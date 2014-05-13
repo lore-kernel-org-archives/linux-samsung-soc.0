@@ -1,61 +1,219 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 5/6] ARM: EXYNOS: Enable multi-platform build support
-Date: Tue, 13 May 2014 11:15:45 +0200
-Message-ID: <4941260.joVvylkMMC@wuerfel>
-References: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org> <201404222156.48432.arnd@arndb.de> <065d01cf6e65$0e903dc0$2bb0b940$@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: [PATCH v2] [media] s5p-mfc: add init buffer cmd to MFCV6
+Date: Tue, 13 May 2014 11:19:30 +0200
+Message-ID: <025401cf6e8c$72835480$5789fd80$%debski@samsung.com>
+References: <1394529345-31952-1-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:49558 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759695AbaEMJQU (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:52749 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759744AbaEMJTR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 May 2014 05:16:20 -0400
-In-Reply-To: <065d01cf6e65$0e903dc0$2bb0b940$@samsung.com>
+	Tue, 13 May 2014 05:19:17 -0400
+In-reply-to: <1394529345-31952-1-git-send-email-arun.kk@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Arun Kumar K' <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@chromium.org, avnd.kiran@samsung.com, arunkk.samsung@gmail.com
 
-On Tuesday 13 May 2014 13:37:33 Kukjin Kim wrote:
-> Arnd Bergmann wrote:
-> > 
-> > On Tuesday 22 April 2014, Olof Johansson wrote:
-> > > I don't think there's a point in keeping this around. A
-> > > "single-platform" config is just enabling a single platform in the
-> > > config, it's not a specific option. I don't think any of the other
-> > > platforms use anything like this today.
-> > 
-> > The only one doing that is shmobile, but only because they have
-> > some SoCs that are multiplatform capable and some that are not.
-> > This isn't the case for Exynos, so it should no longer be needed.
-> > 
-> > When I originally created this patch 18 months ago, there were a
-> > number of drivers that broke when multiplatform got enabled.
-> > Now the cpufreq driver is the only one left, but it seems that
-> > it will make it for 3.16, and I wouldn't wait for it if it doesn't.
-> > Let's just do multiplatform-only.
-> > 
-> In my position in S.LSI, I'd like to keep the current ARCH_EXYNOS4 and
-> EXYNOS5 because IMHO selecting each series would be helpful on real product,
-> multiplatform is available though. Additionally EXYNOS3 is being added.
+Hi,
+
+> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com] On Behalf Of Arun
+> Kumar K
+> Sent: Tuesday, March 11, 2014 10:16 AM
 > 
-> It's true we can support exynos-multiplatform even though above options are
-> included...
+> From: avnd kiran <avnd.kiran@samsung.com>
+> 
+> Latest MFC v6 firmware requires tile mode and loop filter setting to be
+> done as part of Init buffer command, in sync with v7. Since there are
+> two versions of v6 firmware with different interfaces, it is
+> differenciated using the version number read back from firmware which
+> is a hexadecimal value based on the firmware date.
+> 
+> Signed-off-by: avnd kiran <avnd.kiran@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+> Changes from v1
+> ---------------
+> - Check for v6 firmware date for differenciating old and new firmware
+>   as per comments from Kamil and Sylwester.
+> ---
+>  drivers/media/platform/s5p-mfc/regs-mfc-v6.h    |    1 +
+>  drivers/media/platform/s5p-mfc/regs-mfc-v7.h    |    2 --
+>  drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    2 ++
+>  drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c   |    8 +++---
+>  drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |   30
+> ++++++++++++++++++++---
+>  5 files changed, 34 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
+> b/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
+> index 8d0b686..b47567c 100644
+> --- a/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
+> +++ b/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
+> @@ -132,6 +132,7 @@
+>  #define S5P_FIMV_D_METADATA_BUFFER_ADDR_V6	0xf448
+>  #define S5P_FIMV_D_METADATA_BUFFER_SIZE_V6	0xf44c
+>  #define S5P_FIMV_D_NUM_MV_V6			0xf478
+> +#define S5P_FIMV_D_INIT_BUFFER_OPTIONS_V6	0xf47c
+>  #define S5P_FIMV_D_CPB_BUFFER_ADDR_V6		0xf4b0
+>  #define S5P_FIMV_D_CPB_BUFFER_SIZE_V6		0xf4b4
+> 
+> diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
+> b/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
+> index ea5ec2a..82c96fa 100644
+> --- a/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
+> +++ b/drivers/media/platform/s5p-mfc/regs-mfc-v7.h
+> @@ -18,8 +18,6 @@
+>  #define S5P_FIMV_CODEC_VP8_ENC_V7	25
+> 
+>  /* Additional registers for v7 */
+> -#define S5P_FIMV_D_INIT_BUFFER_OPTIONS_V7		0xf47c
+> -
+>  #define S5P_FIMV_E_SOURCE_FIRST_ADDR_V7			0xf9e0
+>  #define S5P_FIMV_E_SOURCE_SECOND_ADDR_V7		0xf9e4
+>  #define S5P_FIMV_E_SOURCE_THIRD_ADDR_V7			0xf9e8
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> index 4d17df9..f5404a6 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> @@ -287,6 +287,7 @@ struct s5p_mfc_priv_buf {
+>   * @warn_start:		hardware error code from which warnings
+start
+>   * @mfc_ops:		ops structure holding HW operation function
+> pointers
+>   * @mfc_cmds:		cmd structure holding HW commands function
+> pointers
+> + * @ver:		firmware sub version
+>   *
+>   */
+>  struct s5p_mfc_dev {
+> @@ -330,6 +331,7 @@ struct s5p_mfc_dev {
+>  	int warn_start;
+>  	struct s5p_mfc_hw_ops *mfc_ops;
+>  	struct s5p_mfc_hw_cmds *mfc_cmds;
+> +	int ver;
+>  };
+> 
+>  /**
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> index 2475a3c..ba1d302 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> @@ -240,7 +240,6 @@ static inline void s5p_mfc_clear_cmds(struct
+> s5p_mfc_dev *dev)
+>  /* Initialize hardware */
+>  int s5p_mfc_init_hw(struct s5p_mfc_dev *dev)  {
+> -	unsigned int ver;
+>  	int ret;
+> 
+>  	mfc_debug_enter();
+> @@ -302,12 +301,13 @@ int s5p_mfc_init_hw(struct s5p_mfc_dev *dev)
+>  		return -EIO;
+>  	}
+>  	if (IS_MFCV6_PLUS(dev))
+> -		ver = mfc_read(dev, S5P_FIMV_FW_VERSION_V6);
+> +		dev->ver = mfc_read(dev, S5P_FIMV_FW_VERSION_V6);
+>  	else
+> -		ver = mfc_read(dev, S5P_FIMV_FW_VERSION);
+> +		dev->ver = mfc_read(dev, S5P_FIMV_FW_VERSION);
+> 
+>  	mfc_debug(2, "MFC F/W version : %02xyy, %02xmm, %02xdd\n",
+> -		(ver >> 16) & 0xFF, (ver >> 8) & 0xFF, ver & 0xFF);
+> +		(dev->ver >> 16) & 0xFF, (dev->ver >> 8) & 0xFF,
+> +		dev->ver & 0xFF);
+>  	s5p_mfc_clock_off();
+>  	mfc_debug_leave();
+>  	return 0;
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> index 90edb19..356cfe5 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> @@ -14,6 +14,7 @@
+> 
+>  #undef DEBUG
+> 
+> +#include <linux/bcd.h>
+>  #include <linux/delay.h>
+>  #include <linux/mm.h>
+>  #include <linux/io.h>
+> @@ -1269,6 +1270,29 @@ static int s5p_mfc_set_enc_params_vp8(struct
+> s5p_mfc_ctx *ctx)
+>  	return 0;
+>  }
+> 
+> +/* Check if newer v6 firmware with changed init buffer interface */
+> +static bool s5p_mfc_is_v6_new(struct s5p_mfc_dev *dev) {
+> +	unsigned long cur_fw, v6_new_fw;
+> +	unsigned int y, m, d;
+> +
+> +	if (IS_MFCV7(dev))
+> +		return false;
+> +
+> +	y = bcd2bin((dev->ver >> 16) & 0xFF) + 2000;
+> +	m = bcd2bin((dev->ver >> 8) & 0xFF);
+> +	d = bcd2bin(dev->ver & 0xFF);
+> +
+> +	cur_fw = mktime(y, m, d, 0, 0, 0);
+> +	/*
+> +	 * Firmware versions from date 29/06/2012 are coming with new
+> interface
+> +	 * for init buffer
+> +	 */
+> +	v6_new_fw = mktime(2012, 6, 29, 0, 0, 0);
+> +
+> +	return cur_fw >= v6_new_fw;
+> +}
 
-I think we are talking about different questions here:
+Hold on for a minute. The firmware date is an integer in the format YYMMDD,
+there is no firmware
+prior to 2000. So a simple greater-than check should be sufficient.
 
-What Olof and I mean is we don't want to have an ARCH_EXYNOS_SINGLE option
-that is there for building EXYNOS but not allowing any other SoC.
+return dev->ver >= 120629;
+or better
+return dev->ver >= MFC_V6_NEW_FIRMWARE;
+with 
+#define MFC_V6_NEW_FIRMWARE 
 
-What I think you mean is that you want the individual EXYNOS versions
-to be separate Kconfig options, so you can build a kernel that supports
-EXYNOS4 but not EXYNOS5 if you want to. This is totally fine as far
-as I'm concerned, and it's not directly related to the first point.
+Also, maybe some versioning should be added? We don't want to have "new"
+firmware
+and "newer" firmware.
 
-Note that if you enable LPAE, you will still only be able to build EXYNOS5
-after the patch, but then you can have it in the same kernel as e.g.
-Tegra4 and Snapdragon 600.
+return dev->ver >= MFC_V6_FIRMWARE_INTERFACE_V2; ?
 
-	Arnd
+Year 2100 problem? Firmware only supplies two digits anyway, so any firmware
+released after 2100 will require changes to the kernel.
+
+> +
+>  /* Initialize decoding */
+>  static int s5p_mfc_init_decode_v6(struct s5p_mfc_ctx *ctx)  { @@ -
+> 1296,7 +1320,7 @@ static int s5p_mfc_init_decode_v6(struct s5p_mfc_ctx
+> *ctx)
+>  		WRITEL(ctx->display_delay, S5P_FIMV_D_DISPLAY_DELAY_V6);
+>  	}
+> 
+> -	if (IS_MFCV7(dev)) {
+> +	if (IS_MFCV7(dev) || s5p_mfc_is_v6_new(dev)) {
+>  		WRITEL(reg, S5P_FIMV_D_DEC_OPTIONS_V6);
+>  		reg = 0;
+>  	}
+> @@ -1311,8 +1335,8 @@ static int s5p_mfc_init_decode_v6(struct
+> s5p_mfc_ctx *ctx)
+>  	if (ctx->dst_fmt->fourcc == V4L2_PIX_FMT_NV12MT_16X16)
+>  		reg |= (0x1 << S5P_FIMV_D_OPT_TILE_MODE_SHIFT_V6);
+> 
+> -	if (IS_MFCV7(dev))
+> -		WRITEL(reg, S5P_FIMV_D_INIT_BUFFER_OPTIONS_V7);
+> +	if (IS_MFCV7(dev) || s5p_mfc_is_v6_new(dev))
+> +		WRITEL(reg, S5P_FIMV_D_INIT_BUFFER_OPTIONS_V6);
+>  	else
+>  		WRITEL(reg, S5P_FIMV_D_DEC_OPTIONS_V6);
+> 
+> --
+> 1.7.9.5
