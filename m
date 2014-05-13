@@ -1,62 +1,111 @@
-From: Shaik Ameer Basha <shaik.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v13 00/19] iommu/exynos: Fixes and Enhancements of System
-	MMU driver with DT
-Date: Tue, 13 May 2014 19:02:39 +0530
-Message-ID: <CAOD6ATou_4aNce-0NVFWOXO66W0dsEva0MQddAqQCqhCGRWxMQ@mail.gmail.com>
-References: <1399875304-19948-1-git-send-email-shaik.ameer@samsung.com>
-	<5576160.rCaFbvon4G@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <5576160.rCaFbvon4G@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "supash.ramaswamy" <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Varun Sethi <varun.sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] ARM: exynos4212: hotplug: Fix CPU idle clock down after CPU1
+ off
+Date: Tue, 13 May 2014 16:12:58 +0200
+Message-ID: <1399990378-7023-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:14999 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932564AbaEMOMv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 13 May 2014 10:12:51 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On Mon, May 12, 2014 at 3:37 PM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-> On Monday 12 May 2014 11:44:45 Shaik Ameer Basha wrote:
->> This is the subset of previous v12 series and includes only the fixes and
->> enhancements, leaving out the private DT bindings as discussed in the below thread.
->>     -- http://www.gossamer-threads.com/lists/linux/kernel/1918178
->>
->> This patch series includes,
->> 1] fixes for exynos-iommu driver build break
->> 2] includes several bug fixes and enhancements for the exynos-iommu driver
->> 3] code to handle multiple exynos sysmmu versions
->> 4] adding support for device tree
->>         Documentation/devicetree/bindings/iommu/samsung,sysmmu.txt
->
-> The patches look good to me, but please add a note into the samsung,sysmmu.txt
-> file explaining that the binding is incomplete and that it's possible to
-> change in incompatible ways when we add support for attaching devices to
-> the IOMMU through the generic IOMMU binding.
+On Exynos4212 USE_DELAYED_RESET_ASSERTION must be set in
+ARM_CORE1_OPTION register during CPU power down. This is the proper way
+of powering down CPU. Additionally without this the CPU clock down won't
+work after powering down CPU1 and CPU will work at full frequency chosen
+by CPUfreq governor.
 
-Hi Arnd,
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/mach-exynos/hotplug.c  | 28 +++++++++++++++++++++++++---
+ arch/arm/mach-exynos/regs-pmu.h |  2 ++
+ 2 files changed, 27 insertions(+), 3 deletions(-)
 
-Thank you.
-If there are no more comments on this series, I can send one more
-incremental patch
-with the note mentioned in your review comment.
-
-Hi Joerg Roedel,
-Can you please add this series to your tree.
-
-Regards,
-Shaik Ameer Basha
-
->
->         Arnd
-> _______________________________________________
-> iommu mailing list
-> iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+index 5eead530c6f8..59b813e74558 100644
+--- a/arch/arm/mach-exynos/hotplug.c
++++ b/arch/arm/mach-exynos/hotplug.c
+@@ -74,7 +74,7 @@ static inline void cpu_enter_lowpower_a15(void)
+ 	dsb();
+ }
+ 
+-static inline void cpu_leave_lowpower(void)
++static inline void cpu_leave_lowpower(unsigned int cpu)
+ {
+ 	unsigned int v;
+ 
+@@ -88,6 +88,14 @@ static inline void cpu_leave_lowpower(void)
+ 	  : "=&r" (v)
+ 	  : "Ir" (CR_C), "Ir" (0x40)
+ 	  : "cc");
++
++	if (cpu == 1 && soc_is_exynos4212()) {
++		unsigned int tmp;
++
++		tmp = __raw_readl(S5P_ARM_CORE1_OPTION);
++		tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
++		__raw_writel(tmp, S5P_ARM_CORE1_OPTION);
++	}
+ }
+ 
+ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+@@ -95,8 +103,22 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+ 	for (;;) {
+ 
+ 		/* make cpu1 to be turned off at next WFI command */
+-		if (cpu == 1)
++		if (cpu == 1) {
++			if (soc_is_exynos4212()) {
++				unsigned int tmp;
++
++				/*
++				 * Exynos 4212 requires setting
++				 * USE_DELAYED_RESET_ASSERTION so the CPU idle
++				 * clock down feature could properly detect
++				 * global idle state when CPU1 is off.
++				 */
++				tmp = __raw_readl(S5P_ARM_CORE1_OPTION);
++				tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
++				__raw_writel(tmp, S5P_ARM_CORE1_OPTION);
++			}
+ 			__raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
++		}
+ 
+ 		/*
+ 		 * here's the WFI
+@@ -152,7 +174,7 @@ void __ref exynos_cpu_die(unsigned int cpu)
+ 	 * bring this CPU back into the world of cache
+ 	 * coherency, and then restore interrupts
+ 	 */
+-	cpu_leave_lowpower();
++	cpu_leave_lowpower(cpu);
+ 
+ 	if (spurious)
+ 		pr_warn("CPU%u: %u spurious wakeup calls\n", cpu, spurious);
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index 4f6a2560d022..1a3da4ef0e22 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -25,6 +25,7 @@
+ 
+ #define S5P_USE_STANDBY_WFI0			(1 << 16)
+ #define S5P_USE_STANDBY_WFE0			(1 << 24)
++#define S5P_USE_DELAYED_RESET_ASSERTION		BIT(12)
+ 
+ #define EXYNOS_SWRESET				S5P_PMUREG(0x0400)
+ #define EXYNOS5440_SWRESET			S5P_PMUREG(0x00C4)
+@@ -107,6 +108,7 @@
+ 
+ #define S5P_ARM_CORE1_CONFIGURATION		S5P_PMUREG(0x2080)
+ #define S5P_ARM_CORE1_STATUS			S5P_PMUREG(0x2084)
++#define S5P_ARM_CORE1_OPTION			S5P_PMUREG(0x2088)
+ 
+ #define S5P_PAD_RET_MAUDIO_OPTION		S5P_PMUREG(0x3028)
+ #define S5P_PAD_RET_GPIO_OPTION			S5P_PMUREG(0x3108)
+-- 
+1.9.1
