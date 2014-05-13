@@ -1,70 +1,45 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: enable fimd for exynos5800 based peach-pi board
-Date: Tue, 13 May 2014 08:53:09 +0530
-Message-ID: <CAPdUM4Mfh-LnUX_fHi7BTJ1LcE+b4oHzjgWAJk+AWvV7UJbGnA@mail.gmail.com>
-References: <1399877120-4634-1-git-send-email-rahul.sharma@samsung.com>
-	<1399877120-4634-3-git-send-email-rahul.sharma@samsung.com>
-	<004701cf6e48$b4578910$1d069b30$%han@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: dts: Remove mau_pd node for Exynos5420
+Date: Tue, 13 May 2014 13:11:07 +0900
+Message-ID: <064101cf6e61$5dbc0540$19340fc0$@samsung.com>
+References: <1398145155-4615-1-git-send-email-tushar.behera@linaro.org>
+ <CAGOxZ52CDOXyXDpy8h3NQ8=26Wn8jF=6_vzb+t370_GbPiHG0g@mail.gmail.com>
+ <CAHbNUh2T8gOdGxDGm995vbj0oiJkyDwW9C9J7VV_o7mudfKjEw@mail.gmail.com>
+ <03b001cf5edc$ae42e770$0ac8b650$@samsung.com> <5358D46F.2050303@linaro.org>
+ <5358E243.7010004@samsung.com> <5358EF70.7070809@linaro.org>
+ <535AEFFE.7020900@gmail.com> <535DCDF8.4000004@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f177.google.com ([74.125.82.177]:40193 "EHLO
-	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750791AbaEMDXL (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:27499 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751047AbaEMEL2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 May 2014 23:23:11 -0400
-In-Reply-To: <004701cf6e48$b4578910$1d069b30$%han@samsung.com>
+	Tue, 13 May 2014 00:11:28 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N5H000D8VMKZW00@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 13 May 2014 13:11:08 +0900 (KST)
+In-reply-to: <535DCDF8.4000004@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
+To: 'Tushar Behera' <tushar.behera@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Alim Akhtar' <alim.akhtar@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, jhbird.choi@samsung.com
 
-Thanks Jingoo Han.
+Tushar Behera wrote:
 
-Hi Kukjin,
+[...]
 
-Please consider both of these series for your tree.
+> 
+> Having tried all these options, I still feel removing mau_pd node from
+> device tree is the only option.
 
-1) http://www.spinics.net/lists/arm-kernel/msg329697.html
-2) http://www.spinics.net/lists/arm-kernel/msg330291.html
+Agreed. I will apply this fix if nobody has any idea about that at this
+moment.
 
-Regards,
-Rahul Sharma
-
-On 13 May 2014 06:44, Jingoo Han <jg1.han@samsung.com> wrote:
-> On Monday, May 12, 2014 3:45 PM, Rahul Sharma wrote:
->>
->> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->>
->> Enable FIMD for peach-pi board.
->>
->> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
->
-> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
->
-> Best regards,
-> Jingoo Han
->
->> ---
->>  arch/arm/boot/dts/exynos5800-peach-pi.dts |    5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> index 426705a..cccacdd 100644
->> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> @@ -157,6 +157,11 @@
->>       };
->>  };
->>
->> +&fimd {
->> +     status = "okay";
->> +     samsung,invert-vclk;
->> +};
->> +
->>  &hsi2c_9 {
->>       status = "okay";
->>       clock-frequency = <400000>;
->> --
->> 1.7.9.5
->
+Thanks,
+Kukjin
