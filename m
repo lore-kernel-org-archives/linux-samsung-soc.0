@@ -1,79 +1,147 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: Re: [PATCH] [media] s5p-mfc: Dequeue sequence header after STREAMON
-Date: Tue, 13 May 2014 17:05:17 +0530
-Message-ID: <CALt3h78STM9rLxZJ8cJZS=2hO9c=-aa+4Z40LHFydVLAq+jx5Q@mail.gmail.com>
-References: <1399462252-21821-1-git-send-email-arun.kk@samsung.com>
-	<CAK9yfHz-YuC0pdqChK2=OFLxyf9zguGFS5275O9fG3DVB8YHsA@mail.gmail.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [Patch v4 5/5] mcpm: exynos: populate suspend and powered_up callbacks
+Date: Tue, 13 May 2014 17:13:31 +0530
+Message-ID: <CANuQgHG9tGzi2rSOwREAxVu4BQoprDg9om62AybgW5v31fpbTQ@mail.gmail.com>
+References: <1399278444-8312-3-git-send-email-chander.kashyap@linaro.org>
+	<1399282040-8995-1-git-send-email-chander.kashyap@linaro.org>
+	<1399282040-8995-6-git-send-email-chander.kashyap@linaro.org>
+	<20140509153206.GB5040@e102568-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f171.google.com ([209.85.220.171]:46963 "EHLO
-	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753134AbaEMLfT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 May 2014 07:35:19 -0400
-In-Reply-To: <CAK9yfHz-YuC0pdqChK2=OFLxyf9zguGFS5275O9fG3DVB8YHsA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20140509153206.GB5040@e102568-lin.cambridge.arm.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Chander Kashyap <k.chander@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-media <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Osciak <posciak@chromium.org>, Kiran Avnd <avnd.kiran@samsung.com>
 
-Hi Sachin,
+Hi Lorenzo
 
-Thank you for the review.
-Will address your comments and post updated version.
-
-Regards
-Arun
-
-On Thu, May 8, 2014 at 3:09 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Hi Arun,
->
-> Just 2 small nits.
->
-> On 7 May 2014 17:00, Arun Kumar K <arun.kk@samsung.com> wrote:
->> MFCv6 encoder needs specific minimum number of buffers to
->> be queued in the CAPTURE plane. This minimum number will
->> be known only when the sequence header is generated.
->> So we used to allow STREAMON on the CAPTURE plane only after
->> sequence header is generated and checked with the minimum
->> buffer requirement.
+On 9 May 2014 21:02, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
+> On Mon, May 05, 2014 at 10:27:20AM +0100, Chander Kashyap wrote:
+>> In order to support cpuidle through mcpm, suspend and powered-up
+>> callbacks are required in mcpm platform code.
+>> Hence populate the same callbacks.
 >>
->> But this causes a problem that we call a vb2_buffer_done
->> for the sequence header buffer before doing a STREAON on the
->> CAPTURE plane. This used to still work fine until this patch
->> was merged b3379c6201bb3555298cdbf0aa004af260f2a6a4.
->
-> Please provide the patch title too along with commit ID
-> (first 12 characters of ID is enough).
->
->>
->> This problem should also come in earlier MFC firmware versions
->> if the application calls STREAMON on CAPTURE with some delay
->> after doing STREAMON on OUTPUT.
->>
->> So this patch keeps the header buffer until the other frame
->> buffers are ready and dequeues it just before the first frame
->> is ready.
->>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+>> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
 >> ---
->>  drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    2 ++
->>  drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    |    6 +++++-
->>  2 files changed, 7 insertions(+), 1 deletion(-)
+>> Changes in v4: None
+>> Changes in v3:
+>>       1. Removed coherancy enablement after suspend failure.
+>
+> coherency
+>
+>>       2. Use generic function to poweron cpu.
+>> changes in v2:
+>>       1. Fixed typo: enynos_pmu_cpunr to exynos_pmu_cpunr
+>>  arch/arm/mach-exynos/mcpm-exynos.c |   34 ++++++++++++++++++++++++++++++++++
+>>  1 file changed, 34 insertions(+)
 >>
->> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->> index d64b680..4fd1034 100644
->> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->> @@ -523,6 +523,7 @@ struct s5p_mfc_codec_ops {
->>   * @output_state:      state of the output buffers queue
->>   * @src_bufs:          information on allocated source buffers
->>   * @dst_bufs:          information on allocated destination buffers
->> + * @header_mb:         buf pointer of the encoded sequence header
+>> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+>> index d0f7461..6d4a907 100644
+>> --- a/arch/arm/mach-exynos/mcpm-exynos.c
+>> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+>> @@ -256,10 +256,44 @@ static int exynos_power_down_finish(unsigned int cpu, unsigned int cluster)
+>>       return -ETIMEDOUT; /* timeout */
+>>  }
+>>
+>> +void exynos_powered_up(void)
 >
-> s/buf/buffer
+> static ?
+
+Ok, done
+
 >
-> --
-> With warm regards,
-> Sachin
+>> +{
+>> +     unsigned int mpidr, cpu, cluster;
+>> +
+>> +     mpidr = read_cpuid_mpidr();
+>> +     cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+>> +     cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+>> +
+>> +     arch_spin_lock(&exynos_mcpm_lock);
+>> +     if (cpu_use_count[cpu][cluster] == 0)
+>> +             cpu_use_count[cpu][cluster] = 1;
+>> +     arch_spin_unlock(&exynos_mcpm_lock);
+>> +}
+>> +
+>> +static void exynos_suspend(u64 residency)
+>> +{
+>> +     unsigned int mpidr, cpunr;
+>> +
+>> +     mpidr = read_cpuid_mpidr();
+>> +     cpunr = exynos_pmu_cpunr(mpidr);
+>
+> If I were to be picky, I would compute these values only if they
+> are needed, ie move the computation after exynos_power_down().
+
+Yes thats make sense. I will realign it.
+
+>
+> There is another quite horrible issue here. We know this code works
+> because the processors A15/A7 hit the caches with C bit in SCTLR cleared.
+>
+> On processors where this is not true, this sequence would explode
+> if power down fails (in case core is gated but L2 is still powered on,
+> the stack is stuck in L2) since it is going to read stack data that is
+> in L2 but can't be read.
+>
+> It is not related to this sequence only, but it is an issue in general
+> and wanted to mention that on the lists for public awareness.
+>
+
+Can you please elaborate. I didn't understand.
+
+> The gist of what I am saying is, please add a comment to that extent,
+> here and it should be added in exynos_power_down() too.
+>
+>> +     __raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 0x1c);
+>
+> No magic numbers please (0x1c). You can add a macro/wrapper, as TC2 does.
+
+Yes i will remove it.
+
+>
+>> +     exynos_power_down();
+>> +
+>> +     /*
+>> +      * Execution reaches here only if cpu did not power down.
+>> +      * Hence roll back the changes done in exynos_power_down function.
+>> +     */
+>> +     exynos_cpu_powerup(cpunr);
+>
+> Please be aware that if this function returns MCPM will soft reboot, and
+> the CPUidle driver will have no way to detect a state entry failure.
+>
+> I am just flagging this up, since fixing this behaviour is not easy, and
+> honestly, since power down failure should be the exception not the rule,
+> the idle stats should not be affected much.
+>
+> I think this is the proper way of implementing the sequence but please
+> all keep in mind what I wrote above.
+>
+> Lorenzo
+>
+>> +}
+>> +
+>>  static const struct mcpm_platform_ops exynos_power_ops = {
+>>       .power_up               = exynos_power_up,
+>>       .power_down             = exynos_power_down,
+>>       .power_down_finish      = exynos_power_down_finish,
+>> +     .suspend                = exynos_suspend,
+>> +     .powered_up             = exynos_powered_up,
+>>  };
+>>
+>>  static void __init exynos_mcpm_usage_count_init(void)
+>> --
+>> 1.7.9.5
+>>
+>>
+>
+
+
+
+-- 
+with warm regards,
+Chander Kashyap
