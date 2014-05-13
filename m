@@ -1,57 +1,181 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 5/6] ARM: EXYNOS: Enable multi-platform build support
-Date: Tue, 13 May 2014 13:37:33 +0900
-Message-ID: <065d01cf6e65$0e903dc0$2bb0b940$@samsung.com>
-References: <1397554134-11827-1-git-send-email-sachin.kamat@linaro.org>
- <1397554134-11827-6-git-send-email-sachin.kamat@linaro.org>
- <CAOesGMh0VdSbQ1fSjGkJOG+BDeNfo4NNQjtiznh18DxSROaT1A@mail.gmail.com>
- <201404222156.48432.arnd@arndb.de>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH] mmc: dw_mmc: Make sure we don't get stuck when we get an
+ error
+Date: Tue, 13 May 2014 13:52:23 +0900
+Message-ID: <001b01cf6e67$2183b400$648b1c00$%jun@samsung.com>
+References: <1395901126-6141-1-git-send-email-yuvaraj.cd@samsung.com>
+ <CAKuRcOL_JVjOfLNspb14kRxcAXjpEwX4WkvmM+izryZbZBE4XA@mail.gmail.com>
+ <CAPz6YkVwT0PrcLP1MJy0vVRw811+_7PwsV_ggKxQkqrjOWeWWw@mail.gmail.com>
+ <002001cf6c59$b5b5e680$2121b380$%jun@samsung.com>
+ <CAD=FV=X=9cTvST5cM=H9H23SMD28cHSExXt3YR=v2AQ6dFJY5w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:27275 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751538AbaEMEhe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 May 2014 00:37:34 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5H00J0HWUL1S80@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 13 May 2014 13:37:33 +0900 (KST)
-In-reply-to: <201404222156.48432.arnd@arndb.de>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <CAD=FV=X=9cTvST5cM=H9H23SMD28cHSExXt3YR=v2AQ6dFJY5w@mail.gmail.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Doug Anderson' <dianders@chromium.org>
+Cc: 'Sonny Rao' <sonnyrao@chromium.org>, 'Yuvaraj Kumar' <yuvaraj.cd@gmail.com>, 'Grant Grundler' <grundler@chromium.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Chris Ball' <cjb@laptop.org>, 'linux-mmc' <linux-mmc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'sunil joshi' <joshi@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Arnd Bergmann wrote:
-> 
-> On Tuesday 22 April 2014, Olof Johansson wrote:
-> > I don't think there's a point in keeping this around. A
-> > "single-platform" config is just enabling a single platform in the
-> > config, it's not a specific option. I don't think any of the other
-> > platforms use anything like this today.
-> 
-> The only one doing that is shmobile, but only because they have
-> some SoCs that are multiplatform capable and some that are not.
-> This isn't the case for Exynos, so it should no longer be needed.
-> 
-> When I originally created this patch 18 months ago, there were a
-> number of drivers that broke when multiplatform got enabled.
-> Now the cpufreq driver is the only one left, but it seems that
-> it will make it for 3.16, and I wouldn't wait for it if it doesn't.
-> Let's just do multiplatform-only.
-> 
-In my position in S.LSI, I'd like to keep the current ARCH_EXYNOS4 and
-EXYNOS5 because IMHO selecting each series would be helpful on real product,
-multiplatform is available though. Additionally EXYNOS3 is being added.
+Hi Doug,
 
-It's true we can support exynos-multiplatform even though above options are
-included...
+On Tue, May 13, 2014, Doug Anderson wrote:
+> Seungwon,
+> 
+> On Sat, May 10, 2014 at 7:11 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> > On Fri, May 09, 2014, Sonny Rao wrote:
+> >> On Thu, May 8, 2014 at 2:42 AM, Yuvaraj Kumar <yuvaraj.cd@gmail.com> wrote:
+> >> > Any comments on this patch?
+> >> >
+> >>
+> >> I'll just add that without this fix, running the tuning loop for UHS
+> >> modes is not reliable on dw_mmc because errors will happen and you
+> >> will eventually hit this race and hang.  This can happen any time
+> >> there is tuning like during boot or during resume from suspend.
+> >>
+> >> > On Thu, Mar 27, 2014 at 11:48 AM, Yuvaraj Kumar C D
+> >> > <yuvaraj.cd@gmail.com> wrote:
+> >> >> From: Doug Anderson <dianders@chromium.org>
+> >> >>
+> >> >> If we happened to get a data error at just the wrong time the dw_mmc
+> >> >> driver could get into a state where it would never complete its
+> >> >> request.  That would leave the caller just hanging there.
+> >> >>
+> >> >> We fix this two ways and both of the two fixes on their own appear to
+> >> >> fix the problems we've seen:
+> >> >>
+> >> >> 1. Fix a race in the tasklet where the interrupt setting the data
+> >> >>    error happens _just after_ we check for it, then we get a
+> >> >>    EVENT_XFER_COMPLETE.  We fix this by repeating a bit of code.
+> > I think repeating is not good approach to fix race.
+> > In your case, XFER_COMPLETE preceded data error and DTO didn't come?
+> > It seems strange case.
+> > I want to know actual error value if you can reproduce.
+> 
+> XFER_COMPLETE didn't necessarily precede data error.  Imagine this scenario:
+> 
+> 1. Check for data error: nope
+> 2. Interrupt happens and we get a data error and immediately xfer complete
+> 3. Check for xfer complete: yup
+> 
+> That's the state that we are handling.
+> 
+> The system that dw_mmc uses where the interrupt handler has no locking
+> makes it incredibly difficult to get things right.  Can you propose an
+> alternate fix that would avoid the race?
+Thank you for detailed scenario.
+You're right.
+Have you consider using spin_lock() in interrupt handler?
+Then, we'll need to change spin_lock() to spin_lock_irqsave() in tasklet func.
+And other locks in driver may need to be adjusted properly.
+
+To return above scenario:
+1. Check for data error: nope
+2. Check for xfer complete: nope -> escape tasklet.
+3. Interrupt happens and we get a data error and immediately xfer complete
+4. Check for data error (Again in tasklet) : yup
+
+How about this change?
 
 Thanks,
-Kukjin
+Seungwon Jeon
+> 
+> 
+> >> >> 2. Fix it so that if we detect that we've got an error in the "data
+> >> >>    busy" state and we're not going to do anything else we end the
+> >> >>    request and unblock anyone waiting.
+> >> >>
+> >> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> >> >> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+> >> >> ---
+> >> >>  drivers/mmc/host/dw_mmc.c |   47 +++++++++++++++++++++++++++++++++++++++++++++
+> >> >>  1 file changed, 47 insertions(+)
+> >> >>
+> >> >> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> >> >> index 1d77431..4c589f1 100644
+> >> >> --- a/drivers/mmc/host/dw_mmc.c
+> >> >> +++ b/drivers/mmc/host/dw_mmc.c
+> >> >> @@ -1300,6 +1300,14 @@ static void dw_mci_tasklet_func(unsigned long priv)
+> >> >>                         /* fall through */
+> >> >>
+> >> >>                 case STATE_SENDING_DATA:
+> >> >> +                       /*
+> >> >> +                        * We could get a data error and never a transfer
+> >> >> +                        * complete so we'd better check for it here.
+> >> >> +                        *
+> >> >> +                        * Note that we don't really care if we also got a
+> >> >> +                        * transfer complete; stopping the DMA and sending an
+> >> >> +                        * abort won't hurt.
+> >> >> +                        */
+> >> >>                         if (test_and_clear_bit(EVENT_DATA_ERROR,
+> >> >>                                                &host->pending_events)) {
+> >> >>                                 dw_mci_stop_dma(host);
+> >> >> @@ -1313,7 +1321,29 @@ static void dw_mci_tasklet_func(unsigned long priv)
+> >> >>                                 break;
+> >> >>
+> >> >>                         set_bit(EVENT_XFER_COMPLETE, &host->completed_events);
+> >> >> +
+> >> >> +                       /*
+> >> >> +                        * Handle an EVENT_DATA_ERROR that might have shown up
+> >> >> +                        * before the transfer completed.  This might not have
+> >> >> +                        * been caught by the check above because the interrupt
+> >> >> +                        * could have gone off between the previous check and
+> >> >> +                        * the check for transfer complete.
+> >> >> +                        *
+> >> >> +                        * Technically this ought not be needed assuming we
+> >> >> +                        * get a DATA_COMPLETE eventually (we'll notice the
+> >> >> +                        * error and end the request), but it shouldn't hurt.
+> >> >> +                        *
+> >> >> +                        * This has the advantage of sending the stop command.
+> >> >> +                        */
+> >> >> +                       if (test_and_clear_bit(EVENT_DATA_ERROR,
+> >> >> +                                              &host->pending_events)) {
+> >> >> +                               dw_mci_stop_dma(host);
+> >> >> +                               send_stop_abort(host, data);
+> >> >> +                               state = STATE_DATA_ERROR;
+> >> >> +                               break;
+> >> >> +                       }
+> >> >>                         prev_state = state = STATE_DATA_BUSY;
+> >> >> +
+> >> >>                         /* fall through */
+> >> >>
+> >> >>                 case STATE_DATA_BUSY:
+> >> >> @@ -1336,6 +1366,23 @@ static void dw_mci_tasklet_func(unsigned long priv)
+> >> >>                                 /* stop command for open-ended transfer*/
+> >> >>                                 if (data->stop)
+> >> >>                                         send_stop_abort(host, data);
+> >> >> +                       } else {
+> >> >> +                               /*
+> >> >> +                                * If we don't have a command complete now we'll
+> >> >> +                                * never get one since we just reset everything;
+> >> >> +                                * better end the request.
+> >> >> +                                *
+> >> >> +                                * If we do have a command complete we'll fall
+> >> >> +                                * through to the SENDING_STOP command and
+> >> >> +                                * everything will be peachy keen.
+> >> >> +                                *
+> >> >> +                                * TODO: I guess we shouldn't send a stop?
+> >> >> +                                */
+> >> >> +                               if (!test_bit(EVENT_CMD_COMPLETE,
+> >> >> +                                             &host->pending_events)) {
+> >> >> +                                       dw_mci_request_end(host, mrq);
+> >> >> +                                       goto unlock;
+> >> >> +                               }
+> > Can you explain what happens above?
+> > What is it for?
+> 
+> This was an alternate fix for the above, but appears to actually hit
+> in practice too.
+> 
+> Said another way: if we don't add the extra checking for
+> EVENT_DATA_ERROR (above) we'll end up here.  ...and if we ever get
+> into this "else" and don't do _something_ then we'll wedge forever.
+> 
+> -Doug
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
