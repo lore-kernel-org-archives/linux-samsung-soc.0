@@ -1,118 +1,85 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCHv2 1/3] phy: Add exynos-simple-phy driver
-Date: Tue, 13 May 2014 16:50:31 +0530
-Message-ID: <CAPdUM4MZS4jMNcEtjHkw1==zG3Z_rNYfsw9Q4Qt3kRpV5PuLJw@mail.gmail.com>
-References: <1396967856-27470-1-git-send-email-t.stanislaws@samsung.com>
- <1396967856-27470-2-git-send-email-t.stanislaws@samsung.com>
- <534506B1.4040908@samsung.com>
- <CAPdUM4M109_kzY6cUMJQPSwgazvWmNDWL1JeXgiqnzvH8dhK2Q@mail.gmail.com>
- <53451A60.4050803@samsung.com> <53675D72.70103@ti.com>
- <CAPdUM4N+2VXpiFSiWW9gKfbte1zkpDbCOSF+KvEo4T1KLqqwjw@mail.gmail.com>
- <536A36F5.5080303@samsung.com>
- <CAPdUM4M6uk2KN_L487_cRkOqbgJrhhMRx9zpczA6-3LzSM3FSg@mail.gmail.com>
- <536A5258.3080104@samsung.com>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: Re: [PATCH 1/3] [media] s5p-mfc: Add variants to access mfc registers
+Date: Tue, 13 May 2014 16:54:25 +0530
+Message-ID: <537200E9.60900@samsung.com>
+References: <1398257864-12097-1-git-send-email-arun.kk@samsung.com> <1398257864-12097-2-git-send-email-arun.kk@samsung.com> <026d01cf6e96$a85d4bb0$f917e310$%debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <536A5258.3080104@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, Mark Rutland <Mark.Rutland@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kumar Gala <galak@codeaurora.org>, Grant Likely <grant.likely@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, sunil joshi <joshi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f44.google.com ([209.85.160.44]:50050 "EHLO
+	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753000AbaEMLYa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 13 May 2014 07:24:30 -0400
+In-Reply-To: <026d01cf6e96$a85d4bb0$f917e310$%debski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@chromium.org, avnd.kiran@samsung.com, arunkk.samsung@gmail.com
 
-<Gentle PING>
+Hi Kamil,
 
-On 7 May 2014 21:03, Tomasz Figa <t.figa@samsung.com> wrote:
-> [CCing more DT-folks :)]
->
-> On 07.05.2014 16:19, Rahul Sharma wrote:
->> On 7 May 2014 19:06, Tomasz Stanislawski <t.stanislaws@samsung.com> wrote:
->>> On 05/07/2014 12:38 PM, Rahul Sharma wrote:
->>>> On 5 May 2014 15:14, Kishon Vijay Abraham I <kishon@ti.com> wrote:
->>>>> Hi,
->>>>>
->>>>> On Wednesday 09 April 2014 03:31 PM, Sylwester Nawrocki wrote:
->>>>>> Hi,
->>>>>>
->>>>>> On 09/04/14 11:12, Rahul Sharma wrote:
->>>>>>> Idea looks good. How about keeping compatible which is independent
->>>>>>> of SoC, something like "samsung,exynos-simple-phy" and provide Reg
->>>>>>> and Bit through phy provider node. This way we can avoid SoC specific
->>>>>>> hardcoding in phy driver and don't need to look into dt bindings for
->>>>>>> each new SoC.
->>>>>>
->>>>>> I believe it is a not recommended approach.
->>>>>
->>>>> Why not? We should try to avoid hard coding in the driver code. Moreover by
->>>>> avoiding hardcoding we can make it a generic driver for single bit PHYs.
->>>>>
->>>>
->>>> +1.
->>>>
->>>> @Tomasz, any plans to consider this approach for simple phy driver?
->>>>
->>>> Regards,
->>>> Rahul Sharma.
->>>>
->>>
->>> Hi Rahul,
->>> Initially, I wanted to make a very generic driver and to add bit and
->>> register (or its offset) attribute to the PHY node.
->>> However, there was a very strong opposition from DT maintainers
->>> to adding any bit related configuration to DT.
->>> The current solution was designed to be a trade-off between
->>> being generic and being accepted :).
->>>
+On 05/13/14 16:02, Kamil Debski wrote:
+> Hi, 
+> 
+> One small comment below,
+> 
+>> -----Original Message-----
+>> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com] On Behalf Of Arun
+>> Kumar K
+>> Sent: Wednesday, April 23, 2014 2:58 PM
+>> To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+>> Cc: k.debski@samsung.com; s.nawrocki@samsung.com; posciak@chromium.org;
+>> avnd.kiran@samsung.com; arunkk.samsung@gmail.com
+>> Subject: [PATCH 1/3] [media] s5p-mfc: Add variants to access mfc
+>> registers
 >>
->> Thanks Tomasz,
->> Ok got it. lets discuss it again and conclude it.
+>> From: Kiran AVND <avnd.kiran@samsung.com>
 >>
->> @Kishon, DT-folks,
+>> This patch is needed in preparation to add MFC V8
+>> where the register offsets are changed w.r.t MFC V6/V7.
 >>
->> The original RFC patch from Tomasz (at https://lkml.org/lkml/2013/10/21/313)
->> added simple phy driver as "Generic-simple-phy" with these properties:
+>> This patch adds variants of MFC V6 and V7 while
+>> accessing MFC registers. Registers are kept in mfc context
+>> and are initialized to a particular MFC variant during probe,
+>> which is used instead of macros.
 >>
->> + of_property_read_u32(dev->of_node, "mask", &sphy->mask);
->> + of_property_read_u32(dev->of_node, "on-value", &sphy->on_value);
->> + of_property_read_u32(dev->of_node, "off-value", &sphy->off_value);
+>> This avoids duplication of the code for MFC variants
+>> V6 & V7, and reduces the if_else checks while accessing
+>> registers of different MFC variants.
 >>
->> Shall we consider the same solution again for generic simple phy
->> driver which just expose on/off control through register bit.
+>> Signed-off-by: Kiran AVND <avnd.kiran@samsung.com>
+>> Signed-off-by: Pawel Osciak <posciak@chromium.org>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> ---
+>>  drivers/media/platform/s5p-mfc/s5p_mfc.c        |    1 +
+>>  drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    1 +
+>>  drivers/media/platform/s5p-mfc/s5p_mfc_opr.c    |    6 +
+>>  drivers/media/platform/s5p-mfc/s5p_mfc_opr.h    |  254 +++++++++
+>>  drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |  697
+>> +++++++++++++++--------
+>>  drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.h |    7 +-
+>>  6 files changed, 710 insertions(+), 256 deletions(-)
 >>
->> Regards,
->> Rahul Sharma
->>
->>> Regards,
->>> Tomasz Stanislawski
->>>
->>>
->>>
->>>>> Cheers
->>>>> Kishon
->>>>
->>>
->>> _______________________________________________
->>> dri-devel mailing list
->>> dri-devel@lists.freedesktop.org
->>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
-> Best regards,
-> Tomasz
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+[snip]
+
+>>  	if (p_h264->fmo) {
+>> @@ -988,10 +991,12 @@ static int s5p_mfc_set_enc_params_h264(struct
+>> s5p_mfc_ctx *ctx)
+>>  		case V4L2_MPEG_VIDEO_H264_FMO_MAP_TYPE_INTERLEAVED_SLICES:
+>>  			if (p_h264->fmo_slice_grp > 4)
+>>  				p_h264->fmo_slice_grp = 4;
+>> -			for (i = 0; i < (p_h264->fmo_slice_grp & 0xF); i++)
+>> +			for (i = 0; i < ARRAY_SIZE(p_h264->fmo_run_len)
+>> +					&& i < p_h264->fmo_slice_grp; i++) {
+> 
+> What do you think about moving this to separate path? This seems
+> like it slipped with the register patches.
+> 
+
+Sure I will remove this change from this patch. Thanks for spotting this.
+
+Regards
+Arun
