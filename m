@@ -1,7 +1,7 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH 10/18] drm/exynos: fimd: support I80 interface
-Date: Wed, 14 May 2014 15:26:57 +0900
-Message-ID: <1400048825-6052-11-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH 14/18] drm/panel: add S6E3FA0 driver
+Date: Wed, 14 May 2014 15:27:01 +0900
+Message-ID: <1400048825-6052-15-git-send-email-yj44.cho@samsung.com>
 References: <1400048825-6052-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,489 +21,618 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-To support MIPI DSI command mode interface, FIMD should do followings:
-- Sets LCD block configuration for I80 interface.
-- Uses "lcd_sys" as an IRQ resource and sets relevant IRQ configuration.
-- Implements trigger feature which transfers image date if there is
-  page flip request, and implements TE handler to call trigger function.
-- Sets command mode timings configuration.
-- Sets ideal(pixel) clock is 2 times faster than the original one to
-  generate frame done IRQ prior to the next TE signal.
+This patch adds MIPI-DSI command mode based S6E3FA0 AMOLED LCD Panel driver.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/gpu/drm/exynos/Kconfig           |    1 +
- drivers/gpu/drm/exynos/exynos_drm_fimd.c |  277 +++++++++++++++++++++++++-----
- include/video/samsung_fimd.h             |    3 +-
- 3 files changed, 237 insertions(+), 44 deletions(-)
+ drivers/gpu/drm/panel/Kconfig         |    7 +
+ drivers/gpu/drm/panel/Makefile        |    1 +
+ drivers/gpu/drm/panel/panel-s6e3fa0.c |  570 +++++++++++++++++++++++++++++++++
+ 3 files changed, 578 insertions(+)
+ create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
 
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 5bf5bca..f4d34f0 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -28,6 +28,7 @@ config DRM_EXYNOS_FIMD
- 	bool "Exynos DRM FIMD"
- 	depends on DRM_EXYNOS && !FB_S3C && !ARCH_MULTIPLATFORM
- 	select FB_MODE_HELPERS
-+	select MFD_SYSCON
- 	help
- 	  Choose this option if you want to use Exynos FIMD for DRM.
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 4ec874d..fa51237 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -30,4 +30,11 @@ config DRM_PANEL_S6E8AA0
+ 	select DRM_MIPI_DSI
+ 	select VIDEOMODE_HELPERS
  
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 173ee97..9d585f9 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -20,11 +20,14 @@
- #include <linux/of_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/component.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
- 
- #include <video/of_display_timing.h>
- #include <video/of_videomode.h>
- #include <video/samsung_fimd.h>
- #include <drm/exynos_drm.h>
++config DRM_PANEL_S6E3FA0
++	tristate "S6E3FA0 DSI command mode panel"
++	depends on DRM && DRM_PANEL
++	depends on OF
++	select DRM_MIPI_DSI
++	select CMDMODE_HELPERS
++
+ endmenu
+diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+index 8b92921..85c6738 100644
+--- a/drivers/gpu/drm/panel/Makefile
++++ b/drivers/gpu/drm/panel/Makefile
+@@ -1,3 +1,4 @@
+ obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
+ obj-$(CONFIG_DRM_PANEL_LD9040) += panel-ld9040.o
+ obj-$(CONFIG_DRM_PANEL_S6E8AA0) += panel-s6e8aa0.o
++obj-$(CONFIG_DRM_PANEL_S6E3FA0) += panel-s6e3fa0.o
+diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c b/drivers/gpu/drm/panel/panel-s6e3fa0.c
+new file mode 100644
+index 0000000..a3b2d7e
+--- /dev/null
++++ b/drivers/gpu/drm/panel/panel-s6e3fa0.c
+@@ -0,0 +1,570 @@
++/*
++ * MIPI-DSI based s6e3fa0 AMOLED LCD 5.7 inch panel driver.
++ *
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd
++ *
++ * YoungJun Cho <yj44.cho@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <drm/drmP.h>
++#include <drm/drm_mipi_dsi.h>
 +#include <drm/drm_panel.h>
- 
- #include "exynos_drm_drv.h"
- #include "exynos_drm_fbdev.h"
-@@ -60,6 +63,24 @@
- /* color key value register for hardware window 1 ~ 4. */
- #define WKEYCON1_BASE(x)		((WKEYCON1 + 0x140) + ((x - 1) * 8))
- 
-+/* i80 / RGB trigger control register */
-+#define TRIGCON				0x1A4
-+#define TRGMODE_I80_RGB_ENABLE_I80	(1 << 0)
-+#define SWTRGCMD_I80_RGB_ENABLE		(1 << 1)
 +
-+/* display mode change control register except exynos4 */
-+#define VIDOUT_CON			0x000
-+#define VIDOUT_CON_F_I80_LDI0		(0x2 << 8)
++#include <linux/gpio/consumer.h>
++#include <linux/regulator/consumer.h>
 +
-+/* i80 interface control for main LDI register */
-+#define I80IFCONFAx(x)			(0x1B0 + (x) * 4)
-+#define I80IFCONFBx(x)			(0x1B8 + (x) * 4)
-+#define LCD_CS_SETUP(x)			((x) << 16)
-+#define LCD_WR_SETUP(x)			((x) << 12)
-+#define LCD_WR_ACT(x)			((x) << 8)
-+#define LCD_WR_HOLD(x)			((x) << 4)
-+#define I80IFEN_ENABLE			(1 << 0)
++#include <video/mipi_display.h>
++#include <video/of_cmdmode.h>
++#include <video/cmdmode.h>
 +
- /* FIMD has totally five hardware windows. */
- #define WINDOWS_NR	5
- 
-@@ -67,10 +88,14 @@
- 
- struct fimd_driver_data {
- 	unsigned int timing_base;
-+	unsigned int lcdblk_off;
-+	unsigned int lcdblk_vt_shift;
-+	unsigned int lcdblk_bypass_shift;
- 
- 	unsigned int has_shadowcon:1;
- 	unsigned int has_clksel:1;
- 	unsigned int has_limited_fmt:1;
-+	unsigned int has_vidoutcon:1;
- };
- 
- static struct fimd_driver_data s3c64xx_fimd_driver_data = {
-@@ -81,12 +106,19 @@ static struct fimd_driver_data s3c64xx_fimd_driver_data = {
- 
- static struct fimd_driver_data exynos4_fimd_driver_data = {
- 	.timing_base = 0x0,
-+	.lcdblk_off = 0x210,
-+	.lcdblk_vt_shift = 10,
-+	.lcdblk_bypass_shift = 1,
- 	.has_shadowcon = 1,
- };
- 
- static struct fimd_driver_data exynos5_fimd_driver_data = {
- 	.timing_base = 0x20000,
-+	.lcdblk_off = 0x214,
-+	.lcdblk_vt_shift = 24,
-+	.lcdblk_bypass_shift = 15,
- 	.has_shadowcon = 1,
-+	.has_vidoutcon = 1,
- };
- 
- struct fimd_win_data {
-@@ -111,15 +143,23 @@ struct fimd_context {
- 	struct clk			*bus_clk;
- 	struct clk			*lcd_clk;
- 	void __iomem			*regs;
-+	struct regmap			*sysreg;
- 	struct drm_display_mode		mode;
- 	struct fimd_win_data		win_data[WINDOWS_NR];
- 	unsigned int			default_win;
- 	unsigned long			irq_flags;
-+	u32				vidcon0;
- 	u32				vidcon1;
-+	u32				vidout_con;
-+	u32				i80ifcon;
-+	bool				i80_if;
- 	bool				suspended;
- 	int				pipe;
- 	wait_queue_head_t		wait_vsync_queue;
- 	atomic_t			wait_vsync_event;
-+	atomic_t			win_updated;
-+	atomic_t			triggering;
-+	spinlock_t			win_updated_lock;
- 
- 	struct exynos_drm_panel_info panel;
- 	struct fimd_driver_data *driver_data;
-@@ -242,6 +282,14 @@ static u32 fimd_calc_clkdiv(struct fimd_context *ctx,
- 	unsigned long ideal_clk = mode->htotal * mode->vtotal * mode->vrefresh;
- 	u32 clkdiv;
- 
-+	if (ctx->i80_if) {
-+		/*
-+		 * The frame done interrupt should be occurred prior to the
-+		 * next TE signal.
-+		 */
-+		ideal_clk *= 2;
-+	}
++/* Manufacturer Command Set */
++#define MCS_GLOBAL_PARAMETER	0xb0
++#define MCS_AID			0xb2
++#define MCS_ELVSSOPT		0xb6
++#define MCS_TEMPERATURE_SET	0xb8
++#define MCS_PENTILE_CTRL	0xc0
++#define MCS_GAMMA_MODE		0xca
++#define MCS_VDDM		0xd7
++#define MCS_ALS			0xe3
++#define MCS_ERR_FG		0xed
++#define MCS_KEY_LEV1		0xf0
++#define MCS_PANEL_UPDATE	0xf7
++#define MCS_KEY_LEV2		0xfc
++#define MCS_RE			0xfe
++#define MCS_TOUT2_HSYNC		0xff
 +
- 	/* Find the clock divider value that gets us closest to ideal_clk */
- 	clkdiv = DIV_ROUND_UP(clk_get_rate(ctx->lcd_clk), ideal_clk);
- 
-@@ -264,17 +312,23 @@ static void fimd_mode_set(struct exynos_drm_manager *mgr,
- 	struct fimd_context *ctx = mgr->ctx;
- 
- 	drm_mode_copy(&ctx->mode, in_mode);
++/* Content Adaptive Brightness Control */
++#define DCS_WRITE_CABC		0x55
 +
-+	if (ctx->i80_if) {
-+		ctx->i80ifcon = LCD_CS_SETUP(in_mode->cs_setup);
-+		ctx->i80ifcon |= LCD_WR_SETUP(in_mode->wr_setup);
-+		ctx->i80ifcon |= LCD_WR_ACT(in_mode->wr_active);
-+		ctx->i80ifcon |= LCD_WR_HOLD(in_mode->wr_hold);
-+	}
- }
- 
- static void fimd_commit(struct exynos_drm_manager *mgr)
- {
- 	struct fimd_context *ctx = mgr->ctx;
- 	struct drm_display_mode *mode = &ctx->mode;
--	struct fimd_driver_data *driver_data;
--	u32 val, clkdiv, vidcon1;
--	int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
-+	struct fimd_driver_data *driver_data = ctx->driver_data;
-+	void *timing_base = ctx->regs + driver_data->timing_base;
-+	u32 val, clkdiv;
- 
--	driver_data = ctx->driver_data;
- 	if (ctx->suspended)
- 		return;
- 
-@@ -282,33 +336,65 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
- 	if (mode->htotal == 0 || mode->vtotal == 0)
- 		return;
- 
--	/* setup polarity values */
--	vidcon1 = ctx->vidcon1;
--	if (mode->flags & DRM_MODE_FLAG_NVSYNC)
--		vidcon1 |= VIDCON1_INV_VSYNC;
--	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
--		vidcon1 |= VIDCON1_INV_HSYNC;
--	writel(vidcon1, ctx->regs + driver_data->timing_base + VIDCON1);
--
--	/* setup vertical timing values. */
--	vsync_len = mode->crtc_vsync_end - mode->crtc_vsync_start;
--	vbpd = mode->crtc_vtotal - mode->crtc_vsync_end;
--	vfpd = mode->crtc_vsync_start - mode->crtc_vdisplay;
--
--	val = VIDTCON0_VBPD(vbpd - 1) |
--		VIDTCON0_VFPD(vfpd - 1) |
--		VIDTCON0_VSPW(vsync_len - 1);
--	writel(val, ctx->regs + driver_data->timing_base + VIDTCON0);
--
--	/* setup horizontal timing values.  */
--	hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
--	hbpd = mode->crtc_htotal - mode->crtc_hsync_end;
--	hfpd = mode->crtc_hsync_start - mode->crtc_hdisplay;
--
--	val = VIDTCON1_HBPD(hbpd - 1) |
--		VIDTCON1_HFPD(hfpd - 1) |
--		VIDTCON1_HSPW(hsync_len - 1);
--	writel(val, ctx->regs + driver_data->timing_base + VIDTCON1);
-+	if (ctx->i80_if) {
-+		val = ctx->i80ifcon | I80IFEN_ENABLE;
-+		writel(val, timing_base + I80IFCONFAx(0));
++#define MTP_ID_LEN		3
++#define GAMMA_LEVEL_NUM		30
 +
-+		/* disable auto frame rate */
-+		writel(0, timing_base + I80IFCONFBx(0));
++#define DEFAULT_VDDM_VAL	0x15
 +
-+		if (ctx->vidout_con)
-+			writel(ctx->vidout_con, timing_base + VIDOUT_CON);
++struct s6e3fa0 {
++	struct device				*dev;
++	struct drm_panel			panel;
 +
-+		/* set video type selection to i80 interface */
-+		if (ctx->sysreg && regmap_update_bits(ctx->sysreg,
-+					driver_data->lcdblk_off,
-+					0x3 << driver_data->lcdblk_vt_shift,
-+					0x1 << driver_data->lcdblk_vt_shift)) {
-+			DRM_ERROR("Failed to update sysreg for i80 i/f.\n");
-+			return;
-+		}
-+	} else {
-+		int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
-+		u32 vidcon1;
++	struct regulator_bulk_data		supplies[2];
++	struct gpio_desc			*reset_gpio;
++	struct gpio_desc			*det_gpio;
++	struct gpio_desc			*te_gpio;
++	struct cmdmode				cm;
 +
-+		/* setup polarity values */
-+		vidcon1 = ctx->vidcon1;
-+		if (mode->flags & DRM_MODE_FLAG_NVSYNC)
-+			vidcon1 |= VIDCON1_INV_VSYNC;
-+		if (mode->flags & DRM_MODE_FLAG_NHSYNC)
-+			vidcon1 |= VIDCON1_INV_HSYNC;
-+		writel(vidcon1, ctx->regs + driver_data->timing_base + VIDCON1);
++	unsigned int				power_on_delay;
++	unsigned int				reset_delay;
++	unsigned int				init_delay;
++	unsigned int				width_mm;
++	unsigned int				height_mm;
 +
-+		/* setup vertical timing values. */
-+		vsync_len = mode->crtc_vsync_end - mode->crtc_vsync_start;
-+		vbpd = mode->crtc_vtotal - mode->crtc_vsync_end;
-+		vfpd = mode->crtc_vsync_start - mode->crtc_vdisplay;
++	unsigned char				id;
++	unsigned char				vddm;
++	unsigned int				brightness;
++};
 +
-+		val = VIDTCON0_VBPD(vbpd - 1) |
-+			VIDTCON0_VFPD(vfpd - 1) |
-+			VIDTCON0_VSPW(vsync_len - 1);
-+		writel(val, ctx->regs + driver_data->timing_base + VIDTCON0);
++#define panel_to_s6e3fa0(p) container_of(p, struct s6e3fa0, panel)
 +
-+		/* setup horizontal timing values.  */
-+		hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
-+		hbpd = mode->crtc_htotal - mode->crtc_hsync_end;
-+		hfpd = mode->crtc_hsync_start - mode->crtc_hdisplay;
++/* VDD Memory Lookup Table contains paires of {ReadValue, WriteValue} */
++static const unsigned char s6e3fa0_vddm_lut[][2] = {
++	{0x00, 0x0d}, {0x01, 0x0d}, {0x02, 0x0e}, {0x03, 0x0f}, {0x04, 0x10},
++	{0x05, 0x11}, {0x06, 0x12}, {0x07, 0x13}, {0x08, 0x14}, {0x09, 0x15},
++	{0x0a, 0x16}, {0x0b, 0x17}, {0x0c, 0x18}, {0x0d, 0x19}, {0x0e, 0x1a},
++	{0x0f, 0x1b}, {0x10, 0x1c}, {0x11, 0x1d}, {0x12, 0x1e}, {0x13, 0x1f},
++	{0x14, 0x20}, {0x15, 0x21}, {0x16, 0x22}, {0x17, 0x23}, {0x18, 0x24},
++	{0x19, 0x25}, {0x1a, 0x26}, {0x1b, 0x27}, {0x1c, 0x28}, {0x1d, 0x29},
++	{0x1e, 0x2a}, {0x1f, 0x2b}, {0x20, 0x2c}, {0x21, 0x2d}, {0x22, 0x2e},
++	{0x23, 0x2f}, {0x24, 0x30}, {0x25, 0x31}, {0x26, 0x32}, {0x27, 0x33},
++	{0x28, 0x34}, {0x29, 0x35}, {0x2a, 0x36}, {0x2b, 0x37}, {0x2c, 0x38},
++	{0x2d, 0x39}, {0x2e, 0x3a}, {0x2f, 0x3b}, {0x30, 0x3c}, {0x31, 0x3d},
++	{0x32, 0x3e}, {0x33, 0x3f}, {0x34, 0x3f}, {0x35, 0x3f}, {0x36, 0x3f},
++	{0x37, 0x3f}, {0x38, 0x3f}, {0x39, 0x3f}, {0x3a, 0x3f}, {0x3b, 0x3f},
++	{0x3c, 0x3f}, {0x3d, 0x3f}, {0x3e, 0x3f}, {0x3f, 0x3f}, {0x40, 0x0c},
++	{0x41, 0x0b}, {0x42, 0x0a}, {0x43, 0x09}, {0x44, 0x08}, {0x45, 0x07},
++	{0x46, 0x06}, {0x47, 0x05}, {0x48, 0x04}, {0x49, 0x03}, {0x4a, 0x02},
++	{0x4b, 0x01}, {0x4c, 0x40}, {0x4d, 0x41}, {0x4e, 0x42}, {0x4f, 0x43},
++	{0x50, 0x44}, {0x51, 0x45}, {0x52, 0x46}, {0x53, 0x47}, {0x54, 0x48},
++	{0x55, 0x49}, {0x56, 0x4a}, {0x57, 0x4b}, {0x58, 0x4c}, {0x59, 0x4d},
++	{0x5a, 0x4e}, {0x5b, 0x4f}, {0x5c, 0x50}, {0x5d, 0x51}, {0x5e, 0x52},
++	{0x5f, 0x53}, {0x60, 0x54}, {0x61, 0x55}, {0x62, 0x56}, {0x63, 0x57},
++	{0x64, 0x58}, {0x65, 0x59}, {0x66, 0x5a}, {0x67, 0x5b}, {0x68, 0x5c},
++	{0x69, 0x5d}, {0x6a, 0x5e}, {0x6b, 0x5f}, {0x6c, 0x60}, {0x6d, 0x61},
++	{0x6e, 0x62}, {0x6f, 0x63}, {0x70, 0x64}, {0x71, 0x65}, {0x72, 0x66},
++	{0x73, 0x67}, {0x74, 0x68}, {0x75, 0x69}, {0x76, 0x6a}, {0x77, 0x6b},
++	{0x78, 0x6c}, {0x79, 0x6d}, {0x7a, 0x6e}, {0x7b, 0x6f}, {0x7c, 0x70},
++	{0x7d, 0x71}, {0x7e, 0x72}, {0x7f, 0x73},
++};
 +
-+		val = VIDTCON1_HBPD(hbpd - 1) |
-+			VIDTCON1_HFPD(hfpd - 1) |
-+			VIDTCON1_HSPW(hsync_len - 1);
-+		writel(val, ctx->regs + driver_data->timing_base + VIDTCON1);
-+	}
-+
-+	/* set bypass selection */
-+	if (ctx->sysreg && regmap_update_bits(ctx->sysreg,
-+				driver_data->lcdblk_off,
-+				0x1 << driver_data->lcdblk_bypass_shift,
-+				0x1 << driver_data->lcdblk_bypass_shift)) {
-+		DRM_ERROR("Failed to update sysreg for bypass setting.\n");
-+		return;
-+	}
- 
- 	/* setup horizontal and vertical display size. */
- 	val = VIDTCON2_LINEVAL(mode->vdisplay - 1) |
-@@ -646,6 +732,14 @@ static void fimd_win_commit(struct exynos_drm_manager *mgr, int zpos)
- 	}
- 
- 	win_data->enabled = true;
-+
-+	if (ctx->i80_if) {
-+		unsigned long flags;
-+
-+		spin_lock_irqsave(&ctx->win_updated_lock, flags);
-+		atomic_set(&ctx->win_updated, 1);
-+		spin_unlock_irqrestore(&ctx->win_updated_lock, flags);
-+	}
- }
- 
- static void fimd_win_disable(struct exynos_drm_manager *mgr, int zpos)
-@@ -835,6 +929,68 @@ static void fimd_dpms(struct exynos_drm_manager *mgr, int mode)
- 	}
- }
- 
-+static void fimd_trigger(struct device *dev)
++static int s6e3fa0_dcs_read(struct s6e3fa0 *ctx, unsigned char cmd,
++							void *data, size_t len)
 +{
-+	struct exynos_drm_manager *mgr = get_fimd_manager(dev);
-+	struct fimd_context *ctx = mgr->ctx;
-+	struct fimd_driver_data *driver_data = ctx->driver_data;
-+	void *timing_base = ctx->regs + driver_data->timing_base;
-+	u32 reg;
++	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
 +
-+	atomic_set(&ctx->triggering, 1);
-+
-+	reg = readl(ctx->regs + VIDINTCON0);
-+	reg |= (VIDINTCON0_INT_ENABLE | VIDINTCON0_INT_I80IFDONE |
-+						VIDINTCON0_INT_SYSMAINCON);
-+	writel(reg, ctx->regs + VIDINTCON0);
-+
-+	reg = readl(timing_base + TRIGCON);
-+	reg |= (TRGMODE_I80_RGB_ENABLE_I80 | SWTRGCMD_I80_RGB_ENABLE);
-+	writel(reg, timing_base + TRIGCON);
++	return mipi_dsi_dcs_read(dsi, dsi->channel, cmd, data, len);
 +}
 +
-+static int fimd_te_handler(struct exynos_drm_manager *mgr)
++static void s6e3fa0_dcs_write(struct s6e3fa0 *ctx, const void *data, size_t len)
 +{
-+	struct fimd_context *ctx = mgr->ctx;
-+	unsigned long flags;
++	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
 +
-+	/* check the crtc is detached already from encoder */
-+	if (ctx->pipe < 0 || !ctx->drm_dev)
-+		return -EINVAL;
++	mipi_dsi_dcs_write(dsi, dsi->channel, data, len);
++}
 +
-+	 /*
-+	 * Skips to trigger if in triggering state, because multiple triggering
-+	 * requests can cause panel reset.
-+	 */
-+	if (atomic_read(&ctx->triggering))
-+		return 0;
++#define s6e3fa0_dcs_write_seq(ctx, seq...)				\
++do {									\
++	const unsigned char d[] = { seq };				\
++	BUILD_BUG_ON_MSG(ARRAY_SIZE(d) > 64, "too big seq for stack");	\
++	s6e3fa0_dcs_write(ctx, d, ARRAY_SIZE(d));			\
++} while (0)
 +
-+	spin_lock_irqsave(&ctx->win_updated_lock, flags);
++#define s6e3fa0_dcs_write_seq_static(ctx, seq...)			\
++do {									\
++	static const unsigned char d[] = { seq };			\
++	s6e3fa0_dcs_write(ctx, d, ARRAY_SIZE(d));			\
++} while (0)
 +
-+	/*
-+	 * If there is a page flip request, triggers and handles the page flip
-+	 * event so that current fb can be updated into panel GRAM.
-+	 */
-+	if (atomic_read(&ctx->win_updated)) {
-+		atomic_set(&ctx->win_updated, 0);
++static void s6e3fa0_apply_level_1_key(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_dcs_write_seq_static(ctx, MCS_KEY_LEV1, 0x5a, 0x5a);
++}
 +
-+		fimd_trigger(ctx->dev);
++static void s6e3fa0_apply_level_2_key(struct s6e3fa0 *ctx, bool on)
++{
++	if (on)
++		s6e3fa0_dcs_write_seq_static(ctx, MCS_KEY_LEV2, 0x5a, 0x5a);
++	else
++		s6e3fa0_dcs_write_seq_static(ctx, MCS_KEY_LEV2, 0xa5, 0xa5);
++}
++
++static void s6e3fa0_set_maximum_return_packet_size(struct s6e3fa0 *ctx,
++							unsigned int size)
++{
++	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
++	const struct mipi_dsi_host_ops *ops = dsi->host->ops;
++
++	if (ops && ops->transfer) {
++		unsigned char buf[] = {size, 0};
++		struct mipi_dsi_msg msg = {
++			.channel = dsi->channel,
++			.type = MIPI_DSI_SET_MAXIMUM_RETURN_PACKET_SIZE,
++			.tx_len = sizeof(buf),
++			.tx_buf = buf
++		};
++
++		ops->transfer(dsi->host, &msg);
++	}
++}
++
++static void s6e3fa0_read_mtp_id(struct s6e3fa0 *ctx)
++{
++	unsigned char id[MTP_ID_LEN];
++	int ret;
++
++	s6e3fa0_set_maximum_return_packet_size(ctx, MTP_ID_LEN);
++	ret = s6e3fa0_dcs_read(ctx, MIPI_DCS_GET_DISPLAY_ID, id, MTP_ID_LEN);
++	if (ret < MTP_ID_LEN || id[0] == 0x00) {
++		dev_err(ctx->dev, "failed to read id\n");
++		return;
 +	}
 +
-+	spin_unlock_irqrestore(&ctx->win_updated_lock, flags);
++	dev_info(ctx->dev, "ID: 0x%02x, 0x%02x, 0x%02x\n", id[0], id[1], id[2]);
 +
-+	/* wake up vsync event queue */
-+	if (atomic_read(&ctx->wait_vsync_event)) {
-+		atomic_set(&ctx->wait_vsync_event, 0);
-+		wake_up(&ctx->wait_vsync_queue);
++	ctx->id = id[2];
++}
 +
-+		if (!atomic_read(&ctx->triggering))
-+			drm_handle_vblank(ctx->drm_dev, ctx->pipe);
++static void s6e3fa0_read_vddm(struct s6e3fa0 *ctx)
++{
++	unsigned char vddm;
++	int ret;
++
++	s6e3fa0_apply_level_2_key(ctx, true);
++	s6e3fa0_dcs_write_seq_static(ctx, MCS_GLOBAL_PARAMETER, 0x16);
++	s6e3fa0_set_maximum_return_packet_size(ctx, 1);
++	ret = s6e3fa0_dcs_read(ctx, MCS_VDDM, &vddm, 1);
++	s6e3fa0_apply_level_2_key(ctx, false);
++
++	if (ret < 1 || vddm > 0x7f) {
++		dev_err(ctx->dev, "failed to read vddm, use default val.\n");
++		vddm = DEFAULT_VDDM_VAL;
 +	}
++
++	ctx->vddm = s6e3fa0_vddm_lut[vddm][1];
++}
++
++static void s6e3fa0_set_pentile_control(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_dcs_write_seq_static(ctx, MCS_PENTILE_CTRL, 0x00, 0x02, 0x03,
++					0x32, 0x03, 0x44, 0x44, 0xc0, 0x00,
++					0x1c, 0x20, 0xe8);
++}
++
++static void s6e3fa0_write_ambient_light_sensor(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_dcs_write_seq_static(ctx, MCS_ALS, 0xff, 0xff, 0xff, 0xff);
++}
++
++static void s6e3fa0_set_readability_enhancement(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_dcs_write_seq_static(ctx, MCS_RE, 0x00, 0x03,
++					MCS_GLOBAL_PARAMETER, 0x2b,
++					MCS_RE, 0xe4);
++}
++
++static void s6e3fa0_set_common_control(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_set_pentile_control(ctx);
++	s6e3fa0_write_ambient_light_sensor(ctx);
++	s6e3fa0_set_readability_enhancement(ctx);
++}
++
++static void s6e3fa0_set_gamma(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_dcs_write_seq_static(ctx, MCS_GAMMA_MODE, 0x01, 0x00, 0x01,
++					0x00, 0x01, 0x00, 0x80, 0x80, 0x80,
++					0x80, 0x80, 0x00, 0x80, 0x80, 0x80,
++					0x80, 0x80, 0x00, 0x80, 0x80, 0x80,
++					0x80, 0x80, 0x00, 0x80, 0x80, 0x80,
++					0x80, 0x80, 0x00, 0x00, 0x00);
++}
++
++static void s6e3fa0_set_amoled_impulse_driving(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_dcs_write_seq_static(ctx, MCS_AID, 0x00, 0x06, 0x00, 0x06);
++}
++
++static void s6e3fa0_set_elvss(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_dcs_write_seq_static(ctx, MCS_ELVSSOPT, 0x88, 0x0a);
++}
++
++static void s6e3fa0_update_panel(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_dcs_write_seq_static(ctx, MCS_PANEL_UPDATE, 0x03);
++}
++
++static void s6e3fa0_write_automatic_current_limit(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_dcs_write_seq_static(ctx, DCS_WRITE_CABC, 0x02);
++}
++
++static void s6e3fa0_set_brightness_control(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_set_gamma(ctx);
++	s6e3fa0_set_amoled_impulse_driving(ctx);
++	s6e3fa0_set_elvss(ctx);
++	s6e3fa0_update_panel(ctx);
++	s6e3fa0_write_automatic_current_limit(ctx);
++}
++
++static void s6e3fa0_set_temperature(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_dcs_write_seq_static(ctx, MCS_GLOBAL_PARAMETER, 0x05,
++					MCS_TEMPERATURE_SET, 0x19);
++}
++
++static void s6e3fa0_set_elvss_control(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_set_temperature(ctx);
++	s6e3fa0_set_elvss(ctx);
++}
++
++static void s6e3fa0_set_te_on(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_SET_TEAR_ON, 0x00);
++}
++
++static void s6e3fa0_set_etc_and_write_vddm(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_apply_level_2_key(ctx, true);
++	s6e3fa0_dcs_write_seq(ctx, MCS_ERR_FG, 0x0c, 0x04,
++				MCS_TOUT2_HSYNC, 0x01,
++				MCS_GLOBAL_PARAMETER, 0x16,
++				MCS_VDDM, ctx->vddm);
++	s6e3fa0_apply_level_2_key(ctx, false);
++}
++
++static void s6e3fa0_set_etc_condition(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_set_te_on(ctx);
++	s6e3fa0_set_etc_and_write_vddm(ctx);
++}
++
++static void s6e3fa0_panel_init(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_set_common_control(ctx);
++	s6e3fa0_set_brightness_control(ctx);
++	s6e3fa0_set_elvss_control(ctx);
++	s6e3fa0_set_etc_condition(ctx);
++
++	msleep(ctx->init_delay);
++}
++
++static int s6e3fa0_power_off(struct s6e3fa0 *ctx)
++{
++	gpiod_set_value(ctx->reset_gpio, 0);
++
++	return regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
++}
++
++static int s6e3fa0_power_on(struct s6e3fa0 *ctx)
++{
++	int ret;
++
++	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
++	if (ret)
++		return ret;
++
++	msleep(ctx->power_on_delay);
++
++	gpiod_set_value(ctx->reset_gpio, 1);
++	gpiod_set_value(ctx->reset_gpio, 0);
++	usleep_range(1000, 2000);
++	gpiod_set_value(ctx->reset_gpio, 1);
++
++	msleep(ctx->reset_delay);
 +
 +	return 0;
 +}
 +
- static struct exynos_drm_manager_ops fimd_manager_ops = {
- 	.dpms = fimd_dpms,
- 	.mode_fixup = fimd_mode_fixup,
-@@ -846,6 +1002,7 @@ static struct exynos_drm_manager_ops fimd_manager_ops = {
- 	.win_mode_set = fimd_win_mode_set,
- 	.win_commit = fimd_win_commit,
- 	.win_disable = fimd_win_disable,
-+	.te_handler = fimd_te_handler,
- };
- 
- static struct exynos_drm_manager fimd_manager = {
-@@ -856,26 +1013,40 @@ static struct exynos_drm_manager fimd_manager = {
- static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
- {
- 	struct fimd_context *ctx = (struct fimd_context *)dev_id;
--	u32 val;
-+	u32 val, clear_bit;
- 
- 	val = readl(ctx->regs + VIDINTCON1);
- 
--	if (val & VIDINTCON1_INT_FRAME)
--		/* VSYNC interrupt */
--		writel(VIDINTCON1_INT_FRAME, ctx->regs + VIDINTCON1);
-+	clear_bit = ctx->i80_if ? VIDINTCON1_INT_I80 : VIDINTCON1_INT_FRAME;
-+	if (val & clear_bit)
-+		writel(clear_bit, ctx->regs + VIDINTCON1);
- 
- 	/* check the crtc is detached already from encoder */
- 	if (ctx->pipe < 0 || !ctx->drm_dev)
- 		goto out;
- 
--	drm_handle_vblank(ctx->drm_dev, ctx->pipe);
--	exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
-+	if (ctx->i80_if) {
-+		/* unset i80 frame done interrupt */
-+		val = readl(ctx->regs + VIDINTCON0);
-+		val &= ~(VIDINTCON0_INT_I80IFDONE | VIDINTCON0_INT_SYSMAINCON);
-+		writel(val, ctx->regs + VIDINTCON0);
- 
--	/* set wait vsync event to zero and wake up queue. */
--	if (atomic_read(&ctx->wait_vsync_event)) {
--		atomic_set(&ctx->wait_vsync_event, 0);
--		wake_up(&ctx->wait_vsync_queue);
-+		/* exit triggering mode */
-+		atomic_set(&ctx->triggering, 0);
++static void s6e3fa0_set_sequence(struct s6e3fa0 *ctx)
++{
++	s6e3fa0_apply_level_1_key(ctx);
++	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_EXIT_SLEEP_MODE);
++	msleep(20);
 +
-+		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
-+		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
-+	} else {
-+		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
-+		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
++	s6e3fa0_read_mtp_id(ctx);
++	s6e3fa0_read_vddm(ctx);
 +
-+		/* set wait vsync event to zero and wake up queue. */
-+		if (atomic_read(&ctx->wait_vsync_event)) {
-+			atomic_set(&ctx->wait_vsync_event, 0);
-+			wake_up(&ctx->wait_vsync_queue);
-+		}
- 	}
++	s6e3fa0_panel_init(ctx);
 +
- out:
- 	return IRQ_HANDLED;
- }
-@@ -936,12 +1107,32 @@ static int fimd_probe(struct platform_device *pdev)
- 
- 	ctx->dev = dev;
- 	ctx->suspended = true;
-+	ctx->driver_data = drm_fimd_get_driver_data(pdev);
- 
- 	if (of_property_read_bool(dev->of_node, "samsung,invert-vden"))
- 		ctx->vidcon1 |= VIDCON1_INV_VDEN;
- 	if (of_property_read_bool(dev->of_node, "samsung,invert-vclk"))
- 		ctx->vidcon1 |= VIDCON1_INV_VCLK;
- 
-+	if (of_property_read_bool(dev->of_node, "vidout-i80-ldi")) {
-+		ctx->i80_if = true;
++	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_ON);
++}
 +
-+		if (ctx->driver_data->has_vidoutcon)
-+			ctx->vidout_con |= VIDOUT_CON_F_I80_LDI0;
-+		else
-+			ctx->vidcon0 |= VIDCON0_VIDOUT_I80_LDI0;
-+		ctx->vidcon0 |= VIDCON0_DSI_EN;
++static int s6e3fa0_disable(struct drm_panel *panel)
++{
++	struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
 +
-+		spin_lock_init(&ctx->win_updated_lock);
++	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_ENTER_SLEEP_MODE);
++	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_OFF);
++	msleep(35);
++
++	return s6e3fa0_power_off(ctx);
++}
++
++static int s6e3fa0_enable(struct drm_panel *panel)
++{
++	struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
++	int ret;
++
++	ret = s6e3fa0_power_on(ctx);
++	if (ret)
++		return ret;
++
++	s6e3fa0_set_sequence(ctx);
++
++	return ret;
++}
++
++static int s6e3fa0_get_modes(struct drm_panel *panel)
++{
++	struct drm_connector *connector = panel->connector;
++	struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
++	struct drm_display_mode *mode;
++
++	mode = drm_mode_create(connector->dev);
++	if (!mode) {
++		DRM_ERROR("failed to create a new display mode\n");
++		return 0;
 +	}
 +
-+	ctx->sysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
-+							"samsung,sysreg");
-+	if (IS_ERR(ctx->sysreg)) {
-+		dev_warn(dev, "failed to get system register.\n");
-+		ctx->sysreg = NULL;
++	drm_display_mode_from_cmdmode(&ctx->cm, mode);
++	mode->width_mm = ctx->width_mm;
++	mode->height_mm = ctx->height_mm;
++	connector->display_info.width_mm = mode->width_mm;
++	connector->display_info.height_mm = mode->height_mm;
++
++	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
++	drm_mode_probed_add(connector, mode);
++
++	return 1;
++}
++
++static const struct drm_panel_funcs s6e3fa0_drm_funcs = {
++	.disable	= s6e3fa0_disable,
++	.enable		= s6e3fa0_enable,
++	.get_modes	= s6e3fa0_get_modes,
++};
++
++static int s6e3fa0_parse_dt(struct s6e3fa0 *ctx)
++{
++	struct device *dev = ctx->dev;
++	int ret;
++
++	ret = of_get_cmdmode(dev->of_node, &ctx->cm, 0);
++	if (ret) {
++		dev_err(dev, "failed to get command mode: %d\n", ret);
++		return ret;
 +	}
 +
- 	ctx->bus_clk = devm_clk_get(dev, "fimd");
- 	if (IS_ERR(ctx->bus_clk)) {
- 		dev_err(dev, "failed to get bus clock\n");
-@@ -960,7 +1151,8 @@ static int fimd_probe(struct platform_device *pdev)
- 	if (IS_ERR(ctx->regs))
- 		return PTR_ERR(ctx->regs);
- 
--	res = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "vsync");
-+	res = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
-+					ctx->i80_if ? "lcd_sys" : "vsync");
- 	if (!res) {
- 		dev_err(dev, "irq request failed.\n");
- 		return -ENXIO;
-@@ -973,7 +1165,6 @@ static int fimd_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ctx->driver_data = drm_fimd_get_driver_data(pdev);
- 	init_waitqueue_head(&ctx->wait_vsync_queue);
- 	atomic_set(&ctx->wait_vsync_event, 0);
- 
-diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
-index b039320..eaad58b 100644
---- a/include/video/samsung_fimd.h
-+++ b/include/video/samsung_fimd.h
-@@ -19,6 +19,7 @@
- /* VIDCON0 */
- 
- #define VIDCON0					0x00
-+#define VIDCON0_DSI_EN				(1 << 30)
- #define VIDCON0_INTERLACE			(1 << 29)
- #define VIDCON0_VIDOUT_MASK			(0x7 << 26)
- #define VIDCON0_VIDOUT_SHIFT			26
-@@ -355,7 +356,7 @@
- #define VIDINTCON0_INT_ENABLE			(1 << 0)
- 
- #define VIDINTCON1				0x134
--#define VIDINTCON1_INT_I180			(1 << 2)
-+#define VIDINTCON1_INT_I80			(1 << 2)
- #define VIDINTCON1_INT_FRAME			(1 << 1)
- #define VIDINTCON1_INT_FIFO			(1 << 0)
- 
++	return ret;
++}
++
++irqreturn_t s6e3fa0_det_interrupt(int irq, void *dev_id)
++{
++	/* TODO */
++	return IRQ_HANDLED;
++}
++
++irqreturn_t s6e3fa0_te_interrupt(int irq, void *dev_id)
++{
++	struct s6e3fa0 *ctx = dev_id;
++	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
++	struct mipi_dsi_host *host = dsi->host;
++	const struct mipi_dsi_host_ops *ops = host->ops;
++
++	if (ops && ops->te_handler)
++		ops->te_handler(host);
++
++	return IRQ_HANDLED;
++}
++
++static int s6e3fa0_probe(struct mipi_dsi_device *dsi)
++{
++	struct device *dev = &dsi->dev;
++	struct s6e3fa0 *ctx;
++	int ret;
++
++	ctx = devm_kzalloc(dev, sizeof(struct s6e3fa0), GFP_KERNEL);
++	if (!ctx) {
++		dev_err(dev, "failed to allocate s6e3fa0 structure.\n");
++		return -ENOMEM;
++	}
++
++	mipi_dsi_set_drvdata(dsi, ctx);
++
++	ctx->dev = dev;
++
++	dsi->lanes = 4;
++	dsi->format = MIPI_DSI_FMT_RGB888;
++
++	ret = s6e3fa0_parse_dt(ctx);
++	if (ret)
++		return ret;
++
++	ctx->supplies[0].supply = "vdd3";
++	ctx->supplies[1].supply = "vci";
++	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ctx->supplies),
++					ctx->supplies);
++	if (ret) {
++		dev_err(dev, "failed to get regulators: %d\n", ret);
++		return ret;
++	}
++
++	ctx->reset_gpio = devm_gpiod_get(dev, "reset");
++	if (IS_ERR(ctx->reset_gpio)) {
++		dev_err(dev, "failed to get reset gpio: %ld\n",
++						PTR_ERR(ctx->reset_gpio));
++		return PTR_ERR(ctx->reset_gpio);
++	}
++	ret = gpiod_direction_output(ctx->reset_gpio, 1);
++	if (ret < 0) {
++		dev_err(dev, "failed to configure reset gpio: %d\n", ret);
++		return ret;
++	}
++
++	ctx->det_gpio = devm_gpiod_get(dev, "det");
++	if (IS_ERR(ctx->det_gpio)) {
++		dev_err(dev, "failed to get det gpio: %ld\n",
++						PTR_ERR(ctx->det_gpio));
++		return PTR_ERR(ctx->det_gpio);
++	}
++	ret = gpiod_direction_input(ctx->det_gpio);
++	if (ret < 0) {
++		dev_err(dev, "failed to configure det gpio: %d\n", ret);
++		return ret;
++	}
++	ret = devm_request_irq(dev, gpiod_to_irq(ctx->det_gpio),
++						s6e3fa0_det_interrupt,
++						IRQF_TRIGGER_FALLING,
++						"oled-det", ctx);
++	if (ret) {
++		dev_err(dev, "failed to request det irq: %d\n", ret);
++		return ret;
++	}
++
++	ctx->te_gpio = devm_gpiod_get(dev, "te");
++	if (IS_ERR(ctx->te_gpio)) {
++		dev_err(dev, "failed to get te gpio: %ld\n",
++						PTR_ERR(ctx->te_gpio));
++		return PTR_ERR(ctx->te_gpio);
++	}
++	ret = gpiod_direction_input(ctx->te_gpio);
++	if (ret < 0) {
++		dev_err(dev, "failed to configure te gpio: %d\n", ret);
++		return ret;
++	}
++	ret = devm_request_irq(dev, gpiod_to_irq(ctx->te_gpio),
++						s6e3fa0_te_interrupt,
++						IRQF_TRIGGER_RISING,
++						"TE", ctx);
++	if (ret) {
++		dev_err(dev, "failed to request det irq: %d\n", ret);
++		return ret;
++	}
++
++	ctx->power_on_delay = 10;
++	ctx->reset_delay = 5;
++	ctx->init_delay = 120;
++	ctx->width_mm = 71;
++	ctx->height_mm = 126;
++
++	ctx->brightness = GAMMA_LEVEL_NUM - 1;
++
++	drm_panel_init(&ctx->panel);
++	ctx->panel.dev = dev;
++	ctx->panel.funcs = &s6e3fa0_drm_funcs;
++
++	ret = drm_panel_add(&ctx->panel);
++	if (ret)
++		return ret;
++
++	ret = mipi_dsi_attach(dsi);
++	if (ret)
++		drm_panel_remove(&ctx->panel);
++
++	return ret;
++}
++
++static int s6e3fa0_remove(struct mipi_dsi_device *dsi)
++{
++	struct s6e3fa0 *ctx = mipi_dsi_get_drvdata(dsi);
++
++	mipi_dsi_detach(dsi);
++	drm_panel_remove(&ctx->panel);
++
++	return 0;
++}
++
++static struct of_device_id s6e3fa0_of_match[] = {
++	{ .compatible = "samsung,s6e3fa0" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, s6e3fa0_of_match);
++
++static struct mipi_dsi_driver s6e3fa0_driver = {
++	.probe = s6e3fa0_probe,
++	.remove = s6e3fa0_remove,
++	.driver = {
++		.name = "panel_s6e3fa0",
++		.owner = THIS_MODULE,
++		.of_match_table = s6e3fa0_of_match,
++	},
++};
++module_mipi_dsi_driver(s6e3fa0_driver);
++
++MODULE_AUTHOR("YoungJun Cho <yj44.cho@samsung.com>");
++MODULE_DESCRIPTION("MIPI-DSI based s6e3fa0 AMOLED LCD Panel Driver");
++MODULE_LICENSE("GPL v2");
 -- 
 1.7.9.5
