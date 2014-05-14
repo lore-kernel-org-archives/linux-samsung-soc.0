@@ -1,43 +1,39 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v4 1/8] cpufreq: cpufreq-cpu0: allow use of optional boost
- mode frequencies
-Date: Wed, 14 May 2014 19:50:56 +0530
-Message-ID: <CAKohpompE8dgE2uePvM52K+99CvRt2Z6kXkgSTi6_Bcd9OC2ZQ@mail.gmail.com>
-References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
-	<1400029876-5830-2-git-send-email-thomas.ab@samsung.com>
-	<CAKohpo=-duhJ-4iaqBG+eUCkoV_qwAu93FgUxmYS5erNTpLoMA@mail.gmail.com>
-	<20140514081739.0b66587e@amdc2363>
-	<CAKohpomdjDDBjuPcAsaCcavvVgcX5977gDWyjeqmULadq_Pw8w@mail.gmail.com>
-	<CAJuA9ajtCAGpBkSBH64bpTAbZKqPHTiDBFspuoXE1MSLyOyRPw@mail.gmail.com>
-	<CAKohpo=yLtGB=N2BrZuMGOrs_6Y06ULGfMwSkxQHV2r831bVgg@mail.gmail.com>
-	<CAJuA9ahiOz6heULQLaKZyB=2auXRmKmC6N1oMVTa3RENiPbR7g@mail.gmail.com>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [PATCH v3 1/2] cpufreq / OPP: Allow boost frequency to be looked
+ up from device tree
+Date: Wed, 14 May 2014 09:31:49 -0500
+Message-ID: <53737E55.9070704@ti.com>
+References: <1400029380-5372-1-git-send-email-thomas.ab@samsung.com>	<1400029380-5372-2-git-send-email-thomas.ab@samsung.com>	<CAKohponnPSRAotJUu+5a9y8j97QF8Jqgc5DA5WQnwGWCnVY-aA@mail.gmail.com>	<CAGo_u6p-uqw82ewDciDEhAt0=Nswfw33-gf8Aa+-6_k3eCcTzw@mail.gmail.com>	<20140514080930.781e0557@amdc2363> <CAKohponG9PNse4cHkvfLfaRouW-jxjToBXUCHyOCgx8-Pc=2Xw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:33254 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750787AbaENOU4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 10:20:56 -0400
-Received: by mail-ob0-f178.google.com with SMTP id va2so2187835obc.37
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 07:20:56 -0700 (PDT)
-In-Reply-To: <CAJuA9ahiOz6heULQLaKZyB=2auXRmKmC6N1oMVTa3RENiPbR7g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAKohponG9PNse4cHkvfLfaRouW-jxjToBXUCHyOCgx8-Pc=2Xw@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, Lukasz Majewski <l.majewski@samsung.com>
+Cc: Thomas Abraham <ta.omasab@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <rob.herring@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas P Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
 
-On 14 May 2014 19:48, Thomas Abraham <ta.omasab@gmail.com> wrote:
-> Okay, I get the point about #ifdef in cpufreq-cpu0. What about your
-> earlier comment about the new Kconfig entry ("Get rid of this.. just
-> not required.")? The new Kconfig entry would be needed in that case.
+On 05/14/2014 01:24 AM, Viresh Kumar wrote:
+> On 14 May 2014 11:39, Lukasz Majewski <l.majewski@samsung.com> wrote:
+>> I agree with Nishanth here, that point 1 (as described by Viresh at
+>> [*]) is a more scalable approach.
+> 
+> The only reason why I wanted all that to be done at OPP level was to
+> ensure if somebody else also needs it apart from cpufreq, they don't have
+> to duplicate code and find it.. As it is present at a central place..
+> 
+> But if no other code is going to look for that, it may just be fine as is..
+> 
+If we eventually have a need beyond cpufreq (say devfreq) with similar
+instances, then it makes sense to move it out to a generic place.
+Either way, code implementation/duplication is a OS problem - and
+should be looked at independent of the description in dts. If we feel
+the description is valid hardware description (which, personally, I
+do), then lets go to the next discussion point of where to put it -
+generic or cpufreq specific (here, I have no preference), and finally
+decide the implementation as necessary as a result of the description.
 
-The only place you used that ifdef was in cpufreq-cpu0, which we
-already decided should stay without any ifdefs..
-
-Now, you must enable CPU_FREQ_BOOST_SW from your defconfig.
-
-Did I make it clear this time ?
-
---
-viresh
+-- 
+Regards,
+Nishanth Menon
