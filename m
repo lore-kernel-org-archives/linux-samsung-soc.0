@@ -1,67 +1,45 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 5/8] ARM: dts: exynos5250-snow: Add Vbus regulator for USB 3.0
-Date: Wed, 14 May 2014 19:31:07 +0530
-Message-ID: <1400076070-12456-6-git-send-email-gautam.vivek@samsung.com>
-References: <1400076070-12456-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1400076070-12456-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v4 7/8] ARM: Exynos: switch to using generic cpufreq-cpu0 driver
+Date: Wed, 14 May 2014 19:33:56 +0530
+Message-ID: <CAJuA9agJg3w6gmYOcB3HKYEHCDMfotQ1htWNscWYL_ONFyFKTQ@mail.gmail.com>
+References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
+	<6835645.2kTGeWTa9p@wuerfel>
+	<CAKohpom_zuQoJ9xABJ2nJGbrubR=_iuE7_EtY6b41mhuhEtMsg@mail.gmail.com>
+	<1480209.xTrtNKOy7N@phil>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:33677 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755383AbaENOD7 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 May 2014 10:03:59 -0400
+In-Reply-To: <1480209.xTrtNKOy7N@phil>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>
 
-Add required fixed-regulator for VBUS supply for USB 3.0
-controller phy.
+On Wed, May 14, 2014 at 6:41 PM, Heiko St=C3=BCbner <heiko@sntech.de> w=
+rote:
+> Am Mittwoch, 14. Mai 2014, 18:35:29 schrieb Viresh Kumar:
+>> On 14 May 2014 18:20, Arnd Bergmann <arnd@arndb.de> wrote:
+>> > Could we please come up with a way to probe this from DT in the
+>> > cpufreq-cpu0 driver itself, so we don't have to add a device in ev=
+ery
+>> > platform using it?
+>> Its followed that way because DT Maintainers had strong objections
+>> to creating virtual device nodes and haven't allowed creation of nod=
+es
+>> for cpufreq drivers.. For which there is no physical device, as CPU =
+already
+>> has a separate node..
+>
+> as we already have the "enable-method" property for enabling/disablin=
+g cpus,
+> would something like a "scaling-method" be feasible?
+>
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/boot/dts/exynos5250-snow.dts |   22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 1ce1088..fd9b3b3 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -37,6 +37,13 @@
- 		sd3_bus4: sd3-bus-width4 {
- 			samsung,pin-drv = <0>;
- 		};
-+
-+		usb3_vbus_en: usb3-vbus-en {
-+			samsung,pins = "gpx2-7";
-+			samsung,pin-function = <1>;
-+			samsung,pin-pud = <0>;
-+			samsung,pin-drv = <0>;
-+		};
- 	};
- 
- 	gpio-keys {
-@@ -196,6 +203,21 @@
- 		};
- 	};
- 
-+	usb3_vbus_reg: regulator-usb3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "P5.0V_USB3CON";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpx2 7 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb3_vbus_en>;
-+		enable-active-high;
-+	};
-+
-+	phy@12100000 {
-+		vbus-supply = <&usb3_vbus_reg>;
-+	};
-+
- 	usb@12110000 {
- 		samsung,vbus-gpio = <&gpx1 1 0>;
- 	};
--- 
-1.7.10.4
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+"scaling-method" also sounds like a software specific property. Would
+that be something that will be acceptable in dt?
