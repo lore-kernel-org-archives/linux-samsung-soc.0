@@ -1,65 +1,39 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v4 8/8] cpufreq: exynos: remove all exynos specific
- cpufreq driver support
-Date: Wed, 14 May 2014 19:23:02 +0530
-Message-ID: <CAJuA9ajVHivO1AdMDw3Ow=T2yV9QMw2sj0b72SN6a5HftNX5Kg@mail.gmail.com>
-References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
-	<1400029876-5830-9-git-send-email-thomas.ab@samsung.com>
-	<20140514092010.02e16520@amdc2363>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v3 1/2] cpufreq / OPP: Allow boost frequency to be looked
+ up from device tree
+Date: Wed, 14 May 2014 19:24:54 +0530
+Message-ID: <CAKohpon-z-MS68qkEvioBPLVvoieo0WqGBTC+ZJz+KsoZ8CGhQ@mail.gmail.com>
+References: <1400029380-5372-1-git-send-email-thomas.ab@samsung.com>
+	<1400029380-5372-2-git-send-email-thomas.ab@samsung.com>
+	<CAKohponnPSRAotJUu+5a9y8j97QF8Jqgc5DA5WQnwGWCnVY-aA@mail.gmail.com>
+	<CAJuA9agfoVwqa88=JB+SirjcO0dXy0s0fTc8=dP=u7H8uarSyg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <20140514092010.02e16520@amdc2363>
-Sender: cpufreq-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:64266 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754530AbaENNyz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 May 2014 09:54:55 -0400
+Received: by mail-oa0-f54.google.com with SMTP id j17so2194309oag.41
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 06:54:54 -0700 (PDT)
+In-Reply-To: <CAJuA9agfoVwqa88=JB+SirjcO0dXy0s0fTc8=dP=u7H8uarSyg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <ta.omasab@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <rob.herring@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Nishanth Menon <nm@ti.com>
 
-Hi Lukasz,
+On 14 May 2014 19:16, Thomas Abraham <ta.omasab@gmail.com> wrote:
+> On Wed, May 14, 2014 at 9:10 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
 
-On Wed, May 14, 2014 at 12:50 PM, Lukasz Majewski
-<l.majewski@samsung.com> wrote:
-> Hi Thomas,
+>> Why is this present outside of above if {} ? as boost_freqs is guaranteed to
+>> be NULL without that.
 >
->> -config ARM_EXYNOS_CPU_FREQ_BOOST_SW
->> -     bool "EXYNOS Frequency Overclocking - Software"
->> -     depends on ARM_EXYNOS_CPUFREQ
->> -     select CPU_FREQ_BOOST_SW
->> -     select EXYNOS_THERMAL
->> -     help
->> -       This driver supports software managed overclocking (BOOST).
->> -       It allows usage of special frequencies for Samsung Exynos
->> -       processors if thermal conditions are appropriate.
->> -
->> -       It reguires, for safe operation, thermal framework with
->> properly
->> -       defined trip points.
->> -
->> -       If in doubt, say N.
->> -
->
-> If I might ask, where this switch,to enable BOOST, will be moved? All
-> in all, I would like to be able to enable boost :-).
+> Just to reduce indentation by one tab. No technical reasons. The code
+> had to wrap at 80 column was becoming unreadable.
 
-The intent was to have a separate boost config option for cpufreq-cpu0
-driver, only available if cpufreq-cpu0 driver is selected, as done in
-the other patch.
+That's bad :), you have added an extra comparison just for that :(
+Instead kill the below indentation by doing a "goto out" with a ! of
+below expression:
 
->
-> In my opinion we should have the Kconfig option to enable/disable the
-> CPU_FREQ_BOOST_SW and this may be used with cpufreq-cpu0 driver as I've
-> pointed out in the other patch.
-
-Okay, this is how this patch series handles CPU_FREQ_BOOST_SW config option.
-
-Thanks,
-Thomas.
-
-
->
-> --
-> Best regards,
->
-> Lukasz Majewski
->
-> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+>> +       if (of_find_property(dev->of_node, "boost-frequency", &len)) {
