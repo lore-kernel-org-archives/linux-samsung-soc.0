@@ -1,144 +1,67 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
-Date: Thu, 15 May 2014 00:14:25 +0200
-Message-ID: <20140514221423.GC6215@mithrandir>
-References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
- <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [GIT PULL 1/4] Samsung clock Exynos5260 support for v3.16
+Date: Thu, 15 May 2014 00:16:04 +0200
+Message-ID: <5373EB24.8000306@gmail.com>
+References: <1400090591-5064-1-git-send-email-t.figa@samsung.com> <5373CB1A.1040801@samsung.com> <20140514201313.19795.35617@quantum> <5373CFFE.1000209@gmail.com> <20140514220744.19795.64527@quantum>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0033608712=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: t.stanislaws@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, robh+dt@kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kishon@ti.com, a.hajda@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, grant.likely@linaro.org, sylvester.nawrocki@gmail.com, joshi@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============0033608712==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Fig2xvG2VGoz8o/s"
-Content-Disposition: inline
-
-
---Fig2xvG2VGoz8o/s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, May 15, 2014 at 12:47:21AM +0530, Rahul Sharma wrote:
-[...]
-> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-[...]
-> +For "samsung,exynos4210-simple-phy" compatible PHYs the second cell in
-> +the PHY specifier identifies the PHY and the supported phys for exynos4210
-
-I think the specifier is only the part after the phandle, so this should
-probably be "... compatible PHYs the single cell specifier ..." or
-something equivalent.
-
-> +are:
-> +  HDMI_PHY,
-> +  DAC_PHY,
-> +  ADC_PHY,
-> +  PCIE_PHY,
-> +  SATA_PHY.
-
-I think you need to specify the literal values here as well, since the
-binding must be fully self-contained. That is you can't rely on the DT
-binding to be bundled with the exynos-simple-phy.h header.
-
-> @@ -20,3 +20,4 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
->  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
->  obj-$(CONFIG_PHY_EXYNOS5_USBDRD)	+= phy-exynos5-usbdrd.o
->  obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
-> +obj-$(CONFIG_EXYNOS_SIMPLE_PHY)		+= exynos-simple-phy.o
-
-Perhaps this should be named phy-exynos-simple for consistency? Also it
-may be a good idea to sort this alphabetically to reduce the potential
-for conflicts.
-
-> +static int exynos_phy_probe(struct platform_device *pdev)
-> +{
-> +	const struct of_device_id *of_id = of_match_device(
-> +		of_match_ptr(exynos_phy_of_match), &pdev->dev);
-
-Why does this need of_match_ptr()?
-
-> +	dev_info(dev, "probe success\n");
-
-If at all this should be dev_dbg(). But in general the driver core will
-already complain if the driver fails to probe, so there's in general no
-need to mention when it probes successfully.
-
-> diff --git a/include/dt-bindings/phy/exynos-simple-phy.h b/include/dt-bindings/phy/exynos-simple-phy.h
-[...]
-> +/* simeple phys */
-
-s/simeple phys/simple PHYs/
-
-Although on second thought that comment probably shouldn't be there in
-the first place.
-
-> +#define INVALID	(~1)
-
-This doesn't belong in this header. The value should never be used by a
-DT source file, should it?
-
-> +#define HDMI_PHY	0
-> +#define DAC_PHY	1
-> +#define ADC_PHY	2
-> +#define PCIE_PHY	3
-> +#define SATA_PHY	4
-
-Perhaps these should be namespaced somehow to avoid potential conflicts
-with other PHY providers?
-
-> +#define PHY_NR	5
-
-I'm not sure that this belongs here either. It's not a value that will
-ever appear in a DT source file.
-
-Thierry
-
---Fig2xvG2VGoz8o/s
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTc+q/AAoJEN0jrNd/PrOhk9kQALw31zQf9mXwPqMgetaAf3CY
-VOYCpST0GTBy0AqhX3MjVNF+AJH6L2v72aiZUBDpfaBCPZaOhyIPoBCl0/gmmXu3
-pms9CZDwb8Rgenf6ZIj8RRuAgD9h8mgjrAkMWCAXF2SZoBp/fngh5EoOSZGjeXtq
-zIXXAlMzSk8FbxphuFITKTcDJuDpie1o9J8U0shiNvMWpLBw4NmcFRkHKn8aatwa
-pVAgu5cORyyXmL/lV+HxucBfl96mbArz+93LHhqTInwbKWa8XANG5qplluAFfi67
-4707d3JGiT0wQOPy/IdjuyzhNrF8dcNGn5KnLecBP6y28wSw5UjrkX0Ku+ne8bBR
-MBHxhhfQmIA/Qx1Zb1zhUX9pPm+jvlRXo6pgtPG3cEME8TAfsyblZC1AjIlmGH++
-0B1lqeEqWlKzVU8kEpuSucoNUNqvjbmVtpPvL3OGTd7HfrOCHWHBv9HPJ5D5llxA
-QKhK4Yb6Jbqg7NiZmpN3Y+CkVTth2zi1/OPbV/orktpiYeDbhMvWZfG/d8/kGGpQ
-iQQOJgK97ulfvKOS/18/tvuhuRLibrNtQB4sn/73vz5TZ75UZK0U/Jg3QGK02Rnu
-GS5u0x5p3uA1zMCLoTS8Yeqe3St7KDsXuy4SY2L0Ot7+gJI8SAN3H7RBDGvr8LZA
-94Knaix7gbGQP3LuNeb0
-=a5nT
------END PGP SIGNATURE-----
-
---Fig2xvG2VGoz8o/s--
-
---===============0033608712==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f50.google.com ([74.125.83.50]:59673 "EHLO
+	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751717AbaENWQR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 May 2014 18:16:17 -0400
+Received: by mail-ee0-f50.google.com with SMTP id e51so118957eek.23
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 15:16:16 -0700 (PDT)
+In-Reply-To: <20140514220744.19795.64527@quantum>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
+On 15.05.2014 00:07, Mike Turquette wrote:
+> Quoting Tomasz Figa (2014-05-14 13:20:14)
+>> Hi Mike,
+>>
+>> On 14.05.2014 22:13, Mike Turquette wrote:
+>>> Quoting Kukjin Kim (2014-05-14 12:59:22)
+>>>> On 05/15/14 03:03, Tomasz Figa wrote:
+>>>>
+>>>> Hi Mike,
+>>>>
+>>>> I've talked to Tomasz about current samsung related clock stuff. Since 
+>>>> they are mostly having dependency on samsung tree now not clock core 
+>>>> stuff, so would be better if it could be sent to upstream via samsung 
+>>>> tree. And as you know, updating arch/arm/ and clock stuff are usually 
+>>>> required for adding new SoC or supporting CCF newly...
+>>>
+>>> The Samsung clk pull requests only touch two arch/arm Kconfig files and
+>>> one dtsi file. That's not a lot of arch/arm churn. Is there a strong
+>>> reason that this needs to go through the samsung/arm-soc trees?
+>>> Otherwise it should continue to go through the clk tree.
+>>
+>> Obviously they are patches for Samsung clock drivers. ;)
+>>
+>> The issue here is that there is a number of patches already merged in
+>> Samsung tree on which the patches discussed here depend.
+> 
+> OK, I think I misread the original email. I thought you were asking for
+> future pull requests to go through the samsung tree, but you only mean
+> the ones in this thread. No problem there.
+> 
+> Acked-by: Mike Turquette <mturquette@linaro.org>
 
---===============0033608712==--
+Thanks.
+
+As you probably noticed with my pull request for 3.15, we've been
+getting quite a lot of burden due to dependencies between arch and clk
+patches lastly, but this is inevitable when we are moving things out of
+arch.
+
+The good news is that after patches from this pull request series, we
+will end up with just one, more or less active platform (s5pv210) that
+needs to be converted (and work already in progress).
+
+Best regards,
+Tomasz
