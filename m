@@ -1,52 +1,51 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH 16/18] ARM: dts: exynos5: add system register support
-Date: Wed, 14 May 2014 15:27:03 +0900
-Message-ID: <1400048825-6052-17-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH 17/18] ARM: dts: exynos5420: add mipi-phy node
+Date: Wed, 14 May 2014 15:27:04 +0900
+Message-ID: <1400048825-6052-18-git-send-email-yj44.cho@samsung.com>
 References: <1400048825-6052-1-git-send-email-yj44.cho@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:32063 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751281AbaENG1S (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 02:27:18 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1400048825-6052-1-git-send-email-yj44.cho@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, laurent.pinchart@ideasonboard.com, s.trumtrar@pengutronix.de, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds sysreg device node, and sysreg property to fimd device node
-which is required to use I80 interface.
+This patch adds mipi-phy node for MIPI-DSI device.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos5.dtsi |    6 ++++++
+ arch/arm/boot/dts/exynos5420.dtsi |    6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index 79d0608..95ee496 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -81,12 +81,18 @@
- 		status = "disabled";
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index c3a9a66..6fde5fd 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -472,6 +472,12 @@
+ 		phy-names = "dp";
  	};
  
-+	sys_reg: syscon@10050000 {
-+		compatible = "samsung,exynos5-sysreg", "syscon";
-+		reg = <0x10050000 0x500>;
++	mipi_phy: video-phy@10040714 {
++		compatible = "samsung,s5pv210-mipi-video-phy";
++		reg = <0x10040714 12>;
++		#phy-cells = <1>;
 +	};
 +
  	fimd@14400000 {
- 		compatible = "samsung,exynos5250-fimd";
- 		interrupt-parent = <&combiner>;
- 		reg = <0x14400000 0x40000>;
- 		interrupt-names = "fifo", "vsync", "lcd_sys";
- 		interrupts = <18 4>, <18 5>, <18 6>;
-+		samsung,sysreg = <&sys_reg>;
- 		status = "disabled";
- 	};
- 
+ 		samsung,power-domain = <&disp_pd>;
+ 		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
 -- 
 1.7.9.5
