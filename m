@@ -1,7 +1,7 @@
 From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v6 4/8] ARM: dts: exynos5250: Update DWC3 usb controller to use new phy driver
-Date: Wed, 14 May 2014 19:31:06 +0530
-Message-ID: <1400076070-12456-5-git-send-email-gautam.vivek@samsung.com>
+Subject: [PATCH v6 7/8] ARM: dts: exynos5420-smdk5420: Add Vbus regulator for USB 3.0
+Date: Wed, 14 May 2014 19:31:09 +0530
+Message-ID: <1400076070-12456-8-git-send-email-gautam.vivek@samsung.com>
 References: <1400076070-12456-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1400076070-12456-1-git-send-email-gautam.vivek@samsung.com>
@@ -10,43 +10,77 @@ To: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vge
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org, gregkh@linuxfoundation.org, t.figa@samsung.com, balbi@ti.com, kishon@ti.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Removing the dt node for older usb3 phy driver from Exynos5250
-device tree and updating the dt node for DWC3 controller to
-use new phy driver based on generic phy framework.
+Add required fixed-regulator for VBUS supply for USB 3.0
+controller phy.
 
 Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250.dtsi |   17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
+ arch/arm/boot/dts/exynos5420-smdk5420.dts |   46 +++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 8303a42..8deadc3 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -556,21 +556,8 @@
- 			compatible = "synopsys,dwc3";
- 			reg = <0x12000000 0x10000>;
- 			interrupts = <0 72 0>;
--			usb-phy = <&usb2_phy &usb3_phy>;
--		};
--	};
--
--	usb3_phy: usbphy@12100000 {
--		compatible = "samsung,exynos5250-usb3phy";
--		reg = <0x12100000 0x100>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_USB3>;
--		clock-names = "ext_xtal", "usbdrd30";
--		#address-cells = <1>;
--		#size-cells = <1>;
--		ranges;
--
--		usbphy-sys {
--			reg = <0x10040704 0x8>;
-+			phys = <&usbdrd_phy 0>, <&usbdrd_phy 1>;
-+			phy-names = "usb2-phy", "usb3-phy";
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index 6910485..6053c9f 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -140,6 +140,22 @@
  		};
  	};
  
++	pinctrl@14000000 {
++		usb300_vbus_en: usb300-vbus-en {
++			samsung,pins = "gpg0-5";
++			samsung,pin-function = <1>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
++
++		usb301_vbus_en: usb301-vbus-en {
++			samsung,pins = "gpg1-4";
++			samsung,pin-function = <1>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
++	};
++
+ 	hdmi@14530000 {
+ 		status = "okay";
+ 		hpd-gpio = <&gpx3 7 0>;
+@@ -147,6 +163,36 @@
+ 		pinctrl-0 = <&hdmi_hpd_irq>;
+ 	};
+ 
++	usb300_vbus_reg: regulator-usb300 {
++		compatible = "regulator-fixed";
++		regulator-name = "VBUS0";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gpg0 5 0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usb300_vbus_en>;
++		enable-active-high;
++	};
++
++	usb301_vbus_reg: regulator-usb301 {
++		compatible = "regulator-fixed";
++		regulator-name = "VBUS1";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gpg1 4 0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usb301_vbus_en>;
++		enable-active-high;
++	};
++
++	phy@12100000 {
++		vbus-supply = <&usb300_vbus_reg>;
++	};
++
++	phy@12500000 {
++		vbus-supply = <&usb301_vbus_reg>;
++	};
++
+ 	i2c_2: i2c@12C80000 {
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <66000>;
 -- 
 1.7.10.4
