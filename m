@@ -1,72 +1,35 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH v4 4/5] ARM: dts: remove chip specific hdmi hpd pin from board
-Date: Thu, 15 May 2014 00:53:04 +0530
-Message-ID: <CAPdUM4P_huO9BNAyUhr+S1di9h+Gxw9T0zJaEUisa+ss4h63gg@mail.gmail.com>
-References: <1400035562-16832-1-git-send-email-rahul.sharma@samsung.com>
-	<1400035562-16832-5-git-send-email-rahul.sharma@samsung.com>
-	<5373B9D4.2060601@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCHv5 3/5] clk: samsung: exynos3250: Add clocks using common
+ clock framework
+Date: Wed, 14 May 2014 21:31:16 +0200
+Message-ID: <5373C484.8050506@gmail.com>
+References: <1399986308-23744-1-git-send-email-cw00.choi@samsung.com> <1399986308-23744-4-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f178.google.com ([74.125.82.178]:45924 "EHLO
-	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751382AbaENTXH (ORCPT
+Received: from mail-ee0-f54.google.com ([74.125.83.54]:65245 "EHLO
+	mail-ee0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751087AbaENTba (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 15:23:07 -0400
-In-Reply-To: <5373B9D4.2060601@samsung.com>
+	Wed, 14 May 2014 15:31:30 -0400
+In-Reply-To: <1399986308-23744-4-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>, kgene.kim@samsung.com, t.figa@samsung.com
+Cc: Mark Rutland <mark.rutland@arm.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, tushar.behera@linaro.org, sajjan.linux@gmail.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, Pawel Moll <pawel.moll@arm.com>, sachin.kamat@linaro.org, Jaehoon Chung <jh80.chung@samsung.com>, thomas.abraham@linaro.org, devicetree@vger.kernel.org, arnd@arndb.de, Ian Campbell <ijc+devicetree@hellion.org.uk>, marc.zyngier@arm.com, inki.dae@samsung.com, Rob Herring <robh+dt@kernel.org>, ben-linux@fluff.org, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Karol Wrona <k.wrona@samsung.com>, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, kyungmin.park@samsung.com, Kumar Gala <galak@codeaurora.org>, olof@lixom.net, chanho61.park@samsung.com
 
-On 15 May 2014 00:15, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> On 05/14/14 11:46, Rahul Sharma wrote:
->>
->> From: Rahul Sharma<Rahul.Sharma@samsung.com>
->>
->> "gpx3-7" is chip specific pin in Exynos5420 for hdmi
->> hotplug. This pin is moved to exynos5420-pinctrl.dts
->> and removed from the board file.
->
->
-> Rahul, you may need to put the change (moving the pin from smdk5420 board to
-> exynos5420-pinctrl.dts) before the patch 3/5.
->
+Hi Chanwoo,
 
-Hi Kukjin,
+On 13.05.2014 15:05, Chanwoo Choi wrote:
+> From: Tomasz Figa <t.figa@samsung.com>
+> 
+> This patch add new the clock drvier of Exynos3250 SoC based on Cortex-A7
+> using common clock framework. The CMU (Clock Management Unit) of Exynos3250
+> control PLLs(Phase Locked Loops) and generate system clocks for CPU, buses,
+> and function clocks for individual IPs.
 
-Ok. I will post with that change tomorrow.
+Applied with few minor fixups.
 
-Regards,
-Rahul Sharma.
-
-> - Kukjin
->
->
->>
->> Signed-off-by: Rahul Sharma<Rahul.Sharma@samsung.com>
->> ---
->>   arch/arm/boot/dts/exynos5420-smdk5420.dts |    9 ---------
->>   1 file changed, 9 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> index 6910485..11cd9bf 100644
->> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> @@ -131,15 +131,6 @@
->>                 };
->>         };
->>
->> -       pinctrl@13400000 {
->> -               hdmi_hpd_irq: hdmi-hpd-irq {
->> -                       samsung,pins = "gpx3-7";
->> -                       samsung,pin-function =<0>;
->> -                       samsung,pin-pud =<1>;
->> -                       samsung,pin-drv =<0>;
->> -               };
->> -       };
->> -
->>         hdmi@14530000 {
->>                 status = "okay";
->>                 hpd-gpio =<&gpx3 7 0>;
+Best regards,
+Tomasz
