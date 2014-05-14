@@ -1,102 +1,80 @@
-From: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v3 0/3] phy: Add exynos-simple-phy driver
-Date: Thu, 15 May 2014 00:47:20 +0530
-Message-ID: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v3 2/3] drm: exynos: hdmi: use hdmiphy as PHY
+Date: Thu, 15 May 2014 00:47:22 +0530
+Message-ID: <1400095043-685-3-git-send-email-rahul.sharma@samsung.com>
+References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: a.hajda@samsung.com, t.stanislaws@samsung.com, devicetree@vger.kernel.org, kgene.kim@samsung.com, kishon@ti.com, kyungmin.park@samsung.com, robh+dt@kernel.org, grant.likely@linaro.org, sylvester.nawrocki@gmail.com, joshi@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Rahul Sharma <Rahul.Sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
 
-Hi All,
+The HDMIPHY (physical interface) is controlled by a single
+bit in a power controller's regiter. It was implemented
+as clock. It was a simple but effective hack.
 
-This series has been originally proposed by Tomasz Stanislawski. With
-his permission, I have addressed the following review comments in V3.
+This patch makes HDMI driver to control HDMIPHY via PHY interface.
 
-Changelog:
-v3:
-	* Implement lazy-init of PHYs.
-	* Use MACROs instead of numbers to represent phys.
-	* Use regmap interface to access PMU registers.
+Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_hdmi.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-It is based on "Next" branch in Kishon Vijay Abraham's tree at
-https://git.kernel.org/cgit/linux/kernel/git/kishon/linux-phy.git/
-
-/* Original Message from Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> */
-
-The Samsung SoCs from Exynos family are enhanced with a bunch of devices that
-provide functionality of a physical layer for interfaces like USB, HDMI, SATA,
-etc. They are controlled by a simple interface, often a single bit that enables
-and/or resets the physical layer.
-
-An IP driver should to control such a controller in an abstract manner.
-Therefore, such 'enablers' were implemented as clocks in older versions of
-Linux kernel.  With the dawn of PHY subsystems, PHYs become a natural way of
-exporting the 'enabler' functionality to drivers.  However, there is an
-unexpected consequence. Some of those 1-bit PHYs were implemented as separate
-drivers.  This means that one has to create a struct device, struct phy, its
-phy provider and 100-150 lines of driver code to basically set one bit.
-
-The DP phy driver is a good example:
-https://lkml.org/lkml/2013/7/18/53
-
-And simple-phy RFC (shares only driver code but not other resources):
-https://lkml.org/lkml/2013/10/21/313
-
-To avoid waste of resources I propose to create all such 1-bit phys from Exynos
-SoC using a single device, driver and phy provider.
-
-This patchset contains a proposed solution.
-
-All comment are welcome.
-
-Hopefully in future the functionality introduced by this patch may be merged
-into a larger Power Management Unit (PMU) gluer driver.  On Samsusng SoC , the
-PMU part contains a number of register barely linked to power management (like
-clock gating, clock dividers, CPU resetting, etc.).  It may be tempting to
-create a hybrid driver that export clocks/phys/etc that are controlled by PMU
-unit.
-
-Alternative solutions might be:
-* exporting a regmap to the IP driver and allow the driver to control the PHY layer
-  like in the patch:
-  http://thread.gmane.org/gmane.linux.kernel.samsung-soc/28617/focus=28648
-
-* create a dedicated power domain for hdmiphy
-
-Regards,
-Tomasz Stanislawski
-
-v2:
-	* rename to exynos-simple-phy
-	* fix usage of devm_ioremap()
-	* add documentation for DT bindings
-	* add patches to client drivers
-
-v1: initial version
-
-Tomasz Stanislawski (3):
-  phy: Add exynos-simple-phy driver
-  drm: exynos: hdmi: use hdmiphy as PHY
-  s5p-tv: hdmi: use hdmiphy as PHY
-
- .../devicetree/bindings/phy/samsung-phy.txt        |   56 ++++++
- drivers/gpu/drm/exynos/exynos_hdmi.c               |   11 +-
- drivers/media/platform/s5p-tv/hdmi_drv.c           |   11 +-
- drivers/phy/Kconfig                                |    5 +
- drivers/phy/Makefile                               |    1 +
- drivers/phy/exynos-simple-phy.c                    |  189 ++++++++++++++++++++
- include/dt-bindings/phy/exynos-simple-phy.h        |   27 +++
- 7 files changed, 290 insertions(+), 10 deletions(-)
- create mode 100644 drivers/phy/exynos-simple-phy.c
- create mode 100644 include/dt-bindings/phy/exynos-simple-phy.h
-
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 9a6d652..ef1cdd0 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -36,6 +36,7 @@
+ #include <linux/i2c.h>
+ #include <linux/of_gpio.h>
+ #include <linux/hdmi.h>
++#include <linux/phy/phy.h>
+ 
+ #include <drm/exynos_drm.h>
+ 
+@@ -74,8 +75,8 @@ struct hdmi_resources {
+ 	struct clk			*sclk_hdmi;
+ 	struct clk			*sclk_pixel;
+ 	struct clk			*sclk_hdmiphy;
+-	struct clk			*hdmiphy;
+ 	struct clk			*mout_hdmi;
++	struct phy			*hdmiphy;
+ 	struct regulator_bulk_data	*regul_bulk;
+ 	int				regul_count;
+ };
+@@ -1854,7 +1855,7 @@ static void hdmi_poweron(struct exynos_drm_display *display)
+ 	if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
+ 		DRM_DEBUG_KMS("failed to enable regulator bulk\n");
+ 
+-	clk_prepare_enable(res->hdmiphy);
++	phy_power_on(res->hdmiphy);
+ 	clk_prepare_enable(res->hdmi);
+ 	clk_prepare_enable(res->sclk_hdmi);
+ 
+@@ -1881,7 +1882,7 @@ static void hdmi_poweroff(struct exynos_drm_display *display)
+ 
+ 	clk_disable_unprepare(res->sclk_hdmi);
+ 	clk_disable_unprepare(res->hdmi);
+-	clk_disable_unprepare(res->hdmiphy);
++	phy_power_off(res->hdmiphy);
+ 	regulator_bulk_disable(res->regul_count, res->regul_bulk);
+ 
+ 	pm_runtime_put_sync(hdata->dev);
+@@ -1977,9 +1978,9 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+ 		DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
+ 		goto fail;
+ 	}
+-	res->hdmiphy = devm_clk_get(dev, "hdmiphy");
++	res->hdmiphy = devm_phy_get(dev, "hdmiphy");
+ 	if (IS_ERR(res->hdmiphy)) {
+-		DRM_ERROR("failed to get clock 'hdmiphy'\n");
++		DRM_ERROR("failed to get phy 'hdmiphy'\n");
+ 		goto fail;
+ 	}
+ 	res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
 -- 
 1.7.9.5
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
