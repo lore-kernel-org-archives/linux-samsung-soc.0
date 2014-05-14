@@ -1,7 +1,7 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v3 3/3] s5p-tv: hdmi: use hdmiphy as PHY
-Date: Thu, 15 May 2014 00:47:23 +0530
-Message-ID: <1400095043-685-4-git-send-email-rahul.sharma@samsung.com>
+Subject: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
+Date: Thu, 15 May 2014 00:47:21 +0530
+Message-ID: <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
 References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
@@ -12,74 +12,336 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Tomasz Stanislawski <t.stanislaws@samsung.com>
 
-The HDMIPHY (physical interface) is controlled by a single
-bit in a power controller's regiter. It was implemented
-as clock. It was a simple but effective hack.
-
-This patch makes S5P-HDMI driver to control HDMIPHY via PHY interface.
+Add exynos-simple-phy driver to support a single register
+PHY interfaces present on Exynos4 SoC.
 
 Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
 Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
----
- drivers/media/platform/s5p-tv/hdmi_drv.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-tv/hdmi_drv.c b/drivers/media/platform/s5p-tv/hdmi_drv.c
-index 534722c..8013e52 100644
---- a/drivers/media/platform/s5p-tv/hdmi_drv.c
-+++ b/drivers/media/platform/s5p-tv/hdmi_drv.c
-@@ -32,6 +32,7 @@
- #include <linux/clk.h>
- #include <linux/regulator/consumer.h>
- #include <linux/v4l2-dv-timings.h>
-+#include <linux/phy/phy.h>
+---
+ .../devicetree/bindings/phy/samsung-phy.txt        |   56 ++++++
+ drivers/phy/Kconfig                                |    5 +
+ drivers/phy/Makefile                               |    1 +
+ drivers/phy/exynos-simple-phy.c                    |  189 ++++++++++++++++++++
+ include/dt-bindings/phy/exynos-simple-phy.h        |   27 +++
+ 5 files changed, 278 insertions(+)
+ create mode 100644 drivers/phy/exynos-simple-phy.c
+ create mode 100644 include/dt-bindings/phy/exynos-simple-phy.h
+
+diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+index 2049261..12ad9cf 100644
+--- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
++++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+@@ -161,3 +161,59 @@ Example:
+ 		usbdrdphy0 = &usb3_phy0;
+ 		usbdrdphy1 = &usb3_phy1;
+ 	};
++
++Samsung S5P/EXYNOS SoC series SIMPLE PHY
++-------------------------------------------------
++
++Required properties:
++- compatible : should be one of the listed compatibles:
++	- "samsung,exynos4210-simple-phy"
++	- "samsung,exynos4412-simple-phy"
++	- "samsung,exynos5250-simple-phy"
++	- "samsung,exynos5420-simple-phy"
++- samsung,pmureg-phandle - handle to syscon to control PMU registers
++- #phy-cells : from the generic phy bindings, must be 1;
++
++For "samsung,exynos4210-simple-phy" compatible PHYs the second cell in
++the PHY specifier identifies the PHY and the supported phys for exynos4210
++are:
++  HDMI_PHY,
++  DAC_PHY,
++  ADC_PHY,
++  PCIE_PHY,
++  SATA_PHY.
++
++For "samsung,exynos4412-simple-phy" compatible PHYs the second cell in
++the PHY specifier identifies the PHY and the supported phys for exynos4412
++are:
++  HDMI_PHY,
++  ADC_PHY.
++
++For "samsung,exynos5250-simple-phy" compatible PHYs the second cell in
++the PHY specifier identifies the PHY and the supported phys for exynos5250
++are:
++  HDMI_PHY,
++  ADC_PHY,
++  SATA_PHY.
++
++For "samsung,exynos5420-simple-phy" compatible PHYs the second cell in
++the PHY specifier identifies the PHY and the supported phys for exynos5420
++are:
++  HDMI_PHY,
++  ADC_PHY.
++
++Example:
++Simple PHY provider node:
++
++	simplephys: simple-phys@10040000 {
++		compatible = "samsung,exynos5250-simple-phy";
++		samsung,pmu-syscon = <&pmu_system_controller>;
++		#phy-cells = <1>;
++	};
++
++Other nodes accessing simple PHYs:
++
++	hdmi {
++		phys = <&simplephys HDMI_PHY>;
++		phy-names = "hdmiphy";
++	};
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index 16a2f06..2a13e0d 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -178,4 +178,9 @@ config PHY_XGENE
+ 	help
+ 	  This option enables support for APM X-Gene SoC multi-purpose PHY.
  
- #include <media/s5p_hdmi.h>
- #include <media/v4l2-common.h>
-@@ -66,7 +67,7 @@ struct hdmi_resources {
- 	struct clk *sclk_hdmi;
- 	struct clk *sclk_pixel;
- 	struct clk *sclk_hdmiphy;
--	struct clk *hdmiphy;
-+	struct phy *hdmiphy;
- 	struct regulator_bulk_data *regul_bulk;
- 	int regul_count;
- };
-@@ -586,7 +587,7 @@ static int hdmi_resource_poweron(struct hdmi_resources *res)
- 	if (ret < 0)
- 		return ret;
- 	/* power-on hdmi physical interface */
--	clk_enable(res->hdmiphy);
-+	phy_power_on(res->hdmiphy);
- 	/* use VPP as parent clock; HDMIPHY is not working yet */
- 	clk_set_parent(res->sclk_hdmi, res->sclk_pixel);
- 	/* turn clocks on */
-@@ -600,7 +601,7 @@ static void hdmi_resource_poweroff(struct hdmi_resources *res)
- 	/* turn clocks off */
- 	clk_disable(res->sclk_hdmi);
- 	/* power-off hdmiphy */
--	clk_disable(res->hdmiphy);
-+	phy_power_off(res->hdmiphy);
- 	/* turn HDMI power off */
- 	regulator_bulk_disable(res->regul_count, res->regul_bulk);
- }
-@@ -784,7 +785,7 @@ static void hdmi_resources_cleanup(struct hdmi_device *hdev)
- 	/* kfree is NULL-safe */
- 	kfree(res->regul_bulk);
- 	if (!IS_ERR(res->hdmiphy))
--		clk_put(res->hdmiphy);
-+		phy_put(res->hdmiphy);
- 	if (!IS_ERR(res->sclk_hdmiphy))
- 		clk_put(res->sclk_hdmiphy);
- 	if (!IS_ERR(res->sclk_pixel))
-@@ -835,7 +836,7 @@ static int hdmi_resources_init(struct hdmi_device *hdev)
- 		dev_err(dev, "failed to get clock 'sclk_hdmiphy'\n");
- 		goto fail;
- 	}
--	res->hdmiphy = clk_get(dev, "hdmiphy");
-+	res->hdmiphy = phy_get(dev, "hdmiphy");
- 	if (IS_ERR(res->hdmiphy)) {
- 		dev_err(dev, "failed to get clock 'hdmiphy'\n");
- 		goto fail;
++config EXYNOS_SIMPLE_PHY
++	tristate "Exynos Simple PHY driver"
++	help
++	  Support for 1-bit PHY controllers on SoCs from Exynos family.
++
+ endmenu
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index b4f1d57..81b6efa 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -20,3 +20,4 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)	+= phy-exynos4x12-usb2.o
+ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)	+= phy-exynos5250-usb2.o
+ obj-$(CONFIG_PHY_EXYNOS5_USBDRD)	+= phy-exynos5-usbdrd.o
+ obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
++obj-$(CONFIG_EXYNOS_SIMPLE_PHY)		+= exynos-simple-phy.o
+diff --git a/drivers/phy/exynos-simple-phy.c b/drivers/phy/exynos-simple-phy.c
+new file mode 100644
+index 0000000..792e9bc
+--- /dev/null
++++ b/drivers/phy/exynos-simple-phy.c
+@@ -0,0 +1,189 @@
++/*
++ * Exynos Simple PHY driver
++ *
++ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
++ * Author: Tomasz Stanislawski <t.stanislaws@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/phy/phy.h>
++#include <linux/mfd/syscon.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/phy/exynos-simple-phy.h>
++
++struct phy_driver_priv {
++	struct phy *phys[PHY_NR];
++	struct regmap *pmureg;
++	u32 offsets[PHY_NR];
++};
++
++struct phy_driver_data {
++	u32 index;
++	u32 offset;
++};
++
++struct phy_private {
++	struct regmap *pmureg;
++	u32 offset;
++};
++
++#define EXYNOS_PHY_ENABLE	(1 << 0)
++
++static int exynos_phy_power_on(struct phy *phy)
++{
++	struct phy_private *phy_private = phy_get_drvdata(phy);
++
++	return regmap_update_bits(phy_private->pmureg, phy_private->offset,
++		EXYNOS_PHY_ENABLE, 1);
++}
++
++static int exynos_phy_power_off(struct phy *phy)
++{
++	struct phy_private *phy_private = phy_get_drvdata(phy);
++
++	return regmap_update_bits(phy_private->pmureg, phy_private->offset,
++		EXYNOS_PHY_ENABLE, 0);
++}
++
++static struct phy_ops exynos_phy_ops = {
++	.power_on	= exynos_phy_power_on,
++	.power_off	= exynos_phy_power_off,
++	.owner		= THIS_MODULE,
++};
++
++static const struct phy_driver_data exynos4210_offsets[] = {
++	{ HDMI_PHY, 0x0700 },	/* HDMI_PHY */
++	{ DAC_PHY, 0x070C },	/* DAC_PHY */
++	{ ADC_PHY, 0x0718 },	/* ADC_PHY */
++	{ PCIE_PHY, 0x071C },	/* PCIE_PHY */
++	{ SATA_PHY, 0x0720 },	/* SATA_PHY */
++	{ INVALID, 0 },		/* End Mark */
++};
++
++static const struct phy_driver_data exynos4412_offsets[] = {
++	{ HDMI_PHY, 0x0700 },	/* HDMI_PHY */
++	{ ADC_PHY, 0x0718 },	/* ADC_PHY */
++	{ INVALID, 0 },		/* End Mark */
++};
++
++static const struct phy_driver_data exynos5250_offsets[] = {
++	{ HDMI_PHY, 0x0700 },	/* HDMI_PHY */
++	{ ADC_PHY, 0x0718 },	/* ADC_PHY */
++	{ SATA_PHY, 0x0724 },	/* SATA_PHY */
++	{ INVALID, 0 },		/* End Mark */
++};
++
++static const struct phy_driver_data exynos5420_offsets[] = {
++	{ HDMI_PHY, 0x0700 },	/* HDMI_PHY */
++	{ ADC_PHY, 0x0720 },	/* ADC_PHY */
++	{ INVALID, 0 },		/* End Mark */
++};
++
++static const struct of_device_id exynos_phy_of_match[] = {
++	{ .compatible = "samsung,exynos4210-simple-phy",
++	  .data = exynos4210_offsets},
++	{ .compatible = "samsung,exynos4412-simple-phy",
++	  .data = exynos4412_offsets},
++	{ .compatible = "samsung,exynos5250-simple-phy",
++	  .data = exynos5250_offsets},
++	{ .compatible = "samsung,exynos5420-simple-phy",
++	  .data = exynos5420_offsets},
++	{ },
++};
++MODULE_DEVICE_TABLE(of, exynos_phy_of_match);
++
++static struct phy *exynos_phy_xlate(struct device *dev,
++					struct of_phandle_args *args)
++{
++	struct phy_driver_priv *priv = dev_get_drvdata(dev);
++	struct phy_private *phy_private;
++	int index = args->args[0];
++
++	/* verify if index and corresponding offset are valid */
++	if (index >= PHY_NR || priv->offsets[index] == INVALID)
++		return ERR_PTR(-ENODEV);
++
++	/* return phy if already allocated */
++	if (!IS_ERR_OR_NULL(priv->phys[index]))
++		return priv->phys[index];
++
++	priv->phys[index] = devm_phy_create(dev, &exynos_phy_ops, NULL);
++	if (IS_ERR(priv->phys[index])) {
++		dev_err(dev, "failed to create PHY %d\n", index);
++		return priv->phys[index];
++	}
++
++	phy_private = devm_kzalloc(dev, sizeof(*phy_private), GFP_KERNEL);
++	if (!phy_private)
++		return ERR_PTR(-ENOMEM);
++
++	phy_private->pmureg = priv->pmureg;
++	phy_private->offset = priv->offsets[index];
++	phy_set_drvdata(priv->phys[index], phy_private);
++
++	return priv->phys[index];
++}
++
++static int exynos_phy_probe(struct platform_device *pdev)
++{
++	const struct of_device_id *of_id = of_match_device(
++		of_match_ptr(exynos_phy_of_match), &pdev->dev);
++	const struct phy_driver_data *drv_data = of_id->data;
++	struct device *dev = &pdev->dev;
++	struct phy_driver_priv *priv;
++	struct phy_provider *phy_provider;
++	int i;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	dev_set_drvdata(dev, priv);
++
++	priv->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
++			"samsung,pmu-syscon");
++	if (IS_ERR(priv->pmureg)) {
++		dev_err(dev, "Failed to map PMU register (via syscon)\n");
++		return PTR_ERR(priv->pmureg);
++	}
++
++	/* make all offsets invalid */
++	for (i = 0; i < PHY_NR; i++)
++		priv->offsets[i] = INVALID;
++
++	/* initialize offsets only if available in drv data */
++	for (i = 0; drv_data[i].index != INVALID; i++)
++		priv->offsets[drv_data[i].index] = drv_data[i].offset;
++
++	phy_provider = devm_of_phy_provider_register(dev, exynos_phy_xlate);
++	if (IS_ERR(phy_provider)) {
++		dev_err(dev, "failed to register PHY provider\n");
++		return PTR_ERR(phy_provider);
++	}
++
++	dev_info(dev, "probe success\n");
++
++	return 0;
++}
++
++static struct platform_driver exynos_phy_driver = {
++	.probe	= exynos_phy_probe,
++	.driver = {
++		.of_match_table	= exynos_phy_of_match,
++		.name  = "exynos-simple-phy",
++		.owner = THIS_MODULE,
++	}
++};
++module_platform_driver(exynos_phy_driver);
++
++MODULE_DESCRIPTION("Exynos Simple PHY driver");
++MODULE_AUTHOR("Tomasz Stanislawski <t.stanislaws@samsung.com>");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/dt-bindings/phy/exynos-simple-phy.h b/include/dt-bindings/phy/exynos-simple-phy.h
+new file mode 100644
+index 0000000..30bb341
+--- /dev/null
++++ b/include/dt-bindings/phy/exynos-simple-phy.h
+@@ -0,0 +1,27 @@
++/*
++ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
++ * Author: Tomasz Stanislawski <t.stanislaws@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Device Tree binding constants for Exynos Simple PHY driver
++ *
++ */
++
++#ifndef _DT_BINDINGS_PHY_EXYNOS_SIMPLE_PHY_H
++#define _DT_BINDINGS_PHY_EXYNOS_SIMPLE_PHY_H
++
++/* simeple phys */
++
++#define INVALID	(~1)
++
++#define HDMI_PHY	0
++#define DAC_PHY	1
++#define ADC_PHY	2
++#define PCIE_PHY	3
++#define SATA_PHY	4
++#define PHY_NR	5
++
++#endif
 -- 
 1.7.9.5
