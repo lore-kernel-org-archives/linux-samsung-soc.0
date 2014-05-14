@@ -1,39 +1,55 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v3 1/2] cpufreq / OPP: Allow boost frequency to be looked
- up from device tree
-Date: Wed, 14 May 2014 19:24:54 +0530
-Message-ID: <CAKohpon-z-MS68qkEvioBPLVvoieo0WqGBTC+ZJz+KsoZ8CGhQ@mail.gmail.com>
-References: <1400029380-5372-1-git-send-email-thomas.ab@samsung.com>
-	<1400029380-5372-2-git-send-email-thomas.ab@samsung.com>
-	<CAKohponnPSRAotJUu+5a9y8j97QF8Jqgc5DA5WQnwGWCnVY-aA@mail.gmail.com>
-	<CAJuA9agfoVwqa88=JB+SirjcO0dXy0s0fTc8=dP=u7H8uarSyg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f54.google.com ([209.85.219.54]:64266 "EHLO
-	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754530AbaENNyz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 09:54:55 -0400
-Received: by mail-oa0-f54.google.com with SMTP id j17so2194309oag.41
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 06:54:54 -0700 (PDT)
-In-Reply-To: <CAJuA9agfoVwqa88=JB+SirjcO0dXy0s0fTc8=dP=u7H8uarSyg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v6 0/8] Enable USB 3.0 support on Exynos5 systems
+Date: Wed, 14 May 2014 19:31:02 +0530
+Message-ID: <1400076070-12456-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org, gregkh@linuxfoundation.org, t.figa@samsung.com, balbi@ti.com, kishon@ti.com, jg1.han@samsung.com, Vivek gautam <gautam.vivek@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <rob.herring@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Nishanth Menon <nm@ti.com>
 
-On 14 May 2014 19:16, Thomas Abraham <ta.omasab@gmail.com> wrote:
-> On Wed, May 14, 2014 at 9:10 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+From: Vivek gautam <gautam.vivek@samsung.com>
 
->> Why is this present outside of above if {} ? as boost_freqs is guaranteed to
->> be NULL without that.
->
-> Just to reduce indentation by one tab. No technical reasons. The code
-> had to wrap at 80 column was becoming unreadable.
+Based on 'for-next' branch of Kgene's linux-samsung tree;
+along with dts patches for USB 2.0 phy[1], and Exynos5800 [2].
+Also based on the latest USB 3.0 DRD phy driver patches posted [3].
 
-That's bad :), you have added an extra comparison just for that :(
-Instead kill the below indentation by doing a "goto out" with a ! of
-below expression:
+Changes from v5:
+ - Added node reference names for new boards.
+ - Removed 'samsung,pmu-offset' porperty from nodes, since with latest driver
+   bindings this is not required.
+ - Added aliase nodes in Exynos5420 to facilitate latest driver bindings.
+ - Added patch to add VBUS regulator for peach-pi board also.
+ - Dropped patches removing older usb-phy driver:
+   usb-phy: samsung-usb3: Remove older phy-samsung-usb3 driver
+   ARM: exynos_defconfig: Remove SAMSUNG_USB3PHY config
+   as appeared in V5 version of this series.
+   Will post them separately after the new driver is merged.
 
->> +       if (of_find_property(dev->of_node, "boost-frequency", &len)) {
+[1] http://www.spinics.net/lists/linux-samsung-soc/msg30494.html
+[2] http://comments.gmane.org/gmane.linux.kernel.samsung-soc/31133
+[3] https://lkml.org/lkml/2014/5/13/285
+
+Vivek Gautam (7):
+  ARM: dts: exynos5420: Enable support for USB 3.0 PHY controller
+  ARM: dts: exynos5420: Enable support for DWC3 controller
+  ARM: dts: exynos5250: Enable support for generic USB DRD phy
+  ARM: dts: exynos5250: Update DWC3 usb controller to use new phy
+    driver
+  ARM: dts: exynos5250-snow: Add Vbus regulator for USB 3.0
+  ARM: dts: exynos5420-peach-pit: Add Vbus regulator for USB 3.0
+  ARM: dts: exynos5420-smdk5420: Add Vbus regulator for USB 3.0
+
+Vivek gautam (1):
+  ARM: dts: exynos5800-peach-pi: Add Vbus regulator for USB 3.0
+
+ arch/arm/boot/dts/exynos5250-snow.dts      |   22 ++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi          |   20 +++++------
+ arch/arm/boot/dts/exynos5420-peach-pit.dts |   46 ++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420-smdk5420.dts  |   46 ++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi          |   54 ++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  |   46 ++++++++++++++++++++++++
+ 6 files changed, 222 insertions(+), 12 deletions(-)
+
+-- 
+1.7.10.4
