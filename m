@@ -1,27 +1,40 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v4 2/8] clk: samsung: change scope of samsung clock lock
- to global
-Date: Wed, 14 May 2014 18:56:43 +0530
-Message-ID: <CAJuA9aj+qCQ+vadG1Z7Op1_3o6ZJieVKGAHfwGQdqBZuiMGWMg@mail.gmail.com>
-References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
-	<1400029876-5830-3-git-send-email-thomas.ab@samsung.com>
-	<CAKohpo=J0wbddjn=igwJQNsNQjoddu9A9ApUhuW8Du=6_E=-KQ@mail.gmail.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH v6 0/5] MCPM backend for Exynos5420
+Date: Wed, 14 May 2014 09:33:28 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1405140931380.980@knanqh.ubzr>
+References: <1399982324-27879-1-git-send-email-a.kesavan@samsung.com> <alpine.LFD.2.11.1405131325060.980@knanqh.ubzr> <CAM4voanvVwj+FuWazTGMHMnM64Cw_qK03D3o=raS43f_zWFfog@mail.gmail.com> <alpine.LFD.2.11.1405140031490.980@knanqh.ubzr>
+ <CAM4voa=6osyXYg_XF=XuGRYmxLDUO+5=-i+cMrNW92fzBZJjfA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <CAKohpo=J0wbddjn=igwJQNsNQjoddu9A9ApUhuW8Du=6_E=-KQ@mail.gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f47.google.com ([209.85.192.47]:35191 "EHLO
+	mail-qg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755380AbaENNda (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 May 2014 09:33:30 -0400
+Received: by mail-qg0-f47.google.com with SMTP id j107so2753921qga.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 06:33:30 -0700 (PDT)
+In-Reply-To: <CAM4voa=6osyXYg_XF=XuGRYmxLDUO+5=-i+cMrNW92fzBZJjfA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Thomas P Abraham <thomas.ab@samsung.com>, "inderpal.s@samsung.com" <inderpal.s@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Dave Martin <Dave.Martin@arm.com>, Tomasz Figa <t.figa@samsung.com>
 
-On Wed, May 14, 2014 at 9:20 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 14 May 2014 06:41, Thomas Abraham <ta.omasab@gmail.com> wrote:
->> From: Thomas Abraham <thomas.ab@samsung.com>
->>
->> Access to samsung clock lock is required to support newer samsung specific
->> clock types. So change the scope of the samsung clock lock to global. And
->
-> Maybe bit more detail on why exactly it should be available outside this file.
+On Wed, 14 May 2014, Abhilash Kesavan wrote:
 
-Okay, will do in the next version.
+> Hi Nicolas,
+> 
+> [...]
+> >>
+> >> 1) can't create /sys/devices/system/cpu/cpu//online: nonexistent directory
+> >
+> > What do you get if you do:
+> >
+> > $ ls -d /sys/devices/system/cpu/cpu?/online
+> ls: /sys/devices/system/cpu/cpu//online: No such file or directory
+
+Somehow, you or your shell replaced the ? character into a / character.
+You could try with a * instead.
+
+
+Nicolas
