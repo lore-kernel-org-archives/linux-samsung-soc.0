@@ -1,55 +1,93 @@
 From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v6 0/8] Enable USB 3.0 support on Exynos5 systems
-Date: Wed, 14 May 2014 19:31:02 +0530
-Message-ID: <1400076070-12456-1-git-send-email-gautam.vivek@samsung.com>
+Subject: [PATCH v6 6/8] ARM: dts: exynos5420-peach-pit: Add Vbus regulator for USB 3.0
+Date: Wed, 14 May 2014 19:31:08 +0530
+Message-ID: <1400076070-12456-7-git-send-email-gautam.vivek@samsung.com>
+References: <1400076070-12456-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1400076070-12456-1-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org, gregkh@linuxfoundation.org, t.figa@samsung.com, balbi@ti.com, kishon@ti.com, jg1.han@samsung.com, Vivek gautam <gautam.vivek@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org, gregkh@linuxfoundation.org, t.figa@samsung.com, balbi@ti.com, kishon@ti.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Vivek gautam <gautam.vivek@samsung.com>
+Add required fixed-regulator for VBUS supply for USB 3.0
+controller phy.
 
-Based on 'for-next' branch of Kgene's linux-samsung tree;
-along with dts patches for USB 2.0 phy[1], and Exynos5800 [2].
-Also based on the latest USB 3.0 DRD phy driver patches posted [3].
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+---
+ arch/arm/boot/dts/exynos5420-peach-pit.dts |   46 ++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-Changes from v5:
- - Added node reference names for new boards.
- - Removed 'samsung,pmu-offset' porperty from nodes, since with latest driver
-   bindings this is not required.
- - Added aliase nodes in Exynos5420 to facilitate latest driver bindings.
- - Added patch to add VBUS regulator for peach-pi board also.
- - Dropped patches removing older usb-phy driver:
-   usb-phy: samsung-usb3: Remove older phy-samsung-usb3 driver
-   ARM: exynos_defconfig: Remove SAMSUNG_USB3PHY config
-   as appeared in V5 version of this series.
-   Will post them separately after the new driver is merged.
-
-[1] http://www.spinics.net/lists/linux-samsung-soc/msg30494.html
-[2] http://comments.gmane.org/gmane.linux.kernel.samsung-soc/31133
-[3] https://lkml.org/lkml/2014/5/13/285
-
-Vivek Gautam (7):
-  ARM: dts: exynos5420: Enable support for USB 3.0 PHY controller
-  ARM: dts: exynos5420: Enable support for DWC3 controller
-  ARM: dts: exynos5250: Enable support for generic USB DRD phy
-  ARM: dts: exynos5250: Update DWC3 usb controller to use new phy
-    driver
-  ARM: dts: exynos5250-snow: Add Vbus regulator for USB 3.0
-  ARM: dts: exynos5420-peach-pit: Add Vbus regulator for USB 3.0
-  ARM: dts: exynos5420-smdk5420: Add Vbus regulator for USB 3.0
-
-Vivek gautam (1):
-  ARM: dts: exynos5800-peach-pi: Add Vbus regulator for USB 3.0
-
- arch/arm/boot/dts/exynos5250-snow.dts      |   22 ++++++++++++
- arch/arm/boot/dts/exynos5250.dtsi          |   20 +++++------
- arch/arm/boot/dts/exynos5420-peach-pit.dts |   46 ++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5420-smdk5420.dts  |   46 ++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5420.dtsi          |   54 ++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts  |   46 ++++++++++++++++++++++++
- 6 files changed, 222 insertions(+), 12 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index fae33dd..8402ec3 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -58,6 +58,28 @@
+ 		pinctrl-0 = <&pwm0_out>;
+ 		pinctrl-names = "default";
+ 	};
++
++	usb300_vbus_reg: regulator-usb300 {
++		compatible = "regulator-fixed";
++		regulator-name = "P5.0V_USB3CON0";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gph0 0 0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usb300_vbus_en>;
++		enable-active-high;
++	};
++
++	usb301_vbus_reg: regulator-usb301 {
++		compatible = "regulator-fixed";
++		regulator-name = "P5.0V_USB3CON1";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		gpio = <&gph0 1 0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&usb301_vbus_en>;
++		enable-active-high;
++	};
+ };
+ 
+ &pinctrl_0 {
+@@ -76,6 +98,22 @@
+ 	};
+ };
+ 
++&pinctrl_3 {
++	usb300_vbus_en: usb300-vbus-en {
++		samsung,pins = "gph0-0";
++		samsung,pin-function = <1>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
++	usb301_vbus_en: usb301-vbus-en {
++		samsung,pins = "gph0-1";
++		samsung,pin-function = <1>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++};
++
+ &rtc {
+ 	status = "okay";
+ };
+@@ -137,6 +175,14 @@
+ 	};
+ };
+ 
++&usbdrd3_0 {
++	vbus-supply = <&usb300_vbus_reg>;
++};
++
++&usbdrd3_1 {
++	vbus-supply = <&usb301_vbus_reg>;
++};
++
+ /*
+  * Use longest HW watchdog in SoC (32 seconds) since the hardware
+  * watchdog provides no debugging information (compared to soft/hard
 -- 
 1.7.10.4
