@@ -1,101 +1,47 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv5 4/5] dt-bindings: add documentation for Exynos3250 clock
- controller
-Date: Wed, 14 May 2014 21:35:37 +0200
-Message-ID: <5373C589.9080405@gmail.com>
-References: <1399986308-23744-1-git-send-email-cw00.choi@samsung.com> <1399986308-23744-5-git-send-email-cw00.choi@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCHv5 5/5] ARM: dts: Add device tree sources for Exynos3250
+Date: Wed, 14 May 2014 21:36:47 +0200
+Message-ID: <5373C5CF.4040002@gmail.com>
+References: <1399986308-23744-1-git-send-email-cw00.choi@samsung.com> <1399986308-23744-6-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1399986308-23744-5-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, marc.zyngier-5wv7dgnIgG8@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, hyunhee.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sajjan.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f52.google.com ([74.125.83.52]:61384 "EHLO
+	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751107AbaENThB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 May 2014 15:37:01 -0400
+In-Reply-To: <1399986308-23744-6-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, kgene.kim@samsung.com, t.figa@samsung.com
+Cc: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, arnd@arndb.de, olof@lixom.net, marc.zyngier@arm.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, sajjan.linux@gmail.com, tushar.behera@linaro.org, sachin.kamat@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
 Hi,
 
 On 13.05.2014 15:05, Chanwoo Choi wrote:
-> The Exynos3250 clocks are statically listed and registered using the
-> Samsung specific common clock helper functions. Both device tree based
-> clock lookup and clkdev based clock lookups are supported.
+> From: Tomasz Figa <t.figa@samsung.com>
 > 
-> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-> Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> Cc: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-> Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  .../devicetree/bindings/clock/exynos3250-clock.txt | 41 ++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/exynos3250-clock.txt
+> This patch add new exynos3250.dtsi to support Exynos3250 SoC based on Cortex-A7
+> dual core and includes following dt nodes:
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/exynos3250-clock.txt b/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
-> new file mode 100644
-> index 0000000..aadc9c5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
-> @@ -0,0 +1,41 @@
-> +* Samsung Exynos3250 Clock Controller
-> +
-> +The Exynos3250 clock controller generates and supplies clock to various
-> +controllers within the Exynos3250 SoC.
-> +
-> +Required Properties:
-> +
-> +- compatible: should be one of the following.
-> +  - "samsung,exynos3250-cmu" - controller compatible with Exynos3250 SoC.
-> +
-> +- reg: physical base address of the controller and length of memory mapped
-> +  region.
-> +
-> +- #clock-cells: should be 1.
-> +
-> +Each clock is assigned an identifier and client nodes can use this identifier
-> +to specify the clock which they consume.
-> +
-> +All available clocks are defined as preprocessor macros in
-> +dt-bindings/clock/exynos3250.h header and can be used in device
-> +tree sources.
-> +
-> +Example 1: An example of a clock controller node is listed below.
-> +
-> +	cmu: clock-controller@10030000 {
-> +		compatible = "samsung,exynos3250-cmu";
-> +		reg = <0x10030000 0x20000>;
-> +		#clock-cells = <1>;
-> +	};
-> +
-> +Example 2: UART controller node that consumes the clock generated by the clock
-> +	   controller. Refer to the standard clock bindings for information
-> +	   about 'clocks' and 'clock-names' property.
-> +
-> +	serial@13800000 {
-> +		compatible = "samsung,exynos4210-uart";
-> +		reg = <0x13800000 0x100>;
-> +		interrupts = <0 109 0>;
-> +		clocks = <&cmu CLK_UART0>, <&cmu CLK_SCLK_UART0>;
-> +		clock-names = "uart", "clk_uart_baud0";
-> +	};
-> 
+> - GIC interrupt controller
+> - Pinctrl to control GPIOs
+> - Clock controller
+> - CPU information (Cortex-A7 dual core)
+> - UART to support serial port
+> - MCT (Multi Core Timer)
+> - ADC (Analog Digital Converter)
+> - I2C/SPI bus
+> - Power domain
+> - PMU (Performance Monitoring Unit)
+> - MSHC (Mobile Storage Host Controller)
+> - PWM (Pluse Width Modulation)
+> - AMBA bus
+> - sysram node for SYSRAM memory mapping
 
-Oops, I've forgotten to apply this one. Since it doesn't have any
-dependencies, Kukjin, could you apply it on top of my pull requests with
-my Ack? Thanks in advance.
-
-Acked-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
 Tomasz
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
