@@ -1,98 +1,149 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v4 3/5] ARM: dts: enable hdmi for exynos5420 based peach-pit
- board
-Date: Wed, 14 May 2014 08:16:00 +0530
-Message-ID: <1400035562-16832-4-git-send-email-rahul.sharma@samsung.com>
-References: <1400035562-16832-1-git-send-email-rahul.sharma@samsung.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [Patch v4 5/5] mcpm: exynos: populate suspend and powered_up callbacks
+Date: Wed, 14 May 2014 08:22:17 +0530
+Message-ID: <CANuQgHGSPJ45tbrVppAVpOqF0OfHacPWfX=S5mOVxTPr66f7vg@mail.gmail.com>
+References: <1399278444-8312-3-git-send-email-chander.kashyap@linaro.org>
+	<1399282040-8995-1-git-send-email-chander.kashyap@linaro.org>
+	<1399282040-8995-6-git-send-email-chander.kashyap@linaro.org>
+	<20140509153206.GB5040@e102568-lin.cambridge.arm.com>
+	<CANuQgHG9tGzi2rSOwREAxVu4BQoprDg9om62AybgW5v31fpbTQ@mail.gmail.com>
+	<20140513171452.GB10210@red-moon>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:48928 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752507AbaENCrI (ORCPT
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:53499 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752873AbaENCwS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 May 2014 22:47:08 -0400
-In-reply-to: <1400035562-16832-1-git-send-email-rahul.sharma@samsung.com>
+	Tue, 13 May 2014 22:52:18 -0400
+Received: by mail-ob0-f177.google.com with SMTP id wp4so1404453obc.36
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2014 19:52:17 -0700 (PDT)
+In-Reply-To: <20140513171452.GB10210@red-moon>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Chander Kashyap <k.chander@samsung.com>
 
-From: Rahul Sharma <Rahul.Sharma@samsung.com>
+Hi Lorenzo,
 
-Enable hdmi for exynos5420 based peach-pit board.
+On 13 May 2014 22:44, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
+> On Tue, May 13, 2014 at 12:43:31PM +0100, Chander Kashyap wrote:
+>
+> [...]
+>
+>> >> +static void exynos_suspend(u64 residency)
+>> >> +{
+>> >> +     unsigned int mpidr, cpunr;
+>> >> +
+>> >> +     mpidr = read_cpuid_mpidr();
+>> >> +     cpunr = exynos_pmu_cpunr(mpidr);
+>> >
+>> > If I were to be picky, I would compute these values only if they
+>> > are needed, ie move the computation after exynos_power_down().
+>>
+>> Yes thats make sense. I will realign it.
+>>
+>> >
+>> > There is another quite horrible issue here. We know this code works
+>> > because the processors A15/A7 hit the caches with C bit in SCTLR cleared.
+>> >
+>> > On processors where this is not true, this sequence would explode
+>> > if power down fails (in case core is gated but L2 is still powered on,
+>> > the stack is stuck in L2) since it is going to read stack data that is
+>> > in L2 but can't be read.
+>> >
+>> > It is not related to this sequence only, but it is an issue in general
+>> > and wanted to mention that on the lists for public awareness.
+>> >
+>>
+>> Can you please elaborate. I didn't understand.
+>
+> It is not related to this patch only. This function carries out writes to the
+> stack (which might end up in eg L2) and then disables the C bit in SCTLR
+> through MCPM.
+>
+> A15 and A7 processors hit the cache with the C bit clear in the SCTLR
+> so the processor still "hits" the stack values if the power down fails.
+> On processors where caches are not hit with the C bit clear (eg A9) this code
+> would fail since the stack values that sit in the caches cannot be read with
+> the C bit clear in SCTLR until the SCTLR is restored, so it will have to
+> be implemented in assembly with no stack usage (or better, no cacheable data
+> usage).
+>
+> So, all I am saying is, to avoid copy'n'paste havoc and to avoid running
+> this code on Exynos platforms where it must not be run as-is, please add
+> a comment along the line:
+>
+> "This function requires the stack data to be visible through power down
+> and can only be executed on processors like A15 and A7 that hit the cache
+> with the C bit clear in the SCTLR register."
+>
+> Please let me know if that's clear.
 
-Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
----
- arch/arm/boot/dts/exynos5420-peach-pit.dts |   19 +++++++++++++++++++
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi  |    7 +++++++
- arch/arm/boot/dts/exynos5420.dtsi          |    5 +++++
- 3 files changed, 31 insertions(+)
+It all clear now.
+Thanks a lot.
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index fae33dd..8248255 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -137,6 +137,25 @@
- 	};
- };
- 
-+&i2c_2	{
-+	status = "okay";
-+	samsung,i2c-sda-delay = <100>;
-+	samsung,i2c-max-bus-freq = <66000>;
-+	samsung,i2c-slave-addr = <0x50>;
-+
-+	hdmiddc@50 {
-+		reg = <0x50>;
-+	};
-+};
-+
-+&hdmi {
-+	status = "okay";
-+	hpd-gpio = <&gpx3 7 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hdmi_hpd_irq>;
-+	ddc = <&i2c_2>;
-+};
-+
- /*
-  * Use longest HW watchdog in SoC (32 seconds) since the hardware
-  * watchdog provides no debugging information (compared to soft/hard
-diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-index ba686e4..fc17797 100644
---- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-@@ -66,6 +66,13 @@
- 			samsung,pin-pud = <0>;
- 			samsung,pin-drv = <0>;
- 		};
-+
-+		hdmi_hpd_irq: hdmi-hpd-irq {
-+			samsung,pins = "gpx3-7";
-+			samsung,pin-function = <0>;
-+			samsung,pin-pud = <1>;
-+			samsung,pin-drv = <0>;
-+		};
- 	};
- 
- 	pinctrl@13410000 {
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 016992c..df4422c 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -648,9 +648,14 @@
- 			 <&clock CLK_MOUT_HDMI>;
- 		clock-names = "hdmi", "sclk_hdmi", "sclk_pixel",
- 			"sclk_hdmiphy", "mout_hdmi";
-+		phy = <&hdmiphy>;
- 		status = "disabled";
- 	};
- 
-+	hdmiphy: hdmiphy@145D0000 {
-+		reg = <0x145D0000 0x20>;
-+	};
-+
- 	mixer: mixer@14450000 {
- 		compatible = "samsung,exynos5420-mixer";
- 		reg = <0x14450000 0x10000>;
+>
+> Lorenzo
+>
+>>
+>> > The gist of what I am saying is, please add a comment to that extent,
+>> > here and it should be added in exynos_power_down() too.
+>> >
+>> >> +     __raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 0x1c);
+>> >
+>> > No magic numbers please (0x1c). You can add a macro/wrapper, as TC2 does.
+>>
+>> Yes i will remove it.
+>>
+>> >
+>> >> +     exynos_power_down();
+>> >> +
+>> >> +     /*
+>> >> +      * Execution reaches here only if cpu did not power down.
+>> >> +      * Hence roll back the changes done in exynos_power_down function.
+>> >> +     */
+>> >> +     exynos_cpu_powerup(cpunr);
+>> >
+>> > Please be aware that if this function returns MCPM will soft reboot, and
+>> > the CPUidle driver will have no way to detect a state entry failure.
+>> >
+>> > I am just flagging this up, since fixing this behaviour is not easy, and
+>> > honestly, since power down failure should be the exception not the rule,
+>> > the idle stats should not be affected much.
+>> >
+>> > I think this is the proper way of implementing the sequence but please
+>> > all keep in mind what I wrote above.
+>> >
+>> > Lorenzo
+>> >
+>> >> +}
+>> >> +
+>> >>  static const struct mcpm_platform_ops exynos_power_ops = {
+>> >>       .power_up               = exynos_power_up,
+>> >>       .power_down             = exynos_power_down,
+>> >>       .power_down_finish      = exynos_power_down_finish,
+>> >> +     .suspend                = exynos_suspend,
+>> >> +     .powered_up             = exynos_powered_up,
+>> >>  };
+>> >>
+>> >>  static void __init exynos_mcpm_usage_count_init(void)
+>> >> --
+>> >> 1.7.9.5
+>> >>
+>> >>
+>> >
+>>
+>>
+>>
+>> --
+>> with warm regards,
+>> Chander Kashyap
+>>
+>
+
+
+
 -- 
-1.7.9.5
+with warm regards,
+Chander Kashyap
