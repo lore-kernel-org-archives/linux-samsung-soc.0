@@ -1,40 +1,68 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH] [media] s5p-mfc: Update scratch buffer size for MPEG4
-Date: Wed, 14 May 2014 12:02:39 +0530
-Message-ID: <1400049159-801-1-git-send-email-arun.kk@samsung.com>
+Subject: [PATCH v2 0/4] Add MFCv8 support
+Date: Wed, 14 May 2014 12:16:01 +0530
+Message-ID: <1400049965-1022-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:39329 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751351AbaENGcq (ORCPT
+Received: from mail-pb0-f50.google.com ([209.85.160.50]:43965 "EHLO
+	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751537AbaENGqN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 02:32:46 -0400
+	Wed, 14 May 2014 02:46:13 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, s.nawrocki@samsung.com, arunkk.samsung@gmail.com
+Cc: k.debski@samsung.com, s.nawrocki@samsung.com, posciak@chromium.org, avnd.kiran@samsung.com, arunkk.samsung@gmail.com
 
-Update the MPEG4 decoder scratch buffer size as per the
-new v6 firmware. This updation is increasing the size and so
-is backward compatible with older v6 firmwares.
+This patchset adds MFCv8 support to the s5p-mfc driver.
+MFCv8 has the same operation sequence as that of v6+, but
+there is some shuffling of the registers happened. So to
+re-use the exisiting code, register access uses context
+variables instead of macros.
+The patchset modifies opr_v6 file to use register variables
+and is tested on mfc v5, v6, v7 and v8 based boards.
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
- drivers/media/platform/s5p-mfc/regs-mfc-v6.h |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The patchset is based on the following set of patches
+posted for MFC which are currently under review:
 
-diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v6.h b/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
-index b47567c..fd04f84 100644
---- a/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
-+++ b/drivers/media/platform/s5p-mfc/regs-mfc-v6.h
-@@ -382,8 +382,7 @@
- 	 (DIV_ROUND_UP((mbw) * (mbh), 32) * 16))
- #define S5P_FIMV_SCRATCH_BUF_SIZE_H264_DEC_V6(w, h)	(((w) * 192) + 64)
- #define S5P_FIMV_SCRATCH_BUF_SIZE_MPEG4_DEC_V6(w, h) \
--			((w) * ((h) * 64 + 144) + (2048/16 * (h) * 64) + \
--			 (2048/16 * 256 + 8320))
-+			((w) * 144 + 8192 * (h) + 49216 + 1048576)
- #define S5P_FIMV_SCRATCH_BUF_SIZE_VC1_DEC_V6(w, h) \
- 						(2096 * ((w) + (h) + 1))
- #define S5P_FIMV_SCRATCH_BUF_SIZE_H263_DEC_V6(w, h)	((w) * 400)
+s5p-mfc: Update scratch buffer size for MPEG4
+s5p-mfc: Add support for resolution change event
+v4l: Add source change event
+s5p-mfc: Don't try to resubmit VP8 bitstream buffer for decode.
+s5p-mfc: Update scratch buffer size for VP8 encoder
+s5p-mfc: Dequeue sequence header after STREAMON
+s5p-mfc: Don't allocate codec buffers on STREAMON.
+s5p-mfc: Extract open/close MFC instance commands.
+s5p-mfc: Fixes for decode REQBUFS.
+s5p-mfc: Copy timestamps only when a frame is produced.
+s5p-mfc: add init buffer cmd to MFCV6
+s5p-mfc: Add a control for IVF format for VP8 encoder
+
+Changes from v1
+- Included encoder support for v8 patch
+- Addressed review comments from Kamil & Sachin
+  https://patchwork.linuxtv.org/patch/23770/
+  https://patchwork.linuxtv.org/patch/23768/
+
+Arun Kumar K (1):
+  [media] s5p-mfc: Rename IS_MFCV7 macro
+
+Kiran AVND (3):
+  [media] s5p-mfc: Add variants to access mfc registers
+  [media] s5p-mfc: Core support to add v8 decoder
+  [media] s5p-mfc: Core support for v8 encoder
+
+ .../devicetree/bindings/media/s5p-mfc.txt          |    3 +-
+ drivers/media/platform/s5p-mfc/regs-mfc-v8.h       |  124 +++
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           |   33 +
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h    |    7 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c       |    4 +
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c       |    2 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr.c       |    6 +
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr.h       |  254 ++++++
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c    |  849 +++++++++++++-------
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.h    |    7 +-
+ 10 files changed, 1007 insertions(+), 282 deletions(-)
+ create mode 100644 drivers/media/platform/s5p-mfc/regs-mfc-v8.h
+
 -- 
 1.7.9.5
