@@ -1,106 +1,80 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCHv5 4/5] dt-bindings: add documentation for Exynos3250 clock
- controller
-Date: Thu, 15 May 2014 04:46:48 +0900
-Message-ID: <5373C828.1010804@samsung.com>
-References: <1399986308-23744-1-git-send-email-cw00.choi@samsung.com> <1399986308-23744-5-git-send-email-cw00.choi@samsung.com> <5373C589.9080405@gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 3/5] ARM: dts: enable hdmi for exynos5420 based peach-pit
+ board
+Date: Wed, 14 May 2014 21:50:44 +0200
+Message-ID: <5373C914.1050909@gmail.com>
+References: <1400035562-16832-1-git-send-email-rahul.sharma@samsung.com> <1400035562-16832-4-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:65362 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750962AbaENTq5 (ORCPT
+Received: from mail-ee0-f42.google.com ([74.125.83.42]:48271 "EHLO
+	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751711AbaENTu5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 15:46:57 -0400
-In-Reply-To: <5373C589.9080405@gmail.com>
+	Wed, 14 May 2014 15:50:57 -0400
+In-Reply-To: <1400035562-16832-4-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, kgene.kim@samsung.com, t.figa@samsung.com, Mark Rutland <mark.rutland@arm.com>, Randy Dunlap <rdunlap@infradead.org>, tushar.behera@linaro.org, sajjan.linux@gmail.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, arnd@arndb.de, sachin.kamat@linaro.org, thomas.abraham@linaro.org, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, marc.zyngier@arm.com, inki.dae@samsung.com, Rob Herring <robh+dt@kernel.org>, ben-linux@fluff.org, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, kyungmin.park@samsung.com, Kumar Gala <galak@codeaurora.org>, olof@lixom.net, chanho61.park@samsung.com
+To: Rahul Sharma <rahul.sharma@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
 
-On 05/15/14 04:35, Tomasz Figa wrote:
-> Hi,
->
-> On 13.05.2014 15:05, Chanwoo Choi wrote:
->> The Exynos3250 clocks are statically listed and registered using the
->> Samsung specific common clock helper functions. Both device tree based
->> clock lookup and clkdev based clock lookups are supported.
->>
->> Signed-off-by: Chanwoo Choi<cw00.choi@samsung.com>
->> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
->> Acked-by: Kyungmin Park<kyungmin.park@samsung.com>
->> Cc: Mike Turquette<mturquette@linaro.org>
->> Cc: Kukjin Kim<kgene.kim@samsung.com>
->> Cc: Rob Herring<robh+dt@kernel.org>
->> Cc: Pawel Moll<pawel.moll@arm.com>
->> Cc: Mark Rutland<mark.rutland@arm.com>
->> Cc: Ian Campbell<ijc+devicetree@hellion.org.uk>
->> Cc: Kumar Gala<galak@codeaurora.org>
->> Cc: Randy Dunlap<rdunlap@infradead.org>
->> Cc: Tomasz Figa<t.figa@samsung.com>
->> ---
->>   .../devicetree/bindings/clock/exynos3250-clock.txt | 41 ++++++++++++++++++++++
->>   1 file changed, 41 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/exynos3250-clock.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/exynos3250-clock.txt b/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
->> new file mode 100644
->> index 0000000..aadc9c5
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/exynos3250-clock.txt
->> @@ -0,0 +1,41 @@
->> +* Samsung Exynos3250 Clock Controller
->> +
->> +The Exynos3250 clock controller generates and supplies clock to various
->> +controllers within the Exynos3250 SoC.
->> +
->> +Required Properties:
->> +
->> +- compatible: should be one of the following.
->> +  - "samsung,exynos3250-cmu" - controller compatible with Exynos3250 SoC.
->> +
->> +- reg: physical base address of the controller and length of memory mapped
->> +  region.
->> +
->> +- #clock-cells: should be 1.
->> +
->> +Each clock is assigned an identifier and client nodes can use this identifier
->> +to specify the clock which they consume.
->> +
->> +All available clocks are defined as preprocessor macros in
->> +dt-bindings/clock/exynos3250.h header and can be used in device
->> +tree sources.
->> +
->> +Example 1: An example of a clock controller node is listed below.
->> +
->> +	cmu: clock-controller@10030000 {
->> +		compatible = "samsung,exynos3250-cmu";
->> +		reg =<0x10030000 0x20000>;
->> +		#clock-cells =<1>;
->> +	};
->> +
->> +Example 2: UART controller node that consumes the clock generated by the clock
->> +	   controller. Refer to the standard clock bindings for information
->> +	   about 'clocks' and 'clock-names' property.
->> +
->> +	serial@13800000 {
->> +		compatible = "samsung,exynos4210-uart";
->> +		reg =<0x13800000 0x100>;
->> +		interrupts =<0 109 0>;
->> +		clocks =<&cmu CLK_UART0>,<&cmu CLK_SCLK_UART0>;
->> +		clock-names = "uart", "clk_uart_baud0";
->> +	};
->>
->
-> Oops, I've forgotten to apply this one. Since it doesn't have any
-> dependencies, Kukjin, could you apply it on top of my pull requests with
-> my Ack? Thanks in advance.
->
-> Acked-by: Tomasz Figa<t.figa@samsung.com>
->
-Sure, I will do it on your 4/4 pull-request after pulling it into 
-samsung tree.
+Hi Rahul,
 
-Thanks,
-Kukjin
+On 14.05.2014 04:46, Rahul Sharma wrote:
+> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+> 
+> Enable hdmi for exynos5420 based peach-pit board.
+> 
+> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   19 +++++++++++++++++++
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi  |    7 +++++++
+>  arch/arm/boot/dts/exynos5420.dtsi          |    5 +++++
+>  3 files changed, 31 insertions(+)
+
+[snip]
+
+> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> index ba686e4..fc17797 100644
+> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> @@ -66,6 +66,13 @@
+>  			samsung,pin-pud = <0>;
+>  			samsung,pin-drv = <0>;
+>  		};
+> +
+> +		hdmi_hpd_irq: hdmi-hpd-irq {
+> +			samsung,pins = "gpx3-7";
+> +			samsung,pin-function = <0>;
+> +			samsung,pin-pud = <1>;
+> +			samsung,pin-drv = <0>;
+
+Same comment as for patch 1/5.
+
+> +		};
+>  	};
+>  
+>  	pinctrl@13410000 {
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 016992c..df4422c 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -648,9 +648,14 @@
+>  			 <&clock CLK_MOUT_HDMI>;
+>  		clock-names = "hdmi", "sclk_hdmi", "sclk_pixel",
+>  			"sclk_hdmiphy", "mout_hdmi";
+> +		phy = <&hdmiphy>;
+>  		status = "disabled";
+>  	};
+>  
+> +	hdmiphy: hdmiphy@145D0000 {
+> +		reg = <0x145D0000 0x20>;
+> +	};
+
+Hmm, this doesn't seem like a proper device node and I don't see other
+properties present in exynos5.dtsi either. Are all the necessary patches
+already merged in linux-next?
+
+Best regards,
+Tomasz
