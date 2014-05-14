@@ -1,83 +1,102 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Remove g2d_pd node for exynos5420
-Date: Thu, 15 May 2014 04:09:11 +0900
-Message-ID: <5373BF57.6040109@samsung.com>
-References: <1399972526-20828-1-git-send-email-arun.kk@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f50.google.com ([209.85.160.50]:50410 "EHLO
-	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750906AbaENTJR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 15:09:17 -0400
-Received: by mail-pb0-f50.google.com with SMTP id ma3so2058049pbc.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 12:09:16 -0700 (PDT)
-In-Reply-To: <1399972526-20828-1-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 0/3] phy: Add exynos-simple-phy driver
+Date: Thu, 15 May 2014 00:47:20 +0530
+Message-ID: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com, tushar.behera@linaro.org, shaik.ameer@samsung.com
 
-On 05/13/14 18:15, Arun Kumar K wrote:
-> G2D power domain also controls the CMU block of G2D.
-> Since clock registers can be accessed anytime for viewing
-> clk_summary, it can cause a system crash if g2d power domain
-> is disabled.
->
-> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
-> ---
-> Please also refer to the existing discussion on removal of
-> mau_pd node.
-> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/29718
->
-> This patch also fixes a similar issue of the power domian being
-> linked to the CMU block. AFAIK, only MAU and G2D power domains
-> has this problem in 5420.
->
-> The issue is more critical now with the merging of following
-> patches in Tomasz's clk tree -
-> clk: samsung exynos5250/5420: Add gate clock for SSS module
-> clk: exynos5420: update clocks for G2D and G3D blocks
->
-> With these patches, I get the following crash on kernel booting -
-> [8.971209] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
-> [8.993044] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000007
->
-> For fixing this, either g2d_pd has to be removed or we need to make all
-> GATE clocks touching the GATE_IP_G2D as CLK_IGNORE_UNUSED.
-> I believe removing g2d_pd is the better solution as we get almost the
-> same power saving by gating off these clocks and keeping the domain ON.
-> ---
->   arch/arm/boot/dts/exynos5420.dtsi |    6 ------
->   1 file changed, 6 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 2f6da50..47d3f17 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -242,11 +242,6 @@
->   		reg =<0x100440E0 0x20>;
->   	};
->
-> -	g2d_pd: power-domain@10044100 {
-> -		compatible = "samsung,exynos4210-pd";
-> -		reg =<0x10044100 0x20>;
-> -	};
-> -
->   	msc_pd: power-domain@10044120 {
->   		compatible = "samsung,exynos4210-pd";
->   		reg =<0x10044120 0x20>;
-> @@ -755,6 +750,5 @@
->   		interrupts =<0 112 0>;
->   		clocks =<&clock 471>;
->   		clock-names = "secss";
-> -		samsung,power-domain =<&g2d_pd>;
->   	};
->   };
+From: Rahul Sharma <Rahul.Sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-OK, applied.
+Hi All,
 
-Thanks,
-Kukjin
+This series has been originally proposed by Tomasz Stanislawski. With
+his permission, I have addressed the following review comments in V3.
+
+Changelog:
+v3:
+	* Implement lazy-init of PHYs.
+	* Use MACROs instead of numbers to represent phys.
+	* Use regmap interface to access PMU registers.
+
+It is based on "Next" branch in Kishon Vijay Abraham's tree at
+https://git.kernel.org/cgit/linux/kernel/git/kishon/linux-phy.git/
+
+/* Original Message from Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> */
+
+The Samsung SoCs from Exynos family are enhanced with a bunch of devices that
+provide functionality of a physical layer for interfaces like USB, HDMI, SATA,
+etc. They are controlled by a simple interface, often a single bit that enables
+and/or resets the physical layer.
+
+An IP driver should to control such a controller in an abstract manner.
+Therefore, such 'enablers' were implemented as clocks in older versions of
+Linux kernel.  With the dawn of PHY subsystems, PHYs become a natural way of
+exporting the 'enabler' functionality to drivers.  However, there is an
+unexpected consequence. Some of those 1-bit PHYs were implemented as separate
+drivers.  This means that one has to create a struct device, struct phy, its
+phy provider and 100-150 lines of driver code to basically set one bit.
+
+The DP phy driver is a good example:
+https://lkml.org/lkml/2013/7/18/53
+
+And simple-phy RFC (shares only driver code but not other resources):
+https://lkml.org/lkml/2013/10/21/313
+
+To avoid waste of resources I propose to create all such 1-bit phys from Exynos
+SoC using a single device, driver and phy provider.
+
+This patchset contains a proposed solution.
+
+All comment are welcome.
+
+Hopefully in future the functionality introduced by this patch may be merged
+into a larger Power Management Unit (PMU) gluer driver.  On Samsusng SoC , the
+PMU part contains a number of register barely linked to power management (like
+clock gating, clock dividers, CPU resetting, etc.).  It may be tempting to
+create a hybrid driver that export clocks/phys/etc that are controlled by PMU
+unit.
+
+Alternative solutions might be:
+* exporting a regmap to the IP driver and allow the driver to control the PHY layer
+  like in the patch:
+  http://thread.gmane.org/gmane.linux.kernel.samsung-soc/28617/focus=28648
+
+* create a dedicated power domain for hdmiphy
+
+Regards,
+Tomasz Stanislawski
+
+v2:
+	* rename to exynos-simple-phy
+	* fix usage of devm_ioremap()
+	* add documentation for DT bindings
+	* add patches to client drivers
+
+v1: initial version
+
+Tomasz Stanislawski (3):
+  phy: Add exynos-simple-phy driver
+  drm: exynos: hdmi: use hdmiphy as PHY
+  s5p-tv: hdmi: use hdmiphy as PHY
+
+ .../devicetree/bindings/phy/samsung-phy.txt        |   56 ++++++
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |   11 +-
+ drivers/media/platform/s5p-tv/hdmi_drv.c           |   11 +-
+ drivers/phy/Kconfig                                |    5 +
+ drivers/phy/Makefile                               |    1 +
+ drivers/phy/exynos-simple-phy.c                    |  189 ++++++++++++++++++++
+ include/dt-bindings/phy/exynos-simple-phy.h        |   27 +++
+ 7 files changed, 290 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/phy/exynos-simple-phy.c
+ create mode 100644 include/dt-bindings/phy/exynos-simple-phy.h
+
+-- 
+1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
