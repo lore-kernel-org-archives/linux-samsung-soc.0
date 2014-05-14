@@ -1,106 +1,61 @@
-From: Mike Turquette <mturquette@linaro.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
 Subject: Re: [GIT PULL 1/4] Samsung clock Exynos5260 support for v3.16
-Date: Wed, 14 May 2014 13:13:13 -0700
-Message-ID: <20140514201313.19795.35617@quantum>
-References: <1400090591-5064-1-git-send-email-t.figa@samsung.com>
- <5373CB1A.1040801@samsung.com>
+Date: Wed, 14 May 2014 22:20:14 +0200
+Message-ID: <5373CFFE.1000209@gmail.com>
+References: <1400090591-5064-1-git-send-email-t.figa@samsung.com> <5373CB1A.1040801@samsung.com> <20140514201313.19795.35617@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:36227 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751862AbaENUNU convert rfc822-to-8bit (ORCPT
+Received: from mail-ee0-f47.google.com ([74.125.83.47]:46088 "EHLO
+	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751127AbaENUU1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 16:13:20 -0400
-Received: by mail-pa0-f47.google.com with SMTP id lf10so53880pab.34
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 13:13:19 -0700 (PDT)
-In-Reply-To: <5373CB1A.1040801@samsung.com>
+	Wed, 14 May 2014 16:20:27 -0400
+Received: by mail-ee0-f47.google.com with SMTP id c13so61476eek.34
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 13:20:26 -0700 (PDT)
+In-Reply-To: <20140514201313.19795.35617@quantum>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Quoting Kukjin Kim (2014-05-14 12:59:22)
-> On 05/15/14 03:03, Tomasz Figa wrote:
-> 
-> Hi Mike,
-> 
-> I've talked to Tomasz about current samsung related clock stuff. Since 
-> they are mostly having dependency on samsung tree now not clock core 
-> stuff, so would be better if it could be sent to upstream via samsung 
-> tree. And as you know, updating arch/arm/ and clock stuff are usually 
-> required for adding new SoC or supporting CCF newly...
+Hi Mike,
 
-The Samsung clk pull requests only touch two arch/arm Kconfig files and
-one dtsi file. That's not a lot of arch/arm churn. Is there a strong
-reason that this needs to go through the samsung/arm-soc trees?
-Otherwise it should continue to go through the clk tree.
+On 14.05.2014 22:13, Mike Turquette wrote:
+> Quoting Kukjin Kim (2014-05-14 12:59:22)
+>> On 05/15/14 03:03, Tomasz Figa wrote:
+>>
+>> Hi Mike,
+>>
+>> I've talked to Tomasz about current samsung related clock stuff. Since 
+>> they are mostly having dependency on samsung tree now not clock core 
+>> stuff, so would be better if it could be sent to upstream via samsung 
+>> tree. And as you know, updating arch/arm/ and clock stuff are usually 
+>> required for adding new SoC or supporting CCF newly...
+> 
+> The Samsung clk pull requests only touch two arch/arm Kconfig files and
+> one dtsi file. That's not a lot of arch/arm churn. Is there a strong
+> reason that this needs to go through the samsung/arm-soc trees?
+> Otherwise it should continue to go through the clk tree.
+
+Obviously they are patches for Samsung clock drivers. ;)
+
+The issue here is that there is a number of patches already merged in
+Samsung tree on which the patches discussed here depend.
 
 > 
-> How do you think? Basically I need your agreement for it.
-
-Based on the above pull requests I do not see the need for changing how
-code gets merged.
-
-Regards,
-Mike
-
+>>
+>> How do you think? Basically I need your agreement for it.
 > 
-> Thanks,
-> Kukjin
-> 
-> 
-> > The following changes since commit 2916f9a2c6d9200b4c840a613cd1fa1dad04240f:
-> >
-> >    ARM: S3C24XX: remove SAMSUNG_CLOCK remnants after ccf conversion (2014-05-13 08:00:46 +0900)
-> >
-> > are available in the git repository at:
-> >
-> >    git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git for_3.16/exynos5260
-> >
-> > for you to fetch changes up to d39e55e06371c1ba9d11f4a17a56a0f925d12415:
-> >
-> >    clk/exynos5260: add clock file for exynos5260 (2014-05-14 19:16:55 +0200)
-> >
-> > ----------------------------------------------------------------
-> >
-> > Samsung clock Exynos5260 support for v3.16.
-> >
-> > This pull request contains patches preparing Samsung Common Clock Framework
-> > helpers to support Exynos5260 by adding support for multiple clock providers
-> > and then adding clock driver for Exynos5260.
-> >
-> > ----------------------------------------------------------------
-> > Pankaj Dubey (1):
-> >        clk/samsung: add support for pll2550xx
-> >
-> > Rahul Sharma (4):
-> >        clk/samsung: add support for multiple clock providers
-> >        clk/samsung: add support for pll2650xx
-> >        clk/exynos5260: add macros and documentation for exynos5260
-> >        clk/exynos5260: add clock file for exynos5260
-> >
-> >   .../devicetree/bindings/clock/exynos5260-clock.txt |  190 ++
-> >   drivers/clk/samsung/Makefile                       |    1 +
-> >   drivers/clk/samsung/clk-exynos4.c                  |   47 +-
-> >   drivers/clk/samsung/clk-exynos5250.c               |   25 +-
-> >   drivers/clk/samsung/clk-exynos5260.c               | 1980 ++++++++++++++++++++
-> >   drivers/clk/samsung/clk-exynos5260.h               |  459 +++++
-> >   drivers/clk/samsung/clk-exynos5420.c               |   24 +-
-> >   drivers/clk/samsung/clk-exynos5440.c               |   18 +-
-> >   drivers/clk/samsung/clk-pll.c                      |  223 ++-
-> >   drivers/clk/samsung/clk-pll.h                      |    2 +
-> >   drivers/clk/samsung/clk-s3c2410.c                  |   51 +-
-> >   drivers/clk/samsung/clk-s3c2412.c                  |   29 +-
-> >   drivers/clk/samsung/clk-s3c2443.c                  |   46 +-
-> >   drivers/clk/samsung/clk-s3c64xx.c                  |   44 +-
-> >   drivers/clk/samsung/clk.c                          |  114 +-
-> >   drivers/clk/samsung/clk.h                          |   72 +-
-> >   include/dt-bindings/clock/exynos5260-clk.h         |  469 +++++
-> >   17 files changed, 3589 insertions(+), 205 deletions(-)
-> >   create mode 100644 Documentation/devicetree/bindings/clock/exynos5260-clock.txt
-> >   create mode 100644 drivers/clk/samsung/clk-exynos5260.c
-> >   create mode 100644 drivers/clk/samsung/clk-exynos5260.h
-> >   create mode 100644 include/dt-bindings/clock/exynos5260-clk.h
-> > --
+> Based on the above pull requests I do not see the need for changing how
+> code gets merged.
+
+As long as there are no dependencies on arch code and series being
+applied do not touch arch code, this is perfectly fine. Unfortunately
+this is rarely the case, at least for Samsung platforms and at least for
+now. After we finish with arch clean-up and move all code to appropriate
+subsystems, it should become easier, though.
+
+Best regards,
+Tomasz
