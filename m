@@ -1,61 +1,39 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [GIT PULL 1/4] Samsung clock Exynos5260 support for v3.16
-Date: Wed, 14 May 2014 22:20:14 +0200
-Message-ID: <5373CFFE.1000209@gmail.com>
-References: <1400090591-5064-1-git-send-email-t.figa@samsung.com> <5373CB1A.1040801@samsung.com> <20140514201313.19795.35617@quantum>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 2/3] ARM: dts: Add Exynos5800 dt file
+Date: Thu, 15 May 2014 05:27:41 +0900
+Message-ID: <5373D1BD.10605@samsung.com>
+References: <1399638303-32600-1-git-send-email-arun.kk@samsung.com> <1399638303-32600-3-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f47.google.com ([74.125.83.47]:46088 "EHLO
-	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751127AbaENUU1 (ORCPT
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:40210 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751127AbaENU1r (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 16:20:27 -0400
-Received: by mail-ee0-f47.google.com with SMTP id c13so61476eek.34
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 13:20:26 -0700 (PDT)
-In-Reply-To: <20140514201313.19795.35617@quantum>
+	Wed, 14 May 2014 16:27:47 -0400
+In-Reply-To: <1399638303-32600-3-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com, dianders@chromium.org, alim.akhtar@samsung.com, tomasz.figa@gmail.com, olof@lixom.net, arunkk.samsung@gmail.com
 
-Hi Mike,
+On 05/09/14 21:25, Arun Kumar K wrote:
+> Most of the nodes of exynos5420 remains same for exynos5800.
+> So the exynos5420.dtsi is included in exynos5800 and the changed
+> node properties will be overriden.
+>
+> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
+> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
+> Acked-by: Olof Johansson<olof@lixom.net>
+> ---
+> No changes from v1
+> ---
+>   arch/arm/boot/dts/exynos5800.dtsi |   24 ++++++++++++++++++++++++
+>   1 file changed, 24 insertions(+)
+>   create mode 100644 arch/arm/boot/dts/exynos5800.dtsi
+>
 
-On 14.05.2014 22:13, Mike Turquette wrote:
-> Quoting Kukjin Kim (2014-05-14 12:59:22)
->> On 05/15/14 03:03, Tomasz Figa wrote:
->>
->> Hi Mike,
->>
->> I've talked to Tomasz about current samsung related clock stuff. Since 
->> they are mostly having dependency on samsung tree now not clock core 
->> stuff, so would be better if it could be sent to upstream via samsung 
->> tree. And as you know, updating arch/arm/ and clock stuff are usually 
->> required for adding new SoC or supporting CCF newly...
-> 
-> The Samsung clk pull requests only touch two arch/arm Kconfig files and
-> one dtsi file. That's not a lot of arch/arm churn. Is there a strong
-> reason that this needs to go through the samsung/arm-soc trees?
-> Otherwise it should continue to go through the clk tree.
+Applied, thanks.
 
-Obviously they are patches for Samsung clock drivers. ;)
-
-The issue here is that there is a number of patches already merged in
-Samsung tree on which the patches discussed here depend.
-
-> 
->>
->> How do you think? Basically I need your agreement for it.
-> 
-> Based on the above pull requests I do not see the need for changing how
-> code gets merged.
-
-As long as there are no dependencies on arch code and series being
-applied do not touch arch code, this is perfectly fine. Unfortunately
-this is rarely the case, at least for Samsung platforms and at least for
-now. After we finish with arch clean-up and move all code to appropriate
-subsystems, it should become easier, though.
-
-Best regards,
-Tomasz
+- Kukjin
