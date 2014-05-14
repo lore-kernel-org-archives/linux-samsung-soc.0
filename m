@@ -1,45 +1,66 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v4 7/8] ARM: Exynos: switch to using generic cpufreq-cpu0 driver
-Date: Wed, 14 May 2014 19:33:56 +0530
-Message-ID: <CAJuA9agJg3w6gmYOcB3HKYEHCDMfotQ1htWNscWYL_ONFyFKTQ@mail.gmail.com>
-References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
-	<6835645.2kTGeWTa9p@wuerfel>
-	<CAKohpom_zuQoJ9xABJ2nJGbrubR=_iuE7_EtY6b41mhuhEtMsg@mail.gmail.com>
-	<1480209.xTrtNKOy7N@phil>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH v5 4/6] driver: cpuidle: cpuidle-big-little: init driver
+ for Exynos5420
+Date: Wed, 14 May 2014 15:06:29 +0100
+Message-ID: <20140514140628.GA25241@e102568-lin.cambridge.arm.com>
+References: <ANuQgHGSPJ45tbrVppAVpOqF0OfHacPWfX=S5mOVxTPr66f7vg@mail.gmail.com>
+ <1400054637-21505-1-git-send-email-chander.kashyap@linaro.org>
+ <1400054637-21505-5-git-send-email-chander.kashyap@linaro.org>
+ <5587958.90ud9NuKXm@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:33677 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755383AbaENOD7 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 10:03:59 -0400
-In-Reply-To: <1480209.xTrtNKOy7N@phil>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <5587958.90ud9NuKXm@wuerfel>
+Content-Disposition: inline
+Sender: linux-pm-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chander Kashyap <chander.kashyap@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chander Kashyap <k.chander@samsung.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>
 
-On Wed, May 14, 2014 at 6:41 PM, Heiko St=C3=BCbner <heiko@sntech.de> w=
-rote:
-> Am Mittwoch, 14. Mai 2014, 18:35:29 schrieb Viresh Kumar:
->> On 14 May 2014 18:20, Arnd Bergmann <arnd@arndb.de> wrote:
->> > Could we please come up with a way to probe this from DT in the
->> > cpufreq-cpu0 driver itself, so we don't have to add a device in ev=
-ery
->> > platform using it?
->> Its followed that way because DT Maintainers had strong objections
->> to creating virtual device nodes and haven't allowed creation of nod=
-es
->> for cpufreq drivers.. For which there is no physical device, as CPU =
-already
->> has a separate node..
->
-> as we already have the "enable-method" property for enabling/disablin=
-g cpus,
-> would something like a "scaling-method" be feasible?
->
+On Wed, May 14, 2014 at 02:04:51PM +0100, Arnd Bergmann wrote:
+> On Wednesday 14 May 2014 13:33:55 Chander Kashyap wrote:
+> > 
+> > diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
+> > index 4cd02bd..344d79fa 100644
+> > --- a/drivers/cpuidle/cpuidle-big_little.c
+> > +++ b/drivers/cpuidle/cpuidle-big_little.c
+> > @@ -165,6 +165,7 @@ static int __init bl_idle_driver_init(struct cpuidle_driver *drv, int cpu_id)
+> >  
+> >  static const struct of_device_id compatible_machine_match[] = {
+> >         { .compatible = "arm,vexpress,v2p-ca15_a7" },
+> > +       { .compatible = "samsung,exynos5420" },
+> >         {},
+> >  };
+> 
+> Does the cpuidle-big_little driver actually care about the platform?
 
-"scaling-method" also sounds like a software specific property. Would
-that be something that will be acceptable in dt?
+No, platform specific bits are hidden behind MCPM. Apart from idle states
+data, that will soon be initialized through DT too.
+
+Actually, when idle for arm64 is merged we can even rework it and end up
+with a single driver, DT based, that's the ultimate goal.
+
+> If not, it would be good to add a generic string here as well, for
+> future platforms to match.
+
+Yes, you have a point.
+
+> It still makes sense to list both the generic string and the platform
+> specific one though, in case we have to work around subtle differences.
+
+Agreed, but subtle differences do not belong in this driver, that's the
+purpose of abstracting it the best we can. I have no problem in leaving
+platform specific compatible there though.
+
+Lorenzo
+
+> 
+> 	Arnd
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+
