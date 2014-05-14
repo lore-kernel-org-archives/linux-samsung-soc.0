@@ -1,70 +1,99 @@
-From: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Subject: Re: [PATCH v13 00/19] iommu/exynos: Fixes and Enhancements of System
- MMU driver with DT
-Date: Wed, 14 May 2014 11:27:42 +0530
-Message-ID: <CAOD6ATq4Z77n7jFyNb+H=z4T6eG2CHuzrA1v3EOL+LMiP4MMUQ@mail.gmail.com>
-References: <1399875304-19948-1-git-send-email-shaik.ameer@samsung.com> <20140513172038.GC23770@8bytes.org>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v3 1/2] cpufreq / OPP: Allow boost frequency to be looked
+ up from device tree
+Date: Wed, 14 May 2014 08:09:30 +0200
+Message-ID: <20140514080930.781e0557@amdc2363>
+References: <1400029380-5372-1-git-send-email-thomas.ab@samsung.com>
+ <1400029380-5372-2-git-send-email-thomas.ab@samsung.com>
+ <CAKohponnPSRAotJUu+5a9y8j97QF8Jqgc5DA5WQnwGWCnVY-aA@mail.gmail.com>
+ <CAGo_u6p-uqw82ewDciDEhAt0=Nswfw33-gf8Aa+-6_k3eCcTzw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f181.google.com ([209.85.160.181]:39178 "EHLO
-	mail-yk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750715AbaENF6F (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:33168 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751088AbaENGJk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 01:58:05 -0400
-In-Reply-To: <20140513172038.GC23770@8bytes.org>
+	Wed, 14 May 2014 02:09:40 -0400
+In-reply-to: <CAGo_u6p-uqw82ewDciDEhAt0=Nswfw33-gf8Aa+-6_k3eCcTzw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Prathyush <prathyush.k@samsung.com>, Grant Grundler <grundler@chromium.org>, Tomasz Figa <t.figa@samsung.com>, "supash.ramaswamy" <supash.ramaswamy@linaro.org>, Linux Kernel <linux-kernel@vger.kernel.org>, sunil joshi <joshi@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Varun Sethi <varun.sethi@freescale.com>, Antonios Motakis <a.motakis@virtualopensystems.com>, Cho KyongHo <pullip.cho@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Rahul Sharma <rahul.sharma@samsung.com>
+To: Nishanth Menon <nm@ti.com>, Viresh Kumar <viresh.kumar@linaro.org>, Thomas Abraham <ta.omasab@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <rob.herring@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas P Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, May 13, 2014 at 10:50 PM, Joerg Roedel <joro@8bytes.org> wrote:
-> On Mon, May 12, 2014 at 11:44:45AM +0530, Shaik Ameer Basha wrote:
->> Cho KyongHo (18):
->>   iommu/exynos: fix build errors
->>   iommu/exynos: change error handling when page table update is failed
->>   iommu/exynos: allocate lv2 page table from own slab
->>   iommu/exynos: fix L2TLB invalidation
->>   iommu/exynos: remove prefetch buffer setting
->>   iommu/exynos: add missing cache flush for removed page table entries
->>   iommu/exynos: always enable runtime PM
->>   iommu/exynos: remove dbgname from drvdata of a System MMU
->>   iommu/exynos: use managed device helper functions
->>   iommu/exynos: gating clocks of master H/W
->>   iommu/exynos: remove custom fault handler
->>   iommu/exynos: change rwlock to spinlock
->>   iommu/exynos: use exynos-iommu specific typedef
->>   iommu/exynos: enhanced error messages
->>   documentation: iommu: add binding document of Exynos System MMU
->>   iommu/exynos: support for device tree
->>   iommu/exynos: turn on useful configuration options
->>   iommu/exynos: apply workaround of caching fault page table entries
->>
->>  .../devicetree/bindings/iommu/samsung,sysmmu.txt   |   65 ++
->>  drivers/iommu/exynos-iommu.c                       | 1035 ++++++++++++--------
->>  2 files changed, 677 insertions(+), 423 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/iommu/samsung,sysmmu.txt
->
-> Applied, thanks. Please send another patch to update the documentation
-> as requested by Arnd.
+Hi Nishanth, Viresh
 
-Hi Joerg,
+If I may add my 2 cents.
 
-Thanks for applying the series.
-I posted one patch addressing 'Arnd' comments. Please apply it on top
-of this series.
-        -- documentation/iommu: Add note on existing DT binding status
+> On Tue, May 13, 2014 at 10:40 PM, Viresh Kumar
+> <viresh.kumar@linaro.org> wrote:
+> > On 14 May 2014 06:32, Thomas Abraham <ta.omasab@gmail.com> wrote:
+> [...]
+> >> +#ifdef CONFIG_CPU_FREQ_BOOST_SW
+> >> +       if (of_find_property(dev->of_node, "boost-frequency",
+> >> &len)) {
+> >
+> > Does this mean another block inside the cpu node ? Like this: ?
+> >
+> > cpu@0 {
+> >         compatible = "arm,cortex-a9";
+> >         reg = <0>;
+> >         next-level-cache = <&L2>;
+> >         operating-points = <
+> >                 /* kHz    uV */
+> >                 792000  1100000
+> >                 396000  950000
+> >                 198000  850000
+> >         >;
+> >         boost-frequency = <
+> >                 792000
+> >                 198000
+> >         >;
 
-Regards,
-Shaik
+I think that the above approach is more appealing [*].
+
+> > };
+> >
+> > I think it we might better add another field in the opp block as
+> > these OPPs are rather boost one..
+> 
+> If we change the meaning to be:
+>          operating-points = <
+>                  /* kHz    uV          boost? */
+>                  792000  1100000  1
+>                  396000  950000    0
+> 
+> We are adding a modifier to the OPP definition here and does imply
+> every platform which may or maynot require "boost" need to indicate
+> that - basically fails at least my "least common" description for a
+> generic definition. As I had indicated in other threads -> we are back
+> to the discussion of "additional properties" to an OPP..
+> Option 1:
+>   - describe modifiers separately (as in boost-frequencies) - that
+> operate based on data from opp table.
+> Option 2:
+>   - keep adding to the description of opp as time goes by - every SoC
+> has it's own set of quirks that are needed for an OPP - I know that at
+> TI, we have certain OPPs that can only be enabled *if* "custom
+> hardware driver" is enabled, and similar stories. - yet another
+> example is enable the OPP if efuse X, bit Y is set.
+> 
+> Personally, looking at the various descriptions and bL, cpu-idle
+> states dependencies on OPPs, etc.. Option 2 is a non-scalable
+> approach.
+
+I agree with Nishanth here, that point 1 (as described by Viresh at
+[*]) is a more scalable approach.
+
+> 
+> [...]
 
 
->
->
->         Joerg
->
->
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
