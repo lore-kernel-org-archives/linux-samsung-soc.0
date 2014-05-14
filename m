@@ -1,34 +1,42 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 0/8] cpufreq: use cpufreq-cpu0 driver for exynos based platforms
-Date: Wed, 14 May 2014 14:51:22 +0200
-Message-ID: <7170433.Ah6fefFrHR@wuerfel>
-References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
+Subject: Re: [PATCH v5 4/6] driver: cpuidle: cpuidle-big-little: init driver for Exynos5420
+Date: Wed, 14 May 2014 15:04:51 +0200
+Message-ID: <5587958.90ud9NuKXm@wuerfel>
+References: <ANuQgHGSPJ45tbrVppAVpOqF0OfHacPWfX=S5mOVxTPr66f7vg@mail.gmail.com> <1400054637-21505-1-git-send-email-chander.kashyap@linaro.org> <1400054637-21505-5-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Thomas Abraham <ta.omasab@gmail.com>, cpufreq@vger.kernel.org, devicetree@vger.kernel.org, l.majewski@samsung.com, kgene.kim@samsung.com, mturquette@linaro.org, heiko@sntech.de, viresh.kumar@linaro.org, t.figa@samsung.com, rjw@rjwysocki.net, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, shawn.guo@linaro.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.126.131]:50834 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751674AbaENNFV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 May 2014 09:05:21 -0400
+In-Reply-To: <1400054637-21505-5-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Chander Kashyap <chander.kashyap@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chander Kashyap <k.chander@samsung.com>, lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org, rjw@rjwysocki.net, kgene.kim@samsung.com
 
-On Wednesday 14 May 2014 06:41:08 Thomas Abraham wrote:
+On Wednesday 14 May 2014 13:33:55 Chander Kashyap wrote:
 > 
-> The patch series removes the use of Exynos specific cpufreq driver and enables
-> the use of cpufreq-cpu0 driver for Exynos4210, Exynos4x12 and Exynos5250 based
-> platforms. This is being done for few reasons.
-> 
-> (a) The Exynos cpufreq driver reads/writes clock controller registers
->     bypassing the Exynos CCF driver which is sort of problematic.
-> (b) Removes the need for having clock controller register definitions
->     in the cpufreq driver and also removes the need for statically
->     io-remapping clock controller address space (helps in moving towards
->     multiplatform kernel).
-> 
+> diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
+> index 4cd02bd..344d79fa 100644
+> --- a/drivers/cpuidle/cpuidle-big_little.c
+> +++ b/drivers/cpuidle/cpuidle-big_little.c
+> @@ -165,6 +165,7 @@ static int __init bl_idle_driver_init(struct cpuidle_driver *drv, int cpu_id)
+>  
+>  static const struct of_device_id compatible_machine_match[] = {
+>         { .compatible = "arm,vexpress,v2p-ca15_a7" },
+> +       { .compatible = "samsung,exynos5420" },
+>         {},
+>  };
 
-Thanks a lot for your continued effort. Looks great overall, but I have one
-comment about the general way the cpu0 cpufreq driver works, not specific
-to the exynos implementation. See my reply to patch 4.
+Does the cpuidle-big_little driver actually care about the platform?
+If not, it would be good to add a generic string here as well, for
+future platforms to match.
+
+It still makes sense to list both the generic string and the platform
+specific one though, in case we have to work around subtle differences.
 
 	Arnd
