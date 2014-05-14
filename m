@@ -1,31 +1,35 @@
 From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v4 1/8] cpufreq: cpufreq-cpu0: allow use of optional boost
- mode frequencies
-Date: Wed, 14 May 2014 11:50:42 +0530
-Message-ID: <CAKohpomdjDDBjuPcAsaCcavvVgcX5977gDWyjeqmULadq_Pw8w@mail.gmail.com>
-References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
-	<1400029876-5830-2-git-send-email-thomas.ab@samsung.com>
-	<CAKohpo=-duhJ-4iaqBG+eUCkoV_qwAu93FgUxmYS5erNTpLoMA@mail.gmail.com>
-	<20140514081739.0b66587e@amdc2363>
+Subject: Re: [PATCH v3 1/2] cpufreq / OPP: Allow boost frequency to be looked
+ up from device tree
+Date: Wed, 14 May 2014 11:54:40 +0530
+Message-ID: <CAKohponG9PNse4cHkvfLfaRouW-jxjToBXUCHyOCgx8-Pc=2Xw@mail.gmail.com>
+References: <1400029380-5372-1-git-send-email-thomas.ab@samsung.com>
+	<1400029380-5372-2-git-send-email-thomas.ab@samsung.com>
+	<CAKohponnPSRAotJUu+5a9y8j97QF8Jqgc5DA5WQnwGWCnVY-aA@mail.gmail.com>
+	<CAGo_u6p-uqw82ewDciDEhAt0=Nswfw33-gf8Aa+-6_k3eCcTzw@mail.gmail.com>
+	<20140514080930.781e0557@amdc2363>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:55054 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751735AbaENGUn (ORCPT
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:42900 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750705AbaENGYk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 02:20:43 -0400
-Received: by mail-ob0-f182.google.com with SMTP id wn1so1628439obc.41
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2014 23:20:43 -0700 (PDT)
-In-Reply-To: <20140514081739.0b66587e@amdc2363>
+	Wed, 14 May 2014 02:24:40 -0400
+Received: by mail-oa0-f46.google.com with SMTP id i4so1650686oah.33
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2014 23:24:40 -0700 (PDT)
+In-Reply-To: <20140514080930.781e0557@amdc2363>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Thomas P Abraham <thomas.ab@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Nishanth Menon <nm@ti.com>, Thomas Abraham <ta.omasab@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <rob.herring@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas P Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 14 May 2014 11:47, Lukasz Majewski <l.majewski@samsung.com> wrote:
-> I think that you can rely solely on the CPU_FREQ_BOOST_SW flag if the
-> original author of cpufreq-cpu0.c don't mind.
+On 14 May 2014 11:39, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> I agree with Nishanth here, that point 1 (as described by Viresh at
+> [*]) is a more scalable approach.
 
-We don't have to. struct cpufreq_driver: boost_supported is always available.
-Just update it without any ugly #ifdefs ..
+The only reason why I wanted all that to be done at OPP level was to
+ensure if somebody else also needs it apart from cpufreq, they don't have
+to duplicate code and find it.. As it is present at a central place..
+
+But if no other code is going to look for that, it may just be fine as is..
