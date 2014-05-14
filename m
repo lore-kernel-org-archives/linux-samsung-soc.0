@@ -1,50 +1,47 @@
 From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH 0/2] PM / OPP: move cpufreq specific helpers out of OPP layer
-Date: Tue, 13 May 2014 23:59:01 +0530
-Message-ID: <CAJuA9agOJyQ_2KOoyn=ohVOeO199aVqm_YXtpUVfETQiPk+ZTw@mail.gmail.com>
-References: <1399296830-13056-1-git-send-email-nm@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1399296830-13056-1-git-send-email-nm@ti.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Kevin Hilman <khilman@deeprootsystems.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-omap@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] cpufreq: opp: Add device tree based lookup of boost mode frequency
+Date: Wed, 14 May 2014 06:32:58 +0530
+Message-ID: <1400029380-5372-1-git-send-email-thomas.ab@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:47687 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750750AbaENBDX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 13 May 2014 21:03:23 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: rjw@rjwysocki.net, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com
 
-On Mon, May 5, 2014 at 7:03 PM, Nishanth Menon <nm@ti.com> wrote:
-> CPUFreq usage of OPP should be independent of the ordering of type of
-> data storage inside OPP layer. The current operations can equally be
-> performed by generic operations.
->
-> [RFC]: https://patchwork.kernel.org/patch/4100811/
->
-> Series based on: v3.15-rc1
->
-> Nishanth Menon (2):
->   PM / OPP: Remove cpufreq wrapper dependency on internal data
->     organization
->   PM / OPP: Move cpufreq specific OPP functions out of generic OPP
->     library
->
->  Documentation/cpu-freq/core.txt |   29 +++++++++++
->  Documentation/power/opp.txt     |   40 ++------------
->  drivers/base/power/opp.c        |   91 --------------------------------
->  drivers/cpufreq/Makefile        |    2 +
->  drivers/cpufreq/cpufreq_opp.c   |  110 +++++++++++++++++++++++++++++++++++++++
->  include/linux/cpufreq.h         |   21 ++++++++
->  include/linux/pm_opp.h          |   20 -------
->  7 files changed, 167 insertions(+), 146 deletions(-)
->  create mode 100644 drivers/cpufreq/cpufreq_opp.c
+Changes since v2:
+- Reworked based on the "PM / OPP: move cpufreq specific helpers out of OPP layer"
+  patch series posted by Nishanth Menon <nm@ti.com>.
 
-Works fine on Exynos.
-Tested-by: Thomas Abraham <thomas.ab@samsung.com>
+Changes since v1:
+- Boost mode frequencies are specfied as a set of frequencies instead of
+  specifying them as OPPs. Thanks to Nishanth, Lukasz and Rob for the
+  feedback.
 
->
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Commit 6f19efc0 ("cpufreq: Add boost frequency support in core") adds
+support for CPU boost mode for CPUfreq drivers. To use the new boost
+mode, CPUfreq drivers have to specify the boost mode frequency and
+voltage within the CPUfreq driver, which is the case for Exynos4x12
+CPUfreq driver.
+
+But for CPUfreq drivers which obtain the OPPs from cpus node, this
+patch series adds support to specify boost mode frequencies in the
+cpu device tree node. This requirement came up when Lukasz pointed
+out the regression caused by the Exynos CPUfreq driver consolidation
+patches.
+
+Thomas Abraham (2):
+  cpufreq / OPP: Allow boost frequency to be looked up from device tree
+  Documentation: devicetree: Add boost-frequency binding to list boost mode frequency
+
+ .../devicetree/bindings/cpufreq/cpufreq-boost.txt  |   11 ++++++
+ drivers/cpufreq/cpufreq_opp.c                      |   39 ++++++++++++++++++++
+ 2 files changed, 50 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+
+-- 
+1.7.4.4
