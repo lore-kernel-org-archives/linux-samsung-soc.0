@@ -1,93 +1,69 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH v5 2/2] [media] s5p-mfc: Add support for resolution change
- event
-Date: Wed, 14 May 2014 11:23:04 +0200
-Message-ID: <035501cf6f56$1cbbe420$5633ac60$%debski@samsung.com>
-References: <1400050783-2158-1-git-send-email-arun.kk@samsung.com>
- <1400050783-2158-3-git-send-email-arun.kk@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v5 0/6] add cpuidle support for Exynos5420
+Date: Wed, 14 May 2014 11:56:24 +0200
+Message-ID: <53733DC8.1020608@linaro.org>
+References: <ANuQgHGSPJ45tbrVppAVpOqF0OfHacPWfX=S5mOVxTPr66f7vg@mail.gmail.com> <1400054637-21505-1-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:48684 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753622AbaENJXF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 05:23:05 -0400
-In-reply-to: <1400050783-2158-3-git-send-email-arun.kk@samsung.com>
-Content-language: pl
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1400054637-21505-1-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, kgene.kim@samsung.com, Amit Kucheria <amit.kucheria@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arun Kumar K' <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, posciak@chromium.org, arunkk.samsung@gmail.com
 
-Hi,
+On 05/14/2014 10:03 AM, Chander Kashyap wrote:
+> Exynos5420 is a big-little Soc from Samsung. It has 4 A15 and 4 A7 co=
+res.
+>
+> This patchset adds cpuidle support for Exynos5420 SoC based on
+> generic big.little cpuidle driver.
 
-Thank you for this patch.
+Hi Chander,
 
-> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com] On Behalf Of Arun
-> Kumar K
-> Sent: Wednesday, May 14, 2014 9:00 AM
-> To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
-> Cc: k.debski@samsung.com; s.nawrocki@samsung.com; hverkuil@xs4all.nl;
-> laurent.pinchart@ideasonboard.com; posciak@chromium.org;
-> arunkk.samsung@gmail.com
-> Subject: [PATCH v5 2/2] [media] s5p-mfc: Add support for resolution
-> change event
-> 
-> From: Pawel Osciak <posciak@chromium.org>
-> 
-> When a resolution change point is reached, queue an event to signal the
-> userspace that a new set of buffers is required before decoding can
-> continue.
-> 
-> Signed-off-by: Pawel Osciak <posciak@chromium.org>
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+just a side question. I am not succeeding to have both cluster A7/A15=20
+with the upstream kernel.
 
-Acked-by: Kamil Debski <k.debski@samsung.com>
+How can I test your driver ?
 
-> ---
->  drivers/media/platform/s5p-mfc/s5p_mfc.c     |    8 ++++++++
->  drivers/media/platform/s5p-mfc/s5p_mfc_dec.c |    2 ++
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> index 6b04f17..f3a4576 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> @@ -349,8 +349,16 @@ static void s5p_mfc_handle_frame(struct
-> s5p_mfc_ctx *ctx,
->  	/* All frames remaining in the buffer have been extracted  */
->  	if (dst_frame_status == S5P_FIMV_DEC_STATUS_DECODING_EMPTY) {
->  		if (ctx->state == MFCINST_RES_CHANGE_FLUSH) {
-> +			static const struct v4l2_event ev_src_ch = {
-> +				.type = V4L2_EVENT_SOURCE_CHANGE,
-> +				.u.src_change.changes =
-> +					V4L2_EVENT_SRC_CH_RESOLUTION,
-> +			};
-> +
->  			s5p_mfc_handle_frame_all_extracted(ctx);
->  			ctx->state = MFCINST_RES_CHANGE_END;
-> +			v4l2_event_queue_fh(&ctx->fh, &ev_src_ch);
-> +
->  			goto leave_handle_frame;
->  		} else {
->  			s5p_mfc_handle_frame_all_extracted(ctx);
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> index 4586186..326d8db 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> @@ -851,6 +851,8 @@ static int vidioc_subscribe_event(struct v4l2_fh
-> *fh,
->  	switch (sub->type) {
->  	case V4L2_EVENT_EOS:
->  		return v4l2_event_subscribe(fh, sub, 2, NULL);
-> +	case V4L2_EVENT_SOURCE_CHANGE:
-> +		return v4l2_src_change_event_subscribe(fh, sub);
->  	default:
->  		return -EINVAL;
->  	}
-> --
-> 1.7.9.5
+Did I miss something ?
+
+Thanks
+   -- Daniel
+
+> Tested on SMDK5420.
+>
+> This patch set depends on:
+> 	1. [PATCH 0/5] MCPM backend for Exynos5420
+> 	   http://www.spinics.net/lists/arm-kernel/msg331100.html
+> Changelog is in respective patches.
+> Chander Kashyap (5):
+>    driver: cpuidle-big-little: add of_device_id structure
+>    arm: exynos: add generic function to calculate cpu number
+>    cpuidle: config: Add ARCH_EXYNOS entry to select cpuidle-big-littl=
+e
+>      driver
+>    driver: cpuidle: cpuidle-big-little: init driver for Exynos5420
+>    exynos: cpuidle: do not allow cpuidle registration for Exynos5420
+>    mcpm: exynos: populate suspend and powered_up callbacks
+>
+>   arch/arm/mach-exynos/cpuidle.c       |    3 +++
+>   arch/arm/mach-exynos/mcpm-exynos.c   |   36 +++++++++++++++++++++++=
++++++++++++
+>   arch/arm/mach-exynos/regs-pmu.h      |    9 +++++++++
+>   drivers/cpuidle/Kconfig.arm          |    2 +-
+>   drivers/cpuidle/cpuidle-big_little.c |   12 +++++++++++-
+>   5 files changed, 60 insertions(+), 2 deletions(-)
+>
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
