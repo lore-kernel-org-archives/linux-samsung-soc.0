@@ -1,47 +1,106 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCHv5 5/5] ARM: dts: Add device tree sources for Exynos3250
-Date: Wed, 14 May 2014 21:36:47 +0200
-Message-ID: <5373C5CF.4040002@gmail.com>
-References: <1399986308-23744-1-git-send-email-cw00.choi@samsung.com> <1399986308-23744-6-git-send-email-cw00.choi@samsung.com>
+Subject: Re: [PATCH v4 1/5] ARM: dts: enable hdmi for exynos5250 based snow
+ board
+Date: Wed, 14 May 2014 21:41:11 +0200
+Message-ID: <5373C6D7.8010802@gmail.com>
+References: <1400035562-16832-1-git-send-email-rahul.sharma@samsung.com> <1400035562-16832-2-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f52.google.com ([74.125.83.52]:61384 "EHLO
-	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751107AbaENThB (ORCPT
+Received: from mail-ee0-f51.google.com ([74.125.83.51]:39417 "EHLO
+	mail-ee0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750834AbaENTlY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 15:37:01 -0400
-In-Reply-To: <1399986308-23744-6-git-send-email-cw00.choi@samsung.com>
+	Wed, 14 May 2014 15:41:24 -0400
+In-Reply-To: <1400035562-16832-2-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, kgene.kim@samsung.com, t.figa@samsung.com
-Cc: linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, arnd@arndb.de, olof@lixom.net, marc.zyngier@arm.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, sajjan.linux@gmail.com, tushar.behera@linaro.org, sachin.kamat@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
 
-Hi,
+Hi Rahul,
 
-On 13.05.2014 15:05, Chanwoo Choi wrote:
-> From: Tomasz Figa <t.figa@samsung.com>
+On 14.05.2014 04:45, Rahul Sharma wrote:
+> From: Rahul Sharma <Rahul.Sharma@samsung.com>
 > 
-> This patch add new exynos3250.dtsi to support Exynos3250 SoC based on Cortex-A7
-> dual core and includes following dt nodes:
+> Enable support for HDMI for exynos5250 based Snow board.
 > 
-> - GIC interrupt controller
-> - Pinctrl to control GPIOs
-> - Clock controller
-> - CPU information (Cortex-A7 dual core)
-> - UART to support serial port
-> - MCT (Multi Core Timer)
-> - ADC (Analog Digital Converter)
-> - I2C/SPI bus
-> - Power domain
-> - PMU (Performance Monitoring Unit)
-> - MSHC (Mobile Storage Host Controller)
-> - PWM (Pluse Width Modulation)
-> - AMBA bus
-> - sysram node for SYSRAM memory mapping
+> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250-cros-common.dtsi |    6 +++++-
+>  arch/arm/boot/dts/exynos5250-pinctrl.dtsi     |    7 +++++++
+>  arch/arm/boot/dts/exynos5250-snow.dts         |    7 +++++++
+>  3 files changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250-cros-common.dtsi b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+> index 2c1560d..89ac90f 100644
+> --- a/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+> @@ -240,7 +240,7 @@
+>  		samsung,i2c-sda-delay = <100>;
+>  		samsung,i2c-max-bus-freq = <378000>;
+>  
+> -		hdmiphy@38 {
+> +		hdmiphy: hdmiphy@38 {
+>  			compatible = "samsung,exynos4212-hdmiphy";
+>  			reg = <0x38>;
+>  		};
+> @@ -304,6 +304,10 @@
+>  
+>  	hdmi {
+>  		hpd-gpio = <&gpx3 7 0>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&hdmi_hpd_irq>;
+> +		phy = <&hdmiphy>;
+> +		ddc = <&i2c_2>;
+>  	};
+>  
+>  	gpio-keys {
+> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> index 9a49e68..da3ae66 100644
+> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> @@ -560,6 +560,13 @@
+>  			samsung,pin-pud = <0>;
+>  			samsung,pin-drv = <0>;
+>  		};
+> +
+> +		hdmi_hpd_irq: hdmi-hpd-irq {
+> +			samsung,pins = "gpx3-7";
+> +			samsung,pin-function = <0>;
+> +			samsung,pin-pud = <1>;
+> +			samsung,pin-drv = <0>;
+> +		};
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Based on the fact that this is just being configured as input, I don't
+think this is a generic special function, but rather a board-specific
+GPIO, which should be defined in dts of respective board.
+
+>  	};
+>  
+>  	pinctrl@13400000 {
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+> index 1ce1088..696850a 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -206,4 +206,11 @@
+>  			clock-frequency = <24000000>;
+>  		};
+>  	};
+> +
+> +	hdmi {
+> +		hdmi-en-supply = <&tps65090_fet7>;
+> +		vdd-supply = <&ldo8_reg>;
+> +		vdd_osc-supply = <&ldo10_reg>;
+> +		vdd_pll-supply = <&ldo8_reg>;
+
+Hmm, those regulators don't seem to be listed in
+Documentation/devicetree/bindings/video/exynos_hdmi.txt, at least in
+today's linux-next. The driver seems to use them, though.
+
+This isn't a problem with this patch, but if you're working on this,
+could you also fix the documentation in separate patch?
 
 Best regards,
 Tomasz
