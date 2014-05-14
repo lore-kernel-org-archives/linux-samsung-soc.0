@@ -1,61 +1,100 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH] i2c: s3c2410: resume race fix
-Date: Wed, 14 May 2014 17:59:56 +0200
-Message-ID: <20140514155956.GD12911@katana>
-References: <1397254781-23833-1-git-send-email-dianders@chromium.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cHMo6Wbp1wrKhbfi"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1397254781-23833-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [GIT PULL 2/4] Samsung clock non-critical fixes for v3.16
+Date: Wed, 14 May 2014 20:03:09 +0200
+Message-ID: <1400090591-5064-2-git-send-email-t.figa@samsung.com>
+References: <1400090591-5064-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:17333 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750777AbaENSDg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 May 2014 14:03:36 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N5K0051CSTXFN50@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 May 2014 19:03:33 +0100 (BST)
+In-reply-to: <1400090591-5064-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Tomasz Figa <t.figa@samsung.com>
 
+The following changes since commit d39e55e06371c1ba9d11f4a17a56a0f925d12415:
 
---cHMo6Wbp1wrKhbfi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  clk/exynos5260: add clock file for exynos5260 (2014-05-14 19:16:55 +0200)
 
-On Fri, Apr 11, 2014 at 03:19:41PM -0700, Doug Anderson wrote:
-> From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
->=20
-> Don't unmark the device as suspended until after it's been re-setup.
->=20
-> The main race would be w.r.t. an i2c driver that gets resumed at the same
-> time (asyncronously), that is allowed to do a transfer since suspended
-> is set to 0 before reinit, but really should have seen the -EIO return
-> instead.
->=20
-> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+are available in the git repository at:
 
-Applied to for-current, thanks!
+  git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git for_3.16/clk_fixes_non_critical
 
+for you to fetch changes up to 773424326b51cc851b6e28ff22447ba5fcc5f429:
 
---cHMo6Wbp1wrKhbfi
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+  clk: samsung: exynos5420: add more registers to restore list (2014-05-14 19:40:24 +0200)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
+----------------------------------------------------------------
 
-iQIcBAEBAgAGBQJTc5L8AAoJEBQN5MwUoCm2vFgP/0MjLUA5uWZlKqPPkRI5e+5z
-w3MXFVk/aRvsMro2PRwOca8Q022eL5fCl+E4PUabd4H9VNxQf5RGgcVWQgzzJfrP
-QwHHYXprGH/49cLi2UU2CXiVP0O4W9s4d2nnftx1yxmj+9NenVfI49g2WMbdqeuX
-wu/meeitdyNqTARTnygM8YwRrqF6Q98gi+br8ZAiC6I9lLBojwl+/yIUpvC8JmpM
-bRd4AzkNmpQYcP7tx4J6z11Bg9ycSdcbPYACFVOnc2RImxLoGKVAPwBEwDiirSq/
-sgQxi/c28DYpAjjlAzLig0iPlnHrzNA6I8492H+c7dLuWp/X5O6wsaXShsnz/HRX
-29P3riUf3Q0meQY1V+J06437Cf7KtU4fXmCjl9mfvYs1ahSX0IGOdNxc9NdfOrXs
-yFpOURI+zuI7UizyT3t+i+KOiDt7HbpVlG0EHT4zE2YTObP0Wa8qRmBErVPUExqd
-3iAP9EfUxKEAYIHvAeI5YnTR7hy4dV4Lg4piwUEykgwwtA/hr0dWmL4n7Id3W+ps
-2IXT/XL4/Huq8jFKWBx5iVyEiHdR1QYd1J6i/hI7QgteIK7l2fH06qx4LnXcNbpt
-dl51pfuX5B2zHeJJpSQoP/+LeLHAPs8Kbpy9dqTg4ezEHVY2Ppe0Gx8Q56kLx40a
-8L1dPbOsOZm2vpcNvLB+
-=xQeO
------END PGP SIGNATURE-----
+Samsung clock non-critical fixes for v3.16.
 
---cHMo6Wbp1wrKhbfi--
+This pull requests contains a number of non-critical fixes for Samsung clock
+framework and drivers, including:
+
+1) a series of fixes for Exynos5420 to correct clock definitions and make the
+driver closer to the documentation,
+
+2) several missing clocks and clock IDs added to Exynos4, Exynos5250 and
+Exynos5420 drivers,
+
+3) fix for incorrect initialization of clock table with NULL,
+
+4) compiler warning fix.
+
+----------------------------------------------------------------
+Arun Kumar K (2):
+      clk: samsung: exynos5250: Add clocks for G3D
+      clk: samsung: exynos5420: Add clock IDs needed by GPU
+
+Naveen Krishna Chatradhi (1):
+      clk: samsung: exynos5250/5420: Add gate clock for SSS module
+
+Pankaj Dubey (1):
+      clk: samsung: fixed compiler warning [-Wpointer-to-int-cast]
+
+Sachin Kamat (1):
+      clk: samsung: exynos5420: Fix VPLL lock offset
+
+Shaik Ameer Basha (15):
+      clk: samsung: exynos5420: Rename mux parent arrays
+      clk: samsung: exynos5420: add clocks for ISP block
+      clk: samsung: exynos5420: update clocks for GSCL and MSCL blocks
+      clk: samsung: exynos5420: fix parent clocks for mscl sysmmu
+      clk: samsung: exynos5420: update clocks for G2D and G3D blocks
+      clk: samsung: exynos5420: update clocks for DISP1 block
+      clk: samsung: exynos5420: update clocks for PERIC block
+      clk: samsung: exynos5420: update clocks for PERIS and GEN blocks
+      clk: samsung: exynos5420: update clocks for WCORE block
+      clk: samsung: exynos5420: update clocks for FSYS and FSYS2 blocks
+      clk: samsung: exynos5420: correct sysmmu-mfc parent clocks
+      clk: samsung: exynos5420: fix register offset for sclk_bpll
+      clk: samsung: exynos5420: update clocks for MAU Block
+      clk: samsung: exynos5420: add misc clocks
+      clk: samsung: exynos5420: add more registers to restore list
+
+Sylwester Nawrocki (1):
+      clk: samsung: exynos4: Use single clock ID for CLK_MDMA gate clocks
+
+Tomasz Figa (1):
+      clk: samsung: Initialize clock table with error pointers
+
+Tomasz Stanislawski (1):
+      clk: samsung: exynos4: export sclk_hdmiphy clock
+
+ arch/arm/boot/dts/exynos5420.dtsi      |  14 +-
+ drivers/clk/samsung/clk-exynos4.c      |   4 +-
+ drivers/clk/samsung/clk-exynos5250.c   |  16 +-
+ drivers/clk/samsung/clk-exynos5420.c   | 854 +++++++++++++++++++++------------
+ drivers/clk/samsung/clk.c              |   9 +-
+ include/dt-bindings/clock/exynos4.h    |   2 +-
+ include/dt-bindings/clock/exynos5250.h |   5 +-
+ include/dt-bindings/clock/exynos5420.h |  39 +-
+ 8 files changed, 608 insertions(+), 335 deletions(-)
