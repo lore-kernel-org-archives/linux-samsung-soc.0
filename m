@@ -1,115 +1,106 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
-Date: Wed, 14 May 2014 22:01:49 +0200
-Message-ID: <5373CBAD.2010505@gmail.com>
-References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
- <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [GIT PULL 1/4] Samsung clock Exynos5260 support for v3.16
+Date: Wed, 14 May 2014 13:13:13 -0700
+Message-ID: <20140514201313.19795.35617@quantum>
+References: <1400090591-5064-1-git-send-email-t.figa@samsung.com>
+ <5373CB1A.1040801@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: t.stanislaws@samsung.com, devicetree@vger.kernel.org, kgene.kim@samsung.com, joshi@samsung.com, kishon@ti.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, grant.likely@linaro.org, sylvester.nawrocki@gmail.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:36227 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751862AbaENUNU convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 May 2014 16:13:20 -0400
+Received: by mail-pa0-f47.google.com with SMTP id lf10so53880pab.34
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 13:13:19 -0700 (PDT)
+In-Reply-To: <5373CB1A.1040801@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Rahul, Tomasz,
-
-On 14.05.2014 21:17, Rahul Sharma wrote:
-> From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Quoting Kukjin Kim (2014-05-14 12:59:22)
+> On 05/15/14 03:03, Tomasz Figa wrote:
 > 
-> Add exynos-simple-phy driver to support a single register
-> PHY interfaces present on Exynos4 SoC.
+> Hi Mike,
 > 
-> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
-> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+> I've talked to Tomasz about current samsung related clock stuff. Since 
+> they are mostly having dependency on samsung tree now not clock core 
+> stuff, so would be better if it could be sent to upstream via samsung 
+> tree. And as you know, updating arch/arm/ and clock stuff are usually 
+> required for adding new SoC or supporting CCF newly...
+
+The Samsung clk pull requests only touch two arch/arm Kconfig files and
+one dtsi file. That's not a lot of arch/arm churn. Is there a strong
+reason that this needs to go through the samsung/arm-soc trees?
+Otherwise it should continue to go through the clk tree.
+
 > 
-> ---
->  .../devicetree/bindings/phy/samsung-phy.txt        |   56 ++++++
->  drivers/phy/Kconfig                                |    5 +
->  drivers/phy/Makefile                               |    1 +
->  drivers/phy/exynos-simple-phy.c                    |  189 ++++++++++++++++++++
->  include/dt-bindings/phy/exynos-simple-phy.h        |   27 +++
->  5 files changed, 278 insertions(+)
->  create mode 100644 drivers/phy/exynos-simple-phy.c
->  create mode 100644 include/dt-bindings/phy/exynos-simple-phy.h
+> How do you think? Basically I need your agreement for it.
+
+Based on the above pull requests I do not see the need for changing how
+code gets merged.
+
+Regards,
+Mike
+
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> index 2049261..12ad9cf 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> @@ -161,3 +161,59 @@ Example:
->  		usbdrdphy0 = &usb3_phy0;
->  		usbdrdphy1 = &usb3_phy1;
->  	};
-> +
-> +Samsung S5P/EXYNOS SoC series SIMPLE PHY
-> +-------------------------------------------------
-> +
-> +Required properties:
-> +- compatible : should be one of the listed compatibles:
-> +	- "samsung,exynos4210-simple-phy"
-> +	- "samsung,exynos4412-simple-phy"
-> +	- "samsung,exynos5250-simple-phy"
-> +	- "samsung,exynos5420-simple-phy"
-> +- samsung,pmureg-phandle - handle to syscon to control PMU registers
-> +- #phy-cells : from the generic phy bindings, must be 1;
-> +
-> +For "samsung,exynos4210-simple-phy" compatible PHYs the second cell in
-> +the PHY specifier identifies the PHY and the supported phys for exynos4210
-> +are:
-> +  HDMI_PHY,
-> +  DAC_PHY,
-> +  ADC_PHY,
-> +  PCIE_PHY,
-> +  SATA_PHY.
-> +
-> +For "samsung,exynos4412-simple-phy" compatible PHYs the second cell in
-> +the PHY specifier identifies the PHY and the supported phys for exynos4412
-> +are:
-> +  HDMI_PHY,
-> +  ADC_PHY.
-> +
-> +For "samsung,exynos5250-simple-phy" compatible PHYs the second cell in
-> +the PHY specifier identifies the PHY and the supported phys for exynos5250
-> +are:
-> +  HDMI_PHY,
-> +  ADC_PHY,
-> +  SATA_PHY.
-> +
-> +For "samsung,exynos5420-simple-phy" compatible PHYs the second cell in
-> +the PHY specifier identifies the PHY and the supported phys for exynos5420
-> +are:
-> +  HDMI_PHY,
-> +  ADC_PHY.
-> +
-> +Example:
-> +Simple PHY provider node:
-> +
-> +	simplephys: simple-phys@10040000 {
-> +		compatible = "samsung,exynos5250-simple-phy";
-
-Missing reg property or unnecessary @unit-address suffix in node name.
-
-> +		samsung,pmu-syscon = <&pmu_system_controller>;
-> +		#phy-cells = <1>;
-> +	};
-
-In general, the idea is quite good, but I think this should rather bind
-to the main PMU node, since this is just a part of the PMU, not another
-device in the system. This also means that the PMU node itself should be
-the PHY provider.
-
-Otherwise looks good.
-
-Best regards,
-Tomasz
+> Thanks,
+> Kukjin
+> 
+> 
+> > The following changes since commit 2916f9a2c6d9200b4c840a613cd1fa1dad04240f:
+> >
+> >    ARM: S3C24XX: remove SAMSUNG_CLOCK remnants after ccf conversion (2014-05-13 08:00:46 +0900)
+> >
+> > are available in the git repository at:
+> >
+> >    git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git for_3.16/exynos5260
+> >
+> > for you to fetch changes up to d39e55e06371c1ba9d11f4a17a56a0f925d12415:
+> >
+> >    clk/exynos5260: add clock file for exynos5260 (2014-05-14 19:16:55 +0200)
+> >
+> > ----------------------------------------------------------------
+> >
+> > Samsung clock Exynos5260 support for v3.16.
+> >
+> > This pull request contains patches preparing Samsung Common Clock Framework
+> > helpers to support Exynos5260 by adding support for multiple clock providers
+> > and then adding clock driver for Exynos5260.
+> >
+> > ----------------------------------------------------------------
+> > Pankaj Dubey (1):
+> >        clk/samsung: add support for pll2550xx
+> >
+> > Rahul Sharma (4):
+> >        clk/samsung: add support for multiple clock providers
+> >        clk/samsung: add support for pll2650xx
+> >        clk/exynos5260: add macros and documentation for exynos5260
+> >        clk/exynos5260: add clock file for exynos5260
+> >
+> >   .../devicetree/bindings/clock/exynos5260-clock.txt |  190 ++
+> >   drivers/clk/samsung/Makefile                       |    1 +
+> >   drivers/clk/samsung/clk-exynos4.c                  |   47 +-
+> >   drivers/clk/samsung/clk-exynos5250.c               |   25 +-
+> >   drivers/clk/samsung/clk-exynos5260.c               | 1980 ++++++++++++++++++++
+> >   drivers/clk/samsung/clk-exynos5260.h               |  459 +++++
+> >   drivers/clk/samsung/clk-exynos5420.c               |   24 +-
+> >   drivers/clk/samsung/clk-exynos5440.c               |   18 +-
+> >   drivers/clk/samsung/clk-pll.c                      |  223 ++-
+> >   drivers/clk/samsung/clk-pll.h                      |    2 +
+> >   drivers/clk/samsung/clk-s3c2410.c                  |   51 +-
+> >   drivers/clk/samsung/clk-s3c2412.c                  |   29 +-
+> >   drivers/clk/samsung/clk-s3c2443.c                  |   46 +-
+> >   drivers/clk/samsung/clk-s3c64xx.c                  |   44 +-
+> >   drivers/clk/samsung/clk.c                          |  114 +-
+> >   drivers/clk/samsung/clk.h                          |   72 +-
+> >   include/dt-bindings/clock/exynos5260-clk.h         |  469 +++++
+> >   17 files changed, 3589 insertions(+), 205 deletions(-)
+> >   create mode 100644 Documentation/devicetree/bindings/clock/exynos5260-clock.txt
+> >   create mode 100644 drivers/clk/samsung/clk-exynos5260.c
+> >   create mode 100644 drivers/clk/samsung/clk-exynos5260.h
+> >   create mode 100644 include/dt-bindings/clock/exynos5260-clk.h
+> > --
