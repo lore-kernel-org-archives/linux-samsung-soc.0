@@ -1,72 +1,51 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [GIT PULL 1/4] Samsung clock Exynos5260 support for v3.16
-Date: Wed, 14 May 2014 20:03:08 +0200
-Message-ID: <1400090591-5064-1-git-send-email-t.figa@samsung.com>
+Subject: [GIT PULL 4/4] Samsung clock support for Exynos3250 for v3.16
+Date: Wed, 14 May 2014 20:03:11 +0200
+Message-ID: <1400090591-5064-4-git-send-email-t.figa@samsung.com>
+References: <1400090591-5064-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:11487 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750782AbaENSDg (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:23088 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750810AbaENSDg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 14 May 2014 14:03:36 -0400
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
+ by mailout1.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N5K006XZSTT8340@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 May 2014 19:03:29 +0100 (BST)
+ 17 2011)) with ESMTP id <0N5K00A7ASTV2Q50@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 May 2014 19:03:31 +0100 (BST)
+In-reply-to: <1400090591-5064-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Tomasz Figa <t.figa@samsung.com>
 
-The following changes since commit 2916f9a2c6d9200b4c840a613cd1fa1dad04240f:
+The following changes since commit 3bc0c5a16d65ef2a2edb7326f5b77d6a5bcf08a5:
 
-  ARM: S3C24XX: remove SAMSUNG_CLOCK remnants after ccf conversion (2014-05-13 08:00:46 +0900)
+  drivers: clk: use COMMON_CLK_SAMSUNG for Samsung clock support (2014-05-14 19:41:15 +0200)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git for_3.16/exynos5260
+  git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git for_3.16/exynos3250
 
-for you to fetch changes up to d39e55e06371c1ba9d11f4a17a56a0f925d12415:
+for you to fetch changes up to 2ce16c53422a17c0afea8203dd96ac1e7a142cf9:
 
-  clk/exynos5260: add clock file for exynos5260 (2014-05-14 19:16:55 +0200)
-
-----------------------------------------------------------------
-
-Samsung clock Exynos5260 support for v3.16.
-
-This pull request contains patches preparing Samsung Common Clock Framework
-helpers to support Exynos5260 by adding support for multiple clock providers
-and then adding clock driver for Exynos5260.
+  clk: samsung: exynos3250: Add clocks using common clock framework (2014-05-14 19:41:32 +0200)
 
 ----------------------------------------------------------------
-Pankaj Dubey (1):
-      clk/samsung: add support for pll2550xx
 
-Rahul Sharma (4):
-      clk/samsung: add support for multiple clock providers
-      clk/samsung: add support for pll2650xx
-      clk/exynos5260: add macros and documentation for exynos5260
-      clk/exynos5260: add clock file for exynos5260
+Samsung clock support for Exynos3250 for v3.16.
 
- .../devicetree/bindings/clock/exynos5260-clock.txt |  190 ++
- drivers/clk/samsung/Makefile                       |    1 +
- drivers/clk/samsung/clk-exynos4.c                  |   47 +-
- drivers/clk/samsung/clk-exynos5250.c               |   25 +-
- drivers/clk/samsung/clk-exynos5260.c               | 1980 ++++++++++++++++++++
- drivers/clk/samsung/clk-exynos5260.h               |  459 +++++
- drivers/clk/samsung/clk-exynos5420.c               |   24 +-
- drivers/clk/samsung/clk-exynos5440.c               |   18 +-
- drivers/clk/samsung/clk-pll.c                      |  223 ++-
- drivers/clk/samsung/clk-pll.h                      |    2 +
- drivers/clk/samsung/clk-s3c2410.c                  |   51 +-
- drivers/clk/samsung/clk-s3c2412.c                  |   29 +-
- drivers/clk/samsung/clk-s3c2443.c                  |   46 +-
- drivers/clk/samsung/clk-s3c64xx.c                  |   44 +-
- drivers/clk/samsung/clk.c                          |  114 +-
- drivers/clk/samsung/clk.h                          |   72 +-
- include/dt-bindings/clock/exynos5260-clk.h         |  469 +++++
- 17 files changed, 3589 insertions(+), 205 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/exynos5260-clock.txt
- create mode 100644 drivers/clk/samsung/clk-exynos5260.c
- create mode 100644 drivers/clk/samsung/clk-exynos5260.h
- create mode 100644 include/dt-bindings/clock/exynos5260-clk.h
+This small pull request contains a patch adding clock driver for Exynos3250,
+which depends on previous pull requests in this series.
+
+----------------------------------------------------------------
+Tomasz Figa (1):
+      clk: samsung: exynos3250: Add clocks using common clock framework
+
+ drivers/clk/samsung/Makefile           |   1 +
+ drivers/clk/samsung/clk-exynos3250.c   | 780 +++++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/exynos3250.h | 258 +++++++++++
+ 3 files changed, 1039 insertions(+)
+ create mode 100644 drivers/clk/samsung/clk-exynos3250.c
+ create mode 100644 include/dt-bindings/clock/exynos3250.h
