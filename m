@@ -1,151 +1,225 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: Re: [PATCH v2] [media] s5p-mfc: Dequeue sequence header after STREAMON
-Date: Wed, 14 May 2014 13:40:13 +0530
-Message-ID: <537324E5.3030704@samsung.com>
-References: <1400048996-726-1-git-send-email-arun.kk@samsung.com> <53731693.80002@xs4all.nl>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v5 1/2] [media] v4l: Add source change event
+Date: Wed, 14 May 2014 11:05:53 +0200
+Message-ID: <537331F1.6060405@samsung.com>
+References: <1400050783-2158-1-git-send-email-arun.kk@samsung.com>
+ <1400050783-2158-2-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:62684 "EHLO
-	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751253AbaENIKS (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:43118 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751253AbaENJGD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 04:10:18 -0400
-In-Reply-To: <53731693.80002@xs4all.nl>
+	Wed, 14 May 2014 05:06:03 -0400
+In-reply-to: <1400050783-2158-2-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, s.nawrocki@samsung.com, sachin.kamat@linaro.org, arunkk.samsung@gmail.com
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, k.debski@samsung.com, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, posciak@chromium.org, arunkk.samsung@gmail.com
 
-Hi Hans,
+Hi Arun,
 
-On 05/14/14 12:39, Hans Verkuil wrote:
-> On 05/14/2014 08:29 AM, Arun Kumar K wrote:
->> MFCv6 encoder needs specific minimum number of buffers to
->> be queued in the CAPTURE plane. This minimum number will
->> be known only when the sequence header is generated.
->> So we used to allow STREAMON on the CAPTURE plane only after
->> sequence header is generated and checked with the minimum
->> buffer requirement.
->>
->> But this causes a problem that we call a vb2_buffer_done
->> for the sequence header buffer before doing a STREAON on the
->> CAPTURE plane. 
+On 14/05/14 08:59, Arun Kumar K wrote:
+> This event indicates that the video device has encountered
+> a source parameter change during runtime. This can typically be a
+> resolution change detected by a video decoder OR a format change
+> detected by an input connector.
 > 
-> How could this ever have worked? Buffers aren't queued to the driver until
-> STREAMON is called, and calling vb2_buffer_done for a buffer that is not queued
-> first to the driver will mess up internal data (q->queued_count for one).
+> This needs to be nofified to the userspace and the application may
+> be expected to reallocate buffers before proceeding. The application
+> can subscribe to events on a specific pad or input port which
+> it is interested in.
+> 
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+
+This looks like a nice API enhancement.
+
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+> ---
+>  Documentation/DocBook/media/v4l/vidioc-dqevent.xml |   33 ++++++++++++++++++
+>  .../DocBook/media/v4l/vidioc-subscribe-event.xml   |   20 +++++++++++
+>  drivers/media/v4l2-core/v4l2-event.c               |   36 ++++++++++++++++++++
+>  include/media/v4l2-event.h                         |    4 +++
+>  include/uapi/linux/videodev2.h                     |    8 +++++
+>  5 files changed, 101 insertions(+)
+> 
+> diff --git a/Documentation/DocBook/media/v4l/vidioc-dqevent.xml b/Documentation/DocBook/media/v4l/vidioc-dqevent.xml
+> index 89891ad..820f86e 100644
+> --- a/Documentation/DocBook/media/v4l/vidioc-dqevent.xml
+> +++ b/Documentation/DocBook/media/v4l/vidioc-dqevent.xml
+> @@ -242,6 +242,22 @@
+>        </tgroup>
+>      </table>
+>  
+> +    <table frame="none" pgwide="1" id="v4l2-event-src-change">
+> +      <title>struct <structname>v4l2_event_src_change</structname></title>
+> +      <tgroup cols="3">
+> +	&cs-str;
+> +	<tbody valign="top">
+> +	  <row>
+> +	    <entry>__u32</entry>
+> +	    <entry><structfield>changes</structfield></entry>
+> +	    <entry>
+> +	      A bitmask that tells what has changed. See <xref linkend="src-changes-flags" />.
+> +	    </entry>
+> +	  </row>
+> +	</tbody>
+> +      </tgroup>
+> +    </table>
+> +
+>      <table pgwide="1" frame="none" id="changes-flags">
+>        <title>Changes</title>
+>        <tgroup cols="3">
+> @@ -270,6 +286,23 @@
+>  	</tbody>
+>        </tgroup>
+>      </table>
+> +
+> +    <table pgwide="1" frame="none" id="src-changes-flags">
+> +      <title>Source Changes</title>
+> +      <tgroup cols="3">
+> +	&cs-def;
+> +	<tbody valign="top">
+> +	  <row>
+> +	    <entry><constant>V4L2_EVENT_SRC_CH_RESOLUTION</constant></entry>
+> +	    <entry>0x0001</entry>
+> +	    <entry>This event gets triggered when a resolution change is
+> +	    detected at an input. This can come from an input connector or
+> +	    from a video decoder.
+> +	    </entry>
+> +	  </row>
+> +	</tbody>
+> +      </tgroup>
+> +    </table>
+>    </refsect1>
+>    <refsect1>
+>      &return-value;
+> diff --git a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
+> index 5c70b61..f016254 100644
+> --- a/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
+> +++ b/Documentation/DocBook/media/v4l/vidioc-subscribe-event.xml
+> @@ -155,6 +155,26 @@
+>  	    </entry>
+>  	  </row>
+>  	  <row>
+> +	    <entry><constant>V4L2_EVENT_SOURCE_CHANGE</constant></entry>
+> +	    <entry>5</entry>
+> +	    <entry>
+> +	      <para>This event is triggered when a source parameter change is
+> +	       detected during runtime by the video device. It can be a
+> +	       runtime resolution change triggered by a video decoder or the
+> +	       format change happening on an input connector.
+> +	       This event requires that the <structfield>id</structfield>
+> +	       matches the input index (when used with a video device node)
+> +	       or the pad index (when used with a subdevice node) from which
+> +	       you want to receive events.</para>
+> +
+> +              <para>This event has a &v4l2-event-source-change; associated
+> +	      with it. The <structfield>changes</structfield> bitfield denotes
+> +	      what has changed for the subscribed pad. If multiple events
+> +	      occurred before application could dequeue them, then the changes
+> +	      will have the ORed value of all the events generated.</para>
+> +	    </entry>
+> +	  </row>
+> +	  <row>
+>  	    <entry><constant>V4L2_EVENT_PRIVATE_START</constant></entry>
+>  	    <entry>0x08000000</entry>
+>  	    <entry>Base event number for driver-private events.</entry>
+> diff --git a/drivers/media/v4l2-core/v4l2-event.c b/drivers/media/v4l2-core/v4l2-event.c
+> index 86dcb54..8761aab 100644
+> --- a/drivers/media/v4l2-core/v4l2-event.c
+> +++ b/drivers/media/v4l2-core/v4l2-event.c
+> @@ -318,3 +318,39 @@ int v4l2_event_subdev_unsubscribe(struct v4l2_subdev *sd, struct v4l2_fh *fh,
+>  	return v4l2_event_unsubscribe(fh, sub);
+>  }
+>  EXPORT_SYMBOL_GPL(v4l2_event_subdev_unsubscribe);
+> +
+> +static void v4l2_event_src_replace(struct v4l2_event *old,
+> +				const struct v4l2_event *new)
+> +{
+> +	u32 old_changes = old->u.src_change.changes;
+> +
+> +	old->u.src_change = new->u.src_change;
+> +	old->u.src_change.changes |= old_changes;
+> +}
+> +
+> +static void v4l2_event_src_merge(const struct v4l2_event *old,
+> +				struct v4l2_event *new)
+> +{
+> +	new->u.src_change.changes |= old->u.src_change.changes;
+> +}
+> +
+> +static const struct v4l2_subscribed_event_ops v4l2_event_src_ch_ops = {
+> +	.replace = v4l2_event_src_replace,
+> +	.merge = v4l2_event_src_merge,
+> +};
+> +
+> +int v4l2_src_change_event_subscribe(struct v4l2_fh *fh,
+> +				const struct v4l2_event_subscription *sub)
+> +{
+> +	if (sub->type == V4L2_EVENT_SOURCE_CHANGE)
+> +		return v4l2_event_subscribe(fh, sub, 0, &v4l2_event_src_ch_ops);
+> +	return -EINVAL;
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_src_change_event_subscribe);
+> +
+> +int v4l2_src_change_event_subdev_subscribe(struct v4l2_subdev *sd,
+> +		struct v4l2_fh *fh, struct v4l2_event_subscription *sub)
+> +{
+> +	return v4l2_src_change_event_subscribe(fh, sub);
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_src_change_event_subdev_subscribe);
+> diff --git a/include/media/v4l2-event.h b/include/media/v4l2-event.h
+> index be05d01..1ab9045 100644
+> --- a/include/media/v4l2-event.h
+> +++ b/include/media/v4l2-event.h
+> @@ -132,4 +132,8 @@ int v4l2_event_unsubscribe(struct v4l2_fh *fh,
+>  void v4l2_event_unsubscribe_all(struct v4l2_fh *fh);
+>  int v4l2_event_subdev_unsubscribe(struct v4l2_subdev *sd, struct v4l2_fh *fh,
+>  				  struct v4l2_event_subscription *sub);
+> +int v4l2_src_change_event_subscribe(struct v4l2_fh *fh,
+> +				const struct v4l2_event_subscription *sub);
+> +int v4l2_src_change_event_subdev_subscribe(struct v4l2_subdev *sd,
+> +		struct v4l2_fh *fh, struct v4l2_event_subscription *sub);
+>  #endif /* V4L2_EVENT_H */
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index ea468ee..b923d91 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -1765,6 +1765,7 @@ struct v4l2_streamparm {
+>  #define V4L2_EVENT_EOS				2
+>  #define V4L2_EVENT_CTRL				3
+>  #define V4L2_EVENT_FRAME_SYNC			4
+> +#define V4L2_EVENT_SOURCE_CHANGE		5
+>  #define V4L2_EVENT_PRIVATE_START		0x08000000
+>  
+>  /* Payload for V4L2_EVENT_VSYNC */
+> @@ -1796,12 +1797,19 @@ struct v4l2_event_frame_sync {
+>  	__u32 frame_sequence;
+>  };
+>  
+> +#define V4L2_EVENT_SRC_CH_RESOLUTION		(1 << 0)
+> +
+> +struct v4l2_event_src_change {
+> +	__u32 changes;
+> +};
+> +
+>  struct v4l2_event {
+>  	__u32				type;
+>  	union {
+>  		struct v4l2_event_vsync		vsync;
+>  		struct v4l2_event_ctrl		ctrl;
+>  		struct v4l2_event_frame_sync	frame_sync;
+> +		struct v4l2_event_src_change	src_change;
+>  		__u8				data[64];
+>  	} u;
+>  	__u32				pending;
 > 
 
-This worked till now because __enqueue_in_driver is called first and
-then start_streaming qop is called. In MFCv6, the start_streaming driver
-callback used to wait till sequence header interrupt is received and it
-used to do vb2_buffer_done in that interrupt context. So it happened
-after buffers are enqueued in driver and before completing the vb2_streamon.
 
->> This used to still work fine until this patch
->> was merged -
->> b3379c6 : vb2: only call start_streaming if sufficient buffers are queued
-> 
-> Are you testing with CONFIG_VIDEO_ADV_DEBUG set? If not, you should do so. That
-> will check whether all the vb2 calls are balanced.
-> 
-> BTW, that's a small typo in s5p_mfc_enc.c (search for 'inavlid').
-> 
-
-I got it. Will post a patch fixing them. Thanks for spotting this.
-
->> This problem should also come in earlier MFC firmware versions
->> if the application calls STREAMON on CAPTURE with some delay
->> after doing STREAMON on OUTPUT.
-> 
-> You can also play around with the min_buffers_needed field. My rule-of-thumb is that
-> when start_streaming is called everything should be ready to stream. It is painful
-> for drivers to have to keep track of the 'do I have enough buffers' status.
-> 
-> For that reason I introduced the min_buffers_needed field. What I believe you can
-> do here is to set it initially to a large value, preventing start_streaming from
-> being called, and once you really know the minimum number of buffers that you need
-> it can be updated again to the actual value.
-
-If a large value is kept in min_buffers_needed, there will be some
-unnecessary memory initialization needed for say 16 full HD raw YUV
-buffers when actual needed is only 4. And once the encoding is started,
-updating the min_buffers_needed to actual value doesnt give any
-advantage as nobody checks for it after that.
-So the whole idea is to not enforce a worst case buffer allocation
-requirement beforehand itself. I hope the current scheme of things works
-well for the requirement.
-
-Regards
-Arun
-
-> 
-> I don't know this driver well enough to tell whether that works here or not, but
-> it is worth looking at IMHO.
-> 
-> Regards,
-> 
-> 	Hans
-> 
->> So this patch keeps the header buffer until the other frame
->> buffers are ready and dequeues it just before the first frame
->> is ready.
->>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> ---
->> Changes from v1
->> - Addressed review comments from Sachin
->>   https://patchwork.linuxtv.org/patch/23839/
->> ---
->>  drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    2 ++
->>  drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    |    6 +++++-
->>  2 files changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->> index f5404a6..cc2b96e 100644
->> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->> @@ -523,6 +523,7 @@ struct s5p_mfc_codec_ops {
->>   * @output_state:	state of the output buffers queue
->>   * @src_bufs:		information on allocated source buffers
->>   * @dst_bufs:		information on allocated destination buffers
->> + * @header_mb:		buffer pointer of the encoded sequence header
->>   * @sequence:		counter for the sequence number for v4l2
->>   * @dec_dst_flag:	flags for buffers queued in the hardware
->>   * @dec_src_buf_size:	size of the buffer for source buffers in decoding
->> @@ -607,6 +608,7 @@ struct s5p_mfc_ctx {
->>  	int src_bufs_cnt;
->>  	struct s5p_mfc_buf dst_bufs[MFC_MAX_BUFFERS];
->>  	int dst_bufs_cnt;
->> +	struct s5p_mfc_buf *header_mb;
->>  
->>  	unsigned int sequence;
->>  	unsigned long dec_dst_flag;
->> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
->> index f8c7053..0c8d593e 100644
->> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
->> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
->> @@ -787,7 +787,7 @@ static int enc_post_seq_start(struct s5p_mfc_ctx *ctx)
->>  		ctx->dst_queue_cnt--;
->>  		vb2_set_plane_payload(dst_mb->b, 0,
->>  			s5p_mfc_hw_call(dev->mfc_ops, get_enc_strm_size, dev));
->> -		vb2_buffer_done(dst_mb->b, VB2_BUF_STATE_DONE);
->> +		ctx->header_mb = dst_mb;
->>  		spin_unlock_irqrestore(&dev->irqlock, flags);
->>  	}
->>  
->> @@ -845,6 +845,10 @@ static int enc_post_frame_start(struct s5p_mfc_ctx *ctx)
->>  	unsigned int strm_size;
->>  	unsigned long flags;
->>  
->> +	if (ctx->header_mb) {
->> +		vb2_buffer_done(ctx->header_mb->b, VB2_BUF_STATE_DONE);
->> +		ctx->header_mb = NULL;
->> +	}
->>  	slice_type = s5p_mfc_hw_call(dev->mfc_ops, get_enc_slice_type, dev);
->>  	strm_size = s5p_mfc_hw_call(dev->mfc_ops, get_enc_strm_size, dev);
->>  	mfc_debug(2, "Encoded slice type: %d\n", slice_type);
->>
-> 
+-- 
+Sylwester Nawrocki
+Samsung R&D Institute Poland
