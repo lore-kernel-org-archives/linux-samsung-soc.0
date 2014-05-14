@@ -1,66 +1,72 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [GIT PULL 3/4] Samsung clock clean-up for v3.16
-Date: Wed, 14 May 2014 20:03:10 +0200
-Message-ID: <1400090591-5064-3-git-send-email-t.figa@samsung.com>
-References: <1400090591-5064-1-git-send-email-t.figa@samsung.com>
+Subject: [GIT PULL 1/4] Samsung clock Exynos5260 support for v3.16
+Date: Wed, 14 May 2014 20:03:08 +0200
+Message-ID: <1400090591-5064-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:12787 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750705AbaENSDg (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:11487 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750782AbaENSDg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 14 May 2014 14:03:36 -0400
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
+ by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N5K0068MSTM3E50@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 May 2014 19:03:22 +0100 (BST)
-In-reply-to: <1400090591-5064-1-git-send-email-t.figa@samsung.com>
+ 17 2011)) with ESMTP id <0N5K006XZSTT8340@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 May 2014 19:03:29 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Tomasz Figa <t.figa@samsung.com>
 
-The following changes since commit 773424326b51cc851b6e28ff22447ba5fcc5f429:
+The following changes since commit 2916f9a2c6d9200b4c840a613cd1fa1dad04240f:
 
-  clk: samsung: exynos5420: add more registers to restore list (2014-05-14 19:40:24 +0200)
+  ARM: S3C24XX: remove SAMSUNG_CLOCK remnants after ccf conversion (2014-05-13 08:00:46 +0900)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git for_3.16/clk_cleanup
+  git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git for_3.16/exynos5260
 
-for you to fetch changes up to 3bc0c5a16d65ef2a2edb7326f5b77d6a5bcf08a5:
+for you to fetch changes up to d39e55e06371c1ba9d11f4a17a56a0f925d12415:
 
-  drivers: clk: use COMMON_CLK_SAMSUNG for Samsung clock support (2014-05-14 19:41:15 +0200)
-
-----------------------------------------------------------------
-
-Samsung clock clean-up for v3.16.
-
-This pull requests contains minor clean-up related to Samsung clock support,
-including:
-
-1) move Kconfig entries of Samsung clock drivers to drivers/clk,
-
-2) compile drivers/clk/samsung conditionally when COMMON_CLK_SAMSUNG is
-selected,
-
-3) remove obsolete Kconfig lines after moving s3c24xx to CCF.
+  clk/exynos5260: add clock file for exynos5260 (2014-05-14 19:16:55 +0200)
 
 ----------------------------------------------------------------
-Pankaj Dubey (4):
-      clk: samsung: add new Kconfig for Samsung common clock option
-      ARM: select COMMON_CLK_SAMSUNG for ARCH_EXYNOS and ARCH_S3C64XX
-      ARM: S3C24XX: move S3C24XX clock Kconfig options to Samsung clock Kconfig file
-      drivers: clk: use COMMON_CLK_SAMSUNG for Samsung clock support
 
-Tomasz Figa (1):
-      ARM: S3C24XX: Remove omitted Kconfig selects and conditionals
+Samsung clock Exynos5260 support for v3.16.
 
- .../bindings/clock/samsung,s3c2410-clock.txt       |  2 +-
- arch/arm/Kconfig                                   |  4 +--
- arch/arm/mach-s3c24xx/Kconfig                      | 39 +++-------------------
- drivers/clk/Kconfig                                |  2 ++
- drivers/clk/Makefile                               |  2 +-
- drivers/clk/samsung/Kconfig                        | 26 +++++++++++++++
- 6 files changed, 37 insertions(+), 38 deletions(-)
- create mode 100644 drivers/clk/samsung/Kconfig
+This pull request contains patches preparing Samsung Common Clock Framework
+helpers to support Exynos5260 by adding support for multiple clock providers
+and then adding clock driver for Exynos5260.
+
+----------------------------------------------------------------
+Pankaj Dubey (1):
+      clk/samsung: add support for pll2550xx
+
+Rahul Sharma (4):
+      clk/samsung: add support for multiple clock providers
+      clk/samsung: add support for pll2650xx
+      clk/exynos5260: add macros and documentation for exynos5260
+      clk/exynos5260: add clock file for exynos5260
+
+ .../devicetree/bindings/clock/exynos5260-clock.txt |  190 ++
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos4.c                  |   47 +-
+ drivers/clk/samsung/clk-exynos5250.c               |   25 +-
+ drivers/clk/samsung/clk-exynos5260.c               | 1980 ++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5260.h               |  459 +++++
+ drivers/clk/samsung/clk-exynos5420.c               |   24 +-
+ drivers/clk/samsung/clk-exynos5440.c               |   18 +-
+ drivers/clk/samsung/clk-pll.c                      |  223 ++-
+ drivers/clk/samsung/clk-pll.h                      |    2 +
+ drivers/clk/samsung/clk-s3c2410.c                  |   51 +-
+ drivers/clk/samsung/clk-s3c2412.c                  |   29 +-
+ drivers/clk/samsung/clk-s3c2443.c                  |   46 +-
+ drivers/clk/samsung/clk-s3c64xx.c                  |   44 +-
+ drivers/clk/samsung/clk.c                          |  114 +-
+ drivers/clk/samsung/clk.h                          |   72 +-
+ include/dt-bindings/clock/exynos5260-clk.h         |  469 +++++
+ 17 files changed, 3589 insertions(+), 205 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos5260-clock.txt
+ create mode 100644 drivers/clk/samsung/clk-exynos5260.c
+ create mode 100644 drivers/clk/samsung/clk-exynos5260.h
+ create mode 100644 include/dt-bindings/clock/exynos5260-clk.h
