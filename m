@@ -1,63 +1,101 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH v6 0/5] MCPM backend for Exynos5420
-Date: Wed, 14 May 2014 13:04:17 +0530
-Message-ID: <CAM4voa=6osyXYg_XF=XuGRYmxLDUO+5=-i+cMrNW92fzBZJjfA@mail.gmail.com>
-References: <1399982324-27879-1-git-send-email-a.kesavan@samsung.com>
-	<alpine.LFD.2.11.1405131325060.980@knanqh.ubzr>
-	<CAM4voanvVwj+FuWazTGMHMnM64Cw_qK03D3o=raS43f_zWFfog@mail.gmail.com>
-	<alpine.LFD.2.11.1405140031490.980@knanqh.ubzr>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH] arm: exynos: add generic function to calculate cpu number
+Date: Wed, 14 May 2014 13:31:53 +0530
+Message-ID: <CANuQgHE7=fRd5bOb=Ac2-Wh2WR-g4uxip8APBvcO21LNDN-H6w@mail.gmail.com>
+References: <1398404653-14407-1-git-send-email-chander.kashyap@linaro.org>
+	<CANuQgHGtTFcP1baipTwTTPw_t3JV42nn-Kh4n72_9VRZ8ZwaPA@mail.gmail.com>
+	<CANuQgHGJ98s6c7Y-wJ+xFuiwqZXVziyXZzp7oYDpwU7CGzRTyg@mail.gmail.com>
+	<536C8F0C.9060104@samsung.com>
+	<CANuQgHFYQH6dGDnG_6DkdeL63nhMg8dMjELr2AyecxEP2MM1mQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f53.google.com ([209.85.192.53]:53888 "EHLO
-	mail-qg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751067AbaENHeS (ORCPT
+Received: from mail-oa0-f52.google.com ([209.85.219.52]:59085 "EHLO
+	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751351AbaENIBx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 03:34:18 -0400
-Received: by mail-qg0-f53.google.com with SMTP id f51so2131476qge.26
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 00:34:17 -0700 (PDT)
-In-Reply-To: <alpine.LFD.2.11.1405140031490.980@knanqh.ubzr>
+	Wed, 14 May 2014 04:01:53 -0400
+Received: by mail-oa0-f52.google.com with SMTP id eb12so1751759oac.39
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 01:01:53 -0700 (PDT)
+In-Reply-To: <CANuQgHFYQH6dGDnG_6DkdeL63nhMg8dMjELr2AyecxEP2MM1mQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Thomas P Abraham <thomas.ab@samsung.com>, "inderpal.s@samsung.com" <inderpal.s@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Dave Martin <Dave.Martin@arm.com>, Tomasz Figa <t.figa@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chander Kashyap <k.chander@samsung.com>
 
-Hi Nicolas,
-
-[...]
+On 9 May 2014 14:04, Chander Kashyap <chander.kashyap@linaro.org> wrote:
+> On 9 May 2014 13:47, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Hi Chander,
 >>
->> 1) can't create /sys/devices/system/cpu/cpu//online: nonexistent directory
+>> On 09.05.2014 09:50, Chander Kashyap wrote:
+>>> On 5 May 2014 09:37, Chander Kashyap <chander.kashyap@linaro.org> wrote:
+>>>> On 25 April 2014 11:14, Chander Kashyap <chander.kashyap@linaro.org> wrote:
+>>>>> The address of cpu power registers in pmu is based on cpu number
+>>>>> offsets. This function calculate the same. This is essentially
+>>>>> required in case of multicluster SoC's e.g Exynos5420.
+>>>>>
+>>>>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+>>>>> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+>>>>> ---
+>>>>>  arch/arm/mach-exynos/regs-pmu.h |    9 +++++++++
+>>>>>  1 file changed, 9 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+>>>>> index 4f6a256..217da2e 100644
+>>>>> --- a/arch/arm/mach-exynos/regs-pmu.h
+>>>>> +++ b/arch/arm/mach-exynos/regs-pmu.h
+>>>>> @@ -313,4 +313,13 @@
+>>>>>
+>>>>>  #define EXYNOS5_OPTION_USE_RETENTION                           (1 << 4)
+>>>>>
+>>>>> +#include <asm/cputype.h>
+>>>>> +#define MAX_CPUS_IN_CLUSTER    4
+>>>>> +
+>>>>> +static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
+>>>>> +{
+>>>>> +       return ((MPIDR_AFFINITY_LEVEL(mpidr, 1) * MAX_CPUS_IN_CLUSTER)
+>>>>> +                + MPIDR_AFFINITY_LEVEL(mpidr, 0));
+>>>>> +}
+>>>>> +
+>>>>>  #endif /* __ASM_ARCH_REGS_PMU_H */
+>>>>> --
+>>>>> 1.7.9.5
+>>>>>
+>>>>
+>>>> Kukjin, Can you please have a look.
+>>>>
+>>>>
+>>>>
+>>>> --
+>>>> with warm regards,
+>>>> Chander Kashyap
+>>> Hi Kgene,
+>>> Can you take this patch if no issues with it.
+>>
+>> Is there any user for this function right now? Shouldn't this patch
+>> rather be included as a part of some series that adds actual users of it?
 >
-> What do you get if you do:
+> Hi Tomasz,
+> Exynos5420 patches have dependency on this.
+> Those patches already posted.
 >
-> $ ls -d /sys/devices/system/cpu/cpu?/online
-ls: /sys/devices/system/cpu/cpu//online: No such file or directory
->
-> ?
->
->> 2) sleep: invalid number '.0026736'
->
-> A sufficiently recent coreutils package should have a sleep command that
-> accepts fractional values.  Alternatively you may replace it with
-> usleep:
->
->         usleep $RANDOM
-Looks like my cramfs needs an update, it seems to have old packages.
->
->> For 1) the cpu number is not being appended. if I give a particular
->> cpu in the script then hotplug in/out works fine.
->> For 2) a constant msleep 10 works.
->
-> If you have msleep but not usleep then try:
->
->                 msleep $(($RANDOM / 1000))
-I have msleep present.
->
->> Is it OK for me to modify the script to hotplug in/off a randomly chosed core ?
->
-> No.  They must *all* be hotplugged simultaneously with some random
-> timing.
-OK.
 
-Regards,
-Abhilash
+Please ignore. Sending this with cpuidle patches
+
+>
+>>
+>> Best regards,
+>> Tomasz
+>>
+>
+>
+>
+> --
+> with warm regards,
+> Chander Kashyap
+
+
+
+-- 
+with warm regards,
+Chander Kashyap
