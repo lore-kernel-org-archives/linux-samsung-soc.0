@@ -1,15 +1,13 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: =?UTF-8?q?=5BPATCH=2003/18=5D=20ARM=3A=20dts=3A=20video=3A=20add=20command=20mode=20display=20timing=20DT=20bindings?=
-Date: Wed, 14 May 2014 15:26:50 +0900
-Message-ID: <1400048825-6052-4-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH 08/18] drm/exynos: add TE handler to support MIPI DSI command
+ mode interface
+Date: Wed, 14 May 2014 15:26:55 +0900
+Message-ID: <1400048825-6052-9-git-send-email-yj44.cho@samsung.com>
 References: <1400048825-6052-1-git-send-email-yj44.cho@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:50034 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751181AbaENG1M (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:32063 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751175AbaENG1M (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 14 May 2014 02:27:12 -0400
 In-reply-to: <1400048825-6052-1-git-send-email-yj44.cho@samsung.com>
@@ -18,113 +16,105 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, laurent.pinchart@ideasonboard.com, s.trumtrar@pengutronix.de, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com
 
-This patch adds DT bindings for command mode display timing.
+To support MIPI DSI command mode interface, the panel should generates
+Tearing Effect synchronization signal between MCU and FB to display
+video images.
+And the display controller should trigger to transfer video image at
+this signal.
+So the panel receives the TE IRQ, then calls this handler chains
+to notify it to the display controller.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- .../bindings/video/cmdmode-display-timing.txt      |   64 ++++++++++++=
-++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/video/cmdmode-dis=
-play-timing.txt
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c |   11 +++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h |    7 +++++++
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |    3 +++
+ include/drm/drm_mipi_dsi.h               |    8 ++++++++
+ 4 files changed, 29 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/video/cmdmode-display-ti=
-ming.txt b/Documentation/devicetree/bindings/video/cmdmode-display-timi=
-ng.txt
-new file mode 100644
-index 0000000..7cedfe4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/video/cmdmode-display-timing.tx=
-t
-@@ -0,0 +1,64 @@
-+cmdmode-display-timing bindings
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 485fa26..2567ae0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -509,3 +509,14 @@ int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
+ 
+ 	return -EPERM;
+ }
 +
-+cmdmode-display-timings node
-+--------------------------------
++int exynos_drm_crtc_te_handler(struct drm_crtc *crtc)
++{
++	struct exynos_drm_manager *manager = to_exynos_crtc(crtc)->manager;
++	int ret = 0;
 +
-+required properties:
-+ - none
++	if (manager->ops->te_handler)
++		ret = manager->ops->te_handler(manager);
 +
-+optional properties:
-+ - native-mode: The native mode for the display, in case multiple mode=
-s are
-+		provided. When omitted, assume the first node is the native.
++	return ret;
++}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+index 9f74b10..875d93d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+@@ -36,4 +36,11 @@ void exynos_drm_crtc_plane_disable(struct drm_crtc *crtc, int zpos);
+ int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
+ 					unsigned int out_type);
+ 
++/*
++ * This function calls the crtc device(manager)'s te_handler() callback
++ * to trigger to transfer video image at the tearing effect synchronization
++ * signal.
++ */
++int exynos_drm_crtc_te_handler(struct drm_crtc *crtc);
 +
-+timing subnode
-+--------------
-+
-+required properties:
-+ - clock-frequency: display clock in Hz
-+ - hactive, vactive: display resolution
-+ - cs-setup: clock cycles for the active period of address signal is e=
-nabled
-+		until chip select is enabled.
-+ - wr-setup: clock cycles for the active period of CS signal is enable=
-d until
-+		write signal is enabled.
-+ - wr-active: clock cycles for the active period of CS is enabled.
-+ - wr-hold: clock cycles for the active period of CS is disabled until=
- write
-+		signal is disabled.
-+
-+optional properties:
-+
-+There are different ways of describing the capabilities of a display. =
-The
-+devicetree representation corresponds to the one commonly found in dat=
-asheets
-+for displays. If a display supports multiple signal timings, the nativ=
-e-mode
-+can be specified.
-+
-+The parameters are defined as:
-+
-+  VCLK(internal)  __|=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|_____|=C2=AF=
-=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|_____|=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=
-|_____|=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|_____|=C2=AF=C2=AF
-+                    :            :            :            :          =
-  :
-+  Address Output  --:<XXXXXXXXXXX:XXXXXXXXXXXX:XXXXXXXXXXXX:XXXXXXXXXX=
-XX:XX
-+                    | CS-SETUP+1 |            :            :          =
-  :
-+                    |<---------->|            :            :          =
-  :
-+  Chip Select     =C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=
-=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|____________:____________:________=
-____|=C2=AF=C2=AF
-+                                 | WR-SETUP+1 |            | WR-HOLD+1=
-  |
-+                                 |<---------->|            |<---------=
-->|
-+  Write Enable    =C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=
-=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=
-=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|____________|=C2=AF=C2=AF=C2=
-=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=
-=AF
-+                                              | WR-ACTIVE+1|
-+                                              |<---------->|
-+  Video Data      ----------------------------<XXXXXXXXXXXXXXXXXXXXXXX=
-XX>--
-+
-+Example:
-+
-+	cmdmode-display-timings {
-+		native-mode =3D <&timing0>;
-+		timing0: 1080p24 {
-+			/* 1920x1080p24 */
-+			clock-frequency =3D <52000000>;
-+			hactive =3D <1920>;
-+			vactive =3D <1080>;
-+			cs-setup =3D <0>;
-+			wr-setup =3D <0>;
-+			wr-active =3D <1>;
-+			wr-hold =3D <0>;
-+		};
-+	};
---=20
+ #endif
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index e82e620..54b08d7 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -181,6 +181,8 @@ struct exynos_drm_display {
+  * @win_commit: apply hardware specific overlay data to registers.
+  * @win_enable: enable hardware specific overlay.
+  * @win_disable: disable hardware specific overlay.
++ * @te_handler: trigger to transfer video image at the tearing effect
++ *	synchronization signal if there is a page flip request.
+  */
+ struct exynos_drm_manager;
+ struct exynos_drm_manager_ops {
+@@ -199,6 +201,7 @@ struct exynos_drm_manager_ops {
+ 	void (*win_commit)(struct exynos_drm_manager *mgr, int zpos);
+ 	void (*win_enable)(struct exynos_drm_manager *mgr, int zpos);
+ 	void (*win_disable)(struct exynos_drm_manager *mgr, int zpos);
++	int (*te_handler)(struct exynos_drm_manager *mgr);
+ };
+ 
+ /*
+diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+index 7209df1..f6d4c85 100644
+--- a/include/drm/drm_mipi_dsi.h
++++ b/include/drm/drm_mipi_dsi.h
+@@ -49,6 +49,13 @@ struct mipi_dsi_msg {
+  * @detach: detach DSI device from DSI host
+  * @transfer: send and/or receive DSI packet, return number of received bytes,
+  * 	      or error
++ * @te_handler: call the crtc te_handler() callback from DSI host.
++ *		The panel generates tearing effect synchronization signal
++ *		between MCU and FB to display video images.
++ *		And the display controller should trigger to transfer video
++ *		image at this signal.
++ *		So the panel receives the TE IRQ, then calls this handler
++ *		to notify it to the display controller.
+  */
+ struct mipi_dsi_host_ops {
+ 	int (*attach)(struct mipi_dsi_host *host,
+@@ -57,6 +64,7 @@ struct mipi_dsi_host_ops {
+ 		      struct mipi_dsi_device *dsi);
+ 	ssize_t (*transfer)(struct mipi_dsi_host *host,
+ 			    struct mipi_dsi_msg *msg);
++	int (*te_handler)(struct mipi_dsi_host *host);
+ };
+ 
+ /**
+-- 
 1.7.9.5
