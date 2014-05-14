@@ -1,73 +1,61 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v3 2/2] Documentation: devicetree: Add boost-frequency
- binding to list boost mode frequency
-Date: Wed, 14 May 2014 16:06:03 +0100
-Message-ID: <5373865B.2040205@arm.com>
-References: <1400029380-5372-1-git-send-email-thomas.ab@samsung.com> <1400029380-5372-3-git-send-email-thomas.ab@samsung.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH] i2c: s3c2410: resume race fix
+Date: Wed, 14 May 2014 17:59:56 +0200
+Message-ID: <20140514155956.GD12911@katana>
+References: <1397254781-23833-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:53301 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753082AbaENPGF convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 11:06:05 -0400
-In-Reply-To: <1400029380-5372-3-git-send-email-thomas.ab@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cHMo6Wbp1wrKhbfi"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1397254781-23833-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
 
+--cHMo6Wbp1wrKhbfi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 14/05/14 02:03, Thomas Abraham wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
->
-> Add a new optional boost-frequency binding for specifying the frequencies
-> usable in boost mode.
->
-> Cc: Nishanth Menon <nm@ti.com>
-> Cc: Lukasz Majewski <l.majewski@samsung.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Pawel Moll <pawel.moll@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-> Cc: Kumar Gala <galak@codeaurora.org>
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> ---
->   .../devicetree/bindings/cpufreq/cpufreq-boost.txt  |   11 +++++++++++
->   1 files changed, 11 insertions(+), 0 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
->
-> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
-> new file mode 100644
-> index 0000000..d925e38
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
-> @@ -0,0 +1,11 @@
-> +* Device tree binding for CPU boost frequency (aka over-clocking)
-> +
-> +Certain CPU's can be operated in optional 'boost' mode (or sometimes referred as
-> +overclocking) in which the CPU can operate in frequencies beyond the normal
-> +operating conditions.
-> +
-> +Optional Properties:
-> +- boost-frequency: list of frequencies in KHz to be used only in boost mode.
-> +  This list should be a subset of frequencies listed in "operating-points"
-> +  property. Refer to Documentation/devicetree/bindings/power/opp.txt for
-> +  details about "operating-points" property.
->
+On Fri, Apr 11, 2014 at 03:19:41PM -0700, Doug Anderson wrote:
+> From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+>=20
+> Don't unmark the device as suspended until after it's been re-setup.
+>=20
+> The main race would be w.r.t. an i2c driver that gets resumed at the same
+> time (asyncronously), that is allowed to do a transfer since suspended
+> is set to 0 before reinit, but really should have seen the -EIO return
+> instead.
+>=20
+> Signed-off-by: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-Though I understand the need of it, I think the binding is designed to suffice
-the need of the boost frequency support in cpufreq.
+Applied to for-current, thanks!
 
-Typically SoC would provide characteristics like under-drive(hits performance
-but most energy efficient), nominal(highest sustained performance w/o any
-external constraint like power, thermal) and over-drive(maximum performance but
-not sustainable for long periods)
 
-IMO the binding could represent these unique points on the curve instead.
+--cHMo6Wbp1wrKhbfi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Regards,
-Sudeep
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTc5L8AAoJEBQN5MwUoCm2vFgP/0MjLUA5uWZlKqPPkRI5e+5z
+w3MXFVk/aRvsMro2PRwOca8Q022eL5fCl+E4PUabd4H9VNxQf5RGgcVWQgzzJfrP
+QwHHYXprGH/49cLi2UU2CXiVP0O4W9s4d2nnftx1yxmj+9NenVfI49g2WMbdqeuX
+wu/meeitdyNqTARTnygM8YwRrqF6Q98gi+br8ZAiC6I9lLBojwl+/yIUpvC8JmpM
+bRd4AzkNmpQYcP7tx4J6z11Bg9ycSdcbPYACFVOnc2RImxLoGKVAPwBEwDiirSq/
+sgQxi/c28DYpAjjlAzLig0iPlnHrzNA6I8492H+c7dLuWp/X5O6wsaXShsnz/HRX
+29P3riUf3Q0meQY1V+J06437Cf7KtU4fXmCjl9mfvYs1ahSX0IGOdNxc9NdfOrXs
+yFpOURI+zuI7UizyT3t+i+KOiDt7HbpVlG0EHT4zE2YTObP0Wa8qRmBErVPUExqd
+3iAP9EfUxKEAYIHvAeI5YnTR7hy4dV4Lg4piwUEykgwwtA/hr0dWmL4n7Id3W+ps
+2IXT/XL4/Huq8jFKWBx5iVyEiHdR1QYd1J6i/hI7QgteIK7l2fH06qx4LnXcNbpt
+dl51pfuX5B2zHeJJpSQoP/+LeLHAPs8Kbpy9dqTg4ezEHVY2Ppe0Gx8Q56kLx40a
+8L1dPbOsOZm2vpcNvLB+
+=xQeO
+-----END PGP SIGNATURE-----
+
+--cHMo6Wbp1wrKhbfi--
