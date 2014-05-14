@@ -1,7 +1,7 @@
 From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v6 6/8] ARM: dts: exynos5420-peach-pit: Add Vbus regulator for USB 3.0
-Date: Wed, 14 May 2014 19:31:08 +0530
-Message-ID: <1400076070-12456-7-git-send-email-gautam.vivek@samsung.com>
+Subject: [PATCH v6 2/8] ARM: dts: exynos5420: Enable support for DWC3 controller
+Date: Wed, 14 May 2014 19:31:04 +0530
+Message-ID: <1400076070-12456-3-git-send-email-gautam.vivek@samsung.com>
 References: <1400076070-12456-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1400076070-12456-1-git-send-email-gautam.vivek@samsung.com>
@@ -10,84 +10,66 @@ To: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vge
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org, gregkh@linuxfoundation.org, t.figa@samsung.com, balbi@ti.com, kishon@ti.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add required fixed-regulator for VBUS supply for USB 3.0
-controller phy.
+Add device tree nodes for DWC3 controller present on
+Exynos 5420 SoC, to enable support for USB 3.0.
 
 Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/boot/dts/exynos5420-peach-pit.dts |   46 ++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ arch/arm/boot/dts/exynos5420.dtsi |   34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index fae33dd..8402ec3 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -58,6 +58,28 @@
- 		pinctrl-0 = <&pwm0_out>;
- 		pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 8eebf7f..128829a 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -805,6 +805,23 @@
+ 		samsung,pmureg-phandle = <&pmu_system_controller>;
  	};
-+
-+	usb300_vbus_reg: regulator-usb300 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "P5.0V_USB3CON0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gph0 0 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb300_vbus_en>;
-+		enable-active-high;
-+	};
-+
-+	usb301_vbus_reg: regulator-usb301 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "P5.0V_USB3CON1";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gph0 1 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb301_vbus_en>;
-+		enable-active-high;
-+	};
- };
  
- &pinctrl_0 {
-@@ -76,6 +98,22 @@
++	usbdrd3_0: usb@12000000 {
++		compatible = "samsung,exynos5250-dwusb3";
++		clocks = <&clock CLK_USBD300>;
++		clock-names = "usbdrd30";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		dwc3 {
++			compatible = "snps,dwc3";
++			reg = <0x12000000 0x10000>;
++			interrupts = <0 72 0>;
++			phys = <&usbdrd_phy0 0>, <&usbdrd_phy0 1>;
++			phy-names = "usb2-phy", "usb3-phy";
++		};
++	};
++
+ 	usbdrd_phy0: phy@12100000 {
+ 		compatible = "samsung,exynos5420-usbdrd-phy";
+ 		reg = <0x12100000 0x100>;
+@@ -814,6 +831,23 @@
+ 		#phy-cells = <1>;
  	};
- };
  
-+&pinctrl_3 {
-+	usb300_vbus_en: usb300-vbus-en {
-+		samsung,pins = "gph0-0";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
++	usbdrd3_1: usb@12400000 {
++		compatible = "samsung,exynos5250-dwusb3";
++		clocks = <&clock CLK_USBD301>;
++		clock-names = "usbdrd30";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		dwc3 {
++			compatible = "snps,dwc3";
++			reg = <0x12400000 0x10000>;
++			interrupts = <0 73 0>;
++			phys = <&usbdrd_phy1 0>, <&usbdrd_phy1 1>;
++			phy-names = "usb2-phy", "usb3-phy";
++		};
 +	};
 +
-+	usb301_vbus_en: usb301-vbus-en {
-+		samsung,pins = "gph0-1";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-+
- &rtc {
- 	status = "okay";
- };
-@@ -137,6 +175,14 @@
- 	};
- };
- 
-+&usbdrd3_0 {
-+	vbus-supply = <&usb300_vbus_reg>;
-+};
-+
-+&usbdrd3_1 {
-+	vbus-supply = <&usb301_vbus_reg>;
-+};
-+
- /*
-  * Use longest HW watchdog in SoC (32 seconds) since the hardware
-  * watchdog provides no debugging information (compared to soft/hard
+ 	usbdrd_phy1: phy@12500000 {
+ 		compatible = "samsung,exynos5420-usbdrd-phy";
+ 		reg = <0x12500000 0x100>;
 -- 
 1.7.10.4
