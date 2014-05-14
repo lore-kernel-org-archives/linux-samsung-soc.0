@@ -1,128 +1,100 @@
 From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v3 1/2] cpufreq / OPP: Allow boost frequency to be looked
- up from device tree
-Date: Wed, 14 May 2014 09:10:10 +0530
-Message-ID: <CAKohponnPSRAotJUu+5a9y8j97QF8Jqgc5DA5WQnwGWCnVY-aA@mail.gmail.com>
-References: <1400029380-5372-1-git-send-email-thomas.ab@samsung.com>
-	<1400029380-5372-2-git-send-email-thomas.ab@samsung.com>
+Subject: Re: [PATCH v4 1/8] cpufreq: cpufreq-cpu0: allow use of optional boost
+ mode frequencies
+Date: Wed, 14 May 2014 09:16:46 +0530
+Message-ID: <CAKohpo=-duhJ-4iaqBG+eUCkoV_qwAu93FgUxmYS5erNTpLoMA@mail.gmail.com>
+References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
+	<1400029876-5830-2-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1400029380-5372-2-git-send-email-thomas.ab@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <rob.herring@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Thomas P Abraham <thomas.ab@samsung.com>, Nishanth Menon <nm@ti.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:33875 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753056AbaENDqq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 13 May 2014 23:46:46 -0400
+Received: by mail-oa0-f48.google.com with SMTP id i4so1525685oah.35
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2014 20:46:46 -0700 (PDT)
+In-Reply-To: <1400029876-5830-2-git-send-email-thomas.ab@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <ta.omasab@gmail.com>
+Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Thomas P Abraham <thomas.ab@samsung.com>
 
-On 14 May 2014 06:32, Thomas Abraham <ta.omasab@gmail.com> wrote:
+On 14 May 2014 06:41, Thomas Abraham <ta.omasab@gmail.com> wrote:
 > From: Thomas Abraham <thomas.ab@samsung.com>
 >
-> Commit 6f19efc0 ("cpufreq: Add boost frequency support in core") adds
-> support for CPU boost mode. This patch adds support for finding available
-> boost frequencies from device tree and marking them as usable in boost mode.
+> Lookup for the optional boost-frequency property in cpu0 node and if
+> available, enable support for boost mode frequencies. The frequencies
+> usable in boost mode are determined while preparing the cpufreq table
+> from the list of operating points available.
 >
-> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Shawn Guo <shawn.guo@linaro.org>
 > Cc: Lukasz Majewski <l.majewski@samsung.com>
 > Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 > ---
->  drivers/cpufreq/cpufreq_opp.c |   39 +++++++++++++++++++++++++++++++++++++++
->  1 files changed, 39 insertions(+), 0 deletions(-)
+>  .../devicetree/bindings/cpufreq/cpufreq-cpu0.txt   |    2 ++
+>  drivers/cpufreq/Kconfig                            |   11 +++++++++++
+>  drivers/cpufreq/cpufreq-cpu0.c                     |    5 +++++
+>  3 files changed, 18 insertions(+), 0 deletions(-)
 >
-> diff --git a/drivers/cpufreq/cpufreq_opp.c b/drivers/cpufreq/cpufreq_opp.c
-> index c0c6f4a..e3c97f3 100644
-> --- a/drivers/cpufreq/cpufreq_opp.c
-> +++ b/drivers/cpufreq/cpufreq_opp.c
-> @@ -19,6 +19,7 @@
->  #include <linux/pm_opp.h>
->  #include <linux/rcupdate.h>
->  #include <linux/slab.h>
-> +#include <linux/of.h>
+> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> index f055515..60f321a 100644
+> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> @@ -19,6 +19,8 @@ Optional properties:
+>  - cooling-min-level:
+>  - cooling-max-level:
+>       Please refer to Documentation/devicetree/bindings/thermal/thermal.txt.
+> +- boost-frequency:
+> +     Please refer to Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
 >
->  /**
->   * dev_pm_opp_init_cpufreq_table() - create a cpufreq table for a device
-> @@ -51,6 +52,10 @@ int dev_pm_opp_init_cpufreq_table(struct device *dev,
->         struct cpufreq_frequency_table *freq_table = NULL;
->         int i, max_opps, ret = 0;
->         unsigned long rate;
-> +#ifdef CONFIG_CPU_FREQ_BOOST_SW
-> +       int j, len;
-> +       u32 *boost_freqs = NULL;
-> +#endif
+>  Examples:
 >
->         rcu_read_lock();
+> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+> index 1fbe11f..0ca4485 100644
+> --- a/drivers/cpufreq/Kconfig
+> +++ b/drivers/cpufreq/Kconfig
+> @@ -194,6 +194,17 @@ config GENERIC_CPUFREQ_CPU0
 >
-> @@ -82,6 +87,40 @@ int dev_pm_opp_init_cpufreq_table(struct device *dev,
+>           If in doubt, say N.
 >
->         *table = &freq_table[0];
->
-> +#ifdef CONFIG_CPU_FREQ_BOOST_SW
-> +       if (of_find_property(dev->of_node, "boost-frequency", &len)) {
+> +config GENERIC_CPUFREQ_CPU0_BOOST
 
-Does this mean another block inside the cpu node ? Like this: ?
+Get rid of this.. just not required.
 
-cpu@0 {
-        compatible = "arm,cortex-a9";
-        reg = <0>;
-        next-level-cache = <&L2>;
-        operating-points = <
-                /* kHz    uV */
-                792000  1100000
-                396000  950000
-                198000  850000
-        >;
-        boost-frequency = <
-                792000
-                198000
-        >;
-};
-
-I think it we might better add another field in the opp block as these
-OPPs are rather boost one..
-
-@Rob/Rafael: Opinion please ..
-
-> +               if (len == 0 || (len & (sizeof(u32) - 1)) != 0) {
-> +                       dev_err(dev, "%s: invalid boost frequency\n", __func__);
-> +                       ret = -EINVAL;
-> +                       goto out;
-> +               }
+> +       bool "Boost frequency support for generic CPU0 cpufreq driver"
+> +       depends on GENERIC_CPUFREQ_CPU0
+> +       select CPU_FREQ_BOOST_SW
+> +       help
+> +         This enables support for software managed overclocking (BOOST). It
+> +         allows usage of special frequencies (those beyond the normal operating
+> +         frequencies).
 > +
-> +               boost_freqs = kzalloc(len, GFP_KERNEL);
-> +               if (!boost_freqs) {
-> +                       dev_warn(dev, "%s: no memory for boost freq table\n",
-> +                                       __func__);
-> +                       ret = -ENOMEM;
-> +                       goto out;
-> +               }
-> +               of_property_read_u32_array(dev->of_node, "boost-frequency",
-> +                       boost_freqs, len / sizeof(u32));
-> +       }
+> +         If in doubt, say N.
 > +
-> +       for (j = 0; j < len / sizeof(u32) && boost_freqs; j++) {
+>  menu "x86 CPU frequency scaling drivers"
+>  depends on X86
+>  source "drivers/cpufreq/Kconfig.x86"
+> diff --git a/drivers/cpufreq/cpufreq-cpu0.c b/drivers/cpufreq/cpufreq-cpu0.c
+> index 1bf6bba..e6c21a8 100644
+> --- a/drivers/cpufreq/cpufreq-cpu0.c
+> +++ b/drivers/cpufreq/cpufreq-cpu0.c
+> @@ -194,6 +194,11 @@ static int cpu0_cpufreq_probe(struct platform_device *pdev)
+>                         transition_latency += ret * 1000;
+>         }
+>
+> +#ifdef CONFIG_GENERIC_CPUFREQ_CPU0_BOOST
+> +       if (of_find_property(cpu_dev->of_node, "boost-frequency", NULL))
 
-Why is this present outside of above if {} ? as boost_freqs is guaranteed to
-be NULL without that.
+Lets see what happens to the other thread for this.
 
-> +               for (i = 0; freq_table[i].frequency != CPUFREQ_TABLE_END; i++) {
-> +                       if (boost_freqs[j] == freq_table[i].frequency) {
-
-Use cpufreq_frequency_table_get_index() instead.
-
-> +                               freq_table[i].flags |= CPUFREQ_BOOST_FREQ;
-> +                               break;
-> +                       }
-> +               }
-> +               if (freq_table[i].frequency == CPUFREQ_TABLE_END)
-> +                       pr_err("%s: invalid boost frequency %d\n",
-> +                               __func__, boost_freqs[j]);
-> +       }
-> +
-> +       kfree(boost_freqs);
+> +               cpu0_cpufreq_driver.boost_supported = true;
 > +#endif
 > +
->  out:
->         rcu_read_unlock();
->         if (ret)
+>         ret = cpufreq_register_driver(&cpu0_cpufreq_driver);
+>         if (ret) {
+>                 pr_err("failed register driver: %d\n", ret);
 > --
 > 1.7.4.4
 >
