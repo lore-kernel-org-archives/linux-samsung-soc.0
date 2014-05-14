@@ -1,100 +1,66 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: [PATCH v6 5/5] arm: exynos: Add MCPM call-back functions
-Date: Tue, 13 May 2014 23:02:23 -0400 (EDT)
-Message-ID: <alpine.LFD.2.11.1405132301360.980@knanqh.ubzr>
-References: <1399982324-27879-1-git-send-email-a.kesavan@samsung.com> <1399982324-27879-6-git-send-email-a.kesavan@samsung.com> <20140513164845.GA10210@red-moon> <CAM4voamY+nM3eoJWfR=0VBDtbf6wan-2awRaALN=ym9gGC_DYg@mail.gmail.com>
- <CANuQgHES4O=mWjVVY5=6KwSee-TzL8HdTFhfr-VGu=d9GS-ZWQ@mail.gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH v3 1/2] ARM: EXYNOS: Map SYSRAM through generic SRAM bindings
+Date: Wed, 14 May 2014 08:44:35 +0530
+Message-ID: <5372DF9B.4000700@linaro.org>
+References: <1399522592-23618-1-git-send-email-sachin.kamat@linaro.org>	 <536BAE39.70504@samsung.com> <034b01cf6b2c$5b5d06b0$12171410$@samsung.com>	 <536C5E40.90405@gmail.com> <029b01cf6e59$35a452e0$a0ecf8a0$@samsung.com> <1399975674.24871.19.camel@x220>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f47.google.com ([209.85.192.47]:45521 "EHLO
-	mail-qg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751679AbaENDCb (ORCPT
+Received: from mail-pb0-f42.google.com ([209.85.160.42]:49197 "EHLO
+	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752588AbaENDOq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 May 2014 23:02:31 -0400
-Received: by mail-qg0-f47.google.com with SMTP id j107so1850977qga.34
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2014 20:02:30 -0700 (PDT)
-In-Reply-To: <CANuQgHES4O=mWjVVY5=6KwSee-TzL8HdTFhfr-VGu=d9GS-ZWQ@mail.gmail.com>
+	Tue, 13 May 2014 23:14:46 -0400
+Received: by mail-pb0-f42.google.com with SMTP id md12so708723pbc.29
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2014 20:14:45 -0700 (PDT)
+In-Reply-To: <1399975674.24871.19.camel@x220>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "abrestic@chromium.org" <abrestic@chromium.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "inderpal.s@samsung.com" <inderpal.s@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "t.figa@samsung.com" <t.figa@samsung.com>
+To: Paul Bolle <pebolle@tiscali.nl>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, robh+dt@kernel.org, arnd@arndb.de, heiko@sntech.de, linux-arm-kernel@lists.infradead.org
 
-On Wed, 14 May 2014, Chander Kashyap wrote:
-
-> On 14 May 2014 08:14, Abhilash Kesavan <kesavan.abhilash@gmail.com> wrote:
-> > Hi Lorenzo,
-> >
-> > On Tue, May 13, 2014 at 10:18 PM, Lorenzo Pieralisi
-> > <lorenzo.pieralisi@arm.com> wrote:
-> >> On Tue, May 13, 2014 at 12:58:44PM +0100, Abhilash Kesavan wrote:
-> >>
-> >> [...]
-> >>
-> >>> +static int __init exynos_mcpm_init(void)
-> >>> +{
-> >>> +       struct device_node *node;
-> >>> +       int ret = 0;
-> >>
-> >> There is no point in initializing it to 0.
-> > OK.
-> >>
-> >>> +
-> >>> +       node = of_find_compatible_node(NULL, NULL, "samsung,exynos5420");
-> >>> +       if (!node)
-> >>> +               return -ENODEV;
-> >>> +       of_node_put(node);
-> >>> +
-> >>> +       if (!cci_probed())
-> >>> +               return -ENODEV;
-> >>> +
-> >>> +       node = of_find_compatible_node(NULL, NULL,
-> >>> +                       "samsung,exynos4210-sysram-ns");
-> >>> +       if (!node)
-> >>> +               return -ENODEV;
-> >>> +
-> >>> +       ns_sram_base_addr = of_iomap(node, 0);
-> >>> +       of_node_put(node);
-> >>> +       if (!ns_sram_base_addr) {
-> >>> +               pr_err("failed to map non-secure iRAM base address\n");
-> >>> +               return -ENOMEM;
-> >>> +       }
-> >>> +
-> >>> +       /*
-> >>> +        * To increase the stability of KFC reset we need to program
-> >>> +        * the PMU SPARE3 register
-> >>> +        */
-> >>> +       __raw_writel(EXYNOS5420_SWRESET_KFC_SEL, S5P_PMU_SPARE3);
-> >>> +
-> >>> +       exynos_mcpm_usage_count_init();
-> >>> +
-> >>> +       ret = mcpm_platform_register(&exynos_power_ops);
-> >>> +       if (!ret)
-> >>> +               ret = mcpm_sync_init(exynos_pm_power_up_setup);
-> >>> +       if (ret) {
-> >>> +               iounmap(ns_sram_base_addr);
-> >>> +               return ret;
-> >>> +       }
-> >>> +
-> >>> +       mcpm_smp_set_ops();
-> >>> +
-> >>> +       pr_info("Exynos MCPM support installed\n");
-> >>> +
-> >>> +       /*
-> >>> +        * Future entries into the kernel can now go
-> >>> +        * through the cluster entry vectors.
-> >>> +        */
-> >>> +       __raw_writel(virt_to_phys(mcpm_entry_point),
-> >>> +                       ns_sram_base_addr + MCPM_BOOT_ADDR_OFFSET);
-> >>> +
-> >>
-> >> ns_sram_base_addr must be unmapped, since it is unused after the write.
-> > Will unmap.
+On 05/13/2014 03:37 PM, Paul Bolle wrote:
+> Kukjin,
 > 
-> This mapping is required in for cpuilde (suspend) to program
-> mcpm_entry before going to suspend.
+> On Tue, 2014-05-13 at 12:12 +0900, Kukjin Kim wrote:
+>> Tomasz Figa wrote:
+>>> You mean s/sram/sysram/ in compatible strings of Exynos-specific
+>>> reserved areas? If yes, I'm fine, it might be even better. Just remember
+>>> to update documentation in patch 2/2 as well.
+>>>
+>> Done. If any problems in my tree, please let me know.
+> 
+> It seems this one just hit linux-next (in next-20140513) as "ARM:
+> EXYNOS: Map SYSRAM through generic DT bindings". Its commit now contains
+> this hunk:
+>     --- a/arch/arm/Kconfig
+>     +++ b/arch/arm/Kconfig
+>     @@ -843,6 +843,7 @@ config ARCH_EXYNOS
+>             select HAVE_S3C_RTC if RTC_CLASS
+>             select NEED_MACH_MEMORY_H
+>             select SPARSE_IRQ
+>     +       select SYSRAM
+>             select USE_OF
+>             help
+>               Support for SAMSUNG's EXYNOS SoCs (EXYNOS4/5)
+> 
+> But there's no Kconfig symbol SYSRAM. However, there is a Kconfig symbol
+> SRAM. Did you perhaps do one s/sram/sysram/ too many on the original
+> patch?
+> 
 
-Why?
+Also the compatible string name should be 'mmio-sram' on the DTS files.
+
+> 
+> Paul Bolle
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
 
-Nicolas
+-- 
+Tushar Behera
