@@ -1,39 +1,47 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2 3/3] ARM: dts: Add peach-pi board support
-Date: Thu, 15 May 2014 05:28:17 +0900
-Message-ID: <5373D1E1.4070407@samsung.com>
-References: <1399638303-32600-1-git-send-email-arun.kk@samsung.com> <1399638303-32600-4-git-send-email-arun.kk@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: exynos5420: Add 5800 specific clocks
+Date: Wed, 14 May 2014 22:46:00 +0200
+Message-ID: <5373D608.5020404@gmail.com>
+References: <1399638303-32600-1-git-send-email-arun.kk@samsung.com> <1399638303-32600-2-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f54.google.com ([209.85.160.54]:58558 "EHLO
-	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751378AbaENU2W (ORCPT
+Received: from mail-ee0-f49.google.com ([74.125.83.49]:49498 "EHLO
+	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751173AbaENUqN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 May 2014 16:28:22 -0400
-In-Reply-To: <1399638303-32600-4-git-send-email-arun.kk@samsung.com>
+	Wed, 14 May 2014 16:46:13 -0400
+In-Reply-To: <1399638303-32600-2-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com, dianders@chromium.org, alim.akhtar@samsung.com, tomasz.figa@gmail.com, olof@lixom.net, arunkk.samsung@gmail.com
+To: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, dianders@chromium.org, alim.akhtar@samsung.com, olof@lixom.net, arunkk.samsung@gmail.com
 
-On 05/09/14 21:25, Arun Kumar K wrote:
-> Adds support for google peach-pi board having the
-> Exynos5800 SoC.
->
-> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
-> Signed-off-by: Doug Anderson<dianders@chromium.org>
-> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
+Hi Arun, Alim,
+
+On 09.05.2014 14:25, Arun Kumar K wrote:
+> From: Alim Akhtar <alim.akhtar@samsung.com>
+> 
+> Exynos5800 clock structure is mostly similar to 5420 with only
+> a small delta changes. So the 5420 clock file is re-used for
+> 5800 also. The common clocks for both are seggreagated and few
+> clocks which are different for both are separately initialized.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 > ---
 > Changes from v1
-> - Updated memory node with a safe size of 2GB
-> ---
->   arch/arm/boot/dts/Makefile                |    3 +-
->   arch/arm/boot/dts/exynos5800-peach-pi.dts |  144 +++++++++++++++++++++++++++++
->   2 files changed, 146 insertions(+), 1 deletion(-)
->   create mode 100644 arch/arm/boot/dts/exynos5800-peach-pi.dts
->
-Applied, thanks.
+> ---------------
+> - Rebased on clock cleanup by Shaik
 
-- Kukjin
+This still isn't using correct base and won't compile with current
+sources, even if it applies fine. This is partially my fault as we had a
+lot of issues with cross-tree dependencies and it was not clear what to
+base clock patches on, but I'll try to keep samsung-clk-next branch of
+samsung-clk [1] tree up to date, so it should be safe to base on.
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git
+
+Best regards,
+Tomasz
