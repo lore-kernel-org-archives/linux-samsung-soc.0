@@ -1,77 +1,93 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH v3 2/2] Documentation: devicetree: Add boost-frequency
- binding to list boost mode frequency
-Date: Tue, 13 May 2014 21:02:23 -0500
-Message-ID: <CAGo_u6ozaKjzVQsJjzi5g13ysBT6UDwsgW3O1=K3RD4Y-ODtDA@mail.gmail.com>
-References: <1400029380-5372-1-git-send-email-thomas.ab@samsung.com>
-	<1400029380-5372-3-git-send-email-thomas.ab@samsung.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH v6 5/5] arm: exynos: Add MCPM call-back functions
+Date: Wed, 14 May 2014 08:14:06 +0530
+Message-ID: <CAM4voamY+nM3eoJWfR=0VBDtbf6wan-2awRaALN=ym9gGC_DYg@mail.gmail.com>
+References: <1399982324-27879-1-git-send-email-a.kesavan@samsung.com>
+	<1399982324-27879-6-git-send-email-a.kesavan@samsung.com>
+	<20140513164845.GA10210@red-moon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:51892 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752856AbaENCCZ (ORCPT
+Received: from mail-qc0-f171.google.com ([209.85.216.171]:65331 "EHLO
+	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750907AbaENCoH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 May 2014 22:02:25 -0400
-In-Reply-To: <1400029380-5372-3-git-send-email-thomas.ab@samsung.com>
+	Tue, 13 May 2014 22:44:07 -0400
+Received: by mail-qc0-f171.google.com with SMTP id x13so1779764qcv.16
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 May 2014 19:44:07 -0700 (PDT)
+In-Reply-To: <20140513164845.GA10210@red-moon>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, dt list <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "abrestic@chromium.org" <abrestic@chromium.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "inderpal.s@samsung.com" <inderpal.s@samsung.com>, "nicolas.pitre@linaro.org" <nicolas.pitre@linaro.org>, Dave P Martin <Dave.Martin@arm.com>, "t.figa@samsung.com" <t.figa@samsung.com>
 
-On Tue, May 13, 2014 at 8:03 PM, Thomas Abraham <ta.omasab@gmail.com> wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
+Hi Lorenzo,
+
+On Tue, May 13, 2014 at 10:18 PM, Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+> On Tue, May 13, 2014 at 12:58:44PM +0100, Abhilash Kesavan wrote:
 >
-> Add a new optional boost-frequency binding for specifying the frequencies
-> usable in boost mode.
+> [...]
 >
-> Cc: Nishanth Menon <nm@ti.com>
-> Cc: Lukasz Majewski <l.majewski@samsung.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Pawel Moll <pawel.moll@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-> Cc: Kumar Gala <galak@codeaurora.org>
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> ---
->  .../devicetree/bindings/cpufreq/cpufreq-boost.txt  |   11 +++++++++++
->  1 files changed, 11 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+>> +static int __init exynos_mcpm_init(void)
+>> +{
+>> +       struct device_node *node;
+>> +       int ret = 0;
 >
-> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
-> new file mode 100644
-> index 0000000..d925e38
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
-> @@ -0,0 +1,11 @@
-> +* Device tree binding for CPU boost frequency (aka over-clocking)
-> +
-> +Certain CPU's can be operated in optional 'boost' mode (or sometimes referred as
-> +overclocking) in which the CPU can operate in frequencies beyond the normal
+> There is no point in initializing it to 0.
+OK.
+>
+>> +
+>> +       node = of_find_compatible_node(NULL, NULL, "samsung,exynos5420");
+>> +       if (!node)
+>> +               return -ENODEV;
+>> +       of_node_put(node);
+>> +
+>> +       if (!cci_probed())
+>> +               return -ENODEV;
+>> +
+>> +       node = of_find_compatible_node(NULL, NULL,
+>> +                       "samsung,exynos4210-sysram-ns");
+>> +       if (!node)
+>> +               return -ENODEV;
+>> +
+>> +       ns_sram_base_addr = of_iomap(node, 0);
+>> +       of_node_put(node);
+>> +       if (!ns_sram_base_addr) {
+>> +               pr_err("failed to map non-secure iRAM base address\n");
+>> +               return -ENOMEM;
+>> +       }
+>> +
+>> +       /*
+>> +        * To increase the stability of KFC reset we need to program
+>> +        * the PMU SPARE3 register
+>> +        */
+>> +       __raw_writel(EXYNOS5420_SWRESET_KFC_SEL, S5P_PMU_SPARE3);
+>> +
+>> +       exynos_mcpm_usage_count_init();
+>> +
+>> +       ret = mcpm_platform_register(&exynos_power_ops);
+>> +       if (!ret)
+>> +               ret = mcpm_sync_init(exynos_pm_power_up_setup);
+>> +       if (ret) {
+>> +               iounmap(ns_sram_base_addr);
+>> +               return ret;
+>> +       }
+>> +
+>> +       mcpm_smp_set_ops();
+>> +
+>> +       pr_info("Exynos MCPM support installed\n");
+>> +
+>> +       /*
+>> +        * Future entries into the kernel can now go
+>> +        * through the cluster entry vectors.
+>> +        */
+>> +       __raw_writel(virt_to_phys(mcpm_entry_point),
+>> +                       ns_sram_base_addr + MCPM_BOOT_ADDR_OFFSET);
+>> +
+>
+> ns_sram_base_addr must be unmapped, since it is unused after the write.
+Will unmap.
 
-"operate at"?
-
-> +operating conditions.
-
-"normal operating conditions" probably need a little bit of an
-expansion here perhaps?
-
-> +
-> +Optional Properties:
-> +- boost-frequency: list of frequencies in KHz to be used only in boost mode.
-
-probably boost-frequencies?
-
-> +  This list should be a subset of frequencies listed in "operating-points"
-> +  property. Refer to Documentation/devicetree/bindings/power/opp.txt for
-> +  details about "operating-points" property.
-
-
-an example is expected here.
-
-personally, I think I understand the intent here, but as a hardware
-description, will let folks comment if it is acceptable.
-
---
 Regards,
-Nishanth Menon
+Abhilash
