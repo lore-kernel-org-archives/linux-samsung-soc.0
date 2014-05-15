@@ -1,7 +1,7 @@
-From: Olof Johansson <olof@lixom.net>
+From: Doug Anderson <dianders@chromium.org>
 Subject: Re: [PATCH] arm: dts: exynos5: Remove multi core timer
-Date: Thu, 15 May 2014 16:39:10 -0700
-Message-ID: <CAOesGMizW3vrOWdwYNP1x2U0vdtnTe+8r22H7-6c76zT=7rM=A@mail.gmail.com>
+Date: Thu, 15 May 2014 16:43:07 -0700
+Message-ID: <CAD=FV=UMoL7i9rg_QtBAqPwisSQyRqRmk8wQhneMXAiLBjTT1A@mail.gmail.com>
 References: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
 	<53752E25.9060604@gmail.com>
 	<CAD=FV=WKOtZaUyzTWNqR=vi_L=U-Q1dct2U_oCYi3ZJv6401Hg@mail.gmail.com>
@@ -15,18 +15,20 @@ References: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f47.google.com ([209.85.192.47]:39493 "EHLO
-	mail-qg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752932AbaEOXjL (ORCPT
+Received: from mail-vc0-f172.google.com ([209.85.220.172]:47098 "EHLO
+	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753215AbaEOXnJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 19:39:11 -0400
-Received: by mail-qg0-f47.google.com with SMTP id j107so2957471qga.20
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 16:39:10 -0700 (PDT)
+	Thu, 15 May 2014 19:43:09 -0400
+Received: by mail-vc0-f172.google.com with SMTP id hr9so5291004vcb.31
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 16:43:08 -0700 (PDT)
 In-Reply-To: <53754CE2.3000905@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: David Riley <davidriley@google.com>, Chirantan Ekbote <chirantan@chromium.org>, Doug Anderson <dianders@chromium.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: David Riley <davidriley@google.com>, Chirantan Ekbote <chirantan@chromium.org>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>
+
+Tomasz,
 
 On Thu, May 15, 2014 at 4:25 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 > On 16.05.2014 01:18, David Riley wrote:
@@ -83,10 +85,17 @@ On Thu, May 15, 2014 at 4:25 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 > gettimeofday() really that crucial in this case? Are there any other use
 > cases when this improvement is significant?
 
-In general, yes. gettimeofday() is normally the prime candidate for
-vDSO implementaiton (see Nathan Lynch's patch set in the last couple
-of months for enabling this). Speeding up gettimeofday() does have
-real benefit for some workloads.
+I guess I should restate.  Chrome is always profiling to some extent.
+I think that the Javascript engine, for instance, uses gettimeofday()
+to figure out how much time it's spending in various places.
+
+Sonny just sent me some recent benchmarks using perf.  On this
+particular benchmark it shows 1.85% of the time was spent in
+exynos_frc_read.  If we can half that then we'll get a ~1% speedup in
+the system, which is nothing to sneeze at.  If getting rid of the
+system call overead makes this several times faster again, then we
+roughly eliminate the overhead totally.
+
 
 > Anyway, I'm by no means opposed to switching to arch timers. They
 > provide a well designed, generic interface and drivers shared by
@@ -94,15 +103,12 @@ real benefit for some workloads.
 > looking at the code, which is always good. However if they don't support
 > low power states correctly, we can't just remove MCT.
 
-Yeah, this will definitely need to be tested. Do the low power states
-work on exynos5 upstream such that they can be tested? The snow
-chromebook has a u-boot bug that makes AFTR not work, so it's not a
-suitable platform to test on, unfortunately.
+I think low power states aren't in mainline (right?).
 
-And if we need MCT for low power states, we'll need MCT to co-exist
-with arch timers. Maybe by checking for the presence of those dt nodes
-+ CONFIG_ARM_ARCH_TIMER, or somesuch. But let's discuss that when we
-know more.
+One solution that might work could be to leave the device tree entry
+alone but change the MCT init code to simply act as a no-op if it sees
+an arch timer is in the device tree and enabled.  Then when/if someone
+got the low power states enabled we could just change source code
+rather than dts files.
 
-
--Olof
+-Doug
