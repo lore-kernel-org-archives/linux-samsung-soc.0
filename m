@@ -1,82 +1,93 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung fixes for 3.15
-Date: Thu, 15 May 2014 18:13:09 +0900
-Message-ID: <02ae01cf701d$e5761f80$b0625e80$@samsung.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
+Date: Thu, 15 May 2014 11:23:50 +0200
+Message-ID: <20140515092349.GE6434@ulmo>
+References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
+ <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
+ <20140514221423.GC6215@mithrandir>
+ <CAPdUM4NaLpN99JCJH3qMakSO3OG6ASjEuvvr_CnKv=gOiqfzMQ@mail.gmail.com>
+ <20140515074203.GD5952@ulmo>
+ <CAPdUM4OXXMzMDNVym1ysMx7wifbO2QsSP5jk6cn3+F8Or3ng3w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54380 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750702AbaEOJNO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 05:13:14 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5L006M3YY08E90@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 15 May 2014 18:13:12 +0900 (KST)
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ep0oHQY+/Gbo/zt0"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAPdUM4OXXMzMDNVym1ysMx7wifbO2QsSP5jk6cn3+F8Or3ng3w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>, arm@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Arnd, Olof, Kevin,
 
-Please pull Samsung fixes and if any problem, please kinldly let me know.
+--ep0oHQY+/Gbo/zt0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Kukjin
+On Thu, May 15, 2014 at 01:47:33PM +0530, Rahul Sharma wrote:
+> On 15 May 2014 13:12, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> > On Thu, May 15, 2014 at 10:49:37AM +0530, Rahul Sharma wrote:
+> >> On 15 May 2014 03:44, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> >> > On Thu, May 15, 2014 at 12:47:21AM +0530, Rahul Sharma wrote:
+[...]
+> >> >> +#define PHY_NR       5
+> >> >
+> >> > I'm not sure that this belongs here either. It's not a value that wi=
+ll
+> >> > ever appear in a DT source file.
+> >>
+> >> I want it to grow along with new additions in the phy list else
+> >> catastrophic. This will look unrelated in driver.
+> >
+> > But this is in no way growing automatically as it is. Whoever adds a new
+> > type of PHY will need to manually increment this define. Furthermore the
+> > driver will need to be updated to cope with this anyway.
+>=20
+> Not automatically. What I meant was If keeping it at end of the list, it =
+is not
+> possible that somebody skip the updation of PHY_NR when adding a new phy
+> type.
 
-The following changes since commit 89ca3b881987f5a4be4c5dbaa7f0df12bbdde2fd:
+It's perhaps not as likely, but still possible.
 
-  Linux 3.15-rc4 (2014-05-04 18:14:42 -0700)
+> If I leave a comment at the end of the list to update PHY_NR (after movin=
+g it
+> to driver), that also serves the purpose.
 
-are available in the git repository at:
+I don't think this is needed either. Like I said earlier, since the
+driver has an internal maximum number of PHYs that it supports the
+maximum that can be specified in the DTS is irrelevant. If it doesn't
+support a new one, then it will simply return an error. And I would
+assume that if somebody added support for a new PHY type then they
+probably wouldn't forget to update the driver since they're modifying
+it anyway and testing will fail if they don't.
 
-  http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-fixes
+Thierry
 
-for you to fetch changes up to 702b691e4a711e699cf3cccba879c1d945665c0d:
+--ep0oHQY+/Gbo/zt0
+Content-Type: application/pgp-signature
 
-  ARM: dts: Remove g2d_pd node for exynos5420 (2014-05-15 04:18:24 +0900)
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-----------------------------------------------------------------
-Samsung fixes for 3.15
-- Remove g2d_pd and mau_pd nodes on exynos5420.
-  Since the power domains are linked to the CMU blocks,
-  kernel panic happens during access clocks when the
-  power domains are disabled. Now this is a best solution.
-- Enable HS-I2C on exynos5 by default
-  MMC partition cannot be mounted for RFS without the
-  enabling HS-I2C because regulators for MMC power are
-  connected to HS-I2C bus.
-- Disable MDMA1 node on exynos5420
-  When MDMA1 runs in secure mode it makes kernel fault,
-  so need to disalbe it on exynos5420 by default instead
-  of each board.
-- Fix the secondary CPU boot for exynos4212
+iQIcBAEBAgAGBQJTdIelAAoJEN0jrNd/PrOhflAP/1Gzw5mXfrnFNP7lQrnxHxSC
+aT9K0BoLcPdz37oJu5euWFZAT8Oe2cojaVfWCeeBPi2kaKEdCHIV82Dr9wJjE9Rs
+0hJu8Kp9pprXVSkYUje+6ik1Ts+oKjzrdiaz0IDkUzqFhQHAJY9AQn/yilSCnGct
+vswKnpht5t2r0SfzIeNahCksgbZnqkDfUOb2RI/IwPFo23pJSv44ljvE2FDJ4qZ8
+l+2Nyurd+86+G/swomAwNQd4oaby0vrSkXt0Y6vreKYtWoSyrB7JtBWuuip8L3S7
+8giMMldQyMG1bXiOwKkz7+IUVBtKI4Q2lALsjmiL0FstkEXE3HiVVP8zp9H3JT2M
+5qqDOM5Wx0AI6oRhnzMyVxpU3JSxMFix9+Jyt1Hc7HGZ5GHHfAo9x3SqQGyvYur/
+kn6fa5j1h0h+MH38AlvCXDNGaK90BUG09pj+aafnIXTdKqkV8W+x04gDjS7fNlHJ
+c+nRCcOiYuF4aE3g4twhB0pLB3YmBidhP8piKVaSG/70Zt4QvOeRnYlA0UyCGaPr
+cRUk96raZn/+ncLToghVSxf6Cv4CHSb+jOgcRq28xzn31Yllp0la7qOTmPHr24f0
+6/7rh6MP649kMVPOTXBTzlVYZXVnT7TlN8OQ7ChTk1e4JhS6iYw8XUbXBHWhZQBc
+LDhbFXosdQNy9GtqdjcR
+=12g9
+-----END PGP SIGNATURE-----
 
-----------------------------------------------------------------
-Arun Kumar K (1):
-      ARM: dts: Remove g2d_pd node for exynos5420
-
-Kyungmin Park (1):
-      ARM: EXYNOS: fix the secondary CPU boot of exynos4212
-
-Sachin Kamat (1):
-      ARM: exynos_defconfig: enable HS-I2C to fix for mmc partition mount
-
-Seungwon Jeon (1):
-      ARM: dts: disable MDMA1 node for exynos5420
-
-Tushar Behera (1):
-      ARM: dts: Remove mau_pd node for exynos5420
-
- arch/arm/boot/dts/exynos5420-arndale-octa.dts |   12 ------------
- arch/arm/boot/dts/exynos5420.dtsi             |   18 +++++++-----------
- arch/arm/configs/exynos_defconfig             |    1 +
- arch/arm/mach-exynos/firmware.c               |   15 ++++++++++++++-
- 4 files changed, 22 insertions(+), 24 deletions(-)
+--ep0oHQY+/Gbo/zt0--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
