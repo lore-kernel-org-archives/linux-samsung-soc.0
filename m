@@ -1,128 +1,347 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH v2] [media] s5p-mfc: Dequeue sequence header after STREAMON
-Date: Thu, 15 May 2014 17:17:42 +0200
-Message-ID: <047d01cf7050$d1943780$74bca680$%debski@samsung.com>
-References: <1400048996-726-1-git-send-email-arun.kk@samsung.com>
- <53731693.80002@xs4all.nl> <537324E5.3030704@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 04/10] thermal: exynos: remove dead code for
+ TYPE_TWO_POINT_TRIMMING calibration
+Date: Thu, 15 May 2014 17:35:02 +0200
+Message-ID: <1966594.GSvIsYJh8q@amdc1032>
+References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
+ <1399288539-1793-5-git-send-email-b.zolnierkie@samsung.com>
+ <20140515143004.GC27339@developer>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51610 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752179AbaEOPR3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 11:17:29 -0400
-In-reply-to: <537324E5.3030704@samsung.com>
-Content-language: pl
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <20140515143004.GC27339@developer>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arun Kumar K' <arun.kk@samsung.com>, 'Hans Verkuil' <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, sachin.kamat@linaro.org, arunkk.samsung@gmail.com
 
-Hi Arun,
 
-> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
-> owner@vger.kernel.org] On Behalf Of Arun Kumar K
-> Sent: Wednesday, May 14, 2014 10:10 AM
+On Thursday, May 15, 2014 10:31:33 AM Eduardo Valentin wrote:
+> Hello Bartlomiej,
+
+Hi,
+
+> On Mon, May 05, 2014 at 01:15:33PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> > Only TYPE_ONE_POINT_TRIMMING calibration is used so remove
+> > the dead code for TYPE_TWO_POINT_TRIMMING calibration.
+> > 
 > 
-> Hi Hans,
+> Only TYPE_ONE_POINT_TRIMMING is used by which SoC? This patch removes
+
+TYPE_ONE_POINT_TRIMMING is used by all Exynos SoCs currently.
+
+> all four types of calibrations, as present in the current code. Is this
+> the expected outcome?
+
+There are only two types of calibration (TYPE_ONE_POINT_TRIMMING and
+TYPE_TWO_POINT_TRIMMING) implemented in the driver currently, the other
+ones (TYPE_ONE_POINT_TRIMMING_25 and TYPE_ONE_POINT_TRIMMING_85) are
+defined in calibration_type enum but are not implemented.
+
+> According to commit 9d97e5c8, which introduced this feature,
+> TYPE_TWO_POINT_TRIMMING is supported by exynos4 tmu, as per code
+> history, for instance.
+
+The commit 9d97e5c8 (which is from Wed Sep 7 18:49:08 2011) introduced
+TYPE_TWO_POINT_TRIMMING implementation but no users of it have ever been
+added.  IOW it has been a dead code for over 2.5 years now.
+
+> > There should be no functional changes caused by this patch.
+> > 
 > 
-> On 05/14/14 12:39, Hans Verkuil wrote:
-> > On 05/14/2014 08:29 AM, Arun Kumar K wrote:
-> >> MFCv6 encoder needs specific minimum number of buffers to be queued
-> >> in the CAPTURE plane. This minimum number will be known only when
-> the
-> >> sequence header is generated.
-> >> So we used to allow STREAMON on the CAPTURE plane only after
-> sequence
-> >> header is generated and checked with the minimum buffer requirement.
-> >>
-> >> But this causes a problem that we call a vb2_buffer_done for the
-> >> sequence header buffer before doing a STREAON on the CAPTURE plane.
-> >
-> > How could this ever have worked? Buffers aren't queued to the driver
-> > until STREAMON is called, and calling vb2_buffer_done for a buffer
-> > that is not queued first to the driver will mess up internal data (q-
-> >queued_count for one).
-> >
+> Well, the patch seams to be doing more than removing type two trimming.
+
+It does related dead code removals.  I can improve the patch description
+if needed to be more verbose but it doesn't change the fact that the patch
+doesn't contain any functional changes.
+
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> >  drivers/thermal/samsung/exynos_tmu.c      | 55 ++++++-------------------------
+> >  drivers/thermal/samsung/exynos_tmu.h      | 20 +----------
+> >  drivers/thermal/samsung/exynos_tmu_data.c | 17 +---------
+> >  drivers/thermal/samsung/exynos_tmu_data.h |  2 --
+> >  4 files changed, 12 insertions(+), 82 deletions(-)
+> > 
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> > index 9f2a5ee..903566f 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -47,8 +47,7 @@
+> >   * @irq_work: pointer to the irq work structure.
+> >   * @lock: lock to implement synchronization.
+> >   * @clk: pointer to the clock structure.
+> > - * @temp_error1: fused value of the first point trim.
+> > - * @temp_error2: fused value of the second point trim.
+> > + * @temp_error: fused value of the first point trim.
+> >   * @regulator: pointer to the TMU regulator structure.
+> >   * @reg_conf: pointer to structure to register with core thermal.
+> >   */
+> > @@ -62,14 +61,13 @@ struct exynos_tmu_data {
+> >  	struct work_struct irq_work;
+> >  	struct mutex lock;
+> >  	struct clk *clk;
+> > -	u8 temp_error1, temp_error2;
+> > +	u8 temp_error;
+> >  	struct regulator *regulator;
+> >  	struct thermal_sensor_conf *reg_conf;
+> >  };
+> >  
+> >  /*
+> >   * TMU treats temperature as a mapped temperature code.
+> > - * The temperature is converted differently depending on the calibration type.
+> >   */
+> >  static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+> >  {
+> > @@ -83,20 +81,7 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+> >  			goto out;
+> >  		}
+> >  
+> > -	switch (pdata->cal_type) {
+> > -	case TYPE_TWO_POINT_TRIMMING:
+> > -		temp_code = (temp - pdata->first_point_trim) *
+> > -			(data->temp_error2 - data->temp_error1) /
+> > -			(pdata->second_point_trim - pdata->first_point_trim) +
+> > -			data->temp_error1;
+> > -		break;
+> > -	case TYPE_ONE_POINT_TRIMMING:
+> > -		temp_code = temp + data->temp_error1 - pdata->first_point_trim;
+> > -		break;
+> > -	default:
+> > -		temp_code = temp + pdata->default_temp_offset;
+> > -		break;
+> > -	}
+> > +	temp_code = temp + data->temp_error - pdata->first_point_trim;
+> >  out:
+> >  	return temp_code;
+> >  }
+> > @@ -117,20 +102,7 @@ static int code_to_temp(struct exynos_tmu_data *data, u8 temp_code)
+> >  			goto out;
+> >  		}
+> >  
+> > -	switch (pdata->cal_type) {
+> > -	case TYPE_TWO_POINT_TRIMMING:
+> > -		temp = (temp_code - data->temp_error1) *
+> > -			(pdata->second_point_trim - pdata->first_point_trim) /
+> > -			(data->temp_error2 - data->temp_error1) +
+> > -			pdata->first_point_trim;
+> > -		break;
+> > -	case TYPE_ONE_POINT_TRIMMING:
+> > -		temp = temp_code - data->temp_error1 + pdata->first_point_trim;
+> > -		break;
+> > -	default:
+> > -		temp = temp_code - pdata->default_temp_offset;
+> > -		break;
+> > -	}
+> > +	temp = temp_code - data->temp_error + pdata->first_point_trim;
+> >  out:
+> >  	return temp;
+> >  }
+> > @@ -179,19 +151,12 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+> >  	} else {
+> >  		trim_info = readl(data->base + reg->triminfo_data);
+> >  	}
+> > -	data->temp_error1 = trim_info & EXYNOS_TMU_TEMP_MASK;
+> > -	data->temp_error2 = ((trim_info >> reg->triminfo_85_shift) &
+> > -				EXYNOS_TMU_TEMP_MASK);
+> > -
+> > -	if (!data->temp_error1 ||
+> > -		(pdata->min_efuse_value > data->temp_error1) ||
+> > -		(data->temp_error1 > pdata->max_efuse_value))
+> > -		data->temp_error1 = pdata->efuse_value & EXYNOS_TMU_TEMP_MASK;
+> > -
+> > -	if (!data->temp_error2)
+> > -		data->temp_error2 =
+> > -			(pdata->efuse_value >> reg->triminfo_85_shift) &
+> > -			EXYNOS_TMU_TEMP_MASK;
+> > +	data->temp_error = trim_info & EXYNOS_TMU_TEMP_MASK;
+> > +
+> > +	if (!data->temp_error ||
+> > +	    pdata->min_efuse_value > data->temp_error ||
+> > +	    data->temp_error > pdata->max_efuse_value)
+> > +		data->temp_error = pdata->efuse_value & EXYNOS_TMU_TEMP_MASK;
+> >  
+> >  	if (pdata->max_trigger_level > MAX_THRESHOLD_LEVS) {
+> >  		dev_err(&pdev->dev, "Invalid max trigger level\n");
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+> > index e417af8..186e39e 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.h
+> > +++ b/drivers/thermal/samsung/exynos_tmu.h
+> > @@ -26,14 +26,6 @@
+> >  
+> >  #include "exynos_thermal_common.h"
+> >  
+> > -enum calibration_type {
+> > -	TYPE_ONE_POINT_TRIMMING,
+> > -	TYPE_ONE_POINT_TRIMMING_25,
+> > -	TYPE_ONE_POINT_TRIMMING_85,
+> > -	TYPE_TWO_POINT_TRIMMING,
+> > -	TYPE_NONE,
+> > -};
 > 
-> This worked till now because __enqueue_in_driver is called first and
-> then start_streaming qop is called. In MFCv6, the start_streaming
-> driver callback used to wait till sequence header interrupt is received
-> and it used to do vb2_buffer_done in that interrupt context. So it
-> happened after buffers are enqueued in driver and before completing the
-> vb2_streamon.
 > 
-> >> This used to still work fine until this patch was merged -
-> >> b3379c6 : vb2: only call start_streaming if sufficient buffers are
-> >> queued
-> >
-> > Are you testing with CONFIG_VIDEO_ADV_DEBUG set? If not, you should
-> do
-> > so. That will check whether all the vb2 calls are balanced.
-> >
-> > BTW, that's a small typo in s5p_mfc_enc.c (search for 'inavlid').
-> >
+> There are more than two types of calibrations. tmu_control covers
+> all types. This patch misses tmu_control.
+
+Please take a look at patch #3 (the code in question has been removed by
+it altogether).
+
+> > -
+> >  enum soc_type {
+> >  	SOC_ARCH_EXYNOS4210 = 1,
+> >  	SOC_ARCH_EXYNOS4412,
+> > @@ -74,8 +66,6 @@ enum soc_type {
+> >   * bitfields. The register validity, offsets and bitfield values may vary
+> >   * slightly across different exynos SOC's.
+> >   * @triminfo_data: register containing 2 pont trimming data
+> > - * @triminfo_25_shift: shift bit of the 25 C trim value in triminfo_data reg.
+> > - * @triminfo_85_shift: shift bit of the 85 C trim value in triminfo_data reg.
+> >   * @triminfo_ctrl: trim info controller register.
+> >   * @tmu_ctrl: TMU main controller register.
+> >   * @test_mux_addr_shift: shift bits of test mux address.
+> > @@ -116,8 +106,6 @@ enum soc_type {
+> >   */
+> >  struct exynos_tmu_registers {
+> >  	u32	triminfo_data;
+> > -	u32	triminfo_25_shift;
+> > -	u32	triminfo_85_shift;
+> >  
+> >  	u32	triminfo_ctrl;
+> >  
+> > @@ -207,10 +195,7 @@ struct exynos_tmu_registers {
+> >   * @min_efuse_value: minimum valid trimming data
+> >   * @max_efuse_value: maximum valid trimming data
+> >   * @first_point_trim: temp value of the first point trimming
+> > - * @second_point_trim: temp value of the second point trimming
+> > - * @default_temp_offset: default temperature offset in case of no trimming
+> >   * @test_mux; information if SoC supports test MUX
+> > - * @cal_type: calibration type for temperature
+> >   * @freq_clip_table: Table representing frequency reduction percentage.
+> >   * @freq_tab_count: Count of the above table as frequency reduction may
+> >   *	applicable to only some of the trigger levels.
+> > @@ -232,15 +217,12 @@ struct exynos_tmu_platform_data {
+> >  	u8 reference_voltage;
+> >  	u8 noise_cancel_mode;
+> >  
+> > -	u32 efuse_value;
+> > +	u8 efuse_value;
 > 
-> I got it. Will post a patch fixing them. Thanks for spotting this.
+> Why?
+
+In exynos_tmu_initialize() if data->temp_error2 was zero then its value was
+obtained from bits 8-15 of efuse_value (bits 16-31 are always zero).  After
+TYPE_TWO_POINT_TRIMMING code removal data->temp_error2 was no longer needed
+and was also removed.  Thus only bits 0-7 of efuse_value are ever used and
+its type can be changed from u32 to u8.
+
+> >  	u32 min_efuse_value;
+> >  	u32 max_efuse_value;
+> >  	u8 first_point_trim;
+> > -	u8 second_point_trim;
+> > -	u8 default_temp_offset;
+> >  	u8 test_mux;
+> >  
+> > -	enum calibration_type cal_type;
+> >  	enum soc_type type;
+> >  	struct freq_clip_table freq_tab[4];
+> >  	unsigned int freq_tab_count;
+> > diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+> > index 4b992d9..c32d186 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu_data.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+> > @@ -27,8 +27,6 @@
+> >  #if defined(CONFIG_CPU_EXYNOS4210)
+> >  static const struct exynos_tmu_registers exynos4210_tmu_registers = {
+> >  	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
+> > -	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
+> > -	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
+> >  	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
+> >  	.buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
+> >  	.buf_vref_sel_mask = EXYNOS_TMU_REF_VOLTAGE_MASK,
+> > @@ -66,12 +64,9 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
+> >  		.max_trigger_level = 4,
+> >  		.gain = 15,
+> >  		.reference_voltage = 7,
+> > -		.cal_type = TYPE_ONE_POINT_TRIMMING,
+> >  		.min_efuse_value = 40,
+> >  		.max_efuse_value = 100,
+> >  		.first_point_trim = 25,
+> > -		.second_point_trim = 85,
+> > -		.default_temp_offset = 50,
+> >  		.freq_tab[0] = {
+> >  			.freq_clip_max = 800 * 1000,
+> >  			.temp_level = 85,
+> > @@ -93,8 +88,6 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
+> >  #if defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250)
+> >  static const struct exynos_tmu_registers exynos4412_tmu_registers = {
+> >  	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
+> > -	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
+> > -	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
+> >  	.triminfo_ctrl = EXYNOS_TMU_TRIMINFO_CON,
+> >  	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
+> >  	.test_mux_addr_shift = EXYNOS4412_MUX_ADDR_SHIFT,
+> > @@ -145,13 +138,10 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
+> >  	.gain = 8, \
+> >  	.reference_voltage = 16, \
+> >  	.noise_cancel_mode = 4, \
+> > -	.cal_type = TYPE_ONE_POINT_TRIMMING, \
+> >  	.efuse_value = 55, \
+> >  	.min_efuse_value = 40, \
+> >  	.max_efuse_value = 100, \
+> >  	.first_point_trim = 25, \
+> > -	.second_point_trim = 85, \
+> > -	.default_temp_offset = 50, \
+> >  	.freq_tab[0] = { \
+> >  		.freq_clip_max = 1400 * 1000, \
+> >  		.temp_level = 70, \
+> > @@ -195,8 +185,6 @@ struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
+> >  #if defined(CONFIG_SOC_EXYNOS5440)
+> >  static const struct exynos_tmu_registers exynos5440_tmu_registers = {
+> >  	.triminfo_data = EXYNOS5440_TMU_S0_7_TRIM,
+> > -	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
+> > -	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
+> >  	.tmu_ctrl = EXYNOS5440_TMU_S0_7_CTRL,
+> >  	.buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
+> >  	.buf_vref_sel_mask = EXYNOS_TMU_REF_VOLTAGE_MASK,
+> > @@ -240,13 +228,10 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
+> >  	.gain = 5, \
+> >  	.reference_voltage = 16, \
+> >  	.noise_cancel_mode = 4, \
+> > -	.cal_type = TYPE_ONE_POINT_TRIMMING, \
+> > -	.efuse_value = 0x5b2d, \
+> > +	.efuse_value = 45, \
 > 
-> >> This problem should also come in earlier MFC firmware versions if
-> the
-> >> application calls STREAMON on CAPTURE with some delay after doing
-> >> STREAMON on OUTPUT.
-> >
-> > You can also play around with the min_buffers_needed field. My
-> > rule-of-thumb is that when start_streaming is called everything
-> should
-> > be ready to stream. It is painful for drivers to have to keep track
-> of the 'do I have enough buffers' status.
-> >
-> > For that reason I introduced the min_buffers_needed field. What I
-> > believe you can do here is to set it initially to a large value,
-> > preventing start_streaming from being called, and once you really
-> know
-> > the minimum number of buffers that you need it can be updated again
-> to the actual value.
-> 
-> If a large value is kept in min_buffers_needed, there will be some
-> unnecessary memory initialization needed for say 16 full HD raw YUV
-> buffers when actual needed is only 4. And once the encoding is started,
-> updating the min_buffers_needed to actual value doesnt give any
-> advantage as nobody checks for it after that.
-> So the whole idea is to not enforce a worst case buffer allocation
-> requirement beforehand itself. I hope the current scheme of things
-> works well for the requirement.
+> What efuse value has to do with removing type two calibration type?
 
-I was looking in the code of the MFC encoder and handling of this situation
-seems wrong to me.
+Bits 8-15 of efuse_value are only used for TYPE_TWO_POINT_TRIMMING code
+(please take a look at changes inside exynos_tmu_initialize() for details).
 
-You say that a minimum number of buffers has to be queued for MFC encoder to
-work. But this number is not checked in s5p_mfc_ctx_ready in s5p_mfc_enc.c.
+> >  	.min_efuse_value = 16, \
+> >  	.max_efuse_value = 76, \
+> >  	.first_point_trim = 25, \
+> > -	.second_point_trim = 70, \
+> > -	.default_temp_offset = 25, \
+> >  	.type = SOC_ARCH_EXYNOS5440, \
+> >  	.registers = &exynos5440_tmu_registers, \
+> >  	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
+> > diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
+> > index 1fed00d..734d1f9 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu_data.h
+> > +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+> > @@ -51,8 +51,6 @@
+> >  #define EXYNOS_THD_TEMP_FALL		0x54
+> >  #define EXYNOS_EMUL_CON		0x80
+> >  
+> > -#define EXYNOS_TRIMINFO_25_SHIFT	0
+> > -#define EXYNOS_TRIMINFO_85_SHIFT	8
+> >  #define EXYNOS_TMU_RISE_INT_MASK	0x111
+> >  #define EXYNOS_TMU_RISE_INT_SHIFT	0
+> >  #define EXYNOS_TMU_FALL_INT_MASK	0x111
 
-It is only checked during reqbufs. This way it does not ensure that there is
-a minimum number of buffers queued.
-
-Also there is a control V4L2_CID_MIN_BUFFERS_FOR_CAPTURE, maybe it could be
-used
-in this context?
-
-Another thing - you say that header is generated to a CAPTURE buffer before
-STREAMON on CAPTURE was done. Is this correct? Can the hardware/driver write
-to a queued buffer without streaming enabled? Hans, Sylwester?
-
-Arun, is there a way to guess the needed number of buffers from controls?
-Isn't this
-related with number of B frames? I understand how this affects the number of
-buffers for OUTPUT, but I thought that a single CAPTURE buffer is always
-enough.
-I understood that a generated compressed stream is no longer used after it
-was
-created and its processing is finished.
-
-I think we need some discussion on this patch.
- 
-Best wishes,
--- 
-Kamil Debski
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
 Samsung R&D Institute Poland
+Samsung Electronics
+
