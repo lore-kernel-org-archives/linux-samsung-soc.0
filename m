@@ -1,347 +1,190 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 04/10] thermal: exynos: remove dead code for
- TYPE_TWO_POINT_TRIMMING calibration
-Date: Thu, 15 May 2014 17:35:02 +0200
-Message-ID: <1966594.GSvIsYJh8q@amdc1032>
-References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
- <1399288539-1793-5-git-send-email-b.zolnierkie@samsung.com>
- <20140515143004.GC27339@developer>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH v6 0/5] MCPM backend for Exynos5420
+Date: Thu, 15 May 2014 21:19:50 +0530
+Message-ID: <CAM4voakB57mgyQmtkpCUAF1BVW5z3BGsesvxvTuSg_JwBh-sxw@mail.gmail.com>
+References: <1399982324-27879-1-git-send-email-a.kesavan@samsung.com>
+	<alpine.LFD.2.11.1405131325060.980@knanqh.ubzr>
+	<CAM4voanvVwj+FuWazTGMHMnM64Cw_qK03D3o=raS43f_zWFfog@mail.gmail.com>
+	<alpine.LFD.2.11.1405140031490.980@knanqh.ubzr>
+	<CAM4voa=6osyXYg_XF=XuGRYmxLDUO+5=-i+cMrNW92fzBZJjfA@mail.gmail.com>
+	<alpine.LFD.2.11.1405140931380.980@knanqh.ubzr>
+	<CAM4voam29e7aK7n86_Mpj-wwvkchm-e68qA5=iUFou+sUMONig@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20140515143004.GC27339@developer>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f50.google.com ([209.85.192.50]:36121 "EHLO
+	mail-qg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751428AbaEOPtv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 May 2014 11:49:51 -0400
+Received: by mail-qg0-f50.google.com with SMTP id z60so2074282qgd.9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 08:49:50 -0700 (PDT)
+In-Reply-To: <CAM4voam29e7aK7n86_Mpj-wwvkchm-e68qA5=iUFou+sUMONig@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Thomas P Abraham <thomas.ab@samsung.com>, "inderpal.s@samsung.com" <inderpal.s@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Dave Martin <Dave.Martin@arm.com>, Tomasz Figa <t.figa@samsung.com>
 
+Hi Nicolas,
 
-On Thursday, May 15, 2014 10:31:33 AM Eduardo Valentin wrote:
-> Hello Bartlomiej,
+On Wed, May 14, 2014 at 7:09 PM, Abhilash Kesavan
+<kesavan.abhilash@gmail.com> wrote:
+> Hi Nicolas,
+>
+> On Wed, May 14, 2014 at 7:03 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+>> On Wed, 14 May 2014, Abhilash Kesavan wrote:
+>>
+>>> Hi Nicolas,
+>>>
+>>> [...]
+>>> >>
+>>> >> 1) can't create /sys/devices/system/cpu/cpu//online: nonexistent directory
+>>> >
+>>> > What do you get if you do:
+>>> >
+>>> > $ ls -d /sys/devices/system/cpu/cpu?/online
+>>> ls: /sys/devices/system/cpu/cpu//online: No such file or directory
+>>
+>> Somehow, you or your shell replaced the ? character into a / character.
+>> You could try with a * instead.
+> With a different RFS your script runs fine without any change. Will
+> update with results once testing is done.
+The script has been running for a few hours on my 5420 based
+chromebook. I can see all the cores being hotplugged in/out. A snippet
+of the prints, that I get on running the test, follows:
 
-Hi,
+===========================================
+[ 2408.454198] CPU4: Booted secondary processor
+[ 2408.461468] CPU6: Booted secondary processor
+[ 2408.466306] CPU2: Booted secondary processor
+[ 2408.527229] CPU7: shutdown
+[ 2408.571822] CPU3: shutdown
+[ 2408.611762] CPU1: shutdown
+[ 2408.647230] CPU6: shutdown
+027316[ 2408.686885] CPU2: shutdown
+[ 2408.691756] CPU3: Booted secondary processor
+[ 2408.696468] CPU0: Booted secondary processor
+2[ 2408.705123] CPU2: Booted secondary processor
+[ 2408.747231] CPU4: shutdown
+4[ 2408.776798] CPU3: shutdown
+[ 2408.786452] CPU4: Booted secondary processor
+[ 2408.796497] CPU1: Booted secondary processor
+3[ 2408.852188] CPU4: shutdown
+[ 2408.856478] CPU7: Booted secondary processor
+[ 2408.861457] CPU5: Booted secondary processor
+4[ 2408.865536] CPU4: Booted secondary processor
+[ 2408.921844] CPU1: shutdown
+[ 2408.926486] CPU6: Booted secondary processor
+[ 2408.931539] CPU3: Booted secondary processor
+1[ 2408.967235] CPU7: shutdown
+7[ 2409.011792] CPU3: shutdown
+[ 2409.016529] CPU1: Booted secondary processor
+3[ 2409.082196] CPU6: shutdown
+6[ 2409.126847] CPU0: shutdown
+[ 2409.172204] CPU4: shutdown
+[ 2409.176441] CPU7: Booted secondary processor
+04[ 2409.226786] CPU2: shutdown
+[ 2409.229347] CPU4: Booted secondary processor
+2[ 2409.272214] CPU7: shutdown
+[ 2409.276462] CPU0: Booted secondary processor
+7[ 2409.317145] CPU5: shutdown
+[ 2409.321589] CPU3: Booted secondary processor
+[ 2409.326465] CPU7: Booted secondary processor
+[ 2409.331456] CPU2: Booted secondary processor
+5[ 2409.335634] CPU5: Booted secondary processor
+[ 2409.382202] CPU4: shutdown
+4[ 2409.421861] CPU1: shutdown
+[ 2409.461784] CPU2: shutdown
+[ 2409.466485] CPU6: Booted secondary processor
+1[ 2409.471381] CPU1: Booted secondary processor
+2[ 2409.522210] CPU5: shutdown
+5[ 2409.582098] CPU7: shutdown
+[ 2409.586421] CPU2: Booted secondary processor
+7[ 2409.642135] CPU6: shutdown
+6[ 2409.681787] CPU1: shutdown
+1[ 2409.716719] CPU0: shutdown
+[ 2409.721476] CPU7: Booted secondary processor
+[ 2409.726454] CPU5: Booted secondary processor
+0[ 2409.731046] CPU0: Booted secondary processor
+[ 2409.736473] CPU1: Booted secondary processor
+[ 2409.772226] CPU7: shutdown
+7[ 2409.816833] CPU3: shutdown
+[ 2409.821472] CPU4: Booted secondary processor
+3[ 2409.871810] CPU0: shutdown
+[ 2409.912194] CPU4: shutdown
+[ 2409.957127] CPU5: shutdown
+[ 2409.961456] CPU6: Booted secondary processor
+[ 2409.966447] CPU3: Booted secondary processor
+[ 2409.970816] CPU5: Booted secondary processor
+[ 2410.011828] CPU2: shutdown
+[ 2410.041787] CPU1: shutdown
+[ 2410.044138] CPU2: Booted secondary processor
+0452[ 2410.047629] CPU0: Booted secondary processor
+[ 2410.056582] CPU4: Booted secondary processor
+[ 2410.060400] CPU1: Booted secondary processor
+1[ 2410.116858] CPU2: shutdown
+[ 2410.121472] CPU7: Booted secondary processor
+2[ 2410.176838] CPU1: shutdown
+[ 2410.181614] CPU2: Booted secondary processor
+1[ 2410.237224] CPU4: shutdown
+4[ 2410.286853] CPU2: shutdown
+[ 2410.291472] CPU4: Booted secondary processor
+2[ 2410.341767] CPU3: shutdown
+[ 2410.346579] CPU1: Booted secondary processor
+[ 2410.351585] CPU2: Booted secondary processor
+3[ 2410.387251] CPU7: shutdown
+7[ 2410.426854] CPU1: shutdown
+1[ 2410.477217] CPU5: shutdown
+5[ 2410.526810] CPU0: shutdown
+[ 2410.529108] CPU7: Booted secondary processor
+[ 2410.536432] CPU1: Booted secondary processor
+[ 2410.592173] CPU7: shutdown
+[ 2410.637141] CPU4: shutdown
+[ 2410.641459] CPU7: Booted secondary processor
+07[ 2410.646392] CPU0: Booted secondary processor
+4[ 2410.652206] CPU4: Booted secondary processor
+[ 2410.701872] CPU1: shutdown
+1[ 2410.746764] CPU0: shutdown
+[ 2410.751481] CPU5: Booted secondary processor
+[ 2410.756512] CPU1: Booted secondary processor
+[ 2410.761505] CPU3: Booted secondary processor
+[ 2410.812331] CPU7: shutdown
+[ 2410.851841] CPU3: shutdown
+[ 2410.854089] CPU7: Booted secondary processor
+[ 2410.902210] CPU6: shutdown
+[ 2410.906476] CPU3: Booted secondary processor
+[ 2410.961858] CPU2: shutdown
+07362[ 2411.011814] CPU3: shutdown
+[ 2411.016561] CPU2: Booted secondary processor
+3[ 2411.057255] CPU4: shutdown
+[ 2411.061626] CPU6: Booted secondary processor
+4[ 2411.111898] CPU2: shutdown
+[ 2411.116443] CPU4: Booted secondary processor
+2[ 2411.166769] CPU1: shutdown
+[ 2411.170693] CPU3: Booted secondary processor
+[ 2411.222264] CPU7: shutdown
+[ 2411.262199] CPU5: shutdown
+17[ 2411.266511] CPU1: Booted secondary processor
+[ 2411.271614] CPU2: Booted secondary processor
+5[ 2411.327240] CPU4: shutdown
+[ 2411.331394] CPU0: Booted secondary processor
+4[ 2411.381868] CPU1: shutdown
+1[ 2411.426780] CPU3: shutdown
+[ 2411.431477] CPU5: Booted secondary processor
+3[ 2411.441362] CPU3: Booted secondary processor
+[ 2411.492221] CPU5: shutdown
+[ 2411.501452] CPU1: Booted secondary processor
+[ 2411.505211] CPU5: Booted secondary processor
+5[ 2411.511488] CPU4: Booted secondary processor
+[ 2411.566926] CPU0: shutdown
+[ 2411.612216] CPU5: shutdown
+0[ 2411.616661] CPU0: Booted secondary processor
+[ 2411.621520] CPU7: Booted secondary processor
+5[ 2411.628604] CPU5: Booted secondary processor
+===========================================
 
-> On Mon, May 05, 2014 at 01:15:33PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > Only TYPE_ONE_POINT_TRIMMING calibration is used so remove
-> > the dead code for TYPE_TWO_POINT_TRIMMING calibration.
-> > 
-> 
-> Only TYPE_ONE_POINT_TRIMMING is used by which SoC? This patch removes
+Is there anything else that needs to be checked to ensure that the
+script is running as expected ?
 
-TYPE_ONE_POINT_TRIMMING is used by all Exynos SoCs currently.
-
-> all four types of calibrations, as present in the current code. Is this
-> the expected outcome?
-
-There are only two types of calibration (TYPE_ONE_POINT_TRIMMING and
-TYPE_TWO_POINT_TRIMMING) implemented in the driver currently, the other
-ones (TYPE_ONE_POINT_TRIMMING_25 and TYPE_ONE_POINT_TRIMMING_85) are
-defined in calibration_type enum but are not implemented.
-
-> According to commit 9d97e5c8, which introduced this feature,
-> TYPE_TWO_POINT_TRIMMING is supported by exynos4 tmu, as per code
-> history, for instance.
-
-The commit 9d97e5c8 (which is from Wed Sep 7 18:49:08 2011) introduced
-TYPE_TWO_POINT_TRIMMING implementation but no users of it have ever been
-added.  IOW it has been a dead code for over 2.5 years now.
-
-> > There should be no functional changes caused by this patch.
-> > 
-> 
-> Well, the patch seams to be doing more than removing type two trimming.
-
-It does related dead code removals.  I can improve the patch description
-if needed to be more verbose but it doesn't change the fact that the patch
-doesn't contain any functional changes.
-
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> >  drivers/thermal/samsung/exynos_tmu.c      | 55 ++++++-------------------------
-> >  drivers/thermal/samsung/exynos_tmu.h      | 20 +----------
-> >  drivers/thermal/samsung/exynos_tmu_data.c | 17 +---------
-> >  drivers/thermal/samsung/exynos_tmu_data.h |  2 --
-> >  4 files changed, 12 insertions(+), 82 deletions(-)
-> > 
-> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> > index 9f2a5ee..903566f 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu.c
-> > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > @@ -47,8 +47,7 @@
-> >   * @irq_work: pointer to the irq work structure.
-> >   * @lock: lock to implement synchronization.
-> >   * @clk: pointer to the clock structure.
-> > - * @temp_error1: fused value of the first point trim.
-> > - * @temp_error2: fused value of the second point trim.
-> > + * @temp_error: fused value of the first point trim.
-> >   * @regulator: pointer to the TMU regulator structure.
-> >   * @reg_conf: pointer to structure to register with core thermal.
-> >   */
-> > @@ -62,14 +61,13 @@ struct exynos_tmu_data {
-> >  	struct work_struct irq_work;
-> >  	struct mutex lock;
-> >  	struct clk *clk;
-> > -	u8 temp_error1, temp_error2;
-> > +	u8 temp_error;
-> >  	struct regulator *regulator;
-> >  	struct thermal_sensor_conf *reg_conf;
-> >  };
-> >  
-> >  /*
-> >   * TMU treats temperature as a mapped temperature code.
-> > - * The temperature is converted differently depending on the calibration type.
-> >   */
-> >  static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
-> >  {
-> > @@ -83,20 +81,7 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
-> >  			goto out;
-> >  		}
-> >  
-> > -	switch (pdata->cal_type) {
-> > -	case TYPE_TWO_POINT_TRIMMING:
-> > -		temp_code = (temp - pdata->first_point_trim) *
-> > -			(data->temp_error2 - data->temp_error1) /
-> > -			(pdata->second_point_trim - pdata->first_point_trim) +
-> > -			data->temp_error1;
-> > -		break;
-> > -	case TYPE_ONE_POINT_TRIMMING:
-> > -		temp_code = temp + data->temp_error1 - pdata->first_point_trim;
-> > -		break;
-> > -	default:
-> > -		temp_code = temp + pdata->default_temp_offset;
-> > -		break;
-> > -	}
-> > +	temp_code = temp + data->temp_error - pdata->first_point_trim;
-> >  out:
-> >  	return temp_code;
-> >  }
-> > @@ -117,20 +102,7 @@ static int code_to_temp(struct exynos_tmu_data *data, u8 temp_code)
-> >  			goto out;
-> >  		}
-> >  
-> > -	switch (pdata->cal_type) {
-> > -	case TYPE_TWO_POINT_TRIMMING:
-> > -		temp = (temp_code - data->temp_error1) *
-> > -			(pdata->second_point_trim - pdata->first_point_trim) /
-> > -			(data->temp_error2 - data->temp_error1) +
-> > -			pdata->first_point_trim;
-> > -		break;
-> > -	case TYPE_ONE_POINT_TRIMMING:
-> > -		temp = temp_code - data->temp_error1 + pdata->first_point_trim;
-> > -		break;
-> > -	default:
-> > -		temp = temp_code - pdata->default_temp_offset;
-> > -		break;
-> > -	}
-> > +	temp = temp_code - data->temp_error + pdata->first_point_trim;
-> >  out:
-> >  	return temp;
-> >  }
-> > @@ -179,19 +151,12 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
-> >  	} else {
-> >  		trim_info = readl(data->base + reg->triminfo_data);
-> >  	}
-> > -	data->temp_error1 = trim_info & EXYNOS_TMU_TEMP_MASK;
-> > -	data->temp_error2 = ((trim_info >> reg->triminfo_85_shift) &
-> > -				EXYNOS_TMU_TEMP_MASK);
-> > -
-> > -	if (!data->temp_error1 ||
-> > -		(pdata->min_efuse_value > data->temp_error1) ||
-> > -		(data->temp_error1 > pdata->max_efuse_value))
-> > -		data->temp_error1 = pdata->efuse_value & EXYNOS_TMU_TEMP_MASK;
-> > -
-> > -	if (!data->temp_error2)
-> > -		data->temp_error2 =
-> > -			(pdata->efuse_value >> reg->triminfo_85_shift) &
-> > -			EXYNOS_TMU_TEMP_MASK;
-> > +	data->temp_error = trim_info & EXYNOS_TMU_TEMP_MASK;
-> > +
-> > +	if (!data->temp_error ||
-> > +	    pdata->min_efuse_value > data->temp_error ||
-> > +	    data->temp_error > pdata->max_efuse_value)
-> > +		data->temp_error = pdata->efuse_value & EXYNOS_TMU_TEMP_MASK;
-> >  
-> >  	if (pdata->max_trigger_level > MAX_THRESHOLD_LEVS) {
-> >  		dev_err(&pdev->dev, "Invalid max trigger level\n");
-> > diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-> > index e417af8..186e39e 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu.h
-> > +++ b/drivers/thermal/samsung/exynos_tmu.h
-> > @@ -26,14 +26,6 @@
-> >  
-> >  #include "exynos_thermal_common.h"
-> >  
-> > -enum calibration_type {
-> > -	TYPE_ONE_POINT_TRIMMING,
-> > -	TYPE_ONE_POINT_TRIMMING_25,
-> > -	TYPE_ONE_POINT_TRIMMING_85,
-> > -	TYPE_TWO_POINT_TRIMMING,
-> > -	TYPE_NONE,
-> > -};
-> 
-> 
-> There are more than two types of calibrations. tmu_control covers
-> all types. This patch misses tmu_control.
-
-Please take a look at patch #3 (the code in question has been removed by
-it altogether).
-
-> > -
-> >  enum soc_type {
-> >  	SOC_ARCH_EXYNOS4210 = 1,
-> >  	SOC_ARCH_EXYNOS4412,
-> > @@ -74,8 +66,6 @@ enum soc_type {
-> >   * bitfields. The register validity, offsets and bitfield values may vary
-> >   * slightly across different exynos SOC's.
-> >   * @triminfo_data: register containing 2 pont trimming data
-> > - * @triminfo_25_shift: shift bit of the 25 C trim value in triminfo_data reg.
-> > - * @triminfo_85_shift: shift bit of the 85 C trim value in triminfo_data reg.
-> >   * @triminfo_ctrl: trim info controller register.
-> >   * @tmu_ctrl: TMU main controller register.
-> >   * @test_mux_addr_shift: shift bits of test mux address.
-> > @@ -116,8 +106,6 @@ enum soc_type {
-> >   */
-> >  struct exynos_tmu_registers {
-> >  	u32	triminfo_data;
-> > -	u32	triminfo_25_shift;
-> > -	u32	triminfo_85_shift;
-> >  
-> >  	u32	triminfo_ctrl;
-> >  
-> > @@ -207,10 +195,7 @@ struct exynos_tmu_registers {
-> >   * @min_efuse_value: minimum valid trimming data
-> >   * @max_efuse_value: maximum valid trimming data
-> >   * @first_point_trim: temp value of the first point trimming
-> > - * @second_point_trim: temp value of the second point trimming
-> > - * @default_temp_offset: default temperature offset in case of no trimming
-> >   * @test_mux; information if SoC supports test MUX
-> > - * @cal_type: calibration type for temperature
-> >   * @freq_clip_table: Table representing frequency reduction percentage.
-> >   * @freq_tab_count: Count of the above table as frequency reduction may
-> >   *	applicable to only some of the trigger levels.
-> > @@ -232,15 +217,12 @@ struct exynos_tmu_platform_data {
-> >  	u8 reference_voltage;
-> >  	u8 noise_cancel_mode;
-> >  
-> > -	u32 efuse_value;
-> > +	u8 efuse_value;
-> 
-> Why?
-
-In exynos_tmu_initialize() if data->temp_error2 was zero then its value was
-obtained from bits 8-15 of efuse_value (bits 16-31 are always zero).  After
-TYPE_TWO_POINT_TRIMMING code removal data->temp_error2 was no longer needed
-and was also removed.  Thus only bits 0-7 of efuse_value are ever used and
-its type can be changed from u32 to u8.
-
-> >  	u32 min_efuse_value;
-> >  	u32 max_efuse_value;
-> >  	u8 first_point_trim;
-> > -	u8 second_point_trim;
-> > -	u8 default_temp_offset;
-> >  	u8 test_mux;
-> >  
-> > -	enum calibration_type cal_type;
-> >  	enum soc_type type;
-> >  	struct freq_clip_table freq_tab[4];
-> >  	unsigned int freq_tab_count;
-> > diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-> > index 4b992d9..c32d186 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu_data.c
-> > +++ b/drivers/thermal/samsung/exynos_tmu_data.c
-> > @@ -27,8 +27,6 @@
-> >  #if defined(CONFIG_CPU_EXYNOS4210)
-> >  static const struct exynos_tmu_registers exynos4210_tmu_registers = {
-> >  	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
-> > -	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
-> > -	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
-> >  	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
-> >  	.buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
-> >  	.buf_vref_sel_mask = EXYNOS_TMU_REF_VOLTAGE_MASK,
-> > @@ -66,12 +64,9 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
-> >  		.max_trigger_level = 4,
-> >  		.gain = 15,
-> >  		.reference_voltage = 7,
-> > -		.cal_type = TYPE_ONE_POINT_TRIMMING,
-> >  		.min_efuse_value = 40,
-> >  		.max_efuse_value = 100,
-> >  		.first_point_trim = 25,
-> > -		.second_point_trim = 85,
-> > -		.default_temp_offset = 50,
-> >  		.freq_tab[0] = {
-> >  			.freq_clip_max = 800 * 1000,
-> >  			.temp_level = 85,
-> > @@ -93,8 +88,6 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
-> >  #if defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250)
-> >  static const struct exynos_tmu_registers exynos4412_tmu_registers = {
-> >  	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
-> > -	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
-> > -	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
-> >  	.triminfo_ctrl = EXYNOS_TMU_TRIMINFO_CON,
-> >  	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
-> >  	.test_mux_addr_shift = EXYNOS4412_MUX_ADDR_SHIFT,
-> > @@ -145,13 +138,10 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
-> >  	.gain = 8, \
-> >  	.reference_voltage = 16, \
-> >  	.noise_cancel_mode = 4, \
-> > -	.cal_type = TYPE_ONE_POINT_TRIMMING, \
-> >  	.efuse_value = 55, \
-> >  	.min_efuse_value = 40, \
-> >  	.max_efuse_value = 100, \
-> >  	.first_point_trim = 25, \
-> > -	.second_point_trim = 85, \
-> > -	.default_temp_offset = 50, \
-> >  	.freq_tab[0] = { \
-> >  		.freq_clip_max = 1400 * 1000, \
-> >  		.temp_level = 70, \
-> > @@ -195,8 +185,6 @@ struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
-> >  #if defined(CONFIG_SOC_EXYNOS5440)
-> >  static const struct exynos_tmu_registers exynos5440_tmu_registers = {
-> >  	.triminfo_data = EXYNOS5440_TMU_S0_7_TRIM,
-> > -	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
-> > -	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
-> >  	.tmu_ctrl = EXYNOS5440_TMU_S0_7_CTRL,
-> >  	.buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
-> >  	.buf_vref_sel_mask = EXYNOS_TMU_REF_VOLTAGE_MASK,
-> > @@ -240,13 +228,10 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
-> >  	.gain = 5, \
-> >  	.reference_voltage = 16, \
-> >  	.noise_cancel_mode = 4, \
-> > -	.cal_type = TYPE_ONE_POINT_TRIMMING, \
-> > -	.efuse_value = 0x5b2d, \
-> > +	.efuse_value = 45, \
-> 
-> What efuse value has to do with removing type two calibration type?
-
-Bits 8-15 of efuse_value are only used for TYPE_TWO_POINT_TRIMMING code
-(please take a look at changes inside exynos_tmu_initialize() for details).
-
-> >  	.min_efuse_value = 16, \
-> >  	.max_efuse_value = 76, \
-> >  	.first_point_trim = 25, \
-> > -	.second_point_trim = 70, \
-> > -	.default_temp_offset = 25, \
-> >  	.type = SOC_ARCH_EXYNOS5440, \
-> >  	.registers = &exynos5440_tmu_registers, \
-> >  	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
-> > diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
-> > index 1fed00d..734d1f9 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu_data.h
-> > +++ b/drivers/thermal/samsung/exynos_tmu_data.h
-> > @@ -51,8 +51,6 @@
-> >  #define EXYNOS_THD_TEMP_FALL		0x54
-> >  #define EXYNOS_EMUL_CON		0x80
-> >  
-> > -#define EXYNOS_TRIMINFO_25_SHIFT	0
-> > -#define EXYNOS_TRIMINFO_85_SHIFT	8
-> >  #define EXYNOS_TMU_RISE_INT_MASK	0x111
-> >  #define EXYNOS_TMU_RISE_INT_SHIFT	0
-> >  #define EXYNOS_TMU_FALL_INT_MASK	0x111
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+Regards,
+Abhilash
