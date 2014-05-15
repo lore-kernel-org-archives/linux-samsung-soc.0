@@ -1,58 +1,37 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v5 1/5] ARM: EXYNOS: Add generic cpu power control functions
- for all exynos based SoCs
-Date: Thu, 15 May 2014 23:11:40 +0200
-Message-ID: <53752D8C.3030708@gmail.com>
-References: <1399307221-8659-1-git-send-email-a.kesavan@samsung.com> <1399307221-8659-2-git-send-email-a.kesavan@samsung.com> <019b01cf6e52$75e1a710$61a4f530$@samsung.com> <CAM4voamSNYZ_hsjF3eZhqZ=FF__39tFgi5FeXRcUhRbYYzu0LQ@mail.gmail.com>
+Subject: Re: [PATCH] arm: dts: exynos5: Remove multi core timer
+Date: Thu, 15 May 2014 23:14:13 +0200
+Message-ID: <53752E25.9060604@gmail.com>
+References: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f47.google.com ([74.125.83.47]:58334 "EHLO
-	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755538AbaEOVLx (ORCPT
+Received: from mail-ee0-f48.google.com ([74.125.83.48]:62751 "EHLO
+	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751524AbaEOVOZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 17:11:53 -0400
-In-Reply-To: <CAM4voamSNYZ_hsjF3eZhqZ=FF__39tFgi5FeXRcUhRbYYzu0LQ@mail.gmail.com>
+	Thu, 15 May 2014 17:14:25 -0400
+Received: by mail-ee0-f48.google.com with SMTP id e49so996538eek.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 14:14:24 -0700 (PDT)
+In-Reply-To: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, "mark.rutland" <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Arnd Bergmann <arnd@arndb.de>, devicetree <devicetree@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Will Deacon <will.deacon@arm.com>, skon.hwang@samsung.com, robh+dt <robh+dt@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, Grant Likely <grant.likely@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>, Dave Martin <Dave.Martin@arm.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "inderpal.s@samsung.com" <inderpal.s@samsung.com>
+To: Chirantan Ekbote <chirantan@chromium.org>, Russell King <linux@arm.linux.org.uk>
+Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Abhilash,
+Hi Chirantan,
 
-On 13.05.2014 12:12, Abhilash Kesavan wrote:
-> On Tue, May 13, 2014 at 7:54 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+On 15.05.2014 23:07, Chirantan Ekbote wrote:
+> The multi core timer and the ARM architected timer are two different
+> interfaces to the same underlying hardware timer.  This causes some
+> strange timing issues when they are both enabled at the same time so
+> remove the mct from the device tree and keep only the architected
+> timer.
 
-[snip]
-
->>> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-
->>> pmu.h
->>> index 4f6a256..0bdfcbc 100644
->>> --- a/arch/arm/mach-exynos/regs-pmu.h
->>> +++ b/arch/arm/mach-exynos/regs-pmu.h
->>> @@ -121,6 +121,12 @@
->>>
->>>  #define S5P_CHECK_SLEEP                              0x00000BAD
->>>
->>> +#define EXYNOS_ARM_CORE0_CONFIGURATION               S5P_PMUREG(0x2000)
->>
->> This can be put in order of address.
-> OK, will fix.
->>
->>> +#define EXYNOS_ARM_CORE_CONFIGURATION(_nr)   \
->>> +                     (EXYNOS_ARM_CORE0_CONFIGURATION + (0x80 * (_nr)))
->>> +#define EXYNOS_ARM_CORE_STATUS(_nr)          \
->>> +                     (EXYNOS_ARM_CORE_CONFIGURATION(_nr) + 0x4)
-
-My patches posted quite a while ago [1] to fix DT CPU topology already
-add these, remove S5P_ARM_CORE1* and fix corresponding usage in
-hotplug.c and platsmp.c.
-
-[1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/29573
-
-So I think you should rebase on top of them or at least on top of
-patches 1 and 2 from that series, as 3 and 4 should be dropped.
+Huh? I've always thought MCT is a completely separate hardware block
+outside of ARM cores, while architected timers are embedded inside the
+CPU block in which the ARM cores reside. Could you elaborate on this?
 
 Best regards,
 Tomasz
