@@ -1,140 +1,105 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [RFC V2 0/3] drm/bridge: panel and chaining
-Date: Thu, 15 May 2014 14:34:52 +0200
-Message-ID: <20140515123452.GP8790@phenom.ffwll.local>
-References: <1399319548-16567-1-git-send-email-ajaykumar.rs@samsung.com>
- <536B26FC.507@samsung.com>
- <CAF6AEGvWxCS-NX4uLjyMqc==7X9znn8PJ0AmJ6aFqqHYSBgsrQ@mail.gmail.com>
- <536C9B2B.2010006@samsung.com>
- <CAF6AEGsd8xViZWroUgsT5Lf_DZhbC5-V_ycR_HOtqdUH9QbA1A@mail.gmail.com>
- <20140515103256.GH6434@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20140515103256.GH6434@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v4 0/3] phy: Add exynos-simple-phy driver
+Date: Thu, 15 May 2014 18:40:51 +0530
+Message-ID: <1400159454-31107-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:51791 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751403AbaEONMc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 May 2014 09:12:32 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: a.hajda@samsung.com, t.stanislaws@samsung.com, thierry.reding@gmail.com, devicetree@vger.kernel.org, kgene.kim@samsung.com, kishon@ti.com, kyungmin.park@samsung.com, robh+dt@kernel.org, grant.likely@linaro.org, sylvester.nawrocki@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On Thu, May 15, 2014 at 12:32:58PM +0200, Thierry Reding wrote:
-> On Fri, May 09, 2014 at 09:59:34AM -0400, Rob Clark wrote:
-> > On Fri, May 9, 2014 at 5:08 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> [...]
-> > > 4. And the last thing, it is more about the concept/design. drm_bridge,
-> > > drm_hw_block suggests that those interfaces describes the whole device:
-> > > bridge, panel, whatever.
-> > 
-> > hmm, I don't think this is the case.  I can easily see things like:
-> > 
-> >   struct foo_panel {
-> >     struct drm_panel base;
-> >     struct drm_bridge bridge;
-> >     ...
-> >   }
-> > 
-> > where a panel implementation implements both panel and bridge.  In
-> > fact that is kinda what I was encouraging.
-> 
-> For lack of a better entry point into the discussion, let me pick this
-> example. It seems like in general we all agree that the basic structure
-> would have to be something like this:
-> 
-> 	CRTC -> encoder -> bridge [ -> bridge ... ] -> panel
-> 
-> Where panel could optionally be a bridge/panel hybrid as Rob pointed
-> out. I'm not sure if there's panels like this, but I suspect the use
-> case would be where a panel had built-in controls to modify the image in
-> some fashion (brightness, saturation, ...). I think those things exist
-> in DCS for example.
-> 
-> What's missing here, and if I understand correctly what Sean said about
-> the connector type, what we need to solve is how to wire up the
-> connector so that it reflects the correct type. So the above would have
-> to become something like this:
-> 
-> 	CRTC -> encoder -> bridge [ -> bridge ... ] -> panel
-> 		connector -----------------------------^
+From: Rahul Sharma <Rahul.Sharma@samsung.com>
 
-This is kinda always how I've thought it should play out: The last item in
-the chain actually implements the drm connector, everyone else just
-ignores it.
 
-> One of the problems with that approach is that panel is more than just a
-> video sink. It also controls the panel (and optionally backlight) power.
-> The standard DRM connector helpers don't work well in that case, because
-> drm_helper_connector_dpms() forwards changes to the CRTC and encoder,
-> though that could possibly be solved by wrapping it in a small custom
-> implementation that also controls the panel. Anyway, that's really just
-> an implementation detail.
+Changelog:
+v4:
+	* Rename files to follow "phy-exynos-simple" names.
+	* Rename Macros to this convention PHY_EXYNOS_SIMPLE_XXXX.
+	* Added list of phy specifier values to documentation file.
+	* Removed of_match_ptr from driver probe.
+	* Moved unrelated MACROs to driver file from header file.
 
-I don't see an issue with the dpms really. At worst the overall kms driver
-(which provides the crtc and encoder implementation) needs to pass a
-suitable dpms implementation for the drm_bridge to use in the connector.
-Or we could just move this vfunc into the core kms funtion table since
-everyone uses the same (well except i915, but that's a different story).
+v3:
+	* Implement lazy-init of PHYs.
+	* Use MACROs instead of numbers to represent phys.
+	* Use regmap interface to access PMU registers.
 
-dpms changes would then still be driven through the crtc -> encoder ->
-bridge ... chain.
+It is based on "Next" branch in Kishon Vijay Abraham's tree at
+https://git.kernel.org/cgit/linux/kernel/git/kishon/linux-phy.git/
 
-> So once a complete chain from encoder to panel has been created, we need
-> a way to find the appropriate connector type. Perhaps to achieve that it
-> would be useful to instantiate the connector by the bridge that's
-> connected to the panel. So essentially something like this:
-> 
-> 	struct drm_bridge {
-> 		/* to allow chaining */
-> 		struct drm_bridge *next;
-> 		/* for bridges directly connected to a panel or monitor */
-> 		struct drm_connector *connector;
-> 		/* for bridges directly connected to a panel */
-> 		struct drm_panel *panel;
+/* Original Message from Tomasz Stanislawski <t.stanislaws@samsung.com> */
 
-Imo these two shouldn't be here, but instead should be embedded into the
-overall structure the drm_bridge driver is using.
-> 
-> 		...
-> 	};
-> 
-> To make this work in a generic way, I think we're missing one bridge
-> instance. Currently the bridge in an encoder is completely optional, so
-> if there is no bridge in the system this needs to be special cased. One
-> way to unify this would be to make drm_encoder implement drm_bridge, or
-> an alternative would be to make drm_panel implement a bridge. Both can
-> possibly be dummies stubbed out with simple helpers.
+The Samsung SoCs from Exynos family are enhanced with a bunch of devices that
+provide functionality of a physical layer for interfaces like USB, HDMI, SATA,
+etc. They are controlled by a simple interface, often a single bit that enables
+and/or resets the physical layer.
 
-Yeah, imo if the panel isn't just a dumb thing but needs to actively take
-part in the modeset dance, it simply needs to implement itself as a
-drm_bridge+panel combo and do the magic in the various hooks provided.
+An IP driver should to control such a controller in an abstract manner.
+Therefore, such 'enablers' were implemented as clocks in older versions of
+Linux kernel.  With the dawn of PHY subsystems, PHYs become a natural way of
+exporting the 'enabler' functionality to drivers.  However, there is an
+unexpected consequence. Some of those 1-bit PHYs were implemented as separate
+drivers.  This means that one has to create a struct device, struct phy, its
+phy provider and 100-150 lines of driver code to basically set one bit.
 
-> I wonder if this would have any consequences on Dave's DP MST work,
-> since presumably an MST hub could be considered a bridge. In that case I
-> guess there would need to be support for multiple "next" bridges,
-> perhaps a simple doubly-linked list instead of a next pointer. The first
-> bridge would then be used to model the hub's input and child bridges
-> would be used to model each
-> of the outputs.
+The DP phy driver is a good example:
+https://lkml.org/lkml/2013/7/18/53
 
-DP is standardize. No need to wrestle the complexity through a drm_bridge,
-since code reuse anywhere else (non-DP) will be know to be zero. And for
-all the guys implementing a DP output can simply use the helpers. So I
-don't see an upside of this idea.
+And simple-phy RFC (shares only driver code but not other resources):
+https://lkml.org/lkml/2013/10/21/313
 
-Imo we should restrict drm_bridge to all the crazy transcoder chips/blocks
-commonly found on SoCs which all do non-standard stuff and where we
-actually have an established or anticipated need for sharing.
--Daniel
+To avoid waste of resources I propose to create all such 1-bit phys from Exynos
+SoC using a single device, driver and phy provider.
+
+This patchset contains a proposed solution.
+
+All comment are welcome.
+
+Hopefully in future the functionality introduced by this patch may be merged
+into a larger Power Management Unit (PMU) gluer driver.  On Samsusng SoC , the
+PMU part contains a number of register barely linked to power management (like
+clock gating, clock dividers, CPU resetting, etc.).  It may be tempting to
+create a hybrid driver that export clocks/phys/etc that are controlled by PMU
+unit.
+
+Alternative solutions might be:
+* exporting a regmap to the IP driver and allow the driver to control the PHY layer
+  like in the patch:
+  http://thread.gmane.org/gmane.linux.kernel.samsung-soc/28617/focus=28648
+
+* create a dedicated power domain for hdmiphy
+
+Regards,
+Tomasz Stanislawski
+
+v2:
+	* rename to exynos-simple-phy
+	* fix usage of devm_ioremap()
+	* add documentation for DT bindings
+	* add patches to client drivers
+
+v1: initial version
+
+Tomasz Stanislawski (3):
+  phy: Add exynos-simple-phy driver
+  drm: exynos: hdmi: use hdmiphy as PHY
+  s5p-tv: hdmi: use hdmiphy as PHY
+
+ .../devicetree/bindings/phy/samsung-phy.txt        |   57 ++++++
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |   11 +-
+ drivers/media/platform/s5p-tv/hdmi_drv.c           |   11 +-
+ drivers/phy/Kconfig                                |    5 +
+ drivers/phy/Makefile                               |    1 +
+ drivers/phy/phy-exynos-simple.c                    |  189 ++++++++++++++++++++
+ include/dt-bindings/phy/phy-exynos-simple.h        |   22 +++
+ 7 files changed, 286 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/phy/phy-exynos-simple.c
+ create mode 100644 include/dt-bindings/phy/phy-exynos-simple.h
+
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+1.7.9.5
