@@ -1,138 +1,120 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
-	Exynos System MMU
-Date: Thu, 15 May 2014 22:37:31 +0200
-Message-ID: <20140515203729.GA7136@mithrandir>
-References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
-	<6544270.ddFBoY6LMm@wuerfel> <20140428111802.GI19455@ulmo>
-	<4780885.JaktFvJeC7@wuerfel>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH V5 18/20] ARM: exynos: cpuidle: Pass the AFTR callback
+ to the platform_data
+Date: Fri, 16 May 2014 05:40:12 +0900
+Message-ID: <5375262C.10805@samsung.com>
+References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org> <1397212815-16068-19-git-send-email-daniel.lezcano@linaro.org> <201405091256.54755.arnd@arndb.de> <536CC3C6.6070804@samsung.com> <5370E648.10006@linaro.org> <5374CA34.1030405@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4910969773740930535=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4780885.JaktFvJeC7@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org, pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============4910969773740930535==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
-Content-Disposition: inline
-
-
---82I3+IH0IqGh5yIs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Apr 28, 2014 at 02:05:30PM +0200, Arnd Bergmann wrote:
-[...]
-> let me clarify by example:
->=20
-> 	iommu@1 {
-> 		compatible =3D "some,simple-iommu";
-> 		reg =3D <1>;
-> 		#iommu-cells =3D <0>; /* supports only one master */
-> 	};
->=20
-> 	iommu@2 {
-> 		compatible =3D "some,other-iommu";
-> 		reg =3D <3>;
-> 		#iommu-cells =3D <1>; /* contains master ID */
-> 	};
->=20
-> 	iommu@3 {
-> 		compatible =3D "some,windowed-iommu";
-> 		reg =3D <2>;
-> 		#iommu-cells =3D <2>; /* contains dma-window */
-> 	};
->=20
-> 	device@4 {
-> 		compatible =3D "some,ethernet";
-> 		iommus =3D <&/iommu@1>;
-> 	};
->=20
-> 	device@5 {
-> 		compatible =3D "some,dmaengine";
-> 		iommus =3D <&/iommu@2 0x40000000 0x1000000>,
-> 			 <&/iommu@3 0x101>;
-> 	};
->=20
-> The device at address 4 has a one-one relationship with iommu@1, so there
-> is no need for any data. device@5 has two master ports. One is connected =
-to
-> an IOMMU that has a per-device aperture, device@5 can only issue transfers
-> to the 256MB area at 0x40000000, and the IOMMU will have to put entries f=
-or
-> this device into that address. The second master port is connected to
-> iommu@3, which uses a master ID that gets passed along with each transfer,
-> so that needs to be put into the IOTLBs.
-
-iommu@3 and the second port of device@5 seem to match what we need for
-Tegra (and as I understand also Exynos). Can we settle on this for now
-so that Hiroshi and Cho can go update their drivers for this binding?
-
-> A variation would be to not use #iommu-cells at all, but provide a
-> #address-cells / #size-cells pair in the IOMMU, and have a translation
-> as we do for dma-ranges. This is probably most flexible.
-
-The remainder of this discussion seems to indicate that #iommu-cells and
-dma-ranges don't have to be mutually exclusive. For some IOMMUs it might
-make sense to use both.
-
-In fact perhaps we should require every IOMMU user to also specify a
-dma-ranges property, even if for some cases the range would be simply
-the complete physical address space. Perhaps in analogy to the ranges
-property an empty dma-ranges property could be taken to mean all of the
-physical address space.
-
-I'm aware that this doesn't cover any of the more exotic cases out
-there, but the fact is that we have real devices out there that ship
-with some variations of these simple IOMMUs and I don't think we're
-doing ourselves a favour by blocking support for these to be added on
-the hope of merging the perfect solution that covers all use-cases.
-Patches for Tegra have already been around for close to half a year.
-
-Thierry
-
---82I3+IH0IqGh5yIs
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTdSWIAAoJEN0jrNd/PrOhNlcQAL3IQystbn7k1fYhGLuqJ15t
-FnHMNLIrL5LroGQBJ0F/zGd+tGe8lSlo+pwbAK5ewxVdPCJL29VpeuEPLwZpZGiN
-QRrxFHnZPhyKTiTiFVGJJThCW0yY4IMLZ/c3wZk/17KYKftTFyOaWjGQFLwMQ6Hu
-xDZOO+5dmcc9SckHRJUOn+WDLExBDV3GNOZxSGbMNtiYqYjCV6vRmqI+O55lq9+1
-vmN78TzdKCj+lHN4jsRk2ehn1Zfqy/mNkmjcV1I4wL5CPl4XV7XC1SxFaZNBINIT
-12cp+2NcGE+yuizM+mOyF/hVdGR8P4i3wMBTAuX8fzH6g2gAnelRkzCGvefLe5aX
-2qJbUJ/S/pXxq+kga9eBgyMzTj8xLqZMawHCfDUSIv1YDfRXBWyZy0xK44aD+a/g
-igQOpSLhJc0xb3QF8EUntTB8Et23OzbyKXWW+cMXnuAcW1ahL0M85Z+ixuYRfJl+
-MggbJUUVa14EJvJMrAwFMVHm2j7Kjsalhfy8m8dke/3HoAeeaY1Lrehdf8DbsGtu
-edFGeuwLyUCwYc1jh620+qeNjDjo6ovORjPOJo6fIxf+gaiszXxFf7Fm/KHtBAoQ
-ns8fOahCGwFvch3snzU12QhVW6cBNtMPINL3+nqyeThN3shf6neaqrgWJPOiUSwh
-zoYccPp4OLvP5zEZCEmA
-=tf6d
------END PGP SIGNATURE-----
-
---82I3+IH0IqGh5yIs--
-
---===============4910969773740930535==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:40614 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754209AbaEOUkT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 May 2014 16:40:19 -0400
+Received: by mail-pa0-f51.google.com with SMTP id kq14so1537709pab.38
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 13:40:18 -0700 (PDT)
+In-Reply-To: <5374CA34.1030405@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Mark Rutland <Mark.Rutland@arm.com>, linux-samsung-soc@vger.kernel.org, rjw@rjwysocki.net, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, kgene.kim@samsung.com, linaro-kernel@lists.linaro.org
 
+On 05/15/14 23:07, Tomasz Figa wrote:
+> Arnd, Kukjin, Daniel,
+>
+> On 12.05.2014 17:18, Daniel Lezcano wrote:
+>> On 05/09/2014 02:02 PM, Tomasz Figa wrote:
+>>> Hi Arnd,
+>>>
+>>> On 09.05.2014 12:56, Arnd Bergmann wrote:
+>>>> On Friday 11 April 2014, Daniel Lezcano wrote:
+>>>>> No more dependency on the arch code. The platform_data field is used to set the
+>>>>> PM callback as the other cpuidle drivers.
+>>>>>
+>>>>> Signed-off-by: Daniel Lezcano<daniel.lezcano@linaro.org>
+>>>>> Reviewed-by: Viresh Kumar<viresh.kumar@linaro.org>
+>>>>> Reviewed-by: Bartlomiej Zolnierkiewicz<b.zolnierkie@samsung.com>
+>>>>
+>>>> This has just shown up in linux-next and broken randconfig builds.
+>>>>
+>>>>> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+>>>>> index fe8dac8..d22f0e4 100644
+>>>>> --- a/arch/arm/mach-exynos/exynos.c
+>>>>> +++ b/arch/arm/mach-exynos/exynos.c
+>>>>> @@ -221,8 +221,9 @@ void exynos_restart(enum reboot_mode mode, const char *cmd)
+>>>>>    }
+>>>>>
+>>>>>    static struct platform_device exynos_cpuidle = {
+>>>>> -       .name           = "exynos_cpuidle",
+>>>>> -       .id             = -1,
+>>>>> +       .name              = "exynos_cpuidle",
+>>>>> +       .dev.platform_data = exynos_enter_aftr,
+>>>>> +       .id                = -1,
+>>>>>    };
+>>>>>
+>>>>
+>>>> This is wrong on many levels, can we please do this properly?
+>>>>
+>>>> * The exynos_enter_aftr function is compiled conditionally, so you can't just
+>>>>     reference it from generic code, or you get a link error.
+>>>
+>>> +1
+>>
+>> That is true but still we have a link error without this patch. We
+>> shouldn't register and declare this structure if CONFIG_PM /
+>> CONFIG_CPU_IDLE are not set.
+>>
+>>>> * 'static struct platform_device ...' has been deprecated for at least a decade,
+>>>>     stop doing that. For any platform devices that get registered, there is
+>>>>     platform_device_register_simple().
+>>>
+>>> +0.5
+>>>
+>>> The missing 0.5 is because you can't pass platform data using
+>>> platform_device_register_simple(). There is
+>>> platform_device_register_resndata(), though.
+>>>
+>>>> * There shouldn't need to be a platform_device to start with, this should all
+>>>>     come from DT. We can't do this on arm64 anyway, so any code that may be
+>>>>     shared between arm32 and arm64 should have proper abstractions.
+>>>
+>>> -1
+>>>
+>>> Exynos cpuidle is not a device on the SoC, so I don't think there is any
+>>> way to represent it in DT. The only thing I could see this is matching
+>>> root node with a central SoC driver that instantiates specific
+>>> subdevices, such as cpufreq and cpuidle, but I don't see any available
+>>> infrastructure for this.
+>>
+>> There is a RFC for defining generic idle states [1].
+>>
+>> The idea behind using the platform driver framework is to unify the code
+>> across the different drivers and separate the PM / cpuidle code.
+>>
+>> By this way, we can move the different drivers to drivers/cpuidle and
+>> store them in a single place. That make easier the tracking, the review
+>> and the maintenance.
+>>
+>> I am ok to by using platform_device_register_resndata() but I would
+>> prefer to do that a bit later by converting the other drivers too. That
+>> will be easier if we have them grouped in a single directory (this is
+>> what does this patchset at the end).
+>>
+>> As there are some more work based on this patchset and the link error
+>> could be fixed as an independent patch, I would recommend to
+>> re-integrate it in the tree as asked by Bartlomiej.
+>
+> In general, it would be nice to have everything done properly, but I'd
+> consider Daniel's series as a huge improvement already and a nice
+> intermediate step towards further clean-up.
+>
+> So based on the comments quoted above, instead of stalling the
+> development, I'd suggest to accept this series and then move forward.
+>
+I'm fine.
 
---===============4910969773740930535==--
+Arnd, how about you?
+
+- Kukjin
