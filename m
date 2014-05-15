@@ -1,228 +1,72 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH 03/10] thermal: exynos: remove dead code for HW_MODE
- calibration
-Date: Thu, 15 May 2014 10:14:41 -0400
-Message-ID: <20140515141441.GB27339@developer>
-References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
- <1399288539-1793-4-git-send-email-b.zolnierkie@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH 1/4] clk: samsung: out: Add infrastructure to register CLKOUT
+Date: Thu, 15 May 2014 19:44:12 +0530
+Message-ID: <CAPdUM4NcFGGNZA9fjRP9VkpN3A0Gu+5DSgZ0RPhDD=wicr4GzA@mail.gmail.com>
+References: <1399640410-30957-1-git-send-email-tushar.behera@linaro.org>
+	<1399640410-30957-2-git-send-email-tushar.behera@linaro.org>
+	<536DA243.6000600@samsung.com>
+	<53705243.1030704@linaro.org>
+	<CAPdUM4N=k-pPxdhPQgVHh0fb+nqkgs7StwM2Pb6C8gcjx6dw-w@mail.gmail.com>
+	<5374CA1C.8000207@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f171.google.com ([209.85.160.171]:35053 "EHLO
-	mail-yk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751689AbaEOOM6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 10:12:58 -0400
-Content-Disposition: inline
-In-Reply-To: <1399288539-1793-4-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5374CA1C.8000207@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Tushar Behera <tushar.behera@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Pankaj Dubey <pankaj.dubey@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, sunil joshi <joshi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Bartlomiej
+On 15 May 2014 19:37, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Rahul, Tushar,
+>
+> On 15.05.2014 15:44, Rahul Sharma wrote:
+>> Hi Tushar,
+>>
+>> Basically you are adding a new clock-type for Clkout. IMO clkout
+>> is not a special hardware. Existing clock types can be reused to
+>> support clkout. I see 3 major problem here:
+>>
+>> 1) Clkout -> (Mux + Gate). You clubbed mux and gate together, and
+>> exposing as a single clock which is something like a composite clock.
+>> IMO this is not a recommended way in CCF.
+>>
+>> 2) New Clock Type: Since clkout is just a combination of a simple
+>> mux and gate which are already supported, it is a unnecessary
+>> duplication.
+>>
+>> 3) Clkout registered along with CMU: which is not correct. Clkout is in PMU
+>> (Separate physical IP) and should be registered as a independent Clock
+>> provider which provides 1 mux and 1 gate clock (As if now). It should also be
+>> well connected with main CMU.
+>>
+>> I understand the challenge in using regmap interface for a clock provider. But
+>> we need to identify a clean solution. IMHO a independent clock provider with
+>> iomap, is relatively cleaner approach till CCF is not ready with regmap based
+>> reg access for clock registers.
+>>
+>> Experts!! please comment.
+>
+> It's quite unfortunate that Tushar has duplicated the effort to create a
+> clkout driver, considering the fact that we did have such driver
+> internally at SRPOL and it was quite nice and simple.
+>
+> I will post a cleaned-up version today, that is about 2 times smaller in
+> terms of lines of added code and provides the same functionality,
+> without introducing custom clock types. In addition, it models the
+> clkout properly as a feature of PMU, not CMU (CMU only provides outputs
+> of particular sub-blocks that are fed into the PMU).
 
-On Mon, May 05, 2014 at 01:15:32PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> There should be no functional changes caused by this patch.
-> 
+oh.. thats nice. Please share the implementation.
 
-Please provide better explanation when removing features. For instance,
-based on the comment of commit introducing it, HW_MODE is a feature of
-5540 samsung's SoC. Question is why now it is being removed?
+Regards,
+Rahul Sharma.
 
-commit 1928457ea6337043a06ca2acd9b4d01e75810a3f
-Author: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Date:   Mon Jun 24 16:20:46 2013 +0530
-
-    thermal: exynos: Add hardware mode thermal calibration support
-        
-    This patch adds support for h/w mode calibration in the TMU controller.
-    Soc's like 5440 support this features. The h/w bits needed for calibration
-    setting are same as that of enum calibration_type.
-
-  
-
-
-Cheers,
-
-
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  drivers/thermal/samsung/exynos_tmu.c      | 33 +------------------------------
->  drivers/thermal/samsung/exynos_tmu.h      | 13 ------------
->  drivers/thermal/samsung/exynos_tmu_data.c |  3 ---
->  drivers/thermal/samsung/exynos_tmu_data.h |  2 --
->  4 files changed, 1 insertion(+), 50 deletions(-)
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index 0d96a51..9f2a5ee 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -76,9 +76,6 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
->  	struct exynos_tmu_platform_data *pdata = data->pdata;
->  	int temp_code;
->  
-> -	if (pdata->cal_mode == HW_MODE)
-> -		return temp;
-> -
->  	if (data->soc == SOC_ARCH_EXYNOS4210)
->  		/* temp should range between 25 and 125 */
->  		if (temp < 25 || temp > 125) {
-> @@ -113,9 +110,6 @@ static int code_to_temp(struct exynos_tmu_data *data, u8 temp_code)
->  	struct exynos_tmu_platform_data *pdata = data->pdata;
->  	int temp;
->  
-> -	if (pdata->cal_mode == HW_MODE)
-> -		return temp_code;
-> -
->  	if (data->soc == SOC_ARCH_EXYNOS4210)
->  		/* temp_code should range between 75 and 175 */
->  		if (temp_code < 75 || temp_code > 175) {
-> @@ -164,9 +158,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->  	if (TMU_SUPPORTS(pdata, TRIM_RELOAD))
->  		__raw_writel(1, data->base + reg->triminfo_ctrl);
->  
-> -	if (pdata->cal_mode == HW_MODE)
-> -		goto skip_calib_data;
-> -
->  	/* Save trimming info in order to perform calibration */
->  	if (data->soc == SOC_ARCH_EXYNOS5440) {
->  		/*
-> @@ -202,7 +193,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->  			(pdata->efuse_value >> reg->triminfo_85_shift) &
->  			EXYNOS_TMU_TEMP_MASK;
->  
-> -skip_calib_data:
->  	if (pdata->max_trigger_level > MAX_THRESHOLD_LEVS) {
->  		dev_err(&pdev->dev, "Invalid max trigger level\n");
->  		ret = -EINVAL;
-> @@ -311,7 +301,7 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
->  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->  	struct exynos_tmu_platform_data *pdata = data->pdata;
->  	const struct exynos_tmu_registers *reg = pdata->registers;
-> -	unsigned int con, interrupt_en, cal_val;
-> +	unsigned int con, interrupt_en;
->  
->  	mutex_lock(&data->lock);
->  	clk_enable(data->clk);
-> @@ -337,27 +327,6 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
->  		con |= (pdata->noise_cancel_mode << reg->therm_trip_mode_shift);
->  	}
->  
-> -	if (pdata->cal_mode == HW_MODE) {
-> -		con &= ~(reg->calib_mode_mask << reg->calib_mode_shift);
-> -		cal_val = 0;
-> -		switch (pdata->cal_type) {
-> -		case TYPE_TWO_POINT_TRIMMING:
-> -			cal_val = 3;
-> -			break;
-> -		case TYPE_ONE_POINT_TRIMMING_85:
-> -			cal_val = 2;
-> -			break;
-> -		case TYPE_ONE_POINT_TRIMMING_25:
-> -			cal_val = 1;
-> -			break;
-> -		case TYPE_NONE:
-> -			break;
-> -		default:
-> -			dev_err(&pdev->dev, "Invalid calibration type, using none\n");
-> -		}
-> -		con |= cal_val << reg->calib_mode_shift;
-> -	}
-> -
->  	if (on) {
->  		con |= (1 << reg->core_en_shift);
->  		interrupt_en =
-> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-> index 80dc899..e417af8 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.h
-> +++ b/drivers/thermal/samsung/exynos_tmu.h
-> @@ -34,11 +34,6 @@ enum calibration_type {
->  	TYPE_NONE,
->  };
->  
-> -enum calibration_mode {
-> -	SW_MODE,
-> -	HW_MODE,
-> -};
-> -
->  enum soc_type {
->  	SOC_ARCH_EXYNOS4210 = 1,
->  	SOC_ARCH_EXYNOS4412,
-> @@ -92,10 +87,6 @@ enum soc_type {
->   * @buf_slope_sel_shift: shift bits of amplifier gain value in tmu_ctrl
->  	register.
->   * @buf_slope_sel_mask: mask bits of amplifier gain value in tmu_ctrl register.
-> - * @calib_mode_shift: shift bits of calibration mode value in tmu_ctrl
-> -	register.
-> - * @calib_mode_mask: mask bits of calibration mode value in tmu_ctrl
-> -	register.
->   * @core_en_shift: shift bits of TMU core enable bit in tmu_ctrl register.
->   * @tmu_status: register drescribing the TMU status.
->   * @tmu_cur_temp: register containing the current temperature of the TMU.
-> @@ -139,8 +130,6 @@ struct exynos_tmu_registers {
->  	u32	therm_trip_en_shift;
->  	u32	buf_slope_sel_shift;
->  	u32	buf_slope_sel_mask;
-> -	u32	calib_mode_shift;
-> -	u32	calib_mode_mask;
->  	u32	core_en_shift;
->  
->  	u32	tmu_status;
-> @@ -222,7 +211,6 @@ struct exynos_tmu_registers {
->   * @default_temp_offset: default temperature offset in case of no trimming
->   * @test_mux; information if SoC supports test MUX
->   * @cal_type: calibration type for temperature
-> - * @cal_mode: calibration mode for temperature
->   * @freq_clip_table: Table representing frequency reduction percentage.
->   * @freq_tab_count: Count of the above table as frequency reduction may
->   *	applicable to only some of the trigger levels.
-> @@ -253,7 +241,6 @@ struct exynos_tmu_platform_data {
->  	u8 test_mux;
->  
->  	enum calibration_type cal_type;
-> -	enum calibration_mode cal_mode;
->  	enum soc_type type;
->  	struct freq_clip_table freq_tab[4];
->  	unsigned int freq_tab_count;
-> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-> index 36d64d6..4b992d9 100644
-> --- a/drivers/thermal/samsung/exynos_tmu_data.c
-> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
-> @@ -205,8 +205,6 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
->  	.therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
->  	.buf_slope_sel_shift = EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
->  	.buf_slope_sel_mask = EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
-> -	.calib_mode_shift = EXYNOS_TMU_CALIB_MODE_SHIFT,
-> -	.calib_mode_mask = EXYNOS_TMU_CALIB_MODE_MASK,
->  	.core_en_shift = EXYNOS_TMU_CORE_EN_SHIFT,
->  	.tmu_status = EXYNOS5440_TMU_S0_7_STATUS,
->  	.tmu_cur_temp = EXYNOS5440_TMU_S0_7_TEMP,
-> @@ -243,7 +241,6 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
->  	.reference_voltage = 16, \
->  	.noise_cancel_mode = 4, \
->  	.cal_type = TYPE_ONE_POINT_TRIMMING, \
-> -	.cal_mode = 0, \
->  	.efuse_value = 0x5b2d, \
->  	.min_efuse_value = 16, \
->  	.max_efuse_value = 76, \
-> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
-> index d4eeddb..1fed00d 100644
-> --- a/drivers/thermal/samsung/exynos_tmu_data.h
-> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
-> @@ -60,8 +60,6 @@
->  #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
->  #define EXYNOS_TMU_TRIP_MODE_MASK	0x7
->  #define EXYNOS_TMU_THERM_TRIP_EN_SHIFT	12
-> -#define EXYNOS_TMU_CALIB_MODE_SHIFT	4
-> -#define EXYNOS_TMU_CALIB_MODE_MASK	0x3
->  
->  #define EXYNOS_TMU_INTEN_RISE0_SHIFT	0
->  #define EXYNOS_TMU_INTEN_RISE1_SHIFT	4
-> -- 
-> 1.8.2.3
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> Best regards,
+> Tomasz
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
