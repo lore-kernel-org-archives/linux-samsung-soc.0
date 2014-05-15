@@ -1,34 +1,70 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 7/7] ARM: tegra: Add the EC i2c tunnel to tegra124-venice2
-Date: Thu, 15 May 2014 11:55:55 -0700
-Message-ID: <CAD=FV=Vj5M_yiYZOkjzB-QjYJa9WE2fcGcwwzAF1h8gcjc9jeA@mail.gmail.com>
-References: <1397757570-19750-1-git-send-email-dianders@chromium.org>
-	<1397757570-19750-8-git-send-email-dianders@chromium.org>
-	<53750A9A.8000808@wwwdotorg.org>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v4 3/8] clk: samsung: add infrastructure to register cpu clocks
+Date: Thu, 15 May 2014 21:17:20 +0200
+Message-ID: <12969374.fAYJcpG05n@phil>
+References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com> <1400029876-5830-4-git-send-email-thomas.ab@samsung.com> <CAD=FV=XmVNwwZY_LM6Za-p7gg6CPh1mGj=BoWvG0Q-Cx9L_A9Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53750A9A.8000808-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=XmVNwwZY_LM6Za-p7gg6CPh1mGj=BoWvG0Q-Cx9L_A9Q@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Thomas Abraham <ta.omasab@gmail.com>, cpufreq@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, l.majewski@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>, Thomas P Abraham <thomas.ab@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Stephen,
+Am Donnerstag, 15. Mai 2014, 11:18:44 schrieb Doug Anderson:
+> Thomas,
+> 
+> On Tue, May 13, 2014 at 6:11 PM, Thomas Abraham <ta.omasab@gmail.com> wrote:
+> > From: Thomas Abraham <thomas.ab@samsung.com>
+> > +static int exynos4210_armclk_pre_rate_change(struct clk_notifier_data
+> > *ndata, +                       struct exynos_cpuclk *armclk, void
+> > __iomem *base) +{
+> > +       struct exynos4210_armclk_data *armclk_data = armclk->data;
+> > +       unsigned long alt_prate = clk_get_rate(armclk->alt_parent);
+> > +       unsigned long alt_div, div0, div1, tdiv0, mux_reg;
+> > +       unsigned long cur_armclk_rate, timeout;
+> > +       unsigned long flags;
+> > +
+> > +       /* find out the divider values to use for clock data */
+> > +       while (armclk_data->prate != ndata->new_rate) {
+> > +               if (armclk_data->prate == 0)
+> > +                       return -EINVAL;
+> > +               armclk_data++;
+> > +       }
+> > +
+> > +       div0 = armclk_data->div0;
+> > +       div1 = armclk_data->div1;
+> > +       if (readl(base + SRC_CPU) & EXYNOS4210_MUX_HPM_MASK) {
+> > +               div1 = readl(base + DIV_CPU1) & EXYNOS4210_DIV1_HPM_MASK;
+> > +               div1 |= ((armclk_data->div1) & ~EXYNOS4210_DIV1_HPM_MASK);
+> > +       }
+> > +
+> > +       /*
+> > +        * if the new and old parent clock speed is less than the clock
+> > speed +        * of the alternate parent, then it should be ensured that
+> > at no point +        * the armclk speed is more than the old_prate until
+> > the dividers are +        * set.
+> > +        */
+> > +       tdiv0 = readl(base + DIV_CPU0);
+> > +       cur_armclk_rate = ndata->old_rate / EXYNOS4210_ARM_DIV1(tdiv0) /
+> > +                               EXYNOS4210_ARM_DIV2(tdiv0);
+> > +       if (alt_prate > cur_armclk_rate) {
+> > +               alt_div = _calc_div(alt_prate, cur_armclk_rate);
+> > +               _exynos4210_set_armclk_div(base, alt_div);
+> > +               div0 |= alt_div;
+> 
+> Don't you need to up the voltage here, too?  ...I haven't reviewed
+> this whole patch (so perhaps it's elsewhere in the patch or in the
+> series), but I stumbled upon this while trying to solve a different
+> problem and figured I'd check...
 
-On Thu, May 15, 2014 at 11:42 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 04/17/2014 11:59 AM, Doug Anderson wrote:
->> This adds the EC i2c tunnel (and devices under it) to the
->> tegra124-venice2 device tree.
->
-> Did the MFD patches at the start of this series get applied yet? I was
-> hoping to apply this one patch to the Tegra tree for 3.16, and that
-> needs to happen by tomorrow morning at the latest since -rc6 is looming
-> fast. However, I'm holding off until the rest of the series is applied
-> to the MFD tree so I can be sure the DT binding is accepted first...
+setting the voltage should be done by the cpufreq driver like cpufreq-cpu0 - 
+whose usage this series intents to allow.
 
-As far as I know, they didn't.  Lee was waiting on Wolfram's ack to
-the i2c tunnel before landing them.  ...and I'm still eagerly awaiting
-Wolfram's next i2c tunnel review.
+As I've hijacked Thomas' concept for my current rockchip clock work, I've 
+already seen this working nicely :-) .
 
--Doug
+
+Heiko
