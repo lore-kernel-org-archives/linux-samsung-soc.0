@@ -1,112 +1,85 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 3/4] irqchip: gic: Add support for per CPU bank offset
- specification in DT
-Date: Thu, 15 May 2014 22:12:48 +0200
-Message-ID: <53751FC0.8000500@gmail.com>
-References: <1397832181-5153-1-git-send-email-t.figa@samsung.com>	<1397832181-5153-4-git-send-email-t.figa@samsung.com>	<CAL_Jsq+wCDWnZ-wemMPc1tvpnK3kd=bx5fkT5GAP_QyLPjQfJQ@mail.gmail.com>	<536BBA3F.4020908@samsung.com> <CAL_JsqKwSuRebXdtfmrRCxhfwFOk8AMYUdeYX7SFu=ssM3=_hg@mail.gmail.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH 4/4] ARM: dts: exynos5250-snow: add ptn3460 node
+Date: Fri, 16 May 2014 01:45:32 +0530
+Message-ID: <CAEC9eQPfiwyWkzUdk9F92yx1Sz8XHw8CEUCX47fo9fedFO9C0w@mail.gmail.com>
+References: <1397481367-12652-1-git-send-email-sachin.kamat@linaro.org>
+	<1397481367-12652-4-git-send-email-sachin.kamat@linaro.org>
+	<CAOesGMh3bpJtphTFz_3ZZXBPTi_RFXv24tKyTPWa=rHq3xkP8Q@mail.gmail.com>
+	<CAEC9eQPrSiYt4b1LAWcRYBcozBSOmbs3zUO-zitFWsBm7py9ig@mail.gmail.com>
+	<537517AF.7080805@samsung.com>
+	<CAD=FV=VvhBTCPMTN2bhhDNBnodpCkWoEnU483RTOGv8PdJ+VsA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f50.google.com ([74.125.83.50]:33774 "EHLO
-	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755598AbaEOUNB (ORCPT
+Received: from mail-ve0-f178.google.com ([209.85.128.178]:62316 "EHLO
+	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754758AbaEOUPd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 16:13:01 -0400
-In-Reply-To: <CAL_JsqKwSuRebXdtfmrRCxhfwFOk8AMYUdeYX7SFu=ssM3=_hg@mail.gmail.com>
+	Thu, 15 May 2014 16:15:33 -0400
+Received: by mail-ve0-f178.google.com with SMTP id sa20so1972873veb.37
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 13:15:32 -0700 (PDT)
+In-Reply-To: <CAD=FV=VvhBTCPMTN2bhhDNBnodpCkWoEnU483RTOGv8PdJ+VsA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>, Tomasz Figa <t.figa@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sachin Kamat <sachin.kamat@linaro.org>, sunil joshi <joshi@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-On 08.05.2014 20:04, Rob Herring wrote:
-> On Thu, May 8, 2014 at 12:09 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->> On 08.05.2014 19:04, Rob Herring wrote:
->>> On Fri, Apr 18, 2014 at 9:43 AM, Tomasz Figa <t.figa@samsung.com> wrote:
->>>> On most platforms GIC registers are banked, so each CPU can access its
->>>> registers at the same address. However there is a small number of SoCs
->>>> on which the banking is not implemented and each CPU has its GIC
->>>> register set at different offset from GIC base address.
->>>>
->>>> Originally the driver used simple maths to calculate the address, i.e.
->>>> multiplying constant percpu_offset by cpu_logical_map(cpu). However this
->>>> assumed the namespace of cpu_logical_map() to be from 0 to num_cpus-1,
->>>> but if CPU topology is specified via DT, this changes to full ID in
->>>> the same format as MPIDR register and thus breaks the assumption.
->>>>
->>>> This patch adds support for per CPU GIC bank offset specification
->>>> through device tree to separate SoC-internal core wiring from CPU
->>>> multi-processor IDs.
->>>>
->>>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
->>>> ---
->>>>  Documentation/devicetree/bindings/arm/cpus.txt |  7 ++
->>>>  Documentation/devicetree/bindings/arm/gic.txt  | 34 +++++++++-
->>>>  drivers/irqchip/irq-gic.c                      | 94 ++++++++++++++++++--------
->>>>  3 files changed, 105 insertions(+), 30 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/arm/cpus.txt b/Documentation/devicetree/bindings/arm/cpus.txt
->>>> index 333f4ae..47654e6 100644
->>>> --- a/Documentation/devicetree/bindings/arm/cpus.txt
->>>> +++ b/Documentation/devicetree/bindings/arm/cpus.txt
->>>> @@ -209,6 +209,13 @@ nodes to be present and contain the properties described below.
->>>>                 Value type: <phandle>
->>>>                 Definition: Specifies the ACC[2] node associated with this CPU.
->>>>
->>>> +       - gic-offset
->>>> +               Usage: required for systems that have non-banked GIC
->>>> +                      implementation that requires each CPU to use different
->>>> +                      offset to access its set of GIC registers
->>>> +               Value type: <u32>
->>>> +               Definition: Specifies the offset of GIC registers specific to
->>>> +                           this CPU.
+On 5/16/14, Doug Anderson <dianders@chromium.org> wrote:
+> Kukjin,
+>
+> On Thu, May 15, 2014 at 12:38 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> On 04/30/14 22:03, Ajay kumar wrote:
 >>>
->>> What if you have 1 distributor address and a per cpu address which is
->>> allowed in the gicv2 spec IIRC.
+>>> Hi,
+>>>
+>> Hi,
 >>
->> Hmm, I need to take a look at GIC v2 spec... but I think my proposed
->> binding would still cover this, as the implementation (if modified to
->> support this) would simply ignore the offset for distributor in this case.
-> 
-> How does the implementation know whether to ignore the offset for the
-> distributor or not?
+>>> On Tue, Apr 15, 2014 at 4:24 AM, Olof Johansson<olof@lixom.net>  wrote:
+>>>>
+>>>> Hi Sachin,
+>>>>
+>>>> On Mon, Apr 14, 2014 at 6:16 AM, Sachin Kamat<sachin.kamat@linaro.org>
+>>>> wrote:
+>>>>>
+>>>>> From: Doug Anderson<dianders@chromium.org>
+>>>>>
+>>>>> Added nodes for ptn3460 driver to Snow board.
+>>>>>
+>>>>> Signed-off-by: Doug Anderson<dianders@chromium.org>
+>>>>> Signed-off-by: Ajay Kumar<ajaykumar.rs@samsung.com>
+>>>>> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+>>>>
+>>>>
+>>>> I'm curious, how are you testing this code on the upstream kernel
+>>>> before you post the patches?
+>>>>
+>>>> Especially since Doug was referring to some of these containing parts
+>>>> that is needed for drivers that are not yet upstreamed.
+>>>
+>>>
+>>> Its better to ignore this patch as of now, since discussion is still
+>>> going
+>>> on, at http://www.spinics.net/lists/dri-devel/msg58474.html
+>>> I guess we will have few more DT bindings. Once it is finalized,
+>>> I shall resend this again.
+>>>
+>> This means this whole series?
+>
+> I think you can land everything except the last patch.
+I think you can take this ptn3460 DT patch also.
+Because, ptn3460 driver is already present in Inki's tree. Its true
+that the driver may need some changes, the discussions are still going
+on, and if we need to add a new DT binding, I will send that change as
+a seperate patch sometime down the line.
+As of now, this can go in (but I am sure we won't get the display
+until we keep FET1 and FET6 "always on" for snow)
 
-Hmm, if GIC v2 spec allows both cases, then this solution is not enough
-indeed. I need to find some time to familiarize with necessary
-documentation...
+Ajay
 
->>> I think I would rather see this stay contained within the gic node and
->>> use reg property.
->>
->> How do we match reg entries with CPUs then? The first idea that comes to
->> my mind would be adding arm,cpu-map property that would list MPIDR
->> values of CPUs in the same order as register banks are listed in reg
->> property but I'm not sure this is a good idea.
-> 
-> How do you do it currently?
-
-We don't. As I described in commit message, the driver expects
-cpu_logical_map() to return a value from [0...N-1] range where N is the
-number of CPUs and that respective per-CPU bank is located at gic_base +
-cpu_offset * cpu_logical_map(). There are two problems with this:
-
-a) after adding CPU topology data to DT, cpu_logical_map() starts
-returning lower 24 bits of MPIDR and certain SoCs have non-zero cluster
-ID, even if there is only a single cluster present,
-
-b) obviously for multi-cluster SoCs the above assumption doesn't stand.
-
-> 
-> The issue with putting properties in the cpu node is it does not
-> scale. What if you had 10 per cpu properties on 10 different blocks.
-> 
-> Using the MPIDR directly is a bit specific. I would perhaps just do
-> something like this:
-> 
-> gic-cpu-map = <&CPU0 &CPU1>;
-
-It sounds quite good. I'll try to get this implemented in next version,
-but after looking through GIC v2 spec first.
-
-Best regards,
-Tomasz
+> The tps65090 charger portion of the MFD will fail to probe (assuming
+> it is configured) since we're still waiting for a review on
+> <https://patchwork.kernel.org/patch/4042741/>.  ...but it doesn't hurt
+> to take the device tree part.
+>
+> -Doug
+>
