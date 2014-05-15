@@ -1,96 +1,63 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: SWRESET is needed to boot secondary CPU on
- Exynos3250
-Date: Thu, 15 May 2014 13:18:11 +0200
-Message-ID: <1400152691-29705-1-git-send-email-k.kozlowski@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [PATCH] FIX:cache:exynos: Execute the cache reconfiguration
+ unconditionally for Exynos4
+Date: Thu, 15 May 2014 13:34:06 +0200
+Message-ID: <1400153646-827-1-git-send-email-l.majewski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:48591 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751485AbaEOLWW (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:22673 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751967AbaEOLfG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 07:22:22 -0400
+	Thu, 15 May 2014 07:35:06 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N5M00KDM5IG9940@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 15 May 2014 20:35:04 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, "arm@kernel.org" <arm@kernel.org>, Lukasz Majewski <l.majewski@majess.pl>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 'Olof Johansson' <olof@lixom.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
 
-Without software reset the secondary CPU does not power up and
-exynos_boot_secondary() ends with pen_release equal to 1. This can be
-observed in dmesg:
-	CPU1: failed to come online
-	Brought up 1 CPUs
-	SMP: Total of 1 processors activated.
-	CPU: All CPU(s) started in SVC mode.
+The commit 2bf73dd61a84cdf27e49f48e08739af6ba70ace1 has made the cache
+configuration depending on definition of CONFIG_S5P_SLEEP Kconfig flag.
+It is enabled on various S5PV210 incarnations and not available at Exynos4
+family of SoCs.
 
-When booting the secondary CPU on Exynos3250 execute also software
-reset for core 1.
+The problem emerges when one wants to disable/enable core via hotplug - e.g:
+echo 0 > /sys/devices/system/cpu/cpu1/online.
+When CONFIG_CPU_IDLE is enabled (it is not enabled at default exynos_defconfig).
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On Exynos4 based targets (Exynos4412 and Exynos4210, namely trats2 and
+trats) board locks up and consumes considerable power.
+
+This patch does nothing more than restoration of the state before the
+offending commit.
+
+Tested on top of next-20140514 at Trats board.
+
+Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
 ---
- arch/arm/mach-exynos/platsmp.c  | 22 ++++++++++++++++++++++
- arch/arm/mach-exynos/regs-pmu.h |  3 +++
- 2 files changed, 25 insertions(+)
+ arch/arm/mach-exynos/exynos.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 8b88eb2f077b..64ec5ca18f60 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -76,6 +76,25 @@ static inline void __iomem *cpu_boot_reg(int cpu)
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 1b97b93..5c8b334 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -254,10 +254,9 @@ static int __init exynos4_l2x0_cache_init(void)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (IS_ENABLED(CONFIG_S5P_SLEEP)) {
+-		l2x0_regs_phys = virt_to_phys(&l2x0_saved_regs);
+-		clean_dcache_area(&l2x0_regs_phys, sizeof(unsigned long));
+-	}
++	l2x0_regs_phys = virt_to_phys(&l2x0_saved_regs);
++	clean_dcache_area(&l2x0_regs_phys, sizeof(unsigned long));
++
+ 	return 0;
  }
- 
- /*
-+ * Set wake up by local power mode and execute software reset for given core.
-+ *
-+ * Currently this is needed only when booting secondary CPU on Exynos3250.
-+ */
-+static inline void exynos_core_restart(u32 core_id)
-+{
-+	if (of_machine_is_compatible("samsung,exynos3250")) {
-+		u32 val;
-+
-+		val = __raw_readl(S5P_ARM_CORE_STATUS(core_id));
-+		val |= S5P_CORE_WAKEUP_FROM_LOCAL_CFG;
-+		__raw_writel(val, S5P_ARM_CORE_STATUS(core_id));
-+
-+		pr_info("CPU%u: Software reset\n", core_id);
-+		__raw_writel(EXYNOS_CORE_PO_RESET(core_id), EXYNOS_SWRESET);
-+	}
-+}
-+
-+/*
-  * Write pen_release in a way that is guaranteed to be visible to all
-  * observers, irrespective of whether they're taking part in coherency
-  * or not.  This is necessary for the hotplug code to work reliably.
-@@ -155,6 +174,9 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 			return -ETIMEDOUT;
- 		}
- 	}
-+
-+	exynos_core_restart(core_id);
-+
- 	/*
- 	 * Send the secondary CPU a soft interrupt, thereby causing
- 	 * the boot monitor to read the system wide flags register,
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index d94bbc85d7e0..3ecbb4fe227b 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -26,6 +26,8 @@
- #define S5P_USE_STANDBY_WFI0			(1 << 16)
- #define S5P_USE_STANDBY_WFE0			(1 << 24)
- 
-+#define EXYNOS_CORE_PO_RESET(n)			((1 << 4) << n)
-+
- #define EXYNOS_SWRESET				S5P_PMUREG(0x0400)
- #define EXYNOS5440_SWRESET			S5P_PMUREG(0x00C4)
- 
-@@ -117,6 +119,7 @@
- #define S5P_PAD_RET_EBIB_OPTION			S5P_PMUREG(0x31A8)
- 
- #define S5P_CORE_LOCAL_PWR_EN			0x3
-+#define S5P_CORE_WAKEUP_FROM_LOCAL_CFG		(0x3 << 8)
- #define S5P_INT_LOCAL_PWR_EN			0x7
- 
- #define S5P_CHECK_SLEEP				0x00000BAD
+ early_initcall(exynos4_l2x0_cache_init);
 -- 
-1.9.1
+1.7.10.4
