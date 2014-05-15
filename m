@@ -1,206 +1,115 @@
-From: Pawel Osciak <posciak@chromium.org>
-Subject: Re: [PATCH] [media] s5p-mfc: Add a control for IVF format for VP8 encoder
-Date: Thu, 15 May 2014 15:14:41 +0900
-Message-ID: <CACHYQ-rsL66nV5s4yh0kkJ33ho=n9FmTqPEPscnRjEwZhG3pCA@mail.gmail.com>
-References: <1394085820-3784-1-git-send-email-arun.kk@samsung.com> <037201cf6f7e$7ca1ba90$75e52fb0$%debski@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
+Date: Thu, 15 May 2014 09:42:04 +0200
+Message-ID: <20140515074203.GD5952@ulmo>
+References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
+ <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
+ <20140514221423.GC6215@mithrandir>
+ <CAPdUM4NaLpN99JCJH3qMakSO3OG6ASjEuvvr_CnKv=gOiqfzMQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f45.google.com ([209.85.192.45]:43432 "EHLO
-	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751251AbaEOGPX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 02:15:23 -0400
-Received: by mail-qg0-f45.google.com with SMTP id z60so1000449qgd.32
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 23:15:23 -0700 (PDT)
-Received: from mail-qg0-f48.google.com (mail-qg0-f48.google.com [209.85.192.48])
-        by mx.google.com with ESMTPSA id o88sm478063qge.19.2014.05.14.23.15.22
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
-        Wed, 14 May 2014 23:15:22 -0700 (PDT)
-Received: by mail-qg0-f48.google.com with SMTP id i50so990415qgf.35
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 May 2014 23:15:22 -0700 (PDT)
-In-Reply-To: <037201cf6f7e$7ca1ba90$75e52fb0$%debski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============2004639824=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAPdUM4NaLpN99JCJH3qMakSO3OG6ASjEuvvr_CnKv=gOiqfzMQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, sunil joshi <joshi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>
-Cc: Arun Kumar K <arun.kk@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Arun Kumar <arunkk.samsung@gmail.com>, hans.verkuil@cisco.com
 
-On Wed, May 14, 2014 at 11:12 PM, Kamil Debski <k.debski@samsung.com> wrote:
-> Hi Pawel, Hans,
->
-> I think we talked some time ago on IRC about this patch.
-> If I remember correctly, the conclusion was that it would be better to use
-> a specific pixel formats for this kind of out codec output.
->
-> Akin to:
-> V4L2_PIX_FMT_H264                       'H264'  H264 video elementary stream
-> with start codes.
-> V4L2_PIX_FMT_H264_NO_SC         'AVC1'  H264 video elementary stream without
-> start codes.
->
-> Could you confirm this?
 
-Hi Kamil.
-Yes, that was the conclusion.
-Pawel
+--===============2004639824==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tNQTSEo8WG/FKZ8E"
+Content-Disposition: inline
 
->
-> Best wishes,
-> --
-> Kamil Debski
-> Samsung R&D Institute Poland
->
->
->> -----Original Message-----
->> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com] On Behalf Of Arun
->> Kumar K
->> Sent: Thursday, March 06, 2014 7:04 AM
->> To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
->> Cc: k.debski@samsung.com; s.nawrocki@samsung.com; posciak@chromium.org;
->> arunkk.samsung@gmail.com
->> Subject: [PATCH] [media] s5p-mfc: Add a control for IVF format for VP8
->> encoder
->>
->> From: Pawel Osciak <posciak@chromium.org>
->>
->> Add a control to enable/disable IVF output stream format for VP8 encode.
->> Set the IVF format output to disabled as default.
->>
->> Signed-off-by: Pawel Osciak <posciak@chromium.org>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> ---
->>  Documentation/DocBook/media/v4l/controls.xml    |    8 ++++++++
->>  drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    1 +
->>  drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    |   11 +++++++++++
->>  drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |    2 ++
->>  drivers/media/v4l2-core/v4l2-ctrls.c            |    1 +
->>  include/uapi/linux/v4l2-controls.h              |    1 +
->>  6 files changed, 24 insertions(+)
->>
->> diff --git a/Documentation/DocBook/media/v4l/controls.xml
->> b/Documentation/DocBook/media/v4l/controls.xml
->> index 0e1770c..07fb64a 100644
->> --- a/Documentation/DocBook/media/v4l/controls.xml
->> +++ b/Documentation/DocBook/media/v4l/controls.xml
->> @@ -3222,6 +3222,14 @@ V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_REF_PERIOD
->> as a golden frame.</entry>  Acceptable values are 0, 1, 2 and 3
->> corresponding to encoder profiles 0, 1, 2 and 3.</entry>
->>             </row>
->>
->> +           <row><entry></entry></row>
->> +           <row>
->> +             <entry
->> spanname="id"><constant>V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT</constant>&n
->> bsp;</entry>
->> +             <entry>boolean</entry>
->> +           </row>
->> +           <row><entry spanname="descr">Outputs the VP8 encoded stream
->> in IVF file format.</entry>
->> +           </row>
->> +
->>            <row><entry></entry></row>
->>          </tbody>
->>        </tgroup>
->> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->> b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->> index 5c28cc3..4d17df9 100644
->> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
->> @@ -418,6 +418,7 @@ struct s5p_mfc_vp8_enc_params {
->>       u8 rc_frame_qp;
->>       u8 rc_p_frame_qp;
->>       u8 profile;
->> +     bool ivf;
->>  };
->>
->>  /**
->> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
->> b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
->> index df83cd1..a67913e 100644
->> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
->> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
->> @@ -676,6 +676,14 @@ static struct mfc_control controls[] = {
->>               .step = 1,
->>               .default_value = 0,
->>       },
->> +     {
->> +             .id = V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT,
->> +             .type = V4L2_CTRL_TYPE_BOOLEAN,
->> +             .minimum = 0,
->> +             .maximum = 1,
->> +             .step = 1,
->> +             .default_value = 0,
->> +     },
->>  };
->>
->>  #define NUM_CTRLS ARRAY_SIZE(controls)
->> @@ -1636,6 +1644,9 @@ static int s5p_mfc_enc_s_ctrl(struct v4l2_ctrl
->> *ctrl)
->>       case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:
->>               p->codec.vp8.profile = ctrl->val;
->>               break;
->> +     case V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT:
->> +             p->codec.vp8.ivf = ctrl->val;
->> +             break;
->>       default:
->>               v4l2_err(&dev->v4l2_dev, "Invalid control, id=%d, val=%d\n",
->>                                                       ctrl->id,
-> ctrl->val);
->> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
->> b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
->> index f64621a..90edb19 100644
->> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
->> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
->> @@ -1243,6 +1243,8 @@ static int s5p_mfc_set_enc_params_vp8(struct
->> s5p_mfc_ctx *ctx)
->>
->>       /* VP8 specific params */
->>       reg = 0;
->> +     /* Bit set to 1 disables IVF stream format. */
->> +     reg |= p_vp8->ivf ? 0 : (0x1 << 12);
->>       reg |= (p_vp8->imd_4x4 & 0x1) << 10;
->>       switch (p_vp8->num_partitions) {
->>       case V4L2_CID_MPEG_VIDEO_VPX_1_PARTITION:
->> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-
->> core/v4l2-ctrls.c
->> index e9e12c4..19e78df 100644
->> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
->> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
->> @@ -752,6 +752,7 @@ const char *v4l2_ctrl_get_name(u32 id)
->>       case V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP:                return "VPX
-> I-
->> Frame QP Value";
->>       case V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP:                return "VPX
-> P-
->> Frame QP Value";
->>       case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:                   return "VPX
->> Profile";
->> +     case V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT:                return "VPX
-> Output
->> stream in IVF format";
->>
->>       /* CAMERA controls */
->>       /* Keep the order of the 'case's the same as in videodev2.h! */
->> diff --git a/include/uapi/linux/v4l2-controls.h
->> b/include/uapi/linux/v4l2-controls.h
->> index cda6fa0..b2763d6 100644
->> --- a/include/uapi/linux/v4l2-controls.h
->> +++ b/include/uapi/linux/v4l2-controls.h
->> @@ -565,6 +565,7 @@ enum v4l2_vp8_golden_frame_sel {
->>  #define V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP
->>       (V4L2_CID_MPEG_BASE+509)
->>  #define V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP
->>       (V4L2_CID_MPEG_BASE+510)
->>  #define V4L2_CID_MPEG_VIDEO_VPX_PROFILE
->>       (V4L2_CID_MPEG_BASE+511)
->> +#define V4L2_CID_MPEG_VIDEO_VPX_IVF_FORMAT
->>       (V4L2_CID_MPEG_BASE+512)
->>
->>  /*  MPEG-class control IDs specific to the CX2341x driver as defined
->> by V4L2 */
->>  #define V4L2_CID_MPEG_CX2341X_BASE
->>       (V4L2_CTRL_CLASS_MPEG | 0x1000)
->> --
->> 1.7.9.5
->
+
+--tNQTSEo8WG/FKZ8E
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, May 15, 2014 at 10:49:37AM +0530, Rahul Sharma wrote:
+> Hi Thierry,
+>=20
+> On 15 May 2014 03:44, Thierry Reding <thierry.reding@gmail.com> wrote:
+> > On Thu, May 15, 2014 at 12:47:21AM +0530, Rahul Sharma wrote:
+[...]
+> >> +#define HDMI_PHY     0
+> >> +#define DAC_PHY      1
+> >> +#define ADC_PHY      2
+> >> +#define PCIE_PHY     3
+> >> +#define SATA_PHY     4
+> >
+> > Perhaps these should be namespaced somehow to avoid potential conflicts
+> > with other PHY providers?
+>=20
+> How about XXX_SIMPLE_PHY?
+
+The indices are specific to the Exynos PHY device, so why not
+PHY_EXYNOS_SIMPLE_XXX (or any variation thereof)?
+
+> >> +#define PHY_NR       5
+> >
+> > I'm not sure that this belongs here either. It's not a value that will
+> > ever appear in a DT source file.
+>=20
+> I want it to grow along with new additions in the phy list else
+> catastrophic. This will look unrelated in driver.
+
+But this is in no way growing automatically as it is. Whoever adds a new
+type of PHY will need to manually increment this define. Furthermore the
+driver will need to be updated to cope with this anyway.
+
+I think this is even a reason to have this only in the driver. Otherwise
+you could have a situation where somebody upgrades the binding (and this
+file along with it) but not update the driver with the necessary support.
+But the driver will still pick up the PHY_NR change and will accept the
+new PHY type as valid, even though it has no code to handle it. If you
+have this in the driver, however, then as long as the driver has not yet
+been updated it will reject requests for the new PHY type. And that's
+exactly what it should be doing since it doesn't know how to handle it.
+
+Thierry
+
+--tNQTSEo8WG/FKZ8E
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTdG/LAAoJEN0jrNd/PrOhxcsP/RdR01ceQtmbqBx/1om+YSe9
+0ekVajz9CMbe4n4nc6/TlxLoNJlDQXNoLYrLyj9sNz9K0uZNkjaW0RStKETYtgl2
+e0/m0MVRo53rT4iosefV3qsPCBeU1eAwHdCbGrnmb00z+fE+K1rPd+oMqs3ZS05a
+uFgzt/3s3E9Kg6HdDrGMg7YGj00fSQhw+1otnmLN+t+pP0w6A9Z2mAMhLihXY1FR
+sB1P9NmYZdwKDdRS5423355hH5eNAE8xXv/EzA/mb+WPLGTtyjlNMxgFzso3bww1
+3n9l/ZscwXlq+XjHekZHXra50YlM4J4SBeHbbrArObkTGFWEjzm0pJ8An9hssh1l
+lMiGeZ61FUplxTtXnYI/0C8alxJGG/1tS3BlPtBL9Wqog1XV0OIQdUByU8APCNzU
+CVW68BVu8gteKJjtzGTAWHWMq4BDU7vDOqTIhThLnxTtxQAW0H4L4TCZXJ0GdqL2
+QFlormg5wW2x8ArSJYc8HlRKr2FbD86mr+FMOZiPh7wIg2L5McvQl4r/fVUF7PID
+pUemvq9TbH02yvFPuyyV3bcKJjMDcEW5+mJsBqjcbJurM0GuKU1WgTUWSDGRlup5
+CUKDbn0iavAosRn8muzQeH+Gy9rA9MFhoY0nG7tmHOV+xMWlr3smSFuxMi6pQBnx
+sqWv6AENtahVIWeL32ze
+=vRlj
+-----END PGP SIGNATURE-----
+
+--tNQTSEo8WG/FKZ8E--
+
+--===============2004639824==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============2004639824==--
