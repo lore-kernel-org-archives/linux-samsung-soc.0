@@ -1,87 +1,89 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 09/10] thermal: exynos: remove redundant pdata checks from
- exynos_tmu_control()
-Date: Thu, 15 May 2014 19:06:58 +0200
-Message-ID: <2117889.Z2oDTHJSPp@amdc1032>
-References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
- <1399288539-1793-10-git-send-email-b.zolnierkie@samsung.com>
- <20140515150308.GC27690@developer>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCHv4 1/4] ARM: dts: exynos4: add PMU syscon node
+Date: Thu, 15 May 2014 19:07:19 +0200
+Message-ID: <5374F447.9030102@samsung.com>
+References: <1399004769-31033-1-git-send-email-chanho61.park@samsung.com>
+ <1399004769-31033-2-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:42015 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752807AbaEORHQ (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:65178 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754888AbaEORH0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 13:07:16 -0400
-In-reply-to: <20140515150308.GC27690@developer>
+	Thu, 15 May 2014 13:07:26 -0400
+In-reply-to: <1399004769-31033-2-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Chanho Park <chanho61.park@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, k.debski@samsung.com
 
-On Thursday, May 15, 2014 11:03:08 AM Eduardo Valentin wrote:
-> Hello Bartlomiej,
+Hi Chanho,
 
-Hi,
+When testing some other patches with this series applied I found one
+more issue. Please see below.
 
-> On Mon, May 05, 2014 at 01:15:38PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > pdata->reference_voltage and pdata->gain are always defined
-> > to non-zero values so remove the redundant checks from
-> > exynos_tmu_control().
-> > 
+On 02.05.2014 06:26, Chanho Park wrote:
+> This patch adds a PMU(Power Management Unit) syscon node. This
+> should be required for USB Phy syscon regmap I/F.
 > 
-> In all existing SoCs? 
-
-Yes.
-
-> Should this be considered to any upcoming SoCs?
-
-Yes, if/when it changes we will update the code.
-
-> > There should be no functional changes caused by this patch.
-> > 
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> >  drivers/thermal/samsung/exynos_tmu.c | 12 ++++--------
-> >  1 file changed, 4 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> > index a8d9524..45d7c6f 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu.c
-> > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > @@ -215,15 +215,11 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
-> >  	if (pdata->test_mux)
-> >  		con |= (pdata->test_mux << reg->test_mux_addr_shift);
-> >  
-> > -	if (pdata->reference_voltage) {
-> > -		con &= ~(reg->buf_vref_sel_mask << reg->buf_vref_sel_shift);
-> > -		con |= pdata->reference_voltage << reg->buf_vref_sel_shift;
-> > -	}
-> > +	con &= ~(reg->buf_vref_sel_mask << reg->buf_vref_sel_shift);
-> > +	con |= pdata->reference_voltage << reg->buf_vref_sel_shift;
-> >  
-> > -	if (pdata->gain) {
-> > -		con &= ~(reg->buf_slope_sel_mask << reg->buf_slope_sel_shift);
-> > -		con |= (pdata->gain << reg->buf_slope_sel_shift);
-> > -	}
-> > +	con &= ~(reg->buf_slope_sel_mask << reg->buf_slope_sel_shift);
-> > +	con |= (pdata->gain << reg->buf_slope_sel_shift);
+> Cc: Kamil Debski <k.debski@samsung.com>
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/arm/samsung/pmu.txt | 3 +++
+>  arch/arm/boot/dts/exynos4.dtsi                        | 5 +++++
+>  arch/arm/boot/dts/exynos4x12.dtsi                     | 4 ++++
+>  3 files changed, 12 insertions(+)
 > 
-> The way it is put, looks like gain and reference_voltage are mandatory
-> pdata fields. Should these checks be moved to initialization phase?
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> index f1f1552..b562634 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> @@ -2,6 +2,9 @@ SAMSUNG Exynos SoC series PMU Registers
+>  
+>  Properties:
+>   - compatible : should contain two values. First value must be one from following list:
+> +		   - "samsung,exynos4210-pmu" - for Exynos4210 SoC,
+> +		   - "samsung,exynos4212-pmu" - for Exynos4212 SoC,
+> +		   - "samsung,exynos4412-pmu" - for Exynos4412 SoC,
 
-Yes, they should be considered mandatory pdata fields but I'm against
-adding any superfluous pdata checks for initialization phase (I will
-update struct exynos_tmu_platform_data documentation to indicate that
-these fields cannot be zero instead).
+Here two compatible strings are specified, one for each SoC in 4x12
+family, but...
 
-> >  	if (pdata->noise_cancel_mode) {
-> >  		con &= ~(reg->therm_trip_mode_mask <<
+>  		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
+>  		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
+>  		second value must be always "syscon".
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index 2f8bcd0..264066f 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -110,6 +110,11 @@
+>  		reg = <0x10010000 0x400>;
+>  	};
+>  
+> +	pmu_system_controller: system-controller@10020000 {
+> +		compatible = "samsung,exynos4210-pmu", "syscon";
+> +		reg = <0x10020000 0x4000>;
+> +	};
+> +
+>  	dsi_0: dsi@11C80000 {
+>  		compatible = "samsung,exynos4210-mipi-dsi";
+>  		reg = <0x11C80000 0x10000>;
+> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+> index c4a9306..7f767f7 100644
+> --- a/arch/arm/boot/dts/exynos4x12.dtsi
+> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+> @@ -119,6 +119,10 @@
+>  		interrupts = <0 72 0>;
+>  	};
+>  
+> +	pmu_system_controller: system-controller@10020000 {
+> +		compatible = "samsung,exynos4x12-pmu", "syscon";
+
+Here one node is added for both using an undocumented compatible string.
+Please fix this according to documentation.
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Tomasz
