@@ -1,99 +1,66 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
 Subject: Re: [PATCH] arm: dts: exynos5: Remove multi core timer
-Date: Fri, 16 May 2014 00:13:43 +0200
-Message-ID: <53753C17.1090002@gmail.com>
-References: <1400188079-21832-1-git-send-email-chirantan@chromium.org>	<53752E25.9060604@gmail.com>	<CAD=FV=WKOtZaUyzTWNqR=vi_L=U-Q1dct2U_oCYi3ZJv6401Hg@mail.gmail.com>	<53753443.8010303@gmail.com> <CAD=FV=V8UZoeOqEwfx_E015pLM+amTt51LrUa+dk7mTdn=vKgA@mail.gmail.com>
+Date: Thu, 15 May 2014 15:44:29 -0700
+Message-ID: <CAD=FV=WGa7j_As_NpySxU7OEd_SzuGWK6oxU6UeiJ-4HsoWvvg@mail.gmail.com>
+References: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
+	<53752E25.9060604@gmail.com>
+	<CAD=FV=WKOtZaUyzTWNqR=vi_L=U-Q1dct2U_oCYi3ZJv6401Hg@mail.gmail.com>
+	<53753443.8010303@gmail.com>
+	<CAD=FV=V8UZoeOqEwfx_E015pLM+amTt51LrUa+dk7mTdn=vKgA@mail.gmail.com>
+	<53753C17.1090002@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f42.google.com ([74.125.83.42]:59858 "EHLO
-	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752291AbaEOWN4 (ORCPT
+Received: from mail-ve0-f176.google.com ([209.85.128.176]:56841 "EHLO
+	mail-ve0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754667AbaEOWoa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 18:13:56 -0400
-Received: by mail-ee0-f42.google.com with SMTP id d49so1024046eek.15
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 15:13:55 -0700 (PDT)
-In-Reply-To: <CAD=FV=V8UZoeOqEwfx_E015pLM+amTt51LrUa+dk7mTdn=vKgA@mail.gmail.com>
+	Thu, 15 May 2014 18:44:30 -0400
+Received: by mail-ve0-f176.google.com with SMTP id jz11so2133486veb.35
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 15:44:29 -0700 (PDT)
+In-Reply-To: <53753C17.1090002@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Chirantan Ekbote <chirantan@chromium.org>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Chirantan Ekbote <chirantan@chromium.org>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, David Riley <davidriley@chromium.org>
 
-On 15.05.2014 23:54, Doug Anderson wrote:
-> Tomasz,
-> 
-> 
-> 
-> On Thu, May 15, 2014 at 2:40 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> On 15.05.2014 23:33, Doug Anderson wrote:
->>> Tomasz,
->>>
->>> On Thu, May 15, 2014 at 2:14 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>>> Hi Chirantan,
->>>>
->>>> On 15.05.2014 23:07, Chirantan Ekbote wrote:
->>>>> The multi core timer and the ARM architected timer are two different
->>>>> interfaces to the same underlying hardware timer.  This causes some
->>>>> strange timing issues when they are both enabled at the same time so
->>>>> remove the mct from the device tree and keep only the architected
->>>>> timer.
->>>>
->>>> Huh? I've always thought MCT is a completely separate hardware block
->>>> outside of ARM cores, while architected timers are embedded inside the
->>>> CPU block in which the ARM cores reside. Could you elaborate on this?
->>>
->>> Yup.  Our thoughts exactly.
->>>
->>> ...but it appears not to be the case.  Chirantan demonstrated this in
->>> U-Boot just to prove that it's not some strange kernel interaction in
->>> <https://chromium-review.googlesource.com/200035>.  I took his patch
->>> and tweaked it a little more myself in
->>> <https://chromium-review.googlesource.com/200098>.
->>>
->>> Specifically:
->>> * If you stop the MCT, the arch timer stops
->>> * If you reset the MCT, the arch timer resets
->>> * If you start the MCT again, the arch timer starts again
->>> * If you read the MCT and the arch timer, they give the same value.
->>>
->>>
->>> This is apparently the answer to my question at
->>> <http://www.spinics.net/lists/linux-samsung-soc/msg29085.html>.
->>> Specifically Chirantan found that the big jump in time happened when
->>> MCT reset to 0.  That made the arch timer code think that there was a
->>> wraparound and jump forward in time a lot.
->>>
->>>
->>> Please confirm if you have a system that has MCT and arch timer in front of you.
->>
->> Wow, this is so strange that I just can't believe it, but if you proved
->> it using such detailed test then I don't have any reasons to object anymore.
->>
->> One more thing, though, is whether the architected timer "interface" can
->> wake the system from lighter power states, such as AFTR or LPA. Could
->> you check this?
-> 
-> I've never used AFTR or LPA and so can't really comment on it.
-> Hopefully someone on the list can?
-> 
-> NOTE: if for some reason we need to keep the MCT around, we're
-> definitely going to need to account for the fact that tweaking it
-> affects the arch timer.  ...and having the arch timer is really nice
-> since:
+Tomasz,
 
-[Let me reorder the points below to make it easier to comment:]
+On Thu, May 15, 2014 at 3:13 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> NOTE: if for some reason we need to keep the MCT around, we're
+>> definitely going to need to account for the fact that tweaking it
+>> affects the arch timer.  ...and having the arch timer is really nice
+>> since:
+>
+> [Let me reorder the points below to make it easier to comment:]
+>
+>> * it's faster to access.
+>> * it is accessible from userspace for really fast access.
+>
+> Do you have some data on whether it is a significant difference,
+> especially considering real use cases?
 
-> * it's faster to access.
-> * it is accessible from userspace for really fast access.
+I know that Chrome makes _a lot_ of calls to gettimeofday() for
+profiling purposes, enough that it showed up on benchmarks.  In fact,
+we made a change to the MCT to make accesses faster and there's a
+small mention of the benchmarking that was done at:
 
-Do you have some data on whether it is a significant difference,
-especially considering real use cases?
+https://chromium-review.googlesource.com/#/c/32190/
 
-> * it implements the bits needed for udelay() to use it.
+...that change probably should be sent upstream, actually.
 
-Hmm, do you know what bits are those? On Exynos4 MCT is the only option
-and it would be nice to let udelay() use it.
+I'll let Chirantan comment on how much faster arch timers were.
+...and I think David Riley (also CCed now) may be able to comment on
+the benefits of userspace timers.
 
-Best regards,
-Tomasz
+
+>> * it implements the bits needed for udelay() to use it.
+>
+> Hmm, do you know what bits are those? On Exynos4 MCT is the only option
+> and it would be nice to let udelay() use it.
+
+Look for register_current_timer_delay().  It seems like we could do
+this for MCT, but I've never done the investigation because we were
+always planning to move to arch timers.  ;)
+
+-Doug
