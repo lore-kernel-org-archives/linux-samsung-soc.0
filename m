@@ -1,72 +1,113 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] FIX:cache:exynos: Execute the cache reconfiguration unconditionally
- for Exynos4
-Date: Thu, 15 May 2014 23:02:42 +0200
-Message-ID: <53752B72.40308@gmail.com>
-References: <1400153646-827-1-git-send-email-l.majewski@samsung.com> <537529CE.5030803@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Chirantan Ekbote <chirantan@chromium.org>
+Subject: [PATCH] arm: dts: exynos5: Remove multi core timer
+Date: Thu, 15 May 2014 14:07:59 -0700
+Message-ID: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f44.google.com ([74.125.83.44]:64750 "EHLO
-	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751249AbaEOVCz (ORCPT
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:45478 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751673AbaEOVJM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 17:02:55 -0400
-Received: by mail-ee0-f44.google.com with SMTP id c41so986198eek.31
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 14:02:53 -0700 (PDT)
-In-Reply-To: <537529CE.5030803@samsung.com>
+	Thu, 15 May 2014 17:09:12 -0400
+Received: by mail-pb0-f52.google.com with SMTP id rr13so1591563pbb.39
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 14:09:11 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kevin Hilman <khilman@linaro.org>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Russell King <linux@arm.linux.org.uk>
+Cc: Chirantan Ekbote <chirantan@chromium.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 15.05.2014 22:55, Kukjin Kim wrote:
-> On 05/15/14 20:34, Lukasz Majewski wrote:
->> The commit 2bf73dd61a84cdf27e49f48e08739af6ba70ace1 has made the cache
->> configuration depending on definition of CONFIG_S5P_SLEEP Kconfig flag.
->> It is enabled on various S5PV210 incarnations and not available at
->> Exynos4
->> family of SoCs.
->>
->> The problem emerges when one wants to disable/enable core via hotplug
->> - e.g:
->> echo 0>  /sys/devices/system/cpu/cpu1/online.
->> When CONFIG_CPU_IDLE is enabled (it is not enabled at default
->> exynos_defconfig).
->>
->> On Exynos4 based targets (Exynos4412 and Exynos4210, namely trats2 and
->> trats) board locks up and consumes considerable power.
->>
->> This patch does nothing more than restoration of the state before the
->> offending commit.
->>
->> Tested on top of next-20140514 at Trats board.
->>
->> Signed-off-by: Lukasz Majewski<l.majewski@samsung.com>
->> ---
->>   arch/arm/mach-exynos/exynos.c |    7 +++----
->>   1 file changed, 3 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/exynos.c
->> b/arch/arm/mach-exynos/exynos.c
->> index 1b97b93..5c8b334 100644
->> --- a/arch/arm/mach-exynos/exynos.c
->> +++ b/arch/arm/mach-exynos/exynos.c
->> @@ -254,10 +254,9 @@ static int __init exynos4_l2x0_cache_init(void)
->>       if (ret)
->>           return ret;
->>
->> -    if (IS_ENABLED(CONFIG_S5P_SLEEP)) {
->> -        l2x0_regs_phys = virt_to_phys(&l2x0_saved_regs);
->> -        clean_dcache_area(&l2x0_regs_phys, sizeof(unsigned long));
->> -    }
-> 
-> Hmm...should be PM_SLEEP instead of removing check the S5P_SLEEP. This
-> is missed when we stopped to use legacy Samsung PM(commit ID d710aa31)
+The multi core timer and the ARM architected timer are two different
+interfaces to the same underlying hardware timer.  This causes some
+strange timing issues when they are both enabled at the same time so
+remove the mct from the device tree and keep only the architected
+timer.
 
-Yes, should be. I have already discussed this with Lukasz and he was
-supposed to send next version.
+Cc: Olof Johansson <olof@lixom.net>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
 
-Best regards,
-Tomasz
+Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
+---
+ arch/arm/boot/dts/exynos5250.dtsi | 24 ------------------------
+ arch/arm/boot/dts/exynos5420.dtsi | 30 ------------------------------
+ 2 files changed, 54 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 3742331..60cd945 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -110,30 +110,6 @@
+ 		clock-frequency = <24000000>;
+ 	};
+ 
+-	mct@101C0000 {
+-		compatible = "samsung,exynos4210-mct";
+-		reg = <0x101C0000 0x800>;
+-		interrupt-controller;
+-		#interrups-cells = <2>;
+-		interrupt-parent = <&mct_map>;
+-		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
+-			     <4 0>, <5 0>;
+-		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+-		clock-names = "fin_pll", "mct";
+-
+-		mct_map: mct-map {
+-			#interrupt-cells = <2>;
+-			#address-cells = <0>;
+-			#size-cells = <0>;
+-			interrupt-map = <0x0 0 &combiner 23 3>,
+-					<0x1 0 &combiner 23 4>,
+-					<0x2 0 &combiner 25 2>,
+-					<0x3 0 &combiner 25 3>,
+-					<0x4 0 &gic 0 120 0>,
+-					<0x5 0 &gic 0 121 0>;
+-		};
+-	};
+-
+ 	pmu {
+ 		compatible = "arm,cortex-a15-pmu";
+ 		interrupt-parent = <&combiner>;
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index c3a9a66..3c38c6d 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -169,36 +169,6 @@
+ 		status = "disabled";
+ 	};
+ 
+-	mct@101C0000 {
+-		compatible = "samsung,exynos4210-mct";
+-		reg = <0x101C0000 0x800>;
+-		interrupt-controller;
+-		#interrups-cells = <1>;
+-		interrupt-parent = <&mct_map>;
+-		interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
+-				<8>, <9>, <10>, <11>;
+-		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+-		clock-names = "fin_pll", "mct";
+-
+-		mct_map: mct-map {
+-			#interrupt-cells = <1>;
+-			#address-cells = <0>;
+-			#size-cells = <0>;
+-			interrupt-map = <0 &combiner 23 3>,
+-					<1 &combiner 23 4>,
+-					<2 &combiner 25 2>,
+-					<3 &combiner 25 3>,
+-					<4 &gic 0 120 0>,
+-					<5 &gic 0 121 0>,
+-					<6 &gic 0 122 0>,
+-					<7 &gic 0 123 0>,
+-					<8 &gic 0 128 0>,
+-					<9 &gic 0 129 0>,
+-					<10 &gic 0 130 0>,
+-					<11 &gic 0 131 0>;
+-		};
+-	};
+-
+ 	gsc_pd: power-domain@10044000 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10044000 0x20>;
+-- 
+1.9.1.423.g4596e3a
