@@ -1,304 +1,209 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v4 5/8] clk: exynos: use cpu-clock provider type to
- represent arm clock.
-Date: Thu, 15 May 2014 10:10:39 +0200
-Message-ID: <20140515101039.2854bbbf@amdc2363>
-References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
- <1400029876-5830-6-git-send-email-thomas.ab@samsung.com>
- <20140514213729.19795.77753@quantum>
- <CAJuA9aiq6zzsdwDhGBUdnFDvtX65V1K_L4KgXpFpWvua18bfBw@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC V3 2/3] drm/bridge: add a dummy panel driver to support
+ lvds bridges
+Date: Thu, 15 May 2014 10:13:24 +0200
+Message-ID: <20140515081321.GF5952@ulmo>
+References: <1399647182-20951-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1399647182-20951-3-git-send-email-ajaykumar.rs@samsung.com>
+ <20140513080501.GH6754@ulmo>
+ <CAEC9eQN=AAOVFNqWp61zFsS1jtewyDb18oFP1VAuCjYhQWGRnA@mail.gmail.com>
+ <20140514145402.GC8612@ulmo>
+ <CAEC9eQOvObG5CKb-GcpuSBXccSnVrEjQsBThAOJ4q5YECc6d0A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:56588 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754653AbaEOILE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 04:11:04 -0400
-In-reply-to: <CAJuA9aiq6zzsdwDhGBUdnFDvtX65V1K_L4KgXpFpWvua18bfBw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0202711744=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAEC9eQOvObG5CKb-GcpuSBXccSnVrEjQsBThAOJ4q5YECc6d0A@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-
-Hi Thomas,
-
-> On Thu, May 15, 2014 at 3:07 AM, Mike Turquette
-> <mturquette@linaro.org> wrote:
-> > Quoting Thomas Abraham (2014-05-13 18:11:13)
-> >> From: Thomas Abraham <thomas.ab@samsung.com>
-> >>
-> >> With the addition of the new Samsung specific cpu-clock type, the
-> >> arm clock can be represented as a cpu-clock type and the
-> >> independent clock blocks that made up the arm clock can be removed.
-> >
-> > <rant>
-> >
-> > I am not a fan of this type of "clock hiding". Certainly the design
-> > of the CCF allows for a clock provider to obfuscate it's internals;
-> > there was never a requirement that every clock node be exposed to
-> > Linux as a struct clk. A truly obfuscated system could only expose
-> > leaf clocks that are consumed by Linux device drivers, and never
-> > expose any of the intermediary clocks in between the input clock
-> > signal (if it exists) and the leaf nodes.
-> >
-> > However I feel that this patch is more of a workaround to the fact
-> > that the clock framework today does not make DVFS transitions (or
-> > coordinated, multi-clock rate change transitions) easy to control.
-> > The generic "walk up the tree" algorithm might give you the right
-> > rate, but perhaps using a non-validated combination of PLL
-> > frequency and adjustable-rate dividers, or a combination that his
-> > higher jitter or is more likely to unlock at higher temperatures,
-> > etc.
-> >
-> > Back in the pre-CCF days lots of folks implemented this with
-> > "virtual" clock nodes that simply called "clk_set_rate" or whatever
-> > on the affected clocks, or even worse just banged a bunch of
-> > registers.
-> >
-> > The cbus clock series for Tegra is also looks a little like this.
-> >
-> > </rant>
-> >
-> > Thomas,
-> >
-> > Would a coordinated clock rate change method solve this problem for
-> > you in place of the cpu-clock provider type? A poorly conceived
-> > call graph for this might look something like:
-> >
-> > clk_set_rate(div_arm2, 1000000);
-> > -> if (div_arm2->coordinated == true)
-> >         clk_coordinate_rates(div_arm2, 1000000);
-> >         -> clk->ops->coordinate(div_arm2->hw, 1000000);
-> >            -> vendor_supplied_magic()
-> >
-> > The vendor_supplied_magic() would be a callback that essentially
-> > calls clk_set_rate() on all of the affected (coordinated) clocks.
-> > In your case that looks like mout_core, div_core, div_core2,
-> > arm_clk and sclk_apll for Exynos4.
-
-I might misinterpret the idea here, but is clk_set_rate() function
-ready to handle atomic change for several clocks? Especially setting
-rate of dividers located in the same register, represented as different
-clocks to CCF.
-
-As fair as I remember it was not possible to serialize operations on
-clocks with calling clk_set_rate() several times. Those had to be done
-instantly, otherwise platform hanged.
-
-Am I missing something, or a major improvement had I overlooked?
-
-> >
-> > The trick is that calling clk_set_rate() from any driver would
-> > initiate this coordinated rate change, and then the exynos clock
-> > driver would set up the coordinated clocks itself. No new API is
-> > introduced to drivers (since it still uses clk_set_rate) and now a
-> > new clock provider doesn't have to be invented every time we have a
-> > couple of clocks involved in a DVFS transition.
-> >
-> > Does this sound right to you or have I horribly misinterpreted the
-> > point of these clock patches?
-> 
-> Mike,
-> 
-> Thanks for your comments. If I have understood the coordinated clock
-> as described above, I believe this patch series also attempts to do
-> almost the same thing. The advantage of using coordinated clock over
-> the approach in this series is that each platform need not define a
-> new clock type.
-> 
-> In this patch series, for all exynos SoC's, a new cpu clock type was
-> introduced which is reusable for multi-cluster exynos SoCs as well.
-> The new clock type is part of the clock driver and all drivers can use
-> standard clock API to access this clock type instance.
-> 
-> So probably, all the logic for the new cpu_clk clock type introduced
-> in this patch would go into the vendor_supplied_magic() callback. So
-> it sounds like the coordinated clock approach would be helpful. Is
-> this something that you are already working on?
-> 
-> Thanks,
-> Thomas.
-> 
-> >
-> > Thanks,
-> > Mike
-> >
-> >>
-> >> Cc: Tomasz Figa <t.figa@samsung.com>
-> >> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> >> ---
-> >>  drivers/clk/samsung/clk-exynos4.c      |   25
-> >> +++++++++---------------- drivers/clk/samsung/clk-exynos5250.c
-> >> |   12 ++++++------ include/dt-bindings/clock/exynos5250.h |    1 +
-> >>  3 files changed, 16 insertions(+), 22 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/samsung/clk-exynos4.c
-> >> b/drivers/clk/samsung/clk-exynos4.c index b4f9672..7e3bb16c 100644
-> >> --- a/drivers/clk/samsung/clk-exynos4.c
-> >> +++ b/drivers/clk/samsung/clk-exynos4.c
-> >> @@ -471,7 +471,6 @@ static struct samsung_mux_clock
-> >> exynos4210_mux_clks[] __initdata = { MUX(0, "mout_fimd1",
-> >> group1_p4210, E4210_SRC_LCD1, 0, 4), MUX(0, "mout_mipi1",
-> >> group1_p4210, E4210_SRC_LCD1, 12, 4), MUX(CLK_SCLK_MPLL,
-> >> "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1),
-> >> -       MUX(CLK_MOUT_CORE, "mout_core", mout_core_p4210, SRC_CPU,
-> >> 16, 1), MUX(CLK_SCLK_VPLL, "sclk_vpll", sclk_vpll_p4210, SRC_TOP0,
-> >> 8, 1), MUX(CLK_MOUT_FIMC0, "mout_fimc0", group1_p4210, SRC_CAM, 0,
-> >> 4), MUX(CLK_MOUT_FIMC1, "mout_fimc1", group1_p4210, SRC_CAM, 4, 4),
-> >> @@ -530,7 +529,6 @@ static struct samsung_mux_clock
-> >> exynos4x12_mux_clks[] __initdata = { MUX(0, "mout_jpeg",
-> >> mout_jpeg_p, E4X12_SRC_CAM1, 8, 1), MUX(CLK_SCLK_MPLL,
-> >> "sclk_mpll", mout_mpll_p, SRC_DMC, 12, 1), MUX(CLK_SCLK_VPLL,
-> >> "sclk_vpll", mout_vpll_p, SRC_TOP0, 8, 1),
-> >> -       MUX(CLK_MOUT_CORE, "mout_core", mout_core_p4x12, SRC_CPU,
-> >> 16, 1), MUX(CLK_MOUT_FIMC0, "mout_fimc0", group1_p4x12, SRC_CAM,
-> >> 0, 4), MUX(CLK_MOUT_FIMC1, "mout_fimc1", group1_p4x12, SRC_CAM, 4,
-> >> 4), MUX(CLK_MOUT_FIMC2, "mout_fimc2", group1_p4x12, SRC_CAM, 8, 4),
-> >> @@ -572,8 +570,6 @@ static struct samsung_mux_clock
-> >> exynos4x12_mux_clks[] __initdata = {
-> >>
-> >>  /* list of divider clocks supported in all exynos4 soc's */
-> >>  static struct samsung_div_clock exynos4_div_clks[] __initdata = {
-> >> -       DIV(0, "div_core", "mout_core", DIV_CPU0, 0, 3),
-> >> -       DIV(0, "div_core2", "div_core", DIV_CPU0, 28, 3),
-> >>         DIV(0, "div_fimc0", "mout_fimc0", DIV_CAM, 0, 4),
-> >>         DIV(0, "div_fimc1", "mout_fimc1", DIV_CAM, 4, 4),
-> >>         DIV(0, "div_fimc2", "mout_fimc2", DIV_CAM, 8, 4),
-> >> @@ -619,8 +615,8 @@ static struct samsung_div_clock
-> >> exynos4_div_clks[] __initdata = { DIV(0, "div_spi_pre2",
-> >> "div_spi2", DIV_PERIL2, 8, 8), DIV(0, "div_audio1", "mout_audio1",
-> >> DIV_PERIL4, 0, 4), DIV(0, "div_audio2", "mout_audio2", DIV_PERIL4,
-> >> 16, 4),
-> >> -       DIV(CLK_ARM_CLK, "arm_clk", "div_core2", DIV_CPU0, 28, 3),
-> >> -       DIV(CLK_SCLK_APLL, "sclk_apll", "mout_apll", DIV_CPU0, 24,
-> >> 3),
-> >> +       DIV_F(CLK_SCLK_APLL, "sclk_apll", "mout_apll", DIV_CPU0,
-> >> 24, 3,
-> >> +                       CLK_GET_RATE_NOCACHE, 0),
-> >>         DIV_F(0, "div_mipi_pre0", "div_mipi0", DIV_LCD0, 20, 4,
-> >>                         CLK_SET_RATE_PARENT, 0),
-> >>         DIV_F(0, "div_mmc_pre0", "div_mmc0", DIV_FSYS1, 8, 8,
-> >> @@ -1003,12 +999,6 @@ static struct samsung_gate_clock
-> >> exynos4x12_gate_clks[] __initdata = { 0),
-> >>  };
-> >>
-> >> -static struct samsung_clock_alias exynos4_aliases[] __initdata = {
-> >> -       ALIAS(CLK_MOUT_CORE, NULL, "moutcore"),
-> >> -       ALIAS(CLK_ARM_CLK, NULL, "armclk"),
-> >> -       ALIAS(CLK_SCLK_APLL, NULL, "mout_apll"),
-> >> -};
-> >> -
-> >>  static struct samsung_clock_alias exynos4210_aliases[] __initdata
-> >> = { ALIAS(CLK_SCLK_MPLL, NULL, "mout_mpll"),
-> >>  };
-> >> @@ -1241,6 +1231,9 @@ static void __init exynos4_clk_init(struct
-> >> device_node *np, ARRAY_SIZE(exynos4210_gate_clks));
-> >>                 samsung_clk_register_alias(exynos4210_aliases,
-> >>                         ARRAY_SIZE(exynos4210_aliases));
-> >> +               exynos_register_arm_clock(CLK_ARM_CLK,
-> >> mout_core_p4210,
-> >> +                       ARRAY_SIZE(mout_core_p4210), reg_base, np,
-> >> NULL,
-> >> +                       &samsung_clk_lock);
-> >>         } else {
-> >>                 samsung_clk_register_mux(exynos4x12_mux_clks,
-> >>                         ARRAY_SIZE(exynos4x12_mux_clks));
-> >> @@ -1250,11 +1243,11 @@ static void __init exynos4_clk_init(struct
-> >> device_node *np, ARRAY_SIZE(exynos4x12_gate_clks));
-> >>                 samsung_clk_register_alias(exynos4x12_aliases,
-> >>                         ARRAY_SIZE(exynos4x12_aliases));
-> >> +               exynos_register_arm_clock(CLK_ARM_CLK,
-> >> mout_core_p4x12,
-> >> +                       ARRAY_SIZE(mout_core_p4x12), reg_base, np,
-> >> NULL,
-> >> +                       &samsung_clk_lock);
-> >>         }
-> >>
-> >> -       samsung_clk_register_alias(exynos4_aliases,
-> >> -                       ARRAY_SIZE(exynos4_aliases));
-> >> -
-> >>         exynos4_clk_sleep_init();
-> >>
-> >>         pr_info("%s clocks: sclk_apll = %ld, sclk_mpll = %ld\n"
-> >> @@ -1262,7 +1255,7 @@ static void __init exynos4_clk_init(struct
-> >> device_node *np, exynos4_soc == EXYNOS4210 ? "Exynos4210" :
-> >> "Exynos4x12", _get_rate("sclk_apll"), _get_rate("sclk_mpll"),
-> >>                 _get_rate("sclk_epll"), _get_rate("sclk_vpll"),
-> >> -               _get_rate("arm_clk"));
-> >> +               _get_rate("armclk"));
-> >>  }
-> >>
-> >>
-> >> diff --git a/drivers/clk/samsung/clk-exynos5250.c
-> >> b/drivers/clk/samsung/clk-exynos5250.c index e7ee442..3fe1ca0
-> >> 100644 --- a/drivers/clk/samsung/clk-exynos5250.c
-> >> +++ b/drivers/clk/samsung/clk-exynos5250.c
-> >> @@ -260,8 +260,6 @@ static struct samsung_mux_clock
-> >> exynos5250_mux_clks[] __initdata = { */
-> >>         MUX_FA(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
-> >>                                         CLK_SET_RATE_PARENT, 0,
-> >> "mout_apll"),
-> >> -       MUX_A(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1,
-> >> "mout_cpu"), -
-> >>         /*
-> >>          * CMU_CORE
-> >>          */
-> >> @@ -339,9 +337,8 @@ static struct samsung_div_clock
-> >> exynos5250_div_clks[] __initdata = { /*
-> >>          * CMU_CPU
-> >>          */
-> >> -       DIV(0, "div_arm", "mout_cpu", DIV_CPU0, 0, 3),
-> >> -       DIV(0, "div_apll", "mout_apll", DIV_CPU0, 24, 3),
-> >> -       DIV_A(0, "div_arm2", "div_arm", DIV_CPU0, 28, 3, "armclk"),
-> >> +       DIV_F(0, "div_apll", "mout_apll", DIV_CPU0, 24, 3,
-> >> +                       CLK_GET_RATE_NOCACHE, 0),
-> >>
-> >>         /*
-> >>          * CMU_TOP
-> >> @@ -721,10 +718,13 @@ static void __init
-> >> exynos5250_clk_init(struct device_node *np)
-> >> ARRAY_SIZE(exynos5250_div_clks));
-> >> samsung_clk_register_gate(exynos5250_gate_clks,
-> >> ARRAY_SIZE(exynos5250_gate_clks));
-> >> +       exynos_register_arm_clock(CLK_ARM_CLK, mout_cpu_p,
-> >> +                       ARRAY_SIZE(mout_cpu_p), reg_base, np, NULL,
-> >> +                       &samsung_clk_lock);
-> >>
-> >>         exynos5250_clk_sleep_init();
-> >>
-> >>         pr_info("Exynos5250: clock setup completed, armclk=%ld\n",
-> >> -                       _get_rate("div_arm2"));
-> >> +                       _get_rate("armclk"));
-> >>  }
-> >>  CLK_OF_DECLARE(exynos5250_clk, "samsung,exynos5250-clock",
-> >> exynos5250_clk_init); diff --git
-> >> a/include/dt-bindings/clock/exynos5250.h
-> >> b/include/dt-bindings/clock/exynos5250.h index 922f2dc..59a10fb
-> >> 100644 --- a/include/dt-bindings/clock/exynos5250.h +++
-> >> b/include/dt-bindings/clock/exynos5250.h @@ -21,6 +21,7 @@
-> >>  #define CLK_FOUT_CPLL          6
-> >>  #define CLK_FOUT_EPLL          7
-> >>  #define CLK_FOUT_VPLL          8
-> >> +#define CLK_ARM_CLK            12
-> >>
-> >>  /* gate for special clocks (sclk) */
-> >>  #define CLK_SCLK_CAM_BAYER     128
-> >> --
-> >> 1.7.4.4
-> >>
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
 
+--===============0202711744==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="fwqqG+mf3f7vyBCB"
+Content-Disposition: inline
 
--- 
-Best regards,
 
-Lukasz Majewski
+--fwqqG+mf3f7vyBCB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+On Wed, May 14, 2014 at 11:39:30PM +0530, Ajay kumar wrote:
+[...]
+> >> >> diff --git a/Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt b/Documentation/devicetree/bindings/drm/bridge/bridge_panel.txt
+> >> > [...]
+> >> >> +     -led-en-gpio:
+> >> >> +             eDP panel LED enable GPIO.
+> >> >> +                     Indicates which GPIO needs to be powered up as output
+> >> >> +                     to enable the backlight.
+> >> >
+> >> > Since this is used to control a backlight, then this should really be a
+> >> > separate node to describe the backlight device (and use the
+> >> > corresponding backlight driver) rather than duplicating a subset of that
+> >> > functionality.
+> >> I am stressing this point again!
+> >> Backlight should ideally be enabled only after:
+> >> 1) Panel is powered up (LCD_VDD)
+> >> 2) HPD is thrown.
+> >> 3) Valid data starts coming from the encoder(DP in our case)
+> >> All the above 3 are controlled inside drm, but pwm-backlight is
+> >> independent of drm. So, we let the pwm_config happen in pwm-backlight driver
+> >> and enable backlight GPIO(BL_EN) inside drm, after valid video data starts
+> >> coming out of the encoder.
+> >
+> > But that's completely the wrong way around. Why can't you simply control
+> > the backlight from within DRM and only enable it at the right time?
+> I am trying to reuse existing code as much as possible. pwm-backlight driver
+> takes care of generating proper pwm signals for the given backlight value,
+> so I am reusing that part of it. Even though it also provides a way to handle
+> "backlight enable" pin(which is ofcourse optional) I wish to control it in the
+> panel drvier, because generally all panel datasheets say you should control
+> backlight enable along with panel controls.
+
+I still don't see how controlling the enable GPIO from the panel will be
+in any way better, or different for that matter, from simply enabling
+the backlight and let the backlight driver handle the enable GPIO. Have
+you tried to do that and found that it doesn't work?
+
+> >> As you said, we can get this GPIO from a backlight device node, but since
+> >> this GPIO is related to panel also, I think conceptually its not wrong
+> >> to have this
+> >> GPIO binding defined in a panel node.
+> >
+> > It's not related to the panel. It's an enable for the backlight.
+> > Backlight could be considered part of the panel, therefore it makes
+> > sense to control the backlight from the panel driver.
+> Ok. This GPIO goes from my AP to the backlight unit of the panel.
+> Basically, a board related GPIO which exists on all the boards.
+> Where should I be handling this?
+
+In the driver that handles the backlight unit. That is: pwm-backlight.
+
+> >> > What are panel_VCC or video_enable?
+> >> It is the time taken for the panel to throw a valid HPD from the point
+> >> we enabled LCD_VCC.
+> >> After HPD is thrown, we can start sending video data.
+> >
+> > What does "throw a valid HPD" mean? Is it an actual signal that can be
+> > captured via software (GPIO, interrupt, ...)? If so then it would be
+> > preferable to not use a delay at all but rather rely on that mechanism
+> > to determine when it's safe to send a video signal.
+> Right, your explanation holds good, but only for the case of eDP panels.
+> But, when we use eDP-LVDS bridges(ps8622), its a different case!
+> the bridge takes care of sending HPD, so the encoder gets HPD interrupt
+> and tries to read edid from the panel, but the panel might not have powered up
+> enough to read edid. In such cases we would need delay.
+> So, having a delay field here would be really useful.
+
+Okay.
+
+> May be, while describing this particular DT binding I should elaborate more.
+
+Yes, something like the above explanation would be good to have in the
+binding.
+
+> >> >> diff --git a/drivers/gpu/drm/bridge/bridge_panel.c b/drivers/gpu/drm/bridge/bridge_panel.c
+> >> > [...]
+> >> >
+> >> > This duplicates much of the functionality that panels should provide. I
+> >> > think a better solution would be to properly integrate panels with
+> >> > bridges.
+> >> True, ideally I should be calling drm_panel functions from a simple dummy
+> >> bridge which sits at the end of the bridge chain. But, since you are not
+> >> convinced with having pre_enable and post_disable calls for panels, I had
+> >> no other way to do this, than stuffing these panel controls inside
+> >> bridge! :(
+> >
+> > What makes you think that I would suddenly be any more convinced by this
+> > solution than by your prior proposal? I didn't say outright no to what
+> > you proposed earlier. What I said was that I didn't like it and that I
+> > thought we could come up with a better solution. Part of getting to a
+> > better solution is trying to understand the problems involved. You don't
+> > solve a problem by simply moving code into a different driver.
+> Ok. What is better solution according to you?
+> Handling the backlight enable GPIO in pwm-backlight driver is not
+> a better soultion "ALWAYS". Sometimes, we may just need to control it
+> along with video encoders.
+
+You keep saying that, but you haven't said *why* you need to do that.
+
+> And, even the panel datasheets mention that  in "Power On/off sequence"
+> chapter.
+
+Can you point me to such a datasheet?
+
+> And, I have explained the problems and feasible solutions.
+
+You have explained the solutions that you've found to the problem. I'm
+trying to understand the problem fully so that perhaps we can find a
+more generic solution.
+
+> If drm_panel can support pre_enable/post_disable, we can easily
+> implement a generic bridge which sits at the end of bridge chain, and
+> calls corresponding drm_panel functions.
+
+The problem with blindly adding .pre_enable() and .post_disable()
+without thinking this through is that it can easily introduce
+incompatibilities between various drivers and panels. There is a risk
+that some of the code that goes into a panel's .pre_enable() will be
+specific to a given setup (and perhaps not even related to the panel
+at all). If that panel is reused on a different board where the
+restrictions may be different the panel may not work.
+
+So before we go and add any new functions to DRM panel I'd like to see
+them properly documented. It needs to be defined precisely what the
+effect of these functions should be so that both panel driver writers
+know what to implement and display driver writers need to know when to
+call which function.
+
+Also, please let's not call them .pre_enable() and .post_disable(). The
+names should be something more specific to reflect what they are meant
+to do. Even something like .prepare() and .unprepare() would be better
+choices.
+
+Thierry
+
+--fwqqG+mf3f7vyBCB
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTdHchAAoJEN0jrNd/PrOhzi4P/0RnneCZsbrzF/+pDf5HN3XB
+mAlvXGv5tpCl7r3p9eK8UDv3zMxL9G8idQr+IMl3QzxqSNx+WfNvIMetASyznCjB
+IeXMUfSec10LOevpM2GD68ZQ8bGmMa82CELDdAZkqJtcps7bbuQxPKCFC8P4ga2k
+LbtM7SPi+TaDwQb3tgdIUN9IOP4XIWQ1GVBpvlA5q1EP/Cu5rd+OPtEIqWbHW17A
+pqtveI3lHQgBeducktB4Fb3Q+zrmWxFxZK2VfrdIk19Nod1eZDRzjpTqCE85zdpz
+EG/Mwfs+//z+osjSSdF5vzzpOj7zptVEaytY2/qjumG1rF5Wt6G7HFFa4Rs0EEhC
+yjquLHwT5RXWpCfgX0taQeAhPgz6mwetLNtu8N8s7WTTvjG6ylr8RolBiZRXJAhM
+roqYPGXMX2c2Kos7O7lp3UYE1Hw/dzl7JFsEbjTIlYWyvzFkLsMD4CekrCMXiRVX
+3NFXUf2N/wsNXKYhkl70660438YBmDOAErb31eGO36F4VJdxvrLqmHfr8hRmiGfq
+s4CGYB2SQugejz7wvU1hOuW8Ef+G0cpXxodp+SDqomIdE0dAmKTwuP5eREl9ByWy
+uRcSSOKnAuBRCjDLs4HLVxG+GeAeQimDYQk4k7gycbQ367c10i8DlqpHSSYLYgzX
+do2W/KaxgVHWxqqB0aEH
+=GH1S
+-----END PGP SIGNATURE-----
+
+--fwqqG+mf3f7vyBCB--
+
+--===============0202711744==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0202711744==--
