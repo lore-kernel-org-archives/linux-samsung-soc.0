@@ -1,42 +1,96 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH] ARM: dts: Add mfc node for exynos5800
-Date: Thu, 15 May 2014 16:48:29 +0530
-Message-ID: <1400152709-16845-1-git-send-email-arun.kk@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: SWRESET is needed to boot secondary CPU on
+ Exynos3250
+Date: Thu, 15 May 2014 13:18:11 +0200
+Message-ID: <1400152691-29705-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:64854 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752231AbaEOLSi (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:48591 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751485AbaEOLWW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 07:18:38 -0400
-Received: by mail-pa0-f41.google.com with SMTP id lj1so969274pab.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 04:18:37 -0700 (PDT)
+	Thu, 15 May 2014 07:22:22 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, k.debski@samsung.com, arunkk.samsung@gmail.com
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Adds the mfc node to exynos5800 which uses MFCv8.
+Without software reset the secondary CPU does not power up and
+exynos_boot_secondary() ends with pen_release equal to 1. This can be
+observed in dmesg:
+	CPU1: failed to come online
+	Brought up 1 CPUs
+	SMP: Total of 1 processors activated.
+	CPU: All CPU(s) started in SVC mode.
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+When booting the secondary CPU on Exynos3250 execute also software
+reset for core 1.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
-The driver side patch adding support for MFCv8 is under
-review [1]. This is based on the linux-samsung for-next branch.
-[1] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg30670.html
----
- arch/arm/boot/dts/exynos5800.dtsi |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/mach-exynos/platsmp.c  | 22 ++++++++++++++++++++++
+ arch/arm/mach-exynos/regs-pmu.h |  3 +++
+ 2 files changed, 25 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
-index 6979fc7..c0bb356 100644
---- a/arch/arm/boot/dts/exynos5800.dtsi
-+++ b/arch/arm/boot/dts/exynos5800.dtsi
-@@ -22,3 +22,7 @@
- &clock {
- 	compatible = "samsung,exynos5800-clock";
- };
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 8b88eb2f077b..64ec5ca18f60 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -76,6 +76,25 @@ static inline void __iomem *cpu_boot_reg(int cpu)
+ }
+ 
+ /*
++ * Set wake up by local power mode and execute software reset for given core.
++ *
++ * Currently this is needed only when booting secondary CPU on Exynos3250.
++ */
++static inline void exynos_core_restart(u32 core_id)
++{
++	if (of_machine_is_compatible("samsung,exynos3250")) {
++		u32 val;
 +
-+&mfc {
-+	compatible = "samsung,mfc-v8";
-+};
++		val = __raw_readl(S5P_ARM_CORE_STATUS(core_id));
++		val |= S5P_CORE_WAKEUP_FROM_LOCAL_CFG;
++		__raw_writel(val, S5P_ARM_CORE_STATUS(core_id));
++
++		pr_info("CPU%u: Software reset\n", core_id);
++		__raw_writel(EXYNOS_CORE_PO_RESET(core_id), EXYNOS_SWRESET);
++	}
++}
++
++/*
+  * Write pen_release in a way that is guaranteed to be visible to all
+  * observers, irrespective of whether they're taking part in coherency
+  * or not.  This is necessary for the hotplug code to work reliably.
+@@ -155,6 +174,9 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 			return -ETIMEDOUT;
+ 		}
+ 	}
++
++	exynos_core_restart(core_id);
++
+ 	/*
+ 	 * Send the secondary CPU a soft interrupt, thereby causing
+ 	 * the boot monitor to read the system wide flags register,
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index d94bbc85d7e0..3ecbb4fe227b 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -26,6 +26,8 @@
+ #define S5P_USE_STANDBY_WFI0			(1 << 16)
+ #define S5P_USE_STANDBY_WFE0			(1 << 24)
+ 
++#define EXYNOS_CORE_PO_RESET(n)			((1 << 4) << n)
++
+ #define EXYNOS_SWRESET				S5P_PMUREG(0x0400)
+ #define EXYNOS5440_SWRESET			S5P_PMUREG(0x00C4)
+ 
+@@ -117,6 +119,7 @@
+ #define S5P_PAD_RET_EBIB_OPTION			S5P_PMUREG(0x31A8)
+ 
+ #define S5P_CORE_LOCAL_PWR_EN			0x3
++#define S5P_CORE_WAKEUP_FROM_LOCAL_CFG		(0x3 << 8)
+ #define S5P_INT_LOCAL_PWR_EN			0x7
+ 
+ #define S5P_CHECK_SLEEP				0x00000BAD
 -- 
-1.7.9.5
+1.9.1
