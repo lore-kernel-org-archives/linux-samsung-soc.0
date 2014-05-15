@@ -1,136 +1,118 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
-Date: Thu, 15 May 2014 10:49:37 +0530
-Message-ID: <CAPdUM4NaLpN99JCJH3qMakSO3OG6ASjEuvvr_CnKv=gOiqfzMQ@mail.gmail.com>
-References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
- <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
- <20140514221423.GC6215@mithrandir>
+Subject: Re: [PATCH v4 1/5] ARM: dts: enable hdmi for exynos5250 based snow board
+Date: Thu, 15 May 2014 10:52:42 +0530
+Message-ID: <CAPdUM4Ndn9Y7=SF0BG-j16vCHt_4EDOZSuHEV36NTUovM7FcNQ@mail.gmail.com>
+References: <1400035562-16832-1-git-send-email-rahul.sharma@samsung.com>
+	<1400035562-16832-2-git-send-email-rahul.sharma@samsung.com>
+	<5373C6D7.8010802@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140514221423.GC6215@mithrandir>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, sunil joshi <joshi@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:51624 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753198AbaEOFWn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 May 2014 01:22:43 -0400
+In-Reply-To: <5373C6D7.8010802@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, sunil joshi <joshi@samsung.com>
 
-Hi Thierry,
+Tomasz,
 
-On 15 May 2014 03:44, Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Thu, May 15, 2014 at 12:47:21AM +0530, Rahul Sharma wrote:
-> [...]
->> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> [...]
->> +For "samsung,exynos4210-simple-phy" compatible PHYs the second cell in
->> +the PHY specifier identifies the PHY and the supported phys for exynos4210
+On 15 May 2014 01:11, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Rahul,
 >
-> I think the specifier is only the part after the phandle, so this should
-> probably be "... compatible PHYs the single cell specifier ..." or
-> something equivalent.
+> On 14.05.2014 04:45, Rahul Sharma wrote:
+>> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+>>
+>> Enable support for HDMI for exynos5250 based Snow board.
+>>
+>> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5250-cros-common.dtsi |    6 +++++-
+>>  arch/arm/boot/dts/exynos5250-pinctrl.dtsi     |    7 +++++++
+>>  arch/arm/boot/dts/exynos5250-snow.dts         |    7 +++++++
+>>  3 files changed, 19 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5250-cros-common.dtsi b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+>> index 2c1560d..89ac90f 100644
+>> --- a/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+>> @@ -240,7 +240,7 @@
+>>               samsung,i2c-sda-delay = <100>;
+>>               samsung,i2c-max-bus-freq = <378000>;
+>>
+>> -             hdmiphy@38 {
+>> +             hdmiphy: hdmiphy@38 {
+>>                       compatible = "samsung,exynos4212-hdmiphy";
+>>                       reg = <0x38>;
+>>               };
+>> @@ -304,6 +304,10 @@
+>>
+>>       hdmi {
+>>               hpd-gpio = <&gpx3 7 0>;
+>> +             pinctrl-names = "default";
+>> +             pinctrl-0 = <&hdmi_hpd_irq>;
+>> +             phy = <&hdmiphy>;
+>> +             ddc = <&i2c_2>;
+>>       };
+>>
+>>       gpio-keys {
+>> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>> index 9a49e68..da3ae66 100644
+>> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>> @@ -560,6 +560,13 @@
+>>                       samsung,pin-pud = <0>;
+>>                       samsung,pin-drv = <0>;
+>>               };
+>> +
+>> +             hdmi_hpd_irq: hdmi-hpd-irq {
+>> +                     samsung,pins = "gpx3-7";
+>> +                     samsung,pin-function = <0>;
+>> +                     samsung,pin-pud = <1>;
+>> +                     samsung,pin-drv = <0>;
+>> +             };
+>
+> Based on the fact that this is just being configured as input, I don't
+> think this is a generic special function, but rather a board-specific
+> GPIO, which should be defined in dts of respective board.
 >
 
-ok. I will rephrase this line.
+Ok.
 
->> +are:
->> +  HDMI_PHY,
->> +  DAC_PHY,
->> +  ADC_PHY,
->> +  PCIE_PHY,
->> +  SATA_PHY.
+>>       };
+>>
+>>       pinctrl@13400000 {
+>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+>> index 1ce1088..696850a 100644
+>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+>> @@ -206,4 +206,11 @@
+>>                       clock-frequency = <24000000>;
+>>               };
+>>       };
+>> +
+>> +     hdmi {
+>> +             hdmi-en-supply = <&tps65090_fet7>;
+>> +             vdd-supply = <&ldo8_reg>;
+>> +             vdd_osc-supply = <&ldo10_reg>;
+>> +             vdd_pll-supply = <&ldo8_reg>;
 >
-> I think you need to specify the literal values here as well, since the
-> binding must be fully self-contained. That is you can't rely on the DT
-> binding to be bundled with the exynos-simple-phy.h header.
+> Hmm, those regulators don't seem to be listed in
+> Documentation/devicetree/bindings/video/exynos_hdmi.txt, at least in
+> today's linux-next. The driver seems to use them, though.
 >
-
-Ok. I will add that.
-
->> @@ -20,3 +20,4 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)       += phy-exynos4x12-usb2.o
->>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)        += phy-exynos5250-usb2.o
->>  obj-$(CONFIG_PHY_EXYNOS5_USBDRD)     += phy-exynos5-usbdrd.o
->>  obj-$(CONFIG_PHY_XGENE)                      += phy-xgene.o
->> +obj-$(CONFIG_EXYNOS_SIMPLE_PHY)              += exynos-simple-phy.o
->
-> Perhaps this should be named phy-exynos-simple for consistency? Also it
-> may be a good idea to sort this alphabetically to reduce the potential
-> for conflicts.
-
-yea correct. I will use "phy-exynos-simple".
-I will place this addition in alphabetical order in makefile.
-
->
->> +static int exynos_phy_probe(struct platform_device *pdev)
->> +{
->> +     const struct of_device_id *of_id = of_match_device(
->> +             of_match_ptr(exynos_phy_of_match), &pdev->dev);
->
-> Why does this need of_match_ptr()?
+> This isn't a problem with this patch, but if you're working on this,
+> could you also fix the documentation in separate patch?
 >
 
-yea correct. Not required.
-
->> +     dev_info(dev, "probe success\n");
->
-> If at all this should be dev_dbg(). But in general the driver core will
-> already complain if the driver fails to probe, so there's in general no
-> need to mention when it probes successfully.
->
-
-ok.
-
->> diff --git a/include/dt-bindings/phy/exynos-simple-phy.h b/include/dt-bindings/phy/exynos-simple-phy.h
-> [...]
->> +/* simeple phys */
->
-> s/simeple phys/simple PHYs/
->
-> Although on second thought that comment probably shouldn't be there in
-> the first place.
->
->> +#define INVALID      (~1)
->
-> This doesn't belong in this header. The value should never be used by a
-> DT source file, should it?
-
-I will move this to driver file.
->
->> +#define HDMI_PHY     0
->> +#define DAC_PHY      1
->> +#define ADC_PHY      2
->> +#define PCIE_PHY     3
->> +#define SATA_PHY     4
->
-> Perhaps these should be namespaced somehow to avoid potential conflicts
-> with other PHY providers?
-
-How about XXX_SIMPLE_PHY?
-
->
->> +#define PHY_NR       5
->
-> I'm not sure that this belongs here either. It's not a value that will
-> ever appear in a DT source file.
-
-I want it to grow along with new additions in the phy list else
-catastrophic. This will look unrelated in driver.
+I will post another patch for documentation update.
 
 Regards,
 Rahul Sharma.
 
->
-> Thierry
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->
+> Best regards,
+> Tomasz
