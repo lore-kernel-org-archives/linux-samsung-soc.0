@@ -1,57 +1,136 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: Re: [PATCH v2 1/3] clk: exynos5420: Add 5800 specific clocks
-Date: Thu, 15 May 2014 10:19:04 +0530
-Message-ID: <CALt3h7-gvPZvmv2mhS7EdSQxo6+94DzYBWPeOW6bPUFUc6fuJw@mail.gmail.com>
-References: <1399638303-32600-1-git-send-email-arun.kk@samsung.com>
-	<1399638303-32600-2-git-send-email-arun.kk@samsung.com>
-	<5373D608.5020404@gmail.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
+Date: Thu, 15 May 2014 10:49:37 +0530
+Message-ID: <CAPdUM4NaLpN99JCJH3qMakSO3OG6ASjEuvvr_CnKv=gOiqfzMQ@mail.gmail.com>
+References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
+ <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
+ <20140514221423.GC6215@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f170.google.com ([209.85.128.170]:50134 "EHLO
-	mail-ve0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750941AbaEOEtG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 00:49:06 -0400
-In-Reply-To: <5373D608.5020404@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20140514221423.GC6215@mithrandir>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, sunil joshi <joshi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, olof@lixom.net
 
-Hi Tomasz,
+Hi Thierry,
 
-On Thu, May 15, 2014 at 2:16 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Arun, Alim,
+On 15 May 2014 03:44, Thierry Reding <thierry.reding@gmail.com> wrote:
+> On Thu, May 15, 2014 at 12:47:21AM +0530, Rahul Sharma wrote:
+> [...]
+>> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> [...]
+>> +For "samsung,exynos4210-simple-phy" compatible PHYs the second cell in
+>> +the PHY specifier identifies the PHY and the supported phys for exynos4210
 >
-> On 09.05.2014 14:25, Arun Kumar K wrote:
->> From: Alim Akhtar <alim.akhtar@samsung.com>
->>
->> Exynos5800 clock structure is mostly similar to 5420 with only
->> a small delta changes. So the 5420 clock file is re-used for
->> 5800 also. The common clocks for both are seggreagated and few
->> clocks which are different for both are separately initialized.
->>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> ---
->> Changes from v1
->> ---------------
->> - Rebased on clock cleanup by Shaik
+> I think the specifier is only the part after the phandle, so this should
+> probably be "... compatible PHYs the single cell specifier ..." or
+> something equivalent.
 >
-> This still isn't using correct base and won't compile with current
-> sources, even if it applies fine. This is partially my fault as we had a
-> lot of issues with cross-tree dependencies and it was not clear what to
-> base clock patches on, but I'll try to keep samsung-clk-next branch of
-> samsung-clk [1] tree up to date, so it should be safe to base on.
+
+ok. I will rephrase this line.
+
+>> +are:
+>> +  HDMI_PHY,
+>> +  DAC_PHY,
+>> +  ADC_PHY,
+>> +  PCIE_PHY,
+>> +  SATA_PHY.
 >
-> [1] git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git
+> I think you need to specify the literal values here as well, since the
+> binding must be fully self-contained. That is you can't rely on the DT
+> binding to be bundled with the exynos-simple-phy.h header.
+>
 
-Ok I will rebase the 5800 clock patch on this branch and resend it.
+Ok. I will add that.
 
-Thanks & Regards
-Arun
+>> @@ -20,3 +20,4 @@ phy-exynos-usb2-$(CONFIG_PHY_EXYNOS4X12_USB2)       += phy-exynos4x12-usb2.o
+>>  phy-exynos-usb2-$(CONFIG_PHY_EXYNOS5250_USB2)        += phy-exynos5250-usb2.o
+>>  obj-$(CONFIG_PHY_EXYNOS5_USBDRD)     += phy-exynos5-usbdrd.o
+>>  obj-$(CONFIG_PHY_XGENE)                      += phy-xgene.o
+>> +obj-$(CONFIG_EXYNOS_SIMPLE_PHY)              += exynos-simple-phy.o
+>
+> Perhaps this should be named phy-exynos-simple for consistency? Also it
+> may be a good idea to sort this alphabetically to reduce the potential
+> for conflicts.
+
+yea correct. I will use "phy-exynos-simple".
+I will place this addition in alphabetical order in makefile.
 
 >
-> Best regards,
-> Tomasz
+>> +static int exynos_phy_probe(struct platform_device *pdev)
+>> +{
+>> +     const struct of_device_id *of_id = of_match_device(
+>> +             of_match_ptr(exynos_phy_of_match), &pdev->dev);
+>
+> Why does this need of_match_ptr()?
+>
+
+yea correct. Not required.
+
+>> +     dev_info(dev, "probe success\n");
+>
+> If at all this should be dev_dbg(). But in general the driver core will
+> already complain if the driver fails to probe, so there's in general no
+> need to mention when it probes successfully.
+>
+
+ok.
+
+>> diff --git a/include/dt-bindings/phy/exynos-simple-phy.h b/include/dt-bindings/phy/exynos-simple-phy.h
+> [...]
+>> +/* simeple phys */
+>
+> s/simeple phys/simple PHYs/
+>
+> Although on second thought that comment probably shouldn't be there in
+> the first place.
+>
+>> +#define INVALID      (~1)
+>
+> This doesn't belong in this header. The value should never be used by a
+> DT source file, should it?
+
+I will move this to driver file.
+>
+>> +#define HDMI_PHY     0
+>> +#define DAC_PHY      1
+>> +#define ADC_PHY      2
+>> +#define PCIE_PHY     3
+>> +#define SATA_PHY     4
+>
+> Perhaps these should be namespaced somehow to avoid potential conflicts
+> with other PHY providers?
+
+How about XXX_SIMPLE_PHY?
+
+>
+>> +#define PHY_NR       5
+>
+> I'm not sure that this belongs here either. It's not a value that will
+> ever appear in a DT source file.
+
+I want it to grow along with new additions in the phy list else
+catastrophic. This will look unrelated in driver.
+
+Regards,
+Rahul Sharma.
+
+>
+> Thierry
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
