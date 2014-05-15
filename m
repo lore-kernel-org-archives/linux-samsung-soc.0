@@ -1,113 +1,74 @@
-From: Chirantan Ekbote <chirantan@chromium.org>
-Subject: [PATCH] arm: dts: exynos5: Remove multi core timer
-Date: Thu, 15 May 2014 14:07:59 -0700
-Message-ID: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [GIT PULL 1/4] Samsung clock Exynos5260 support for v3.16
+Date: Fri, 16 May 2014 06:11:24 +0900
+Message-ID: <53752D7C.4010003@samsung.com>
+References: <1400090591-5064-1-git-send-email-t.figa@samsung.com> <5373CB1A.1040801@samsung.com> <20140514201313.19795.35617@quantum> <5373CFFE.1000209@gmail.com> <20140514220744.19795.64527@quantum> <5373EB24.8000306@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:45478 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751673AbaEOVJM (ORCPT
+Received: from mail-pb0-f48.google.com ([209.85.160.48]:37871 "EHLO
+	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751076AbaEOVLa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 17:09:12 -0400
-Received: by mail-pb0-f52.google.com with SMTP id rr13so1591563pbb.39
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 14:09:11 -0700 (PDT)
+	Thu, 15 May 2014 17:11:30 -0400
+Received: by mail-pb0-f48.google.com with SMTP id rr13so1585445pbb.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 14:11:30 -0700 (PDT)
+In-Reply-To: <5373EB24.8000306@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>
-Cc: Chirantan Ekbote <chirantan@chromium.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-The multi core timer and the ARM architected timer are two different
-interfaces to the same underlying hardware timer.  This causes some
-strange timing issues when they are both enabled at the same time so
-remove the mct from the device tree and keep only the architected
-timer.
+On 05/15/14 07:16, Tomasz Figa wrote:
+> On 15.05.2014 00:07, Mike Turquette wrote:
+>> Quoting Tomasz Figa (2014-05-14 13:20:14)
+>>> Hi Mike,
+>>>
+>>> On 14.05.2014 22:13, Mike Turquette wrote:
+>>>> Quoting Kukjin Kim (2014-05-14 12:59:22)
+>>>>> On 05/15/14 03:03, Tomasz Figa wrote:
+>>>>>
+>>>>> Hi Mike,
+>>>>>
+>>>>> I've talked to Tomasz about current samsung related clock stuff. Since
+>>>>> they are mostly having dependency on samsung tree now not clock core
+>>>>> stuff, so would be better if it could be sent to upstream via samsung
+>>>>> tree. And as you know, updating arch/arm/ and clock stuff are usually
+>>>>> required for adding new SoC or supporting CCF newly...
+>>>>
+>>>> The Samsung clk pull requests only touch two arch/arm Kconfig files and
+>>>> one dtsi file. That's not a lot of arch/arm churn. Is there a strong
+>>>> reason that this needs to go through the samsung/arm-soc trees?
+>>>> Otherwise it should continue to go through the clk tree.
+>>>
+>>> Obviously they are patches for Samsung clock drivers. ;)
+>>>
+>>> The issue here is that there is a number of patches already merged in
+>>> Samsung tree on which the patches discussed here depend.
+>>
+>> OK, I think I misread the original email. I thought you were asking for
+>> future pull requests to go through the samsung tree, but you only mean
+>> the ones in this thread. No problem there.
+>>
+>> Acked-by: Mike Turquette<mturquette@linaro.org>
+>
+Mike, thanks for your ack on this whole pull-requests.
 
-Cc: Olof Johansson <olof@lixom.net>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
+I will pull 1 to 4 into samsung tree for 3.16.
 
-Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
----
- arch/arm/boot/dts/exynos5250.dtsi | 24 ------------------------
- arch/arm/boot/dts/exynos5420.dtsi | 30 ------------------------------
- 2 files changed, 54 deletions(-)
+> Thanks.
+>
+> As you probably noticed with my pull request for 3.15, we've been
+> getting quite a lot of burden due to dependencies between arch and clk
+> patches lastly, but this is inevitable when we are moving things out of
+> arch.
+>
+> The good news is that after patches from this pull request series, we
+> will end up with just one, more or less active platform (s5pv210) that
+> needs to be converted (and work already in progress).
+>
+Sounds great.
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 3742331..60cd945 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -110,30 +110,6 @@
- 		clock-frequency = <24000000>;
- 	};
- 
--	mct@101C0000 {
--		compatible = "samsung,exynos4210-mct";
--		reg = <0x101C0000 0x800>;
--		interrupt-controller;
--		#interrups-cells = <2>;
--		interrupt-parent = <&mct_map>;
--		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
--			     <4 0>, <5 0>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
--		clock-names = "fin_pll", "mct";
--
--		mct_map: mct-map {
--			#interrupt-cells = <2>;
--			#address-cells = <0>;
--			#size-cells = <0>;
--			interrupt-map = <0x0 0 &combiner 23 3>,
--					<0x1 0 &combiner 23 4>,
--					<0x2 0 &combiner 25 2>,
--					<0x3 0 &combiner 25 3>,
--					<0x4 0 &gic 0 120 0>,
--					<0x5 0 &gic 0 121 0>;
--		};
--	};
--
- 	pmu {
- 		compatible = "arm,cortex-a15-pmu";
- 		interrupt-parent = <&combiner>;
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index c3a9a66..3c38c6d 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -169,36 +169,6 @@
- 		status = "disabled";
- 	};
- 
--	mct@101C0000 {
--		compatible = "samsung,exynos4210-mct";
--		reg = <0x101C0000 0x800>;
--		interrupt-controller;
--		#interrups-cells = <1>;
--		interrupt-parent = <&mct_map>;
--		interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
--				<8>, <9>, <10>, <11>;
--		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
--		clock-names = "fin_pll", "mct";
--
--		mct_map: mct-map {
--			#interrupt-cells = <1>;
--			#address-cells = <0>;
--			#size-cells = <0>;
--			interrupt-map = <0 &combiner 23 3>,
--					<1 &combiner 23 4>,
--					<2 &combiner 25 2>,
--					<3 &combiner 25 3>,
--					<4 &gic 0 120 0>,
--					<5 &gic 0 121 0>,
--					<6 &gic 0 122 0>,
--					<7 &gic 0 123 0>,
--					<8 &gic 0 128 0>,
--					<9 &gic 0 129 0>,
--					<10 &gic 0 130 0>,
--					<11 &gic 0 131 0>;
--		};
--	};
--
- 	gsc_pd: power-domain@10044000 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044000 0x20>;
--- 
-1.9.1.423.g4596e3a
+Thanks,
+Kukjin
