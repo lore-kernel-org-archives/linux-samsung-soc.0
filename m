@@ -1,194 +1,69 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH RFC 3/4] clk: samsung: Add driver to control CLKOUT line on
- Exynos SoCs
-Date: Thu, 15 May 2014 19:32:30 +0200
-Message-ID: <1400175151-27779-4-git-send-email-t.figa@samsung.com>
-References: <1400175151-27779-1-git-send-email-t.figa@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v4 3/8] clk: samsung: add infrastructure to register cpu clocks
+Date: Thu, 15 May 2014 11:18:44 -0700
+Message-ID: <CAD=FV=XmVNwwZY_LM6Za-p7gg6CPh1mGj=BoWvG0Q-Cx9L_A9Q@mail.gmail.com>
+References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
+	<1400029876-5830-4-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1400175151-27779-1-git-send-email-t.figa@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f182.google.com ([209.85.220.182]:34258 "EHLO
+	mail-vc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755487AbaEOSSp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 May 2014 14:18:45 -0400
+Received: by mail-vc0-f182.google.com with SMTP id la4so4885978vcb.13
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 11:18:44 -0700 (PDT)
+In-Reply-To: <1400029876-5830-4-git-send-email-thomas.ab@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <ta.omasab@gmail.com>
+Cc: cpufreq@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, l.majewski@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Thomas P Abraham <thomas.ab@samsung.com>
 
-This patch introduces a driver that handles configuration of CLKOUT pin
-of Exynos SoCs that can be used to output certain clocks from inside of
-the SoC to a dedicated output pin.
+Thomas,
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- .../devicetree/bindings/arm/samsung/pmu.txt        |  18 ++++
- drivers/clk/samsung/Makefile                       |   1 +
- drivers/clk/samsung/exynos-clkout.c                | 107 +++++++++++++++++++++
- 3 files changed, 126 insertions(+)
- create mode 100644 drivers/clk/samsung/exynos-clkout.c
+On Tue, May 13, 2014 at 6:11 PM, Thomas Abraham <ta.omasab@gmail.com> wrote:
+> From: Thomas Abraham <thomas.ab@samsung.com>
+> +static int exynos4210_armclk_pre_rate_change(struct clk_notifier_data *ndata,
+> +                       struct exynos_cpuclk *armclk, void __iomem *base)
+> +{
+> +       struct exynos4210_armclk_data *armclk_data = armclk->data;
+> +       unsigned long alt_prate = clk_get_rate(armclk->alt_parent);
+> +       unsigned long alt_div, div0, div1, tdiv0, mux_reg;
+> +       unsigned long cur_armclk_rate, timeout;
+> +       unsigned long flags;
+> +
+> +       /* find out the divider values to use for clock data */
+> +       while (armclk_data->prate != ndata->new_rate) {
+> +               if (armclk_data->prate == 0)
+> +                       return -EINVAL;
+> +               armclk_data++;
+> +       }
+> +
+> +       div0 = armclk_data->div0;
+> +       div1 = armclk_data->div1;
+> +       if (readl(base + SRC_CPU) & EXYNOS4210_MUX_HPM_MASK) {
+> +               div1 = readl(base + DIV_CPU1) & EXYNOS4210_DIV1_HPM_MASK;
+> +               div1 |= ((armclk_data->div1) & ~EXYNOS4210_DIV1_HPM_MASK);
+> +       }
+> +
+> +       /*
+> +        * if the new and old parent clock speed is less than the clock speed
+> +        * of the alternate parent, then it should be ensured that at no point
+> +        * the armclk speed is more than the old_prate until the dividers are
+> +        * set.
+> +        */
+> +       tdiv0 = readl(base + DIV_CPU0);
+> +       cur_armclk_rate = ndata->old_rate / EXYNOS4210_ARM_DIV1(tdiv0) /
+> +                               EXYNOS4210_ARM_DIV2(tdiv0);
+> +       if (alt_prate > cur_armclk_rate) {
+> +               alt_div = _calc_div(alt_prate, cur_armclk_rate);
+> +               _exynos4210_set_armclk_div(base, alt_div);
+> +               div0 |= alt_div;
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-index b562634..67c7272 100644
---- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-@@ -11,8 +11,26 @@ Properties:
- 
-  - reg : offset and length of the register set.
- 
-+ - #clock-cells : must be zero.
-+
-+ - clock-names : list of clock names for particular CLKOUT mux inputs in
-+		following format:
-+			"clkoutN", where N is a decimal number corresponding to
-+			CLKOUT mux control bits value for given input, e.g.
-+				"clkout0", "clkout7", "clkout15".
-+
-+ - clocks : list of phandles and specifiers to all input clocks listed in
-+		clock-names property.
-+
- Example :
- pmu_system_controller: system-controller@10040000 {
- 	compatible = "samsung,exynos5250-pmu", "syscon";
- 	reg = <0x10040000 0x5000>;
-+	#clock-cells = <0>;
-+	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
-+			"clkout4", "clkout8", "clkout9";
-+	clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
-+		<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
-+		<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
-+		<&clock CLK_XUSBXTI>;
- };
-diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-index 2cb62f8..3c40362 100644
---- a/drivers/clk/samsung/Makefile
-+++ b/drivers/clk/samsung/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_SOC_EXYNOS5250)	+= clk-exynos5250.o
- obj-$(CONFIG_SOC_EXYNOS5420)	+= clk-exynos5420.o
- obj-$(CONFIG_SOC_EXYNOS5440)	+= clk-exynos5440.o
- obj-$(CONFIG_ARCH_EXYNOS)	+= clk-exynos-audss.o
-+obj-$(CONFIG_ARCH_EXYNOS)	+= exynos-clkout.o
- obj-$(CONFIG_S3C2410_COMMON_CLK)+= clk-s3c2410.o
- obj-$(CONFIG_S3C2410_COMMON_DCLK)+= clk-s3c2410-dclk.o
- obj-$(CONFIG_S3C2412_COMMON_CLK)+= clk-s3c2412.o
-diff --git a/drivers/clk/samsung/exynos-clkout.c b/drivers/clk/samsung/exynos-clkout.c
-new file mode 100644
-index 0000000..461f1c3
---- /dev/null
-+++ b/drivers/clk/samsung/exynos-clkout.c
-@@ -0,0 +1,107 @@
-+/*
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ * Author: Tomasz Figa <t.figa@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Clock driver for Exynos clock output
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/syscore_ops.h>
-+
-+#define EXYNOS_CLKOUT_PARENTS		32
-+
-+#define EXYNOS_PMU_DEBUG_REG		0xa00
-+#define EXYNOS_CLKOUT_DISABLE_SHIFT	0
-+#define EXYNOS_CLKOUT_MUX_SHIFT		8
-+#define EXYNOS_CLKOUT_MUX_MASK		0x1f
-+
-+static DEFINE_SPINLOCK(clkout_lock);
-+
-+static void __init exynos_clkout_init(struct device_node *node)
-+{
-+	const char *parent_names[EXYNOS_CLKOUT_PARENTS];
-+	struct clk *parents[EXYNOS_CLKOUT_PARENTS];
-+	struct clk_gate *gate;
-+	struct clk_mux *mux;
-+	int parent_count;
-+	struct clk *clk;
-+	void *reg;
-+	int i;
-+
-+	/* allocate mux and gate clock structs */
-+	mux = kzalloc(sizeof(struct clk_mux), GFP_KERNEL);
-+	if (!mux)
-+		return;
-+
-+	gate = kzalloc(sizeof(struct clk_gate), GFP_KERNEL);
-+	if (!gate)
-+		goto free_mux;
-+
-+	parent_count = 0;
-+	for (i = 0; i < EXYNOS_CLKOUT_PARENTS; ++i) {
-+		char name[] = "clkoutXX";
-+
-+		snprintf(name, sizeof(name), "clkout%d", i);
-+		parents[i] = of_clk_get_by_name(node, name);
-+		if (IS_ERR(parents[i])) {
-+			parent_names[i] = "none";
-+			continue;
-+		}
-+
-+		parent_names[i] = __clk_get_name(parents[i]);
-+		parent_count = i + 1;
-+	}
-+
-+	if (!parent_count)
-+		goto free_gate;
-+
-+	reg = of_iomap(node, 0);
-+	if (!reg)
-+		goto clks_put;
-+
-+	gate->reg = reg + EXYNOS_PMU_DEBUG_REG;
-+	gate->bit_idx = EXYNOS_CLKOUT_DISABLE_SHIFT;
-+	gate->flags = CLK_GATE_SET_TO_DISABLE;
-+	gate->lock = &clkout_lock;
-+
-+	mux->reg = reg + EXYNOS_PMU_DEBUG_REG;
-+	mux->mask = EXYNOS_CLKOUT_MUX_MASK;
-+	mux->shift = EXYNOS_CLKOUT_MUX_SHIFT;
-+	mux->lock = &clkout_lock;
-+
-+	clk = clk_register_composite(NULL, "clkout", parent_names,
-+					parent_count, &mux->hw,
-+					&clk_mux_ops, NULL, NULL, &gate->hw,
-+					&clk_gate_ops, 0);
-+	if (IS_ERR(clk))
-+		goto err_unmap;
-+
-+	of_clk_add_provider(node, of_clk_src_simple_get, clk);
-+
-+	return;
-+
-+err_unmap:
-+	iounmap(reg);
-+clks_put:
-+	for (i = 0; i < EXYNOS_CLKOUT_PARENTS; ++i)
-+		if (!IS_ERR(parents[i]))
-+			clk_put(parents[i]);
-+free_gate:
-+	kfree(gate);
-+free_mux:
-+	kfree(mux);
-+
-+	pr_err("%s: failed to register clkout clock\n", __func__);
-+}
-+CLK_OF_DECLARE(exynos4210_clkout, "samsung,exynos4210-pmu", exynos_clkout_init);
-+CLK_OF_DECLARE(exynos4412_clkout, "samsung,exynos4x12-pmu", exynos_clkout_init);
-+CLK_OF_DECLARE(exynos5250_clkout, "samsung,exynos5250-pmu", exynos_clkout_init);
-+CLK_OF_DECLARE(exynos5420_clkout, "samsung,exynos5420-pmu", exynos_clkout_init);
--- 
-1.9.2
+Don't you need to up the voltage here, too?  ...I haven't reviewed
+this whole patch (so perhaps it's elsewhere in the patch or in the
+series), but I stumbled upon this while trying to solve a different
+problem and figured I'd check...
+
+-Doug
