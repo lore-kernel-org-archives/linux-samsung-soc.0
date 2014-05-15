@@ -1,66 +1,89 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH v4 5/5] ARM: dts: enable hdmi for exynos5800 based
- peach-pi board
-Date: Thu, 15 May 2014 13:57:19 +0530
-Message-ID: <CAPdUM4PxYqrt1xaZJ6vw5GXk8wFzRGG=ayscvs0x=n7=deJZKQ@mail.gmail.com>
-References: <1400035562-16832-1-git-send-email-rahul.sharma@samsung.com>
-	<1400035562-16832-6-git-send-email-rahul.sharma@samsung.com>
-	<5373CA74.8080500@gmail.com>
-	<5373CAB7.3040002@gmail.com>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH] thermal: samsung: Only update available threshold limits
+Date: Thu, 15 May 2014 16:45:28 +0800
+Message-ID: <1400143528.2273.30.camel@rzhang1-toshiba>
+References: <1397453895-6688-1-git-send-email-tushar.behera@linaro.org>
+	 <CADGdYn719UzdPd3fVWrPi=mTnKvKy3O5bPHZcn8xCFjrAWp7yA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:42471 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750927AbaEOI1V (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 04:27:21 -0400
-In-Reply-To: <5373CAB7.3040002@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CADGdYn719UzdPd3fVWrPi=mTnKvKy3O5bPHZcn8xCFjrAWp7yA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amit Kachhap <amit.kachhap@gmail.com>
+Cc: Tushar Behera <tushar.behera@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, eduardo.valentin@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, sunil joshi <joshi@samsung.com>
 
-On 15 May 2014 01:27, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->
->
-> On 14.05.2014 21:56, Tomasz Figa wrote:
->> Hi Rahul,
->>
->> On 14.05.2014 04:46, Rahul Sharma wrote:
->>> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->>>
->>> Enable hdmi for peach-pi board.
->>>
->>> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
->>> ---
->>>  arch/arm/boot/dts/exynos5800-peach-pi.dts |   19 +++++++++++++++++++
->>>  1 file changed, 19 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->>> index 742655b..2a6f23b8 100644
->>> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
->>> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->>> @@ -134,6 +134,25 @@
->>>      };
->>>  };
->>>
->>> +&i2c_2 {
->>> +    status = "okay";
->>> +    samsung,i2c-sda-delay = <100>;
->>> +    samsung,i2c-max-bus-freq = <66000>;
->>> +    samsung,i2c-slave-addr = <0x50>;
->>> +
->>> +    hdmiddc@50 {
->>> +            reg = <0x50>;
->>> +    };
->
-> Aha, also with the new Exynos HDMI bindings, I don't think the DDC
-> device node is necessary any longer.
+On =E5=9B=9B, 2014-04-24 at 11:48 +0530, Amit Kachhap wrote:
+> On 4/14/14, Tushar Behera <tushar.behera@linaro.org> wrote:
+> > Currently the threshold limits are updated in 2 stages, once for al=
+l
+> > software trigger levels and again for hardware trip point.
+> I guess the first stage is bootloader as could not find this in this =
+file.
+> Anyways the changes looks fine to me.
+>=20
+> Acked-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-Yea it is not necessary now. I added it to list the i2c devices
-under controller node. Just for completion.
+applied.
 
->
-> Best regards,
-> Tomasz
+thanks,
+rui
+>=20
+> >
+> > While updating the software trigger levels, it overwrites the thres=
+hold
+> > limit for hardware trip point thereby forcing the Exynos core to is=
+sue
+> > an emergency shutdown.
+> >
+> > Updating only the required fields in threshold register fixes this =
+issue.
+> >
+> > Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> > ---
+> > Based on v3.15-rc1.
+> >
+> >  drivers/thermal/samsung/exynos_tmu.c |    4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c
+> > b/drivers/thermal/samsung/exynos_tmu.c
+> > index 0d96a51..ffccc89 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -225,6 +225,8 @@ skip_calib_data:
+> >  			trigger_levs++;
+> >  	}
+> >
+> > +	rising_threshold =3D readl(data->base + reg->threshold_th0);
+> > +
+> >  	if (data->soc =3D=3D SOC_ARCH_EXYNOS4210) {
+> >  		/* Write temperature code for threshold */
+> >  		threshold_code =3D temp_to_code(data, pdata->threshold);
+> > @@ -249,6 +251,7 @@ skip_calib_data:
+> >  				ret =3D threshold_code;
+> >  				goto out;
+> >  			}
+> > +			rising_threshold &=3D ~(0xff << 8 * i);
+> >  			rising_threshold |=3D threshold_code << 8 * i;
+> >  			if (pdata->threshold_falling) {
+> >  				threshold_code =3D temp_to_code(data,
+> > @@ -281,6 +284,7 @@ skip_calib_data:
+> >  			}
+> >  			if (i =3D=3D EXYNOS_MAX_TRIGGER_PER_REG - 1) {
+> >  				/* 1-4 level to be assigned in th0 reg */
+> > +				rising_threshold &=3D ~(0xff << 8 * i);
+> >  				rising_threshold |=3D threshold_code << 8 * i;
+> >  				writel(rising_threshold,
+> >  					data->base + reg->threshold_th0);
+> > --
+> > 1.7.9.5
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-sam=
+sung-soc"
+> > in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >
