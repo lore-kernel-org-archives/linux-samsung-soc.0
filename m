@@ -1,113 +1,57 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv5 0/5] Support new Exynos3250 SoC based on Cortex-A7 dual
- core
-Date: Thu, 15 May 2014 13:28:27 +0900
-Message-ID: <5374426B.6000505@samsung.com>
-References: <1399986308-23744-1-git-send-email-cw00.choi@samsung.com>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: Re: [PATCH v2 1/3] clk: exynos5420: Add 5800 specific clocks
+Date: Thu, 15 May 2014 10:19:04 +0530
+Message-ID: <CALt3h7-gvPZvmv2mhS7EdSQxo6+94DzYBWPeOW6bPUFUc6fuJw@mail.gmail.com>
+References: <1399638303-32600-1-git-send-email-arun.kk@samsung.com>
+	<1399638303-32600-2-git-send-email-arun.kk@samsung.com>
+	<5373D608.5020404@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:42812 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750724AbaEOE2b (ORCPT
+Received: from mail-ve0-f170.google.com ([209.85.128.170]:50134 "EHLO
+	mail-ve0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750941AbaEOEtG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 00:28:31 -0400
-In-reply-to: <1399986308-23744-1-git-send-email-cw00.choi@samsung.com>
+	Thu, 15 May 2014 00:49:06 -0400
+In-Reply-To: <5373D608.5020404@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, t.figa@samsung.com, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, arnd@arndb.de, olof@lixom.net, marc.zyngier@arm.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, hyunhee.kim@samsung.com, yj44.cho@samsung.com, chanho61.park@samsung.com, sajjan.linux@gmail.com, tushar.behera@linaro.org, sachin.kamat@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, olof@lixom.net
 
-Dear Kukjin,
+Hi Tomasz,
 
-Could you please pick following patches?
-- [PATCHv5 1/5] ARM: EXYNOS: Add Exynos3250 SoC ID
-- [PATCHv5 2/5] ARM: EXYNOS: Support secondary CPU boot of Exynos3250
+On Thu, May 15, 2014 at 2:16 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Arun, Alim,
+>
+> On 09.05.2014 14:25, Arun Kumar K wrote:
+>> From: Alim Akhtar <alim.akhtar@samsung.com>
+>>
+>> Exynos5800 clock structure is mostly similar to 5420 with only
+>> a small delta changes. So the 5420 clock file is re-used for
+>> 5800 also. The common clocks for both are seggreagated and few
+>> clocks which are different for both are separately initialized.
+>>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> ---
+>> Changes from v1
+>> ---------------
+>> - Rebased on clock cleanup by Shaik
+>
+> This still isn't using correct base and won't compile with current
+> sources, even if it applies fine. This is partially my fault as we had a
+> lot of issues with cross-tree dependencies and it was not clear what to
+> base clock patches on, but I'll try to keep samsung-clk-next branch of
+> samsung-clk [1] tree up to date, so it should be safe to base on.
+>
+> [1] git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git
 
-Best Regards,
-Chanwoo Choi
+Ok I will rebase the 5800 clock patch on this branch and resend it.
 
-On 05/13/2014 10:05 PM, Chanwoo Choi wrote:
-> This patchset support new Exynos3250 Samsung SoC based on Cortex-A7 dual core.
-> Exynos3250 is a System-On-Chip (SoC) that is based on 32-bit RISC processor
-> for Smartphone. It is desigend with the 28nm low-power high-K metal gate process
-> and provides the best performance features.
-> 
-> This patchset include some patches such as:
-> - Support booting of Exynos3250
-> - Supoort uart/mct/adc/gic/i2c/spi/power-domain/pmu/mshc/pwm/amba
-> - Support the clock control for Exynos3250 using common clk framework
-> 
-> This patchset is based on following git repo/branch.
-> - git repo : git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> - branch   : for-next (2ca8b247775d7c24fa8c2524a5562bad7e88f84b)
-> 
-> Changes from v4:
-> - Rebase this patch on latest for-next branch in linux-samsung.git
-> - Post separated secondary CPU boot patch for Exynos4212 and merged it
->  : https://lkml.org/lkml/2014/5/8/745
-> - Drop following patch[1] and use alternative patch[2] to turn off Cortex-A7
->   [1] ARM: EXYNOS: Enter a15 lowpower mode for Exynos3250 based on Cortex-a7
->   [2] http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg29064.html
-> - Modify clock driver of exynos3250
-> - Add 'soc' dt node and move all dt nodes under 'soc' dt node in exynos3250.dtsi
-> - Add missing CPU1 dt node in exynos3250.dtsi
-> - Fix minor issue about coding style
-> 
-> Changes from v3:
-> - Remove all dependency about following patchset to remove static memory
->   mapping for SYSRAM[1] / PMU ([2] or [3]). If following patchset merged,
->   I'll send a further patches to support SYSRAM/PMU for secondary CPU.
->   [1] http://www.spinics.net/lists/arm-kernel/msg323011.html
->   [2] https://lkml.org/lkml/2014/4/2/48
->   [3] http://www.spinics.net/lists/arm-kernel/msg316013.html
-> 
-> Changes from v2:
-> - Remove static memory mapping about SYSRAM/PMU such as following patches:
->   ARM: EXYNOS: Add IO mapping for non-secure SYSRAM of Exynos3250
->   ARM: EXYNOS: Add IO mapping for PMU of Exynos3250
-> - Add description for secondary CPU boot of Exynos4212/Exynos3250
-> - Fix description in exynos_cpu_die() to remove particular SoC series
-> - Fix minor coding style
-> - Add documentation for Exynos3250 clock controller
-> 
-> Changes from v1:
-> - Add new "samsung,exynos3" compatible name
-> - Add comment about exynos_cpu_boot in Exynos4212
-> - Remove unnecessary 'goto' statement in firmware.c
-> - Use read_cpuid_part_number() function instead of assembler directly
-> - Post separated pinctrl patch from this patchset
->   : https://lkml.org/lkml/2014/4/13/156
-> - Remove unused pmu interrupts due to Exynos3250 dual-core
-> - Cosolidate all the patches related to exynos3250.dtsi into one patch
-> - Fix gic compatible name to "cortex-a15-gic" because Cortex-A7 GIC is same
-> - Add sign-off of sender to all this patches
-> - Fix minor typo
-> 
-> Chanwoo Choi (3):
->   ARM: EXYNOS: Add Exynos3250 SoC ID
->   ARM: EXYNOS: Support secondary CPU boot of Exynos3250
->   dt-bindings: add documentation for Exynos3250 clock controller
-> 
-> Tomasz Figa (2):
->   clk: samsung: exynos3250: Add clocks using common clock framework
->   ARM: dts: Add device tree sources for Exynos3250
-> 
->  .../devicetree/bindings/clock/exynos3250-clock.txt |  41 ++
->  arch/arm/boot/dts/exynos3250-pinctrl.dtsi          | 475 +++++++++++++
->  arch/arm/boot/dts/exynos3250.dtsi                  | 439 ++++++++++++
->  arch/arm/mach-exynos/Kconfig                       |  22 +
->  arch/arm/mach-exynos/common.h                      |  10 +
->  arch/arm/mach-exynos/exynos.c                      |   2 +
->  arch/arm/mach-exynos/firmware.c                    |   9 +-
->  drivers/clk/samsung/Makefile                       |   1 +
->  drivers/clk/samsung/clk-exynos3250.c               | 782 +++++++++++++++++++++
->  include/dt-bindings/clock/exynos3250.h             | 258 +++++++
->  10 files changed, 2038 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/exynos3250-clock.txt
->  create mode 100644 arch/arm/boot/dts/exynos3250-pinctrl.dtsi
->  create mode 100644 arch/arm/boot/dts/exynos3250.dtsi
->  create mode 100644 drivers/clk/samsung/clk-exynos3250.c
->  create mode 100644 include/dt-bindings/clock/exynos3250.h
-> 
+Thanks & Regards
+Arun
+
+>
+> Best regards,
+> Tomasz
