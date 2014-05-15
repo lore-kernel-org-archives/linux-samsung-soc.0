@@ -1,94 +1,58 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH RFC 4/4] ARM: dts: exynos: Update PMU node with CLKOUT related
- data
-Date: Thu, 15 May 2014 19:32:31 +0200
-Message-ID: <1400175151-27779-5-git-send-email-t.figa@samsung.com>
-References: <1400175151-27779-1-git-send-email-t.figa@samsung.com>
+Subject: [PATCH RFC 0/4] Add support for Exynos clock output configuration
+Date: Thu, 15 May 2014 19:32:27 +0200
+Message-ID: <1400175151-27779-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1400175151-27779-1-git-send-email-t.figa@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch extends nodes of PMU system controller on Exynos4210, 4x12,
-5250 and 5420 SoCs with newly defined properties used by Exynos CLKOUT
-driver.
+On all Exynos SoCs there is a dedicated CLKOUT pin that allows many of
+internal SoC clocks to be output from the SoC. The hardware structure
+of CLKOUT related clocks looks as follows:
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/boot/dts/exynos4210.dtsi | 10 ++++++++++
- arch/arm/boot/dts/exynos4x12.dtsi |  7 +++++++
- arch/arm/boot/dts/exynos5250.dtsi |  3 +++
- arch/arm/boot/dts/exynos5420.dtsi |  3 +++
- 4 files changed, 23 insertions(+)
+	CMU	|---> clock0 --------->	|	PMU	|
+		|			|		|
+    several	|---> clock1 ---------> |	mux	|
+    muxes	|			|	+	|---> CLKOUT
+    dividers	|       ...		|	gate	|
+    and gates	|			|		|
+		|---> clockN ---------> |		|
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index c4e3df9..a9d9b8c 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -31,6 +31,16 @@
- 		pinctrl2 = &pinctrl_2;
- 	};
- 
-+	pmu_system_controller: system-controller@10020000 {
-+		#clock-cells = <0>;
-+		clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
-+				"clkout4", "clkout8", "clkout9";
-+		clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
-+			<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
-+			<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
-+			<&clock CLK_XUSBXTI>;
-+	};
-+
- 	sysram@02020000 {
- 		compatible = "mmio-sysram";
- 		reg = <0x02020000 0x20000>;
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index a2889b5..494d296 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -139,6 +139,13 @@
- 
- 	pmu_system_controller: system-controller@10020000 {
- 		compatible = "samsung,exynos4x12-pmu", "syscon";
-+		#clock-cells = <0>;
-+		clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
-+				"clkout4", "clkout5", "clkout8", "clkout9";
-+		clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
-+			<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
-+			<&clock CLK_OUT_CPU>, <&clock CLK_OUT_ISP>,
-+			<&clock CLK_XXTI>, <&clock CLK_XUSBXTI>;
- 	};
- 
- 	g2d@10800000 {
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index e910253..d0a899c 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -191,6 +191,9 @@
- 	pmu_system_controller: system-controller@10040000 {
- 		compatible = "samsung,exynos5250-pmu", "syscon";
- 		reg = <0x10040000 0x5000>;
-+		#clock-cells = <0>;
-+		clock-names = "clkout16";
-+		clocks = <&clock CLK_FIN_PLL>;
- 	};
- 
- 	watchdog@101D0000 {
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 0cd65a7..20ee104 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -698,6 +698,9 @@
- 	pmu_system_controller: system-controller@10040000 {
- 		compatible = "samsung,exynos5420-pmu", "syscon";
- 		reg = <0x10040000 0x5000>;
-+		#clock-cells = <0>;
-+		clock-names = "clkout16";
-+		clocks = <&clock CLK_FIN_PLL>;
- 	};
- 
- 	tmu_cpu0: tmu@10060000 {
+Since the block responsible for handling the pin is PMU, not CMU,
+a separate driver, that binds to PMU node is required and acquires
+all input clocks by standard DT clock look-up. This way we don't need
+any cross-IP block drivers and cross-driver register sharing or
+nodes for fake devices.
+
+To represent the PMU mux/gate clock, generic composite clock is registered.
+
+Tested on Odroid U3, with HSIC/USB hub using CLKOUT as reference clock,
+with some additional patches.
+
+Depends on:
+[PATCHv4 0/4] Enable usbphy and hsotg for exynos4
+(http://thread.gmane.org/gmane.linux.kernel.samsung-soc/30631)
+for Exynos4210/4x12 PMU DT nodes.
+
+Tomasz Figa (4):
+  clk: samsung: exynos4: Add missing DMC clock hierarchy
+  clk: samsung: exynos4: Add CLKOUT clock hierarchy
+  clk: samsung: Add driver to control CLKOUT line on Exynos SoCs
+  ARM: dts: exynos: Update PMU node with CLKOUT related data
+
+ .../devicetree/bindings/arm/samsung/pmu.txt        |  18 +++
+ arch/arm/boot/dts/exynos4210.dtsi                  |  10 ++
+ arch/arm/boot/dts/exynos4x12.dtsi                  |   7 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |   3 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |   3 +
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-exynos4.c                  | 156 +++++++++++++++++++++
+ drivers/clk/samsung/exynos-clkout.c                | 107 ++++++++++++++
+ include/dt-bindings/clock/exynos4.h                |   6 +
+ 9 files changed, 311 insertions(+)
+ create mode 100644 drivers/clk/samsung/exynos-clkout.c
+
 -- 
 1.9.2
