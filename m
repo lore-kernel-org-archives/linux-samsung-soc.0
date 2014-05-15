@@ -1,61 +1,104 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: [PATCH v6 0/5] MCPM backend for Exynos5420
-Date: Thu, 15 May 2014 12:52:31 -0400 (EDT)
-Message-ID: <alpine.LFD.2.11.1405151250070.17310@knanqh.ubzr>
-References: <1399982324-27879-1-git-send-email-a.kesavan@samsung.com> <alpine.LFD.2.11.1405131325060.980@knanqh.ubzr> <CAM4voanvVwj+FuWazTGMHMnM64Cw_qK03D3o=raS43f_zWFfog@mail.gmail.com> <alpine.LFD.2.11.1405140031490.980@knanqh.ubzr>
- <CAM4voa=6osyXYg_XF=XuGRYmxLDUO+5=-i+cMrNW92fzBZJjfA@mail.gmail.com> <alpine.LFD.2.11.1405140931380.980@knanqh.ubzr> <CAM4voam29e7aK7n86_Mpj-wwvkchm-e68qA5=iUFou+sUMONig@mail.gmail.com> <CAM4voakB57mgyQmtkpCUAF1BVW5z3BGsesvxvTuSg_JwBh-sxw@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 06/10] thermal: exynos: remove redundant threshold_code
+ checks from exynos_tmu_initialize()
+Date: Thu, 15 May 2014 18:56:55 +0200
+Message-ID: <2759070.4B75QlgKJJ@amdc1032>
+References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
+ <1399288539-1793-7-git-send-email-b.zolnierkie@samsung.com>
+ <20140515145552.GB27690@developer>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f52.google.com ([209.85.192.52]:37686 "EHLO
-	mail-qg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752916AbaEOQwe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 12:52:34 -0400
-Received: by mail-qg0-f52.google.com with SMTP id a108so2172878qge.39
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 09:52:33 -0700 (PDT)
-In-Reply-To: <CAM4voakB57mgyQmtkpCUAF1BVW5z3BGsesvxvTuSg_JwBh-sxw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <20140515145552.GB27690@developer>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Thomas P Abraham <thomas.ab@samsung.com>, "inderpal.s@samsung.com" <inderpal.s@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Dave Martin <Dave.Martin@arm.com>, Tomasz Figa <t.figa@samsung.com>
 
-On Thu, 15 May 2014, Abhilash Kesavan wrote:
+On Thursday, May 15, 2014 10:55:52 AM Eduardo Valentin wrote:
+> Hello Bartlomiej,
 
-> Hi Nicolas,
+Hi,
+
+> On Mon, May 05, 2014 at 01:15:35PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> > Remove runtime checks for negative return values of temp_to_code()
+> > from exynos_tmu_initialize().  The current level temperature data
+> > hardcoded in pdata will never cause a negative temp_to_code()
+> > return values and for the new code potential mistakes should be
+> > caught during development/review phases.
+> > 
+> > Theres should be no functional changes caused by this patch.
+> > 
 > 
-> On Wed, May 14, 2014 at 7:09 PM, Abhilash Kesavan
-> <kesavan.abhilash@gmail.com> wrote:
-> > Hi Nicolas,
-> >
-> > On Wed, May 14, 2014 at 7:03 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> >> On Wed, 14 May 2014, Abhilash Kesavan wrote:
-> >>
-> >>> Hi Nicolas,
-> >>>
-> >>> [...]
-> >>> >>
-> >>> >> 1) can't create /sys/devices/system/cpu/cpu//online: nonexistent directory
-> >>> >
-> >>> > What do you get if you do:
-> >>> >
-> >>> > $ ls -d /sys/devices/system/cpu/cpu?/online
-> >>> ls: /sys/devices/system/cpu/cpu//online: No such file or directory
-> >>
-> >> Somehow, you or your shell replaced the ? character into a / character.
-> >> You could try with a * instead.
-> > With a different RFS your script runs fine without any change. Will
-> > update with results once testing is done.
-> The script has been running for a few hours on my 5420 based
-> chromebook. I can see all the cores being hotplugged in/out. A snippet
-> of the prints, that I get on running the test, follows:
-> 
-[...]
+> Same question as in previous patch. Removing defensive code must
 
-Good, that looks pretty good.
+Simirarly like in a previous case.  Such verification should not be done
+at runtime in a production code because it is already too late for such
+checking.  It should be done during development and review phases.
 
-Once you implement full cluster shutdown I can provide you with another 
-script stressing that part.
+> be done carefully. 
 
+BTW In case of temp_to_code() its users should be audited to pass only
+input values that give positive results and later the function itself
+may be modified to catch wrong input values by using WARN_ON (or even
+BUG_ON).
 
-Nicolas
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> >  drivers/thermal/samsung/exynos_tmu.c | 16 +---------------
+> >  1 file changed, 1 insertion(+), 15 deletions(-)
+> > 
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> > index 789d745..a415829 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -170,10 +170,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+> >  	if (data->soc == SOC_ARCH_EXYNOS4210) {
+> >  		/* Write temperature code for threshold */
+> >  		threshold_code = temp_to_code(data, pdata->threshold);
+> > -		if (threshold_code < 0) {
+> > -			ret = threshold_code;
+> > -			goto out;
+> > -		}
+> >  		writeb(threshold_code,
+> >  			data->base + reg->threshold_temp);
+> >  		for (i = 0; i < trigger_levs; i++)
+> > @@ -187,18 +183,12 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+> >  		i < trigger_levs && i < EXYNOS_MAX_TRIGGER_PER_REG; i++) {
+> >  			threshold_code = temp_to_code(data,
+> >  						pdata->trigger_levels[i]);
+> > -			if (threshold_code < 0) {
+> > -				ret = threshold_code;
+> > -				goto out;
+> > -			}
+> >  			rising_threshold |= threshold_code << 8 * i;
+> >  			if (pdata->threshold_falling) {
+> >  				threshold_code = temp_to_code(data,
+> >  						pdata->trigger_levels[i] -
+> >  						pdata->threshold_falling);
+> > -				if (threshold_code > 0)
+> > -					falling_threshold |=
+> > -						threshold_code << 8 * i;
+> > +				falling_threshold |= threshold_code << 8 * i;
+> >  			}
+> >  		}
+> >  
+> > @@ -217,10 +207,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+> >  				(pdata->trigger_type[i] == HW_TRIP)) {
+> >  			threshold_code = temp_to_code(data,
+> >  						pdata->trigger_levels[i]);
+> > -			if (threshold_code < 0) {
+> > -				ret = threshold_code;
+> > -				goto out;
+> > -			}
+> >  			if (i == EXYNOS_MAX_TRIGGER_PER_REG - 1) {
+> >  				/* 1-4 level to be assigned in th0 reg */
+> >  				rising_threshold |= threshold_code << 8 * i;
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
