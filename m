@@ -1,66 +1,64 @@
-From: Doug Anderson <dianders@chromium.org>
+From: Chirantan Ekbote <chirantan@chromium.org>
 Subject: Re: [PATCH] arm: dts: exynos5: Remove multi core timer
-Date: Thu, 15 May 2014 15:44:29 -0700
-Message-ID: <CAD=FV=WGa7j_As_NpySxU7OEd_SzuGWK6oxU6UeiJ-4HsoWvvg@mail.gmail.com>
+Date: Thu, 15 May 2014 16:03:24 -0700
+Message-ID: <CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com>
 References: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
 	<53752E25.9060604@gmail.com>
 	<CAD=FV=WKOtZaUyzTWNqR=vi_L=U-Q1dct2U_oCYi3ZJv6401Hg@mail.gmail.com>
 	<53753443.8010303@gmail.com>
 	<CAD=FV=V8UZoeOqEwfx_E015pLM+amTt51LrUa+dk7mTdn=vKgA@mail.gmail.com>
 	<53753C17.1090002@gmail.com>
+	<CAD=FV=WGa7j_As_NpySxU7OEd_SzuGWK6oxU6UeiJ-4HsoWvvg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f176.google.com ([209.85.128.176]:56841 "EHLO
-	mail-ve0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754667AbaEOWoa (ORCPT
+Received: from mail-oa0-f53.google.com ([209.85.219.53]:40855 "EHLO
+	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751654AbaEOXDY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 18:44:30 -0400
-Received: by mail-ve0-f176.google.com with SMTP id jz11so2133486veb.35
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 15:44:29 -0700 (PDT)
-In-Reply-To: <53753C17.1090002@gmail.com>
+	Thu, 15 May 2014 19:03:24 -0400
+Received: by mail-oa0-f53.google.com with SMTP id m1so2066003oag.26
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 16:03:24 -0700 (PDT)
+In-Reply-To: <CAD=FV=WGa7j_As_NpySxU7OEd_SzuGWK6oxU6UeiJ-4HsoWvvg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Chirantan Ekbote <chirantan@chromium.org>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, David Riley <davidriley@chromium.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, David Riley <davidriley@chromium.org>
 
-Tomasz,
+Hi Tomasz,
 
-On Thu, May 15, 2014 at 3:13 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> NOTE: if for some reason we need to keep the MCT around, we're
->> definitely going to need to account for the fact that tweaking it
->> affects the arch timer.  ...and having the arch timer is really nice
->> since:
+On Thu, May 15, 2014 at 3:44 PM, Doug Anderson <dianders@chromium.org> wrote:
+> Tomasz,
 >
-> [Let me reorder the points below to make it easier to comment:]
+> On Thu, May 15, 2014 at 3:13 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>>> NOTE: if for some reason we need to keep the MCT around, we're
+>>> definitely going to need to account for the fact that tweaking it
+>>> affects the arch timer.  ...and having the arch timer is really nice
+>>> since:
+>>
+>> [Let me reorder the points below to make it easier to comment:]
+>>
+>>> * it's faster to access.
+>>> * it is accessible from userspace for really fast access.
+>>
+>> Do you have some data on whether it is a significant difference,
+>> especially considering real use cases?
 >
->> * it's faster to access.
->> * it is accessible from userspace for really fast access.
+> I know that Chrome makes _a lot_ of calls to gettimeofday() for
+> profiling purposes, enough that it showed up on benchmarks.  In fact,
+> we made a change to the MCT to make accesses faster and there's a
+> small mention of the benchmarking that was done at:
 >
-> Do you have some data on whether it is a significant difference,
-> especially considering real use cases?
-
-I know that Chrome makes _a lot_ of calls to gettimeofday() for
-profiling purposes, enough that it showed up on benchmarks.  In fact,
-we made a change to the MCT to make accesses faster and there's a
-small mention of the benchmarking that was done at:
-
-https://chromium-review.googlesource.com/#/c/32190/
-
-...that change probably should be sent upstream, actually.
-
-I'll let Chirantan comment on how much faster arch timers were.
-...and I think David Riley (also CCed now) may be able to comment on
-the benefits of userspace timers.
-
-
->> * it implements the bits needed for udelay() to use it.
+> https://chromium-review.googlesource.com/#/c/32190/
 >
-> Hmm, do you know what bits are those? On Exynos4 MCT is the only option
-> and it would be nice to let udelay() use it.
+> ...that change probably should be sent upstream, actually.
+>
+> I'll let Chirantan comment on how much faster arch timers were.
+> ...and I think David Riley (also CCed now) may be able to comment on
+> the benefits of userspace timers.
+>
 
-Look for register_current_timer_delay().  It seems like we could do
-this for MCT, but I've never done the investigation because we were
-always planning to move to arch timers.  ;)
+When I profiled gettimeofday() calls, they were about 50 - 60% faster
+with the arch timers compared to the mct.
 
--Doug
+- Chirantan
