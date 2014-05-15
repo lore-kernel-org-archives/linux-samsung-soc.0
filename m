@@ -1,45 +1,62 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH on kgene/for-next] ARM: EXYNOS: Do not calculate boot address
- twice
-Date: Thu, 15 May 2014 10:50:59 +0200
-Message-ID: <1400143859-21457-1-git-send-email-k.kozlowski@samsung.com>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH 00/10] thermal: exynos: various cleanups
+Date: Thu, 15 May 2014 17:06:45 +0800
+Message-ID: <1400144805.2273.34.camel@rzhang1-toshiba>
+References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit b3205dea8fbf ("ARM: EXYNOS: Map SYSRAM through generic DT
-bindings") introduced local variable boot_reg where boot address from
-cpu_boot_reg() call is stored. Re-use it instead calling cpu_boot_reg()
-again.
+On =E4=B8=80, 2014-05-05 at 13:15 +0200, Bartlomiej Zolnierkiewicz wrot=
+e:
+> Hi,
+>=20
+> This patch series contains various cleanups for EXYNOS thermal
+> driver.  Overall it decreases driver's LOC by 13%.  It is based
+> on next-20140428 kernel.  It should not cause any functionality
+> changes.
+>=20
+Amit,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/mach-exynos/platsmp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+what do you think of this patch set?
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 51cdabee10e5..c64bfc68ff9a 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -180,7 +180,7 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 				ret = PTR_ERR(boot_reg);
- 				goto fail;
- 			}
--			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
-+			__raw_writel(boot_addr, boot_reg);
- 		}
- 
- 		call_firmware_op(cpu_boot, phys_cpu);
-@@ -267,7 +267,7 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
- 
- 			if (IS_ERR(boot_reg))
- 				break;
--			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
-+			__raw_writel(boot_addr, boot_reg);
- 		}
- 	}
- }
--- 
-1.9.1
+thanks,
+rui
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>=20
+>=20
+> Bartlomiej Zolnierkiewicz (10):
+>   thermal: exynos: remove unused struct exynos_tmu_registers entries
+>   thermal: exynos: remove unused defines
+>   thermal: exynos: remove dead code for HW_MODE calibration
+>   thermal: exynos: remove dead code for TYPE_TWO_POINT_TRIMMING
+>     calibration
+>   thermal: exynos: remove redundant pdata checks from
+>     exynos_tmu_initialize()
+>   thermal: exynos: remove redundant threshold_code checks from
+>     exynos_tmu_initialize()
+>   thermal: exynos: simplify temp_to_code() and code_to_temp()
+>   thermal: exynos: cache non_hw_trigger_levels in pdata
+>   thermal: exynos: remove redundant pdata checks from
+>     exynos_tmu_control()
+>   thermal: exynos: remove identical values from exynos*_tmu_registers
+>     structures
+>=20
+>  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
+>  drivers/thermal/samsung/exynos_tmu.c            | 181 ++++----------=
+----------
+>  drivers/thermal/samsung/exynos_tmu.h            |  86 +----------
+>  drivers/thermal/samsung/exynos_tmu_data.c       |  40 +-----
+>  drivers/thermal/samsung/exynos_tmu_data.h       |  32 +----
+>  5 files changed, 37 insertions(+), 303 deletions(-)
+>=20
