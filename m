@@ -1,85 +1,61 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 4/4] ARM: dts: exynos5250-snow: add ptn3460 node
-Date: Fri, 16 May 2014 01:45:32 +0530
-Message-ID: <CAEC9eQPfiwyWkzUdk9F92yx1Sz8XHw8CEUCX47fo9fedFO9C0w@mail.gmail.com>
-References: <1397481367-12652-1-git-send-email-sachin.kamat@linaro.org>
-	<1397481367-12652-4-git-send-email-sachin.kamat@linaro.org>
-	<CAOesGMh3bpJtphTFz_3ZZXBPTi_RFXv24tKyTPWa=rHq3xkP8Q@mail.gmail.com>
-	<CAEC9eQPrSiYt4b1LAWcRYBcozBSOmbs3zUO-zitFWsBm7py9ig@mail.gmail.com>
-	<537517AF.7080805@samsung.com>
-	<CAD=FV=VvhBTCPMTN2bhhDNBnodpCkWoEnU483RTOGv8PdJ+VsA@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 0/4] Fixes for DT CPU topology specification on Exynos
+Date: Thu, 15 May 2014 22:15:48 +0200
+Message-ID: <53752074.3020205@gmail.com>
+References: <1397832181-5153-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f178.google.com ([209.85.128.178]:62316 "EHLO
-	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754758AbaEOUPd (ORCPT
+Received: from mail-ee0-f54.google.com ([74.125.83.54]:49017 "EHLO
+	mail-ee0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754758AbaEOUQB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 16:15:33 -0400
-Received: by mail-ve0-f178.google.com with SMTP id sa20so1972873veb.37
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 13:15:32 -0700 (PDT)
-In-Reply-To: <CAD=FV=VvhBTCPMTN2bhhDNBnodpCkWoEnU483RTOGv8PdJ+VsA@mail.gmail.com>
+	Thu, 15 May 2014 16:16:01 -0400
+In-Reply-To: <1397832181-5153-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sachin Kamat <sachin.kamat@linaro.org>, sunil joshi <joshi@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <marc.zyngier@arm.com>, Arnd Bergmann <arnd@arndb.de>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 5/16/14, Doug Anderson <dianders@chromium.org> wrote:
-> Kukjin,
->
-> On Thu, May 15, 2014 at 12:38 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> On 04/30/14 22:03, Ajay kumar wrote:
->>>
->>> Hi,
->>>
->> Hi,
->>
->>> On Tue, Apr 15, 2014 at 4:24 AM, Olof Johansson<olof@lixom.net>  wrote:
->>>>
->>>> Hi Sachin,
->>>>
->>>> On Mon, Apr 14, 2014 at 6:16 AM, Sachin Kamat<sachin.kamat@linaro.org>
->>>> wrote:
->>>>>
->>>>> From: Doug Anderson<dianders@chromium.org>
->>>>>
->>>>> Added nodes for ptn3460 driver to Snow board.
->>>>>
->>>>> Signed-off-by: Doug Anderson<dianders@chromium.org>
->>>>> Signed-off-by: Ajay Kumar<ajaykumar.rs@samsung.com>
->>>>> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
->>>>
->>>>
->>>> I'm curious, how are you testing this code on the upstream kernel
->>>> before you post the patches?
->>>>
->>>> Especially since Doug was referring to some of these containing parts
->>>> that is needed for drivers that are not yet upstreamed.
->>>
->>>
->>> Its better to ignore this patch as of now, since discussion is still
->>> going
->>> on, at http://www.spinics.net/lists/dri-devel/msg58474.html
->>> I guess we will have few more DT bindings. Once it is finalized,
->>> I shall resend this again.
->>>
->> This means this whole series?
->
-> I think you can land everything except the last patch.
-I think you can take this ptn3460 DT patch also.
-Because, ptn3460 driver is already present in Inki's tree. Its true
-that the driver may need some changes, the discussions are still going
-on, and if we need to add a new DT binding, I will send that change as
-a seperate patch sometime down the line.
-As of now, this can go in (but I am sure we won't get the display
-until we keep FET1 and FET6 "always on" for snow)
+Hi Kukjin,
 
-Ajay
+On 18.04.2014 16:42, Tomasz Figa wrote:
+> Due to some parts of Exynos SoC support designed originally in a non-scalable
+> way, relying on 1:1 mapping between value returned by cpu_logical_map() and
+> CPU IDs as seen by PMU and GIC, trying to specify CPU topology in device tree
+> caused various boot-up issues on Exynos SoCs, ranging from CPUs other than 0
+> failing to boot to crashes due to GIC driver accessing registers out of range.
+> 
+> This series attempts to fix aforementioned issues by removing incorrect
+> assumptions from Exynos SoC core code and GIC driver and then adding CPU
+> topology data to device tree sources of Exynos4.
+> 
+> [On Exynos4210-based TRATS and Exynos4412-based TRATS2 board]
+> Tested-by: Tomasz Figa <t.figa@samsung.com>
+> 
+> Tomasz Figa (4):
+>   ARM: EXYNOS: Fix definitions of S5P_ARM_CORE_* registers
+>   ARM: EXYNOS: Fix core ID used by platsmp and hotplug code
+>   irqchip: gic: Add support for per CPU bank offset specification in DT
+>   ARM: dts: exynos4: Add CPU topology data
+> 
+>  Documentation/devicetree/bindings/arm/cpus.txt |  7 ++
+>  Documentation/devicetree/bindings/arm/gic.txt  | 34 +++++++++-
+>  arch/arm/boot/dts/exynos4210.dtsi              | 19 ++++++
+>  arch/arm/boot/dts/exynos4212.dtsi              | 19 ++++++
+>  arch/arm/boot/dts/exynos4412.dtsi              | 37 ++++++++--
+>  arch/arm/mach-exynos/hotplug.c                 | 10 +--
+>  arch/arm/mach-exynos/platsmp.c                 | 31 +++++----
+>  arch/arm/mach-exynos/regs-pmu.h                |  4 +-
+>  drivers/irqchip/irq-gic.c                      | 94 ++++++++++++++++++--------
+>  9 files changed, 202 insertions(+), 53 deletions(-)
+> 
 
-> The tps65090 charger portion of the MFD will fail to probe (assuming
-> it is configured) since we're still waiting for a review on
-> <https://patchwork.kernel.org/patch/4042741/>.  ...but it doesn't hurt
-> to take the device tree part.
->
-> -Doug
->
+Please drop patches 3 and 4 from this series, as patch 3 needs a bit
+more work and 4 depends on 3.
+
+Having patches 1 and 2 applied regardless would be nice, though.
+
+Best regards,
+Tomasz
