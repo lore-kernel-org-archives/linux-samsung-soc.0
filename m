@@ -1,74 +1,58 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [GIT PULL 1/4] Samsung clock Exynos5260 support for v3.16
-Date: Fri, 16 May 2014 06:11:24 +0900
-Message-ID: <53752D7C.4010003@samsung.com>
-References: <1400090591-5064-1-git-send-email-t.figa@samsung.com> <5373CB1A.1040801@samsung.com> <20140514201313.19795.35617@quantum> <5373CFFE.1000209@gmail.com> <20140514220744.19795.64527@quantum> <5373EB24.8000306@gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v5 1/5] ARM: EXYNOS: Add generic cpu power control functions
+ for all exynos based SoCs
+Date: Thu, 15 May 2014 23:11:40 +0200
+Message-ID: <53752D8C.3030708@gmail.com>
+References: <1399307221-8659-1-git-send-email-a.kesavan@samsung.com> <1399307221-8659-2-git-send-email-a.kesavan@samsung.com> <019b01cf6e52$75e1a710$61a4f530$@samsung.com> <CAM4voamSNYZ_hsjF3eZhqZ=FF__39tFgi5FeXRcUhRbYYzu0LQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:37871 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751076AbaEOVLa (ORCPT
+Received: from mail-ee0-f47.google.com ([74.125.83.47]:58334 "EHLO
+	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755538AbaEOVLx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 17:11:30 -0400
-Received: by mail-pb0-f48.google.com with SMTP id rr13so1585445pbb.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 14:11:30 -0700 (PDT)
-In-Reply-To: <5373EB24.8000306@gmail.com>
+	Thu, 15 May 2014 17:11:53 -0400
+In-Reply-To: <CAM4voamSNYZ_hsjF3eZhqZ=FF__39tFgi5FeXRcUhRbYYzu0LQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, "mark.rutland" <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Arnd Bergmann <arnd@arndb.de>, devicetree <devicetree@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Will Deacon <will.deacon@arm.com>, skon.hwang@samsung.com, robh+dt <robh+dt@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, Grant Likely <grant.likely@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>, Dave Martin <Dave.Martin@arm.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "inderpal.s@samsung.com" <inderpal.s@samsung.com>
 
-On 05/15/14 07:16, Tomasz Figa wrote:
-> On 15.05.2014 00:07, Mike Turquette wrote:
->> Quoting Tomasz Figa (2014-05-14 13:20:14)
->>> Hi Mike,
+Hi Abhilash,
+
+On 13.05.2014 12:12, Abhilash Kesavan wrote:
+> On Tue, May 13, 2014 at 7:54 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+
+[snip]
+
+>>> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-
+>>> pmu.h
+>>> index 4f6a256..0bdfcbc 100644
+>>> --- a/arch/arm/mach-exynos/regs-pmu.h
+>>> +++ b/arch/arm/mach-exynos/regs-pmu.h
+>>> @@ -121,6 +121,12 @@
 >>>
->>> On 14.05.2014 22:13, Mike Turquette wrote:
->>>> Quoting Kukjin Kim (2014-05-14 12:59:22)
->>>>> On 05/15/14 03:03, Tomasz Figa wrote:
->>>>>
->>>>> Hi Mike,
->>>>>
->>>>> I've talked to Tomasz about current samsung related clock stuff. Since
->>>>> they are mostly having dependency on samsung tree now not clock core
->>>>> stuff, so would be better if it could be sent to upstream via samsung
->>>>> tree. And as you know, updating arch/arm/ and clock stuff are usually
->>>>> required for adding new SoC or supporting CCF newly...
->>>>
->>>> The Samsung clk pull requests only touch two arch/arm Kconfig files and
->>>> one dtsi file. That's not a lot of arch/arm churn. Is there a strong
->>>> reason that this needs to go through the samsung/arm-soc trees?
->>>> Otherwise it should continue to go through the clk tree.
+>>>  #define S5P_CHECK_SLEEP                              0x00000BAD
 >>>
->>> Obviously they are patches for Samsung clock drivers. ;)
->>>
->>> The issue here is that there is a number of patches already merged in
->>> Samsung tree on which the patches discussed here depend.
+>>> +#define EXYNOS_ARM_CORE0_CONFIGURATION               S5P_PMUREG(0x2000)
 >>
->> OK, I think I misread the original email. I thought you were asking for
->> future pull requests to go through the samsung tree, but you only mean
->> the ones in this thread. No problem there.
+>> This can be put in order of address.
+> OK, will fix.
 >>
->> Acked-by: Mike Turquette<mturquette@linaro.org>
->
-Mike, thanks for your ack on this whole pull-requests.
+>>> +#define EXYNOS_ARM_CORE_CONFIGURATION(_nr)   \
+>>> +                     (EXYNOS_ARM_CORE0_CONFIGURATION + (0x80 * (_nr)))
+>>> +#define EXYNOS_ARM_CORE_STATUS(_nr)          \
+>>> +                     (EXYNOS_ARM_CORE_CONFIGURATION(_nr) + 0x4)
 
-I will pull 1 to 4 into samsung tree for 3.16.
+My patches posted quite a while ago [1] to fix DT CPU topology already
+add these, remove S5P_ARM_CORE1* and fix corresponding usage in
+hotplug.c and platsmp.c.
 
-> Thanks.
->
-> As you probably noticed with my pull request for 3.15, we've been
-> getting quite a lot of burden due to dependencies between arch and clk
-> patches lastly, but this is inevitable when we are moving things out of
-> arch.
->
-> The good news is that after patches from this pull request series, we
-> will end up with just one, more or less active platform (s5pv210) that
-> needs to be converted (and work already in progress).
->
-Sounds great.
+[1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/29573
 
-Thanks,
-Kukjin
+So I think you should rebase on top of them or at least on top of
+patches 1 and 2 from that series, as 3 and 4 should be dropped.
+
+Best regards,
+Tomasz
