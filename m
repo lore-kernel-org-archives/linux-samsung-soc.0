@@ -1,93 +1,108 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: dts: Add audio subsystem nodes to exynos4.dtsi
-Date: Fri, 16 May 2014 13:28:53 +0200
-Message-ID: <1400239733-11782-1-git-send-email-s.nawrocki@samsung.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: [PATCH] ARM: S3C24XX: remove checks for CONFIG_CPU_S3C2413
+Date: Fri, 16 May 2014 14:02:49 +0200
+Message-ID: <1400241769.20342.39.camel@x220>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:9875 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932152AbaEPL3j (ORCPT
+Received: from cpsmtpb-ews02.kpnxchange.com ([213.75.39.5]:59575 "EHLO
+	cpsmtpb-ews02.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756097AbaEPMCv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 May 2014 07:29:39 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N5N00KRGZXDVBC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 May 2014 20:29:37 +0900 (KST)
+	Fri, 16 May 2014 08:02:51 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch adds the audio subsystem clock controller and the I2S
-IP block nodes for Exynos4 SoC series.
+There are a number of checks for CONFIG_CPU_S3C2413. But there's no
+Kconfig symbol CPU_S3C2413. That symbol is not needed, as CPU_S3C2412 is
+documented to support both the S3C2412 and the S3C2413 SoCs.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Luckily, all these checks for CONFIG_CPU_S3C2413 are in places were we
+also checks for CONFIG_CPU_S3C2412. So these checks can safely be
+removed.
+
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
 ---
- arch/arm/boot/dts/exynos4.dtsi |   38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+Tested with git grep only.
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 58ff8e2..0eb768c 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -20,6 +20,7 @@
-  */
+I hope the ARM/SAMSUNG maintainers are allowed to touch s3c-i2s-v2.c in
+this case.
 
- #include <dt-bindings/clock/exynos4.h>
-+#include <dt-bindings/clock/exynos-audss-clk.h>
- #include "skeleton.dtsi"
+Fun fact: the first checks for CONFIG_CPU_S3C2413 were added in commit
+68d9ab394f06 ("[ARM] 3635/1: S3C24XX: Add S3C2412 core cpu support").
+Perhaps it were leftovers of a preceding version of that patch.
 
- / {
-@@ -45,6 +46,23 @@
- 		fimc3 = &fimc_3;
- 	};
+ arch/arm/mach-s3c24xx/common.c                  | 2 +-
+ arch/arm/mach-s3c24xx/include/mach/regs-clock.h | 4 ++--
+ arch/arm/plat-samsung/include/plat/map-s3c.h    | 2 +-
+ sound/soc/samsung/s3c-i2s-v2.c                  | 4 ++--
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-+	clock_audss: clock-controller@03810000 {
-+		compatible = "samsung,exynos4210-audss-clock";
-+		reg = <0x03810000 0x0C>;
-+		#clock-cells = <1>;
-+	};
-+
-+	i2s0: i2s@03830000 {
-+		compatible = "samsung,s5pv210-i2s";
-+		reg = <0x03830000 0x100>;
-+		clocks = <&clock_audss EXYNOS_I2S_BUS>;
-+		clock-names = "iis";
-+		dmas = <&pdma0 12>, <&pdma0 11>, <&pdma0 10>;
-+		dma-names = "tx", "rx", "tx-sec";
-+		samsung,idma-addr = <0x03000000>;
-+		status = "disabled";
-+	};
-+
- 	chipid@10000000 {
- 		compatible = "samsung,exynos4210-chipid";
- 		reg = <0x10000000 0x100>;
-@@ -289,6 +307,26 @@
- 		status = "disabled";
- 	};
-
-+	i2s1: i2s@13960000 {
-+		compatible = "samsung,s5pv210-i2s";
-+		reg = <0x13960000 0x100>;
-+		clocks = <&clock CLK_I2S1>;
-+		clock-names = "iis";
-+		dmas = <&pdma1 12>, <&pdma1 11>;
-+		dma-names = "tx", "rx";
-+		status = "disabled";
-+	};
-+
-+	i2s2: i2s@13970000 {
-+		compatible = "samsung,s5pv210-i2s";
-+		reg = <0x13970000 0x100>;
-+		clocks = <&clock CLK_I2S2>;
-+		clock-names = "iis";
-+		dmas = <&pdma0 14>, <&pdma0 13>;
-+		dma-names = "tx", "rx";
-+		status = "disabled";
-+	};
-+
- 	mfc: codec@13400000 {
- 		compatible = "samsung,mfc-v5";
- 		reg = <0x13400000 0x10000>;
---
-1.7.9.5
+diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+index 1bc8e73c94f9..137eea8b156a 100644
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -184,7 +184,7 @@ static unsigned long s3c24xx_read_idcode_v5(void)
+ 		return gs;
+ #endif
+ 
+-#if defined(CONFIG_CPU_S3C2412) || defined(CONFIG_CPU_S3C2413)
++#if defined(CONFIG_CPU_S3C2412)
+ 	return __raw_readl(S3C2412_GSTATUS1);
+ #else
+ 	return 1UL;	/* don't look like an 2400 */
+diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
+index 3415b60082d7..c143319c0396 100644
+--- a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
++++ b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
+@@ -95,7 +95,7 @@
+ 
+ #endif /* CONFIG_CPU_S3C2440 or CONFIG_CPU_S3C2442 */
+ 
+-#if defined(CONFIG_CPU_S3C2412) || defined(CONFIG_CPU_S3C2413)
++#if defined(CONFIG_CPU_S3C2412)
+ 
+ #define S3C2412_OSCSET		S3C2410_CLKREG(0x18)
+ #define S3C2412_CLKSRC		S3C2410_CLKREG(0x1C)
+@@ -159,7 +159,7 @@
+ #define S3C2412_CLKSRC_UREFCLK_EXTCLK	(1<<12)
+ #define S3C2412_CLKSRC_EREFCLK_EXTCLK	(1<<14)
+ 
+-#endif /* CONFIG_CPU_S3C2412 | CONFIG_CPU_S3C2413 */
++#endif /* CONFIG_CPU_S3C2412 */
+ 
+ #define S3C2416_CLKDIV2		S3C2410_CLKREG(0x28)
+ 
+diff --git a/arch/arm/plat-samsung/include/plat/map-s3c.h b/arch/arm/plat-samsung/include/plat/map-s3c.h
+index c0c70a895ca8..612c2a71fffd 100644
+--- a/arch/arm/plat-samsung/include/plat/map-s3c.h
++++ b/arch/arm/plat-samsung/include/plat/map-s3c.h
+@@ -65,7 +65,7 @@
+ 
+ /* deal with the registers that move under the 2412/2413 */
+ 
+-#if defined(CONFIG_CPU_S3C2412) || defined(CONFIG_CPU_S3C2413)
++#if defined(CONFIG_CPU_S3C2412)
+ #ifndef __ASSEMBLY__
+ extern void __iomem *s3c24xx_va_gpio2;
+ #endif
+diff --git a/sound/soc/samsung/s3c-i2s-v2.c b/sound/soc/samsung/s3c-i2s-v2.c
+index 79e7efb9283c..9eea58382ab3 100644
+--- a/sound/soc/samsung/s3c-i2s-v2.c
++++ b/sound/soc/samsung/s3c-i2s-v2.c
+@@ -30,8 +30,8 @@
+ 
+ #undef S3C_IIS_V2_SUPPORTED
+ 
+-#if defined(CONFIG_CPU_S3C2412) || defined(CONFIG_CPU_S3C2413) \
+-	|| defined(CONFIG_ARCH_S3C64XX) || defined(CONFIG_CPU_S5PV210)
++#if defined(CONFIG_CPU_S3C2412) || defined(CONFIG_ARCH_S3C64XX) \
++	|| defined(CONFIG_CPU_S5PV210)
+ #define S3C_IIS_V2_SUPPORTED
+ #endif
+ 
+-- 
+1.9.0
