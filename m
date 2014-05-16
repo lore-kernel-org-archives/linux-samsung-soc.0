@@ -1,122 +1,81 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
-Date: Fri, 16 May 2014 16:49:39 +0200
-Message-ID: <53762583.5020907@samsung.com>
-References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
- <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
- <5373CBAD.2010505@gmail.com>
- <CAPdUM4MT0nZcLRtNcKRAeW4Q3n5z9n4BnzR-7uYMb1gqwEhWXA@mail.gmail.com>
- <53753527.3000905@gmail.com>
- <CAPdUM4M5k-aouSA=dyUXWOyFLBhob+o8103a=gAxo-O68i-MCw@mail.gmail.com>
- <CAPdUM4Py4r3ZV79ULcJ3KojaPQ0hfZTE2XbsY+=hP4LD70mb8Q@mail.gmail.com>
- <5375ED80.2010008@samsung.com>
- <CAPdUM4Mfe4xTnh-qPeazcknbCoqX3HcORKHLqBE9ukqa4ULi9A@mail.gmail.com>
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH RFC 3/4] clk: samsung: Add driver to control CLKOUT line on
+ Exynos SoCs
+Date: Fri, 16 May 2014 16:58:36 +0200
+Message-ID: <5376279C.4070006@samsung.com>
+References: <1400175151-27779-1-git-send-email-t.figa@samsung.com>
+ <1400175151-27779-4-git-send-email-t.figa@samsung.com>
+ <CAPdUM4P7Z1eLVKuc0N1iPaekM_7kNv7KCve2MgrEziszfnzz7A@mail.gmail.com>
+ <5375EDFD.1020708@samsung.com>
+ <CAPdUM4O4RKFZFR_tcwG4pd7E6KMkneG9R_VbZPt+m4fGG_UFVg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAPdUM4Mfe4xTnh-qPeazcknbCoqX3HcORKHLqBE9ukqa4ULi9A@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, sunil joshi <joshi@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <CAPdUM4O4RKFZFR_tcwG4pd7E6KMkneG9R_VbZPt+m4fGG_UFVg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 16.05.2014 16:30, Rahul Sharma wrote:
-> On 16 May 2014 16:20, Tomasz Figa <t.figa@samsung.com> wrote:
->> On 16.05.2014 12:35, Rahul Sharma wrote:
->>> On 16 May 2014 15:12, Rahul Sharma <rahul.sharma@samsung.com> wrote:
->>>> On 16 May 2014 03:14, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>>>> On 15.05.2014 06:01, Rahul Sharma wrote:
+On 16.05.2014 16:35, Rahul Sharma wrote:
+> On 16 May 2014 16:22, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> Hi Rahul,
+>>
+>> On 16.05.2014 12:39, Rahul Sharma wrote:
 >>> [snip]
->>>>>>> the PHY provider.
->>>>>>>
->>>>>>
->>>>>> Please correct me if I got you wrong. You want somthing like this:
->>>>>>
->>>>>> pmu_system_controller: system-controller@10040000 {
->>>>>>          ...
->>>>>>           simple_phys: simple-phys {
->>>>>>                         compatible = "samsung,exynos5420-simple-phy";
->>>>>>                         ...
->>>>>>           };
->>>>>> };
->>>>>
->>>>> Not exactly.
->>>>>
->>>>> What I meant is that the PMU node itself should be the PHY provider, e.g.
->>>>>
->>>>> pmu_system_controller: system-controller@10040000 {
->>>>>         /* ... */
->>>>>         #phy-cells = <1>;
->>>>> };
->>>>>
->>>>> and then the PMU node should instantiate the Exynos simple PHY driver,
->>>>> as this is a driver for a facility existing entirely inside of the PMU.
->>>>> Moreover, the driver should be rather called Exynos PMU PHY.
->>>>>
->>>>> I know this isn't really possible at the moment, but with device tree we
->>>>> must design things carefully, so it's better to take a bit more time and
->>>>> do things properly.
->>>>>
->>>>> So my opinion on this is that there should be a central Exynos PMU
->>>>> driver that claims the IO region and instantiates necessary subdrivers,
->>>>> such as Exynos PMU PHY driver, Exynos CLKOUT driver, Exynos cpuidle
->>>>> driver and more, similar to what is being done in drivers/mfd.
->>>>
+>>>> +       gate->lock = &clkout_lock;
+>>>> +
+>>>> +       mux->reg = reg + EXYNOS_PMU_DEBUG_REG;
+>>>> +       mux->mask = EXYNOS_CLKOUT_MUX_MASK;
+>>>> +       mux->shift = EXYNOS_CLKOUT_MUX_SHIFT;
+>>>> +       mux->lock = &clkout_lock;
+>>>> +
+>>>> +       clk = clk_register_composite(NULL, "clkout", parent_names,
+>>>> +                                       parent_count, &mux->hw,
+>>>> +                                       &clk_mux_ops, NULL, NULL, &gate->hw,
+>>>> +                                       &clk_gate_ops, 0);
+>>>> +       if (IS_ERR(clk))
+>>>> +               goto err_unmap;
+>>>> +
 >>>
 >>> Hi Tomasz,
 >>>
->>> These PHYs are not part of PMU as such. I am not sure if it is correct to
->>> probe them as phy provider for all these phys. Only relation of these phys with
->>> the PMU is 'enable/disable control'.
+>>> Do we really need a composite clock here? How about registering
+>>> a mux and a gate separately?
 >>
->> Well, in reality what is implemented by this driver is not even a PHY,
->> just some kind of power controllers, which are contained entirely in the
->> PMU.
+>> What's wrong with a composite clock? It simplifies the code as just a
+>> single clock needs to be registered. I don't see any drawbacks compared
+>> to registering two clocks separately.
 >>
 > 
-> I agree. Actually the role of generic phy framework for these 'simple' phys is
-> only that much.
+> I always took it as a thumb rule to not to use composite clocks if you
+> can easily represent the block using basic clocks structures.
 > 
->>> Controlling this bit using regmap interface
->>> still looks better to me.
->>
->> Well, when there is a choice between using regmap and not using regmap,
->> I'd rather choose the latter. Why would you want to introduce additional
->> abstraction layer if there is no need for such?
->>
->>>
->>> IMHO Ideal method would be probing these PHYs independently and resolving
->>> the necessary dependencies like syscon handle, clocks etc. This way we will
->>> not be having any common phy provider for all these independent PHYs and it
->>> would be clean to add each of these phy nodes in DT. Please see my original
->>> comment below.
->>>
->>> http://lkml.iu.edu/hypermail/linux/kernel/1404.1/00701.html
->>
->> With the solution I proposed, you don't need any kind of dependencies
->> for those simple power controllers. They are just single bits that don't
->> need anything special to operate, except PMU clock running.
-> 
-> In that case we can further trim it down and let the drivers use the regmap
-> interface to control this bit. Many drivers including HDMI, DP just need that
-> much functionality from the phy provider.
+> There can be a problem when drivers using such clocks assume that such
+> clock continue to offer composite functionality for all futures SoCs and
+> write code around it. This is what we faced when fixing drivers during
+> CCF migration.
 
-Well, this is what several drivers already do, like USB PHY (dedicated
-IP block), watchdog (for watchdog mask), SATA PHY (dedicated IP block
-too) or will do, like I2C (for configuration of I2C mux on Exynos5).
+The drivers using CLKOUT need to be designed this way, because they are
+not Exynos-specific, such as drivers for HSIC hubs or audio codecs. They
+can't have any Exynos-specific knowledge about clock hierarchy.
 
-At least this would be consistent with them and wouldn't be an API
-abuse, so I'd be inclined to go this way more than introducing
-abstractions like this patch does.
+So regardless of whether this is implemented using the composite clock
+or not, consumer device drivers need to be able to use just a single
+clock to do whatever they need, e.g. gating or rate configuration.
+
+However I can see one problem here with my implementation - it is
+missing the CLK_SET_RATE_PARENT flag, so dividers of particular CLK_OUTs
+from CMU blocks could be reconfigured.
+
+Also the driver is missing save and restore of PMU_DEBUG register.
+
+I will fix both in next version.
 
 Best regards,
 Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
