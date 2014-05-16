@@ -1,101 +1,69 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
-Date: Fri, 16 May 2014 15:12:01 +0530
-Message-ID: <CAPdUM4M5k-aouSA=dyUXWOyFLBhob+o8103a=gAxo-O68i-MCw@mail.gmail.com>
-References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
- <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
- <5373CBAD.2010505@gmail.com>
- <CAPdUM4MT0nZcLRtNcKRAeW4Q3n5z9n4BnzR-7uYMb1gqwEhWXA@mail.gmail.com>
- <53753527.3000905@gmail.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: [PATCH 1/2] s5p-mfc: Update mfc-v6 firmware
+Date: Fri, 16 May 2014 11:54:31 +0200
+Message-ID: <04be01cf70ec$d5f37a10$81da6e30$%debski@samsung.com>
+References: <1400233490-5677-1-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <53753527.3000905@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, sunil joshi <joshi@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:27580 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756489AbaEPJyR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 May 2014 05:54:17 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N5N00GD8VICKG00@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 May 2014 10:54:12 +0100 (BST)
+In-reply-to: <1400233490-5677-1-git-send-email-arun.kk@samsung.com>
+Content-language: pl
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Arun Kumar K' <arun.kk@samsung.com>, dwmw2@infradead.org, ben@decadent.org.uk, linux-samsung-soc@vger.kernel.org
+Cc: arunkk.samsung@gmail.com
 
-On 16 May 2014 03:14, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On 15.05.2014 06:01, Rahul Sharma wrote:
->> Thanks Tomasz,
->>
->> On 15 May 2014 01:31, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>> Hi Rahul, Tomasz,
->> [snip]
->>>> +     simplephys: simple-phys@10040000 {
->>>> +             compatible = "samsung,exynos5250-simple-phy";
->>>
->>> Missing reg property or unnecessary @unit-address suffix in node name.
->>
->> I should have removed "@unit-address". I will change this.
->>
->>>
->>>> +             samsung,pmu-syscon = <&pmu_system_controller>;
->>>> +             #phy-cells = <1>;
->>>> +     };
->>>
->>> In general, the idea is quite good, but I think this should rather bind
->>> to the main PMU node, since this is just a part of the PMU, not another
->>> device in the system. This also means that the PMU node itself should be
->>> the PHY provider.
->>>
->>
->> Please correct me if I got you wrong. You want somthing like this:
->>
->> pmu_system_controller: system-controller@10040000 {
->>          ...
->>           simple_phys: simple-phys {
->>                         compatible = "samsung,exynos5420-simple-phy";
->>                         ...
->>           };
->> };
->
-> Not exactly.
->
-> What I meant is that the PMU node itself should be the PHY provider, e.g.
->
-> pmu_system_controller: system-controller@10040000 {
->         /* ... */
->         #phy-cells = <1>;
-> };
->
-> and then the PMU node should instantiate the Exynos simple PHY driver,
-> as this is a driver for a facility existing entirely inside of the PMU.
-> Moreover, the driver should be rather called Exynos PMU PHY.
->
-> I know this isn't really possible at the moment, but with device tree we
-> must design things carefully, so it's better to take a bit more time and
-> do things properly.
->
-> So my opinion on this is that there should be a central Exynos PMU
-> driver that claims the IO region and instantiates necessary subdrivers,
-> such as Exynos PMU PHY driver, Exynos CLKOUT driver, Exynos cpuidle
-> driver and more, similar to what is being done in drivers/mfd.
+Hi Arun,
 
-Hi Tomasz,
+I asked you to put old and new v6 firmware in separate files.
+You should also mention in the commit message that this new firmware
+will not work with the s5p-mfc driver without the patch you recently
+submitted to linux-media mailing list. Please also add a link to the
+thread with the necessary patch.
+
+In addition to the above I think a readme/description file should be
+added to the s5p-mfc folder. The issue of firmware for v6 should be
+explained, so that no one is surprised that something does not work.
+
+Best wishes,
+-- 
+Kamil Debski
+Samsung R&D Institute Poland
 
 
+> -----Original Message-----
+> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com] On Behalf Of Arun
+> Kumar K
+> Sent: Friday, May 16, 2014 11:45 AM
+> To: dwmw2@infradead.org; ben@decadent.org.uk; linux-samsung-
+> soc@vger.kernel.org
+> Cc: k.debski@samsung.com; arunkk.samsung@gmail.com
+> Subject: [PATCH 1/2] s5p-mfc: Update mfc-v6 firmware
+> 
+> This is the newer version of s5p-mfc-v6.fw with many
+> fixes and enhancements.
+> 
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+>  s5p-mfc/s5p-mfc-v6.fw |  Bin 306312 -> 343756 bytes
+>  1 file changed, 0 insertions(+), 0 deletions(-)
+> 
+> diff --git a/s5p-mfc/s5p-mfc-v6.fw b/s5p-mfc/s5p-mfc-v6.fw
+> index
+> 2e1179fa6d227f1c5a23f78b4834be336e579f50..9d3345fbf4abb7ea7389816916d68
+> 57d64732380 100644
+> GIT binary patch
+> literal 343756
 
->
-> Now, there is already ongoing effort to convert current freestanding PMU
-> configuration code in mach-exynos into a full-fledged PMU driver, but
-> not exactly in the same direction as I stated above. I'll try to
-> cooperate with Pankaj, who is responsible for this work to make this go
-> into the right track.
->
-> Best regards,
-> Tomasz
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+[snip]
