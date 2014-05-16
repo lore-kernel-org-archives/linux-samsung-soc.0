@@ -1,113 +1,151 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH 1/2] s5p-mfc: Update mfc-v6 firmware
-Date: Fri, 16 May 2014 12:09:37 +0200
-Message-ID: <04bf01cf70ee$f2184d40$d648e7c0$%debski@samsung.com>
-References: <1400233490-5677-1-git-send-email-arun.kk@samsung.com>
- <04be01cf70ec$d5f37a10$81da6e30$%debski@samsung.com>
- <CALt3h7_A2TmyoXFBjr7Ncy8560oBT6EOD7nq9qdRtD34O56FdQ@mail.gmail.com>
+From: Jonghwan Choi <jhbird.choi@samsung.com>
+Subject: [PATCH v3] cpufreq: exynos:  Fix the compile error
+Date: Fri, 16 May 2014 19:18:28 +0900
+Message-ID: <000001cf70f0$2e48f930$8adaeb90$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:28671 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755828AbaEPKJ1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 May 2014 06:09:27 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N5N00KFMW7H9700@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 May 2014 11:09:17 +0100 (BST)
-In-reply-to: <CALt3h7_A2TmyoXFBjr7Ncy8560oBT6EOD7nq9qdRtD34O56FdQ@mail.gmail.com>
-Content-language: pl
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <cpufreq-owner@vger.kernel.org>
+Content-language: ko
+Sender: cpufreq-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, cpufreq@vger.kernel.org
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, Jonghwan Choi <jhbird.choi@gmail.com>, 'Viresh Kumar' <viresh.kumar@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arun Kumar K' <arun.kk@samsung.com>
-Cc: 'dwmw2' <dwmw2@infradead.org>, 'ben' <ben@decadent.org.uk>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-Hi,
+Commit 7da83a80 ("ARM: EXYNOS: Migrate Exynos specific macros from plat to mach") which lands in samsung tree causes build breakage
+for cpufreq-exynos like following:
 
-----Original Message-----
-> From: arunkk.samsung@gmail.com [mailto:arunkk.samsung@gmail.com] On
-> Behalf Of Arun Kumar K
-> Sent: Friday, May 16, 2014 12:00 PM
-> 
-> Hi Kamil,
-> 
-> On Fri, May 16, 2014 at 3:24 PM, Kamil Debski <k.debski@samsung.com>
-> wrote:
-> > Hi Arun,
-> >
-> > I asked you to put old and new v6 firmware in separate files.
-> 
-> But wont that require a different filename other than s5p-mfc-v6.fw?
+drivers/cpufreq/exynos-cpufreq.c: In function 'exynos_cpufreq_probe':
+drivers/cpufreq/exynos-cpufreq.c:166:2: error: implicit declaration of function 'soc_is_exynos4210'
+[-Werror=implicit-function-declaration]
+drivers/cpufreq/exynos-cpufreq.c:168:2: error: implicit declaration of function 'soc_is_exynos4212'
+[-Werror=implicit-function-declaration]
+drivers/cpufreq/exynos-cpufreq.c:168:2: error: implicit declaration of function 'soc_is_exynos4412'
+[-Werror=implicit-function-declaration]
+drivers/cpufreq/exynos-cpufreq.c:170:2: error: implicit declaration of function 'soc_is_exynos5250'
+[-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+make[2]: *** [drivers/cpufreq/exynos-cpufreq.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+drivers/cpufreq/exynos4x12-cpufreq.c: In function 'exynos4x12_set_clkdiv':
+drivers/cpufreq/exynos4x12-cpufreq.c:118:2: error: implicit declaration of function 'soc_is_exynos4212'
+[-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+make[2]: *** [drivers/cpufreq/exynos4x12-cpufreq.o] Error 1
+make[1]: *** [drivers/cpufreq] Error 2
+This fixes above error with getting SoC information via of_machine_is_compatible() instead of soc_is_exynosXXXX().
 
-Yes.
+Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+---
+ drivers/cpufreq/exynos-cpufreq.c     |   20 +++++++++++++++++---
+ drivers/cpufreq/exynos-cpufreq.h     |    8 ++++++++
+ drivers/cpufreq/exynos4x12-cpufreq.c |   11 ++++-------
+ 3 files changed, 29 insertions(+), 10 deletions(-)
 
-> But the driver still expects the same file name.
-> Can I put the new filename as s5p-mfc-v6-v2.fw and mention in the
-> README that the file has to be renamed to s5p-mfc-v6.fw to be used?
-
-I think this is the way to go, because the new driver (with the patch)
-will work with old firmware, while old driver (without the patch) will
-not work with the new firmware.
-
-> 
-> > You should also mention in the commit message that this new firmware
-> > will not work with the s5p-mfc driver without the patch you recently
-> > submitted to linux-media mailing list. Please also add a link to the
-> > thread with the necessary patch.
-> 
-> Ok will do that.
-> 
-> >
-> > In addition to the above I think a readme/description file should be
-> > added to the s5p-mfc folder. The issue of firmware for v6 should be
-> > explained, so that no one is surprised that something does not work.
-> >
-> 
-> Ok.
-> 
-> Regards
-> Arun
-
-Best wishes,
+diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+index f99cfe2..9aecffef 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -17,6 +17,7 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/cpufreq.h>
+ #include <linux/platform_device.h>
++#include <linux/of.h>
+ 
+ #include <plat/cpu.h>
+ 
+@@ -163,11 +164,24 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
+ 	if (!exynos_info)
+ 		return -ENOMEM;
+ 
+-	if (soc_is_exynos4210())
++	if (of_machine_is_compatible("samsung,exynos4210")) {
++		exynos_info->type = EXYNOS_SOC_4210;
++	} else if (of_machine_is_compatible("samsung,exynos4212")) {
++		exynos_info->type = EXYNOS_SOC_4212;
++	} else if (of_machine_is_compatible("samsung,exynos4412")) {
++		exynos_info->type = EXYNOS_SOC_4212;
++	} else if (of_machine_is_compatible("samsung,exynos5250")) {
++		exynos_info->type = EXYNOS_SOC_5250;
++	} else {
++		pr_err("%s: Unknown SoC type\n", __func__);
++		return -ENODEV;
++	}
++
++	if (exynos_info->type == EXYNOS_SOC_4210)
+ 		ret = exynos4210_cpufreq_init(exynos_info);
+-	else if (soc_is_exynos4212() || soc_is_exynos4412())
++	else if (exynos_info->type == EXYNOS_SOC_4212 || exynos_info->type == EXYNOS_SOC_4412)
+ 		ret = exynos4x12_cpufreq_init(exynos_info);
+-	else if (soc_is_exynos5250())
++	else if (exynos_info->type == EXYNOS_SOC_5250)
+ 		ret = exynos5250_cpufreq_init(exynos_info);
+ 	else
+ 		return 0;
+diff --git a/drivers/cpufreq/exynos-cpufreq.h b/drivers/cpufreq/exynos-cpufreq.h
+index 3ddade8..f189547 100644
+--- a/drivers/cpufreq/exynos-cpufreq.h
++++ b/drivers/cpufreq/exynos-cpufreq.h
+@@ -17,6 +17,13 @@ enum cpufreq_level_index {
+ 	L20,
+ };
+ 
++enum exynos_soc_type {
++	EXYNOS_SOC_4210,
++	EXYNOS_SOC_4212,
++	EXYNOS_SOC_4412,
++	EXYNOS_SOC_5250,
++};
++
+ #define APLL_FREQ(f, a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, m, p, s) \
+ 	{ \
+ 		.freq = (f) * 1000, \
+@@ -34,6 +41,7 @@ struct apll_freq {
+ };
+ 
+ struct exynos_dvfs_info {
++	enum exynos_soc_type type;
+ 	unsigned long	mpll_freq_khz;
+ 	unsigned int	pll_safe_idx;
+ 	struct clk	*cpu_clk;
+diff --git a/drivers/cpufreq/exynos4x12-cpufreq.c b/drivers/cpufreq/exynos4x12-cpufreq.c
+index 466c76a..63a3907 100644
+--- a/drivers/cpufreq/exynos4x12-cpufreq.c
++++ b/drivers/cpufreq/exynos4x12-cpufreq.c
+@@ -100,7 +100,6 @@ static struct apll_freq apll_freq_4412[] = {
+ static void exynos4x12_set_clkdiv(unsigned int div_index)
+ {
+ 	unsigned int tmp;
+-	unsigned int stat_cpu1;
+ 
+ 	/* Change Divider - CPU0 */
+ 
+@@ -115,13 +114,11 @@ static void exynos4x12_set_clkdiv(unsigned int div_index)
+ 	tmp = apll_freq_4x12[div_index].clk_div_cpu1;
+ 
+ 	__raw_writel(tmp, EXYNOS4_CLKDIV_CPU1);
+-	if (soc_is_exynos4212())
+-		stat_cpu1 = 0x11;
+-	else
+-		stat_cpu1 = 0x111;
+ 
+-	while (__raw_readl(EXYNOS4_CLKDIV_STATCPU1) & stat_cpu1)
++	do {
+ 		cpu_relax();
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STATCPU1);
++	} while (tmp != 0x0);
+ }
+ 
+ static void exynos4x12_set_apll(unsigned int index)
+@@ -184,7 +181,7 @@ int exynos4x12_cpufreq_init(struct exynos_dvfs_info *info)
+ 	if (IS_ERR(mout_apll))
+ 		goto err_mout_apll;
+ 
+-	if (soc_is_exynos4212())
++	if (info->type == EXYNOS_SOC_4212)
+ 		apll_freq_4x12 = apll_freq_4212;
+ 	else
+ 		apll_freq_4x12 = apll_freq_4412;
 -- 
-Kamil Debski
-Samsung R&D Institute Poland
+1.7.10.4
 
-> 
-> > Best wishes,
-> > --
-> > Kamil Debski
-> > Samsung R&D Institute Poland
-> >
-> >
-> >> -----Original Message-----
-> >> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com] On Behalf Of
-> >> Arun Kumar K
-> >> Sent: Friday, May 16, 2014 11:45 AM
-> >> To: dwmw2@infradead.org; ben@decadent.org.uk; linux-samsung-
-> >> soc@vger.kernel.org
-> >> Cc: k.debski@samsung.com; arunkk.samsung@gmail.com
-> >> Subject: [PATCH 1/2] s5p-mfc: Update mfc-v6 firmware
-> >>
-> >> This is the newer version of s5p-mfc-v6.fw with many fixes and
-> >> enhancements.
-> >>
-> >> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> >> ---
-> >>  s5p-mfc/s5p-mfc-v6.fw |  Bin 306312 -> 343756 bytes
-> >>  1 file changed, 0 insertions(+), 0 deletions(-)
-> >>
-> >> diff --git a/s5p-mfc/s5p-mfc-v6.fw b/s5p-mfc/s5p-mfc-v6.fw index
-> >>
-> 2e1179fa6d227f1c5a23f78b4834be336e579f50..9d3345fbf4abb7ea7389816916d
-> >> 68
-> >> 57d64732380 100644
-> >> GIT binary patch
-> >> literal 343756
-> >
-> > [snip]
-> >
