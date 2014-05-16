@@ -1,93 +1,93 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v3] cpufreq: exynos: Fix the compile error
-Date: Fri, 16 May 2014 16:37:15 +0530
-Message-ID: <CAKohponFCpNThX1m9n+_96vN=WqN5zqA-+GWMLMLO_z-3p5okA@mail.gmail.com>
-References: <000001cf70f0$2e48f930$8adaeb90$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <000001cf70f0$2e48f930$8adaeb90$@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Jonghwan Choi <jhbird.choi@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Jonghwan Choi <jhbird.choi@gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ARM: dts: Add audio subsystem nodes to exynos4.dtsi
+Date: Fri, 16 May 2014 13:28:53 +0200
+Message-ID: <1400239733-11782-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:9875 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932152AbaEPL3j (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 May 2014 07:29:39 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N5N00KRGZXDVBC0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 May 2014 20:29:37 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 16 May 2014 15:48, Jonghwan Choi <jhbird.choi@samsung.com> wrote:
-> Commit 7da83a80 ("ARM: EXYNOS: Migrate Exynos specific macros from plat to mach") which lands in samsung tree causes build breakage
-> for cpufreq-exynos like following:
->
-> drivers/cpufreq/exynos-cpufreq.c: In function 'exynos_cpufreq_probe':
-> drivers/cpufreq/exynos-cpufreq.c:166:2: error: implicit declaration of function 'soc_is_exynos4210'
-> [-Werror=implicit-function-declaration]
-> drivers/cpufreq/exynos-cpufreq.c:168:2: error: implicit declaration of function 'soc_is_exynos4212'
-> [-Werror=implicit-function-declaration]
-> drivers/cpufreq/exynos-cpufreq.c:168:2: error: implicit declaration of function 'soc_is_exynos4412'
-> [-Werror=implicit-function-declaration]
-> drivers/cpufreq/exynos-cpufreq.c:170:2: error: implicit declaration of function 'soc_is_exynos5250'
-> [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
-> make[2]: *** [drivers/cpufreq/exynos-cpufreq.o] Error 1
-> make[2]: *** Waiting for unfinished jobs....
-> drivers/cpufreq/exynos4x12-cpufreq.c: In function 'exynos4x12_set_clkdiv':
-> drivers/cpufreq/exynos4x12-cpufreq.c:118:2: error: implicit declaration of function 'soc_is_exynos4212'
-> [-Werror=implicit-function-declaration]
-> cc1: some warnings being treated as errors
-> make[2]: *** [drivers/cpufreq/exynos4x12-cpufreq.o] Error 1
-> make[1]: *** [drivers/cpufreq] Error 2
+This patch adds the audio subsystem clock controller and the I2S
+IP block nodes for Exynos4 SoC series.
 
-Blank line here..
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ arch/arm/boot/dts/exynos4.dtsi |   38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-> This fixes above error with getting SoC information via of_machine_is_compatible() instead of soc_is_exynosXXXX().
->
-> Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
-> ---
->  drivers/cpufreq/exynos-cpufreq.c     |   20 +++++++++++++++++---
->  drivers/cpufreq/exynos-cpufreq.h     |    8 ++++++++
->  drivers/cpufreq/exynos4x12-cpufreq.c |   11 ++++-------
->  3 files changed, 29 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-> index f99cfe2..9aecffef 100644
-> --- a/drivers/cpufreq/exynos-cpufreq.c
-> +++ b/drivers/cpufreq/exynos-cpufreq.c
-> @@ -17,6 +17,7 @@
->  #include <linux/regulator/consumer.h>
->  #include <linux/cpufreq.h>
->  #include <linux/platform_device.h>
-> +#include <linux/of.h>
->
->  #include <plat/cpu.h>
->
-> @@ -163,11 +164,24 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
->         if (!exynos_info)
->                 return -ENOMEM;
->
-> -       if (soc_is_exynos4210())
-> +       if (of_machine_is_compatible("samsung,exynos4210")) {
-> +               exynos_info->type = EXYNOS_SOC_4210;
-> +       } else if (of_machine_is_compatible("samsung,exynos4212")) {
-> +               exynos_info->type = EXYNOS_SOC_4212;
-> +       } else if (of_machine_is_compatible("samsung,exynos4412")) {
-> +               exynos_info->type = EXYNOS_SOC_4212;
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 58ff8e2..0eb768c 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -20,6 +20,7 @@
+  */
 
-4412 ?
+ #include <dt-bindings/clock/exynos4.h>
++#include <dt-bindings/clock/exynos-audss-clk.h>
+ #include "skeleton.dtsi"
 
-> +       } else if (of_machine_is_compatible("samsung,exynos5250")) {
-> +               exynos_info->type = EXYNOS_SOC_5250;
-> +       } else {
-> +               pr_err("%s: Unknown SoC type\n", __func__);
-> +               return -ENODEV;
-> +       }
-> +
-> +       if (exynos_info->type == EXYNOS_SOC_4210)
->                 ret = exynos4210_cpufreq_init(exynos_info);
-> -       else if (soc_is_exynos4212() || soc_is_exynos4412())
-> +       else if (exynos_info->type == EXYNOS_SOC_4212 || exynos_info->type == EXYNOS_SOC_4412)
->                 ret = exynos4x12_cpufreq_init(exynos_info);
-> -       else if (soc_is_exynos5250())
-> +       else if (exynos_info->type == EXYNOS_SOC_5250)
->                 ret = exynos5250_cpufreq_init(exynos_info);
->         else
->                 return 0;
+ / {
+@@ -45,6 +46,23 @@
+ 		fimc3 = &fimc_3;
+ 	};
 
-Do this in the first if/else only..
++	clock_audss: clock-controller@03810000 {
++		compatible = "samsung,exynos4210-audss-clock";
++		reg = <0x03810000 0x0C>;
++		#clock-cells = <1>;
++	};
++
++	i2s0: i2s@03830000 {
++		compatible = "samsung,s5pv210-i2s";
++		reg = <0x03830000 0x100>;
++		clocks = <&clock_audss EXYNOS_I2S_BUS>;
++		clock-names = "iis";
++		dmas = <&pdma0 12>, <&pdma0 11>, <&pdma0 10>;
++		dma-names = "tx", "rx", "tx-sec";
++		samsung,idma-addr = <0x03000000>;
++		status = "disabled";
++	};
++
+ 	chipid@10000000 {
+ 		compatible = "samsung,exynos4210-chipid";
+ 		reg = <0x10000000 0x100>;
+@@ -289,6 +307,26 @@
+ 		status = "disabled";
+ 	};
+
++	i2s1: i2s@13960000 {
++		compatible = "samsung,s5pv210-i2s";
++		reg = <0x13960000 0x100>;
++		clocks = <&clock CLK_I2S1>;
++		clock-names = "iis";
++		dmas = <&pdma1 12>, <&pdma1 11>;
++		dma-names = "tx", "rx";
++		status = "disabled";
++	};
++
++	i2s2: i2s@13970000 {
++		compatible = "samsung,s5pv210-i2s";
++		reg = <0x13970000 0x100>;
++		clocks = <&clock CLK_I2S2>;
++		clock-names = "iis";
++		dmas = <&pdma0 14>, <&pdma0 13>;
++		dma-names = "tx", "rx";
++		status = "disabled";
++	};
++
+ 	mfc: codec@13400000 {
+ 		compatible = "samsung,mfc-v5";
+ 		reg = <0x13400000 0x10000>;
+--
+1.7.9.5
