@@ -1,116 +1,109 @@
-From: Sonny Rao <sonnyrao@chromium.org>
-Subject: Re: [PATCH] arm: dts: exynos5: Remove multi core timer
-Date: Thu, 15 May 2014 17:31:05 -0700
-Message-ID: <CAPz6YkU8GDrLj8UkqEQXxxqxWF5_p427wKSDgAp+QPR7WE7Ujg@mail.gmail.com>
-References: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
- <53752E25.9060604@gmail.com> <CAD=FV=WKOtZaUyzTWNqR=vi_L=U-Q1dct2U_oCYi3ZJv6401Hg@mail.gmail.com>
- <53753443.8010303@gmail.com> <CAD=FV=V8UZoeOqEwfx_E015pLM+amTt51LrUa+dk7mTdn=vKgA@mail.gmail.com>
- <53753C17.1090002@gmail.com> <CAD=FV=WGa7j_As_NpySxU7OEd_SzuGWK6oxU6UeiJ-4HsoWvvg@mail.gmail.com>
- <CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com>
- <CAASgrz2Nr69tpfC8ka9gbs2OvjLEGsvgAj4vBCFxhsamuFum7w@mail.gmail.com>
- <53754CE2.3000905@gmail.com> <CAD=FV=UMoL7i9rg_QtBAqPwisSQyRqRmk8wQhneMXAiLBjTT1A@mail.gmail.com>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v12 11/31] documentation: iommu: add binding document of
+	Exynos System MMU
+Date: Fri, 16 May 2014 09:39:24 +0900
+Message-ID: <20140516093924.8ee826b9e7e346cb0144a0f1@samsung.com>
+References: <1398584283-22846-1-git-send-email-shaik.ameer@samsung.com>
+	<6544270.ddFBoY6LMm@wuerfel> <20140428111802.GI19455@ulmo>
+	<4780885.JaktFvJeC7@wuerfel> <20140515203729.GA7136@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f170.google.com ([209.85.216.170]:35619 "EHLO
-	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750927AbaEPAb0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 May 2014 20:31:26 -0400
-Received: by mail-qc0-f170.google.com with SMTP id i8so3161806qcq.15
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 17:31:25 -0700 (PDT)
-In-Reply-To: <CAD=FV=UMoL7i9rg_QtBAqPwisSQyRqRmk8wQhneMXAiLBjTT1A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <20140515203729.GA7136@mithrandir>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, David Riley <davidriley@google.com>, Chirantan Ekbote <chirantan@chromium.org>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Thu, May 15, 2014 at 4:43 PM, Doug Anderson <dianders@chromium.org> wrote:
-> Tomasz,
->
-> On Thu, May 15, 2014 at 4:25 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> On 16.05.2014 01:18, David Riley wrote:
->>> On Thu, May 15, 2014 at 4:03 PM, Chirantan Ekbote
->>> <chirantan@chromium.org> wrote:
->>>> Hi Tomasz,
->>>>
->>>> On Thu, May 15, 2014 at 3:44 PM, Doug Anderson <dianders@chromium.org> wrote:
->>>>> Tomasz,
->>>>>
->>>>> On Thu, May 15, 2014 at 3:13 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>>>>>> NOTE: if for some reason we need to keep the MCT around, we're
->>>>>>> definitely going to need to account for the fact that tweaking it
->>>>>>> affects the arch timer.  ...and having the arch timer is really nice
->>>>>>> since:
->>>>>>
->>>>>> [Let me reorder the points below to make it easier to comment:]
->>>>>>
->>>>>>> * it's faster to access.
->>>>>>> * it is accessible from userspace for really fast access.
->>>>>>
->>>>>> Do you have some data on whether it is a significant difference,
->>>>>> especially considering real use cases?
->>>>>
->>>>> I know that Chrome makes _a lot_ of calls to gettimeofday() for
->>>>> profiling purposes, enough that it showed up on benchmarks.  In fact,
->>>>> we made a change to the MCT to make accesses faster and there's a
->>>>> small mention of the benchmarking that was done at:
->>>>>
->>>>> https://chromium-review.googlesource.com/#/c/32190/
->>>>>
->>>>> ...that change probably should be sent upstream, actually.
->>>>>
->>>>> I'll let Chirantan comment on how much faster arch timers were.
->>>>> ...and I think David Riley (also CCed now) may be able to comment on
->>>>> the benefits of userspace timers.
->>>>>
->>>>
->>>> When I profiled gettimeofday() calls, they were about 50 - 60% faster
->>>> with the arch timers compared to the mct.
->>>
->>> When I profiled gettimeofday(), the standard systems call version took
->>> about 2.5x longer than through a vDSO interface.
->>
->> Sounds like we should invent a new kind of jokes, starting with "When I
->> profiled gettimeofday()". ;)
->>
->> Just kidding.
->>
->> The raw improvement looks quite good, but what I'm more concerned about
->> is whether this has any significant effect on real use cases. As Doug
->> mentioned, Chrome makes a lot of calls to gettimeofday(), but he also
->> mentioned that this is for profiling purposes. Is performance of
->> gettimeofday() really that crucial in this case? Are there any other use
->> cases when this improvement is significant?
->
-> I guess I should restate.  Chrome is always profiling to some extent.
-> I think that the Javascript engine, for instance, uses gettimeofday()
-> to figure out how much time it's spending in various places.
->
-> Sonny just sent me some recent benchmarks using perf.  On this
-> particular benchmark it shows 1.85% of the time was spent in
-> exynos_frc_read.  If we can half that then we'll get a ~1% speedup in
-> the system, which is nothing to sneeze at.  If getting rid of the
-> system call overead makes this several times faster again, then we
-> roughly eliminate the overhead totally.
+On Thu, 15 May 2014 22:37:31 +0200, Thierry Reding wrote:
+> On Mon, Apr 28, 2014 at 02:05:30PM +0200, Arnd Bergmann wrote:
+> [...]
+> > let me clarify by example:
+> > 
+> > 	iommu@1 {
+> > 		compatible = "some,simple-iommu";
+> > 		reg = <1>;
+> > 		#iommu-cells = <0>; /* supports only one master */
+> > 	};
+> > 
+> > 	iommu@2 {
+> > 		compatible = "some,other-iommu";
+> > 		reg = <3>;
+> > 		#iommu-cells = <1>; /* contains master ID */
+> > 	};
+> > 
+> > 	iommu@3 {
+> > 		compatible = "some,windowed-iommu";
+> > 		reg = <2>;
+> > 		#iommu-cells = <2>; /* contains dma-window */
+> > 	};
+> > 
+> > 	device@4 {
+> > 		compatible = "some,ethernet";
+> > 		iommus = <&/iommu@1>;
+> > 	};
+> > 
+> > 	device@5 {
+> > 		compatible = "some,dmaengine";
+> > 		iommus = <&/iommu@2 0x40000000 0x1000000>,
+> > 			 <&/iommu@3 0x101>;
+> > 	};
+> > 
+> > The device at address 4 has a one-one relationship with iommu@1, so there
+> > is no need for any data. device@5 has two master ports. One is connected to
+> > an IOMMU that has a per-device aperture, device@5 can only issue transfers
+> > to the 256MB area at 0x40000000, and the IOMMU will have to put entries for
+> > this device into that address. The second master port is connected to
+> > iommu@3, which uses a master ID that gets passed along with each transfer,
+> > so that needs to be put into the IOTLBs.
+> 
+> iommu@3 and the second port of device@5 seem to match what we need for
+> Tegra (and as I understand also Exynos). Can we settle on this for now
+> so that Hiroshi and Cho can go update their drivers for this binding?
+> 
 
-To clarify, that data wasn't a benchmark -- It's field data, so
-actually much better than a benchmark.
+Currently, Exynos IOMMU is the case of iommu@1.
 
->
->
->> Anyway, I'm by no means opposed to switching to arch timers. They
->> provide a well designed, generic interface and drivers shared by
->> multiple platforms, which means more code sharing and possibly more eyes
->> looking at the code, which is always good. However if they don't support
->> low power states correctly, we can't just remove MCT.
->
-> I think low power states aren't in mainline (right?).
->
-> One solution that might work could be to leave the device tree entry
-> alone but change the MCT init code to simply act as a no-op if it sees
-> an arch timer is in the device tree and enabled.  Then when/if someone
-> got the low power states enabled we could just change source code
-> rather than dts files.
->
-> -Doug
+But in the near future, it will support multiple masters with a single context
+that means all masters that shares a single System MMU also views the same
+address space.
+
+For some cases, we may need iommu@3 that supports dma-window.
+
+So, I have no other opinion.
+
+By the way, iommu framework should allow to process the parameters
+to 'iommus' property in the master nodes by iommu driver implementations
+because it is depended on implementations.
+
+> > A variation would be to not use #iommu-cells at all, but provide a
+> > #address-cells / #size-cells pair in the IOMMU, and have a translation
+> > as we do for dma-ranges. This is probably most flexible.
+> 
+> The remainder of this discussion seems to indicate that #iommu-cells and
+> dma-ranges don't have to be mutually exclusive. For some IOMMUs it might
+> make sense to use both.
+> 
+> In fact perhaps we should require every IOMMU user to also specify a
+> dma-ranges property, even if for some cases the range would be simply
+> the complete physical address space. Perhaps in analogy to the ranges
+> property an empty dma-ranges property could be taken to mean all of the
+> physical address space.
+> 
+> I'm aware that this doesn't cover any of the more exotic cases out
+> there, but the fact is that we have real devices out there that ship
+> with some variations of these simple IOMMUs and I don't think we're
+> doing ourselves a favour by blocking support for these to be added on
+> the hope of merging the perfect solution that covers all use-cases.
+> Patches for Tegra have already been around for close to half a year.
+> 
+> Thierry
