@@ -1,59 +1,51 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH v4 0/4] Adds PMU and S2R support for exynos5420
-Date: Fri, 16 May 2014 10:37:58 +0530
-Message-ID: <CAM4voan82jypoHTOo9KwsvA7tPzdYYa3QYNHMo4Q2Yvt_cf7gA@mail.gmail.com>
-References: <1399982522-27928-1-git-send-email-a.kesavan@samsung.com>
-	<53753021.5050801@gmail.com>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: Re: [PATCH 1/1] ARM: dts: Add PD entry to MFC codec on 5420
+Date: Fri, 16 May 2014 10:42:23 +0530
+Message-ID: <CALt3h790buGxX8JAsqnCr5yVZh-HCGWVmG1w06qyrLbYADCSfQ@mail.gmail.com>
+References: <1398754183-30764-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f41.google.com ([209.85.192.41]:50750 "EHLO
-	mail-qg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752725AbaEPFH7 (ORCPT
+Received: from mail-ve0-f179.google.com ([209.85.128.179]:40061 "EHLO
+	mail-ve0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752719AbaEPFMY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 May 2014 01:07:59 -0400
-Received: by mail-qg0-f41.google.com with SMTP id j5so3432143qga.14
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 22:07:58 -0700 (PDT)
-In-Reply-To: <53753021.5050801@gmail.com>
+	Fri, 16 May 2014 01:12:24 -0400
+Received: by mail-ve0-f179.google.com with SMTP id oy12so2562995veb.10
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 May 2014 22:12:23 -0700 (PDT)
+In-Reply-To: <1398754183-30764-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Vikas Sajjan <vikas.sajjan@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Tomasz,
+Looks good.
+Reviewed-by : Arun Kumar K <arun.kk@samsung.com>
 
-On Fri, May 16, 2014 at 2:52 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Abhilash,
+On Tue, Apr 29, 2014 at 12:19 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> PD entry was missing in MFC codec node.
 >
-> On 13.05.2014 14:01, Abhilash Kesavan wrote:
->> Rebased on
->> 1] Kukjin Kim's tree for-next branch (which has Sachin Kamat's SYSRAM
->> patches merged) with Tomasz Figa's samsung clock tree (samsung-next branch)
->> merged.
->> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
->> 2] Pankaj Dubey's v4 PMU patchset
->> https://lkml.org/lkml/2014/5/10/29
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi |    1 +
+>  1 file changed, 1 insertion(+)
 >
-> I think this patch is not safe to base on yet. I need to find time to
-> review the latest version and share my latest view on this with Pankaj,
-> as I have a bit different design in mind.
-OK, do you think the PMU series might make it this cycle or should I
-drop this as a dependency and re-base my patches just on Daniel's
-CPUIdle consolidation.
-
-Regards,
-Abhilash
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 6f662b5cc90d..2fd36b0a7568 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -131,6 +131,7 @@
+>                 interrupts = <0 96 0>;
+>                 clocks = <&clock CLK_MFC>;
+>                 clock-names = "mfc";
+> +               samsung,power-domain = <&mfc_pd>;
+>         };
 >
-> In general, I don't like the fact that you end up with using regmap to
-> access registers that are used exclusively by PMU driver or for accesses
-> happening at late suspend or early resume, where concurrent accesses
-> from other drivers simply can't occur.
-
+>         mmc_0: mmc@12200000 {
+> --
+> 1.7.9.5
 >
-> Best regards,
-> Tomasz
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
