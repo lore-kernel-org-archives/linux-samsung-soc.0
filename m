@@ -1,84 +1,63 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] ARM: dts: Add pwmX_out pinctrl nodes to Exynos5250
-Date: Fri, 16 May 2014 21:28:09 +0900
-Message-ID: <048c01cf7102$4c2266f0$e46734d0$@samsung.com>
-References: <1399542642-10001-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: [PATCH] ARM: S3C24XX: check for
+ 'CONFIG_SND_SOC_SAMSUNG_SMDK2443_WM9710'
+Date: Fri, 16 May 2014 14:29:15 +0200
+Message-ID: <1400243355.20342.43.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:59049 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754454AbaEPM2M (ORCPT
+Received: from cpsmtpb-ews04.kpnxchange.com ([213.75.39.7]:57086 "EHLO
+	cpsmtpb-ews04.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751004AbaEPM3S (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 May 2014 08:28:12 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5O00A7S2MY0H10@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 May 2014 21:28:10 +0900 (KST)
-In-reply-to: <1399542642-10001-1-git-send-email-ajaykumar.rs@samsung.com>
-Content-language: ko
+	Fri, 16 May 2014 08:29:18 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Ajay Kumar' <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: ajaynumb@gmail.com, tomasz.figa@gmail.com, joshi@samsung.com, prashanth.g@samsung.com
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Ajay Kumar wrote:
-> 
-> Adds the PWM nodes to 5250 pinctrl dtsi file.
-> 
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250-pinctrl.dtsi |   28
-> ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> index 9a49e68..886cfca 100644
-> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> @@ -351,6 +351,34 @@
->  			samsung,pin-drv = <0>;
->  		};
-> 
-> +		pwm0_out: pwm0-out {
-> +			samsung,pins = "gpb2-0";
-> +			samsung,pin-function = <2>;
-> +			samsung,pin-pud = <0>;
-> +			samsung,pin-drv = <0>;
-> +		};
-> +
-> +		pwm1_out: pwm1-out {
-> +			samsung,pins = "gpb2-1";
-> +			samsung,pin-function = <2>;
-> +			samsung,pin-pud = <0>;
-> +			samsung,pin-drv = <0>;
-> +		};
-> +
-> +		pwm2_out: pwm2-out {
-> +			samsung,pins = "gpb2-2";
-> +			samsung,pin-function = <2>;
-> +			samsung,pin-pud = <0>;
-> +			samsung,pin-drv = <0>;
-> +		};
-> +
-> +		pwm3_out: pwm3-out {
-> +			samsung,pins = "gpb2-3";
-> +			samsung,pin-function = <2>;
-> +			samsung,pin-pud = <0>;
-> +			samsung,pin-drv = <0>;
-> +		};
-> +
->  		i2c7_bus: i2c7-bus {
->  			samsung,pins = "gpb2-2", "gpb2-3";
->  			samsung,pin-function = <3>;
-> --
-> 1.7.9.5
+Since v2.6.34 there are two checks for CONFIG_SND_SOC_SMDK2443_WM9710.
+But a Kconfig symbol SND_SOC_SMDK2443_WM9710 has never been part of the
+tree. However, in v2.6.38 a symbol SND_SOC_SAMSUNG_SMDK2443_WM9710 was
+added, so it seems these checks should be for its macro.
 
-Looks good to me, applied this and 2nd one.
+But the second check is a guard for
+    s3c24xx_ac97_setup_gpio(S3C24XX_AC97_GPE0);
 
-Thanks,
-Kukjin
+And since neither s3c24xx_ac97_setup_gpio nor S3C24XX_AC97_GPE0 are
+defined anywhere, that second check can be dropped entirely.
+
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+---
+Tested with git grep. Needs further testing, obviously.
+
+ arch/arm/mach-s3c24xx/mach-smdk2443.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/arch/arm/mach-s3c24xx/mach-smdk2443.c b/arch/arm/mach-s3c24xx/mach-smdk2443.c
+index 06c4d77de3a5..ce842189bc64 100644
+--- a/arch/arm/mach-s3c24xx/mach-smdk2443.c
++++ b/arch/arm/mach-s3c24xx/mach-smdk2443.c
+@@ -112,7 +112,7 @@ static struct platform_device *smdk2443_devices[] __initdata = {
+ 	&s3c_device_wdt,
+ 	&s3c_device_i2c0,
+ 	&s3c_device_hsmmc1,
+-#ifdef CONFIG_SND_SOC_SMDK2443_WM9710
++#ifdef CONFIG_SND_SOC_SAMSUNG_SMDK2443_WM9710
+ 	&s3c_device_ac97,
+ #endif
+ 	&s3c2443_device_dma,
+@@ -130,10 +130,6 @@ static void __init smdk2443_machine_init(void)
+ {
+ 	s3c_i2c0_set_platdata(NULL);
+ 
+-#ifdef CONFIG_SND_SOC_SMDK2443_WM9710
+-	s3c24xx_ac97_setup_gpio(S3C24XX_AC97_GPE0);
+-#endif
+-
+ 	platform_add_devices(smdk2443_devices, ARRAY_SIZE(smdk2443_devices));
+ 	smdk_machine_init();
+ }
+-- 
+1.9.0
