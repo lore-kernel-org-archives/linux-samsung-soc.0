@@ -1,108 +1,146 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: [PATCH] ARM: S3C24XX: remove checks for CONFIG_CPU_S3C2413
-Date: Fri, 16 May 2014 14:02:49 +0200
-Message-ID: <1400241769.20342.39.camel@x220>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews02.kpnxchange.com ([213.75.39.5]:59575 "EHLO
-	cpsmtpb-ews02.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756097AbaEPMCv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 May 2014 08:02:51 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] devicetree: Add generic IOMMU device tree bindings
+Date: Fri, 16 May 2014 14:23:18 +0200
+Message-ID: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-There are a number of checks for CONFIG_CPU_S3C2413. But there's no
-Kconfig symbol CPU_S3C2413. That symbol is not needed, as CPU_S3C2412 is
-documented to support both the S3C2412 and the S3C2413 SoCs.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Luckily, all these checks for CONFIG_CPU_S3C2413 are in places were we
-also checks for CONFIG_CPU_S3C2412. So these checks can safely be
-removed.
+This commit introduces a generic device tree binding for IOMMU devices.
+Only a very minimal subset is described here, but it is enough to cover
+the requirements of both the Exynos System MMU and Tegra SMMU as
+discussed here:
 
-Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+    https://lkml.org/lkml/2014/4/27/346
+
+More advanced functionality such as the dma-ranges property can easily
+be added in a backwards-compatible way. In the absence of a dma-ranges
+property it should be safe to default to the whole address space.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Tested with git grep only.
+ Documentation/devicetree/bindings/iommu/iommu.txt | 109 ++++++++++++++++++++++
+ 1 file changed, 109 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iommu/iommu.txt
 
-I hope the ARM/SAMSUNG maintainers are allowed to touch s3c-i2s-v2.c in
-this case.
-
-Fun fact: the first checks for CONFIG_CPU_S3C2413 were added in commit
-68d9ab394f06 ("[ARM] 3635/1: S3C24XX: Add S3C2412 core cpu support").
-Perhaps it were leftovers of a preceding version of that patch.
-
- arch/arm/mach-s3c24xx/common.c                  | 2 +-
- arch/arm/mach-s3c24xx/include/mach/regs-clock.h | 4 ++--
- arch/arm/plat-samsung/include/plat/map-s3c.h    | 2 +-
- sound/soc/samsung/s3c-i2s-v2.c                  | 4 ++--
- 4 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
-index 1bc8e73c94f9..137eea8b156a 100644
---- a/arch/arm/mach-s3c24xx/common.c
-+++ b/arch/arm/mach-s3c24xx/common.c
-@@ -184,7 +184,7 @@ static unsigned long s3c24xx_read_idcode_v5(void)
- 		return gs;
- #endif
- 
--#if defined(CONFIG_CPU_S3C2412) || defined(CONFIG_CPU_S3C2413)
-+#if defined(CONFIG_CPU_S3C2412)
- 	return __raw_readl(S3C2412_GSTATUS1);
- #else
- 	return 1UL;	/* don't look like an 2400 */
-diff --git a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
-index 3415b60082d7..c143319c0396 100644
---- a/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
-+++ b/arch/arm/mach-s3c24xx/include/mach/regs-clock.h
-@@ -95,7 +95,7 @@
- 
- #endif /* CONFIG_CPU_S3C2440 or CONFIG_CPU_S3C2442 */
- 
--#if defined(CONFIG_CPU_S3C2412) || defined(CONFIG_CPU_S3C2413)
-+#if defined(CONFIG_CPU_S3C2412)
- 
- #define S3C2412_OSCSET		S3C2410_CLKREG(0x18)
- #define S3C2412_CLKSRC		S3C2410_CLKREG(0x1C)
-@@ -159,7 +159,7 @@
- #define S3C2412_CLKSRC_UREFCLK_EXTCLK	(1<<12)
- #define S3C2412_CLKSRC_EREFCLK_EXTCLK	(1<<14)
- 
--#endif /* CONFIG_CPU_S3C2412 | CONFIG_CPU_S3C2413 */
-+#endif /* CONFIG_CPU_S3C2412 */
- 
- #define S3C2416_CLKDIV2		S3C2410_CLKREG(0x28)
- 
-diff --git a/arch/arm/plat-samsung/include/plat/map-s3c.h b/arch/arm/plat-samsung/include/plat/map-s3c.h
-index c0c70a895ca8..612c2a71fffd 100644
---- a/arch/arm/plat-samsung/include/plat/map-s3c.h
-+++ b/arch/arm/plat-samsung/include/plat/map-s3c.h
-@@ -65,7 +65,7 @@
- 
- /* deal with the registers that move under the 2412/2413 */
- 
--#if defined(CONFIG_CPU_S3C2412) || defined(CONFIG_CPU_S3C2413)
-+#if defined(CONFIG_CPU_S3C2412)
- #ifndef __ASSEMBLY__
- extern void __iomem *s3c24xx_va_gpio2;
- #endif
-diff --git a/sound/soc/samsung/s3c-i2s-v2.c b/sound/soc/samsung/s3c-i2s-v2.c
-index 79e7efb9283c..9eea58382ab3 100644
---- a/sound/soc/samsung/s3c-i2s-v2.c
-+++ b/sound/soc/samsung/s3c-i2s-v2.c
-@@ -30,8 +30,8 @@
- 
- #undef S3C_IIS_V2_SUPPORTED
- 
--#if defined(CONFIG_CPU_S3C2412) || defined(CONFIG_CPU_S3C2413) \
--	|| defined(CONFIG_ARCH_S3C64XX) || defined(CONFIG_CPU_S5PV210)
-+#if defined(CONFIG_CPU_S3C2412) || defined(CONFIG_ARCH_S3C64XX) \
-+	|| defined(CONFIG_CPU_S5PV210)
- #define S3C_IIS_V2_SUPPORTED
- #endif
- 
+diff --git a/Documentation/devicetree/bindings/iommu/iommu.txt b/Documentation/devicetree/bindings/iommu/iommu.txt
+new file mode 100644
+index 000000000000..2d67b52b656e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iommu/iommu.txt
+@@ -0,0 +1,109 @@
++This document describes the generic device tree binding for IOMMUs and their
++master(s).
++
++
++IOMMU device node:
++==================
++
++An IOMMU can provide the following services:
++
++* Remap address space to allow devices to access physical memory ranges that
++  they otherwise wouldn't be capable of accessing.
++
++  Example: 32-bit DMA to 64-bit physical addresses
++
++* Implement scatter-gather at page level granularity so that the device does
++  not have to.
++
++* Provide system protection against "rogue" DMA by forcing all accesses to go
++  through the IOMMU and faulting when encountering accesses to unmapped
++  address regions.
++
++* Provide address space isolation between multiple contexts.
++
++  Example: Virtualization
++
++Device nodes compatible with this binding represent hardware with some of the
++above capabilities.
++
++IOMMUs can be single-master or multiple-master. Single-master IOMMU devices
++typically have a fixed association to the master device, whereas multiple-
++master IOMMU devices can translate accesses from more than one master.
++
++Required properties:
++--------------------
++- #iommu-cells: The number of cells in an IOMMU specifier. The meaning of the
++  cells is defined by the binding for the IOMMU device.
++
++  Typical values include:
++  * 0: Single-master IOMMU devices are often not configurable, therefore the
++    specifying doesn't need to encode any information and can be empty.
++
++  * 1: Multiple-master IOMMU devices need to know for which master they should
++    enable translation. Typically the single cell in the specifier corresponds
++    to the master device's ID.
++
++
++IOMMU master node:
++==================
++
++Devices that access memory through an IOMMU are called masters. A device can
++have multiple master interfaces (to one or more IOMMU devices).
++
++Required properties:
++--------------------
++- iommus: A list of phandle and IOMMU specifier pairs that describe the IOMMU
++  master interfaces of the device. One entry in the list describes one master
++  interface of the device.
++
++Optional properties:
++--------------------
++- iommu-names: A list of names identifying each entry in the iommus property.
++
++
++Examples:
++=========
++
++Single-master IOMMU:
++--------------------
++
++	iommu {
++		#iommu-cells = <0>;
++	};
++
++	master {
++		iommu = <&/iommu>;
++	};
++
++Multi-master IOMMU:
++-------------------
++
++	iommu {
++		/* the specifier represents the ID of the master */
++		#iommu-cells = <1>;
++	};
++
++	master {
++		/* device has master ID 42 in the IOMMU */
++		iommu = <&/iommu 42>;
++	};
++
++Multi-master device:
++--------------------
++
++	/* single-master IOMMU */
++	iommu@1 {
++		#iommu-cells = <0>;
++	};
++
++	/* multi-master IOMMU */
++	iommu@2 {
++		/* the specifier represents the ID of the master */
++		#iommu-cells = <1>;
++	};
++
++	/* device with two master interfaces */
++	master {
++		iommus = <&/iommu@1>,    /* master of the single-master IOMMU */
++			 <&/iommu@2 42>; /* ID 42 in multi-master IOMMU */
++	};
 -- 
-1.9.0
+1.9.2
