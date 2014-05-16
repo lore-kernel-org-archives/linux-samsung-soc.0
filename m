@@ -1,97 +1,98 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [PATCH v6 6/6] mcpm: exynos: populate suspend and powered_up callbacks
-Date: Fri, 16 May 2014 13:33:58 +0530
-Message-ID: <1400227438-27155-7-git-send-email-chander.kashyap@linaro.org>
-References: <CANuQgHGSA+R__raSa_tzrgpceqLD2SZw+s0XQUHGF4wscgh6Kg@mail.gmail.com>
- <1400227438-27155-1-git-send-email-chander.kashyap@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] cpufreq: exynos: Fix the compile error
+Date: Fri, 16 May 2014 17:13:06 +0900
+Message-ID: <02f801cf70de$ad3eac10$07bc0430$@samsung.com>
+References: <006c01cf70db$7e7f3b90$7b7db2b0$@samsung.com>
+ <CAKohpomof3h9GG9WmyehM=H8xP=Qqdx+vtMoy4pkNqCsPvnUbg@mail.gmail.com>
+ <CAKohpokxDQ8w0-fJsyp+i3pLsq5Qyfyev-W8ZXXj8gbyP11pqQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1400227438-27155-1-git-send-email-chander.kashyap@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Chander Kashyap <k.chander@samsung.com>, lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org, rjw@rjwysocki.net, tomasz.figa@gmail.com, Chander Kashyap <chander.kashyap@linaro.org>, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:19715 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756422AbaEPINO convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 May 2014 04:13:14 -0400
+In-reply-to: <CAKohpokxDQ8w0-fJsyp+i3pLsq5Qyfyev-W8ZXXj8gbyP11pqQ@mail.gmail.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Viresh Kumar' <viresh.kumar@linaro.org>, 'Jonghwan Choi' <jhbird.choi@samsung.com>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
+Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, cpufreq@vger.kernel.org
 
-In order to support cpuidle through mcpm, suspend and powered-up
-callbacks are required in mcpm platform code.
-Hence populate the same callbacks.
+Viresh Kumar wrote:
+> 
+> And please use Rafael's email id from Maintainers..
+> 
+> On 16 May 2014 13:25, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > On 16 May 2014 13:20, Jonghwan Choi <jhbird.choi@samsung.com> wrote:
+> >> Commit 7da83a80 ("ARM: EXYNOS: Migrate Exynos specific macros from
+> >> plat to
+> >> mach")
+> >
+> > Why do you have a line break here ?
+> >
+> >> which lands in samsung tree causes build breakage for cpufreq-exynos
+> >> like
+> >> following:
+> >
+> > Enter a blank line here..
+> >
+> >> drivers/cpufreq/exynos-cpufreq.c: In function 'exynos_cpufreq_probe':
+> >> drivers/cpufreq/exynos-cpufreq.c:166:2: error: implicit declaration
+> >> of function 'soc_is_exynos4210'
+> >> [-Werror=implicit-function-declaration]
+> >
+> > Let these cross 80 columns, don't break them, its unreadable.
+> >
+> >> drivers/cpufreq/exynos-cpufreq.c:168:2: error: implicit declaration
+> >> of function 'soc_is_exynos4212'
+> >> [-Werror=implicit-function-declaration]
+> >> drivers/cpufreq/exynos-cpufreq.c:168:2: error: implicit declaration
+> >> of function 'soc_is_exynos4412'
+> >> [-Werror=implicit-function-declaration]
+> >> drivers/cpufreq/exynos-cpufreq.c:170:2: error: implicit declaration
+> >> of function 'soc_is_exynos5250'
+> >> [-Werror=implicit-function-declaration]
+> >> cc1: some warnings being treated as errors
+> >> make[2]: *** [drivers/cpufreq/exynos-cpufreq.o] Error 1
+> >> make[2]: *** Waiting for unfinished jobs....
+> >> drivers/cpufreq/exynos4x12-cpufreq.c: In function
+> 'exynos4x12_set_clkdiv':
+> >> drivers/cpufreq/exynos4x12-cpufreq.c:118:2: error: implicit
+> >> declaration of function 'soc_is_exynos4212'
+> >> [-Werror=implicit-function-declaration]
+> >> cc1: some warnings being treated as errors
+> >> make[2]: *** [drivers/cpufreq/exynos4x12-cpufreq.o] Error 1
+> >> make[1]: *** [drivers/cpufreq] Error 2
+> >
+> > Two blank lines here.
+> >
+> >> This fixes above error with getting SoC information via DT instead of
+> >> soc_is_exynosXXXX().
+> >>
+> >> Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+> >> ---
+> >>  .../devicetree/bindings/cpufreq/cpufreq-exynos.txt |   18 ++++++++
+> >>  drivers/cpufreq/Kconfig.arm                        |    4 +-
+> >>  drivers/cpufreq/exynos-cpufreq.c                   |   47
+> >> +++++++++++++++++---
+> >>  drivers/cpufreq/exynos-cpufreq.h                   |    8 ++++
+> >>  drivers/cpufreq/exynos4x12-cpufreq.c               |   11 ++---
+> >>  5 files changed, 72 insertions(+), 16 deletions(-)
+> >
+> > I don't think anybody can call that a fix :)
+> >
+> > So what you have done is combined 'fix' with 'cleanups or improvements'.
+> > That's surely wrong..
+> >
+Well, I think this is really _fix_ the build error, this adds support DT binding for exynos cpufreq stuff though. Because we cannot cover exynos cpufreq without this and you can see that on current -next tree.
 
-Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-Signed-off-by: Chander Kashyap <k.chander@samsung.com>
----
-Changes in v6: None
-Changes in v5:
-	1. Add comment to address cache access while c-bit is cleared in SCLTR
-	2. Make exynos_powered_up static
-Changes in v4: None
-Changes in v3:
-	1. Removed coherency enablement after suspend failure.
-	2. Use generic function to poweron cpu.
-changes in v2:
-	1. Fixed typo: enynos_pmu_cpunr to exynos_pmu_cpunr
- arch/arm/mach-exynos/mcpm-exynos.c |   36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+> > Just give a simple fix for this breakage that will go in 3.15 and do
+> > the DT stuff in another patch for 3.16..
 
-diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
-index c6bb3a4..623dfa7 100644
---- a/arch/arm/mach-exynos/mcpm-exynos.c
-+++ b/arch/arm/mach-exynos/mcpm-exynos.c
-@@ -253,10 +253,46 @@ static int exynos_power_down_finish(unsigned int cpu, unsigned int cluster)
- 	return -ETIMEDOUT; /* timeout */
- }
- 
-+static void exynos_powered_up(void)
-+{
-+	unsigned int mpidr, cpu, cluster;
-+
-+	mpidr = read_cpuid_mpidr();
-+	cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
-+	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
-+
-+	arch_spin_lock(&exynos_mcpm_lock);
-+	if (cpu_use_count[cpu][cluster] == 0)
-+		cpu_use_count[cpu][cluster] = 1;
-+	arch_spin_unlock(&exynos_mcpm_lock);
-+}
-+
-+static void exynos_suspend(u64 residency)
-+{
-+	unsigned int mpidr, cpunr;
-+
-+	exynos_power_down();
-+
-+	/*
-+	 * Execution reaches here only if cpu did not power down.
-+	 * Hence roll back the changes done in exynos_power_down function.
-+	 *
-+	 * CAUTION: "This function requires the stack data to be visible through
-+	 * power down and can only be executed on processors like A15 and A7
-+	 * that hit the cache with the C bit clear in the SCTLR register."
-+	*/
-+	mpidr = read_cpuid_mpidr();
-+	cpunr = exynos_pmu_cpunr(mpidr);
-+
-+	exynos_cpu_power_up(cpunr);
-+}
-+
- static const struct mcpm_platform_ops exynos_power_ops = {
- 	.power_up		= exynos_power_up,
- 	.power_down		= exynos_power_down,
- 	.power_down_finish	= exynos_power_down_finish,
-+	.suspend		= exynos_suspend,
-+	.powered_up		= exynos_powered_up,
- };
- 
- static void __init exynos_mcpm_usage_count_init(void)
--- 
-1.7.9.5
+In 3.15, it should be fine. Please check the -next tree and this should be sent to upstream for 3.16 not 3.15 via samsung tree with the patch (commit ID 7da83a80) which causes the build error.
+
+Thanks,
+Kukjin
