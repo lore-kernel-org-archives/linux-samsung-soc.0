@@ -1,102 +1,53 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
-Date: Fri, 16 May 2014 12:50:40 +0200
-Message-ID: <5375ED80.2010008@samsung.com>
-References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
- <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
- <5373CBAD.2010505@gmail.com>
- <CAPdUM4MT0nZcLRtNcKRAeW4Q3n5z9n4BnzR-7uYMb1gqwEhWXA@mail.gmail.com>
- <53753527.3000905@gmail.com>
- <CAPdUM4M5k-aouSA=dyUXWOyFLBhob+o8103a=gAxo-O68i-MCw@mail.gmail.com>
- <CAPdUM4Py4r3ZV79ULcJ3KojaPQ0hfZTE2XbsY+=hP4LD70mb8Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/4] clk: samsung: Add driver to control CLKOUT line on
+ Exynos SoCs
+Date: Fri, 16 May 2014 12:52:45 +0200
+Message-ID: <5375EDFD.1020708@samsung.com>
+References: <1400175151-27779-1-git-send-email-t.figa@samsung.com>
+ <1400175151-27779-4-git-send-email-t.figa@samsung.com>
+ <CAPdUM4P7Z1eLVKuc0N1iPaekM_7kNv7KCve2MgrEziszfnzz7A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAPdUM4Py4r3ZV79ULcJ3KojaPQ0hfZTE2XbsY+=hP4LD70mb8Q@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, sunil joshi <joshi@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:19605 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932302AbaEPKww (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 May 2014 06:52:52 -0400
+In-reply-to: <CAPdUM4P7Z1eLVKuc0N1iPaekM_7kNv7KCve2MgrEziszfnzz7A@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Tushar Behera <tushar.behera@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 16.05.2014 12:35, Rahul Sharma wrote:
-> On 16 May 2014 15:12, Rahul Sharma <rahul.sharma@samsung.com> wrote:
->> On 16 May 2014 03:14, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>> On 15.05.2014 06:01, Rahul Sharma wrote:
+Hi Rahul,
+
+On 16.05.2014 12:39, Rahul Sharma wrote:
 > [snip]
->>>>> the PHY provider.
->>>>>
->>>>
->>>> Please correct me if I got you wrong. You want somthing like this:
->>>>
->>>> pmu_system_controller: system-controller@10040000 {
->>>>          ...
->>>>           simple_phys: simple-phys {
->>>>                         compatible = "samsung,exynos5420-simple-phy";
->>>>                         ...
->>>>           };
->>>> };
->>>
->>> Not exactly.
->>>
->>> What I meant is that the PMU node itself should be the PHY provider, e.g.
->>>
->>> pmu_system_controller: system-controller@10040000 {
->>>         /* ... */
->>>         #phy-cells = <1>;
->>> };
->>>
->>> and then the PMU node should instantiate the Exynos simple PHY driver,
->>> as this is a driver for a facility existing entirely inside of the PMU.
->>> Moreover, the driver should be rather called Exynos PMU PHY.
->>>
->>> I know this isn't really possible at the moment, but with device tree we
->>> must design things carefully, so it's better to take a bit more time and
->>> do things properly.
->>>
->>> So my opinion on this is that there should be a central Exynos PMU
->>> driver that claims the IO region and instantiates necessary subdrivers,
->>> such as Exynos PMU PHY driver, Exynos CLKOUT driver, Exynos cpuidle
->>> driver and more, similar to what is being done in drivers/mfd.
->>
+>> +       gate->lock = &clkout_lock;
+>> +
+>> +       mux->reg = reg + EXYNOS_PMU_DEBUG_REG;
+>> +       mux->mask = EXYNOS_CLKOUT_MUX_MASK;
+>> +       mux->shift = EXYNOS_CLKOUT_MUX_SHIFT;
+>> +       mux->lock = &clkout_lock;
+>> +
+>> +       clk = clk_register_composite(NULL, "clkout", parent_names,
+>> +                                       parent_count, &mux->hw,
+>> +                                       &clk_mux_ops, NULL, NULL, &gate->hw,
+>> +                                       &clk_gate_ops, 0);
+>> +       if (IS_ERR(clk))
+>> +               goto err_unmap;
+>> +
 > 
 > Hi Tomasz,
 > 
-> These PHYs are not part of PMU as such. I am not sure if it is correct to
-> probe them as phy provider for all these phys. Only relation of these phys with
-> the PMU is 'enable/disable control'.
+> Do we really need a composite clock here? How about registering
+> a mux and a gate separately?
 
-Well, in reality what is implemented by this driver is not even a PHY,
-just some kind of power controllers, which are contained entirely in the
-PMU.
-
-> Controlling this bit using regmap interface
-> still looks better to me.
-
-Well, when there is a choice between using regmap and not using regmap,
-I'd rather choose the latter. Why would you want to introduce additional
-abstraction layer if there is no need for such?
-
-> 
-> IMHO Ideal method would be probing these PHYs independently and resolving
-> the necessary dependencies like syscon handle, clocks etc. This way we will
-> not be having any common phy provider for all these independent PHYs and it
-> would be clean to add each of these phy nodes in DT. Please see my original
-> comment below.
-> 
-> http://lkml.iu.edu/hypermail/linux/kernel/1404.1/00701.html
-
-With the solution I proposed, you don't need any kind of dependencies
-for those simple power controllers. They are just single bits that don't
-need anything special to operate, except PMU clock running.
+What's wrong with a composite clock? It simplifies the code as just a
+single clock needs to be registered. I don't see any drawbacks compared
+to registering two clocks separately.
 
 Best regards,
 Tomasz
