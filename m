@@ -1,74 +1,102 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: enable fimd for exynos5800 based peach-pi board
-Date: Fri, 16 May 2014 16:19:24 +0530
-Message-ID: <CAPdUM4O4bEHtSnmiFno1Lm-0rH9qFLJ6S=7THeywAUCFen_iNw@mail.gmail.com>
-References: <1399877120-4634-1-git-send-email-rahul.sharma@samsung.com>
-	<1399877120-4634-3-git-send-email-rahul.sharma@samsung.com>
-	<004701cf6e48$b4578910$1d069b30$%han@samsung.com>
-	<CAPdUM4Mfh-LnUX_fHi7BTJ1LcE+b4oHzjgWAJk+AWvV7UJbGnA@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
+Date: Fri, 16 May 2014 12:50:40 +0200
+Message-ID: <5375ED80.2010008@samsung.com>
+References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
+ <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
+ <5373CBAD.2010505@gmail.com>
+ <CAPdUM4MT0nZcLRtNcKRAeW4Q3n5z9n4BnzR-7uYMb1gqwEhWXA@mail.gmail.com>
+ <53753527.3000905@gmail.com>
+ <CAPdUM4M5k-aouSA=dyUXWOyFLBhob+o8103a=gAxo-O68i-MCw@mail.gmail.com>
+ <CAPdUM4Py4r3ZV79ULcJ3KojaPQ0hfZTE2XbsY+=hP4LD70mb8Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:61002 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756788AbaEPKtZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 May 2014 06:49:25 -0400
-In-Reply-To: <CAPdUM4Mfh-LnUX_fHi7BTJ1LcE+b4oHzjgWAJk+AWvV7UJbGnA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAPdUM4Py4r3ZV79ULcJ3KojaPQ0hfZTE2XbsY+=hP4LD70mb8Q@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, sunil joshi <joshi@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
 
-<Gentle Ping>
+On 16.05.2014 12:35, Rahul Sharma wrote:
+> On 16 May 2014 15:12, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+>> On 16 May 2014 03:14, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>>> On 15.05.2014 06:01, Rahul Sharma wrote:
+> [snip]
+>>>>> the PHY provider.
+>>>>>
+>>>>
+>>>> Please correct me if I got you wrong. You want somthing like this:
+>>>>
+>>>> pmu_system_controller: system-controller@10040000 {
+>>>>          ...
+>>>>           simple_phys: simple-phys {
+>>>>                         compatible = "samsung,exynos5420-simple-phy";
+>>>>                         ...
+>>>>           };
+>>>> };
+>>>
+>>> Not exactly.
+>>>
+>>> What I meant is that the PMU node itself should be the PHY provider, e.g.
+>>>
+>>> pmu_system_controller: system-controller@10040000 {
+>>>         /* ... */
+>>>         #phy-cells = <1>;
+>>> };
+>>>
+>>> and then the PMU node should instantiate the Exynos simple PHY driver,
+>>> as this is a driver for a facility existing entirely inside of the PMU.
+>>> Moreover, the driver should be rather called Exynos PMU PHY.
+>>>
+>>> I know this isn't really possible at the moment, but with device tree we
+>>> must design things carefully, so it's better to take a bit more time and
+>>> do things properly.
+>>>
+>>> So my opinion on this is that there should be a central Exynos PMU
+>>> driver that claims the IO region and instantiates necessary subdrivers,
+>>> such as Exynos PMU PHY driver, Exynos CLKOUT driver, Exynos cpuidle
+>>> driver and more, similar to what is being done in drivers/mfd.
+>>
+> 
+> Hi Tomasz,
+> 
+> These PHYs are not part of PMU as such. I am not sure if it is correct to
+> probe them as phy provider for all these phys. Only relation of these phys with
+> the PMU is 'enable/disable control'.
 
-On 13 May 2014 08:53, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> Thanks Jingoo Han.
->
-> Hi Kukjin,
->
-> Please consider both of these series for your tree.
->
-> 1) http://www.spinics.net/lists/arm-kernel/msg329697.html
-> 2) http://www.spinics.net/lists/arm-kernel/msg330291.html
->
-> Regards,
-> Rahul Sharma
->
-> On 13 May 2014 06:44, Jingoo Han <jg1.han@samsung.com> wrote:
->> On Monday, May 12, 2014 3:45 PM, Rahul Sharma wrote:
->>>
->>> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->>>
->>> Enable FIMD for peach-pi board.
->>>
->>> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
->>
->> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
->>
->> Best regards,
->> Jingoo Han
->>
->>> ---
->>>  arch/arm/boot/dts/exynos5800-peach-pi.dts |    5 +++++
->>>  1 file changed, 5 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->>> index 426705a..cccacdd 100644
->>> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
->>> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->>> @@ -157,6 +157,11 @@
->>>       };
->>>  };
->>>
->>> +&fimd {
->>> +     status = "okay";
->>> +     samsung,invert-vclk;
->>> +};
->>> +
->>>  &hsi2c_9 {
->>>       status = "okay";
->>>       clock-frequency = <400000>;
->>> --
->>> 1.7.9.5
->>
+Well, in reality what is implemented by this driver is not even a PHY,
+just some kind of power controllers, which are contained entirely in the
+PMU.
+
+> Controlling this bit using regmap interface
+> still looks better to me.
+
+Well, when there is a choice between using regmap and not using regmap,
+I'd rather choose the latter. Why would you want to introduce additional
+abstraction layer if there is no need for such?
+
+> 
+> IMHO Ideal method would be probing these PHYs independently and resolving
+> the necessary dependencies like syscon handle, clocks etc. This way we will
+> not be having any common phy provider for all these independent PHYs and it
+> would be clean to add each of these phy nodes in DT. Please see my original
+> comment below.
+> 
+> http://lkml.iu.edu/hypermail/linux/kernel/1404.1/00701.html
+
+With the solution I proposed, you don't need any kind of dependencies
+for those simple power controllers. They are just single bits that don't
+need anything special to operate, except PMU clock running.
+
+Best regards,
+Tomasz
