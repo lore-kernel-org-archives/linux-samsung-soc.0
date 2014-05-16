@@ -1,255 +1,269 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v4 5/8] clk: exynos: use cpu-clock provider type to
- represent arm clock.
-Date: Fri, 16 May 2014 10:44:44 +0530
-Message-ID: <CAJuA9ahXzaYuSFu=eZoZthwYkD=hN1QHO3XWDPTAMG_rznWz5A@mail.gmail.com>
-References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
-	<1400029876-5830-6-git-send-email-thomas.ab@samsung.com>
-	<20140514213729.19795.77753@quantum>
+From: Jonghwan Choi <jhbird.choi@samsung.com>
+Subject: [PATCH] cpufreq: exynos:  Fix the compile error
+Date: Fri, 16 May 2014 16:50:23 +0900
+Message-ID: <006c01cf70db$7e7f3b90$7b7db2b0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f182.google.com ([209.85.217.182]:52515 "EHLO
-	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751637AbaEPFOq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 May 2014 01:14:46 -0400
-In-Reply-To: <20140514213729.19795.77753@quantum>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <cpufreq-owner@vger.kernel.org>
+Content-language: ko
+Sender: cpufreq-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, cpufreq@vger.kernel.org
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Viresh Kumar' <viresh.kumar@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Shawn Guo <shawn.guo@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
 
-On Thu, May 15, 2014 at 3:07 AM, Mike Turquette <mturquette@linaro.org> wrote:
-> Quoting Thomas Abraham (2014-05-13 18:11:13)
->> From: Thomas Abraham <thomas.ab@samsung.com>
->>
->> With the addition of the new Samsung specific cpu-clock type, the
->> arm clock can be represented as a cpu-clock type and the independent
->> clock blocks that made up the arm clock can be removed.
->
-> <rant>
->
-> I am not a fan of this type of "clock hiding". Certainly the design of
-> the CCF allows for a clock provider to obfuscate it's internals; there
-> was never a requirement that every clock node be exposed to Linux as a
-> struct clk. A truly obfuscated system could only expose leaf clocks that
-> are consumed by Linux device drivers, and never expose any of the
-> intermediary clocks in between the input clock signal (if it exists) and
-> the leaf nodes.
->
-> However I feel that this patch is more of a workaround to the fact that
-> the clock framework today does not make DVFS transitions (or
-> coordinated, multi-clock rate change transitions) easy to control. The
-> generic "walk up the tree" algorithm might give you the right rate, but
-> perhaps using a non-validated combination of PLL frequency and
-> adjustable-rate dividers, or a combination that his higher jitter or is
-> more likely to unlock at higher temperatures, etc.
->
-> Back in the pre-CCF days lots of folks implemented this with "virtual"
-> clock nodes that simply called "clk_set_rate" or whatever on the
-> affected clocks, or even worse just banged a bunch of registers.
->
-> The cbus clock series for Tegra is also looks a little like this.
->
-> </rant>
->
-> Thomas,
->
-> Would a coordinated clock rate change method solve this problem for you
-> in place of the cpu-clock provider type? A poorly conceived call graph
-> for this might look something like:
->
-> clk_set_rate(div_arm2, 1000000);
-> -> if (div_arm2->coordinated == true)
->         clk_coordinate_rates(div_arm2, 1000000);
->         -> clk->ops->coordinate(div_arm2->hw, 1000000);
->            -> vendor_supplied_magic()
->
-> The vendor_supplied_magic() would be a callback that essentially calls
-> clk_set_rate() on all of the affected (coordinated) clocks. In your case
-> that looks like mout_core, div_core, div_core2, arm_clk and sclk_apll
-> for Exynos4.
->
-> The trick is that calling clk_set_rate() from any driver would initiate
-> this coordinated rate change, and then the exynos clock driver would set
-> up the coordinated clocks itself. No new API is introduced to drivers
-> (since it still uses clk_set_rate) and now a new clock provider doesn't
-> have to be invented every time we have a couple of clocks involved in a
-> DVFS transition.
->
-> Does this sound right to you or have I horribly misinterpreted the point
-> of these clock patches?
->
-> Thanks,
-> Mike
+Commit 7da83a80 ("ARM: EXYNOS: Migrate Exynos specific macros from plat to
+mach")
+which lands in samsung tree causes build breakage for cpufreq-exynos like
+following:
+drivers/cpufreq/exynos-cpufreq.c: In function 'exynos_cpufreq_probe':
+drivers/cpufreq/exynos-cpufreq.c:166:2: error: implicit declaration of
+function 'soc_is_exynos4210' [-Werror=implicit-function-declaration]
+drivers/cpufreq/exynos-cpufreq.c:168:2: error: implicit declaration of
+function 'soc_is_exynos4212' [-Werror=implicit-function-declaration]
+drivers/cpufreq/exynos-cpufreq.c:168:2: error: implicit declaration of
+function 'soc_is_exynos4412' [-Werror=implicit-function-declaration]
+drivers/cpufreq/exynos-cpufreq.c:170:2: error: implicit declaration of
+function 'soc_is_exynos5250' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+make[2]: *** [drivers/cpufreq/exynos-cpufreq.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+drivers/cpufreq/exynos4x12-cpufreq.c: In function 'exynos4x12_set_clkdiv':
+drivers/cpufreq/exynos4x12-cpufreq.c:118:2: error: implicit declaration of
+function 'soc_is_exynos4212' [-Werror=implicit-function-declaration]
+cc1: some warnings being treated as errors
+make[2]: *** [drivers/cpufreq/exynos4x12-cpufreq.o] Error 1
+make[1]: *** [drivers/cpufreq] Error 2
+This fixes above error with getting SoC information via DT instead of
+soc_is_exynosXXXX().
 
-Hi Mike,
+Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+---
+ .../devicetree/bindings/cpufreq/cpufreq-exynos.txt |   18 ++++++++
+ drivers/cpufreq/Kconfig.arm                        |    4 +-
+ drivers/cpufreq/exynos-cpufreq.c                   |   47
++++++++++++++++++---
+ drivers/cpufreq/exynos-cpufreq.h                   |    8 ++++
+ drivers/cpufreq/exynos4x12-cpufreq.c               |   11 ++---
+ 5 files changed, 72 insertions(+), 16 deletions(-)
+ create mode 100644
+Documentation/devicetree/bindings/cpufreq/cpufreq-exynos.txt
 
-I have been testing this patch series on three exynos platforms for
-about five days now and do not see any issues. There are some review
-comments which I need to incorporate. So before that, I wanted to
-check with you about the grouping of clocks approach in this patch
-series. Is this approach something that we could use until the changes
-for coordinated clocks are in place? This patch series also helps with
-multi-platform support for exynos as well.
+diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-exynos.txt
+b/Documentation/devicetree/bindings/cpufreq/cpufreq-exynos.txt
+new file mode 100644
+index 0000000..f5e8ac6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-exynos.txt
+@@ -0,0 +1,18 @@
++
++Exynos cpufreq driver
++-------------------
++
++Exynos4210/4212/4412/5250 SoC cpufreq driver for CPU frequency scaling.
++
++Required properties:
++  - compatible: value should be either of the following.
++      (a) "samsung, exynos4210-cpufreq", for Exynos4210.
++      (b) "samsung, exynos4212-cpufreq", for Exynos4212.
++      (c) "samsung, exynos4412-cpufreq", for Exynos4412.
++      (d) "samsung, exynos5250-cpufreq", for Exynos5250.
++
++Example:
++--------
++	cpufreq@10030000 {
++		compatible = "samsung,exynos4210-cpufreq";
++	};
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 5805035..9606f90 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -27,6 +27,8 @@ config ARM_VEXPRESS_SPC_CPUFREQ
+ 
+ config ARM_EXYNOS_CPUFREQ
+ 	bool
++	depends on HAVE_CLK && OF
++	select PM_OPP
+ 
+ config ARM_EXYNOS4210_CPUFREQ
+ 	bool "SAMSUNG EXYNOS4210"
+@@ -64,8 +66,6 @@ config ARM_EXYNOS5250_CPUFREQ
+ config ARM_EXYNOS5440_CPUFREQ
+ 	bool "SAMSUNG EXYNOS5440"
+ 	depends on SOC_EXYNOS5440
+-	depends on HAVE_CLK && OF
+-	select PM_OPP
+ 	default y
+ 	help
+ 	  This adds the CPUFreq driver for Samsung EXYNOS5440
+diff --git a/drivers/cpufreq/exynos-cpufreq.c
+b/drivers/cpufreq/exynos-cpufreq.c
+index f99cfe2..cfc8c75 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -16,7 +16,10 @@
+ #include <linux/slab.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/cpufreq.h>
++#include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_opp.h>
++#include <linux/of_device.h>
+ 
+ #include <plat/cpu.h>
+ 
+@@ -155,19 +158,44 @@ static struct cpufreq_driver exynos_driver = {
+ #endif
+ };
+ 
++static const struct of_device_id exynos_cpufreq_match[] = {
++	{ .compatible = "samsung,exynos4210-cpufreq",	.data =
+(void*)EXYNOS_SOC_4210 },
++	{ .compatible = "samsung,exynos4212-cpufreq",	.data =
+(void*)EXYNOS_SOC_4212 },
++	{ .compatible = "samsung,exynos4412-cpufreq",	.data =
+(void*)EXYNOS_SOC_4412 },
++	{ .compatible = "samsung,exynos5250-cpufreq",	.data =
+(void*)EXYNOS_SOC_5250 },
++	{},
++};
++MODULE_DEVICE_TABLE(of, exynos_cpufreq_match);
++
+ static int exynos_cpufreq_probe(struct platform_device *pdev)
+ {
+ 	int ret = -EINVAL;
++	struct device_node *np;
++	const struct of_device_id *match;
++
++	np =  pdev->dev.of_node;
++	if (!np)
++		return -ENODEV;
++
++	match = of_match_device(exynos_cpufreq_match, &pdev->dev);
++	if (!match) {
++		pr_err("%s: Unknown device mode\n", __func__);
++		goto err_put_node;
++	}
+ 
+ 	exynos_info = kzalloc(sizeof(*exynos_info), GFP_KERNEL);
+-	if (!exynos_info)
+-		return -ENOMEM;
++	if (!exynos_info) {
++		ret = -ENOMEM;
++		goto err_put_node;
++	}
++
++	exynos_info->type = (long)match->data;
+ 
+-	if (soc_is_exynos4210())
++	if (exynos_info->type == EXYNOS_SOC_4210)
+ 		ret = exynos4210_cpufreq_init(exynos_info);
+-	else if (soc_is_exynos4212() || soc_is_exynos4412())
++	else if (exynos_info->type == EXYNOS_SOC_4212 || exynos_info->type
+== EXYNOS_SOC_4412)
+ 		ret = exynos4x12_cpufreq_init(exynos_info);
+-	else if (soc_is_exynos5250())
++	else if (exynos_info->type == EXYNOS_SOC_5250)
+ 		ret = exynos5250_cpufreq_init(exynos_info);
+ 	else
+ 		return 0;
+@@ -189,20 +217,25 @@ static int exynos_cpufreq_probe(struct platform_device
+*pdev)
+ 	/* Done here as we want to capture boot frequency */
+ 	locking_frequency = clk_get_rate(exynos_info->cpu_clk) / 1000;
+ 
+-	if (!cpufreq_register_driver(&exynos_driver))
++	if (!cpufreq_register_driver(&exynos_driver)) {
++		of_node_put(np);
+ 		return 0;
++	}
+ 
+ 	pr_err("%s: failed to register cpufreq driver\n", __func__);
+ 	regulator_put(arm_regulator);
+ err_vdd_arm:
+ 	kfree(exynos_info);
+-	return -EINVAL;
++err_put_node:
++	of_node_put(np);
++	return ret;
+ }
+ 
+ static struct platform_driver exynos_cpufreq_platdrv = {
+ 	.driver = {
+ 		.name	= "exynos-cpufreq",
+ 		.owner	= THIS_MODULE,
++		.of_match_table = exynos_cpufreq_match,
+ 	},
+ 	.probe = exynos_cpufreq_probe,
+ };
+diff --git a/drivers/cpufreq/exynos-cpufreq.h
+b/drivers/cpufreq/exynos-cpufreq.h
+index 3ddade8..f189547 100644
+--- a/drivers/cpufreq/exynos-cpufreq.h
++++ b/drivers/cpufreq/exynos-cpufreq.h
+@@ -17,6 +17,13 @@ enum cpufreq_level_index {
+ 	L20,
+ };
+ 
++enum exynos_soc_type {
++	EXYNOS_SOC_4210,
++	EXYNOS_SOC_4212,
++	EXYNOS_SOC_4412,
++	EXYNOS_SOC_5250,
++};
++
+ #define APLL_FREQ(f, a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, m, p, s) \
+ 	{ \
+ 		.freq = (f) * 1000, \
+@@ -34,6 +41,7 @@ struct apll_freq {
+ };
+ 
+ struct exynos_dvfs_info {
++	enum exynos_soc_type type;
+ 	unsigned long	mpll_freq_khz;
+ 	unsigned int	pll_safe_idx;
+ 	struct clk	*cpu_clk;
+diff --git a/drivers/cpufreq/exynos4x12-cpufreq.c
+b/drivers/cpufreq/exynos4x12-cpufreq.c
+index 466c76a..63a3907 100644
+--- a/drivers/cpufreq/exynos4x12-cpufreq.c
++++ b/drivers/cpufreq/exynos4x12-cpufreq.c
+@@ -100,7 +100,6 @@ static struct apll_freq apll_freq_4412[] = {
+ static void exynos4x12_set_clkdiv(unsigned int div_index)
+ {
+ 	unsigned int tmp;
+-	unsigned int stat_cpu1;
+ 
+ 	/* Change Divider - CPU0 */
+ 
+@@ -115,13 +114,11 @@ static void exynos4x12_set_clkdiv(unsigned int
+div_index)
+ 	tmp = apll_freq_4x12[div_index].clk_div_cpu1;
+ 
+ 	__raw_writel(tmp, EXYNOS4_CLKDIV_CPU1);
+-	if (soc_is_exynos4212())
+-		stat_cpu1 = 0x11;
+-	else
+-		stat_cpu1 = 0x111;
+ 
+-	while (__raw_readl(EXYNOS4_CLKDIV_STATCPU1) & stat_cpu1)
++	do {
+ 		cpu_relax();
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STATCPU1);
++	} while (tmp != 0x0);
+ }
+ 
+ static void exynos4x12_set_apll(unsigned int index)
+@@ -184,7 +181,7 @@ int exynos4x12_cpufreq_init(struct exynos_dvfs_info
+*info)
+ 	if (IS_ERR(mout_apll))
+ 		goto err_mout_apll;
+ 
+-	if (soc_is_exynos4212())
++	if (info->type == EXYNOS_SOC_4212)
+ 		apll_freq_4x12 = apll_freq_4212;
+ 	else
+ 		apll_freq_4x12 = apll_freq_4412;
+-- 
+1.7.10.4
 
-Tomasz, I have addressed most of your comments from v3. If you could
-have a look at the v4 series as well, it would be helpful in making
-this better.
-
-Thanks,
-Thomas.
-
->
->>
->> Cc: Tomasz Figa <t.figa@samsung.com>
->> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-exynos4.c      |   25 +++++++++----------------
->>  drivers/clk/samsung/clk-exynos5250.c   |   12 ++++++------
->>  include/dt-bindings/clock/exynos5250.h |    1 +
->>  3 files changed, 16 insertions(+), 22 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
->> index b4f9672..7e3bb16c 100644
->> --- a/drivers/clk/samsung/clk-exynos4.c
->> +++ b/drivers/clk/samsung/clk-exynos4.c
->> @@ -471,7 +471,6 @@ static struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
->>         MUX(0, "mout_fimd1", group1_p4210, E4210_SRC_LCD1, 0, 4),
->>         MUX(0, "mout_mipi1", group1_p4210, E4210_SRC_LCD1, 12, 4),
->>         MUX(CLK_SCLK_MPLL, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1),
->> -       MUX(CLK_MOUT_CORE, "mout_core", mout_core_p4210, SRC_CPU, 16, 1),
->>         MUX(CLK_SCLK_VPLL, "sclk_vpll", sclk_vpll_p4210, SRC_TOP0, 8, 1),
->>         MUX(CLK_MOUT_FIMC0, "mout_fimc0", group1_p4210, SRC_CAM, 0, 4),
->>         MUX(CLK_MOUT_FIMC1, "mout_fimc1", group1_p4210, SRC_CAM, 4, 4),
->> @@ -530,7 +529,6 @@ static struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
->>         MUX(0, "mout_jpeg", mout_jpeg_p, E4X12_SRC_CAM1, 8, 1),
->>         MUX(CLK_SCLK_MPLL, "sclk_mpll", mout_mpll_p, SRC_DMC, 12, 1),
->>         MUX(CLK_SCLK_VPLL, "sclk_vpll", mout_vpll_p, SRC_TOP0, 8, 1),
->> -       MUX(CLK_MOUT_CORE, "mout_core", mout_core_p4x12, SRC_CPU, 16, 1),
->>         MUX(CLK_MOUT_FIMC0, "mout_fimc0", group1_p4x12, SRC_CAM, 0, 4),
->>         MUX(CLK_MOUT_FIMC1, "mout_fimc1", group1_p4x12, SRC_CAM, 4, 4),
->>         MUX(CLK_MOUT_FIMC2, "mout_fimc2", group1_p4x12, SRC_CAM, 8, 4),
->> @@ -572,8 +570,6 @@ static struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
->>
->>  /* list of divider clocks supported in all exynos4 soc's */
->>  static struct samsung_div_clock exynos4_div_clks[] __initdata = {
->> -       DIV(0, "div_core", "mout_core", DIV_CPU0, 0, 3),
->> -       DIV(0, "div_core2", "div_core", DIV_CPU0, 28, 3),
->>         DIV(0, "div_fimc0", "mout_fimc0", DIV_CAM, 0, 4),
->>         DIV(0, "div_fimc1", "mout_fimc1", DIV_CAM, 4, 4),
->>         DIV(0, "div_fimc2", "mout_fimc2", DIV_CAM, 8, 4),
->> @@ -619,8 +615,8 @@ static struct samsung_div_clock exynos4_div_clks[] __initdata = {
->>         DIV(0, "div_spi_pre2", "div_spi2", DIV_PERIL2, 8, 8),
->>         DIV(0, "div_audio1", "mout_audio1", DIV_PERIL4, 0, 4),
->>         DIV(0, "div_audio2", "mout_audio2", DIV_PERIL4, 16, 4),
->> -       DIV(CLK_ARM_CLK, "arm_clk", "div_core2", DIV_CPU0, 28, 3),
->> -       DIV(CLK_SCLK_APLL, "sclk_apll", "mout_apll", DIV_CPU0, 24, 3),
->> +       DIV_F(CLK_SCLK_APLL, "sclk_apll", "mout_apll", DIV_CPU0, 24, 3,
->> +                       CLK_GET_RATE_NOCACHE, 0),
->>         DIV_F(0, "div_mipi_pre0", "div_mipi0", DIV_LCD0, 20, 4,
->>                         CLK_SET_RATE_PARENT, 0),
->>         DIV_F(0, "div_mmc_pre0", "div_mmc0", DIV_FSYS1, 8, 8,
->> @@ -1003,12 +999,6 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->>                 0),
->>  };
->>
->> -static struct samsung_clock_alias exynos4_aliases[] __initdata = {
->> -       ALIAS(CLK_MOUT_CORE, NULL, "moutcore"),
->> -       ALIAS(CLK_ARM_CLK, NULL, "armclk"),
->> -       ALIAS(CLK_SCLK_APLL, NULL, "mout_apll"),
->> -};
->> -
->>  static struct samsung_clock_alias exynos4210_aliases[] __initdata = {
->>         ALIAS(CLK_SCLK_MPLL, NULL, "mout_mpll"),
->>  };
->> @@ -1241,6 +1231,9 @@ static void __init exynos4_clk_init(struct device_node *np,
->>                         ARRAY_SIZE(exynos4210_gate_clks));
->>                 samsung_clk_register_alias(exynos4210_aliases,
->>                         ARRAY_SIZE(exynos4210_aliases));
->> +               exynos_register_arm_clock(CLK_ARM_CLK, mout_core_p4210,
->> +                       ARRAY_SIZE(mout_core_p4210), reg_base, np, NULL,
->> +                       &samsung_clk_lock);
->>         } else {
->>                 samsung_clk_register_mux(exynos4x12_mux_clks,
->>                         ARRAY_SIZE(exynos4x12_mux_clks));
->> @@ -1250,11 +1243,11 @@ static void __init exynos4_clk_init(struct device_node *np,
->>                         ARRAY_SIZE(exynos4x12_gate_clks));
->>                 samsung_clk_register_alias(exynos4x12_aliases,
->>                         ARRAY_SIZE(exynos4x12_aliases));
->> +               exynos_register_arm_clock(CLK_ARM_CLK, mout_core_p4x12,
->> +                       ARRAY_SIZE(mout_core_p4x12), reg_base, np, NULL,
->> +                       &samsung_clk_lock);
->>         }
->>
->> -       samsung_clk_register_alias(exynos4_aliases,
->> -                       ARRAY_SIZE(exynos4_aliases));
->> -
->>         exynos4_clk_sleep_init();
->>
->>         pr_info("%s clocks: sclk_apll = %ld, sclk_mpll = %ld\n"
->> @@ -1262,7 +1255,7 @@ static void __init exynos4_clk_init(struct device_node *np,
->>                 exynos4_soc == EXYNOS4210 ? "Exynos4210" : "Exynos4x12",
->>                 _get_rate("sclk_apll"), _get_rate("sclk_mpll"),
->>                 _get_rate("sclk_epll"), _get_rate("sclk_vpll"),
->> -               _get_rate("arm_clk"));
->> +               _get_rate("armclk"));
->>  }
->>
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
->> index e7ee442..3fe1ca0 100644
->> --- a/drivers/clk/samsung/clk-exynos5250.c
->> +++ b/drivers/clk/samsung/clk-exynos5250.c
->> @@ -260,8 +260,6 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
->>          */
->>         MUX_FA(0, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
->>                                         CLK_SET_RATE_PARENT, 0, "mout_apll"),
->> -       MUX_A(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1, "mout_cpu"),
->> -
->>         /*
->>          * CMU_CORE
->>          */
->> @@ -339,9 +337,8 @@ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
->>         /*
->>          * CMU_CPU
->>          */
->> -       DIV(0, "div_arm", "mout_cpu", DIV_CPU0, 0, 3),
->> -       DIV(0, "div_apll", "mout_apll", DIV_CPU0, 24, 3),
->> -       DIV_A(0, "div_arm2", "div_arm", DIV_CPU0, 28, 3, "armclk"),
->> +       DIV_F(0, "div_apll", "mout_apll", DIV_CPU0, 24, 3,
->> +                       CLK_GET_RATE_NOCACHE, 0),
->>
->>         /*
->>          * CMU_TOP
->> @@ -721,10 +718,13 @@ static void __init exynos5250_clk_init(struct device_node *np)
->>                         ARRAY_SIZE(exynos5250_div_clks));
->>         samsung_clk_register_gate(exynos5250_gate_clks,
->>                         ARRAY_SIZE(exynos5250_gate_clks));
->> +       exynos_register_arm_clock(CLK_ARM_CLK, mout_cpu_p,
->> +                       ARRAY_SIZE(mout_cpu_p), reg_base, np, NULL,
->> +                       &samsung_clk_lock);
->>
->>         exynos5250_clk_sleep_init();
->>
->>         pr_info("Exynos5250: clock setup completed, armclk=%ld\n",
->> -                       _get_rate("div_arm2"));
->> +                       _get_rate("armclk"));
->>  }
->>  CLK_OF_DECLARE(exynos5250_clk, "samsung,exynos5250-clock", exynos5250_clk_init);
->> diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
->> index 922f2dc..59a10fb 100644
->> --- a/include/dt-bindings/clock/exynos5250.h
->> +++ b/include/dt-bindings/clock/exynos5250.h
->> @@ -21,6 +21,7 @@
->>  #define CLK_FOUT_CPLL          6
->>  #define CLK_FOUT_EPLL          7
->>  #define CLK_FOUT_VPLL          8
->> +#define CLK_ARM_CLK            12
->>
->>  /* gate for special clocks (sclk) */
->>  #define CLK_SCLK_CAM_BAYER     128
->> --
->> 1.7.4.4
->>
