@@ -1,30 +1,61 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 4/7] ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros
- by static inlines
-Date: Fri, 16 May 2014 10:59:06 +0200
-Message-ID: <5375D35A.6030806@linaro.org>
-References: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com> <1399287439-31376-5-git-send-email-b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 6/7] ARM: EXYNOS: PM: fix register setup on EXYNOS4x12
+ for AFTR mode code
+Date: Fri, 16 May 2014 11:03:11 +0200
+Message-ID: <5375D44F.7000505@linaro.org>
+References: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com> <1399287439-31376-7-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8;
 	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1399287439-31376-5-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:49644 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751662AbaEPJDD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 May 2014 05:03:03 -0400
+Received: by mail-wi0-f172.google.com with SMTP id hi2so582903wib.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 May 2014 02:03:01 -0700 (PDT)
+In-Reply-To: <1399287439-31376-7-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 Cc: Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
 On 05/05/2014 12:57 PM, Bartlomiej Zolnierkiewicz wrote:
-> Replace EXYNOS_BOOT_VECTOR_ADDR and EXYNOS_BOOT_VECTOR_FLAG macros
-> by exynos_boot_vector_addr() and exynos_boot_vector_flag() static
-> inlines.
+> Add S5P_CENTRAL_SEQ_OPTION register setup for EXYNOS4x12 to AFTR
+> mode code.  Without this setup AFTR mode doesn't show any benefit
+> over WFI one.  When this setup is applied AFTR mode reduces power
+> consumption by ~12% (as measured on Trats2 board).
 >
-> This patch shouldn't cause any functionality changes.
+> This change is a preparation for adding secure firmware support to
+> EXYNOS cpuidle driver.
 >
 > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>   arch/arm/mach-exynos/pm.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index 18f6bf8..3922968 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -391,6 +391,10 @@ static int exynos_cpu_pm_notifier(struct notifie=
+r_block *self,
+>   	case CPU_PM_ENTER:
+>   		if (cpu =3D=3D 0) {
+>   			exynos_pm_central_suspend();
+> +			if (soc_is_exynos4212() || soc_is_exynos4412())
+> +				__raw_writel(S5P_USE_STANDBY_WFI0 |
+> +					     S5P_USE_STANDBY_WFE0,
+> +					     S5P_CENTRAL_SEQ_OPTION);
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Why not put this code in the exynos_enter_aftr() ?
+
+>   			exynos_cpu_save_register();
+>   		}
+>   		break;
+
 
 
 --=20
@@ -34,4 +65,3 @@ r ARM SoCs
 =46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
 <http://twitter.com/#!/linaroorg> Twitter |
 <http://www.linaro.org/linaro-blog/> Blog
-
