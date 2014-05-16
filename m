@@ -1,47 +1,84 @@
-From: Jonghwan Choi <jhbird.choi@samsung.com>
-Subject: RE: [PATCH v2] cpufreq: exynos:  Fix the compile error
-Date: Fri, 16 May 2014 18:57:38 +0900
-Message-ID: <000001cf70ed$451bbec0$cf533c40$@samsung.com>
-References: <000001cf70dc$9ccfe4e0$d66faea0$@samsung.com>
- <5375D150.1020109@gmail.com>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: Re: [PATCH 1/2] s5p-mfc: Update mfc-v6 firmware
+Date: Fri, 16 May 2014 15:29:56 +0530
+Message-ID: <CALt3h7_A2TmyoXFBjr7Ncy8560oBT6EOD7nq9qdRtD34O56FdQ@mail.gmail.com>
+References: <1400233490-5677-1-git-send-email-arun.kk@samsung.com>
+	<04be01cf70ec$d5f37a10$81da6e30$%debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:10910 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756662AbaEPJ5k (ORCPT
+Received: from mail-ve0-f180.google.com ([209.85.128.180]:53033 "EHLO
+	mail-ve0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756419AbaEPJ75 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 May 2014 05:57:40 -0400
-In-reply-to: <5375D150.1020109@gmail.com>
-Content-language: ko
+	Fri, 16 May 2014 05:59:57 -0400
+Received: by mail-ve0-f180.google.com with SMTP id db12so2818784veb.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 May 2014 02:59:56 -0700 (PDT)
+In-Reply-To: <04be01cf70ec$d5f37a10$81da6e30$%debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, cpufreq@vger.kernel.org
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Jonghwan Choi' <jhbird.choi@gmail.com>, 'Viresh Kumar' <viresh.kumar@linaro.org>
+To: Kamil Debski <k.debski@samsung.com>
+Cc: dwmw2 <dwmw2@infradead.org>, ben <ben@decadent.org.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 16.05.2014 5:50 PM, Tomasz Figa wrote:
+Hi Kamil,
 
-> We have been discussing Exynos cpufreq framework rework, including DT support since quite a long time.
-> so if you want to know details, please look at respective discussion threads. I don't have time to
-> find them for you right now, but if you look for threads of cpufreq patches by Thomas Abraham and ones
-> about Exynos multiplatform support, then you should have quite complete set of information.
-> 
-I will check that.
+On Fri, May 16, 2014 at 3:24 PM, Kamil Debski <k.debski@samsung.com> wrote:
+> Hi Arun,
+>
+> I asked you to put old and new v6 firmware in separate files.
 
-> In general, I can see three ways to "fix" this for 3.15:
-> 
-> 1) revert moving soc_is_* macros to mach-exynos/common.h,
-> 
-> 2) move soc_is_* macros to a header in mach-exynos/include/mach/,
-> 
-> 3) use of_machine_is_compatible() or of_match_node() on root node in this driver to match directly
-> with SoC compatible strings.
-> 
-> Probably option 3) would be preferred, as it would remove some of the dependencies of this driver on
-> arch code and including plat/cpu.h (or mach/cpu.h as would be introduced by 2)) would be no longer
-> necessary.
+But wont that require a different filename other than s5p-mfc-v6.fw?
+But the driver still expects the same file name.
+Can I put the new filename as s5p-mfc-v6-v2.fw and mention in the
+README that the file has to be renamed to s5p-mfc-v6.fw to be used?
 
-Thanks~
+> You should also mention in the commit message that this new firmware
+> will not work with the s5p-mfc driver without the patch you recently
+> submitted to linux-media mailing list. Please also add a link to the
+> thread with the necessary patch.
 
-Best Regards.
+Ok will do that.
+
+>
+> In addition to the above I think a readme/description file should be
+> added to the s5p-mfc folder. The issue of firmware for v6 should be
+> explained, so that no one is surprised that something does not work.
+>
+
+Ok.
+
+Regards
+Arun
+
+> Best wishes,
+> --
+> Kamil Debski
+> Samsung R&D Institute Poland
+>
+>
+>> -----Original Message-----
+>> From: Arun Kumar K [mailto:arunkk.samsung@gmail.com] On Behalf Of Arun
+>> Kumar K
+>> Sent: Friday, May 16, 2014 11:45 AM
+>> To: dwmw2@infradead.org; ben@decadent.org.uk; linux-samsung-
+>> soc@vger.kernel.org
+>> Cc: k.debski@samsung.com; arunkk.samsung@gmail.com
+>> Subject: [PATCH 1/2] s5p-mfc: Update mfc-v6 firmware
+>>
+>> This is the newer version of s5p-mfc-v6.fw with many
+>> fixes and enhancements.
+>>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> ---
+>>  s5p-mfc/s5p-mfc-v6.fw |  Bin 306312 -> 343756 bytes
+>>  1 file changed, 0 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/s5p-mfc/s5p-mfc-v6.fw b/s5p-mfc/s5p-mfc-v6.fw
+>> index
+>> 2e1179fa6d227f1c5a23f78b4834be336e579f50..9d3345fbf4abb7ea7389816916d68
+>> 57d64732380 100644
+>> GIT binary patch
+>> literal 343756
+>
+> [snip]
+>
