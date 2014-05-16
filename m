@@ -1,84 +1,100 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/2] s5p-mfc: Update mfc-v6 firmware
-Date: Fri, 16 May 2014 12:22:19 +0200
-Message-ID: <5375E6DB.70303@samsung.com>
-References: <1400233490-5677-1-git-send-email-arun.kk@samsung.com>
- <04be01cf70ec$d5f37a10$81da6e30$%debski@samsung.com>
- <CALt3h7_A2TmyoXFBjr7Ncy8560oBT6EOD7nq9qdRtD34O56FdQ@mail.gmail.com>
- <04bf01cf70ee$f2184d40$d648e7c0$%debski@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
+Date: Fri, 16 May 2014 16:05:48 +0530
+Message-ID: <CAPdUM4Py4r3ZV79ULcJ3KojaPQ0hfZTE2XbsY+=hP4LD70mb8Q@mail.gmail.com>
+References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
+ <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
+ <5373CBAD.2010505@gmail.com>
+ <CAPdUM4MT0nZcLRtNcKRAeW4Q3n5z9n4BnzR-7uYMb1gqwEhWXA@mail.gmail.com>
+ <53753527.3000905@gmail.com>
+ <CAPdUM4M5k-aouSA=dyUXWOyFLBhob+o8103a=gAxo-O68i-MCw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:24086 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756815AbaEPKWe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 May 2014 06:22:34 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N5N00FLWWTJ7F00@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 May 2014 11:22:31 +0100 (BST)
-In-reply-to: <04bf01cf70ee$f2184d40$d648e7c0$%debski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAPdUM4M5k-aouSA=dyUXWOyFLBhob+o8103a=gAxo-O68i-MCw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, sunil joshi <joshi@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>, 'Arun Kumar K' <arun.kk@samsung.com>
-Cc: 'dwmw2' <dwmw2@infradead.org>, 'ben' <ben@decadent.org.uk>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-Hi Kamil, Arun,
-
-On 16.05.2014 12:09, Kamil Debski wrote:
-> Hi,
-> 
-> ----Original Message-----
->> From: arunkk.samsung@gmail.com [mailto:arunkk.samsung@gmail.com] On
->> Behalf Of Arun Kumar K
->> Sent: Friday, May 16, 2014 12:00 PM
->>
->> Hi Kamil,
->>
->> On Fri, May 16, 2014 at 3:24 PM, Kamil Debski <k.debski@samsung.com>
->> wrote:
->>> Hi Arun,
+On 16 May 2014 15:12, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> On 16 May 2014 03:14, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> On 15.05.2014 06:01, Rahul Sharma wrote:
+[snip]
+>>>> the PHY provider.
+>>>>
 >>>
->>> I asked you to put old and new v6 firmware in separate files.
->>
->> But wont that require a different filename other than s5p-mfc-v6.fw?
-> 
-> Yes.
-> 
->> But the driver still expects the same file name.
->> Can I put the new filename as s5p-mfc-v6-v2.fw and mention in the
->> README that the file has to be renamed to s5p-mfc-v6.fw to be used?
-> 
-> I think this is the way to go, because the new driver (with the patch)
-> will work with old firmware, while old driver (without the patch) will
-> not work with the new firmware.
-> 
->>
->>> You should also mention in the commit message that this new firmware
->>> will not work with the s5p-mfc driver without the patch you recently
->>> submitted to linux-media mailing list. Please also add a link to the
->>> thread with the necessary patch.
->>
->> Ok will do that.
->>
+>>> Please correct me if I got you wrong. You want somthing like this:
 >>>
->>> In addition to the above I think a readme/description file should be
->>> added to the s5p-mfc folder. The issue of firmware for v6 should be
->>> explained, so that no one is surprised that something does not work.
->>>
+>>> pmu_system_controller: system-controller@10040000 {
+>>>          ...
+>>>           simple_phys: simple-phys {
+>>>                         compatible = "samsung,exynos5420-simple-phy";
+>>>                         ...
+>>>           };
+>>> };
+>>
+>> Not exactly.
+>>
+>> What I meant is that the PMU node itself should be the PHY provider, e.g.
+>>
+>> pmu_system_controller: system-controller@10040000 {
+>>         /* ... */
+>>         #phy-cells = <1>;
+>> };
+>>
+>> and then the PMU node should instantiate the Exynos simple PHY driver,
+>> as this is a driver for a facility existing entirely inside of the PMU.
+>> Moreover, the driver should be rather called Exynos PMU PHY.
+>>
+>> I know this isn't really possible at the moment, but with device tree we
+>> must design things carefully, so it's better to take a bit more time and
+>> do things properly.
+>>
+>> So my opinion on this is that there should be a central Exynos PMU
+>> driver that claims the IO region and instantiates necessary subdrivers,
+>> such as Exynos PMU PHY driver, Exynos CLKOUT driver, Exynos cpuidle
+>> driver and more, similar to what is being done in drivers/mfd.
+>
 
-May I suggest a little different solution?
+Hi Tomasz,
 
-Since to not break compatibility, support for both firmware versions is
-needed in the driver anyway, why not simply make the new, incompatible
-firmware always use a different filename.
+These PHYs are not part of PMU as such. I am not sure if it is correct to
+probe them as phy provider for all these phys. Only relation of these phys with
+the PMU is 'enable/disable control'. Controlling this bit using regmap interface
+still looks better to me.
 
-Then let the driver try to load the new one first and if it fails then
-load the old one? This would also let you get rid of that version check
-by hardcoded date, as you would know which firmware type was found.
+IMHO Ideal method would be probing these PHYs independently and resolving
+the necessary dependencies like syscon handle, clocks etc. This way we will
+not be having any common phy provider for all these independent PHYs and it
+would be clean to add each of these phy nodes in DT. Please see my original
+comment below.
 
-Best regards,
-Tomasz
+http://lkml.iu.edu/hypermail/linux/kernel/1404.1/00701.html
+
+Regards,
+Rahul Sharma
+
+>
+>>
+>> Now, there is already ongoing effort to convert current freestanding PMU
+>> configuration code in mach-exynos into a full-fledged PMU driver, but
+>> not exactly in the same direction as I stated above. I'll try to
+>> cooperate with Pankaj, who is responsible for this work to make this go
+>> into the right track.
+>>
+>> Best regards,
+>> Tomasz
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
