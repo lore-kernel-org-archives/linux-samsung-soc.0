@@ -1,67 +1,101 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 6/7] ARM: EXYNOS: PM: fix register setup on EXYNOS4x12
- for AFTR mode code
-Date: Fri, 16 May 2014 11:03:11 +0200
-Message-ID: <5375D44F.7000505@linaro.org>
-References: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com> <1399287439-31376-7-git-send-email-b.zolnierkie@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
+Date: Fri, 16 May 2014 15:12:01 +0530
+Message-ID: <CAPdUM4M5k-aouSA=dyUXWOyFLBhob+o8103a=gAxo-O68i-MCw@mail.gmail.com>
+References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
+ <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
+ <5373CBAD.2010505@gmail.com>
+ <CAPdUM4MT0nZcLRtNcKRAeW4Q3n5z9n4BnzR-7uYMb1gqwEhWXA@mail.gmail.com>
+ <53753527.3000905@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:49644 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751662AbaEPJDD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 May 2014 05:03:03 -0400
-Received: by mail-wi0-f172.google.com with SMTP id hi2so582903wib.17
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 May 2014 02:03:01 -0700 (PDT)
-In-Reply-To: <1399287439-31376-7-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <53753527.3000905@gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, sunil joshi <joshi@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
 
-On 05/05/2014 12:57 PM, Bartlomiej Zolnierkiewicz wrote:
-> Add S5P_CENTRAL_SEQ_OPTION register setup for EXYNOS4x12 to AFTR
-> mode code.  Without this setup AFTR mode doesn't show any benefit
-> over WFI one.  When this setup is applied AFTR mode reduces power
-> consumption by ~12% (as measured on Trats2 board).
+On 16 May 2014 03:14, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On 15.05.2014 06:01, Rahul Sharma wrote:
+>> Thanks Tomasz,
+>>
+>> On 15 May 2014 01:31, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>>> Hi Rahul, Tomasz,
+>> [snip]
+>>>> +     simplephys: simple-phys@10040000 {
+>>>> +             compatible = "samsung,exynos5250-simple-phy";
+>>>
+>>> Missing reg property or unnecessary @unit-address suffix in node name.
+>>
+>> I should have removed "@unit-address". I will change this.
+>>
+>>>
+>>>> +             samsung,pmu-syscon = <&pmu_system_controller>;
+>>>> +             #phy-cells = <1>;
+>>>> +     };
+>>>
+>>> In general, the idea is quite good, but I think this should rather bind
+>>> to the main PMU node, since this is just a part of the PMU, not another
+>>> device in the system. This also means that the PMU node itself should be
+>>> the PHY provider.
+>>>
+>>
+>> Please correct me if I got you wrong. You want somthing like this:
+>>
+>> pmu_system_controller: system-controller@10040000 {
+>>          ...
+>>           simple_phys: simple-phys {
+>>                         compatible = "samsung,exynos5420-simple-phy";
+>>                         ...
+>>           };
+>> };
 >
-> This change is a preparation for adding secure firmware support to
-> EXYNOS cpuidle driver.
+> Not exactly.
 >
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->   arch/arm/mach-exynos/pm.c | 4 ++++
->   1 file changed, 4 insertions(+)
+> What I meant is that the PMU node itself should be the PHY provider, e.g.
 >
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index 18f6bf8..3922968 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
-> @@ -391,6 +391,10 @@ static int exynos_cpu_pm_notifier(struct notifie=
-r_block *self,
->   	case CPU_PM_ENTER:
->   		if (cpu =3D=3D 0) {
->   			exynos_pm_central_suspend();
-> +			if (soc_is_exynos4212() || soc_is_exynos4412())
-> +				__raw_writel(S5P_USE_STANDBY_WFI0 |
-> +					     S5P_USE_STANDBY_WFE0,
-> +					     S5P_CENTRAL_SEQ_OPTION);
+> pmu_system_controller: system-controller@10040000 {
+>         /* ... */
+>         #phy-cells = <1>;
+> };
+>
+> and then the PMU node should instantiate the Exynos simple PHY driver,
+> as this is a driver for a facility existing entirely inside of the PMU.
+> Moreover, the driver should be rather called Exynos PMU PHY.
+>
+> I know this isn't really possible at the moment, but with device tree we
+> must design things carefully, so it's better to take a bit more time and
+> do things properly.
+>
+> So my opinion on this is that there should be a central Exynos PMU
+> driver that claims the IO region and instantiates necessary subdrivers,
+> such as Exynos PMU PHY driver, Exynos CLKOUT driver, Exynos cpuidle
+> driver and more, similar to what is being done in drivers/mfd.
 
-Why not put this code in the exynos_enter_aftr() ?
-
->   			exynos_cpu_save_register();
->   		}
->   		break;
+Hi Tomasz,
 
 
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+>
+> Now, there is already ongoing effort to convert current freestanding PMU
+> configuration code in mach-exynos into a full-fledged PMU driver, but
+> not exactly in the same direction as I stated above. I'll try to
+> cooperate with Pankaj, who is responsible for this work to make this go
+> into the right track.
+>
+> Best regards,
+> Tomasz
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
