@@ -1,126 +1,71 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 0/8] cpufreq: use cpufreq-cpu0 driver for exynos based
- platforms
-Date: Sat, 17 May 2014 02:14:17 +0200
-Message-ID: <5376A9D9.3070702@gmail.com>
-References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
+Subject: Re: [PATCH v5 1/5] ARM: EXYNOS: Add generic cpu power control functions
+ for all exynos based SoCs
+Date: Sat, 17 May 2014 02:32:57 +0200
+Message-ID: <5376AE39.1030301@gmail.com>
+References: <1399307221-8659-1-git-send-email-a.kesavan@samsung.com>	<1399307221-8659-2-git-send-email-a.kesavan@samsung.com>	<019b01cf6e52$75e1a710$61a4f530$@samsung.com>	<CAM4voamSNYZ_hsjF3eZhqZ=FF__39tFgi5FeXRcUhRbYYzu0LQ@mail.gmail.com>	<53752D8C.3030708@gmail.com> <CAM4voam1UiX+WaxScTdhb4bW+_1nCcsztFEkx4MyWFOBBjV6XQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>, cpufreq@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, shawn.guo@linaro.org, devicetree@vger.kernel.org, rjw@rjwysocki.net, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, thomas.ab@samsung.com
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f54.google.com ([74.125.83.54]:57950 "EHLO
+	mail-ee0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753439AbaEQAdJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 May 2014 20:33:09 -0400
+In-Reply-To: <CAM4voam1UiX+WaxScTdhb4bW+_1nCcsztFEkx4MyWFOBBjV6XQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, "mark.rutland" <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Arnd Bergmann <arnd@arndb.de>, devicetree <devicetree@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Will Deacon <will.deacon@arm.com>, skon.hwang@samsung.com, robh+dt <robh+dt@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, Grant Likely <grant.likely@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>, Dave Martin <Dave.Martin@arm.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "inderpal.s@samsung.com" <inderpal.s@samsung.com>
 
-Hi Thomas,
 
-In general the design already looks good, but I commented on several
-implementation issues I found in particular patches (and some minor
-nitpicks while at it).
 
-Please let me know whether you have time to work on addressing them.
-Otherwise we can just let me, Lukasz or someone else address remaining
-issues.
+On 16.05.2014 07:07, Abhilash Kesavan wrote:
+> Hi Tomasz,
+> 
+> On Fri, May 16, 2014 at 2:41 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> Hi Abhilash,
+>>
+>> On 13.05.2014 12:12, Abhilash Kesavan wrote:
+>>> On Tue, May 13, 2014 at 7:54 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>>
+>> [snip]
+>>
+>>>>> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-
+>>>>> pmu.h
+>>>>> index 4f6a256..0bdfcbc 100644
+>>>>> --- a/arch/arm/mach-exynos/regs-pmu.h
+>>>>> +++ b/arch/arm/mach-exynos/regs-pmu.h
+>>>>> @@ -121,6 +121,12 @@
+>>>>>
+>>>>>  #define S5P_CHECK_SLEEP                              0x00000BAD
+>>>>>
+>>>>> +#define EXYNOS_ARM_CORE0_CONFIGURATION               S5P_PMUREG(0x2000)
+>>>>
+>>>> This can be put in order of address.
+>>> OK, will fix.
+>>>>
+>>>>> +#define EXYNOS_ARM_CORE_CONFIGURATION(_nr)   \
+>>>>> +                     (EXYNOS_ARM_CORE0_CONFIGURATION + (0x80 * (_nr)))
+>>>>> +#define EXYNOS_ARM_CORE_STATUS(_nr)          \
+>>>>> +                     (EXYNOS_ARM_CORE_CONFIGURATION(_nr) + 0x4)
+>>
+>> My patches posted quite a while ago [1] to fix DT CPU topology already
+>> add these, remove S5P_ARM_CORE1* and fix corresponding usage in
+>> hotplug.c and platsmp.c.
+>>
+>> [1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/29573
+>>
+>> So I think you should rebase on top of them or at least on top of
+>> patches 1 and 2 from that series, as 3 and 4 should be dropped.
+> 
+> Patch 2 of your series does not apply on kgene's for-next or
+> linux-next. Are you planning on re-sending this ?
+
+OK, it seems like Kukjin has already applied your v6 series, so let's
+drop my series for now. I'll remove patch 1 from my series and rebase it
+on top of your v6.
 
 Best regards,
 Tomasz
-
-On 14.05.2014 03:11, Thomas Abraham wrote:
-> Changes since v3:
-> - Addressed comments from Tomasz Figa <t.figa@samsung.com>
->   [http://www.spinics.net/lists/cpufreq/msg09290.html]
-> - Rebased to v3.15-rc4
->=20
-> Changes since v2:
-> - Safe operating voltage is not required while switching APLL frequen=
-cy
->   since the temporary parent's clock is divided down to keep armclk w=
-ithin
->   permissible limits. Thanks to Heiko St=C3=BCbner <heiko@sntech.de> =
-for this
->   suggesting this.
-> - Rob had suggested to use max frequency for each of the divider cloc=
-k
->   outputs instead of divider values. But due to certain SoC specific
->   characteristics, the divider values corresponding to the input cloc=
-k
->   frequency for the CMU_CPU clock blocks have to be used.
->=20
-> Changes since v1:
-> - Removes Exynos4x12 and Exynos5250 cpufreq driver also.
-> - Device tree based clock configuration lookup as suggested by Lukasz
->   Majewski and Tomasz Figa.
-> - safe operating point binding reworked as suggested by Shawn Guo.
->=20
-> The patch series removes the use of Exynos specific cpufreq driver an=
-d enables
-> the use of cpufreq-cpu0 driver for Exynos4210, Exynos4x12 and Exynos5=
-250 based
-> platforms. This is being done for few reasons.
->=20
-> (a) The Exynos cpufreq driver reads/writes clock controller registers
->     bypassing the Exynos CCF driver which is sort of problematic.
-> (b) Removes the need for having clock controller register definitions
->     in the cpufreq driver and also removes the need for statically
->     io-remapping clock controller address space (helps in moving towa=
-rds
->     multiplatform kernel).
->=20
-> Thomas Abraham (8):
->   cpufreq: cpufreq-cpu0: allow use of optional boost mode frequencies
->   clk: samsung: change scope of samsung clock lock to global
->   clk: samsung: add infrastructure to register cpu clocks
->   Documentation: devicetree: add cpu clock configuration data binding=
- for Exynos4/5
->   clk: exynos: use cpu-clock provider type to represent arm clock
->   ARM: dts: Exynos: add cpu nodes, opp and cpu clock configuration da=
-ta
->   ARM: Exynos: switch to using generic cpufreq-cpu0 driver
->   cpufreq: exynos: remove all exynos specific cpufreq driver support
->=20
->=20
->  .../devicetree/bindings/clock/exynos4-clock.txt    |   37 ++
->  .../devicetree/bindings/clock/exynos5250-clock.txt |   36 ++
->  .../devicetree/bindings/cpufreq/cpufreq-cpu0.txt   |    2 +
->  arch/arm/boot/dts/exynos4210-origen.dts            |    6 +
->  arch/arm/boot/dts/exynos4210-trats.dts             |    6 +
->  arch/arm/boot/dts/exynos4210-universal_c210.dts    |    6 +
->  arch/arm/boot/dts/exynos4210.dtsi                  |   35 ++
->  arch/arm/boot/dts/exynos4212.dtsi                  |   18 +
->  arch/arm/boot/dts/exynos4412-odroidx.dts           |    6 +
->  arch/arm/boot/dts/exynos4412-origen.dts            |    6 +
->  arch/arm/boot/dts/exynos4412-trats2.dts            |    6 +
->  arch/arm/boot/dts/exynos4412.dtsi                  |   31 ++
->  arch/arm/boot/dts/exynos4x12.dtsi                  |   36 ++
->  arch/arm/boot/dts/exynos5250-arndale.dts           |    6 +
->  arch/arm/boot/dts/exynos5250-cros-common.dtsi      |    6 +
->  arch/arm/boot/dts/exynos5250-smdk5250.dts          |    6 +
->  arch/arm/boot/dts/exynos5250.dtsi                  |   41 ++
->  arch/arm/mach-exynos/exynos.c                      |    4 +-
->  drivers/clk/samsung/Makefile                       |    2 +-
->  drivers/clk/samsung/clk-cpu.c                      |  458 ++++++++++=
-++++++++++
->  drivers/clk/samsung/clk-exynos4.c                  |   25 +-
->  drivers/clk/samsung/clk-exynos5250.c               |   12 +-
->  drivers/clk/samsung/clk.c                          |   13 +-
->  drivers/clk/samsung/clk.h                          |    7 +
->  drivers/cpufreq/Kconfig                            |   11 +
->  drivers/cpufreq/Kconfig.arm                        |   52 ---
->  drivers/cpufreq/Makefile                           |    4 -
->  drivers/cpufreq/cpufreq-cpu0.c                     |    5 +
->  drivers/cpufreq/exynos-cpufreq.c                   |  209 ---------
->  drivers/cpufreq/exynos-cpufreq.h                   |   91 ----
->  drivers/cpufreq/exynos4210-cpufreq.c               |  157 -------
->  drivers/cpufreq/exynos4x12-cpufreq.c               |  211 ---------
->  drivers/cpufreq/exynos5250-cpufreq.c               |  183 --------
->  include/dt-bindings/clock/exynos5250.h             |    1 +
->  34 files changed, 799 insertions(+), 936 deletions(-)
->  create mode 100644 drivers/clk/samsung/clk-cpu.c
->  delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
->  delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
->  delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
->  delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
->  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
->=20
