@@ -1,39 +1,29 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [GIT PULL 1/4] Samsung clock Exynos5260 support for v3.16
-Date: Sat, 17 May 2014 08:57:51 +0900
-Message-ID: <5376A5FF.6000100@samsung.com>
-References: <1400090591-5064-1-git-send-email-t.figa@samsung.com> <5373CB1A.1040801@samsung.com> <20140514201313.19795.35617@quantum> <5373CFFE.1000209@gmail.com> <20140514220744.19795.64527@quantum> <5373EB24.8000306@gmail.com> <53752D7C.4010003@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 4/8] Documentation: devicetree: add cpu clock configuration
+ data binding for Exynos4/5
+Date: Sat, 17 May 2014 02:00:08 +0200
+Message-ID: <5376A688.4010206@gmail.com>
+References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com> <1400029876-5830-5-git-send-email-thomas.ab@samsung.com> <53769E1F.1090706@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:35067 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755701AbaEPX54 (ORCPT
+Received: from mail-ee0-f52.google.com ([74.125.83.52]:34355 "EHLO
+	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752059AbaEQAAV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 May 2014 19:57:56 -0400
-Received: by mail-pa0-f44.google.com with SMTP id ld10so3171559pab.17
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 May 2014 16:57:55 -0700 (PDT)
-In-Reply-To: <53752D7C.4010003@samsung.com>
+	Fri, 16 May 2014 20:00:21 -0400
+In-Reply-To: <53769E1F.1090706@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Thomas Abraham <ta.omasab@gmail.com>, cpufreq@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, shawn.guo@linaro.org, devicetree@vger.kernel.org, rjw@rjwysocki.net, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, thomas.ab@samsung.com, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-On 05/16/14 06:11, Kukjin Kim wrote:
+On 17.05.2014 01:24, Tomasz Figa wrote:
+> Also, shouldn't you also extend exynos5420-clock.txt in the same way?
 
-[...]
+Please ignore this comment. Somehow I thought other patches of this
+series also had support for Exynos5420.
 
->>> OK, I think I misread the original email. I thought you were asking for
->>> future pull requests to go through the samsung tree, but you only mean
->>> the ones in this thread. No problem there.
->>>
->>> Acked-by: Mike Turquette<mturquette@linaro.org>
->>
-> Mike, thanks for your ack on this whole pull-requests.
->
-> I will pull 1 to 4 into samsung tree for 3.16.
->
-Done, thanks.
-
-- Kukjin
+Best regards,
+Tomasz
