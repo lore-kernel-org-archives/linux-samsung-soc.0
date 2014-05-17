@@ -1,96 +1,176 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 0/3] Generic Device Tree based power domain look-up
-Date: Sat, 17 May 2014 03:23:42 +0200
-Message-ID: <5376BA1E.8050309@gmail.com>
-References: <1399553355-6615-1-git-send-email-t.figa@samsung.com>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
+Date: Sat, 17 May 2014 17:04:55 +0900
+Message-ID: <20140517170455.08e181f16d3abf36d1ec6274@samsung.com>
+References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1399553355-6615-1-git-send-email-t.figa@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, linux-pm@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, Philipp Zabel <philipp.zabel@gmail.com>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <1400242998-437-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Fri, 16 May 2014 14:23:18 +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> This commit introduces a generic device tree binding for IOMMU devices.
+> Only a very minimal subset is described here, but it is enough to cover
+> the requirements of both the Exynos System MMU and Tegra SMMU as
+> discussed here:
+> 
+>     https://lkml.org/lkml/2014/4/27/346
+> 
+> More advanced functionality such as the dma-ranges property can easily
+> be added in a backwards-compatible way. In the absence of a dma-ranges
+> property it should be safe to default to the whole address space.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/iommu/iommu.txt | 109 ++++++++++++++++++++++
+>  1 file changed, 109 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iommu/iommu.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/iommu/iommu.txt b/Documentation/devicetree/bindings/iommu/iommu.txt
+> new file mode 100644
+> index 000000000000..2d67b52b656e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iommu/iommu.txt
+> @@ -0,0 +1,109 @@
+> +This document describes the generic device tree binding for IOMMUs and their
+> +master(s).
+> +
+> +
+> +IOMMU device node:
+> +==================
+> +
+> +An IOMMU can provide the following services:
+> +
+> +* Remap address space to allow devices to access physical memory ranges that
+> +  they otherwise wouldn't be capable of accessing.
+> +
+> +  Example: 32-bit DMA to 64-bit physical addresses
+> +
+> +* Implement scatter-gather at page level granularity so that the device does
+> +  not have to.
+> +
+> +* Provide system protection against "rogue" DMA by forcing all accesses to go
+> +  through the IOMMU and faulting when encountering accesses to unmapped
+> +  address regions.
+> +
+> +* Provide address space isolation between multiple contexts.
+> +
+> +  Example: Virtualization
+> +
+> +Device nodes compatible with this binding represent hardware with some of the
+> +above capabilities.
+> +
+> +IOMMUs can be single-master or multiple-master. Single-master IOMMU devices
+> +typically have a fixed association to the master device, whereas multiple-
+> +master IOMMU devices can translate accesses from more than one master.
+> +
+> +Required properties:
+> +--------------------
+> +- #iommu-cells: The number of cells in an IOMMU specifier. The meaning of the
+> +  cells is defined by the binding for the IOMMU device.
+> +
+> +  Typical values include:
+> +  * 0: Single-master IOMMU devices are often not configurable, therefore the
+> +    specifying doesn't need to encode any information and can be empty.
+> +
+> +  * 1: Multiple-master IOMMU devices need to know for which master they should
+> +    enable translation. Typically the single cell in the specifier corresponds
+> +    to the master device's ID.
+> +
+> +
+> +IOMMU master node:
+> +==================
+> +
+> +Devices that access memory through an IOMMU are called masters. A device can
+> +have multiple master interfaces (to one or more IOMMU devices).
+> +
+> +Required properties:
+> +--------------------
+> +- iommus: A list of phandle and IOMMU specifier pairs that describe the IOMMU
+> +  master interfaces of the device. One entry in the list describes one master
+> +  interface of the device.
+> +
+> +Optional properties:
+> +--------------------
+> +- iommu-names: A list of names identifying each entry in the iommus property.
+> +
+> +
+> +Examples:
+> +=========
+> +
+> +Single-master IOMMU:
+> +--------------------
+> +
+> +	iommu {
+> +		#iommu-cells = <0>;
+> +	};
+> +
+> +	master {
+> +		iommu = <&/iommu>;
+> +	};
+> +
 
-On 08.05.2014 14:49, Tomasz Figa wrote:
-> Up till now there was no single generic method to bind devices to their
-> power domains using Device Tree. Each platform has been doing this using
-> its own way, example of which are Exynos power domain bindings [1] and
-> look-up code [2].
-> 
-> This series is intended to change this and provide generic DT bindings for
-> power domain specification and generic code performing look-up of power
-> domains and binding them to devices.
-> 
-> First two patches are the most important part of this series, as they
-> introduce $subject. Patch 3 converts mach-exynos to use the new generic
-> method. Further patches are adding one more user of the new code,
-> mach-s3c64xx, with first 3 patches (4-6) required to clean-up its power
-> domain driver a bit and last 3 patches (9-11) adding display support for
-> Mini6410 board, including a node for display controller (FIMD) which is
-> a power domain consumer.
-> 
-> The design of DT bindings and provider code is heavily inspired by
-> implementation of clock providers in Common Clock Framework, while
-> the code binding devices to power domains by my Exynos power domain
-> implementation (now removed by this series ;)).
-> 
-> Successfully tested on Exynos4210-based Trats and Exynos4412-based Trats2
-> boards using MFC, 
-> 
-> [1] Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> [2] arch/arm/mach-exynos/pm_domains.c
-> 
-> Changes since v3:
-> (http://thread.gmane.org/gmane.linux.power-management.general/44571)
->  - rebased onto current Rafael's linux-pm bleeding-edge branch (0a112bf),
->  - renamed "power-domain" property to "power-domains" to facilitate further
->    extension to support multiple power domains per device in future.
-> 
-> Changes since v2:
-> (http://thread.gmane.org/gmane.linux.kernel/1658926)
->  - rebased onto current Rafael's linux-pm bleeding-edge branch,
->  - dropped patches for s3c64xx for now. I will send them in separate series,
->  - do not call pm_genpd_dev_need_restore(true) in genpd_bind_domain(),
->  - fixed various stylistic issues reported in review comments.
-> 
-> Changes since v1 (RFC):
-> [https://lkml.org/lkml/2014/1/11/141]
->  - rebased onto current Rafael's linux-pm bleeding-edge branch,
->  - reordered the patches a bit (to have the generic ones first),
->  - dropped renaming of S3C64xx power domains (as suggested by Mark Brown),
->  - added support for deferred probing (as suggested by Stephen Boyd),
->  - fixed several minor issues pointed by Stephen Boyd,
->  - replaced notifiers with direct hooks in driver core to make power domain
->    support independent from specific bus type and allow error handling.
-> 
-> Tomasz Figa (3):
->   base: power: Add generic OF-based power domain look-up
->   drivercore: Bind/unbind power domain on probe/remove
->   ARM: exynos: Move to generic power domain bindings
-> 
->  .../bindings/arm/exynos/power_domain.txt           |  12 +-
->  .../devicetree/bindings/power/power_domain.txt     |  51 ++++
->  arch/arm/mach-exynos/pm_domains.c                  |  81 +-----
->  drivers/base/dd.c                                  |   9 +-
->  drivers/base/power/domain.c                        | 283 +++++++++++++++++++++
->  include/linux/pm_domain.h                          |  46 ++++
->  kernel/power/Kconfig                               |   4 +
->  7 files changed, 398 insertions(+), 88 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/power/power_domain.txt
-> 
+Great work, Thierry.
 
-Rob, Mark, could we have your ACK (or NAK if you find some issues) for
-DT bindings introduced by this series?
+One simple comment.
 
-Rafael, I wonder if we could still have this series applied for 3.16. I
-know it is a bit late already, but the series isn't too invasive, as it
-mostly generalizes what was being done on per-platform basis and makes
-the code generic. Also I have already seen at least two other series
-depending on this one, so they would benefit from this being merged.
+This should be also applicable to multi-master IOMMUs that the masters
+of an IOMMU is not configurable with ID or something.
+I think the title needs to be changed to cover such IOMMUs which always
+translate master's transactions and unable to change the configuration
+of the relationship between the masters and IOMMUs by S/W.
 
-Best regards,
-Tomasz
+Regards,
+
+KyongHo
+
+> +Multi-master IOMMU:
+> +-------------------
+> +
+> +	iommu {
+> +		/* the specifier represents the ID of the master */
+> +		#iommu-cells = <1>;
+> +	};
+> +
+> +	master {
+> +		/* device has master ID 42 in the IOMMU */
+> +		iommu = <&/iommu 42>;
+> +	};
+> +
+> +Multi-master device:
+> +--------------------
+> +
+> +	/* single-master IOMMU */
+> +	iommu@1 {
+> +		#iommu-cells = <0>;
+> +	};
+> +
+> +	/* multi-master IOMMU */
+> +	iommu@2 {
+> +		/* the specifier represents the ID of the master */
+> +		#iommu-cells = <1>;
+> +	};
+> +
+> +	/* device with two master interfaces */
+> +	master {
+> +		iommus = <&/iommu@1>,    /* master of the single-master IOMMU */
+> +			 <&/iommu@2 42>; /* ID 42 in multi-master IOMMU */
+> +	};
+> -- 
+> 1.9.2
+> 
