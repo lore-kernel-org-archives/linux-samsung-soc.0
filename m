@@ -1,95 +1,108 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: Add pwmX_out pinctrl nodes to Exynos5250
-Date: Sun, 18 May 2014 02:13:22 +0530
-Message-ID: <CAEC9eQMUEAc45+5t_e-3DfFBxuainG8iFOz9qq=OAN2nigVDrg@mail.gmail.com>
-References: <1399542642-10001-1-git-send-email-ajaykumar.rs@samsung.com>
-	<048c01cf7102$4c2266f0$e46734d0$@samsung.com>
-	<5376A7BF.9010702@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
+Date: Sat, 17 May 2014 22:48:06 +0200
+Message-ID: <20140517204805.GA1046@mithrandir>
+References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
+ <20140517170455.08e181f16d3abf36d1ec6274@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f172.google.com ([209.85.220.172]:37400 "EHLO
-	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751101AbaEQUnX (ORCPT
+Received: from mail-ee0-f45.google.com ([74.125.83.45]:61284 "EHLO
+	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751101AbaEQUsL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 17 May 2014 16:43:23 -0400
-Received: by mail-vc0-f172.google.com with SMTP id hr9so7957662vcb.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 17 May 2014 13:43:22 -0700 (PDT)
-In-Reply-To: <5376A7BF.9010702@samsung.com>
+	Sat, 17 May 2014 16:48:11 -0400
+Content-Disposition: inline
+In-Reply-To: <20140517170455.08e181f16d3abf36d1ec6274@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
+To: Cho KyongHo <pullip.cho@samsung.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>, Grant Grundler <grundler@chromium.org>, Dave Martin <Dave.Martin@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, devicetree@vger.kernel.org, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Kukjin,
 
-On Sat, May 17, 2014 at 5:35 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> On 05/16/14 21:28, Kukjin Kim wrote:
->>
->> Ajay Kumar wrote:
->>>
->>>
->>> Adds the PWM nodes to 5250 pinctrl dtsi file.
->>>
->>> Signed-off-by: Ajay Kumar<ajaykumar.rs@samsung.com>
->>> ---
->>>   arch/arm/boot/dts/exynos5250-pinctrl.dtsi |   28
->>> ++++++++++++++++++++++++++++
->>>   1 file changed, 28 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->>> b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->>> index 9a49e68..886cfca 100644
->>> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->>> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->>> @@ -351,6 +351,34 @@
->>>                         samsung,pin-drv =<0>;
->>>                 };
->>>
->>> +               pwm0_out: pwm0-out {
->>> +                       samsung,pins = "gpb2-0";
->>> +                       samsung,pin-function =<2>;
->>> +                       samsung,pin-pud =<0>;
->>> +                       samsung,pin-drv =<0>;
->>> +               };
->>> +
->>> +               pwm1_out: pwm1-out {
->>> +                       samsung,pins = "gpb2-1";
->>> +                       samsung,pin-function =<2>;
->>> +                       samsung,pin-pud =<0>;
->>> +                       samsung,pin-drv =<0>;
->>> +               };
->>> +
->>> +               pwm2_out: pwm2-out {
->>> +                       samsung,pins = "gpb2-2";
->>> +                       samsung,pin-function =<2>;
->>> +                       samsung,pin-pud =<0>;
->>> +                       samsung,pin-drv =<0>;
->>> +               };
->>> +
->>> +               pwm3_out: pwm3-out {
->>> +                       samsung,pins = "gpb2-3";
->>> +                       samsung,pin-function =<2>;
->>> +                       samsung,pin-pud =<0>;
->>> +                       samsung,pin-drv =<0>;
->>> +               };
->>> +
->>>                 i2c7_bus: i2c7-bus {
->>>                         samsung,pins = "gpb2-2", "gpb2-3";
->>>                         samsung,pin-function =<3>;
->>> --
->>> 1.7.9.5
->>
->>
->> Looks good to me, applied this and 2nd one.
->>
-> Oops, I can't find the branch including this patches and your patches in my
-> mailbox...can you please send this patches again including linux-arm-kernel
-> ml?
+--6TrnltStXW4iwmi0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-These patches were created against the "for-next" branch.
-Anyways, I will add the branch name and resend after including
-linux-arm-kernel ml.
+On Sat, May 17, 2014 at 05:04:55PM +0900, Cho KyongHo wrote:
+> On Fri, 16 May 2014 14:23:18 +0200, Thierry Reding wrote:
+[...]
+> > +Examples:
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +Single-master IOMMU:
+> > +--------------------
+> > +
+> > +	iommu {
+> > +		#iommu-cells =3D <0>;
+> > +	};
+> > +
+> > +	master {
+> > +		iommu =3D <&/iommu>;
+> > +	};
+> > +
+>=20
+> Great work, Thierry.
+>=20
+> One simple comment.
+>=20
+> This should be also applicable to multi-master IOMMUs that the masters
+> of an IOMMU is not configurable with ID or something.
+> I think the title needs to be changed to cover such IOMMUs which always
+> translate master's transactions and unable to change the configuration
+> of the relationship between the masters and IOMMUs by S/W.
 
-Regards,
-Ajay
+Agreed, how about we add a separate example for that case:
+
+Multiple-master IOMMU with fixed associations:
+----------------------------------------------
+
+	/* multiple-master IOMMU */
+	iommu {
+		/*
+		 * Masters are statically associated with this IOMMU and
+		 * address translation is always enabled.
+		 */
+		#iommu-cells =3D <0>;
+	};
+
+	/* static association with IOMMU */
+	master@1 {
+		reg =3D <1>;
+		iommus =3D <&/iommu>;
+	};
+
+	/* static association with IOMMU */
+	master@2 {
+		reg =3D <2>;
+		iommus =3D <&/iommu>;
+	};
+
+?
+
+Thierry
+
+--6TrnltStXW4iwmi0
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTd8sFAAoJEN0jrNd/PrOhGXIQAJOqRSklMjl4lFQfRhWaoB3m
+pYpRwqjrA0rLzEb+u6bk5Kv4kLRK5wOYr6Fd/y8DYONY+vZ0SXBOgEo7uv/mXURM
+R2m8tTiKLtmQm6xZ///FmcU98lOZM+l6Vv3/F+QVH/41RRNTzTXXir0q2XTYG5wU
+Fefylq654a8Ha1rDN2Y6kPt4P/1Q0tuA/7Z0jidDYXK04Pp+5QTBUHSFAYJ4V1Q3
+HuH2XmCioGRTem4cl4SMM6uA+IrnuZcXePrNT35HwtN6bmSe2IKNxaK+VKvnVzza
+Qc0hvQEDdsjijs1Fy4rY3zPhkvAGz/rbs6nYUJpRl96R3Zb5sKaO2Vqj9glLX5/e
+B5/wv5yVSs/ygRLW8/E76LXB2PNqkVg68smSRGrA/7q7iU2/ZUatnqoVCTWT2Jid
+0zUkBur8KM0wdBrowgrs/sVzFvS5Ii/yUyyfXJQWZELkhEo681LGGNt7PXYugjtr
+P//6zQwn1ogR7xq+7hCcy5yZAtc8UrXyIRF9/XrNvdGhg0zXdaQa1viM5AapeLGs
+WAPwb+KlFvXxG/8EY96Y59LvULcP5oGhwMXkUrkvH9OiDzZXIVbEZfrtCvKhUzn6
+G7CzsIQr4Q3+5u42Ndt94WglpdiDfVeUmh6ofv34rTZHqy7MGpybJBp67qf0sff9
+wO7Z6vqP8a7m/yZuQ7tr
+=Y4ib
+-----END PGP SIGNATURE-----
+
+--6TrnltStXW4iwmi0--
