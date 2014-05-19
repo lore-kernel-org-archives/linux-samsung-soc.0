@@ -1,104 +1,63 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH 1/2] s5p-mfc: Update mfc-v6 firmware
-Date: Mon, 19 May 2014 12:18:30 +0100
-Message-ID: <1400498310.17377.34.camel@deadeye.wl.decadent.org.uk>
-References: <1400233490-5677-1-git-send-email-arun.kk@samsung.com>
-	 <04be01cf70ec$d5f37a10$81da6e30$%debski@samsung.com>
-	 <CALt3h7_A2TmyoXFBjr7Ncy8560oBT6EOD7nq9qdRtD34O56FdQ@mail.gmail.com>
-	 <04bf01cf70ee$f2184d40$d648e7c0$%debski@samsung.com>
-	 <5375E6DB.70303@samsung.com>
-	 <06bd01cf733d$bc903380$35b09a80$%debski@samsung.com>
-	 <CALt3h7_gxaUdmzao1pQw6xTTu+u2YR7_hdP1eb-wrLhum1Td_g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-NC3sgbH77c/7w6WvVu2h"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:58914 "EHLO
-	shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750957AbaESLSq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 May 2014 07:18:46 -0400
-In-Reply-To: <CALt3h7_gxaUdmzao1pQw6xTTu+u2YR7_hdP1eb-wrLhum1Td_g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vikas Sajjan <vikas.sajjan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH V3 0/4] dts: Add usb2phy to Exynos 5250/5420
+Date: Mon, 19 May 2014 16:49:12 +0530
+Message-ID: <1400498356-26803-1-git-send-email-vikas.sajjan@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vikas Sajjan <vikas.sajjan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: Kamil Debski <k.debski@samsung.com>, Tomasz Figa <t.figa@samsung.com>, dwmw2 <dwmw2@infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
+Based on 'for-next' branch of Kgene's linux-samsung tree.
+These patches are as per discussions on the driver side patches
+which have already been acked. [1]
 
---=-NC3sgbH77c/7w6WvVu2h
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Changes from v2:
+	- Addressed kukjin's comments to update DT binding documentation for sysreg.
+	- removed the version for each patch. Made all patches version as same.
 
-On Mon, 2014-05-19 at 15:12 +0530, Arun Kumar K wrote:
-> Hi Kamil, Tomasz,
->=20
-> On Mon, May 19, 2014 at 2:08 PM, Kamil Debski <k.debski@samsung.com> wrot=
-e:
-> > Hi Tomasz, Arun,
-> >
-> >> From: Tomasz Figa [mailto:t.figa@samsung.com]
-> >> Sent: Friday, May 16, 2014 12:22 PM
-[...]
-> >> May I suggest a little different solution?
-> >>
-> >> Since to not break compatibility, support for both firmware versions i=
-s
-> >> needed in the driver anyway, why not simply make the new, incompatible
-> >> firmware always use a different filename.
-> >>
-> >> Then let the driver try to load the new one first and if it fails then
-> >> load the old one? This would also let you get rid of that version chec=
-k
-> >> by hardcoded date, as you would know which firmware type was found.
-> >>
-> >
-> > Tomasz, I really like your idea. I find it both simple and elegant.
-> > This way there will be no need to rename the firmware file in the repo =
-or
-> > by the user, if the user wishes to use the new version.
-> >
-> > Arun, what is your opinion?
-> >
->=20
-> Yes this seems like a better approach to me too.
-> With this the new FW used in older kernel issue is also resolved as the n=
-ew
-> fw file will have a different name and is not accepted in old kernel.
+Changes from v1:
+ - Rebase on 'for-next' branch.
+ - Removed 'phy-names' property as per discuusion in the driver patches. [1]
 
-This is the right way to do it.  New firmware files must not break old
-drivers, as distributions and users will usually install everything from
-linux-firmware without checking things like that.
+V1 of this series was the next version for earlier patch-series:
+[PATCH v7 0/2] dts: Add usb2phy to Exynos 5250 [2]
 
-If the new driver can work with the old firmware, that's a bonus, but
-less important.
+Changes from v7 series:
+ - Added patches to enable usb 2.0 support on exynos5420;
+   which include dt nodes for usb2phy as well as ehci and ohci
+   controllers.
 
-Ben.
+Changes from v6:
+ - Splitted the patch into two:
+    adding syscon nodes to Exynos5250 and Exynos5420 in first;
+    and phy entry change in the second.
+ - Changed the name of phandle for usb2phy from 'usb2_phy_new'
+   to 'usb2_phy_gen' indicating generic phy.
+ - Using clock macros in dt entries.
 
---=20
-Ben Hutchings
-It is easier to change the specification to fit the program than vice versa=
-.
+[1] http://www.spinics.net/lists/linux-usb/msg106908.html
+    http://www.spinics.net/lists/linux-usb/msg106837.html
+[2] http://www.spinics.net/lists/linux-usb/msg106427.html
 
---=-NC3sgbH77c/7w6WvVu2h
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Kamil Debski (1):
+  ARM: dts: Add usb2phy to Exynos 5250
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Vivek Gautam (3):
+  ARM: dts: Add sysreg sytem controller node to exynos5250 and
+    exynos5420
+  ARM: dts: Add usb2phy support on exynos5420
+  ARM: dts: Add usb 2.0 support on exynos5420
 
-iQIVAwUAU3noi+e/yOyVhhEJAQoTpg//fXo9u3KX9NRQFHhj/abwbGJQV7yE+Mj+
-oRPEU0jbycUJ5VSwMCFZuGwqdSFaWDL3NWAZS+IEj3vJF95V2QdvSa8kao56R1dA
-HyQGLkflS7kZGlG0mcEKIOj8VGGfuEh5swg3oTY3TiMcoP/4oKvm7U42aV/QYyuf
-hcNwva42FbBZTuXkjdXlCKFP8jlvOFvNDb4yUtW0alQcCTdladC1H9ei0AAaCzYQ
-7MMw4hrd7aYAVSl83s60qag+5hs45fN9c5I1eht6/AMgKqd9vID8TApkJwtB0739
-8f0EN0z/HT1KrLV3Yi6+l4T+9g/7iAnaHAakCdPx2EyG8UExvBAyOBf8SfqzuEyj
-d/RMgDOYzJUJ7hSvtfb5vfPdMNgsIKq4iOVbfm3d+K5EAqDeHa8tgyI4n9yf+Bxf
-M+/3n0ChekJGWOqyCaSgtmRIDJMkhVWhbLEsmjbvST5JBvXe26/VCq3jDaGy8/4p
-sw/Decxuk/qhF5EPRf+SiOJMViPOoJW6p4OrpTX3SR1anYFsch47gQxcTkVapZ3E
-tlhgElzj9hLYiKF4QjvS1lgP7HJf2UsA85kvHqdARkl7SeJLafUarDQlbfjIRXBI
-uZN9AsfnY699zw0sGf5nBbKxZvO4bcP3ziTOqovz4ESTZGPKi0EmjMPxFm9rtIzy
-UJbn7oZBkgc=
-=BS9F
------END PGP SIGNATURE-----
+ .../devicetree/bindings/arm/samsung/sysreg.txt     |   11 ++++-
+ arch/arm/boot/dts/exynos5250.dtsi                  |   27 ++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |   45 ++++++++++++++++++++
+ 3 files changed, 81 insertions(+), 2 deletions(-)
 
---=-NC3sgbH77c/7w6WvVu2h--
+-- 
+1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
