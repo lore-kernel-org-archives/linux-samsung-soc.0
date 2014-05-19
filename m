@@ -1,108 +1,68 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH 1/2] s5p-mfc: Update mfc-v6 firmware
-Date: Mon, 19 May 2014 10:38:39 +0200
-Message-ID: <06bd01cf733d$bc903380$35b09a80$%debski@samsung.com>
-References: <1400233490-5677-1-git-send-email-arun.kk@samsung.com>
- <04be01cf70ec$d5f37a10$81da6e30$%debski@samsung.com>
- <CALt3h7_A2TmyoXFBjr7Ncy8560oBT6EOD7nq9qdRtD34O56FdQ@mail.gmail.com>
- <04bf01cf70ee$f2184d40$d648e7c0$%debski@samsung.com>
- <5375E6DB.70303@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 7/7] ARM: tegra: Add the EC i2c tunnel to tegra124-venice2
+Date: Mon, 19 May 2014 10:18:36 +0100
+Message-ID: <20140519091836.GD4978@lee--X1>
+References: <1397757570-19750-1-git-send-email-dianders@chromium.org>
+ <1397757570-19750-8-git-send-email-dianders@chromium.org>
+ <53750A9A.8000808@wwwdotorg.org>
+ <CAD=FV=Vj5M_yiYZOkjzB-QjYJa9WE2fcGcwwzAF1h8gcjc9jeA@mail.gmail.com>
+ <CAOesGMhe-STC3GUwAyC6qeEPWWmxdsWbXqdevy8b4MHDgM2v=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:17269 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753087AbaESIin (ORCPT
+Received: from mail-ig0-f178.google.com ([209.85.213.178]:60217 "EHLO
+	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751262AbaESJSn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 May 2014 04:38:43 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N5T00IVJC04P670@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 May 2014 09:38:28 +0100 (BST)
-In-reply-to: <5375E6DB.70303@samsung.com>
-Content-language: pl
+	Mon, 19 May 2014 05:18:43 -0400
+Received: by mail-ig0-f178.google.com with SMTP id hl10so3236965igb.17
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 May 2014 02:18:43 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CAOesGMhe-STC3GUwAyC6qeEPWWmxdsWbXqdevy8b4MHDgM2v=A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, 'Arun Kumar K' <arun.kk@samsung.com>
-Cc: 'dwmw2' <dwmw2@infradead.org>, 'ben' <ben@decadent.org.uk>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: Doug Anderson <dianders@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@nvidia.com>, Andrew Bresticker <abrestic@chromium.org>, Dylan Reid <dgreid@chromium.org>, Simon Glass <sjg@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Tomasz, Arun,
+On Thu, 15 May 2014, Olof Johansson wrote:
 
-> From: Tomasz Figa [mailto:t.figa@samsung.com]
-> Sent: Friday, May 16, 2014 12:22 PM
-> 
-> Hi Kamil, Arun,
-> 
-> On 16.05.2014 12:09, Kamil Debski wrote:
-> > Hi,
+> On Thu, May 15, 2014 at 11:55 AM, Doug Anderson <dianders@chromium.or=
+g> wrote:
+> > Stephen,
 > >
-> > ----Original Message-----
-> >> From: arunkk.samsung@gmail.com [mailto:arunkk.samsung@gmail.com] On
-> >> Behalf Of Arun Kumar K
-> >> Sent: Friday, May 16, 2014 12:00 PM
+> > On Thu, May 15, 2014 at 11:42 AM, Stephen Warren <swarren@wwwdotorg=
+=2Eorg> wrote:
+> >> On 04/17/2014 11:59 AM, Doug Anderson wrote:
+> >>> This adds the EC i2c tunnel (and devices under it) to the
+> >>> tegra124-venice2 device tree.
 > >>
-> >> Hi Kamil,
-> >>
-> >> On Fri, May 16, 2014 at 3:24 PM, Kamil Debski <k.debski@samsung.com>
-> >> wrote:
-> >>> Hi Arun,
-> >>>
-> >>> I asked you to put old and new v6 firmware in separate files.
-> >>
-> >> But wont that require a different filename other than s5p-mfc-v6.fw?
+> >> Did the MFD patches at the start of this series get applied yet? I=
+ was
+> >> hoping to apply this one patch to the Tegra tree for 3.16, and tha=
+t
+> >> needs to happen by tomorrow morning at the latest since -rc6 is lo=
+oming
+> >> fast. However, I'm holding off until the rest of the series is app=
+lied
+> >> to the MFD tree so I can be sure the DT binding is accepted first.=
+=2E.
 > >
-> > Yes.
-> >
-> >> But the driver still expects the same file name.
-> >> Can I put the new filename as s5p-mfc-v6-v2.fw and mention in the
-> >> README that the file has to be renamed to s5p-mfc-v6.fw to be used?
-> >
-> > I think this is the way to go, because the new driver (with the patch)
-> > will work with old firmware, while old driver (without the patch)
-> will
-> > not work with the new firmware.
-> >
-> >>
-> >>> You should also mention in the commit message that this new
-> firmware
-> >>> will not work with the s5p-mfc driver without the patch you
-> recently
-> >>> submitted to linux-media mailing list. Please also add a link to
-> the
-> >>> thread with the necessary patch.
-> >>
-> >> Ok will do that.
-> >>
-> >>>
-> >>> In addition to the above I think a readme/description file should
-> be
-> >>> added to the s5p-mfc folder. The issue of firmware for v6 should be
-> >>> explained, so that no one is surprised that something does not work.
-> >>>
-> 
-> May I suggest a little different solution?
-> 
-> Since to not break compatibility, support for both firmware versions is
-> needed in the driver anyway, why not simply make the new, incompatible
-> firmware always use a different filename.
-> 
-> Then let the driver try to load the new one first and if it fails then
-> load the old one? This would also let you get rid of that version check
-> by hardcoded date, as you would know which firmware type was found.
-> 
+> > As far as I know, they didn't.  Lee was waiting on Wolfram's ack to
+> > the i2c tunnel before landing them.  ...and I'm still eagerly await=
+ing
+> > Wolfram's next i2c tunnel review.
+>=20
+> The i2c portion can be revisited if needed, the MFD piece should be
+> possible to land sooner than that... Lee?
 
-Tomasz, I really like your idea. I find it both simple and elegant.
-This way there will be no need to rename the firmware file in the repo or
-by the user, if the user wishes to use the new version.
+The set 'will' make it in during this cycle.  The trouble is, once
+it's applied, the I2C portion will have to wait until the next cycle.
+By applying late, I'm giving this set every chance to go in as a
+whole.
 
-Arun, what is your opinion? 
-
-> Best regards,
-> Tomasz
-
-Best wishes,
--- 
-Kamil Debski
-Samsung R&D Institute Poland
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
