@@ -1,73 +1,91 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/4] clk: samsung: out: Add infrastructure to register
- CLKOUT
-Date: Mon, 19 May 2014 12:44:11 +0200
-Message-ID: <5379E07B.9040507@gmail.com>
-References: <1399640410-30957-1-git-send-email-tushar.behera@linaro.org>	<1399640410-30957-2-git-send-email-tushar.behera@linaro.org>	<536DA243.6000600@samsung.com>	<53705243.1030704@linaro.org>	<CAPdUM4N=k-pPxdhPQgVHh0fb+nqkgs7StwM2Pb6C8gcjx6dw-w@mail.gmail.com>	<5374CA1C.8000207@samsung.com> <CAHbNUh03TVxbXZcT3e6618zPdu_53_y6nVjwJE7cWa6zxLMpqA@mail.gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v3 6/7] i2c: ChromeOS EC tunnel driver
+Date: Mon, 19 May 2014 12:50:56 +0200
+Message-ID: <20140519105055.GA2612@katana>
+References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
+ <1398879850-9111-7-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHbNUh03TVxbXZcT3e6618zPdu_53_y6nVjwJE7cWa6zxLMpqA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, sunil joshi <joshi@samsung.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1398879850-9111-7-git-send-email-dianders@chromium.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: lee.jones@linaro.org, swarren@nvidia.com, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sameo@linux.intel.com, jdelvare@suse.de, shane.huang@amd.com, maxime.ripard@free-electrons.com, laurent.pinchart+renesas@ideasonboard.com, u.kleine-koenig@pengutronix.de, bjorn.andersson@sonymobile.com, kevin.strasser@linux.intel.com, linux@prisktech.co.nz, andrew@lunn.ch, andriy.shevchenko@linux.intel.com, schwidefsky@de.ibm.com, matt.porter@linaro.org, ch.naveen@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 19.05.2014 05:30, Tushar Behera wrote:
-> On 15 May 2014 19:37, Tomasz Figa <t.figa@samsung.com> wrote:
->> Hi Rahul, Tushar,
->>
->> On 15.05.2014 15:44, Rahul Sharma wrote:
->>> Hi Tushar,
->>>
->>> Basically you are adding a new clock-type for Clkout. IMO clkout
->>> is not a special hardware. Existing clock types can be reused to
->>> support clkout. I see 3 major problem here:
->>>
->>> 1) Clkout -> (Mux + Gate). You clubbed mux and gate together, and
->>> exposing as a single clock which is something like a composite clock.
->>> IMO this is not a recommended way in CCF.
->>>
->>> 2) New Clock Type: Since clkout is just a combination of a simple
->>> mux and gate which are already supported, it is a unnecessary
->>> duplication.
->>>
->>> 3) Clkout registered along with CMU: which is not correct. Clkout is in PMU
->>> (Separate physical IP) and should be registered as a independent Clock
->>> provider which provides 1 mux and 1 gate clock (As if now). It should also be
->>> well connected with main CMU.
->>>
->>> I understand the challenge in using regmap interface for a clock provider. But
->>> we need to identify a clean solution. IMHO a independent clock provider with
->>> iomap, is relatively cleaner approach till CCF is not ready with regmap based
->>> reg access for clock registers.
->>>
->>> Experts!! please comment.
->>
->> It's quite unfortunate that Tushar has duplicated the effort to create a
->> clkout driver, considering the fact that we did have such driver
->> internally at SRPOL and it was quite nice and simple.
->>
-> 
-> I had no idea that you had some solutions to this available to be posted :(
-> 
-> Now that the new series is posted, I will test that at my end and
-> update you later.
 
-Again, sorry for this duplicated effort.
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The biggest problem is that we (SRPOL and Linaro) don't have a way to
-share our upstream TODO lists and say "hey, we have this working, if you
-need it, we can upstream it \o/" or "we need it too, but don't have
-resources right now to work on it :(".
 
-Maybe we should set up some wiki or any other semi-public site for this
-purpose? I need to talk with other people from my team and my manager to
-see what we can do. Other guys (other Samsung teams, Chromium folks,
-hobbyists) could also benefit from it.
+> +I2C bus that tunnels through the ChromeOS EC (cros-ec)
+> +======================================================
+> +On some ChromeOS board designs we've got a connection to the EC (embedded
+> +controller) but no direct connection to some devices on the other side of
+> +the EC (like a battery and PMIC).  To get access to those devices we need
+> +to tunnel our i2c commands through the EC.
+> +
+> +The node for this device should be under a cros-ec node like google,cros-ec-spi
+> +or google,cros-ec-i2c.
+> +
+> +
+> +Required properties:
+> +- compatible: google,cros-ec-i2c-tunnel
+> +- google,remote-bus: The EC bus we'd like to talk to.
+> +
+> +Optional child nodes:
+> +- One node per I2C device connected to the tunnelled I2C bus.
+> +
+> +
+> +Example:
+> +	cros-ec@0 {
+> +		compatible = "google,cros-ec-spi";
 
-Anyway, thanks for your understanding and testing.
+Ooookay, now I get it. From the compatible name of this snipplet, I
+assumed this node describes only an SPI IP core inside the EC. This is
+why I complained about the location of the I2C busses, since placing it
+as subnodes of the EC based SPI didn't make sense to me, even though the
+connection of the tunnel was SPI. Now I understand that this is the core
+driver for the EC, talking to it via SPI. Since this driver is an SPI
+child node I would not have expected the "-spi" suffix. Sorry, for this
+confusion :/ Now, the bindings make much more sense to me.
 
-Best regards,
-Tomasz
+> +			google,remote-bus = <0>;
+
+I am still not too happy about this one, but it is good enough for now,
+I suppose.
+
+Code looks good, so
+
+Reviewed-by: Wolfram Sang <wsa@the-dreams.de>
+
+I don't mind how it gets upstream. I can take it, but you can also keep
+it in this series.
+
+
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTeeIPAAoJEBQN5MwUoCm2oW0P/j8JB1WuVh1unAN3oJOQVJlN
+1gd6qurO+IlAf77yBAVfJa1cMZGxo5+KGmHo6TQmqv1BgNygntU+TlUeO8acwFdj
+RDQ2j7qGx/ZwcN8GELw4fVpFNcNAJ/nQmOi4nPHYC8sUNjrHYVG4ybjC9ogJbM+Z
+Y+gyc1b/t7crdLhg92c63nZxy7n6R2Kez1ZPhXj1djeu30klh8LLqshZA04muL+t
+n7Kac/sISeKv0pkv70V0qX06WPCwwbgbticIkMf1Z3kOmfFUeCi83QQOjYJXDltB
+ohnebK/6rfF+vG6Lsrsorl5pKc/fQlv6dIKO2seRFUbmpQXJ4d2roFhozd1eh1Qw
+R0bc02a1aLjExluyjLX1/bYfgu+NsFk0Cx/O+EoTF/kocpDaznBR/DmJ6IeQBCDP
+MjsH3ppXSnJYx+iqvTtiIbL1g4BTriBtgDC/bKVecdi9WypbEqFYWIRvIGmHt7x5
+W4i1Dr2fv08EOO7BWeN9580+fFIi+Y8Z8+17fuEeSelkZvCVDsyXemCEoiea7nQl
+RKqsKYGTXJqhc/hgJ4rjqRknSc14Byta64uYFCRnbw9tDe+EppiNwzGP4eIz2jE0
+r8W4+1IQU1TSsW8lPTBSDghuzi3SZrfibw2wFpZSoieRW7x8jg1ByuDU2DLFegbr
+NYJrAKmVyWcucMSBGWhn
+=W4a9
+-----END PGP SIGNATURE-----
+
+--pf9I7BMVVzbSWLtt--
