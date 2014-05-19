@@ -1,202 +1,109 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
-Date: Mon, 19 May 2014 20:34:07 +0200
-Message-ID: <14622654.QO8kH1AoTT@wuerfel>
-References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com> <4391809.OTRCiJQXS4@wuerfel> <20140519125336.GA9466@ulmo>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [RFC V3 2/3] drm/bridge: add a dummy panel driver to support lvds bridges
+Date: Tue, 20 May 2014 00:37:38 +0530
+Message-ID: <CAEC9eQMPR1VbA6+ziDGaPSH_9VHtFS8-YkMKiTtaD90gDTLcKA@mail.gmail.com>
+References: <1399647182-20951-1-git-send-email-ajaykumar.rs@samsung.com>
+	<1399647182-20951-3-git-send-email-ajaykumar.rs@samsung.com>
+	<20140513080501.GH6754@ulmo>
+	<CAEC9eQN=AAOVFNqWp61zFsS1jtewyDb18oFP1VAuCjYhQWGRnA@mail.gmail.com>
+	<20140514145402.GC8612@ulmo>
+	<CAEC9eQOvObG5CKb-GcpuSBXccSnVrEjQsBThAOJ4q5YECc6d0A@mail.gmail.com>
+	<20140515081321.GF5952@ulmo>
+	<CAEC9eQM_KtHDRaYGCmeT3f61+Rwh5oG2xWDNTTMkQCht6kAydQ@mail.gmail.com>
+	<20140517211404.GC1046@mithrandir>
+	<CAEC9eQN5Z+dGqNBDq_pkMu0AzASkrA9xPpEjKRWRoVYAq2L1bA@mail.gmail.com>
+	<20140519153053.GB30978@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:54030 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751150AbaESSeS (ORCPT
+Received: from mail-vc0-f176.google.com ([209.85.220.176]:43994 "EHLO
+	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753539AbaESTHj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 May 2014 14:34:18 -0400
-In-Reply-To: <20140519125336.GA9466@ulmo>
+	Mon, 19 May 2014 15:07:39 -0400
+Received: by mail-vc0-f176.google.com with SMTP id lg15so10042913vcb.35
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 May 2014 12:07:38 -0700 (PDT)
+In-Reply-To: <20140519153053.GB30978@ulmo>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Cho KyongHo <pullip.cho@samsung.com>, Dave Martin <Dave.Martin@arm.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-On Monday 19 May 2014 14:53:37 Thierry Reding wrote:
-> On Mon, May 19, 2014 at 12:26:35PM +0200, Arnd Bergmann wrote:
-> > On Friday 16 May 2014 14:23:18 Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > > 
-> > > This commit introduces a generic device tree binding for IOMMU devices.
-> > > Only a very minimal subset is described here, but it is enough to cover
-> > > the requirements of both the Exynos System MMU and Tegra SMMU as
-> > > discussed here:
-> > > 
-> > >     https://lkml.org/lkml/2014/4/27/346
-> > > 
-> > > More advanced functionality such as the dma-ranges property can easily
-> > > be added in a backwards-compatible way. In the absence of a dma-ranges
-> > > property it should be safe to default to the whole address space.
-> > > 
-> > 
-> > The basic binding looks fine, but I'd like it to be more explicit
-> > about dma-ranges. Most importantly, what does "the whole address space"
-> > mean?
-> 
-> The whole point was to leave out any mention of dma-ranges from the
-> binding until we've figured out more of the puzzle.
-> 
-> So what I was trying to avoid was another lengthy discussion on the
-> topic of dma-ranges. Oh well... =)
+On 5/19/14, Thierry Reding <thierry.reding@gmail.com> wrote:
+> On Sun, May 18, 2014 at 01:50:36PM +0530, Ajay kumar wrote:
+>> On Sun, May 18, 2014 at 2:44 AM, Thierry Reding
+>> <thierry.reding@gmail.com> wrote:
+>> > On Thu, May 15, 2014 at 05:10:16PM +0530, Ajay kumar wrote:
+>> >> On Thu, May 15, 2014 at 1:43 PM, Thierry Reding
+>> >> <thierry.reding@gmail.com> wrote:
+>> > [...]
+>> >> > I still don't see how controlling the enable GPIO from the panel will
+>> >> > be
+>> >> > in any way better, or different for that matter, from simply
+>> >> > enabling
+>> >> > the backlight and let the backlight driver handle the enable GPIO.
+>> >> > Have
+>> >> > you tried to do that and found that it doesn't work?
+>> >> It works, but it gives me glitch when I try to configure video.
+>> >> This is because backlight_on(pwm-backlight) happens much before
+>> >> I configure video(inside drm), and while configuring video there would
+>> >> be a glitch,
+>> >> and that glitch would be visible to the user since backlight is already
+>> >> enabled.
+>> >
+>> > Okay, so this means that your backlight is turned on too early. Instead
+>> > of working around that problem by moving control of the backlight
+>> > enable
+>> > GPIO from the backlight driver into the panel driver, the correct way
+>> > to
+>> > fix it is to make sure the backlight stays off until video is ready.
+>> Ok. Please suggest an idea how to do the same!
+>
+> I did post a patch[0] a long time ago that added a way to fix this for
+> pwm-backlight at least.
+I have tried this. We have to wait till the userspace to switch the
+backlight on again :(
 
-I think that can't work, because we need a way to specify the
-ranges for some iommu drivers. We have to make sure we at least
-don't prevent it from working.
+>> I have already suggested a simple idea which conforms to a valid spec.
+>> Just because enable_gpio is already a part of pwm_bl.c, I somewhat feel
+>> like we are forcing people to handle enable_gpio inside pwm_bl.c.
+>
+> And that's a good thing. That's what people will expect. Backlights are
+> exposed via sysfs, which is currently also the only way to control the
+> backlight from userspace. If the driver for that doesn't have everything
+> required to control the backlight how can userspace control it?
+This is a valid point, only at the hardware level.
+But if you consider a user experience perspective,
+user still will not be able to see the backlight even
+though enable_gpio is controlled elsewhere, since
+pwm is disabled anyhow.
+Now lets talk about backlight_on case. Even though user tries to turn
+on the backlight, and the driver turns on backlight supply, pwm and
+enable_gpio, the driver cannot always guarantee him that backlight is
+"really on" since it also depends on panel power.
+Such ambiguities exist for few panels. And, for such panels why can't
+we keep enable_gpio in another driver, and let the pwm_bl control only
+backlight levels?
 
-> > A lot of IOMMUs have only 32-bit bus addresses when targetted
-> > by a bus master, it would also be normal for some to be smaller and
-> > some might even support 64-bit.
-> > 
-> > For the upstream side, I'd hope we always have access to the full
-> > physical memory, but since this is a brand-new binding, it should
-> > be straightforward to just ask for upstream dma-ranges properties
-> > to be set all the way up to the root to confirm that.
-> > 
-> > For downstream, we don't actually have a good place to put the
-> > dma-ranges property.
-> 
-> I'm not sure I understand what you mean by upstream and downstream in
-> this context.
+>> Note that, pwm_bl can still work properly without enabling the backlight
+>> GPIO.
+>> And, I did point out to a valid datasheet from AUO, which clearly
+>> indicates why
+>> backlight enable GPIO should be a part of panel driver and not pwm_bl
+>> driver.
+>
+> Just because some spec mentions the backlight enable pin in some panel
+> power up sequence diagram that doesn't mean we have to implement it as
+> part of the panel driver.
+That is not "some spec". I believe all the AUO panels share the same sequence!
 
-Upstream -> close to memory
-Downstream -> close to DMA master
-
-> > We can't put it into the iommu node, because  that would imply translating
-> > to the iommu's parent bus, not the iommu's own bus space.
-> 
-> My understanding was that the purpose of dma-ranges was to define a
-> mapping from one bus to another. So the general form of
-> 
-> 	child-address  parent-address  child-size
-> 
-> Would be used to translate a region of size <child-size> from the
-> <child-address> (the I/O address space created by the IOMMU) to the
-> <parent-address> (physical address space).
-
-That's how it's defined for normal buses, we haven't defined it for
-IOMMUs yet.
-
-> > We also can't put it into the master, because dma-ranges is supposed to be
-> > in the parent bus.
-> 
-> I don't understand. From the above I would think that the master's node
-> is precisely where it belongs.
-
-The way that I read the binding, the way that dma-ranges belongs into the parent
-of the master, according. On normal buses (e.g. classic PCI), all DMA masters
-see the same address space. The bus defines how a transaction started on one
-of its children gets translated to the address space of its parent. This
-is similar to 'ranges', which defines how an MMIO address initiated on the
-parent of a bus gets translated to an address understood by its children.
-
-My interpretation at least matches the defintion of of_dma_get_range(),
-but then again Santosh added that according to my comments.
-
-> > Finally, it makes no sense to use the dma-ranges property of the master's
-> > parent bus, because that bus isn't actually involved in the translation.
-> 
-> My understanding here is mostly based on the OpenFirmware working group
-> proposal for the dma-ranges property[0]. I'll give another example to
-> try and clarify how I had imagined this to work:
-> 
-> 	/ {
-> 		#address-cells = <2>;
-> 		#size-cells = <2>;
-> 
-> 		iommu {
-> 			/*
-> 			 * This is somewhat unusual (or maybe not) in that we
-> 			 * need 2 cells to represent the size of an address
-> 			 * space that is 32 bits long.
-> 			 */
-> 			#address-cells = <1>;
-> 			#size-cells = <2>;
-
-You should never need #size-cells > #address-cells
-
-> 			#iommu-cells = <1>;
-> 		};
-> 
-> 		master {
-> 			iommus = <&/iommu 42>;
-> 			/*
-> 			 * Map I/O addresses 0 - 4 GiB to physical addresses
-> 			 * 2 GiB - 6 GiB.
-> 			 */
-> 			dma-ranges = <0x00000000 0 0x80000000 1 0>;
-> 		};
-> 	};
-> 
-> This is somewhat incompatible with [0] in that #address-cells used to
-> parse the child address must be taken from the iommu node rather than
-> the child node. But that seems to me to be the only reasonable thing
-> to do, because after all the IOMMU creates a completely new address
-> space for the master.
-> 
-> [0]: http://www.openfirmware.org/ofwg/proposals/Closed/Accepted/410-it.txt
-
-I don't think you can have a dma-ranges without a #address-cells and
-#size-cells property in the same node. In your example, I'd also expect
-a child node below 'master' that then interprets the address space
-made up by dma-ranges.
-
-As a comment on the numbers in your example, I don't expect to ever
-see a 4GB IOMMU address space that doesn't start at an offset. Instead
-I'd expect either addresses that encode a device ID, or those that
-are just a subset of the parent address space, with non-overlapping
-bus addresses for each master.
-
-> > My preferred option would be to always put the address range into
-> > the iommu descriptor, using the iommu's #address-cells.
-> 
-> That could become impossible to parse. I'm not sure if such hardware
-> actually exists, but if for some reason we have to split the address
-> range into two, then there's no longer any way to determine the size
-> needed for the specifier.
-> 
-> On the other hand what you propose makes it easy to represent multiple
-> master interfaces on a device. With a separate dma-ranges property how
-> can you define which ranges apply to which of the master interfaces?
-
-Well, you could have multiple links to the same IOMMU if you want to 
-do that, and define that there must be at least one dma-ranges entry
-for each IOMMU entry (although not necessarily the other way round,
-you could have direct ranges in addition to translated ones.
-
-> Then again if address ranges can't be broken up in the first place, then
-> dma-ranges could be considered to be one entry per IOMMU in the iommus
-> property.
-
-Let me do another example, with the address merged into the iommu
-references:
-
-/ {
-	#address-cells = <2>; // 64-bit address
-	#size-cells = <2>;
-
-	iommu@a {
-		#address-cells = <2>; // 1 cell ID, 1 cell address
-		#size-cells = <1>;
-
-		// no need for #iommu-cells
-	};
-
-
-	master@b {
-		iommus = <&/iommu@a // iommu
-			0x23  	     // ID
-			0x40000000   // window start
-			0x10000000>; //window size
-	};
-};
-
-A disadvantage of this model would be that for all ARM SMMU users, we'd
-have to always list a 4GB address space, which is kind of redundant.
-
-	Arnd
+>> I am not trying to say we should remove enable_gpio from pwm_bl.
+>> Provided that its already an optional property, and if someone wants
+>> to control it in a panel driver, what is wrong in doing so?
+>
+> See above.
+>
+> Thierry
+>
+> [0]: https://lkml.org/lkml/2013/10/7/188
+>
