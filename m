@@ -1,257 +1,168 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH 2/2] [media] s5p-mfc: Core support for v8 encoder
-Date: Mon, 19 May 2014 18:20:02 +0530
-Message-ID: <1400503802-5543-3-git-send-email-arun.kk@samsung.com>
-References: <1400503802-5543-1-git-send-email-arun.kk@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
+Date: Mon, 19 May 2014 14:53:37 +0200
+Message-ID: <20140519125336.GA9466@ulmo>
+References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
+ <4391809.OTRCiJQXS4@wuerfel>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:32920 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754461AbaESMuO (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:64723 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754380AbaESMzw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 May 2014 08:50:14 -0400
-In-Reply-To: <1400503802-5543-1-git-send-email-arun.kk@samsung.com>
+	Mon, 19 May 2014 08:55:52 -0400
+Content-Disposition: inline
+In-Reply-To: <4391809.OTRCiJQXS4@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, posciak@chromium.org, avnd.kiran@samsung.com, arunkk.samsung@gmail.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Cho KyongHo <pullip.cho@samsung.com>, Dave Martin <Dave.Martin@arm.com>
 
-From: Kiran AVND <avnd.kiran@samsung.com>
 
-This patch adds core support for v8 encoder. This
-patch also adds register definitions and buffer size
-requirements for H264 & VP8 encoding, needed for new
-firmware version v8 for MFC
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Kiran AVND <avnd.kiran@samsung.com>
-Signed-off-by: Pawel Osciak <posciak@chromium.org>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
- drivers/media/platform/s5p-mfc/regs-mfc-v8.h    |   30 ++++++++++++
- drivers/media/platform/s5p-mfc/s5p_mfc.c        |    2 +
- drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    |   12 ++---
- drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |   56 +++++++++++++++++++----
- 4 files changed, 85 insertions(+), 15 deletions(-)
+On Mon, May 19, 2014 at 12:26:35PM +0200, Arnd Bergmann wrote:
+> On Friday 16 May 2014 14:23:18 Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > This commit introduces a generic device tree binding for IOMMU devices.
+> > Only a very minimal subset is described here, but it is enough to cover
+> > the requirements of both the Exynos System MMU and Tegra SMMU as
+> > discussed here:
+> >=20
+> >     https://lkml.org/lkml/2014/4/27/346
+> >=20
+> > More advanced functionality such as the dma-ranges property can easily
+> > be added in a backwards-compatible way. In the absence of a dma-ranges
+> > property it should be safe to default to the whole address space.
+> >=20
+>=20
+> The basic binding looks fine, but I'd like it to be more explicit
+> about dma-ranges. Most importantly, what does "the whole address space"
+> mean?
 
-diff --git a/drivers/media/platform/s5p-mfc/regs-mfc-v8.h b/drivers/media/platform/s5p-mfc/regs-mfc-v8.h
-index c84d120..cc7cbec 100644
---- a/drivers/media/platform/s5p-mfc/regs-mfc-v8.h
-+++ b/drivers/media/platform/s5p-mfc/regs-mfc-v8.h
-@@ -72,16 +72,46 @@
- /* SEI related information */
- #define S5P_FIMV_D_FRAME_PACK_SEI_AVAIL_V8	0xf6dc
- 
-+/* Encoder Registers */
-+#define S5P_FIMV_E_FIXED_PICTURE_QP_V8		0xf794
-+#define S5P_FIMV_E_RC_CONFIG_V8			0xf798
-+#define S5P_FIMV_E_RC_QP_BOUND_V8		0xf79c
-+#define S5P_FIMV_E_RC_RPARAM_V8			0xf7a4
-+#define S5P_FIMV_E_MB_RC_CONFIG_V8		0xf7a8
-+#define S5P_FIMV_E_PADDING_CTRL_V8		0xf7ac
-+#define S5P_FIMV_E_MV_HOR_RANGE_V8		0xf7b4
-+#define S5P_FIMV_E_MV_VER_RANGE_V8		0xf7b8
-+
-+#define S5P_FIMV_E_VBV_BUFFER_SIZE_V8		0xf78c
-+#define S5P_FIMV_E_VBV_INIT_DELAY_V8		0xf790
-+
-+#define S5P_FIMV_E_ASPECT_RATIO_V8		0xfb4c
-+#define S5P_FIMV_E_EXTENDED_SAR_V8		0xfb50
-+#define S5P_FIMV_E_H264_OPTIONS_V8		0xfb54
-+
- /* MFCv8 Context buffer sizes */
- #define MFC_CTX_BUF_SIZE_V8		(30 * SZ_1K)	/*  30KB */
- #define MFC_H264_DEC_CTX_BUF_SIZE_V8	(2 * SZ_1M)	/*  2MB */
- #define MFC_OTHER_DEC_CTX_BUF_SIZE_V8	(20 * SZ_1K)	/*  20KB */
-+#define MFC_H264_ENC_CTX_BUF_SIZE_V8	(100 * SZ_1K)	/* 100KB */
-+#define MFC_OTHER_ENC_CTX_BUF_SIZE_V8	(10 * SZ_1K)	/*  10KB */
- 
- /* Buffer size defines */
-+#define S5P_FIMV_TMV_BUFFER_SIZE_V8(w, h)	(((w) + 1) * ((h) + 1) * 8)
-+
- #define S5P_FIMV_SCRATCH_BUF_SIZE_H264_DEC_V8(w, h)	(((w) * 704) + 2176)
- #define S5P_FIMV_SCRATCH_BUF_SIZE_VP8_DEC_V8(w, h) \
- 		(((w) * 576 + (h) * 128)  + 4128)
- 
-+#define S5P_FIMV_SCRATCH_BUF_SIZE_H264_ENC_V8(w, h) \
-+			(((w) * 592) + 2336)
-+#define S5P_FIMV_SCRATCH_BUF_SIZE_VP8_ENC_V8(w, h) \
-+			(((w) * 576) + 10512 + \
-+			((((((w) * 16) * ((h) * 16)) * 3) / 2) * 4))
-+#define S5P_FIMV_ME_BUFFER_SIZE_V8(imw, imh, mbw, mbh) \
-+	((DIV_ROUND_UP((mbw * 16), 64) *  DIV_ROUND_UP((mbh * 16), 64) * 256) \
-+	 + (DIV_ROUND_UP((mbw) * (mbh), 32) * 16))
-+
- /* BUffer alignment defines */
- #define S5P_FIMV_D_ALIGN_PLANE_SIZE_V8	64
- 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 6c466a3..9ed0985 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -1404,6 +1404,8 @@ struct s5p_mfc_buf_size_v6 mfc_buf_size_v8 = {
- 	.dev_ctx	= MFC_CTX_BUF_SIZE_V8,
- 	.h264_dec_ctx	= MFC_H264_DEC_CTX_BUF_SIZE_V8,
- 	.other_dec_ctx	= MFC_OTHER_DEC_CTX_BUF_SIZE_V8,
-+	.h264_enc_ctx	= MFC_H264_ENC_CTX_BUF_SIZE_V8,
-+	.other_enc_ctx	= MFC_OTHER_ENC_CTX_BUF_SIZE_V8,
- };
- 
- struct s5p_mfc_buf_size buf_size_v8 = {
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-index ad759b9..56d1edd 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-@@ -58,7 +58,7 @@ static struct s5p_mfc_fmt formats[] = {
- 		.codec_mode	= S5P_MFC_CODEC_NONE,
- 		.type		= MFC_FMT_RAW,
- 		.num_planes	= 2,
--		.versions	= MFC_V5 | MFC_V6 | MFC_V7,
-+		.versions	= MFC_V5 | MFC_V6 | MFC_V7 | MFC_V8,
- 	},
- 	{
- 		.name		= "4:2:0 2 Planes Y/CrCb",
-@@ -66,7 +66,7 @@ static struct s5p_mfc_fmt formats[] = {
- 		.codec_mode	= S5P_MFC_CODEC_NONE,
- 		.type		= MFC_FMT_RAW,
- 		.num_planes	= 2,
--		.versions	= MFC_V5 | MFC_V6 | MFC_V7,
-+		.versions	= MFC_V5 | MFC_V6 | MFC_V7 | MFC_V8,
- 	},
- 	{
- 		.name		= "H264 Encoded Stream",
-@@ -74,7 +74,7 @@ static struct s5p_mfc_fmt formats[] = {
- 		.codec_mode	= S5P_MFC_CODEC_H264_ENC,
- 		.type		= MFC_FMT_ENC,
- 		.num_planes	= 1,
--		.versions	= MFC_V5 | MFC_V6 | MFC_V7,
-+		.versions	= MFC_V5 | MFC_V6 | MFC_V7 | MFC_V8,
- 	},
- 	{
- 		.name		= "MPEG4 Encoded Stream",
-@@ -82,7 +82,7 @@ static struct s5p_mfc_fmt formats[] = {
- 		.codec_mode	= S5P_MFC_CODEC_MPEG4_ENC,
- 		.type		= MFC_FMT_ENC,
- 		.num_planes	= 1,
--		.versions	= MFC_V5 | MFC_V6 | MFC_V7,
-+		.versions	= MFC_V5 | MFC_V6 | MFC_V7 | MFC_V8,
- 	},
- 	{
- 		.name		= "H263 Encoded Stream",
-@@ -90,7 +90,7 @@ static struct s5p_mfc_fmt formats[] = {
- 		.codec_mode	= S5P_MFC_CODEC_H263_ENC,
- 		.type		= MFC_FMT_ENC,
- 		.num_planes	= 1,
--		.versions	= MFC_V5 | MFC_V6 | MFC_V7,
-+		.versions	= MFC_V5 | MFC_V6 | MFC_V7 | MFC_V8,
- 	},
- 	{
- 		.name		= "VP8 Encoded Stream",
-@@ -98,7 +98,7 @@ static struct s5p_mfc_fmt formats[] = {
- 		.codec_mode	= S5P_MFC_CODEC_VP8_ENC,
- 		.type		= MFC_FMT_ENC,
- 		.num_planes	= 1,
--		.versions	= MFC_V7,
-+		.versions	= MFC_V7 | MFC_V8,
- 	},
- };
- 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-index f365f7d..4f5e0ea 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-@@ -77,7 +77,12 @@ static int s5p_mfc_alloc_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
- 			  ctx->luma_size, ctx->chroma_size, ctx->mv_size);
- 		mfc_debug(2, "Totals bufs: %d\n", ctx->total_dpb_count);
- 	} else if (ctx->type == MFCINST_ENCODER) {
--		ctx->tmv_buffer_size = S5P_FIMV_NUM_TMV_BUFFERS_V6 *
-+		if (IS_MFCV8(dev))
-+			ctx->tmv_buffer_size = S5P_FIMV_NUM_TMV_BUFFERS_V6 *
-+			ALIGN(S5P_FIMV_TMV_BUFFER_SIZE_V8(mb_width, mb_height),
-+			S5P_FIMV_TMV_BUFFER_ALIGN_V6);
-+		else
-+			ctx->tmv_buffer_size = S5P_FIMV_NUM_TMV_BUFFERS_V6 *
- 			ALIGN(S5P_FIMV_TMV_BUFFER_SIZE_V6(mb_width, mb_height),
- 			S5P_FIMV_TMV_BUFFER_ALIGN_V6);
- 
-@@ -87,10 +92,16 @@ static int s5p_mfc_alloc_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
- 		ctx->chroma_dpb_size = ALIGN((mb_width * mb_height) *
- 				S5P_FIMV_CHROMA_MB_TO_PIXEL_V6,
- 				S5P_FIMV_CHROMA_DPB_BUFFER_ALIGN_V6);
--		ctx->me_buffer_size = ALIGN(S5P_FIMV_ME_BUFFER_SIZE_V6(
--					ctx->img_width, ctx->img_height,
--					mb_width, mb_height),
--					S5P_FIMV_ME_BUFFER_ALIGN_V6);
-+		if (IS_MFCV8(dev))
-+			ctx->me_buffer_size = ALIGN(S5P_FIMV_ME_BUFFER_SIZE_V8(
-+						ctx->img_width, ctx->img_height,
-+						mb_width, mb_height),
-+						S5P_FIMV_ME_BUFFER_ALIGN_V6);
-+		else
-+			ctx->me_buffer_size = ALIGN(S5P_FIMV_ME_BUFFER_SIZE_V6(
-+						ctx->img_width, ctx->img_height,
-+						mb_width, mb_height),
-+						S5P_FIMV_ME_BUFFER_ALIGN_V6);
- 
- 		mfc_debug(2, "recon luma size: %d chroma size: %d\n",
- 			  ctx->luma_dpb_size, ctx->chroma_dpb_size);
-@@ -174,10 +185,16 @@ static int s5p_mfc_alloc_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
- 		ctx->bank1.size = ctx->scratch_buf_size;
- 		break;
- 	case S5P_MFC_CODEC_H264_ENC:
--		ctx->scratch_buf_size =
--			S5P_FIMV_SCRATCH_BUF_SIZE_H264_ENC_V6(
-+		if (IS_MFCV8(dev))
-+			ctx->scratch_buf_size =
-+				S5P_FIMV_SCRATCH_BUF_SIZE_H264_ENC_V8(
- 					mb_width,
- 					mb_height);
-+		else
-+			ctx->scratch_buf_size =
-+				S5P_FIMV_SCRATCH_BUF_SIZE_H264_ENC_V6(
-+						mb_width,
-+						mb_height);
- 		ctx->scratch_buf_size = ALIGN(ctx->scratch_buf_size,
- 				S5P_FIMV_SCRATCH_BUFFER_ALIGN_V6);
- 		ctx->bank1.size =
-@@ -201,10 +218,16 @@ static int s5p_mfc_alloc_codec_buffers_v6(struct s5p_mfc_ctx *ctx)
- 		ctx->bank2.size = 0;
- 		break;
- 	case S5P_MFC_CODEC_VP8_ENC:
--		ctx->scratch_buf_size =
--			S5P_FIMV_SCRATCH_BUF_SIZE_VP8_ENC_V7(
-+		if (IS_MFCV8(dev))
-+			ctx->scratch_buf_size =
-+				S5P_FIMV_SCRATCH_BUF_SIZE_VP8_ENC_V8(
- 					mb_width,
- 					mb_height);
-+		else
-+			ctx->scratch_buf_size =
-+				S5P_FIMV_SCRATCH_BUF_SIZE_VP8_ENC_V7(
-+						mb_width,
-+						mb_height);
- 		ctx->scratch_buf_size = ALIGN(ctx->scratch_buf_size,
- 				S5P_FIMV_SCRATCH_BUFFER_ALIGN_V6);
- 		ctx->bank1.size =
-@@ -2235,6 +2258,21 @@ const struct s5p_mfc_regs *s5p_mfc_init_regs_v6_plus(struct s5p_mfc_dev *dev)
- 	R(d_display_crop_info1, S5P_FIMV_D_DISPLAY_CROP_INFO1_V8);
- 	R(d_display_crop_info2, S5P_FIMV_D_DISPLAY_CROP_INFO2_V8);
- 
-+	/* encoder registers */
-+	R(e_padding_ctrl, S5P_FIMV_E_PADDING_CTRL_V8);
-+	R(e_rc_config, S5P_FIMV_E_RC_CONFIG_V8);
-+	R(e_rc_mode, S5P_FIMV_E_RC_RPARAM_V8);
-+	R(e_mv_hor_range, S5P_FIMV_E_MV_HOR_RANGE_V8);
-+	R(e_mv_ver_range, S5P_FIMV_E_MV_VER_RANGE_V8);
-+	R(e_rc_qp_bound, S5P_FIMV_E_RC_QP_BOUND_V8);
-+	R(e_fixed_picture_qp, S5P_FIMV_E_FIXED_PICTURE_QP_V8);
-+	R(e_vbv_buffer_size, S5P_FIMV_E_VBV_BUFFER_SIZE_V8);
-+	R(e_vbv_init_delay, S5P_FIMV_E_VBV_INIT_DELAY_V8);
-+	R(e_mb_rc_config, S5P_FIMV_E_MB_RC_CONFIG_V8);
-+	R(e_aspect_ratio, S5P_FIMV_E_ASPECT_RATIO_V8);
-+	R(e_extended_sar, S5P_FIMV_E_EXTENDED_SAR_V8);
-+	R(e_h264_options, S5P_FIMV_E_H264_OPTIONS_V8);
-+
- done:
- 	return &mfc_regs;
- #undef S5P_MFC_REG_ADDR
--- 
-1.7.9.5
+The whole point was to leave out any mention of dma-ranges from the
+binding until we've figured out more of the puzzle.
+
+So what I was trying to avoid was another lengthy discussion on the
+topic of dma-ranges. Oh well... =3D)
+
+> A lot of IOMMUs have only 32-bit bus addresses when targetted
+> by a bus master, it would also be normal for some to be smaller and
+> some might even support 64-bit.
+>=20
+> For the upstream side, I'd hope we always have access to the full
+> physical memory, but since this is a brand-new binding, it should
+> be straightforward to just ask for upstream dma-ranges properties
+> to be set all the way up to the root to confirm that.
+>=20
+> For downstream, we don't actually have a good place to put the
+> dma-ranges property.
+
+I'm not sure I understand what you mean by upstream and downstream in
+this context.
+
+> We can't put it into the iommu node, because  that would imply translating
+> to the iommu's parent bus, not the iommu's own bus space.
+
+My understanding was that the purpose of dma-ranges was to define a
+mapping from one bus to another. So the general form of
+
+	child-address  parent-address  child-size
+
+Would be used to translate a region of size <child-size> from the
+<child-address> (the I/O address space created by the IOMMU) to the
+<parent-address> (physical address space).
+
+> We also can't put it into the master, because dma-ranges is supposed to be
+> in the parent bus.
+
+I don't understand. From the above I would think that the master's node
+is precisely where it belongs.
+
+> Finally, it makes no sense to use the dma-ranges property of the master's
+> parent bus, because that bus isn't actually involved in the translation.
+
+My understanding here is mostly based on the OpenFirmware working group
+proposal for the dma-ranges property[0]. I'll give another example to
+try and clarify how I had imagined this to work:
+
+	/ {
+		#address-cells =3D <2>;
+		#size-cells =3D <2>;
+
+		iommu {
+			/*
+			 * This is somewhat unusual (or maybe not) in that we
+			 * need 2 cells to represent the size of an address
+			 * space that is 32 bits long.
+			 */
+			#address-cells =3D <1>;
+			#size-cells =3D <2>;
+
+			#iommu-cells =3D <1>;
+		};
+
+		master {
+			iommus =3D <&/iommu 42>;
+			/*
+			 * Map I/O addresses 0 - 4 GiB to physical addresses
+			 * 2 GiB - 6 GiB.
+			 */
+			dma-ranges =3D <0x00000000 0 0x80000000 1 0>;
+		};
+	};
+
+This is somewhat incompatible with [0] in that #address-cells used to
+parse the child address must be taken from the iommu node rather than
+the child node. But that seems to me to be the only reasonable thing
+to do, because after all the IOMMU creates a completely new address
+space for the master.
+
+[0]: http://www.openfirmware.org/ofwg/proposals/Closed/Accepted/410-it.txt
+
+> My preferred option would be to always put the address range into
+> the iommu descriptor, using the iommu's #address-cells.
+
+That could become impossible to parse. I'm not sure if such hardware
+actually exists, but if for some reason we have to split the address
+range into two, then there's no longer any way to determine the size
+needed for the specifier.
+
+On the other hand what you propose makes it easy to represent multiple
+master interfaces on a device. With a separate dma-ranges property how
+can you define which ranges apply to which of the master interfaces?
+
+Then again if address ranges can't be broken up in the first place, then
+dma-ranges could be considered to be one entry per IOMMU in the iommus
+property.
+
+Thierry
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTef7QAAoJEN0jrNd/PrOhEhcP/RnunYI1MsoTF5WgGp40ph4R
+LRO8Izry3NaFy/0XHjDeeZw/nuQ8KOQMRX3E8QartFceZokiYXEJuJ/k3xhgA+jI
+tpPWunoUkcOKkWJwLFDIh6zuF5T4V+2TxaK4xOv8sxDbnhO984+OcZWpYgrNn4Ho
+E8xB0TBVfBomWb5VOvWliPV1s6/KYFKMEGbfRm8HiCg2myAAwgGZcKZ3uE7VgjDY
+w3ZMJ7c+XtqyljWAWSFJh6BpH9Xelt6GwP/Qpdw6du/lvn+qfS08WydhbJvWzYpF
+gv/RKBzWBPbSrdDOAakX/1xYAtuuM7sxobWvCFUhWBmbRyCLeQLPzb8PEGRyB3x/
+1uS0d3ol64yXao94gQycRy3dx1YDQFF6wIrFMnZT9MT0iop8HHrc6f49VCpvEJsz
+rwlf4nZAc+C+Duyj1n8Niqbcj122Pa0698aHqJTJK62UNQW5iCFBpluzp9/MerNQ
+7QaU7G6nGo8mJIlVDPVrQ16XtA4OiJTtvtpqVDwz/7DIb5sewXwbXXq+GGWzD/Mh
+5lTq3bfIeMpvEKnKXp+WJvagAXjvtBix+PuBHivP9hFD0F4cxYooViZk9DksoMPy
+Nlrh+Ob0dc8Ya57WVMIhlWHVakB/1fVKRXzoEfZ4nHY62pTAEdFeDfGcQ1jypsMB
++clp4pRKrtHCLLamnU1v
+=Aulo
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
