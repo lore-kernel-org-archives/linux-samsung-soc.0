@@ -1,91 +1,44 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v3 6/7] i2c: ChromeOS EC tunnel driver
-Date: Mon, 19 May 2014 12:50:56 +0200
-Message-ID: <20140519105055.GA2612@katana>
-References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
- <1398879850-9111-7-git-send-email-dianders@chromium.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v9 0/3] Exynos 5410 support
+Date: Mon, 19 May 2014 12:51:36 +0200
+Message-ID: <5379E238.1080803@gmail.com>
+References: <1400470640-30611-1-git-send-email-t.dakhran@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1398879850-9111-7-git-send-email-dianders@chromium.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: lee.jones@linaro.org, swarren@nvidia.com, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sameo@linux.intel.com, jdelvare@suse.de, shane.huang@amd.com, maxime.ripard@free-electrons.com, laurent.pinchart+renesas@ideasonboard.com, u.kleine-koenig@pengutronix.de, bjorn.andersson@sonymobile.com, kevin.strasser@linux.intel.com, linux@prisktech.co.nz, andrew@lunn.ch, andriy.shevchenko@linux.intel.com, schwidefsky@de.ibm.com, matt.porter@linaro.org, ch.naveen@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1400470640-30611-1-git-send-email-t.dakhran@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tarek Dakhran <t.dakhran@samsung.com>, linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Romain Naour <romain.naour@openwide.fr>, Chander Kashyap <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Tarek,
 
---pf9I7BMVVzbSWLtt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 19.05.2014 05:37, Tarek Dakhran wrote:
+> The series of patches represent support of Exynos 5410 SoC
+> 
+> The Exynos 5410 is the first Samsung SoC based on big.LITTLE architecture
+> 
+> Patches add new platform description, support of clock controller and device
+> tree for Exynos 5410.
+> 
+> Has been build on Samsung Linux Kernel
+>   (branch: for-next, commit: ccf5511 ARM: EXYNOS: Add MCPM call-back functions)
 
+This doesn't look like an up-to-date tip of that branch. There was a lot
+of changes merged 2 days ago, especially from samsung-clk tree and your
+patches won't apply and/or compile (at least patch 2/3). Are you sure
+you didn't have a git fetch error?
 
-> +I2C bus that tunnels through the ChromeOS EC (cros-ec)
-> +======================================================
-> +On some ChromeOS board designs we've got a connection to the EC (embedded
-> +controller) but no direct connection to some devices on the other side of
-> +the EC (like a battery and PMIC).  To get access to those devices we need
-> +to tunnel our i2c commands through the EC.
-> +
-> +The node for this device should be under a cros-ec node like google,cros-ec-spi
-> +or google,cros-ec-i2c.
-> +
-> +
-> +Required properties:
-> +- compatible: google,cros-ec-i2c-tunnel
-> +- google,remote-bus: The EC bus we'd like to talk to.
-> +
-> +Optional child nodes:
-> +- One node per I2C device connected to the tunnelled I2C bus.
-> +
-> +
-> +Example:
-> +	cros-ec@0 {
-> +		compatible = "google,cros-ec-spi";
+Moreover I can still see the dts using full-path syntax, instead of
+reference-based one and also no soc node, as I pointed in v8. [1]
 
-Ooookay, now I get it. From the compatible name of this snipplet, I
-assumed this node describes only an SPI IP core inside the EC. This is
-why I complained about the location of the I2C busses, since placing it
-as subnodes of the EC based SPI didn't make sense to me, even though the
-connection of the tunnel was SPI. Now I understand that this is the core
-driver for the EC, talking to it via SPI. Since this driver is an SPI
-child node I would not have expected the "-spi" suffix. Sorry, for this
-confusion :/ Now, the bindings make much more sense to me.
+[1] https://lkml.org/lkml/2014/4/26/59
 
-> +			google,remote-bus = <0>;
+Another thing is that I still see a custom fixed clock binding being
+used for oscclk in the clock driver, while I believe I pointed in some
+of the previous versions that generic fixed clock should be used.
 
-I am still not too happy about this one, but it is good enough for now,
-I suppose.
-
-Code looks good, so
-
-Reviewed-by: Wolfram Sang <wsa@the-dreams.de>
-
-I don't mind how it gets upstream. I can take it, but you can also keep
-it in this series.
-
-
---pf9I7BMVVzbSWLtt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTeeIPAAoJEBQN5MwUoCm2oW0P/j8JB1WuVh1unAN3oJOQVJlN
-1gd6qurO+IlAf77yBAVfJa1cMZGxo5+KGmHo6TQmqv1BgNygntU+TlUeO8acwFdj
-RDQ2j7qGx/ZwcN8GELw4fVpFNcNAJ/nQmOi4nPHYC8sUNjrHYVG4ybjC9ogJbM+Z
-Y+gyc1b/t7crdLhg92c63nZxy7n6R2Kez1ZPhXj1djeu30klh8LLqshZA04muL+t
-n7Kac/sISeKv0pkv70V0qX06WPCwwbgbticIkMf1Z3kOmfFUeCi83QQOjYJXDltB
-ohnebK/6rfF+vG6Lsrsorl5pKc/fQlv6dIKO2seRFUbmpQXJ4d2roFhozd1eh1Qw
-R0bc02a1aLjExluyjLX1/bYfgu+NsFk0Cx/O+EoTF/kocpDaznBR/DmJ6IeQBCDP
-MjsH3ppXSnJYx+iqvTtiIbL1g4BTriBtgDC/bKVecdi9WypbEqFYWIRvIGmHt7x5
-W4i1Dr2fv08EOO7BWeN9580+fFIi+Y8Z8+17fuEeSelkZvCVDsyXemCEoiea7nQl
-RKqsKYGTXJqhc/hgJ4rjqRknSc14Byta64uYFCRnbw9tDe+EppiNwzGP4eIz2jE0
-r8W4+1IQU1TSsW8lPTBSDghuzi3SZrfibw2wFpZSoieRW7x8jg1ByuDU2DLFegbr
-NYJrAKmVyWcucMSBGWhn
-=W4a9
------END PGP SIGNATURE-----
-
---pf9I7BMVVzbSWLtt--
+Best regards,
+Tomasz
