@@ -1,55 +1,57 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH RFC 3/4] clk: samsung: Add driver to control CLKOUT line
- on Exynos SoCs
-Date: Mon, 19 May 2014 12:25:02 +0200
-Message-ID: <5379DBFE.4010000@gmail.com>
-References: <1400175151-27779-1-git-send-email-t.figa@samsung.com> <1400175151-27779-4-git-send-email-t.figa@samsung.com> <5379AFB9.9030608@linaro.org>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
+Date: Mon, 19 May 2014 12:26:35 +0200
+Message-ID: <4391809.OTRCiJQXS4@wuerfel>
+References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5379AFB9.9030608@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1400242998-437-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Tushar,
-
-On 19.05.2014 09:16, Tushar Behera wrote:
-> On 05/15/2014 11:02 PM, Tomasz Figa wrote:
->> This patch introduces a driver that handles configuration of CLKOUT pin
->> of Exynos SoCs that can be used to output certain clocks from inside of
->> the SoC to a dedicated output pin.
->>
->> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
->> ---
+On Friday 16 May 2014 14:23:18 Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Tested the series on Exynos5420-based peach-pit board for audio playback
-> (with an internal patch to set CLK_FIN_PLL as the parent of clkout).
+> This commit introduces a generic device tree binding for IOMMU devices.
+> Only a very minimal subset is described here, but it is enough to cover
+> the requirements of both the Exynos System MMU and Tegra SMMU as
+> discussed here:
 > 
-> Tested-by: Tushar Behera <tushar.behera@linaro.org>
+>     https://lkml.org/lkml/2014/4/27/346
+> 
+> More advanced functionality such as the dma-ranges property can easily
+> be added in a backwards-compatible way. In the absence of a dma-ranges
+> property it should be safe to default to the whole address space.
 > 
 
-Thank you for testing.
+The basic binding looks fine, but I'd like it to be more explicit
+about dma-ranges. Most importantly, what does "the whole address space"
+mean? A lot of IOMMUs have only 32-bit bus addresses when targetted
+by a bus master, it would also be normal for some to be smaller and
+some might even support 64-bit.
 
->>  Example :
->>  pmu_system_controller: system-controller@10040000 {
->>  	compatible = "samsung,exynos5250-pmu", "syscon";
->>  	reg = <0x10040000 0x5000>;
->> +	#clock-cells = <0>;
->> +	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
->> +			"clkout4", "clkout8", "clkout9";
->> +	clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
->> +		<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
->> +		<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
->> +		<&clock CLK_XUSBXTI>;
->>  };
-> 
-> Adding an usage example in the documentation would be helpful.
+For the upstream side, I'd hope we always have access to the full
+physical memory, but since this is a brand-new binding, it should
+be straightforward to just ask for upstream dma-ranges properties
+to be set all the way up to the root to confirm that.
 
-Right, that's usually a good idea, I don't know why I haven't added one.
-Thanks.
+For downstream, we don't actually have a good place to put the
+dma-ranges property. We can't put it into the iommu node, because
+that would imply translating to the iommu's parent bus, not the
+iommu's own bus space. We also can't put it into the master, because
+dma-ranges is supposed to be in the parent bus. Finally, it makes
+no sense to use the dma-ranges property of the master's parent bus,
+because that bus isn't actually involved in the translation.
 
-Best regards,
-Tomasz
+My preferred option would be to always put the address range into
+the iommu descriptor, using the iommu's #address-cells.
+
+	Arnd
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
