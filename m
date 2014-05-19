@@ -1,56 +1,63 @@
-From: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
-Subject: [PATCH] sound: soc: samsung: dma.c:  Fix for possible null pointer dereference
-Date: Mon, 19 May 2014 23:37:23 +0200
-Message-ID: <1400535443-5886-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f52.google.com ([74.125.83.52]:35077 "EHLO
-	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750838AbaESVge (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 May 2014 17:36:34 -0400
-Received: by mail-ee0-f52.google.com with SMTP id e53so4016983eek.39
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 May 2014 14:36:33 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH v3 6/7] i2c: ChromeOS EC tunnel driver
+Date: Tue, 20 May 2014 00:19:02 +0200
+Message-ID: <20140519221902.GA2871@katana>
+References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
+ <1398879850-9111-7-git-send-email-dianders@chromium.org>
+ <20140519105055.GA2612@katana>
+ <20140519172258.GD20435@lee--X1>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20140519172258.GD20435@lee--X1>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, jdelvare-l3A5Bk7waGM@public.gmane.org, shane.huang-5C7GfCeVMHo@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org, kevin.strasser-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-ci5G2KO2hbZ+pU9mqzGVBQ@public.gmane.org, andrew-g2DYL2Zd6BY@public.gmane.org, andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, schwidefsky-tA70FqPdS9bQT0dZR+AlfA@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-There is otherwise a risk of a possible null pointer dereference.
 
-Was largely found by using a static code analysis program called cppcheck.
+--3V7upXqbjpZ4EhLz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
----
- sound/soc/samsung/dma.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+On Mon, May 19, 2014 at 06:22:58PM +0100, Lee Jones wrote:
+> > Code looks good, so
+> >=20
+> > Reviewed-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+> >=20
+> > I don't mind how it gets upstream. I can take it, but you can also keep
+> > it in this series.
+>=20
+> Let's keep the series together.  Are you happy with me just merging it
+> through MFD, or would you like a pull-request, so you can take it in
+> too?
 
-diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
-index dc09b71..1d9bcaa 100644
---- a/sound/soc/samsung/dma.c
-+++ b/sound/soc/samsung/dma.c
-@@ -115,17 +115,19 @@ static void dma_enqueue(struct snd_pcm_substream *substream)
- static void audio_buffdone(void *data)
- {
- 	struct snd_pcm_substream *substream = data;
--	struct runtime_data *prtd = substream->runtime->private_data;
-+	struct runtime_data *prtd = NULL;
- 
- 	pr_debug("Entered %s\n", __func__);
- 
--	if (prtd->state & ST_RUNNING) {
-+	if (substream)
-+		prtd = substream->runtime->private_data;
-+
-+	if (prtd && prtd->state & ST_RUNNING) {
- 		prtd->dma_pos += prtd->dma_period;
- 		if (prtd->dma_pos >= prtd->dma_end)
- 			prtd->dma_pos = prtd->dma_start;
- 
--		if (substream)
--			snd_pcm_period_elapsed(substream);
-+		snd_pcm_period_elapsed(substream);
- 
- 		spin_lock(&prtd->lock);
- 		if (!samsung_dma_has_circular()) {
--- 
-1.7.10.4
+Just merge it...
+
+
+--3V7upXqbjpZ4EhLz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTeoNWAAoJEBQN5MwUoCm20pIP/3uHi/PK3vNRfj6srP5o+bH7
+GI1HE0FPB4RaNmmeTb+hpp4rlynNvbpcnGUdBlopjgmXDkHDpbfM7GSuc12bEyqX
+uuBxpIQmX5X/aYysgZf2K8oHvTz4HmthINu+8gRDrztBwV0wuviorpb7aFjmJK+w
+aniFjSH7hykvqMi/+abYUEobn0elMrKzkx7+GrmpeXLUXyHNKxhpzP3Xp7ZhqlQt
+ldKMXiqQTLn6tzyZAVUPWiA0kHbqbbWjwpXse2S2ARK/JxMzIkV9UfR552EFwTWN
+g6UPT5h0uA7vlSVdV5vLpkSF+Zu9Q+fHT/CaleXHgJs7PKfB2Lizuu8MzCTytBRR
+wKb6fzMjrq2nkq8GFt0oxTxzpX/Xtcs9k5wcQm57n7gKjbz8f+It+NvmuEHOiHMV
+HvNfRHA9LW14sPutJjZXOVl1nQVZsJPQWoPkbc82fhg8RuhaAYxJw3+PBRR9N4VJ
+aZbHJtI3uE/hb6dyq7rhQyg72LoDyTy3H9bfz9SyJsv+AlCc1FK4l3tHltB9IRoM
+jBnNFLJ0VEW+0at36Ztv51UOLf3nOhdM8pfeA7ehet+FNVs7Bq55z7jsxVTO8udO
+deYp4gMLc8Ggghj47BzvWVfR2Oy7cn1/lhlfMzFD3J9VR39Zxla1FsLIbTbb1cMF
+1qiT7wKNJjcL1c3k0GGB
+=56Po
+-----END PGP SIGNATURE-----
+
+--3V7upXqbjpZ4EhLz--
