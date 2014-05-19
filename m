@@ -1,40 +1,57 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCHv5 0/5] Support new Exynos3250 SoC based on Cortex-A7 dual
- core
-Date: Mon, 19 May 2014 13:39:23 +0200
-Message-ID: <5379ED6B.8060309@gmail.com>
-References: <1399986308-23744-1-git-send-email-cw00.choi@samsung.com> <5374426B.6000505@samsung.com> <5379ECBF.9010706@gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
+Date: Mon, 19 May 2014 17:36:38 +0530
+Message-ID: <5379F3CE.8030404@linaro.org>
+References: <20140424133920.GA12304@sirena.org.uk> <5359E18B.60600@linaro.org> <20140429222915.GU15125@sirena.org.uk> <5360E5E7.8090807@linaro.org> <20140430180314.GA3245@sirena.org.uk> <53623004.5010805@linaro.org> <20140501141510.GW3245@sirena.org.uk> <CAD=FV=Wa4CovkxBng0SkUUAryiFqa=m63tro1Yv1jRgp4e95aw@mail.gmail.com> <20140501164003.GC3245@sirena.org.uk> <53632568.5020200@linaro.org> <20140502165643.GQ3245@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f42.google.com ([74.125.83.42]:51452 "EHLO
-	mail-ee0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751644AbaESLjd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 May 2014 07:39:33 -0400
-In-Reply-To: <5379ECBF.9010706@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20140502165643.GQ3245@sirena.org.uk>
+Sender: linux-doc-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, sbkim73@samsung.com, Randy Dunlap <rdunlap@infradead.org>, Mike Turquette <mturquette@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, kgene.kim@samsung.com
-Cc: sajjan.linux@gmail.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, arnd@arndb.de, marc.zyngier@arm.com, t.figa@samsung.com, hyunhee.kim@samsung.com, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, inki.dae@samsung.com, kyungmin.park@samsung.com, thomas.abraham@linaro.org, ben-linux@fluff.org, olof@lixom.net, chanho61.park@samsung.com, sachin.kamat@linaro.org, linux-arm-kernel@lists.infradead.org, tushar.behera@linaro.org
 
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-
-On 19.05.2014 13:36, Tomasz Figa wrote:
-> Hi Kukjin, Chanwoo,
+On 05/02/2014 10:26 PM, Mark Brown wrote:
+> On Fri, May 02, 2014 at 10:26:08AM +0530, Tushar Behera wrote:
+>> On 05/01/2014 10:10 PM, Mark Brown wrote:
 > 
-> On 15.05.2014 06:28, Chanwoo Choi wrote:
->> Dear Kukjin,
->>
->> Could you please pick following patches?
->> - [PATCHv5 1/5] ARM: EXYNOS: Add Exynos3250 SoC ID
->> - [PATCHv5 2/5] ARM: EXYNOS: Support secondary CPU boot of Exynos3250
+>>> There's patches been posted by (IIRC) Sylvester Nawrocki for
+>>> this which I think Mike was basically happy with - I don't
+>>> immediately see them in -next though, but I may be looking in
+>>> the wrong place.
 > 
-> I'd say that [PATCHv5 5/5] ARM: dts: Add device tree sources for
-> Exynos3250 would be also useful. :)
+>> Right, there are some patches from Sylwester regarding this. I
+>> dont' think the patches are accepted yet as Rob has some
+>> reservations against the clock parents.
+> 
+>> https://lkml.org/lkml/2014/4/9/173
+> 
+> Well, OK - that's the bit to fix.  Speaking to Mike the other day
+> he said there was also another competing implementation of this.
+> 
 
-Aha, it is already applied. I should have checked in the tree first. Sorry.
+Instead of setting the parent clock, setting the desired rate on
+XCLKOUT works for audio playback.
 
-Best regards,
-Tomasz
+Will it be okay to do a 'clk_set_rate(mclk, 24000000)' in sound card
+driver or should we wait for Sylwester's patch to get merged?
+
+- -- 
+Tushar Behera
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iQEcBAEBAgAGBQJTefPOAAoJELqclMPPkq4N6UIH/i5W7KYjyKTQtX+AGdUmJwIx
+3TTwyWVz5YQ6gFpLHwwy5AwIkj4mygox2e7l0qWU6yOXCMceaXrvzxOK+B/LRXlp
++s8xjd+C+Idxhs0T6V4GkJRA9jtari3gcIGfz4tFtWY5O0l0eNTUduILhAvmE/Sw
+c4m8aOwK33P0kvkTIp/ShSujYa8v82XosMRuf4P0iEz9I3qw3syJkWWvqNZFrnPs
+B7i+9ZiZkyttsUVBOAWMBfOdLP5sMtxKDdk1GTkN1plxAE8lKdNVATR5htQL4bxo
+ZFcWJxE14pWQ770gEJVXkDT9o8dhmVNrDVp4eGe3m+43gN+Bssh+9kgdxb3vmIY=
+=gXaJ
+-----END PGP SIGNATURE-----
