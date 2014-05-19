@@ -1,35 +1,58 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 6/7] i2c: ChromeOS EC tunnel driver
-Date: Mon, 19 May 2014 18:22:58 +0100
-Message-ID: <20140519172258.GD20435@lee--X1>
-References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
- <1398879850-9111-7-git-send-email-dianders@chromium.org>
- <20140519105055.GA2612@katana>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140519105055.GA2612@katana>
-Sender: linux-doc-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Doug Anderson <dianders@chromium.org>, swarren@nvidia.com, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sameo@linux.intel.com, jdelvare@suse.de, shane.huang@amd.com, maxime.ripard@free-electrons.com, laurent.pinchart+renesas@ideasonboard.com, u.kleine-koenig@pengutronix.de, bjorn.andersson@sonymobile.com, kevin.strasser@linux.intel.com, linux@prisktech.co.nz, andrew@lunn.ch, andriy.shevchenko@linux.intel.com, schwidefsky@de.ibm.com, matt.porter@linaro.org, ch.naveen@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ASoC: samsung: Allow setting OP_CLK of the IIS Multi Audio
+ Interface
+Date: Mon, 19 May 2014 19:30:38 +0200
+Message-ID: <1400520638-6907-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:22711 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754832AbaESRbM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 May 2014 13:31:12 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N5U00LHB0NZI1A0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 May 2014 02:31:11 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-> Code looks good, so
->=20
-> Reviewed-by: Wolfram Sang <wsa@the-dreams.de>
->=20
-> I don't mind how it gets upstream. I can take it, but you can also ke=
-ep
-> it in this series.
+This patch adds support for setting source clock of the "Core CLK"
+of the IIS Multi Audio Interface.
 
-Let's keep the series together.  Are you happy with me just merging it
-through MFD, or would you like a pull-request, so you can take it in
-too?
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ sound/soc/samsung/i2s.c |    4 ++++
+ sound/soc/samsung/i2s.h |    1 +
+ 2 files changed, 5 insertions(+)
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 048ead9..ae02811 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -451,6 +451,10 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 	u32 mod = readl(i2s->addr + I2SMOD);
+ 
+ 	switch (clk_id) {
++	case SAMSUNG_I2S_OPCLK:
++		mod &= ~MOD_OPCLK_MASK;
++		mod |= dir;
++		break;
+ 	case SAMSUNG_I2S_CDCLK:
+ 		/* Shouldn't matter in GATING(CLOCK_IN) mode */
+ 		if (dir == SND_SOC_CLOCK_IN)
+diff --git a/sound/soc/samsung/i2s.h b/sound/soc/samsung/i2s.h
+index 7966afc..21ff24e 100644
+--- a/sound/soc/samsung/i2s.h
++++ b/sound/soc/samsung/i2s.h
+@@ -18,5 +18,6 @@
+ #define SAMSUNG_I2S_RCLKSRC_0	0
+ #define SAMSUNG_I2S_RCLKSRC_1	1
+ #define SAMSUNG_I2S_CDCLK		2
++#define SAMSUNG_I2S_OPCLK		3
+ 
+ #endif /* __SND_SOC_SAMSUNG_I2S_H */
+-- 
+1.7.9.5
