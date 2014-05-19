@@ -1,168 +1,86 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
-Date: Mon, 19 May 2014 14:53:37 +0200
-Message-ID: <20140519125336.GA9466@ulmo>
-References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
- <4391809.OTRCiJQXS4@wuerfel>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] arm: dts: exynos5: Remove multi core timer
+Date: Mon, 19 May 2014 08:12:42 -0700
+Message-ID: <CAD=FV=VXSP1TM9qY8PxFuQ+Tq2Ju57VdpzpwsHXqHshQm_havQ@mail.gmail.com>
+References: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
+	<53752E25.9060604@gmail.com>
+	<CAD=FV=WKOtZaUyzTWNqR=vi_L=U-Q1dct2U_oCYi3ZJv6401Hg@mail.gmail.com>
+	<53753443.8010303@gmail.com>
+	<CAD=FV=V8UZoeOqEwfx_E015pLM+amTt51LrUa+dk7mTdn=vKgA@mail.gmail.com>
+	<53753C17.1090002@gmail.com>
+	<CAD=FV=WGa7j_As_NpySxU7OEd_SzuGWK6oxU6UeiJ-4HsoWvvg@mail.gmail.com>
+	<CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com>
+	<CAASgrz2Nr69tpfC8ka9gbs2OvjLEGsvgAj4vBCFxhsamuFum7w@mail.gmail.com>
+	<53754CE2.3000905@gmail.com>
+	<CAD=FV=UMoL7i9rg_QtBAqPwisSQyRqRmk8wQhneMXAiLBjTT1A@mail.gmail.com>
+	<CAPz6YkU8GDrLj8UkqEQXxxqxWF5_p427wKSDgAp+QPR7WE7Ujg@mail.gmail.com>
+	<CAJFHJrrb2XFDZqJh4OuLdFP=J0aR4pGe-WLWKZ7ZpMfUSPGd4Q@mail.gmail.com>
+	<5376A726.4000106@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:64723 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754380AbaESMzw (ORCPT
+Received: from mail-ve0-f177.google.com ([209.85.128.177]:50735 "EHLO
+	mail-ve0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751003AbaESPMn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 May 2014 08:55:52 -0400
-Content-Disposition: inline
-In-Reply-To: <4391809.OTRCiJQXS4@wuerfel>
+	Mon, 19 May 2014 11:12:43 -0400
+Received: by mail-ve0-f177.google.com with SMTP id db11so6528889veb.22
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 May 2014 08:12:42 -0700 (PDT)
+In-Reply-To: <5376A726.4000106@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Cho KyongHo <pullip.cho@samsung.com>, Dave Martin <Dave.Martin@arm.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Chirantan Ekbote <chirantan@chromium.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, David Riley <davidriley@google.com>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
+Kukjin,
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, May 16, 2014 at 5:02 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 05/17/14 07:56, Chirantan Ekbote wrote:
+>>>>>
+>>>>> Anyway, I'm by no means opposed to switching to arch timers. They
+>>>>> provide a well designed, generic interface and drivers shared by
+>>>>> multiple platforms, which means more code sharing and possibly more
+>>>>> eyes
+>>>>> looking at the code, which is always good. However if they don't
+>>>>> support
+>>>>> low power states correctly, we can't just remove MCT.
+>>>>
+>>>>
+>>>> I think low power states aren't in mainline (right?).
+>>>>
+>>>> One solution that might work could be to leave the device tree entry
+>>>> alone but change the MCT init code to simply act as a no-op if it sees
+>>>> an arch timer is in the device tree and enabled.  Then when/if someone
+>>>> got the low power states enabled we could just change source code
+>>>> rather than dts files.
+>>>>
+>>
+>> Doug and I were talking about this and we think we may have a way to
+>> have the mct and arch timers co-exist.  The main issue is that the mct
+>> (and therefore arch timer) gets cleared once during boot and every
+>> time we do a suspend / resume.  This happens in
+>> exynos4_mct_frc_start() but it's not immediately clear to us why the
+>> counter needs to be reset at all.  If we remove the lines that clear
+>> the counter then there is no longer an issue with having both the mct
+>> and the arch timers on at the same time.
+>>
+>> Alternately, if there is some code that depends on the mct being reset
+>> we could store an offset instead of clearing the counter and then
+>> subtract that offset every time something reads it.  Doug has a patch
+>> that does this at
+>> https://chromium-review.googlesource.com/#/c/200298/.  Effectively the
+>> visible behavior will not change.  Would either of these options work?
+>>
+> Hi all,
+>
+> Even though I've heard something about the behavior of mct and arch
+> timer...but I couldn't finish the talk to h/w guys yet. I need to talk again
+> in next week then I could provide some useful information. Sorry for late
+> and can you please wait a minute before deciding whatever.
 
-On Mon, May 19, 2014 at 12:26:35PM +0200, Arnd Bergmann wrote:
-> On Friday 16 May 2014 14:23:18 Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > This commit introduces a generic device tree binding for IOMMU devices.
-> > Only a very minimal subset is described here, but it is enough to cover
-> > the requirements of both the Exynos System MMU and Tegra SMMU as
-> > discussed here:
-> >=20
-> >     https://lkml.org/lkml/2014/4/27/346
-> >=20
-> > More advanced functionality such as the dma-ranges property can easily
-> > be added in a backwards-compatible way. In the absence of a dma-ranges
-> > property it should be safe to default to the whole address space.
-> >=20
->=20
-> The basic binding looks fine, but I'd like it to be more explicit
-> about dma-ranges. Most importantly, what does "the whole address space"
-> mean?
+I think we could wait a few days.  Note however, that Chirantan's
+latest proposal keeps all existing functionality (can use both MCT and
+arch timers).  It merely removes the unnecessary bit of the MCT init
+code setting the timer.  No functionality is affected by that.
 
-The whole point was to leave out any mention of dma-ranges from the
-binding until we've figured out more of the puzzle.
-
-So what I was trying to avoid was another lengthy discussion on the
-topic of dma-ranges. Oh well... =3D)
-
-> A lot of IOMMUs have only 32-bit bus addresses when targetted
-> by a bus master, it would also be normal for some to be smaller and
-> some might even support 64-bit.
->=20
-> For the upstream side, I'd hope we always have access to the full
-> physical memory, but since this is a brand-new binding, it should
-> be straightforward to just ask for upstream dma-ranges properties
-> to be set all the way up to the root to confirm that.
->=20
-> For downstream, we don't actually have a good place to put the
-> dma-ranges property.
-
-I'm not sure I understand what you mean by upstream and downstream in
-this context.
-
-> We can't put it into the iommu node, because  that would imply translating
-> to the iommu's parent bus, not the iommu's own bus space.
-
-My understanding was that the purpose of dma-ranges was to define a
-mapping from one bus to another. So the general form of
-
-	child-address  parent-address  child-size
-
-Would be used to translate a region of size <child-size> from the
-<child-address> (the I/O address space created by the IOMMU) to the
-<parent-address> (physical address space).
-
-> We also can't put it into the master, because dma-ranges is supposed to be
-> in the parent bus.
-
-I don't understand. From the above I would think that the master's node
-is precisely where it belongs.
-
-> Finally, it makes no sense to use the dma-ranges property of the master's
-> parent bus, because that bus isn't actually involved in the translation.
-
-My understanding here is mostly based on the OpenFirmware working group
-proposal for the dma-ranges property[0]. I'll give another example to
-try and clarify how I had imagined this to work:
-
-	/ {
-		#address-cells =3D <2>;
-		#size-cells =3D <2>;
-
-		iommu {
-			/*
-			 * This is somewhat unusual (or maybe not) in that we
-			 * need 2 cells to represent the size of an address
-			 * space that is 32 bits long.
-			 */
-			#address-cells =3D <1>;
-			#size-cells =3D <2>;
-
-			#iommu-cells =3D <1>;
-		};
-
-		master {
-			iommus =3D <&/iommu 42>;
-			/*
-			 * Map I/O addresses 0 - 4 GiB to physical addresses
-			 * 2 GiB - 6 GiB.
-			 */
-			dma-ranges =3D <0x00000000 0 0x80000000 1 0>;
-		};
-	};
-
-This is somewhat incompatible with [0] in that #address-cells used to
-parse the child address must be taken from the iommu node rather than
-the child node. But that seems to me to be the only reasonable thing
-to do, because after all the IOMMU creates a completely new address
-space for the master.
-
-[0]: http://www.openfirmware.org/ofwg/proposals/Closed/Accepted/410-it.txt
-
-> My preferred option would be to always put the address range into
-> the iommu descriptor, using the iommu's #address-cells.
-
-That could become impossible to parse. I'm not sure if such hardware
-actually exists, but if for some reason we have to split the address
-range into two, then there's no longer any way to determine the size
-needed for the specifier.
-
-On the other hand what you propose makes it easy to represent multiple
-master interfaces on a device. With a separate dma-ranges property how
-can you define which ranges apply to which of the master interfaces?
-
-Then again if address ranges can't be broken up in the first place, then
-dma-ranges could be considered to be one entry per IOMMU in the iommus
-property.
-
-Thierry
-
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTef7QAAoJEN0jrNd/PrOhEhcP/RnunYI1MsoTF5WgGp40ph4R
-LRO8Izry3NaFy/0XHjDeeZw/nuQ8KOQMRX3E8QartFceZokiYXEJuJ/k3xhgA+jI
-tpPWunoUkcOKkWJwLFDIh6zuF5T4V+2TxaK4xOv8sxDbnhO984+OcZWpYgrNn4Ho
-E8xB0TBVfBomWb5VOvWliPV1s6/KYFKMEGbfRm8HiCg2myAAwgGZcKZ3uE7VgjDY
-w3ZMJ7c+XtqyljWAWSFJh6BpH9Xelt6GwP/Qpdw6du/lvn+qfS08WydhbJvWzYpF
-gv/RKBzWBPbSrdDOAakX/1xYAtuuM7sxobWvCFUhWBmbRyCLeQLPzb8PEGRyB3x/
-1uS0d3ol64yXao94gQycRy3dx1YDQFF6wIrFMnZT9MT0iop8HHrc6f49VCpvEJsz
-rwlf4nZAc+C+Duyj1n8Niqbcj122Pa0698aHqJTJK62UNQW5iCFBpluzp9/MerNQ
-7QaU7G6nGo8mJIlVDPVrQ16XtA4OiJTtvtpqVDwz/7DIb5sewXwbXXq+GGWzD/Mh
-5lTq3bfIeMpvEKnKXp+WJvagAXjvtBix+PuBHivP9hFD0F4cxYooViZk9DksoMPy
-Nlrh+Ob0dc8Ya57WVMIhlWHVakB/1fVKRXzoEfZ4nHY62pTAEdFeDfGcQ1jypsMB
-+clp4pRKrtHCLLamnU1v
-=Aulo
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
+-Doug
