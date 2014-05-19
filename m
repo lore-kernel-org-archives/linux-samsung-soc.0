@@ -1,63 +1,43 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add sound card driver for Snow board
-Date: Mon, 19 May 2014 13:34:16 +0100
-Message-ID: <20140519123416.GV12304@sirena.org.uk>
-References: <20140429222915.GU15125@sirena.org.uk>
- <5360E5E7.8090807@linaro.org>
- <20140430180314.GA3245@sirena.org.uk>
- <53623004.5010805@linaro.org>
- <20140501141510.GW3245@sirena.org.uk>
- <CAD=FV=Wa4CovkxBng0SkUUAryiFqa=m63tro1Yv1jRgp4e95aw@mail.gmail.com>
- <20140501164003.GC3245@sirena.org.uk>
- <53632568.5020200@linaro.org>
- <20140502165643.GQ3245@sirena.org.uk>
- <5379F3CE.8030404@linaro.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tPs2xF8bwC43uhQg"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5379F3CE.8030404@linaro.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: Doug Anderson <dianders@chromium.org>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, sbkim73@samsung.com, Randy Dunlap <rdunlap@infradead.org>, Mike Turquette <mturquette@linaro.org>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH 0/2] Re-send MFCv8 support patches
+Date: Mon, 19 May 2014 18:20:00 +0530
+Message-ID: <1400503802-5543-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:48770 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754229AbaESMuH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 May 2014 08:50:07 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: k.debski@samsung.com, posciak@chromium.org, avnd.kiran@samsung.com, arunkk.samsung@gmail.com
 
+These 2 patches for MFCv8 support are rebased onto
+[1] with the dependencies as mentioned below.
+Changes include adding the MFC_V8 version to formats.
 
---tPs2xF8bwC43uhQg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+- Re-send MFC patches
+  https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31051.html
+- Adding version information to formats by Kamil
+  v4l: s5p-mfc: Fix default pixel format selection for decoder
+  v4l: s5p-mfc: Limit enum_fmt to output formats of current version
 
-On Mon, May 19, 2014 at 05:36:38PM +0530, Tushar Behera wrote:
+[1] http://git.linuxtv.org/cgit.cgi/kdebski/media_tree_2.git/?h=for-3.16-2
 
-> Instead of setting the parent clock, setting the desired rate on
-> XCLKOUT works for audio playback.
+Kiran AVND (2):
+  [media] s5p-mfc: Core support to add v8 decoder
+  [media] s5p-mfc: Core support for v8 encoder
 
-> Will it be okay to do a 'clk_set_rate(mclk, 24000000)' in sound card
-> driver or should we wait for Sylwester's patch to get merged?
+ .../devicetree/bindings/media/s5p-mfc.txt          |    3 +-
+ drivers/media/platform/s5p-mfc/regs-mfc-v8.h       |  124 +++++++++++++++++
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           |   33 +++++
+ drivers/media/platform/s5p-mfc/s5p_mfc_common.h    |    5 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c       |   28 ++--
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c       |   12 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c    |  141 +++++++++++++++++---
+ 7 files changed, 308 insertions(+), 38 deletions(-)
+ create mode 100644 drivers/media/platform/s5p-mfc/regs-mfc-v8.h
 
-Yes, that's fine - going further back into the clock tree isn't.
-
---tPs2xF8bwC43uhQg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTefpFAAoJELSic+t+oim9/+YQAJhXKgmK6oOpUbyw6+TnbLCI
-mnWRcMbtfMTR5aItorrVqgQ8n39/4XBrJ3z9nTYIfG59VYdoqHYYFqTxMnlNkcYT
-pg4vapEM/o09Z198vixZRJkbcHFDakIUE16Tf6P1MFqM6UYyAReNOznIU3m32zkX
-XI6k8RHsZV4ILIjBhFw4zYaSCOREZp1GpWYj/ulHNe08ID3nVhLuaSmXDnMdZV0f
-wsrjRtSl+G3XJC9Mxk6ID5HuMsc1lvAXQhyzf/AJzdz97ayZeptqt9IzgjbyFA2H
-f/pCf8B0jEiVjggRQ3HqLH44nFYnzbVN1vGyK6G8tfLJOEhlAwImkQeGQ4FB4C9o
-MOgfQYSS4RRohTW5XtSRO8YLM1mqTwJN87uEbEkb5IVP9IY14c/6jSlaMJaB1tya
-Wm8eetSaU4pAXUVPASNvf0rambyNgTdwxAa97VOavSdYbHMB9ru09LQR44WqEohk
-yBsoCH7REYpz7snvNRLCwvGgaHZ7nou6b+oj5rKFW4Iqnk2VyMMcq1JoLGBce0bB
-NhQ+xhX+wcpQcQipYf8js69tSZRVoznt9prhw+1BEEHGSYHm727Ebwx0aj/s15FC
-TiFI0kgbDrXB6F7DFjz06MXyXhK2MrZ96sEUwAGYA0MF7MZjWfVy347YhJJTYgXv
-YVknhzt+uVSGZDRCroQJ
-=UuJR
------END PGP SIGNATURE-----
-
---tPs2xF8bwC43uhQg--
+-- 
+1.7.9.5
