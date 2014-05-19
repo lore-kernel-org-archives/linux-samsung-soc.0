@@ -1,92 +1,120 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v9 1/4] ARM: dts: Add sysreg sytem controller node to
- exynos5250 and exynos5420
-Date: Mon, 19 May 2014 18:28:55 +0900
-Message-ID: <02fe01cf7344$c19d36f0$44d7a4d0$@samsung.com>
-References: <1399641784-10833-1-git-send-email-gautam.vivek@samsung.com>
- <1399641784-10833-2-git-send-email-gautam.vivek@samsung.com>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: Re: [PATCH 1/2] s5p-mfc: Update mfc-v6 firmware
+Date: Mon, 19 May 2014 15:12:44 +0530
+Message-ID: <CALt3h7_gxaUdmzao1pQw6xTTu+u2YR7_hdP1eb-wrLhum1Td_g@mail.gmail.com>
+References: <1400233490-5677-1-git-send-email-arun.kk@samsung.com>
+	<04be01cf70ec$d5f37a10$81da6e30$%debski@samsung.com>
+	<CALt3h7_A2TmyoXFBjr7Ncy8560oBT6EOD7nq9qdRtD34O56FdQ@mail.gmail.com>
+	<04bf01cf70ee$f2184d40$d648e7c0$%debski@samsung.com>
+	<5375E6DB.70303@samsung.com>
+	<06bd01cf733d$bc903380$35b09a80$%debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:10491 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753398AbaESJ26 (ORCPT
+Received: from mail-qc0-f173.google.com ([209.85.216.173]:37233 "EHLO
+	mail-qc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753333AbaESJmp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 May 2014 05:28:58 -0400
-In-reply-to: <1399641784-10833-2-git-send-email-gautam.vivek@samsung.com>
-Content-language: ko
+	Mon, 19 May 2014 05:42:45 -0400
+Received: by mail-qc0-f173.google.com with SMTP id i8so8486030qcq.18
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 May 2014 02:42:44 -0700 (PDT)
+In-Reply-To: <06bd01cf733d$bc903380$35b09a80$%debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org, stern@rowland.harvard.edu, kishon@ti.com, k.debski@samsung.com, jg1.han@samsung.com
+To: Kamil Debski <k.debski@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, dwmw2 <dwmw2@infradead.org>, ben <ben@decadent.org.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Vivek Gautam wrote:
-> 
-> This patch adds sysreg-syscon node to exynos5250 and exynos5420 device
-> tree, to access System Register's registers using syscon driver.
-> 
-> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> [gautam.vivek@samsung.com: Split this syreg-syscon dts entry from
-> dts: Add usb2phy to Exynos 5250 patch]
-> [gautam.vivek@samsung.com: added similar syscon entry for exynos5420]
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> ---
-> 
-Vivek,
+Hi Kamil, Tomasz,
 
-See my comment below.
+On Mon, May 19, 2014 at 2:08 PM, Kamil Debski <k.debski@samsung.com> wrote:
+> Hi Tomasz, Arun,
+>
+>> From: Tomasz Figa [mailto:t.figa@samsung.com]
+>> Sent: Friday, May 16, 2014 12:22 PM
+>>
+>> Hi Kamil, Arun,
+>>
+>> On 16.05.2014 12:09, Kamil Debski wrote:
+>> > Hi,
+>> >
+>> > ----Original Message-----
+>> >> From: arunkk.samsung@gmail.com [mailto:arunkk.samsung@gmail.com] On
+>> >> Behalf Of Arun Kumar K
+>> >> Sent: Friday, May 16, 2014 12:00 PM
+>> >>
+>> >> Hi Kamil,
+>> >>
+>> >> On Fri, May 16, 2014 at 3:24 PM, Kamil Debski <k.debski@samsung.com>
+>> >> wrote:
+>> >>> Hi Arun,
+>> >>>
+>> >>> I asked you to put old and new v6 firmware in separate files.
+>> >>
+>> >> But wont that require a different filename other than s5p-mfc-v6.fw?
+>> >
+>> > Yes.
+>> >
+>> >> But the driver still expects the same file name.
+>> >> Can I put the new filename as s5p-mfc-v6-v2.fw and mention in the
+>> >> README that the file has to be renamed to s5p-mfc-v6.fw to be used?
+>> >
+>> > I think this is the way to go, because the new driver (with the patch)
+>> > will work with old firmware, while old driver (without the patch)
+>> will
+>> > not work with the new firmware.
+>> >
+>> >>
+>> >>> You should also mention in the commit message that this new
+>> firmware
+>> >>> will not work with the s5p-mfc driver without the patch you
+>> recently
+>> >>> submitted to linux-media mailing list. Please also add a link to
+>> the
+>> >>> thread with the necessary patch.
+>> >>
+>> >> Ok will do that.
+>> >>
+>> >>>
+>> >>> In addition to the above I think a readme/description file should
+>> be
+>> >>> added to the s5p-mfc folder. The issue of firmware for v6 should be
+>> >>> explained, so that no one is surprised that something does not work.
+>> >>>
+>>
+>> May I suggest a little different solution?
+>>
+>> Since to not break compatibility, support for both firmware versions is
+>> needed in the driver anyway, why not simply make the new, incompatible
+>> firmware always use a different filename.
+>>
+>> Then let the driver try to load the new one first and if it fails then
+>> load the old one? This would also let you get rid of that version check
+>> by hardcoded date, as you would know which firmware type was found.
+>>
+>
+> Tomasz, I really like your idea. I find it both simple and elegant.
+> This way there will be no need to rename the firmware file in the repo or
+> by the user, if the user wishes to use the new version.
+>
+> Arun, what is your opinion?
+>
 
-And please don't version each patch in series...it's really not a good way.
-It cause very big confusing...
+Yes this seems like a better approach to me too.
+With this the new FW used in older kernel issue is also resolved as the new
+fw file will have a different name and is not accepted in old kernel.
 
-> Changes since v7:
-> None
-> 
->  arch/arm/boot/dts/exynos5250.dtsi |    5 +++++
->  arch/arm/boot/dts/exynos5420.dtsi |    5 +++++
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi
-> index 3742331..70f0cd5 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -175,6 +175,11 @@
->  		reg = <0x10040000 0x5000>;
->  	};
-> 
-> +	sysreg_system_controller: syscon@10050000 {
-> +		compatible = "samsung,exynos5250-sys", "syscon";
+Regards
+Arun
 
-Maybe exynos5250-sysreg?
-
-And need to add/modify binding doc?
-
-- Kukjin
-
-> +		reg = <0x10050000 0x5000>;
-> +	};
-> +
->  	watchdog@101D0000 {
->  		compatible = "samsung,exynos5250-wdt";
->  		reg = <0x101D0000 0x100>;
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
-> b/arch/arm/boot/dts/exynos5420.dtsi
-> index a802f74..5d5d6e3 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -682,6 +682,11 @@
->  		reg = <0x10040000 0x5000>;
->  	};
-> 
-> +	sysreg_system_controller: syscon@10050000 {
-> +		compatible = "samsung,exynos5420-sys", "syscon";
-> +		reg = <0x10050000 0x5000>;
-> +	};
-> +
->  	tmu_cpu0: tmu@10060000 {
->  		compatible = "samsung,exynos5420-tmu";
->  		reg = <0x10060000 0x100>;
+>> Best regards,
+>> Tomasz
+>
+> Best wishes,
 > --
-> 1.7.10.4
+> Kamil Debski
+> Samsung R&D Institute Poland
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
