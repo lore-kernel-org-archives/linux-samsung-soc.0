@@ -1,147 +1,55 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: Re: exynos4412: porting hdmiddc and hdmiphy node entries
-Date: Mon, 19 May 2014 02:18:57 +0200
-Message-ID: <53794DF1.70909@gmx.net>
-References: <535C504A.2090809@gmx.net> <53675932.30306@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v8 0/3] Exynos 5410 support
+Date: Mon, 19 May 2014 09:58:04 +0900
+Message-ID: <019101cf72fd$644883c0$2cd98b40$@samsung.com>
+References: <1397459860-21869-1-git-send-email-t.dakhran@samsung.com>
+ <7hppk5f26g.fsf@paris.lan>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------060003090005030308040904"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.20]:65075 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752152AbaESATJ (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:32530 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752493AbaESA6I (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 18 May 2014 20:19:09 -0400
-In-Reply-To: <53675932.30306@samsung.com>
+	Sun, 18 May 2014 20:58:08 -0400
+In-reply-to: <7hppk5f26g.fsf@paris.lan>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Stanislawski <t.stanislaws@samsung.com>, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, rahul.sharma@samsung.com
+To: 'Kevin Hilman' <khilman@linaro.org>, 'Tarek Dakhran' <t.dakhran@samsung.com>
+Cc: linux-kernel@vger.kernel.org, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Rob Landley' <rob@landley.net>, 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Mike Turquette' <mturquette@linaro.org>, 'Vyacheslav Tyrtov' <v.tyrtov@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Heiko Stuebner' <heiko@sntech.de>, 'Romain Naour' <romain.naour@openwide.fr>, 'Chander Kashyap' <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Tarek Dakhran' <t.dakhran@gmail.com>
 
-This is a multi-part message in MIME format.
---------------060003090005030308040904
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Kevin Hilman wrote:
+> 
+> Tarek Dakhran <t.dakhran@samsung.com> writes:
+> 
+> > The series of patches represent support of Exynos 5410 SoC
+> >
+> > The Exynos 5410 is the first Samsung SoC based on bigLITTLE architecture
+> >
+> > Patches add new platform description, support of clock controller and
+> device
+> > tree for Exynos 5410.
+> >
+> > Has been build on Linux Kernel v3.15-rc1
+> > Has been tested on: 1) Exynos 5410 reference board (exynos_defconfig)
+> > 		    2) Odroid-XU board (exynos_defconfig)
+> 
+Hi all,
 
-Hello,
+Sorry for late response...
 
-I made some progress with the HDMI output on the board.
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+> 
+Kevin,
 
-I updated to v4 of the exynos-simple-phy driver.
-@Rahul: You can add a tested-by from me, if you want.
+Thanks for your test :-)
 
-My dts now looks like this:
-https://github.com/tobiasjakobi/linux-odroid/blob/odroid-3.15.y/arch/arm/boot/dts/exynos4412-odroidx2.dts
+[...]
 
-This works, but I have to force disabling of the LCD0 powerdomain:
-https://github.com/tobiasjakobi/linux-odroid/commit/65b97415b90f54240e03a065cfea1097629fb17e
+Tarek, can you please re-spin this series based on my current for-next
+because some common stuff has been changed?
 
-It looks like that the HDMI doesn't work properly when LCD0 pd is
-switched off, which it normally is for my use case. The nodes related to
-HDMI also don't seem to reference it. It seems like only the TV pd is
-referenced, and from the looks of the kernel log this one gets
-enabled/disabled properly.
-@Inki: Is this a known problem?
-
-Another issue which I then encountered can be easily triggered with
-'modetest' from libdrm/tests:
-modetest -M exynos -v -s 15@6:640x480
-
-This triggers a kernel warning (mixer_dpms). I attached the full output.
-Note that the warning appear when exiting modetest (so it's probably
-triggeed by crtc restore or something).
-
-With best wishes,
-Tobias
-
-
---------------060003090005030308040904
-Content-Type: text/plain; charset=UTF-8;
- name="exynos_mixer_warning.txt"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="exynos_mixer_warning.txt"
-
-WyAgIDg2Ljc2MDAwMF0gV0FSTklORzogQ1BVOiAwIFBJRDogMjUxMiBhdCBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jOjYyMCBtaXhlcl9kcG1zKzB4NTRjLzB4Njc0
-KCkKWyAgIDg2Ljc2MDAwMF0gZmFpbGVkIHRvIHJlc2V0IFZpZGVvIFByb2Nlc3NvcgpbICAg
-ODYuNzYwMDAwXSBNb2R1bGVzIGxpbmtlZCBpbjogYnJpZGdlIHN0cCBsbGMgYm5lcCByZmNv
-bW0gZWNiIGJ0dXNiIGJsdWV0b290aCBzNXBfbWZjIHVzYl9zdG9yYWdlIHZpZGVvYnVmMl9k
-bWFfY29udGlnIHZpZGVvYnVmMl9tZW1vcHMgdmlkZW9idWYyX2NvcmUKWyAgIDg2Ljc2MDAw
-MF0gQ1BVOiAwIFBJRDogMjUxMiBDb21tOiBtb2RldGVzdCBOb3QgdGFpbnRlZCAzLjE1LjAt
-cmM1KyAjMTMKWyAgIDg2Ljc2MDAwMF0gQmFja3RyYWNlOiAKWyAgIDg2Ljc2MDAwMF0gWzxj
-MDAxMWE1Yz5dIChkdW1wX2JhY2t0cmFjZSkgZnJvbSBbPGMwMDExYmY4Pl0gKHNob3dfc3Rh
-Y2srMHgxOC8weDFjKQpbICAgODYuNzYwMDAwXSAgcjY6MDAwMDAyNmMgcjU6MDAwMDAwMDkg
-cjQ6MDAwMDAwMDAgcjM6MDAwMDAwMDAKWyAgIDg2Ljc2MDAwMF0gWzxjMDAxMWJlMD5dIChz
-aG93X3N0YWNrKSBmcm9tIFs8YzA0MWY0OTQ+XSAoZHVtcF9zdGFjaysweDg4LzB4ZDQpClsg
-ICA4Ni43NjAwMDBdIFs8YzA0MWY0MGM+XSAoZHVtcF9zdGFjaykgZnJvbSBbPGMwMDIzYTZj
-Pl0gKHdhcm5fc2xvd3BhdGhfY29tbW9uKzB4NmMvMHg5MCkKWyAgIDg2Ljc2MDAwMF0gIHI0
-OmU1OTE5YTk4IHIzOmU1OTE4MDAwClsgICA4Ni43NjAwMDBdIFs8YzAwMjNhMDA+XSAod2Fy
-bl9zbG93cGF0aF9jb21tb24pIGZyb20gWzxjMDAyM2IzND5dICh3YXJuX3Nsb3dwYXRoX2Zt
-dCsweDM4LzB4NDApClsgICA4Ni43NjAwMDBdICByODpjMDViZTY0OCByNzowMDAwMDAwMCBy
-NjpjMDU5ZTQxNCByNTplNjM5NTQxMCByNDowMDAwMDAwMApbICAgODYuNzYwMDAwXSBbPGMw
-MDIzYjAwPl0gKHdhcm5fc2xvd3BhdGhfZm10KSBmcm9tIFs8YzAyNjBmYzg+XSAobWl4ZXJf
-ZHBtcysweDU0Yy8weDY3NCkKWyAgIDg2Ljc2MDAwMF0gIHIzOmMwMWM5MjY4IHIyOmMwNTE2
-YWEwClsgICA4Ni43NjAwMDBdIFs8YzAyNjBhN2M+XSAobWl4ZXJfZHBtcykgZnJvbSBbPGMw
-MjRmZmE0Pl0gKGV4eW5vc19kcm1fY3J0Y19kcG1zKzB4NzQvMHgxMTQpClsgICA4Ni43NjAw
-MDBdICByMTA6MDAwMDAwMDEgcjk6ZTYxMmM5ZDQgcjg6YzA1YmU2NDggcjc6ZTUzOTk3ODAg
-cjY6MDAwMDAwMDAgcjU6YzA1ZmYyNDAKWyAgIDg2Ljc2MDAwMF0gIHI0OmU2MTJkMDAwClsg
-ICA4Ni43NjAwMDBdIFs8YzAyNGZmMzA+XSAoZXh5bm9zX2RybV9jcnRjX2RwbXMpIGZyb20g
-WzxjMDI1MDBmOD5dIChleHlub3NfZHJtX2NydGNfY29tbWl0KzB4MWMvMHg0YykKWyAgIDg2
-Ljc2MDAwMF0gIHI4OmU2MTJjODAwIHI3OmU1Mzk5NzgwIHI2OmU2MTI5ZTQwIHI1OmMwNWJl
-NjQ4IHI0OmU2MTJkMDAwClsgICA4Ni43NjAwMDBdIFs8YzAyNTAwZGM+XSAoZXh5bm9zX2Ry
-bV9jcnRjX2NvbW1pdCkgZnJvbSBbPGMwMjMwOTU0Pl0gKGRybV9jcnRjX2hlbHBlcl9zZXRf
-bW9kZSsweDNjNC8weDUxOCkKWyAgIDg2Ljc2MDAwMF0gIHI1OmU2MTJjOWQ4IHI0OmU2MTJk
-MDAwClsgICA4Ni43NjAwMDBdIFs8YzAyMzA1OTA+XSAoZHJtX2NydGNfaGVscGVyX3NldF9t
-b2RlKSBmcm9tIFs8YzAyMzEzNTQ+XSAoZHJtX2NydGNfaGVscGVyX3NldF9jb25maWcrMHg3
-NzgvMHg5ZDApClsgICA4Ni43NjAwMDBdICByMTA6ZTYxOGZjODAgcjk6MDAwMDAwMDAgcjg6
-YzA1ZmYyNDAgcjc6ZTYxMmM5ZDggcjY6ZTYxMmM5YzAgcjU6ZTYxMmM5YjQKWyAgIDg2Ljc2
-MDAwMF0gIHI0OmU2MTJkMDAwClsgICA4Ni43NjAwMDBdIFs8YzAyMzBiZGM+XSAoZHJtX2Ny
-dGNfaGVscGVyX3NldF9jb25maWcpIGZyb20gWzxjMDI0MWU3ND5dIChkcm1fbW9kZV9zZXRf
-Y29uZmlnX2ludGVybmFsKzB4NjAvMHhlYykKWyAgIDg2Ljc2MDAwMF0gIHIxMDpjMDVmZjI0
-MCByOTplNjEyYzg4YyByODowMDAwMDAwMCByNzplNjM4NDMwMCByNjplNjE4ZmM4MCByNTpl
-NjEyZDAwMApbICAgODYuNzYwMDAwXSAgcjQ6ZTYzOTg5MDAKWyAgIDg2Ljc2MDAwMF0gWzxj
-MDI0MWUxND5dIChkcm1fbW9kZV9zZXRfY29uZmlnX2ludGVybmFsKSBmcm9tIFs8YzAyMzRh
-MTA+XSAoZHJtX2ZiX2hlbHBlcl9yZXN0b3JlX2ZiZGV2X21vZGUrMHhiOC8weGQ4KQpbICAg
-ODYuNzYwMDAwXSAgcjY6ZTYxOGZjODAgcjU6MDAwMDAwMDAgcjQ6MDAwMDAwMDEgcjM6MDAw
-MDAwMDAKWyAgIDg2Ljc2MDAwMF0gWzxjMDIzNDk1OD5dIChkcm1fZmJfaGVscGVyX3Jlc3Rv
-cmVfZmJkZXZfbW9kZSkgZnJvbSBbPGMwMjUwZTAwPl0gKGV4eW5vc19kcm1fZmJkZXZfcmVz
-dG9yZV9tb2RlKzB4MzQvMHg0MCkKWyAgIDg2Ljc2MDAwMF0gIHI4OmU2MTJjODAwIHI3OmU2
-MTJjODAwIHI2OmU2MTJjODM4IHI1OmU2MTJjODAwIHI0OmU2MThmMjAwClsgICA4Ni43NjAw
-MDBdIFs8YzAyNTBkY2M+XSAoZXh5bm9zX2RybV9mYmRldl9yZXN0b3JlX21vZGUpIGZyb20g
-WzxjMDI0ZjZmND5dIChleHlub3NfZHJtX2xhc3RjbG9zZSsweDEwLzB4MTQpClsgICA4Ni43
-NjAwMDBdICByNTplNjEyYzg1MCByNDplNWE2MTQ4MApbICAgODYuNzYwMDAwXSBbPGMwMjRm
-NmU0Pl0gKGV4eW5vc19kcm1fbGFzdGNsb3NlKSBmcm9tIFs8YzAyMzg5Y2M+XSAoZHJtX2xh
-c3RjbG9zZSsweDM4LzB4MTU0KQpbICAgODYuNzYwMDAwXSBbPGMwMjM4OTk0Pl0gKGRybV9s
-YXN0Y2xvc2UpIGZyb20gWzxjMDIzOGVhYz5dIChkcm1fcmVsZWFzZSsweDNjNC8weDViYykK
-WyAgIDg2Ljc2MDAwMF0gIHIxMDplNjEyN2Y4MCByOTplNjEyYzg4YyByODplNWE2MTRmNCBy
-NzplNjEyYzgwMCByNjplNjEyYzgzOCByNTplNjEyYzg1MApbICAgODYuNzYwMDAwXSAgcjQ6
-ZTVhNjE0ODAgcjM6MDAwMDAwMDAKWyAgIDg2Ljc2MDAwMF0gWzxjMDIzOGFlOD5dIChkcm1f
-cmVsZWFzZSkgZnJvbSBbPGMwMGQ3YThjPl0gKF9fZnB1dCsweDg4LzB4MWM0KQpbICAgODYu
-NzYwMDAwXSAgcjEwOjAwMDAwMDAwIHI5OmU1YTYxNmM4IHI4OjAwMDAwMDA4IHI3OmU1YzQ2
-OTkwIHI2OmU1OTQ4M2QwIHI1OmU2MzJiMTAwClsgICA4Ni43NjAwMDBdICByNDplNWE2MTZj
-MApbICAgODYuNzYwMDAwXSBbPGMwMGQ3YTA0Pl0gKF9fZnB1dCkgZnJvbSBbPGMwMGQ3YzJj
-Pl0gKF9fX19mcHV0KzB4MTAvMHgxNCkKWyAgIDg2Ljc2MDAwMF0gIHIxMDplNTk5MGZmOCBy
-OTo0MTgwMDRmYyByODplNTkxODAwMCByNzplNTBhYzgwMCByNjowMDAwMDAwMCByNTpjMDVj
-ZWI3MApbICAgODYuNzYwMDAwXSAgcjQ6ZTUwYWNiYjAKWyAgIDg2Ljc2MDAwMF0gWzxjMDBk
-N2MxYz5dIChfX19fZnB1dCkgZnJvbSBbPGMwMDNjNTI4Pl0gKHRhc2tfd29ya19ydW4rMHhi
-MC8weGU0KQpbICAgODYuNzYwMDAwXSBbPGMwMDNjNDc4Pl0gKHRhc2tfd29ya19ydW4pIGZy
-b20gWzxjMDAyNTg5ND5dIChkb19leGl0KzB4MmI0LzB4OGU0KQpbICAgODYuNzYwMDAwXSAg
-cjc6ZTU5OTBmYzAgcjY6ZTUwYWM4MDAgcjU6MDAwMDAwMDIgcjQ6ZTUwYWNiYzgKWyAgIDg2
-Ljc2MDAwMF0gWzxjMDAyNTVlMD5dIChkb19leGl0KSBmcm9tIFs8YzAwMjVmZDg+XSAoZG9f
-Z3JvdXBfZXhpdCsweDQ0LzB4YjgpClsgICA4Ni43NjAwMDBdICByNzplNWJlZThjNApbICAg
-ODYuNzYwMDAwXSBbPGMwMDI1Zjk0Pl0gKGRvX2dyb3VwX2V4aXQpIGZyb20gWzxjMDAzMTBl
-OD5dIChnZXRfc2lnbmFsX3RvX2RlbGl2ZXIrMHgxZTQvMHg1NTgpClsgICA4Ni43NjAwMDBd
-ICByNzplNWJlZThjNCByNjplNTkxODAwMCByNTplNTkxOWVkYyByNDplNTkxODAwMApbICAg
-ODYuNzYwMDAwXSBbPGMwMDMwZjA0Pl0gKGdldF9zaWduYWxfdG9fZGVsaXZlcikgZnJvbSBb
-PGMwNDFjNTU0Pl0gKGRvX3NpZ25hbCsweGI0LzB4M2QwKQpbICAgODYuNzYwMDAwXSAgcjEw
-OmI2ZGVmMmVjIHI5OmU1OTE4MDAwIHI4OmI2ZGVmMmYwIHI3OmZmZmZmZGZlIHI2OmU1OTE4
-MDAwIHI1OjAwMDAwMDAxClsgICA4Ni43NjAwMDBdICByNDplNTkxOWZiMApbICAgODYuNzYw
-MDAwXSBbPGMwNDFjNGEwPl0gKGRvX3NpZ25hbCkgZnJvbSBbPGMwMDExNTY4Pl0gKGRvX3dv
-cmtfcGVuZGluZysweDhjLzB4Y2MpClsgICA4Ni43NjAwMDBdICByMTA6MDAwMDAwMDAgcjg6
-ZTU5MTlmYjAgcjc6YzAwMGVjYTQgcjY6ZTU5MTgwMDAgcjU6ZTU5MTgwMDAgcjQ6YmVjNjVl
-MTgKWyAgIDg2Ljc2MDAwMF0gWzxjMDAxMTRkYz5dIChkb193b3JrX3BlbmRpbmcpIGZyb20g
-WzxjMDAwZWI2MD5dICh3b3JrX3BlbmRpbmcrMHhjLzB4MjApClsgICA4Ni43NjAwMDBdICBy
-ODpjMDAwZWNhNCByNzowMDAwMDA4ZSByNjpiZWM2NWUxOCByNTowMDAwMDAwMyByNDpiZWM2
-NWUxOCByMzowMDAwMDAwMApbICAgODYuNzYwMDAwXSAtLS1bIGVuZCB0cmFjZSBkZTJiYjEw
-M2UyZGJmODcyIF0tLS0K
---------------060003090005030308040904--
+Thanks,
+Kukjin
