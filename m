@@ -1,7 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 4/8] drm/exynos/fimc: simplify pre-scaler ratio calculation
-Date: Mon, 19 May 2014 12:54:06 +0200
-Message-ID: <1400496850-23860-5-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 8/8] drm/exynos/fimc: simplify and rename fimc_dst_get_buf_seq
+Date: Mon, 19 May 2014 12:54:10 +0200
+Message-ID: <1400496850-23860-9-git-send-email-a.hajda@samsung.com>
 References: <1400496850-23860-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,108 +21,61 @@ To: open list <linux-kernel@vger.kernel.org>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch replaces dedicated function for scaling ratio
-calculation by fls calls.
+fimc_dst_get_buf_seq returns number of buffers
+so the name should be fimc_dst_get_buf_count.
+Function body has been simplified.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_fimc.c | 56 ++++++++------------------------
- 1 file changed, 13 insertions(+), 43 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-index 5060f8a..d40b7fb 100644
+index 9860d38..831dde9 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-@@ -957,43 +957,13 @@ static int fimc_dst_set_transf(struct device *dev,
+@@ -58,7 +58,6 @@
+ #define FIMC_SHFACTOR	10
+ #define FIMC_BUF_STOP	1
+ #define FIMC_BUF_START	2
+-#define FIMC_REG_SZ		32
+ #define FIMC_WIDTH_ITU_709	1280
+ #define FIMC_REFRESH_MAX	60
+ #define FIMC_REFRESH_MIN	12
+@@ -1123,16 +1122,13 @@ static int fimc_dst_set_size(struct device *dev, int swap,
  	return 0;
  }
  
--static int fimc_get_ratio_shift(u32 src, u32 dst, u32 *ratio, u32 *shift)
--{
--	DRM_DEBUG_KMS("src[%d]dst[%d]\n", src, dst);
--
--	if (src >= dst * 64) {
--		DRM_ERROR("failed to make ratio and shift.\n");
--		return -EINVAL;
--	} else if (src >= dst * 32) {
--		*ratio = 32;
--		*shift = 5;
--	} else if (src >= dst * 16) {
--		*ratio = 16;
--		*shift = 4;
--	} else if (src >= dst * 8) {
--		*ratio = 8;
--		*shift = 3;
--	} else if (src >= dst * 4) {
--		*ratio = 4;
--		*shift = 2;
--	} else if (src >= dst * 2) {
--		*ratio = 2;
--		*shift = 1;
--	} else {
--		*ratio = 1;
--		*shift = 0;
--	}
--
--	return 0;
--}
--
- static int fimc_set_prescaler(struct fimc_context *ctx, struct fimc_scaler *sc,
- 		struct drm_exynos_pos *src, struct drm_exynos_pos *dst)
+-static int fimc_dst_get_buf_seq(struct fimc_context *ctx)
++static int fimc_dst_get_buf_count(struct fimc_context *ctx)
  {
- 	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
- 	u32 cfg, cfg_ext, shfactor;
- 	u32 pre_dst_width, pre_dst_height;
--	u32 pre_hratio, hfactor, pre_vratio, vfactor;
-+	u32 hfactor, vfactor;
- 	int ret = 0;
- 	u32 src_w, src_h, dst_w, dst_h;
+-	u32 cfg, i, buf_num = 0;
+-	u32 mask = 0x00000001;
++	u32 cfg, buf_num;
  
-@@ -1014,24 +984,24 @@ static int fimc_set_prescaler(struct fimc_context *ctx, struct fimc_scaler *sc,
- 		dst_h = dst->h;
- 	}
+ 	cfg = fimc_read(ctx, EXYNOS_CIFCNTSEQ);
  
--	ret = fimc_get_ratio_shift(src_w, dst_w, &pre_hratio, &hfactor);
--	if (ret) {
-+	/* fimc_ippdrv_check_property assures that dividers are not null */
-+	hfactor = fls(src_w / dst_w / 2);
-+	if (hfactor > FIMC_SHFACTOR / 2) {
- 		dev_err(ippdrv->dev, "failed to get ratio horizontal.\n");
--		return ret;
-+		return -EINVAL;
- 	}
+-	for (i = 0; i < FIMC_REG_SZ; i++)
+-		if (cfg & (mask << i))
+-			buf_num++;
++	buf_num = hweight32(cfg);
  
--	ret = fimc_get_ratio_shift(src_h, dst_h, &pre_vratio, &vfactor);
--	if (ret) {
-+	vfactor = fls(src_h / dst_h / 2);
-+	if (vfactor > FIMC_SHFACTOR / 2) {
- 		dev_err(ippdrv->dev, "failed to get ratio vertical.\n");
--		return ret;
-+		return -EINVAL;
- 	}
+ 	DRM_DEBUG_KMS("buf_num[%d]\n", buf_num);
  
--	pre_dst_width = src_w / pre_hratio;
--	pre_dst_height = src_h / pre_vratio;
-+	pre_dst_width = src_w >> hfactor;
-+	pre_dst_height = src_h >> vfactor;
- 	DRM_DEBUG_KMS("pre_dst_width[%d]pre_dst_height[%d]\n",
- 		pre_dst_width, pre_dst_height);
--	DRM_DEBUG_KMS("pre_hratio[%d]hfactor[%d]pre_vratio[%d]vfactor[%d]\n",
--		pre_hratio, hfactor, pre_vratio, vfactor);
-+	DRM_DEBUG_KMS("hfactor[%d]vfactor[%d]\n", hfactor, vfactor);
+@@ -1176,12 +1172,12 @@ static int fimc_dst_set_buf_seq(struct fimc_context *ctx, u32 buf_id,
  
- 	sc->hratio = (src_w << 14) / (dst_w << hfactor);
- 	sc->vratio = (src_h << 14) / (dst_h << vfactor);
-@@ -1044,8 +1014,8 @@ static int fimc_set_prescaler(struct fimc_context *ctx, struct fimc_scaler *sc,
- 	DRM_DEBUG_KMS("shfactor[%d]\n", shfactor);
+ 	/* interrupt enable */
+ 	if (buf_type == IPP_BUF_ENQUEUE &&
+-	    fimc_dst_get_buf_seq(ctx) >= FIMC_BUF_START)
++	    fimc_dst_get_buf_count(ctx) >= FIMC_BUF_START)
+ 		fimc_mask_irq(ctx, true);
  
- 	cfg = (EXYNOS_CISCPRERATIO_SHFACTOR(shfactor) |
--		EXYNOS_CISCPRERATIO_PREHORRATIO(pre_hratio) |
--		EXYNOS_CISCPRERATIO_PREVERRATIO(pre_vratio));
-+		EXYNOS_CISCPRERATIO_PREHORRATIO(1 << hfactor) |
-+		EXYNOS_CISCPRERATIO_PREVERRATIO(1 << vfactor));
- 	fimc_write(cfg, EXYNOS_CISCPRERATIO);
+ 	/* interrupt disable */
+ 	if (buf_type == IPP_BUF_DEQUEUE &&
+-	    fimc_dst_get_buf_seq(ctx) <= FIMC_BUF_STOP)
++	    fimc_dst_get_buf_count(ctx) <= FIMC_BUF_STOP)
+ 		fimc_mask_irq(ctx, false);
  
- 	cfg = (EXYNOS_CISCPREDST_PREDSTWIDTH(pre_dst_width) |
+ err_unlock:
 -- 
 1.9.1
