@@ -1,81 +1,138 @@
-From: Amit Kachhap <amit.kachhap@gmail.com>
-Subject: Re: [PATCH 00/10] thermal: exynos: various cleanups
-Date: Mon, 19 May 2014 11:46:10 +0530
-Message-ID: <CADGdYn5S67Sd8ON5YHiUvqiw7ypXqV3n4VURheEJsStWinR85w@mail.gmail.com>
-References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
-	<1400144805.2273.34.camel@rzhang1-toshiba>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH v3 1/3] phy: Add exynos-simple-phy driver
+Date: Mon, 19 May 2014 12:40:59 +0530
+Message-ID: <CAPdUM4OWbDBDNsaETT64sbLs_We40ZeV2WVh09Jkdx_ZPoms4Q@mail.gmail.com>
+References: <1400095043-685-1-git-send-email-rahul.sharma@samsung.com>
+ <1400095043-685-2-git-send-email-rahul.sharma@samsung.com>
+ <5373CBAD.2010505@gmail.com>
+ <CAPdUM4MT0nZcLRtNcKRAeW4Q3n5z9n4BnzR-7uYMb1gqwEhWXA@mail.gmail.com>
+ <53753527.3000905@gmail.com>
+ <CAPdUM4M5k-aouSA=dyUXWOyFLBhob+o8103a=gAxo-O68i-MCw@mail.gmail.com>
+ <CAPdUM4Py4r3ZV79ULcJ3KojaPQ0hfZTE2XbsY+=hP4LD70mb8Q@mail.gmail.com>
+ <5375ED80.2010008@samsung.com>
+ <CAPdUM4Mfe4xTnh-qPeazcknbCoqX3HcORKHLqBE9ukqa4ULi9A@mail.gmail.com>
+ <53762583.5020907@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1400144805.2273.34.camel@rzhang1-toshiba>
-Sender: linux-pm-owner@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <53762583.5020907@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, sunil joshi <joshi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 5/15/14, Zhang Rui <rui.zhang@intel.com> wrote:
-> On =E4=B8=80, 2014-05-05 at 13:15 +0200, Bartlomiej Zolnierkiewicz wr=
-ote:
->> Hi,
+On 16 May 2014 20:19, Tomasz Figa <t.figa@samsung.com> wrote:
+> On 16.05.2014 16:30, Rahul Sharma wrote:
+>> On 16 May 2014 16:20, Tomasz Figa <t.figa@samsung.com> wrote:
+>>> On 16.05.2014 12:35, Rahul Sharma wrote:
+>>>> On 16 May 2014 15:12, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+>>>>> On 16 May 2014 03:14, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>>>>>> On 15.05.2014 06:01, Rahul Sharma wrote:
+>>>> [snip]
+>>>>>>>> the PHY provider.
+>>>>>>>>
+>>>>>>>
+>>>>>>> Please correct me if I got you wrong. You want somthing like this:
+>>>>>>>
+>>>>>>> pmu_system_controller: system-controller@10040000 {
+>>>>>>>          ...
+>>>>>>>           simple_phys: simple-phys {
+>>>>>>>                         compatible = "samsung,exynos5420-simple-phy";
+>>>>>>>                         ...
+>>>>>>>           };
+>>>>>>> };
+>>>>>>
+>>>>>> Not exactly.
+>>>>>>
+>>>>>> What I meant is that the PMU node itself should be the PHY provider, e.g.
+>>>>>>
+>>>>>> pmu_system_controller: system-controller@10040000 {
+>>>>>>         /* ... */
+>>>>>>         #phy-cells = <1>;
+>>>>>> };
+>>>>>>
+>>>>>> and then the PMU node should instantiate the Exynos simple PHY driver,
+>>>>>> as this is a driver for a facility existing entirely inside of the PMU.
+>>>>>> Moreover, the driver should be rather called Exynos PMU PHY.
+>>>>>>
+>>>>>> I know this isn't really possible at the moment, but with device tree we
+>>>>>> must design things carefully, so it's better to take a bit more time and
+>>>>>> do things properly.
+>>>>>>
+>>>>>> So my opinion on this is that there should be a central Exynos PMU
+>>>>>> driver that claims the IO region and instantiates necessary subdrivers,
+>>>>>> such as Exynos PMU PHY driver, Exynos CLKOUT driver, Exynos cpuidle
+>>>>>> driver and more, similar to what is being done in drivers/mfd.
+>>>>>
+>>>>
+>>>> Hi Tomasz,
+>>>>
+>>>> These PHYs are not part of PMU as such. I am not sure if it is correct to
+>>>> probe them as phy provider for all these phys. Only relation of these phys with
+>>>> the PMU is 'enable/disable control'.
+>>>
+>>> Well, in reality what is implemented by this driver is not even a PHY,
+>>> just some kind of power controllers, which are contained entirely in the
+>>> PMU.
+>>>
 >>
->> This patch series contains various cleanups for EXYNOS thermal
->> driver.  Overall it decreases driver's LOC by 13%.  It is based
->> on next-20140428 kernel.  It should not cause any functionality
->> changes.
+>> I agree. Actually the role of generic phy framework for these 'simple' phys is
+>> only that much.
 >>
-> Amit,
+>>>> Controlling this bit using regmap interface
+>>>> still looks better to me.
+>>>
+>>> Well, when there is a choice between using regmap and not using regmap,
+>>> I'd rather choose the latter. Why would you want to introduce additional
+>>> abstraction layer if there is no need for such?
+>>>
+>>>>
+>>>> IMHO Ideal method would be probing these PHYs independently and resolving
+>>>> the necessary dependencies like syscon handle, clocks etc. This way we will
+>>>> not be having any common phy provider for all these independent PHYs and it
+>>>> would be clean to add each of these phy nodes in DT. Please see my original
+>>>> comment below.
+>>>>
+>>>> http://lkml.iu.edu/hypermail/linux/kernel/1404.1/00701.html
+>>>
+>>> With the solution I proposed, you don't need any kind of dependencies
+>>> for those simple power controllers. They are just single bits that don't
+>>> need anything special to operate, except PMU clock running.
+>>
+>> In that case we can further trim it down and let the drivers use the regmap
+>> interface to control this bit. Many drivers including HDMI, DP just need that
+>> much functionality from the phy provider.
 >
-> what do you think of this patch set?
+> Well, this is what several drivers already do, like USB PHY (dedicated
+> IP block), watchdog (for watchdog mask), SATA PHY (dedicated IP block
+> too) or will do, like I2C (for configuration of I2C mux on Exynos5).
 >
-> thanks,
-> rui
+> At least this would be consistent with them and wouldn't be an API
+> abuse, so I'd be inclined to go this way more than introducing
+> abstractions like this patch does.
 
-I agreed to many of the cleanups in the patch but tmu controller
-features should be retained as they will allow adding quick soc
-support and also avoid unnecessary churning of code in the future.
+Ok. I had already posted a patch for this at
+http://www.spinics.net/lists/linux-samsung-soc/msg28049.html
+I will revive that thread.
 
-Thanks,
-Amit
+@Tomasz Stanislawski, Do you have different opinion here?
 
->> Best regards,
->> --
->> Bartlomiej Zolnierkiewicz
->> Samsung R&D Institute Poland
->> Samsung Electronics
->>
->>
->> Bartlomiej Zolnierkiewicz (10):
->>   thermal: exynos: remove unused struct exynos_tmu_registers entries
->>   thermal: exynos: remove unused defines
->>   thermal: exynos: remove dead code for HW_MODE calibration
->>   thermal: exynos: remove dead code for TYPE_TWO_POINT_TRIMMING
->>     calibration
->>   thermal: exynos: remove redundant pdata checks from
->>     exynos_tmu_initialize()
->>   thermal: exynos: remove redundant threshold_code checks from
->>     exynos_tmu_initialize()
->>   thermal: exynos: simplify temp_to_code() and code_to_temp()
->>   thermal: exynos: cache non_hw_trigger_levels in pdata
->>   thermal: exynos: remove redundant pdata checks from
->>     exynos_tmu_control()
->>   thermal: exynos: remove identical values from exynos*_tmu_register=
-s
->>     structures
->>
->>  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
->>  drivers/thermal/samsung/exynos_tmu.c            | 181
->> ++++--------------------
->>  drivers/thermal/samsung/exynos_tmu.h            |  86 +----------
->>  drivers/thermal/samsung/exynos_tmu_data.c       |  40 +-----
->>  drivers/thermal/samsung/exynos_tmu_data.h       |  32 +----
->>  5 files changed, 37 insertions(+), 303 deletions(-)
->>
+Regards,
+Rahul Sharma.
+
 >
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" i=
-n
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+> Best regards,
+> Tomasz
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
