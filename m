@@ -1,67 +1,45 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 00/10] thermal: exynos: various cleanups
-Date: Mon, 19 May 2014 13:09:34 +0200
-Message-ID: <5379E66E.7020804@gmail.com>
-References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com> <1400144805.2273.34.camel@rzhang1-toshiba> <CADGdYn5S67Sd8ON5YHiUvqiw7ypXqV3n4VURheEJsStWinR85w@mail.gmail.com> <4899668.1WyrreGo3H@amdc1032>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4899668.1WyrreGo3H@amdc1032>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Amit Kachhap <amit.kachhap@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] ARM: dts: Add secure firmware support for Arndale-octa
+Date: Mon, 19 May 2014 16:39:17 +0530
+Message-ID: <1400497757-18991-2-git-send-email-tushar.behera@linaro.org>
+References: <1400497757-18991-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:59199 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754075AbaESLLX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 May 2014 07:11:23 -0400
+Received: by mail-pb0-f46.google.com with SMTP id rq2so5747841pbb.33
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 May 2014 04:11:22 -0700 (PDT)
+In-Reply-To: <1400497757-18991-1-git-send-email-tushar.behera@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com
 
-Hi,
+Arndale-Octa board is always configured to work with trustzone
+firmware binary. Added DTS node entry to enable this support.
 
-On 19.05.2014 13:05, Bartlomiej Zolnierkiewicz wrote:
->=20
-> Hi,
->=20
-> On Monday, May 19, 2014 11:46:10 AM Amit Kachhap wrote:
->> On 5/15/14, Zhang Rui <rui.zhang@intel.com> wrote:
->>> On =E4=B8=80, 2014-05-05 at 13:15 +0200, Bartlomiej Zolnierkiewicz =
-wrote:
->>>> Hi,
->>>>
->>>> This patch series contains various cleanups for EXYNOS thermal
->>>> driver.  Overall it decreases driver's LOC by 13%.  It is based
->>>> on next-20140428 kernel.  It should not cause any functionality
->>>> changes.
->>>>
->>> Amit,
->>>
->>> what do you think of this patch set?
->>>
->>> thanks,
->>> rui
->>
->> I agreed to many of the cleanups in the patch but tmu controller
->> features should be retained as they will allow adding quick soc
->> support and also avoid unnecessary churning of code in the future.
->=20
-> The general rule in the kernel code is not to keep the dead code as
-> it has a maintainance cost and makes further changes usually more
-> difficult, not easier.  There is no guarantee that the future SoCs
-> support will use the dead code (i.e. TYPE_TWO_POINT_TRIMMING support
-> has been introudced more than 2.5 years but no users of it has been
-> ever added) and in the meantime all other code changes has to take
-> the dead code into account.  I also have more Exynos thermal driver
-> changes in the work and it would be much easier to do them without
-> the need to support unused SoC features.  Please consider this in
-> your opinion.
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-I'd also like to add that I don't see any correlation with mentioned
-dead code and possibility of adding new SoCs. The code is mostly relate=
-d
-to unused/untested features and support for new SoCs might just be adde=
-d
-without those optional features. Moreover, less features (especially
-untested) means less hassle to add new SoC, because you have less thing=
-s
-to test. Especially considering the fact that you would have to test
-originally untested code and fix it if it turns out to be broken.
-
-Best regards,
-Tomasz
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index 896a2a6..253d101 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -26,6 +26,11 @@
+ 		bootargs = "console=ttySAC3,115200";
+ 	};
+ 
++	firmware@02073000 {
++		compatible = "samsung,secure-firmware";
++		reg = <0x02073000 0x1000>;
++	};
++
+ 	fixed-rate-clocks {
+ 		oscclk {
+ 			compatible = "samsung,exynos5420-oscclk";
+-- 
+1.7.9.5
