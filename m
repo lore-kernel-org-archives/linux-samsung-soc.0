@@ -1,223 +1,65 @@
-From: Amit Kachhap <amit.kachhap@gmail.com>
-Subject: Re: [PATCH 03/10] thermal: exynos: remove dead code for HW_MODE calibration
-Date: Mon, 19 May 2014 10:57:28 +0530
-Message-ID: <CADGdYn4rDibjEWT3BQw+ibkg64cGMFNNwX_fZzd9W+MRQkuCAg@mail.gmail.com>
-References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
-	<1399288539-1793-4-git-send-email-b.zolnierkie@samsung.com>
+From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
+Subject: Re: [PATCH] Fix for possible null pointer dereference in dma.c
+Date: Mon, 19 May 2014 07:39:47 +0200
+Message-ID: <20140519073947.66bb2c46@ipc1.ka-ro>
+References: <1400191076-28279-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f177.google.com ([209.85.160.177]:33839 "EHLO
-	mail-yk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750758AbaESF13 (ORCPT
+Received: from mail.karo-electronics.de ([81.173.242.67]:56343 "EHLO
+	mail.karo-electronics.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750738AbaESFkH convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 May 2014 01:27:29 -0400
-In-Reply-To: <1399288539-1793-4-git-send-email-b.zolnierkie@samsung.com>
+	Mon, 19 May 2014 01:40:07 -0400
+In-Reply-To: <1400191076-28279-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-Hi Bartlomiej,
+Hi,
 
-On 5/5/14, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> wrote:
-> There should be no functional changes caused by this patch.
->
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Rickard Strandqvist wrote:
+> There is otherwise a risk of a possible null pointer dereference.
+>=20
+> Was largely found by using a static code analysis program called cppc=
+heck.
+>=20
+> Signed-off-by: Rickard Strandqvist <rickard_strandqvist@spectrumdigit=
+al.se>
 > ---
->  drivers/thermal/samsung/exynos_tmu.c      | 33
-> +------------------------------
->  drivers/thermal/samsung/exynos_tmu.h      | 13 ------------
->  drivers/thermal/samsung/exynos_tmu_data.c |  3 ---
->  drivers/thermal/samsung/exynos_tmu_data.h |  2 --
->  4 files changed, 1 insertion(+), 50 deletions(-)
+>  sound/soc/samsung/dma.c |   10 ++++++----
+>  1 fil =C3=A4ndrad, 6 till=C3=A4gg(+), 4 borttagningar(-)
+>=20
+> diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
+> index dc09b71..b1f6757 100644
+> --- a/sound/soc/samsung/dma.c
+> +++ b/sound/soc/samsung/dma.c
+> @@ -115,17 +115,19 @@ static void dma_enqueue(struct snd_pcm_substrea=
+m *substream)
+>  static void audio_buffdone(void *data)
+>  {
+>  	struct snd_pcm_substream *substream =3D data;
+> -	struct runtime_data *prtd =3D substream->runtime->private_data;
+> +	struct runtime_data *prtd =3D NULL;
+> =20
+>  	pr_debug("Entered %s\n", __func__);
+> =20
+> -	if (prtd->state & ST_RUNNING) {
+> +	if(substream)
 >
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> b/drivers/thermal/samsung/exynos_tmu.c
-> index 0d96a51..9f2a5ee 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -76,9 +76,6 @@ static int temp_to_code(struct exynos_tmu_data *data, u8
-> temp)
->  	struct exynos_tmu_platform_data *pdata = data->pdata;
->  	int temp_code;
->
-> -	if (pdata->cal_mode == HW_MODE)
-> -		return temp;
-> -
-I suggest to retain the hw mode generic feature as it is provided by
-the TMU controller.  However below unused defines for 5440 might be
-removed as the h/w mode relevant values were wrongly fused.
->  	if (data->soc == SOC_ARCH_EXYNOS4210)
->  		/* temp should range between 25 and 125 */
->  		if (temp < 25 || temp > 125) {
-> @@ -113,9 +110,6 @@ static int code_to_temp(struct exynos_tmu_data *data, u8
-> temp_code)
->  	struct exynos_tmu_platform_data *pdata = data->pdata;
->  	int temp;
->
-> -	if (pdata->cal_mode == HW_MODE)
-> -		return temp_code;
-> -
->  	if (data->soc == SOC_ARCH_EXYNOS4210)
->  		/* temp_code should range between 75 and 175 */
->  		if (temp_code < 75 || temp_code > 175) {
-> @@ -164,9 +158,6 @@ static int exynos_tmu_initialize(struct platform_device
-> *pdev)
->  	if (TMU_SUPPORTS(pdata, TRIM_RELOAD))
->  		__raw_writel(1, data->base + reg->triminfo_ctrl);
->
-> -	if (pdata->cal_mode == HW_MODE)
-> -		goto skip_calib_data;
-> -
->  	/* Save trimming info in order to perform calibration */
->  	if (data->soc == SOC_ARCH_EXYNOS5440) {
->  		/*
-> @@ -202,7 +193,6 @@ static int exynos_tmu_initialize(struct platform_device
-> *pdev)
->  			(pdata->efuse_value >> reg->triminfo_85_shift) &
->  			EXYNOS_TMU_TEMP_MASK;
->
-> -skip_calib_data:
->  	if (pdata->max_trigger_level > MAX_THRESHOLD_LEVS) {
->  		dev_err(&pdev->dev, "Invalid max trigger level\n");
->  		ret = -EINVAL;
-> @@ -311,7 +301,7 @@ static void exynos_tmu_control(struct platform_device
-> *pdev, bool on)
->  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->  	struct exynos_tmu_platform_data *pdata = data->pdata;
->  	const struct exynos_tmu_registers *reg = pdata->registers;
-> -	unsigned int con, interrupt_en, cal_val;
-> +	unsigned int con, interrupt_en;
->
->  	mutex_lock(&data->lock);
->  	clk_enable(data->clk);
-> @@ -337,27 +327,6 @@ static void exynos_tmu_control(struct platform_device
-> *pdev, bool on)
->  		con |= (pdata->noise_cancel_mode << reg->therm_trip_mode_shift);
->  	}
->
-> -	if (pdata->cal_mode == HW_MODE) {
-> -		con &= ~(reg->calib_mode_mask << reg->calib_mode_shift);
-> -		cal_val = 0;
-> -		switch (pdata->cal_type) {
-> -		case TYPE_TWO_POINT_TRIMMING:
-> -			cal_val = 3;
-> -			break;
-> -		case TYPE_ONE_POINT_TRIMMING_85:
-> -			cal_val = 2;
-> -			break;
-> -		case TYPE_ONE_POINT_TRIMMING_25:
-> -			cal_val = 1;
-> -			break;
-> -		case TYPE_NONE:
-> -			break;
-> -		default:
-> -			dev_err(&pdev->dev, "Invalid calibration type, using none\n");
-> -		}
-> -		con |= cal_val << reg->calib_mode_shift;
-> -	}
-> -
->  	if (on) {
->  		con |= (1 << reg->core_en_shift);
->  		interrupt_en =
-> diff --git a/drivers/thermal/samsung/exynos_tmu.h
-> b/drivers/thermal/samsung/exynos_tmu.h
-> index 80dc899..e417af8 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.h
-> +++ b/drivers/thermal/samsung/exynos_tmu.h
-> @@ -34,11 +34,6 @@ enum calibration_type {
->  	TYPE_NONE,
->  };
->
-> -enum calibration_mode {
-> -	SW_MODE,
-> -	HW_MODE,
-> -};
-> -
->  enum soc_type {
->  	SOC_ARCH_EXYNOS4210 = 1,
->  	SOC_ARCH_EXYNOS4412,
-> @@ -92,10 +87,6 @@ enum soc_type {
->   * @buf_slope_sel_shift: shift bits of amplifier gain value in tmu_ctrl
->  	register.
->   * @buf_slope_sel_mask: mask bits of amplifier gain value in tmu_ctrl
-> register.
-> - * @calib_mode_shift: shift bits of calibration mode value in tmu_ctrl
-> -	register.
-> - * @calib_mode_mask: mask bits of calibration mode value in tmu_ctrl
-> -	register.
->   * @core_en_shift: shift bits of TMU core enable bit in tmu_ctrl register.
->   * @tmu_status: register drescribing the TMU status.
->   * @tmu_cur_temp: register containing the current temperature of the TMU.
-> @@ -139,8 +130,6 @@ struct exynos_tmu_registers {
->  	u32	therm_trip_en_shift;
->  	u32	buf_slope_sel_shift;
->  	u32	buf_slope_sel_mask;
-> -	u32	calib_mode_shift;
-> -	u32	calib_mode_mask;
->  	u32	core_en_shift;
->
->  	u32	tmu_status;
-> @@ -222,7 +211,6 @@ struct exynos_tmu_registers {
->   * @default_temp_offset: default temperature offset in case of no trimming
->   * @test_mux; information if SoC supports test MUX
->   * @cal_type: calibration type for temperature
-> - * @cal_mode: calibration mode for temperature
->   * @freq_clip_table: Table representing frequency reduction percentage.
->   * @freq_tab_count: Count of the above table as frequency reduction may
->   *	applicable to only some of the trigger levels.
-> @@ -253,7 +241,6 @@ struct exynos_tmu_platform_data {
->  	u8 test_mux;
->
->  	enum calibration_type cal_type;
-> -	enum calibration_mode cal_mode;
->  	enum soc_type type;
->  	struct freq_clip_table freq_tab[4];
->  	unsigned int freq_tab_count;
-> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c
-> b/drivers/thermal/samsung/exynos_tmu_data.c
-> index 36d64d6..4b992d9 100644
-> --- a/drivers/thermal/samsung/exynos_tmu_data.c
-> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
-> @@ -205,8 +205,6 @@ static const struct exynos_tmu_registers
-> exynos5440_tmu_registers = {
->  	.therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
->  	.buf_slope_sel_shift = EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
->  	.buf_slope_sel_mask = EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
-> -	.calib_mode_shift = EXYNOS_TMU_CALIB_MODE_SHIFT,
-> -	.calib_mode_mask = EXYNOS_TMU_CALIB_MODE_MASK,
->  	.core_en_shift = EXYNOS_TMU_CORE_EN_SHIFT,
->  	.tmu_status = EXYNOS5440_TMU_S0_7_STATUS,
->  	.tmu_cur_temp = EXYNOS5440_TMU_S0_7_TEMP,
-> @@ -243,7 +241,6 @@ static const struct exynos_tmu_registers
-> exynos5440_tmu_registers = {
->  	.reference_voltage = 16, \
->  	.noise_cancel_mode = 4, \
->  	.cal_type = TYPE_ONE_POINT_TRIMMING, \
-> -	.cal_mode = 0, \
->  	.efuse_value = 0x5b2d, \
->  	.min_efuse_value = 16, \
->  	.max_efuse_value = 76, \
-> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h
-> b/drivers/thermal/samsung/exynos_tmu_data.h
-> index d4eeddb..1fed00d 100644
-> --- a/drivers/thermal/samsung/exynos_tmu_data.h
-> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
-> @@ -60,8 +60,6 @@
->  #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
->  #define EXYNOS_TMU_TRIP_MODE_MASK	0x7
->  #define EXYNOS_TMU_THERM_TRIP_EN_SHIFT	12
-> -#define EXYNOS_TMU_CALIB_MODE_SHIFT	4
-> -#define EXYNOS_TMU_CALIB_MODE_MASK	0x3
->
->  #define EXYNOS_TMU_INTEN_RISE0_SHIFT	0
->  #define EXYNOS_TMU_INTEN_RISE1_SHIFT	4
-> --
-> 1.8.2.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Missing space.
+
+
+Lothar Wa=C3=9Fmann
+--=20
+___________________________________________________________
+
+Ka-Ro electronics GmbH | Pascalstra=C3=9Fe 22 | D - 52076 Aachen
+Phone: +49 2408 1402-0 | Fax: +49 2408 1402-10
+Gesch=C3=A4ftsf=C3=BChrer: Matthias Kaussen
+Handelsregistereintrag: Amtsgericht Aachen, HRB 4996
+
+www.karo-electronics.de | info@karo-electronics.de
+___________________________________________________________
