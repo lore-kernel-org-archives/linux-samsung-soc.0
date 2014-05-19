@@ -1,7 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 8/8] drm/exynos/fimc: simplify and rename fimc_dst_get_buf_seq
-Date: Mon, 19 May 2014 12:54:10 +0200
-Message-ID: <1400496850-23860-9-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 7/8] drm/exynos/fimc: replace mutex by spinlock
+Date: Mon, 19 May 2014 12:54:09 +0200
+Message-ID: <1400496850-23860-8-git-send-email-a.hajda@samsung.com>
 References: <1400496850-23860-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,61 +21,73 @@ To: open list <linux-kernel@vger.kernel.org>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-fimc_dst_get_buf_seq returns number of buffers
-so the name should be fimc_dst_get_buf_count.
-Function body has been simplified.
+Function fimc_dst_set_buf_seq is called by irq handler
+so it should not use mutexes. This patch fixes it.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_fimc.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-index 9860d38..831dde9 100644
+index 7a66f18..9860d38 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-@@ -58,7 +58,6 @@
- #define FIMC_SHFACTOR	10
- #define FIMC_BUF_STOP	1
- #define FIMC_BUF_START	2
--#define FIMC_REG_SZ		32
- #define FIMC_WIDTH_ITU_709	1280
- #define FIMC_REFRESH_MAX	60
- #define FIMC_REFRESH_MIN	12
-@@ -1123,16 +1122,13 @@ static int fimc_dst_set_size(struct device *dev, int swap,
- 	return 0;
- }
+@@ -18,6 +18,7 @@
+ #include <linux/clk.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/of.h>
++#include <linux/spinlock.h>
  
--static int fimc_dst_get_buf_seq(struct fimc_context *ctx)
-+static int fimc_dst_get_buf_count(struct fimc_context *ctx)
- {
--	u32 cfg, i, buf_num = 0;
--	u32 mask = 0x00000001;
-+	u32 cfg, buf_num;
+ #include <drm/drmP.h>
+ #include <drm/exynos_drm.h>
+@@ -158,7 +159,7 @@ struct fimc_context {
+ 	struct exynos_drm_ippdrv	ippdrv;
+ 	struct resource	*regs_res;
+ 	void __iomem	*regs;
+-	struct mutex	lock;
++	spinlock_t	lock;
+ 	struct clk	*clocks[FIMC_CLKS_MAX];
+ 	u32		clk_frequency;
+ 	struct regmap	*sysreg;
+@@ -1146,10 +1147,11 @@ static int fimc_dst_set_buf_seq(struct fimc_context *ctx, u32 buf_id,
+ 	u32 cfg;
+ 	u32 mask = 0x00000001 << buf_id;
+ 	int ret = 0;
++	unsigned long flags;
  
+ 	DRM_DEBUG_KMS("buf_id[%d]buf_type[%d]\n", buf_id, buf_type);
+ 
+-	mutex_lock(&ctx->lock);
++	spin_lock_irqsave(&ctx->lock, flags);
+ 
+ 	/* mask register set */
  	cfg = fimc_read(ctx, EXYNOS_CIFCNTSEQ);
- 
--	for (i = 0; i < FIMC_REG_SZ; i++)
--		if (cfg & (mask << i))
--			buf_num++;
-+	buf_num = hweight32(cfg);
- 
- 	DRM_DEBUG_KMS("buf_num[%d]\n", buf_num);
- 
-@@ -1176,12 +1172,12 @@ static int fimc_dst_set_buf_seq(struct fimc_context *ctx, u32 buf_id,
- 
- 	/* interrupt enable */
- 	if (buf_type == IPP_BUF_ENQUEUE &&
--	    fimc_dst_get_buf_seq(ctx) >= FIMC_BUF_START)
-+	    fimc_dst_get_buf_count(ctx) >= FIMC_BUF_START)
- 		fimc_mask_irq(ctx, true);
- 
- 	/* interrupt disable */
- 	if (buf_type == IPP_BUF_DEQUEUE &&
--	    fimc_dst_get_buf_seq(ctx) <= FIMC_BUF_STOP)
-+	    fimc_dst_get_buf_count(ctx) <= FIMC_BUF_STOP)
+@@ -1183,7 +1185,7 @@ static int fimc_dst_set_buf_seq(struct fimc_context *ctx, u32 buf_id,
  		fimc_mask_irq(ctx, false);
  
  err_unlock:
+-	mutex_unlock(&ctx->lock);
++	spin_unlock_irqrestore(&ctx->lock, flags);
+ 	return ret;
+ }
+ 
+@@ -1794,7 +1796,7 @@ static int fimc_probe(struct platform_device *pdev)
+ 
+ 	DRM_DEBUG_KMS("id[%d]ippdrv[0x%x]\n", ctx->id, (int)ippdrv);
+ 
+-	mutex_init(&ctx->lock);
++	spin_lock_init(&ctx->lock);
+ 	platform_set_drvdata(pdev, ctx);
+ 
+ 	pm_runtime_set_active(dev);
+@@ -1825,7 +1827,6 @@ static int fimc_remove(struct platform_device *pdev)
+ 	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+ 
+ 	exynos_drm_ippdrv_unregister(ippdrv);
+-	mutex_destroy(&ctx->lock);
+ 
+ 	fimc_put_clocks(ctx);
+ 	pm_runtime_set_suspended(dev);
 -- 
 1.9.1
