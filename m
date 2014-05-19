@@ -1,7 +1,7 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH 01/10] [media] s5p-mfc: Copy timestamps only when a frame is produced.
-Date: Mon, 19 May 2014 18:02:57 +0530
-Message-ID: <1400502786-4826-2-git-send-email-arun.kk@samsung.com>
+Subject: [PATCH 02/10] [media] s5p-mfc: Fixes for decode REQBUFS.
+Date: Mon, 19 May 2014 18:02:58 +0530
+Message-ID: <1400502786-4826-3-git-send-email-arun.kk@samsung.com>
 References: <1400502786-4826-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <1400502786-4826-1-git-send-email-arun.kk@samsung.com>
@@ -12,64 +12,236 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Pawel Osciak <posciak@chromium.org>
 
-Timestamps for destination buffers are assigned by copying them from
-corresponding source buffers when the decode operation results in a frame
-being outputted to a destination buffer. But the decision when to do this, i.e.
-whether the decode operation on current source buffer produced a destination
-frame, is wrongly based on "display status". Display status reflects the status
-of the destination buffer, not source.
+- Honor return values from vb2_reqbufs on REQBUFS(0).
 
-This used to work for firmwares version <= 6, because in addition to the above,
-we'd check the decoded frame type register, which was set to "skipped" if
-a destination frame was not produced, exiting early from
-s5p_mfc_handle_frame_new().
-Firmware >=7 does not set the frame type register for frames that were not
-decoded anymore though, which results in us wrongly overwriting timestamps of
-previously decoded buffers (firmware reports the same destination buffer address
-as previously decoded one if a frame wasn't decoded during current operation).
+- Do not set the number of allocated buffers to 0 if userspace tries
+  to request buffers again without freeing them.
 
-To do it properly, we should be basing our decision to copy the timestamp on the
-status of the source buffer, i.e. "decode status". The decode status register
-values are confusing, because in its case "display" means "a frame has been
-outputted to a destination buffer". We should copy if "decode and display"
-is returned in it. This also works on <= v6 firmware, which behaves in the same
-way with regards to decode status register.
+- There is no need to verify correct instance state on reqbufs, as we will
+  verify this in queue_setup().
+
+- There is also no need to verify that vb2_reqbufs() was able to allocate enough
+  buffers (pb_count) and call buf_init on that many buffers (i.e. dst_buf_count
+  is at least pb_count), because this will be verified by second queue_setup()
+  call as well and vb2_reqbufs() will fail otherwise.
+
+- Only verify state is MFCINST_INIT when allocating, not when freeing.
+
+- Refactor and simplify code.
 
 Signed-off-by: Pawel Osciak <posciak@chromium.org>
 Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c |  178 ++++++++++++++------------
+ 1 file changed, 99 insertions(+), 79 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 89356ae..6ef6bd1 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -309,12 +309,15 @@ static void s5p_mfc_handle_frame(struct s5p_mfc_ctx *ctx,
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+index 58b7bba..99a55e6 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+@@ -462,104 +462,124 @@ out:
+ 	return ret;
+ }
+ 
+-/* Reqeust buffers */
+-static int vidioc_reqbufs(struct file *file, void *priv,
+-					  struct v4l2_requestbuffers *reqbufs)
++static int reqbufs_output(struct s5p_mfc_dev *dev, struct s5p_mfc_ctx *ctx,
++				struct v4l2_requestbuffers *reqbufs)
  {
- 	struct s5p_mfc_dev *dev = ctx->dev;
- 	unsigned int dst_frame_status;
-+	unsigned int dec_frame_status;
- 	struct s5p_mfc_buf *src_buf;
- 	unsigned long flags;
- 	unsigned int res_change;
+-	struct s5p_mfc_dev *dev = video_drvdata(file);
+-	struct s5p_mfc_ctx *ctx = fh_to_ctx(priv);
+ 	int ret = 0;
  
- 	dst_frame_status = s5p_mfc_hw_call(dev->mfc_ops, get_dspl_status, dev)
- 				& S5P_FIMV_DEC_STATUS_DECODING_STATUS_MASK;
-+	dec_frame_status = s5p_mfc_hw_call(dev->mfc_ops, get_dec_status, dev)
-+				& S5P_FIMV_DEC_STATUS_DECODING_STATUS_MASK;
- 	res_change = (s5p_mfc_hw_call(dev->mfc_ops, get_dspl_status, dev)
- 				& S5P_FIMV_DEC_STATUS_RESOLUTION_MASK)
- 				>> S5P_FIMV_DEC_STATUS_RESOLUTION_SHIFT;
-@@ -347,8 +350,7 @@ static void s5p_mfc_handle_frame(struct s5p_mfc_ctx *ctx,
+-	if (reqbufs->memory != V4L2_MEMORY_MMAP) {
+-		mfc_err("Only V4L2_MEMORY_MAP is supported\n");
+-		return -EINVAL;
+-	}
+-	if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+-		/* Can only request buffers after an instance has been opened.*/
+-		if (ctx->state == MFCINST_INIT) {
+-			ctx->src_bufs_cnt = 0;
+-			if (reqbufs->count == 0) {
+-				mfc_debug(2, "Freeing buffers\n");
+-				s5p_mfc_clock_on();
+-				ret = vb2_reqbufs(&ctx->vq_src, reqbufs);
+-				s5p_mfc_clock_off();
+-				return ret;
+-			}
+-			/* Decoding */
+-			if (ctx->output_state != QUEUE_FREE) {
+-				mfc_err("Bufs have already been requested\n");
+-				return -EINVAL;
+-			}
+-			s5p_mfc_clock_on();
+-			ret = vb2_reqbufs(&ctx->vq_src, reqbufs);
+-			s5p_mfc_clock_off();
+-			if (ret) {
+-				mfc_err("vb2_reqbufs on output failed\n");
+-				return ret;
+-			}
+-			mfc_debug(2, "vb2_reqbufs: %d\n", ret);
+-			ctx->output_state = QUEUE_BUFS_REQUESTED;
++	s5p_mfc_clock_on();
++
++	if (reqbufs->count == 0) {
++		mfc_debug(2, "Freeing buffers\n");
++		ret = vb2_reqbufs(&ctx->vq_src, reqbufs);
++		if (ret)
++			goto out;
++		ctx->src_bufs_cnt = 0;
++	} else if (ctx->output_state == QUEUE_FREE) {
++		/* Can only request buffers after the instance
++		 * has been opened.
++		 */
++		WARN_ON(ctx->src_bufs_cnt != 0);
++		if (ctx->state != MFCINST_INIT) {
++			mfc_err("Reqbufs called in an invalid state\n");
++			ret = -EINVAL;
++			goto out;
  		}
+-	} else if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
++
++		mfc_debug(2, "Allocating %d buffers for OUTPUT queue\n",
++				reqbufs->count);
++		ret = vb2_reqbufs(&ctx->vq_src, reqbufs);
++		if (ret)
++			goto out;
++
++		ctx->output_state = QUEUE_BUFS_REQUESTED;
++	} else {
++		mfc_err("Buffers have already been requested\n");
++		ret = -EINVAL;
++	}
++out:
++	s5p_mfc_clock_off();
++	if (ret)
++		mfc_err("Failed allocating buffers for OUTPUT queue\n");
++	return ret;
++}
++
++static int reqbufs_capture(struct s5p_mfc_dev *dev, struct s5p_mfc_ctx *ctx,
++				struct v4l2_requestbuffers *reqbufs)
++{
++	int ret = 0;
++
++	s5p_mfc_clock_on();
++
++	if (reqbufs->count == 0) {
++		mfc_debug(2, "Freeing buffers\n");
++		ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
++		if (ret)
++			goto out;
++		s5p_mfc_hw_call(dev->mfc_ops, release_codec_buffers, ctx);
+ 		ctx->dst_bufs_cnt = 0;
+-		if (reqbufs->count == 0) {
+-			mfc_debug(2, "Freeing buffers\n");
+-			s5p_mfc_clock_on();
+-			ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
+-			s5p_mfc_clock_off();
+-			return ret;
+-		}
+-		if (ctx->capture_state != QUEUE_FREE) {
+-			mfc_err("Bufs have already been requested\n");
+-			return -EINVAL;
+-		}
+-		ctx->capture_state = QUEUE_BUFS_REQUESTED;
+-		s5p_mfc_clock_on();
++	} else if (ctx->capture_state == QUEUE_FREE) {
++		WARN_ON(ctx->dst_bufs_cnt != 0);
++		mfc_debug(2, "Allocating %d buffers for CAPTURE queue\n",
++				reqbufs->count);
+ 		ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
+-		s5p_mfc_clock_off();
+-		if (ret) {
+-			mfc_err("vb2_reqbufs on capture failed\n");
+-			return ret;
+-		}
+-		if (reqbufs->count < ctx->pb_count) {
+-			mfc_err("Not enough buffers allocated\n");
+-			reqbufs->count = 0;
+-			s5p_mfc_clock_on();
+-			ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
+-			s5p_mfc_clock_off();
+-			return -ENOMEM;
+-		}
++		if (ret)
++			goto out;
++
++		ctx->capture_state = QUEUE_BUFS_REQUESTED;
+ 		ctx->total_dpb_count = reqbufs->count;
++
+ 		ret = s5p_mfc_hw_call(dev->mfc_ops, alloc_codec_buffers, ctx);
+ 		if (ret) {
+ 			mfc_err("Failed to allocate decoding buffers\n");
+ 			reqbufs->count = 0;
+-			s5p_mfc_clock_on();
+-			ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
+-			s5p_mfc_clock_off();
+-			return -ENOMEM;
+-		}
+-		if (ctx->dst_bufs_cnt == ctx->total_dpb_count) {
+-			ctx->capture_state = QUEUE_BUFS_MMAPED;
+-		} else {
+-			mfc_err("Not all buffers passed to buf_init\n");
+-			reqbufs->count = 0;
+-			s5p_mfc_clock_on();
+-			ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
+-			s5p_mfc_hw_call(dev->mfc_ops, release_codec_buffers,
+-					ctx);
+-			s5p_mfc_clock_off();
+-			return -ENOMEM;
++			vb2_reqbufs(&ctx->vq_dst, reqbufs);
++			ret = -ENOMEM;
++			ctx->capture_state = QUEUE_FREE;
++			goto out;
+ 		}
++
++		WARN_ON(ctx->dst_bufs_cnt != ctx->total_dpb_count);
++		ctx->capture_state = QUEUE_BUFS_MMAPED;
++
+ 		if (s5p_mfc_ctx_ready(ctx))
+ 			set_work_bit_irqsave(ctx);
+ 		s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
+-		s5p_mfc_wait_for_done_ctx(ctx,
+-					S5P_MFC_R2H_CMD_INIT_BUFFERS_RET, 0);
++		s5p_mfc_wait_for_done_ctx(ctx, S5P_MFC_R2H_CMD_INIT_BUFFERS_RET,
++					  0);
++	} else {
++		mfc_err("Buffers have already been requested\n");
++		ret = -EINVAL;
  	}
++out:
++	s5p_mfc_clock_off();
++	if (ret)
++		mfc_err("Failed allocating buffers for CAPTURE queue\n");
+ 	return ret;
+ }
  
--	if (dst_frame_status == S5P_FIMV_DEC_STATUS_DECODING_DISPLAY ||
--		dst_frame_status == S5P_FIMV_DEC_STATUS_DECODING_ONLY)
-+	if (dec_frame_status == S5P_FIMV_DEC_STATUS_DECODING_DISPLAY)
- 		s5p_mfc_handle_frame_copy_time(ctx);
- 
- 	/* A frame has been decoded and is in the buffer  */
++/* Reqeust buffers */
++static int vidioc_reqbufs(struct file *file, void *priv,
++					  struct v4l2_requestbuffers *reqbufs)
++{
++	struct s5p_mfc_dev *dev = video_drvdata(file);
++	struct s5p_mfc_ctx *ctx = fh_to_ctx(priv);
++
++	if (reqbufs->memory != V4L2_MEMORY_MMAP) {
++		mfc_err("Only V4L2_MEMORY_MAP is supported\n");
++		return -EINVAL;
++	}
++
++	if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
++		return reqbufs_output(dev, ctx, reqbufs);
++	} else if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
++		return reqbufs_capture(dev, ctx, reqbufs);
++	} else {
++		mfc_err("Invalid type requested\n");
++		return -EINVAL;
++	}
++}
++
+ /* Query buffer */
+ static int vidioc_querybuf(struct file *file, void *priv,
+ 						   struct v4l2_buffer *buf)
 -- 
 1.7.9.5
