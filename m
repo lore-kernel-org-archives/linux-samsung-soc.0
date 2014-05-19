@@ -1,134 +1,208 @@
-From: Tarek Dakhran <t.dakhran@samsung.com>
-Subject: [PATCH v9 1/3] ARM: EXYNOS: Add support for EXYNOS5410 SoC
-Date: Mon, 19 May 2014 07:37:18 +0400
-Message-ID: <1400470640-30611-2-git-send-email-t.dakhran@samsung.com>
-References: <1400470640-30611-1-git-send-email-t.dakhran@samsung.com>
+From: Amit Kachhap <amit.kachhap@gmail.com>
+Subject: Re: [PATCH 01/10] thermal: exynos: remove unused struct
+ exynos_tmu_registers entries
+Date: Mon, 19 May 2014 10:42:17 +0530
+Message-ID: <CADGdYn69-+uaHwh7YEMjOXG=b6tTMSg9=KS=OV8ZiQVDLD8GOw@mail.gmail.com>
+References: <1399288539-1793-1-git-send-email-b.zolnierkie@samsung.com>
+	<1399288539-1793-2-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1400470640-30611-1-git-send-email-t.dakhran@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>, Romain Naour <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Rob Landley <rob@landley.net>, Kumar Gala <galak@codeaurora.org>, Tarek Dakhran <t.dakhran@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f46.google.com ([209.85.213.46]:40699 "EHLO
+	mail-yh0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750727AbaESFMS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 May 2014 01:12:18 -0400
+In-Reply-To: <1399288539-1793-2-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-EXYNOS5410 is SoC in Samsung's Exynos5 SoC series.
-Add initial support for this SoC.
+Hi Bartlomiej,
 
-Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
-Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/mach-exynos/Kconfig             |    8 ++++++++
- arch/arm/mach-exynos/exynos.c            |    1 +
- arch/arm/mach-exynos/platsmp.c           |    4 ++++
- arch/arm/plat-samsung/include/plat/cpu.h |   11 ++++++++++-
- 4 files changed, 23 insertions(+), 1 deletion(-)
+On 5/5/14, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> wrote:
+> There should be no functional changes caused by this patch.
+>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.h      | 40
+> -------------------------------
+>  drivers/thermal/samsung/exynos_tmu_data.c |  2 --
+>  drivers/thermal/samsung/exynos_tmu_data.h |  1 -
+>  3 files changed, 43 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.h
+> b/drivers/thermal/samsung/exynos_tmu.h
+> index 3fb6554..80dc899 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.h
+> +++ b/drivers/thermal/samsung/exynos_tmu.h
+> @@ -82,8 +82,6 @@ enum soc_type {
+>   * @triminfo_25_shift: shift bit of the 25 C trim value in triminfo_data
+> reg.
+>   * @triminfo_85_shift: shift bit of the 85 C trim value in triminfo_data
+> reg.
+>   * @triminfo_ctrl: trim info controller register.
+> - * @triminfo_reload_shift: shift of triminfo reload enable bit in
+> triminfo_ctrl
+> -	reg.
+>   * @tmu_ctrl: TMU main controller register.
+>   * @test_mux_addr_shift: shift bits of test mux address.
+>   * @buf_vref_sel_shift: shift bits of reference voltage in tmu_ctrl
+> register.
+> @@ -98,27 +96,13 @@ enum soc_type {
+>  	register.
+>   * @calib_mode_mask: mask bits of calibration mode value in tmu_ctrl
+>  	register.
+> - * @therm_trip_tq_en_shift: shift bits of thermal trip enable by TQ pin in
+> -	tmu_ctrl register.
+>   * @core_en_shift: shift bits of TMU core enable bit in tmu_ctrl register.
+>   * @tmu_status: register drescribing the TMU status.
+>   * @tmu_cur_temp: register containing the current temperature of the TMU.
+> - * @tmu_cur_temp_shift: shift bits of current temp value in tmu_cur_temp
+> -	register.
+>   * @threshold_temp: register containing the base threshold level.
+>   * @threshold_th0: Register containing first set of rising levels.
+> - * @threshold_th0_l0_shift: shift bits of level0 threshold temperature.
+> - * @threshold_th0_l1_shift: shift bits of level1 threshold temperature.
+> - * @threshold_th0_l2_shift: shift bits of level2 threshold temperature.
+> - * @threshold_th0_l3_shift: shift bits of level3 threshold temperature.
+>   * @threshold_th1: Register containing second set of rising levels.
+> - * @threshold_th1_l0_shift: shift bits of level0 threshold temperature.
+> - * @threshold_th1_l1_shift: shift bits of level1 threshold temperature.
+> - * @threshold_th1_l2_shift: shift bits of level2 threshold temperature.
+> - * @threshold_th1_l3_shift: shift bits of level3 threshold temperature.
+>   * @threshold_th2: Register containing third set of rising levels.
+> - * @threshold_th2_l0_shift: shift bits of level0 threshold temperature.
+> - * @threshold_th3: Register containing fourth set of rising levels.
+>   * @threshold_th3_l0_shift: shift bits of level0 threshold temperature.
+>   * @tmu_inten: register containing the different threshold interrupt
+>  	enable bits.
+> @@ -131,15 +115,11 @@ enum soc_type {
+>   * @inten_rise2_shift: shift bits of rising 2 interrupt bits.
+>   * @inten_rise3_shift: shift bits of rising 3 interrupt bits.
+>   * @inten_fall0_shift: shift bits of falling 0 interrupt bits.
+> - * @inten_fall1_shift: shift bits of falling 1 interrupt bits.
+> - * @inten_fall2_shift: shift bits of falling 2 interrupt bits.
+> - * @inten_fall3_shift: shift bits of falling 3 interrupt bits.
+>   * @tmu_intstat: Register containing the interrupt status values.
+>   * @tmu_intclear: Register for clearing the raised interrupt status.
+>   * @emul_con: TMU emulation controller register.
+>   * @emul_temp_shift: shift bits of emulation temperature.
+>   * @emul_time_shift: shift bits of emulation time.
+> - * @emul_time_mask: mask bits of emulation time.
+>   * @tmu_irqstatus: register to find which TMU generated interrupts.
+>   * @tmu_pmin: register to get/set the Pmin value.
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 1602abc..79a3e85 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -84,6 +84,14 @@ config SOC_EXYNOS5250
- 	help
- 	  Enable EXYNOS5250 SoC support
- 
-+config SOC_EXYNOS5410
-+	bool "SAMSUNG EXYNOS5410"
-+	default y
-+	depends on ARCH_EXYNOS5
-+	select PM_GENERIC_DOMAINS if PM_RUNTIME
-+	help
-+	  Enable EXYNOS5410 SoC support
-+
- config SOC_EXYNOS5420
- 	bool "SAMSUNG EXYNOS5420"
- 	default y
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index e973ff5..12db6cf 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -312,6 +312,7 @@ static char const *exynos_dt_compat[] __initconst = {
- 	"samsung,exynos4412",
- 	"samsung,exynos5",
- 	"samsung,exynos5250",
-+	"samsung,exynos5410",
- 	"samsung,exynos5420",
- 	"samsung,exynos5440",
- 	NULL
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 78002c7..a95213d 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -60,6 +60,8 @@ static inline void __iomem *cpu_boot_reg_base(void)
- {
- 	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
- 		return S5P_INFORM5;
-+	if (soc_is_exynos5410())
-+		return sysram_ns_base_addr;
- 	return sysram_base_addr;
- }
- 
-@@ -72,6 +74,8 @@ static inline void __iomem *cpu_boot_reg(int cpu)
- 		return ERR_PTR(-ENODEV);
- 	if (soc_is_exynos4412())
- 		boot_reg += 4*cpu;
-+	else if (soc_is_exynos5410())
-+		boot_reg += (0x1c);
- 	else if (soc_is_exynos5420())
- 		boot_reg += 4;
- 	return boot_reg;
-diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
-index 5992b8d..21db380 100644
---- a/arch/arm/plat-samsung/include/plat/cpu.h
-+++ b/arch/arm/plat-samsung/include/plat/cpu.h
-@@ -49,6 +49,7 @@ extern unsigned long samsung_cpu_id;
- #define EXYNOS4_CPU_MASK	0xFFFE0000
- 
- #define EXYNOS5250_SOC_ID	0x43520000
-+#define EXYNOS5410_SOC_ID	0xE5410000
- #define EXYNOS5420_SOC_ID	0xE5420000
- #define EXYNOS5440_SOC_ID	0xE5440000
- #define EXYNOS5_SOC_MASK	0xFFFFF000
-@@ -72,6 +73,7 @@ IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
- IS_SAMSUNG_CPU(exynos4212, EXYNOS4212_CPU_ID, EXYNOS4_CPU_MASK)
- IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
- IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
-+IS_SAMSUNG_CPU(exynos5410, EXYNOS5410_SOC_ID, EXYNOS5_SOC_MASK)
- IS_SAMSUNG_CPU(exynos5420, EXYNOS5420_SOC_ID, EXYNOS5_SOC_MASK)
- IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
- 
-@@ -154,6 +156,12 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
- # define soc_is_exynos5250()	0
- #endif
- 
-+#if defined(CONFIG_SOC_EXYNOS5410)
-+# define soc_is_exynos5410()	is_samsung_exynos5410()
-+#else
-+# define soc_is_exynos5410()	0
-+#endif
-+
- #if defined(CONFIG_SOC_EXYNOS5420)
- # define soc_is_exynos5420()	is_samsung_exynos5420()
- #else
-@@ -168,7 +176,8 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
- 
- #define soc_is_exynos4() (soc_is_exynos4210() || soc_is_exynos4212() || \
- 			  soc_is_exynos4412())
--#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5420())
-+#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5410() || \
-+			  soc_is_exynos5420())
- 
- #define IODESC_ENT(x) { (unsigned long)S3C24XX_VA_##x, __phys_to_pfn(S3C24XX_PA_##x), S3C24XX_SZ_##x, MT_DEVICE }
- 
--- 
-1.7.9.5
+I prefer to have these register description as they describe the h/w
+and are used for capturing those parameters. My argument here is that
+adding new soc should have minimum changes. However some unused macros
+removed below makes sense.
+>   */
+> @@ -149,7 +129,6 @@ struct exynos_tmu_registers {
+>  	u32	triminfo_85_shift;
+>
+>  	u32	triminfo_ctrl;
+> -	u32	triminfo_reload_shift;
+>
+>  	u32	tmu_ctrl;
+>  	u32     test_mux_addr_shift;
+> @@ -162,32 +141,17 @@ struct exynos_tmu_registers {
+>  	u32	buf_slope_sel_mask;
+>  	u32	calib_mode_shift;
+>  	u32	calib_mode_mask;
+> -	u32	therm_trip_tq_en_shift;
+>  	u32	core_en_shift;
+>
+>  	u32	tmu_status;
+>
+>  	u32	tmu_cur_temp;
+> -	u32	tmu_cur_temp_shift;
+>
+>  	u32	threshold_temp;
+>
+>  	u32	threshold_th0;
+> -	u32	threshold_th0_l0_shift;
+> -	u32	threshold_th0_l1_shift;
+> -	u32	threshold_th0_l2_shift;
+> -	u32	threshold_th0_l3_shift;
+> -
+>  	u32	threshold_th1;
+> -	u32	threshold_th1_l0_shift;
+> -	u32	threshold_th1_l1_shift;
+> -	u32	threshold_th1_l2_shift;
+> -	u32	threshold_th1_l3_shift;
+> -
+>  	u32	threshold_th2;
+> -	u32	threshold_th2_l0_shift;
+> -
+> -	u32	threshold_th3;
+>  	u32	threshold_th3_l0_shift;
+>
+>  	u32	tmu_inten;
+> @@ -200,9 +164,6 @@ struct exynos_tmu_registers {
+>  	u32	inten_rise2_shift;
+>  	u32	inten_rise3_shift;
+>  	u32	inten_fall0_shift;
+> -	u32	inten_fall1_shift;
+> -	u32	inten_fall2_shift;
+> -	u32	inten_fall3_shift;
+>
+>  	u32	tmu_intstat;
+>
+> @@ -211,7 +172,6 @@ struct exynos_tmu_registers {
+>  	u32	emul_con;
+>  	u32	emul_temp_shift;
+>  	u32	emul_time_shift;
+> -	u32	emul_time_mask;
+>
+>  	u32	tmu_irqstatus;
+>  	u32	tmu_pmin;
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c
+> b/drivers/thermal/samsung/exynos_tmu_data.c
+> index 476b768..36d64d6 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.c
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+> @@ -96,7 +96,6 @@ static const struct exynos_tmu_registers
+> exynos4412_tmu_registers = {
+>  	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
+>  	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
+>  	.triminfo_ctrl = EXYNOS_TMU_TRIMINFO_CON,
+> -	.triminfo_reload_shift = EXYNOS_TRIMINFO_RELOAD_SHIFT,
+>  	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
+>  	.test_mux_addr_shift = EXYNOS4412_MUX_ADDR_SHIFT,
+>  	.buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
+> @@ -126,7 +125,6 @@ static const struct exynos_tmu_registers
+> exynos4412_tmu_registers = {
+>  	.emul_con = EXYNOS_EMUL_CON,
+>  	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
+>  	.emul_time_shift = EXYNOS_EMUL_TIME_SHIFT,
+> -	.emul_time_mask = EXYNOS_EMUL_TIME_MASK,
+Makes sense.
+>  };
+>
+>  #define EXYNOS4412_TMU_DATA \
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h
+> b/drivers/thermal/samsung/exynos_tmu_data.h
+> index a1ea19d..06c4345 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.h
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+> @@ -63,7 +63,6 @@
+>  #define EXYNOS_THD_TEMP_FALL		0x54
+>  #define EXYNOS_EMUL_CON		0x80
+>
+> -#define EXYNOS_TRIMINFO_RELOAD_SHIFT	1
+make sense.
+
+>  #define EXYNOS_TRIMINFO_25_SHIFT	0
+>  #define EXYNOS_TRIMINFO_85_SHIFT	8
+>  #define EXYNOS_TMU_RISE_INT_MASK	0x111
+> --
+> 1.8.2.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
