@@ -1,44 +1,70 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v9 0/3] Exynos 5410 support
-Date: Mon, 19 May 2014 12:51:36 +0200
-Message-ID: <5379E238.1080803@gmail.com>
-References: <1400470640-30611-1-git-send-email-t.dakhran@samsung.com>
+Subject: Re: [PATCH] Fix for possible null pointer dereference in dma.c
+Date: Mon, 19 May 2014 12:52:52 +0200
+Message-ID: <5379E284.7030700@gmail.com>
+References: <1400191076-28279-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1400470640-30611-1-git-send-email-t.dakhran@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tarek Dakhran <t.dakhran@samsung.com>, linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Romain Naour <romain.naour@openwide.fr>, Chander Kashyap <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f50.google.com ([74.125.83.50]:44824 "EHLO
+	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752756AbaESKxC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 May 2014 06:53:02 -0400
+In-Reply-To: <1400191076-28279-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
 
-Hi Tarek,
+Hi Rickard,
 
-On 19.05.2014 05:37, Tarek Dakhran wrote:
-> The series of patches represent support of Exynos 5410 SoC
-> 
-> The Exynos 5410 is the first Samsung SoC based on big.LITTLE architecture
-> 
-> Patches add new platform description, support of clock controller and device
-> tree for Exynos 5410.
-> 
-> Has been build on Samsung Linux Kernel
->   (branch: for-next, commit: ccf5511 ARM: EXYNOS: Add MCPM call-back functions)
+On 15.05.2014 23:57, Rickard Strandqvist wrote:
+> There is otherwise a risk of a possible null pointer dereference.
+>=20
+> Was largely found by using a static code analysis program called cppc=
+heck.
+>=20
+> Signed-off-by: Rickard Strandqvist <rickard_strandqvist@spectrumdigit=
+al.se>
+> ---
+>  sound/soc/samsung/dma.c |   10 ++++++----
+>  1 fil =C3=A4ndrad, 6 till=C3=A4gg(+), 4 borttagningar(-)
+>=20
+> diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
+> index dc09b71..b1f6757 100644
+> --- a/sound/soc/samsung/dma.c
+> +++ b/sound/soc/samsung/dma.c
+> @@ -115,17 +115,19 @@ static void dma_enqueue(struct snd_pcm_substrea=
+m *substream)
+>  static void audio_buffdone(void *data)
+>  {
+>  	struct snd_pcm_substream *substream =3D data;
+> -	struct runtime_data *prtd =3D substream->runtime->private_data;
+> +	struct runtime_data *prtd =3D NULL;
+> =20
+>  	pr_debug("Entered %s\n", __func__);
+> =20
+> -	if (prtd->state & ST_RUNNING) {
+> +	if(substream)
+> +		prtd =3D substream->runtime->private_data;
+> +
+> +	if (prtd && prtd->state & ST_RUNNING) {
+>  		prtd->dma_pos +=3D prtd->dma_period;
+>  		if (prtd->dma_pos >=3D prtd->dma_end)
+>  			prtd->dma_pos =3D prtd->dma_start;
+> =20
+> -		if (substream)
+> -			snd_pcm_period_elapsed(substream);
+> +		snd_pcm_period_elapsed(substream);
+> =20
+>  		spin_lock(&prtd->lock);
+>  		if (!samsung_dma_has_circular()) {
+>=20
 
-This doesn't look like an up-to-date tip of that branch. There was a lot
-of changes merged 2 days ago, especially from samsung-clk tree and your
-patches won't apply and/or compile (at least patch 2/3). Are you sure
-you didn't have a git fetch error?
-
-Moreover I can still see the dts using full-path syntax, instead of
-reference-based one and also no soc node, as I pointed in v8. [1]
-
-[1] https://lkml.org/lkml/2014/4/26/59
-
-Another thing is that I still see a custom fixed clock binding being
-used for oscclk in the clock driver, while I believe I pointed in some
-of the previous versions that generic fixed clock should be used.
+Can you find a path (or use case, if possible) on which any of affected
+pointers will be NULL?
 
 Best regards,
 Tomasz
