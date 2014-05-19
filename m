@@ -1,83 +1,72 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH v5 1/5] ARM: EXYNOS: Add generic cpu power control
- functions for all exynos based SoCs
-Date: Mon, 19 May 2014 08:12:28 +0530
-Message-ID: <CAM4voan1SjvaSsWemxSFkkuSZH5v8X4KY6giLnvDznnw2aryWg@mail.gmail.com>
-References: <1399307221-8659-1-git-send-email-a.kesavan@samsung.com>
-	<1399307221-8659-2-git-send-email-a.kesavan@samsung.com>
-	<019b01cf6e52$75e1a710$61a4f530$@samsung.com>
-	<CAM4voamSNYZ_hsjF3eZhqZ=FF__39tFgi5FeXRcUhRbYYzu0LQ@mail.gmail.com>
-	<53752D8C.3030708@gmail.com>
-	<CAM4voam1UiX+WaxScTdhb4bW+_1nCcsztFEkx4MyWFOBBjV6XQ@mail.gmail.com>
-	<5376AE39.1030301@gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 1/4] clk: samsung: out: Add infrastructure to register CLKOUT
+Date: Mon, 19 May 2014 09:00:46 +0530
+Message-ID: <CAHbNUh03TVxbXZcT3e6618zPdu_53_y6nVjwJE7cWa6zxLMpqA@mail.gmail.com>
+References: <1399640410-30957-1-git-send-email-tushar.behera@linaro.org>
+	<1399640410-30957-2-git-send-email-tushar.behera@linaro.org>
+	<536DA243.6000600@samsung.com>
+	<53705243.1030704@linaro.org>
+	<CAPdUM4N=k-pPxdhPQgVHh0fb+nqkgs7StwM2Pb6C8gcjx6dw-w@mail.gmail.com>
+	<5374CA1C.8000207@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f47.google.com ([209.85.192.47]:51696 "EHLO
-	mail-qg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752492AbaESCm2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 18 May 2014 22:42:28 -0400
-In-Reply-To: <5376AE39.1030301@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5374CA1C.8000207@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, sunil joshi <joshi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, "mark.rutland" <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Arnd Bergmann <arnd@arndb.de>, devicetree <devicetree@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Will Deacon <will.deacon@arm.com>, skon.hwang@samsung.com, robh+dt <robh+dt@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, Grant Likely <grant.likely@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>, Dave Martin <Dave.Martin@arm.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "inderpal.s@samsung.com" <inderpal.s@samsung.com>
 
-Hi Tomasz,
-
-On Sat, May 17, 2014 at 6:02 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+On 15 May 2014 19:37, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Rahul, Tushar,
 >
->
-> On 16.05.2014 07:07, Abhilash Kesavan wrote:
->> Hi Tomasz,
+> On 15.05.2014 15:44, Rahul Sharma wrote:
+>> Hi Tushar,
 >>
->> On Fri, May 16, 2014 at 2:41 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>> Hi Abhilash,
->>>
->>> On 13.05.2014 12:12, Abhilash Kesavan wrote:
->>>> On Tue, May 13, 2014 at 7:54 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->>>
->>> [snip]
->>>
->>>>>> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-
->>>>>> pmu.h
->>>>>> index 4f6a256..0bdfcbc 100644
->>>>>> --- a/arch/arm/mach-exynos/regs-pmu.h
->>>>>> +++ b/arch/arm/mach-exynos/regs-pmu.h
->>>>>> @@ -121,6 +121,12 @@
->>>>>>
->>>>>>  #define S5P_CHECK_SLEEP                              0x00000BAD
->>>>>>
->>>>>> +#define EXYNOS_ARM_CORE0_CONFIGURATION               S5P_PMUREG(0x2000)
->>>>>
->>>>> This can be put in order of address.
->>>> OK, will fix.
->>>>>
->>>>>> +#define EXYNOS_ARM_CORE_CONFIGURATION(_nr)   \
->>>>>> +                     (EXYNOS_ARM_CORE0_CONFIGURATION + (0x80 * (_nr)))
->>>>>> +#define EXYNOS_ARM_CORE_STATUS(_nr)          \
->>>>>> +                     (EXYNOS_ARM_CORE_CONFIGURATION(_nr) + 0x4)
->>>
->>> My patches posted quite a while ago [1] to fix DT CPU topology already
->>> add these, remove S5P_ARM_CORE1* and fix corresponding usage in
->>> hotplug.c and platsmp.c.
->>>
->>> [1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/29573
->>>
->>> So I think you should rebase on top of them or at least on top of
->>> patches 1 and 2 from that series, as 3 and 4 should be dropped.
+>> Basically you are adding a new clock-type for Clkout. IMO clkout
+>> is not a special hardware. Existing clock types can be reused to
+>> support clkout. I see 3 major problem here:
 >>
->> Patch 2 of your series does not apply on kgene's for-next or
->> linux-next. Are you planning on re-sending this ?
+>> 1) Clkout -> (Mux + Gate). You clubbed mux and gate together, and
+>> exposing as a single clock which is something like a composite clock.
+>> IMO this is not a recommended way in CCF.
+>>
+>> 2) New Clock Type: Since clkout is just a combination of a simple
+>> mux and gate which are already supported, it is a unnecessary
+>> duplication.
+>>
+>> 3) Clkout registered along with CMU: which is not correct. Clkout is in PMU
+>> (Separate physical IP) and should be registered as a independent Clock
+>> provider which provides 1 mux and 1 gate clock (As if now). It should also be
+>> well connected with main CMU.
+>>
+>> I understand the challenge in using regmap interface for a clock provider. But
+>> we need to identify a clean solution. IMHO a independent clock provider with
+>> iomap, is relatively cleaner approach till CCF is not ready with regmap based
+>> reg access for clock registers.
+>>
+>> Experts!! please comment.
 >
-> OK, it seems like Kukjin has already applied your v6 series, so let's
-> drop my series for now. I'll remove patch 1 from my series and rebase it
-> on top of your v6.
-Ok, thanks.
+> It's quite unfortunate that Tushar has duplicated the effort to create a
+> clkout driver, considering the fact that we did have such driver
+> internally at SRPOL and it was quite nice and simple.
+>
 
-Regards,
-Abhilash
+I had no idea that you had some solutions to this available to be posted :(
+
+Now that the new series is posted, I will test that at my end and
+update you later.
+
+> I will post a cleaned-up version today, that is about 2 times smaller in
+> terms of lines of added code and provides the same functionality,
+> without introducing custom clock types. In addition, it models the
+> clkout properly as a feature of PMU, not CMU (CMU only provides outputs
+> of particular sub-blocks that are fed into the PMU).
 >
 > Best regards,
 > Tomasz
+
+
+
+-- 
+Tushar Behera
