@@ -1,33 +1,96 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 7/7] ARM: tegra: Add the EC i2c tunnel to
- tegra124-venice2
-Date: Tue, 20 May 2014 09:48:05 +0100
-Message-ID: <20140520084805.GH24991@lee--X1>
-References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
- <1398879850-9111-8-git-send-email-dianders@chromium.org>
- <53629B29.3050702@wwwdotorg.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] ASoC: samsung: Allow setting OP_CLK of the IIS Multi Audio
+ Interface
+Date: Tue, 20 May 2014 11:10:08 +0200
+Message-ID: <537B1BF0.8060302@samsung.com>
+References: <1400520638-6907-1-git-send-email-s.nawrocki@samsung.com>
+ <537AE4C1.7050703@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <53629B29.3050702-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:65144 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751173AbaETJKN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 May 2014 05:10:13 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N5V001UN84TBW60@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 May 2014 10:10:05 +0100 (BST)
+In-reply-to: <537AE4C1.7050703@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: broonie@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-> > This adds the EC i2c tunnel (and devices under it) to the
-> > tegra124-venice2 device tree.
->=20
-> I'll happily take this into the Tegra tree once the patch containing =
-the
-> binding it uses is applied.
+On 20/05/14 07:14, Tushar Behera wrote:
+> On 05/19/2014 11:00 PM, Sylwester Nawrocki wrote:
+>> This patch adds support for setting source clock of the "Core CLK"
+>> of the IIS Multi Audio Interface.
+>>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> ---
+>>  sound/soc/samsung/i2s.c |    4 ++++
+>>  sound/soc/samsung/i2s.h |    1 +
+>>  2 files changed, 5 insertions(+)
+>>
+>> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+>> index 048ead9..ae02811 100644
+>> --- a/sound/soc/samsung/i2s.c
+>> +++ b/sound/soc/samsung/i2s.c
+>> @@ -451,6 +451,10 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+>>  	u32 mod = readl(i2s->addr + I2SMOD);
+>>  
+>>  	switch (clk_id) {
+>> +	case SAMSUNG_I2S_OPCLK:
+>> +		mod &= ~MOD_OPCLK_MASK;
+>> +		mod |= dir;
+> 
+> I am assuming here that dir is one of SND_SOC_CLOCK_IN or
+> SND_SOC_CLOCK_OUT. In that case, you need to take care of offset (30).
 
-All other patches applied.  Take this when ready.
+And that's not a correct assumption. I also got similarly confused when 
+first seeing this in our downstream kernels. 'dir' is supposed to be one 
+of the MOD_OPCLK_* constants, as defined in sound/soc/samsung/i2s-regs.h.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+#define MOD_OPCLK_CDCLK_OUT	(0 << 30)
+#define MOD_OPCLK_CDCLK_IN	(1 << 30)
+#define MOD_OPCLK_BCLK_OUT	(2 << 30)
+#define MOD_OPCLK_PCLK		(3 << 30)
+#define MOD_OPCLK_MASK		(3 << 30)
+
+So the clock is reconfigured with calls like:
+snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_OPCLK, 0, MOD_OPCLK_PCLK);
+
+> Also the value of this bit-field doesn't match with SND_SOC_CLOCK_XXX
+> macros.
+> 
+> Bit-field (2'b):
+> 00	Codec Clock out
+> 01	Codec Clock in
+> 10	Bit clock out
+> 11	Audio bus clock
+> 
+> Value of macros:
+> SND_SOC_CLOCK_IN	0
+> SND_SOC_CLOCK_OUT	1
+
+> In the manual, this field is suggested to be Audio bus clock always. Is
+> there an use-case where we might need to update this?
+
+I've checked couple boards and AFAICS we're always setting MOD_OPCLK_PCLK,
+however it's still different from the default value after reset - 
+MOD_OPCLK_CDCLK_OUT. 
+So how do you think this should be addressed ? Isn't it better to give
+options to the machine drivers to alter these clock settings, rather than
+hard coding it in the I2S driver ? Let's not forget it covers multiple 
+Samsung SoC series.
+
+> The default value for audio playback right now is 00 (2'b), which needs
+> to be fixed anyways.
+
+--
+Regards,
+Sylwester
