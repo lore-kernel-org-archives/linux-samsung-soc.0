@@ -1,15 +1,15 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 01/18] drm/exynos: dsi: move the EoT packets configuration
- point
-Date: Tue, 20 May 2014 11:50:33 +0200
-Message-ID: <537B2569.8010805@samsung.com>
+Subject: Re: [PATCH 02/18] drm/exynos: use wait_event_timeout() for safety
+ usage
+Date: Tue, 20 May 2014 11:51:35 +0200
+Message-ID: <537B25A7.30805@samsung.com>
 References: <1400048825-6052-1-git-send-email-yj44.cho@samsung.com>
- <1400048825-6052-2-git-send-email-yj44.cho@samsung.com>
+ <1400048825-6052-3-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1400048825-6052-2-git-send-email-yj44.cho@samsung.com>
+In-reply-to: <1400048825-6052-3-git-send-email-yj44.cho@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -24,7 +24,10 @@ Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.ker
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On 05/14/2014 08:26 AM, YoungJun Cho wrote:
-> This configuration could be used in MIPI DSI command mode also.
+> There could be the case that the page flip operation isn't finished correctly
+> with some abnormal condition such as panel reset. So this patch replaces
+> wait_event() with wait_event_timeout() to avoid waiting for page flip completion
+> infinitely.
 >
 > Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 > Acked-by: Inki Dae <inki.dae@samsung.com>
@@ -33,29 +36,22 @@ On 05/14/2014 08:26 AM, YoungJun Cho wrote:
 Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c |    5 +++--
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c |    5 +++--
 >  1 file changed, 3 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index 84661fe..0a4e3ce 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -473,8 +473,6 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index 95c9435..485fa26 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -69,8 +69,9 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
 >  
->  		if (!(dsi->mode_flags & MIPI_DSI_MODE_VSYNC_FLUSH))
->  			reg |= DSIM_MFLUSH_VS;
-> -		if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
-> -			reg |= DSIM_EOT_DISABLE;
->  		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
->  			reg |= DSIM_SYNC_INFORM;
->  		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
-> @@ -491,6 +489,9 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
->  			reg |= DSIM_HSA_MODE;
+>  	if (mode > DRM_MODE_DPMS_ON) {
+>  		/* wait for the completion of page flip. */
+> -		wait_event(exynos_crtc->pending_flip_queue,
+> -				atomic_read(&exynos_crtc->pending_flip) == 0);
+> +		wait_event_timeout(exynos_crtc->pending_flip_queue,
+> +				!atomic_read(&exynos_crtc->pending_flip),
+> +				HZ/20);
+>  		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
 >  	}
 >  
-> +	if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
-> +		reg |= DSIM_EOT_DISABLE;
-> +
->  	switch (dsi->format) {
->  	case MIPI_DSI_FMT_RGB888:
->  		reg |= DSIM_MAIN_PIX_FORMAT_RGB888;
