@@ -1,105 +1,72 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ASoC: samsung: Allow setting OP_CLK of the IIS Multi
- Audio Interface
-Date: Tue, 20 May 2014 15:31:24 +0530
-Message-ID: <537B27F4.5030008@linaro.org>
-References: <1400520638-6907-1-git-send-email-s.nawrocki@samsung.com> <537AE4C1.7050703@linaro.org> <537B1BF0.8060302@samsung.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: Re: [PATCH 02/18] drm/exynos: use wait_event_timeout() for safety
+ usage
+Date: Tue, 20 May 2014 18:02:54 +0800
+Message-ID: <CAGS+omDx1zLBuE_J9CQW=65WkMKO51eCDzSfjazoQoC15_J=Cg@mail.gmail.com>
+References: <1400048825-6052-1-git-send-email-yj44.cho@samsung.com>
+ <1400048825-6052-3-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f54.google.com ([209.85.160.54]:33482 "EHLO
-	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751795AbaETKB3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 May 2014 06:01:29 -0400
-Received: by mail-pb0-f54.google.com with SMTP id jt11so183613pbb.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 May 2014 03:01:29 -0700 (PDT)
-In-Reply-To: <537B1BF0.8060302@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1400048825-6052-3-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, s.trumtrar@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: broonie@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 05/20/2014 02:40 PM, Sylwester Nawrocki wrote:
-> On 20/05/14 07:14, Tushar Behera wrote:
->> On 05/19/2014 11:00 PM, Sylwester Nawrocki wrote:
->>> This patch adds support for setting source clock of the "Core CLK"
->>> of the IIS Multi Audio Interface.
->>>
->>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>> ---
->>>  sound/soc/samsung/i2s.c |    4 ++++
->>>  sound/soc/samsung/i2s.h |    1 +
->>>  2 files changed, 5 insertions(+)
->>>
->>> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
->>> index 048ead9..ae02811 100644
->>> --- a/sound/soc/samsung/i2s.c
->>> +++ b/sound/soc/samsung/i2s.c
->>> @@ -451,6 +451,10 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
->>>  	u32 mod = readl(i2s->addr + I2SMOD);
->>>  
->>>  	switch (clk_id) {
->>> +	case SAMSUNG_I2S_OPCLK:
->>> +		mod &= ~MOD_OPCLK_MASK;
->>> +		mod |= dir;
->>
->> I am assuming here that dir is one of SND_SOC_CLOCK_IN or
->> SND_SOC_CLOCK_OUT. In that case, you need to take care of offset (30).
-> 
-> And that's not a correct assumption. I also got similarly confused when 
-> first seeing this in our downstream kernels. 'dir' is supposed to be one 
-> of the MOD_OPCLK_* constants, as defined in sound/soc/samsung/i2s-regs.h.
-> 
-> #define MOD_OPCLK_CDCLK_OUT	(0 << 30)
-> #define MOD_OPCLK_CDCLK_IN	(1 << 30)
-> #define MOD_OPCLK_BCLK_OUT	(2 << 30)
-> #define MOD_OPCLK_PCLK		(3 << 30)
-> #define MOD_OPCLK_MASK		(3 << 30)
-> 
-> So the clock is reconfigured with calls like:
-> snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_OPCLK, 0, MOD_OPCLK_PCLK);
-> 
+On Wed, May 14, 2014 at 2:26 PM, YoungJun Cho <yj44.cho@samsung.com> wrote:
+>
+> There could be the case that the page flip operation isn't finished correctly
+> with some abnormal condition such as panel reset. So this patch replaces
+> wait_event() with wait_event_timeout() to avoid waiting for page flip completion
+> infinitely.
 
-Ok.
 
->> Also the value of this bit-field doesn't match with SND_SOC_CLOCK_XXX
->> macros.
->>
->> Bit-field (2'b):
->> 00	Codec Clock out
->> 01	Codec Clock in
->> 10	Bit clock out
->> 11	Audio bus clock
->>
->> Value of macros:
->> SND_SOC_CLOCK_IN	0
->> SND_SOC_CLOCK_OUT	1
-> 
->> In the manual, this field is suggested to be Audio bus clock always. Is
->> there an use-case where we might need to update this?
-> 
-> I've checked couple boards and AFAICS we're always setting MOD_OPCLK_PCLK,
-> however it's still different from the default value after reset - 
-> MOD_OPCLK_CDCLK_OUT. 
-> So how do you think this should be addressed ? Isn't it better to give
-> options to the machine drivers to alter these clock settings, rather than
-> hard coding it in the I2S driver ? Let's not forget it covers multiple 
-> Samsung SoC series.
-> 
+This solution looks like we aren't really handling some conditions
+completely (such as "panel reset"?). In cases where this timeout can
+occur, shouldn't we be clearing pending_flip when we detect that the
+flip will never complete?
 
-I don't have any objection to this patch. Just that, I could not find
-any use-case where we would not like to set the value as MOD_OPCLK_PCLK.
+-Dan
 
->> The default value for audio playback right now is 00 (2'b), which needs
->> to be fixed anyways.
-> 
+>
+>
+> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> Acked-by: Inki Dae <inki.dae@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c |    5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index 95c9435..485fa26 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -69,8 +69,9 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+>
+>         if (mode > DRM_MODE_DPMS_ON) {
+>                 /* wait for the completion of page flip. */
+> -               wait_event(exynos_crtc->pending_flip_queue,
+> -                               atomic_read(&exynos_crtc->pending_flip) == 0);
+> +               wait_event_timeout(exynos_crtc->pending_flip_queue,
+> +                               !atomic_read(&exynos_crtc->pending_flip),
+> +                               HZ/20);
+>                 drm_vblank_off(crtc->dev, exynos_crtc->pipe);
+>         }
+>
 > --
-> Regards,
-> Sylwester
-> 
-
-
--- 
-Tushar Behera
+> 1.7.9.5
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
