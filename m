@@ -1,115 +1,153 @@
-From: Chanho Park <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCHv4 1/4] ARM: dts: exynos4: add PMU syscon node
-Date: Tue, 20 May 2014 11:01:59 +0900
-Message-ID: <011801cf73cf$7c5fc770$751f5650$@samsung.com>
-References: <1399004769-31033-1-git-send-email-chanho61.park@samsung.com>
- <1399004769-31033-2-git-send-email-chanho61.park@samsung.com>
- <5374F447.9030102@samsung.com> <537A2FEA.6070208@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL 4/5] Samsung DT updates for 3.16
+Date: Tue, 20 May 2014 10:11:41 +0900
+Message-ID: <014701cf73c8$752a65c0$5f7f3140$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <537A2FEA.6070208-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:45008 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752570AbaETBLn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 May 2014 21:11:43 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N5U00ISQLZHVL00@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 May 2014 10:11:42 +0900 (KST)
 Content-language: ko
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Tomasz Figa' <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, olof@lixom.net, 'Kevin Hilman' <khilman@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Kukjin,
+The following changes since commit c9eaa447e77efe77b7fa4c953bd62de8297fd6c5:
 
-> -----Original Message-----
-> From: Kukjin Kim [mailto:kgene.kim-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org] On Behalf Of Kukjin Kim
-> Sent: Tuesday, May 20, 2014 1:23 AM
-> To: Tomasz Figa
-> Cc: Chanho Park; kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org; linux-samsung-
-> soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-> Subject: Re: [PATCHv4 1/4] ARM: dts: exynos4: add PMU syscon node
-> 
-> On 05/16/14 02:07, Tomasz Figa wrote:
-> > Hi Chanho,
-> >
-> Hi,
-> 
-> > When testing some other patches with this series applied I found one
-> > more issue. Please see below.
-> >
-> > On 02.05.2014 06:26, Chanho Park wrote:
-> >> This patch adds a PMU(Power Management Unit) syscon node. This
-> >> should be required for USB Phy syscon regmap I/F.
-> >>
-> >> Cc: Kamil Debski<k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >> Signed-off-by: Chanho Park<chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >> Reviewed-by: Tomasz Figa<t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >> ---
-> >>   Documentation/devicetree/bindings/arm/samsung/pmu.txt | 3 +++
-> >>   arch/arm/boot/dts/exynos4.dtsi                        | 5 +++++
-> >>   arch/arm/boot/dts/exynos4x12.dtsi                     | 4 ++++
-> >>   3 files changed, 12 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> >> index f1f1552..b562634 100644
-> >> --- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> >> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> >> @@ -2,6 +2,9 @@ SAMSUNG Exynos SoC series PMU Registers
-> >>
-> >>   Properties:
-> >>    - compatible : should contain two values. First value must be one
-> from following list:
-> >> +		   - "samsung,exynos4210-pmu" - for Exynos4210 SoC,
-> >> +		   - "samsung,exynos4212-pmu" - for Exynos4212 SoC,
-> >> +		   - "samsung,exynos4412-pmu" - for Exynos4412 SoC,
-> >
-> > Here two compatible strings are specified, one for each SoC in 4x12
-> > family, but...
-> >
-> >>   		- "samsung,exynos5250-pmu" - for Exynos5250 SoC,
-> >>   		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
-> >>   		second value must be always "syscon".
-> >> diff --git a/arch/arm/boot/dts/exynos4.dtsi
-> b/arch/arm/boot/dts/exynos4.dtsi
-> >> index 2f8bcd0..264066f 100644
-> >> --- a/arch/arm/boot/dts/exynos4.dtsi
-> >> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> >> @@ -110,6 +110,11 @@
-> >>   		reg =<0x10010000 0x400>;
-> >>   	};
-> >>
-> >> +	pmu_system_controller: system-controller@10020000 {
-> >> +		compatible = "samsung,exynos4210-pmu", "syscon";
-> >> +		reg =<0x10020000 0x4000>;
-> >> +	};
-> >> +
-> >>   	dsi_0: dsi@11C80000 {
-> >>   		compatible = "samsung,exynos4210-mipi-dsi";
-> >>   		reg =<0x11C80000 0x10000>;
-> >> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi
-> b/arch/arm/boot/dts/exynos4x12.dtsi
-> >> index c4a9306..7f767f7 100644
-> >> --- a/arch/arm/boot/dts/exynos4x12.dtsi
-> >> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
-> >> @@ -119,6 +119,10 @@
-> >>   		interrupts =<0 72 0>;
-> >>   	};
-> >>
-> >> +	pmu_system_controller: system-controller@10020000 {
-> >> +		compatible = "samsung,exynos4x12-pmu", "syscon";
-> >
-> > Here one node is added for both using an undocumented compatible
-> string.
-> > Please fix this according to documentation.
-> >
-> 
-> Chanho, updated patch?
+  Linux 3.15-rc1 (2014-04-13 14:18:35 -0700)
 
-I'll re-send the patchset soon.
-Thanks.
+are available in the git repository at:
 
-Best Regards,
-Chanho Park
+  http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+tags/samsung-dt
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+for you to fetch changes up to b5839bd87f197e133a0025c36df286eab6e1d858:
+
+  ARM: dts: Add MFC memory banks to exynos5420 boards (2014-05-20 01:04:13
++0900)
+
+----------------------------------------------------------------
+Samsung DT updates for v3.16
+
+- exynos4
+  : add missing pinctrls
+
+- exynos4412-trats2
+  : update camera nodes and add rear camera nodes
+  : rename alias for i2c_ak8975 label
+  Update camera nodes for exynos4 and exynos4412-trats2
+
+- exynos5250
+  : update DWC3 usb controller and enable to use generic USB DRD phy
+
+- exynos5250-snow
+  : enable dp-controller, fimd, hdmi and pwm backlight
+  : add sound node and Vbus regulator for USB 3.0
+  : add tps65090 power regulator
+  : add pinctrl for EC irq and i2c-arbitrator
+
+- exynos5420
+  : change to correct compatible string for hdmi
+  : add PD entry to MFC codec and enable DWC3 and USB 3.0 PHY
+  : add MFC memory banks for smdk5420 and arndale-octa boards
+
+- exynos5420-peach-pit
+  : add support exynos5420 based peach-pit board
+  : add sound node and Vbus regulatro for USB 3.0
+  : enable dp-controller, fimd
+
+- exynos5420-smdk5420
+  : add Vbus regulatro for USB 3.0
+
+- use generic DT bindings for map SYSRAM
+
+----------------------------------------------------------------
+Ajay Kumar (2):
+      ARM: dts: Add pwmX_out pinctrl nodes to exynos5250
+      ARM: dts: enable pwm backlight for exynos5250-snow
+
+Arun Kumar K (3):
+      ARM: dts: Add pwmX_out pinctrl nodes to exynos5420
+      ARM: dts: Add node labels to exynos5420
+      ARM: dts: Add exynos5420 peach-pit board support
+
+Doug Anderson (3):
+      ARM: dts: add pinctrl for i2c-arbitrator of exynos5250-snow
+      ARM: dts: add pinctrl for EC irq of exynos5250-snow
+      ARM: dts: add tps65090 power regulator for exynos5250-snow
+
+Rahul Sharma (7):
+      ARM: dts: enable hdmi for exynos5250 based snow board
+      ARM: dts: change to correct compatible string for exynos5420 hdmi
+      ARM: dts: enable hdmi for exynos5420-peach-pit board
+      ARM: dts: enable fimd for exynos5250-snow board
+      ARM: dts: enable dp-controller for exynos5250-snow board
+      ARM: dts: enable fimd for exynos5420 based peach-pit board
+      ARM: dts: enable dp-controller for exynos5420-peach-pit board
+
+Sachin Kamat (4):
+      ARM: EXYNOS: Map SYSRAM through generic DT bindings
+      devicetree: bindings: document SYSRAM binding
+      ARM: dts: Add PD entry to MFC codec on exynos5420
+      ARM: dts: Add MFC memory banks to exynos5420 boards
+
+Sylwester Nawrocki (2):
+      ARM: dts: Update camera nodes for exynos4 and exynos4412-trats2
+      ARM: dts: Add rear camera nodes for exynos4412-trats2
+
+Tomasz Stanislawski (2):
+      ARM: dts: add missing pinctrls for I2C of exynos4
+      ARM: dts: rename alias for i2c_ak8975 label for exynos4412-trats2
+
+Tushar Behera (2):
+      ARM: dts: Add sound node for exynos5250-snow board
+      ARM: dts: Add sound node for exynos5420-peach-pit board
+
+Vivek Gautam (7):
+      ARM: dts: Enable support for USB 3.0 PHY controller for exynos5420
+      ARM: dts: Enable support for DWC3 controller for exynos5420
+      ARM: dts: Enable support for generic USB DRD phy for exynos5250
+      ARM: dts: Update DWC3 usb controller to use new phy driver for
+exynos5250
+      ARM: dts: Add Vbus regulator for USB 3.0 on exynos5250-snow
+      ARM: dts: Add Vbus regulator for USB 3.0 on exynos5420-peach-pit
+      ARM: dts: Add Vbus regulator for USB 3.0 on exynos5420-smdk5420
+
+ .../devicetree/bindings/arm/exynos/smp-sysram.txt  |   38 +++
+ arch/arm/Kconfig                                   |    1 +
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/exynos4.dtsi                     |   18 +-
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    |   15 +
+ arch/arm/boot/dts/exynos4210.dtsi                  |   18 ++
+ arch/arm/boot/dts/exynos4412-trats2.dts            |   79 +++++-
+ arch/arm/boot/dts/exynos4x12.dtsi                  |   18 ++
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi      |    6 +-
+ arch/arm/boot/dts/exynos5250-pinctrl.dtsi          |   28 ++
+ arch/arm/boot/dts/exynos5250-snow.dts              |  224 +++++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi                  |   38 ++-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |    5 +
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |  287
+++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |   28 ++
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   51 ++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |  106 +++++++-
+ arch/arm/mach-exynos/common.h                      |    1 +
+ arch/arm/mach-exynos/exynos.c                      |   64 -----
+ arch/arm/mach-exynos/firmware.c                    |    8 +-
+ arch/arm/mach-exynos/include/mach/map.h            |    7 -
+ arch/arm/mach-exynos/platsmp.c                     |   56 +++-
+ 22 files changed, 984 insertions(+), 113 deletions(-)
+ create mode 100644
+Documentation/devicetree/bindings/arm/exynos/smp-sysram.txt
+ create mode 100644 arch/arm/boot/dts/exynos5420-peach-pit.dts
