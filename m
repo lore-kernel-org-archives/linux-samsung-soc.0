@@ -1,166 +1,80 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
-Date: Tue, 20 May 2014 13:15:48 +0200
-Message-ID: <10711669.TTjp9L4tTG@wuerfel>
-References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com> <5759340.gycj7cP1t3@wuerfel> <20140520110536.GA10302@ulmo>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: samsung: Add 'mclk' handling for
+ Snow sound-card driver
+Date: Tue, 20 May 2014 12:16:00 +0100
+Message-ID: <20140520111600.GL12304@sirena.org.uk>
+References: <1400559942-5666-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140520110536.GA10302@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, iommu@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Cho KyongHo <pullip.cho@samsung.com>, Dave Martin <Dave.Martin@arm.com>
+Content-Type: multipart/mixed; boundary="===============1722724084882285034=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1400559942-5666-1-git-send-email-tushar.behera@linaro.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: dianders@chromium.org, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, sbkim73@samsung.com, t.figa@samsung.com, rdunlap@infradead.org, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday 20 May 2014 13:05:37 Thierry Reding wrote:
-> On Tue, May 20, 2014 at 12:04:54PM +0200, Arnd Bergmann wrote:
-> > On Monday 19 May 2014 22:59:46 Thierry Reding wrote:
-> > > On Mon, May 19, 2014 at 08:34:07PM +0200, Arnd Bergmann wrote:
-> > > > On Monday 19 May 2014 14:53:37 Thierry Reding wrote:
-> > > > > On Mon, May 19, 2014 at 12:26:35PM +0200, Arnd Bergmann wrote:
-> > > > > > On Friday 16 May 2014 14:23:18 Thierry Reding wrote:
-> > > > > > > From: Thierry Reding <treding@nvidia.com>
-> [...]
-> > > > > > Finally, it makes no sense to use the dma-ranges property of the master's
-> > > > > > parent bus, because that bus isn't actually involved in the translation.
-> > > > > 
-> > > > > My understanding here is mostly based on the OpenFirmware working group
-> > > > > proposal for the dma-ranges property[0]. I'll give another example to
-> > > > > try and clarify how I had imagined this to work:
-> > > > > 
-> > > > > 	/ {
-> > > > > 		#address-cells = <2>;
-> > > > > 		#size-cells = <2>;
-> > > > > 
-> > > > > 		iommu {
-> > > > > 			/*
-> > > > > 			 * This is somewhat unusual (or maybe not) in that we
-> > > > > 			 * need 2 cells to represent the size of an address
-> > > > > 			 * space that is 32 bits long.
-> > > > > 			 */
-> > > > > 			#address-cells = <1>;
-> > > > > 			#size-cells = <2>;
-> > > > 
-> > > > You should never need #size-cells > #address-cells
-> > > 
-> > > That was always my impression as well. But how then do you represent the
-> > > full 4 GiB address space in a 32-bit system? It starts at 0 and ends at
-> > > 4 GiB - 1, which makes it 4 GiB large. That's:
-> > > 
-> > > 	<0 1 0>
-> > > 
-> > > With #address-cells = <1> and #size-cells = <1> the best you can do is:
-> > > 
-> > > 	<0 0xffffffff>
-> > > 
-> > > but that's not accurate.
-> > 
-> > I think we've done both in the past, either extended #size-cells or
-> > taken 0xffffffff as a special token. Note that in your example,
-> > the iommu actually needs #address-cells = <2> anyway.
-> 
-> But it needs #address-cells = <2> only to encode an ID in addition to
-> the address. If this was a single-master IOMMU then there'd be no need
-> for the ID.
 
-Right. But for a single-master IOMMU, there is no need to specify
-any additional data, it could have #address-cells=<0> if we take the
-optimization you suggested.
+--===============1722724084882285034==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="P/co8ZP+C4wcN8Yg"
+Content-Disposition: inline
 
-> This really isn't specific to IOMMUs though. It really applies to all
-> cases where #address-cells and #size-cells are parsed. While it's way
-> too late to change the semantics of standard properties, perhaps for
-> properties that are introduced it would make more sense to encode this
-> as a <start limit> pair, both of length #address-cells, to avoid this
-> type of corner case.
-> 
-> On the other hand doing so would make it inconsistent with existing
-> bindings which may not be desirable either.
-> 
-> But since it seems like we're headed for something completely different
-> for IOMMUs, perhaps it would be worth considering to describe the IOMMU
-> range as <start limit>. Since it will likely use #iommu-cells rather
-> than #address-cells we have an opportunity to change the semantics.
 
-I'd still prefer #address-cells/#size-cells over #iommu-cells.
+--P/co8ZP+C4wcN8Yg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > / {
-> > 	#address-cells = <1>;
-> > 	#size-cells = <1>;
-> > 
-> > 	iommu {
-> > 		#address-cells = <2>; // ID, address
-> > 		#size-cells = <2>;
-> > 	};
-> > 
-> > 	master@a {
-> > 		iommus = <& {/iommu} 0xa 0x0  0x1 0x0>; // 4GB ID '0xa'
-> > 	}
-> > 
-> > 	bus1 {
-> > 		#address-cells = <1>;
-> > 		#size-cells = <1>;
-> > 		ranges;
-> > 		iommus = <& {/iommu} 0 0   0x100 0>; // all IDs
-> > 		dma-ranges = <0  0xb 0  1 0>; // child devices use ID '0xb'
-> > 
-> > 		anothermaster {
-> > 			// no iommus link, implied by dma-ranges above
-> > 		};
-> > 	};
-> > };
-> > 
-> > If you set #size-cells=<0>, you can't really do that but instead would
-> > require an iommus property in each master, which is not a big concern
-> > either.
-> 
-> I'm not sure I understand the need for 0x100 (all IDs) entry above. If
-> bus1's iommus property applies to all devices on the bus, why can't the
-> ID 0xb be listed in the iommus property?
-> 
-> 	bus1 {
-> 		#address-cells = <1>;
-> 		#size-cells = <1>;
-> 		ranges;
-> 		iommus = <&{/iommu} 0xb 0  0x1 0x0>; // 4GB ID '0xb'
-> 		dma-ranges = <0  0xb 0  0x1 0x0>;
-> 
-> 		anothermaster {
-> 			...
-> 		};
-> 	};
+On Tue, May 20, 2014 at 09:55:42AM +0530, Tushar Behera wrote:
+> For audio to work on Snow board, we need the codec master clock 'mclk'
+> to be properly configured.
+>=20
+> Currently XCLKOUT is configured as 'mclk' for codec chip and it is
+> required to be clocked at 24MHz for the codec to work properly.
+>=20
+> Add appropriate clock handling within Snow sound-card driver to set
+> 'mclk' to operate at 24MHz.
 
-It depends on how the address is interpreted, but we could make this
-a valid case too.
+The clock here is connected to the CODEC on the board so it should be
+connected to the CODEC in the device tree too.
 
-> In which case I guess dma-ranges would be redundant.
+--P/co8ZP+C4wcN8Yg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-No, because the iommus property doesn't translate the address range, it
-just creates a new address space. bus1 and iommu in the example have
-different #address-cells, so you definitely need a non-empty ranges
-property.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-> > The main advantage I think would be for IOMMUs that use the PCI b/d/f
-> > numbers as IDs. These can have #address-cells=<3>, #size-cells=<2>
-> > and have an empty dma-ranges property in the PCI host bridge node,
-> > and interpret this as using the same encoding as the PCI BARs in
-> > the ranges property.
-> 
-> I'm somewhat confused here, since you said earlier:
-> 
-> > After giving the ranges stuff some more thought, I have come to the
-> > conclusion that using #iommu-cells should work fine for almost
-> > all cases, including windowed iommus, because the window is not
-> > actually needed in the device, but only in the iommu, wihch is of course
-> > free to interpret the arguments as addresses.
-> 
-> But now you seem to be saying that we should still be using the
-> #address-cells and #size-cells properties in the IOMMU node to determine
-> the length of the specifier.
+iQIcBAEBAgAGBQJTezltAAoJELSic+t+oim9pTsP/j2J/0qbHTLC/QBWUCY5IppL
+9OWrNQUz4XE3lAUVM0yRuVTt90+EdgM21A1qTq2ojz/MZXdST6udFkRBw6YRJKNL
+xG0antQhhd1ez05mg78bkK2qzGb/oCGUQgJfPQoFhTlb471GnnfmR3K5TR98I08D
+1IyA3SLq6JcRA0bBIWED1cGRw0T639QV3RGuTEbHUQ6ZDG5Nl8CwI8RdgPWxzkn2
+xcTaMQa0cMDozcxz38cuqIWnO+jwv30fPPxn7CnzF+HE/qzKMj8PAdlc2WUQqNks
+6YCbkM4N8EbodVQ5CUJ0/EmuZTA9lHazKsUF01eVFayM/QYcdZXoN7+Pqo/B+KSX
+GMsYggkduK3A/vj5YbdtjDBGI+Hbt0wEQmuyPE3SCCbUKdrmGlvUNthlwmdMLpYP
+QmKczhQuIJZSYy7QOf+jTi3v62CzqURBXr/p6qiNXwrVT7lGUdlUHug5i2igaCkO
+VE3wQx5y5oIStUqOzdzi5Gr2PU6Vs7x4l/hMP0STRVlismD4AxSdDbXO8edF8BJ8
+4Lr80mOIc7A5YSngWEbyyEydIcoRSKEmERmNF4R4/QW1Ja0emwgiHpLKRBQkrPE9
+Vbq9mFUfJojXKFU2ZBb8rYKXznl737Nmm9XFsg2OcodtxShGo0TkSAi2jp9/97vF
+fc9nkwdtSiXdRsD/cmOi
+=z2EL
+-----END PGP SIGNATURE-----
 
-I probably wasn't clear. I think we can make it work either way, but
-my feeling is that using #address-cells/#size-cells gives us a nicer
-syntax for the more complex cases.
+--P/co8ZP+C4wcN8Yg--
 
-	Arnd
+--===============1722724084882285034==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============1722724084882285034==--
