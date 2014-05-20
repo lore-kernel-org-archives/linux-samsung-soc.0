@@ -1,49 +1,66 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung fixes for 3.15
-Date: Mon, 19 May 2014 22:55:31 -0700
-Message-ID: <20140520055531.GQ18956@quad.lixom.net>
-References: <02ae01cf701d$e5761f80$b0625e80$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <02ae01cf701d$e5761f80$b0625e80$@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kevin Hilman' <khilman@linaro.org>, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>
+From: Chanho Park <chanho61.park@samsung.com>
+Subject: [PATCHv5 2/4] ARM: dts: exynos4: add exynos_usbphy node
+Date: Tue, 20 May 2014 11:06:28 +0900
+Message-ID: <1400551590-7772-3-git-send-email-chanho61.park@samsung.com>
+References: <1400551590-7772-1-git-send-email-chanho61.park@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:59297 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752354AbaETCGi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 May 2014 22:06:38 -0400
+In-reply-to: <1400551590-7772-1-git-send-email-chanho61.park@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: t.figa@samsung.com, k.debski@samsung.com, devicetree@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>
 
-On Thu, May 15, 2014 at 06:13:09PM +0900, Kukjin Kim wrote:
-> Hi Arnd, Olof, Kevin,
-> 
-> Please pull Samsung fixes and if any problem, please kinldly let me know.
-> 
-> Thanks,
-> Kukjin
-> 
-> The following changes since commit 89ca3b881987f5a4be4c5dbaa7f0df12bbdde2fd:
-> 
->   Linux 3.15-rc4 (2014-05-04 18:14:42 -0700)
-> 
-> are available in the git repository at:
-> 
->   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/samsung-fixes
-> 
-> for you to fetch changes up to 702b691e4a711e699cf3cccba879c1d945665c0d:
-> 
->   ARM: dts: Remove g2d_pd node for exynos5420 (2014-05-15 04:18:24 +0900)
+This patch enables a exynos_usbphy node for exynos4 SoCs.
+A exynos4x12 usb phy node is almost same with 4210's one
+except compatible string and pmu syscon.
 
-Merged, thanks.
+Cc: Tomasz Figa <t.figa@samsung.com>
+Cc: Kamil Debski <k.debski@samsung.com>
+Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos4.dtsi    | 10 ++++++++++
+ arch/arm/boot/dts/exynos4x12.dtsi |  5 +++++
+ 2 files changed, 15 insertions(+)
 
-
--Olof
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index da29a2a..8a02810 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -276,6 +276,16 @@
+ 		status = "disabled";
+ 	};
+ 
++	exynos_usbphy: exynos-usbphy@125B0000 {
++		compatible = "samsung,exynos4210-usb2-phy";
++		reg = <0x125B0000 0x100>;
++		samsung,pmureg-phandle = <&pmu_system_controller>;
++		clocks = <&clock CLK_USB_DEVICE>, <&clock CLK_XUSBXTI>;
++		clock-names = "phy", "ref";
++		#phy-cells = <1>;
++		status = "disabled";
++	};
++
+ 	ehci@12580000 {
+ 		compatible = "samsung,exynos4210-ehci";
+ 		reg = <0x12580000 0x100>;
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 2f1e6c1..c5a943d 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -265,4 +265,9 @@
+ 		clock-names = "biu", "ciu";
+ 		status = "disabled";
+ 	};
++
++	exynos-usbphy@125B0000 {
++		compatible = "samsung,exynos4x12-usb2-phy";
++		samsung,sysreg-phandle = <&sys_reg>;
++	};
+ };
+-- 
+1.8.3.2
