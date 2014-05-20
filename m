@@ -1,89 +1,72 @@
-From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
-Date: Tue, 20 May 2014 17:39:12 +0100
-Message-ID: <20140520163912.GC5041@e103592.cambridge.arm.com>
-References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
-	<5080348.QmhgfQRxZW@wuerfel>
-	<20140520130659.GA5041@e103592.cambridge.arm.com>
-	<6382280.3uMvoxaUSK@wuerfel> <20140520152659.GA30404@arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140520152659.GA30404-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH 0/4] Add support for Exynos clock output configuration
+Date: Tue, 20 May 2014 18:43:27 +0200
+Message-ID: <1400604211-9447-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, May 20, 2014 at 04:26:59PM +0100, Will Deacon wrote:
-> On Tue, May 20, 2014 at 02:23:47PM +0100, Arnd Bergmann wrote:
-> > 	Bit#   33222222 22221111 11111100 00000000
-> > 	       10987654 32109876 54321098 76543210
-> > phys.hi cell:  npt000ss bbbbbbbb dddddfff rrrrrrrr
-> > phys.mid cell: hhhhhhhh hhhhhhhh hhhhhhhh hhhhhhhh
-> > phys.lo cell:  llllllll llllllll llllllll llllllll
-> > 
-> > where:
-> > n is 0 if the address is relocatable, 1 otherwise
-> > p is 1 if the addressable region is "prefetchable", 0 otherwise
-> > t is 1 if the address is aliased (for non-relocatable I/O),
-> >  below 1 MB (for Memory), or below 64 KB (for relocatable I/O).
-> > ss is the space code, denoting the address space
-> > bbbbbbbb is the 8-bit Bus Number
-> > ddddd is the 5-bit Device Number
-> > fff is the 3-bit Function Number
-> > rrrrrrrr is the 8-bit Register Number
-> > hh...hh is a 32-bit unsigned number
-> > ll...ll is a 32-bit unsigned number
-> > 
-> > We can ignore n, p, t and r here, and use the same format for a DMA
-> > address, then define an empty "dma-ranges" property. That would
-> > imply that using b/d/f is sufficient to identify each master at the
-> > iommu. Any device outside of the PCI host but connected to the same
-> > iommu can use the same notation to list the logical b/d/f that gets
-> > sent to the IOMMU in bus master transactions.
-> > 
-> > Do you think this is sufficient for the ARM SMMU, or do we need
-> > something beyond that?
-> 
-> I think it can define the common-cases for the existing implementations,
-> yes. I anticipate Stream-IDs becoming > 16-bit in the near future though,
-> so we'd need extra bits if we're describing other devices coming into the
-> SMMU.
-> 
-> Note that we already have a binding for the current SMMU driver, so I'm not
-> really in a position to shift over to a new binding until the next version of
-> the SMMU architecture comes along...
+On all Exynos SoCs there is a dedicated CLKOUT pin that allows many of
+internal SoC clocks to be output from the SoC. The hardware structure
+of CLKOUT related clocks looks as follows:
 
-How much code relies on the meaning of the nptsbdf bits?
+	CMU	|---> clock0 --------->	|	PMU	|
+		|			|		|
+    several	|---> clock1 ---------> |	mux	|
+    muxes	|			|	+	|---> CLKOUT
+    dividers	|       ...		|	gate	|
+    and gates	|			|		|
+		|---> clockN ---------> |		|
 
-Following the general model of concatenating the master ID with the
-address bits and trasting that as a single input to the IOMMU seems
-reasonable -- maybe we either don't care about the attribute bits and
-can replace them with master ID bits, or instead we could extend with
-more master ID bits at bit 96 and up.
+Since the block responsible for handling the pin is PMU, not CMU,
+a separate driver, that binds to PMU node is required and acquires
+all input clocks by standard DT clock look-up. This way we don't need
+any cross-IP block drivers and cross-driver register sharing or
+nodes for fake devices.
 
-npts looks like memory type information.  What memory type information
-we need to describe for coherent masters on ARM is a bit of an open
-question.  Perhaps we can come up with a good ARM-specific interpretation
-of these bits, but I wonder whether they are enough.
+To represent the PMU mux/gate clock, generic composite clock is registered.
 
-If there is a real PCI bus in the system of course, then we are fine
-once we reach it.  The only problem is for the stuff on AMBA buses etc.
+Tested on Odroid U3, with HSIC/USB hub using CLKOUT as reference clock,
+with some additional patches.
 
-In theory, we could have to describe memory types, cacheability
-attributes and coherency domains, but we may be able to squeeze the
-possibilities down to a smaller set of sane memory types.
+Depends on:
+[PATCHv5 0/4] Enable usbphy and hsotg for exynos4
+(No link, sorry, I could not find it in any archive yet...)
+for Exynos4210/4x12 PMU binding and DT nodes.
 
-Cheers
----Dave
+Changes since RFC v1:
+(https://lkml.org/lkml/2014/5/15/506)
+ - rebased onto v5 of "Enable usbphy and hsotg for exynos4" series and
+   current HEAD of samsung-clk tree,
+ - added handling of suspend/resume in the driver,
+ - added missing CPU clocks on Exynos4,
+ - added CLK_SET_RATE_PARENT to CMU CLKOUT gates on Exynos4,
+ - fixed bit field width on Exynos4,
+ - added CLKOUT CMU registers of Exynos4 to save/restore list,
+ - added CLK_SET_RATE_PARENT and CLK_SET_RATE_NO_REPARENT to clkout clock,
+ - changed the binding to use 1-cell clock specifier to allow extension
+   with further PMU clocks in future, if needed.
+
+Tomasz Figa (4):
+  clk: samsung: exynos4: Add missing CPU/DMC clock hierarchy
+  clk: samsung: exynos4: Add CLKOUT clock hierarchy
+  clk: samsung: Add driver to control CLKOUT line on Exynos SoCs
+  ARM: dts: exynos: Update PMU node with CLKOUT related data
+
+ .../devicetree/bindings/arm/samsung/pmu.txt        |  30 ++++
+ arch/arm/boot/dts/exynos4.dtsi                     |   1 +
+ arch/arm/boot/dts/exynos4210.dtsi                  |   9 ++
+ arch/arm/boot/dts/exynos4x12.dtsi                  |   6 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |   3 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |   3 +
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-exynos-clkout.c            | 153 ++++++++++++++++++
+ drivers/clk/samsung/clk-exynos4.c                  | 173 +++++++++++++++++++++
+ include/dt-bindings/clock/exynos4.h                |   6 +
+ 10 files changed, 385 insertions(+)
+ create mode 100644 drivers/clk/samsung/clk-exynos-clkout.c
+
+-- 
+1.9.3
