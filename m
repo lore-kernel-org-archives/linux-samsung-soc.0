@@ -1,111 +1,122 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH v3 0/4] ARM: dts: enable display for peach-pit and snow
- boards
-Date: Tue, 20 May 2014 12:35:40 +0530
-Message-ID: <CAPdUM4NBCC+R+WkREhLhh0sDTg35bKyb6FZhgYJiUDVtEtXjdw@mail.gmail.com>
-References: <1399630186-22610-1-git-send-email-rahul.sharma@samsung.com>
- <537A25F8.4040604@samsung.com>
- <CAPdUM4OcHOiSAbNt_6yEo_YY3FqGxef=p33opW21nEt7P+m6Xw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAPdUM4OcHOiSAbNt_6yEo_YY3FqGxef=p33opW21nEt7P+m6Xw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Inki Dae <inki.dae@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] ASoC: samsung: Add 'mclk' handling for Snow sound-card driver
+Date: Tue, 20 May 2014 09:55:42 +0530
+Message-ID: <1400559942-5666-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: lgirdwood@gmail.com, robh+dt@kernel.org, sbkim73@samsung.com, rdunlap@infradead.org, broonie@kernel.org, dianders@chromium.org, t.figa@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 20 May 2014 10:41, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> Thanks Kukjin,
->
-> I have changed it in my environment now.
->
+For audio to work on Snow board, we need the codec master clock 'mclk'
+to be properly configured.
 
-Kukjin,
+Currently XCLKOUT is configured as 'mclk' for codec chip and it is
+required to be clocked at 24MHz for the codec to work properly.
 
-dp_hpd_gpio got accidentally merged to pinctrl_3 in your "for-next"
-branch. It should
-be in pinctrl_0.
+Add appropriate clock handling within Snow sound-card driver to set
+'mclk' to operate at 24MHz.
 
-/*****************/
-        };
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ Documentation/devicetree/bindings/sound/snow.txt |    7 ++++++
+ sound/soc/samsung/snow.c                         |   26 +++++++++++++++++++++-
+ 2 files changed, 32 insertions(+), 1 deletion(-)
 
-        dp_hpd_gpio: dp_hpd_gpio {
-               samsung,pins = "gpx2-6";
-               samsung,pin-function = <0>;
-               samsung,pin-pud = <3>;
-                samsung,pin-drv = <0>;
-        };
-};
-
-&pinctrl_3 {
-usb300_vbus_en: usb300-vbus-en {
-/*****************/
-
-Regards,
-Rahul Sharma.
-
-> Regards,
-> Rahul Sharma.
->
-> On 19 May 2014 21:10, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> On 05/09/14 19:09, Rahul Sharma wrote:
->>>
->>> From: Rahul Sharma<Rahul.Sharma@samsung.com>
->>
->>
->> Probably, should be "Rahul Sharma <rahul.sharma@...>"
->>
->> Please make sure your gitconfig has no problem.
->>
->> Just note, I found same thing and fixed your email address in my tree...
->>
->>
->>>
->>> Add nodes for fimd and dp controller for exynos5250 based snow
->>> and exynos5420 based peach-pit board.
->>>
->>> This series is based on Kukjin Kims, for-next branch.
->>>
->>> V3:
->>> 1) Dropped 1 patch "ARM: dts: move dp hpd line to the board file for
->>>   exynos5420".
->>> 2) Extra blank lines for readability.
->>> 3) dp hpd gpio name change (dp_hpd ->  dp_hpd_gpio)
->>>
->>> V2:
->>> 1) Rebase on Peach-pit dependent patches.
->>>
->>> It is dependent on
->>> 1) Andrew Bresticker's patch for hpd gpio addition, avilable at
->>> http://www.spinics.net/lists/linux-samsung-soc/msg28827.html [Patch is
->>> 'ACK'ed.]
->>> 2) Arun's patch for adding peach-pit board dts file at
->>> http://www.spinics.net/lists/linux-samsung-soc/msg30103.html. [Patch is
->>> 'ACK'ed.]
->>>
->>> Rahul Sharma (4):
->>>    ARM: dts: enable fimd for exynos5250 based snow board
->>>    ARM: dts: enable dp-controller for exynos5250 based snow board
->>>    ARM: dts: enable fimd for exynos5420 based peach-pit board
->>>    ARM: dts: enable dp-controller for exynos5420 based peach-pit board
->>>
->>>   arch/arm/boot/dts/exynos5250-snow.dts      |   35
->>> ++++++++++++++++++++++++
->>>   arch/arm/boot/dts/exynos5420-peach-pit.dts |   41
->>> ++++++++++++++++++++++++++++
->>>   2 files changed, 76 insertions(+)
->>>
->> OK, applied whole series with Jingoo's 'reviewed-by'.
->>
->> Thanks,
->> Kukjin
+diff --git a/Documentation/devicetree/bindings/sound/snow.txt b/Documentation/devicetree/bindings/sound/snow.txt
+index 678b191..94dd29c 100644
+--- a/Documentation/devicetree/bindings/sound/snow.txt
++++ b/Documentation/devicetree/bindings/sound/snow.txt
+@@ -7,6 +7,10 @@ Required properties:
+ - samsung,i2s-controller: The phandle of the Samsung I2S controller
+ - samsung,audio-codec: The phandle of the audio codec
+ 
++Optional properties:
++- clocks: The phandle of the master clock to audio codec
++- clock-names: Should be "mclk"
++
+ Example:
+ 
+ sound {
+@@ -14,4 +18,7 @@ sound {
+ 
+ 		samsung,i2s-controller = <&i2s0>;
+ 		samsung,audio-codec = <&max98095>;
++
++		clocks = <&pmu_system_controller>;
++		clock-names = "mclk";
+ };
+diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
+index 014c177..c910739 100644
+--- a/sound/soc/samsung/snow.c
++++ b/sound/soc/samsung/snow.c
+@@ -15,13 +15,18 @@
+ #include <linux/platform_device.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/clk.h>
+ 
+ #include <sound/soc.h>
+ 
+ #include "i2s.h"
+ 
++/* Desired clock rate for codec mclk */
+ #define FIN_PLL_RATE		24000000
+ 
++static struct clk *mclk;
++static unsigned long mclk_rate;
++
+ static struct snd_soc_dai_link snow_dai[] = {
+ 	{
+ 		.name = "Primary",
+@@ -41,7 +46,7 @@ static int snow_late_probe(struct snd_soc_card *card)
+ 
+ 	/* Set the MCLK rate for the codec */
+ 	ret = snd_soc_dai_set_sysclk(codec_dai, 0,
+-					FIN_PLL_RATE, SND_SOC_CLOCK_IN);
++					mclk_rate, SND_SOC_CLOCK_IN);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -68,6 +73,16 @@ static int snow_probe(struct platform_device *pdev)
+ 	struct device_node *i2s_node, *codec_node;
+ 	int i, ret;
+ 
++	/* The codec MCLK should be clocked at 24MHz */
++	mclk = devm_clk_get(&pdev->dev, "mclk");
++	if (!IS_ERR(mclk)) {
++		clk_prepare_enable(mclk);
++		clk_set_rate(mclk, FIN_PLL_RATE);
++		mclk_rate = clk_get_rate(mclk);
++	} else {
++		mclk_rate = FIN_PLL_RATE;
++	}
++
+ 	i2s_node = of_parse_phandle(pdev->dev.of_node,
+ 				    "samsung,i2s-controller", 0);
+ 	if (!i2s_node) {
+@@ -101,6 +116,14 @@ static int snow_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
++static int snow_remove(struct platform_device *pdev)
++{
++	if (!IS_ERR(mclk))
++		clk_disable_unprepare(mclk);
++
++	return 0;
++}
++
+ static const struct of_device_id snow_of_match[] = {
+ 	{ .compatible = "google,snow-audio-max98090", },
+ 	{ .compatible = "google,snow-audio-max98095", },
+@@ -115,6 +138,7 @@ static struct platform_driver snow_driver = {
+ 		.of_match_table = snow_of_match,
+ 	},
+ 	.probe = snow_probe,
++	.remove = snow_remove,
+ };
+ 
+ module_platform_driver(snow_driver);
+-- 
+1.7.9.5
