@@ -1,198 +1,201 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 2/5] Samsung clock updates for 3.16
-Date: Tue, 20 May 2014 10:11:03 +0900
-Message-ID: <014501cf73c8$5eb66960$1c233c20$@samsung.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH] mmc: dw_mmc: Make sure we don't get stuck when we get an
+ error
+Date: Tue, 20 May 2014 10:51:11 +0900
+Message-ID: <003a01cf73cd$fa2ee160$ee8ca420$%jun@samsung.com>
+References: <1395901126-6141-1-git-send-email-yuvaraj.cd@samsung.com>
+ <CAKuRcOL_JVjOfLNspb14kRxcAXjpEwX4WkvmM+izryZbZBE4XA@mail.gmail.com>
+ <CAPz6YkVwT0PrcLP1MJy0vVRw811+_7PwsV_ggKxQkqrjOWeWWw@mail.gmail.com>
+ <002001cf6c59$b5b5e680$2121b380$%jun@samsung.com>
+ <CAD=FV=X=9cTvST5cM=H9H23SMD28cHSExXt3YR=v2AQ6dFJY5w@mail.gmail.com>
+ <001b01cf6e67$2183b400$648b1c00$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44863 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751660AbaETBLF (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:50667 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750956AbaETBvO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 May 2014 21:11:05 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5U00IPULYGVL00@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 May 2014 10:11:04 +0900 (KST)
+	Mon, 19 May 2014 21:51:14 -0400
+In-reply-to: <001b01cf6e67$2183b400$648b1c00$%jun@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, olof@lixom.net, 'Kevin Hilman' <khilman@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Tomasz Figa' <t.figa@samsung.com>
+To: 'Seungwon Jeon' <tgih.jun@samsung.com>, 'Doug Anderson' <dianders@chromium.org>
+Cc: 'Sonny Rao' <sonnyrao@chromium.org>, 'Yuvaraj Kumar' <yuvaraj.cd@gmail.com>, 'Grant Grundler' <grundler@chromium.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Chris Ball' <cjb@laptop.org>, 'linux-mmc' <linux-mmc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'sunil joshi' <joshi@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>
 
-The following changes since commit 34c453ce16633539a94a2e876faeb731ac1be899:
+On Tue, May 13, 2014, Seungwon Jeon wrote:
+> Hi Doug,
+> 
+> On Tue, May 13, 2014, Doug Anderson wrote:
+> > Seungwon,
+> >
+> > On Sat, May 10, 2014 at 7:11 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> > > On Fri, May 09, 2014, Sonny Rao wrote:
+> > >> On Thu, May 8, 2014 at 2:42 AM, Yuvaraj Kumar <yuvaraj.cd@gmail.com> wrote:
+> > >> > Any comments on this patch?
+> > >> >
+> > >>
+> > >> I'll just add that without this fix, running the tuning loop for UHS
+> > >> modes is not reliable on dw_mmc because errors will happen and you
+> > >> will eventually hit this race and hang.  This can happen any time
+> > >> there is tuning like during boot or during resume from suspend.
+> > >>
+> > >> > On Thu, Mar 27, 2014 at 11:48 AM, Yuvaraj Kumar C D
+> > >> > <yuvaraj.cd@gmail.com> wrote:
+> > >> >> From: Doug Anderson <dianders@chromium.org>
+> > >> >>
+> > >> >> If we happened to get a data error at just the wrong time the dw_mmc
+> > >> >> driver could get into a state where it would never complete its
+> > >> >> request.  That would leave the caller just hanging there.
+> > >> >>
+> > >> >> We fix this two ways and both of the two fixes on their own appear to
+> > >> >> fix the problems we've seen:
+> > >> >>
+> > >> >> 1. Fix a race in the tasklet where the interrupt setting the data
+> > >> >>    error happens _just after_ we check for it, then we get a
+> > >> >>    EVENT_XFER_COMPLETE.  We fix this by repeating a bit of code.
+> > > I think repeating is not good approach to fix race.
+> > > In your case, XFER_COMPLETE preceded data error and DTO didn't come?
+> > > It seems strange case.
+> > > I want to know actual error value if you can reproduce.
+> >
+> > XFER_COMPLETE didn't necessarily precede data error.  Imagine this scenario:
+> >
+> > 1. Check for data error: nope
+> > 2. Interrupt happens and we get a data error and immediately xfer complete
+> > 3. Check for xfer complete: yup
+> >
+> > That's the state that we are handling.
+> >
+> > The system that dw_mmc uses where the interrupt handler has no locking
+> > makes it incredibly difficult to get things right.  Can you propose an
+> > alternate fix that would avoid the race?
+> Thank you for detailed scenario.
+> You're right.
+> Have you consider using spin_lock() in interrupt handler?
+> Then, we'll need to change spin_lock() to spin_lock_irqsave() in tasklet func.
+> And other locks in driver may need to be adjusted properly.
+> 
+> To return above scenario:
+> 1. Check for data error: nope
+> 2. Check for xfer complete: nope -> escape tasklet.
+> 3. Interrupt happens and we get a data error and immediately xfer complete
+> 4. Check for data error (Again in tasklet) : yup
+> 
+> How about this change?
+> 
+> Thanks,
+> Seungwon Jeon
+> >
+> >
+> > >> >> 2. Fix it so that if we detect that we've got an error in the "data
+> > >> >>    busy" state and we're not going to do anything else we end the
+> > >> >>    request and unblock anyone waiting.
+> > >> >>
+> > >> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> > >> >> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+> > >> >> ---
+> > >> >>  drivers/mmc/host/dw_mmc.c |   47 +++++++++++++++++++++++++++++++++++++++++++++
+> > >> >>  1 file changed, 47 insertions(+)
+> > >> >>
+> > >> >> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> > >> >> index 1d77431..4c589f1 100644
+> > >> >> --- a/drivers/mmc/host/dw_mmc.c
+> > >> >> +++ b/drivers/mmc/host/dw_mmc.c
+> > >> >> @@ -1300,6 +1300,14 @@ static void dw_mci_tasklet_func(unsigned long priv)
+> > >> >>                         /* fall through */
+> > >> >>
+> > >> >>                 case STATE_SENDING_DATA:
+> > >> >> +                       /*
+> > >> >> +                        * We could get a data error and never a transfer
+> > >> >> +                        * complete so we'd better check for it here.
+> > >> >> +                        *
+> > >> >> +                        * Note that we don't really care if we also got a
+> > >> >> +                        * transfer complete; stopping the DMA and sending an
+> > >> >> +                        * abort won't hurt.
+> > >> >> +                        */
+> > >> >>                         if (test_and_clear_bit(EVENT_DATA_ERROR,
+> > >> >>                                                &host->pending_events)) {
+> > >> >>                                 dw_mci_stop_dma(host);
+> > >> >> @@ -1313,7 +1321,29 @@ static void dw_mci_tasklet_func(unsigned long priv)
+> > >> >>                                 break;
+> > >> >>
+> > >> >>                         set_bit(EVENT_XFER_COMPLETE, &host->completed_events);
+> > >> >> +
+> > >> >> +                       /*
+> > >> >> +                        * Handle an EVENT_DATA_ERROR that might have shown up
+> > >> >> +                        * before the transfer completed.  This might not have
+> > >> >> +                        * been caught by the check above because the interrupt
+> > >> >> +                        * could have gone off between the previous check and
+> > >> >> +                        * the check for transfer complete.
+> > >> >> +                        *
+> > >> >> +                        * Technically this ought not be needed assuming we
+> > >> >> +                        * get a DATA_COMPLETE eventually (we'll notice the
+> > >> >> +                        * error and end the request), but it shouldn't hurt.
+> > >> >> +                        *
+> > >> >> +                        * This has the advantage of sending the stop command.
+> > >> >> +                        */
+> > >> >> +                       if (test_and_clear_bit(EVENT_DATA_ERROR,
+> > >> >> +                                              &host->pending_events)) {
+> > >> >> +                               dw_mci_stop_dma(host);
+> > >> >> +                               send_stop_abort(host, data);
+> > >> >> +                               state = STATE_DATA_ERROR;
+> > >> >> +                               break;
+> > >> >> +                       }
+> > >> >>                         prev_state = state = STATE_DATA_BUSY;
+> > >> >> +
+> > >> >>                         /* fall through */
+> > >> >>
+> > >> >>                 case STATE_DATA_BUSY:
+> > >> >> @@ -1336,6 +1366,23 @@ static void dw_mci_tasklet_func(unsigned long priv)
+> > >> >>                                 /* stop command for open-ended transfer*/
+> > >> >>                                 if (data->stop)
+> > >> >>                                         send_stop_abort(host, data);
+> > >> >> +                       } else {
+> > >> >> +                               /*
+> > >> >> +                                * If we don't have a command complete now we'll
+> > >> >> +                                * never get one since we just reset everything;
+> > >> >> +                                * better end the request.
+> > >> >> +                                *
+> > >> >> +                                * If we do have a command complete we'll fall
+> > >> >> +                                * through to the SENDING_STOP command and
+> > >> >> +                                * everything will be peachy keen.
+> > >> >> +                                *
+> > >> >> +                                * TODO: I guess we shouldn't send a stop?
 
-  ARM: S3C24XX: fix merge conflict (2014-05-15 05:54:38 +0900)
+Please remove TODO:
+We already reset controller in dw_mci_data_complete() through "mmc: dw_mmc: change to use recommended reset procedure"?
+I guess it depends on that patch.
+Then, we don't need to stop sequence anymore.
 
-are available in the git repository at:
+Thanks,
+Seungwon Jeon
 
-  http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-clk
-
-for you to fetch changes up to 6520e968eef4f88c076a84a80e026049d157132e:
-
-  clk: exynos5420: Add 5800 specific clocks (2014-05-19 22:15:08 +0900)
-
-----------------------------------------------------------------
-Samsung clock updates for 3.16
-
-In this time, it is having dependency with arch/arm/ for 3.16,
-I pulled them into samsung tree from Tomasz under agreement from Mike.
-
-- Pull for_3.16/exynos5260 from Tomasz Figa:
-
-  "This pull request contains patches preparing Samsung Common Clock
-Framework
-  helpers to support Exynos5260 by adding support for multiple clock
-providers
-  and then adding clock driver for Exynos5260."
-
-- Pull for_3.16/clk_fixes_non_critical from Tomasz Figa:
-
-  "This pull requests contains a number of non-critical fixes for Samsung
-clock
-  framework and drivers, including:
-  1) a series of fixes for Exynos5420 to correct clock definitions and make
-the
-  driver closer to the documentation,
-  2) several missing clocks and clock IDs added to Exynos4, Exynos5250 and
-  Exynos5420 drivers,
-  3) fix for incorrect initialization of clock table with NULL,
-  4) compiler warning fix."
-
-- Pull for_3.16/clk_cleanup from Tomasz Figa:
-
-  "This pull requests contains minor clean-up related to Samsung clock
-  support, including:
-  1) move Kconfig entries of Samsung clock drivers to drivers/clk,
-  2) compile drivers/clk/samsung conditionally when COMMON_CLK_SAMSUNG is
-  selected,
-  3) remove obsolete Kconfig lines after moving s3c24xx to CCF."
-
-- Pull for_3.16/exynos3250 from Tomasz Figa:
-
-  "This small pull request contains a patch adding clock driver for
-Exynos3250,
-  which depends on previous pull requests in this series."
-
-- add dt bindings for exynos3250 clock
-- add exynos5800 specific clocks in current exynos5420 clock
-
-Note that this branch is based on s3c24xx ccf branch
-
-----------------------------------------------------------------
-Alim Akhtar (1):
-      clk: exynos5420: Add 5800 specific clocks
-
-Arun Kumar K (2):
-      clk: samsung: exynos5250: Add clocks for G3D
-      clk: samsung: exynos5420: Add clock IDs needed by GPU
-
-Chanwoo Choi (1):
-      dt-bindings: add documentation for Exynos3250 clock controller
-
-Kukjin Kim (4):
-      Merge branch 'for_3.16/exynos5260' of
-git://git.kernel.org/.../tfiga/samsung-clk into v3.16-next/clk-samsung
-      Merge branch 'for_3.16/clk_fixes_non_critical' of
-git://git.kernel.org/.../tfiga/samsung-clk into v3.16-next/clk-samsung
-      Merge branch 'for_3.16/clk_cleanup' of
-git://git.kernel.org/.../tfiga/samsung-clk into v3.16-next/clk-samsung
-      Merge branch 'for_3.16/exynos3250' of
-git://git.kernel.org/.../tfiga/samsung-clk into v3.16-next/clk-samsung
-
-Naveen Krishna Chatradhi (1):
-      clk: samsung: exynos5250/5420: Add gate clock for SSS module
-
-Pankaj Dubey (6):
-      clk/samsung: add support for pll2550xx
-      clk: samsung: fixed compiler warning [-Wpointer-to-int-cast]
-      clk: samsung: add new Kconfig for Samsung common clock option
-      ARM: select COMMON_CLK_SAMSUNG for ARCH_EXYNOS and ARCH_S3C64XX
-      ARM: S3C24XX: move S3C24XX clock Kconfig options to Samsung clock
-Kconfig file
-      drivers: clk: use COMMON_CLK_SAMSUNG for Samsung clock support
-
-Rahul Sharma (4):
-      clk/samsung: add support for multiple clock providers
-      clk/samsung: add support for pll2650xx
-      clk/exynos5260: add macros and documentation for exynos5260
-      clk/exynos5260: add clock file for exynos5260
-
-Sachin Kamat (1):
-      clk: samsung: exynos5420: Fix VPLL lock offset
-
-Shaik Ameer Basha (15):
-      clk: samsung: exynos5420: Rename mux parent arrays
-      clk: samsung: exynos5420: add clocks for ISP block
-      clk: samsung: exynos5420: update clocks for GSCL and MSCL blocks
-      clk: samsung: exynos5420: fix parent clocks for mscl sysmmu
-      clk: samsung: exynos5420: update clocks for G2D and G3D blocks
-      clk: samsung: exynos5420: update clocks for DISP1 block
-      clk: samsung: exynos5420: update clocks for PERIC block
-      clk: samsung: exynos5420: update clocks for PERIS and GEN blocks
-      clk: samsung: exynos5420: update clocks for WCORE block
-      clk: samsung: exynos5420: update clocks for FSYS and FSYS2 blocks
-      clk: samsung: exynos5420: correct sysmmu-mfc parent clocks
-      clk: samsung: exynos5420: fix register offset for sclk_bpll
-      clk: samsung: exynos5420: update clocks for MAU Block
-      clk: samsung: exynos5420: add misc clocks
-      clk: samsung: exynos5420: add more registers to restore list
-
-Sylwester Nawrocki (1):
-      clk: samsung: exynos4: Use single clock ID for CLK_MDMA gate clocks
-
-Tomasz Figa (3):
-      clk: samsung: Initialize clock table with error pointers
-      ARM: S3C24XX: Remove omitted Kconfig selects and conditionals
-      clk: samsung: exynos3250: Add clocks using common clock framework
-
-Tomasz Stanislawski (1):
-      clk: samsung: exynos4: export sclk_hdmiphy clock
-
- .../devicetree/bindings/clock/exynos3250-clock.txt |   41 +
- .../devicetree/bindings/clock/exynos5260-clock.txt |  190 ++
- .../devicetree/bindings/clock/exynos5420-clock.txt |    3 +-
- .../bindings/clock/samsung,s3c2410-clock.txt       |    2 +-
- arch/arm/Kconfig                                   |    4 +-
- arch/arm/boot/dts/exynos5420.dtsi                  |   14 +-
- arch/arm/mach-s3c24xx/Kconfig                      |   37 +-
- drivers/clk/Kconfig                                |    2 +
- drivers/clk/Makefile                               |    2 +-
- drivers/clk/samsung/Kconfig                        |   26 +
- drivers/clk/samsung/Makefile                       |    2 +
- drivers/clk/samsung/clk-exynos3250.c               |  780 ++++++++
- drivers/clk/samsung/clk-exynos4.c                  |   51 +-
- drivers/clk/samsung/clk-exynos5250.c               |   41 +-
- drivers/clk/samsung/clk-exynos5260.c               | 1980
-++++++++++++++++++++
- drivers/clk/samsung/clk-exynos5260.h               |  459 +++++
- drivers/clk/samsung/clk-exynos5420.c               | 1127 +++++++----
- drivers/clk/samsung/clk-exynos5440.c               |   18 +-
- drivers/clk/samsung/clk-pll.c                      |  223 ++-
- drivers/clk/samsung/clk-pll.h                      |    2 +
- drivers/clk/samsung/clk-s3c2410.c                  |   51 +-
- drivers/clk/samsung/clk-s3c2412.c                  |   29 +-
- drivers/clk/samsung/clk-s3c2443.c                  |   46 +-
- drivers/clk/samsung/clk-s3c64xx.c                  |   44 +-
- drivers/clk/samsung/clk.c                          |  123 +-
- drivers/clk/samsung/clk.h                          |   72 +-
- include/dt-bindings/clock/exynos3250.h             |  258 +++
- include/dt-bindings/clock/exynos4.h                |    2 +-
- include/dt-bindings/clock/exynos5250.h             |    5 +-
- include/dt-bindings/clock/exynos5260-clk.h         |  469 +++++
- include/dt-bindings/clock/exynos5420.h             |   43 +-
- 31 files changed, 5543 insertions(+), 603 deletions(-)
- create mode 100644
-Documentation/devicetree/bindings/clock/exynos3250-clock.txt
- create mode 100644
-Documentation/devicetree/bindings/clock/exynos5260-clock.txt
- create mode 100644 drivers/clk/samsung/Kconfig
- create mode 100644 drivers/clk/samsung/clk-exynos3250.c
- create mode 100644 drivers/clk/samsung/clk-exynos5260.c
- create mode 100644 drivers/clk/samsung/clk-exynos5260.h
- create mode 100644 include/dt-bindings/clock/exynos3250.h
- create mode 100644 include/dt-bindings/clock/exynos5260-clk.h
+> > >> >> +                                */
+> > >> >> +                               if (!test_bit(EVENT_CMD_COMPLETE,
+> > >> >> +                                             &host->pending_events)) {
+> > >> >> +                                       dw_mci_request_end(host, mrq);
+> > >> >> +                                       goto unlock;
+> > >> >> +                               }
+> > > Can you explain what happens above?
+> > > What is it for?
+> >
+> > This was an alternate fix for the above, but appears to actually hit
+> > in practice too.
+> >
+> > Said another way: if we don't add the extra checking for
+> > EVENT_DATA_ERROR (above) we'll end up here.  ...and if we ever get
+> > into this "else" and don't do _something_ then we'll wedge forever.
+> >
+> > -Doug
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
