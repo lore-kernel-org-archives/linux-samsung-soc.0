@@ -1,78 +1,45 @@
-From: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3 0/4] ARM: dts: enable display for peach-pit and snow boards
-Date: Tue, 20 May 2014 10:41:25 +0530
-Message-ID: <CAPdUM4OcHOiSAbNt_6yEo_YY3FqGxef=p33opW21nEt7P+m6Xw@mail.gmail.com>
-References: <1399630186-22610-1-git-send-email-rahul.sharma@samsung.com>
-	<537A25F8.4040604@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <537A25F8.4040604-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH RESEND 2/2] ARM: dts: Add secure firmware support for Arndale-octa
+Date: Tue, 20 May 2014 09:20:10 +0530
+Message-ID: <1400557810-28428-2-git-send-email-tushar.behera@linaro.org>
+References: <1400557810-28428-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:60431 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751103AbaETDwQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 May 2014 23:52:16 -0400
+Received: by mail-pa0-f47.google.com with SMTP id lf10so6668099pab.34
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 May 2014 20:52:16 -0700 (PDT)
+In-Reply-To: <1400557810-28428-1-git-send-email-tushar.behera@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com
 
-Thanks Kukjin,
+Arndale-Octa board is always configured to work with trustzone
+firmware binary. Added DTS node entry to enable this support.
 
-I have changed it in my environment now.
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-Regards,
-Rahul Sharma.
-
-On 19 May 2014 21:10, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On 05/09/14 19:09, Rahul Sharma wrote:
->>
->> From: Rahul Sharma<Rahul.Sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->
->
-> Probably, should be "Rahul Sharma <rahul.sharma@...>"
->
-> Please make sure your gitconfig has no problem.
->
-> Just note, I found same thing and fixed your email address in my tree...
->
->
->>
->> Add nodes for fimd and dp controller for exynos5250 based snow
->> and exynos5420 based peach-pit board.
->>
->> This series is based on Kukjin Kims, for-next branch.
->>
->> V3:
->> 1) Dropped 1 patch "ARM: dts: move dp hpd line to the board file for
->>   exynos5420".
->> 2) Extra blank lines for readability.
->> 3) dp hpd gpio name change (dp_hpd ->  dp_hpd_gpio)
->>
->> V2:
->> 1) Rebase on Peach-pit dependent patches.
->>
->> It is dependent on
->> 1) Andrew Bresticker's patch for hpd gpio addition, avilable at
->> http://www.spinics.net/lists/linux-samsung-soc/msg28827.html [Patch is
->> 'ACK'ed.]
->> 2) Arun's patch for adding peach-pit board dts file at
->> http://www.spinics.net/lists/linux-samsung-soc/msg30103.html. [Patch is
->> 'ACK'ed.]
->>
->> Rahul Sharma (4):
->>    ARM: dts: enable fimd for exynos5250 based snow board
->>    ARM: dts: enable dp-controller for exynos5250 based snow board
->>    ARM: dts: enable fimd for exynos5420 based peach-pit board
->>    ARM: dts: enable dp-controller for exynos5420 based peach-pit board
->>
->>   arch/arm/boot/dts/exynos5250-snow.dts      |   35
->> ++++++++++++++++++++++++
->>   arch/arm/boot/dts/exynos5420-peach-pit.dts |   41
->> ++++++++++++++++++++++++++++
->>   2 files changed, 76 insertions(+)
->>
-> OK, applied whole series with Jingoo's 'reviewed-by'.
->
-> Thanks,
-> Kukjin
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index 896a2a6..253d101 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -26,6 +26,11 @@
+ 		bootargs = "console=ttySAC3,115200";
+ 	};
+ 
++	firmware@02073000 {
++		compatible = "samsung,secure-firmware";
++		reg = <0x02073000 0x1000>;
++	};
++
+ 	fixed-rate-clocks {
+ 		oscclk {
+ 			compatible = "samsung,exynos5420-oscclk";
+-- 
+1.7.9.5
