@@ -1,86 +1,49 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3] cpufreq: exynos:  Fix the compile error
-Date: Tue, 20 May 2014 09:29:36 +0900
-Message-ID: <013c01cf73c2$94289150$bc79b3f0$@samsung.com>
-References: <000001cf70f0$2e48f930$8adaeb90$@samsung.com>
- <037e01cf70f5$25b374d0$711a5e70$@samsung.com>
- <2553916.Pl2B0tVZGR@vostro.rjw.lan> <1655043.7FHqnunz6p@vostro.rjw.lan>
+Subject: [GIT PULL 3/5] Samsung driver update for 3.16
+Date: Tue, 20 May 2014 10:11:20 +0900
+Message-ID: <014601cf73c8$68e56030$3ab02090$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-reply-to: <1655043.7FHqnunz6p@vostro.rjw.lan>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-language: ko
-Sender: cpufreq-owner@vger.kernel.org
-To: "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
-Cc: 'Jonghwan Choi' <jhbird.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, cpufreq@vger.kernel.org, 'Jonghwan Choi' <jhbird.choi@gmail.com>, 'Viresh Kumar' <viresh.kumar@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, olof@lixom.net, 'Kevin Hilman' <khilman@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Rafael J. Wysocki wrote:
-> 
-> On Saturday, May 17, 2014 01:04:29 AM Rafael J. Wysocki wrote:
-> > On Friday, May 16, 2014 07:54:01 PM Kukjin Kim wrote:
-> > > Jonghwan Choi wrote:
-> > > >
-> > > > Commit 7da83a80 ("ARM: EXYNOS: Migrate Exynos specific macros from
-> plat to
-> > > > mach") which lands in samsung tree causes build breakage
-> > > > for cpufreq-exynos like following:
-> > > >
-> > > > drivers/cpufreq/exynos-cpufreq.c: In function 'exynos_cpufreq_probe':
-> > > > drivers/cpufreq/exynos-cpufreq.c:166:2: error: implicit declaration
-> of
-> > > > function 'soc_is_exynos4210'
-> > > > [-Werror=implicit-function-declaration]
-> > > > drivers/cpufreq/exynos-cpufreq.c:168:2: error: implicit declaration
-> of
-> > > > function 'soc_is_exynos4212'
-> > > > [-Werror=implicit-function-declaration]
-> > > > drivers/cpufreq/exynos-cpufreq.c:168:2: error: implicit declaration
-> of
-> > > > function 'soc_is_exynos4412'
-> > > > [-Werror=implicit-function-declaration]
-> > > > drivers/cpufreq/exynos-cpufreq.c:170:2: error: implicit declaration
-> of
-> > > > function 'soc_is_exynos5250'
-> > > > [-Werror=implicit-function-declaration]
-> > > > cc1: some warnings being treated as errors
-> > > > make[2]: *** [drivers/cpufreq/exynos-cpufreq.o] Error 1
-> > > > make[2]: *** Waiting for unfinished jobs....
-> > > > drivers/cpufreq/exynos4x12-cpufreq.c: In function
-> 'exynos4x12_set_clkdiv':
-> > > > drivers/cpufreq/exynos4x12-cpufreq.c:118:2: error: implicit
-> declaration of
-> > > > function 'soc_is_exynos4212'
-> > > > [-Werror=implicit-function-declaration]
-> > > > cc1: some warnings being treated as errors
-> > > > make[2]: *** [drivers/cpufreq/exynos4x12-cpufreq.o] Error 1
-> > > > make[1]: *** [drivers/cpufreq] Error 2
-> > > > This fixes above error with getting SoC information via
-> > > > of_machine_is_compatible() instead of soc_is_exynosXXXX().
-> > > >
-> > >
-> > > Probably,
-> > > Suggested-by: Tomasz Figa ?
-> > >
-> > > > Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
-> > >
-> > > Looks better.
-> > >
-> > > Rafael, if you have no objection on this, shall I pick this into
-> samsung
-> > > tree for 3.16 because of the current build breakage with enabling
-> exynos
-> > > cpufreq?
-> >
-> > Please go ahead.
-> 
-> Actually, this conflicts with one patch already in my tree.  The
-> resoultion
-> is quite obvious, but it would be better to avoid this conflict altogether.
-> 
-Yeah. If you don't mind, shall I pick the patch (commit e5eaa445b0dc)into samsung tree with your ack?
+The following changes since commit c9eaa447e77efe77b7fa4c953bd62de8297fd6c5:
 
-Thanks,
-Kukjin
+  Linux 3.15-rc1 (2014-04-13 14:18:35 -0700)
 
+are available in the git repository at:
+
+  http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+tags/samsung-drivers
+
+for you to fetch changes up to 93bfb769752babdc4d3665a1fb166bb4e3ff927b:
+
+  clocksource: exynos_mct: register sched_clock callback (2014-05-02
+22:27:01 +0900)
+
+----------------------------------------------------------------
+exynos_mct update for v3.16
+
+- register sched_clock callback to use clocksource mct-frc
+
+Note that got ack from Daniel
+
+----------------------------------------------------------------
+Vincent Guittot (1):
+      clocksource: exynos_mct: register sched_clock callback
+
+ drivers/clocksource/exynos_mct.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
