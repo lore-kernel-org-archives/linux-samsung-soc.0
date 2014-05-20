@@ -1,54 +1,71 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 0/2] ARM: dts: add device data for exynos4412-trats2
-Date: Wed, 21 May 2014 00:45:33 +0200
-Message-ID: <537BDB0D.6060804@gmail.com>
-References: <537B32E5.2070606@samsung.com>
+Subject: Re: [PATCH 2/4] ARM: dts: exynos4210-universal_c210: enable USB functionality
+Date: Wed, 21 May 2014 00:48:11 +0200
+Message-ID: <537BDBAB.8010101@gmail.com>
+References: <1400590021-15422-1-git-send-email-m.szyprowski@samsung.com> <1400590021-15422-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f54.google.com ([74.125.83.54]:64558 "EHLO
+Received: from mail-ee0-f54.google.com ([74.125.83.54]:51133 "EHLO
 	mail-ee0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750747AbaETWpm (ORCPT
+	with ESMTP id S1750826AbaETWsT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 May 2014 18:45:42 -0400
-In-Reply-To: <537B32E5.2070606@samsung.com>
+	Tue, 20 May 2014 18:48:19 -0400
+Received: by mail-ee0-f54.google.com with SMTP id b57so951171eek.41
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 May 2014 15:48:17 -0700 (PDT)
+In-Reply-To: <1400590021-15422-3-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Beomho Seo <beomho.seo@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Myungjoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>
 
-On 20.05.2014 12:48, Beomho Seo wrote:
-> This patchset add some device node for exynos4412-trats2.
-> It is based on v3.15-next/dt-samsung-2 branch.
-> 
-> exynos4412-trats2.dts
-> - Fix incorrect compatible. Compatible of AK8975 are "ak8975" or "asahi-kasei,ak8975".
-> - Add cm36651 light/proximity sensor device node.
-> - Change gpio-key device node. fix incorrect gpio property, and then add "ok-key" node.
-> 
-> Changes in v3:
-> - Patch set based on v3.16-next/dt-samsung
-> - ARM: dts: fix incorrect compatible for exynos4412 patch is applied.
-> - Remove device node property; status, interrupt-parent, interrupt
-> - Changes gpio/interrupt specified index.
-> 
-> Changes in v2:
-> 
-> - Change ak8975 magnetic sensor compatible according to binding document.
-> - Change cm36651 light/proximity sensor compatible according to binding document and driver.
-> 
-> Beomho Seo (2):
->   ARM: dts: add cm36651 light/proximity sensor node
->   ARM: dts: fixed gpio key node for exynos4412
-> 
->  arch/arm/boot/dts/exynos4412-trats2.dts |   46 +++++++++++++++++++++++++------
->  1 file changed, 38 insertions(+), 8 deletions(-)
-> 
+Hi Marek,
 
-For the whole series:
+On 20.05.2014 14:46, Marek Szyprowski wrote:
+> This patch adds device tree nodes necessary to enable USB support on
+> universalc210 board, this includes UDC controller (USB gadget) as well
+> as EHCI and OHCI host ports. LDO3 and LDO8 regulators are switched to
+> always on mode until EHCI and OHCI drivers will support them correctly.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> index 9296dee10e26..0a32b396306c 100644
+> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> @@ -68,6 +68,12 @@
+>  		enable-active-high;
+>  	};
+>  
+> +	hsotg@12480000 {
+> +		vusb_d-supply = <&ldo3_reg>;
+> +		vusb_a-supply = <&ldo8_reg>;
+> +		status = "okay";
+> +	};
+> +
+>  	sdhci_emmc: sdhci@12510000 {
+>  		bus-width = <8>;
+>  		non-removable;
+> @@ -77,6 +83,18 @@
+>  		status = "okay";
+>  	};
+>  
+> +	ehci@12580000 {
+> +		status = "okay";
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Shouldn't you also enable applicable ports here, so that required PHYs
+are configured?
+
+> +	};
+> +
+> +	ohci@12590000 {
+> +		status = "okay";
+
+Ditto.
 
 Best regards,
 Tomasz
