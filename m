@@ -1,222 +1,148 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: Re: [RFC] ARM: EXYNOS: Add support for clock handling in power domain
-Date: Tue, 20 May 2014 10:08:54 +0530
-Message-ID: <CALt3h7_Ud3_KRsHQ80JnWrhJ9z7H2TbDhR0wAcqBrt0JbQ6sWA@mail.gmail.com>
-References: <1399883945-22500-1-git-send-email-arun.kk@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 2/7] mfd: cros_ec: spi: Add mutex to cros_ec_spi
+Date: Tue, 20 May 2014 09:44:29 +0100
+Message-ID: <20140520084429.GC24991@lee--X1>
+References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
+ <1398879850-9111-3-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f49.google.com ([209.85.192.49]:57019 "EHLO
-	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750758AbaETEiz (ORCPT
+Received: from mail-ig0-f180.google.com ([209.85.213.180]:45956 "EHLO
+	mail-ig0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750771AbaETIoe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 May 2014 00:38:55 -0400
-Received: by mail-qg0-f49.google.com with SMTP id a108so10174634qge.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 May 2014 21:38:54 -0700 (PDT)
-In-Reply-To: <1399883945-22500-1-git-send-email-arun.kk@samsung.com>
+	Tue, 20 May 2014 04:44:34 -0400
+Received: by mail-ig0-f180.google.com with SMTP id c1so438374igq.7
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 May 2014 01:44:34 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1398879850-9111-3-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, prathyush.k@samsung.com, abrestic@chromium.org, vikas.sajjan@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Arun Kumar <arunkk.samsung@gmail.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: swarren@nvidia.com, wsa@the-dreams.de, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sjg@chromium.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, sameo@linux.intel.com, linux-kernel@vger.kernel.org
 
-Hi,
-Any comments on this patch?
-If this approach is ok, then I can drop the RFC tag and resend this for merging?
+On Wed, 30 Apr 2014, Doug Anderson wrote:
 
-Regards
-Arun
-
-On Mon, May 12, 2014 at 2:09 PM, Arun Kumar K <arun.kk@samsung.com> wrote:
-> From: Prathyush K <prathyush.k@samsung.com>
->
-> While powering on/off a local powerdomain in exynos5 chipsets, the input
-> clocks to each device gets modified. This behaviour is based on the
-> SYSCLK_SYS_PWR_REG registers.
-> E.g. SYSCLK_MFC_SYS_PWR_REG = 0x0, the parent of input clock to MFC
->                                    (aclk333) gets modified to oscclk
->                             = 0x1, no change in clocks.
-> The recommended value of SYSCLK_SYS_PWR_REG before power gating any
-> domain is 0x0. So we must also restore the clocks while powering on a
-> domain everytime.
->
-> This patch adds the framework for getting the required mux and parent clocks
-> through a power domain device node.
-> Just setting the parent while powering on is not enough since according
-> to the clock framework, the parent has never changed. So we set the
-> parent clock as oscclk before power gating and then set back the correct
-> parent clock after powering on a domain.
->
-> Signed-off-by: Prathyush K <prathyush.k@samsung.com>
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> The main transfer function for cros_ec_spi can be called by more than
+> one client at a time.  Make sure that those clients don't stomp on
+> each other by locking the bus for the duration of the transfer
+> function.
+>=20
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> Reviewed-by: Simon Glass <sjg@chromium.org>
+> Tested-by: Andrew Bresticker <abrestic@chromium.org>
+> Tested-by: Stephen Warren <swarren@nvidia.com>
 > ---
-> This patch is posted for getting the opinion from all on what would
-> be the best possible solution to the issue at hand.
-> The issue is observed with multiple IPs like MFC, GSC, G2D, MSC etc.
-> where after a PD OFF-ON sequence, the parent clock gets reset to oscclk.
-> I would like to get the opinion from all on what would be the right
-> place to handle this. Either the clock re-parenting should be done
-> by all these individual IP drivers
-> OR
-> power-domain driver can handle this at a common place as is being done
-> in this patch.
->
-> One more possible change I can do is to make a exynos5250 compatible for
-> the power-domain driver and get the extra clocks only for exynos5 onwards.
-> But since there are no errors being reported even if these clocks are not
-> provided, these changes are fully backward compatible with exynos4 also.
-> ---
->  .../bindings/arm/exynos/power_domain.txt           |   18 +++++++
->  arch/arm/mach-exynos/pm_domains.c                  |   56 +++++++++++++++++++-
->  2 files changed, 73 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> index 5216b41..2e19a9f 100644
-> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> @@ -9,6 +9,16 @@ Required Properties:
->  - reg: physical base address of the controller and length of memory mapped
->      region.
->
-> +Optional Properties:
-> +- clocks: List of clock handles. The parent clocks of the input clocks to the
-> +  devices in this power domain are set to oscclk before power gating and
-> +  restored back after powering on a domain. This is required for all domains
-> +  which are powered on and off and not required for unused domains.
-> +  The following clocks can be specified:
-> +  - oscclk: oscillator clock.
-> +  - clk(n): input clock to the devices in this power domain
-> +  - pclk(n): parent clock of input clock to the devices in this power domain
-> +
->  Node of a device using power domains must have a samsung,power-domain property
->  defined with a phandle to respective power domain.
->
-> @@ -19,6 +29,14 @@ Example:
->                 reg = <0x10023C00 0x10>;
->         };
->
-> +       mfc_pd: power-domain@10044060 {
-> +               compatible = "samsung,exynos4210-pd";
-> +               reg = <0x10044060 0x20>;
-> +               clocks = <&clock CLK_FIN_PLL>, <&clock MOUT_SW_ACLK333>,
-> +                       <&clock MOUT_USER_ACLK333>;
-> +               clock-names = "oscclk", "pclk0", "clk0";
-> +       };
-> +
->  Example of the node using power domain:
->
->         node {
-> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-> index fe6570e..e5fe76d 100644
-> --- a/arch/arm/mach-exynos/pm_domains.c
-> +++ b/arch/arm/mach-exynos/pm_domains.c
-> @@ -17,6 +17,7 @@
->  #include <linux/err.h>
->  #include <linux/slab.h>
->  #include <linux/pm_domain.h>
-> +#include <linux/clk.h>
->  #include <linux/delay.h>
->  #include <linux/of_address.h>
->  #include <linux/of_platform.h>
-> @@ -24,6 +25,8 @@
->
->  #include "regs-pmu.h"
->
-> +#define MAX_CLK_PER_DOMAIN                     4
-> +
->  /*
->   * Exynos specific wrapper around the generic power domain
+> Changes in v3: None
+> Changes in v2: None
+>=20
+>  drivers/mfd/cros_ec_spi.c | 26 +++++++++++++++++++++-----
+>  1 file changed, 21 insertions(+), 5 deletions(-)
+
+Applied, thanks.
+=20
+> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+> index c185eb6..a2a605d 100644
+> --- a/drivers/mfd/cros_ec_spi.c
+> +++ b/drivers/mfd/cros_ec_spi.c
+> @@ -65,11 +65,13 @@
+>   *	if no record
+>   * @end_of_msg_delay: used to set the delay_usecs on the spi_transfe=
+r that
+>   *      is sent when we want to turn off CS at the end of a transact=
+ion.
+> + * @lock: mutex to ensure only one user of cros_ec_command_spi_xfer =
+at a time
 >   */
-> @@ -32,6 +35,9 @@ struct exynos_pm_domain {
->         char const *name;
->         bool is_off;
->         struct generic_pm_domain pd;
-> +       struct clk *oscclk;
-> +       struct clk *clk[MAX_CLK_PER_DOMAIN];
-> +       struct clk *pclk[MAX_CLK_PER_DOMAIN];
+>  struct cros_ec_spi {
+>  	struct spi_device *spi;
+>  	s64 last_transfer_ns;
+>  	unsigned int end_of_msg_delay;
+> +	struct mutex lock;
 >  };
->
->  static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
-> @@ -44,6 +50,18 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
->         pd = container_of(domain, struct exynos_pm_domain, pd);
->         base = pd->base;
->
-> +       /* Set oscclk before powering off a domain*/
-> +       if (!power_on) {
-> +               int i;
-> +               for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
-> +                       if (!pd->clk[i])
-> +                               break;
-> +                       if (clk_set_parent(pd->clk[i], pd->oscclk))
-> +                               pr_info("%s: error setting oscclk as parent to clock %d\n",
-> +                                               pd->name, i);
-> +               }
-> +       }
+> =20
+>  static void debug_packet(struct device *dev, const char *name, u8 *p=
+tr,
+> @@ -208,6 +210,13 @@ static int cros_ec_command_spi_xfer(struct cros_=
+ec_device *ec_dev,
+>  	int ret =3D 0, final_ret;
+>  	struct timespec ts;
+> =20
+> +	/*
+> +	 * We have the shared ec_dev buffer plus we do lots of separate spi=
+_sync
+> +	 * calls, so we need to make sure only one person is using this at =
+a
+> +	 * time.
+> +	 */
+> +	mutex_lock(&ec_spi->lock);
 > +
->         pwr = power_on ? S5P_INT_LOCAL_PWR_EN : 0;
->         __raw_writel(pwr, base);
->
-> @@ -60,6 +78,19 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
->                 cpu_relax();
->                 usleep_range(80, 100);
->         }
-> +
-> +       /* Restore clocks after powering on a domain*/
-> +       if (power_on) {
-> +               int i;
-> +               for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
-> +                       if (!pd->clk[i])
-> +                               break;
-> +                       if (clk_set_parent(pd->clk[i], pd->pclk[i]))
-> +                               pr_info("%s: error setting parent to clock%d\n",
-> +                                               pd->name, i);
-> +               }
-> +       }
-> +
->         return 0;
+>  	len =3D cros_ec_prepare_tx(ec_dev, ec_msg);
+>  	dev_dbg(ec_dev->dev, "prepared, len=3D%d\n", len);
+> =20
+> @@ -260,7 +269,7 @@ static int cros_ec_command_spi_xfer(struct cros_e=
+c_device *ec_dev,
+>  		ret =3D final_ret;
+>  	if (ret < 0) {
+>  		dev_err(ec_dev->dev, "spi transfer failed: %d\n", ret);
+> -		return ret;
+> +		goto exit;
+>  	}
+> =20
+>  	/* check response error code */
+> @@ -269,14 +278,16 @@ static int cros_ec_command_spi_xfer(struct cros=
+_ec_device *ec_dev,
+>  		dev_warn(ec_dev->dev, "command 0x%02x returned an error %d\n",
+>  			 ec_msg->cmd, ptr[0]);
+>  		debug_packet(ec_dev->dev, "in_err", ptr, len);
+> -		return -EINVAL;
+> +		ret =3D -EINVAL;
+> +		goto exit;
+>  	}
+>  	len =3D ptr[1];
+>  	sum =3D ptr[0] + ptr[1];
+>  	if (len > ec_msg->in_len) {
+>  		dev_err(ec_dev->dev, "packet too long (%d bytes, expected %d)",
+>  			len, ec_msg->in_len);
+> -		return -ENOSPC;
+> +		ret =3D -ENOSPC;
+> +		goto exit;
+>  	}
+> =20
+>  	/* copy response packet payload and compute checksum */
+> @@ -293,10 +304,14 @@ static int cros_ec_command_spi_xfer(struct cros=
+_ec_device *ec_dev,
+>  		dev_err(ec_dev->dev,
+>  			"bad packet checksum, expected %02x, got %02x\n",
+>  			sum, ptr[len + 2]);
+> -		return -EBADMSG;
+> +		ret =3D -EBADMSG;
+> +		goto exit;
+>  	}
+> =20
+> -	return 0;
+> +	ret =3D 0;
+> +exit:
+> +	mutex_unlock(&ec_spi->lock);
+> +	return ret;
 >  }
->
-> @@ -152,9 +183,11 @@ static __init int exynos4_pm_init_power_domain(void)
->
->         for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
->                 struct exynos_pm_domain *pd;
-> -               int on;
-> +               int on, i;
-> +               struct device *dev;
->
->                 pdev = of_find_device_by_node(np);
-> +               dev = &pdev->dev;
->
->                 pd = kzalloc(sizeof(*pd), GFP_KERNEL);
->                 if (!pd) {
-> @@ -170,6 +203,27 @@ static __init int exynos4_pm_init_power_domain(void)
->                 pd->pd.power_on = exynos_pd_power_on;
->                 pd->pd.of_node = np;
->
-> +               pd->oscclk = devm_clk_get(dev, "oscclk");
-> +               if (IS_ERR(pd->oscclk))
-> +                       goto no_clk;
-> +
-> +               for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
-> +                       struct clk *tmp, *tmp_parent;
-> +                       char clk_name[8];
-> +
-> +                       snprintf(clk_name, sizeof(clk_name), "clk%d", i);
-> +                       tmp = devm_clk_get(dev, clk_name);
-> +                       if (IS_ERR(tmp))
-> +                               break;
-> +                       snprintf(clk_name, sizeof(clk_name), "pclk%d", i);
-> +                       tmp_parent = devm_clk_get(dev, clk_name);
-> +                       if (IS_ERR(tmp_parent))
-> +                               break;
-> +                       pd->clk[i] = tmp;
-> +                       pd->pclk[i] = tmp_parent;
-> +               }
-> +
-> +no_clk:
->                 platform_set_drvdata(pdev, pd);
->
->                 on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
-> --
-> 1.7.9.5
->
+> =20
+>  static void cros_ec_spi_dt_probe(struct cros_ec_spi *ec_spi, struct =
+device *dev)
+> @@ -327,6 +342,7 @@ static int cros_ec_spi_probe(struct spi_device *s=
+pi)
+>  	if (ec_spi =3D=3D NULL)
+>  		return -ENOMEM;
+>  	ec_spi->spi =3D spi;
+> +	mutex_init(&ec_spi->lock);
+>  	ec_dev =3D devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
+>  	if (!ec_dev)
+>  		return -ENOMEM;
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
