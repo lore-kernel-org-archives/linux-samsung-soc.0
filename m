@@ -1,109 +1,56 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2] mmc: dw_mmc: Make sure we don't get stuck when we get an error
-Date: Tue, 20 May 2014 15:07:50 -0700
-Message-ID: <1400623670-2657-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Chris Ball <cjb@laptop.org>, Sonny Rao <sonnyrao@chromium.org>, Grant Grundler <grundler@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, chris@printf.net, ulf.hansson@linaro.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: samsung: Allow setting OP_CLK of the IIS Multi
+ Audio Interface
+Date: Tue, 20 May 2014 23:21:13 +0100
+Message-ID: <20140520222113.GJ12304@sirena.org.uk>
+References: <1400520638-6907-1-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="O7ttjHhq/TFHqrxu"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34825 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750897AbaETWV1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 May 2014 18:21:27 -0400
+Content-Disposition: inline
+In-Reply-To: <1400520638-6907-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-If we happened to get a data error at just the wrong time the dw_mmc
-driver could get into a state where it would never complete its
-request.  That would leave the caller just hanging there.
 
-We fix this two ways and both of the two fixes on their own appear to
-fix the problems we've seen:
+--O7ttjHhq/TFHqrxu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-1. Fix a race in the tasklet where the interrupt setting the data
-   error happens _just after_ we check for it, then we get a
-   EVENT_XFER_COMPLETE.  We fix this by repeating a bit of code.
-2. Fix it so that if we detect that we've got an error in the "data
-   busy" state and we're not going to do anything else we end the
-   request and unblock anyone waiting.
+On Mon, May 19, 2014 at 07:30:38PM +0200, Sylwester Nawrocki wrote:
+> This patch adds support for setting source clock of the "Core CLK"
+> of the IIS Multi Audio Interface.
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
----
-Changes in v2:
-- Removed TODO
-- Set cmd to NULL before calling dw_mci_request_end()
+Applied, thanks.
 
- drivers/mmc/host/dw_mmc.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+--O7ttjHhq/TFHqrxu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index cced599..54ec8b0 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -1318,6 +1318,14 @@ static void dw_mci_tasklet_func(unsigned long priv)
- 			/* fall through */
- 
- 		case STATE_SENDING_DATA:
-+			/*
-+			 * We could get a data error and never a transfer
-+			 * complete so we'd better check for it here.
-+			 *
-+			 * Note that we don't really care if we also got a
-+			 * transfer complete; stopping the DMA and sending an
-+			 * abort won't hurt.
-+			 */
- 			if (test_and_clear_bit(EVENT_DATA_ERROR,
- 					       &host->pending_events)) {
- 				dw_mci_stop_dma(host);
-@@ -1331,7 +1339,29 @@ static void dw_mci_tasklet_func(unsigned long priv)
- 				break;
- 
- 			set_bit(EVENT_XFER_COMPLETE, &host->completed_events);
-+
-+			/*
-+			 * Handle an EVENT_DATA_ERROR that might have shown up
-+			 * before the transfer completed.  This might not have
-+			 * been caught by the check above because the interrupt
-+			 * could have gone off between the previous check and
-+			 * the check for transfer complete.
-+			 *
-+			 * Technically this ought not be needed assuming we
-+			 * get a DATA_COMPLETE eventually (we'll notice the
-+			 * error and end the request), but it shouldn't hurt.
-+			 *
-+			 * This has the advantage of sending the stop command.
-+			 */
-+			if (test_and_clear_bit(EVENT_DATA_ERROR,
-+					       &host->pending_events)) {
-+				dw_mci_stop_dma(host);
-+				send_stop_abort(host, data);
-+				state = STATE_DATA_ERROR;
-+				break;
-+			}
- 			prev_state = state = STATE_DATA_BUSY;
-+
- 			/* fall through */
- 
- 		case STATE_DATA_BUSY:
-@@ -1354,6 +1384,22 @@ static void dw_mci_tasklet_func(unsigned long priv)
- 				/* stop command for open-ended transfer*/
- 				if (data->stop)
- 					send_stop_abort(host, data);
-+			} else {
-+				/*
-+				 * If we don't have a command complete now we'll
-+				 * never get one since we just reset everything;
-+				 * better end the request.
-+				 *
-+				 * If we do have a command complete we'll fall
-+				 * through to the SENDING_STOP command and
-+				 * everything will be peachy keen.
-+				 */
-+				if (!test_bit(EVENT_CMD_COMPLETE,
-+					      &host->pending_events)) {
-+					host->cmd = NULL;
-+					dw_mci_request_end(host, mrq);
-+					goto unlock;
-+				}
- 			}
- 
- 			/*
--- 
-1.9.1.423.g4596e3a
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
+iQIcBAEBAgAGBQJTe9VWAAoJELSic+t+oim9nEIP/1SNqS1B9l1RN6enjUqBcLFu
++Nhc1oekBH9tTUlWovk+gCT4eFSmTdaz+kkWNeilwelwD6SnEf/eWH7tijEOcw1S
+gNKNvwlF7/Lmc0ZMfgFw0ycZ43x4N0N+s4klGZ88zh4ZYJBbwV5VYJGz42wIVe8d
+GEcEFnDvQrSUhz7W5K3QVTnzGcSfOWaZZ88o/j5JLlaJ6vb8ZSt+Sp80rtR70TfJ
+TFHOYej6d/H0fjztqwBf9TNDFNuH2/Z49J+xPxjZ8re0yG+Eo+OUNjynsMyE40nc
+/5JWqb6lx06q7CCBJTQN/LPKgdXQB8Iw7KU5eqy5g+wR2/LZIRnkZW0HGq81CAbU
+kZapgGNYrsbYPRU5/QKol0IQ6Gf0KUsqbCfW+rFBC45+LMXPzLNcp4Y8+2ta27Zd
+0X7UVLMBKzgL2f8uj5hdy3A75201j7XMRH+LCrFCOAwwakfdKJfVUB81DT6113vG
+K7MQrTb9olbyxWOoiBJoqLN77+D65Q2pY5GLHD4rUjK2utl7nehiDowiQEIe5MTg
+8Ngx8iQDE4qE0qgG8qFNZ3f86OwwmhL4eiPXcbxokQeAbnHKofmzFguP6WiaANfC
+D+Lyq4Ur+oxpgTE6HHX6KIn2KlbcwLgZs3uBmEUj1iUexezlQEJtAnGKEtkRPrJR
+KnFKgmEQb3x/jCWX4eWC
+=qyzq
+-----END PGP SIGNATURE-----
+
+--O7ttjHhq/TFHqrxu--
