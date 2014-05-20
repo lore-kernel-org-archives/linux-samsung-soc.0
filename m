@@ -1,164 +1,218 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 1/4] clk: samsung: exynos4: Add missing CPU/DMC clock hierarchy
-Date: Tue, 20 May 2014 18:43:28 +0200
-Message-ID: <1400604211-9447-2-git-send-email-t.figa@samsung.com>
-References: <1400604211-9447-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1400604211-9447-1-git-send-email-t.figa@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: [RESEND PATCH v3] charger: tps65090: Allow charger module to be used when no irq
+Date: Tue, 20 May 2014 10:00:21 -0700
+Message-ID: <1400605221-15326-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f74.google.com ([209.85.219.74]:49250 "EHLO
+	mail-oa0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753395AbaETRAq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 May 2014 13:00:46 -0400
+Received: by mail-oa0-f74.google.com with SMTP id m1so141597oag.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 May 2014 10:00:46 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>
+Cc: olof@lixom.net, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, broonie@kernel.org, lee.jones@linaro.org, Anton Vorontsov <anton@enomsg.org>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org
 
-This patch adds missing definitions of clocks from CPU and DMC clock
-domains, which are necessary to properly represent CLKOUT clock hierarchy
-added in further patch.
+On the ARM Chromebook tps65090 has two masters: the AP (the main
+processor running linux) and the EC (the embedded controller).  The AP
+is allowed to mess with FETs but the EC is in charge of charge control.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+The tps65090 interupt line is routed to both the AP and the EC, which
+can cause quite a headache.  Having two people adjusting masks and
+acking interrupts is a recipe for disaster.
+
+In the shipping kernel we had a hack to have the AP pay attention to
+the IRQ but not to ack it.  It also wasn't supposed to configure the
+IRQ in any way.  That hack allowed us to detect when the device was
+charging without messing with the EC's state.
+
+The current tps65090 infrastructure makes the above difficult, and it
+was a bit of a hack to begin with.  Rather than uglify the driver to
+support it, just extend the driver's existing notion of "no irq" to
+the charger.  This makes the charger code poll every 2 seconds for AC
+detect, which is sufficient.
+
+For proper functioning, requires (mfd: tps65090: Don't tell child
+devices we have an IRQ if we don't).  If we don't have that patch
+we'll simply fail to probe on devices without an interrupt (just like
+we did before this patch).
+
+Signed-off-by: Doug Anderson <dianders@chromium.org>
 ---
- drivers/clk/samsung/clk-exynos4.c | 50 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index c4df294..9d13fed 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -397,10 +397,15 @@ PNAME(mout_audio2_p4210) = { "cdclk2", "none", "sclk_hdmi24m",
- 				"sclk_epll", "sclk_vpll", };
- PNAME(mout_mixer_p4210)	= { "sclk_dac", "sclk_hdmi", };
- PNAME(mout_dac_p4210)	= { "sclk_vpll", "sclk_hdmiphy", };
-+PNAME(mout_pwi_p4210) = { "xxti", "xusbxti", "sclk_hdmi24m", "sclk_usbphy0",
-+				"sclk_usbphy1", "sclk_hdmiphy", "none",
-+				"sclk_epll", "sclk_vpll" };
+Note that this patch was part of a larger series
+<https://patchwork.kernel.org/patch/4042751/>.  The rest of the series
+has been applied, so just RESENDing this one part.
+
+Changes in v3: None
+Changes in v2:
+- Split noirq (polling mode) changes into MFD and charger
+
+ drivers/power/tps65090-charger.c | 76 +++++++++++++++++++++++++++++++---------
+ 1 file changed, 59 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/power/tps65090-charger.c b/drivers/power/tps65090-charger.c
+index 8fc9d6d..cc26c12 100644
+--- a/drivers/power/tps65090-charger.c
++++ b/drivers/power/tps65090-charger.c
+@@ -17,9 +17,11 @@
+  */
+ #include <linux/delay.h>
+ #include <linux/err.h>
++#include <linux/freezer.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
++#include <linux/kthread.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+@@ -43,11 +45,15 @@
+ #define TPS65090_VACG		BIT(1)
+ #define TPS65090_NOITERM	BIT(5)
  
- /* Exynos 4x12-specific parent groups */
- PNAME(mout_mpll_user_p4x12) = { "fin_pll", "sclk_mpll", };
- PNAME(mout_core_p4x12)	= { "mout_apll", "mout_mpll_user_c", };
-+PNAME(mout_gdl_p4x12)	= { "mout_mpll_user_l", "sclk_apll", };
-+PNAME(mout_gdr_p4x12)	= { "mout_mpll_user_r", "sclk_apll", };
- PNAME(sclk_ampll_p4x12)	= { "mout_mpll_user_t", "sclk_apll", };
- PNAME(group1_p4x12)	= { "xxti", "xusbxti", "sclk_hdmi24m", "sclk_usbphy0",
- 				"none",	"sclk_hdmiphy", "mout_mpll_user_t",
-@@ -418,6 +423,9 @@ PNAME(aclk_p4412)	= { "mout_mpll_user_t", "sclk_apll", };
- PNAME(mout_user_aclk400_mcuisp_p4x12) = {"fin_pll", "div_aclk400_mcuisp", };
- PNAME(mout_user_aclk200_p4x12) = {"fin_pll", "div_aclk200", };
- PNAME(mout_user_aclk266_gps_p4x12) = {"fin_pll", "div_aclk266_gps", };
-+PNAME(mout_pwi_p4x12) = { "xxti", "xusbxti", "sclk_hdmi24m", "sclk_usbphy0",
-+				"none", "sclk_hdmiphy", "sclk_mpll",
-+				"sclk_epll", "sclk_vpll" };
- 
- /* fixed rate clocks generated outside the soc */
- static struct samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata = {
-@@ -451,6 +459,9 @@ static struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
- 	MUX(0, "mout_onenand1", mout_onenand1_p, SRC_TOP0, 0, 1),
- 	MUX(CLK_SCLK_EPLL, "sclk_epll", mout_epll_p, SRC_TOP0, 4, 1),
- 	MUX(0, "mout_onenand", mout_onenand_p, SRC_TOP0, 28, 1),
++#define POLL_INTERVAL		(HZ * 2)	/* Used when no irq */
 +
-+	MUX(0, "mout_dmc_bus", sclk_ampll_p4210, SRC_DMC, 4, 1),
-+	MUX(0, "mout_dphy", sclk_ampll_p4210, SRC_DMC, 8, 1),
+ struct tps65090_charger {
+ 	struct	device	*dev;
+ 	int	ac_online;
+ 	int	prev_ac_online;
+ 	int	irq;
++	struct task_struct	*poll_task;
++	bool			passive_mode;
+ 	struct power_supply	ac;
+ 	struct tps65090_platform_data *pdata;
  };
+@@ -60,6 +66,9 @@ static int tps65090_low_chrg_current(struct tps65090_charger *charger)
+ {
+ 	int ret;
  
- /* list of mux clocks supported in exynos4210 soc */
-@@ -459,6 +470,10 @@ static struct samsung_mux_clock exynos4210_mux_early[] __initdata = {
- };
++	if (charger->passive_mode)
++		return 0;
++
+ 	ret = tps65090_write(charger->dev->parent, TPS65090_REG_CG_CTRL5,
+ 			TPS65090_NOITERM);
+ 	if (ret < 0) {
+@@ -75,6 +84,9 @@ static int tps65090_enable_charging(struct tps65090_charger *charger)
+ 	int ret;
+ 	uint8_t ctrl0 = 0;
  
- static struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
-+	MUX(0, "mout_gdl", sclk_ampll_p4210, SRC_LEFTBUS, 0, 1),
++	if (charger->passive_mode)
++		return 0;
 +
-+	MUX(0, "mout_gdr", sclk_ampll_p4210, SRC_RIGHTBUS, 0, 1),
-+
- 	MUX(0, "mout_aclk200", sclk_ampll_p4210, SRC_TOP0, 12, 1),
- 	MUX(0, "mout_aclk100", sclk_ampll_p4210, SRC_TOP0, 16, 1),
- 	MUX(0, "mout_aclk160", sclk_ampll_p4210, SRC_TOP0, 20, 1),
-@@ -472,6 +487,7 @@ static struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
- 	MUX(0, "mout_mipi1", group1_p4210, E4210_SRC_LCD1, 12, 4),
- 	MUX(CLK_SCLK_MPLL, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1),
- 	MUX(CLK_MOUT_CORE, "mout_core", mout_core_p4210, SRC_CPU, 16, 1),
-+	MUX(0, "mout_hpm", mout_core_p4210, SRC_CPU, 20, 1),
- 	MUX(CLK_SCLK_VPLL, "sclk_vpll", sclk_vpll_p4210, SRC_TOP0, 8, 1),
- 	MUX(CLK_MOUT_FIMC0, "mout_fimc0", group1_p4210, SRC_CAM, 0, 4),
- 	MUX(CLK_MOUT_FIMC1, "mout_fimc1", group1_p4210, SRC_CAM, 4, 4),
-@@ -503,10 +519,18 @@ static struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
- 	MUX(0, "mout_spi0", group1_p4210, SRC_PERIL1, 16, 4),
- 	MUX(0, "mout_spi1", group1_p4210, SRC_PERIL1, 20, 4),
- 	MUX(0, "mout_spi2", group1_p4210, SRC_PERIL1, 24, 4),
-+
-+	MUX(0, "mout_pwi", mout_pwi_p4210, SRC_DMC, 16, 4),
- };
+ 	ret = tps65090_read(charger->dev->parent, TPS65090_REG_CG_CTRL0,
+ 			    &ctrl0);
+ 	if (ret < 0) {
+@@ -98,6 +110,9 @@ static int tps65090_config_charger(struct tps65090_charger *charger)
+ 	uint8_t intrmask = 0;
+ 	int ret;
  
- /* list of mux clocks supported in exynos4x12 soc */
- static struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
-+	MUX(0, "mout_mpll_user_l", mout_mpll_p, SRC_LEFTBUS, 4, 1),
-+	MUX(0, "mout_gdl", mout_gdl_p4x12, SRC_LEFTBUS, 0, 1),
++	if (charger->passive_mode)
++		return 0;
 +
-+	MUX(0, "mout_mpll_user_r", mout_mpll_p, SRC_RIGHTBUS, 4, 1),
-+	MUX(0, "mout_gdr", mout_gdr_p4x12, SRC_RIGHTBUS, 0, 1),
-+
- 	MUX(CLK_MOUT_MPLL_USER_C, "mout_mpll_user_c", mout_mpll_user_p4x12,
- 			SRC_CPU, 24, 1),
- 	MUX(0, "mout_aclk266_gps", aclk_p4412, SRC_TOP1, 4, 1),
-@@ -531,6 +555,7 @@ static struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
- 	MUX(CLK_SCLK_MPLL, "sclk_mpll", mout_mpll_p, SRC_DMC, 12, 1),
- 	MUX(CLK_SCLK_VPLL, "sclk_vpll", mout_vpll_p, SRC_TOP0, 8, 1),
- 	MUX(CLK_MOUT_CORE, "mout_core", mout_core_p4x12, SRC_CPU, 16, 1),
-+	MUX(0, "mout_hpm", mout_core_p4x12, SRC_CPU, 20, 1),
- 	MUX(CLK_MOUT_FIMC0, "mout_fimc0", group1_p4x12, SRC_CAM, 0, 4),
- 	MUX(CLK_MOUT_FIMC1, "mout_fimc1", group1_p4x12, SRC_CAM, 4, 4),
- 	MUX(CLK_MOUT_FIMC2, "mout_fimc2", group1_p4x12, SRC_CAM, 8, 4),
-@@ -565,6 +590,8 @@ static struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
- 	MUX(0, "mout_spi0_isp", group1_p4x12, E4X12_SRC_ISP, 4, 4),
- 	MUX(0, "mout_spi1_isp", group1_p4x12, E4X12_SRC_ISP, 8, 4),
- 	MUX(0, "mout_uart_isp", group1_p4x12, E4X12_SRC_ISP, 12, 4),
-+	MUX(0, "mout_c2c", sclk_ampll_p4210, SRC_DMC, 0, 1),
-+	MUX(0, "mout_pwi", mout_pwi_p4x12, SRC_DMC, 16, 4),
- 	MUX(0, "mout_g2d0", sclk_ampll_p4210, SRC_DMC, 20, 1),
- 	MUX(0, "mout_g2d1", sclk_evpll_p, SRC_DMC, 24, 1),
- 	MUX(0, "mout_g2d", mout_g2d_p, SRC_DMC, 28, 1),
-@@ -572,8 +599,21 @@ static struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
+ 	if (charger->pdata->enable_low_current_chrg) {
+ 		ret = tps65090_low_chrg_current(charger);
+ 		if (ret < 0) {
+@@ -175,10 +190,14 @@ static irqreturn_t tps65090_charger_isr(int irq, void *dev_id)
+ 	}
  
- /* list of divider clocks supported in all exynos4 soc's */
- static struct samsung_div_clock exynos4_div_clks[] __initdata = {
-+	DIV(0, "div_gdl", "mout_gdl", DIV_LEFTBUS, 0, 3),
-+	DIV(0, "div_gpl", "div_gdl", DIV_LEFTBUS, 4, 3),
-+
-+	DIV(0, "div_gdr", "mout_gdr", DIV_RIGHTBUS, 0, 3),
-+	DIV(0, "div_gpr", "div_gdr", DIV_RIGHTBUS, 4, 3),
-+
- 	DIV(0, "div_core", "mout_core", DIV_CPU0, 0, 3),
-+	DIV(0, "div_corem0", "div_core2", DIV_CPU0, 4, 3),
-+	DIV(0, "div_corem1", "div_core2", DIV_CPU0, 8, 3),
-+	DIV(0, "div_periph", "div_core2", DIV_CPU0, 12, 3),
-+	DIV(0, "div_atb", "mout_core", DIV_CPU0, 16, 3),
-+	DIV(0, "div_pclk_dbg", "div_atb", DIV_CPU0, 20, 3),
- 	DIV(0, "div_core2", "div_core", DIV_CPU0, 28, 3),
-+	DIV(0, "div_copy", "mout_hpm", DIV_CPU1, 0, 3),
-+	DIV(0, "div_hpm", "div_copy", DIV_CPU1, 4, 3),
- 	DIV(0, "div_fimc0", "mout_fimc0", DIV_CAM, 0, 4),
- 	DIV(0, "div_fimc1", "mout_fimc1", DIV_CAM, 4, 4),
- 	DIV(0, "div_fimc2", "mout_fimc2", DIV_CAM, 8, 4),
-@@ -631,6 +671,14 @@ static struct samsung_div_clock exynos4_div_clks[] __initdata = {
- 			CLK_SET_RATE_PARENT, 0),
- 	DIV_F(0, "div_mmc_pre3", "div_mmc3", DIV_FSYS2, 24, 8,
- 			CLK_SET_RATE_PARENT, 0),
-+
-+	DIV(0, "div_acp", "mout_dmc_bus", DIV_DMC0, 0, 3),
-+	DIV(0, "div_acp_pclk", "div_acp", DIV_DMC0, 4, 3),
-+	DIV(0, "div_dphy", "mout_dphy", DIV_DMC0, 8, 3),
-+	DIV(0, "div_dmc", "mout_dmc_bus", DIV_DMC0, 12, 3),
-+	DIV(0, "div_dmcd", "div_dmc", DIV_DMC0, 16, 3),
-+	DIV(0, "div_dmcp", "div_dmcd", DIV_DMC0, 20, 3),
-+	DIV(0, "div_pwi", "mout_pwi", DIV_DMC1, 8, 4),
- };
+ 	/* Clear interrupts. */
+-	ret = tps65090_write(charger->dev->parent, TPS65090_REG_INTR_STS, 0x00);
+-	if (ret < 0) {
+-		dev_err(charger->dev, "%s(): Error in writing reg 0x%x\n",
++	if (!charger->passive_mode) {
++		ret = tps65090_write(charger->dev->parent,
++				     TPS65090_REG_INTR_STS, 0x00);
++		if (ret < 0) {
++			dev_err(charger->dev,
++				"%s(): Error in writing reg 0x%x\n",
+ 				__func__, TPS65090_REG_INTR_STS);
++		}
+ 	}
  
- /* list of divider clocks supported in exynos4210 soc */
-@@ -671,6 +719,8 @@ static struct samsung_div_clock exynos4x12_div_clks[] __initdata = {
- 	DIV_F(CLK_DIV_MCUISP1, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1,
- 						8, 3, CLK_GET_RATE_NOCACHE, 0),
- 	DIV(CLK_SCLK_FIMG2D, "sclk_fimg2d", "mout_g2d", DIV_DMC1, 0, 4),
-+	DIV(0, "div_c2c", "mout_c2c", DIV_DMC1, 4, 3),
-+	DIV(0, "div_c2c_aclk", "div_c2c", DIV_DMC1, 12, 3),
- };
+ 	if (charger->prev_ac_online != charger->ac_online)
+@@ -209,6 +228,18 @@ static struct tps65090_platform_data *
  
- /* list of gate clocks supported in all exynos4 soc's */
+ }
+ 
++static int tps65090_charger_poll_task(void *data)
++{
++	set_freezable();
++
++	while (!kthread_should_stop()) {
++		schedule_timeout_interruptible(POLL_INTERVAL);
++		try_to_freeze();
++		tps65090_charger_isr(-1, data);
++	}
++	return 0;
++}
++
+ static int tps65090_charger_probe(struct platform_device *pdev)
+ {
+ 	struct tps65090_charger *cdata;
+@@ -255,22 +286,10 @@ static int tps65090_charger_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq <= 0) {
+-		dev_warn(&pdev->dev, "Unable to get charger irq = %d\n", irq);
+-		ret = irq;
+-		goto fail_unregister_supply;
+-	}
+-
++	if (irq < 0)
++		irq = NO_IRQ;
+ 	cdata->irq = irq;
+ 
+-	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
+-		tps65090_charger_isr, 0, "tps65090-charger", cdata);
+-	if (ret) {
+-		dev_err(cdata->dev, "Unable to register irq %d err %d\n", irq,
+-			ret);
+-		goto fail_unregister_supply;
+-	}
+-
+ 	ret = tps65090_config_charger(cdata);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "charger config failed, err %d\n", ret);
+@@ -296,6 +315,27 @@ static int tps65090_charger_probe(struct platform_device *pdev)
+ 		power_supply_changed(&cdata->ac);
+ 	}
+ 
++	if (irq != NO_IRQ) {
++		ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
++			tps65090_charger_isr, 0, "tps65090-charger", cdata);
++		if (ret) {
++			dev_err(cdata->dev,
++				"Unable to register irq %d err %d\n", irq,
++				ret);
++			goto fail_unregister_supply;
++		}
++	} else {
++		cdata->poll_task = kthread_run(tps65090_charger_poll_task,
++					      cdata, "ktps65090charger");
++		cdata->passive_mode = true;
++		if (IS_ERR(cdata->poll_task)) {
++			ret = PTR_ERR(cdata->poll_task);
++			dev_err(cdata->dev,
++				"Unable to run kthread err %d\n", ret);
++			goto fail_unregister_supply;
++		}
++	}
++
+ 	return 0;
+ 
+ fail_unregister_supply:
+@@ -308,6 +348,8 @@ static int tps65090_charger_remove(struct platform_device *pdev)
+ {
+ 	struct tps65090_charger *cdata = platform_get_drvdata(pdev);
+ 
++	if (cdata->irq == NO_IRQ)
++		kthread_stop(cdata->poll_task);
+ 	power_supply_unregister(&cdata->ac);
+ 
+ 	return 0;
 -- 
-1.9.3
+1.9.1.423.g4596e3a
