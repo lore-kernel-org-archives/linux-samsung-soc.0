@@ -1,82 +1,285 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] clk: exynos4: Register custom fixed rate clocks conditionally
-Date: Tue, 20 May 2014 16:08:28 +0200
-Message-ID: <1400594908-11941-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH] ARM: dts: exynos4: Remove custom fixed rate clock nodes
+Date: Tue, 20 May 2014 17:10:46 +0200
+Message-ID: <1400598646-7420-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:17585 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:22145 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753217AbaETOI4 (ORCPT
+	with ESMTP id S1751907AbaETPLj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 May 2014 10:08:56 -0400
+	Tue, 20 May 2014 11:11:39 -0400
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N5V007TZLYT3C80@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 May 2014 23:08:53 +0900 (KST)
+ 17 2011)) with ESMTP id <0N5V0076XOVD3LA0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 May 2014 00:11:37 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: t.figa@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Use the Exynos custom fixed rate clocks registration (for oscillators
-connected to the XXTI or XUSBXTI pins) only if "fixed-rate-clocks"
-node is found in device tree. This allows to handle new dtbs with those
-clocks described in a generic way and having the "fixed-rate-clocks"
-node removed.
+This patch specifies the XXTI and XUSBXTI clock sources as standard
+fixed rate clocks and removes the related Exynos custom clock nodes.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos4.c |   24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ arch/arm/boot/dts/exynos4.dtsi                  |   14 +++++++++++++-
+ arch/arm/boot/dts/exynos4210-origen.dts         |   12 ------------
+ arch/arm/boot/dts/exynos4210-smdkv310.dts       |   16 ++++------------
+ arch/arm/boot/dts/exynos4210-trats.dts          |   12 ------------
+ arch/arm/boot/dts/exynos4210-universal_c210.dts |   12 ------------
+ arch/arm/boot/dts/exynos4210.dtsi               |    2 ++
+ arch/arm/boot/dts/exynos4412-origen.dts         |   12 ------------
+ arch/arm/boot/dts/exynos4412-smdk4412.dts       |   12 ------------
+ arch/arm/boot/dts/exynos4412-tiny4412.dts       |   12 ------------
+ arch/arm/boot/dts/exynos4412-trats2.dts         |   12 ------------
+ arch/arm/boot/dts/exynos4x12.dtsi               |    2 ++
+ 11 files changed, 21 insertions(+), 97 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 05fc93c..f0b8420 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1045,7 +1045,7 @@ static unsigned long exynos4_get_xom(void)
- 	return xom;
- }
- 
--static void __init exynos4_clk_register_finpll(void)
-+static void __init exynos4_clk_register_finpll(struct device_node *np)
- {
- 	struct samsung_fixed_rate_clock fclk;
- 	struct clk *clk;
-@@ -1054,7 +1054,10 @@ static void __init exynos4_clk_register_finpll(void)
- 	unsigned int xom = exynos4_get_xom();
- 
- 	parent_name = xom & 1 ? "xusbxti" : "xxti";
--	clk = clk_get(NULL, parent_name);
-+	if (np)
-+		clk = of_clk_get_by_name(np, parent_name);
-+	else
-+		clk = clk_get(NULL, parent_name);
- 	if (IS_ERR(clk)) {
- 		pr_err("%s: failed to lookup parent clock %s, assuming "
- 			"fin_pll clock frequency is 24MHz\n", __func__,
-@@ -1193,11 +1196,18 @@ static void __init exynos4_clk_init(struct device_node *np,
- 
- 	samsung_clk_init(np, reg_base, CLK_NR_CLKS);
- 
--	samsung_clk_of_register_fixed_ext(exynos4_fixed_rate_ext_clks,
--			ARRAY_SIZE(exynos4_fixed_rate_ext_clks),
--			ext_clk_match);
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index e8a4e20..d91792d 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -46,6 +46,18 @@
+ 		fimc3 = &fimc_3;
+ 	};
+
++	xxti: xxti {
++		compatible = "fixed-clock";
++		clock-frequency = <0>;
++		#clock-cells = <0>;
++	};
++
++	xusbxti: xusbxti {
++		compatible = "fixed-clock";
++		clock-frequency = <24000000>;
++		#clock-cells = <0>;
++	};
++
+ 	clock_audss: clock-controller@03810000 {
+ 		compatible = "samsung,exynos4210-audss-clock";
+ 		reg = <0x03810000 0x0C>;
+@@ -305,7 +317,7 @@
+ 		compatible = "samsung,exynos4210-usb2-phy";
+ 		reg = <0x125B0000 0x100>;
+ 		samsung,pmureg-phandle = <&pmu_system_controller>;
+-		clocks = <&clock CLK_USB_DEVICE>, <&clock CLK_XUSBXTI>;
++		clocks = <&clock CLK_USB_DEVICE>, <&xusbxti>;
+ 		clock-names = "phy", "ref";
+ 		#phy-cells = <1>;
+ 		status = "disabled";
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index 72fb11f..a533207 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -292,18 +292,6 @@
+ 		};
+ 	};
+
+-	fixed-rate-clocks {
+-		xxti {
+-			compatible = "samsung,clock-xxti";
+-			clock-frequency = <0>;
+-		};
 -
--	exynos4_clk_register_finpll();
-+	if (of_find_node_by_name(np, "fixed-rate-clocks")) {
-+		/*
-+		 * Exynos custom fixed clock registration, only for
-+		 * compatibility with legacy dtbs.
-+		 */
-+		samsung_clk_of_register_fixed_ext(exynos4_fixed_rate_ext_clks,
-+					ARRAY_SIZE(exynos4_fixed_rate_ext_clks),
-+					ext_clk_match);
-+		exynos4_clk_register_finpll(NULL);
-+	} else {
-+		exynos4_clk_register_finpll(np);
-+	}
- 
- 	if (exynos4_soc == EXYNOS4210) {
- 		samsung_clk_register_mux(exynos4210_mux_early,
--- 
+-		xusbxti {
+-			compatible = "samsung,clock-xusbxti";
+-			clock-frequency = <24000000>;
+-		};
+-	};
+-
+ 	fimd@11c00000 {
+ 		pinctrl-0 = <&lcd_en &lcd_clk &lcd_data24 &pwm0_out>;
+ 		pinctrl-names = "default";
+diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+index 636d166..ca74220 100644
+--- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
++++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+@@ -29,6 +29,10 @@
+ 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
+ 	};
+
++	xxti: xxti {
++		clock-frequency = <12000000>;
++	};
++
+ 	sdhci@12530000 {
+ 		bus-width = <4>;
+ 		pinctrl-names = "default";
+@@ -194,16 +198,4 @@
+ 			};
+ 		};
+ 	};
+-
+-	fixed-rate-clocks {
+-		xxti {
+-			compatible = "samsung,clock-xxti";
+-			clock-frequency = <12000000>;
+-		};
+-
+-		xusbxti {
+-			compatible = "samsung,clock-xusbxti";
+-			clock-frequency = <24000000>;
+-		};
+-	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index f516da9..226ddfa 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -351,18 +351,6 @@
+ 		};
+ 	};
+
+-	fixed-rate-clocks {
+-		xxti {
+-			compatible = "samsung,clock-xxti";
+-			clock-frequency = <0>;
+-		};
+-
+-		xusbxti {
+-			compatible = "samsung,clock-xusbxti";
+-			clock-frequency = <24000000>;
+-		};
+-	};
+-
+ 	dsi_0: dsi@11C80000 {
+ 		vddcore-supply = <&vusb_reg>;
+ 		vddio-supply = <&vmipi_reg>;
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index 6de0d45..97f5008 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+@@ -32,18 +32,6 @@
+ 		compatible = "none";
+ 	};
+
+-	fixed-rate-clocks {
+-		xxti {
+-			compatible = "samsung,clock-xxti";
+-			clock-frequency = <0>;
+-		};
+-
+-		xusbxti {
+-			compatible = "samsung,clock-xusbxti";
+-			clock-frequency = <24000000>;
+-		};
+-	};
+-
+ 	vemmc_reg: voltage-regulator {
+ 	        compatible = "regulator-fixed";
+ 		regulator-name = "VMEM_VDD_2_8V";
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index cacf614..d6c0a19 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -73,6 +73,8 @@
+ 		compatible = "samsung,exynos4210-clock";
+ 		reg = <0x10030000 0x20000>;
+ 		#clock-cells = <1>;
++		clocks = <&xxti>, <&xusbxti>;
++		clock-names = "xxti", "xusbxti";
+ 	};
+
+ 	pmu {
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index e2c0dca..69acc32 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -513,16 +513,4 @@
+ 			};
+ 		};
+ 	};
+-
+-	fixed-rate-clocks {
+-		xxti {
+-			compatible = "samsung,clock-xxti";
+-			clock-frequency = <0>;
+-		};
+-
+-		xusbxti {
+-			compatible = "samsung,clock-xusbxti";
+-			clock-frequency = <24000000>;
+-		};
+-	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+index ded0b70..9efc5b2 100644
+--- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
++++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+@@ -146,16 +146,4 @@
+ 	serial@13830000 {
+ 		status = "okay";
+ 	};
+-
+-	fixed-rate-clocks {
+-		xxti {
+-			compatible = "samsung,clock-xxti";
+-			clock-frequency = <0>;
+-		};
+-
+-		xusbxti {
+-			compatible = "samsung,clock-xusbxti";
+-			clock-frequency = <24000000>;
+-		};
+-	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+index ea6929d..a193da7 100644
+--- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
++++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+@@ -78,16 +78,4 @@
+ 	serial@13830000 {
+ 		status = "okay";
+ 	};
+-
+-	fixed-rate-clocks {
+-		xxti {
+-			compatible = "samsung,clock-xxti";
+-			clock-frequency = <0>;
+-		};
+-
+-		xusbxti {
+-			compatible = "samsung,clock-xusbxti";
+-			clock-frequency = <24000000>;
+-		};
+-	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index a16db6c..bc2d9fd 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -36,18 +36,6 @@
+ 		reg = <0x0204F000 0x1000>;
+ 	};
+
+-	fixed-rate-clocks {
+-		xxti {
+-			compatible = "samsung,clock-xxti", "fixed-clock";
+-			clock-frequency = <0>;
+-		};
+-
+-		xusbxti {
+-			compatible = "samsung,clock-xusbxti", "fixed-clock";
+-			clock-frequency = <24000000>;
+-		};
+-	};
+-
+ 	regulators {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 6d9a21a..0d62456 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -46,6 +46,8 @@
+ 		compatible = "samsung,exynos4412-clock";
+ 		reg = <0x10030000 0x20000>;
+ 		#clock-cells = <1>;
++		clocks = <&xxti>, <&xusbxti>;
++		clock-names = "xxti", "xusbxti";
+ 	};
+
+ 	mct@10050000 {
+--
 1.7.9.5
