@@ -1,182 +1,76 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] clk: exynos5250: Add missing sysmmu clocks for DISP and
- ISP blocks
-Date: Tue, 20 May 2014 23:38:30 +0200
-Message-ID: <537BCB56.4000107@gmail.com>
-References: <1399900817-10544-1-git-send-email-shaik.ameer@samsung.com> <CAOD6ATq2A1yJM-Mw+4k0Vt-bLYSJ6-yO66Zj=p1NPOrUDuTgMQ@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [alsa-devel] [PATCH] Fix for possible null pointer dereference
+ in dma.c
+Date: Tue, 20 May 2014 22:58:54 +0100
+Message-ID: <20140520215854.GY12304@sirena.org.uk>
+References: <1400191076-28279-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
+ <5379E284.7030700@gmail.com>
+ <CAFo99gZ3kVGn04we5OtRtbkceYRs6SiHXRyoX1Gb-SknJH=z=w@mail.gmail.com>
+ <537BAA2B.9090906@gmail.com>
+ <537BC744.8020601@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="0vD5pVGp8mlWv9jf"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f47.google.com ([74.125.83.47]:40396 "EHLO
-	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750835AbaETVij (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34738 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750755AbaETV7P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 May 2014 17:38:39 -0400
-Received: by mail-ee0-f47.google.com with SMTP id c13so991517eek.34
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 May 2014 14:38:38 -0700 (PDT)
-In-Reply-To: <CAOD6ATq2A1yJM-Mw+4k0Vt-bLYSJ6-yO66Zj=p1NPOrUDuTgMQ@mail.gmail.com>
+	Tue, 20 May 2014 17:59:15 -0400
+Content-Disposition: inline
+In-Reply-To: <537BC744.8020601@metafoo.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.samsung@gmail.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>
-Cc: Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 
-Hi Shaik,
 
-On 20.05.2014 06:08, Shaik Ameer Basha wrote:
-> Hi Tomasz,
-> 
-> Any comments on this patch ?
+--0vD5pVGp8mlWv9jf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Looks good.
+On Tue, May 20, 2014 at 11:21:08PM +0200, Lars-Peter Clausen wrote:
+> On 05/20/2014 09:16 PM, Tomasz Figa wrote:
 
-Kukjin, if you still can pick this up to your tree for 3.16, since all
-the dependencies are already there, then
+> >Still, I'm not too experienced with ALSA and ASoC, so I might be wrong.
+> >Mark, what do you think about this?
 
-Acked-by: Tomasz Figa <t.figa@samsung.com>
+> Given that there is a patch[1] which removes the whole file I think we can
+> stop the discussion about this patch here.
 
-If not, I will pick it up to my tree for 3.17.
+> But for the record, substream will never ever be NULL in this function. prtd
+> might be though if the DMA completion callback races against the closing of
+> the PCM stream.
 
-Best regards,
-Tomasz
+Yeah, what Lars said - obviously the patch removing the driver is more
+comprehensive!
 
-> 
-> Regards,
-> Shaik
-> 
-> On Mon, May 12, 2014 at 6:50 PM, Shaik Ameer Basha
-> <shaik.ameer@samsung.com> wrote:
->> From: Cho KyongHo <pullip.cho@samsung.com>
->>
->> This patch adds the missing sysmmu clocks for Display and
->> ISP blocks.
->>
->> Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
->> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-exynos5250.c   |   35 ++++++++++++++++++++++++++++++++
->>  include/dt-bindings/clock/exynos5250.h |   16 +++++++++++++++
->>  2 files changed, 51 insertions(+)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
->> index 65cb966..3bc8f40 100644
->> --- a/drivers/clk/samsung/clk-exynos5250.c
->> +++ b/drivers/clk/samsung/clk-exynos5250.c
->> @@ -28,6 +28,8 @@
->>  #define MPLL_CON0              0x4100
->>  #define SRC_CORE1              0x4204
->>  #define GATE_IP_ACP            0x8800
->> +#define GATE_IP_ISP0           0xc800
->> +#define GATE_IP_ISP1           0xc804
->>  #define CPLL_LOCK              0x10020
->>  #define EPLL_LOCK              0x10030
->>  #define VPLL_LOCK              0x10040
->> @@ -145,6 +147,8 @@ static unsigned long exynos5250_clk_regs[] __initdata = {
->>         PLL_DIV2_SEL,
->>         GATE_IP_DISP1,
->>         GATE_IP_ACP,
->> +       GATE_IP_ISP0,
->> +       GATE_IP_ISP1,
->>  };
->>
->>  static int exynos5250_clk_suspend(void)
->> @@ -202,6 +206,7 @@ PNAME(mout_aclk400_p)       = { "mout_aclk400_g3d_mid", "mout_gpll" };
->>  PNAME(mout_aclk200_sub_p) = { "fin_pll", "div_aclk200" };
->>  PNAME(mout_aclk266_sub_p) = { "fin_pll", "div_aclk266" };
->>  PNAME(mout_aclk333_sub_p) = { "fin_pll", "div_aclk333" };
->> +PNAME(mout_aclk400_isp_sub_p) = { "fin_pll", "div_aclk400_isp" };
->>  PNAME(mout_hdmi_p)     = { "div_hdmi_pixel", "sclk_hdmiphy" };
->>  PNAME(mout_usb3_p)     = { "mout_mpll_user", "mout_cpll" };
->>  PNAME(mout_group1_p)   = { "fin_pll", "fin_pll", "sclk_hdmi27m",
->> @@ -281,6 +286,7 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
->>         MUX(0, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
->>         MUX(0, "mout_aclk400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
->>
->> +       MUX(0, "mout_aclk400_isp", mout_aclk200_p, SRC_TOP1, 24, 1),
->>         MUX(0, "mout_aclk400_g3d", mout_aclk400_p, SRC_TOP1, 28, 1),
->>
->>         MUX(0, "mout_cpll", mout_cpll_p, SRC_TOP2, 8, 1),
->> @@ -292,6 +298,9 @@ static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
->>
->>         MUX(0, "mout_aclk200_disp1_sub", mout_aclk200_sub_p, SRC_TOP3, 4, 1),
->>         MUX(0, "mout_aclk266_gscl_sub", mout_aclk266_sub_p, SRC_TOP3, 8, 1),
->> +       MUX(0, "mout_aclk_266_isp_sub", mout_aclk266_sub_p, SRC_TOP3, 16, 1),
->> +       MUX(0, "mout_aclk_400_isp_sub", mout_aclk400_isp_sub_p,
->> +                       SRC_TOP3, 20, 1),
->>         MUX(0, "mout_aclk333_sub", mout_aclk333_sub_p, SRC_TOP3, 24, 1),
->>
->>         MUX(0, "mout_cam_bayer", mout_group1_p, SRC_GSCL, 12, 4),
->> @@ -364,6 +373,7 @@ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
->>         DIV(0, "div_aclk400_g3d", "mout_aclk400_g3d", DIV_TOP0,
->>                                                         24, 3),
->>
->> +       DIV(0, "div_aclk400_isp", "mout_aclk400_isp", DIV_TOP1, 20, 3),
->>         DIV(0, "div_aclk66_pre", "mout_mpll_user", DIV_TOP1, 24, 3),
->>
->>         DIV(0, "div_cam_bayer", "mout_cam_bayer", DIV_GSCL, 12, 4),
->> @@ -629,6 +639,31 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
->>         GATE(CLK_WDT, "wdt", "div_aclk66", GATE_IP_PERIS, 19, 0, 0),
->>         GATE(CLK_RTC, "rtc", "div_aclk66", GATE_IP_PERIS, 20, 0, 0),
->>         GATE(CLK_TMU, "tmu", "div_aclk66", GATE_IP_PERIS, 21, 0, 0),
->> +       GATE(CLK_SMMU_TV, "smmu_tv", "mout_aclk200_disp1_sub",
->> +                       GATE_IP_DISP1, 2, 0, 0),
->> +       GATE(CLK_SMMU_FIMD1, "smmu_fimd1", "mout_aclk200_disp1_sub",
->> +                       GATE_IP_DISP1, 8, 0, 0),
->> +       GATE(CLK_SMMU_2D, "smmu_2d", "div_aclk200", GATE_IP_ACP, 7, 0, 0),
->> +       GATE(CLK_SMMU_FIMC_ISP, "smmu_fimc_isp", "mout_aclk_266_isp_sub",
->> +                       GATE_IP_ISP0, 8, 0, 0),
->> +       GATE(CLK_SMMU_FIMC_DRC, "smmu_fimc_drc", "mout_aclk_266_isp_sub",
->> +                       GATE_IP_ISP0, 9, 0, 0),
->> +       GATE(CLK_SMMU_FIMC_FD, "smmu_fimc_fd", "mout_aclk_266_isp_sub",
->> +                       GATE_IP_ISP0, 10, 0, 0),
->> +       GATE(CLK_SMMU_FIMC_SCC, "smmu_fimc_scc", "mout_aclk_266_isp_sub",
->> +                       GATE_IP_ISP0, 11, 0, 0),
->> +       GATE(CLK_SMMU_FIMC_SCP, "smmu_fimc_scp", "mout_aclk_266_isp_sub",
->> +                       GATE_IP_ISP0, 12, 0, 0),
->> +       GATE(CLK_SMMU_FIMC_MCU, "smmu_fimc_mcu", "mout_aclk_400_isp_sub",
->> +                       GATE_IP_ISP0, 13, 0, 0),
->> +       GATE(CLK_SMMU_FIMC_ODC, "smmu_fimc_odc", "mout_aclk_266_isp_sub",
->> +                       GATE_IP_ISP1, 4, 0, 0),
->> +       GATE(CLK_SMMU_FIMC_DIS0, "smmu_fimc_dis0", "mout_aclk_266_isp_sub",
->> +                       GATE_IP_ISP1, 5, 0, 0),
->> +       GATE(CLK_SMMU_FIMC_DIS1, "smmu_fimc_dis1", "mout_aclk_266_isp_sub",
->> +                       GATE_IP_ISP1, 6, 0, 0),
->> +       GATE(CLK_SMMU_FIMC_3DNR, "smmu_fimc_3dnr", "mout_aclk_266_isp_sub",
->> +                       GATE_IP_ISP1, 7, 0, 0),
->>  };
->>
->>  static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
->> diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
->> index 415d447..be6e97c 100644
->> --- a/include/dt-bindings/clock/exynos5250.h
->> +++ b/include/dt-bindings/clock/exynos5250.h
->> @@ -152,6 +152,22 @@
->>  #define CLK_SMMU_MDMA0         347
->>  #define CLK_SSS                        348
->>  #define CLK_G3D                        349
->> +#define CLK_SMMU_TV            350
->> +#define CLK_SMMU_FIMD1         351
->> +#define CLK_SMMU_2D            352
->> +#define CLK_SMMU_FIMC_ISP      353
->> +#define CLK_SMMU_FIMC_DRC      354
->> +#define CLK_SMMU_FIMC_SCC      355
->> +#define CLK_SMMU_FIMC_SCP      356
->> +#define CLK_SMMU_FIMC_FD       357
->> +#define CLK_SMMU_FIMC_MCU      358
->> +#define CLK_SMMU_FIMC_ODC      359
->> +#define CLK_SMMU_FIMC_DIS0     360
->> +#define CLK_SMMU_FIMC_DIS1     361
->> +#define CLK_SMMU_FIMC_3DNR     362
->> +#define CLK_SMMU_FIMC_LITE0    363
->> +#define CLK_SMMU_FIMC_LITE1    364
->> +#define CLK_CAMIF_TOP          365
->>
->>  /* mux clocks */
->>  #define CLK_MOUT_HDMI          1024
->> --
->> 1.7.9.5
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+For the record it's very helpful to be specific about what the problem
+being addressed is in the changelog, if it's not obvious what the bug
+that's being fixed is that'll slow things down.  Please also use subject
+lines appropriate for the subsystem, it will help your patch get
+noticed.
+
+--0vD5pVGp8mlWv9jf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTe9AbAAoJELSic+t+oim9vdwP/jt48ImlvqwrXCC0YmJvyPEt
+Tm+9QQoCZHzIoqv0Ij7MfyB4gfpRLaEElHj97S7ebUsgjEe3l2bSzcmZkL34ElWd
+bxheooyW4SNfy5lMD9M/cSLFkLPt24MsRJPID6co5SF00t5CbuPZweKvcXSPkY78
+H8GrLoPMi5iv4E0Ef87F8nxZgQEUPiTnlNIgFVusXUIJ0kX26QAFknZIj0OFTGJm
+f+dnEUkorZQrMi8aeaGHCEbPmwE8hiryUjIiJeD3BA+KxZQDXSr3JmcGzoo/BpwH
+cVhe2OOMtmkK95ch9Ck6aUdkBJYiRihN3cfeHzysdqDP2CfHy/vYhdMj87HAB6Uc
+kU8KjMPXIIgxBoPFNosR5h3Sw32R7FGj9rADsive0ToaCM1mml+NAqt6b1lCivFl
+ua5EUUp+/ePebZvu5cFHk3KHn/ScY4rn+fQMAhqULBw0qGCATUfXPOfdYYnRYOlK
+KchkP+iqs85d1GBdABBZS1Tzu8GlwGvoTIgPcJ3sNjrTRWZUY6lbTB2COQbNX0l+
+DndEVNaRuswfTp9/e+lfXqSTeEuYgh+iqLIRmpW+ZOeOLXCBsyVTvaSuMPEaNqKX
+SH2iyc3fSwPhE8kz/Ffe2kD55IZUUn75xADIfufST77Tyg0ETDcmPtXlCk4oI2I6
+5LDmj5A/Ts43uKI1gghm
+=S2g0
+-----END PGP SIGNATURE-----
+
+--0vD5pVGp8mlWv9jf--
