@@ -1,56 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: Allow setting OP_CLK of the IIS Multi
- Audio Interface
-Date: Tue, 20 May 2014 23:21:13 +0100
-Message-ID: <20140520222113.GJ12304@sirena.org.uk>
-References: <1400520638-6907-1-git-send-email-s.nawrocki@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v3 0/2] ARM: dts: add device data for exynos4412-trats2
+Date: Wed, 21 May 2014 00:45:33 +0200
+Message-ID: <537BDB0D.6060804@gmail.com>
+References: <537B32E5.2070606@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="O7ttjHhq/TFHqrxu"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34825 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750897AbaETWV1 (ORCPT
+Received: from mail-ee0-f54.google.com ([74.125.83.54]:64558 "EHLO
+	mail-ee0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750747AbaETWpm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 May 2014 18:21:27 -0400
-Content-Disposition: inline
-In-Reply-To: <1400520638-6907-1-git-send-email-s.nawrocki@samsung.com>
+	Tue, 20 May 2014 18:45:42 -0400
+In-Reply-To: <537B32E5.2070606@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Beomho Seo <beomho.seo@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Myungjoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
+On 20.05.2014 12:48, Beomho Seo wrote:
+> This patchset add some device node for exynos4412-trats2.
+> It is based on v3.15-next/dt-samsung-2 branch.
+> 
+> exynos4412-trats2.dts
+> - Fix incorrect compatible. Compatible of AK8975 are "ak8975" or "asahi-kasei,ak8975".
+> - Add cm36651 light/proximity sensor device node.
+> - Change gpio-key device node. fix incorrect gpio property, and then add "ok-key" node.
+> 
+> Changes in v3:
+> - Patch set based on v3.16-next/dt-samsung
+> - ARM: dts: fix incorrect compatible for exynos4412 patch is applied.
+> - Remove device node property; status, interrupt-parent, interrupt
+> - Changes gpio/interrupt specified index.
+> 
+> Changes in v2:
+> 
+> - Change ak8975 magnetic sensor compatible according to binding document.
+> - Change cm36651 light/proximity sensor compatible according to binding document and driver.
+> 
+> Beomho Seo (2):
+>   ARM: dts: add cm36651 light/proximity sensor node
+>   ARM: dts: fixed gpio key node for exynos4412
+> 
+>  arch/arm/boot/dts/exynos4412-trats2.dts |   46 +++++++++++++++++++++++++------
+>  1 file changed, 38 insertions(+), 8 deletions(-)
+> 
 
---O7ttjHhq/TFHqrxu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+For the whole series:
 
-On Mon, May 19, 2014 at 07:30:38PM +0200, Sylwester Nawrocki wrote:
-> This patch adds support for setting source clock of the "Core CLK"
-> of the IIS Multi Audio Interface.
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-Applied, thanks.
-
---O7ttjHhq/TFHqrxu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTe9VWAAoJELSic+t+oim9nEIP/1SNqS1B9l1RN6enjUqBcLFu
-+Nhc1oekBH9tTUlWovk+gCT4eFSmTdaz+kkWNeilwelwD6SnEf/eWH7tijEOcw1S
-gNKNvwlF7/Lmc0ZMfgFw0ycZ43x4N0N+s4klGZ88zh4ZYJBbwV5VYJGz42wIVe8d
-GEcEFnDvQrSUhz7W5K3QVTnzGcSfOWaZZ88o/j5JLlaJ6vb8ZSt+Sp80rtR70TfJ
-TFHOYej6d/H0fjztqwBf9TNDFNuH2/Z49J+xPxjZ8re0yG+Eo+OUNjynsMyE40nc
-/5JWqb6lx06q7CCBJTQN/LPKgdXQB8Iw7KU5eqy5g+wR2/LZIRnkZW0HGq81CAbU
-kZapgGNYrsbYPRU5/QKol0IQ6Gf0KUsqbCfW+rFBC45+LMXPzLNcp4Y8+2ta27Zd
-0X7UVLMBKzgL2f8uj5hdy3A75201j7XMRH+LCrFCOAwwakfdKJfVUB81DT6113vG
-K7MQrTb9olbyxWOoiBJoqLN77+D65Q2pY5GLHD4rUjK2utl7nehiDowiQEIe5MTg
-8Ngx8iQDE4qE0qgG8qFNZ3f86OwwmhL4eiPXcbxokQeAbnHKofmzFguP6WiaANfC
-D+Lyq4Ur+oxpgTE6HHX6KIn2KlbcwLgZs3uBmEUj1iUexezlQEJtAnGKEtkRPrJR
-KnFKgmEQb3x/jCWX4eWC
-=qyzq
------END PGP SIGNATURE-----
-
---O7ttjHhq/TFHqrxu--
+Best regards,
+Tomasz
