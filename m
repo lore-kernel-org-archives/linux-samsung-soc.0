@@ -1,72 +1,59 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] sound: soc: samsung: dma.c: Fix for possible null pointer
- dereference
-Date: Tue, 20 May 2014 11:10:59 +0530
-Message-ID: <537AEAEB.8040803@linaro.org>
-References: <1400535443-5886-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1400535443-5886-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH V2 1/2] ARM: EXYNOS: Update secondary boot addr for secure mode
+Date: Tue, 20 May 2014 09:20:09 +0530
+Message-ID: <1400557810-28428-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:33865 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750763AbaETDwO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 May 2014 23:52:14 -0400
+Received: by mail-pa0-f54.google.com with SMTP id bj1so6713033pad.27
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 May 2014 20:52:14 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, Sachin Kamat <sachin.kamat@linaro.org>
 
-On 05/20/2014 03:07 AM, Rickard Strandqvist wrote:
-> There is otherwise a risk of a possible null pointer dereference.
-> 
-> Was largely found by using a static code analysis program called cppcheck.
-> 
-> Signed-off-by: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
-> ---
->  sound/soc/samsung/dma.c |   10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
-> index dc09b71..1d9bcaa 100644
-> --- a/sound/soc/samsung/dma.c
-> +++ b/sound/soc/samsung/dma.c
-> @@ -115,17 +115,19 @@ static void dma_enqueue(struct snd_pcm_substream *substream)
->  static void audio_buffdone(void *data)
->  {
->  	struct snd_pcm_substream *substream = data;
-> -	struct runtime_data *prtd = substream->runtime->private_data;
-> +	struct runtime_data *prtd = NULL;
+From: Sachin Kamat <sachin.kamat@linaro.org>
 
-I am not sure if this check is required as audio_buffdone() is set as a
-callback function with known valid parameter during dma_enqueue().
+Almost all Exynos-series of SoCs that run in secure mode don't need
+additional offset for every CPU, with Exynos4412 being the only
+exception.
 
->  
->  	pr_debug("Entered %s\n", __func__);
->  
-> -	if (prtd->state & ST_RUNNING) {
-> +	if (substream)
-> +		prtd = substream->runtime->private_data;
-> +
-> +	if (prtd && prtd->state & ST_RUNNING) {
+Tested on Origen-Quad (Exynos4412) and Arndale-Octa (Exynos5420).
 
-ditto as above
+While at it, fix the coding style (space around *).
 
->  		prtd->dma_pos += prtd->dma_period;
->  		if (prtd->dma_pos >= prtd->dma_end)
->  			prtd->dma_pos = prtd->dma_start;
->  
-> -		if (substream)
-> -			snd_pcm_period_elapsed(substream);
-> +		snd_pcm_period_elapsed(substream);
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+Changes for V2:
+* Changed the condition statement as per review comment
+* Fixed coding style
 
-This check certainly can be removed as snd_pcm_period_elapsed() also
-checks the validity of the argument.
+ arch/arm/mach-exynos/firmware.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 739bdc8..7d18103 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -50,8 +50,13 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ 
+ 	boot_reg = sysram_ns_base_addr + 0x1c;
+ 
+-	if (!soc_is_exynos4212())
+-		boot_reg += 4*cpu;
++	/*
++	 * Almost all Exynos-series of SoCs that run in secure mode don't need
++	 * additional offset for every CPU, with Exynos4412 being the only
++	 * exception.
++	 */
++	if (soc_is_exynos4412())
++		boot_reg += 4 * cpu;
+ 
+ 	__raw_writel(boot_addr, boot_reg);
+ 	return 0;
 -- 
-Tushar Behera
+1.7.9.5
