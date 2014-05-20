@@ -1,285 +1,145 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
-Date: Tue, 20 May 2014 14:02:43 +0200
-Message-ID: <20140520120242.GA20995@ulmo>
-References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
-	<5759340.gycj7cP1t3@wuerfel> <20140520110536.GA10302@ulmo>
-	<10711669.TTjp9L4tTG@wuerfel>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2261608275536795131=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <10711669.TTjp9L4tTG@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] drivers: phy: exynos4x12-phy: fix HSIC1 power on/off sequence
+Date: Tue, 20 May 2014 14:09:14 +0200
+Message-ID: <1400587754-8363-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:19526 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752045AbaETMJY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 May 2014 08:09:24 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kamil Debski <k.debski@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
+>From experiments with real hardware, it seems that URSTCON bits for
+HSIC0 and HSIC1 seems to be swapped, so updated macro definitions for
+them. HSIC1 also requires enabling power to device phy to get properly
+enabled (similar hack is already implemented for HSIC0).
 
---===============2261608275536795131==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
-Content-Disposition: inline
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+Hello,
 
+This fix for Exynos4x12 USB2 PHY driver is needed to add support for
+OdroidU3 board, which uses both HSIC0 and HSIC1 ports. Without it only
+LAN chip, which is connected to HSIC0 works correctly.
 
---CE+1k2dSO48ffgeK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, May 20, 2014 at 01:15:48PM +0200, Arnd Bergmann wrote:
-> On Tuesday 20 May 2014 13:05:37 Thierry Reding wrote:
-> > On Tue, May 20, 2014 at 12:04:54PM +0200, Arnd Bergmann wrote:
-> > > On Monday 19 May 2014 22:59:46 Thierry Reding wrote:
-> > > > On Mon, May 19, 2014 at 08:34:07PM +0200, Arnd Bergmann wrote:
-[...]
-> > > > > You should never need #size-cells > #address-cells
-> > > >=20
-> > > > That was always my impression as well. But how then do you represen=
-t the
-> > > > full 4 GiB address space in a 32-bit system? It starts at 0 and end=
-s at
-> > > > 4 GiB - 1, which makes it 4 GiB large. That's:
-> > > >=20
-> > > > 	<0 1 0>
-> > > >=20
-> > > > With #address-cells =3D <1> and #size-cells =3D <1> the best you ca=
-n do is:
-> > > >=20
-> > > > 	<0 0xffffffff>
-> > > >=20
-> > > > but that's not accurate.
-> > >=20
-> > > I think we've done both in the past, either extended #size-cells or
-> > > taken 0xffffffff as a special token. Note that in your example,
-> > > the iommu actually needs #address-cells =3D <2> anyway.
-> >=20
-> > But it needs #address-cells =3D <2> only to encode an ID in addition to
-> > the address. If this was a single-master IOMMU then there'd be no need
-> > for the ID.
->=20
-> Right. But for a single-master IOMMU, there is no need to specify
-> any additional data, it could have #address-cells=3D<0> if we take the
-> optimization you suggested.
-
-Couldn't a single-master IOMMU be windowed?
-
-> > I'm not sure I understand the need for 0x100 (all IDs) entry above. If
-> > bus1's iommus property applies to all devices on the bus, why can't the
-> > ID 0xb be listed in the iommus property?
-> >=20
-> > 	bus1 {
-> > 		#address-cells =3D <1>;
-> > 		#size-cells =3D <1>;
-> > 		ranges;
-> > 		iommus =3D <&{/iommu} 0xb 0  0x1 0x0>; // 4GB ID '0xb'
-> > 		dma-ranges =3D <0  0xb 0  0x1 0x0>;
-> >=20
-> > 		anothermaster {
-> > 			...
-> > 		};
-> > 	};
->=20
-> It depends on how the address is interpreted, but we could make this
-> a valid case too.
->=20
-> > In which case I guess dma-ranges would be redundant.
->=20
-> No, because the iommus property doesn't translate the address range, it
-> just creates a new address space. bus1 and iommu in the example have
-> different #address-cells, so you definitely need a non-empty ranges
-> property.
-
-Ah, now I get it.
-
-> > > The main advantage I think would be for IOMMUs that use the PCI b/d/f
-> > > numbers as IDs. These can have #address-cells=3D<3>, #size-cells=3D<2>
-> > > and have an empty dma-ranges property in the PCI host bridge node,
-> > > and interpret this as using the same encoding as the PCI BARs in
-> > > the ranges property.
-> >=20
-> > I'm somewhat confused here, since you said earlier:
-> >=20
-> > > After giving the ranges stuff some more thought, I have come to the
-> > > conclusion that using #iommu-cells should work fine for almost
-> > > all cases, including windowed iommus, because the window is not
-> > > actually needed in the device, but only in the iommu, wihch is of cou=
-rse
-> > > free to interpret the arguments as addresses.
-> >=20
-> > But now you seem to be saying that we should still be using the
-> > #address-cells and #size-cells properties in the IOMMU node to determine
-> > the length of the specifier.
->=20
-> I probably wasn't clear. I think we can make it work either way, but
-> my feeling is that using #address-cells/#size-cells gives us a nicer
-> syntax for the more complex cases.
-
-Okay, so in summary we'd have something like this for simple cases:
-
-Required properties:
---------------------
-- #address-cells: The number of cells in an IOMMU specifier needed to encode
-  an address.
-- #size-cells: The number of cells in an IOMMU specifier needed to represent
-  the length of an address range.
-
-Typical values for the above include:
-- #address-cells =3D <0>, size-cells =3D <0>: Single master IOMMU devices a=
-re not
-  configurable and therefore no additional information needs to be encoded =
-in
-  the specifier. This may also apply to multiple master IOMMU devices that =
-do
-  not allow the association of masters to be configured.
-- #address-cells =3D <1>, size-cells =3D <0>: Multiple master IOMMU devices=
- may
-  need to be configured in order to enable translation for a given master. =
-In
-  such cases the single address cell corresponds to the master device's ID.
-- #address-cells =3D <2>, size-cells =3D <2>: Some IOMMU devices allow the =
-DMA
-  window for masters to be configured. The first cell of the address in this
-  may contain the master device's ID for example, while the second cell cou=
-ld
-  contain the start of the DMA window for the given device. The length of t=
-he
-  DMA window is specified by two additional cells.
-
-Examples:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Single-master IOMMU:
---------------------
-
-	iommu {
-		#address-cells =3D <0>;
-		#size-cells =3D <0>;
-	};
-
-	master {
-		iommus =3D <&/iommu>;
-	};
-
-Multiple-master IOMMU with fixed associations:
-----------------------------------------------
-
-	/* multiple-master IOMMU */
-	iommu {
-		/*
-		 * Masters are statically associated with this IOMMU and
-		 * address translation is always enabled.
-		 */
-		#iommu-cells =3D <0>;
-	};
-
-	/* static association with IOMMU */
-	master@1 {
-		reg =3D <1>;
-		iommus =3D <&/iommu>;
-	};
-
-	/* static association with IOMMU */
-	master@2 {
-		reg =3D <2>;
-		iommus =3D <&/iommu>;
-	};
-
-Multiple-master IOMMU:
-----------------------
-
-	iommu {
-		/* the specifier represents the ID of the master */
-		#address-cells =3D <1>;
-		#size-cells =3D <0>;
-	};
-
-	master {
-		/* device has master ID 42 in the IOMMU */
-		iommus =3D <&/iommu 42>;
-	};
-
-Multiple-master device:
------------------------
-
-	/* single-master IOMMU */
-	iommu@1 {
-		reg =3D <1>;
-		#address-cells =3D <0>;
-		#size-cells =3D <0>;
-	};
-
-	/* multiple-master IOMMU */
-	iommu@2 {
-		reg =3D <2>;
-		#address-cells =3D <1>;
-		#size-cells =3D <0>;
-	};
-
-	/* device with two master interfaces */
-	master {
-		iommus =3D <&/iommu@1>,    /* master of the single-master IOMMU */
-			 <&/iommu@2 42>; /* ID 42 in multiple-master IOMMU */
-	};
-
-Multiple-master IOMMU with configurable DMA window:
----------------------------------------------------
-
-	/ {
-		#address-cells =3D <1>;
-		#size-cells =3D <1>;
-
-		iommu {
-			/* master ID, address of DMA window */
-			#address-cells =3D <2>;
-			#size-cells =3D <2>;
-		};
-
-		master {
-			/* master ID 42, 4 GiB DMA window starting at 0 */
-			iommus =3D <&/iommu  42 0  0x1 0x0>;
-		};
-	};
-
-Does that sound about right?
-
-Thierry
-
---CE+1k2dSO48ffgeK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTe0RiAAoJEN0jrNd/PrOhf/8P/3HamFbOceUu0UPNhJ9Isyb4
-EthYY/OdxkPiaIzznEUq2mXcEKpfCywPqme89OsovHbnKyToqs2ZqT1kJdtA3Van
-YfuhZ132VOiTSrx0ZHFdT8aaYNVIVzhSWsEUUn4AbeEpFUvBuMYjkCn6LRLIcQo+
-W728gXNgTKL2kK5/VWB1+H+UI8kpO9vCrmWLHKIEZ3jfb443WX9JWtMUuOK4E4up
-ia0xdu9RxL6bS38cy/kyr17/t+lsXuZ36iy4WDeif7hde67zBG4IEB6DoiyVPVe4
-kkrJwg7AUfApONagAQ9ojvWQJs+ueVYFkvXsqYfQCYD9s9ZilaF9MwKMmrxQIkB5
-VKafeFBPmarLNNcaa0x/mqPaO48lUKherOT8l/0cwBK1aivVwWk0OMiVxJTkL3ch
-9Ui6gmtU6DlAJHOJZSfmL2+05aftU4rNBcovSFiZrFvGPxuNduyxpO0bQa+3h8TD
-A6Anaw5h29utlmSBqmhh+Gx4Cf5XgOht9H38IKST4DjHErrrNjhXVq63OU1YZ76M
-GbmDrsgeolvb8j/VvaBmkm6RSgU2tB6xUjvkfhkEtlBSztFXqfH0oQAvhZ97sLje
-TI+mHoqQnZ6MGGBSTLbGGzKybqfUSTKw5PYUdaH1pi1HQGRirVd53wdplTIY4Xgx
-g/mUJ9w4Dnaua92wOFDk
-=d3Rt
------END PGP SIGNATURE-----
-
---CE+1k2dSO48ffgeK--
-
---===============2261608275536795131==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============2261608275536795131==--
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+---
+ drivers/phy/phy-exynos4x12-usb2.c | 48 +++++++++++++++++++++++++++------------
+ drivers/phy/phy-samsung-usb2.h    |  2 +-
+ 2 files changed, 35 insertions(+), 15 deletions(-)
+diff --git a/drivers/phy/phy-exynos4x12-usb2.c b/drivers/phy/phy-exynos4x12-usb2.c
+index d92a7cc5698a..431568b5cc61 100644
+--- a/drivers/phy/phy-exynos4x12-usb2.c
++++ b/drivers/phy/phy-exynos4x12-usb2.c
+@@ -87,8 +87,16 @@
+ #define EXYNOS_4x12_URSTCON_OTG_PHYLINK		BIT(2)
+ #define EXYNOS_4x12_URSTCON_HOST_PHY		BIT(3)
+ #define EXYNOS_4x12_URSTCON_PHY1		BIT(4)
+-#define EXYNOS_4x12_URSTCON_HSIC0		BIT(5)
+-#define EXYNOS_4x12_URSTCON_HSIC1		BIT(6)
++/*
++ * According to Exynos 4x12 reference manual the values for
++ * EXYNOS_4x12_URSTCON_HSIC are:
++ * 	URSTCON_HSIC0 = BIT(5)
++ *	URSTCON_HSIC1 = BIT(6)
++ * but from experiments with real hardware the above 2 bitfields
++ * seems to be swapped, so define them to match the actual
++ * hardware */
++#define EXYNOS_4x12_URSTCON_HSIC1		BIT(5)
++#define EXYNOS_4x12_URSTCON_HSIC0		BIT(6)
+ #define EXYNOS_4x12_URSTCON_HOST_LINK_ALL	BIT(7)
+ #define EXYNOS_4x12_URSTCON_HOST_LINK_P0	BIT(8)
+ #define EXYNOS_4x12_URSTCON_HOST_LINK_P1	BIT(9)
+@@ -216,14 +224,15 @@ static void exynos4x12_phy_pwr(struct samsung_usb2_phy_instance *inst, bool on)
+ 		break;
+ 	case EXYNOS4x12_HSIC0:
+ 		phypwr =	EXYNOS_4x12_UPHYPWR_HSIC0;
+-		rstbits =	EXYNOS_4x12_URSTCON_HSIC1 |
++		rstbits =	EXYNOS_4x12_URSTCON_HSIC0 |
+ 				EXYNOS_4x12_URSTCON_HOST_LINK_P0 |
+ 				EXYNOS_4x12_URSTCON_HOST_PHY;
+ 		break;
+ 	case EXYNOS4x12_HSIC1:
+ 		phypwr =	EXYNOS_4x12_UPHYPWR_HSIC1;
+ 		rstbits =	EXYNOS_4x12_URSTCON_HSIC1 |
+-				EXYNOS_4x12_URSTCON_HOST_LINK_P1;
++				EXYNOS_4x12_URSTCON_HOST_LINK_P1 |
++				EXYNOS_4x12_URSTCON_HOST_PHY;
+ 		break;
+ 	};
+ 
+@@ -256,18 +265,22 @@ static void exynos4x12_phy_pwr(struct samsung_usb2_phy_instance *inst, bool on)
+ static int exynos4x12_power_on(struct samsung_usb2_phy_instance *inst)
+ {
+ 	struct samsung_usb2_phy_driver *drv = inst->drv;
++	struct samsung_usb2_phy_instance *device =
++					&drv->instances[EXYNOS4x12_DEVICE];
+ 
+-	inst->enabled = 1;
++	inst->enabled++;
+ 	exynos4x12_setup_clk(inst);
+ 	exynos4x12_phy_pwr(inst, 1);
+ 	exynos4x12_isol(inst, 0);
+ 
+ 	/* Power on the device, as it is necessary for HSIC to work */
+-	if (inst->cfg->id == EXYNOS4x12_HSIC0) {
+-		struct samsung_usb2_phy_instance *device =
+-					&drv->instances[EXYNOS4x12_DEVICE];
+-		exynos4x12_phy_pwr(device, 1);
+-		exynos4x12_isol(device, 0);
++	if (inst->cfg->id == EXYNOS4x12_HSIC0 ||
++	    inst->cfg->id == EXYNOS4x12_HSIC1) {
++		if (!device->enabled) {
++			exynos4x12_phy_pwr(device, 1);
++			exynos4x12_isol(device, 0);
++		}
++		device->enabled++;
+ 	}
+ 
+ 	return 0;
+@@ -279,13 +292,20 @@ static int exynos4x12_power_off(struct samsung_usb2_phy_instance *inst)
+ 	struct samsung_usb2_phy_instance *device =
+ 					&drv->instances[EXYNOS4x12_DEVICE];
+ 
+-	inst->enabled = 0;
++	inst->enabled--;
++	if (inst->enabled)
++		return 0;
++
+ 	exynos4x12_isol(inst, 1);
+ 	exynos4x12_phy_pwr(inst, 0);
+ 
+-	if (inst->cfg->id == EXYNOS4x12_HSIC0 && !device->enabled) {
+-		exynos4x12_isol(device, 1);
+-		exynos4x12_phy_pwr(device, 0);
++	if (inst->cfg->id == EXYNOS4x12_HSIC0 ||
++	    inst->cfg->id == EXYNOS4x12_HSIC1) {
++		device->enabled--;
++		if (!device->enabled) {
++			exynos4x12_isol(device, 1);
++			exynos4x12_phy_pwr(device, 0);
++		}
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/phy/phy-samsung-usb2.h b/drivers/phy/phy-samsung-usb2.h
+index 51a16016a214..848744ab8f38 100644
+--- a/drivers/phy/phy-samsung-usb2.h
++++ b/drivers/phy/phy-samsung-usb2.h
+@@ -29,7 +29,7 @@ struct samsung_usb2_phy_instance {
+ 	const struct samsung_usb2_common_phy *cfg;
+ 	struct phy *phy;
+ 	struct samsung_usb2_phy_driver *drv;
+-	bool enabled;
++	int enabled;
+ };
+ 
+ struct samsung_usb2_phy_driver {
+-- 
+1.9.2
