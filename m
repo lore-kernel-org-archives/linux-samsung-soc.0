@@ -1,90 +1,306 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCHv5 1/4] ARM: dts: exynos4: add PMU syscon node
-Date: Tue, 20 May 2014 11:06:27 +0900
-Message-ID: <1400551590-7772-2-git-send-email-chanho61.park@samsung.com>
-References: <1400551590-7772-1-git-send-email-chanho61.park@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:26465 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752918AbaETCGh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 May 2014 22:06:37 -0400
-In-reply-to: <1400551590-7772-1-git-send-email-chanho61.park@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCHv2] mmc: dw_mmc: change to use recommended reset procedure
+Date: Tue, 20 May 2014 10:49:53 +0900
+Message-ID: <003901cf73cd$cb5c56b0$62150410$%jun@samsung.com>
+References: <1399945121-7387-1-git-send-email-sonnyrao@chromium.org>
+ <002301cf6e68$8809ee00$981dca00$%jun@samsung.com>
+ <CAPz6YkWObQe86MZYmyLrbYOkQ4hHkb2Hcpe8QZWDZCMO5U0f_Q@mail.gmail.com>
+ <002a01cf6e9b$c0538900$40fa9b00$%jun@samsung.com>
+ <CAPz6YkVF4VsgMAi4t=KxRcDU=TDzzRCoSPO-cQa6qMESVSgo9g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <CAPz6YkVF4VsgMAi4t=KxRcDU=TDzzRCoSPO-cQa6qMESVSgo9g@mail.gmail.com>
+Content-language: ko
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Sonny Rao' <sonnyrao@chromium.org>
+Cc: 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Grant Grundler' <grundler@chromium.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'linux-mmc' <linux-mmc@vger.kernel.org>, 'sunil joshi' <joshi@samsung.com>, 'Douglas Anderson' <dianders@chromium.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Chris Ball' <cjb@laptop.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: t.figa@samsung.com, k.debski@samsung.com, devicetree@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>
 
-This patch adds a PMU(Power Management Unit) syscon node. This
-should be required for USB Phy syscon regmap I/F.
+On Sat, May 17, 2014, Sonny Rao wrote:
+> On Tue, May 13, 2014 at 4:09 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> > On Tuesday, May 13, Sonny Rao wrote:
+> >> On Mon, May 12, 2014 at 10:02 PM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> >> > As I mentioned in previous version, you put all reset stuff in existing fifo_reset function.
+> >> > Although databook mentions ciu_reset case for SBE error, it's not obvious when ciu_reset is
+> needed
+> >> in other error cases.
+> >> > If you intend to add some robust error handing, it would be better to make another function.
+> >>
+> >> The document I have actually doesn't mention error cases, it describes
+> >> this procedure as "Controller/DMA/FIFO Reset Usage" so I believe it is
+> >> saying this is the correct procedure in all cases, and based on our
+> >> testing it seems to work.  I understand the skepticism, as I shared it
+> >> initially when I saw this, but based on our experience, this is
+> >> correct and it doesn't need to live in a separate function.
+> > I agree this active error handling.
+> > But, existing fifo_reset function is focused on fifo reset purely.
+> > I think your change is close to error recovery and it seems overloaded to basic function.
+> > So, you suggest renaming function for new sequence.
+> 
+> I think the documentation says it should always be done, not just in
+> error recovery.  I can rename the function to dw_mci_reset rather than
+> dw_mci_fifo_reset.  Is that what you mean? Or do you mean make a new
+> function that is only called in error cases?
+Both are okay.
 
-Cc: Kamil Debski <k.debski@samsung.com>
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
----
- Documentation/devicetree/bindings/arm/samsung/pmu.txt | 3 +++
- arch/arm/boot/dts/exynos4.dtsi                        | 5 +++++
- arch/arm/boot/dts/exynos4412.dtsi                     | 4 ++++
- arch/arm/boot/dts/exynos4x12.dtsi                     | 4 ++++
- 4 files changed, 16 insertions(+)
+> 
+> > And look into dw_mci_work_routine_card(). dw_mci_idmac_reset() is redundancy.
+> > I expect it can be cleaned.
+> >
+> > <Quot>
+> >                                 /* Clear down the FIFO */
+> >                                 dw_mci_fifo_reset(host);
+> > #ifdef CONFIG_MMC_DW_IDMAC
+> >                                 dw_mci_idmac_reset(host);
+> > #endif
+> > </Quot>
+> >
+> 
+> Ok, I'll remove that extra reset, thanks for catching.
+> 
+> >>
+> >> > Please check my comments below.
+> >> >
+> >> > On Tue, May 13, 2014, Sonny Rao wrote:
+> >> >> This patch changes the fifo reset code to follow the reset procedure
+> >> >> outlined in the documentation of Synopsys  Mobile storage host databook
+> >> >> 7.2.13.
+> > Please remove this section number.
+> > No needed. It's old version.
+> >
+> 
+> Ok
+> 
+> >> >>
+> >> >> v2: Add Generic DMA support
+> >> >>     per the documentation, move interrupt clear before wait
+> >> >>     make the test for DMA host->use_dma rather than host->using_dma
+> >> >>     add proper return values (although it appears no caller checks)
+> >> >>
+> >> >> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
+> >> >> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> >> >> ---
+> >> >>  drivers/mmc/host/dw_mmc.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++-
+> >> >>  drivers/mmc/host/dw_mmc.h |  1 +
+> >> >>  2 files changed, 55 insertions(+), 1 deletion(-)
+> >> >>
+> >> >> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> >> >> index 55cd110..aff57e1 100644
+> >> >> --- a/drivers/mmc/host/dw_mmc.c
+> >> >> +++ b/drivers/mmc/host/dw_mmc.c
+> >> >> @@ -2325,6 +2325,7 @@ static bool dw_mci_ctrl_reset(struct dw_mci *host, u32 reset)
+> >> >>
+> >> >>  static inline bool dw_mci_fifo_reset(struct dw_mci *host)
+> >> >>  {
+> >> >> +     u32 flags = SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET;
+> >> >>       /*
+> >> >>        * Reseting generates a block interrupt, hence setting
+> >> >>        * the scatter-gather pointer to NULL.
+> >> >> @@ -2334,7 +2335,59 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
+> >> >>               host->sg = NULL;
+> >> >>       }
+> >> >>
+> >> >> -     return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
+> >> >> +     /*
+> >> >> +      * The recommended method for resetting is to always reset the
+> >> >> +      * controller and the fifo, but differs slightly depending on the mode.
+> >> >> +      * The Generic DMA mode (non IDMAC) also needs to reset DMA where IDMAC
+> >> >> +      * mode resets IDMAC at the end.
+> >> >> +      *
+> >> >> +      */
+> >> >> +#ifndef CONFIG_MMC_DW_IDMAC
+> >> > Is it added for generic DMA?
+> >> > IDMAC should be considered for dma_reseet as well.
+> >> > Please check databook.
+> >> >
+> >>
+> >> Yeah it's a little unclear.  In the "7.2.13 Controller/DMA/FIFO Reset
+> >> Usage" part of the document they mention It is set for what they call
+> >> "generic" DMA, which I think is when there is an external DMA
+> >> controller, and the part below that it says for "DW-DMA/Non-DW-DMA"
+> >> that controller_reset and fifo_reset should be set.   I believe this
+> >> "DW-DMA" case refers to what is called IDMAC.  So, I think it's not
+> >> required for this case, but I admit I'm not sure why they also say
+> >> "Non-DW-DMA". If you know of a good way to differentiate the "Generic
+> >> DMA" case  I can implement it.  It wasn't clear to me if the driver
+> >> even supported this "generic" dma case, but it sounds like it might,
+> >> so I added this code.  In practice, on the Exynos Systems we have,
+> >> which are using IDMAC, the reset procedure seems to work okay without
+> >> the dma_reset bit set, but I cannot test this "generic dma" case.
+> >>
+> >> The other places in the doc where I see them mention the dma_reset bit
+> >> are "7.2.21 Transmission and Reception with Internal DMAC (IDMAC)"
+> >> and the description of the CTRL register, and in "7.1
+> >> Software/Hardware Restrictions" where they say it will terminate any
+> >> pending transfer.
+> > "DW-DMA" means Synopsys's DMA controller not IDMAC.
+> > SDMMC_CTRL_DMA_RESET can apply in all type DMA interface.
+> 
+> So, do you think I should always set that bit if we're using DMA?
+Yes. Although you used it for general dma at first, IDMAC also needs it.
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-index f1f1552..b562634 100644
---- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-@@ -2,6 +2,9 @@ SAMSUNG Exynos SoC series PMU Registers
- 
- Properties:
-  - compatible : should contain two values. First value must be one from following list:
-+		   - "samsung,exynos4210-pmu" - for Exynos4210 SoC,
-+		   - "samsung,exynos4212-pmu" - for Exynos4212 SoC,
-+		   - "samsung,exynos4412-pmu" - for Exynos4412 SoC,
- 		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
- 		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
- 		second value must be always "syscon".
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 58ff8e2..da29a2a 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -110,6 +110,11 @@
- 		reg = <0x10010000 0x400>;
- 	};
- 
-+	pmu_system_controller: system-controller@10020000 {
-+		compatible = "samsung,exynos4210-pmu", "syscon";
-+		reg = <0x10020000 0x4000>;
-+	};
-+
- 	dsi_0: dsi@11C80000 {
- 		compatible = "samsung,exynos4210-mipi-dsi";
- 		reg = <0x11C80000 0x10000>;
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index 15d3c0a..c42a3e1 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -29,4 +29,8 @@
- 	gic: interrupt-controller@10490000 {
- 		cpu-offset = <0x4000>;
- 	};
-+
-+	pmu_system_controller: system-controller@10020000 {
-+		compatible = "samsung,exynos4412-pmu", "syscon";
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 70e3765..2f1e6c1 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -137,6 +137,10 @@
- 		interrupts = <0 72 0>;
- 	};
- 
-+	pmu_system_controller: system-controller@10020000 {
-+		compatible = "samsung,exynos4212-pmu", "syscon";
-+	};
-+
- 	g2d@10800000 {
- 		compatible = "samsung,exynos4212-g2d";
- 		reg = <0x10800000 0x1000>;
--- 
-1.8.3.2
+> 
+> >
+> >>
+> >> >> +     if (host->use_dma)
+> >> >> +             flags |= SDMMC_CTRL_DMA_RESET;
+> >> >> +#endif
+> >> >> +     if (dw_mci_ctrl_reset(host, flags)) {
+> >> >> +             /*
+> >> >> +              * In all cases we clear the RAWINTS register to clear any
+> >> >> +              * interrupts.
+> >> >> +              */
+> >> > I think interrupt masking is needed before reset because we will not handle it anymore.
+> >> > And Is there any reason to move interrupt clear here compared with previous version?
+> >>
+> >> Yeah I moved it to match the description in the document more closely.
+> >>  The documents mentioned doing the interrupt clear after setting the
+> >> reset bits, and before waiting for the dma_req bit in the status
+> >> register to clear.  We've been running it with the interrupt clear
+> >> below the loop, for a while, and I just tested it with the clear above
+> >> the wait to make sure it still works properly and I was able to pass
+> >> the tuning process with some errors, so I believe this works fine too,
+> >> and more closely matches the description in the doc that I have.
+> > When I tried ciu_reset, I found some unexpected interrupts occurred.
+> > It means that interrupt handler will run to handle extra interrupts.
+> > Then, we may need mask the interrupt.
+> > Can you check it for test?
+> 
+> You're right.  When I have the controller reset bit set, I see one
+> interrupt coming in shortly after we write the reset bits, which has
+> status bits of 0x180.  This has Response timeout (RTO) and Data CRC
+> error set.  It sounds like some interrupt ocurring may be expected
+> since they say to clear RINTSTS as part of the procedure though.
+Yes, it needs to clear RINTSTS.
+While this interrupt occurs, interrupt handler is called and thus tasklet function is also called.
+Can we handle this unexpected interrupt properly?
+To prevent these calling, we may need interrupt mask before resetting.
+
+> 
+> 
+> >
+> >>
+> >> >> +             mci_writel(host, RINTSTS, 0xFFFFFFFF);
+> >> >> +
+> >> >> +             /* if using dma we wait for dma_req to clear */
+> >> >> +             if (host->use_dma) {
+> >> >> +                     unsigned long timeout = jiffies + msecs_to_jiffies(500);
+> >> >> +                     u32 status;
+> >> >> +                     do {
+> >> >> +                             status = mci_readl(host, STATUS);
+> >> >> +                             if (!(status & SDMMC_STATUS_DMA_REQ))
+> >> >> +                                     break;
+> >> >> +                             cpu_relax();
+> >> > What did you intend here?
+> >> > If you intent busy-wait, how about using sleep instead?
+> >>
+> >> Yes it is a busy-wait.  There is similar code in dw_mci_ctrl_reset,
+> >> where that function is polling without sleeps, so I was trying to
+> >> match that.  The cpu_relax() is something I saw in other busy-waits in
+> >> the kernel, but I'm happy to take it out if you'd like.
+> > In case of ctrl_reset, waiting is during 2 clock.
+> > If this polling status is not long, I'm OK.
+> >
+> >>
+> >> >> +                     } while (time_before(jiffies, timeout));
+> >> >> +
+> >> >> +                     if (status & SDMMC_STATUS_DMA_REQ) {
+> >> >> +                             dev_err(host->dev,
+> >> >> +                                     "%s: Timeout waiting for dma_req to "
+> >> >> +                                     "clear during reset", __func__);
+> >> >> +                             return false;
+> >> >> +                     }
+> >> >> +
+> >> >> +                     /* when using DMA next we reset the fifo again */
+> >> >> +                     dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
+> >> >> +             }
+> >> >> +     } else {
+> >> >> +             dev_err(host->dev, "%s: Reset bits didn't clear", __func__);
+> >> > If ciu_reset is cleared, clk update below is needed?
+> >>
+> >> I'm honestly not sure what happens if the reset bits don't clear.  The
+> >> docs say controller_reset and dma_reset will auto clear after a number
+> >> of clocks, but fifo_reset will clear "after completion of the reset
+> >> operation"  So in this particular error case I'm not sure if it's
+> >> possible to recover properly or not and might hang, so I thought it
+> >> best to just return the error immediately.
+> > Yes.
+> > But at least if ciu_reset is done successfully, it may need clock update sequence again.
+> > In addition, printing reset bit[2:0] will be helpful for debug information.
+> 
+> The dw_mci_ctrl_reset() function would run this code if some of the
+> bits didn't clear:
+> 
+>         dev_err(host->dev,
+>                 "Timeout resetting block (ctrl reset %#x)\n",
+>                 ctrl & reset);
+> 
+> Does that give you what you're looking for?
+Ah, it was there.
+
+Thanks,
+Seungwon Jeon
+
+> 
+> >
+> > Thanks,
+> > Seungwon Jeon
+> >
+> >>
+> >> > Thanks,
+> >> > Seungwon Jeon
+> >> >
+> >> >> +             return false;
+> >> >> +     }
+> >> >> +
+> >> >> +#ifdef CONFIG_MMC_DW_IDMAC
+> >> >> +     /* It is also recommended that we reset and reprogram idmac */
+> >> >> +     dw_mci_idmac_reset(host);
+> >> >> +#endif
+> >> >> +
+> >> >> +     /* After a CTRL reset we need to have CIU set clock registers  */
+> >> >> +     mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
+> >> >> +
+> >> >> +     return true;
+> >> >>  }
+> >> >>
+> >> >>  static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
+> >> >> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+> >> >> index 6bf24ab..2505804 100644
+> >> >> --- a/drivers/mmc/host/dw_mmc.h
+> >> >> +++ b/drivers/mmc/host/dw_mmc.h
+> >> >> @@ -129,6 +129,7 @@
+> >> >>  #define SDMMC_CMD_INDX(n)            ((n) & 0x1F)
+> >> >>  /* Status register defines */
+> >> >>  #define SDMMC_GET_FCNT(x)            (((x)>>17) & 0x1FFF)
+> >> >> +#define SDMMC_STATUS_DMA_REQ         BIT(31)
+> >> >>  /* FIFOTH register defines */
+> >> >>  #define SDMMC_SET_FIFOTH(m, r, t)    (((m) & 0x7) << 28 | \
+> >> >>                                        ((r) & 0xFFF) << 16 | \
+> >> >> --
+> >> >> 1.9.1.423.g4596e3a
+> >> >>
+> >> >> --
+> >> >> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> >> >> the body of a message to majordomo@vger.kernel.org
+> >> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >> >
+> >> --
+> >> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> >> the body of a message to majordomo@vger.kernel.org
+> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
