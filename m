@@ -1,80 +1,175 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: Add 'mclk' handling for
- Snow sound-card driver
-Date: Tue, 20 May 2014 12:16:00 +0100
-Message-ID: <20140520111600.GL12304@sirena.org.uk>
-References: <1400559942-5666-1-git-send-email-tushar.behera@linaro.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 2/3] [media] s5p-mfc: Support multiple firmware sub-versions
+Date: Tue, 20 May 2014 17:15:45 +0530
+Message-ID: <CAK9yfHxiT2yEnJjXrGEeciQeG_pX74k9mW4HdbHaSHYuq8VgSQ@mail.gmail.com>
+References: <1400581029-3475-1-git-send-email-arun.kk@samsung.com>
+	<1400581029-3475-3-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1722724084882285034=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1400559942-5666-1-git-send-email-tushar.behera@linaro.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: dianders@chromium.org, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, sbkim73@samsung.com, t.figa@samsung.com, rdunlap@infradead.org, lgirdwood@gmail.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:55982 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751476AbaETLpp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 May 2014 07:45:45 -0400
+Received: by mail-oa0-f47.google.com with SMTP id i7so344027oag.34
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 May 2014 04:45:45 -0700 (PDT)
+In-Reply-To: <1400581029-3475-3-git-send-email-arun.kk@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Osciak <posciak@chromium.org>, Kiran Avnd <avnd.kiran@samsung.com>, Arun Kumar <arunkk.samsung@gmail.com>
+
+Hi Arun,
+
+On 20 May 2014 15:47, Arun Kumar K <arun.kk@samsung.com> wrote:
+> For MFC firmwares, improved versions with bug fixes and
+> feature additions are released keeping the firmware version
+> including major and minor number same. The issue came with
+> the release of a new MFCv6 firmware with an interface change.
+> This patch adds the support of accepting multiple firmware
+> binaries for every version with the driver trying to load
+> firmwares starting from latest. This ensures full backward
+> compatibility regardless of which firmware version and kernel
+> version is used.
+>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+>  drivers/media/platform/s5p-mfc/s5p_mfc.c        |    9 +++++----
+>  drivers/media/platform/s5p-mfc/s5p_mfc_common.h |   11 ++++++++++-
+>  drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c   |   15 ++++++++++++---
+>  3 files changed, 27 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> index 8da4c23..514e7ec 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> @@ -1343,7 +1343,7 @@ static struct s5p_mfc_variant mfc_drvdata_v5 = {
+>         .port_num       = MFC_NUM_PORTS,
+>         .buf_size       = &buf_size_v5,
+>         .buf_align      = &mfc_buf_align_v5,
+> -       .fw_name        = "s5p-mfc.fw",
+> +       .fw_name[0]     = "s5p-mfc.fw",
+>  };
+>
+>  struct s5p_mfc_buf_size_v6 mfc_buf_size_v6 = {
+> @@ -1370,7 +1370,8 @@ static struct s5p_mfc_variant mfc_drvdata_v6 = {
+>         .port_num       = MFC_NUM_PORTS_V6,
+>         .buf_size       = &buf_size_v6,
+>         .buf_align      = &mfc_buf_align_v6,
+> -       .fw_name        = "s5p-mfc-v6.fw",
+> +       .fw_name[0]     = "s5p-mfc-v6.fw",
+> +       .fw_name[1]     = "s5p-mfc-v6-v2.fw",
+
+Probably a simple 1 line comment about the difference between the
+versions would help.
+
+>  };
+>
+>  struct s5p_mfc_buf_size_v6 mfc_buf_size_v7 = {
+> @@ -1397,7 +1398,7 @@ static struct s5p_mfc_variant mfc_drvdata_v7 = {
+>         .port_num       = MFC_NUM_PORTS_V7,
+>         .buf_size       = &buf_size_v7,
+>         .buf_align      = &mfc_buf_align_v7,
+> -       .fw_name        = "s5p-mfc-v7.fw",
+> +       .fw_name[0]     = "s5p-mfc-v7.fw",
+>  };
+>
+>  struct s5p_mfc_buf_size_v6 mfc_buf_size_v8 = {
+> @@ -1424,7 +1425,7 @@ static struct s5p_mfc_variant mfc_drvdata_v8 = {
+>         .port_num       = MFC_NUM_PORTS_V8,
+>         .buf_size       = &buf_size_v8,
+>         .buf_align      = &mfc_buf_align_v8,
+> -       .fw_name        = "s5p-mfc-v8.fw",
+> +       .fw_name[0]     = "s5p-mfc-v8.fw",
+>  };
+>
+>  static struct platform_device_id mfc_driver_ids[] = {
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> index 89681c3..de60185 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> @@ -38,6 +38,8 @@
+>  #define MFC_BANK2_ALIGN_ORDER  13
+>  #define MFC_BASE_ALIGN_ORDER   17
+>
+> +#define MFC_FW_MAX_VERSIONS    2
+> +
+>  #include <media/videobuf2-dma-contig.h>
+>
+>  static inline dma_addr_t s5p_mfc_mem_cookie(void *a, void *b)
+> @@ -163,6 +165,11 @@ enum s5p_mfc_decode_arg {
+>         MFC_DEC_RES_CHANGE,
+>  };
+>
+> +enum s5p_mfc_fw_ver {
+> +       MFC_FW_V1,
+> +       MFC_FW_V2,
+> +};
+> +
+>  #define MFC_BUF_FLAG_USED      (1 << 0)
+>  #define MFC_BUF_FLAG_EOS       (1 << 1)
+>
+> @@ -225,7 +232,7 @@ struct s5p_mfc_variant {
+>         u32 version_bit;
+>         struct s5p_mfc_buf_size *buf_size;
+>         struct s5p_mfc_buf_align *buf_align;
+> -       char    *fw_name;
+> +       char    *fw_name[MFC_FW_MAX_VERSIONS];
+>  };
+>
+>  /**
+> @@ -287,6 +294,7 @@ struct s5p_mfc_priv_buf {
+>   * @warn_start:                hardware error code from which warnings start
+>   * @mfc_ops:           ops structure holding HW operation function pointers
+>   * @mfc_cmds:          cmd structure holding HW commands function pointers
+> + * @fw_ver:            loaded firmware sub-version
+>   *
+>   */
+>  struct s5p_mfc_dev {
+> @@ -331,6 +339,7 @@ struct s5p_mfc_dev {
+>         struct s5p_mfc_hw_ops *mfc_ops;
+>         struct s5p_mfc_hw_cmds *mfc_cmds;
+>         const struct s5p_mfc_regs *mfc_regs;
+> +       enum s5p_mfc_fw_ver fw_ver;
+>  };
+>
+>  /**
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> index c97c7c8..7aabcdb 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+> @@ -78,14 +78,23 @@ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev)
+>  int s5p_mfc_load_firmware(struct s5p_mfc_dev *dev)
+>  {
+>         struct firmware *fw_blob;
+> -       int err;
+> +       int err = -EINVAL, i;
+
+nit: Please use either
+            int i, err = -EINVAL;
+or
+            int i;
+            int err = -EINVAL;
+
+>
+>         /* Firmare has to be present as a separate file or compiled
+>          * into kernel. */
+>         mfc_debug_enter();
+>
+> -       err = request_firmware((const struct firmware **)&fw_blob,
+> -                                    dev->variant->fw_name, dev->v4l2_dev.dev);
+> +       for (i = MFC_FW_MAX_VERSIONS - 1; i >= 0; i--) {
+> +               if (!dev->variant->fw_name[i])
+> +                       continue;
+> +               err = request_firmware((const struct firmware **)&fw_blob,
+> +                               dev->variant->fw_name[i], dev->v4l2_dev.dev);
+> +               if (!err) {
+> +                       dev->fw_ver = (enum s5p_mfc_fw_ver) i;
+
+Where is this getting used?
 
 
---===============1722724084882285034==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="P/co8ZP+C4wcN8Yg"
-Content-Disposition: inline
-
-
---P/co8ZP+C4wcN8Yg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, May 20, 2014 at 09:55:42AM +0530, Tushar Behera wrote:
-> For audio to work on Snow board, we need the codec master clock 'mclk'
-> to be properly configured.
->=20
-> Currently XCLKOUT is configured as 'mclk' for codec chip and it is
-> required to be clocked at 24MHz for the codec to work properly.
->=20
-> Add appropriate clock handling within Snow sound-card driver to set
-> 'mclk' to operate at 24MHz.
-
-The clock here is connected to the CODEC on the board so it should be
-connected to the CODEC in the device tree too.
-
---P/co8ZP+C4wcN8Yg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTezltAAoJELSic+t+oim9pTsP/j2J/0qbHTLC/QBWUCY5IppL
-9OWrNQUz4XE3lAUVM0yRuVTt90+EdgM21A1qTq2ojz/MZXdST6udFkRBw6YRJKNL
-xG0antQhhd1ez05mg78bkK2qzGb/oCGUQgJfPQoFhTlb471GnnfmR3K5TR98I08D
-1IyA3SLq6JcRA0bBIWED1cGRw0T639QV3RGuTEbHUQ6ZDG5Nl8CwI8RdgPWxzkn2
-xcTaMQa0cMDozcxz38cuqIWnO+jwv30fPPxn7CnzF+HE/qzKMj8PAdlc2WUQqNks
-6YCbkM4N8EbodVQ5CUJ0/EmuZTA9lHazKsUF01eVFayM/QYcdZXoN7+Pqo/B+KSX
-GMsYggkduK3A/vj5YbdtjDBGI+Hbt0wEQmuyPE3SCCbUKdrmGlvUNthlwmdMLpYP
-QmKczhQuIJZSYy7QOf+jTi3v62CzqURBXr/p6qiNXwrVT7lGUdlUHug5i2igaCkO
-VE3wQx5y5oIStUqOzdzi5Gr2PU6Vs7x4l/hMP0STRVlismD4AxSdDbXO8edF8BJ8
-4Lr80mOIc7A5YSngWEbyyEydIcoRSKEmERmNF4R4/QW1Ja0emwgiHpLKRBQkrPE9
-Vbq9mFUfJojXKFU2ZBb8rYKXznl737Nmm9XFsg2OcodtxShGo0TkSAi2jp9/97vF
-fc9nkwdtSiXdRsD/cmOi
-=z2EL
------END PGP SIGNATURE-----
-
---P/co8ZP+C4wcN8Yg--
-
---===============1722724084882285034==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============1722724084882285034==--
+-- 
+With warm regards,
+Sachin
