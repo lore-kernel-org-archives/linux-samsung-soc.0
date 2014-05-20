@@ -1,48 +1,86 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCHv5 0/4] Enable usbphy and hsotg for exynos4
-Date: Tue, 20 May 2014 11:06:26 +0900
-Message-ID: <1400551590-7772-1-git-send-email-chanho61.park@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:59297 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752514AbaETCGh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 May 2014 22:06:37 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v3] cpufreq: exynos:  Fix the compile error
+Date: Tue, 20 May 2014 09:29:36 +0900
+Message-ID: <013c01cf73c2$94289150$bc79b3f0$@samsung.com>
+References: <000001cf70f0$2e48f930$8adaeb90$@samsung.com>
+ <037e01cf70f5$25b374d0$711a5e70$@samsung.com>
+ <2553916.Pl2B0tVZGR@vostro.rjw.lan> <1655043.7FHqnunz6p@vostro.rjw.lan>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: <1655043.7FHqnunz6p@vostro.rjw.lan>
+Content-language: ko
+Sender: cpufreq-owner@vger.kernel.org
+To: "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
+Cc: 'Jonghwan Choi' <jhbird.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, cpufreq@vger.kernel.org, 'Jonghwan Choi' <jhbird.choi@gmail.com>, 'Viresh Kumar' <viresh.kumar@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: t.figa@samsung.com, k.debski@samsung.com, devicetree@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>
 
-This patchset enables a exynos4 usbphy and hsotg DT node for exynos4. The usb
-phy node uses generic exynos phy driver. The driver uses PMU syscon and SYSREG
-syscon phandles.
+Rafael J. Wysocki wrote:
+> 
+> On Saturday, May 17, 2014 01:04:29 AM Rafael J. Wysocki wrote:
+> > On Friday, May 16, 2014 07:54:01 PM Kukjin Kim wrote:
+> > > Jonghwan Choi wrote:
+> > > >
+> > > > Commit 7da83a80 ("ARM: EXYNOS: Migrate Exynos specific macros from
+> plat to
+> > > > mach") which lands in samsung tree causes build breakage
+> > > > for cpufreq-exynos like following:
+> > > >
+> > > > drivers/cpufreq/exynos-cpufreq.c: In function 'exynos_cpufreq_probe':
+> > > > drivers/cpufreq/exynos-cpufreq.c:166:2: error: implicit declaration
+> of
+> > > > function 'soc_is_exynos4210'
+> > > > [-Werror=implicit-function-declaration]
+> > > > drivers/cpufreq/exynos-cpufreq.c:168:2: error: implicit declaration
+> of
+> > > > function 'soc_is_exynos4212'
+> > > > [-Werror=implicit-function-declaration]
+> > > > drivers/cpufreq/exynos-cpufreq.c:168:2: error: implicit declaration
+> of
+> > > > function 'soc_is_exynos4412'
+> > > > [-Werror=implicit-function-declaration]
+> > > > drivers/cpufreq/exynos-cpufreq.c:170:2: error: implicit declaration
+> of
+> > > > function 'soc_is_exynos5250'
+> > > > [-Werror=implicit-function-declaration]
+> > > > cc1: some warnings being treated as errors
+> > > > make[2]: *** [drivers/cpufreq/exynos-cpufreq.o] Error 1
+> > > > make[2]: *** Waiting for unfinished jobs....
+> > > > drivers/cpufreq/exynos4x12-cpufreq.c: In function
+> 'exynos4x12_set_clkdiv':
+> > > > drivers/cpufreq/exynos4x12-cpufreq.c:118:2: error: implicit
+> declaration of
+> > > > function 'soc_is_exynos4212'
+> > > > [-Werror=implicit-function-declaration]
+> > > > cc1: some warnings being treated as errors
+> > > > make[2]: *** [drivers/cpufreq/exynos4x12-cpufreq.o] Error 1
+> > > > make[1]: *** [drivers/cpufreq] Error 2
+> > > > This fixes above error with getting SoC information via
+> > > > of_machine_is_compatible() instead of soc_is_exynosXXXX().
+> > > >
+> > >
+> > > Probably,
+> > > Suggested-by: Tomasz Figa ?
+> > >
+> > > > Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+> > >
+> > > Looks better.
+> > >
+> > > Rafael, if you have no objection on this, shall I pick this into
+> samsung
+> > > tree for 3.16 because of the current build breakage with enabling
+> exynos
+> > > cpufreq?
+> >
+> > Please go ahead.
+> 
+> Actually, this conflicts with one patch already in my tree.  The
+> resoultion
+> is quite obvious, but it would be better to avoid this conflict altogether.
+> 
+Yeah. If you don't mind, shall I pick the patch (commit e5eaa445b0dc)into samsung tree with your ack?
 
-Changes from v4:
- - Correct 4212/4412 PMU syscon node according to documentation
+Thanks,
+Kukjin
 
-Change from v3:
- - Place a status field at the end of the nodes for readability
-
-Change from v2:
- - Split 4x12 compatibles to 4212 and 4412
-
-Changes from v1: Applied Tomasz Figa's comments
- - Document PMU syscon compatibles for exynos4210/4x12
- - Use clock macro instead of raw clock number
- - Correct phy name to "usb2-phy"
-
-Chanho Park (4):
-  ARM: dts: exynos4: add PMU syscon node
-  ARM: dts: exynos4: add exynos_usbphy node
-  ARM: dts: exynos4: add hsotg device node
-  ARM: dts: exynos4412-trats2: enable usb nodes
-
- .../devicetree/bindings/arm/samsung/pmu.txt        |  3 +++
- arch/arm/boot/dts/exynos4.dtsi                     | 26 ++++++++++++++++++++++
- arch/arm/boot/dts/exynos4412-trats2.dts            | 10 +++++++++
- arch/arm/boot/dts/exynos4412.dtsi                  |  4 ++++
- arch/arm/boot/dts/exynos4x12.dtsi                  |  9 ++++++++
- 5 files changed, 52 insertions(+)
-
--- 
-1.8.3.2
