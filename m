@@ -1,74 +1,79 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v4 2/3] clk: s2mps11: Remove useless check for clk_table
-Date: Wed, 21 May 2014 13:23:00 +0200
-Message-ID: <1400671381-14792-3-git-send-email-k.kozlowski@samsung.com>
-References: <1400671381-14792-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1400671381-14792-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Lee Jones <lee.jones@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Beomho Seo <beomho.seo@samsung.com>
+Subject: [PATCH] Documentation: remove gpio-samsung device tree bindings
+ documentation
+Date: Wed, 21 May 2014 20:22:27 +0900
+Message-ID: <537C8C73.8050606@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:14622 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751481AbaEULWf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 May 2014 07:22:35 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Myungjoo Ham <myungjoo.ham@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-There is no need for checking if 'clk_table' is not NULL twice (first
-after allocation and second at the end of probe()). Also move allocation
-of this 'clk_table' to probe from s2mps11_clk_parse_dt as this is
-logical place for it.
+This patch remove gpio-samsung device tree bindings documentation.
+Already a pictrl driver used for exynos4 and 5. If want to know about
+gpio pin control(e.g. mux function, confiugration), refer to samsung-pinctrl
+device tree bindings documentation.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
 ---
- drivers/clk/clk-s2mps11.c | 24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ .../devicetree/bindings/gpio/gpio-samsung.txt      |   41 --------------------
+ 1 file changed, 41 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-samsung.txt
 
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index 843ec3646501..23ffd89c4023 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -141,11 +141,6 @@ static struct device_node *s2mps11_clk_parse_dt(struct platform_device *pdev)
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	clk_table = devm_kzalloc(&pdev->dev, sizeof(struct clk *) *
--				 S2MPS11_CLKS_NUM, GFP_KERNEL);
--	if (!clk_table)
--		return ERR_PTR(-ENOMEM);
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-samsung.txt b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+deleted file mode 100644
+index 5375625..0000000
+--- a/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
++++ /dev/null
+@@ -1,41 +0,0 @@
+-Samsung Exynos4 GPIO Controller
 -
- 	for (i = 0; i < S2MPS11_CLKS_NUM; i++)
- 		of_property_read_string_index(clk_np, "clock-output-names", i,
- 				&s2mps11_clks_init[i].name);
-@@ -168,6 +163,11 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 
- 	s2mps11_clk = s2mps11_clks;
- 
-+	clk_table = devm_kzalloc(&pdev->dev, sizeof(struct clk *) *
-+				 S2MPS11_CLKS_NUM, GFP_KERNEL);
-+	if (!clk_table)
-+		return -ENOMEM;
-+
- 	/* Store clocks of_node in first element of s2mps11_clks array */
- 	s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev);
- 	if (IS_ERR(s2mps11_clks->clk_np))
-@@ -220,15 +220,13 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 		clkdev_add(s2mps11_clk->lookup);
- 	}
- 
--	if (clk_table) {
--		for (i = 0; i < S2MPS11_CLKS_NUM; i++)
--			clk_table[i] = s2mps11_clks[i].clk;
-+	for (i = 0; i < S2MPS11_CLKS_NUM; i++)
-+		clk_table[i] = s2mps11_clks[i].clk;
- 
--		clk_data.clks = clk_table;
--		clk_data.clk_num = S2MPS11_CLKS_NUM;
--		of_clk_add_provider(s2mps11_clks->clk_np,
--				of_clk_src_onecell_get, &clk_data);
--	}
-+	clk_data.clks = clk_table;
-+	clk_data.clk_num = S2MPS11_CLKS_NUM;
-+	of_clk_add_provider(s2mps11_clks->clk_np, of_clk_src_onecell_get,
-+			&clk_data);
- 
- 	platform_set_drvdata(pdev, s2mps11_clks);
- 
+-Required properties:
+-- compatible: Compatible property value should be "samsung,exynos4-gpio>".
+-
+-- reg: Physical base address of the controller and length of memory mapped
+-  region.
+-
+-- #gpio-cells: Should be 4. The syntax of the gpio specifier used by client nodes
+-  should be the following with values derived from the SoC user manual.
+-     <[phandle of the gpio controller node]
+-      [pin number within the gpio controller]
+-      [mux function]
+-      [flags and pull up/down]
+-      [drive strength]>
+-
+-  Values for gpio specifier:
+-  - Pin number: is a value between 0 to 7.
+-  - Flags and Pull Up/Down: 0 - Pull Up/Down Disabled.
+-                            1 - Pull Down Enabled.
+-                            3 - Pull Up Enabled.
+-          Bit 16 (0x00010000) - Input is active low.
+-  - Drive Strength: 0 - 1x,
+-                    1 - 3x,
+-                    2 - 2x,
+-                    3 - 4x
+-
+-- gpio-controller: Specifies that the node is a gpio controller.
+-- #address-cells: should be 1.
+-- #size-cells: should be 1.
+-
+-Example:
+-
+-	gpa0: gpio-controller@11400000 {
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		compatible = "samsung,exynos4-gpio";
+-		reg = <0x11400000 0x20>;
+-		#gpio-cells = <4>;
+-		gpio-controller;
+-	};
 -- 
-1.9.1
+1.7.9.5
