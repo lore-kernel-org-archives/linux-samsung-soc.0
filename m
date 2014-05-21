@@ -1,166 +1,125 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
-Date: Wed, 21 May 2014 10:54:42 +0200
-Message-ID: <4506822.XX7GrvtHhk@wuerfel>
-References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
-	<5123714.0MpMQfsmcr@wuerfel> <20140521081608.GA11068@ulmo>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH V5 18/20] ARM: exynos: cpuidle: Pass the AFTR callback
+ to the platform_data
+Date: Wed, 21 May 2014 11:02:29 +0200
+Message-ID: <537C6BA5.5080909@linaro.org>
+References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org> <5375262C.10805@samsung.com> <537C5296.7050801@linaro.org> <11675203.TylGKV1VBZ@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20140521081608.GA11068@ulmo>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:58702 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751984AbaEUJCS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 May 2014 05:02:18 -0400
+Received: by mail-wg0-f49.google.com with SMTP id m15so1709462wgh.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 02:02:16 -0700 (PDT)
+In-Reply-To: <11675203.TylGKV1VBZ@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, linaro-kernel@lists.linaro.org
+Cc: Mark Rutland <Mark.Rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, rjw@rjwysocki.net, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On Wednesday 21 May 2014 10:16:09 Thierry Reding wrote:
-> On Tue, May 20, 2014 at 10:31:29PM +0200, Arnd Bergmann wrote:
-> > On Tuesday 20 May 2014 16:00:02 Thierry Reding wrote:
-> > > On Tue, May 20, 2014 at 03:34:46PM +0200, Arnd Bergmann wrote:
-> > > > On Tuesday 20 May 2014 15:17:43 Thierry Reding wrote:
-> > > > > On Tue, May 20, 2014 at 02:41:18PM +0200, Arnd Bergmann wrote:
-> > > > > > On Tuesday 20 May 2014 14:02:43 Thierry Reding wrote:
-> > > > > [...]
-> > > > > > > Couldn't a single-master IOMMU be windowed?
-> > > > > > 
-> > > > > > Ah, yes. That would actually be like an IBM pSeries, which has a windowed
-> > > > > > IOMMU but uses one window per virtual machine. In that case, the window could
-> > > > > > be a property of the iommu node though, rather than part of the address
-> > > > > > in the link.
-> > > > > 
-> > > > > Does that mean that the IOMMU has one statically configured window which
-> > > > > is the same for each virtual machine? That would require some other
-> > > > > mechanism to assign separate address spaces to each virtual machine,
-> > > > > wouldn't it? But I suspect that if the IOMMU allows that it could be
-> > > > > allocated dynamically at runtime.
-> > > > 
-> > > > The way it works on pSeries is that upon VM creation, the guest is assigned
-> > > > one 256MB window for use by assigned DMA capable devices. When the guest
-> > > > creates a mapping, it uses a hypercall to associate a bus address in that
-> > > > range with a guest physical address. The hypervisor checks that the bus
-> > > > address is within the allowed range, and translates the guest physical
-> > > > address into a host physical address, then enters both into the I/O page
-> > > > table or I/O TLB.
-> > > 
-> > > So when a VM is booted it is passed a device tree with that DMA window?
-> > 
-> > Correct.
-> > 
-> > > Given what you describe above this seems to be more of a configuration
-> > > option to restrict the IOMMU to a subset of the physical memory for
-> > > purposes of virtualization. So I agree that this wouldn't be a good fit
-> > > for what we're trying to achieve with iommus or dma-ranges in this
-> > > binding.
-> > 
-> > Thinking about it again now, I wonder if there are any other use cases
-> > for windowed IOMMUs. If this is the only one, there might be no use
-> > in the #address-cells model I suggested instead of your original
-> > #iommu-cells.
-> 
-> So in this case virtualization is the reason why we need the DMA window.
-> The reason for that is that the guest has no other way of knowing what
-> other guests might be using, so it's essentially a mechanism for the
-> host to manage the DMA region and allocate subregions for each guest. If
-> virtualization isn't an issue then it seems to me that the need for DMA
-> windows goes away because the operating system will track DMA regions
-> anyway.
-> 
-> The only reason I can think of why a windowed IOMMU would be useful is
-> to prevent two or more devices from stepping on each others' toes. But
-> that's a problem that the OS should already be handling during DMA
-> buffer allocation, isn't it?
+On 05/21/2014 10:10 AM, Arnd Bergmann wrote:
+> On Wednesday 21 May 2014 09:15:34 Daniel Lezcano wrote:
+>> On 05/15/2014 10:40 PM, Kukjin Kim wrote:
+>>
+>> [ ... ]
+>>
+>>>>>> Exynos cpuidle is not a device on the SoC, so I don't think ther=
+e is
+>>>>>> any
+>>>>>> way to represent it in DT. The only thing I could see this is ma=
+tching
+>>>>>> root node with a central SoC driver that instantiates specific
+>>>>>> subdevices, such as cpufreq and cpuidle, but I don't see any ava=
+ilable
+>>>>>> infrastructure for this.
+>>>>>
+>>>>> There is a RFC for defining generic idle states [1].
+>>>>>
+>>>>> The idea behind using the platform driver framework is to unify t=
+he code
+>>>>> across the different drivers and separate the PM / cpuidle code.
+>>>>>
+>>>>> By this way, we can move the different drivers to drivers/cpuidle=
+ and
+>>>>> store them in a single place. That make easier the tracking, the =
+review
+>>>>> and the maintenance.
+>
+> Yes, that would be great. I only looked briefly at the series now, do=
+esn't
+> that require the use of psci?
 
-Right. As long as we always unmap the buffers from the IOMMU after they
-have stopped being in use, it's very unlikely that even a broken device
-driver causes a DMA into some bus address that happens to be mapped for
-another device.
+No, because PSCI is for some specific platform (eg. calxeda), all the=20
+other drivers are legacy and manually handling the PM via some low leve=
+l=20
+callbacks. This is why all drivers were implemented all over the place=20
+making so difficult to maintain them. Little by little, we split the PM=
+=20
+callbacks from the idle algorithm so reducing the platform dependency=20
+with the generic code.
 
-> > > > > > I would like to add an explanation about dma-ranges to the binding:
-> > > > > > 
-> > > > > > 8<--------
-> > > > > > The parent bus of the iommu must have a valid "dma-ranges" property
-> > > > > > describing how the physical address space of the IOMMU maps into
-> > > > > > memory.
-> > > > > 
-> > > > > With physical address space you mean the addresses after translation,
-> > > > > not the I/O virtual addresses, right? But even so, how will this work
-> > > > > when there are multiple IOMMU devices? What determines which IOMMU is
-> > > > > mapped via which entry?
-> > > > > 
-> > > > > Perhaps having multiple IOMMUs implies that there will have to be some
-> > > > > partitioning of the parent address space to make sure two IOMMUs don't
-> > > > > translate to the same ranges?
-> > > > 
-> > > > These dma-ranges properties would almost always be for the entire RAM,
-> > > > and we can treat anything else as a bug.
-> > > 
-> > > Would it typically be a 1:1 mapping? In that case could we define an
-> > > empty dma-ranges property to mean exactly that? That would make it
-> > > consistent with the ranges property.
-> > 
-> > Yes, I believe that is how it's already defined.
-> 
-> I've gone through the proposal at [0] again, but couldn't find a mention
-> of an empty "dma-ranges" property. But regardless I think that a 1:1
-> mapping is the obvious meaning of an empty "dma-ranges" property.
-> 
-> [0]: http://www.openfirmware.org/ofwg/proposals/Closed/Accepted/410-it.txt
-> 
-> One thing I'm not sure about is whether dma-ranges should be documented
-> in this binding at all. Since there's an accepted standard proposal it
-> would seem that it doesn't need to be specifically mentioned. One other
-> option would be to link to the above proposal from the binding and then
-> complement that with what an empty "dma-ranges" property means.
-> 
-> Or we could possible document this in a file along with other standard
-> properties. I don't think we currently do that for any properties, but
-> my concern is that there will always be a limited number of people
-> knowing about how such properties are supposed to work. If all of a
-> sudden all these people would disappear, everybody else would be left
-> with references to these properties but nowhere to look for their
-> meaning.
+The PSCI implements such PM callbacks in the firmware directly and are=20
+accessed through an API. PSCI is, let's say some kindof nextgen cpuidle=
+=2E=20
+It is similar than mwait on Intel. But if a new platform does not have=20
+such firmware, then the cpuidle driver will have the legacy format.
 
-I think it makes sense to document how the standard dma-ranges
-interacts with the new iommu binding, because it's not obvious
-what happens if you have both together, or iommu without a parent
-dma-ranges.
+> That's not a bad idea of course, but it
+> doesn't solve the problem I raised here.
+>
+>>>>> I am ok to by using platform_device_register_resndata() but I wou=
+ld
+>>>>> prefer to do that a bit later by converting the other drivers too=
+=2E That
+>>>>> will be easier if we have them grouped in a single directory (thi=
+s is
+>>>>> what does this patchset at the end).
+>>>>>
+>>>>> As there are some more work based on this patchset and the link e=
+rror
+>>>>> could be fixed as an independent patch, I would recommend to
+>>>>> re-integrate it in the tree as asked by Bartlomiej.
+>>>>
+>>>> In general, it would be nice to have everything done properly, but=
+ I'd
+>>>> consider Daniel's series as a huge improvement already and a nice
+>>>> intermediate step towards further clean-up.
+>>>>
+>>>> So based on the comments quoted above, instead of stalling the
+>>>> development, I'd suggest to accept this series and then move forwa=
+rd.
+>>>>
+>>> I'm fine.
+>>>
+>>> Arnd, how about you?
+>>>
+>>> - Kukjin
+>>
+>> Arnd ?
+>
+> Sorry for the delay.
 
-> > > > > > A device with an "iommus" property will ignore the "dma-ranges" property
-> > > > > > of the parent node and rely on the IOMMU for translation instead.
-> > > > > 
-> > > > > Do we need to consider the case where an IOMMU listed in iommus isn't
-> > > > > enabled (status = "disabled")? In that case presumably the device would
-> > > > > either not function or may optionally continue to master onto the parent
-> > > > > untranslated.
-> > > > 
-> > > > My reasoning was that the DT should specify whether we use the IOMMU
-> > > > or not. Being able to just switch on or off the IOMMU sounds nice as
-> > > > well, so we could change the text above to do that.
-> > > > 
-> > > > Another option would be to do this in the IOMMU code, basically
-> > > > falling back to the IOMMU parent's dma-ranges property and using
-> > > > linear dma_map_ops when that is disabled.
-> > > 
-> > > Yes, it should be trivial for the IOMMU core code to take care of this
-> > > special case. Still I think it's worth mentioning it in the binding so
-> > > that it's clearly specified.
-> > 
-> > Agreed.
-> 
-> Okay, I have a new version of the binding that I think incorporates all
-> the changes discussed so far. It uses #address-cells and #size-cells to
-> define the length of the specifier, but if we decide against that it can
-> easily be changed again.
+No problem.
 
-Ok.	
+> Yes, let's do it this way once more, but please
+> come up with something better for the future that doesn't tie the
+> cpuidle method to the root compatible string as this does.
 
-	Arnd
+ok.
+
+Thanks
+
+   -- Daniel
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
