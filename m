@@ -1,260 +1,64 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 3/4] ASoC: samsung: Use devm_snd_soc_register_component
-Date: Wed, 21 May 2014 08:52:19 +0530
-Message-ID: <1400642540-24375-4-git-send-email-tushar.behera@linaro.org>
-References: <1400642540-24375-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1400642540-24375-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
-Cc: tiwai@suse.de, perex@perex.cz, broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com, kgene.kim@samsung.com
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: [PATCH v2 02/18] drm/exynos: use wait_event_timeout() for safety usage
+Date: Wed, 21 May 2014 13:42:54 +0900
+Message-ID: <1400647390-26590-3-git-send-email-yj44.cho@samsung.com>
+References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Replaced snd_soc_register_component with its devres equivalent,
-devm_snd_soc_register_component.
+There could be the case that the page flip operation isn't finished correctly
+with some abnormal condition such as panel reset. So this patch replaces
+wait_event() with wait_event_timeout() to avoid waiting for page flip completion
+infinitely.
+And clears exynos_crtc->pending_flip in exynos_drm_crtc_page_flip() when
+exynos_drm_crtc_mode_set_commit() is failed.
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- sound/soc/samsung/ac97.c        |    8 ++------
- sound/soc/samsung/goni_wm8994.c |    9 +++------
- sound/soc/samsung/pcm.c         |    8 ++------
- sound/soc/samsung/s3c-i2s-v2.c  |    2 +-
- sound/soc/samsung/s3c2412-i2s.c |   14 +-------------
- sound/soc/samsung/s3c24xx-i2s.c |   18 +++---------------
- sound/soc/samsung/spdif.c       |   10 +++-------
- 7 files changed, 15 insertions(+), 54 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
-index fbce03b..68d9303 100644
---- a/sound/soc/samsung/ac97.c
-+++ b/sound/soc/samsung/ac97.c
-@@ -433,7 +433,7 @@ static int s3c_ac97_probe(struct platform_device *pdev)
- 		goto err4;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 95c9435..3bf091d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -69,8 +69,10 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+ 
+ 	if (mode > DRM_MODE_DPMS_ON) {
+ 		/* wait for the completion of page flip. */
+-		wait_event(exynos_crtc->pending_flip_queue,
+-				atomic_read(&exynos_crtc->pending_flip) == 0);
++		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
++				!atomic_read(&exynos_crtc->pending_flip),
++				HZ/20))
++			atomic_set(&exynos_crtc->pending_flip, 0);
+ 		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
  	}
  
--	ret = snd_soc_register_component(&pdev->dev, &s3c_ac97_component,
-+	ret = devm_snd_soc_register_component(&pdev->dev, &s3c_ac97_component,
- 					 s3c_ac97_dai, ARRAY_SIZE(s3c_ac97_dai));
- 	if (ret)
- 		goto err5;
-@@ -441,12 +441,10 @@ static int s3c_ac97_probe(struct platform_device *pdev)
- 	ret = samsung_asoc_dma_platform_register(&pdev->dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to get register DMA: %d\n", ret);
--		goto err6;
-+		goto err5;
- 	}
+@@ -259,6 +261,7 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+ 			spin_lock_irq(&dev->event_lock);
+ 			drm_vblank_put(dev, exynos_crtc->pipe);
+ 			list_del(&event->base.link);
++			atomic_set(&exynos_crtc->pending_flip, 0);
+ 			spin_unlock_irq(&dev->event_lock);
  
- 	return 0;
--err6:
--	snd_soc_unregister_component(&pdev->dev);
- err5:
- 	free_irq(irq_res->start, NULL);
- err4:
-@@ -461,8 +459,6 @@ static int s3c_ac97_remove(struct platform_device *pdev)
- {
- 	struct resource *irq_res;
- 
--	snd_soc_unregister_component(&pdev->dev);
--
- 	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (irq_res)
- 		free_irq(irq_res->start, NULL);
-diff --git a/sound/soc/samsung/goni_wm8994.c b/sound/soc/samsung/goni_wm8994.c
-index 415ad81..9506d76 100644
---- a/sound/soc/samsung/goni_wm8994.c
-+++ b/sound/soc/samsung/goni_wm8994.c
-@@ -274,8 +274,8 @@ static int __init goni_init(void)
- 		return -ENOMEM;
- 
- 	/* register voice DAI here */
--	ret = snd_soc_register_component(&goni_snd_device->dev, &voice_component,
--					 &voice_dai, 1);
-+	ret = devm_snd_soc_register_component(&goni_snd_device->dev,
-+			&voice_component, &voice_dai, 1);
- 	if (ret) {
- 		platform_device_put(goni_snd_device);
- 		return ret;
-@@ -284,17 +284,14 @@ static int __init goni_init(void)
- 	platform_set_drvdata(goni_snd_device, &goni);
- 	ret = platform_device_add(goni_snd_device);
- 
--	if (ret) {
--		snd_soc_unregister_component(&goni_snd_device->dev);
-+	if (ret)
- 		platform_device_put(goni_snd_device);
--	}
- 
- 	return ret;
- }
- 
- static void __exit goni_exit(void)
- {
--	snd_soc_unregister_component(&goni_snd_device->dev);
- 	platform_device_unregister(goni_snd_device);
- }
- 
-diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
-index 38df2a8..90fcd52 100644
---- a/sound/soc/samsung/pcm.c
-+++ b/sound/soc/samsung/pcm.c
-@@ -588,7 +588,7 @@ static int s3c_pcm_dev_probe(struct platform_device *pdev)
- 
- 	pm_runtime_enable(&pdev->dev);
- 
--	ret = snd_soc_register_component(&pdev->dev, &s3c_pcm_component,
-+	ret = devm_snd_soc_register_component(&pdev->dev, &s3c_pcm_component,
- 					 &s3c_pcm_dai[pdev->id], 1);
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "failed to get register DAI: %d\n", ret);
-@@ -598,13 +598,11 @@ static int s3c_pcm_dev_probe(struct platform_device *pdev)
- 	ret = samsung_asoc_dma_platform_register(&pdev->dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to get register DMA: %d\n", ret);
--		goto err6;
-+		goto err5;
- 	}
- 
- 	return 0;
- 
--err6:
--	snd_soc_unregister_component(&pdev->dev);
- err5:
- 	clk_disable_unprepare(pcm->pclk);
- 	clk_put(pcm->pclk);
-@@ -624,8 +622,6 @@ static int s3c_pcm_dev_remove(struct platform_device *pdev)
- 	struct s3c_pcm_info *pcm = &s3c_pcm[pdev->id];
- 	struct resource *mem_res;
- 
--	snd_soc_unregister_component(&pdev->dev);
--
- 	pm_runtime_disable(&pdev->dev);
- 
- 	iounmap(pcm->regs);
-diff --git a/sound/soc/samsung/s3c-i2s-v2.c b/sound/soc/samsung/s3c-i2s-v2.c
-index 79e7efb..77a2ae5 100644
---- a/sound/soc/samsung/s3c-i2s-v2.c
-+++ b/sound/soc/samsung/s3c-i2s-v2.c
-@@ -745,7 +745,7 @@ int s3c_i2sv2_register_component(struct device *dev, int id,
- 	dai_drv->suspend = s3c2412_i2s_suspend;
- 	dai_drv->resume = s3c2412_i2s_resume;
- 
--	return snd_soc_register_component(dev, cmp_drv, dai_drv, 1);
-+	return devm_snd_soc_register_component(dev, cmp_drv, dai_drv, 1);
- }
- EXPORT_SYMBOL_GPL(s3c_i2sv2_register_component);
- 
-diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
-index f42da8d..843f315 100644
---- a/sound/soc/samsung/s3c2412-i2s.c
-+++ b/sound/soc/samsung/s3c2412-i2s.c
-@@ -179,26 +179,14 @@ static int s3c2412_iis_dev_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = samsung_asoc_dma_platform_register(&pdev->dev);
--	if (ret) {
-+	if (ret)
- 		pr_err("failed to register the DMA: %d\n", ret);
--		goto err;
--	}
- 
--	return 0;
--err:
--	snd_soc_unregister_component(&pdev->dev);
- 	return ret;
- }
- 
--static int s3c2412_iis_dev_remove(struct platform_device *pdev)
--{
--	snd_soc_unregister_component(&pdev->dev);
--	return 0;
--}
--
- static struct platform_driver s3c2412_iis_driver = {
- 	.probe  = s3c2412_iis_dev_probe,
--	.remove = s3c2412_iis_dev_remove,
- 	.driver = {
- 		.name = "s3c2412-iis",
- 		.owner = THIS_MODULE,
-diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
-index 8380443..4a6d206 100644
---- a/sound/soc/samsung/s3c24xx-i2s.c
-+++ b/sound/soc/samsung/s3c24xx-i2s.c
-@@ -475,34 +475,22 @@ static int s3c24xx_iis_dev_probe(struct platform_device *pdev)
- {
- 	int ret = 0;
- 
--	ret = snd_soc_register_component(&pdev->dev, &s3c24xx_i2s_component,
--					 &s3c24xx_i2s_dai, 1);
-+	ret = devm_snd_soc_register_component(&pdev->dev,
-+			&s3c24xx_i2s_component, &s3c24xx_i2s_dai, 1);
- 	if (ret) {
- 		pr_err("failed to register the dai\n");
- 		return ret;
- 	}
- 
- 	ret = samsung_asoc_dma_platform_register(&pdev->dev);
--	if (ret) {
-+	if (ret)
- 		pr_err("failed to register the dma: %d\n", ret);
--		goto err;
--	}
- 
--	return 0;
--err:
--	snd_soc_unregister_component(&pdev->dev);
- 	return ret;
- }
- 
--static int s3c24xx_iis_dev_remove(struct platform_device *pdev)
--{
--	snd_soc_unregister_component(&pdev->dev);
--	return 0;
--}
--
- static struct platform_driver s3c24xx_iis_driver = {
- 	.probe  = s3c24xx_iis_dev_probe,
--	.remove = s3c24xx_iis_dev_remove,
- 	.driver = {
- 		.name = "s3c24xx-iis",
- 		.owner = THIS_MODULE,
-diff --git a/sound/soc/samsung/spdif.c b/sound/soc/samsung/spdif.c
-index 7d89d01..e93a93e 100644
---- a/sound/soc/samsung/spdif.c
-+++ b/sound/soc/samsung/spdif.c
-@@ -427,8 +427,8 @@ static int spdif_probe(struct platform_device *pdev)
- 
- 	dev_set_drvdata(&pdev->dev, spdif);
- 
--	ret = snd_soc_register_component(&pdev->dev, &samsung_spdif_component,
--					 &samsung_spdif_dai, 1);
-+	ret = devm_snd_soc_register_component(&pdev->dev,
-+			&samsung_spdif_component, &samsung_spdif_dai, 1);
- 	if (ret != 0) {
- 		dev_err(&pdev->dev, "fail to register dai\n");
- 		goto err4;
-@@ -444,12 +444,10 @@ static int spdif_probe(struct platform_device *pdev)
- 	ret = samsung_asoc_dma_platform_register(&pdev->dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed to register DMA: %d\n", ret);
--		goto err5;
-+		goto err4;
- 	}
- 
- 	return 0;
--err5:
--	snd_soc_unregister_component(&pdev->dev);
- err4:
- 	iounmap(spdif->regs);
- err3:
-@@ -467,8 +465,6 @@ static int spdif_remove(struct platform_device *pdev)
- 	struct samsung_spdif_info *spdif = &spdif_info;
- 	struct resource *mem_res;
- 
--	snd_soc_unregister_component(&pdev->dev);
--
- 	iounmap(spdif->regs);
- 
- 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 			goto out;
 -- 
 1.7.9.5
