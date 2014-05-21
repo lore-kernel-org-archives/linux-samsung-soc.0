@@ -1,74 +1,63 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH V5 18/20] ARM: exynos: cpuidle: Pass the AFTR callback to the platform_data
-Date: Wed, 21 May 2014 10:10:24 +0200
-Message-ID: <11675203.TylGKV1VBZ@wuerfel>
-References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org> <5375262C.10805@samsung.com> <537C5296.7050801@linaro.org>
+Subject: Re: [PATCH 2/3] ARM: EXYNOS: Enable multi-platform build support
+Date: Wed, 21 May 2014 10:16:18 +0200
+Message-ID: <4352730.lnFJpo5XeV@wuerfel>
+References: <1400655169-21683-1-git-send-email-sachin.kamat@linaro.org> <1400655169-21683-3-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:64864 "EHLO
+Received: from mout.kundenserver.de ([212.227.17.10]:49324 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751033AbaEUIKb (ORCPT
+	with ESMTP id S1751642AbaEUIQz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 04:10:31 -0400
-In-Reply-To: <537C5296.7050801@linaro.org>
+	Wed, 21 May 2014 04:16:55 -0400
+In-Reply-To: <1400655169-21683-3-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linaro-kernel@lists.linaro.org
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Rutland <Mark.Rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, rjw@rjwysocki.net, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On Wednesday 21 May 2014 09:15:34 Daniel Lezcano wrote:
-> On 05/15/2014 10:40 PM, Kukjin Kim wrote:
+On Wednesday 21 May 2014 12:22:48 Sachin Kamat wrote:
+>  # Configuration options for the EXYNOS4
+>  
+> +config ARCH_EXYNOS
+> +       bool "Samsung EXYNOS" if ARCH_MULTI_V7
+> +       select ARCH_HAS_BANDGAP
+> +       select ARCH_HAS_CPUFREQ
+> +       select ARCH_HAS_HOLES_MEMORYMODEL
+> +       select ARCH_REQUIRE_GPIOLIB
+> +       select ARM_AMBA
+> +       select ARM_GIC
+> +       select CLKSRC_OF
+> +       select COMMON_CLK_SAMSUNG
+> +       select CPU_V7
+> +       select GENERIC_CLOCKEVENTS
+> +       select HAVE_ARM_SCU if SMP
+> +       select HAVE_S3C2410_I2C if I2C
+> +       select HAVE_S3C2410_WATCHDOG if WATCHDOG
+> +       select HAVE_S3C_RTC if RTC_CLASS
+> +       select HAVE_SMP
+> +       select PINCTRL
+> +       select PINCTRL_EXYNOS
+> +       select PM_GENERIC_DOMAINS if PM_RUNTIME
+> +       select S5P_DEV_MFC
+> +       select SAMSUNG_DMADEV
+> +       select SPARSE_IRQ
+> +       select SRAM
+> +       select USE_OF
+> +       help
+> +         Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
+> +
 > 
-> [ ... ]
-> 
-> >>>> Exynos cpuidle is not a device on the SoC, so I don't think there is
-> >>>> any
-> >>>> way to represent it in DT. The only thing I could see this is matching
-> >>>> root node with a central SoC driver that instantiates specific
-> >>>> subdevices, such as cpufreq and cpuidle, but I don't see any available
-> >>>> infrastructure for this.
-> >>>
-> >>> There is a RFC for defining generic idle states [1].
-> >>>
-> >>> The idea behind using the platform driver framework is to unify the code
-> >>> across the different drivers and separate the PM / cpuidle code.
-> >>>
-> >>> By this way, we can move the different drivers to drivers/cpuidle and
-> >>> store them in a single place. That make easier the tracking, the review
-> >>> and the maintenance.
 
-Yes, that would be great. I only looked briefly at the series now, doesn't
-that require the use of psci? That's not a bad idea of course, but it
-doesn't solve the problem I raised here.
+A number of these can be removed now: SPARSE_IRQ, USE_OF, GENERIC_CLOCKEVENTS,
+CLKSRC_OF, CPU_V7 and HAVE_SMP are implied by ARCH_MULTIPLATFORM or ARCH_MULTI_V7,
+so we shouldn't duplicate them here.
 
-> >>> I am ok to by using platform_device_register_resndata() but I would
-> >>> prefer to do that a bit later by converting the other drivers too. That
-> >>> will be easier if we have them grouped in a single directory (this is
-> >>> what does this patchset at the end).
-> >>>
-> >>> As there are some more work based on this patchset and the link error
-> >>> could be fixed as an independent patch, I would recommend to
-> >>> re-integrate it in the tree as asked by Bartlomiej.
-> >>
-> >> In general, it would be nice to have everything done properly, but I'd
-> >> consider Daniel's series as a huge improvement already and a nice
-> >> intermediate step towards further clean-up.
-> >>
-> >> So based on the comments quoted above, instead of stalling the
-> >> development, I'd suggest to accept this series and then move forward.
-> >>
-> > I'm fine.
-> >
-> > Arnd, how about you?
-> >
-> > - Kukjin
-> 
-> Arnd ?
+I believe SAMSUNG_DMADEV cannot work in multiplatform, but we also don't need
+it any more.
 
-Sorry for the delay. Yes, let's do it this way once more, but please
-come up with something better for the future that doesn't tie the
-cpuidle method to the root compatible string as this does.
+The rest looks good.
 
 	Arnd
