@@ -1,74 +1,50 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 2/3] ARM: EXYNOS: Enable multi-platform build support
-Date: Wed, 21 May 2014 13:50:06 +0530
-Message-ID: <CAK9yfHxzvuPVt1pGdbt3f1i9g9mNzzL+Oa8oSRY+20xcNSMQ0A@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 0/3] Exynos multi-platform support
+Date: Wed, 21 May 2014 10:26:56 +0200
+Message-ID: <537C6350.2010707@gmail.com>
 References: <1400655169-21683-1-git-send-email-sachin.kamat@linaro.org>
-	<1400655169-21683-3-git-send-email-sachin.kamat@linaro.org>
-	<4352730.lnFJpo5XeV@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f44.google.com ([209.85.219.44]:55069 "EHLO
-	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750883AbaEUIUH (ORCPT
+Received: from mail-ee0-f50.google.com ([74.125.83.50]:48049 "EHLO
+	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751822AbaEUI1E (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 04:20:07 -0400
-Received: by mail-oa0-f44.google.com with SMTP id o6so1852810oag.17
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 01:20:07 -0700 (PDT)
-In-Reply-To: <4352730.lnFJpo5XeV@wuerfel>
+	Wed, 21 May 2014 04:27:04 -0400
+Received: by mail-ee0-f50.google.com with SMTP id e51so1296963eek.37
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 01:27:03 -0700 (PDT)
+In-Reply-To: <1400655169-21683-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, arnd@arndb.de
 
-On 21 May 2014 13:46, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wednesday 21 May 2014 12:22:48 Sachin Kamat wrote:
->>  # Configuration options for the EXYNOS4
->>
->> +config ARCH_EXYNOS
->> +       bool "Samsung EXYNOS" if ARCH_MULTI_V7
->> +       select ARCH_HAS_BANDGAP
->> +       select ARCH_HAS_CPUFREQ
->> +       select ARCH_HAS_HOLES_MEMORYMODEL
->> +       select ARCH_REQUIRE_GPIOLIB
->> +       select ARM_AMBA
->> +       select ARM_GIC
->> +       select CLKSRC_OF
->> +       select COMMON_CLK_SAMSUNG
->> +       select CPU_V7
->> +       select GENERIC_CLOCKEVENTS
->> +       select HAVE_ARM_SCU if SMP
->> +       select HAVE_S3C2410_I2C if I2C
->> +       select HAVE_S3C2410_WATCHDOG if WATCHDOG
->> +       select HAVE_S3C_RTC if RTC_CLASS
->> +       select HAVE_SMP
->> +       select PINCTRL
->> +       select PINCTRL_EXYNOS
->> +       select PM_GENERIC_DOMAINS if PM_RUNTIME
->> +       select S5P_DEV_MFC
->> +       select SAMSUNG_DMADEV
->> +       select SPARSE_IRQ
->> +       select SRAM
->> +       select USE_OF
->> +       help
->> +         Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
->> +
->>
->
-> A number of these can be removed now: SPARSE_IRQ, USE_OF, GENERIC_CLOCKEVENTS,
-> CLKSRC_OF, CPU_V7 and HAVE_SMP are implied by ARCH_MULTIPLATFORM or ARCH_MULTI_V7,
-> so we shouldn't duplicate them here.
+Hi,
 
-OK.
+On 21.05.2014 08:52, Sachin Kamat wrote:
+> The patches in this series were earlier sent as part of other
+> series. Now that the other patches have been merged, re-sending
+> these after rebasing them on linux-next (20140519).
+> Tested on Exynos4210, 4412, 5250 and 5420 based boards.
+> 
+> A particular change in this series is the removal of single platform
+> support for Exynos as suggested by Arnd and Olof (patch 2/3). With
+> this change certain features (drivers) which are not yet multi-platform
+> aware like cpufreq, devfreq and DRM based gscaler will not be available
+> now.
 
->
-> I believe SAMSUNG_DMADEV cannot work in multiplatform, but we also don't need
-> it any more.
+I really don't like this. Well, I don't care too much for devfreq and
+DRM Gscaler, as the the first one doesn't even support DT and Gscaler is
+usually used through a V4L2 driver, which should be fine. However
+cpufreq is quite important feature and it will be a serious regression
+in terms of performance (most boards don't boot at maximum frequency)
+and power consumption (no ability to scale the CPU down).
 
-Yes this is no longer needed now that we use generic DMA engine. Will
-remove this too.
-Thanks for the review.
+So my proposal here is to hack the cpufreq driver with a minimal amount
+of changes needed to compile and use it on multi-platform builds. I'll
+send a patch later today to show what I mean. It would have to be merged
+as a prerequisite for this series, to keep the history bisectable.
 
--- 
-With warm regards,
-Sachin
+Best regards,
+Tomasz
