@@ -1,37 +1,86 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v2 0/3] Support for multiple MFC FW sub-versions
-Date: Wed, 21 May 2014 14:59:28 +0530
-Message-ID: <1400664571-13746-1-git-send-email-arun.kk@samsung.com>
+Subject: [PATCH v2 1/3] [media] s5p-mfc: Remove duplicate function s5p_mfc_reload_firmware
+Date: Wed, 21 May 2014 14:59:29 +0530
+Message-ID: <1400664571-13746-2-git-send-email-arun.kk@samsung.com>
+References: <1400664571-13746-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:42753 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751547AbaEUJ3l (ORCPT
+Received: from mail-pd0-f172.google.com ([209.85.192.172]:57340 "EHLO
+	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752108AbaEUJ3p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 05:29:41 -0400
+	Wed, 21 May 2014 05:29:45 -0400
+In-Reply-To: <1400664571-13746-1-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: k.debski@samsung.com, s.nawrocki@samsung.com, posciak@chromium.org, avnd.kiran@samsung.com, sachin.kamat@linaro.org, t.figa@samsung.com, arunkk.samsung@gmail.com
 
-This patchset is for supporting multple firmware sub-versions
-for MFC. Newer firmwares come with changed interfaces and fixes
-without any change in the fw version number.
-So this implementation is as per Tomasz Figa's suggestion [1].
-[1] http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/31735
+The function s5p_mfc_reload_firmware is exactly same as
+s5p_mfc_load_firmware. So removing the duplicate function.
 
-Changes from v1
-- Addressed nits pointed by Sachin on PATCH 2/3
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c      |    2 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c |   33 -------------------------
+ 2 files changed, 1 insertion(+), 34 deletions(-)
 
-Arun Kumar K (3):
-  [media] s5p-mfc: Remove duplicate function s5p_mfc_reload_firmware
-  [media] s5p-mfc: Support multiple firmware sub-versions
-  [media] s5p-mfc: Add init buffer cmd to MFCV6
-
- drivers/media/platform/s5p-mfc/s5p_mfc.c        |   15 +++++---
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h |   11 +++++-
- drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c   |   44 ++++++-----------------
- drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |    6 ++--
- 4 files changed, 34 insertions(+), 42 deletions(-)
-
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 9ed0985..8da4c23 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -162,7 +162,7 @@ static void s5p_mfc_watchdog_worker(struct work_struct *work)
+ 	/* Double check if there is at least one instance running.
+ 	 * If no instance is in memory than no firmware should be present */
+ 	if (dev->num_inst > 0) {
+-		ret = s5p_mfc_reload_firmware(dev);
++		ret = s5p_mfc_load_firmware(dev);
+ 		if (ret) {
+ 			mfc_err("Failed to reload FW\n");
+ 			goto unlock;
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+index 6c3f8f7..c97c7c8 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+@@ -107,39 +107,6 @@ int s5p_mfc_load_firmware(struct s5p_mfc_dev *dev)
+ 	return 0;
+ }
+ 
+-/* Reload firmware to MFC */
+-int s5p_mfc_reload_firmware(struct s5p_mfc_dev *dev)
+-{
+-	struct firmware *fw_blob;
+-	int err;
+-
+-	/* Firmare has to be present as a separate file or compiled
+-	 * into kernel. */
+-	mfc_debug_enter();
+-
+-	err = request_firmware((const struct firmware **)&fw_blob,
+-				     dev->variant->fw_name, dev->v4l2_dev.dev);
+-	if (err != 0) {
+-		mfc_err("Firmware is not present in the /lib/firmware directory nor compiled in kernel\n");
+-		return -EINVAL;
+-	}
+-	if (fw_blob->size > dev->fw_size) {
+-		mfc_err("MFC firmware is too big to be loaded\n");
+-		release_firmware(fw_blob);
+-		return -ENOMEM;
+-	}
+-	if (!dev->fw_virt_addr) {
+-		mfc_err("MFC firmware is not allocated\n");
+-		release_firmware(fw_blob);
+-		return -EINVAL;
+-	}
+-	memcpy(dev->fw_virt_addr, fw_blob->data, fw_blob->size);
+-	wmb();
+-	release_firmware(fw_blob);
+-	mfc_debug_leave();
+-	return 0;
+-}
+-
+ /* Release firmware memory */
+ int s5p_mfc_release_firmware(struct s5p_mfc_dev *dev)
+ {
 -- 
 1.7.9.5
