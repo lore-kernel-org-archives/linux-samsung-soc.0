@@ -1,37 +1,74 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/3] ARM: dts: replace number by macro in clock binding
- for exynos4
-Date: Wed, 21 May 2014 14:13:45 +0530
-Message-ID: <CAK9yfHzPwp7dLERPJkVi0pN5SHmUXqHC4zC+MYqZrD7iW6_Tjw@mail.gmail.com>
-References: <537C664E.6060704@samsung.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 21 May 2014 10:50:38 +0200
+Message-ID: <4367469.BqpJyVF8PT@wuerfel>
+References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
+	<5612206.Fzsy1mf3q3@wuerfel> <20140521082606.GB11068@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:35780 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751425AbaEUInq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 04:43:46 -0400
-Received: by mail-oa0-f42.google.com with SMTP id j17so1870637oag.15
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 01:43:45 -0700 (PDT)
-In-Reply-To: <537C664E.6060704@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140521082606.GB11068@ulmo>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Beomho Seo <beomho.seo@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Beomho,
+On Wednesday 21 May 2014 10:26:11 Thierry Reding wrote:
+> On Tue, May 20, 2014 at 10:26:12PM +0200, Arnd Bergmann wrote:
+> > On Tuesday 20 May 2014 16:24:59 Dave Martin wrote:
+> > > On Tue, May 20, 2014 at 02:41:18PM +0200, Arnd Bergmann wrote:
+> > > > On Tuesday 20 May 2014 14:02:43 Thierry Reding wrote:
+> [...]
+> > > > > Multiple-master IOMMU:
+> > > > > ----------------------
+> > > > > 
+> > > > > 	iommu {
+> > > > > 		/* the specifier represents the ID of the master */
+> > > > > 		#address-cells = <1>;
+> > > > > 		#size-cells = <0>;
+> > > 
+> > > How do we know the size of the input address to the IOMMU?  Do we
+> > > get cases for example where the IOMMU only accepts a 32-bit input
+> > > address, but some 64-bit capable masters are connected through it?
+> > 
+> > I was stuck on this question for a while before, but then I realized
+> > that it doesn't matter at all: It's the IOMMU driver itself that
+> > manages the address space, and it doesn't matter if a slave can
+> > address a larger range than the IOMMU can accept. If the IOMMU
+> > needs to deal with the opposite case (64-bit input addresses
+> > but a 32-bit master), that limitation can be put into the specifier.
+> 
+> Isn't this what DMA masks are for? Couldn't the IOMMU simply use the
+> master device's DMA mask to do the right thing here?
 
-On 21 May 2014 14:09, Beomho Seo <beomho.seo@samsung.com> wrote:
-> This patch replaces magic number of MIPI DSI Master node with
-> macros in clock binding for exynos4
->
-> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-> ---
+Ah, yes. I guess that's the right way to do it.
 
-Looks good. All 3 patches
-Reviewed-by: Sachin Kamat <sachin.kamat@linaro.org>
+> > > For determining dma masks, it is the output address that it
+> > > important.  Santosh's code can probably be taught to handle this,
+> > > if given an additional traversal rule for following "iommus"
+> > > properties.  However, deploying an IOMMU whose output address size
+> > > is smaller than the 
+> > 
+> > Something seems to be missing here. I don't think we want to handle
+> > the case where the IOMMU output cannot the entire memory address
+> > space. If necessary, that would mean using both an IOMMU driver
+> > and swiotlb, but I think it's a reasonable assumption that hardware
+> > isn't /that/ crazy.
+> 
+> Similarily, should the IOMMU not be treated like any other device here?
+> Its DMA mask should determine what address range it can access.
 
--- 
-With warm regards,
-Sachin
+Right. But for that we need a dma-ranges property in the parent of the
+iommu, just so the mask can be set correctly and we don't have to
+rely on the 32-bit fallback case.
+
+	Arnd
