@@ -1,61 +1,37 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v2 3/3] [media] s5p-mfc: Add init buffer cmd to MFCV6
-Date: Wed, 21 May 2014 14:59:31 +0530
-Message-ID: <1400664571-13746-4-git-send-email-arun.kk@samsung.com>
-References: <1400664571-13746-1-git-send-email-arun.kk@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 21 May 2014 11:32:23 +0200
+Message-ID: <11242680.PQytQQqlPJ@wuerfel>
+References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com> <4506822.XX7GrvtHhk@wuerfel> <20140521090244.GB19268@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f43.google.com ([209.85.160.43]:36600 "EHLO
-	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751786AbaEUJ35 (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.131]:49628 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750796AbaEUJcj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 05:29:57 -0400
-In-Reply-To: <1400664571-13746-1-git-send-email-arun.kk@samsung.com>
+	Wed, 21 May 2014 05:32:39 -0400
+In-Reply-To: <20140521090244.GB19268@ulmo>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, s.nawrocki@samsung.com, posciak@chromium.org, avnd.kiran@samsung.com, sachin.kamat@linaro.org, t.figa@samsung.com, arunkk.samsung@gmail.com
+To: linux-arm-kernel@lists.infradead.org
+Cc: Thierry Reding <thierry.reding@gmail.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org, Cho KyongHo <pullip.cho@samsung.com>, Dave Martin <Dave.Martin@arm.com>
 
-Latest MFC v6 firmware requires tile mode and loop filter
-setting to be done as part of Init buffer command, in sync
-with v7. This patch adds this support for new v6 firmware.
+On Wednesday 21 May 2014 11:02:45 Thierry Reding wrote:
+> On Wed, May 21, 2014 at 10:54:42AM +0200, Arnd Bergmann wrote:
+>
+> > Right. As long as we always unmap the buffers from the IOMMU after they
+> > have stopped being in use, it's very unlikely that even a broken device
+> > driver causes a DMA into some bus address that happens to be mapped for
+> > another device.
+> 
+> I think that if buffers remain mapped in the IOMMU when they have been
+> deallocated that should be considered a bug.
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-Signed-off-by: Kiran AVND <avnd.kiran@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+You could see it as a performance optimization in some cases, e.g. when you
+cannot flush individual IOTLBs or doing so is expensive, and you just keep
+assigning new addresses until every one has been used, then you do a global
+IOTLB flush once. Obviously you have to maintain the IO page tables correctly.
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-index 4f5e0ea..c1c12f8 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
-@@ -48,6 +48,8 @@
- #define WRITEL(data, reg) \
- 	(WARN_ON_ONCE(!(reg)) ? 0 : writel((data), (reg)))
- 
-+#define IS_MFCV6_V2(dev) (!IS_MFCV7_PLUS(dev) && dev->fw_ver == MFC_FW_V2)
-+
- /* Allocate temporary buffers for decoding */
- static int s5p_mfc_alloc_dec_temp_buffers_v6(struct s5p_mfc_ctx *ctx)
- {
-@@ -1352,7 +1354,7 @@ static int s5p_mfc_init_decode_v6(struct s5p_mfc_ctx *ctx)
- 		WRITEL(ctx->display_delay, mfc_regs->d_display_delay);
- 	}
- 
--	if (IS_MFCV7_PLUS(dev)) {
-+	if (IS_MFCV7_PLUS(dev) || IS_MFCV6_V2(dev)) {
- 		WRITEL(reg, mfc_regs->d_dec_options);
- 		reg = 0;
- 	}
-@@ -1367,7 +1369,7 @@ static int s5p_mfc_init_decode_v6(struct s5p_mfc_ctx *ctx)
- 	if (ctx->dst_fmt->fourcc == V4L2_PIX_FMT_NV12MT_16X16)
- 		reg |= (0x1 << S5P_FIMV_D_OPT_TILE_MODE_SHIFT_V6);
- 
--	if (IS_MFCV7_PLUS(dev))
-+	if (IS_MFCV7_PLUS(dev) || IS_MFCV6_V2(dev))
- 		WRITEL(reg, mfc_regs->d_init_buffer_options);
- 	else
- 		WRITEL(reg, mfc_regs->d_dec_options);
--- 
-1.7.9.5
+	Arnd
