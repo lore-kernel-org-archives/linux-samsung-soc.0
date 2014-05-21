@@ -1,58 +1,99 @@
-From: Chirantan Ekbote <chirantan@chromium.org>
-Subject: Re: [PATCH] arm: dts: exynos5: Remove multi core timer
-Date: Wed, 21 May 2014 11:34:55 -0700
-Message-ID: <CAJFHJrpdVQ6G=-h5J_EgBT8+XSiyvPnNGR2yBDV27i8TDQ7jRg@mail.gmail.com>
-References: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
-	<53752E25.9060604@gmail.com>
-	<CAD=FV=WKOtZaUyzTWNqR=vi_L=U-Q1dct2U_oCYi3ZJv6401Hg@mail.gmail.com>
-	<53753443.8010303@gmail.com>
-	<CAD=FV=V8UZoeOqEwfx_E015pLM+amTt51LrUa+dk7mTdn=vKgA@mail.gmail.com>
-	<53753C17.1090002@gmail.com>
-	<CAD=FV=WGa7j_As_NpySxU7OEd_SzuGWK6oxU6UeiJ-4HsoWvvg@mail.gmail.com>
-	<CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com>
-	<CAASgrz2Nr69tpfC8ka9gbs2OvjLEGsvgAj4vBCFxhsamuFum7w@mail.gmail.com>
-	<53754CE2.3000905@gmail.com>
-	<CAD=FV=UMoL7i9rg_QtBAqPwisSQyRqRmk8wQhneMXAiLBjTT1A@mail.gmail.com>
-	<CAPz6YkU8GDrLj8UkqEQXxxqxWF5_p427wKSDgAp+QPR7WE7Ujg@mail.gmail.com>
-	<CAJFHJrrb2XFDZqJh4OuLdFP=J0aR4pGe-WLWKZ7ZpMfUSPGd4Q@mail.gmail.com>
-	<5376A726.4000106@samsung.com>
-	<CAD=FV=VXSP1TM9qY8PxFuQ+Tq2Ju57VdpzpwsHXqHshQm_havQ@mail.gmail.com>
-	<035001cf74f8$0aabdae0$200390a0$@samsung.com>
-	<537CD235.2020304@samsung.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: [PATCH] PM / devfreq: remove checks for CONFIG_EXYNOS_ASV
+Date: Wed, 21 May 2014 22:37:34 +0200
+Message-ID: <1400704654.30334.22.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:54850 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751786AbaEUSe4 (ORCPT
+Received: from cpsmtpb-ews10.kpnxchange.com ([213.75.39.15]:54319 "EHLO
+	cpsmtpb-ews10.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752837AbaEUUhh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 14:34:56 -0400
-Received: by mail-ob0-f178.google.com with SMTP id va2so2609033obc.37
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 11:34:55 -0700 (PDT)
-In-Reply-To: <537CD235.2020304@samsung.com>
+	Wed, 21 May 2014 16:37:37 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, David Riley <davidriley@google.com>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, May 21, 2014 at 9:20 AM, Tomasz Figa <t.figa@samsung.com> wrote:
-> On 21.05.2014 15:24, Kukjin Kim wrote:
->
->> BTW, since
->> exynos5260, exynos5420 and exynos5800 doesn't support arch timer, we
->> have been using MCT on exynos5 SoCs.
->
-> Hmm, I thought arch timer was a core feature of ARM Cortex A15 (and A7)
-> cores. Also you mention Exynos5420, while Chirantan's patch removing MCT
-> node from exynos5420.dtsi, would suggest that it worked for him fine. (I
-> assume it was tested.)
->
+Checks for CONFIG_EXYNOS_ASV were added in v3.3. But the related Kconfig
+symbol has never been added to the tree. Remove these checks, as they
+always evaluate to false.
 
-I was able to boot both 5420 and 5800 with just the arch timers on our
-3.8 based franken-kernel.  The upstream kernel doesn't boot on those
-systems with or without the mct so I wasn't able to test there.
-Although looking at the upstream device tree now I see that there is
-no entry for the arch timer in exynos5420.dtsi.  Maybe it should be
-added in?
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+---
+0) Untested.
 
-Chirantan
+1) I do not really care much for this patch. Two years is not very long
+for dead code to remain in the tree. There is, however, a trivial issue
+that makes this patch stand out from the other patches in my current
+sweep of the tree for Kconfig related problems.
+
+See, here the use of an unknown Kconfig macro hides an obvious typo: it
+should either be "exynos_result_of_asv" or "exynos4_result_of_asv", but
+not both. Ie, this almost certainly wouldn't have compiled even if the
+Kconfig symbol EXYNOS_ASV would have been part of the tree.
+
+2) So this makes me wonder whether there are any guidelines for using
+Kconfig macros before the related Kconfig symbols are merged?
+
+ drivers/devfreq/Kconfig              |  3 +--
+ drivers/devfreq/exynos/exynos4_bus.c | 13 -------------
+ 2 files changed, 1 insertion(+), 15 deletions(-)
+
+diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+index 7d2f43550700..fd985630ad7d 100644
+--- a/drivers/devfreq/Kconfig
++++ b/drivers/devfreq/Kconfig
+@@ -75,8 +75,7 @@ config ARM_EXYNOS4_BUS_DEVFREQ
+ 	  and Exynos4212/4412 memory interface and bus (vdd_mif + vdd_int).
+ 	  It reads PPMU counters of memory controllers and adjusts
+ 	  the operating frequencies and voltages with OPP support.
+-	  To operate with optimal voltages, ASV support is required
+-	  (CONFIG_EXYNOS_ASV).
++	  This does net yet operate with optimal voltages.
+ 
+ config ARM_EXYNOS5_BUS_DEVFREQ
+ 	bool "ARM Exynos5250 Bus DEVFREQ Driver"
+diff --git a/drivers/devfreq/exynos/exynos4_bus.c b/drivers/devfreq/exynos/exynos4_bus.c
+index e07b0c68c715..c12911a0915d 100644
+--- a/drivers/devfreq/exynos/exynos4_bus.c
++++ b/drivers/devfreq/exynos/exynos4_bus.c
+@@ -25,11 +25,6 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/module.h>
+ 
+-/* Exynos4 ASV has been in the mailing list, but not upstreamed, yet. */
+-#ifdef CONFIG_EXYNOS_ASV
+-extern unsigned int exynos_result_of_asv;
+-#endif
+-
+ #include <mach/map.h>
+ 
+ #include "exynos4_bus.h"
+@@ -837,11 +832,7 @@ static int exynos4210_init_tables(struct busfreq_data *data)
+ 		data->top_divtable[i] = tmp;
+ 	}
+ 
+-#ifdef CONFIG_EXYNOS_ASV
+-	tmp = exynos4_result_of_asv;
+-#else
+ 	tmp = 0; /* Max voltages for the reliability of the unknown */
+-#endif
+ 
+ 	pr_debug("ASV Group of Exynos4 is %d\n", tmp);
+ 	/* Use merged grouping for voltage */
+@@ -922,11 +913,7 @@ static int exynos4x12_init_tables(struct busfreq_data *data)
+ 		data->dmc_divtable[i] = tmp;
+ 	}
+ 
+-#ifdef CONFIG_EXYNOS_ASV
+-	tmp = exynos4_result_of_asv;
+-#else
+ 	tmp = 0; /* Max voltages for the reliability of the unknown */
+-#endif
+ 
+ 	if (tmp > 8)
+ 		tmp = 0;
+-- 
+1.9.0
