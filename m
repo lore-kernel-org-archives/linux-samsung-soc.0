@@ -1,54 +1,61 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [alsa-devel] [PATCH v2 1/2] ASoC: samsung: s3c24{xx, 12}-i2s:
- port to use generic dmaengine API
-Date: Wed, 21 May 2014 17:53:06 +0300
-Message-ID: <CA+E=qVd_M5wes5rwU0pkR7-4FDS8J-XKfajV7-efTtm=sy2==g@mail.gmail.com>
-References: <1400617569-7187-1-git-send-email-anarsoul@gmail.com> <537CA9F0.8000704@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH V5 18/20] ARM: exynos: cpuidle: Pass the AFTR callback to the platform_data
+Date: Wed, 21 May 2014 16:56:46 +0200
+Message-ID: <5367019.Bht3ZqI0ij@wuerfel>
+References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org> <11675203.TylGKV1VBZ@wuerfel> <537C6BA5.5080909@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:40720 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751425AbaEUOx1 (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.130]:64789 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752298AbaEUO5V (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 10:53:27 -0400
-Received: by mail-ob0-f169.google.com with SMTP id vb8so2277410obc.28
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 07:53:26 -0700 (PDT)
-In-Reply-To: <537CA9F0.8000704@samsung.com>
+	Wed, 21 May 2014 10:57:21 -0400
+In-Reply-To: <537C6BA5.5080909@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linaro-kernel@lists.linaro.org, Mark Rutland <Mark.Rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, rjw@rjwysocki.net, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On Wed, May 21, 2014 at 4:28 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Vasily,
+On Wednesday 21 May 2014 11:02:29 Daniel Lezcano wrote:
+> On 05/21/2014 10:10 AM, Arnd Bergmann wrote:
+> > On Wednesday 21 May 2014 09:15:34 Daniel Lezcano wrote:
+> >> On 05/15/2014 10:40 PM, Kukjin Kim wrote:
+> >>
+> >> [ ... ]
+> >>
+> >>>>>> Exynos cpuidle is not a device on the SoC, so I don't think there is
+> >>>>>> any
+> >>>>>> way to represent it in DT. The only thing I could see this is matching
+> >>>>>> root node with a central SoC driver that instantiates specific
+> >>>>>> subdevices, such as cpufreq and cpuidle, but I don't see any available
+> >>>>>> infrastructure for this.
+> >>>>>
+> >>>>> There is a RFC for defining generic idle states [1].
+> >>>>>
+> >>>>> The idea behind using the platform driver framework is to unify the code
+> >>>>> across the different drivers and separate the PM / cpuidle code.
+> >>>>>
+> >>>>> By this way, we can move the different drivers to drivers/cpuidle and
+> >>>>> store them in a single place. That make easier the tracking, the review
+> >>>>> and the maintenance.
+> >
+> > Yes, that would be great. I only looked briefly at the series now, doesn't
+> > that require the use of psci?
+> 
+> No, because PSCI is for some specific platform (eg. calxeda), all the 
+> other drivers are legacy and manually handling the PM via some low level 
+> callbacks. This is why all drivers were implemented all over the place 
+> making so difficult to maintain them. Little by little, we split the PM 
+> callbacks from the idle algorithm so reducing the platform dependency 
+> with the generic code.
+>
+> The PSCI implements such PM callbacks in the firmware directly and are 
+> accessed through an API. PSCI is, let's say some kindof nextgen cpuidle. 
+> It is similar than mwait on Intel. But if a new platform does not have 
+> such firmware, then the cpuidle driver will have the legacy format.
 
-Hi Tomasz,
+Ok, thanks for the exlanation.
 
-> Please remember to keep linux-samsung-soc ML on Cc when sending patches
-> related to Samsung platforms. It is essential to let Samsung people
-> review them.
-
-Ok, I'll keep it in mind. I've just checked and get_maintainer.pl
-outputs linux-samsung-soc ML for these
-patches. I've omitted it occasionally, because it wasn't necessary to
-keep it in CC back in 2011
-(year of my last sound-related patch for s3c24xx).
-
-> Please resend the series with this in mind.
-
-Is it really necessary? This patch is supposed to go through ASoC
-tree, not through Samsung's.
-And I really doubt that Samsung guys test kernel for s3c24xx boards nowadays.
-
-> The patch in general looks good to me. Might be a good idea to specify
-> on what board(s) and how it was tested, though.
-
-It was tested on s3c2410-based iPAQ h1940, s3c2412 part was only
-compile-tested, as I don't have s3c2412 hardware.
-
-> Best regards,
-> Tomasz
-
-Regards
-Vasily
+	Arnd
