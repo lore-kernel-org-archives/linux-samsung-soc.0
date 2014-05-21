@@ -1,66 +1,82 @@
-From: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
-Date: Wed, 21 May 2014 08:44:42 -0700
-Message-ID: <CANEJEGvhEsC9wKqX_pYmOg7LwsQkoN9=jjXJuW0UeEa9XywSPw@mail.gmail.com>
-References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
-	<4506822.XX7GrvtHhk@wuerfel> <20140521090244.GB19268@ulmo>
-	<11242680.PQytQQqlPJ@wuerfel>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/exynos: Make exynos_drm_init() call late during the
+ bootup
+Date: Wed, 21 May 2014 17:46:23 +0200
+Message-ID: <20140521154622.GO2014@ulmo>
+References: <1400067585-31236-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <11242680.PQytQQqlPJ@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="hOh8F6DNH/RZBSFD"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f53.google.com ([74.125.83.53]:61302 "EHLO
+	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751450AbaEUPsl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 May 2014 11:48:41 -0400
+Received: by mail-ee0-f53.google.com with SMTP id c13so1714674eek.40
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 08:48:40 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1400067585-31236-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, naveenkrishna.ch@gmail.com
 
-On Wed, May 21, 2014 at 2:32 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-> On Wednesday 21 May 2014 11:02:45 Thierry Reding wrote:
->> On Wed, May 21, 2014 at 10:54:42AM +0200, Arnd Bergmann wrote:
->>
->> > Right. As long as we always unmap the buffers from the IOMMU after they
->> > have stopped being in use, it's very unlikely that even a broken device
->> > driver causes a DMA into some bus address that happens to be mapped for
->> > another device.
->>
->> I think that if buffers remain mapped in the IOMMU when they have been
->> deallocated that should be considered a bug.
 
-There is currently no general requirement to tear down mappings immediately.
-An option to enforce immediate tear down might be useful since I agree
-Virtual Guests sharing host memory through shared physical devices
-will want that. ie there should be no opportunity for a shared device
-to be able to access another guests memory through "stale" (but live)
-DMA mappings. I don't think that's the case but I'd ask someone like
-Alex Williamson for a more certain answer.
+--hOh8F6DNH/RZBSFD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> You could see it as a performance optimization in some cases, e.g. when you
-> cannot flush individual IOTLBs or doing so is expensive, and you just keep
-> assigning new addresses until every one has been used, then you do a global
-> IOTLB flush once.
+On Wed, May 14, 2014 at 05:09:45PM +0530, Naveen Krishna Chatradhi wrote:
+> exynos_drm_init() does probing of various drivers like dp_panel,
+> hdmi, fimd, mixer, etc in an order and finally binds them together.
+>=20
+> Some of the drm devices (Eg: dp_panel) try to do regulator_get()
+> and enable few supplies during their probe.
+> Chances are that, these devices may get probed before the respective
+> supply/PMIC is hooked.  In such cases, dp_panel would continue with
+> "dummy regulator". Which is not what the system wants.
+>=20
+> Lets give the core connectivity and regulators modules some time
+> to hookup the supplies before Exynos DRM devices comes into picture.
+>=20
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> ---
+> This change is proposed after
+> 1. Discussing with I2C/SPI & DMA subsystem maintainers and Others
+>    @ https://lkml.org/lkml/2014/5/9/333
+>    Trying to change the I2C, SPI and DMA drivers as subsys_initcall()
+>    Which was strictly opposed, as a flaw was found in DRM subsystem.
+>=20
+> 2. -EPROBE_DEFER won't work well with the current sequency of
+>     platform_driver_register()s in exynos_drm_init()
 
-This is in fact exactly what several IOMMUs do - including the Intel
-IOMMU driver.
+Then this is the problem that you need to fix. If the driver doesn't
+handle -EPROBE_DEFER properly then that means the driver is broken. No
+amount of initcall ordering can fix this for you.
 
-IIRC, the Intel IOMMU driver collects 256 or so  entries to flush and
-then flushes them all at once and updates the metadata. I don't if it
-does this for ranges assigned to different virtual guests though or
-just within a given range.
+Thierry
 
-> Obviously you have to maintain the IO page tables correctly.
+--hOh8F6DNH/RZBSFD
+Content-Type: application/pgp-signature
 
-To be clear, "Correctly" in this case just means until the IOTLB is
-flushed, the given IOMMU Pdir entries are marked "in use" even though
-the driver has handed "ownership" back to the IOMMU driver.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-cheers,
-grant
+iQIcBAEBAgAGBQJTfMpOAAoJEN0jrNd/PrOh62cP/jn11L6lN8e5GmoSTJxltu9D
+hi/bvOp8CdlAwJVfxP2gNT/sa0jeLB0eV3SaTeGzq72q2tBZ44EiRP9TJsMnX56c
+nHZ2HF6xj9ACWtroLFHU3FbciBbMwxEV2Vv1XgHcJrpUzv2hFlGurEK6eMK/9cWO
+aRQC4IzA/JxRXbwCAy0V6guzPrnuilHqNi6PpUoZJVb1F+ZLAKpqU8HVCoI3mwrs
+dwqUhbtGkiu04uNHGqRxleex1hQ47LHKkhdeMFKjkejdw8FwSRrD1IG7RjAZmX9m
+LIkLINCiB1DLS8rODN1zdf9P/jQ7Nu/VlXZIqoDAz24WRO+NyqRpaS6shhEixEit
+ZNnWgYodKt/BFUY6D1JE6GJslTUoTGL8BALgyM2N92VuYvQF+Jd+j/3mtewzi5DV
+Dp5W9FLc/t8vIZ/iiTW4dLvVQPOlJ7ydIPikYiSz2GSQq92PjHq4v42jJCYWrrvs
+3jJ/y0a8VsH2jh0azzr3BSQEwwzPsD47waW7pzN3uYAF9KfV4QE9xdQBNjoSEAvO
+VOBPfMNFd7VYIJ5+mTtAvg2TahnOb+qcI8Enyj30R4oaL5jqtug1yQa+BosCDhrj
+2z4OPCoIEw+ux1pj0NWazrwW/G2n3gKRAH0kC4TiUbvO4n0ROJ8yMhPu4qq22Wei
+7olmZB4GSaSBrhB2niTn
+=lons
+-----END PGP SIGNATURE-----
+
+--hOh8F6DNH/RZBSFD--
