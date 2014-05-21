@@ -1,99 +1,87 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 3/3] ARM: multi_v7_defconfig: Enable Exynos platform
-Date: Wed, 21 May 2014 12:22:49 +0530
-Message-ID: <1400655169-21683-4-git-send-email-sachin.kamat@linaro.org>
-References: <1400655169-21683-1-git-send-email-sachin.kamat@linaro.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH V5 18/20] ARM: exynos: cpuidle: Pass the AFTR callback
+ to the platform_data
+Date: Wed, 21 May 2014 09:15:34 +0200
+Message-ID: <537C5296.7050801@linaro.org>
+References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org> <1397212815-16068-19-git-send-email-daniel.lezcano@linaro.org> <201405091256.54755.arnd@arndb.de> <536CC3C6.6070804@samsung.com> <5370E648.10006@linaro.org> <5374CA34.1030405@samsung.com> <5375262C.10805@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:61813 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751567AbaEUGzJ (ORCPT
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:46354 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750883AbaEUHPW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 02:55:09 -0400
-Received: by mail-pb0-f52.google.com with SMTP id rr13so1120379pbb.39
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 May 2014 23:55:08 -0700 (PDT)
-In-Reply-To: <1400655169-21683-1-git-send-email-sachin.kamat@linaro.org>
+	Wed, 21 May 2014 03:15:22 -0400
+Received: by mail-wi0-f176.google.com with SMTP id n15so7127975wiw.9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 00:15:21 -0700 (PDT)
+In-Reply-To: <5375262C.10805@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, arnd@arndb.de, sachin.kamat@linaro.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, Mark Rutland <Mark.Rutland@arm.com>, linux-samsung-soc@vger.kernel.org, rjw@rjwysocki.net, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, linaro-kernel@lists.linaro.org
 
-Enable Exynos platform and its related IPs.
+On 05/15/2014 10:40 PM, Kukjin Kim wrote:
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/configs/multi_v7_defconfig |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+[ ... ]
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 2fbafc529624..b76e978a62ae 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -48,6 +48,7 @@ CONFIG_ARCH_SPEAR13XX=y
- CONFIG_MACH_SPEAR1310=y
- CONFIG_MACH_SPEAR1340=y
- CONFIG_ARCH_STI=y
-+CONFIG_ARCH_EXYNOS=y
- CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_SIRF=y
- CONFIG_ARCH_TEGRA=y
-@@ -72,6 +73,7 @@ CONFIG_PCI_MSI=y
- CONFIG_PCI_MVEBU=y
- CONFIG_PCI_TEGRA=y
- CONFIG_SMP=y
-+CONFIG_NR_CPUS=8
- CONFIG_HIGHPTE=y
- CONFIG_CMA=y
- CONFIG_ARM_APPENDED_DTB=y
-@@ -155,6 +157,8 @@ CONFIG_SERIAL_8250_CONSOLE=y
- CONFIG_SERIAL_8250_DW=y
- CONFIG_SERIAL_AMBA_PL011=y
- CONFIG_SERIAL_AMBA_PL011_CONSOLE=y
-+CONFIG_SERIAL_SAMSUNG=y
-+CONFIG_SERIAL_SAMSUNG_CONSOLE=y
- CONFIG_SERIAL_SIRFSOC=y
- CONFIG_SERIAL_SIRFSOC_CONSOLE=y
- CONFIG_SERIAL_TEGRA=y
-@@ -178,6 +182,7 @@ CONFIG_I2C_MUX=y
- CONFIG_I2C_MUX_PCA954x=y
- CONFIG_I2C_MUX_PINCTRL=y
- CONFIG_I2C_DESIGNWARE_PLATFORM=y
-+CONFIG_I2C_EXYNOS5=y
- CONFIG_I2C_MV64XXX=y
- CONFIG_I2C_SIRF=y
- CONFIG_I2C_TEGRA=y
-@@ -213,6 +218,7 @@ CONFIG_MFD_AS3722=y
- CONFIG_MFD_CROS_EC=y
- CONFIG_MFD_CROS_EC_SPI=y
- CONFIG_MFD_MAX8907=y
-+CONFIG_MFD_SEC_CORE=y
- CONFIG_MFD_PALMAS=y
- CONFIG_MFD_TPS65090=y
- CONFIG_MFD_TPS6586X=y
-@@ -223,6 +229,8 @@ CONFIG_REGULATOR_AS3722=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_MAX8907=y
- CONFIG_REGULATOR_PALMAS=y
-+CONFIG_REGULATOR_S2MPS11=y
-+CONFIG_REGULATOR_S5M8767=y
- CONFIG_REGULATOR_TPS51632=y
- CONFIG_REGULATOR_TPS62360=y
- CONFIG_REGULATOR_TPS65090=y
-@@ -279,12 +287,16 @@ CONFIG_MMC_SDHCI=y
- CONFIG_MMC_SDHCI_ESDHC_IMX=y
- CONFIG_MMC_SDHCI_PXAV3=y
- CONFIG_MMC_SDHCI_TEGRA=y
-+CONFIG_MMC_SDHCI_S3C=y
- CONFIG_MMC_SDHCI_DOVE=y
- CONFIG_MMC_SDHCI_SPEAR=y
-+CONFIG_MMC_SDHCI_S3C_DMA=y
- CONFIG_MMC_SDHCI_BCM_KONA=y
- CONFIG_MMC_OMAP=y
- CONFIG_MMC_OMAP_HS=y
- CONFIG_MMC_MVSDIO=y
-+CONFIG_MMC_DW=y
-+CONFIG_MMC_DW_EXYNOS=y
- CONFIG_EDAC=y
- CONFIG_EDAC_MM_EDAC=y
- CONFIG_EDAC_HIGHBANK_MC=y
--- 
-1.7.9.5
+>>>> Exynos cpuidle is not a device on the SoC, so I don't think there =
+is
+>>>> any
+>>>> way to represent it in DT. The only thing I could see this is matc=
+hing
+>>>> root node with a central SoC driver that instantiates specific
+>>>> subdevices, such as cpufreq and cpuidle, but I don't see any avail=
+able
+>>>> infrastructure for this.
+>>>
+>>> There is a RFC for defining generic idle states [1].
+>>>
+>>> The idea behind using the platform driver framework is to unify the=
+ code
+>>> across the different drivers and separate the PM / cpuidle code.
+>>>
+>>> By this way, we can move the different drivers to drivers/cpuidle a=
+nd
+>>> store them in a single place. That make easier the tracking, the re=
+view
+>>> and the maintenance.
+>>>
+>>> I am ok to by using platform_device_register_resndata() but I would
+>>> prefer to do that a bit later by converting the other drivers too. =
+That
+>>> will be easier if we have them grouped in a single directory (this =
+is
+>>> what does this patchset at the end).
+>>>
+>>> As there are some more work based on this patchset and the link err=
+or
+>>> could be fixed as an independent patch, I would recommend to
+>>> re-integrate it in the tree as asked by Bartlomiej.
+>>
+>> In general, it would be nice to have everything done properly, but I=
+'d
+>> consider Daniel's series as a huge improvement already and a nice
+>> intermediate step towards further clean-up.
+>>
+>> So based on the comments quoted above, instead of stalling the
+>> development, I'd suggest to accept this series and then move forward=
+=2E
+>>
+> I'm fine.
+>
+> Arnd, how about you?
+>
+> - Kukjin
+
+Arnd ?
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
