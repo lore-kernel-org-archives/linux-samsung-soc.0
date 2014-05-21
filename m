@@ -1,79 +1,65 @@
-From: Beomho Seo <beomho.seo@samsung.com>
-Subject: [PATCH] Documentation: remove gpio-samsung device tree bindings
- documentation
-Date: Wed, 21 May 2014 20:22:27 +0900
-Message-ID: <537C8C73.8050606@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/1] ARM: EXYNOS: Fix compilation warning
+Date: Wed, 21 May 2014 16:56:33 +0530
+Message-ID: <CAK9yfHyFEb3hchLLndfqW1xOHD59d_bsFMA4k5MLJ8Hgpx7Ekw@mail.gmail.com>
+References: <1399282008-9738-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:14622 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751481AbaEULWf (ORCPT
+Received: from mail-oa0-f50.google.com ([209.85.219.50]:36187 "EHLO
+	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752874AbaEUL0f convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 07:22:35 -0400
+	Wed, 21 May 2014 07:26:35 -0400
+Received: by mail-oa0-f50.google.com with SMTP id i7so2063917oag.9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 04:26:33 -0700 (PDT)
+In-Reply-To: <1399282008-9738-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Myungjoo Ham <myungjoo.ham@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Rob Herring <robh@kernel.org>
 
-This patch remove gpio-samsung device tree bindings documentation.
-Already a pictrl driver used for exynos4 and 5. If want to know about
-gpio pin control(e.g. mux function, confiugration), refer to samsung-pinctrl
-device tree bindings documentation.
+On 5 May 2014 14:56, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> of_get_flat_dt_prop return type is now const.
+> Fixes the following compilation warning introduced by commit 9d0c4dfe=
+dd96
+> ("of/fdt: update of_get_flat_dt_prop in prep for libfdt")
+>
+> arch/arm/mach-exynos/exynos.c:259:6: warning:
+> assignment discards =E2=80=98const=E2=80=99 qualifier from pointer ta=
+rget type [enabled by default]
+>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Cc: Rob Herring <robh@kernel.org>
+> ---
+> Based on linux-next (20140505)
+> ---
+>  arch/arm/mach-exynos/exynos.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exy=
+nos.c
+> index 77293d39dfc9..f356c67a1fa9 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -249,7 +249,7 @@ static int __init exynos_fdt_map_chipid(unsigned =
+long node, const char *uname,
+>                                         int depth, void *data)
+>  {
+>         struct map_desc iodesc;
+> -       __be32 *reg;
+> +       const __be32 *reg;
+>         int len;
+>
+>         if (!of_flat_dt_is_compatible(node, "samsung,exynos4210-chipi=
+d") &&
+> --
+> 1.7.9.5
+>
 
-Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
----
- .../devicetree/bindings/gpio/gpio-samsung.txt      |   41 --------------------
- 1 file changed, 41 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+Ping. This warning is still seen in latest linux-next.
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-samsung.txt b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
-deleted file mode 100644
-index 5375625..0000000
---- a/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
-+++ /dev/null
-@@ -1,41 +0,0 @@
--Samsung Exynos4 GPIO Controller
--
--Required properties:
--- compatible: Compatible property value should be "samsung,exynos4-gpio>".
--
--- reg: Physical base address of the controller and length of memory mapped
--  region.
--
--- #gpio-cells: Should be 4. The syntax of the gpio specifier used by client nodes
--  should be the following with values derived from the SoC user manual.
--     <[phandle of the gpio controller node]
--      [pin number within the gpio controller]
--      [mux function]
--      [flags and pull up/down]
--      [drive strength]>
--
--  Values for gpio specifier:
--  - Pin number: is a value between 0 to 7.
--  - Flags and Pull Up/Down: 0 - Pull Up/Down Disabled.
--                            1 - Pull Down Enabled.
--                            3 - Pull Up Enabled.
--          Bit 16 (0x00010000) - Input is active low.
--  - Drive Strength: 0 - 1x,
--                    1 - 3x,
--                    2 - 2x,
--                    3 - 4x
--
--- gpio-controller: Specifies that the node is a gpio controller.
--- #address-cells: should be 1.
--- #size-cells: should be 1.
--
--Example:
--
--	gpa0: gpio-controller@11400000 {
--		#address-cells = <1>;
--		#size-cells = <1>;
--		compatible = "samsung,exynos4-gpio";
--		reg = <0x11400000 0x20>;
--		#gpio-cells = <4>;
--		gpio-controller;
--	};
--- 
-1.7.9.5
+--=20
+With warm regards,
+Sachin
