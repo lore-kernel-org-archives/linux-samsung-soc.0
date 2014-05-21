@@ -1,129 +1,131 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v2 00/18] drm/exynos: support MIPI DSI command mode display
-Date: Wed, 21 May 2014 13:42:52 +0900
-Message-ID: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:20104 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751148AbaEUEnQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 00:43:16 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: YoungJun Cho <yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: =?UTF-8?q?=5BPATCH=20v2=2003/18=5D=20ARM=3A=20dts=3A=20video=3A=20add=20command=20mode=20display=20timing=20DT=20bindings?=
+Date: Wed, 21 May 2014 13:42:55 +0900
+Message-ID: <1400647390-26590-4-git-send-email-yj44.cho@samsung.com>
+References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1400647390-26590-1-git-send-email-yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: airlied-cv59FeDIM0c@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, s.trumtrar-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, laurent.pinchart@ideasonboard.com, s.trumtrar@pengutronix.de, djkurtz@chromium.org, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com
 
-Hi,
+This patch adds DT bindings for command mode display timing.
 
-This series is for the Exynos DRM driver to support MIPI DSI command mode
-display and based on exynos-drm-next branch.
+Signed-off-by: YoungJun Cho <yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ .../bindings/video/cmdmode-display-timing.txt      |   64 ++++++++++++=
+++++++++
+ 1 file changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/video/cmdmode-dis=
+play-timing.txt
 
-The previous patches,
-RFC: http://www.spinics.net/lists/dri-devel/msg58898.html
-V1: http://www.spinics.net/lists/dri-devel/msg59291.html
-
-Changelog v2:
-- Rebases for latest exynos-drm-next branch
-- Fixes typo and removes unnecessary error log (commented by Andrzej Hazda)
-- Adds missed pendlig_flip flag clear points (commented by Daniel Kurtz)
-
-Patches 1 and 2 fix trivial bugs.
-
-Patches 3 and 4 introduce command mode and command mode display timing.
-These are based on video mode and (video mode) display timing.
-The MIPI DSI command mode interface panel does not require (video mode) display
-timing, but it requires signal timings to distinguish command data and video
-data so command mode and command mode display timing are used for it.
-
-Patch 5 converts command mode to drm display mode.
-
-Patches 6, 7, 8, 9 and 10 implement FIMD(display controller) I80 interface.
-The MIPI DSI command mode interface panel generates Tearing Effect
-synchronization signal between MCU and FB to display video image,
-and FIMD should trigger to transfer video image at this signal.
-So the panel should receive the TE IRQ then calls TE handler chains to notify
-it to the FIMD.
-
-Patches 11 and 12 implement to use Exynos5420 SoC DSI driver which is different
-from previous Exynos4 SoCs for some registers control.
-
-Patches 13 and 14 introduce MIPI DSI command interface Samsung S6E3FA0 AMOLED
-5.7" LCD panel driver.
-
-Patch 15 is device tree source file for Exynos4 SoCs to support MIPI DSI
-command mode.
-
-The others are device tree source files for Exynos5420 to support MIPI DSI
-(command mode) driver.
-
-I welcome any comments.
-
-Thank you.
-Best regards YJ
-
-YoungJun Cho (18):
-  drm/exynos: dsi: move the EoT packets configuration point
-  drm/exynos: use wait_event_timeout() for safety usage
-  ARM: dts: video: add command mode display timing DT bindings
-  video: add command mode and command mode display timing
-  drm_modes: add command mode helpers
-  ARM: dts: sysreg: add exynos5 compatible to DT bindings
-  ARM: dts: samsung-fimd: add I80 specific properties
-  drm/exynos: add TE handler to support MIPI DSI command mode interface
-  drm/exynos: dsi: add TE handler to support command mode interface
-  drm/exynos: fimd: support I80 interface
-  ARM: dts: exynos_dsim: add exynos5420 compatible to DT bindings
-  drm/exynos: dsi: add driver data to support Exynos5420
-  ARM: dts: s6e3fa0: add DT bindings
-  drm/panel: add S6E3FA0 driver
-  ARM: dts: exynos4: add system register node
-  ARM: dts: exynos5: add system register support
-  ARM: dts: exynos5420: add mipi-phy node
-  ARM: dts: exynos5420: add dsi node
-
- .../devicetree/bindings/arm/samsung/sysreg.txt     |    1 +
- .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   45 ++
- .../bindings/video/cmdmode-display-timing.txt      |   64 +++
- .../devicetree/bindings/video/exynos_dsim.txt      |    4 +-
- .../devicetree/bindings/video/samsung-fimd.txt     |    2 +
- arch/arm/boot/dts/exynos4.dtsi                     |    1 +
- arch/arm/boot/dts/exynos5.dtsi                     |    6 +
- arch/arm/boot/dts/exynos5420.dtsi                  |   20 +
- drivers/gpu/drm/drm_modes.c                        |   59 ++
- drivers/gpu/drm/exynos/Kconfig                     |    1 +
- drivers/gpu/drm/exynos/exynos_drm_crtc.c           |   18 +-
- drivers/gpu/drm/exynos/exynos_drm_crtc.h           |    7 +
- drivers/gpu/drm/exynos/exynos_drm_drv.h            |    3 +
- drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  175 +++++-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c           |  277 ++++++++--
- drivers/gpu/drm/panel/Kconfig                      |    7 +
- drivers/gpu/drm/panel/Makefile                     |    1 +
- drivers/gpu/drm/panel/panel-s6e3fa0.c              |  568 ++++++++++++++++++++
- drivers/video/Kconfig                              |    3 +
- drivers/video/Makefile                             |    2 +
- drivers/video/cmdmode.c                            |   42 ++
- drivers/video/cmdmode_display_timing.c             |   26 +
- drivers/video/of_cmdmode.c                         |   55 ++
- drivers/video/of_cmdmode_display_timing.c          |  212 ++++++++
- include/drm/drm_mipi_dsi.h                         |    8 +
- include/drm/drm_modes.h                            |   12 +
- include/video/cmdmode.h                            |   67 +++
- include/video/cmdmode_display_timing.h             |   59 ++
- include/video/of_cmdmode.h                         |   19 +
- include/video/of_cmdmode_display_timing.h          |   26 +
- include/video/samsung_fimd.h                       |    3 +-
- 31 files changed, 1722 insertions(+), 71 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
- create mode 100644 Documentation/devicetree/bindings/video/cmdmode-display-timing.txt
- create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
- create mode 100644 drivers/video/cmdmode.c
- create mode 100644 drivers/video/cmdmode_display_timing.c
- create mode 100644 drivers/video/of_cmdmode.c
- create mode 100644 drivers/video/of_cmdmode_display_timing.c
- create mode 100644 include/video/cmdmode.h
- create mode 100644 include/video/cmdmode_display_timing.h
- create mode 100644 include/video/of_cmdmode.h
- create mode 100644 include/video/of_cmdmode_display_timing.h
-
--- 
+diff --git a/Documentation/devicetree/bindings/video/cmdmode-display-ti=
+ming.txt b/Documentation/devicetree/bindings/video/cmdmode-display-timi=
+ng.txt
+new file mode 100644
+index 0000000..7cedfe4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/video/cmdmode-display-timing.tx=
+t
+@@ -0,0 +1,64 @@
++cmdmode-display-timing bindings
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++
++cmdmode-display-timings node
++--------------------------------
++
++required properties:
++ - none
++
++optional properties:
++ - native-mode: The native mode for the display, in case multiple mode=
+s are
++		provided. When omitted, assume the first node is the native.
++
++timing subnode
++--------------
++
++required properties:
++ - clock-frequency: display clock in Hz
++ - hactive, vactive: display resolution
++ - cs-setup: clock cycles for the active period of address signal is e=
+nabled
++		until chip select is enabled.
++ - wr-setup: clock cycles for the active period of CS signal is enable=
+d until
++		write signal is enabled.
++ - wr-active: clock cycles for the active period of CS is enabled.
++ - wr-hold: clock cycles for the active period of CS is disabled until=
+ write
++		signal is disabled.
++
++optional properties:
++
++There are different ways of describing the capabilities of a display. =
+The
++devicetree representation corresponds to the one commonly found in dat=
+asheets
++for displays. If a display supports multiple signal timings, the nativ=
+e-mode
++can be specified.
++
++The parameters are defined as:
++
++  VCLK(internal)  __|=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|_____|=C2=AF=
+=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|_____|=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=
+|_____|=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|_____|=C2=AF=C2=AF
++                    :            :            :            :          =
+  :
++  Address Output  --:<XXXXXXXXXXX:XXXXXXXXXXXX:XXXXXXXXXXXX:XXXXXXXXXX=
+XX:XX
++                    | CS-SETUP+1 |            :            :          =
+  :
++                    |<---------->|            :            :          =
+  :
++  Chip Select     =C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=
+=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|____________:____________:________=
+____|=C2=AF=C2=AF
++                                 | WR-SETUP+1 |            | WR-HOLD+1=
+  |
++                                 |<---------->|            |<---------=
+->|
++  Write Enable    =C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=
+=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=
+=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|____________|=C2=AF=C2=AF=C2=
+=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=
+=AF
++                                              | WR-ACTIVE+1|
++                                              |<---------->|
++  Video Data      ----------------------------<XXXXXXXXXXXXXXXXXXXXXXX=
+XX>--
++
++Example:
++
++	cmdmode-display-timings {
++		native-mode =3D <&timing0>;
++		timing0: 1080p24 {
++			/* 1920x1080p24 */
++			clock-frequency =3D <52000000>;
++			hactive =3D <1920>;
++			vactive =3D <1080>;
++			cs-setup =3D <0>;
++			wr-setup =3D <0>;
++			wr-active =3D <1>;
++			wr-hold =3D <0>;
++		};
++	};
+--=20
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
