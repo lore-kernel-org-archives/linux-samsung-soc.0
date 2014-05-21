@@ -1,102 +1,61 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] arm: dts: exynos5: Remove multi core timer
-Date: Wed, 21 May 2014 21:47:20 +0900
-Message-ID: <033a01cf74f2$d025ce80$70716b80$@samsung.com>
-References: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
- <53752E25.9060604@gmail.com>
- <CAD=FV=WKOtZaUyzTWNqR=vi_L=U-Q1dct2U_oCYi3ZJv6401Hg@mail.gmail.com>
- <53753443.8010303@gmail.com>
- <CAD=FV=V8UZoeOqEwfx_E015pLM+amTt51LrUa+dk7mTdn=vKgA@mail.gmail.com>
- <53753C17.1090002@gmail.com>
- <CAD=FV=WGa7j_As_NpySxU7OEd_SzuGWK6oxU6UeiJ-4HsoWvvg@mail.gmail.com>
- <CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com>
- <CAASgrz2Nr69tpfC8ka9gbs2OvjLEGsvgAj4vBCFxhsamuFum7w@mail.gmail.com>
- <53754CE2.3000905@gmail.com>
- <CAD=FV=UMoL7i9rg_QtBAqPwisSQyRqRmk8wQhneMXAiLBjTT1A@mail.gmail.com>
- <CAPz6YkU8GDrLj8UkqEQXxxqxWF5_p427wKSDgAp+QPR7WE7Ujg@mail.gmail.com>
- <CAJFHJrrb2XFDZqJh4OuLdFP=J0aR4pGe-WLWKZ7ZpMfUSPGd4Q@mail.gmail.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH] i2c: exynos5: Initialise Samsung High Speed I2C
+ controller early
+Date: Wed, 21 May 2014 15:00:43 +0200
+Message-ID: <20140521130043.GA2628@katana>
+References: <1398350916-885-1-git-send-email-ch.naveen@samsung.com>
+ <20140424162558.GB12304@sirena.org.uk>
+ <CAHfPSqB5+mLiC07jbEpeUgW63pZVk700SkYGxToO7GRAsFm_nQ@mail.gmail.com>
+ <20140509135153.GM12304@sirena.org.uk>
+ <CAHfPSqDSTyQXPT-NCZ2hE01qpdmaR54tbWCUYC_zSDGFp58+7g@mail.gmail.com>
+ <20140509145425.GP12304@sirena.org.uk>
+ <20140521102515.GJ2708@katana>
+ <CAHfPSqCOnW4YGPfMfpBMbLSaiSxRN=CHJK6kYdkXMujKvNwAPA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:44086 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752508AbaEUMr1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 08:47:27 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5X00G6SCV0VS80@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 May 2014 21:47:24 +0900 (KST)
-In-reply-to: <CAJFHJrrb2XFDZqJh4OuLdFP=J0aR4pGe-WLWKZ7ZpMfUSPGd4Q@mail.gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAHfPSqCOnW4YGPfMfpBMbLSaiSxRN=CHJK6kYdkXMujKvNwAPA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chirantan Ekbote' <chirantan@chromium.org>, 'Sonny Rao' <sonnyrao@chromium.org>
-Cc: 'Doug Anderson' <dianders@chromium.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'David Riley' <davidriley@google.com>, 'Russell King' <linux@arm.linux.org.uk>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
-
-Chirantan Ekbote wrote:
-> 
-> >>> Anyway, I'm by no means opposed to switching to arch timers. They
-> >>> provide a well designed, generic interface and drivers shared by
-> >>> multiple platforms, which means more code sharing and possibly more eyes
-> >>> looking at the code, which is always good. However if they don't support
-> >>> low power states correctly, we can't just remove MCT.
-> >>
-> >> I think low power states aren't in mainline (right?).
-> >>
-> >> One solution that might work could be to leave the device tree entry
-> >> alone but change the MCT init code to simply act as a no-op if it sees
-> >> an arch timer is in the device tree and enabled.  Then when/if someone
-> >> got the low power states enabled we could just change source code
-> >> rather than dts files.
-> >>
-> Doug and I were talking about this and we think we may have a way to
-> have the mct and arch timers co-exist.  The main issue is that the mct
-> (and therefore arch timer) gets cleared once during boot and every
-> time we do a suspend / resume.  This happens in
-> exynos4_mct_frc_start() but it's not immediately clear to us why the
-> counter needs to be reset at all.  If we remove the lines that clear
-> the counter then there is no longer an issue with having both the mct
-> and the arch timers on at the same time.
-> 
-Yeah, actually we don't need to reset the count value after suspend/resume.
-So, how about following? I think, it should be fine to you.
-
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 8d64200..d24db6f 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -157,12 +157,15 @@ static void exynos4_mct_frc_start(u32 hi, u32 lo)
- {
- 	u32 reg;
- 
--	exynos4_mct_write(lo, EXYNOS4_MCT_G_CNT_L);
--	exynos4_mct_write(hi, EXYNOS4_MCT_G_CNT_U);
--
- 	reg = __raw_readl(reg_base + EXYNOS4_MCT_G_TCON);
--	reg |= MCT_G_TCON_START;
--	exynos4_mct_write(reg, EXYNOS4_MCT_G_TCON);
-+
-+	if (!(reg & MCT_G_TCON_START)) {
-+		exynos4_mct_write(lo, EXYNOS4_MCT_G_CNT_L);
-+		exynos4_mct_write(hi, EXYNOS4_MCT_G_CNT_U);
-+
-+		reg |= MCT_G_TCON_START;
-+		exynos4_mct_write(reg, EXYNOS4_MCT_G_TCON);
-+	}
- }
 
 
-> Alternately, if there is some code that depends on the mct being reset
-> we could store an offset instead of clearing the counter and then
-> subtract that offset every time something reads it.  Doug has a patch
-> that does this at
-> https://chromium-review.googlesource.com/#/c/200298/.  Effectively the
-> visible behavior will not change.  Would either of these options work?
-> 
-Hmm...I cannot open the webpage :(
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-- Kukjin
+
+> Kindly, suggest a workable approach for all the subsystems.
+
+Keep this patch out-of-tree? I know that probe ordering causes problems,
+and that it needs major efforts. Yet, I understood that adding more and
+more subsys_initcall to mainline is not going to help the process unless
+essential. Using subsys_initcall has issues, too.
+
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTfKN7AAoJEBQN5MwUoCm2hNcP/A+xeI3nO4vZCWuEdMXs2+qa
+KxPBorEF0k0xzIcFFkwRWjJEcm1nq/gkQbe0XJlmdi5uSkWN0FyGKtggY+6jNxCR
+JCpwk50eGKfVtR/0B0KLuzrlkDckqwY13tZG8ySTAuYzcRA8TO6oVMjS8Hdy5Tmo
+fYTNFWiMOVpGa3Nws71oWiEfqSVNXJDN3JOg6kHEiTjZvR1I3UExxxojOyV6PDqe
+uuFFcdXNqNPrwr/9IlzSJKqwOaJp165WQtaSNdjvVK9JNa9xiMwaL6/5lbkAYyVY
+jeAIS/IuLTQwNPQ0bGSzPxjx/RAKvyEfu+GdloaPBjH9I3lhLHd7Wajd8CQlr8aZ
+KDt4hiAQKpyawX2+wElQi6FCwxD3ZatMAGfXDakj4VbzjCIzhuy84wGYjfK01fJU
+m1RHNiqueKTLRdwMuQsck2FtSiXnJWwROb4uy/bo09K79n71/45H9ZMRNz4+mGS/
+6Bj7K4Z5zaM1lVusfmBqbz45vglL472qONZBZGAEMsUGq7hSlgkklfDdMJAIrDAp
+KodVfiNR/S2iuvqXo/68wISDTtX2BLZGPqvqcsuPUfS2vdsvQwYWvLMBDTSxy8my
+IpaW4OlL0p0YIgCRyM4xbRioH/aMDJQElrouL8AEqpHpbHeJTIx14Vc7Ug/t2dMA
+jfk+Ywssv7mOYleBgj7U
+=30LS
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
