@@ -1,62 +1,78 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v4 0/3] clk: s2mps11: Fixes and add support for S2MPS14 clocks
-Date: Wed, 21 May 2014 13:22:58 +0200
-Message-ID: <1400671381-14792-1-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v4 1/3] clk: s2mps11: Add missing of_node_put and
+ of_clk_del_provider
+Date: Wed, 21 May 2014 13:22:59 +0200
+Message-ID: <1400671381-14792-2-git-send-email-k.kozlowski@samsung.com>
+References: <1400671381-14792-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1400671381-14792-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Mike Turquette <mturquette@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: Lee Jones <lee.jones@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Add of_clk_del_provider to remove previously registered clock provider.
+Add of_node_put to decrement the ref count of clock nodes.
 
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/clk-s2mps11.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-This is actually a resend of previous patches, rebased on latest
-3.15-rc5. There are no changes, beside rebasing.
-
-The first two fixes were posted previously as separate patches and they
-didn't get review [1]. I am attaching them here.
-The last patch adds support for S2MPS14 device and already was
-reviewed/acked [2].
-
-Mike, could you pick them up or should they go through MFD tree?
-
-
-[1] https://lkml.org/lkml/2014/4/7/42
-[2] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/28039/focus=310279
-
-
-Changes since v3:
-=================
-1. Add Mike's acked-by (see [2]).
-2. Rebase patch 3/3 on the fixes (patches 1 and 2).
-3. Rebase on v3.15-rc5-157-g60b5f90d0fac
-
-Changes since v2:
-=================
-1. Patch 2/3: Remove MFD cells of_compatible which aren't used by child
-   drivers and are not documented.
-2. Added Tomasz's Review-by.
-
-Changes since v1:
-=================
-1. Patch 1/3: Update driver description in Kconfig.
-2. Patch 2/3: Add of_compatible to all MFD cells.
-3. Add Yadwinder's Review-by.
-
-
-Best regards,
-Krzysztof
-
-
-Krzysztof Kozlowski (3):
-  clk: s2mps11: Add missing of_node_put and of_clk_del_provider
-  clk: s2mps11: Remove useless check for clk_table
-  clk: s2mps11: Add support for S2MPS14 clocks
-
- drivers/clk/Kconfig       |  8 ++---
- drivers/clk/clk-s2mps11.c | 88 +++++++++++++++++++++++++++++++++--------------
- 2 files changed, 66 insertions(+), 30 deletions(-)
-
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index f2f62a1bf61a..843ec3646501 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -44,6 +44,7 @@ enum {
+ 
+ struct s2mps11_clk {
+ 	struct sec_pmic_dev *iodev;
++	struct device_node *clk_np;
+ 	struct clk_hw hw;
+ 	struct clk *clk;
+ 	struct clk_lookup *lookup;
+@@ -156,7 +157,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ {
+ 	struct sec_pmic_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+ 	struct s2mps11_clk *s2mps11_clks, *s2mps11_clk;
+-	struct device_node *clk_np = NULL;
+ 	unsigned int s2mps11_reg;
+ 	int i, ret = 0;
+ 	u32 val;
+@@ -168,9 +168,10 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 
+ 	s2mps11_clk = s2mps11_clks;
+ 
+-	clk_np = s2mps11_clk_parse_dt(pdev);
+-	if (IS_ERR(clk_np))
+-		return PTR_ERR(clk_np);
++	/* Store clocks of_node in first element of s2mps11_clks array */
++	s2mps11_clks->clk_np = s2mps11_clk_parse_dt(pdev);
++	if (IS_ERR(s2mps11_clks->clk_np))
++		return PTR_ERR(s2mps11_clks->clk_np);
+ 
+ 	switch(platform_get_device_id(pdev)->driver_data) {
+ 	case S2MPS11X:
+@@ -225,7 +226,8 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 
+ 		clk_data.clks = clk_table;
+ 		clk_data.clk_num = S2MPS11_CLKS_NUM;
+-		of_clk_add_provider(clk_np, of_clk_src_onecell_get, &clk_data);
++		of_clk_add_provider(s2mps11_clks->clk_np,
++				of_clk_src_onecell_get, &clk_data);
+ 	}
+ 
+ 	platform_set_drvdata(pdev, s2mps11_clks);
+@@ -250,6 +252,10 @@ static int s2mps11_clk_remove(struct platform_device *pdev)
+ 	struct s2mps11_clk *s2mps11_clks = platform_get_drvdata(pdev);
+ 	int i;
+ 
++	of_clk_del_provider(s2mps11_clks[0].clk_np);
++	/* Drop the reference obtained in s2mps11_clk_parse_dt */
++	of_node_put(s2mps11_clks[0].clk_np);
++
+ 	for (i = 0; i < S2MPS11_CLKS_NUM; i++)
+ 		clkdev_drop(s2mps11_clks[i].lookup);
+ 
 -- 
 1.9.1
