@@ -1,77 +1,58 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [alsa-devel] [PATCH v2 1/2] ASoC: samsung: s3c24{xx, 12}-i2s: port to use generic dmaengine API
-Date: Wed, 21 May 2014 17:56:41 +0200
-Message-ID: <27469899.QpTIQjlnqG@phil>
-References: <1400617569-7187-1-git-send-email-anarsoul@gmail.com> <45188858.i0tHnasRTk@phil> <CA+E=qVfXb2BeEsPcwnvKSiYRtP=HL6J_OLv+yrpg16kg74zJzQ@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 21 May 2014 18:01:06 +0200
+Message-ID: <4376848.aihqtRyYDl@wuerfel>
+References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com> <11242680.PQytQQqlPJ@wuerfel> <CANEJEGvhEsC9wKqX_pYmOg7LwsQkoN9=jjXJuW0UeEa9XywSPw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:43369 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751148AbaEUPxT convert rfc822-to-8bit (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.187]:60235 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752611AbaEUQBQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 11:53:19 -0400
-In-Reply-To: <CA+E=qVfXb2BeEsPcwnvKSiYRtP=HL6J_OLv+yrpg16kg74zJzQ@mail.gmail.com>
+	Wed, 21 May 2014 12:01:16 -0400
+In-Reply-To: <CANEJEGvhEsC9wKqX_pYmOg7LwsQkoN9=jjXJuW0UeEa9XywSPw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Grant Grundler <grundler@chromium.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thierry Reding <thierry.reding@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Linux DeviceTree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, Will Deacon <will.deacon@arm.com>, LKML <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org, Cho KyongHo <pullip.cho@samsung.com>, Dave Martin <Dave.Martin@arm.com>
 
-Am Mittwoch, 21. Mai 2014, 18:39:26 schrieb Vasily Khoruzhick:
-> On Wed, May 21, 2014 at 6:29 PM, Heiko St=FCbner <heiko@sntech.de> wr=
-ote:
-> > Am Mittwoch, 21. Mai 2014, 17:07:47 schrieb Tomasz Figa:
-> >> On 21.05.2014 16:53, Vasily Khoruzhick wrote:
-> >> > On Wed, May 21, 2014 at 4:28 PM, Tomasz Figa <t.figa@samsung.com=
-> wrote:
-> >> >> Please remember to keep linux-samsung-soc ML on Cc when sending
-> >> >> patches
-> >> >> related to Samsung platforms. It is essential to let Samsung pe=
-ople
-> >> >> review them.
-> >> >=20
-> >> > Ok, I'll keep it in mind. I've just checked and get_maintainer.p=
-l
-> >> > outputs linux-samsung-soc ML for these
-> >> > patches. I've omitted it occasionally, because it wasn't necessa=
-ry to
-> >> > keep it in CC back in 2011
-> >> > (year of my last sound-related patch for s3c24xx).
-> >> >=20
-> >> >> Please resend the series with this in mind.
-> >> >=20
-> >> > Is it really necessary? This patch is supposed to go through ASo=
-C
-> >> > tree, not through Samsung's.
-> >> > And I really doubt that Samsung guys test kernel for s3c24xx boa=
-rds
-> >> > nowadays.
-> >>=20
-> >> Maybe not test, but at least review the code. Also there might be =
-other
-> >> people following that list that might be interested in looking at =
-this
-> >> series, while not subscribed to alsa-devel - I can name at least H=
-eiko
-> >> St=FCbner, who should be able to test it on further s3c24xx-based =
-boards.
-> >=20
-> > Sadly, I don't have a working sound setup on my 2 s3c boards.
->=20
-> What are they btw? Is it too time-consuming to make sound working on =
-them?
-> It would be nice if anyone except me could test these patches.
+On Wednesday 21 May 2014 08:44:42 Grant Grundler wrote:
+> On Wed, May 21, 2014 at 2:32 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Wednesday 21 May 2014 11:02:45 Thierry Reding wrote:
+> >> On Wed, May 21, 2014 at 10:54:42AM +0200, Arnd Bergmann wrote:
+> >>
+> >> > Right. As long as we always unmap the buffers from the IOMMU after they
+> >> > have stopped being in use, it's very unlikely that even a broken device
+> >> > driver causes a DMA into some bus address that happens to be mapped for
+> >> > another device.
+> >>
+> >> I think that if buffers remain mapped in the IOMMU when they have been
+> >> deallocated that should be considered a bug.
+> 
+> There is currently no general requirement to tear down mappings immediately.
+> An option to enforce immediate tear down might be useful since I agree
+> Virtual Guests sharing host memory through shared physical devices
+> will want that. ie there should be no opportunity for a shared device
+> to be able to access another guests memory through "stale" (but live)
+> DMA mappings. I don't think that's the case but I'd ask someone like
+> Alex Williamson for a more certain answer.
 
-Openmoko Freerunner (S3C2440) where there may be sound reachable somewa=
-y and a=20
-"Oyo" ebook-reader (S3C2416) whose i2s is I think compatible with the s=
-3c64xx=20
-instead of the s3c24xx ones and with a completely unsupported codec.
+I believe powerpc has a boot-time option to enforce the immediate
+IOTLB flush, which is very useful for device driver debugging when
+something goes wrong with stale DMAs.
 
-But in general I'm fairly confident that if you hear sounds on your dev=
-ice your=20
-conversion would be fine test-wise :-)
+> > Obviously you have to maintain the IO page tables correctly.
+> 
+> To be clear, "Correctly" in this case just means until the IOTLB is
+> flushed, the given IOMMU Pdir entries are marked "in use" even though
+> the driver has handed "ownership" back to the IOMMU driver.
 
+I don't know what a Pdir is, but I guess strictly speaking we have
+to ensure that all IO page table entries that have been unmapped by
+a driver are marked as invalid at least by the time the IOTLB is flushed,
+plus we have to flush each entry before it gets reused for a different
+page.
 
-Heiko
+	Arnd
