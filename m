@@ -1,56 +1,110 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [alsa-devel] [PATCH v2 1/2] ASoC: samsung: s3c24{xx, 12}-i2s: port to use generic dmaengine API
-Date: Wed, 21 May 2014 17:29:41 +0200
-Message-ID: <45188858.i0tHnasRTk@phil>
-References: <1400617569-7187-1-git-send-email-anarsoul@gmail.com> <CA+E=qVd_M5wes5rwU0pkR7-4FDS8J-XKfajV7-efTtm=sy2==g@mail.gmail.com> <537CC143.9050307@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] arm: dts: exynos5: Remove multi core timer
+Date: Wed, 21 May 2014 08:30:38 -0700
+Message-ID: <CAOesGMiZ1rk5R_hyqZe6ud+oKqD70_tS1vbRuJRLu+OJ8F7Cjw@mail.gmail.com>
+References: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
+	<53752E25.9060604@gmail.com>
+	<CAD=FV=WKOtZaUyzTWNqR=vi_L=U-Q1dct2U_oCYi3ZJv6401Hg@mail.gmail.com>
+	<53753443.8010303@gmail.com>
+	<CAD=FV=V8UZoeOqEwfx_E015pLM+amTt51LrUa+dk7mTdn=vKgA@mail.gmail.com>
+	<53753C17.1090002@gmail.com>
+	<CAD=FV=WGa7j_As_NpySxU7OEd_SzuGWK6oxU6UeiJ-4HsoWvvg@mail.gmail.com>
+	<CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com>
+	<CAASgrz2Nr69tpfC8ka9gbs2OvjLEGsvgAj4vBCFxhsamuFum7w@mail.gmail.com>
+	<53754CE2.3000905@gmail.com>
+	<CAD=FV=UMoL7i9rg_QtBAqPwisSQyRqRmk8wQhneMXAiLBjTT1A@mail.gmail.com>
+	<CAPz6YkU8GDrLj8UkqEQXxxqxWF5_p427wKSDgAp+QPR7WE7Ujg@mail.gmail.com>
+	<CAJFHJrrb2XFDZqJh4OuLdFP=J0aR4pGe-WLWKZ7ZpMfUSPGd4Q@mail.gmail.com>
+	<5376A726.4000106@samsung.com>
+	<CAD=FV=VXSP1TM9qY8PxFuQ+Tq2Ju57VdpzpwsHXqHshQm_havQ@mail.gmail.com>
+	<035001cf74f8$0aabdae0$200390a0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:43030 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752181AbaEUP0W convert rfc822-to-8bit (ORCPT
+Received: from mail-qg0-f42.google.com ([209.85.192.42]:55708 "EHLO
+	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752770AbaEUPaj convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 11:26:22 -0400
-In-Reply-To: <537CC143.9050307@samsung.com>
+	Wed, 21 May 2014 11:30:39 -0400
+Received: by mail-qg0-f42.google.com with SMTP id q107so3539730qgd.29
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 08:30:38 -0700 (PDT)
+In-Reply-To: <035001cf74f8$0aabdae0$200390a0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Vasily Khoruzhick <anarsoul@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, Chirantan Ekbote <chirantan@chromium.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, David Riley <davidriley@google.com>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Am Mittwoch, 21. Mai 2014, 17:07:47 schrieb Tomasz Figa:
-> On 21.05.2014 16:53, Vasily Khoruzhick wrote:
-> > On Wed, May 21, 2014 at 4:28 PM, Tomasz Figa <t.figa@samsung.com> w=
-rote:
-> >> Please remember to keep linux-samsung-soc ML on Cc when sending pa=
-tches
-> >> related to Samsung platforms. It is essential to let Samsung peopl=
-e
-> >> review them.
-> >=20
-> > Ok, I'll keep it in mind. I've just checked and get_maintainer.pl
-> > outputs linux-samsung-soc ML for these
-> > patches. I've omitted it occasionally, because it wasn't necessary =
-to
-> > keep it in CC back in 2011
-> > (year of my last sound-related patch for s3c24xx).
-> >=20
-> >> Please resend the series with this in mind.
-> >=20
-> > Is it really necessary? This patch is supposed to go through ASoC
-> > tree, not through Samsung's.
-> > And I really doubt that Samsung guys test kernel for s3c24xx boards
-> > nowadays.
-> Maybe not test, but at least review the code. Also there might be oth=
-er
-> people following that list that might be interested in looking at thi=
-s
-> series, while not subscribed to alsa-devel - I can name at least Heik=
-o
-> St=FCbner, who should be able to test it on further s3c24xx-based boa=
-rds.
+On Wed, May 21, 2014 at 6:24 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Doug Anderson wrote:
+>>
+>> Kukjin,
+>>
+> Hi Doug,
+>
+>> On Fri, May 16, 2014 at 5:02 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> > On 05/17/14 07:56, Chirantan Ekbote wrote:
+>> >>>>>
+>> >>>>> Anyway, I'm by no means opposed to switching to arch timers. They
+>> >>>>> provide a well designed, generic interface and drivers shared by
+>> >>>>> multiple platforms, which means more code sharing and possibly more
+>> >>>>> eyes
+>> >>>>> looking at the code, which is always good. However if they don't
+>> >>>>> support
+>> >>>>> low power states correctly, we can't just remove MCT.
+>> >>>>
+>> >>>>
+>> >>>> I think low power states aren't in mainline (right?).
+>> >>>>
+>> >>>> One solution that might work could be to leave the device tree entry
+>> >>>> alone but change the MCT init code to simply act as a no-op if it sees
+>> >>>> an arch timer is in the device tree and enabled.  Then when/if someone
+>> >>>> got the low power states enabled we could just change source code
+>> >>>> rather than dts files.
+>> >>>>
+>> >>
+>> >> Doug and I were talking about this and we think we may have a way to
+>> >> have the mct and arch timers co-exist.  The main issue is that the mct
+>> >> (and therefore arch timer) gets cleared once during boot and every
+>> >> time we do a suspend / resume.  This happens in
+>> >> exynos4_mct_frc_start() but it's not immediately clear to us why the
+>> >> counter needs to be reset at all.  If we remove the lines that clear
+>> >> the counter then there is no longer an issue with having both the mct
+>> >> and the arch timers on at the same time.
+>> >>
+>> >> Alternately, if there is some code that depends on the mct being reset
+>> >> we could store an offset instead of clearing the counter and then
+>> >> subtract that offset every time something reads it.  Doug has a patch
+>> >> that does this at
+>> >> https://chromium-review.googlesource.com/#/c/200298/.  Effectively the
+>> >> visible behavior will not change.  Would either of these options work?
+>> >>
+>> > Hi all,
+>> >
+>> > Even though I've heard something about the behavior of mct and arch
+>> > timer...but I couldn't finish the talk to h/w guys yet. I need to talk
+>> again
+>> > in next week then I could provide some useful information. Sorry for late
+>> > and can you please wait a minute before deciding whatever.
+>>
+>> I think we could wait a few days.  Note however, that Chirantan's
+>> latest proposal keeps all existing functionality (can use both MCT and
+>> arch timers).  It merely removes the unnecessary bit of the MCT init
+>> code setting the timer.  No functionality is affected by that.
+>>
+> Let me explain the behavior of MCT and arch timer.
+>
+> Basically the two blocks are connected and the arch timer uses the count value from MCT for reference on exynos5250 so following in this mail thread is expected and it's true.
+>
+> * If you read the MCT and the arch timer, they give the same value.
+>
+> And as you know, usually the access to arch timer is faster than MCT because of APB bus access...but using MCT has some benefits sometimes it depends on use case of power management though. BTW, since exynos5260, exynos5420 and exynos5800 doesn't support arch timer, we have been using MCT on exynos5 SoCs.
 
-Sadly, I don't have a working sound setup on my 2 s3c boards.
+This I don't understand. What, _exactly_ are the benefits of MCT.
+You've been vague on this several times now and it is not helping us
+understand why Samsung (and you personally) prefer MCT. Details,
+please.
 
 
-Heiko
+
+-Olof
