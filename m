@@ -1,87 +1,52 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v2 13/18] ARM: dts: s6e3fa0: add DT bindings
-Date: Wed, 21 May 2014 13:43:05 +0900
-Message-ID: <1400647390-26590-14-git-send-email-yj44.cho@samsung.com>
+From: YoungJun Cho <yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 16/18] ARM: dts: exynos5: add system register support
+Date: Wed, 21 May 2014 13:43:08 +0900
+Message-ID: <1400647390-26590-17-git-send-email-yj44.cho@samsung.com>
 References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1400647390-26590-1-git-send-email-yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: airlied-cv59FeDIM0c@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, s.trumtrar-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds DT bindings for s6e3fa0 panel.
-The bindings describes panel resources, display timings and cpu mode timings.
+This patch adds sysreg device node, and sysreg property to fimd device node
+which is required to use I80 interface.
 
-Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: YoungJun Cho <yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   45 ++++++++++++++++++++
- 1 file changed, 45 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+ arch/arm/boot/dts/exynos5.dtsi |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-new file mode 100644
-index 0000000..c9a3fbd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-@@ -0,0 +1,45 @@
-+Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
-+
-+Required properties:
-+  - compatible: "samsung,s6e3fa0"
-+  - reg: the virtual channel number of a DSI peripheral
-+  - vdd3-supply: core voltage supply
-+  - vci-supply: voltage supply for analog circuits
-+  - reset-gpios: a GPIO spec for the reset pin
-+  - det-gpios: a GPIO spec for the OLED detection pin
-+  - te-gpios: a GPIO spec for the TE pin
-+  - cmdmode-display-timings: command mode interface timings for the connected
-+      panel as described by [1]
-+
-+Optional properties:
-+
-+The device node can contain one 'port' child node with one child 'endpoint'
-+node, according to the bindings defined in [2]. This node should describe
-+panel's video bus.
-+
-+[1]: Documentation/devicetree/bindings/video/cmdmode-display-timing.txt
-+[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
-+
-+Example:
-+
-+	panel@0 {
-+		compatible = "samsung,s6e3fa0";
-+		reg = <0>;
-+		vdd3-supply = <&vcclcd_reg>;
-+		vci-supply = <&vlcd_reg>;
-+		reset-gpios = <&gpy7 4 0>;
-+		det-gpios = <&gpg0 6 0>;
-+		te-gpios = <&gpd1 7 0>;
-+
-+		cmdmode-display-timings {
-+			timing-0 {
-+				clock-frequency = <0>;
-+				hactive = <1080>;
-+				vactive = <1920>;
-+				cs-setup = <0>;
-+				wr-setup = <0>;
-+				wr-active = <1>;
-+				wr-hold = <0>;
-+			};
-+		};
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index 79d0608..95ee496 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -81,12 +81,18 @@
+ 		status = "disabled";
+ 	};
+ 
++	sys_reg: syscon@10050000 {
++		compatible = "samsung,exynos5-sysreg", "syscon";
++		reg = <0x10050000 0x500>;
 +	};
++
+ 	fimd@14400000 {
+ 		compatible = "samsung,exynos5250-fimd";
+ 		interrupt-parent = <&combiner>;
+ 		reg = <0x14400000 0x40000>;
+ 		interrupt-names = "fifo", "vsync", "lcd_sys";
+ 		interrupts = <18 4>, <18 5>, <18 6>;
++		samsung,sysreg = <&sys_reg>;
+ 		status = "disabled";
+ 	};
+ 
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
