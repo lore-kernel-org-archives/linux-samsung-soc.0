@@ -1,83 +1,122 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH] drm/exynos: Make exynos_drm_init() call late during the bootup
-Date: Wed, 21 May 2014 12:09:37 +0530
-Message-ID: <CAHfPSqAEF=1Ky81=AWqGeR8kxQ=vyNfb6SLzZubDds2EmEmtGg@mail.gmail.com>
-References: <1400067585-31236-1-git-send-email-ch.naveen@samsung.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: Re: [PATCH v2 02/18] drm/exynos: use wait_event_timeout() for safety usage
+Date: Wed, 21 May 2014 14:45:25 +0800
+Message-ID: <CAGS+omB_xgErG9u_0XB=UpJCrMhhkOu-Sjv_zupOn1V4i-V_-w@mail.gmail.com>
+References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
+ <1400647390-26590-3-git-send-email-yj44.cho@samsung.com> <CAGS+omCHJppm=9GeFarb_UhwB-mSJi+nxWFw1FC+ew3OOA-srQ@mail.gmail.com>
+ <537C4775.1050702@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f42.google.com ([209.85.192.42]:41241 "EHLO
-	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750770AbaEUGj6 (ORCPT
+Received: from mail-vc0-f176.google.com ([209.85.220.176]:50514 "EHLO
+	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751429AbaEUGpq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 02:39:58 -0400
-Received: by mail-qg0-f42.google.com with SMTP id q107so2538740qgd.29
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 May 2014 23:39:58 -0700 (PDT)
-In-Reply-To: <1400067585-31236-1-git-send-email-ch.naveen@samsung.com>
+	Wed, 21 May 2014 02:45:46 -0400
+Received: by mail-vc0-f176.google.com with SMTP id lg15so1926120vcb.7
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 May 2014 23:45:46 -0700 (PDT)
+In-Reply-To: <537C4775.1050702@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, seanpaul@chromium.org, inki.dae@samsung.com, dianders@chromium.org, sjg@chromium.org, Kukjin Kim <kgene.kim@samsung.com>, broonie@kernel.org
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, s.trumtrar@pengutronix.de, Kyungmin Park <kyungmin.park@samsung.com>, InKi Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-Hello Everyone,
+On Wed, May 21, 2014 at 2:28 PM, YoungJun Cho <yj44.cho@samsung.com> wrote:
+> Hi Daniel
+>
+>
+> On 05/21/2014 03:01 PM, Daniel Kurtz wrote:
+>>
+>> On Wed, May 21, 2014 at 12:42 PM, YoungJun Cho <yj44.cho@samsung.com>
+>> wrote:
+>>>
+>>> There could be the case that the page flip operation isn't finished
+>>> correctly
+>>> with some abnormal condition such as panel reset. So this patch replaces
+>>> wait_event() with wait_event_timeout() to avoid waiting for page flip
+>>> completion
+>>> infinitely.
+>>> And clears exynos_crtc->pending_flip in exynos_drm_crtc_page_flip() when
+>>> exynos_drm_crtc_mode_set_commit() is failed.
+>>>
+>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> ---
+>>>   drivers/gpu/drm/exynos/exynos_drm_crtc.c |    7 +++++--
+>>>   1 file changed, 5 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+>>> b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+>>> index 95c9435..3bf091d 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+>>> @@ -69,8 +69,10 @@ static void exynos_drm_crtc_dpms(struct drm_crtc
+>>> *crtc, int mode)
+>>>
+>>>          if (mode > DRM_MODE_DPMS_ON) {
+>>>                  /* wait for the completion of page flip. */
+>>> -               wait_event(exynos_crtc->pending_flip_queue,
+>>> -                               atomic_read(&exynos_crtc->pending_flip)
+>>> == 0);
+>>> +               if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
+>>> +                               !atomic_read(&exynos_crtc->pending_flip),
+>>> +                               HZ/20))
+>>> +                       atomic_set(&exynos_crtc->pending_flip, 0);
+>>
+>>
+>> I meant that changing this to wait_event_timeout() seems to be masking
+>> the original problem, that pending_flip wasn't being cleared.
+>
+>
+> Yes, I agree.
+>
+> The original purpose of this patch is to avoid lock-up during modetest (with
+> test_vsync) with command mode panel.
+> In MIPI DSI command mode interface, the display controller can not generate
+> VSYNC signal and uses TE signal instead which is generated by panel.
+> If there is an abnormal power off or reset condition, it is possible that
+> the display controller misses the TE signal and it makes lock-up.
+> So I needed this patch.
 
-On 14 May 2014 17:09, Naveen Krishna Chatradhi <ch.naveen@samsung.com> wrote:
-> exynos_drm_init() does probing of various drivers like dp_panel,
-> hdmi, fimd, mixer, etc in an order and finally binds them together.
->
-> Some of the drm devices (Eg: dp_panel) try to do regulator_get()
-> and enable few supplies during their probe.
-> Chances are that, these devices may get probed before the respective
-> supply/PMIC is hooked.  In such cases, dp_panel would continue with
-> "dummy regulator". Which is not what the system wants.
->
-> Lets give the core connectivity and regulators modules some time
-> to hookup the supplies before Exynos DRM devices comes into picture.
->
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> ---
-> This change is proposed after
-> 1. Discussing with I2C/SPI & DMA subsystem maintainers and Others
->    @ https://lkml.org/lkml/2014/5/9/333
->    Trying to change the I2C, SPI and DMA drivers as subsys_initcall()
->    Which was strictly opposed, as a flaw was found in DRM subsystem.
->
-> 2. -EPROBE_DEFER won't work well with the current sequency of
->     platform_driver_register()s in exynos_drm_init()
->
-> 3. bridge_panel mechanism is under RFC and no conclusions were drawn yet.
->
-> We should be able to probe each DRM device independently and let PROBE_DEFER
-> take care of dependencies. But, this could cause lot of bootup time.
->
-> late_initcall() of DRM works well and fixes all the above issues for now.
-> Kindly suggest, if an alternative/better mechanism is out there.
->
-> Thanks,
->  drivers/gpu/drm/exynos/exynos_drm_drv.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index 4cef88f..78c185a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -692,7 +692,7 @@ static void exynos_drm_exit(void)
->         platform_driver_unregister(&exynos_drm_platform_driver);
->  }
->
-> -module_init(exynos_drm_init);
-> +late_initcall(exynos_drm_init);
->  module_exit(exynos_drm_exit);
->
->  MODULE_AUTHOR("Inki Dae <inki.dae@samsung.com>");
-Kindly, show some light on this change.
-Also adding more reviewers.
-> --
-> 1.7.9.5
->
+If flips are not completing on MIPI DSI, may I recommend that you
+start a timer when scheduling such a flip in the MIPI DSI driver that
+will expire after a timeout.  In that timer's expiration handler, you
+can then go through the normal process of completing a flip.  This
+would make the timeout transparent to the generic exynos_drm_crtc
+layer, which can then do its normal flip complete processing: send
+pending vblank events, put vblank, clear pending_flip, etc.
+Does that make sense?
+Is it possible?
 
+-Dan
 
-
--- 
-Shine bright,
-(: Nav :)
+>> Now that you are now clearing pending_flip in the error path, you
+>> don't need the timeout, right?
+>>
+>
+> There might be my missing point. Would you explain more detail?
+>
+>
+> Thank you.
+> Best regards YJ
+>
+>> -Dan
+>>
+>>>                  drm_vblank_off(crtc->dev, exynos_crtc->pipe);
+>>>          }
+>>>
+>>> @@ -259,6 +261,7 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc
+>>> *crtc,
+>>>                          spin_lock_irq(&dev->event_lock);
+>>>                          drm_vblank_put(dev, exynos_crtc->pipe);
+>>>                          list_del(&event->base.link);
+>>> +                       atomic_set(&exynos_crtc->pending_flip, 0);
+>>>                          spin_unlock_irq(&dev->event_lock);
+>>>
+>>>                          goto out;
+>>> --
+>>> 1.7.9.5
+>>>
+>>
+>
