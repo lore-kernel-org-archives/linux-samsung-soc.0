@@ -1,165 +1,150 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 2/3] ARM: EXYNOS: Enable multi-platform build support
-Date: Wed, 21 May 2014 12:36:07 +0200
-Message-ID: <1635304.bK37Q0Q4AO@amdc1032>
-References: <1400655169-21683-1-git-send-email-sachin.kamat@linaro.org>
- <1400655169-21683-3-git-send-email-sachin.kamat@linaro.org>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: Re: [PATCH v2 02/18] drm/exynos: use wait_event_timeout() for safety
+ usage
+Date: Wed, 21 May 2014 19:37:36 +0900
+Message-ID: <537C81F0.3060108@samsung.com>
+References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
+ <1400647390-26590-3-git-send-email-yj44.cho@samsung.com>
+ <CAGS+omCHJppm=9GeFarb_UhwB-mSJi+nxWFw1FC+ew3OOA-srQ@mail.gmail.com>
+ <537C4775.1050702@samsung.com>
+ <CAGS+omB_xgErG9u_0XB=UpJCrMhhkOu-Sjv_zupOn1V4i-V_-w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:65437 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751120AbaEUKg1 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:29064 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750980AbaEUKhk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 06:36:27 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N5X00FMH6SJ3R20@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 May 2014 19:36:19 +0900 (KST)
-In-reply-to: <1400655169-21683-3-git-send-email-sachin.kamat@linaro.org>
+	Wed, 21 May 2014 06:37:40 -0400
+In-reply-to: <CAGS+omB_xgErG9u_0XB=UpJCrMhhkOu-Sjv_zupOn1V4i-V_-w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, arnd@arndb.de
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, s.trumtrar@pengutronix.de, Kyungmin Park <kyungmin.park@samsung.com>, InKi Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
+Hi Daniel,
 
-Hi,
+On 05/21/2014 03:45 PM, Daniel Kurtz wrote:
+> On Wed, May 21, 2014 at 2:28 PM, YoungJun Cho <yj44.cho@samsung.com> wrote:
+>> Hi Daniel
+>>
+>>
+>> On 05/21/2014 03:01 PM, Daniel Kurtz wrote:
+>>>
+>>> On Wed, May 21, 2014 at 12:42 PM, YoungJun Cho <yj44.cho@samsung.com>
+>>> wrote:
+>>>>
+>>>> There could be the case that the page flip operation isn't finished
+>>>> correctly
+>>>> with some abnormal condition such as panel reset. So this patch replaces
+>>>> wait_event() with wait_event_timeout() to avoid waiting for page flip
+>>>> completion
+>>>> infinitely.
+>>>> And clears exynos_crtc->pending_flip in exynos_drm_crtc_page_flip() when
+>>>> exynos_drm_crtc_mode_set_commit() is failed.
+>>>>
+>>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>>>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>> ---
+>>>>    drivers/gpu/drm/exynos/exynos_drm_crtc.c |    7 +++++--
+>>>>    1 file changed, 5 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+>>>> b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+>>>> index 95c9435..3bf091d 100644
+>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+>>>> @@ -69,8 +69,10 @@ static void exynos_drm_crtc_dpms(struct drm_crtc
+>>>> *crtc, int mode)
+>>>>
+>>>>           if (mode > DRM_MODE_DPMS_ON) {
+>>>>                   /* wait for the completion of page flip. */
+>>>> -               wait_event(exynos_crtc->pending_flip_queue,
+>>>> -                               atomic_read(&exynos_crtc->pending_flip)
+>>>> == 0);
+>>>> +               if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
+>>>> +                               !atomic_read(&exynos_crtc->pending_flip),
+>>>> +                               HZ/20))
+>>>> +                       atomic_set(&exynos_crtc->pending_flip, 0);
+>>>
+>>>
+>>> I meant that changing this to wait_event_timeout() seems to be masking
+>>> the original problem, that pending_flip wasn't being cleared.
+>>
+>>
+>> Yes, I agree.
+>>
+>> The original purpose of this patch is to avoid lock-up during modetest (with
+>> test_vsync) with command mode panel.
+>> In MIPI DSI command mode interface, the display controller can not generate
+>> VSYNC signal and uses TE signal instead which is generated by panel.
+>> If there is an abnormal power off or reset condition, it is possible that
 
-On Wednesday, May 21, 2014 12:22:48 PM Sachin Kamat wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> This makes it possible to enable the exynos platform as part of a
-> multiplatform kernel, in addition to keeping the single-platform
-> Exynos support.
+At first, I omitted the keyword "panel" at previous reply.
+The abnormal power off or reset condition could be happened in panel
+which generates TE signal.
 
-The patch description is wrong.  After this patch single-platform Exynos
-support is no longer available and it adds at least one serious regression
-(cpufreq) which should be fixed before merging this patch.  Moreover it
-seems that this patch (#2) should be merged with patch #3 to preserve
-bisectability.  Please also note that exynos_defconfig is no longer useful
-after these changes and can be be removed.
+>> the display controller misses the TE signal and it makes lock-up.
+>> So I needed this patch.
+>
+> If flips are not completing on MIPI DSI, may I recommend that you
+> start a timer when scheduling such a flip in the MIPI DSI driver that
+> will expire after a timeout.  In that timer's expiration handler, you
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+The MIPI DSI doesn't take care page flip operation at all.
+And the exynos_drm_crtc_finish_page_flip() is called only by interrupt 
+handler of display controllers.
+So there is no suitable place to set time-out for this.
 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/Kconfig               |   30 ------------------------------
->  arch/arm/mach-exynos/Kconfig   |   28 ++++++++++++++++++++++++++++
->  arch/arm/mach-exynos/Makefile  |    2 ++
->  arch/arm/plat-samsung/Makefile |    3 +++
->  4 files changed, 33 insertions(+), 30 deletions(-)
-> 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 666b59b58ab0..26f2bae4d948 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -829,36 +829,6 @@ config ARCH_S5PV210
->  	help
->  	  Samsung S5PV210/S5PC110 series based systems
->  
-> -config ARCH_EXYNOS
-> -	bool "Samsung EXYNOS"
-> -	select ARCH_HAS_BANDGAP
-> -	select ARCH_HAS_CPUFREQ
-> -	select ARCH_HAS_HOLES_MEMORYMODEL
-> -	select ARCH_REQUIRE_GPIOLIB
-> -	select ARCH_SPARSEMEM_ENABLE
-> -	select ARM_AMBA
-> -	select ARM_GIC
-> -	select CLKSRC_OF
-> -	select COMMON_CLK_SAMSUNG
-> -	select CPU_V7
-> -	select GENERIC_CLOCKEVENTS
-> -	select HAVE_ARM_SCU if SMP
-> -	select HAVE_S3C2410_I2C if I2C
-> -	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-> -	select HAVE_S3C_RTC if RTC_CLASS
-> -	select HAVE_SMP
-> -	select NEED_MACH_MEMORY_H
-> -	select PINCTRL
-> -	select PINCTRL_EXYNOS
-> -	select PM_GENERIC_DOMAINS if PM_RUNTIME
-> -	select S5P_DEV_MFC
-> -	select SAMSUNG_DMADEV
-> -	select SPARSE_IRQ
-> -	select SRAM
-> -	select USE_OF
-> -	help
-> -	  Support for SAMSUNG's EXYNOS SoCs (EXYNOS4/5)
-> -
->  config ARCH_DAVINCI
->  	bool "TI DaVinci"
->  	select ARCH_HAS_HOLES_MEMORYMODEL
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index 138070e42aa9..46634175cf54 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -7,6 +7,34 @@
->  
->  # Configuration options for the EXYNOS4
->  
-> +config ARCH_EXYNOS
-> +	bool "Samsung EXYNOS" if ARCH_MULTI_V7
-> +	select ARCH_HAS_BANDGAP
-> +	select ARCH_HAS_CPUFREQ
-> +	select ARCH_HAS_HOLES_MEMORYMODEL
-> +	select ARCH_REQUIRE_GPIOLIB
-> +	select ARM_AMBA
-> +	select ARM_GIC
-> +	select CLKSRC_OF
-> +	select COMMON_CLK_SAMSUNG
-> +	select CPU_V7
-> +	select GENERIC_CLOCKEVENTS
-> +	select HAVE_ARM_SCU if SMP
-> +	select HAVE_S3C2410_I2C if I2C
-> +	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-> +	select HAVE_S3C_RTC if RTC_CLASS
-> +	select HAVE_SMP
-> +	select PINCTRL
-> +	select PINCTRL_EXYNOS
-> +	select PM_GENERIC_DOMAINS if PM_RUNTIME
-> +	select S5P_DEV_MFC
-> +	select SAMSUNG_DMADEV
-> +	select SPARSE_IRQ
-> +	select SRAM
-> +	select USE_OF
-> +	help
-> +	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
-> +
->  if ARCH_EXYNOS
->  
->  menu "SAMSUNG EXYNOS SoCs Support"
-> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-> index 2e0666d31e75..97af694291f1 100644
-> --- a/arch/arm/mach-exynos/Makefile
-> +++ b/arch/arm/mach-exynos/Makefile
-> @@ -5,6 +5,8 @@
->  #
->  # Licensed under GPLv2
->  
-> +ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)/arch/arm/plat-samsung/include
-> +
->  obj-y				:=
->  obj-m				:=
->  obj-n				:=
-> diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-> index 25c826ed3b65..5e5beaa9ae15 100644
-> --- a/arch/arm/plat-samsung/Makefile
-> +++ b/arch/arm/plat-samsung/Makefile
-> @@ -4,6 +4,9 @@
->  #
->  # Licensed under GPLv2
->  
-> +ccflags-$(CONFIG_ARCH_MULTI_V7) += -I$(srctree)/$(src)/include
-> +ccflags-$(CONFIG_ARCH_EXYNOS)	+= -I$(srctree)/arch/arm/mach-exynos/include
-> +
->  obj-y				:=
->  obj-m				:=
->  obj-n				:= dummy.o
+> can then go through the normal process of completing a flip.  This
+> would make the timeout transparent to the generic exynos_drm_crtc
+> layer, which can then do its normal flip complete processing: send
+> pending vblank events, put vblank, clear pending_flip, etc.
+> Does that make sense?
+> Is it possible?
+
+This function is exynos_drm_crtc_dpms() and my patch is for DPMS OFF case.
+That means all page flip operations should be finished already to
+control DPMS off and in almost every case, there is no problem.
+
+But if there is an issue like this lock-up, I think it should escape 
+this condition.
+
+Thank you.
+Best regards YJ
+
+>
+> -Dan
+>
+>>> Now that you are now clearing pending_flip in the error path, you
+>>> don't need the timeout, right?
+>>>
+>>
+>> There might be my missing point. Would you explain more detail?
+>>
+>>
+>> Thank you.
+>> Best regards YJ
+>>
+>>> -Dan
+>>>
+>>>>                   drm_vblank_off(crtc->dev, exynos_crtc->pipe);
+>>>>           }
+>>>>
+>>>> @@ -259,6 +261,7 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc
+>>>> *crtc,
+>>>>                           spin_lock_irq(&dev->event_lock);
+>>>>                           drm_vblank_put(dev, exynos_crtc->pipe);
+>>>>                           list_del(&event->base.link);
+>>>> +                       atomic_set(&exynos_crtc->pending_flip, 0);
+>>>>                           spin_unlock_irq(&dev->event_lock);
+>>>>
+>>>>                           goto out;
+>>>> --
+>>>> 1.7.9.5
+>>>>
+>>>
+>>
+>
