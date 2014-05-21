@@ -1,125 +1,122 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH V5 18/20] ARM: exynos: cpuidle: Pass the AFTR callback
- to the platform_data
-Date: Wed, 21 May 2014 11:02:29 +0200
-Message-ID: <537C6BA5.5080909@linaro.org>
-References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org> <5375262C.10805@samsung.com> <537C5296.7050801@linaro.org> <11675203.TylGKV1VBZ@wuerfel>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 21 May 2014 11:00:38 +0200
+Message-ID: <20140521090037.GA19268@ulmo>
+References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
+	<5612206.Fzsy1mf3q3@wuerfel> <20140521082606.GB11068@ulmo>
+	<4367469.BqpJyVF8PT@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f49.google.com ([74.125.82.49]:58702 "EHLO
-	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751984AbaEUJCS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 05:02:18 -0400
-Received: by mail-wg0-f49.google.com with SMTP id m15so1709462wgh.20
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 02:02:16 -0700 (PDT)
-In-Reply-To: <11675203.TylGKV1VBZ@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============5264570147372565159=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <4367469.BqpJyVF8PT@wuerfel>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, linaro-kernel@lists.linaro.org
-Cc: Mark Rutland <Mark.Rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, rjw@rjwysocki.net, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On 05/21/2014 10:10 AM, Arnd Bergmann wrote:
-> On Wednesday 21 May 2014 09:15:34 Daniel Lezcano wrote:
->> On 05/15/2014 10:40 PM, Kukjin Kim wrote:
->>
->> [ ... ]
->>
->>>>>> Exynos cpuidle is not a device on the SoC, so I don't think ther=
-e is
->>>>>> any
->>>>>> way to represent it in DT. The only thing I could see this is ma=
-tching
->>>>>> root node with a central SoC driver that instantiates specific
->>>>>> subdevices, such as cpufreq and cpuidle, but I don't see any ava=
-ilable
->>>>>> infrastructure for this.
->>>>>
->>>>> There is a RFC for defining generic idle states [1].
->>>>>
->>>>> The idea behind using the platform driver framework is to unify t=
-he code
->>>>> across the different drivers and separate the PM / cpuidle code.
->>>>>
->>>>> By this way, we can move the different drivers to drivers/cpuidle=
- and
->>>>> store them in a single place. That make easier the tracking, the =
-review
->>>>> and the maintenance.
->
-> Yes, that would be great. I only looked briefly at the series now, do=
-esn't
-> that require the use of psci?
 
-No, because PSCI is for some specific platform (eg. calxeda), all the=20
-other drivers are legacy and manually handling the PM via some low leve=
-l=20
-callbacks. This is why all drivers were implemented all over the place=20
-making so difficult to maintain them. Little by little, we split the PM=
-=20
-callbacks from the idle algorithm so reducing the platform dependency=20
-with the generic code.
+--===============5264570147372565159==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
+Content-Disposition: inline
 
-The PSCI implements such PM callbacks in the firmware directly and are=20
-accessed through an API. PSCI is, let's say some kindof nextgen cpuidle=
-=2E=20
-It is similar than mwait on Intel. But if a new platform does not have=20
-such firmware, then the cpuidle driver will have the legacy format.
 
-> That's not a bad idea of course, but it
-> doesn't solve the problem I raised here.
->
->>>>> I am ok to by using platform_device_register_resndata() but I wou=
-ld
->>>>> prefer to do that a bit later by converting the other drivers too=
-=2E That
->>>>> will be easier if we have them grouped in a single directory (thi=
-s is
->>>>> what does this patchset at the end).
->>>>>
->>>>> As there are some more work based on this patchset and the link e=
-rror
->>>>> could be fixed as an independent patch, I would recommend to
->>>>> re-integrate it in the tree as asked by Bartlomiej.
->>>>
->>>> In general, it would be nice to have everything done properly, but=
- I'd
->>>> consider Daniel's series as a huge improvement already and a nice
->>>> intermediate step towards further clean-up.
->>>>
->>>> So based on the comments quoted above, instead of stalling the
->>>> development, I'd suggest to accept this series and then move forwa=
-rd.
->>>>
->>> I'm fine.
->>>
->>> Arnd, how about you?
->>>
->>> - Kukjin
->>
->> Arnd ?
->
-> Sorry for the delay.
+--8t9RHnE3ZwKMSgU+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No problem.
+On Wed, May 21, 2014 at 10:50:38AM +0200, Arnd Bergmann wrote:
+> On Wednesday 21 May 2014 10:26:11 Thierry Reding wrote:
+> > On Tue, May 20, 2014 at 10:26:12PM +0200, Arnd Bergmann wrote:
+> > > On Tuesday 20 May 2014 16:24:59 Dave Martin wrote:
+> > > > On Tue, May 20, 2014 at 02:41:18PM +0200, Arnd Bergmann wrote:
+> > > > > On Tuesday 20 May 2014 14:02:43 Thierry Reding wrote:
+> > [...]
+> > > > > > Multiple-master IOMMU:
+> > > > > > ----------------------
+> > > > > >=20
+> > > > > > 	iommu {
+> > > > > > 		/* the specifier represents the ID of the master */
+> > > > > > 		#address-cells =3D <1>;
+> > > > > > 		#size-cells =3D <0>;
+> > > >=20
+> > > > How do we know the size of the input address to the IOMMU?  Do we
+> > > > get cases for example where the IOMMU only accepts a 32-bit input
+> > > > address, but some 64-bit capable masters are connected through it?
+> > >=20
+> > > I was stuck on this question for a while before, but then I realized
+> > > that it doesn't matter at all: It's the IOMMU driver itself that
+> > > manages the address space, and it doesn't matter if a slave can
+> > > address a larger range than the IOMMU can accept. If the IOMMU
+> > > needs to deal with the opposite case (64-bit input addresses
+> > > but a 32-bit master), that limitation can be put into the specifier.
+> >=20
+> > Isn't this what DMA masks are for? Couldn't the IOMMU simply use the
+> > master device's DMA mask to do the right thing here?
+>=20
+> Ah, yes. I guess that's the right way to do it.
+>=20
+> > > > For determining dma masks, it is the output address that it
+> > > > important.  Santosh's code can probably be taught to handle this,
+> > > > if given an additional traversal rule for following "iommus"
+> > > > properties.  However, deploying an IOMMU whose output address size
+> > > > is smaller than the=20
+> > >=20
+> > > Something seems to be missing here. I don't think we want to handle
+> > > the case where the IOMMU output cannot the entire memory address
+> > > space. If necessary, that would mean using both an IOMMU driver
+> > > and swiotlb, but I think it's a reasonable assumption that hardware
+> > > isn't /that/ crazy.
+> >=20
+> > Similarily, should the IOMMU not be treated like any other device here?
+> > Its DMA mask should determine what address range it can access.
+>=20
+> Right. But for that we need a dma-ranges property in the parent of the
+> iommu, just so the mask can be set correctly and we don't have to
+> rely on the 32-bit fallback case.
 
-> Yes, let's do it this way once more, but please
-> come up with something better for the future that doesn't tie the
-> cpuidle method to the root compatible string as this does.
+Shouldn't the IOMMU driver be the one to set the DMA mask for the device
+in exactly the same way that other drivers override the 32-bit default?
 
-ok.
+Thierry
 
-Thanks
+--8t9RHnE3ZwKMSgU+
+Content-Type: application/pgp-signature
 
-   -- Daniel
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+iQIcBAEBAgAGBQJTfGs1AAoJEN0jrNd/PrOhIPwP/R1z0diAWm8nHHeDV0xiIRxS
+tLD/7OIxrBGp1JC6wg86r1tsq7hKW3c09mpSc8cooDJTcRL6PCT8RQCEguITP7Xe
+OHpT/QX6guTwpD+HBCEOmB0sDuitF5Ut7aoGqA1EjDctBTIRLnvzBHMmVshUBbQv
+X6XEmaobZxv1SO1JBaETX1HyWaLsIbiw4ScFzEmtVX69OnCM1IlggJK713DLV79N
+fDaQA67znm7Ee6iWoyIU1x3Dkl/l1Hy/S4cRZCemuk94uaVQopbqn122ylbS/iFz
+sx/ceZu0lBf9W0atWk0gek+r6/CfGp/YU1VW+3mX1S/dr2OoxygC8ZOwRCxWhvlw
+2CBScvd1u/HgK++rrZaZ7vN5kZ8XZWufPOeoPJHOo0JdccRDw6F6AjYYGCbNDPZg
+4TS+MveTZodRa8LkdFAWnGepZdTmEbKMxoATfQLtrndvy76ZW3HE5BWH/iXhBjGY
+h4Zy6Ufdx1qhg6P8nw3QO5h93pGCwK4QTtbluj7986dpLEYVsLJi666LcrFEq5mf
+gBUVE1Us7LXa4XrWmD3eqJE9NEEOf8KPI6bhGY0CVNEvXP5y+qn2BFHbh1dJFAcj
+EVZDadDReFEowOqaoLf0oLEAOBtA3rcICxM/Fafl0MQ25NIVx8oU9AB0RfznWOAN
+t3Bf1w5/uGATq9ZIWvPh
+=SiJ1
+-----END PGP SIGNATURE-----
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--8t9RHnE3ZwKMSgU+--
+
+--===============5264570147372565159==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============5264570147372565159==--
