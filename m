@@ -1,114 +1,70 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: dts: move dp hpd gpio pin to pinctrl_0 for exynos5420
- peach_pit
-Date: Wed, 21 May 2014 22:36:57 +0900
-Message-ID: <036b01cf74f9$bcaf7d90$360e78b0$@samsung.com>
-References: <1400675242-7423-1-git-send-email-rahul.sharma@samsung.com>
+Subject: RE: [PATCH 2/3] ARM: EXYNOS: Enable multi-platform build support
+Date: Wed, 21 May 2014 22:40:07 +0900
+Message-ID: <036c01cf74fa$2da9c320$88fd4960$@samsung.com>
+References: <1400655169-21683-1-git-send-email-sachin.kamat@linaro.org>
+ <1400655169-21683-3-git-send-email-sachin.kamat@linaro.org>
+ <1635304.bK37Q0Q4AO@amdc1032>
+ <CAK9yfHxj-z1bWQqiaWVwvL2yRotqZn86ecjKcoHcyMQHZCrVcA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:27820 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:28090 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750877AbaEUNhA (ORCPT
+	with ESMTP id S1751022AbaEUNkJ convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 09:37:00 -0400
-In-reply-to: <1400675242-7423-1-git-send-email-rahul.sharma@samsung.com>
+	Wed, 21 May 2014 09:40:09 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N5X00KEMFAVY5B0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 May 2014 22:40:07 +0900 (KST)
+In-reply-to: <CAK9yfHxj-z1bWQqiaWVwvL2yRotqZn86ecjKcoHcyMQHZCrVcA@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Rahul Sharma' <rahul.sharma@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: inki.dae@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
+Cc: 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Arnd Bergmann' <arnd@arndb.de>
 
-Rahul Sharma wrote:
+Sachin Kamat wrote:
 > 
-> DP Hpd Gpio pin which is "gpx2-6" in Exynos 5420 based peach board,
-> belongs to Pinctrl_0. It has moved to pinctrl_0 from pinctrl_3.
+> Hi Bartlomiej,
 > 
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> ---
-> Based on Kukjin's for-next branch.
+> On 21 May 2014 16:06, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> >
+> > Hi,
+> >
+> > On Wednesday, May 21, 2014 12:22:48 PM Sachin Kamat wrote:
+> >> From: Arnd Bergmann <arnd@arndb.de>
+> >>
+> >> This makes it possible to enable the exynos platform as part of a
+> >> multiplatform kernel, in addition to keeping the single-platform
+> >> Exynos support.
+> >
+> > The patch description is wrong.  After this patch single-platform Exynos
+> > support is no longer available
 > 
->  arch/arm/boot/dts/exynos5420-peach-pit.dts |   14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+> Forgot to update the message while rebasing. Thanks for noticing.
 > 
-> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> index d4127b0..29f64de 100644
-> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> @@ -117,6 +117,13 @@
->  		samsung,pin-pud = <1>;
->  		samsung,pin-drv = <0>;
->  	};
-> +
-> +	dp_hpd_gpio: dp_hpd_gpio {
-> +		samsung,pins = "gpx2-6";
-> +		samsung,pin-function = <0>;
-> +		samsung,pin-pud = <3>;
-> +		samsung,pin-drv = <0>;
-> +	};
->  };
+> > and it adds at least one serious regression
 > 
->  &pinctrl_3 {
-> @@ -133,13 +140,6 @@
->  		samsung,pin-pud = <0>;
->  		samsung,pin-drv = <0>;
->  	};
-> -
-> -	dp_hpd_gpio: dp_hpd_gpio {
-> -		samsung,pins = "gpx2-6";
-> -		samsung,pin-function = <0>;
-> -		samsung,pin-pud = <3>;
-> -		samsung,pin-drv = <0>;
-> -	};
->  };
+> I have mentioned about this in the cover letter.
 > 
->  &rtc {
-> --
-> 1.7.9.5
-
-Yeah, probably it happened when I applied your patch with rebase on top of
-samsung-dt branch. Sorry about that.
-
-BTW, I think alphabetical ordering would be nice like following...
-
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index d4127b0..79008ac 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -111,6 +111,13 @@
- 		samsung,pin-drv = <0>;
- 	};
- 
-+	dp_hpd_gpio: dp_hpd_gpio {
-+		samsung,pins = "gpx2-6";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
-+
- 	hdmi_hpd_irq: hdmi-hpd-irq {
- 		samsung,pins = "gpx3-7";
- 		samsung,pin-function = <0>;
-@@ -133,13 +140,6 @@
- 		samsung,pin-pud = <0>;
- 		samsung,pin-drv = <0>;
- 	};
--
--	dp_hpd_gpio: dp_hpd_gpio {
--		samsung,pins = "gpx2-6";
--		samsung,pin-function = <0>;
--		samsung,pin-pud = <3>;
--		samsung,pin-drv = <0>;
--	};
- };
- 
- &rtc {
-
-
-I will take this ;-)
+> > (cpufreq) which should be fixed before merging this patch.  Moreover it
+> > seems that this patch (#2) should be merged with patch #3 to preserve
+> > bisectability.
+> 
+> At this point exynos_defconfig works.
+> 
+> >Please also note that exynos_defconfig is no longer useful
+> > after these changes and can be be removed.
+> 
+> Yes.
+> 
+Well, I think keeping the exynos_defconfig would be nice like other platform in multiplatforms...and I'm going to enable possible configs in exynos_defconfig for exynso SoCs then it can cover more for exynos...
 
 Thanks,
 Kukjin
