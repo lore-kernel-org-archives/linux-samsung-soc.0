@@ -1,68 +1,60 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: use 4WORD dma burst length for small fbs
-Date: Wed, 21 May 2014 20:13:09 +0900
-Message-ID: <537C8A45.6040407@samsung.com>
-References: <1399461922-27131-1-git-send-email-rahul.sharma@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 2/3] ARM: EXYNOS: Enable multi-platform build support
+Date: Wed, 21 May 2014 16:44:04 +0530
+Message-ID: <CAK9yfHxj-z1bWQqiaWVwvL2yRotqZn86ecjKcoHcyMQHZCrVcA@mail.gmail.com>
+References: <1400655169-21683-1-git-send-email-sachin.kamat@linaro.org>
+	<1400655169-21683-3-git-send-email-sachin.kamat@linaro.org>
+	<1635304.bK37Q0Q4AO@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1399461922-27131-1-git-send-email-rahul.sharma@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, joshi@samsung.com, dri-devel@lists.freedesktop.org, Prathyush K <prathyush.k@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:42996 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751481AbaEULOG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 May 2014 07:14:06 -0400
+Received: by mail-ob0-f170.google.com with SMTP id uy5so1966774obc.29
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 04:14:04 -0700 (PDT)
+In-Reply-To: <1635304.bK37Q0Q4AO@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>
 
-CkhpIFJhaHVsLAoKT24gMjAxNOuFhCAwNeyblCAwN+ydvCAyMDoyNSwgUmFodWwgU2hhcm1hIHdy
-b3RlOgo+IEZyb206IFJhaHVsIFNoYXJtYSA8UmFodWwuU2hhcm1hQHNhbXN1bmcuY29tPgo+IAo+
-IEluIGNhc2Ugb2YgZXh5bm9zLCBzZXR0aW5nIGRtYS1idXJzdCB0byAxNldvcmQgY2F1c2VzIHBl
-cm1hbmVudAo+IHRlYXJpbmcgZm9yIHZlcnkgc21hbGwgYnVmZmVycywgZS5nLiBjdXJzb3IgYnVm
-ZmVyLiBCdXJzdCBNb2RlCj4gc3dpdGNoaW5nLCB3aGljaCBpcyBiYXNlZCBvbiBvdmVybGF5IHNp
-emUgaXMgbm90IHJlY29tbWVuZGVkIGFzCj4gb3ZlcmxheSBzaXplIHZhcmllcyBhIGxvdCB0b3dh
-cmRzIHRoZSBlbmQgb2YgdGhlIHNjcmVlbi4gVGhpcwo+IGNhdXNlcyB1bnN0YWJsZSBETUEgd2hp
-Y2ggcmVzdWx0cyBpbnRvIHRlYXJpbmcgYWdhaW4uCj4gCj4gUmVuZGVyaW5nIHNtYWxsIGJ1ZmZl
-cnMgd2l0aCBsb3dlciBidXJzdCBzaXplIGRvZXNuJ3QKPiBjYXVzZSBhbnkgbm90aWNhYmxlIHBl
-cmZvcm1hbmNlIG92ZXJoZWFkLiAxMjggcGl4ZWwgd2lkdGggaXMKPiBzZWxlY3RlZCBiYXNlZCBv
-biBtdWxpdHBsZSBleHBlcmltZW50cyB3aXRoIGV4eW5vczUgU29Dcy4KPiAKPiBTaWduZWQtb2Zm
-LWJ5OiBSYWh1bCBTaGFybWEgPFJhaHVsLlNoYXJtYUBzYW1zdW5nLmNvbT4KPiBTaWduZWQtb2Zm
-LWJ5OiBQcmF0aHl1c2ggSyA8cHJhdGh5dXNoLmtAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gQmFzZWQg
-b24gSW5raSBEYWUncyBleHlub3MtZHJtLW5leHQgYnJhbmNoLgo+IAo+ICBkcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIHwgICAxNCArKysrKysrKysrKysrKwo+ICAxIGZp
-bGUgY2hhbmdlZCwgMTQgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2ZpbWQuYwo+IGluZGV4IDQwZmQ2Y2MuLmVmNTYwNzcgMTAwNjQ0Cj4gLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+ICsrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKPiBAQCAtMzgsNiArMzgsNyBAQAo+ICAg
-Ki8KPiAgCj4gICNkZWZpbmUgRklNRF9ERUZBVUxUX0ZSQU1FUkFURSA2MAo+ICsjZGVmaW5lIE1J
-Tl9GQl9XSURUSF9GT1JfMTZXT1JEX0JVUlNUIDEyOAo+ICAKPiAgLyogcG9zaXRpb24gY29udHJv
-bCByZWdpc3RlciBmb3IgaGFyZHdhcmUgd2luZG93IDAsIDIgfiA0LiovCj4gICNkZWZpbmUgVklE
-T1NEX0Eod2luKQkJKFZJRE9TRF9CQVNFICsgMHgwMCArICh3aW4pICogMTYpCj4gQEAgLTQ0Niw2
-ICs0NDcsMTkgQEAgc3RhdGljIHZvaWQgZmltZF93aW5fc2V0X3BpeGZtdChzdHJ1Y3QgZmltZF9j
-b250ZXh0ICpjdHgsIHVuc2lnbmVkIGludCB3aW4pCj4gIAo+ICAJRFJNX0RFQlVHX0tNUygiYnBw
-ID0gJWRcbiIsIHdpbl9kYXRhLT5icHApOwo+ICAKPiArCS8qCj4gKwkgKiBJbiBjYXNlIG9mIGV4
-eW5vcywgc2V0dGluZyBkbWEtYnVyc3QgdG8gMTZXb3JkIGNhdXNlcyBwZXJtYW5lbnQKPiArCSAq
-IHRlYXJpbmcgZm9yIHZlcnkgc21hbGwgYnVmZmVycywgZS5nLiBjdXJzb3IgYnVmZmVyLiBCdXJz
-dCBNb2RlCj4gKwkgKiBzd2l0Y2hpbmcgd2hpY2ggaXMgYmFzZWQgb24gb3ZlcmxheSBzaXplIGlz
-IG5vdCByZWNvbW1lbmRlZCBhcwo+ICsJICogb3ZlcmxheSBzaXplIHZhcmllcyBhbG90IHRvd2Fy
-ZHMgdGhlIGVuZCBvZiB0aGUgc2NyZWVuIGFuZCByYXBpZAo+ICsJICogbW92ZW1lbnQgY2F1c2Vz
-IHVuc3RhYmxlIERNQSB3aGljaCByZXN1bHRzIGludG8gaW9tbXUgY3Jhc2gvdGVhci4KCkZJTUQg
-aGFzIHdpZHRoIGxpbWl0YXRpb24gc28gd2lkdGggb2YgaGFyZHdhcmUgb3ZlcmxheSBtYXkgbmVl
-ZCB0byBiZQphbGlnbmVkIHRvIDE2IHBpeGVscy4KV2UgaGFkIGZhY2VkIHdpdGggc2ltaWxhciBp
-c3N1ZSBhbmQgdGhlIGlzc3VlIGhhZCBiZWVuIHJlc29sdmVkIGJ5CmFsaWduaW5nIGl0IHRvIDE2
-IHBpeGVscy4KClNvIGNhbiB5b3UgdHJ5IHRvIGFsaWduIGl0IGluc3RlYWQgb2YgY2hhbmdpbmcg
-YnVyc3QgbGVuIHNpemU/CgpUaGFua3MsCklua2kgRGFlCgo+ICsJICovCj4gKwo+ICsJaWYgKHdp
-bl9kYXRhLT5mYl93aWR0aCA8IE1JTl9GQl9XSURUSF9GT1JfMTZXT1JEX0JVUlNUKSB7Cj4gKwkJ
-dmFsICY9IH5XSU5DT054X0JVUlNUTEVOX01BU0s7Cj4gKwkJdmFsIHw9IFdJTkNPTnhfQlVSU1RM
-RU5fNFdPUkQ7Cj4gKwl9Cj4gKwo+ICAJd3JpdGVsKHZhbCwgY3R4LT5yZWdzICsgV0lOQ09OKHdp
-bikpOwo+ICB9Cj4gIAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+Hi Bartlomiej,
+
+On 21 May 2014 16:06, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+>
+> Hi,
+>
+> On Wednesday, May 21, 2014 12:22:48 PM Sachin Kamat wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>> This makes it possible to enable the exynos platform as part of a
+>> multiplatform kernel, in addition to keeping the single-platform
+>> Exynos support.
+>
+> The patch description is wrong.  After this patch single-platform Exynos
+> support is no longer available
+
+Forgot to update the message while rebasing. Thanks for noticing.
+
+> and it adds at least one serious regression
+
+I have mentioned about this in the cover letter.
+
+> (cpufreq) which should be fixed before merging this patch.  Moreover it
+> seems that this patch (#2) should be merged with patch #3 to preserve
+> bisectability.
+
+At this point exynos_defconfig works.
+
+>Please also note that exynos_defconfig is no longer useful
+> after these changes and can be be removed.
+
+Yes.
+
+---
+With warm regards,
+Sachin
