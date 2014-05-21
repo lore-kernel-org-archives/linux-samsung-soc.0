@@ -1,55 +1,62 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH] i2c: exynos5: add support for HSI2C on Exynos5260 SoC
-Date: Wed, 21 May 2014 16:53:05 +0530
-Message-ID: <CAHfPSqDwg9z27jPHaZohYCvr314dye1Wd6dgYQKP7Ub7=gSVuA@mail.gmail.com>
-References: <1398675598-25991-1-git-send-email-ch.naveen@samsung.com> <20140521103432.GM2708@katana>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v4 0/3] clk: s2mps11: Fixes and add support for S2MPS14 clocks
+Date: Wed, 21 May 2014 13:22:58 +0200
+Message-ID: <1400671381-14792-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140521103432.GM2708@katana>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, sjg@chromium.org, linux-kernel@vger.kernel.org, cpgs@samsung.com, broonie@kernel.org, t.figa@samsung.com
+To: Mike Turquette <mturquette@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Lee Jones <lee.jones@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Wolfram,
-
-On 21 May 2014 16:04, Wolfram Sang <wsa@the-dreams.de> wrote:
-> On Mon, Apr 28, 2014 at 02:29:58PM +0530, Naveen Krishna Chatradhi wrote:
->> HSI2C module on Exynos5260 differs from current modules in
->> following ways:
->> 1.  HSI2C on Exynos5260 has fifo_depth of 16bytes
->> 2.  Module needs to be reset as a part of init sequence.
->>
->> Hence, Following changes are involved.
->> 1. Add a new compatible string and Updates the Documentation dt bindings.
->> 2. Introduce a variant struct to support the changes in H/W
->> 3. Reset the module during init. Thus, bringing the module back
->> to default state irrespective of what firmware did with it.
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ich.naveen@samsung.com>
-I just realized another typo. Its my email id:  ch.naveen@samsung.com
-
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->
-> ...
->
->> -             fifo_ctl |= HSI2C_RXFIFO_TRIGGER_LEVEL(HSI2C_DEF_TXFIFO_LVL);
->> +             trig_lvl = (i2c->msg->len > i2c->variant->fifo_depth) ?
->> +                     (i2c->variant->fifo_depth * 3/4) : i2c->msg->len;
->> +             fifo_ctl |= HSI2C_RXFIFO_TRIGGER_LEVEL(trig_lvl);
->> +
->
-> Dunno why checkpatch missed the 'space around operator' issue, yet I
-> fixed it here...
->
-> Applied to for-next, thanks!
-You want me to send another version fixing these nits ?
->
+Hi,
 
 
+This is actually a resend of previous patches, rebased on latest
+3.15-rc5. There are no changes, beside rebasing.
+
+The first two fixes were posted previously as separate patches and they
+didn't get review [1]. I am attaching them here.
+The last patch adds support for S2MPS14 device and already was
+reviewed/acked [2].
+
+Mike, could you pick them up or should they go through MFD tree?
+
+
+[1] https://lkml.org/lkml/2014/4/7/42
+[2] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/28039/focus=310279
+
+
+Changes since v3:
+=================
+1. Add Mike's acked-by (see [2]).
+2. Rebase patch 3/3 on the fixes (patches 1 and 2).
+3. Rebase on v3.15-rc5-157-g60b5f90d0fac
+
+Changes since v2:
+=================
+1. Patch 2/3: Remove MFD cells of_compatible which aren't used by child
+   drivers and are not documented.
+2. Added Tomasz's Review-by.
+
+Changes since v1:
+=================
+1. Patch 1/3: Update driver description in Kconfig.
+2. Patch 2/3: Add of_compatible to all MFD cells.
+3. Add Yadwinder's Review-by.
+
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (3):
+  clk: s2mps11: Add missing of_node_put and of_clk_del_provider
+  clk: s2mps11: Remove useless check for clk_table
+  clk: s2mps11: Add support for S2MPS14 clocks
+
+ drivers/clk/Kconfig       |  8 ++---
+ drivers/clk/clk-s2mps11.c | 88 +++++++++++++++++++++++++++++++++--------------
+ 2 files changed, 66 insertions(+), 30 deletions(-)
 
 -- 
-Shine bright,
-(: Nav :)
+1.9.1
