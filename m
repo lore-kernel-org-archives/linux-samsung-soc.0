@@ -1,76 +1,35 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: Re: [PATCH v2 02/18] drm/exynos: use wait_event_timeout() for safety
- usage
-Date: Wed, 21 May 2014 14:01:12 +0800
-Message-ID: <CAGS+omCHJppm=9GeFarb_UhwB-mSJi+nxWFw1FC+ew3OOA-srQ@mail.gmail.com>
-References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
- <1400647390-26590-3-git-send-email-yj44.cho@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH RESEND 2/2] ARM: dts: Add secure firmware support for Arndale-octa
+Date: Wed, 21 May 2014 11:34:51 +0530
+Message-ID: <CAK9yfHw=YD7G10Riym2N5NbRK7nyGr5rh7v=uT+XTp14U0dCbQ@mail.gmail.com>
+References: <1400557810-28428-1-git-send-email-tushar.behera@linaro.org>
+	<1400557810-28428-2-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1400647390-26590-3-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, s.trumtrar@pengutronix.de
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:55357 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750770AbaEUGEw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 May 2014 02:04:52 -0400
+Received: by mail-oa0-f41.google.com with SMTP id m1so1735947oag.28
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 May 2014 23:04:51 -0700 (PDT)
+In-Reply-To: <1400557810-28428-2-git-send-email-tushar.behera@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-On Wed, May 21, 2014 at 12:42 PM, YoungJun Cho <yj44.cho@samsung.com> wrote:
-> There could be the case that the page flip operation isn't finished correctly
-> with some abnormal condition such as panel reset. So this patch replaces
-> wait_event() with wait_event_timeout() to avoid waiting for page flip completion
-> infinitely.
-> And clears exynos_crtc->pending_flip in exynos_drm_crtc_page_flip() when
-> exynos_drm_crtc_mode_set_commit() is failed.
+On 20 May 2014 09:20, Tushar Behera <tushar.behera@linaro.org> wrote:
+> Arndale-Octa board is always configured to work with trustzone
+> firmware binary. Added DTS node entry to enable this support.
 >
-> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-> Acked-by: Inki Dae <inki.dae@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_crtc.c |    7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> index 95c9435..3bf091d 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> @@ -69,8 +69,10 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
->
->         if (mode > DRM_MODE_DPMS_ON) {
->                 /* wait for the completion of page flip. */
-> -               wait_event(exynos_crtc->pending_flip_queue,
-> -                               atomic_read(&exynos_crtc->pending_flip) == 0);
-> +               if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
-> +                               !atomic_read(&exynos_crtc->pending_flip),
-> +                               HZ/20))
-> +                       atomic_set(&exynos_crtc->pending_flip, 0);
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 
-I meant that changing this to wait_event_timeout() seems to be masking
-the original problem, that pending_flip wasn't being cleared.
-Now that you are now clearing pending_flip in the error path, you
-don't need the timeout, right?
+Works well.
 
--Dan
+Tested-by: Sachin Kamat <sachin.kamat@linaro.org>
 
->                 drm_vblank_off(crtc->dev, exynos_crtc->pipe);
->         }
->
-> @@ -259,6 +261,7 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
->                         spin_lock_irq(&dev->event_lock);
->                         drm_vblank_put(dev, exynos_crtc->pipe);
->                         list_del(&event->base.link);
-> +                       atomic_set(&exynos_crtc->pending_flip, 0);
->                         spin_unlock_irq(&dev->event_lock);
->
->                         goto out;
-> --
-> 1.7.9.5
->
+-- 
+With warm regards,
+Sachin
