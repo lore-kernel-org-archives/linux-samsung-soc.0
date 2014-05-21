@@ -1,150 +1,112 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [PATCH v2 02/18] drm/exynos: use wait_event_timeout() for safety
- usage
-Date: Wed, 21 May 2014 19:37:36 +0900
-Message-ID: <537C81F0.3060108@samsung.com>
-References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
- <1400647390-26590-3-git-send-email-yj44.cho@samsung.com>
- <CAGS+omCHJppm=9GeFarb_UhwB-mSJi+nxWFw1FC+ew3OOA-srQ@mail.gmail.com>
- <537C4775.1050702@samsung.com>
- <CAGS+omB_xgErG9u_0XB=UpJCrMhhkOu-Sjv_zupOn1V4i-V_-w@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 21 May 2014 12:50:38 +0200
+Message-ID: <20140521105034.GA2014@ulmo>
+References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
+ <4367469.BqpJyVF8PT@wuerfel>
+ <20140521090037.GA19268@ulmo>
+ <5371868.4QO1YJ0hU2@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:29064 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750980AbaEUKhk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 06:37:40 -0400
-In-reply-to: <CAGS+omB_xgErG9u_0XB=UpJCrMhhkOu-Sjv_zupOn1V4i-V_-w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5371868.4QO1YJ0hU2@wuerfel>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, s.trumtrar@pengutronix.de, Kyungmin Park <kyungmin.park@samsung.com>, InKi Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-Hi Daniel,
 
-On 05/21/2014 03:45 PM, Daniel Kurtz wrote:
-> On Wed, May 21, 2014 at 2:28 PM, YoungJun Cho <yj44.cho@samsung.com> wrote:
->> Hi Daniel
->>
->>
->> On 05/21/2014 03:01 PM, Daniel Kurtz wrote:
->>>
->>> On Wed, May 21, 2014 at 12:42 PM, YoungJun Cho <yj44.cho@samsung.com>
->>> wrote:
->>>>
->>>> There could be the case that the page flip operation isn't finished
->>>> correctly
->>>> with some abnormal condition such as panel reset. So this patch replaces
->>>> wait_event() with wait_event_timeout() to avoid waiting for page flip
->>>> completion
->>>> infinitely.
->>>> And clears exynos_crtc->pending_flip in exynos_drm_crtc_page_flip() when
->>>> exynos_drm_crtc_mode_set_commit() is failed.
->>>>
->>>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
->>>> Acked-by: Inki Dae <inki.dae@samsung.com>
->>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>> ---
->>>>    drivers/gpu/drm/exynos/exynos_drm_crtc.c |    7 +++++--
->>>>    1 file changed, 5 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->>>> b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->>>> index 95c9435..3bf091d 100644
->>>> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->>>> @@ -69,8 +69,10 @@ static void exynos_drm_crtc_dpms(struct drm_crtc
->>>> *crtc, int mode)
->>>>
->>>>           if (mode > DRM_MODE_DPMS_ON) {
->>>>                   /* wait for the completion of page flip. */
->>>> -               wait_event(exynos_crtc->pending_flip_queue,
->>>> -                               atomic_read(&exynos_crtc->pending_flip)
->>>> == 0);
->>>> +               if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
->>>> +                               !atomic_read(&exynos_crtc->pending_flip),
->>>> +                               HZ/20))
->>>> +                       atomic_set(&exynos_crtc->pending_flip, 0);
->>>
->>>
->>> I meant that changing this to wait_event_timeout() seems to be masking
->>> the original problem, that pending_flip wasn't being cleared.
->>
->>
->> Yes, I agree.
->>
->> The original purpose of this patch is to avoid lock-up during modetest (with
->> test_vsync) with command mode panel.
->> In MIPI DSI command mode interface, the display controller can not generate
->> VSYNC signal and uses TE signal instead which is generated by panel.
->> If there is an abnormal power off or reset condition, it is possible that
+--Q68bSM7Ycu6FN28Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-At first, I omitted the keyword "panel" at previous reply.
-The abnormal power off or reset condition could be happened in panel
-which generates TE signal.
+On Wed, May 21, 2014 at 11:36:32AM +0200, Arnd Bergmann wrote:
+> On Wednesday 21 May 2014 11:00:38 Thierry Reding wrote:
+> > On Wed, May 21, 2014 at 10:50:38AM +0200, Arnd Bergmann wrote:
+> > > On Wednesday 21 May 2014 10:26:11 Thierry Reding wrote:
+>=20
+> > > > > > For determining dma masks, it is the output address that it
+> > > > > > important.  Santosh's code can probably be taught to handle thi=
+s,
+> > > > > > if given an additional traversal rule for following "iommus"
+> > > > > > properties.  However, deploying an IOMMU whose output address s=
+ize
+> > > > > > is smaller than the=20
+> > > > >=20
+> > > > > Something seems to be missing here. I don't think we want to hand=
+le
+> > > > > the case where the IOMMU output cannot the entire memory address
+> > > > > space. If necessary, that would mean using both an IOMMU driver
+> > > > > and swiotlb, but I think it's a reasonable assumption that hardwa=
+re
+> > > > > isn't /that/ crazy.
+> > > >=20
+> > > > Similarily, should the IOMMU not be treated like any other device h=
+ere?
+> > > > Its DMA mask should determine what address range it can access.
+> > >=20
+> > > Right. But for that we need a dma-ranges property in the parent of the
+> > > iommu, just so the mask can be set correctly and we don't have to
+> > > rely on the 32-bit fallback case.
+> >=20
+> > Shouldn't the IOMMU driver be the one to set the DMA mask for the device
+> > in exactly the same way that other drivers override the 32-bit default?
+>=20
+> The IOMMU driver could /ask/ for an appropriate mask based on its internal
+> design, but if you have an IOMMU with a 64-bit output address connected
+> to a 32-bit bus, that should fail.
 
->> the display controller misses the TE signal and it makes lock-up.
->> So I needed this patch.
->
-> If flips are not completing on MIPI DSI, may I recommend that you
-> start a timer when scheduling such a flip in the MIPI DSI driver that
-> will expire after a timeout.  In that timer's expiration handler, you
+Are there real use-cases where that really happens? I guess if we need
+that the correct thing would be to bitwise AND both the DMA mask of the
+IOMMU device (as set by the driver) with that derived from the IOMMU's
+parent bus' dma-ranges property.
 
-The MIPI DSI doesn't take care page flip operation at all.
-And the exynos_drm_crtc_finish_page_flip() is called only by interrupt 
-handler of display controllers.
-So there is no suitable place to set time-out for this.
+> Note that it's not obvious what the IOMMU's DMA mask actually means.
+> It clearly has to be the mask that is used for allocating the IO page
+> tables, but it wouldn't normally be used in the path that allocates
+> pages on behalf of a DMA master attached to the IOMMU, because that
+> allocation is performed by the code that looks at the other device's
+> dma mask.
 
-> can then go through the normal process of completing a flip.  This
-> would make the timeout transparent to the generic exynos_drm_crtc
-> layer, which can then do its normal flip complete processing: send
-> pending vblank events, put vblank, clear pending_flip, etc.
-> Does that make sense?
-> Is it possible?
+Interesting. If a DMA buffer is allocated using the master's DMA mask
+wouldn't that cause breakage if the IOMMU and master's DMA masks don't
+match. It seems to me like the right thing to do for buffer allocation
+is to use the IOMMU's DMA mask if a device uses the IOMMU for
+translation and use the device's DMA mask when determining to what I/O
+virtual address to map that buffer.
 
-This function is exynos_drm_crtc_dpms() and my patch is for DPMS OFF case.
-That means all page flip operations should be finished already to
-control DPMS off and in almost every case, there is no problem.
+Obviously if we always assume that IOMMU hardware is sane and can always
+access at least the whole memory then this isn't an issue. But what if a
+device can do DMA to a 64-bit address space, but the IOMMU can only
+address 32 bits. If the device's DMA mask is used for allocations, then
+buffers could reside beyond the 4 GiB boundary that the IOMMU can
+address, so effectively the IOMMU wouldn't be able to write to those
+buffers.
 
-But if there is an issue like this lock-up, I think it should escape 
-this condition.
+Thierry
 
-Thank you.
-Best regards YJ
+--Q68bSM7Ycu6FN28Q
+Content-Type: application/pgp-signature
 
->
-> -Dan
->
->>> Now that you are now clearing pending_flip in the error path, you
->>> don't need the timeout, right?
->>>
->>
->> There might be my missing point. Would you explain more detail?
->>
->>
->> Thank you.
->> Best regards YJ
->>
->>> -Dan
->>>
->>>>                   drm_vblank_off(crtc->dev, exynos_crtc->pipe);
->>>>           }
->>>>
->>>> @@ -259,6 +261,7 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc
->>>> *crtc,
->>>>                           spin_lock_irq(&dev->event_lock);
->>>>                           drm_vblank_put(dev, exynos_crtc->pipe);
->>>>                           list_del(&event->base.link);
->>>> +                       atomic_set(&exynos_crtc->pending_flip, 0);
->>>>                           spin_unlock_irq(&dev->event_lock);
->>>>
->>>>                           goto out;
->>>> --
->>>> 1.7.9.5
->>>>
->>>
->>
->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTfIT6AAoJEN0jrNd/PrOhe+EQAIrfRaMfhOARFFEQ+bHIe9OM
+IcY5BO/ZBqqp3Lh82bEflCwWWgmCXhu0x3hs77/6UTbs0+rbe+lymia/B7t9uC4M
+pbE1SBD54hXD9K5R7VrgOQIcpfMO1Z+K5wkrDA4qvBI2+BZtTnXTflyNK3OPEF9e
+IBwImKNfgfJ/QNAz5/5jbJf7jb1O06AS2gqw/In4vNI1NyYLdWvan8OtZxCXWRT+
+V384XzjmdYS0lf6BhcCTCBF2DQZjjNNjFYeK6cZJMdcPLrduvEOCvjsSE7IRqlbP
+xUZ1L9dGrt+aFYFCwrjUZn/tIojc5rKWKV+x2Sf4Y7y9MvXlBeA0wnhlIqN4AAvw
+kbvB6hdeculGY6CbCZoPkhdxYheR6i9Z9S4/awHIcVna2zHXxFmJvmEB1FjflKRf
+c2nI83+Mt7shhZacn0P5v2+mvEnCF8B2rykfe+F5yv7vjcCU53mM0ecbk+ebTYQz
+QEJXOIdH73irPrUhEDQ8JVp6KN5WcheBBPxjySJbMn1DN8UxUaXj2y86H6Bhu6HE
+q/vrLRue2cE25DLJwWm7+ajSny+xCtqJ1nX0KYhM/Sp/Cleaybwu0wtD9D1R9JPm
+6ho/ZotGmhiVUxFmA5oOkdqLUelgUPydePJ5jraLo2wX9DAWYIbyhXh5fVVWs3Mz
+rD4OdjkLwapAhMcXnMQm
+=gZM1
+-----END PGP SIGNATURE-----
+
+--Q68bSM7Ycu6FN28Q--
