@@ -1,56 +1,56 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] i2c: exynos5: add support for HSI2C on Exynos5260 SoC
-Date: Wed, 21 May 2014 13:32:29 +0200
-Message-ID: <20140521113229.GU2708@katana>
-References: <1398675598-25991-1-git-send-email-ch.naveen@samsung.com>
- <20140521103432.GM2708@katana>
- <CAHfPSqDwg9z27jPHaZohYCvr314dye1Wd6dgYQKP7Ub7=gSVuA@mail.gmail.com>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: Re: [PATCH v2 04/18] video: add command mode and command mode display
+ timing
+Date: Wed, 21 May 2014 20:41:39 +0900
+Message-ID: <537C90F3.7050404@samsung.com>
+References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
+ <1400647390-26590-5-git-send-email-yj44.cho@samsung.com>
+ <20140521110204.GB2014@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cqG5pBpskktEuCrX"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:47335 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751254AbaEULck (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 07:32:40 -0400
-Content-Disposition: inline
-In-Reply-To: <CAHfPSqDwg9z27jPHaZohYCvr314dye1Wd6dgYQKP7Ub7=gSVuA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20140521110204.GB2014@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, sjg@chromium.org, linux-kernel@vger.kernel.org, cpgs@samsung.com, broonie@kernel.org, t.figa@samsung.com
 
+Hi Therry
 
---cqG5pBpskktEuCrX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 05/21/2014 08:02 PM, Thierry Reding wrote:
+> On Wed, May 21, 2014 at 01:42:56PM +0900, YoungJun Cho wrote:
+>> This patch is based on videomode and display_timing relevant codes.
+>> To support command mode panel, it does not need to guide its timing
+>> information to the display controller like video mode panel,
+>> but it requires signal timings to transfer video data.
+>> So this patch adds cmdmode struct, cmdmode_display_timing struct and
+>> the according helper functions to convert cmdmode_display_timing
+>> to a generic cmdmode.
+>
+> Can you point me to relevant documentation? I wasn't able to find it by
+> a quick scan through the DSI specification.
+>
 
-> You want me to send another version fixing these nits ?
+I'm sorry to say that there is no specific one document.
 
-No, did it locally here. Thanks.
+I referred to several ones, CPU interface, I80 interface and
+DBI document(last time you said it).
+I think this is good to check it.
+[ http://cache.freescale.com/files/dsp/doc/app_note/AN4180.pdf ]
 
+And I asked panel vendor custom service centre also.
 
---cqG5pBpskktEuCrX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Thank you.
+Best regards YJ
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.15 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTfI7NAAoJEBQN5MwUoCm2xsUP/j6VRy2+sFreaM6nKTn3vsxF
-qUF2Qzzya0HvAKxxMzzGxSLyILQMx8YLaovxTRqiSE7liFhmR0EarQNnwF7WARHg
-fCTS7ct8USRqbyq0ZsAP2V6UNDdnUaICRk2p7I6YMkVH0IYqNxTzLmq6bkNg+1xZ
-KQbXMH0C8yR/niAjsAXIf16x1WAdW+VRFc2jX1QbY2MjVq3mjWJ5A9IrjG+4ObMk
-2yxOI1ctwcGQDpCzs5z7jiXlgKi6/H9YJ/ax06ey3Go86DKOMH/i8HgQCnJToKWk
-EjnbWGl1Poss225kZPituI+wPau4UUzVuKAGhIeNcIm+Vso5y6ZE7Dr4fVWCOvAI
-7a+qUWBSrP7qEq4Iws5EX/ypjcIcXdmk8/iY+24oR2QeJQMFo2oSyRRF04agEpee
-YOzK8dotHduD06d6wnscHweIJXRL4vk4m5X/5dHhJgXo0Y3HDwU33/0opeeFJgb2
-naZRedUXHMnSeZcWK+XnjHHeNKBr+dTE36KM08fCDSz7QGAPnE/4I4AWOOHyJGy7
-Kw+FB6GcHwkS43Vfy9TnkplIVDbvM59IBvHZ+4xVOZfoFLBViK/srRcN9Uqjrpcw
-z1Ot1DlOsj1S1msrw1oBI3h7Gq7+ORN0lZDna9QcXfGXNiW/OF0ICXro9BRnBbrW
-0JHhbcE5riGg2PZPfnGC
-=CQVy
------END PGP SIGNATURE-----
-
---cqG5pBpskktEuCrX--
+> Thierry
+>
