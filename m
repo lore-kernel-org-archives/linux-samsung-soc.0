@@ -1,58 +1,76 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ASoC: samsung: Add 'mclk' handling for Snow sound-card
- driver
-Date: Wed, 21 May 2014 11:11:02 +0530
-Message-ID: <537C3C6E.6010207@linaro.org>
-References: <1400559942-5666-1-git-send-email-tushar.behera@linaro.org> <20140520111600.GL12304@sirena.org.uk>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: Re: [PATCH v2 02/18] drm/exynos: use wait_event_timeout() for safety
+ usage
+Date: Wed, 21 May 2014 14:01:12 +0800
+Message-ID: <CAGS+omCHJppm=9GeFarb_UhwB-mSJi+nxWFw1FC+ew3OOA-srQ@mail.gmail.com>
+References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
+ <1400647390-26590-3-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:37222 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750796AbaEUFlI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 01:41:08 -0400
-Received: by mail-pd0-f169.google.com with SMTP id w10so1048462pde.28
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 May 2014 22:41:07 -0700 (PDT)
-In-Reply-To: <20140520111600.GL12304@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1400647390-26590-3-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, s.trumtrar@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org, sbkim73@samsung.com, rdunlap@infradead.org, dianders@chromium.org, t.figa@samsung.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On Wed, May 21, 2014 at 12:42 PM, YoungJun Cho <yj44.cho@samsung.com> wrote:
+> There could be the case that the page flip operation isn't finished correctly
+> with some abnormal condition such as panel reset. So this patch replaces
+> wait_event() with wait_event_timeout() to avoid waiting for page flip completion
+> infinitely.
+> And clears exynos_crtc->pending_flip in exynos_drm_crtc_page_flip() when
+> exynos_drm_crtc_mode_set_commit() is failed.
+>
+> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> Acked-by: Inki Dae <inki.dae@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c |    7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index 95c9435..3bf091d 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -69,8 +69,10 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+>
+>         if (mode > DRM_MODE_DPMS_ON) {
+>                 /* wait for the completion of page flip. */
+> -               wait_event(exynos_crtc->pending_flip_queue,
+> -                               atomic_read(&exynos_crtc->pending_flip) == 0);
+> +               if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
+> +                               !atomic_read(&exynos_crtc->pending_flip),
+> +                               HZ/20))
+> +                       atomic_set(&exynos_crtc->pending_flip, 0);
 
-On 05/20/2014 04:46 PM, Mark Brown wrote:
-> On Tue, May 20, 2014 at 09:55:42AM +0530, Tushar Behera wrote:
->> For audio to work on Snow board, we need the codec master clock
->> 'mclk' to be properly configured.
->> 
->> Currently XCLKOUT is configured as 'mclk' for codec chip and it
->> is required to be clocked at 24MHz for the codec to work
->> properly.
->> 
->> Add appropriate clock handling within Snow sound-card driver to
->> set 'mclk' to operate at 24MHz.
-> 
-> The clock here is connected to the CODEC on the board so it should
-> be connected to the CODEC in the device tree too.
-> 
+I meant that changing this to wait_event_timeout() seems to be masking
+the original problem, that pending_flip wasn't being cleared.
+Now that you are now clearing pending_flip in the error path, you
+don't need the timeout, right?
 
-Ok. I will move 'mclk' clock handling to respective CODEC drivers.
+-Dan
 
-- -- 
-Tushar Behera
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQEcBAEBAgAGBQJTfDxtAAoJELqclMPPkq4NkPcH/2fOwVTGgmGFarm2RSoxJcON
-QcSQlNpVXEpAqslVdz+ay7VkYCWy+wiuTq4Fe/Yw5RK/Pl7DdkEX/Ltj7/Q6+CbT
-38r6o5PSbZLlPcBxVjGXBiOTpK7PZLumF8c1DK4/6HzsHYDzLGTvbWVi6cy9kZzj
-X3glD3PBiK/NL12IuOHsRg2wzBRE56RQCmfT2kPueWHEklebGzr/qv5UgdGWa+jb
-JRVDt11klGfvIFj+Ov28yave1epzFEzrNm4ixso8MJN7J9HxlufagTheS0HkDpuX
-+uY8PbRFTAdT7pjvZR4n2lPws940nk7aUqyVPTQaG9JVKk7R4FVZgBwmhMeIsMU=
-=eKSS
------END PGP SIGNATURE-----
+>                 drm_vblank_off(crtc->dev, exynos_crtc->pipe);
+>         }
+>
+> @@ -259,6 +261,7 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+>                         spin_lock_irq(&dev->event_lock);
+>                         drm_vblank_put(dev, exynos_crtc->pipe);
+>                         list_del(&event->base.link);
+> +                       atomic_set(&exynos_crtc->pending_flip, 0);
+>                         spin_unlock_irq(&dev->event_lock);
+>
+>                         goto out;
+> --
+> 1.7.9.5
+>
