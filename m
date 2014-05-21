@@ -1,70 +1,66 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [alsa-devel] [PATCH v2 1/2] ASoC: samsung: s3c24{xx, 12}-i2s:
- port to use generic dmaengine API
-Date: Wed, 21 May 2014 18:39:26 +0300
-Message-ID: <CA+E=qVfXb2BeEsPcwnvKSiYRtP=HL6J_OLv+yrpg16kg74zJzQ@mail.gmail.com>
-References: <1400617569-7187-1-git-send-email-anarsoul@gmail.com>
- <CA+E=qVd_M5wes5rwU0pkR7-4FDS8J-XKfajV7-efTtm=sy2==g@mail.gmail.com>
- <537CC143.9050307@samsung.com> <45188858.i0tHnasRTk@phil>
+From: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 21 May 2014 08:44:42 -0700
+Message-ID: <CANEJEGvhEsC9wKqX_pYmOg7LwsQkoN9=jjXJuW0UeEa9XywSPw@mail.gmail.com>
+References: <1400242998-437-1-git-send-email-thierry.reding@gmail.com>
+	<4506822.XX7GrvtHhk@wuerfel> <20140521090244.GB19268@ulmo>
+	<11242680.PQytQQqlPJ@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f52.google.com ([209.85.219.52]:49265 "EHLO
-	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752641AbaEUPjr convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 11:39:47 -0400
-Received: by mail-oa0-f52.google.com with SMTP id eb12so2453297oac.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 08:39:46 -0700 (PDT)
-In-Reply-To: <45188858.i0tHnasRTk@phil>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <11242680.PQytQQqlPJ@wuerfel>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Tomasz Figa <t.figa@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Wed, May 21, 2014 at 6:29 PM, Heiko St=C3=BCbner <heiko@sntech.de> w=
-rote:
-> Am Mittwoch, 21. Mai 2014, 17:07:47 schrieb Tomasz Figa:
->> On 21.05.2014 16:53, Vasily Khoruzhick wrote:
->> > On Wed, May 21, 2014 at 4:28 PM, Tomasz Figa <t.figa@samsung.com> =
-wrote:
->> >> Please remember to keep linux-samsung-soc ML on Cc when sending p=
-atches
->> >> related to Samsung platforms. It is essential to let Samsung peop=
-le
->> >> review them.
->> >
->> > Ok, I'll keep it in mind. I've just checked and get_maintainer.pl
->> > outputs linux-samsung-soc ML for these
->> > patches. I've omitted it occasionally, because it wasn't necessary=
- to
->> > keep it in CC back in 2011
->> > (year of my last sound-related patch for s3c24xx).
->> >
->> >> Please resend the series with this in mind.
->> >
->> > Is it really necessary? This patch is supposed to go through ASoC
->> > tree, not through Samsung's.
->> > And I really doubt that Samsung guys test kernel for s3c24xx board=
-s
->> > nowadays.
->> Maybe not test, but at least review the code. Also there might be ot=
-her
->> people following that list that might be interested in looking at th=
-is
->> series, while not subscribed to alsa-devel - I can name at least Hei=
-ko
->> St=C3=BCbner, who should be able to test it on further s3c24xx-based=
- boards.
->
-> Sadly, I don't have a working sound setup on my 2 s3c boards.
+On Wed, May 21, 2014 at 2:32 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> On Wednesday 21 May 2014 11:02:45 Thierry Reding wrote:
+>> On Wed, May 21, 2014 at 10:54:42AM +0200, Arnd Bergmann wrote:
+>>
+>> > Right. As long as we always unmap the buffers from the IOMMU after they
+>> > have stopped being in use, it's very unlikely that even a broken device
+>> > driver causes a DMA into some bus address that happens to be mapped for
+>> > another device.
+>>
+>> I think that if buffers remain mapped in the IOMMU when they have been
+>> deallocated that should be considered a bug.
 
-What are they btw? Is it too time-consuming to make sound working on th=
-em?
-It would be nice if anyone except me could test these patches.
+There is currently no general requirement to tear down mappings immediately.
+An option to enforce immediate tear down might be useful since I agree
+Virtual Guests sharing host memory through shared physical devices
+will want that. ie there should be no opportunity for a shared device
+to be able to access another guests memory through "stale" (but live)
+DMA mappings. I don't think that's the case but I'd ask someone like
+Alex Williamson for a more certain answer.
 
-> Heiko
+> You could see it as a performance optimization in some cases, e.g. when you
+> cannot flush individual IOTLBs or doing so is expensive, and you just keep
+> assigning new addresses until every one has been used, then you do a global
+> IOTLB flush once.
 
-Regards
-Vasily
+This is in fact exactly what several IOMMUs do - including the Intel
+IOMMU driver.
+
+IIRC, the Intel IOMMU driver collects 256 or so  entries to flush and
+then flushes them all at once and updates the metadata. I don't if it
+does this for ranges assigned to different virtual guests though or
+just within a given range.
+
+> Obviously you have to maintain the IO page tables correctly.
+
+To be clear, "Correctly" in this case just means until the IOTLB is
+flushed, the given IOMMU Pdir entries are marked "in use" even though
+the driver has handed "ownership" back to the IOMMU driver.
+
+cheers,
+grant
