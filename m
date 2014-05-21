@@ -1,74 +1,85 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] clk: exynos5420: Staticize local variables
-Date: Wed, 21 May 2014 17:28:02 +0530
-Message-ID: <1400673482-16287-1-git-send-email-sachin.kamat@linaro.org>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH] i2c: exynos5: Initialise Samsung High Speed I2C
+ controller early
+Date: Wed, 21 May 2014 17:34:09 +0530
+Message-ID: <CAHfPSqCOnW4YGPfMfpBMbLSaiSxRN=CHJK6kYdkXMujKvNwAPA@mail.gmail.com>
+References: <1398350916-885-1-git-send-email-ch.naveen@samsung.com>
+ <20140424162558.GB12304@sirena.org.uk> <CAHfPSqB5+mLiC07jbEpeUgW63pZVk700SkYGxToO7GRAsFm_nQ@mail.gmail.com>
+ <20140509135153.GM12304@sirena.org.uk> <CAHfPSqDSTyQXPT-NCZ2hE01qpdmaR54tbWCUYC_zSDGFp58+7g@mail.gmail.com>
+ <20140509145425.GP12304@sirena.org.uk> <20140521102515.GJ2708@katana>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:39554 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752221AbaEUMAK (ORCPT
+Received: from mail-qc0-f172.google.com ([209.85.216.172]:39557 "EHLO
+	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752149AbaEUMEa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 08:00:10 -0400
-Received: by mail-pd0-f173.google.com with SMTP id v10so1329884pde.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 05:00:10 -0700 (PDT)
+	Wed, 21 May 2014 08:04:30 -0400
+In-Reply-To: <20140521102515.GJ2708@katana>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, kgene.kim@samsung.com, mturquette@linaro.org, sachin.kamat@linaro.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Mark Brown <broonie@kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, sjg@chromium.org, grundler@chromium.org, linux-kernel@vger.kernel.org, cpgs@samsung.com
 
-Local symbols are made static.
+Hello Wolfram,
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- drivers/clk/samsung/clk-exynos5420.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+On 21 May 2014 15:55, Wolfram Sang <wsa@the-dreams.de> wrote:
+> On Fri, May 09, 2014 at 03:54:25PM +0100, Mark Brown wrote:
+>> On Fri, May 09, 2014 at 08:12:47PM +0530, Naveen Krishna Ch wrote:
+>> > On 9 May 2014 19:21, Mark Brown <broonie@kernel.org> wrote:
+>> > > On Fri, May 09, 2014 at 05:50:00PM +0530, Naveen Krishna Ch wrote:
+>>
+>> > >> DRM related drivers like DP, FIMD, HDMI, Mixer wants to be probed ASAP
+>> > >> during the boot.
+>> > >> The real problem comes when, one of these drivers do a regulator_get().
+>>
+>> > >> If the physical supply  is not enabled/hookedup the regulator_get() call
+>> > >> assumes that physical supply is present and returns a
+>> > >> "dummy_regulator" (But, not an error).
+>>
+>> > >> Because of which, Display and several other devices fails to work.
+>>
+>> > > These drivers are buggy, if they geniunely expect and handle a missing
+>> > > supply then they should be using regulator_get_optional() to request the
+>> > > regulator and even if they don't the use of subsys_initcall() is not
+>> > > going to fix anything here - if a dummy regulator is going to be
+>> > > returned the time things are probed won't make a difference.
+>>
+>> ...
+>>
+>> > If all the I2C, SPI, DMA, I2C_TUNNEL, DRM based LCD are all mod_probes()
+>> > DRM drivers are probing a head of the PMIC probe. Which is causing the
+>> > display drivers to get "dummy_regulators" instead of the real supplies.
+>>
+>> No, it really won't - I have no idea what you are doing but it's not
+>> mainline.  If you are getting dummy regulators then you don't have a
+>> supply present at all and probe ordering isn't going to make a blind
+>> bit of difference.
+>>
+>> Please provide a specific technical description of the problem you are
+>> seeing in mainline.
+>
+> +1 Unless we have a clear understanding that this is the only acceptable
+> solution in mainline, this is really an out-of-tree patch.
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 9d7d7eed03fd..41b507baf5d6 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -474,7 +474,7 @@ static struct samsung_fixed_factor_clock
- 	FFACTOR(0, "ff_dout_spll2", "mout_sclk_spll", 1, 2, 0),
- };
- 
--struct samsung_mux_clock exynos5800_mux_clks[] __initdata = {
-+static struct samsung_mux_clock exynos5800_mux_clks[] __initdata = {
- 	MUX(0, "mout_aclk400_isp", mout_group3_5800_p, SRC_TOP0, 0, 3),
- 	MUX(0, "mout_aclk400_mscl", mout_group3_5800_p, SRC_TOP0, 4, 3),
- 	MUX(0, "mout_aclk400_wcore", mout_group2_5800_p, SRC_TOP0, 16, 3),
-@@ -523,7 +523,7 @@ struct samsung_mux_clock exynos5800_mux_clks[] __initdata = {
- 	MUX(0, "mout_fimd1", mout_group2_p, SRC_DISP10, 4, 3),
- };
- 
--struct samsung_div_clock exynos5800_div_clks[] __initdata = {
-+static struct samsung_div_clock exynos5800_div_clks[] __initdata = {
- 	DIV(0, "dout_aclk400_wcore", "mout_aclk400_wcore", DIV_TOP0, 16, 3),
- 
- 	DIV(0, "dout_aclk550_cam", "mout_aclk550_cam",
-@@ -539,14 +539,14 @@ struct samsung_div_clock exynos5800_div_clks[] __initdata = {
- 	DIV(0, "dout_sclk_sw", "sclk_spll", DIV_TOP9, 24, 6),
- };
- 
--struct samsung_gate_clock exynos5800_gate_clks[] __initdata = {
-+static struct samsung_gate_clock exynos5800_gate_clks[] __initdata = {
- 	GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
- 				GATE_BUS_TOP, 24, 0, 0),
- 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
- 				GATE_BUS_TOP, 27, 0, 0),
- };
- 
--struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
-+static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
- 	MUX(0, "sclk_bpll", mout_bpll_p, TOP_SPARE2, 0, 1),
- 	MUX(0, "mout_aclk400_wcore_bpll", mout_aclk400_wcore_bpll_p,
- 				TOP_SPARE2, 4, 1),
-@@ -576,7 +576,7 @@ struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
- 	MUX(0, "mout_fimd1", mout_group3_p, SRC_DISP10, 4, 1),
- };
- 
--struct samsung_div_clock exynos5420_div_clks[] __initdata = {
-+static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
- 	DIV(0, "dout_aclk400_wcore", "mout_aclk400_wcore_bpll",
- 			DIV_TOP0, 16, 3),
- };
+Few of the DRM based devices need regulators during their probe and
+DRM subsystem
+wants to bring up LCD as fast as it could to give a better user experience.
+
+Exynos DRM (few others for that matter) does platform_driver_register()
+of devices in a sequence and finally binds them all together into one
+blob or /dev/dri-0 device.
+Which makes it hard to implement -EPROBE_DEFER. Even if -EPROBE_DEFER is
+implemented in DRM, it adds lot of overhead during the boot up.
+
+I've proposed to make exynos_drm_init() as late_initcall() instead of making
+I2C, SPI, DMA and I2C-arbitrator and I2C-TUNNEL drivers as subsys_initcall()
+
+http://www.spinics.net/lists/linux-samsung-soc/msg30858.html
+
+Kindly, suggest a workable approach for all the subsystems.
+>
+
 -- 
-1.7.9.5
+Shine bright,
+(: Nav :)
