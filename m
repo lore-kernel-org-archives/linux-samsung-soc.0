@@ -1,82 +1,77 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/exynos: Make exynos_drm_init() call late during the
- bootup
-Date: Wed, 21 May 2014 17:46:23 +0200
-Message-ID: <20140521154622.GO2014@ulmo>
-References: <1400067585-31236-1-git-send-email-ch.naveen@samsung.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [alsa-devel] [PATCH v2 1/2] ASoC: samsung: s3c24{xx, 12}-i2s: port to use generic dmaengine API
+Date: Wed, 21 May 2014 17:56:41 +0200
+Message-ID: <27469899.QpTIQjlnqG@phil>
+References: <1400617569-7187-1-git-send-email-anarsoul@gmail.com> <45188858.i0tHnasRTk@phil> <CA+E=qVfXb2BeEsPcwnvKSiYRtP=HL6J_OLv+yrpg16kg74zJzQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hOh8F6DNH/RZBSFD"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f53.google.com ([74.125.83.53]:61302 "EHLO
-	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751450AbaEUPsl (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:43369 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751148AbaEUPxT convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 11:48:41 -0400
-Received: by mail-ee0-f53.google.com with SMTP id c13so1714674eek.40
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 08:48:40 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1400067585-31236-1-git-send-email-ch.naveen@samsung.com>
+	Wed, 21 May 2014 11:53:19 -0400
+In-Reply-To: <CA+E=qVfXb2BeEsPcwnvKSiYRtP=HL6J_OLv+yrpg16kg74zJzQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, naveenkrishna.ch@gmail.com
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-
---hOh8F6DNH/RZBSFD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, May 14, 2014 at 05:09:45PM +0530, Naveen Krishna Chatradhi wrote:
-> exynos_drm_init() does probing of various drivers like dp_panel,
-> hdmi, fimd, mixer, etc in an order and finally binds them together.
+Am Mittwoch, 21. Mai 2014, 18:39:26 schrieb Vasily Khoruzhick:
+> On Wed, May 21, 2014 at 6:29 PM, Heiko St=FCbner <heiko@sntech.de> wr=
+ote:
+> > Am Mittwoch, 21. Mai 2014, 17:07:47 schrieb Tomasz Figa:
+> >> On 21.05.2014 16:53, Vasily Khoruzhick wrote:
+> >> > On Wed, May 21, 2014 at 4:28 PM, Tomasz Figa <t.figa@samsung.com=
+> wrote:
+> >> >> Please remember to keep linux-samsung-soc ML on Cc when sending
+> >> >> patches
+> >> >> related to Samsung platforms. It is essential to let Samsung pe=
+ople
+> >> >> review them.
+> >> >=20
+> >> > Ok, I'll keep it in mind. I've just checked and get_maintainer.p=
+l
+> >> > outputs linux-samsung-soc ML for these
+> >> > patches. I've omitted it occasionally, because it wasn't necessa=
+ry to
+> >> > keep it in CC back in 2011
+> >> > (year of my last sound-related patch for s3c24xx).
+> >> >=20
+> >> >> Please resend the series with this in mind.
+> >> >=20
+> >> > Is it really necessary? This patch is supposed to go through ASo=
+C
+> >> > tree, not through Samsung's.
+> >> > And I really doubt that Samsung guys test kernel for s3c24xx boa=
+rds
+> >> > nowadays.
+> >>=20
+> >> Maybe not test, but at least review the code. Also there might be =
+other
+> >> people following that list that might be interested in looking at =
+this
+> >> series, while not subscribed to alsa-devel - I can name at least H=
+eiko
+> >> St=FCbner, who should be able to test it on further s3c24xx-based =
+boards.
+> >=20
+> > Sadly, I don't have a working sound setup on my 2 s3c boards.
 >=20
-> Some of the drm devices (Eg: dp_panel) try to do regulator_get()
-> and enable few supplies during their probe.
-> Chances are that, these devices may get probed before the respective
-> supply/PMIC is hooked.  In such cases, dp_panel would continue with
-> "dummy regulator". Which is not what the system wants.
->=20
-> Lets give the core connectivity and regulators modules some time
-> to hookup the supplies before Exynos DRM devices comes into picture.
->=20
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> ---
-> This change is proposed after
-> 1. Discussing with I2C/SPI & DMA subsystem maintainers and Others
->    @ https://lkml.org/lkml/2014/5/9/333
->    Trying to change the I2C, SPI and DMA drivers as subsys_initcall()
->    Which was strictly opposed, as a flaw was found in DRM subsystem.
->=20
-> 2. -EPROBE_DEFER won't work well with the current sequency of
->     platform_driver_register()s in exynos_drm_init()
+> What are they btw? Is it too time-consuming to make sound working on =
+them?
+> It would be nice if anyone except me could test these patches.
 
-Then this is the problem that you need to fix. If the driver doesn't
-handle -EPROBE_DEFER properly then that means the driver is broken. No
-amount of initcall ordering can fix this for you.
+Openmoko Freerunner (S3C2440) where there may be sound reachable somewa=
+y and a=20
+"Oyo" ebook-reader (S3C2416) whose i2s is I think compatible with the s=
+3c64xx=20
+instead of the s3c24xx ones and with a completely unsupported codec.
 
-Thierry
+But in general I'm fairly confident that if you hear sounds on your dev=
+ice your=20
+conversion would be fine test-wise :-)
 
---hOh8F6DNH/RZBSFD
-Content-Type: application/pgp-signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTfMpOAAoJEN0jrNd/PrOh62cP/jn11L6lN8e5GmoSTJxltu9D
-hi/bvOp8CdlAwJVfxP2gNT/sa0jeLB0eV3SaTeGzq72q2tBZ44EiRP9TJsMnX56c
-nHZ2HF6xj9ACWtroLFHU3FbciBbMwxEV2Vv1XgHcJrpUzv2hFlGurEK6eMK/9cWO
-aRQC4IzA/JxRXbwCAy0V6guzPrnuilHqNi6PpUoZJVb1F+ZLAKpqU8HVCoI3mwrs
-dwqUhbtGkiu04uNHGqRxleex1hQ47LHKkhdeMFKjkejdw8FwSRrD1IG7RjAZmX9m
-LIkLINCiB1DLS8rODN1zdf9P/jQ7Nu/VlXZIqoDAz24WRO+NyqRpaS6shhEixEit
-ZNnWgYodKt/BFUY6D1JE6GJslTUoTGL8BALgyM2N92VuYvQF+Jd+j/3mtewzi5DV
-Dp5W9FLc/t8vIZ/iiTW4dLvVQPOlJ7ydIPikYiSz2GSQq92PjHq4v42jJCYWrrvs
-3jJ/y0a8VsH2jh0azzr3BSQEwwzPsD47waW7pzN3uYAF9KfV4QE9xdQBNjoSEAvO
-VOBPfMNFd7VYIJ5+mTtAvg2TahnOb+qcI8Enyj30R4oaL5jqtug1yQa+BosCDhrj
-2z4OPCoIEw+ux1pj0NWazrwW/G2n3gKRAH0kC4TiUbvO4n0ROJ8yMhPu4qq22Wei
-7olmZB4GSaSBrhB2niTn
-=lons
------END PGP SIGNATURE-----
-
---hOh8F6DNH/RZBSFD--
+Heiko
