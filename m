@@ -1,65 +1,99 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] pwm: samsung: do not set manual update bit in
- pwm_samsung_config
-Date: Wed, 21 May 2014 12:20:43 +0200
-Message-ID: <20140521102042.GB22783@ulmo>
-References: <1399906581-29298-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: exynos5: Initialise Samsung High Speed I2C
+ controller early
+Date: Wed, 21 May 2014 12:25:15 +0200
+Message-ID: <20140521102515.GJ2708@katana>
+References: <1398350916-885-1-git-send-email-ch.naveen@samsung.com>
+ <20140424162558.GB12304@sirena.org.uk>
+ <CAHfPSqB5+mLiC07jbEpeUgW63pZVk700SkYGxToO7GRAsFm_nQ@mail.gmail.com>
+ <20140509135153.GM12304@sirena.org.uk>
+ <CAHfPSqDSTyQXPT-NCZ2hE01qpdmaR54tbWCUYC_zSDGFp58+7g@mail.gmail.com>
+ <20140509145425.GP12304@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yEPQxsgoJgBvi8ip"
-Return-path: <linux-pwm-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="pMCBjikF2xGw87uL"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:46865 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751786AbaEUKZY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 May 2014 06:25:24 -0400
 Content-Disposition: inline
-In-Reply-To: <1399906581-29298-1-git-send-email-ajaykumar.rs@samsung.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, ajaynumb@gmail.com, tomasz.figa@gmail.com, abrestic@chromium.org, jg1.han@samsung.com, sachin.kamat@linaro.org, joshi@samsung.com, prashanth.g@samsung.com
+In-Reply-To: <20140509145425.GP12304@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, sjg@chromium.org, grundler@chromium.org, linux-kernel@vger.kernel.org, cpgs@samsung.com
 
 
---yEPQxsgoJgBvi8ip
+--pMCBjikF2xGw87uL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 12, 2014 at 08:26:21PM +0530, Ajay Kumar wrote:
-> pwm_samsung_config sets manual update bit via call to
-> pwm_samsung_enable even when the channel is already running.
-> This causes noticable flickers on display if we try to change
-> the backlight value from 0 to MAX, continiously.
+On Fri, May 09, 2014 at 03:54:25PM +0100, Mark Brown wrote:
+> On Fri, May 09, 2014 at 08:12:47PM +0530, Naveen Krishna Ch wrote:
+> > On 9 May 2014 19:21, Mark Brown <broonie@kernel.org> wrote:
+> > > On Fri, May 09, 2014 at 05:50:00PM +0530, Naveen Krishna Ch wrote:
 >=20
-> So, we remove the call to pwm_samsung_enable from
-> pwm_samsung_config to avoid the flicker and this change doesn't
-> harm normal working since the pwm_bl core already takes care of
-> calling pwm_samsung_enable whenever needed.
+> > >> DRM related drivers like DP, FIMD, HDMI, Mixer wants to be probed AS=
+AP
+> > >> during the boot.
+> > >> The real problem comes when, one of these drivers do a regulator_get=
+().
 >=20
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> ---
->  drivers/pwm/pwm-samsung.c | 3 ---
->  1 file changed, 3 deletions(-)
+> > >> If the physical supply  is not enabled/hookedup the regulator_get() =
+call
+> > >> assumes that physical supply is present and returns a
+> > >> "dummy_regulator" (But, not an error).
+>=20
+> > >> Because of which, Display and several other devices fails to work.
+>=20
+> > > These drivers are buggy, if they geniunely expect and handle a missing
+> > > supply then they should be using regulator_get_optional() to request =
+the
+> > > regulator and even if they don't the use of subsys_initcall() is not
+> > > going to fix anything here - if a dummy regulator is going to be
+> > > returned the time things are probed won't make a difference.
+>=20
+> ...
+>=20
+> > If all the I2C, SPI, DMA, I2C_TUNNEL, DRM based LCD are all mod_probes()
+> > DRM drivers are probing a head of the PMIC probe. Which is causing the
+> > display drivers to get "dummy_regulators" instead of the real supplies.
+>=20
+> No, it really won't - I have no idea what you are doing but it's not
+> mainline.  If you are getting dummy regulators then you don't have a
+> supply present at all and probe ordering isn't going to make a blind
+> bit of difference.
+>=20
+> Please provide a specific technical description of the problem you are
+> seeing in mainline.
 
-Applied, thanks.
++1 Unless we have a clear understanding that this is the only acceptable
+solution in mainline, this is really an out-of-tree patch.
 
-Thierry
 
---yEPQxsgoJgBvi8ip
-Content-Type: application/pgp-signature
+--pMCBjikF2xGw87uL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Version: GnuPG v1.4.15 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTfH36AAoJEN0jrNd/PrOhIxMP/RYLUKRZHVV9akmJIZDkoCmQ
-LDZZCZBM6sBRF+ZQ7BPlRTeYVA6xsnp0OCrw1DR0yf5ciQg+sYR0GgiB4QrVpTSj
-1H4D7kTg9KvULveMdjSQR/aU7RjujXl36MuluG6M+NPh81wP1DIUn2P4q9k5q5+I
-ra4AUheNl6b/VlJcUNoMvyHpbOrV7bRhkGsD9mzVjMMvY5HfhZ9OmOPYDuLkqbBE
-aHqls7QMk4i9jWRXZcGI1SRhyWRn051lfbcs1FAEzFshR6S0sBVaxBae4U2Y7Uso
-LF+dRTfWXrfmYzDHHxqojltNViQ0VeMxl9xKwR2vFOAY4Y5H6WzfTmuyRrTAjz6G
-Wr2W0lAPEhxOSiik8mOIJ6RwH4QuItwtDIFN/f3TZH/VSC4Eg9M+Q4yrrj3jfIxP
-Rw6Yg5IPdJsvkJQ9gKjVT8Hevsz2CHCsTWk0COpoRdz8EizVA79yptPRsYoxJ4Kb
-1hVab4S2IST9TI11R2rzjkX/k3JZIcm/F6n6gDiL1lmDemJcOqy2411AhVuADIFV
-YZdRKfUItnZmKe4slC9EumrFI8mmto0kuxwrdAJGXfSfOFkHQ2705fLHTZExUgS1
-QmEujkggV2ObIz+kDrcQwuEyVYrKHM2pKO1ztToOWeHnbzhMNCqoA+F2tLyLhC0j
-o7uGKaKyVgkEPZtlteAe
-=6ZBB
+iQIcBAEBAgAGBQJTfH8LAAoJEBQN5MwUoCm2ucIQALTUkXNNmgTuuIsPE0Wqrfie
+eJDqbBy5ImwGsGGdAfZBM9Y11kpI9+SHNKMInx0iZCqS5rjodEA0y/cBy+1d6pvZ
+RcWvGoUTFjkQ22XUQhiSFMioaI4tf0HVrhX+N8XYghGYyw7XlaBbpiWh9IPNxBfG
+XJigANkBM50p+Gsme2dKk0nKdOwpat3eQF2MbQX1+W99K4tW6KcTFlm57AjfYfdV
+XESUx1x4JfCNOhag9K9WxANj8kqIg7jwbq6rvpV2xC3z5jLnMlOBbgsGYyB4ATug
+MBgkWm0LjnSWekIXxKP8mrZtwguhKnvj4eNoaSInBauvXHUk12x5t7ZvA+75jQ0S
+F1LEzUmlhCbi/JAbVOEXfBmbb0WddcUOHxcM2HLdzU2MaZfR2XpVAE9yrsAGjzhI
+UT8mMKGhQLmNBULeEuwDtmtA5qbyJst1miHB2WIlTTt3A/azlGzPAhkv+dJDqSqO
+AGHL64lrWjyl30pcd51EWcstBIWSe+HKtUb326gqFGLxZssMP9QQ/3WhZoC2pHbJ
++X+jX9rpxIBOlnNEyDDgnyE5If3zWQR4mSxQtAjoefcO5N5bRRRgq37zXb63YEnt
+7358E29wCEHkVXW0PuAR8QlTzwa+D5YpWudUjdOT2SUC/3QHdsEi8Weg6fps0Y/5
+oo47lcIJY+Rr1TSq6KZa
+=V8vQ
 -----END PGP SIGNATURE-----
 
---yEPQxsgoJgBvi8ip--
+--pMCBjikF2xGw87uL--
