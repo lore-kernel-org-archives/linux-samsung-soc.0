@@ -1,65 +1,56 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: EXYNOS: Fix compilation warning
-Date: Wed, 21 May 2014 16:56:33 +0530
-Message-ID: <CAK9yfHyFEb3hchLLndfqW1xOHD59d_bsFMA4k5MLJ8Hgpx7Ekw@mail.gmail.com>
-References: <1399282008-9738-1-git-send-email-sachin.kamat@linaro.org>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: exynos5: add support for HSI2C on Exynos5260 SoC
+Date: Wed, 21 May 2014 13:32:29 +0200
+Message-ID: <20140521113229.GU2708@katana>
+References: <1398675598-25991-1-git-send-email-ch.naveen@samsung.com>
+ <20140521103432.GM2708@katana>
+ <CAHfPSqDwg9z27jPHaZohYCvr314dye1Wd6dgYQKP7Ub7=gSVuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cqG5pBpskktEuCrX"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f50.google.com ([209.85.219.50]:36187 "EHLO
-	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752874AbaEUL0f convert rfc822-to-8bit (ORCPT
+Received: from sauhun.de ([89.238.76.85]:47335 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751254AbaEULck (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 07:26:35 -0400
-Received: by mail-oa0-f50.google.com with SMTP id i7so2063917oag.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 04:26:33 -0700 (PDT)
-In-Reply-To: <1399282008-9738-1-git-send-email-sachin.kamat@linaro.org>
+	Wed, 21 May 2014 07:32:40 -0400
+Content-Disposition: inline
+In-Reply-To: <CAHfPSqDwg9z27jPHaZohYCvr314dye1Wd6dgYQKP7Ub7=gSVuA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Rob Herring <robh@kernel.org>
+To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, sjg@chromium.org, linux-kernel@vger.kernel.org, cpgs@samsung.com, broonie@kernel.org, t.figa@samsung.com
 
-On 5 May 2014 14:56, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> of_get_flat_dt_prop return type is now const.
-> Fixes the following compilation warning introduced by commit 9d0c4dfe=
-dd96
-> ("of/fdt: update of_get_flat_dt_prop in prep for libfdt")
->
-> arch/arm/mach-exynos/exynos.c:259:6: warning:
-> assignment discards =E2=80=98const=E2=80=99 qualifier from pointer ta=
-rget type [enabled by default]
->
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> Cc: Rob Herring <robh@kernel.org>
-> ---
-> Based on linux-next (20140505)
-> ---
->  arch/arm/mach-exynos/exynos.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exy=
-nos.c
-> index 77293d39dfc9..f356c67a1fa9 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -249,7 +249,7 @@ static int __init exynos_fdt_map_chipid(unsigned =
-long node, const char *uname,
->                                         int depth, void *data)
->  {
->         struct map_desc iodesc;
-> -       __be32 *reg;
-> +       const __be32 *reg;
->         int len;
->
->         if (!of_flat_dt_is_compatible(node, "samsung,exynos4210-chipi=
-d") &&
-> --
-> 1.7.9.5
->
 
-Ping. This warning is still seen in latest linux-next.
+--cqG5pBpskktEuCrX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---=20
-With warm regards,
-Sachin
+> You want me to send another version fixing these nits ?
+
+No, did it locally here. Thanks.
+
+
+--cqG5pBpskktEuCrX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.15 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTfI7NAAoJEBQN5MwUoCm2xsUP/j6VRy2+sFreaM6nKTn3vsxF
+qUF2Qzzya0HvAKxxMzzGxSLyILQMx8YLaovxTRqiSE7liFhmR0EarQNnwF7WARHg
+fCTS7ct8USRqbyq0ZsAP2V6UNDdnUaICRk2p7I6YMkVH0IYqNxTzLmq6bkNg+1xZ
+KQbXMH0C8yR/niAjsAXIf16x1WAdW+VRFc2jX1QbY2MjVq3mjWJ5A9IrjG+4ObMk
+2yxOI1ctwcGQDpCzs5z7jiXlgKi6/H9YJ/ax06ey3Go86DKOMH/i8HgQCnJToKWk
+EjnbWGl1Poss225kZPituI+wPau4UUzVuKAGhIeNcIm+Vso5y6ZE7Dr4fVWCOvAI
+7a+qUWBSrP7qEq4Iws5EX/ypjcIcXdmk8/iY+24oR2QeJQMFo2oSyRRF04agEpee
+YOzK8dotHduD06d6wnscHweIJXRL4vk4m5X/5dHhJgXo0Y3HDwU33/0opeeFJgb2
+naZRedUXHMnSeZcWK+XnjHHeNKBr+dTE36KM08fCDSz7QGAPnE/4I4AWOOHyJGy7
+Kw+FB6GcHwkS43Vfy9TnkplIVDbvM59IBvHZ+4xVOZfoFLBViK/srRcN9Uqjrpcw
+z1Ot1DlOsj1S1msrw1oBI3h7Gq7+ORN0lZDna9QcXfGXNiW/OF0ICXro9BRnBbrW
+0JHhbcE5riGg2PZPfnGC
+=CQVy
+-----END PGP SIGNATURE-----
+
+--cqG5pBpskktEuCrX--
