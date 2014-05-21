@@ -1,56 +1,157 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [PATCH v2 04/18] video: add command mode and command mode display
- timing
-Date: Wed, 21 May 2014 20:41:39 +0900
-Message-ID: <537C90F3.7050404@samsung.com>
-References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
- <1400647390-26590-5-git-send-email-yj44.cho@samsung.com>
- <20140521110204.GB2014@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20140521110204.GB2014@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] clk: exynos4: Improve handling of the xxti, xusbxti,
+ fin_pll clocks
+Date: Wed, 21 May 2014 13:52:15 +0200
+Message-ID: <1400673135-31777-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:18177 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751018AbaEULw7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 May 2014 07:52:59 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N5X00K4VAC9Y580@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 May 2014 20:52:57 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: t.figa@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hi Therry
+Make sure the Exynos custom fixed rate clocks registration function
+is called only when there are any of those clocks specified in the
+device tree. This allows to switch to the standard fixed rate clocks
+for oscillators connected to the XXTI or XUSBXTI pins.
 
-On 05/21/2014 08:02 PM, Thierry Reding wrote:
-> On Wed, May 21, 2014 at 01:42:56PM +0900, YoungJun Cho wrote:
->> This patch is based on videomode and display_timing relevant codes.
->> To support command mode panel, it does not need to guide its timing
->> information to the display controller like video mode panel,
->> but it requires signal timings to transfer video data.
->> So this patch adds cmdmode struct, cmdmode_display_timing struct and
->> the according helper functions to convert cmdmode_display_timing
->> to a generic cmdmode.
->
-> Can you point me to relevant documentation? I wasn't able to find it by
-> a quick scan through the DSI specification.
->
+This patch also changes CLK_FIN_PLL clock from a fixed rate clock to
+a proper read-only mux clock.
 
-I'm sorry to say that there is no specific one document.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+This patch superseeded my previous one:
+http://www.spinics.net/lists/arm-kernel/msg333211.html
 
-I referred to several ones, CPU interface, I80 interface and
-DBI document(last time you said it).
-I think this is good to check it.
-[ http://cache.freescale.com/files/dsp/doc/app_note/AN4180.pdf ]
+ drivers/clk/samsung/clk-exynos4.c |   73 ++++++++++++++++++++-----------------
+ drivers/clk/samsung/clk.c         |    5 ++-
+ 2 files changed, 43 insertions(+), 35 deletions(-)
 
-And I asked panel vendor custom service centre also.
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 05fc93c..904a413 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1026,50 +1026,55 @@ static struct samsung_clock_alias exynos4x12_aliases[] __initdata = {
+  * controller is first remapped and the value of XOM[0] bit is read to
+  * determine the parent clock.
+  */
+-static unsigned long exynos4_get_xom(void)
++static u8 __fin_pll_mux_get_parent(struct clk_hw *hw)
+ {
+-	unsigned long xom = 0;
+-	void __iomem *chipid_base;
+-	struct device_node *np;
+-
+-	np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
+-	if (np) {
+-		chipid_base = of_iomap(np, 0);
+-
+-		if (chipid_base)
+-			xom = readl(chipid_base + 8);
+-
+-		iounmap(chipid_base);
++	static int xom = -1;
++
++	if (xom < 0) {
++		void __iomem *addr;
++		struct device_node *np;
++
++		xom = 0;
++		np = of_find_compatible_node(NULL, NULL,
++					"samsung,exynos4210-chipid");
++		if (np) {
++			addr = of_iomap(np, 0);
++			if (addr) {
++				xom = readl(addr + 8) & 0x1;
++				iounmap(addr);
++			}
++		}
+ 	}
+-
+ 	return xom;
+ }
 
-Thank you.
-Best regards YJ
++/* FIN_PLL is a read-only MUX clock */
++const struct clk_ops __fin_pll_clk_mux_ops = {
++	.get_parent = __fin_pll_mux_get_parent,
++};
++
+ static void __init exynos4_clk_register_finpll(void)
+ {
+-	struct samsung_fixed_rate_clock fclk;
++	const char *parent_names[] = { "xxti", "xusbxti"};
++	static struct clk_hw *hw;
++	struct clk_init_data init;
+ 	struct clk *clk;
+-	unsigned long finpll_f = 24000000;
+-	char *parent_name;
+-	unsigned int xom = exynos4_get_xom();
+-
+-	parent_name = xom & 1 ? "xusbxti" : "xxti";
+-	clk = clk_get(NULL, parent_name);
+-	if (IS_ERR(clk)) {
+-		pr_err("%s: failed to lookup parent clock %s, assuming "
+-			"fin_pll clock frequency is 24MHz\n", __func__,
+-			parent_name);
+-	} else {
+-		finpll_f = clk_get_rate(clk);
+-	}
 
-> Thierry
->
+-	fclk.id = CLK_FIN_PLL;
+-	fclk.name = "fin_pll";
+-	fclk.parent_name = NULL;
+-	fclk.flags = CLK_IS_ROOT;
+-	fclk.fixed_rate = finpll_f;
+-	samsung_clk_register_fixed_rate(&fclk, 1);
++	hw = kzalloc(sizeof(*hw), GFP_KERNEL);
++	if (WARN_ON(!hw))
++		return;
++
++	init.name = "fin_pll";
++	init.ops = &__fin_pll_clk_mux_ops;
++	init.parent_names = parent_names;
++	init.num_parents = ARRAY_SIZE(parent_names);
++	init.flags = 0;
++	hw->init = &init;
++
++	clk = clk_register(NULL, hw);
++	WARN_ON(IS_ERR(clk));
+
++	samsung_clk_add_lookup(clk, CLK_FIN_PLL);
+ }
+
+ static struct of_device_id exynos4_clkout_ids[] __initdata = {
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 91bec3e..31fcf5f 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -273,14 +273,17 @@ void __init samsung_clk_of_register_fixed_ext(
+ {
+ 	const struct of_device_id *match;
+ 	struct device_node *np;
++	unsigned int count = 0;
+ 	u32 freq;
+
+ 	for_each_matching_node_and_match(np, clk_matches, &match) {
+ 		if (of_property_read_u32(np, "clock-frequency", &freq))
+ 			continue;
+ 		fixed_rate_clk[(u32)match->data].fixed_rate = freq;
++		count++;
+ 	}
+-	samsung_clk_register_fixed_rate(fixed_rate_clk, nr_fixed_rate_clk);
++	if (count > 0)
++		samsung_clk_register_fixed_rate(fixed_rate_clk, count);
+ }
+ #endif
+
+--
+1.7.9.5
