@@ -1,77 +1,75 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] i2c: mux: Use subsys_initcall for the
- i2c-arb-gpio-challenge
-Date: Wed, 21 May 2014 12:26:53 +0200
-Message-ID: <20140521102653.GK2708@katana>
-References: <1398351922-1647-1-git-send-email-ch.naveen@samsung.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH] i2c: exynos5: add support for HSI2C on Exynos5260 SoC
+Date: Wed, 21 May 2014 12:34:32 +0200
+Message-ID: <20140521103432.GM2708@katana>
+References: <1398675598-25991-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZG5hGh9V5E9QzVHS"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:46878 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751691AbaEUK0z (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 06:26:55 -0400
+	protocol="application/pgp-signature"; boundary="00sTfE/IIAT5d2r5"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1398351922-1647-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1398675598-25991-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-i2c@vger.kernel.org, naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sjg@chromium.org, grundler@chromium.org, linux-kernel@vger.kernel.org, cpgs@samsung.com, broonie@kernel.org, Doug Anderson <dianders@chromium.org>
 
 
---ZG5hGh9V5E9QzVHS
+--00sTfE/IIAT5d2r5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 24, 2014 at 08:35:22PM +0530, Naveen Krishna Chatradhi wrote:
-> From: Doug Anderson <dianders@chromium.org>
+On Mon, Apr 28, 2014 at 02:29:58PM +0530, Naveen Krishna Chatradhi wrote:
+> HSI2C module on Exynos5260 differs from current modules in
+> following ways:
+> 1.  HSI2C on Exynos5260 has fifo_depth of 16bytes
+> 2.  Module needs to be reset as a part of init sequence.
 >=20
-> Since many drivers rely on FETs that live behind this arbitrator, they
-> can't successfully probe until after the arbitrator comes up.  They
-> ought to handle things properly with EPROBE_DEFER and still work, but
-> that has some downsides:
+> Hence, Following changes are involved.
+> 1. Add a new compatible string and Updates the Documentation dt bindings.
+> 2. Introduce a variant struct to support the changes in H/W
+> 3. Reset the module during init. Thus, bringing the module back
+> to default state irrespective of what firmware did with it.
 >=20
-> 1. Those drivers don't come up till later in the boot process.  That
->    really not so nice for the LCD--we want that to init early.
-> 2. Some drivers have bugs and don't handle EPROBE_DEFER.  Those
->    drivers should be fixed but not all of them have been fixed yet.
->    HDMI is one example since DRM doesn't really have good support for
->    deferring probes.
->=20
-> With this change We end up using the same init level as the main i2c bus.
->=20
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> Reviewed-on: https://gerrit.chromium.org/gerrit/57007
-> Reviewed-by: Simon Glass <sjg@chromium.org>
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Signed-off-by: Naveen Krishna Chatradhi <ich.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
 
-Same here. Unless we have a clear understanding that this is the only
-acceptable solution in mainline, this is really an out-of-tree patch.
+=2E..
+
+> -		fifo_ctl |=3D HSI2C_RXFIFO_TRIGGER_LEVEL(HSI2C_DEF_TXFIFO_LVL);
+> +		trig_lvl =3D (i2c->msg->len > i2c->variant->fifo_depth) ?
+> +			(i2c->variant->fifo_depth * 3/4) : i2c->msg->len;
+> +		fifo_ctl |=3D HSI2C_RXFIFO_TRIGGER_LEVEL(trig_lvl);
+> +
+
+Dunno why checkpatch missed the 'space around operator' issue, yet I
+fixed it here...
+
+Applied to for-next, thanks!
 
 
---ZG5hGh9V5E9QzVHS
+--00sTfE/IIAT5d2r5
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.15 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTfH9sAAoJEBQN5MwUoCm2NKIP/RnXdE5wd+fUPW7J+JRAYKPo
-TngFUG55mdvAiHqHT4PiUIbv+8HookLkmD43JdXt0ORbYt+AyAi+vAnwOfWHOFix
-x4Q3ZRhwBTvPmQ3Lk96Z/nvgqKA5W47w8NGkXd9Q7lAoG2rgAcAGZeBT2hrqnho4
-t4fqvjvMRtL3hC/JB1o4Bb5gUafjFxI7biDowLHH8TsW1jrTdpyp6u9fowDBLbr9
-b8A9KHeaIvL/ckqnrWor9FtpT5V7IlMOkYwXVEx0FojiV84PHQPxXKD6/weKJQo1
-F6YJFygH73EvudotETNqjgPibyik3/NojyS7cO3Uyb1Ivv67VIdKEyoUJjfHr3Yt
-yhHJYFGDZazmyUKjlKtjd3QphtJLS0KIco1dK7E+86XxYv85nQiUDTzMrkbo33X+
-VfKfArY52CM8XiAd4y44VvsxXgz7jA5sgn7rl71CGOXJnlko2W7FTlhB9GMAp6Gq
-OqeGmVFVrKYC4n+Qp/qKeak7k4VBCqUmTFJeGQ+0QZO0lZM+ethdS+hcDWBZerdi
-P8Mo06mWhRgi5Zu8ohQjd3OmFU3ZVgu3W1dGZKyftuCf7wXYycq5hm8AOufqV5D1
-lyhTJH1AWYvSgBDw95O08hEMezxJbuueD3lf5am+AJaAoB5bMKJ3vPbJjFN6l8YJ
-xWZxfOMro9pbUC2v+mmd
-=8Gcc
+iQIcBAEBAgAGBQJTfIE4AAoJEBQN5MwUoCm2YF0P/0EFkN+wHA4u0tnxLbjfCXiT
+mvz+QdM0aDBfnZ94TzkuDIYdDfH79QHG6goj0co6w33MqMS++E8tHhFO+7cFF5Ol
+dkto2A0nJNHnqoC8hmvCoL9MaqTSsVrcOhWgrRcaxKj4CC8nQnJj+BkLgsf+PCXY
+tfJEEwO+7N9Z7eWokF3Vyr/uzLEDPgkSgCsJLLvNNaAxNB8OGCpMPpHnNkL7eWdL
+KqlkDqqvGTIpQZ4yJFTEE5RDMmACB+XzVrKF4L3Fu7ZwEZaKgOmlImo8qKAyRfeE
+Pt0gLxSGQZyM0nlK+P16Fmk4cB96gwBJKzOAX956NltuEe0ykh0mR4Xzstczeb/G
+hkD3R7XeYHYQ+6vDBvGlR3kZjYvWaUnfEiUGVaj+8lTQmaKqZbBESc25r3D93MsI
++D+BZ13CsGs1Q6sJAdYiH2D3ujdy80V8wtgUBAMyXTZNAVhd5sFF2wbhNn3AZlwO
+TGXs8oBWu4IMqRvjcdH7Me2PAHVdP62miN7Gq3PFoyrMgSB1PX213JoJvE0ccCP1
+CCSLdJq8ittMeiF0EhqWnq40xQMd0E6c518B6fd8rSNH2G586CCu6qHNdsddrbAw
+NdAt0uKX4t/TBcQJiZVJDahDGQ+pvz13tv2zVApZqZ4/XrBjKFfwmJhpVtaK9Bhg
+2OUAzmXWRBZ+EEwOUppr
+=2qMU
 -----END PGP SIGNATURE-----
 
---ZG5hGh9V5E9QzVHS--
+--00sTfE/IIAT5d2r5--
