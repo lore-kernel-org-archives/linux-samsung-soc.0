@@ -1,55 +1,115 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] clk: exynos5250: Add missing sysmmu clocks for DISP and
- ISP blocks
-Date: Thu, 22 May 2014 09:25:08 +0900
-Message-ID: <010701cf7554$4b3682c0$e1a38840$@samsung.com>
-References: <1399900817-10544-1-git-send-email-shaik.ameer@samsung.com>
- <CAOD6ATq2A1yJM-Mw+4k0Vt-bLYSJ6-yO66Zj=p1NPOrUDuTgMQ@mail.gmail.com>
- <537BCB56.4000107@gmail.com>
+Subject: RE: [PATCH] ARM: dts: Add audio subsystem nodes to exynos4.dtsi
+Date: Thu, 22 May 2014 09:27:09 +0900
+Message-ID: <012901cf7554$91680610$b4381230$@samsung.com>
+References: <1400239733-11782-1-git-send-email-s.nawrocki@samsung.com>
+ <537CB7A6.3050202@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:19384 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:19807 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752321AbaEVAZO (ORCPT
+	with ESMTP id S1752075AbaEVA1L (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 May 2014 20:25:14 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
+	Wed, 21 May 2014 20:27:11 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
  by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5Y0077G95ZJ820@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 22 May 2014 09:25:11 +0900 (KST)
-In-reply-to: <537BCB56.4000107@gmail.com>
+ with ESMTP id <0N5Y007E9999J820@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 May 2014 09:27:09 +0900 (KST)
+In-reply-to: <537CB7A6.3050202@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Shaik Ameer Basha' <shaik.samsung@gmail.com>, 'Shaik Ameer Basha' <shaik.ameer@samsung.com>
-Cc: 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'sunil joshi' <joshi@samsung.com>, 'Cho KyongHo' <pullip.cho@samsung.com>
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com
 
-Tomasz Figa wrote:
+Sylwester Nawrocki wrote:
 > 
-> Hi Shaik,
-> 
-> On 20.05.2014 06:08, Shaik Ameer Basha wrote:
-> > Hi Tomasz,
+> On 16/05/14 13:28, Sylwester Nawrocki wrote:
+> > This patch adds the audio subsystem clock controller and the I2S
+> > IP block nodes for Exynos4 SoC series.
 > >
-> > Any comments on this patch ?
+> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > 
-> Looks good.
+> Can this still be applied in the coming merge window ?
 > 
-> Kukjin, if you still can pick this up to your tree for 3.16, since all
-> the dependencies are already there, then
-> 
-I did. Thanks.
+Applied, thanks.
 
-> Acked-by: Tomasz Figa <t.figa@samsung.com>
-> 
-BTW, I missed your acked-by tag :-( I will amend it soon :-)
+- Kukjin
 
-> If not, I will pick it up to my tree for 3.17.
-> 
-
-Thanks,
-Kukjin
+> Thanks,
+> Sylwester
+> > ---
+> >  arch/arm/boot/dts/exynos4.dtsi |   38
+> ++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 38 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos4.dtsi
+> b/arch/arm/boot/dts/exynos4.dtsi
+> > index 58ff8e2..0eb768c 100644
+> > --- a/arch/arm/boot/dts/exynos4.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4.dtsi
+> > @@ -20,6 +20,7 @@
+> >   */
+> >
+> >  #include <dt-bindings/clock/exynos4.h>
+> > +#include <dt-bindings/clock/exynos-audss-clk.h>
+> >  #include "skeleton.dtsi"
+> >
+> >  / {
+> > @@ -45,6 +46,23 @@
+> >  		fimc3 = &fimc_3;
+> >  	};
+> >
+> > +	clock_audss: clock-controller@03810000 {
+> > +		compatible = "samsung,exynos4210-audss-clock";
+> > +		reg = <0x03810000 0x0C>;
+> > +		#clock-cells = <1>;
+> > +	};
+> > +
+> > +	i2s0: i2s@03830000 {
+> > +		compatible = "samsung,s5pv210-i2s";
+> > +		reg = <0x03830000 0x100>;
+> > +		clocks = <&clock_audss EXYNOS_I2S_BUS>;
+> > +		clock-names = "iis";
+> > +		dmas = <&pdma0 12>, <&pdma0 11>, <&pdma0 10>;
+> > +		dma-names = "tx", "rx", "tx-sec";
+> > +		samsung,idma-addr = <0x03000000>;
+> > +		status = "disabled";
+> > +	};
+> > +
+> >  	chipid@10000000 {
+> >  		compatible = "samsung,exynos4210-chipid";
+> >  		reg = <0x10000000 0x100>;
+> > @@ -289,6 +307,26 @@
+> >  		status = "disabled";
+> >  	};
+> >
+> > +	i2s1: i2s@13960000 {
+> > +		compatible = "samsung,s5pv210-i2s";
+> > +		reg = <0x13960000 0x100>;
+> > +		clocks = <&clock CLK_I2S1>;
+> > +		clock-names = "iis";
+> > +		dmas = <&pdma1 12>, <&pdma1 11>;
+> > +		dma-names = "tx", "rx";
+> > +		status = "disabled";
+> > +	};
+> > +
+> > +	i2s2: i2s@13970000 {
+> > +		compatible = "samsung,s5pv210-i2s";
+> > +		reg = <0x13970000 0x100>;
+> > +		clocks = <&clock CLK_I2S2>;
+> > +		clock-names = "iis";
+> > +		dmas = <&pdma0 14>, <&pdma0 13>;
+> > +		dma-names = "tx", "rx";
+> > +		status = "disabled";
+> > +	};
+> > +
+> >  	mfc: codec@13400000 {
+> >  		compatible = "samsung,mfc-v5";
+> >  		reg = <0x13400000 0x10000>;
+> > --
+> > 1.7.9.5
