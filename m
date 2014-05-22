@@ -1,45 +1,112 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH V2] drm/exynos: enable fimd clocks in probe before
- accessing fimd registers
-Date: Thu, 22 May 2014 12:06:16 +0530
-Message-ID: <CAPdUM4ODvHXQcN=Z2VN6yuWtOX-4Cb2oo89cHC0PO3Kab2UJJA@mail.gmail.com>
-References: <1400735767-5905-1-git-send-email-rahul.sharma@samsung.com>
-	<CAK9yfHz4DxG-Ey7HieMU9t32arXMDGYn1JXe0g8LNGpNYV6KaQ@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: allocate non-contigous buffers when iommu is
+ enabled
+Date: Thu, 22 May 2014 15:41:02 +0900
+Message-ID: <537D9BFE.7060101@samsung.com>
+References: <1399463489-6925-1-git-send-email-rahul.sharma@samsung.com>
+ <CAPdUM4OL+Kt8v1upyczDmjBPh5kT1d4gYDmYLBb=ZovQ=qOE7w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:40500 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750741AbaEVGgR (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:64769 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751576AbaEVGlH convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 02:36:17 -0400
-Received: by mail-wi0-f175.google.com with SMTP id f8so8735202wiw.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 23:36:16 -0700 (PDT)
-In-Reply-To: <CAK9yfHz4DxG-Ey7HieMU9t32arXMDGYn1JXe0g8LNGpNYV6KaQ@mail.gmail.com>
+	Thu, 22 May 2014 02:41:07 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N5Y007LTQKERK90@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 May 2014 15:41:02 +0900 (KST)
+In-reply-to: <CAPdUM4OL+Kt8v1upyczDmjBPh5kT1d4gYDmYLBb=ZovQ=qOE7w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
 
-On 22 May 2014 11:51, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Hi Rahul,
-[snip]
+On 2014=EB=85=84 05=EC=9B=94 22=EC=9D=BC 14:25, Rahul Sharma wrote:
+> Hi Inki,
+>=20
+> The below fix doesn't affect the FB dev buffer allocation. IMO the sc=
+enario
+> where u-boot allocates the buffer is not disturbed.
+> Please review the implementation.
+>=20
+
+Applied.
+
+Thanks,
+Inki Dae
+
+
+> Regards,
+> Rahul Sharma.
+>=20
+> On 7 May 2014 17:21, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+>> From: Rahul Sharma <Rahul.Sharma@samsung.com>
 >>
->> +       clk_prepare_enable(ctx->bus_clk);
->
-> Probably a check for its success?
->
->> +       clk_prepare_enable(ctx->lcd_clk);
->
-
-Generally we don't check this in any of the driver. It will be
-quite unnecessary.
-
-Regards,
-Rahul Sharma
-
-> ditto.
->
-> --
-> With warm regards,
-> Sachin
+>> Allow to allocate non-contigous buffers when iommu is enabled.
+>> Currently, it tries to allocates contigous buffer which consistently
+>> fail for large buffers and then fall back to non contigous. Apart
+>> from being slow, this implementation is also very noisy and fills
+>> the screen with alloc fail logs.
+>>
+>> Change-Id: I523e95aa308122ed2edc55e065ae6eb8be996541
+>> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_gem.c |   22 ++++++++++----------=
+--
+>>  1 file changed, 10 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/d=
+rm/exynos/exynos_drm_gem.c
+>> index 5d88924..7136945 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+>> @@ -624,22 +624,20 @@ int exynos_drm_gem_dumb_create(struct drm_file=
+ *file_priv,
+>>         args->pitch =3D args->width * ((args->bpp + 7) / 8);
+>>         args->size =3D args->pitch * args->height;
+>>
+>> -       exynos_gem_obj =3D exynos_drm_gem_create(dev, EXYNOS_BO_CONT=
+IG |
+>> -                                               EXYNOS_BO_WC, args->=
+size);
+>> -       /*
+>> -        * If physically contiguous memory allocation fails and if I=
+OMMU is
+>> -        * supported then try to get buffer from non physically cont=
+iguous
+>> -        * memory area.
+>> -        */
+>> -       if (IS_ERR(exynos_gem_obj) && is_drm_iommu_supported(dev)) {
+>> -               dev_warn(dev->dev, "contiguous FB allocation failed,=
+ falling back to non-contiguous\n");
+>> +       if (is_drm_iommu_supported(dev)) {
+>> +               exynos_gem_obj =3D exynos_drm_gem_create(dev,
+>> +                       EXYNOS_BO_NONCONTIG | EXYNOS_BO_WC,
+>> +                       args->size);
+>> +       } else {
+>>                 exynos_gem_obj =3D exynos_drm_gem_create(dev,
+>> -                                       EXYNOS_BO_NONCONTIG | EXYNOS=
+_BO_WC,
+>> -                                       args->size);
+>> +                       EXYNOS_BO_CONTIG | EXYNOS_BO_WC,
+>> +                       args->size);
+>>         }
+>>
+>> -       if (IS_ERR(exynos_gem_obj))
+>> +       if (IS_ERR(exynos_gem_obj)) {
+>> +               dev_warn(dev->dev, "FB allocation failed.\n");
+>>                 return PTR_ERR(exynos_gem_obj);
+>> +       }
+>>
+>>         ret =3D exynos_drm_gem_handle_create(&exynos_gem_obj->base, =
+file_priv,
+>>                         &args->handle);
+>> --
+>> 1.7.9.5
+>>
+>=20
