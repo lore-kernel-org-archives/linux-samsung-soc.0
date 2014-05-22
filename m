@@ -1,44 +1,41 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 0/2] ARM: dts: add pmu syscon handle to exynos hdmi nodes
-Date: Fri, 23 May 2014 03:37:27 +0900
-Message-ID: <537E43E7.407@samsung.com>
-References: <1400593129-21170-1-git-send-email-rahul.sharma@samsung.com>
+Subject: Re: [PATCH 0/3] ARM: dts: replace number by macro in clock binding
+ for exynos
+Date: Fri, 23 May 2014 03:38:48 +0900
+Message-ID: <537E4438.4090409@samsung.com>
+References: <537C6640.2010404@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f50.google.com ([209.85.160.50]:35876 "EHLO
-	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750890AbaEVShc (ORCPT
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:51064 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751581AbaEVSix (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 14:37:32 -0400
-In-Reply-To: <1400593129-21170-1-git-send-email-rahul.sharma@samsung.com>
+	Thu, 22 May 2014 14:38:53 -0400
+In-Reply-To: <537C6640.2010404@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com
+To: Beomho Seo <beomho.seo@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On 05/20/14 22:38, Rahul Sharma wrote:
-> Add PMU syscon handle to HDMI dt node for controlling PHY
-> Enable/Disable bit.
+On 05/21/14 17:39, Beomho Seo wrote:
+> Currently, some device node missed clock macro. This patchset
+> replaced it's magic number with macros in clock binding for
+> exynos4, exynos5250 and exynos 5420.
+> This patchset is based on v3.16-next/clk-samsung branch.
 >
-> Patch is dependent for following patch for approval on DT
-> Bindings:
-> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31106.html
+> Beomho Seo (3):
+>    ARM: dts: replace number by macro in clock binding for exynos4
+>    ARM: dts: replace number by macro in clock binding for exynos5250
+>    ARM: dts: replace number by macro in clock binding for exynos5420
 >
-Yeah, I checked above.
+>   arch/arm/boot/dts/exynos4.dtsi    |    2 +-
+>   arch/arm/boot/dts/exynos5250.dtsi |    4 ++--
+>   arch/arm/boot/dts/exynos5420.dtsi |    2 +-
+>   3 files changed, 4 insertions(+), 4 deletions(-)
+>
 
-Applied this series.
+Applied, thanks.
 
-Thanks,
-Kukjin
-
-> It is based on Kukjin's "for-next" branch.
->
-> Rahul Sharma (2):
->    ARM: dts: add pmu syscon handle to exynos5250 hdmi
->    ARM: dts: add pmu syscon handle to exynos5420 hdmi
->
->   arch/arm/boot/dts/exynos5250.dtsi |    1 +
->   arch/arm/boot/dts/exynos5420.dtsi |    1 +
->   2 files changed, 2 insertions(+)
+- Kukjin
