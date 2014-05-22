@@ -1,46 +1,73 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 0/8] drm/exynos/ipp: image post processing improvements
-Date: Thu, 22 May 2014 20:53:01 +0900
-Message-ID: <537DE51D.6080309@samsung.com>
-References: <1400496850-23860-1-git-send-email-a.hajda@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Use wfi macro in platform_do_lowpower
+Date: Thu, 22 May 2014 13:53:20 +0200
+Message-ID: <537DE530.3050205@linaro.org>
+References: <1400745455-27920-1-git-send-email-leela.krishna@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1400496850-23860-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1400745455-27920-1-git-send-email-leela.krishna@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Leela Krishna Amudala <leela.krishna@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, amit.kucheria@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNOuFhCAwNeyblCAxOeydvCAxOTo1NCwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBUaGlz
-IHNldCBvZiBpbmRlcGVuZGVudCBwYXRjaGVzIGNvbnRhaW5zIHZhcmlvdXMgaW1wcm92ZW1lbnQg
-YW5kIGZpeGVzCj4gZm9yIGV4eW5vc19kcm0gaXBwIGZyYW1ld29yayBhbmQgZHJpdmVycy4KPiBU
-aGUgcGF0Y2hzZXQgaXMgYmFzZWQgb24gZHJtLWV4eW5vcy9leHlub3MtZHJtLW5leHQgYnJhbmNo
-LgoKVGhhbmtzIGZvciBjb250cmlidXRpb25zIGFuZCBtZXJnZWQuCgpUaGFua3MsCklua2kgRGFl
-Cgo+IAo+IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4gCj4gQW5kcnplaiBIYWpkYSAoOCk6Cj4gICBk
-cm0vZXh5bm9zL2lwcDogZml4IGdldF9wcm9wZXJ0eSBJT0NUTAo+ICAgZHJtL2V4eW5vcy9pcHA6
-IGNvcnJlY3QgaXBwX2lkIGZpZWxkIGluaXRpYWxpemF0aW9uCj4gICBkcm0vZXh5bm9zL2lwcDog
-c2ltcGxpZnkgcHJvcGVydHkgbGlzdCBhbGxvY2F0aW9uCj4gICBkcm0vZXh5bm9zL2ZpbWM6IHNp
-bXBsaWZ5IHByZS1zY2FsZXIgcmF0aW8gY2FsY3VsYXRpb24KPiAgIGRybS9leHlub3MvZmltYzog
-c2ltcGxpZnkgaXJxIG1hc2tpbmcgZnVuY3Rpb24KPiAgIGRybS9leHlub3MvZmltYzogcmVwbGFj
-ZSBodyBhY2Nlc3MgbWFjcm9zIHdpdGggZnVuY3Rpb25zCj4gICBkcm0vZXh5bm9zL2ZpbWM6IHJl
-cGxhY2UgbXV0ZXggYnkgc3BpbmxvY2sKPiAgIGRybS9leHlub3MvZmltYzogc2ltcGxpZnkgYW5k
-IHJlbmFtZSBmaW1jX2RzdF9nZXRfYnVmX3NlcQo+IAo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fZmltYy5jICAgIHwgNDI3ICsrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0K
-PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dzYy5jICAgICB8ICAxMCArLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1faXBwLmMgICAgIHwgIDE2ICstCj4g
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pcHAuaCAgICAgfCAgIDMgKy0KPiAg
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3JvdGF0b3IuYyB8ICAgOCArLQo+ICA1
-IGZpbGVzIGNoYW5nZWQsIDE5NiBpbnNlcnRpb25zKCspLCAyNjggZGVsZXRpb25zKC0pCj4gCgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 05/22/2014 09:57 AM, Leela Krishna Amudala wrote:
+> This patch is originally based on commit b3377d186572 ("ARM: 7064/1:
+> vexpress: Use wfi macro in platform_do_lowpower.")
+>
+> Current Exynos CPU hotplug code includes a hardcoded WFI
+> instruction, in ARM encoding.  When the kernel is compiled in Thumb-2
+> mode, this is invalid and causes the machine to hang hard when a CPU
+> is offlined.
+>
+> Use wfi macro instead of the hardcoded WFI instruction.
+
+Is it possible to change it for cpu_do_idle() ?
+
+I guess, that should be backported to the previous kernel version, righ=
+t=20
+? (Cc stable@).
+
+Thanks
+   -- Daniel
+
+> Signed-off-by: Leela Krishna Amudala <leela.krishna@linaro.org>
+> ---
+>   arch/arm/mach-exynos/hotplug.c |    8 +-------
+>   1 file changed, 1 insertion(+), 7 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/ho=
+tplug.c
+> index 69fa483..8a134d0 100644
+> --- a/arch/arm/mach-exynos/hotplug.c
+> +++ b/arch/arm/mach-exynos/hotplug.c
+> @@ -46,13 +46,7 @@ static inline void platform_do_lowpower(unsigned i=
+nt cpu, int *spurious)
+>   		if (cpu =3D=3D 1)
+>   			exynos_cpu_power_down(cpu);
+>
+> -		/*
+> -		 * here's the WFI
+> -		 */
+> -		asm(".word	0xe320f003\n"
+> -		    :
+> -		    :
+> -		    : "memory", "cc");
+> +		wfi();
+>
+>   		if (pen_release =3D=3D cpu_logical_map(cpu)) {
+>   			/*
+>
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
