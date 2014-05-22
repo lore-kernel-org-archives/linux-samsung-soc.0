@@ -1,53 +1,50 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH V5 00/20] ARM: exynos: cpuidle: Move the driver to drivers/cpuidle
-Date: Fri, 23 May 2014 03:35:56 +0900
-Message-ID: <537E438C.8060600@samsung.com>
-References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org> <534BA3CF.6030701@linaro.org> <535943B2.8030308@samsung.com> <0b4201cf613f$80c91750$825b45f0$@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Add mfc node for exynos5800
+Date: Fri, 23 May 2014 03:36:33 +0900
+Message-ID: <537E43B1.1090703@samsung.com>
+References: <1400152709-16845-1-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f41.google.com ([209.85.160.41]:50057 "EHLO
-	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750870AbaEVSgB (ORCPT
+Received: from mail-pb0-f54.google.com ([209.85.160.54]:57883 "EHLO
+	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750917AbaEVSgi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 14:36:01 -0400
-Received: by mail-pb0-f41.google.com with SMTP id uo5so2876418pbc.14
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 11:36:00 -0700 (PDT)
-In-Reply-To: <0b4201cf613f$80c91750$825b45f0$@samsung.com>
+	Thu, 22 May 2014 14:36:38 -0400
+Received: by mail-pb0-f54.google.com with SMTP id jt11so2897016pbb.27
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 11:36:38 -0700 (PDT)
+In-Reply-To: <1400152709-16845-1-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, 'Daniel Lezcano' <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, rjw@rjwysocki.net, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, k.debski@samsung.com, arunkk.samsung@gmail.com
 
-On 04/26/14 20:05, Kukjin Kim wrote:
-> Tomasz Figa wrote:
->>
->> On 14.04.2014 11:01, Daniel Lezcano wrote:
->>>
->>> Hi Kukjin,
->>>
->>> I believe I addressed all the comments. Is it possible to take this
->>> patchset for next ?
->>
-> Sure ;-)
+On 05/15/14 20:18, Arun Kumar K wrote:
+> Adds the mfc node to exynos5800 which uses MFCv8.
 >
->> +1.
->>
->> Also when applying you might add
->>
->> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
->>
->> to any patches that don't have it yet.
->>
-> Tomasz, thanks for your review.
+> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
+> ---
+> The driver side patch adding support for MFCv8 is under
+> review [1]. This is based on the linux-samsung for-next branch.
+> [1] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg30670.html
+> ---
+>   arch/arm/boot/dts/exynos5800.dtsi |    4 ++++
+>   1 file changed, 4 insertions(+)
 >
-> I will take this series, "moving exynos-cpuidle into drivers/cpuidle" into samsung tree if Rafael is OK on that.
->
-Daniel,
+> diff --git a/arch/arm/boot/dts/exynos5800.dtsi b/arch/arm/boot/dts/exynos5800.dtsi
+> index 6979fc7..c0bb356 100644
+> --- a/arch/arm/boot/dts/exynos5800.dtsi
+> +++ b/arch/arm/boot/dts/exynos5800.dtsi
+> @@ -22,3 +22,7 @@
+>   &clock {
+>   	compatible = "samsung,exynos5800-clock";
+>   };
+> +
+> +&mfc {
+> +	compatible = "samsung,mfc-v8";
+> +};
 
-Can you please check/test the functionality your series with using my 
-for-next because there were merge conflicts with mcpm-exynos stuff...?
+Applied, thanks.
 
-Thanks,
-Kukjin
+- Kukjin
