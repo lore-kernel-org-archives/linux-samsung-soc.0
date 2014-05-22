@@ -1,64 +1,86 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ASoC: max98090: Add NI/MI values for user pclk 19.2 MHz
-Date: Thu, 22 May 2014 13:21:43 +0200
-Message-ID: <1400757703-24431-1-git-send-email-s.nawrocki@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL 4/5] Samsung DT updates for 3.16
+Date: Thu, 22 May 2014 20:36:07 +0900
+Message-ID: <031701cf75b2$05572760$10057620$@samsung.com>
+References: <014701cf73c8$752a65c0$5f7f3140$@samsung.com>
+ <20140522054547.GA4021@quad.lixom.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:9614 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752212AbaEVLWV (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:35871 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752584AbaEVLgJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 07:22:21 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N5Z004943L8TA60@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 22 May 2014 20:22:20 +0900 (KST)
+	Thu, 22 May 2014 07:36:09 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N5Z008XK4876370@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 May 2014 20:36:07 +0900 (KST)
+In-reply-to: <20140522054547.GA4021@quad.lixom.net>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chen Zhen <zhen1.chen@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: 'Olof Johansson' <olof@lixom.net>
+Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-From: Chen Zhen <zhen1.chen@samsung.com>
+Olof Johansson wrote:
+> 
+> On Tue, May 20, 2014 at 10:11:41AM +0900, Kukjin Kim wrote:
+> 
+> > Sachin Kamat (4):
+> >       ARM: EXYNOS: Map SYSRAM through generic DT bindings
+> 
+> This patch has a conflict with your own fixes. You should have based this
+> branch on top of the fixes to avoid it.
+> 
+Oops, I forgot the previous my fixes. Sorry about that...
 
-This patch adds the clock divisor and multiplier NI, MI values for audio
-sampling frequencies 44100 and 48000 Hz and PCLK 19.2 MHz. This is useful
-for the Odroid X2/U2 boards when the codec works in master mode and its
-MCLK clock is fed from the I2S CDCLK output.
+> Not only that, but it seems to break 4212, which the other fix was meant
+> to
+> take care of.
+> 
+> I think I've fixed it in my merge, please double check. You really have to
+> be more careful than this in the future.
+> 
+OK, I checked and it should be fine. BTW, another cleanup branch in my tree
+has dependency with following and s3c24xx-clk already queued in arm-soc so I
+need to sort out the branch before sending pull-request...
 
-Signed-off-by: Chen Zhen <zhen1.chen@samsung.com>
-[s.nawrocki@samsung.com: edited the commit description]
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- sound/soc/codecs/max98090.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Anyway thanks for your pulling.
 
-diff --git a/sound/soc/codecs/max98090.c b/sound/soc/codecs/max98090.c
-index f7b0b37..ea44471 100644
---- a/sound/soc/codecs/max98090.c
-+++ b/sound/soc/codecs/max98090.c
-@@ -1544,19 +1544,19 @@ static const int lrclk_rates[] = {
- };
- 
- static const int user_pclk_rates[] = {
--	13000000, 13000000
-+	13000000, 13000000, 19200000, 19200000,
- };
- 
- static const int user_lrclk_rates[] = {
--	44100, 48000
-+	44100, 48000, 44100, 48000,
- };
- 
- static const unsigned long long ni_value[] = {
--	3528, 768
-+	3528, 768, 441, 8
- };
- 
- static const unsigned long long mi_value[] = {
--	8125, 1625
-+	8125, 1625, 1500, 25
- };
- 
- static void max98090_configure_bclk(struct snd_soc_codec *codec)
--- 
-1.7.9.5
+- Kukjin
+
+> My resolution is:
+> 
+> index aa01c4222b40,483dfcd69065..000000000000
+> --- a/arch/arm/mach-exynos/firmware.c
+> +++ b/arch/arm/mach-exynos/firmware.c
+> @@@ -18,8 -18,7 +18,9 @@@
+> 
+>   #include <mach/map.h>
+> 
+>  +#include <plat/cpu.h>
+>  +
+> + #include "common.h"
+>   #include "smc.h"
+> 
+>   static int exynos_do_idle(void)
+> @@@ -44,10 -35,12 +45,15 @@@ static int exynos_cpu_boot(int cpu
+> 
+>   static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+>   {
+> -       void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c;
+> +       void __iomem *boot_reg;
+> +
+> +       if (!sysram_ns_base_addr)
+> +               return -ENODEV;
+> +
+>  -      boot_reg = sysram_ns_base_addr + 0x1c + 4*cpu;
+> ++      boot_reg = sysram_ns_base_addr + 0x1c;
+>  +
+>  +      if (!soc_is_exynos4212())
+>  +              boot_reg += 4*cpu;
+> 
