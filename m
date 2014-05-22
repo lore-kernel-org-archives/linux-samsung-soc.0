@@ -1,93 +1,175 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2] drm/exynos: enable fimd clocks in probe before
- accessing fimd registers
-Date: Thu, 22 May 2014 10:03:47 +0200
-Message-ID: <20140522080345.GA30247@ulmo>
-References: <1400735767-5905-1-git-send-email-rahul.sharma@samsung.com>
- <CAK9yfHz4DxG-Ey7HieMU9t32arXMDGYn1JXe0g8LNGpNYV6KaQ@mail.gmail.com>
- <CAPdUM4ODvHXQcN=Z2VN6yuWtOX-4Cb2oo89cHC0PO3Kab2UJJA@mail.gmail.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH] drm/exynos: use 4WORD dma burst length for small fbs
+Date: Thu, 22 May 2014 14:09:25 +0530
+Message-ID: <CAPdUM4MzfeS6JZEJHjRJ1PzT1gzMW2Eer_zvA3cN4Kr_Zsqwwg@mail.gmail.com>
+References: <1399461922-27131-1-git-send-email-rahul.sharma@samsung.com>
+	<537C8A45.6040407@samsung.com>
+	<CAPdUM4NyCHsA8gBZrcDw1+1LqUbE9LquWA=H4NsjHEXb8Xp1dg@mail.gmail.com>
+	<537D9F7D.9020204@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1945561295=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAPdUM4ODvHXQcN=Z2VN6yuWtOX-4Cb2oo89cHC0PO3Kab2UJJA@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:37824 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751547AbaEVIj1 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 May 2014 04:39:27 -0400
+Received: by mail-wi0-f174.google.com with SMTP id r20so8927293wiv.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 01:39:25 -0700 (PDT)
+In-Reply-To: <537D9F7D.9020204@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: sreekumar.c@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prathyush K <prathyush.k@samsung.com>
 
+On 22 May 2014 12:25, Inki Dae <inki.dae@samsung.com> wrote:
+> On 2014=B3=E2 05=BF=F9 22=C0=CF 13:36, Rahul Sharma wrote:
+>> Hi Inki,
+>>
+>> On 21 May 2014 16:43, Inki Dae <inki.dae@samsung.com> wrote:
+>>>
+>>> Hi Rahul,
+>>>
+>>> On 2014=B3=E2 05=BF=F9 07=C0=CF 20:25, Rahul Sharma wrote:
+>>>> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+>>>>
+>>>> In case of exynos, setting dma-burst to 16Word causes permanent
+>>>> tearing for very small buffers, e.g. cursor buffer. Burst Mode
+>>>> switching, which is based on overlay size is not recommended as
+>>>> overlay size varies a lot towards the end of the screen. This
+>>>> causes unstable DMA which results into tearing again.
+>> [snip]
+>>>> +     /*
+>>>> +      * In case of exynos, setting dma-burst to 16Word causes per=
+manent
+>>>> +      * tearing for very small buffers, e.g. cursor buffer. Burst=
+ Mode
+>>>> +      * switching which is based on overlay size is not recommend=
+ed as
+>>>> +      * overlay size varies alot towards the end of the screen an=
+d rapid
+>>>> +      * movement causes unstable DMA which results into iommu cra=
+sh/tear.
+>>>
+>>> FIMD has width limitation so width of hardware overlay may need to =
+be
+>>> aligned to 16 pixels.
+>>> We had faced with similar issue and the issue had been resolved by
+>>> aligning it to 16 pixels.
+>>>
+>>> So can you try to align it instead of changing burst len size?
+>>>
+>>
+>> This problem is only with the very small FBs which are
+>> rendered towards corners. For large FBs like 1366x768,
+>> we dont see this issue though 1366 is not 16 pixel
+>> aligned.
+>
+> Right, we had test it with 8x64 pixels. the limitation would be decid=
+ed
+> by memory bus length(ML), DMA burst length(DL) and pixel size in byte=
+s(PS).
+> And that can be calculated like below, which was guided by hardware t=
+eam,
+>
+> Align { (ML * DI / PS) + (4bytes / PS), 2}
 
---===============1945561295==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
-Content-Disposition: inline
+What will be the value for ML in Exynos? 4, I guess ?
 
+>
+> It seems too big value. Actually, 16 pixels works well and I don't se=
+e
+> why it works well although out of limitation.
 
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Actually Peach Pit and Peach Pi, native LCD resolution is 1366x768
+which has no issues.
 
-On Thu, May 22, 2014 at 12:06:16PM +0530, Rahul Sharma wrote:
-> On 22 May 2014 11:51, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> > Hi Rahul,
-> [snip]
-> >>
-> >> +       clk_prepare_enable(ctx->bus_clk);
-> >
-> > Probably a check for its success?
-> >
-> >> +       clk_prepare_enable(ctx->lcd_clk);
-> >
->=20
-> Generally we don't check this in any of the driver. It will be
-> quite unnecessary.
+In above experiments, I rendered FB of size 96*64 which corrupts when
+overlay width reduces beyond 48 Pixels for 5420, 5800 and 64 for 5250.
 
-Then those drivers are all buggy. There's a reason why this function
-returns an int rather than void. Just because you've never seen it fail
-doesn't mean it can't.
+Probably we have not tested rendering the Small buffers (<96 Pixels) wi=
+th
+16 bit DMA burst and towards end of FB. As if now, this scenario only
+applicable for Chrome which is having cursor.
 
-Thierry
+Please let me know how to proceed further.
 
---ibTvN161/egqYuK8
-Content-Type: application/pgp-signature
+Regards,
+Rahul Sharma.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTfa9hAAoJEN0jrNd/PrOhlOwP/A2RMsPJmCn3SVQvzoOT1Y4w
-ywNXSl4KqS5cqXtwSKTI40k3RPleSGSfteUsi6FC8TH967+kmJRV0Rc3y86od8Hr
-NdrBCIs3+E4rAt+cG3FXGO0BHpwCHlxiMeZlr2GuyQw6Ty9BO/XPD/6uglpJzRGe
-cQh64G8GJwdYWbBbqZi7x94Uegon94TQHVNhCGBk1FgdGY/G23vZoFuNvav6PvcE
-QU23Dh4jo4YctaVxv8TQFmAWRx6zFNUS9xjtcc96xKwKMADQGL7osgBNSW9wLZc6
-vyaWY8caO3PNVx+x2GGZzg04TK7H4s7PXazInAp7vURmFkUJenx3SbfaoQ83n17d
-B9LMn+qzi/d6MyaPrbiPjPXl8tUJ/nXEZ11GdbCDV4REtIZMEUX7t5wOaRi1K3kP
-vDApxCsw1PKt+jMCLpC+kBTK3S+uJD6BA+oFbrHrhmlWn1LEGOLnGnl9zIJwuTKp
-P77+/q3p0QceOZ9YgOjRUTq6ZgDZMmLqLjH9peUrznvNDVmfJiEAxdUkqWO16OrA
-dM7VcuamYDg/P4++ysF407DVLgSSHBreckl7+1JeErqlgq330m3kamuyn1ZxqC6Z
-6FlDwrGGy0e2n2ofpYMLLs1TNNk7wXF4B7qGwZ5rk93Ofp5sqeJBt+VEvoPhKYmv
-G4NHglyFL9+BoF98OP5H
-=3USm
------END PGP SIGNATURE-----
-
---ibTvN161/egqYuK8--
-
---===============1945561295==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1945561295==--
+>
+> Thanks,
+> Inki Dae
+>
+>>
+>> But I still carried out following experiments just to
+>> verify the fimd behaviour for small overlay.
+>>
+>> 1) Round DOWN:
+>> +  overlay->crtc_width =3D ((overlay->crtc_width)/16)*16;
+>>
+>> Cursor corruption from A to B
+>> A: [  308.530000] start addr =3D 0x20408000, end addr =3D 0x2040e000=
+, size =3D 0x6000
+>> [  308.530000] ovl_width =3D 64, ovl_height =3D 64
+>> [  308.540000] offset_x =3D 1302, offset_y =3D 335
+>> [  308.540000] fb_width =3D 96, fb_height =3D 64
+>>
+>> B: [  341.890000] start addr =3D 0x20408000, end addr =3D 0x2040e000=
+, size =3D 0x6000
+>> [  341.890000] ovl_width =3D 48, ovl_height =3D 64
+>> [  341.900000] offset_x =3D 1303, offset_y =3D 335
+>> [  341.900000] fb_width =3D 96, fb_height =3D 64
+>>
+>>
+>> 2) Round UP:
+>>
+>> + overlay->crtc_width =3D ((overlay->crtc_width + 16)/16)*16;
+>> + if(overlay->crtc_width > overlay->fb_width)
+>> +         overlay->crtc_width =3D overlay->fb_width;
+>>
+>> Cursor corruption from A to B
+>> A: [   63.200000] start addr =3D 0x20408000, end addr =3D 0x2040e000=
+, size =3D 0x6000
+>> [   63.210000] ovl_width =3D 96, ovl_height =3D 64
+>> [   63.210000] offset_x =3D 1271, offset_y =3D 346
+>> [   63.220000] fb_width =3D 96, fb_height =3D 64
+>>
+>> B: [   68.600000] start addr =3D 0x20408000, end addr =3D 0x2040e000=
+, size =3D 0x6000
+>> [   68.610000] ovl_width =3D 96, ovl_height =3D 64
+>> [   68.610000] offset_x =3D 1272, offset_y =3D 346
+>> [   68.620000] fb_width =3D 96, fb_height =3D 64
+>>
+>> In both the scenarios ovl_width is always 16 Pixel aligned.
+>> Please let me know if you have something else in mind. I
+>> will check and share the observations.
+>>
+>> The solution in the patch is proposed by hardware team
+>> and work fine for exynos 5250, 5420 and 5800.
+>>
+>> Regards,
+>> Rahul Sharma
+>>
+>>> Thanks,
+>>> Inki Dae
+>>>
+>>>> +      */
+>>>> +
+>>>> +     if (win_data->fb_width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
+>>>> +             val &=3D ~WINCONx_BURSTLEN_MASK;
+>>>> +             val |=3D WINCONx_BURSTLEN_4WORD;
+>>>> +     }
+>>>> +
+>>>>       writel(val, ctx->regs + WINCON(win));
+>>>>  }
+>>>>
+>>>>
+>>>
+>>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
