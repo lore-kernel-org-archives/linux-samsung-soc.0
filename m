@@ -1,61 +1,40 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH V5 00/20] ARM: exynos: cpuidle: Move the driver to drivers/cpuidle
-Date: Thu, 22 May 2014 20:57:43 +0200
-Message-ID: <537E48A7.1060904@linaro.org>
-References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org> <534BA3CF.6030701@linaro.org> <535943B2.8030308@samsung.com> <0b4201cf613f$80c91750$825b45f0$@samsung.com> <537E438C.8060600@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Use wfi macro in platform_do_lowpower
+Date: Thu, 22 May 2014 21:01:15 +0200
+Message-ID: <537E497B.9020404@linaro.org>
+References: <1400745455-27920-1-git-send-email-leela.krishna@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8;
 	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:49491 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751210AbaEVS5b (ORCPT
+Received: from mail-wi0-f181.google.com ([209.85.212.181]:54247 "EHLO
+	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751313AbaEVTBC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 14:57:31 -0400
-Received: by mail-wg0-f47.google.com with SMTP id x12so3830992wgg.30
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 11:57:30 -0700 (PDT)
-In-Reply-To: <537E438C.8060600@samsung.com>
+	Thu, 22 May 2014 15:01:02 -0400
+Received: by mail-wi0-f181.google.com with SMTP id n15so4879909wiw.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 12:01:01 -0700 (PDT)
+In-Reply-To: <1400745455-27920-1-git-send-email-leela.krishna@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, rjw@rjwysocki.net, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org
+To: Leela Krishna Amudala <leela.krishna@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, amit.kucheria@linaro.org
 
-On 05/22/2014 08:35 PM, Kukjin Kim wrote:
-> On 04/26/14 20:05, Kukjin Kim wrote:
->> Tomasz Figa wrote:
->>>
->>> On 14.04.2014 11:01, Daniel Lezcano wrote:
->>>>
->>>> Hi Kukjin,
->>>>
->>>> I believe I addressed all the comments. Is it possible to take thi=
-s
->>>> patchset for next ?
->>>
->> Sure ;-)
->>
->>> +1.
->>>
->>> Also when applying you might add
->>>
->>> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
->>>
->>> to any patches that don't have it yet.
->>>
->> Tomasz, thanks for your review.
->>
->> I will take this series, "moving exynos-cpuidle into drivers/cpuidle=
-"
->> into samsung tree if Rafael is OK on that.
->>
-> Daniel,
+On 05/22/2014 09:57 AM, Leela Krishna Amudala wrote:
+> This patch is originally based on commit b3377d186572 ("ARM: 7064/1:
+> vexpress: Use wfi macro in platform_do_lowpower.")
 >
-> Can you please check/test the functionality your series with using my
-> for-next because there were merge conflicts with mcpm-exynos stuff...=
-?
+> Current Exynos CPU hotplug code includes a hardcoded WFI
+> instruction, in ARM encoding.  When the kernel is compiled in Thumb-2
+> mode, this is invalid and causes the machine to hang hard when a CPU
+> is offlined.
+>
+> Use wfi macro instead of the hardcoded WFI instruction.
+>
+> Signed-off-by: Leela Krishna Amudala <leela.krishna@linaro.org>
 
-Sure, will do that tomorrow.
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
 
 --=20
