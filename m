@@ -1,69 +1,57 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH] drm/exynos: fix nested calls to lock mutex in drm resume
-Date: Fri, 23 May 2014 00:32:03 +0900
-Message-ID: <CAH9JG2VhH+8HiVgO90f_V9FbWRDhDK3au-qoO+sLy9+510Xn8g@mail.gmail.com>
-References: <1398865294-6754-1-git-send-email-rahul.sharma@samsung.com>
- <CAPdUM4M3MdM2Dm2GPYXD-A18YDVGmKKBz+-uGDOmiTO=WUKu8A@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: samsung: Handle errors when getting the op_clk
+ clock
+Date: Thu, 22 May 2014 17:57:44 +0100
+Message-ID: <20140522165744.GK12304@sirena.org.uk>
+References: <1400753452-6943-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAPdUM4M3MdM2Dm2GPYXD-A18YDVGmKKBz+-uGDOmiTO=WUKu8A@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="u13C/yEOc42HESKG"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39179 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750913AbaEVQ6A (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 May 2014 12:58:00 -0400
+Content-Disposition: inline
+In-Reply-To: <1400753452-6943-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-add Mr. Dae
 
-On Thu, May 22, 2014 at 11:16 PM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> Hi Inki,
->
-> This is another one which has not got reviewed. Please review.
->
-> Regards,
-> Rahul Sharma
->
-> On 30 April 2014 19:11, Rahul Sharma <rahul.sharma@samsung.com> wrote:
->> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->>
->> While testing S2R on exynos board, system is hanging and
->> rebooting due to nested mutex_lock calls in exynos drm
->> resume callback. Changing the order of the calls is fixing
->> the issue.
->>
->> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
->> ---
->> Based on exynos-drm-next branch in Inki Dae's tree.
->>  drivers/gpu/drm/exynos/exynos_drm_drv.c |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> index bb7dfee..2bb6233 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> @@ -184,8 +184,8 @@ static int exynos_drm_resume(struct drm_device *dev)
->>                         connector->funcs->dpms(connector, connector->dpms);
->>         }
->>
->> -       drm_helper_resume_force_mode(dev);
->>         drm_modeset_unlock_all(dev);
->> +       drm_helper_resume_force_mode(dev);
->>
->>         return 0;
->>  }
->> --
->> 1.7.9.5
->>
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+--u13C/yEOc42HESKG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, May 22, 2014 at 12:10:52PM +0200, Sylwester Nawrocki wrote:
+> Ensure i2s->op_clk is not used when clk_get() for this clock fails.
+> This prevents working with an incorrectly configured clock in some
+> conditions.
+
+Applied, thanks.
+
+--u13C/yEOc42HESKG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTfiyFAAoJELSic+t+oim97nEQAJbA+nP1eer0RBqNFmmwBl2n
+PIdLJy2rwvCvzyfjukgqFuzWarEIjdzjUosHFmDOBFochjkW9+C0Zz3DREXzKc62
+J+l+85KOCkp4bfu1LoIOJjFL7Wl2I1SBrj39DFbj4uH4bPmB2NXCnyxVZTzIl/+f
+D1OYubU/hpPfckwbCwcnYaxvSkOzLu3U2Oo4lpmRjlykrDvzVIv5IuTaQ+oeaugF
+paI1wE0VhFAlb0ufHcn+HUwHFAu3Rl5MUrE0/8ebLoOpZSJ7IY4cKfQJD55EgyVI
+DDt0r7n6B2VWmx5R8/IhtCKZC7cwHnkmhUm6zHiSng9qq7Mw2sAKpVmhIMX0Z0qK
+YBX1Hm1VY2tSilnkvcbZjCRSkrZXq4HiTMLdQyAnc7puYZB4nIcmFhjrLAPT3rCC
+jbdFGA/LtEfTS+4zIRIRIEqo4GsN9JyMMbwWpDbzBytyzlS948HAFEbKgfQ4nnmo
+hMLA98QWc0OgLUqfF3FDPf5Gexp6ZP43Jq1CH1bq9hwn68fDt5gwCkqqci3B8RLc
+kczhzfPMxro2uIQbRHCVhHbLn2fFuNOZuDS+tEUQHo2qBnj984uDGRKivCzvX9/Q
+p6E8eXlD7TzeiFO8NJX/+Ow5+o+zcpaye3s4j5S0w096fpyXucZI1k48OH/hpBEB
+xZiQd13VXJsYOV2z5SWw
+=YNfL
+-----END PGP SIGNATURE-----
+
+--u13C/yEOc42HESKG--
