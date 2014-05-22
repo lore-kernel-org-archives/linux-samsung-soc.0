@@ -1,65 +1,64 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL 5/5] Samsung Exynos MCPM support for 3.16
-Date: Thu, 22 May 2014 20:19:14 +0900
-Message-ID: <02fe01cf75af$a9a89cc0$fcf9d640$@samsung.com>
-References: <014801cf73c8$7d1f9930$775ecb90$@samsung.com>
- <20140522053841.GI32618@quad.lixom.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ASoC: max98090: Add NI/MI values for user pclk 19.2 MHz
+Date: Thu, 22 May 2014 13:21:43 +0200
+Message-ID: <1400757703-24431-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:50809 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751347AbaEVLTQ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:9614 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752212AbaEVLWV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 07:19:16 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5Z00C4L3G29390@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 22 May 2014 20:19:14 +0900 (KST)
-In-reply-to: <20140522053841.GI32618@quad.lixom.net>
-Content-language: ko
+	Thu, 22 May 2014 07:22:21 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N5Z004943L8TA60@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 May 2014 20:22:20 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>
-Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Abhilash Kesavan' <a.kesavan@samsung.com>
+To: broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chen Zhen <zhen1.chen@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Olof Johansson wrote:
-> 
-> On Tue, May 20, 2014 at 10:11:54AM +0900, Kukjin Kim wrote:
-> > The following changes since commit
-> d7067f1c5fa0232001502569c6878d22308da268:
-> >
-> >   devicetree: bindings: document SYSRAM binding (2014-05-15 03:30:29
-> +0900)
-> >
-> > are available in the git repository at:
-> >
-> >   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > tags/exynos-mcpm
-> >
-> > for you to fetch changes up to ccf5511797cd4b48d20a85fa1778f5608eac9fd7:
-> >
-> >   ARM: EXYNOS: Add MCPM call-back functions (2014-05-16 04:26:30 +0900)
-> >
-> > ----------------------------------------------------------------
-> > Exynos MCPM support for v3.16
-> >
-> > - adding MCPM backend support for SMP secondary boot and core switching
-> > on Samsung's Exynos5420.
-> >
-> > Tested on exynos5420-smdk5420 and exynos5420 based chromebook
-(peach-pit)
-> > using the "/dev/b.L_switcher" user interface. Secondary core boot-up has
-> > also been tested on both the boards.
-> 
-> This goes with new SoC enablement as well; we'll merge it after multi-
-> platform.
-> 
-Well, the branch (tags/exynos-mcpm) is for exynos5420 and as you know, it is
-not new SoC? I think. But it's up to you.
+From: Chen Zhen <zhen1.chen@samsung.com>
 
-Thanks,
-Kukjin
+This patch adds the clock divisor and multiplier NI, MI values for audio
+sampling frequencies 44100 and 48000 Hz and PCLK 19.2 MHz. This is useful
+for the Odroid X2/U2 boards when the codec works in master mode and its
+MCLK clock is fed from the I2S CDCLK output.
+
+Signed-off-by: Chen Zhen <zhen1.chen@samsung.com>
+[s.nawrocki@samsung.com: edited the commit description]
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ sound/soc/codecs/max98090.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/codecs/max98090.c b/sound/soc/codecs/max98090.c
+index f7b0b37..ea44471 100644
+--- a/sound/soc/codecs/max98090.c
++++ b/sound/soc/codecs/max98090.c
+@@ -1544,19 +1544,19 @@ static const int lrclk_rates[] = {
+ };
+ 
+ static const int user_pclk_rates[] = {
+-	13000000, 13000000
++	13000000, 13000000, 19200000, 19200000,
+ };
+ 
+ static const int user_lrclk_rates[] = {
+-	44100, 48000
++	44100, 48000, 44100, 48000,
+ };
+ 
+ static const unsigned long long ni_value[] = {
+-	3528, 768
++	3528, 768, 441, 8
+ };
+ 
+ static const unsigned long long mi_value[] = {
+-	8125, 1625
++	8125, 1625, 1500, 25
+ };
+ 
+ static void max98090_configure_bclk(struct snd_soc_codec *codec)
+-- 
+1.7.9.5
