@@ -1,121 +1,71 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: use 4WORD dma burst length for small fbs
-Date: Thu, 22 May 2014 21:14:36 +0900
-Message-ID: <537DEA2C.3090806@samsung.com>
-References: <1399461922-27131-1-git-send-email-rahul.sharma@samsung.com>
- <537C8A45.6040407@samsung.com>
- <CAPdUM4NyCHsA8gBZrcDw1+1LqUbE9LquWA=H4NsjHEXb8Xp1dg@mail.gmail.com>
- <537D9F7D.9020204@samsung.com>
- <CAPdUM4MzfeS6JZEJHjRJ1PzT1gzMW2Eer_zvA3cN4Kr_Zsqwwg@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 3/4] clk: samsung: Add driver to control CLKOUT line on
+ Exynos SoCs
+Date: Thu, 22 May 2014 14:25:50 +0200
+Message-ID: <537DECCE.8000301@samsung.com>
+References: <1400604211-9447-1-git-send-email-t.figa@samsung.com>
+ <1400604211-9447-4-git-send-email-t.figa@samsung.com>
+ <537D8788.8030904@linaro.org> <537DD2C0.4060802@samsung.com>
+ <CAHbNUh2gkpV-rt6S+-bUmFvYAuK_HNoXfyOStwYe29sZMJonUw@mail.gmail.com>
+ <537DE714.1090407@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="euc-kr"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAPdUM4MzfeS6JZEJHjRJ1PzT1gzMW2Eer_zvA3cN4Kr_Zsqwwg@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: sreekumar.c@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prathyush K <prathyush.k@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <537DE714.1090407@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>, Tushar Behera <tushar.behera@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Mark Brown <broonie@kernel.org>, lkml <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rahul Sharma <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNLPiIDA1v/kgMjLAzyAxNzozOSwgUmFodWwgU2hhcm1hIHdyb3RlOgo+IE9uIDIyIE1h
-eSAyMDE0IDEyOjI1LCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+IHdyb3RlOgo+PiBP
-biAyMDE0s+IgMDW/+SAyMsDPIDEzOjM2LCBSYWh1bCBTaGFybWEgd3JvdGU6Cj4+PiBIaSBJbmtp
-LAo+Pj4KPj4+IE9uIDIxIE1heSAyMDE0IDE2OjQzLCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3Vu
-Zy5jb20+IHdyb3RlOgo+Pj4+Cj4+Pj4gSGkgUmFodWwsCj4+Pj4KPj4+PiBPbiAyMDE0s+IgMDW/
-+SAwN8DPIDIwOjI1LCBSYWh1bCBTaGFybWEgd3JvdGU6Cj4+Pj4+IEZyb206IFJhaHVsIFNoYXJt
-YSA8UmFodWwuU2hhcm1hQHNhbXN1bmcuY29tPgo+Pj4+Pgo+Pj4+PiBJbiBjYXNlIG9mIGV4eW5v
-cywgc2V0dGluZyBkbWEtYnVyc3QgdG8gMTZXb3JkIGNhdXNlcyBwZXJtYW5lbnQKPj4+Pj4gdGVh
-cmluZyBmb3IgdmVyeSBzbWFsbCBidWZmZXJzLCBlLmcuIGN1cnNvciBidWZmZXIuIEJ1cnN0IE1v
-ZGUKPj4+Pj4gc3dpdGNoaW5nLCB3aGljaCBpcyBiYXNlZCBvbiBvdmVybGF5IHNpemUgaXMgbm90
-IHJlY29tbWVuZGVkIGFzCj4+Pj4+IG92ZXJsYXkgc2l6ZSB2YXJpZXMgYSBsb3QgdG93YXJkcyB0
-aGUgZW5kIG9mIHRoZSBzY3JlZW4uIFRoaXMKPj4+Pj4gY2F1c2VzIHVuc3RhYmxlIERNQSB3aGlj
-aCByZXN1bHRzIGludG8gdGVhcmluZyBhZ2Fpbi4KPj4+IFtzbmlwXQo+Pj4+PiArICAgICAvKgo+
-Pj4+PiArICAgICAgKiBJbiBjYXNlIG9mIGV4eW5vcywgc2V0dGluZyBkbWEtYnVyc3QgdG8gMTZX
-b3JkIGNhdXNlcyBwZXJtYW5lbnQKPj4+Pj4gKyAgICAgICogdGVhcmluZyBmb3IgdmVyeSBzbWFs
-bCBidWZmZXJzLCBlLmcuIGN1cnNvciBidWZmZXIuIEJ1cnN0IE1vZGUKPj4+Pj4gKyAgICAgICog
-c3dpdGNoaW5nIHdoaWNoIGlzIGJhc2VkIG9uIG92ZXJsYXkgc2l6ZSBpcyBub3QgcmVjb21tZW5k
-ZWQgYXMKPj4+Pj4gKyAgICAgICogb3ZlcmxheSBzaXplIHZhcmllcyBhbG90IHRvd2FyZHMgdGhl
-IGVuZCBvZiB0aGUgc2NyZWVuIGFuZCByYXBpZAo+Pj4+PiArICAgICAgKiBtb3ZlbWVudCBjYXVz
-ZXMgdW5zdGFibGUgRE1BIHdoaWNoIHJlc3VsdHMgaW50byBpb21tdSBjcmFzaC90ZWFyLgo+Pj4+
-Cj4+Pj4gRklNRCBoYXMgd2lkdGggbGltaXRhdGlvbiBzbyB3aWR0aCBvZiBoYXJkd2FyZSBvdmVy
-bGF5IG1heSBuZWVkIHRvIGJlCj4+Pj4gYWxpZ25lZCB0byAxNiBwaXhlbHMuCj4+Pj4gV2UgaGFk
-IGZhY2VkIHdpdGggc2ltaWxhciBpc3N1ZSBhbmQgdGhlIGlzc3VlIGhhZCBiZWVuIHJlc29sdmVk
-IGJ5Cj4+Pj4gYWxpZ25pbmcgaXQgdG8gMTYgcGl4ZWxzLgo+Pj4+Cj4+Pj4gU28gY2FuIHlvdSB0
-cnkgdG8gYWxpZ24gaXQgaW5zdGVhZCBvZiBjaGFuZ2luZyBidXJzdCBsZW4gc2l6ZT8KPj4+Pgo+
-Pj4KPj4+IFRoaXMgcHJvYmxlbSBpcyBvbmx5IHdpdGggdGhlIHZlcnkgc21hbGwgRkJzIHdoaWNo
-IGFyZQo+Pj4gcmVuZGVyZWQgdG93YXJkcyBjb3JuZXJzLiBGb3IgbGFyZ2UgRkJzIGxpa2UgMTM2
-Nng3NjgsCj4+PiB3ZSBkb250IHNlZSB0aGlzIGlzc3VlIHRob3VnaCAxMzY2IGlzIG5vdCAxNiBw
-aXhlbAo+Pj4gYWxpZ25lZC4KPj4KPj4gUmlnaHQsIHdlIGhhZCB0ZXN0IGl0IHdpdGggOHg2NCBw
-aXhlbHMuIHRoZSBsaW1pdGF0aW9uIHdvdWxkIGJlIGRlY2lkZWQKPj4gYnkgbWVtb3J5IGJ1cyBs
-ZW5ndGgoTUwpLCBETUEgYnVyc3QgbGVuZ3RoKERMKSBhbmQgcGl4ZWwgc2l6ZSBpbiBieXRlcyhQ
-UykuCj4+IEFuZCB0aGF0IGNhbiBiZSBjYWxjdWxhdGVkIGxpa2UgYmVsb3csIHdoaWNoIHdhcyBn
-dWlkZWQgYnkgaGFyZHdhcmUgdGVhbSwKPj4KPj4gQWxpZ24geyAoTUwgKiBESSAvIFBTKSArICg0
-Ynl0ZXMgLyBQUyksIDJ9Cj4gCj4gV2hhdCB3aWxsIGJlIHRoZSB2YWx1ZSBmb3IgTUwgaW4gRXh5
-bm9zPyA0LCBJIGd1ZXNzID8KPiAKPj4KPj4gSXQgc2VlbXMgdG9vIGJpZyB2YWx1ZS4gQWN0dWFs
-bHksIDE2IHBpeGVscyB3b3JrcyB3ZWxsIGFuZCBJIGRvbid0IHNlZQo+PiB3aHkgaXQgd29ya3Mg
-d2VsbCBhbHRob3VnaCBvdXQgb2YgbGltaXRhdGlvbi4KPiAKPiBBY3R1YWxseSBQZWFjaCBQaXQg
-YW5kIFBlYWNoIFBpLCBuYXRpdmUgTENEIHJlc29sdXRpb24gaXMgMTM2Nng3NjgKPiB3aGljaCBo
-YXMgbm8gaXNzdWVzLgo+IAo+IEluIGFib3ZlIGV4cGVyaW1lbnRzLCBJIHJlbmRlcmVkIEZCIG9m
-IHNpemUgOTYqNjQgd2hpY2ggY29ycnVwdHMgd2hlbgo+IG92ZXJsYXkgd2lkdGggcmVkdWNlcyBi
-ZXlvbmQgNDggUGl4ZWxzIGZvciA1NDIwLCA1ODAwIGFuZCA2NCBmb3IgNTI1MC4KPiAKPiBQcm9i
-YWJseSB3ZSBoYXZlIG5vdCB0ZXN0ZWQgcmVuZGVyaW5nIHRoZSBTbWFsbCBidWZmZXJzICg8OTYg
-UGl4ZWxzKSB3aXRoCj4gMTYgYml0IERNQSBidXJzdCBhbmQgdG93YXJkcyBlbmQgb2YgRkIuIEFz
-IGlmIG5vdywgdGhpcyBzY2VuYXJpbyBvbmx5Cj4gYXBwbGljYWJsZSBmb3IgQ2hyb21lIHdoaWNo
-IGlzIGhhdmluZyBjdXJzb3IuCj4gCj4gUGxlYXNlIGxldCBtZSBrbm93IGhvdyB0byBwcm9jZWVk
-IGZ1cnRoZXIuCj4gCgpBcyB3ZSBoYWQgYSBkaXNjdXNzaW9uIGFib3V0IHRoaXMsIHRoZXJlIGlz
-IG5vIHJpZ2h0IHNvbHV0aW9uIGJ1dCBvbmUKaXNzdWUuIFNvIG1lcmdlZCBpdCB0ZW1wb3Jhcmls
-eSB1bnRpbCB3ZSBjb3VsZCBmaW5kIHRoZSByaWdodCBzb2x1dGlvbgp0aGF0IGNhbiBjb25zaWRl
-ciBtZW1vcnkgYnVzIGxlbmd0aCBvZiBhbGwgRXh5bm9zIFNvQzogdGhlIGxpbWl0YXRpb24Kd291
-bGQgaGF2ZSBkZXBlbmRlbmN5IG9mIG1lbW9yeSBidXMgbGVuZ3RoIG9mIFNvQy4KClRoYW5rcywK
-SW5raSBEYWUKCj4gUmVnYXJkcywKPiBSYWh1bCBTaGFybWEuCj4gCj4+Cj4+IFRoYW5rcywKPj4g
-SW5raSBEYWUKPj4KPj4+Cj4+PiBCdXQgSSBzdGlsbCBjYXJyaWVkIG91dCBmb2xsb3dpbmcgZXhw
-ZXJpbWVudHMganVzdCB0bwo+Pj4gdmVyaWZ5IHRoZSBmaW1kIGJlaGF2aW91ciBmb3Igc21hbGwg
-b3ZlcmxheS4KPj4+Cj4+PiAxKSBSb3VuZCBET1dOOgo+Pj4gKyAgb3ZlcmxheS0+Y3J0Y193aWR0
-aCA9ICgob3ZlcmxheS0+Y3J0Y193aWR0aCkvMTYpKjE2Owo+Pj4KPj4+IEN1cnNvciBjb3JydXB0
-aW9uIGZyb20gQSB0byBCCj4+PiBBOiBbICAzMDguNTMwMDAwXSBzdGFydCBhZGRyID0gMHgyMDQw
-ODAwMCwgZW5kIGFkZHIgPSAweDIwNDBlMDAwLCBzaXplID0gMHg2MDAwCj4+PiBbICAzMDguNTMw
-MDAwXSBvdmxfd2lkdGggPSA2NCwgb3ZsX2hlaWdodCA9IDY0Cj4+PiBbICAzMDguNTQwMDAwXSBv
-ZmZzZXRfeCA9IDEzMDIsIG9mZnNldF95ID0gMzM1Cj4+PiBbICAzMDguNTQwMDAwXSBmYl93aWR0
-aCA9IDk2LCBmYl9oZWlnaHQgPSA2NAo+Pj4KPj4+IEI6IFsgIDM0MS44OTAwMDBdIHN0YXJ0IGFk
-ZHIgPSAweDIwNDA4MDAwLCBlbmQgYWRkciA9IDB4MjA0MGUwMDAsIHNpemUgPSAweDYwMDAKPj4+
-IFsgIDM0MS44OTAwMDBdIG92bF93aWR0aCA9IDQ4LCBvdmxfaGVpZ2h0ID0gNjQKPj4+IFsgIDM0
-MS45MDAwMDBdIG9mZnNldF94ID0gMTMwMywgb2Zmc2V0X3kgPSAzMzUKPj4+IFsgIDM0MS45MDAw
-MDBdIGZiX3dpZHRoID0gOTYsIGZiX2hlaWdodCA9IDY0Cj4+Pgo+Pj4KPj4+IDIpIFJvdW5kIFVQ
-Ogo+Pj4KPj4+ICsgb3ZlcmxheS0+Y3J0Y193aWR0aCA9ICgob3ZlcmxheS0+Y3J0Y193aWR0aCAr
-IDE2KS8xNikqMTY7Cj4+PiArIGlmKG92ZXJsYXktPmNydGNfd2lkdGggPiBvdmVybGF5LT5mYl93
-aWR0aCkKPj4+ICsgICAgICAgICBvdmVybGF5LT5jcnRjX3dpZHRoID0gb3ZlcmxheS0+ZmJfd2lk
-dGg7Cj4+Pgo+Pj4gQ3Vyc29yIGNvcnJ1cHRpb24gZnJvbSBBIHRvIEIKPj4+IEE6IFsgICA2My4y
-MDAwMDBdIHN0YXJ0IGFkZHIgPSAweDIwNDA4MDAwLCBlbmQgYWRkciA9IDB4MjA0MGUwMDAsIHNp
-emUgPSAweDYwMDAKPj4+IFsgICA2My4yMTAwMDBdIG92bF93aWR0aCA9IDk2LCBvdmxfaGVpZ2h0
-ID0gNjQKPj4+IFsgICA2My4yMTAwMDBdIG9mZnNldF94ID0gMTI3MSwgb2Zmc2V0X3kgPSAzNDYK
-Pj4+IFsgICA2My4yMjAwMDBdIGZiX3dpZHRoID0gOTYsIGZiX2hlaWdodCA9IDY0Cj4+Pgo+Pj4g
-QjogWyAgIDY4LjYwMDAwMF0gc3RhcnQgYWRkciA9IDB4MjA0MDgwMDAsIGVuZCBhZGRyID0gMHgy
-MDQwZTAwMCwgc2l6ZSA9IDB4NjAwMAo+Pj4gWyAgIDY4LjYxMDAwMF0gb3ZsX3dpZHRoID0gOTYs
-IG92bF9oZWlnaHQgPSA2NAo+Pj4gWyAgIDY4LjYxMDAwMF0gb2Zmc2V0X3ggPSAxMjcyLCBvZmZz
-ZXRfeSA9IDM0Ngo+Pj4gWyAgIDY4LjYyMDAwMF0gZmJfd2lkdGggPSA5NiwgZmJfaGVpZ2h0ID0g
-NjQKPj4+Cj4+PiBJbiBib3RoIHRoZSBzY2VuYXJpb3Mgb3ZsX3dpZHRoIGlzIGFsd2F5cyAxNiBQ
-aXhlbCBhbGlnbmVkLgo+Pj4gUGxlYXNlIGxldCBtZSBrbm93IGlmIHlvdSBoYXZlIHNvbWV0aGlu
-ZyBlbHNlIGluIG1pbmQuIEkKPj4+IHdpbGwgY2hlY2sgYW5kIHNoYXJlIHRoZSBvYnNlcnZhdGlv
-bnMuCj4+Pgo+Pj4gVGhlIHNvbHV0aW9uIGluIHRoZSBwYXRjaCBpcyBwcm9wb3NlZCBieSBoYXJk
-d2FyZSB0ZWFtCj4+PiBhbmQgd29yayBmaW5lIGZvciBleHlub3MgNTI1MCwgNTQyMCBhbmQgNTgw
-MC4KPj4+Cj4+PiBSZWdhcmRzLAo+Pj4gUmFodWwgU2hhcm1hCj4+Pgo+Pj4+IFRoYW5rcywKPj4+
-PiBJbmtpIERhZQo+Pj4+Cj4+Pj4+ICsgICAgICAqLwo+Pj4+PiArCj4+Pj4+ICsgICAgIGlmICh3
-aW5fZGF0YS0+ZmJfd2lkdGggPCBNSU5fRkJfV0lEVEhfRk9SXzE2V09SRF9CVVJTVCkgewo+Pj4+
-PiArICAgICAgICAgICAgIHZhbCAmPSB+V0lOQ09OeF9CVVJTVExFTl9NQVNLOwo+Pj4+PiArICAg
-ICAgICAgICAgIHZhbCB8PSBXSU5DT054X0JVUlNUTEVOXzRXT1JEOwo+Pj4+PiArICAgICB9Cj4+
-Pj4+ICsKPj4+Pj4gICAgICAgd3JpdGVsKHZhbCwgY3R4LT5yZWdzICsgV0lOQ09OKHdpbikpOwo+
-Pj4+PiAgfQo+Pj4+Pgo+Pj4+Pgo+Pj4+Cj4+Pgo+Pgo+PiBfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwo+PiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4+IGRy
-aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPj4gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo+IAoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 22/05/14 14:01, Tomasz Figa wrote:
+>>>> >>> [ ... ]
+>>>> >>>
+>>>>> >>>> +    clkout->clk_table[0] = clk_register_composite(NULL, "clkout",
+>>>>> >>>> +                            parent_names, parent_count, &clkout->mux.hw,
+>>>>> >>>> +                            &clk_mux_ops, NULL, NULL, &clkout->gate.hw,
+>>>>> >>>> +                            &clk_gate_ops, CLK_SET_RATE_PARENT
+>>>>> >>>> +                            | CLK_SET_RATE_NO_REPARENT);
+>>>> >>>
+>>>> >>> Would you please remove CLK_SET_RATE_NO_REPARENT flag from here? Let me
+>>>> >>> know if you have reservations against this.
+>>> >>
+>>> >> The problem with clock reparenting is that there are certain parent
+>>> >> clocks of CLKOUT, rate of which changes at runtime, e.g. clocks derived
+>>> >> from APLL or bus clocks, which can be reconfigured by cpufreq or devfreq.
+>>> >>
+>> > 
+>> > +CC: Sylwester Nawrocki
+>> > 
+>> > Okay. But in cases where there is only 1 valid parent clock provided
+>> > through DT (at the moment for Exynos5250/Exynos5420), would it be safe
+>> > to set that clock as the parent of CLKOUT?
+>
+> This is not something to rely on. I have simply omitted remaining CLKOUT
+> parents on Exynos 5 SoCs, as I don't have any board with them on which I
+> could test this. Eventually they will be added.
+> 
+>> > Otherwise, this clock is
+>> > not usable ATM.
+>
+> On many boards it is already configured properly by the bootloader.
+> Although I don't see any reason why you couldn't reparent it in
+> (board-specific) sound card driver right now.
+
+This would require passing the parent's clock specifier in 'clocks'
+property of the sound card device node, which I assume is not something
+we're generally expected to do in mainline. Although some drivers
+happen to be doing it already I think that's a bad example. It sounds
+like an abuse of the current clock bindings.
+
+--
+Regards,
+Sylwester
