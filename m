@@ -1,232 +1,96 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/2] ASoC: samsung: Add machine driver for odroidx2
-Date: Thu, 22 May 2014 13:55:08 +0200
-Message-ID: <1400759708-25831-2-git-send-email-s.nawrocki@samsung.com>
-References: <1400759708-25831-1-git-send-email-s.nawrocki@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 3/4] clk: samsung: Add driver to control CLKOUT line on
+ Exynos SoCs
+Date: Thu, 22 May 2014 14:01:24 +0200
+Message-ID: <537DE714.1090407@samsung.com>
+References: <1400604211-9447-1-git-send-email-t.figa@samsung.com>
+ <1400604211-9447-4-git-send-email-t.figa@samsung.com>
+ <537D8788.8030904@linaro.org> <537DD2C0.4060802@samsung.com>
+ <CAHbNUh2gkpV-rt6S+-bUmFvYAuK_HNoXfyOStwYe29sZMJonUw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:38043 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752786AbaEVL4d (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:59654 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754431AbaEVMBe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 07:56:33 -0400
-In-reply-to: <1400759708-25831-1-git-send-email-s.nawrocki@samsung.com>
+	Thu, 22 May 2014 08:01:34 -0400
+In-reply-to: <CAHbNUh2gkpV-rt6S+-bUmFvYAuK_HNoXfyOStwYe29sZMJonUw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org
-Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chen Zhen <zhen1.chen@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-From: Chen Zhen <zhen1.chen@samsung.com>
+On 22.05.2014 13:44, Tushar Behera wrote:
+> On 22 May 2014 16:04, Tomasz Figa <t.figa@samsung.com> wrote:
+>> On 22.05.2014 07:13, Tushar Behera wrote:
+>>> On 05/20/2014 10:13 PM, Tomasz Figa wrote:
+>>>> This patch introduces a driver that handles configuration of CLKOUT pin
+>>>> of Exynos SoCs that can be used to output certain clocks from inside of
+>>>> the SoC to a dedicated output pin.
+>>>>
+>>>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+>>>> ---
+>>>>  .../devicetree/bindings/arm/samsung/pmu.txt        |  30 ++++
+>>>>  drivers/clk/samsung/Makefile                       |   1 +
+>>>>  drivers/clk/samsung/clk-exynos-clkout.c            | 153 +++++++++++++++++++++
+>>>>  3 files changed, 184 insertions(+)
+>>>>  create mode 100644 drivers/clk/samsung/clk-exynos-clkout.c
+>>>>
+>>>
+>>> [ ... ]
+>>>
+>>>> +    clkout->clk_table[0] = clk_register_composite(NULL, "clkout",
+>>>> +                            parent_names, parent_count, &clkout->mux.hw,
+>>>> +                            &clk_mux_ops, NULL, NULL, &clkout->gate.hw,
+>>>> +                            &clk_gate_ops, CLK_SET_RATE_PARENT
+>>>> +                            | CLK_SET_RATE_NO_REPARENT);
+>>>
+>>> Would you please remove CLK_SET_RATE_NO_REPARENT flag from here? Let me
+>>> know if you have reservations against this.
+>>
+>> The problem with clock reparenting is that there are certain parent
+>> clocks of CLKOUT, rate of which changes at runtime, e.g. clocks derived
+>> from APLL or bus clocks, which can be reconfigured by cpufreq or devfreq.
+>>
+> 
+> +CC: Sylwester Nawrocki
+> 
+> Okay. But in cases where there is only 1 valid parent clock provided
+> through DT (at the moment for Exynos5250/Exynos5420), would it be safe
+> to set that clock as the parent of CLKOUT?
 
-This machine driver primary defines the audio path, the supported
-data formats and sample frequency.
-The codec works in I2S master mode, in order to achieve required
-exact audio sampling frequencies without a need to adjust the EPLL
-frequency to each sample rate at runtime.
+This is not something to rely on. I have simply omitted remaining CLKOUT
+parents on Exynos 5 SoCs, as I don't have any board with them on which I
+could test this. Eventually they will be added.
 
-Signed-off-by: Chen Zhen <zhen1.chen@samsung.com>
-[s.nawrocki@samsung.com: coding style changes, fixed of_match table name]
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-The only bits missing for v3.16 for audio on the Odroid X2/U3 to work
-now seem to be only my clock defaults setting patches [1] and the related
-dts updates.
+> Otherwise, this clock is
+> not usable ATM.
 
-[1] http://www.spinics.net/lists/devicetree/msg34718.html
+On many boards it is already configured properly by the bootloader.
+Although I don't see any reason why you couldn't reparent it in
+(board-specific) sound card driver right now.
 
- sound/soc/samsung/Kconfig             |    8 ++
- sound/soc/samsung/Makefile            |    2 +
- sound/soc/samsung/odroidx2_max98090.c |  150 +++++++++++++++++++++++++++++++++
- 3 files changed, 160 insertions(+)
- create mode 100644 sound/soc/samsung/odroidx2_max98090.c
+> 
+>>>
+>>> With RFC patches, I am able to do a clk_set_rate() on this clock to
+>>> get a 24MHz output to the codec clock. With this flag set, I again have
+>>> to rely on the default value set to this register in bootloader.
+>>>
+>>
+>> This problem should be handled by initializing clocks from DT. I'm not
+>> sure why it hasn't been implemented yet...
+> 
+> I would be happy to get it done that way. I can see a patch from
+> Sylwester regarding this, but there hasn't been a conclusion as of
+> yet.
+> 
+> https://lkml.org/lkml/2014/4/9/173
 
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index f2e2891..aa5ce7c 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -231,3 +231,11 @@ config SND_SOC_LITTLEMILL
- 	select SND_SAMSUNG_I2S
- 	select MFD_WM8994
- 	select SND_SOC_WM8994
-+
-+config SND_SOC_ODROIDX2
-+	tristate "Audio support for Odroid-X2 and Odroid-U3"
-+	depends on SND_SOC_SAMSUNG
-+	select SND_SOC_MAX98090
-+	select SND_SAMSUNG_I2S
-+	help
-+	  Say Y here to enable audio support for the Odroid-X2/U3.
-diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
-index 86715d8..db89489 100644
---- a/sound/soc/samsung/Makefile
-+++ b/sound/soc/samsung/Makefile
-@@ -45,6 +45,7 @@ snd-soc-tobermory-objs := tobermory.o
- snd-soc-lowland-objs := lowland.o
- snd-soc-littlemill-objs := littlemill.o
- snd-soc-bells-objs := bells.o
-+snd-soc-odroidx2-max98090-objs := odroidx2_max98090.o
+Have you mentioned your use case there? It might indicate that this is
+indeed an important problem and that too much bikeshedding doesn't
+really make us closer to the solution.
 
- obj-$(CONFIG_SND_SOC_SAMSUNG_JIVE_WM8750) += snd-soc-jive-wm8750.o
- obj-$(CONFIG_SND_SOC_SAMSUNG_NEO1973_WM8753) += snd-soc-neo1973-wm8753.o
-@@ -69,3 +70,4 @@ obj-$(CONFIG_SND_SOC_TOBERMORY) += snd-soc-tobermory.o
- obj-$(CONFIG_SND_SOC_LOWLAND) += snd-soc-lowland.o
- obj-$(CONFIG_SND_SOC_LITTLEMILL) += snd-soc-littlemill.o
- obj-$(CONFIG_SND_SOC_BELLS) += snd-soc-bells.o
-+obj-$(CONFIG_SND_SOC_ODROIDX2) += snd-soc-odroidx2-max98090.o
-diff --git a/sound/soc/samsung/odroidx2_max98090.c b/sound/soc/samsung/odroidx2_max98090.c
-new file mode 100644
-index 0000000..c3065a9
---- /dev/null
-+++ b/sound/soc/samsung/odroidx2_max98090.c
-@@ -0,0 +1,150 @@
-+/*
-+ * Copyright (C) 2014 Samsung Electronics Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/of.h>
-+#include <linux/module.h>
-+#include <sound/soc.h>
-+#include <sound/pcm_params.h>
-+#include "i2s.h"
-+#include "i2s-regs.h"
-+
-+/* The I2S CDCLK output clock frequency to the MAX98090 codec. */
-+#define MAX98090_MCLK_FREQ 19200000
-+
-+static int odroidx2_hw_params(struct snd_pcm_substream *substream,
-+			      struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-+	int ret;
-+
-+	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_I2S
-+					| SND_SOC_DAIFMT_NB_NF
-+					| SND_SOC_DAIFMT_CBM_CFM);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_I2S
-+					| SND_SOC_DAIFMT_NB_NF
-+					| SND_SOC_DAIFMT_CBM_CFM);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = snd_soc_dai_set_sysclk(codec_dai, 3, MAX98090_MCLK_FREQ,
-+				     SND_SOC_CLOCK_IN);
-+	if (ret < 0) {
-+		dev_err(codec_dai->dev,
-+			"Unable to switch to FLL1: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_OPCLK,
-+					0, MOD_OPCLK_PCLK);
-+	if (ret < 0) {
-+		dev_err(cpu_dai->dev,
-+			"Unable to set i2s opclk: 0x%x\n", ret);
-+		return ret;
-+	}
-+
-+	/* Set the cpu DAI configuration in order to use CDCLK */
-+	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
-+					0, SND_SOC_CLOCK_OUT);
-+	if (ret < 0)
-+		return ret;
-+
-+	dev_dbg(codec_dai->dev,
-+		"HiFi DAI %s params: channel %d, rate %d as I2S slave\n",
-+		((substream->stream == SNDRV_PCM_STREAM_PLAYBACK) ?
-+		 "playback" : "capture"),  params_channels(params),
-+		params_rate(params));
-+
-+	return 0;
-+}
-+
-+static struct snd_soc_ops odroidx2_ops = {
-+	.hw_params	= odroidx2_hw_params,
-+};
-+
-+static struct snd_soc_dai_link odroidx2_dai = {
-+	.name		= "MAX98090",
-+	.stream_name	= "MAX98090 PCM",
-+	.codec_dai_name	= "HiFi",
-+	.ops		= &odroidx2_ops,
-+};
-+
-+static struct snd_soc_card odroidx2 = {
-+	.name		= "odroidx2",
-+	.owner		= THIS_MODULE,
-+	.dai_link	= &odroidx2_dai,
-+	.num_links	= 1,
-+};
-+
-+static int odroidx2_audio_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct snd_soc_card *card = &odroidx2;
-+
-+	if (!np)
-+		return -ENODEV;
-+
-+	card->dev = &pdev->dev;
-+
-+	odroidx2_dai.codec_name = NULL;
-+	odroidx2_dai.codec_of_node = of_parse_phandle(np,
-+						"samsung,audio-codec", 0);
-+	if (!odroidx2_dai.codec_of_node) {
-+		dev_err(&pdev->dev,
-+			"missing or invalid samsung,audio-codec property\n");
-+		return -EINVAL;
-+	}
-+
-+	odroidx2_dai.cpu_name = NULL;
-+	odroidx2_dai.cpu_of_node = of_parse_phandle(np,
-+						"samsung,i2s-controller", 0);
-+	if (!odroidx2_dai.cpu_of_node) {
-+		dev_err(&pdev->dev,
-+			"missing or invalid samsung,i2s-controller property\n");
-+		return -EINVAL;
-+	}
-+
-+	odroidx2_dai.platform_of_node = odroidx2_dai.cpu_of_node;
-+
-+	return snd_soc_register_card(card);
-+}
-+
-+static int odroidx2_audio_remove(struct platform_device *pdev)
-+{
-+	struct snd_soc_card *card = platform_get_drvdata(pdev);
-+
-+	snd_soc_unregister_card(card);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id odroidx2_audio_of_match[] = {
-+	{ .compatible = "samsung,odroidx2-audio" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, odroidx2_audio_of_match);
-+
-+static struct platform_driver odroidx2_audio_driver = {
-+	.driver = {
-+		.name		= "odroidx2-audio",
-+		.owner		= THIS_MODULE,
-+		.of_match_table	= odroidx2_audio_of_match,
-+	},
-+	.probe	= odroidx2_audio_probe,
-+	.remove	= odroidx2_audio_remove,
-+};
-+module_platform_driver(odroidx2_audio_driver);
-+
-+MODULE_AUTHOR("zhen1.chen@samsung.com");
-+MODULE_DESCRIPTION("ALSA SoC Odroidx2 Audio Support");
-+MODULE_LICENSE("GPL v2");
---
-1.7.9.5
+Best regards,
+Tomasz
