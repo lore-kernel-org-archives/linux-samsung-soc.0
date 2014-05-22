@@ -1,75 +1,124 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v3] drm/exynos: enable fimd clocks in probe before accessing
- fimd registers
-Date: Thu, 22 May 2014 19:41:07 +0530
-Message-ID: <1400767867-8965-1-git-send-email-rahul.sharma@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:9286 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751146AbaEVOMm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 10:12:42 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5Z0086UBH4DX20@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 22 May 2014 23:12:40 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: Re: [PATCH 5/7] drm/exynos: add hdmiphy power on/off sequence
+Date: Thu, 22 May 2014 19:45:28 +0530
+Message-ID: <CAPdUM4Ot5Bmu9RctNWpN+koFj1DNVvzjMsQ80SdLtR0Tefq_Lg@mail.gmail.com>
+References: <1396537864-29291-1-git-send-email-rahul.sharma@samsung.com>
+ <1396537864-29291-6-git-send-email-rahul.sharma@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1396537864-29291-6-git-send-email-rahul.sharma@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, sunil joshi <joshi@samsung.com>, Shirish S <s.shirish@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, thierry.reding@gmail.com, sachin.kamat@linaro.org, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>Rahul Sharma <rahul.sharma@samsung.com>
 
-Fimd probe is accessing fimd Registers without enabling the fimd
-gate clocks. If FIMD clocks are kept disabled in Uboot or disbaled
-during kernel boottime, the system hangs during boottime.
+Hi Inki,
 
-This issue got surfaced when verifying with sysmmu enabled. Probe of
-fimd Sysmmu enables the master clock before accessing sysmmu regs and
-then disables. Later fimd probe tries to read the register without
-enabling the clock which is wrong and hangs the system.
+Please review this patch.
 
-Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c |   17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+Regards,
+Rahul Sharma
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index bd30d0c..38b77ed 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -898,16 +898,31 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
- {
- 	struct fimd_context *ctx = fimd_manager.ctx;
- 	struct drm_device *drm_dev = data;
--	int win;
-+	int win, ret;
- 
- 	fimd_mgr_initialize(&fimd_manager, drm_dev);
- 	exynos_drm_crtc_create(&fimd_manager);
- 	if (ctx->display)
- 		exynos_drm_create_enc_conn(drm_dev, ctx->display);
- 
-+	ret = clk_prepare_enable(ctx->bus_clk);
-+	if (ret) {
-+		dev_err(dev, "bus clock enable failed.\n");
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(ctx->lcd_clk);
-+	if (ret) {
-+		dev_err(dev, "lcd clock enable failed.\n");
-+		return ret;
-+	}
-+
- 	for (win = 0; win < WINDOWS_NR; win++)
- 		fimd_clear_win(ctx, win);
- 
-+	clk_disable_unprepare(ctx->lcd_clk);
-+	clk_disable_unprepare(ctx->bus_clk);
-+
- 	return 0;
- 
- }
--- 
-1.7.9.5
+On 3 April 2014 20:41, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> From: Shirish S <s.shirish@samsung.com>
+>
+> This patch implements the power on/off sequence
+> of HDMI PHY in exynos5420 and exynos5250 as provided
+> by the hardware team.
+>
+> This has been verified for mulitple iterations of
+> S2R.
+>
+> Signed-off-by: Shirish S <s.shirish@samsung.com>
+> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_hdmi.c |   40 +++++++++++++++++++++++++++++-----
+>  drivers/gpu/drm/exynos/regs-hdmi.h   |    7 +++++-
+>  2 files changed, 40 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 539e603..b2cbf43 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -1711,16 +1711,44 @@ static void hdmiphy_conf_reset(struct hdmi_context *hdata)
+>
+>  static void hdmiphy_poweron(struct hdmi_context *hdata)
+>  {
+> -       if (hdata->type == HDMI_TYPE14)
+> -               hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, 0,
+> -                       HDMI_PHY_POWER_OFF_EN);
+> +       if (hdata->type != HDMI_TYPE14)
+> +               return;
+> +
+> +       DRM_DEBUG_KMS("\n");
+> +
+> +       /* For PHY Mode Setting */
+> +       hdmiphy_reg_writeb(hdata, HDMIPHY_MODE_SET_DONE,
+> +                               HDMI_PHY_ENABLE_MODE_SET);
+> +       /* Phy Power On */
+> +       hdmiphy_reg_writeb(hdata, HDMIPHY_POWER,
+> +                               HDMI_PHY_POWER_ON);
+> +       /* For PHY Mode Setting */
+> +       hdmiphy_reg_writeb(hdata, HDMIPHY_MODE_SET_DONE,
+> +                               HDMI_PHY_DISABLE_MODE_SET);
+> +       /* PHY SW Reset */
+> +       hdmiphy_conf_reset(hdata);
+>  }
+>
+>  static void hdmiphy_poweroff(struct hdmi_context *hdata)
+>  {
+> -       if (hdata->type == HDMI_TYPE14)
+> -               hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, ~0,
+> -                       HDMI_PHY_POWER_OFF_EN);
+> +       if (hdata->type != HDMI_TYPE14)
+> +               return;
+> +
+> +       DRM_DEBUG_KMS("\n");
+> +
+> +       /* PHY SW Reset */
+> +       hdmiphy_conf_reset(hdata);
+> +       /* For PHY Mode Setting */
+> +       hdmiphy_reg_writeb(hdata, HDMIPHY_MODE_SET_DONE,
+> +                               HDMI_PHY_ENABLE_MODE_SET);
+> +
+> +       /* PHY Power Off */
+> +       hdmiphy_reg_writeb(hdata, HDMIPHY_POWER,
+> +                               HDMI_PHY_POWER_OFF);
+> +
+> +       /* For PHY Mode Setting */
+> +       hdmiphy_reg_writeb(hdata, HDMIPHY_MODE_SET_DONE,
+> +                               HDMI_PHY_DISABLE_MODE_SET);
+>  }
+>
+>  static void hdmiphy_conf_apply(struct hdmi_context *hdata)
+> diff --git a/drivers/gpu/drm/exynos/regs-hdmi.h b/drivers/gpu/drm/exynos/regs-hdmi.h
+> index 344a5db..fd4c590 100644
+> --- a/drivers/gpu/drm/exynos/regs-hdmi.h
+> +++ b/drivers/gpu/drm/exynos/regs-hdmi.h
+> @@ -579,7 +579,12 @@
+>  #define HDMI_TG_3D                     HDMI_TG_BASE(0x00F0)
+>
+>  /* HDMI PHY Registers Offsets*/
+> -#define HDMIPHY_MODE_SET_DONE          (0x7C >> 2)
+> +#define HDMIPHY_POWER          (0x74 >> 2)
+> +#define HDMIPHY_MODE_SET_DONE          (0x7c >> 2)
+> +
+> +/* HDMI PHY Values */
+> +#define HDMI_PHY_POWER_ON              0x80
+> +#define HDMI_PHY_POWER_OFF             0xff
+>
+>  /* HDMI PHY Values */
+>  #define HDMI_PHY_DISABLE_MODE_SET      0x80
+> --
+> 1.7.9.5
+>
