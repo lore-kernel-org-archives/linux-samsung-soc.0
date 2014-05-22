@@ -1,76 +1,82 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL 2/5] Samsung clock updates for 3.16
-Date: Thu, 22 May 2014 20:42:51 +0900
-Message-ID: <032801cf75b2$f62f57c0$e28e0740$@samsung.com>
-References: <014501cf73c8$5eb66960$1c233c20$@samsung.com>
- <20140522053126.GF32618@quad.lixom.net> <537DC9B5.6090405@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 3/4] clk: samsung: Add driver to control CLKOUT line on
+ Exynos SoCs
+Date: Thu, 22 May 2014 17:14:49 +0530
+Message-ID: <CAHbNUh2gkpV-rt6S+-bUmFvYAuK_HNoXfyOStwYe29sZMJonUw@mail.gmail.com>
+References: <1400604211-9447-1-git-send-email-t.figa@samsung.com>
+	<1400604211-9447-4-git-send-email-t.figa@samsung.com>
+	<537D8788.8030904@linaro.org>
+	<537DD2C0.4060802@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:53610 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753504AbaEVLmx (ORCPT
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:33388 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752875AbaEVLow (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 07:42:53 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5Z00BZJ4JFFRA0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 22 May 2014 20:42:51 +0900 (KST)
-In-reply-to: <537DC9B5.6090405@samsung.com>
-Content-language: ko
+	Thu, 22 May 2014 07:44:52 -0400
+Received: by mail-oa0-f51.google.com with SMTP id n16so3802740oag.24
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 04:44:49 -0700 (PDT)
+In-Reply-To: <537DD2C0.4060802@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <t.figa@samsung.com>, 'Olof Johansson' <olof@lixom.net>
-Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Tomasz Figa wrote:
-> 
-> Hi Olof,
-> 
-> On 22.05.2014 07:31, Olof Johansson wrote:
-> > On Tue, May 20, 2014 at 10:11:03AM +0900, Kukjin Kim wrote:
-> >> The following changes since commit
-> 34c453ce16633539a94a2e876faeb731ac1be899:
-> >>
-> >>   ARM: S3C24XX: fix merge conflict (2014-05-15 05:54:38 +0900)
-> >>
-> >> are available in the git repository at:
-> >>
-> >>   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-
-> samsung.git
-> >> tags/samsung-clk
-> >>
-> >> for you to fetch changes up to
-6520e968eef4f88c076a84a80e026049d157132e:
-> >>
-> >>   clk: exynos5420: Add 5800 specific clocks (2014-05-19 22:15:08 +0900)
-> >>
-> >
-> > 1. This is new SoC support -- you said you're sending multiplatform soon
-> so
-> >    we'll hold off until that's made it in.
-> >
-> > 2. What's the actual dependency here for taking it through arm-soc?
-> Seems like
-> >    nearly all of it is in drivers/clk.
-> 
-> This is a complicated network of dependencies:
-> 
->  1) s3c24xx conversion to CCF had dependencies on Kukjin's tree so it
-> was applied there,
->  2) support for multiple clock providers in Samsung clock library needed
-> to convert s3c24xx clock driver (applied to Kukjin's tree) as well,
->  3) due to quite invasive nature of the series above, most of the
-> patches touching Samsung clock drivers ended depending on it, due to
-> multiple conflicts otherwise.
-> 
-Yeah it's tree, so we talked about its handling and this way would be better
-to us in this time and Mike also agreed about that. Basically as you know,
-we need to avoid useless merge conflicts and this is a good way it's not a
-best way sometimes though :-)
+On 22 May 2014 16:04, Tomasz Figa <t.figa@samsung.com> wrote:
+> On 22.05.2014 07:13, Tushar Behera wrote:
+>> On 05/20/2014 10:13 PM, Tomasz Figa wrote:
+>>> This patch introduces a driver that handles configuration of CLKOUT pin
+>>> of Exynos SoCs that can be used to output certain clocks from inside of
+>>> the SoC to a dedicated output pin.
+>>>
+>>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+>>> ---
+>>>  .../devicetree/bindings/arm/samsung/pmu.txt        |  30 ++++
+>>>  drivers/clk/samsung/Makefile                       |   1 +
+>>>  drivers/clk/samsung/clk-exynos-clkout.c            | 153 +++++++++++++++++++++
+>>>  3 files changed, 184 insertions(+)
+>>>  create mode 100644 drivers/clk/samsung/clk-exynos-clkout.c
+>>>
+>>
+>> [ ... ]
+>>
+>>> +    clkout->clk_table[0] = clk_register_composite(NULL, "clkout",
+>>> +                            parent_names, parent_count, &clkout->mux.hw,
+>>> +                            &clk_mux_ops, NULL, NULL, &clkout->gate.hw,
+>>> +                            &clk_gate_ops, CLK_SET_RATE_PARENT
+>>> +                            | CLK_SET_RATE_NO_REPARENT);
+>>
+>> Would you please remove CLK_SET_RATE_NO_REPARENT flag from here? Let me
+>> know if you have reservations against this.
+>
+> The problem with clock reparenting is that there are certain parent
+> clocks of CLKOUT, rate of which changes at runtime, e.g. clocks derived
+> from APLL or bus clocks, which can be reconfigured by cpufreq or devfreq.
+>
+
++CC: Sylwester Nawrocki
+
+Okay. But in cases where there is only 1 valid parent clock provided
+through DT (at the moment for Exynos5250/Exynos5420), would it be safe
+to set that clock as the parent of CLKOUT? Otherwise, this clock is
+not usable ATM.
+
+>>
+>> With RFC patches, I am able to do a clk_set_rate() on this clock to
+>> get a 24MHz output to the codec clock. With this flag set, I again have
+>> to rely on the default value set to this register in bootloader.
+>>
+>
+> This problem should be handled by initializing clocks from DT. I'm not
+> sure why it hasn't been implemented yet...
+
+I would be happy to get it done that way. I can see a patch from
+Sylwester regarding this, but there hasn't been a conclusion as of
+yet.
+
+https://lkml.org/lkml/2014/4/9/173
 
 Thanks,
-Kukjin
+-- 
+Tushar Behera
