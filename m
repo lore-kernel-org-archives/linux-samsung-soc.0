@@ -1,64 +1,65 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 3/4] clk: samsung: Add driver to control CLKOUT line on
- Exynos SoCs
-Date: Thu, 22 May 2014 12:34:40 +0200
-Message-ID: <537DD2C0.4060802@samsung.com>
-References: <1400604211-9447-1-git-send-email-t.figa@samsung.com>
- <1400604211-9447-4-git-send-email-t.figa@samsung.com>
- <537D8788.8030904@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL 5/5] Samsung Exynos MCPM support for 3.16
+Date: Thu, 22 May 2014 20:19:14 +0900
+Message-ID: <02fe01cf75af$a9a89cc0$fcf9d640$@samsung.com>
+References: <014801cf73c8$7d1f9930$775ecb90$@samsung.com>
+ <20140522053841.GI32618@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:54776 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752590AbaEVKer (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:50809 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751347AbaEVLTQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 06:34:47 -0400
-In-reply-to: <537D8788.8030904@linaro.org>
+	Thu, 22 May 2014 07:19:16 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N5Z00C4L3G29390@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 May 2014 20:19:14 +0900 (KST)
+In-reply-to: <20140522053841.GI32618@quad.lixom.net>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+To: 'Olof Johansson' <olof@lixom.net>
+Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Abhilash Kesavan' <a.kesavan@samsung.com>
 
-On 22.05.2014 07:13, Tushar Behera wrote:
-> On 05/20/2014 10:13 PM, Tomasz Figa wrote:
->> This patch introduces a driver that handles configuration of CLKOUT pin
->> of Exynos SoCs that can be used to output certain clocks from inside of
->> the SoC to a dedicated output pin.
->>
->> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
->> ---
->>  .../devicetree/bindings/arm/samsung/pmu.txt        |  30 ++++
->>  drivers/clk/samsung/Makefile                       |   1 +
->>  drivers/clk/samsung/clk-exynos-clkout.c            | 153 +++++++++++++++++++++
->>  3 files changed, 184 insertions(+)
->>  create mode 100644 drivers/clk/samsung/clk-exynos-clkout.c
->>
+Olof Johansson wrote:
 > 
-> [ ... ]
+> On Tue, May 20, 2014 at 10:11:54AM +0900, Kukjin Kim wrote:
+> > The following changes since commit
+> d7067f1c5fa0232001502569c6878d22308da268:
+> >
+> >   devicetree: bindings: document SYSRAM binding (2014-05-15 03:30:29
+> +0900)
+> >
+> > are available in the git repository at:
+> >
+> >   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> > tags/exynos-mcpm
+> >
+> > for you to fetch changes up to ccf5511797cd4b48d20a85fa1778f5608eac9fd7:
+> >
+> >   ARM: EXYNOS: Add MCPM call-back functions (2014-05-16 04:26:30 +0900)
+> >
+> > ----------------------------------------------------------------
+> > Exynos MCPM support for v3.16
+> >
+> > - adding MCPM backend support for SMP secondary boot and core switching
+> > on Samsung's Exynos5420.
+> >
+> > Tested on exynos5420-smdk5420 and exynos5420 based chromebook
+(peach-pit)
+> > using the "/dev/b.L_switcher" user interface. Secondary core boot-up has
+> > also been tested on both the boards.
 > 
->> +	clkout->clk_table[0] = clk_register_composite(NULL, "clkout",
->> +				parent_names, parent_count, &clkout->mux.hw,
->> +				&clk_mux_ops, NULL, NULL, &clkout->gate.hw,
->> +				&clk_gate_ops, CLK_SET_RATE_PARENT
->> +				| CLK_SET_RATE_NO_REPARENT);
+> This goes with new SoC enablement as well; we'll merge it after multi-
+> platform.
 > 
-> Would you please remove CLK_SET_RATE_NO_REPARENT flag from here? Let me
-> know if you have reservations against this.
+Well, the branch (tags/exynos-mcpm) is for exynos5420 and as you know, it is
+not new SoC? I think. But it's up to you.
 
-The problem with clock reparenting is that there are certain parent
-clocks of CLKOUT, rate of which changes at runtime, e.g. clocks derived
-from APLL or bus clocks, which can be reconfigured by cpufreq or devfreq.
-
-> 
-> With RFC patches, I am able to do a clk_set_rate() on this clock to
-> get a 24MHz output to the codec clock. With this flag set, I again have
-> to rely on the default value set to this register in bootloader.
-> 
-
-This problem should be handled by initializing clocks from DT. I'm not
-sure why it hasn't been implemented yet...
-
-Best regards,
-Tomasz
+Thanks,
+Kukjin
