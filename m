@@ -1,70 +1,51 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 4/5] Samsung DT updates for 3.16
-Date: Wed, 21 May 2014 22:45:47 -0700
-Message-ID: <20140522054547.GA4021@quad.lixom.net>
-References: <014701cf73c8$752a65c0$5f7f3140$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2 0/4] Add more supported blocks to UniversalC210 and Trats
+Date: Thu, 22 May 2014 07:52:13 +0200
+Message-ID: <1400737937-7368-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:57401 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750924AbaEVFpi (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45769 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750924AbaEVFwn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 01:45:38 -0400
-Received: by mail-pa0-f46.google.com with SMTP id kq14so2136014pab.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 22:45:38 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <014701cf73c8$752a65c0$5f7f3140$@samsung.com>
+	Thu, 22 May 2014 01:52:43 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N5Y009CROBPP270@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 May 2014 06:52:37 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Tue, May 20, 2014 at 10:11:41AM +0900, Kukjin Kim wrote:
+Hello,
 
-> Sachin Kamat (4):
->       ARM: EXYNOS: Map SYSRAM through generic DT bindings
+This is a small update for Exynos4210 based UniversalC210 and Trats
+boards. Full USB support requires merging '[PATCHv5 0/4] Enable usbphy
+and hsotg for exynos4' series recently posted by Chanho Park.
 
-This patch has a conflict with your own fixes. You should have based this
-branch on top of the fixes to avoid it.
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
 
-Not only that, but it seems to break 4212, which the other fix was meant to
-take care of.
+Changelog:
+v2:
+- added port sub-nodes to ehci and ohci modules as requested by Tomasz Figa
 
-I think I've fixed it in my merge, please double check. You really have to
-be more careful than this in the future.
+v1:
+- initial version
 
-My resolution is:
+Marek Szyprowski (3):
+  ARM: dts: exynos4210-universal_c210: enable USB functionality
+  ARM: dts: exynos4210-universal_c210: add multimedia nodes
+  ARM: dts: exynos4210-universal_c210: add external sd card node
 
-index aa01c4222b40,483dfcd69065..000000000000
---- a/arch/arm/mach-exynos/firmware.c
-+++ b/arch/arm/mach-exynos/firmware.c
-@@@ -18,8 -18,7 +18,9 @@@
-  
-  #include <mach/map.h>
-  
- +#include <plat/cpu.h>
- +
-+ #include "common.h"
-  #include "smc.h"
-  
-  static int exynos_do_idle(void)
-@@@ -44,10 -35,12 +45,15 @@@ static int exynos_cpu_boot(int cpu
-  
-  static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
-  {
--       void __iomem *boot_reg = S5P_VA_SYSRAM_NS + 0x1c;
-+       void __iomem *boot_reg;
-+ 
-+       if (!sysram_ns_base_addr)
-+               return -ENODEV;
-+ 
- -      boot_reg = sysram_ns_base_addr + 0x1c + 4*cpu;
-++      boot_reg = sysram_ns_base_addr + 0x1c;
- +
- +      if (!soc_is_exynos4212())
- +              boot_reg += 4*cpu;
-  
+Tomasz Figa (1):
+  ARM: dts: exynos4210-trats: Enable USB gadget functionality
 
+ arch/arm/boot/dts/exynos4210-trats.dts          | 10 +++++
+ arch/arm/boot/dts/exynos4210-universal_c210.dts | 59 +++++++++++++++++++++++++
+ 2 files changed, 69 insertions(+)
 
--Olof
+-- 
+1.9.2
