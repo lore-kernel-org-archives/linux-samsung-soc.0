@@ -1,56 +1,56 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2 0/4] Add more supported blocks to UniversalC210 and
- Trats
-Date: Fri, 23 May 2014 03:32:19 +0900
-Message-ID: <537E42B3.5080608@samsung.com>
-References: <1400737937-7368-1-git-send-email-m.szyprowski@samsung.com>
+Subject: Re: [PATCHv5 0/4] Enable usbphy and hsotg for exynos4
+Date: Fri, 23 May 2014 03:32:55 +0900
+Message-ID: <537E42D7.7050608@samsung.com>
+References: <1400551590-7772-1-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:34489 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751037AbaEVScY (ORCPT
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:59145 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751037AbaEVSdA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 14:32:24 -0400
-Received: by mail-pa0-f49.google.com with SMTP id lj1so2843844pab.36
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 11:32:23 -0700 (PDT)
-In-Reply-To: <1400737937-7368-1-git-send-email-m.szyprowski@samsung.com>
+	Thu, 22 May 2014 14:33:00 -0400
+In-Reply-To: <1400551590-7772-1-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: Chanho Park <chanho61.park@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, k.debski@samsung.com, devicetree@vger.kernel.org
 
-On 05/22/14 14:52, Marek Szyprowski wrote:
-> Hello,
+On 05/20/14 11:06, Chanho Park wrote:
+> This patchset enables a exynos4 usbphy and hsotg DT node for exynos4. The usb
+> phy node uses generic exynos phy driver. The driver uses PMU syscon and SYSREG
+> syscon phandles.
 >
-> This is a small update for Exynos4210 based UniversalC210 and Trats
-> boards. Full USB support requires merging '[PATCHv5 0/4] Enable usbphy
-> and hsotg for exynos4' series recently posted by Chanho Park.
+> Changes from v4:
+>   - Correct 4212/4412 PMU syscon node according to documentation
 >
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
+> Change from v3:
+>   - Place a status field at the end of the nodes for readability
 >
-> Changelog:
-> v2:
-> - added port sub-nodes to ehci and ohci modules as requested by Tomasz Figa
+> Change from v2:
+>   - Split 4x12 compatibles to 4212 and 4412
 >
-> v1:
-> - initial version
+> Changes from v1: Applied Tomasz Figa's comments
+>   - Document PMU syscon compatibles for exynos4210/4x12
+>   - Use clock macro instead of raw clock number
+>   - Correct phy name to "usb2-phy"
 >
-> Marek Szyprowski (3):
->    ARM: dts: exynos4210-universal_c210: enable USB functionality
->    ARM: dts: exynos4210-universal_c210: add multimedia nodes
->    ARM: dts: exynos4210-universal_c210: add external sd card node
+> Chanho Park (4):
+>    ARM: dts: exynos4: add PMU syscon node
+>    ARM: dts: exynos4: add exynos_usbphy node
+>    ARM: dts: exynos4: add hsotg device node
+>    ARM: dts: exynos4412-trats2: enable usb nodes
 >
-> Tomasz Figa (1):
->    ARM: dts: exynos4210-trats: Enable USB gadget functionality
+>   .../devicetree/bindings/arm/samsung/pmu.txt        |  3 +++
+>   arch/arm/boot/dts/exynos4.dtsi                     | 26 ++++++++++++++++++++++
+>   arch/arm/boot/dts/exynos4412-trats2.dts            | 10 +++++++++
+>   arch/arm/boot/dts/exynos4412.dtsi                  |  4 ++++
+>   arch/arm/boot/dts/exynos4x12.dtsi                  |  9 ++++++++
+>   5 files changed, 52 insertions(+)
 >
->   arch/arm/boot/dts/exynos4210-trats.dts          | 10 +++++
->   arch/arm/boot/dts/exynos4210-universal_c210.dts | 59 +++++++++++++++++++++++++
->   2 files changed, 69 insertions(+)
->
-Applied, thanks.
+Looks good to me, applied.
 
-- Kukjin
+Thanks,
+Kukjin
