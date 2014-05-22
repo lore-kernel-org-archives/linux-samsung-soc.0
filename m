@@ -1,62 +1,104 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH V2] drm/exynos: enable fimd clocks in probe before
- accessing fimd registers
-Date: Thu, 22 May 2014 11:51:26 +0530
-Message-ID: <CAK9yfHz4DxG-Ey7HieMU9t32arXMDGYn1JXe0g8LNGpNYV6KaQ@mail.gmail.com>
-References: <1400735767-5905-1-git-send-email-rahul.sharma@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH] drm/exynos: allocate non-contigous buffers when iommu is
+ enabled
+Date: Thu, 22 May 2014 12:02:07 +0530
+Message-ID: <CAPdUM4PancQ0jJHsq=LLsFwmVcj40Vp7nY_xOC+8Y=QgFG8uew@mail.gmail.com>
+References: <1399463489-6925-1-git-send-email-rahul.sharma@samsung.com>
+ <CAK9yfHz8UG6uHfs_Ao35EBwMN3voos8Lank+Sak0brFFrxqkDA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:54363 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751946AbaEVGV1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 02:21:27 -0400
-Received: by mail-ob0-f179.google.com with SMTP id vb8so3351004obc.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 23:21:26 -0700 (PDT)
-In-Reply-To: <1400735767-5905-1-git-send-email-rahul.sharma@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAK9yfHz8UG6uHfs_Ao35EBwMN3voos8Lank+Sak0brFFrxqkDA@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
 
-Hi Rahul,
+Thanks Sachin.
 
-On 22 May 2014 10:46, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+On 22 May 2014 11:38, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Hi Rahul,
 >
-> Fimd probe is accessing fimd Registers without enabling the fimd
-> gate clocks. If FIMD clocks are kept disabled in Uboot or disbaled
-> during kernel boottime, the system hangs during boottime.
+> On 7 May 2014 17:21, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+>> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+>>
+>> Allow to allocate non-contigous buffers when iommu is enabled.
+>> Currently, it tries to allocates contigous buffer which consistently
+>> fail for large buffers and then fall back to non contigous. Apart
+>> from being slow, this implementation is also very noisy and fills
+>> the screen with alloc fail logs.
+>>
+>> Change-Id: I523e95aa308122ed2edc55e065ae6eb8be996541
 >
-> This issue got surfaced when verifying with sysmmu enabled. Probe of
-> fimd Sysmmu enables the master clock before accessing sysmmu regs and
-> then disables. Later fimd probe tries to read the register without
-> enabling the clock which is wrong and hangs the system.
+> Not needed.
 >
-> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
-> ---
-> Rebased on exynos-drm-next branch.
+>> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_gem.c |   22 ++++++++++------------
+>>  1 file changed, 10 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+>> index 5d88924..7136945 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+>> @@ -624,22 +624,20 @@ int exynos_drm_gem_dumb_create(struct drm_file *file_priv,
+>>         args->pitch = args->width * ((args->bpp + 7) / 8);
+>>         args->size = args->pitch * args->height;
+>>
+>> -       exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG |
+>> -                                               EXYNOS_BO_WC, args->size);
+>> -       /*
+>> -        * If physically contiguous memory allocation fails and if IOMMU is
+>> -        * supported then try to get buffer from non physically contiguous
+>> -        * memory area.
+>> -        */
 >
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c |    6 ++++++
->  1 file changed, 6 insertions(+)
+> This comment could be retained after suitable modification to reflect
+> current logic.
 >
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> index 173ee97..a79ba0a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -891,9 +891,15 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
->         if (ctx->display)
->                 exynos_drm_create_enc_conn(drm_dev, ctx->display);
->
-> +       clk_prepare_enable(ctx->bus_clk);
 
-Probably a check for its success?
+ok. Posting V2.
 
-> +       clk_prepare_enable(ctx->lcd_clk);
+Regards,
+Rahul Sharma
 
-ditto.
-
--- 
-With warm regards,
-Sachin
+>> -       if (IS_ERR(exynos_gem_obj) && is_drm_iommu_supported(dev)) {
+>> -               dev_warn(dev->dev, "contiguous FB allocation failed, falling back to non-contiguous\n");
+>> +       if (is_drm_iommu_supported(dev)) {
+>> +               exynos_gem_obj = exynos_drm_gem_create(dev,
+>> +                       EXYNOS_BO_NONCONTIG | EXYNOS_BO_WC,
+>> +                       args->size);
+>> +       } else {
+>>                 exynos_gem_obj = exynos_drm_gem_create(dev,
+>> -                                       EXYNOS_BO_NONCONTIG | EXYNOS_BO_WC,
+>> -                                       args->size);
+>> +                       EXYNOS_BO_CONTIG | EXYNOS_BO_WC,
+>> +                       args->size);
+>>         }
+>>
+>> -       if (IS_ERR(exynos_gem_obj))
+>> +       if (IS_ERR(exynos_gem_obj)) {
+>> +               dev_warn(dev->dev, "FB allocation failed.\n");
+>>                 return PTR_ERR(exynos_gem_obj);
+>> +       }
+>>
+>>         ret = exynos_drm_gem_handle_create(&exynos_gem_obj->base, file_priv,
+>>                         &args->handle);
+>> --
+>> 1.7.9.5
+>
+> Otherwise looks good.
+> Reviewed-by: Sachin Kamat <sachin.kamat@linaro.org>
+>
+> --
+> With warm regards,
+> Sachin
