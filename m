@@ -1,36 +1,56 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH] drm/exynos: fix nested calls to lock mutex in drm resume
-Date: Thu, 22 May 2014 23:26:07 +0530
-Message-ID: <CAK9yfHxK5tdaoBZTfs3MYheK2VjA-ddgWi=u7F3bHowUWU9bHQ@mail.gmail.com>
-References: <1398865294-6754-1-git-send-email-rahul.sharma@samsung.com>
-	<CAPdUM4M3MdM2Dm2GPYXD-A18YDVGmKKBz+-uGDOmiTO=WUKu8A@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 0/4] Add more supported blocks to UniversalC210 and
+ Trats
+Date: Fri, 23 May 2014 03:32:19 +0900
+Message-ID: <537E42B3.5080608@samsung.com>
+References: <1400737937-7368-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f49.google.com ([209.85.219.49]:58456 "EHLO
-	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751061AbaEVR4H (ORCPT
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:34489 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751037AbaEVScY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 13:56:07 -0400
-Received: by mail-oa0-f49.google.com with SMTP id eb12so4380621oac.36
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 10:56:07 -0700 (PDT)
-In-Reply-To: <CAPdUM4M3MdM2Dm2GPYXD-A18YDVGmKKBz+-uGDOmiTO=WUKu8A@mail.gmail.com>
+	Thu, 22 May 2014 14:32:24 -0400
+Received: by mail-pa0-f49.google.com with SMTP id lj1so2843844pab.36
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 11:32:23 -0700 (PDT)
+In-Reply-To: <1400737937-7368-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Rahul,
-
- On 22 May 2014 19:46, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> Hi Inki,
+On 05/22/14 14:52, Marek Szyprowski wrote:
+> Hello,
 >
-> This is another one which has not got reviewed. Please review.
+> This is a small update for Exynos4210 based UniversalC210 and Trats
+> boards. Full USB support requires merging '[PATCHv5 0/4] Enable usbphy
+> and hsotg for exynos4' series recently posted by Chanho Park.
+>
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+>
+> Changelog:
+> v2:
+> - added port sub-nodes to ehci and ohci modules as requested by Tomasz Figa
+>
+> v1:
+> - initial version
+>
+> Marek Szyprowski (3):
+>    ARM: dts: exynos4210-universal_c210: enable USB functionality
+>    ARM: dts: exynos4210-universal_c210: add multimedia nodes
+>    ARM: dts: exynos4210-universal_c210: add external sd card node
+>
+> Tomasz Figa (1):
+>    ARM: dts: exynos4210-trats: Enable USB gadget functionality
+>
+>   arch/arm/boot/dts/exynos4210-trats.dts          | 10 +++++
+>   arch/arm/boot/dts/exynos4210-universal_c210.dts | 59 +++++++++++++++++++++++++
+>   2 files changed, 69 insertions(+)
+>
+Applied, thanks.
 
-Inki has applied a similar patch from Takashi [1].
-
-[1] https://lkml.org/lkml/2014/5/9/24
-
--- 
-With warm regards,
-Sachin
+- Kukjin
