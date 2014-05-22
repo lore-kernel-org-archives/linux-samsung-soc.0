@@ -1,73 +1,62 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Use wfi macro in platform_do_lowpower
-Date: Thu, 22 May 2014 13:53:20 +0200
-Message-ID: <537DE530.3050205@linaro.org>
-References: <1400745455-27920-1-git-send-email-leela.krishna@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1400745455-27920-1-git-send-email-leela.krishna@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Leela Krishna Amudala <leela.krishna@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, amit.kucheria@linaro.org
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 1/2] doc: dt bindings: Document Odroid X2/U3 audio subsystem
+ bindings
+Date: Thu, 22 May 2014 13:55:07 +0200
+Message-ID: <1400759708-25831-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:59036 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752786AbaEVL4K (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 May 2014 07:56:10 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 05/22/2014 09:57 AM, Leela Krishna Amudala wrote:
-> This patch is originally based on commit b3377d186572 ("ARM: 7064/1:
-> vexpress: Use wfi macro in platform_do_lowpower.")
->
-> Current Exynos CPU hotplug code includes a hardcoded WFI
-> instruction, in ARM encoding.  When the kernel is compiled in Thumb-2
-> mode, this is invalid and causes the machine to hang hard when a CPU
-> is offlined.
->
-> Use wfi macro instead of the hardcoded WFI instruction.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ .../bindings/sound/samsung,odroidx2-max98090.txt   |   32 ++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt
 
-Is it possible to change it for cpu_do_idle() ?
-
-I guess, that should be backported to the previous kernel version, righ=
-t=20
-? (Cc stable@).
-
-Thanks
-   -- Daniel
-
-> Signed-off-by: Leela Krishna Amudala <leela.krishna@linaro.org>
-> ---
->   arch/arm/mach-exynos/hotplug.c |    8 +-------
->   1 file changed, 1 insertion(+), 7 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/ho=
-tplug.c
-> index 69fa483..8a134d0 100644
-> --- a/arch/arm/mach-exynos/hotplug.c
-> +++ b/arch/arm/mach-exynos/hotplug.c
-> @@ -46,13 +46,7 @@ static inline void platform_do_lowpower(unsigned i=
-nt cpu, int *spurious)
->   		if (cpu =3D=3D 1)
->   			exynos_cpu_power_down(cpu);
->
-> -		/*
-> -		 * here's the WFI
-> -		 */
-> -		asm(".word	0xe320f003\n"
-> -		    :
-> -		    :
-> -		    : "memory", "cc");
-> +		wfi();
->
->   		if (pen_release =3D=3D cpu_logical_map(cpu)) {
->   			/*
->
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+diff --git a/Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt b/Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt
+new file mode 100644
+index 0000000..b37e79a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt
+@@ -0,0 +1,32 @@
++Odroid X2/U3 audio complex
++
++Required properties:
++- compatible		 : "samsung,odroidx2-audio"
++- samsung,i2s-controller : phandle to the I2S controller
++- samsung,audio-codec	 : phandle to the audio codec
++
++Example:
++
++	i2s0: i2s@03830000 {
++		...
++		clocks = <&clock_audss EXYNOS_I2S_BUS>,
++			 <&clock_audss EXYNOS_DOUT_AUD_BUS>;
++		clock-names = "iis", "i2s_opclk0";
++		status = "okay";
++	};
++
++	i2c@13870000 {
++		...
++		max98090: max98090@10 {
++			compatible = "maxim,max98090";
++			reg = <0x10>;
++			interrupt-parent = <&gpx0>;
++			interrupts = <1 0>;
++		};
++	};
++
++	sound {
++		compatible = "samsung,odroidx2-audio";
++		samsung,i2s-controller = <&i2s0>;
++		samsung,audio-codec = <&max98090>;
++	};
+-- 
+1.7.9.5
