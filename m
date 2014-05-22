@@ -1,41 +1,36 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Use wfi macro in platform_do_lowpower
-Date: Thu, 22 May 2014 13:55:16 -0400 (EDT)
-Message-ID: <alpine.LFD.2.11.1405221353030.17310@knanqh.ubzr>
-References: <1400745455-27920-1-git-send-email-leela.krishna@linaro.org> <537DE530.3050205@linaro.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH] drm/exynos: fix nested calls to lock mutex in drm resume
+Date: Thu, 22 May 2014 23:26:07 +0530
+Message-ID: <CAK9yfHxK5tdaoBZTfs3MYheK2VjA-ddgWi=u7F3bHowUWU9bHQ@mail.gmail.com>
+References: <1398865294-6754-1-git-send-email-rahul.sharma@samsung.com>
+	<CAPdUM4M3MdM2Dm2GPYXD-A18YDVGmKKBz+-uGDOmiTO=WUKu8A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f51.google.com ([209.85.192.51]:49076 "EHLO
-	mail-qg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750917AbaEVRzS (ORCPT
+Received: from mail-oa0-f49.google.com ([209.85.219.49]:58456 "EHLO
+	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751061AbaEVR4H (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 13:55:18 -0400
-Received: by mail-qg0-f51.google.com with SMTP id q107so6271683qgd.24
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 10:55:17 -0700 (PDT)
-In-Reply-To: <537DE530.3050205@linaro.org>
+	Thu, 22 May 2014 13:56:07 -0400
+Received: by mail-oa0-f49.google.com with SMTP id eb12so4380621oac.36
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 10:56:07 -0700 (PDT)
+In-Reply-To: <CAPdUM4M3MdM2Dm2GPYXD-A18YDVGmKKBz+-uGDOmiTO=WUKu8A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Leela Krishna Amudala <leela.krishna@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, amit.kucheria@linaro.org
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
 
-On Thu, 22 May 2014, Daniel Lezcano wrote:
+Hi Rahul,
 
-> On 05/22/2014 09:57 AM, Leela Krishna Amudala wrote:
-> > This patch is originally based on commit b3377d186572 ("ARM: 7064/1:
-> > vexpress: Use wfi macro in platform_do_lowpower.")
-> >
-> > Current Exynos CPU hotplug code includes a hardcoded WFI
-> > instruction, in ARM encoding.  When the kernel is compiled in Thumb-2
-> > mode, this is invalid and causes the machine to hang hard when a CPU
-> > is offlined.
-> >
-> > Use wfi macro instead of the hardcoded WFI instruction.
-> 
-> Is it possible to change it for cpu_do_idle() ?
+ On 22 May 2014 19:46, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> Hi Inki,
+>
+> This is another one which has not got reviewed. Please review.
 
-Please let's not encourage every wfi() to be turned into cpu_do_idle().  
-They are not always equivalent.  And semantically they are not.
+Inki has applied a similar patch from Takashi [1].
 
+[1] https://lkml.org/lkml/2014/5/9/24
 
-Nicolas
+-- 
+With warm regards,
+Sachin
