@@ -1,57 +1,88 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: Handle errors when getting the op_clk
- clock
-Date: Thu, 22 May 2014 17:57:44 +0100
-Message-ID: <20140522165744.GK12304@sirena.org.uk>
-References: <1400753452-6943-1-git-send-email-s.nawrocki@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v3] drm/exynos: enable fimd clocks in probe before
+ accessing fimd registers
+Date: Thu, 22 May 2014 23:18:51 +0530
+Message-ID: <CAK9yfHxOQ56_eDK7KFgN6ZkX=E=UWqepi74O+Wt0vyzvhPyHFQ@mail.gmail.com>
+References: <1400767867-8965-1-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="u13C/yEOc42HESKG"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39179 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750913AbaEVQ6A (ORCPT
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:33417 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751313AbaEVRsw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 12:58:00 -0400
-Content-Disposition: inline
-In-Reply-To: <1400753452-6943-1-git-send-email-s.nawrocki@samsung.com>
+	Thu, 22 May 2014 13:48:52 -0400
+Received: by mail-oa0-f46.google.com with SMTP id i4so4415064oah.33
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 10:48:51 -0700 (PDT)
+In-Reply-To: <1400767867-8965-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
+
+Hi Rahul,
+
+On 22 May 2014 19:41, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> Fimd probe is accessing fimd Registers without enabling the fimd
+> gate clocks. If FIMD clocks are kept disabled in Uboot or disbaled
+> during kernel boottime, the system hangs during boottime.
+>
+> This issue got surfaced when verifying with sysmmu enabled. Probe of
+> fimd Sysmmu enables the master clock before accessing sysmmu regs and
+> then disables. Later fimd probe tries to read the register without
+> enabling the clock which is wrong and hangs the system.
+>
+> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c |   17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index bd30d0c..38b77ed 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -898,16 +898,31 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+>  {
+>         struct fimd_context *ctx = fimd_manager.ctx;
+>         struct drm_device *drm_dev = data;
+> -       int win;
+> +       int win, ret;
+>
+>         fimd_mgr_initialize(&fimd_manager, drm_dev);
+>         exynos_drm_crtc_create(&fimd_manager);
+>         if (ctx->display)
+>                 exynos_drm_create_enc_conn(drm_dev, ctx->display);
+>
+> +       ret = clk_prepare_enable(ctx->bus_clk);
+> +       if (ret) {
+> +               dev_err(dev, "bus clock enable failed.\n");
+> +               return ret;
+> +       }
+> +
+> +       ret = clk_prepare_enable(ctx->lcd_clk);
+> +       if (ret) {
+> +               dev_err(dev, "lcd clock enable failed.\n");
+
+Add clk_disable_unprepare(ctx->bus_clk) before returning on error.
+
+> +               return ret;
+> +       }
+> +
+>         for (win = 0; win < WINDOWS_NR; win++)
+>                 fimd_clear_win(ctx, win);
+>
+> +       clk_disable_unprepare(ctx->lcd_clk);
+> +       clk_disable_unprepare(ctx->bus_clk);
+> +
+>         return 0;
+>
+>  }
+> --
+> 1.7.9.5
+>
 
 
---u13C/yEOc42HESKG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Thu, May 22, 2014 at 12:10:52PM +0200, Sylwester Nawrocki wrote:
-> Ensure i2s->op_clk is not used when clk_get() for this clock fails.
-> This prevents working with an incorrectly configured clock in some
-> conditions.
-
-Applied, thanks.
-
---u13C/yEOc42HESKG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTfiyFAAoJELSic+t+oim97nEQAJbA+nP1eer0RBqNFmmwBl2n
-PIdLJy2rwvCvzyfjukgqFuzWarEIjdzjUosHFmDOBFochjkW9+C0Zz3DREXzKc62
-J+l+85KOCkp4bfu1LoIOJjFL7Wl2I1SBrj39DFbj4uH4bPmB2NXCnyxVZTzIl/+f
-D1OYubU/hpPfckwbCwcnYaxvSkOzLu3U2Oo4lpmRjlykrDvzVIv5IuTaQ+oeaugF
-paI1wE0VhFAlb0ufHcn+HUwHFAu3Rl5MUrE0/8ebLoOpZSJ7IY4cKfQJD55EgyVI
-DDt0r7n6B2VWmx5R8/IhtCKZC7cwHnkmhUm6zHiSng9qq7Mw2sAKpVmhIMX0Z0qK
-YBX1Hm1VY2tSilnkvcbZjCRSkrZXq4HiTMLdQyAnc7puYZB4nIcmFhjrLAPT3rCC
-jbdFGA/LtEfTS+4zIRIRIEqo4GsN9JyMMbwWpDbzBytyzlS948HAFEbKgfQ4nnmo
-hMLA98QWc0OgLUqfF3FDPf5Gexp6ZP43Jq1CH1bq9hwn68fDt5gwCkqqci3B8RLc
-kczhzfPMxro2uIQbRHCVhHbLn2fFuNOZuDS+tEUQHo2qBnj984uDGRKivCzvX9/Q
-p6E8eXlD7TzeiFO8NJX/+Ow5+o+zcpaye3s4j5S0w096fpyXucZI1k48OH/hpBEB
-xZiQd13VXJsYOV2z5SWw
-=YNfL
------END PGP SIGNATURE-----
-
---u13C/yEOc42HESKG--
+-- 
+With warm regards,
+Sachin
