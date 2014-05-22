@@ -1,85 +1,52 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH] drm/exynos: allocate non-contigous buffers when iommu is enabled
-Date: Thu, 22 May 2014 10:55:11 +0530
-Message-ID: <CAPdUM4OL+Kt8v1upyczDmjBPh5kT1d4gYDmYLBb=ZovQ=qOE7w@mail.gmail.com>
-References: <1399463489-6925-1-git-send-email-rahul.sharma@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 1/5] Samsung S3C24XX updates for 3.16
+Date: Wed, 21 May 2014 22:29:28 -0700
+Message-ID: <20140522052928.GE32618@quad.lixom.net>
+References: <014401cf73c8$3d485e00$b7d91a00$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f170.google.com ([74.125.82.170]:45072 "EHLO
-	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750958AbaEVFZM (ORCPT
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:62830 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750873AbaEVF3T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 01:25:12 -0400
-Received: by mail-we0-f170.google.com with SMTP id u57so2985355wes.29
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 22:25:11 -0700 (PDT)
-In-Reply-To: <1399463489-6925-1-git-send-email-rahul.sharma@samsung.com>
+	Thu, 22 May 2014 01:29:19 -0400
+Received: by mail-pb0-f52.google.com with SMTP id rr13so2161098pbb.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 May 2014 22:29:18 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <014401cf73c8$3d485e00$b7d91a00$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Heiko Stuebner' <heiko@sntech.de>
 
-Hi Inki,
+On Tue, May 20, 2014 at 10:10:07AM +0900, Kukjin Kim wrote:
+> The following changes since commit c9eaa447e77efe77b7fa4c953bd62de8297fd6c5:
+> 
+>   Linux 3.15-rc1 (2014-04-13 14:18:35 -0700)
+> 
+> are available in the git repository at:
+> 
+>   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/s3c24xx-clk
+> 
+> for you to fetch changes up to 34c453ce16633539a94a2e876faeb731ac1be899:
+> 
+>   ARM: S3C24XX: fix merge conflict (2014-05-15 05:54:38 +0900)
+> 
+> ----------------------------------------------------------------
+> Samsung S3C24XX to use the common clock framework
+> - S3C2412, S3C2413, S3C2416 and S3C2443 to use CCF
+> - S3C2410, S3C2440, S3C2442 to use CCF
+> - Remove legacy samsung clock from mach-s3c24xx/
+> 
+> - Some of them are missed from previous pull-request
+> - Clock related sutff got ack from Mike and Tomasz
+> - Created the last commit due to missing changes
+>   during re-sorting because this branch is provided
+>   as a base to samsung clk tree.
 
-The below fix doesn't affect the FB dev buffer allocation. IMO the scenario
-where u-boot allocates the buffer is not disturbed.
-Please review the implementation.
+Merged into next/cleanup. Thanks.
 
-Regards,
-Rahul Sharma.
 
-On 7 May 2014 17:21, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->
-> Allow to allocate non-contigous buffers when iommu is enabled.
-> Currently, it tries to allocates contigous buffer which consistently
-> fail for large buffers and then fall back to non contigous. Apart
-> from being slow, this implementation is also very noisy and fills
-> the screen with alloc fail logs.
->
-> Change-Id: I523e95aa308122ed2edc55e065ae6eb8be996541
-> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_gem.c |   22 ++++++++++------------
->  1 file changed, 10 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> index 5d88924..7136945 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-> @@ -624,22 +624,20 @@ int exynos_drm_gem_dumb_create(struct drm_file *file_priv,
->         args->pitch = args->width * ((args->bpp + 7) / 8);
->         args->size = args->pitch * args->height;
->
-> -       exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG |
-> -                                               EXYNOS_BO_WC, args->size);
-> -       /*
-> -        * If physically contiguous memory allocation fails and if IOMMU is
-> -        * supported then try to get buffer from non physically contiguous
-> -        * memory area.
-> -        */
-> -       if (IS_ERR(exynos_gem_obj) && is_drm_iommu_supported(dev)) {
-> -               dev_warn(dev->dev, "contiguous FB allocation failed, falling back to non-contiguous\n");
-> +       if (is_drm_iommu_supported(dev)) {
-> +               exynos_gem_obj = exynos_drm_gem_create(dev,
-> +                       EXYNOS_BO_NONCONTIG | EXYNOS_BO_WC,
-> +                       args->size);
-> +       } else {
->                 exynos_gem_obj = exynos_drm_gem_create(dev,
-> -                                       EXYNOS_BO_NONCONTIG | EXYNOS_BO_WC,
-> -                                       args->size);
-> +                       EXYNOS_BO_CONTIG | EXYNOS_BO_WC,
-> +                       args->size);
->         }
->
-> -       if (IS_ERR(exynos_gem_obj))
-> +       if (IS_ERR(exynos_gem_obj)) {
-> +               dev_warn(dev->dev, "FB allocation failed.\n");
->                 return PTR_ERR(exynos_gem_obj);
-> +       }
->
->         ret = exynos_drm_gem_handle_create(&exynos_gem_obj->base, file_priv,
->                         &args->handle);
-> --
-> 1.7.9.5
->
+-Olof
