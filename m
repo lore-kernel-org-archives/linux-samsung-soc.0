@@ -1,112 +1,95 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: allocate non-contigous buffers when iommu is
- enabled
-Date: Thu, 22 May 2014 15:41:02 +0900
-Message-ID: <537D9BFE.7060101@samsung.com>
-References: <1399463489-6925-1-git-send-email-rahul.sharma@samsung.com>
- <CAPdUM4OL+Kt8v1upyczDmjBPh5kT1d4gYDmYLBb=ZovQ=qOE7w@mail.gmail.com>
+Subject: Re: [PATCH] drm/exynos: use 4WORD dma burst length for small fbs
+Date: Thu, 22 May 2014 15:55:57 +0900
+Message-ID: <537D9F7D.9020204@samsung.com>
+References: <1399461922-27131-1-git-send-email-rahul.sharma@samsung.com>
+ <537C8A45.6040407@samsung.com>
+ <CAPdUM4NyCHsA8gBZrcDw1+1LqUbE9LquWA=H4NsjHEXb8Xp1dg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:64769 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751576AbaEVGlH convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 02:41:07 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N5Y007LTQKERK90@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 22 May 2014 15:41:02 +0900 (KST)
-In-reply-to: <CAPdUM4OL+Kt8v1upyczDmjBPh5kT1d4gYDmYLBb=ZovQ=qOE7w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAPdUM4NyCHsA8gBZrcDw1+1LqUbE9LquWA=H4NsjHEXb8Xp1dg@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
+Cc: sreekumar.c@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prathyush K <prathyush.k@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2014=EB=85=84 05=EC=9B=94 22=EC=9D=BC 14:25, Rahul Sharma wrote:
-> Hi Inki,
->=20
-> The below fix doesn't affect the FB dev buffer allocation. IMO the sc=
-enario
-> where u-boot allocates the buffer is not disturbed.
-> Please review the implementation.
->=20
-
-Applied.
-
-Thanks,
-Inki Dae
-
-
-> Regards,
-> Rahul Sharma.
->=20
-> On 7 May 2014 17:21, Rahul Sharma <rahul.sharma@samsung.com> wrote:
->> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->>
->> Allow to allocate non-contigous buffers when iommu is enabled.
->> Currently, it tries to allocates contigous buffer which consistently
->> fail for large buffers and then fall back to non contigous. Apart
->> from being slow, this implementation is also very noisy and fills
->> the screen with alloc fail logs.
->>
->> Change-Id: I523e95aa308122ed2edc55e065ae6eb8be996541
->> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_gem.c |   22 ++++++++++----------=
---
->>  1 file changed, 10 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/d=
-rm/exynos/exynos_drm_gem.c
->> index 5d88924..7136945 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
->> @@ -624,22 +624,20 @@ int exynos_drm_gem_dumb_create(struct drm_file=
- *file_priv,
->>         args->pitch =3D args->width * ((args->bpp + 7) / 8);
->>         args->size =3D args->pitch * args->height;
->>
->> -       exynos_gem_obj =3D exynos_drm_gem_create(dev, EXYNOS_BO_CONT=
-IG |
->> -                                               EXYNOS_BO_WC, args->=
-size);
->> -       /*
->> -        * If physically contiguous memory allocation fails and if I=
-OMMU is
->> -        * supported then try to get buffer from non physically cont=
-iguous
->> -        * memory area.
->> -        */
->> -       if (IS_ERR(exynos_gem_obj) && is_drm_iommu_supported(dev)) {
->> -               dev_warn(dev->dev, "contiguous FB allocation failed,=
- falling back to non-contiguous\n");
->> +       if (is_drm_iommu_supported(dev)) {
->> +               exynos_gem_obj =3D exynos_drm_gem_create(dev,
->> +                       EXYNOS_BO_NONCONTIG | EXYNOS_BO_WC,
->> +                       args->size);
->> +       } else {
->>                 exynos_gem_obj =3D exynos_drm_gem_create(dev,
->> -                                       EXYNOS_BO_NONCONTIG | EXYNOS=
-_BO_WC,
->> -                                       args->size);
->> +                       EXYNOS_BO_CONTIG | EXYNOS_BO_WC,
->> +                       args->size);
->>         }
->>
->> -       if (IS_ERR(exynos_gem_obj))
->> +       if (IS_ERR(exynos_gem_obj)) {
->> +               dev_warn(dev->dev, "FB allocation failed.\n");
->>                 return PTR_ERR(exynos_gem_obj);
->> +       }
->>
->>         ret =3D exynos_drm_gem_handle_create(&exynos_gem_obj->base, =
-file_priv,
->>                         &args->handle);
->> --
->> 1.7.9.5
->>
->=20
+T24gMjAxNOuFhCAwNeyblCAyMuydvCAxMzozNiwgUmFodWwgU2hhcm1hIHdyb3RlOgo+IEhpIElu
+a2ksCj4gCj4gT24gMjEgTWF5IDIwMTQgMTY6NDMsIElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5n
+LmNvbT4gd3JvdGU6Cj4+Cj4+IEhpIFJhaHVsLAo+Pgo+PiBPbiAyMDE064WEIDA17JuUIDA37J28
+IDIwOjI1LCBSYWh1bCBTaGFybWEgd3JvdGU6Cj4+PiBGcm9tOiBSYWh1bCBTaGFybWEgPFJhaHVs
+LlNoYXJtYUBzYW1zdW5nLmNvbT4KPj4+Cj4+PiBJbiBjYXNlIG9mIGV4eW5vcywgc2V0dGluZyBk
+bWEtYnVyc3QgdG8gMTZXb3JkIGNhdXNlcyBwZXJtYW5lbnQKPj4+IHRlYXJpbmcgZm9yIHZlcnkg
+c21hbGwgYnVmZmVycywgZS5nLiBjdXJzb3IgYnVmZmVyLiBCdXJzdCBNb2RlCj4+PiBzd2l0Y2hp
+bmcsIHdoaWNoIGlzIGJhc2VkIG9uIG92ZXJsYXkgc2l6ZSBpcyBub3QgcmVjb21tZW5kZWQgYXMK
+Pj4+IG92ZXJsYXkgc2l6ZSB2YXJpZXMgYSBsb3QgdG93YXJkcyB0aGUgZW5kIG9mIHRoZSBzY3Jl
+ZW4uIFRoaXMKPj4+IGNhdXNlcyB1bnN0YWJsZSBETUEgd2hpY2ggcmVzdWx0cyBpbnRvIHRlYXJp
+bmcgYWdhaW4uCj4gW3NuaXBdCj4+PiArICAgICAvKgo+Pj4gKyAgICAgICogSW4gY2FzZSBvZiBl
+eHlub3MsIHNldHRpbmcgZG1hLWJ1cnN0IHRvIDE2V29yZCBjYXVzZXMgcGVybWFuZW50Cj4+PiAr
+ICAgICAgKiB0ZWFyaW5nIGZvciB2ZXJ5IHNtYWxsIGJ1ZmZlcnMsIGUuZy4gY3Vyc29yIGJ1ZmZl
+ci4gQnVyc3QgTW9kZQo+Pj4gKyAgICAgICogc3dpdGNoaW5nIHdoaWNoIGlzIGJhc2VkIG9uIG92
+ZXJsYXkgc2l6ZSBpcyBub3QgcmVjb21tZW5kZWQgYXMKPj4+ICsgICAgICAqIG92ZXJsYXkgc2l6
+ZSB2YXJpZXMgYWxvdCB0b3dhcmRzIHRoZSBlbmQgb2YgdGhlIHNjcmVlbiBhbmQgcmFwaWQKPj4+
+ICsgICAgICAqIG1vdmVtZW50IGNhdXNlcyB1bnN0YWJsZSBETUEgd2hpY2ggcmVzdWx0cyBpbnRv
+IGlvbW11IGNyYXNoL3RlYXIuCj4+Cj4+IEZJTUQgaGFzIHdpZHRoIGxpbWl0YXRpb24gc28gd2lk
+dGggb2YgaGFyZHdhcmUgb3ZlcmxheSBtYXkgbmVlZCB0byBiZQo+PiBhbGlnbmVkIHRvIDE2IHBp
+eGVscy4KPj4gV2UgaGFkIGZhY2VkIHdpdGggc2ltaWxhciBpc3N1ZSBhbmQgdGhlIGlzc3VlIGhh
+ZCBiZWVuIHJlc29sdmVkIGJ5Cj4+IGFsaWduaW5nIGl0IHRvIDE2IHBpeGVscy4KPj4KPj4gU28g
+Y2FuIHlvdSB0cnkgdG8gYWxpZ24gaXQgaW5zdGVhZCBvZiBjaGFuZ2luZyBidXJzdCBsZW4gc2l6
+ZT8KPj4KPiAKPiBUaGlzIHByb2JsZW0gaXMgb25seSB3aXRoIHRoZSB2ZXJ5IHNtYWxsIEZCcyB3
+aGljaCBhcmUKPiByZW5kZXJlZCB0b3dhcmRzIGNvcm5lcnMuIEZvciBsYXJnZSBGQnMgbGlrZSAx
+MzY2eDc2OCwKPiB3ZSBkb250IHNlZSB0aGlzIGlzc3VlIHRob3VnaCAxMzY2IGlzIG5vdCAxNiBw
+aXhlbAo+IGFsaWduZWQuCgpSaWdodCwgd2UgaGFkIHRlc3QgaXQgd2l0aCA4eDY0IHBpeGVscy4g
+dGhlIGxpbWl0YXRpb24gd291bGQgYmUgZGVjaWRlZApieSBtZW1vcnkgYnVzIGxlbmd0aChNTCks
+IERNQSBidXJzdCBsZW5ndGgoREwpIGFuZCBwaXhlbCBzaXplIGluIGJ5dGVzKFBTKS4KQW5kIHRo
+YXQgY2FuIGJlIGNhbGN1bGF0ZWQgbGlrZSBiZWxvdywgd2hpY2ggd2FzIGd1aWRlZCBieSBoYXJk
+d2FyZSB0ZWFtLAoKQWxpZ24geyAoTUwgKiBESSAvIFBTKSArICg0Ynl0ZXMgLyBQUyksIDJ9CgpJ
+dCBzZWVtcyB0b28gYmlnIHZhbHVlLiBBY3R1YWxseSwgMTYgcGl4ZWxzIHdvcmtzIHdlbGwgYW5k
+IEkgZG9uJ3Qgc2VlCndoeSBpdCB3b2tzIHdlbGwgYWx0aG91Z2ggb3V0IG9mIGxpbWl0YXRpb24u
+CgpUaGFua3MsCklua2kgRGFlCgo+IAo+IEJ1dCBJIHN0aWxsIGNhcnJpZWQgb3V0IGZvbGxvd2lu
+ZyBleHBlcmltZW50cyBqdXN0IHRvCj4gdmVyaWZ5IHRoZSBmaW1kIGJlaGF2aW91ciBmb3Igc21h
+bGwgb3ZlcmxheS4KPiAKPiAxKSBSb3VuZCBET1dOOgo+ICsgIG92ZXJsYXktPmNydGNfd2lkdGgg
+PSAoKG92ZXJsYXktPmNydGNfd2lkdGgpLzE2KSoxNjsKPiAKPiBDdXJzb3IgY29ycnVwdGlvbiBm
+cm9tIEEgdG8gQgo+IEE6IFsgIDMwOC41MzAwMDBdIHN0YXJ0IGFkZHIgPSAweDIwNDA4MDAwLCBl
+bmQgYWRkciA9IDB4MjA0MGUwMDAsIHNpemUgPSAweDYwMDAKPiBbICAzMDguNTMwMDAwXSBvdmxf
+d2lkdGggPSA2NCwgb3ZsX2hlaWdodCA9IDY0Cj4gWyAgMzA4LjU0MDAwMF0gb2Zmc2V0X3ggPSAx
+MzAyLCBvZmZzZXRfeSA9IDMzNQo+IFsgIDMwOC41NDAwMDBdIGZiX3dpZHRoID0gOTYsIGZiX2hl
+aWdodCA9IDY0Cj4gCj4gQjogWyAgMzQxLjg5MDAwMF0gc3RhcnQgYWRkciA9IDB4MjA0MDgwMDAs
+IGVuZCBhZGRyID0gMHgyMDQwZTAwMCwgc2l6ZSA9IDB4NjAwMAo+IFsgIDM0MS44OTAwMDBdIG92
+bF93aWR0aCA9IDQ4LCBvdmxfaGVpZ2h0ID0gNjQKPiBbICAzNDEuOTAwMDAwXSBvZmZzZXRfeCA9
+IDEzMDMsIG9mZnNldF95ID0gMzM1Cj4gWyAgMzQxLjkwMDAwMF0gZmJfd2lkdGggPSA5NiwgZmJf
+aGVpZ2h0ID0gNjQKPiAKPiAKPiAyKSBSb3VuZCBVUDoKPiAKPiArIG92ZXJsYXktPmNydGNfd2lk
+dGggPSAoKG92ZXJsYXktPmNydGNfd2lkdGggKyAxNikvMTYpKjE2Owo+ICsgaWYob3ZlcmxheS0+
+Y3J0Y193aWR0aCA+IG92ZXJsYXktPmZiX3dpZHRoKQo+ICsgICAgICAgICBvdmVybGF5LT5jcnRj
+X3dpZHRoID0gb3ZlcmxheS0+ZmJfd2lkdGg7Cj4gCj4gQ3Vyc29yIGNvcnJ1cHRpb24gZnJvbSBB
+IHRvIEIKPiBBOiBbICAgNjMuMjAwMDAwXSBzdGFydCBhZGRyID0gMHgyMDQwODAwMCwgZW5kIGFk
+ZHIgPSAweDIwNDBlMDAwLCBzaXplID0gMHg2MDAwCj4gWyAgIDYzLjIxMDAwMF0gb3ZsX3dpZHRo
+ID0gOTYsIG92bF9oZWlnaHQgPSA2NAo+IFsgICA2My4yMTAwMDBdIG9mZnNldF94ID0gMTI3MSwg
+b2Zmc2V0X3kgPSAzNDYKPiBbICAgNjMuMjIwMDAwXSBmYl93aWR0aCA9IDk2LCBmYl9oZWlnaHQg
+PSA2NAo+IAo+IEI6IFsgICA2OC42MDAwMDBdIHN0YXJ0IGFkZHIgPSAweDIwNDA4MDAwLCBlbmQg
+YWRkciA9IDB4MjA0MGUwMDAsIHNpemUgPSAweDYwMDAKPiBbICAgNjguNjEwMDAwXSBvdmxfd2lk
+dGggPSA5Niwgb3ZsX2hlaWdodCA9IDY0Cj4gWyAgIDY4LjYxMDAwMF0gb2Zmc2V0X3ggPSAxMjcy
+LCBvZmZzZXRfeSA9IDM0Ngo+IFsgICA2OC42MjAwMDBdIGZiX3dpZHRoID0gOTYsIGZiX2hlaWdo
+dCA9IDY0Cj4gCj4gSW4gYm90aCB0aGUgc2NlbmFyaW9zIG92bF93aWR0aCBpcyBhbHdheXMgMTYg
+UGl4ZWwgYWxpZ25lZC4KPiBQbGVhc2UgbGV0IG1lIGtub3cgaWYgeW91IGhhdmUgc29tZXRoaW5n
+IGVsc2UgaW4gbWluZC4gSQo+IHdpbGwgY2hlY2sgYW5kIHNoYXJlIHRoZSBvYnNlcnZhdGlvbnMu
+Cj4gCj4gVGhlIHNvbHV0aW9uIGluIHRoZSBwYXRjaCBpcyBwcm9wb3NlZCBieSBoYXJkd2FyZSB0
+ZWFtCj4gYW5kIHdvcmsgZmluZSBmb3IgZXh5bm9zIDUyNTAsIDU0MjAgYW5kIDU4MDAuCj4gCj4g
+UmVnYXJkcywKPiBSYWh1bCBTaGFybWEKPiAKPj4gVGhhbmtzLAo+PiBJbmtpIERhZQo+Pgo+Pj4g
+KyAgICAgICovCj4+PiArCj4+PiArICAgICBpZiAod2luX2RhdGEtPmZiX3dpZHRoIDwgTUlOX0ZC
+X1dJRFRIX0ZPUl8xNldPUkRfQlVSU1QpIHsKPj4+ICsgICAgICAgICAgICAgdmFsICY9IH5XSU5D
+T054X0JVUlNUTEVOX01BU0s7Cj4+PiArICAgICAgICAgICAgIHZhbCB8PSBXSU5DT054X0JVUlNU
+TEVOXzRXT1JEOwo+Pj4gKyAgICAgfQo+Pj4gKwo+Pj4gICAgICAgd3JpdGVsKHZhbCwgY3R4LT5y
+ZWdzICsgV0lOQ09OKHdpbikpOwo+Pj4gIH0KPj4+Cj4+Pgo+Pgo+IAoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
