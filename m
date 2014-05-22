@@ -1,88 +1,41 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v3] drm/exynos: enable fimd clocks in probe before
- accessing fimd registers
-Date: Thu, 22 May 2014 23:18:51 +0530
-Message-ID: <CAK9yfHxOQ56_eDK7KFgN6ZkX=E=UWqepi74O+Wt0vyzvhPyHFQ@mail.gmail.com>
-References: <1400767867-8965-1-git-send-email-rahul.sharma@samsung.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Use wfi macro in platform_do_lowpower
+Date: Thu, 22 May 2014 13:55:16 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1405221353030.17310@knanqh.ubzr>
+References: <1400745455-27920-1-git-send-email-leela.krishna@linaro.org> <537DE530.3050205@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:33417 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751313AbaEVRsw (ORCPT
+Received: from mail-qg0-f51.google.com ([209.85.192.51]:49076 "EHLO
+	mail-qg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750917AbaEVRzS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 13:48:52 -0400
-Received: by mail-oa0-f46.google.com with SMTP id i4so4415064oah.33
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 10:48:51 -0700 (PDT)
-In-Reply-To: <1400767867-8965-1-git-send-email-rahul.sharma@samsung.com>
+	Thu, 22 May 2014 13:55:18 -0400
+Received: by mail-qg0-f51.google.com with SMTP id q107so6271683qgd.24
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 10:55:17 -0700 (PDT)
+In-Reply-To: <537DE530.3050205@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Leela Krishna Amudala <leela.krishna@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, amit.kucheria@linaro.org
 
-Hi Rahul,
+On Thu, 22 May 2014, Daniel Lezcano wrote:
 
-On 22 May 2014 19:41, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> Fimd probe is accessing fimd Registers without enabling the fimd
-> gate clocks. If FIMD clocks are kept disabled in Uboot or disbaled
-> during kernel boottime, the system hangs during boottime.
->
-> This issue got surfaced when verifying with sysmmu enabled. Probe of
-> fimd Sysmmu enables the master clock before accessing sysmmu regs and
-> then disables. Later fimd probe tries to read the register without
-> enabling the clock which is wrong and hangs the system.
->
-> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c |   17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> index bd30d0c..38b77ed 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -898,16 +898,31 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
->  {
->         struct fimd_context *ctx = fimd_manager.ctx;
->         struct drm_device *drm_dev = data;
-> -       int win;
-> +       int win, ret;
->
->         fimd_mgr_initialize(&fimd_manager, drm_dev);
->         exynos_drm_crtc_create(&fimd_manager);
->         if (ctx->display)
->                 exynos_drm_create_enc_conn(drm_dev, ctx->display);
->
-> +       ret = clk_prepare_enable(ctx->bus_clk);
-> +       if (ret) {
-> +               dev_err(dev, "bus clock enable failed.\n");
-> +               return ret;
-> +       }
-> +
-> +       ret = clk_prepare_enable(ctx->lcd_clk);
-> +       if (ret) {
-> +               dev_err(dev, "lcd clock enable failed.\n");
+> On 05/22/2014 09:57 AM, Leela Krishna Amudala wrote:
+> > This patch is originally based on commit b3377d186572 ("ARM: 7064/1:
+> > vexpress: Use wfi macro in platform_do_lowpower.")
+> >
+> > Current Exynos CPU hotplug code includes a hardcoded WFI
+> > instruction, in ARM encoding.  When the kernel is compiled in Thumb-2
+> > mode, this is invalid and causes the machine to hang hard when a CPU
+> > is offlined.
+> >
+> > Use wfi macro instead of the hardcoded WFI instruction.
+> 
+> Is it possible to change it for cpu_do_idle() ?
 
-Add clk_disable_unprepare(ctx->bus_clk) before returning on error.
-
-> +               return ret;
-> +       }
-> +
->         for (win = 0; win < WINDOWS_NR; win++)
->                 fimd_clear_win(ctx, win);
->
-> +       clk_disable_unprepare(ctx->lcd_clk);
-> +       clk_disable_unprepare(ctx->bus_clk);
-> +
->         return 0;
->
->  }
-> --
-> 1.7.9.5
->
+Please let's not encourage every wfi() to be turned into cpu_do_idle().  
+They are not always equivalent.  And semantically they are not.
 
 
-
--- 
-With warm regards,
-Sachin
+Nicolas
