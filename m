@@ -1,124 +1,217 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: EXYNOS: Add 5800 SoC support
-Date: Fri, 23 May 2014 13:08:42 -0700
-Message-ID: <CAOesGMip5oQtGpnQd3gGnegdviqxq5yFcMDw+SAZiHgNonXEjA@mail.gmail.com>
-References: <1400830448-28501-1-git-send-email-arun.kk@samsung.com>
-	<537FAA0D.7050902@samsung.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Fri, 23 May 2014 22:33:38 +0200
+Message-ID: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f45.google.com ([209.85.192.45]:55274 "EHLO
-	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751265AbaEWUIo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 16:08:44 -0400
-Received: by mail-qg0-f45.google.com with SMTP id z60so8859357qgd.32
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 May 2014 13:08:43 -0700 (PDT)
-In-Reply-To: <537FAA0D.7050902@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arun Kumar K <arun.kk@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arun Kumar <arunkk.samsung@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 
-On Fri, May 23, 2014 at 1:05 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> On 05/23/14 16:34, Arun Kumar K wrote:
->>
->> Exynos5800 is an octa core SoC which is based on the 5420
->> platform. This patch adds the basic support for it in the
->> mach-exynos.
->>
->> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
->> ---
->>   arch/arm/mach-exynos/Kconfig   |    5 +++++
->>   arch/arm/mach-exynos/common.h  |   11 ++++++++++-
->>   arch/arm/mach-exynos/platsmp.c |    2 +-
->>   3 files changed, 16 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
->> index 4663417..c5423da 100644
->> --- a/arch/arm/mach-exynos/Kconfig
->> +++ b/arch/arm/mach-exynos/Kconfig
->> @@ -99,6 +99,11 @@ config SOC_EXYNOS5440
->>         help
->>           Enable EXYNOS5440 SoC support
->>
->> +config SOC_EXYNOS5800
->> +       bool "SAMSUNG EXYNOS5800"
->> +       default y
->> +       depends on SOC_EXYNOS5420
->> +
->>   endmenu
->>
->>   config EXYNOS5420_MCPM
->> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
->> index ae5f648..8fbc55b 100644
->> --- a/arch/arm/mach-exynos/common.h
->> +++ b/arch/arm/mach-exynos/common.h
->> @@ -23,6 +23,7 @@
->>   #define EXYNOS5250_SOC_ID     0x43520000
->>   #define EXYNOS5420_SOC_ID     0xE5420000
->>   #define EXYNOS5440_SOC_ID     0xE5440000
->> +#define EXYNOS5800_SOC_ID      0xE5422000
->>   #define EXYNOS5_SOC_MASK      0xFFFFF000
->>
->>   extern unsigned long samsung_cpu_id;
->> @@ -39,6 +40,7 @@ IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID,
->> EXYNOS4_CPU_MASK)
->>   IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
->>   IS_SAMSUNG_CPU(exynos5420, EXYNOS5420_SOC_ID, EXYNOS5_SOC_MASK)
->>   IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
->> +IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
->>
->>   #if defined(CONFIG_CPU_EXYNOS4210)
->>   # define soc_is_exynos4210()  is_samsung_exynos4210()
->> @@ -80,9 +82,16 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID,
->> EXYNOS5_SOC_MASK)
->>   # define soc_is_exynos5440()  0
->>   #endif
->>
->> +#if defined(CONFIG_SOC_EXYNOS5800)
->> +# define soc_is_exynos5800()   is_samsung_exynos5800()
->> +#else
->> +# define soc_is_exynos5800()   0
->> +#endif
->> +
->>   #define soc_is_exynos4() (soc_is_exynos4210() || soc_is_exynos4212() ||
->> \
->>                           soc_is_exynos4412())
->> -#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5420())
->> +#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5420() || \
->> +                         soc_is_exynos5800())
->>
->>   void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
->>
->> diff --git a/arch/arm/mach-exynos/platsmp.c
->> b/arch/arm/mach-exynos/platsmp.c
->> index 9c16da2..112bc66 100644
->> --- a/arch/arm/mach-exynos/platsmp.c
->> +++ b/arch/arm/mach-exynos/platsmp.c
->> @@ -70,7 +70,7 @@ static inline void __iomem *cpu_boot_reg(int cpu)
->>                 return ERR_PTR(-ENODEV);
->>         if (soc_is_exynos4412())
->>                 boot_reg += 4*cpu;
->> -       else if (soc_is_exynos5420())
->> +       else if (soc_is_exynos5420() || soc_is_exynos5800())
->>                 boot_reg += 4;
->>         return boot_reg;
->>   }
->
->
-> + Arnd, Olof
->
-> Hmm...yeah, 5800 doesn't boot without this and 3250 is also same situation.
-> In this time, soc_is_exynos0000() is required and I think, we need to sort
-> it out next time. Let's do one by one...;)
->
-> Arnd, Olof how do you think about this? I agree with Olof's suggestion that
-> we need to add only dt for new SoC but we need more time...
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-As long as you follow through on the cleanups I'm ok with it. In the
-past, that has not always been the case. I'm willing to give you one
-more (last) chance.
+This commit introduces a generic device tree binding for IOMMU devices.
+Only a very minimal subset is described here, but it is enough to cover
+the requirements of both the Exynos System MMU and Tegra SMMU as
+discussed here:
 
+    https://lkml.org/lkml/2014/4/27/346
 
--Olof
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes in v2:
+- add notes about "dma-ranges" property (drop note from commit message)
+- document priorities of "iommus" property vs. "dma-ranges" property
+- drop #iommu-cells in favour of #address-cells and #size-cells
+- remove multiple-master device example
+
+ Documentation/devicetree/bindings/iommu/iommu.txt | 167 ++++++++++++++++++++++
+ 1 file changed, 167 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iommu/iommu.txt
+
+diff --git a/Documentation/devicetree/bindings/iommu/iommu.txt b/Documentation/devicetree/bindings/iommu/iommu.txt
+new file mode 100644
+index 000000000000..6ce759afcc94
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iommu/iommu.txt
+@@ -0,0 +1,167 @@
++This document describes the generic device tree binding for IOMMUs and their
++master(s).
++
++
++IOMMU device node:
++==================
++
++An IOMMU can provide the following services:
++
++* Remap address space to allow devices to access physical memory ranges that
++  they otherwise wouldn't be capable of accessing.
++
++  Example: 32-bit DMA to 64-bit physical addresses
++
++* Implement scatter-gather at page level granularity so that the device does
++  not have to.
++
++* Provide system protection against "rogue" DMA by forcing all accesses to go
++  through the IOMMU and faulting when encountering accesses to unmapped
++  address regions.
++
++* Provide address space isolation between multiple contexts.
++
++  Example: Virtualization
++
++Device nodes compatible with this binding represent hardware with some of the
++above capabilities.
++
++IOMMUs can be single-master or multiple-master. Single-master IOMMU devices
++typically have a fixed association to the master device, whereas multiple-
++master IOMMU devices can translate accesses from more than one master.
++
++The device tree node of the IOMMU device's parent bus must contain a valid
++"dma-ranges" property that describes how the physical address space of the
++IOMMU maps to memory. An empty "dma-ranges" property means that there is a
++1:1 mapping from IOMMU to memory.
++
++Required properties:
++--------------------
++- #address-cells: The number of cells in an IOMMU specifier needed to encode
++  an address.
++- #size-cells: The number of cells in an IOMMU specifier needed to represent
++  the length of an address range.
++
++Typical values for the above include:
++- #address-cells = <0>, size-cells = <0>: Single master IOMMU devices are not
++  configurable and therefore no additional information needs to be encoded in
++  the specifier. This may also apply to multiple master IOMMU devices that do
++  not allow the association of masters to be configured.
++- #address-cells = <1>, size-cells = <0>: Multiple master IOMMU devices may
++  need to be configured in order to enable translation for a given master. In
++  such cases the single address cell corresponds to the master device's ID.
++- #address-cells = <2>, size-cells = <2>: Some IOMMU devices allow the DMA
++  window for masters to be configured. The first cell of the address in this
++  may contain the master device's ID for example, while the second cell could
++  contain the start of the DMA window for the given device. The length of the
++  DMA window is specified by two additional cells.
++
++
++IOMMU master node:
++==================
++
++Devices that access memory through an IOMMU are called masters. A device can
++have multiple master interfaces (to one or more IOMMU devices).
++
++Required properties:
++--------------------
++- iommus: A list of phandle and IOMMU specifier pairs that describe the IOMMU
++  master interfaces of the device. One entry in the list describes one master
++  interface of the device.
++
++When an "iommus" property is specified in a device tree node, the IOMMU will
++be used for address translation. If a "dma-ranges" property exists in the
++device's parent node it will be ignored. An exception to this rule is if the
++referenced IOMMU is disabled, in which case the "dma-ranges" property of the
++parent shall take effect.
++
++Optional properties:
++--------------------
++- iommu-names: A list of names identifying each entry in the "iommus"
++  property.
++
++
++Notes:
++======
++
++One possible extension to the above is to use an "iommus" property along with
++a "dma-ranges" property in a bus device node (such as PCI host bridges). This
++can be useful to describe how children on the bus relate to the IOMMU if they
++are not explicitly listed in the device tree (e.g. PCI devices). However, the
++requirements of that use-case haven't been fully determined yet. Implementing
++this is therefore not recommended without further discussion and extension of
++this binding.
++
++
++Examples:
++=========
++
++Single-master IOMMU:
++--------------------
++
++	iommu {
++		#address-cells = <0>;
++		#size-cells = <0>;
++	};
++
++	master {
++		iommus = <&/iommu>;
++	};
++
++Multiple-master IOMMU with fixed associations:
++----------------------------------------------
++
++	/* multiple-master IOMMU */
++	iommu {
++		/*
++		 * Masters are statically associated with this IOMMU and
++		 * address translation is always enabled.
++		 */
++		#address-cells = <0>;
++		#size-cells = <0>;
++	};
++
++	/* static association with IOMMU */
++	master@1 {
++		reg = <1>;
++		iommus = <&/iommu>;
++	};
++
++	/* static association with IOMMU */
++	master@2 {
++		reg = <2>;
++		iommus = <&/iommu>;
++	};
++
++Multiple-master IOMMU:
++----------------------
++
++	iommu {
++		/* the specifier represents the ID of the master */
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
++
++	master {
++		/* device has master ID 42 in the IOMMU */
++		iommus = <&/iommu 42>;
++	};
++
++Multiple-master IOMMU with configurable DMA window:
++---------------------------------------------------
++
++	/ {
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		iommu {
++			/* master ID, address of DMA window */
++			#address-cells = <2>;
++			#size-cells = <2>;
++		};
++
++		master {
++			/* master ID 42, 4 GiB DMA window starting at 0 */
++			iommus = <&/iommu  42 0  0x1 0x0>;
++		};
++	};
+-- 
+1.9.2
