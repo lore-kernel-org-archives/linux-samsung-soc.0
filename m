@@ -1,97 +1,101 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Add 5800 SoC support
-Date: Fri, 23 May 2014 13:04:08 +0530
-Message-ID: <1400830448-28501-1-git-send-email-arun.kk@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v4] drm/exynos: enable fimd clocks in probe before
+ accessing fimd registers
+Date: Fri, 23 May 2014 09:43:01 +0200
+Message-ID: <537EFC05.6090708@samsung.com>
+References: <1400811591-10132-1-git-send-email-rahul.sharma@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f51.google.com ([209.85.160.51]:43841 "EHLO
-	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751178AbaEWHeQ (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38997 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751188AbaEWHnL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 03:34:16 -0400
-Received: by mail-pb0-f51.google.com with SMTP id ma3so3740308pbc.24
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 May 2014 00:34:16 -0700 (PDT)
+	Fri, 23 May 2014 03:43:11 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N6000MAHO3ULM60@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 May 2014 08:43:06 +0100 (BST)
+In-reply-to: <1400811591-10132-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, arunkk.samsung@gmail.com
+To: Rahul Sharma <rahul.sharma@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, thierry.reding@gmail.com, sachin.kamat@linaro.org, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
 
-Exynos5800 is an octa core SoC which is based on the 5420
-platform. This patch adds the basic support for it in the
-mach-exynos.
+Hi Rahul,
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
- arch/arm/mach-exynos/Kconfig   |    5 +++++
- arch/arm/mach-exynos/common.h  |   11 ++++++++++-
- arch/arm/mach-exynos/platsmp.c |    2 +-
- 3 files changed, 16 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 4663417..c5423da 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -99,6 +99,11 @@ config SOC_EXYNOS5440
- 	help
- 	  Enable EXYNOS5440 SoC support
- 
-+config SOC_EXYNOS5800
-+	bool "SAMSUNG EXYNOS5800"
-+	default y
-+	depends on SOC_EXYNOS5420
-+
- endmenu
- 
- config EXYNOS5420_MCPM
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index ae5f648..8fbc55b 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -23,6 +23,7 @@
- #define EXYNOS5250_SOC_ID	0x43520000
- #define EXYNOS5420_SOC_ID	0xE5420000
- #define EXYNOS5440_SOC_ID	0xE5440000
-+#define EXYNOS5800_SOC_ID	0xE5422000
- #define EXYNOS5_SOC_MASK	0xFFFFF000
- 
- extern unsigned long samsung_cpu_id;
-@@ -39,6 +40,7 @@ IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
- IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
- IS_SAMSUNG_CPU(exynos5420, EXYNOS5420_SOC_ID, EXYNOS5_SOC_MASK)
- IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
-+IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
- 
- #if defined(CONFIG_CPU_EXYNOS4210)
- # define soc_is_exynos4210()	is_samsung_exynos4210()
-@@ -80,9 +82,16 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
- # define soc_is_exynos5440()	0
- #endif
- 
-+#if defined(CONFIG_SOC_EXYNOS5800)
-+# define soc_is_exynos5800()	is_samsung_exynos5800()
-+#else
-+# define soc_is_exynos5800()	0
-+#endif
-+
- #define soc_is_exynos4() (soc_is_exynos4210() || soc_is_exynos4212() || \
- 			  soc_is_exynos4412())
--#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5420())
-+#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5420() || \
-+			  soc_is_exynos5800())
- 
- void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
- 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 9c16da2..112bc66 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -70,7 +70,7 @@ static inline void __iomem *cpu_boot_reg(int cpu)
- 		return ERR_PTR(-ENODEV);
- 	if (soc_is_exynos4412())
- 		boot_reg += 4*cpu;
--	else if (soc_is_exynos5420())
-+	else if (soc_is_exynos5420() || soc_is_exynos5800())
- 		boot_reg += 4;
- 	return boot_reg;
- }
--- 
-1.7.9.5
+On 05/23/2014 04:19 AM, Rahul Sharma wrote:
+> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+> 
+> Fimd probe is accessing fimd Registers without enabling the fimd
+> gate clocks. If FIMD clocks are kept disabled in Uboot or disbaled
+> during kernel boottime, the system hangs during boottime.
+> 
+> This issue got surfaced when verifying with sysmmu enabled. Probe of
+> fimd Sysmmu enables the master clock before accessing sysmmu regs and
+> then disables. Later fimd probe tries to read the register without
+> enabling the clock which is wrong and hangs the system.
+> 
+> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+> ---
+> v4:
+> 	1) Added clk_disable for prev clock when clk_enable fails.
+> v3:
+> 	1) Added checks for clk_enable.
+> v2:
+> 	Rebase.
+> 
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c |   18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index bd30d0c..30ccd67 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -898,16 +898,32 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+>  {
+>  	struct fimd_context *ctx = fimd_manager.ctx;
+>  	struct drm_device *drm_dev = data;
+> -	int win;
+> +	int win, ret;
+>  
+>  	fimd_mgr_initialize(&fimd_manager, drm_dev);
+>  	exynos_drm_crtc_create(&fimd_manager);
+>  	if (ctx->display)
+>  		exynos_drm_create_enc_conn(drm_dev, ctx->display);
+>  
+> +	ret = clk_prepare_enable(ctx->bus_clk);
+> +	if (ret) {
+> +		dev_err(dev, "bus clock enable failed.\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(ctx->lcd_clk);
+> +	if (ret) {
+> +		dev_err(dev, "lcd clock enable failed.\n");
+> +		clk_disable_unprepare(ctx->bus_clk);
+> +		return ret;
+> +	}
+> +
+>  	for (win = 0; win < WINDOWS_NR; win++)
+>  		fimd_clear_win(ctx, win);
+>  
+> +	clk_disable_unprepare(ctx->lcd_clk);
+> +	clk_disable_unprepare(ctx->bus_clk);
+> +
+>  	return 0;
+
+If you want to access fimd registers I guess pm_runtime_get_sync should
+be called as well, to wake up display pm domain.
+
+
+Regards
+Andrzej
+
+
+>  
+>  }
+> 
