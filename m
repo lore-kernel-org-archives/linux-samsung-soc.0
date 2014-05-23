@@ -1,21 +1,28 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
+From: Tarek Dakhran <t.dakhran@gmail.com>
 Subject: Re: [PATCH v10 1/3] ARM: EXYNOS: Add support for EXYNOS5410 SoC
-Date: Sat, 24 May 2014 00:48:01 +0200
-Message-ID: <537FD021.2020808@gmail.com>
-References: <1400841343-6016-1-git-send-email-t.dakhran@samsung.com>	<1400841343-6016-2-git-send-email-t.dakhran@samsung.com>	<537FB995.5070604@gmail.com> <CANhyOUd8Q2nzh_bF6LZNuv8keVUB3F45PocYrLP_B=D_Q3tWuQ@mail.gmail.com>
+Date: Sat, 24 May 2014 02:48:31 +0400
+Message-ID: <CANhyOUfp1AL6wJ1Q9kWj=v-n9e2CyxkQOPb8_50M5bY_JN2f9A@mail.gmail.com>
+References: <1400841343-6016-1-git-send-email-t.dakhran@samsung.com>
+	<1400841343-6016-2-git-send-email-t.dakhran@samsung.com>
+	<537FB995.5070604@gmail.com>
+	<CANhyOUd8Q2nzh_bF6LZNuv8keVUB3F45PocYrLP_B=D_Q3tWuQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-doc-owner@vger.kernel.org>
 In-Reply-To: <CANhyOUd8Q2nzh_bF6LZNuv8keVUB3F45PocYrLP_B=D_Q3tWuQ@mail.gmail.com>
 Sender: linux-doc-owner@vger.kernel.org
-To: Tarek Dakhran <t.dakhran@gmail.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: Tarek Dakhran <t.dakhran@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Romain Naour <romain.naour@openwide.fr>, Chander Kashyap <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infrad>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 24.05.2014 00:44, Tarek Dakhran wrote:
+Sorry, only now catch it!
+I agree, this patch is not needed anymore, except Kconfig option.
+config SOC_EXYNOS5410 is needed to build clock stuff.
+What is your opinion, Tomasz?
+
+On Sat, May 24, 2014 at 2:44 AM, Tarek Dakhran <t.dakhran@gmail.com> wrote:
 > Hi Tomazs,
-> 
+>
 > On Sat, May 24, 2014 at 1:11 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 >> Hi Tarek,
 >>
@@ -43,15 +50,10 @@ On 24.05.2014 00:44, Tarek Dakhran wrote:
 >>>
 >>>       __raw_writel(boot_addr, boot_reg);
 >>>
-> 
+>
 > I need to define SoC type to set correct bootreg in firmware,
 > otherwise only one cpu can be booted.
 > So, this stuff is needed.
-
-The patch I referred to in my previous reply changes this condition from
-!soc_is_exynos4212() to soc_is_exynos4412(), which makes the 4*cpu
-offset being added only in case of Exynos4412 (and so not being added
-for Exynos5410). What else is needed?
-
-Best regards,
-Tomasz
+>
+> Best regards,
+>      Tarek
