@@ -1,83 +1,103 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/2] ASoC: samsung: Add machine driver for odroidx2
-Date: Fri, 23 May 2014 10:44:56 +0200
-Message-ID: <537F0A88.8000904@samsung.com>
-References: <1400759708-25831-1-git-send-email-s.nawrocki@samsung.com>
- <1400759708-25831-2-git-send-email-s.nawrocki@samsung.com>
- <20140522185334.GT12304@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:42705 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750958AbaEWIpA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 04:45:00 -0400
-In-reply-to: <20140522185334.GT12304@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] clk: samsung: Make of_device_id array const
+Date: Fri, 23 May 2014 11:04:08 +0200
+Message-ID: <1400835848-26993-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chen Zhen <zhen1.chen@samsung.com>
 
-On 22/05/14 20:53, Mark Brown wrote:
-> On Thu, May 22, 2014 at 01:55:08PM +0200, Sylwester Nawrocki wrote:
->> From: Chen Zhen <zhen1.chen@samsung.com>
->>
->> This machine driver primary defines the audio path, the supported
->> data formats and sample frequency.
-> 
-> I guess it can't yet, it would have been good to explain that in the
-> changelog for the bindings (and include the binding in this patch...).
+Array of struct of_device_id may be be const as expected by
+of_match_table field and of_find_matching_node_and_match() function.
 
-Thanks for the review, I'm still rather inexperienced in the ASoC stuff,
-I've obviously overlooked there is actually no routing handling. I'd rather
-add those bits.
-As for the DT binding documentation patch, I thought we're supposed to keep
-documentation in separate patches, so processes of separating it from the
-kernel is easier ?
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c    | 2 +-
+ drivers/clk/samsung/clk-exynos5250.c | 2 +-
+ drivers/clk/samsung/clk-exynos5420.c | 2 +-
+ drivers/clk/samsung/clk-exynos5440.c | 2 +-
+ drivers/clk/samsung/clk.c            | 2 +-
+ drivers/clk/samsung/clk.h            | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
->> +	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_I2S
->> +					| SND_SOC_DAIFMT_NB_NF
->> +					| SND_SOC_DAIFMT_CBM_CFM);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	ret = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_I2S
->> +					| SND_SOC_DAIFMT_NB_NF
->> +					| SND_SOC_DAIFMT_CBM_CFM);
->> +	if (ret < 0)
->> +		return ret;
-> 
-> These are constant, set these in the dai_link.
-> 
->> +
->> +	ret = snd_soc_dai_set_sysclk(codec_dai, 3, MAX98090_MCLK_FREQ,
->> +				     SND_SOC_CLOCK_IN);
->> +	if (ret < 0) {
->> +		dev_err(codec_dai->dev,
->> +			"Unable to switch to FLL1: %d\n", ret);
->> +		return ret;
->> +	}
-> 
-> So's this - also what is 3?  Set it on init.
-
-OK, will move it. I'm not sure why 3, it seems to be ignored by the codec
-anyway. Chen, can you confirm the second argument is actually a don't care
-value ?
-
->> +	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_OPCLK,
->> +					0, MOD_OPCLK_PCLK);
-> 
-> Similarly for the rest of the function.
-> 
->> +	return snd_soc_register_card(card);
-> 
-> devm_snd_soc_register_card().
-
-Thanks for the suggestions, I'll amend that.
-
-
---
-Regards,
-Sylwester
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index b4f967210175..3463535dcc25 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1070,7 +1070,7 @@ static void __init exynos4_clk_register_finpll(void)
+ 
+ }
+ 
+-static struct of_device_id ext_clk_match[] __initdata = {
++static const struct of_device_id ext_clk_match[] __initconst = {
+ 	{ .compatible = "samsung,clock-xxti", .data = (void *)0, },
+ 	{ .compatible = "samsung,clock-xusbxti", .data = (void *)1, },
+ 	{},
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index e7ee4420da81..0d97c69fde29 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -678,7 +678,7 @@ static struct samsung_pll_clock exynos5250_plls[nr_plls] __initdata = {
+ 		VPLL_LOCK, VPLL_CON0, NULL),
+ };
+ 
+-static struct of_device_id ext_clk_match[] __initdata = {
++static const struct of_device_id ext_clk_match[] __initconst = {
+ 	{ .compatible = "samsung,clock-xxti", .data = (void *)0, },
+ 	{ },
+ };
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 60b26819bed5..904881493b32 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -770,7 +770,7 @@ static struct samsung_pll_clock exynos5420_plls[nr_plls] __initdata = {
+ 		KPLL_CON0, NULL),
+ };
+ 
+-static struct of_device_id ext_clk_match[] __initdata = {
++static const struct of_device_id ext_clk_match[] __initconst = {
+ 	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
+ 	{ },
+ };
+diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
+index 2bfad5a993d0..ff70bfed5ef8 100644
+--- a/drivers/clk/samsung/clk-exynos5440.c
++++ b/drivers/clk/samsung/clk-exynos5440.c
+@@ -84,7 +84,7 @@ static struct samsung_gate_clock exynos5440_gate_clks[] __initdata = {
+ 	GATE(CLK_CS250_O, "cs250_o", "cs250", CLKEN_OV_VAL, 19, 0, 0),
+ };
+ 
+-static struct of_device_id ext_clk_match[] __initdata = {
++static const struct of_device_id ext_clk_match[] __initconst = {
+ 	{ .compatible = "samsung,clock-xtal", .data = (void *)0, },
+ 	{},
+ };
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 91bec3ebdc8f..f9914a8b02ae 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -269,7 +269,7 @@ void __init samsung_clk_register_gate(struct samsung_gate_clock *list,
+ void __init samsung_clk_of_register_fixed_ext(
+ 			struct samsung_fixed_rate_clock *fixed_rate_clk,
+ 			unsigned int nr_fixed_rate_clk,
+-			struct of_device_id *clk_matches)
++			const struct of_device_id *clk_matches)
+ {
+ 	const struct of_device_id *match;
+ 	struct device_node *np;
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index c7141ba826e0..dc8f2cc6f486 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -317,7 +317,7 @@ extern void __init samsung_clk_init(struct device_node *np, void __iomem *base,
+ extern void __init samsung_clk_of_register_fixed_ext(
+ 		struct samsung_fixed_rate_clock *fixed_rate_clk,
+ 		unsigned int nr_fixed_rate_clk,
+-		struct of_device_id *clk_matches);
++		const struct of_device_id *clk_matches);
+ 
+ extern void samsung_clk_add_lookup(struct clk *clk, unsigned int id);
+ 
+-- 
+1.9.1
