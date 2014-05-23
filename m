@@ -1,139 +1,238 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH V5 00/20] ARM: exynos: cpuidle: Move the driver to drivers/cpuidle
-Date: Fri, 23 May 2014 23:31:46 +0200
-Message-ID: <537FBE42.7050608@gmail.com>
-References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org> <534BA3CF.6030701@linaro.org> <535943B2.8030308@samsung.com> <0b4201cf613f$80c91750$825b45f0$@samsung.com> <537E438C.8060600@samsung.com> <537F6A02.2040606@linaro.org>
+Subject: Re: [PATCH 1/3] ARM: EXYNOS: Add support for clock handling in power
+ domain
+Date: Fri, 23 May 2014 23:51:53 +0200
+Message-ID: <537FC2F9.5040100@gmail.com>
+References: <1400821692-22370-1-git-send-email-arun.kk@samsung.com> <1400821692-22370-2-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f179.google.com ([74.125.82.179]:42233 "EHLO
-	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751200AbaEWVbx (ORCPT
+Received: from mail-we0-f173.google.com ([74.125.82.173]:51106 "EHLO
+	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751011AbaEWVv7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 17:31:53 -0400
-Received: by mail-we0-f179.google.com with SMTP id q59so5347704wes.38
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 May 2014 14:31:51 -0700 (PDT)
-In-Reply-To: <537F6A02.2040606@linaro.org>
+	Fri, 23 May 2014 17:51:59 -0400
+In-Reply-To: <1400821692-22370-2-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, rjw@rjwysocki.net, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd.bergmann@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Heiko St??bner <heiko@sntech.de>
+To: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: t.figa@samsung.com, kgene.kim@samsung.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, prathyush.k@samsung.com, abrestic@chromium.org, arunkk.samsung@gmail.com
 
-Hi Daniel,
+Hi,
 
-On 23.05.2014 17:32, Daniel Lezcano wrote:
-> On 05/22/2014 08:35 PM, Kukjin Kim wrote:
->> On 04/26/14 20:05, Kukjin Kim wrote:
->>> Tomasz Figa wrote:
->>>>
->>>> On 14.04.2014 11:01, Daniel Lezcano wrote:
->>>>>
->>>>> Hi Kukjin,
->>>>>
->>>>> I believe I addressed all the comments. Is it possible to take this
->>>>> patchset for next ?
->>>>
->>> Sure ;-)
->>>
->>>> +1.
->>>>
->>>> Also when applying you might add
->>>>
->>>> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
->>>>
->>>> to any patches that don't have it yet.
->>>>
->>> Tomasz, thanks for your review.
->>>
->>> I will take this series, "moving exynos-cpuidle into drivers/cpuidle"
->>> into samsung tree if Rafael is OK on that.
->>>
->> Daniel,
->>
->> Can you please check/test the functionality your series with using my
->> for-next because there were merge conflicts with mcpm-exynos stuff...?
+On 23.05.2014 07:08, Arun Kumar K wrote:
+> From: Prathyush K <prathyush.k@samsung.com>
 > 
-> Hi Kukjin,
+> While powering on/off a local powerdomain in exynos5 chipsets, the input
+> clocks to each device gets modified. This behaviour is based on the
+> SYSCLK_SYS_PWR_REG registers.
+> E.g. SYSCLK_MFC_SYS_PWR_REG = 0x0, the parent of input clock to MFC
+> 				   (aclk333) gets modified to oscclk
+> 			    = 0x1, no change in clocks.
+> The recommended value of SYSCLK_SYS_PWR_REG before power gating any
+> domain is 0x0. So we must also restore the clocks while powering on a
+> domain everytime.
 > 
-> I tested the latest tree. Unfortunately it panics when unplugging cpu1:
+> This patch adds the framework for getting the required mux and parent clocks
+> through a power domain device node. With this patch, while powering off
+> a domain, parent is set to oscclk and while powering back on, its re-set
+> to the correct parent which is as per the recommended pd on/off
+> sequence.
 > 
-> [    3.124189] Unable to handle kernel paging request at virtual address
-> f8400024
-> [    3.129950] pgd = c0004000
-> [    3.132626] [f8400024] *pgd=6f7f7841, *pte=00000000, *ppte=00000000
-> [    3.138877] Internal error: Oops: 827 [#1] PREEMPT SMP ARM
-> [    3.192782] r3 : f8400024  r2 : f8180800  r1 : ee836e44  r0 : f8400024
-> [    3.199293] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
-> Segment kernel
-> [    3.206673] Control: 10c5387d  Table: 6e37c04a  DAC: 00000015
-> [    3.212398] Process swapper/0 (pid: 0, stack limit = 0xc0510240)
-> [    3.218388] Stack: (0xc0511ef4 to 0xc0512000)
-> [    3.222728] 1ee0: 00000030 c02b20f8 ee836e40
-> [    3.230894] 1f00: c001234c 6e880000 c0511f34 40018a80 00000000
-> 00000000 00000000 00000015
-> [    3.239053] 1f20: 4000404a 10c5387d 00000041 00f00000 00000000
-> 00000000 c02b20e4 edc4a540
-> [    3.247212] 1f40: c038dacc eefc5cf8 c050ecf0 c0543210 00000000
-> c0012460 00000001 c0543210
-> [    3.255371] 1f60: eefc5cf8 c02b2148 b9f92927 00000000 c054326c
-> c02b0968 b9f92927 00000000
-> [    3.263530] 1f80: c0510000 c0518480 c038dacc c0510000 c0510000
-> c0518480 c038dacc eefc5cf8
-> [    3.271689] 1fa0: c0543210 c004e990 c0511fb4 c03873b8 00000000
-> c04f90c8 00000000 c04d4b18
-> [    3.279848] 1fc0: ffffffff ffffffff c04d457c 00000000 00000000
-> c04f90c8 00000000 10c5387d
-> [    3.288007] 1fe0: c0518410 c04f90c4 c051bd5c 4000406a 00000000
-> 40008074 00000000 00000000
-> [    3.296184] [<c0019c5c>] (exynos_enter_aftr) from [<c02b20f8>]
-> (idle_finisher+0x14/0x20)
-> [    3.304247] [<c02b20f8>] (idle_finisher) from [<c001234c>]
-> (cpu_suspend_abort+0x0/0x14)
-> [    3.312226] [<c001234c>] (cpu_suspend_abort) from [<00000000>] ( 
-> (null))
-> [    3.318994] Code: e34f3840 e3500010 11a00002 01a00003 (e5804000)
-> [    3.325069] ---[ end trace fca911f75a18c040 ]---
+> Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+>  .../bindings/arm/exynos/power_domain.txt           |   18 +++++++
+>  arch/arm/mach-exynos/pm_domains.c                  |   56 +++++++++++++++++++-
+>  2 files changed, 73 insertions(+), 1 deletion(-)
 > 
-> 
-> After git bisecting I falls on this commit:
-> 
-> commit b3205dea8fbf6db9b1e46a0dad19a0712fdff44f
-> Author: Sachin Kamat <sachin.kamat@linaro.org>
-> Date:   Tue May 13 07:13:44 2014 +0900
-> 
->     ARM: EXYNOS: Map SYSRAM through generic DT bindings
-> 
->     Instead of hardcoding the SYSRAM details for each SoC,
->     pass this information through device tree (DT) and make
->     the code SoC agnostic. Generic DT SRAM bindings are
->     used for achieving this.
-> 
->     Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->     Acked-by: Arnd Bergmann <arnd@arndb.de>
->     Acked-by: Heiko Stuebner <heiko@sntech.de>
->     Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->     Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> 
-> 
-> ... which is before my series is applied.
-> 
-> So I am not able to tell yet if my series is correctly rebased or not.
-> 
-> And before someone asks me, yes I updated the dtb :)
+> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> index 5216b41..168a191 100644
+> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> @@ -9,6 +9,16 @@ Required Properties:
+>  - reg: physical base address of the controller and length of memory mapped
+>      region.
+>  
+> +Optional Properties:
+> +- clocks: List of clock handles. The parent clocks of the input clocks to the
+> +  devices in this power domain are set to oscclk before power gating and
+> +  restored back after powering on a domain. This is required for all domains
+> +  which are powered on and off and not required for unused domains.
 
-The driver seemed to be working fine for me on Exynos4210-TRATS board
-(with right bootloader, which supports AFTR).
+I'd keep it required to all domains that exhibit this behavior, as
+device tree should expose complete information about the hardware
+whenever possible.
 
-Still, a quick look at the code reveals use of S5P_VA_SYSRAM macro, in
-case of certain SoC revisions, which is not valid any longer, after
-SYSRAM started to be mapped dynamically. As you can see in platsmp.c,
-the new dynamic mapping is stored in sysram_base_addr variable, which is
-static right now.
+> +  The following clocks can be specified:
+> +  - oscclk: oscillator clock.
+> +  - clk(n): input clock to the devices in this power domain
 
-My proposed fix would be to make it non-static, declare it in one of
-existing private headers (common.h probably) and use it in pm.c instead
-of S5P_VA_SYSRAM.
+s/clk(n)/clkN/
+
+> +  - pclk(n): parent clock of input clock to the devices in this power domain
+
+s/pclk(n)/pclkN/
+
+The meaning of N should be described and the relation between clkN and
+pclkN with the same value of N.
+
+Also shouldn't this rather be a description of clock-names property?
+
+> +
+>  Node of a device using power domains must have a samsung,power-domain property
+>  defined with a phandle to respective power domain.
+>  
+> @@ -19,6 +29,14 @@ Example:
+>  		reg = <0x10023C00 0x10>;
+>  	};
+>  
+> +	mfc_pd: power-domain@10044060 {
+> +		compatible = "samsung,exynos4210-pd";
+> +		reg = <0x10044060 0x20>;
+> +		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
+> +			<&clock CLK_MOUT_USER_ACLK333>;
+> +		clock-names = "oscclk", "pclk0", "clk0";
+> +	};
+> +
+>  Example of the node using power domain:
+>  
+>  	node {
+> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+> index fe6570e..e5fe76d 100644
+> --- a/arch/arm/mach-exynos/pm_domains.c
+> +++ b/arch/arm/mach-exynos/pm_domains.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/err.h>
+>  #include <linux/slab.h>
+>  #include <linux/pm_domain.h>
+> +#include <linux/clk.h>
+>  #include <linux/delay.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_platform.h>
+> @@ -24,6 +25,8 @@
+>  
+>  #include "regs-pmu.h"
+>  
+> +#define MAX_CLK_PER_DOMAIN			4
+> +
+>  /*
+>   * Exynos specific wrapper around the generic power domain
+>   */
+> @@ -32,6 +35,9 @@ struct exynos_pm_domain {
+>  	char const *name;
+>  	bool is_off;
+>  	struct generic_pm_domain pd;
+> +	struct clk *oscclk;
+> +	struct clk *clk[MAX_CLK_PER_DOMAIN];
+> +	struct clk *pclk[MAX_CLK_PER_DOMAIN];
+>  };
+>  
+>  static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+> @@ -44,6 +50,18 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+>  	pd = container_of(domain, struct exynos_pm_domain, pd);
+>  	base = pd->base;
+>  
+> +	/* Set oscclk before powering off a domain*/
+> +	if (!power_on) {
+> +		int i;
+> +		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+> +			if (!pd->clk[i])
+> +				break;
+
+Clock handles should be checked for validity using IS_ERR() macro (as
+most of opaque handles, which should not be considered pointers, even if
+they have a pointer type).
+
+> +			if (clk_set_parent(pd->clk[i], pd->oscclk))
+> +				pr_info("%s: error setting oscclk as parent to clock %d\n",
+> +						pd->name, i);
+
+pr_err()?
+
+> +		}
+> +	}
+> +
+>  	pwr = power_on ? S5P_INT_LOCAL_PWR_EN : 0;
+>  	__raw_writel(pwr, base);
+>  
+> @@ -60,6 +78,19 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+>  		cpu_relax();
+>  		usleep_range(80, 100);
+>  	}
+> +
+> +	/* Restore clocks after powering on a domain*/
+> +	if (power_on) {
+> +		int i;
+> +		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+> +			if (!pd->clk[i])
+> +				break;
+
+Ditto.
+
+> +			if (clk_set_parent(pd->clk[i], pd->pclk[i]))
+> +				pr_info("%s: error setting parent to clock%d\n",
+> +						pd->name, i);
+
+Ditto.
+
+> +		}
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -152,9 +183,11 @@ static __init int exynos4_pm_init_power_domain(void)
+>  
+>  	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
+>  		struct exynos_pm_domain *pd;
+> -		int on;
+> +		int on, i;
+> +		struct device *dev;
+>  
+>  		pdev = of_find_device_by_node(np);
+> +		dev = &pdev->dev;
+>  
+>  		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+>  		if (!pd) {
+> @@ -170,6 +203,27 @@ static __init int exynos4_pm_init_power_domain(void)
+>  		pd->pd.power_on = exynos_pd_power_on;
+>  		pd->pd.of_node = np;
+>  
+> +		pd->oscclk = devm_clk_get(dev, "oscclk");
+
+Based on the fact that power domains are not hotpluggable (and not even
+handled by a normal driver in terms of driver core), I don't see a point
+in using managed resources.
+
+> +		if (IS_ERR(pd->oscclk))
+> +			goto no_clk;
+> +
+> +		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
+> +			struct clk *tmp, *tmp_parent;
+> +			char clk_name[8];
+> +
+> +			snprintf(clk_name, sizeof(clk_name), "clk%d", i);
+> +			tmp = devm_clk_get(dev, clk_name);
+
+Ditto.
+
+> +			if (IS_ERR(tmp))
+> +				break;
+> +			snprintf(clk_name, sizeof(clk_name), "pclk%d", i);
+> +			tmp_parent = devm_clk_get(dev, clk_name);
+
+Ditto.
+
+> +			if (IS_ERR(tmp_parent))
+> +				break;
+> +			pd->clk[i] = tmp;
+> +			pd->pclk[i] = tmp_parent;
+
+You should use those directly to store return values of calls to
+clk_get(), to be able check clock handle validity properly.
 
 Best regards,
 Tomasz
