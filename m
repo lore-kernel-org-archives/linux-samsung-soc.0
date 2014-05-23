@@ -1,58 +1,97 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 5/5] ARM: dts: Update watchdog node name in exynos5440.dtsi
-Date: Fri, 23 May 2014 15:45:52 +0900
-Message-ID: <002001cf7652$a42be650$ec83b2f0$%han@samsung.com>
-References: <1400825338-1272-1-git-send-email-sachin.kamat@linaro.org>
- <1400825338-1272-5-git-send-email-sachin.kamat@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Add 5800 SoC support
+Date: Fri, 23 May 2014 13:04:08 +0530
+Message-ID: <1400830448-28501-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:9808 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751930AbaEWGp4 (ORCPT
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:43841 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751178AbaEWHeQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 02:45:56 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N6000J1HLGIRIE0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 23 May 2014 15:45:54 +0900 (KST)
-In-reply-to: <1400825338-1272-5-git-send-email-sachin.kamat@linaro.org>
-Content-language: ko
+	Fri, 23 May 2014 03:34:16 -0400
+Received: by mail-pb0-f51.google.com with SMTP id ma3so3740308pbc.24
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 May 2014 00:34:16 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, arunkk.samsung@gmail.com
 
-On Friday, May 23, 2014 3:09 PM, Sachin Kamat wrote:
-> 
-> Made it as per DT node naming convention <name@reg_addr>.
-> 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Exynos5800 is an octa core SoC which is based on the 5420
+platform. This patch adds the basic support for it in the
+mach-exynos.
 
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+---
+ arch/arm/mach-exynos/Kconfig   |    5 +++++
+ arch/arm/mach-exynos/common.h  |   11 ++++++++++-
+ arch/arm/mach-exynos/platsmp.c |    2 +-
+ 3 files changed, 16 insertions(+), 2 deletions(-)
 
-Best regards,
-Jingoo Han
-
-> ---
->  arch/arm/boot/dts/exynos5440.dtsi |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-> index 84f77c2fe4d4..ae3a17c791f6 100644
-> --- a/arch/arm/boot/dts/exynos5440.dtsi
-> +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> @@ -176,7 +176,7 @@
->  		clock-names = "i2c";
->  	};
-> 
-> -	watchdog {
-> +	watchdog@110000 {
->  		compatible = "samsung,s3c2410-wdt";
->  		reg = <0x110000 0x1000>;
->  		interrupts = <0 1 0>;
-> --
-> 1.7.9.5
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 4663417..c5423da 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -99,6 +99,11 @@ config SOC_EXYNOS5440
+ 	help
+ 	  Enable EXYNOS5440 SoC support
+ 
++config SOC_EXYNOS5800
++	bool "SAMSUNG EXYNOS5800"
++	default y
++	depends on SOC_EXYNOS5420
++
+ endmenu
+ 
+ config EXYNOS5420_MCPM
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index ae5f648..8fbc55b 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -23,6 +23,7 @@
+ #define EXYNOS5250_SOC_ID	0x43520000
+ #define EXYNOS5420_SOC_ID	0xE5420000
+ #define EXYNOS5440_SOC_ID	0xE5440000
++#define EXYNOS5800_SOC_ID	0xE5422000
+ #define EXYNOS5_SOC_MASK	0xFFFFF000
+ 
+ extern unsigned long samsung_cpu_id;
+@@ -39,6 +40,7 @@ IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
+ IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
+ IS_SAMSUNG_CPU(exynos5420, EXYNOS5420_SOC_ID, EXYNOS5_SOC_MASK)
+ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
++IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
+ 
+ #if defined(CONFIG_CPU_EXYNOS4210)
+ # define soc_is_exynos4210()	is_samsung_exynos4210()
+@@ -80,9 +82,16 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+ # define soc_is_exynos5440()	0
+ #endif
+ 
++#if defined(CONFIG_SOC_EXYNOS5800)
++# define soc_is_exynos5800()	is_samsung_exynos5800()
++#else
++# define soc_is_exynos5800()	0
++#endif
++
+ #define soc_is_exynos4() (soc_is_exynos4210() || soc_is_exynos4212() || \
+ 			  soc_is_exynos4412())
+-#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5420())
++#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5420() || \
++			  soc_is_exynos5800())
+ 
+ void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
+ 
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 9c16da2..112bc66 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -70,7 +70,7 @@ static inline void __iomem *cpu_boot_reg(int cpu)
+ 		return ERR_PTR(-ENODEV);
+ 	if (soc_is_exynos4412())
+ 		boot_reg += 4*cpu;
+-	else if (soc_is_exynos5420())
++	else if (soc_is_exynos5420() || soc_is_exynos5800())
+ 		boot_reg += 4;
+ 	return boot_reg;
+ }
+-- 
+1.7.9.5
