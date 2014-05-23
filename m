@@ -1,35 +1,61 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 0/3] Exynos multi-platform support
-Date: Fri, 23 May 2014 21:17:12 +0200
-Message-ID: <201405232117.12348.arnd@arndb.de>
-References: <1400858369-14357-1-git-send-email-sachin.kamat@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung 2nd fixes for 3.15
+Date: Sat, 24 May 2014 04:43:22 +0900
+Message-ID: <537FA4DA.3090600@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:57698 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751618AbaEWTRY (ORCPT
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:61160 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750899AbaEWTnc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 15:17:24 -0400
-In-Reply-To: <1400858369-14357-1-git-send-email-sachin.kamat@linaro.org>
+	Fri, 23 May 2014 15:43:32 -0400
+Received: by mail-pa0-f51.google.com with SMTP id kq14so4505422pab.24
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 May 2014 12:43:31 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Friday 23 May 2014, Sachin Kamat wrote:
-> The patches in this series were earlier sent as part of other
-> series. Now that the other patches have been merged, re-sending
-> these after rebasing them on linux-next (20140523).
-> Tested on Exynos4210, 4412, 5250 and 5420 based boards.
-> 
-> A particular change in this series is the removal of single platform
-> support for Exynos as suggested by Arnd and Olof (patch 2/3). With
-> this change certain features (drivers) which are not yet multi-platform
-> aware like cpufreq, devfreq and DRM based gscaler will not be available
-> now.
+Hi,
+
+Here is 2nd samsung fixes for 3.15, actually it happened before 3.14 but 
+would be better if this could be merged into 3.15.
+
+Thanks,
+Kukjin
 
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+The following changes since commit c9eaa447e77efe77b7fa4c953bd62de8297fd6c5:
+
+   Linux 3.15-rc1 (2014-04-13 14:18:35 -0700)
+
+are available in the git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+tags/samsung-fixes-2nd-tag
+
+for you to fetch changes up to 68d0e40298f064a5cff40670caded0480274d4b2:
+
+   ARM: dts: Keep LDO4 always ON for exynos5250-arndale board 
+(2014-05-20 01:15:46 +0900)
+
+----------------------------------------------------------------
+Samsung-fixes-2 for 3.15
+- keep LD04 always on for exynos5250-arndale
+- fix spi interrupt numbers for exynos5420
+- fix ak8975 compatible for exynos4412-trats2
+
+----------------------------------------------------------------
+Beomho Seo (1):
+       ARM: dts: fix incorrect ak8975 compatible for exynos4412-trats2 board
+
+Sachin Kamat (2):
+       ARM: dts: Fix SPI interrupt numbers for exynos5420
+       ARM: dts: Keep LDO4 always ON for exynos5250-arndale board
+
+  arch/arm/boot/dts/exynos4412-trats2.dts  | 2 +-
+  arch/arm/boot/dts/exynos5250-arndale.dts | 1 +
+  arch/arm/boot/dts/exynos5420.dtsi        | 6 +++---
+  3 files changed, 5 insertions(+), 4 deletions(-)
