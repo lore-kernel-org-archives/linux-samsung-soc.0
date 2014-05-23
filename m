@@ -1,85 +1,99 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v4] drm/exynos: enable fimd clocks in probe before accessing
- fimd registers
-Date: Fri, 23 May 2014 07:49:51 +0530
-Message-ID: <1400811591-10132-1-git-send-email-rahul.sharma@samsung.com>
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH] arm: exynos: Modify pm code to check for cortex A9 rather than
+ the SoC
+Date: Fri, 23 May 2014 08:31:01 +0530
+Message-ID: <1400814061-12813-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37473 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:46837 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750790AbaEWCUq (ORCPT
+	with ESMTP id S1751069AbaEWC7g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 May 2014 22:20:46 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
+	Thu, 22 May 2014 22:59:36 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
  by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N6000KIQ96LFBE0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 23 May 2014 11:20:45 +0900 (KST)
+ with ESMTP id <0N60007CUAZAST30@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 May 2014 11:59:34 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, thierry.reding@gmail.com, sachin.kamat@linaro.org, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, t.figa@samsung.com
+Cc: daniel.lezcano@linaro.org, Abhilash Kesavan <a.kesavan@samsung.com>
 
-From: Rahul Sharma <Rahul.Sharma@samsung.com>
+We have an soc check to ensure that the scu and certain A9 specific
+registers are not accessed on Exynos5250 (which is A15 based).
+Rather than adding another soc specific check for 5420 let us test
+for the Cortex A9 primary part number.
 
-Fimd probe is accessing fimd Registers without enabling the fimd
-gate clocks. If FIMD clocks are kept disabled in Uboot or disbaled
-during kernel boottime, the system hangs during boottime.
+This resolves the below crash seen on exynos5420 during core switching
+after the CPUIdle consolidation series was merged.
 
-This issue got surfaced when verifying with sysmmu enabled. Probe of
-fimd Sysmmu enables the master clock before accessing sysmmu regs and
-then disables. Later fimd probe tries to read the register without
-enabling the clock which is wrong and hangs the system.
+[  155.975589] [<c0013174>] (scu_enable) from [<c001b0dc>] (exynos_cpu_pm_notifier+0x80/0xc4)
+[  155.983833] [<c001b0dc>] (exynos_cpu_pm_notifier) from [<c003c1b0>] (notifier_call_chain+0x44/0x84)
+[  155.992851] [<c003c1b0>] (notifier_call_chain) from [<c007a49c>] (cpu_pm_notify+0x20/0x3c)
+[  156.001089] [<c007a49c>] (cpu_pm_notify) from [<c007a564>] (cpu_pm_exit+0x20/0x38)
+[  156.008635] [<c007a564>] (cpu_pm_exit) from [<c0019e98>] (bL_switcher_thread+0x298/0x40c)
+[  156.016788] [<c0019e98>] (bL_switcher_thread) from [<c003842c>] (kthread+0xcc/0xe8)
+[  156.024426] [<c003842c>] (kthread) from [<c000e438>] (ret_from_fork+0x14/0x3c)
+[  156.031621] Code: ea017fec c0530a00 c052e3f8 c0012dcc (e5903000
 
-Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 ---
-v4:
-	1) Added clk_disable for prev clock when clk_enable fails.
-v3:
-	1) Added checks for clk_enable.
-v2:
-	Rebase.
+ arch/arm/mach-exynos/pm.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
- drivers/gpu/drm/exynos/exynos_drm_fimd.c |   18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index bd30d0c..30ccd67 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -898,16 +898,32 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
- {
- 	struct fimd_context *ctx = fimd_manager.ctx;
- 	struct drm_device *drm_dev = data;
--	int win;
-+	int win, ret;
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index d10c351..6dd4a11 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -300,7 +300,7 @@ static int exynos_pm_suspend(void)
+ 	tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
+ 	__raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
  
- 	fimd_mgr_initialize(&fimd_manager, drm_dev);
- 	exynos_drm_crtc_create(&fimd_manager);
- 	if (ctx->display)
- 		exynos_drm_create_enc_conn(drm_dev, ctx->display);
+-	if (!soc_is_exynos5250())
++	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+ 		exynos_cpu_save_register();
  
-+	ret = clk_prepare_enable(ctx->bus_clk);
-+	if (ret) {
-+		dev_err(dev, "bus clock enable failed.\n");
-+		return ret;
-+	}
-+
-+	ret = clk_prepare_enable(ctx->lcd_clk);
-+	if (ret) {
-+		dev_err(dev, "lcd clock enable failed.\n");
-+		clk_disable_unprepare(ctx->bus_clk);
-+		return ret;
-+	}
-+
- 	for (win = 0; win < WINDOWS_NR; win++)
- 		fimd_clear_win(ctx, win);
- 
-+	clk_disable_unprepare(ctx->lcd_clk);
-+	clk_disable_unprepare(ctx->bus_clk);
-+
  	return 0;
+@@ -334,7 +334,7 @@ static void exynos_pm_resume(void)
+ 	if (exynos_pm_central_resume())
+ 		goto early_wakeup;
  
- }
+-	if (!soc_is_exynos5250())
++	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+ 		exynos_cpu_restore_register();
+ 
+ 	/* For release retention */
+@@ -353,7 +353,7 @@ static void exynos_pm_resume(void)
+ 
+ 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+ 
+-	if (!soc_is_exynos5250())
++	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+ 		scu_enable(S5P_VA_SCU);
+ 
+ early_wakeup:
+@@ -440,15 +440,18 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+ 	case CPU_PM_ENTER:
+ 		if (cpu == 0) {
+ 			exynos_pm_central_suspend();
+-			exynos_cpu_save_register();
++			if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
++				exynos_cpu_save_register();
+ 		}
+ 		break;
+ 
+ 	case CPU_PM_EXIT:
+ 		if (cpu == 0) {
+-			if (!soc_is_exynos5250())
++			if (read_cpuid_part_number() ==
++					ARM_CPU_PART_CORTEX_A9) {
+ 				scu_enable(S5P_VA_SCU);
+-			exynos_cpu_restore_register();
++				exynos_cpu_restore_register();
++			}
+ 			exynos_pm_central_resume();
+ 		}
+ 		break;
 -- 
 1.7.9.5
