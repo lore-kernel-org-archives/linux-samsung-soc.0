@@ -1,137 +1,219 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH V5 00/20] ARM: exynos: cpuidle: Move the driver to drivers/cpuidle
-Date: Fri, 23 May 2014 17:32:18 +0200
-Message-ID: <537F6A02.2040606@linaro.org>
-References: <1397212815-16068-1-git-send-email-daniel.lezcano@linaro.org> <534BA3CF.6030701@linaro.org> <535943B2.8030308@samsung.com> <0b4201cf613f$80c91750$825b45f0$@samsung.com> <537E438C.8060600@samsung.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v10 3/3] ARM: dts: Add initial device tree support for EXYNOS5410
+Date: Fri, 23 May 2014 19:02:59 +0200
+Message-ID: <CABuKBeKgva6gbN1GkVeZNPuagewrw09uz8Fqb8-qKOgaSg4oZw@mail.gmail.com>
+References: <1400841343-6016-1-git-send-email-t.dakhran@samsung.com>
+	<1400841343-6016-4-git-send-email-t.dakhran@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f179.google.com ([74.125.82.179]:45167 "EHLO
-	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751387AbaEWPcH (ORCPT
+Received: from mail-qg0-f45.google.com ([209.85.192.45]:38424 "EHLO
+	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751186AbaEWRDA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 11:32:07 -0400
-Received: by mail-we0-f179.google.com with SMTP id q59so4931486wes.24
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 May 2014 08:32:04 -0700 (PDT)
-In-Reply-To: <537E438C.8060600@samsung.com>
+	Fri, 23 May 2014 13:03:00 -0400
+In-Reply-To: <1400841343-6016-4-git-send-email-t.dakhran@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, rjw@rjwysocki.net, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd.bergmann@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Heiko St??bner <heiko@sntech.de>
+To: Tarek Dakhran <t.dakhran@samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Heiko Stuebner <heiko@sntech.de>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>, Romain Naour <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On 05/22/2014 08:35 PM, Kukjin Kim wrote:
-> On 04/26/14 20:05, Kukjin Kim wrote:
->> Tomasz Figa wrote:
->>>
->>> On 14.04.2014 11:01, Daniel Lezcano wrote:
->>>>
->>>> Hi Kukjin,
->>>>
->>>> I believe I addressed all the comments. Is it possible to take thi=
-s
->>>> patchset for next ?
->>>
->> Sure ;-)
->>
->>> +1.
->>>
->>> Also when applying you might add
->>>
->>> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
->>>
->>> to any patches that don't have it yet.
->>>
->> Tomasz, thanks for your review.
->>
->> I will take this series, "moving exynos-cpuidle into drivers/cpuidle=
-"
->> into samsung tree if Rafael is OK on that.
->>
-> Daniel,
+2014-05-23 12:35 GMT+02:00 Tarek Dakhran <t.dakhran@samsung.com>:
+> Add initial device tree nodes for EXYNOS5410 SoC and SMDK5410 board.
 >
-> Can you please check/test the functionality your series with using my
-> for-next because there were merge conflicts with mcpm-exynos stuff...=
-?
+> Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
+> Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+> ---
+>  arch/arm/boot/dts/Makefile                |    1 +
+>  arch/arm/boot/dts/exynos5410-smdk5410.dts |   82 ++++++++++++
+>  arch/arm/boot/dts/exynos5410.dtsi         |  206 +++++++++++++++++++++++++++++
+>  3 files changed, 289 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/exynos5410-smdk5410.dts
+>  create mode 100644 arch/arm/boot/dts/exynos5410.dtsi
+>
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index cd399a2..709f862 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -73,6 +73,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+>         exynos5250-smdk5250.dtb \
+>         exynos5250-snow.dtb \
+>         exynos5260-xyref5260.dtb \
+> +       exynos5410-smdk5410.dtb \
+>         exynos5420-arndale-octa.dtb \
+>         exynos5420-peach-pit.dtb \
+>         exynos5420-smdk5420.dtb \
+> diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+> new file mode 100644
+> index 0000000..7275bbd
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+> @@ -0,0 +1,82 @@
+> +/*
+> + * SAMSUNG SMDK5410 board device tree source
+> + *
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *             http://www.samsung.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +/dts-v1/;
+> +#include "exynos5410.dtsi"
+> +/ {
+> +       model = "Samsung SMDK5410 board based on EXYNOS5410";
+> +       compatible = "samsung,smdk5410", "samsung,exynos5410", "samsung,exynos5";
+> +
+> +       memory {
+> +               reg = <0x40000000 0x80000000>;
+> +       };
+> +
+> +       chosen {
+> +               bootargs = "console=ttySAC2,115200";
+> +       };
+> +
+> +       fin_pll: xxti {
+> +               compatible = "fixed-clock";
+> +               clock-frequency = <24000000>;
+> +               clock-output-names = "fin_pll";
+> +               #clock-cells = <0>;
+> +       };
+> +
+> +       firmware@02037000 {
+> +               compatible = "samsung,secure-firmware";
+> +               reg = <0x02037000 0x1000>;
+> +       };
+> +
+> +};
+> +
+> +&mmc_0 {
+> +       status = "okay";
+> +       num-slots = <1>;
+> +       supports-highspeed;
+> +       broken-cd;
+> +       card-detect-delay = <200>;
+> +       samsung,dw-mshc-ciu-div = <3>;
+> +       samsung,dw-mshc-sdr-timing = <2 3>;
+> +       samsung,dw-mshc-ddr-timing = <1 2>;
+> +
+> +       slot@0 {
+> +               reg = <0>;
+> +               bus-width = <8>;
+> +       };
+> +};
+> +
+> +&mmc_2 {
+> +       status = "okay";
+> +       num-slots = <1>;
+> +       supports-highspeed;
+> +       card-detect-delay = <200>;
+> +       samsung,dw-mshc-ciu-div = <3>;
+> +       samsung,dw-mshc-sdr-timing = <2 3>;
+> +       samsung,dw-mshc-ddr-timing = <1 2>;
+> +
+> +       slot@0 {
+> +               reg = <0>;
+> +               bus-width = <4>;
+> +               disable-wp;
+> +       };
+> +};
+> +
+> +&uart0 {
+> +               status = "okay";
+> +};
+> +
+> +&uart1 {
+> +               status = "okay";
+> +};
+> +
+> +&uart2 {
+> +               status = "okay";
+> +};
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> new file mode 100644
+> index 0000000..3839c26
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -0,0 +1,206 @@
+> +/*
+> + * SAMSUNG EXYNOS5410 SoC device tree source
+> + *
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *             http://www.samsung.com
+> + *
+> + * SAMSUNG EXYNOS5410 SoC device nodes are listed in this file.
+> + * EXYNOS5410 based board files can include this file and provide
+> + * values for board specfic bindings.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include "skeleton.dtsi"
+> +#include <dt-bindings/clock/exynos5410.h>
+> +
+> +/ {
+> +       compatible = "samsung,exynos5410", "samsung,exynos5";
+> +       interrupt-parent = <&gic>;
+> +
+> +       cpus {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               CPU0: cpu@0 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <0x0>;
+> +               };
+> +
+> +               CPU1: cpu@1 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <0x1>;
+> +               };
+> +
+> +               CPU2: cpu@2 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <0x2>;
+> +               };
+> +
+> +               CPU3: cpu@3 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <0x3>;
+> +               };
+> +       };
+> +
+> +       soc: soc {
+> +               compatible = "simple-bus";
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges;
+> +
+> +               combiner: interrupt-controller@10440000 {
+> +                       compatible = "samsung,exynos4210-combiner";
+> +                       #interrupt-cells = <2>;
+> +                       interrupt-controller;
+> +                       samsung,combiner-nr = <32>;
+> +                       reg = <0x10440000 0x1000>;
+> +                       interrupts =    <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+> +                                       <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
+> +                                       <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+> +                                       <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
+> +                                       <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
+> +                                       <0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>,
+> +                                       <0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,
+> +                                       <0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>;
+> +               };
+> +
+> +               gic: interrupt-controller@10481000 {
+> +                       compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
 
-Hi Kukjin,
+shouldn't it be just "arm,cortex-a15-gic", as this is your SoC architecture?
 
-I tested the latest tree. Unfortunately it panics when unplugging cpu1:
-
-[    3.124189] Unable to handle kernel paging request at virtual addres=
-s=20
-f8400024
-[    3.129950] pgd =3D c0004000
-[    3.132626] [f8400024] *pgd=3D6f7f7841, *pte=3D00000000, *ppte=3D000=
-00000
-[    3.138877] Internal error: Oops: 827 [#1] PREEMPT SMP ARM
-[    3.192782] r3 : f8400024  r2 : f8180800  r1 : ee836e44  r0 : f84000=
-24
-[    3.199293] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM=20
-Segment kernel
-[    3.206673] Control: 10c5387d  Table: 6e37c04a  DAC: 00000015
-[    3.212398] Process swapper/0 (pid: 0, stack limit =3D 0xc0510240)
-[    3.218388] Stack: (0xc0511ef4 to 0xc0512000)
-[    3.222728] 1ee0: 00000030 c02b20f8 ee836e40
-[    3.230894] 1f00: c001234c 6e880000 c0511f34 40018a80 00000000=20
-00000000 00000000 00000015
-[    3.239053] 1f20: 4000404a 10c5387d 00000041 00f00000 00000000=20
-00000000 c02b20e4 edc4a540
-[    3.247212] 1f40: c038dacc eefc5cf8 c050ecf0 c0543210 00000000=20
-c0012460 00000001 c0543210
-[    3.255371] 1f60: eefc5cf8 c02b2148 b9f92927 00000000 c054326c=20
-c02b0968 b9f92927 00000000
-[    3.263530] 1f80: c0510000 c0518480 c038dacc c0510000 c0510000=20
-c0518480 c038dacc eefc5cf8
-[    3.271689] 1fa0: c0543210 c004e990 c0511fb4 c03873b8 00000000=20
-c04f90c8 00000000 c04d4b18
-[    3.279848] 1fc0: ffffffff ffffffff c04d457c 00000000 00000000=20
-c04f90c8 00000000 10c5387d
-[    3.288007] 1fe0: c0518410 c04f90c4 c051bd5c 4000406a 00000000=20
-40008074 00000000 00000000
-[    3.296184] [<c0019c5c>] (exynos_enter_aftr) from [<c02b20f8>]=20
-(idle_finisher+0x14/0x20)
-[    3.304247] [<c02b20f8>] (idle_finisher) from [<c001234c>]=20
-(cpu_suspend_abort+0x0/0x14)
-[    3.312226] [<c001234c>] (cpu_suspend_abort) from [<00000000>] (  (n=
-ull))
-[    3.318994] Code: e34f3840 e3500010 11a00002 01a00003 (e5804000)
-[    3.325069] ---[ end trace fca911f75a18c040 ]---
-
-
-After git bisecting I falls on this commit:
-
-commit b3205dea8fbf6db9b1e46a0dad19a0712fdff44f
-Author: Sachin Kamat <sachin.kamat@linaro.org>
-Date:   Tue May 13 07:13:44 2014 +0900
-
-     ARM: EXYNOS: Map SYSRAM through generic DT bindings
-
-     Instead of hardcoding the SYSRAM details for each SoC,
-     pass this information through device tree (DT) and make
-     the code SoC agnostic. Generic DT SRAM bindings are
-     used for achieving this.
-
-     Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-     Acked-by: Arnd Bergmann <arnd@arndb.de>
-     Acked-by: Heiko Stuebner <heiko@sntech.de>
-     Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-     Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-
-
-=2E.. which is before my series is applied.
-
-So I am not able to tell yet if my series is correctly rebased or not.
-
-And before someone asks me, yes I updated the dtb :)
-
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Cheers,
+Matthias
