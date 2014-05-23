@@ -1,48 +1,165 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH v2 0/3] Exynos multi-platform support
-Date: Fri, 23 May 2014 20:49:26 +0530
-Message-ID: <1400858369-14357-1-git-send-email-sachin.kamat@linaro.org>
+Subject: [PATCH v2 1/3] ARM: EXYNOS: Consolidate Kconfig entries
+Date: Fri, 23 May 2014 20:49:27 +0530
+Message-ID: <1400858369-14357-2-git-send-email-sachin.kamat@linaro.org>
+References: <1400858369-14357-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f51.google.com ([209.85.160.51]:43329 "EHLO
-	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751506AbaEWPVl (ORCPT
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:55389 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752687AbaEWPVo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 11:21:41 -0400
-Received: by mail-pb0-f51.google.com with SMTP id ma3so4299606pbc.38
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 May 2014 08:21:41 -0700 (PDT)
+	Fri, 23 May 2014 11:21:44 -0400
+Received: by mail-pa0-f47.google.com with SMTP id lf10so4253936pab.20
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 May 2014 08:21:44 -0700 (PDT)
+In-Reply-To: <1400858369-14357-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, arnd@arndb.de, sachin.kamat@linaro.org
 
-The patches in this series were earlier sent as part of other
-series. Now that the other patches have been merged, re-sending
-these after rebasing them on linux-next (20140523).
-Tested on Exynos4210, 4412, 5250 and 5420 based boards.
+Instead of repeating the Kconfig entries for every SoC, move them under
+ARCH_EXYNOS4 and 5 and move the entries common to both 4 and 5 under
+ARCH_EXYNOS.
 
-A particular change in this series is the removal of single platform
-support for Exynos as suggested by Arnd and Olof (patch 2/3). With
-this change certain features (drivers) which are not yet multi-platform
-aware like cpufreq, devfreq and DRM based gscaler will not be available
-now.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+No changes since v1
+---
+ arch/arm/Kconfig             |   10 ++++++++++
+ arch/arm/mach-exynos/Kconfig |   45 ++++--------------------------------------
+ 2 files changed, 14 insertions(+), 41 deletions(-)
 
-Changes since v1:
-Patch 2/3: Dropped some duplicated config symbols as suggested by Arnd.
-
-
-Arnd Bergmann (1):
-  ARM: EXYNOS: Enable multi-platform build support
-
-Sachin Kamat (2):
-  ARM: EXYNOS: Consolidate Kconfig entries
-  ARM: multi_v7_defconfig: Enable Exynos platform
-
- arch/arm/Kconfig                    |   20 -----------
- arch/arm/configs/multi_v7_defconfig |   12 +++++++
- arch/arm/mach-exynos/Kconfig        |   66 +++++++++++++----------------------
- arch/arm/mach-exynos/Makefile       |    2 ++
- arch/arm/plat-samsung/Makefile      |    3 ++
- 5 files changed, 42 insertions(+), 61 deletions(-)
-
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index eae853bb7ee5..b8d47ca91406 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -832,18 +832,28 @@ config ARCH_S5PV210
+ 
+ config ARCH_EXYNOS
+ 	bool "Samsung EXYNOS"
++	select ARCH_HAS_BANDGAP
+ 	select ARCH_HAS_CPUFREQ
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+ 	select ARCH_REQUIRE_GPIOLIB
+ 	select ARCH_SPARSEMEM_ENABLE
++	select ARM_AMBA
+ 	select ARM_GIC
++	select CLKSRC_OF
+ 	select COMMON_CLK_SAMSUNG
+ 	select CPU_V7
+ 	select GENERIC_CLOCKEVENTS
++	select HAVE_ARM_SCU if SMP
+ 	select HAVE_S3C2410_I2C if I2C
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+ 	select HAVE_S3C_RTC if RTC_CLASS
++	select HAVE_SMP
+ 	select NEED_MACH_MEMORY_H
++	select PINCTRL
++	select PINCTRL_EXYNOS
++	select PM_GENERIC_DOMAINS if PM_RUNTIME
++	select S5P_DEV_MFC
++	select SAMSUNG_DMADEV
+ 	select SPARSE_IRQ
+ 	select SRAM
+ 	select USE_OF
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 1602abce6ec0..138070e42aa9 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -14,30 +14,20 @@ menu "SAMSUNG EXYNOS SoCs Support"
+ config ARCH_EXYNOS4
+ 	bool "SAMSUNG EXYNOS4"
+ 	default y
+-	select ARM_AMBA
+-	select CLKSRC_OF
++	select ARM_CPU_SUSPEND if PM_SLEEP
+ 	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
+ 	select CPU_EXYNOS4210
+ 	select GIC_NON_BANKED
+ 	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
+-	select HAVE_ARM_SCU if SMP
+-	select HAVE_SMP
+ 	select MIGHT_HAVE_CACHE_L2X0
+-	select PINCTRL
+-	select PM_GENERIC_DOMAINS if PM_RUNTIME
+-	select S5P_DEV_MFC
+ 	help
+-	  Samsung EXYNOS4 SoCs based systems
++	  Samsung EXYNOS4 (Cortex-A9) SoC based systems
+ 
+ config ARCH_EXYNOS5
+ 	bool "SAMSUNG EXYNOS5"
+-	select ARM_AMBA
+-	select CLKSRC_OF
+-	select HAVE_ARM_SCU if SMP
+-	select HAVE_SMP
+-	select PINCTRL
++	default y
+ 	help
+-	  Samsung EXYNOS5 (Cortex-A15) SoC based systems
++	  Samsung EXYNOS5 (Cortex-A15/A7) SoC based systems
+ 
+ comment "EXYNOS SoCs"
+ 
+@@ -45,59 +35,32 @@ config CPU_EXYNOS4210
+ 	bool "SAMSUNG EXYNOS4210"
+ 	default y
+ 	depends on ARCH_EXYNOS4
+-	select ARCH_HAS_BANDGAP
+-	select ARM_CPU_SUSPEND if PM_SLEEP
+-	select PINCTRL_EXYNOS
+-	select SAMSUNG_DMADEV
+-	help
+-	  Enable EXYNOS4210 CPU support
+ 
+ config SOC_EXYNOS4212
+ 	bool "SAMSUNG EXYNOS4212"
+ 	default y
+ 	depends on ARCH_EXYNOS4
+-	select ARCH_HAS_BANDGAP
+-	select PINCTRL_EXYNOS
+-	select SAMSUNG_DMADEV
+-	help
+-	  Enable EXYNOS4212 SoC support
+ 
+ config SOC_EXYNOS4412
+ 	bool "SAMSUNG EXYNOS4412"
+ 	default y
+ 	depends on ARCH_EXYNOS4
+-	select ARCH_HAS_BANDGAP
+-	select PINCTRL_EXYNOS
+-	select SAMSUNG_DMADEV
+-	help
+-	  Enable EXYNOS4412 SoC support
+ 
+ config SOC_EXYNOS5250
+ 	bool "SAMSUNG EXYNOS5250"
+ 	default y
+ 	depends on ARCH_EXYNOS5
+-	select ARCH_HAS_BANDGAP
+-	select PINCTRL_EXYNOS
+-	select PM_GENERIC_DOMAINS if PM_RUNTIME
+-	select S5P_DEV_MFC
+-	select SAMSUNG_DMADEV
+-	help
+-	  Enable EXYNOS5250 SoC support
+ 
+ config SOC_EXYNOS5420
+ 	bool "SAMSUNG EXYNOS5420"
+ 	default y
+ 	depends on ARCH_EXYNOS5
+-	select PM_GENERIC_DOMAINS if PM_RUNTIME
+-	help
+-	  Enable EXYNOS5420 SoC support
+ 
+ config SOC_EXYNOS5440
+ 	bool "SAMSUNG EXYNOS5440"
+ 	default y
+ 	depends on ARCH_EXYNOS5
+ 	select ARCH_DMA_ADDR_T_64BIT if ARM_LPAE
+-	select ARCH_HAS_BANDGAP
+ 	select ARCH_HAS_OPP
+ 	select HAVE_ARM_ARCH_TIMER
+ 	select AUTO_ZRELADDR
 -- 
 1.7.9.5
