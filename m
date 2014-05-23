@@ -1,63 +1,44 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/2] doc: dt bindings: Document Odroid X2/U3 audio
- subsystem bindings
-Date: Fri, 23 May 2014 11:54:31 +0200
-Message-ID: <537F1AD7.1070808@samsung.com>
-References: <1400759708-25831-1-git-send-email-s.nawrocki@samsung.com>
- <20140522184656.GS12304@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH 0/3] mmc: fixed the mmc_of_parse for dwmmc
+Date: Fri, 23 May 2014 19:25:18 +0900
+Message-ID: <1400840721-11050-1-git-send-email-jh80.chung@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:38393 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751537AbaEWJyg (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:17087 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751017AbaEWKZ0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 05:54:36 -0400
-In-reply-to: <20140522184656.GS12304@sirena.org.uk>
+	Fri, 23 May 2014 06:25:26 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-mmc@vger.kernel.org
+Cc: Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Ludovic Desroches <ludovic.desroches@atmel.com>, Seungwon Jeon <tgih.jun@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>
 
-On 22/05/14 20:46, Mark Brown wrote:
-> On Thu, May 22, 2014 at 01:55:07PM +0200, Sylwester Nawrocki wrote:
-> 
->> +	sound {
->> +		compatible = "samsung,odroidx2-audio";
->> +		samsung,i2s-controller = <&i2s0>;
->> +		samsung,audio-codec = <&max98090>;
->> +	};
-> 
-> Can this not use simple-card?
+This patch-set is fixed the dw-mmc controller problem.
+dw-mmc controller have the slot, but mmc_of_parse didn't parse the slot sub-node.
+So dw-mmc controller didn't work correctly.
 
-I dug into that and it seems it almost could, but there is one
-thing I'm not sure how to cover with the simple-card DT bindings
-and the related driver.
+Jaehoon Chung (2):
+  mmc: dw_mmc: use the __mmc_of_parse to parse the slot node
+  ARM: dts: replace the broken-cd property into slot node for dwmmc.
 
-There are these two calls:
+Ludovic Desroches (1):
+  mmc: host: add slot argument to mmc_of_parse
 
-+	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_OPCLK,
-+					0, MOD_OPCLK_PCLK);
-
-
-+	/* Set the cpu DAI configuration in order to use CDCLK */
-+	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
-+					0, SND_SOC_CLOCK_OUT);
-
-This changes clocks routing so that the CPU DAI in slave mode generates
-master clock for the codec, on the SoC's CDCLK pin. Then this is
-a reference clock for the codec's PLL, which is a source of the I2S
-interface clocks.
-
-It's done this way to avoid changing at runtime frequency of the EPLL
-clock, which may be parent of other clocks than the sound subsystem,
-e.g. MMC.
-
-simple-card just calls set_sysclk once for the CPU DAI and CODEC with
-the second and last argument set to 0.
-I'll try and see again if there is some way to use simple-card.
+ arch/arm/boot/dts/exynos4412-odroidx.dts      |    2 +-
+ arch/arm/boot/dts/exynos4412-origen.dts       |    2 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts       |    4 ++--
+ arch/arm/boot/dts/exynos5250-arndale.dts      |    2 +-
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi |    4 ++--
+ arch/arm/boot/dts/exynos5250-smdk5250.dts     |    2 +-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |    2 +-
+ arch/arm/boot/dts/rk3066a-bqcurie2.dts        |    2 +-
+ arch/arm/boot/dts/socfpga_arria5.dtsi         |    2 +-
+ arch/arm/boot/dts/socfpga_cyclone5.dtsi       |    2 +-
+ arch/arm/boot/dts/socfpga_vt.dts              |    2 +-
+ drivers/mmc/core/host.c                       |   13 +++++++++----
+ drivers/mmc/host/dw_mmc.c                     |   25 ++++++-------------------
+ include/linux/mmc/host.h                      |   10 +++++++++-
+ 14 files changed, 37 insertions(+), 37 deletions(-)
 
 -- 
-Thanks,
-Sylwester
+1.7.9.5
