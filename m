@@ -1,38 +1,98 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v10 3/3] ARM: dts: Add initial device tree support for
- EXYNOS5410
-Date: Fri, 23 May 2014 23:15:38 +0200
-Message-ID: <537FBA7A.3000605@gmail.com>
-References: <1400841343-6016-1-git-send-email-t.dakhran@samsung.com> <1400841343-6016-4-git-send-email-t.dakhran@samsung.com>
+Subject: Re: [PATCH v10 2/3] clk: exynos5410: register clocks using common
+ clock framework
+Date: Fri, 23 May 2014 23:19:29 +0200
+Message-ID: <537FBB61.6070201@gmail.com>
+References: <1400841343-6016-1-git-send-email-t.dakhran@samsung.com> <1400841343-6016-3-git-send-email-t.dakhran@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1400841343-6016-4-git-send-email-t.dakhran@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:59265 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750923AbaEWVTg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 May 2014 17:19:36 -0400
+In-Reply-To: <1400841343-6016-3-git-send-email-t.dakhran@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Tarek Dakhran <t.dakhran@samsung.com>, linux-kernel@vger.kernel.org
 Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Romain Naour <romain.naour@openwide.fr>, Chander Kashyap <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@gmail.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Tarek,
 
+Thanks for keeping up with addressing my comments. See below.
+
 On 23.05.2014 12:35, Tarek Dakhran wrote:
-> Add initial device tree nodes for EXYNOS5410 SoC and SMDK5410 board.
+> The EXYNOS5410 clocks are statically listed and registered
+> using the Samsung specific common clock helper functions.
 > 
 > Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
 > Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
 > ---
->  arch/arm/boot/dts/Makefile                |    1 +
->  arch/arm/boot/dts/exynos5410-smdk5410.dts |   82 ++++++++++++
->  arch/arm/boot/dts/exynos5410.dtsi         |  206 +++++++++++++++++++++++++++++
->  3 files changed, 289 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos5410-smdk5410.dts
->  create mode 100644 arch/arm/boot/dts/exynos5410.dtsi
+>  .../devicetree/bindings/clock/exynos5410-clock.txt |   51 +++++
+>  drivers/clk/samsung/Makefile                       |    1 +
+>  drivers/clk/samsung/clk-exynos5410.c               |  209 ++++++++++++++++++++
+>  include/dt-bindings/clock/exynos5410.h             |   33 ++++
+>  4 files changed, 294 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+>  create mode 100644 drivers/clk/samsung/clk-exynos5410.c
+>  create mode 100644 include/dt-bindings/clock/exynos5410.h
+> 
 
-Looks good. Hopefully we can have this patch applied soon, so it won't
-get outdated again.
+The driver itself looks good, but binding documentation seems to be
+outdated. The part about external clocks, more specifically.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> diff --git a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+> new file mode 100644
+> index 0000000..82337c4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+> @@ -0,0 +1,51 @@
+> +* Samsung Exynos5410 Clock Controller
+> +
+> +The Exynos5410 clock controller generates and supplies clock to various
+> +controllers within the Exynos5410 SoC.
+> +
+> +Required Properties:
+> +
+> +- compatible: should be "samsung,exynos5410-clock"
+> +
+> +- reg: physical base address of the controller and length of memory mapped
+> +  region.
+> +
+> +- #clock-cells: should be 1.
+> +
+> +All available clocks are defined as preprocessor macros in
+> +dt-bindings/clock/exynos5410.h header and can be used in device
+> +tree sources.
+> +
+> +External clock:
+> +There is clock that is generated outside the SoC. It is expected
+> +that it is defined using standard clock bindings with following
+> + - compatible: should be "samsung,exynos5410-oscclk"
+
+^^^^^
+
+> +
+> +Example 1: An example of a clock controller node is listed below.
+> +
+> +	clock: clock-controller@0x10010000 {
+> +		compatible = "samsung,exynos5410-clock";
+> +		reg = <0x10010000 0x30000>;
+> +		#clock-cells = <1>;
+> +	};
+> +
+> +Example 2: Required external clock.
+> +
+> +	fixed-rate-clocks {
+> +		oscclk {
+> +			compatible = "samsung,exynos5410-oscclk";
+> +			clock-frequency = <24000000>;
+> +		};
+> +	};
+
+^^^^^
 
 Best regards,
 Tomasz
