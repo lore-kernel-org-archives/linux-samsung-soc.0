@@ -1,49 +1,56 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 3/3] ARM: dts: Add clock property for mfc_pd in 5420
-Date: Fri, 23 May 2014 23:54:10 +0200
-Message-ID: <537FC382.8060602@gmail.com>
-References: <1400821692-22370-1-git-send-email-arun.kk@samsung.com> <1400821692-22370-4-git-send-email-arun.kk@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Samsung 2nd fixes for 3.15
+Date: Sat, 24 May 2014 00:00:56 +0200
+Message-ID: <201405240000.56933.arnd@arndb.de>
+References: <537FA4DA.3090600@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f173.google.com ([74.125.82.173]:43222 "EHLO
-	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750995AbaEWVyR (ORCPT
+Received: from mout.kundenserver.de ([212.227.17.24]:65433 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751106AbaEWWBC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 17:54:17 -0400
-In-Reply-To: <1400821692-22370-4-git-send-email-arun.kk@samsung.com>
+	Fri, 23 May 2014 18:01:02 -0400
+In-Reply-To: <537FA4DA.3090600@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: t.figa@samsung.com, kgene.kim@samsung.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, prathyush.k@samsung.com, abrestic@chromium.org, arunkk.samsung@gmail.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: "arm@kernel.org" <arm@kernel.org>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 23.05.2014 07:08, Arun Kumar K wrote:
-> Adding the optional clock property for the mfc_pd for
-> handling the re-parenting while pd on/off.
+On Friday 23 May 2014, Kukjin Kim wrote:
+> Hi,
 > 
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi |    3 +++
->  1 file changed, 3 insertions(+)
+> Here is 2nd samsung fixes for 3.15, actually it happened before 3.14 but 
+> would be better if this could be merged into 3.15.
 > 
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 5a85896..890bdac 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -260,6 +260,9 @@
->  	mfc_pd: power-domain@10044060 {
->  		compatible = "samsung,exynos4210-pd";
->  		reg = <0x10044060 0x20>;
-> +		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
-> +			<&clock CLK_MOUT_USER_ACLK333>,;
-> +		clock-names = "oscclk", "pclk0", "clk0";
->  	};
->  
->  	disp_pd: power-domain@100440C0 {
+> Thanks,
+> Kukjin
 > 
+> 
+> The following changes since commit c9eaa447e77efe77b7fa4c953bd62de8297fd6c5:
+> 
+>    Linux 3.15-rc1 (2014-04-13 14:18:35 -0700)
+> 
+> are available in the git repository at:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+> tags/samsung-fixes-2nd-tag
+> 
+> for you to fetch changes up to 68d0e40298f064a5cff40670caded0480274d4b2:
+> 
+>    ARM: dts: Keep LDO4 always ON for exynos5250-arndale board 
+> (2014-05-20 01:15:46 +0900)
+> 
+> ----------------------------------------------------------------
+> Samsung-fixes-2 for 3.15
+> - keep LD04 always on for exynos5250-arndale
+> - fix spi interrupt numbers for exynos5420
+> - fix ak8975 compatible for exynos4412-trats2
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Pulled into fixes branch.
 
-Best regards,
-Tomasz
+Should these have been marked 'Cc: stable'?
+
+	Arnd
