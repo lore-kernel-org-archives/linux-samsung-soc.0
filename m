@@ -1,48 +1,44 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/exynos: remove redundant mutex_unlock
-Date: Fri, 23 May 2014 12:57:54 +0200
-Message-ID: <1400842674-20499-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:33530 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751855AbaEWK6W (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 06:58:22 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N6000NRCX534IA0@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 23 May 2014 11:58:15 +0100 (BST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] drm/exynos/fimd: allow multiplatform configuration
+Date: Fri, 23 May 2014 12:58:36 +0200
+Message-ID: <1400842716-20560-1-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, m.szyprowski@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch fixes unlocking in exynos_drm_component_del.
+The patch removes dependency on !ARCH_MULTIPLATFORM.
+This dependency seems to be not longer valid.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
-Hi Inki,
+ drivers/gpu/drm/exynos/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This patch is based on exynos_drm_next branch.
-
-Regards
-Andrzej
----
- drivers/gpu/drm/exynos/exynos_drm_drv.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index 4cef88f..c5a401ae 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -417,7 +417,6 @@ void exynos_drm_component_del(struct device *dev,
- 		if (dev == cdev->dev) {
- 			list_del(&cdev->list);
- 			kfree(cdev);
--			mutex_unlock(&drm_component_lock);
- 			break;
- 		}
- 	}
+diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+index c8c9510..e0d73fb 100644
+--- a/drivers/gpu/drm/exynos/Kconfig
++++ b/drivers/gpu/drm/exynos/Kconfig
+@@ -26,7 +26,7 @@ config DRM_EXYNOS_DMABUF
+ 
+ config DRM_EXYNOS_FIMD
+ 	bool "Exynos DRM FIMD"
+-	depends on DRM_EXYNOS && !FB_S3C && !ARCH_MULTIPLATFORM
++	depends on DRM_EXYNOS && !FB_S3C
+ 	select FB_MODE_HELPERS
+ 	help
+ 	  Choose this option if you want to use Exynos FIMD for DRM.
 -- 
 1.9.1
