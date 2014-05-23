@@ -1,103 +1,63 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] clk: samsung: Make of_device_id array const
-Date: Fri, 23 May 2014 11:04:08 +0200
-Message-ID: <1400835848-26993-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/2] doc: dt bindings: Document Odroid X2/U3 audio
+ subsystem bindings
+Date: Fri, 23 May 2014 11:54:31 +0200
+Message-ID: <537F1AD7.1070808@samsung.com>
+References: <1400759708-25831-1-git-send-email-s.nawrocki@samsung.com>
+ <20140522184656.GS12304@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:38393 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751537AbaEWJyg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 May 2014 05:54:36 -0400
+In-reply-to: <20140522184656.GS12304@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Array of struct of_device_id may be be const as expected by
-of_match_table field and of_find_matching_node_and_match() function.
+On 22/05/14 20:46, Mark Brown wrote:
+> On Thu, May 22, 2014 at 01:55:07PM +0200, Sylwester Nawrocki wrote:
+> 
+>> +	sound {
+>> +		compatible = "samsung,odroidx2-audio";
+>> +		samsung,i2s-controller = <&i2s0>;
+>> +		samsung,audio-codec = <&max98090>;
+>> +	};
+> 
+> Can this not use simple-card?
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos4.c    | 2 +-
- drivers/clk/samsung/clk-exynos5250.c | 2 +-
- drivers/clk/samsung/clk-exynos5420.c | 2 +-
- drivers/clk/samsung/clk-exynos5440.c | 2 +-
- drivers/clk/samsung/clk.c            | 2 +-
- drivers/clk/samsung/clk.h            | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+I dug into that and it seems it almost could, but there is one
+thing I'm not sure how to cover with the simple-card DT bindings
+and the related driver.
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index b4f967210175..3463535dcc25 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1070,7 +1070,7 @@ static void __init exynos4_clk_register_finpll(void)
- 
- }
- 
--static struct of_device_id ext_clk_match[] __initdata = {
-+static const struct of_device_id ext_clk_match[] __initconst = {
- 	{ .compatible = "samsung,clock-xxti", .data = (void *)0, },
- 	{ .compatible = "samsung,clock-xusbxti", .data = (void *)1, },
- 	{},
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index e7ee4420da81..0d97c69fde29 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -678,7 +678,7 @@ static struct samsung_pll_clock exynos5250_plls[nr_plls] __initdata = {
- 		VPLL_LOCK, VPLL_CON0, NULL),
- };
- 
--static struct of_device_id ext_clk_match[] __initdata = {
-+static const struct of_device_id ext_clk_match[] __initconst = {
- 	{ .compatible = "samsung,clock-xxti", .data = (void *)0, },
- 	{ },
- };
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 60b26819bed5..904881493b32 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -770,7 +770,7 @@ static struct samsung_pll_clock exynos5420_plls[nr_plls] __initdata = {
- 		KPLL_CON0, NULL),
- };
- 
--static struct of_device_id ext_clk_match[] __initdata = {
-+static const struct of_device_id ext_clk_match[] __initconst = {
- 	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
- 	{ },
- };
-diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
-index 2bfad5a993d0..ff70bfed5ef8 100644
---- a/drivers/clk/samsung/clk-exynos5440.c
-+++ b/drivers/clk/samsung/clk-exynos5440.c
-@@ -84,7 +84,7 @@ static struct samsung_gate_clock exynos5440_gate_clks[] __initdata = {
- 	GATE(CLK_CS250_O, "cs250_o", "cs250", CLKEN_OV_VAL, 19, 0, 0),
- };
- 
--static struct of_device_id ext_clk_match[] __initdata = {
-+static const struct of_device_id ext_clk_match[] __initconst = {
- 	{ .compatible = "samsung,clock-xtal", .data = (void *)0, },
- 	{},
- };
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 91bec3ebdc8f..f9914a8b02ae 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -269,7 +269,7 @@ void __init samsung_clk_register_gate(struct samsung_gate_clock *list,
- void __init samsung_clk_of_register_fixed_ext(
- 			struct samsung_fixed_rate_clock *fixed_rate_clk,
- 			unsigned int nr_fixed_rate_clk,
--			struct of_device_id *clk_matches)
-+			const struct of_device_id *clk_matches)
- {
- 	const struct of_device_id *match;
- 	struct device_node *np;
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index c7141ba826e0..dc8f2cc6f486 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -317,7 +317,7 @@ extern void __init samsung_clk_init(struct device_node *np, void __iomem *base,
- extern void __init samsung_clk_of_register_fixed_ext(
- 		struct samsung_fixed_rate_clock *fixed_rate_clk,
- 		unsigned int nr_fixed_rate_clk,
--		struct of_device_id *clk_matches);
-+		const struct of_device_id *clk_matches);
- 
- extern void samsung_clk_add_lookup(struct clk *clk, unsigned int id);
- 
+There are these two calls:
+
++	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_OPCLK,
++					0, MOD_OPCLK_PCLK);
+
+
++	/* Set the cpu DAI configuration in order to use CDCLK */
++	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
++					0, SND_SOC_CLOCK_OUT);
+
+This changes clocks routing so that the CPU DAI in slave mode generates
+master clock for the codec, on the SoC's CDCLK pin. Then this is
+a reference clock for the codec's PLL, which is a source of the I2S
+interface clocks.
+
+It's done this way to avoid changing at runtime frequency of the EPLL
+clock, which may be parent of other clocks than the sound subsystem,
+e.g. MMC.
+
+simple-card just calls set_sysclk once for the CPU DAI and CODEC with
+the second and last argument set to 0.
+I'll try and see again if there is some way to use simple-card.
+
 -- 
-1.9.1
+Thanks,
+Sylwester
