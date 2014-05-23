@@ -1,66 +1,82 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH] drm/exynos: remove redundant mutex_unlock
-Date: Fri, 23 May 2014 16:34:33 +0530
-Message-ID: <CAK9yfHw4T8OwQEUQKyy4x94XoBRfX1ZC=gg0kkq9wujwemADPw@mail.gmail.com>
-References: <1400842674-20499-1-git-send-email-a.hajda@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/2] ASoC: samsung: Add machine driver for odroidx2
+Date: Fri, 23 May 2014 12:05:44 +0100
+Message-ID: <20140523110544.GY12304@sirena.org.uk>
+References: <1400759708-25831-1-git-send-email-s.nawrocki@samsung.com>
+ <1400759708-25831-2-git-send-email-s.nawrocki@samsung.com>
+ <20140522185334.GT12304@sirena.org.uk>
+ <537F0A88.8000904@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MZRUDfwK0cLsyVHQ"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:58739 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751458AbaEWLEe (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40005 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752491AbaEWLF6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 07:04:34 -0400
-Received: by mail-oa0-f53.google.com with SMTP id m1so5455286oag.40
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 May 2014 04:04:34 -0700 (PDT)
-In-Reply-To: <1400842674-20499-1-git-send-email-a.hajda@samsung.com>
+	Fri, 23 May 2014 07:05:58 -0400
+Content-Disposition: inline
+In-Reply-To: <537F0A88.8000904@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-
-Hi Andrzej,
-
-On 23 May 2014 16:27, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> The patch fixes unlocking in exynos_drm_component_del.
-
-This patch actually removes multiple unlocking issue.
-
->
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
-> Hi Inki,
->
-> This patch is based on exynos_drm_next branch.
->
-> Regards
-> Andrzej
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index 4cef88f..c5a401ae 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -417,7 +417,6 @@ void exynos_drm_component_del(struct device *dev,
->                 if (dev == cdev->dev) {
->                         list_del(&cdev->list);
->                         kfree(cdev);
-> -                       mutex_unlock(&drm_component_lock);
->                         break;
->                 }
->         }
-> --
-> 1.9.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chen Zhen <zhen1.chen@samsung.com>
 
 
+--MZRUDfwK0cLsyVHQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-With warm regards,
-Sachin
+On Fri, May 23, 2014 at 10:44:56AM +0200, Sylwester Nawrocki wrote:
+> On 22/05/14 20:53, Mark Brown wrote:
+
+> As for the DT binding documentation patch, I thought we're supposed to keep
+> documentation in separate patches, so processes of separating it from the
+> kernel is easier ?
+
+I'm not sure what the current theory is - they should definitely be
+separate if they're part of a multi-patch series but for a single patch
+I don't remember what the current taste is.  If you're sending to the
+same recipients anyway splitting isn't going to accomplish much, the
+idea was to only send the DT binding to the DT maintainers and list and
+not the code.
+
+> >> +	ret = snd_soc_dai_set_sysclk(codec_dai, 3, MAX98090_MCLK_FREQ,
+> >> +				     SND_SOC_CLOCK_IN);
+> >> +	if (ret < 0) {
+> >> +		dev_err(codec_dai->dev,
+> >> +			"Unable to switch to FLL1: %d\n", ret);
+> >> +		return ret;
+> >> +	}
+
+> > So's this - also what is 3?  Set it on init.
+
+> OK, will move it. I'm not sure why 3, it seems to be ignored by the codec
+> anyway. Chen, can you confirm the second argument is actually a don't care
+> value ?
+
+If it's don't care supply 0 instead.
+
+--MZRUDfwK0cLsyVHQ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTfyuEAAoJELSic+t+oim955YP/0q2lXOX0mplig4lK/bLQD55
+YThdFpX2rEAEI0ZhU+YcfydG2K3Um3tHpoMm9PV9yTBFPjzlVK7Ja1FosyDba5kc
+JhCdG0ckeUvxaj5IZ7Pa9KkxqfW0CIZZ09yk5NqbOnj9C6+vqXKZYCkvL6BavZ3h
+3Voa4TUQY1WLf1Zlx1C+FiMia6aHWfQVmh3tidKkJ/WdwEeHfNJl/Jnl4EDrNJ5I
+KBVXtS4yff+9LZP1qaLtkLkzSVmQrtPGFj6LBrywH67L8rNkdqbN1ZtbeRGU4cx8
+gX+RcdkljWjfP/BUsM6+UlsJ+3Xw4RKK6Qyi8Qy9f//VAPowRRbz7f+9HRao6uHz
+F27YEcqwXTvA1DXJdeX4Uf+c3DUxhJkyQxB6wFgV4fTHfpLNhCLULLeSl/De67Ie
+AZE7lOhGBsa77+T6Ew9M/ZXT9YuK1dIYQhg1YxPn2ZgmLLJi64wTrQaY9GguIxCF
+zO5zR8eh2dxi2GIRyErAR4VP6MT3iVz6qauTYOwEBkQbe7lB09+P9XxP+GXjH1Gh
+xTP5q9SZ7KGpoGJR8NKQwNeWAR6WWFcnLJBpxVuTj4J0tB7G0crBs3P9ZRCXupFs
+F8/D8TAAVFPe/18c2+Q/pgEMXogAnqxZZ5lfvqHyIxwOir1NgB4rRCv+bSxWKBEA
+bejqPtatfOqu5udrR5oQ
+=HKeh
+-----END PGP SIGNATURE-----
+
+--MZRUDfwK0cLsyVHQ--
