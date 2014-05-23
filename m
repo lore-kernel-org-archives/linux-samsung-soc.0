@@ -1,56 +1,57 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] Samsung 2nd fixes for 3.15
-Date: Sat, 24 May 2014 00:00:56 +0200
-Message-ID: <201405240000.56933.arnd@arndb.de>
-References: <537FA4DA.3090600@samsung.com>
+From: Tarek Dakhran <t.dakhran@gmail.com>
+Subject: Re: [PATCH v10 1/3] ARM: EXYNOS: Add support for EXYNOS5410 SoC
+Date: Sat, 24 May 2014 02:44:30 +0400
+Message-ID: <CANhyOUd8Q2nzh_bF6LZNuv8keVUB3F45PocYrLP_B=D_Q3tWuQ@mail.gmail.com>
+References: <1400841343-6016-1-git-send-email-t.dakhran@samsung.com>
+	<1400841343-6016-2-git-send-email-t.dakhran@samsung.com>
+	<537FB995.5070604@gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:65433 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751106AbaEWWBC (ORCPT
+Received: from mail-wg0-f46.google.com ([74.125.82.46]:64604 "EHLO
+	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751017AbaEWWoc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 18:01:02 -0400
-In-Reply-To: <537FA4DA.3090600@samsung.com>
+	Fri, 23 May 2014 18:44:32 -0400
+In-Reply-To: <537FB995.5070604@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "arm@kernel.org" <arm@kernel.org>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tarek Dakhran <t.dakhran@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Romain Naour <romain.naour@openwide.fr>, Chander Kashyap <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infrad>
 
-On Friday 23 May 2014, Kukjin Kim wrote:
-> Hi,
-> 
-> Here is 2nd samsung fixes for 3.15, actually it happened before 3.14 but 
-> would be better if this could be merged into 3.15.
-> 
-> Thanks,
-> Kukjin
-> 
-> 
-> The following changes since commit c9eaa447e77efe77b7fa4c953bd62de8297fd6c5:
-> 
->    Linux 3.15-rc1 (2014-04-13 14:18:35 -0700)
-> 
-> are available in the git repository at:
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-> tags/samsung-fixes-2nd-tag
-> 
-> for you to fetch changes up to 68d0e40298f064a5cff40670caded0480274d4b2:
-> 
->    ARM: dts: Keep LDO4 always ON for exynos5250-arndale board 
-> (2014-05-20 01:15:46 +0900)
-> 
-> ----------------------------------------------------------------
-> Samsung-fixes-2 for 3.15
-> - keep LD04 always on for exynos5250-arndale
-> - fix spi interrupt numbers for exynos5420
-> - fix ak8975 compatible for exynos4412-trats2
+Hi Tomazs,
 
-Pulled into fixes branch.
+On Sat, May 24, 2014 at 1:11 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Tarek,
+>
+> With v2 of the series I mentioned in review of previous version [1],
+> this patch can be skipped.
+>
+> [1] http://www.spinics.net/lists/linux-samsung-soc/msg31258.html
+>
+> Best regards,
+> Tomasz
+>
+> On 23.05.2014 12:35, Tarek Dakhran wrote:
+[snip]
+>> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+>> index 739bdc8..971baf0 100644
+>> --- a/arch/arm/mach-exynos/firmware.c
+>> +++ b/arch/arm/mach-exynos/firmware.c
+>> @@ -50,7 +50,7 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+>>
+>>       boot_reg = sysram_ns_base_addr + 0x1c;
+>>
+>> -     if (!soc_is_exynos4212())
+>> +     if (!soc_is_exynos4212() && !soc_is_exynos5410())
+>>               boot_reg += 4*cpu;
+>>
+>>       __raw_writel(boot_addr, boot_reg);
+>>
 
-Should these have been marked 'Cc: stable'?
+I need to define SoC type to set correct bootreg in firmware,
+otherwise only one cpu can be booted.
+So, this stuff is needed.
 
-	Arnd
+Best regards,
+     Tarek
