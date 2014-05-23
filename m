@@ -1,57 +1,110 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 0/3] Exynos multi-platform support
-Date: Fri, 23 May 2014 23:02:57 +0200
-Message-ID: <537FB781.8050501@gmail.com>
-References: <1400858369-14357-1-git-send-email-sachin.kamat@linaro.org> <201405232117.12348.arnd@arndb.de> <537FA610.6050609@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Add 5800 SoC support
+Date: Fri, 23 May 2014 23:06:17 +0200
+Message-ID: <537FB849.10303@gmail.com>
+References: <1400830448-28501-1-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f52.google.com ([74.125.82.52]:55957 "EHLO
-	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751038AbaEWVDE (ORCPT
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:52080 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751334AbaEWVGX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 17:03:04 -0400
-Received: by mail-wg0-f52.google.com with SMTP id l18so5411190wgh.35
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 May 2014 14:03:02 -0700 (PDT)
-In-Reply-To: <537FA610.6050609@samsung.com>
+	Fri, 23 May 2014 17:06:23 -0400
+Received: by mail-wi0-f177.google.com with SMTP id f8so1489811wiw.10
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 May 2014 14:06:22 -0700 (PDT)
+In-Reply-To: <1400830448-28501-1-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, arunkk.samsung@gmail.com
 
-Hi Kukjin,
+Hi Arun,
 
-On 23.05.2014 21:48, Kukjin Kim wrote:
-> On 05/24/14 04:17, Arnd Bergmann wrote:
->> On Friday 23 May 2014, Sachin Kamat wrote:
->>> The patches in this series were earlier sent as part of other
->>> series. Now that the other patches have been merged, re-sending
->>> these after rebasing them on linux-next (20140523).
->>> Tested on Exynos4210, 4412, 5250 and 5420 based boards.
->>>
->>> A particular change in this series is the removal of single platform
->>> support for Exynos as suggested by Arnd and Olof (patch 2/3). With
->>> this change certain features (drivers) which are not yet multi-platform
->>> aware like cpufreq, devfreq and DRM based gscaler will not be available
->>> now.
->>
->>
->> Acked-by: Arnd Bergmann<arnd@arndb.de>
+On 23.05.2014 09:34, Arun Kumar K wrote:
+> Exynos5800 is an octa core SoC which is based on the 5420
+> platform. This patch adds the basic support for it in the
+> mach-exynos.
 > 
-> Yes, it's time to move on exynos multiplatform and we can't wait for
-> more perfect something. Anyway if any problems, let's fix them after
-> this. Will apply this whole series.
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+>  arch/arm/mach-exynos/Kconfig   |    5 +++++
+>  arch/arm/mach-exynos/common.h  |   11 ++++++++++-
+>  arch/arm/mach-exynos/platsmp.c |    2 +-
+>  3 files changed, 16 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 4663417..c5423da 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -99,6 +99,11 @@ config SOC_EXYNOS5440
+>  	help
+>  	  Enable EXYNOS5440 SoC support
+>  
+> +config SOC_EXYNOS5800
+> +	bool "SAMSUNG EXYNOS5800"
+> +	default y
+> +	depends on SOC_EXYNOS5420
+> +
+>  endmenu
+>  
+>  config EXYNOS5420_MCPM
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index ae5f648..8fbc55b 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -23,6 +23,7 @@
+>  #define EXYNOS5250_SOC_ID	0x43520000
+>  #define EXYNOS5420_SOC_ID	0xE5420000
+>  #define EXYNOS5440_SOC_ID	0xE5440000
+> +#define EXYNOS5800_SOC_ID	0xE5422000
+>  #define EXYNOS5_SOC_MASK	0xFFFFF000
+>  
+>  extern unsigned long samsung_cpu_id;
+> @@ -39,6 +40,7 @@ IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
+>  IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
+>  IS_SAMSUNG_CPU(exynos5420, EXYNOS5420_SOC_ID, EXYNOS5_SOC_MASK)
+>  IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+> +IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
+>  
+>  #if defined(CONFIG_CPU_EXYNOS4210)
+>  # define soc_is_exynos4210()	is_samsung_exynos4210()
+> @@ -80,9 +82,16 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+>  # define soc_is_exynos5440()	0
+>  #endif
+>  
+> +#if defined(CONFIG_SOC_EXYNOS5800)
+> +# define soc_is_exynos5800()	is_samsung_exynos5800()
+> +#else
+> +# define soc_is_exynos5800()	0
+> +#endif
+> +
+>  #define soc_is_exynos4() (soc_is_exynos4210() || soc_is_exynos4212() || \
+>  			  soc_is_exynos4412())
+> -#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5420())
+> +#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5420() || \
+> +			  soc_is_exynos5800())
+>  
+>  void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
+>  
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index 9c16da2..112bc66 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -70,7 +70,7 @@ static inline void __iomem *cpu_boot_reg(int cpu)
+>  		return ERR_PTR(-ENODEV);
+>  	if (soc_is_exynos4412())
+>  		boot_reg += 4*cpu;
+> -	else if (soc_is_exynos5420())
+> +	else if (soc_is_exynos5420() || soc_is_exynos5800())
+>  		boot_reg += 4;
+>  	return boot_reg;
+>  }
+> 
 
-I have tested v1 of this series on Exynos4210-TRATS and
-Exynos4412-TRATS2 boards and they seemed to work fine with added two
-patches that are already on the ML:
- - [PATCH v2] cpufreq: exynos: Fix driver compilation with
-ARCH_MULTIPLATFORM,
- - [PATCH] drm/exynos/fimd: allow multiplatform configuration.
-
-Not tested too extensively, but primary features (boot, display, USB
-gadget, cpufreq) seem to work at first glance with the above patches.
+Isn't this SoC a multi-cluster one? Shouldn't it rather use MCPM SMP ops
+and so the code being changed here be ignored completely?
 
 Best regards,
 Tomasz
