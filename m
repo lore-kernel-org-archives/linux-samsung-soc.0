@@ -1,99 +1,100 @@
-From: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 1/3] mmc: host: add slot argument to mmc_of_parse
-Date: Fri, 23 May 2014 19:25:19 +0900
-Message-ID: <1400840721-11050-2-git-send-email-jh80.chung@samsung.com>
-References: <1400840721-11050-1-git-send-email-jh80.chung@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1400840721-11050-1-git-send-email-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ludovic Desroches <ludovic.desroches-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>, Seungwon Jeon <tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Tarek Dakhran <t.dakhran@samsung.com>
+Subject: [PATCH v10 1/3] ARM: EXYNOS: Add support for EXYNOS5410 SoC
+Date: Fri, 23 May 2014 14:35:41 +0400
+Message-ID: <1400841343-6016-2-git-send-email-t.dakhran@samsung.com>
+References: <1400841343-6016-1-git-send-email-t.dakhran@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1400841343-6016-1-git-send-email-t.dakhran@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Romain Naour <romain.naour@openwide.fr>, Chander Kashyap <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@gmail.com>, Tarek Dakhran <t.dakhran@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Ludovic Desroches <ludovic.desroches-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+EXYNOS5410 is SoC in Samsung's Exynos5 SoC series.
+Add initial support for this SoC.
 
-Some hosts manage several slots. In these case information such as the
-bus width, chi detect and others are into the slot node. So we have to
-parse child node. If not NULL, slot node will be used instead of the
-device node.
-
-Signed-off-by: Ludovic Desroches <ludovic.desroches-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
+Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
 ---
- drivers/mmc/core/host.c  |   13 +++++++++----
- include/linux/mmc/host.h |   10 +++++++++-
- 2 files changed, 18 insertions(+), 5 deletions(-)
+ arch/arm/mach-exynos/Kconfig    |    8 ++++++++
+ arch/arm/mach-exynos/common.h   |   11 ++++++++++-
+ arch/arm/mach-exynos/firmware.c |    2 +-
+ 3 files changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-index 95cceae..0f677b3 100644
---- a/drivers/mmc/core/host.c
-+++ b/drivers/mmc/core/host.c
-@@ -298,15 +298,17 @@ static inline void mmc_host_clk_sysfs_init(struct mmc_host *host)
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 1602abc..79a3e85 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -84,6 +84,14 @@ config SOC_EXYNOS5250
+ 	help
+ 	  Enable EXYNOS5250 SoC support
+ 
++config SOC_EXYNOS5410
++	bool "SAMSUNG EXYNOS5410"
++	default y
++	depends on ARCH_EXYNOS5
++	select PM_GENERIC_DOMAINS if PM_RUNTIME
++	help
++	  Enable EXYNOS5410 SoC support
++
+ config SOC_EXYNOS5420
+ 	bool "SAMSUNG EXYNOS5420"
+ 	default y
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index e2d0954..d64c6de 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -21,6 +21,7 @@
+ #define EXYNOS4_CPU_MASK	0xFFFE0000
+ 
+ #define EXYNOS5250_SOC_ID	0x43520000
++#define EXYNOS5410_SOC_ID	0xE5410000
+ #define EXYNOS5420_SOC_ID	0xE5420000
+ #define EXYNOS5440_SOC_ID	0xE5440000
+ #define EXYNOS5_SOC_MASK	0xFFFFF000
+@@ -37,6 +38,7 @@ IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
+ IS_SAMSUNG_CPU(exynos4212, EXYNOS4212_CPU_ID, EXYNOS4_CPU_MASK)
+ IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
+ IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
++IS_SAMSUNG_CPU(exynos5410, EXYNOS5410_SOC_ID, EXYNOS5_SOC_MASK)
+ IS_SAMSUNG_CPU(exynos5420, EXYNOS5420_SOC_ID, EXYNOS5_SOC_MASK)
+ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+ 
+@@ -68,6 +70,12 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
+ # define soc_is_exynos5250()	0
  #endif
  
- /**
-- *	mmc_of_parse() - parse host's device-tree node
-+ *	__mmc_of_parse() - parse host's device-tree node
-  *	@host: host whose node should be parsed.
-+ *	@slot : some device provide several slots so the node to parse
-+ *		is not the host one.
-  *
-  * To keep the rest of the MMC subsystem unaware of whether DT has been
-  * used to to instantiate and configure this host instance or not, we
-  * parse the properties and set respective generic mmc-host flags and
-  * parameters.
-  */
--int mmc_of_parse(struct mmc_host *host)
-+int __mmc_of_parse(struct mmc_host *host, struct device_node *slot)
- {
- 	struct device_node *np;
- 	u32 bus_width;
-@@ -317,7 +319,10 @@ int mmc_of_parse(struct mmc_host *host)
- 	if (!host->parent || !host->parent->of_node)
- 		return 0;
++#if defined(CONFIG_SOC_EXYNOS5410)
++# define soc_is_exynos5410()	is_samsung_exynos5410()
++#else
++# define soc_is_exynos5410()	0
++#endif
++
+ #if defined(CONFIG_SOC_EXYNOS5420)
+ # define soc_is_exynos5420()	is_samsung_exynos5420()
+ #else
+@@ -82,7 +90,8 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
  
--	np = host->parent->of_node;
-+	if (slot)
-+		np = slot;
-+	else
-+		np = host->parent->of_node;
+ #define soc_is_exynos4() (soc_is_exynos4210() || soc_is_exynos4212() || \
+ 			  soc_is_exynos4412())
+-#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5420())
++#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5410() || \
++			  soc_is_exynos5420())
  
- 	/* "bus-width" is translated to MMC_CAP_*_BIT_DATA flags */
- 	if (of_property_read_u32(np, "bus-width", &bus_width) < 0) {
-@@ -459,7 +464,7 @@ out:
- 	return ret;
- }
+ void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
  
--EXPORT_SYMBOL(mmc_of_parse);
-+EXPORT_SYMBOL(__mmc_of_parse);
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 739bdc8..971baf0 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -50,7 +50,7 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
  
- /**
-  *	mmc_alloc_host - initialise the per-host structure.
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 7960424..c62af91 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -372,7 +372,15 @@ struct mmc_host *mmc_alloc_host(int extra, struct device *);
- int mmc_add_host(struct mmc_host *);
- void mmc_remove_host(struct mmc_host *);
- void mmc_free_host(struct mmc_host *);
--int mmc_of_parse(struct mmc_host *host);
-+int __mmc_of_parse(struct mmc_host *host, struct device_node *slot);
-+/*
-+ * mmc_of_parse - parse host's device-tree node
-+ *	@host: host whose node should be parsed.
-+ */
-+static inline int mmc_of_parse(struct mmc_host *host)
-+{
-+	return __mmc_of_parse(host, NULL);
-+}
+ 	boot_reg = sysram_ns_base_addr + 0x1c;
  
- static inline void *mmc_priv(struct mmc_host *host)
- {
+-	if (!soc_is_exynos4212())
++	if (!soc_is_exynos4212() && !soc_is_exynos5410())
+ 		boot_reg += 4*cpu;
+ 
+ 	__raw_writel(boot_addr, boot_reg);
 -- 
 1.7.9.5
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
