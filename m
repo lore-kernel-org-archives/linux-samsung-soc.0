@@ -1,50 +1,46 @@
-From: Tarek Dakhran <t.dakhran@samsung.com>
-Subject: [PATCH v10 0/3] Exynos 5410 support
-Date: Fri, 23 May 2014 14:35:40 +0400
-Message-ID: <1400841343-6016-1-git-send-email-t.dakhran@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 1/3] mmc: host: add slot argument to mmc_of_parse
+Date: Fri, 23 May 2014 16:14:01 +0530
+Message-ID: <CAHbNUh0pmG0vkOvM9fhcy_kPU1uDOUVCeTkgw1QQPG62c51CVQ@mail.gmail.com>
+References: <1400840721-11050-1-git-send-email-jh80.chung@samsung.com>
+	<1400840721-11050-2-git-send-email-jh80.chung@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1400840721-11050-2-git-send-email-jh80.chung@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Romain Naour <romain.naour@openwide.fr>, Chander Kashyap <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@gmail.com>, Tarek Dakhran <t.dakhran@samsung.com>
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc@vger.kernel.org, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Ludovic Desroches <ludovic.desroches@atmel.com>, Seungwon Jeon <tgih.jun@samsung.com>, devicetree <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The series of patches represent support of Exynos 5410 SoC
+On 23 May 2014 15:55, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> From: Ludovic Desroches <ludovic.desroches@atmel.com>
+>
+> Some hosts manage several slots. In these case information such as the
+> bus width, chi detect and others are into the slot node. So we have to
+> parse child node. If not NULL, slot node will be used instead of the
+> device node.
+>
+> Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> ---
+>  drivers/mmc/core/host.c  |   13 +++++++++----
+>  include/linux/mmc/host.h |   10 +++++++++-
+>  2 files changed, 18 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+> index 95cceae..0f677b3 100644
+> --- a/drivers/mmc/core/host.c
+> +++ b/drivers/mmc/core/host.c
+> @@ -298,15 +298,17 @@ static inline void mmc_host_clk_sysfs_init(struct mmc_host *host)
+>  #endif
+>
+>  /**
+> - *     mmc_of_parse() - parse host's device-tree node
+> + *     __mmc_of_parse() - parse host's device-tree node
 
-The Exynos 5410 is the first Samsung SoC based on big.LITTLE architecture
-
-Patches add new platform description, support of clock controller and device
-tree for Exynos 5410.
-
-Has been build on Samsung Linux Kernel
-  (branch: for-next, commit: 19307a0 Merge branch 'v3.16-next/dt-samsung-2' into for-next)
-Has been tested on: 1) Exynos 5410 reference board (exynos_defconfig)
-		    2) Odroid-XU board (exynos_defconfig)
-
-Many thanks for reviewing to Tomasz Figa.
-
-Tarek.
-
-Tarek Dakhran (3):
-  ARM: EXYNOS: Add support for EXYNOS5410 SoC
-  clk: exynos5410: register clocks using common clock framework
-  ARM: dts: Add initial device tree support for EXYNOS5410
-
- .../devicetree/bindings/clock/exynos5410-clock.txt |   51 +++++
- arch/arm/boot/dts/Makefile                         |    1 +
- arch/arm/boot/dts/exynos5410-smdk5410.dts          |   82 ++++++++
- arch/arm/boot/dts/exynos5410.dtsi                  |  206 +++++++++++++++++++
- arch/arm/mach-exynos/Kconfig                       |    8 +
- arch/arm/mach-exynos/common.h                      |   11 +-
- arch/arm/mach-exynos/firmware.c                    |    2 +-
- drivers/clk/samsung/Makefile                       |    1 +
- drivers/clk/samsung/clk-exynos5410.c               |  209 ++++++++++++++++++++
- include/dt-bindings/clock/exynos5410.h             |   33 ++++
- 10 files changed, 602 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/exynos5410-clock.txt
- create mode 100644 arch/arm/boot/dts/exynos5410-smdk5410.dts
- create mode 100644 arch/arm/boot/dts/exynos5410.dtsi
- create mode 100644 drivers/clk/samsung/clk-exynos5410.c
- create mode 100644 include/dt-bindings/clock/exynos5410.h
+IMO it would be better to rename this function, something like
+mmc_of_parse_slot().
 
 -- 
-1.7.9.5
+Tushar Behera
