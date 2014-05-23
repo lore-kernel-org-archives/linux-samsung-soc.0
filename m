@@ -1,77 +1,51 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH V2 1/2] ARM: EXYNOS: Update secondary boot addr for secure mode
-Date: Fri, 23 May 2014 09:42:01 +0530
-Message-ID: <CAHbNUh2i8_ib-K6981G=g16MocKWM08iVyMLO3a5w9kJz177+A@mail.gmail.com>
-References: <1400557810-28428-1-git-send-email-tushar.behera@linaro.org>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH] PM / devfreq: remove checks for CONFIG_EXYNOS_ASV
+Date: Fri, 23 May 2014 04:52:44 +0000 (GMT)
+Message-ID: <7638065.14871400820762911.JavaMail.weblogic@epml08>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:49715 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750814AbaEWEMC (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:10247 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751020AbaEWEws (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 00:12:02 -0400
-Received: by mail-oa0-f46.google.com with SMTP id i4so5037202oah.5
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 May 2014 21:12:01 -0700 (PDT)
-In-Reply-To: <1400557810-28428-1-git-send-email-tushar.behera@linaro.org>
+	Fri, 23 May 2014 00:52:48 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N60007P2G7YSIC0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 May 2014 13:52:46 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sachin Kamat <sachin.kamat@linaro.org>
+To: Paul Bolle <pebolle@tiscali.nl>, =?euc-kr?Q?=B9=DA=B0=E6=B9=CE?= <kyungmin.park@samsung.com>, =?euc-kr?Q?=B1=E8=B1=B9=C1=F8?= <kgene.kim@samsung.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 20 May 2014 09:20, Tushar Behera <tushar.behera@linaro.org> wrote:
-> From: Sachin Kamat <sachin.kamat@linaro.org>
->
-> Almost all Exynos-series of SoCs that run in secure mode don't need
-> additional offset for every CPU, with Exynos4412 being the only
-> exception.
->
-> Tested on Origen-Quad (Exynos4412) and Arndale-Octa (Exynos5420).
->
-> While at it, fix the coding style (space around *).
->
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> ---
-> Changes for V2:
-> * Changed the condition statement as per review comment
-> * Fixed coding style
->
->  arch/arm/mach-exynos/firmware.c |    9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-
-Kukjin,
-
-Would you please pick this patch and patch 2/2 for this merge window?
-
-[PATCH RESEND 2/2] ARM: dts: Add secure firmware support for Arndale-octa
-
-> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-> index 739bdc8..7d18103 100644
-> --- a/arch/arm/mach-exynos/firmware.c
-> +++ b/arch/arm/mach-exynos/firmware.c
-> @@ -50,8 +50,13 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
->
->         boot_reg = sysram_ns_base_addr + 0x1c;
->
-> -       if (!soc_is_exynos4212())
-> -               boot_reg += 4*cpu;
-> +       /*
-> +        * Almost all Exynos-series of SoCs that run in secure mode don't need
-> +        * additional offset for every CPU, with Exynos4412 being the only
-> +        * exception.
-> +        */
-> +       if (soc_is_exynos4412())
-> +               boot_reg += 4 * cpu;
->
->         __raw_writel(boot_addr, boot_reg);
->         return 0;
-> --
-> 1.7.9.5
->
-
-
-
--- 
-Tushar Behera
+T24gVGh1LCBNYXkgMjIsIDIwMTQgYXQgNTozNyBBTSwgUGF1bCBCb2xsZSA8cGVib2xsZUB0aXNj
+YWxpLm5sPiB3cm90ZToNCj4gQ2hlY2tzIGZvciBDT05GSUdfRVhZTk9TX0FTViB3ZXJlIGFkZGVk
+IGluIHYzLjMuIEJ1dCB0aGUgcmVsYXRlZCBLY29uZmlnDQo+IHN5bWJvbCBoYXMgbmV2ZXIgYmVl
+biBhZGRlZCB0byB0aGUgdHJlZS4gUmVtb3ZlIHRoZXNlIGNoZWNrcywgYXMgdGhleQ0KPiBhbHdh
+eXMgZXZhbHVhdGUgdG8gZmFsc2UuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IFBhdWwgQm9sbGUgPHBl
+Ym9sbGVAdGlzY2FsaS5ubD4NCg0KVGhhbmtzIGZvciBwb2ludGluZyB0aGlzIG91dC4NCg0KQVNW
+IHdhcyBzdXBwb3NlZCB0byBiZSBtZXJnZWQsIGJ1dCBpdCBhcHBlYXJzIGl0IGZhaWxlZCBvciBu
+ZXZlciBhdHRlbXB0ZWQuDQoNCkkgd2lsbCBtZXJnZSB3aXRoIHRoZSBuZXh0IGJhdGNoICh0aGlz
+IHdlZWspLg0KDQoNCkNoZWVycywNCk15dW5nSm9vLg0KDQo+IC0tLQ0KPiAwKSBVbnRlc3RlZC4N
+Cj4NCj4gMSkgSSBkbyBub3QgcmVhbGx5IGNhcmUgbXVjaCBmb3IgdGhpcyBwYXRjaC4gVHdvIHll
+YXJzIGlzIG5vdCB2ZXJ5IGxvbmcNCj4gZm9yIGRlYWQgY29kZSB0byByZW1haW4gaW4gdGhlIHRy
+ZWUuIFRoZXJlIGlzLCBob3dldmVyLCBhIHRyaXZpYWwgaXNzdWUNCj4gdGhhdCBtYWtlcyB0aGlz
+IHBhdGNoIHN0YW5kIG91dCBmcm9tIHRoZSBvdGhlciBwYXRjaGVzIGluIG15IGN1cnJlbnQNCj4g
+c3dlZXAgb2YgdGhlIHRyZWUgZm9yIEtjb25maWcgcmVsYXRlZCBwcm9ibGVtcy4NCj4NCj4gU2Vl
+LCBoZXJlIHRoZSB1c2Ugb2YgYW4gdW5rbm93biBLY29uZmlnIG1hY3JvIGhpZGVzIGFuIG9idmlv
+dXMgdHlwbzogaXQNCj4gc2hvdWxkIGVpdGhlciBiZSAiZXh5bm9zX3Jlc3VsdF9vZl9hc3YiIG9y
+ICJleHlub3M0X3Jlc3VsdF9vZl9hc3YiLCBidXQNCj4gbm90IGJvdGguIEllLCB0aGlzIGFsbW9z
+dCBjZXJ0YWlubHkgd291bGRuJ3QgaGF2ZSBjb21waWxlZCBldmVuIGlmIHRoZQ0KPiBLY29uZmln
+IHN5bWJvbCBFWFlOT1NfQVNWIHdvdWxkIGhhdmUgYmVlbiBwYXJ0IG9mIHRoZSB0cmVlLg0KPg0K
+PiAyKSBTbyB0aGlzIG1ha2VzIG1lIHdvbmRlciB3aGV0aGVyIHRoZXJlIGFyZSBhbnkgZ3VpZGVs
+aW5lcyBmb3IgdXNpbmcNCj4gS2NvbmZpZyBtYWNyb3MgYmVmb3JlIHRoZSByZWxhdGVkIEtjb25m
+aWcgc3ltYm9scyBhcmUgbWVyZ2VkPw0KPg0KPiAgZHJpdmVycy9kZXZmcmVxL0tjb25maWcgICAg
+ICAgICAgICAgIHwgIDMgKy0tDQo+ICBkcml2ZXJzL2RldmZyZXEvZXh5bm9zL2V4eW5vczRfYnVz
+LmMgfCAxMyAtLS0tLS0tLS0tLS0tDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCsp
+LCAxNSBkZWxldGlvbnMoLSk=
