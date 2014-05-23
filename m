@@ -1,51 +1,39 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH] PM / devfreq: remove checks for CONFIG_EXYNOS_ASV
-Date: Fri, 23 May 2014 04:52:44 +0000 (GMT)
-Message-ID: <7638065.14871400820762911.JavaMail.weblogic@epml08>
-Reply-To: myungjoo.ham@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH 0/3] Power-domain clk handling
+Date: Fri, 23 May 2014 10:38:09 +0530
+Message-ID: <1400821692-22370-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:10247 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751020AbaEWEws (ORCPT
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:35499 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750961AbaEWFIV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 May 2014 00:52:48 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N60007P2G7YSIC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 23 May 2014 13:52:46 +0900 (KST)
-MIME-version: 1.0
+	Fri, 23 May 2014 01:08:21 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>, =?euc-kr?Q?=B9=DA=B0=E6=B9=CE?= <kyungmin.park@samsung.com>, =?euc-kr?Q?=B1=E8=B1=B9=C1=F8?= <kgene.kim@samsung.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: t.figa@samsung.com, kgene.kim@samsung.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, prathyush.k@samsung.com, abrestic@chromium.org, arunkk.samsung@gmail.com
 
-T24gVGh1LCBNYXkgMjIsIDIwMTQgYXQgNTozNyBBTSwgUGF1bCBCb2xsZSA8cGVib2xsZUB0aXNj
-YWxpLm5sPiB3cm90ZToNCj4gQ2hlY2tzIGZvciBDT05GSUdfRVhZTk9TX0FTViB3ZXJlIGFkZGVk
-IGluIHYzLjMuIEJ1dCB0aGUgcmVsYXRlZCBLY29uZmlnDQo+IHN5bWJvbCBoYXMgbmV2ZXIgYmVl
-biBhZGRlZCB0byB0aGUgdHJlZS4gUmVtb3ZlIHRoZXNlIGNoZWNrcywgYXMgdGhleQ0KPiBhbHdh
-eXMgZXZhbHVhdGUgdG8gZmFsc2UuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IFBhdWwgQm9sbGUgPHBl
-Ym9sbGVAdGlzY2FsaS5ubD4NCg0KVGhhbmtzIGZvciBwb2ludGluZyB0aGlzIG91dC4NCg0KQVNW
-IHdhcyBzdXBwb3NlZCB0byBiZSBtZXJnZWQsIGJ1dCBpdCBhcHBlYXJzIGl0IGZhaWxlZCBvciBu
-ZXZlciBhdHRlbXB0ZWQuDQoNCkkgd2lsbCBtZXJnZSB3aXRoIHRoZSBuZXh0IGJhdGNoICh0aGlz
-IHdlZWspLg0KDQoNCkNoZWVycywNCk15dW5nSm9vLg0KDQo+IC0tLQ0KPiAwKSBVbnRlc3RlZC4N
-Cj4NCj4gMSkgSSBkbyBub3QgcmVhbGx5IGNhcmUgbXVjaCBmb3IgdGhpcyBwYXRjaC4gVHdvIHll
-YXJzIGlzIG5vdCB2ZXJ5IGxvbmcNCj4gZm9yIGRlYWQgY29kZSB0byByZW1haW4gaW4gdGhlIHRy
-ZWUuIFRoZXJlIGlzLCBob3dldmVyLCBhIHRyaXZpYWwgaXNzdWUNCj4gdGhhdCBtYWtlcyB0aGlz
-IHBhdGNoIHN0YW5kIG91dCBmcm9tIHRoZSBvdGhlciBwYXRjaGVzIGluIG15IGN1cnJlbnQNCj4g
-c3dlZXAgb2YgdGhlIHRyZWUgZm9yIEtjb25maWcgcmVsYXRlZCBwcm9ibGVtcy4NCj4NCj4gU2Vl
-LCBoZXJlIHRoZSB1c2Ugb2YgYW4gdW5rbm93biBLY29uZmlnIG1hY3JvIGhpZGVzIGFuIG9idmlv
-dXMgdHlwbzogaXQNCj4gc2hvdWxkIGVpdGhlciBiZSAiZXh5bm9zX3Jlc3VsdF9vZl9hc3YiIG9y
-ICJleHlub3M0X3Jlc3VsdF9vZl9hc3YiLCBidXQNCj4gbm90IGJvdGguIEllLCB0aGlzIGFsbW9z
-dCBjZXJ0YWlubHkgd291bGRuJ3QgaGF2ZSBjb21waWxlZCBldmVuIGlmIHRoZQ0KPiBLY29uZmln
-IHN5bWJvbCBFWFlOT1NfQVNWIHdvdWxkIGhhdmUgYmVlbiBwYXJ0IG9mIHRoZSB0cmVlLg0KPg0K
-PiAyKSBTbyB0aGlzIG1ha2VzIG1lIHdvbmRlciB3aGV0aGVyIHRoZXJlIGFyZSBhbnkgZ3VpZGVs
-aW5lcyBmb3IgdXNpbmcNCj4gS2NvbmZpZyBtYWNyb3MgYmVmb3JlIHRoZSByZWxhdGVkIEtjb25m
-aWcgc3ltYm9scyBhcmUgbWVyZ2VkPw0KPg0KPiAgZHJpdmVycy9kZXZmcmVxL0tjb25maWcgICAg
-ICAgICAgICAgIHwgIDMgKy0tDQo+ICBkcml2ZXJzL2RldmZyZXEvZXh5bm9zL2V4eW5vczRfYnVz
-LmMgfCAxMyAtLS0tLS0tLS0tLS0tDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCsp
-LCAxNSBkZWxldGlvbnMoLSk=
+This patchset enables the clk handling in power domain for
+working as per the recommended power domain on / off sequence for
+exynos5 SoCs. I have posted an RFC for the same [1] and didnt get any
+review comments / objections. So I am dropping the RFC tag and
+posting the patch along with the required clk and dt support.
+
+[1] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg30479.html
+
+Arun Kumar K (2):
+  clk: exynos5420: Add IDs for clocks used in PD mfc
+  ARM: dts: Add clock property for mfc_pd in 5420
+
+Prathyush K (1):
+  ARM: EXYNOS: Add support for clock handling in power domain
+
+ .../bindings/arm/exynos/power_domain.txt           |   18 +++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |    3 ++
+ arch/arm/mach-exynos/pm_domains.c                  |   56 +++++++++++++++++++-
+ drivers/clk/samsung/clk-exynos5420.c               |    6 ++-
+ include/dt-bindings/clock/exynos5420.h             |    2 +
+ 5 files changed, 82 insertions(+), 3 deletions(-)
+
+-- 
+1.7.9.5
