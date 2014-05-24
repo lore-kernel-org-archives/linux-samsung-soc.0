@@ -1,72 +1,79 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH] PM / devfreq: remove checks for CONFIG_EXYNOS_ASV
-Date: Sat, 24 May 2014 21:40:31 +0900
-Message-ID: <CAJ0PZbS_Xcu=OJuiy=xs7k_A1=ajp34KEdi4KGC3e-y8t3EUGw@mail.gmail.com>
-References: <7638065.14871400820762911.JavaMail.weblogic@epml08>
-Reply-To: myungjoo.ham@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <7638065.14871400820762911.JavaMail.weblogic@epml08>
-Sender: linux-pm-owner@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH] ARM: exynos: Fix kernel panic when unplugging CPU1 on 4210
+Date: Sat, 24 May 2014 19:24:15 +0200
+Message-ID: <1400952255-13750-1-git-send-email-daniel.lezcano@linaro.org>
+References: <537FBE42.7050608@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:53640 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750882AbaEXRYD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 24 May 2014 13:24:03 -0400
+Received: by mail-wi0-f170.google.com with SMTP id bs8so2475371wib.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 24 May 2014 10:24:01 -0700 (PDT)
+In-Reply-To: <537FBE42.7050608@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com, tomasz.figa@gmail.com
+Cc: linux-samsung-soc@vger.kernel.org, rjw@rjwysocki.net, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, arnd.bergmann@linaro.org, sachin.kamat@linaro.org, heiko@sntech.de
 
-On Fri, May 23, 2014 at 1:52 PM, MyungJoo Ham <myungjoo.ham@samsung.com> wrote:
-> On Thu, May 22, 2014 at 5:37 AM, Paul Bolle <pebolle@tiscali.nl> wrote:
->> Checks for CONFIG_EXYNOS_ASV were added in v3.3. But the related Kconfig
->> symbol has never been added to the tree. Remove these checks, as they
->> always evaluate to false.
->>
->> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
->
-> Thanks for pointing this out.
->
-> ASV was supposed to be merged, but it appears it failed or never attempted.
->
-> I will merge with the next batch (this week).
->
->
-> Cheers,
-> MyungJoo.
+A look at the code reveals use of S5P_VA_SYSRAM macro, in case of certain SoC
+revisions, which is not valid any longer, after SYSRAM started to be mapped
+dynamically. The new dynamic mapping is stored in sysram_base_addr variable,
+which is declared static in platsmp.c
 
-Uh.. ASV itself affects the power efficiency; thus, I'd like to keep
-it alive, but not as the current form.
+This fix makes sysram_base_addr non-static, declared it in common.h and used
+in pm.c instead of S5P_VA_SYSRAM.
 
-For 3.16, I'll correct the name following your report. (not going for
-3.15RCx anyway)
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Suggested-by: Tomasz Figa <t.figa@samsung.com>
+---
+ arch/arm/mach-exynos/common.h  |    1 +
+ arch/arm/mach-exynos/platsmp.c |    2 +-
+ arch/arm/mach-exynos/pm.c      |    4 ++--
+ 3 files changed, 4 insertions(+), 3 deletions(-)
 
-
-Then, I'll let it merged into struct busfreq_data for later RCx.
-
-
-Cheers,
-MyungJoo.
-
->
->> ---
->> 0) Untested.
->>
->> 1) I do not really care much for this patch. Two years is not very long
->> for dead code to remain in the tree. There is, however, a trivial issue
->> that makes this patch stand out from the other patches in my current
->> sweep of the tree for Kconfig related problems.
->>
->> See, here the use of an unknown Kconfig macro hides an obvious typo: it
->> should either be "exynos_result_of_asv" or "exynos4_result_of_asv", but
->> not both. Ie, this almost certainly wouldn't have compiled even if the
->> Kconfig symbol EXYNOS_ASV would have been part of the tree.
->>
->> 2) So this makes me wonder whether there are any guidelines for using
->> Kconfig macros before the related Kconfig symbols are merged?
->>
->>  drivers/devfreq/Kconfig              |  3 +--
->>  drivers/devfreq/exynos/exynos4_bus.c | 13 -------------
->>  2 files changed, 1 insertion(+), 15 deletions(-)
-
-
-
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index e2d0954..a012bc1 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -88,6 +88,7 @@ void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
+ 
+ struct map_desc;
+ extern void __iomem *sysram_ns_base_addr;
++extern void __iomem *sysram_base_addr;
+ void exynos_init_io(void);
+ void exynos_restart(enum reboot_mode mode, const char *cmd);
+ void exynos_cpuidle_init(void);
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 9c16da2..f2bea78 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -32,7 +32,7 @@
+ 
+ extern void exynos4_secondary_startup(void);
+ 
+-static void __iomem *sysram_base_addr;
++void __iomem *sysram_base_addr;
+ void __iomem *sysram_ns_base_addr;
+ 
+ static void __init exynos_smp_prepare_sysram(void)
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index d10c351..87c0d34 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -168,10 +168,10 @@ int exynos_cluster_power_state(int cluster)
+ 
+ #define EXYNOS_BOOT_VECTOR_ADDR	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
+ 			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
+-			(S5P_VA_SYSRAM + 0x24) : S5P_INFORM0))
++			(sysram_base_addr + 0x24) : S5P_INFORM0))
+ #define EXYNOS_BOOT_VECTOR_FLAG	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
+ 			S5P_INFORM6 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
+-			(S5P_VA_SYSRAM + 0x20) : S5P_INFORM1))
++			(sysram_base_addr + 0x20) : S5P_INFORM1))
+ 
+ #define S5P_CHECK_AFTR  0xFCBA0D10
+ #define S5P_CHECK_SLEEP 0x00000BAD
 -- 
-MyungJoo Ham, Ph.D.
-System S/W Lab, S/W Center, Samsung Electronics
+1.7.9.5
