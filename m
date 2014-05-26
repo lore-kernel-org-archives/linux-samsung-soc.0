@@ -1,88 +1,78 @@
 From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v4 2/2] Documentation: devicetree: Add boost-frequency
- binding to list boost mode frequency
-Date: Mon, 26 May 2014 11:39:23 +0530
-Message-ID: <CAKohpokB8qg7aZ6tncvU8LSL09EAi+X6a2UnZDA7rA1SymLAQg@mail.gmail.com>
-References: <1400852262-6290-1-git-send-email-thomas.ab@samsung.com>
-	<1400852262-6290-3-git-send-email-thomas.ab@samsung.com>
+Subject: Re: [PATCH v5 1/7] cpufreq: cpufreq-cpu0: allow use of optional boost
+ mode frequencies
+Date: Mon, 26 May 2014 11:42:58 +0530
+Message-ID: <CAKohpo=MhUdYK8jEmuOB=Nj9JPBqEoUnQB6SY3vQ35yfkduUVA@mail.gmail.com>
+References: <1400855260-6807-1-git-send-email-thomas.ab@samsung.com>
+	<1400855260-6807-2-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:34388 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751466AbaEZGJX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 May 2014 02:09:23 -0400
-Received: by mail-oa0-f53.google.com with SMTP id m1so7985988oag.12
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2014 23:09:23 -0700 (PDT)
-In-Reply-To: <1400852262-6290-3-git-send-email-thomas.ab@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <1400855260-6807-2-git-send-email-thomas.ab@samsung.com>
+Sender: cpufreq-owner@vger.kernel.org
 To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 23 May 2014 19:07, Thomas Abraham <thomas.ab@samsung.com> wrote:
+On 23 May 2014 19:57, Thomas Abraham <thomas.ab@samsung.com> wrote:
 > From: Thomas Abraham <thomas.ab@samsung.com>
 >
-> Add a new optional boost-frequency binding for specifying the frequencies
-> usable in boost mode.
+> Lookup for the optional boost-frequency property in cpu0 node and if
+> available, enable support for boost mode frequencies. The frequencies
+> usable in boost mode are determined while preparing the cpufreq table
+> from the list of operating points available.
 >
-> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Shawn Guo <shawn.guo@linaro.org>
 > Cc: Lukasz Majewski <l.majewski@samsung.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Pawel Moll <pawel.moll@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-> Cc: Kumar Gala <galak@codeaurora.org>
 > Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 > ---
->  .../devicetree/bindings/cpufreq/cpufreq-boost.txt  |   38 ++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+>  .../devicetree/bindings/cpufreq/cpufreq-cpu0.txt   |    2 ++
+>  drivers/cpufreq/Kconfig                            |    1 +
+>  drivers/cpufreq/cpufreq-cpu0.c                     |    3 +++
+>  3 files changed, 6 insertions(+)
 >
-> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
-> new file mode 100644
-> index 0000000..63ed0fc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
-> @@ -0,0 +1,38 @@
-> +* Device tree binding for CPU boost frequency (aka over-clocking)
-> +
-> +Certain CPU's can be operated in optional 'boost' mode (or sometimes referred as
-> +overclocking) in which the CPU can operate at frequencies which are not
-> +specified by the manufacturer as CPU's operating frequency.
-> +
-> +Optional Properties:
-> +- boost-frequencies: list of frequencies in KHz to be used only in boost mode.
-> +  This list should be a subset of frequencies listed in "operating-points"
-> +  property. Refer to Documentation/devicetree/bindings/power/opp.txt for
-> +  details about "operating-points" property.
-> +
-> +Example:
-> +
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a9";
-> +                       reg = <0>;
-> +
-> +                       operating-points = <
-> +                               1500000 1350000
-> +                               1400000 1287500
-> +                               1300000 1250000
-> +                               1200000 1187500
-> +                               1100000 1137500
-> +                               1000000 1087500
-> +                       >;
-> +                       boost-frequencies = <1500000 1400000>;
-> +               };
-> +               cpu@1 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a9";
-> +                       reg = <1>;
-> +               };
-> +       };
+> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> index f055515..60f321a 100644
+> --- a/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-cpu0.txt
+> @@ -19,6 +19,8 @@ Optional properties:
+>  - cooling-min-level:
+>  - cooling-max-level:
+>       Please refer to Documentation/devicetree/bindings/thermal/thermal.txt.
+> +- boost-frequency:
+> +     Please refer to Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+>
+>  Examples:
+>
+> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+> index 1fbe11f..52741b9 100644
+> --- a/drivers/cpufreq/Kconfig
+> +++ b/drivers/cpufreq/Kconfig
+> @@ -187,6 +187,7 @@ config GENERIC_CPUFREQ_CPU0
+>         tristate "Generic CPU0 cpufreq driver"
+>         depends on HAVE_CLK && REGULATOR && OF && THERMAL && CPU_THERMAL
+>         select PM_OPP
+> +       select CPU_FREQ_BOOST_SW
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Drop this. Select it from your platform driver if you want.
+
+>         help
+>           This adds a generic cpufreq driver for CPU0 frequency management.
+>           It supports both uniprocessor (UP) and symmetric multiprocessor (SMP)
+> diff --git a/drivers/cpufreq/cpufreq-cpu0.c b/drivers/cpufreq/cpufreq-cpu0.c
+> index 1bf6bba..93d3d6d 100644
+> --- a/drivers/cpufreq/cpufreq-cpu0.c
+> +++ b/drivers/cpufreq/cpufreq-cpu0.c
+> @@ -194,6 +194,9 @@ static int cpu0_cpufreq_probe(struct platform_device *pdev)
+>                         transition_latency += ret * 1000;
+>         }
+>
+> +       if (of_find_property(cpu_dev->of_node, "boost-frequencies", NULL))
+> +               cpu0_cpufreq_driver.boost_supported = true;
+> +
+>         ret = cpufreq_register_driver(&cpu0_cpufreq_driver);
+>         if (ret) {
+>                 pr_err("failed register driver: %d\n", ret);
+> --
+> 1.7.9.5
+>
