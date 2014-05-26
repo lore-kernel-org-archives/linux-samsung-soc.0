@@ -1,40 +1,56 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v2] cpufreq: exynos: Fix driver compilation with ARCH_MULTIPLATFORM
-Date: Mon, 26 May 2014 11:10:35 +0530
-Message-ID: <CAKohpo=b=Jm4vZfgS2YPA740QfvktgVExXXzOdSUmQjGWhzrhg@mail.gmail.com>
-References: <1400670752-673-1-git-send-email-t.figa@samsung.com>
-	<1400858533-4327-1-git-send-email-t.figa@samsung.com>
-	<53826377.8060709@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH] arm: exynos: Enable mcpm for dual-cluster 5800 SoC
+Date: Mon, 26 May 2014 11:24:36 +0530
+Message-ID: <1401083676-25660-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f45.google.com ([209.85.219.45]:52553 "EHLO
-	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751179AbaEZFkg (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:28627 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750951AbaEZFxJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 May 2014 01:40:36 -0400
-Received: by mail-oa0-f45.google.com with SMTP id l6so7873424oag.4
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2014 22:40:35 -0700 (PDT)
-In-Reply-To: <53826377.8060709@samsung.com>
+	Mon, 26 May 2014 01:53:09 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N660062M30JR060@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 May 2014 14:53:07 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sachin Kamat <sachin.kamat@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, t.figa@samsung.com
+Cc: Abhilash Kesavan <a.kesavan@samsung.com>
 
-On 26 May 2014 03:11, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> I'm not sure Thomas' v5 cpufreq-cpu0 driver can be upstreamed for 3.16
-> because of dependency with others, some of them got ack though...
->
-> * "PM / OPP: move cpufreq specific helpers out of OPP layer"
-> - https://www.mail-archive.com/linux-omap@vger.kernel.org/msg104610.html
+5800 is very similar to 5420. We can re-use the existing
+MCPM support for 5800 for secondary boot-up and switching.
 
-This is already lying in Rafael's tree.
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+---
+ arch/arm/mach-exynos/mcpm-exynos.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> * "cpufreq: opp: Add device tree based lookup of boost mode frequency"
-> - http://www.spinics.net/lists/arm-kernel/msg334336.html
->
-> So firstly, I've queued this instead with exynos-multiplatform series...
->
-> How do you think?
-
-Looks fine to me. Thanks.
+diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+index 1ac618c..20707bd 100644
+--- a/arch/arm/mach-exynos/mcpm-exynos.c
++++ b/arch/arm/mach-exynos/mcpm-exynos.c
+@@ -290,13 +290,19 @@ static void __naked exynos_pm_power_up_setup(unsigned int affinity_level)
+ 	"b	cci_enable_port_for_self");
+ }
+ 
++static const struct of_device_id exynos_dt_mcpm_match[] = {
++	{ .compatible = "samsung,exynos5420" },
++	{ .compatible = "samsung,exynos5800" },
++	{},
++};
++
+ static int __init exynos_mcpm_init(void)
+ {
+ 	struct device_node *node;
+ 	void __iomem *ns_sram_base_addr;
+ 	int ret;
+ 
+-	node = of_find_compatible_node(NULL, NULL, "samsung,exynos5420");
++	node = of_find_matching_node(NULL, exynos_dt_mcpm_match);
+ 	if (!node)
+ 		return -ENODEV;
+ 	of_node_put(node);
+-- 
+1.7.9.5
