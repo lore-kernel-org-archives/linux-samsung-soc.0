@@ -1,139 +1,164 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v4 1/2] cpufreq / OPP: Allow boost frequency to be looked
- up from device tree
-Date: Mon, 26 May 2014 11:28:59 +0530
-Message-ID: <CAKohpom02xmubyNMMmH9J59i8KCoAXpZoX+Gj9NP9gQ8B9qB3w@mail.gmail.com>
-References: <1400852262-6290-1-git-send-email-thomas.ab@samsung.com>
-	<1400852262-6290-2-git-send-email-thomas.ab@samsung.com>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v4 4/8] Documentation: devicetree: add cpu clock
+ configuration data binding for Exynos4/5
+Date: Mon, 26 May 2014 11:35:08 +0530
+Message-ID: <CAJuA9aikGp=_Vgv+qGyRJhSo1a0Qpb_KLE9a63wtbRNbrxYBYQ@mail.gmail.com>
+References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
+	<1400029876-5830-5-git-send-email-thomas.ab@samsung.com>
+	<53769E1F.1090706@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:37123 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750951AbaEZF7A (ORCPT
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:47332 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751663AbaEZGFJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 May 2014 01:59:00 -0400
-Received: by mail-oa0-f46.google.com with SMTP id i4so7953754oah.33
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2014 22:58:59 -0700 (PDT)
-In-Reply-To: <1400852262-6290-2-git-send-email-thomas.ab@samsung.com>
+	Mon, 26 May 2014 02:05:09 -0400
+In-Reply-To: <53769E1F.1090706@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Nishanth Menon <nm@ti.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-On 23 May 2014 19:07, Thomas Abraham <thomas.ab@samsung.com> wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
+Hi Tomasz,
+
+Thanks for your comments. Please see inline reply.
+
+On Sat, May 17, 2014 at 4:54 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Thomas,
 >
-> Commit 6f19efc0 ("cpufreq: Add boost frequency support in core") adds
-> support for CPU boost mode. This patch adds support for finding available
-> boost frequencies from device tree and marking them as usable in boost mode.
+> Please see my comments inline.
 >
-> Cc: Nishanth Menon <nm@ti.com>
-> Cc: Lukasz Majewski <l.majewski@samsung.com>
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> ---
->  drivers/cpufreq/cpufreq_opp.c |   44 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
+> On 14.05.2014 03:11, Thomas Abraham wrote:
+>> From; Thomas Abraham <thomas.ab@samsung.com>
+>>
+>> The clock blocks within the CMU_CPU clock domain are put together into a
+>> new composite clock type called the cpu clock. This clock type requires
+>> configuration data that will be atomically programmed in the multiple
+>> clock blocks encapsulated within the cpu clock type when the parent clock
+>> frequency is changed. This configuration data is held in the clock controller
+>> node. Update clock binding documentation about this configuration data format
+>> for Samsung Exynos4 and Exynos5 platforms.
+>>
+>> Cc: Tomasz Figa <t.figa@samsung.com>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: Pawel Moll <pawel.moll@arm.com>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+>> Cc: Kumar Gala <galak@codeaurora.org>
+>> Cc: <devicetree@vger.kernel.org>
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> ---
+>>  .../devicetree/bindings/clock/exynos4-clock.txt    |   37 ++++++++++++++++++++
+>>  .../devicetree/bindings/clock/exynos5250-clock.txt |   36 +++++++++++++++++++
+>>  2 files changed, 73 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+>> index f5a5b19..0934e02 100644
+>> --- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+>> +++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+>> @@ -15,6 +15,35 @@ Required Properties:
+>>
+>>  - #clock-cells: should be 1.
+>>
+>> +- samsung,armclk-divider-table: when the frequency of the APLL is changed
+>> +  the divider clocks in CMU_CPU clock domain also need to be updated. These
+>> +  divider clocks have SoC specific divider clock output requirements for a
+>> +  specific APLL clock speeds. When APLL clock rate is changed, these divider
+>> +  clocks are reprogrammed with pre-determined values in order to maintain the
+>> +  SoC specific divider clock outputs. This property lists the divider values
+>> +  for divider clocks in the CMU_CPU block for supported APLL clock speeds.
+>> +  The format of each entry included in the arm-frequency-table should be
+>> +  as defined below
 >
-> diff --git a/drivers/cpufreq/cpufreq_opp.c b/drivers/cpufreq/cpufreq_opp.c
-> index c0c6f4a..2b3905b 100644
-> --- a/drivers/cpufreq/cpufreq_opp.c
-> +++ b/drivers/cpufreq/cpufreq_opp.c
-> @@ -19,6 +19,7 @@
->  #include <linux/pm_opp.h>
->  #include <linux/rcupdate.h>
->  #include <linux/slab.h>
-> +#include <linux/of.h>
+> As far as I understand, the relation is not between the APLL frequency
+> and particular clocks in CPU domain, but rather between the latter and
+> input clock to CPU domain, which is _after_ the two dividers (called
+> DIV_CORE and DIV_CORE2 or ARM_DIV1 and ARM_DIV2), which is also exactly
+> the output frequency of ARMCLK.
 >
->  /**
->   * dev_pm_opp_init_cpufreq_table() - create a cpufreq table for a device
-> @@ -51,6 +52,10 @@ int dev_pm_opp_init_cpufreq_table(struct device *dev,
->         struct cpufreq_frequency_table *freq_table = NULL;
->         int i, max_opps, ret = 0;
->         unsigned long rate;
-> +#ifdef CONFIG_CPU_FREQ_BOOST_SW
-> +       int j, len;
-> +       u32 *boost_freqs = NULL;
-> +#endif
+>> +
+>> +  - for Exynos4210 and Exynos4212 based platforms:
+>> +      cell #1: arm clock parent frequency
 >
->         rcu_read_lock();
+> Considering my comment above, this should be rather ARMCLK frequency.
+
+The clocks SCLK_APLL, SCLK_HPM, ATCLK and PCLK_DBG have no relation to
+the ARMCLK frequency. These clocks are directly derived from the PLL
+clock and so it would not be correct to have them related to ARMCLK.
+
+So, I see two solutions to this, first being preferred solution.
+
+[A] Cell #1 should define PLL (parent of armclk) clock speed. Cell #2
+and Cell #3  should define divider values for ARMCLK clock speed. The
+hardware does support PLL frequency != ARMCLK frequency and so DT
+binding should allow that (even though implementation in the linux
+kernel does not use this feature). BTW, this was what was done in v2
+of this series.
+
+[B] Embedded this data with the code and don't get this from DT. The
+reason for doing this is, these are SoC specific values and not board
+specific. And when we are clear about what we want to put in DT, have
+a provision to lookup DT first and if DT values are not found,
+fallback on data embedded with the code.
+
+Thanks,
+Thomas.
+
 >
-> @@ -82,6 +87,45 @@ int dev_pm_opp_init_cpufreq_table(struct device *dev,
+>> +      cell #2 ~ cell 9#: value of clock divider in the following order
+>> +             corem0_ratio, corem1_ratio, periph_ratio, atb_ratio,
+>> +             pclk_dbg_ratio, apll_ratio, copy_ratio, hpm_ratio.
+>> +
+>> +  - for Exynos4412 based platforms:
+>> +      cell #1: expected arm clock parent frequency
 >
->         *table = &freq_table[0];
+> Ditto.
 >
-> +#ifdef CONFIG_CPU_FREQ_BOOST_SW
-> +       if (of_find_property(dev->of_node, "boost-frequencies", &len)) {
-
-Maybe:
-if(!of_find_property(...))
-        goto out;
-
-To get rid of extra indentation levels below..
-
-> +               struct cpufreq_frequency_table *ft;
-
-Declare at the top with boost_freqs, etc..
-
-> +               if (len == 0 || (len & (sizeof(u32) - 1)) != 0) {
-
-s/len == 0/!len
-
-And use IS_ALIGNED() instead of the right hand side of ||
-
-> +                       dev_err(dev, "%s: invalid boost frequency\n", __func__);
-> +                       ret = -EINVAL;
-> +                       goto out;
-> +               }
-> +
-> +               boost_freqs = kzalloc(len, GFP_KERNEL);
-
-Can we do a devm_kzalloc instead? And why not kmalloc BTW ?
-
-> +               if (!boost_freqs) {
-> +                       dev_warn(dev, "%s: no memory for boost freq table\n",
-
-dev_err ?
-
-> +                                       __func__);
-> +                       ret = -ENOMEM;
-> +                       goto out;
-> +               }
-> +               of_property_read_u32_array(dev->of_node, "boost-frequencies",
-> +                       boost_freqs, len / sizeof(u32));
-
-
-Create int count = len / sizeof(u32) instead.. You have used this
-multiple times.
-
-> +               for (j = 0; j < len / sizeof(u32); j++) {
-> +                       ft = *table;
-> +                       for (i = 0; ft->frequency != CPUFREQ_TABLE_END; i++) {
-
-See if new macros can be used here instead. cpufreq_for_each_valid_entry().
-
-> +                               if (boost_freqs[j] == ft->frequency) {
-> +                                       ft->flags |= CPUFREQ_BOOST_FREQ;
-> +                                       break;
-> +                               }
-> +                               ft++;
-> +                       }
-> +
-> +                       if (ft->frequency == CPUFREQ_TABLE_END)
-> +                               pr_err("%s: invalid boost frequency %d\n",
-> +                                       __func__, boost_freqs[j]);
-
-Maybe a pr_debug on the else part as well ? With boost freqs ..
-
-> +               }
-> +       }
-> +
-> +       kfree(boost_freqs);
-> +#endif
-> +
->  out:
->         rcu_read_unlock();
->         if (ret)
-> --
-> 1.7.9.5
+>> +      cell #2 ~ cell #10: value of clock divider in the following order
+>> +            corem0_ratio, corem1_ratio, periph_ratio, atb_ratio,
+>> +               pclk_dbg_ratio, apll_ratio, copy_ratio, hpm_ratio, cores_ratio
+>> +
+>> +- samsung,armclk-cells: defines the number of cells in
+>> +  samsung,armclk-divider-table property. The value of this property depends on
+>> +  the SoC type.
 >
+> To follow conventions used by all other bindings with variable number of
+> cells, the property should be called "#samsung,armclk-cells". AFAIK the
+> "#" should be interpreted as "number of" and so accents the meaning of
+> the property.
+>
+>> +
+>> +  - for Exynos4210 and Exynos4212: the value should be 9.
+>> +  - for Exynos4412: the value should be 10.
+>> +
+>>  Each clock is assigned an identifier and client nodes can use this identifier
+>>  to specify the clock which they consume.
+>>
+>> @@ -28,6 +57,14 @@ Example 1: An example of a clock controller node is listed below.
+>>               compatible = "samsung,exynos4210-clock";
+>>               reg = <0x10030000 0x20000>;
+>>               #clock-cells = <1>;
+>> +
+>> +             samsung,armclk-cells = <9>;
+>> +             samsung,armclk-divider-table = <1200000 3 7 3 4 1 7 5 0>,
+>> +                                            <1000000 3 7 3 4 1 7 4 0>,
+>> +                                            < 800000 3 7 3 3 1 7 3 0>,
+>> +                                            < 500000 3 7 3 3 1 7 3 0>,
+>> +                                            < 400000 3 7 3 3 1 7 3 0>,
+>> +                                            < 200000 1 3 1 1 1 0 3 0>;
+>>       };
+>>
+>>  Example 2: UART controller node that consumes the clock generated by the clock
+>> diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+>> index 536eacd..3d63d09 100644
+>> --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+>> +++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+>> @@ -13,6 +13,24 @@ Required Properties:
+>
+> Same comments apply to this file as well.
+>
+> Also, shouldn't you also extend exynos5420-clock.txt in the same way?
+>
+> Best regards,
+> Tomasz
