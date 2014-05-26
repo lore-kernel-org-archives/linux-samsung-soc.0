@@ -1,75 +1,79 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v11 0/3] Exynos 5410 support
-Date: Tue, 27 May 2014 07:08:21 +0900
-Message-ID: <5383BB55.9070606@samsung.com>
-References: <1401074613-29227-1-git-send-email-t.dakhran@samsung.com> <53832157.2020502@gmail.com>
+Subject: [GIT PULL 4th 1/2] Samsung Exynos multiplatform for 3.16
+Date: Tue, 27 May 2014 07:12:50 +0900
+Message-ID: <5383BC62.6040005@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f43.google.com ([209.85.160.43]:49960 "EHLO
-	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752040AbaEZWIb (ORCPT
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:37417 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752259AbaEZWM6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 May 2014 18:08:31 -0400
-In-Reply-To: <53832157.2020502@gmail.com>
+	Mon, 26 May 2014 18:12:58 -0400
+Received: by mail-pa0-f48.google.com with SMTP id rd3so8056934pab.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 May 2014 15:12:58 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Tarek Dakhran <t.dakhran@samsung.com>, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>, Romain Naour <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Rob Landley <rob@landley.net>, Kumar Gala <galak@codeaurora.>
+To: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 05/26/14 20:11, Tomasz Figa wrote:
-> Hi,
->
-Hi
+Hi Arnd, Olof, Kevin
 
-> On 26.05.2014 05:23, Tarek Dakhran wrote:
->> The series of patches represent support of Exynos 5410 SoC
->>
->> The Exynos 5410 is the first Samsung SoC based on big.LITTLE architecture
->>
->> Patches add new platform description, support of clock controller and device
->> tree for Exynos 5410.
->>
->> Has been build on Samsung Linux Kernel
->>    (branch: for-next, commit: 97eae6c Merge branch 'v3.16-next/multiplatform' into for-next)
->>
->> Has been tested on: 1) Exynos 5410 reference board (exynos_defconfig)
->> 		    2) Exynos 5410 reference board (multi_v7_defconfig)
->> 		    3) Odroid-XU board (exynos_defconfig)
->> 		    4) Odroid-XU board (multi_v7_defconfig)
->>
-Thanks for your test with exynos_defconfig and multi_v7_defconfig.
+Sorry for late support multiplatform on exynos and now it's possible. 
+Thanks for many guys' effort and time :-)
 
->> I hope this is clean and would be applied.
->>
->> Tarek.
->>
->> Tarek Dakhran (3):
->>    ARM: EXYNOS: Add support for EXYNOS5410 SoC
->>    clk: exynos5410: register clocks using common clock framework
->>    ARM: dts: Add initial device tree support for EXYNOS5410
->>
->>   .../devicetree/bindings/clock/exynos5410-clock.txt |   45 +++++
->>   arch/arm/boot/dts/Makefile                         |    1 +
->>   arch/arm/boot/dts/exynos5410-smdk5410.dts          |   82 ++++++++
->>   arch/arm/boot/dts/exynos5410.dtsi                  |  206 +++++++++++++++++++
->>   arch/arm/mach-exynos/Kconfig                       |    5 +
->>   arch/arm/mach-exynos/common.h                      |   12 +-
->>   drivers/clk/samsung/Makefile                       |    1 +
->>   drivers/clk/samsung/clk-exynos5410.c               |  209 ++++++++++++++++++++
->>   include/dt-bindings/clock/exynos5410.h             |   33 ++++
->>   9 files changed, 592 insertions(+), 2 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/clock/exynos5410-clock.txt
->>   create mode 100644 arch/arm/boot/dts/exynos5410-smdk5410.dts
->>   create mode 100644 arch/arm/boot/dts/exynos5410.dtsi
->>   create mode 100644 drivers/clk/samsung/clk-exynos5410.c
->>   create mode 100644 include/dt-bindings/clock/exynos5410.h
->>
->
-> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
->
-Applied this whole series.
-
-Thanks,
+BRs,
 Kukjin
+
+The following changes since commit dfacdfef06090ca0c131f45dfd3f3ca3452a8ed3:
+
+   Merge branch 'v3.16-next/dt-samsung' into v3.16-next/multiplatform 
+(2014-05-26 06:19:01 +0900)
+
+are available in the git repository at:
+
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+tags/exynos-multiplatform
+
+for you to fetch changes up to 43baa7dcb5fa0c95b1e443d2a739c14de1fbbe07:
+
+   cpufreq: exynos: Fix driver compilation with ARCH_MULTIPLATFORM 
+(2014-05-27 06:22:53 +0900)
+
+----------------------------------------------------------------
+Exynos mutiplatform support for 3.16
+
+Here is enabling the exynos platform as part of a multiplatform
+kernel. This is including ARCH_EXYNOS related Kconfig entries
+consolidation and update multi_v7_defconfig accordingly. And
+fixes exynos-cpufreq driver compilation with ARCH_MULTIPLATFORM.
+
+Note that this is based on tags/exynos-soc. And tags/samsung-dt,
+tags/samsung-clk are merged on top of that.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+       ARM: EXYNOS: Enable multi-platform build support
+
+Sachin Kamat (2):
+       ARM: EXYNOS: Consolidate Kconfig entries
+       ARM: multi_v7_defconfig: Enable Exynos platform
+
+Tomasz Figa (1):
+       cpufreq: exynos: Fix driver compilation with ARCH_MULTIPLATFORM
+
+  arch/arm/Kconfig                     | 20 ---------
+  arch/arm/configs/multi_v7_defconfig  | 12 ++++++
+  arch/arm/mach-exynos/Kconfig         | 81 
+++++++++++++------------------------
+  arch/arm/mach-exynos/Makefile        |  2 +
+  arch/arm/plat-samsung/Makefile       |  3 ++
+  drivers/cpufreq/Kconfig.arm          |  6 +--
+  drivers/cpufreq/exynos-cpufreq.c     |  2 -
+  drivers/cpufreq/exynos-cpufreq.h     | 30 +++++++------
+  drivers/cpufreq/exynos4210-cpufreq.c | 39 ++++++++++++++---
+  drivers/cpufreq/exynos4x12-cpufreq.c | 40 +++++++++++++++---
+  drivers/cpufreq/exynos5250-cpufreq.c | 43 +++++++++++++++----
+  11 files changed, 163 insertions(+), 115 deletions(-)
