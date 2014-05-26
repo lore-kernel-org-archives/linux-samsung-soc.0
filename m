@@ -1,85 +1,107 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 13/18] ARM: dts: s6e3fa0: add DT bindings
-Date: Mon, 26 May 2014 15:41:54 +0200
-Message-ID: <20140526134153.GA2373@ulmo>
-References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
- <1400647390-26590-14-git-send-email-yj44.cho@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCHv2 1/3] mmc: host: add slot argument to mmc_of_parse
+Date: Mon, 26 May 2014 16:37:32 +0200
+Message-ID: <CAPDyKFooaEf-SM4_SbX=mUr_QaYz3zqY6C4y-7hv4RuQrEVcgg@mail.gmail.com>
+References: <1401104107-17651-1-git-send-email-jh80.chung@samsung.com>
+	<1401104107-17651-2-git-send-email-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f178.google.com ([74.125.82.178]:59774 "EHLO
-	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752310AbaEZNoY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 May 2014 09:44:24 -0400
-Content-Disposition: inline
-In-Reply-To: <1400647390-26590-14-git-send-email-yj44.cho@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1401104107-17651-2-git-send-email-jh80.chung@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ludovic Desroches <ludovic.desroches@atmel.com>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, s.trumtrar@pengutronix.de, djkurtz@chromium.org, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com
 
+On 26 May 2014 13:35, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> From: Ludovic Desroches <ludovic.desroches@atmel.com>
+>
+> Some hosts manage several slots. In these case information such as the
+> bus width, chip detect and others are into the slot node. So we have to
+> parse child node. If not NULL, slot node will be used instead of the
+> device node.
+>
+> Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 
---qMm9M+Fa2AknHoGS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks Jaehoon/Ludovic,
 
-On Wed, May 21, 2014 at 01:43:05PM +0900, YoungJun Cho wrote:
-> This patch adds DT bindings for s6e3fa0 panel.
-> The bindings describes panel resources, display timings and cpu mode timi=
-ngs.
->=20
-> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-> Acked-by: Inki Dae <inki.dae@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+
 > ---
->  .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   45 ++++++++++++++=
-++++++
->  1 file changed, 45 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3f=
-a0.txt
-
-You're totally confusing me here. Half of this patch series is about
-adding i80 support to Exynos FIMD, and then you go and add what is
-apparently a DSI peripheral driver here that's supposed to be used by
-this new i80 support. Nothing I've been able to dig up indicates that
-i80 or DSI are in anyway related.
-
-Even the Exynos DSI Master bindings[0] say that these two are not at all
-the same thing:
-
-	port node:
-	    - reg: (required) can be 0 for input RGB/I80 port or 1 for
-	      DSI port;
-
-Am I missing something here?
-
-Thierry
-
-[0]: https://www.kernel.org/doc/Documentation/devicetree/bindings/video/exy=
-nos_dsim.txt
-
---qMm9M+Fa2AknHoGS
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTg0ShAAoJEN0jrNd/PrOhq1sQAIYJIGlds6R9NjdR1R6lhrO7
-ly7PjU2ToUtrJxkrCJOOMgg0DieBRWBXF8Q90GKRUQB6JPS4pUwnc9D9A3QwyixO
-f1HMwhHodnxCR94PkbSD5x6+D05Hm6Yu+pepUbVpYvh9MpqbsRcXXUPesOexbWVS
-ekDr9OTgosBtdijYXRYS11wowWoCJ0799SASGl/4v2B3+Hq0MEZQcV5iBfTrG1/A
-PPQ2beC0mSTZgv/N4JSUrtjJ57+Zx5uSabmWEPx/z8r000F7XbfRh1EmzrVdrrhs
-Np2/TsZty7AqJqWrxVnlymWUxjeo9Jzy+t0WjBNo8lSvxTKhFSm+OF1ox55OscNO
-MQ6swV7Eutw16BPJh8FrLTFtpbF7KCKr4WMuS0vzxzrRLDyoKOjKoZ2r7IhDrXqK
-crHvCuslVqCfdZV3NXEUmCztLjmJqPSvPY8pW9iHs0DnJ05s4wnEUwKOpB65u0e+
-wVNTa0xW4sO2cqAlFvfzd6bRZ4UUceQixo27waZBt33G1R+QAHE7Wjl9aZ/0/EmY
-IvfTI1b7NG3M614YfFljB+nGNZle8J5wyl5Jw+HJy6iWPJEhfD9KeQIaoWpq+XwU
-f5kfERzTvawdWOjBCY1dUBCQYcBnubn1q+SDwWIScOKUUmLQJmaOI5u6j8tUjGnO
-KUPU93umAHqeYUIBDG8X
-=h0Co
------END PGP SIGNATURE-----
-
---qMm9M+Fa2AknHoGS--
+> Changelog V2:
+>         - Fix the typo.
+>
+>  drivers/mmc/core/host.c  |   13 +++++++++----
+>  include/linux/mmc/host.h |   10 +++++++++-
+>  2 files changed, 18 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+> index 95cceae..0f677b3 100644
+> --- a/drivers/mmc/core/host.c
+> +++ b/drivers/mmc/core/host.c
+> @@ -298,15 +298,17 @@ static inline void mmc_host_clk_sysfs_init(struct mmc_host *host)
+>  #endif
+>
+>  /**
+> - *     mmc_of_parse() - parse host's device-tree node
+> + *     __mmc_of_parse() - parse host's device-tree node
+>   *     @host: host whose node should be parsed.
+> + *     @slot : some device provide several slots so the node to parse
+> + *             is not the host one.
+>   *
+>   * To keep the rest of the MMC subsystem unaware of whether DT has been
+>   * used to to instantiate and configure this host instance or not, we
+>   * parse the properties and set respective generic mmc-host flags and
+>   * parameters.
+>   */
+> -int mmc_of_parse(struct mmc_host *host)
+> +int __mmc_of_parse(struct mmc_host *host, struct device_node *slot)
+>  {
+>         struct device_node *np;
+>         u32 bus_width;
+> @@ -317,7 +319,10 @@ int mmc_of_parse(struct mmc_host *host)
+>         if (!host->parent || !host->parent->of_node)
+>                 return 0;
+>
+> -       np = host->parent->of_node;
+> +       if (slot)
+> +               np = slot;
+> +       else
+> +               np = host->parent->of_node;
+>
+>         /* "bus-width" is translated to MMC_CAP_*_BIT_DATA flags */
+>         if (of_property_read_u32(np, "bus-width", &bus_width) < 0) {
+> @@ -459,7 +464,7 @@ out:
+>         return ret;
+>  }
+>
+> -EXPORT_SYMBOL(mmc_of_parse);
+> +EXPORT_SYMBOL(__mmc_of_parse);
+>
+>  /**
+>   *     mmc_alloc_host - initialise the per-host structure.
+> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+> index 7960424..c62af91 100644
+> --- a/include/linux/mmc/host.h
+> +++ b/include/linux/mmc/host.h
+> @@ -372,7 +372,15 @@ struct mmc_host *mmc_alloc_host(int extra, struct device *);
+>  int mmc_add_host(struct mmc_host *);
+>  void mmc_remove_host(struct mmc_host *);
+>  void mmc_free_host(struct mmc_host *);
+> -int mmc_of_parse(struct mmc_host *host);
+> +int __mmc_of_parse(struct mmc_host *host, struct device_node *slot);
+> +/*
+> + * mmc_of_parse - parse host's device-tree node
+> + *     @host: host whose node should be parsed.
+> + */
+> +static inline int mmc_of_parse(struct mmc_host *host)
+> +{
+> +       return __mmc_of_parse(host, NULL);
+> +}
+>
+>  static inline void *mmc_priv(struct mmc_host *host)
+>  {
+> --
+> 1.7.9.5
+>
