@@ -1,136 +1,125 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 7/9] drm/exynos: ipp: rearrange c_node->event_lock using
- routine
-Date: Mon, 26 May 2014 10:17:21 +0200
-Message-ID: <1401092243-25568-8-git-send-email-a.hajda@samsung.com>
-References: <1401092243-25568-1-git-send-email-a.hajda@samsung.com>
+From: Jaehoon Chung <jh80.chung@gmail.com>
+Subject: Re: [PATCH 1/3] mmc: host: add slot argument to mmc_of_parse
+Date: Mon, 26 May 2014 17:38:16 +0900
+Message-ID: <5382FD78.3060402@gmail.com>
+References: <1400840721-11050-1-git-send-email-jh80.chung@samsung.com>
+ <1400840721-11050-2-git-send-email-jh80.chung@samsung.com>
+ <20140526080916.GE12777@ldesroches-Latitude-E6320>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1401092243-25568-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:15440 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751217AbaEZIiT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 May 2014 04:38:19 -0400
+In-reply-to: <20140526080916.GE12777@ldesroches-Latitude-E6320>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tushar Behera <tushar.behera@linaro.org>
 
-From: YoungJun Cho <yj44.cho@samsung.com>
+Hi,
 
-The c_node->event_list should be protected with
-c_node->event_lock.
+On 05/26/2014 05:09 PM, Ludovic Desroches wrote:
+> On Fri, May 23, 2014 at 07:25:19PM +0900, Jaehoon Chung wrote:
+>> From: Ludovic Desroches <ludovic.desroches@atmel.com>
+>>
+>> Some hosts manage several slots. In these case information such as the
+>> bus width, chi detect and others are into the slot node. So we have to
+> 
+> /s/chi detect/chip detect
+Will fix.
 
-Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-Acked-by: Seong-Woo Kim <sw0312.kim@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Tested-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
+Tushar have suggested the rename mmc_of_parse_slot() instead of __mmc_of_parse().
+I'm not sure which name is better. How about?
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index 4b5afd3..603a796 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -796,7 +796,9 @@ static int ipp_get_event(struct drm_device *drm_dev,
- 	e->base.event = &e->event.base;
- 	e->base.file_priv = file;
- 	e->base.destroy = ipp_free_event;
-+	mutex_lock(&c_node->event_lock);
- 	list_add_tail(&e->base.link, &c_node->event_list);
-+	mutex_unlock(&c_node->event_lock);
- 
- 	return 0;
- }
-@@ -807,6 +809,7 @@ static void ipp_put_event(struct drm_exynos_ipp_cmd_node *c_node,
- 	struct drm_exynos_ipp_send_event *e, *te;
- 	int count = 0;
- 
-+	mutex_lock(&c_node->event_lock);
- 	list_for_each_entry_safe(e, te, &c_node->event_list, base.link) {
- 		DRM_DEBUG_KMS("count[%d]e[0x%x]\n", count++, (int)e);
- 
-@@ -827,9 +830,13 @@ static void ipp_put_event(struct drm_exynos_ipp_cmd_node *c_node,
- 			/* delete list */
- 			list_del(&e->base.link);
- 			kfree(e);
--			return;
-+			goto out_unlock;
- 		}
- 	}
-+
-+out_unlock:
-+	mutex_unlock(&c_node->event_lock);
-+	return;
- }
- 
- static void ipp_handle_cmd_work(struct device *dev,
-@@ -1515,9 +1522,11 @@ static int ipp_send_event(struct exynos_drm_ippdrv *ippdrv,
- 		return -EINVAL;
- 	}
- 
-+	mutex_lock(&c_node->event_lock);
- 	if (list_empty(&c_node->event_list)) {
- 		DRM_DEBUG_KMS("event list is empty.\n");
--		return 0;
-+		ret = 0;
-+		goto err_event_unlock;
- 	}
- 
- 	mutex_lock(&c_node->mem_lock);
-@@ -1609,11 +1618,6 @@ static int ipp_send_event(struct exynos_drm_ippdrv *ippdrv,
- 	e = list_first_entry(&c_node->event_list,
- 		struct drm_exynos_ipp_send_event, base.link);
- 
--	if (!e) {
--		DRM_ERROR("empty event.\n");
--		return -EINVAL;
--	}
--
- 	do_gettimeofday(&now);
- 	DRM_DEBUG_KMS("tv_sec[%ld]tv_usec[%ld]\n", now.tv_sec, now.tv_usec);
- 	e->event.tv_sec = now.tv_sec;
-@@ -1628,6 +1632,7 @@ static int ipp_send_event(struct exynos_drm_ippdrv *ippdrv,
- 	list_move_tail(&e->base.link, &e->base.file_priv->event_list);
- 	wake_up_interruptible(&e->base.file_priv->event_wait);
- 	spin_unlock_irqrestore(&drm_dev->event_lock, flags);
-+	mutex_unlock(&c_node->event_lock);
- 
- 	DRM_DEBUG_KMS("done cmd[%d]prop_id[%d]buf_id[%d]\n",
- 		property->cmd, property->prop_id, tbuf_id[EXYNOS_DRM_OPS_DST]);
-@@ -1636,6 +1641,8 @@ static int ipp_send_event(struct exynos_drm_ippdrv *ippdrv,
- 
- err_mem_unlock:
- 	mutex_unlock(&c_node->mem_lock);
-+err_event_unlock:
-+	mutex_unlock(&c_node->event_lock);
- 	return ret;
- }
- 
-@@ -1678,8 +1685,6 @@ void ipp_sched_event(struct work_struct *work)
- 		goto err_completion;
- 	}
- 
--	mutex_lock(&c_node->event_lock);
--
- 	ret = ipp_send_event(ippdrv, c_node, event_work->buf_id);
- 	if (ret) {
- 		DRM_ERROR("failed to send event.\n");
-@@ -1689,8 +1694,6 @@ void ipp_sched_event(struct work_struct *work)
- err_completion:
- 	if (ipp_is_m2m_cmd(c_node->property.cmd))
- 		complete(&c_node->start_complete);
--
--	mutex_unlock(&c_node->event_lock);
- }
- 
- static int ipp_subdrv_probe(struct drm_device *drm_dev, struct device *dev)
--- 
-1.9.1
+If never mind, i will change to mmc_of_parse_slot(), then send patch-v2.
+
+Best Regards,
+Jaehoon Chung
+> 
+>> parse child node. If not NULL, slot node will be used instead of the
+>> device node.
+>>
+>> Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>> ---
+>>  drivers/mmc/core/host.c  |   13 +++++++++----
+>>  include/linux/mmc/host.h |   10 +++++++++-
+>>  2 files changed, 18 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+>> index 95cceae..0f677b3 100644
+>> --- a/drivers/mmc/core/host.c
+>> +++ b/drivers/mmc/core/host.c
+>> @@ -298,15 +298,17 @@ static inline void mmc_host_clk_sysfs_init(struct mmc_host *host)
+>>  #endif
+>>  
+>>  /**
+>> - *	mmc_of_parse() - parse host's device-tree node
+>> + *	__mmc_of_parse() - parse host's device-tree node
+>>   *	@host: host whose node should be parsed.
+>> + *	@slot : some device provide several slots so the node to parse
+>> + *		is not the host one.
+>>   *
+>>   * To keep the rest of the MMC subsystem unaware of whether DT has been
+>>   * used to to instantiate and configure this host instance or not, we
+>>   * parse the properties and set respective generic mmc-host flags and
+>>   * parameters.
+>>   */
+>> -int mmc_of_parse(struct mmc_host *host)
+>> +int __mmc_of_parse(struct mmc_host *host, struct device_node *slot)
+>>  {
+>>  	struct device_node *np;
+>>  	u32 bus_width;
+>> @@ -317,7 +319,10 @@ int mmc_of_parse(struct mmc_host *host)
+>>  	if (!host->parent || !host->parent->of_node)
+>>  		return 0;
+>>  
+>> -	np = host->parent->of_node;
+>> +	if (slot)
+>> +		np = slot;
+>> +	else
+>> +		np = host->parent->of_node;
+>>  
+>>  	/* "bus-width" is translated to MMC_CAP_*_BIT_DATA flags */
+>>  	if (of_property_read_u32(np, "bus-width", &bus_width) < 0) {
+>> @@ -459,7 +464,7 @@ out:
+>>  	return ret;
+>>  }
+>>  
+>> -EXPORT_SYMBOL(mmc_of_parse);
+>> +EXPORT_SYMBOL(__mmc_of_parse);
+>>  
+>>  /**
+>>   *	mmc_alloc_host - initialise the per-host structure.
+>> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+>> index 7960424..c62af91 100644
+>> --- a/include/linux/mmc/host.h
+>> +++ b/include/linux/mmc/host.h
+>> @@ -372,7 +372,15 @@ struct mmc_host *mmc_alloc_host(int extra, struct device *);
+>>  int mmc_add_host(struct mmc_host *);
+>>  void mmc_remove_host(struct mmc_host *);
+>>  void mmc_free_host(struct mmc_host *);
+>> -int mmc_of_parse(struct mmc_host *host);
+>> +int __mmc_of_parse(struct mmc_host *host, struct device_node *slot);
+>> +/*
+>> + * mmc_of_parse - parse host's device-tree node
+>> + *	@host: host whose node should be parsed.
+>> + */
+>> +static inline int mmc_of_parse(struct mmc_host *host)
+>> +{
+>> +	return __mmc_of_parse(host, NULL);
+>> +}
+>>  
+>>  static inline void *mmc_priv(struct mmc_host *host)
+>>  {
+>> -- 
+>> 1.7.9.5
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
