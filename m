@@ -1,199 +1,68 @@
-From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [PATCH v2 1/3] ARM: EXYNOS: Add support for clock handling in power
- domain
-Date: Mon, 26 May 2014 17:26:22 +0530
-Message-ID: <1401105384-8678-2-git-send-email-shaik.ameer@samsung.com>
+From: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 2/3] clk: exynos5420: Add IDs for clocks used in PD mfc
+Date: Mon, 26 May 2014 17:26:23 +0530
+Message-ID: <1401105384-8678-3-git-send-email-shaik.ameer@samsung.com>
 References: <1401105384-8678-1-git-send-email-shaik.ameer@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:54469 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751549AbaEZL6S (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 May 2014 07:58:18 -0400
-In-reply-to: <1401105384-8678-1-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1401105384-8678-1-git-send-email-shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, prathyush.k@samsung.com, abrestic@chromium.org, arunkk.samsung@gmail.com, joshi@samsung.com, Arun Kumar K <arun.kk@samsung.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-From: Prathyush K <prathyush.k@samsung.com>
+From: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-While powering on/off a local powerdomain in exynos5 chipsets, the input
-clocks to each device gets modified. This behaviour is based on the
-SYSCLK_SYS_PWR_REG registers.
-E.g. SYSCLK_MFC_SYS_PWR_REG = 0x0, the parent of input clock to MFC
-				   (aclk333) gets modified to oscclk
-			    = 0x1, no change in clocks.
-The recommended value of SYSCLK_SYS_PWR_REG before power gating any
-domain is 0x0. So we must also restore the clocks while powering on a
-domain everytime.
+Adds IDs for MUX clocks to be used by power domain for MFC
+for doing re-parenting while pd on/off.
 
-This patch adds the framework for getting the required mux and parent clocks
-through a power domain device node. With this patch, while powering off
-a domain, parent is set to oscclk and while powering back on, its re-set
-to the correct parent which is as per the recommended pd on/off
-sequence.
-
-Signed-off-by: Prathyush K <prathyush.k@samsung.com>
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Signed-off-by: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- .../bindings/arm/exynos/power_domain.txt           |   20 +++++++
- arch/arm/mach-exynos/pm_domains.c                  |   59 +++++++++++++++++++-
- 2 files changed, 78 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos5420.c   |    6 ++++--
+ include/dt-bindings/clock/exynos5420.h |    2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index 5216b41..8b4f7b7f 100644
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -9,6 +9,18 @@ Required Properties:
- - reg: physical base address of the controller and length of memory mapped
-     region.
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 9d7d7ee..f74f882f 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -631,7 +631,8 @@ static struct samsung_mux_clock exynos5x_mux_clks[] __initdata = {
+ 			SRC_TOP4, 16, 1),
+ 	MUX(0, "mout_user_aclk266", mout_user_aclk266_p, SRC_TOP4, 20, 1),
+ 	MUX(0, "mout_user_aclk166", mout_user_aclk166_p, SRC_TOP4, 24, 1),
+-	MUX(0, "mout_user_aclk333", mout_user_aclk333_p, SRC_TOP4, 28, 1),
++	MUX(CLK_MOUT_USER_ACLK333, "mout_user_aclk333", mout_user_aclk333_p,
++			SRC_TOP4, 28, 1),
  
-+Optional Properties:
-+- clocks: List of clock handles. The parent clocks of the input clocks to the
-+	devices in this power domain are set to oscclk before power gating
-+	and restored back after powering on a domain. This is required for
-+	all domains which are powered on and off and not required for unused
-+	domains.
-+- clock-names: The following clocks can be specified:
-+	- oscclk: Oscillator clock.
-+	- pclkN, clkN: Pairs of parent of input clock and input clock to the
-+		devices in this power domain. Maximum of 4 pairs (N = 0 to 3)
-+		are supported currently.
-+
- Node of a device using power domains must have a samsung,power-domain property
- defined with a phandle to respective power domain.
+ 	MUX(0, "mout_user_aclk400_disp1", mout_user_aclk400_disp1_p,
+ 			SRC_TOP5, 0, 1),
+@@ -684,7 +685,8 @@ static struct samsung_mux_clock exynos5x_mux_clks[] __initdata = {
+ 			SRC_TOP11, 12, 1),
+ 	MUX(0, "mout_sw_aclk266", mout_sw_aclk266_p, SRC_TOP11, 20, 1),
+ 	MUX(0, "mout_sw_aclk166", mout_sw_aclk166_p, SRC_TOP11, 24, 1),
+-	MUX(0, "mout_sw_aclk333", mout_sw_aclk333_p, SRC_TOP11, 28, 1),
++	MUX(CLK_MOUT_SW_ACLK333, "mout_sw_aclk333", mout_sw_aclk333_p,
++			SRC_TOP11, 28, 1),
  
-@@ -19,6 +31,14 @@ Example:
- 		reg = <0x10023C00 0x10>;
- 	};
+ 	MUX(0, "mout_sw_aclk400_disp1", mout_sw_aclk400_disp1_p,
+ 			SRC_TOP12, 4, 1),
+diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+index 97dcb89..3fc08ff 100644
+--- a/include/dt-bindings/clock/exynos5420.h
++++ b/include/dt-bindings/clock/exynos5420.h
+@@ -203,6 +203,8 @@
+ #define CLK_MOUT_G3D		641
+ #define CLK_MOUT_VPLL		642
+ #define CLK_MOUT_MAUDIO0	643
++#define CLK_MOUT_USER_ACLK333	644
++#define CLK_MOUT_SW_ACLK333	645
  
-+	mfc_pd: power-domain@10044060 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10044060 0x20>;
-+		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
-+			<&clock CLK_MOUT_USER_ACLK333>;
-+		clock-names = "oscclk", "pclk0", "clk0";
-+	};
-+
- Example of the node using power domain:
- 
- 	node {
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index fe6570e..34d86b1 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -17,6 +17,7 @@
- #include <linux/err.h>
- #include <linux/slab.h>
- #include <linux/pm_domain.h>
-+#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
-@@ -24,6 +25,8 @@
- 
- #include "regs-pmu.h"
- 
-+#define MAX_CLK_PER_DOMAIN			4
-+
- /*
-  * Exynos specific wrapper around the generic power domain
-  */
-@@ -32,6 +35,9 @@ struct exynos_pm_domain {
- 	char const *name;
- 	bool is_off;
- 	struct generic_pm_domain pd;
-+	struct clk *oscclk;
-+	struct clk *clk[MAX_CLK_PER_DOMAIN];
-+	struct clk *pclk[MAX_CLK_PER_DOMAIN];
- };
- 
- static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
-@@ -44,6 +50,18 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	pd = container_of(domain, struct exynos_pm_domain, pd);
- 	base = pd->base;
- 
-+	/* Set oscclk before powering off a domain*/
-+	if (!power_on) {
-+		int i;
-+		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
-+			if (IS_ERR(pd->clk[i]))
-+				break;
-+			if (clk_set_parent(pd->clk[i], pd->oscclk))
-+				pr_err("%s: error setting oscclk as parent to clock %d\n",
-+						pd->name, i);
-+		}
-+	}
-+
- 	pwr = power_on ? S5P_INT_LOCAL_PWR_EN : 0;
- 	__raw_writel(pwr, base);
- 
-@@ -60,6 +78,19 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 		cpu_relax();
- 		usleep_range(80, 100);
- 	}
-+
-+	/* Restore clocks after powering on a domain*/
-+	if (power_on) {
-+		int i;
-+		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
-+			if (IS_ERR(pd->clk[i]))
-+				break;
-+			if (clk_set_parent(pd->clk[i], pd->pclk[i]))
-+				pr_err("%s: error setting parent to clock%d\n",
-+						pd->name, i);
-+		}
-+	}
-+
- 	return 0;
- }
- 
-@@ -152,9 +183,11 @@ static __init int exynos4_pm_init_power_domain(void)
- 
- 	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
- 		struct exynos_pm_domain *pd;
--		int on;
-+		int on, i;
-+		struct device *dev;
- 
- 		pdev = of_find_device_by_node(np);
-+		dev = &pdev->dev;
- 
- 		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
- 		if (!pd) {
-@@ -170,6 +203,30 @@ static __init int exynos4_pm_init_power_domain(void)
- 		pd->pd.power_on = exynos_pd_power_on;
- 		pd->pd.of_node = np;
- 
-+		pd->oscclk = clk_get(dev, "oscclk");
-+		if (IS_ERR(pd->oscclk))
-+			goto no_clk;
-+
-+		for (i = 0; i < MAX_CLK_PER_DOMAIN; i++) {
-+			char clk_name[8];
-+
-+			snprintf(clk_name, sizeof(clk_name), "clk%d", i);
-+			pd->clk[i] = clk_get(dev, clk_name);
-+			if (IS_ERR(pd->clk[i]))
-+				break;
-+			snprintf(clk_name, sizeof(clk_name), "pclk%d", i);
-+			pd->pclk[i] = clk_get(dev, clk_name);
-+			if (IS_ERR(pd->pclk[i])) {
-+				clk_put(pd->clk[i]);
-+				pd->clk[i] = ERR_PTR(-EINVAL);
-+				break;
-+			}
-+		}
-+
-+		if (IS_ERR(pd->clk[0]))
-+			clk_put(pd->oscclk);
-+
-+no_clk:
- 		platform_set_drvdata(pdev, pd);
- 
- 		on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
+ /* divider clocks */
+ #define CLK_DOUT_PIXEL		768
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
