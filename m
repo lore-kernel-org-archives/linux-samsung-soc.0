@@ -1,89 +1,75 @@
-From: Tarek Dakhran <t.dakhran@samsung.com>
-Subject: [PATCH v11 1/3] ARM: EXYNOS: Add support for EXYNOS5410 SoC
-Date: Mon, 26 May 2014 07:23:31 +0400
-Message-ID: <1401074613-29227-2-git-send-email-t.dakhran@samsung.com>
-References: <1401074613-29227-1-git-send-email-t.dakhran@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/5] ARM: dts: Enable RTC node on Origen boards
+Date: Mon, 26 May 2014 08:59:00 +0530
+Message-ID: <CAK9yfHzDkYtwdb-ZcfsFTKfborzkuM22ndFrxT4VmqcG0-fGyg@mail.gmail.com>
+References: <1400825338-1272-1-git-send-email-sachin.kamat@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:26989 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751224AbaEZDXr (ORCPT
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:60874 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751083AbaEZD3B (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 25 May 2014 23:23:47 -0400
-In-reply-to: <1401074613-29227-1-git-send-email-t.dakhran@samsung.com>
+	Sun, 25 May 2014 23:29:01 -0400
+Received: by mail-ob0-f173.google.com with SMTP id wm4so7572893obc.32
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2014 20:29:00 -0700 (PDT)
+In-Reply-To: <1400825338-1272-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Romain Naour <romain.naour@openwide.fr>, Chander Kashyap <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@gmail.com>, Tarek Dakhran <t.dakhran@samsung.com>
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>
 
-EXYNOS5410 is SoC in Samsung's Exynos5 SoC series.
-Add initial support for this SoC.
+On 23 May 2014 11:38, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Enabled RTC node on Origen 4210 and 4412 boards.
+>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos4210-origen.dts |    4 ++++
+>  arch/arm/boot/dts/exynos4412-origen.dts |    4 ++++
+>  2 files changed, 8 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+> index 72fb11f7ea21..95efb1189cf0 100644
+> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+> @@ -48,6 +48,10 @@
+>                 };
+>         };
+>
+> +       rtc@10070000 {
+> +               status = "okay";
+> +       };
+> +
+>         tmu@100C0000 {
+>                 status = "okay";
+>         };
+> diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+> index e2c0dcab4d81..934fe7ecca7e 100644
+> --- a/arch/arm/boot/dts/exynos4412-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4412-origen.dts
+> @@ -48,6 +48,10 @@
+>                 };
+>         };
+>
+> +       rtc@10070000 {
+> +               status = "okay";
+> +       };
+> +
+>         pinctrl@11000000 {
+>                 keypad_rows: keypad-rows {
+>                         samsung,pins = "gpx2-0", "gpx2-1", "gpx2-2";
+> --
+> 1.7.9.5
+>
 
-Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
-Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
----
- arch/arm/mach-exynos/Kconfig  |    5 +++++
- arch/arm/mach-exynos/common.h |   12 ++++++++++--
- 2 files changed, 15 insertions(+), 2 deletions(-)
+Kukjin,
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 15fa610..d58995c9 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -88,6 +88,11 @@ config SOC_EXYNOS5260
- 	default y
- 	depends on ARCH_EXYNOS5
- 
-+config SOC_EXYNOS5410
-+	bool "SAMSUNG EXYNOS5410"
-+	default y
-+	depends on ARCH_EXYNOS5
-+
- config SOC_EXYNOS5420
- 	bool "SAMSUNG EXYNOS5420"
- 	default y
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 9eb6258..80b90e3 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -24,6 +24,7 @@
- #define EXYNOS4_CPU_MASK	0xFFFE0000
- 
- #define EXYNOS5250_SOC_ID	0x43520000
-+#define EXYNOS5410_SOC_ID	0xE5410000
- #define EXYNOS5420_SOC_ID	0xE5420000
- #define EXYNOS5440_SOC_ID	0xE5440000
- #define EXYNOS5800_SOC_ID	0xE5422000
-@@ -42,6 +43,7 @@ IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
- IS_SAMSUNG_CPU(exynos4212, EXYNOS4212_CPU_ID, EXYNOS4_CPU_MASK)
- IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
- IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
-+IS_SAMSUNG_CPU(exynos5410, EXYNOS5410_SOC_ID, EXYNOS5_SOC_MASK)
- IS_SAMSUNG_CPU(exynos5420, EXYNOS5420_SOC_ID, EXYNOS5_SOC_MASK)
- IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
- IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
-@@ -80,6 +82,12 @@ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
- # define soc_is_exynos5250()	0
- #endif
- 
-+#if defined(CONFIG_SOC_EXYNOS5410)
-+# define soc_is_exynos5410()	is_samsung_exynos5410()
-+#else
-+# define soc_is_exynos5410()	0
-+#endif
-+
- #if defined(CONFIG_SOC_EXYNOS5420)
- # define soc_is_exynos5420()	is_samsung_exynos5420()
- #else
-@@ -100,8 +108,8 @@ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
- 
- #define soc_is_exynos4() (soc_is_exynos4210() || soc_is_exynos4212() || \
- 			  soc_is_exynos4412())
--#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5420() || \
--			  soc_is_exynos5800())
-+#define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5410() || \
-+			  soc_is_exynos5420() || soc_is_exynos5800())
- 
- void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
- 
+The patches in this series are really simple and do not want them to
+wait for another
+cycle. Please review and send them with your next pull request for
+3.16. Also please
+look at the 2 patches related to secondary cpu boot sent by Tushar.
+
 -- 
-1.7.9.5
+With warm regards,
+Sachin
