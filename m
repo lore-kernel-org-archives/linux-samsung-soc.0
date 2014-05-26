@@ -1,101 +1,47 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCHv2 2/3] mmc: dw_mmc: use the __mmc_of_parse to parse the slot
- node
-Date: Mon, 26 May 2014 20:35:06 +0900
-Message-ID: <1401104107-17651-3-git-send-email-jh80.chung@samsung.com>
-References: <1401104107-17651-1-git-send-email-jh80.chung@samsung.com>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <1401104107-17651-1-git-send-email-jh80.chung@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: chris@printf.net, ulf.hansson@linaro.org, ludovic.desroches@atmel.com, tgih.jun@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: [PATCH v2 0/3] Power-domain clk handling
+Date: Mon, 26 May 2014 17:26:21 +0530
+Message-ID: <1401105384-8678-1-git-send-email-shaik.ameer@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:54445 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751546AbaEZL6F (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 May 2014 07:58:05 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, prathyush.k@samsung.com, abrestic@chromium.org, arunkk.samsung@gmail.com, joshi@samsung.com, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-dw-mmc controller have the multiple slot.
-Then it needs to parse the property for each slot.
+This patchset enables the clk handling in power domain for
+working as per the recommended power domain on / off sequence for
+exynos5 SoCs. I have posted an RFC for the same [1] and didnt get any
+review comments / objections. So I am dropping the RFC tag and
+posting the patch along with the required clk and dt support.
 
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
----
-Changelog V2:
-	- None
+[1] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg30479.html
 
- drivers/mmc/host/dw_mmc.c |   25 ++++++-------------------
- 1 file changed, 6 insertions(+), 19 deletions(-)
+Rebased on Kukjin Kim's linux-samsung.git, for-next branch
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git:for-next
 
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index 1ac227c..d4800f8 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -1015,12 +1015,11 @@ static int dw_mci_get_cd(struct mmc_host *mmc)
- {
- 	int present;
- 	struct dw_mci_slot *slot = mmc_priv(mmc);
--	struct dw_mci_board *brd = slot->host->pdata;
- 	struct dw_mci *host = slot->host;
- 	int gpio_cd = mmc_gpio_get_cd(mmc);
- 
- 	/* Use platform get_cd function, else try onboard card detect */
--	if (brd->quirks & DW_MCI_QUIRK_BROKEN_CARD_DETECTION)
-+	if (slot->quirks & DW_MCI_QUIRK_BROKEN_CARD_DETECTION)
- 		present = 1;
- 	else if (!IS_ERR_VALUE(gpio_cd))
- 		present = gpio_cd;
-@@ -2010,6 +2009,9 @@ static struct dw_mci_of_slot_quirks {
- 	{
- 		.quirk	= "disable-wp",
- 		.id	= DW_MCI_SLOT_QUIRK_NO_WRITE_PROTECT,
-+	}, {
-+		.quirk	= "broken-cd",
-+		.id	= DW_MCI_QUIRK_BROKEN_CARD_DETECTION,
- 	},
- };
- 
-@@ -2088,7 +2090,7 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
- 	if (host->pdata->caps2)
- 		mmc->caps2 = host->pdata->caps2;
- 
--	mmc_of_parse(mmc);
-+	__mmc_of_parse(mmc, dw_mci_of_find_slot_node(host->dev, slot->id));
- 
- 	if (host->pdata->blk_settings) {
- 		mmc->max_segs = host->pdata->blk_settings->max_segs;
-@@ -2231,23 +2233,13 @@ static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
- }
- 
- #ifdef CONFIG_OF
--static struct dw_mci_of_quirks {
--	char *quirk;
--	int id;
--} of_quirks[] = {
--	{
--		.quirk	= "broken-cd",
--		.id	= DW_MCI_QUIRK_BROKEN_CARD_DETECTION,
--	},
--};
--
- static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
- {
- 	struct dw_mci_board *pdata;
- 	struct device *dev = host->dev;
- 	struct device_node *np = dev->of_node;
- 	const struct dw_mci_drv_data *drv_data = host->drv_data;
--	int idx, ret;
-+	int ret;
- 	u32 clock_frequency;
- 
- 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-@@ -2264,11 +2256,6 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
- 		pdata->num_slots = 1;
- 	}
- 
--	/* get quirks */
--	for (idx = 0; idx < ARRAY_SIZE(of_quirks); idx++)
--		if (of_get_property(np, of_quirks[idx].quirk, NULL))
--			pdata->quirks |= of_quirks[idx].id;
--
- 	if (of_property_read_u32(np, "fifo-depth", &pdata->fifo_depth))
- 		dev_info(dev, "fifo-depth property not found, using "
- 				"value of FIFOTH register as default\n");
+Changes since v1:
+Addressed review comments from Tomasz Figa.
+	- http://www.spinics.net/lists/linux-samsung-soc/msg31625.html
+	- http://www.spinics.net/lists/linux-samsung-soc/msg31626.html
+
+Arun Kumar K (2):
+  clk: exynos5420: Add IDs for clocks used in PD mfc
+  ARM: dts: Add clock property for mfc_pd in 5420
+
+Prathyush K (1):
+  ARM: EXYNOS: Add support for clock handling in power domain
+
+ .../bindings/arm/exynos/power_domain.txt           |   20 +++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |    3 +
+ arch/arm/mach-exynos/pm_domains.c                  |   59 +++++++++++++++++++-
+ drivers/clk/samsung/clk-exynos5420.c               |    6 +-
+ include/dt-bindings/clock/exynos5420.h             |    2 +
+ 5 files changed, 87 insertions(+), 3 deletions(-)
+
 -- 
 1.7.9.5
-
