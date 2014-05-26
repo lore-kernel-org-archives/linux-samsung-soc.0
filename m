@@ -1,78 +1,50 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: dts: Add mclk entry for Snow/Peach-pit boards
-Date: Mon, 26 May 2014 13:40:06 +0530
-Message-ID: <CAHbNUh3GtjabLrcaug9Uku1J=EK23PUcOqM2eP2WUknnCEswdQ@mail.gmail.com>
-References: <1400561355-9484-1-git-send-email-tushar.behera@linaro.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 0/9] drm/exynos/ipp: image post processing improvements,
+ part deux
+Date: Mon, 26 May 2014 10:17:14 +0200
+Message-ID: <1401092243-25568-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f43.google.com ([209.85.219.43]:56842 "EHLO
-	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751913AbaEZIKG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 May 2014 04:10:06 -0400
-Received: by mail-oa0-f43.google.com with SMTP id l6so8049903oag.16
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 May 2014 01:10:06 -0700 (PDT)
-In-Reply-To: <1400561355-9484-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-On 20 May 2014 10:19, Tushar Behera <tushar.behera@linaro.org> wrote:
-> On Snow/Peach-pit boards, XCLKOUT provides master clock (mclk) to codec.
->
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> ---
+This is the next part of ipp improvement patches, this time made
+by YoungJun Cho, I am posting them as he is on leave.
 
-This patch is obsolete now because the proposed clock bindings for
-XCLKOUT is now different (change in #clock-cells). Updated patch will
-be sent once the XCLKOUT drivers are accepted.
+The patchset is based on drm-exynos/exynos-drm-next branch.
 
-> Dependency:
-> 1. Driver side changes have been posted here.
-> https://lkml.org/lkml/2014/5/20/4
->
-> 2. XCLKOUT clock driver support
-> https://lkml.org/lkml/2014/5/15/530
->
->  arch/arm/boot/dts/exynos5250-snow.dts      |    3 +++
->  arch/arm/boot/dts/exynos5420-peach-pit.dts |    3 +++
->  2 files changed, 6 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-> index 67391b9..1014ce0 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -346,6 +346,9 @@
->
->                 samsung,i2s-controller = <&i2s0>;
->                 samsung,audio-codec = <&max98095>;
-> +
-> +               clocks = <&pmu_system_controller>;
-> +               clock-names = "mclk";
->         };
->
->         usb@12110000 {
-> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> index f4b2a16..c0664e9 100644
-> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> @@ -64,6 +64,9 @@
->
->                 samsung,i2s-controller = <&i2s0>;
->                 samsung,audio-codec = <&max98090>;
-> +
-> +               clocks = <&pmu_system_controller>;
-> +               clock-names = "mclk";
->         };
->  };
->
-> --
-> 1.7.9.5
->
+Regards
+Andrzej
 
 
+Andrzej Hajda (1):
+  drm/exynos: ipp: remove description of non-existing field
+
+YoungJun Cho (8):
+  drm/exynos: ipp: remove usless list_empty() functions
+  drm/exynos: ipp: remove duplicated setting
+  drm/exynos: ipp: rename cmd_lock to lock
+  drm/exynos: ipp: add cmd_lock for cmd_list
+  drm/exynos: ipp: add ipp_remove_id()
+  drm/exynos: ipp: rearrange c_node->mem_lock using routines
+  drm/exynos: ipp: rearrange c_node->event_lock using routine
+  drm/exynos: ipp: update comment for struct drm_ipp_buf_info
+
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 242 ++++++++++++++++----------------
+ drivers/gpu/drm/exynos/exynos_drm_ipp.h |   9 +-
+ 2 files changed, 129 insertions(+), 122 deletions(-)
 
 -- 
-Tushar Behera
+1.9.1
