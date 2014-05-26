@@ -1,86 +1,55 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] clk: exynos5420: Staticize local variables
-Date: Mon, 26 May 2014 09:09:49 +0530
-Message-ID: <CAK9yfHwNq+Br+2QFXzksqifUZ6wW2JAv=EhMpRt9OYNpUPb7bg@mail.gmail.com>
-References: <1400673482-16287-1-git-send-email-sachin.kamat@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL 3rd 0/3] Samsung updates for 3.16
+Date: Mon, 26 May 2014 13:03:08 +0900
+Message-ID: <035501cf7897$6705ec70$3511c550$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:44587 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750829AbaEZDju (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:16717 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751521AbaEZEDK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 25 May 2014 23:39:50 -0400
-Received: by mail-ob0-f180.google.com with SMTP id va2so7432387obc.25
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2014 20:39:49 -0700 (PDT)
-In-Reply-To: <1400673482-16287-1-git-send-email-sachin.kamat@linaro.org>
+	Mon, 26 May 2014 00:03:10 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N65001H9XX8VI80@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 May 2014 13:03:08 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>
+To: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 21 May 2014 17:28, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Local symbols are made static.
->
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c |   10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 9d7d7eed03fd..41b507baf5d6 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -474,7 +474,7 @@ static struct samsung_fixed_factor_clock
->         FFACTOR(0, "ff_dout_spll2", "mout_sclk_spll", 1, 2, 0),
->  };
->
-> -struct samsung_mux_clock exynos5800_mux_clks[] __initdata = {
-> +static struct samsung_mux_clock exynos5800_mux_clks[] __initdata = {
->         MUX(0, "mout_aclk400_isp", mout_group3_5800_p, SRC_TOP0, 0, 3),
->         MUX(0, "mout_aclk400_mscl", mout_group3_5800_p, SRC_TOP0, 4, 3),
->         MUX(0, "mout_aclk400_wcore", mout_group2_5800_p, SRC_TOP0, 16, 3),
-> @@ -523,7 +523,7 @@ struct samsung_mux_clock exynos5800_mux_clks[] __initdata = {
->         MUX(0, "mout_fimd1", mout_group2_p, SRC_DISP10, 4, 3),
->  };
->
-> -struct samsung_div_clock exynos5800_div_clks[] __initdata = {
-> +static struct samsung_div_clock exynos5800_div_clks[] __initdata = {
->         DIV(0, "dout_aclk400_wcore", "mout_aclk400_wcore", DIV_TOP0, 16, 3),
->
->         DIV(0, "dout_aclk550_cam", "mout_aclk550_cam",
-> @@ -539,14 +539,14 @@ struct samsung_div_clock exynos5800_div_clks[] __initdata = {
->         DIV(0, "dout_sclk_sw", "sclk_spll", DIV_TOP9, 24, 6),
->  };
->
-> -struct samsung_gate_clock exynos5800_gate_clks[] __initdata = {
-> +static struct samsung_gate_clock exynos5800_gate_clks[] __initdata = {
->         GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
->                                 GATE_BUS_TOP, 24, 0, 0),
->         GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
->                                 GATE_BUS_TOP, 27, 0, 0),
->  };
->
-> -struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
-> +static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
->         MUX(0, "sclk_bpll", mout_bpll_p, TOP_SPARE2, 0, 1),
->         MUX(0, "mout_aclk400_wcore_bpll", mout_aclk400_wcore_bpll_p,
->                                 TOP_SPARE2, 4, 1),
-> @@ -576,7 +576,7 @@ struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
->         MUX(0, "mout_fimd1", mout_group3_p, SRC_DISP10, 4, 1),
->  };
->
-> -struct samsung_div_clock exynos5420_div_clks[] __initdata = {
-> +static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
->         DIV(0, "dout_aclk400_wcore", "mout_aclk400_wcore_bpll",
->                         DIV_TOP0, 16, 3),
->  };
-> --
-> 1.7.9.5
->
+Hi Arnd, Olof and Kevin,
 
-Gentle ping, Tomasz :)
+Here is 3rd Samsung pull-request for 3.16
 
--- 
-With warm regards,
-Sachin
+Actually this series is depending on multiplatform and as you know it it
+alreay ready, honestly almost but it should be fine for 3.16 soon.
+
+Note, please see the resolution for tags/exynos-cpuidle in the [GIT PULL 3rd
+1/3] Samsung Exynos cpuidle updates for 3.16.
+
+One more, maybe you need to pull following for samsung updates for 3.16,
+once exynos-multiplatform is ready to pull ;-)
+
+>From 1st pull-request:
+- tags/samsung-clk ([GIT PULL 2/5] Samsung clock updates for 3.16)
+- tags/exynos-mcpm ([GIT PULL 5/5] Samsung Exynos MCPM support for 3.16)
+
+>From 2nd pull-request:
+- (nothing)
+
+>From this:
+- tags/cpuidle-exynos
+- tags/exynos-soc
+- tags/samsung-clk-2
+
+
+If any problems, please kindly let me know.
+
+Thanks,
+Kukjin
