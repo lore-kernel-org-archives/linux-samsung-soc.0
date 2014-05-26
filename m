@@ -1,154 +1,103 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: Re: [PATCH v5] drm/exynos: enable fimd clocks in probe before
- accessing fimd registers
-Date: Mon, 26 May 2014 15:41:19 +0800
-Message-ID: <CAGS+omB642X9XtC6CdmgSFiAUr0ChgJKjVwseMj0TeD09oRq6Q@mail.gmail.com>
-References: <1400845643-13644-1-git-send-email-rahul.sharma@samsung.com>
- <CAPdUM4MZOJASg2=LxGmX3ABFoytW1V5V0sieTb3HJwujY=gqtg@mail.gmail.com>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [PATCH 1/3] mmc: host: add slot argument to mmc_of_parse
+Date: Mon, 26 May 2014 10:09:16 +0200
+Message-ID: <20140526080916.GE12777@ldesroches-Latitude-E6320>
+References: <1400840721-11050-1-git-send-email-jh80.chung@samsung.com>
+ <1400840721-11050-2-git-send-email-jh80.chung@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAPdUM4MZOJASg2=LxGmX3ABFoytW1V5V0sieTb3HJwujY=gqtg@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1400840721-11050-2-git-send-email-jh80.chung@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc@vger.kernel.org, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Ludovic Desroches <ludovic.desroches@atmel.com>, Seungwon Jeon <tgih.jun@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, May 26, 2014 at 2:59 PM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
->
-> Hi Inki,
->
-> Please review this patch.
->
-> Regards,
-> Rahul Sharma
->
-> On 23 May 2014 17:17, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> > From: Rahul Sharma <Rahul.Sharma@samsung.com>
-> >
-> > Fimd probe is accessing fimd Registers without enabling the fimd
-> > gate clocks. If FIMD clocks are kept disabled in Uboot or disbaled
-> > during kernel boottime, the system hangs during boottime.
-> >
-> > This issue got surfaced when verifying with sysmmu enabled. Probe of
-> > fimd Sysmmu enables the master clock before accessing sysmmu regs and
-> > then disables. Later fimd probe tries to read the register without
-> > enabling the clock which is wrong and hangs the system.
-> >
-> > Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
-> > ---
-> > v5:
-> >         1) Added pm_runtime_get_sync to enable the Display power domain.
-> > v4:
-> >         1) Added clk_disable for prev clock when clk_enable fails.
-> > v3:
-> >         1) Added checks for clk_enable.
-> > v2:
-> >         Rebase.
-> >  drivers/gpu/drm/exynos/exynos_drm_fimd.c |   35 +++++++++++++++++++++++++++++-
-> >  1 file changed, 34 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> > index bd30d0c..6a30415 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> > @@ -898,18 +898,51 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
-> >  {
-> >         struct fimd_context *ctx = fimd_manager.ctx;
-> >         struct drm_device *drm_dev = data;
-> > -       int win;
-> > +       int win, ret;
-> >
-> >         fimd_mgr_initialize(&fimd_manager, drm_dev);
-> >         exynos_drm_crtc_create(&fimd_manager);
-> >         if (ctx->display)
-> >                 exynos_drm_create_enc_conn(drm_dev, ctx->display);
-> >
-> > +       ret = pm_runtime_get_sync(ctx->dev);
-> > +       if (ret) {
-> > +               dev_err(dev, "pm runtime get has failed.\n");
-> > +               return ret;
-> > +       }
-> > +
-> > +       ret = clk_prepare_enable(ctx->bus_clk);
-> > +       if (ret) {
-> > +               dev_err(dev, "bus clock enable failed.\n");
-> > +               goto bus_clk_err;
-> > +       }
-> > +
-> > +       ret = clk_prepare_enable(ctx->lcd_clk);
+On Fri, May 23, 2014 at 07:25:19PM +0900, Jaehoon Chung wrote:
+> From: Ludovic Desroches <ludovic.desroches@atmel.com>
+> 
+> Some hosts manage several slots. In these case information such as the
+> bus width, chi detect and others are into the slot node. So we have to
 
-Hi Rahul,
+/s/chi detect/chip detect
 
-Can you explain why exactly we are "clearing windows" here in probe(), anyway?
-
-IIUC, bus_clk is the clock that enables FIMD register access, and
-lcd_clk clocks the scan out engine.
-Therefore, if we only need to read/write some registers, we only need
-the bus_clk, not lcd_clk, right?
-
-However, fimd_clear_win() actually clears per-window registers.
-Writes to per-window registers typically do not take effect until the
-next vblank.
-Therefore we do would need to enable lcd_clk to ensure that these
-changes take effect.
-Furthermore, to ensure the window clear completes during probe(), we
-would also need to synchronously wait for the next vblank here - but
-only if FIMD scanout is actually enabled already, otherwise there will
-never be a next scanout, so we must check for that first.
-Lastly, waiting around for a vblank could take a while.  Doing so in
-probe() is not very friendly to boot up time, so the waiting should
-probably be moved out of the main probe() thread into some sort of
-asynchronous handler, which could then signal back when the clear is
-complete.
-
-Do you agree, or am I missing something?
-
-Thanks,
--djk
-
->
-> > +       if (ret) {
-> > +               dev_err(dev, "lcd clock enable failed.\n");
-> > +               goto lcd_clk_err;
-> > +       }
-> > +
-> >         for (win = 0; win < WINDOWS_NR; win++)
-> >                 fimd_clear_win(ctx, win);
-> >
-> > +       clk_disable_unprepare(ctx->lcd_clk);
-> > +       clk_disable_unprepare(ctx->bus_clk);
-> > +
-> > +       ret = pm_runtime_put_sync(ctx->dev);
-> > +       if (ret) {
-> > +               dev_err(dev, "pm runtime put has failed.\n");
-> > +               goto pm_put_err;
-> > +       }
-> > +
-> >         return 0;
-> >
-> > +lcd_clk_err:
-> > +       clk_disable_unprepare(ctx->bus_clk);
-> > +bus_clk_err:
-> > +       pm_runtime_put_sync(ctx->dev);
-> > +pm_put_err:
-> > +       return ret;
-> >  }
-> >
-> >  static void fimd_unbind(struct device *dev, struct device *master,
-> > --
-> > 1.7.9.5
-> >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+> parse child node. If not NULL, slot node will be used instead of the
+> device node.
+> 
+> Signed-off-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> ---
+>  drivers/mmc/core/host.c  |   13 +++++++++----
+>  include/linux/mmc/host.h |   10 +++++++++-
+>  2 files changed, 18 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
+> index 95cceae..0f677b3 100644
+> --- a/drivers/mmc/core/host.c
+> +++ b/drivers/mmc/core/host.c
+> @@ -298,15 +298,17 @@ static inline void mmc_host_clk_sysfs_init(struct mmc_host *host)
+>  #endif
+>  
+>  /**
+> - *	mmc_of_parse() - parse host's device-tree node
+> + *	__mmc_of_parse() - parse host's device-tree node
+>   *	@host: host whose node should be parsed.
+> + *	@slot : some device provide several slots so the node to parse
+> + *		is not the host one.
+>   *
+>   * To keep the rest of the MMC subsystem unaware of whether DT has been
+>   * used to to instantiate and configure this host instance or not, we
+>   * parse the properties and set respective generic mmc-host flags and
+>   * parameters.
+>   */
+> -int mmc_of_parse(struct mmc_host *host)
+> +int __mmc_of_parse(struct mmc_host *host, struct device_node *slot)
+>  {
+>  	struct device_node *np;
+>  	u32 bus_width;
+> @@ -317,7 +319,10 @@ int mmc_of_parse(struct mmc_host *host)
+>  	if (!host->parent || !host->parent->of_node)
+>  		return 0;
+>  
+> -	np = host->parent->of_node;
+> +	if (slot)
+> +		np = slot;
+> +	else
+> +		np = host->parent->of_node;
+>  
+>  	/* "bus-width" is translated to MMC_CAP_*_BIT_DATA flags */
+>  	if (of_property_read_u32(np, "bus-width", &bus_width) < 0) {
+> @@ -459,7 +464,7 @@ out:
+>  	return ret;
+>  }
+>  
+> -EXPORT_SYMBOL(mmc_of_parse);
+> +EXPORT_SYMBOL(__mmc_of_parse);
+>  
+>  /**
+>   *	mmc_alloc_host - initialise the per-host structure.
+> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+> index 7960424..c62af91 100644
+> --- a/include/linux/mmc/host.h
+> +++ b/include/linux/mmc/host.h
+> @@ -372,7 +372,15 @@ struct mmc_host *mmc_alloc_host(int extra, struct device *);
+>  int mmc_add_host(struct mmc_host *);
+>  void mmc_remove_host(struct mmc_host *);
+>  void mmc_free_host(struct mmc_host *);
+> -int mmc_of_parse(struct mmc_host *host);
+> +int __mmc_of_parse(struct mmc_host *host, struct device_node *slot);
+> +/*
+> + * mmc_of_parse - parse host's device-tree node
+> + *	@host: host whose node should be parsed.
+> + */
+> +static inline int mmc_of_parse(struct mmc_host *host)
+> +{
+> +	return __mmc_of_parse(host, NULL);
+> +}
+>  
+>  static inline void *mmc_priv(struct mmc_host *host)
+>  {
+> -- 
+> 1.7.9.5
+> 
