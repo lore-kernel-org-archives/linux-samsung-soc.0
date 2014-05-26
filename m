@@ -1,73 +1,47 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH v6 0/6] add cpuidle support for Exynos5420
-Date: Mon, 26 May 2014 10:10:12 +0530
-Message-ID: <CANuQgHFeDXozQH4LRuidKBOvmhPn8afTpdUg0U4csbsbsyz-OA@mail.gmail.com>
-References: <CANuQgHGSA+R__raSa_tzrgpceqLD2SZw+s0XQUHGF4wscgh6Kg@mail.gmail.com>
-	<1400227438-27155-1-git-send-email-chander.kashyap@linaro.org>
-	<CANuQgHH1_O-8XHhRREdu5WjOwz1oeASdVf7TQFdGxjr0WDSvhQ@mail.gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2] cpufreq: exynos: Fix driver compilation with ARCH_MULTIPLATFORM
+Date: Mon, 26 May 2014 11:10:02 +0530
+Message-ID: <CAKohponMVKg118YxGHohqcHGmnnZmU3G2-=EJqz+RD0hH5o4tA@mail.gmail.com>
+References: <1400670752-673-1-git-send-email-t.figa@samsung.com>
+	<1400858533-4327-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:64789 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751507AbaEZEkN (ORCPT
+Received: from mail-ob0-f170.google.com ([209.85.214.170]:57790 "EHLO
+	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751535AbaEZFkD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 May 2014 00:40:13 -0400
-Received: by mail-ob0-f173.google.com with SMTP id wm4so7615363obc.32
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2014 21:40:12 -0700 (PDT)
-In-Reply-To: <CANuQgHH1_O-8XHhRREdu5WjOwz1oeASdVf7TQFdGxjr0WDSvhQ@mail.gmail.com>
+	Mon, 26 May 2014 01:40:03 -0400
+Received: by mail-ob0-f170.google.com with SMTP id uy5so7706686obc.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2014 22:40:02 -0700 (PDT)
+In-Reply-To: <1400858533-4327-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chander Kashyap <chander.kashyap@linaro.org>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 19 May 2014 11:10, Chander Kashyap <chander.kashyap@linaro.org> wrote:
-> Hi Daniel/Kgene,
+On 23 May 2014 20:52, Tomasz Figa <t.figa@samsung.com> wrote:
+> Currently Exynos cpufreq drivers rely on globally mapped clock
+> controller registers to configure frequency of CPU cores. This is
+> obviously wrong and will be removed in near future, but to enable
+> support for multi-platform builds without introducing a regression it
+> needs to be worked around.
 >
-> On 16 May 2014 13:33, Chander Kashyap <chander.kashyap@linaro.org> wrote:
->> Exynos5420 is a big-little Soc from Samsung. It has 4 A15 and 4 A7 cores.
->>
->> This patchset adds cpuidle support for Exynos5420 SoC based on
->> generic big.little cpuidle driver.
->>
->> Tested on SMDK5420.
->>
->> This patch set depends on:
->>         1. [PATCH 0/5] MCPM backend for Exynos5420
->>            http://www.spinics.net/lists/arm-kernel/msg331100.html
->> Changelog is in respective patches.
->> Chander Kashyap (5):
->>   driver: cpuidle-big-little: add of_device_id structure
->>   arm: exynos: add generic function to calculate cpu number
->>   cpuidle: config: Add ARCH_EXYNOS entry to select cpuidle-big-little
->>     driver
->>   driver: cpuidle: cpuidle-big-little: init driver for Exynos5420
->>   exynos: cpuidle: do not allow cpuidle registration for Exynos5420
->>   mcpm: exynos: populate suspend and powered_up callbacks
->>
->>  arch/arm/mach-exynos/exynos.c        |    4 +++-
->>  arch/arm/mach-exynos/mcpm-exynos.c   |   36 ++++++++++++++++++++++++++++++++++
->>  arch/arm/mach-exynos/regs-pmu.h      |    9 +++++++++
->>  drivers/cpuidle/Kconfig.arm          |    2 +-
->>  drivers/cpuidle/cpuidle-big_little.c |   12 +++++++++++-
->>  5 files changed, 60 insertions(+), 3 deletions(-)
->>
->> --
->> 1.7.9.5
->>
+> This patch hacks the code to look for clock controller node in device
+> tree and map its registers using of_iomap(), instead of relying on
+> global mapping, so dependencies on platform headers are removed and the
+> driver can compile again with multiplatform support.
 >
-> As dependency patches are merged. If their are no further comment, can
-> these patches be taken?
->
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  drivers/cpufreq/Kconfig.arm          |  6 ++---
+>  drivers/cpufreq/exynos-cpufreq.c     |  2 --
+>  drivers/cpufreq/exynos-cpufreq.h     | 30 ++++++++++++-------------
+>  drivers/cpufreq/exynos4210-cpufreq.c | 39 +++++++++++++++++++++++++++-----
+>  drivers/cpufreq/exynos4x12-cpufreq.c | 40 ++++++++++++++++++++++++++++-----
+>  drivers/cpufreq/exynos5250-cpufreq.c | 43 +++++++++++++++++++++++++++++-------
+>  6 files changed, 119 insertions(+), 41 deletions(-)
 
-ping
+Looks fine..
 
-> --
-> with warm regards,
-> Chander Kashyap
-
-
-
--- 
-with warm regards,
-Chander Kashyap
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
