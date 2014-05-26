@@ -1,54 +1,73 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] clk/exynos4: Fix compilation warning
-Date: Mon, 26 May 2014 09:46:28 +0530
-Message-ID: <1401077788-31427-1-git-send-email-sachin.kamat@linaro.org>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH v6 0/6] add cpuidle support for Exynos5420
+Date: Mon, 26 May 2014 10:10:12 +0530
+Message-ID: <CANuQgHFeDXozQH4LRuidKBOvmhPn8afTpdUg0U4csbsbsyz-OA@mail.gmail.com>
+References: <CANuQgHGSA+R__raSa_tzrgpceqLD2SZw+s0XQUHGF4wscgh6Kg@mail.gmail.com>
+	<1400227438-27155-1-git-send-email-chander.kashyap@linaro.org>
+	<CANuQgHH1_O-8XHhRREdu5WjOwz1oeASdVf7TQFdGxjr0WDSvhQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:34520 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750914AbaEZESp (ORCPT
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:64789 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751507AbaEZEkN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 May 2014 00:18:45 -0400
-Received: by mail-pa0-f48.google.com with SMTP id rd3so6961787pab.21
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2014 21:18:45 -0700 (PDT)
+	Mon, 26 May 2014 00:40:13 -0400
+Received: by mail-ob0-f173.google.com with SMTP id wm4so7615363obc.32
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2014 21:40:12 -0700 (PDT)
+In-Reply-To: <CANuQgHH1_O-8XHhRREdu5WjOwz1oeASdVf7TQFdGxjr0WDSvhQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, kgene.kim@samsung.com, mturquette@linaro.org, sachin.kamat@linaro.org
+To: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chander Kashyap <chander.kashyap@linaro.org>
 
-Fixes the following warning:
-WARNING: drivers/built-in.o(.text.unlikely+0x2c50): Section mismatch in reference from the function exynos4_clk_sleep_init() to the (unknown reference) .init.data:(unknown)
-   The function exynos4_clk_sleep_init() references
-   the (unknown reference) __initdata (unknown).
-   This is often because exynos4_clk_sleep_init lacks a __initdata
-   annotation or the annotation of (unknown) is wrong.
+On 19 May 2014 11:10, Chander Kashyap <chander.kashyap@linaro.org> wrote:
+> Hi Daniel/Kgene,
+>
+> On 16 May 2014 13:33, Chander Kashyap <chander.kashyap@linaro.org> wrote:
+>> Exynos5420 is a big-little Soc from Samsung. It has 4 A15 and 4 A7 cores.
+>>
+>> This patchset adds cpuidle support for Exynos5420 SoC based on
+>> generic big.little cpuidle driver.
+>>
+>> Tested on SMDK5420.
+>>
+>> This patch set depends on:
+>>         1. [PATCH 0/5] MCPM backend for Exynos5420
+>>            http://www.spinics.net/lists/arm-kernel/msg331100.html
+>> Changelog is in respective patches.
+>> Chander Kashyap (5):
+>>   driver: cpuidle-big-little: add of_device_id structure
+>>   arm: exynos: add generic function to calculate cpu number
+>>   cpuidle: config: Add ARCH_EXYNOS entry to select cpuidle-big-little
+>>     driver
+>>   driver: cpuidle: cpuidle-big-little: init driver for Exynos5420
+>>   exynos: cpuidle: do not allow cpuidle registration for Exynos5420
+>>   mcpm: exynos: populate suspend and powered_up callbacks
+>>
+>>  arch/arm/mach-exynos/exynos.c        |    4 +++-
+>>  arch/arm/mach-exynos/mcpm-exynos.c   |   36 ++++++++++++++++++++++++++++++++++
+>>  arch/arm/mach-exynos/regs-pmu.h      |    9 +++++++++
+>>  drivers/cpuidle/Kconfig.arm          |    2 +-
+>>  drivers/cpuidle/cpuidle-big_little.c |   12 +++++++++++-
+>>  5 files changed, 60 insertions(+), 3 deletions(-)
+>>
+>> --
+>> 1.7.9.5
+>>
+>
+> As dependency patches are merged. If their are no further comment, can
+> these patches be taken?
+>
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
----
- drivers/clk/samsung/clk-exynos4.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ping
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index c4df294bb7fb..4f150c9dd38c 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -324,7 +324,7 @@ static struct syscore_ops exynos4_clk_syscore_ops = {
- 	.resume = exynos4_clk_resume,
- };
- 
--static void exynos4_clk_sleep_init(void)
-+static void __init exynos4_clk_sleep_init(void)
- {
- 	exynos4_save_common = samsung_clk_alloc_reg_dump(exynos4_clk_regs,
- 					ARRAY_SIZE(exynos4_clk_regs));
-@@ -359,7 +359,7 @@ err_warn:
- 		__func__);
- }
- #else
--static void exynos4_clk_sleep_init(void) {}
-+static void __init exynos4_clk_sleep_init(void) {}
- #endif
- 
- /* list of all parent clock list */
+> --
+> with warm regards,
+> Chander Kashyap
+
+
+
 -- 
-1.7.9.5
+with warm regards,
+Chander Kashyap
