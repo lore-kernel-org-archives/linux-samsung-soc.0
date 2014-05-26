@@ -1,49 +1,75 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2] cpufreq: exynos: Fix driver compilation with ARCH_MULTIPLATFORM
-Date: Tue, 27 May 2014 07:06:10 +0900
-Message-ID: <5383BAD2.6020406@samsung.com>
-References: <1400670752-673-1-git-send-email-t.figa@samsung.com>	<1400858533-4327-1-git-send-email-t.figa@samsung.com>	<53826377.8060709@samsung.com> <CAKohpo=b=Jm4vZfgS2YPA740QfvktgVExXXzOdSUmQjGWhzrhg@mail.gmail.com>
+Subject: Re: [PATCH v11 0/3] Exynos 5410 support
+Date: Tue, 27 May 2014 07:08:21 +0900
+Message-ID: <5383BB55.9070606@samsung.com>
+References: <1401074613-29227-1-git-send-email-t.dakhran@samsung.com> <53832157.2020502@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:36242 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751826AbaEZWGT (ORCPT
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:49960 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752040AbaEZWIb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 May 2014 18:06:19 -0400
-Received: by mail-pa0-f48.google.com with SMTP id rd3so8094426pab.35
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 May 2014 15:06:18 -0700 (PDT)
-In-Reply-To: <CAKohpo=b=Jm4vZfgS2YPA740QfvktgVExXXzOdSUmQjGWhzrhg@mail.gmail.com>
+	Mon, 26 May 2014 18:08:31 -0400
+In-Reply-To: <53832157.2020502@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sachin Kamat <sachin.kamat@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tarek Dakhran <t.dakhran@samsung.com>, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>, Romain Naour <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-samsung-soc@vger.kernel.org, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Rob Landley <rob@landley.net>, Kumar Gala <galak@codeaurora.>
 
-On 05/26/14 14:40, Viresh Kumar wrote:
-> On 26 May 2014 03:11, Kukjin Kim<kgene.kim@samsung.com>  wrote:
->> I'm not sure Thomas' v5 cpufreq-cpu0 driver can be upstreamed for 3.16
->> because of dependency with others, some of them got ack though...
->>
->> * "PM / OPP: move cpufreq specific helpers out of OPP layer"
->> - https://www.mail-archive.com/linux-omap@vger.kernel.org/msg104610.html
+On 05/26/14 20:11, Tomasz Figa wrote:
+> Hi,
 >
-> This is already lying in Rafael's tree.
->
-Good.
+Hi
 
->> * "cpufreq: opp: Add device tree based lookup of boost mode frequency"
->> - http://www.spinics.net/lists/arm-kernel/msg334336.html
+> On 26.05.2014 05:23, Tarek Dakhran wrote:
+>> The series of patches represent support of Exynos 5410 SoC
 >>
-Probably need more time?
-
->> So firstly, I've queued this instead with exynos-multiplatform series...
+>> The Exynos 5410 is the first Samsung SoC based on big.LITTLE architecture
 >>
->> How do you think?
->
-> Looks fine to me. Thanks.
+>> Patches add new platform description, support of clock controller and device
+>> tree for Exynos 5410.
+>>
+>> Has been build on Samsung Linux Kernel
+>>    (branch: for-next, commit: 97eae6c Merge branch 'v3.16-next/multiplatform' into for-next)
+>>
+>> Has been tested on: 1) Exynos 5410 reference board (exynos_defconfig)
+>> 		    2) Exynos 5410 reference board (multi_v7_defconfig)
+>> 		    3) Odroid-XU board (exynos_defconfig)
+>> 		    4) Odroid-XU board (multi_v7_defconfig)
+>>
+Thanks for your test with exynos_defconfig and multi_v7_defconfig.
 
-OK, I applied with your ack.
+>> I hope this is clean and would be applied.
+>>
+>> Tarek.
+>>
+>> Tarek Dakhran (3):
+>>    ARM: EXYNOS: Add support for EXYNOS5410 SoC
+>>    clk: exynos5410: register clocks using common clock framework
+>>    ARM: dts: Add initial device tree support for EXYNOS5410
+>>
+>>   .../devicetree/bindings/clock/exynos5410-clock.txt |   45 +++++
+>>   arch/arm/boot/dts/Makefile                         |    1 +
+>>   arch/arm/boot/dts/exynos5410-smdk5410.dts          |   82 ++++++++
+>>   arch/arm/boot/dts/exynos5410.dtsi                  |  206 +++++++++++++++++++
+>>   arch/arm/mach-exynos/Kconfig                       |    5 +
+>>   arch/arm/mach-exynos/common.h                      |   12 +-
+>>   drivers/clk/samsung/Makefile                       |    1 +
+>>   drivers/clk/samsung/clk-exynos5410.c               |  209 ++++++++++++++++++++
+>>   include/dt-bindings/clock/exynos5410.h             |   33 ++++
+>>   9 files changed, 592 insertions(+), 2 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+>>   create mode 100644 arch/arm/boot/dts/exynos5410-smdk5410.dts
+>>   create mode 100644 arch/arm/boot/dts/exynos5410.dtsi
+>>   create mode 100644 drivers/clk/samsung/clk-exynos5410.c
+>>   create mode 100644 include/dt-bindings/clock/exynos5410.h
+>>
+>
+> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
+>
+Applied this whole series.
 
 Thanks,
-- Kukjin
+Kukjin
