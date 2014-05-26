@@ -1,40 +1,44 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [BUG] Compile error with THUMB2
-Date: Mon, 26 May 2014 17:02:00 +0530
-Message-ID: <CAKohpo=_=n7n+1KMGyZEp3-OmsSicv98ScoVj1M1Mc-hLD-Z7g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCHv2 0/3] mmc: fixed the mmc_of_parse for dwmmc
+Date: Mon, 26 May 2014 20:35:04 +0900
+Message-ID: <1401104107-17651-1-git-send-email-jh80.chung@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:58211 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752242AbaEZLcB (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:52070 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752100AbaEZLfP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 May 2014 07:32:01 -0400
-Received: by mail-oa0-f51.google.com with SMTP id n16so8284510oag.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 May 2014 04:32:01 -0700 (PDT)
+	Mon, 26 May 2014 07:35:15 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Santosh Shukla <santosh.shukla@linaro.org>
+To: linux-mmc@vger.kernel.org
+Cc: chris@printf.net, ulf.hansson@linaro.org, ludovic.desroches@atmel.com, tgih.jun@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>
 
-Hi Guys,
+This patch-set is fixed the dw-mmc controller problem.
+dw-mmc controller have the slot, but mmc_of_parse didn't parse the slot sub-node.
+So dw-mmc controller didn't work correctly.
 
-I didn't had time to put in an effort on this but here is a problem
-reported by Santosh. See if somebody can get this fixed..
+Jaehoon Chung (2):
+  mmc: dw_mmc: use the __mmc_of_parse to parse the slot node
+  ARM: dts: replace the broken-cd property into slot node for dwmmc.
 
-arch/arm/mach-exynos/sleep.S: Assembler messages:
-arch/arm/mach-exynos/sleep.S:57: Error: invalid immediate for address
-calculation (value = 0x00000004)
+Ludovic Desroches (1):
+  mmc: host: add slot argument to mmc_of_parse
 
-Its because of THUMB2 and a probably fix would be something
-like this:
+ arch/arm/boot/dts/exynos4412-odroidx.dts      |    2 +-
+ arch/arm/boot/dts/exynos4412-origen.dts       |    2 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts       |    4 ++--
+ arch/arm/boot/dts/exynos5250-arndale.dts      |    2 +-
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi |    4 ++--
+ arch/arm/boot/dts/exynos5250-smdk5250.dts     |    2 +-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |    2 +-
+ arch/arm/boot/dts/rk3066a-bqcurie2.dts        |    2 +-
+ arch/arm/boot/dts/socfpga_arria5.dtsi         |    2 +-
+ arch/arm/boot/dts/socfpga_cyclone5.dtsi       |    2 +-
+ arch/arm/boot/dts/socfpga_vt.dts              |    2 +-
+ drivers/mmc/core/host.c                       |   13 +++++++++----
+ drivers/mmc/host/dw_mmc.c                     |   25 ++++++-------------------
+ include/linux/mmc/host.h                      |   10 +++++++++-
+ 14 files changed, 37 insertions(+), 37 deletions(-)
 
-https://lkml.org/lkml/2010/3/31/235
-
-NOTE: Mainline's defconfig doesn't get this as THUMB2 isn't
-enabled.
-
-Reproduced on 3.15-rc6
-
---
-viresh
+-- 
+1.7.9.5
