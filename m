@@ -1,52 +1,132 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v6 0/6] add cpuidle support for Exynos5420
-Date: Mon, 26 May 2014 12:29:41 +0200
-Message-ID: <53831795.9070006@gmail.com>
-References: <CANuQgHGSA+R__raSa_tzrgpceqLD2SZw+s0XQUHGF4wscgh6Kg@mail.gmail.com> <1400227438-27155-1-git-send-email-chander.kashyap@linaro.org>
+Subject: Re: [PATCH v4 4/8] Documentation: devicetree: add cpu clock configuration
+ data binding for Exynos4/5
+Date: Mon, 26 May 2014 13:02:06 +0200
+Message-ID: <53831F2E.8000501@gmail.com>
+References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>	<1400029876-5830-5-git-send-email-thomas.ab@samsung.com>	<53769E1F.1090706@gmail.com> <CAJuA9aikGp=_Vgv+qGyRJhSo1a0Qpb_KLE9a63wtbRNbrxYBYQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1400227438-27155-1-git-send-email-chander.kashyap@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, daniel.lezcano@linaro.org, lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, kgene.kim@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:48978 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751515AbaEZLCM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 May 2014 07:02:12 -0400
+In-Reply-To: <CAJuA9aikGp=_Vgv+qGyRJhSo1a0Qpb_KLE9a63wtbRNbrxYBYQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <ta.omasab@gmail.com>
+Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-Hi Chander,
+Thomas,
 
-On 16.05.2014 10:03, Chander Kashyap wrote:
-> Exynos5420 is a big-little Soc from Samsung. It has 4 A15 and 4 A7 cores.
+On 26.05.2014 08:05, Thomas Abraham wrote:
+> Hi Tomasz,
 > 
-> This patchset adds cpuidle support for Exynos5420 SoC based on
-> generic big.little cpuidle driver.
+> Thanks for your comments. Please see inline reply.
 > 
-> Tested on SMDK5420.
+> On Sat, May 17, 2014 at 4:54 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> Hi Thomas,
+>>
+>> Please see my comments inline.
+>>
+>> On 14.05.2014 03:11, Thomas Abraham wrote:
+>>> From; Thomas Abraham <thomas.ab@samsung.com>
+>>>
+>>> The clock blocks within the CMU_CPU clock domain are put together into a
+>>> new composite clock type called the cpu clock. This clock type requires
+>>> configuration data that will be atomically programmed in the multiple
+>>> clock blocks encapsulated within the cpu clock type when the parent clock
+>>> frequency is changed. This configuration data is held in the clock controller
+>>> node. Update clock binding documentation about this configuration data format
+>>> for Samsung Exynos4 and Exynos5 platforms.
+>>>
+>>> Cc: Tomasz Figa <t.figa@samsung.com>
+>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>> Cc: Pawel Moll <pawel.moll@arm.com>
+>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+>>> Cc: Kumar Gala <galak@codeaurora.org>
+>>> Cc: <devicetree@vger.kernel.org>
+>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>>> ---
+>>>  .../devicetree/bindings/clock/exynos4-clock.txt    |   37 ++++++++++++++++++++
+>>>  .../devicetree/bindings/clock/exynos5250-clock.txt |   36 +++++++++++++++++++
+>>>  2 files changed, 73 insertions(+), 0 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+>>> index f5a5b19..0934e02 100644
+>>> --- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+>>> +++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+>>> @@ -15,6 +15,35 @@ Required Properties:
+>>>
+>>>  - #clock-cells: should be 1.
+>>>
+>>> +- samsung,armclk-divider-table: when the frequency of the APLL is changed
+>>> +  the divider clocks in CMU_CPU clock domain also need to be updated. These
+>>> +  divider clocks have SoC specific divider clock output requirements for a
+>>> +  specific APLL clock speeds. When APLL clock rate is changed, these divider
+>>> +  clocks are reprogrammed with pre-determined values in order to maintain the
+>>> +  SoC specific divider clock outputs. This property lists the divider values
+>>> +  for divider clocks in the CMU_CPU block for supported APLL clock speeds.
+>>> +  The format of each entry included in the arm-frequency-table should be
+>>> +  as defined below
+>>
+>> As far as I understand, the relation is not between the APLL frequency
+>> and particular clocks in CPU domain, but rather between the latter and
+>> input clock to CPU domain, which is _after_ the two dividers (called
+>> DIV_CORE and DIV_CORE2 or ARM_DIV1 and ARM_DIV2), which is also exactly
+>> the output frequency of ARMCLK.
+>>
+>>> +
+>>> +  - for Exynos4210 and Exynos4212 based platforms:
+>>> +      cell #1: arm clock parent frequency
+>>
+>> Considering my comment above, this should be rather ARMCLK frequency.
 > 
-> This patch set depends on:
-> 	1. [PATCH 0/5] MCPM backend for Exynos5420
-> 	   http://www.spinics.net/lists/arm-kernel/msg331100.html
-> Changelog is in respective patches.
-> Chander Kashyap (5):
->   driver: cpuidle-big-little: add of_device_id structure
->   arm: exynos: add generic function to calculate cpu number
->   cpuidle: config: Add ARCH_EXYNOS entry to select cpuidle-big-little
->     driver
->   driver: cpuidle: cpuidle-big-little: init driver for Exynos5420
->   exynos: cpuidle: do not allow cpuidle registration for Exynos5420
->   mcpm: exynos: populate suspend and powered_up callbacks
-> 
->  arch/arm/mach-exynos/exynos.c        |    4 +++-
->  arch/arm/mach-exynos/mcpm-exynos.c   |   36 ++++++++++++++++++++++++++++++++++
->  arch/arm/mach-exynos/regs-pmu.h      |    9 +++++++++
->  drivers/cpuidle/Kconfig.arm          |    2 +-
->  drivers/cpuidle/cpuidle-big_little.c |   12 +++++++++++-
->  5 files changed, 60 insertions(+), 3 deletions(-)
-> 
+> The clocks SCLK_APLL, SCLK_HPM, ATCLK and PCLK_DBG have no relation to
+> the ARMCLK frequency. These clocks are directly derived from the PLL
+> clock and so it would not be correct to have them related to ARMCLK.
 
-For the whole series,
+Oh, right, the old driver was changing DIV_APLL, DIV_ATB and
+DIV_PCLK_DBG as well. Somehow I was under an impression that we need to
+care only about those dividers on the path after DIV_CORE and DIV_CORE2.
+In this case the parent rate is the key here, although I'd call it "CPU
+block parent rate (usually APLL)".
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+However this means that the trick with using DIV_CORE and DIV_CORE2 to
+divide the rate of temporary parent clock is not enough, because DIV_ATB
+is sourced directly from MOUT_CORE.
+
+> 
+> So, I see two solutions to this, first being preferred solution.
+> 
+> [A] Cell #1 should define PLL (parent of armclk) clock speed. Cell #2
+> and Cell #3  should define divider values for ARMCLK clock speed. The
+> hardware does support PLL frequency != ARMCLK frequency and so DT
+> binding should allow that (even though implementation in the linux
+> kernel does not use this feature). BTW, this was what was done in v2
+> of this series.
+> 
+> [B] Embedded this data with the code and don't get this from DT. The
+> reason for doing this is, these are SoC specific values and not board
+> specific. And when we are clear about what we want to put in DT, have
+> a provision to lookup DT first and if DT values are not found,
+> fallback on data embedded with the code.
+
+Well, they are not that generic as they might appear. I've seen
+different values for the same SoC in different vendor kernels, depending
+on device the kernel was targeted for. Also they will likely differ
+between SoC revisions.
+
+However it might be a good idea indeed to keep the table in the code as
+a first step to get the driver running without creating new DT bindings.
+
+By the way, I'm not fully convinced if there is really a need for such
+hardcoded look-up tables at all. Those divisors certainly look like they
+are calculated based on some upper bounds for certain clocks and the
+driver could simply find them out itself if those limits were provided.
 
 Best regards,
 Tomasz
