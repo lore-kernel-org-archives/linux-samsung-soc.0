@@ -1,56 +1,53 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: Use params_width()
-Date: Mon, 26 May 2014 17:04:40 +0100
-Message-ID: <20140526160440.GJ22111@sirena.org.uk>
-References: <1400846739-32427-1-git-send-email-tushar.behera@linaro.org>
+From: HUSAM AL SAYED <Husamalsayed@asia.com>
+Subject: Your Urgent reply.
+Date: Mon, 26 May 2014 22:00:48 +0400
+Message-ID: <CAKFyHyqE-jAV0G8GqYW7H_3cUYv2iXVQm5a6-m1VNZWRhKVXAg__26029.4840358712$1401127261$gmane$org@mail.gmail.com>
+Reply-To: Husamalsayed@asia.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yYtrNYCJ4sZown6G"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43438 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751704AbaEZQFW (ORCPT
+Received: from mail-wg0-f66.google.com ([74.125.82.66]:64234 "EHLO
+	mail-wg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751392AbaEZSAt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 May 2014 12:05:22 -0400
-Content-Disposition: inline
-In-Reply-To: <1400846739-32427-1-git-send-email-tushar.behera@linaro.org>
+	Mon, 26 May 2014 14:00:49 -0400
+Received: by mail-wg0-f66.google.com with SMTP id m15so2646837wgh.9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 May 2014 11:00:48 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, tiwai@suse.de, perex@perex.cz, lgirdwood@gmail.com, sbkim73@samsung.com, kgene.kim@samsung.com
+
+Dear Friend,
 
 
---yYtrNYCJ4sZown6G
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Compliments of the day.This mail May be a surprise to you Because you
+did not give me the permission to do so and Neither do you know me but
+before I tell you about myself I want you to please forgive me for
+sending this mail without your permission I have been in search of
+someone with this last name so when I saw you online, I was pushed to
+contact you and see how best we can assist each other. I am Mr. Husam
+Al Sayed, a Bank Officer here in U.A.E. I believe it is the wish of
+God for me to come across you now. I am having an important business
+discussion I wish to share with you which I  believe will interest
+you, because it is in connection with your last name and you are going
+to benefit from it.
 
-On Fri, May 23, 2014 at 05:35:39PM +0530, Tushar Behera wrote:
-> commit 8c5178fca4ce ("ALSA: Add params_width() helpers") introduces
-> a helper to get the sample width. Updating Samsung related sound
-> drivers to use this helper.
+One Late peter who was among the death victims in the May 27 2006
+Earthquake disaster in Java, Indonesia that killed over 5,000 people.
+He was in Indonesia on a business trip and that was how he met his
+end. My bank management is yet to know about his death, I knew about
+it because he was my friend and I am his account officer.he did not
+mention any Next of Kin/ Heir when the account was opened, and he was
+not married and no children. Last week my Bank Management requested
+that he should give instructions on what to do about his funds,I know
+this will happen and that is why I have been looking for a means to
+handle the situation,
 
-Applied, thanks.
+If you are interested send me your private Email Address so that i can
+send you more details of the transaction,
+Thanks for your understanding
 
---yYtrNYCJ4sZown6G
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+I am waiting for your reply.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Best regards,
 
-iQIcBAEBAgAGBQJTg2YVAAoJELSic+t+oim9ZdAP/32osrxT61699mdfyzQNHesF
-ME8yujSL5/E6AMZ/dvIOscp4Y6u+1Yeju9XS0l+SrQqaY7a9eJMmX7gzInQC4z2M
-SdrByuhzpezU9tcVBhkmpe7PVUtZ7srcx3qUMZqxoxQTHPuEnoCQTdQp5tjBW594
-g7OvUc2C8HfAJMmpJuVZRDu2fQf7giPxgF6z9WihJC1u+bRvjmkszLnOxNi9nC1a
-ArNA+uTe4GewNliqqygvrJFVJwQuXez0i3Df2kXOcYQ+rSOX/S7gr2z0RvxRQGl0
-hV6YSqjhammCWI9cRFgNQX9jKArcAa+La6NTastSJzVfq+5SlJSNohyRYGyqD9Aj
-yNmEjrhLWITtVnTekuwuz4g5IMaeVLzNuVDNbRCoQ/jIDMMgOk1i4Xdt3jf8Nsg+
-HPeiUit+Mg9NVw42ghumrNOtNp9sakO4g2QOuL2JwOFst2WLO7Yw6LRnZXgdaPqJ
-Q2FU9nfqw3UgohiOJl4AJyM3G8N4T3ncGCtfywdYL3E+1xJegRSAB1RHUcx4YuQK
-CPuLsPbBoF5w6xke7epj9n8s8v6xJZZhu3z+IKzZi2Vp7QtrVYvW6DtSE2mfc/yb
-64Lb1ymtg/A74LKn4vFtxAwpFtFWjetgESp4ZI+HZnDtKKHQhS6njnac+qz0ix2B
-RYZMudFQVmtk4TBa6dWN
-=/PBU
------END PGP SIGNATURE-----
-
---yYtrNYCJ4sZown6G--
+Mr. Husam Al Sayed
