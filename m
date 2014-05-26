@@ -1,12 +1,13 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 0/9] drm/exynos/ipp: image post processing improvements,
- part deux
-Date: Mon, 26 May 2014 10:17:14 +0200
-Message-ID: <1401092243-25568-1-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 1/9] drm/exynos: ipp: remove usless list_empty() functions
+Date: Mon, 26 May 2014 10:17:15 +0200
+Message-ID: <1401092243-25568-2-git-send-email-a.hajda@samsung.com>
+References: <1401092243-25568-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1401092243-25568-1-git-send-email-a.hajda@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -17,34 +18,157 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This is the next part of ipp improvement patches, this time made
-by YoungJun Cho, I am posting them as he is on leave.
+From: YoungJun Cho <yj44.cho@samsung.com>
 
-The patchset is based on drm-exynos/exynos-drm-next branch.
+list_for_each_entry() handles empty lists, so there is no
+need to check whether the list is empty first.
 
-Regards
-Andrzej
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Acked-by: Seong-Woo Kim <sw0312.kim@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Tested-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 61 +++++----------------------------
+ 1 file changed, 9 insertions(+), 52 deletions(-)
 
-
-Andrzej Hajda (1):
-  drm/exynos: ipp: remove description of non-existing field
-
-YoungJun Cho (8):
-  drm/exynos: ipp: remove usless list_empty() functions
-  drm/exynos: ipp: remove duplicated setting
-  drm/exynos: ipp: rename cmd_lock to lock
-  drm/exynos: ipp: add cmd_lock for cmd_list
-  drm/exynos: ipp: add ipp_remove_id()
-  drm/exynos: ipp: rearrange c_node->mem_lock using routines
-  drm/exynos: ipp: rearrange c_node->event_lock using routine
-  drm/exynos: ipp: update comment for struct drm_ipp_buf_info
-
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 242 ++++++++++++++++----------------
- drivers/gpu/drm/exynos/exynos_drm_ipp.h |   9 +-
- 2 files changed, 129 insertions(+), 122 deletions(-)
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+index bf71d97..c8cfa24 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+@@ -276,11 +276,6 @@ static struct exynos_drm_ippdrv *ipp_find_drv_by_handle(u32 prop_id)
+ 
+ 	DRM_DEBUG_KMS("prop_id[%d]\n", prop_id);
+ 
+-	if (list_empty(&exynos_drm_ippdrv_list)) {
+-		DRM_DEBUG_KMS("ippdrv_list is empty.\n");
+-		return ERR_PTR(-ENODEV);
+-	}
+-
+ 	/*
+ 	 * This case is search ipp driver by prop_id handle.
+ 	 * sometimes, ipp subsystem find driver by prop_id.
+@@ -289,11 +284,9 @@ static struct exynos_drm_ippdrv *ipp_find_drv_by_handle(u32 prop_id)
+ 	list_for_each_entry(ippdrv, &exynos_drm_ippdrv_list, drv_list) {
+ 		DRM_DEBUG_KMS("count[%d]ippdrv[0x%x]\n", count++, (int)ippdrv);
+ 
+-		if (!list_empty(&ippdrv->cmd_list)) {
+-			list_for_each_entry(c_node, &ippdrv->cmd_list, list)
+-				if (c_node->property.prop_id == prop_id)
+-					return ippdrv;
+-		}
++		list_for_each_entry(c_node, &ippdrv->cmd_list, list)
++			if (c_node->property.prop_id == prop_id)
++				return ippdrv;
+ 	}
+ 
+ 	return ERR_PTR(-ENODEV);
+@@ -573,11 +566,6 @@ static int ipp_check_mem_list(struct drm_exynos_ipp_cmd_node *c_node)
+ 		/* source/destination memory list */
+ 		head = &c_node->mem_list[i];
+ 
+-		if (list_empty(head)) {
+-			DRM_DEBUG_KMS("%s memory empty.\n", i ? "dst" : "src");
+-			continue;
+-		}
+-
+ 		/* find memory node entry */
+ 		list_for_each_entry(m_node, head, list) {
+ 			DRM_DEBUG_KMS("%s,count[%d]m_node[0x%x]\n",
+@@ -816,11 +804,6 @@ static void ipp_put_event(struct drm_exynos_ipp_cmd_node *c_node,
+ 	struct drm_exynos_ipp_send_event *e, *te;
+ 	int count = 0;
+ 
+-	if (list_empty(&c_node->event_list)) {
+-		DRM_DEBUG_KMS("event_list is empty.\n");
+-		return;
+-	}
+-
+ 	list_for_each_entry_safe(e, te, &c_node->event_list, base.link) {
+ 		DRM_DEBUG_KMS("count[%d]e[0x%x]\n", count++, (int)e);
+ 
+@@ -918,14 +901,12 @@ static void ipp_clean_queue_buf(struct drm_device *drm_dev,
+ {
+ 	struct drm_exynos_ipp_mem_node *m_node, *tm_node;
+ 
+-	if (!list_empty(&c_node->mem_list[qbuf->ops_id])) {
+-		/* delete list */
+-		list_for_each_entry_safe(m_node, tm_node,
+-			&c_node->mem_list[qbuf->ops_id], list) {
+-			if (m_node->buf_id == qbuf->buf_id &&
+-			    m_node->ops_id == qbuf->ops_id)
+-				ipp_put_mem_node(drm_dev, c_node, m_node);
+-		}
++	/* delete list */
++	list_for_each_entry_safe(m_node, tm_node,
++		&c_node->mem_list[qbuf->ops_id], list) {
++		if (m_node->buf_id == qbuf->buf_id &&
++		    m_node->ops_id == qbuf->ops_id)
++			ipp_put_mem_node(drm_dev, c_node, m_node);
+ 	}
+ }
+ 
+@@ -1361,11 +1342,6 @@ static int ipp_stop_property(struct drm_device *drm_dev,
+ 			/* source/destination memory list */
+ 			head = &c_node->mem_list[i];
+ 
+-			if (list_empty(head)) {
+-				DRM_DEBUG_KMS("mem_list is empty.\n");
+-				break;
+-			}
+-
+ 			list_for_each_entry_safe(m_node, tm_node,
+ 				head, list) {
+ 				ret = ipp_put_mem_node(drm_dev, c_node,
+@@ -1381,11 +1357,6 @@ static int ipp_stop_property(struct drm_device *drm_dev,
+ 		/* destination memory list */
+ 		head = &c_node->mem_list[EXYNOS_DRM_OPS_DST];
+ 
+-		if (list_empty(head)) {
+-			DRM_DEBUG_KMS("mem_list is empty.\n");
+-			break;
+-		}
+-
+ 		list_for_each_entry_safe(m_node, tm_node, head, list) {
+ 			ret = ipp_put_mem_node(drm_dev, c_node, m_node);
+ 			if (ret) {
+@@ -1398,11 +1369,6 @@ static int ipp_stop_property(struct drm_device *drm_dev,
+ 		/* source memory list */
+ 		head = &c_node->mem_list[EXYNOS_DRM_OPS_SRC];
+ 
+-		if (list_empty(head)) {
+-			DRM_DEBUG_KMS("mem_list is empty.\n");
+-			break;
+-		}
+-
+ 		list_for_each_entry_safe(m_node, tm_node, head, list) {
+ 			ret = ipp_put_mem_node(drm_dev, c_node, m_node);
+ 			if (ret) {
+@@ -1790,15 +1756,7 @@ static void ipp_subdrv_close(struct drm_device *drm_dev, struct device *dev,
+ 
+ 	DRM_DEBUG_KMS("for priv[0x%x]\n", (int)priv);
+ 
+-	if (list_empty(&exynos_drm_ippdrv_list)) {
+-		DRM_DEBUG_KMS("ippdrv_list is empty.\n");
+-		goto err_clear;
+-	}
+-
+ 	list_for_each_entry(ippdrv, &exynos_drm_ippdrv_list, drv_list) {
+-		if (list_empty(&ippdrv->cmd_list))
+-			continue;
+-
+ 		list_for_each_entry_safe(c_node, tc_node,
+ 			&ippdrv->cmd_list, list) {
+ 			DRM_DEBUG_KMS("count[%d]ippdrv[0x%x]\n",
+@@ -1825,7 +1783,6 @@ static void ipp_subdrv_close(struct drm_device *drm_dev, struct device *dev,
+ 		}
+ 	}
+ 
+-err_clear:
+ 	kfree(priv);
+ 	return;
+ }
 -- 
 1.9.1
