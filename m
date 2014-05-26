@@ -1,7 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 1/9] drm/exynos: ipp: remove usless list_empty() functions
-Date: Mon, 26 May 2014 10:17:15 +0200
-Message-ID: <1401092243-25568-2-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 3/9] drm/exynos: ipp: rename cmd_lock to lock
+Date: Mon, 26 May 2014 10:17:17 +0200
+Message-ID: <1401092243-25568-4-git-send-email-a.hajda@samsung.com>
 References: <1401092243-25568-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,152 +23,97 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: YoungJun Cho <yj44.cho@samsung.com>
 
-list_for_each_entry() handles empty lists, so there is no
-need to check whether the list is empty first.
+The ippdrv->cmd_list requires cmd_lock.
+So renames cmd_lock to lock for context.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Seong-Woo Kim <sw0312.kim@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 Tested-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 61 +++++----------------------------
- 1 file changed, 9 insertions(+), 52 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 12 ++++++------
+ drivers/gpu/drm/exynos/exynos_drm_ipp.h |  4 ++--
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index bf71d97..c8cfa24 100644
+index 0968777..0d85433 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -276,11 +276,6 @@ static struct exynos_drm_ippdrv *ipp_find_drv_by_handle(u32 prop_id)
- 
- 	DRM_DEBUG_KMS("prop_id[%d]\n", prop_id);
- 
--	if (list_empty(&exynos_drm_ippdrv_list)) {
--		DRM_DEBUG_KMS("ippdrv_list is empty.\n");
--		return ERR_PTR(-ENODEV);
--	}
--
- 	/*
- 	 * This case is search ipp driver by prop_id handle.
- 	 * sometimes, ipp subsystem find driver by prop_id.
-@@ -289,11 +284,9 @@ static struct exynos_drm_ippdrv *ipp_find_drv_by_handle(u32 prop_id)
- 	list_for_each_entry(ippdrv, &exynos_drm_ippdrv_list, drv_list) {
- 		DRM_DEBUG_KMS("count[%d]ippdrv[0x%x]\n", count++, (int)ippdrv);
- 
--		if (!list_empty(&ippdrv->cmd_list)) {
--			list_for_each_entry(c_node, &ippdrv->cmd_list, list)
--				if (c_node->property.prop_id == prop_id)
--					return ippdrv;
--		}
-+		list_for_each_entry(c_node, &ippdrv->cmd_list, list)
-+			if (c_node->property.prop_id == prop_id)
-+				return ippdrv;
+@@ -507,7 +507,7 @@ int exynos_drm_ipp_set_property(struct drm_device *drm_dev, void *data,
+ 		goto err_free_stop;
  	}
  
- 	return ERR_PTR(-ENODEV);
-@@ -573,11 +566,6 @@ static int ipp_check_mem_list(struct drm_exynos_ipp_cmd_node *c_node)
- 		/* source/destination memory list */
- 		head = &c_node->mem_list[i];
+-	mutex_init(&c_node->cmd_lock);
++	mutex_init(&c_node->lock);
+ 	mutex_init(&c_node->mem_lock);
+ 	mutex_init(&c_node->event_lock);
  
--		if (list_empty(head)) {
--			DRM_DEBUG_KMS("%s memory empty.\n", i ? "dst" : "src");
--			continue;
--		}
--
- 		/* find memory node entry */
- 		list_for_each_entry(m_node, head, list) {
- 			DRM_DEBUG_KMS("%s,count[%d]m_node[0x%x]\n",
-@@ -816,11 +804,6 @@ static void ipp_put_event(struct drm_exynos_ipp_cmd_node *c_node,
- 	struct drm_exynos_ipp_send_event *e, *te;
- 	int count = 0;
+@@ -542,7 +542,7 @@ static void ipp_clean_cmd_node(struct drm_exynos_ipp_cmd_node *c_node)
+ 	list_del(&c_node->list);
  
--	if (list_empty(&c_node->event_list)) {
--		DRM_DEBUG_KMS("event_list is empty.\n");
--		return;
--	}
--
- 	list_for_each_entry_safe(e, te, &c_node->event_list, base.link) {
- 		DRM_DEBUG_KMS("count[%d]e[0x%x]\n", count++, (int)e);
+ 	/* destroy mutex */
+-	mutex_destroy(&c_node->cmd_lock);
++	mutex_destroy(&c_node->lock);
+ 	mutex_destroy(&c_node->mem_lock);
+ 	mutex_destroy(&c_node->event_lock);
  
-@@ -918,14 +901,12 @@ static void ipp_clean_queue_buf(struct drm_device *drm_dev,
- {
- 	struct drm_exynos_ipp_mem_node *m_node, *tm_node;
- 
--	if (!list_empty(&c_node->mem_list[qbuf->ops_id])) {
--		/* delete list */
--		list_for_each_entry_safe(m_node, tm_node,
--			&c_node->mem_list[qbuf->ops_id], list) {
--			if (m_node->buf_id == qbuf->buf_id &&
--			    m_node->ops_id == qbuf->ops_id)
--				ipp_put_mem_node(drm_dev, c_node, m_node);
--		}
-+	/* delete list */
-+	list_for_each_entry_safe(m_node, tm_node,
-+		&c_node->mem_list[qbuf->ops_id], list) {
-+		if (m_node->buf_id == qbuf->buf_id &&
-+		    m_node->ops_id == qbuf->ops_id)
-+			ipp_put_mem_node(drm_dev, c_node, m_node);
- 	}
- }
- 
-@@ -1361,11 +1342,6 @@ static int ipp_stop_property(struct drm_device *drm_dev,
- 			/* source/destination memory list */
- 			head = &c_node->mem_list[i];
- 
--			if (list_empty(head)) {
--				DRM_DEBUG_KMS("mem_list is empty.\n");
--				break;
--			}
--
- 			list_for_each_entry_safe(m_node, tm_node,
- 				head, list) {
- 				ret = ipp_put_mem_node(drm_dev, c_node,
-@@ -1381,11 +1357,6 @@ static int ipp_stop_property(struct drm_device *drm_dev,
- 		/* destination memory list */
- 		head = &c_node->mem_list[EXYNOS_DRM_OPS_DST];
- 
--		if (list_empty(head)) {
--			DRM_DEBUG_KMS("mem_list is empty.\n");
--			break;
--		}
--
- 		list_for_each_entry_safe(m_node, tm_node, head, list) {
- 			ret = ipp_put_mem_node(drm_dev, c_node, m_node);
- 			if (ret) {
-@@ -1398,11 +1369,6 @@ static int ipp_stop_property(struct drm_device *drm_dev,
- 		/* source memory list */
- 		head = &c_node->mem_list[EXYNOS_DRM_OPS_SRC];
- 
--		if (list_empty(head)) {
--			DRM_DEBUG_KMS("mem_list is empty.\n");
--			break;
--		}
--
- 		list_for_each_entry_safe(m_node, tm_node, head, list) {
- 			ret = ipp_put_mem_node(drm_dev, c_node, m_node);
- 			if (ret) {
-@@ -1790,15 +1756,7 @@ static void ipp_subdrv_close(struct drm_device *drm_dev, struct device *dev,
- 
- 	DRM_DEBUG_KMS("for priv[0x%x]\n", (int)priv);
- 
--	if (list_empty(&exynos_drm_ippdrv_list)) {
--		DRM_DEBUG_KMS("ippdrv_list is empty.\n");
--		goto err_clear;
--	}
--
- 	list_for_each_entry(ippdrv, &exynos_drm_ippdrv_list, drv_list) {
--		if (list_empty(&ippdrv->cmd_list))
--			continue;
--
- 		list_for_each_entry_safe(c_node, tc_node,
- 			&ippdrv->cmd_list, list) {
- 			DRM_DEBUG_KMS("count[%d]ippdrv[0x%x]\n",
-@@ -1825,7 +1783,6 @@ static void ipp_subdrv_close(struct drm_device *drm_dev, struct device *dev,
+@@ -979,7 +979,7 @@ int exynos_drm_ipp_queue_buf(struct drm_device *drm_dev, void *data,
  		}
+ 		break;
+ 	case IPP_BUF_DEQUEUE:
+-		mutex_lock(&c_node->cmd_lock);
++		mutex_lock(&c_node->lock);
+ 
+ 		/* put event for destination buffer */
+ 		if (qbuf->ops_id == EXYNOS_DRM_OPS_DST)
+@@ -987,7 +987,7 @@ int exynos_drm_ipp_queue_buf(struct drm_device *drm_dev, void *data,
+ 
+ 		ipp_clean_queue_buf(drm_dev, c_node, qbuf);
+ 
+-		mutex_unlock(&c_node->cmd_lock);
++		mutex_unlock(&c_node->lock);
+ 		break;
+ 	default:
+ 		DRM_ERROR("invalid buffer control.\n");
+@@ -1412,7 +1412,7 @@ void ipp_sched_cmd(struct work_struct *work)
+ 		return;
  	}
  
--err_clear:
- 	kfree(priv);
- 	return;
+-	mutex_lock(&c_node->cmd_lock);
++	mutex_lock(&c_node->lock);
+ 
+ 	property = &c_node->property;
+ 
+@@ -1460,7 +1460,7 @@ void ipp_sched_cmd(struct work_struct *work)
+ 	DRM_DEBUG_KMS("ctrl[%d] done.\n", cmd_work->ctrl);
+ 
+ err_unlock:
+-	mutex_unlock(&c_node->cmd_lock);
++	mutex_unlock(&c_node->lock);
  }
+ 
+ static int ipp_send_event(struct exynos_drm_ippdrv *ippdrv,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.h b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
+index eea4db3..fbb80ac 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
+@@ -52,7 +52,7 @@ struct drm_exynos_ipp_cmd_work {
+  * @list: list head to command queue information.
+  * @event_list: list head of event.
+  * @mem_list: list head to source,destination memory queue information.
+- * @cmd_lock: lock for synchronization of access to ioctl.
++ * @lock: lock for synchronization of access to ioctl.
+  * @mem_lock: lock for synchronization of access to memory nodes.
+  * @event_lock: lock for synchronization of access to scheduled event.
+  * @start_complete: completion of start of command.
+@@ -68,7 +68,7 @@ struct drm_exynos_ipp_cmd_node {
+ 	struct list_head	list;
+ 	struct list_head	event_list;
+ 	struct list_head	mem_list[EXYNOS_DRM_OPS_MAX];
+-	struct mutex	cmd_lock;
++	struct mutex	lock;
+ 	struct mutex	mem_lock;
+ 	struct mutex	event_lock;
+ 	struct completion	start_complete;
 -- 
 1.9.1
