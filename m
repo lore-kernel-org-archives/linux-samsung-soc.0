@@ -1,20 +1,21 @@
 From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v5 6/7] ARM: Exynos: switch to using generic cpufreq-cpu0 driver
-Date: Mon, 26 May 2014 11:47:21 +0530
-Message-ID: <CAKohpokcvwXTnUGJH6w2vcoR9Kjcu0dN0CRHtpf1Ars10mGgyA@mail.gmail.com>
+Subject: Re: [PATCH v5 7/7] cpufreq: exynos: remove all exynos specific
+ cpufreq driver support
+Date: Mon, 26 May 2014 11:48:24 +0530
+Message-ID: <CAKohpokP8Kwygi-DbUmEc8EkGYYkO8+NRUN4VDyJ3SXWXViN2Q@mail.gmail.com>
 References: <1400855260-6807-1-git-send-email-thomas.ab@samsung.com>
-	<1400855260-6807-7-git-send-email-thomas.ab@samsung.com>
+	<1400855260-6807-8-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:62206 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751499AbaEZGRW (ORCPT
+Received: from mail-oa0-f45.google.com ([209.85.219.45]:54751 "EHLO
+	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751292AbaEZGSZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 May 2014 02:17:22 -0400
-Received: by mail-ob0-f174.google.com with SMTP id uz6so7599736obc.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2014 23:17:22 -0700 (PDT)
-In-Reply-To: <1400855260-6807-7-git-send-email-thomas.ab@samsung.com>
+	Mon, 26 May 2014 02:18:25 -0400
+Received: by mail-oa0-f45.google.com with SMTP id l6so7900629oag.4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 May 2014 23:18:24 -0700 (PDT)
+In-Reply-To: <1400855260-6807-8-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.ab@samsung.com>
@@ -23,12 +24,24 @@ Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists
 On 23 May 2014 19:57, Thomas Abraham <thomas.ab@samsung.com> wrote:
 > From: Thomas Abraham <thomas.ab@samsung.com>
 >
-> Remove the platform device instantiation for Exynos specific cpufreq
-> driver and add the platform device for cpufreq-cpu0 driver.
+> Exynos4210, Exynos4x12 and Exynos5250 based platforms have switched over
+> to use cpufreq-cpu0 driver for cpufreq functionality. So the Exynos
+> specific cpufreq drivers for these platforms can be removed.
 >
 > Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 > ---
->  arch/arm/mach-exynos/exynos.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  drivers/cpufreq/Kconfig.arm          |   52 --------
+>  drivers/cpufreq/Makefile             |    4 -
+>  drivers/cpufreq/exynos-cpufreq.c     |  218 ----------------------------------
+>  drivers/cpufreq/exynos-cpufreq.h     |   99 ---------------
+>  drivers/cpufreq/exynos4210-cpufreq.c |  157 ------------------------
+>  drivers/cpufreq/exynos4x12-cpufreq.c |  208 --------------------------------
+>  drivers/cpufreq/exynos5250-cpufreq.c |  183 ----------------------------
+>  7 files changed, 921 deletions(-)
+>  delete mode 100644 drivers/cpufreq/exynos-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/exynos-cpufreq.h
+>  delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
 
 Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
