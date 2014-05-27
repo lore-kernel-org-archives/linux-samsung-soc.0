@@ -1,86 +1,106 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/3] regulator: s2mps11: Refactor setting ramp delay
-Date: Tue, 27 May 2014 08:57:18 +0200
-Message-ID: <1401173838.8073.4.camel@AMDC1943>
-References: <1401110423-5647-1-git-send-email-k.kozlowski@samsung.com>
- <1401110423-5647-2-git-send-email-k.kozlowski@samsung.com>
- <CAKew6eV63jkFtpeaHGj4c5fUq0jZYFNzvf_W-fOrtJ5opnadyg@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v2 13/18] ARM: dts: s6e3fa0: add DT bindings
+Date: Tue, 27 May 2014 09:53:29 +0200
+Message-ID: <20140527075328.GA13081@ulmo>
+References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
+ <1400647390-26590-14-git-send-email-yj44.cho@samsung.com>
+ <20140526134153.GA2373@ulmo> <538430A4.8020702@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAKew6eV63jkFtpeaHGj4c5fUq0jZYFNzvf_W-fOrtJ5opnadyg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Lee Jones <lee.jones@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, devicetree <devicetree@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============0818883072=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <538430A4.8020702@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de, laurent.pinchart@ideasonboard.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On wto, 2014-05-27 at 11:56 +0530, Yadwinder Singh Brar wrote:
-> Hi Krzysztof,
-> 
-> 
-> On Mon, May 26, 2014 at 6:50 PM, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
-> > Prepare for merging the s2mpa01 regulator driver into s2mps11 by:
-> > 1. Adding common id for buck regulators.
-> > 2. Splitting shared ramp delay settings to match S2MPA01.
-> > 3. Adding a configuration of registers for setting ramp delay for each
-> >    buck regulator.
-> >
-> > The functionality of the driver should not change as this patch only
-> > prepares for supporting S2MPA01 device.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > ---
-> >  drivers/regulator/s2mps11.c | 210 ++++++++++++++++++++++++++++++--------------
-> >  1 file changed, 144 insertions(+), 66 deletions(-)
-> >
-> 
-> [snip]
-> 
-> >
-> > -               if (ramp_delay > s2mps11->ramp_delay34)
-> > -                       s2mps11->ramp_delay34 = ramp_delay;
-> > +               if (ramp_delay > s2mps11->ramp_delay3)
-> > +                       s2mps11->ramp_delay3 = ramp_delay;
-> >                 else
-> > -                       ramp_delay = s2mps11->ramp_delay34;
-> > -
-> > -               ramp_shift = S2MPS11_BUCK34_RAMP_SHIFT;
-> > -               ramp_reg = S2MPS11_REG_RAMP;
-> > +                       ramp_delay = s2mps11->ramp_delay3;
-> >                 break;
-> >         case S2MPS11_BUCK4:
-> > -               enable_shift = S2MPS11_BUCK4_RAMP_EN_SHIFT;
-> >                 if (!ramp_delay) {
-> >                         ramp_enable = 0;
-> >                         break;
-> >                 }
-> >
-> > -               if (ramp_delay > s2mps11->ramp_delay34)
-> > -                       s2mps11->ramp_delay34 = ramp_delay;
-> > +               if (ramp_delay > s2mps11->ramp_delay4)
-> > +                       s2mps11->ramp_delay4 = ramp_delay;
-> >                 else
-> > -                       ramp_delay = s2mps11->ramp_delay34;
-> > -
-> > -               ramp_shift = S2MPS11_BUCK34_RAMP_SHIFT;
-> > -               ramp_reg = S2MPS11_REG_RAMP;
-> > +                       ramp_delay = s2mps11->ramp_delay4;
-> 
-> Main rationale behind shared value is completely omitted here, in
-> other cases also,
-> after just giving a NOTE in documentation asking user to make sure to
-> pass same value.
-> It doesn't seem safe, simply leaving a scope of stability issue (in
-> case ramp_delay3 > ramp_delay4).
 
-The documentation already states that these bucks (e.g. 3 and 4) share
-the ramp delay setting and 'regulator-ramp-delay' should be the same.
-However you're right that patch is not safe against changing shared ramp
-delays to different values. Previously the code was safe so this is not
-entirely "non-functional" change. I'll fix it to retain the same
-behavior.
+--===============0818883072==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
+Content-Disposition: inline
 
-Best regards,
-Krzysztof
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, May 27, 2014 at 08:28:52AM +0200, Andrzej Hajda wrote:
+> Hi Thierry,
+>=20
+> On 05/26/2014 03:41 PM, Thierry Reding wrote:
+> > On Wed, May 21, 2014 at 01:43:05PM +0900, YoungJun Cho wrote:
+> >> This patch adds DT bindings for s6e3fa0 panel.
+> >> The bindings describes panel resources, display timings and cpu mode t=
+imings.
+> >>
+> >> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> >> Acked-by: Inki Dae <inki.dae@samsung.com>
+> >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> >> ---
+> >>  .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   45 +++++++++++=
++++++++++
+> >>  1 file changed, 45 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6=
+e3fa0.txt
+> > You're totally confusing me here. Half of this patch series is about
+> > adding i80 support to Exynos FIMD, and then you go and add what is
+> > apparently a DSI peripheral driver here that's supposed to be used by
+> > this new i80 support. Nothing I've been able to dig up indicates that
+> > i80 or DSI are in anyway related.
+>=20
+> FIMD can produce parallel RGB output or command mode in i80 style output
+> via parallel lines.
+> DSIM can accept parallel RGB stream in this case it produces MIPI DSI
+> video mode signal or it can accept i80 and in this case it translates it
+> to MIPI DSI command mode.
+
+Then the command mode timings aren't a property of the panel at all.
+They describe what DSIM expects, so that's where they should be defined.
+
+Thierry
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJThER4AAoJEN0jrNd/PrOhWBcQAIyPFZg8zTqeGhUssDktc+SW
+M7nAWFKJG0YbrUuNX5w41Sx+gYQ23ij3m4UQY5enHNPak/MlRgz68xgPl4FVb7f9
+t2C6tolZOvAlzoGYeUgQ2pSYxlFLYnQ3ViWzrvS3mY2gs6Vqig/NzZ9XE9EeQQ5J
+YQrDmB1EK6sA3t4VYQt/X1mOcxn9UCeBXqG7+VaX2X/rjIjCe9B1K3MfMnipqgtd
+saix+15OwHTYQ8G8VRZw/+JqK9UUuedPpJJk9I8OwlP+Raf0dm8di+BJaEBB7np4
+2XwNunc5c7nktSy28GGxSoG3CqLouIDE5JycHVCE9j1RWn5nkwdJpSLqdjNear5H
+6NpwM4JZOBUYoLMAYJPbKauFQKYN/dhleOWf8Yn4ZbjGEJUMPECmQAURP5Wdgodf
+oS/lVFnbXpwgxK8YwJ1Z7vOip6hdncJdPu8Nxz9kZVluiTld8gS/gC3wqH+Aba18
+qK93E7oJvCl6JxOkCQTao8HIgnmfhnhfuEPZgdIusfSrOMd+qnCzKPOuCFwA/MUy
+ZfQGG8wJAd/fsvyezu1mOKHSrtsi49ozMEumf1LBu+oJCmGVffAn1DE2M+O7jOo/
+tFGKYwETv3X29jpmmFZ/gz5MdTwDmjt8LhcxR560TSFm7yhZ5DuxveECgEuDeJ5w
+P7Uxa/zKam3V8Un4F8Gs
+=89Oi
+-----END PGP SIGNATURE-----
+
+--7AUc2qLy4jB3hD7Z--
+
+--===============0818883072==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0818883072==--
