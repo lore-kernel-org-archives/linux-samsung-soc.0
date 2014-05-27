@@ -1,71 +1,42 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v5 5/5] arm: exynos: Add MCPM call-back functions
-Date: Tue, 27 May 2014 20:39:24 +0900
-Message-ID: <002101cf79a0$50fba0f0$f2f2e2d0$@samsung.com>
-References: <1399307221-8659-1-git-send-email-a.kesavan@samsung.com>
- <1399307221-8659-6-git-send-email-a.kesavan@samsung.com>
- <201405271307.56729.arnd@arndb.de>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH 0/2] drm/exynos: consider deferred probe case
+Date: Tue, 27 May 2014 21:42:41 +0900
+Message-ID: <1401194563-803-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:20090 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750904AbaE0Lja (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 May 2014 07:39:30 -0400
-In-reply-to: <201405271307.56729.arnd@arndb.de>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, rmk+kernel@arm.linux.org.uk
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, 'Abhilash Kesavan' <a.kesavan@samsung.com>
-Cc: nicolas.pitre@linaro.org, Dave.Martin@arm.com, lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org, linux-arm-kernel@lists.infradead.org, t.figa@samsung.com, abrestic@chromium.org, thomas.ab@samsung.com, inderpal.s@samsung.com, mark.rutland@arm.com, devicetree@vger.kernel.org, grant.likely@linaro.org, robh+dt@kernel.org, will.deacon@arm.com, kesavan.abhilash@gmail.com, linux-samsung-soc@vger.kernel.org
 
-Arnd Bergmann wrote:
-> 
-> On Monday 05 May 2014, Abhilash Kesavan wrote:
-> > +static const struct mcpm_platform_ops exynos_power_ops = {
-> > +       .power_up               = exynos_power_up,
-> > +       .power_down             = exynos_power_down,
-> > +       .power_down_finish      = exynos_power_down_finish,
-> > +};
-> 
-> 
-> I'm getting a build error in linux-next because there is
-> no .power_down_finish
-> member in mcpm_platform_ops here.
-> 
-Yeah, commit 166aaf39 ("ARM: 8029/1: mcpm: Rename the power_down_finish()
-functions to be less confusing") changed the name to
-wait_for_cpu_powerdown...
+This patch series includes the following two patches.
 
-So need to change it accordingly...
+One makes sure that exynos drm framework handles deferred probe
+case of sub drivers, and other makes sure that mipi dsi driver
+considers deferred probe incurred by panel driver.
 
-diff --git a/arch/arm/mach-exynos/mcpm-exynos.c
-b/arch/arm/mach-exynos/mcpm-exynos.c
-index 1ac618c..34c4e6f 100644
---- a/arch/arm/mach-exynos/mcpm-exynos.c
-+++ b/arch/arm/mach-exynos/mcpm-exynos.c
-@@ -235,7 +235,7 @@ static void exynos_power_down(void)
- 	/* Not dead at this point?  Let our caller cope. */
- }
- 
--static int exynos_power_down_finish(unsigned int cpu, unsigned int cluster)
-+static int exynos_wait_for_powerdown(unsigned int cpu, unsigned int
-cluster)
- {
- 	unsigned int tries = 100;
- 	unsigned int cpunr = cpu + (cluster * EXYNOS5420_CPUS_PER_CLUSTER);
-@@ -261,7 +261,7 @@ static int exynos_power_down_finish(unsigned int cpu,
-unsigned int cluster)
- static const struct mcpm_platform_ops exynos_power_ops = {
- 	.power_up		= exynos_power_up,
- 	.power_down		= exynos_power_down,
--	.power_down_finish	= exynos_power_down_finish,
-+	.wait_for_powerdown	= exynos_wait_for_powerdown,
- };
- 
- static void __init exynos_mcpm_usage_count_init(void)
+Inki Dae (2):
+  drm/exynos: consider deferred probe feature
+  drm/exynos: mipi-dsi: consider panel driver-deferred probe
 
-Thanks,
-Kukjin
+ drivers/gpu/drm/exynos/exynos_dp_core.c  |   16 ++++++-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c  |   28 ++++++------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |    7 +--
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c  |   69 +++++++++++++++++++-----------
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c |   49 +++++++++++++++------
+ drivers/gpu/drm/exynos/exynos_hdmi.c     |   62 +++++++++++++++++++--------
+ drivers/gpu/drm/exynos/exynos_mixer.c    |   16 ++++++-
+ 7 files changed, 170 insertions(+), 77 deletions(-)
+
+-- 
+1.7.9.5
