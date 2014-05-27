@@ -1,151 +1,64 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v5] drm/exynos: enable fimd clocks in probe before
- accessing fimd registers
-Date: Tue, 27 May 2014 21:58:23 +0900
-Message-ID: <53848BEF.4060005@samsung.com>
-References: <1400845643-13644-1-git-send-email-rahul.sharma@samsung.com>
- <CAPdUM4MZOJASg2=LxGmX3ABFoytW1V5V0sieTb3HJwujY=gqtg@mail.gmail.com>
- <CAGS+omB642X9XtC6CdmgSFiAUr0ChgJKjVwseMj0TeD09oRq6Q@mail.gmail.com>
- <CAPdUM4O-tx1fog=ad_nTDHFJUVUT1tJBKaF3Wm+eN7GD4sPNvw@mail.gmail.com>
- <CAPdUM4NPURbcVuwZdpvHKHk4f4Kr17Z1veWLzRAqzPZtk78kdw@mail.gmail.com>
+Subject: Re: [PATCH] drm/exynos: Make exynos_drm_init() call late during the
+ bootup
+Date: Tue, 27 May 2014 22:02:30 +0900
+Message-ID: <53848CE6.4020707@samsung.com>
+References: <1400067585-31236-1-git-send-email-ch.naveen@samsung.com>
+ <20140521154622.GO2014@ulmo>
+ <CAHfPSqBoh=RmavEsJPwb8Mp5Or_M64smUk8NEpO8aAJm5RU0GQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:25269 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751869AbaE0M60 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 May 2014 08:58:26 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N6800FMRHDBRYC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 27 May 2014 21:58:24 +0900 (KST)
-In-reply-to: <CAPdUM4NPURbcVuwZdpvHKHk4f4Kr17Z1veWLzRAqzPZtk78kdw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAHfPSqBoh=RmavEsJPwb8Mp5Or_M64smUk8NEpO8aAJm5RU0GQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: Daniel Kurtz <djkurtz@chromium.org>, Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 
-On 2014=EB=85=84 05=EC=9B=94 27=EC=9D=BC 18:55, Rahul Sharma wrote:
-> <Gentle Reminder>
->=20
-> On 26 May 2014 14:21, Rahul Sharma <rahul.sharma@samsung.com> wrote:
->> Hi Daniel,
->>
->> On 26 May 2014 13:11, Daniel Kurtz <djkurtz@chromium.org> wrote:
->>> On Mon, May 26, 2014 at 2:59 PM, Rahul Sharma <rahul.sharma@samsung=
-=2Ecom> wrote:
->>>>
->>>> Hi Inki,
->>>>
->>>> Please review this patch.
->> [snip]
->>>>> +
->>>>> +       ret =3D clk_prepare_enable(ctx->lcd_clk);
->>>
->>> Hi Rahul,
->>>
->>> Can you explain why exactly we are "clearing windows" here in probe=
-(), anyway?
->>
->> I am not sure why it was added there but it is present since the fir=
-st
->> version of this
->> file. Probably Inki can explain about this :). I can see the change
->> coming from his
->> first patch for adding drm fimd driver.
->>
->>>
->>> IIUC, bus_clk is the clock that enables FIMD register access, and
->>> lcd_clk clocks the scan out engine.
->>> Therefore, if we only need to read/write some registers, we only ne=
-ed
->>> the bus_clk, not lcd_clk, right?
->>>
->>
->> Correct, bus_clk should be sufficient to access the registers. But u=
-nless we
->> are confident about all implicit clock requirements in all SoCs, it =
-is
->> safer to follow
->> the power_on/off sequence. This implementation is as good as DPMS on=
- -> perform
->> reg operation -> DPMS Off. It was same in the original version but
->> later clock enables
->> were moved out of the probe.
->>
->>> However, fimd_clear_win() actually clears per-window registers.
->>> Writes to per-window registers typically do not take effect until t=
-he
->>> next vblank.
->>> Therefore we do would need to enable lcd_clk to ensure that these
->>> changes take effect.
->>> Furthermore, to ensure the window clear completes during probe(), w=
-e
->>> would also need to synchronously wait for the next vblank here - bu=
-t
->>> only if FIMD scanout is actually enabled already, otherwise there w=
-ill
->>> never be a next scanout, so we must check for that first.
->>> Lastly, waiting around for a vblank could take a while.  Doing so i=
-n
->>> probe() is not very friendly to boot up time, so the waiting should
->>> probably be moved out of the main probe() thread into some sort of
->>> asynchronous handler, which could then signal back when the clear i=
-s
->>> complete.
->>>
->>> Do you agree, or am I missing something?
->>
->> I agree. There seems a room for improvement. But at present we have =
-two options,
->> either fix the current implementation and try to improve it as you m=
-entioned
->> above. OR remove fimd_clear_win from probe if it is just a legacy co=
-de which
-
-Just let's remove fimd_clear_win. it wouldn't need to disable all
-hardware overlays at probe.
-
-Thanks,
-Inki Dae
-
->> is no more required.
->>
->> @Inki, need your inputs here.
->>
->> Regards,
->> Rahul Sharma.
->>
->>>
->>> Thanks,
->>> -djk
->>>
->>>>
->>>>> +       if (ret) {
->> [snip]
->>>>> +pm_put_err:
->>>>> +       return ret;
->>>>>  }
->>>>>
->>>>>  static void fimd_unbind(struct device *dev, struct device *maste=
-r,
->>>>> --
->>>>> 1.7.9.5
->>>>>
->>>> _______________________________________________
->>>> dri-devel mailing list
->>>> dri-devel@lists.freedesktop.org
->>>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->>> _______________________________________________
->>> dri-devel mailing list
->>> dri-devel@lists.freedesktop.org
->>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->=20
+T24gMjAxNOuFhCAwNeyblCAyNuydvCAxNDozOSwgTmF2ZWVuIEtyaXNobmEgQ2ggd3JvdGU6Cj4g
+SGVsbG8gRXZlcnlvbmUsCj4gCj4gT24gMjEgTWF5IDIwMTQgMjE6MTYsIFRoaWVycnkgUmVkaW5n
+IDx0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+IHdyb3RlOgo+PiBPbiBXZWQsIE1heSAxNCwgMjAx
+NCBhdCAwNTowOTo0NVBNICswNTMwLCBOYXZlZW4gS3Jpc2huYSBDaGF0cmFkaGkgd3JvdGU6Cj4+
+PiBleHlub3NfZHJtX2luaXQoKSBkb2VzIHByb2Jpbmcgb2YgdmFyaW91cyBkcml2ZXJzIGxpa2Ug
+ZHBfcGFuZWwsCj4+PiBoZG1pLCBmaW1kLCBtaXhlciwgZXRjIGluIGFuIG9yZGVyIGFuZCBmaW5h
+bGx5IGJpbmRzIHRoZW0gdG9nZXRoZXIuCj4+Pgo+Pj4gU29tZSBvZiB0aGUgZHJtIGRldmljZXMg
+KEVnOiBkcF9wYW5lbCkgdHJ5IHRvIGRvIHJlZ3VsYXRvcl9nZXQoKQo+Pj4gYW5kIGVuYWJsZSBm
+ZXcgc3VwcGxpZXMgZHVyaW5nIHRoZWlyIHByb2JlLgo+Pj4gQ2hhbmNlcyBhcmUgdGhhdCwgdGhl
+c2UgZGV2aWNlcyBtYXkgZ2V0IHByb2JlZCBiZWZvcmUgdGhlIHJlc3BlY3RpdmUKPj4+IHN1cHBs
+eS9QTUlDIGlzIGhvb2tlZC4gIEluIHN1Y2ggY2FzZXMsIGRwX3BhbmVsIHdvdWxkIGNvbnRpbnVl
+IHdpdGgKPj4+ICJkdW1teSByZWd1bGF0b3IiLiBXaGljaCBpcyBub3Qgd2hhdCB0aGUgc3lzdGVt
+IHdhbnRzLgo+Pj4KPj4+IExldHMgZ2l2ZSB0aGUgY29yZSBjb25uZWN0aXZpdHkgYW5kIHJlZ3Vs
+YXRvcnMgbW9kdWxlcyBzb21lIHRpbWUKPj4+IHRvIGhvb2t1cCB0aGUgc3VwcGxpZXMgYmVmb3Jl
+IEV4eW5vcyBEUk0gZGV2aWNlcyBjb21lcyBpbnRvIHBpY3R1cmUuCj4+Pgo+Pj4gU2lnbmVkLW9m
+Zi1ieTogTmF2ZWVuIEtyaXNobmEgQ2hhdHJhZGhpIDxjaC5uYXZlZW5Ac2Ftc3VuZy5jb20+Cj4+
+PiAtLS0KPj4+IFRoaXMgY2hhbmdlIGlzIHByb3Bvc2VkIGFmdGVyCj4+PiAxLiBEaXNjdXNzaW5n
+IHdpdGggSTJDL1NQSSAmIERNQSBzdWJzeXN0ZW0gbWFpbnRhaW5lcnMgYW5kIE90aGVycwo+Pj4g
+ICAgQCBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNC81LzkvMzMzCj4+PiAgICBUcnlpbmcgdG8g
+Y2hhbmdlIHRoZSBJMkMsIFNQSSBhbmQgRE1BIGRyaXZlcnMgYXMgc3Vic3lzX2luaXRjYWxsKCkK
+Pj4+ICAgIFdoaWNoIHdhcyBzdHJpY3RseSBvcHBvc2VkLCBhcyBhIGZsYXcgd2FzIGZvdW5kIGlu
+IERSTSBzdWJzeXN0ZW0uCj4+Pgo+Pj4gMi4gLUVQUk9CRV9ERUZFUiB3b24ndCB3b3JrIHdlbGwg
+d2l0aCB0aGUgY3VycmVudCBzZXF1ZW5jeSBvZgo+Pj4gICAgIHBsYXRmb3JtX2RyaXZlcl9yZWdp
+c3RlcigpcyBpbiBleHlub3NfZHJtX2luaXQoKQo+Pgo+PiBUaGVuIHRoaXMgaXMgdGhlIHByb2Js
+ZW0gdGhhdCB5b3UgbmVlZCB0byBmaXguIElmIHRoZSBkcml2ZXIgZG9lc24ndAo+PiBoYW5kbGUg
+LUVQUk9CRV9ERUZFUiBwcm9wZXJseSB0aGVuIHRoYXQgbWVhbnMgdGhlIGRyaXZlciBpcyBicm9r
+ZW4uIE5vCj4+IGFtb3VudCBvZiBpbml0Y2FsbCBvcmRlcmluZyBjYW4gZml4IHRoaXMgZm9yIHlv
+dS4KPiAKPiBXZSBzZWVtIHRvIGhhdmUgYSBwcm9ibGVtIHdpdGggdGhlIHByb2JlIHNlcXVlbmNp
+bmcgYW5kIHVzYWdlIG9mIF9FUFJPQkVfREVGRVIKPiBpbiBEUk0uICBDb21wb25lbnQgd2F5IG9m
+IHJlZ2lzdHJhdGlvbiBkb2VzbnQgc2VlbSB0byBmaXggZXZlcnl0aGluZy4KPiAKPiBJbmtpIERh
+ZSwKPiBJcyB0aGVyZSBhbnkgZGlzY3Vzc2lvbiBvciBhcHByb2FjaCB1bmRlcndheS4KPiBBbnlv
+bmUgd29ya2luZyBvbiB0aGlzLgoKSGksCgpJIGhhdmUganVzdCBwb3N0ZWQgYSBwYXRjaCBzZXJp
+ZXMsIFtQQVRDSCAwLzJdIGRybS9leHlub3M6IGNvbnNpZGVyCmRlZmVycmVkIHByb2JlIGNhc2Us
+IHRvIHJlc29sdmUgdGhhdCBpc3N1ZS4gV2l0aCB0aGlzLCBpdCB3b3VsZG4ndCBuZWVkCnlvdXIg
+cGF0Y2ggYW55bW9yZS4KClRoYW5rcywKSW5raSBEYWUKCj4+Cj4+IFRoaWVycnkKPiAKPiAKPiAK
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
