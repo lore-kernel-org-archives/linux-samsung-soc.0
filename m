@@ -1,80 +1,80 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/5] ARM: dts: Enable RTC node on Origen boards
-Date: Wed, 28 May 2014 00:39:14 +0900
-Message-ID: <5384B1A2.902@samsung.com>
-References: <1400825338-1272-1-git-send-email-sachin.kamat@linaro.org> <CAK9yfHzDkYtwdb-ZcfsFTKfborzkuM22ndFrxT4VmqcG0-fGyg@mail.gmail.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: exynos4412: powerdomain issues with HDMI PHY and VP
+Date: Tue, 27 May 2014 09:49:50 -0700
+Message-ID: <7hwqd79nf5.fsf@paris.lan>
+References: <538104FF.7070601@gmx.net> <53810E0D.5010802@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f54.google.com ([209.85.160.54]:53062 "EHLO
-	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752431AbaE0PjU (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:38485 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752639AbaE0Qtw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 May 2014 11:39:20 -0400
-Received: by mail-pb0-f54.google.com with SMTP id jt11so9491194pbb.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 May 2014 08:39:19 -0700 (PDT)
-In-Reply-To: <CAK9yfHzDkYtwdb-ZcfsFTKfborzkuM22ndFrxT4VmqcG0-fGyg@mail.gmail.com>
+	Tue, 27 May 2014 12:49:52 -0400
+Received: by mail-pa0-f46.google.com with SMTP id kq14so9429540pab.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 May 2014 09:49:52 -0700 (PDT)
+In-Reply-To: <53810E0D.5010802@gmail.com> (Tomasz Figa's message of "Sat, 24
+	May 2014 23:24:29 +0200")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tobias Jakobi <liquid.acid@gmx.net>, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>, arun.kk@samsung.com, Tomasz Stanislawski <t.stanislaws@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ulf Hansson <ulf.hansson@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 05/26/14 12:29, Sachin Kamat wrote:
-> On 23 May 2014 11:38, Sachin Kamat<sachin.kamat@linaro.org>  wrote:
->> Enabled RTC node on Origen 4210 and 4412 boards.
->>
->> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
->> ---
->>   arch/arm/boot/dts/exynos4210-origen.dts |    4 ++++
->>   arch/arm/boot/dts/exynos4412-origen.dts |    4 ++++
->>   2 files changed, 8 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
->> index 72fb11f7ea21..95efb1189cf0 100644
->> --- a/arch/arm/boot/dts/exynos4210-origen.dts
->> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
->> @@ -48,6 +48,10 @@
->>                  };
->>          };
->>
->> +       rtc@10070000 {
->> +               status = "okay";
->> +       };
->> +
->>          tmu@100C0000 {
->>                  status = "okay";
->>          };
->> diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
->> index e2c0dcab4d81..934fe7ecca7e 100644
->> --- a/arch/arm/boot/dts/exynos4412-origen.dts
->> +++ b/arch/arm/boot/dts/exynos4412-origen.dts
->> @@ -48,6 +48,10 @@
->>                  };
->>          };
->>
->> +       rtc@10070000 {
->> +               status = "okay";
->> +       };
->> +
->>          pinctrl@11000000 {
->>                  keypad_rows: keypad-rows {
->>                          samsung,pins = "gpx2-0", "gpx2-1", "gpx2-2";
->> --
->> 1.7.9.5
->>
->
-> Kukjin,
->
-> The patches in this series are really simple and do not want them to
-> wait for another
-> cycle. Please review and send them with your next pull request for
-> 3.16. Also please
-> look at the 2 patches related to secondary cpu boot sent by Tushar.
->
-Applied, but I'm not sure this can be sent to upstream in this time, I 
-will try to do it though ;-) Because already queued a bunch of exynos 
-stuff for arm-soc and this is not really critical at this moment?...
+Tomasz Figa <tomasz.figa@gmail.com> writes:
 
-Anyway thanks.
-- Kukjin
+> Hi Tobias,
+>
+> First of all, big thanks for investigating this issue. Hopefully we can
+> have it fixed in upstream soon.
+>
+> I've added Tomasz Stanislawski to CC list, as he's been doing some work
+> to enable HDMI support on Exynos4 using Exynos DRM.
+>
+> On 24.05.2014 22:45, Tobias Jakobi wrote:
+>> Hello,
+>> 
+>> I'm still working on getting HDMI output on my ODROID-X2 board (based on
+>> Exynos4412 Prime) working. My tree is a 3.15-rc6 with some patches on
+>> top to get it boot on the board.
+>> 
+>> You can find the tree here:
+>> https://github.com/tobiasjakobi/linux-odroid/commits/odroid-3.15.y
+>> 
+>> Here is the DTS:
+>> https://github.com/tobiasjakobi/linux-odroid/blob/odroid-3.15.y/arch/arm/boot/dts/exynos4412-odroidx2.dts
+>> 
+>> I encountered two issues with powerdomains. On related to HDMI PHY and
+>> the other one related to the VP (video processor).
+>> 
+>> The pd the mixer is in, is currently set to pd_tv. I can't seem to
+>> specify multiple powerdomains for one device. However the PHY seems to
+>> need both TV and LCD0 pd to function properly.
+>
+> We've discovered this issue too. Unfortunately the Linux implementation
+> of generic power domain core (genpd) doesn't support multiple power
+> domains per device, so we ended up with a hack in our internal tree.
+>
+> Generic power domain bindings aren't going to help too much, because
+> even though they account for this, the implementation will use only the
+> first domain.
+>
+> I have CC'ed Rafael, Kevin and Ulf, as they might have some ideas how to
+> solve this.
+
+Hmm, this seems a bit strange.  How is this implemented in hardware?  It
+seems rather unlikely that the same IP block is getting power from two
+different power rails.  So I don't think what you really want is to have
+the device modeled in 2 power domains.
+
+Rather, I suspect there's some functional dependency going on that's not
+directly a function of the power domain itself.  Taking a wild shot in
+the dark, it wouldn't be too surprising if the IP block in question
+depends on a clock coming from a device in another power domain?  Since
+this sounds display related, is the pixel clock required coming from an
+IP block in the other power domain?
+
+If it's something like a clock dependency, then that needs to be modeled
+so what when the clock is enabled, the power domain containg the device
+providing that clock cannot be shut down.
+
+Kevin
