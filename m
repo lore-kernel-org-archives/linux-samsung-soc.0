@@ -1,74 +1,46 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v5 5/5] arm: exynos: Add MCPM call-back functions
-Date: Wed, 28 May 2014 00:17:41 +0900
-Message-ID: <5384AC95.6080008@samsung.com>
-References: <1399307221-8659-1-git-send-email-a.kesavan@samsung.com> <1399307221-8659-6-git-send-email-a.kesavan@samsung.com> <201405271307.56729.arnd@arndb.de> <002101cf79a0$50fba0f0$f2f2e2d0$@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Use wfi macro in platform_do_lowpower
+Date: Wed, 28 May 2014 00:33:53 +0900
+Message-ID: <5384B061.7070507@samsung.com>
+References: <1400745455-27920-1-git-send-email-leela.krishna@linaro.org> <537E497B.9020404@linaro.org> <CAM7CM0kG-fWcAo9rTwRj1iPD7EFSDVZWaPc93XmLVE=s_ePDpw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f44.google.com ([209.85.160.44]:45467 "EHLO
-	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751833AbaE0PRu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 May 2014 11:17:50 -0400
-In-Reply-To: <002101cf79a0$50fba0f0$f2f2e2d0$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAM7CM0kG-fWcAo9rTwRj1iPD7EFSDVZWaPc93XmLVE=s_ePDpw@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Leela Krishna Amudala <leela.krishna@linaro.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-pm <linux-pm@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Amit Kucheria <amit.kucheria@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Abhilash Kesavan' <a.kesavan@samsung.com>, nicolas.pitre@linaro.org, Dave.Martin@arm.com, lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org, linux-arm-kernel@lists.infradead.org, t.figa@samsung.com, abrestic@chromium.org, thomas.ab@samsung.com, inderpal.s@samsung.com, mark.rutland@arm.com, devicetree@vger.kernel.org, grant.likely@linaro.org, robh+dt@kernel.org, will.deacon@arm.com, kesavan.abhilash@gmail.com, linux-samsung-soc@vger.kernel.org
 
-On 05/27/14 20:39, Kukjin Kim wrote:
-> Arnd Bergmann wrote:
->>
->> On Monday 05 May 2014, Abhilash Kesavan wrote:
->>> +static const struct mcpm_platform_ops exynos_power_ops = {
->>> +       .power_up               = exynos_power_up,
->>> +       .power_down             = exynos_power_down,
->>> +       .power_down_finish      = exynos_power_down_finish,
->>> +};
->>
->>
->> I'm getting a build error in linux-next because there is
->> no .power_down_finish
->> member in mcpm_platform_ops here.
->>
-> Yeah, commit 166aaf39 ("ARM: 8029/1: mcpm: Rename the power_down_finish()
-> functions to be less confusing") changed the name to
-> wait_for_cpu_powerdown...
+On 05/23/14 15:13, Leela Krishna Amudala wrote:
+> Hi Kgene,
 >
-> So need to change it accordingly...
->
-> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c
-> b/arch/arm/mach-exynos/mcpm-exynos.c
-> index 1ac618c..34c4e6f 100644
-> --- a/arch/arm/mach-exynos/mcpm-exynos.c
-> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
-> @@ -235,7 +235,7 @@ static void exynos_power_down(void)
->   	/* Not dead at this point?  Let our caller cope. */
->   }
->
-> -static int exynos_power_down_finish(unsigned int cpu, unsigned int cluster)
-> +static int exynos_wait_for_powerdown(unsigned int cpu, unsigned int
-> cluster)
->   {
->   	unsigned int tries = 100;
->   	unsigned int cpunr = cpu + (cluster * EXYNOS5420_CPUS_PER_CLUSTER);
-> @@ -261,7 +261,7 @@ static int exynos_power_down_finish(unsigned int cpu,
-> unsigned int cluster)
->   static const struct mcpm_platform_ops exynos_power_ops = {
->   	.power_up		= exynos_power_up,
->   	.power_down		= exynos_power_down,
-> -	.power_down_finish	= exynos_power_down_finish,
-> +	.wait_for_powerdown	= exynos_wait_for_powerdown,
->   };
->
->   static void __init exynos_mcpm_usage_count_init(void)
->
-Arnd,
+Hi,
 
-Fixed with above patch.
-So I hope it should be fine with tomorrow -next tree.
+>
+> On Fri, May 23, 2014 at 12:31 AM, Daniel Lezcano
+> <daniel.lezcano@linaro.org>  wrote:
+>> On 05/22/2014 09:57 AM, Leela Krishna Amudala wrote:
+>>>
+>>> This patch is originally based on commit b3377d186572 ("ARM: 7064/1:
+>>> vexpress: Use wfi macro in platform_do_lowpower.")
+>>>
+>>> Current Exynos CPU hotplug code includes a hardcoded WFI
+>>> instruction, in ARM encoding.  When the kernel is compiled in Thumb-2
+>>> mode, this is invalid and causes the machine to hang hard when a CPU
+>>> is offlined.
+>>>
+>>> Use wfi macro instead of the hardcoded WFI instruction.
+>>>
+>>> Signed-off-by: Leela Krishna Amudala<leela.krishna@linaro.org>
+>>
+>>
+>> Acked-by: Daniel Lezcano<daniel.lezcano@linaro.org>
+>>
+>
+> Can you please take action on this patch.
+>
+Applied, thanks.
 
-Thanks,
-Kukjin
+- Kukjin
