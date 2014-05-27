@@ -1,91 +1,101 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 13/18] ARM: dts: s6e3fa0: add DT bindings
-Date: Tue, 27 May 2014 23:24:49 +0900
-Message-ID: <CAAQKjZOGLPoGbZ7G3+BFd3ydRC2HGmz8JKqFiytdSvxN3T5U_w@mail.gmail.com>
-References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
- <1400647390-26590-14-git-send-email-yj44.cho@samsung.com>
- <20140526134153.GA2373@ulmo> <538430A4.8020702@samsung.com>
- <20140527075328.GA13081@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140527075328.GA13081@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: multi_v7_defconfig: Enable Exynos platform
+Date: Wed, 28 May 2014 00:14:10 +0900
+Message-ID: <1401203650-17813-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f42.google.com ([209.85.160.42]:52647 "EHLO
+	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751831AbaE0POt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 27 May 2014 11:14:49 -0400
+Received: by mail-pb0-f42.google.com with SMTP id md12so9470604pbc.29
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 May 2014 08:14:48 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: arm@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: arnd@arndb.de, olof@lixom.net, khilman@linaro.org, Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-2014-05-27 16:53 GMT+09:00 Thierry Reding <thierry.reding@gmail.com>:
-> On Tue, May 27, 2014 at 08:28:52AM +0200, Andrzej Hajda wrote:
->> Hi Thierry,
->>
->> On 05/26/2014 03:41 PM, Thierry Reding wrote:
->> > On Wed, May 21, 2014 at 01:43:05PM +0900, YoungJun Cho wrote:
->> >> This patch adds DT bindings for s6e3fa0 panel.
->> >> The bindings describes panel resources, display timings and cpu mode timings.
->> >>
->> >> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
->> >> Acked-by: Inki Dae <inki.dae@samsung.com>
->> >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> >> ---
->> >>  .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   45 ++++++++++++++++++++
->> >>  1 file changed, 45 insertions(+)
->> >>  create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
->> > You're totally confusing me here. Half of this patch series is about
->> > adding i80 support to Exynos FIMD, and then you go and add what is
->> > apparently a DSI peripheral driver here that's supposed to be used by
->> > this new i80 support. Nothing I've been able to dig up indicates that
->> > i80 or DSI are in anyway related.
->>
->> FIMD can produce parallel RGB output or command mode in i80 style output
->> via parallel lines.
->> DSIM can accept parallel RGB stream in this case it produces MIPI DSI
->> video mode signal or it can accept i80 and in this case it translates it
->> to MIPI DSI command mode.
->
-> Then the command mode timings aren't a property of the panel at all.
+From: Sachin Kamat <sachin.kamat@linaro.org>
 
-Then the video mode timings aren't also a property of the panel.
+Enable Exynos platform and its related IPs for multi_v7_defconfig.
 
-Which interface mipi and display controller should use would be
-decided by lcd panel type: display controller can use i80 interface
-based lcd panel, and also mipi controller can use i80 interface based
-lcd panel.
-In here, the only difference is that lcd panel receives  packets,
-which includes video data or command data, packed with mipi protocol
-via lane lines or receives video data or command data via parallel
-lines.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/configs/multi_v7_defconfig | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-And the below is LCD types,
-        RGB interface panel.
-        i80 interface panel.
-        MIPI based RGB interface panel.
-        MIPI based i80 interface panel.
-
-RGB interface also is called video mode, and i80 interface also is
-called cpu mode. In case of omap SoC, it is also called Smart panel.
-i80 interface is just one of LCD types. So I think this interface
-timings should be handled by frameworks related to mode in same way as
-RGB interface.
-
-Thanks,
-Inki Dae
-
-> They describe what DSIM expects, so that's where they should be defined.
->
-> Thierry
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index d4e8a47..1996463 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -47,6 +47,7 @@ CONFIG_ARCH_SPEAR13XX=y
+ CONFIG_MACH_SPEAR1310=y
+ CONFIG_MACH_SPEAR1340=y
+ CONFIG_ARCH_STI=y
++CONFIG_ARCH_EXYNOS=y
+ CONFIG_ARCH_SUNXI=y
+ CONFIG_ARCH_SIRF=y
+ CONFIG_ARCH_TEGRA=y
+@@ -71,6 +72,7 @@ CONFIG_PCI_MSI=y
+ CONFIG_PCI_MVEBU=y
+ CONFIG_PCI_TEGRA=y
+ CONFIG_SMP=y
++CONFIG_NR_CPUS=8
+ CONFIG_HIGHPTE=y
+ CONFIG_CMA=y
+ CONFIG_ARM_APPENDED_DTB=y
+@@ -153,6 +155,8 @@ CONFIG_SERIAL_8250_CONSOLE=y
+ CONFIG_SERIAL_8250_DW=y
+ CONFIG_SERIAL_AMBA_PL011=y
+ CONFIG_SERIAL_AMBA_PL011_CONSOLE=y
++CONFIG_SERIAL_SAMSUNG=y
++CONFIG_SERIAL_SAMSUNG_CONSOLE=y
+ CONFIG_SERIAL_SIRFSOC=y
+ CONFIG_SERIAL_SIRFSOC_CONSOLE=y
+ CONFIG_SERIAL_TEGRA=y
+@@ -176,6 +180,7 @@ CONFIG_I2C_MUX=y
+ CONFIG_I2C_MUX_PCA954x=y
+ CONFIG_I2C_MUX_PINCTRL=y
+ CONFIG_I2C_DESIGNWARE_PLATFORM=y
++CONFIG_I2C_EXYNOS5=y
+ CONFIG_I2C_MV64XXX=y
+ CONFIG_I2C_SIRF=y
+ CONFIG_I2C_TEGRA=y
+@@ -210,6 +215,7 @@ CONFIG_MFD_AS3722=y
+ CONFIG_MFD_CROS_EC=y
+ CONFIG_MFD_CROS_EC_SPI=y
+ CONFIG_MFD_MAX8907=y
++CONFIG_MFD_SEC_CORE=y
+ CONFIG_MFD_PALMAS=y
+ CONFIG_MFD_TPS65090=y
+ CONFIG_MFD_TPS6586X=y
+@@ -220,6 +226,8 @@ CONFIG_REGULATOR_AS3722=y
+ CONFIG_REGULATOR_GPIO=y
+ CONFIG_REGULATOR_MAX8907=y
+ CONFIG_REGULATOR_PALMAS=y
++CONFIG_REGULATOR_S2MPS11=y
++CONFIG_REGULATOR_S5M8767=y
+ CONFIG_REGULATOR_TPS51632=y
+ CONFIG_REGULATOR_TPS62360=y
+ CONFIG_REGULATOR_TPS65090=y
+@@ -274,12 +282,16 @@ CONFIG_MMC_ARMMMCI=y
+ CONFIG_MMC_SDHCI=y
+ CONFIG_MMC_SDHCI_ESDHC_IMX=y
+ CONFIG_MMC_SDHCI_TEGRA=y
++CONFIG_MMC_SDHCI_S3C=y
+ CONFIG_MMC_SDHCI_DOVE=y
+ CONFIG_MMC_SDHCI_SPEAR=y
++CONFIG_MMC_SDHCI_S3C_DMA=y
+ CONFIG_MMC_SDHCI_BCM_KONA=y
+ CONFIG_MMC_OMAP=y
+ CONFIG_MMC_OMAP_HS=y
+ CONFIG_MMC_MVSDIO=y
++CONFIG_MMC_DW=y
++CONFIG_MMC_DW_EXYNOS=y
+ CONFIG_EDAC=y
+ CONFIG_EDAC_MM_EDAC=y
+ CONFIG_EDAC_HIGHBANK_MC=y
+-- 
+1.8.2.1.339.g52a3e01
