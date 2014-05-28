@@ -1,80 +1,50 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v6 0/6] add cpuidle support for Exynos5420
-Date: Wed, 28 May 2014 11:02:48 +0200
-Message-ID: <5385A638.2000001@linaro.org>
-References: <CANuQgHGSA+R__raSa_tzrgpceqLD2SZw+s0XQUHGF4wscgh6Kg@mail.gmail.com> <1400227438-27155-1-git-send-email-chander.kashyap@linaro.org> <53831795.9070006@gmail.com> <CANuQgHH284A9QY7M5zGbSE-mXjm2KDqr54VWmtKVkbma3zZvvw@mail.gmail.com> <015f01cf7a2e$3b141590$b13c40b0$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <015f01cf7a2e$3b141590$b13c40b0$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Chander Kashyap' <chander.kashyap@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Lorenzo Pieralisi' <lorenzo.pieralisi@arm.com>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] PCI: exynos: Fix section mismatch warning
+Date: Wed, 28 May 2014 15:18:45 +0530
+Message-ID: <1401270525-27139-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f53.google.com ([209.85.160.53]:33026 "EHLO
+	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752790AbaE1JvH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 May 2014 05:51:07 -0400
+Received: by mail-pb0-f53.google.com with SMTP id md12so10851839pbc.12
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 May 2014 02:51:07 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-pci@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, jg1.han@samsung.com, bhelgaas@google.com, sachin.kamat@linaro.org
 
-On 05/28/2014 06:35 AM, Kukjin Kim wrote:
-> Chander Kashyap wrote:
->>
->> On 26 May 2014 15:59, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>> Hi Chander,
->>>
->>> On 16.05.2014 10:03, Chander Kashyap wrote:
->>>> Exynos5420 is a big-little Soc from Samsung. It has 4 A15 and 4 A7
->> cores.
->>>>
->>>> This patchset adds cpuidle support for Exynos5420 SoC based on
->>>> generic big.little cpuidle driver.
->>>>
->>>> Tested on SMDK5420.
->>>>
->>>> This patch set depends on:
->>>>        1. [PATCH 0/5] MCPM backend for Exynos5420
->>>>           http://www.spinics.net/lists/arm-kernel/msg331100.html
->>>> Changelog is in respective patches.
->>>> Chander Kashyap (5):
->>>>    driver: cpuidle-big-little: add of_device_id structure
->>>>    arm: exynos: add generic function to calculate cpu number
->>>>    cpuidle: config: Add ARCH_EXYNOS entry to select cpuidle-big-li=
-ttle
->>>>      driver
->>>>    driver: cpuidle: cpuidle-big-little: init driver for Exynos5420
->>>>    exynos: cpuidle: do not allow cpuidle registration for Exynos54=
-20
->>>>    mcpm: exynos: populate suspend and powered_up callbacks
->>>>
->>>>   arch/arm/mach-exynos/exynos.c        |    4 +++-
->>>>   arch/arm/mach-exynos/mcpm-exynos.c   |   36
->> ++++++++++++++++++++++++++++++++++
->>>>   arch/arm/mach-exynos/regs-pmu.h      |    9 +++++++++
->>>>   drivers/cpuidle/Kconfig.arm          |    2 +-
->>>>   drivers/cpuidle/cpuidle-big_little.c |   12 +++++++++++-
->>>>   5 files changed, 60 insertions(+), 3 deletions(-)
->>>>
->>>
->>> For the whole series,
->>>
->>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->>
->> Thanks Tomasz.
->>
->> Dear Kukjin,
->> Can you take these patches.
->>>
-> When I looked at this series quickly, looks good to me but I need to =
-get ack from cpuidle maintainer Rafael or Daniel.
+add_pcie_port is called from probe which is annotated with __init.
+add_pcie_port calls dw_pcie_host_init which is also annotated with
+__init. Thus it makes sense to annotate add_pcie_port with __init
+to avoid the following section mismatch warning:
 
-Acked the different cpuidle bits.
+WARNING: drivers/pci/built-in.o(.text.unlikely+0xf8): Section mismatch in reference from the function add_pcie_port() to the function .init.text:dw_pcie_host_init()
+   The function add_pcie_port() references
+   the function __init dw_pcie_host_init().
+   This is often because add_pcie_port lacks a __init
+   annotation or the annotation of dw_pcie_host_init is wrong.
 
-Thanks
-   -- Daniel
+Reported-by: kbuild test robot <fengguang.wu@intel.com>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ drivers/pci/host/pci-exynos.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
+index 3de6bfbbe8e9..3c1ff89829ec 100644
+--- a/drivers/pci/host/pci-exynos.c
++++ b/drivers/pci/host/pci-exynos.c
+@@ -511,7 +511,8 @@ static struct pcie_host_ops exynos_pcie_host_ops = {
+ 	.host_init = exynos_pcie_host_init,
+ };
+ 
+-static int add_pcie_port(struct pcie_port *pp, struct platform_device *pdev)
++static int __init add_pcie_port(struct pcie_port *pp,
++				struct platform_device *pdev)
+ {
+ 	int ret;
+ 
+-- 
+1.7.9.5
