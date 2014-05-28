@@ -1,87 +1,118 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v11 2/3] clk: exynos5410: register clocks using common
- clock framework
-Date: Wed, 28 May 2014 13:49:49 +0900
-Message-ID: <01a201cf7a30$41ecca90$c5c65fb0$@samsung.com>
-References: <1401074613-29227-1-git-send-email-t.dakhran@samsung.com>
- <1401074613-29227-3-git-send-email-t.dakhran@samsung.com>
- <20140528004116.7816.69646@quantum>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 13/18] ARM: dts: s6e3fa0: add DT bindings
+Date: Wed, 28 May 2014 13:50:21 +0900
+Message-ID: <53856B0D.6010501@samsung.com>
+References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
+ <1400647390-26590-14-git-send-email-yj44.cho@samsung.com>
+ <20140526134153.GA2373@ulmo> <538430A4.8020702@samsung.com>
+ <20140527075328.GA13081@ulmo>
+ <CAAQKjZOGLPoGbZ7G3+BFd3ydRC2HGmz8JKqFiytdSvxN3T5U_w@mail.gmail.com>
+ <20140527202122.GA10609@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <20140528004116.7816.69646@quantum>
-Content-language: ko
-Sender: linux-doc-owner@vger.kernel.org
-To: 'Mike Turquette' <mturquette@linaro.org>, linux-kernel@vger.kernel.org
-Cc: 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Rob Landley' <rob@landley.net>, 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Vyacheslav Tyrtov' <v.tyrtov@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Heiko Stuebner' <heiko@sntech.de>, 'Romain Naour' <romain.naour@openwide.fr>, 'Chander Kashyap' <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Tarek Dakhran' <t.dakhran@gmail.com>, 'Tarek Dakhran' <t.dakhran@samsung.com>, 'Jonghwan Choi' <jhbird.choi@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20140527202122.GA10609@mithrandir>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Mike Turquette wrote:
-> 
-> Quoting Tarek Dakhran (2014-05-25 20:23:32)
-> > The EXYNOS5410 clocks are statically listed and registered
-> > using the Samsung specific common clock helper functions.
-> >
-> > Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
-> > Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
-> > ---
-> >  .../devicetree/bindings/clock/exynos5410-clock.txt |   45 +++++
-> >  drivers/clk/samsung/Makefile                       |    1 +
-> >  drivers/clk/samsung/clk-exynos5410.c               |  209
-> ++++++++++++++++++++
-> >  include/dt-bindings/clock/exynos5410.h             |   33 ++++
-> >  4 files changed, 288 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/exynos5410-
-> clock.txt
-> >  create mode 100644 drivers/clk/samsung/clk-exynos5410.c
-> >  create mode 100644 include/dt-bindings/clock/exynos5410.h
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/exynos5410-
-> clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> > new file mode 100644
-> > index 0000000..aeab635
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> > @@ -0,0 +1,45 @@
-> > +* Samsung Exynos5410 Clock Controller
-> > +
-> > +The Exynos5410 clock controller generates and supplies clock to various
-> > +controllers within the Exynos5410 SoC.
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible: should be "samsung,exynos5410-clock"
-> > +
-> > +- reg: physical base address of the controller and length of memory
-> mapped
-> > +  region.
-> > +
-> > +- #clock-cells: should be 1.
-> > +
-> > +All available clocks are defined as preprocessor macros in
-> > +dt-bindings/clock/exynos5410.h header and can be used in device
-> > +tree sources.
-> > +
-> > +External clock:
-> > +
-> > +There is clock that is generated outside the SoC. It
-> > +is expected that it is defined using standard clock bindings
-> > +with following clock-output-name:
-> > +
-> > + - "fin_pll" - PLL input clock from XXTI
-> 
-> Does fin_pll feed into the exynos5410-clock controller? If so, should
-> the example clock-controller node below have a clocks and clock-names
-> property?
-> 
-Well, it is fixed clocks and generated outside of the SoC...so maybe the properties are not required?
-
-BTW, I've applied this series with Tomasz Figa's reviewed tag and sent out to arm-soc today so if any concerns on this, please let me know immediately.
-
-> Otherwise patch looks good.
-> 
-
-Thanks,
-Kukjin
-
+T24gMjAxNOuFhCAwNeyblCAyOOydvCAwNToyMSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24g
+VHVlLCBNYXkgMjcsIDIwMTQgYXQgMTE6MjQ6NDlQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6Cj4+
+IDIwMTQtMDUtMjcgMTY6NTMgR01UKzA5OjAwIFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGlu
+Z0BnbWFpbC5jb20+Ogo+Pj4gT24gVHVlLCBNYXkgMjcsIDIwMTQgYXQgMDg6Mjg6NTJBTSArMDIw
+MCwgQW5kcnplaiBIYWpkYSB3cm90ZToKPj4+PiBIaSBUaGllcnJ5LAo+Pj4+Cj4+Pj4gT24gMDUv
+MjYvMjAxNCAwMzo0MSBQTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4+Pj4+IE9uIFdlZCwgTWF5
+IDIxLCAyMDE0IGF0IDAxOjQzOjA1UE0gKzA5MDAsIFlvdW5nSnVuIENobyB3cm90ZToKPj4+Pj4+
+IFRoaXMgcGF0Y2ggYWRkcyBEVCBiaW5kaW5ncyBmb3IgczZlM2ZhMCBwYW5lbC4KPj4+Pj4+IFRo
+ZSBiaW5kaW5ncyBkZXNjcmliZXMgcGFuZWwgcmVzb3VyY2VzLCBkaXNwbGF5IHRpbWluZ3MgYW5k
+IGNwdSBtb2RlIHRpbWluZ3MuCj4+Pj4+Pgo+Pj4+Pj4gU2lnbmVkLW9mZi1ieTogWW91bmdKdW4g
+Q2hvIDx5ajQ0LmNob0BzYW1zdW5nLmNvbT4KPj4+Pj4+IEFja2VkLWJ5OiBJbmtpIERhZSA8aW5r
+aS5kYWVAc2Ftc3VuZy5jb20+Cj4+Pj4+PiBBY2tlZC1ieTogS3l1bmdtaW4gUGFyayA8a3l1bmdt
+aW4ucGFya0BzYW1zdW5nLmNvbT4KPj4+Pj4+IC0tLQo+Pj4+Pj4gIC4uLi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL3BhbmVsL3NhbXN1bmcsczZlM2ZhMC50eHQgIHwgICA0NSArKysrKysrKysrKysrKysr
+KysrKwo+Pj4+Pj4gIDEgZmlsZSBjaGFuZ2VkLCA0NSBpbnNlcnRpb25zKCspCj4+Pj4+PiAgY3Jl
+YXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9wYW5lbC9z
+YW1zdW5nLHM2ZTNmYTAudHh0Cj4+Pj4+IFlvdSdyZSB0b3RhbGx5IGNvbmZ1c2luZyBtZSBoZXJl
+LiBIYWxmIG9mIHRoaXMgcGF0Y2ggc2VyaWVzIGlzIGFib3V0Cj4+Pj4+IGFkZGluZyBpODAgc3Vw
+cG9ydCB0byBFeHlub3MgRklNRCwgYW5kIHRoZW4geW91IGdvIGFuZCBhZGQgd2hhdCBpcwo+Pj4+
+PiBhcHBhcmVudGx5IGEgRFNJIHBlcmlwaGVyYWwgZHJpdmVyIGhlcmUgdGhhdCdzIHN1cHBvc2Vk
+IHRvIGJlIHVzZWQgYnkKPj4+Pj4gdGhpcyBuZXcgaTgwIHN1cHBvcnQuIE5vdGhpbmcgSSd2ZSBi
+ZWVuIGFibGUgdG8gZGlnIHVwIGluZGljYXRlcyB0aGF0Cj4+Pj4+IGk4MCBvciBEU0kgYXJlIGlu
+IGFueXdheSByZWxhdGVkLgo+Pj4+Cj4+Pj4gRklNRCBjYW4gcHJvZHVjZSBwYXJhbGxlbCBSR0Ig
+b3V0cHV0IG9yIGNvbW1hbmQgbW9kZSBpbiBpODAgc3R5bGUgb3V0cHV0Cj4+Pj4gdmlhIHBhcmFs
+bGVsIGxpbmVzLgo+Pj4+IERTSU0gY2FuIGFjY2VwdCBwYXJhbGxlbCBSR0Igc3RyZWFtIGluIHRo
+aXMgY2FzZSBpdCBwcm9kdWNlcyBNSVBJIERTSQo+Pj4+IHZpZGVvIG1vZGUgc2lnbmFsIG9yIGl0
+IGNhbiBhY2NlcHQgaTgwIGFuZCBpbiB0aGlzIGNhc2UgaXQgdHJhbnNsYXRlcyBpdAo+Pj4+IHRv
+IE1JUEkgRFNJIGNvbW1hbmQgbW9kZS4KPj4+Cj4+PiBUaGVuIHRoZSBjb21tYW5kIG1vZGUgdGlt
+aW5ncyBhcmVuJ3QgYSBwcm9wZXJ0eSBvZiB0aGUgcGFuZWwgYXQgYWxsLgo+Pgo+PiBUaGVuIHRo
+ZSB2aWRlbyBtb2RlIHRpbWluZ3MgYXJlbid0IGFsc28gYSBwcm9wZXJ0eSBvZiB0aGUgcGFuZWwu
+Cj4+Cj4+IFdoaWNoIGludGVyZmFjZSBtaXBpIGFuZCBkaXNwbGF5IGNvbnRyb2xsZXIgc2hvdWxk
+IHVzZSB3b3VsZCBiZQo+PiBkZWNpZGVkIGJ5IGxjZCBwYW5lbCB0eXBlOiBkaXNwbGF5IGNvbnRy
+b2xsZXIgY2FuIHVzZSBpODAgaW50ZXJmYWNlCj4+IGJhc2VkIGxjZCBwYW5lbCwgYW5kIGFsc28g
+bWlwaSBjb250cm9sbGVyIGNhbiB1c2UgaTgwIGludGVyZmFjZSBiYXNlZAo+PiBsY2QgcGFuZWwu
+Cj4+IEluIGhlcmUsIHRoZSBvbmx5IGRpZmZlcmVuY2UgaXMgdGhhdCBsY2QgcGFuZWwgcmVjZWl2
+ZXMgIHBhY2tldHMsCj4+IHdoaWNoIGluY2x1ZGVzIHZpZGVvIGRhdGEgb3IgY29tbWFuZCBkYXRh
+LCBwYWNrZWQgd2l0aCBtaXBpIHByb3RvY29sCj4+IHZpYSBsYW5lIGxpbmVzIG9yIHJlY2VpdmVz
+IHZpZGVvIGRhdGEgb3IgY29tbWFuZCBkYXRhIHZpYSBwYXJhbGxlbAo+PiBsaW5lcy4KPj4KPj4g
+QW5kIHRoZSBiZWxvdyBpcyBMQ0QgdHlwZXMsCj4+ICAgICAgICAgUkdCIGludGVyZmFjZSBwYW5l
+bC4KPj4gICAgICAgICBpODAgaW50ZXJmYWNlIHBhbmVsLgo+PiAgICAgICAgIE1JUEkgYmFzZWQg
+UkdCIGludGVyZmFjZSBwYW5lbC4KPj4gICAgICAgICBNSVBJIGJhc2VkIGk4MCBpbnRlcmZhY2Ug
+cGFuZWwuCj4+Cj4+IFJHQiBpbnRlcmZhY2UgYWxzbyBpcyBjYWxsZWQgdmlkZW8gbW9kZSwgYW5k
+IGk4MCBpbnRlcmZhY2UgYWxzbyBpcwo+PiBjYWxsZWQgY3B1IG1vZGUuIEluIGNhc2Ugb2Ygb21h
+cCBTb0MsIGl0IGlzIGFsc28gY2FsbGVkIFNtYXJ0IHBhbmVsLgo+PiBpODAgaW50ZXJmYWNlIGlz
+IGp1c3Qgb25lIG9mIExDRCB0eXBlcy4gU28gSSB0aGluayB0aGlzIGludGVyZmFjZQo+PiB0aW1p
+bmdzIHNob3VsZCBiZSBoYW5kbGVkIGJ5IGZyYW1ld29ya3MgcmVsYXRlZCB0byBtb2RlIGluIHNh
+bWUgd2F5IGFzCj4+IFJHQiBpbnRlcmZhY2UuCj4gCj4gTENEIGlzIGEgZGlzcGxheSB0ZWNobm9s
+b2d5LCBpdCBoYXMgbm90aGluZyB0byBkbyB3aXRoIHRoZSBpbnRlcmZhY2UuIE15Cj4gcG9pbnQg
+aXMgdGhhdCBmcm9tIEFuZHJ6ZWoncyBkZXNjcmlwdGlvbiwgYW5kIGluIGZhY3QgZnJvbSB0aGlz
+IHBhdGNoCj4gc2VyaWVzIGluIGdlbmVyYWwsIHRoZSBTNkUzRkEwIHBhbmVsIGlzIGEgRFNJIHBh
+bmVsLiBBc3NvY2lhdGluZyB0aW1pbmdzCj4gdGhhdCBhcmUgaTgwIHNwZWNpZmljIHRvIGl0IGlz
+IHRoZXJlZm9yZSB3cm9uZy4KPiAKPiBDb25zaWRlciBmb3IgaW5zdGFuY2Ugd2hhdCB3b3VsZCBo
+YXBwZW4gaWYgc29tZWJvZHkgd2VyZSB0byB1c2UgdGhlIHNhbWUKPiBwYW5lbCBvbiBzb21lIG90
+aGVyIGRldmljZSAoY29ubmVjdGVkIHRvIGEgRFNJIGNvbnRyb2xsZXIpLiBJZiB5b3UKPiBzcGVj
+aWZ5IGk4MCB0aW1pbmdzIGZvciB0aGUgcGFuZWwgdGhlbiB0aGUgbmV3IGRldmljZSB3b24ndCBr
+bm93IHdoYXQgdG8KPiBkbyB3aXRoIHRoZW0gYmVjYXVzZSBpdCBleHBlY3RzIERTSS1yZWxhdGVk
+IHRpbWluZ3MuCj4gCj4gTGV0IG1lIHRyeSB0byBzdW1tYXJpemUgdGhlIGFib3ZlIHRvIG1ha2Ug
+c3VyZSB3ZSdyZSBhbGwgb24gdGhlIHNhbWUKPiBwYWdlOgo+IAo+IAktIEZJTUQgaXMgYSBkaXNw
+bGF5IGNvbnRyb2xsZXIgdGhhdCBjYW4gYmUgY29uZmlndXJlZCB0byBlaXRoZXIKPiAJICBzZW5k
+IFJHQiBkYXRhIG9yIGk4MCBkYXRhCj4gCS0gRFNJTSB0YWtlcyBlaXRoZXIgUkdCIGFzIGlucHV0
+IGFuZCBvdXRwdXRzIERTSSAodmlkZW8gbW9kZSkgb3IKPiAJICBpODAgYXMgaW5wdXQgYW5kIG91
+dHB1dHMgRFNJIChjb21tYW5kIG1vZGUpCj4gCj4gSW4gYm90aCBjYXNlcyB0aGUgcGFuZWwgaXMg
+Y29ubmVjdGVkIHRvIERTSU0gYW5kIGl0IHRha2VzIERTSSBhcyBpbnB1dCwKPiBiZWNhdXNlIGl0
+IGlzIGEgRFNJIHBhbmVsIChpdCBkb2Vzbid0IHVuZGVyc3RhbmQgUkdCIG9yIGk4MCkuIFRoZSBw
+YW5lbAo+IG5lZWRzIHRvIGRlc2NyaWJlIHRoZSBwcm9wZXJ0aWVzIG9mIHRoZSBEU0kgaW50ZXJm
+YWNlIHNvIHRoYXQgRFNJTSBjYW4KPiBiZSBjb25maWd1cmVkIGFwcHJvcHJpYXRlbHkuIERTSU0g
+aW4gdHVybiB3b3JrcyBhcyBhIGJyaWRnZSBvciBlbmNvZGVyCj4gdGhhdCBjb252ZXJ0cyBSR0Ig
+b3IgaTgwIHRvIERTSSAodmlkZW8gb3IgY29tbWFuZCBtb2RlKS4gU28gaXQgbWFrZXMgbm8KPiBz
+ZW5zZSB0byBkZXNjcmliZSB0aGUgaTgwIHRpbWluZ3MgZm9yIHRoZSBwYW5lbCBiZWNhdXNlIGl0
+IGhhcyBub3RoaW5nCj4gdG8gZG8gd2l0aCBpODAuIEluc3RlYWQgdGhlIERTSU0gaXMgdGhlIGhh
+cmR3YXJlIHRoYXQgbmVlZHMgdG8gc3BlY2lmeQo+IHRoZSBpODAgdGltaW5ncywgc28gdGhhdCBG
+SU1EIGNhbiBiZSBjb25maWd1cmVkIHRvIGdlbmVyYXRlIHRoZSB0aW1pbmdzCj4gdGhhdCBEU0lN
+IG5lZWRzLgoKICAgICAgICAgICAgQ1BVIGludGVyZmFjZSAgICAgICAgICAgICAgICAgICAgIE1J
+UEkgbGFuZQpGSU1EIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIERTSU0gLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tIExDRCBQYW5lbAoKSG1tLi4uIHJlYXNvbmFibGUuIFNvIHlvdXIgcG9pbnQgaXMgdGhh
+dCBjb21tYW5kIG1vZGUgdGltaW5nIHNob3VsZCBiZQpwbGFjZWQgaW4gZmltZCBkZXZpY2Ugbm9k
+ZSwgbm90IHBhbmVsIGRldmljZSBub2RlPyBBbmQgcGFuZWwgZGV2aWNlIG5vZGUKc2hvdWxkIHBy
+b3ZpZGUgb25seSBhIHByb3BlcnR5IHRoYXQgRFNJTSBkcml2ZXIgY2FuIHNldCBMQ0QgbW9kZQpw
+cm9wZXJseSB0byBpODAgb3IgcmdiIGludGVyZmFjZSBtb2RlLCBhbmQgYWxzbyBGSU1EIGRyaXZl
+ciBjYW4gc2V0IExDRAptb2RlIHRvIGk4MCBvciByZ2IgaW50ZXJmYWNlIG1vZGUuCgpJcyB0aGVy
+ZSBteSBtaXNzaW5nIHBvaW50PwoKQW5kIGluIGNhc2Ugb2YgRXh5bm9zLCBub3cgdmlkZW8gdGlt
+aW5nIHByb3BlcnR5IGlzIGFsc28gcGxhY2VkIGluIHBhbmVsCmRldmljZSBub2RlIHNvIGl0IG5l
+ZWRzIHRvIG1vdmUgdG8gZmltZCBkZXZpY2Ugbm9kZS4KCkFuZHJ6ZWosIGRvIHlvdSBoYXZlIG90
+aGVyIG9waW5pb24/IEkgaGF2ZSBsb29rZWQgaW50byBkdHMgZmlsZXMgZm9yCm90aGVyIFNvQyBh
+bmQgSW4gbW9zdCBTb0MsIGl0IHNlZW1zIHRoYXQgZGlzcGxheSBjb250cm9sbGVyIG5vZGUgaGFz
+CnZpZGVvIHRpbWluZyBwcm9wZXJ0eSwgbm90IHBhbmVsIG5vZGUuIFRoaWVycnkncyBwb2ludGlu
+ZyBzZWVtcwpyZWFzb25hYmxlIHRvIG1lLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBUaGllcnJ5
+Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
