@@ -1,86 +1,74 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] clk: exynos5420: Staticize local variables
-Date: Wed, 28 May 2014 13:31:04 +0530
-Message-ID: <CAK9yfHwzAsJLfYfn_ZfyEx+jerntZOn3fBG682M08hN+DR+sCA@mail.gmail.com>
-References: <1400673482-16287-1-git-send-email-sachin.kamat@linaro.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v6 1/6] driver: cpuidle-big-little: add of_device_id structure
+Date: Wed, 28 May 2014 10:58:32 +0200
+Message-ID: <5385A538.8020504@linaro.org>
+References: <CANuQgHGSA+R__raSa_tzrgpceqLD2SZw+s0XQUHGF4wscgh6Kg@mail.gmail.com> <1400227438-27155-1-git-send-email-chander.kashyap@linaro.org> <1400227438-27155-2-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:57097 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752037AbaE1IBF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 May 2014 04:01:05 -0400
-Received: by mail-ob0-f173.google.com with SMTP id wm4so10487725obc.32
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 May 2014 01:01:04 -0700 (PDT)
-In-Reply-To: <1400673482-16287-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1400227438-27155-2-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, kgene.kim@samsung.com, tomasz.figa@gmail.com, Chander Kashyap <k.chander@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>
 
-On 21 May 2014 17:28, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Local symbols are made static.
+On 05/16/2014 10:03 AM, Chander Kashyap wrote:
+> This driver will be used by many big.Little Soc's. As of now it does
+> string matching of hardcoded compatible string to init the driver. Th=
+is
+> comparison list will keep on growing with addition of new SoC's.
+> Hence add of_device_id structure to collect the compatible strings of
+> SoC's using this driver.
 >
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
 > ---
->  drivers/clk/samsung/clk-exynos5420.c |   10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>   drivers/cpuidle/cpuidle-big_little.c |   11 ++++++++++-
+>   1 file changed, 10 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 9d7d7eed03fd..41b507baf5d6 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -474,7 +474,7 @@ static struct samsung_fixed_factor_clock
->         FFACTOR(0, "ff_dout_spll2", "mout_sclk_spll", 1, 2, 0),
->  };
+> diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/c=
+puidle-big_little.c
+> index b45fc62..4cd02bd 100644
+> --- a/drivers/cpuidle/cpuidle-big_little.c
+> +++ b/drivers/cpuidle/cpuidle-big_little.c
+> @@ -163,14 +163,23 @@ static int __init bl_idle_driver_init(struct cp=
+uidle_driver *drv, int cpu_id)
+>   	return 0;
+>   }
 >
-> -struct samsung_mux_clock exynos5800_mux_clks[] __initdata = {
-> +static struct samsung_mux_clock exynos5800_mux_clks[] __initdata = {
->         MUX(0, "mout_aclk400_isp", mout_group3_5800_p, SRC_TOP0, 0, 3),
->         MUX(0, "mout_aclk400_mscl", mout_group3_5800_p, SRC_TOP0, 4, 3),
->         MUX(0, "mout_aclk400_wcore", mout_group2_5800_p, SRC_TOP0, 16, 3),
-> @@ -523,7 +523,7 @@ struct samsung_mux_clock exynos5800_mux_clks[] __initdata = {
->         MUX(0, "mout_fimd1", mout_group2_p, SRC_DISP10, 4, 3),
->  };
+> +static const struct of_device_id compatible_machine_match[] =3D {
+> +	{ .compatible =3D "arm,vexpress,v2p-ca15_a7" },
+> +	{},
+> +};
+> +
+>   static int __init bl_idle_init(void)
+>   {
+>   	int ret;
+> +	struct device_node *root =3D of_find_node_by_path("/");
+> +
+> +	if (!root)
+> +		return -ENODEV;
 >
-> -struct samsung_div_clock exynos5800_div_clks[] __initdata = {
-> +static struct samsung_div_clock exynos5800_div_clks[] __initdata = {
->         DIV(0, "dout_aclk400_wcore", "mout_aclk400_wcore", DIV_TOP0, 16, 3),
+>   	/*
+>   	 * Initialize the driver just for a compliant set of machines
+>   	 */
+> -	if (!of_machine_is_compatible("arm,vexpress,v2p-ca15_a7"))
+> +	if (!of_match_node(compatible_machine_match, root))
+>   		return -ENODEV;
+>   	/*
+>   	 * For now the differentiation between little and big cores
 >
->         DIV(0, "dout_aclk550_cam", "mout_aclk550_cam",
-> @@ -539,14 +539,14 @@ struct samsung_div_clock exynos5800_div_clks[] __initdata = {
->         DIV(0, "dout_sclk_sw", "sclk_spll", DIV_TOP9, 24, 6),
->  };
->
-> -struct samsung_gate_clock exynos5800_gate_clks[] __initdata = {
-> +static struct samsung_gate_clock exynos5800_gate_clks[] __initdata = {
->         GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
->                                 GATE_BUS_TOP, 24, 0, 0),
->         GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
->                                 GATE_BUS_TOP, 27, 0, 0),
->  };
->
-> -struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
-> +static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
->         MUX(0, "sclk_bpll", mout_bpll_p, TOP_SPARE2, 0, 1),
->         MUX(0, "mout_aclk400_wcore_bpll", mout_aclk400_wcore_bpll_p,
->                                 TOP_SPARE2, 4, 1),
-> @@ -576,7 +576,7 @@ struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
->         MUX(0, "mout_fimd1", mout_group3_p, SRC_DISP10, 4, 1),
->  };
->
-> -struct samsung_div_clock exynos5420_div_clks[] __initdata = {
-> +static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
->         DIV(0, "dout_aclk400_wcore", "mout_aclk400_wcore_bpll",
->                         DIV_TOP0, 16, 3),
->  };
-> --
 
-Mike,
 
-Tomasz is probably on vacation. Can you please take this patch?
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
 
--- 
-With warm regards,
-Sachin
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
