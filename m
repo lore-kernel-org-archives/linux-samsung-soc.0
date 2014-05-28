@@ -1,50 +1,36 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] PCI: exynos: Fix section mismatch warning
-Date: Wed, 28 May 2014 15:18:45 +0530
-Message-ID: <1401270525-27139-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f53.google.com ([209.85.160.53]:33026 "EHLO
-	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752790AbaE1JvH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 May 2014 05:51:07 -0400
-Received: by mail-pb0-f53.google.com with SMTP id md12so10851839pbc.12
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 May 2014 02:51:07 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] ARM: exynos_defconfig: Enable clock and RTC driver for S2M and
+ S5M
+Date: Wed, 28 May 2014 12:16:07 +0200
+Message-ID: <1401272167-3125-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pci@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, jg1.han@samsung.com, bhelgaas@google.com, sachin.kamat@linaro.org
 
-add_pcie_port is called from probe which is annotated with __init.
-add_pcie_port calls dw_pcie_host_init which is also annotated with
-__init. Thus it makes sense to annotate add_pcie_port with __init
-to avoid the following section mismatch warning:
+The config enables already Samsung's PMIC-s MFD driver and regulators
+(S2MPS11 and S5M8767). Enable also drivers for rest of these PMIC-s
+features: clock and RTC.
 
-WARNING: drivers/pci/built-in.o(.text.unlikely+0xf8): Section mismatch in reference from the function add_pcie_port() to the function .init.text:dw_pcie_host_init()
-   The function add_pcie_port() references
-   the function __init dw_pcie_host_init().
-   This is often because add_pcie_port lacks a __init
-   annotation or the annotation of dw_pcie_host_init is wrong.
-
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/pci/host/pci-exynos.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/configs/exynos_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-index 3de6bfbbe8e9..3c1ff89829ec 100644
---- a/drivers/pci/host/pci-exynos.c
-+++ b/drivers/pci/host/pci-exynos.c
-@@ -511,7 +511,8 @@ static struct pcie_host_ops exynos_pcie_host_ops = {
- 	.host_init = exynos_pcie_host_init,
- };
- 
--static int add_pcie_port(struct pcie_port *pp, struct platform_device *pdev)
-+static int __init add_pcie_port(struct pcie_port *pp,
-+				struct platform_device *pdev)
- {
- 	int ret;
- 
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index e07a227ec0db..f69b86b650fa 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -109,7 +109,9 @@ CONFIG_MMC_DW_IDMAC=y
+ CONFIG_MMC_DW_EXYNOS=y
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_S3C=y
++CONFIG_RTC_DRV_S5M=y
+ CONFIG_COMMON_CLK_MAX77686=y
++CONFIG_COMMON_CLK_S2MPS11=y
+ CONFIG_EXT2_FS=y
+ CONFIG_EXT3_FS=y
+ CONFIG_EXT4_FS=y
 -- 
-1.7.9.5
+1.9.1
