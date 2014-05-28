@@ -1,100 +1,53 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/5] ARM: dts: Enable RTC node on Origen boards
-Date: Wed, 28 May 2014 09:23:06 +0530
-Message-ID: <CAK9yfHwZRhzHMwcJzrgSOyVBd4yjPm4sX80rnQTNeg5VNcKmcg@mail.gmail.com>
-References: <1400825338-1272-1-git-send-email-sachin.kamat@linaro.org>
-	<CAK9yfHzDkYtwdb-ZcfsFTKfborzkuM22ndFrxT4VmqcG0-fGyg@mail.gmail.com>
-	<5384B1A2.902@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH v2 Resend 1/2] ARM: EXYNOS: Update secondary boot addr for secure mode
+Date: Wed, 28 May 2014 09:43:01 +0530
+Message-ID: <1401250382-24046-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:37197 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751966AbaE1DxI (ORCPT
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:44642 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750774AbaE1EPY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 May 2014 23:53:08 -0400
-Received: by mail-ob0-f176.google.com with SMTP id wo20so10198737obc.21
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 May 2014 20:53:06 -0700 (PDT)
-In-Reply-To: <5384B1A2.902@samsung.com>
+	Wed, 28 May 2014 00:15:24 -0400
+Received: by mail-pa0-f48.google.com with SMTP id rd3so10253347pab.7
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 May 2014 21:15:24 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, tushar.behera@linaro.org, sachin.kamat@linaro.org, tomasz.figa@gmail.com
 
-Hi Kukjin,
+Almost all Exynos-series of SoCs that run in secure mode don't need
+additional offset for every CPU, with Exynos4412 being the only
+exception.
 
-On 27 May 2014 21:09, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> On 05/26/14 12:29, Sachin Kamat wrote:
->>
->> On 23 May 2014 11:38, Sachin Kamat<sachin.kamat@linaro.org>  wrote:
->>>
->>> Enabled RTC node on Origen 4210 and 4412 boards.
->>>
->>> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
->>> ---
->>>   arch/arm/boot/dts/exynos4210-origen.dts |    4 ++++
->>>   arch/arm/boot/dts/exynos4412-origen.dts |    4 ++++
->>>   2 files changed, 8 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts
->>> b/arch/arm/boot/dts/exynos4210-origen.dts
->>> index 72fb11f7ea21..95efb1189cf0 100644
->>> --- a/arch/arm/boot/dts/exynos4210-origen.dts
->>> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
->>> @@ -48,6 +48,10 @@
->>>                  };
->>>          };
->>>
->>> +       rtc@10070000 {
->>> +               status = "okay";
->>> +       };
->>> +
->>>          tmu@100C0000 {
->>>                  status = "okay";
->>>          };
->>> diff --git a/arch/arm/boot/dts/exynos4412-origen.dts
->>> b/arch/arm/boot/dts/exynos4412-origen.dts
->>> index e2c0dcab4d81..934fe7ecca7e 100644
->>> --- a/arch/arm/boot/dts/exynos4412-origen.dts
->>> +++ b/arch/arm/boot/dts/exynos4412-origen.dts
->>> @@ -48,6 +48,10 @@
->>>                  };
->>>          };
->>>
->>> +       rtc@10070000 {
->>> +               status = "okay";
->>> +       };
->>> +
->>>          pinctrl@11000000 {
->>>                  keypad_rows: keypad-rows {
->>>                          samsung,pins = "gpx2-0", "gpx2-1", "gpx2-2";
->>> --
->>> 1.7.9.5
->>>
->>
->> Kukjin,
->>
->> The patches in this series are really simple and do not want them to
->> wait for another
->> cycle. Please review and send them with your next pull request for
->> 3.16. Also please
->> look at the 2 patches related to secondary cpu boot sent by Tushar.
->>
-> Applied, but I'm not sure this can be sent to upstream in this time, I will
-> try to do it though ;-) Because already queued a bunch of exynos stuff for
-> arm-soc and this is not really critical at this moment?...
+Tested on Origen-Quad (Exynos4412) and Arndale-Octa (Exynos5420).
 
-Thanks for applying. These patches are not critical. However there are 2 more
-patches posted by Tushar which are critical (have already sent pings for that,
-will send once again separately for your reference). You may send these patches
-along with those.
+While at it, fix the coding style (space around *).
 
-[PATCH V2 1/2] ARM: EXYNOS: Update secondary boot addr for secure mode
-http://www.spinics.net/lists/linux-samsung-soc/msg31258.html
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/mach-exynos/firmware.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-[PATCH RESEND 2/2] ARM: dts: Add secure firmware support for Arndale-octa
-http://www.spinics.net/lists/linux-samsung-soc/msg31259.html
-
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index eb91d2350f8c..e8797bb78871 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -57,8 +57,13 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ 
+ 	boot_reg = sysram_ns_base_addr + 0x1c;
+ 
+-	if (!soc_is_exynos4212() && !soc_is_exynos3250())
+-		boot_reg += 4*cpu;
++	/*
++	 * Almost all Exynos-series of SoCs that run in secure mode don't need
++	 * additional offset for every CPU, with Exynos4412 being the only
++	 * exception.
++	 */
++	if (soc_is_exynos4412())
++		boot_reg += 4 * cpu;
+ 
+ 	__raw_writel(boot_addr, boot_reg);
+ 	return 0;
 -- 
-With warm regards,
-Sachin
+1.7.9.5
