@@ -1,130 +1,86 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 2/2] drm/exynos: mipi-dsi: consider panel driver-deferred
- probe
-Date: Wed, 28 May 2014 09:58:23 +0200
-Message-ID: <5385971F.4040906@samsung.com>
-References: <1401194563-803-1-git-send-email-inki.dae@samsung.com>
- <1401194563-803-3-git-send-email-inki.dae@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/1] clk: exynos5420: Staticize local variables
+Date: Wed, 28 May 2014 13:31:04 +0530
+Message-ID: <CAK9yfHwzAsJLfYfn_ZfyEx+jerntZOn3fBG682M08hN+DR+sCA@mail.gmail.com>
+References: <1400673482-16287-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:61085 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751984AbaE1H62 (ORCPT
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:57097 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752037AbaE1IBF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 May 2014 03:58:28 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N69008U4Y50M170@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 May 2014 08:58:12 +0100 (BST)
-In-reply-to: <1401194563-803-3-git-send-email-inki.dae@samsung.com>
+	Wed, 28 May 2014 04:01:05 -0400
+Received: by mail-ob0-f173.google.com with SMTP id wm4so10487725obc.32
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 May 2014 01:01:04 -0700 (PDT)
+In-Reply-To: <1400673482-16287-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, rmk+kernel@arm.linux.org.uk
+To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>
 
-Hi Inki,
-
-There is no problem with the DSI panels, so there is nothing to fix.
-DSI receives notifications about panel presence via mipi dsi bus,
-so it can attach/detach it to/from drm using connector's hotplug mechansim.
-
-Deferring DSI in unnecessary.
-
-Regards
-Andrzej
-
-
-On 05/27/2014 02:42 PM, Inki Dae wrote:
-> This patch makes sure that mipi dsi driver makes it re-probe
-> in case that panel driver isn't probed yet.
+On 21 May 2014 17:28, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Local symbols are made static.
 >
-> For this, it checks if panel driver is probed or not before
-> component_add() is called.
->
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c |   38 +++++++++++++++----------------
->  1 file changed, 19 insertions(+), 19 deletions(-)
+>  drivers/clk/samsung/clk-exynos5420.c |   10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index 1421d9b..22503f3 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -1166,11 +1166,8 @@ exynos_dsi_detect(struct drm_connector *connector, bool force)
->  {
->  	struct exynos_dsi *dsi = connector_to_dsi(connector);
->  
-> -	if (!dsi->panel) {
-> -		dsi->panel = of_drm_find_panel(dsi->panel_node);
-> -		if (dsi->panel)
-> -			drm_panel_attach(dsi->panel, &dsi->connector);
-> -	} else if (!dsi->panel_node) {
-> +	 /* Power off if panel driver is removed. */
-> +	if (!dsi->panel_node) {
->  		struct exynos_drm_display *display;
->  
->  		display = platform_get_drvdata(to_platform_device(dsi->dev));
-> @@ -1383,19 +1380,8 @@ static int exynos_dsi_bind(struct device *dev, struct device *master,
->  				void *data)
->  {
->  	struct drm_device *drm_dev = data;
-> -	struct exynos_dsi *dsi;
-> -	int ret;
->  
-> -	ret = exynos_drm_create_enc_conn(drm_dev, &exynos_dsi_display);
-> -	if (ret) {
-> -		DRM_ERROR("Encoder create [%d] failed with %d\n",
-> -				exynos_dsi_display.type, ret);
-> -		return ret;
-> -	}
-> -
-> -	dsi = exynos_dsi_display.ctx;
-> -
-> -	return mipi_dsi_host_register(&dsi->dsi_host);
-> +	return exynos_drm_create_enc_conn(drm_dev, &exynos_dsi_display);
->  }
->  
->  static void exynos_dsi_unbind(struct device *dev, struct device *master,
-> @@ -1406,8 +1392,6 @@ static void exynos_dsi_unbind(struct device *dev, struct device *master,
->  
->  	exynos_dsi_dpms(&exynos_dsi_display, DRM_MODE_DPMS_OFF);
->  
-> -	mipi_dsi_host_unregister(&dsi->dsi_host);
-> -
->  	encoder->funcs->destroy(encoder);
->  	drm_connector_cleanup(&dsi->connector);
->  }
-> @@ -1502,6 +1486,18 @@ static int exynos_dsi_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, &exynos_dsi_display);
->  
-> +	ret = mipi_dsi_host_register(&dsi->dsi_host);
-> +	if (ret)
-> +		goto err_del_component;
-> +
-> +	dsi->panel = of_drm_find_panel(dsi->panel_node);
-> +	if (!dsi->panel) {
-> +		mipi_dsi_host_unregister(&dsi->dsi_host);
-> +		return -EPROBE_DEFER;
-> +	}
-> +
-> +	drm_panel_attach(dsi->panel, &dsi->connector);
-> +
->  	ret = component_add(&pdev->dev, &exynos_dsi_component_ops);
->  	if (ret)
->  		goto err_del_component;
-> @@ -1515,6 +1511,10 @@ err_del_component:
->  
->  static int exynos_dsi_remove(struct platform_device *pdev)
->  {
-> +	struct exynos_dsi *dsi = exynos_dsi_display.ctx;
-> +
-> +	mipi_dsi_host_unregister(&dsi->dsi_host);
-> +
->  	component_del(&pdev->dev, &exynos_dsi_component_ops);
->  	exynos_drm_component_del(&pdev->dev);
->  
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 9d7d7eed03fd..41b507baf5d6 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -474,7 +474,7 @@ static struct samsung_fixed_factor_clock
+>         FFACTOR(0, "ff_dout_spll2", "mout_sclk_spll", 1, 2, 0),
+>  };
+>
+> -struct samsung_mux_clock exynos5800_mux_clks[] __initdata = {
+> +static struct samsung_mux_clock exynos5800_mux_clks[] __initdata = {
+>         MUX(0, "mout_aclk400_isp", mout_group3_5800_p, SRC_TOP0, 0, 3),
+>         MUX(0, "mout_aclk400_mscl", mout_group3_5800_p, SRC_TOP0, 4, 3),
+>         MUX(0, "mout_aclk400_wcore", mout_group2_5800_p, SRC_TOP0, 16, 3),
+> @@ -523,7 +523,7 @@ struct samsung_mux_clock exynos5800_mux_clks[] __initdata = {
+>         MUX(0, "mout_fimd1", mout_group2_p, SRC_DISP10, 4, 3),
+>  };
+>
+> -struct samsung_div_clock exynos5800_div_clks[] __initdata = {
+> +static struct samsung_div_clock exynos5800_div_clks[] __initdata = {
+>         DIV(0, "dout_aclk400_wcore", "mout_aclk400_wcore", DIV_TOP0, 16, 3),
+>
+>         DIV(0, "dout_aclk550_cam", "mout_aclk550_cam",
+> @@ -539,14 +539,14 @@ struct samsung_div_clock exynos5800_div_clks[] __initdata = {
+>         DIV(0, "dout_sclk_sw", "sclk_spll", DIV_TOP9, 24, 6),
+>  };
+>
+> -struct samsung_gate_clock exynos5800_gate_clks[] __initdata = {
+> +static struct samsung_gate_clock exynos5800_gate_clks[] __initdata = {
+>         GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
+>                                 GATE_BUS_TOP, 24, 0, 0),
+>         GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
+>                                 GATE_BUS_TOP, 27, 0, 0),
+>  };
+>
+> -struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+> +static struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+>         MUX(0, "sclk_bpll", mout_bpll_p, TOP_SPARE2, 0, 1),
+>         MUX(0, "mout_aclk400_wcore_bpll", mout_aclk400_wcore_bpll_p,
+>                                 TOP_SPARE2, 4, 1),
+> @@ -576,7 +576,7 @@ struct samsung_mux_clock exynos5420_mux_clks[] __initdata = {
+>         MUX(0, "mout_fimd1", mout_group3_p, SRC_DISP10, 4, 1),
+>  };
+>
+> -struct samsung_div_clock exynos5420_div_clks[] __initdata = {
+> +static struct samsung_div_clock exynos5420_div_clks[] __initdata = {
+>         DIV(0, "dout_aclk400_wcore", "mout_aclk400_wcore_bpll",
+>                         DIV_TOP0, 16, 3),
+>  };
+> --
+
+Mike,
+
+Tomasz is probably on vacation. Can you please take this patch?
+
+-- 
+With warm regards,
+Sachin
