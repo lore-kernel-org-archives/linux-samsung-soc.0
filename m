@@ -1,118 +1,49 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 13/18] ARM: dts: s6e3fa0: add DT bindings
-Date: Wed, 28 May 2014 13:50:21 +0900
-Message-ID: <53856B0D.6010501@samsung.com>
-References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
- <1400647390-26590-14-git-send-email-yj44.cho@samsung.com>
- <20140526134153.GA2373@ulmo> <538430A4.8020702@samsung.com>
- <20140527075328.GA13081@ulmo>
- <CAAQKjZOGLPoGbZ7G3+BFd3ydRC2HGmz8JKqFiytdSvxN3T5U_w@mail.gmail.com>
- <20140527202122.GA10609@mithrandir>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20140527202122.GA10609@mithrandir>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, kyungmin.park@samsung.com, robh+dt@kernel.org, laurent.pinchart@ideasonboard.com, galak@codeaurora.org, kgene.kim@samsung.com, s.trumtrar@pengutronix.de
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCHv3 0/4] mmc: fixed the mmc_of_parse for dwmmc
+Date: Wed, 28 May 2014 14:35:47 +0900
+Message-ID: <1401255351-17653-1-git-send-email-jh80.chung@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:43438 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750853AbaE1Ff5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 May 2014 01:35:57 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: chris@printf.net, ulf.hansson@linaro.org, ludovic.desroches@atmel.com, tgih.jun@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>
 
-T24gMjAxNOuFhCAwNeyblCAyOOydvCAwNToyMSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24g
-VHVlLCBNYXkgMjcsIDIwMTQgYXQgMTE6MjQ6NDlQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6Cj4+
-IDIwMTQtMDUtMjcgMTY6NTMgR01UKzA5OjAwIFRoaWVycnkgUmVkaW5nIDx0aGllcnJ5LnJlZGlu
-Z0BnbWFpbC5jb20+Ogo+Pj4gT24gVHVlLCBNYXkgMjcsIDIwMTQgYXQgMDg6Mjg6NTJBTSArMDIw
-MCwgQW5kcnplaiBIYWpkYSB3cm90ZToKPj4+PiBIaSBUaGllcnJ5LAo+Pj4+Cj4+Pj4gT24gMDUv
-MjYvMjAxNCAwMzo0MSBQTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4+Pj4+IE9uIFdlZCwgTWF5
-IDIxLCAyMDE0IGF0IDAxOjQzOjA1UE0gKzA5MDAsIFlvdW5nSnVuIENobyB3cm90ZToKPj4+Pj4+
-IFRoaXMgcGF0Y2ggYWRkcyBEVCBiaW5kaW5ncyBmb3IgczZlM2ZhMCBwYW5lbC4KPj4+Pj4+IFRo
-ZSBiaW5kaW5ncyBkZXNjcmliZXMgcGFuZWwgcmVzb3VyY2VzLCBkaXNwbGF5IHRpbWluZ3MgYW5k
-IGNwdSBtb2RlIHRpbWluZ3MuCj4+Pj4+Pgo+Pj4+Pj4gU2lnbmVkLW9mZi1ieTogWW91bmdKdW4g
-Q2hvIDx5ajQ0LmNob0BzYW1zdW5nLmNvbT4KPj4+Pj4+IEFja2VkLWJ5OiBJbmtpIERhZSA8aW5r
-aS5kYWVAc2Ftc3VuZy5jb20+Cj4+Pj4+PiBBY2tlZC1ieTogS3l1bmdtaW4gUGFyayA8a3l1bmdt
-aW4ucGFya0BzYW1zdW5nLmNvbT4KPj4+Pj4+IC0tLQo+Pj4+Pj4gIC4uLi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL3BhbmVsL3NhbXN1bmcsczZlM2ZhMC50eHQgIHwgICA0NSArKysrKysrKysrKysrKysr
-KysrKwo+Pj4+Pj4gIDEgZmlsZSBjaGFuZ2VkLCA0NSBpbnNlcnRpb25zKCspCj4+Pj4+PiAgY3Jl
-YXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9wYW5lbC9z
-YW1zdW5nLHM2ZTNmYTAudHh0Cj4+Pj4+IFlvdSdyZSB0b3RhbGx5IGNvbmZ1c2luZyBtZSBoZXJl
-LiBIYWxmIG9mIHRoaXMgcGF0Y2ggc2VyaWVzIGlzIGFib3V0Cj4+Pj4+IGFkZGluZyBpODAgc3Vw
-cG9ydCB0byBFeHlub3MgRklNRCwgYW5kIHRoZW4geW91IGdvIGFuZCBhZGQgd2hhdCBpcwo+Pj4+
-PiBhcHBhcmVudGx5IGEgRFNJIHBlcmlwaGVyYWwgZHJpdmVyIGhlcmUgdGhhdCdzIHN1cHBvc2Vk
-IHRvIGJlIHVzZWQgYnkKPj4+Pj4gdGhpcyBuZXcgaTgwIHN1cHBvcnQuIE5vdGhpbmcgSSd2ZSBi
-ZWVuIGFibGUgdG8gZGlnIHVwIGluZGljYXRlcyB0aGF0Cj4+Pj4+IGk4MCBvciBEU0kgYXJlIGlu
-IGFueXdheSByZWxhdGVkLgo+Pj4+Cj4+Pj4gRklNRCBjYW4gcHJvZHVjZSBwYXJhbGxlbCBSR0Ig
-b3V0cHV0IG9yIGNvbW1hbmQgbW9kZSBpbiBpODAgc3R5bGUgb3V0cHV0Cj4+Pj4gdmlhIHBhcmFs
-bGVsIGxpbmVzLgo+Pj4+IERTSU0gY2FuIGFjY2VwdCBwYXJhbGxlbCBSR0Igc3RyZWFtIGluIHRo
-aXMgY2FzZSBpdCBwcm9kdWNlcyBNSVBJIERTSQo+Pj4+IHZpZGVvIG1vZGUgc2lnbmFsIG9yIGl0
-IGNhbiBhY2NlcHQgaTgwIGFuZCBpbiB0aGlzIGNhc2UgaXQgdHJhbnNsYXRlcyBpdAo+Pj4+IHRv
-IE1JUEkgRFNJIGNvbW1hbmQgbW9kZS4KPj4+Cj4+PiBUaGVuIHRoZSBjb21tYW5kIG1vZGUgdGlt
-aW5ncyBhcmVuJ3QgYSBwcm9wZXJ0eSBvZiB0aGUgcGFuZWwgYXQgYWxsLgo+Pgo+PiBUaGVuIHRo
-ZSB2aWRlbyBtb2RlIHRpbWluZ3MgYXJlbid0IGFsc28gYSBwcm9wZXJ0eSBvZiB0aGUgcGFuZWwu
-Cj4+Cj4+IFdoaWNoIGludGVyZmFjZSBtaXBpIGFuZCBkaXNwbGF5IGNvbnRyb2xsZXIgc2hvdWxk
-IHVzZSB3b3VsZCBiZQo+PiBkZWNpZGVkIGJ5IGxjZCBwYW5lbCB0eXBlOiBkaXNwbGF5IGNvbnRy
-b2xsZXIgY2FuIHVzZSBpODAgaW50ZXJmYWNlCj4+IGJhc2VkIGxjZCBwYW5lbCwgYW5kIGFsc28g
-bWlwaSBjb250cm9sbGVyIGNhbiB1c2UgaTgwIGludGVyZmFjZSBiYXNlZAo+PiBsY2QgcGFuZWwu
-Cj4+IEluIGhlcmUsIHRoZSBvbmx5IGRpZmZlcmVuY2UgaXMgdGhhdCBsY2QgcGFuZWwgcmVjZWl2
-ZXMgIHBhY2tldHMsCj4+IHdoaWNoIGluY2x1ZGVzIHZpZGVvIGRhdGEgb3IgY29tbWFuZCBkYXRh
-LCBwYWNrZWQgd2l0aCBtaXBpIHByb3RvY29sCj4+IHZpYSBsYW5lIGxpbmVzIG9yIHJlY2VpdmVz
-IHZpZGVvIGRhdGEgb3IgY29tbWFuZCBkYXRhIHZpYSBwYXJhbGxlbAo+PiBsaW5lcy4KPj4KPj4g
-QW5kIHRoZSBiZWxvdyBpcyBMQ0QgdHlwZXMsCj4+ICAgICAgICAgUkdCIGludGVyZmFjZSBwYW5l
-bC4KPj4gICAgICAgICBpODAgaW50ZXJmYWNlIHBhbmVsLgo+PiAgICAgICAgIE1JUEkgYmFzZWQg
-UkdCIGludGVyZmFjZSBwYW5lbC4KPj4gICAgICAgICBNSVBJIGJhc2VkIGk4MCBpbnRlcmZhY2Ug
-cGFuZWwuCj4+Cj4+IFJHQiBpbnRlcmZhY2UgYWxzbyBpcyBjYWxsZWQgdmlkZW8gbW9kZSwgYW5k
-IGk4MCBpbnRlcmZhY2UgYWxzbyBpcwo+PiBjYWxsZWQgY3B1IG1vZGUuIEluIGNhc2Ugb2Ygb21h
-cCBTb0MsIGl0IGlzIGFsc28gY2FsbGVkIFNtYXJ0IHBhbmVsLgo+PiBpODAgaW50ZXJmYWNlIGlz
-IGp1c3Qgb25lIG9mIExDRCB0eXBlcy4gU28gSSB0aGluayB0aGlzIGludGVyZmFjZQo+PiB0aW1p
-bmdzIHNob3VsZCBiZSBoYW5kbGVkIGJ5IGZyYW1ld29ya3MgcmVsYXRlZCB0byBtb2RlIGluIHNh
-bWUgd2F5IGFzCj4+IFJHQiBpbnRlcmZhY2UuCj4gCj4gTENEIGlzIGEgZGlzcGxheSB0ZWNobm9s
-b2d5LCBpdCBoYXMgbm90aGluZyB0byBkbyB3aXRoIHRoZSBpbnRlcmZhY2UuIE15Cj4gcG9pbnQg
-aXMgdGhhdCBmcm9tIEFuZHJ6ZWoncyBkZXNjcmlwdGlvbiwgYW5kIGluIGZhY3QgZnJvbSB0aGlz
-IHBhdGNoCj4gc2VyaWVzIGluIGdlbmVyYWwsIHRoZSBTNkUzRkEwIHBhbmVsIGlzIGEgRFNJIHBh
-bmVsLiBBc3NvY2lhdGluZyB0aW1pbmdzCj4gdGhhdCBhcmUgaTgwIHNwZWNpZmljIHRvIGl0IGlz
-IHRoZXJlZm9yZSB3cm9uZy4KPiAKPiBDb25zaWRlciBmb3IgaW5zdGFuY2Ugd2hhdCB3b3VsZCBo
-YXBwZW4gaWYgc29tZWJvZHkgd2VyZSB0byB1c2UgdGhlIHNhbWUKPiBwYW5lbCBvbiBzb21lIG90
-aGVyIGRldmljZSAoY29ubmVjdGVkIHRvIGEgRFNJIGNvbnRyb2xsZXIpLiBJZiB5b3UKPiBzcGVj
-aWZ5IGk4MCB0aW1pbmdzIGZvciB0aGUgcGFuZWwgdGhlbiB0aGUgbmV3IGRldmljZSB3b24ndCBr
-bm93IHdoYXQgdG8KPiBkbyB3aXRoIHRoZW0gYmVjYXVzZSBpdCBleHBlY3RzIERTSS1yZWxhdGVk
-IHRpbWluZ3MuCj4gCj4gTGV0IG1lIHRyeSB0byBzdW1tYXJpemUgdGhlIGFib3ZlIHRvIG1ha2Ug
-c3VyZSB3ZSdyZSBhbGwgb24gdGhlIHNhbWUKPiBwYWdlOgo+IAo+IAktIEZJTUQgaXMgYSBkaXNw
-bGF5IGNvbnRyb2xsZXIgdGhhdCBjYW4gYmUgY29uZmlndXJlZCB0byBlaXRoZXIKPiAJICBzZW5k
-IFJHQiBkYXRhIG9yIGk4MCBkYXRhCj4gCS0gRFNJTSB0YWtlcyBlaXRoZXIgUkdCIGFzIGlucHV0
-IGFuZCBvdXRwdXRzIERTSSAodmlkZW8gbW9kZSkgb3IKPiAJICBpODAgYXMgaW5wdXQgYW5kIG91
-dHB1dHMgRFNJIChjb21tYW5kIG1vZGUpCj4gCj4gSW4gYm90aCBjYXNlcyB0aGUgcGFuZWwgaXMg
-Y29ubmVjdGVkIHRvIERTSU0gYW5kIGl0IHRha2VzIERTSSBhcyBpbnB1dCwKPiBiZWNhdXNlIGl0
-IGlzIGEgRFNJIHBhbmVsIChpdCBkb2Vzbid0IHVuZGVyc3RhbmQgUkdCIG9yIGk4MCkuIFRoZSBw
-YW5lbAo+IG5lZWRzIHRvIGRlc2NyaWJlIHRoZSBwcm9wZXJ0aWVzIG9mIHRoZSBEU0kgaW50ZXJm
-YWNlIHNvIHRoYXQgRFNJTSBjYW4KPiBiZSBjb25maWd1cmVkIGFwcHJvcHJpYXRlbHkuIERTSU0g
-aW4gdHVybiB3b3JrcyBhcyBhIGJyaWRnZSBvciBlbmNvZGVyCj4gdGhhdCBjb252ZXJ0cyBSR0Ig
-b3IgaTgwIHRvIERTSSAodmlkZW8gb3IgY29tbWFuZCBtb2RlKS4gU28gaXQgbWFrZXMgbm8KPiBz
-ZW5zZSB0byBkZXNjcmliZSB0aGUgaTgwIHRpbWluZ3MgZm9yIHRoZSBwYW5lbCBiZWNhdXNlIGl0
-IGhhcyBub3RoaW5nCj4gdG8gZG8gd2l0aCBpODAuIEluc3RlYWQgdGhlIERTSU0gaXMgdGhlIGhh
-cmR3YXJlIHRoYXQgbmVlZHMgdG8gc3BlY2lmeQo+IHRoZSBpODAgdGltaW5ncywgc28gdGhhdCBG
-SU1EIGNhbiBiZSBjb25maWd1cmVkIHRvIGdlbmVyYXRlIHRoZSB0aW1pbmdzCj4gdGhhdCBEU0lN
-IG5lZWRzLgoKICAgICAgICAgICAgQ1BVIGludGVyZmFjZSAgICAgICAgICAgICAgICAgICAgIE1J
-UEkgbGFuZQpGSU1EIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIERTSU0gLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tIExDRCBQYW5lbAoKSG1tLi4uIHJlYXNvbmFibGUuIFNvIHlvdXIgcG9pbnQgaXMgdGhh
-dCBjb21tYW5kIG1vZGUgdGltaW5nIHNob3VsZCBiZQpwbGFjZWQgaW4gZmltZCBkZXZpY2Ugbm9k
-ZSwgbm90IHBhbmVsIGRldmljZSBub2RlPyBBbmQgcGFuZWwgZGV2aWNlIG5vZGUKc2hvdWxkIHBy
-b3ZpZGUgb25seSBhIHByb3BlcnR5IHRoYXQgRFNJTSBkcml2ZXIgY2FuIHNldCBMQ0QgbW9kZQpw
-cm9wZXJseSB0byBpODAgb3IgcmdiIGludGVyZmFjZSBtb2RlLCBhbmQgYWxzbyBGSU1EIGRyaXZl
-ciBjYW4gc2V0IExDRAptb2RlIHRvIGk4MCBvciByZ2IgaW50ZXJmYWNlIG1vZGUuCgpJcyB0aGVy
-ZSBteSBtaXNzaW5nIHBvaW50PwoKQW5kIGluIGNhc2Ugb2YgRXh5bm9zLCBub3cgdmlkZW8gdGlt
-aW5nIHByb3BlcnR5IGlzIGFsc28gcGxhY2VkIGluIHBhbmVsCmRldmljZSBub2RlIHNvIGl0IG5l
-ZWRzIHRvIG1vdmUgdG8gZmltZCBkZXZpY2Ugbm9kZS4KCkFuZHJ6ZWosIGRvIHlvdSBoYXZlIG90
-aGVyIG9waW5pb24/IEkgaGF2ZSBsb29rZWQgaW50byBkdHMgZmlsZXMgZm9yCm90aGVyIFNvQyBh
-bmQgSW4gbW9zdCBTb0MsIGl0IHNlZW1zIHRoYXQgZGlzcGxheSBjb250cm9sbGVyIG5vZGUgaGFz
-CnZpZGVvIHRpbWluZyBwcm9wZXJ0eSwgbm90IHBhbmVsIG5vZGUuIFRoaWVycnkncyBwb2ludGlu
-ZyBzZWVtcwpyZWFzb25hYmxlIHRvIG1lLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBUaGllcnJ5
-Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+This patch-set is fixed the dw-mmc controller problem.
+dw-mmc controller have the slot, but mmc_of_parse didn't parse the slot sub-node.
+So dw-mmc controller didn't work correctly.
+
+Jaehoon Chung (3):
+  mmc: dw_mmc: use the __mmc_of_parse to parse the slot node
+  mmc: dw_mmc: remove the "supports-highspeed" property.
+  ARM: dts: replace the slot property into slot sub-node for dwmmc.
+
+Ludovic Desroches (1):
+  mmc: host: add slot argument to mmc_of_parse
+
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    5 +++--
+ .../devicetree/bindings/mmc/k3-dw-mshc.txt         |    3 ++-
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |    6 ++++--
+ arch/arm/boot/dts/exynos4412-odroidx.dts           |    4 ++--
+ arch/arm/boot/dts/exynos4412-origen.dts            |    4 ++--
+ arch/arm/boot/dts/exynos4412-trats2.dts            |    6 +++---
+ arch/arm/boot/dts/exynos5250-arndale.dts           |    6 +++---
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi      |   10 +++++-----
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |    6 +++---
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |    6 +++---
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |    4 ++--
+ arch/arm/boot/dts/rk3066a-bqcurie2.dts             |    2 +-
+ arch/arm/boot/dts/socfpga_arria5.dtsi              |    5 +++--
+ arch/arm/boot/dts/socfpga_cyclone5.dtsi            |    5 +++--
+ arch/arm/boot/dts/socfpga_vt.dts                   |    5 +++--
+ drivers/mmc/core/host.c                            |   13 +++++++++----
+ drivers/mmc/host/dw_mmc.c                          |   18 ++++++------------
+ include/linux/mmc/host.h                           |   10 +++++++++-
+ 18 files changed, 66 insertions(+), 52 deletions(-)
+
+-- 
+1.7.9.5
