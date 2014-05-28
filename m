@@ -1,104 +1,67 @@
 From: Mike Turquette <mturquette@linaro.org>
-Subject: RE: [PATCH v11 2/3] clk: exynos5410: register clocks using common clock
- framework
-Date: Wed, 28 May 2014 00:22:40 -0700
-Message-ID: <20140528072240.10062.16890@quantum>
-References: <1401074613-29227-1-git-send-email-t.dakhran@samsung.com>
- <1401074613-29227-3-git-send-email-t.dakhran@samsung.com>
- <20140528004116.7816.69646@quantum>
- <01a201cf7a30$41ecca90$c5c65fb0$@samsung.com>
+Subject: Re: [PATCH 1/1] clk/exynos4: Fix compilation warning
+Date: Wed, 28 May 2014 00:57:07 -0700
+Message-ID: <20140528075707.10062.7113@quantum>
+References: <1401077788-31427-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <01a201cf7a30$41ecca90$c5c65fb0$@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org
-Cc: 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Rob Landley' <rob@landley.net>, 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Vyacheslav Tyrtov' <v.tyrtov@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Heiko Stuebner' <heiko@sntech.de>, 'Romain Naour' <romain.naour@openwide.fr>, 'Chander Kashyap' <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Tarek Dakhran' <t.dakhran@gmail.com>, 'Tarek Dakhran' <t.dakhran@samsung.com>, 'Jonghwan Choi' <jhbird.choi@s>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:45105 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753895AbaE1H5L convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 May 2014 03:57:11 -0400
+Received: by mail-pb0-f47.google.com with SMTP id rp16so10652523pbb.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 May 2014 00:57:10 -0700 (PDT)
+In-Reply-To: <1401077788-31427-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, kgene.kim@samsung.com, sachin.kamat@linaro.org
 
-Quoting Kukjin Kim (2014-05-27 21:49:49)
-> Mike Turquette wrote:
-> > 
-> > Quoting Tarek Dakhran (2014-05-25 20:23:32)
-> > > The EXYNOS5410 clocks are statically listed and registered
-> > > using the Samsung specific common clock helper functions.
-> > >
-> > > Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
-> > > Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
-> > > ---
-> > >  .../devicetree/bindings/clock/exynos5410-clock.txt |   45 +++++
-> > >  drivers/clk/samsung/Makefile                       |    1 +
-> > >  drivers/clk/samsung/clk-exynos5410.c               |  209
-> > ++++++++++++++++++++
-> > >  include/dt-bindings/clock/exynos5410.h             |   33 ++++
-> > >  4 files changed, 288 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/clock/exynos5410-
-> > clock.txt
-> > >  create mode 100644 drivers/clk/samsung/clk-exynos5410.c
-> > >  create mode 100644 include/dt-bindings/clock/exynos5410.h
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/clock/exynos5410-
-> > clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> > > new file mode 100644
-> > > index 0000000..aeab635
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> > > @@ -0,0 +1,45 @@
-> > > +* Samsung Exynos5410 Clock Controller
-> > > +
-> > > +The Exynos5410 clock controller generates and supplies clock to various
-> > > +controllers within the Exynos5410 SoC.
-> > > +
-> > > +Required Properties:
-> > > +
-> > > +- compatible: should be "samsung,exynos5410-clock"
-> > > +
-> > > +- reg: physical base address of the controller and length of memory
-> > mapped
-> > > +  region.
-> > > +
-> > > +- #clock-cells: should be 1.
-> > > +
-> > > +All available clocks are defined as preprocessor macros in
-> > > +dt-bindings/clock/exynos5410.h header and can be used in device
-> > > +tree sources.
-> > > +
-> > > +External clock:
-> > > +
-> > > +There is clock that is generated outside the SoC. It
-> > > +is expected that it is defined using standard clock bindings
-> > > +with following clock-output-name:
-> > > +
-> > > + - "fin_pll" - PLL input clock from XXTI
-> > 
-> > Does fin_pll feed into the exynos5410-clock controller? If so, should
-> > the example clock-controller node below have a clocks and clock-names
-> > property?
-> > 
-> Well, it is fixed clocks and generated outside of the SoC...so maybe the properties are not required?
-
-I guess the fin_pll parts of the binding description are not needed
-then. This isn't a big issue, but I think that someone reading that
-binding (like myself) might conclude that there is some relationship
-between the clock controller and the external clock, which seems not to
-be the case.
-
+Quoting Sachin Kamat (2014-05-25 21:16:28)
+> Fixes the following warning:
+> WARNING: drivers/built-in.o(.text.unlikely+0x2c50): Section mismatch in reference from the function exynos4_clk_sleep_init() to the (unknown reference) .init.data:(unknown)
+>    The function exynos4_clk_sleep_init() references
+>    the (unknown reference) __initdata (unknown).
+>    This is often because exynos4_clk_sleep_init lacks a __initdata
+>    annotation or the annotation of (unknown) is wrong.
 > 
-> BTW, I've applied this series with Tomasz Figa's reviewed tag and sent out to arm-soc today so if any concerns on this, please let me know immediately.
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Reported-by: kbuild test robot <fengguang.wu@intel.com>
 
-As far as I can tell the fin_pll paragraph can be removed at a later
-date. It isn't part of any real DT binding description such as a
-property or definition. So no need to cause havoc for your existing pull
-request.
+Applied to clk-next.
 
-Regards,
+Thanks!
 Mike
 
+> ---
+>  drivers/clk/samsung/clk-exynos4.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> > Otherwise patch looks good.
-> > 
-> 
-> Thanks,
-> Kukjin
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index c4df294bb7fb..4f150c9dd38c 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -324,7 +324,7 @@ static struct syscore_ops exynos4_clk_syscore_ops = {
+>         .resume = exynos4_clk_resume,
+>  };
+>  
+> -static void exynos4_clk_sleep_init(void)
+> +static void __init exynos4_clk_sleep_init(void)
+>  {
+>         exynos4_save_common = samsung_clk_alloc_reg_dump(exynos4_clk_regs,
+>                                         ARRAY_SIZE(exynos4_clk_regs));
+> @@ -359,7 +359,7 @@ err_warn:
+>                 __func__);
+>  }
+>  #else
+> -static void exynos4_clk_sleep_init(void) {}
+> +static void __init exynos4_clk_sleep_init(void) {}
+>  #endif
+>  
+>  /* list of all parent clock list */
+> -- 
+> 1.7.9.5
 > 
