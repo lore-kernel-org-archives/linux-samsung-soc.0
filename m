@@ -1,54 +1,58 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] drm/exynos: hdmi: remove the i2c drivers and use devtree
- - continued
-Date: Thu, 29 May 2014 18:42:01 +0200
-Message-ID: <53876359.8070304@gmail.com>
-References: <1401381377-29973-1-git-send-email-lee.jones@linaro.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 5/5] Samsung Exynos MCPM support for 3.16
+Date: Thu, 29 May 2014 09:52:25 -0700
+Message-ID: <CAOesGMj=c3RVQs2=xtWV82nMxjD9w6QNv2Wz4wTi7KrOuHYTig@mail.gmail.com>
+References: <014801cf73c8$7d1f9930$775ecb90$@samsung.com>
+	<20140522053841.GI32618@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f178.google.com ([74.125.82.178]:45782 "EHLO
-	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751130AbaE2QmT (ORCPT
+Received: from mail-qg0-f49.google.com ([209.85.192.49]:56765 "EHLO
+	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932513AbaE2Qw0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 May 2014 12:42:19 -0400
-In-Reply-To: <1401381377-29973-1-git-send-email-lee.jones@linaro.org>
+	Thu, 29 May 2014 12:52:26 -0400
+Received: by mail-qg0-f49.google.com with SMTP id a108so1767863qge.36
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2014 09:52:25 -0700 (PDT)
+In-Reply-To: <20140522053841.GI32618@quad.lixom.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: kernel@stlinux.com, djkurtz@chromium.org, seanpaul@chromium.org, inki.dae@samsung.com, irlied@linux.ie, jy0922.shim@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-Hi.
+On Wed, May 21, 2014 at 10:38 PM, Olof Johansson <olof@lixom.net> wrote:
+> On Tue, May 20, 2014 at 10:11:54AM +0900, Kukjin Kim wrote:
+>> The following changes since commit d7067f1c5fa0232001502569c6878d22308da268:
+>>
+>>   devicetree: bindings: document SYSRAM binding (2014-05-15 03:30:29 +0900)
+>>
+>> are available in the git repository at:
+>>
+>>   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>> tags/exynos-mcpm
+>>
+>> for you to fetch changes up to ccf5511797cd4b48d20a85fa1778f5608eac9fd7:
+>>
+>>   ARM: EXYNOS: Add MCPM call-back functions (2014-05-16 04:26:30 +0900)
+>>
+>> ----------------------------------------------------------------
+>> Exynos MCPM support for v3.16
+>>
+>> - adding MCPM backend support for SMP secondary boot and core switching
+>> on Samsung's Exynos5420.
+>>
+>> Tested on exynos5420-smdk5420 and exynos5420 based chromebook (peach-pit)
+>> using the "/dev/b.L_switcher" user interface. Secondary core boot-up has
+>> also been tested on both the boards.
+>
+> This goes with new SoC enablement as well; we'll merge it after multi-platform.
 
-On 29.05.2014 18:36, Lee Jones wrote:
-> There appears to have been a merge error on commit:
-> 
->   2b76813: drm/exynos: hdmi: remove the i2c drivers and use
-> 
-> The original submission can be found at:
-> 
->   https://patchwork.kernel.org/patch/3559541/
-> 
-> It looks like the commit was only half applied.  This patch aims
-> to finish what was started by Daniel.
-> 
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/gpu/drm/exynos/exynos_ddc.c     | 63 --------------------------------
->  drivers/gpu/drm/exynos/exynos_hdmi.h    | 23 ------------
->  drivers/gpu/drm/exynos/exynos_hdmiphy.c | 65 ---------------------------------
->  3 files changed, 151 deletions(-)
->  delete mode 100644 drivers/gpu/drm/exynos/exynos_ddc.c
->  delete mode 100644 drivers/gpu/drm/exynos/exynos_hdmi.h
->  delete mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy.c
-> 
+Merged now, since multiplatform is going in as well.
 
-Obviously there is nothing to review, but still:
+What confused me for a while here was that this branch was based on a
+partial version of the DT branch, but it didn't match any of the
+branch heads we had merged in. It's not wrong to do so but it's useful
+to get a heads up in the pull request.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-Thanks for the patch.
-
-Best regards,
-Tomasz
+-Olof
