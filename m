@@ -1,7 +1,7 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH] drm/exynos: consider deferred probe case
-Date: Thu, 29 May 2014 18:27:15 +0900
-Message-ID: <1401355635-6883-1-git-send-email-inki.dae@samsung.com>
+Subject: [PATCH v2] drm/exynos: consider deferred probe case
+Date: Thu, 29 May 2014 18:28:02 +0900
+Message-ID: <1401355682-6939-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
