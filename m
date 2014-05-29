@@ -1,146 +1,60 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/panel/s6e8aa0: add backlight support
-Date: Thu, 29 May 2014 14:48:05 +0200
-Message-ID: <1401367685-22528-1-git-send-email-a.hajda@samsung.com>
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH v11 0/3] Exynos 5410 support
+Date: Thu, 29 May 2014 15:36:10 +0200
+Message-ID: <538737CA.4070709@suse.de>
+References: <1401074613-29227-1-git-send-email-t.dakhran@samsung.com> <7hr43f9mmn.fsf@paris.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:46957 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932423AbaE2NgR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 May 2014 09:36:17 -0400
+In-Reply-To: <7hr43f9mmn.fsf@paris.lan>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kevin Hilman <khilman@linaro.org>, Tarek Dakhran <t.dakhran@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Romain Naour <romain.naour@openwide.fr>, Chander Kashyap <chander.kashyap@linaro.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@gmail.com>
 
-The patch adds backlight support to s6e8aa0 panel.
+Hi Tarek and Kevin,
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/panel/Kconfig         |  2 ++
- drivers/gpu/drm/panel/panel-s6e8aa0.c | 50 +++++++++++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+)
+Am 27.05.2014 19:06, schrieb Kevin Hilman:
+> Tarek Dakhran <t.dakhran@samsung.com> writes:
+>=20
+>> The series of patches represent support of Exynos 5410 SoC
+>>
+>> The Exynos 5410 is the first Samsung SoC based on big.LITTLE archite=
+cture
+>>
+>> Patches add new platform description, support of clock controller an=
+d device
+>> tree for Exynos 5410.
+>>
+>> Has been build on Samsung Linux Kernel
+>>   (branch: for-next, commit: 97eae6c Merge branch 'v3.16-next/multip=
+latform' into for-next)
+>>
+>> Has been tested on: 1) Exynos 5410 reference board (exynos_defconfig=
+)
+>> 		    2) Exynos 5410 reference board (multi_v7_defconfig)
+>> 		    3) Odroid-XU board (exynos_defconfig)
+>> 		    4) Odroid-XU board (multi_v7_defconfig)
+>=20
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+>=20
+> FYI, I boot tested this on an odroid-xu (exynos_defconfig and
+> multi_v7_defconfig.)
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 4ec874d..a54d89b 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -29,5 +29,7 @@ config DRM_PANEL_S6E8AA0
- 	depends on OF
- 	select DRM_MIPI_DSI
- 	select VIDEOMODE_HELPERS
-+	select BACKLIGHT_LCD_SUPPORT
-+	select BACKLIGHT_CLASS_DEVICE
- 
- endmenu
-diff --git a/drivers/gpu/drm/panel/panel-s6e8aa0.c b/drivers/gpu/drm/panel/panel-s6e8aa0.c
-index 35941d2..98a59a7 100644
---- a/drivers/gpu/drm/panel/panel-s6e8aa0.c
-+++ b/drivers/gpu/drm/panel/panel-s6e8aa0.c
-@@ -19,6 +19,7 @@
- #include <drm/drm_mipi_dsi.h>
- #include <drm/drm_panel.h>
- 
-+#include <linux/backlight.h>
- #include <linux/gpio/consumer.h>
- #include <linux/regulator/consumer.h>
- 
-@@ -91,6 +92,8 @@ struct s6e8aa0_variant {
- 	const s6e8aa0_gamma_table *gamma_tables;
- };
- 
-+#define S6E8AA0_STATE_BIT_ENABLED	0
-+
- struct s6e8aa0 {
- 	struct device *dev;
- 	struct drm_panel panel;
-@@ -106,6 +109,7 @@ struct s6e8aa0 {
- 	u32 width_mm;
- 	u32 height_mm;
- 
-+	unsigned long state;
- 	u8 version;
- 	u8 id;
- 	const struct s6e8aa0_variant *variant;
-@@ -890,6 +894,7 @@ static int s6e8aa0_disable(struct drm_panel *panel)
- {
- 	struct s6e8aa0 *ctx = panel_to_s6e8aa0(panel);
- 
-+	clear_bit(S6E8AA0_STATE_BIT_ENABLED, &ctx->state);
- 	s6e8aa0_dcs_write_seq_static(ctx, MIPI_DCS_ENTER_SLEEP_MODE);
- 	s6e8aa0_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_OFF);
- 	msleep(40);
-@@ -913,6 +918,8 @@ static int s6e8aa0_enable(struct drm_panel *panel)
- 
- 	if (ret < 0)
- 		s6e8aa0_disable(panel);
-+	else
-+		set_bit(S6E8AA0_STATE_BIT_ENABLED, &ctx->state);
- 
- 	return ret;
- }
-@@ -947,6 +954,47 @@ static const struct drm_panel_funcs s6e8aa0_drm_funcs = {
- 	.get_modes = s6e8aa0_get_modes,
- };
- 
-+static int s6e8aa0_get_brightness(struct backlight_device *bd)
-+{
-+	return bd->props.brightness;
-+}
-+
-+static int s6e8aa0_set_brightness(struct backlight_device *bd)
-+{
-+	struct s6e8aa0 *ctx = bl_get_data(bd);
-+
-+	bd->props.power = FB_BLANK_UNBLANK;
-+	if (ctx->brightness != bd->props.brightness) {
-+		ctx->brightness = bd->props.brightness;
-+		if (test_bit(S6E8AA0_STATE_BIT_ENABLED, &ctx->state))
-+			s6e8aa0_brightness_set(ctx);
-+	}
-+
-+	return s6e8aa0_clear_error(ctx);
-+}
-+
-+static const struct backlight_ops s6e8aa0_backlight_ops = {
-+	.get_brightness = s6e8aa0_get_brightness,
-+	.update_status = s6e8aa0_set_brightness,
-+};
-+
-+static void s6e8aa0_backlight_register(struct s6e8aa0 *ctx)
-+{
-+	struct backlight_properties props = {
-+		.type = BACKLIGHT_RAW,
-+		.brightness = ctx->brightness,
-+		.max_brightness = GAMMA_LEVEL_NUM - 1
-+	};
-+	struct device *dev = ctx->dev;
-+	struct backlight_device *bd;
-+
-+	bd = devm_backlight_device_register(dev, "s6e8aa0-bl", dev, ctx,
-+					    &s6e8aa0_backlight_ops, &props);
-+	if (IS_ERR(bd))
-+		dev_err(dev, "error registering backlight device (%ld)\n",
-+			PTR_ERR(bd));
-+}
-+
- static int s6e8aa0_parse_dt(struct s6e8aa0 *ctx)
- {
- 	struct device *dev = ctx->dev;
-@@ -1029,6 +1077,8 @@ static int s6e8aa0_probe(struct mipi_dsi_device *dsi)
- 	if (ret < 0)
- 		drm_panel_remove(&ctx->panel);
- 
-+	s6e8aa0_backlight_register(ctx);
-+
- 	return ret;
- }
- 
--- 
-1.9.1
+Could you clarify: Are you using exynos5410-smdk5410.dts with the
+ODROID-XU or do you have some upcoming exynos5410-odroidxu.dts based on
+exynos5410.dtsi?
+
+Thanks,
+Andreas
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
+berg
