@@ -1,60 +1,109 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 1/1] PCI: exynos: Fix section mismatch warning
-Date: Thu, 29 May 2014 16:19:24 -0600
-Message-ID: <20140529221924.GA11907@google.com>
-References: <1401270525-27139-1-git-send-email-sachin.kamat@linaro.org>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH] clk: exynos5420: Keep aclk66_peric enabled during boot
+Date: Thu, 29 May 2014 15:29:04 -0700
+Message-ID: <20140529222904.10062.22764@quantum>
+References: <1401398496-4624-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f182.google.com ([209.85.223.182]:54872 "EHLO
-	mail-ie0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751149AbaE2WT3 (ORCPT
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:60482 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751037AbaE2W3J convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 May 2014 18:19:29 -0400
-Received: by mail-ie0-f182.google.com with SMTP id x19so990759ier.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2014 15:19:28 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1401270525-27139-1-git-send-email-sachin.kamat@linaro.org>
+	Thu, 29 May 2014 18:29:09 -0400
+Received: by mail-pd0-f180.google.com with SMTP id y13so222175pdi.39
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2014 15:29:08 -0700 (PDT)
+In-Reply-To: <1401398496-4624-1-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jg1.han@samsung.com
+To: Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: olof@lixom.net, javier.martinez@collabora.co.uk, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, May 28, 2014 at 03:18:45PM +0530, Sachin Kamat wrote:
-> add_pcie_port is called from probe which is annotated with __init.
-> add_pcie_port calls dw_pcie_host_init which is also annotated with
-> __init. Thus it makes sense to annotate add_pcie_port with __init
-> to avoid the following section mismatch warning:
+Quoting Doug Anderson (2014-05-29 14:21:36)
+> Right now if you've got earlyprintk enabled on exynos5420-peach-pit
+> then you'll get a hang on boot.  Here's why:
 > 
-> WARNING: drivers/pci/built-in.o(.text.unlikely+0xf8): Section mismatch in reference from the function add_pcie_port() to the function .init.text:dw_pcie_host_init()
->    The function add_pcie_port() references
->    the function __init dw_pcie_host_init().
->    This is often because add_pcie_port lacks a __init
->    annotation or the annotation of dw_pcie_host_init is wrong.
+> 1. The i2c-s3c2410 driver will probe at subsys_initcall.  It will
+>    enable its clock and disable it.  This is the clock "i2c2".
+> 2. The act of disabling "i2c2" will disable its parents.  In this case
+>    the parent is "aclk66_peric".  There are no other children of
+>    "aclk66_peric" officially enabled, so "aclk66_peric" will be turned
+>    off (despite being CLK_IGNORE_UNUSED, but that's by design).
+> 3. The next time you try to earlyprintk you'll do so without the UART
+>    clock enabled.  That's because the UART clocks are also children of
+>    "aclk66_peric".  You'll hang.
 > 
-> Reported-by: kbuild test robot <fengguang.wu@intel.com>
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-
-Applied with Jingoo's ack to pci/host-exynos for v3.16, thanks!
-
+> There's no good place to put a clock enable for earlyprintk, which is
+> handled by a bunch of assembly code.  The best we can do is to handle
+> this in the clock driver.
+> 
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
 > ---
->  drivers/pci/host/pci-exynos.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/clk/samsung/clk-exynos5420.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 > 
-> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-> index 3de6bfbbe8e9..3c1ff89829ec 100644
-> --- a/drivers/pci/host/pci-exynos.c
-> +++ b/drivers/pci/host/pci-exynos.c
-> @@ -511,7 +511,8 @@ static struct pcie_host_ops exynos_pcie_host_ops = {
->  	.host_init = exynos_pcie_host_init,
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 9d7d7ee..1e586be 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -1172,11 +1172,17 @@ static struct of_device_id ext_clk_match[] __initdata = {
+>         { },
 >  };
 >  
-> -static int add_pcie_port(struct pcie_port *pp, struct platform_device *pdev)
-> +static int __init add_pcie_port(struct pcie_port *pp,
-> +				struct platform_device *pdev)
+> +/* Keep these clocks on until late_initcall */
+> +static const char *boot_clocks[] __initconst = {
+> +       "aclk66_peric",
+> +};
+> +
+>  /* register exynos5420 clocks */
+>  static void __init exynos5x_clk_init(struct device_node *np,
+>                 enum exynos5x_soc soc)
 >  {
->  	int ret;
+>         struct samsung_clk_provider *ctx;
+> +       int i;
 >  
+>         if (np) {
+>                 reg_base = of_iomap(np, 0);
+> @@ -1226,6 +1232,12 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>         }
+>  
+>         exynos5420_clk_sleep_init();
+> +
+> +       for (i = 0; i < ARRAY_SIZE(boot_clocks); i++) {
+> +               struct clk *to_enable = __clk_lookup(boot_clocks[i]);
+
+How about replacing __clk_lookup with clk_get? You can keep the struct
+clk object hanging around for later...
+
+> +
+> +               clk_prepare_enable(to_enable);
+> +       }
+>  }
+>  
+>  static void __init exynos5420_clk_init(struct device_node *np)
+> @@ -1239,3 +1251,15 @@ static void __init exynos5800_clk_init(struct device_node *np)
+>         exynos5x_clk_init(np, EXYNOS5800);
+>  }
+>  CLK_OF_DECLARE(exynos5800_clk, "samsung,exynos5800-clock", exynos5800_clk_init);
+> +
+> +static int __init exynos5420_clk_late_init(void)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(boot_clocks); i++) {
+> +               struct clk *to_disable = __clk_lookup(boot_clocks[i]);
+> +
+> +               clk_disable_unprepare(to_disable);
+
+And then release it here with a clk_put.
+
+Regards,
+Mike
+
+> +       }
+> +}
+> +late_initcall(exynos5420_clk_late_init);
 > -- 
-> 1.7.9.5
+> 1.9.1.423.g4596e3a
 > 
