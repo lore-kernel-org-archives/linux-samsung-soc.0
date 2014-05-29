@@ -1,62 +1,107 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 3rd 1/3] Samsung Exynos cpuidle updates for 3.16
-Date: Thu, 29 May 2014 11:21:52 -0700
-Message-ID: <20140529182152.GB18481@quad.lixom.net>
-References: <035601cf7897$6c959190$45c0b4b0$@samsung.com>
+From: Manish Badarkhe <badarkhe.manish@gmail.com>
+Subject: Re: [PATCH V4] max8925_power: Use "IS_ENABLED(CONFIG_OF)" for DT code.
+Date: Thu, 29 May 2014 23:57:01 +0530
+Message-ID: <CAKDJKT4sXfwZnkcGzuQVGULbJnUEZjD7do0fn98Go2RnJso-Cw@mail.gmail.com>
+References: <1390928069-7313-1-git-send-email-badarkhe.manish@gmail.com>
+	<CAKDJKT5PuL6RTwUC3pkZCPDVosfcX51TRmrX3tC952L2N+X43Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:60834 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750940AbaE2SVk (ORCPT
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:35740 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755315AbaE2S1D (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 May 2014 14:21:40 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rq2so781564pbb.33
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2014 11:21:40 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <035601cf7897$6c959190$45c0b4b0$@samsung.com>
+	Thu, 29 May 2014 14:27:03 -0400
+In-Reply-To: <CAKDJKT5PuL6RTwUC3pkZCPDVosfcX51TRmrX3tC952L2N+X43Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Daniel Lezcano' <daniel.lezcano@linaro.org>
+To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, =?UTF-8?B?4KSu4KSo4KS/4KS3IOCkrOCkpuCksOCkluClhw==?= <badarkhe.manish@gmail.com>
 
-On Mon, May 26, 2014 at 01:03:17PM +0900, Kukjin Kim wrote:
-> Note: merge conflict will be happened when pulling this for
-> arch/arm/mach-exynos/cpuidle.
-> You may just fixup with 'git rm arch/arm/mach-exynos/cpuidle.', it is due to
-> 'removing inclusion of <plat/cpu.h>' before moving cpuidle driver into
-> drivers/cpuidle...
-> 
-> - Kukjin
-> 
-> The following changes since commit 985326c9f65a4c1a3b5ab875e6ce0c97c39449ec:
-> 
->   Merge branch 'v3.16-next/clk-samsung' into v3.16-next/cpuidle-exynos
-> (2014-05-26 05:20:25 +0900)
-> 
-> are available in the git repository at:
-> 
-> 
->   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/exynos-cpuidle
-> 
-> for you to fetch changes up to cd245f59aae5d6ef265f46aa6cea78354d61b629:
-> 
->   ARM: EXYNOS: Fix kernel panic when unplugging CPU1 on exynos (2014-05-26
-> 05:21:47 +0900)
-> 
-> ----------------------------------------------------------------
-> Samsung exynos-cpuidle updates for v3.16
-> 
-> - From Daniel Lezcano:
->  This patchset relies on the cpm_pm notifier to initiate the
->  powerdown sequence operations from pm.c instead cpuidle.c.
->  Thus the cpuidle driver is no longer dependent from arch
->  specific code as everything is called from the pm.c file.
-> 
-> Note, this is based on tags/exnos-mcpm and tags/samsung-clk
+Hi Dmitry,
 
-Merged into next/drivers.
+On Tue, Feb 11, 2014 at 10:15 PM, Manish Badarkhe
+<badarkhe.manish@gmail.com> wrote:
+> Hi Dmitry,
+>
+> On Tue, Jan 28, 2014 at 10:24 PM, Manish Badarkhe
+> <badarkhe.manish@gmail.com> wrote:
+>> Instead of "#ifdef CONFIG_OF" use "IS_ENABLED(CONFIG_OF)"
+>> option for DT code to avoid if-deffery in code.
+>>
+>> Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
+>> ---
+>> Changes since V1:
+>> 1.Updated code to use "IS_ENABLED" during retrieval
+>>   of platform/DT data.
+>>
+>> Changes since V2:
+>> 1.Updated code as per Dmitry's comment to give preferance to
+>>   platform data.
+>>
+>> Changes since V3:
+>> 1.Updated code to use "IS_ENABLED(CONFIG_OF)" to remove
+>>   DT data retrieval function during compilation itself
+>>   when CONFIG_OF option is not set.
+>>
+>> :100644 100644 b4513f2... a7482db... M  drivers/power/max8925_power.c
+>>  drivers/power/max8925_power.c |   17 +++++------------
+>>  1 file changed, 5 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/power/max8925_power.c b/drivers/power/max8925_power.c
+>> index b4513f2..a7482db 100644
+>> --- a/drivers/power/max8925_power.c
+>> +++ b/drivers/power/max8925_power.c
+>> @@ -427,7 +427,6 @@ static int max8925_deinit_charger(struct max8925_power_info *info)
+>>         return 0;
+>>  }
+>>
+>> -#ifdef CONFIG_OF
+>>  static struct max8925_power_pdata *
+>>  max8925_power_dt_init(struct platform_device *pdev)
+>>  {
+>> @@ -440,9 +439,6 @@ max8925_power_dt_init(struct platform_device *pdev)
+>>         int no_insert_detect;
+>>         struct max8925_power_pdata *pdata;
+>>
+>> -       if (!nproot)
+>> -               return pdev->dev.platform_data;
+>> -
+>>         np = of_find_node_by_name(nproot, "charger");
+>>         if (!np) {
+>>                 dev_err(&pdev->dev, "failed to find charger node\n");
+>> @@ -468,13 +464,6 @@ max8925_power_dt_init(struct platform_device *pdev)
+>>
+>>         return pdata;
+>>  }
+>> -#else
+>> -static struct max8925_power_pdata *
+>> -max8925_power_dt_init(struct platform_device *pdev)
+>> -{
+>> -       return pdev->dev.platform_data;
+>> -}
+>> -#endif
+>>
+>>  static int max8925_power_probe(struct platform_device *pdev)
+>>  {
+>> @@ -483,7 +472,11 @@ static int max8925_power_probe(struct platform_device *pdev)
+>>         struct max8925_power_info *info;
+>>         int ret;
+>>
+>> -       pdata = max8925_power_dt_init(pdev);
+>> +       pdata = dev_get_platdata(&pdev->dev);
+>> +
+>> +       if (IS_ENABLED(CONFIG_OF) && !pdata && chip->dev->of_node)
+>> +               pdata = max8925_power_dt_init(pdev);
+>> +
+>>         if (!pdata) {
+>>                 dev_err(&pdev->dev, "platform data isn't assigned to "
+>>                         "power supply\n");
+>
+> Gentle ping!!
+> Please let me know, are there any review comments on this patch?
 
+Gentle ping!!
 
--Olof
+Thanks
+Manish Badarkhe
