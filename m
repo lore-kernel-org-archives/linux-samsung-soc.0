@@ -1,107 +1,46 @@
-From: Manish Badarkhe <badarkhe.manish@gmail.com>
-Subject: Re: [PATCH V4] max8925_power: Use "IS_ENABLED(CONFIG_OF)" for DT code.
-Date: Thu, 29 May 2014 23:57:01 +0530
-Message-ID: <CAKDJKT4sXfwZnkcGzuQVGULbJnUEZjD7do0fn98Go2RnJso-Cw@mail.gmail.com>
-References: <1390928069-7313-1-git-send-email-badarkhe.manish@gmail.com>
-	<CAKDJKT5PuL6RTwUC3pkZCPDVosfcX51TRmrX3tC952L2N+X43Q@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 3rd 3/3] Samsung clk-2 updates for 3.16
+Date: Thu, 29 May 2014 12:37:42 -0700
+Message-ID: <20140529193742.GC18481@quad.lixom.net>
+References: <035801cf7897$72d573e0$58805ba0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:35740 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755315AbaE2S1D (ORCPT
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:38254 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751264AbaE2Thb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 May 2014 14:27:03 -0400
-In-Reply-To: <CAKDJKT5PuL6RTwUC3pkZCPDVosfcX51TRmrX3tC952L2N+X43Q@mail.gmail.com>
+	Thu, 29 May 2014 15:37:31 -0400
+Received: by mail-pa0-f51.google.com with SMTP id kq14so827196pab.10
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2014 12:37:30 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <035801cf7897$72d573e0$58805ba0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, =?UTF-8?B?4KSu4KSo4KS/4KS3IOCkrOCkpuCksOCkluClhw==?= <badarkhe.manish@gmail.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com
 
-Hi Dmitry,
+On Mon, May 26, 2014 at 01:03:27PM +0900, Kukjin Kim wrote:
+> The following changes since commit 6520e968eef4f88c076a84a80e026049d157132e:
+> 
+>   clk: exynos5420: Add 5800 specific clocks (2014-05-19 22:15:08 +0900)
+> 
+> are available in the git repository at:
+> 
+>   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/samsung-clk-2
+> 
+> for you to fetch changes up to bfed1074f213051e94648bfad0d0611a16d81366:
+> 
+>   clk: exynos5250: Add missing sysmmu clocks for DISP and ISP blocks
+> (2014-05-26 06:48:10 +0900)
+> 
+> ----------------------------------------------------------------
+> Samsung 2nd clock updates for 3.16	
+> 
+> - Add missing sysmmu clocks for DISP and ISP blocks for exynos5250
 
-On Tue, Feb 11, 2014 at 10:15 PM, Manish Badarkhe
-<badarkhe.manish@gmail.com> wrote:
-> Hi Dmitry,
->
-> On Tue, Jan 28, 2014 at 10:24 PM, Manish Badarkhe
-> <badarkhe.manish@gmail.com> wrote:
->> Instead of "#ifdef CONFIG_OF" use "IS_ENABLED(CONFIG_OF)"
->> option for DT code to avoid if-deffery in code.
->>
->> Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
->> ---
->> Changes since V1:
->> 1.Updated code to use "IS_ENABLED" during retrieval
->>   of platform/DT data.
->>
->> Changes since V2:
->> 1.Updated code as per Dmitry's comment to give preferance to
->>   platform data.
->>
->> Changes since V3:
->> 1.Updated code to use "IS_ENABLED(CONFIG_OF)" to remove
->>   DT data retrieval function during compilation itself
->>   when CONFIG_OF option is not set.
->>
->> :100644 100644 b4513f2... a7482db... M  drivers/power/max8925_power.c
->>  drivers/power/max8925_power.c |   17 +++++------------
->>  1 file changed, 5 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/power/max8925_power.c b/drivers/power/max8925_power.c
->> index b4513f2..a7482db 100644
->> --- a/drivers/power/max8925_power.c
->> +++ b/drivers/power/max8925_power.c
->> @@ -427,7 +427,6 @@ static int max8925_deinit_charger(struct max8925_power_info *info)
->>         return 0;
->>  }
->>
->> -#ifdef CONFIG_OF
->>  static struct max8925_power_pdata *
->>  max8925_power_dt_init(struct platform_device *pdev)
->>  {
->> @@ -440,9 +439,6 @@ max8925_power_dt_init(struct platform_device *pdev)
->>         int no_insert_detect;
->>         struct max8925_power_pdata *pdata;
->>
->> -       if (!nproot)
->> -               return pdev->dev.platform_data;
->> -
->>         np = of_find_node_by_name(nproot, "charger");
->>         if (!np) {
->>                 dev_err(&pdev->dev, "failed to find charger node\n");
->> @@ -468,13 +464,6 @@ max8925_power_dt_init(struct platform_device *pdev)
->>
->>         return pdata;
->>  }
->> -#else
->> -static struct max8925_power_pdata *
->> -max8925_power_dt_init(struct platform_device *pdev)
->> -{
->> -       return pdev->dev.platform_data;
->> -}
->> -#endif
->>
->>  static int max8925_power_probe(struct platform_device *pdev)
->>  {
->> @@ -483,7 +472,11 @@ static int max8925_power_probe(struct platform_device *pdev)
->>         struct max8925_power_info *info;
->>         int ret;
->>
->> -       pdata = max8925_power_dt_init(pdev);
->> +       pdata = dev_get_platdata(&pdev->dev);
->> +
->> +       if (IS_ENABLED(CONFIG_OF) && !pdata && chip->dev->of_node)
->> +               pdata = max8925_power_dt_init(pdev);
->> +
->>         if (!pdata) {
->>                 dev_err(&pdev->dev, "platform data isn't assigned to "
->>                         "power supply\n");
->
-> Gentle ping!!
-> Please let me know, are there any review comments on this patch?
+Merged, thanks.
 
-Gentle ping!!
 
-Thanks
-Manish Badarkhe
+-Olof
