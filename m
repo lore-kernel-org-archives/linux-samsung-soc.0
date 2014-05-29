@@ -1,218 +1,602 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH] mmc: dw_mmc: change to use recommended reset procedure
-Date: Thu, 29 May 2014 14:17:25 +0900
-Message-ID: <5386C2E5.4090408@samsung.com>
-References: <CAPz6YkW+eJjoUz0YRb_JOsKXMUhCe4hRUQVQLhZbkfo01fVnqg@mail.gmail.com>
- <1401323709-10345-1-git-send-email-sonnyrao@chromium.org>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: Re: [PATCH v2 10/18] drm/exynos: fimd: support I80 interface
+Date: Thu, 29 May 2014 14:45:48 +0900
+Message-ID: <5386C98C.5010707@samsung.com>
+References: <1400647390-26590-1-git-send-email-yj44.cho@samsung.com>
+ <1400647390-26590-11-git-send-email-yj44.cho@samsung.com>
+ <CAGS+omDXCgBaUq=SVo0kMYTqhOR8FE5CfogFr-b1qzaNjdcocw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <1401323709-10345-1-git-send-email-sonnyrao@chromium.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Sonny Rao <sonnyrao@chromium.org>, linux-mmc@vger.kernel.org
-Cc: grundler@chromium.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, tgih.jun@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, t.figa@samsung.com, dianders@chromium.org, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAGS+omDXCgBaUq=SVo0kMYTqhOR8FE5CfogFr-b1qzaNjdcocw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Kurtz <djkurtz@chromium.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, s.trumtrar@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi, Sonny.
+Hi Daniel,
 
-On 05/29/2014 09:35 AM, Sonny Rao wrote:
-> This patch changes the fifo reset code to follow the reset procedure
-> outlined in the documentation of Synopsys Mobile storage host databook.
-> 
-> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> ---
-> v2: Add Generic DMA support
->     per the documentation, move interrupt clear before wait
->     make the test for DMA host->use_dma rather than host->using_dma
->     add proper return values (although it appears no caller checks)
-> v3: rename fifo reset function, and change callers
->     use this combined reset function in dw_mci_resume()
->     just one caller left (probe), so get rid of dw_mci_ctrl_all_reset()
->     use DMA reset bit for all systems which use DMA
->     remove extra IDMAC reset in dw_mci_work_routine_card()
->     do CIU clock update in error path, if CIU reset cleared
-> 
->  drivers/mmc/host/dw_mmc.c | 85 +++++++++++++++++++++++++++++++++++------------
->  drivers/mmc/host/dw_mmc.h |  1 +
->  2 files changed, 64 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 55cd110..988492c 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -111,8 +111,7 @@ static const u8 tuning_blk_pattern_8bit[] = {
->  	0xff, 0x77, 0x77, 0xff, 0x77, 0xbb, 0xdd, 0xee,
->  };
->  
-> -static inline bool dw_mci_fifo_reset(struct dw_mci *host);
-> -static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host);
-> +static inline bool dw_mci_reset(struct dw_mci *host);
->  
->  #if defined(CONFIG_DEBUG_FS)
->  static int dw_mci_req_show(struct seq_file *s, void *v)
-> @@ -1254,7 +1253,7 @@ static int dw_mci_data_complete(struct dw_mci *host, struct mmc_data *data)
->  		 * After an error, there may be data lingering
->  		 * in the FIFO
->  		 */
-> -		dw_mci_fifo_reset(host);
-> +		dw_mci_reset(host);
->  	} else {
->  		data->bytes_xfered = data->blocks * data->blksz;
->  		data->error = 0;
-> @@ -1371,7 +1370,7 @@ static void dw_mci_tasklet_func(unsigned long priv)
->  
->  			/* CMD error in data command */
->  			if (mrq->cmd->error && mrq->data)
-> -				dw_mci_fifo_reset(host);
-> +				dw_mci_reset(host);
->  
->  			host->cmd = NULL;
->  			host->data = NULL;
-> @@ -1982,14 +1981,9 @@ static void dw_mci_work_routine_card(struct work_struct *work)
->  			}
->  
->  			/* Power down slot */
-> -			if (present == 0) {
-> +			if (present == 0)
->  				/* Clear down the FIFO */
-Didn't Need to change the Comment?
-> -				dw_mci_fifo_reset(host);
-> -#ifdef CONFIG_MMC_DW_IDMAC
-> -				dw_mci_idmac_reset(host);
-> -#endif
-> -
-> -			}
-> +				dw_mci_reset(host);
->  
->  			spin_unlock_bh(&host->lock);
->  
-> @@ -2323,8 +2317,11 @@ static bool dw_mci_ctrl_reset(struct dw_mci *host, u32 reset)
->  	return false;
->  }
->  
-> -static inline bool dw_mci_fifo_reset(struct dw_mci *host)
-> +static inline bool dw_mci_reset(struct dw_mci *host)
->  {
-> +	u32 flags = SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET;
-> +	bool ret = false;
-> +
->  	/*
->  	 * Reseting generates a block interrupt, hence setting
->  	 * the scatter-gather pointer to NULL.
-> @@ -2334,15 +2331,57 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
->  		host->sg = NULL;
->  	}
->  
-> -	return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
-> -}
-> +	if (host->use_dma)
-> +		flags |= SDMMC_CTRL_DMA_RESET;
->  
-> -static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
-> -{
-> -	return dw_mci_ctrl_reset(host,
-> -				 SDMMC_CTRL_FIFO_RESET |
-> -				 SDMMC_CTRL_RESET |
-> -				 SDMMC_CTRL_DMA_RESET);
-> +	if (dw_mci_ctrl_reset(host, flags)) {
-> +		/*
-> +		 * In all cases we clear the RAWINTS register to clear any
-> +		 * interrupts.
-> +		 */
-> +		mci_writel(host, RINTSTS, 0xFFFFFFFF);
-> +
-> +		/* if using dma we wait for dma_req to clear */
-> +		if (host->use_dma) {
-> +			unsigned long timeout = jiffies + msecs_to_jiffies(500);
-> +			u32 status;
-> +			do {
-> +				status = mci_readl(host, STATUS);
-> +				if (!(status & SDMMC_STATUS_DMA_REQ))
-> +					break;
-> +				cpu_relax();
-> +			} while (time_before(jiffies, timeout));
-> +
-> +			if (status & SDMMC_STATUS_DMA_REQ) {
-> +				dev_err(host->dev,
-> +					"%s: Timeout waiting for dma_req to "
-> +					"clear during reset", __func__);
-> +				goto ciu_out;
-> +			}
-> +
-> +			/* when using DMA next we reset the fifo again */
-> +			if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET))
-> +				goto ciu_out;
-> +		}
-> +	} else {
-> +		dev_err(host->dev, "%s: Reset bits didn't clear", __func__);
-> +
-> +		/* if the controller reset bit did clear, then set clock regs */
-I have some confusion at this point. you added the above error message "Reset bits didn't clear".
-But this comment is "if the controller reset bit did clear..".
+On 05/26/2014 06:00 PM, Daniel Kurtz wrote:
+> Hi YoungJun,
+>
+> I am not famiilar with i80.  Reading through this patch, it looks like
+> it works something like below for a page flip...
+>
+> -> page_flip ioctl
+> exynos_drm_crtc_page_flip()
+>    exynos_drm_crtc_mode_set_commit()
+>      exynos_plane_mode_set()
+>      exynos_drm_crtc_commit()
+>        exynos_plane_commit()
+>          exynos_drm_crtc_plane_commit()
+>            ops->win_commit() => fimd_win_commit()
+>              update BASE (scanout) register
+>              atomic_set(&ctx->win_updated, 1);
+>
+> ... at the next TE event ...
+> fimd_te_handler()
+>    atomic_set(&ctx->win_updated, 0);
+>    fimd_trigger(ctx->dev);
+>      atomic_set(&ctx->triggering, 1);
+>      VIDINTCON0 |= VIDINTCON0_INT_ENABLE;
+>      TRIGCON |= TRGMODE_I80_RGB_ENABLE_I80 | SWTRGCMD_I80_RGB_ENABLE
+>      ... start an i80 transaction to transfer frame data from BASE to
+> the panel ...
+>
+> ... write complete signalled by ...
+> -> FIMD interrupt: source =  VIDINTCON0_INT_I80IFDONE |
+> VIDINTCON0_INT_SYSMAINCON (which one?)
 
-I think that dev_err message would be better to locate into "if (!(mci_read(host, CTRL) & ...)".
+VIDINTCON0_INT_SYSMAINCON is for main LCD interrupt.
+So both are required.
 
-> +		if (!(mci_readl(host, CTRL) & SDMMC_CTRL_RESET))
-> +			goto ciu_out;
-> +	}
-> +
-> +	if (IS_ENABLED(CONFIG_MMC_DW_IDMAC))
-> +		/* It is also recommended that we reset and reprogram idmac */
-> +		dw_mci_idmac_reset(host);
-> +
-> +	ret = true;
-> +
-> +ciu_out:
-> +	/* After a CTRL reset we need to have CIU set clock registers  */
-> +	mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
-> +
-> +	return ret;
->  }
->  
->  #ifdef CONFIG_OF
-> @@ -2432,6 +2471,7 @@ int dw_mci_probe(struct dw_mci *host)
->  	const struct dw_mci_drv_data *drv_data = host->drv_data;
->  	int width, i, ret = 0;
->  	u32 fifo_size;
-> +	u32 flags;
->  	int init_slots = 0;
->  
->  	if (!host->pdata) {
-> @@ -2555,7 +2595,8 @@ int dw_mci_probe(struct dw_mci *host)
->  	}
->  
->  	/* Reset all blocks */
-> -	if (!dw_mci_ctrl_all_reset(host))
-> +	flags = SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET | SDMMC_CTRL_DMA_RESET;
-how about adding the SDMMC_CTRL_ALL_RESET macro into header file?
-#define SDMMC_CTRL_ALL_RESET (.....)
+> fimd_irq_handler()
+>    atomic_set(&ctx->triggering, 0);
+>    drm_handle_vblank(ctx->drm_dev, ctx->pipe);
+>    exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
+>
+> Some questions/points:
+>   (1) does the "i80 done" interrupt mean that the panel is now
+> displaying the new frame?  Or just that the new frame is pending in a
+> panel-side scanout buffer?  Is there a separate interrupt for (a) "i80
 
-> +	if (!dw_mci_ctrl_reset(host, flags))
->  		return -ENODEV;
->  
->  	host->dma_ops = host->pdata->dma_ops;
-> @@ -2744,7 +2785,7 @@ int dw_mci_resume(struct dw_mci *host)
->  		}
->  	}
->  
-> -	if (!dw_mci_ctrl_all_reset(host)) {
-> +	if (!dw_mci_reset(host)) {
->  		ret = -ENODEV;
->  		return ret;
->  	}
-> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
-> index 6bf24ab..2505804 100644
-> --- a/drivers/mmc/host/dw_mmc.h
-> +++ b/drivers/mmc/host/dw_mmc.h
-> @@ -129,6 +129,7 @@
->  #define SDMMC_CMD_INDX(n)		((n) & 0x1F)
->  /* Status register defines */
->  #define SDMMC_GET_FCNT(x)		(((x)>>17) & 0x1FFF)
-> +#define SDMMC_STATUS_DMA_REQ		BIT(31)
->  /* FIFOTH register defines */
->  #define SDMMC_SET_FIFOTH(m, r, t)	(((m) & 0x7) << 28 | \
->  					 ((r) & 0xFFF) << 16 | \
-> 
+The 'i80 done' interrupt means that display controller(FIMD) completes
+sending the last line of screen(framebuffer) to DSI master.
 
+> transfer complete", and (b) "new frame now on main display"?
+
+The TE signal indicates that the panel completes dispatching gram.
+So like this:
+[ fimd ] : fimd_trigger() => frame done irq
+[ panel ] :                                 te signal => show gram img
+
+>
+>   (2) from the "DPMS off" patch, you mentioned that the panel sometimes
+> has an issue.  Do you mean that sometimes when you trigger the i80
+> transaction, there is no corresponding "i80ifdone / sysmaincon"
+
+No, I meant that fimd could miss TE signal if panel was reset / power
+off before generating it.
+
+> interrupt?   If so, then I think you want to start a timer in
+> fimd_trigger(), that, if it expires before an I80IFDONE irq, will call
+> exynos_drm_crtc_finish_pageflip(), rather than hiding handling this
+> condition in dpms off of the exynos_drm_crtc.c layer.
+
+As you know that even though display controller missed TE signal and
+didn't trigger, the panel kept previous screen by self-refresh.
+After the panel recovers well and display controller sets next fb,
+then the panel would show it well without problem except current fb
+overwritten issue.
+But the dpms off case before the panel recovers well, there is no way
+to resolving pending event.
+
+Thank you.
+Best regards YJ
+
+
+>
+> Thanks,
+> -djk
+>
+>
+>
+>
+> On Wed, May 21, 2014 at 12:43 PM, YoungJun Cho <yj44.cho@samsung.com> wrote:
+>> To support MIPI DSI command mode interface, FIMD should do followings:
+>> - Sets LCD block configuration for I80 interface.
+>> - Uses "lcd_sys" as an IRQ resource and sets relevant IRQ configuration.
+>> - Implements trigger feature which transfers image date if there is
+>>    page flip request, and implements TE handler to call trigger function.
+>> - Sets command mode timings configuration.
+>> - Sets ideal(pixel) clock is 2 times faster than the original one to
+>>    generate frame done IRQ prior to the next TE signal.
+>>
+>> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>   drivers/gpu/drm/exynos/Kconfig           |    1 +
+>>   drivers/gpu/drm/exynos/exynos_drm_fimd.c |  277 +++++++++++++++++++++++++-----
+>>   include/video/samsung_fimd.h             |    3 +-
+>>   3 files changed, 237 insertions(+), 44 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+>> index 5bf5bca..f4d34f0 100644
+>> --- a/drivers/gpu/drm/exynos/Kconfig
+>> +++ b/drivers/gpu/drm/exynos/Kconfig
+>> @@ -28,6 +28,7 @@ config DRM_EXYNOS_FIMD
+>>          bool "Exynos DRM FIMD"
+>>          depends on DRM_EXYNOS && !FB_S3C && !ARCH_MULTIPLATFORM
+>>          select FB_MODE_HELPERS
+>> +       select MFD_SYSCON
+>>          help
+>>            Choose this option if you want to use Exynos FIMD for DRM.
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> index 173ee97..9d585f9 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+>> @@ -20,11 +20,14 @@
+>>   #include <linux/of_device.h>
+>>   #include <linux/pm_runtime.h>
+>>   #include <linux/component.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/regmap.h>
+>>
+>>   #include <video/of_display_timing.h>
+>>   #include <video/of_videomode.h>
+>>   #include <video/samsung_fimd.h>
+>>   #include <drm/exynos_drm.h>
+>> +#include <drm/drm_panel.h>
+>>
+>>   #include "exynos_drm_drv.h"
+>>   #include "exynos_drm_fbdev.h"
+>> @@ -60,6 +63,24 @@
+>>   /* color key value register for hardware window 1 ~ 4. */
+>>   #define WKEYCON1_BASE(x)               ((WKEYCON1 + 0x140) + ((x - 1) * 8))
+>>
+>> +/* i80 / RGB trigger control register */
+>> +#define TRIGCON                                0x1A4
+>> +#define TRGMODE_I80_RGB_ENABLE_I80     (1 << 0)
+>> +#define SWTRGCMD_I80_RGB_ENABLE                (1 << 1)
+>> +
+>> +/* display mode change control register except exynos4 */
+>> +#define VIDOUT_CON                     0x000
+>> +#define VIDOUT_CON_F_I80_LDI0          (0x2 << 8)
+>> +
+>> +/* i80 interface control for main LDI register */
+>> +#define I80IFCONFAx(x)                 (0x1B0 + (x) * 4)
+>> +#define I80IFCONFBx(x)                 (0x1B8 + (x) * 4)
+>> +#define LCD_CS_SETUP(x)                        ((x) << 16)
+>> +#define LCD_WR_SETUP(x)                        ((x) << 12)
+>> +#define LCD_WR_ACT(x)                  ((x) << 8)
+>> +#define LCD_WR_HOLD(x)                 ((x) << 4)
+>> +#define I80IFEN_ENABLE                 (1 << 0)
+>> +
+>>   /* FIMD has totally five hardware windows. */
+>>   #define WINDOWS_NR     5
+>>
+>> @@ -67,10 +88,14 @@
+>>
+>>   struct fimd_driver_data {
+>>          unsigned int timing_base;
+>> +       unsigned int lcdblk_off;
+>> +       unsigned int lcdblk_vt_shift;
+>> +       unsigned int lcdblk_bypass_shift;
+>>
+>>          unsigned int has_shadowcon:1;
+>>          unsigned int has_clksel:1;
+>>          unsigned int has_limited_fmt:1;
+>> +       unsigned int has_vidoutcon:1;
+>>   };
+>>
+>>   static struct fimd_driver_data s3c64xx_fimd_driver_data = {
+>> @@ -81,12 +106,19 @@ static struct fimd_driver_data s3c64xx_fimd_driver_data = {
+>>
+>>   static struct fimd_driver_data exynos4_fimd_driver_data = {
+>>          .timing_base = 0x0,
+>> +       .lcdblk_off = 0x210,
+>> +       .lcdblk_vt_shift = 10,
+>> +       .lcdblk_bypass_shift = 1,
+>>          .has_shadowcon = 1,
+>>   };
+>>
+>>   static struct fimd_driver_data exynos5_fimd_driver_data = {
+>>          .timing_base = 0x20000,
+>> +       .lcdblk_off = 0x214,
+>> +       .lcdblk_vt_shift = 24,
+>> +       .lcdblk_bypass_shift = 15,
+>>          .has_shadowcon = 1,
+>> +       .has_vidoutcon = 1,
+>>   };
+>>
+>>   struct fimd_win_data {
+>> @@ -111,15 +143,23 @@ struct fimd_context {
+>>          struct clk                      *bus_clk;
+>>          struct clk                      *lcd_clk;
+>>          void __iomem                    *regs;
+>> +       struct regmap                   *sysreg;
+>>          struct drm_display_mode         mode;
+>>          struct fimd_win_data            win_data[WINDOWS_NR];
+>>          unsigned int                    default_win;
+>>          unsigned long                   irq_flags;
+>> +       u32                             vidcon0;
+>>          u32                             vidcon1;
+>> +       u32                             vidout_con;
+>> +       u32                             i80ifcon;
+>> +       bool                            i80_if;
+>>          bool                            suspended;
+>>          int                             pipe;
+>>          wait_queue_head_t               wait_vsync_queue;
+>>          atomic_t                        wait_vsync_event;
+>> +       atomic_t                        win_updated;
+>> +       atomic_t                        triggering;
+>> +       spinlock_t                      win_updated_lock;
+>>
+>>          struct exynos_drm_panel_info panel;
+>>          struct fimd_driver_data *driver_data;
+>> @@ -242,6 +282,14 @@ static u32 fimd_calc_clkdiv(struct fimd_context *ctx,
+>>          unsigned long ideal_clk = mode->htotal * mode->vtotal * mode->vrefresh;
+>>          u32 clkdiv;
+>>
+>> +       if (ctx->i80_if) {
+>> +               /*
+>> +                * The frame done interrupt should be occurred prior to the
+>> +                * next TE signal.
+>> +                */
+>> +               ideal_clk *= 2;
+>> +       }
+>> +
+>>          /* Find the clock divider value that gets us closest to ideal_clk */
+>>          clkdiv = DIV_ROUND_UP(clk_get_rate(ctx->lcd_clk), ideal_clk);
+>>
+>> @@ -264,17 +312,23 @@ static void fimd_mode_set(struct exynos_drm_manager *mgr,
+>>          struct fimd_context *ctx = mgr->ctx;
+>>
+>>          drm_mode_copy(&ctx->mode, in_mode);
+>> +
+>> +       if (ctx->i80_if) {
+>> +               ctx->i80ifcon = LCD_CS_SETUP(in_mode->cs_setup);
+>> +               ctx->i80ifcon |= LCD_WR_SETUP(in_mode->wr_setup);
+>> +               ctx->i80ifcon |= LCD_WR_ACT(in_mode->wr_active);
+>> +               ctx->i80ifcon |= LCD_WR_HOLD(in_mode->wr_hold);
+>> +       }
+>>   }
+>>
+>>   static void fimd_commit(struct exynos_drm_manager *mgr)
+>>   {
+>>          struct fimd_context *ctx = mgr->ctx;
+>>          struct drm_display_mode *mode = &ctx->mode;
+>> -       struct fimd_driver_data *driver_data;
+>> -       u32 val, clkdiv, vidcon1;
+>> -       int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
+>> +       struct fimd_driver_data *driver_data = ctx->driver_data;
+>> +       void *timing_base = ctx->regs + driver_data->timing_base;
+>> +       u32 val, clkdiv;
+>>
+>> -       driver_data = ctx->driver_data;
+>>          if (ctx->suspended)
+>>                  return;
+>>
+>> @@ -282,33 +336,65 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
+>>          if (mode->htotal == 0 || mode->vtotal == 0)
+>>                  return;
+>>
+>> -       /* setup polarity values */
+>> -       vidcon1 = ctx->vidcon1;
+>> -       if (mode->flags & DRM_MODE_FLAG_NVSYNC)
+>> -               vidcon1 |= VIDCON1_INV_VSYNC;
+>> -       if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+>> -               vidcon1 |= VIDCON1_INV_HSYNC;
+>> -       writel(vidcon1, ctx->regs + driver_data->timing_base + VIDCON1);
+>> -
+>> -       /* setup vertical timing values. */
+>> -       vsync_len = mode->crtc_vsync_end - mode->crtc_vsync_start;
+>> -       vbpd = mode->crtc_vtotal - mode->crtc_vsync_end;
+>> -       vfpd = mode->crtc_vsync_start - mode->crtc_vdisplay;
+>> -
+>> -       val = VIDTCON0_VBPD(vbpd - 1) |
+>> -               VIDTCON0_VFPD(vfpd - 1) |
+>> -               VIDTCON0_VSPW(vsync_len - 1);
+>> -       writel(val, ctx->regs + driver_data->timing_base + VIDTCON0);
+>> -
+>> -       /* setup horizontal timing values.  */
+>> -       hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
+>> -       hbpd = mode->crtc_htotal - mode->crtc_hsync_end;
+>> -       hfpd = mode->crtc_hsync_start - mode->crtc_hdisplay;
+>> -
+>> -       val = VIDTCON1_HBPD(hbpd - 1) |
+>> -               VIDTCON1_HFPD(hfpd - 1) |
+>> -               VIDTCON1_HSPW(hsync_len - 1);
+>> -       writel(val, ctx->regs + driver_data->timing_base + VIDTCON1);
+>> +       if (ctx->i80_if) {
+>> +               val = ctx->i80ifcon | I80IFEN_ENABLE;
+>> +               writel(val, timing_base + I80IFCONFAx(0));
+>> +
+>> +               /* disable auto frame rate */
+>> +               writel(0, timing_base + I80IFCONFBx(0));
+>> +
+>> +               if (ctx->vidout_con)
+>> +                       writel(ctx->vidout_con, timing_base + VIDOUT_CON);
+>> +
+>> +               /* set video type selection to i80 interface */
+>> +               if (ctx->sysreg && regmap_update_bits(ctx->sysreg,
+>> +                                       driver_data->lcdblk_off,
+>> +                                       0x3 << driver_data->lcdblk_vt_shift,
+>> +                                       0x1 << driver_data->lcdblk_vt_shift)) {
+>> +                       DRM_ERROR("Failed to update sysreg for i80 i/f.\n");
+>> +                       return;
+>> +               }
+>> +       } else {
+>> +               int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
+>> +               u32 vidcon1;
+>> +
+>> +               /* setup polarity values */
+>> +               vidcon1 = ctx->vidcon1;
+>> +               if (mode->flags & DRM_MODE_FLAG_NVSYNC)
+>> +                       vidcon1 |= VIDCON1_INV_VSYNC;
+>> +               if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+>> +                       vidcon1 |= VIDCON1_INV_HSYNC;
+>> +               writel(vidcon1, ctx->regs + driver_data->timing_base + VIDCON1);
+>> +
+>> +               /* setup vertical timing values. */
+>> +               vsync_len = mode->crtc_vsync_end - mode->crtc_vsync_start;
+>> +               vbpd = mode->crtc_vtotal - mode->crtc_vsync_end;
+>> +               vfpd = mode->crtc_vsync_start - mode->crtc_vdisplay;
+>> +
+>> +               val = VIDTCON0_VBPD(vbpd - 1) |
+>> +                       VIDTCON0_VFPD(vfpd - 1) |
+>> +                       VIDTCON0_VSPW(vsync_len - 1);
+>> +               writel(val, ctx->regs + driver_data->timing_base + VIDTCON0);
+>> +
+>> +               /* setup horizontal timing values.  */
+>> +               hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
+>> +               hbpd = mode->crtc_htotal - mode->crtc_hsync_end;
+>> +               hfpd = mode->crtc_hsync_start - mode->crtc_hdisplay;
+>> +
+>> +               val = VIDTCON1_HBPD(hbpd - 1) |
+>> +                       VIDTCON1_HFPD(hfpd - 1) |
+>> +                       VIDTCON1_HSPW(hsync_len - 1);
+>> +               writel(val, ctx->regs + driver_data->timing_base + VIDTCON1);
+>> +       }
+>> +
+>> +       /* set bypass selection */
+>> +       if (ctx->sysreg && regmap_update_bits(ctx->sysreg,
+>> +                               driver_data->lcdblk_off,
+>> +                               0x1 << driver_data->lcdblk_bypass_shift,
+>> +                               0x1 << driver_data->lcdblk_bypass_shift)) {
+>> +               DRM_ERROR("Failed to update sysreg for bypass setting.\n");
+>> +               return;
+>> +       }
+>>
+>>          /* setup horizontal and vertical display size. */
+>>          val = VIDTCON2_LINEVAL(mode->vdisplay - 1) |
+>> @@ -646,6 +732,14 @@ static void fimd_win_commit(struct exynos_drm_manager *mgr, int zpos)
+>>          }
+>>
+>>          win_data->enabled = true;
+>> +
+>> +       if (ctx->i80_if) {
+>> +               unsigned long flags;
+>> +
+>> +               spin_lock_irqsave(&ctx->win_updated_lock, flags);
+>> +               atomic_set(&ctx->win_updated, 1);
+>> +               spin_unlock_irqrestore(&ctx->win_updated_lock, flags);
+>> +       }
+>>   }
+>>
+>>   static void fimd_win_disable(struct exynos_drm_manager *mgr, int zpos)
+>> @@ -835,6 +929,68 @@ static void fimd_dpms(struct exynos_drm_manager *mgr, int mode)
+>>          }
+>>   }
+>>
+>> +static void fimd_trigger(struct device *dev)
+>> +{
+>> +       struct exynos_drm_manager *mgr = get_fimd_manager(dev);
+>> +       struct fimd_context *ctx = mgr->ctx;
+>> +       struct fimd_driver_data *driver_data = ctx->driver_data;
+>> +       void *timing_base = ctx->regs + driver_data->timing_base;
+>> +       u32 reg;
+>> +
+>> +       atomic_set(&ctx->triggering, 1);
+>> +
+>> +       reg = readl(ctx->regs + VIDINTCON0);
+>> +       reg |= (VIDINTCON0_INT_ENABLE | VIDINTCON0_INT_I80IFDONE |
+>> +                                               VIDINTCON0_INT_SYSMAINCON);
+>> +       writel(reg, ctx->regs + VIDINTCON0);
+>> +
+>> +       reg = readl(timing_base + TRIGCON);
+>> +       reg |= (TRGMODE_I80_RGB_ENABLE_I80 | SWTRGCMD_I80_RGB_ENABLE);
+>> +       writel(reg, timing_base + TRIGCON);
+>> +}
+>> +
+>> +static int fimd_te_handler(struct exynos_drm_manager *mgr)
+>> +{
+>> +       struct fimd_context *ctx = mgr->ctx;
+>> +       unsigned long flags;
+>> +
+>> +       /* check the crtc is detached already from encoder */
+>> +       if (ctx->pipe < 0 || !ctx->drm_dev)
+>> +               return -EINVAL;
+>> +
+>> +        /*
+>> +        * Skips to trigger if in triggering state, because multiple triggering
+>> +        * requests can cause panel reset.
+>> +        */
+>> +       if (atomic_read(&ctx->triggering))
+>> +               return 0;
+>> +
+>> +       spin_lock_irqsave(&ctx->win_updated_lock, flags);
+>> +
+>> +       /*
+>> +        * If there is a page flip request, triggers and handles the page flip
+>> +        * event so that current fb can be updated into panel GRAM.
+>> +        */
+>> +       if (atomic_read(&ctx->win_updated)) {
+>> +               atomic_set(&ctx->win_updated, 0);
+>> +
+>> +               fimd_trigger(ctx->dev);
+>> +       }
+>> +
+>> +       spin_unlock_irqrestore(&ctx->win_updated_lock, flags);
+>> +
+>> +       /* wake up vsync event queue */
+>> +       if (atomic_read(&ctx->wait_vsync_event)) {
+>> +               atomic_set(&ctx->wait_vsync_event, 0);
+>> +               wake_up(&ctx->wait_vsync_queue);
+>> +
+>> +               if (!atomic_read(&ctx->triggering))
+>> +                       drm_handle_vblank(ctx->drm_dev, ctx->pipe);
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>>   static struct exynos_drm_manager_ops fimd_manager_ops = {
+>>          .dpms = fimd_dpms,
+>>          .mode_fixup = fimd_mode_fixup,
+>> @@ -846,6 +1002,7 @@ static struct exynos_drm_manager_ops fimd_manager_ops = {
+>>          .win_mode_set = fimd_win_mode_set,
+>>          .win_commit = fimd_win_commit,
+>>          .win_disable = fimd_win_disable,
+>> +       .te_handler = fimd_te_handler,
+>>   };
+>>
+>>   static struct exynos_drm_manager fimd_manager = {
+>> @@ -856,26 +1013,40 @@ static struct exynos_drm_manager fimd_manager = {
+>>   static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
+>>   {
+>>          struct fimd_context *ctx = (struct fimd_context *)dev_id;
+>> -       u32 val;
+>> +       u32 val, clear_bit;
+>>
+>>          val = readl(ctx->regs + VIDINTCON1);
+>>
+>> -       if (val & VIDINTCON1_INT_FRAME)
+>> -               /* VSYNC interrupt */
+>> -               writel(VIDINTCON1_INT_FRAME, ctx->regs + VIDINTCON1);
+>> +       clear_bit = ctx->i80_if ? VIDINTCON1_INT_I80 : VIDINTCON1_INT_FRAME;
+>> +       if (val & clear_bit)
+>> +               writel(clear_bit, ctx->regs + VIDINTCON1);
+>>
+>>          /* check the crtc is detached already from encoder */
+>>          if (ctx->pipe < 0 || !ctx->drm_dev)
+>>                  goto out;
+>>
+>> -       drm_handle_vblank(ctx->drm_dev, ctx->pipe);
+>> -       exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
+>> +       if (ctx->i80_if) {
+>> +               /* unset i80 frame done interrupt */
+>> +               val = readl(ctx->regs + VIDINTCON0);
+>> +               val &= ~(VIDINTCON0_INT_I80IFDONE | VIDINTCON0_INT_SYSMAINCON);
+>> +               writel(val, ctx->regs + VIDINTCON0);
+>>
+>> -       /* set wait vsync event to zero and wake up queue. */
+>> -       if (atomic_read(&ctx->wait_vsync_event)) {
+>> -               atomic_set(&ctx->wait_vsync_event, 0);
+>> -               wake_up(&ctx->wait_vsync_queue);
+>> +               /* exit triggering mode */
+>> +               atomic_set(&ctx->triggering, 0);
+>> +
+>> +               drm_handle_vblank(ctx->drm_dev, ctx->pipe);
+>> +               exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
+>> +       } else {
+>> +               drm_handle_vblank(ctx->drm_dev, ctx->pipe);
+>> +               exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
+>> +
+>> +               /* set wait vsync event to zero and wake up queue. */
+>> +               if (atomic_read(&ctx->wait_vsync_event)) {
+>> +                       atomic_set(&ctx->wait_vsync_event, 0);
+>> +                       wake_up(&ctx->wait_vsync_queue);
+>> +               }
+>>          }
+>> +
+>>   out:
+>>          return IRQ_HANDLED;
+>>   }
+>> @@ -936,12 +1107,32 @@ static int fimd_probe(struct platform_device *pdev)
+>>
+>>          ctx->dev = dev;
+>>          ctx->suspended = true;
+>> +       ctx->driver_data = drm_fimd_get_driver_data(pdev);
+>>
+>>          if (of_property_read_bool(dev->of_node, "samsung,invert-vden"))
+>>                  ctx->vidcon1 |= VIDCON1_INV_VDEN;
+>>          if (of_property_read_bool(dev->of_node, "samsung,invert-vclk"))
+>>                  ctx->vidcon1 |= VIDCON1_INV_VCLK;
+>>
+>> +       if (of_property_read_bool(dev->of_node, "vidout-i80-ldi")) {
+>> +               ctx->i80_if = true;
+>> +
+>> +               if (ctx->driver_data->has_vidoutcon)
+>> +                       ctx->vidout_con |= VIDOUT_CON_F_I80_LDI0;
+>> +               else
+>> +                       ctx->vidcon0 |= VIDCON0_VIDOUT_I80_LDI0;
+>> +               ctx->vidcon0 |= VIDCON0_DSI_EN;
+>> +
+>> +               spin_lock_init(&ctx->win_updated_lock);
+>> +       }
+>> +
+>> +       ctx->sysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
+>> +                                                       "samsung,sysreg");
+>> +       if (IS_ERR(ctx->sysreg)) {
+>> +               dev_warn(dev, "failed to get system register.\n");
+>> +               ctx->sysreg = NULL;
+>> +       }
+>> +
+>>          ctx->bus_clk = devm_clk_get(dev, "fimd");
+>>          if (IS_ERR(ctx->bus_clk)) {
+>>                  dev_err(dev, "failed to get bus clock\n");
+>> @@ -960,7 +1151,8 @@ static int fimd_probe(struct platform_device *pdev)
+>>          if (IS_ERR(ctx->regs))
+>>                  return PTR_ERR(ctx->regs);
+>>
+>> -       res = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "vsync");
+>> +       res = platform_get_resource_byname(pdev, IORESOURCE_IRQ,
+>> +                                       ctx->i80_if ? "lcd_sys" : "vsync");
+>>          if (!res) {
+>>                  dev_err(dev, "irq request failed.\n");
+>>                  return -ENXIO;
+>> @@ -973,7 +1165,6 @@ static int fimd_probe(struct platform_device *pdev)
+>>                  return ret;
+>>          }
+>>
+>> -       ctx->driver_data = drm_fimd_get_driver_data(pdev);
+>>          init_waitqueue_head(&ctx->wait_vsync_queue);
+>>          atomic_set(&ctx->wait_vsync_event, 0);
+>>
+>> diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
+>> index b039320..eaad58b 100644
+>> --- a/include/video/samsung_fimd.h
+>> +++ b/include/video/samsung_fimd.h
+>> @@ -19,6 +19,7 @@
+>>   /* VIDCON0 */
+>>
+>>   #define VIDCON0                                        0x00
+>> +#define VIDCON0_DSI_EN                         (1 << 30)
+>>   #define VIDCON0_INTERLACE                      (1 << 29)
+>>   #define VIDCON0_VIDOUT_MASK                    (0x7 << 26)
+>>   #define VIDCON0_VIDOUT_SHIFT                   26
+>> @@ -355,7 +356,7 @@
+>>   #define VIDINTCON0_INT_ENABLE                  (1 << 0)
+>>
+>>   #define VIDINTCON1                             0x134
+>> -#define VIDINTCON1_INT_I180                    (1 << 2)
+>> +#define VIDINTCON1_INT_I80                     (1 << 2)
+>>   #define VIDINTCON1_INT_FRAME                   (1 << 1)
+>>   #define VIDINTCON1_INT_FIFO                    (1 << 0)
+>>
+>> --
+>> 1.7.9.5
+>>
+>
