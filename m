@@ -1,59 +1,209 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Thu, 29 May 2014 09:52:22 -0600
-Message-ID: <538757B6.4010109@wwwdotorg.org>
-References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1400877395-4235-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH] drm/exynos: hdmi: remove the i2c drivers and use devtree - continued
+Date: Thu, 29 May 2014 17:36:17 +0100
+Message-ID: <1401381377-29973-1-git-send-email-lee.jones@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ig0-f169.google.com ([209.85.213.169]:55726 "EHLO
+	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757207AbaE2Qgb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 May 2014 12:36:31 -0400
+Received: by mail-ig0-f169.google.com with SMTP id hl10so3726852igb.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2014 09:36:30 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: lee.jones@linaro.org, kernel@stlinux.com, djkurtz@chromium.org, seanpaul@chromium.org, inki.dae@samsung.com, irlied@linux.ie, jy0922.shim@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On 05/23/2014 02:36 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This commit introduces a generic device tree binding for IOMMU devices.
-> Only a very minimal subset is described here, but it is enough to cover
-> the requirements of both the Exynos System MMU and Tegra SMMU as
-> discussed here:
-> 
->     https://lkml.org/lkml/2014/4/27/346
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Apologies for the noise, but apparently I mistyped one of the email
-> addresses, should be fixed now.
-> 
-> Changes in v2:
-> - add notes about "dma-ranges" property (drop note from commit message)
-> - document priorities of "iommus" property vs. "dma-ranges" property
-> - drop #iommu-cells in favour of #address-cells and #size-cells
+There appears to have been a merge error on commit:
 
-I think this is a mistake. address-cells/size-cells are for transactions
-flowing down the bus (from the CPU to date). Describing a connection
-from a device to an IOMMU is something completely different, and should
-therefore simply use an iommu-cells property to describe any necessary
-information. If we start re-using properties for different things in
-different contexts, how is anyone going to know what they mean, and how
-will conflicts be resolved. For example, what if there's a single HW
-module that both acts as a regular register bus with children (where
-address-cells/size-cells defines how transactions reach the children
-from the parent), and is also an IOMMU (where according to this binding
-proposal, address-cells/size-cells represent some aspect of the IOMMU
-feature). Using different properties for different things is the only
-sane way to keep different concepts separate. Another alternative would
-be to represent the single HW module as separate nodes in DT, but I
-think that will only make our lives harder, and where I've done that in
-the past, I've regretted it.
+  2b76813: drm/exynos: hdmi: remove the i2c drivers and use
+
+The original submission can be found at:
+
+  https://patchwork.kernel.org/patch/3559541/
+
+It looks like the commit was only half applied.  This patch aims
+to finish what was started by Daniel.
+
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/gpu/drm/exynos/exynos_ddc.c     | 63 --------------------------------
+ drivers/gpu/drm/exynos/exynos_hdmi.h    | 23 ------------
+ drivers/gpu/drm/exynos/exynos_hdmiphy.c | 65 ---------------------------------
+ 3 files changed, 151 deletions(-)
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_ddc.c
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_hdmi.h
+ delete mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy.c
+
+diff --git a/drivers/gpu/drm/exynos/exynos_ddc.c b/drivers/gpu/drm/exynos/exynos_ddc.c
+deleted file mode 100644
+index 6a8c84e..0000000
+--- a/drivers/gpu/drm/exynos/exynos_ddc.c
++++ /dev/null
+@@ -1,63 +0,0 @@
+-/*
+- * Copyright (C) 2011 Samsung Electronics Co.Ltd
+- * Authors:
+- *	Seung-Woo Kim <sw0312.kim@samsung.com>
+- *	Inki Dae <inki.dae@samsung.com>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- *
+- */
+-
+-#include <drm/drmP.h>
+-
+-#include <linux/kernel.h>
+-#include <linux/i2c.h>
+-#include <linux/of.h>
+-
+-#include "exynos_drm_drv.h"
+-#include "exynos_hdmi.h"
+-
+-static int s5p_ddc_probe(struct i2c_client *client,
+-			const struct i2c_device_id *dev_id)
+-{
+-	hdmi_attach_ddc_client(client);
+-
+-	dev_info(&client->adapter->dev,
+-		"attached %s into i2c adapter successfully\n",
+-		client->name);
+-
+-	return 0;
+-}
+-
+-static int s5p_ddc_remove(struct i2c_client *client)
+-{
+-	dev_info(&client->adapter->dev,
+-		"detached %s from i2c adapter successfully\n",
+-		client->name);
+-
+-	return 0;
+-}
+-
+-static struct of_device_id hdmiddc_match_types[] = {
+-	{
+-		.compatible = "samsung,exynos5-hdmiddc",
+-	}, {
+-		.compatible = "samsung,exynos4210-hdmiddc",
+-	}, {
+-		/* end node */
+-	}
+-};
+-
+-struct i2c_driver ddc_driver = {
+-	.driver = {
+-		.name = "exynos-hdmiddc",
+-		.owner = THIS_MODULE,
+-		.of_match_table = hdmiddc_match_types,
+-	},
+-	.probe		= s5p_ddc_probe,
+-	.remove		= s5p_ddc_remove,
+-	.command		= NULL,
+-};
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.h b/drivers/gpu/drm/exynos/exynos_hdmi.h
+deleted file mode 100644
+index 0ddf395..0000000
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.h
++++ /dev/null
+@@ -1,23 +0,0 @@
+-/*
+- *
+- * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+- * Authors:
+- *	Inki Dae <inki.dae@samsung.com>
+- *	Seung-Woo Kim <sw0312.kim@samsung.com>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- */
+-
+-#ifndef _EXYNOS_HDMI_H_
+-#define _EXYNOS_HDMI_H_
+-
+-void hdmi_attach_ddc_client(struct i2c_client *ddc);
+-void hdmi_attach_hdmiphy_client(struct i2c_client *hdmiphy);
+-
+-extern struct i2c_driver hdmiphy_driver;
+-extern struct i2c_driver ddc_driver;
+-
+-#endif
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmiphy.c b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
+deleted file mode 100644
+index 59abb14..0000000
+--- a/drivers/gpu/drm/exynos/exynos_hdmiphy.c
++++ /dev/null
+@@ -1,65 +0,0 @@
+-/*
+- * Copyright (C) 2011 Samsung Electronics Co.Ltd
+- * Authors:
+- *	Seung-Woo Kim <sw0312.kim@samsung.com>
+- *	Inki Dae <inki.dae@samsung.com>
+- *
+- * This program is free software; you can redistribute  it and/or modify it
+- * under  the terms of  the GNU General  Public License as published by the
+- * Free Software Foundation;  either version 2 of the  License, or (at your
+- * option) any later version.
+- *
+- */
+-
+-#include <drm/drmP.h>
+-
+-#include <linux/kernel.h>
+-#include <linux/i2c.h>
+-#include <linux/of.h>
+-
+-#include "exynos_drm_drv.h"
+-#include "exynos_hdmi.h"
+-
+-
+-static int hdmiphy_probe(struct i2c_client *client,
+-	const struct i2c_device_id *id)
+-{
+-	hdmi_attach_hdmiphy_client(client);
+-
+-	dev_info(&client->adapter->dev, "attached s5p_hdmiphy "
+-		"into i2c adapter successfully\n");
+-
+-	return 0;
+-}
+-
+-static int hdmiphy_remove(struct i2c_client *client)
+-{
+-	dev_info(&client->adapter->dev, "detached s5p_hdmiphy "
+-		"from i2c adapter successfully\n");
+-
+-	return 0;
+-}
+-
+-static struct of_device_id hdmiphy_match_types[] = {
+-	{
+-		.compatible = "samsung,exynos5-hdmiphy",
+-	}, {
+-		.compatible = "samsung,exynos4210-hdmiphy",
+-	}, {
+-		.compatible = "samsung,exynos4212-hdmiphy",
+-	}, {
+-		/* end node */
+-	}
+-};
+-
+-struct i2c_driver hdmiphy_driver = {
+-	.driver = {
+-		.name	= "exynos-hdmiphy",
+-		.owner	= THIS_MODULE,
+-		.of_match_table = hdmiphy_match_types,
+-	},
+-	.probe		= hdmiphy_probe,
+-	.remove		= hdmiphy_remove,
+-	.command		= NULL,
+-};
+-EXPORT_SYMBOL(hdmiphy_driver);
+-- 
+1.8.3.2
