@@ -1,74 +1,37 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v6 0/2] cpufreq: opp: Add device tree based lookup of
- boost mode frequency
-Date: Fri, 30 May 2014 23:37:58 +0530
-Message-ID: <CAJuA9aiz8ipNXt0-9ybrTUdeH=boOp2BOo2KPsLMVAYUNBPRuA@mail.gmail.com>
-References: <1401440477-4328-1-git-send-email-thomas.ab@samsung.com>
-	<5683009.PqtetcWKuO@vostro.rjw.lan>
-	<1430270.VsBiDfiUL9@vostro.rjw.lan>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Add pmu sysreg node to Exynos3250
+Date: Sat, 31 May 2014 03:08:11 +0900
+Message-ID: <5388C90B.605@samsung.com>
+References: <1401085776-14212-1-git-send-email-cw00.choi@samsung.com> <538870F8.9090507@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1430270.VsBiDfiUL9@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, Nishanth Menon <nm@ti.com>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:49849 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932473AbaE3SIU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 May 2014 14:08:20 -0400
+In-Reply-To: <538870F8.9090507@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, kgene.kim@samsung.com, t.figa@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, ben-linux@fluff.org, linux@arm.linux.org.uk, l.krishna@samsung.com, chanho61.park@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Fri, May 30, 2014 at 8:17 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Friday, May 30, 2014 02:19:06 PM Rafael J. Wysocki wrote:
->> On Friday, May 30, 2014 02:31:15 PM Thomas Abraham wrote:
->> > Changes since v5:
->> > - Fixes for checkpatch warnings with --strict option as suggested by
->> >   Nishanth Menon.
->> >
->> > Changes since v4:
->> > - Code improvements suggested by Viresh Kumar.
->> >
->> > Changes since v3:
->> > - Minor changes as suggested in the last version.
->> >
->> > Changes since v2:
->> > - Reworked based on the "PM / OPP: move cpufreq specific helpers out of OPP
->> >   layer" patch series posted by Nishanth Menon.
->> >
->> > Changes since v1:
->> > - Boost mode frequencies are specfied as a set of frequencies instead of
->> >   specifying them as OPPs. Thanks to Nishanth, Lukasz and Rob for the
->> >   feedback.
->> >
->> > This series has been acked by authors and maintainers of the code
->> > portions changed in this series. The new DT binding introduced in this
->> > patch needs an ack from device tree binding maintainers as well.
->> >
->> > Commit 6f19efc0 ("cpufreq: Add boost frequency support in core") adds
->> > support for CPU boost mode for CPUfreq drivers. To use the new boost
->> > mode, CPUfreq drivers have to specify the boost mode frequency and
->> > voltage within the CPUfreq driver, which is the case for Exynos4x12
->> > CPUfreq driver.
->> >
->> > But for CPUfreq drivers which obtain the OPPs from cpus node, this
->> > patch series adds support to specify boost mode frequencies in the
->> > cpu device tree node. This requirement came up when Lukasz pointed
->> > out the regression caused by the Exynos CPUfreq driver consolidation
->> > patches.
+On 05/30/14 20:52, Tomasz Figa wrote:
+> On 26.05.2014 08:29, Chanwoo Choi wrote:
+>> This patch add pmusysreg node for Exynos3250 to access PMU (Power Management Unit)
+>> register in a centralized way using syscon driver.
 >>
->> Both patches queued up for 3.16 in the linux-pm tree.
+>> Signed-off-by: Chanwoo Choi<cw00.choi@samsung.com>
+>> Acked-by: Kyungmin Park<kyungmin.park@samsung.com>
+>> ---
+>>   Documentation/devicetree/bindings/arm/samsung/pmu.txt | 1 +
+>>   arch/arm/boot/dts/exynos3250.dtsi                     | 5 +++++
+>>   2 files changed, 6 insertions(+)
 >
-> But please address the Mark's comments or I'll drop them.
-
-Hi Rafael,
-
-Please drop this series for now. Both the patches have to reworked
-based on Mark's comments.
-
-Thanks,
-Thomas.
-
+> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
 >
-> Rafael
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Applied, thanks.
+
+- Kukjin
