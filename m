@@ -1,79 +1,54 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Fri, 30 May 2014 21:54:37 +0200
-Message-ID: <4462924.8iRbdkOPp7@wuerfel>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com> <4545972.cM7IP1qTXQ@wuerfel> <87tx87rrp2.fsf@nvidia.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL 1/5] Samsung CLK update for 3.16
+Date: Sat, 31 May 2014 04:58:57 +0900
+Message-ID: <5388E301.7080407@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:65231 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751525AbaE3Tyx (ORCPT
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:49527 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932303AbaE3T7D (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 May 2014 15:54:53 -0400
-In-Reply-To: <87tx87rrp2.fsf@nvidia.com>
+	Fri, 30 May 2014 15:59:03 -0400
+Received: by mail-pa0-f44.google.com with SMTP id lj1so2052201pab.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 May 2014 12:59:02 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hiroshi Doyu <hdoyu@nvidia.com>
-Cc: Rob Herring <robherring2@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Cho KyongHo <pullip.cho@samsung.com>, Grant Grundler <grundler@chromium.org>, Dave Martin <Dave.Martin@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+To: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>
 
-On Friday 30 May 2014 22:29:13 Hiroshi Doyu wrote:
-> 
-> IIUC the original problem, "a master with 8 streamIDs" means something
-> like below, where some devices have multiple IDs but some have a
-> single. A sinle #address-cells cannot afford those 2 masters at once.
-> 
->        iommu {
->                /* the specifier represents the ID of the master */
->                #address-cells = <1>;
->                #size-cells = <0>;
->        };
-> 
->         master@a {
->                 ...
->                 iommus = <&smmu 1 2 3>; # 3 IDs
->         };
-> 
->         master@b {
->                 ...
->                 iommus = <&smmu 4>;     # 1 ID
->         };
+The following changes since commit bfed1074f213051e94648bfad0d0611a16d81366:
 
-This would not be the usual format really. It should instead be
+   clk: exynos5250: Add missing sysmmu clocks for DISP and ISP blocks 
+(2014-05-26 06:48:10 +0900)
 
-		iommus = <&smmu 1>, <&smmu 2>, <&smmu 3>;
+are available in the git repository at:
 
-which can be tedious to type.
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+tags/samsung-clk-3
 
-> Tegra,SMMU has a similar problem and we have used a fixed size bitmap(64
-> bit) to afford 64 stream IDs so that a single device can hold multiple
-> IDs. If we apply the same bitmap to the above exmaple:
-> 
->        iommu {
->                /* the specifier represents the ID of the master */
->                #address-cells = <1>;
->                #size-cells = <0>;
->        };
-> 
->         master@a {
->                 ...
->                 iommus = <&smmu (BIT(1) | BIT(2) | BIT(3))>; # IDs 1 2 3
->         };
-> 
->         master@b {
->                 ...
->                 iommus = <&smmu BIT(4)>;     # ID 4
->         };
-> 
-> The disadvantage of this is that this limits the max number of streamIDs
-> to support. If # of streamID is increased later more than 64, this
-> format cannot cover any more. You have to predict the max # of streamIDs
-> in advance if steamID is statically assigned.
-> 
+for you to fetch changes up to e7ef0b632eb45b0c725629da3561ecde8935a398:
 
-Well, the iommu specific binding could allow a variable #address-cells.
-That way, you just need to know the number of stream IDs for that instance
-of the iommu.
+   clk: exynos5410: register clocks using common clock framework 
+(2014-05-31 02:13:16 +0900)
 
-	Arnd
+----------------------------------------------------------------
+Samsung 3rd clock updates for 3.16
+
+- add clock for new exynos5410 SoC
+
+----------------------------------------------------------------
+Tarek Dakhran (1):
+       clk: exynos5410: register clocks using common clock framework
+
+  .../devicetree/bindings/clock/exynos5410-clock.txt |  45 +++++
+  drivers/clk/samsung/Makefile                       |   1 +
+  drivers/clk/samsung/clk-exynos5410.c               | 209 
++++++++++++++++++++++
+  include/dt-bindings/clock/exynos5410.h             |  33 ++++
+  4 files changed, 288 insertions(+)
+  create mode 100644 
+Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+  create mode 100644 drivers/clk/samsung/clk-exynos5410.c
+  create mode 100644 include/dt-bindings/clock/exynos5410.h
