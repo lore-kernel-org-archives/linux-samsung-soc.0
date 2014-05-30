@@ -1,681 +1,157 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCHv3 4/4] ARM: dts: replace the slot property into slot sub-node for dwmmc.
-Date: Fri, 30 May 2014 20:15:02 +0200
-Message-ID: <1834387.xgX8NLRvfH@phil>
-References: <1401255351-17653-1-git-send-email-jh80.chung@samsung.com> <1401255351-17653-5-git-send-email-jh80.chung@samsung.com> <001d01cf7c06$420dea90$c629bfb0$%jun@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v6 2/2] Documentation: devicetree: Add boost-frequency
+ binding to list boost mode frequency
+Date: Fri, 30 May 2014 20:15:33 +0200
+Message-ID: <5388CAC5.5010607@gmail.com>
+References: <1401440477-4328-1-git-send-email-thomas.ab@samsung.com>	<1401440477-4328-3-git-send-email-thomas.ab@samsung.com>	<20140530130827.GK24233@leverpostej> <CAJuA9ajs6K1PVtXC4_U0vQsA0oPnpaF_PdMfiQJxBFStF3Z2aw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:48629 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932556AbaE3SL6 (ORCPT
+Received: from mail-wg0-f46.google.com ([74.125.82.46]:57643 "EHLO
+	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932473AbaE3SPu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 May 2014 14:11:58 -0400
-In-Reply-To: <001d01cf7c06$420dea90$c629bfb0$%jun@samsung.com>
+	Fri, 30 May 2014 14:15:50 -0400
+In-Reply-To: <CAJuA9ajs6K1PVtXC4_U0vQsA0oPnpaF_PdMfiQJxBFStF3Z2aw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, chris@printf.net, ulf.hansson@linaro.org, ludovic.desroches@atmel.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dinguyen@altera.com, cpgs@samsung.com
+To: Thomas Abraham <ta.omasab@gmail.com>, Mark Rutland <mark.rutland@arm.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "nm@ti.com" <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-Am Freitag, 30. Mai 2014, 21:54:13 schrieb Seungwon Jeon:
-> + Dinh Nguyen <dinguyen@altera.com>
-> + Heiko Stuebner <heiko@sntech.de>
+
+
+On 30.05.2014 20:05, Thomas Abraham wrote:
+> Hi Mark,
 > 
-> On Wed, May 28, 2014, Jaehoon Chung wrote:
-> > dw-mmc controller can support the multiple slot.
-> > So each slot's property can be difference.
-> > And "support-highspeed" property in dw-mmc is deprecated.
-> > "support-highspeed" property can be replaced to "cap-sd/mmc-highspeed".
-> > 
-> > Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> On Fri, May 30, 2014 at 6:38 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+>> Hi,
+>>
+>> Apologies for being somewhat late w.r.t. review on this.
+>>
+>> On Fri, May 30, 2014 at 10:01:17AM +0100, Thomas Abraham wrote:
+>>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>>
+>>> Add a new optional boost-frequency binding for specifying the frequencies
+>>> usable in boost mode.
+>>>
+>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>> Cc: Pawel Moll <pawel.moll@arm.com>
+>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+>>> Cc: Kumar Gala <galak@codeaurora.org>
+>>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>>> Acked-by: Nishanth Menon <nm@ti.com>
+>>> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+>>> ---
+>>>  .../devicetree/bindings/cpufreq/cpufreq-boost.txt  |   38 ++++++++++++++++++++
+>>>  1 file changed, 38 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+>>> new file mode 100644
+>>> index 0000000..63ed0fc
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+>>> @@ -0,0 +1,38 @@
+>>> +* Device tree binding for CPU boost frequency (aka over-clocking)
+>>> +
+>>> +Certain CPU's can be operated in optional 'boost' mode (or sometimes referred as
+>>
+>> Nit: CPUs (we're not greengrocers [1])
+>>
+>>> +overclocking) in which the CPU can operate at frequencies which are not
+>>> +specified by the manufacturer as CPU's operating frequency.
+>>> +
+>>> +Optional Properties:
+>>> +- boost-frequencies: list of frequencies in KHz to be used only in boost mode.
+>>> +  This list should be a subset of frequencies listed in "operating-points"
+>>> +  property. Refer to Documentation/devicetree/bindings/power/opp.txt for
+>>> +  details about "operating-points" property.
+>>
+>> What is 'boost-mode'?
 > 
-> Looks good to me.
+> boost-mode activates additional one or more cpu clock speeds (which
+> are not specified as operating frequency of the cpu by the
+> manufacturer). The cpu is allowed to operate in these boost mode
+> speeds when the boost mode is active. The boost mode speeds are
+> usually undocumented. Some of the chip samples could be clocked in
+> boost mode speeds and only such samples can be safely operated in
+> boost mode.
 > 
-> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
 
-the rockchip part also looks ok to me
+IMHO the most important part that I believe should be stated in the
+documentation is that CPU usually can operate in boost mode for limited
+amount of time, which depends on thermal conditions, which makes the
+boost operating points separate from normal ones, which can be used at
+any time.
 
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+> The mechanism of entry into and exit out of boost mode is outside the
+> scope of this documentation.
+> 
+>>
+>> What are the limitations on boost frequencies? When is a CPU expected to
+>> go to these frequencies and for now long? When should I as a dt author
+>> place elements in boost-frequencies?
+> 
+> I will add these details in the next revision of this patch.
+> 
+>>
+>> Why are these in both operating-points and boost-frequencies? It'll be
+>> really easy to accidentally forget to mark something as a
+>> boost-frequency this way. Why not have a boost-points instead?
+> 
+> Does boost-points mean a set of clock speeds which are not listed as
+> part of operating-points property? If yes, that also is a possible
+> implementation (it was implemented in one of the earlier version of
+> this series). Could you confirm that you want the boost mode speeds to
+> be exclusive of the speeds listed in operating-points?
 
+It seems reasonable to have boost operating points completely separate
+from normal ones, so that a kernel without support for boost mode will
+not use them. Also considering my comment above, logically boost
+operating points are not considered normal operating points, due to
+various constraints that need to be met to use them (i.e. mostly thermal
+conditions).
 
 > 
 > Thanks,
-> Seungwon Jeon
+> Thomas.
 > 
-> > ---
-> > 
-> > Changelog V3:
-> > 	- Merge "[PATCH 2/5] mmc: dw_mmc: rmove the "supports-highspeed"
-> > 	property"
-> > 
-> > Changelog V2:
-> > 	- None
-> > 	
-> >  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    5 +++--
-> >  .../devicetree/bindings/mmc/k3-dw-mshc.txt         |    3 ++-
-> >  .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |    6 ++++--
-> >  arch/arm/boot/dts/exynos4412-odroidx.dts           |    4 ++--
-> >  arch/arm/boot/dts/exynos4412-origen.dts            |    4 ++--
-> >  arch/arm/boot/dts/exynos4412-trats2.dts            |    6 +++---
-> >  arch/arm/boot/dts/exynos5250-arndale.dts           |    6 +++---
-> >  arch/arm/boot/dts/exynos5250-cros-common.dtsi      |   10 +++++-----
-> >  arch/arm/boot/dts/exynos5250-smdk5250.dts          |    6 +++---
-> >  arch/arm/boot/dts/exynos5420-arndale-octa.dts      |    6 +++---
-> >  arch/arm/boot/dts/exynos5420-smdk5420.dts          |    4 ++--
-> >  arch/arm/boot/dts/rk3066a-bqcurie2.dts             |    2 +-
-> >  arch/arm/boot/dts/socfpga_arria5.dtsi              |    5 +++--
-> >  arch/arm/boot/dts/socfpga_cyclone5.dtsi            |    5 +++--
-> >  arch/arm/boot/dts/socfpga_vt.dts                   |    5 +++--
-> >  15 files changed, 42 insertions(+), 35 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> > b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> > index 532b1d4..41cc703 100644
-> > --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> > +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> > 
-> > @@ -69,8 +69,6 @@ Example:
-> >  	dwmmc0@12200000 {
-> >  	
-> >  		num-slots = <1>;
-> > 
-> > -		supports-highspeed;
-> > -		broken-cd;
-> > 
-> >  		fifo-depth = <0x80>;
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> > 
-> > @@ -85,5 +83,8 @@ Example:
-> >  				<&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>,
-> >  				<&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
-> >  				<&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>;
-> > 
-> > +			broken-cd;
-> > +			cap-mmc-highspeed;
-> > +			cap-sd-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt
-> > b/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt
-> > index b8653ea..b1844c5 100644
-> > --- a/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt
-> > +++ b/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt
-> > 
-> > @@ -34,7 +34,6 @@ Example:
-> >  		num-slots = <1>;
-> >  		vmmc-supply = <&ldo12>;
-> >  		fifo-depth = <0x100>;
-> > 
-> > -		supports-highspeed;
-> > 
-> >  		pinctrl-names = "default";
-> >  		pinctrl-0 = <&sd_pmx_pins &sd_cfg_func1 &sd_cfg_func2>;
-> >  		slot@0 {
-> > 
-> > @@ -42,5 +41,7 @@ Example:
-> >  			bus-width = <4>;
-> >  			disable-wp;
-> >  			cd-gpios = <&gpio10 3 0>;
-> > 
-> > +			cap-mmc-highspeed;
-> > +			cap-sd-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-> > b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-> > index 2d4a725..ff393ab 100644
-> > --- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-> > +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-> > 
-> > @@ -67,7 +67,8 @@ Optional properties:
-> >  * card-detect-delay: Delay in milli-seconds before detecting card after
-> >  card>  
-> >    insert event. The default value is 0.
-> > 
-> > -* supports-highspeed: Enables support for high speed cards (up to 50MHz)
-> > +* supports-highspeed (DEPRECATED): Enables support for high speed cards
-> > (up to 50MHz) +			   (use "cap-mmc-highspeed" or "cap-sd-
-highspeed"
-> > instead)
-> > 
-> >  * broken-cd: as documented in mmc core bindings.
-> > 
-> > @@ -98,7 +99,6 @@ board specific portions as listed below.
-> > 
-> >  		clock-frequency = <400000000>;
-> >  		clock-freq-min-max = <400000 200000000>;
-> >  		num-slots = <1>;
-> > 
-> > -		supports-highspeed;
-> > 
-> >  		broken-cd;
-> >  		fifo-depth = <0x80>;
-> >  		card-detect-delay = <200>;
-> > 
-> > @@ -107,5 +107,7 @@ board specific portions as listed below.
-> > 
-> >  		slot@0 {
-> >  		
-> >  			reg = <0>;
-> >  			bus-width = <8>;
-> > 
-> > +			cap-mmc-highspeed;
-> > +			cap-sd-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts
-> > b/arch/arm/boot/dts/exynos4412-odroidx.dts index 31db28a..fb2cd8d 100644
-> > --- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-> > +++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-> > @@ -45,8 +45,6 @@
-> > 
-> >  		status = "okay";
-> >  		
-> >  		num-slots = <1>;
-> > 
-> > -		supports-highspeed;
-> > -		broken-cd;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> >  		samsung,dw-mshc-sdr-timing = <2 3>;
-> > 
-> > @@ -55,6 +53,8 @@
-> > 
-> >  		slot@0 {
-> >  		
-> >  			reg = <0>;
-> >  			bus-width = <8>;
-> > 
-> > +			broken-cd;
-> > +			cap-mmc-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos4412-origen.dts
-> > b/arch/arm/boot/dts/exynos4412-origen.dts index e2c0dca..698a5f4 100644
-> > --- a/arch/arm/boot/dts/exynos4412-origen.dts
-> > +++ b/arch/arm/boot/dts/exynos4412-origen.dts
-> > @@ -128,8 +128,6 @@
-> > 
-> >  		status = "okay";
-> >  		
-> >  		num-slots = <1>;
-> > 
-> > -		supports-highspeed;
-> > -		broken-cd;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> >  		samsung,dw-mshc-sdr-timing = <2 3>;
-> > 
-> > @@ -138,6 +136,8 @@
-> > 
-> >  		slot@0 {
-> >  		
-> >  			reg = <0>;
-> >  			bus-width = <8>;
-> > 
-> > +			broken-cd;
-> > +			cap-mmc-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts
-> > b/arch/arm/boot/dts/exynos4412-trats2.dts index 73be464..eb53d3a 100644
-> > --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> > +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-> > @@ -459,9 +459,6 @@
-> > 
-> >  	mmc@12550000 {
-> >  	
-> >  		num-slots = <1>;
-> > 
-> > -		supports-highspeed;
-> > -		broken-cd;
-> > -		non-removable;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		vmmc-supply = <&vemmc_reg>;
-> >  		clock-frequency = <400000000>;
-> > 
-> > @@ -475,6 +472,9 @@
-> > 
-> >  		slot@0 {
-> >  		
-> >  			reg = <0>;
-> >  			bus-width = <8>;
-> > 
-> > +			non-removable;
-> > +			broken-cd;
-> > +			cap-mmc-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts
-> > b/arch/arm/boot/dts/exynos5250-arndale.dts index 090f983..c48293f 100644
-> > --- a/arch/arm/boot/dts/exynos5250-arndale.dts
-> > +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-> > @@ -399,8 +399,6 @@
-> > 
-> >  	mmc_0: mmc@12200000 {
-> >  	
-> >  		status = "okay";
-> >  		num-slots = <1>;
-> > 
-> > -		supports-highspeed;
-> > -		broken-cd;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> >  		samsung,dw-mshc-sdr-timing = <2 3>;
-> > 
-> > @@ -412,13 +410,14 @@
-> > 
-> >  		slot@0 {
-> >  		
-> >  			reg = <0>;
-> >  			bus-width = <8>;
-> > 
-> > +			broken-cd;
-> > +			cap-mmc-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> >  	
-> >  	mmc_2: mmc@12220000 {
-> >  	
-> >  		status = "okay";
-> >  		num-slots = <1>;
-> > 
-> > -		supports-highspeed;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> >  		samsung,dw-mshc-sdr-timing = <2 3>;
-> > 
-> > @@ -431,6 +430,7 @@
-> > 
-> >  			reg = <0>;
-> >  			bus-width = <4>;
-> >  			disable-wp;
-> > 
-> > +			cap-sd-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos5250-cros-common.dtsi
-> > b/arch/arm/boot/dts/exynos5250-cros- common.dtsi
-> > index 2c1560d..c00eef6 100644
-> > --- a/arch/arm/boot/dts/exynos5250-cros-common.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
-> > @@ -248,8 +248,6 @@
-> > 
-> >  	mmc@12200000 {
-> >  	
-> >  		num-slots = <1>;
-> > 
-> > -		supports-highspeed;
-> > -		broken-cd;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> >  		samsung,dw-mshc-sdr-timing = <2 3>;
-> > 
-> > @@ -260,12 +258,13 @@
-> > 
-> >  		slot@0 {
-> >  		
-> >  			reg = <0>;
-> >  			bus-width = <8>;
-> > 
-> > +			broken-cd;
-> > +			cap-mmc-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> >  	
-> >  	mmc@12220000 {
-> >  	
-> >  		num-slots = <1>;
-> > 
-> > -		supports-highspeed;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> >  		samsung,dw-mshc-sdr-timing = <2 3>;
-> > 
-> > @@ -277,13 +276,12 @@
-> > 
-> >  			reg = <0>;
-> >  			bus-width = <4>;
-> >  			wp-gpios = <&gpc2 1 0>;
-> > 
-> > +			cap-sd-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> >  	
-> >  	mmc@12230000 {
-> >  	
-> >  		num-slots = <1>;
-> > 
-> > -		supports-highspeed;
-> > -		broken-cd;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> >  		samsung,dw-mshc-sdr-timing = <2 3>;
-> > 
-> > @@ -293,6 +291,8 @@
-> > 
-> >  		slot@0 {
-> >  		
-> >  			reg = <0>;
-> >  			bus-width = <4>;
-> > 
-> > +			broken-cd;
-> > +			cap-sd-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> > b/arch/arm/boot/dts/exynos5250-smdk5250.dts index a794a70..28095cb 100644
-> > --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> > +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> > @@ -282,8 +282,6 @@
-> > 
-> >  	mmc@12200000 {
-> >  	
-> >  		status = "okay";
-> >  		num-slots = <1>;
-> > 
-> > -		supports-highspeed;
-> > -		broken-cd;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> >  		samsung,dw-mshc-sdr-timing = <2 3>;
-> > 
-> > @@ -294,13 +292,14 @@
-> > 
-> >  		slot@0 {
-> >  		
-> >  			reg = <0>;
-> >  			bus-width = <8>;
-> > 
-> > +			broken-cd;
-> > +			cap-mmc-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> >  	
-> >  	mmc@12220000 {
-> >  	
-> >  		status = "okay";
-> >  		num-slots = <1>;
-> > 
-> > -		supports-highspeed;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> >  		samsung,dw-mshc-sdr-timing = <2 3>;
-> > 
-> > @@ -312,6 +311,7 @@
-> > 
-> >  			reg = <0>;
-> >  			bus-width = <4>;
-> >  			disable-wp;
-> > 
-> > +			cap-sd-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> > b/arch/arm/boot/dts/exynos5420-arndale- octa.dts
-> > index 80a3bf4..506ce0d 100644
-> > --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> > +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> > @@ -39,8 +39,6 @@
-> > 
-> >  	mmc@12200000 {
-> >  	
-> >  		status = "okay";
-> > 
-> > -		broken-cd;
-> > -		supports-highspeed;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> >  		samsung,dw-mshc-sdr-timing = <0 4>;
-> > 
-> > @@ -52,12 +50,13 @@
-> > 
-> >  		slot@0 {
-> >  		
-> >  			reg = <0>;
-> >  			bus-width = <8>;
-> > 
-> > +			broken-cd;
-> > +			cap-mmc-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> >  	
-> >  	mmc@12220000 {
-> >  	
-> >  		status = "okay";
-> > 
-> > -		supports-highspeed;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> >  		samsung,dw-mshc-sdr-timing = <2 3>;
-> > 
-> > @@ -69,6 +68,7 @@
-> > 
-> >  		slot@0 {
-> >  		
-> >  			reg = <0>;
-> >  			bus-width = <4>;
-> > 
-> > +			cap-sd-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> > b/arch/arm/boot/dts/exynos5420-smdk5420.dts index 6910485..4d7b2c8 100644
-> > --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> > +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> > @@ -71,7 +71,6 @@
-> > 
-> >  	mmc@12200000 {
-> >  	
-> >  		status = "okay";
-> >  		broken-cd;
-> > 
-> > -		supports-highspeed;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> >  		samsung,dw-mshc-sdr-timing = <0 4>;
-> > 
-> > @@ -82,12 +81,12 @@
-> > 
-> >  		slot@0 {
-> >  		
-> >  			reg = <0>;
-> >  			bus-width = <8>;
-> > 
-> > +			cap-mmc-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> >  	
-> >  	mmc@12220000 {
-> >  	
-> >  		status = "okay";
-> > 
-> > -		supports-highspeed;
-> > 
-> >  		card-detect-delay = <200>;
-> >  		samsung,dw-mshc-ciu-div = <3>;
-> >  		samsung,dw-mshc-sdr-timing = <2 3>;
-> > 
-> > @@ -98,6 +97,7 @@
-> > 
-> >  		slot@0 {
-> >  		
-> >  			reg = <0>;
-> >  			bus-width = <4>;
-> > 
-> > +			cap-sd-highspeed;
-> > 
-> >  		};
-> >  	
-> >  	};
-> > 
-> > diff --git a/arch/arm/boot/dts/rk3066a-bqcurie2.dts
-> > b/arch/arm/boot/dts/rk3066a-bqcurie2.dts index 035df40..62c7484 100644
-> > --- a/arch/arm/boot/dts/rk3066a-bqcurie2.dts
-> > +++ b/arch/arm/boot/dts/rk3066a-bqcurie2.dts
-> > @@ -69,7 +69,6 @@
-> > 
-> >  		dwmmc@10218000 { /* wifi */
-> >  		
-> >  			num-slots = <1>;
-> >  			status = "okay";
-> > 
-> > -			non-removable;
-> > 
-> >  			pinctrl-names = "default";
-> >  			pinctrl-0 = <&sd1_clk &sd1_cmd &sd1_bus4>;
-> > 
-> > @@ -78,6 +77,7 @@
-> > 
-> >  				reg = <0>;
-> >  				bus-width = <4>;
-> >  				disable-wp;
-> > 
-> > +				non-removable;
-> > 
-> >  			};
-> >  		
-> >  		};
-> > 
-> > diff --git a/arch/arm/boot/dts/socfpga_arria5.dtsi
-> > b/arch/arm/boot/dts/socfpga_arria5.dtsi index 6c87b70..1da0e81 100644
-> > --- a/arch/arm/boot/dts/socfpga_arria5.dtsi
-> > +++ b/arch/arm/boot/dts/socfpga_arria5.dtsi
-> > @@ -29,12 +29,13 @@
-> > 
-> >  		dwmmc0@ff704000 {
-> >  		
-> >  			num-slots = <1>;
-> > 
-> > -			supports-highspeed;
-> > -			broken-cd;
-> > 
-> >  			slot@0 {
-> >  			
-> >  				reg = <0>;
-> >  				bus-width = <4>;
-> > 
-> > +				broken-cd;
-> > +				cap-mmc-highspeed;
-> > +				cap-sd-highspeed;
-> > 
-> >  			};
-> >  		
-> >  		};
-> > 
-> > diff --git a/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-> > b/arch/arm/boot/dts/socfpga_cyclone5.dtsi index ca41b0e..5c61067 100644
-> > --- a/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-> > +++ b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-> > @@ -30,12 +30,13 @@
-> > 
-> >  		dwmmc0@ff704000 {
-> >  		
-> >  			num-slots = <1>;
-> > 
-> > -			supports-highspeed;
-> > -			broken-cd;
-> > 
-> >  			slot@0 {
-> >  			
-> >  				reg = <0>;
-> >  				bus-width = <4>;
-> > 
-> > +				broken-cd;
-> > +				cap-mmc-highspeed;
-> > +				cap-sd-highspeed;
-> > 
-> >  			};
-> >  		
-> >  		};
-> > 
-> > diff --git a/arch/arm/boot/dts/socfpga_vt.dts
-> > b/arch/arm/boot/dts/socfpga_vt.dts index 87d6f75..79c0e86 100644
-> > --- a/arch/arm/boot/dts/socfpga_vt.dts
-> > +++ b/arch/arm/boot/dts/socfpga_vt.dts
-> > @@ -43,12 +43,13 @@
-> > 
-> >  		dwmmc0@ff704000 {
-> >  		
-> >  			num-slots = <1>;
-> > 
-> > -			supports-highspeed;
-> > -			broken-cd;
-> > 
-> >  			slot@0 {
-> >  			
-> >  				reg = <0>;
-> >  				bus-width = <4>;
-> > 
-> > +				broken-cd;
-> > +				cap-mmc-highspeed;
-> > +				cap-sd-highspeed;
-> > 
-> >  			};
-> >  		
-> >  		};
-> > 
-> > --
-> > 1.7.9.5
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>>> +
+>>> +Example:
+>>> +
+>>> +     cpus {
+>>> +             #address-cells = <1>;
+>>> +             #size-cells = <0>;
+>>> +             cpu@0 {
+>>> +                     device_type = "cpu";
+>>> +                     compatible = "arm,cortex-a9";
+>>> +                     reg = <0>;
+>>> +
+>>> +                     operating-points = <
+>>> +                             1500000 1350000
+>>> +                             1400000 1287500
+>>> +                             1300000 1250000
+>>> +                             1200000 1187500
+>>> +                             1100000 1137500
+>>> +                             1000000 1087500
+>>> +                     >;
+>>> +                     boost-frequencies = <1500000 1400000>;
+>>
+>> This is more of a general issue, but I hate the whole cpufreq-cpu0 way
+>> of assuming that all CPUs mirror CPU0.
+>>
+>> It would be nicer if either this were dropped in /cpus or repeated
+>> per-cpu.
+
+Would it make any difference?
+
+IMHO, as long as the binding is well defined and doesn't cause
+significant issues, I don't think there is a reason to redesign it and
+add a necessity to support both new and old variants.
+
+Best regards,
+Tomasz
