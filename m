@@ -1,109 +1,58 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH] clk: exynos5420: Keep aclk66_peric enabled during boot
-Date: Fri, 30 May 2014 16:00:21 +0200
-Message-ID: <53888EF5.5090800@collabora.co.uk>
-References: <1401398496-4624-1-git-send-email-dianders@chromium.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v6 0/2] cpufreq: opp: Add device tree based lookup of boost mode frequency
+Date: Fri, 30 May 2014 16:47:15 +0200
+Message-ID: <1430270.VsBiDfiUL9@vostro.rjw.lan>
+References: <1401440477-4328-1-git-send-email-thomas.ab@samsung.com> <5683009.PqtetcWKuO@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:44303 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755506AbaE3OA1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 May 2014 10:00:27 -0400
-In-Reply-To: <1401398496-4624-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <5683009.PqtetcWKuO@vostro.rjw.lan>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, nm@ti.com, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: olof@lixom.net, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hello Doug,
-
-On 05/29/2014 11:21 PM, Doug Anderson wrote:
-> Right now if you've got earlyprintk enabled on exynos5420-peach-pit
-> then you'll get a hang on boot.  Here's why:
+On Friday, May 30, 2014 02:19:06 PM Rafael J. Wysocki wrote:
+> On Friday, May 30, 2014 02:31:15 PM Thomas Abraham wrote:
+> > Changes since v5:
+> > - Fixes for checkpatch warnings with --strict option as suggested by
+> >   Nishanth Menon.
+> > 
+> > Changes since v4:
+> > - Code improvements suggested by Viresh Kumar.
+> > 
+> > Changes since v3:
+> > - Minor changes as suggested in the last version.
+> > 
+> > Changes since v2:
+> > - Reworked based on the "PM / OPP: move cpufreq specific helpers out of OPP 
+> >   layer" patch series posted by Nishanth Menon.
+> > 
+> > Changes since v1:
+> > - Boost mode frequencies are specfied as a set of frequencies instead of
+> >   specifying them as OPPs. Thanks to Nishanth, Lukasz and Rob for the
+> >   feedback.
+> > 
+> > This series has been acked by authors and maintainers of the code
+> > portions changed in this series. The new DT binding introduced in this
+> > patch needs an ack from device tree binding maintainers as well.
+> > 
+> > Commit 6f19efc0 ("cpufreq: Add boost frequency support in core") adds
+> > support for CPU boost mode for CPUfreq drivers. To use the new boost
+> > mode, CPUfreq drivers have to specify the boost mode frequency and
+> > voltage within the CPUfreq driver, which is the case for Exynos4x12
+> > CPUfreq driver.
+> > 
+> > But for CPUfreq drivers which obtain the OPPs from cpus node, this
+> > patch series adds support to specify boost mode frequencies in the
+> > cpu device tree node. This requirement came up when Lukasz pointed
+> > out the regression caused by the Exynos CPUfreq driver consolidation
+> > patches.
 > 
-> 1. The i2c-s3c2410 driver will probe at subsys_initcall.  It will
->    enable its clock and disable it.  This is the clock "i2c2".
-> 2. The act of disabling "i2c2" will disable its parents.  In this case
->    the parent is "aclk66_peric".  There are no other children of
->    "aclk66_peric" officially enabled, so "aclk66_peric" will be turned
->    off (despite being CLK_IGNORE_UNUSED, but that's by design).
-> 3. The next time you try to earlyprintk you'll do so without the UART
->    clock enabled.  That's because the UART clocks are also children of
->    "aclk66_peric".  You'll hang.
-> 
-> There's no good place to put a clock enable for earlyprintk, which is
-> handled by a bunch of assembly code.  The best we can do is to handle
-> this in the clock driver.
-> 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
+> Both patches queued up for 3.16 in the linux-pm tree.
 
-I tested your patch and it solves the issue for me, so feel free to add
+But please address the Mark's comments or I'll drop them.
 
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Rafael
 
-Just one trivial comment below:
-
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 9d7d7ee..1e586be 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -1172,11 +1172,17 @@ static struct of_device_id ext_clk_match[] __initdata = {
->  	{ },
->  };
->  
-> +/* Keep these clocks on until late_initcall */
-> +static const char *boot_clocks[] __initconst = {
-> +	"aclk66_peric",
-> +};
-> +
->  /* register exynos5420 clocks */
->  static void __init exynos5x_clk_init(struct device_node *np,
->  		enum exynos5x_soc soc)
->  {
->  	struct samsung_clk_provider *ctx;
-> +	int i;
->  
->  	if (np) {
->  		reg_base = of_iomap(np, 0);
-> @@ -1226,6 +1232,12 @@ static void __init exynos5x_clk_init(struct device_node *np,
->  	}
->  
->  	exynos5420_clk_sleep_init();
-> +
-> +	for (i = 0; i < ARRAY_SIZE(boot_clocks); i++) {
-> +		struct clk *to_enable = __clk_lookup(boot_clocks[i]);
-> +
-> +		clk_prepare_enable(to_enable);
-> +	}
->  }
->  
->  static void __init exynos5420_clk_init(struct device_node *np)
-> @@ -1239,3 +1251,15 @@ static void __init exynos5800_clk_init(struct device_node *np)
->  	exynos5x_clk_init(np, EXYNOS5800);
->  }
->  CLK_OF_DECLARE(exynos5800_clk, "samsung,exynos5800-clock", exynos5800_clk_init);
-> +
-> +static int __init exynos5420_clk_late_init(void)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(boot_clocks); i++) {
-> +		struct clk *to_disable = __clk_lookup(boot_clocks[i]);
-> +
-> +		clk_disable_unprepare(to_disable);
-> +	}
-> +}
-> +late_initcall(exynos5420_clk_late_init);
-> 
-
-You should return 0 here.
-
-Best regards,
-Javier
