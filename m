@@ -1,121 +1,109 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] Exynos4: cpuidle: support dual CPUs with AFTR state
-Date: Fri, 30 May 2014 15:53:09 +0200
-Message-ID: <2110279.TVBlLBzQV3@amdc1032>
-References: <1396604925-18383-1-git-send-email-daniel.lezcano@linaro.org>
- <53884FD2.7020700@linaro.org> <53886CD5.8010301@gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH] clk: exynos5420: Keep aclk66_peric enabled during boot
+Date: Fri, 30 May 2014 16:00:21 +0200
+Message-ID: <53888EF5.5090800@collabora.co.uk>
+References: <1401398496-4624-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <53886CD5.8010301@gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, ccross@google.com
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:44303 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755506AbaE3OA1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 May 2014 10:00:27 -0400
+In-Reply-To: <1401398496-4624-1-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: olof@lixom.net, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
+Hello Doug,
 
-Hi,
-
-On Friday, May 30, 2014 01:34:45 PM Tomasz Figa wrote:
-> Hi Daniel,
+On 05/29/2014 11:21 PM, Doug Anderson wrote:
+> Right now if you've got earlyprintk enabled on exynos5420-peach-pit
+> then you'll get a hang on boot.  Here's why:
 > 
-> On 30.05.2014 11:30, Daniel Lezcano wrote:
-> > On 04/24/2014 07:42 PM, Tomasz Figa wrote:
-> >> Hi Daniel,
-> >>
-> >> Please see my comments inline.
-> >>
-> >> Btw. Please fix your e-mail composer to properly wrap your messages
-> >> around 7xth column, as otherwise they're hard to read.
-> >>
-> >> On 04.04.2014 11:48, Daniel Lezcano wrote:
-> >>> The following driver is for exynos4210. I did not yet finished the
-> >>> other boards, so
-> >>> I created a specific driver for 4210 which could be merged later.
-> >>>
-> >>> The driver is based on Colin Cross's driver found at:
-> >>>
-> >>> https://android.googlesource.com/kernel/exynos/+/e686b1ec67423c40b4fdf811f9a4dfa3b393a010%5E%5E!/
-> >>>
-> >>>
-> >>>
-> >>> This one was based on a 3.4 kernel and an old API.
-> >>>
-> >>> It has been refreshed, simplified and based on the recent code cleanup
-> >>> I sent
-> >>> today.
-> >>>
-> >>> The AFTR could be entered when all the cpus (except cpu0) are down. In
-> >>> order to
-> >>> reach this situation, the couple idle states are used.
-> >>>
-> >>> There is a sync barrier at the entry and the exit of the low power
-> >>> function. So
-> >>> all cpus will enter and exit the function at the same time.
-> >>>
-> >>> At this point, CPU0 knows the other cpu will power down itself. CPU0
-> >>> waits for
-> >>> the CPU1 to be powered down and then initiate the AFTR power down
-> >>> sequence.
-> >>>
-> >>> No interrupts are handled by CPU1, this is why we switch to the timer
-> >>> broadcast
-> >>> even if the local timer is not impacted by the idle state.
-> >>>
-> >>> When CPU0 wakes up, it powers up CPU1 and waits for it to boot. Then
-> >>> they both
-> >>> exit the idle function.
-> >>>
-> >>> This driver allows the exynos4210 to have the same power consumption
-> >>> at idle
-> >>> time than the one when we have to unplug CPU1 in order to let CPU0 to
-> >>> reach
-> >>> the AFTR state.
-> >>>
-> >>> This patch is a RFC because, we have to find a way to remove the macros
-> >>> definitions and cpu powerdown function without pulling the arch
-> >>> dependent
-> >>> headers.
-> >>>
-> >>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> >>> ---
-> >>>   arch/arm/mach-exynos/common.c        |   11 +-
-> >>>   drivers/cpuidle/Kconfig.arm          |    8 ++
-> >>>   drivers/cpuidle/Makefile             |    1 +
-> >>>   drivers/cpuidle/cpuidle-exynos4210.c |  226
-> >>> ++++++++++++++++++++++++++++++++++
-> > 
-> > [ ... ]
-> > 
-> > 
-> >> Otherwise, I quite like the whole idea. I need to play a bit with CPU
-> >> hotplug and PMU to verify that things couldn't really be simplified a
-> >> bit, but in general this looks reasonably.
-> > 
-> > Hi Tomasz,
-> > 
-> > did you have time to look at this simplification ?
+> 1. The i2c-s3c2410 driver will probe at subsys_initcall.  It will
+>    enable its clock and disable it.  This is the clock "i2c2".
+> 2. The act of disabling "i2c2" will disable its parents.  In this case
+>    the parent is "aclk66_peric".  There are no other children of
+>    "aclk66_peric" officially enabled, so "aclk66_peric" will be turned
+>    off (despite being CLK_IGNORE_UNUSED, but that's by design).
+> 3. The next time you try to earlyprintk you'll do so without the UART
+>    clock enabled.  That's because the UART clocks are also children of
+>    "aclk66_peric".  You'll hang.
 > 
-> Unfortunately I got preempted with other things to do and now I'm on
-> vacation. I worked a bit with Bart (added on CC) on this and generally
-> the conclusion was that all the things are necessary. He was also
-> working to extend the driver to support Exynos4x12.
+> There's no good place to put a clock enable for earlyprintk, which is
+> handled by a bunch of assembly code.  The best we can do is to handle
+> this in the clock driver.
 > 
-> Bart, has anything interesting showed up since we talked about this last
-> time?
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
 
-Since we last looked into this I have fixed the "standard" AFTR support
-for Exynos3250 and started to work on adding Exynos3250 support to this
-driver (as Exynos3250 support has bigger priority than Exynos4x12 one).
-Unfortunately I also got preempted with other things so it is still
-unfinished and doesn't work yet.  Moreover I had no possibility to test
-the new driver on Exynos4210 based Origen yet (I hope to do this next
-week).
+I tested your patch and it solves the issue for me, so feel free to add
+
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+Just one trivial comment below:
+
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 9d7d7ee..1e586be 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -1172,11 +1172,17 @@ static struct of_device_id ext_clk_match[] __initdata = {
+>  	{ },
+>  };
+>  
+> +/* Keep these clocks on until late_initcall */
+> +static const char *boot_clocks[] __initconst = {
+> +	"aclk66_peric",
+> +};
+> +
+>  /* register exynos5420 clocks */
+>  static void __init exynos5x_clk_init(struct device_node *np,
+>  		enum exynos5x_soc soc)
+>  {
+>  	struct samsung_clk_provider *ctx;
+> +	int i;
+>  
+>  	if (np) {
+>  		reg_base = of_iomap(np, 0);
+> @@ -1226,6 +1232,12 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>  	}
+>  
+>  	exynos5420_clk_sleep_init();
+> +
+> +	for (i = 0; i < ARRAY_SIZE(boot_clocks); i++) {
+> +		struct clk *to_enable = __clk_lookup(boot_clocks[i]);
+> +
+> +		clk_prepare_enable(to_enable);
+> +	}
+>  }
+>  
+>  static void __init exynos5420_clk_init(struct device_node *np)
+> @@ -1239,3 +1251,15 @@ static void __init exynos5800_clk_init(struct device_node *np)
+>  	exynos5x_clk_init(np, EXYNOS5800);
+>  }
+>  CLK_OF_DECLARE(exynos5800_clk, "samsung,exynos5800-clock", exynos5800_clk_init);
+> +
+> +static int __init exynos5420_clk_late_init(void)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(boot_clocks); i++) {
+> +		struct clk *to_disable = __clk_lookup(boot_clocks[i]);
+> +
+> +		clk_disable_unprepare(to_disable);
+> +	}
+> +}
+> +late_initcall(exynos5420_clk_late_init);
+> 
+
+You should return 0 here.
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
+Javier
