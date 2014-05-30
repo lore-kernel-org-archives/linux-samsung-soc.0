@@ -1,98 +1,76 @@
-From: Tarek Dakhran <t.dakhran@gmail.com>
-Subject: Re: [PATCH v11 0/3] Exynos 5410 support
-Date: Fri, 30 May 2014 23:15:46 +0400
-Message-ID: <CANhyOUf0coACaziesgSXsL3Vy-sypxS_Eo=Cb-2OEAaBodep=w@mail.gmail.com>
-References: <1401074613-29227-1-git-send-email-t.dakhran@samsung.com>
-	<7hr43f9mmn.fsf@paris.lan>
-	<538737CA.4070709@suse.de>
-	<53874862.5080809@samsung.com>
-	<538775AB.3000604@suse.de>
-	<CAC5m3Bz53QO5tTTvk7qnBQtwtjMvSgYZ15prAvnLjdogQRsfMQ@mail.gmail.com>
-	<CAK9yfHwatFrQ9ssjJXi=eR3mz95xWQeRJ4-vkteR_Npksa3+tg@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RFC] Sort out S5P SoCs support in mainline
+Date: Fri, 30 May 2014 21:19:53 +0200
+Message-ID: <5388D9D9.5020602@gmail.com>
+References: <021f01cf7a61$69853e30$3c8fba90$@samsung.com> <13875033.1X6R9lksgc@wuerfel> <5385C3CC.6010509@gmail.com> <5388D2E5.5080006@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:52831 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754215AbaE3TPs convert rfc822-to-8bit (ORCPT
+Received: from mail-wg0-f41.google.com ([74.125.82.41]:60263 "EHLO
+	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751339AbaE3TUK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 May 2014 15:15:48 -0400
-In-Reply-To: <CAK9yfHwatFrQ9ssjJXi=eR3mz95xWQeRJ4-vkteR_Npksa3+tg@mail.gmail.com>
+	Fri, 30 May 2014 15:20:10 -0400
+Received: by mail-wg0-f41.google.com with SMTP id z12so2410771wgg.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 May 2014 12:20:08 -0700 (PDT)
+In-Reply-To: <5388D2E5.5080006@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Tarek Dakhran <t.dakhran@gmail.com>
-Cc: Tushar Behera <trblinux@gmail.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Tarek Dakhran <t.dakhran@samsung.com>, Kevin Hilman <khilman@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, 'Olof Johansson' <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 
-Hi all,
 
-On Fri, May 30, 2014 at 10:16 PM, Sachin Kamat <sachin.kamat@linaro.org=
-> wrote:
->
->
-> On Friday, 30 May 2014, Tushar Behera <trblinux@gmail.com> wrote:
->>
->> On Thu, May 29, 2014 at 11:30 PM, Andreas F=C3=A4rber <afaerber@suse=
-=2Ede> wrote:
->> > Hi Tarek,
->> >
->> >
->> > And I reproducibly get failures for CPUs 1-3, resulting in only on=
-e CPU
->> > in /proc/cpuinfo (compared to 4 on downstream 3.14):
->> >
->> > [    0.045778] CPU: Testing write buffer coherency: ok
->> > [    0.045968] /cpus/cpu@0 missing clock-frequency property
->> > [    0.045993] /cpus/cpu@1 missing clock-frequency property
->> > [    0.046016] /cpus/cpu@2 missing clock-frequency property
->> > [    0.046040] /cpus/cpu@3 missing clock-frequency property
->> > [    0.046059] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
->> > [    0.046135] Setting up static identity map for 0x403a8920 -
->> > 0x403a8978
->> > [    2.075052] CPU1: failed to come online
->> > [    4.085095] CPU2: failed to come online
->> > [    6.095142] CPU3: failed to come online
->> > [    6.095237] Brought up 1 CPUs
->> > [    6.095269] SMP: Total of 1 processors activated.
->> > [    6.095303] CPU: All CPU(s) started in HYP mode.
->> > [    6.095336] CPU: Virtualization extensions available.
->> >
->> > I also notice another apparent device tree issue:
->> >
->> > [    7.341814] of_get_named_gpiod_flags: can't parse gpios propert=
-y of
->> > node '/soc/mmc@12220000/slot@0[0]'
->> > [    7.341850] of_get_named_gpiod_flags: can't parse gpios propert=
-y of
->> > node '/soc/mmc@12220000/slot@0[0]'
->> >
->> > Are any of those known issues and being worked on?
->> > (The CPU failures affected 5420 Arndale Octa as well iirc.)
->> >
 
-[snip]
+On 30.05.2014 20:50, Kukjin Kim wrote:
+> On 05/28/14 20:09, Tomasz Figa wrote:
+>> On 28.05.2014 13:04, Arnd Bergmann wrote:
+>>> On Wednesday 28 May 2014 19:41:41 Kukjin Kim wrote:
+>>>> Hi all,
+>>>>
+>>>> I'm wondering who need to support following SoCs/boards in mainline.
+>>>>
+>>>> * S5P64X0/SMDK6440 and SMDK6450
+>>>> * S5PC100/SMDKC100
+>>>>
+>>>> If nobody is using them, how about to remove them from mainline?
+>>>
+>>> I talked about this with Tomasz Figa before, he also thinks they can
+>>> be removed.
+>>> I don't see any reason to keep them myself, and will apply a patch to
+>>> remove
+>>> them. Of course, if later somebody comes around who does need them,
+>>> we can
+>>> revert the patch to bring them back.
+> 
+> Yeah, agreed.
+> 
+>>
+>> Or better, if later somebody comes around who does need them, we can add
+>> them properly, using Device Tree and existing generic code.
+>>
+> Of course.
+> 
+>> Anyway, for removal of both s5p64x0 and s5pc100:
+>>
+>> Acked-by: Tomasz Figa<t.figa@samsung.com>
+>>
+>> Actually I have played a bit with the code to see how much can be
+>> removed and ended up with following branch:
+>>
+>> https://github.com/tom3q/linux.git v3.17-cleanup
+>>
+>> Feel free to do _whatever_ you want with patches there.
+>>
+> OK, thanks.
+> 
+> Let me remove them from mainline when 3.16-rc1 is released...
 
->>
->> [1] http://www.spinics.net/lists/linux-samsung-soc/msg31776.html
->>
->> [PATCH v2 Resend 1/2] ARM: EXYNOS: Update secondary boot addr for se=
-cure
->> mode
->>
->> [2] http://www.spinics.net/lists/linux-samsung-soc/msg31777.html
->>
->> [PATCH v2 Resend 2/2] ARM: dts: Add secure firmware support for
->> Arndale-octa
->>
->>
->> Kukjin,
->
-> Can you please apply the above patches?
->
+Alright.
 
-Patches [1], [2] tested on ODROID-XU, SMDK5410 and Arndale Octa boards.
-
-Tested-by: Tarek Dakhran <t.dakhran@samsung.com>
+I have a series to convert s5pv210 to DT-only waiting to be sent as soon
+as 3.16-rc1 is released, but if you remove those two first, I should be
+able to simplify several things, so I'll wait.
 
 Best regards,
-     Tarek
+Tomasz
