@@ -1,101 +1,98 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Fri, 30 May 2014 21:11:07 +0200
-Message-ID: <4663172.oXIylQOrlk@wuerfel>
-References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com> <20140530073006.GA24748@ulmo> <20140530112728.GB3949@e103592.cambridge.arm.com>
+From: Tarek Dakhran <t.dakhran@gmail.com>
+Subject: Re: [PATCH v11 0/3] Exynos 5410 support
+Date: Fri, 30 May 2014 23:15:46 +0400
+Message-ID: <CANhyOUf0coACaziesgSXsL3Vy-sypxS_Eo=Cb-2OEAaBodep=w@mail.gmail.com>
+References: <1401074613-29227-1-git-send-email-t.dakhran@samsung.com>
+	<7hr43f9mmn.fsf@paris.lan>
+	<538737CA.4070709@suse.de>
+	<53874862.5080809@samsung.com>
+	<538775AB.3000604@suse.de>
+	<CAC5m3Bz53QO5tTTvk7qnBQtwtjMvSgYZ15prAvnLjdogQRsfMQ@mail.gmail.com>
+	<CAK9yfHwatFrQ9ssjJXi=eR3mz95xWQeRJ4-vkteR_Npksa3+tg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140530112728.GB3949-M5GwZQ6tE7x5pKCnmE3YQBJ8xKzm50AiAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel@vge>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:52831 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754215AbaE3TPs convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 May 2014 15:15:48 -0400
+In-Reply-To: <CAK9yfHwatFrQ9ssjJXi=eR3mz95xWQeRJ4-vkteR_Npksa3+tg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Tarek Dakhran <t.dakhran@gmail.com>
+Cc: Tushar Behera <trblinux@gmail.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Tarek Dakhran <t.dakhran@samsung.com>, Kevin Hilman <khilman@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Friday 30 May 2014 12:27:28 Dave Martin wrote:
-> On Fri, May 30, 2014 at 08:30:08AM +0100, Thierry Reding wrote:
-> > On Thu, May 29, 2014 at 09:52:22AM -0600, Stephen Warren wrote:
-> > > On 05/23/2014 02:36 PM, Thierry Reding wrote:
-> > > I think this is a mistake. address-cells/size-cells are for transactions
-> > > flowing down the bus (from the CPU to date). Describing a connection
-> > > from a device to an IOMMU is something completely different, and should
-> > > therefore simply use an iommu-cells property to describe any necessary
-> > > information. If we start re-using properties for different things in
-> > > different contexts, how is anyone going to know what they mean, and how
-> > > will conflicts be resolved. For example, what if there's a single HW
-> > > module that both acts as a regular register bus with children (where
-> > > address-cells/size-cells defines how transactions reach the children
-> > > from the parent), and is also an IOMMU (where according to this binding
-> > > proposal, address-cells/size-cells represent some aspect of the IOMMU
-> > > feature). Using different properties for different things is the only
-> > > sane way to keep different concepts separate. Another alternative would
-> > > be to represent the single HW module as separate nodes in DT, but I
-> > > think that will only make our lives harder, and where I've done that in
-> > > the past, I've regretted it.
-> > 
-> > There was some back-and-forth on this topic and the latest concensus
-> > when I wrote the second version was that #address-cells and #size-cells
-> > were to be used.
-> > 
-> > But there was some bore back-and-forth after that, and it seems like
-> > Arnd no longer thinks that using #address-cells and #size-cells is a
-> > good idea either[0].
-> 
-> Mistake or not, ePAPR already (ab)uses the address concept for PCI.
-> Unless ePAPR is wrong, I don't think it makes sense to argue that
-> the address concept cannot be repurposed.
-> 
-> The reason why this is abused for PCI is the same as our reason here:
-> different masters really are treated as distinct even when accessing
-> the same destination address, and DT has no general native way to
-> describe that.
-> 
-> One clear advantage of using #address-cells etc. is that ePAPR already
-> has very clear and well-defined ways of how to specify range mappings.
-> This gives us a ready-made way to describe windowed IOMMUs and 1:1
-> remappings of whole blocks of master IDs, which are the most obvious
-> cases other than having a small-integer set of explicit IDs.
-> 
-> That said, the PCI pseudo-address thing is not something we _necessarily_
-> want to repeat.
+Hi all,
 
-I'm really impartial to the question of whether to use #address-cells
-or #iommus now. It's possible that we can use the addresses in some
-meaningful way, but it's not clear to me that this will help make the
-representation cleaner or that we will actually want it for SMMU.
+On Fri, May 30, 2014 at 10:16 PM, Sachin Kamat <sachin.kamat@linaro.org=
+> wrote:
+>
+>
+> On Friday, 30 May 2014, Tushar Behera <trblinux@gmail.com> wrote:
+>>
+>> On Thu, May 29, 2014 at 11:30 PM, Andreas F=C3=A4rber <afaerber@suse=
+=2Ede> wrote:
+>> > Hi Tarek,
+>> >
+>> >
+>> > And I reproducibly get failures for CPUs 1-3, resulting in only on=
+e CPU
+>> > in /proc/cpuinfo (compared to 4 on downstream 3.14):
+>> >
+>> > [    0.045778] CPU: Testing write buffer coherency: ok
+>> > [    0.045968] /cpus/cpu@0 missing clock-frequency property
+>> > [    0.045993] /cpus/cpu@1 missing clock-frequency property
+>> > [    0.046016] /cpus/cpu@2 missing clock-frequency property
+>> > [    0.046040] /cpus/cpu@3 missing clock-frequency property
+>> > [    0.046059] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+>> > [    0.046135] Setting up static identity map for 0x403a8920 -
+>> > 0x403a8978
+>> > [    2.075052] CPU1: failed to come online
+>> > [    4.085095] CPU2: failed to come online
+>> > [    6.095142] CPU3: failed to come online
+>> > [    6.095237] Brought up 1 CPUs
+>> > [    6.095269] SMP: Total of 1 processors activated.
+>> > [    6.095303] CPU: All CPU(s) started in HYP mode.
+>> > [    6.095336] CPU: Virtualization extensions available.
+>> >
+>> > I also notice another apparent device tree issue:
+>> >
+>> > [    7.341814] of_get_named_gpiod_flags: can't parse gpios propert=
+y of
+>> > node '/soc/mmc@12220000/slot@0[0]'
+>> > [    7.341850] of_get_named_gpiod_flags: can't parse gpios propert=
+y of
+>> > node '/soc/mmc@12220000/slot@0[0]'
+>> >
+>> > Are any of those known issues and being worked on?
+>> > (The CPU failures affected 5420 Arndale Octa as well iirc.)
+>> >
 
-> > Arnd, can you take another look at this binding and see if there's
-> > anything else missing? If not I'll go through the document again and
-> > update all #address-cells/#size-cells references with #iommu-cells as
-> > appropriate and submit v3.
-> 
-> How do you envisage propagation of the master ID bits downstream of the
-> IOMMU would be described?
-> 
-> We will definitely need a way to describe this for GICv3.  How those
-> values are propagated is likely to vary between related SoCs and doesn't
-> feel like it should be baked into a driver, especially for the ARM SMMU
-> which may get reused in radically different SoC families from different
-> vendors.
-> 
-> The most likely types of remapping are the adding of a base offset or
-> some extra bits to the ID -- because not all MSIs to the GIC will
-> necessarily pass through the IOMMU.  It's also possible that we might
-> see ID squashing or folding in some systems.
-> 
-> 
-> For types of remapping which mix the ID and address together, I now
-> do tend to agree that any flexibility arising from describing that
-> in a general way that is unlikely to repay the cost of trying to
-> interpret and analyse the DT.  Defining a few sterotypical kinds
-> of mapping explicitly, as needed, looks more sensible for now.  The
-> windowed-IOMMU case is one example.
+[snip]
 
-For MSI, my feeling is that we'd just be best off doing an end-to-end
-description. Any device using an MSI would have an interrupt specifier
-that is sufficient for the interrupt controller to understand where
-the IRQ comes from, and return an address/value pair back to the driver
-to program into some register.
+>>
+>> [1] http://www.spinics.net/lists/linux-samsung-soc/msg31776.html
+>>
+>> [PATCH v2 Resend 1/2] ARM: EXYNOS: Update secondary boot addr for se=
+cure
+>> mode
+>>
+>> [2] http://www.spinics.net/lists/linux-samsung-soc/msg31777.html
+>>
+>> [PATCH v2 Resend 2/2] ARM: dts: Add secure firmware support for
+>> Arndale-octa
+>>
+>>
+>> Kukjin,
+>
+> Can you please apply the above patches?
+>
 
-	Arnd
+Patches [1], [2] tested on ODROID-XU, SMDK5410 and Arndale Octa boards.
+
+Tested-by: Tarek Dakhran <t.dakhran@samsung.com>
+
+Best regards,
+     Tarek
