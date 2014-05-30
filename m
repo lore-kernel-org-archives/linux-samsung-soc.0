@@ -1,63 +1,115 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [RFC] Sort out S5P SoCs support in mainline
-Date: Sat, 31 May 2014 03:50:13 +0900
-Message-ID: <5388D2E5.5080006@samsung.com>
-References: <021f01cf7a61$69853e30$3c8fba90$@samsung.com> <13875033.1X6R9lksgc@wuerfel> <5385C3CC.6010509@gmail.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v6 2/2] Documentation: devicetree: Add boost-frequency
+ binding to list boost mode frequency
+Date: Fri, 30 May 2014 19:55:49 +0100
+Message-ID: <20140530185549.GN24233@leverpostej>
+References: <1401440477-4328-1-git-send-email-thomas.ab@samsung.com>
+ <1401440477-4328-3-git-send-email-thomas.ab@samsung.com>
+ <20140530130827.GK24233@leverpostej>
+ <CAJuA9ajs6K1PVtXC4_U0vQsA0oPnpaF_PdMfiQJxBFStF3Z2aw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:36683 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754324AbaE3SuS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 May 2014 14:50:18 -0400
-Received: by mail-pa0-f49.google.com with SMTP id fa1so936872pad.36
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 May 2014 11:50:17 -0700 (PDT)
-In-Reply-To: <5385C3CC.6010509@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAJuA9ajs6K1PVtXC4_U0vQsA0oPnpaF_PdMfiQJxBFStF3Z2aw@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thomas Abraham <ta.omasab@gmail.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "nm@ti.com" <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, 'Olof Johansson' <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 
-On 05/28/14 20:09, Tomasz Figa wrote:
-> On 28.05.2014 13:04, Arnd Bergmann wrote:
->> On Wednesday 28 May 2014 19:41:41 Kukjin Kim wrote:
->>> Hi all,
->>>
->>> I'm wondering who need to support following SoCs/boards in mainline.
->>>
->>> * S5P64X0/SMDK6440 and SMDK6450
->>> * S5PC100/SMDKC100
->>>
->>> If nobody is using them, how about to remove them from mainline?
->>
->> I talked about this with Tomasz Figa before, he also thinks they can be removed.
->> I don't see any reason to keep them myself, and will apply a patch to remove
->> them. Of course, if later somebody comes around who does need them, we can
->> revert the patch to bring them back.
+On Fri, May 30, 2014 at 07:05:43PM +0100, Thomas Abraham wrote:
+> Hi Mark,
+> 
+> On Fri, May 30, 2014 at 6:38 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> > Hi,
+> >
+> > Apologies for being somewhat late w.r.t. review on this.
+> >
+> > On Fri, May 30, 2014 at 10:01:17AM +0100, Thomas Abraham wrote:
+> >> From: Thomas Abraham <thomas.ab@samsung.com>
+> >>
+> >> Add a new optional boost-frequency binding for specifying the frequencies
+> >> usable in boost mode.
+> >>
+> >> Cc: Rob Herring <robh+dt@kernel.org>
+> >> Cc: Pawel Moll <pawel.moll@arm.com>
+> >> Cc: Mark Rutland <mark.rutland@arm.com>
+> >> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+> >> Cc: Kumar Gala <galak@codeaurora.org>
+> >> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> >> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> >> Acked-by: Nishanth Menon <nm@ti.com>
+> >> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+> >> ---
+> >>  .../devicetree/bindings/cpufreq/cpufreq-boost.txt  |   38 ++++++++++++++++++++
+> >>  1 file changed, 38 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+> >> new file mode 100644
+> >> index 0000000..63ed0fc
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+> >> @@ -0,0 +1,38 @@
+> >> +* Device tree binding for CPU boost frequency (aka over-clocking)
+> >> +
+> >> +Certain CPU's can be operated in optional 'boost' mode (or sometimes referred as
+> >
+> > Nit: CPUs (we're not greengrocers [1])
+> >
+> >> +overclocking) in which the CPU can operate at frequencies which are not
+> >> +specified by the manufacturer as CPU's operating frequency.
+> >> +
+> >> +Optional Properties:
+> >> +- boost-frequencies: list of frequencies in KHz to be used only in boost mode.
+> >> +  This list should be a subset of frequencies listed in "operating-points"
+> >> +  property. Refer to Documentation/devicetree/bindings/power/opp.txt for
+> >> +  details about "operating-points" property.
+> >
+> > What is 'boost-mode'?
+> 
+> boost-mode activates additional one or more cpu clock speeds (which
+> are not specified as operating frequency of the cpu by the
+> manufacturer). The cpu is allowed to operate in these boost mode
+> speeds when the boost mode is active. The boost mode speeds are
+> usually undocumented. Some of the chip samples could be clocked in
+> boost mode speeds and only such samples can be safely operated in
+> boost mode.
+> 
+> The mechanism of entry into and exit out of boost mode is outside the
+> scope of this documentation.
+> 
+> >
+> > What are the limitations on boost frequencies? When is a CPU expected to
+> > go to these frequencies and for now long? When should I as a dt author
+> > place elements in boost-frequencies?
+> 
+> I will add these details in the next revision of this patch.
 
-Yeah, agreed.
+Cheers.
 
->
-> Or better, if later somebody comes around who does need them, we can add
-> them properly, using Device Tree and existing generic code.
->
-Of course.
+> >
+> > Why are these in both operating-points and boost-frequencies? It'll be
+> > really easy to accidentally forget to mark something as a
+> > boost-frequency this way. Why not have a boost-points instead?
+> 
+> Does boost-points mean a set of clock speeds which are not listed as
+> part of operating-points property? If yes, that also is a possible
+> implementation (it was implemented in one of the earlier version of
+> this series). Could you confirm that you want the boost mode speeds to
+> be exclusive of the speeds listed in operating-points?
 
-> Anyway, for removal of both s5p64x0 and s5pc100:
->
-> Acked-by: Tomasz Figa<t.figa@samsung.com>
->
-> Actually I have played a bit with the code to see how much can be
-> removed and ended up with following branch:
->
-> https://github.com/tom3q/linux.git v3.17-cleanup
->
-> Feel free to do _whatever_ you want with patches there.
->
-OK, thanks.
+If these boost mode operating points are not generally advisable for use
+as the other operating-points are, then they should IMO been in an
+entirely separate property exclusive of (but in the same format as) the
+operating-points property, e.g.
 
-Let me remove them from mainline when 3.16-rc1 is released...
+operating points = <A B>, <C D>;
+boost-points = <E F>;
 
-- Kukjin
+Otherwise, without boost-mode support we have to parse the boost mode
+table to figure out which points to avoid. Or if someone typos a value
+in either table we might go into a boost mode when we didn't want to!
+
+Cheers,
+Mark.
