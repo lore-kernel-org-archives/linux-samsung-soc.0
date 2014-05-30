@@ -1,56 +1,120 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v11 0/3] Exynos 5410 support
-Date: Fri, 30 May 2014 07:10:58 +0200
-Message-ID: <538812E2.6070807@gmail.com>
-References: <1401074613-29227-1-git-send-email-t.dakhran@samsung.com> <7hr43f9mmn.fsf@paris.lan> <538737CA.4070709@suse.de> <53874862.5080809@samsung.com> <538775AB.3000604@suse.de>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v5 1/2] cpufreq / OPP: Allow boost frequency to be looked
+ up from device tree
+Date: Fri, 30 May 2014 09:31:30 +0200
+Message-ID: <20140530093130.2610eb0a@amdc2363>
+References: <1401374319-4480-1-git-send-email-thomas.ab@samsung.com>
+ <1401374319-4480-2-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <538775AB.3000604-l3A5Bk7waGM@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tarek Dakhran <t.dakhran-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1401374319-4480-2-git-send-email-thomas.ab@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Nishanth Menon <nm@ti.com>, kgene.kim@samsung.com, viresh.kumar@linaro.org, t.figa@samsung.com, rjw@rjwysocki.net, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Andreas,
+Hi Thomas,
 
-On 29.05.2014 20:00, Andreas F=E4rber wrote:
+> From: Thomas Abraham <thomas.ab@samsung.com>
+> 
+> Commit 6f19efc0 ("cpufreq: Add boost frequency support in core") adds
+> support for CPU boost mode. This patch adds support for finding
+> available boost frequencies from device tree and marking them as
+> usable in boost mode.
+> 
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Lukasz Majewski <l.majewski@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> ---
+>  drivers/cpufreq/cpufreq_opp.c |   45
+> +++++++++++++++++++++++++++++++++++++++++ 1 file changed, 45
+> insertions(+)
+> 
+> diff --git a/drivers/cpufreq/cpufreq_opp.c
+> b/drivers/cpufreq/cpufreq_opp.c index c0c6f4a..05fb115 100644
+> --- a/drivers/cpufreq/cpufreq_opp.c
+> +++ b/drivers/cpufreq/cpufreq_opp.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/pm_opp.h>
+>  #include <linux/rcupdate.h>
+>  #include <linux/slab.h>
+> +#include <linux/of.h>
+>  
+>  /**
+>   * dev_pm_opp_init_cpufreq_table() - create a cpufreq table for a
+> device @@ -51,6 +52,11 @@ int dev_pm_opp_init_cpufreq_table(struct
+> device *dev, struct cpufreq_frequency_table *freq_table = NULL;
+>  	int i, max_opps, ret = 0;
+>  	unsigned long rate;
+> +#ifdef CONFIG_CPU_FREQ_BOOST_SW
+> +	struct cpufreq_frequency_table *ft;
+> +	int len, count;
+> +	u32 *boost_freqs = NULL;
+> +#endif
+>  
+>  	rcu_read_lock();
+>  
+> @@ -82,6 +88,45 @@ int dev_pm_opp_init_cpufreq_table(struct device
+> *dev, 
+>  	*table = &freq_table[0];
+>  
+> +#ifdef CONFIG_CPU_FREQ_BOOST_SW
+> +	if (!of_find_property(dev->of_node, "boost-frequencies",
+> &len))
+> +		goto out;
+> +
+> +	if (!len || !IS_ALIGNED(len, sizeof(u32))) {
+> +		dev_err(dev, "%s: invalid boost frequency\n",
+> __func__);
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	boost_freqs = kmalloc(len, GFP_KERNEL);
+> +	if (!boost_freqs) {
+> +		dev_err(dev, "%s: no memory for boost freq table\n",
+> __func__);
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	count = len / sizeof(u32);
+> +	of_property_read_u32_array(dev->of_node, "boost-frequencies",
+> +			boost_freqs, count);
+> +
+> +	for (i = 0; i < count; i++) {
+> +		cpufreq_for_each_valid_entry(ft, *table) {
+> +			if (boost_freqs[i] == ft->frequency) {
+> +				ft->flags |= CPUFREQ_BOOST_FREQ;
+> +				pr_debug("%s: marked %d as boost
+> frequency\n",
+> +					__func__, boost_freqs[i]);
+> +				break;
+> +			}
+> +		}
+> +
+> +		if (ft->frequency == CPUFREQ_TABLE_END)
+> +			dev_err(dev, "%s: invalid boost frequency
+> %d\n",
+> +				__func__, boost_freqs[i]);
+> +	}
+> +
+> +	kfree(boost_freqs);
+> +#endif
+> +
+>  out:
+>  	rcu_read_unlock();
+>  	if (ret)
 
-[snip]
+Acked-by: Lukasz Majewski <l.majewski@samsung.com>
 
-> Some of the low-hanging fruit like no heartbeat/SD LEDs, no RTC, no
-> usb3503 and thus no network I'm already looking into myself. For now =
-I'm
-> putting everything into the SMDK .dts, but I guess we'll need to spli=
-t
-> off -odroidxu.dts and -pinctrl.dtsi at some point.
+Thomas, thanks for this patch.
 
-Odroid XU needs its own dts for sure. I think you can make a copy of
-SMDK dts and name it -odroidxu straightaway and work further with it.
-
-exynos5410-pinctrl.dtsi is used for generic SoC-wide pinctrl
-definitions, such as pin banks and pin groups. There should be no
-board-specific things defined in it. Instead respective board dts shoul=
-d
-have them.
-
->=20
-> What about graphics? The 5410 is an oddball in using PowerVR rather t=
-han
-> Mali GPU - should a framebuffer on HDMI or DisplayPort work if we add=
- DT
-> nodes, or will the GPU require larger code changes?
-
-The 3D GPU is completely independent from display controllers, which ar=
-e
-standard Samsung IP blocks, so you should be able to get unaccelerated
-output using VP+Mixer+HDMI or FIMD+DP using existing drivers.
-
+-- 
 Best regards,
-Tomasz
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
