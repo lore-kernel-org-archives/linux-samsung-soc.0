@@ -1,46 +1,49 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] drm/exynos: remove unnecessary exynos_hdmi.h file
-Date: Fri, 30 May 2014 09:15:36 +0100
-Message-ID: <20140530081536.GE2619@lee--X1>
-References: <000a01cf7bac$8f805f60$ae811e20$%han@samsung.com>
- <20140530081403.GD2619@lee--X1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Thomas Abraham <thomas.ab@samsung.com>
+Subject: [PATCH v6 0/2] cpufreq: opp: Add device tree based lookup of boost mode frequency
+Date: Fri, 30 May 2014 14:31:15 +0530
+Message-ID: <1401440477-4328-1-git-send-email-thomas.ab@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f181.google.com ([209.85.223.181]:62875 "EHLO
-	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751782AbaE3IPm (ORCPT
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:63035 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752272AbaE3JBb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 May 2014 04:15:42 -0400
-Received: by mail-ie0-f181.google.com with SMTP id rp18so1424690iec.40
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 May 2014 01:15:42 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20140530081403.GD2619@lee--X1>
+	Fri, 30 May 2014 05:01:31 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Inki Dae' <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, 'Seung-Woo Kim' <sw0312.kim@samsung.com>, 'Dave Airlie' <airlied@redhat.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kernel@stlinux.com, 'Tomasz Figa' <tomasz.figa@gmail.com>
+To: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: rjw@rjwysocki.net, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com, nm@ti.com
 
-> > The exynos_hdmi.h has been used for the dedicated i2c drivers
-> > that were already removed. Thus, the unnecessary exynos_hdmi.h
-> > should be removed.
-> >=20
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_hdmi.h |   23 ----------------------=
--
-> >  1 file changed, 23 deletions(-)
-> >  delete mode 100644 drivers/gpu/drm/exynos/exynos_hdmi.h
->=20
-> https://lkml.org/lkml/2014/5/29/810
+Changes since v5:
+- Fixes for checkpatch warnings with --strict option as suggested by
+  Nishanth Menon.
 
-Oh, I see.
+Changes since v4:
+- Code improvements suggested by Viresh Kumar.
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Changes since v3:
+- Minor changes as suggested in the last version.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Changes since v2:
+- Reworked based on the "PM / OPP: move cpufreq specific helpers out of OPP 
+  layer" patch series posted by Nishanth Menon.
+
+Changes since v1:
+- Boost mode frequencies are specfied as a set of frequencies instead of
+  specifying them as OPPs. Thanks to Nishanth, Lukasz and Rob for the
+  feedback.
+
+This series has been acked by authors and maintainers of the code
+portions changed in this series. The new DT binding introduced in this
+patch needs an ack from device tree binding maintainers as well.
+
+Commit 6f19efc0 ("cpufreq: Add boost frequency support in core") adds
+support for CPU boost mode for CPUfreq drivers. To use the new boost
+mode, CPUfreq drivers have to specify the boost mode frequency and
+voltage within the CPUfreq driver, which is the case for Exynos4x12
+CPUfreq driver.
+
+But for CPUfreq drivers which obtain the OPPs from cpus node, this
+patch series adds support to specify boost mode frequencies in the
+cpu device tree node. This requirement came up when Lukasz pointed
+out the regression caused by the Exynos CPUfreq driver consolidation
+patches.
