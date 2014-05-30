@@ -1,99 +1,152 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 0/8] i.MX6 PCIe binding change and MSI support
-Date: Fri, 30 May 2014 11:30:53 -0600
-Message-ID: <20140530173053.GF4607@google.com>
-References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
- <20140424175844.GD29593@google.com>
- <1398421265.4657.25.camel@weser.hi.pengutronix.de>
- <CAErSpo7Boi8d+apAUC3TmmE33LuRMYJ6J+TEPLRbeyZyU3O8RQ@mail.gmail.com>
- <1398774686.4677.12.camel@weser.hi.pengutronix.de>
- <1399885183.5016.4.camel@weser.hi.pengutronix.de>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v6 2/2] Documentation: devicetree: Add boost-frequency
+ binding to list boost mode frequency
+Date: Fri, 30 May 2014 23:35:43 +0530
+Message-ID: <CAJuA9ajs6K1PVtXC4_U0vQsA0oPnpaF_PdMfiQJxBFStF3Z2aw@mail.gmail.com>
+References: <1401440477-4328-1-git-send-email-thomas.ab@samsung.com>
+	<1401440477-4328-3-git-send-email-thomas.ab@samsung.com>
+	<20140530130827.GK24233@leverpostej>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f176.google.com ([209.85.213.176]:40651 "EHLO
-	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754389AbaE3Ra4 (ORCPT
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:36453 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751339AbaE3SFo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 May 2014 13:30:56 -0400
-Received: by mail-ig0-f176.google.com with SMTP id hl10so1081628igb.9
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 May 2014 10:30:56 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1399885183.5016.4.camel@weser.hi.pengutronix.de>
+	Fri, 30 May 2014 14:05:44 -0400
+In-Reply-To: <20140530130827.GK24233@leverpostej>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Shawn Guo <shawn.guo@linaro.org>, Richard Zhu <r65037@freescale.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Marek Vasut <marex@denx.de>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Tim Harvey <tharvey@gateworks.com>, Jingoo Han <jg1.han@samsung.com>, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, Mark Rutland <mark.rutland@arm.com>, Sean Cross <xobs@kosagi.com>, linux-arm <linux-arm-kernel@lists.infradead.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "nm@ti.com" <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-On Mon, May 12, 2014 at 10:59:43AM +0200, Lucas Stach wrote:
-> Hi Bjorn,
-> 
-> just a friendly reminder. It would be nice if you could pull those in.
-> 
-> Shawn already pulled the DT change and as it is a binding change this
-> means PCIe on i.MX6 is broken in -next, as long as the remaining patches
-> are missing.
+Hi Mark,
 
-I applied these to pci/host-imx6 for v3.16.
+On Fri, May 30, 2014 at 6:38 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> Hi,
+>
+> Apologies for being somewhat late w.r.t. review on this.
+>
+> On Fri, May 30, 2014 at 10:01:17AM +0100, Thomas Abraham wrote:
+>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>
+>> Add a new optional boost-frequency binding for specifying the frequencies
+>> usable in boost mode.
+>>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: Pawel Moll <pawel.moll@arm.com>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
+>> Cc: Kumar Gala <galak@codeaurora.org>
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>> Acked-by: Nishanth Menon <nm@ti.com>
+>> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+>> ---
+>>  .../devicetree/bindings/cpufreq/cpufreq-boost.txt  |   38 ++++++++++++++++++++
+>>  1 file changed, 38 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+>> new file mode 100644
+>> index 0000000..63ed0fc
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+>> @@ -0,0 +1,38 @@
+>> +* Device tree binding for CPU boost frequency (aka over-clocking)
+>> +
+>> +Certain CPU's can be operated in optional 'boost' mode (or sometimes referred as
+>
+> Nit: CPUs (we're not greengrocers [1])
+>
+>> +overclocking) in which the CPU can operate at frequencies which are not
+>> +specified by the manufacturer as CPU's operating frequency.
+>> +
+>> +Optional Properties:
+>> +- boost-frequencies: list of frequencies in KHz to be used only in boost mode.
+>> +  This list should be a subset of frequencies listed in "operating-points"
+>> +  property. Refer to Documentation/devicetree/bindings/power/opp.txt for
+>> +  details about "operating-points" property.
+>
+> What is 'boost-mode'?
 
-Sorry I didn't do this sooner; I get a lot of email and it's easy to
-overlook things.  I mostly work from patchwork
-(http://patchwork.ozlabs.org/project/linux-pci/list/?order=date), and I had
-dropped this series from there because there was enough discussion that I
-expected a re-post, so it wasn't on my radar screen anymore.
+boost-mode activates additional one or more cpu clock speeds (which
+are not specified as operating frequency of the cpu by the
+manufacturer). The cpu is allowed to operate in these boost mode
+speeds when the boost mode is active. The boost mode speeds are
+usually undocumented. Some of the chip samples could be clocked in
+boost mode speeds and only such samples can be safely operated in
+boost mode.
 
-Bjorn
+The mechanism of entry into and exit out of boost mode is outside the
+scope of this documentation.
 
-> Am Dienstag, den 29.04.2014, 14:31 +0200 schrieb Lucas Stach:
-> > Hi Bjorn,
-> > 
-> > Am Freitag, den 25.04.2014, 08:39 -0600 schrieb Bjorn Helgaas:
-> > [...]
-> > > >> >   PCI: designware: split Exynos and i.MX bindings
-> > > >> >   ARM: dts: imx6: update pcie to bring in line with new binding
-> > > >> >   PCI: imx6: use new clock names
-> > > >> >   PCI: imx6: drop old irq mapping
-> > > >> >   PCI: imx6: rip out optional (and unused) irqs
-> > > >> >   PCI: designware: make MSI isr shared irq aware
-> > > >> >   PCI: imx6: add support for MSI
-> > > >>
-> > > >> What's the status of all these?  I would normally apply patches 4-8 of this
-> > > >> series through my tree, given the appropriate acks, but I haven't seen
-> > > >> those yet.  And I'm not sure what dependencies there are between the
-> > > >> non-PCI patches and the PCI ones.
-> > > >>
-> > > > It's a complete binding change, so applying one part without the other
-> > > > is going to horribly break things.
-> > > >
-> > > > So I would at least want to see an ack for the binding change on the
-> > > > i.MX side from Shawn and Richard. This will need some follow on patches,
-> > > > as some boards adding PCIe using the old binding have cropped up in
-> > > > linux-next, but I can do the patches on short notice if everyone agrees
-> > > > to merge this patchset.
-> > > >
-> > > > The designware part is pretty simple and doesn't change anything for
-> > > > other users than i.MX. Though I would like to see an ack from Jingoo for
-> > > > those.
-> > > >
-> > > > I have some more stuff in the pipes regarding multiple MSI irqs, that
-> > > > depend on this series and also the Keystone people are waiting for this
-> > > > to be applied in order to consolidate the clock handling of the
-> > > > designware core driver, so it would be nice to get this moving again.
-> > > 
-> > > OK, just poke me again when you're ready for me to do something with these.
-> > > 
-> > 
-> > As both Richard and Jingoo gave their ack for the respective patches I
-> > think this is good to go in and I would expect all the PCI patches to go
-> > through your tree for 3.16.
-> > 
-> > Shawn, if you are not okay with this change, please speak up now.
-> > Otherwise please pick the dts change for 3.16. I'll go over linux-next
-> > and prepare the patches to fix up the boards there.
-> > 
-> 
-> 
-> -- 
-> Pengutronix e.K.             | Lucas Stach                 |
-> Industrial Linux Solutions   | http://www.pengutronix.de/  |
-> 
+>
+> What are the limitations on boost frequencies? When is a CPU expected to
+> go to these frequencies and for now long? When should I as a dt author
+> place elements in boost-frequencies?
+
+I will add these details in the next revision of this patch.
+
+>
+> Why are these in both operating-points and boost-frequencies? It'll be
+> really easy to accidentally forget to mark something as a
+> boost-frequency this way. Why not have a boost-points instead?
+
+Does boost-points mean a set of clock speeds which are not listed as
+part of operating-points property? If yes, that also is a possible
+implementation (it was implemented in one of the earlier version of
+this series). Could you confirm that you want the boost mode speeds to
+be exclusive of the speeds listed in operating-points?
+
+Thanks,
+Thomas.
+
+>
+>> +
+>> +Example:
+>> +
+>> +     cpus {
+>> +             #address-cells = <1>;
+>> +             #size-cells = <0>;
+>> +             cpu@0 {
+>> +                     device_type = "cpu";
+>> +                     compatible = "arm,cortex-a9";
+>> +                     reg = <0>;
+>> +
+>> +                     operating-points = <
+>> +                             1500000 1350000
+>> +                             1400000 1287500
+>> +                             1300000 1250000
+>> +                             1200000 1187500
+>> +                             1100000 1137500
+>> +                             1000000 1087500
+>> +                     >;
+>> +                     boost-frequencies = <1500000 1400000>;
+>
+> This is more of a general issue, but I hate the whole cpufreq-cpu0 way
+> of assuming that all CPUs mirror CPU0.
+>
+> It would be nicer if either this were dropped in /cpus or repeated
+> per-cpu.
+>
+> Cheers,
+> Mark.
+>
+>> +             };
+>> +             cpu@1 {
+>> +                     device_type = "cpu";
+>> +                     compatible = "arm,cortex-a9";
+>> +                     reg = <1>;
+>> +             };
+>> +     };
+>> --
+>> 1.7.9.5
+>>
+>>
+>
+> [1] http://en.wikipedia.org/wiki/Apostrophe#Superfluous_apostrophes_.28.22greengrocers.27_apostrophes.22.29
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
