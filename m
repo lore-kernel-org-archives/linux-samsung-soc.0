@@ -1,120 +1,184 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v6 2/2] Documentation: devicetree: Add boost-frequency
- binding to list boost mode frequency
-Date: Fri, 30 May 2014 14:08:27 +0100
-Message-ID: <20140530130827.GK24233@leverpostej>
-References: <1401440477-4328-1-git-send-email-thomas.ab@samsung.com>
- <1401440477-4328-3-git-send-email-thomas.ab@samsung.com>
+From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Fri, 30 May 2014 08:16:05 -0500
+Message-ID: <CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:60883 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932205AbaE3NIc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 May 2014 09:08:32 -0400
-Content-Disposition: inline
-In-Reply-To: <1401440477-4328-3-git-send-email-thomas.ab@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1400877218-4113-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "nm@ti.com" <nm@ti.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 
-Hi,
-
-Apologies for being somewhat late w.r.t. review on this.
-
-On Fri, May 30, 2014 at 10:01:17AM +0100, Thomas Abraham wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
-> 
-> Add a new optional boost-frequency binding for specifying the frequencies
-> usable in boost mode.
-> 
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Pawel Moll <pawel.moll@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-> Cc: Kumar Gala <galak@codeaurora.org>
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Acked-by: Nishanth Menon <nm@ti.com>
-> Acked-by: Lukasz Majewski <l.majewski@samsung.com>
+On Fri, May 23, 2014 at 3:33 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> This commit introduces a generic device tree binding for IOMMU devices.
+> Only a very minimal subset is described here, but it is enough to cover
+> the requirements of both the Exynos System MMU and Tegra SMMU as
+> discussed here:
+>
+>     https://lkml.org/lkml/2014/4/27/346
+>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  .../devicetree/bindings/cpufreq/cpufreq-boost.txt  |   38 ++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+> Changes in v2:
+> - add notes about "dma-ranges" property (drop note from commit message)
+> - document priorities of "iommus" property vs. "dma-ranges" property
+> - drop #iommu-cells in favour of #address-cells and #size-cells
+> - remove multiple-master device example
+>
+>  Documentation/devicetree/bindings/iommu/iommu.txt | 167 ++++++++++++++++++++++
+>  1 file changed, 167 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iommu/iommu.txt
+>
+> diff --git a/Documentation/devicetree/bindings/iommu/iommu.txt b/Documentation/devicetree/bindings/iommu/iommu.txt
 > new file mode 100644
-> index 0000000..63ed0fc
+> index 000000000000..6ce759afcc94
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
-> @@ -0,0 +1,38 @@
-> +* Device tree binding for CPU boost frequency (aka over-clocking)
+> +++ b/Documentation/devicetree/bindings/iommu/iommu.txt
+> @@ -0,0 +1,167 @@
+> +This document describes the generic device tree binding for IOMMUs and their
+> +master(s).
 > +
-> +Certain CPU's can be operated in optional 'boost' mode (or sometimes referred as
-
-Nit: CPUs (we're not greengrocers [1])
-
-> +overclocking) in which the CPU can operate at frequencies which are not
-> +specified by the manufacturer as CPU's operating frequency.
 > +
-> +Optional Properties:
-> +- boost-frequencies: list of frequencies in KHz to be used only in boost mode.
-> +  This list should be a subset of frequencies listed in "operating-points"
-> +  property. Refer to Documentation/devicetree/bindings/power/opp.txt for
-> +  details about "operating-points" property.
+> +IOMMU device node:
+> +==================
+> +
+> +An IOMMU can provide the following services:
+> +
+> +* Remap address space to allow devices to access physical memory ranges that
+> +  they otherwise wouldn't be capable of accessing.
+> +
+> +  Example: 32-bit DMA to 64-bit physical addresses
+> +
+> +* Implement scatter-gather at page level granularity so that the device does
+> +  not have to.
+> +
+> +* Provide system protection against "rogue" DMA by forcing all accesses to go
+> +  through the IOMMU and faulting when encountering accesses to unmapped
+> +  address regions.
+> +
+> +* Provide address space isolation between multiple contexts.
+> +
+> +  Example: Virtualization
+> +
+> +Device nodes compatible with this binding represent hardware with some of the
+> +above capabilities.
+> +
+> +IOMMUs can be single-master or multiple-master. Single-master IOMMU devices
+> +typically have a fixed association to the master device, whereas multiple-
+> +master IOMMU devices can translate accesses from more than one master.
+> +
+> +The device tree node of the IOMMU device's parent bus must contain a valid
+> +"dma-ranges" property that describes how the physical address space of the
+> +IOMMU maps to memory. An empty "dma-ranges" property means that there is a
+> +1:1 mapping from IOMMU to memory.
+> +
+> +Required properties:
+> +--------------------
+> +- #address-cells: The number of cells in an IOMMU specifier needed to encode
+> +  an address.
+> +- #size-cells: The number of cells in an IOMMU specifier needed to represent
+> +  the length of an address range.
+> +
+> +Typical values for the above include:
+> +- #address-cells = <0>, size-cells = <0>: Single master IOMMU devices are not
+> +  configurable and therefore no additional information needs to be encoded in
+> +  the specifier. This may also apply to multiple master IOMMU devices that do
+> +  not allow the association of masters to be configured.
+> +- #address-cells = <1>, size-cells = <0>: Multiple master IOMMU devices may
+> +  need to be configured in order to enable translation for a given master. In
+> +  such cases the single address cell corresponds to the master device's ID.
+> +- #address-cells = <2>, size-cells = <2>: Some IOMMU devices allow the DMA
+> +  window for masters to be configured. The first cell of the address in this
+> +  may contain the master device's ID for example, while the second cell could
+> +  contain the start of the DMA window for the given device. The length of the
+> +  DMA window is specified by two additional cells.
+> +
+> +
+> +IOMMU master node:
+> +==================
+> +
+> +Devices that access memory through an IOMMU are called masters. A device can
+> +have multiple master interfaces (to one or more IOMMU devices).
+> +
+> +Required properties:
+> +--------------------
+> +- iommus: A list of phandle and IOMMU specifier pairs that describe the IOMMU
+> +  master interfaces of the device. One entry in the list describes one master
+> +  interface of the device.
+> +
+> +When an "iommus" property is specified in a device tree node, the IOMMU will
+> +be used for address translation. If a "dma-ranges" property exists in the
+> +device's parent node it will be ignored. An exception to this rule is if the
+> +referenced IOMMU is disabled, in which case the "dma-ranges" property of the
+> +parent shall take effect.
 
-What is 'boost-mode'?
+Just thinking out loud, could you have dma-ranges in the iommu node
+for the case when the iommu is enabled rather than putting the DMA
+window information into the iommus property?
 
-What are the limitations on boost frequencies? When is a CPU expected to
-go to these frequencies and for now long? When should I as a dt author
-place elements in boost-frequencies?
-
-Why are these in both operating-points and boost-frequencies? It'll be
-really easy to accidentally forget to mark something as a
-boost-frequency this way. Why not have a boost-points instead?
+This would probably mean that you need both #iommu-cells and #address-cells.
 
 > +
-> +Example:
+> +Optional properties:
+> +--------------------
+> +- iommu-names: A list of names identifying each entry in the "iommus"
+> +  property.
+
+Do we really need a name here? I would not expect that you have
+clearly documented names here from the datasheet like you would for
+interrupts or clocks, so you'd just be making up names. Sorry, but I'm
+not a fan of names properties in general.
+
 > +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a9";
-> +			reg = <0>;
 > +
-> +			operating-points = <
-> +				1500000 1350000
-> +				1400000 1287500
-> +				1300000 1250000
-> +				1200000 1187500
-> +				1100000 1137500
-> +				1000000 1087500
-> +			>;
-> +			boost-frequencies = <1500000 1400000>;
+> +Notes:
+> +======
+> +
+> +One possible extension to the above is to use an "iommus" property along with
+> +a "dma-ranges" property in a bus device node (such as PCI host bridges). This
+> +can be useful to describe how children on the bus relate to the IOMMU if they
+> +are not explicitly listed in the device tree (e.g. PCI devices). However, the
+> +requirements of that use-case haven't been fully determined yet. Implementing
+> +this is therefore not recommended without further discussion and extension of
+> +this binding.
+> +
+> +
 
-This is more of a general issue, but I hate the whole cpufreq-cpu0 way
-of assuming that all CPUs mirror CPU0.
+[...]
 
-It would be nicer if either this were dropped in /cpus or repeated
-per-cpu.
+> +Multiple-master IOMMU:
+> +----------------------
+> +
+> +       iommu {
+> +               /* the specifier represents the ID of the master */
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +       };
+> +
+> +       master {
+> +               /* device has master ID 42 in the IOMMU */
+> +               iommus = <&/iommu 42>;
+> +       };
 
-Cheers,
-Mark.
+Presumably the ID would be the streamID on ARM's SMMU. How would a
+master with 8 streamIDs be described? This is what Calxeda midway has
+for SATA and I would expect that to be somewhat common. Either you
+need some ID masking or you'll have lots of duplication when you have
+windows.
 
-> +		};
-> +		cpu@1 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a9";
-> +			reg = <1>;
-> +		};
-> +	};
-> -- 
-> 1.7.9.5
-> 
-> 
-
-[1] http://en.wikipedia.org/wiki/Apostrophe#Superfluous_apostrophes_.28.22greengrocers.27_apostrophes.22.29
+Rob
