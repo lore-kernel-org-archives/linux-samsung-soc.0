@@ -1,103 +1,86 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: exynos4212: hotplug: Fix CPU idle clock down after
- CPU1 off
-Date: Fri, 30 May 2014 14:46:30 +0200
-Message-ID: <1401453990.11651.2.camel@AMDC1943>
-References: <1399990378-7023-1-git-send-email-k.kozlowski@samsung.com>
- <53887095.7090108@gmail.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCHv3 3/4] mmc: dw_mmc: remove the "supports-highspeed"
+ property.
+Date: Fri, 30 May 2014 21:51:56 +0900
+Message-ID: <001a01cf7c05$f02a2bd0$d07e8370$%jun@samsung.com>
+References: <1401255351-17653-1-git-send-email-jh80.chung@samsung.com>
+ <1401255351-17653-4-git-send-email-jh80.chung@samsung.com>
+ <CAPDyKFpTTYHtkKjFmbPi6P_xfdfd8Fv8qfpKZMfpQBppRNZLwg@mail.gmail.com>
+ <53883D69.4010701@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53493 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752186AbaE3Mq3 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:45426 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752615AbaE3Mv7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 May 2014 08:46:29 -0400
-In-reply-to: <53887095.7090108@gmail.com>
+	Fri, 30 May 2014 08:51:59 -0400
+In-reply-to: <53883D69.4010701@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Ulf Hansson' <ulf.hansson@linaro.org>
+Cc: 'linux-mmc' <linux-mmc@vger.kernel.org>, 'Chris Ball' <chris@printf.net>, 'Ludovic Desroches' <ludovic.desroches@atmel.com>, devicetree@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, cpgs@samsung.com
 
-On pi=C4=85, 2014-05-30 at 13:50 +0200, Tomasz Figa wrote:
-> Hi Krzysztof,
->=20
-> On 13.05.2014 16:12, Krzysztof Kozlowski wrote:
-> > On Exynos4212 USE_DELAYED_RESET_ASSERTION must be set in
-> > ARM_CORE1_OPTION register during CPU power down. This is the proper=
- way
-> > of powering down CPU. Additionally without this the CPU clock down =
-won't
-> > work after powering down CPU1 and CPU will work at full frequency c=
-hosen
-> > by CPUfreq governor.
-> >=20
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > ---
-> >  arch/arm/mach-exynos/hotplug.c  | 28 +++++++++++++++++++++++++---
-> >  arch/arm/mach-exynos/regs-pmu.h |  2 ++
-> >  2 files changed, 27 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/=
-hotplug.c
-> > index 5eead530c6f8..59b813e74558 100644
-> > --- a/arch/arm/mach-exynos/hotplug.c
-> > +++ b/arch/arm/mach-exynos/hotplug.c
-> > @@ -74,7 +74,7 @@ static inline void cpu_enter_lowpower_a15(void)
-> >  	dsb();
-> >  }
-> > =20
-> > -static inline void cpu_leave_lowpower(void)
-> > +static inline void cpu_leave_lowpower(unsigned int cpu)
-> >  {
-> >  	unsigned int v;
-> > =20
-> > @@ -88,6 +88,14 @@ static inline void cpu_leave_lowpower(void)
-> >  	  : "=3D&r" (v)
-> >  	  : "Ir" (CR_C), "Ir" (0x40)
-> >  	  : "cc");
-> > +
-> > +	if (cpu =3D=3D 1 && soc_is_exynos4212()) {
->=20
-> AFAIK this is needed not only on Exynos4x12, but at least also on 441=
-2.
-> Also I don't think the (cpu =3D=3D 1) condition is necessary. See bel=
-ow.
+On Fri, May 30, 2014, Jaehoon Chung wrote:
+> Hi, Ulf.
+> 
+> On 05/30/2014 05:01 PM, Ulf Hansson wrote:
+> > On 28 May 2014 07:35, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> >> Removed the parser for "supports-highspeed".
+> >> It can be parsed with "cap-mmc-highsped" or "cap-sd-highspeed" at
+> >> mmc_of_parse().
+> >>
+> >> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> >> ---
+> >>  drivers/mmc/host/dw_mmc.c |    3 ---
+> >>  1 file changed, 3 deletions(-)
+> >>
+> >> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> >> index 3285bdd..34b5210 100644
+> >> --- a/drivers/mmc/host/dw_mmc.c
+> >> +++ b/drivers/mmc/host/dw_mmc.c
+> >> @@ -2281,9 +2281,6 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
+> >>                         return ERR_PTR(ret);
+> >>         }
+> >>
+> >> -       if (of_find_property(np, "supports-highspeed", NULL))
+> >> -               pdata->caps |= MMC_CAP_SD_HIGHSPEED | MMC_CAP_MMC_HIGHSPEED;
+> >> -
+> >
+> > According to DT guys, normally we shouldn't remove DT bindings. Thus,
+> > you need to keep this, unless you can get some of the DT guys to ack
+> > it.
+> As you mentioned, this patch didn't need, right?
+> 
+> >
+> > Though, you still want to move the DTs to use common mmc bindings. And
+> > you could mark the documentation of the above binding as deprecated.
+> I added the comment for deprecated into dw-mmc dt-binding doc file.
+> "[PATCHv3,4/4] ARM: dts: replace the slot property into slot sub-node for dwmmc."
+> 
+> I think this patch can be discarded. then everything is ok.!? :)
+Once decided to turn common mmc bindings instead of driver-specific,
+host driver shall not need old one.
+I think we can remove it.
 
-I'll test it on Exynos4412.
+Thanks,
+Seungwon Jeon
 
->=20
-> > +		unsigned int tmp;
-> > +
-> > +		tmp =3D __raw_readl(S5P_ARM_CORE1_OPTION);
-> > +		tmp &=3D ~(S5P_USE_DELAYED_RESET_ASSERTION);
-> > +		__raw_writel(tmp, S5P_ARM_CORE1_OPTION);
-> > +	}
-> >  }
-> > =20
-> >  static inline void platform_do_lowpower(unsigned int cpu, int *spu=
-rious)
-> > @@ -95,8 +103,22 @@ static inline void platform_do_lowpower(unsigne=
-d int cpu, int *spurious)
-> >  	for (;;) {
-> > =20
-> >  		/* make cpu1 to be turned off at next WFI command */
-> > -		if (cpu =3D=3D 1)
-> > +		if (cpu =3D=3D 1) {
->=20
-> I think this patch should be rebased on top of my "[PATCH] ARM: EXYNO=
-S:
-> Fix core ID used by platsmp and hotplug code". Then instead of if (cp=
-u
-> =3D=3D 1) you would just use EXYNOS_ARM_CORE_OPTION(core_id).
->=20
-> Also same comment as above, I believe this is also needed on Exynos44=
-12.
-
-Probably your patch needs rebasing too. I couldn't apply (cleanly) on
-current Linus' tree and on Kukjin's for-next. What are the requirements
-for it?
-
-Best regards,
-Krzysztof
+> 
+> If i'm wrong, let me know, plz.
+> 
+> Thank you for sharing the information.
+> 
+> Best Regards,
+> Jaehoon Chung
+> >
+> > Kind regards
+> > Ulf Hansson
+> >
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
