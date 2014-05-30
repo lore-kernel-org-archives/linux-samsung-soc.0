@@ -1,103 +1,73 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL 2/5] Samsung clock updates for 3.16
-Date: Fri, 30 May 2014 10:18:10 +0900
-Message-ID: <060401cf7ba5$058227f0$108677d0$@samsung.com>
-References: <014501cf73c8$5eb66960$1c233c20$@samsung.com>
- <20140529181708.GA18481@quad.lixom.net>
+Subject: RE: [GIT PULL 5/5] Samsung Exynos MCPM support for 3.16
+Date: Fri, 30 May 2014 10:26:24 +0900
+Message-ID: <060801cf7ba6$2b815ec0$82841c40$@samsung.com>
+References: <014801cf73c8$7d1f9930$775ecb90$@samsung.com>
+ <20140522053841.GI32618@quad.lixom.net>
+ <CAOesGMj=c3RVQs2=xtWV82nMxjD9w6QNv2Wz4wTi7KrOuHYTig@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:63506 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754225AbaE3BSN (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:46267 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752220AbaE3B0Z (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 May 2014 21:18:13 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Thu, 29 May 2014 21:26:25 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N6D004VH4YBPY40@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 30 May 2014 10:18:11 +0900 (KST)
-In-reply-to: <20140529181708.GA18481@quad.lixom.net>
+ with ESMTP id <0N6D006MI5C00ND0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 30 May 2014 10:26:24 +0900 (KST)
+In-reply-to: <CAOesGMj=c3RVQs2=xtWV82nMxjD9w6QNv2Wz4wTi7KrOuHYTig@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Olof Johansson' <olof@lixom.net>
-Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Tomasz Figa' <t.figa@samsung.com>
+Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Abhilash Kesavan' <a.kesavan@samsung.com>
 
 Olof Johansson wrote:
 > 
-> On Tue, May 20, 2014 at 10:11:03AM +0900, Kukjin Kim wrote:
-> > The following changes since commit
-> 34c453ce16633539a94a2e876faeb731ac1be899:
+> On Wed, May 21, 2014 at 10:38 PM, Olof Johansson <olof@lixom.net> wrote:
+> > On Tue, May 20, 2014 at 10:11:54AM +0900, Kukjin Kim wrote:
+> >> The following changes since commit d7067f1c5fa0232001502569c6878d22308da268:
+> >>
+> >>   devicetree: bindings: document SYSRAM binding (2014-05-15 03:30:29 +0900)
+> >>
+> >> are available in the git repository at:
+> >>
+> >>   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> >> tags/exynos-mcpm
+> >>
+> >> for you to fetch changes up to ccf5511797cd4b48d20a85fa1778f5608eac9fd7:
+> >>
+> >>   ARM: EXYNOS: Add MCPM call-back functions (2014-05-16 04:26:30 +0900)
+> >>
+> >> ----------------------------------------------------------------
+> >> Exynos MCPM support for v3.16
+> >>
+> >> - adding MCPM backend support for SMP secondary boot and core switching
+> >> on Samsung's Exynos5420.
+> >>
+> >> Tested on exynos5420-smdk5420 and exynos5420 based chromebook (peach-pit)
+> >> using the "/dev/b.L_switcher" user interface. Secondary core boot-up has
+> >> also been tested on both the boards.
 > >
-> >   ARM: S3C24XX: fix merge conflict (2014-05-15 05:54:38 +0900)
-> >
-> > are available in the git repository at:
-> >
-> >   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > tags/samsung-clk
-> >
-> > for you to fetch changes up to 6520e968eef4f88c076a84a80e026049d157132e:
-> >
-> >   clk: exynos5420: Add 5800 specific clocks (2014-05-19 22:15:08 +0900)
-> >
-> > ----------------------------------------------------------------
-> > Samsung clock updates for 3.16
-> >
-> > In this time, it is having dependency with arch/arm/ for 3.16,
-> > I pulled them into samsung tree from Tomasz under agreement from Mike.
-> >
-> > - Pull for_3.16/exynos5260 from Tomasz Figa:
-> >
-> >   "This pull request contains patches preparing Samsung Common Clock
-> > Framework
-> >   helpers to support Exynos5260 by adding support for multiple clock
-> > providers
-> >   and then adding clock driver for Exynos5260."
-> >
-> > - Pull for_3.16/clk_fixes_non_critical from Tomasz Figa:
-> >
-> >   "This pull requests contains a number of non-critical fixes for Samsung
-> > clock
-> >   framework and drivers, including:
-> >   1) a series of fixes for Exynos5420 to correct clock definitions and make
-> > the
-> >   driver closer to the documentation,
-> >   2) several missing clocks and clock IDs added to Exynos4, Exynos5250 and
-> >   Exynos5420 drivers,
-> >   3) fix for incorrect initialization of clock table with NULL,
-> >   4) compiler warning fix."
-> >
-> > - Pull for_3.16/clk_cleanup from Tomasz Figa:
-> >
-> >   "This pull requests contains minor clean-up related to Samsung clock
-> >   support, including:
-> >   1) move Kconfig entries of Samsung clock drivers to drivers/clk,
-> >   2) compile drivers/clk/samsung conditionally when COMMON_CLK_SAMSUNG is
-> >   selected,
-> >   3) remove obsolete Kconfig lines after moving s3c24xx to CCF."
-> >
-> > - Pull for_3.16/exynos3250 from Tomasz Figa:
-> >
-> >   "This small pull request contains a patch adding clock driver for
-> > Exynos3250,
-> >   which depends on previous pull requests in this series."
-> >
-> > - add dt bindings for exynos3250 clock
-> > - add exynos5800 specific clocks in current exynos5420 clock
-> >
-> > Note that this branch is based on s3c24xx ccf branch
+> > This goes with new SoC enablement as well; we'll merge it after multi-platform.
 > 
-> Hi,
+> Merged now, since multiplatform is going in as well.
 > 
-> Merged into next/soc. In the future, you can probably just send up topic
-> branches like these directly, no need to merge them together just to send
-> them
-> up.
+> What confused me for a while here was that this branch was based on a
+> partial version of the DT branch, but it didn't match any of the
+
+Yeah, I just thought that it would be better if this could be having minimally
+the dependent patches.
+
+> branch heads we had merged in. It's not wrong to do so but it's useful
+> to get a heads up in the pull request.
 > 
-OK, I see.
+OK, I see. I will do as you suggested in future.
 
 Thanks,
 Kukjin
