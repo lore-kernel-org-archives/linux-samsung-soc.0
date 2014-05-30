@@ -1,49 +1,55 @@
-From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH v2 Resend 1/2] ARM: EXYNOS: Update secondary boot addr
- for secure mode
-Date: Fri, 30 May 2014 20:19:37 +0200
-Message-ID: <5388CBB9.1050003@suse.de>
-References: <1401250382-24046-1-git-send-email-sachin.kamat@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 Resend 2/2] ARM: dts: Add secure firmware support for
+ Arndale-octa
+Date: Sat, 31 May 2014 03:20:23 +0900
+Message-ID: <5388CBE7.40202@samsung.com>
+References: <1401250382-24046-1-git-send-email-sachin.kamat@linaro.org> <1401250382-24046-2-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:40499 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932473AbaE3STj (ORCPT
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:34158 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932413AbaE3SU2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 May 2014 14:19:39 -0400
-In-Reply-To: <1401250382-24046-1-git-send-email-sachin.kamat@linaro.org>
+	Fri, 30 May 2014 14:20:28 -0400
+Received: by mail-pb0-f51.google.com with SMTP id ma3so1983987pbc.24
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 May 2014 11:20:28 -0700 (PDT)
+In-Reply-To: <1401250382-24046-2-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, tushar.behera@linaro.org, tomasz.figa@gmail.com
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, tushar.behera@linaro.org, tomasz.figa@gmail.com
 
-Am 28.05.2014 06:13, schrieb Sachin Kamat:
-> Almost all Exynos-series of SoCs that run in secure mode don't need
-> additional offset for every CPU, with Exynos4412 being the only
-> exception.
->=20
-> Tested on Origen-Quad (Exynos4412) and Arndale-Octa (Exynos5420).
->=20
-> While at it, fix the coding style (space around *).
->=20
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+On 05/28/14 13:13, Sachin Kamat wrote:
+> From: Tushar Behera<tushar.behera@linaro.org>
+>
+> Arndale-Octa board is always configured to work with trustzone
+> firmware binary. Added DTS node entry to enable this support.
+>
+> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
+> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
 > ---
->  arch/arm/mach-exynos/firmware.c |    9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+>   arch/arm/boot/dts/exynos5420-arndale-octa.dts |    5 +++++
+>   1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> index 6ee8149fd5c4..434fd9d3e09d 100644
+> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> @@ -26,6 +26,11 @@
+>   		bootargs = "console=ttySAC3,115200";
+>   	};
+>
+> +	firmware@02073000 {
+> +		compatible = "samsung,secure-firmware";
+> +		reg =<0x02073000 0x1000>;
+> +	};
+> +
+>   	fixed-rate-clocks {
+>   		oscclk {
+>   			compatible = "samsung,exynos5420-oscclk";
 
-=46ixes ODROID-XU (Exynos5410) as well - thought it had been a prereq t=
-o
-applying the 5410 patches...
+Applied, thanks.
 
-Tested-by: Andreas F=E4rber <afaerber@suse.de>
-
-Regards,
-Andreas
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
-berg
+- Kukjin
