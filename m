@@ -1,79 +1,46 @@
-From: Tushar Behera <trblinux@gmail.com>
-Subject: Re: [PATCH v11 0/3] Exynos 5410 support
-Date: Fri, 30 May 2014 09:11:21 +0530
-Message-ID: <CAC5m3Bz53QO5tTTvk7qnBQtwtjMvSgYZ15prAvnLjdogQRsfMQ@mail.gmail.com>
-References: <1401074613-29227-1-git-send-email-t.dakhran@samsung.com>
-	<7hr43f9mmn.fsf@paris.lan>
-	<538737CA.4070709@suse.de>
-	<53874862.5080809@samsung.com>
-	<538775AB.3000604@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH 1/2] ARM: dts: Correct the usb phy node in peach-pit
+Date: Fri, 30 May 2014 10:31:39 +0530
+Message-ID: <1401426100-13720-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f173.google.com ([209.85.128.173]:38456 "EHLO
-	mail-ve0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752099AbaE3DlW convert rfc822-to-8bit (ORCPT
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:61582 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750892AbaE3FCD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 May 2014 23:41:22 -0400
-In-Reply-To: <538775AB.3000604@suse.de>
+	Fri, 30 May 2014 01:02:03 -0400
+Received: by mail-pb0-f43.google.com with SMTP id up15so1302546pbc.16
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2014 22:02:02 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: Tarek Dakhran <t.dakhran@samsung.com>, Kevin Hilman <khilman@linaro.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@gmail.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, gautam.vivek@samsung.com
 
-On Thu, May 29, 2014 at 11:30 PM, Andreas F=C3=A4rber <afaerber@suse.de=
-> wrote:
-> Hi Tarek,
->
->
-> And I reproducibly get failures for CPUs 1-3, resulting in only one C=
-PU
-> in /proc/cpuinfo (compared to 4 on downstream 3.14):
->
-> [    0.045778] CPU: Testing write buffer coherency: ok
-> [    0.045968] /cpus/cpu@0 missing clock-frequency property
-> [    0.045993] /cpus/cpu@1 missing clock-frequency property
-> [    0.046016] /cpus/cpu@2 missing clock-frequency property
-> [    0.046040] /cpus/cpu@3 missing clock-frequency property
-> [    0.046059] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
-> [    0.046135] Setting up static identity map for 0x403a8920 - 0x403a=
-8978
-> [    2.075052] CPU1: failed to come online
-> [    4.085095] CPU2: failed to come online
-> [    6.095142] CPU3: failed to come online
-> [    6.095237] Brought up 1 CPUs
-> [    6.095269] SMP: Total of 1 processors activated.
-> [    6.095303] CPU: All CPU(s) started in HYP mode.
-> [    6.095336] CPU: Virtualization extensions available.
->
-> I also notice another apparent device tree issue:
->
-> [    7.341814] of_get_named_gpiod_flags: can't parse gpios property o=
-f
-> node '/soc/mmc@12220000/slot@0[0]'
-> [    7.341850] of_get_named_gpiod_flags: can't parse gpios property o=
-f
-> node '/soc/mmc@12220000/slot@0[0]'
->
-> Are any of those known issues and being worked on?
-> (The CPU failures affected 5420 Arndale Octa as well iirc.)
->
+The vbus-supply property is wrongly updated in the
+usbdrd node instead of the usbdrd_phy node. This patch
+fixes the same.
 
-Can you check after applying following two patches for Arndale-Octa
-([1],[2])? In other words, a patch similar to [2] might be required
-for this board too if it is booting under secure mode.
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+---
+ arch/arm/boot/dts/exynos5420-peach-pit.dts |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[1] http://www.spinics.net/lists/linux-samsung-soc/msg31776.html
-
-[PATCH v2 Resend 1/2] ARM: EXYNOS: Update secondary boot addr for secur=
-e mode
-
-[2] http://www.spinics.net/lists/linux-samsung-soc/msg31777.html
-
-[PATCH v2 Resend 2/2] ARM: dts: Add secure firmware support for Arndale=
--octa
-
-
---
-Tushar Behera
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 29f64de..1c5b8f9 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -231,11 +231,11 @@
+ 	ddc = <&i2c_2>;
+ };
+ 
+-&usbdrd3_0 {
++&usbdrd_phy0 {
+ 	vbus-supply = <&usb300_vbus_reg>;
+ };
+ 
+-&usbdrd3_1 {
++&usbdrd_phy1 {
+ 	vbus-supply = <&usb301_vbus_reg>;
+ };
+ 
+-- 
+1.7.9.5
