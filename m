@@ -1,115 +1,99 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2] clk: exynos5420: Keep aclk66_peric enabled during boot
-Date: Fri, 30 May 2014 09:32:42 -0700
-Message-ID: <1401467562-5585-1-git-send-email-dianders@chromium.org>
-References: <1401398496-4624-1-git-send-email-dianders@chromium.org>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 0/8] i.MX6 PCIe binding change and MSI support
+Date: Fri, 30 May 2014 11:30:53 -0600
+Message-ID: <20140530173053.GF4607@google.com>
+References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
+ <20140424175844.GD29593@google.com>
+ <1398421265.4657.25.camel@weser.hi.pengutronix.de>
+ <CAErSpo7Boi8d+apAUC3TmmE33LuRMYJ6J+TEPLRbeyZyU3O8RQ@mail.gmail.com>
+ <1398774686.4677.12.camel@weser.hi.pengutronix.de>
+ <1399885183.5016.4.camel@weser.hi.pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f73.google.com ([209.85.219.73]:61586 "EHLO
-	mail-oa0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933148AbaE3Qcx (ORCPT
+Received: from mail-ig0-f176.google.com ([209.85.213.176]:40651 "EHLO
+	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754389AbaE3Ra4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 May 2014 12:32:53 -0400
-Received: by mail-oa0-f73.google.com with SMTP id g18so418990oah.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 May 2014 09:32:52 -0700 (PDT)
-In-Reply-To: <1401398496-4624-1-git-send-email-dianders@chromium.org>
+	Fri, 30 May 2014 13:30:56 -0400
+Received: by mail-ig0-f176.google.com with SMTP id hl10so1081628igb.9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 May 2014 10:30:56 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1399885183.5016.4.camel@weser.hi.pengutronix.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: olof@lixom.net, javier.martinez@collabora.co.uk, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Shawn Guo <shawn.guo@linaro.org>, Richard Zhu <r65037@freescale.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Marek Vasut <marex@denx.de>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Tim Harvey <tharvey@gateworks.com>, Jingoo Han <jg1.han@samsung.com>, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, Mark Rutland <mark.rutland@arm.com>, Sean Cross <xobs@kosagi.com>, linux-arm <linux-arm-kernel@lists.infradead.org>
 
-Right now if you've got earlyprintk enabled on exynos5420-peach-pit
-then you'll get a hang on boot.  Here's why:
+On Mon, May 12, 2014 at 10:59:43AM +0200, Lucas Stach wrote:
+> Hi Bjorn,
+> 
+> just a friendly reminder. It would be nice if you could pull those in.
+> 
+> Shawn already pulled the DT change and as it is a binding change this
+> means PCIe on i.MX6 is broken in -next, as long as the remaining patches
+> are missing.
 
-1. The i2c-s3c2410 driver will probe at subsys_initcall.  It will
-   enable its clock and disable it.  This is the clock "i2c2".
-2. The act of disabling "i2c2" will disable its parents.  In this case
-   the parent is "aclk66_peric".  There are no other children of
-   "aclk66_peric" officially enabled, so "aclk66_peric" will be turned
-   off (despite being CLK_IGNORE_UNUSED, but that's by design).
-3. The next time you try to earlyprintk you'll do so without the UART
-   clock enabled.  That's because the UART clocks are also children of
-   "aclk66_peric".  You'll hang.
+I applied these to pci/host-imx6 for v3.16.
 
-There's no good place to put a clock enable for earlyprintk, which is
-handled by a bunch of assembly code.  The best we can do is to handle
-this in the clock driver.
+Sorry I didn't do this sooner; I get a lot of email and it's easy to
+overlook things.  I mostly work from patchwork
+(http://patchwork.ozlabs.org/project/linux-pci/list/?order=date), and I had
+dropped this series from there because there was enough discussion that I
+expected a re-post, so it wasn't on my radar screen anymore.
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
-Changes in v2:
-- Use GATE_A and clk_get().  Save the clock for putting later.
-- Return 0 from exynos5420_clk_late_init().
+Bjorn
 
- drivers/clk/samsung/clk-exynos5420.c | 33 +++++++++++++++++++++++++++++++--
- 1 file changed, 31 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 9d7d7ee..70b607a 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -890,8 +890,8 @@ static struct samsung_gate_clock exynos5x_gate_clks[] __initdata = {
- 			GATE_BUS_TOP, 9, CLK_IGNORE_UNUSED, 0),
- 	GATE(0, "aclk66_psgen", "mout_user_aclk66_psgen",
- 			GATE_BUS_TOP, 10, CLK_IGNORE_UNUSED, 0),
--	GATE(CLK_ACLK66_PERIC, "aclk66_peric", "mout_user_aclk66_peric",
--			GATE_BUS_TOP, 11, CLK_IGNORE_UNUSED, 0),
-+	GATE_A(CLK_ACLK66_PERIC, "aclk66_peric", "mout_user_aclk66_peric",
-+			GATE_BUS_TOP, 11, CLK_IGNORE_UNUSED, 0, "aclk66_peric"),
- 	GATE(0, "aclk266_isp", "mout_user_aclk266_isp",
- 			GATE_BUS_TOP, 13, 0, 0),
- 	GATE(0, "aclk166", "mout_user_aclk166",
-@@ -1172,11 +1172,22 @@ static struct of_device_id ext_clk_match[] __initdata = {
- 	{ },
- };
- 
-+/* Keep these clocks on until late_initcall */
-+struct boot_clock {
-+	char *name;
-+	struct clk *clk;
-+};
-+
-+static struct boot_clock boot_clocks[] __initdata = {
-+	{ .name = "aclk66_peric", },
-+};
-+
- /* register exynos5420 clocks */
- static void __init exynos5x_clk_init(struct device_node *np,
- 		enum exynos5x_soc soc)
- {
- 	struct samsung_clk_provider *ctx;
-+	int i;
- 
- 	if (np) {
- 		reg_base = of_iomap(np, 0);
-@@ -1226,6 +1237,11 @@ static void __init exynos5x_clk_init(struct device_node *np,
- 	}
- 
- 	exynos5420_clk_sleep_init();
-+
-+	for (i = 0; i < ARRAY_SIZE(boot_clocks); i++) {
-+		boot_clocks[i].clk = clk_get(NULL, boot_clocks[i].name);
-+		clk_prepare_enable(boot_clocks[i].clk);
-+	}
- }
- 
- static void __init exynos5420_clk_init(struct device_node *np)
-@@ -1239,3 +1255,16 @@ static void __init exynos5800_clk_init(struct device_node *np)
- 	exynos5x_clk_init(np, EXYNOS5800);
- }
- CLK_OF_DECLARE(exynos5800_clk, "samsung,exynos5800-clock", exynos5800_clk_init);
-+
-+static int __init exynos5420_clk_late_init(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(boot_clocks); i++) {
-+		clk_disable_unprepare(boot_clocks[i].clk);
-+		clk_put(boot_clocks[i].clk);
-+	}
-+
-+	return 0;
-+}
-+late_initcall(exynos5420_clk_late_init);
--- 
-1.9.1.423.g4596e3a
+> Am Dienstag, den 29.04.2014, 14:31 +0200 schrieb Lucas Stach:
+> > Hi Bjorn,
+> > 
+> > Am Freitag, den 25.04.2014, 08:39 -0600 schrieb Bjorn Helgaas:
+> > [...]
+> > > >> >   PCI: designware: split Exynos and i.MX bindings
+> > > >> >   ARM: dts: imx6: update pcie to bring in line with new binding
+> > > >> >   PCI: imx6: use new clock names
+> > > >> >   PCI: imx6: drop old irq mapping
+> > > >> >   PCI: imx6: rip out optional (and unused) irqs
+> > > >> >   PCI: designware: make MSI isr shared irq aware
+> > > >> >   PCI: imx6: add support for MSI
+> > > >>
+> > > >> What's the status of all these?  I would normally apply patches 4-8 of this
+> > > >> series through my tree, given the appropriate acks, but I haven't seen
+> > > >> those yet.  And I'm not sure what dependencies there are between the
+> > > >> non-PCI patches and the PCI ones.
+> > > >>
+> > > > It's a complete binding change, so applying one part without the other
+> > > > is going to horribly break things.
+> > > >
+> > > > So I would at least want to see an ack for the binding change on the
+> > > > i.MX side from Shawn and Richard. This will need some follow on patches,
+> > > > as some boards adding PCIe using the old binding have cropped up in
+> > > > linux-next, but I can do the patches on short notice if everyone agrees
+> > > > to merge this patchset.
+> > > >
+> > > > The designware part is pretty simple and doesn't change anything for
+> > > > other users than i.MX. Though I would like to see an ack from Jingoo for
+> > > > those.
+> > > >
+> > > > I have some more stuff in the pipes regarding multiple MSI irqs, that
+> > > > depend on this series and also the Keystone people are waiting for this
+> > > > to be applied in order to consolidate the clock handling of the
+> > > > designware core driver, so it would be nice to get this moving again.
+> > > 
+> > > OK, just poke me again when you're ready for me to do something with these.
+> > > 
+> > 
+> > As both Richard and Jingoo gave their ack for the respective patches I
+> > think this is good to go in and I would expect all the PCI patches to go
+> > through your tree for 3.16.
+> > 
+> > Shawn, if you are not okay with this change, please speak up now.
+> > Otherwise please pick the dts change for 3.16. I'll go over linux-next
+> > and prepare the patches to fix up the boards there.
+> > 
+> 
+> 
+> -- 
+> Pengutronix e.K.             | Lucas Stach                 |
+> Industrial Linux Solutions   | http://www.pengutronix.de/  |
+> 
