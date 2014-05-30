@@ -1,78 +1,54 @@
-From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH v6 2/2] Documentation: devicetree: Add boost-frequency binding to list boost mode frequency
-Date: Fri, 30 May 2014 14:31:17 +0530
-Message-ID: <1401440477-4328-3-git-send-email-thomas.ab@samsung.com>
-References: <1401440477-4328-1-git-send-email-thomas.ab@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1401440477-4328-1-git-send-email-thomas.ab@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: rjw@rjwysocki.net, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com, nm@ti.com, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Enabling 8 cores on 5420
+Date: Fri, 30 May 2014 11:25:28 +0200
+Message-ID: <53884E88.2090408@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f181.google.com ([74.125.82.181]:40048 "EHLO
+	mail-we0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755029AbaE3JZO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 May 2014 05:25:14 -0400
+Received: by mail-we0-f181.google.com with SMTP id w61so1679217wes.40
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 May 2014 02:25:12 -0700 (PDT)
+Received: from [192.168.1.150] (AToulouse-654-1-345-44.w90-55.abo.wanadoo.fr. [90.55.184.44])
+        by mx.google.com with ESMTPSA id en6sm4390463wib.11.2014.05.30.02.25.10
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
+        Fri, 30 May 2014 02:25:11 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-From: Thomas Abraham <thomas.ab@samsung.com>
 
-Add a new optional boost-frequency binding for specifying the frequencies
-usable in boost mode.
+Hi all,
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-Cc: Kumar Gala <galak@codeaurora.org>
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Acked-by: Nishanth Menon <nm@ti.com>
-Acked-by: Lukasz Majewski <l.majewski@samsung.com>
----
- .../devicetree/bindings/cpufreq/cpufreq-boost.txt  |   38 ++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
+I am trying an upstream kernel + some patches to enable ethernet on=20
+arndale octa.
 
-diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
-new file mode 100644
-index 0000000..63ed0fc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-boost.txt
-@@ -0,0 +1,38 @@
-+* Device tree binding for CPU boost frequency (aka over-clocking)
-+
-+Certain CPU's can be operated in optional 'boost' mode (or sometimes referred as
-+overclocking) in which the CPU can operate at frequencies which are not
-+specified by the manufacturer as CPU's operating frequency.
-+
-+Optional Properties:
-+- boost-frequencies: list of frequencies in KHz to be used only in boost mode.
-+  This list should be a subset of frequencies listed in "operating-points"
-+  property. Refer to Documentation/devicetree/bindings/power/opp.txt for
-+  details about "operating-points" property.
-+
-+Example:
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0>;
-+
-+			operating-points = <
-+				1500000 1350000
-+				1400000 1287500
-+				1300000 1250000
-+				1200000 1187500
-+				1100000 1137500
-+				1000000 1087500
-+			>;
-+			boost-frequencies = <1500000 1400000>;
-+		};
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <1>;
-+		};
-+	};
--- 
-1.7.9.5
+Unfortunately, only 4 cores boot up. The other ones fail to boot.
 
+[12.179453] CPU6: failed to come online
+[13.189479] CPU7: failed to come online
+[14.199479] CPU4: failed to come online
+[15.209743] CPU5: failed to come online
+
+What should I do to enable those 8 cores ? Is there a patchset somewher=
+e=20
+to do so ?
+
+Thanks
+
+   -- Daniel
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
