@@ -1,108 +1,60 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH] Exynos4: cpuidle: support dual CPUs with AFTR state
-Date: Fri, 30 May 2014 11:30:58 +0200
-Message-ID: <53884FD2.7020700@linaro.org>
-References: <1396604925-18383-1-git-send-email-daniel.lezcano@linaro.org> <53594D17.6020107@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 0/2] backlight: remove trivial get_brightness implementations
+Date: Fri, 30 May 2014 12:10:48 +0200
+Message-ID: <1401444650-12267-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <53594D17.6020107@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, ccross@google.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Lee Jones <lee.jones@linaro.org>, Jingoo Han <jg1.han@samsung.com>, Bryan Wu <cooloney@gmail.com>
+Cc: Milo Kim <milo.kim@ti.com>, "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "open list:X86 PLATFORM DRIVERS" <platform-driver-x86@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Yijing Wang <wangyijing@huawei.com>, Matthew Garrett <matthew.garrett@nebula.com>, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Dan Carpenter <dan.carpenter@oracle.com>, "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Mikulas Patocka <mpato>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/24/2014 07:42 PM, Tomasz Figa wrote:
-> Hi Daniel,
->
-> Please see my comments inline.
->
-> Btw. Please fix your e-mail composer to properly wrap your messages
-> around 7xth column, as otherwise they're hard to read.
->
-> On 04.04.2014 11:48, Daniel Lezcano wrote:
->> The following driver is for exynos4210. I did not yet finished the
->> other boards, so
->> I created a specific driver for 4210 which could be merged later.
->>
->> The driver is based on Colin Cross's driver found at:
->>
->> https://android.googlesource.com/kernel/exynos/+/e686b1ec67423c40b4f=
-df811f9a4dfa3b393a010%5E%5E!/
->>
->>
->> This one was based on a 3.4 kernel and an old API.
->>
->> It has been refreshed, simplified and based on the recent code clean=
-up
->> I sent
->> today.
->>
->> The AFTR could be entered when all the cpus (except cpu0) are down. =
-In
->> order to
->> reach this situation, the couple idle states are used.
->>
->> There is a sync barrier at the entry and the exit of the low power
->> function. So
->> all cpus will enter and exit the function at the same time.
->>
->> At this point, CPU0 knows the other cpu will power down itself. CPU0
->> waits for
->> the CPU1 to be powered down and then initiate the AFTR power down
->> sequence.
->>
->> No interrupts are handled by CPU1, this is why we switch to the time=
-r
->> broadcast
->> even if the local timer is not impacted by the idle state.
->>
->> When CPU0 wakes up, it powers up CPU1 and waits for it to boot. Then
->> they both
->> exit the idle function.
->>
->> This driver allows the exynos4210 to have the same power consumption
->> at idle
->> time than the one when we have to unplug CPU1 in order to let CPU0 t=
-o
->> reach
->> the AFTR state.
->>
->> This patch is a RFC because, we have to find a way to remove the mac=
-ros
->> definitions and cpu powerdown function without pulling the arch depe=
-ndent
->> headers.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> ---
->>   arch/arm/mach-exynos/common.c        |   11 +-
->>   drivers/cpuidle/Kconfig.arm          |    8 ++
->>   drivers/cpuidle/Makefile             |    1 +
->>   drivers/cpuidle/cpuidle-exynos4210.c |  226
->> ++++++++++++++++++++++++++++++++++
+This patchset makes get_brightness callback optional
+and removes trivial implementations.
+Driver changes are quite obvious so I have put them into single
+patch.
 
-[ ... ]
+The patchset is based on the current linux-next branch.
 
+Regards
+Andrzej
 
-> Otherwise, I quite like the whole idea. I need to play a bit with CPU
-> hotplug and PMU to verify that things couldn't really be simplified a
-> bit, but in general this looks reasonably.
+Andrzej Hajda (2):
+  backlight: show brightness even if get_brightness is not implemented
+  backlight: remove trivial get_brightness implementations
 
-Hi Tomasz,
+ drivers/macintosh/via-pmu-backlight.c      | 6 ------
+ drivers/platform/x86/samsung-q10.c         | 6 ------
+ drivers/video/backlight/aat2870_bl.c       | 6 ------
+ drivers/video/backlight/ams369fg06.c       | 6 ------
+ drivers/video/backlight/backlight.c        | 2 ++
+ drivers/video/backlight/bd6107.c           | 6 ------
+ drivers/video/backlight/gpio_backlight.c   | 6 ------
+ drivers/video/backlight/ld9040.c           | 6 ------
+ drivers/video/backlight/lp855x_bl.c        | 6 ------
+ drivers/video/backlight/lp8788_bl.c        | 6 ------
+ drivers/video/backlight/lv5207lp.c         | 6 ------
+ drivers/video/backlight/pandora_bl.c       | 6 ------
+ drivers/video/backlight/pwm_bl.c           | 6 ------
+ drivers/video/backlight/s6e63m0.c          | 6 ------
+ drivers/video/backlight/tps65217_bl.c      | 6 ------
+ drivers/video/fbdev/aty/aty128fb.c         | 6 ------
+ drivers/video/fbdev/aty/atyfb_base.c       | 6 ------
+ drivers/video/fbdev/aty/radeon_backlight.c | 6 ------
+ drivers/video/fbdev/exynos/s6e8ax0.c       | 6 ------
+ drivers/video/fbdev/nvidia/nv_backlight.c  | 6 ------
+ drivers/video/fbdev/riva/fbdev.c           | 6 ------
+ 21 files changed, 2 insertions(+), 120 deletions(-)
 
-did you have time to look at this simplification ?
-
-Thanks
-   -- Daniel
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+-- 
+1.9.1
