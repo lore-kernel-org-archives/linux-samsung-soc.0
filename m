@@ -1,109 +1,103 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: exynos5420: Keep aclk66_peric enabled during boot
-Date: Thu, 29 May 2014 15:29:04 -0700
-Message-ID: <20140529222904.10062.22764@quantum>
-References: <1401398496-4624-1-git-send-email-dianders@chromium.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL 2/5] Samsung clock updates for 3.16
+Date: Fri, 30 May 2014 10:18:10 +0900
+Message-ID: <060401cf7ba5$058227f0$108677d0$@samsung.com>
+References: <014501cf73c8$5eb66960$1c233c20$@samsung.com>
+ <20140529181708.GA18481@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f180.google.com ([209.85.192.180]:60482 "EHLO
-	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751037AbaE2W3J convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:63506 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754225AbaE3BSN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 May 2014 18:29:09 -0400
-Received: by mail-pd0-f180.google.com with SMTP id y13so222175pdi.39
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 May 2014 15:29:08 -0700 (PDT)
-In-Reply-To: <1401398496-4624-1-git-send-email-dianders@chromium.org>
+	Thu, 29 May 2014 21:18:13 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N6D004VH4YBPY40@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 30 May 2014 10:18:11 +0900 (KST)
+In-reply-to: <20140529181708.GA18481@quad.lixom.net>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: olof@lixom.net, javier.martinez@collabora.co.uk, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Olof Johansson' <olof@lixom.net>
+Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Tomasz Figa' <t.figa@samsung.com>
 
-Quoting Doug Anderson (2014-05-29 14:21:36)
-> Right now if you've got earlyprintk enabled on exynos5420-peach-pit
-> then you'll get a hang on boot.  Here's why:
+Olof Johansson wrote:
 > 
-> 1. The i2c-s3c2410 driver will probe at subsys_initcall.  It will
->    enable its clock and disable it.  This is the clock "i2c2".
-> 2. The act of disabling "i2c2" will disable its parents.  In this case
->    the parent is "aclk66_peric".  There are no other children of
->    "aclk66_peric" officially enabled, so "aclk66_peric" will be turned
->    off (despite being CLK_IGNORE_UNUSED, but that's by design).
-> 3. The next time you try to earlyprintk you'll do so without the UART
->    clock enabled.  That's because the UART clocks are also children of
->    "aclk66_peric".  You'll hang.
+> On Tue, May 20, 2014 at 10:11:03AM +0900, Kukjin Kim wrote:
+> > The following changes since commit
+> 34c453ce16633539a94a2e876faeb731ac1be899:
+> >
+> >   ARM: S3C24XX: fix merge conflict (2014-05-15 05:54:38 +0900)
+> >
+> > are available in the git repository at:
+> >
+> >   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> > tags/samsung-clk
+> >
+> > for you to fetch changes up to 6520e968eef4f88c076a84a80e026049d157132e:
+> >
+> >   clk: exynos5420: Add 5800 specific clocks (2014-05-19 22:15:08 +0900)
+> >
+> > ----------------------------------------------------------------
+> > Samsung clock updates for 3.16
+> >
+> > In this time, it is having dependency with arch/arm/ for 3.16,
+> > I pulled them into samsung tree from Tomasz under agreement from Mike.
+> >
+> > - Pull for_3.16/exynos5260 from Tomasz Figa:
+> >
+> >   "This pull request contains patches preparing Samsung Common Clock
+> > Framework
+> >   helpers to support Exynos5260 by adding support for multiple clock
+> > providers
+> >   and then adding clock driver for Exynos5260."
+> >
+> > - Pull for_3.16/clk_fixes_non_critical from Tomasz Figa:
+> >
+> >   "This pull requests contains a number of non-critical fixes for Samsung
+> > clock
+> >   framework and drivers, including:
+> >   1) a series of fixes for Exynos5420 to correct clock definitions and make
+> > the
+> >   driver closer to the documentation,
+> >   2) several missing clocks and clock IDs added to Exynos4, Exynos5250 and
+> >   Exynos5420 drivers,
+> >   3) fix for incorrect initialization of clock table with NULL,
+> >   4) compiler warning fix."
+> >
+> > - Pull for_3.16/clk_cleanup from Tomasz Figa:
+> >
+> >   "This pull requests contains minor clean-up related to Samsung clock
+> >   support, including:
+> >   1) move Kconfig entries of Samsung clock drivers to drivers/clk,
+> >   2) compile drivers/clk/samsung conditionally when COMMON_CLK_SAMSUNG is
+> >   selected,
+> >   3) remove obsolete Kconfig lines after moving s3c24xx to CCF."
+> >
+> > - Pull for_3.16/exynos3250 from Tomasz Figa:
+> >
+> >   "This small pull request contains a patch adding clock driver for
+> > Exynos3250,
+> >   which depends on previous pull requests in this series."
+> >
+> > - add dt bindings for exynos3250 clock
+> > - add exynos5800 specific clocks in current exynos5420 clock
+> >
+> > Note that this branch is based on s3c24xx ccf branch
 > 
-> There's no good place to put a clock enable for earlyprintk, which is
-> handled by a bunch of assembly code.  The best we can do is to handle
-> this in the clock driver.
+> Hi,
 > 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
+> Merged into next/soc. In the future, you can probably just send up topic
+> branches like these directly, no need to merge them together just to send
+> them
+> up.
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 9d7d7ee..1e586be 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -1172,11 +1172,17 @@ static struct of_device_id ext_clk_match[] __initdata = {
->         { },
->  };
->  
-> +/* Keep these clocks on until late_initcall */
-> +static const char *boot_clocks[] __initconst = {
-> +       "aclk66_peric",
-> +};
-> +
->  /* register exynos5420 clocks */
->  static void __init exynos5x_clk_init(struct device_node *np,
->                 enum exynos5x_soc soc)
->  {
->         struct samsung_clk_provider *ctx;
-> +       int i;
->  
->         if (np) {
->                 reg_base = of_iomap(np, 0);
-> @@ -1226,6 +1232,12 @@ static void __init exynos5x_clk_init(struct device_node *np,
->         }
->  
->         exynos5420_clk_sleep_init();
-> +
-> +       for (i = 0; i < ARRAY_SIZE(boot_clocks); i++) {
-> +               struct clk *to_enable = __clk_lookup(boot_clocks[i]);
+OK, I see.
 
-How about replacing __clk_lookup with clk_get? You can keep the struct
-clk object hanging around for later...
-
-> +
-> +               clk_prepare_enable(to_enable);
-> +       }
->  }
->  
->  static void __init exynos5420_clk_init(struct device_node *np)
-> @@ -1239,3 +1251,15 @@ static void __init exynos5800_clk_init(struct device_node *np)
->         exynos5x_clk_init(np, EXYNOS5800);
->  }
->  CLK_OF_DECLARE(exynos5800_clk, "samsung,exynos5800-clock", exynos5800_clk_init);
-> +
-> +static int __init exynos5420_clk_late_init(void)
-> +{
-> +       int i;
-> +
-> +       for (i = 0; i < ARRAY_SIZE(boot_clocks); i++) {
-> +               struct clk *to_disable = __clk_lookup(boot_clocks[i]);
-> +
-> +               clk_disable_unprepare(to_disable);
-
-And then release it here with a clk_put.
-
-Regards,
-Mike
-
-> +       }
-> +}
-> +late_initcall(exynos5420_clk_late_init);
-> -- 
-> 1.9.1.423.g4596e3a
-> 
+Thanks,
+Kukjin
