@@ -1,85 +1,45 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 7/7] ARM: EXYNOS: cpuidle: add secure firmware support to
- AFTR mode code
-Date: Mon, 02 Jun 2014 14:35:43 +0200
-Message-ID: <1401712543-14281-8-git-send-email-b.zolnierkie@samsung.com>
-References: <1401712543-14281-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1401712543-14281-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 1/7] arm: firmware: Check firmware is running or not
+Date: Mon, 02 Jun 2014 14:51:14 +0200
+Message-ID: <538C7342.4000700@gmail.com>
+References: <1401712543-14281-1-git-send-email-b.zolnierkie@samsung.com> <1401712543-14281-2-git-send-email-b.zolnierkie@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1401712543-14281-2-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-* Use do_idle firmware method instead of cpu_do_idle() on boards with
-  secure firmware enabled.
+Hi,
 
-* Use sysram_ns_base_addr + 0x24 address for exynos_boot_vector_addr()
-  and sysram_ns_base_addr + 0x20 one for exynos_boot_vector_flag() on
-  boards with secure firmware enabled.
+On 02.06.2014 14:35, Bartlomiej Zolnierkiewicz wrote:
+> From: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> To support multi-platform, it needs to know it's running under secure
+> OS or not.  Sometimes it needs to access physical address by SMC calls.
+> 
+> e.g.,
+>         if (firmware_run()) {
+>                 addr = physical address;
+>         } else {
+>                 addr = virtual address;
+>         }
+> 
+>         call_firmware_ops(read_address, addr, &value);
 
-This patch fixes hang on an attempt to enter AFTR mode for TRATS2
-board (which uses EXYNOS4412 SoC with secure firmware enabled).
+Hmm, I don't understand the code above. It first asks whether the
+firmware is available and then calls a firmware operation anyway
+(assuming that firmware is available regardless of the check above)...
 
-This patch shouldn't cause any functionality changes on boards that
-don't use secure firmware.
+I don't like the idea of this function, because we have designed the
+firmware API to not require this kind of checks. Instead, you just call
+whatever firmware operation you need and if it returns -ENOSYS you need
+to fallback to legacy (firmware-less) way of doing it.
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/pm.c        | 8 ++++++--
- drivers/cpuidle/cpuidle-exynos.c | 7 ++++++-
- 2 files changed, 12 insertions(+), 3 deletions(-)
+Could you provide your use case for which this doesn't work?
 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 0fb9a5a..62a0a5e 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -169,7 +169,9 @@ int exynos_cluster_power_state(int cluster)
- 
- static inline void __iomem *exynos_boot_vector_addr(void)
- {
--	if (samsung_rev() == EXYNOS4210_REV_1_1)
-+	if (firmware_run())
-+		return sysram_ns_base_addr + 0x24;
-+	else if (samsung_rev() == EXYNOS4210_REV_1_1)
- 		return S5P_INFORM7;
- 	else if (samsung_rev() == EXYNOS4210_REV_1_0)
- 		return sysram_base_addr + 0x24;
-@@ -178,7 +180,9 @@ static inline void __iomem *exynos_boot_vector_addr(void)
- 
- static inline void __iomem *exynos_boot_vector_flag(void)
- {
--	if (samsung_rev() == EXYNOS4210_REV_1_1)
-+	if (firmware_run())
-+		return sysram_ns_base_addr + 0x20;
-+	else if (samsung_rev() == EXYNOS4210_REV_1_1)
- 		return S5P_INFORM6;
- 	else if (samsung_rev() == EXYNOS4210_REV_1_0)
- 		return sysram_base_addr + 0x20;
-diff --git a/drivers/cpuidle/cpuidle-exynos.c b/drivers/cpuidle/cpuidle-exynos.c
-index 7c01512..f90a4a0 100644
---- a/drivers/cpuidle/cpuidle-exynos.c
-+++ b/drivers/cpuidle/cpuidle-exynos.c
-@@ -17,13 +17,18 @@
- #include <asm/proc-fns.h>
- #include <asm/suspend.h>
- #include <asm/cpuidle.h>
-+#include <asm/firmware.h>
- 
- static void (*exynos_enter_aftr)(void);
- 
- static int idle_finisher(unsigned long flags)
- {
- 	exynos_enter_aftr();
--	cpu_do_idle();
-+	if (firmware_run())
-+		/* no need to check the return value on EXYNOS SoCs */
-+		call_firmware_op(do_idle, FW_DO_IDLE_AFTR);
-+	else
-+		cpu_do_idle();
- 
- 	return 1;
- }
--- 
-1.8.2.3
+Best regards,
+Tomasz
