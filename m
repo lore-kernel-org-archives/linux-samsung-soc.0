@@ -1,110 +1,126 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCHv3] ARM: dts: exynos4: clean up arm-pmu node
-Date: Mon, 02 Jun 2014 09:20:45 +0900
-Message-ID: <1401668445-9810-1-git-send-email-chanho61.park@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:9458 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751434AbaFBAU7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 1 Jun 2014 20:20:59 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N6I000ZAMAYP610@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 02 Jun 2014 09:20:58 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: [PATCH v3 05/15] drm/exynos: add TE handler to support LCD I80
+ interface
+Date: Mon, 02 Jun 2014 14:22:41 +0900
+Message-ID: <1401686571-22148-6-git-send-email-yj44.cho@samsung.com>
+References: <1401686571-22148-1-git-send-email-yj44.cho@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1401686571-22148-1-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, tushar.behera@linaro.org, Chanho Park <chanho61.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-This patch cleans a arm-pmu node up for exynos4. Only exynos4412 series
-boards have four pmu interrupts. Rest of exynos4 boards, except 4412, have only
-two pmu interrupts. Thus, we can define two interrupts in the
-exynos4.dtsi and extends the interrupts only exynos4412.dtsi.
+To support LCD I80 interface, the panel should generates
+Tearing Effect synchronization signal between MCU and FB
+to display video images.
+And the display controller should trigger to transfer
+video image at this signal.
+So the panel receives the TE IRQ, then calls this handler
+chains to notify it to the display controller.
 
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>
-Tested-by: Tushar Behera <tushar.behera@linaro.org>
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
-Changes from v2:
- - Rebase the patch on top of the kukjin's v3.16-next/dt-samsung-3
-Changes from v1:
- - Remove duplicated properties in exynos4412.dtsi(Comment from Tomasz Figa)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c |   11 +++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h |    7 +++++++
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |    3 +++
+ include/drm/drm_mipi_dsi.h               |    8 ++++++++
+ 4 files changed, 29 insertions(+)
 
- arch/arm/boot/dts/exynos4.dtsi    | 6 ++++++
- arch/arm/boot/dts/exynos4210.dtsi | 6 ------
- arch/arm/boot/dts/exynos4412.dtsi | 4 ++++
- arch/arm/boot/dts/exynos4x12.dtsi | 6 ------
- 4 files changed, 10 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index b8ece4b..5cb21a7 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -123,6 +123,12 @@
- 		reg = <0x10440000 0x1000>;
- 	};
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 3bf091d..504e023 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -511,3 +511,14 @@ int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
  
-+	pmu {
-+		compatible = "arm,cortex-a9-pmu";
-+		interrupt-parent = <&combiner>;
-+		interrupts = <2 2>, <3 2>;
-+	};
+ 	return -EPERM;
+ }
 +
- 	sys_reg: syscon@10010000 {
- 		compatible = "samsung,exynos4-sysreg", "syscon";
- 		reg = <0x10010000 0x400>;
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index ee3001f..a4f28e8 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -93,12 +93,6 @@
- 		#clock-cells = <1>;
- 	};
- 
--	pmu {
--		compatible = "arm,cortex-a9-pmu";
--		interrupt-parent = <&combiner>;
--		interrupts = <2 2>, <3 2>;
--	};
--
- 	pinctrl_0: pinctrl@11400000 {
- 		compatible = "samsung,exynos4210-pinctrl";
- 		reg = <0x11400000 0x1000>;
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index c42a3e1..d8bc059e 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -26,6 +26,10 @@
- 		samsung,combiner-nr = <20>;
- 	};
- 
-+	pmu {
-+		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
-+	};
++int exynos_drm_crtc_te_handler(struct drm_crtc *crtc)
++{
++	struct exynos_drm_manager *manager = to_exynos_crtc(crtc)->manager;
++	int ret = 0;
 +
- 	gic: interrupt-controller@10490000 {
- 		cpu-offset = <0x4000>;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index c5a943d..95cdfb9 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -31,12 +31,6 @@
- 		mshc0 = &mshc_0;
- 	};
++	if (manager->ops->te_handler)
++		ret = manager->ops->te_handler(manager);
++
++	return ret;
++}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+index 9f74b10..875d93d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+@@ -36,4 +36,11 @@ void exynos_drm_crtc_plane_disable(struct drm_crtc *crtc, int zpos);
+ int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
+ 					unsigned int out_type);
  
--	pmu {
--		compatible = "arm,cortex-a9-pmu";
--		interrupt-parent = <&combiner>;
--		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
--	};
--
- 	sysram@02020000 {
- 		compatible = "mmio-sram";
- 		reg = <0x02020000 0x40000>;
++/*
++ * This function calls the crtc device(manager)'s te_handler() callback
++ * to trigger to transfer video image at the tearing effect synchronization
++ * signal.
++ */
++int exynos_drm_crtc_te_handler(struct drm_crtc *crtc);
++
+ #endif
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index e82e620..54b08d7 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -181,6 +181,8 @@ struct exynos_drm_display {
+  * @win_commit: apply hardware specific overlay data to registers.
+  * @win_enable: enable hardware specific overlay.
+  * @win_disable: disable hardware specific overlay.
++ * @te_handler: trigger to transfer video image at the tearing effect
++ *	synchronization signal if there is a page flip request.
+  */
+ struct exynos_drm_manager;
+ struct exynos_drm_manager_ops {
+@@ -199,6 +201,7 @@ struct exynos_drm_manager_ops {
+ 	void (*win_commit)(struct exynos_drm_manager *mgr, int zpos);
+ 	void (*win_enable)(struct exynos_drm_manager *mgr, int zpos);
+ 	void (*win_disable)(struct exynos_drm_manager *mgr, int zpos);
++	int (*te_handler)(struct exynos_drm_manager *mgr);
+ };
+ 
+ /*
+diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+index 7209df1..f6d4c85 100644
+--- a/include/drm/drm_mipi_dsi.h
++++ b/include/drm/drm_mipi_dsi.h
+@@ -49,6 +49,13 @@ struct mipi_dsi_msg {
+  * @detach: detach DSI device from DSI host
+  * @transfer: send and/or receive DSI packet, return number of received bytes,
+  * 	      or error
++ * @te_handler: call the crtc te_handler() callback from DSI host.
++ *		The panel generates tearing effect synchronization signal
++ *		between MCU and FB to display video images.
++ *		And the display controller should trigger to transfer video
++ *		image at this signal.
++ *		So the panel receives the TE IRQ, then calls this handler
++ *		to notify it to the display controller.
+  */
+ struct mipi_dsi_host_ops {
+ 	int (*attach)(struct mipi_dsi_host *host,
+@@ -57,6 +64,7 @@ struct mipi_dsi_host_ops {
+ 		      struct mipi_dsi_device *dsi);
+ 	ssize_t (*transfer)(struct mipi_dsi_host *host,
+ 			    struct mipi_dsi_msg *msg);
++	int (*te_handler)(struct mipi_dsi_host *host);
+ };
+ 
+ /**
 -- 
-1.8.3.2
+1.7.9.5
