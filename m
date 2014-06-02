@@ -1,55 +1,61 @@
-From: Dinh Nguyen <dinh.linux@gmail.com>
-Subject: Re: [PATCHv3 4/4] ARM: dts: replace the slot property into slot sub-node
- for dwmmc.
-Date: Mon, 02 Jun 2014 08:08:48 -0500
-Message-ID: <538C7760.2070909@gmail.com>
-References: <1401255351-17653-1-git-send-email-jh80.chung@samsung.com> <1401255351-17653-5-git-send-email-jh80.chung@samsung.com> <001d01cf7c06$420dea90$c629bfb0$%jun@samsung.com> <1834387.xgX8NLRvfH@phil>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 6/7] ARM: EXYNOS: PM: fix register setup on EXYNOS4x12
+ for AFTR mode code
+Date: Mon, 02 Jun 2014 15:10:05 +0200
+Message-ID: <538C77AD.1000801@gmail.com>
+References: <1401712543-14281-1-git-send-email-b.zolnierkie@samsung.com> <1401712543-14281-7-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:40951 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754176AbaFBNIw (ORCPT
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:44944 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754327AbaFBNKW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jun 2014 09:08:52 -0400
-In-Reply-To: <1834387.xgX8NLRvfH@phil>
+	Mon, 2 Jun 2014 09:10:22 -0400
+In-Reply-To: <1401712543-14281-7-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Seungwon Jeon <tgih.jun@samsung.com>
-Cc: 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, chris@printf.net, ulf.hansson@linaro.org, ludovic.desroches@atmel.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dinguyen@altera.com, cpgs@samsung.com
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
 
+Hi,
 
+On 02.06.2014 14:35, Bartlomiej Zolnierkiewicz wrote:
+> Add S5P_CENTRAL_SEQ_OPTION register setup for EXYNOS4x12 to AFTR
+> mode code.  Without this setup AFTR mode doesn't show any benefit
+> over WFI one.  When this setup is applied AFTR mode reduces power
+> consumption by ~12% (as measured on Trats2 board).
+> 
+> This change is a preparation for adding secure firmware support to
+> EXYNOS cpuidle driver.
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/pm.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index aeff99e..0fb9a5a 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -456,6 +456,10 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+>  	case CPU_PM_ENTER:
+>  		if (cpu == 0) {
+>  			exynos_pm_central_suspend();
+> +			if (soc_is_exynos4212() || soc_is_exynos4412())
+> +				__raw_writel(S5P_USE_STANDBY_WFI0 |
+> +					     S5P_USE_STANDBY_WFE0,
+> +					     S5P_CENTRAL_SEQ_OPTION);
 
-On 05/30/2014 01:15 PM, Heiko St=FCbner wrote:
-> Am Freitag, 30. Mai 2014, 21:54:13 schrieb Seungwon Jeon:
->> + Dinh Nguyen <dinguyen@altera.com>
->> + Heiko Stuebner <heiko@sntech.de>
->>
->> On Wed, May 28, 2014, Jaehoon Chung wrote:
->>> dw-mmc controller can support the multiple slot.
->>> So each slot's property can be difference.
->>> And "support-highspeed" property in dw-mmc is deprecated.
->>> "support-highspeed" property can be replaced to "cap-sd/mmc-highspe=
-ed".
->>>
->>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->>
->> Looks good to me.
->>
->> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
->
-> the rockchip part also looks ok to me
->
-> Acked-by: Heiko Stuebner <heiko@sntech.de>
->
->
->>
+I wonder whether this isn't required on any Exynos SoC in general, as
+this mask decides which STANDBY_WFI/WFE signals are considered before
+entering the lower power state.
 
-=46or the socfpga parts:
+Also you should check the behavior with Krzysztof's patch adding support
+for delayed reset assertion, which should cause WFI/WFE signals of CPUs
+powered down to be kept asserted.
 
-Acked-by: Dinh Nguyen <dinguyen@altera.com>
-
-Thanks,
-Dinh
+Best regards,
+Tomasz
