@@ -1,43 +1,90 @@
-From: Jungseok Lee <jays.lee@samsung.com>
-Subject: Re: [PATCH v6 3/7] arm64: Add a description on 48-bit address space
- with 4KB pages
-Date: Mon, 02 Jun 2014 17:13:19 +0900
-Message-ID: <07ff01cf7e3a$83442d40$89cc87c0$@samsung.com>
-References: <000201cf6dc6$3ed91500$bc8b3f00$@samsung.com>
- <CAMJs5B8MW_Abni2X=+bdywg9zz5JyaEcDmZ+0MLd79Pn1+ZYtg@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] drm/exynos: remove hardware overlays disable from fimd
+ probe
+Date: Mon, 02 Jun 2014 11:11:32 +0200
+Message-ID: <538C3FC4.6090509@samsung.com>
+References: <1401257471-31994-1-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:8322 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751442AbaFBINX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jun 2014 04:13:23 -0400
-In-reply-to: <CAMJs5B8MW_Abni2X=+bdywg9zz5JyaEcDmZ+0MLd79Pn1+ZYtg@mail.gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1401257471-31994-1-git-send-email-rahul.sharma@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: kgene.kim@samsung.com, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, "Szyprowski, Marek" <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Christoffer Dall' <christoffer.dall@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, 'Catalin Marinas' <Catalin.Marinas@arm.com>, 'Marc Zyngier' <Marc.Zyngier@arm.com>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Steve Capper' <steve.capper@linaro.org>, =?UTF-8?B?J+ygleyEseynhCc=?= <sungjinn.chung@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Ilho Lee' <ilho215.lee@samsung.com>
 
-On Wednesday, May 28, 2014 5:26 AM, Christoffer Dall wrote:
-> On Mon, May 12, 2014 at 06:40:44PM +0900, Jungseok Lee wrote:
-> > This patch adds memory layout and translation lookup information about
-> > 48-bit address space with 4K pages. The description is based on 4
-> > levels of translation tables.
-> >
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Steve Capper <steve.capper@linaro.org>
-> > Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
-> > Reviewed-by: Sungjinn Chung <sungjinn.chung@samsung.com>
-> > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> > ---
+Hi Rahul,
+
+On 05/28/2014 08:11 AM, Rahul Sharma wrote:
+> System hangs when FIMD registers are accessed to disable
+> hardware overlays. This is because of the clocks which are
+> not enabled before register access.
 > 
-> Looks reasonable to me:
+> 'Hardware overlay disable' is cleaned from the FIMD probe.
 > 
-> Acked-by: Christoffer Dall <christoffer.dall@linaro.org>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 
-Thank a lot!
+This patch causes regression on some exynos4210-universal_c210 devices,
+everything works expect colors are incorrect - it seems blue component
+is very dark, almost black.
 
-- Jungseok Lee
+Regards
+Andrzej
+
+> ---
+> Based on exynos-drm-next branch.
+> 
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c |   17 -----------------
+>  1 file changed, 17 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index bd30d0c..2ec634f 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -703,19 +703,6 @@ static void fimd_win_disable(struct exynos_drm_manager *mgr, int zpos)
+>  	win_data->enabled = false;
+>  }
+>  
+> -static void fimd_clear_win(struct fimd_context *ctx, int win)
+> -{
+> -	writel(0, ctx->regs + WINCON(win));
+> -	writel(0, ctx->regs + VIDOSD_A(win));
+> -	writel(0, ctx->regs + VIDOSD_B(win));
+> -	writel(0, ctx->regs + VIDOSD_C(win));
+> -
+> -	if (win == 1 || win == 2)
+> -		writel(0, ctx->regs + VIDOSD_D(win));
+> -
+> -	fimd_shadow_protect_win(ctx, win, false);
+> -}
+> -
+>  static void fimd_window_suspend(struct exynos_drm_manager *mgr)
+>  {
+>  	struct fimd_context *ctx = mgr->ctx;
+> @@ -898,16 +885,12 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+>  {
+>  	struct fimd_context *ctx = fimd_manager.ctx;
+>  	struct drm_device *drm_dev = data;
+> -	int win;
+>  
+>  	fimd_mgr_initialize(&fimd_manager, drm_dev);
+>  	exynos_drm_crtc_create(&fimd_manager);
+>  	if (ctx->display)
+>  		exynos_drm_create_enc_conn(drm_dev, ctx->display);
+>  
+> -	for (win = 0; win < WINDOWS_NR; win++)
+> -		fimd_clear_win(ctx, win);
+> -
+>  	return 0;
+>  
+>  }
+> 
