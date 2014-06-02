@@ -1,59 +1,95 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v3 02/15] drm/exynos: use wait_event_timeout() for safety usage
-Date: Mon, 02 Jun 2014 14:22:38 +0900
-Message-ID: <1401686571-22148-3-git-send-email-yj44.cho@samsung.com>
+Subject: =?UTF-8?q?=5BPATCH=20v3=2004/15=5D=20ARM=3A=20dts=3A=20samsung-fimd=3A=20add=20LCD=20I80=20interface=20specific=20properties?=
+Date: Mon, 02 Jun 2014 14:22:40 +0900
+Message-ID: <1401686571-22148-5-git-send-email-yj44.cho@samsung.com>
 References: <1401686571-22148-1-git-send-email-yj44.cho@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:30914 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751800AbaFBFW5 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:37250 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751826AbaFBFW6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jun 2014 01:22:57 -0400
+	Mon, 2 Jun 2014 01:22:58 -0400
 In-reply-to: <1401686571-22148-1-git-send-email-yj44.cho@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com
 
-There could be the case that the page flip operation isn't finished correctly
-with some abnormal condition such as panel reset. So this patch replaces
-wait_event() with wait_event_timeout() to avoid waiting for page flip completion
-infinitely.
-And clears exynos_crtc->pending_flip in exynos_drm_crtc_page_flip()
-when exynos_drm_crtc_mode_set_commit() is failed.
+In case of using MIPI DSI based I80 interface panel,
+the relevant registers should be set.
+So this patch adds relevant DT bindings.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_crtc.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/video/samsung-fimd.txt     |   28 ++++++++++++=
+++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 95c9435..3bf091d 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -69,8 +69,10 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
- 
- 	if (mode > DRM_MODE_DPMS_ON) {
- 		/* wait for the completion of page flip. */
--		wait_event(exynos_crtc->pending_flip_queue,
--				atomic_read(&exynos_crtc->pending_flip) == 0);
-+		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
-+				!atomic_read(&exynos_crtc->pending_flip),
-+				HZ/20))
-+			atomic_set(&exynos_crtc->pending_flip, 0);
- 		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
- 	}
- 
-@@ -259,6 +261,7 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
- 			spin_lock_irq(&dev->event_lock);
- 			drm_vblank_put(dev, exynos_crtc->pipe);
- 			list_del(&event->base.link);
-+			atomic_set(&exynos_crtc->pending_flip, 0);
- 			spin_unlock_irq(&dev->event_lock);
- 
- 			goto out;
--- 
+diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b=
+/Documentation/devicetree/bindings/video/samsung-fimd.txt
+index 2dad41b..59ff61e 100644
+--- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
++++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+@@ -44,6 +44,34 @@ Optional Properties:
+ - display-timings: timing settings for FIMD, as described in document =
+[1].
+ 		Can be used in case timings cannot be provided otherwise
+ 		or to override timings provided by the panel.
++- samsung,sysreg: handle to syscon used to control the system register=
+s
++- i80-if-timings: timing configuration for lcd i80 interface support.
++  - cs-setup: clock cycles for the active period of address signal is =
+enabled
++              until chip select is enabled.
++              If not specified, the default value(0) will be used.
++  - wr-setup: clock cycles for the active period of CS signal is enabl=
+ed until
++              write signal is enabled.
++              If not specified, the default value(0) will be used.
++  - wr-active: clock cycles for the active period of CS is enabled.
++               If not specified, the default value(1) will be used.
++  - wr-hold: clock cycles for the active period of CS is disabled unti=
+l write
++             signal is disabled.
++             If not specified, the default value(0) will be used.
++
++  The parameters are defined as:
++
++    VCLK(internal)  __|=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|_____|=C2=AF=
+=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|_____|=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=
+|_____|=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|_____|=C2=AF=C2=AF
++                      :            :            :            :        =
+    :
++    Address Output  --:<XXXXXXXXXXX:XXXXXXXXXXXX:XXXXXXXXXXXX:XXXXXXXX=
+XXXX:XX
++                      | cs-setup+1 |            :            :        =
+    :
++                      |<---------->|            :            :        =
+    :
++    Chip Select     =C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=
+=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|____________:____________:_____=
+_______|=C2=AF=C2=AF
++                                   | wr-setup+1 |            | wr-hold=
++1  |
++                                   |<---------->|            |<-------=
+--->|
++    Write Enable    =C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=
+=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=
+=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|____________|=C2=AF=C2=AF=
+=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=
+=C2=AF
++                                                | wr-active+1|
++                                                |<---------->|
++    Video Data      ----------------------------<XXXXXXXXXXXXXXXXXXXXX=
+XXXX>--
+=20
+ The device node can contain 'port' child nodes according to the bindin=
+gs defined
+ in [2]. The following are properties specific to those nodes:
+--=20
 1.7.9.5
