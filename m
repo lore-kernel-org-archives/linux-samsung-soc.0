@@ -1,104 +1,68 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm/exynos: remove hardware overlays disable from fimd
- probe
-Date: Mon, 02 Jun 2014 13:48:55 +0200
-Message-ID: <538C64A7.50900@samsung.com>
-References: <1401257471-31994-1-git-send-email-rahul.sharma@samsung.com>
- <538C3FC4.6090509@samsung.com>
- <CAPdUM4POJwfe_RyKV+ym=ENgVF+2To0qgS88UGp1ueBD3LH4ig@mail.gmail.com>
- <538C4DE0.50801@gmail.com> <538C551E.30407@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 6/7] ARM: EXYNOS: PM: fix register setup on EXYNOS4x12 for
+ AFTR mode code
+Date: Mon, 02 Jun 2014 14:08:29 +0200
+Message-ID: <2762097.QhkViWyNLQ@amdc1032>
+References: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com>
+ <1399287439-31376-7-git-send-email-b.zolnierkie@samsung.com>
+ <5375D44F.7000505@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <538C551E.30407@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomasz Figa <tomasz.figa@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, "Szyprowski,
- Marek" <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <5375D44F.7000505@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06/02/2014 12:42 PM, Andrzej Hajda wrote:
-> On 06/02/2014 12:11 PM, Tomasz Figa wrote:
->> Hi Rahul, Andrzej,
->>
->> On 02.06.2014 11:42, Rahul Sharma wrote:
->>> On 2 June 2014 14:41, Andrzej Hajda <a.hajda@samsung.com> wrote:
->>>> Hi Rahul,
->>>>
->>>> On 05/28/2014 08:11 AM, Rahul Sharma wrote:
->>>>> System hangs when FIMD registers are accessed to disable
->>>>> hardware overlays. This is because of the clocks which are
->>>>> not enabled before register access.
->>>>>
->>>>> 'Hardware overlay disable' is cleaned from the FIMD probe.
->>>>>
->>>>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->>>>
->>>> This patch causes regression on some exynos4210-universal_c210 devices,
->>>> everything works expect colors are incorrect - it seems blue component
->>>> is very dark, almost black.
->>>>
->>>
->>> Oh.... Sorry for that. I did not see any problem on 5250/5420/5800. I do not
->>> have setup for 4210. Better we should revert this patch.
->>>
->>> Would you please help me by verifying the following patch on 4210? This
->>> is an alternate solution to the same problem.
->>>
->>> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31426.html
->>>
->>> Thanks Andrej, for bringing it to notice.
->>
->> I don't see how this patch could introduce such regression, as all the
->> affected registers seem to be properly reconfigured in fimd_win_commit()
->> anyway.
->>
->> IMHO instead of reverting the patch, this issue should be investigated
->> and fixed properly.
->>
->> Best regards,
->> Tomasz
->>
+
+Hi,
+
+On Friday, May 16, 2014 11:03:11 AM Daniel Lezcano wrote:
+> On 05/05/2014 12:57 PM, Bartlomiej Zolnierkiewicz wrote:
+> > Add S5P_CENTRAL_SEQ_OPTION register setup for EXYNOS4x12 to AFTR
+> > mode code.  Without this setup AFTR mode doesn't show any benefit
+> > over WFI one.  When this setup is applied AFTR mode reduces power
+> > consumption by ~12% (as measured on Trats2 board).
+> >
+> > This change is a preparation for adding secure firmware support to
+> > EXYNOS cpuidle driver.
+> >
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> >   arch/arm/mach-exynos/pm.c | 4 ++++
+> >   1 file changed, 4 insertions(+)
+> >
+> > diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> > index 18f6bf8..3922968 100644
+> > --- a/arch/arm/mach-exynos/pm.c
+> > +++ b/arch/arm/mach-exynos/pm.c
+> > @@ -391,6 +391,10 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+> >   	case CPU_PM_ENTER:
+> >   		if (cpu == 0) {
+> >   			exynos_pm_central_suspend();
+> > +			if (soc_is_exynos4212() || soc_is_exynos4412())
+> > +				__raw_writel(S5P_USE_STANDBY_WFI0 |
+> > +					     S5P_USE_STANDBY_WFE0,
+> > +					     S5P_CENTRAL_SEQ_OPTION);
 > 
-> I am looking at the problem, it is quite strange as it happens only on
-> one of two targets I have access to. Anyway it seems that something
-> should be added to fimd initialization sequence if we want to remove hw
-> accessing code from probe.
+> Why not put this code in the exynos_enter_aftr() ?
 
-The problem is that fimd does not clear unused windows.
-Simple patch which helps:
+I would prefer to keep this code close to exynos_pm_central_suspend()
+because exynos_pm_suspend() (which calls exynos_pm_central_suspend()
+too) also contains S5P_USE_STANDBY_WF[I,E]0 setting code (done for all
+SoCs).  If possible I would like to make this code common for AFTR &
+suspend in the future (once it is tested on Exynos4210 and Exynos5250)
+by moving S5P_USE_STANDBY_WF[I,E]0 setting to exynos_pm_central_suspend()
+and doing it for all SoCs.  Are you okay with this?
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 2ec634f..b58fce2 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -741,6 +741,8 @@ static void fimd_apply(struct exynos_drm_manager *mgr)
-                win_data = &ctx->win_data[i];
-                if (win_data->enabled)
-                        fimd_win_commit(mgr, i);
-+               else
-+                       fimd_win_disable(mgr, i);
-        }
+> >   			exynos_cpu_save_register();
+> >   		}
+> >   		break;
 
-        fimd_commit(mgr);
-
-But I am not fully familiar with window management code, so I do not
-know if it does not breaks other stuff.
-
-Regards
-Andrzej
-
-> 
-> Regards
-> Andrzej
-> 
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
