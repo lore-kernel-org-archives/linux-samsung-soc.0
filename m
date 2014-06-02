@@ -1,78 +1,138 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm/exynos: remove hardware overlays disable from fimd
- probe
-Date: Mon, 02 Jun 2014 12:42:38 +0200
-Message-ID: <538C551E.30407@samsung.com>
-References: <1401257471-31994-1-git-send-email-rahul.sharma@samsung.com>
- <538C3FC4.6090509@samsung.com>
- <CAPdUM4POJwfe_RyKV+ym=ENgVF+2To0qgS88UGp1ueBD3LH4ig@mail.gmail.com>
- <538C4DE0.50801@gmail.com>
+From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Mon, 2 Jun 2014 11:56:26 +0100
+Message-ID: <20140602105626.GE3855@e103592.cambridge.arm.com>
+References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
+	<20140530073006.GA24748@ulmo>
+	<20140530112728.GB3949@e103592.cambridge.arm.com>
+	<4663172.oXIylQOrlk@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:23655 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752784AbaFBKmn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jun 2014 06:42:43 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N6J002PLF2RKRA0@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 02 Jun 2014 11:42:27 +0100 (BST)
-In-reply-to: <538C4DE0.50801@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4663172.oXIylQOrlk@wuerfel>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "Szyprowski, Marek" <m.szyprowski@samsung.com>
 
-On 06/02/2014 12:11 PM, Tomasz Figa wrote:
-> Hi Rahul, Andrzej,
+On Fri, May 30, 2014 at 09:11:07PM +0200, Arnd Bergmann wrote:
+> On Friday 30 May 2014 12:27:28 Dave Martin wrote:
+> > On Fri, May 30, 2014 at 08:30:08AM +0100, Thierry Reding wrote:
+> > > On Thu, May 29, 2014 at 09:52:22AM -0600, Stephen Warren wrote:
+> > > > On 05/23/2014 02:36 PM, Thierry Reding wrote:
+> > > > I think this is a mistake. address-cells/size-cells are for transactions
+> > > > flowing down the bus (from the CPU to date). Describing a connection
+> > > > from a device to an IOMMU is something completely different, and should
+> > > > therefore simply use an iommu-cells property to describe any necessary
+> > > > information. If we start re-using properties for different things in
+> > > > different contexts, how is anyone going to know what they mean, and how
+> > > > will conflicts be resolved. For example, what if there's a single HW
+> > > > module that both acts as a regular register bus with children (where
+> > > > address-cells/size-cells defines how transactions reach the children
+> > > > from the parent), and is also an IOMMU (where according to this binding
+> > > > proposal, address-cells/size-cells represent some aspect of the IOMMU
+> > > > feature). Using different properties for different things is the only
+> > > > sane way to keep different concepts separate. Another alternative would
+> > > > be to represent the single HW module as separate nodes in DT, but I
+> > > > think that will only make our lives harder, and where I've done that in
+> > > > the past, I've regretted it.
+> > > 
+> > > There was some back-and-forth on this topic and the latest concensus
+> > > when I wrote the second version was that #address-cells and #size-cells
+> > > were to be used.
+> > > 
+> > > But there was some bore back-and-forth after that, and it seems like
+> > > Arnd no longer thinks that using #address-cells and #size-cells is a
+> > > good idea either[0].
+> > 
+> > Mistake or not, ePAPR already (ab)uses the address concept for PCI.
+> > Unless ePAPR is wrong, I don't think it makes sense to argue that
+> > the address concept cannot be repurposed.
+> > 
+> > The reason why this is abused for PCI is the same as our reason here:
+> > different masters really are treated as distinct even when accessing
+> > the same destination address, and DT has no general native way to
+> > describe that.
+> > 
+> > One clear advantage of using #address-cells etc. is that ePAPR already
+> > has very clear and well-defined ways of how to specify range mappings.
+> > This gives us a ready-made way to describe windowed IOMMUs and 1:1
+> > remappings of whole blocks of master IDs, which are the most obvious
+> > cases other than having a small-integer set of explicit IDs.
+> > 
+> > That said, the PCI pseudo-address thing is not something we _necessarily_
+> > want to repeat.
 > 
-> On 02.06.2014 11:42, Rahul Sharma wrote:
->> On 2 June 2014 14:41, Andrzej Hajda <a.hajda@samsung.com> wrote:
->>> Hi Rahul,
->>>
->>> On 05/28/2014 08:11 AM, Rahul Sharma wrote:
->>>> System hangs when FIMD registers are accessed to disable
->>>> hardware overlays. This is because of the clocks which are
->>>> not enabled before register access.
->>>>
->>>> 'Hardware overlay disable' is cleaned from the FIMD probe.
->>>>
->>>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->>>
->>> This patch causes regression on some exynos4210-universal_c210 devices,
->>> everything works expect colors are incorrect - it seems blue component
->>> is very dark, almost black.
->>>
->>
->> Oh.... Sorry for that. I did not see any problem on 5250/5420/5800. I do not
->> have setup for 4210. Better we should revert this patch.
->>
->> Would you please help me by verifying the following patch on 4210? This
->> is an alternate solution to the same problem.
->>
->> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31426.html
->>
->> Thanks Andrej, for bringing it to notice.
+> I'm really impartial to the question of whether to use #address-cells
+> or #iommus now. It's possible that we can use the addresses in some
+> meaningful way, but it's not clear to me that this will help make the
+> representation cleaner or that we will actually want it for SMMU.
 > 
-> I don't see how this patch could introduce such regression, as all the
-> affected registers seem to be properly reconfigured in fimd_win_commit()
-> anyway.
+> > > Arnd, can you take another look at this binding and see if there's
+> > > anything else missing? If not I'll go through the document again and
+> > > update all #address-cells/#size-cells references with #iommu-cells as
+> > > appropriate and submit v3.
+> > 
+> > How do you envisage propagation of the master ID bits downstream of the
+> > IOMMU would be described?
+> > 
+> > We will definitely need a way to describe this for GICv3.  How those
+> > values are propagated is likely to vary between related SoCs and doesn't
+> > feel like it should be baked into a driver, especially for the ARM SMMU
+> > which may get reused in radically different SoC families from different
+> > vendors.
+> > 
+> > The most likely types of remapping are the adding of a base offset or
+> > some extra bits to the ID -- because not all MSIs to the GIC will
+> > necessarily pass through the IOMMU.  It's also possible that we might
+> > see ID squashing or folding in some systems.
+> > 
+> > 
+> > For types of remapping which mix the ID and address together, I now
+> > do tend to agree that any flexibility arising from describing that
+> > in a general way that is unlikely to repay the cost of trying to
+> > interpret and analyse the DT.  Defining a few sterotypical kinds
+> > of mapping explicitly, as needed, looks more sensible for now.  The
+> > windowed-IOMMU case is one example.
 > 
-> IMHO instead of reverting the patch, this issue should be investigated
-> and fixed properly.
-> 
-> Best regards,
-> Tomasz
-> 
+> For MSI, my feeling is that we'd just be best off doing an end-to-end
+> description. Any device using an MSI would have an interrupt specifier
+> that is sufficient for the interrupt controller to understand where
+> the IRQ comes from, and return an address/value pair back to the driver
+> to program into some register.
 
-I am looking at the problem, it is quite strange as it happens only on
-one of two targets I have access to. Anyway it seems that something
-should be added to fimd initialization sequence if we want to remove hw
-accessing code from probe.
+This is OK so long as the number of endpoint pairings is trivial.
 
-Regards
-Andrzej
+If there are multiple GICv3 ITSes addressable by a master, then we
+might have to describe each one per master, or impose policy on the
+DT whereby we choose one or two arbitrary or preferred ITSes for a
+particular master and describe just those.
+
+It's worth nothing that ePAPR strenuously avoids such an approach
+for describing DMA: device-device DMA would require information about
+every possible destination in every master node.
+
+Of course, device-device DMA turns out not to be a hot topic in
+practice most of the time, and likewise with this master ID stuff the
+number of pairings that are really relevant in useful situations is
+much smaller than the number of possible pairings.
+
+The element of gamble here, and the design of DT around Linux's
+present-day limitations makes me feel uneasy, but there's no
+knockdown argument that I'm aware of.
+
+_If_ we end up with a combinatorial explosion of pairings in the
+future, do you have a solution in mind?
+
+Cheers
+---Dave
