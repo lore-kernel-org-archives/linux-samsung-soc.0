@@ -1,128 +1,126 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [PATCH] drm/exynos: remove hardware overlays disable from fimd
- probe
-Date: Mon, 02 Jun 2014 19:32:01 +0900
-Message-ID: <538C52A1.8040703@samsung.com>
-References: <1401257471-31994-1-git-send-email-rahul.sharma@samsung.com>
- <538C3FC4.6090509@samsung.com>
- <CAPdUM4POJwfe_RyKV+ym=ENgVF+2To0qgS88UGp1ueBD3LH4ig@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAPdUM4POJwfe_RyKV+ym=ENgVF+2To0qgS88UGp1ueBD3LH4ig@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "Szyprowski, Marek" <m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2] ARM: exynos4: hotplug: Fix CPU idle clock down after CPU off
+Date: Mon, 02 Jun 2014 12:38:45 +0200
+Message-ID: <1401705525-8678-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:32947 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752784AbaFBKjH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Jun 2014 06:39:07 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hi Rahul,
+On Exynos4 USE_DELAYED_RESET_ASSERTION must be set in
+ARM_COREx_OPTION register during CPU power down. This is the proper way
+of powering down CPU.
 
-On 06/02/2014 06:42 PM, Rahul Sharma wrote:
-> On 2 June 2014 14:41, Andrzej Hajda <a.hajda@samsung.com> wrote:
->> Hi Rahul,
->>
->> On 05/28/2014 08:11 AM, Rahul Sharma wrote:
->>> System hangs when FIMD registers are accessed to disable
->>> hardware overlays. This is because of the clocks which are
->>> not enabled before register access.
->>>
->>> 'Hardware overlay disable' is cleaned from the FIMD probe.
->>>
->>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->>
->> This patch causes regression on some exynos4210-universal_c210 devices,
->> everything works expect colors are incorrect - it seems blue component
->> is very dark, almost black.
->>
->
-> Oh.... Sorry for that. I did not see any problem on 5250/5420/5800. I do not
-> have setup for 4210. Better we should revert this patch.
->
-> Would you please help me by verifying the following patch on 4210? This
-> is an alternate solution to the same problem.
->
-> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31426.html
+Additionally without this the CPU clock down won't work after powering
+down some other CPU and online CPUs will work at full frequency chosen
+by CPUfreq governor.
 
-In my humble opinion, the patch is required to modify like below:
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-+       ret = pm_runtime_get_sync(ctx->dev);
-+       if (ret < 0) {
+---
+Changes since v1:
+1. Use delayed reset assertion on all Exynos4 family and all cores, not
+   only on core 1 of Exynos4212.
+2. Rebase on Tomasz Figa's patch:
+   ARM: EXYNOS: Fix core ID used by platsmp and hotplug code
+   http://www.spinics.net/lists/linux-samsung-soc/msg31604.html
+---
+ arch/arm/mach-exynos/hotplug.c  | 27 +++++++++++++++++++++++++--
+ arch/arm/mach-exynos/regs-pmu.h |  3 +++
+ 2 files changed, 28 insertions(+), 2 deletions(-)
 
-When the bootloader enabled FIMD to show logo(boot image) or animation,
-this function pm_runtime_get_sync() in fimd_bind() would return 1.
-
-Thank you.
-Best regards YJ
-
->
-> Thanks Andrej, for bringing it to notice.
->
-> Regards,
-> Rahul Sharma
->
->> Regards
->> Andrzej
->>
->>> ---
->>> Based on exynos-drm-next branch.
->>>
->>>   drivers/gpu/drm/exynos/exynos_drm_fimd.c |   17 -----------------
->>>   1 file changed, 17 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->>> index bd30d0c..2ec634f 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->>> @@ -703,19 +703,6 @@ static void fimd_win_disable(struct exynos_drm_manager *mgr, int zpos)
->>>        win_data->enabled = false;
->>>   }
->>>
->>> -static void fimd_clear_win(struct fimd_context *ctx, int win)
->>> -{
->>> -     writel(0, ctx->regs + WINCON(win));
->>> -     writel(0, ctx->regs + VIDOSD_A(win));
->>> -     writel(0, ctx->regs + VIDOSD_B(win));
->>> -     writel(0, ctx->regs + VIDOSD_C(win));
->>> -
->>> -     if (win == 1 || win == 2)
->>> -             writel(0, ctx->regs + VIDOSD_D(win));
->>> -
->>> -     fimd_shadow_protect_win(ctx, win, false);
->>> -}
->>> -
->>>   static void fimd_window_suspend(struct exynos_drm_manager *mgr)
->>>   {
->>>        struct fimd_context *ctx = mgr->ctx;
->>> @@ -898,16 +885,12 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
->>>   {
->>>        struct fimd_context *ctx = fimd_manager.ctx;
->>>        struct drm_device *drm_dev = data;
->>> -     int win;
->>>
->>>        fimd_mgr_initialize(&fimd_manager, drm_dev);
->>>        exynos_drm_crtc_create(&fimd_manager);
->>>        if (ctx->display)
->>>                exynos_drm_create_enc_conn(drm_dev, ctx->display);
->>>
->>> -     for (win = 0; win < WINDOWS_NR; win++)
->>> -             fimd_clear_win(ctx, win);
->>> -
->>>        return 0;
->>>
->>>   }
->>>
->>
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->
+diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+index 920a4baa53cd..f2521bc53869 100644
+--- a/arch/arm/mach-exynos/hotplug.c
++++ b/arch/arm/mach-exynos/hotplug.c
+@@ -22,7 +22,7 @@
+ #include "common.h"
+ #include "regs-pmu.h"
+ 
+-static inline void cpu_leave_lowpower(void)
++static inline void cpu_leave_lowpower(u32 core_id)
+ {
+ 	unsigned int v;
+ 
+@@ -36,6 +36,14 @@ static inline void cpu_leave_lowpower(void)
+ 	  : "=&r" (v)
+ 	  : "Ir" (CR_C), "Ir" (0x40)
+ 	  : "cc");
++
++	if (soc_is_exynos4()) {
++		unsigned int tmp;
++
++		tmp = __raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
++		tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
++		__raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
++	}
+ }
+ 
+ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+@@ -47,6 +55,19 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+ 
+ 		/* Turn the CPU off on next WFI instruction. */
+ 		exynos_cpu_power_down(core_id);
++		if (soc_is_exynos4()) {
++			unsigned int tmp;
++
++			/*
++			 * Exynos 4 SoCs require setting
++			 * USE_DELAYED_RESET_ASSERTION so the CPU idle
++			 * clock down feature could properly detect
++			 * global idle state when CPU1 is off.
++			 */
++			tmp = __raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
++			tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
++			__raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
++		}
+ 
+ 		wfi();
+ 
+@@ -76,6 +97,8 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+ void __ref exynos_cpu_die(unsigned int cpu)
+ {
+ 	int spurious = 0;
++	u32 mpidr = cpu_logical_map(cpu);
++	u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+ 
+ 	v7_exit_coherency_flush(louis);
+ 
+@@ -85,7 +108,7 @@ void __ref exynos_cpu_die(unsigned int cpu)
+ 	 * bring this CPU back into the world of cache
+ 	 * coherency, and then restore interrupts
+ 	 */
+-	cpu_leave_lowpower();
++	cpu_leave_lowpower(core_id);
+ 
+ 	if (spurious)
+ 		pr_warn("CPU%u: %u spurious wakeup calls\n", cpu, spurious);
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index 1d13b08708f0..59bd92112842 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -25,6 +25,7 @@
+ 
+ #define S5P_USE_STANDBY_WFI0			(1 << 16)
+ #define S5P_USE_STANDBY_WFE0			(1 << 24)
++#define S5P_USE_DELAYED_RESET_ASSERTION		BIT(12)
+ 
+ #define EXYNOS_SWRESET				S5P_PMUREG(0x0400)
+ #define EXYNOS5440_SWRESET			S5P_PMUREG(0x00C4)
+@@ -111,6 +112,8 @@
+ 			(EXYNOS_ARM_CORE0_CONFIGURATION + (0x80 * (_nr)))
+ #define EXYNOS_ARM_CORE_STATUS(_nr)		\
+ 			(EXYNOS_ARM_CORE_CONFIGURATION(_nr) + 0x4)
++#define EXYNOS_ARM_CORE_OPTION(_nr)		\
++			(EXYNOS_ARM_CORE_CONFIGURATION(_nr) + 0x8)
+ 
+ #define EXYNOS_ARM_COMMON_CONFIGURATION		S5P_PMUREG(0x2500)
+ #define EXYNOS_COMMON_CONFIGURATION(_nr)	\
+-- 
+1.9.1
