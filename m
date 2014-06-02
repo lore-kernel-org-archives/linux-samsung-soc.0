@@ -1,59 +1,55 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 5/7] ARM: EXYNOS: PM: use c15resume firmware method
- if secure firmware is enabled
-Date: Mon, 02 Jun 2014 15:07:46 +0200
-Message-ID: <538C7722.8020706@gmail.com>
-References: <1401712543-14281-1-git-send-email-b.zolnierkie@samsung.com> <1401712543-14281-6-git-send-email-b.zolnierkie@samsung.com>
+From: Dinh Nguyen <dinh.linux@gmail.com>
+Subject: Re: [PATCHv3 4/4] ARM: dts: replace the slot property into slot sub-node
+ for dwmmc.
+Date: Mon, 02 Jun 2014 08:08:48 -0500
+Message-ID: <538C7760.2070909@gmail.com>
+References: <1401255351-17653-1-git-send-email-jh80.chung@samsung.com> <1401255351-17653-5-git-send-email-jh80.chung@samsung.com> <001d01cf7c06$420dea90$c629bfb0$%jun@samsung.com> <1834387.xgX8NLRvfH@phil>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1401712543-14281-6-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:40951 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754176AbaFBNIw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Jun 2014 09:08:52 -0400
+In-Reply-To: <1834387.xgX8NLRvfH@phil>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Seungwon Jeon <tgih.jun@samsung.com>
+Cc: 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, chris@printf.net, ulf.hansson@linaro.org, ludovic.desroches@atmel.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dinguyen@altera.com, cpgs@samsung.com
 
-Hi,
 
-On 02.06.2014 14:35, Bartlomiej Zolnierkiewicz wrote:
-> Use c15resume firmware method instead of accessing the registers
-> directly in exynos_cpu_restore_register() if secure firmware is
-> enabled.  This affects both PM resume method and cpuidle AFTR mode.
-> 
-> This patch shouldn't cause any functionality changes on boards that
-> don't use secure firmware.
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-exynos/pm.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index cf09383..aeff99e 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
-> @@ -26,6 +26,7 @@
->  #include <asm/hardware/cache-l2x0.h>
->  #include <asm/smp_scu.h>
->  #include <asm/suspend.h>
-> +#include <asm/firmware.h>
->  
->  #include <plat/pm-common.h>
->  #include <plat/pll.h>
-> @@ -232,6 +233,9 @@ static void exynos_cpu_restore_register(void)
->  {
->  	unsigned long tmp;
->  
-> +	if (call_firmware_op(c15resume, save_arm_register) == 0)
-> +		return;
-> +
 
-As I mentioned in my comments to patch 2/7, instead of introducing
-heavily SoC-specific operations, I'd rather add more general suspend and
-resume firmware operations which would take care of both saving and
-restoring those registers.
+On 05/30/2014 01:15 PM, Heiko St=FCbner wrote:
+> Am Freitag, 30. Mai 2014, 21:54:13 schrieb Seungwon Jeon:
+>> + Dinh Nguyen <dinguyen@altera.com>
+>> + Heiko Stuebner <heiko@sntech.de>
+>>
+>> On Wed, May 28, 2014, Jaehoon Chung wrote:
+>>> dw-mmc controller can support the multiple slot.
+>>> So each slot's property can be difference.
+>>> And "support-highspeed" property in dw-mmc is deprecated.
+>>> "support-highspeed" property can be replaced to "cap-sd/mmc-highspe=
+ed".
+>>>
+>>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>>
+>> Looks good to me.
+>>
+>> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+>
+> the rockchip part also looks ok to me
+>
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
+>
+>
+>>
 
-Best regards,
-Tomasz
+=46or the socfpga parts:
+
+Acked-by: Dinh Nguyen <dinguyen@altera.com>
+
+Thanks,
+Dinh
