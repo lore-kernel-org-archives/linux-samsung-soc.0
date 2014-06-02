@@ -1,88 +1,131 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: remove hardware overlays disable from fimd
- probe
-Date: Mon, 02 Jun 2014 20:06:01 +0900
-Message-ID: <538C5A99.6040505@samsung.com>
-References: <1401257471-31994-1-git-send-email-rahul.sharma@samsung.com>
- <538C3FC4.6090509@samsung.com>
- <CAPdUM4POJwfe_RyKV+ym=ENgVF+2To0qgS88UGp1ueBD3LH4ig@mail.gmail.com>
+From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Mon, 2 Jun 2014 12:44:51 +0100
+Message-ID: <20140602114450.GF3855@e103592.cambridge.arm.com>
+References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
+	<20140530112226.GA3949@e103592.cambridge.arm.com>
+	<4830064.JvgTAs8Xty@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAPdUM4POJwfe_RyKV+ym=ENgVF+2To0qgS88UGp1ueBD3LH4ig@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "Szyprowski, Marek" <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4830064.JvgTAs8Xty@wuerfel>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNOuFhCAwNuyblCAwMuydvCAxODo0MiwgUmFodWwgU2hhcm1hIHdyb3RlOgo+IE9uIDIg
-SnVuZSAyMDE0IDE0OjQxLCBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPiB3cm90
-ZToKPj4gSGkgUmFodWwsCj4+Cj4+IE9uIDA1LzI4LzIwMTQgMDg6MTEgQU0sIFJhaHVsIFNoYXJt
-YSB3cm90ZToKPj4+IFN5c3RlbSBoYW5ncyB3aGVuIEZJTUQgcmVnaXN0ZXJzIGFyZSBhY2Nlc3Nl
-ZCB0byBkaXNhYmxlCj4+PiBoYXJkd2FyZSBvdmVybGF5cy4gVGhpcyBpcyBiZWNhdXNlIG9mIHRo
-ZSBjbG9ja3Mgd2hpY2ggYXJlCj4+PiBub3QgZW5hYmxlZCBiZWZvcmUgcmVnaXN0ZXIgYWNjZXNz
-Lgo+Pj4KPj4+ICdIYXJkd2FyZSBvdmVybGF5IGRpc2FibGUnIGlzIGNsZWFuZWQgZnJvbSB0aGUg
-RklNRCBwcm9iZS4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBSYWh1bCBTaGFybWEgPHJhaHVsLnNo
-YXJtYUBzYW1zdW5nLmNvbT4KPj4KPj4gVGhpcyBwYXRjaCBjYXVzZXMgcmVncmVzc2lvbiBvbiBz
-b21lIGV4eW5vczQyMTAtdW5pdmVyc2FsX2MyMTAgZGV2aWNlcywKPj4gZXZlcnl0aGluZyB3b3Jr
-cyBleHBlY3QgY29sb3JzIGFyZSBpbmNvcnJlY3QgLSBpdCBzZWVtcyBibHVlIGNvbXBvbmVudAo+
-PiBpcyB2ZXJ5IGRhcmssIGFsbW9zdCBibGFjay4KClRoYXQgaXNzdWUgd291bGQgYmUgYmVjYXVz
-ZSB5b3VyIGJvb3QtbG9hZGVyIGVuYWJsZWQgYSBoYXJkd2FyZSBvdmVybGF5CmJ1dCBrZXJuZWwg
-ZHJpdmVyIGVuYWJsZXMgYW5vdGhlciBoYXJkd2FyZSBvdmVybGF5LCB3aGljaCB3b3VsZCBhbHNv
-IGJlCndoeSBpdCBoYXBwZW5zIG9ubHkgb24gb25lIHRhcmdldCBvZiB5b3VyIHRhcmdldHMsIGFu
-ZCB3aHkgaXQgd29ya3MKY29ycmVjdGx5IGJ5IGNsZWFuaW5nIGhhcmR3YXJlIG92ZXJsYXlzIGF0
-IGZpbWQgcHJvYmUuCgo+Pgo+IAo+IE9oLi4uLiBTb3JyeSBmb3IgdGhhdC4gSSBkaWQgbm90IHNl
-ZSBhbnkgcHJvYmxlbSBvbiA1MjUwLzU0MjAvNTgwMC4gSSBkbyBub3QKPiBoYXZlIHNldHVwIGZv
-ciA0MjEwLiBCZXR0ZXIgd2Ugc2hvdWxkIHJldmVydCB0aGlzIHBhdGNoLgo+IAoKTm8sIGl0IHNo
-b3VsZCB3b3JrIGNvcnJlY3RseSBhcyBpcyBiZWNhdXNlIGZpbWQgb3ZlcmxheXMgd2lsbCBiZQpy
-ZWNvbmZpZ3VyZWQgYXQgYm9vdGluZyB0aW1lIGJ5IHJlZ2lzdGVyX2ZyYW1lYnVmZmVyKCkgaWYg
-Y29uc29sZQpmcmFtZWJ1ZmZlciBpcyBlbmFibGVkLiBPdGhlcndpc2UsIGEgbWFzdGVyIHByb2Nl
-c3MsIFggb3IgV2VzdG9uLCB3aWxsCnJlY29uZmlndXJlIGZpbWQgb3ZlcmxheXMgYWZ0ZXIga2Vy
-bmVsIGJvb3RpbmcuCgpUaGFua3MsCklua2kgRGFlCgo+IFdvdWxkIHlvdSBwbGVhc2UgaGVscCBt
-ZSBieSB2ZXJpZnlpbmcgdGhlIGZvbGxvd2luZyBwYXRjaCBvbiA0MjEwPyBUaGlzCj4gaXMgYW4g
-YWx0ZXJuYXRlIHNvbHV0aW9uIHRvIHRoZSBzYW1lIHByb2JsZW0uCj4gCj4gaHR0cDovL3d3dy5t
-YWlsLWFyY2hpdmUuY29tL2xpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZy9tc2czMTQy
-Ni5odG1sCj4gCj4gVGhhbmtzIEFuZHJlaiwgZm9yIGJyaW5naW5nIGl0IHRvIG5vdGljZS4KPiAK
-PiBSZWdhcmRzLAo+IFJhaHVsIFNoYXJtYQo+IAo+PiBSZWdhcmRzCj4+IEFuZHJ6ZWoKPj4KPj4+
-IC0tLQo+Pj4gQmFzZWQgb24gZXh5bm9zLWRybS1uZXh0IGJyYW5jaC4KPj4+Cj4+PiAgZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyB8ICAgMTcgLS0tLS0tLS0tLS0tLS0t
-LS0KPj4+ICAxIGZpbGUgY2hhbmdlZCwgMTcgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgYi9kcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCj4+PiBpbmRleCBiZDMwZDBjLi4yZWM2MzRm
-IDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQu
-Ywo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+Pj4g
-QEAgLTcwMywxOSArNzAzLDYgQEAgc3RhdGljIHZvaWQgZmltZF93aW5fZGlzYWJsZShzdHJ1Y3Qg
-ZXh5bm9zX2RybV9tYW5hZ2VyICptZ3IsIGludCB6cG9zKQo+Pj4gICAgICAgd2luX2RhdGEtPmVu
-YWJsZWQgPSBmYWxzZTsKPj4+ICB9Cj4+Pgo+Pj4gLXN0YXRpYyB2b2lkIGZpbWRfY2xlYXJfd2lu
-KHN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCwgaW50IHdpbikKPj4+IC17Cj4+PiAtICAgICB3cml0
-ZWwoMCwgY3R4LT5yZWdzICsgV0lOQ09OKHdpbikpOwo+Pj4gLSAgICAgd3JpdGVsKDAsIGN0eC0+
-cmVncyArIFZJRE9TRF9BKHdpbikpOwo+Pj4gLSAgICAgd3JpdGVsKDAsIGN0eC0+cmVncyArIFZJ
-RE9TRF9CKHdpbikpOwo+Pj4gLSAgICAgd3JpdGVsKDAsIGN0eC0+cmVncyArIFZJRE9TRF9DKHdp
-bikpOwo+Pj4gLQo+Pj4gLSAgICAgaWYgKHdpbiA9PSAxIHx8IHdpbiA9PSAyKQo+Pj4gLSAgICAg
-ICAgICAgICB3cml0ZWwoMCwgY3R4LT5yZWdzICsgVklET1NEX0Qod2luKSk7Cj4+PiAtCj4+PiAt
-ICAgICBmaW1kX3NoYWRvd19wcm90ZWN0X3dpbihjdHgsIHdpbiwgZmFsc2UpOwo+Pj4gLX0KPj4+
-IC0KPj4+ICBzdGF0aWMgdm9pZCBmaW1kX3dpbmRvd19zdXNwZW5kKHN0cnVjdCBleHlub3NfZHJt
-X21hbmFnZXIgKm1ncikKPj4+ICB7Cj4+PiAgICAgICBzdHJ1Y3QgZmltZF9jb250ZXh0ICpjdHgg
-PSBtZ3ItPmN0eDsKPj4+IEBAIC04OTgsMTYgKzg4NSwxMiBAQCBzdGF0aWMgaW50IGZpbWRfYmlu
-ZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkK
-Pj4+ICB7Cj4+PiAgICAgICBzdHJ1Y3QgZmltZF9jb250ZXh0ICpjdHggPSBmaW1kX21hbmFnZXIu
-Y3R4Owo+Pj4gICAgICAgc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYgPSBkYXRhOwo+Pj4gLSAg
-ICAgaW50IHdpbjsKPj4+Cj4+PiAgICAgICBmaW1kX21ncl9pbml0aWFsaXplKCZmaW1kX21hbmFn
-ZXIsIGRybV9kZXYpOwo+Pj4gICAgICAgZXh5bm9zX2RybV9jcnRjX2NyZWF0ZSgmZmltZF9tYW5h
-Z2VyKTsKPj4+ICAgICAgIGlmIChjdHgtPmRpc3BsYXkpCj4+PiAgICAgICAgICAgICAgIGV4eW5v
-c19kcm1fY3JlYXRlX2VuY19jb25uKGRybV9kZXYsIGN0eC0+ZGlzcGxheSk7Cj4+Pgo+Pj4gLSAg
-ICAgZm9yICh3aW4gPSAwOyB3aW4gPCBXSU5ET1dTX05SOyB3aW4rKykKPj4+IC0gICAgICAgICAg
-ICAgZmltZF9jbGVhcl93aW4oY3R4LCB3aW4pOwo+Pj4gLQo+Pj4gICAgICAgcmV0dXJuIDA7Cj4+
-Pgo+Pj4gIH0KPj4+Cj4+Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+On Fri, May 30, 2014 at 09:01:19PM +0200, Arnd Bergmann wrote:
+> On Friday 30 May 2014 12:22:32 Dave Martin wrote:
+> > > +
+> > > +Examples:
+> > > +=========
+> > > +
+> > > +Single-master IOMMU:
+> > > +--------------------
+> > > +
+> > > +	iommu {
+> > > +		#address-cells = <0>;
+> > > +		#size-cells = <0>;
+> > > +	};
+> > > +
+> > > +	master {
+> > > +		iommus = <&/iommu>;
+> > > +	};
+> > > +
+> > > +Multiple-master IOMMU with fixed associations:
+> > > +----------------------------------------------
+> > > +
+> > > +	/* multiple-master IOMMU */
+> > > +	iommu {
+> > > +		/*
+> > > +		 * Masters are statically associated with this IOMMU and
+> > > +		 * address translation is always enabled.
+> > > +		 */
+> > > +		#address-cells = <0>;
+> > > +		#size-cells = <0>;
+> > 
+> > In this example, can different translations be set up for the different
+> > masters?
+> > 
+> > With no cells available to contain any sort of ID, it looks like this
+> > is not possible.
+> 
+> Correct, this example is for an IOMMU that does not use IDs but has a
+> shared address space for all devices.
+> 
+> > > +Multiple-master IOMMU with configurable DMA window:
+> > > +---------------------------------------------------
+> > > +
+> > > +	/ {
+> > > +		#address-cells = <1>;
+> > > +		#size-cells = <1>;
+> > > +
+> > > +		iommu {
+> > > +			/* master ID, address of DMA window */
+> > > +			#address-cells = <2>;
+> > > +			#size-cells = <2>;
+> > > +		};
+> > > +
+> > > +		master {
+> > > +			/* master ID 42, 4 GiB DMA window starting at 0 */
+> > > +			iommus = <&/iommu  42 0  0x1 0x0>;
+> > 
+> > I'm still concerned that in order to deal with future cases we will have
+> > to invent multiple ways to parse the "iommus" property.  For example, if
+> > we have a PCEe RC mastering through an IOMMU, it will pass a huge set
+> > of possible master IDs to the IOMMU, not just noe or two.
+> > 
+> > Do you have a solution in mind for that which doesn't break backwards
+> > compatibility?
+> 
+> I think we can treat PCI as a special case here and have an interface
+> that gets used by the PCI core code to talk to the IOMMU core code
+> when setting up a the dma_map_ops for a PCI function. As long as the
+> IOMMU driver understands what PCI is, we don't have to describe the
+> mapping in detail.
+
+PCI is only an example, but I admit it's likely to be the most important
+example of a peripheral using a huge ID space.
+
+There may still be integration-specific parameters which would need to
+be fed in via DT regarding how IDs coming out of the RC map onto the
+IOMMU and GIC.
+
+> 
+> > One option is to include an extra cell to the IOMMUs property
+> > that indicates how to parse it.  For now, only a single value would
+> > be defined.  For example:
+> > 
+> > 	iommus = <&/iommu IOMMU_SIMPLE 42>;
+> > 
+> > Then maybe later
+> > 
+> > 	iommus = <&/iommu IOMMU_RANGE 0x10000 0x10000>;
+> > 
+> > (I'm not suggesting what IOMMU_RANGE might mean.)
+> > 
+> 
+> This can really be left up to the specific IOMMU driver itself.
+> We can have drivers that support both #address-cells=<1>
+> and #address-cells=<2> and behave differently based on that.
+> I don't see a reason to define that across IOMMU implementations.
+
+There's a risk we have to come up with multiple solutions to the same
+problem there -- i.e., one solution per IOMMU implementation and then
+another solution for the GIC.
+
+Ideally that would be avoided, but the number of times this problem
+would need to be solved is probably not that large.
+
+Cheers
+---Dave
