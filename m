@@ -1,60 +1,57 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: dts: Enable USB 3503 hub on exynos5250-snow
-Date: Mon, 2 Jun 2014 17:39:51 +0530
-Message-ID: <CAFp+6iFbDfWconRZzMhSXFG_RbXF-rnYwraJK1P1tQSb6R+Dkw@mail.gmail.com>
-References: <1399293056-17143-1-git-send-email-gautam.vivek@samsung.com>
-	<536BA9E8.2030306@suse.de>
-	<536BAD05.9070401@samsung.com>
-	<CAODwPW8FpsF6vo5Z8_+YXwchwab=7Ltv0nEvP_=907HK232xCg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAODwPW8FpsF6vo5Z8_+YXwchwab=7Ltv0nEvP_=907HK232xCg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Julius Werner <jwerner@chromium.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Arun Kumar <arunkk.samsung@gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 0/7] ARM: EXYNOS: cpuidle: fix AFTR mode on boards with
+ secure firmware enabled
+Date: Mon, 02 Jun 2014 14:35:36 +0200
+Message-ID: <1401712543-14281-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:44533 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751877AbaFBMfz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Jun 2014 08:35:55 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
 
-Hi Julius,
+Hi,
+
+This patch series fixes support for AFTR idle mode on boards with
+secure firmware enabled (it also includes fix for register setup on
+EXYNOS4x12 SoCs).  It has been tested on Trats2 target but should
+also work on (EXYNOS4412 based) Insignal Origen board.
+
+v2:
+- synced against next-20140602
+- added missing Acked-by-s
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
 
-On Thu, May 29, 2014 at 4:07 AM, Julius Werner <jwerner@chromium.org> wrote:
-> We originally tried using this driver on ChromiumOS and never got it
-> to work reliably. IIRC the issue was that if the hub had already been
-> initialized by firmware, the USB stack might enumerate it before the
-> usb3503 driver is probed and then the later reset will silently
-> disrupt that connection. (I think I tried to force the 3503 to probe
-> earlier as well, and there was some other issue with that although I
-> don't recall the details.)
+Bartlomiej Zolnierkiewicz (5):
+  ARM: EXYNOS: add AFTR mode support to firmware do_idle method
+  ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static inlines
+  ARM: EXYNOS: PM: use c15resume firmware method if secure firmware is
+    enabled
+  ARM: EXYNOS: PM: fix register setup on EXYNOS4x12 for AFTR mode code
+  ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode code
 
-Ok, there was already a patch posted by you for this[1], which had
-quite a much discussion
-on it.
-Would you like to give some pointers based on that ?
-One that Olof had suggested was to use gpio-reset driver which is yet
-to make to mainline.
-But i think with that too we need to take care of the timing for
-resetting the hub before PHY
-gets reset.
+Kyungmin Park (1):
+  arm: firmware: Check firmware is running or not
 
->
-> This will not be an issue for the Snow and Peach_Pi(t) boards (since
-> neither of them shipped with firmware that supports this hub), but it
-> will be an issue for Spring and Skate. On ChromiumOS we decided to
-> carry a local (and admittedly ugly) patch to pull that reset line from
-> the USB PHY driver instead, since that's the only way I could get it
-> to work in all cases (see http://crosreview.com/58963).
->
-> This doesn't mean I'm against this patch per se, just wanted to point
-> out the trade-offs.
+Tomasz Figa (1):
+  ARM: EXYNOS: add support for firmware-assisted c15resume
 
-Thanks for raising the concern, this needs to be addressed.
-
-[1] https://lkml.org/lkml/2013/7/9/486
-
+ arch/arm/common/firmware.c       |  5 +++++
+ arch/arm/include/asm/firmware.h  | 14 +++++++++++++-
+ arch/arm/mach-exynos/firmware.c  | 18 ++++++++++++++++--
+ arch/arm/mach-exynos/pm.c        | 40 ++++++++++++++++++++++++++++++++--------
+ drivers/cpuidle/cpuidle-exynos.c |  7 ++++++-
+ 5 files changed, 72 insertions(+), 12 deletions(-)
 
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+1.8.2.3
