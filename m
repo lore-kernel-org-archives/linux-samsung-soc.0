@@ -1,98 +1,92 @@
-From: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v11 0/3] Exynos 5410 support
-Date: Mon, 02 Jun 2014 08:05:10 -0700
-Message-ID: <7hzjhvxsgp.fsf@paris.lan>
-References: <1401074613-29227-1-git-send-email-t.dakhran@samsung.com>
-	<7hr43f9mmn.fsf@paris.lan> <538737CA.4070709@suse.de>
-	<53874862.5080809@samsung.com> <538775AB.3000604@suse.de>
-	<CAC5m3Bz53QO5tTTvk7qnBQtwtjMvSgYZ15prAvnLjdogQRsfMQ@mail.gmail.com>
-	<CANhyOUeq1MMHHn9t+Fy5gpkb43y_rS9F_OAoJ_KFyM1pL4ZJ4w@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 6/7] ARM: EXYNOS: PM: fix register setup on EXYNOS4x12
+ for AFTR mode code
+Date: Mon, 02 Jun 2014 18:05:04 +0200
+Message-ID: <538CA0B0.2030200@linaro.org>
+References: <1399287439-31376-1-git-send-email-b.zolnierkie@samsung.com> <1399287439-31376-7-git-send-email-b.zolnierkie@samsung.com> <5375D44F.7000505@linaro.org> <2762097.QhkViWyNLQ@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CANhyOUeq1MMHHn9t+Fy5gpkb43y_rS9F_OAoJ_KFyM1pL4ZJ4w-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-	(Tarek Dakhran's message of "Fri, 30 May 2014 23:07:01 +0400")
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tarek Dakhran <t.dakhran-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:47493 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754559AbaFBQEr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Jun 2014 12:04:47 -0400
+Received: by mail-wi0-f175.google.com with SMTP id f8so4910086wiw.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Jun 2014 09:04:45 -0700 (PDT)
+In-Reply-To: <2762097.QhkViWyNLQ@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
 
-Tarek Dakhran <t.dakhran-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
-
+On 06/02/2014 02:08 PM, Bartlomiej Zolnierkiewicz wrote:
+>
 > Hi,
 >
-> On Fri, May 30, 2014 at 7:41 AM, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> w=
-rote:
->> On Thu, May 29, 2014 at 11:30 PM, Andreas F=C3=A4rber <afaerber@suse=
-=2Ede> wrote:
->>> Hi Tarek,
+> On Friday, May 16, 2014 11:03:11 AM Daniel Lezcano wrote:
+>> On 05/05/2014 12:57 PM, Bartlomiej Zolnierkiewicz wrote:
+>>> Add S5P_CENTRAL_SEQ_OPTION register setup for EXYNOS4x12 to AFTR
+>>> mode code.  Without this setup AFTR mode doesn't show any benefit
+>>> over WFI one.  When this setup is applied AFTR mode reduces power
+>>> consumption by ~12% (as measured on Trats2 board).
 >>>
+>>> This change is a preparation for adding secure firmware support to
+>>> EXYNOS cpuidle driver.
 >>>
->>> And I reproducibly get failures for CPUs 1-3, resulting in only one=
- CPU
->>> in /proc/cpuinfo (compared to 4 on downstream 3.14):
+>>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>>> ---
+>>>    arch/arm/mach-exynos/pm.c | 4 ++++
+>>>    1 file changed, 4 insertions(+)
 >>>
->>> [    0.045778] CPU: Testing write buffer coherency: ok
->>> [    0.045968] /cpus/cpu@0 missing clock-frequency property
->>> [    0.045993] /cpus/cpu@1 missing clock-frequency property
->>> [    0.046016] /cpus/cpu@2 missing clock-frequency property
->>> [    0.046040] /cpus/cpu@3 missing clock-frequency property
->>> [    0.046059] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
->>> [    0.046135] Setting up static identity map for 0x403a8920 - 0x40=
-3a8978
->>> [    2.075052] CPU1: failed to come online
->>> [    4.085095] CPU2: failed to come online
->>> [    6.095142] CPU3: failed to come online
->>> [    6.095237] Brought up 1 CPUs
->>> [    6.095269] SMP: Total of 1 processors activated.
->>> [    6.095303] CPU: All CPU(s) started in HYP mode.
->>> [    6.095336] CPU: Virtualization extensions available.
->>>
->>> I also notice another apparent device tree issue:
->>>
->>> [    7.341814] of_get_named_gpiod_flags: can't parse gpios property=
- of
->>> node '/soc/mmc@12220000/slot@0[0]'
->>> [    7.341850] of_get_named_gpiod_flags: can't parse gpios property=
- of
->>> node '/soc/mmc@12220000/slot@0[0]'
->>>
->>> Are any of those known issues and being worked on?
->>> (The CPU failures affected 5420 Arndale Octa as well iirc.)
->>>
+>>> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+>>> index 18f6bf8..3922968 100644
+>>> --- a/arch/arm/mach-exynos/pm.c
+>>> +++ b/arch/arm/mach-exynos/pm.c
+>>> @@ -391,6 +391,10 @@ static int exynos_cpu_pm_notifier(struct notif=
+ier_block *self,
+>>>    	case CPU_PM_ENTER:
+>>>    		if (cpu =3D=3D 0) {
+>>>    			exynos_pm_central_suspend();
+>>> +			if (soc_is_exynos4212() || soc_is_exynos4412())
+>>> +				__raw_writel(S5P_USE_STANDBY_WFI0 |
+>>> +					     S5P_USE_STANDBY_WFE0,
+>>> +					     S5P_CENTRAL_SEQ_OPTION);
 >>
->> Can you check after applying following two patches for Arndale-Octa
->> ([1],[2])? In other words, a patch similar to [2] might be required
->> for this board too if it is booting under secure mode.
+>> Why not put this code in the exynos_enter_aftr() ?
 >
-> Firmware node already present into exynos5410-smdk5410.dts
-> So with only patch[1] 4xA15 cores will boot on ODROID-XU and SMDK5410=
-=2E
+> I would prefer to keep this code close to exynos_pm_central_suspend()
+> because exynos_pm_suspend() (which calls exynos_pm_central_suspend()
+> too) also contains S5P_USE_STANDBY_WF[I,E]0 setting code (done for al=
+l
+> SoCs).  If possible I would like to make this code common for AFTR &
+> suspend in the future (once it is tested on Exynos4210 and Exynos5250=
+)
+> by moving S5P_USE_STANDBY_WF[I,E]0 setting to exynos_pm_central_suspe=
+nd()
+> and doing it for all SoCs.  Are you okay with this?
 
-I also confirm that with 4xA15 cores boot when adding patch [1].
+Yeah, no problem.
 
-Kevin
 
->>
->> [1] http://www.spinics.net/lists/linux-samsung-soc/msg31776.html
->>
->> [PATCH v2 Resend 1/2] ARM: EXYNOS: Update secondary boot addr for se=
-cure mode
->>
->> [2] http://www.spinics.net/lists/linux-samsung-soc/msg31777.html
->>
->> [PATCH v2 Resend 2/2] ARM: dts: Add secure firmware support for Arnd=
-ale-octa
->>
->>
->> --
->> Tushar Behera
+>>>    			exynos_cpu_save_register();
+>>>    		}
+>>>    		break;
 >
 > Best regards,
->     Tarek
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
