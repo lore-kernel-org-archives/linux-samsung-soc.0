@@ -1,131 +1,104 @@
-From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Mon, 2 Jun 2014 12:44:51 +0100
-Message-ID: <20140602114450.GF3855@e103592.cambridge.arm.com>
-References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
-	<20140530112226.GA3949@e103592.cambridge.arm.com>
-	<4830064.JvgTAs8Xty@wuerfel>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] drm/exynos: remove hardware overlays disable from fimd
+ probe
+Date: Mon, 02 Jun 2014 13:48:55 +0200
+Message-ID: <538C64A7.50900@samsung.com>
+References: <1401257471-31994-1-git-send-email-rahul.sharma@samsung.com>
+ <538C3FC4.6090509@samsung.com>
+ <CAPdUM4POJwfe_RyKV+ym=ENgVF+2To0qgS88UGp1ueBD3LH4ig@mail.gmail.com>
+ <538C4DE0.50801@gmail.com> <538C551E.30407@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4830064.JvgTAs8Xty@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <538C551E.30407@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, "Szyprowski,
+ Marek" <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, May 30, 2014 at 09:01:19PM +0200, Arnd Bergmann wrote:
-> On Friday 30 May 2014 12:22:32 Dave Martin wrote:
-> > > +
-> > > +Examples:
-> > > +=========
-> > > +
-> > > +Single-master IOMMU:
-> > > +--------------------
-> > > +
-> > > +	iommu {
-> > > +		#address-cells = <0>;
-> > > +		#size-cells = <0>;
-> > > +	};
-> > > +
-> > > +	master {
-> > > +		iommus = <&/iommu>;
-> > > +	};
-> > > +
-> > > +Multiple-master IOMMU with fixed associations:
-> > > +----------------------------------------------
-> > > +
-> > > +	/* multiple-master IOMMU */
-> > > +	iommu {
-> > > +		/*
-> > > +		 * Masters are statically associated with this IOMMU and
-> > > +		 * address translation is always enabled.
-> > > +		 */
-> > > +		#address-cells = <0>;
-> > > +		#size-cells = <0>;
-> > 
-> > In this example, can different translations be set up for the different
-> > masters?
-> > 
-> > With no cells available to contain any sort of ID, it looks like this
-> > is not possible.
+On 06/02/2014 12:42 PM, Andrzej Hajda wrote:
+> On 06/02/2014 12:11 PM, Tomasz Figa wrote:
+>> Hi Rahul, Andrzej,
+>>
+>> On 02.06.2014 11:42, Rahul Sharma wrote:
+>>> On 2 June 2014 14:41, Andrzej Hajda <a.hajda@samsung.com> wrote:
+>>>> Hi Rahul,
+>>>>
+>>>> On 05/28/2014 08:11 AM, Rahul Sharma wrote:
+>>>>> System hangs when FIMD registers are accessed to disable
+>>>>> hardware overlays. This is because of the clocks which are
+>>>>> not enabled before register access.
+>>>>>
+>>>>> 'Hardware overlay disable' is cleaned from the FIMD probe.
+>>>>>
+>>>>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>>>>
+>>>> This patch causes regression on some exynos4210-universal_c210 devices,
+>>>> everything works expect colors are incorrect - it seems blue component
+>>>> is very dark, almost black.
+>>>>
+>>>
+>>> Oh.... Sorry for that. I did not see any problem on 5250/5420/5800. I do not
+>>> have setup for 4210. Better we should revert this patch.
+>>>
+>>> Would you please help me by verifying the following patch on 4210? This
+>>> is an alternate solution to the same problem.
+>>>
+>>> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31426.html
+>>>
+>>> Thanks Andrej, for bringing it to notice.
+>>
+>> I don't see how this patch could introduce such regression, as all the
+>> affected registers seem to be properly reconfigured in fimd_win_commit()
+>> anyway.
+>>
+>> IMHO instead of reverting the patch, this issue should be investigated
+>> and fixed properly.
+>>
+>> Best regards,
+>> Tomasz
+>>
 > 
-> Correct, this example is for an IOMMU that does not use IDs but has a
-> shared address space for all devices.
-> 
-> > > +Multiple-master IOMMU with configurable DMA window:
-> > > +---------------------------------------------------
-> > > +
-> > > +	/ {
-> > > +		#address-cells = <1>;
-> > > +		#size-cells = <1>;
-> > > +
-> > > +		iommu {
-> > > +			/* master ID, address of DMA window */
-> > > +			#address-cells = <2>;
-> > > +			#size-cells = <2>;
-> > > +		};
-> > > +
-> > > +		master {
-> > > +			/* master ID 42, 4 GiB DMA window starting at 0 */
-> > > +			iommus = <&/iommu  42 0  0x1 0x0>;
-> > 
-> > I'm still concerned that in order to deal with future cases we will have
-> > to invent multiple ways to parse the "iommus" property.  For example, if
-> > we have a PCEe RC mastering through an IOMMU, it will pass a huge set
-> > of possible master IDs to the IOMMU, not just noe or two.
-> > 
-> > Do you have a solution in mind for that which doesn't break backwards
-> > compatibility?
-> 
-> I think we can treat PCI as a special case here and have an interface
-> that gets used by the PCI core code to talk to the IOMMU core code
-> when setting up a the dma_map_ops for a PCI function. As long as the
-> IOMMU driver understands what PCI is, we don't have to describe the
-> mapping in detail.
+> I am looking at the problem, it is quite strange as it happens only on
+> one of two targets I have access to. Anyway it seems that something
+> should be added to fimd initialization sequence if we want to remove hw
+> accessing code from probe.
 
-PCI is only an example, but I admit it's likely to be the most important
-example of a peripheral using a huge ID space.
+The problem is that fimd does not clear unused windows.
+Simple patch which helps:
 
-There may still be integration-specific parameters which would need to
-be fed in via DT regarding how IDs coming out of the RC map onto the
-IOMMU and GIC.
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 2ec634f..b58fce2 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -741,6 +741,8 @@ static void fimd_apply(struct exynos_drm_manager *mgr)
+                win_data = &ctx->win_data[i];
+                if (win_data->enabled)
+                        fimd_win_commit(mgr, i);
++               else
++                       fimd_win_disable(mgr, i);
+        }
+
+        fimd_commit(mgr);
+
+But I am not fully familiar with window management code, so I do not
+know if it does not breaks other stuff.
+
+Regards
+Andrzej
 
 > 
-> > One option is to include an extra cell to the IOMMUs property
-> > that indicates how to parse it.  For now, only a single value would
-> > be defined.  For example:
-> > 
-> > 	iommus = <&/iommu IOMMU_SIMPLE 42>;
-> > 
-> > Then maybe later
-> > 
-> > 	iommus = <&/iommu IOMMU_RANGE 0x10000 0x10000>;
-> > 
-> > (I'm not suggesting what IOMMU_RANGE might mean.)
-> > 
+> Regards
+> Andrzej
 > 
-> This can really be left up to the specific IOMMU driver itself.
-> We can have drivers that support both #address-cells=<1>
-> and #address-cells=<2> and behave differently based on that.
-> I don't see a reason to define that across IOMMU implementations.
-
-There's a risk we have to come up with multiple solutions to the same
-problem there -- i.e., one solution per IOMMU implementation and then
-another solution for the GIC.
-
-Ideally that would be avoided, but the number of times this problem
-would need to be solved is probably not that large.
-
-Cheers
----Dave
