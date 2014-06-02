@@ -1,138 +1,88 @@
-From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Mon, 2 Jun 2014 11:56:26 +0100
-Message-ID: <20140602105626.GE3855@e103592.cambridge.arm.com>
-References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
-	<20140530073006.GA24748@ulmo>
-	<20140530112728.GB3949@e103592.cambridge.arm.com>
-	<4663172.oXIylQOrlk@wuerfel>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: remove hardware overlays disable from fimd
+ probe
+Date: Mon, 02 Jun 2014 20:06:01 +0900
+Message-ID: <538C5A99.6040505@samsung.com>
+References: <1401257471-31994-1-git-send-email-rahul.sharma@samsung.com>
+ <538C3FC4.6090509@samsung.com>
+ <CAPdUM4POJwfe_RyKV+ym=ENgVF+2To0qgS88UGp1ueBD3LH4ig@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4663172.oXIylQOrlk@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAPdUM4POJwfe_RyKV+ym=ENgVF+2To0qgS88UGp1ueBD3LH4ig@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "Szyprowski, Marek" <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, May 30, 2014 at 09:11:07PM +0200, Arnd Bergmann wrote:
-> On Friday 30 May 2014 12:27:28 Dave Martin wrote:
-> > On Fri, May 30, 2014 at 08:30:08AM +0100, Thierry Reding wrote:
-> > > On Thu, May 29, 2014 at 09:52:22AM -0600, Stephen Warren wrote:
-> > > > On 05/23/2014 02:36 PM, Thierry Reding wrote:
-> > > > I think this is a mistake. address-cells/size-cells are for transactions
-> > > > flowing down the bus (from the CPU to date). Describing a connection
-> > > > from a device to an IOMMU is something completely different, and should
-> > > > therefore simply use an iommu-cells property to describe any necessary
-> > > > information. If we start re-using properties for different things in
-> > > > different contexts, how is anyone going to know what they mean, and how
-> > > > will conflicts be resolved. For example, what if there's a single HW
-> > > > module that both acts as a regular register bus with children (where
-> > > > address-cells/size-cells defines how transactions reach the children
-> > > > from the parent), and is also an IOMMU (where according to this binding
-> > > > proposal, address-cells/size-cells represent some aspect of the IOMMU
-> > > > feature). Using different properties for different things is the only
-> > > > sane way to keep different concepts separate. Another alternative would
-> > > > be to represent the single HW module as separate nodes in DT, but I
-> > > > think that will only make our lives harder, and where I've done that in
-> > > > the past, I've regretted it.
-> > > 
-> > > There was some back-and-forth on this topic and the latest concensus
-> > > when I wrote the second version was that #address-cells and #size-cells
-> > > were to be used.
-> > > 
-> > > But there was some bore back-and-forth after that, and it seems like
-> > > Arnd no longer thinks that using #address-cells and #size-cells is a
-> > > good idea either[0].
-> > 
-> > Mistake or not, ePAPR already (ab)uses the address concept for PCI.
-> > Unless ePAPR is wrong, I don't think it makes sense to argue that
-> > the address concept cannot be repurposed.
-> > 
-> > The reason why this is abused for PCI is the same as our reason here:
-> > different masters really are treated as distinct even when accessing
-> > the same destination address, and DT has no general native way to
-> > describe that.
-> > 
-> > One clear advantage of using #address-cells etc. is that ePAPR already
-> > has very clear and well-defined ways of how to specify range mappings.
-> > This gives us a ready-made way to describe windowed IOMMUs and 1:1
-> > remappings of whole blocks of master IDs, which are the most obvious
-> > cases other than having a small-integer set of explicit IDs.
-> > 
-> > That said, the PCI pseudo-address thing is not something we _necessarily_
-> > want to repeat.
-> 
-> I'm really impartial to the question of whether to use #address-cells
-> or #iommus now. It's possible that we can use the addresses in some
-> meaningful way, but it's not clear to me that this will help make the
-> representation cleaner or that we will actually want it for SMMU.
-> 
-> > > Arnd, can you take another look at this binding and see if there's
-> > > anything else missing? If not I'll go through the document again and
-> > > update all #address-cells/#size-cells references with #iommu-cells as
-> > > appropriate and submit v3.
-> > 
-> > How do you envisage propagation of the master ID bits downstream of the
-> > IOMMU would be described?
-> > 
-> > We will definitely need a way to describe this for GICv3.  How those
-> > values are propagated is likely to vary between related SoCs and doesn't
-> > feel like it should be baked into a driver, especially for the ARM SMMU
-> > which may get reused in radically different SoC families from different
-> > vendors.
-> > 
-> > The most likely types of remapping are the adding of a base offset or
-> > some extra bits to the ID -- because not all MSIs to the GIC will
-> > necessarily pass through the IOMMU.  It's also possible that we might
-> > see ID squashing or folding in some systems.
-> > 
-> > 
-> > For types of remapping which mix the ID and address together, I now
-> > do tend to agree that any flexibility arising from describing that
-> > in a general way that is unlikely to repay the cost of trying to
-> > interpret and analyse the DT.  Defining a few sterotypical kinds
-> > of mapping explicitly, as needed, looks more sensible for now.  The
-> > windowed-IOMMU case is one example.
-> 
-> For MSI, my feeling is that we'd just be best off doing an end-to-end
-> description. Any device using an MSI would have an interrupt specifier
-> that is sufficient for the interrupt controller to understand where
-> the IRQ comes from, and return an address/value pair back to the driver
-> to program into some register.
-
-This is OK so long as the number of endpoint pairings is trivial.
-
-If there are multiple GICv3 ITSes addressable by a master, then we
-might have to describe each one per master, or impose policy on the
-DT whereby we choose one or two arbitrary or preferred ITSes for a
-particular master and describe just those.
-
-It's worth nothing that ePAPR strenuously avoids such an approach
-for describing DMA: device-device DMA would require information about
-every possible destination in every master node.
-
-Of course, device-device DMA turns out not to be a hot topic in
-practice most of the time, and likewise with this master ID stuff the
-number of pairings that are really relevant in useful situations is
-much smaller than the number of possible pairings.
-
-The element of gamble here, and the design of DT around Linux's
-present-day limitations makes me feel uneasy, but there's no
-knockdown argument that I'm aware of.
-
-_If_ we end up with a combinatorial explosion of pairings in the
-future, do you have a solution in mind?
-
-Cheers
----Dave
+T24gMjAxNOuFhCAwNuyblCAwMuydvCAxODo0MiwgUmFodWwgU2hhcm1hIHdyb3RlOgo+IE9uIDIg
+SnVuZSAyMDE0IDE0OjQxLCBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPiB3cm90
+ZToKPj4gSGkgUmFodWwsCj4+Cj4+IE9uIDA1LzI4LzIwMTQgMDg6MTEgQU0sIFJhaHVsIFNoYXJt
+YSB3cm90ZToKPj4+IFN5c3RlbSBoYW5ncyB3aGVuIEZJTUQgcmVnaXN0ZXJzIGFyZSBhY2Nlc3Nl
+ZCB0byBkaXNhYmxlCj4+PiBoYXJkd2FyZSBvdmVybGF5cy4gVGhpcyBpcyBiZWNhdXNlIG9mIHRo
+ZSBjbG9ja3Mgd2hpY2ggYXJlCj4+PiBub3QgZW5hYmxlZCBiZWZvcmUgcmVnaXN0ZXIgYWNjZXNz
+Lgo+Pj4KPj4+ICdIYXJkd2FyZSBvdmVybGF5IGRpc2FibGUnIGlzIGNsZWFuZWQgZnJvbSB0aGUg
+RklNRCBwcm9iZS4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBSYWh1bCBTaGFybWEgPHJhaHVsLnNo
+YXJtYUBzYW1zdW5nLmNvbT4KPj4KPj4gVGhpcyBwYXRjaCBjYXVzZXMgcmVncmVzc2lvbiBvbiBz
+b21lIGV4eW5vczQyMTAtdW5pdmVyc2FsX2MyMTAgZGV2aWNlcywKPj4gZXZlcnl0aGluZyB3b3Jr
+cyBleHBlY3QgY29sb3JzIGFyZSBpbmNvcnJlY3QgLSBpdCBzZWVtcyBibHVlIGNvbXBvbmVudAo+
+PiBpcyB2ZXJ5IGRhcmssIGFsbW9zdCBibGFjay4KClRoYXQgaXNzdWUgd291bGQgYmUgYmVjYXVz
+ZSB5b3VyIGJvb3QtbG9hZGVyIGVuYWJsZWQgYSBoYXJkd2FyZSBvdmVybGF5CmJ1dCBrZXJuZWwg
+ZHJpdmVyIGVuYWJsZXMgYW5vdGhlciBoYXJkd2FyZSBvdmVybGF5LCB3aGljaCB3b3VsZCBhbHNv
+IGJlCndoeSBpdCBoYXBwZW5zIG9ubHkgb24gb25lIHRhcmdldCBvZiB5b3VyIHRhcmdldHMsIGFu
+ZCB3aHkgaXQgd29ya3MKY29ycmVjdGx5IGJ5IGNsZWFuaW5nIGhhcmR3YXJlIG92ZXJsYXlzIGF0
+IGZpbWQgcHJvYmUuCgo+Pgo+IAo+IE9oLi4uLiBTb3JyeSBmb3IgdGhhdC4gSSBkaWQgbm90IHNl
+ZSBhbnkgcHJvYmxlbSBvbiA1MjUwLzU0MjAvNTgwMC4gSSBkbyBub3QKPiBoYXZlIHNldHVwIGZv
+ciA0MjEwLiBCZXR0ZXIgd2Ugc2hvdWxkIHJldmVydCB0aGlzIHBhdGNoLgo+IAoKTm8sIGl0IHNo
+b3VsZCB3b3JrIGNvcnJlY3RseSBhcyBpcyBiZWNhdXNlIGZpbWQgb3ZlcmxheXMgd2lsbCBiZQpy
+ZWNvbmZpZ3VyZWQgYXQgYm9vdGluZyB0aW1lIGJ5IHJlZ2lzdGVyX2ZyYW1lYnVmZmVyKCkgaWYg
+Y29uc29sZQpmcmFtZWJ1ZmZlciBpcyBlbmFibGVkLiBPdGhlcndpc2UsIGEgbWFzdGVyIHByb2Nl
+c3MsIFggb3IgV2VzdG9uLCB3aWxsCnJlY29uZmlndXJlIGZpbWQgb3ZlcmxheXMgYWZ0ZXIga2Vy
+bmVsIGJvb3RpbmcuCgpUaGFua3MsCklua2kgRGFlCgo+IFdvdWxkIHlvdSBwbGVhc2UgaGVscCBt
+ZSBieSB2ZXJpZnlpbmcgdGhlIGZvbGxvd2luZyBwYXRjaCBvbiA0MjEwPyBUaGlzCj4gaXMgYW4g
+YWx0ZXJuYXRlIHNvbHV0aW9uIHRvIHRoZSBzYW1lIHByb2JsZW0uCj4gCj4gaHR0cDovL3d3dy5t
+YWlsLWFyY2hpdmUuY29tL2xpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZy9tc2czMTQy
+Ni5odG1sCj4gCj4gVGhhbmtzIEFuZHJlaiwgZm9yIGJyaW5naW5nIGl0IHRvIG5vdGljZS4KPiAK
+PiBSZWdhcmRzLAo+IFJhaHVsIFNoYXJtYQo+IAo+PiBSZWdhcmRzCj4+IEFuZHJ6ZWoKPj4KPj4+
+IC0tLQo+Pj4gQmFzZWQgb24gZXh5bm9zLWRybS1uZXh0IGJyYW5jaC4KPj4+Cj4+PiAgZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyB8ICAgMTcgLS0tLS0tLS0tLS0tLS0t
+LS0KPj4+ICAxIGZpbGUgY2hhbmdlZCwgMTcgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCj4+PiBpbmRleCBiZDMwZDBjLi4yZWM2MzRm
+IDEwMDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQu
+Ywo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+Pj4g
+QEAgLTcwMywxOSArNzAzLDYgQEAgc3RhdGljIHZvaWQgZmltZF93aW5fZGlzYWJsZShzdHJ1Y3Qg
+ZXh5bm9zX2RybV9tYW5hZ2VyICptZ3IsIGludCB6cG9zKQo+Pj4gICAgICAgd2luX2RhdGEtPmVu
+YWJsZWQgPSBmYWxzZTsKPj4+ICB9Cj4+Pgo+Pj4gLXN0YXRpYyB2b2lkIGZpbWRfY2xlYXJfd2lu
+KHN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCwgaW50IHdpbikKPj4+IC17Cj4+PiAtICAgICB3cml0
+ZWwoMCwgY3R4LT5yZWdzICsgV0lOQ09OKHdpbikpOwo+Pj4gLSAgICAgd3JpdGVsKDAsIGN0eC0+
+cmVncyArIFZJRE9TRF9BKHdpbikpOwo+Pj4gLSAgICAgd3JpdGVsKDAsIGN0eC0+cmVncyArIFZJ
+RE9TRF9CKHdpbikpOwo+Pj4gLSAgICAgd3JpdGVsKDAsIGN0eC0+cmVncyArIFZJRE9TRF9DKHdp
+bikpOwo+Pj4gLQo+Pj4gLSAgICAgaWYgKHdpbiA9PSAxIHx8IHdpbiA9PSAyKQo+Pj4gLSAgICAg
+ICAgICAgICB3cml0ZWwoMCwgY3R4LT5yZWdzICsgVklET1NEX0Qod2luKSk7Cj4+PiAtCj4+PiAt
+ICAgICBmaW1kX3NoYWRvd19wcm90ZWN0X3dpbihjdHgsIHdpbiwgZmFsc2UpOwo+Pj4gLX0KPj4+
+IC0KPj4+ICBzdGF0aWMgdm9pZCBmaW1kX3dpbmRvd19zdXNwZW5kKHN0cnVjdCBleHlub3NfZHJt
+X21hbmFnZXIgKm1ncikKPj4+ICB7Cj4+PiAgICAgICBzdHJ1Y3QgZmltZF9jb250ZXh0ICpjdHgg
+PSBtZ3ItPmN0eDsKPj4+IEBAIC04OTgsMTYgKzg4NSwxMiBAQCBzdGF0aWMgaW50IGZpbWRfYmlu
+ZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkK
+Pj4+ICB7Cj4+PiAgICAgICBzdHJ1Y3QgZmltZF9jb250ZXh0ICpjdHggPSBmaW1kX21hbmFnZXIu
+Y3R4Owo+Pj4gICAgICAgc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYgPSBkYXRhOwo+Pj4gLSAg
+ICAgaW50IHdpbjsKPj4+Cj4+PiAgICAgICBmaW1kX21ncl9pbml0aWFsaXplKCZmaW1kX21hbmFn
+ZXIsIGRybV9kZXYpOwo+Pj4gICAgICAgZXh5bm9zX2RybV9jcnRjX2NyZWF0ZSgmZmltZF9tYW5h
+Z2VyKTsKPj4+ICAgICAgIGlmIChjdHgtPmRpc3BsYXkpCj4+PiAgICAgICAgICAgICAgIGV4eW5v
+c19kcm1fY3JlYXRlX2VuY19jb25uKGRybV9kZXYsIGN0eC0+ZGlzcGxheSk7Cj4+Pgo+Pj4gLSAg
+ICAgZm9yICh3aW4gPSAwOyB3aW4gPCBXSU5ET1dTX05SOyB3aW4rKykKPj4+IC0gICAgICAgICAg
+ICAgZmltZF9jbGVhcl93aW4oY3R4LCB3aW4pOwo+Pj4gLQo+Pj4gICAgICAgcmV0dXJuIDA7Cj4+
+Pgo+Pj4gIH0KPj4+Cj4+Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
