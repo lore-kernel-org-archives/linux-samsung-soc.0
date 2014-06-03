@@ -1,40 +1,59 @@
-From: Sachin Kamat <sachin.kamat@samsung.com>
-Subject: [PATCH 1/1] i2c: s3c2410: Remove class based instantiation
-Date: Tue,  3 Jun 2014 14:30:22 +0530
-Message-ID: <1401786022-29587-1-git-send-email-sachin.kamat@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: free jack GPIOs before the sound card is freed
+Date: Tue, 3 Jun 2014 10:47:14 +0100
+Message-ID: <20140603094714.GS31751@sirena.org.uk>
+References: <1401475377-12123-1-git-send-email-swarren@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FYef6pHvFBuPZp1D"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f67.google.com ([209.85.160.67]:40700 "EHLO
-	mail-pb0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750767AbaFCJC6 (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51647 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750786AbaFCJr5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jun 2014 05:02:58 -0400
+	Tue, 3 Jun 2014 05:47:57 -0400
+Content-Disposition: inline
+In-Reply-To: <1401475377-12123-1-git-send-email-swarren@wwwdotorg.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-i2c@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, wsa@the-dreams.de, kgene.kim@samsung.com, ch.naveen@samsung.com, spk.linux@gmail.com, Olof Johansson <olof@lixom.net>
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, Stephen Warren <swarren@nvidia.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, Jarkko Nikula <jarkko.nikula@bitmer.com>, Philipp Zabel <philipp.zabel@gmail.com>, Paul Parsons <lost.distance@yahoo.com>, Eric Miao <eric.y.miao@gmail.com>, Russell King <linux@arm.linux.org.uk>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, "open list:OMAP AUDIO SUPPORT" <linux-omap@vger.kernel.org>, "moderated list:ARM/SAMSUNG ARM A..." <linux-samsung-soc@vger.kernel.org>
 
-With multiplatform support enabled for Exynos, class based
-instantiation causes a boot time delay due to I2C_CLASS_HWMON
-triggered probe. Since class based instantiation has been
-deprecated since some time now, remove it for Samsung I2C driver.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>
----
- drivers/i2c/busses/i2c-s3c2410.c |    1 -
- 1 file changed, 1 deletion(-)
+--FYef6pHvFBuPZp1D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index bb3a9964f7e0..6f1706cdd9ba 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1135,7 +1135,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	i2c->adap.owner   = THIS_MODULE;
- 	i2c->adap.algo    = &s3c24xx_i2c_algorithm;
- 	i2c->adap.retries = 2;
--	i2c->adap.class   = I2C_CLASS_HWMON | I2C_CLASS_SPD | I2C_CLASS_DEPRECATED;
- 	i2c->tx_setup     = 50;
- 
- 	init_waitqueue_head(&i2c->wait);
--- 
-1.7.9.5
+On Fri, May 30, 2014 at 12:42:57PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+>=20
+> This is the same change as commit fb6b8e71448a "ASoC: tegra: free jack
+> GPIOs before the sound card is freed", but applied to all other ASoC
+> machine drivers where code inspection indicates the same problem exists.
+
+Applied, thanks.
+
+--FYef6pHvFBuPZp1D
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTjZmeAAoJELSic+t+oim9N8oP/1SKkfvf0ai6JYcI3UJKuU2m
+oitENvUr5hYRCmfHyrRHFwcgG1iio5iItSfAcGpyN7sNGKz3QECpkFxR3dxLNYTk
+jt1Hlh37Zz/XexvM9zWp0g62RbuZ5CKsf3xA+zgVAAgbVM58qapaDLtYbrLrcy6r
+0HZVvcVrIgn8QOlnb7Iw03nw+hFa6MS1S8NWSi+5FW7NhwHrwAJAyCDPsU1MrqS8
+svlxuOTBw0f218IAcb8tcQvhVer75Eky0LI5ELIqIPFI5Ru5AjnEaLKoqO9DMDZH
+9mKd++aqzKOoSxaJKXfBRYo7AGFc254zPGEkbVM9q/tAai1tOhwqseWTeLyaS63n
+QG0ouVFf2L8UiDnx5VDG53abNHdO383atRaLyz6CePkcfKpfP8x1TSmEmPZ+YjXd
+b4o307UhS8VQmVq3z8gXkbOtuJOr3OR2rzLi+sJhlnmPiMQnCnl4m0J66/syGiz5
+z/64+ES4fknWET9K1flijnPsokRfYPFku5lq+8qlFTyUoKKnnv06iOe2AhZEgqNy
+SX3ZTY71xoXUF1KhwAB0zyrs2XIigmDm0G2Bhs3unnp1iHX6hiXDnaIgUkUJomrd
+Ps6wtN2DIe7FMBAT1/OYUXSToEn4umBWx/VjSA6R+a/J5Cu1H6n4IqqQ/k7wGP51
+CiODml83mXKzjn3YbwGo
+=Cxnt
+-----END PGP SIGNATURE-----
+
+--FYef6pHvFBuPZp1D--
