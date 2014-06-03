@@ -1,100 +1,40 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Fix the sequence of secondary CPU boot for
- Exynos3250
-Date: Tue, 03 Jun 2014 14:39:32 +0900
-Message-ID: <1401773972-13689-1-git-send-email-cw00.choi@samsung.com>
+From: Sachin Kamat <sachin.kamat@samsung.com>
+Subject: [PATCH 1/1] i2c: s3c2410: Remove class based instantiation
+Date: Tue,  3 Jun 2014 14:30:22 +0530
+Message-ID: <1401786022-29587-1-git-send-email-sachin.kamat@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:56361 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753300AbaFCFjo (ORCPT
+Received: from mail-pb0-f67.google.com ([209.85.160.67]:40700 "EHLO
+	mail-pb0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750767AbaFCJC6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jun 2014 01:39:44 -0400
+	Tue, 3 Jun 2014 05:02:58 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux@arm.linux.org.uk, kgene.kim@samsung.com, t.figa@samsung.com
-Cc: kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, wsa@the-dreams.de, kgene.kim@samsung.com, ch.naveen@samsung.com, spk.linux@gmail.com, Olof Johansson <olof@lixom.net>
 
-This patch set AUTOWAKEUP_EN bit to ARM_CORE_CONFIGURATION register
-because Exynos3250 removes WFE in secure mode so that turn on automatically
-after setting CORE_LOCAL_PWR_EN. Also, This patch use dbs_sev() macro
-to guarantee the data synchronization of command instead of IPI_WAKEUP
-because Exynos3250 don't have WFE mode in secue mode.
+With multiplatform support enabled for Exynos, class based
+instantiation causes a boot time delay due to I2C_CLASS_HWMON
+triggered probe. Since class based instantiation has been
+deprecated since some time now, remove it for Samsung I2C driver.
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>
 ---
- arch/arm/mach-exynos/platsmp.c  | 9 ++++++++-
- arch/arm/mach-exynos/pm.c       | 8 ++++++--
- arch/arm/mach-exynos/regs-pmu.h | 4 ++++
- 3 files changed, 18 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-s3c2410.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index ec02422..882fb84 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -149,6 +149,10 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 			return -ETIMEDOUT;
- 		}
- 	}
-+
-+	if (soc_is_exynos3250())
-+		__raw_writel(EXYNOS3_COREPORESET(phys_cpu), EXYNOS_SWRESET);
-+
- 	/*
- 	 * Send the secondary CPU a soft interrupt, thereby causing
- 	 * the boot monitor to read the system wide flags register,
-@@ -182,7 +186,10 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index bb3a9964f7e0..6f1706cdd9ba 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1135,7 +1135,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	i2c->adap.owner   = THIS_MODULE;
+ 	i2c->adap.algo    = &s3c24xx_i2c_algorithm;
+ 	i2c->adap.retries = 2;
+-	i2c->adap.class   = I2C_CLASS_HWMON | I2C_CLASS_SPD | I2C_CLASS_DEPRECATED;
+ 	i2c->tx_setup     = 50;
  
- 		call_firmware_op(cpu_boot, phys_cpu);
- 
--		arch_send_wakeup_ipi_mask(cpumask_of(cpu));
-+		if (soc_is_exynos3250())
-+			dsb_sev();
-+		else
-+			arch_send_wakeup_ipi_mask(cpumask_of(cpu));
- 
- 		if (pen_release == -1)
- 			break;
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 87c0d34..4681f64 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -121,8 +121,12 @@ void exynos_cpu_power_down(int cpu)
-  */
- void exynos_cpu_power_up(int cpu)
- {
--	__raw_writel(S5P_CORE_LOCAL_PWR_EN,
--		     EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-+	u32 core_conf = 0;
-+
-+	core_conf |= S5P_CORE_LOCAL_PWR_EN;
-+	if (soc_is_exynos3250())
-+		core_conf |= S5P_CORE_AUTOWAKEUP_EN;
-+	__raw_writel(core_conf, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
- }
- 
- /**
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index 1d13b08..674dfc2 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -128,6 +128,7 @@
- 
- #define S5P_CORE_LOCAL_PWR_EN			0x3
- #define S5P_INT_LOCAL_PWR_EN			0x7
-+#define S5P_CORE_AUTOWAKEUP_EN			(1 << 31)
- 
- /* Only for EXYNOS4210 */
- #define S5P_CMU_CLKSTOP_LCD1_LOWPWR	S5P_PMUREG(0x1154)
-@@ -186,6 +187,9 @@
- #define S5P_DIS_IRQ_CORE3			S5P_PMUREG(0x1034)
- #define S5P_DIS_IRQ_CENTRAL3			S5P_PMUREG(0x1038)
- 
-+/* For EXYNOS3 */
-+#define EXYNOS3_COREPORESET(cpu)		((1 << 4) << cpu)
-+
- /* For EXYNOS5 */
- 
- #define EXYNOS5_SYS_I2C_CFG					S5P_SYSREG(0x0234)
+ 	init_waitqueue_head(&i2c->wait);
 -- 
-1.8.0
+1.7.9.5
