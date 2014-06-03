@@ -1,79 +1,72 @@
-From: Chirantan Ekbote <chirantan@chromium.org>
-Subject: [PATCH] arm: mct: Don't reset the counter during boot and resume
-Date: Tue,  3 Jun 2014 11:48:19 -0700
-Message-ID: <1401821299-24431-1-git-send-email-chirantan@chromium.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f49.google.com ([209.85.160.49]:36515 "EHLO
-	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752885AbaFCSsg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jun 2014 14:48:36 -0400
-Received: by mail-pb0-f49.google.com with SMTP id jt11so5837591pbb.36
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Jun 2014 11:48:35 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Paul Zimmerman <Paul.Zimmerman@synopsys.com>
+Subject: RE: [PATCH] usb: dwc3: Keeping 'resource' related code together
+Date: Tue, 3 Jun 2014 19:11:54 +0000
+Message-ID: <A2CA0424C0A6F04399FB9E1CD98E0304844B2141@US01WEMBX2.internal.synopsys.com>
+References: <1401791978-3555-1-git-send-email-gautam.vivek@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1401791978-3555-1-git-send-email-gautam.vivek@samsung.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "balbi@ti.com" <balbi@ti.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "kishon@ti.com" <kishon@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux@arm.linux.org.uk
-Cc: Chirantan Ekbote <chirantan@chromium.org>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Unfortunately on some exynos systems, resetting the mct counter also
-resets the architected timer counter.  This can cause problems if the
-architected timer driver has already been initialized because the kernel
-will think that the counter has wrapped around, causing a big jump in
-printk timestamps and delaying any scheduled clock events until the
-counter reaches the value it had before it was reset.
+> From: linux-usb-owner@vger.kernel.org [mailto:linux-usb-owner@vger.kernel.org] On Behalf Of Vivek Gautam
+> Sent: Tuesday, June 03, 2014 3:40 AM
+> 
+> Putting together the code related to getting the 'IORESOURCE_MEM'
+> and assigning the same to dwc->xhci_resources, for increasing
+> the readability.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> ---
+> 
+> Based on 'next' branch of Felipe's usb tree.
+> Also cleanly applies to 'usb-next' branch of Greg's usb tree.
+> 
+>  drivers/usb/dwc3/core.c |   38 +++++++++++++++++++-------------------
+>  1 file changed, 19 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> index 3f59c12..4ca925d 100644
+> --- a/drivers/usb/dwc3/core.c
+> +++ b/drivers/usb/dwc3/core.c
+> @@ -656,6 +656,25 @@ static int dwc3_probe(struct platform_device *pdev)
+>  		return -ENODEV;
+>  	}
+> 
+> +	dwc->xhci_resources[0].start = res->start;
+> +	dwc->xhci_resources[0].end = dwc->xhci_resources[0].start +
+> +					DWC3_XHCI_REGS_END;
+> +	dwc->xhci_resources[0].flags = res->flags;
+> +	dwc->xhci_resources[0].name = res->name;
+> +
+> +	res->start += DWC3_GLOBALS_REGS_START;
+> +
+> +	/*
+> +	 * Request memory region but exclude xHCI regs,
+> +	 * since it will be requested by the xhci-plat driver.
+> +	 */
+> +	regs = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(regs))
+> +		return PTR_ERR(regs);
+> +
+> +	dwc->regs	= regs;
+> +	dwc->regs_size	= resource_size(res);
+> +
+>  	if (node) {
+>  		dwc->maximum_speed = of_usb_get_maximum_speed(node);
 
-The kernel code makes no assumptions about the initial value of the mct
-counter so there is no reason from a software perspective to clear the
-counter before starting it.  This also fixes the problems described in
-the previous paragraph.
+I think this will break if the following dwc3_core_get_phy() call returns
+-EPROBE_DEFER. Since you have incremented res->start above, the next time
+this probe function is called, res->start will have the wrong value.
+Provided I'm reading the code correctly of course :)
 
-Cc: Olof Johansson <olof@lixom.net>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
----
- drivers/clocksource/exynos_mct.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+I think you could fix that by decrementing res->start back to its
+original value just after the call to resource_size() above.
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index acf5a32..9b4a0ae 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -152,13 +152,10 @@ static void exynos4_mct_write(unsigned int value, unsigned long offset)
- }
- 
- /* Clocksource handling */
--static void exynos4_mct_frc_start(u32 hi, u32 lo)
-+static void exynos4_mct_frc_start(void)
- {
- 	u32 reg;
- 
--	exynos4_mct_write(lo, EXYNOS4_MCT_G_CNT_L);
--	exynos4_mct_write(hi, EXYNOS4_MCT_G_CNT_U);
--
- 	reg = __raw_readl(reg_base + EXYNOS4_MCT_G_TCON);
- 	reg |= MCT_G_TCON_START;
- 	exynos4_mct_write(reg, EXYNOS4_MCT_G_TCON);
-@@ -180,7 +177,7 @@ static cycle_t exynos4_frc_read(struct clocksource *cs)
- 
- static void exynos4_frc_resume(struct clocksource *cs)
- {
--	exynos4_mct_frc_start(0, 0);
-+	exynos4_mct_frc_start();
- }
- 
- struct clocksource mct_frc = {
-@@ -194,7 +191,7 @@ struct clocksource mct_frc = {
- 
- static void __init exynos4_clocksource_init(void)
- {
--	exynos4_mct_frc_start(0, 0);
-+	exynos4_mct_frc_start();
- 
- 	if (clocksource_register_hz(&mct_frc, clk_rate))
- 		panic("%s: can't register clocksource\n", mct_frc.name);
 -- 
-1.9.1.423.g4596e3a
+Paul
