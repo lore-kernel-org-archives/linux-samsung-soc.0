@@ -1,65 +1,65 @@
-From: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH 0/8] i.MX6 PCIe binding change and MSI support
-Date: Tue, 03 Jun 2014 15:22:47 +0200
-Message-ID: <1401801767.5422.4.camel@weser.hi.pengutronix.de>
-References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
-	 <20140424175844.GD29593@google.com>
-	 <1398421265.4657.25.camel@weser.hi.pengutronix.de>
-	 <CAErSpo7Boi8d+apAUC3TmmE33LuRMYJ6J+TEPLRbeyZyU3O8RQ@mail.gmail.com>
-	 <1398774686.4677.12.camel@weser.hi.pengutronix.de>
-	 <1399885183.5016.4.camel@weser.hi.pengutronix.de>
-	 <20140530173053.GF4607@google.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCHv3 3/4] mmc: dw_mmc: remove the "supports-highspeed"
+ property.
+Date: Tue, 3 Jun 2014 14:43:13 +0100
+Message-ID: <20140603134313.GE1310@leverpostej>
+References: <1401255351-17653-1-git-send-email-jh80.chung@samsung.com>
+ <1401255351-17653-4-git-send-email-jh80.chung@samsung.com>
+ <CAPDyKFpTTYHtkKjFmbPi6P_xfdfd8Fv8qfpKZMfpQBppRNZLwg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140530173053.GF4607-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Richard Zhu <r65037-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marek Vasut <marex-ynQEQJNshbs@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tim Harvey <tharvey-UMMOYl/HMS+akBO8gow8eQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sean Cross <xobs-nXMMniAx+RbQT0dZR+AlfA@public.gmane.org>, linux-arm <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:64003 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753907AbaFCNrS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Jun 2014 09:47:18 -0400
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFpTTYHtkKjFmbPi6P_xfdfd8Fv8qfpKZMfpQBppRNZLwg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ludovic Desroches <ludovic.desroches@atmel.com>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Hello Bjorn,
-
-Am Freitag, den 30.05.2014, 11:30 -0600 schrieb Bjorn Helgaas:
-> On Mon, May 12, 2014 at 10:59:43AM +0200, Lucas Stach wrote:
-> > Hi Bjorn,
-> > 
-> > just a friendly reminder. It would be nice if you could pull those in.
-> > 
-> > Shawn already pulled the DT change and as it is a binding change this
-> > means PCIe on i.MX6 is broken in -next, as long as the remaining patches
-> > are missing.
+On Fri, May 30, 2014 at 09:01:16AM +0100, Ulf Hansson wrote:
+> On 28 May 2014 07:35, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> > Removed the parser for "supports-highspeed".
+> > It can be parsed with "cap-mmc-highsped" or "cap-sd-highspeed" at
+> > mmc_of_parse().
+> >
+> > Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> > ---
+> >  drivers/mmc/host/dw_mmc.c |    3 ---
+> >  1 file changed, 3 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> > index 3285bdd..34b5210 100644
+> > --- a/drivers/mmc/host/dw_mmc.c
+> > +++ b/drivers/mmc/host/dw_mmc.c
+> > @@ -2281,9 +2281,6 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
+> >                         return ERR_PTR(ret);
+> >         }
+> >
+> > -       if (of_find_property(np, "supports-highspeed", NULL))
+> > -               pdata->caps |= MMC_CAP_SD_HIGHSPEED | MMC_CAP_MMC_HIGHSPEED;
+> > -
 > 
-> I applied these to pci/host-imx6 for v3.16.
-> 
-> Sorry I didn't do this sooner; I get a lot of email and it's easy to
-> overlook things.  I mostly work from patchwork
-> (http://patchwork.ozlabs.org/project/linux-pci/list/?order=date), and I had
-> dropped this series from there because there was enough discussion that I
-> expected a re-post, so it wasn't on my radar screen anymore.
-> 
-> Bjorn
-> 
-> > Am Dienstag, den 29.04.2014, 14:31 +0200 schrieb Lucas Stach:
-> > > Hi Bjorn,
-> > > 
-> > > Am Freitag, den 25.04.2014, 08:39 -0600 schrieb Bjorn Helgaas:
-> > > [...]
-> > > > >> >   PCI: designware: split Exynos and i.MX bindings
+> According to DT guys, normally we shouldn't remove DT bindings. Thus,
+> you need to keep this, unless you can get some of the DT guys to ack
+> it.
 
-It seems you missed this one patch. This isn't too urgent, as it is just
-the doc update, but it should still go into 3.16 along with the other
-changes. I would have expected that is ok for this to go through your
-tree.
+In general, yes. Unless there's a compelling reason to drop a binding,
+and all users are happy with it being dropped, then there's not much
+point in removing it. It's usually not possible to get agreement because
+it's usually nto possible to know the full set of users, so in general
+we can't drop or change stuff.
 
-Regards,
-Lucas
--- 
-Pengutronix e.K.             | Lucas Stach                 |
-Industrial Linux Solutions   | http://www.pengutronix.de/  |
+> Though, you still want to move the DTs to use common mmc bindings. And
+> you could mark the documentation of the above binding as deprecated.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Deprecated bindings can be supported even if discouraged. As far as I
+can see, keeping the existing binding along side the new one looks
+relatively simple in this case.
+
+Thanks,
+Mark.
