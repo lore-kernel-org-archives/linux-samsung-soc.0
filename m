@@ -1,60 +1,74 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH 0/8] i.MX6 PCIe binding change and MSI support
-Date: Tue, 3 Jun 2014 08:50:35 -0600
-Message-ID: <CAErSpo5hP6UYbCVMu_43ezbrNvd0-BBW_KOVbcd_Uj4MHRao2Q@mail.gmail.com>
-References: <1396025579-14344-1-git-send-email-l.stach@pengutronix.de>
- <20140424175844.GD29593@google.com> <1398421265.4657.25.camel@weser.hi.pengutronix.de>
- <CAErSpo7Boi8d+apAUC3TmmE33LuRMYJ6J+TEPLRbeyZyU3O8RQ@mail.gmail.com>
- <1398774686.4677.12.camel@weser.hi.pengutronix.de> <1399885183.5016.4.camel@weser.hi.pengutronix.de>
- <20140530173053.GF4607@google.com> <1401801767.5422.4.camel@weser.hi.pengutronix.de>
+From: Chirantan Ekbote <chirantan@chromium.org>
+Subject: Re: [PATCH] arm: dts: exynos5: Remove multi core timer
+Date: Tue, 3 Jun 2014 11:41:26 -0700
+Message-ID: <CAJFHJrq79aH1QaDZqT74edwhcmYhriqG9FR4dfO1d24VfH1_uw@mail.gmail.com>
+References: <1400188079-21832-1-git-send-email-chirantan@chromium.org>
+	<53752E25.9060604@gmail.com>
+	<CAD=FV=WKOtZaUyzTWNqR=vi_L=U-Q1dct2U_oCYi3ZJv6401Hg@mail.gmail.com>
+	<53753443.8010303@gmail.com>
+	<CAD=FV=V8UZoeOqEwfx_E015pLM+amTt51LrUa+dk7mTdn=vKgA@mail.gmail.com>
+	<53753C17.1090002@gmail.com>
+	<CAD=FV=WGa7j_As_NpySxU7OEd_SzuGWK6oxU6UeiJ-4HsoWvvg@mail.gmail.com>
+	<CAJFHJrrgWGc4XGQB0ysLufAg3Wouz-aYXu97Sy2Kp=HzK+akVQ@mail.gmail.com>
+	<CAASgrz2Nr69tpfC8ka9gbs2OvjLEGsvgAj4vBCFxhsamuFum7w@mail.gmail.com>
+	<53754CE2.3000905@gmail.com>
+	<CAD=FV=UMoL7i9rg_QtBAqPwisSQyRqRmk8wQhneMXAiLBjTT1A@mail.gmail.com>
+	<CAPz6YkU8GDrLj8UkqEQXxxqxWF5_p427wKSDgAp+QPR7WE7Ujg@mail.gmail.com>
+	<CAJFHJrrb2XFDZqJh4OuLdFP=J0aR4pGe-WLWKZ7ZpMfUSPGd4Q@mail.gmail.com>
+	<033a01cf74f2$d025ce80$70716b80$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1401801767.5422.4.camel@weser.hi.pengutronix.de>
-Sender: linux-pci-owner@vger.kernel.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Richard Zhu <r65037@freescale.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Marek Vasut <marex@denx.de>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Tim Harvey <tharvey@gateworks.com>, Jingoo Han <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, kernel@pengutronix.de, Mark Rutland <mark.rutland@arm.com>, Shawn Guo <shawn.guo@linaro.org>, Sean Cross <xobs@kosagi.com>, linux-arm <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:55675 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754998AbaFCSl0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Jun 2014 14:41:26 -0400
+Received: by mail-oa0-f47.google.com with SMTP id i7so6675348oag.34
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Jun 2014 11:41:26 -0700 (PDT)
+In-Reply-To: <033a01cf74f2$d025ce80$70716b80$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Sonny Rao <sonnyrao@chromium.org>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, David Riley <davidriley@google.com>, Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Tue, Jun 3, 2014 at 7:22 AM, Lucas Stach <l.stach@pengutronix.de> wrote:
-> Hello Bjorn,
+Hi Kukjin,
+
+On Wed, May 21, 2014 at 5:47 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Yeah, actually we don't need to reset the count value after suspend/resume.
+> So, how about following? I think, it should be fine to you.
 >
-> Am Freitag, den 30.05.2014, 11:30 -0600 schrieb Bjorn Helgaas:
->> On Mon, May 12, 2014 at 10:59:43AM +0200, Lucas Stach wrote:
->> > Hi Bjorn,
->> >
->> > just a friendly reminder. It would be nice if you could pull those in.
->> >
->> > Shawn already pulled the DT change and as it is a binding change this
->> > means PCIe on i.MX6 is broken in -next, as long as the remaining patches
->> > are missing.
->>
->> I applied these to pci/host-imx6 for v3.16.
->>
->> Sorry I didn't do this sooner; I get a lot of email and it's easy to
->> overlook things.  I mostly work from patchwork
->> (http://patchwork.ozlabs.org/project/linux-pci/list/?order=date), and I had
->> dropped this series from there because there was enough discussion that I
->> expected a re-post, so it wasn't on my radar screen anymore.
->>
->> Bjorn
->>
->> > Am Dienstag, den 29.04.2014, 14:31 +0200 schrieb Lucas Stach:
->> > > Hi Bjorn,
->> > >
->> > > Am Freitag, den 25.04.2014, 08:39 -0600 schrieb Bjorn Helgaas:
->> > > [...]
->> > > > >> >   PCI: designware: split Exynos and i.MX bindings
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index 8d64200..d24db6f 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -157,12 +157,15 @@ static void exynos4_mct_frc_start(u32 hi, u32 lo)
+>  {
+>         u32 reg;
 >
-> It seems you missed this one patch. This isn't too urgent, as it is just
-> the doc update, but it should still go into 3.16 along with the other
-> changes. I would have expected that is ok for this to go through your
-> tree.
+> -       exynos4_mct_write(lo, EXYNOS4_MCT_G_CNT_L);
+> -       exynos4_mct_write(hi, EXYNOS4_MCT_G_CNT_U);
+> -
+>         reg = __raw_readl(reg_base + EXYNOS4_MCT_G_TCON);
+> -       reg |= MCT_G_TCON_START;
+> -       exynos4_mct_write(reg, EXYNOS4_MCT_G_TCON);
+> +
+> +       if (!(reg & MCT_G_TCON_START)) {
+> +               exynos4_mct_write(lo, EXYNOS4_MCT_G_CNT_L);
+> +               exynos4_mct_write(hi, EXYNOS4_MCT_G_CNT_U);
+> +
+> +               reg |= MCT_G_TCON_START;
+> +               exynos4_mct_write(reg, EXYNOS4_MCT_G_TCON);
+> +       }
+>  }
+>
+>
 
-Oops, sorry.  I had mentioned patches 4-8 earlier in the conversation,
-so that's what I merged.
+As Doug mentioned, this seems more complicated than necessary since
+the kernel doesn't care about the initial value of the mct counter at
+all.  Is there some reason from a hardware standpoint that the counter
+needs to be cleared?  If not, I would rather just delete the two
+offending lines.  I am sending a patch that does this instead.
 
-I added patch 2 to pci/host-imx6, and I'll ask Linus to pull it later
-along with some other things I forgot.  Thanks for the reminder!
-
-Bjorn
+Cheers,
+Chirantan
