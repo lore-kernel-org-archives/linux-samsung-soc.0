@@ -1,56 +1,35 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
 Subject: Re: [PATCH 1/1] i2c: s3c2410: Remove class based instantiation
-Date: Tue, 3 Jun 2014 14:17:12 +0200
-Message-ID: <20140603121712.GB2713@katana>
-References: <1401786022-29587-1-git-send-email-sachin.kamat@samsung.com>
- <20140603100546.GA12261@katana>
- <CAK5sBcEkCy0kDL_bG_RsDJ6nwuqZeAGN0fXpPV-MJkHugxuubw@mail.gmail.com>
- <538DB979.1030305@gmail.com>
+Date: Tue, 03 Jun 2014 14:18:22 +0200
+Message-ID: <538DBD0E.1070504@gmail.com>
+References: <1401786022-29587-1-git-send-email-sachin.kamat@samsung.com> <20140603100546.GA12261@katana> <CAK5sBcEkCy0kDL_bG_RsDJ6nwuqZeAGN0fXpPV-MJkHugxuubw@mail.gmail.com> <538DB979.1030305@gmail.com> <20140603121712.GB2713@katana>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <538DB979.1030305-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f176.google.com ([74.125.82.176]:44600 "EHLO
+	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932109AbaFCMSl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Jun 2014 08:18:41 -0400
+In-Reply-To: <20140603121712.GB2713@katana>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Sachin Kamat <sachin.kamat@samsung.com>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ch.naveen@samsung.com, Olof Johansson <olof@lixom.net>
 
+On 03.06.2014 14:17, Wolfram Sang wrote:
+> 
+>> Couldn't it be made configurable with a Kconfig entry? E.g. "Enable
+>> deprecated class-based instantiation" under Drivers / I2C? Turning it
+>> off could make the code ignore the class field completely.
+> 
+> Technically, yes. But we could also wait another cycle and just be done
+> with it :)
+> 
 
---KFztAG8eRSV9hGtP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+OK, if it's just one cycle, then it wouldn't make sense indeed. Thanks
+for clarification.
 
-
-> Couldn't it be made configurable with a Kconfig entry? E.g. "Enable
-> deprecated class-based instantiation" under Drivers / I2C? Turning it
-> off could make the code ignore the class field completely.
-
-Technically, yes. But we could also wait another cycle and just be done
-with it :)
-
-
---KFztAG8eRSV9hGtP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJTjbzIAAoJEBQN5MwUoCm2p70P/2DPTAbnTc2FYiMYjM/TwJ3V
-ubuEwUCmyj22YIuetalPkXNCAnEu49tXMohUJqIqMZlBAu1KYg67AGGOc8oecMEj
-dLI3nolRFT6QCdt9XocignSEjHBZ2YjAdl165O2JUMA77pN8Fo++rE1LdbZYITDY
-mN5bcWqrxhAxir+BDdNmShD4EbIwqGM9A+pzeldk8VVe8H4wmuTTlpEu4bUpDL7y
-HXfu/Bb5YUI0arcytn62y95BniTypkVRXHdTdDbeRppjJ1SrmDZ1IkqYEB7eoa2m
-gOgTdM8YbO2uQRRR9SOUmUEn4HX7RaDG3L4xmc3kQOenubJeDltF9CJOQCEAwwO5
-1KUZAVUXqBGAjXMof1fKFQwaT0ifrY+X7L+2Ez47jdZKW6CGOLmm7co+Fcxv2AgS
-56MA7aaZKze/X+Jo4kvgE8veZLgqy9cXnmHkby0rSrX/s3BJavY/RNmPS3wOaPs+
-rmirQ6pSm2+ht1lMbO9TxOlEiZk21SDJBdHjCBEU0iXNLum9lVYs/GNyxTQ3U3z7
-Y9M4gzhxqgQ3zDSTu6Rq63Ag8BDo+125kg4tDuouL6InwUojolRw5yluJQDEISiS
-Ig+MsIdICEoU0DeelobYWQhpxKqI08ksC/eHz5pdp8zNNl5gA6m9HnqTRioAPxMn
-39ctOG6zwwXpDbfBCfKE
-=EjXm
------END PGP SIGNATURE-----
-
---KFztAG8eRSV9hGtP--
+Best regards,
+Tomasz
