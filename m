@@ -1,44 +1,32 @@
-From: Sachin Kamat <sachin.kamat@samsung.com>
-Subject: Re: [PATCH 1/1] i2c: s3c2410: Remove class based instantiation
-Date: Tue, 3 Jun 2014 16:51:14 +0530
-Message-ID: <CAK5sBcEkCy0kDL_bG_RsDJ6nwuqZeAGN0fXpPV-MJkHugxuubw@mail.gmail.com>
-References: <1401786022-29587-1-git-send-email-sachin.kamat@samsung.com>
-	<20140603100546.GA12261@katana>
+From: Sachin Kamat <spk.linux@gmail.com>
+Subject: Re: [PATCH] serial: samsung: fix typo in debug code
+Date: Tue, 3 Jun 2014 16:57:28 +0530
+Message-ID: <CAK5sBcH8YH1+i0yBUHLqiYWAmOV3v5Dpoavxo-ZOGA8oX0OcwQ@mail.gmail.com>
+References: <10455941.RzodM59Z3O@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f66.google.com ([209.85.215.66]:60928 "EHLO
-	mail-la0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751202AbaFCLVR (ORCPT
+Received: from mail-la0-f46.google.com ([209.85.215.46]:61794 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751189AbaFCL1a (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jun 2014 07:21:17 -0400
-In-Reply-To: <20140603100546.GA12261@katana>
+	Tue, 3 Jun 2014 07:27:30 -0400
+In-Reply-To: <10455941.RzodM59Z3O@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ch.naveen@samsung.com, Olof Johansson <olof@lixom.net>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Joe Perches <joe@perches.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Wolfram,
+Hi Arnd,
 
-On Tue, Jun 3, 2014 at 3:35 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> On Tue, Jun 03, 2014 at 02:30:22PM +0530, Sachin Kamat wrote:
->> With multiplatform support enabled for Exynos, class based
->> instantiation causes a boot time delay due to I2C_CLASS_HWMON
->> triggered probe. Since class based instantiation has been
->> deprecated since some time now, remove it for Samsung I2C driver.
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
->> Cc: Olof Johansson <olof@lixom.net>
+On Tue, Jun 3, 2014 at 3:23 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> commit e4ac92df2791 ("serial: samsung: Neaten dbg uses") introduced
+> a regression in the conversion from vsprintf to vsnprintf.
 >
-> In my book, not long enough. I suggest I will take care of the removal.
-> I'll do it for all class deprecating drivers.
+> This fixes the build error by passing the correct variable name.
 
-The reason for the removal is the boot delay it is causing on Exynos 5250
-based boards by throwing the following errors continuously.
-
-[   55.005300] s3c-i2c 12ce0000.i2c: cannot get bus (error -110)
-[   59.005300] s3c-i2c 12ce0000.i2c: cannot get bus (error -110)
-[   63.005300] s3c-i2c 12ce0000.i2c: cannot get bus (error -110)
+I submitted a similar patch sometime back.
+http://www.spinics.net/lists/linux-serial/msg12843.html
 
 Regards,
 Sachin
