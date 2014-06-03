@@ -1,47 +1,45 @@
 From: Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH v2 1/2] s5p-mfc: Add s5p-mfc-v6-v2 firmware
-Date: Tue, 03 Jun 2014 20:33:31 +0100
-Message-ID: <1401824011.2412.6.camel@deadeye.wl.decadent.org.uk>
+Subject: Re: [PATCH v2 2/2] s5p-mfc: Adding MFC v7 and v8 firmwares
+Date: Tue, 03 Jun 2014 20:34:07 +0100
+Message-ID: <1401824047.2412.7.camel@deadeye.wl.decadent.org.uk>
 References: <1400676064-17819-1-git-send-email-arun.kk@samsung.com>
+	 <1400676064-17819-2-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-dDsgqiQBLNeiVn/ye0Gh"
+	protocol="application/pgp-signature"; boundary="=-WESXHdZrsWmleBCVoDQu"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52245 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52250 "EHLO
 	shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754915AbaFCT3W (ORCPT
+	by vger.kernel.org with ESMTP id S932602AbaFCT3p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jun 2014 15:29:22 -0400
-In-Reply-To: <1400676064-17819-1-git-send-email-arun.kk@samsung.com>
+	Tue, 3 Jun 2014 15:29:45 -0400
+In-Reply-To: <1400676064-17819-2-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arun Kumar K <arun.kk@samsung.com>
 Cc: dwmw2@infradead.org, linux-samsung-soc@vger.kernel.org, k.debski@samsung.com, t.figa@samsung.com, arunkk.samsung@gmail.com, linux-firmware@kernel.org
 
 
---=-dDsgqiQBLNeiVn/ye0Gh
+--=-WESXHdZrsWmleBCVoDQu
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Wed, 2014-05-21 at 18:11 +0530, Arun Kumar K wrote:
-> This is the newer version of mfc-v6 firmware which can
-> be used in exynos5250 based boards. This has many bug fixes
-> and enhancements. To maintain backward compatibility, the older
-> firmware file is still retained and the new file is added with
-> the name s5p-mfc-v6-v2.fw. This new firmware handling is supported
-> with the below patches in s5p-mfc driver:
-> s5p-mfc: Support multiple firmware sub-versions
-> s5p-mfc: Add init buffer cmd to MFCV6
+> Adding the following firmware files for MFC
+> s5p-mfc-v7.fw: Used in exynos 5420
+> s5p-mfc-v8.fw: Used in exynos 5800
 >=20
 > Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 > ---
 > Changes from v1
-> - Made into a new file instead of upgrading old v6 firmware
+> - None
 > ---
->  WHENCE                   |    7 ++++---
->  s5p-mfc/s5p-mfc-v6-v2.fw |  Bin 0 -> 343756 bytes
->  2 files changed, 4 insertions(+), 3 deletions(-)
->  create mode 100644 s5p-mfc/s5p-mfc-v6-v2.fw
+>  WHENCE                |    2 ++
+>  s5p-mfc/s5p-mfc-v7.fw |  Bin 0 -> 382724 bytes
+>  s5p-mfc/s5p-mfc-v8.fw |  Bin 0 -> 360576 bytes
+>  3 files changed, 2 insertions(+)
+>  create mode 100644 s5p-mfc/s5p-mfc-v7.fw
+>  create mode 100644 s5p-mfc/s5p-mfc-v8.fw
 [...]
 
 Applied, thanks.
@@ -52,26 +50,26 @@ Ben.
 Ben Hutchings
 If more than one person is responsible for a bug, no one is at fault.
 
---=-dDsgqiQBLNeiVn/ye0Gh
+--=-WESXHdZrsWmleBCVoDQu
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIVAwUAU44jFue/yOyVhhEJAQruMw/+LEJyHhAxlw+w8KcTwvRkB8r/6MxzzXTz
-2h3qtO9cisG87N3HpL+wzCjQ/HIlUxs+ZNdC2Cbl+pSehiJ8M6btTfOc4hRr2OSQ
-VDxvJYb7NtpFV9yqJ5a/0NQQ6D7zzzVyYVnuhBBzZ0JTEgu/wC7JquT0gwAY2cUl
-/WF9NkK76DE6wc4Q0aa2WAVx8i0EWRXEHwRnI3dR8KglHLL9VMXqY76ar/ryxbsz
-fk7RZl5Oma+vca994ZHkj+vOxkj469uDvkiEdHPsfHXae7wncNkxaPXMynrFwtuZ
-AQPkOEuU26Ns9+kmDV/e/IYGfJ8cW+dLSOW3OuKhhS0xXxkzkdBv4B8eCCDvLswJ
-KyfOjAArfRhruhwd5nWHzVkQR0T91I7S+MZde2/V3QWxZ49chiDlzDvA//nvN3+H
-0ew4f38iqjoBXaT4cd2dczuYIG+zIdpVJ3u30I71tkrKcwsuNkVh4NBGJ5dwBu0j
-X81hKChEtp7tj7DHkSpHwGZFevynQaWgGwzrad9pcL4rvb0q0LlRvMIajyjCC+Ou
-CBmwgeOvkoMx5fjQ8BvqyY0zVvs/7vlMdpvhGAEp91ZJz3hqM81AMj2OCA2ihAwT
-cBY69dSmW+ZL9KestFbdGmzrWJ+PI/oKp39C/gt3cmNghYX67X0HjVOUbxZthLdk
-vk6S2dVAhTM=
-=09uk
+iQIVAwUAU44jL+e/yOyVhhEJAQqNgQ//UbkXypRH3QvLTX8wm6mk6xMzwP3G+vRh
+HBWlzPyRx94oL5FPTK6n4eM9zV/tTvf1JQKo+/THVcwgIHCvv+G/K05mcz5wtQIa
+LLBjZSHJiSfivLXtYCS/41Af/VKUVbti9w1UOViezPnWN3lX7J4on7bqnELOuYkk
+d6QgIqnfhiz8Ye6PcKwffkAU+Du8xFSSbRvUOxJMTeW/AdAWFLPSUPm9DnW43ZxS
+fNL6qK6o5gV4beRrvEJjdCnQb2SsJHnfgB7nTeseifGPWinLEhAm7jZoGPBjS6Hm
+IxpxRSpN2vQHvpA85xFeHGQ7P3Ho4IKu5k/nnWBXeMqxCwYF2AZ2F8ebG45BAbWR
+yt7u61tqHANtuiO6O6ryuvwOm9YL+ZUfyAWDG6EBrEZWz2nB9nZSdBphaRFX6fh+
+Sk1b4+vynEk50ReIfP3A6BocZq36hhlZ90HsrbvKTexiDpdlB2q+dl31C4z8x0DQ
+2oBQYIHMoVxRyFqaPbVh4L+rWR/1QjPEEiGcSPFP4OCNZHeHfZNc0emdTLP+Zo/y
+DJElYfhjQOBHuKFXgAo+fAa1UUTCc24yK7nJ4vI32/RVrqUzw2iQYjFkpI1IKYRl
+eOze6Ml/6r4RqBCPFjW46w0ZrzOVSwgbDjoEDfD9CCW7TR9arYjT07smDlXiM62/
+RVncgG5bLwo=
+=PUGz
 -----END PGP SIGNATURE-----
 
---=-dDsgqiQBLNeiVn/ye0Gh--
+--=-WESXHdZrsWmleBCVoDQu--
