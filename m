@@ -1,63 +1,59 @@
-From: Wolfram Sang <wsa@the-dreams.de>
+From: Tomasz Figa <tomasz.figa@gmail.com>
 Subject: Re: [PATCH 1/1] i2c: s3c2410: Remove class based instantiation
-Date: Tue, 3 Jun 2014 13:54:20 +0200
-Message-ID: <20140603115420.GA2713@katana>
-References: <1401786022-29587-1-git-send-email-sachin.kamat@samsung.com>
- <20140603100546.GA12261@katana>
- <CAK5sBcEkCy0kDL_bG_RsDJ6nwuqZeAGN0fXpPV-MJkHugxuubw@mail.gmail.com>
+Date: Tue, 03 Jun 2014 14:03:05 +0200
+Message-ID: <538DB979.1030305@gmail.com>
+References: <1401786022-29587-1-git-send-email-sachin.kamat@samsung.com>	<20140603100546.GA12261@katana> <CAK5sBcEkCy0kDL_bG_RsDJ6nwuqZeAGN0fXpPV-MJkHugxuubw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:54331 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754827AbaFCLyY (ORCPT
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:53184 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932482AbaFCMDZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jun 2014 07:54:24 -0400
-Content-Disposition: inline
+	Tue, 3 Jun 2014 08:03:25 -0400
 In-Reply-To: <CAK5sBcEkCy0kDL_bG_RsDJ6nwuqZeAGN0fXpPV-MJkHugxuubw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@samsung.com>
+To: Sachin Kamat <sachin.kamat@samsung.com>, Wolfram Sang <wsa@the-dreams.de>
 Cc: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ch.naveen@samsung.com, Olof Johansson <olof@lixom.net>
 
+Hi Wolfram, Sachin,
 
---UlVJffcvxoiEqYs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 03.06.2014 13:21, Sachin Kamat wrote:
+> Hi Wolfram,
+> 
+> On Tue, Jun 3, 2014 at 3:35 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+>> On Tue, Jun 03, 2014 at 02:30:22PM +0530, Sachin Kamat wrote:
+>>> With multiplatform support enabled for Exynos, class based
+>>> instantiation causes a boot time delay due to I2C_CLASS_HWMON
+>>> triggered probe. Since class based instantiation has been
+>>> deprecated since some time now, remove it for Samsung I2C driver.
+>>>
+>>> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
+>>> Cc: Olof Johansson <olof@lixom.net>
+>>
+>> In my book, not long enough. I suggest I will take care of the removal.
+>> I'll do it for all class deprecating drivers.
 
+Couldn't it be made configurable with a Kconfig entry? E.g. "Enable
+deprecated class-based instantiation" under Drivers / I2C? Turning it
+off could make the code ignore the class field completely.
+
+This way people that don't want it could just disable it and others
+could also test whether disabling it affects them in any way.
+
+> 
 > The reason for the removal is the boot delay it is causing on Exynos 5250
 > based boards by throwing the following errors continuously.
->=20
+> 
 > [   55.005300] s3c-i2c 12ce0000.i2c: cannot get bus (error -110)
 > [   59.005300] s3c-i2c 12ce0000.i2c: cannot get bus (error -110)
 > [   63.005300] s3c-i2c 12ce0000.i2c: cannot get bus (error -110)
 
-I know. That's why I implemented the deprecated class. Still, users may
-need more time to switch over. Keep it an out-of-tree patch until then.
+Are you sure this is directly related to class-based instantiation? This
+looks like the bus being driven low by some external component or
+incorrectly configured pins. What is this bus used for on affected board?
 
-
---UlVJffcvxoiEqYs2
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJTjbdsAAoJEBQN5MwUoCm2e9sQAIWT6BXvG27gge/qvGEFjl0y
-Karsn3KJfiIOLX/Pk06osAt3UmckkR8yWaPbzk5xrrGtD0RVGgFd76nOwvSfsU3C
-jW2n3Q2VIgrU3Vd5jxkO7wlbOdlcUpFyphG58fPSF76bwUFHQe6+ecwNHYjjXGFu
-sRYgdK9NyZXnFhJUSk//fXULkgHR8fzTw+fY2R9y5yTgmznkdjj4qYEV1HFKzLEO
-2h2eBS0ii8ZZj7C5TjxEE/WYAhphUWucW1u+FrQ3K0pgqbSHIVK5GOzzpbK1EeP5
-8edhyRebw8ztLglCuLI7LA5jlesizGlS8jxByLwkUctshlyYCSDLHYpw5C483+YK
-OvtPHHa+oO9uCQukcIE+V69QsDQ55oOecz53Leiop3uffmLEgUxpa5S1iGMJT/1F
-6e+GR3h+vTnLSmvw+IVGvtgPtMa+um22i0Su7WL/iX1D3GLYbGD9X4Nt/frb3G/x
-WnKTb1y3h8C90L6vy1nbeDYofC9x6nzc9RYaE0YDqFeUcJBILUoz9aeWzRfMjXXp
-Oh4/vs+GOOuUnG7H+S9V8NOujKupyknc1aSJGdH63heJiMj+VuE69Ve9NLn6lNOv
-QpP46ixbFTwc+PXBId5hWF2R2bDyOdHF735VSBZHIMvCFjc3mUSgRO0Ldcjr41g6
-9JrMzYXeca+K3HNrWsdV
-=+OKN
------END PGP SIGNATURE-----
-
---UlVJffcvxoiEqYs2--
+Best regards,
+Tomasz
