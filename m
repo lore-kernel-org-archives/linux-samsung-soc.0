@@ -1,102 +1,100 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: [PATCH] ARM: exynos: mark machine descriptor functions static
-Date: Mon,  2 Jun 2014 21:57:36 -0700
-Message-ID: <1401771456-6101-1-git-send-email-olof@lixom.net>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Fix the sequence of secondary CPU boot for
+ Exynos3250
+Date: Tue, 03 Jun 2014 14:39:32 +0900
+Message-ID: <1401773972-13689-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f49.google.com ([209.85.160.49]:53555 "EHLO
-	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751698AbaFCE4A (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:56361 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753300AbaFCFjo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jun 2014 00:56:00 -0400
-Received: by mail-pb0-f49.google.com with SMTP id jt11so4929037pbb.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Jun 2014 21:56:00 -0700 (PDT)
+	Tue, 3 Jun 2014 01:39:44 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, Olof Johansson <olof@lixom.net>
+To: linux@arm.linux.org.uk, kgene.kim@samsung.com, t.figa@samsung.com
+Cc: kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 
-There's no reason to export these functions, and I have no idea why
-they have over time ended up in the header file. As a result, none of
-the checker tools caught it (i.e. sparse was silent on it).
+This patch set AUTOWAKEUP_EN bit to ARM_CORE_CONFIGURATION register
+because Exynos3250 removes WFE in secure mode so that turn on automatically
+after setting CORE_LOCAL_PWR_EN. Also, This patch use dbs_sev() macro
+to guarantee the data synchronization of command instead of IPI_WAKEUP
+because Exynos3250 don't have WFE mode in secue mode.
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
+ arch/arm/mach-exynos/platsmp.c  | 9 ++++++++-
+ arch/arm/mach-exynos/pm.c       | 8 ++++++--
+ arch/arm/mach-exynos/regs-pmu.h | 4 ++++
+ 3 files changed, 18 insertions(+), 3 deletions(-)
 
-I'm guessing with all the churn right now this might not apply, so it
-might need manual application around -rc1.
-
-There's definitely room for more cleanup in common.h.
-
- arch/arm/mach-exynos/common.h |    6 ------
- arch/arm/mach-exynos/exynos.c |   10 +++++-----
- 2 files changed, 5 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 5a3a1ec..0b0b6d5 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -116,13 +116,7 @@ void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
- struct map_desc;
- extern void __iomem *sysram_ns_base_addr;
- extern void __iomem *sysram_base_addr;
--void exynos_init_io(void);
--void exynos_restart(enum reboot_mode mode, const char *cmd);
- void exynos_sysram_init(void);
--void exynos_cpuidle_init(void);
--void exynos_cpufreq_init(void);
--void exynos_init_late(void);
--
- void exynos_firmware_init(void);
- 
- #ifdef CONFIG_PINCTRL_EXYNOS
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 9183675..c4f9c3d 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -146,7 +146,7 @@ static struct map_desc exynos5_iodesc[] __initdata = {
- 	},
- };
- 
--void exynos_restart(enum reboot_mode mode, const char *cmd)
-+static void exynos_restart(enum reboot_mode mode, const char *cmd)
- {
- 	struct device_node *np;
- 	u32 val = 0x1;
-@@ -174,7 +174,7 @@ static struct platform_device exynos_cpuidle = {
- 	.id                = -1,
- };
- 
--void __init exynos_cpuidle_init(void)
-+static void __init exynos_cpuidle_init(void)
- {
- 	if (soc_is_exynos5440())
- 		return;
-@@ -182,7 +182,7 @@ void __init exynos_cpuidle_init(void)
- 	platform_device_register(&exynos_cpuidle);
- }
- 
--void __init exynos_cpufreq_init(void)
-+static void __init exynos_cpufreq_init(void)
- {
- 	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
- }
-@@ -209,7 +209,7 @@ void __init exynos_sysram_init(void)
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index ec02422..882fb84 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -149,6 +149,10 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 			return -ETIMEDOUT;
+ 		}
  	}
++
++	if (soc_is_exynos3250())
++		__raw_writel(EXYNOS3_COREPORESET(phys_cpu), EXYNOS_SWRESET);
++
+ 	/*
+ 	 * Send the secondary CPU a soft interrupt, thereby causing
+ 	 * the boot monitor to read the system wide flags register,
+@@ -182,7 +186,10 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 
+ 		call_firmware_op(cpu_boot, phys_cpu);
+ 
+-		arch_send_wakeup_ipi_mask(cpumask_of(cpu));
++		if (soc_is_exynos3250())
++			dsb_sev();
++		else
++			arch_send_wakeup_ipi_mask(cpumask_of(cpu));
+ 
+ 		if (pen_release == -1)
+ 			break;
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 87c0d34..4681f64 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -121,8 +121,12 @@ void exynos_cpu_power_down(int cpu)
+  */
+ void exynos_cpu_power_up(int cpu)
+ {
+-	__raw_writel(S5P_CORE_LOCAL_PWR_EN,
+-		     EXYNOS_ARM_CORE_CONFIGURATION(cpu));
++	u32 core_conf = 0;
++
++	core_conf |= S5P_CORE_LOCAL_PWR_EN;
++	if (soc_is_exynos3250())
++		core_conf |= S5P_CORE_AUTOWAKEUP_EN;
++	__raw_writel(core_conf, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
  }
  
--void __init exynos_init_late(void)
-+static void __init exynos_init_late(void)
- {
- 	if (of_machine_is_compatible("samsung,exynos5440"))
- 		/* to be supported later */
-@@ -256,7 +256,7 @@ static void __init exynos_map_io(void)
- 		iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
- }
+ /**
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index 1d13b08..674dfc2 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -128,6 +128,7 @@
  
--void __init exynos_init_io(void)
-+static void __init exynos_init_io(void)
- {
- 	debug_ll_io_init();
+ #define S5P_CORE_LOCAL_PWR_EN			0x3
+ #define S5P_INT_LOCAL_PWR_EN			0x7
++#define S5P_CORE_AUTOWAKEUP_EN			(1 << 31)
  
+ /* Only for EXYNOS4210 */
+ #define S5P_CMU_CLKSTOP_LCD1_LOWPWR	S5P_PMUREG(0x1154)
+@@ -186,6 +187,9 @@
+ #define S5P_DIS_IRQ_CORE3			S5P_PMUREG(0x1034)
+ #define S5P_DIS_IRQ_CENTRAL3			S5P_PMUREG(0x1038)
+ 
++/* For EXYNOS3 */
++#define EXYNOS3_COREPORESET(cpu)		((1 << 4) << cpu)
++
+ /* For EXYNOS5 */
+ 
+ #define EXYNOS5_SYS_I2C_CFG					S5P_SYSREG(0x0234)
 -- 
-1.7.10.4
+1.8.0
