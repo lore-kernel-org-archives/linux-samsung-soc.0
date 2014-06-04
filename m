@@ -1,71 +1,67 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] arm: mct: Don't reset the counter during boot and resume
-Date: Wed, 04 Jun 2014 10:47:22 +0900
-Message-ID: <026701cf7f96$ed616a00$c8243e00$@samsung.com>
-References: <1401821299-24431-1-git-send-email-chirantan@chromium.org>
- <CAD=FV=VfK6DoK53ZBzouoUz-j8COUDUkifEenggC0kkLrJnVcA@mail.gmail.com>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: Re: [PATCH v2 2/2] s5p-mfc: Adding MFC v7 and v8 firmwares
+Date: Wed, 4 Jun 2014 11:01:51 +0530
+Message-ID: <CALt3h7-D1VA5WfyaZDpuOe0L6V2ZhiOsb-wDFx48Nk3-mxBAPA@mail.gmail.com>
+References: <1400676064-17819-1-git-send-email-arun.kk@samsung.com>
+	<1400676064-17819-2-git-send-email-arun.kk@samsung.com>
+	<1401824047.2412.7.camel@deadeye.wl.decadent.org.uk>
+	<1401837995.2412.45.camel@deadeye.wl.decadent.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:34570 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752036AbaFDBrZ (ORCPT
+Received: from mail-ve0-f169.google.com ([209.85.128.169]:54808 "EHLO
+	mail-ve0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751937AbaFDFbw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jun 2014 21:47:25 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N6M00CSIFMY1ZA0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 04 Jun 2014 10:47:22 +0900 (KST)
-In-reply-to: <CAD=FV=VfK6DoK53ZBzouoUz-j8COUDUkifEenggC0kkLrJnVcA@mail.gmail.com>
-Content-language: ko
+	Wed, 4 Jun 2014 01:31:52 -0400
+Received: by mail-ve0-f169.google.com with SMTP id jx11so8292114veb.28
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Jun 2014 22:31:51 -0700 (PDT)
+In-Reply-To: <1401837995.2412.45.camel@deadeye.wl.decadent.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Doug Anderson' <dianders@chromium.org>, 'Chirantan Ekbote' <chirantan@chromium.org>
-Cc: 'Russell King' <linux@arm.linux.org.uk>, 'Olof Johansson' <olof@lixom.net>, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
+To: Ben Hutchings <ben@decadent.org.uk>
+Cc: David Woodhouse <dwmw2@infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-firmware@kernel.org
 
-Doug Anderson wrote:
-> 
-> Chirantan,
-> 
-> On Tue, Jun 3, 2014 at 11:48 AM, Chirantan Ekbote
-> <chirantan@chromium.org> wrote:
-> > Unfortunately on some exynos systems, resetting the mct counter also
-> > resets the architected timer counter.  This can cause problems if the
-> > architected timer driver has already been initialized because the kernel
-> > will think that the counter has wrapped around, causing a big jump in
-> > printk timestamps and delaying any scheduled clock events until the
-> > counter reaches the value it had before it was reset.
-> >
-> > The kernel code makes no assumptions about the initial value of the mct
-> > counter so there is no reason from a software perspective to clear the
-> > counter before starting it.  This also fixes the problems described in
-> > the previous paragraph.
-> >
-> > Cc: Olof Johansson <olof@lixom.net>
-> > Cc: Doug Anderson <dianders@chromium.org>
-> > Cc: Kukjin Kim <kgene.kim@samsung.com>
-> > Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-samsung-soc@vger.kernel.org
-> > Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
-> > ---
-> >  drivers/clocksource/exynos_mct.c | 9 +++------
-> >  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> I can confirm that this fixes problems I described in
-> <http://www.spinics.net/lists/linux-samsung-soc/msg29085.html>.  Now
-> when I boot there's no mysterious delay and there's no big jump in
-> time.
-> 
-> I'd love to see this in 3.16 so we can get rid of this annoying delay.
-> 
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> Tested-by: Doug Anderson <dianders@chromium.org>
+Hi Ben,
 
-OK, I will queue this patch into fixes for 3.16.
+On Wed, Jun 4, 2014 at 4:56 AM, Ben Hutchings <ben@decadent.org.uk> wrote:
+> On Tue, 2014-06-03 at 20:34 +0100, Ben Hutchings wrote:
+>> On Wed, 2014-05-21 at 18:11 +0530, Arun Kumar K wrote:
+>> > Adding the following firmware files for MFC
+>> > s5p-mfc-v7.fw: Used in exynos 5420
+>> > s5p-mfc-v8.fw: Used in exynos 5800
+>> >
+>> > Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> > ---
+>> > Changes from v1
+>> > - None
+>> > ---
+>> >  WHENCE                |    2 ++
+>> >  s5p-mfc/s5p-mfc-v7.fw |  Bin 0 -> 382724 bytes
+>> >  s5p-mfc/s5p-mfc-v8.fw |  Bin 0 -> 360576 bytes
+>> >  3 files changed, 2 insertions(+)
+>> >  create mode 100644 s5p-mfc/s5p-mfc-v7.fw
+>> >  create mode 100644 s5p-mfc/s5p-mfc-v8.fw
+>> [...]
+>>
+>> Applied, thanks.
+>
+> Just noticed a problem with all the s5p-mfc firmware: you are putting it
+> in the s5p-mfc subdirectory, so distribution packages will install them
+> in /lib/firmware/s5p-mfc.  However, unless I'm mistaken your driver
+> requests it with a bare filename (e.g. "s5p-mfc-v7.fw") so it won't be
+> found.
+>
 
-Thanks,
-Kukjin
+Yes this issue is there.
+Kamil, are you ok with changing the fw load path to s5p-mfc/s5p-mfc*.fw
+in the driver?
+
+Regards
+Arun
+
+> Ben.
+>
+> --
+> Ben Hutchings
+> Experience is what causes a person to make new mistakes instead of old ones.
