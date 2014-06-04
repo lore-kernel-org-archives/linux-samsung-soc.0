@@ -1,33 +1,27 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH v2] drm/exynos: consider deferred probe case
-Date: Wed, 04 Jun 2014 13:24:28 +0200
-Message-ID: <538F01EC.5050008@samsung.com>
+Date: Wed, 04 Jun 2014 13:24:47 +0200
+Message-ID: <538F01FF.4060301@samsung.com>
 References: <1401355682-6939-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:43509 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752129AbaFDLYt (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:16690 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752305AbaFDLYy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Jun 2014 07:24:49 -0400
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
-	id 1Ws9JF-0001OY-LL
-	for linux-samsung-soc@vger.kernel.org; Wed, 04 Jun 2014 13:24:45 +0200
-Received: from 217-67-201-162.itsa.net.pl ([217.67.201.162])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Jun 2014 13:24:45 +0200
-Received: from a.hajda by 217-67-201-162.itsa.net.pl with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Jun 2014 13:24:45 +0200
-In-Reply-To: <1401355682-6939-1-git-send-email-inki.dae@samsung.com>
+	Wed, 4 Jun 2014 07:24:54 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N6N00CZ56D269A0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 04 Jun 2014 12:24:38 +0100 (BST)
+In-reply-to: <1401355682-6939-1-git-send-email-inki.dae@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
+To: Inki Dae <inki.dae@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 
 On 05/29/2014 11:28 AM, Inki Dae wrote:
 > This patch makes sure that exynos drm framework handles deferred
