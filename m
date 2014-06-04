@@ -1,87 +1,103 @@
-From: Christoffer Dall <christoffer.dall@linaro.org>
-Subject: Re: [PATCH v6 6/7] arm64: KVM: Set physical address size related
- factors in runtime
-Date: Wed, 4 Jun 2014 15:11:59 +0200
-Message-ID: <20140604131159.GB19587@lvm>
-References: <000501cf6dc6$44fac0f0$cef042d0$@samsung.com>
- <20140527135349.GJ31431@lvm>
- <20140527140241.GA13967@lvm>
- <07fe01cf7e3a$47d4e010$d77ea030$@samsung.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 6/6] usb: host: ohci-exynos: Use devm_ioremap_resource
+ instead of devm_ioremap
+Date: Wed, 4 Jun 2014 15:13:07 +0200
+Message-ID: <20140604131306.GB28484@ulmo>
+References: <1399723210-21569-1-git-send-email-gautam.vivek@samsung.com>
+ <1399723210-21569-7-git-send-email-gautam.vivek@samsung.com>
+ <CAFp+6iFufCh6SVEF-HQA62ZsJGJGSebDSs28eqcrMy1X8e5vjA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7ZAtKRhVyVSsbBD2"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <07fe01cf7e3a$47d4e010$d77ea030$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jungseok Lee <jays.lee@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu, Catalin.Marinas@arm.com, 'Marc Zyngier' <Marc.Zyngier@arm.com>, linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, steve.capper@linaro.org, sungjinn.chung@samsung.com, 'Arnd Bergmann' <arnd@arndb.de>, kgene.kim@samsung.com, ilho215.lee@samsung.com
+In-Reply-To: <CAFp+6iFufCh6SVEF-HQA62ZsJGJGSebDSs28eqcrMy1X8e5vjA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Shiyan <shc_work-JGs/UdohzUI@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jun 02, 2014 at 05:11:39PM +0900, Jungseok Lee wrote:
-> On Tuesday, May 27, 2014 11:03 PM, Christoffer Dall wrote:
-> > On Tue, May 27, 2014 at 03:53:49PM +0200, Christoffer Dall wrote:
-> > > On Mon, May 12, 2014 at 06:40:54PM +0900, Jungseok Lee wrote:
-> > > > This patch sets TCR_EL2.PS, VTCR_EL2.T0SZ and vttbr_baddr_mask in runtime,
-> > > > not compile time.
-> > > >
-> > > > In ARMv8, EL2 physical address size (TCR_EL2.PS) and stage2 input address
-> > > > size (VTCR_EL2.T0SZE) cannot be determined in compile time since they
-> > > > depends on hardware capability.
-> > >
-> > > s/depends/depend/
-> > >
-> > > >
-> > > > According to Table D4-23 and Table D4-25 in ARM DDI 0487A.b document,
-> > > > vttbr_x is calculated using different hard-coded values with consideration
-> > >
-> > > super nit: I guess this is fixed values, and not hard-coded values
-> > >
-> > > > of T0SZ, granule size and the level of translation tables. Therefore,
-> > > > vttbr_baddr_mask should be determined dynamically.
-> > >
-> > > so I think there's a deeper issue here, which is that we're not
-> > > currently considering that for a given supported physical address size
-> > > (run-time) and given page granularity (compile-time), we may have some
-> > > flexibility in choosing the VTCR_EL2.SL0 field, and thereby the size of
-> > > the initial stage2 pgd, by concatinating the initial level page tables.
-> > >
-> > > Additionally, the combinations of the givens may also force us to choose
-> > > a specific SL0 value.
-> > >
-> > > Policy-wise, I would say we should concatenate as many initial level page
-> > > tables as possible when using 4K pages, iow. always set VTCR_EL2.SL0 to
-> > > the lowest possible value given the PARange and page size config we have
-> > > at hand.  That should always provide increased performance for VMs at
-> > > the cost of maximum 16 concatenated tables, which is a 64K contiguous
-> > > allocation and alignment, for 4K pages.
-> > >
-> > > For 64K pages, it becomes a 256K alignment and contiguous allocation
-> > > requirement.  One could argue that if this is not possible on your
-> > > system, then you have no business runninng VMs on there, but I want to
-> > > leave this open for comments...
-> > >
-> > Just had a brief chat with Marc, and he made me think of the fact that
-> > we cannot decide this freely, because the code in kvm_mmu.c assumes that
-> > the stage-2 page tables have the same number of levels etc. as the host
-> > kernel (we re-use functions like pud_offset, pud_addr_end, etc. etc.).
-> > 
-> > I'm not sure this can always be aligned, so we may have to write our own
-> > kvm_... versions of these to accomodate the best policy for KVM.
-> 
-> I agree with your opinion in performance and long-term perspective. We
-> should consider all combinations and re-write code if needed.
-> 
-> However, I'm not sure that this work should be included in this patch series.
-> 
-> If this functionality is needed, it would be good to prepare the work as
-> a separate patchset and drop off the last 2 KVM patches. Instead, 4 level
-> features should be marked as EXPERIMENTAL.
-> 
-If you want to get the 4-level page tables merged earlier you should
-make sure KVM gets disabled when this feature is enabled, but it would
-be a bit of shame now that you're already worked a lot on this code.
 
-I would be very happy to see patches from you fixing this properly, but
-I understand it is developing into something of an effort.
+--7ZAtKRhVyVSsbBD2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Christoffer
+On Wed, Jun 04, 2014 at 03:41:20PM +0530, Vivek Gautam wrote:
+> Hi,
+>=20
+>=20
+> On Sat, May 10, 2014 at 5:30 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> =
+wrote:
+> > Using devm_ioremap_resource() API should actually be preferred over
+> > devm_ioremap(), since the former request the mem region first and then
+> > gives back the ioremap'ed memory pointer.
+> > devm_ioremap_resource() calls request_mem_region(), therby preventing
+> > other drivers to make any overlapping call to the same region.
+> >
+> > Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>=20
+> Although this patch and rest in the series are merged.
+> But i have got a doubt, so making this thread alive.
+>=20
+> > ---
+> >  drivers/usb/host/ohci-exynos.c |    7 +++----
+> >  1 file changed, 3 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exy=
+nos.c
+> > index 9cf80cb..dec691d 100644
+> > --- a/drivers/usb/host/ohci-exynos.c
+> > +++ b/drivers/usb/host/ohci-exynos.c
+> > @@ -120,10 +120,9 @@ skip_phy:
+> >
+> >         hcd->rsrc_start =3D res->start;
+> >         hcd->rsrc_len =3D resource_size(res);
+> > -       hcd->regs =3D devm_ioremap(&pdev->dev, res->start, hcd->rsrc_le=
+n);
+> > -       if (!hcd->regs) {
+> > -               dev_err(&pdev->dev, "Failed to remap I/O memory\n");
+> > -               err =3D -ENOMEM;
+> > +       hcd->regs =3D devm_ioremap_resource(&pdev->dev, res);
+>=20
+> Here, we replaced devm_ioremap() call with devm_ioremap_resource(),
+> which internally requests the memory region
+
+I guess this could lead to problems if drivers haven't been written to
+cleanly split the register ranges that they access, since now two
+overlapping regions may be requested and cause the drivers to fail.
+
+> and then does a "devm_ioremap()" or "devm_ioremap_nocache()" based on
+> the check for IORESOURCE_CACHEABLE flag.
+>=20
+> But this flag is not set for the resource of this device.
+> So should we be explicitly setting the flag in driver ?
+
+I don't think it makes much sense to map these registers cached anyway.
+Drivers will likely expect writes to this region to take effect without
+needing any kind of flushing.
+
+Thierry
+
+--7ZAtKRhVyVSsbBD2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTjxtiAAoJEN0jrNd/PrOhiTYP/2NPPViprewJ60qZhUc+hJ7G
+hMv0Qa08HrSeNLnHN/jOqIwdgDMFSy/8Um2yCyqH5Wpy0+ohJL2V0PuBuXA/ZIbO
+ZQ6Q3CChqGxqc939kaVjoeLYlNJCPaz2lkxqGHpuSLDY9ojIbbHgfPbEVFeQj6Z4
+6+VkGh06/+Ato8Rpp5xmzr77x9qujLzGPe6e8zS7cr272TwBXBgBGo/jUBHt4aE1
+EKo4TQtVfkBXIeSqvSKBXQSxVq3ADWOS5EOl7o0MTfoxd/2DKt3Ktd8SFisvBCWQ
+aGu6QjHIaEMiAjmAwIYSTZW9Djw1x62xgdRA/ZFQufLJK2anwxgKv+jEz0Fz1XPu
+LSJCGiCWzma9IywPEc5abTRSsfIYI6iQJxwq7Fg4Z2ssLII6aPljyozbUm81YjxS
+ViB8OtzJnUjqcpca2UmDfvuG3Ty3LgyH+mopNP28daMcEeY4LczBX/Pk3uftS2Nm
++s+Whk9Ssv1WNlYz4nq737PuwnZ8leSf8hhfPDqWh9Zw8mZ/F8Cv/jqWEF7vK7ar
+lckvyWfGH/9CYqZu/WYgzid70hO4T32SnS+sJiqx/6/oGqI1bVEc+JVcNherwL88
+azmSggvCzovSD9B9Tlp4Bu2Lj7tSfsmHPIOvf5CVsKUHWWJYT6egfnm/vin2Y2L3
++3awh4NG713uFf5l4gfm
+=1dt2
+-----END PGP SIGNATURE-----
+
+--7ZAtKRhVyVSsbBD2--
