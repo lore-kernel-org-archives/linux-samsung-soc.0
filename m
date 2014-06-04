@@ -1,110 +1,139 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Wed, 4 Jun 2014 23:32:00 +0200
-Message-ID: <20140604213159.GB18780@mithrandir>
-References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
-	<20140530112226.GA3949@e103592.cambridge.arm.com>
-	<4830064.JvgTAs8Xty@wuerfel>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7145590475466759764=="
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4830064.JvgTAs8Xty@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH 3/3] ARM: dts: Use the cros-ec-keyboard fragment in exynos5250-snow
+Date: Wed,  4 Jun 2014 15:20:20 -0700
+Message-ID: <1401920421-25729-3-git-send-email-dianders@chromium.org>
+References: <1401920421-25729-1-git-send-email-dianders@chromium.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1401920421-25729-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
+Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos5250-snow.dts | 93 ++---------------------------------
+ 1 file changed, 3 insertions(+), 90 deletions(-)
 
---===============7145590475466759764==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dc+cDN39EJAMEtIO"
-Content-Disposition: inline
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index 079fdf9..7bd2df1 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -137,7 +137,7 @@
+ 				sbs,poll-retry-count = <1>;
+ 			};
+ 
+-			ec: embedded-controller {
++			cros_ec: embedded-controller {
+ 				compatible = "google,cros-ec-i2c";
+ 				reg = <0x1e>;
+ 				interrupts = <6 0>;
+@@ -145,95 +145,6 @@
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&ec_irq>;
+ 				wakeup-source;
+-
+-				keyboard-controller {
+-				        compatible = "google,cros-ec-keyb";
+-				        keypad,num-rows = <8>;
+-				        keypad,num-columns = <13>;
+-				        google,needs-ghost-filter;
+-					linux,keymap = <0x0001007d	/* L_META */
+-							0x0002003b	/* F1 */
+-							0x00030030	/* B */
+-							0x00040044	/* F10 */
+-							0x00060031	/* N */
+-							0x0008000d	/* = */
+-							0x000a0064	/* R_ALT */
+-
+-							0x01010001	/* ESC */
+-							0x0102003e	/* F4 */
+-							0x01030022	/* G */
+-							0x01040041	/* F7 */
+-							0x01060023	/* H */
+-							0x01080028	/* ' */
+-							0x01090043	/* F9 */
+-							0x010b000e	/* BKSPACE */
+-
+-							0x0200001d	/* L_CTRL */
+-							0x0201000f	/* TAB */
+-							0x0202003d	/* F3 */
+-							0x02030014	/* T */
+-							0x02040040	/* F6 */
+-							0x0205001b	/* ] */
+-							0x02060015	/* Y */
+-							0x02070056	/* 102ND */
+-							0x0208001a	/* [ */
+-							0x02090042	/* F8 */
+-
+-							0x03010029	/* GRAVE */
+-							0x0302003c	/* F2 */
+-							0x03030006	/* 5 */
+-							0x0304003f	/* F5 */
+-							0x03060007	/* 6 */
+-							0x0308000c	/* - */
+-							0x030b002b	/* \ */
+-
+-							0x04000061	/* R_CTRL */
+-							0x0401001e	/* A */
+-							0x04020020	/* D */
+-							0x04030021	/* F */
+-							0x0404001f	/* S */
+-							0x04050025	/* K */
+-							0x04060024	/* J */
+-							0x04080027	/* ; */
+-							0x04090026	/* L */
+-							0x040a002b	/* \ */
+-							0x040b001c	/* ENTER */
+-
+-							0x0501002c	/* Z */
+-							0x0502002e	/* C */
+-							0x0503002f	/* V */
+-							0x0504002d	/* X */
+-							0x05050033	/* , */
+-							0x05060032	/* M */
+-							0x0507002a	/* L_SHIFT */
+-							0x05080035	/* / */
+-							0x05090034	/* . */
+-							0x050B0039	/* SPACE */
+-
+-							0x06010002	/* 1 */
+-							0x06020004	/* 3 */
+-							0x06030005	/* 4 */
+-							0x06040003	/* 2 */
+-							0x06050009	/* 8 */
+-							0x06060008	/* 7 */
+-							0x0608000b	/* 0 */
+-							0x0609000a	/* 9 */
+-							0x060a0038	/* L_ALT */
+-							0x060b006c	/* DOWN */
+-							0x060c006a	/* RIGHT */
+-
+-							0x07010010	/* Q */
+-							0x07020012	/* E */
+-							0x07030013	/* R */
+-							0x07040011	/* W */
+-							0x07050017	/* I */
+-							0x07060016	/* U */
+-							0x07070036	/* R_SHIFT */
+-							0x07080019	/* P */
+-							0x07090018	/* O */
+-							0x070b0067	/* UP */
+-							0x070c0069>;	/* LEFT */
+-				};
+ 			};
+ 
+ 			power-regulator {
+@@ -431,3 +342,5 @@
+ 		};
+ 	};
+ };
++
++#include "cros-ec-keyboard.dtsi"
+-- 
+2.0.0.526.g5318336
 
-
---dc+cDN39EJAMEtIO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 30, 2014 at 09:01:19PM +0200, Arnd Bergmann wrote:
-> On Friday 30 May 2014 12:22:32 Dave Martin wrote:
-> > > +
-> > > +Examples:
-> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > +
-> > > +Single-master IOMMU:
-> > > +--------------------
-> > > +
-> > > +	iommu {
-> > > +		#address-cells =3D <0>;
-> > > +		#size-cells =3D <0>;
-> > > +	};
-> > > +
-> > > +	master {
-> > > +		iommus =3D <&/iommu>;
-> > > +	};
-> > > +
-> > > +Multiple-master IOMMU with fixed associations:
-> > > +----------------------------------------------
-> > > +
-> > > +	/* multiple-master IOMMU */
-> > > +	iommu {
-> > > +		/*
-> > > +		 * Masters are statically associated with this IOMMU and
-> > > +		 * address translation is always enabled.
-> > > +		 */
-> > > +		#address-cells =3D <0>;
-> > > +		#size-cells =3D <0>;
-> >=20
-> > In this example, can different translations be set up for the different
-> > masters?
-> >=20
-> > With no cells available to contain any sort of ID, it looks like this
-> > is not possible.
->=20
-> Correct, this example is for an IOMMU that does not use IDs but has a
-> shared address space for all devices.
-
-Couldn't these device all still have separate address spaces?
-
-Thierry
-
---dc+cDN39EJAMEtIO
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTj5BPAAoJEN0jrNd/PrOhGcQP/A2I75o+TqycvUJtqqiz5AQC
-bh2K9rRqbUgQoBTnAwD4oOmnM50zXpxxOd+1OAEE9Q6mRFw4FpZqGmHnkep89LtR
-mh9grCRO6rqnLjt/98K2KzRdW5vtJ0PvuBHsyPW1VIhXr1vp114YkV7+bMqsrtwe
-TN3W5YPZLw/vfG4VJV+lkFji3AHFgBnJgvOx12T4eiX4RoTzW4wvNzFsP+2dr50L
-rythOupdjbDufTMqoWB4bmXDQBUc5FHax+jTxzAPpLAumTvWn5f3hUjfutPVPzrj
-JTy3xkdIXtx+yhLf3DFzMvoWiLbS0xnu1+qJ9xp8Av6R8fCWKLyG/SkP2FAKfWCb
-qc4yxogkG49yXIeLteuCFwO3SGqVMeN0b5jWPiuyBWq1avbZq1vJkfExzV+KdAxy
-u0wVHxX12ab/NW+lfl2UHRdoNxJdcaVXSdrxlo6UHTptwjKiOiknf+KNQooHU3wr
-LJ0dNc2Pay96PLElOkwP/Cv5iZjlp0IeZxvM4/lpYRZc4xxnl1V1gROmWTJGTUcY
-m3CXyZ0hJhWBddoDODPeaY7oua2VjeEeZ8nBPkFZncvw9cezPH6EVH/+wLjxGKcG
-lWWo7bT6XH4ZFjKp3tU5/J3gAnTAPHrDiOfpQWVns//jh7DHH0EdZCVvAtKpo6re
-azJUtvUntUZEH6CGSCXy
-=PEUa
------END PGP SIGNATURE-----
-
---dc+cDN39EJAMEtIO--
-
---===============7145590475466759764==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============7145590475466759764==--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
