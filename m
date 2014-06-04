@@ -1,58 +1,64 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Wed, 4 Jun 2014 17:41:32 +0100
-Message-ID: <20140604164132.GF6644@arm.com>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
-	<4545972.cM7IP1qTXQ@wuerfel>
-	<CAL_Jsq+tkFNpjSEZboT+o69B_Z3a8e-ZVKaYDmLwtkyYoPy6VQ@mail.gmail.com>
-	<5288123.eXagyPAxNq@wuerfel>
-	<20140602104104.GD3855@e103592.cambridge.arm.com>
-	<20140604143509.GF28484@ulmo>
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH 3/3] clocksource: exynos_mct: Optimize register reads with
+ ldmia
+Date: Wed,  4 Jun 2014 10:30:34 -0700
+Message-ID: <1401903034-20074-3-git-send-email-dianders@chromium.org>
+References: <1401903034-20074-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140604143509.GF28484@ulmo>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1401903034-20074-1-git-send-email-dianders@chromium.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, David Riley <davidriley@chromium.org>, Chirantan Ekbote <chirantan@chromium.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, olof@lixom.net, Vincent Guittot <vincent.guittot@linaro.org>, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 04, 2014 at 03:35:10PM +0100, Thierry Reding wrote:
-> On Mon, Jun 02, 2014 at 11:41:04AM +0100, Dave Martin wrote:
-> > In the strictest sense, no.
-> > 
-> > But for a large set of sane configurations, this probably works.
-> > 
-> > Small sets of randomly-assigned IDs can just be enumerated one by one.
-> > 
-> > We wouldn't be able to describe folding and bit shuffling, but we
-> > probably don't want to encourage that anyway.
-> 
-> I'm having some difficulty understanding this. You make it sound like
-> there's a fairly arbitrary number of IDs that the SMMU can handle. So
-> how is the mapping to devices defined? If you say encourage that does
-> make it sound like the assignment of IDs is purely defined by some
-> mechanism in software rather than in hardware. Or they are more or less
-> randomly picked by someone. If that's the case, is that not something
-> that should be dynamically allocated by the kernel rather than put into
-> the device tree?
+As we saw in (clocksource: exynos_mct: cache mct upper count), the
+time spent reading the MCT shows up fairly high in real-world
+profiles.  That means that it's worth some optimization.
 
-The set of StreamIDs that can be generated by a master is fixed in the
-hardware. The SMMU can then be programmed to map these incoming IDs onto
-a context ID (or a set of context IDs), which are the IDs used internally
-by the SMMU to find the page tables etc.
+We get a roughly 10% speedup in userspace gettimeofday() by using an
+ldmia to read the two halfs of the MCT.  That seems like a worthwhile
+thing to do.
 
-The StreamID -> ContextID mapping is dynamic and controlled by software.
-The Master -> StreamIDs mapping is fixed in the hardware.
+Before: 1173084 us for 1000000 gettimeofday in userspace
+After:  1045674 us for 1000000 gettimeofday in userspace
 
-Will
+NOTE: we could actually do better than this if we really wanted to.
+Technically we could register the clocksource as a 32-bit timer and
+only use the "lower" half.  Doing so brings us down to 1014429 us for
+1000000 gettimeofday in userspace (and doesn't even require assembly
+code).  That would be an alternative to this change.
+
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+ drivers/clocksource/exynos_mct.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 7cbe4aa..6e3017b 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -172,8 +172,9 @@ static inline cycle_t notrace _exynos4_frc_read(void)
+ 
+ 	do {
+ 		hi = hi2;
+-		lo = __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_L);
+-		hi2 = __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_U);
++		asm volatile("ldmia  %2, {%0, %1}"
++			     : "=r" (lo), "=r" (hi2)
++			     : "r" (reg_base + EXYNOS4_MCT_G_CNT_L));
+ 	} while (hi != hi2);
+ 
+ 	return ((cycle_t)hi << 32) | lo;
+-- 
+2.0.0.526.g5318336
