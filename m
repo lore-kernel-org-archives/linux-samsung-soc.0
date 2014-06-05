@@ -1,67 +1,410 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2] clk: exynos5420: Keep aclk66_peric enabled during boot
-Date: Thu, 05 Jun 2014 21:14:34 +0200
-Message-ID: <5390C19A.9060201@gmail.com>
-References: <1401398496-4624-1-git-send-email-dianders@chromium.org>
- <1401467562-5585-1-git-send-email-dianders@chromium.org>
- <CAD=FV=W8-M5iOMDG190WGaeSySTd=qcp30k-H8DMUs_C5Pdwog@mail.gmail.com>
+From: Ajay kumar <ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3 5/8] drm/panel: Add driver for lvds/edp based panels
+Date: Fri, 6 Jun 2014 00:51:47 +0530
+Message-ID: <CAEC9eQMXa33NsLyRqmFUjSEfNihDDj3GmJ0mkUzgeuk+OcadKQ@mail.gmail.com>
+References: <1401995452-15798-1-git-send-email-ajaykumar.rs@samsung.com>
+	<1401995452-15798-6-git-send-email-ajaykumar.rs@samsung.com>
+	<CAEC9eQNamrF7G0kQ6J=R5DgvMn_zX1X6D2f7pegkRKxQ7LMfLQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAD=FV=W8-M5iOMDG190WGaeSySTd=qcp30k-H8DMUs_C5Pdwog@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAEC9eQNamrF7G0kQ6J=R5DgvMn_zX1X6D2f7pegkRKxQ7LMfLQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sean Paul <seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prashanth G <prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05.06.2014 20:48, Doug Anderson wrote:
-> Tomasz / Mike,
-> 
-> On Fri, May 30, 2014 at 9:32 AM, Doug Anderson <dianders@chromium.org> wrote:
->> Right now if you've got earlyprintk enabled on exynos5420-peach-pit
->> then you'll get a hang on boot.  Here's why:
+On Fri, Jun 6, 2014 at 12:47 AM, Ajay kumar <ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> +Device tree list
+>
+> On Fri, Jun 6, 2014 at 12:40 AM, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> This patch adds a simple driver to handle all the LCD and LED
+>> powerup/down routines needed to support eDP/LVDS panels.
 >>
->> 1. The i2c-s3c2410 driver will probe at subsys_initcall.  It will
->>    enable its clock and disable it.  This is the clock "i2c2".
->> 2. The act of disabling "i2c2" will disable its parents.  In this case
->>    the parent is "aclk66_peric".  There are no other children of
->>    "aclk66_peric" officially enabled, so "aclk66_peric" will be turned
->>    off (despite being CLK_IGNORE_UNUSED, but that's by design).
->> 3. The next time you try to earlyprintk you'll do so without the UART
->>    clock enabled.  That's because the UART clocks are also children of
->>    "aclk66_peric".  You'll hang.
+>> The LCD and LED units are usually powered up via regulators,
+>> and almost on all boards, we will have a BACKLIGHT_EN pin to
+>> enable/ disable the backlight.
+>> Sometimes, we can have LCD_EN switches as well.
 >>
->> There's no good place to put a clock enable for earlyprintk, which is
->> handled by a bunch of assembly code.  The best we can do is to handle
->> this in the clock driver.
+>> The routines in this driver can be used to control
+>> panel power sequence on such boards.
 >>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> Signed-off-by: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Signed-off-by: Rahul Sharma <Rahul.Sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 >> ---
->> Changes in v2:
->> - Use GATE_A and clk_get().  Save the clock for putting later.
->> - Return 0 from exynos5420_clk_late_init().
+>>  .../devicetree/bindings/panel/panel-lvds.txt       |   50 ++++
+>>  drivers/gpu/drm/panel/Kconfig                      |   18 ++
+>>  drivers/gpu/drm/panel/Makefile                     |    2 +
+>>  drivers/gpu/drm/panel/panel-lvds.c                 |  262 ++++++++++++++++++++
+>>  4 files changed, 332 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/panel/panel-lvds.txt
+>>  create mode 100644 drivers/gpu/drm/panel/panel-lvds.c
 >>
->>  drivers/clk/samsung/clk-exynos5420.c | 33 +++++++++++++++++++++++++++++++--
->>  1 file changed, 31 insertions(+), 2 deletions(-)
-> 
-> Are there other changes you'd like me to make to this?  It would be
-> really nice to get this in for 3.16 so the system doesn't just
-> mysteriously hang when you use earlyprintk.
-
-We can probably take this as an -rc fix, so it should be fine.
-
-However I still don't see the point of exporting this clock and
-polluting the global clkdev namespace. Even the diffstat looks better in v1.
-
-Best regards,
-Tomasz
+>> diff --git a/Documentation/devicetree/bindings/panel/panel-lvds.txt b/Documentation/devicetree/bindings/panel/panel-lvds.txt
+>> new file mode 100644
+>> index 0000000..465016d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/panel/panel-lvds.txt
+>> @@ -0,0 +1,50 @@
+>> +panel interface for eDP/lvds panels
+>> +
+>> +Required properties:
+>> +  - compatible: "panel-lvds"
+>> +
+>> +Optional properties:
+>> +       -lcd-en-gpio:
+>> +               panel LCD poweron GPIO.
+>> +                       Indicates which GPIO needs to be powered up as output
+>> +                       to powerup/enable the switch to the LCD panel.
+>> +       -led-en-gpio:
+>> +               panel LED enable GPIO.
+>> +                       Indicates which GPIO needs to be powered up as output
+>> +                       to enable the backlight.
+>> +       -panel-prepare-delay:
+>> +               delay value in ms required for panel_prepare process
+>> +                       Delay in ms needed for the panel LCD unit to
+>> +                       powerup completely.
+>> +                       ex: delay needed till eDP panel throws HPD.
+>> +                           delay needed so that we cans tart reading edid.
+>> +       -panel-enable-delay:
+>> +               delay value in ms required for panel_enable process
+>> +                       Delay in ms needed for the panel backlight/LED unit
+>> +                       to powerup, and delay needed between video_enable and
+>> +                       backlight_enable.
+>> +       -panel-disable-delay:
+>> +               delay value in ms required for panel_disable process
+>> +                       Delay in ms needed for the panel backlight/LED unit
+>> +                       powerdown, and delay needed between backlight_disable
+>> +                       and video_disable.
+>> +       -panel-unprepare-delay:
+>> +               delay value in ms required for panel_post_disable process
+>> +                       Delay in ms needed for the panel LCD unit to
+>> +                       to powerdown completely, and the minimum delay needed
+>> +                       before powering it on again.
+>> +       -panel-width-mm: physical panel width [mm]
+>> +       -panel-height-mm: physical panel height [mm]
+>> +
+>> +Example:
+>> +
+>> +       panel-lvds {
+>> +               compatible = "panel-lvds";
+>> +               led-en-gpio = <&gpx3 0 1>;
+>> +               panel-pre-enable-delay = <40>;
+>> +               panel-enable-delay = <20>;
+>> +               panel-disable-delay = <20>;
+>> +               panel-post-disable-delay = <30>;
+>> +               panel-width-mm = <256>;
+>> +               panel-height-mm = <144>;
+>> +       };
+>> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+>> index 4ec874d..3743947 100644
+>> --- a/drivers/gpu/drm/panel/Kconfig
+>> +++ b/drivers/gpu/drm/panel/Kconfig
+>> @@ -30,4 +30,22 @@ config DRM_PANEL_S6E8AA0
+>>         select DRM_MIPI_DSI
+>>         select VIDEOMODE_HELPERS
+>>
+>> +config DRM_PANEL_LVDS
+>> +       tristate "support for LVDS panels"
+>> +       depends on OF && DRM_PANEL
+>> +       help
+>> +         DRM panel driver for LVDS connected via DP bridges that need at most
+>> +         a regulator for LCD unit, a regulator for LED unit and/or enable
+>> +         GPIOs for LCD or LED units. Delay values can also be
+>> +         specified to support powerup and powerdown process.
+>> +
+>> +config DRM_PANEL_EDP
+>> +       tristate "support for eDP panels"
+>> +       depends on OF && DRM_PANEL
+>> +       help
+>> +         DRM panel driver for eDP panels that need at most a
+>> +         regulator for LCD unit, a regulator for LED unit and/or enable
+>> +         GPIOs for LCD or LED units. Delay values can also be
+>> +         specified to support powerup and powerdown process.
+>> +
+>>  endmenu
+>> diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+>> index 8b92921..9c4f120 100644
+>> --- a/drivers/gpu/drm/panel/Makefile
+>> +++ b/drivers/gpu/drm/panel/Makefile
+>> @@ -1,3 +1,5 @@
+>>  obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
+>>  obj-$(CONFIG_DRM_PANEL_LD9040) += panel-ld9040.o
+>>  obj-$(CONFIG_DRM_PANEL_S6E8AA0) += panel-s6e8aa0.o
+>> +obj-$(CONFIG_DRM_PANEL_LVDS) += panel-lvds.o
+>> +obj-$(CONFIG_DRM_PANEL_EDP) += panel-lvds.o
+>> diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
+>> new file mode 100644
+>> index 0000000..4dfb322
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/panel/panel-lvds.c
+>> @@ -0,0 +1,262 @@
+>> +/*
+>> + * panel driver for lvds and eDP panels
+>> + *
+>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd
+>> + *
+>> + * Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include <linux/gpio.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_gpio.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/regulator/consumer.h>
+>> +
+>> +#include <video/of_videomode.h>
+>> +#include <video/videomode.h>
+>> +
+>> +#include <drm/drmP.h>
+>> +#include <drm/drm_crtc.h>
+>> +#include <drm/drm_panel.h>
+>> +
+>> +struct panel_lvds {
+>> +       struct drm_panel        base;
+>> +       struct regulator        *backlight_fet;
+>> +       struct regulator        *lcd_fet;
+>> +       struct videomode        vm;
+>> +       int                     width_mm;
+>> +       int                     height_mm;
+>> +       bool                    backlight_fet_enabled;
+>> +       bool                    lcd_fet_enabled;
+>> +       int                     led_en_gpio;
+>> +       int                     lcd_en_gpio;
+>> +       int                     panel_prepare_delay;
+>> +       int                     panel_enable_delay;
+>> +       int                     panel_disable_delay;
+>> +       int                     panel_unprepare_delay;
+>> +};
+>> +
+>> +static inline struct panel_lvds *to_panel(struct drm_panel *panel)
+>> +{
+>> +       return container_of(panel, struct panel_lvds, base);
+>> +}
+>> +
+>> +static int panel_lvds_prepare(struct drm_panel *panel)
+>> +{
+>> +       struct panel_lvds *lvds_panel = to_panel(panel);
+>> +
+>> +       if (!IS_ERR_OR_NULL(lvds_panel->lcd_fet))
+>> +               if (!lvds_panel->lcd_fet_enabled) {
+>> +                       if (regulator_enable(lvds_panel->lcd_fet))
+>> +                               DRM_ERROR("failed to enable LCD fet\n");
+>> +                       lvds_panel->lcd_fet_enabled = true;
+>> +               }
+>> +
+>> +       if (gpio_is_valid(lvds_panel->lcd_en_gpio))
+>> +               gpio_set_value(lvds_panel->lcd_en_gpio, 1);
+>> +
+>> +       msleep(lvds_panel->panel_prepare_delay);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int panel_lvds_enable(struct drm_panel *panel)
+>> +{
+>> +       struct panel_lvds *lvds_panel = to_panel(panel);
+>> +
+>> +       if (!IS_ERR_OR_NULL(lvds_panel->backlight_fet))
+>> +               if (!lvds_panel->backlight_fet_enabled) {
+>> +                       if (regulator_enable(lvds_panel->backlight_fet))
+>> +                               DRM_ERROR("failed to enable LED fet\n");
+>> +                       lvds_panel->backlight_fet_enabled = true;
+>> +               }
+>> +
+>> +       msleep(lvds_panel->panel_enable_delay);
+>> +
+>> +       if (gpio_is_valid(lvds_panel->led_en_gpio))
+>> +               gpio_set_value(lvds_panel->led_en_gpio, 1);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int panel_lvds_disable(struct drm_panel *panel)
+>> +{
+>> +       struct panel_lvds *lvds_panel = to_panel(panel);
+>> +
+>> +       if (gpio_is_valid(lvds_panel->led_en_gpio))
+>> +               gpio_set_value(lvds_panel->led_en_gpio, 0);
+>> +
+>> +       if (!IS_ERR_OR_NULL(lvds_panel->backlight_fet))
+>> +               if (lvds_panel->backlight_fet_enabled) {
+>> +                       regulator_disable(lvds_panel->backlight_fet);
+>> +                       lvds_panel->backlight_fet_enabled = false;
+>> +               }
+>> +
+>> +       msleep(lvds_panel->panel_disable_delay);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int panel_lvds_unprepare(struct drm_panel *panel)
+>> +{
+>> +       struct panel_lvds *lvds_panel = to_panel(panel);
+>> +
+>> +       if (gpio_is_valid(lvds_panel->lcd_en_gpio))
+>> +               gpio_set_value(lvds_panel->lcd_en_gpio, 0);
+>> +
+>> +       if (!IS_ERR_OR_NULL(lvds_panel->lcd_fet))
+>> +               if (lvds_panel->lcd_fet_enabled) {
+>> +                       regulator_disable(lvds_panel->lcd_fet);
+>> +                       lvds_panel->lcd_fet_enabled = false;
+>> +               }
+>> +
+>> +       msleep(lvds_panel->panel_unprepare_delay);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int panel_lvds_get_modes(struct drm_panel *panel)
+>> +{
+>> +       struct drm_connector *connector = panel->connector;
+>> +       struct panel_lvds *lvds_panel = to_panel(panel);
+>> +       struct drm_display_mode *mode;
+>> +
+>> +       mode = drm_mode_create(connector->dev);
+>> +       if (!mode) {
+>> +               DRM_ERROR("failed to create a new display mode.\n");
+>> +               return 0;
+>> +       }
+>> +
+>> +       drm_display_mode_from_videomode(&lvds_panel->vm, mode);
+>> +       mode->width_mm = lvds_panel->width_mm;
+>> +       mode->height_mm = lvds_panel->height_mm;
+>> +       connector->display_info.width_mm = mode->width_mm;
+>> +       connector->display_info.height_mm = mode->height_mm;
+>> +
+>> +       mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+>> +       drm_mode_set_name(mode);
+>> +       drm_mode_probed_add(connector, mode);
+>> +
+>> +       return 1;
+>> +}
+>> +
+>> +static const struct drm_panel_funcs panel_lvds_funcs = {
+>> +       .unprepare = panel_lvds_unprepare,
+>> +       .disable = panel_lvds_disable,
+>> +       .prepare = panel_lvds_prepare,
+>> +       .enable = panel_lvds_enable,
+>> +       .get_modes = panel_lvds_get_modes,
+>> +};
+>> +
+>> +static int panel_lvds_probe(struct platform_device *pdev)
+>> +{
+>> +       struct panel_lvds *panel;
+>> +       struct device *dev = &pdev->dev;
+>> +       struct device_node *node = dev->of_node;
+>> +       int ret;
+>> +
+>> +       panel = devm_kzalloc(dev, sizeof(*panel), GFP_KERNEL);
+>> +       if (!panel)
+>> +               return -ENOMEM;
+>> +
+>> +       ret = of_get_videomode(node, &panel->vm, 0);
+>> +       if (ret) {
+>> +               DRM_ERROR("failed: of_get_videomode() : %d\n", ret);
+>> +               return ret;
+>> +       }
+>> +
+>> +       panel->lcd_fet = devm_regulator_get_optional(dev, "lcd_vdd");
+>> +       if (IS_ERR(panel->lcd_fet))
+>> +               return -EPROBE_DEFER;
+>> +
+>> +       panel->backlight_fet = devm_regulator_get_optional(dev, "vcd_led");
+>> +       if (IS_ERR(panel->backlight_fet))
+>> +               return -EPROBE_DEFER;
+>> +
+>> +       panel->lcd_en_gpio = of_get_named_gpio(node, "lcd-en-gpio", 0);
+>> +       panel->led_en_gpio = of_get_named_gpio(node, "led-en-gpio", 0);
+>> +
+>> +       of_property_read_u32(node, "panel-width-mm", &panel->width_mm);
+>> +       of_property_read_u32(node, "panel-height-mm", &panel->height_mm);
+>> +
+>> +       of_property_read_u32(node, "panel-pre-enable-delay",
+>> +                                       &panel->panel_prepare_delay);
+>> +       of_property_read_u32(node, "panel-enable-delay",
+>> +                                       &panel->panel_enable_delay);
+>> +       of_property_read_u32(node, "panel-disable-delay",
+>> +                                       &panel->panel_disable_delay);
+>> +       of_property_read_u32(node, "panel-post-disable-delay",
+>> +                                       &panel->panel_unprepare_delay);
+>> +
+>> +       if (gpio_is_valid(panel->lcd_en_gpio)) {
+>> +               ret = devm_gpio_request_one(dev, panel->lcd_en_gpio,
+>> +                                       GPIOF_OUT_INIT_LOW, "lcd_en_gpio");
+>> +               if (ret) {
+>> +                       DRM_ERROR("failed to get lcd-en gpio [%d]\n", ret);
+>> +                       return 0;
+>> +               }
+>> +       } else {
+>> +               panel->lcd_en_gpio = -ENODEV;
+>> +       }
+>> +
+>> +       if (gpio_is_valid(panel->led_en_gpio)) {
+>> +               ret = devm_gpio_request_one(dev, panel->led_en_gpio,
+>> +                                       GPIOF_OUT_INIT_LOW, "led_en_gpio");
+>> +               if (ret) {
+>> +                       DRM_ERROR("failed to get led-en gpio [%d]\n", ret);
+>> +                       return 0;
+>> +               }
+>> +       } else {
+>> +               panel->led_en_gpio = -ENODEV;
+>> +       }
+>> +
+>> +       drm_panel_init(&panel->base);
+>> +       panel->base.dev = dev;
+>> +       panel->base.funcs = &panel_lvds_funcs;
+>> +
+>> +       ret = drm_panel_add(&panel->base);
+>> +       if (ret < 0)
+>> +               return ret;
+>> +
+>> +       dev_set_drvdata(dev, panel);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int panel_lvds_remove(struct platform_device *pdev)
+>> +{
+>> +       struct panel_lvds *panel = dev_get_drvdata(&pdev->dev);
+>> +
+>> +       panel_lvds_disable(&panel->base);
+>> +       panel_lvds_unprepare(&panel->base);
+>> +
+>> +       drm_panel_remove(&panel->base);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static const struct of_device_id lvds_panel_dt_match[] = {
+>> +       { .compatible = "panel-lvds" },
+>> +       {},
+>> +};
+>> +MODULE_DEVICE_TABLE(of, lvds_panel_dt_match);
+>> +
+>> +struct platform_driver lvds_panel_driver = {
+>> +       .driver = {
+>> +               .name = "panel_lvds",
+>> +               .owner = THIS_MODULE,
+>> +               .of_match_table = lvds_panel_dt_match,
+>> +       },
+>> +       .probe = panel_lvds_probe,
+>> +       .remove = panel_lvds_remove,
+>> +};
+>> +module_platform_driver(lvds_panel_driver);
+>> +
+>> +MODULE_AUTHOR("Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
+>> +MODULE_DESCRIPTION("lvds/eDP panel driver");
+>> +MODULE_LICENSE("GPL v2");
+>> --
+>> 1.7.9.5
+>>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
