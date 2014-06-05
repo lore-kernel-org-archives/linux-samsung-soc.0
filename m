@@ -1,40 +1,54 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2] clk: exynos5420: Keep aclk66_peric enabled during boot
-Date: Thu, 5 Jun 2014 13:42:20 -0700
-Message-ID: <CAD=FV=XEqWTrRCPndLPuXnVeE_wLmDXCkgL-V95UZ0S1x4ppaA@mail.gmail.com>
-References: <1401398496-4624-1-git-send-email-dianders@chromium.org>
-	<1401467562-5585-1-git-send-email-dianders@chromium.org>
-	<CAD=FV=W8-M5iOMDG190WGaeSySTd=qcp30k-H8DMUs_C5Pdwog@mail.gmail.com>
-	<5390C19A.9060201@gmail.com>
-	<CAD=FV=UZsEh+bOQxc8CP+yG5a5Sbp2eTyq8B_iq9u5io5G0B6A@mail.gmail.com>
-	<5390C5A9.5070900@gmail.com>
-	<CAD=FV=Ucn20GDib=t=OOT+8YjGuk6uoWrP1qourY=YfrLJj1WA@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v3] clk: exynos5420: Remove aclk66_peric from the clock
+ tree description
+Date: Fri, 06 Jun 2014 00:26:31 +0200
+Message-ID: <5390EE97.9020702@gmail.com>
+References: <1401467562-5585-1-git-send-email-dianders@chromium.org> <1402000514-30752-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f171.google.com ([209.85.128.171]:55675 "EHLO
-	mail-ve0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751354AbaFEUmV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Jun 2014 16:42:21 -0400
-Received: by mail-ve0-f171.google.com with SMTP id oz11so1936708veb.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Jun 2014 13:42:20 -0700 (PDT)
-In-Reply-To: <CAD=FV=Ucn20GDib=t=OOT+8YjGuk6uoWrP1qourY=YfrLJj1WA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1402000514-30752-1-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: olof@lixom.net, javier.martinez@collabora.co.uk, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rahul.sharma@samsung.com, shaik.ameer@samsung.com, arun.kk@samsung.com, alim.akhtar@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi,
+On 05.06.2014 22:35, Doug Anderson wrote:
+> The "aclk66_peric" clock is a gate clock with a whole bunch of gates
+> underneath it.  This big gate isn't very useful to include in our
+> clock tree.  If any of the children need to be turned on then the big
+> gate will need to be on anyway.  ...and there are plenty of other "big
+> gates" that aren't described in our clock tree, some of which shut off
+> collections of clocks that have no relationship in the hierarchy so
+> are hard to model.
+> 
+> "aclk66_peric" is causing earlyprintk problems since it gets disabled
+> as part of the boot process, so let's just remove it.
+> 
+> Strangely (and for no good reason) this clock is exported as part of
+> the common clock bindings.  Remove it since there are no in-kernel
+> device trees using it and no reason anyone out of tree should refer to
+> it either.
+> 
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+> Changes in v3:
+> - Now just remove aclk66_peric from the tree as suggested by Tomasz.
+> 
+> Changes in v2:
+> - Use GATE_A and clk_get().  Save the clock for putting later.
+> - Return 0 from exynos5420_clk_late_init().
+> 
+>  drivers/clk/samsung/clk-exynos5420.c   | 85 ++++++++++++++++++++++------------
+>  include/dt-bindings/clock/exynos5420.h |  1 -
+>  2 files changed, 55 insertions(+), 31 deletions(-)
+> 
 
-On Thu, Jun 5, 2014 at 1:10 PM, Doug Anderson <dianders@chromium.org> wrote:
-> Hmmm, I think I've convinced myself that your suggestion of just
-> removing this gate from the table is the right thing to do.  Patch
-> will be coming up soon.
+Mike, I can take this patch to my tree as a fix for 3.16-rc, or if still
+possible and you don't mind, feel free to apply it directly with my ACK:
 
-It's here <https://patchwork.kernel.org/patch/4308631/>
+Acked-by: Tomasz Figa <t.figa@samsung.com>
 
-Ironically, that patch has a much worse diffstat and also changes
-devicetree bindings (!).  ...but it does seem better.
-
--Doug
+Best regards,
+Tomasz
