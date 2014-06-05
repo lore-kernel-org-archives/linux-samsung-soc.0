@@ -1,344 +1,319 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V3 4/8] drm/bridge: ptn3460: Support bridge chaining
-Date: Fri, 06 Jun 2014 00:40:48 +0530
-Message-ID: <1401995452-15798-5-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [PATCH V3 3/8] drm/bridge: Add a driver which binds drm_bridge with
+ drm_panel
+Date: Fri, 06 Jun 2014 00:40:47 +0530
+Message-ID: <1401995452-15798-4-git-send-email-ajaykumar.rs@samsung.com>
 References: <1401995452-15798-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:47826 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751761AbaFETMp (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:26940 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751761AbaFETMn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Jun 2014 15:12:45 -0400
+	Thu, 5 Jun 2014 15:12:43 -0400
 Received: from epcpsbgr5.samsung.com
  (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N6P0045ZMP8UC40@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 06 Jun 2014 04:12:44 +0900 (KST)
+ with ESMTP id <0N6P00CIIMP6R830@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 06 Jun 2014 04:12:42 +0900 (KST)
 In-reply-to: <1401995452-15798-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc: inki.dae@samsung.com, seanpaul@google.com, jg1.han@samsung.com, ajaynumb@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, thierry.reding@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Modify the driver to invoke callbacks for the next bridge
-in the bridge chain.
-Also, remove the drm_connector implementation from ptn3460,
-since the same is implemented using panel_binder.
+Add a dummy bridge which binds all of the drm_bridge callbacks
+to corresponding drm_panel callbacks.
+
+In theory, this is just a glue layer for the last bridge and
+the panel attached to it.
+
+This driver also implements the required drm_connector ops
+for the encoder(on which the entire bridge chain is hanging off).
 
 Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 ---
- drivers/gpu/drm/bridge/ptn3460.c        |  136 +++++--------------------------
- drivers/gpu/drm/exynos/exynos_dp_core.c |   16 ++--
- include/drm/bridge/ptn3460.h            |   15 ++--
- 3 files changed, 39 insertions(+), 128 deletions(-)
+ drivers/gpu/drm/bridge/Kconfig        |    7 ++
+ drivers/gpu/drm/bridge/Makefile       |    1 +
+ drivers/gpu/drm/bridge/panel_binder.c |  196 +++++++++++++++++++++++++++++++++
+ include/drm/bridge/panel_binder.h     |   42 +++++++
+ 4 files changed, 246 insertions(+)
+ create mode 100644 drivers/gpu/drm/bridge/panel_binder.c
+ create mode 100644 include/drm/bridge/panel_binder.h
 
-diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
-index 98fd17a..21e9db8 100644
---- a/drivers/gpu/drm/bridge/ptn3460.c
-+++ b/drivers/gpu/drm/bridge/ptn3460.c
-@@ -34,37 +34,15 @@
- #define PTN3460_EDID_SRAM_LOAD_ADDR		0x85
- 
- struct ptn3460_bridge {
--	struct drm_connector connector;
- 	struct i2c_client *client;
- 	struct drm_encoder *encoder;
- 	struct drm_bridge *bridge;
--	struct edid *edid;
- 	int gpio_pd_n;
- 	int gpio_rst_n;
- 	u32 edid_emulation;
- 	bool enabled;
- };
- 
--static int ptn3460_read_bytes(struct ptn3460_bridge *ptn_bridge, char addr,
--		u8 *buf, int len)
--{
--	int ret;
--
--	ret = i2c_master_send(ptn_bridge->client, &addr, 1);
--	if (ret <= 0) {
--		DRM_ERROR("Failed to send i2c command, ret=%d\n", ret);
--		return ret;
--	}
--
--	ret = i2c_master_recv(ptn_bridge->client, buf, len);
--	if (ret <= 0) {
--		DRM_ERROR("Failed to recv i2c data, ret=%d\n", ret);
--		return ret;
--	}
--
--	return 0;
--}
--
- static int ptn3460_write_byte(struct ptn3460_bridge *ptn_bridge, char addr,
- 		char val)
- {
-@@ -126,6 +104,8 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
- 		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
- 	}
- 
-+	drm_next_bridge_pre_enable(bridge);
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index 884923f..e3fb487 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -3,3 +3,10 @@ config DRM_PTN3460
+ 	depends on DRM
+ 	select DRM_KMS_HELPER
+ 	---help---
 +
- 	/*
- 	 * There's a bug in the PTN chip where it falsely asserts hotplug before
- 	 * it is fully functional. We're forced to wait for the maximum start up
-@@ -142,6 +122,7 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
++config DRM_PANEL_BINDER
++	tristate "bridge panel binder"
++	depends on DRM
++	select DRM_KMS_HELPER
++	select DRM_PANEL
++	---help---
+diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+index b4733e1..ba8b5b8 100644
+--- a/drivers/gpu/drm/bridge/Makefile
++++ b/drivers/gpu/drm/bridge/Makefile
+@@ -1,3 +1,4 @@
+ ccflags-y := -Iinclude/drm
  
- static void ptn3460_enable(struct drm_bridge *bridge)
- {
-+	drm_next_bridge_enable(bridge);
- }
- 
- static void ptn3460_disable(struct drm_bridge *bridge)
-@@ -153,6 +134,8 @@ static void ptn3460_disable(struct drm_bridge *bridge)
- 
- 	ptn_bridge->enabled = false;
- 
-+	drm_next_bridge_disable(bridge);
+ obj-$(CONFIG_DRM_PTN3460) += ptn3460.o
++obj-$(CONFIG_DRM_PANEL_BINDER) += panel_binder.o
+diff --git a/drivers/gpu/drm/bridge/panel_binder.c b/drivers/gpu/drm/bridge/panel_binder.c
+new file mode 100644
+index 0000000..c97e3a9
+--- /dev/null
++++ b/drivers/gpu/drm/bridge/panel_binder.c
+@@ -0,0 +1,196 @@
++/*
++ * Copyright (C) 2014 Samsung Electronics Co., Ltd.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
 +
- 	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
- 		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
- 
-@@ -162,6 +145,7 @@ static void ptn3460_disable(struct drm_bridge *bridge)
- 
- static void ptn3460_post_disable(struct drm_bridge *bridge)
- {
-+	drm_next_bridge_post_disable(bridge);
- }
- 
- void ptn3460_bridge_destroy(struct drm_bridge *bridge)
-@@ -173,6 +157,9 @@ void ptn3460_bridge_destroy(struct drm_bridge *bridge)
- 		gpio_free(ptn_bridge->gpio_pd_n);
- 	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
- 		gpio_free(ptn_bridge->gpio_rst_n);
++#include <linux/module.h>
++#include <linux/of.h>
 +
-+	drm_next_bridge_destroy(bridge);
++#include <drm/drm_panel.h>
 +
- 	/* Nothing else to free, we've got devm allocated memory */
- }
- 
-@@ -184,81 +171,10 @@ struct drm_bridge_funcs ptn3460_bridge_funcs = {
- 	.destroy = ptn3460_bridge_destroy,
- };
- 
--int ptn3460_get_modes(struct drm_connector *connector)
--{
--	struct ptn3460_bridge *ptn_bridge;
--	u8 *edid;
--	int ret, num_modes;
--	bool power_off;
--
--	ptn_bridge = container_of(connector, struct ptn3460_bridge, connector);
--
--	if (ptn_bridge->edid)
--		return drm_add_edid_modes(connector, ptn_bridge->edid);
--
--	power_off = !ptn_bridge->enabled;
--	ptn3460_pre_enable(ptn_bridge->bridge);
--
--	edid = kmalloc(EDID_LENGTH, GFP_KERNEL);
--	if (!edid) {
--		DRM_ERROR("Failed to allocate edid\n");
--		return 0;
--	}
--
--	ret = ptn3460_read_bytes(ptn_bridge, PTN3460_EDID_ADDR, edid,
--			EDID_LENGTH);
--	if (ret) {
--		kfree(edid);
--		num_modes = 0;
--		goto out;
--	}
--
--	ptn_bridge->edid = (struct edid *)edid;
--	drm_mode_connector_update_edid_property(connector, ptn_bridge->edid);
--
--	num_modes = drm_add_edid_modes(connector, ptn_bridge->edid);
--
--out:
--	if (power_off)
--		ptn3460_disable(ptn_bridge->bridge);
--
--	return num_modes;
--}
--
--struct drm_encoder *ptn3460_best_encoder(struct drm_connector *connector)
--{
--	struct ptn3460_bridge *ptn_bridge;
--
--	ptn_bridge = container_of(connector, struct ptn3460_bridge, connector);
--
--	return ptn_bridge->encoder;
--}
--
--struct drm_connector_helper_funcs ptn3460_connector_helper_funcs = {
--	.get_modes = ptn3460_get_modes,
--	.best_encoder = ptn3460_best_encoder,
--};
--
--enum drm_connector_status ptn3460_detect(struct drm_connector *connector,
--		bool force)
--{
--	return connector_status_connected;
--}
--
--void ptn3460_connector_destroy(struct drm_connector *connector)
--{
--	drm_connector_cleanup(connector);
--}
--
--struct drm_connector_funcs ptn3460_connector_funcs = {
--	.dpms = drm_helper_connector_dpms,
--	.fill_modes = drm_helper_probe_single_connector_modes,
--	.detect = ptn3460_detect,
--	.destroy = ptn3460_connector_destroy,
--};
--
--int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
--		struct i2c_client *client, struct device_node *node)
-+struct drm_bridge *ptn3460_init(struct drm_device *dev,
-+				struct drm_encoder *encoder,
-+				struct i2c_client *client,
-+				struct device_node *node)
- {
- 	int ret;
- 	struct drm_bridge *bridge;
-@@ -267,13 +183,13 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
- 	bridge = devm_kzalloc(dev->dev, sizeof(*bridge), GFP_KERNEL);
- 	if (!bridge) {
- 		DRM_ERROR("Failed to allocate drm bridge\n");
--		return -ENOMEM;
++#include "drmP.h"
++#include "drm_crtc.h"
++#include "drm_crtc_helper.h"
++
++#include "bridge/panel_binder.h"
++
++struct panel_binder {
++	struct drm_connector	connector;
++	struct i2c_client	*client;
++	struct drm_encoder	*encoder;
++	struct drm_bridge	*bridge;
++	struct drm_panel	*panel;
++};
++
++static void panel_binder_pre_enable(struct drm_bridge *bridge)
++{
++	struct panel_binder *panel_binder = bridge->driver_private;
++
++	drm_panel_prepare(panel_binder->panel);
++}
++
++static void panel_binder_enable(struct drm_bridge *bridge)
++{
++	struct panel_binder *panel_binder = bridge->driver_private;
++
++	drm_panel_enable(panel_binder->panel);
++}
++
++static void panel_binder_disable(struct drm_bridge *bridge)
++{
++	struct panel_binder *panel_binder = bridge->driver_private;
++
++	drm_panel_disable(panel_binder->panel);
++}
++
++static void panel_binder_post_disable(struct drm_bridge *bridge)
++{
++	struct panel_binder *panel_binder = bridge->driver_private;
++
++	drm_panel_unprepare(panel_binder->panel);
++}
++
++void panel_binder_destroy(struct drm_bridge *bridge)
++{
++	struct panel_binder *panel_binder = bridge->driver_private;
++
++	drm_panel_detach(panel_binder->panel);
++	drm_bridge_cleanup(bridge);
++}
++
++struct drm_bridge_funcs panel_binder_funcs = {
++	.pre_enable = panel_binder_pre_enable,
++	.enable = panel_binder_enable,
++	.disable = panel_binder_disable,
++	.post_disable = panel_binder_post_disable,
++	.destroy = panel_binder_destroy,
++};
++
++static int panel_binder_mode_valid(struct drm_connector *connector,
++				 struct drm_display_mode *mode)
++{
++	return MODE_OK;
++}
++
++static int panel_binder_get_modes(struct drm_connector *connector)
++{
++	struct panel_binder *panel_binder;
++
++	panel_binder = container_of(connector, struct panel_binder, connector);
++
++	return panel_binder->panel->funcs->get_modes(panel_binder->panel);
++}
++
++static struct drm_encoder *panel_binder_best_encoder(struct drm_connector
++								*connector)
++{
++	struct panel_binder *panel_binder;
++
++	panel_binder = container_of(connector, struct panel_binder, connector);
++
++	return panel_binder->encoder;
++}
++
++static const struct drm_connector_helper_funcs
++					panel_binder_connector_helper_funcs = {
++	.get_modes = panel_binder_get_modes,
++	.mode_valid = panel_binder_mode_valid,
++	.best_encoder = panel_binder_best_encoder,
++};
++
++static enum drm_connector_status panel_binder_detect(struct drm_connector
++							*connector, bool force)
++{
++	return connector_status_connected;
++}
++
++static void panel_binder_connector_destroy(struct drm_connector *connector)
++{
++	drm_connector_cleanup(connector);
++}
++
++static const struct drm_connector_funcs panel_binder_connector_funcs = {
++	.dpms = drm_helper_connector_dpms,
++	.fill_modes = drm_helper_probe_single_connector_modes,
++	.detect = panel_binder_detect,
++	.destroy = panel_binder_connector_destroy,
++};
++
++struct drm_bridge *panel_binder_init(struct drm_device *dev,
++					struct drm_encoder *encoder,
++					struct i2c_client *client,
++					struct device_node *node,
++					struct drm_panel *panel,
++					uint8_t polled)
++{
++	int ret;
++	struct drm_bridge *bridge;
++	struct panel_binder *panel_binder;
++
++	if (IS_ERR_OR_NULL(panel)) {
++		DRM_ERROR("invalid drm_panel pointer\n");
 +		return NULL;
- 	}
- 
- 	ptn_bridge = devm_kzalloc(dev->dev, sizeof(*ptn_bridge), GFP_KERNEL);
- 	if (!ptn_bridge) {
- 		DRM_ERROR("Failed to allocate ptn bridge\n");
--		return -ENOMEM;
++	}
++
++	bridge = devm_kzalloc(dev->dev, sizeof(*bridge), GFP_KERNEL);
++	if (!bridge) {
++		DRM_ERROR("failed to allocate drm bridge\n");
 +		return NULL;
- 	}
- 
- 	ptn_bridge->client = client;
-@@ -285,7 +201,7 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
- 				GPIOF_OUT_INIT_HIGH, "PTN3460_PD_N");
- 		if (ret) {
- 			DRM_ERROR("Request powerdown-gpio failed (%d)\n", ret);
--			return ret;
-+			return NULL;
- 		}
- 	}
- 
-@@ -300,7 +216,7 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
- 		if (ret) {
- 			DRM_ERROR("Request reset-gpio failed (%d)\n", ret);
- 			gpio_free(ptn_bridge->gpio_pd_n);
--			return ret;
-+			return NULL;
- 		}
- 	}
- 
-@@ -318,26 +234,18 @@ int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
- 	}
- 
- 	bridge->driver_private = ptn_bridge;
--	encoder->bridge = bridge;
- 
--	ret = drm_connector_init(dev, &ptn_bridge->connector,
--			&ptn3460_connector_funcs, DRM_MODE_CONNECTOR_LVDS);
--	if (ret) {
--		DRM_ERROR("Failed to initialize connector with drm\n");
--		goto err;
--	}
--	drm_connector_helper_add(&ptn_bridge->connector,
--			&ptn3460_connector_helper_funcs);
--	drm_sysfs_connector_add(&ptn_bridge->connector);
--	drm_mode_connector_attach_encoder(&ptn_bridge->connector, encoder);
++	}
++
++	panel_binder = devm_kzalloc(dev->dev, sizeof(*panel_binder),
++								GFP_KERNEL);
++	if (!panel_binder) {
++		DRM_ERROR("failed to allocate bridge panel_binder\n");
++		return NULL;
++	}
++
++	panel_binder->client = client;
++	panel_binder->encoder = encoder;
++	panel_binder->bridge = bridge;
++	panel_binder->panel = panel;
++
++	ret = drm_bridge_init(dev, bridge, &panel_binder_funcs);
++	if (ret) {
++		DRM_ERROR("failed to initialize bridge with drm\n");
++		goto err;
++	}
++
++	bridge->driver_private = panel_binder;
++
++	drm_panel_attach(panel_binder->panel, &panel_binder->connector);
++
 +	if (!encoder->bridge)
 +		/* First entry in the bridge chain */
 +		encoder->bridge = bridge;
- 
--	return 0;
-+	return bridge;
- 
- err:
- 	if (gpio_is_valid(ptn_bridge->gpio_pd_n))
- 		gpio_free(ptn_bridge->gpio_pd_n);
- 	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
- 		gpio_free(ptn_bridge->gpio_rst_n);
--	return ret;
-+	return NULL;
- }
- EXPORT_SYMBOL(ptn3460_init);
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 5e05dbc..414f5e5 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -979,19 +979,19 @@ static bool find_bridge(const char *compat, struct bridge_init *bridge)
- 	return true;
- }
- 
--/* returns the number of bridges attached */
--static int exynos_drm_attach_lcd_bridge(struct drm_device *dev,
-+static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
- 		struct drm_encoder *encoder)
- {
- 	struct bridge_init bridge;
--	int ret;
-+	struct drm_bridge *bridge_chain = NULL;
-+	bool connector_created = false;
- 
- 	if (find_bridge("nxp,ptn3460", &bridge)) {
--		ret = ptn3460_init(dev, encoder, bridge.client, bridge.node);
--		if (!ret)
--			return 1;
-+		bridge_chain = ptn3460_init(dp->drm_dev, encoder, bridge.client,
-+								bridge.node);
- 	}
--	return 0;
 +
-+	return connector_created;
- }
- 
- static int exynos_dp_create_connector(struct exynos_drm_display *display,
-@@ -1004,7 +1004,7 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
- 	dp->encoder = encoder;
- 
- 	/* Pre-empt DP connector creation if there's a bridge */
--	ret = exynos_drm_attach_lcd_bridge(dp->drm_dev, encoder);
-+	ret = exynos_drm_attach_lcd_bridge(dp, encoder);
- 	if (ret)
- 		return 0;
- 
-diff --git a/include/drm/bridge/ptn3460.h b/include/drm/bridge/ptn3460.h
-index ff62344..f612b9b 100644
---- a/include/drm/bridge/ptn3460.h
-+++ b/include/drm/bridge/ptn3460.h
-@@ -21,15 +21,18 @@ struct device_node;
- 
- #if defined(CONFIG_DRM_PTN3460) || defined(CONFIG_DRM_PTN3460_MODULE)
- 
--int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
--		struct i2c_client *client, struct device_node *node);
-+struct drm_bridge *ptn3460_init(struct drm_device *dev,
-+				struct drm_encoder *encoder,
-+				struct i2c_client *client,
-+				struct device_node *node);
- #else
- 
--static inline int ptn3460_init(struct drm_device *dev,
--		struct drm_encoder *encoder, struct i2c_client *client,
--		struct device_node *node)
-+static inline struct drm_bridge *ptn3460_init(struct drm_device *dev,
++	panel_binder->connector.polled = polled;
++	ret = drm_connector_init(dev, &panel_binder->connector,
++#ifdef CONFIG_DRM_PANEL_EDP
++			&panel_binder_connector_funcs, DRM_MODE_CONNECTOR_eDP);
++#else
++			&panel_binder_connector_funcs, DRM_MODE_CONNECTOR_LVDS);
++#endif
++	if (ret) {
++		DRM_ERROR("failed to initialize connector with drm\n");
++		goto err;
++	}
++	drm_connector_helper_add(&panel_binder->connector,
++			&panel_binder_connector_helper_funcs);
++	drm_sysfs_connector_add(&panel_binder->connector);
++	drm_mode_connector_attach_encoder(&panel_binder->connector, encoder);
++
++	return bridge;
++
++err:
++	return NULL;
++}
++EXPORT_SYMBOL(panel_binder_init);
+diff --git a/include/drm/bridge/panel_binder.h b/include/drm/bridge/panel_binder.h
+new file mode 100644
+index 0000000..1ce7288
+--- /dev/null
++++ b/include/drm/bridge/panel_binder.h
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (C) 2014 Samsung Electronics Co., Ltd.
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _DRM_BRIDGE_PANEL_H_
++#define _DRM_BRIDGE_PANEL_H_
++
++struct drm_device;
++struct drm_encoder;
++struct i2c_client;
++struct device_node;
++struct drm_panel;
++
++#if defined(CONFIG_DRM_PANEL_BINDER)
++struct drm_bridge *panel_binder_init(struct drm_device *dev,
++					struct drm_encoder *encoder,
++					struct i2c_client *client,
++					struct device_node *node,
++					struct drm_panel *panel,
++					uint8_t polled);
++#else
++static inline struct drm_bridge *panel_binder_init(struct drm_device *dev,
 +						struct drm_encoder *encoder,
 +						struct i2c_client *client,
-+						struct device_node *node)
- {
--	return 0;
-+	return NULL;
- }
- 
- #endif
++						struct device_node *node,
++						struct drm_panel *panel,
++						uint8_t polled)
++{
++	return 0;
++}
++#endif
++
++#endif
 -- 
 1.7.9.5
