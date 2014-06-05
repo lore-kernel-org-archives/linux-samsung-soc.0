@@ -1,7 +1,7 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v4 12/14] ARM: dts: exynos5: add system register property
-Date: Thu, 05 Jun 2014 15:19:52 +0900
-Message-ID: <1401949194-20092-13-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH v4 11/14] ARM: dts: exynos4: add system register property
+Date: Thu, 05 Jun 2014 15:19:51 +0900
+Message-ID: <1401949194-20092-12-git-send-email-yj44.cho@samsung.com>
 References: <1401949194-20092-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -28,20 +28,20 @@ Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos5.dtsi |    1 +
+ arch/arm/boot/dts/exynos4.dtsi |    1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index 79d0608..fdead12 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -87,6 +87,7 @@
- 		reg = <0x14400000 0x40000>;
- 		interrupt-names = "fifo", "vsync", "lcd_sys";
- 		interrupts = <18 4>, <18 5>, <18 6>;
-+		samsung,sysreg = <&sysreg_system_controller>;
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 2f8bcd0..abfcbe2 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -534,6 +534,7 @@
+ 		clocks = <&clock CLK_SCLK_FIMD0>, <&clock CLK_FIMD0>;
+ 		clock-names = "sclk_fimd", "fimd";
+ 		samsung,power-domain = <&pd_lcd0>;
++		samsung,sysreg = <&sys_reg>;
  		status = "disabled";
  	};
- 
+ };
 -- 
 1.7.9.5
