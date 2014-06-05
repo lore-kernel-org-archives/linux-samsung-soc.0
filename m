@@ -1,94 +1,81 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 00/14] drm/exynos: support LCD I80 interface display
-Date: Thu, 5 Jun 2014 10:51:05 +0200
-Message-ID: <20140605085104.GB22966@ulmo>
-References: <1401949194-20092-1-git-send-email-yj44.cho@samsung.com>
- <539026F5.2010005@samsung.com> <20140605082028.GA22629@ulmo>
- <53902D9E.6070905@samsung.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Thu, 05 Jun 2014 11:42:12 +0200
+Message-ID: <6794037.0YTCc6JFQV@wuerfel>
+References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
+	<4830064.JvgTAs8Xty@wuerfel> <20140604213159.GB18780@mithrandir>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1301766362=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <53902D9E.6070905@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140604213159.GB18780@mithrandir>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Wednesday 04 June 2014 23:32:00 Thierry Reding wrote:
+> On Fri, May 30, 2014 at 09:01:19PM +0200, Arnd Bergmann wrote:
+> > On Friday 30 May 2014 12:22:32 Dave Martin wrote:
+> > > > +
+> > > > +Examples:
+> > > > +=========
+> > > > +
+> > > > +Single-master IOMMU:
+> > > > +--------------------
+> > > > +
+> > > > + iommu {
+> > > > +         #address-cells = <0>;
+> > > > +         #size-cells = <0>;
+> > > > + };
+> > > > +
+> > > > + master {
+> > > > +         iommus = <&/iommu>;
+> > > > + };
+> > > > +
+> > > > +Multiple-master IOMMU with fixed associations:
+> > > > +----------------------------------------------
+> > > > +
+> > > > + /* multiple-master IOMMU */
+> > > > + iommu {
+> > > > +         /*
+> > > > +          * Masters are statically associated with this IOMMU and
+> > > > +          * address translation is always enabled.
+> > > > +          */
+> > > > +         #address-cells = <0>;
+> > > > +         #size-cells = <0>;
+> > > 
+> > > In this example, can different translations be set up for the different
+> > > masters?
+> > > 
+> > > With no cells available to contain any sort of ID, it looks like this
+> > > is not possible.
+> > 
+> > Correct, this example is for an IOMMU that does not use IDs but has a
+> > shared address space for all devices.
+> 
+> Couldn't these device all still have separate address spaces?
 
---===============1301766362==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Bn2rw/3z4jIqBvZU"
-Content-Disposition: inline
+No. If they had separate address spaces, they would require a more
+sophisticated IOMMU. A simple IOMMU without IDs can only be used
+for overcoming address space limits (e.g. for 32-bit DMA masters on
+systems with more than 4GB RAM) but not for strict isolation.
 
+You basically have one page table shared across all devices connected
+to the IOMMU, and every call to dma_alloc_coherent or dma_map_*
+allocates a new IOVA that isn't used by any of the other devices
+already, but you can't prevent a malicious user from getting a device
+to do DMA to an IOVA that has been set up for another device.
 
---Bn2rw/3z4jIqBvZU
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You could have one such IOMMU per device of course, but I guess that's
+not what you mean.
 
-On Thu, Jun 05, 2014 at 05:43:10PM +0900, Inki Dae wrote:
-> On 2014=EB=85=84 06=EC=9B=94 05=EC=9D=BC 17:20, Thierry Reding wrote:
-> > On Thu, Jun 05, 2014 at 05:14:45PM +0900, Inki Dae wrote:
-> >>
-> >> Hi all,
-> >>
-> >>
-> >> Is there anyone who are reviewing this patch series? If there is no any
-> >> comment, I'd like to pick them up after test.
-> >=20
-> > What's with the rush? You should at least give people a day or two to
-> > get a chance to even see the patches.
->=20
-> No, I don't hurry up. I plan to pick them up after test, and I don't
-> pick them up at least a week even if there are no people who are
-> reviewing this patch series.
->=20
-> I just gave notice beforehand.
-
-Okay, good.
-
-Thierry
-
---Bn2rw/3z4jIqBvZU
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTkC94AAoJEN0jrNd/PrOhhScP/2T59JdbHwcehnCNPXKM7O34
-p2P8PCYOH7xQ2q05Rjy6TV5W1d/fe0VA+7pKnE+W+GdnMDFLYmd/jg1oKbygU/wq
-Epwc0mJlk9r5pmJr5+khbLuf0MQgsCD1zBaQOYWSJYKTaUpcyZjQ1dwYuqkF3W/m
-Y51dUaO2RVKOMoK1741MJri4L8fO6n3g4c3IP36NNkISvz90znhMYdYDkxZfcm/1
-nsnTzFqWO30Hm+oxZFfptauHpdwefl4ojf+nsOSdH23Tzh60kHxtGngHygreA6vK
-eGhbyNwtD/iDD3AjbY3Iv/IpIhuVLYzDtdRC9kDkllDWJao+dyOpBfK/RU4qR5Z8
-SCrlPJg8ka1FN0DIhtCXKwrdbW8DMO2L3PhsqLZkzGl4R+4fe68jfxmZK9K4hXYu
-2YoYAh2c5p8AX6g4vvMLEEIoYx1Pm0n5P1LqKQCkq/HE75OkWnbGXzRuqYmjGM1g
-N3FDsx7f0Z2MHkXjwMgDOkmauU/6stt6yss9kbleCjgIzJdaWn7AtwQ0CYl9Be8e
-7FJdNGIoZsIytVIuIWTCLe6pTgPYpnqfa1P0zbZ3K9lFSAZzfJAIh1GPkm/vlz/P
-WaxAlqCNxmRp8kAMCyApcYjGVVhvyFTLKFsZng8W+0Vnm4nouuS19CPMHWZ94+z5
-6bbS7bS0unvHbQURXEH5
-=rSlt
------END PGP SIGNATURE-----
-
---Bn2rw/3z4jIqBvZU--
-
---===============1301766362==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1301766362==--
+	Arnd
