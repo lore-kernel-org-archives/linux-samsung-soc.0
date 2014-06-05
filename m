@@ -1,66 +1,132 @@
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH 2/3] clocksource: exynos_mct: cache mct upper count
-Date: Thu, 5 Jun 2014 09:55:15 +0200
-Message-ID: <CAKfTPtBeYMW7kOrAhVrqoWhTHfLAtcMeY9FXxZpm7CNAM7NdaA@mail.gmail.com>
-References: <1401903034-20074-1-git-send-email-dianders@chromium.org> <1401903034-20074-2-git-send-email-dianders@chromium.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v4 00/14] drm/exynos: support LCD I80 interface display
+Date: Thu, 05 Jun 2014 17:14:45 +0900
+Message-ID: <539026F5.2010005@samsung.com>
+References: <1401949194-20092-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1401903034-20074-2-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mandeep Singh Baines <msb@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel <linux-kernel@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:56534 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751125AbaFEIO4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Jun 2014 04:14:56 -0400
+In-reply-to: <1401949194-20092-1-git-send-email-yj44.cho@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-On 4 June 2014 19:30, Doug Anderson <dianders@chromium.org> wrote:
-> From: Mandeep Singh Baines <msb@chromium.org>
->
-> Saves one register read.  Note that the upper count only changes every
-> ~178 seconds with a 24MHz source clock, so it's likely it hasn't
-> changed from call to call.
-
-Hi Doug,
-
-Have you checked that the time saved in using a 32bits counter instead
-of a 64bits one is not lost in the handle of the wrap of sched_clock
-which occurs every 178s instead of never ?
-
-sched_clock_poll function will be called every 178s
-
-Regards,
-Vincent
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com
 
 
->
-> Before: 1323852 us for 1000000 gettimeofday in userspace
-> After:  1173084 us for 1000000 gettimeofday in userspace
->
-> Note that even with this change the CPU is in exynos_frc_read() more
-> than 2% of the time in real world profiles of ChromeOS.  That
-> indicates that it's important to optimize.
->
-> Signed-off-by: Mandeep Singh Baines <msb@chromium.org>
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
->  drivers/clocksource/exynos_mct.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index ba3a683..7cbe4aa 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -167,8 +167,8 @@ static void exynos4_mct_frc_start(u32 hi, u32 lo)
->
->  static inline cycle_t notrace _exynos4_frc_read(void)
->  {
-> -       unsigned int lo, hi;
-> -       u32 hi2 = __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_U);
-> +       u32 lo, hi;
-> +       static u32 hi2;
->
->         do {
->                 hi = hi2;
-> --
-> 2.0.0.526.g5318336
->
+Hi all,
+
+
+Is there anyone who are reviewing this patch series? If there is no any
+comment, I'd like to pick them up after test.
+
+Thanks,
+Inki Dae
+
+On 2014=EB=85=84 06=EC=9B=94 05=EC=9D=BC 15:19, YoungJun Cho wrote:
+> Hi,
+>=20
+> This series adds LCD I80 interface display support for Exynos DRM dri=
+ver.
+> The FIMD(display controller) specification describes it as "LCD I80 i=
+nterface"
+> and the DSI specification describes it as "Command mode interface".
+>=20
+> This is based on exynos-drm-next branch.
+>=20
+> The previous patches,
+> RFC: http://www.spinics.net/lists/dri-devel/msg58898.html
+> V1: http://www.spinics.net/lists/dri-devel/msg59291.html
+> V2: http://www.spinics.net/lists/dri-devel/msg59867.html
+> V3: http://www.spinics.net/lists/dri-devel/msg60708.html
+>=20
+> Changelog v2:
+> - Fixes typo and removes unnecessary error log (commented by Andrzej =
+Hazda)
+> - Adds missed pendlig_flip flag clear points (commented by Daniel Kur=
+tz)
+>=20
+> Changelog v3:
+> - Removes generic command mode and command mode display timing interf=
+ace.
+> - Moves I80 interface timings from panel DT to the FIMD(display contr=
+oller) DT.
+>=20
+> Changelog v4:
+> - Removes exynos5 sysreg(syscon) DT bindings and node from dtsi becau=
+se
+>   it was already updated by linux-samsung-soc (commented by Vivek Gau=
+tam)
+>=20
+> Patches 1 and 2 fix trivial bugs.
+>=20
+> Patches 3, 4, 5 and 6 implement FIMD(display controller) I80 interfac=
+e.
+> The MIPI DSI command mode based panel generates Tearing Effect synchr=
+onization
+> signal between MCU and FB to display video image, and FIMD should tri=
+gger to
+> transfer video image at this signal.
+> So the panel should receive the TE IRQ and call TE handler chains to =
+notify
+> it to the FIMD.
+>=20
+> Patches 7 and 8 implement to use Exynos5420 SoC DSI driver which is d=
+ifferent
+> from previous Exynos4 SoCs for some registers control.
+>=20
+> Patches 9 and 10 introduce MIPI DSI command mode based Samsung S6E3FA=
+0 AMOLED
+> 5.7" LCD drm panel driver.
+>=20
+> The ohters add DT property nodes to support MIPI DSI command mode.
+>=20
+> I welcome any comments.
+>=20
+> Thank you.
+> Best regards YJ
+>=20
+> YoungJun Cho (14):
+>   drm/exynos: dsi: move the EoT packets configuration point
+>   drm/exynos: use wait_event_timeout() for safety usage
+>   ARM: dts: samsung-fimd: add LCD I80 interface specific properties
+>   drm/exynos: add TE handler to support LCD I80 interface
+>   drm/exynos: dsi: add TE handler to support LCD I80 interface
+>   drm/exynos: fimd: support LCD I80 interface
+>   ARM: dts: exynos_dsim: add exynos5420 compatible to DT bindings
+>   drm/exynos: dsi: add driver data to support Exynos5420
+>   ARM: dts: s6e3fa0: add DT bindings
+>   drm/panel: add S6E3FA0 driver
+>   ARM: dts: exynos4: add system register property
+>   ARM: dts: exynos5: add system register property
+>   ARM: dts: exynos5420: add mipi-phy node
+>   ARM: dts: exynos5420: add dsi node
+>=20
+>  .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |   46 ++
+>  .../devicetree/bindings/video/exynos_dsim.txt      |    4 +-
+>  .../devicetree/bindings/video/samsung-fimd.txt     |   28 +
+>  arch/arm/boot/dts/exynos4.dtsi                     |    1 +
+>  arch/arm/boot/dts/exynos5.dtsi                     |    1 +
+>  arch/arm/boot/dts/exynos5420.dtsi                  |   20 +
+>  drivers/gpu/drm/exynos/Kconfig                     |    1 +
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c           |   18 +-
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.h           |    7 +
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h            |    3 +
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  175 +++++-
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c           |  287 ++++++++--
+>  drivers/gpu/drm/panel/Kconfig                      |    7 +
+>  drivers/gpu/drm/panel/Makefile                     |    1 +
+>  drivers/gpu/drm/panel/panel-s6e3fa0.c              |  568 ++++++++++=
+++++++++++
+>  include/drm/drm_mipi_dsi.h                         |    8 +
+>  include/video/samsung_fimd.h                       |    3 +-
+>  17 files changed, 1107 insertions(+), 71 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/panel/samsung,s=
+6e3fa0.txt
+>  create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
+>=20
