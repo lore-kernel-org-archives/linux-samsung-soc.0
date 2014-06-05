@@ -1,952 +1,163 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2] drm/exynos: consider deferred probe case
-Date: Thu, 05 Jun 2014 12:42:05 +0900
-Message-ID: <538FE70D.9090004@samsung.com>
-References: <1401355682-6939-1-git-send-email-inki.dae@samsung.com>
- <538F01EC.5050008@samsung.com>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: Re: [PATCH v2 2/2] s5p-mfc: Adding MFC v7 and v8 firmwares
+Date: Thu, 5 Jun 2014 09:54:25 +0530
+Message-ID: <CALt3h7_BHLwr2yt2bhO8zwNZh9-Q+qWLxkEfvy_mVzSpoRgMEw@mail.gmail.com>
+References: <1400676064-17819-1-git-send-email-arun.kk@samsung.com>
+	<1400676064-17819-2-git-send-email-arun.kk@samsung.com>
+	<1401824047.2412.7.camel@deadeye.wl.decadent.org.uk>
+	<1401837995.2412.45.camel@deadeye.wl.decadent.org.uk>
+	<CALt3h7-D1VA5WfyaZDpuOe0L6V2ZhiOsb-wDFx48Nk3-mxBAPA@mail.gmail.com>
+	<01f601cf7fe5$5b325fa0$11971ee0$%debski@samsung.com>
+	<1401884009.2412.73.camel@deadeye.wl.decadent.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:34350 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750944AbaFEDmJ convert rfc822-to-8bit (ORCPT
+Received: from mail-vc0-f178.google.com ([209.85.220.178]:49221 "EHLO
+	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750921AbaFEEY1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Jun 2014 23:42:09 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N6O003RQFM6CZ80@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 05 Jun 2014 12:42:06 +0900 (KST)
-In-reply-to: <538F01EC.5050008@samsung.com>
+	Thu, 5 Jun 2014 00:24:27 -0400
+Received: by mail-vc0-f178.google.com with SMTP id hy4so513962vcb.23
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Jun 2014 21:24:25 -0700 (PDT)
+In-Reply-To: <1401884009.2412.73.camel@deadeye.wl.decadent.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Ben Hutchings <ben@decadent.org.uk>
+Cc: Kamil Debski <k.debski@samsung.com>, David Woodhouse <dwmw2@infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, linux-firmware@kernel.org
 
-On 2014=EB=85=84 06=EC=9B=94 04=EC=9D=BC 20:24, Andrzej Hajda wrote:
-> On 05/29/2014 11:28 AM, Inki Dae wrote:
->> This patch makes sure that exynos drm framework handles deferred
->> probe case correctly.
+Hi Ben,
+
+On Wed, Jun 4, 2014 at 5:43 PM, Ben Hutchings <ben@decadent.org.uk> wrote:
+> On Wed, 2014-06-04 at 13:08 +0200, Kamil Debski wrote:
+>> Hi Arun, Ben,
 >>
->> Sub drivers could be probed before resources, clock, regulator,
->> phy or panel, are ready for them so we should make sure that exynos
->> drm core waits until all resources are ready and sub drivers are
->> probed correctly.
 >>
->> Chagelog v2:
->> - Make sure that exynos drm core tries to bind sub drivers only in c=
-ase that
->>   they have a pair: crtc and encoder/connector components should be =
-a pair.
->=20
-> Do we really need it? It adds lot of code which in fact does not impr=
-ove
-> exynos_drm - if some driver or device is missing drm will fail at loa=
-d
-> or it will start with unusable pipeline anyway, the latter can be
-> changed to error as well.
-
-Previous version also incurred unusable pipeline: crtc driver is bound
-even though probe of connector/encoder driver returned error. In this
-case, the crtc driver would have nothing to do alone without
-connector/encoder part.
-
->=20
->> - Remove unnecessary patch:
->>   drm/exynos: mipi-dsi: consider panel driver-deferred probe
->> - Return error type correctly.
+>> > From: arunkk.samsung@gmail.com [mailto:arunkk.samsung@gmail.com] On
+>> > Behalf Of Arun Kumar K
+>> > Sent: Wednesday, June 04, 2014 7:32 AM
+>> >
+>> > Hi Ben,
+>> >
+>> > On Wed, Jun 4, 2014 at 4:56 AM, Ben Hutchings <ben@decadent.org.uk>
+>> > wrote:
+>> > > On Tue, 2014-06-03 at 20:34 +0100, Ben Hutchings wrote:
+>> > >> On Wed, 2014-05-21 at 18:11 +0530, Arun Kumar K wrote:
+>> > >> > Adding the following firmware files for MFC
+>> > >> > s5p-mfc-v7.fw: Used in exynos 5420
+>> > >> > s5p-mfc-v8.fw: Used in exynos 5800
+>> > >> >
+>> > >> > Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> > >> > ---
+>> > >> > Changes from v1
+>> > >> > - None
+>> > >> > ---
+>> > >> >  WHENCE                |    2 ++
+>> > >> >  s5p-mfc/s5p-mfc-v7.fw |  Bin 0 -> 382724 bytes
+>> > >> > s5p-mfc/s5p-mfc-v8.fw |  Bin 0 -> 360576 bytes
+>> > >> >  3 files changed, 2 insertions(+)
+>> > >> >  create mode 100644 s5p-mfc/s5p-mfc-v7.fw  create mode 100644
+>> > >> > s5p-mfc/s5p-mfc-v8.fw
+>> > >> [...]
+>> > >>
+>> > >> Applied, thanks.
+>> > >
+>> > > Just noticed a problem with all the s5p-mfc firmware: you are putting
+>> > > it in the s5p-mfc subdirectory, so distribution packages will install
+>> > > them in /lib/firmware/s5p-mfc.  However, unless I'm mistaken your
+>> > > driver requests it with a bare filename (e.g. "s5p-mfc-v7.fw") so it
+>> > > won't be found.
+>> > >
+>> >
+>> > Yes this issue is there.
+>> > Kamil, are you ok with changing the fw load path to s5p-mfc/s5p-mfc*.fw
+>> > in the driver?
 >>
->> Signed-off-by: Inki Dae <inki.dae@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_dp_core.c  |   18 +++-
->>  drivers/gpu/drm/exynos/exynos_drm_dpi.c  |   22 ++++-
->>  drivers/gpu/drm/exynos/exynos_drm_drv.c  |  139 +++++++++++++++++++=
-++++++-----
->>  drivers/gpu/drm/exynos/exynos_drm_drv.h  |   13 ++-
->>  drivers/gpu/drm/exynos/exynos_drm_dsi.c  |   41 ++++++---
->>  drivers/gpu/drm/exynos/exynos_drm_fimd.c |   51 ++++++++---
->>  drivers/gpu/drm/exynos/exynos_hdmi.c     |   78 ++++++++++++-----
->>  drivers/gpu/drm/exynos/exynos_mixer.c    |   17 +++-
->>  8 files changed, 304 insertions(+), 75 deletions(-)
+>> We have two options here:
+>> 1) Change the driver to request s5p-mfc/sp5-mfc-fw*
+>> 2) Move the files in the firmware repository
 >>
->> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/d=
-rm/exynos/exynos_dp_core.c
->> index ff63901..a892586 100644
->> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
->> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
->> @@ -1328,12 +1328,26 @@ static const struct component_ops exynos_dp_=
-ops =3D {
->> =20
->>  static int exynos_dp_probe(struct platform_device *pdev)
->>  {
->> -	return exynos_drm_component_add(&pdev->dev, &exynos_dp_ops);
->> +	int ret;
->> +
->> +	ret =3D exynos_drm_component_add(&pdev->dev, EXYNOS_DEVICE_TYPE_CO=
-NNECTOR,
->> +					exynos_dp_display.type);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret =3D component_add(&pdev->dev, &exynos_dp_ops);
->> +	if (ret)
->> +		exynos_drm_component_del(&pdev->dev,
->> +						EXYNOS_DEVICE_TYPE_CONNECTOR);
->> +
->> +	return ret;
->>  }
->> =20
->>  static int exynos_dp_remove(struct platform_device *pdev)
->>  {
->> -	exynos_drm_component_del(&pdev->dev, &exynos_dp_ops);
->> +	component_del(&pdev->dev, &exynos_dp_ops);
->> +	exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CONNECTOR)=
-;
->=20
-> As I wrote in the previous comment calling exynos_drm_component_del h=
-ere
-> will cause exynos_drv to stop waiting for exynos_dp to bring up drm
-> again, which is wrong. The same comment is valid for all other calls =
-of
-> exynos_drm_component_del in *_remove and *_probe.
-> Or maybe I miss something???
->=20
-
-If we remove exynos_drm_component_del calls, the deferred probe case
-doesn't work correctly. Assume that connector/encoder driver returned
--EPROBE_DEFER but its corresponding crtc driver worked correctly. In
-this case, if we don't call exynos_drm_component_del function at fail
-case, exynos drm core will try to bind the sub driver which returned
--EPROBE_DEFER. However, the sub driver will be probed by deferred probe
-again, and will call exynos_drm_component_add again. That would be your
-missing point.
-
-
->> +
->>  	return 0;
->>  }
->> =20
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/d=
-rm/exynos/exynos_drm_dpi.c
->> index a832364..f1b8587 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
->> @@ -295,9 +295,15 @@ struct exynos_drm_display *exynos_dpi_probe(str=
-uct device *dev)
->>  	struct exynos_dpi *ctx;
->>  	int ret;
->> =20
->> +	ret =3D exynos_drm_component_add(dev,
->> +					EXYNOS_DEVICE_TYPE_CONNECTOR,
->> +					exynos_dpi_display.type);
->> +	if (ret)
->> +		return ERR_PTR(ret);
->> +
->>  	ctx =3D devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
->>  	if (!ctx)
->> -		return NULL;
->> +		goto err_del_component;
->> =20
->>  	ctx->dev =3D dev;
->>  	exynos_dpi_display.ctx =3D ctx;
->> @@ -306,16 +312,24 @@ struct exynos_drm_display *exynos_dpi_probe(st=
-ruct device *dev)
->>  	ret =3D exynos_dpi_parse_dt(ctx);
->>  	if (ret < 0) {
->>  		devm_kfree(dev, ctx);
->> -		return NULL;
->> +		goto err_del_component;
->>  	}
->> =20
->>  	if (ctx->panel_node) {
->>  		ctx->panel =3D of_drm_find_panel(ctx->panel_node);
->> -		if (!ctx->panel)
->> +		if (!ctx->panel) {
->> +			exynos_drm_component_del(dev,
->> +						EXYNOS_DEVICE_TYPE_CONNECTOR);
->>  			return ERR_PTR(-EPROBE_DEFER);
->> +		}
->>  	}
->> =20
->>  	return &exynos_dpi_display;
->> +
->> +err_del_component:
->> +	exynos_drm_component_del(dev, EXYNOS_DEVICE_TYPE_CONNECTOR);
->> +
->> +	return NULL;
->>  }
->> =20
->>  int exynos_dpi_remove(struct device *dev)
->> @@ -327,5 +341,7 @@ int exynos_dpi_remove(struct device *dev)
->>  	encoder->funcs->destroy(encoder);
->>  	drm_connector_cleanup(&ctx->connector);
->> =20
->> +	exynos_drm_component_del(dev, EXYNOS_DEVICE_TYPE_CONNECTOR);
->> +
->>  	return 0;
->>  }
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/d=
-rm/exynos/exynos_drm_drv.c
->> index c5a401ae..72a5de1 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> @@ -48,7 +48,10 @@ static LIST_HEAD(drm_component_list);
->> =20
->>  struct component_dev {
->>  	struct list_head list;
->> -	struct device *dev;
->> +	struct device *crtc_dev;
->> +	struct device *conn_dev;
->> +	enum exynos_drm_output_type out_type;
->> +	unsigned int dev_type_flag;
->>  };
->> =20
->>  static int exynos_drm_load(struct drm_device *dev, unsigned long fl=
-ags)
->> @@ -382,22 +385,65 @@ static const struct dev_pm_ops exynos_drm_pm_o=
-ps =3D {
->>  };
->> =20
->>  int exynos_drm_component_add(struct device *dev,
->> -				const struct component_ops *ops)
->> +				enum exynos_drm_device_type dev_type,
->> +				enum exynos_drm_output_type out_type)
->>  {
->>  	struct component_dev *cdev;
->> -	int ret;
->> +
->> +	if (dev_type !=3D EXYNOS_DEVICE_TYPE_CRTC &&
->> +			dev_type !=3D EXYNOS_DEVICE_TYPE_CONNECTOR) {
->> +		DRM_ERROR("invalid device type.\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	mutex_lock(&drm_component_lock);
->> +
->> +	/*
->> +	 * Make sure to check if there is a component which has two device
->> +	 * objects, for connector and for encoder/connector.
->> +	 * It should make sure that crtc and encoder/connector drivers are
->> +	 * ready before exynos drm core binds them.
->> +	 */
->> +	list_for_each_entry(cdev, &drm_component_list, list) {
->> +		if (cdev->out_type =3D=3D out_type) {
->> +			/*
->> +			 * If crtc and encoder/connector device objects are
->> +			 * added already just return.
->> +			 */
->> +			if (cdev->dev_type_flag =3D=3D (EXYNOS_DEVICE_TYPE_CRTC |
->> +						EXYNOS_DEVICE_TYPE_CONNECTOR)) {
->> +				mutex_unlock(&drm_component_lock);
->> +				return 0;
->> +			}
->> +
->> +			if (dev_type =3D=3D EXYNOS_DEVICE_TYPE_CRTC) {
->> +				cdev->crtc_dev =3D dev;
->> +				cdev->dev_type_flag |=3D dev_type;
->> +			}
->> +
->> +			if (dev_type =3D=3D EXYNOS_DEVICE_TYPE_CONNECTOR) {
->> +				cdev->conn_dev =3D dev;
->> +				cdev->dev_type_flag |=3D dev_type;
->> +			}
->> +
->> +			mutex_unlock(&drm_component_lock);
->> +			return 0;
->> +		}
->> +	}
->> +
->> +	mutex_unlock(&drm_component_lock);
->> =20
->>  	cdev =3D kzalloc(sizeof(*cdev), GFP_KERNEL);
->>  	if (!cdev)
->>  		return -ENOMEM;
->> =20
->> -	ret =3D component_add(dev, ops);
->> -	if (ret) {
->> -		kfree(cdev);
->> -		return ret;
->> -	}
->> +	if (dev_type =3D=3D EXYNOS_DEVICE_TYPE_CRTC)
->> +		cdev->crtc_dev =3D dev;
->> +	if (dev_type =3D=3D EXYNOS_DEVICE_TYPE_CONNECTOR)
->> +		cdev->conn_dev =3D dev;
->> =20
->> -	cdev->dev =3D dev;
->> +	cdev->out_type =3D out_type;
->> +	cdev->dev_type_flag =3D dev_type;
->> =20
->>  	mutex_lock(&drm_component_lock);
->>  	list_add_tail(&cdev->list, &drm_component_list);
->> @@ -407,23 +453,40 @@ int exynos_drm_component_add(struct device *de=
-v,
->>  }
->> =20
->>  void exynos_drm_component_del(struct device *dev,
->> -				const struct component_ops *ops)
->> +				enum exynos_drm_device_type dev_type)
->>  {
->>  	struct component_dev *cdev, *next;
->> =20
->>  	mutex_lock(&drm_component_lock);
->> =20
->>  	list_for_each_entry_safe(cdev, next, &drm_component_list, list) {
->> -		if (dev =3D=3D cdev->dev) {
->> +		if (dev_type =3D=3D EXYNOS_DEVICE_TYPE_CRTC) {
->> +			if (cdev->crtc_dev =3D=3D dev) {
->> +				cdev->crtc_dev =3D NULL;
->> +				cdev->dev_type_flag &=3D ~dev_type;
->> +			}
->> +		}
->> +
->> +		if (dev_type =3D=3D EXYNOS_DEVICE_TYPE_CONNECTOR) {
->> +			if (cdev->conn_dev =3D=3D dev) {
->> +				cdev->conn_dev =3D NULL;
->> +				cdev->dev_type_flag &=3D ~dev_type;
->> +			}
->> +		}
->> +
->> +		/*
->> +		 * Release cdev object only in case that both of crtc and
->> +		 * encoder/connector device objects are NULL.
->> +		 */
->> +		if (!cdev->crtc_dev && !cdev->conn_dev) {
->>  			list_del(&cdev->list);
->>  			kfree(cdev);
->> -			break;
->>  		}
->> +
->> +		break;
->>  	}
->> =20
->>  	mutex_unlock(&drm_component_lock);
->> -
->> -	component_del(dev, ops);
->>  }
->> =20
->>  static int compare_of(struct device *dev, void *data)
->> @@ -433,29 +496,61 @@ static int compare_of(struct device *dev, void=
- *data)
->> =20
->>  static int exynos_drm_add_components(struct device *dev, struct mas=
-ter *m)
->>  {
->> -	unsigned int attached_cnt =3D 0;
->>  	struct component_dev *cdev;
->> +	unsigned int attach_cnt =3D 0;
->> =20
->>  	mutex_lock(&drm_component_lock);
->> =20
->>  	list_for_each_entry(cdev, &drm_component_list, list) {
->>  		int ret;
->> =20
->> +		/*
->> +		 * Add components to master only in case that crtc and
->> +		 * encoder/connector device objects exist.
->> +		 */
->> +		if (!cdev->crtc_dev || !cdev->conn_dev)
->> +			continue;
->> +
->> +		attach_cnt++;
->> +
->>  		mutex_unlock(&drm_component_lock);
->> =20
->> -		ret =3D component_master_add_child(m, compare_of, cdev->dev);
->> -		if (!ret)
->> -			attached_cnt++;
->> +		/*
->> +		 * fimd and dpi modules have same device object so add
->> +		 * only crtc device object in this case.
->> +		 *
->> +		 * TODO. if dpi module follows driver-model driver then
->> +		 * below codes can be removed.
->=20
-> It should not happen as DPI is not a separate ip block, it is just
-> integeral part of fimd.
->=20
-
-Hm.. agree. it seems that we may need more clear way.
-
->> +		 */
->> +		if (cdev->crtc_dev =3D=3D cdev->conn_dev) {
->> +			ret =3D component_master_add_child(m, compare_of,
->> +					cdev->crtc_dev);
->> +			if (ret < 0)
->> +				return ret;
->> +
->> +			goto out_lock;
->> +		}
->> +
->> =20
->> +		/*
->> +		 * Do not chage below call order.
->> +		 * crtc device first should be added to master because
->> +		 * connector/encoder need pipe number of crtc when they
->> +		 * are created.
->> +		 */
->> +		ret =3D component_master_add_child(m, compare_of, cdev->crtc_dev)=
-;
->> +		ret |=3D component_master_add_child(m, compare_of,
->> +							cdev->conn_dev);
->=20
->=20
-> The sequence above (up to my previous comment) could be simplified, t=
-o
-> sth like this:
->=20
-> 		ret =3D component_master_add_child(m, compare_of,
-> 						cdev->crtc_dev);
-> 		if (!ret && cdev->crtc_dev !=3D cdev->conn_dev)
-> 			ret =3D component_master_add_child(m, compare_of,
-> 						cdev->conn_dev);
->=20
-> Regards
-> Andrzej
->=20
->=20
->> +		if (ret < 0)
->> +			return ret;
->> +
->> +out_lock:
->>  		mutex_lock(&drm_component_lock);
->>  	}
->> =20
->>  	mutex_unlock(&drm_component_lock);
->> =20
->> -	if (!attached_cnt)
->> -		return -ENXIO;
->> -
->> -	return 0;
->> +	return attach_cnt ? 0 : -ENODEV;
->>  }
->> =20
->>  static int exynos_drm_bind(struct device *dev)
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/d=
-rm/exynos/exynos_drm_drv.h
->> index e82e620..36535f3 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> @@ -42,6 +42,13 @@ struct drm_connector;
->> =20
->>  extern unsigned int drm_vblank_offdelay;
->> =20
->> +/* This enumerates device type. */
->> +enum exynos_drm_device_type {
->> +	EXYNOS_DEVICE_TYPE_NONE,
->> +	EXYNOS_DEVICE_TYPE_CRTC,
->> +	EXYNOS_DEVICE_TYPE_CONNECTOR,
->> +};
->> +
->>  /* this enumerates display type. */
->>  enum exynos_drm_output_type {
->>  	EXYNOS_DISPLAY_TYPE_NONE,
->> @@ -354,12 +361,12 @@ void exynos_drm_remove_vidi(void);
->>  int exynos_drm_create_enc_conn(struct drm_device *dev,
->>  				struct exynos_drm_display *display);
->> =20
->> -struct component_ops;
->>  int exynos_drm_component_add(struct device *dev,
->> -				const struct component_ops *ops);
->> +				enum exynos_drm_device_type dev_type,
->> +				enum exynos_drm_output_type out_type);
->> =20
->>  void exynos_drm_component_del(struct device *dev,
->> -				const struct component_ops *ops);
->> +				enum exynos_drm_device_type dev_type);
->> =20
->>  extern struct platform_driver fimd_driver;
->>  extern struct platform_driver dp_driver;
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/d=
-rm/exynos/exynos_drm_dsi.c
->> index 84661fe..6302aa6 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> @@ -1423,10 +1423,16 @@ static int exynos_dsi_probe(struct platform_=
-device *pdev)
->>  	struct exynos_dsi *dsi;
->>  	int ret;
->> =20
->> +	ret =3D exynos_drm_component_add(&pdev->dev, EXYNOS_DEVICE_TYPE_CO=
-NNECTOR,
->> +					exynos_dsi_display.type);
->> +	if (ret)
->> +		return ret;
->> +
->>  	dsi =3D devm_kzalloc(&pdev->dev, sizeof(*dsi), GFP_KERNEL);
->>  	if (!dsi) {
->>  		dev_err(&pdev->dev, "failed to allocate dsi object.\n");
->> -		return -ENOMEM;
->> +		ret =3D -ENOMEM;
->> +		goto err_del_component;
->>  	}
->> =20
->>  	init_completion(&dsi->completed);
->> @@ -1440,7 +1446,7 @@ static int exynos_dsi_probe(struct platform_de=
-vice *pdev)
->> =20
->>  	ret =3D exynos_dsi_parse_dt(dsi);
->>  	if (ret)
->> -		return ret;
->> +		goto err_del_component;
->> =20
->>  	dsi->supplies[0].supply =3D "vddcore";
->>  	dsi->supplies[1].supply =3D "vddio";
->> @@ -1454,32 +1460,37 @@ static int exynos_dsi_probe(struct platform_=
-device *pdev)
->>  	dsi->pll_clk =3D devm_clk_get(&pdev->dev, "pll_clk");
->>  	if (IS_ERR(dsi->pll_clk)) {
->>  		dev_info(&pdev->dev, "failed to get dsi pll input clock\n");
->> -		return -EPROBE_DEFER;
->> +		ret =3D PTR_ERR(dsi->pll_clk);
->> +		goto err_del_component;
->>  	}
->> =20
->>  	dsi->bus_clk =3D devm_clk_get(&pdev->dev, "bus_clk");
->>  	if (IS_ERR(dsi->bus_clk)) {
->>  		dev_info(&pdev->dev, "failed to get dsi bus clock\n");
->> -		return -EPROBE_DEFER;
->> +		ret =3D PTR_ERR(dsi->bus_clk);
->> +		goto err_del_component;
->>  	}
->> =20
->>  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>  	dsi->reg_base =3D devm_ioremap_resource(&pdev->dev, res);
->>  	if (IS_ERR(dsi->reg_base)) {
->>  		dev_err(&pdev->dev, "failed to remap io region\n");
->> -		return PTR_ERR(dsi->reg_base);
->> +		ret =3D PTR_ERR(dsi->reg_base);
->> +		goto err_del_component;
->>  	}
->> =20
->>  	dsi->phy =3D devm_phy_get(&pdev->dev, "dsim");
->>  	if (IS_ERR(dsi->phy)) {
->>  		dev_info(&pdev->dev, "failed to get dsim phy\n");
->> -		return -EPROBE_DEFER;
->> +		ret =3D PTR_ERR(dsi->phy);
->> +		goto err_del_component;
->>  	}
->> =20
->>  	dsi->irq =3D platform_get_irq(pdev, 0);
->>  	if (dsi->irq < 0) {
->>  		dev_err(&pdev->dev, "failed to request dsi irq resource\n");
->> -		return dsi->irq;
->> +		ret =3D dsi->irq;
->> +		goto err_del_component;
->>  	}
->> =20
->>  	irq_set_status_flags(dsi->irq, IRQ_NOAUTOEN);
->> @@ -1488,19 +1499,29 @@ static int exynos_dsi_probe(struct platform_=
-device *pdev)
->>  					dev_name(&pdev->dev), dsi);
->>  	if (ret) {
->>  		dev_err(&pdev->dev, "failed to request dsi irq\n");
->> -		return ret;
->> +		goto err_del_component;
->>  	}
->> =20
->>  	exynos_dsi_display.ctx =3D dsi;
->> =20
->>  	platform_set_drvdata(pdev, &exynos_dsi_display);
->> =20
->> -	return exynos_drm_component_add(&pdev->dev, &exynos_dsi_component_=
-ops);
->> +	ret =3D component_add(&pdev->dev, &exynos_dsi_component_ops);
->> +	if (ret)
->> +		goto err_del_component;
->> +
->> +	return ret;
->> +
->> +err_del_component:
->> +	exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CONNECTOR)=
-;
->> +	return ret;
->>  }
->> =20
->>  static int exynos_dsi_remove(struct platform_device *pdev)
->>  {
->> -	exynos_drm_component_del(&pdev->dev, &exynos_dsi_component_ops);
->> +	component_del(&pdev->dev, &exynos_dsi_component_ops);
->> +	exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CONNECTOR)=
-;
->> +
->>  	return 0;
->>  }
->> =20
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/=
-drm/exynos/exynos_drm_fimd.c
->> index bd30d0c..47a772d 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> @@ -941,12 +941,21 @@ static int fimd_probe(struct platform_device *=
-pdev)
->>  	struct resource *res;
->>  	int ret =3D -EINVAL;
->> =20
->> -	if (!dev->of_node)
->> -		return -ENODEV;
->> +	ret =3D exynos_drm_component_add(&pdev->dev, EXYNOS_DEVICE_TYPE_CR=
-TC,
->> +					fimd_manager.type);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (!dev->of_node) {
->> +		ret =3D -ENODEV;
->> +		goto err_del_component;
->> +	}
->> =20
->>  	ctx =3D devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
->> -	if (!ctx)
->> -		return -ENOMEM;
->> +	if (!ctx) {
->> +		ret =3D -ENOMEM;
->> +		goto err_del_component;
->> +	}
->> =20
->>  	ctx->dev =3D dev;
->>  	ctx->suspended =3D true;
->> @@ -959,32 +968,37 @@ static int fimd_probe(struct platform_device *=
-pdev)
->>  	ctx->bus_clk =3D devm_clk_get(dev, "fimd");
->>  	if (IS_ERR(ctx->bus_clk)) {
->>  		dev_err(dev, "failed to get bus clock\n");
->> -		return PTR_ERR(ctx->bus_clk);
->> +		ret =3D PTR_ERR(ctx->bus_clk);
->> +		goto err_del_component;
->>  	}
->> =20
->>  	ctx->lcd_clk =3D devm_clk_get(dev, "sclk_fimd");
->>  	if (IS_ERR(ctx->lcd_clk)) {
->>  		dev_err(dev, "failed to get lcd clock\n");
->> -		return PTR_ERR(ctx->lcd_clk);
->> +		ret =3D PTR_ERR(ctx->lcd_clk);
->> +		goto err_del_component;
->>  	}
->> =20
->>  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> =20
->>  	ctx->regs =3D devm_ioremap_resource(dev, res);
->> -	if (IS_ERR(ctx->regs))
->> -		return PTR_ERR(ctx->regs);
->> +	if (IS_ERR(ctx->regs)) {
->> +		ret =3D PTR_ERR(ctx->regs);
->> +		goto err_del_component;
->> +	}
->> =20
->>  	res =3D platform_get_resource_byname(pdev, IORESOURCE_IRQ, "vsync"=
-);
->>  	if (!res) {
->>  		dev_err(dev, "irq request failed.\n");
->> -		return -ENXIO;
->> +		ret =3D -ENXIO;
->> +		goto err_del_component;
->>  	}
->> =20
->>  	ret =3D devm_request_irq(dev, res->start, fimd_irq_handler,
->>  							0, "drm_fimd", ctx);
->>  	if (ret) {
->>  		dev_err(dev, "irq request failed.\n");
->> -		return ret;
->> +		goto err_del_component;
->>  	}
->> =20
->>  	ctx->driver_data =3D drm_fimd_get_driver_data(pdev);
->> @@ -1001,14 +1015,27 @@ static int fimd_probe(struct platform_device=
- *pdev)
->> =20
->>  	pm_runtime_enable(&pdev->dev);
->> =20
->> -	return exynos_drm_component_add(&pdev->dev, &fimd_component_ops);
->> +	ret =3D component_add(&pdev->dev, &fimd_component_ops);
->> +	if (ret)
->> +		goto err_disable_pm_runtime;
->> +
->> +	return ret;
->> +
->> +err_disable_pm_runtime:
->> +	pm_runtime_disable(&pdev->dev);
->> +
->> +err_del_component:
->> +	exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CRTC);
->> +	return ret;
->>  }
->> =20
->>  static int fimd_remove(struct platform_device *pdev)
->>  {
->>  	pm_runtime_disable(&pdev->dev);
->> =20
->> -	exynos_drm_component_del(&pdev->dev, &fimd_component_ops);
->> +	component_del(&pdev->dev, &fimd_component_ops);
->> +	exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CRTC);
->> +
->>  	return 0;
->>  }
->> =20
->> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/=
-exynos/exynos_hdmi.c
->> index e05c86a..0c3bcee 100644
->> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
->> @@ -2134,26 +2134,31 @@ static int hdmi_resources_init(struct hdmi_c=
-ontext *hdata)
->>  	res->hdmi =3D devm_clk_get(dev, "hdmi");
->>  	if (IS_ERR(res->hdmi)) {
->>  		DRM_ERROR("failed to get clock 'hdmi'\n");
->> +		ret =3D PTR_ERR(res->hdmi);
->>  		goto fail;
->>  	}
->>  	res->sclk_hdmi =3D devm_clk_get(dev, "sclk_hdmi");
->>  	if (IS_ERR(res->sclk_hdmi)) {
->>  		DRM_ERROR("failed to get clock 'sclk_hdmi'\n");
->> +		ret =3D PTR_ERR(res->sclk_hdmi);
->>  		goto fail;
->>  	}
->>  	res->sclk_pixel =3D devm_clk_get(dev, "sclk_pixel");
->>  	if (IS_ERR(res->sclk_pixel)) {
->>  		DRM_ERROR("failed to get clock 'sclk_pixel'\n");
->> +		ret =3D PTR_ERR(res->sclk_pixel);
->>  		goto fail;
->>  	}
->>  	res->sclk_hdmiphy =3D devm_clk_get(dev, "sclk_hdmiphy");
->>  	if (IS_ERR(res->sclk_hdmiphy)) {
->>  		DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
->> +		ret =3D PTR_ERR(res->sclk_hdmiphy);
->>  		goto fail;
->>  	}
->>  	res->mout_hdmi =3D devm_clk_get(dev, "mout_hdmi");
->>  	if (IS_ERR(res->mout_hdmi)) {
->>  		DRM_ERROR("failed to get clock 'mout_hdmi'\n");
->> +		ret =3D PTR_ERR(res->mout_hdmi);
->>  		goto fail;
->>  	}
->> =20
->> @@ -2161,8 +2166,10 @@ static int hdmi_resources_init(struct hdmi_co=
-ntext *hdata)
->> =20
->>  	res->regul_bulk =3D devm_kzalloc(dev, ARRAY_SIZE(supply) *
->>  		sizeof(res->regul_bulk[0]), GFP_KERNEL);
->> -	if (!res->regul_bulk)
->> +	if (!res->regul_bulk) {
->> +		ret =3D -ENOMEM;
->>  		goto fail;
->> +	}
->>  	for (i =3D 0; i < ARRAY_SIZE(supply); ++i) {
->>  		res->regul_bulk[i].supply =3D supply[i];
->>  		res->regul_bulk[i].consumer =3D NULL;
->> @@ -2170,14 +2177,14 @@ static int hdmi_resources_init(struct hdmi_c=
-ontext *hdata)
->>  	ret =3D devm_regulator_bulk_get(dev, ARRAY_SIZE(supply), res->regu=
-l_bulk);
->>  	if (ret) {
->>  		DRM_ERROR("failed to get regulators\n");
->> -		goto fail;
->> +		return ret;
->>  	}
->>  	res->regul_count =3D ARRAY_SIZE(supply);
->> =20
->> -	return 0;
->> +	return ret;
->>  fail:
->>  	DRM_ERROR("HDMI resource init - failed\n");
->> -	return -ENODEV;
->> +	return ret;
->>  }
->> =20
->>  static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
->> @@ -2275,24 +2282,37 @@ static int hdmi_probe(struct platform_device=
- *pdev)
->>  	struct resource *res;
->>  	int ret;
->> =20
->> -	if (!dev->of_node)
->> -		return -ENODEV;
->> +	ret =3D exynos_drm_component_add(&pdev->dev, EXYNOS_DEVICE_TYPE_CO=
-NNECTOR,
->> +					hdmi_display.type);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (!dev->of_node) {
->> +		ret =3D -ENODEV;
->> +		goto err_del_component;
->> +	}
->> =20
->>  	pdata =3D drm_hdmi_dt_parse_pdata(dev);
->> -	if (!pdata)
->> -		return -EINVAL;
->> +	if (!pdata) {
->> +		ret =3D -EINVAL;
->> +		goto err_del_component;
->> +	}
->> =20
->>  	hdata =3D devm_kzalloc(dev, sizeof(struct hdmi_context), GFP_KERNE=
-L);
->> -	if (!hdata)
->> -		return -ENOMEM;
->> +	if (!hdata) {
->> +		ret =3D -ENOMEM;
->> +		goto err_del_component;
->> +	}
->> =20
->>  	mutex_init(&hdata->hdmi_mutex);
->> =20
->>  	platform_set_drvdata(pdev, &hdmi_display);
->> =20
->>  	match =3D of_match_node(hdmi_match_types, dev->of_node);
->> -	if (!match)
->> -		return -ENODEV;
->> +	if (!match) {
->> +		ret =3D -ENODEV;
->> +		goto err_del_component;
->> +	}
->> =20
->>  	drv_data =3D (struct hdmi_driver_data *)match->data;
->>  	hdata->type =3D drv_data->type;
->> @@ -2305,18 +2325,20 @@ static int hdmi_probe(struct platform_device=
- *pdev)
->>  	ret =3D hdmi_resources_init(hdata);
->>  	if (ret) {
->>  		DRM_ERROR("hdmi_resources_init failed\n");
->> -		return -EINVAL;
->> +		return ret;
->>  	}
->> =20
->>  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>  	hdata->regs =3D devm_ioremap_resource(dev, res);
->> -	if (IS_ERR(hdata->regs))
->> -		return PTR_ERR(hdata->regs);
->> +	if (IS_ERR(hdata->regs)) {
->> +		ret =3D PTR_ERR(hdata->regs);
->> +		goto err_del_component;
->> +	}
->> =20
->>  	ret =3D devm_gpio_request(dev, hdata->hpd_gpio, "HPD");
->>  	if (ret) {
->>  		DRM_ERROR("failed to request HPD gpio\n");
->> -		return ret;
->> +		goto err_del_component;
->>  	}
->> =20
->>  	ddc_node =3D hdmi_legacy_ddc_dt_binding(dev);
->> @@ -2327,14 +2349,15 @@ static int hdmi_probe(struct platform_device=
- *pdev)
->>  	ddc_node =3D of_parse_phandle(dev->of_node, "ddc", 0);
->>  	if (!ddc_node) {
->>  		DRM_ERROR("Failed to find ddc node in device tree\n");
->> -		return -ENODEV;
->> +		ret =3D -ENODEV;
->> +		goto err_del_component;
->>  	}
->> =20
->>  out_get_ddc_adpt:
->>  	hdata->ddc_adpt =3D of_find_i2c_adapter_by_node(ddc_node);
->>  	if (!hdata->ddc_adpt) {
->>  		DRM_ERROR("Failed to get ddc i2c adapter by node\n");
->> -		return -ENODEV;
->> +		return -EPROBE_DEFER;
->>  	}
->> =20
->>  	phy_node =3D hdmi_legacy_phy_dt_binding(dev);
->> @@ -2361,7 +2384,7 @@ out_get_phy_port:
->>  		hdata->hdmiphy_port =3D of_find_i2c_device_by_node(phy_node);
->>  		if (!hdata->hdmiphy_port) {
->>  			DRM_ERROR("Failed to get hdmi phy i2c client\n");
->> -			ret =3D -ENODEV;
->> +			ret =3D -EPROBE_DEFER;
->>  			goto err_ddc;
->>  		}
->>  	}
->> @@ -2390,19 +2413,31 @@ out_get_phy_port:
->>  			"samsung,syscon-phandle");
->>  	if (IS_ERR(hdata->pmureg)) {
->>  		DRM_ERROR("syscon regmap lookup failed.\n");
->> +		ret =3D -EPROBE_DEFER;
->>  		goto err_hdmiphy;
->>  	}
->> =20
->>  	pm_runtime_enable(dev);
->>  	hdmi_display.ctx =3D hdata;
->> =20
->> -	return exynos_drm_component_add(&pdev->dev, &hdmi_component_ops);
->> +	ret =3D component_add(&pdev->dev, &hdmi_component_ops);
->> +	if (ret)
->> +		goto err_disable_pm_runtime;
->> +
->> +	return ret;
->> +
->> +err_disable_pm_runtime:
->> +	pm_runtime_disable(dev);
->> =20
->>  err_hdmiphy:
->>  	if (hdata->hdmiphy_port)
->>  		put_device(&hdata->hdmiphy_port->dev);
->>  err_ddc:
->>  	put_device(&hdata->ddc_adpt->dev);
->> +
->> +err_del_component:
->> +	exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CONNECTOR)=
-;
->> +
->>  	return ret;
->>  }
->> =20
->> @@ -2416,8 +2451,9 @@ static int hdmi_remove(struct platform_device =
-*pdev)
->>  	put_device(&hdata->ddc_adpt->dev);
->> =20
->>  	pm_runtime_disable(&pdev->dev);
->> +	component_del(&pdev->dev, &hdmi_component_ops);
->> =20
->> -	exynos_drm_component_del(&pdev->dev, &hdmi_component_ops);
->> +	exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CONNECTOR)=
-;
->>  	return 0;
->>  }
->> =20
->> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm=
-/exynos/exynos_mixer.c
->> index 483d7c0..4c5aed7 100644
->> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->> @@ -1273,12 +1273,25 @@ static const struct component_ops mixer_comp=
-onent_ops =3D {
->> =20
->>  static int mixer_probe(struct platform_device *pdev)
->>  {
->> -	return exynos_drm_component_add(&pdev->dev, &mixer_component_ops);
->> +	int ret;
->> +
->> +	ret =3D exynos_drm_component_add(&pdev->dev, EXYNOS_DEVICE_TYPE_CR=
-TC,
->> +					mixer_manager.type);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret =3D component_add(&pdev->dev, &mixer_component_ops);
->> +	if (ret)
->> +		exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CRTC);
->> +
->> +	return ret;
->>  }
->> =20
->>  static int mixer_remove(struct platform_device *pdev)
->>  {
->> -	exynos_drm_component_del(&pdev->dev, &mixer_component_ops);
->> +	component_del(&pdev->dev, &mixer_component_ops);
->> +	exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CRTC);
->> +
->>  	return 0;
->>  }
->> =20
+>> I would opt for the second option. The driver was uploaded before the
+>> firmware. I see that there are many firmware files in the root folder
+>> of the repository
 >>
->=20
->=20
+>> Ben, what is your opinion? Which is preferred: creating subdirectories
+>> or storing firmware in the root folder?
+>
+> I prefer subdirectories, but compatibility wins.  So I'll apply the
+> following patch if no-one objects.
+>
+> Ben.
+>
+> ---
+> Subject: Move the s5p-mfc firmware out of its subdirectory
+>
+> The driver does not include this subdirectory name when requesting
+> firmware.
+>
+> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+> ---
+>  WHENCE                                       |  10 +++++-----
+>  s5p-mfc/s5p-mfc-v6-v2.fw => s5p-mfc-v6-v2.fw | Bin
+>  s5p-mfc/s5p-mfc-v6.fw => s5p-mfc-v6.fw       | Bin
+>  s5p-mfc/s5p-mfc-v7.fw => s5p-mfc-v7.fw       | Bin
+>  s5p-mfc/s5p-mfc-v8.fw => s5p-mfc-v8.fw       | Bin
+>  s5p-mfc/s5p-mfc.fw => s5p-mfc.fw             | Bin
+>  6 files changed, 5 insertions(+), 5 deletions(-)
+>  rename s5p-mfc/s5p-mfc-v6-v2.fw => s5p-mfc-v6-v2.fw (100%)
+>  rename s5p-mfc/s5p-mfc-v6.fw => s5p-mfc-v6.fw (100%)
+>  rename s5p-mfc/s5p-mfc-v7.fw => s5p-mfc-v7.fw (100%)
+>  rename s5p-mfc/s5p-mfc-v8.fw => s5p-mfc-v8.fw (100%)
+>  rename s5p-mfc/s5p-mfc.fw => s5p-mfc.fw (100%)
+>
+> diff --git a/WHENCE b/WHENCE
+> index 6a64fc2..a172f5f 100644
+> --- a/WHENCE
+> +++ b/WHENCE
+> @@ -2250,11 +2250,11 @@ Licence: Redistributable. See LICENCE.atheros_firmware for details
+>
+>  Driver: s5p-mfc - Samsung MFC video encoder/decoder driver
+>
+> -File: s5p-mfc/s5p-mfc.fw
+> -File: s5p-mfc/s5p-mfc-v6.fw
+> -File: s5p-mfc/s5p-mfc-v6-v2.fw
+> -File: s5p-mfc/s5p-mfc-v7.fw
+> -File: s5p-mfc/s5p-mfc-v8.fw
+> +File: s5p-mfc.fw
+> +File: s5p-mfc-v6.fw
+> +File: s5p-mfc-v6-v2.fw
+> +File: s5p-mfc-v7.fw
+> +File: s5p-mfc-v8.fw
+>
+>  Licence:
+>  Samsung grants permission to use and redistribute aforementioned firmware
+> diff --git a/s5p-mfc/s5p-mfc-v6-v2.fw b/s5p-mfc-v6-v2.fw
+> similarity index 100%
+> rename from s5p-mfc/s5p-mfc-v6-v2.fw
+> rename to s5p-mfc-v6-v2.fw
+> diff --git a/s5p-mfc/s5p-mfc-v6.fw b/s5p-mfc-v6.fw
+> similarity index 100%
+> rename from s5p-mfc/s5p-mfc-v6.fw
+> rename to s5p-mfc-v6.fw
+> diff --git a/s5p-mfc/s5p-mfc-v7.fw b/s5p-mfc-v7.fw
+> similarity index 100%
+> rename from s5p-mfc/s5p-mfc-v7.fw
+> rename to s5p-mfc-v7.fw
+> diff --git a/s5p-mfc/s5p-mfc-v8.fw b/s5p-mfc-v8.fw
+> similarity index 100%
+> rename from s5p-mfc/s5p-mfc-v8.fw
+> rename to s5p-mfc-v8.fw
+> diff --git a/s5p-mfc/s5p-mfc.fw b/s5p-mfc.fw
+> similarity index 100%
+> rename from s5p-mfc/s5p-mfc.fw
+> rename to s5p-mfc.fw
+>
+>
+
+Looks good to me.
+
+Regards
+Arun
+
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
+> Ben Hutchings
+> Experience is what causes a person to make new mistakes instead of old ones.
