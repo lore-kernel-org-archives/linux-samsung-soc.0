@@ -1,56 +1,88 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 2/3] clocksource: exynos_mct: cache mct upper count
-Date: Thu, 5 Jun 2014 10:14:05 -0700
-Message-ID: <CAD=FV=Xy84f=KFO4SLmW27=ztt_hxSiBMJSMAwhw9RxKAaFU-Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clocksource: exynos_mct: Optimize register reads with ldmia
+Date: Thu, 5 Jun 2014 11:21:36 -0700
+Message-ID: <CAD=FV=WYT6gEh9vJjAWxE_zY1m0hojq_5LYL9vKgUzN+7MZ9ow@mail.gmail.com>
 References: <1401903034-20074-1-git-send-email-dianders@chromium.org>
-	<1401903034-20074-2-git-send-email-dianders@chromium.org>
-	<CAKfTPtBeYMW7kOrAhVrqoWhTHfLAtcMeY9FXxZpm7CNAM7NdaA@mail.gmail.com>
+	<1401903034-20074-3-git-send-email-dianders@chromium.org>
+	<alpine.DEB.2.10.1406042004140.3319@nanos>
+	<CAD=FV=UDAcBeXewVinSG0WeoHkkw2zHe2ORp7BLW=NKxmKUiew@mail.gmail.com>
+	<539051F9.4030100@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAKfTPtBeYMW7kOrAhVrqoWhTHfLAtcMeY9FXxZpm7CNAM7NdaA@mail.gmail.com>
+In-Reply-To: <539051F9.4030100@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mandeep Singh Baines <msb@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel <linux-kernel@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Vincent,
+Tomasz,
 
-On Thu, Jun 5, 2014 at 12:55 AM, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
-> On 4 June 2014 19:30, Doug Anderson <dianders@chromium.org> wrote:
->> From: Mandeep Singh Baines <msb@chromium.org>
+On Thu, Jun 5, 2014 at 4:18 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On 04.06.2014 20:49, Doug Anderson wrote:
+>> Thomas,
 >>
->> Saves one register read.  Note that the upper count only changes every
->> ~178 seconds with a 24MHz source clock, so it's likely it hasn't
->> changed from call to call.
+>> On Wed, Jun 4, 2014 at 11:05 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>>> On Wed, 4 Jun 2014, Doug Anderson wrote:
+>>>
+>>>> As we saw in (clocksource: exynos_mct: cache mct upper count), the
+>>>> time spent reading the MCT shows up fairly high in real-world
+>>>> profiles.  That means that it's worth some optimization.
+>>>>
+>>>> We get a roughly 10% speedup in userspace gettimeofday() by using an
+>>>> ldmia to read the two halfs of the MCT.  That seems like a worthwhile
+>>>> thing to do.
+>>>>
+>>>> Before: 1173084 us for 1000000 gettimeofday in userspace
+>>>> After:  1045674 us for 1000000 gettimeofday in userspace
+>>>>
+>>>> NOTE: we could actually do better than this if we really wanted to.
+>>>> Technically we could register the clocksource as a 32-bit timer and
+>>>> only use the "lower" half.  Doing so brings us down to 1014429 us for
+>>>> 1000000 gettimeofday in userspace (and doesn't even require assembly
+>>>> code).  That would be an alternative to this change.
+>>>
+>>> I was about to ask exactly that question: What's the advantage of the
+>>> 64 bit dance there? AFAICT nothing.
+>>
+>> I debated whether to send out the 32-bit version, since I'd
+>> implemented both.  I'm happy to send out the 32-bit version too and
+>> people can pick which they like better.  Let me know.
+>>
+>> The final thing that pushed me over the edge to send the 64-bit
+>> version was that I didn't know enough about how MCT was used with
+>> respect to low power modes (we don't use AFTR / LPA modes on our
+>> system).  I could actually believe that we might want to set a timer
+>> for more than 178 seconds into the future for these low power modes.
+>> If that's the case, we still need to keep around the 64-bit read code
+>> for that case.  ...and once we have the 64-bit code then we might as
+>> well use it for the rest of the timers.
+>>
+>> Perhaps Tomasz will comment on this.
 >
-> Hi Doug,
+> I can't say definitely that we won't need those extra 32-bits, but the
+> low power modes you mentioned are (and probably will always be)
+> implemented as CPU idle modes. This means that most likely having a
+> wake-up every 178 second wouldn't hurt that much, especially considering
+> the fact that in normal use cases, when the system is not fully
+> suspended it usually has things to do and will need to be woken up more
+> frequently than that.
 >
-> Have you checked that the time saved in using a 32bits counter instead
-> of a 64bits one is not lost in the handle of the wrap of sched_clock
-> which occurs every 178s instead of never ?
->
-> sched_clock_poll function will be called every 178s
+> Adding Bart and Krzysztof to the discussion as they are currently
+> working on power management.
 
-Probably should move this to the discussion in the other patch where
-we're talking about moving to 32-bits?
+OK, I'm happy to send out the 32-bit version of the patches.  In the
+other series Vincent was questioning whether the performance gain of
+32-bit would be offset by the extra overhead of needing to handle the
+wraparound.  I have no idea what the answer is there.  Who on this
+thread would be willing to pick between the two?
 
-...but in general I have no benchmarks at all that how much the
-scheduler is affected by this change.  All of my benchmarks are based
-on gettimeofday(), where the improvement is clear.  Do you have a
-suggested way to check?
+My own personal opinion is to take the existing optimized 64-bit
+versions I sent out since:
+* there's no question that they work and won't regress performance or
+functionality
+* the speed is nearly equal to the 32-bit version
+* the single assembly instruction isn't _too_ ugly.
 
-I think that it's pretty clear that we'll want to take either the
-32-bit conversion or the 64-bit optimizations I sent out.  If you take
-out gettimeofday() overhead, I believe that the actual read of the MCT
-(exynos_frc_read) took about:
-* ~800ns per call with the original 64-bit code
-* ~500ns per call with the optimized 64-bit code (both patch 2 and 3)
-* ~500ns per call with the 32-bit code
 
-The 32-bit code is slightly faster but not significantly (like 530ns
-vs 500ns).  ...but it is definitely simpler.
-
-If we find that the schedule clock wrap overhead is real then that
-would be a good reason to take the 64-bit version.
+-Doug
