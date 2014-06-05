@@ -1,82 +1,165 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2] clk: exynos5420: Keep aclk66_peric enabled during boot
-Date: Thu, 5 Jun 2014 13:10:46 -0700
-Message-ID: <CAD=FV=Ucn20GDib=t=OOT+8YjGuk6uoWrP1qourY=YfrLJj1WA@mail.gmail.com>
-References: <1401398496-4624-1-git-send-email-dianders@chromium.org>
-	<1401467562-5585-1-git-send-email-dianders@chromium.org>
-	<CAD=FV=W8-M5iOMDG190WGaeSySTd=qcp30k-H8DMUs_C5Pdwog@mail.gmail.com>
-	<5390C19A.9060201@gmail.com>
-	<CAD=FV=UZsEh+bOQxc8CP+yG5a5Sbp2eTyq8B_iq9u5io5G0B6A@mail.gmail.com>
-	<5390C5A9.5070900@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH v3] clk: exynos5420: Remove aclk66_peric from the clock tree description
+Date: Thu,  5 Jun 2014 13:35:14 -0700
+Message-ID: <1402000514-30752-1-git-send-email-dianders@chromium.org>
+References: <1401467562-5585-1-git-send-email-dianders@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f178.google.com ([209.85.128.178]:44498 "EHLO
-	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750840AbaFEUKr (ORCPT
+Received: from mail-oa0-f74.google.com ([209.85.219.74]:53066 "EHLO
+	mail-oa0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751409AbaFEUfW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Jun 2014 16:10:47 -0400
-Received: by mail-ve0-f178.google.com with SMTP id sa20so1872480veb.37
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Jun 2014 13:10:47 -0700 (PDT)
-In-Reply-To: <5390C5A9.5070900@gmail.com>
+	Thu, 5 Jun 2014 16:35:22 -0400
+Received: by mail-oa0-f74.google.com with SMTP id m1so316812oag.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Jun 2014 13:35:21 -0700 (PDT)
+In-Reply-To: <1401467562-5585-1-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: olof@lixom.net, javier.martinez@collabora.co.uk, Doug Anderson <dianders@chromium.org>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rahul.sharma@samsung.com, shaik.ameer@samsung.com, arun.kk@samsung.com, alim.akhtar@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-Tomasz,
+The "aclk66_peric" clock is a gate clock with a whole bunch of gates
+underneath it.  This big gate isn't very useful to include in our
+clock tree.  If any of the children need to be turned on then the big
+gate will need to be on anyway.  ...and there are plenty of other "big
+gates" that aren't described in our clock tree, some of which shut off
+collections of clocks that have no relationship in the hierarchy so
+are hard to model.
 
-On Thu, Jun 5, 2014 at 12:31 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> One more question that just came to my mind: Why it is just the
-> aclk66_peri and not its children related to UARTs?
+"aclk66_peric" is causing earlyprintk problems since it gets disabled
+as part of the boot process, so let's just remove it.
 
-Can you re-read out the original patch description and see if it
-answers that?  Basically: the UART was left on by the bootloader and
-that's a requirement of earlyprintk but the common clock framework is
-messing with aclk66_peric which is what's killing us.
+Strangely (and for no good reason) this clock is exported as part of
+the common clock bindings.  Remove it since there are no in-kernel
+device trees using it and no reason anyone out of tree should refer to
+it either.
 
-
-> Exynos5420 clock driver still needs a little clean-up, so I'm okay with
-> any fix for now and changing this later if needed, but is this gate
-> clock for ACLK66_PERIC even needed? It seems to be marked with
-> CLK_IGNORE_UNUSED which suggests that it is not needed in this driver at
-> all, along with other similar clocks. AFAIK for power management
-> purposes our fine-grained approach is fine and we shouldn't need to use
-> the big gates.
-
-Right, another option is to remove this gate from the clock tree (and
-reparent all children on the gate's parent) and that would also fix
-us.  The main advantages of the "big gate" as I see it:
-
-1. There's a reasonable chance that our clock tree description is not
-complete.  Patches to add previously undocumented clocks seems to be a
-relatively common occurrence.  If one of those undocumented clocks
-happens to be a child of aclk66_peric then we'll no longer be gating
-it.
-
-2. There might be a small amount of power saved by gating the clock
-higher in the tree.
-
-3. Having a more complete description of the clock tree is nice in
-case someone outside the kernel does something.  If a stray pointer
-(or a nonstandard bootloader) gates the clock then our tree won't show
-problems, but the clock will still be gated.
-
-
-Of course as soon as the first child of aclk66_peric is activated then
-points #1 and #2 are invalid.  ...and #3 is a bit bogus because there
-are A LOT of gates that we already don't model.
-
-
-Also: the CLK_IGNORE_UNUSED is a bit bogus here.  That's not really a
-useful flag in the case that you've got children that are enabled and
-disabled.  Once your first child is enabled and disabled you'll be
-disabled!
-
+Signed-off-by: Doug Anderson <dianders@chromium.org>
 ---
+Changes in v3:
+- Now just remove aclk66_peric from the tree as suggested by Tomasz.
 
-Hmmm, I think I've convinced myself that your suggestion of just
-removing this gate from the table is the right thing to do.  Patch
-will be coming up soon.
+Changes in v2:
+- Use GATE_A and clk_get().  Save the clock for putting later.
+- Return 0 from exynos5420_clk_late_init().
 
--Doug
+ drivers/clk/samsung/clk-exynos5420.c   | 85 ++++++++++++++++++++++------------
+ include/dt-bindings/clock/exynos5420.h |  1 -
+ 2 files changed, 55 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 9d7d7ee..61eccf0 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -890,8 +890,6 @@ static struct samsung_gate_clock exynos5x_gate_clks[] __initdata = {
+ 			GATE_BUS_TOP, 9, CLK_IGNORE_UNUSED, 0),
+ 	GATE(0, "aclk66_psgen", "mout_user_aclk66_psgen",
+ 			GATE_BUS_TOP, 10, CLK_IGNORE_UNUSED, 0),
+-	GATE(CLK_ACLK66_PERIC, "aclk66_peric", "mout_user_aclk66_peric",
+-			GATE_BUS_TOP, 11, CLK_IGNORE_UNUSED, 0),
+ 	GATE(0, "aclk266_isp", "mout_user_aclk266_isp",
+ 			GATE_BUS_TOP, 13, 0, 0),
+ 	GATE(0, "aclk166", "mout_user_aclk166",
+@@ -994,34 +992,61 @@ static struct samsung_gate_clock exynos5x_gate_clks[] __initdata = {
+ 			SRC_MASK_FSYS, 24, CLK_SET_RATE_PARENT, 0),
+ 
+ 	/* PERIC Block */
+-	GATE(CLK_UART0, "uart0", "aclk66_peric", GATE_IP_PERIC, 0, 0, 0),
+-	GATE(CLK_UART1, "uart1", "aclk66_peric", GATE_IP_PERIC, 1, 0, 0),
+-	GATE(CLK_UART2, "uart2", "aclk66_peric", GATE_IP_PERIC, 2, 0, 0),
+-	GATE(CLK_UART3, "uart3", "aclk66_peric", GATE_IP_PERIC, 3, 0, 0),
+-	GATE(CLK_I2C0, "i2c0", "aclk66_peric", GATE_IP_PERIC, 6, 0, 0),
+-	GATE(CLK_I2C1, "i2c1", "aclk66_peric", GATE_IP_PERIC, 7, 0, 0),
+-	GATE(CLK_I2C2, "i2c2", "aclk66_peric", GATE_IP_PERIC, 8, 0, 0),
+-	GATE(CLK_I2C3, "i2c3", "aclk66_peric", GATE_IP_PERIC, 9, 0, 0),
+-	GATE(CLK_USI0, "usi0", "aclk66_peric", GATE_IP_PERIC, 10, 0, 0),
+-	GATE(CLK_USI1, "usi1", "aclk66_peric", GATE_IP_PERIC, 11, 0, 0),
+-	GATE(CLK_USI2, "usi2", "aclk66_peric", GATE_IP_PERIC, 12, 0, 0),
+-	GATE(CLK_USI3, "usi3", "aclk66_peric", GATE_IP_PERIC, 13, 0, 0),
+-	GATE(CLK_I2C_HDMI, "i2c_hdmi", "aclk66_peric", GATE_IP_PERIC, 14, 0, 0),
+-	GATE(CLK_TSADC, "tsadc", "aclk66_peric", GATE_IP_PERIC, 15, 0, 0),
+-	GATE(CLK_SPI0, "spi0", "aclk66_peric", GATE_IP_PERIC, 16, 0, 0),
+-	GATE(CLK_SPI1, "spi1", "aclk66_peric", GATE_IP_PERIC, 17, 0, 0),
+-	GATE(CLK_SPI2, "spi2", "aclk66_peric", GATE_IP_PERIC, 18, 0, 0),
+-	GATE(CLK_I2S1, "i2s1", "aclk66_peric", GATE_IP_PERIC, 20, 0, 0),
+-	GATE(CLK_I2S2, "i2s2", "aclk66_peric", GATE_IP_PERIC, 21, 0, 0),
+-	GATE(CLK_PCM1, "pcm1", "aclk66_peric", GATE_IP_PERIC, 22, 0, 0),
+-	GATE(CLK_PCM2, "pcm2", "aclk66_peric", GATE_IP_PERIC, 23, 0, 0),
+-	GATE(CLK_PWM, "pwm", "aclk66_peric", GATE_IP_PERIC, 24, 0, 0),
+-	GATE(CLK_SPDIF, "spdif", "aclk66_peric", GATE_IP_PERIC, 26, 0, 0),
+-	GATE(CLK_USI4, "usi4", "aclk66_peric", GATE_IP_PERIC, 28, 0, 0),
+-	GATE(CLK_USI5, "usi5", "aclk66_peric", GATE_IP_PERIC, 30, 0, 0),
+-	GATE(CLK_USI6, "usi6", "aclk66_peric", GATE_IP_PERIC, 31, 0, 0),
+-
+-	GATE(CLK_KEYIF, "keyif", "aclk66_peric", GATE_BUS_PERIC, 22, 0, 0),
++	GATE(CLK_UART0, "uart0", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 0, 0, 0),
++	GATE(CLK_UART1, "uart1", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 1, 0, 0),
++	GATE(CLK_UART2, "uart2", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 2, 0, 0),
++	GATE(CLK_UART3, "uart3", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 3, 0, 0),
++	GATE(CLK_I2C0, "i2c0", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 6, 0, 0),
++	GATE(CLK_I2C1, "i2c1", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 7, 0, 0),
++	GATE(CLK_I2C2, "i2c2", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 8, 0, 0),
++	GATE(CLK_I2C3, "i2c3", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 9, 0, 0),
++	GATE(CLK_USI0, "usi0", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 10, 0, 0),
++	GATE(CLK_USI1, "usi1", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 11, 0, 0),
++	GATE(CLK_USI2, "usi2", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 12, 0, 0),
++	GATE(CLK_USI3, "usi3", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 13, 0, 0),
++	GATE(CLK_I2C_HDMI, "i2c_hdmi", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 14, 0, 0),
++	GATE(CLK_TSADC, "tsadc", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 15, 0, 0),
++	GATE(CLK_SPI0, "spi0", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 16, 0, 0),
++	GATE(CLK_SPI1, "spi1", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 17, 0, 0),
++	GATE(CLK_SPI2, "spi2", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 18, 0, 0),
++	GATE(CLK_I2S1, "i2s1", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 20, 0, 0),
++	GATE(CLK_I2S2, "i2s2", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 21, 0, 0),
++	GATE(CLK_PCM1, "pcm1", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 22, 0, 0),
++	GATE(CLK_PCM2, "pcm2", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 23, 0, 0),
++	GATE(CLK_PWM, "pwm", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 24, 0, 0),
++	GATE(CLK_SPDIF, "spdif", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 26, 0, 0),
++	GATE(CLK_USI4, "usi4", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 28, 0, 0),
++	GATE(CLK_USI5, "usi5", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 30, 0, 0),
++	GATE(CLK_USI6, "usi6", "mout_user_aclk66_peric",
++			GATE_IP_PERIC, 31, 0, 0),
++
++	GATE(CLK_KEYIF, "keyif", "mout_user_aclk66_peric",
++			GATE_BUS_PERIC, 22, 0, 0),
+ 
+ 	/* PERIS Block */
+ 	GATE(CLK_CHIPID, "chipid", "aclk66_psgen",
+diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+index 97dcb89..14e1c8f 100644
+--- a/include/dt-bindings/clock/exynos5420.h
++++ b/include/dt-bindings/clock/exynos5420.h
+@@ -63,7 +63,6 @@
+ #define CLK_SCLK_MPHY_IXTAL24	161
+ 
+ /* gate clocks */
+-#define CLK_ACLK66_PERIC	256
+ #define CLK_UART0		257
+ #define CLK_UART1		258
+ #define CLK_UART2		259
+-- 
+2.0.0.526.g5318336
