@@ -1,86 +1,82 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
 Subject: Re: [PATCH v2] clk: exynos5420: Keep aclk66_peric enabled during boot
-Date: Thu, 05 Jun 2014 21:31:53 +0200
-Message-ID: <5390C5A9.5070900@gmail.com>
-References: <1401398496-4624-1-git-send-email-dianders@chromium.org>	<1401467562-5585-1-git-send-email-dianders@chromium.org>	<CAD=FV=W8-M5iOMDG190WGaeSySTd=qcp30k-H8DMUs_C5Pdwog@mail.gmail.com>	<5390C19A.9060201@gmail.com>
- <CAD=FV=UZsEh+bOQxc8CP+yG5a5Sbp2eTyq8B_iq9u5io5G0B6A@mail.gmail.com>
+Date: Thu, 5 Jun 2014 13:10:46 -0700
+Message-ID: <CAD=FV=Ucn20GDib=t=OOT+8YjGuk6uoWrP1qourY=YfrLJj1WA@mail.gmail.com>
+References: <1401398496-4624-1-git-send-email-dianders@chromium.org>
+	<1401467562-5585-1-git-send-email-dianders@chromium.org>
+	<CAD=FV=W8-M5iOMDG190WGaeSySTd=qcp30k-H8DMUs_C5Pdwog@mail.gmail.com>
+	<5390C19A.9060201@gmail.com>
+	<CAD=FV=UZsEh+bOQxc8CP+yG5a5Sbp2eTyq8B_iq9u5io5G0B6A@mail.gmail.com>
+	<5390C5A9.5070900@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAD=FV=UZsEh+bOQxc8CP+yG5a5Sbp2eTyq8B_iq9u5io5G0B6A@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ve0-f178.google.com ([209.85.128.178]:44498 "EHLO
+	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750840AbaFEUKr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Jun 2014 16:10:47 -0400
+Received: by mail-ve0-f178.google.com with SMTP id sa20so1872480veb.37
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Jun 2014 13:10:47 -0700 (PDT)
+In-Reply-To: <5390C5A9.5070900@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 05.06.2014 21:22, Doug Anderson wrote:
-> Tomasz,
-> 
-> On Thu, Jun 5, 2014 at 12:14 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> On 05.06.2014 20:48, Doug Anderson wrote:
->>> Tomasz / Mike,
->>>
->>> On Fri, May 30, 2014 at 9:32 AM, Doug Anderson <dianders@chromium.org> wrote:
->>>> Right now if you've got earlyprintk enabled on exynos5420-peach-pit
->>>> then you'll get a hang on boot.  Here's why:
->>>>
->>>> 1. The i2c-s3c2410 driver will probe at subsys_initcall.  It will
->>>>    enable its clock and disable it.  This is the clock "i2c2".
->>>> 2. The act of disabling "i2c2" will disable its parents.  In this case
->>>>    the parent is "aclk66_peric".  There are no other children of
->>>>    "aclk66_peric" officially enabled, so "aclk66_peric" will be turned
->>>>    off (despite being CLK_IGNORE_UNUSED, but that's by design).
->>>> 3. The next time you try to earlyprintk you'll do so without the UART
->>>>    clock enabled.  That's because the UART clocks are also children of
->>>>    "aclk66_peric".  You'll hang.
->>>>
->>>> There's no good place to put a clock enable for earlyprintk, which is
->>>> handled by a bunch of assembly code.  The best we can do is to handle
->>>> this in the clock driver.
->>>>
->>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
->>>> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->>>> ---
->>>> Changes in v2:
->>>> - Use GATE_A and clk_get().  Save the clock for putting later.
->>>> - Return 0 from exynos5420_clk_late_init().
->>>>
->>>>  drivers/clk/samsung/clk-exynos5420.c | 33 +++++++++++++++++++++++++++++++--
->>>>  1 file changed, 31 insertions(+), 2 deletions(-)
->>>
->>> Are there other changes you'd like me to make to this?  It would be
->>> really nice to get this in for 3.16 so the system doesn't just
->>> mysteriously hang when you use earlyprintk.
->>
->> We can probably take this as an -rc fix, so it should be fine.
->>
->> However I still don't see the point of exporting this clock and
->> polluting the global clkdev namespace. Even the diffstat looks better in v1.
-> 
-> OK, I'm happy to go back to v1 with the addition of the "return 0".
-> 
-> Mike: are you OK with that?
-> 
+Tomasz,
 
-One more question that just came to my mind: Why it is just the
-aclk66_peri and not its children related to UARTs?
+On Thu, Jun 5, 2014 at 12:31 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> One more question that just came to my mind: Why it is just the
+> aclk66_peri and not its children related to UARTs?
 
-Exynos5420 clock driver still needs a little clean-up, so I'm okay with
-any fix for now and changing this later if needed, but is this gate
-clock for ACLK66_PERIC even needed? It seems to be marked with
-CLK_IGNORE_UNUSED which suggests that it is not needed in this driver at
-all, along with other similar clocks. AFAIK for power management
-purposes our fine-grained approach is fine and we shouldn't need to use
-the big gates.
+Can you re-read out the original patch description and see if it
+answers that?  Basically: the UART was left on by the bootloader and
+that's a requirement of earlyprintk but the common clock framework is
+messing with aclk66_peric which is what's killing us.
 
-Best regards,
-Tomasz
+
+> Exynos5420 clock driver still needs a little clean-up, so I'm okay with
+> any fix for now and changing this later if needed, but is this gate
+> clock for ACLK66_PERIC even needed? It seems to be marked with
+> CLK_IGNORE_UNUSED which suggests that it is not needed in this driver at
+> all, along with other similar clocks. AFAIK for power management
+> purposes our fine-grained approach is fine and we shouldn't need to use
+> the big gates.
+
+Right, another option is to remove this gate from the clock tree (and
+reparent all children on the gate's parent) and that would also fix
+us.  The main advantages of the "big gate" as I see it:
+
+1. There's a reasonable chance that our clock tree description is not
+complete.  Patches to add previously undocumented clocks seems to be a
+relatively common occurrence.  If one of those undocumented clocks
+happens to be a child of aclk66_peric then we'll no longer be gating
+it.
+
+2. There might be a small amount of power saved by gating the clock
+higher in the tree.
+
+3. Having a more complete description of the clock tree is nice in
+case someone outside the kernel does something.  If a stray pointer
+(or a nonstandard bootloader) gates the clock then our tree won't show
+problems, but the clock will still be gated.
+
+
+Of course as soon as the first child of aclk66_peric is activated then
+points #1 and #2 are invalid.  ...and #3 is a bit bogus because there
+are A LOT of gates that we already don't model.
+
+
+Also: the CLK_IGNORE_UNUSED is a bit bogus here.  That's not really a
+useful flag in the case that you've got children that are enabled and
+disabled.  Once your first child is enabled and disabled you'll be
+disabled!
+
+---
+
+Hmmm, I think I've convinced myself that your suggestion of just
+removing this gate from the table is the right thing to do.  Patch
+will be coming up soon.
+
+-Doug
