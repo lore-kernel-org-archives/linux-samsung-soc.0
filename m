@@ -1,74 +1,65 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH v3 13/15] ARM: dts: exynos5: add system register support
-Date: Thu, 5 Jun 2014 10:41:03 +0530
-Message-ID: <CAFp+6iE2RL=duZSXKCoiu-zRA=cLq5p2fO8XzFkYJiaa22FdGg@mail.gmail.com>
-References: <1401686571-22148-1-git-send-email-yj44.cho@samsung.com>
-	<1401686571-22148-14-git-send-email-yj44.cho@samsung.com>
-	<CAFp+6iFpSHWwH68BSNzetrTdxt2wpZC3y3WfQ+nuRDBeask_MA@mail.gmail.com>
-	<538FDB89.70504@samsung.com>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: [PATCH v4 02/14] drm/exynos: use wait_event_timeout() for safety usage
+Date: Thu, 05 Jun 2014 15:19:42 +0900
+Message-ID: <1401949194-20092-3-git-send-email-yj44.cho@samsung.com>
+References: <1401949194-20092-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f54.google.com ([209.85.216.54]:64525 "EHLO
-	mail-qa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751706AbaFEFLF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Jun 2014 01:11:05 -0400
-In-Reply-To: <538FDB89.70504@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1401949194-20092-1-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, robh+dt <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, inki.dae@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, sw0312.kim@samsung.com, a.hajda@samsung.com
 
-Hi YoungJun,
+There could be the case that the page flip operation isn't finished correctly
+with some abnormal condition such as panel reset. So this patch replaces
+wait_event() with wait_event_timeout() to avoid waiting for page flip completion
+infinitely.
+And clears exynos_crtc->pending_flip in exynos_drm_crtc_page_flip()
+when exynos_drm_crtc_mode_set_commit() is failed.
 
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-On Thu, Jun 5, 2014 at 8:22 AM, YoungJun Cho <yj44.cho@samsung.com> wrote:
-> Hi Vivek,
->
->
-> On 06/04/2014 08:50 PM, Vivek Gautam wrote:
->>
->> On Mon, Jun 2, 2014 at 10:52 AM, YoungJun Cho <yj44.cho@samsung.com>
->> wrote:
->>>
->>> This patch adds sysreg device node, and sysreg property
->>> to fimd device node which is required to use I80 interface.
->>
->>
->> Same here. The system register nodes have been added to exynos5250 and
->> exynos5420 by the patch:
->> dfbbdbf ARM: dts: Add sysreg sytem controller node to exynos5250 and
->> exynos5420
->>
->> May be, you may want to move those two nodes to this common file
->> (exynos5.dtsi).
->>
->
-> Thank you for reporting.
-> I didn't check linux-samsung-soc.
->
-> The exynos5410, 5420 and 5422 use system register with base address
-> 0x10050000.
-> But exynos5260 and 5430 are different.
-> And I can't check exynos5250.
-
-Exynos5250 too starts with same register base address as Exynos5420,
-but as you say Exynos5430 and Exynos5260 starts with different base address
-then it make sense to keep them separate in their dtsi. (I couldn't
-check Exynos5430)
-
->
-> So with this condition, it is reasonable to remove these sysreg relevant
-> patches.
-
-Sure.
-
-[snip]
-
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 95c9435..3bf091d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -69,8 +69,10 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+ 
+ 	if (mode > DRM_MODE_DPMS_ON) {
+ 		/* wait for the completion of page flip. */
+-		wait_event(exynos_crtc->pending_flip_queue,
+-				atomic_read(&exynos_crtc->pending_flip) == 0);
++		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
++				!atomic_read(&exynos_crtc->pending_flip),
++				HZ/20))
++			atomic_set(&exynos_crtc->pending_flip, 0);
+ 		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
+ 	}
+ 
+@@ -259,6 +261,7 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+ 			spin_lock_irq(&dev->event_lock);
+ 			drm_vblank_put(dev, exynos_crtc->pipe);
+ 			list_del(&event->base.link);
++			atomic_set(&exynos_crtc->pending_flip, 0);
+ 			spin_unlock_irq(&dev->event_lock);
+ 
+ 			goto out;
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+1.7.9.5
