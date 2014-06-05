@@ -1,100 +1,86 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V3 2/8] drm/panel: add prepare and unprepare routines
-Date: Fri, 06 Jun 2014 00:40:46 +0530
-Message-ID: <1401995452-15798-3-git-send-email-ajaykumar.rs@samsung.com>
-References: <1401995452-15798-1-git-send-email-ajaykumar.rs@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:26935 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751434AbaFETMl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Jun 2014 15:12:41 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N6P006BWMP4W150@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 06 Jun 2014 04:12:40 +0900 (KST)
-In-reply-to: <1401995452-15798-1-git-send-email-ajaykumar.rs@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2] clk: exynos5420: Keep aclk66_peric enabled during boot
+Date: Thu, 05 Jun 2014 21:31:53 +0200
+Message-ID: <5390C5A9.5070900@gmail.com>
+References: <1401398496-4624-1-git-send-email-dianders@chromium.org>	<1401467562-5585-1-git-send-email-dianders@chromium.org>	<CAD=FV=W8-M5iOMDG190WGaeSySTd=qcp30k-H8DMUs_C5Pdwog@mail.gmail.com>	<5390C19A.9060201@gmail.com>
+ <CAD=FV=UZsEh+bOQxc8CP+yG5a5Sbp2eTyq8B_iq9u5io5G0B6A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAD=FV=UZsEh+bOQxc8CP+yG5a5Sbp2eTyq8B_iq9u5io5G0B6A@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
-Cc: inki.dae@samsung.com, seanpaul@google.com, jg1.han@samsung.com, ajaynumb@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, thierry.reding@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Most of the panels need an init sequence as mentioned below:
-	-- poweron LCD unit/LCD_EN
-	-- start video data
-	-- poweron LED unit/BACKLIGHT_EN
-And, a de-init sequence as mentioned below:
-	-- poweroff LED unit/BACKLIGHT_EN
-	-- stop video data
-	-- poweroff LCD unit/LCD_EN
-With existing callbacks for drm panel, we cannot accomodate such panels,
-since only two callbacks, i.e "panel_enable" and panel_disable are supported.
+On 05.06.2014 21:22, Doug Anderson wrote:
+> Tomasz,
+> 
+> On Thu, Jun 5, 2014 at 12:14 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> On 05.06.2014 20:48, Doug Anderson wrote:
+>>> Tomasz / Mike,
+>>>
+>>> On Fri, May 30, 2014 at 9:32 AM, Doug Anderson <dianders@chromium.org> wrote:
+>>>> Right now if you've got earlyprintk enabled on exynos5420-peach-pit
+>>>> then you'll get a hang on boot.  Here's why:
+>>>>
+>>>> 1. The i2c-s3c2410 driver will probe at subsys_initcall.  It will
+>>>>    enable its clock and disable it.  This is the clock "i2c2".
+>>>> 2. The act of disabling "i2c2" will disable its parents.  In this case
+>>>>    the parent is "aclk66_peric".  There are no other children of
+>>>>    "aclk66_peric" officially enabled, so "aclk66_peric" will be turned
+>>>>    off (despite being CLK_IGNORE_UNUSED, but that's by design).
+>>>> 3. The next time you try to earlyprintk you'll do so without the UART
+>>>>    clock enabled.  That's because the UART clocks are also children of
+>>>>    "aclk66_peric".  You'll hang.
+>>>>
+>>>> There's no good place to put a clock enable for earlyprintk, which is
+>>>> handled by a bunch of assembly code.  The best we can do is to handle
+>>>> this in the clock driver.
+>>>>
+>>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>>>> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>>>> ---
+>>>> Changes in v2:
+>>>> - Use GATE_A and clk_get().  Save the clock for putting later.
+>>>> - Return 0 from exynos5420_clk_late_init().
+>>>>
+>>>>  drivers/clk/samsung/clk-exynos5420.c | 33 +++++++++++++++++++++++++++++++--
+>>>>  1 file changed, 31 insertions(+), 2 deletions(-)
+>>>
+>>> Are there other changes you'd like me to make to this?  It would be
+>>> really nice to get this in for 3.16 so the system doesn't just
+>>> mysteriously hang when you use earlyprintk.
+>>
+>> We can probably take this as an -rc fix, so it should be fine.
+>>
+>> However I still don't see the point of exporting this clock and
+>> polluting the global clkdev namespace. Even the diffstat looks better in v1.
+> 
+> OK, I'm happy to go back to v1 with the addition of the "return 0".
+> 
+> Mike: are you OK with that?
+> 
 
-This patch adds:
-	-- "prepare" callback which can be called before
-	the actual video data is on, and then call the "enable"
-	callback after the video data is available.
+One more question that just came to my mind: Why it is just the
+aclk66_peri and not its children related to UARTs?
 
-	-- "unprepare" callback which can be called after
-	the video data is off, and use "disable" callback
-	to do something before switching off the video data.
+Exynos5420 clock driver still needs a little clean-up, so I'm okay with
+any fix for now and changing this later if needed, but is this gate
+clock for ACLK66_PERIC even needed? It seems to be marked with
+CLK_IGNORE_UNUSED which suggests that it is not needed in this driver at
+all, along with other similar clocks. AFAIK for power management
+purposes our fine-grained approach is fine and we shouldn't need to use
+the big gates.
 
-Now, we can easily map the above scenario as shown below:
-	poweron LCD unit/LCD_EN = "prepare" callback
-	poweron LED unit/BACKLIGHT_EN = "enable" callback
-	poweroff LED unit/BACKLIGHT_EN = "disable" callback
-	poweroff LCD unit/LCD_EN = "unprepare" callback
-
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
- include/drm/drm_panel.h |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-index c2ab77a..9addc69 100644
---- a/include/drm/drm_panel.h
-+++ b/include/drm/drm_panel.h
-@@ -31,7 +31,9 @@ struct drm_device;
- struct drm_panel;
- 
- struct drm_panel_funcs {
-+	int (*unprepare)(struct drm_panel *panel);
- 	int (*disable)(struct drm_panel *panel);
-+	int (*prepare)(struct drm_panel *panel);
- 	int (*enable)(struct drm_panel *panel);
- 	int (*get_modes)(struct drm_panel *panel);
- };
-@@ -46,6 +48,14 @@ struct drm_panel {
- 	struct list_head list;
- };
- 
-+static inline int drm_panel_unprepare(struct drm_panel *panel)
-+{
-+	if (panel && panel->funcs && panel->funcs->unprepare)
-+		return panel->funcs->unprepare(panel);
-+
-+	return panel ? -ENOSYS : -EINVAL;
-+}
-+
- static inline int drm_panel_disable(struct drm_panel *panel)
- {
- 	if (panel && panel->funcs && panel->funcs->disable)
-@@ -54,6 +64,14 @@ static inline int drm_panel_disable(struct drm_panel *panel)
- 	return panel ? -ENOSYS : -EINVAL;
- }
- 
-+static inline int drm_panel_prepare(struct drm_panel *panel)
-+{
-+	if (panel && panel->funcs && panel->funcs->prepare)
-+		return panel->funcs->prepare(panel);
-+
-+	return panel ? -ENOSYS : -EINVAL;
-+}
-+
- static inline int drm_panel_enable(struct drm_panel *panel)
- {
- 	if (panel && panel->funcs && panel->funcs->enable)
--- 
-1.7.9.5
+Best regards,
+Tomasz
