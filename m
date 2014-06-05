@@ -1,8 +1,8 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v4 07/14] ARM: dts: exynos_dsim: add exynos5420 compatible to
- DT bindings
-Date: Thu, 05 Jun 2014 15:19:47 +0900
-Message-ID: <1401949194-20092-8-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH v4 01/14] drm/exynos: dsi: move the EoT packets configuration
+ point
+Date: Thu, 05 Jun 2014 15:19:41 +0900
+Message-ID: <1401949194-20092-2-git-send-email-yj44.cho@samsung.com>
 References: <1401949194-20092-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,30 +22,38 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds relevant to exynos5420 compatible
-for exynos5420 SoC support.
+This configuration could be used in MIPI DSI command mode also.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- .../devicetree/bindings/video/exynos_dsim.txt      |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt b/Documentation/devicetree/bindings/video/exynos_dsim.txt
-index 33b5730..29bf3b2 100644
---- a/Documentation/devicetree/bindings/video/exynos_dsim.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
-@@ -1,7 +1,9 @@
- Exynos MIPI DSI Master
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 6302aa6..df2d23d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -473,8 +473,6 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
  
- Required properties:
--  - compatible: "samsung,exynos4210-mipi-dsi"
-+  - compatible: value should be one of the following
-+			"samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
-+			"samsung,exynos5420-mipi-dsi" /* for Exynos5420 SoCs */
-   - reg: physical base address and length of the registers set for the device
-   - interrupts: should contain DSI interrupt
-   - clocks: list of clock specifiers, must contain an entry for each required
+ 		if (!(dsi->mode_flags & MIPI_DSI_MODE_VSYNC_FLUSH))
+ 			reg |= DSIM_MFLUSH_VS;
+-		if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
+-			reg |= DSIM_EOT_DISABLE;
+ 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+ 			reg |= DSIM_SYNC_INFORM;
+ 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
+@@ -491,6 +489,9 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
+ 			reg |= DSIM_HSA_MODE;
+ 	}
+ 
++	if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
++		reg |= DSIM_EOT_DISABLE;
++
+ 	switch (dsi->format) {
+ 	case MIPI_DSI_FMT_RGB888:
+ 		reg |= DSIM_MAIN_PIX_FORMAT_RGB888;
 -- 
 1.7.9.5
