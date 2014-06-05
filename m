@@ -1,139 +1,53 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH 3/3] ARM: dts: Use the cros-ec-keyboard fragment in exynos5250-snow
-Date: Wed,  4 Jun 2014 15:20:20 -0700
-Message-ID: <1401920421-25729-3-git-send-email-dianders@chromium.org>
-References: <1401920421-25729-1-git-send-email-dianders@chromium.org>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1401920421-25729-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH] serial: samsung: fix typo in debug code
+Date: Wed, 04 Jun 2014 18:20:41 -0700
+Message-ID: <1401931241.26329.16.camel@joe-AO725>
+References: <10455941.RzodM59Z3O@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <10455941.RzodM59Z3O@wuerfel>
+Sender: linux-serial-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- arch/arm/boot/dts/exynos5250-snow.dts | 93 ++---------------------------------
- 1 file changed, 3 insertions(+), 90 deletions(-)
+On Tue, 2014-06-03 at 11:53 +0200, Arnd Bergmann wrote:
+> commit e4ac92df2791 ("serial: samsung: Neaten dbg uses") introduced
+> a regression in the conversion from vsprintf to vsnprintf.
+> 
+> This fixes the build error by passing the correct variable name.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> 
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+> index 3293377..c1d3ebd 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -66,7 +66,7 @@ static void dbg(const char *fmt, ...)
+>  	char buff[256];
+>  
+>  	va_start(va, fmt);
+> -	vscnprintf(buff, sizeof(buf), fmt, va);
+> +	vscnprintf(buff, sizeof(buff), fmt, va);
+>  	va_end(va);
+>  
+>  	printascii(buff);
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 079fdf9..7bd2df1 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -137,7 +137,7 @@
- 				sbs,poll-retry-count = <1>;
- 			};
- 
--			ec: embedded-controller {
-+			cros_ec: embedded-controller {
- 				compatible = "google,cros-ec-i2c";
- 				reg = <0x1e>;
- 				interrupts = <6 0>;
-@@ -145,95 +145,6 @@
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&ec_irq>;
- 				wakeup-source;
--
--				keyboard-controller {
--				        compatible = "google,cros-ec-keyb";
--				        keypad,num-rows = <8>;
--				        keypad,num-columns = <13>;
--				        google,needs-ghost-filter;
--					linux,keymap = <0x0001007d	/* L_META */
--							0x0002003b	/* F1 */
--							0x00030030	/* B */
--							0x00040044	/* F10 */
--							0x00060031	/* N */
--							0x0008000d	/* = */
--							0x000a0064	/* R_ALT */
--
--							0x01010001	/* ESC */
--							0x0102003e	/* F4 */
--							0x01030022	/* G */
--							0x01040041	/* F7 */
--							0x01060023	/* H */
--							0x01080028	/* ' */
--							0x01090043	/* F9 */
--							0x010b000e	/* BKSPACE */
--
--							0x0200001d	/* L_CTRL */
--							0x0201000f	/* TAB */
--							0x0202003d	/* F3 */
--							0x02030014	/* T */
--							0x02040040	/* F6 */
--							0x0205001b	/* ] */
--							0x02060015	/* Y */
--							0x02070056	/* 102ND */
--							0x0208001a	/* [ */
--							0x02090042	/* F8 */
--
--							0x03010029	/* GRAVE */
--							0x0302003c	/* F2 */
--							0x03030006	/* 5 */
--							0x0304003f	/* F5 */
--							0x03060007	/* 6 */
--							0x0308000c	/* - */
--							0x030b002b	/* \ */
--
--							0x04000061	/* R_CTRL */
--							0x0401001e	/* A */
--							0x04020020	/* D */
--							0x04030021	/* F */
--							0x0404001f	/* S */
--							0x04050025	/* K */
--							0x04060024	/* J */
--							0x04080027	/* ; */
--							0x04090026	/* L */
--							0x040a002b	/* \ */
--							0x040b001c	/* ENTER */
--
--							0x0501002c	/* Z */
--							0x0502002e	/* C */
--							0x0503002f	/* V */
--							0x0504002d	/* X */
--							0x05050033	/* , */
--							0x05060032	/* M */
--							0x0507002a	/* L_SHIFT */
--							0x05080035	/* / */
--							0x05090034	/* . */
--							0x050B0039	/* SPACE */
--
--							0x06010002	/* 1 */
--							0x06020004	/* 3 */
--							0x06030005	/* 4 */
--							0x06040003	/* 2 */
--							0x06050009	/* 8 */
--							0x06060008	/* 7 */
--							0x0608000b	/* 0 */
--							0x0609000a	/* 9 */
--							0x060a0038	/* L_ALT */
--							0x060b006c	/* DOWN */
--							0x060c006a	/* RIGHT */
--
--							0x07010010	/* Q */
--							0x07020012	/* E */
--							0x07030013	/* R */
--							0x07040011	/* W */
--							0x07050017	/* I */
--							0x07060016	/* U */
--							0x07070036	/* R_SHIFT */
--							0x07080019	/* P */
--							0x07090018	/* O */
--							0x070b0067	/* UP */
--							0x070c0069>;	/* LEFT */
--				};
- 			};
- 
- 			power-regulator {
-@@ -431,3 +342,5 @@
- 		};
- 	};
- };
-+
-+#include "cros-ec-keyboard.dtsi"
--- 
-2.0.0.526.g5318336
+Greg?
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The original has ended up in Linus' -next branch.
+
+Can you please apply this sooner rather than later?
+
+Sorry for the bother.  Dunno how it happened.
+
+I thought I compiled it with the appropriate CONFIG
+settings.
+
+
