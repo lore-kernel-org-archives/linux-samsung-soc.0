@@ -1,95 +1,120 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: =?UTF-8?q?=5BPATCH=20v4=2003/14=5D=20ARM=3A=20dts=3A=20samsung-fimd=3A=20add=20LCD=20I80=20interface=20specific=20properties?=
-Date: Thu, 05 Jun 2014 15:19:43 +0900
-Message-ID: <1401949194-20092-4-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH v4 04/14] drm/exynos: add TE handler to support LCD I80
+ interface
+Date: Thu, 05 Jun 2014 15:19:44 +0900
+Message-ID: <1401949194-20092-5-git-send-email-yj44.cho@samsung.com>
 References: <1401949194-20092-1-git-send-email-yj44.cho@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:28680 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751098AbaFEGUC (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:25286 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751409AbaFEGUF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Jun 2014 02:20:02 -0400
+	Thu, 5 Jun 2014 02:20:05 -0400
 In-reply-to: <1401949194-20092-1-git-send-email-yj44.cho@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com
 
-In case of using MIPI DSI based I80 interface panel,
-the relevant registers should be set.
-So this patch adds relevant DT bindings.
+To support LCD I80 interface, the panel should generates
+Tearing Effect synchronization signal between MCU and FB
+to display video images.
+And the display controller should trigger to transfer
+video image at this signal.
+So the panel receives the TE IRQ, then calls this handler
+chains to notify it to the display controller.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- .../devicetree/bindings/video/samsung-fimd.txt     |   28 ++++++++++++=
-++++++++
- 1 file changed, 28 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c |   11 +++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h |    7 +++++++
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |    3 +++
+ include/drm/drm_mipi_dsi.h               |    8 ++++++++
+ 4 files changed, 29 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b=
-/Documentation/devicetree/bindings/video/samsung-fimd.txt
-index 2dad41b..59ff61e 100644
---- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
-+++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
-@@ -44,6 +44,34 @@ Optional Properties:
- - display-timings: timing settings for FIMD, as described in document =
-[1].
- 		Can be used in case timings cannot be provided otherwise
- 		or to override timings provided by the panel.
-+- samsung,sysreg: handle to syscon used to control the system register=
-s
-+- i80-if-timings: timing configuration for lcd i80 interface support.
-+  - cs-setup: clock cycles for the active period of address signal is =
-enabled
-+              until chip select is enabled.
-+              If not specified, the default value(0) will be used.
-+  - wr-setup: clock cycles for the active period of CS signal is enabl=
-ed until
-+              write signal is enabled.
-+              If not specified, the default value(0) will be used.
-+  - wr-active: clock cycles for the active period of CS is enabled.
-+               If not specified, the default value(1) will be used.
-+  - wr-hold: clock cycles for the active period of CS is disabled unti=
-l write
-+             signal is disabled.
-+             If not specified, the default value(0) will be used.
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 3bf091d..504e023 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -511,3 +511,14 @@ int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
+ 
+ 	return -EPERM;
+ }
 +
-+  The parameters are defined as:
++int exynos_drm_crtc_te_handler(struct drm_crtc *crtc)
++{
++	struct exynos_drm_manager *manager = to_exynos_crtc(crtc)->manager;
++	int ret = 0;
 +
-+    VCLK(internal)  __|=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|_____|=C2=AF=
-=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|_____|=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=
-|_____|=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|_____|=C2=AF=C2=AF
-+                      :            :            :            :        =
-    :
-+    Address Output  --:<XXXXXXXXXXX:XXXXXXXXXXXX:XXXXXXXXXXXX:XXXXXXXX=
-XXXX:XX
-+                      | cs-setup+1 |            :            :        =
-    :
-+                      |<---------->|            :            :        =
-    :
-+    Chip Select     =C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=
-=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|____________:____________:_____=
-_______|=C2=AF=C2=AF
-+                                   | wr-setup+1 |            | wr-hold=
-+1  |
-+                                   |<---------->|            |<-------=
---->|
-+    Write Enable    =C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=
-=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=
-=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF|____________|=C2=AF=C2=AF=
-=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=C2=AF=
-=C2=AF
-+                                                | wr-active+1|
-+                                                |<---------->|
-+    Video Data      ----------------------------<XXXXXXXXXXXXXXXXXXXXX=
-XXXX>--
-=20
- The device node can contain 'port' child nodes according to the bindin=
-gs defined
- in [2]. The following are properties specific to those nodes:
---=20
++	if (manager->ops->te_handler)
++		ret = manager->ops->te_handler(manager);
++
++	return ret;
++}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+index 9f74b10..875d93d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+@@ -36,4 +36,11 @@ void exynos_drm_crtc_plane_disable(struct drm_crtc *crtc, int zpos);
+ int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
+ 					unsigned int out_type);
+ 
++/*
++ * This function calls the crtc device(manager)'s te_handler() callback
++ * to trigger to transfer video image at the tearing effect synchronization
++ * signal.
++ */
++int exynos_drm_crtc_te_handler(struct drm_crtc *crtc);
++
+ #endif
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 36535f3..ab3a88d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -188,6 +188,8 @@ struct exynos_drm_display {
+  * @win_commit: apply hardware specific overlay data to registers.
+  * @win_enable: enable hardware specific overlay.
+  * @win_disable: disable hardware specific overlay.
++ * @te_handler: trigger to transfer video image at the tearing effect
++ *	synchronization signal if there is a page flip request.
+  */
+ struct exynos_drm_manager;
+ struct exynos_drm_manager_ops {
+@@ -206,6 +208,7 @@ struct exynos_drm_manager_ops {
+ 	void (*win_commit)(struct exynos_drm_manager *mgr, int zpos);
+ 	void (*win_enable)(struct exynos_drm_manager *mgr, int zpos);
+ 	void (*win_disable)(struct exynos_drm_manager *mgr, int zpos);
++	int (*te_handler)(struct exynos_drm_manager *mgr);
+ };
+ 
+ /*
+diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+index 7209df1..f6d4c85 100644
+--- a/include/drm/drm_mipi_dsi.h
++++ b/include/drm/drm_mipi_dsi.h
+@@ -49,6 +49,13 @@ struct mipi_dsi_msg {
+  * @detach: detach DSI device from DSI host
+  * @transfer: send and/or receive DSI packet, return number of received bytes,
+  * 	      or error
++ * @te_handler: call the crtc te_handler() callback from DSI host.
++ *		The panel generates tearing effect synchronization signal
++ *		between MCU and FB to display video images.
++ *		And the display controller should trigger to transfer video
++ *		image at this signal.
++ *		So the panel receives the TE IRQ, then calls this handler
++ *		to notify it to the display controller.
+  */
+ struct mipi_dsi_host_ops {
+ 	int (*attach)(struct mipi_dsi_host *host,
+@@ -57,6 +64,7 @@ struct mipi_dsi_host_ops {
+ 		      struct mipi_dsi_device *dsi);
+ 	ssize_t (*transfer)(struct mipi_dsi_host *host,
+ 			    struct mipi_dsi_msg *msg);
++	int (*te_handler)(struct mipi_dsi_host *host);
+ };
+ 
+ /**
+-- 
 1.7.9.5
