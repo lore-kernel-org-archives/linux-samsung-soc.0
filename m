@@ -1,77 +1,70 @@
-From: Varun Sethi <Varun.Sethi@freescale.com>
-Subject: RE: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Thu, 5 Jun 2014 19:10:19 +0000
-Message-ID: <07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
- <4545972.cM7IP1qTXQ@wuerfel>
- <CAL_Jsq+tkFNpjSEZboT+o69B_Z3a8e-ZVKaYDmLwtkyYoPy6VQ@mail.gmail.com>
- <5288123.eXagyPAxNq@wuerfel>
- <20140602104104.GD3855@e103592.cambridge.arm.com>
- <20140604143509.GF28484@ulmo> <20140604164132.GF6644@arm.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2] clk: exynos5420: Keep aclk66_peric enabled during boot
+Date: Thu, 5 Jun 2014 12:22:27 -0700
+Message-ID: <CAD=FV=UZsEh+bOQxc8CP+yG5a5Sbp2eTyq8B_iq9u5io5G0B6A@mail.gmail.com>
+References: <1401398496-4624-1-git-send-email-dianders@chromium.org>
+	<1401467562-5585-1-git-send-email-dianders@chromium.org>
+	<CAD=FV=W8-M5iOMDG190WGaeSySTd=qcp30k-H8DMUs_C5Pdwog@mail.gmail.com>
+	<5390C19A.9060201@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140604164132.GF6644@arm.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Will Deacon <will.deacon@arm.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Arnd Bergmann <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stuart Yoder <stuart.yoder@freescale.com>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f176.google.com ([209.85.220.176]:43355 "EHLO
+	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752497AbaFETW2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Jun 2014 15:22:28 -0400
+Received: by mail-vc0-f176.google.com with SMTP id im17so1703596vcb.21
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Jun 2014 12:22:27 -0700 (PDT)
+In-Reply-To: <5390C19A.9060201@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
+Tomasz,
 
+On Thu, Jun 5, 2014 at 12:14 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On 05.06.2014 20:48, Doug Anderson wrote:
+>> Tomasz / Mike,
+>>
+>> On Fri, May 30, 2014 at 9:32 AM, Doug Anderson <dianders@chromium.org> wrote:
+>>> Right now if you've got earlyprintk enabled on exynos5420-peach-pit
+>>> then you'll get a hang on boot.  Here's why:
+>>>
+>>> 1. The i2c-s3c2410 driver will probe at subsys_initcall.  It will
+>>>    enable its clock and disable it.  This is the clock "i2c2".
+>>> 2. The act of disabling "i2c2" will disable its parents.  In this case
+>>>    the parent is "aclk66_peric".  There are no other children of
+>>>    "aclk66_peric" officially enabled, so "aclk66_peric" will be turned
+>>>    off (despite being CLK_IGNORE_UNUSED, but that's by design).
+>>> 3. The next time you try to earlyprintk you'll do so without the UART
+>>>    clock enabled.  That's because the UART clocks are also children of
+>>>    "aclk66_peric".  You'll hang.
+>>>
+>>> There's no good place to put a clock enable for earlyprintk, which is
+>>> handled by a bunch of assembly code.  The best we can do is to handle
+>>> this in the clock driver.
+>>>
+>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>>> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>>> ---
+>>> Changes in v2:
+>>> - Use GATE_A and clk_get().  Save the clock for putting later.
+>>> - Return 0 from exynos5420_clk_late_init().
+>>>
+>>>  drivers/clk/samsung/clk-exynos5420.c | 33 +++++++++++++++++++++++++++++++--
+>>>  1 file changed, 31 insertions(+), 2 deletions(-)
+>>
+>> Are there other changes you'd like me to make to this?  It would be
+>> really nice to get this in for 3.16 so the system doesn't just
+>> mysteriously hang when you use earlyprintk.
+>
+> We can probably take this as an -rc fix, so it should be fine.
+>
+> However I still don't see the point of exporting this clock and
+> polluting the global clkdev namespace. Even the diffstat looks better in v1.
 
-> -----Original Message-----
-> From: iommu-bounces@lists.linux-foundation.org [mailto:iommu-
-> bounces@lists.linux-foundation.org] On Behalf Of Will Deacon
-> Sent: Wednesday, June 04, 2014 10:12 PM
-> To: Thierry Reding
-> Cc: Mark Rutland; devicetree@vger.kernel.org; linux-samsung-
-> soc@vger.kernel.org; Pawel Moll; Arnd Bergmann; Ian Campbell; Grant
-> Grundler; Stephen Warren; linux-kernel@vger.kernel.org; Marc Zyngier;
-> Linux IOMMU; Rob Herring; Kumar Gala; linux-tegra@vger.kernel.org; Cho
-> KyongHo; Dave P Martin; linux-arm-kernel@lists.infradead.org
-> Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree
-> bindings
-> 
-> On Wed, Jun 04, 2014 at 03:35:10PM +0100, Thierry Reding wrote:
-> > On Mon, Jun 02, 2014 at 11:41:04AM +0100, Dave Martin wrote:
-> > > In the strictest sense, no.
-> > >
-> > > But for a large set of sane configurations, this probably works.
-> > >
-> > > Small sets of randomly-assigned IDs can just be enumerated one by
-> one.
-> > >
-> > > We wouldn't be able to describe folding and bit shuffling, but we
-> > > probably don't want to encourage that anyway.
-> >
-> > I'm having some difficulty understanding this. You make it sound like
-> > there's a fairly arbitrary number of IDs that the SMMU can handle. So
-> > how is the mapping to devices defined? If you say encourage that does
-> > make it sound like the assignment of IDs is purely defined by some
-> > mechanism in software rather than in hardware. Or they are more or
-> > less randomly picked by someone. If that's the case, is that not
-> > something that should be dynamically allocated by the kernel rather
-> > than put into the device tree?
-> 
-> The set of StreamIDs that can be generated by a master is fixed in the
-> hardware. The SMMU can then be programmed to map these incoming IDs onto
-> a context ID (or a set of context IDs), which are the IDs used internally
-> by the SMMU to find the page tables etc.
-> 
-> The StreamID -> ContextID mapping is dynamic and controlled by software.
-> The Master -> StreamIDs mapping is fixed in the hardware.
-The Master -> StreamIDs mapping may not always be fixed in the hardware. At, least in our case we plan to program these via software. PCI devices is one place where this mapping would have to be dynamic (based on the topology i.e. if the devices are connected to a bridge etc). Also, we have a hot plug device architecture where the stream ID is software programmable.
+OK, I'm happy to go back to v1 with the addition of the "return 0".
 
-Other than that, based on the isolation requirements (iommu domain) software programmability offers greater flexibility.
-
--Varun
+Mike: are you OK with that?
