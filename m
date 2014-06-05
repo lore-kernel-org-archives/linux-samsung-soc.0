@@ -1,37 +1,56 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/2] [RFC] ASoC: samsung: move s3c24xx over
-	to dmaengine
-Date: Thu, 05 Jun 2014 16:04:03 +0200
-Message-ID: <4306380.m7SZhHfhaK@wuerfel>
-References: <6123933.aGtaUr149J@wuerfel> <20140605133606.GX2520@sirena.org.uk>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 2/3] clocksource: exynos_mct: cache mct upper count
+Date: Thu, 5 Jun 2014 10:14:05 -0700
+Message-ID: <CAD=FV=Xy84f=KFO4SLmW27=ztt_hxSiBMJSMAwhw9RxKAaFU-Q@mail.gmail.com>
+References: <1401903034-20074-1-git-send-email-dianders@chromium.org>
+	<1401903034-20074-2-git-send-email-dianders@chromium.org>
+	<CAKfTPtBeYMW7kOrAhVrqoWhTHfLAtcMeY9FXxZpm7CNAM7NdaA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20140605133606.GX2520@sirena.org.uk>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sangbeom Kim <sbkim73@samsung.com>, lgirdwood@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAKfTPtBeYMW7kOrAhVrqoWhTHfLAtcMeY9FXxZpm7CNAM7NdaA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mandeep Singh Baines <msb@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel <linux-kernel@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday 05 June 2014 14:36:06 Mark Brown wrote:
-> On Thu, Jun 05, 2014 at 03:20:50PM +0200, Arnd Bergmann wrote:
-> > The s3c24xx sound support keeps giving randconfig build errors, this
-> > is a new attempt to solve it by moving the driver over to use dmaengine
-> > exclusively.
-> 
-> We already have a patch pending for this, it's just waiting until after
-> the merge window to avoid bisection breakage since it depends on
-> dmaengine changes.
+Vincent,
 
-Ok, very good.
+On Thu, Jun 5, 2014 at 12:55 AM, Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+> On 4 June 2014 19:30, Doug Anderson <dianders@chromium.org> wrote:
+>> From: Mandeep Singh Baines <msb@chromium.org>
+>>
+>> Saves one register read.  Note that the upper count only changes every
+>> ~178 seconds with a 24MHz source clock, so it's likely it hasn't
+>> changed from call to call.
+>
+> Hi Doug,
+>
+> Have you checked that the time saved in using a 32bits counter instead
+> of a 64bits one is not lost in the handle of the wrap of sched_clock
+> which occurs every 178s instead of never ?
+>
+> sched_clock_poll function will be called every 178s
 
-	Arnd
+Probably should move this to the discussion in the other patch where
+we're talking about moving to 32-bits?
+
+...but in general I have no benchmarks at all that how much the
+scheduler is affected by this change.  All of my benchmarks are based
+on gettimeofday(), where the improvement is clear.  Do you have a
+suggested way to check?
+
+I think that it's pretty clear that we'll want to take either the
+32-bit conversion or the 64-bit optimizations I sent out.  If you take
+out gettimeofday() overhead, I believe that the actual read of the MCT
+(exynos_frc_read) took about:
+* ~800ns per call with the original 64-bit code
+* ~500ns per call with the optimized 64-bit code (both patch 2 and 3)
+* ~500ns per call with the 32-bit code
+
+The 32-bit code is slightly faster but not significantly (like 530ns
+vs 500ns).  ...but it is definitely simpler.
+
+If we find that the schedule clock wrap overhead is real then that
+would be a good reason to take the 64-bit version.
