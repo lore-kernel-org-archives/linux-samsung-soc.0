@@ -1,86 +1,38 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2] ARM: EXYNOS: mcpm: Don't rely on firmware's
- secondary_cpu_start
-Date: Fri,  6 Jun 2014 16:14:25 -0700
-Message-ID: <1402096465-13218-1-git-send-email-dianders@chromium.org>
-References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v3] clk: exynos5420: Remove aclk66_peric from the clock
+ tree description
+Date: Fri, 6 Jun 2014 16:19:59 -0700
+Message-ID: <CAD=FV=Wug+3yanjUJ6OffHggJnKEcWcAKKovtEbswoFDmhevmQ@mail.gmail.com>
+References: <1401467562-5585-1-git-send-email-dianders@chromium.org>
+	<1402000514-30752-1-git-send-email-dianders@chromium.org>
+	<20140606000324.10062.10257@quantum>
+	<CAD=FV=UQhBh68Bgv=kfUROCOxg1dS1OnZ1ir+wouewKoDFE_1g@mail.gmail.com>
+	<20140606223123.10062.29366@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1402090985-8061-1-git-send-email-dianders@chromium.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Tushar Behera <trblinux@gmail.com>, linux@arm.linux.org.uk, Kevin Hilman <khilman@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, olof@lixom.net, Thomas Abraham <thomas.ab@samsung.com>, linux-arm-kernel@lists.infradead.org, Abhilash Kesavan <a.kesavan@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140606223123.10062.29366@quantum>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arun Kumar <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On exynos mcpm systems the firmware is hardcoded to jump to an address
-in SRAM (0x02073000) when secondary CPUs come up.  By default the
-firmware puts a bunch of code at that location.  That code expects the
-kernel to fill in a few slots with addresses that it uses to jump back
-to the kernel's entry point for secondary CPUs.
+Mike,
 
-Originally (on prerelease hardware) this firmware code contained a
-bunch of workarounds to deal with boot ROM bugs.  However on all
-shipped hardware we simply use this code to redirect to a kernel
-function for bringing up the CPUs.
+On Fri, Jun 6, 2014 at 3:31 PM, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> Anyways, getting back on point, Tomasz was right about the whole clk_get
+> thing. So I'm happy to take either V1 or V3 of your patch. I will be
+> submitting a second PR for 3.16 next week and it will include whichever
+> version you and Tomasz agree is best.
 
-Let's stop relying on the code provided by the bootloader and just
-plumb in our own (simple) code jump to the kernel.  This has the nice
-benefit of fixing problems due to the fact that older bootloaders
-(like the one shipped on the Samsung Chromebook 2) might have put
-slightly different code into this location.
+I like V3 slightly better and it has Tomasz's Ack.  Unless he emails
+and suggests that he really V1 better then I'd say go with V3.  If we
+go back to V1 we'll need to add the "return 0", which I'm happy to do.
 
-Once suspend/resume is implemented for systems using exynos-mcpm we'll
-need to make sure we reinstall our fixed up code after resume.  ...but
-that's not anything new since IRAM (and thus the address of the
-mcpm_entry_point) is lost across suspend/resume anyway.
+Thanks!
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
-Changes in v2:
-- Removed #define
-
- arch/arm/mach-exynos/mcpm-exynos.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
-index 0498d0b..ace0ed6 100644
---- a/arch/arm/mach-exynos/mcpm-exynos.c
-+++ b/arch/arm/mach-exynos/mcpm-exynos.c
-@@ -25,7 +25,6 @@
- 
- #define EXYNOS5420_CPUS_PER_CLUSTER	4
- #define EXYNOS5420_NR_CLUSTERS		2
--#define MCPM_BOOT_ADDR_OFFSET		0x1c
- 
- /*
-  * The common v7_exit_coherency_flush API could not be used because of the
-@@ -343,11 +342,13 @@ static int __init exynos_mcpm_init(void)
- 	pr_info("Exynos MCPM support installed\n");
- 
- 	/*
--	 * Future entries into the kernel can now go
--	 * through the cluster entry vectors.
-+	 * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
-+	 * as part of secondary_cpu_start().  Let's redirect it to the
-+	 * mcpm_entry_point().
- 	 */
--	__raw_writel(virt_to_phys(mcpm_entry_point),
--			ns_sram_base_addr + MCPM_BOOT_ADDR_OFFSET);
-+	__raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
-+	__raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
-+	__raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
- 
- 	iounmap(ns_sram_base_addr);
- 
--- 
-2.0.0.526.g5318336
+-Doug
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
