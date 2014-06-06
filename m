@@ -1,64 +1,79 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] PM / OPP: Remove ARCH_HAS_OPP
-Date: Fri, 6 Jun 2014 14:08:50 +0100
-Message-ID: <20140606130850.GO2520@sirena.org.uk>
-References: <1402051016-28853-1-git-send-email-broonie@kernel.org>
- <20140606111411.GD25896@verge.net.au>
- <CANqRtoTy_LwSiZgRFEw5Ly4ojfinoCichxrX7cO6m2XB9JGoww@mail.gmail.com>
- <20140606125003.GA13332@verge.net.au>
+From: Doug Anderson <dianders@google.com>
+Subject: Re: Problems booting exynos5420 with >1 CPU
+Date: Fri, 6 Jun 2014 10:17:00 -0700
+Message-ID: <CAD=FV=XqwEQNJmij-4Gh62OY+B66AjdQjZC0=f_6tbot3UfQaA@mail.gmail.com>
+References: <CAD=FV=UX90hgyojW3k_kpT=mt8eX9=AyHr+AGjhK=MrE1hHbUA@mail.gmail.com>
+	<539145B4.5000200@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cU9XODsizZBnwgll"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20140606125003.GA13332@verge.net.au>
-Sender: linux-pm-owner@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>
-Cc: Magnus Damm <magnus.damm@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh@kernel.org>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Tony Lindgren <tony@atomide.com>, Michal Simek <michal.simek@xilinx.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, SH-Linux <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ve0-f178.google.com ([209.85.128.178]:36342 "EHLO
+	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751851AbaFFRRC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 6 Jun 2014 13:17:02 -0400
+Received: by mail-ve0-f178.google.com with SMTP id sa20so3568479veb.37
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Jun 2014 10:17:00 -0700 (PDT)
+In-Reply-To: <539145B4.5000200@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <trblinux@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>, "Turquette, Mike" <mturquette@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Arun Kumar <arun.kk@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Sonny Rao <sonnyrao@chromium.org>
+
+Tushar,
+
+On Thu, Jun 5, 2014 at 9:38 PM, Tushar Behera <trblinux@gmail.com> wrote:
+> On 06/06/2014 06:38 AM, Doug Anderson wrote:
+>> Hi,
+>>
+>> When I try to boot linuxnext on my exynos5420-peach-pit chromebook I
+>> have problems bringing up extra CPUs:
+>>
+>> 1. They don't come up
+>>
+>
+> [ ... ]
+>
+>> [    1.125030] CPU1: failed to boot: -38
+>> [    2.130043] CPU2: failed to boot: -38
+>> [    3.135059] CPU3: failed to boot: -38
+>>
+>
+> With following config modifications over exynos_defconfig, I can see 4
+> big cores coming up.
+>
+> CONFIG_MCPM=y
+> CONFIG_EXYNOS5420_MCPM=y
+
+Thanks!  OK, that certainly changes the behavior for me!  ...but it
+doesn't work.
+
+I also got a response from some folks that I pinged off-list.
+Apparently our U-Boot doesn't set things up like the upstream kernel
+expects (ugh!), so to get things booting you need the magic commands
+in U-Boot:
+
+mw.l 02073028 0  # Clear EXYNOS_START_FLAG
+mw.l 10d25000 3  # Enable CCI from U-Boot
+
+Once you do that then all 8 CPUs can come up!
 
 
---cU9XODsizZBnwgll
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Can someone at Samsung come up with a reasonable solution about how we
+should solve this in a way that everyone can be happy with?  I haven't
+really been involved with MCPM stuff, so I'm not sure why what landed
+upstream is different than what we have in our kernel.
 
-On Fri, Jun 06, 2014 at 09:50:06PM +0900, Simon Horman wrote:
-> On Fri, Jun 06, 2014 at 09:14:01PM +0900, Magnus Damm wrote:
+I guess worst case we can require that anyone running an upstream
+kernel simply needs a "fixed" U-Boot, but that's always a bit of a
+hassle.  We might have to go there eventually anyway given that our L2
+cache timings in U-Boot are wrong (again!) and it's unlikely that
+upstream will take some weird hack in the kernel to fix them...
 
-> > I'm not sure about the expected merge order for this kind of change vs
-> > queued up stuff in the renesas git tree, but I believe the following
-> > patch selects ARCH_HAS_OPP:
+-Doug
 
-> > [PATCH v3] ARM: shmobile: Mark all SoCs in shmobile as CPUFreq, capable
 
-> I propose that we fix that up by adding an incremental patch to
-> mach-shmobile via my renesas tree once the dependency (assuming there is
-> one) is in Linus's tree.
-
-Yes, the conversion to make ARCH_HAS_OPP unused is in Raphael's tree for
-the merge window.  I'd expect this patch to end up going after the merge
-window (or at the end I guess).
-
---cU9XODsizZBnwgll
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTkb1fAAoJELSic+t+oim9ksoP+wUlNxCCTSQ9UrzvZfjNPynK
-oVQNuAvD0dlyrOaE/OnY3QuJOp/1FaVnWIr/kJO/N1KlSetg6Pz7n9I5W0/4zlQ/
-CtV50+Kj799fLTNAuFU5ftinugVHZCqccgqZuCGng/XR+/eJ4mq1PBSgQHVyrNxm
-PXyCXIjSlVIX84YW4zA+5en/Tts74zzH3w8R27AVj6oW0Au6VIgjKEoeBYlgWD/g
-b1j7ShJ9ykUlel8XtggfrddRo1u9UmLsyilFrWKEPFmpfbCPKCIwoAg/xsszLqgo
-6nUx7f4gRPLBcDGAyRmlH32LdKDnce3N0Bxxgiz9rfYyoOPJia/ZITMPnUyHiezZ
-vrQjrdx/V5A1GXSjXO9I/GdrJORmX+TmFajhyZGasCduxHT7TJhFjFEVtcaeVad1
-1jBhKKonWmLdiFq454UCFSStBW0JoGCoho19df/lGloUDHG8JQgd5Fm0izhPn0bC
-mTWmc3KuxYukXVY8sko0sdlu50wtBMSknxm/bYI3Q/LBrxRtTRIoBbxwFnyHUs+N
-ZRDyeym6iiu1MRECKOWJZ8jnrQei5v5pjmuOTpQyZTbOmecT/TEwz2mUQDir/5Wb
-Bda+Jrh+I4ut81r2vdE6FLzHvWxtW0ijkXvMtXVwhW4yYsmpvPc+YAW4VpcasxiG
-lzTDIush25LhobKeaccI
-=iMA5
------END PGP SIGNATURE-----
-
---cU9XODsizZBnwgll--
+P.S. We also really need to do something about the configs.  There are
+no exynos configs upstream that have any useful set of options (that I
+know of).  ...and useful options don't seem to get selected
+automatically...
