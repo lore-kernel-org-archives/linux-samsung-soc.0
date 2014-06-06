@@ -1,76 +1,64 @@
-From: Doug Anderson <dianders@google.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
 Subject: Re: Problems booting exynos5420 with >1 CPU
-Date: Fri, 6 Jun 2014 14:12:50 -0700
-Message-ID: <CAD=FV=WnMJtagh6rvNdirU-PEc6nz8i_9xX6z-HPz0ZEc4k-7g@mail.gmail.com>
-References: <539145B4.5000200@gmail.com>
- <CAD=FV=XqwEQNJmij-4Gh62OY+B66AjdQjZC0=f_6tbot3UfQaA@mail.gmail.com>
- <CAM4voaknx3+X4O8MUwaruUFPyquY8Opq61ucKX08xTrv8PqfLg@mail.gmail.com>
- <CAD=FV=Vo1JR6n496Q3FqXjRBkbTBRg89_fJQNsqeRx8WQW_a9w@mail.gmail.com>
- <CAM4voakAMN4jdAZDPz55tnc3woZDieZ5aL3TVU2kYsNHT+AMqg@mail.gmail.com>
- <CAD=FV=UjmN5AwWMPy7mQt-J4A_niO8Ug4r15Ez2ZWPT1g3L=VA@mail.gmail.com>
- <CAM4voa=1FY5bfk095BU=3X=vzqjnCSfdLoXpCix5tOwDgOoioQ@mail.gmail.com>
- <CAD=FV=UwgPQVm_KvHbpoJNs-5EtpyaYJ2rp2f-466uhnob=ixA@mail.gmail.com>
- <CAM4voa=cTbobQHi+sBOCy_CDYAnQ6CsvvuoE7XwqFZV_E3gEbQ@mail.gmail.com>
- <CAD=FV=U6HuQj3MxZ-yF-MYdjzqjT5bu=K26JuHZP1hjJzkSqbg@mail.gmail.com>
- <20140606210151.GK23430@n2100.arm.linux.org.uk>
+Date: Fri, 6 Jun 2014 17:34:21 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1406061717520.25775@knanqh.ubzr>
+References: <CAD=FV=UX90hgyojW3k_kpT=mt8eX9=AyHr+AGjhK=MrE1hHbUA@mail.gmail.com> <539145B4.5000200@gmail.com> <CAD=FV=XqwEQNJmij-4Gh62OY+B66AjdQjZC0=f_6tbot3UfQaA@mail.gmail.com> <CAM4voaknx3+X4O8MUwaruUFPyquY8Opq61ucKX08xTrv8PqfLg@mail.gmail.com>
+ <CAD=FV=Vo1JR6n496Q3FqXjRBkbTBRg89_fJQNsqeRx8WQW_a9w@mail.gmail.com> <CAM4voakAMN4jdAZDPz55tnc3woZDieZ5aL3TVU2kYsNHT+AMqg@mail.gmail.com> <CAD=FV=UjmN5AwWMPy7mQt-J4A_niO8Ug4r15Ez2ZWPT1g3L=VA@mail.gmail.com> <20140606203721.GA10422@quad.lixom.net>
+ <CAM4voanSpTd=dAXLZhdZKRP4Z_YShbD4Hr-6UWn3DFYueoxeTA@mail.gmail.com> <20140606210126.GA10219@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140606210151.GK23430@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tushar Behera <trblinux@gmail.com>, "Turquette, Mike" <mturquette@linaro.org>, Kevin Hilman <khilman@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Arun Kumar <arun.kk@samsung.com>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f50.google.com ([209.85.192.50]:58661 "EHLO
+	mail-qg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752395AbaFFVeY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 6 Jun 2014 17:34:24 -0400
+Received: by mail-qg0-f50.google.com with SMTP id z60so5712828qgd.9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Jun 2014 14:34:23 -0700 (PDT)
+In-Reply-To: <20140606210126.GA10219@quad.lixom.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Doug Anderson <dianders@google.com>, Tushar Behera <trblinux@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "Turquette, Mike" <mturquette@linaro.org>, Kevin Hilman <khilman@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Arun Kumar <arun.kk@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Hi,
+On Fri, 6 Jun 2014, Olof Johansson wrote:
 
-On Fri, Jun 6, 2014 at 2:01 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Fri, Jun 06, 2014 at 01:49:11PM -0700, Doug Anderson wrote:
->> This works and IMHO is much cleaner because it totally removes the
->> U-Boot dependency.  I'll cleanup to not be so insane and post:
->>
->> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c
->> b/arch/arm/mach-exynos/mcpm-exynos.c
->> index 0498d0b..9c5df7b 100644
->> --- a/arch/arm/mach-exynos/mcpm-exynos.c
->> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
->> @@ -290,6 +290,14 @@ static void __naked
->> exynos_pm_power_up_setup(unsigned int affinity_level)
->>         "b      cci_enable_port_for_self");
->>  }
->>
->> +static void __naked exynos_mcpm_secondary_cpu_start(void)
->> +{
->> +       asm volatile ("\n"
->> +       "ldr    r0, [pc, #0]\n"
->> +       "bx     r0\n"
->> +       ".word  0" );
->> +}
->> +
->
-> So does it matter whether the above code gets assembled as thumb or
-> ARM?  How does your caller know which ISA mode to enter this fragment
-> in?
+> On Sat, Jun 07, 2014 at 02:16:27AM +0530, Abhilash Kesavan wrote:
+> > My answer is not "use mainline u-boot" primarily because I am not sure
+> > mainline u-boot actually works on 5420 :).
+> 
+> And I'm saying that's not the answer primarily because we should never require
+> people to update their firmware to get a usable linux system.
+> 
+> > My answer is keep a patch
+> > locally (or make a trivial change to the bootcmd) for people who would
+> > like to use an upstream kernel with the firmware on the device. Once
+> > we do have a working mainline u-boot, that can then be used by the
+> > interested parties.
+> 
+> And I am strongly NAK:ing both of those approaches. We should not require
+> a single out-of-tree patch because that means we have failed to make a useful
+> kernel for people. And it should never, ever, be a requirement for people to
+> reflash and risk bricking their device just to run mainline linux on it.
 
-I'm going to take Olof's suggestion and just hardcode the instructions like:
+What we can do, though, is to publicly shame you all Google People very 
+strongly for not making firmware updates in the field safer and easier.  
+After all you must all know already that, by definition, software always 
+contains bugs.  The first feature to be tested with a new 
+bootloader/firmware must be the ability to successfully and safely (and 
+securely) update itself.  Especially for a mainstream device like a 
+Chromebook.
 
-__raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
-__raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
-__raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
+> It's an artificial barrier of entry with high risk, and we'll be worse 
+> off for adding it. Same for out-of-tree patches.
 
-The caller always jumps to this code with "bx" but always jumps into
-ARM mode.  Specifically U-Boot will have:
+So ... let's find the lesser of all evils ... as always.
 
-  branch_bx(CONFIG_EXYNOS_RELOCATE_CODE_BASE);
+> iRAM is covered on Doug's sub-thread, and I think his approach looks promising.
+> So, it seems like we have a solution both to enable the CCI port and to avoid
+> clearing iram -- we should be set?
 
--Doug
+Care to resume the proposed solution then?
+
+
+Nicolas
