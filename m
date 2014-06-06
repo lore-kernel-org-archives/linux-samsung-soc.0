@@ -1,100 +1,98 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: Problems booting exynos5420 with >1 CPU
-Date: Fri, 6 Jun 2014 18:17:27 -0400 (EDT)
-Message-ID: <alpine.LFD.2.11.1406061755200.25775@knanqh.ubzr>
-References: <539145B4.5000200@gmail.com> <CAD=FV=XqwEQNJmij-4Gh62OY+B66AjdQjZC0=f_6tbot3UfQaA@mail.gmail.com> <CAM4voaknx3+X4O8MUwaruUFPyquY8Opq61ucKX08xTrv8PqfLg@mail.gmail.com> <CAD=FV=Vo1JR6n496Q3FqXjRBkbTBRg89_fJQNsqeRx8WQW_a9w@mail.gmail.com>
- <CAM4voakAMN4jdAZDPz55tnc3woZDieZ5aL3TVU2kYsNHT+AMqg@mail.gmail.com> <CAD=FV=UjmN5AwWMPy7mQt-J4A_niO8Ug4r15Ez2ZWPT1g3L=VA@mail.gmail.com> <20140606203721.GA10422@quad.lixom.net> <CAM4voanSpTd=dAXLZhdZKRP4Z_YShbD4Hr-6UWn3DFYueoxeTA@mail.gmail.com>
- <20140606210126.GA10219@quad.lixom.net> <alpine.LFD.2.11.1406061717520.25775@knanqh.ubzr> <20140606214921.GA10969@quad.lixom.net>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v3] clk: exynos5420: Remove aclk66_peric from the clock
+ tree description
+Date: Fri, 06 Jun 2014 15:31:23 -0700
+Message-ID: <20140606223123.10062.29366@quantum>
+References: <1401467562-5585-1-git-send-email-dianders@chromium.org>
+ <1402000514-30752-1-git-send-email-dianders@chromium.org>
+ <20140606000324.10062.10257@quantum>
+ <CAD=FV=UQhBh68Bgv=kfUROCOxg1dS1OnZ1ir+wouewKoDFE_1g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f48.google.com ([209.85.216.48]:39257 "EHLO
-	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751969AbaFFWRa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Jun 2014 18:17:30 -0400
-Received: by mail-qa0-f48.google.com with SMTP id i13so4832953qae.21
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Jun 2014 15:17:29 -0700 (PDT)
-In-Reply-To: <20140606214921.GA10969@quad.lixom.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAD=FV=UQhBh68Bgv=kfUROCOxg1dS1OnZ1ir+wouewKoDFE_1g@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Tomasz Figa <t.figa@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, a.hajda@samsung.com, Rob Herring <robh+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alim Akhtar <alim.akhtar@samsung.com>, Kumar Gala <galak@codeaurora.org>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Arun Kumar <arun.kk@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Doug Anderson <dianders@google.com>, Tushar Behera <trblinux@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "Turquette, Mike" <mturquette@linaro.org>, Kevin Hilman <khilman@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Arun Kumar <arun.kk@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-On Fri, 6 Jun 2014, Olof Johansson wrote:
-
-> On Fri, Jun 06, 2014 at 05:34:21PM -0400, Nicolas Pitre wrote:
-> > On Fri, 6 Jun 2014, Olof Johansson wrote:
-> > 
-> > > On Sat, Jun 07, 2014 at 02:16:27AM +0530, Abhilash Kesavan wrote:
-> > > > My answer is not "use mainline u-boot" primarily because I am not sure
-> > > > mainline u-boot actually works on 5420 :).
-> > > 
-> > > And I'm saying that's not the answer primarily because we should never require
-> > > people to update their firmware to get a usable linux system.
-> > > 
-> > > > My answer is keep a patch
-> > > > locally (or make a trivial change to the bootcmd) for people who would
-> > > > like to use an upstream kernel with the firmware on the device. Once
-> > > > we do have a working mainline u-boot, that can then be used by the
-> > > > interested parties.
-> > > 
-> > > And I am strongly NAK:ing both of those approaches. We should not require
-> > > a single out-of-tree patch because that means we have failed to make a useful
-> > > kernel for people. And it should never, ever, be a requirement for people to
-> > > reflash and risk bricking their device just to run mainline linux on it.
-> > 
-> > What we can do, though, is to publicly shame you all Google People very 
-> > strongly for not making firmware updates in the field safer and easier.  
-> > After all you must all know already that, by definition, software always 
-> > contains bugs.  The first feature to be tested with a new 
-> > bootloader/firmware must be the ability to successfully and safely (and 
-> > securely) update itself.  Especially for a mainstream device like a 
-> > Chromebook.
+Quoting Doug Anderson (2014-06-05 17:46:23)
+> Mike,
 > 
-> The security model of Chrome OS is that it relies on a read-only firmware
-> that is later verifying and launching a read-write firwmare.
+> On Thu, Jun 5, 2014 at 5:03 PM, Mike Turquette <mturquette@linaro.org> wrote:
+> > Quoting Doug Anderson (2014-06-05 13:35:14)
+> >> The "aclk66_peric" clock is a gate clock with a whole bunch of gates
+> >> underneath it.  This big gate isn't very useful to include in our
+> >> clock tree.  If any of the children need to be turned on then the big
+> >> gate will need to be on anyway.  ...and there are plenty of other "big
+> >> gates" that aren't described in our clock tree, some of which shut off
+> >> collections of clocks that have no relationship in the hierarchy so
+> >> are hard to model.
+> >
+> > I think this is a common problem. On OMAP we have something similar to
+> > this called "clock domains" or "clkdm" and it has been historically
+> > handled outside of the Linux clock framework[1]. There is a relationship
+> > to the clock framework of course and in the future it might be
+> > worthwhile to see if there is a generic way to handle this stuff.
+> 
+> That sounds like something that would be nice to solve, but it's not
+> going to happen now.
+> 
+> On the off chance that the user manual mentioned the existence of one
+> of these "big gate" bits, it tends to not be very specific about
+> _exactly_ which sets of clocks it disables.
+> 
+> Tracking down every one of these would be hugely time consuming.
+> Also: as Tomasz has indicated they don't provide a huge amount of
+> benefit since we're already dealing with clocks on a more fine-grained
+> level...
 
-It must do a whole lot more than that, otherwise we wouldn't be talking 
-about ways to update it.
+Sounds like you are dealing with crappy documentation :-(
 
-> Some changes are
-> not possible to work around in the read-write part of the firmware,
-> or for some other reason becomes unfeasible to handle there.
+> 
+> 
+> >> "aclk66_peric" is causing earlyprintk problems since it gets disabled
+> >> as part of the boot process, so let's just remove it.
+> >>
+> >> Strangely (and for no good reason) this clock is exported as part of
+> >> the common clock bindings.  Remove it since there are no in-kernel
+> >> device trees using it and no reason anyone out of tree should refer to
+> >> it either.
+> >
+> > So Linux has no control over the big gate now, correct? You are
+> > dependent on the bootloader to ungate this thing?
+> 
+> A better way to put it is that you're dependent on the bootloader not
+> to gate it.
+> 
+> ...but that's also true for pretty much any clock marked IGNORE_UNUSED
+> and not explicitly enabled anywhere.
+> 
+> 
+> Are you opposed to this landing as-is to unblock things and people can
+> continue to work on the clock driver to make it even better?
 
-In other words, you are pleading guilty for bad design.
+No. I'm just trying to understand how things work so that we can arrive
+to the right decision. I know what it is like to try and quickly unblock
+everyone else and the rush to do so often leads to less awesome
+solutions.
 
-> We're working on making the RO portion smaller, so we'll be less exposed
-> to this in the future, but that's a feature that will take some time
-> to mature. It can also be hard to motivate updating the firmware in
-> the field for upstream usage, since doing these updates are a large
-> undertaking from a QA point of view.
+Anyways, getting back on point, Tomasz was right about the whole clk_get
+thing. So I'm happy to take either V1 or V3 of your patch. I will be
+submitting a second PR for 3.16 next week and it will include whichever
+version you and Tomasz agree is best.
 
-Usually, when the mechanism is there, it gets happily used even before 
-mainline usage is considered.
+Regards,
+Mike
 
-> We're working hard on making sure a vanilla upstream kernel will work
-> well on this generation of ARM Chromebooks, something we never really
-> did with the first generation. If the response we get is "just carry it
-> out of tree", why would we even care about upstream at all? We're trying
-> to do the right thing here, even if it might require a line of code or
-> two here or there that isn't perfect.
-
-Shit happens.  One line or two is tolerable.
-
-What is not acceptable is the impossibility to fix fundamental 
-correctness issues because people think their damn read-only firmware is 
-bug free.  I've spent a great amount of time doing multiple rounds of 
-reviews for MCPM backends.  Still it seems that people just don't get 
-all the correctness subtleties before at least 5 rounds.  Yet they 
-thought their code was OK on the initial rounds, otherwise why would 
-they knowingly post buggy code?  If that code had been put into 
-read-only firmware, say behind some PSCI interface for example, then 
-your device would simply be stuck to board-bringup feature level.
-
-I don't know enough about the actual issue with the Chromebook yet, but 
-I do hope your firmware screwups aren't too serious.  The patch Doug 
-just posted appears innocent enough.
-
-
-Nicolas
+> 
+> -Doug
