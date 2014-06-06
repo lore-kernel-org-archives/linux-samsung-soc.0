@@ -1,97 +1,56 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH 3/4] usb: host: xhci-plat: Caibrate PHY post host reset
-Date: Fri,  6 Jun 2014 17:42:14 +0530
-Message-ID: <1402056736-12674-4-git-send-email-gautam.vivek@samsung.com>
-References: <1402056736-12674-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1402056736-12674-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, kishon@ti.com, mathias.nyman@intel.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, jwerner@chromium.org, Vivek Gautam <gautam.vivek@samsung.com>
+From: Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH] PM / OPP: Remove ARCH_HAS_OPP
+Date: Fri, 6 Jun 2014 21:14:01 +0900
+Message-ID: <CANqRtoTy_LwSiZgRFEw5Ly4ojfinoCichxrX7cO6m2XB9JGoww@mail.gmail.com>
+References: <1402051016-28853-1-git-send-email-broonie@kernel.org>
+	<20140606111411.GD25896@verge.net.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20140606111411.GD25896@verge.net.au>
+Sender: linux-pm-owner@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>
+Cc: Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh@kernel.org>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Tony Lindgren <tony@atomide.com>, Michal Simek <michal.simek@xilinx.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, SH-Linux <linux-sh@vger.kernel.org>, Mark Brown <broonie@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Some quirky PHYs may require to be calibrated post the host
-controller initialization.
-The USB 3.0 DRD PHY on Exynos5420/5800 systems is one such PHY
-which needs to calibrated post xhci's reset at initialization
-time and at resume time, to get the controller work at SuperSpeed.
+On Fri, Jun 6, 2014 at 8:14 PM, Simon Horman <horms@verge.net.au> wrote:
+> On Fri, Jun 06, 2014 at 11:36:56AM +0100, Mark Brown wrote:
+>> From: Mark Brown <broonie@linaro.org>
+>>
+>> Since the OPP layer is a kernel library which has been converted to be
+>> directly selectable by its callers rather than user selectable and
+>> requiring architectures to enable it explicitly the ARCH_HAS_OPP symbol
+>> has become redundant and can be removed. Do so.
+>>
+>> Signed-off-by: Mark Brown <broonie@linaro.org>
+>> ---
+>>  Documentation/power/opp.txt    | 3 ---
+>>  arch/arm/mach-exynos/Kconfig   | 1 -
+>>  arch/arm/mach-highbank/Kconfig | 1 -
+>>  arch/arm/mach-imx/Kconfig      | 1 -
+>>  arch/arm/mach-omap2/Kconfig    | 1 -
+>>  arch/arm/mach-shmobile/Kconfig | 2 --
+>>  arch/arm/mach-vexpress/Kconfig | 1 -
+>>  arch/arm/mach-zynq/Kconfig     | 1 -
+>>  drivers/devfreq/Kconfig        | 1 -
+>>  kernel/power/Kconfig           | 3 ---
+>>  10 files changed, 15 deletions(-)
+>
+> shmobile portion:
+>
+> Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
----
- drivers/usb/host/xhci-plat.c |   50 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 48 insertions(+), 2 deletions(-)
+Hi Simon, Mark,
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index e7145b5..7be03df 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -32,10 +32,51 @@ static void xhci_plat_quirks(struct device *dev, struct xhci_hcd *xhci)
- 	xhci->quirks |= XHCI_PLAT;
- }
- 
-+static int xhci_plat_calibrate_phy(struct xhci_hcd *xhci)
-+{
-+	int ret = 0;
-+	struct usb_hcd *hcd = xhci_to_hcd(xhci);
-+
-+	/* calibrate phy if available */
-+	if (!IS_ERR(xhci->phy2_gen)) {
-+		ret = phy_calibrate(xhci->phy2_gen);
-+		if (ret < 0 && ret != -ENOTSUPP) {
-+			dev_err(hcd->self.controller,
-+				"failed to calibrate USB 2.0 type PHY\n");
-+			return ret;
-+		}
-+	}
-+
-+	if (!IS_ERR(xhci->phy3_gen)) {
-+		ret = phy_calibrate(xhci->phy3_gen);
-+		if (ret < 0 && ret != -ENOTSUPP)
-+			dev_err(hcd->self.controller,
-+				"failed to calibrate USB 3.0 type PHY\n");
-+	}
-+
-+	return ret;
-+}
-+
- /* called during probe() after chip reset completes */
- static int xhci_plat_setup(struct usb_hcd *hcd)
- {
--	return xhci_gen_setup(hcd, xhci_plat_quirks);
-+	struct xhci_hcd	*xhci;
-+	int ret;
-+
-+	ret = xhci_gen_setup(hcd, xhci_plat_quirks);
-+	if (ret) {
-+		dev_err(hcd->self.controller, "xhci setup failed\n");
-+		return ret;
-+	}
-+
-+	if (!usb_hcd_is_primary_hcd(hcd)) {
-+		xhci = hcd_to_xhci(hcd);
-+		ret = xhci_plat_calibrate_phy(xhci);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
- }
- 
- static int xhci_plat_start(struct usb_hcd *hcd)
-@@ -276,8 +317,13 @@ static int xhci_plat_resume(struct device *dev)
- {
- 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
- 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
-+	int ret;
-+
-+	ret = xhci_resume(xhci, 0);
-+	if (ret)
-+		return ret;
- 
--	return xhci_resume(xhci, 0);
-+	return xhci_plat_calibrate_phy(xhci);
- }
- 
- static const struct dev_pm_ops xhci_plat_pm_ops = {
--- 
-1.7.10.4
+Nice to see cleanups in this area. Reducing the number of Kconfig
+symbols must be a good thing.
+
+I'm not sure about the expected merge order for this kind of change vs
+queued up stuff in the renesas git tree, but I believe the following
+patch selects ARCH_HAS_OPP:
+
+[PATCH v3] ARM: shmobile: Mark all SoCs in shmobile as CPUFreq, capable
+
+Cheers,
+
+/ magnus
