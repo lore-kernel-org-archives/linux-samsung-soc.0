@@ -1,63 +1,83 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v3] clk: exynos5420: Remove aclk66_peric from the clock tree
- description
-Date: Fri, 06 Jun 2014 16:41:55 -0700
-Message-ID: <20140606234155.10062.58609@quantum>
-References: <1401467562-5585-1-git-send-email-dianders@chromium.org>
- <1402000514-30752-1-git-send-email-dianders@chromium.org>
- <5390EE97.9020702@gmail.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH v2] ARM: EXYNOS: mcpm: Don't rely on firmware's
+ secondary_cpu_start
+Date: Fri, 6 Jun 2014 21:34:00 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1406062132480.25775@knanqh.ubzr>
+References: <1402090985-8061-1-git-send-email-dianders@chromium.org> <1402096465-13218-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5390EE97.9020702@gmail.com>
+In-Reply-To: <1402096465-13218-1-git-send-email-dianders@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: olof@lixom.net, javier.martinez@collabora.co.uk, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rahul.sharma@samsung.com, shaik.ameer@samsung.com, arun.kk@samsung.com, alim.akhtar@samsung.com, a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, olof@lixom.net, Tushar Behera <trblinux@gmail.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Tomasz Figa (2014-06-05 15:26:31)
-> On 05.06.2014 22:35, Doug Anderson wrote:
-> > The "aclk66_peric" clock is a gate clock with a whole bunch of gates
-> > underneath it.  This big gate isn't very useful to include in our
-> > clock tree.  If any of the children need to be turned on then the big
-> > gate will need to be on anyway.  ...and there are plenty of other "big
-> > gates" that aren't described in our clock tree, some of which shut off
-> > collections of clocks that have no relationship in the hierarchy so
-> > are hard to model.
-> > 
-> > "aclk66_peric" is causing earlyprintk problems since it gets disabled
-> > as part of the boot process, so let's just remove it.
-> > 
-> > Strangely (and for no good reason) this clock is exported as part of
-> > the common clock bindings.  Remove it since there are no in-kernel
-> > device trees using it and no reason anyone out of tree should refer to
-> > it either.
-> > 
-> > Signed-off-by: Doug Anderson <dianders@chromium.org>
-> > ---
-> > Changes in v3:
-> > - Now just remove aclk66_peric from the tree as suggested by Tomasz.
-> > 
-> > Changes in v2:
-> > - Use GATE_A and clk_get().  Save the clock for putting later.
-> > - Return 0 from exynos5420_clk_late_init().
-> > 
-> >  drivers/clk/samsung/clk-exynos5420.c   | 85 ++++++++++++++++++++++------------
-> >  include/dt-bindings/clock/exynos5420.h |  1 -
-> >  2 files changed, 55 insertions(+), 31 deletions(-)
-> > 
-> 
-> Mike, I can take this patch to my tree as a fix for 3.16-rc, or if still
-> possible and you don't mind, feel free to apply it directly with my ACK:
-> 
-> Acked-by: Tomasz Figa <t.figa@samsung.com>
+On Fri, 6 Jun 2014, Doug Anderson wrote:
 
-I'll send a second PR next week that includes this.
-
-Regards,
-Mike
-
+> On exynos mcpm systems the firmware is hardcoded to jump to an address
+> in SRAM (0x02073000) when secondary CPUs come up.  By default the
+> firmware puts a bunch of code at that location.  That code expects the
+> kernel to fill in a few slots with addresses that it uses to jump back
+> to the kernel's entry point for secondary CPUs.
 > 
-> Best regards,
-> Tomasz
+> Originally (on prerelease hardware) this firmware code contained a
+> bunch of workarounds to deal with boot ROM bugs.  However on all
+> shipped hardware we simply use this code to redirect to a kernel
+> function for bringing up the CPUs.
+> 
+> Let's stop relying on the code provided by the bootloader and just
+> plumb in our own (simple) code jump to the kernel.  This has the nice
+> benefit of fixing problems due to the fact that older bootloaders
+> (like the one shipped on the Samsung Chromebook 2) might have put
+> slightly different code into this location.
+> 
+> Once suspend/resume is implemented for systems using exynos-mcpm we'll
+> need to make sure we reinstall our fixed up code after resume.  ...but
+> that's not anything new since IRAM (and thus the address of the
+> mcpm_entry_point) is lost across suspend/resume anyway.
+> 
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+
+Acked-by: Nicolas Pitre <nico@linaro.org>
+
+> ---
+> Changes in v2:
+> - Removed #define
+> 
+>  arch/arm/mach-exynos/mcpm-exynos.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+> index 0498d0b..ace0ed6 100644
+> --- a/arch/arm/mach-exynos/mcpm-exynos.c
+> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+> @@ -25,7 +25,6 @@
+>  
+>  #define EXYNOS5420_CPUS_PER_CLUSTER	4
+>  #define EXYNOS5420_NR_CLUSTERS		2
+> -#define MCPM_BOOT_ADDR_OFFSET		0x1c
+>  
+>  /*
+>   * The common v7_exit_coherency_flush API could not be used because of the
+> @@ -343,11 +342,13 @@ static int __init exynos_mcpm_init(void)
+>  	pr_info("Exynos MCPM support installed\n");
+>  
+>  	/*
+> -	 * Future entries into the kernel can now go
+> -	 * through the cluster entry vectors.
+> +	 * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
+> +	 * as part of secondary_cpu_start().  Let's redirect it to the
+> +	 * mcpm_entry_point().
+>  	 */
+> -	__raw_writel(virt_to_phys(mcpm_entry_point),
+> -			ns_sram_base_addr + MCPM_BOOT_ADDR_OFFSET);
+> +	__raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
+> +	__raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
+> +	__raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
+>  
+>  	iounmap(ns_sram_base_addr);
+>  
+> -- 
+> 2.0.0.526.g5318336
+> 
