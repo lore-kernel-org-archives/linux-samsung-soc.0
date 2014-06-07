@@ -1,56 +1,86 @@
-From: Tushar Behera <tushar.b@samsung.com>
-Subject: [PATCH] ARM: dts: Add missing clock/pin-control entries for I2S0 on Exynos4
-Date: Sat,  7 Jun 2014 15:00:54 +0530
-Message-ID: <1402133454-28445-1-git-send-email-tushar.b@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:39521 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750732AbaFGJdg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 7 Jun 2014 05:33:36 -0400
-Received: by mail-pd0-f169.google.com with SMTP id w10so3426362pde.0
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 07 Jun 2014 02:33:35 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Sat, 07 Jun 2014 15:22:13 +0200
+Message-ID: <4306568.dZTtF4xhhK@wuerfel>
+References: <20140606224542.GA22188@mithrandir>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140606224542.GA22188@mithrandir>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, s.nawrocki@samsung.com
 
-I2S driver uses 3 clocks under different conditions. Added two
-missing clocks.
+On Saturday 07 June 2014 00:45:45 Thierry Reding wrote:
+> This is somewhat off-topic, but given the various concepts discussed in
+> this thread I'm beginning to wonder how they will be implemented.
 
-Additionally updated pin-control property for this node.
+I think it's good you raised the question.
 
-Signed-off-by: Tushar Behera <tushar.b@samsung.com>
----
-Based on next-20140606.
+> The
+> current implementation hooks the IOMMU API into the DMA mapping API, and
+> the way this is done is by setting a single IOMMU (or rather a set of
+> IOMMU operations) globally per bus type.
 
-Tested on Exynos4210-based Origen boards with private patches for
-codec/machine driver.
+I hadn't realized that we have a per-bus iommu_ops pointer. I agree
+this will become a limitation as soon as we have a soc with two different
+IOMMUs that have platform devices attached, and it has to be moved into
+the device or a structure related to that.
 
- arch/arm/boot/dts/exynos4.dtsi |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+If that turns out controversial, we can probably have a set of pseudo
+iommu ops that just call into dev->archdata->iommu_ops->function()
+for ARM.
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index fbaf426..10bb081 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -55,11 +55,15 @@
- 	i2s0: i2s@03830000 {
- 		compatible = "samsung,s5pv210-i2s";
- 		reg = <0x03830000 0x100>;
--		clocks = <&clock_audss EXYNOS_I2S_BUS>;
--		clock-names = "iis";
-+		clocks = <&clock_audss EXYNOS_I2S_BUS>,
-+			<&clock_audss EXYNOS_I2S_BUS>,
-+			<&clock_audss EXYNOS_SCLK_I2S>;
-+		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
- 		dmas = <&pdma0 12>, <&pdma0 11>, <&pdma0 10>;
- 		dma-names = "tx", "rx", "tx-sec";
- 		samsung,idma-addr = <0x03000000>;
-+		pinctrl-0 = <&i2s0_bus>;
-+		pinctrl-names = "default";
- 		status = "disabled";
- 	};
- 
--- 
-1.7.9.5
+> There are two issues that I can see with that: one is that we can't
+> support multiple IOMMUs in the system at all, and the other is that
+> there is no context associated with the IOMMU ops, and therefore there
+> is no way to differentiate between two instances of the same IOMMU. A
+> few drivers use global variables to keep track of context information
+> but that won't work with multiple instances, unless they keep a global
+> list of all instances and then require explicit lookup in each of the
+> IOMMU operations. That sounds more like a workaround rather than a
+> proper solution to me.
+
+Supporting multiple iommus that share one iommu driver should work
+without such hacks, as you can put the per-device information into
+dev->device_dma_parameters (this works only for very simple IOMMUs)
+or dev->archdata->iommu (we may want to generalize that, I think
+someone just posted patches for it).
+
+> Discussion in this thread indicates that both of the above will be
+> required at some point. Have I completely missed something or will we
+> have to rework (parts of) the IOMMU API to make this work?
+> 
+> One other thing that I have some difficulty understanding is how we can
+> support things like process isolation using the current IOMMU API. Since
+> a device will be statically assigned to one IOMMU domain at probe time
+> there is no way we can change the address space upon a context switch.
+
+We have just introduced a way to parse dma-ranges in of_dma_configure().
+
+The only way I see this done for platform devices is to do the IOMMU
+configuration in the same place: if an iommus property is found there,
+we call out to the iommu driver that matches the respective iommu device
+and let it configure the master device.
+
+The device already has multiple properties related to iommus:
+'struct device_dma_parameters', 'archdata', 'iommu_group', and
+pdev_archdata for platform devices. This should be enough to set up
+the default iommu dma_map_ops so we can have non-isolated DMA using
+dma_map_* and dma_alloc_coherent.
+
+I haven't given much thought to devices that want to use the IOMMU
+API directly so they can have multiple domains rather than rely on
+the dma-mapping abstraction.
+
+	Arnd
