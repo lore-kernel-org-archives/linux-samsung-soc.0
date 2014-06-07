@@ -1,86 +1,155 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Sat, 07 Jun 2014 15:22:13 +0200
-Message-ID: <4306568.dZTtF4xhhK@wuerfel>
-References: <20140606224542.GA22188@mithrandir>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: Problems booting exynos5420 with >1 CPU
+Date: Sat, 7 Jun 2014 12:10:27 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1406062340480.25775@knanqh.ubzr>
+References: <CAD=FV=UX90hgyojW3k_kpT=mt8eX9=AyHr+AGjhK=MrE1hHbUA@mail.gmail.com> <539145B4.5000200@gmail.com> <CAD=FV=XqwEQNJmij-4Gh62OY+B66AjdQjZC0=f_6tbot3UfQaA@mail.gmail.com> <CAM4voaknx3+X4O8MUwaruUFPyquY8Opq61ucKX08xTrv8PqfLg@mail.gmail.com>
+ <alpine.LFD.2.11.1406061740280.25775@knanqh.ubzr> <CAM4voam5KDicwLAt3EA1UC7M+EciGccrnMUKxoR-5c8xT8-zSQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20140606224542.GA22188@mithrandir>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f54.google.com ([209.85.192.54]:45256 "EHLO
+	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752930AbaFGQKa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 7 Jun 2014 12:10:30 -0400
+Received: by mail-qg0-f54.google.com with SMTP id q108so6996028qgd.27
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 07 Jun 2014 09:10:29 -0700 (PDT)
+In-Reply-To: <CAM4voam5KDicwLAt3EA1UC7M+EciGccrnMUKxoR-5c8xT8-zSQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "Turquette, Mike" <mturquette@linaro.org>, Kevin Hilman <khilman@linaro.org>, Tushar Behera <trblinux@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Arun Kumar <arun.kk@samsung.com>
 
-On Saturday 07 June 2014 00:45:45 Thierry Reding wrote:
-> This is somewhat off-topic, but given the various concepts discussed in
-> this thread I'm beginning to wonder how they will be implemented.
+On Sat, 7 Jun 2014, Abhilash Kesavan wrote:
 
-I think it's good you raised the question.
-
-> The
-> current implementation hooks the IOMMU API into the DMA mapping API, and
-> the way this is done is by setting a single IOMMU (or rather a set of
-> IOMMU operations) globally per bus type.
-
-I hadn't realized that we have a per-bus iommu_ops pointer. I agree
-this will become a limitation as soon as we have a soc with two different
-IOMMUs that have platform devices attached, and it has to be moved into
-the device or a structure related to that.
-
-If that turns out controversial, we can probably have a set of pseudo
-iommu ops that just call into dev->archdata->iommu_ops->function()
-for ARM.
-
-> There are two issues that I can see with that: one is that we can't
-> support multiple IOMMUs in the system at all, and the other is that
-> there is no context associated with the IOMMU ops, and therefore there
-> is no way to differentiate between two instances of the same IOMMU. A
-> few drivers use global variables to keep track of context information
-> but that won't work with multiple instances, unless they keep a global
-> list of all instances and then require explicit lookup in each of the
-> IOMMU operations. That sounds more like a workaround rather than a
-> proper solution to me.
-
-Supporting multiple iommus that share one iommu driver should work
-without such hacks, as you can put the per-device information into
-dev->device_dma_parameters (this works only for very simple IOMMUs)
-or dev->archdata->iommu (we may want to generalize that, I think
-someone just posted patches for it).
-
-> Discussion in this thread indicates that both of the above will be
-> required at some point. Have I completely missed something or will we
-> have to rework (parts of) the IOMMU API to make this work?
+> Hi Nicolas,
 > 
-> One other thing that I have some difficulty understanding is how we can
-> support things like process isolation using the current IOMMU API. Since
-> a device will be statically assigned to one IOMMU domain at probe time
-> there is no way we can change the address space upon a context switch.
+> The first man of the incoming cluster enables its snoops via the
+> power_up_setup function. During secondary boot-up, this does not occur
+> for the boot cluster. Hence, I enable the snoops for the boot cluster
+> as a one-time setup from the u-boot prompt. After secondary boot-up
+> there is no modification that I do.
 
-We have just introduced a way to parse dma-ranges in of_dma_configure().
+OK that's good.
 
-The only way I see this done for platform devices is to do the IOMMU
-configuration in the same place: if an iommus property is found there,
-we call out to the iommu driver that matches the respective iommu device
-and let it configure the master device.
+> Where should this be ideally done ?
 
-The device already has multiple properties related to iommus:
-'struct device_dma_parameters', 'archdata', 'iommu_group', and
-pdev_archdata for platform devices. This should be enough to set up
-the default iommu dma_map_ops so we can have non-isolated DMA using
-dma_map_* and dma_alloc_coherent.
+If I remember correctly, the CCI can be safely activated only when the 
+cache is disabled.  So that means the CCI should ideally be turned on 
+for the boot cluster (and *only* for the boot CPU) by the bootloader.
 
-I haven't given much thought to devices that want to use the IOMMU
-API directly so they can have multiple domains rather than rely on
-the dma-mapping abstraction.
+Now... If you _really_ prefer to do it from the kernel to avoid 
+difficulties with bootloader updates, then it should be possible to do 
+it from the kernel by temporarily turning the cache off.  This is not a 
+small thing but the MCPM infrastructure can be leveraged.  Here's what I 
+tried on a TC2 which might just work for you as well:
 
-	Arnd
+diff --git a/arch/arm/common/mcpm_entry.c b/arch/arm/common/mcpm_entry.c
+index 86fd60fefb..1cc49de308 100644
+--- a/arch/arm/common/mcpm_entry.c
++++ b/arch/arm/common/mcpm_entry.c
+@@ -12,11 +12,13 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/irqflags.h>
++#include <linux/cpu_pm.h>
+ 
+ #include <asm/mcpm.h>
+ #include <asm/cacheflush.h>
+ #include <asm/idmap.h>
+ #include <asm/cputype.h>
++#include <asm/suspend.h>
+ 
+ extern unsigned long mcpm_entry_vectors[MAX_NR_CLUSTERS][MAX_CPUS_PER_CLUSTER];
+ 
+@@ -146,6 +148,44 @@ int mcpm_cpu_powered_up(void)
+ 	return 0;
+ }
+ 
++static int go_down(unsigned long _arg)
++{
++	void (*cache_disable)(void) = (void *)_arg;
++	unsigned int mpidr = read_cpuid_mpidr();
++	unsigned int cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
++	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
++	phys_reset_t phys_reset;
++
++	mcpm_set_entry_vector(cpu, cluster, cpu_resume);
++	setup_mm_for_reboot();
++
++	__mcpm_cpu_going_down(cpu, cluster);
++	BUG_ON(!__mcpm_outbound_enter_critical(cpu, cluster));
++	cache_disable();
++	__mcpm_outbound_leave_critical(cluster, CLUSTER_DOWN);
++	__mcpm_cpu_down(cpu, cluster);
++
++	phys_reset = (phys_reset_t)(unsigned long)virt_to_phys(cpu_reset);
++	phys_reset(virt_to_phys(mcpm_entry_point));
++	BUG();
++}
++	
++int mcpm_loopback(void (*cache_disable)(void))
++{
++	int ret;
++
++	local_irq_disable();
++	local_fiq_disable();
++	ret = cpu_pm_enter();
++	if (!ret) {
++		ret = cpu_suspend((unsigned long)cache_disable, go_down);
++		cpu_pm_exit();
++	}
++	local_fiq_enable();
++	local_irq_enable();
++	return ret;
++}
++
+ struct sync_struct mcpm_sync;
+ 
+ /*
+diff --git a/arch/arm/mach-vexpress/tc2_pm.c b/arch/arm/mach-vexpress/tc2_pm.c
+index 29e7785a54..abecdd734f 100644
+--- a/arch/arm/mach-vexpress/tc2_pm.c
++++ b/arch/arm/mach-vexpress/tc2_pm.c
+@@ -323,6 +323,26 @@ static void __naked tc2_pm_power_up_setup(unsigned int affinity_level)
+ "	b	cci_enable_port_for_self ");
+ }
+ 
++int mcpm_loopback(void (*cache_disable)(void));
++
++static void tc2_cache_down(void)
++{
++	pr_warn("TC2: disabling cache\n");
++	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A15) {
++		/*
++		 * On the Cortex-A15 we need to disable
++		 * L2 prefetching before flushing the cache.
++		 */
++		asm volatile(
++		"mcr	p15, 1, %0, c15, c0, 3 \n\t"
++		"isb	\n\t"
++		"dsb	"
++		: : "r" (0x400) );
++	}
++	v7_exit_coherency_flush(all);
++	cci_disable_port_by_cpu(read_cpuid_mpidr());
++}
++
+ static int __init tc2_pm_init(void)
+ {
+ 	int ret, irq;
+@@ -370,6 +390,7 @@ static int __init tc2_pm_init(void)
+ 	ret = mcpm_platform_register(&tc2_pm_power_ops);
+ 	if (!ret) {
+ 		mcpm_sync_init(tc2_pm_power_up_setup);
++		BUG_ON(mcpm_loopback(tc2_cache_down) != 0);
+ 		pr_info("TC2 power management initialized\n");
+ 	}
+ 	return ret;
+
+Of course it is not because I'm helping you sidestepping firmware 
+problems that I'll stop shaming those who came up with that firmware 
+design.  ;-)
+
+
+Nicolas
