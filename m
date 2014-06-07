@@ -1,104 +1,144 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH] ARM: EXYNOS: mcpm: Don't rely on firmware's
- secondary_cpu_start
-Date: Sat, 7 Jun 2014 19:12:21 +0100
-Message-ID: <20140607181221.GB25068@e102568-lin.cambridge.arm.com>
-References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: Problems booting exynos5420 with >1 CPU
+Date: Sat, 7 Jun 2014 16:06:36 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1406071431490.25775@knanqh.ubzr>
+References: <CAD=FV=UX90hgyojW3k_kpT=mt8eX9=AyHr+AGjhK=MrE1hHbUA@mail.gmail.com> <539145B4.5000200@gmail.com> <CAD=FV=XqwEQNJmij-4Gh62OY+B66AjdQjZC0=f_6tbot3UfQaA@mail.gmail.com> <CAM4voaknx3+X4O8MUwaruUFPyquY8Opq61ucKX08xTrv8PqfLg@mail.gmail.com>
+ <alpine.LFD.2.11.1406061740280.25775@knanqh.ubzr> <CAM4voam5KDicwLAt3EA1UC7M+EciGccrnMUKxoR-5c8xT8-zSQ@mail.gmail.com> <alpine.LFD.2.11.1406062340480.25775@knanqh.ubzr> <20140607175618.GA25068@e102568-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: MULTIPART/MIXED; BOUNDARY="8323328-1366427559-1402169780=:25775"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:55853 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752887AbaFGSM2 convert rfc822-to-8bit (ORCPT
+Received: from mail-qa0-f47.google.com ([209.85.216.47]:36414 "EHLO
+	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751087AbaFGUGj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 7 Jun 2014 14:12:28 -0400
-In-Reply-To: <1402090985-8061-1-git-send-email-dianders@chromium.org>
-Content-Disposition: inline
+	Sat, 7 Jun 2014 16:06:39 -0400
+Received: by mail-qa0-f47.google.com with SMTP id s7so6077795qap.20
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 07 Jun 2014 13:06:38 -0700 (PDT)
+In-Reply-To: <20140607175618.GA25068@e102568-lin.cambridge.arm.com>
+Content-ID: <alpine.LFD.2.11.1406071536410.25775@knanqh.ubzr>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, "olof@lixom.net" <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tushar Behera <trblinux@gmail.com>, "Turquette, Mike" <mturquette@linaro.org>, Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Arun Kumar <arun.kk@samsung.com>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-On Fri, Jun 06, 2014 at 10:43:05PM +0100, Doug Anderson wrote:
-> On exynos mcpm systems the firmware is hardcoded to jump to an address
-> in SRAM (0x02073000) when secondary CPUs come up.  By default the
-> firmware puts a bunch of code at that location.  That code expects the
-> kernel to fill in a few slots with addresses that it uses to jump back
-> to the kernel's entry point for secondary CPUs.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-1366427559-1402169780=:25775
+Content-Type: TEXT/PLAIN; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
+Content-ID: <alpine.LFD.2.11.1406071536411.25775@knanqh.ubzr>
+
+On Sat, 7 Jun 2014, Lorenzo Pieralisi wrote:
+
+> On Sat, Jun 07, 2014 at 05:10:27PM +0100, Nicolas Pitre wrote:
+> > On Sat, 7 Jun 2014, Abhilash Kesavan wrote:
+> > 
+> > > Hi Nicolas,
+> > > 
+> > > The first man of the incoming cluster enables its snoops via the
+> > > power_up_setup function. During secondary boot-up, this does not occur
+> > > for the boot cluster. Hence, I enable the snoops for the boot cluster
+> > > as a one-time setup from the u-boot prompt. After secondary boot-up
+> > > there is no modification that I do.
+> > 
+> > OK that's good.
+> > 
+> > > Where should this be ideally done ?
+> > 
+> > If I remember correctly, the CCI can be safely activated only when the 
+> > cache is disabled.  So that means the CCI should ideally be turned on 
+> > for the boot cluster (and *only* for the boot CPU) by the bootloader.
 > 
-> Originally (on prerelease hardware) this firmware code contained a
-> bunch of workarounds to deal with boot ROM bugs.  However on all
-> shipped hardware we simply use this code to redirect to a kernel
-> function for bringing up the CPUs.
-> 
-> Let's stop relying on the code provided by the bootloader and just
-> plumb in our own (simple) code jump to the kernel.  This has the nice
-> benefit of fixing problems due to the fact that older bootloaders
-> (like the one shipped on the Samsung Chromebook 2) might have put
-> slightly different code into this location.
-> 
-> Once suspend/resume is implemented for systems using exynos-mcpm we'll
-> need to make sure we reinstall our fixed up code after resume.  ...but
-> that's not anything new since IRAM (and thus the address of the
-> mcpm_entry_point) is lost across suspend/resume anyway.
+> CCI ports are enabled per-cluster, so the boot loader must turn on
+> CCI for all clusters before the respective CPUs have a chance to
+> turn on their caches. It is a secure operation, this can be overriden
+> and probably that's what has been done, wrongly.
 
-Can I ask you please what the firmware does for the boot (primary) cpu
-on cold-boot and warm-boot (resume from suspend) ?
+Careful.  By saying "for all clusters" you might be interpreted as 
+saying that the CCI must be turned on even for CPUs that are not powered 
+up.
 
-Does it jump to a specific (hardcoded) location ?
+> True, TC2 on warm-boot reenables CCI, and that's because it runs the
+> kernel in secure world, and again that's _wrong_.
 
-Is the primary CPU (MPIDR) hardcoded in firmware so that on both
-cold and warm-boot firmware sees a specific MPIDR as "special" ?
+Let me respectfully disagree.
 
-I am asking to check if on this platform CPUidle (where the notion of
-primary CPU disappears) has a chance to run properly.
+> It must be done in firmware, and I am totally against any attempt at
+> papering over what looks like a messed up firmware implementation with
+> a bunch of hacks in the kernel, because that's what the patch below is
+> (soft restarting a CPU to enable CCI ? and adding generic code for that ?
+> what's next ?)
 
-Probably CPUidle won't attain idle states where IRAM content is lost, but I
-am still worried about the primary vs secondaries firmware boot behaviour.
+Are you promoting for the removal of drivers/bus/arm-cci.c ?
 
-What happens on reboot from suspend to RAM (or to put it differently,
-what does secure firmware do on reboot from suspend to RAM - in
-particular how is the "jump" address to bootloader/kernel set ?)
+You do realize that the fundamental raison d'être for MCPM is actually 
+to manage the race free enabling of the cache and CCI ?
 
-Thank you very much.
+> I understand there is an issue and lots at stake here, but I do not want the
+> patch below to be merged in the kernel, I am sorry, it is a tad too much.
 
-Lorenzo
+Lorenzo: Don't get me wrong.  The Chromebooks, and possibly to some 
+extent some people at Samsung, were simply too confident in their 
+ability to create absolutely bug-free firmware code to the point of not 
+making its update easy in the field.  This is completely outrageous in 
+my point of view.  Yet one of the reactions was to call upstream kernel 
+people as purists because the kernel is so much easier to modify in 
+order to cover their mess and yet that might not be accepted.  Like I 
+said I won't stop shaming them publicly for their own "incompetence" 
+just yet (no pun intended), but being excessively purist does not 
+benefit anyone either, and for that they have a point.
 
-> 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
->  arch/arm/mach-exynos/mcpm-exynos.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
-> index 0498d0b..3a7fad0 100644
-> --- a/arch/arm/mach-exynos/mcpm-exynos.c
-> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
-> @@ -343,11 +343,13 @@ static int __init exynos_mcpm_init(void)
->  	pr_info("Exynos MCPM support installed\n");
->  
->  	/*
-> -	 * Future entries into the kernel can now go
-> -	 * through the cluster entry vectors.
-> +	 * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
-> +	 * as part of secondary_cpu_start().  Let's redirect it to the
-> +	 * mcpm_entry_point().
->  	 */
-> -	__raw_writel(virt_to_phys(mcpm_entry_point),
-> -			ns_sram_base_addr + MCPM_BOOT_ADDR_OFFSET);
-> +	__raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
-> +	__raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
-> +	__raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
->  
->  	iounmap(ns_sram_base_addr);
->  
-> -- 
-> 2.0.0.526.g5318336
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-> 
+*HOWEVER* I have no choice but to say that many people at ARM, including 
+a couple individuals for whom I nevertheless have a lot of admiration, 
+also have an incredible faith in their ability to convince themselves, 
+and then turn around to preach to the world, that *more firmware* is 
+going to be so much purer and solve so many more problems than it 
+creates and become such a magical success that we should immediately 
+dedicate our soul to the cause with no hint of a doubt.
+
+I'm sorry to rain on your parade, but I don't believe in this one iota.
+
+Let me repeat the MCPM story again: it took 3 people, including 2 from 
+ARM, over *six* months to get everything right and stable on TC2. I 
+think you also contributed to that effort as well. Subsequent MCPM 
+backend contributions (yes, just the backend and not the core code) took 
+at least *five* rounds of reviews in one case, and after *seven* rounds 
+in another case it is still not right, despite the publicly available 
+TC2 implementation to serve as a reference.
+
+I'm sure each time a new patch set was posted, their authors honestly 
+believed their code was correct.  Otherwise why would they post buggy 
+code?
+
+Now you are telling me that they should have put that code into firmware 
+instead?  Can you realize what a catastrophe this would have been? Are 
+you _seriously_ believing that they would be up to their 5th firmware 
+revision by now?  And that updating their firmware six months after 
+product launch would be as easy as updating the kernel?
+
+Software ALWAYS has bugs, whether it is user apps, the kernel, firmware 
+or boot ROM. The bigger one of those parts is, the more bugs it will 
+have. And the cost to vendors for fixing those bugs grow exponentially 
+down each level. For proof, we're now considering possible workarounds 
+in the kernel to sidestep the difficulty with updating the firmware on a 
+Chromebook.
+
+Yet you're saying that firmware should grow code with the same 
+complexity as the MCPM core, plus a machine specific backend that 
+experience has proven multiple times is evidently hard to get right, 
+into firmware because running Linux in secure mode is wrong?  If so we 
+don't live in the same world indeed.
+
+The day I see a firmware architecture that allows for 1) the same level 
+of peer review as what we enjoy with the Linux kernel code and 2) the 
+same ability to perform updates in the field as the kernel, then maybe I 
+could be sold on the many advantages having generic firmware might have.  
+In the meantime I consider complex firmware as a very suboptimal 
+architecture with no bearing on the reality of actual short-cycled 
+products, and if they prevail we'd better be ready to pile more of those 
+ugly hacks in the kernel.
+
+
+Nicolas
+--8323328-1366427559-1402169780=:25775--
