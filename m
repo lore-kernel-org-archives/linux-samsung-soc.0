@@ -1,62 +1,56 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: Problems booting exynos5420 with >1 CPU
-Date: Sat, 7 Jun 2014 08:55:36 +0530
-Message-ID: <CAM4voam5KDicwLAt3EA1UC7M+EciGccrnMUKxoR-5c8xT8-zSQ@mail.gmail.com>
-References: <CAD=FV=UX90hgyojW3k_kpT=mt8eX9=AyHr+AGjhK=MrE1hHbUA@mail.gmail.com>
-	<539145B4.5000200@gmail.com>
-	<CAD=FV=XqwEQNJmij-4Gh62OY+B66AjdQjZC0=f_6tbot3UfQaA@mail.gmail.com>
-	<CAM4voaknx3+X4O8MUwaruUFPyquY8Opq61ucKX08xTrv8PqfLg@mail.gmail.com>
-	<alpine.LFD.2.11.1406061740280.25775@knanqh.ubzr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Tushar Behera <tushar.b@samsung.com>
+Subject: [PATCH] ARM: dts: Add missing clock/pin-control entries for I2S0 on Exynos4
+Date: Sat,  7 Jun 2014 15:00:54 +0530
+Message-ID: <1402133454-28445-1-git-send-email-tushar.b@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f50.google.com ([209.85.192.50]:61225 "EHLO
-	mail-qg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752708AbaFGDZh (ORCPT
+Received: from mail-pd0-f169.google.com ([209.85.192.169]:39521 "EHLO
+	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750732AbaFGJdg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Jun 2014 23:25:37 -0400
-Received: by mail-qg0-f50.google.com with SMTP id z60so6159101qgd.9
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Jun 2014 20:25:36 -0700 (PDT)
-In-Reply-To: <alpine.LFD.2.11.1406061740280.25775@knanqh.ubzr>
+	Sat, 7 Jun 2014 05:33:36 -0400
+Received: by mail-pd0-f169.google.com with SMTP id w10so3426362pde.0
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 07 Jun 2014 02:33:35 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "Turquette, Mike" <mturquette@linaro.org>, Kevin Hilman <khilman@linaro.org>, Tushar Behera <trblinux@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Arun Kumar <arun.kk@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, s.nawrocki@samsung.com
 
-Hi Nicolas,
+I2S driver uses 3 clocks under different conditions. Added two
+missing clocks.
 
-The first man of the incoming cluster enables its snoops via the
-power_up_setup function. During secondary boot-up, this does not occur
-for the boot cluster. Hence, I enable the snoops for the boot cluster
-as a one-time setup from the u-boot prompt. After secondary boot-up
-there is no modification that I do. Where should this be ideally done
-?
+Additionally updated pin-control property for this node.
 
-Regards,
-Abhilash
+Signed-off-by: Tushar Behera <tushar.b@samsung.com>
+---
+Based on next-20140606.
 
-On Sat, Jun 7, 2014 at 3:18 AM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> On Fri, 6 Jun 2014, Abhilash Kesavan wrote:
->
->> Hi Doug,
->>
->> The first change in the kernel (clearing an iRAM location) is needed
->> because of an unnecessary change that we are carrying in the Chrome
->> U-boot. There is no reason for us to have the workaround in the
->> mainline kernel. Rather, we should remove the check from our u-boot.
->> However AFAIR a clean-up patch that I had posted internally was not
->> accepted as we had frozen the SPL at the time.
->>
->> The second change is to enable snoops for boot cluster. Internally, we
->> were disabling the snoops for both the clusters at power off and
->> enabling it in power_up_setup and power_up. However, I dropped the
->> approach due to problems pointed out by Nicolas here
->> http://www.spinics.net/lists/arm-kernel/msg324091.html related to
->> cpuidle. Hence, we turn it on at the u-boot.
->
-> You should never *ever* play with the CCI from U-Boot.  That's for the
-> MCPM layer to decide when it is safe to do so.  That's mainly the
-> _whole_ reason why MCPM exists in the first place.
->
->
-> Nicolas
+Tested on Exynos4210-based Origen boards with private patches for
+codec/machine driver.
+
+ arch/arm/boot/dts/exynos4.dtsi |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index fbaf426..10bb081 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -55,11 +55,15 @@
+ 	i2s0: i2s@03830000 {
+ 		compatible = "samsung,s5pv210-i2s";
+ 		reg = <0x03830000 0x100>;
+-		clocks = <&clock_audss EXYNOS_I2S_BUS>;
+-		clock-names = "iis";
++		clocks = <&clock_audss EXYNOS_I2S_BUS>,
++			<&clock_audss EXYNOS_I2S_BUS>,
++			<&clock_audss EXYNOS_SCLK_I2S>;
++		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+ 		dmas = <&pdma0 12>, <&pdma0 11>, <&pdma0 10>;
+ 		dma-names = "tx", "rx", "tx-sec";
+ 		samsung,idma-addr = <0x03000000>;
++		pinctrl-0 = <&i2s0_bus>;
++		pinctrl-names = "default";
+ 		status = "disabled";
+ 	};
+ 
+-- 
+1.7.9.5
