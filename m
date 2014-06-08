@@ -1,54 +1,62 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
 Subject: Re: Problems booting exynos5420 with >1 CPU
-Date: Sun, 8 Jun 2014 19:29:49 +0100
-Message-ID: <20140608182949.GP23430@n2100.arm.linux.org.uk>
-References: <CAM4voaknx3+X4O8MUwaruUFPyquY8Opq61ucKX08xTrv8PqfLg@mail.gmail.com> <alpine.LFD.2.11.1406061740280.25775@knanqh.ubzr> <CAM4voam5KDicwLAt3EA1UC7M+EciGccrnMUKxoR-5c8xT8-zSQ@mail.gmail.com> <alpine.LFD.2.11.1406062340480.25775@knanqh.ubzr> <20140607175618.GA25068@e102568-lin.cambridge.arm.com> <alpine.LFD.2.11.1406071431490.25775@knanqh.ubzr> <20140607223614.GA26641@e102568-lin.cambridge.arm.com> <CAOesGMj+itYr-daqxfX=J3Ss+7YdWhUUzBWTW3FqVEH8tXqt-A@mail.gmail.com> <20140608001942.GM23430@n2100.arm.linux.org.uk> <alpine.LFD.2.11.1406081356050.25775@knanqh.ubzr>
+Date: Sun, 8 Jun 2014 14:55:03 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1406081452590.25775@knanqh.ubzr>
+References: <CAM4voaknx3+X4O8MUwaruUFPyquY8Opq61ucKX08xTrv8PqfLg@mail.gmail.com> <alpine.LFD.2.11.1406061740280.25775@knanqh.ubzr> <CAM4voam5KDicwLAt3EA1UC7M+EciGccrnMUKxoR-5c8xT8-zSQ@mail.gmail.com> <alpine.LFD.2.11.1406062340480.25775@knanqh.ubzr>
+ <20140607175618.GA25068@e102568-lin.cambridge.arm.com> <alpine.LFD.2.11.1406071431490.25775@knanqh.ubzr> <20140607223614.GA26641@e102568-lin.cambridge.arm.com> <CAOesGMj+itYr-daqxfX=J3Ss+7YdWhUUzBWTW3FqVEH8tXqt-A@mail.gmail.com> <20140608001942.GM23430@n2100.arm.linux.org.uk>
+ <alpine.LFD.2.11.1406081356050.25775@knanqh.ubzr> <20140608182949.GP23430@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:50886 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753617AbaFHSbk (ORCPT
+Received: from mail-qa0-f48.google.com ([209.85.216.48]:48872 "EHLO
+	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753723AbaFHSzH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 Jun 2014 14:31:40 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.11.1406081356050.25775@knanqh.ubzr>
+	Sun, 8 Jun 2014 14:55:07 -0400
+Received: by mail-qa0-f48.google.com with SMTP id x12so1030258qac.7
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Jun 2014 11:55:05 -0700 (PDT)
+In-Reply-To: <20140608182949.GP23430@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
 Cc: Olof Johansson <olof@lixom.net>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tushar Behera <trblinux@gmail.com>, "Turquette, Mike" <mturquette@linaro.org>, Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Arun Kumar <arun.kk@samsung.com>
 
-On Sun, Jun 08, 2014 at 02:26:43PM -0400, Nicolas Pitre wrote:
-> On Sun, 8 Jun 2014, Russell King - ARM Linux wrote:
-> 
-> > On Sat, Jun 07, 2014 at 04:53:34PM -0700, Olof Johansson wrote:
-> > > You do realize that you have absolutely zero leverage over us on this,
-> > > right? Our product is already shipped with kernel code that fixes
-> > > this.
+On Sun, 8 Jun 2014, Russell King - ARM Linux wrote:
+
+> On Sun, Jun 08, 2014 at 02:26:43PM -0400, Nicolas Pitre wrote:
+> > On Sun, 8 Jun 2014, Russell King - ARM Linux wrote:
 > > 
-> > That is never a justification for forcing /any/ code into the kernel.
+> > > On Sat, Jun 07, 2014 at 04:53:34PM -0700, Olof Johansson wrote:
+> > > > You do realize that you have absolutely zero leverage over us on this,
+> > > > right? Our product is already shipped with kernel code that fixes
+> > > > this.
+> > > 
+> > > That is never a justification for forcing /any/ code into the kernel.
+> > > 
+> > > We've been here before with the iPAQs, where there were all sorts of
+> > > horrid hacks that were in the code for that device, and we said no to
+> > > it, and we kept it out of the mainline kernel, and stopped those hacks
+> > > polluting elsewhere (because people got to know on the whole that if
+> > > they used those hacks, it would bar them from mainline participation.)
 > > 
-> > We've been here before with the iPAQs, where there were all sorts of
-> > horrid hacks that were in the code for that device, and we said no to
-> > it, and we kept it out of the mainline kernel, and stopped those hacks
-> > polluting elsewhere (because people got to know on the whole that if
-> > they used those hacks, it would bar them from mainline participation.)
+> > That's different.  The iPaq had very little in terms of firmware, and 
+> > the one it had was field upgradable with almost no risk to brick it 
+> > (unless you wanted to hack the firmware code but that's another story).  
+> > The reason iPaq had never been well supported in mainline can be 
+> > attributed to laziness for not wanting to make the code into a shape 
+> > acceptable for mainline inclusion.  But nothing fundamentally prevented 
+> > that from happening if someone had wanted to do it.
 > 
-> That's different.  The iPaq had very little in terms of firmware, and 
-> the one it had was field upgradable with almost no risk to brick it 
-> (unless you wanted to hack the firmware code but that's another story).  
-> The reason iPaq had never been well supported in mainline can be 
-> attributed to laziness for not wanting to make the code into a shape 
-> acceptable for mainline inclusion.  But nothing fundamentally prevented 
-> that from happening if someone had wanted to do it.
+> No, I was specifically thinking about the various iPAQ specific things
+> like the additional platform specific ATAGs that they invented with
+> zero reference to mainline, and then expected them to be accepted as-is.
+> 
+> I gave them a very clear message over that (which was "no way") and that
+> was essentially the last of their mainline submissions.
 
-No, I was specifically thinking about the various iPAQ specific things
-like the additional platform specific ATAGs that they invented with
-zero reference to mainline, and then expected them to be accepted as-is.
+That's basically what I'm saying.  They were too lazy to fix their code.  
+But nothing prevented that otherwise. They certainly couldn't use the 
+"firmware is broken and too hard to update" excuse.
 
-I gave them a very clear message over that (which was "no way") and that
-was essentially the last of their mainline submissions.
 
--- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+Nicolas
