@@ -1,42 +1,20 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] PM / OPP: Remove ARCH_HAS_OPP
-Date: Mon, 9 Jun 2014 10:19:20 +0530
-Message-ID: <CAOh2x=ms6Z421AqGAQxJFA3v63fDGu+=+zfrVzNzrfQOZoZGjg@mail.gmail.com>
-References: <1402051016-28853-1-git-send-email-broonie@kernel.org>
+From: "Santander Finance" <zein@sumutprov.go.id>
+Subject: We offer all purpose loan at 3% interest rate
+Date: Sun, 08 Jun 2014 15:15:17 -0700
+Message-ID: <201406090806.s595hU4U011925__29460.9662415043$1402302266$gmane$org@akmo.kz>
+Reply-To: santafinance@aol.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f179.google.com ([209.85.220.179]:44285 "EHLO
-	mail-vc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750754AbaFIEtV (ORCPT
+Received: from akmo.kz ([212.154.234.163]:58688 "EHLO akmo.kz"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752793AbaFIIYI convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Jun 2014 00:49:21 -0400
-In-Reply-To: <1402051016-28853-1-git-send-email-broonie@kernel.org>
+	Mon, 9 Jun 2014 04:24:08 -0400
+Content-Description: Mail message body
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh@kernel.org>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Tony Lindgren <tony@atomide.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, Mark Brown <broonie@linaro.org>
+To: Recipients <zein@sumutprov.go.id>
 
-On Fri, Jun 6, 2014 at 4:06 PM, Mark Brown <broonie@kernel.org> wrote:
-> From: Mark Brown <broonie@linaro.org>
->
-> Since the OPP layer is a kernel library which has been converted to be
-> directly selectable by its callers rather than user selectable and
-> requiring architectures to enable it explicitly the ARCH_HAS_OPP symbol
-> has become redundant and can be removed. Do so.
->
-> Signed-off-by: Mark Brown <broonie@linaro.org>
-> ---
->  Documentation/power/opp.txt    | 3 ---
->  arch/arm/mach-exynos/Kconfig   | 1 -
->  arch/arm/mach-highbank/Kconfig | 1 -
->  arch/arm/mach-imx/Kconfig      | 1 -
->  arch/arm/mach-omap2/Kconfig    | 1 -
->  arch/arm/mach-shmobile/Kconfig | 2 --
->  arch/arm/mach-vexpress/Kconfig | 1 -
->  arch/arm/mach-zynq/Kconfig     | 1 -
->  drivers/devfreq/Kconfig        | 1 -
->  kernel/power/Kconfig           | 3 ---
->  10 files changed, 15 deletions(-)
-
-Reviewed-by: Viresh Kumar <viresh.kumar@linaro.org>
+We offer all purpose loan at 3% interest rate. Contact Us for more details by Email:santanderfinancegroup@gmail.com
