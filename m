@@ -1,41 +1,65 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Add missing clock/pin-control entries for I2S0
- on Exynos4
-Date: Mon, 09 Jun 2014 13:06:50 +0200
-Message-ID: <5395954A.5070203@samsung.com>
-References: <1402133454-28445-1-git-send-email-tushar.b@samsung.com>
- <5395841B.8000702@samsung.com> <53958FF0.40101@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH] ARM: dts: remove display power domain for exynos5420
+Date: Mon, 09 Jun 2014 16:58:19 +0530
+Message-ID: <1402313299-18885-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51441 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932194AbaFILHB (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:63306 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932253AbaFIL3T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Jun 2014 07:07:01 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N6W00J43EVJQTA0@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 09 Jun 2014 12:06:55 +0100 (BST)
-In-reply-to: <53958FF0.40101@gmail.com>
+	Mon, 9 Jun 2014 07:29:19 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <trblinux@gmail.com>, Tushar Behera <tushar.b@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On 09/06/14 12:44, Tushar Behera wrote:
-> IMHO, the clock entries belong here as the audss clock provider
-> essentially remains same for all Exynos4 based systems.
-> 
-> As for pin-control entry, I believe we can move them to respective SoC
-> dtsi files.
-> 
-> Does that sound okay to you?
+Display domain is removed due to instability issues. Explaining
+the problem below:
 
-I guess that's fine, I tend to agree with you about the clocks.
+exynos_init_late triggers the pm_genpd_poweroff_unused which
+powers off the unused power domains. This call hits before
+the trigger to deferred probes.
 
---
-Thanks,
-Sylwester
+DRM DP Panel defers the probe due to supply get failure. By the
+time, deferred probe is scheduled again, Display Power Domain is
+powered off by pm_genpd_poweroff_unused.
+
+FIMD and DP drivers are accessing registers during Probe and Bind
+callbacks. If display domain is enabled/disabled around register
+accesses, display domain gets unstable and we are getting Power
+Domain Disable fail notification. Increasing the Timeout also
+didn't help.
+
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+---
+based on Kukjin's for-next branch.
+
+ arch/arm/boot/dts/exynos5420.dtsi |    6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index e385322..3d528cf 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -262,11 +262,6 @@
+ 		reg = <0x10044060 0x20>;
+ 	};
+ 
+-	disp_pd: power-domain@100440C0 {
+-		compatible = "samsung,exynos4210-pd";
+-		reg = <0x100440C0 0x20>;
+-	};
+-
+ 	msc_pd: power-domain@10044120 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10044120 0x20>;
+@@ -518,7 +513,6 @@
+ 	};
+ 
+ 	fimd: fimd@14400000 {
+-		samsung,power-domain = <&disp_pd>;
+ 		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
+ 		clock-names = "sclk_fimd", "fimd";
+ 	};
+-- 
+1.7.9.5
