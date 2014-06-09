@@ -1,65 +1,64 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH] ARM: dts: remove display power domain for exynos5420
-Date: Mon, 09 Jun 2014 16:58:19 +0530
-Message-ID: <1402313299-18885-1-git-send-email-rahul.sharma@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/5] mfd: Add driver for Maxim 77802 Power Management IC
+Date: Mon, 9 Jun 2014 12:56:43 +0100
+Message-ID: <20140609115643.GZ5099@sirena.org.uk>
+References: <1402306670-17041-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1402306670-17041-2-git-send-email-javier.martinez@collabora.co.uk>
+ <1402309361.17650.14.camel@AMDC1943>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kpwIYr1TmOiRZuUu"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63306 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932253AbaFIL3T (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33409 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751715AbaFIL5R (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Jun 2014 07:29:19 -0400
+	Mon, 9 Jun 2014 07:57:17 -0400
+Content-Disposition: inline
+In-Reply-To: <1402309361.17650.14.camel@AMDC1943>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Daniel Stone <daniels@collabora.com>
 
-Display domain is removed due to instability issues. Explaining
-the problem below:
 
-exynos_init_late triggers the pm_genpd_poweroff_unused which
-powers off the unused power domains. This call hits before
-the trigger to deferred probes.
+--kpwIYr1TmOiRZuUu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-DRM DP Panel defers the probe due to supply get failure. By the
-time, deferred probe is scheduled again, Display Power Domain is
-powered off by pm_genpd_poweroff_unused.
+On Mon, Jun 09, 2014 at 12:22:41PM +0200, Krzysztof Kozlowski wrote:
+> On pon, 2014-06-09 at 11:37 +0200, Javier Martinez Canillas wrote:
 
-FIMD and DP drivers are accessing registers during Probe and Bind
-callbacks. If display domain is enabled/disabled around register
-accesses, display domain gets unstable and we are getting Power
-Domain Disable fail notification. Increasing the Timeout also
-didn't help.
+> > +static const struct max77802_irq_data max77802_irqs[] = {
+> > +	DECLARE_IRQ(MAX77802_PMICIRQ_PWRONF,	PMIC_INT1, 1 << 0),
+> > +	DECLARE_IRQ(MAX77802_PMICIRQ_PWRONR,	PMIC_INT1, 1 << 1),
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
----
-based on Kukjin's for-next branch.
+> Why just not use two regmap_irq_chips (for PMIC and RTC blocks)
+> replacing whole max77802-irq.c file?
 
- arch/arm/boot/dts/exynos5420.dtsi |    6 ------
- 1 file changed, 6 deletions(-)
+If they share the same primary IRQ line something like what the arizona
+drivers do should handle things well enough.
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index e385322..3d528cf 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -262,11 +262,6 @@
- 		reg = <0x10044060 0x20>;
- 	};
- 
--	disp_pd: power-domain@100440C0 {
--		compatible = "samsung,exynos4210-pd";
--		reg = <0x100440C0 0x20>;
--	};
--
- 	msc_pd: power-domain@10044120 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044120 0x20>;
-@@ -518,7 +513,6 @@
- 	};
- 
- 	fimd: fimd@14400000 {
--		samsung,power-domain = <&disp_pd>;
- 		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
- 		clock-names = "sclk_fimd", "fimd";
- 	};
--- 
-1.7.9.5
+--kpwIYr1TmOiRZuUu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJTlaD4AAoJELSic+t+oim9z70QAJymnz4t4+N/+kU+5Te1yMe/
+RUZSVhZ+pJarOShf3lGi8ubqMfqS597X8V25QLJZuo0EpdBuCs8XE1ZlvSTLgYCT
+jh8mI97Fipa+KfRs1JPiAAfjqbvXsbO1OBPMuGQNd6iexDK79/FHgUlXAEd9sRtx
+OI+SWLWklZ3dunc/CjEXd0o9MicqnclXXcvBOJ4EU/6U0ev6a0k63AoEpc1wX4r9
+ULrVVe9e7K8NsXR5rHw3NBWDQPr4gnpYKy48fl5NHBcew4nE8E8m7P77OjEqtEx9
+ByaS1RDVQCUKSF4ddSJ6o5zKi8jDJf2JdowhqkOtmZlRXRhs41sbRpR/vJmEKGu9
+Ng5eoVo4cTDhUQGk5Qz0NSoiicCciJMf6FwSC+SluTxd619xWBpAPC42wW9/lnUS
+K2BbANak/JKLaZyOJMqlu4xuIyWf/tvB4oaOm6G+0N/i/gvHdrxu7g3QxXisMhbb
+sR5oVaXMYUdsmS22i2GjRIzVWDb+Oech4bTi24cU2WXwPIBK3gzOKlbWD8kGKnA/
+X7SknMV3qEBCaB/YgCdlTEULy/NMDGz4zIoThR9dRpU1RvzQPDdJUZbfcn/L0ruZ
+LSXl100W6hopEY1kf6WhDTGxa+xQLJ4g+GXnX/U7KT3VbHsrEs59SRI0j3meocid
+09+2rZJoMyZUpB70ioW3
+=m/aG
+-----END PGP SIGNATURE-----
+
+--kpwIYr1TmOiRZuUu--
