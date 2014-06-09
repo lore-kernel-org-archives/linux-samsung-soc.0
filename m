@@ -1,51 +1,127 @@
-From: Pratyush Anand <pratyush.anand-qxv4g6HH51o@public.gmane.org>
-Subject: Re: [PATCH 1/4] phy: Add provision for calibrating phy.
-Date: Mon, 9 Jun 2014 09:19:03 +0530
-Message-ID: <20140609034902.GA2625@pratyush-vbox>
-References: <1402056736-12674-1-git-send-email-gautam.vivek@samsung.com>
- <1402056736-12674-2-git-send-email-gautam.vivek@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: remove hardware overlays disable from fimd
+ probe
+Date: Mon, 09 Jun 2014 13:13:40 +0900
+Message-ID: <53953474.7080902@samsung.com>
+References: <1401257471-31994-1-git-send-email-rahul.sharma@samsung.com>
+ <538C3FC4.6090509@samsung.com>
+ <CAPdUM4POJwfe_RyKV+ym=ENgVF+2To0qgS88UGp1ueBD3LH4ig@mail.gmail.com>
+ <538C4DE0.50801@gmail.com> <538C551E.30407@samsung.com>
+ <538C64A7.50900@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1402056736-12674-2-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "kishon-l0cyMroinI0@public.gmane.org" <kishon-l0cyMroinI0@public.gmane.org>, "mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org" <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:26248 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750979AbaFIENn convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 Jun 2014 00:13:43 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N6V00EMMVQTQV50@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 09 Jun 2014 13:13:41 +0900 (KST)
+In-reply-to: <538C64A7.50900@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "Szyprowski, Marek" <m.szyprowski@samsung.com>
 
-On Fri, Jun 06, 2014 at 08:12:12PM +0800, Vivek Gautam wrote:
-> Some PHY controllers may need to calibrate certain
-> PHY settings after initialization of the controller and
-> sometimes even after initializing the PHY-consumer too.
-> Add support for the same in order to let consumers do so in need.
-> 
-> Signed-off-by: vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/phy/phy-core.c  |   36 ++++++++++++++++++++++++++++++++++++
->  include/linux/phy/phy.h |    7 +++++++
->  2 files changed, 43 insertions(+)
-> 
-> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> index 74d4346..92d31a3 100644
-> --- a/drivers/phy/phy-core.c
-> +++ b/drivers/phy/phy-core.c
-> @@ -376,6 +376,42 @@ int phy_power_off(struct phy *phy)
->  EXPORT_SYMBOL_GPL(phy_power_off);
->  
->  /**
-> + * phy_calibrate - calibrate a phy post initialization
-> + * @phy: Pointer to 'phy' from consumer
-> + *
-> + * For certain PHYs, it may be needed to calibrate few phy parameters
-> + * post initialization. The need to calibrate may arise after the
+On 2014=EB=85=84 06=EC=9B=94 02=EC=9D=BC 20:48, Andrzej Hajda wrote:
+> On 06/02/2014 12:42 PM, Andrzej Hajda wrote:
+>> On 06/02/2014 12:11 PM, Tomasz Figa wrote:
+>>> Hi Rahul, Andrzej,
+>>>
+>>> On 02.06.2014 11:42, Rahul Sharma wrote:
+>>>> On 2 June 2014 14:41, Andrzej Hajda <a.hajda@samsung.com> wrote:
+>>>>> Hi Rahul,
+>>>>>
+>>>>> On 05/28/2014 08:11 AM, Rahul Sharma wrote:
+>>>>>> System hangs when FIMD registers are accessed to disable
+>>>>>> hardware overlays. This is because of the clocks which are
+>>>>>> not enabled before register access.
+>>>>>>
+>>>>>> 'Hardware overlay disable' is cleaned from the FIMD probe.
+>>>>>>
+>>>>>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>>>>>
+>>>>> This patch causes regression on some exynos4210-universal_c210 de=
+vices,
+>>>>> everything works expect colors are incorrect - it seems blue comp=
+onent
+>>>>> is very dark, almost black.
+>>>>>
+>>>>
+>>>> Oh.... Sorry for that. I did not see any problem on 5250/5420/5800=
+=2E I do not
+>>>> have setup for 4210. Better we should revert this patch.
+>>>>
+>>>> Would you please help me by verifying the following patch on 4210?=
+ This
+>>>> is an alternate solution to the same problem.
+>>>>
+>>>> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg3=
+1426.html
+>>>>
+>>>> Thanks Andrej, for bringing it to notice.
+>>>
+>>> I don't see how this patch could introduce such regression, as all =
+the
+>>> affected registers seem to be properly reconfigured in fimd_win_com=
+mit()
+>>> anyway.
+>>>
+>>> IMHO instead of reverting the patch, this issue should be investiga=
+ted
+>>> and fixed properly.
+>>>
+>>> Best regards,
+>>> Tomasz
+>>>
+>>
+>> I am looking at the problem, it is quite strange as it happens only =
+on
+>> one of two targets I have access to. Anyway it seems that something
+>> should be added to fimd initialization sequence if we want to remove=
+ hw
+>> accessing code from probe.
+>=20
+> The problem is that fimd does not clear unused windows.
+> Simple patch which helps:
+>=20
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index 2ec634f..b58fce2 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -741,6 +741,8 @@ static void fimd_apply(struct exynos_drm_manager =
+*mgr)
+>                 win_data =3D &ctx->win_data[i];
+>                 if (win_data->enabled)
+>                         fimd_win_commit(mgr, i);
+> +               else
+> +                       fimd_win_disable(mgr, i);
+>         }
+>=20
+>         fimd_commit(mgr);
+>=20
+> But I am not fully familiar with window management code, so I do not
+> know if it does not breaks other stuff.
 
-For USB you may need to calibrate phy after each new connection. If
-so, why not to use already existing struct usb_phy's notify_connect.
+It looks good to me. Can you post it?
 
-        pratyush
+Thanks,
+Inki Dae
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+> Regards
+> Andrzej
+>=20
+>>
+>> Regards
+>> Andrzej
+>>
+>=20
+>=20
