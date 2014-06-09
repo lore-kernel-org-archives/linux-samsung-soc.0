@@ -1,132 +1,124 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 0/5] Add Maxim 77802 PMIC support
-Date: Tue, 10 Jun 2014 00:55:25 +0200
-Message-ID: <53963B5D.8090908@collabora.co.uk>
-References: <1402306670-17041-1-git-send-email-javier.martinez@collabora.co.uk>	<1402309011.17650.9.camel@AMDC1943> <CAD=FV=U2zPJ=NohDjGvJKfmwJzQhphtVMefM0p_hvFVoReauhQ@mail.gmail.com>
+Subject: Re: [PATCH 1/5] mfd: Add driver for Maxim 77802 Power Management
+ IC
+Date: Tue, 10 Jun 2014 01:07:43 +0200
+Message-ID: <53963E3F.2090607@collabora.co.uk>
+References: <1402306670-17041-1-git-send-email-javier.martinez@collabora.co.uk> <1402306670-17041-2-git-send-email-javier.martinez@collabora.co.uk> <1402309361.17650.14.camel@AMDC1943>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=U2zPJ=NohDjGvJKfmwJzQhphtVMefM0p_hvFVoReauhQ@mail.gmail.com>
+In-Reply-To: <1402309361.17650.14.camel@AMDC1943>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Stone <daniels@collabora.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Daniel Stone <daniels@collabora.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzystof,
+Hello Krzysztof,
 
-Thanks a lot for your feedback.
-
-On 06/09/2014 06:04 PM, Doug Anderson wrote:
-> Krzystof,
+On 06/09/2014 12:22 PM, Krzysztof Kozlowski wrote:
+> On pon, 2014-06-09 at 11:37 +0200, Javier Martinez Canillas wrote:
+>> Maxim MAX77802 is a power management chip that contains 10 high
+>> efficiency Buck regulators, 32 Low-dropout (LDO) regulators used
+>> to power up application processors and peripherals, a 2-channel
+>> 32kHz clock outputs, a Real-Time-Clock (RTC) and a I2C interface
+>> to program the individual regulators, clocks outputs and the RTC.
+>> 
+>> This patch adds the core support for MAX77802 PMIC and is based
+>> on a driver added by Simon Glass to the Chrome OS kernel 3.8 tree.
+>> 
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 > 
-> On Mon, Jun 9, 2014 at 3:16 AM, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
->> On pon, 2014-06-09 at 11:37 +0200, Javier Martinez Canillas wrote:
->>> MAX77802 is a PMIC that contains 10 high efficiency Buck regulators,
->>> 32 Low-dropout (LDO) regulators, two 32kHz buffered clock outputs,
->>> a Real-Time-Clock (RTC) and a I2C interface to program the individual
->>> regulators, clocks and the RTC.
->>>
->>> This series are based on drivers added by Simon Glass to the Chrome OS
->>> kernel and adds support for the Maxim 77802 Power Management IC, their
->>> regulators, clocks, RTC and I2C interface. It is composed of patches:
->>>
->>> [PATCH 1/5] mfd: Add driver for Maxim 77802 Power Management IC
->>> [PATCH 2/5] regulator: Add driver for Maxim 77802 PMIC regulators
->>> [PATCH 3/5] clk: Add driver for Maxim 77802 PMIC clocks
->>> [PATCH 4/5] rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
->>> [PATCH 5/5] ARM: dts: Add max77802 device node for exynos5420-peach-pit
->>>
->>> Patches 1-4 add support for the different devices and Patch 5 enables
->>> the MAX77802 PMIC on the Exynos5420 based Peach pit board.
->>
->>
->> Hi,
->>
->> The main mfd, mfd irq, clk and rtc drivers look very similar to max77686
->> drivers. I haven't checked other Maxim drivers but I think there will be
->> a lot of similarities with them also. It is almost common for Maxim
->> chipsets to share components between each other.
->>
->> I think there is no need in duplicating all that stuff once again in new
->> driver for another Maxim-almost-the-same-as-others-XYZ chipset. Just
->> merge it with max77686 (or other better candidate).
->>
->> The only difference is in regulator driver. I am not sure whether this
->> is a result of differences in chip or differences in driver design.
-> 
-> Yes, we thought the same thing when we added support for the max77802
-> in the ChromeOS tree.  Unfortunately it didn't work out half as well
-> as we thought it would.  When Javier was asking advice about sending
-> things upstream we suggested that perhaps he should split the two up.
+> (...)
 > 
 > 
-> You can see the result of the combined driver the ChromeOS tree (the
-> code there is older, probably misnamed as max77xxx, and doesn't have
-> the proper clock pieces, but you can get the gist):
+>> diff --git a/drivers/mfd/max77802-irq.c b/drivers/mfd/max77802-irq.c
+>> new file mode 100644
+>> index 0000000..38a8ce7
+>> --- /dev/null
+>> +++ b/drivers/mfd/max77802-irq.c
+>> @@ -0,0 +1,332 @@
+>> +/*
+>> + * max77802-irq.c - Interrupt controller support for MAX77802
+>> + *
+>> + * Copyright (C) 2013-2014 Google, Inc
+>> + *
+>> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
+>> + * Chiwoong Byun <woong.byun@samsung.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License as published by
+>> + * the Free Software Foundation; either version 2 of the License, or
+>> + * (at your option) any later version.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + *
+>> + * This driver is based on max8997-irq.c
+>> + */
+>> +
+>> +#include <linux/err.h>
+>> +#include <linux/irq.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/gpio.h>
+>> +#include <linux/mfd/max77802.h>
+>> +#include <linux/mfd/max77802-private.h>
+>> +#include <linux/irqdomain.h>
+>> +#include <linux/regmap.h>
+>> +
+>> +enum {
+>> +	MAX77802_DEBUG_IRQ_INFO = 1 << 0,
+>> +	MAX77802_DEBUG_IRQ_MASK = 1 << 1,
+>> +	MAX77802_DEBUG_IRQ_INT = 1 << 2,
+>> +};
+>> +
+>> +static int debug_mask = 0;
+>> +module_param(debug_mask, int, 0);
+>> +MODULE_PARM_DESC(debug_mask, "Set debug_mask : 0x0=off 0x1=IRQ_INFO  0x2=IRQ_MASK 0x4=IRQ_INI)");
+>> +
+>> +static const u8 max77802_mask_reg[] = {
+>> +	[PMIC_INT1] = MAX77802_REG_INT1MSK,
+>> +	[PMIC_INT2] = MAX77802_REG_INT2MSK,
+>> +	[RTC_INT] = MAX77802_RTC_INTM,
+>> +};
+>> +
+>> +struct max77802_irq_data {
+>> +	int mask;
+>> +	enum max77802_irq_source group;
+>> +};
+>> +
+>> +#define DECLARE_IRQ(idx, _group, _mask)		\
+>> +	[(idx)] = { .group = (_group), .mask = (_mask) }
+>> +static const struct max77802_irq_data max77802_irqs[] = {
+>> +	DECLARE_IRQ(MAX77802_PMICIRQ_PWRONF,	PMIC_INT1, 1 << 0),
+>> +	DECLARE_IRQ(MAX77802_PMICIRQ_PWRONR,	PMIC_INT1, 1 << 1),
+>> +	DECLARE_IRQ(MAX77802_PMICIRQ_JIGONBF,	PMIC_INT1, 1 << 2),
+>> +	DECLARE_IRQ(MAX77802_PMICIRQ_JIGONBR,	PMIC_INT1, 1 << 3),
+>> +	DECLARE_IRQ(MAX77802_PMICIRQ_ACOKBF,	PMIC_INT1, 1 << 4),
+>> +	DECLARE_IRQ(MAX77802_PMICIRQ_ACOKBR,	PMIC_INT1, 1 << 5),
+>> +	DECLARE_IRQ(MAX77802_PMICIRQ_ONKEY1S,	PMIC_INT1, 1 << 6),
+>> +	DECLARE_IRQ(MAX77802_PMICIRQ_MRSTB,		PMIC_INT1, 1 << 7),
+>> +	DECLARE_IRQ(MAX77802_PMICIRQ_140C,		PMIC_INT2, 1 << 0),
+>> +	DECLARE_IRQ(MAX77802_PMICIRQ_120C,		PMIC_INT2, 1 << 1),
+>> +	DECLARE_IRQ(MAX77802_RTCIRQ_RTC60S,		RTC_INT, 1 << 0),
+>> +	DECLARE_IRQ(MAX77802_RTCIRQ_RTCA1,		RTC_INT, 1 << 1),
+>> +	DECLARE_IRQ(MAX77802_RTCIRQ_RTCA2,		RTC_INT, 1 << 2),
+>> +	DECLARE_IRQ(MAX77802_RTCIRQ_SMPL,		RTC_INT, 1 << 3),
+>> +	DECLARE_IRQ(MAX77802_RTCIRQ_RTC1S,		RTC_INT, 1 << 4),
+>> +	DECLARE_IRQ(MAX77802_RTCIRQ_WTSR,		RTC_INT, 1 << 5),
+>> +};
 > 
-> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/regulator/max77xxx-regulator.c
-> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/rtc/rtc-max77xxx.c
-> 
-> 
-> Specific problems that made it ugly to have a combined driver:
-> 
-> * The RTC has many subtle differences between the 77686 and 77802.
-> They expanded it to handle a 200 year timeframe instead of 100 and
-> that meant that they had to shuffle the bits around everywhere.  They
-> also moved it to have the same i2c address as the main PMIC so all
-> addresses are different (see max77686_map in the RTC link above).
+> Why just not use two regmap_irq_chips (for PMIC and RTC blocks)
+> replacing whole max77802-irq.c file?
 >
-> * The regulator itself has similar concepts between the two, but the
-> list of bucks / ldos and how they behave is quite different.  Trying
-> to understand the complex tables in
-> <https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/regulator/max77xxx-regulator.c>
-> was not easy.
+
+Great, I was not aware about regmap_irq_chip. I'll take a look to it for v2.
+
+> Best regards,
+> Krzysztof
 > 
-> 
-
-There are other differences that were not mentioned:
-
-- The max77802 uses a single register to enable RTC alarm while max77686 uses 1
-bit from a set of registers.
-- Each chip has some regulators that are not available and you have to take care
-of those exceptions (e.g: LDO16, LDO22 and LD31 on max77802).
-- The max77802 has 2 clocks outputs while the max77686 has three.
-
-So, as Doug said there are many differences on these two chips besides the
-regulators. It's true that these two drivers share a lot of the structure and
-there is code duplication (this applies to most maxim drivers btw) but I have my
-doubts that the combined approach will make the code more easy to maintain.
-
-The biggest problem is the i2c addresses space being different so you need an
-indirection level to access registers and have duplicated registers definition
-for each chip.
-
-> If we really need to write a single driver it certainly can be done,
-> but please look at the above to be sure this is what you want.
-> 
->
-
-Yes, if the combined driver is preferred over having a separate driver for
-max77802 then I will try to find the more elegant way to merge both drivers. But
-I tried to do it already and I can't say I liked the end result more than having
-two separate drivers.
-
-> NOTE: it's possible that things could be more sane with more driver
-> redesign, possibly making things more data driven.  The thing that
-> would be really nice to do would be to avoid all of the crazy
-> "regulator_zzz_desc_zzz" macros, maybe?  I'd have to actually try
-> doing it to be sure it's cleaner, though...
-> 
-
-Another option is to use an hybrid approach. Merge the mfd core, irq and clk
-drivers but have different platform drivers for rtc and regulators. Still the
-end result is not great imho but better than trying merging the regulators and
-RTC drivers where most of the differences are.
-
-> 
-> -Doug
 > 
 
 Best regards,
