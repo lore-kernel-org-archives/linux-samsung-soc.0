@@ -1,57 +1,31 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] PM / OPP: Remove ARCH_HAS_OPP
-Date: Mon, 9 Jun 2014 20:49:17 +0100
-Message-ID: <20140609194917.GH5099@sirena.org.uk>
-References: <1402051016-28853-1-git-send-email-broonie@kernel.org>
- <20140606125003.GA13332@verge.net.au>
- <20140606130850.GO2520@sirena.org.uk>
- <3122018.iBNBjMKNbN@vostro.rjw.lan>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH v2] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
+Date: Mon, 9 Jun 2014 13:05:17 -0700
+Message-ID: <CAL1qeaGv+hBCr8oqs-E2j_Qh0Z=ZTVEaM-gdyu286Snu4otbMA@mail.gmail.com>
+References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
+	<1402096465-13218-1-git-send-email-dianders@chromium.org>
+	<7htx7uq7k1.fsf@paris.lan>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZZc4RZLlj7DA0l+0"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <3122018.iBNBjMKNbN@vostro.rjw.lan>
-Sender: linux-omap-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh@kernel.org>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Tony Lindgren <tony@atomide.com>, Michal Simek <michal.simek@xilinx.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, SH-Linux <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <7htx7uq7k1.fsf@paris.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kevin Hilman <khilman@linaro.org>, Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Inderpal Singh <inderpal.s@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Olof Johansson <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+> [1] While waiting for the forth-coming patch from Andrew to enable the
+>     CCI port for the boot cluster), I do this from u-boot before starting
+>     the kernel (based on earlier email from Doug):
+>
+>     mw.l 10d25000 3  # Enable CCI from U-Boot
 
---ZZc4RZLlj7DA0l+0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+>From the other thread, it sounds like Nicolas wants enabling of the
+boot cluster's CCI port to be done unconditionally for all MCPM
+platforms.  Nicolas, are you preparing a patch for this or should I?
+The only issue I see with making the MCPM loopback generic is that
+although all current mainline MCPM platforms have the same cache flush
+procedure, a future platform could be different.
 
-On Fri, Jun 06, 2014 at 11:15:06PM +0200, Rafael J. Wysocki wrote:
-> On Friday, June 06, 2014 02:08:50 PM Mark Brown wrote:
-
-> > Yes, the conversion to make ARCH_HAS_OPP unused is in Raphael's tree for
-> > the merge window.
-
-> Perhaps already merged?
-
-Yes, looks like it is.
-
---ZZc4RZLlj7DA0l+0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTlg+5AAoJELSic+t+oim9gPQQAJl+gVZkOImjKju67ucY3fZG
-AiQKQy/CtAMigWQ00llUxF2NBEJdQ5zRCzNKsVG3W0UYQYmyQMG6fNrUGsBRrsgK
-5t5koeipaq9aKha55tUkhs6eucv8yEL8dIRe6cQtfQjoZmQi9O2+KhaCwFBH+P/k
-S+3K2p4uwJyx5NI97Le4Wtqb/uu3Y17DQWhg+nFsxS9MeURaI8X39uanK/GQOW2o
-PSmWCRWcqOmGzf/pJ35R5RnhYHRk0bkZzoZ9h51BsM8r7Oc7RvO1XUi6YAllwrL9
-h1MbBb1aBC6lgnsiIC02UIVVuB23kzjRorbSrUVwvY7VSKM+P7IkqMo12wE41y24
-EGj+cGICmkAnmS2JzZlDTvFwvQoLsCkT51iql3+G2y4Wfj8m/1CErIO9umpOZcbW
-n9L6teTFKYl2lND7IT75C0CRACPJ/c2pkRBYqjIsMeV17hohVIJVgsBezVRGroZd
-vFyVq3sRaxba7uP93Z16Dp0+WeWjuDRfvH5KXZBQG/ECayFN32w3cTqCvBs7z6fr
-6XUW/eu3vOQlNLdR25efrkrJ6yxom+zsbVbXo1kbiYJ/a4O0efWFKz55F7009s2B
-pYGsC/D8ZMrbTmNyoblwxnfqhUWZCLR7HwdvUZC/wBzPMGxO5LVrWb4WzASKUhpU
-kz8BmH+8msYUA2PL806Q
-=wNKN
------END PGP SIGNATURE-----
-
---ZZc4RZLlj7DA0l+0--
+Thanks,
+Andrew
