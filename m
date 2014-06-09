@@ -1,110 +1,57 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/5] mfd: Add driver for Maxim 77802 Power Management IC
-Date: Mon, 9 Jun 2014 20:47:13 +0100
-Message-ID: <20140609194713.GF5099@sirena.org.uk>
-References: <1402306670-17041-1-git-send-email-javier.martinez@collabora.co.uk>
- <1402306670-17041-2-git-send-email-javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH] PM / OPP: Remove ARCH_HAS_OPP
+Date: Mon, 9 Jun 2014 20:49:17 +0100
+Message-ID: <20140609194917.GH5099@sirena.org.uk>
+References: <1402051016-28853-1-git-send-email-broonie@kernel.org>
+ <20140606125003.GA13332@verge.net.au>
+ <20140606130850.GO2520@sirena.org.uk>
+ <3122018.iBNBjMKNbN@vostro.rjw.lan>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yqX3wpb4QnjwKg06"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34322 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750822AbaFITro (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Jun 2014 15:47:44 -0400
+	protocol="application/pgp-signature"; boundary="ZZc4RZLlj7DA0l+0"
+Return-path: <linux-omap-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1402306670-17041-2-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <3122018.iBNBjMKNbN@vostro.rjw.lan>
+Sender: linux-omap-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh@kernel.org>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Tony Lindgren <tony@atomide.com>, Michal Simek <michal.simek@xilinx.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, SH-Linux <linux-sh@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
---yqX3wpb4QnjwKg06
+--ZZc4RZLlj7DA0l+0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Mon, Jun 09, 2014 at 11:37:46AM +0200, Javier Martinez Canillas wrote:
+On Fri, Jun 06, 2014 at 11:15:06PM +0200, Rafael J. Wysocki wrote:
+> On Friday, June 06, 2014 02:08:50 PM Mark Brown wrote:
 
-> +Optional node:
-> +- voltage-regulators : The regulators of max77802 have to be instantiated
-> +  under subnode named "voltage-regulators" using the following format.
+> > Yes, the conversion to make ARCH_HAS_OPP unused is in Raphael's tree for
+> > the merge window.
 
-Every other PMIC calls this node regulators...
+> Perhaps already merged?
 
-> +	regulator_name {
-> +		regulator-compatible = LDOn/BUCKn
+Yes, looks like it is.
 
-regulator-compatible is deprecated, use the node name instead.
-
-> +config MFD_MAX77802
-> +	bool "Maxim Integrated MAX77802 PMIC Support"
-
-Why is this bool and not tristate?
-
-> +int max77802_irq_resume(struct max77802_dev *max77802)
-> +{
-> +	/*
-> +	 * The IRQ that woke us up may still need to be ACK'ed on resume.
-> +	 * If it isn't ever ACK'ed, future IRQs may not be delivered.
-> +	 */
-> +	if (max77802->irq)
-> +		max77802_irq_thread(0, max77802);
-> +
-> +	return 0;
-> +}
-
-As covered in another subthread all this code looks like it should be
-regmap-irq.
-
-> +	if (regmap_read(max77802->regmap,
-> +			 MAX77802_REG_DEVICE_ID, &data) < 0) {
-> +		dev_err(max77802->dev,
-> +			"device not found on this channel (this is not an error)\n");
-> +		return -ENODEV;
-
-If this is not an error why is it printed as dev_err()?  It does look
-like an error to me, though.
-
-> +	} else {
-> +		dev_info(max77802->dev, "device found\n");
-> +	}
-
-These sort of prints are just noise, remove this unless there is some
-revision information you can display.  It's also better practice to
-check that the device ID is actually what was expected in case there was
-an error in the DT.
-
-> +static const struct i2c_device_id max77802_i2c_id[] = {
-> +	{ "max77802", TYPE_MAX77802 },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, max77802_i2c_id);
-
-We have type information here but not in the OF ID table (not that we
-ever look at it).
-
---yqX3wpb4QnjwKg06
+--ZZc4RZLlj7DA0l+0
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTlg8+AAoJELSic+t+oim9tGsP/RrgPb6Ks5oqJYi8qd7kKfJi
-HqC48BXqJACEvfLkvCun302iOEYFus4bX/q2tQ753ffz1qsoi2n8iDBNYLzYi87T
-hllh0FWJHbMWmdoR22OjaWQLfYiF5MfgaRzsS+9eOkxNMeVXAJrAH91wormsA41W
-fm7chn07pHGqbWYIUw4lULAOzBmtmkr7jIsroNuzROjwkb4Lyg8/8+epxAk9V2qm
-TgB53v0yrqxWD41dZqwYT+u+rBhxGIqmv93OEZ3LzgFq4bcR33Amn7jNSkhSFf++
-9/RrEmBWBmC5cuFXwpkZuqEzoYk4JoOhqFWZnWQv+uIRSMq8RiyxXAcagAtBJnok
-FMJofsfT0Saitj7x42pdSylvUYU7DHcalslrwGD53Jay+3w7B5OkBS8pOJCLft7R
-hzjizuKzKG+ULtStlKYtZ1fvX0KPeF3SDrE1IVXYMaT4MIuC98s+EVl3tiTXIrrc
-F9vrk2op+mEmgC0Ea4HqWyhu9fGcfw4gpgaFWeI6TW5H+WDbhbU9bHwgR5mjNTJx
-2SvA7v4UW617HSsJpQHNq6i+LRrSn1MAMydbPLhd38bh2SImmVQq8lcuc5utW/mX
-jbUQqqEbotCdjdUggoKWj+rInlYXLmNljO+btrIrwO29JqqRZ+vYprGVd+FbN01b
-Pde+ix2Kgvv4YuZNkXxf
-=x6e0
+iQIcBAEBAgAGBQJTlg+5AAoJELSic+t+oim9gPQQAJl+gVZkOImjKju67ucY3fZG
+AiQKQy/CtAMigWQ00llUxF2NBEJdQ5zRCzNKsVG3W0UYQYmyQMG6fNrUGsBRrsgK
+5t5koeipaq9aKha55tUkhs6eucv8yEL8dIRe6cQtfQjoZmQi9O2+KhaCwFBH+P/k
+S+3K2p4uwJyx5NI97Le4Wtqb/uu3Y17DQWhg+nFsxS9MeURaI8X39uanK/GQOW2o
+PSmWCRWcqOmGzf/pJ35R5RnhYHRk0bkZzoZ9h51BsM8r7Oc7RvO1XUi6YAllwrL9
+h1MbBb1aBC6lgnsiIC02UIVVuB23kzjRorbSrUVwvY7VSKM+P7IkqMo12wE41y24
+EGj+cGICmkAnmS2JzZlDTvFwvQoLsCkT51iql3+G2y4Wfj8m/1CErIO9umpOZcbW
+n9L6teTFKYl2lND7IT75C0CRACPJ/c2pkRBYqjIsMeV17hohVIJVgsBezVRGroZd
+vFyVq3sRaxba7uP93Z16Dp0+WeWjuDRfvH5KXZBQG/ECayFN32w3cTqCvBs7z6fr
+6XUW/eu3vOQlNLdR25efrkrJ6yxom+zsbVbXo1kbiYJ/a4O0efWFKz55F7009s2B
+pYGsC/D8ZMrbTmNyoblwxnfqhUWZCLR7HwdvUZC/wBzPMGxO5LVrWb4WzASKUhpU
+kz8BmH+8msYUA2PL806Q
+=wNKN
 -----END PGP SIGNATURE-----
 
---yqX3wpb4QnjwKg06--
+--ZZc4RZLlj7DA0l+0--
