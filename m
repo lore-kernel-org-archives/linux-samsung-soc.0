@@ -1,94 +1,124 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 0/5] Add Maxim 77802 PMIC support
-Date: Mon, 9 Jun 2014 09:04:02 -0700
-Message-ID: <CAD=FV=U2zPJ=NohDjGvJKfmwJzQhphtVMefM0p_hvFVoReauhQ@mail.gmail.com>
-References: <1402306670-17041-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1402309011.17650.9.camel@AMDC1943>
+Subject: Re: [PATCH] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
+Date: Mon, 9 Jun 2014 10:03:31 -0700
+Message-ID: <CAD=FV=X17PeJ6JPE9Qyc1QT07AvA2PTE69Q87gz9a6MdUHgi4A@mail.gmail.com>
+References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
+	<20140607181221.GB25068@e102568-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1402309011.17650.9.camel@AMDC1943>
+In-Reply-To: <20140607181221.GB25068@e102568-lin.cambridge.arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Stone <daniels@collabora.com>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, "olof@lixom.net" <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Krzystof,
+Lorenzo,
 
-On Mon, Jun 9, 2014 at 3:16 AM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> On pon, 2014-06-09 at 11:37 +0200, Javier Martinez Canillas wrote:
->> MAX77802 is a PMIC that contains 10 high efficiency Buck regulators,
->> 32 Low-dropout (LDO) regulators, two 32kHz buffered clock outputs,
->> a Real-Time-Clock (RTC) and a I2C interface to program the individual
->> regulators, clocks and the RTC.
+On Sat, Jun 7, 2014 at 11:12 AM, Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+> On Fri, Jun 06, 2014 at 10:43:05PM +0100, Doug Anderson wrote:
+>> On exynos mcpm systems the firmware is hardcoded to jump to an address
+>> in SRAM (0x02073000) when secondary CPUs come up.  By default the
+>> firmware puts a bunch of code at that location.  That code expects the
+>> kernel to fill in a few slots with addresses that it uses to jump back
+>> to the kernel's entry point for secondary CPUs.
 >>
->> This series are based on drivers added by Simon Glass to the Chrome OS
->> kernel and adds support for the Maxim 77802 Power Management IC, their
->> regulators, clocks, RTC and I2C interface. It is composed of patches:
+>> Originally (on prerelease hardware) this firmware code contained a
+>> bunch of workarounds to deal with boot ROM bugs.  However on all
+>> shipped hardware we simply use this code to redirect to a kernel
+>> function for bringing up the CPUs.
 >>
->> [PATCH 1/5] mfd: Add driver for Maxim 77802 Power Management IC
->> [PATCH 2/5] regulator: Add driver for Maxim 77802 PMIC regulators
->> [PATCH 3/5] clk: Add driver for Maxim 77802 PMIC clocks
->> [PATCH 4/5] rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
->> [PATCH 5/5] ARM: dts: Add max77802 device node for exynos5420-peach-pit
+>> Let's stop relying on the code provided by the bootloader and just
+>> plumb in our own (simple) code jump to the kernel.  This has the nice
+>> benefit of fixing problems due to the fact that older bootloaders
+>> (like the one shipped on the Samsung Chromebook 2) might have put
+>> slightly different code into this location.
 >>
->> Patches 1-4 add support for the different devices and Patch 5 enables
->> the MAX77802 PMIC on the Exynos5420 based Peach pit board.
+>> Once suspend/resume is implemented for systems using exynos-mcpm we'll
+>> need to make sure we reinstall our fixed up code after resume.  ...but
+>> that's not anything new since IRAM (and thus the address of the
+>> mcpm_entry_point) is lost across suspend/resume anyway.
 >
->
-> Hi,
->
-> The main mfd, mfd irq, clk and rtc drivers look very similar to max77686
-> drivers. I haven't checked other Maxim drivers but I think there will be
-> a lot of similarities with them also. It is almost common for Maxim
-> chipsets to share components between each other.
->
-> I think there is no need in duplicating all that stuff once again in new
-> driver for another Maxim-almost-the-same-as-others-XYZ chipset. Just
-> merge it with max77686 (or other better candidate).
->
-> The only difference is in regulator driver. I am not sure whether this
-> is a result of differences in chip or differences in driver design.
+> Can I ask you please what the firmware does for the boot (primary) cpu
+> on cold-boot and warm-boot (resume from suspend) ?
 
-Yes, we thought the same thing when we added support for the max77802
-in the ChromeOS tree.  Unfortunately it didn't work out half as well
-as we thought it would.  When Javier was asking advice about sending
-things upstream we suggested that perhaps he should split the two up.
+On cold boot:
+
+1. iROM loads BL1 from SPI flash
+2. BL1 loads BL2 (SPL) from SPI flash
+3. BL2 loads loads RO U-Boot from SPI flash
+4. RO U-Boot (might) load RW U-Boot from SPI flash
+5. U-Boot loads kernel from eMMC (or SD card or USB)
+6. U-Boot boots kernel using bootm.
 
 
-You can see the result of the combined driver the ChromeOS tree (the
-code there is older, probably misnamed as max77xxx, and doesn't have
-the proper clock pieces, but you can get the gist):
+On resume from suspend:
 
-https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/regulator/max77xxx-regulator.c
-https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/rtc/rtc-max77xxx.c
+1. iROM loads BL1 from SPI flash
 
+2. BL1 loads BL2 (SPL) from SPI flash
 
-Specific problems that made it ugly to have a combined driver:
+3. BL2 does some basic init code (clocks, SDRAM out of self refresh,
+...) and looks at some SoC registers that are preserved across
+suspend/resume.  These registers contain flags indicating that this is
+a resume from suspend and a pointer to the address in the kernel to
+jump to at resume time.  The address of these registers and which bits
+mean which flags is hardcoded and is part of the contract between the
+bootloader and the kernel.
 
-* The RTC has many subtle differences between the 77686 and 77802.
-They expanded it to handle a 200 year timeframe instead of 100 and
-that meant that they had to shuffle the bits around everywhere.  They
-also moved it to have the same i2c address as the main PMIC so all
-addresses are different (see max77686_map in the RTC link above).
+4. BL2 jumps to kernel.
 
-* The regulator itself has similar concepts between the two, but the
-list of bucks / ldos and how they behave is quite different.  Trying
-to understand the complex tables in
-<https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/regulator/max77xxx-regulator.c>
-was not easy.
+---
 
-
-If we really need to write a single driver it certainly can be done,
-but please look at the above to be sure this is what you want.
+I will note that BL1, BL2, and "RO U-Boot" are read only in production
+systems.  Note that at resume time only Read-Only code is loaded from
+persistent storage.  That means no extra verification is needed.  A
+system exploit could survive suspend/resume but a reboot would clear
+it and a reboot + suspend/resume wouldn't bring it back.
 
 
-NOTE: it's possible that things could be more sane with more driver
-redesign, possibly making things more data driven.  The thing that
-would be really nice to do would be to avoid all of the crazy
-"regulator_zzz_desc_zzz" macros, maybe?  I'd have to actually try
-doing it to be sure it's cleaner, though...
+> Does it jump to a specific (hardcoded) location ?
 
+I guess I could say it this way:
+
+A) In resume from suspend, by agreement between the kernel and the
+bootloader we'll jump to the address stored in 0x10040800 (INFORM0)
+
+B) In bringing up a new CPU, by agreement between the kernel and the
+bootloader we'll jump directly to 0x02073000 (and address in the SoC's
+internal SRAM).
+
+
+> Is the primary CPU (MPIDR) hardcoded in firmware so that on both
+> cold and warm-boot firmware sees a specific MPIDR as "special" ?
+
+Cold boot and resume from suspend are detected via various special
+flags in various special locations.  Resume from suspend looks at
+INFORM1 (0x10048004) for flags.  This register is 0 during a cold boot
+and has special values set by the kernel at resume time.
+
+It also looks as if some code looks at 0x10040900 (PMU_SPARE0) to help
+tell initial cold boot and secondary CPU bringup.
+
+
+> I am asking to check if on this platform CPUidle (where the notion of
+> primary CPU disappears) has a chance to run properly.
+
+I believe it should be possible, but we don't have CPUidle implemented
+in our current system.  Abhilash may be able to comment more.
+
+
+> Probably CPUidle won't attain idle states where IRAM content is lost, but I
+> am still worried about the primary vs secondaries firmware boot behaviour.
+
+I don't think iRAM can be turned off for CPUidle.
+
+
+> What happens on reboot from suspend to RAM (or to put it differently,
+> what does secure firmware do on reboot from suspend to RAM - in
+> particular how is the "jump" address to bootloader/kernel set ?)
+
+Should be described above now.
 
 -Doug
