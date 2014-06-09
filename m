@@ -1,64 +1,94 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/5] mfd: Add driver for Maxim 77802 Power Management IC
-Date: Mon, 9 Jun 2014 12:56:43 +0100
-Message-ID: <20140609115643.GZ5099@sirena.org.uk>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 0/5] Add Maxim 77802 PMIC support
+Date: Mon, 9 Jun 2014 09:04:02 -0700
+Message-ID: <CAD=FV=U2zPJ=NohDjGvJKfmwJzQhphtVMefM0p_hvFVoReauhQ@mail.gmail.com>
 References: <1402306670-17041-1-git-send-email-javier.martinez@collabora.co.uk>
- <1402306670-17041-2-git-send-email-javier.martinez@collabora.co.uk>
- <1402309361.17650.14.camel@AMDC1943>
+	<1402309011.17650.9.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kpwIYr1TmOiRZuUu"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33409 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751715AbaFIL5R (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Jun 2014 07:57:17 -0400
-Content-Disposition: inline
-In-Reply-To: <1402309361.17650.14.camel@AMDC1943>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1402309011.17650.9.camel@AMDC1943>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Daniel Stone <daniels@collabora.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Stone <daniels@collabora.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
+Krzystof,
 
---kpwIYr1TmOiRZuUu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Jun 09, 2014 at 12:22:41PM +0200, Krzysztof Kozlowski wrote:
+On Mon, Jun 9, 2014 at 3:16 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
 > On pon, 2014-06-09 at 11:37 +0200, Javier Martinez Canillas wrote:
+>> MAX77802 is a PMIC that contains 10 high efficiency Buck regulators,
+>> 32 Low-dropout (LDO) regulators, two 32kHz buffered clock outputs,
+>> a Real-Time-Clock (RTC) and a I2C interface to program the individual
+>> regulators, clocks and the RTC.
+>>
+>> This series are based on drivers added by Simon Glass to the Chrome OS
+>> kernel and adds support for the Maxim 77802 Power Management IC, their
+>> regulators, clocks, RTC and I2C interface. It is composed of patches:
+>>
+>> [PATCH 1/5] mfd: Add driver for Maxim 77802 Power Management IC
+>> [PATCH 2/5] regulator: Add driver for Maxim 77802 PMIC regulators
+>> [PATCH 3/5] clk: Add driver for Maxim 77802 PMIC clocks
+>> [PATCH 4/5] rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
+>> [PATCH 5/5] ARM: dts: Add max77802 device node for exynos5420-peach-pit
+>>
+>> Patches 1-4 add support for the different devices and Patch 5 enables
+>> the MAX77802 PMIC on the Exynos5420 based Peach pit board.
+>
+>
+> Hi,
+>
+> The main mfd, mfd irq, clk and rtc drivers look very similar to max77686
+> drivers. I haven't checked other Maxim drivers but I think there will be
+> a lot of similarities with them also. It is almost common for Maxim
+> chipsets to share components between each other.
+>
+> I think there is no need in duplicating all that stuff once again in new
+> driver for another Maxim-almost-the-same-as-others-XYZ chipset. Just
+> merge it with max77686 (or other better candidate).
+>
+> The only difference is in regulator driver. I am not sure whether this
+> is a result of differences in chip or differences in driver design.
 
-> > +static const struct max77802_irq_data max77802_irqs[] = {
-> > +	DECLARE_IRQ(MAX77802_PMICIRQ_PWRONF,	PMIC_INT1, 1 << 0),
-> > +	DECLARE_IRQ(MAX77802_PMICIRQ_PWRONR,	PMIC_INT1, 1 << 1),
+Yes, we thought the same thing when we added support for the max77802
+in the ChromeOS tree.  Unfortunately it didn't work out half as well
+as we thought it would.  When Javier was asking advice about sending
+things upstream we suggested that perhaps he should split the two up.
 
-> Why just not use two regmap_irq_chips (for PMIC and RTC blocks)
-> replacing whole max77802-irq.c file?
 
-If they share the same primary IRQ line something like what the arizona
-drivers do should handle things well enough.
+You can see the result of the combined driver the ChromeOS tree (the
+code there is older, probably misnamed as max77xxx, and doesn't have
+the proper clock pieces, but you can get the gist):
 
---kpwIYr1TmOiRZuUu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/regulator/max77xxx-regulator.c
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/rtc/rtc-max77xxx.c
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJTlaD4AAoJELSic+t+oim9z70QAJymnz4t4+N/+kU+5Te1yMe/
-RUZSVhZ+pJarOShf3lGi8ubqMfqS597X8V25QLJZuo0EpdBuCs8XE1ZlvSTLgYCT
-jh8mI97Fipa+KfRs1JPiAAfjqbvXsbO1OBPMuGQNd6iexDK79/FHgUlXAEd9sRtx
-OI+SWLWklZ3dunc/CjEXd0o9MicqnclXXcvBOJ4EU/6U0ev6a0k63AoEpc1wX4r9
-ULrVVe9e7K8NsXR5rHw3NBWDQPr4gnpYKy48fl5NHBcew4nE8E8m7P77OjEqtEx9
-ByaS1RDVQCUKSF4ddSJ6o5zKi8jDJf2JdowhqkOtmZlRXRhs41sbRpR/vJmEKGu9
-Ng5eoVo4cTDhUQGk5Qz0NSoiicCciJMf6FwSC+SluTxd619xWBpAPC42wW9/lnUS
-K2BbANak/JKLaZyOJMqlu4xuIyWf/tvB4oaOm6G+0N/i/gvHdrxu7g3QxXisMhbb
-sR5oVaXMYUdsmS22i2GjRIzVWDb+Oech4bTi24cU2WXwPIBK3gzOKlbWD8kGKnA/
-X7SknMV3qEBCaB/YgCdlTEULy/NMDGz4zIoThR9dRpU1RvzQPDdJUZbfcn/L0ruZ
-LSXl100W6hopEY1kf6WhDTGxa+xQLJ4g+GXnX/U7KT3VbHsrEs59SRI0j3meocid
-09+2rZJoMyZUpB70ioW3
-=m/aG
------END PGP SIGNATURE-----
+Specific problems that made it ugly to have a combined driver:
 
---kpwIYr1TmOiRZuUu--
+* The RTC has many subtle differences between the 77686 and 77802.
+They expanded it to handle a 200 year timeframe instead of 100 and
+that meant that they had to shuffle the bits around everywhere.  They
+also moved it to have the same i2c address as the main PMIC so all
+addresses are different (see max77686_map in the RTC link above).
+
+* The regulator itself has similar concepts between the two, but the
+list of bucks / ldos and how they behave is quite different.  Trying
+to understand the complex tables in
+<https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/regulator/max77xxx-regulator.c>
+was not easy.
+
+
+If we really need to write a single driver it certainly can be done,
+but please look at the above to be sure this is what you want.
+
+
+NOTE: it's possible that things could be more sane with more driver
+redesign, possibly making things more data driven.  The thing that
+would be really nice to do would be to avoid all of the crazy
+"regulator_zzz_desc_zzz" macros, maybe?  I'd have to actually try
+doing it to be sure it's cleaner, though...
+
+
+-Doug
