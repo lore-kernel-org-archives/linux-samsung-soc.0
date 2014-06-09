@@ -1,61 +1,132 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] PM / OPP: Remove ARCH_HAS_OPP
-Date: Tue, 10 Jun 2014 00:22:07 +0200
-Message-ID: <1976508.Da0u8DZI5B@vostro.rjw.lan>
-References: <1402051016-28853-1-git-send-email-broonie@kernel.org> <3122018.iBNBjMKNbN@vostro.rjw.lan> <20140609194917.GH5099@sirena.org.uk>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: Problems booting exynos5420 with >1 CPU
+Date: Mon, 9 Jun 2014 23:26:05 +0100
+Message-ID: <20140609222604.GA16889@e102568-lin.cambridge.arm.com>
+References: <alpine.LFD.2.11.1406061740280.25775@knanqh.ubzr>
+ <CAM4voam5KDicwLAt3EA1UC7M+EciGccrnMUKxoR-5c8xT8-zSQ@mail.gmail.com>
+ <alpine.LFD.2.11.1406062340480.25775@knanqh.ubzr>
+ <20140607175618.GA25068@e102568-lin.cambridge.arm.com>
+ <alpine.LFD.2.11.1406071431490.25775@knanqh.ubzr>
+ <20140607223614.GA26641@e102568-lin.cambridge.arm.com>
+ <CAOesGMj+itYr-daqxfX=J3Ss+7YdWhUUzBWTW3FqVEH8tXqt-A@mail.gmail.com>
+ <20140608124530.GA31921@e102568-lin.cambridge.arm.com>
+ <alpine.LFD.2.11.1406081138070.25775@knanqh.ubzr>
+ <7hsindq07l.fsf@paris.lan>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3402537.ZIBVb2cVVr"; micalg="pgp-sha256"; protocol="application/pgp-signature"
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20140609194917.GH5099@sirena.org.uk>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh@kernel.org>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Tony Lindgren <tony@atomide.com>, Michal Simek <michal.simek@xilinx.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, SH-Linux <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:45182 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754171AbaFIW0O convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 Jun 2014 18:26:14 -0400
+In-Reply-To: <7hsindq07l.fsf@paris.lan>
+Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kevin Hilman <khilman@linaro.org>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, Olof Johansson <olof@lixom.net>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tushar Behera <trblinux@gmail.com>, "Turquette, Mike" <mturquette@linaro.org>, Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Arun Kumar <arun.kk@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-
---nextPart3402537.ZIBVb2cVVr
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-
-On Monday, June 09, 2014 08:49:17 PM Mark Brown wrote:
-> On Fri, Jun 06, 2014 at 11:15:06PM +0200, Rafael J. Wysocki wrote:
-> > On Friday, June 06, 2014 02:08:50 PM Mark Brown wrote:
+On Mon, Jun 09, 2014 at 09:47:42PM +0100, Kevin Hilman wrote:
+> Nicolas Pitre <nicolas.pitre@linaro.org> writes:
 > 
-> > > Yes, the conversion to make ARCH_HAS_OPP unused is in Raphael's tree for
-> > > the merge window.
+> > On Sun, 8 Jun 2014, Lorenzo Pieralisi wrote:
+> >
+> >> On Sun, Jun 08, 2014 at 12:53:34AM +0100, Olof Johansson wrote:
+> >> > Lorenzo,
+> >> > 
+> >> > Since you're emailing from @arm.com, some of this is to the wider
+> >> > recipient and maybe not directly to you:
+> >> 
+> >> I am glad to reply and take blame since this is a debate definitely worth
+> >> having.
+> >
+> > Great.  Because I would like to steer this debate a little towards the 
+> > genuine cause rather than sticking to some particular consequences.
+
+I commented on Nico's patch because I did not like how it was
+implemented (at least remove the CPU PM notifier calls please, because
+they are not needed). I also said that's the only thing he could do,
+and I still think that's not a nice way to use the cpu_suspend API
+for something it was not designed for, that's what I wanted to say,
+period.
+
+> >> Guys, do not get me wrong here. There are fixes that can be deemed
+> >> acceptable in an OS, there are fixes that can't. I just can't help thinking
+> >> that Nicolas' patch is a nasty hack (and I am far, really really far from
+> >> blaming him for that, because that's the only patch that can fix that
+> >> issue in the kernel), and he perfectly knows that.
+> >
+> > You know what?  The more I think about my patch, the more I consider 
+> > this should be the standard way of setting up things unconditionally on 
+> > _all_ platforms using MCPM.  Why? Because that's the most coherent thing 
+> > to do!
 > 
-> > Perhaps already merged?
+> I agree.
 > 
-> Yes, looks like it is.
+> > I really think the kernel should either be responsible for the CCI or it 
+> > should not at all.  And conversely for the bootloader.  Right now we 
+> > have an implicit requirement that the bootloader should turn on the CCI, 
+> > but only for cold boot, and only for the boot cluster, and not for CPU 
+> > resuming from idle, and what other case we haven't thought about yet.  
+> > And as noticed this requirement is not documented.
+> 
+> In addition to being a firmware minimalist like Nico, what I find most
+> objectional to the bootloader approach is that even with CCI enabled by
+> the firmware, since it's a runtime requirement (for low-power idle or
+> suspend), the kernel has to handle it anyways.  So you end up with a
+> partial solution in the firwmare (for boot cluster only) *and* a full
+> solution in the kernel.  This doesn't make any sense, expecially because
+> the kernel might then have to do things differently on cold boot
+> vs. low-power idle/suspend or differently on the boot cluster vs. other
+> clusters.  From a maintenance PoV, this is a mess and could easily lead
+> to just as many SoC specific hacks that are different across platforms.
+> 
+> Stated more simply: If the kernel has to manage the resource at runtime
+> due to low-power idle/suspend.  I don't see any reason why it shouldn't
+> manage it at cold boot time also.
 
-But it doesn't apply for me on top of the current Linus' tree.
+If I am allowed to say something, here is a couple of thoughts.
 
-Can you please rebase?
+1) CCI snoops and DVM enablement are secure operations, to do them in
+   non-secure world this must be overriden in firmware. You can argue,
+   you can think whatever you want, that's a fact. So, to use this
+   code SMP bit in SCTLR and CCI enablement must become non-secure
+   operations. This is a boot requirement for MCPM, right or wrong
+   it is up to platform designers to judge. If CCI and SMP enablement
+   are secure operations, we should not start adding random SMC calls
+   in the kernel, since managing coherency in the kernel would become
+   problematic, with lots of platform quirks. We do not want that to
+   happen, and I think we all agree on this.
+2) (1) must be documented.
+3) When I talked about consequences for CPUidle (implicit), I was referring
+   to all sort of hacks we had to come up to bring devices like SPC
+   (remember ? I remember very very well unfortunately for me), or whatever
+   power controller up in the kernel early, too early to fit in any
+   existing kernel device framework. There is still no solution to that, and
+   the only way that code can exist is in mach- code. Right or wrong,
+   that's a second fact and in my opinion that's not nice for the ARM
+   kernel.
+4) When I am talking about firmware I am talking about sequences that
+   are very close to HW (disabling C bit, cleaning caches, exiting
+   coherency). Erratas notwithstanding, they are being standardized at
+   ARM the best we can. They might even end up being implemented in HW
+   in the not so far future. I understand they are tricky, I understand
+   they take lots of time to implement them and to debug them, what I
+   want to say is that they are becoming standard and we _must_ reuse the
+   same code for all ARM platforms. You can implement them in MCPM (see
+   (1)) or in firmware (and please do not start painting me as firmware
+   hugger here, I am referring to standard power down sequences that
+   again, are very close to HW state machines and more importantly if they
+   HAVE to run in secure world that's the only solution we have unless you
+   want to split race conditions between kernel and secure world).
+5) I agree that the CCI enablement in TC2 (bootmon for cold boot and
+   kernel for warm-boot is wrong, nothing to say and it was not the
+   reason I commented on Nico's patch - I think I explained to you
+   thoroughly why now).
 
-Rafael
+That's what I had to say, I hope it helps.
 
---nextPart3402537.ZIBVb2cVVr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAABCAAGBQJTljOUAAoJEILEb/54YlRx3egQAIcwfBZuvaR4Lbm3WoV8U81e
-GaDglyvAtI/HKqYMC6y7L47i01D3+tHw2MXvOcHfcWZ7oLtEryDbTW7K/CqBZmnB
-rPUPEW/91hMtWk/AtT0I25wa0ajMHvHgDtnrrEphmN+a6IaC0RyNtXOMLEzwzOqN
-U40H6qFTp2wJlcSMvL/Rqi5Itev9sx0F3UiKQwGIpusBPgeR0aIg7Nl7p2c2JNmj
-9kk2n30FyoHqlBADqXwb4NaCe0GYMtLdyD+CVBKYHUebpwtIwADelRSjjT8HXo1/
-D/VIs84oVy5NFNUqtls9LSQG7KOHVwxOMuXaIWcEddhD6PYPh2GUScmX5n+yu9bQ
-fIARP+VmkDm94KrUUCPq5y1eJaBaKK+g6uQb0zwKUpCzHgjZckMa663usTe5vzVO
-4Bm67E1FJb0OophqmEHBLzolK+C5RJf+YMSjo9B1Kelbv34lYrwA5PwadlgUtEos
-l0Q4YLTX2BgTHkJ6ESTdtitMpMd7l6oWMF8gcqOC4BXOx4/DbBdxvSQfd3SPfCI8
-UTG3jtjUZabTQjwOLaoBs4N2G9UYa1k44fnFR6yV2k87Dg3PcJtmPUe6Tq/ne0AF
-nE07/hYw1L60lqUfpDKHeOovbJHGtPpHLXStD29+ghAs/Ar907c/V8sH/7yJvWIL
-fAxsIpLz+X+BCGYMds7c
-=z8ED
------END PGP SIGNATURE-----
-
---nextPart3402537.ZIBVb2cVVr--
-
+Thanks,
+Lorenzo
