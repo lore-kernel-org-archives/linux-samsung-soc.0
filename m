@@ -1,125 +1,117 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/5] mfd: Add driver for Maxim 77802 Power Management
- IC
-Date: Tue, 10 Jun 2014 01:07:43 +0200
-Message-ID: <53963E3F.2090607@collabora.co.uk>
-References: <1402306670-17041-1-git-send-email-javier.martinez@collabora.co.uk> <1402306670-17041-2-git-send-email-javier.martinez@collabora.co.uk> <1402309361.17650.14.camel@AMDC1943>
+Subject: Re: [PATCH 2/5] regulator: Add driver for Maxim 77802 PMIC regulators
+Date: Tue, 10 Jun 2014 01:29:17 +0200
+Message-ID: <5396434D.3020402@collabora.co.uk>
+References: <1402306670-17041-1-git-send-email-javier.martinez@collabora.co.uk> <1402306670-17041-3-git-send-email-javier.martinez@collabora.co.uk> <20140609193849.GE5099@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1402309361.17650.14.camel@AMDC1943>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Daniel Stone <daniels@collabora.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:50228 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932349AbaFIX30 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 Jun 2014 19:29:26 -0400
+In-Reply-To: <20140609193849.GE5099@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Krzysztof,
+Hello Mark,
 
-On 06/09/2014 12:22 PM, Krzysztof Kozlowski wrote:
-> On pon, 2014-06-09 at 11:37 +0200, Javier Martinez Canillas wrote:
->> Maxim MAX77802 is a power management chip that contains 10 high
->> efficiency Buck regulators, 32 Low-dropout (LDO) regulators used
->> to power up application processors and peripherals, a 2-channel
->> 32kHz clock outputs, a Real-Time-Clock (RTC) and a I2C interface
->> to program the individual regulators, clocks outputs and the RTC.
->> 
->> This patch adds the core support for MAX77802 PMIC and is based
->> on a driver added by Simon Glass to the Chrome OS kernel 3.8 tree.
->> 
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Thanks a lot for your feedback.
+
+On 06/09/2014 09:38 PM, Mark Brown wrote:
+> On Mon, Jun 09, 2014 at 11:37:47AM +0200, Javier Martinez Canillas wrote:
 > 
-> (...)
+>> +	case REGULATOR_MODE_STANDBY:			/* switch off */
+>> +		if (id != MAX77802_LDO1 && id != MAX77802_LDO20 &&
+>> +			id != MAX77802_LDO21 && id != MAX77802_LDO3) {
+>> +			val = MAX77802_OPMODE_STANDBY;
+>> +			break;
+>> +		}
+>> +		/* no break */
 > 
-> 
->> diff --git a/drivers/mfd/max77802-irq.c b/drivers/mfd/max77802-irq.c
->> new file mode 100644
->> index 0000000..38a8ce7
->> --- /dev/null
->> +++ b/drivers/mfd/max77802-irq.c
->> @@ -0,0 +1,332 @@
->> +/*
->> + * max77802-irq.c - Interrupt controller support for MAX77802
->> + *
->> + * Copyright (C) 2013-2014 Google, Inc
->> + *
->> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
->> + * Chiwoong Byun <woong.byun@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License as published by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + *
->> + * This driver is based on max8997-irq.c
->> + */
->> +
->> +#include <linux/err.h>
->> +#include <linux/irq.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/gpio.h>
->> +#include <linux/mfd/max77802.h>
->> +#include <linux/mfd/max77802-private.h>
->> +#include <linux/irqdomain.h>
->> +#include <linux/regmap.h>
->> +
->> +enum {
->> +	MAX77802_DEBUG_IRQ_INFO = 1 << 0,
->> +	MAX77802_DEBUG_IRQ_MASK = 1 << 1,
->> +	MAX77802_DEBUG_IRQ_INT = 1 << 2,
->> +};
->> +
->> +static int debug_mask = 0;
->> +module_param(debug_mask, int, 0);
->> +MODULE_PARM_DESC(debug_mask, "Set debug_mask : 0x0=off 0x1=IRQ_INFO  0x2=IRQ_MASK 0x4=IRQ_INI)");
->> +
->> +static const u8 max77802_mask_reg[] = {
->> +	[PMIC_INT1] = MAX77802_REG_INT1MSK,
->> +	[PMIC_INT2] = MAX77802_REG_INT2MSK,
->> +	[RTC_INT] = MAX77802_RTC_INTM,
->> +};
->> +
->> +struct max77802_irq_data {
->> +	int mask;
->> +	enum max77802_irq_source group;
->> +};
->> +
->> +#define DECLARE_IRQ(idx, _group, _mask)		\
->> +	[(idx)] = { .group = (_group), .mask = (_mask) }
->> +static const struct max77802_irq_data max77802_irqs[] = {
->> +	DECLARE_IRQ(MAX77802_PMICIRQ_PWRONF,	PMIC_INT1, 1 << 0),
->> +	DECLARE_IRQ(MAX77802_PMICIRQ_PWRONR,	PMIC_INT1, 1 << 1),
->> +	DECLARE_IRQ(MAX77802_PMICIRQ_JIGONBF,	PMIC_INT1, 1 << 2),
->> +	DECLARE_IRQ(MAX77802_PMICIRQ_JIGONBR,	PMIC_INT1, 1 << 3),
->> +	DECLARE_IRQ(MAX77802_PMICIRQ_ACOKBF,	PMIC_INT1, 1 << 4),
->> +	DECLARE_IRQ(MAX77802_PMICIRQ_ACOKBR,	PMIC_INT1, 1 << 5),
->> +	DECLARE_IRQ(MAX77802_PMICIRQ_ONKEY1S,	PMIC_INT1, 1 << 6),
->> +	DECLARE_IRQ(MAX77802_PMICIRQ_MRSTB,		PMIC_INT1, 1 << 7),
->> +	DECLARE_IRQ(MAX77802_PMICIRQ_140C,		PMIC_INT2, 1 << 0),
->> +	DECLARE_IRQ(MAX77802_PMICIRQ_120C,		PMIC_INT2, 1 << 1),
->> +	DECLARE_IRQ(MAX77802_RTCIRQ_RTC60S,		RTC_INT, 1 << 0),
->> +	DECLARE_IRQ(MAX77802_RTCIRQ_RTCA1,		RTC_INT, 1 << 1),
->> +	DECLARE_IRQ(MAX77802_RTCIRQ_RTCA2,		RTC_INT, 1 << 2),
->> +	DECLARE_IRQ(MAX77802_RTCIRQ_SMPL,		RTC_INT, 1 << 3),
->> +	DECLARE_IRQ(MAX77802_RTCIRQ_RTC1S,		RTC_INT, 1 << 4),
->> +	DECLARE_IRQ(MAX77802_RTCIRQ_WTSR,		RTC_INT, 1 << 5),
->> +};
-> 
-> Why just not use two regmap_irq_chips (for PMIC and RTC blocks)
-> replacing whole max77802-irq.c file?
+> This sounds very broken...
 >
 
-Great, I was not aware about regmap_irq_chip. I'll take a look to it for v2.
+The problem is that not all regulators supports the same operational modes. For
+instance regulators LDO 1, 20, 21 and 3 does not support REGULATOR_MODE_STANDBY
+so if the condition is not met a break is not needed since the default case is
+to warn that the mode is not supported.
 
-> Best regards,
-> Krzysztof
+But I'll rework that logic on v2 to make it cleaner and have a break on each
+case and don't rely on case cascading.
+
+>> +		/* OK if some GPIOs aren't defined */
+>> +		if (!gpio_is_valid(gpio))
+>> +			continue;
+>> +
+>> +		/* If a GPIO is valid, we'd better be able to claim it */
+>> +		ret = devm_gpio_request_one(dev, gpio, GPIOF_OUT_INIT_HIGH,
+>> +					    "max77802 selb");
+>> +		if (ret) {
+>> +			dev_err(dev, "can't claim gpio[%d]: %d\n", i, ret);
+>> +			return ret;
+>> +		}
 > 
+> Can this use the GPIO descriptor API?
 > 
+
+Ok, I'll use gpiod_request() on v2.
+
+>> +static void max77802_copy_reg(struct device *dev, struct regmap *regmap,
+>> +			      int from_reg, int to_reg)
+>> +{
+>> +	int val;
+>> +	int ret;
+>> +
+>> +	if (from_reg == to_reg)
+>> +		return;
+>> +
+>> +	ret = regmap_read(regmap, from_reg, &val);
+>> +	if (!ret)
+>> +		ret = regmap_write(regmap, to_reg, val);
+>> +
+>> +	if (ret)
+>> +		dev_warn(dev, "Copy err %d => %d (%d)\n",
+>> +			 from_reg, to_reg, ret);
+>> +}
+> 
+> This doesn't look at all device specific, better implement it in generic
+> code.
+> 
+
+Ok, will do.
+
+>> +	if (pdata->num_regulators != MAX77802_MAX_REGULATORS) {
+>> +		dev_err(&pdev->dev,
+>> +			"Invalid initial data for regulator's initialiation: " \
+>> +			"expected %d, pdata/dt provided %d\n",
+>> +			MAX77802_MAX_REGULATORS,
+>> +			pdata->num_regulators);
+>> +		return -EINVAL;
+>> +	}
+> 
+> Don't split log messages over multiple lines so people can find the log
+> message in the kernel source with grep, though in any case checking for
+> this is a bug - the driver should always be at least able to read the
+> current state from the hardware.
+> 
+
+Ok.
+
+>> +static int __init max77802_pmic_init(void)
+>> +{
+>> +	return platform_driver_register(&max77802_pmic_driver);
+>> +}
+>> +subsys_initcall(max77802_pmic_init);
+> 
+> module_platform_driver().
+> 
+
+Ok.
 
 Best regards,
 Javier
