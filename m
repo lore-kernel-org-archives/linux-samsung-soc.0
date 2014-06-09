@@ -1,119 +1,91 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 1/5] mfd: Add driver for Maxim 77802 Power Management IC
-Date: Mon, 09 Jun 2014 12:22:41 +0200
-Message-ID: <1402309361.17650.14.camel@AMDC1943>
-References: <1402306670-17041-1-git-send-email-javier.martinez@collabora.co.uk>
- <1402306670-17041-2-git-send-email-javier.martinez@collabora.co.uk>
+From: Tushar Behera <trblinux@gmail.com>
+Subject: Re: [PATCH] ARM: dts: Add missing clock/pin-control entries for I2S0
+ on Exynos4
+Date: Mon, 09 Jun 2014 16:14:00 +0530
+Message-ID: <53958FF0.40101@gmail.com>
+References: <1402133454-28445-1-git-send-email-tushar.b@samsung.com> <5395841B.8000702@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:32583 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932611AbaFIKWq (ORCPT
+Received: from mail-pb0-f42.google.com ([209.85.160.42]:63714 "EHLO
+	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932330AbaFIKoF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Jun 2014 06:22:46 -0400
-In-reply-to: <1402306670-17041-2-git-send-email-javier.martinez@collabora.co.uk>
+	Mon, 9 Jun 2014 06:44:05 -0400
+Received: by mail-pb0-f42.google.com with SMTP id md12so4781285pbc.15
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Jun 2014 03:44:04 -0700 (PDT)
+In-Reply-To: <5395841B.8000702@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Daniel Stone <daniels@collabora.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tushar Behera <tushar.b@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On pon, 2014-06-09 at 11:37 +0200, Javier Martinez Canillas wrote:
-> Maxim MAX77802 is a power management chip that contains 10 high
-> efficiency Buck regulators, 32 Low-dropout (LDO) regulators used
-> to power up application processors and peripherals, a 2-channel
-> 32kHz clock outputs, a Real-Time-Clock (RTC) and a I2C interface
-> to program the individual regulators, clocks outputs and the RTC.
+On 06/09/2014 03:23 PM, Sylwester Nawrocki wrote:
+> Hi Tushar,
 > 
-> This patch adds the core support for MAX77802 PMIC and is based
-> on a driver added by Simon Glass to the Chrome OS kernel 3.8 tree.
+> On 07/06/14 11:30, Tushar Behera wrote:
+>> I2S driver uses 3 clocks under different conditions. Added two
+>> missing clocks.
+>>
+>> Additionally updated pin-control property for this node.
+>>
+>> Signed-off-by: Tushar Behera <tushar.b@samsung.com>
+>> ---
+>> Based on next-20140606.
+>>
+>> Tested on Exynos4210-based Origen boards with private patches for
+>> codec/machine driver.
+>>
+>>  arch/arm/boot/dts/exynos4.dtsi |    8 ++++++--
+>>  1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+>> index fbaf426..10bb081 100644
+>> --- a/arch/arm/boot/dts/exynos4.dtsi
+>> +++ b/arch/arm/boot/dts/exynos4.dtsi
+>> @@ -55,11 +55,15 @@
+>>  	i2s0: i2s@03830000 {
+>>  		compatible = "samsung,s5pv210-i2s";
+>>  		reg = <0x03830000 0x100>;
+>> -		clocks = <&clock_audss EXYNOS_I2S_BUS>;
+>> -		clock-names = "iis";
+>> +		clocks = <&clock_audss EXYNOS_I2S_BUS>,
+>> +			<&clock_audss EXYNOS_I2S_BUS>,
+>> +			<&clock_audss EXYNOS_SCLK_I2S>;
+>> +		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+>>  		dmas = <&pdma0 12>, <&pdma0 11>, <&pdma0 10>;
+>>  		dma-names = "tx", "rx", "tx-sec";
+>>  		samsung,idma-addr = <0x03000000>;
+>> +		pinctrl-0 = <&i2s0_bus>;
+>> +		pinctrl-names = "default";
+>>  		status = "disabled";
+>>  	};
 > 
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> I assumed those properties you're adding here belong to board or
+> to SoC type specific dts. It doesn't hurt ot have it like this,
+> but what do you think about moving this to  arch/arm/boot/dts/
+> exynos4210(4x12).dtsi ? For instance pinctrl definitions are
+> in SoC specific dts.
+> 
 
-(...)
+IMHO, the clock entries belong here as the audss clock provider
+essentially remains same for all Exynos4 based systems.
+
+As for pin-control entry, I believe we can move them to respective SoC
+dtsi files.
+
+Does that sound okay to you?
+
+> --
+> Thanks,
+> Sylwester
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
 
-> diff --git a/drivers/mfd/max77802-irq.c b/drivers/mfd/max77802-irq.c
-> new file mode 100644
-> index 0000000..38a8ce7
-> --- /dev/null
-> +++ b/drivers/mfd/max77802-irq.c
-> @@ -0,0 +1,332 @@
-> +/*
-> + * max77802-irq.c - Interrupt controller support for MAX77802
-> + *
-> + * Copyright (C) 2013-2014 Google, Inc
-> + *
-> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
-> + * Chiwoong Byun <woong.byun@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + * This driver is based on max8997-irq.c
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/irq.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/gpio.h>
-> +#include <linux/mfd/max77802.h>
-> +#include <linux/mfd/max77802-private.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/regmap.h>
-> +
-> +enum {
-> +	MAX77802_DEBUG_IRQ_INFO = 1 << 0,
-> +	MAX77802_DEBUG_IRQ_MASK = 1 << 1,
-> +	MAX77802_DEBUG_IRQ_INT = 1 << 2,
-> +};
-> +
-> +static int debug_mask = 0;
-> +module_param(debug_mask, int, 0);
-> +MODULE_PARM_DESC(debug_mask, "Set debug_mask : 0x0=off 0x1=IRQ_INFO  0x2=IRQ_MASK 0x4=IRQ_INI)");
-> +
-> +static const u8 max77802_mask_reg[] = {
-> +	[PMIC_INT1] = MAX77802_REG_INT1MSK,
-> +	[PMIC_INT2] = MAX77802_REG_INT2MSK,
-> +	[RTC_INT] = MAX77802_RTC_INTM,
-> +};
-> +
-> +struct max77802_irq_data {
-> +	int mask;
-> +	enum max77802_irq_source group;
-> +};
-> +
-> +#define DECLARE_IRQ(idx, _group, _mask)		\
-> +	[(idx)] = { .group = (_group), .mask = (_mask) }
-> +static const struct max77802_irq_data max77802_irqs[] = {
-> +	DECLARE_IRQ(MAX77802_PMICIRQ_PWRONF,	PMIC_INT1, 1 << 0),
-> +	DECLARE_IRQ(MAX77802_PMICIRQ_PWRONR,	PMIC_INT1, 1 << 1),
-> +	DECLARE_IRQ(MAX77802_PMICIRQ_JIGONBF,	PMIC_INT1, 1 << 2),
-> +	DECLARE_IRQ(MAX77802_PMICIRQ_JIGONBR,	PMIC_INT1, 1 << 3),
-> +	DECLARE_IRQ(MAX77802_PMICIRQ_ACOKBF,	PMIC_INT1, 1 << 4),
-> +	DECLARE_IRQ(MAX77802_PMICIRQ_ACOKBR,	PMIC_INT1, 1 << 5),
-> +	DECLARE_IRQ(MAX77802_PMICIRQ_ONKEY1S,	PMIC_INT1, 1 << 6),
-> +	DECLARE_IRQ(MAX77802_PMICIRQ_MRSTB,		PMIC_INT1, 1 << 7),
-> +	DECLARE_IRQ(MAX77802_PMICIRQ_140C,		PMIC_INT2, 1 << 0),
-> +	DECLARE_IRQ(MAX77802_PMICIRQ_120C,		PMIC_INT2, 1 << 1),
-> +	DECLARE_IRQ(MAX77802_RTCIRQ_RTC60S,		RTC_INT, 1 << 0),
-> +	DECLARE_IRQ(MAX77802_RTCIRQ_RTCA1,		RTC_INT, 1 << 1),
-> +	DECLARE_IRQ(MAX77802_RTCIRQ_RTCA2,		RTC_INT, 1 << 2),
-> +	DECLARE_IRQ(MAX77802_RTCIRQ_SMPL,		RTC_INT, 1 << 3),
-> +	DECLARE_IRQ(MAX77802_RTCIRQ_RTC1S,		RTC_INT, 1 << 4),
-> +	DECLARE_IRQ(MAX77802_RTCIRQ_WTSR,		RTC_INT, 1 << 5),
-> +};
-
-Why just not use two regmap_irq_chips (for PMIC and RTC blocks)
-replacing whole max77802-irq.c file?
-
-Best regards,
-Krzysztof
+-- 
+Tushar Behera
