@@ -1,81 +1,100 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: linux-next on Chromebook2: DRM failing to allocate
-Date: Tue, 10 Jun 2014 15:18:07 -0700
-Message-ID: <CAGa+x86YjQoOv=Z-1+96X2D16zfxNHHF=b=KA6c3ft80jEUZRw@mail.gmail.com>
-References: <CAGa+x87EQcHBMc9NUOL_EKx=rKhOjfQ=_aMY5qvyPhqCN5--4w@mail.gmail.com>
-	<CADMs+9a-vMpFOUmF5DO6X_OJfLgPP48DtRA9tcquzzt-Uso89A@mail.gmail.com>
-	<CAGa+x85gXyefMhkpE8nGZkEEPc1X8pAHUvGMQbOPkTKZ6DLNqQ@mail.gmail.com>
-	<CAEC9eQMpukbdekaUeCzs8kqS9543hnnQj95bxHadmOQW1jvmaQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [RESEND PATCH] ARM: EXYNOS: Fix the sequence of secondary CPU boot for
+ Exynos3250
+Date: Wed, 11 Jun 2014 08:27:07 +0900
+Message-ID: <1402442827-2321-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f46.google.com ([209.85.216.46]:35079 "EHLO
-	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751255AbaFJWSI convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:38073 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753230AbaFJX1O (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 18:18:08 -0400
-Received: by mail-qa0-f46.google.com with SMTP id i13so3543347qae.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 15:18:07 -0700 (PDT)
-In-Reply-To: <CAEC9eQMpukbdekaUeCzs8kqS9543hnnQj95bxHadmOQW1jvmaQ@mail.gmail.com>
+	Tue, 10 Jun 2014 19:27:14 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@chromium.org>, Daniel Kurtz <djkurtz@chromium.org>, Inki Dae <inki.dae@samsung.com>, Naveen Krishna <naveenkrishna.ch@gmail.com>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Olof Johansson <olof@lixom.net>
+To: linux@arm.linux.org.uk, kgene.kim@samsung.com, t.figa@samsung.com
+Cc: kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Ajay,
+This patch set AUTOWAKEUP_EN bit to ARM_CORE_CONFIGURATION register
+because Exynos3250 removes WFE in secure mode so that turn on automatically
+after setting CORE_LOCAL_PWR_EN. Also, This patch use dbs_sev() macro
+to guarantee the data synchronization of command instead of IPI_WAKEUP
+because Exynos3250 don't have WFE mode in secue mode.
 
-On Tue, Jun 10, 2014 at 1:51 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
-> Hi,
->
-> On 6/11/14, Kevin Hilman <khilman@linaro.org> wrote:
->> On Tue, Jun 10, 2014 at 11:04 AM, St=C3=A9phane Marchesin
->> <marcheu@chromium.org> wrote:
->>> On Tue, Jun 10, 2014 at 10:56 AM, Kevin Hilman <khilman@linaro.org>
->>> wrote:
->>>> I'm trying to get the latest linux-next working on my Chromebook2
->>>> (it's booting to a serial console) and am now trying to get the
->>>> display working (at least for a frambuffer console.)
->>>>
->>>> Since the display nodes seem to be present in the exynos5800-peach=
--pi
->>>> DTS, I tried enabling DRM and it's failing to allocate memory (log
->>>> below[1]
->>>>
->>>> Is there some additional memory setup/allocations I should be doin=
-g?
->>>> maybe with CMA?
->>>
->>> Probably not CMA, but maybe you don't have the iommu enabled?
->>
->> Turns out it was missing CMA support.  Specifically:
->>    CONFIG_CMA=3Dy
->>    CONFIG_DMA_CMA=3Dy
->> are needed (my full .config is here: http://hastebin.com/uqopirazir.=
-vbs)
->>
->> With that, it allocates, appears to detect the panel and even claims
->> "Console: switching to colour frame buffer device", but I don't see
->> tux or any output on the display (DRM debug output below).
->>
->> Note that I'm chain-loading nv_uboot from an SD card, and u-boot is
->> driving the display (black text on white background.)  As soon as it
->> starts the kernel though, u-boot seems to shut down the display
->> (though the backlight seems to still be on.)
->>
->> Maybe the DT for peach-pi is missing the regulator used to power the
->> panel, or maybe a GPIO used to power up the panel?
->>
->> Any ideas?
-> Not only the DT patches, but few patches are missing to support the
-> panel present on peach-pi.
-> You should also take the following patches to be able to get the
-> display up on peach-pi:
-> http://www.spinics.net/lists/linux-samsung-soc/msg32122.html
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/platsmp.c  | 9 ++++++++-
+ arch/arm/mach-exynos/pm.c       | 8 ++++++--
+ arch/arm/mach-exynos/regs-pmu.h | 4 ++++
+ 3 files changed, 18 insertions(+), 3 deletions(-)
 
-Excellent, thanks for the pointer to those patches.  I'll have a look.
-
-Can you confirm that this should work even when chain-loading
-nv_uboot?  It appears u-boot is powering down the panel.
-
-Kevin
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index ec02422..882fb84 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -149,6 +149,10 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 			return -ETIMEDOUT;
+ 		}
+ 	}
++
++	if (soc_is_exynos3250())
++		__raw_writel(EXYNOS3_COREPORESET(phys_cpu), EXYNOS_SWRESET);
++
+ 	/*
+ 	 * Send the secondary CPU a soft interrupt, thereby causing
+ 	 * the boot monitor to read the system wide flags register,
+@@ -182,7 +186,10 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 
+ 		call_firmware_op(cpu_boot, phys_cpu);
+ 
+-		arch_send_wakeup_ipi_mask(cpumask_of(cpu));
++		if (soc_is_exynos3250())
++			dsb_sev();
++		else
++			arch_send_wakeup_ipi_mask(cpumask_of(cpu));
+ 
+ 		if (pen_release == -1)
+ 			break;
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 87c0d34..4681f64 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -121,8 +121,12 @@ void exynos_cpu_power_down(int cpu)
+  */
+ void exynos_cpu_power_up(int cpu)
+ {
+-	__raw_writel(S5P_CORE_LOCAL_PWR_EN,
+-		     EXYNOS_ARM_CORE_CONFIGURATION(cpu));
++	u32 core_conf = 0;
++
++	core_conf |= S5P_CORE_LOCAL_PWR_EN;
++	if (soc_is_exynos3250())
++		core_conf |= S5P_CORE_AUTOWAKEUP_EN;
++	__raw_writel(core_conf, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+ }
+ 
+ /**
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index 1d13b08..674dfc2 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -128,6 +128,7 @@
+ 
+ #define S5P_CORE_LOCAL_PWR_EN			0x3
+ #define S5P_INT_LOCAL_PWR_EN			0x7
++#define S5P_CORE_AUTOWAKEUP_EN			(1 << 31)
+ 
+ /* Only for EXYNOS4210 */
+ #define S5P_CMU_CLKSTOP_LCD1_LOWPWR	S5P_PMUREG(0x1154)
+@@ -186,6 +187,9 @@
+ #define S5P_DIS_IRQ_CORE3			S5P_PMUREG(0x1034)
+ #define S5P_DIS_IRQ_CENTRAL3			S5P_PMUREG(0x1038)
+ 
++/* For EXYNOS3 */
++#define EXYNOS3_COREPORESET(cpu)		((1 << 4) << cpu)
++
+ /* For EXYNOS5 */
+ 
+ #define EXYNOS5_SYS_I2C_CFG					S5P_SYSREG(0x0234)
+-- 
+1.8.0
