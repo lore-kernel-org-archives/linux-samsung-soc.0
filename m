@@ -1,48 +1,100 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 3/6] ARM: EXYNOS: Remove soc_is_exynos4/5 from exynos.c
-Date: Tue, 10 Jun 2014 16:04:47 +0200
-Message-ID: <4504625.aXgUF2A4Cb@wuerfel>
-References: <1399706287-13919-1-git-send-email-y@samsung.com> <1399706419-13976-4-git-send-email-pankaj.dubey@samsung.com> <53970E3D.9080501@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Rob Herring <robherring2@gmail.com>
+Subject: [PATCH 1/2] ARM: exynos: cleanup kconfig option display
+Date: Tue, 10 Jun 2014 09:06:09 -0500
+Message-ID: <1402409170-1314-2-git-send-email-robherring2@gmail.com>
+References: <1402409170-1314-1-git-send-email-robherring2@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:61133 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752142AbaFJOFW (ORCPT
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:40569 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752516AbaFJOGV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 10:05:22 -0400
-In-Reply-To: <53970E3D.9080501@samsung.com>
+	Tue, 10 Jun 2014 10:06:21 -0400
+Received: by mail-oa0-f51.google.com with SMTP id j17so4001972oag.38
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 07:06:20 -0700 (PDT)
+In-Reply-To: <1402409170-1314-1-git-send-email-robherring2@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Tomasz Figa <t.figa@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, kgene.kim@samsung.com, Russell King <linux@arm.linux.org.uk>
+To: arm@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh@kernel.org>, linux-samsung-soc@vger.kernel.org
 
-On Tuesday 10 June 2014 15:55:09 Tomasz Figa wrote:
-> On 10.05.2014 09:20, Pankaj Dubey wrote:
-> > This patch removes usage of soc_is_exynos4/5 from exynos.c.
-> > For this we need to separate machine descriptors for exynos4
-> > and exynos5. While doing this patch does some consolidation also.
-> > 
-> > CC: Russell King <linux@arm.linux.org.uk>
-> > CC: Thomas Abraham <thomas.abraham@linaro.org>
-> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> > ---
-> >  arch/arm/mach-exynos/exynos.c            |   52 +++++++++++++++++++-----------
-> >  arch/arm/plat-samsung/include/plat/cpu.h |    3 --
-> >  2 files changed, 33 insertions(+), 22 deletions(-)
-> > 
-> 
-> I don't think this is needed. All those static mappings should just go
-> away, which will also eliminate the need to have separate machine
-> descriptor or soc_is_exynos{4,5}() macros.
+From: Rob Herring <robh@kernel.org>
 
-I think I suggested doing this patch as an intermediate step to
-get rid of the macros first, so we don't get any new users.
-I agree that we should also remove the static mappings eventually,
-and once we do that, the machine descriptors can be unified again.
+The addition of Exynos to multi-platform configs creates a mess of config
+options with options appearing before the Exynos config option. This is
+due to arch/arm/plat-samsung/Kconfig being included out of order with the
+other Samsung platform kconfig files. Reorder the kconfig files and move
+all the options into a sub-menu. Some of the options are dead, so remove
+those as well.
 
-I have not checked which of the map_desc entries are currently used
-at all, or what it would take to remove them.
+Signed-off-by: Rob Herring <robh@kernel.org>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+---
+ arch/arm/Kconfig              |  3 +--
+ arch/arm/plat-samsung/Kconfig | 17 +++--------------
+ 2 files changed, 4 insertions(+), 16 deletions(-)
 
-	Arnd
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 87b63fd..cbf0c37 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1009,8 +1009,6 @@ source "arch/arm/mach-rockchip/Kconfig"
+ 
+ source "arch/arm/mach-sa1100/Kconfig"
+ 
+-source "arch/arm/plat-samsung/Kconfig"
+-
+ source "arch/arm/mach-socfpga/Kconfig"
+ 
+ source "arch/arm/mach-spear/Kconfig"
+@@ -1028,6 +1026,7 @@ source "arch/arm/mach-s5pc100/Kconfig"
+ source "arch/arm/mach-s5pv210/Kconfig"
+ 
+ source "arch/arm/mach-exynos/Kconfig"
++source "arch/arm/plat-samsung/Kconfig"
+ 
+ source "arch/arm/mach-shmobile/Kconfig"
+ 
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 243dfcb..ac032cd 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -35,27 +35,15 @@ config SAMSUNG_PM
+ 	  Base platform power management code for samsung code
+ 
+ if PLAT_SAMSUNG
++menu "Samsung Common options"
+ 
+ # boot configurations
+ 
+ comment "Boot options"
+ 
+-config S3C_BOOT_ERROR_RESET
+-	bool "S3C Reboot on decompression error"
+-	help
+-	  Say y here to use the watchdog to reset the system if the
+-	  kernel decompressor detects an error during decompression.
+-
+-config S3C_BOOT_UART_FORCE_FIFO
+-       bool "Force UART FIFO on during boot process"
+-       default y
+-       help
+-         Say Y here to force the UART FIFOs on during the kernel
+-	 uncompressor
+-
+-
+ config S3C_LOWLEVEL_UART_PORT
+ 	int "S3C UART to use for low-level messages"
++	depends on ARCH_S3C64XX
+ 	default 0
+ 	help
+ 	  Choice of which UART port to use for the low-level messages,
+@@ -503,4 +491,5 @@ config DEBUG_S3C_UART
+ 	default "2" if DEBUG_S3C_UART2
+ 	default "3" if DEBUG_S3C_UART3
+ 
++endmenu
+ endif
+-- 
+1.9.1
