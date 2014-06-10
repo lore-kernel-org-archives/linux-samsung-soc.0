@@ -1,192 +1,79 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: linux-next on Chromebook2: DRM failing to allocate
-Date: Tue, 10 Jun 2014 12:29:55 -0700
-Message-ID: <CAGa+x85gXyefMhkpE8nGZkEEPc1X8pAHUvGMQbOPkTKZ6DLNqQ@mail.gmail.com>
-References: <CAGa+x87EQcHBMc9NUOL_EKx=rKhOjfQ=_aMY5qvyPhqCN5--4w@mail.gmail.com>
-	<CADMs+9a-vMpFOUmF5DO6X_OJfLgPP48DtRA9tcquzzt-Uso89A@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 1/2 v2] spi: s3c64xx: use "cs-gpios" from spi node instead
+ of "cs-gpio"
+Date: Tue, 10 Jun 2014 21:43:59 +0200
+Message-ID: <53975FFF.7010209@gmail.com>
+References: <1402394881-31564-1-git-send-email-ch.naveen@samsung.com>	<1402394881-31564-2-git-send-email-ch.naveen@samsung.com>	<5396E051.8050803@samsung.com>	<CAHfPSqAq9L5Zu7z3-y6Y2pG8AhE4Y1j8DE35LDfMW_DYc_x-gw@mail.gmail.com> <CAD=FV=XtdgKEg7fTHe+tsFM1Y_YwqNNk_DBW7ZX83YERGJsHBg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f178.google.com ([209.85.216.178]:32815 "EHLO
-	mail-qc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753144AbaFJT34 convert rfc822-to-8bit (ORCPT
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:36140 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753083AbaFJToS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 15:29:56 -0400
-Received: by mail-qc0-f178.google.com with SMTP id c9so2858577qcz.37
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 12:29:56 -0700 (PDT)
-In-Reply-To: <CADMs+9a-vMpFOUmF5DO6X_OJfLgPP48DtRA9tcquzzt-Uso89A@mail.gmail.com>
+	Tue, 10 Jun 2014 15:44:18 -0400
+In-Reply-To: <CAD=FV=XtdgKEg7fTHe+tsFM1Y_YwqNNk_DBW7ZX83YERGJsHBg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@chromium.org>, Daniel Kurtz <djkurtz@chromium.org>, Inki Dae <inki.dae@samsung.com>, Naveen Krishna <naveenkrishna.ch@gmail.com>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Olof Johansson <olof@lixom.net>
+To: Doug Anderson <dianders@chromium.org>, Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "broonie@kernel.org" <broonie@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On Tue, Jun 10, 2014 at 11:04 AM, St=C3=A9phane Marchesin
-<marcheu@chromium.org> wrote:
-> On Tue, Jun 10, 2014 at 10:56 AM, Kevin Hilman <khilman@linaro.org> w=
-rote:
->> I'm trying to get the latest linux-next working on my Chromebook2
->> (it's booting to a serial console) and am now trying to get the
->> display working (at least for a frambuffer console.)
+On 10.06.2014 20:09, Doug Anderson wrote:
+> Naveen / Sylwester,
+> 
+> On Tue, Jun 10, 2014 at 4:00 AM, Naveen Krishna Ch
+> <naveenkrishna.ch@gmail.com> wrote:
+>>> Can we support both "cs-gpio" and "cs-gpios" for backward compatibility ?
+>>> After your change all DTBs using the original pattern will not work with
+>>> new kernels any more. At least I would expect such backward compatibility
+>>> maintained for few kernel releases.
 >>
->> Since the display nodes seem to be present in the exynos5800-peach-p=
-i
->> DTS, I tried enabling DRM and it's failing to allocate memory (log
->> below[1]
+>> The reason behind removing the "cs-gpio" or not providing backward
+>> compatibility was
 >>
->> Is there some additional memory setup/allocations I should be doing?
->> maybe with CMA?
->
-> Probably not CMA, but maybe you don't have the iommu enabled?
+>> 1. Since spi-core started using "cs-gpios" string from spi device node
+>> several months ago.
+>>   The spi-s3c64xx.c driver is partially broken for more than 6 months.
+>>
+>> 2. Supporting "cs-gpio" would add extra bit of code.
+>>
+>> I've corrected the dts files that were using "cs-gpio" under
+>> "controller-data"(child node)
+>> to use "cs-gpio" from spi device node (parent node).
+>>
+>> I will make another version if you insist.
+> 
+> Yup, as near as I can tell this has been broken since (3146bee spi:
+> s3c64xx: Added provision for dedicated cs pin).  That landed June 25th
+> of 2013 into the SPI tree.
+> 
+> ...so clearly nobody was really testing Samsung's SPI driver on ToT
+> Linux.  1 year of unnoticed brokenness seems like enough time that we
+> could do away with the old code.  If someone comes out of the woodwork
+> and claims a dire need to support the old binding then it can be added
+> then.
+> 
+> In-tree users of this appear to be:
+> 
+> arch/arm/boot/dts/exynos4210-smdkv310.dts:
+>  cs-gpio = <&gpc1 2 0>;
+> arch/arm/boot/dts/exynos4412-trats2.dts:
+>  cs-gpio = <&gpb 5 0>;
+> arch/arm/boot/dts/exynos5250-smdk5250.dts:
+>  cs-gpio = <&gpa2 5 0>;
+> 
+> ...and I guess nobody has bothered using the SPI flash on those boards
+> for the last year?
 
-Turns out it was missing CMA support.  Specifically:
-   CONFIG_CMA=3Dy
-   CONFIG_DMA_CMA=3Dy
-are needed (my full .config is here: http://hastebin.com/uqopirazir.vbs=
-)
+On Trats2, it's actually a camera sensor, not SPI flash...
 
-With that, it allocates, appears to detect the panel and even claims
-"Console: switching to colour frame buffer device", but I don't see
-tux or any output on the display (DRM debug output below).
+Still, that's really a shame that:
 
-Note that I'm chain-loading nv_uboot from an SD card, and u-boot is
-driving the display (black text on white background.)  As soon as it
-starts the kernel though, u-boot seems to shut down the display
-(though the backlight seems to still be on.)
+a) such patch went in (i.e. its brokenness was not spotted in review),
+b) the regression was not spotted.
 
-Maybe the DT for peach-pi is missing the regulator used to power the
-panel, or maybe a GPIO used to power up the panel?
+Anyway, IMHO this justifies removing the old binding then.
 
-Any ideas?
-
-Kevin
-
-[1] DRM output with drm.debug=3D0xff  (full kernel boot log here:
-http://hastebin.com/xigofelepe.vhdl
-
-[    1.192850] [drm] Initialized drm 1.1.0 20060810
-[    1.197676] [drm:drm_platform_init]
-[    1.200224] [drm:drm_get_platform_dev]
-[    1.204092] [drm:drm_minor_register]
-[    1.207851] [drm:drm_minor_register] new minor assigned 64
-[    1.213154] [drm:drm_minor_register]
-[    1.216791] [drm:drm_minor_register]
-[    1.220608] [drm:drm_minor_register] new minor assigned 0
-[    1.225869] [drm:exynos_drm_encoder_create] possible_crtcs =3D 0x1
-[    1.231820] [drm:exynos_drm_encoder_create] encoder has been created
-[    1.238295] [drm:drm_sysfs_connector_add] adding "eDP-1" to sysfs
-[    1.244222] [drm:drm_sysfs_hotplug_event] generating hotplug event
-[    1.250371] [drm] Supports vblank timestamp caching Rev 2 (21.10.201=
-3).
-[    1.256953] [drm] No driver support for vblank timestamp query.
-[    1.262855] [drm:drm_helper_hpd_irq_event] [CONNECTOR:15:eDP-1]
-status updated from unknown to connected
-[    1.272309] [drm:drm_sysfs_hotplug_event] generating hotplug event
-[    1.278480] [drm:exynos_drm_encoder_dpms] encoder dpms: 3
-[    1.283849] [drm:exynos_drm_crtc_dpms] crtc[6] mode[3]
-[    1.288964] [drm:exynos_drm_crtc_dpms] desired dpms mode is same as
-previous one.
-[    1.296428] [drm:drm_helper_probe_single_connector_modes_merge_bits]
-[CONNECTOR:15:eDP-1]
-[    1.304588] [drm:drm_helper_probe_single_connector_modes_merge_bits]
-[CONNECTOR:15:eDP-1] probed modes :
-[    1.314043] [drm:drm_mode_debug_printmodeline] Modeline
-16:"1920x1080" 60 150660 1920 1980 2060 2232 1080 1090 1100 1125 0x48
-0x0
-[    1.325660] [drm:drm_setup_crtcs]
-[    1.329044] [drm:drm_enable_connectors] connector 15 enabled? yes
-[    1.335116] [drm:drm_target_preferred] looking for cmdline mode on
-connector 15
-[    1.342402] [drm:drm_target_preferred] looking for preferred mode
-on connector 15
-[    1.349862] [drm:drm_target_preferred] found mode 1920x1080
-[    1.355414] [drm:drm_setup_crtcs] picking CRTCs for 4096x4096 config
-[    1.361749] [drm:drm_setup_crtcs] desired mode 1920x1080 set on crtc=
- 6
-[    1.368257] [drm:exynos_drm_fbdev_create] surface width(1920),
-height(1080) and bpp(32
-[    1.376150] [drm:exynos_drm_init_buf] desired size =3D 0x7e9000
-[    1.381886] [drm:exynos_drm_gem_init] created file object =3D 0xec7e=
-2000
-[    1.391732] [drm:lowlevel_buffer_allocate] dma_addr(0x8e900000),
-size(0x7e9000)
-[    1.397581] [drm:drm_framebuffer_reference] FB ID: 18
-[    1.402614] [drm:exynos_drm_fb_buffer] dma_addr =3D 0x8e900000
-[    1.408526] [drm:drm_crtc_helper_set_config]
-[    1.408531] [drm:drm_crtc_helper_set_config] [CRTC:6] [FB:18]
-#connectors=3D1 (x y) (0 0)
-[    1.408536] [drm:drm_crtc_helper_set_config] crtc has no fb, full mo=
-de set
-[    1.408539] [drm:drm_crtc_helper_set_config] modes are different,
-full mode set
-[    1.408544] [drm:drm_mode_debug_printmodeline] Modeline 0:"" 0 0 0
-0 0 0 0 0 0 0 0x0 0x0
-[    1.408549] [drm:drm_mode_debug_printmodeline] Modeline
-17:"1920x1080" 60 150660 1920 1980 2060 2232 1080 1090 1100 1125 0x48
-0x0
-[    1.408553] [drm:drm_crtc_helper_set_config] encoder changed, full
-mode switch
-[    1.408556] [drm:drm_crtc_helper_set_config] crtc changed, full mode=
- switch
-[    1.408560] [drm:drm_crtc_helper_set_config] [CONNECTOR:15:eDP-1] to=
- [CRTC:6]
-[    1.408563] [drm:drm_crtc_helper_set_config] attempting to set mode
-from userspace
-[    1.408568] [drm:drm_mode_debug_printmodeline] Modeline
-17:"1920x1080" 60 150660 1920 1980 2060 2232 1080 1090 1100 1125 0x48
-0x0
-[    1.408574] [drm:drm_crtc_helper_set_mode] [CRTC:6]
-[    1.408579] [drm:exynos_drm_fb_buffer] dma_addr =3D 0x8e900000
-[    1.408582] [drm:exynos_plane_mode_set] buffer: 0, dma_addr =3D 0x8e=
-900000
-[    1.408590] [drm:exynos_plane_mode_set] overlay : offset_x/y(0,0),
-width/height(1920,1080)
-[    1.408591] [drm:fimd_win_mode_set] offset =3D 0x0, pitch =3D 1e00
-[    1.408595] [drm:fimd_win_mode_set] offset_x =3D 0, offset_y =3D 0
-[    1.408598] [drm:fimd_win_mode_set] ovl_width =3D 1920, ovl_height =3D=
- 1080
-[    1.408601] [drm:fimd_win_mode_set] paddr =3D 0x8e900000
-[    1.408604] [drm:fimd_win_mode_set] fb_width =3D 1920, crtc_width =3D=
- 1920
-[    1.408607] [drm:drm_framebuffer_reference] FB ID: 18
-[    1.408611] [drm:drm_crtc_helper_set_mode] [ENCODER:14:TMDS-14] set
-[MODE:17:1920x1080]
-[    1.408614] [drm:exynos_drm_crtc_dpms] crtc[6] mode[0]
-[    1.408618] [drm:fimd_dpms] ../drivers/gpu/drm/exynos/exynos_drm_fim=
-d.c, 0
-[    1.408649] [drm:fimd_win_commit] start addr =3D 0x8e900000, end add=
-r
-=3D 0x8f0e9000, size =3D 0x7e9000
-[    1.408652] [drm:fimd_win_commit] ovl_width =3D 1920, ovl_height =3D=
- 1080
-[    1.408656] [drm:fimd_win_commit] osd pos: tx =3D 0, ty =3D 0, bx =3D
-1919, by =3D 1079
-[    1.408660] [drm:fimd_win_commit] osd size =3D 0x1fa400
-[    1.408663] [drm:fimd_win_set_pixfmt] bpp =3D 32
-[    1.408948] [drm:drm_calc_timestamping_constants] crtc 6: hwmode:
-htotal 2232, vtotal 1125, vdisplay 1080
-[    1.408953] [drm:drm_calc_timestamping_constants] crtc 6: clock
-150660 kHz framedur 16666666 linedur 14814, pixeldur 6
-[    1.408958] [drm:drm_crtc_helper_set_config] Setting connector DPMS
-state to on
-[    1.408961] [drm:drm_crtc_helper_set_config] [CONNECTOR:15:eDP-1] se=
-t DPMS on
-[    1.408966] [drm:drm_framebuffer_reference] FB ID: 18
-[    1.409097] [drm:drm_crtc_helper_set_config]
-[    1.409102] [drm:drm_crtc_helper_set_config] [CRTC:6] [FB:18]
-#connectors=3D1 (x y) (0 0)
-[    1.409107] [drm:drm_crtc_helper_set_config] [CONNECTOR:15:eDP-1] to=
- [CRTC:6]
-[    1.409110] [drm:drm_framebuffer_reference] FB ID: 18
-[    1.409113] [drm:drm_framebuffer_unreference] FB ID: 18
-[    1.422580] Console: switching to colour frame buffer device 274x77
-[    1.422587] [drm:drm_crtc_helper_set_config]
-[    1.422591] [drm:drm_crtc_helper_set_config] [CRTC:6] [FB:18]
-#connectors=3D1 (x y) (0 0)
-[    1.422596] [drm:drm_crtc_helper_set_config] [CONNECTOR:15:eDP-1] to=
- [CRTC:6]
-[    1.422600] [drm:drm_framebuffer_reference] FB ID: 18
-[    1.422603] [drm:drm_framebuffer_unreference] FB ID: 18
-[    1.745135] exynos-drm exynos-drm: fb0:  frame buffer device
-[    1.752593] exynos-drm exynos-drm: registered panic notifier
-[    1.773526] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+Best regards,
+Tomasz
