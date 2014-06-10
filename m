@@ -1,181 +1,157 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: Problems booting exynos5420 with >1 CPU
-Date: Tue, 10 Jun 2014 18:42:12 +0100
-Message-ID: <20140610174212.GJ3523@arm.com>
-References: <alpine.LFD.2.11.1406071431490.25775@knanqh.ubzr>
- <20140607223614.GA26641@e102568-lin.cambridge.arm.com>
- <CAOesGMj+itYr-daqxfX=J3Ss+7YdWhUUzBWTW3FqVEH8tXqt-A@mail.gmail.com>
- <20140608124530.GA31921@e102568-lin.cambridge.arm.com>
- <alpine.LFD.2.11.1406081138070.25775@knanqh.ubzr>
- <7hsindq07l.fsf@paris.lan>
- <20140609222604.GA16889@e102568-lin.cambridge.arm.com>
- <alpine.LFD.2.11.1406092254220.25775@knanqh.ubzr>
- <20140610141446.GA3519@arm.com>
- <alpine.LFD.2.11.1406101149520.25775@knanqh.ubzr>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: linux-next on Chromebook2: DRM failing to allocate
+Date: Tue, 10 Jun 2014 10:56:06 -0700
+Message-ID: <CAGa+x87EQcHBMc9NUOL_EKx=rKhOjfQ=_aMY5qvyPhqCN5--4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fw-tnat.austin.arm.com ([217.140.110.23]:26121 "EHLO
-	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751135AbaFJRmn (ORCPT
+Received: from mail-qa0-f53.google.com ([209.85.216.53]:63216 "EHLO
+	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752404AbaFJR4H (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 13:42:43 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.11.1406101149520.25775@knanqh.ubzr>
+	Tue, 10 Jun 2014 13:56:07 -0400
+Received: by mail-qa0-f53.google.com with SMTP id j5so831105qaq.12
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 10:56:06 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tushar Behera <trblinux@gmail.com>, "Turquette, Mike" <mturquette@linaro.org>, Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Arun Kumar <arun.kk@samsung.com>
+To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: marcheu@chromium.org, seanpaul@chromium.org, djkurtz@chromium.org, Inki Dae <inki.dae@samsung.com>, naveenkrishna.ch@gmail.com, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>
 
-On Tue, Jun 10, 2014 at 05:49:01PM +0100, Nicolas Pitre wrote:
-> On Tue, 10 Jun 2014, Catalin Marinas wrote:
-> > On Tue, Jun 10, 2014 at 12:25:47AM -0400, Nicolas Pitre wrote:
-> > > On Mon, 9 Jun 2014, Lorenzo Pieralisi wrote:
-> > > > 4) When I am talking about firmware I am talking about sequences that
-> > > >    are very close to HW (disabling C bit, cleaning caches, exiting
-> > > >    coherency). Erratas notwithstanding, they are being standardized at
-> > > >    ARM the best we can. They might even end up being implemented in HW
-> > > >    in the not so far future. I understand they are tricky, I understand
-> > > >    they take lots of time to implement them and to debug them, what I
-> > > >    want to say is that they are becoming standard and we _must_ reuse the
-> > > >    same code for all ARM platforms. You can implement them in MCPM (see
-> > > >    (1)) or in firmware (and please do not start painting me as firmware
-> > > >    hugger here, I am referring to standard power down sequences that
-> > > >    again, are very close to HW state machines 
-> > > 
-> > > That's where the disconnect lies.  On the one hand you say "I understand 
-> > > they are tricky, I understand they take lots of time to implement them 
-> > > and to debug them" and on the other hand you say "They might end up being 
-> > > implemented in HW in the not so far future."  That simply makes no 
-> > > economical sense at all!
-> > 
-> > It makes lots of sense, though not from a software maintainability
-> > perspective. It would be nice if everything still looked like ARM7TDMI
-> > but in the race for performance (vs power), hardware becomes more
-> > complex and it's not just the CPU but adjacent parts like interconnects,
-> > caches, asynchronous bridges, voltage shifters, memory controllers,
-> > clocks/PLLs etc. Many of these are simply hidden from the high level OS
-> > like Linux because the OS assumes certain configuration (e.g. access to
-> > memory) and it's only the hardware itself that knows in what order they
-> > can be turned on or off (when triggered explicitly by the OS or an
-> > external event).
-> 
-> I agree when the hardware has to handle parallel dependencies ordered in 
-> waterfall style. In such cases there is usually no point relying on 
-> software to implement what is nevertheless simple determinism with 
-> no possible alternative usage.
-> 
-> But the *most* important thing is what you put in parens, so let me 
-> emphasize on what you just said:
-> 
-> 	When triggered _explicitly_ by the OS or external events
+I'm trying to get the latest linux-next working on my Chromebook2
+(it's booting to a serial console) and am now trying to get the
+display working (at least for a frambuffer console.)
 
-I don't think anyone is arguing that the policy should not be in the OS.
-But part of the mechanism can be in the OS and part in firmware, SCP or
-hardware. The kernel part can be a simple PSCI call or more complex
-setup (possibly MCPM-based) which usually ends up with a WFI. This WFI,
-however, triggers further hardware changes which may be handled by
-dedicated power controller.
+Since the display nodes seem to be present in the exynos5800-peach-pi
+DTS, I tried enabling DRM and it's failing to allocate memory (log
+below[1]
 
-> > Having an dedicated power controller (e.g. M-class
-> > processor) to handle some of these is a rather flexible approach, other
-> > bits require RTL (and usually impossible to update).
-> 
-> The M-class processor should be treated the same way as firmware.  It 
-> ought to be flexible (certainly more than hardwired hardware), but it 
-> shares all the same downsides as firmware and the same concerns apply.
+Is there some additional memory setup/allocations I should be doing?
+maybe with CMA?
 
-Yes, we can treat it as firmware, but we don't have a better alternative
-to move the functionality into the kernel (well, we could at least allow
-the kernel to load a binary blob and restart the controller).
+Thanks for any advice,
 
-> > > When some operation is 1) tricky and takes time to debug, and 2) not 
-> > > performance critical (no one is trying to get in and out of idle or 
-> > > hibernation a billion times per second), then you should never ever put 
-> > > such a thing in firmware, and hardware should be completely out of the 
-> > > question!
-> > 
-> > I agree that things can go wrong (both in hardware and software, no
-> > matter where it runs) but please don't think that such power
-> > architecture has been specifically engineered to hide the hardware from
-> > Linux. It's a necessity for complex systems and the optimal solution is
-> > not always simplification (it's not just ARM+vendors doing this, just
-> > look at the power model of modern x86 processors, hidden nicely from the
-> > software behind a few registers while making things harder for scheduler
-> > which cannot rely on a constant performance level; but it's a trade-off
-> > they are happy to make).
-> 
-> I'll claim that this is a bad tradeoff.  And the reason why some 
-> hardware architects might think it is a good one is because so far we 
-> really sucked at software based power management in Linux (and possibly 
-> other OSes as well).  Hence the (fairly recent) realization that power 
-> management has to be integrated and under control of the scheduler 
-> rather than existing as some ad hoc subsystem.
+Kevin
 
-But even this is a complex problem. Anyway, I don't think the (ARM at
-least) hardware guys aim to take over the cpufreq or Linux scheduler
-functionality. Their concern is rather mechanism rather than policy.
 
-> The reaction from the hardware people often is "the software is crap and 
-> makes our hardware look bad, we know better, so let's make it easier on 
-> those poor software dudes by handling power management in hardware 
-> instead".  But ultimately the hardware just can't predict things like 
-> software can.  It might do a better job than the current software state 
-> of affairs, but most likely not be as efficient as a proper software 
-> architecture.  The hardware may only be reactive, whereas the software 
-> can be proactive (when properly done that is).
+[1] DRM output with drm.debug=0xf on command line
 
-Indeed. But that's not the aim of the power controller on our boards.
-It's just a mechanism for safely changing sleep states, CPU frequencies
-but entirely under the OS decision.
-
-> I sense from your paragraph above that ARM might be going the same 
-> direction as X86 and that would be very sad.  Maybe the best compromise 
-> would be for all knobs to be made available to software if software 
-> wants to turn off the hardware auto-pilot and take control.  This way 
-> the hardware guys would cover their arses while still allowing for the 
-> possibility that software might be able to out perform the hardware 
-> solution.
-
-I'm definitely not suggesting ARM is going the same route. Just trying
-to show that ARM is slightly better here.
-
-As a personal opinion, I like the simplicity of writing a register to
-change the P-state but I don't like the non-determinism of the x86
-hardware w.r.t. CPU performance. There are however some "policy" aspects
-which I find interesting (like detecting whether the workload is memory
-bound and automatically lowering the CPU frequency; the OS cannot react
-this fast).
-
-> > > >    and more importantly if they
-> > > >    HAVE to run in secure world that's the only solution we have unless you
-> > > >    want to split race conditions between kernel and secure world).
-> > > 
-> > > If they HAVE to run in secure world then your secure world architecture 
-> > > is simply misdesigned, period.  Someone must have ignored the economics 
-> > > of modern software development to have come up with this.
-> > 
-> > That's the trade-off between software complexity and hardware cost,
-> > gates, power consumption. You can do proper physical separation of the
-> > secure services but this would require a separate CPU that is rarely
-> > used and adds to the overall SoC cost. On large scale hardware
-> > deployment, it's exactly economics that matter and these translate into
-> > hardware cost. The software cost is irrelevant here, whether we like it
-> > or not.
-> 
-> I agree with you on the hardware cost (and the same argument applies to 
-> power management by the way).  But once the hardware is there, the 
-> software cost has to be optimized the same way.
-> 
-> From a cost perspective, firmware is always a magnitude more costly to 
-> develop and to fix and maintain afterwards than kernel code.  So, 
-> without requiring full physical separation increasing the hardware cost, 
-> I think the software architecture would benefit from a rethought, 
-> possibly with the help of small and cheap hardware enhancements.  I 
-> really think not enough attention has been dedicated to that aspect.
-
-I fully agree (and I think Linaro is well positioned for this ;),
-possibly as an extension of the boot+firmware architecture).
-
--- 
-Catalin
+[    1.095622] [drm] Initialized drm 1.1.0 20060810
+[    1.099792] [drm:drm_platform_init]
+[    1.102311] [drm:drm_get_platform_dev]
+[    1.106211] [drm:drm_minor_register]
+[    1.110000] [drm:drm_minor_register] new minor assigned 64
+[    1.115265] [drm:drm_minor_register]
+[    1.118900] [drm:drm_minor_register]
+[    1.122693] [drm:drm_minor_register] new minor assigned 0
+[    1.127970] [drm:exynos_drm_encoder_create] possible_crtcs = 0x1
+[    1.133915] [drm:exynos_drm_encoder_create] encoder has been created
+[    1.140407] [drm:drm_sysfs_connector_add] adding "eDP-1" to sysfs
+[    1.146335] [drm:drm_sysfs_hotplug_event] generating hotplug event
+[    1.152488] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[    1.159065] [drm] No driver support for vblank timestamp query.
+[    1.164965] [drm:drm_helper_hpd_irq_event] [CONNECTOR:15:eDP-1]
+status updated from unknown to connected
+[    1.174418] [drm:drm_sysfs_hotplug_event] generating hotplug event
+[    1.180590] [drm:exynos_drm_encoder_dpms] encoder dpms: 3
+[    1.185959] [drm:exynos_drm_crtc_dpms] crtc[6] mode[3]
+[    1.191074] [drm:exynos_drm_crtc_dpms] desired dpms mode is same as
+previous one.
+[    1.198538] [drm:drm_helper_probe_single_connector_modes_merge_bits]
+[CONNECTOR:15:eDP-1]
+[    1.206698] [drm:drm_helper_probe_single_connector_modes_merge_bits]
+[CONNECTOR:15:eDP-1] probed modes :
+[    1.216149] [drm:drm_mode_debug_printmodeline] Modeline
+16:"1920x1080" 60 150660 1920 1980 2060 2232 1080 1090 1100 1125 0x48
+0x0
+[    1.227779] [drm:drm_setup_crtcs]
+[    1.231135] [drm:drm_enable_connectors] connector 15 enabled? yes
+[    1.237227] [drm:drm_target_preferred] looking for cmdline mode on
+connector 15
+[    1.244512] [drm:drm_target_preferred] looking for preferred mode
+on connector 15
+[    1.251972] [drm:drm_target_preferred] found mode 1920x1080
+[    1.257525] [drm:drm_setup_crtcs] picking CRTCs for 4096x4096 config
+[    1.263859] [drm:drm_setup_crtcs] desired mode 1920x1080 set on crtc 6
+[    1.270367] [drm:exynos_drm_fbdev_create] surface width(1920),
+height(1080) and bpp(32
+[    1.278260] [drm:exynos_drm_init_buf] desired size = 0x7e9000
+[    1.283995] [drm:exynos_drm_gem_init] created file object = 0xed7f9200
+[    1.290502] ------------[ cut here ]------------
+[    1.295094] WARNING: CPU: 1 PID: 1 at ../mm/page_alloc.c:2509
+__alloc_pages_nodemask+0x220/0x76c()
+[    1.304022] Modules linked in:
+[    1.307044] CPU: 1 PID: 1 Comm: swapper/0 Not tainted
+3.15.0-rc8-next-20140605-00004-gde16f7d3b2b5-dirty #31
+[    1.316882] [<800152ac>] (unwind_backtrace) from [<80011d94>]
+(show_stack+0x20/0x24)
+[    1.324595] [<80011d94>] (show_stack) from [<805128d8>]
+(dump_stack+0x74/0x90)
+[    1.331790] [<805128d8>] (dump_stack) from [<80024208>]
+(warn_slowpath_common+0x78/0x9c)
+[    1.339854] [<80024208>] (warn_slowpath_common) from [<80024258>]
+(warn_slowpath_null+0x2c/0x34)
+[    1.348622] [<80024258>] (warn_slowpath_null) from [<800c9334>]
+(__alloc_pages_nodemask+0x220/0x76c)
+[    1.357730] [<800c9334>] (__alloc_pages_nodemask) from [<80019fb8>]
+(__dma_alloc_buffer.isra.13+0x3c/0x184)
+[    1.367443] [<80019fb8>] (__dma_alloc_buffer.isra.13) from
+[<8001a124>] (__alloc_remap_buffer.isra.15+0x24/0xc0)
+[    1.377592] [<8001a124>] (__alloc_remap_buffer.isra.15) from
+[<8001a410>] (__dma_alloc+0x250/0x2e0)
+[    1.386613] [<8001a410>] (__dma_alloc) from [<8001a5d8>]
+(arm_dma_alloc+0x94/0xa0)
+[    1.394166] [<8001a5d8>] (arm_dma_alloc) from [<802cf650>]
+(exynos_drm_alloc_buf+0x118/0x294)
+[    1.402663] [<802cf650>] (exynos_drm_alloc_buf) from [<802cfd10>]
+(exynos_drm_gem_create+0x84/0xec)
+[    1.411684] [<802cfd10>] (exynos_drm_gem_create) from [<802cea14>]
+(exynos_drm_fbdev_create+0xdc/0x2ec)
+[    1.421056] [<802cea14>] (exynos_drm_fbdev_create) from
+[<802b306c>] (drm_fb_helper_initial_config+0x324/0x440)
+[    1.431117] [<802b306c>] (drm_fb_helper_initial_config) from
+[<802ced58>] (exynos_drm_fbdev_init+0xd0/0x10c)
+[    1.440918] [<802ced58>] (exynos_drm_fbdev_init) from [<802cef10>]
+(exynos_drm_output_poll_changed+0x34/0x38)
+[    1.450808] [<802cef10>] (exynos_drm_output_poll_changed) from
+[<802b0a08>] (drm_kms_helper_hotplug_event+0x34/0x38)
+[    1.461305] [<802b0a08>] (drm_kms_helper_hotplug_event) from
+[<802b1148>] (drm_helper_hpd_irq_event+0x108/0x120)
+[    1.471455] [<802b1148>] (drm_helper_hpd_irq_event) from
+[<802cd998>] (exynos_drm_load+0xf0/0x130)
+[    1.480390] [<802cd998>] (exynos_drm_load) from [<802bb654>]
+(drm_dev_register+0x90/0x110)
+[    1.488631] [<802bb654>] (drm_dev_register) from [<802bcff0>]
+(drm_platform_init+0x80/0xf0)
+[    1.496958] [<802bcff0>] (drm_platform_init) from [<802cda3c>]
+(exynos_drm_platform_probe+0x64/0x74)
+[    1.506069] [<802cda3c>] (exynos_drm_platform_probe) from
+[<802de5c8>] (platform_drv_probe+0x28/0x58)
+[    1.515263] [<802de5c8>] (platform_drv_probe) from [<802dcf20>]
+(driver_probe_device+0xc4/0x214)
+[    1.524024] [<802dcf20>] (driver_probe_device) from [<802dd144>]
+(__device_attach+0x38/0x54)
+[    1.532444] [<802dd144>] (__device_attach) from [<802db430>]
+(bus_for_each_drv+0x5c/0xa4)
+[    1.540594] [<802db430>] (bus_for_each_drv) from [<802dce04>]
+(device_attach+0x74/0x98)
+[    1.548575] [<802dce04>] (device_attach) from [<802dc430>]
+(bus_probe_device+0x38/0xa8)
+[    1.556556] [<802dc430>] (bus_probe_device) from [<802da628>]
+(device_add+0x374/0x518)
+[    1.564450] [<802da628>] (device_add) from [<802de7fc>]
+(platform_device_add+0x140/0x1d0)
+[    1.572604] [<802de7fc>] (platform_device_add) from [<802dee54>]
+(platform_device_register_full+0xa8/0xe0)
+[    1.582236] [<802dee54>] (platform_device_register_full) from
+[<80754a04>] (exynos_drm_init+0x74/0xc8)
+[    1.591517] [<80754a04>] (exynos_drm_init) from [<80008a48>]
+(do_one_initcall+0x108/0x1d0)
+[    1.599758] [<80008a48>] (do_one_initcall) from [<8072dd64>]
+(kernel_init_freeable+0x108/0x1d4)
+[    1.608433] [<8072dd64>] (kernel_init_freeable) from [<8050e66c>]
+(kernel_init+0x1c/0xf4)
+[    1.616588] [<8050e66c>] (kernel_init) from [<8000e698>]
+(ret_from_fork+0x14/0x20)
+[    1.624143] ---[ end trace 7efd36d9338b10a9 ]---
+[    1.628729] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate buffer.
+[    1.635855] [drm] Initialized exynos 1.0.0 20110530 on minor 0
