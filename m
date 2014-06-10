@@ -1,37 +1,136 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] PM / OPP: Remove ARCH_HAS_OPP
-Date: Tue, 10 Jun 2014 02:15:16 +0200
-Message-ID: <1857766.e38RV3V2OT@vostro.rjw.lan>
-References: <1402051016-28853-1-git-send-email-broonie@kernel.org> <1976508.Da0u8DZI5B@vostro.rjw.lan> <20140609225142.GA5099@sirena.org.uk>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: Problems booting exynos5420 with >1 CPU
+Date: Tue, 10 Jun 2014 00:25:47 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1406092254220.25775@knanqh.ubzr>
+References: <alpine.LFD.2.11.1406061740280.25775@knanqh.ubzr> <CAM4voam5KDicwLAt3EA1UC7M+EciGccrnMUKxoR-5c8xT8-zSQ@mail.gmail.com> <alpine.LFD.2.11.1406062340480.25775@knanqh.ubzr> <20140607175618.GA25068@e102568-lin.cambridge.arm.com>
+ <alpine.LFD.2.11.1406071431490.25775@knanqh.ubzr> <20140607223614.GA26641@e102568-lin.cambridge.arm.com> <CAOesGMj+itYr-daqxfX=J3Ss+7YdWhUUzBWTW3FqVEH8tXqt-A@mail.gmail.com> <20140608124530.GA31921@e102568-lin.cambridge.arm.com> <alpine.LFD.2.11.1406081138070.25775@knanqh.ubzr>
+ <7hsindq07l.fsf@paris.lan> <20140609222604.GA16889@e102568-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <20140609225142.GA5099@sirena.org.uk>
-Sender: linux-sh-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh@kernel.org>, Shawn Guo <shawn.guo@freescale.com>, Sascha Hauer <kernel@pengutronix.de>, Tony Lindgren <tony@atomide.com>, Michal Simek <michal.simek@xilinx.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, SH-Linux <linux-sh@vger.kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f41.google.com ([209.85.192.41]:48270 "EHLO
+	mail-qg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750923AbaFJEZu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 10 Jun 2014 00:25:50 -0400
+Received: by mail-qg0-f41.google.com with SMTP id j5so9925875qga.28
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Jun 2014 21:25:49 -0700 (PDT)
+In-Reply-To: <20140609222604.GA16889@e102568-lin.cambridge.arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tushar Behera <trblinux@gmail.com>, "Turquette, Mike" <mturquette@linaro.org>, Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Arun Kumar <arun.kk@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-On Monday, June 09, 2014 11:51:42 PM Mark Brown wrote:
-> 
-> --fYgRtaZIy+F1uhp1
-> Content-Type: text/plain; charset=us-ascii
-> Content-Disposition: inline
-> 
-> On Tue, Jun 10, 2014 at 12:22:07AM +0200, Rafael J. Wysocki wrote:
-> > On Monday, June 09, 2014 08:49:17 PM Mark Brown wrote:
-> 
-> > > Yes, looks like it is.
-> 
-> > But it doesn't apply for me on top of the current Linus' tree.
-> 
-> > Can you please rebase?
-> 
-> It probably depends on other people's trees too, I just killed all the
-> usages in -next - I gather the SH trees added some new ones for example.
-> I'd expect it'll apply after the merge window, if not that's the time to
-> look at it.
+On Mon, 9 Jun 2014, Lorenzo Pieralisi wrote:
 
-OK
+> I commented on Nico's patch because I did not like how it was
+> implemented (at least remove the CPU PM notifier calls please, because
+> they are not needed).
 
+OK no problem.  That's easy enough.  I added them to play it safe as a 
+test patch in case some VFP content could be lost somehow by looping 
+back through the CPU init code for example, and needed to be saved.
+
+> I also said that's the only thing he could do, and I still think 
+> that's not a nice way to use the cpu_suspend API for something it was 
+> not designed for, that's what I wanted to say, period.
+
+Well... Maybe it wasn't designed for that, but it certainly can be used 
+for that. And with no modifications to the core code, making this 
+solution fairly elegant.  This is not so different from, say, the BPF 
+code being reused for seccomp_filters. BPF wasn't designed for system 
+call filtering, but it happens to work well.
+
+> If I am allowed to say something, here is a couple of thoughts.
+> 
+> 1) CCI snoops and DVM enablement are secure operations, to do them in
+>    non-secure world this must be overriden in firmware. You can argue,
+>    you can think whatever you want, that's a fact. So, to use this
+>    code SMP bit in SCTLR and CCI enablement must become non-secure
+>    operations. This is a boot requirement for MCPM, right or wrong
+>    it is up to platform designers to judge. If CCI and SMP enablement
+>    are secure operations, we should not start adding random SMC calls
+>    in the kernel, since managing coherency in the kernel would become
+>    problematic, with lots of platform quirks. We do not want that to
+>    happen, and I think we all agree on this.
+
+One could certainly question the need for so many controls handled in 
+secure world.  But that is not the point.
+
+Here we're talking about MCPM.  That implies the kernel has control over 
+SCTLR.SMP and the CCI.  If those things aren't under the kernel's 
+control, then MCPM is of no use to you.
+
+Therefore, if you do want to use MCPM, then this implies the kernel has 
+access to the CCI. And if it has access to it, then it should turn it on 
+by itself in all cases to be consistent, not only in half of the cases.
+
+> 2) (1) must be documented.
+
+Absolutely.  But let's be coherent in the implementation so the 
+documentation is as simple as it can be.
+
+> 3) When I talked about consequences for CPUidle (implicit), I was referring
+>    to all sort of hacks we had to come up to bring devices like SPC
+>    (remember ? I remember very very well unfortunately for me), or whatever
+>    power controller up in the kernel early, too early to fit in any
+>    existing kernel device framework. There is still no solution to that, and
+>    the only way that code can exist is in mach- code. Right or wrong,
+>    that's a second fact and in my opinion that's not nice for the ARM
+>    kernel.
+
+I disagree.  This can perfectly be turned into driver code. If we need 
+it too early for existing kernel device framework to handle this 
+properly, then the solution is to extend the existing framework or 
+create another one specially for that purpose.  This may not be obvious 
+when TC2 is the first/only platform in that situation, but if more 
+platforms have the same need then it'll be easier to abstract 
+commonalities into a framework.
+
+Saying that no framework exists today or/and upstream maintainers are 
+being difficult is _not_ a reason for throwing your hands up and e.g. 
+shoving all this code into firmware instead.
+
+> 4) When I am talking about firmware I am talking about sequences that
+>    are very close to HW (disabling C bit, cleaning caches, exiting
+>    coherency). Erratas notwithstanding, they are being standardized at
+>    ARM the best we can. They might even end up being implemented in HW
+>    in the not so far future. I understand they are tricky, I understand
+>    they take lots of time to implement them and to debug them, what I
+>    want to say is that they are becoming standard and we _must_ reuse the
+>    same code for all ARM platforms. You can implement them in MCPM (see
+>    (1)) or in firmware (and please do not start painting me as firmware
+>    hugger here, I am referring to standard power down sequences that
+>    again, are very close to HW state machines 
+
+That's where the disconnect lies.  On the one hand you say "I understand 
+they are tricky, I understand they take lots of time to implement them 
+and to debug them" and on the other hand you say "They might end up being 
+implemented in HW in the not so far future."  That simply makes no 
+economical sense at all!
+
+When some operation is 1) tricky and takes time to debug, and 2) not 
+performance critical (no one is trying to get in and out of idle or 
+hibernation a billion times per second), then you should never ever put 
+such a thing in firmware, and hardware should be completely out of the 
+question!
+
+>    and more importantly if they
+>    HAVE to run in secure world that's the only solution we have unless you
+>    want to split race conditions between kernel and secure world).
+
+If they HAVE to run in secure world then your secure world architecture 
+is simply misdesigned, period.  Someone must have ignored the economics 
+of modern software development to have come up with this.
+
+> 5) I agree that the CCI enablement in TC2 (bootmon for cold boot and
+>    kernel for warm-boot is wrong, nothing to say and it was not the
+>    reason I commented on Nico's patch - I think I explained to you
+>    thoroughly why now).
+
+OK. Let's start by agreeing on the spirit behind my patch then.  The 
+actual patch implementation details are a secondary concern and open for 
+discussion.
+
+
+Nicolas
