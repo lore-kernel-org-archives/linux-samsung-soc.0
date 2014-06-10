@@ -1,149 +1,49 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: Problems booting exynos5420 with >1 CPU
-Date: Tue, 10 Jun 2014 12:49:01 -0400 (EDT)
-Message-ID: <alpine.LFD.2.11.1406101149520.25775@knanqh.ubzr>
-References: <alpine.LFD.2.11.1406062340480.25775@knanqh.ubzr> <20140607175618.GA25068@e102568-lin.cambridge.arm.com> <alpine.LFD.2.11.1406071431490.25775@knanqh.ubzr> <20140607223614.GA26641@e102568-lin.cambridge.arm.com> <CAOesGMj+itYr-daqxfX=J3Ss+7YdWhUUzBWTW3FqVEH8tXqt-A@mail.gmail.com>
- <20140608124530.GA31921@e102568-lin.cambridge.arm.com> <alpine.LFD.2.11.1406081138070.25775@knanqh.ubzr> <7hsindq07l.fsf@paris.lan> <20140609222604.GA16889@e102568-lin.cambridge.arm.com> <alpine.LFD.2.11.1406092254220.25775@knanqh.ubzr>
- <20140610141446.GA3519@arm.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v4 06/11] ARM: EXYNOS: Add support for mapping PMU base
+ address via DT
+Date: Tue, 10 Jun 2014 19:10:35 +0200
+Message-ID: <53973C0B.2000903@samsung.com>
+References: <1399704998-13321-1-git-send-email-pankaj.dubey@samsung.com>
+ <1399704998-13321-7-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f42.google.com ([209.85.216.42]:38681 "EHLO
-	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751162AbaFJQtE (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:48781 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751851AbaFJRKx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 12:49:04 -0400
-Received: by mail-qa0-f42.google.com with SMTP id dc16so1391399qab.29
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 09:49:03 -0700 (PDT)
-In-Reply-To: <20140610141446.GA3519@arm.com>
+	Tue, 10 Jun 2014 13:10:53 -0400
+In-reply-to: <1399704998-13321-7-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tushar Behera <trblinux@gmail.com>, "Turquette, Mike" <mturquette@linaro.org>, Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Arun Kumar <arun.kk@samsung.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com, yg1004.jang@samsung.com, vikas.sajjan@samsung.com
 
-On Tue, 10 Jun 2014, Catalin Marinas wrote:
+Hi,
 
-> Hi Nico,
+On 10.05.2014 08:56, Pankaj Dubey wrote:
+> From: Young-Gun Jang <yg1004.jang@samsung.com>
 > 
-> Sorry, I can't stay away from this thread ;)
-
-;-)
-
-> On Tue, Jun 10, 2014 at 12:25:47AM -0400, Nicolas Pitre wrote:
-> > On Mon, 9 Jun 2014, Lorenzo Pieralisi wrote:
-> > > 4) When I am talking about firmware I am talking about sequences that
-> > >    are very close to HW (disabling C bit, cleaning caches, exiting
-> > >    coherency). Erratas notwithstanding, they are being standardized at
-> > >    ARM the best we can. They might even end up being implemented in HW
-> > >    in the not so far future. I understand they are tricky, I understand
-> > >    they take lots of time to implement them and to debug them, what I
-> > >    want to say is that they are becoming standard and we _must_ reuse the
-> > >    same code for all ARM platforms. You can implement them in MCPM (see
-> > >    (1)) or in firmware (and please do not start painting me as firmware
-> > >    hugger here, I am referring to standard power down sequences that
-> > >    again, are very close to HW state machines 
-> > 
-> > That's where the disconnect lies.  On the one hand you say "I understand 
-> > they are tricky, I understand they take lots of time to implement them 
-> > and to debug them" and on the other hand you say "They might end up being 
-> > implemented in HW in the not so far future."  That simply makes no 
-> > economical sense at all!
+> Add support for mapping Samsung Power Management Unit (PMU)
+> base address from device tree. This patch also adds helper
+> function as "get_exynos_pmuregmap". This function can be used
+> by other machine files such as "pm.c", "hotplug.c" for accessing
+> PMU regmap handle.
 > 
-> It makes lots of sense, though not from a software maintainability
-> perspective. It would be nice if everything still looked like ARM7TDMI
-> but in the race for performance (vs power), hardware becomes more
-> complex and it's not just the CPU but adjacent parts like interconnects,
-> caches, asynchronous bridges, voltage shifters, memory controllers,
-> clocks/PLLs etc. Many of these are simply hidden from the high level OS
-> like Linux because the OS assumes certain configuration (e.g. access to
-> memory) and it's only the hardware itself that knows in what order they
-> can be turned on or off (when triggered explicitly by the OS or an
-> external event).
 
-I agree when the hardware has to handle parallel dependencies ordered in 
-waterfall style. In such cases there is usually no point relying on 
-software to implement what is nevertheless simple determinism with 
-no possible alternative usage.
+I don't think there is a need to use regmap to provide access to PMU to
+such low level code such as pm.c or hotplug.c. Moreover, I believe that
+it might be undesirable in some cases, e.g. very low level code running
+at early resume or late suspend.
 
-But the *most* important thing is what you put in parents, so let me 
-emphasize on what you just said:
+IMHO, based on what we now have for SYSRAM, you could simply map PMU
+from device tree one time, before SMP init, and keep the address in some
+globally accessible variable, like those for SYSRAM we have right now
+(sysram_base_addr, sysram_ns_base_addr -> pmu_base_addr).
 
-	When triggered _explicitly_ by the OS or external events
+Then, registration of the normal syscon would happen through standard
+platform driver mechanisms and no special early handling would be necessary.
 
-> Having an dedicated power controller (e.g. M-class
-> processor) to handle some of these is a rather flexible approach, other
-> bits require RTL (and usually impossible to update).
-
-The M-class processor should be treated the same way as firmware.  It 
-ought to be flexible (certainly more than hardwired hardware), but it 
-shares all the same downsides as firmware and the same concerns apply.
-
-> > When some operation is 1) tricky and takes time to debug, and 2) not 
-> > performance critical (no one is trying to get in and out of idle or 
-> > hibernation a billion times per second), then you should never ever put 
-> > such a thing in firmware, and hardware should be completely out of the 
-> > question!
-> 
-> I agree that things can go wrong (both in hardware and software, no
-> matter where it runs) but please don't think that such power
-> architecture has been specifically engineered to hide the hardware from
-> Linux. It's a necessity for complex systems and the optimal solution is
-> not always simplification (it's not just ARM+vendors doing this, just
-> look at the power model of modern x86 processors, hidden nicely from the
-> software behind a few registers while making things harder for scheduler
-> which cannot rely on a constant performance level; but it's a trade-off
-> they are happy to make).
-
-I'll claim that this is a bad tradeoff.  And the reason why some 
-hardware architects might think it is a good one is because so far we 
-really sucked at software based power management in Linux (and possibly 
-other OSes as well).  Hence the (fairly recent) realization that power 
-management has to be integrated and under control of the scheduler 
-rather than existing as some ad hoc subsystem.
-
-The reaction from the hardware people often is "the software is crap and 
-makes our hardware look bad, we know better, so let's make it easier on 
-those poor software dudes by handling power management in hardware 
-instead".  But ultimately the hardware just can't predict things like 
-software can.  It might do a better job than the current software state 
-of affairs, but most likely not be as efficient as a proper software 
-architecture.  The hardware may only be reactive, whereas the software 
-can be proactive (when properly done that is).
-
-I sense from your paragraph above that ARM might be going the same 
-direction as X86 and that would be very sad.  Maybe the best compromise 
-would be for all knobs to be made available to software if software 
-wants to turn off the hardware auto-pilot and take control.  This way 
-the hardware guys would cover their arses while still allowing for the 
-possibility that software might be able to out perform the hardware 
-solution.
-
-> > >    and more importantly if they
-> > >    HAVE to run in secure world that's the only solution we have unless you
-> > >    want to split race conditions between kernel and secure world).
-> > 
-> > If they HAVE to run in secure world then your secure world architecture 
-> > is simply misdesigned, period.  Someone must have ignored the economics 
-> > of modern software development to have come up with this.
-> 
-> That's the trade-off between software complexity and hardware cost,
-> gates, power consumption. You can do proper physical separation of the
-> secure services but this would require a separate CPU that is rarely
-> used and adds to the overall SoC cost. On large scale hardware
-> deployment, it's exactly economics that matter and these translate into
-> hardware cost. The software cost is irrelevant here, whether we like it
-> or not.
-
-I agree with you on the hardware cost (and the same argument applies to 
-power management by the way).  But once the hardware is there, the 
-software cost has to be optimized the same way.
-
->From a cost perspective, firmware is always a magnitude more costly to 
-develop and to fix and maintain afterwards than kernel code.  So, 
-without requiring full physical separation increasing the hardware cost, 
-I think the software architecture would benefit from a rethought, 
-possibly with the help of small and cheap hardware enhancements.  I 
-really think not enough attention has been dedicated to that aspect.
-
-
-Nicolas
+Best regards,
+Tomasz
