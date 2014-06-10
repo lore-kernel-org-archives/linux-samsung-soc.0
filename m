@@ -1,100 +1,47 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [RESEND PATCH] ARM: EXYNOS: Fix the sequence of secondary CPU boot for
- Exynos3250
-Date: Wed, 11 Jun 2014 08:27:07 +0900
-Message-ID: <1402442827-2321-1-git-send-email-cw00.choi@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RESEND PATCH] ARM: EXYNOS: Fix the sequence of secondary CPU
+ boot for Exynos3250
+Date: Wed, 11 Jun 2014 01:35:27 +0200
+Message-ID: <5397963F.30109@gmail.com>
+References: <1402442827-2321-1-git-send-email-cw00.choi@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:38073 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753230AbaFJX1O (ORCPT
+Received: from mail-we0-f182.google.com ([74.125.82.182]:58354 "EHLO
+	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753195AbaFJXfr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 19:27:14 -0400
+	Tue, 10 Jun 2014 19:35:47 -0400
+In-Reply-To: <1402442827-2321-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux@arm.linux.org.uk, kgene.kim@samsung.com, t.figa@samsung.com
-Cc: kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>, linux@arm.linux.org.uk, kgene.kim@samsung.com, t.figa@samsung.com
+Cc: kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch set AUTOWAKEUP_EN bit to ARM_CORE_CONFIGURATION register
-because Exynos3250 removes WFE in secure mode so that turn on automatically
-after setting CORE_LOCAL_PWR_EN. Also, This patch use dbs_sev() macro
-to guarantee the data synchronization of command instead of IPI_WAKEUP
-because Exynos3250 don't have WFE mode in secue mode.
+Hi Chanwoo,
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/platsmp.c  | 9 ++++++++-
- arch/arm/mach-exynos/pm.c       | 8 ++++++--
- arch/arm/mach-exynos/regs-pmu.h | 4 ++++
- 3 files changed, 18 insertions(+), 3 deletions(-)
+On 11.06.2014 01:27, Chanwoo Choi wrote:
+> This patch set AUTOWAKEUP_EN bit to ARM_CORE_CONFIGURATION register
+> because Exynos3250 removes WFE in secure mode so that turn on automatically
+> after setting CORE_LOCAL_PWR_EN. Also, This patch use dbs_sev() macro
+> to guarantee the data synchronization of command instead of IPI_WAKEUP
+> because Exynos3250 don't have WFE mode in secue mode.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/platsmp.c  | 9 ++++++++-
+>  arch/arm/mach-exynos/pm.c       | 8 ++++++--
+>  arch/arm/mach-exynos/regs-pmu.h | 4 ++++
+>  3 files changed, 18 insertions(+), 3 deletions(-)
+> 
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index ec02422..882fb84 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -149,6 +149,10 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 			return -ETIMEDOUT;
- 		}
- 	}
-+
-+	if (soc_is_exynos3250())
-+		__raw_writel(EXYNOS3_COREPORESET(phys_cpu), EXYNOS_SWRESET);
-+
- 	/*
- 	 * Send the secondary CPU a soft interrupt, thereby causing
- 	 * the boot monitor to read the system wide flags register,
-@@ -182,7 +186,10 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 
- 		call_firmware_op(cpu_boot, phys_cpu);
- 
--		arch_send_wakeup_ipi_mask(cpumask_of(cpu));
-+		if (soc_is_exynos3250())
-+			dsb_sev();
-+		else
-+			arch_send_wakeup_ipi_mask(cpumask_of(cpu));
- 
- 		if (pen_release == -1)
- 			break;
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 87c0d34..4681f64 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -121,8 +121,12 @@ void exynos_cpu_power_down(int cpu)
-  */
- void exynos_cpu_power_up(int cpu)
- {
--	__raw_writel(S5P_CORE_LOCAL_PWR_EN,
--		     EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-+	u32 core_conf = 0;
-+
-+	core_conf |= S5P_CORE_LOCAL_PWR_EN;
-+	if (soc_is_exynos3250())
-+		core_conf |= S5P_CORE_AUTOWAKEUP_EN;
-+	__raw_writel(core_conf, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
- }
- 
- /**
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index 1d13b08..674dfc2 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -128,6 +128,7 @@
- 
- #define S5P_CORE_LOCAL_PWR_EN			0x3
- #define S5P_INT_LOCAL_PWR_EN			0x7
-+#define S5P_CORE_AUTOWAKEUP_EN			(1 << 31)
- 
- /* Only for EXYNOS4210 */
- #define S5P_CMU_CLKSTOP_LCD1_LOWPWR	S5P_PMUREG(0x1154)
-@@ -186,6 +187,9 @@
- #define S5P_DIS_IRQ_CORE3			S5P_PMUREG(0x1034)
- #define S5P_DIS_IRQ_CENTRAL3			S5P_PMUREG(0x1038)
- 
-+/* For EXYNOS3 */
-+#define EXYNOS3_COREPORESET(cpu)		((1 << 4) << cpu)
-+
- /* For EXYNOS5 */
- 
- #define EXYNOS5_SYS_I2C_CFG					S5P_SYSREG(0x0234)
--- 
-1.8.0
+This patch seems to be unneeded with Krzysztof's patch send a while ago
+[1]. As reported by Krzysztof, that patch apparently fixes SMP support
+on Exynos3250 and is much smaller and less invasive.
+
+[1] - http://thread.gmane.org/gmane.linux.kernel.samsung-soc/32809
+
+Best regards,
+Tomasz
