@@ -1,89 +1,64 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3 6/6] ARM: EXYNOS: Refactoring to remove soc_is_exynos
- macros from exynos
-Date: Tue, 10 Jun 2014 16:46:06 +0200
-Message-ID: <53971A2E.2010104@samsung.com>
-References: <1399706287-13919-1-git-send-email-y@samsung.com>
- <1399706419-13976-1-git-send-email-pankaj.dubey@samsung.com>
- <1399706419-13976-7-git-send-email-pankaj.dubey@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
+Date: Tue, 10 Jun 2014 08:21:59 -0700
+Message-ID: <CAD=FV=V5_RRNkgA7Rk7XbQw9m1qh6-RJA8arW7ZRU=QbWAPa+w@mail.gmail.com>
+References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
+	<20140607181221.GB25068@e102568-lin.cambridge.arm.com>
+	<CAD=FV=X17PeJ6JPE9Qyc1QT07AvA2PTE69Q87gz9a6MdUHgi4A@mail.gmail.com>
+	<20140609223831.GB16889@e102568-lin.cambridge.arm.com>
+	<CANuQgHHxAhTNYX-JAEdRkO=PMYT4A5GwXcuQfiqwE0CEkQyR+w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1399706419-13976-7-git-send-email-pankaj.dubey@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, arnd@arndb.de
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f172.google.com ([209.85.220.172]:61220 "EHLO
+	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750809AbaFJPWA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 10 Jun 2014 11:22:00 -0400
+Received: by mail-vc0-f172.google.com with SMTP id hy10so2590661vcb.17
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 08:21:59 -0700 (PDT)
+In-Reply-To: <CANuQgHHxAhTNYX-JAEdRkO=PMYT4A5GwXcuQfiqwE0CEkQyR+w@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, "olof@lixom.net" <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Pankaj,
+Chander,
 
-On 10.05.2014 09:20, Pankaj Dubey wrote:
-> This patch enables chipid driver for ARCH_EXYNOS and refactors
-> machine code as well as exynos cpufreq driver code for using
-> chipid driver for identification of SoC ID and SoC rev.
-> 
-> This patch also updates DT binding information in exynos4 and
-> exynos5 dtsi file. As to differentiate product id bit-mask we need
-> separate compatible string for exynos4 and exynos5. Hoping this will
-> be helpful in future as bit-mask and bit-shift bit may differ.
-> Added binding information as well.
+On Tue, Jun 10, 2014 at 1:12 AM, Chander Kashyap
+<chander.kashyap@linaro.org> wrote:
+> On 10 June 2014 04:08, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
+>> On Mon, Jun 09, 2014 at 06:03:31PM +0100, Doug Anderson wrote:
+>>
+>> [...]
+>>
+>>> Cold boot and resume from suspend are detected via various special
+>>> flags in various special locations.  Resume from suspend looks at
+>>> INFORM1 (0x10048004) for flags.  This register is 0 during a cold boot
+>>> and has special values set by the kernel at resume time.
+>>>
+>>> It also looks as if some code looks at 0x10040900 (PMU_SPARE0) to help
+>>> tell initial cold boot and secondary CPU bringup.
+>>
+>> Ok, thanks a lot. It looks like firmware paths should be ready to
+>> detect cold vs warm boot, and hopefully do not rely on a specific
+>> MPIDR to come up first out of power states.
+>>
+>>> > I am asking to check if on this platform CPUidle (where the notion of
+>>> > primary CPU disappears) has a chance to run properly.
+>>>
+>>> I believe it should be possible, but we don't have CPUidle implemented
+>>> in our current system.  Abhilash may be able to comment more.
+>>
+>
+> Cpuidle is implemented for exynos5420, and is tested on chromebook.
 
-[snip]
+My S-state knowledge is not strong, but I believe that Lorenzo's
+questions matter if we're using S2 for CPUidle (where we actually turn
+off power and hot unplug CPUs) but not when we're using S1 for CPUidle
+(where we just enter WFI/WFE).
 
-> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-> index d0482c2..9d6ec84 100644
-> --- a/arch/arm/mach-exynos/platsmp.c
-> +++ b/arch/arm/mach-exynos/platsmp.c
-> @@ -20,13 +20,13 @@
->  #include <linux/smp.h>
->  #include <linux/io.h>
->  #include <linux/of_address.h>
-> +#include <linux/exynos-soc.h>
->  
->  #include <asm/cacheflush.h>
->  #include <asm/smp_plat.h>
->  #include <asm/smp_scu.h>
->  #include <asm/firmware.h>
->  
-> -#include <plat/cpu.h>
->  #include <mach/map.h>
->  
->  #include "common.h"
-> @@ -59,7 +59,8 @@ static void __init exynos_smp_prepare_sram(void)
->  
->  static inline void __iomem *cpu_boot_reg_base(void)
->  {
-> -	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
-> +	if (is_soc_id_compatible(EXYNOS4210) &&
-> +			is_soc_rev_compatible(EXYNOS4210_REV_1_1))
+I believe that in ChromeOS we use S1 CPUidle and that it works fine.
+We've never implemented S2 that I'm aware of.
 
-Well, how is this any better than what is already there? When adding a
-new SoC, you will likely have to add another series of "||"s or "&&"s
-with specific SoC IDs, when using this kind of API. This is not the point.
-
-For now, all those things can be replaced simply with
-of_machine_is_compatible() (except checks for samsung_rev()), but in the
-end they need to be properly abstracted. The goal is to be able to add
-support for new SoC, which requires identical steps to perform certain
-things as already supported SoCs, without explicitly stating this in
-driver code.
-
-E.g. Exynos5250 is already supported, while Exynos5251 shows up. Let's
-say it has exactly the same secondary CPU boot-up method as Exynos5250,
-but to enter suspend mode, the same steps as on Exynos5260 have to be
-performed. With any kind of per-SoC check API, you will have to add
-soc_is_exynos5251() or is_soc_id_compatible(EXYNOS5251) in CPU bring-up
-code and low-level suspend code, even though all the functional code is
-already there.
-
-Best regards,
-Tomasz
+-Doug
