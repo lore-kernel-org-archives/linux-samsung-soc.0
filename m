@@ -1,79 +1,79 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
 Subject: Re: [PATCH 1/2 v2] spi: s3c64xx: use "cs-gpios" from spi node instead
  of "cs-gpio"
-Date: Tue, 10 Jun 2014 21:43:59 +0200
-Message-ID: <53975FFF.7010209@gmail.com>
-References: <1402394881-31564-1-git-send-email-ch.naveen@samsung.com>	<1402394881-31564-2-git-send-email-ch.naveen@samsung.com>	<5396E051.8050803@samsung.com>	<CAHfPSqAq9L5Zu7z3-y6Y2pG8AhE4Y1j8DE35LDfMW_DYc_x-gw@mail.gmail.com> <CAD=FV=XtdgKEg7fTHe+tsFM1Y_YwqNNk_DBW7ZX83YERGJsHBg@mail.gmail.com>
+Date: Tue, 10 Jun 2014 21:49:40 +0200
+Message-ID: <53976154.60308@gmail.com>
+References: <1402394881-31564-1-git-send-email-ch.naveen@samsung.com> <1402394881-31564-2-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:36140 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753083AbaFJToS (ORCPT
+Received: from mail-wg0-f52.google.com ([74.125.82.52]:61000 "EHLO
+	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754417AbaFJTt7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 15:44:18 -0400
-In-Reply-To: <CAD=FV=XtdgKEg7fTHe+tsFM1Y_YwqNNk_DBW7ZX83YERGJsHBg@mail.gmail.com>
+	Tue, 10 Jun 2014 15:49:59 -0400
+In-Reply-To: <1402394881-31564-2-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "broonie@kernel.org" <broonie@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>
 
-On 10.06.2014 20:09, Doug Anderson wrote:
-> Naveen / Sylwester,
-> 
-> On Tue, Jun 10, 2014 at 4:00 AM, Naveen Krishna Ch
-> <naveenkrishna.ch@gmail.com> wrote:
->>> Can we support both "cs-gpio" and "cs-gpios" for backward compatibility ?
->>> After your change all DTBs using the original pattern will not work with
->>> new kernels any more. At least I would expect such backward compatibility
->>> maintained for few kernel releases.
->>
->> The reason behind removing the "cs-gpio" or not providing backward
->> compatibility was
->>
->> 1. Since spi-core started using "cs-gpios" string from spi device node
->> several months ago.
->>   The spi-s3c64xx.c driver is partially broken for more than 6 months.
->>
->> 2. Supporting "cs-gpio" would add extra bit of code.
->>
->> I've corrected the dts files that were using "cs-gpio" under
->> "controller-data"(child node)
->> to use "cs-gpio" from spi device node (parent node).
->>
->> I will make another version if you insist.
-> 
-> Yup, as near as I can tell this has been broken since (3146bee spi:
-> s3c64xx: Added provision for dedicated cs pin).  That landed June 25th
-> of 2013 into the SPI tree.
-> 
-> ...so clearly nobody was really testing Samsung's SPI driver on ToT
-> Linux.  1 year of unnoticed brokenness seems like enough time that we
-> could do away with the old code.  If someone comes out of the woodwork
-> and claims a dire need to support the old binding then it can be added
-> then.
-> 
-> In-tree users of this appear to be:
-> 
-> arch/arm/boot/dts/exynos4210-smdkv310.dts:
->  cs-gpio = <&gpc1 2 0>;
-> arch/arm/boot/dts/exynos4412-trats2.dts:
->  cs-gpio = <&gpb 5 0>;
-> arch/arm/boot/dts/exynos5250-smdk5250.dts:
->  cs-gpio = <&gpa2 5 0>;
-> 
-> ...and I guess nobody has bothered using the SPI flash on those boards
-> for the last year?
+Hi Naveen,
 
-On Trats2, it's actually a camera sensor, not SPI flash...
+On 10.06.2014 12:08, Naveen Krishna Chatradhi wrote:
+> Currently, spi-s3c64xx.c needs "cs-gpio" chip select GPIO to be
+> defined under "controller-data" node under each slave node.
 
-Still, that's really a shame that:
+[snip]
 
-a) such patch went in (i.e. its brokenness was not spotted in review),
-b) the regression was not spotted.
+> @@ -85,6 +83,7 @@ Example:
+>  		#size-cells = <0>;
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&spi0_bus>;
+> +		cs-gpios = <&gpa2 5 1 0 3>;
 
-Anyway, IMHO this justifies removing the old binding then.
+While at it, you might also update the example to something more
+appropriate on Samsung platforms, e.g. <&gpa2 5 0>;
+
+>  
+>  		w25q80bw@0 {
+>  			#address-cells = <1>;
+
+[snip]
+
+> +static struct s3c64xx_spi_csinfo *s3c64xx_get_cs_gpios(struct spi_device *spi)
+> +{
+> +	struct device_node *parent_np = NULL;
+> +	struct s3c64xx_spi_driver_data *sdd;
+> +	struct s3c64xx_spi_csinfo *cs;
+> +
+> +	parent_np = of_get_parent(spi->dev.of_node);
+> +	if (!parent_np) {
+> +		dev_err(&spi->dev, "Parent node not found\n");
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> +	sdd = spi_master_get_devdata(spi->master);
+> +
+>  	cs = kzalloc(sizeof(*cs), GFP_KERNEL);
+>  	if (!cs) {
+> -		of_node_put(data_np);
+> +		of_node_put(parent_np);
+>  		return ERR_PTR(-ENOMEM);
+>  	}
+>  
+>  	/* The CS line is asserted/deasserted by the gpio pin */
+>  	if (sdd->cs_gpio)
+> -		cs->line = of_get_named_gpio(data_np, "cs-gpio", 0);
+> +		cs->line = of_get_named_gpio(parent_np, "cs-gpios", 0);
+
+This is wrong. The "cs-gpios" property is supposed to be an array,
+indexed by chip select number of SPI devices (indicated by their "reg"
+properties).
+
+Moreover, is there a need to parse this manually in this driver? I can
+see respective parsing code in of_spi_register_master().
 
 Best regards,
 Tomasz
