@@ -1,64 +1,46 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
-Date: Tue, 10 Jun 2014 08:21:59 -0700
-Message-ID: <CAD=FV=V5_RRNkgA7Rk7XbQw9m1qh6-RJA8arW7ZRU=QbWAPa+w@mail.gmail.com>
-References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
-	<20140607181221.GB25068@e102568-lin.cambridge.arm.com>
-	<CAD=FV=X17PeJ6JPE9Qyc1QT07AvA2PTE69Q87gz9a6MdUHgi4A@mail.gmail.com>
-	<20140609223831.GB16889@e102568-lin.cambridge.arm.com>
-	<CANuQgHHxAhTNYX-JAEdRkO=PMYT4A5GwXcuQfiqwE0CEkQyR+w@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [RESEND PATCH v2 1/2] ASoC: samsung: s3c24{xx,12}-i2s: port to use
+ generic dmaengine API
+Date: Tue, 10 Jun 2014 17:25:43 +0200
+Message-ID: <53972377.7050109@samsung.com>
+References: <1401642958-6236-1-git-send-email-anarsoul@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f172.google.com ([209.85.220.172]:61220 "EHLO
-	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750809AbaFJPWA (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:39574 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751675AbaFJP0B (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 11:22:00 -0400
-Received: by mail-vc0-f172.google.com with SMTP id hy10so2590661vcb.17
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 08:21:59 -0700 (PDT)
-In-Reply-To: <CANuQgHHxAhTNYX-JAEdRkO=PMYT4A5GwXcuQfiqwE0CEkQyR+w@mail.gmail.com>
+	Tue, 10 Jun 2014 11:26:01 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N6Y00F7SLJ4XT40@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 10 Jun 2014 16:25:52 +0100 (BST)
+In-reply-to: <1401642958-6236-1-git-send-email-anarsoul@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, "olof@lixom.net" <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Vasily Khoruzhick <anarsoul@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
 
-Chander,
+Hi,
 
-On Tue, Jun 10, 2014 at 1:12 AM, Chander Kashyap
-<chander.kashyap@linaro.org> wrote:
-> On 10 June 2014 04:08, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
->> On Mon, Jun 09, 2014 at 06:03:31PM +0100, Doug Anderson wrote:
->>
->> [...]
->>
->>> Cold boot and resume from suspend are detected via various special
->>> flags in various special locations.  Resume from suspend looks at
->>> INFORM1 (0x10048004) for flags.  This register is 0 during a cold boot
->>> and has special values set by the kernel at resume time.
->>>
->>> It also looks as if some code looks at 0x10040900 (PMU_SPARE0) to help
->>> tell initial cold boot and secondary CPU bringup.
->>
->> Ok, thanks a lot. It looks like firmware paths should be ready to
->> detect cold vs warm boot, and hopefully do not rely on a specific
->> MPIDR to come up first out of power states.
->>
->>> > I am asking to check if on this platform CPUidle (where the notion of
->>> > primary CPU disappears) has a chance to run properly.
->>>
->>> I believe it should be possible, but we don't have CPUidle implemented
->>> in our current system.  Abhilash may be able to comment more.
->>
->
-> Cpuidle is implemented for exynos5420, and is tested on chromebook.
+On 01.06.2014 19:15, Vasily Khoruzhick wrote:
+> Use dmaengine instead of legacy s3c24xx DMA API for s3c24xx and s3c2412
+> 
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> ---
+> v2: use hardcoded dma channel number
+> 
+>  sound/soc/samsung/Kconfig       |  9 +++----
+>  sound/soc/samsung/dmaengine.c   |  3 +++
+>  sound/soc/samsung/s3c-i2s-v2.c  | 17 +------------
+>  sound/soc/samsung/s3c2412-i2s.c | 47 +++++++++++++++++-----------------
+>  sound/soc/samsung/s3c24xx-i2s.c | 56 +++++++++++++++++++----------------------
+>  5 files changed, 56 insertions(+), 76 deletions(-)
+> 
 
-My S-state knowledge is not strong, but I believe that Lorenzo's
-questions matter if we're using S2 for CPUidle (where we actually turn
-off power and hot unplug CPUs) but not when we're using S1 for CPUidle
-(where we just enter WFI/WFE).
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-I believe that in ChromeOS we use S1 CPUidle and that it works fine.
-We've never implemented S2 that I'm aware of.
-
--Doug
+Best regards,
+Tomasz
