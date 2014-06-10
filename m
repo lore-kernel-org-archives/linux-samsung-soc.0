@@ -1,100 +1,100 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: [PATCH 1/2] ARM: exynos: cleanup kconfig option display
-Date: Tue, 10 Jun 2014 09:06:09 -0500
-Message-ID: <1402409170-1314-2-git-send-email-robherring2@gmail.com>
-References: <1402409170-1314-1-git-send-email-robherring2@gmail.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: Problems booting exynos5420 with >1 CPU
+Date: Tue, 10 Jun 2014 15:14:46 +0100
+Message-ID: <20140610141446.GA3519@arm.com>
+References: <alpine.LFD.2.11.1406062340480.25775@knanqh.ubzr>
+ <20140607175618.GA25068@e102568-lin.cambridge.arm.com>
+ <alpine.LFD.2.11.1406071431490.25775@knanqh.ubzr>
+ <20140607223614.GA26641@e102568-lin.cambridge.arm.com>
+ <CAOesGMj+itYr-daqxfX=J3Ss+7YdWhUUzBWTW3FqVEH8tXqt-A@mail.gmail.com>
+ <20140608124530.GA31921@e102568-lin.cambridge.arm.com>
+ <alpine.LFD.2.11.1406081138070.25775@knanqh.ubzr>
+ <7hsindq07l.fsf@paris.lan>
+ <20140609222604.GA16889@e102568-lin.cambridge.arm.com>
+ <alpine.LFD.2.11.1406092254220.25775@knanqh.ubzr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:40569 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752516AbaFJOGV (ORCPT
+Received: from fw-tnat.austin.arm.com ([217.140.110.23]:16680 "EHLO
+	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751851AbaFJOPK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 10:06:21 -0400
-Received: by mail-oa0-f51.google.com with SMTP id j17so4001972oag.38
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 07:06:20 -0700 (PDT)
-In-Reply-To: <1402409170-1314-1-git-send-email-robherring2@gmail.com>
+	Tue, 10 Jun 2014 10:15:10 -0400
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.11.1406092254220.25775@knanqh.ubzr>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: arm@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh@kernel.org>, linux-samsung-soc@vger.kernel.org
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tushar Behera <trblinux@gmail.com>, "Turquette, Mike" <mturquette@linaro.org>, Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Arun Kumar <arun.kk@samsung.com>
 
-From: Rob Herring <robh@kernel.org>
+Hi Nico,
 
-The addition of Exynos to multi-platform configs creates a mess of config
-options with options appearing before the Exynos config option. This is
-due to arch/arm/plat-samsung/Kconfig being included out of order with the
-other Samsung platform kconfig files. Reorder the kconfig files and move
-all the options into a sub-menu. Some of the options are dead, so remove
-those as well.
+Sorry, I can't stay away from this thread ;)
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Cc: Ben Dooks <ben-linux@fluff.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
----
- arch/arm/Kconfig              |  3 +--
- arch/arm/plat-samsung/Kconfig | 17 +++--------------
- 2 files changed, 4 insertions(+), 16 deletions(-)
+On Tue, Jun 10, 2014 at 12:25:47AM -0400, Nicolas Pitre wrote:
+> On Mon, 9 Jun 2014, Lorenzo Pieralisi wrote:
+> > 4) When I am talking about firmware I am talking about sequences that
+> >    are very close to HW (disabling C bit, cleaning caches, exiting
+> >    coherency). Erratas notwithstanding, they are being standardized at
+> >    ARM the best we can. They might even end up being implemented in HW
+> >    in the not so far future. I understand they are tricky, I understand
+> >    they take lots of time to implement them and to debug them, what I
+> >    want to say is that they are becoming standard and we _must_ reuse the
+> >    same code for all ARM platforms. You can implement them in MCPM (see
+> >    (1)) or in firmware (and please do not start painting me as firmware
+> >    hugger here, I am referring to standard power down sequences that
+> >    again, are very close to HW state machines 
+> 
+> That's where the disconnect lies.  On the one hand you say "I understand 
+> they are tricky, I understand they take lots of time to implement them 
+> and to debug them" and on the other hand you say "They might end up being 
+> implemented in HW in the not so far future."  That simply makes no 
+> economical sense at all!
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 87b63fd..cbf0c37 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1009,8 +1009,6 @@ source "arch/arm/mach-rockchip/Kconfig"
- 
- source "arch/arm/mach-sa1100/Kconfig"
- 
--source "arch/arm/plat-samsung/Kconfig"
--
- source "arch/arm/mach-socfpga/Kconfig"
- 
- source "arch/arm/mach-spear/Kconfig"
-@@ -1028,6 +1026,7 @@ source "arch/arm/mach-s5pc100/Kconfig"
- source "arch/arm/mach-s5pv210/Kconfig"
- 
- source "arch/arm/mach-exynos/Kconfig"
-+source "arch/arm/plat-samsung/Kconfig"
- 
- source "arch/arm/mach-shmobile/Kconfig"
- 
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 243dfcb..ac032cd 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -35,27 +35,15 @@ config SAMSUNG_PM
- 	  Base platform power management code for samsung code
- 
- if PLAT_SAMSUNG
-+menu "Samsung Common options"
- 
- # boot configurations
- 
- comment "Boot options"
- 
--config S3C_BOOT_ERROR_RESET
--	bool "S3C Reboot on decompression error"
--	help
--	  Say y here to use the watchdog to reset the system if the
--	  kernel decompressor detects an error during decompression.
--
--config S3C_BOOT_UART_FORCE_FIFO
--       bool "Force UART FIFO on during boot process"
--       default y
--       help
--         Say Y here to force the UART FIFOs on during the kernel
--	 uncompressor
--
--
- config S3C_LOWLEVEL_UART_PORT
- 	int "S3C UART to use for low-level messages"
-+	depends on ARCH_S3C64XX
- 	default 0
- 	help
- 	  Choice of which UART port to use for the low-level messages,
-@@ -503,4 +491,5 @@ config DEBUG_S3C_UART
- 	default "2" if DEBUG_S3C_UART2
- 	default "3" if DEBUG_S3C_UART3
- 
-+endmenu
- endif
+It makes lots of sense, though not from a software maintainability
+perspective. It would be nice if everything still looked like ARM7TDMI
+but in the race for performance (vs power), hardware becomes more
+complex and it's not just the CPU but adjacent parts like interconnects,
+caches, asynchronous bridges, voltage shifters, memory controllers,
+clocks/PLLs etc. Many of these are simply hidden from the high level OS
+like Linux because the OS assumes certain configuration (e.g. access to
+memory) and it's only the hardware itself that knows in what order they
+can be turned on or off (when triggered explicitly by the OS or an
+external event). Having an dedicated power controller (e.g. M-class
+processor) to handle some of these is a rather flexible approach, other
+bits require RTL (and usually impossible to update).
+
+> When some operation is 1) tricky and takes time to debug, and 2) not 
+> performance critical (no one is trying to get in and out of idle or 
+> hibernation a billion times per second), then you should never ever put 
+> such a thing in firmware, and hardware should be completely out of the 
+> question!
+
+I agree that things can go wrong (both in hardware and software, no
+matter where it runs) but please don't think that such power
+architecture has been specifically engineered to hide the hardware from
+Linux. It's a necessity for complex systems and the optimal solution is
+not always simplification (it's not just ARM+vendors doing this, just
+look at the power model of modern x86 processors, hidden nicely from the
+software behind a few registers while making things harder for scheduler
+which cannot rely on a constant performance level; but it's a trade-off
+they are happy to make).
+
+> >    and more importantly if they
+> >    HAVE to run in secure world that's the only solution we have unless you
+> >    want to split race conditions between kernel and secure world).
+> 
+> If they HAVE to run in secure world then your secure world architecture 
+> is simply misdesigned, period.  Someone must have ignored the economics 
+> of modern software development to have come up with this.
+
+That's the trade-off between software complexity and hardware cost,
+gates, power consumption. You can do proper physical separation of the
+secure services but this would require a separate CPU that is rarely
+used and adds to the overall SoC cost. On large scale hardware
+deployment, it's exactly economics that matter and these translate into
+hardware cost. The software cost is irrelevant here, whether we like it
+or not.
+
 -- 
-1.9.1
+Catalin
