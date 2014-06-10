@@ -1,90 +1,66 @@
-From: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Subject: Re: exynos5420-peach-pi: linux-next boot fails unless mau_epll left enabled?
-Date: Tue, 10 Jun 2014 12:18:33 +0530
-Message-ID: <CAOD6ATpZWEg9d7WnZ8tg9_uQJ29vMoucaOwh0_tbdRSDRj25cw@mail.gmail.com>
-References: <7hoay6sxjl.fsf@paris.lan>
-	<CAGa+x86ko1N+T+QAqnY+md4+nyzza_cDt0wa-s06TdCX+27fSA@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 2/2] gpio: gpiolib: set gpiochip_remove retval to void
+Date: Tue, 10 Jun 2014 08:57:32 +0200
+Message-ID: <5396AC5C.2080108@samsung.com>
+References: <20140530094025.3b78301e@canb.auug.org.au>
+ <1401449454-30895-1-git-send-email-berthe.ab@gmail.com>
+ <1401449454-30895-2-git-send-email-berthe.ab@gmail.com>
+ <CAMuHMdV6AtjD2aqO3buzj8Eo7A7xc_+ROYnxEi2sdjMaqFiAuA@mail.gmail.com>
+ <5388C0F1.90503@gmail.com> <5388CB1B.3090802@metafoo.de>
+ <20140608231823.GB10112@trinity.fluff.org> <53959A93.7080308@metafoo.de>
+ <5395B379.2010706@samsung.com>
+ <063D6719AE5E284EB5DD2968C1650D6D17259A1F@AcuExch.aculab.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f174.google.com ([209.85.160.174]:45832 "EHLO
-	mail-yk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751131AbaFJGse (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 02:48:34 -0400
-Received: by mail-yk0-f174.google.com with SMTP id 19so1922344ykq.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Jun 2014 23:48:33 -0700 (PDT)
-In-Reply-To: <CAGa+x86ko1N+T+QAqnY+md4+nyzza_cDt0wa-s06TdCX+27fSA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-reply-to: <063D6719AE5E284EB5DD2968C1650D6D17259A1F@AcuExch.aculab.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: David Laight <David.Laight@ACULAB.COM>, Lars-Peter Clausen <lars@metafoo.de>, Ben Dooks <ben@trinity.fluff.org>
+Cc: driverdevel <devel@driverdev.osuosl.org>, Linux MIPS Mailing List <linux-mips@linux-mips.org>, "spear-devel@list.st.com" <spear-devel@list.st.com>, David Daney <ddaney.cavm@gmail.com>, Linux-sh list <linux-sh@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "patches@opensource.wolfsonmicro.com" <patches@opensource.wolfsonmicro.com>, linux-wireless <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "m@bues.ch" <m@bues.ch>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, linux-samsung-soc@vger
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@linaro.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "Turquette, Mike" <mturquette@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Doug Anderson <dianders@google.com>
 
-Hi Kevin,
+On 06/09/2014 03:43 PM, David Laight wrote:
+> From: Of Andrzej Hajda
+> ...
+>>> You can't error out on module unload, although that's not really relevant
+>>> here. gpiochip_remove() is typically called when the device that registered
+>>> the GPIO chip is unbound. And despite some remove() callbacks having a
+>>> return type of int you can not abort the removal of a device.
+>>
+>> It is a design flaw in many subsystems having providers and consumers,
+>> not only GPIO. The same situation is with clock providers, regulators,
+>> phys, drm_panels, ..., at least it was such last time I have tested it.
+>>
+>> The problem is that many frameworks assumes that lifetime of provider is
+>> always bigger than lifetime of its consumers, and this is wrong
+>> assumption - usually it is not possible to prevent unbinding driver from
+>> device, so if the device is a provider there is no way to inform
+>> consumers about his removal.
+>>
+>> Some solution for such problems is to use some kind of availability
+>> callbacks for requesting resources (gpios, clocks, regulators,...)
+>> instead of simple 'getters' (clk_get, gpiod_get). Callbacks should
+>> guarantee that the resource is always valid between callback reporting
+>> its availability and callback reporting its removal. Such approach seems
+>> to be complicated at the first sight but it should allow to make the
+>> code safe and as a bonus it will allow to avoid deferred probing.
+>> Btw I have send already RFC for such framework [1].
+> 
+> Callbacks for delete are generally a locking nightmare.
+> A two-way handshake is also usually needed to avoid problems
+> with concurrent disconnect requests.
 
-We tested on 3 "peach-pi" boards. We are not observing this issue.
+The framework I have proposed is lock-less[1] and concurrent requests
+are serialized so both objections are invalid.
 
-Even I tried with the below defconfig mentioned by you. No issues observed.
-https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/master/eclass/cros-kernel/exynos5_defconfig
+[1]: in fact the framework uses spinlock, but only to protect internal
+list simple operations, and even this could be converted to fully
+lock-less implementation.
 
-This is the u-boot version currently we are using.
-U-Boot 2013.04 (Feb 13 2014 - 16:35:03) for Peach
+Andrzej
 
-Can you provide us more inputs like uboot version or any extra patches
-you applied?
-Also try removing all power domain nodes from exynos5420.dtsi and
-check whether it is reproduced.
+> 
+> 	David
+> 
 
-Regards,
-Shaik Ameer Basha
-
-
-
-On Tue, Jun 10, 2014 at 3:21 AM, Kevin Hilman <khilman@linaro.org> wrote:
-> ping for any Samsung folks that might be able to explain this.
->
-> On Thu, Jun 5, 2014 at 5:15 PM, Kevin Hilman <khilman@linaro.org> wrote:
->> Hello,
->>
->> I'm trying to boot next-20140605[1] on my recently arrived Chromebook2
->> (peach-pi) and was not getting to userspace.  Comparing notes with Doug
->> Anderson, his was booting just fine, so after some debugging and adding
->> 'clk_ignore_unused' to the command-line, it started booting fine.
->>
->> So then, I tracked it down to which clock was causing the problems and
->> found that it's the mau_epll clock gating that's causing the problem,
->> and leaving it enabled[1] allows me to boot again.
->>
->> Any ideas what's going on here?
->>
->> And in particular, any ideas why it would affect my board and not other
->> boards like Doug's?
->>
->> Thanks,
->>
->> Kevin
->>
->> [1] Using this defconfig:
->> https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay/+/master/eclass/cros-kernel/exynos5_defconfig
->>
->> [2]
->> diff --git a/drivers/clk/samsung/clk-exynos5420.c
->> b/drivers/clk/samsung/clk-exynos5420.c
->> index 61eccf0dd72f..ed175088ee7e 100644
->> --- a/drivers/clk/samsung/clk-exynos5420.c
->> +++ b/drivers/clk/samsung/clk-exynos5420.c
->> @@ -911,7 +911,7 @@ static struct samsung_gate_clock
->> exynos5x_gate_clks[] __initdata = {
->>                         SRC_MASK_TOP2, 24, 0, 0),
->>
->>         GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
->> -                       SRC_MASK_TOP7, 20, 0, 0),
->> +                       SRC_MASK_TOP7, 20, CLK_IGNORE_UNUSED, 0),
->>
->>         /* sclk */
->>         GATE(CLK_SCLK_UART0, "sclk_uart0", "dout_uart0",
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
