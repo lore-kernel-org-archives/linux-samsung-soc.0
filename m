@@ -1,62 +1,66 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH CRITICAL] ARM: s3c64xx: dt: Fix boot failure due to double
- clock initialization
-Date: Tue, 10 Jun 2014 01:17:29 -0700
-Message-ID: <CAOesGMgS=+TDHgX29nbbNQ_X2Vk76L5WxZvS9FHAF0hs2MBm+g@mail.gmail.com>
-References: <1386964779-29457-1-git-send-email-tomasz.figa@gmail.com>
-	<CAOesGMifjnTDUcsweOwsw9fFgsE7b4q3wsASfP8YL-uMH5KiPA@mail.gmail.com>
-	<CAPTRvHn7yTt6mC1fjEn5Ra9yx=GZ1DyNQtGWvHsDd_LkuiM_wA@mail.gmail.com>
-	<1500417.9RFCmzklxv@flatron>
-	<20131216210915.GD3185@sirena.org.uk>
-	<20131217151424.GB11138@opensource.wolfsonmicro.com>
-	<CAOesGMiUyOTLMi56cMN9V8Ft0w2X_g0_HzA+cfuYnZyf2=iiMA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH 0/3] spi: s3c64xx: use "cs-gpios" in spi node instead of
+ "cs-gpio"
+Date: Tue, 10 Jun 2014 14:30:56 +0530
+Message-ID: <1402390859-28287-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f169.google.com ([209.85.220.169]:60882 "EHLO
-	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750810AbaFJIRa (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:19185 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750809AbaFJJDn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 04:17:30 -0400
-Received: by mail-vc0-f169.google.com with SMTP id la4so7523751vcb.14
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 01:17:29 -0700 (PDT)
-In-Reply-To: <CAOesGMiUyOTLMi56cMN9V8Ft0w2X_g0_HzA+cfuYnZyf2=iiMA@mail.gmail.com>
+	Tue, 10 Jun 2014 05:03:43 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N6Y00DN33U5NED0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 10 Jun 2014 18:03:41 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, hua dillon <dillonhua@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben.dooks@codethink.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+To: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com
 
-On Tue, Dec 17, 2013 at 11:12 AM, Olof Johansson <olof@lixom.net> wrote:
-> On Tue, Dec 17, 2013 at 7:14 AM, Charles Keepax
-> <ckeepax@opensource.wolfsonmicro.com> wrote:
->> On Mon, Dec 16, 2013 at 09:09:15PM +0000, Mark Brown wrote:
->>> On Sat, Dec 14, 2013 at 04:41:06AM -0800, Tomasz Figa wrote:
->>>
->>> >  - Wolfson Cragganmore 6410 - Mark Brown (copied) is using it for some
->>> >    testing of audio codec AFAIK, but I'm not sure if you can get that
->>> >    anywhere.
->>>
->>> Essentially no, though you could try asking nicely.  It's not suitable
->>> for a test farm anyway without a SD mux as the only bootloader supported
->>> is Qi which only boots from flash.
->>
->> Yeah, we don't have that many spare at the moment and whilst we
->> do use them fairly regularly we are not produce new boards
->> anymore.
->
-> Yeah, sounds unlikely to be a good fit.
->
-> Something like the tiny6410's would be useful. They seem to mostly be
-> available with LCD panels though, which ups the price a bit. I'll keep
-> an eye out for one.
+Currently, spi-s3c64xx.c needs "cs-gpio" chip select GPIO to be
+defined under "controller-data" node under each slave node.
 
-FWIW, I came across a store at Guang Hua Digital Plaza today that had
-the tiny6410+SDK board on display, and ended up buying one. It'll take
-me a little while to wire it up for testing.
+&spi_x {
+	cs-gpios <>;
+	...
+	slave_node {
 
-Seems like there's no upstream u-boot support for the board, so
-getting something onto it that can network boot seems to be a long
-shot. We'll see what I can cobble together.
+		controller-data {
+			cs-gpio = <>;
+			...
+		};
+		...
+	};
+	...
+};
 
+Where as, SPI core and many other drivers uses "cs-gpios" for
+from device tree node.
 
--Olof
+Hence, make changes in spi-s3c64xx.c driver to make use of
+"cs-gpios" from SPI node(parent) instead of "cs-gpio" defined in
+slaves "controller-data"(child) node.
+
+Also, fixes a compilation warning and corrects the DTS nodes for
+Exynos4210 based SMDKv310, Exynos4412 based Trats2, Exynos5250 based
+SMDK5250 boards.
+
+Naveen Krishna Chatradhi (3):
+based on for-next branch of spi.git
+  spi: s3c64xx: use "cs-gpios" from spi node instead of "cs-gpio"
+  spi: s3c64xx: remove a compilation warning with an assignment
+
+based on for-next branch of linuxsamsung.git
+  ARM: DTS: move "cs-gpio" from "controller-data" to under spi node
+
+ arch/arm/boot/dts/exynos4210-smdkv310.dts |    2 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts   |    2 +-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |    2 +-
+ drivers/spi/spi-s3c64xx.c                 |   56 ++++++++++++++++++-----------
+ 4 files changed, 38 insertions(+), 24 deletions(-)
+
+-- 
+1.7.9.5
