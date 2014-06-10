@@ -1,52 +1,153 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: exynos: mark machine descriptor functions static
-Date: Tue, 10 Jun 2014 15:07:10 +0200
-Message-ID: <539702FE.5030902@samsung.com>
-References: <1401771456-6101-1-git-send-email-olof@lixom.net>
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v3 1/6] i2c: s3c2410: Handle i2c sys_cfg register in i2c
+ driver
+Date: Tue, 10 Jun 2014 15:35:16 +0200
+Message-ID: <53970994.8010400@samsung.com>
+References: <1399706287-13919-1-git-send-email-y@samsung.com>
+ <1399706419-13976-1-git-send-email-pankaj.dubey@samsung.com>
+ <1399706419-13976-2-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36460 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750937AbaFJNH1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 09:07:27 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N6Y003XKF3YF200@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Jun 2014 14:07:11 +0100 (BST)
-In-reply-to: <1401771456-6101-1-git-send-email-olof@lixom.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1399706419-13976-2-git-send-email-pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Olof,
+Hi Pankaj,
 
-On 03.06.2014 06:57, Olof Johansson wrote:
-> There's no reason to export these functions, and I have no idea why
-> they have over time ended up in the header file. As a result, none of
-> the checker tools caught it (i.e. sparse was silent on it).
+On 10.05.2014 09:20, Pankaj Dubey wrote:
+> Let's handle i2c interrupt re-configuration in i2c driver. This will
+> help us in removing some soc specific checks from machine files.
+> Since only Exynos5250, and Exynos5420 need to do this, added syscon
+> based phandle to i2c device nodes of respective SoC DT files.
+> Also handle saving and restoring of SYS_I2C_CFG register during
+> suspend and resume of i2c driver. This will help in removing soc
+> specific check from mach-exynos/pm.c.
 > 
-> Signed-off-by: Olof Johansson <olof@lixom.net>
+> CC: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> CC: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+> CC: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+> CC: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+> CC: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> CC: linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> CC: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
-> 
-> I'm guessing with all the churn right now this might not apply, so it
-> might need manual application around -rc1.
-> 
-> There's definitely room for more cleanup in common.h.
-> 
->  arch/arm/mach-exynos/common.h |    6 ------
->  arch/arm/mach-exynos/exynos.c |   10 +++++-----
->  2 files changed, 5 insertions(+), 11 deletions(-)
-> 
+>  .../devicetree/bindings/arm/samsung/sysreg.txt     |    1 +
+>  arch/arm/boot/dts/exynos5.dtsi                     |    5 +++
+>  arch/arm/boot/dts/exynos5250.dtsi                  |    4 +++
+>  arch/arm/boot/dts/exynos5420.dtsi                  |    4 +++
 
-Similar patch and few other clean-up patches were posted some time ago
-on the list as a part of PMU rework series, but somehow got missed. They
-can be applied independently from rest of the series which is still
-under discussion.
+What about Exynos5410 and Exynos5800?
+
+>  drivers/i2c/busses/i2c-s3c2410.c                   |   32 ++++++++++++++++++++
+>  5 files changed, 46 insertions(+)
+
+[snip]
+
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index ae44910..e707062 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -39,6 +39,8 @@
+>  #include <linux/of.h>
+>  #include <linux/of_gpio.h>
+>  #include <linux/pinctrl/consumer.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+>  
+>  #include <asm/irq.h>
+>  
+> @@ -91,6 +93,9 @@
+>  /* Max time to wait for bus to become idle after a xfer (in us) */
+>  #define S3C2410_IDLE_TIMEOUT	5000
+>  
+> +/* Exynos5 Sysreg offset */
+> +#define EXYNOS5_SYS_I2C_CFG	0x0234
+> +
+>  /* i2c controller state */
+>  enum s3c24xx_i2c_state {
+>  	STATE_IDLE,
+> @@ -127,6 +132,8 @@ struct s3c24xx_i2c {
+>  #if defined(CONFIG_ARM_S3C24XX_CPUFREQ)
+>  	struct notifier_block	freq_transition;
+>  #endif
+> +	struct regmap		*sysreg;
+> +	unsigned int		sys_i2s_cfg;
+
+typo: s/i2s/i2c/
+
+>  };
+>  
+>  static struct platform_device_id s3c24xx_driver_ids[] = {
+> @@ -1075,6 +1082,8 @@ static void
+>  s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
+>  {
+>  	struct s3c2410_platform_i2c *pdata = i2c->pdata;
+> +	u32 val = 0;
+> +	int id;
+>  
+>  	if (!np)
+>  		return;
+> @@ -1084,6 +1093,23 @@ s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
+>  	of_property_read_u32(np, "samsung,i2c-slave-addr", &pdata->slave_addr);
+>  	of_property_read_u32(np, "samsung,i2c-max-bus-freq",
+>  				(u32 *)&pdata->frequency);
+> +	/*
+> +	 * Exynos5's legacy i2c controller and new high speed i2c
+> +	 * controller have muxed interrupt sources. By default the
+
+What do you mean by "by default"? Is it a setting from the bootloader or
+reset value?
+
+Probably to ensure that the mux is set correctly, same thing should be
+also added to hsi2c driver.
+
+> +	 * interrupts for 4-channel HS-I2C controller are enabled.
+> +	 * If node for first four channels of legacy i2c controller
+> +	 * are available then re-configure the interrupts via the
+> +	 * system register.
+> +	 */
+> +	id = of_alias_get_id(np, "i2c");
+> +	i2c->sysreg = syscon_regmap_lookup_by_phandle(np,
+> +			"samsung,syscon-phandle");
+> +	if (IS_ERR(i2c->sysreg)) {
+> +		/* As this is not compulsory do not return error */
+> +		pr_info("i2c-%d skipping re-configuration of interrutps\n", id);
+> +		return;
+> +	}
+> +	regmap_update_bits(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, BIT(id), val);
+
+As Wolfram pointed, val can be replaced with immediate 0 here.
+
+>  }
+>  #else
+>  static void
+> @@ -1268,6 +1294,9 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
+>  
+>  	i2c->suspended = 1;
+>  
+> +	if (!IS_ERR(i2c->sysreg))
+> +		regmap_read(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, &i2c->sys_i2s_cfg);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -1276,6 +1305,9 @@ static int s3c24xx_i2c_resume(struct device *dev)
+>  	struct platform_device *pdev = to_platform_device(dev);
+>  	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+>  
+> +	if (!IS_ERR(i2c->sysreg))
+> +		regmap_write(i2c->sysreg, i2c->sys_i2s_cfg, EXYNOS5_SYS_I2C_CFG);
+
+According to include/linux/regmap.h:
+
+int regmap_write(struct regmap *map, unsigned int reg, unsigned int val);
+
+So in your code reg is swapped with val.
 
 Best regards,
 Tomasz
