@@ -1,60 +1,218 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 0/2 v2] spi: s3c64xx: use "cs-gpios" in spi node instead of
- "cs-gpio"
-Date: Tue, 10 Jun 2014 15:37:59 +0530
-Message-ID: <1402394881-31564-1-git-send-email-ch.naveen@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/2 v2] spi: s3c64xx: use "cs-gpios" from spi node instead
+ of "cs-gpio"
+Date: Tue, 10 Jun 2014 12:39:13 +0200
+Message-ID: <5396E051.8050803@samsung.com>
+References: <1402394881-31564-1-git-send-email-ch.naveen@samsung.com>
+ <1402394881-31564-2-git-send-email-ch.naveen@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:26687 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751333AbaFJKKq (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43388 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750760AbaFJKjS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 06:10:46 -0400
+	Tue, 10 Jun 2014 06:39:18 -0400
+In-reply-to: <1402394881-31564-2-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>
 
-Currently, spi-s3c64xx.c needs "cs-gpio" chip select GPIO to be
-defined under "controller-data" node under each slave node.
+On 10/06/14 12:08, Naveen Krishna Chatradhi wrote:
+> Currently, spi-s3c64xx.c needs "cs-gpio" chip select GPIO to be
+> defined under "controller-data" node under each slave node.
+> 
+> &spi_x {
+> 	cs-gpios <>;
+> 	...
+> 	slave_node {
+> 
+> 		controller-data {
+> 			cs-gpio = <>;
+> 			...
+> 		};
+> 		...
+> 	};
+> 	...
+> };
+> 
+> Where as, SPI core and many other drivers uses "cs-gpios" for
+> from device tree node.
+> 
+> Hence, make changes in spi-s3c64xx.c driver to make use of
+> "cs-gpios" from SPI node(parent) instead of "cs-gpio" defined in
+> slaves "controller-data"(child) node.
+> 
+> Also updates the Device tree Documentation.
+> 
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Cc: Doug Anderson <dianders@chromium.org>
+> ---
+> Changes since v1:
+> 1. fixed a compilation warning thus squashing the other patch into this.
+> 2. Updated device tree description in spi-samsung.txt
+> 
+>  .../devicetree/bindings/spi/spi-samsung.txt        |    8 ++-
+>  drivers/spi/spi-s3c64xx.c                          |   56 ++++++++++++--------
+>  2 files changed, 38 insertions(+), 26 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> index 86aa061..13bfcb5 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> +++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> @@ -42,15 +42,13 @@ Optional Board Specific Properties:
+>  - num-cs: Specifies the number of chip select lines supported. If
+>    not specified, the default number of chip select lines is set to 1.
+>  
+> +- cs-gpios: should specify GPIOs used for chipselects (see spi-bus.txt)
+> +
+>  SPI Controller specific data in SPI slave nodes:
+>  
+>  - The spi slave nodes should provide the following information which is required
+>    by the spi controller.
+>  
+> -  - cs-gpio: A gpio specifier that specifies the gpio line used as
+> -    the slave select line by the spi controller. The format of the gpio
+> -    specifier depends on the gpio controller.
+> -
+>    - samsung,spi-feedback-delay: The sampling phase shift to be applied on the
+>      miso line (to account for any lag in the miso line). The following are the
+>      valid values.
+> @@ -85,6 +83,7 @@ Example:
+>  		#size-cells = <0>;
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&spi0_bus>;
+> +		cs-gpios = <&gpa2 5 1 0 3>;
 
-&spi_x {
-        cs-gpios <>;
-        ...
-        slave_node {
+While at it, please change the GPIO specifier format, this one is not
+valid any more.
 
-                controller-data {
-                        cs-gpio = <>;
-                        ...
-                };
-                ...
-        };
-        ...
-};
+>  		w25q80bw@0 {
+>  			#address-cells = <1>;
+> @@ -94,7 +93,6 @@ Example:
+>  			spi-max-frequency = <10000>;
+>  
+>  			controller-data {
+> -				cs-gpio = <&gpa2 5 1 0 3>;
+>  				samsung,spi-feedback-delay = <0>;
+>  			};
+>  
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 75a5696..4594dde 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -750,47 +750,56 @@ static int s3c64xx_spi_transfer_one(struct spi_master *master,
+>  }
+>  
+>  static struct s3c64xx_spi_csinfo *s3c64xx_get_slave_ctrldata(
+> -				struct spi_device *spi)
+> +				struct spi_device *spi,
+> +				struct s3c64xx_spi_csinfo *cs)
+>  {
+> -	struct s3c64xx_spi_csinfo *cs;
+> -	struct device_node *slave_np, *data_np = NULL;
+> -	struct s3c64xx_spi_driver_data *sdd;
+> +	struct device_node *data_np = NULL;
+>  	u32 fb_delay = 0;
+>  
+> -	sdd = spi_master_get_devdata(spi->master);
+> -	slave_np = spi->dev.of_node;
+> -	if (!slave_np) {
+> -		dev_err(&spi->dev, "device node not found\n");
+> +	data_np = of_get_child_by_name(spi->dev.of_node, "controller-data");
+> +	if (!data_np) {
+> +		dev_err(&spi->dev, "child node 'controller-data' not found\n");
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> -	data_np = of_get_child_by_name(slave_np, "controller-data");
+> -	if (!data_np) {
+> -		dev_err(&spi->dev, "child node 'controller-data' not found\n");
+> +	of_property_read_u32(data_np, "samsung,spi-feedback-delay", &fb_delay);
+> +	cs->fb_delay = fb_delay;
+> +	of_node_put(data_np);
+> +
+> +	return cs;
+> +}
+> +
+> +static struct s3c64xx_spi_csinfo *s3c64xx_get_cs_gpios(struct spi_device *spi)
+> +{
+> +	struct device_node *parent_np = NULL;
+> +	struct s3c64xx_spi_driver_data *sdd;
+> +	struct s3c64xx_spi_csinfo *cs;
+> +
+> +	parent_np = of_get_parent(spi->dev.of_node);
+> +	if (!parent_np) {
+> +		dev_err(&spi->dev, "Parent node not found\n");
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> +	sdd = spi_master_get_devdata(spi->master);
+> +
+>  	cs = kzalloc(sizeof(*cs), GFP_KERNEL);
+>  	if (!cs) {
+> -		of_node_put(data_np);
+> +		of_node_put(parent_np);
+>  		return ERR_PTR(-ENOMEM);
+>  	}
+>  
+>  	/* The CS line is asserted/deasserted by the gpio pin */
+>  	if (sdd->cs_gpio)
+> -		cs->line = of_get_named_gpio(data_np, "cs-gpio", 0);
+> +		cs->line = of_get_named_gpio(parent_np, "cs-gpios", 0);
 
-Where as, SPI core and many other drivers uses "cs-gpios" for
-from device tree node.
+Can we support both "cs-gpio" and "cs-gpios" for backward compatibility ?
+After your change all DTBs using the original pattern will not work with
+new kernels any more. At least I would expect such backward compatibility
+maintained for few kernel releases.
 
-Hence, make changes in spi-s3c64xx.c driver to make use of
-"cs-gpios" from SPI node(parent) instead of "cs-gpio" defined in
-slaves "controller-data"(child) node.
+>  	if (!gpio_is_valid(cs->line)) {
+>  		dev_err(&spi->dev, "chip select gpio is not specified or invalid\n");
+> -		kfree(cs);
+> -		of_node_put(data_np);
+> +		of_node_put(parent_np);
+>  		return ERR_PTR(-EINVAL);
+>  	}
+>  
+> -	of_property_read_u32(data_np, "samsung,spi-feedback-delay", &fb_delay);
+> -	cs->fb_delay = fb_delay;
+> -	of_node_put(data_np);
+> -	return cs;
+> +	return s3c64xx_get_slave_ctrldata(spi, cs);
+>  }
+>  
+>  /*
+> @@ -806,9 +815,14 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>  	struct s3c64xx_spi_info *sci;
+>  	int err;
+>  
+> +	if (!spi->dev.of_node) {
+> +		dev_err(&spi->dev, "device node not found\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	sdd = spi_master_get_devdata(spi->master);
+>  	if (!cs && spi->dev.of_node) {
+> -		cs = s3c64xx_get_slave_ctrldata(spi);
+> +		cs = s3c64xx_get_cs_gpios(spi);
+>  		spi->controller_data = cs;
+>  	}
+>  
+> @@ -1077,7 +1091,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+>  	sdd->sfr_start = mem_res->start;
+>  	sdd->cs_gpio = true;
+>  	if (pdev->dev.of_node) {
+> -		if (!of_find_property(pdev->dev.of_node, "cs-gpio", NULL))
+> +		if (!of_find_property(pdev->dev.of_node, "cs-gpios", NULL))
+>  			sdd->cs_gpio = false;
 
-Also, fixes a compilation warning and corrects the DTS nodes for
-Exynos4210 based SMDKv310, Exynos4412 based Trats2, Exynos5250 based
-SMDK5250 boards.
+Ditto.
 
-Naveen Krishna Chatradhi (2):
-based on for-next branch of spi.git
-  spi: s3c64xx: use "cs-gpios" from spi node instead of "cs-gpio"
+>  		ret = of_alias_get_id(pdev->dev.of_node, "spi");
 
-based on for-next branch of linuxsamsung.git
-  ARM: DTS: move "cs-gpio" from "controller-data" to under spi node
-
- .../devicetree/bindings/spi/spi-samsung.txt        |    8 ++-
- arch/arm/boot/dts/exynos4210-smdkv310.dts          |    2 +-
- arch/arm/boot/dts/exynos4412-trats2.dts            |    2 +-
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |    2 +-
- drivers/spi/spi-s3c64xx.c                          |   56 ++++++++++++--------
- 5 files changed, 41 insertions(+), 29 deletions(-)
-
--- 
-1.7.9.5
+--
+Thanks!
+Sylwester
