@@ -1,100 +1,184 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 3/3] ARM: DTS: move "cs-gpio" from "controller-data" to under
- spi node
-Date: Tue, 10 Jun 2014 14:30:59 +0530
-Message-ID: <1402390859-28287-4-git-send-email-ch.naveen@samsung.com>
-References: <1402390859-28287-1-git-send-email-ch.naveen@samsung.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: Problems booting exynos5420 with >1 CPU
+Date: Tue, 10 Jun 2014 10:19:38 +0100
+Message-ID: <20140610091938.GA20944@e102568-lin.cambridge.arm.com>
+References: <alpine.LFD.2.11.1406062340480.25775@knanqh.ubzr>
+ <20140607175618.GA25068@e102568-lin.cambridge.arm.com>
+ <alpine.LFD.2.11.1406071431490.25775@knanqh.ubzr>
+ <20140607223614.GA26641@e102568-lin.cambridge.arm.com>
+ <CAOesGMj+itYr-daqxfX=J3Ss+7YdWhUUzBWTW3FqVEH8tXqt-A@mail.gmail.com>
+ <20140608124530.GA31921@e102568-lin.cambridge.arm.com>
+ <alpine.LFD.2.11.1406081138070.25775@knanqh.ubzr>
+ <7hsindq07l.fsf@paris.lan>
+ <20140609222604.GA16889@e102568-lin.cambridge.arm.com>
+ <alpine.LFD.2.11.1406092254220.25775@knanqh.ubzr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11845 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751058AbaFJJDz (ORCPT
+Received: from service87.mimecast.com ([91.220.42.44]:33216 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751361AbaFJJTq convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 05:03:55 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N6Y00ALZ3UAEY10@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Jun 2014 18:03:47 +0900 (KST)
-In-reply-to: <1402390859-28287-1-git-send-email-ch.naveen@samsung.com>
+	Tue, 10 Jun 2014 05:19:46 -0400
+In-Reply-To: <alpine.LFD.2.11.1406092254220.25775@knanqh.ubzr>
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tushar Behera <trblinux@gmail.com>, "Turquette, Mike" <mturquette@linaro.org>, Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Arun Kumar <arun.kk@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-This patch moves the "cs-gpio" field from "controller-data" child
-node to under the spi device node.
+On Tue, Jun 10, 2014 at 05:25:47AM +0100, Nicolas Pitre wrote:
+> On Mon, 9 Jun 2014, Lorenzo Pieralisi wrote:
+> 
+> > I commented on Nico's patch because I did not like how it was
+> > implemented (at least remove the CPU PM notifier calls please, because
+> > they are not needed).
+> 
+> OK no problem.  That's easy enough.  I added them to play it safe as a 
+> test patch in case some VFP content could be lost somehow by looping 
+> back through the CPU init code for example, and needed to be saved.
 
-Respective changes are preposed to spi-s3c64xx.c driver.
+Ok, thanks.
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Doug Anderson <dianders@chromium.org>
----
- arch/arm/boot/dts/exynos4210-smdkv310.dts |    2 +-
- arch/arm/boot/dts/exynos4412-trats2.dts   |    2 +-
- arch/arm/boot/dts/exynos5250-smdk5250.dts |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+> > I also said that's the only thing he could do, and I still think 
+> > that's not a nice way to use the cpu_suspend API for something it was 
+> > not designed for, that's what I wanted to say, period.
+> 
+> Well... Maybe it wasn't designed for that, but it certainly can be used 
+> for that. And with no modifications to the core code, making this 
+> solution fairly elegant.  This is not so different from, say, the BPF 
+> code being reused for seccomp_filters. BPF wasn't designed for system 
+> call filtering, but it happens to work well.
 
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 636d166..9191491 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -169,6 +169,7 @@
- 
- 	spi_2: spi@13940000 {
- 		status = "okay";
-+		cs-gpios = <&gpc1 2 0>;
- 
- 		w25x80@0 {
- 			#address-cells = <1>;
-@@ -178,7 +179,6 @@
- 			spi-max-frequency = <1000000>;
- 
- 			controller-data {
--				cs-gpio = <&gpc1 2 0>;
- 				samsung,spi-feedback-delay = <0>;
- 			};
- 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 8a558b7..204b0de 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -512,6 +512,7 @@
- 	spi_1: spi@13930000 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&spi1_bus>;
-+		cs-gpios = <&gpb 5 0>;
- 		status = "okay";
- 
- 		s5c73m3_spi: s5c73m3 {
-@@ -519,7 +520,6 @@
- 			spi-max-frequency = <50000000>;
- 			reg = <0>;
- 			controller-data {
--				cs-gpio = <&gpb 5 0>;
- 				samsung,spi-feedback-delay = <2>;
- 			};
- 		};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index a794a70..0c6433a 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -316,6 +316,7 @@
- 	};
- 
- 	spi_1: spi@12d30000 {
-+		cs-gpios = <&gpa2 5 0>;
- 		status = "okay";
- 
- 		w25q80bw@0 {
-@@ -326,7 +327,6 @@
- 			spi-max-frequency = <1000000>;
- 
- 			controller-data {
--				cs-gpio = <&gpa2 5 0>;
- 				samsung,spi-feedback-delay = <0>;
- 			};
- 
--- 
-1.7.9.5
+You defined yourself "not a small thing", you know what you are doing
+and that's enough for me. Please respect that when I reviewed it I thought
+that was a hack. cpu_suspend is being used for many things in the kernel
+and consolidating that took a while, please comment the code, that's all I
+am asking you.
+
+> > If I am allowed to say something, here is a couple of thoughts.
+> > 
+> > 1) CCI snoops and DVM enablement are secure operations, to do them in
+> >    non-secure world this must be overriden in firmware. You can argue,
+> >    you can think whatever you want, that's a fact. So, to use this
+> >    code SMP bit in SCTLR and CCI enablement must become non-secure
+> >    operations. This is a boot requirement for MCPM, right or wrong
+> >    it is up to platform designers to judge. If CCI and SMP enablement
+> >    are secure operations, we should not start adding random SMC calls
+> >    in the kernel, since managing coherency in the kernel would become
+> >    problematic, with lots of platform quirks. We do not want that to
+> >    happen, and I think we all agree on this.
+> 
+> One could certainly question the need for so many controls handled in 
+> secure world.  But that is not the point.
+> 
+> Here we're talking about MCPM.  That implies the kernel has control over 
+> SCTLR.SMP and the CCI.  If those things aren't under the kernel's 
+> control, then MCPM is of no use to you.
+
+ACTLR.SMP for the sake of precision and it was my typo, sorry. That's
+all I wanted to read, so nothing to add.
+
+> Therefore, if you do want to use MCPM, then this implies the kernel has 
+> access to the CCI. And if it has access to it, then it should turn it on 
+> by itself in all cases to be consistent, not only in half of the cases.
+
+I agree.
+
+> > 2) (1) must be documented.
+> 
+> Absolutely.  But let's be coherent in the implementation so the 
+> documentation is as simple as it can be.
+
+Ditto.
+
+> > 3) When I talked about consequences for CPUidle (implicit), I was referring
+> >    to all sort of hacks we had to come up to bring devices like SPC
+> >    (remember ? I remember very very well unfortunately for me), or whatever
+> >    power controller up in the kernel early, too early to fit in any
+> >    existing kernel device framework. There is still no solution to that, and
+> >    the only way that code can exist is in mach- code. Right or wrong,
+> >    that's a second fact and in my opinion that's not nice for the ARM
+> >    kernel.
+> 
+> I disagree.  This can perfectly be turned into driver code. If we need 
+> it too early for existing kernel device framework to handle this 
+> properly, then the solution is to extend the existing framework or 
+> create another one specially for that purpose.  This may not be obvious 
+> when TC2 is the first/only platform in that situation, but if more 
+> platforms have the same need then it'll be easier to abstract 
+> commonalities into a framework.
+> 
+> Saying that no framework exists today or/and upstream maintainers are 
+> being difficult is _not_ a reason for throwing your hands up and e.g. 
+> shoving all this code into firmware instead.
+
+You have a point, as long as we are all aware and we do not forget this
+is a major problem, not a minor one. I do want to see a consolidate
+story for CPUidle for ARM and this bullet is definitely part of the
+picture. On a side note, you made me smile, it sounded like I wanted
+to bury SPC code in firmware or anywhere else as long as it is not in the
+kernel, which in a way is a true statement since I abhor that code =)
+
+> > 4) When I am talking about firmware I am talking about sequences that
+> >    are very close to HW (disabling C bit, cleaning caches, exiting
+> >    coherency). Erratas notwithstanding, they are being standardized at
+> >    ARM the best we can. They might even end up being implemented in HW
+> >    in the not so far future. I understand they are tricky, I understand
+> >    they take lots of time to implement them and to debug them, what I
+> >    want to say is that they are becoming standard and we _must_ reuse the
+> >    same code for all ARM platforms. You can implement them in MCPM (see
+> >    (1)) or in firmware (and please do not start painting me as firmware
+> >    hugger here, I am referring to standard power down sequences that
+> >    again, are very close to HW state machines 
+> 
+> That's where the disconnect lies.  On the one hand you say "I understand 
+> they are tricky, I understand they take lots of time to implement them 
+> and to debug them" and on the other hand you say "They might end up being 
+> implemented in HW in the not so far future."  That simply makes no 
+> economical sense at all!
+
+I wanted to say Nico that those operations are so intrinsic for all ARM
+cores you can almost think of them as part of the ISA and certainly
+HW knows it better than SW when a processor has nothing to do, it does
+idle core units all the time without software interaction, going power off
+(on cue) could just be one step further and solve those pesky races in HW.
+
+> When some operation is 1) tricky and takes time to debug, and 2) not 
+> performance critical (no one is trying to get in and out of idle or 
+> hibernation a billion times per second), then you should never ever put 
+> such a thing in firmware, and hardware should be completely out of the 
+> question!
+
+We can debate this offline, it is an interesting topic in particular on
+the performance critical side of things; as for firmware see my point
+on security, as I already mentioned.
+
+> >    and more importantly if they
+> >    HAVE to run in secure world that's the only solution we have unless you
+> >    want to split race conditions between kernel and secure world).
+> 
+> If they HAVE to run in secure world then your secure world architecture 
+> is simply misdesigned, period.  Someone must have ignored the economics 
+> of modern software development to have come up with this.
+
+That's your opinion and I respect that. What I said, and that's a fact
+not an opinion, is that if those operations are required to be secure in a
+platform, there is not much you can do apart from preventing races where the
+race conditions are, ie in secure world.
+
+> > 5) I agree that the CCI enablement in TC2 (bootmon for cold boot and
+> >    kernel for warm-boot is wrong, nothing to say and it was not the
+> >    reason I commented on Nico's patch - I think I explained to you
+> >    thoroughly why now).
+> 
+> OK. Let's start by agreeing on the spirit behind my patch then.  The 
+> actual patch implementation details are a secondary concern and open for 
+> discussion.
+
+I agree on the spirit of the patch, my concern was about its implementation.
+
+Thank you, this was a constructive discussion.
+
+Lorenzo
