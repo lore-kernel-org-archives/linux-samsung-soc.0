@@ -1,100 +1,354 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: Problems booting exynos5420 with >1 CPU
-Date: Tue, 10 Jun 2014 15:14:46 +0100
-Message-ID: <20140610141446.GA3519@arm.com>
-References: <alpine.LFD.2.11.1406062340480.25775@knanqh.ubzr>
- <20140607175618.GA25068@e102568-lin.cambridge.arm.com>
- <alpine.LFD.2.11.1406071431490.25775@knanqh.ubzr>
- <20140607223614.GA26641@e102568-lin.cambridge.arm.com>
- <CAOesGMj+itYr-daqxfX=J3Ss+7YdWhUUzBWTW3FqVEH8tXqt-A@mail.gmail.com>
- <20140608124530.GA31921@e102568-lin.cambridge.arm.com>
- <alpine.LFD.2.11.1406081138070.25775@knanqh.ubzr>
- <7hsindq07l.fsf@paris.lan>
- <20140609222604.GA16889@e102568-lin.cambridge.arm.com>
- <alpine.LFD.2.11.1406092254220.25775@knanqh.ubzr>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v3 5/6] soc: samsung: exynos-chipid: Add Exynos Chipid
+ driver support
+Date: Tue, 10 Jun 2014 16:36:34 +0200
+Message-ID: <539717F2.3040108@samsung.com>
+References: <1399706287-13919-1-git-send-email-y@samsung.com>
+ <1399706419-13976-1-git-send-email-pankaj.dubey@samsung.com>
+ <1399706419-13976-6-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fw-tnat.austin.arm.com ([217.140.110.23]:16680 "EHLO
-	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751851AbaFJOPK (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:51241 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750717AbaFJOgy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 10:15:10 -0400
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.11.1406092254220.25775@knanqh.ubzr>
+	Tue, 10 Jun 2014 10:36:54 -0400
+In-reply-to: <1399706419-13976-6-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tushar Behera <trblinux@gmail.com>, "Turquette, Mike" <mturquette@linaro.org>, Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Arun Kumar <arun.kk@samsung.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, arnd@arndb.de
 
-Hi Nico,
+Hi Pankaj,
 
-Sorry, I can't stay away from this thread ;)
-
-On Tue, Jun 10, 2014 at 12:25:47AM -0400, Nicolas Pitre wrote:
-> On Mon, 9 Jun 2014, Lorenzo Pieralisi wrote:
-> > 4) When I am talking about firmware I am talking about sequences that
-> >    are very close to HW (disabling C bit, cleaning caches, exiting
-> >    coherency). Erratas notwithstanding, they are being standardized at
-> >    ARM the best we can. They might even end up being implemented in HW
-> >    in the not so far future. I understand they are tricky, I understand
-> >    they take lots of time to implement them and to debug them, what I
-> >    want to say is that they are becoming standard and we _must_ reuse the
-> >    same code for all ARM platforms. You can implement them in MCPM (see
-> >    (1)) or in firmware (and please do not start painting me as firmware
-> >    hugger here, I am referring to standard power down sequences that
-> >    again, are very close to HW state machines 
+On 10.05.2014 09:20, Pankaj Dubey wrote:
+> Exynos SoCs have Chipid, for identification of product IDs
+> and SoC revistions. Till now we are using static macros
+> such as soc_is_exynosNNNN and #ifdefs for run time identification
+> of SoCs and their revisions. This is leading to add new Kconfig,
+> soc_is_exynosNNNN definitions each time new SoC support is getting
+> added. So this driver intends to provide initialization code
+> all these functionalites and thus helping in removing macros.
 > 
-> That's where the disconnect lies.  On the one hand you say "I understand 
-> they are tricky, I understand they take lots of time to implement them 
-> and to debug them" and on the other hand you say "They might end up being 
-> implemented in HW in the not so far future."  That simply makes no 
-> economical sense at all!
-
-It makes lots of sense, though not from a software maintainability
-perspective. It would be nice if everything still looked like ARM7TDMI
-but in the race for performance (vs power), hardware becomes more
-complex and it's not just the CPU but adjacent parts like interconnects,
-caches, asynchronous bridges, voltage shifters, memory controllers,
-clocks/PLLs etc. Many of these are simply hidden from the high level OS
-like Linux because the OS assumes certain configuration (e.g. access to
-memory) and it's only the hardware itself that knows in what order they
-can be turned on or off (when triggered explicitly by the OS or an
-external event). Having an dedicated power controller (e.g. M-class
-processor) to handle some of these is a rather flexible approach, other
-bits require RTL (and usually impossible to update).
-
-> When some operation is 1) tricky and takes time to debug, and 2) not 
-> performance critical (no one is trying to get in and out of idle or 
-> hibernation a billion times per second), then you should never ever put 
-> such a thing in firmware, and hardware should be completely out of the 
-> question!
-
-I agree that things can go wrong (both in hardware and software, no
-matter where it runs) but please don't think that such power
-architecture has been specifically engineered to hide the hardware from
-Linux. It's a necessity for complex systems and the optimal solution is
-not always simplification (it's not just ARM+vendors doing this, just
-look at the power model of modern x86 processors, hidden nicely from the
-software behind a few registers while making things harder for scheduler
-which cannot rely on a constant performance level; but it's a trade-off
-they are happy to make).
-
-> >    and more importantly if they
-> >    HAVE to run in secure world that's the only solution we have unless you
-> >    want to split race conditions between kernel and secure world).
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  drivers/soc/Kconfig                 |    1 +
+>  drivers/soc/Makefile                |    1 +
+>  drivers/soc/samsung/Kconfig         |   10 +++
+>  drivers/soc/samsung/Makefile        |    1 +
+>  drivers/soc/samsung/exynos-chipid.c |  166 +++++++++++++++++++++++++++++++++++
+>  include/linux/exynos-soc.h          |   46 ++++++++++
+>  6 files changed, 225 insertions(+)
+>  create mode 100644 drivers/soc/samsung/Kconfig
+>  create mode 100644 drivers/soc/samsung/Makefile
+>  create mode 100644 drivers/soc/samsung/exynos-chipid.c
+>  create mode 100644 include/linux/exynos-soc.h
 > 
-> If they HAVE to run in secure world then your secure world architecture 
-> is simply misdesigned, period.  Someone must have ignored the economics 
-> of modern software development to have come up with this.
+> diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+> index 07a11be..86e52b1 100644
+> --- a/drivers/soc/Kconfig
+> +++ b/drivers/soc/Kconfig
+> @@ -1,5 +1,6 @@
+>  menu "SOC specific Drivers"
+>  
+>  source "drivers/soc/qcom/Kconfig"
+> +source "drivers/soc/samsung/Kconfig"
+>  
+>  endmenu
+> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+> index 0f7c447..ee890aa 100644
+> --- a/drivers/soc/Makefile
+> +++ b/drivers/soc/Makefile
+> @@ -3,3 +3,4 @@
+>  #
+>  
+>  obj-$(CONFIG_ARCH_QCOM)		+= qcom/
+> +obj-$(CONFIG_ARCH_EXYNOS)	+= samsung/
 
-That's the trade-off between software complexity and hardware cost,
-gates, power consumption. You can do proper physical separation of the
-secure services but this would require a separate CPU that is rarely
-used and adds to the overall SoC cost. On large scale hardware
-deployment, it's exactly economics that matter and these translate into
-hardware cost. The software cost is irrelevant here, whether we like it
-or not.
+EXYNOS or samsung/?
 
--- 
-Catalin
+Also this is just a single file, is it necessary to create a directory
+for it?
+
+> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+> new file mode 100644
+> index 0000000..dacc95d
+> --- /dev/null
+> +++ b/drivers/soc/samsung/Kconfig
+> @@ -0,0 +1,10 @@
+> +
+> +# SAMSUNG Soc drivers
+> +#
+> +config EXYNOS_CHIPID
+> +	tristate "Support Exynos CHIPID"
+> +	default y
+> +	select SOC_BUS
+> +	depends on ARCH_EXYNOS || ARM64
+> +	help
+> +	  If you say Y here you get support for the Exynos CHIP id.
+
+Do we need to have this user-selectable? Couldn't we just have it
+selected by ARCH_EXYNOS and its 64-bit counterpart? AFAIK per-family
+Kconfig symbols are already present (see ARCH_VEXPRESS and ARCH_XGENE in
+arch/arm64/Kconfig), so it is not a problem.
+
+> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+> new file mode 100644
+> index 0000000..855ca05
+> --- /dev/null
+> +++ b/drivers/soc/samsung/Makefile
+> @@ -0,0 +1 @@
+> +obj-$(CONFIG_EXYNOS_CHIPID)	+= exynos-chipid.o
+> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+> new file mode 100644
+> index 0000000..b5bccd9
+> --- /dev/null
+> +++ b/drivers/soc/samsung/exynos-chipid.c
+> @@ -0,0 +1,166 @@
+> +/*
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + *	      http://www.samsung.com/
+> + *
+> + * EXYNOS - CHIP ID support
+> + * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/slab.h>
+> +#include <linux/sys_soc.h>
+> +#include <linux/of_address.h>
+> +#include <linux/exynos-soc.h>
+> +
+> +#define EXYNOS4_SOC_MASK	0xFFFE0
+
+Even though I can see the mask defined in current code to the value
+above, the documentation states that the whole bit field [31:12] is used
+for product ID, so it should be safe to use the same mask as for Exynos5.
+
+> +#define EXYNOS5_SOC_MASK	0xFFFFF
+> +
+> +#define PROD_ID_SHIFT	(12)
+> +
+> +static void __iomem	*exynos_chipid_base;
+> +unsigned int exynos_soc_id = EXYNOS_SOC_UNKNOWN;
+
+static?
+
+> +enum exynos_soc_revision exynos_revision;
+
+static?
+
+> +
+> +struct exynos_chipid_data {
+> +	unsigned int product_id_mask;
+> +	unsigned int product_id_shift;
+> +};
+> +
+> +static struct exynos_chipid_data exynos4_chipid_data = {
+> +	.product_id_mask	= EXYNOS4_SOC_MASK,
+> +	.product_id_shift	= PROD_ID_SHIFT,
+> +};
+> +
+> +static struct exynos_chipid_data exynos5_chipid_data = {
+> +	.product_id_mask	= EXYNOS5_SOC_MASK,
+> +	.product_id_shift	= PROD_ID_SHIFT,
+> +};
+> +
+> +static struct of_device_id of_exynos_chipid_ids[] = {
+> +	{
+> +		.compatible	= "samsung,exynos4-chipid",
+> +		.data		= (void *)&exynos4_chipid_data,
+> +	},
+> +	{
+> +		.compatible	= "samsung,exynos5-chipid",
+> +		.data		= (void *)&exynos5_chipid_data,
+
+We already have "samsung,exynos4210-chipid" compatible string defined
+and used in existing device tree sources (and deployed DTBs).
+
+> +	},
+> +	{},
+> +};
+> +
+> +bool is_soc_id_compatible(enum exynos_soc_id soc_id)
+> +{
+> +	return soc_id == exynos_soc_id;
+> +}
+> +
+> +bool is_soc_rev_compatible(enum exynos_soc_revision soc_rev)
+> +{
+> +	return soc_rev == exynos_revision;
+> +}
+
+I don't think we need this API. (See below.)
+
+> +
+> +static const char *exynos_soc_id_to_name(enum exynos_soc_id id)
+> +{
+> +	const char *soc_name;
+> +	switch (id) {
+> +	case EXYNOS4210:
+> +		soc_name = "EXYNOS4210";
+> +		break;
+> +	case EXYNOS4212:
+> +		soc_name = "EXYNOS4212";
+> +		break;
+> +	case EXYNOS4412:
+> +		soc_name = "EXYNOS4412";
+> +		break;
+> +	case EXYNOS5250:
+> +		soc_name = "EXYNOS5250";
+> +		break;
+> +	case EXYNOS5420:
+> +		soc_name = "EXYNOS5420";
+> +		break;
+> +	case EXYNOS5440:
+> +		soc_name = "EXYNOS5440";
+> +		break;
+> +	default:
+> +		soc_name = "";
+> +	}
+> +	return soc_name;
+> +}
+> +
+> +struct device * __init exynos_soc_device_init(void)
+> +{
+> +	struct soc_device_attribute *soc_dev_attr;
+> +	struct soc_device *exynos_soc_dev;
+> +	struct device_node *root;
+> +	int ret;
+> +
+> +	if (!exynos_chipid_base)
+> +		early_exynos_chipid_init();
+> +
+> +	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+> +	if (!soc_dev_attr)
+> +		return NULL;
+> +
+> +	soc_dev_attr->family = "Samsung Exynos";
+> +
+> +	root = of_find_node_by_path("/");
+> +	ret = of_property_read_string(root, "model", &soc_dev_attr->machine);
+> +	of_node_put(root);
+> +	if (ret)
+> +		goto free_soc;
+> +
+> +	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d", exynos_revision);
+> +	if (!soc_dev_attr->revision)
+> +		goto free_soc;
+> +
+> +	soc_dev_attr->soc_id = exynos_soc_id_to_name(exynos_soc_id);
+> +
+> +	exynos_soc_dev = soc_device_register(soc_dev_attr);
+> +	if (IS_ERR(exynos_soc_dev))
+> +		goto free_rev;
+> +
+> +	return soc_device_to_device(exynos_soc_dev);
+> +
+> +free_rev:
+> +	kfree(soc_dev_attr->revision);
+> +free_soc:
+> +	kfree(soc_dev_attr);
+> +	return NULL;
+> +}
+> +
+> +/**
+> + * early_exynos_chipid_init - Early chipid initialization
+> + */
+> +void __init early_exynos_chipid_init(void)
+> +{
+> +	struct device_node *np = NULL;
+> +	const struct of_device_id *match;
+> +	struct exynos_chipid_data *chipid_data;
+> +	int pro_id;
+> +
+> +	if (!exynos_chipid_base) {
+> +		np = of_find_matching_node_and_match(NULL,
+> +				of_exynos_chipid_ids, &match);
+> +		if (!np)
+> +			panic("%s, failed to find chipid node\n", __func__);
+> +
+> +		chipid_data = (struct exynos_chipid_data *) match->data;
+> +		exynos_chipid_base = of_iomap(np, 0);
+> +
+> +		if (!exynos_chipid_base)
+> +			panic("%s: failed to map registers\n", __func__);
+> +
+> +		pro_id  = __raw_readl(exynos_chipid_base);
+> +		exynos_soc_id = (pro_id >> chipid_data->product_id_shift)
+> +			& chipid_data->product_id_mask;
+> +		exynos_revision = pro_id & 0xFF;
+> +		pr_info("Exynos: CPU[%s] CPU_REV[0x%x] Detected\n",
+> +				exynos_soc_id_to_name(exynos_soc_id),
+> +				exynos_revision);
+> +	}
+> +
+> +}
+
+Basically this API is not much better than soc_is_exynos*(). The goal is
+to get rid of per-SoC checks, not provide another API to do this.
+
+In general, a SoC driver may be useful, though. So my proposal is to
+strip the whole questionable API from this driver, make it a platform
+driver and let it simply register the SoC device.
+
+> diff --git a/include/linux/exynos-soc.h b/include/linux/exynos-soc.h
+> new file mode 100644
+> index 0000000..ebd4366
+> --- /dev/null
+> +++ b/include/linux/exynos-soc.h
+> @@ -0,0 +1,46 @@
+> +/*
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * Header for EXYNOS SoC Chipid support
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef __EXYNOS_SOC_H
+> +#define __EXYNOS_SOC_H
+> +
+> +/* enum holding product id of Exynos SoC
+> + * Any new Exynos SoC product id should be added here
+> + */
+> +enum exynos_soc_id {
+> +	EXYNOS4210 = 0xE4210,
+
+This is not the correct ID of Exynos4210. The correct one is 0x43210.
+
+> +	EXYNOS4212 = 0xE4212,
+
+Should be 0x43220.
+
+> +	EXYNOS4412 = 0xE4412,
+> +	EXYNOS5250 = 0x43520,
+> +	EXYNOS5420 = 0xE5420,
+> +	EXYNOS5440 = 0xE5440,
+> +	EXYNOS_SOC_UNKNOWN = -1,
+> +};
+> +
+> +/* enum holding revision id of Exynos SoC
+> + * Any new Exynos SoC revision id should be added here
+> + */
+> +enum exynos_soc_revision {
+> +	EXYNOS4210_REV_0	= 0x0,
+> +	EXYNOS4210_REV_1_0	= 0x10,
+> +	EXYNOS4210_REV_1_1	= 0x11,
+> +};
+
+AFAIK, considering my comments above, both SoC and revision IDs can be
+defined as macros inside the .c file.
+
+Best regards,
+Tomasz
