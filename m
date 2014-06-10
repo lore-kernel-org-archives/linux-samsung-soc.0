@@ -1,70 +1,57 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/2 v2] spi: s3c64xx: use "cs-gpios" from spi node instead
- of "cs-gpio"
-Date: Tue, 10 Jun 2014 11:09:13 -0700
-Message-ID: <CAD=FV=XtdgKEg7fTHe+tsFM1Y_YwqNNk_DBW7ZX83YERGJsHBg@mail.gmail.com>
-References: <1402394881-31564-1-git-send-email-ch.naveen@samsung.com>
-	<1402394881-31564-2-git-send-email-ch.naveen@samsung.com>
-	<5396E051.8050803@samsung.com>
-	<CAHfPSqAq9L5Zu7z3-y6Y2pG8AhE4Y1j8DE35LDfMW_DYc_x-gw@mail.gmail.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: linux-next on Chromebook2: DRM failing to allocate
+Date: Tue, 10 Jun 2014 11:24:42 -0700
+Message-ID: <CAGa+x860u5On=bNvdrCKyega8AXs5a_+5Tuxhhag9h+-HCAZwQ@mail.gmail.com>
+References: <CAGa+x87EQcHBMc9NUOL_EKx=rKhOjfQ=_aMY5qvyPhqCN5--4w@mail.gmail.com>
+	<CADMs+9a-vMpFOUmF5DO6X_OJfLgPP48DtRA9tcquzzt-Uso89A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f176.google.com ([209.85.220.176]:60928 "EHLO
-	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750888AbaFJSJO (ORCPT
+Received: from mail-qc0-f171.google.com ([209.85.216.171]:45908 "EHLO
+	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750740AbaFJSYn convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 14:09:14 -0400
-Received: by mail-vc0-f176.google.com with SMTP id ik5so675442vcb.35
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 11:09:13 -0700 (PDT)
-In-Reply-To: <CAHfPSqAq9L5Zu7z3-y6Y2pG8AhE4Y1j8DE35LDfMW_DYc_x-gw@mail.gmail.com>
+	Tue, 10 Jun 2014 14:24:43 -0400
+Received: by mail-qc0-f171.google.com with SMTP id w7so1110434qcr.16
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 11:24:42 -0700 (PDT)
+In-Reply-To: <CADMs+9a-vMpFOUmF5DO6X_OJfLgPP48DtRA9tcquzzt-Uso89A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "broonie@kernel.org" <broonie@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@chromium.org>, Daniel Kurtz <djkurtz@chromium.org>, Inki Dae <inki.dae@samsung.com>, naveenkrishna.ch@gmail.com, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>
 
-Naveen / Sylwester,
-
-On Tue, Jun 10, 2014 at 4:00 AM, Naveen Krishna Ch
-<naveenkrishna.ch@gmail.com> wrote:
->> Can we support both "cs-gpio" and "cs-gpios" for backward compatibility ?
->> After your change all DTBs using the original pattern will not work with
->> new kernels any more. At least I would expect such backward compatibility
->> maintained for few kernel releases.
+On Tue, Jun 10, 2014 at 11:04 AM, St=C3=A9phane Marchesin
+<marcheu@chromium.org> wrote:
+> On Tue, Jun 10, 2014 at 10:56 AM, Kevin Hilman <khilman@linaro.org> w=
+rote:
+>> I'm trying to get the latest linux-next working on my Chromebook2
+>> (it's booting to a serial console) and am now trying to get the
+>> display working (at least for a frambuffer console.)
+>>
+>> Since the display nodes seem to be present in the exynos5800-peach-p=
+i
+>> DTS, I tried enabling DRM and it's failing to allocate memory (log
+>> below[1]
+>>
+>> Is there some additional memory setup/allocations I should be doing?
+>> maybe with CMA?
 >
-> The reason behind removing the "cs-gpio" or not providing backward
-> compatibility was
->
-> 1. Since spi-core started using "cs-gpios" string from spi device node
-> several months ago.
->   The spi-s3c64xx.c driver is partially broken for more than 6 months.
->
-> 2. Supporting "cs-gpio" would add extra bit of code.
->
-> I've corrected the dts files that were using "cs-gpio" under
-> "controller-data"(child node)
-> to use "cs-gpio" from spi device node (parent node).
->
-> I will make another version if you insist.
+> Probably not CMA, but maybe you don't have the iommu enabled?
 
-Yup, as near as I can tell this has been broken since (3146bee spi:
-s3c64xx: Added provision for dedicated cs pin).  That landed June 25th
-of 2013 into the SPI tree.
+Thanks!  I didn'th ave that enabled in the .config.
+With that, it seems to allocate, but fails to probe:
 
-...so clearly nobody was really testing Samsung's SPI driver on ToT
-Linux.  1 year of unnoticed brokenness seems like enough time that we
-could do away with the old code.  If someone comes out of the woodwork
-and claims a dire need to support the old binding then it can be added
-then.
-
-In-tree users of this appear to be:
-
-arch/arm/boot/dts/exynos4210-smdkv310.dts:
- cs-gpio = <&gpc1 2 0>;
-arch/arm/boot/dts/exynos4412-trats2.dts:
- cs-gpio = <&gpb 5 0>;
-arch/arm/boot/dts/exynos5250-smdk5250.dts:
- cs-gpio = <&gpa2 5 0>;
-
-...and I guess nobody has bothered using the SPI flash on those boards
-for the last year?
+[    0.829231] [drm] Initialized drm 1.1.0 20060810
+[    0.833153] [drm:drm_platform_init]
+[    0.835947] [drm:drm_get_platform_dev]
+[    0.839813] [drm:drm_minor_register]
+[    0.843580] [drm:drm_minor_register] new minor assigned 64
+[    0.848877] [drm:drm_minor_register]
+[    0.852512] [drm:drm_minor_register]
+[    0.856319] [drm:drm_minor_register] new minor assigned 0
+[    0.861568] [drm:exynos_drm_create_enc_conn] *ERROR* failed to creat=
+e encoder
+[    0.868651] [drm:exynos_drm_initialize_displays] *ERROR* Encoder
+create [1] failed with -14
+[    0.877420] exynos-drm: probe of exynos-drm failed with error -14
