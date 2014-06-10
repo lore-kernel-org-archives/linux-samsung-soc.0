@@ -1,127 +1,46 @@
-From: "Chander M. Kashyap" <chander.kashyap@gmail.com>
-Subject: Re: [PATCH v6 0/6] add cpuidle support for Exynos5420
-Date: Tue, 10 Jun 2014 18:08:28 +0530
-Message-ID: <CADWw7OiQs7H_EeRBVTNEWP-5fRjCgEWQmy=MAmePBday9PQ5Dw@mail.gmail.com>
-References: <CANuQgHGSA+R__raSa_tzrgpceqLD2SZw+s0XQUHGF4wscgh6Kg@mail.gmail.com>
-	<1400227438-27155-1-git-send-email-chander.kashyap@linaro.org>
-	<53831795.9070006@gmail.com>
-	<CANuQgHH284A9QY7M5zGbSE-mXjm2KDqr54VWmtKVkbma3zZvvw@mail.gmail.com>
-	<015f01cf7a2e$3b141590$b13c40b0$@samsung.com>
-	<5385A638.2000001@linaro.org>
-	<CANuQgHGM_PsDO0RmEKDVXSs1u50VMuLrx-=0sYhDut1gSjspcg@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: re: drm/exynos: consider deferred probe case
+Date: Tue, 10 Jun 2014 15:38:38 +0300
+Message-ID: <20140610123837.GA7854@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CANuQgHGM_PsDO0RmEKDVXSs1u50VMuLrx-=0sYhDut1gSjspcg@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from userp1040.oracle.com ([156.151.31.81]:19959 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751816AbaFJMir (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 10 Jun 2014 08:38:47 -0400
+Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: inki.dae@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org
 
-On Thu, May 29, 2014 at 10:07 AM, Chander Kashyap
-<chander.kashyap@linaro.org> wrote:
-> On 28 May 2014 14:32, Daniel Lezcano <daniel.lezcano@linaro.org> wrot=
-e:
->> On 05/28/2014 06:35 AM, Kukjin Kim wrote:
->>>
->>> Chander Kashyap wrote:
->>>>
->>>>
->>>> On 26 May 2014 15:59, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>>>>
->>>>> Hi Chander,
->>>>>
->>>>> On 16.05.2014 10:03, Chander Kashyap wrote:
->>>>>>
->>>>>> Exynos5420 is a big-little Soc from Samsung. It has 4 A15 and 4 =
-A7
->>>>
->>>> cores.
->>>>>>
->>>>>>
->>>>>> This patchset adds cpuidle support for Exynos5420 SoC based on
->>>>>> generic big.little cpuidle driver.
->>>>>>
->>>>>> Tested on SMDK5420.
->>>>>>
->>>>>> This patch set depends on:
->>>>>>        1. [PATCH 0/5] MCPM backend for Exynos5420
->>>>>>           http://www.spinics.net/lists/arm-kernel/msg331100.html
->>>>>> Changelog is in respective patches.
->>>>>> Chander Kashyap (5):
->>>>>>    driver: cpuidle-big-little: add of_device_id structure
->>>>>>    arm: exynos: add generic function to calculate cpu number
->>>>>>    cpuidle: config: Add ARCH_EXYNOS entry to select cpuidle-big-=
-little
->>>>>>      driver
->>>>>>    driver: cpuidle: cpuidle-big-little: init driver for Exynos54=
-20
->>>>>>    exynos: cpuidle: do not allow cpuidle registration for Exynos=
-5420
->>>>>>    mcpm: exynos: populate suspend and powered_up callbacks
->>>>>>
->>>>>>   arch/arm/mach-exynos/exynos.c        |    4 +++-
->>>>>>   arch/arm/mach-exynos/mcpm-exynos.c   |   36
->>>>
->>>> ++++++++++++++++++++++++++++++++++
->>>>>>
->>>>>>   arch/arm/mach-exynos/regs-pmu.h      |    9 +++++++++
->>>>>>   drivers/cpuidle/Kconfig.arm          |    2 +-
->>>>>>   drivers/cpuidle/cpuidle-big_little.c |   12 +++++++++++-
->>>>>>   5 files changed, 60 insertions(+), 3 deletions(-)
->>>>>>
->>>>>
->>>>> For the whole series,
->>>>>
->>>>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->>>>
->>>>
->>>> Thanks Tomasz.
->>>>
->>>> Dear Kukjin,
->>>> Can you take these patches.
->>>>>
->>>>>
->>> When I looked at this series quickly, looks good to me but I need t=
-o get
->>> ack from cpuidle maintainer Rafael or Daniel.
->>
->>
->> Acked the different cpuidle bits.
->
-> Hi Kukjin,
-> Can you take it now?
+Hello Inki Dae,
 
-ping
-Sorry for previous html messages.
+The patch df5225bc9a87: "drm/exynos: consider deferred probe case"
+from May 29, 2014, leads to the following static checker warning:
 
->
->
->>
->> Thanks
->>   -- Daniel
->>
->>
->> --
->>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software =
-for ARM SoCs
->>
->> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
->> <http://twitter.com/#!/linaroorg> Twitter |
->> <http://www.linaro.org/linaro-blog/> Blog
->>
->
->
->
-> --
-> with warm regards,
-> Chander Kashyap
+	drivers/gpu/drm/exynos/exynos_drm_fimd.c:996 fimd_probe()
+	warn: 'ctx->display' isn't an ERR_PTR
 
+drivers/gpu/drm/exynos/exynos_drm_fimd.c
+   994  
+   995          ctx->display = exynos_dpi_probe(dev);
+   996          if (IS_ERR(ctx->display))
+   997                  return PTR_ERR(ctx->display);
+   998  
 
+Smatch is complaining because my config has CONFIG_DRM_EXYNOS_DPI
+disabled.
 
---=20
-thanks and regards,
-Chander M. Kashyap
-Contact Number: +918123738320
-------- TENSION LENE KA NAHI, DENE KE-----
+1) If CONFIG_DRM_EXYNOS_DPI isn't enabled, we still return "0".  That
+will cause a Sparse warning.
+
+2) Also there are still a number of checks for "if (ctx->display)".
+Those things are weird to me, are those checks to see
+CONFIG_DRM_EXYNOS_DPI is enabled or are they checking that
+exynos_dpi_probe() succeeded?
+
+regards,
+dan carpenter
