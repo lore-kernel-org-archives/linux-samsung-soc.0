@@ -1,55 +1,152 @@
-From: Sachin Kamat <spk.linux@gmail.com>
-Subject: Re: [PATCH 2/3] spi: s3c64xx: remove a compilation warning with an assignment
-Date: Tue, 10 Jun 2014 15:15:03 +0530
-Message-ID: <CAK5sBcGfE0fsZ1wZX79GOhXBXkSAn3YFt2MsuMcbFnvV_Cw=wA@mail.gmail.com>
-References: <1402390859-28287-1-git-send-email-ch.naveen@samsung.com>
-	<1402390859-28287-3-git-send-email-ch.naveen@samsung.com>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH 1/3] spi: s3c64xx: use "cs-gpios" from spi node instead of "cs-gpio"
+Date: Tue, 10 Jun 2014 15:18:30 +0530
+Message-ID: <CAHfPSqB3iRBxxULck0PcOntQ5uEEk9RJpjSqH5Wj-Rc+w8UWdw@mail.gmail.com>
+References: <1402390859-28287-1-git-send-email-ch.naveen@samsung.com> <1402390859-28287-2-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:33376 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750835AbaFJJpG (ORCPT
+Received: from mail-qg0-f44.google.com ([209.85.192.44]:64696 "EHLO
+	mail-qg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750717AbaFJJsu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 05:45:06 -0400
-Received: by mail-la0-f48.google.com with SMTP id mc6so3717160lab.7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 02:45:04 -0700 (PDT)
-In-Reply-To: <1402390859-28287-3-git-send-email-ch.naveen@samsung.com>
+	Tue, 10 Jun 2014 05:48:50 -0400
+Received: by mail-qg0-f44.google.com with SMTP id i50so10001774qgf.17
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 02:48:50 -0700 (PDT)
+In-Reply-To: <1402390859-28287-2-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, Kukjin Kim <kgene.kim@samsung.com>, cpgs@samsung.com, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>
+Cc: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, Kukjin Kim <kgene.kim@samsung.com>, cpgs@samsung.com, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>
 
-Hi Naveen,
+Hello All,
 
-On Tue, Jun 10, 2014 at 2:30 PM, Naveen Krishna Chatradhi
-<ch.naveen@samsung.com> wrote:
-> This patch returns an integer error value instead of the
-> pointer.
->
-> "warning: return makes integer from pointer without a cast"
+
+On 10 June 2014 14:30, Naveen Krishna Chatradhi <ch.naveen@samsung.com> wrote:
+> This patch makes the changes in spi-s3c64xx.c driver to make use of
+> "cs-gpios" from SPI node(parent) instead of "cs-gpio" defined in
+> slaves "controller-data"(child) node.
 >
 > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 > Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 > Cc: Doug Anderson <dianders@chromium.org>
 > ---
->  drivers/spi/spi-s3c64xx.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/spi/spi-s3c64xx.c |   56 ++++++++++++++++++++++++++++-----------------
+>  1 file changed, 35 insertions(+), 21 deletions(-)
 >
 > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 0c6013f..4594dde 100644
+> index 75a5696..0c6013f 100644
 > --- a/drivers/spi/spi-s3c64xx.c
 > +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -817,7 +817,7 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+> @@ -750,47 +750,56 @@ static int s3c64xx_spi_transfer_one(struct spi_master *master,
+>  }
 >
->         if (!spi->dev.of_node) {
->                 dev_err(&spi->dev, "device node not found\n");
-> -               return ERR_PTR(-EINVAL);
-> +               return -EINVAL;
+>  static struct s3c64xx_spi_csinfo *s3c64xx_get_slave_ctrldata(
+> -                               struct spi_device *spi)
+> +                               struct spi_device *spi,
+> +                               struct s3c64xx_spi_csinfo *cs)
+>  {
+> -       struct s3c64xx_spi_csinfo *cs;
+> -       struct device_node *slave_np, *data_np = NULL;
+> -       struct s3c64xx_spi_driver_data *sdd;
+> +       struct device_node *data_np = NULL;
+>         u32 fb_delay = 0;
+>
+> -       sdd = spi_master_get_devdata(spi->master);
+> -       slave_np = spi->dev.of_node;
+> -       if (!slave_np) {
+> -               dev_err(&spi->dev, "device node not found\n");
+> +       data_np = of_get_child_by_name(spi->dev.of_node, "controller-data");
+> +       if (!data_np) {
+> +               dev_err(&spi->dev, "child node 'controller-data' not found\n");
+>                 return ERR_PTR(-EINVAL);
+>         }
+>
+> -       data_np = of_get_child_by_name(slave_np, "controller-data");
+> -       if (!data_np) {
+> -               dev_err(&spi->dev, "child node 'controller-data' not found\n");
+> +       of_property_read_u32(data_np, "samsung,spi-feedback-delay", &fb_delay);
+> +       cs->fb_delay = fb_delay;
+> +       of_node_put(data_np);
+> +
+> +       return cs;
+> +}
+> +
+> +static struct s3c64xx_spi_csinfo *s3c64xx_get_cs_gpios(struct spi_device *spi)
+> +{
+> +       struct device_node *parent_np = NULL;
+> +       struct s3c64xx_spi_driver_data *sdd;
+> +       struct s3c64xx_spi_csinfo *cs;
+> +
+> +       parent_np = of_get_parent(spi->dev.of_node);
+> +       if (!parent_np) {
+> +               dev_err(&spi->dev, "Parent node not found\n");
+>                 return ERR_PTR(-EINVAL);
+>         }
+>
+> +       sdd = spi_master_get_devdata(spi->master);
+> +
+>         cs = kzalloc(sizeof(*cs), GFP_KERNEL);
+>         if (!cs) {
+> -               of_node_put(data_np);
+> +               of_node_put(parent_np);
+>                 return ERR_PTR(-ENOMEM);
+>         }
+>
+>         /* The CS line is asserted/deasserted by the gpio pin */
+>         if (sdd->cs_gpio)
+> -               cs->line = of_get_named_gpio(data_np, "cs-gpio", 0);
+> +               cs->line = of_get_named_gpio(parent_np, "cs-gpios", 0);
+>
+>         if (!gpio_is_valid(cs->line)) {
+>                 dev_err(&spi->dev, "chip select gpio is not specified or invalid\n");
+> -               kfree(cs);
+> -               of_node_put(data_np);
+> +               of_node_put(parent_np);
+>                 return ERR_PTR(-EINVAL);
+>         }
+>
+> -       of_property_read_u32(data_np, "samsung,spi-feedback-delay", &fb_delay);
+> -       cs->fb_delay = fb_delay;
+> -       of_node_put(data_np);
+> -       return cs;
+> +       return s3c64xx_get_slave_ctrldata(spi, cs);
+>  }
+>
+>  /*
+> @@ -806,9 +815,14 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>         struct s3c64xx_spi_info *sci;
+>         int err;
+>
+> +       if (!spi->dev.of_node) {
+> +               dev_err(&spi->dev, "device node not found\n");
+> +               return ERR_PTR(-EINVAL);
+> +       }
+> +
+>         sdd = spi_master_get_devdata(spi->master);
+>         if (!cs && spi->dev.of_node) {
+> -               cs = s3c64xx_get_slave_ctrldata(spi);
+> +               cs = s3c64xx_get_cs_gpios(spi);
+>                 spi->controller_data = cs;
+>         }
+>
+> @@ -1077,7 +1091,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+>         sdd->sfr_start = mem_res->start;
+>         sdd->cs_gpio = true;
+>         if (pdev->dev.of_node) {
+> -               if (!of_find_property(pdev->dev.of_node, "cs-gpio", NULL))
+> +               if (!of_find_property(pdev->dev.of_node, "cs-gpios", NULL))
+>                         sdd->cs_gpio = false;
+>
+>                 ret = of_alias_get_id(pdev->dev.of_node, "spi");
+> --
+> 1.7.9.5
+Forgot to add the DTS documentation.
+Will quickly respin. Thanks.
+>
 
-Isn't this warning introduced by the previous patch (patch1/3)?
-If so then this patch should be squashed into that.
+
 
 -- 
-Regards,
-Sachin.
+Shine bright,
+(: Nav :)
