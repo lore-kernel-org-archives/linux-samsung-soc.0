@@ -1,97 +1,60 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 2/2 v2] ARM: DTS: move "cs-gpio" from "controller-data" to
- under spi node
-Date: Tue, 10 Jun 2014 15:38:01 +0530
-Message-ID: <1402394881-31564-3-git-send-email-ch.naveen@samsung.com>
-References: <1402394881-31564-1-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 0/2 v2] spi: s3c64xx: use "cs-gpios" in spi node instead of
+ "cs-gpio"
+Date: Tue, 10 Jun 2014 15:37:59 +0530
+Message-ID: <1402394881-31564-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:26702 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:26687 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751870AbaFJKKu (ORCPT
+	with ESMTP id S1751333AbaFJKKq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 06:10:50 -0400
-In-reply-to: <1402394881-31564-1-git-send-email-ch.naveen@samsung.com>
+	Tue, 10 Jun 2014 06:10:46 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>
+Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org
 
-This patch moves the "cs-gpio" field from "controller-data" child
-node to under the spi device node.
+Currently, spi-s3c64xx.c needs "cs-gpio" chip select GPIO to be
+defined under "controller-data" node under each slave node.
 
-Respective changes are preposed to spi-s3c64xx.c driver.
+&spi_x {
+        cs-gpios <>;
+        ...
+        slave_node {
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Doug Anderson <dianders@chromium.org>
----
-Changes since v1:
-None
+                controller-data {
+                        cs-gpio = <>;
+                        ...
+                };
+                ...
+        };
+        ...
+};
 
- arch/arm/boot/dts/exynos4210-smdkv310.dts |    2 +-
- arch/arm/boot/dts/exynos4412-trats2.dts   |    2 +-
- arch/arm/boot/dts/exynos5250-smdk5250.dts |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Where as, SPI core and many other drivers uses "cs-gpios" for
+from device tree node.
 
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 636d166..9191491 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -169,6 +169,7 @@
- 
- 	spi_2: spi@13940000 {
- 		status = "okay";
-+		cs-gpios = <&gpc1 2 0>;
- 
- 		w25x80@0 {
- 			#address-cells = <1>;
-@@ -178,7 +179,6 @@
- 			spi-max-frequency = <1000000>;
- 
- 			controller-data {
--				cs-gpio = <&gpc1 2 0>;
- 				samsung,spi-feedback-delay = <0>;
- 			};
- 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 8a558b7..204b0de 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -512,6 +512,7 @@
- 	spi_1: spi@13930000 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&spi1_bus>;
-+		cs-gpios = <&gpb 5 0>;
- 		status = "okay";
- 
- 		s5c73m3_spi: s5c73m3 {
-@@ -519,7 +520,6 @@
- 			spi-max-frequency = <50000000>;
- 			reg = <0>;
- 			controller-data {
--				cs-gpio = <&gpb 5 0>;
- 				samsung,spi-feedback-delay = <2>;
- 			};
- 		};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index a794a70..0c6433a 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -316,6 +316,7 @@
- 	};
- 
- 	spi_1: spi@12d30000 {
-+		cs-gpios = <&gpa2 5 0>;
- 		status = "okay";
- 
- 		w25q80bw@0 {
-@@ -326,7 +327,6 @@
- 			spi-max-frequency = <1000000>;
- 
- 			controller-data {
--				cs-gpio = <&gpa2 5 0>;
- 				samsung,spi-feedback-delay = <0>;
- 			};
- 
+Hence, make changes in spi-s3c64xx.c driver to make use of
+"cs-gpios" from SPI node(parent) instead of "cs-gpio" defined in
+slaves "controller-data"(child) node.
+
+Also, fixes a compilation warning and corrects the DTS nodes for
+Exynos4210 based SMDKv310, Exynos4412 based Trats2, Exynos5250 based
+SMDK5250 boards.
+
+Naveen Krishna Chatradhi (2):
+based on for-next branch of spi.git
+  spi: s3c64xx: use "cs-gpios" from spi node instead of "cs-gpio"
+
+based on for-next branch of linuxsamsung.git
+  ARM: DTS: move "cs-gpio" from "controller-data" to under spi node
+
+ .../devicetree/bindings/spi/spi-samsung.txt        |    8 ++-
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |    2 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts            |    2 +-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |    2 +-
+ drivers/spi/spi-s3c64xx.c                          |   56 ++++++++++++--------
+ 5 files changed, 41 insertions(+), 29 deletions(-)
+
 -- 
 1.7.9.5
