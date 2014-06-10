@@ -1,85 +1,70 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: Problems booting exynos5420 with >1 CPU
-Date: Tue, 10 Jun 2014 15:15:53 -0400 (EDT)
-Message-ID: <alpine.LFD.2.11.1406101443160.25775@knanqh.ubzr>
-References: <alpine.LFD.2.11.1406071431490.25775@knanqh.ubzr> <20140607223614.GA26641@e102568-lin.cambridge.arm.com> <CAOesGMj+itYr-daqxfX=J3Ss+7YdWhUUzBWTW3FqVEH8tXqt-A@mail.gmail.com> <20140608124530.GA31921@e102568-lin.cambridge.arm.com>
- <alpine.LFD.2.11.1406081138070.25775@knanqh.ubzr> <7hsindq07l.fsf@paris.lan> <20140609222604.GA16889@e102568-lin.cambridge.arm.com> <alpine.LFD.2.11.1406092254220.25775@knanqh.ubzr> <20140610141446.GA3519@arm.com> <alpine.LFD.2.11.1406101149520.25775@knanqh.ubzr>
- <20140610174212.GJ3523@arm.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 1/2 v2] spi: s3c64xx: use "cs-gpios" from spi node instead
+ of "cs-gpio"
+Date: Tue, 10 Jun 2014 21:25:40 +0200
+Message-ID: <53975BB4.6040104@gmail.com>
+References: <1402394881-31564-1-git-send-email-ch.naveen@samsung.com>	<1402394881-31564-2-git-send-email-ch.naveen@samsung.com> <CAD=FV=WgvyF-P+69SdmCGX0jxJ3FVxpa+AcgQKg-Emya_W-w3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f181.google.com ([209.85.216.181]:62253 "EHLO
-	mail-qc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750735AbaFJTP4 (ORCPT
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:48009 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751758AbaFJT0A (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 15:15:56 -0400
-Received: by mail-qc0-f181.google.com with SMTP id x3so2840880qcv.40
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 12:15:55 -0700 (PDT)
-In-Reply-To: <20140610174212.GJ3523@arm.com>
+	Tue, 10 Jun 2014 15:26:00 -0400
+In-Reply-To: <CAD=FV=WgvyF-P+69SdmCGX0jxJ3FVxpa+AcgQKg-Emya_W-w3Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tushar Behera <trblinux@gmail.com>, "Turquette, Mike" <mturquette@linaro.org>, Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Arun Kumar <arun.kk@samsung.com>
+To: Doug Anderson <dianders@chromium.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, "broonie@kernel.org" <broonie@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On Tue, 10 Jun 2014, Catalin Marinas wrote:
-> On Tue, Jun 10, 2014 at 05:49:01PM +0100, Nicolas Pitre wrote:
-> > The M-class processor should be treated the same way as firmware.  It 
-> > ought to be flexible (certainly more than hardwired hardware), but it 
-> > shares all the same downsides as firmware and the same concerns apply.
+On 10.06.2014 20:26, Doug Anderson wrote:
+> Naveen,
 > 
-> Yes, we can treat it as firmware, but we don't have a better alternative
-> to move the functionality into the kernel (well, we could at least allow
-> the kernel to load a binary blob and restart the controller).
-
-That would address the "easy to update in the field" side of the story.  
-So far I've not seen this aspect been addressed with a serious plan 
-anywhere.
-
-> > The reaction from the hardware people often is "the software is crap and 
-> > makes our hardware look bad, we know better, so let's make it easier on 
-> > those poor software dudes by handling power management in hardware 
-> > instead".  But ultimately the hardware just can't predict things like 
-> > software can.  It might do a better job than the current software state 
-> > of affairs, but most likely not be as efficient as a proper software 
-> > architecture.  The hardware may only be reactive, whereas the software 
-> > can be proactive (when properly done that is).
+> Not a full review, but a few quick things I happened to notice:
 > 
-> Indeed. But that's not the aim of the power controller on our boards.
-> It's just a mechanism for safely changing sleep states, CPU frequencies
-> but entirely under the OS decision.
-
-Sure.  But then you might want to consider that some usage scenarios 
-might benefit from the ability to abort a request, or monitor the 
-progress of a request for software timing purposes, or accept parallel 
-requests rather than serialize them, etc.  Given the flexibility to 
-extend beyond a rigid interface, the system may become even more 
-efficient overall, albeit with added complexity in the implementation. 
-But for that to work it has to be cheaply achievable.
-
-> > I sense from your paragraph above that ARM might be going the same 
-> > direction as X86 and that would be very sad.  Maybe the best compromise 
-> > would be for all knobs to be made available to software if software 
-> > wants to turn off the hardware auto-pilot and take control.  This way 
-> > the hardware guys would cover their arses while still allowing for the 
-> > possibility that software might be able to out perform the hardware 
-> > solution.
+> On Tue, Jun 10, 2014 at 3:08 AM, Naveen Krishna Chatradhi
+> <ch.naveen@samsung.com> wrote:
+>> @@ -94,7 +93,6 @@ Example:
+>>                         spi-max-frequency = <10000>;
+>>
+>>                         controller-data {
+>> -                               cs-gpio = <&gpa2 5 1 0 3>;
+>>                                 samsung,spi-feedback-delay = <0>;
 > 
-> I'm definitely not suggesting ARM is going the same route. Just trying
-> to show that ARM is slightly better here.
+> In a future patch (not this one!) it might make sense to also move
+> spi-feedback-delay out.
 > 
-> As a personal opinion, I like the simplicity of writing a register to
-> change the P-state but I don't like the non-determinism of the x86
-> hardware w.r.t. CPU performance. There are however some "policy" aspects
-> which I find interesting (like detecting whether the workload is memory
-> bound and automatically lowering the CPU frequency; the OS cannot react
-> this fast).
+> 
+>> +static struct s3c64xx_spi_csinfo *s3c64xx_get_cs_gpios(struct spi_device *spi)
+> 
+> I believe that you can make use of the fact that the SPI core already
+> got these GPIOs for you.  See of_spi_register_master().  Everything
+> you need ought to be in master->num_chipselect and master->cs_gpios.
+> 
+> Strangely, it doesn't look like any other drivers use this, so
+> possibly I'm confused...
+> 
+> 
+>> @@ -806,9 +815,14 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>>         struct s3c64xx_spi_info *sci;
+>>         int err;
+>>
+>> +       if (!spi->dev.of_node) {
+>> +               dev_err(&spi->dev, "device node not found\n");
+>> +               return -EINVAL;
+>> +       }
+> 
+> This seems incredibly broken.  You're saying that the SPI driver no
+> longer works without the device tree?  I don't think that's desirable,
+> but I suppose I could be wrong.
+> 
+> Also note that you still left an "if" test below for trying to deal
+> with the fact that there is no "of_node".
 
-This is not really a policy.  This is a straight-forward waterfall 
-dependency.  There is simply nothing you can do with those CPU clock 
-cycles when stalled most of the time waiting for memory queries to come 
-back so the choice is obvious.  If however this has a significant impact 
-on code execution speed then this becomes a tradeoff and the choice to 
-use this feature or not (the policy) must be implemented in software.
+This driver can be also used by non-DT platforms (namely s3c2443,
+s3c64xx and s5p*) and so this assumption is wrong.
 
-
-Nicolas
+Best regards,
+Tomasz
