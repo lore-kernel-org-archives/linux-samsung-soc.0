@@ -1,45 +1,85 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: linux-next on Chromebook2: DRM failing to allocate
-Date: Tue, 10 Jun 2014 20:56:04 +0200
-Message-ID: <539754C4.60008@gmail.com>
-References: <CAGa+x87EQcHBMc9NUOL_EKx=rKhOjfQ=_aMY5qvyPhqCN5--4w@mail.gmail.com> <CADMs+9a-vMpFOUmF5DO6X_OJfLgPP48DtRA9tcquzzt-Uso89A@mail.gmail.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: Problems booting exynos5420 with >1 CPU
+Date: Tue, 10 Jun 2014 15:15:53 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1406101443160.25775@knanqh.ubzr>
+References: <alpine.LFD.2.11.1406071431490.25775@knanqh.ubzr> <20140607223614.GA26641@e102568-lin.cambridge.arm.com> <CAOesGMj+itYr-daqxfX=J3Ss+7YdWhUUzBWTW3FqVEH8tXqt-A@mail.gmail.com> <20140608124530.GA31921@e102568-lin.cambridge.arm.com>
+ <alpine.LFD.2.11.1406081138070.25775@knanqh.ubzr> <7hsindq07l.fsf@paris.lan> <20140609222604.GA16889@e102568-lin.cambridge.arm.com> <alpine.LFD.2.11.1406092254220.25775@knanqh.ubzr> <20140610141446.GA3519@arm.com> <alpine.LFD.2.11.1406101149520.25775@knanqh.ubzr>
+ <20140610174212.GJ3523@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:35885 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752132AbaFJS4X (ORCPT
+Received: from mail-qc0-f181.google.com ([209.85.216.181]:62253 "EHLO
+	mail-qc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750735AbaFJTP4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jun 2014 14:56:23 -0400
-Received: by mail-wg0-f45.google.com with SMTP id l18so1873187wgh.28
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 11:56:22 -0700 (PDT)
-In-Reply-To: <CADMs+9a-vMpFOUmF5DO6X_OJfLgPP48DtRA9tcquzzt-Uso89A@mail.gmail.com>
+	Tue, 10 Jun 2014 15:15:56 -0400
+Received: by mail-qc0-f181.google.com with SMTP id x3so2840880qcv.40
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 12:15:55 -0700 (PDT)
+In-Reply-To: <20140610174212.GJ3523@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <marcheu@chromium.org>, Kevin Hilman <khilman@linaro.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@chromium.org>, Daniel Kurtz <djkurtz@chromium.org>, Inki Dae <inki.dae@samsung.com>, naveenkrishna.ch@gmail.com, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Tushar Behera <trblinux@gmail.com>, "Turquette, Mike" <mturquette@linaro.org>, Doug Anderson <dianders@google.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Arun Kumar <arun.kk@samsung.com>
 
-On 10.06.2014 20:04, St=C3=A9phane Marchesin wrote:
-> On Tue, Jun 10, 2014 at 10:56 AM, Kevin Hilman <khilman@linaro.org> w=
-rote:
->> I'm trying to get the latest linux-next working on my Chromebook2
->> (it's booting to a serial console) and am now trying to get the
->> display working (at least for a frambuffer console.)
->>
->> Since the display nodes seem to be present in the exynos5800-peach-p=
-i
->> DTS, I tried enabling DRM and it's failing to allocate memory (log
->> below[1]
->>
->> Is there some additional memory setup/allocations I should be doing?
->> maybe with CMA?
->=20
-> Probably not CMA, but maybe you don't have the iommu enabled?
->=20
+On Tue, 10 Jun 2014, Catalin Marinas wrote:
+> On Tue, Jun 10, 2014 at 05:49:01PM +0100, Nicolas Pitre wrote:
+> > The M-class processor should be treated the same way as firmware.  It 
+> > ought to be flexible (certainly more than hardwired hardware), but it 
+> > shares all the same downsides as firmware and the same concerns apply.
+> 
+> Yes, we can treat it as firmware, but we don't have a better alternative
+> to move the functionality into the kernel (well, we could at least allow
+> the kernel to load a binary blob and restart the controller).
 
-It should work without IOMMU as well. We're using Exynos DRM on Exynos4
-without IOMMU and with CMA instead and it works fine.
+That would address the "easy to update in the field" side of the story.  
+So far I've not seen this aspect been addressed with a serious plan 
+anywhere.
 
-Best regards,
-Tomasz
+> > The reaction from the hardware people often is "the software is crap and 
+> > makes our hardware look bad, we know better, so let's make it easier on 
+> > those poor software dudes by handling power management in hardware 
+> > instead".  But ultimately the hardware just can't predict things like 
+> > software can.  It might do a better job than the current software state 
+> > of affairs, but most likely not be as efficient as a proper software 
+> > architecture.  The hardware may only be reactive, whereas the software 
+> > can be proactive (when properly done that is).
+> 
+> Indeed. But that's not the aim of the power controller on our boards.
+> It's just a mechanism for safely changing sleep states, CPU frequencies
+> but entirely under the OS decision.
+
+Sure.  But then you might want to consider that some usage scenarios 
+might benefit from the ability to abort a request, or monitor the 
+progress of a request for software timing purposes, or accept parallel 
+requests rather than serialize them, etc.  Given the flexibility to 
+extend beyond a rigid interface, the system may become even more 
+efficient overall, albeit with added complexity in the implementation. 
+But for that to work it has to be cheaply achievable.
+
+> > I sense from your paragraph above that ARM might be going the same 
+> > direction as X86 and that would be very sad.  Maybe the best compromise 
+> > would be for all knobs to be made available to software if software 
+> > wants to turn off the hardware auto-pilot and take control.  This way 
+> > the hardware guys would cover their arses while still allowing for the 
+> > possibility that software might be able to out perform the hardware 
+> > solution.
+> 
+> I'm definitely not suggesting ARM is going the same route. Just trying
+> to show that ARM is slightly better here.
+> 
+> As a personal opinion, I like the simplicity of writing a register to
+> change the P-state but I don't like the non-determinism of the x86
+> hardware w.r.t. CPU performance. There are however some "policy" aspects
+> which I find interesting (like detecting whether the workload is memory
+> bound and automatically lowering the CPU frequency; the OS cannot react
+> this fast).
+
+This is not really a policy.  This is a straight-forward waterfall 
+dependency.  There is simply nothing you can do with those CPU clock 
+cycles when stalled most of the time waiting for memory queries to come 
+back so the choice is obvious.  If however this has a significant impact 
+on code execution speed then this becomes a tradeoff and the choice to 
+use this feature or not (the policy) must be implemented in software.
+
+
+Nicolas
