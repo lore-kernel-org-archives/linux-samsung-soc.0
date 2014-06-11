@@ -1,338 +1,119 @@
-From: Beomho Seo <beomho.seo@samsung.com>
-Subject: [PATCH] ARM: dts: use key code macros on exynos4 series boards
-Date: Wed, 11 Jun 2014 22:01:49 +0900
-Message-ID: <1402491709-29490-1-git-send-email-beomho.seo@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/2] ARM: exynos: cleanup kconfig option display
+Date: Wed, 11 Jun 2014 22:04:36 +0900
+Message-ID: <07fc01cf8575$b4fbc360$1ef34a20$@samsung.com>
+References: <1402409170-1314-1-git-send-email-robherring2@gmail.com>
+ <1402409170-1314-2-git-send-email-robherring2@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:38567 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750929AbaFKNB7 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:40801 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755290AbaFKNEn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jun 2014 09:01:59 -0400
+	Wed, 11 Jun 2014 09:04:43 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N700047E9NTCZ00@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Jun 2014 22:04:41 +0900 (KST)
+In-reply-to: <1402409170-1314-2-git-send-email-robherring2@gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, sachin.kamat@linaro.org, myungjoo.ham@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, Beomho Seo <beomho.seo@samsung.com>
+To: 'Rob Herring' <robherring2@gmail.com>, arm@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, 'Ben Dooks' <ben-linux@fluff.org>, 'Rob Herring' <robh@kernel.org>, linux-samsung-soc@vger.kernel.org
 
-This patch use key code macros on exynos4 series boards.
-Using macros improve readability on device tree.
+Rob Herring wrote:
+> 
+> From: Rob Herring <robh@kernel.org>
+> 
+> The addition of Exynos to multi-platform configs creates a mess of config
+> options with options appearing before the Exynos config option. This is
+> due to arch/arm/plat-samsung/Kconfig being included out of order with the
+> other Samsung platform kconfig files. Reorder the kconfig files and move
+> all the options into a sub-menu. Some of the options are dead, so remove
+> those as well.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
 
-Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi                  |    1 +
- arch/arm/boot/dts/exynos4210-origen.dts         |    1 -
- arch/arm/boot/dts/exynos4210-smdkv310.dts       |   20 ++++++++++----------
- arch/arm/boot/dts/exynos4210-trats.dts          |    8 ++++----
- arch/arm/boot/dts/exynos4210-universal_c210.dts |   12 ++++++------
- arch/arm/boot/dts/exynos4412-smdk4412.dts       |   20 ++++++++++----------
- arch/arm/boot/dts/exynos4412-trats2.dts         |    8 ++++----
- 7 files changed, 35 insertions(+), 35 deletions(-)
+Looks nice to me :-)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index b8ece4b..00bf06e 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -21,6 +21,7 @@
- 
- #include <dt-bindings/clock/exynos4.h>
- #include <dt-bindings/clock/exynos-audss-clk.h>
-+#include <dt-bindings/input/input.h>
- #include "skeleton.dtsi"
- 
- / {
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index f767c42..b8440da 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -16,7 +16,6 @@
- 
- /dts-v1/;
- #include "exynos4210.dtsi"
--#include <dt-bindings/input/input.h>
- 
- / {
- 	model = "Insignal Origen evaluation board based on Exynos4210";
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 636d166..cc78ca2 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -91,61 +91,61 @@
- 		key_1 {
- 			keypad,row = <0>;
- 			keypad,column = <3>;
--			linux,code = <2>;
-+			linux,code = <KEY_1>;
- 		};
- 
- 		key_2 {
- 			keypad,row = <0>;
- 			keypad,column = <4>;
--			linux,code = <3>;
-+			linux,code = <KEY_2>;
- 		};
- 
- 		key_3 {
- 			keypad,row = <0>;
- 			keypad,column = <5>;
--			linux,code = <4>;
-+			linux,code = <KEY_3>;
- 		};
- 
- 		key_4 {
- 			keypad,row = <0>;
- 			keypad,column = <6>;
--			linux,code = <5>;
-+			linux,code = <KEY_4>;
- 		};
- 
- 		key_5 {
- 			keypad,row = <0>;
- 			keypad,column = <7>;
--			linux,code = <6>;
-+			linux,code = <KEY_5>;
- 		};
- 
- 		key_a {
- 			keypad,row = <1>;
- 			keypad,column = <3>;
--			linux,code = <30>;
-+			linux,code = <KEY_A>;
- 		};
- 
- 		key_b {
- 			keypad,row = <1>;
- 			keypad,column = <4>;
--			linux,code = <48>;
-+			linux,code = <KEY_B>;
- 		};
- 
- 		key_c {
- 			keypad,row = <1>;
- 			keypad,column = <5>;
--			linux,code = <46>;
-+			linux,code = <KEY_C>;
- 		};
- 
- 		key_d {
- 			keypad,row = <1>;
- 			keypad,column = <6>;
--			linux,code = <32>;
-+			linux,code = <KEY_D>;
- 		};
- 
- 		key_e {
- 			keypad,row = <1>;
- 			keypad,column = <7>;
--			linux,code = <18>;
-+			linux,code = <KEY_E>;
- 		};
- 	};
- 
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index f516da9..0d9d143 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -128,21 +128,21 @@
- 
- 		vol-down-key {
- 			gpios = <&gpx2 1 1>;
--			linux,code = <114>;
-+			linux,code = <KEY_VOLUMEDOWN>;
- 			label = "volume down";
- 			debounce-interval = <10>;
- 		};
- 
- 		vol-up-key {
- 			gpios = <&gpx2 0 1>;
--			linux,code = <115>;
-+			linux,code = <KEY_VOLUMEUP>;
- 			label = "volume up";
- 			debounce-interval = <10>;
- 		};
- 
- 		power-key {
- 			gpios = <&gpx2 7 1>;
--			linux,code = <116>;
-+			linux,code = <KEY_POWER>;
- 			label = "power";
- 			debounce-interval = <10>;
- 			gpio-key,wakeup;
-@@ -150,7 +150,7 @@
- 
- 		ok-key {
- 			gpios = <&gpx3 5 1>;
--			linux,code = <352>;
-+			linux,code = <KEY_OK>;
- 			label = "ok";
- 			debounce-interval = <10>;
- 		};
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index d50eb3a..43a7bba 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -132,21 +132,21 @@
- 
- 		vol-up-key {
- 			gpios = <&gpx2 0 1>;
--			linux,code = <115>;
-+			linux,code = <KEY_VOLUMEUP>;
- 			label = "volume up";
- 			debounce-interval = <1>;
- 		};
- 
- 		vol-down-key {
- 			gpios = <&gpx2 1 1>;
--			linux,code = <114>;
-+			linux,code = <KEY_VOLUMEDOWN>;
- 			label = "volume down";
- 			debounce-interval = <1>;
- 		};
- 
- 		config-key {
- 			gpios = <&gpx2 2 1>;
--			linux,code = <171>;
-+			linux,code = <KEY_CONFIG>;
- 			label = "config";
- 			debounce-interval = <1>;
- 			gpio-key,wakeup;
-@@ -154,14 +154,14 @@
- 
- 		camera-key {
- 			gpios = <&gpx2 3 1>;
--			linux,code = <212>;
-+			linux,code = <KEY_CAMERA>;
- 			label = "camera";
- 			debounce-interval = <1>;
- 		};
- 
- 		power-key {
- 			gpios = <&gpx2 7 1>;
--			linux,code = <116>;
-+			linux,code = <KEY_POWER>;
- 			label = "power";
- 			debounce-interval = <1>;
- 			gpio-key,wakeup;
-@@ -169,7 +169,7 @@
- 
- 		ok-key {
- 			gpios = <&gpx3 5 1>;
--			linux,code = <352>;
-+			linux,code = <KEY_OK>;
- 			label = "ok";
- 			debounce-interval = <1>;
- 		};
-diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-index ded0b70..5ff6985 100644
---- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-@@ -60,61 +60,61 @@
- 		key_1 {
- 			keypad,row = <1>;
- 			keypad,column = <3>;
--			linux,code = <2>;
-+			linux,code = <KEY_1>;
- 		};
- 
- 		key_2 {
- 			keypad,row = <1>;
- 			keypad,column = <4>;
--			linux,code = <3>;
-+			linux,code = <KEY_2>;
- 		};
- 
- 		key_3 {
- 			keypad,row = <1>;
- 			keypad,column = <5>;
--			linux,code = <4>;
-+			linux,code = <KEY_3>;
- 		};
- 
- 		key_4 {
- 			keypad,row = <1>;
- 			keypad,column = <6>;
--			linux,code = <5>;
-+			linux,code = <KEY_4>;
- 		};
- 
- 		key_5 {
- 			keypad,row = <1>;
- 			keypad,column = <7>;
--			linux,code = <6>;
-+			linux,code = <KEY_5>;
- 		};
- 
- 		key_A {
- 			keypad,row = <2>;
- 			keypad,column = <6>;
--			linux,code = <30>;
-+			linux,code = <KEY_A>;
- 		};
- 
- 		key_B {
- 			keypad,row = <2>;
- 			keypad,column = <7>;
--			linux,code = <48>;
-+			linux,code = <KEY_B>;
- 		};
- 
- 		key_C {
- 			keypad,row = <0>;
--			keypad,column = <5>;
-+			keypad,column = <KEY_C>;
- 			linux,code = <46>;
- 		};
- 
- 		key_D {
- 			keypad,row = <2>;
- 			keypad,column = <5>;
--			linux,code = <32>;
-+			linux,code = <KEY_D>;
- 		};
- 
- 		key_E {
- 			keypad,row = <0>;
- 			keypad,column = <7>;
--			linux,code = <18>;
-+			linux,code = <KEY_E>;
- 		};
- 	};
- 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 106a705..718436d 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -115,21 +115,21 @@
- 
- 		key-down {
- 			gpios = <&gpx3 3 1>;
--			linux,code = <114>;
-+			linux,code = <KEY_VOLUMEDOWN>;
- 			label = "volume down";
- 			debounce-interval = <10>;
- 		};
- 
- 		key-up {
- 			gpios = <&gpx2 2 1>;
--			linux,code = <115>;
-+			linux,code = <KEY_VOLUMEUP>;
- 			label = "volume up";
- 			debounce-interval = <10>;
- 		};
- 
- 		key-power {
- 			gpios = <&gpx2 7 1>;
--			linux,code = <116>;
-+			linux,code = <KEY_POWER>;
- 			label = "power";
- 			debounce-interval = <10>;
- 			gpio-key,wakeup;
-@@ -137,7 +137,7 @@
- 
- 		key-ok {
- 			gpios = <&gpx0 1 1>;
--			linux,code = <139>;
-+			linux,code = <KEY_MENU>;
- 			label = "ok";
- 			debounce-inteval = <10>;
- 			gpio-key,wakeup;
--- 
-1.7.9.5
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+
+Thanks,
+Kukjin
+
+> Cc: linux-samsung-soc@vger.kernel.org
+> ---
+>  arch/arm/Kconfig              |  3 +--
+>  arch/arm/plat-samsung/Kconfig | 17 +++--------------
+>  2 files changed, 4 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 87b63fd..cbf0c37 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -1009,8 +1009,6 @@ source "arch/arm/mach-rockchip/Kconfig"
+> 
+>  source "arch/arm/mach-sa1100/Kconfig"
+> 
+> -source "arch/arm/plat-samsung/Kconfig"
+> -
+>  source "arch/arm/mach-socfpga/Kconfig"
+> 
+>  source "arch/arm/mach-spear/Kconfig"
+> @@ -1028,6 +1026,7 @@ source "arch/arm/mach-s5pc100/Kconfig"
+>  source "arch/arm/mach-s5pv210/Kconfig"
+> 
+>  source "arch/arm/mach-exynos/Kconfig"
+> +source "arch/arm/plat-samsung/Kconfig"
+> 
+>  source "arch/arm/mach-shmobile/Kconfig"
+> 
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index 243dfcb..ac032cd 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -35,27 +35,15 @@ config SAMSUNG_PM
+>  	  Base platform power management code for samsung code
+> 
+>  if PLAT_SAMSUNG
+> +menu "Samsung Common options"
+> 
+>  # boot configurations
+> 
+>  comment "Boot options"
+> 
+> -config S3C_BOOT_ERROR_RESET
+> -	bool "S3C Reboot on decompression error"
+> -	help
+> -	  Say y here to use the watchdog to reset the system if the
+> -	  kernel decompressor detects an error during decompression.
+> -
+> -config S3C_BOOT_UART_FORCE_FIFO
+> -       bool "Force UART FIFO on during boot process"
+> -       default y
+> -       help
+> -         Say Y here to force the UART FIFOs on during the kernel
+> -	 uncompressor
+> -
+> -
+>  config S3C_LOWLEVEL_UART_PORT
+>  	int "S3C UART to use for low-level messages"
+> +	depends on ARCH_S3C64XX
+>  	default 0
+>  	help
+>  	  Choice of which UART port to use for the low-level messages,
+> @@ -503,4 +491,5 @@ config DEBUG_S3C_UART
+>  	default "2" if DEBUG_S3C_UART2
+>  	default "3" if DEBUG_S3C_UART3
+> 
+> +endmenu
+>  endif
+> --
+> 1.9.1
