@@ -1,255 +1,110 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH 1/2 v3] spi: s3c64xx: use "cs-gpios" from spi node instead
- of "cs-gpio"
-Date: Wed, 11 Jun 2014 17:08:00 +0530
-Message-ID: <CAHfPSqCYqTRBBH56y81na-t18pvoPmyWobZwXNgkrtq=H_79CQ@mail.gmail.com>
-References: <1402468318-7342-1-git-send-email-ch.naveen@samsung.com> <539839D6.1050305@collabora.co.uk>
+From: Chander Kashyap <k.chander@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
+Date: Wed, 11 Jun 2014 17:44:21 +0530
+Message-ID: <CADWw7OghkwkMbU=eZG=OhxVowNJy_12UOo_pNYnXbimF73Uwdw@mail.gmail.com>
+References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
+	<20140607181221.GB25068@e102568-lin.cambridge.arm.com>
+	<CAD=FV=X17PeJ6JPE9Qyc1QT07AvA2PTE69Q87gz9a6MdUHgi4A@mail.gmail.com>
+	<20140609223831.GB16889@e102568-lin.cambridge.arm.com>
+	<CANuQgHHxAhTNYX-JAEdRkO=PMYT4A5GwXcuQfiqwE0CEkQyR+w@mail.gmail.com>
+	<CAD=FV=V5_RRNkgA7Rk7XbQw9m1qh6-RJA8arW7ZRU=QbWAPa+w@mail.gmail.com>
+	<alpine.LFD.2.11.1406101146140.25775@knanqh.ubzr>
+	<CADWw7OjqK3MAuqCHuv-WS3Bb2+2Q-FXth+7hqtwFoyAP6pyYhA@mail.gmail.com>
+	<20140611101353.GA18781@e102568-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f175.google.com ([209.85.216.175]:51161 "EHLO
-	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751843AbaFKLiV (ORCPT
+Received: from mail-oa0-f50.google.com ([209.85.219.50]:40360 "EHLO
+	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751510AbaFKMOW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jun 2014 07:38:21 -0400
-In-Reply-To: <539839D6.1050305@collabora.co.uk>
+	Wed, 11 Jun 2014 08:14:22 -0400
+In-Reply-To: <20140611101353.GA18781@e102568-lin.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, Kukjin Kim <kgene.kim@samsung.com>, cpgs@samsung.com, devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Chander Kashyap <k.chander@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Doug Anderson <dianders@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chander Kashyap <chander.kashyap@linaro.org>, "olof@lixom.net" <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hello Javier,
+On Wed, Jun 11, 2014 at 3:43 PM, Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+> On Wed, Jun 11, 2014 at 05:52:10AM +0100, Chander Kashyap wrote:
+>> Hi Doug,
+>>
+>> On Tue, Jun 10, 2014 at 9:19 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+>> > On Tue, 10 Jun 2014, Doug Anderson wrote:
+>> >
+>> >> My S-state knowledge is not strong, but I believe that Lorenzo's
+>> >> questions matter if we're using S2 for CPUidle (where we actually turn
+>> >> off power and hot unplug CPUs) but not when we're using S1 for CPUidle
+>> >> (where we just enter WFI/WFE).
+>> >>
+>>
+>> No Its not plain WFI.
+>>
+>> All cores in Exynos5420 can be powered off independently.
+>> This functionality has been tested.
+>>
+>> Below is the link for the posted patches.
+>>
+>> https://lkml.org/lkml/2014/6/10/194
+>>
+>> And as Nicolas wrote, these patches need MCPM for that.
+>
+> Chander, I cast a look into the code and I have a question
+> (you also told me on CPUidle review that only core off
+> is supported in CPUidle).
+>
+> When you say all cores can be powered off independently, do
+> you also mean that clusters can be powered off (in CPUidle) ?
+>
+> I am pointing this out since in the MCPM backend I noticed:
+>
+> "/* TODO: Turn off the cluster here to save power. */"
+>
+> I do not see any cluster power down request in the down path.
+>
+> If I am wrong, ignore my message, I am just writing to help.
+>
+> If you can only power down cores, but not the clusters on idle,
+> please keep in mind that you are currently cleaning and invalidating
+> the L2 when last man is running and this must not be taken
+> lightly since, if L2 stays on, that's a massive energy waste
+> for nothing.
+>
+> So, if clusters stay up, you _have_ to tweak the MCPM backend slightly
+> to avoid cleaning L2, that's pivotal.
 
-On 11 June 2014 16:43, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> Hello Naveen,
->
-> Thanks a lot for your patches and sorry that I didn't review your prior two
-> versions but I didn't have the time yesterday.
->
-> On 06/11/2014 08:31 AM, Naveen Krishna Chatradhi wrote:
->> Currently, spi-s3c64xx.c needs "cs-gpio" chip select GPIO to be
->> defined under "controller-data" node under each slave node.
->>
->
-> I think that the commit message is not clear enough about the intentions behind
-> your patch.
->
-> It's not only that spi-s3c64xx needs a cs-gpio chip to be defined under
-> controller-data dev node while all other SPI drivers expects cs-gpios at the top
-> level, but more important that currently s3c64xx driver expects to have both
-> cs-gpio (singular) at the top level *and* cs-gpio in controller data which
-> doesn't make too much sense.
->
->> &spi_x {
->>       cs-gpios <>;
->>       ...
->
-> As I said, currently it expects cs-gpio (singular) not cs-gpios (plural) as your
-> example. It's important to have a correct commit message so future code
-> archaeologists can have a proper picture of the situation if needed.
-Will add some explanation in the example, for it to be clear.
->
->>       slave_node {
->>
->>               controller-data {
->>                       cs-gpio = <>;
->>                       ...
->>               };
->>               ...
->>       };
->>       ...
->> };
->>
->> Where as, SPI core and many other drivers uses "cs-gpios" for
->> from device tree node.
->>
->> Hence, make changes in spi-s3c64xx.c driver to make use of
->> "cs-gpios" from SPI node(parent) instead of "cs-gpio" defined in
->> slaves "controller-data"(child) node.
->>
->
-> So, the problem is not that the binding is not consistent with other SPI drivers
-> (that would have been bad but acceptable IMHO) but that it is completely broken.
-> And since we have to fix it which means breaking the ABI anyways, it is better
-> to make it consistent with other drivers and SPI core.
-Will take this point for the while rewriting the commit messages
->
->> Also updates the Device tree Documentation.
->>
->
-> While I agree with others that a binding that has been broken for a year is a
-> binding that appears to not be used a lot, we should be more vocal about this
-> and why breaking backward compatibility is the right approach in this case.
->
-> So, in the (theoretical?) case that users find that their platform stopped to
-> work with their current FDT, it will be easy for them to figure out what commit
-> break it, what was the motivation to break the ABI and what changes are needed
-> on their DTS to make it work again.
->
-> Adding the sha1 of the culprit commit (3146bee spi: s3c64xx: Added provision for
-> dedicated cs pin) that puts us in this situation will also be useful. Since the
-> date of that commit is part of the rationale behind this change. (e.g: nobody
-> cared about this binding and so can be changed).
-Will take this point for the while rewriting the commit messages
->
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> Acked-by: Rob Herring <robh@kernel.org>
->> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> Cc: Doug Anderson <dianders@chromium.org>
->> Cc: Tomasz Figa <t.figa@samsung.com>
->> ---
->> Changes since v2:
->> 1. updated the gpios usage in Documentation
->> 2. use the spi->cs_gpio in the driver, instead of parsing the node again.
->> 3. Corrected error check of the of.node and during gpio_free
->>
->>  .../devicetree/bindings/spi/spi-samsung.txt        |    8 +++-----
->>  drivers/spi/spi-s3c64xx.c                          |   18 ++++++------------
->>  2 files changed, 9 insertions(+), 17 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
->> index 86aa061..2d29dac 100644
->> --- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
->> +++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
->> @@ -42,15 +42,13 @@ Optional Board Specific Properties:
->>  - num-cs: Specifies the number of chip select lines supported. If
->>    not specified, the default number of chip select lines is set to 1.
->>
->> +- cs-gpios: should specify GPIOs used for chipselects (see spi-bus.txt)
->> +
->>  SPI Controller specific data in SPI slave nodes:
->>
->>  - The spi slave nodes should provide the following information which is required
->>    by the spi controller.
->>
->> -  - cs-gpio: A gpio specifier that specifies the gpio line used as
->> -    the slave select line by the spi controller. The format of the gpio
->> -    specifier depends on the gpio controller.
->> -
->>    - samsung,spi-feedback-delay: The sampling phase shift to be applied on the
->>      miso line (to account for any lag in the miso line). The following are the
->>      valid values.
->> @@ -85,6 +83,7 @@ Example:
->>               #size-cells = <0>;
->>               pinctrl-names = "default";
->>               pinctrl-0 = <&spi0_bus>;
->> +             cs-gpios = <&gpa2 5 0>;
->>
->>               w25q80bw@0 {
->>                       #address-cells = <1>;
->> @@ -94,7 +93,6 @@ Example:
->>                       spi-max-frequency = <10000>;
->>
->>                       controller-data {
->> -                             cs-gpio = <&gpa2 5 1 0 3>;
->>                               samsung,spi-feedback-delay = <0>;
->>                       };
->>
->> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
->> index 75a5696..842b148 100644
->> --- a/drivers/spi/spi-s3c64xx.c
->> +++ b/drivers/spi/spi-s3c64xx.c
->> @@ -772,24 +772,19 @@ static struct s3c64xx_spi_csinfo *s3c64xx_get_slave_ctrldata(
->>
->>       cs = kzalloc(sizeof(*cs), GFP_KERNEL);
->>       if (!cs) {
->> -             of_node_put(data_np);
->
-> Why are you removing this?
->
-> You are not removing the call to of_get_child_by_name(slave_np,
-> "controller-data") so on failure data_np reference counter still needs to be
-> decremented.
->
->>               return ERR_PTR(-ENOMEM);
->>       }
->>
->> -     /* The CS line is asserted/deasserted by the gpio pin */
->> -     if (sdd->cs_gpio)
->> -             cs->line = of_get_named_gpio(data_np, "cs-gpio", 0);
->> -
->> -     if (!gpio_is_valid(cs->line)) {
->> +     if (!gpio_is_valid(spi->cs_gpio)) {
->>               dev_err(&spi->dev, "chip select gpio is not specified or invalid\n");
->> -             kfree(cs);
->> -             of_node_put(data_np);
->
-> Again, it's wrong to remove this of_node_put(data_np) call.
-Actually, i wanted to move down the of_get_child_by_name() to before
-of_property_read_u32() call.
->
->>               return ERR_PTR(-EINVAL);
->>       }
->> +     cs->line = spi->cs_gpio;
->>
->
-> I wonder why are you keeping cs->line? AFAICT it's only used in
-> s3c64xx_spi_setup() to request the GPIO and since you get the struct spi_device
-> pointer as a parameter then you can just use spi->s_gpio instead.
-I'm trying not to touch the non-DT part of the code.
+Hi Lorenzo,
+Cluster shutdown is in progress. Abhilash will add support for that.
 
-struct s3c64xx_spi_csinfo *cs = spi->controller_data;
-
-This will update the cs->line and cs->fb_delay in case of non-DT.
->
->>       of_property_read_u32(data_np, "samsung,spi-feedback-delay", &fb_delay);
->>       cs->fb_delay = fb_delay;
->>       of_node_put(data_np);
->> +
->
-> Usually is better to not mix style and functionality changes in the same patch
-> since it makes harder to review.
->
->>       return cs;
->>  }
->>
->> @@ -828,8 +823,6 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
->>                                       cs->line, err);
->>                               goto err_gpio_req;
->>                       }
->> -
->> -                     spi->cs_gpio = cs->line;
->>               }
->>
->>               spi_set_ctldata(spi, cs);
->> @@ -884,7 +877,8 @@ setup_exit:
->>       /* setup() returns with device de-selected */
->>       writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
->>
->> -     gpio_free(cs->line);
->> +     if (cs->line)
->> +             gpio_free(cs->line);
->
-> Same here, we can just get rid of cs->line and use gpio_free(spi->cs_gpio) instead.
-This is to keep the non-DT part untouched.
->
->>       spi_set_ctldata(spi, NULL);
->>
->>  err_gpio_req:
->> @@ -1077,7 +1071,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
->>       sdd->sfr_start = mem_res->start;
->>       sdd->cs_gpio = true;
->>       if (pdev->dev.of_node) {
->> -             if (!of_find_property(pdev->dev.of_node, "cs-gpio", NULL))
->> +             if (!of_find_property(pdev->dev.of_node, "cs-gpios", NULL))
->>                       sdd->cs_gpio = false;
->
-> I think we can get rid of sdd->cs_gpio as well. You can always use
-> gpio_is_valid(spi->cs_gpio) or if (master->cs_gpios) to figure out if the SPI
-> device has a cs-gpios array associated.
-This is to keep the non-DT part untouched
->
->>
->>               ret = of_alias_get_id(pdev->dev.of_node, "spi");
->>
->
-> Best regards,
-> Javier
-Will re-spin after waiting for a couple of more comments.
-Thanks for your review.
+https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31104.html
 
 
--- 
-Shine bright,
-(: Nav :)
+>
+> Lorenzo
+>
+>>
+>> >> I believe that in ChromeOS we use S1 CPUidle and that it works fine.
+>> >> We've never implemented S2 that I'm aware of.
+>> >
+>> > You'll have to rely on MCPM for that.  That's probably why it hasn't
+>> > been implemented before.
+>> >
+>> >
+>> > Nicolas
+>> >
+>> > _______________________________________________
+>> > linux-arm-kernel mailing list
+>> > linux-arm-kernel@lists.infradead.org
+>> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Please read the FAQ at  http://www.tux.org/lkml/
+>>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
