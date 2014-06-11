@@ -1,110 +1,110 @@
-From: Chander Kashyap <k.chander@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
-Date: Wed, 11 Jun 2014 17:44:21 +0530
-Message-ID: <CADWw7OghkwkMbU=eZG=OhxVowNJy_12UOo_pNYnXbimF73Uwdw@mail.gmail.com>
-References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
-	<20140607181221.GB25068@e102568-lin.cambridge.arm.com>
-	<CAD=FV=X17PeJ6JPE9Qyc1QT07AvA2PTE69Q87gz9a6MdUHgi4A@mail.gmail.com>
-	<20140609223831.GB16889@e102568-lin.cambridge.arm.com>
-	<CANuQgHHxAhTNYX-JAEdRkO=PMYT4A5GwXcuQfiqwE0CEkQyR+w@mail.gmail.com>
-	<CAD=FV=V5_RRNkgA7Rk7XbQw9m1qh6-RJA8arW7ZRU=QbWAPa+w@mail.gmail.com>
-	<alpine.LFD.2.11.1406101146140.25775@knanqh.ubzr>
-	<CADWw7OjqK3MAuqCHuv-WS3Bb2+2Q-FXth+7hqtwFoyAP6pyYhA@mail.gmail.com>
-	<20140611101353.GA18781@e102568-lin.cambridge.arm.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/2 v2] spi: s3c64xx: use "cs-gpios" from spi node instead
+ of "cs-gpio"
+Date: Wed, 11 Jun 2014 14:22:08 +0200
+Message-ID: <539849F0.3000308@samsung.com>
+References: <1402394881-31564-1-git-send-email-ch.naveen@samsung.com>
+ <1402394881-31564-2-git-send-email-ch.naveen@samsung.com>
+ <5396E051.8050803@samsung.com>
+ <CAHfPSqAq9L5Zu7z3-y6Y2pG8AhE4Y1j8DE35LDfMW_DYc_x-gw@mail.gmail.com>
+ <CAD=FV=XtdgKEg7fTHe+tsFM1Y_YwqNNk_DBW7ZX83YERGJsHBg@mail.gmail.com>
+ <CAL_JsqLk7rfDaf4gn5_p3dcSNBfQ9BF3U8mUqBQ6YjKWXb5tDg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f50.google.com ([209.85.219.50]:40360 "EHLO
-	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751510AbaFKMOW (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:40352 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750730AbaFKMWM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jun 2014 08:14:22 -0400
-In-Reply-To: <20140611101353.GA18781@e102568-lin.cambridge.arm.com>
+	Wed, 11 Jun 2014 08:22:12 -0400
+In-reply-to: <CAL_JsqLk7rfDaf4gn5_p3dcSNBfQ9BF3U8mUqBQ6YjKWXb5tDg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Chander Kashyap <k.chander@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Doug Anderson <dianders@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chander Kashyap <chander.kashyap@linaro.org>, "olof@lixom.net" <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Doug Anderson <dianders@chromium.org>, Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Cc: Rob Herring <robherring2@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "cpgs ." <cpgs@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, "broonie@kernel.org" <broonie@kernel.org>, spi-devel-general@lists.sourceforge.net, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, Jun 11, 2014 at 3:43 PM, Lorenzo Pieralisi
-<lorenzo.pieralisi@arm.com> wrote:
-> On Wed, Jun 11, 2014 at 05:52:10AM +0100, Chander Kashyap wrote:
->> Hi Doug,
+On 10/06/14 22:32, Rob Herring wrote:
+> On Tue, Jun 10, 2014 at 1:09 PM, Doug Anderson <dianders@chromium.org> wrote:
+>> Naveen / Sylwester,
 >>
->> On Tue, Jun 10, 2014 at 9:19 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
->> > On Tue, 10 Jun 2014, Doug Anderson wrote:
->> >
->> >> My S-state knowledge is not strong, but I believe that Lorenzo's
->> >> questions matter if we're using S2 for CPUidle (where we actually turn
->> >> off power and hot unplug CPUs) but not when we're using S1 for CPUidle
->> >> (where we just enter WFI/WFE).
->> >>
->>
->> No Its not plain WFI.
->>
->> All cores in Exynos5420 can be powered off independently.
->> This functionality has been tested.
->>
->> Below is the link for the posted patches.
->>
->> https://lkml.org/lkml/2014/6/10/194
->>
->> And as Nicolas wrote, these patches need MCPM for that.
->
-> Chander, I cast a look into the code and I have a question
-> (you also told me on CPUidle review that only core off
-> is supported in CPUidle).
->
-> When you say all cores can be powered off independently, do
-> you also mean that clusters can be powered off (in CPUidle) ?
->
-> I am pointing this out since in the MCPM backend I noticed:
->
-> "/* TODO: Turn off the cluster here to save power. */"
->
-> I do not see any cluster power down request in the down path.
->
-> If I am wrong, ignore my message, I am just writing to help.
->
-> If you can only power down cores, but not the clusters on idle,
-> please keep in mind that you are currently cleaning and invalidating
-> the L2 when last man is running and this must not be taken
-> lightly since, if L2 stays on, that's a massive energy waste
-> for nothing.
->
-> So, if clusters stay up, you _have_ to tweak the MCPM backend slightly
-> to avoid cleaning L2, that's pivotal.
+>> On Tue, Jun 10, 2014 at 4:00 AM, Naveen Krishna Ch
+>> <naveenkrishna.ch@gmail.com> wrote:
+>>>> Can we support both "cs-gpio" and "cs-gpios" for backward compatibility ?
+>>>> After your change all DTBs using the original pattern will not work with
+>>>> new kernels any more. At least I would expect such backward compatibility
+>>>> maintained for few kernel releases.
+>>>
+>>> The reason behind removing the "cs-gpio" or not providing backward
+>>> compatibility was
+>>>
+>>> 1. Since spi-core started using "cs-gpios" string from spi device node
+>>> several months ago.
+>>>   The spi-s3c64xx.c driver is partially broken for more than 6 months.
+>>>
+>>> 2. Supporting "cs-gpio" would add extra bit of code.
+>>>
+>>> I've corrected the dts files that were using "cs-gpio" under
+>>> "controller-data"(child node)
+>>> to use "cs-gpio" from spi device node (parent node).
 
-Hi Lorenzo,
-Cluster shutdown is in progress. Abhilash will add support for that.
+Normally properties get removed from existing dts files and then
+marked in the binding documentation as deprecated.  Or least in the
+commit messages it would be good to have clearly explained what was
+replaced with what and what were the main reasons.  This is especially
+useful for out-of-tree dts files, when you port a board to newer
+kernel, things suddenly stop working and you're left with little
+or no clue why.
 
-https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31104.html
+>>> I will make another version if you insist.
 
+I'm OK with dropping the old binding, I'm generally not a proponent
+of a strict DT backward compatibility.  But we _must_ have things
+documented properly, so it all doesn't turn into a debugging nightmare.
 
->
-> Lorenzo
->
+>> Yup, as near as I can tell this has been broken since (3146bee spi:
+>> s3c64xx: Added provision for dedicated cs pin).  That landed June 25th
+>> of 2013 into the SPI tree.
 >>
->> >> I believe that in ChromeOS we use S1 CPUidle and that it works fine.
->> >> We've never implemented S2 that I'm aware of.
->> >
->> > You'll have to rely on MCPM for that.  That's probably why it hasn't
->> > been implemented before.
->> >
->> >
->> > Nicolas
->> >
->> > _______________________________________________
->> > linux-arm-kernel mailing list
->> > linux-arm-kernel@lists.infradead.org
->> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->> Please read the FAQ at  http://www.tux.org/lkml/
+>> ...so clearly nobody was really testing Samsung's SPI driver on ToT
+>> Linux.  1 year of unnoticed brokenness seems like enough time that we
+>> could do away with the old code.  If someone comes out of the woodwork
+>> and claims a dire need to support the old binding then it can be added
+>> then.
 >>
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> In-tree users of this appear to be:
+>>
+>> arch/arm/boot/dts/exynos4210-smdkv310.dts:
+>>  cs-gpio = <&gpc1 2 0>;
+>> arch/arm/boot/dts/exynos4412-trats2.dts:
+>>  cs-gpio = <&gpb 5 0>;
+>> arch/arm/boot/dts/exynos5250-smdk5250.dts:
+>>  cs-gpio = <&gpa2 5 0>;
+>>
+>> ...and I guess nobody has bothered using the SPI flash on those boards
+>> for the last year?
+
+I guess the SMDK boards are not really well maintained now.  I've got a
+working kernel for trats2 based on v3.15-rc4, the SPI is working fine
+there, despite the offending commit you point out.
+
+It seems the GPB[5]/SPI_1_nSS pin is in the reset default state, i.e.
+an input with pull down enabled (gpb-5 is not a part of the SPI
+interface pinctrl group).  So in case we don't pass the CS GPIO in the
+SPI controller node or the driver doesn't handle it properly for any
+other reason the chip select signal is always active and the SPI
+communication works.
+
+> I always try to warn people if they are breaking compatibility, but in
+> this case I agree it is okay. Presumably no one expects BSD or vxworks
+> support for this platform either?
+> 
+> For the binding change:
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+> 
+> Rob
+
+--
+Thanks,
+Sylwester
