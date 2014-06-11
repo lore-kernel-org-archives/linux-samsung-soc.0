@@ -1,60 +1,35 @@
-From: Chander Kashyap <k.chander@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
-Date: Wed, 11 Jun 2014 10:22:10 +0530
-Message-ID: <CADWw7OjqK3MAuqCHuv-WS3Bb2+2Q-FXth+7hqtwFoyAP6pyYhA@mail.gmail.com>
-References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
-	<20140607181221.GB25068@e102568-lin.cambridge.arm.com>
-	<CAD=FV=X17PeJ6JPE9Qyc1QT07AvA2PTE69Q87gz9a6MdUHgi4A@mail.gmail.com>
-	<20140609223831.GB16889@e102568-lin.cambridge.arm.com>
-	<CANuQgHHxAhTNYX-JAEdRkO=PMYT4A5GwXcuQfiqwE0CEkQyR+w@mail.gmail.com>
-	<CAD=FV=V5_RRNkgA7Rk7XbQw9m1qh6-RJA8arW7ZRU=QbWAPa+w@mail.gmail.com>
-	<alpine.LFD.2.11.1406101146140.25775@knanqh.ubzr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Tushar Behera <tushar.b@samsung.com>
+Subject: [PATCH 0/3] Fix boot-hang on Peach-pit and Enable audio
+Date: Wed, 11 Jun 2014 11:02:16 +0530
+Message-ID: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f44.google.com ([209.85.219.44]:47040 "EHLO
-	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750995AbaFKEwL (ORCPT
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:58680 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750749AbaFKFfQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jun 2014 00:52:11 -0400
-In-Reply-To: <alpine.LFD.2.11.1406101146140.25775@knanqh.ubzr>
+	Wed, 11 Jun 2014 01:35:16 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Doug Anderson <dianders@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chander Kashyap <chander.kashyap@linaro.org>, "olof@lixom.net" <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Thomas Abraham <thomas.ab@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, t.figa@samsung.com, linux@arm.linux.org.uk, galak@codeaurora.org, ijc+devicetree@hellion.org.uk, mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org, kgene.kim@samsung.com, khilman@linaro.org, dianders@google.com, trblinux@gmail.com
 
-Hi Doug,
+With next-20140610, Peach-pit/Peach-pi board hangs during boot if we
+run 'sound init' during u-boot. The issue is fixed in following patches.
+While at it, also enable audio support for Peach-pi board.
 
-On Tue, Jun 10, 2014 at 9:19 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> On Tue, 10 Jun 2014, Doug Anderson wrote:
->
->> My S-state knowledge is not strong, but I believe that Lorenzo's
->> questions matter if we're using S2 for CPUidle (where we actually turn
->> off power and hot unplug CPUs) but not when we're using S1 for CPUidle
->> (where we just enter WFI/WFE).
->>
+How to test audio on Peach-pi:
+* On top of exynos_defconfig, enable SND_SOC_SNOW and PL330_DMA.
+* Run 'sound init' at u-boot prompt.
 
-No Its not plain WFI.
+Tushar Behera (3):
+  clk: exynos-audss: Keep the parent of mout_audss always enabled
+  ARM: dts: Update the parent for Audss clocks in Exynos5420
+  ARM: dts: Enable audio support for Peach-pi board
 
-All cores in Exynos5420 can be powered off independently.
-This functionality has been tested.
+ arch/arm/boot/dts/exynos5420.dtsi         |    2 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts |   31 +++++++++++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos-audss.c    |   17 +++++++++++++---
+ 3 files changed, 46 insertions(+), 4 deletions(-)
 
-Below is the link for the posted patches.
-
-https://lkml.org/lkml/2014/6/10/194
-
-And as Nicolas wrote, these patches need MCPM for that.
-
->> I believe that in ChromeOS we use S1 CPUidle and that it works fine.
->> We've never implemented S2 that I'm aware of.
->
-> You'll have to rely on MCPM for that.  That's probably why it hasn't
-> been implemented before.
->
->
-> Nicolas
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+1.7.9.5
