@@ -1,121 +1,62 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v3 5/7] mfd: cros_ec: Sync to the latest
- cros_ec_commands.h from EC sources
-Date: Wed, 11 Jun 2014 08:11:44 -0700
-Message-ID: <CAD=FV=XL9tnEqza8Zx8mt_Z7-bj8TCzdeyHMhnpewKp_1CR-ig@mail.gmail.com>
-References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
-	<1398879850-9111-6-git-send-email-dianders@chromium.org>
-	<20140520084602.GF24991@lee--X1>
-	<1402483068.3798.82.camel@x220>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: Exynos : Fix build error with thumb2
+Date: Thu, 12 Jun 2014 00:13:53 +0900
+Message-ID: <53987231.6080200@samsung.com>
+References: <1401119625-11309-1-git-send-email-santosh.shukla@linaro.org>	<20140602101023.GB3855@e103592.cambridge.arm.com> <CA+iXiiO8ED9rdyxXh9ooDhb9OcBRH52acbqA7cgGX9kvgYaCXg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1402483068.3798.82.camel@x220>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
-Cc: Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:55363 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751049AbaFKPOE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 Jun 2014 11:14:04 -0400
+Received: by mail-pb0-f45.google.com with SMTP id um1so7581447pbc.32
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Jun 2014 08:14:03 -0700 (PDT)
+In-Reply-To: <CA+iXiiO8ED9rdyxXh9ooDhb9OcBRH52acbqA7cgGX9kvgYaCXg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Santosh Shukla <santosh.shukla@linaro.org>
+Cc: Dave Martin <Dave.Martin@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux@arm.linux.org.uk, Catalin Marinas <catalin.marinas@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, "t.figa" <t.figa@samsung.com>, linaro-kernel <linaro-kernel@lists.linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
 
-Paul,
-
-On Wed, Jun 11, 2014 at 3:37 AM, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org> wrote:
-> On Tue, 2014-05-20 at 09:46 +0100, Lee Jones wrote:
->> On Wed, 30 Apr 2014, Doug Anderson wrote:
->> > From: Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> >
->> > This just updates include/linux/mfd/cros_ec_commands.h to match the
->> > latest EC version (which is the One True Source for such things).  See
->> > <https://chromium.googlesource.com/chromiumos/platform/ec>
-
-I believe most of your questions are answered by checking out the git
-tree referenced above.  ...but see below for details.  This header is
-a common interface between the kernel and the EC.
-
-
->> > [dianders: took today's ToT version from the Chromium OS EC; deleted
->> > references to cros_ec_dev and cros_ec_lpc since those aren't upstream
->> > yet]
->> >
->> > Signed-off-by: Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> > Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> > Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->> > Reviewed-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> > Tested-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> > Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> > ---
->> > Changes in v3: None
->> > Changes in v2: None
->> >
->> >  drivers/mfd/cros_ec.c                |    2 +-
->> >  include/linux/mfd/cros_ec.h          |    4 +-
->> >  include/linux/mfd/cros_ec_commands.h | 1128 +++++++++++++++++++++++++++++++---
->> >  3 files changed, 1059 insertions(+), 75 deletions(-)
+On 06/04/14 17:07, Santosh Shukla wrote:
+> On 2 June 2014 15:40, Dave Martin<Dave.Martin@arm.com>  wrote:
+>> On Mon, May 26, 2014 at 09:23:45PM +0530, Santosh Shukla wrote:
+>>> From: santosh shukla<santosh.shukla@linaro.org>
+>>>
+>>> Add non-global symbol .LLl2x0_regs_phys to avoid build break in thumb2 mode.
+>>>
+>>> IIUC, arm assembler fail to load value of "global" variable
+>>> l2xo_regs_phys for thum2 mode and wrapping it in non-global symbol like
+>>> .Ll2x0_regs_phys solves the build break issue.
+>>>
+>>> arch/arm/mach-exynos/sleep.S: Assembler messages:
+>>> arch/arm/mach-exynos/sleep.S:57: Error: invalid immediate for address
+>>> calculation (value = 0x00000004)
+>>>
+>>> fix inspired from [1]
+>>>
+>>> [1] https://lkml.org/lkml/2010/3/31/235
+>>>
+>>> Signed-off-by: santosh shukla<santosh.shukla@linaro.org>
 >>
->> Applied, thanks.
+>> Reviewed-by: Dave Martin<Dave.Martin@arm.com>
+>>
 >
-> This patch is included in linux-next since next-20140521. I'm not sure
-> why I waited three weeks before sending this question...
+> Thanks.
 >
->> > [...]
->> > diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
->> > index 86fd069..7853a64 100644
->> > --- a/include/linux/mfd/cros_ec_commands.h
->> > +++ b/include/linux/mfd/cros_ec_commands.h
->>> [...]
->> > @@ -1206,14 +1865,231 @@ struct ec_params_force_idle {
->> > [...]
->> > +/*
->> > + * Known param numbers are defined here. Ranges are reserved for board-specific
->> > + * params, which are handled by the particular implementations.
->> > + */
->> > +enum charge_state_params {
->> > +   CS_PARAM_CHG_VOLTAGE,         /* charger voltage limit */
->> > +   CS_PARAM_CHG_CURRENT,         /* charger current limit */
->> > +   CS_PARAM_CHG_INPUT_CURRENT,   /* charger input current limit */
->> > +   CS_PARAM_CHG_STATUS,          /* charger-specific status */
->> > +   CS_PARAM_CHG_OPTION,          /* charger-specific options */
->> > +   /* How many so far? */
->> > +   CS_NUM_BASE_PARAMS,
->> > +
->> > +   /* Range for CONFIG_CHARGER_PROFILE_OVERRIDE params */
+> Hi Kukjin, if this patch ok with you then can you pick it up.
 >
-> CONFIG_CHARGER_PROFILE_OVERRIDE doesn't match anything in linux-next. Is
-> a Kconfig symbol CHARGER_PROFILE_OVERRIDE perhaps queued somewhere?
+Sure, I've applied this into fixes for 3.16.
 
-This is a config option on the ChromeOS EC
-<https://chromium.googlesource.com/chromiumos/platform/ec>.  Doing a
-grep there:
-
-board/samus/board.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
-common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
-common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
-common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
-driver/battery/samus.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
-driver/battery/samus.c:#endif   /* CONFIG_CHARGER_PROFILE_OVERRIDE */
-include/config.h:#undef CONFIG_CHARGER_PROFILE_OVERRIDE
-include/ec_commands.h:  /* Range for CONFIG_CHARGER_PROFILE_OVERRIDE params */
-test/test_config.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
+Thanks,
+Kukjin
 
 
->> > +   CS_PARAM_CUSTOM_PROFILE_MIN = 0x10000,
->> > +   CS_PARAM_CUSTOM_PROFILE_MAX = 0x1ffff,
->> > +
->
-> I guess so, because these two constants aren't used anywhere.
-
-A grep from the EC sources:
-
-common/charge_state_v2.c:               if (in->get_param.param >=
-CS_PARAM_CUSTOM_PROFILE_MIN &&
-common/charge_state_v2.c:               if (in->set_param.param >=
-CS_PARAM_CUSTOM_PROFILE_MIN &&
-driver/battery/samus.c:#define PARAM_FASTCHARGE
-(CS_PARAM_CUSTOM_PROFILE_MIN + 0)
-include/ec_commands.h:  CS_PARAM_CUSTOM_PROFILE_MIN = 0x10000,
-test/sbs_charging_v2.c: if (param == CS_PARAM_CUSTOM_PROFILE_MIN) {
-test/sbs_charging_v2.c: if (param == CS_PARAM_CUSTOM_PROFILE_MIN) {
-test/sbs_charging_v2.c: params.get_param.param = CS_PARAM_CUSTOM_PROFILE_MIN;
-test/sbs_charging_v2.c: params.set_param.param = CS_PARAM_CUSTOM_PROFILE_MIN;
-util/ectool.c:          printf("  0x%x - 0x%x\n", CS_PARAM_CUSTOM_PROFILE_MIN,
-
--Doug
+>> The binutils folks insist that this is not a bug in gas.  (I disagreed, but
+>> it's a grey area.)  This is the established pattern for working round this
+>> issue -- looks fine to me.
+>>
+>> Cheers
+>> ---Dave
