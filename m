@@ -1,82 +1,129 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RESEND PATCH] ARM: EXYNOS: Fix the sequence of secondary CPU boot
- for Exynos3250
-Date: Wed, 11 Jun 2014 09:52:19 +0200
-Message-ID: <1402473139.24049.6.camel@AMDC1943>
-References: <1402442827-2321-1-git-send-email-cw00.choi@samsung.com>
- <5397963F.30109@gmail.com> <53979871.2020903@samsung.com>
- <53979B52.5000902@gmail.com>
+Subject: Re: [PATCH] Exynos4: cpuidle: support dual CPUs with AFTR state
+Date: Wed, 11 Jun 2014 10:50:43 +0200
+Message-ID: <1402476643.32147.6.camel@AMDC1943>
+References: <1396604925-18383-1-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:64497 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755279AbaFKHwK (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34190 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753092AbaFKIud (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jun 2014 03:52:10 -0400
-In-reply-to: <53979B52.5000902@gmail.com>
+	Wed, 11 Jun 2014 04:50:33 -0400
+In-reply-to: <1396604925-18383-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux@arm.linux.org.uk, kgene.kim@samsung.com, t.figa@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, ccross@google.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com
 
-On =C5=9Bro, 2014-06-11 at 01:57 +0200, Tomasz Figa wrote:
-> On 11.06.2014 01:44, Chanwoo Choi wrote:
-> > On 06/11/2014 08:35 AM, Tomasz Figa wrote:
-> >> Hi Chanwoo,
-> >>
-> >> On 11.06.2014 01:27, Chanwoo Choi wrote:
-> >>> This patch set AUTOWAKEUP_EN bit to ARM_CORE_CONFIGURATION regist=
-er
-> >>> because Exynos3250 removes WFE in secure mode so that turn on aut=
-omatically
-> >>> after setting CORE_LOCAL_PWR_EN. Also, This patch use dbs_sev() m=
-acro
-> >>> to guarantee the data synchronization of command instead of IPI_W=
-AKEUP
-> >>> because Exynos3250 don't have WFE mode in secue mode.
-> >>>
-> >>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> >>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >>> ---
-> >>>  arch/arm/mach-exynos/platsmp.c  | 9 ++++++++-
-> >>>  arch/arm/mach-exynos/pm.c       | 8 ++++++--
-> >>>  arch/arm/mach-exynos/regs-pmu.h | 4 ++++
-> >>>  3 files changed, 18 insertions(+), 3 deletions(-)
-> >>>
-> >>
-> >> This patch seems to be unneeded with Krzysztof's patch send a whil=
-e ago
-> >> [1]. As reported by Krzysztof, that patch apparently fixes SMP sup=
-port
-> >> on Exynos3250 and is much smaller and less invasive.
-> >>
-> >> [1] - http://thread.gmane.org/gmane.linux.kernel.samsung-soc/32809
-> >=20
-> > OK,
-> > But Krzysztof's patch didn't include set S5P_CORE_AUTOWAKEUP_EN in =
-EXYNOS_ARM_CORE_CONFIGURATION(cpu).
-> > and then use arch_send_wakeup_ipi_mask(cpumask_of(cpu)) command ins=
-tead of dsb_sev(). Exynos3250 don't need
-> > send IPI message.
+On pi=C4=85, 2014-04-04 at 11:48 +0200, Daniel Lezcano wrote:
+> The following driver is for exynos4210. I did not yet finished the ot=
+her boards, so
+> I created a specific driver for 4210 which could be merged later.
 >=20
-> I don't know technical details about CPU boot-up on Exynos3250 as I
-> haven't worked too much with this platform. According to my conversat=
-ion
-> with Krzysztof, he found S5P_CORE_AUTOWAKEUP_EN and dsb_sev() to be n=
-ot
-> needed. Instead S5P_CORE_WAKEUP_FROM_LOCAL_CFG can be set in
-> EXYNOS_ARM_CORE1_STATUS and then normal arch_send_wakeup_ipi_mask()
-> used. He might be able to provide more details.
+> The driver is based on Colin Cross's driver found at:
+>=20
+> https://android.googlesource.com/kernel/exynos/+/e686b1ec67423c40b4fd=
+f811f9a4dfa3b393a010%5E%5E!/
+>=20
+> This one was based on a 3.4 kernel and an old API.
+>=20
+> It has been refreshed, simplified and based on the recent code cleanu=
+p I sent
+> today.
+>=20
+> The AFTR could be entered when all the cpus (except cpu0) are down. I=
+n order to
+> reach this situation, the couple idle states are used.
+>=20
+> There is a sync barrier at the entry and the exit of the low power fu=
+nction. So
+> all cpus will enter and exit the function at the same time.
+>=20
+> At this point, CPU0 knows the other cpu will power down itself. CPU0 =
+waits for
+> the CPU1 to be powered down and then initiate the AFTR power down seq=
+uence.
+>=20
+> No interrupts are handled by CPU1, this is why we switch to the timer=
+ broadcast
+> even if the local timer is not impacted by the idle state.
+>=20
+> When CPU0 wakes up, it powers up CPU1 and waits for it to boot. Then =
+they both
+> exit the idle function.
+>=20
+> This driver allows the exynos4210 to have the same power consumption =
+at idle
+> time than the one when we have to unplug CPU1 in order to let CPU0 to=
+ reach
+> the AFTR state.
+>=20
+> This patch is a RFC because, we have to find a way to remove the macr=
+os
+> definitions and cpu powerdown function without pulling the arch depen=
+dent
+> headers.
+>=20
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  arch/arm/mach-exynos/common.c        |   11 +-
+>  drivers/cpuidle/Kconfig.arm          |    8 ++
+>  drivers/cpuidle/Makefile             |    1 +
+>  drivers/cpuidle/cpuidle-exynos4210.c |  226 ++++++++++++++++++++++++=
+++++++++++
+>  4 files changed, 245 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/cpuidle/cpuidle-exynos4210.c
 
-I tried to avoid setting S5P_CORE_AUTOWAKEUP_EN because of simple
-reason: in my SoC documentation this field is not documented. The
-ARM_CORE_CONFIGURATION register has only "LOCAL_PWR_CFG" field and
-nothing more.
+(...)
 
-As for the IPI wakeup - I think it makes code cleaner than adding 'if'
-statement for specific chipset.
+> diff --git a/drivers/cpuidle/cpuidle-exynos4210.c b/drivers/cpuidle/c=
+puidle-exynos4210.c
+> new file mode 100644
+> index 0000000..56f6d51
+> --- /dev/null
+> +++ b/drivers/cpuidle/cpuidle-exynos4210.c
+> @@ -0,0 +1,226 @@
+> +/*
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * Copyright (c) 2014 Linaro : Daniel Lezcano <daniel.lezcano@linaro=
+=2Eorg>
+> + *		http://www.linaro.org
+> + *
+> + * Based on the work of Colin Cross <ccross@android.com>
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/cpuidle.h>
+> +#include <linux/cpu_pm.h>
+> +#include <linux/io.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <asm/proc-fns.h>
+> +#include <asm/suspend.h>
+> +#include <asm/cpuidle.h>
+> +
+> +#include <plat/pm.h>
+> +#include <plat/cpu.h>
+> +#include <plat/map-base.h>
+> +#include <plat/map-s5p.h>
+> +
+> +static atomic_t exynos_idle_barrier;
+
+Hi,
+
+Shouldn't the exynos_idle_barrier be initialized here?
+
+I know you sent the patch almost 2 months ago but I stomped on this
+while testing it on Exynos3250.
 
 Best regards,
 Krzysztof
