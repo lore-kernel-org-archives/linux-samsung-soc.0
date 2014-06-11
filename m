@@ -1,87 +1,94 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: drm/exynos: consider deferred probe case
-Date: Wed, 11 Jun 2014 15:12:37 +0900
-Message-ID: <5397F355.4060105@samsung.com>
-References: <20140610123837.GA7854@mwanda>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH 1/2 v2] spi: s3c64xx: use "cs-gpios" from spi node instead
+ of "cs-gpio"
+Date: Wed, 11 Jun 2014 11:46:00 +0530
+Message-ID: <CAHfPSqDPCMKkNheKsLcqLg3HQP-qsOuTissggRzFGeGBR92bxQ@mail.gmail.com>
+References: <1402394881-31564-1-git-send-email-ch.naveen@samsung.com>
+ <1402394881-31564-2-git-send-email-ch.naveen@samsung.com> <53976154.60308@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:20926 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752544AbaFKGMj (ORCPT
+Received: from mail-qa0-f50.google.com ([209.85.216.50]:62478 "EHLO
+	mail-qa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750976AbaFKGQV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jun 2014 02:12:39 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N6Z008BYQL14DA0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Jun 2014 15:12:37 +0900 (KST)
-In-reply-to: <20140610123837.GA7854@mwanda>
+	Wed, 11 Jun 2014 02:16:21 -0400
+In-Reply-To: <53976154.60308@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, Kukjin Kim <kgene.kim@samsung.com>, cpgs@samsung.com, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>
 
+Hello Tomasz,
 
-Hello Dan,
-
-On 2014=EB=85=84 06=EC=9B=94 10=EC=9D=BC 21:38, Dan Carpenter wrote:
-> Hello Inki Dae,
->=20
-> The patch df5225bc9a87: "drm/exynos: consider deferred probe case"
-> from May 29, 2014, leads to the following static checker warning:
->=20
-> 	drivers/gpu/drm/exynos/exynos_drm_fimd.c:996 fimd_probe()
-> 	warn: 'ctx->display' isn't an ERR_PTR
->=20
-> drivers/gpu/drm/exynos/exynos_drm_fimd.c
->    994 =20
->    995          ctx->display =3D exynos_dpi_probe(dev);
->    996          if (IS_ERR(ctx->display))
->    997                  return PTR_ERR(ctx->display);
->    998 =20
->=20
-> Smatch is complaining because my config has CONFIG_DRM_EXYNOS_DPI
-> disabled.
->=20
-> 1) If CONFIG_DRM_EXYNOS_DPI isn't enabled, we still return "0".  That
-> will cause a Sparse warning.
+On 11 June 2014 01:19, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Naveen,
 >
+> On 10.06.2014 12:08, Naveen Krishna Chatradhi wrote:
+>> Currently, spi-s3c64xx.c needs "cs-gpio" chip select GPIO to be
+>> defined under "controller-data" node under each slave node.
+>
+> [snip]
+>
+>> @@ -85,6 +83,7 @@ Example:
+>>               #size-cells = <0>;
+>>               pinctrl-names = "default";
+>>               pinctrl-0 = <&spi0_bus>;
+>> +             cs-gpios = <&gpa2 5 1 0 3>;
+>
+> While at it, you might also update the example to something more
+> appropriate on Samsung platforms, e.g. <&gpa2 5 0>;
+Sylwester gave this comment, will club with the other changes.
+>
+>>
+>>               w25q80bw@0 {
+>>                       #address-cells = <1>;
+>
+> [snip]
+>
+>> +static struct s3c64xx_spi_csinfo *s3c64xx_get_cs_gpios(struct spi_device *spi)
+>> +{
+>> +     struct device_node *parent_np = NULL;
+>> +     struct s3c64xx_spi_driver_data *sdd;
+>> +     struct s3c64xx_spi_csinfo *cs;
+>> +
+>> +     parent_np = of_get_parent(spi->dev.of_node);
+>> +     if (!parent_np) {
+>> +             dev_err(&spi->dev, "Parent node not found\n");
+>>               return ERR_PTR(-EINVAL);
+>>       }
+>>
+>> +     sdd = spi_master_get_devdata(spi->master);
+>> +
+>>       cs = kzalloc(sizeof(*cs), GFP_KERNEL);
+>>       if (!cs) {
+>> -             of_node_put(data_np);
+>> +             of_node_put(parent_np);
+>>               return ERR_PTR(-ENOMEM);
+>>       }
+>>
+>>       /* The CS line is asserted/deasserted by the gpio pin */
+>>       if (sdd->cs_gpio)
+>> -             cs->line = of_get_named_gpio(data_np, "cs-gpio", 0);
+>> +             cs->line = of_get_named_gpio(parent_np, "cs-gpios", 0);
+>
+> This is wrong. The "cs-gpios" property is supposed to be an array,
+> indexed by chip select number of SPI devices (indicated by their "reg"
+> properties).
+>
+> Moreover, is there a need to parse this manually in this driver? I can
+> see respective parsing code in of_spi_register_master().
 
-It would be no problem. This code will return PTR_ERR(ctx->dislay) only
-in case that dpi module is enabled.
+Right, spi_add_device() parses the "cs-gpios" and gives the "spi->cs_gpio"
+before calling the driver setup() function.
 
-> 2) Also there are still a number of checks for "if (ctx->display)".
-> Those things are weird to me, are those checks to see
-> CONFIG_DRM_EXYNOS_DPI is enabled or are they checking that
-> exynos_dpi_probe() succeeded?
->=20
+Will respin with appropriate changes.
+>
+> Best regards,
+> Tomasz
 
-Right. crtc driver, fimd, needs encoder/connector objects. In Exynos dr=
-m
-case, encoder/connector can be created by dpi module for parallel panel=
-,
-by dsi module for mipi dsi based panel, or by dp module for eDP based p=
-anel.
 
-So if some board has a parallel panel, encoder/connector objects will b=
-e
-created by dpi module, and then fimd module will refer to ctx->display
-object to control the parallel panel device. Otherwise, dsi or dp
-modules will create encoder/connector objects in its driver, and one of
-them will use its own display object to control corresponding panel dev=
-ice.
 
-Thanks,
-Inki Dae
-
-> regards,
-> dan carpenter
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
+-- 
+Shine bright,
+(: Nav :)
