@@ -1,196 +1,95 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V4 03/10] drm/exynos: dp: modify driver to support drm_panel
-Date: Wed, 11 Jun 2014 23:57:01 +0530
-Message-ID: <1402511228-18945-4-git-send-email-ajaykumar.rs@samsung.com>
-References: <1402511228-18945-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 1/2 v3] spi: s3c64xx: use "cs-gpios" from spi node instead
+ of "cs-gpio"
+Date: Wed, 11 Jun 2014 20:28:59 +0200
+Message-ID: <53989FEB.1010205@gmail.com>
+References: <1402468318-7342-1-git-send-email-ch.naveen@samsung.com> <539839D6.1050305@collabora.co.uk> <CAHfPSqCYqTRBBH56y81na-t18pvoPmyWobZwXNgkrtq=H_79CQ@mail.gmail.com> <5398918F.4060800@collabora.co.uk> <539896FB.4050702@gmail.com> <CAHfPSqB3V+vBCj03WLkeLQ5e7O4r+pUKQ-yZpK=tdAqVV1GuLw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:64033 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754981AbaFKS3N (ORCPT
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:58124 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752640AbaFKS3S (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jun 2014 14:29:13 -0400
-In-reply-to: <1402511228-18945-1-git-send-email-ajaykumar.rs@samsung.com>
+	Wed, 11 Jun 2014 14:29:18 -0400
+In-Reply-To: <CAHfPSqB3V+vBCj03WLkeLQ5e7O4r+pUKQ-yZpK=tdAqVV1GuLw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, thierry.reding@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, marcheu@chromium.org, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, Kukjin Kim <kgene.kim@samsung.com>, cpgs@samsung.com, devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>
 
-Add drm_panel controls to support powerup/down of the
-eDP panel, if one is present at the sink side.
+On 11.06.2014 20:23, Naveen Krishna Ch wrote:
+> Hello Tomasz,
+> 
+> On 11 June 2014 23:20, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> On 11.06.2014 19:27, Javier Martinez Canillas wrote:
+>>> On 06/11/2014 01:38 PM, Naveen Krishna Ch wrote:
+>>>> On 11 June 2014 16:43, Javier Martinez Canillas
+>>>> <javier.martinez@collabora.co.uk> wrote:
+>>>>> On 06/11/2014 08:31 AM, Naveen Krishna Chatradhi wrote:
+>>
+>> [snip]
+>>
+>>>>>
+>>>>>>               return ERR_PTR(-EINVAL);
+>>>>>>       }
+>>>>>> +     cs->line = spi->cs_gpio;
+>>>>>>
+>>>>>
+>>>>> I wonder why are you keeping cs->line? AFAICT it's only used in
+>>>>> s3c64xx_spi_setup() to request the GPIO and since you get the struct spi_device
+>>>>> pointer as a parameter then you can just use spi->s_gpio instead.
+>>>> I'm trying not to touch the non-DT part of the code.
+>>>>
+>>>> struct s3c64xx_spi_csinfo *cs = spi->controller_data;
+>>>>
+>>>> This will update the cs->line and cs->fb_delay in case of non-DT.
+>>>
+>>> I see, then I prefer the opposite and do something like this on s3c64xx_spi_probe():
+>>>
+>>> if (!pdev->dev.of_node)
+>>>        spi->cs_gpio = cs->line;
+>>
+>> Hmm, as far as I understand, spi here is spi_device, not spi_master. I
+>> don't think you have access to SPI devices on your bus in controller
+>> probe().
+>>
+>> What I think could work is reworking the driver to:
+>>
+>> - in DT case, don't do anything in the driver about the GPIO chip
+>> select, because it will be handled automatically by the core.
+> But, i see that gpio_request_one is needed in _setup function in the driver.
+> Except that no other gpio related operation is needed in the driver.
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
- .../devicetree/bindings/video/exynos_dp.txt        |    2 +
- drivers/gpu/drm/exynos/Kconfig                     |    1 +
- drivers/gpu/drm/exynos/exynos_dp_core.c            |   45 ++++++++++++++++----
- drivers/gpu/drm/exynos/exynos_dp_core.h            |    2 +
- 4 files changed, 41 insertions(+), 9 deletions(-)
+This should be handled by SPI core as well, but apparently it isn't. So
+the scheme of work in s3c64xx_spi_setup() changes as in pseudocode below:
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
-index 53dbccf..c029a09 100644
---- a/Documentation/devicetree/bindings/video/exynos_dp.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-@@ -51,6 +51,8 @@ Required properties for dp-controller:
- 			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
- 	- display-timings: timings for the connected panel as described by
- 		Documentation/devicetree/bindings/video/display-timing.txt
-+	-edp-panel:
-+		phandle for the edp/lvds drm_panel node.
- 
- Optional properties for dp-controller:
- 	-interlaced:
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 178d2a9..fd1c070 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -52,6 +52,7 @@ config DRM_EXYNOS_DP
- 	bool "EXYNOS DRM DP driver support"
- 	depends on DRM_EXYNOS_FIMD && ARCH_EXYNOS && (DRM_PTN3460=n || DRM_PTN3460=y || DRM_PTN3460=DRM_EXYNOS)
- 	default DRM_EXYNOS
-+	select DRM_PANEL
- 	help
- 	  This enables support for DP device.
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 96b4e82..aca739d 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -28,6 +28,7 @@
- #include <drm/drmP.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
-+#include <drm/drm_panel.h>
- #include <drm/bridge/ptn3460.h>
- 
- #include "exynos_drm_drv.h"
-@@ -1029,6 +1030,9 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
- 	drm_sysfs_connector_add(connector);
- 	drm_mode_connector_attach_encoder(connector, encoder);
- 
-+	if (dp->edp_panel)
-+		drm_panel_attach(dp->edp_panel, &dp->connector);
-+
- 	return 0;
- }
- 
-@@ -1063,11 +1067,13 @@ static void exynos_dp_poweron(struct exynos_dp_device *dp)
- 	if (dp->dpms_mode == DRM_MODE_DPMS_ON)
- 		return;
- 
-+	drm_panel_prepare(dp->edp_panel);
- 	clk_prepare_enable(dp->clock);
- 	exynos_dp_phy_init(dp);
- 	exynos_dp_init_dp(dp);
- 	enable_irq(dp->irq);
- 	exynos_dp_setup(dp);
-+	drm_panel_enable(dp->edp_panel);
- }
- 
- static void exynos_dp_poweroff(struct exynos_dp_device *dp)
-@@ -1075,10 +1081,12 @@ static void exynos_dp_poweroff(struct exynos_dp_device *dp)
- 	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
- 		return;
- 
-+	drm_panel_disable(dp->edp_panel);
- 	disable_irq(dp->irq);
- 	flush_work(&dp->hotplug_work);
- 	exynos_dp_phy_exit(dp);
- 	clk_disable_unprepare(dp->clock);
-+	drm_panel_unprepare(dp->edp_panel);
- }
- 
- static void exynos_dp_dpms(struct exynos_drm_display *display, int mode)
-@@ -1209,8 +1217,17 @@ err:
- static int exynos_dp_dt_parse_panel(struct exynos_dp_device *dp)
- {
- 	int ret;
-+	struct device_node *videomode_parent;
-+
-+	/* Receive video timing info from panel node
-+	 * if there is a panel node
-+	 */
-+	if (dp->panel_node)
-+		videomode_parent = dp->panel_node;
-+	else
-+		videomode_parent = dp->dev->of_node;
- 
--	ret = of_get_videomode(dp->dev->of_node, &dp->panel.vm,
-+	ret = of_get_videomode(videomode_parent, &dp->panel.vm,
- 			OF_USE_NATIVE_MODE);
- 	if (ret) {
- 		DRM_ERROR("failed: of_get_videomode() : %d\n", ret);
-@@ -1224,16 +1241,10 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct drm_device *drm_dev = data;
- 	struct resource *res;
--	struct exynos_dp_device *dp;
-+	struct exynos_dp_device *dp = exynos_dp_display.ctx;
- 	unsigned int irq_flags;
--
- 	int ret = 0;
- 
--	dp = devm_kzalloc(&pdev->dev, sizeof(struct exynos_dp_device),
--				GFP_KERNEL);
--	if (!dp)
--		return -ENOMEM;
--
- 	dp->dev = &pdev->dev;
- 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
- 
-@@ -1307,7 +1318,6 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	disable_irq(dp->irq);
- 
- 	dp->drm_dev = drm_dev;
--	exynos_dp_display.ctx = dp;
- 
- 	platform_set_drvdata(pdev, &exynos_dp_display);
- 
-@@ -1334,6 +1344,8 @@ static const struct component_ops exynos_dp_ops = {
- 
- static int exynos_dp_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
-+	struct exynos_dp_device *dp;
- 	int ret;
- 
- 	ret = exynos_drm_component_add(&pdev->dev, EXYNOS_DEVICE_TYPE_CONNECTOR,
-@@ -1341,6 +1353,21 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	dp = devm_kzalloc(&pdev->dev, sizeof(struct exynos_dp_device),
-+				GFP_KERNEL);
-+	if (!dp)
-+		return -ENOMEM;
-+
-+	dp->panel_node = of_parse_phandle(dev->of_node, "edp-panel", 0);
-+	if (dp->panel_node) {
-+		dp->edp_panel = of_drm_find_panel(dp->panel_node);
-+		of_node_put(dp->panel_node);
-+		if (!dp->edp_panel)
-+			return -EPROBE_DEFER;
-+	}
-+
-+	exynos_dp_display.ctx = dp;
-+
- 	ret = component_add(&pdev->dev, &exynos_dp_ops);
- 	if (ret)
- 		exynos_drm_component_del(&pdev->dev,
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/exynos/exynos_dp_core.h
-index 02cc4f9..3c29e4e 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.h
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
-@@ -146,9 +146,11 @@ struct link_train {
- 
- struct exynos_dp_device {
- 	struct device		*dev;
-+	struct device_node	*panel_node;
- 	struct drm_device	*drm_dev;
- 	struct drm_connector	connector;
- 	struct drm_encoder	*encoder;
-+	struct drm_panel	*edp_panel;
- 	struct clk		*clock;
- 	unsigned int		irq;
- 	void __iomem		*reg_base;
--- 
-1.7.9.5
+	if (!DT)
+		spi->cs_gpio = cs->line;
+
+	if (gpio_is_valid(spi->cs_gpio))
+		gpio_request_one(spi->cs_gpio);
+
+and in s3c64xx_spi_cleanup():
+
+	if (gpio_is_valid(spi->cs_gpio))
+		gpio_free(spi->cs_gpio);
+
+	if (!DT)
+		spi->cs_gpio = -ENOENT;
+
+>>
+>> - in non-DT case, in s3c64xx_spi_setup(), just take the GPIO pin from
+>> s3c64xx_spi_csinfo struct passed through spi->controller_data, request
+>> it and save it to spi->cs_gpio,
+>>
+>> - in non-DT case, in s3c64xx_spi_cleanup(), free the GPIO requested in
+>> s3c64xx_spi_setup() and set spi->cs_gpio to -ENOENT (as done initially
+>> in spi_alloc_device()).
+> Its better going back to the working way.
+
+Hmm?
+
+Best regards,
+Tomasz
