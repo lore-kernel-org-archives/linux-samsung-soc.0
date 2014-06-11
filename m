@@ -1,7 +1,7 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
 Subject: Re: [PATCH] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
-Date: Wed, 11 Jun 2014 18:59:46 +0530
-Message-ID: <CANuQgHGM=NuyBvJfGRuDk3MepzBzqC7du6rsK1GmK-Of0c5-vA@mail.gmail.com>
+Date: Wed, 11 Jun 2014 19:04:58 +0530
+Message-ID: <CAM4voamzu1L2pF=zTbN7eUrq10-JHfrxwVmoXV__LnoTa8pCPA@mail.gmail.com>
 References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
 	<20140607181221.GB25068@e102568-lin.cambridge.arm.com>
 	<CAD=FV=X17PeJ6JPE9Qyc1QT07AvA2PTE69Q87gz9a6MdUHgi4A@mail.gmail.com>
@@ -15,14 +15,22 @@ References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
 	<20140611131500.GA19884@red-moon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f179.google.com ([209.85.216.179]:51956 "EHLO
+	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751328AbaFKNe7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 Jun 2014 09:34:59 -0400
 In-Reply-To: <20140611131500.GA19884@red-moon>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Chander Kashyap <k.chander@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Doug Anderson <dianders@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "olof@lixom.net" <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Chander Kashyap <k.chander@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Doug Anderson <dianders@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chander Kashyap <chander.kashyap@linaro.org>, "olof@lixom.net" <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 11 June 2014 18:45, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
+Hi Lorenzo and Chander,
+
+On Wed, Jun 11, 2014 at 6:45 PM, Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
 > On Wed, Jun 11, 2014 at 01:14:21PM +0100, Chander Kashyap wrote:
 >> On Wed, Jun 11, 2014 at 3:43 PM, Lorenzo Pieralisi
 >> <lorenzo.pieralisi@arm.com> wrote:
@@ -59,6 +67,7 @@ On 11 June 2014 18:45, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
 >> > I am pointing this out since in the MCPM backend I noticed:
 >> >
 >> > "/* TODO: Turn off the cluster here to save power. */"
+This is something that pends on me.
 >> >
 >> > I do not see any cluster power down request in the down path.
 >> >
@@ -78,9 +87,6 @@ On 11 June 2014 18:45, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
 >>
 >> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31104.html
 >
-
-Hi Lorenzo,
-
 > Hi Chander,
 >
 > thanks. So, as a heads-up:
@@ -90,24 +96,20 @@ Hi Lorenzo,
 >    are likely to be wrong, since they are for cluster shutdown and for
 >    TC2, not core power gating that should require shorter target_residencies.
 >    On top of that, L2 is cleaned and invalidated for nothing.
-
-Yes true.
-
 > 2) when cluster support is merged, you might want to extend the CPUidle
 >    driver to add an additional state (ie C1 core gating, C2 cluster
 >    gating) and to do that you should extend the driver and the MCPM
 >    back-end accordingly, I discussed that with Nico already some time ago
 >    and actually it should be fairly easy to do but we have got to talk
 >    about that.
+
+I have already implemented the missing cluster power down code and
+tested it on an exynos5420 based chromebook. I plan to post the patch
+as soon as I am back in office, which should be early next week.
+
+Regards,
+Abhilash
 >
-
-Yes thats the final goal to add two states (C1 core gating, C2 cluster gating).
-But that will be done in combination with yours patches(to pass
-cpuidle data thru DT).
-
-So finally the mcpm backend will take care for c1 and c2 cpuidle state
-implementation.
-
 > Thank you,
 > Lorenzo
 >
@@ -143,9 +145,8 @@ implementation.
 >> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >>
 >
-
-
-
--- 
-with warm regards,
-Chander Kashyap
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
