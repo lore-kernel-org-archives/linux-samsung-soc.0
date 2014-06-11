@@ -1,63 +1,102 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/5] ARM: mm: cache-l2x0: Add base address argument to
- write_sec callback
-Date: Wed, 11 Jun 2014 18:07:24 +0200
-Message-ID: <53987EBC.70307@samsung.com>
-References: <1402500612-4778-1-git-send-email-t.figa@samsung.com>
- <1402500612-4778-2-git-send-email-t.figa@samsung.com>
- <CAJgR-BhgZ7k_Uk_Md79pkZKQXTZUjspqq0u9sa9D69Kixy7DhA@mail.gmail.com>
+From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/3] clk: exynos-audss: Keep the parent of mout_audss always
+ enabled
+Date: Wed, 11 Jun 2014 09:50:27 -0700
+Message-ID: <20140611165027.6562.64928@quantum>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
+ <1402464739-19044-2-git-send-email-tushar.b@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAJgR-BhgZ7k_Uk_Md79pkZKQXTZUjspqq0u9sa9D69Kixy7DhA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Loeliger <loeliger@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Laura Abbott <lauraa@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Robin Holt <holt@sgi.com>, Russell King <linux@arm.linux.org.uk>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1402464739-19044-2-git-send-email-tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 11.06.2014 18:00, Jon Loeliger wrote:
->> diff --git a/arch/arm/include/asm/mach/arch.h b/arch/arm/include/asm/mach/arch.h
->> index 060a75e..ddaebcd 100644
->> --- a/arch/arm/include/asm/mach/arch.h
->> +++ b/arch/arm/include/asm/mach/arch.h
->> @@ -46,7 +46,8 @@ struct machine_desc {
->>         enum reboot_mode        reboot_mode;    /* default restart mode */
->>         unsigned                l2c_aux_val;    /* L2 cache aux value   */
->>         unsigned                l2c_aux_mask;   /* L2 cache aux mask    */
->> -       void                    (*l2c_write_sec)(unsigned long, unsigned);
->> +       void                    (*l2c_write_sec)(void __iomem *,
->> +                                                unsigned long, unsigned);
->>         struct smp_operations   *smp;           /* SMP operations       */
->>         bool                    (*smp_init)(void);
->>         void                    (*fixup)(struct tag *, char **);
+Quoting Tushar Behera (2014-06-10 22:32:17)
+> When the output clock of AUDSS mux is disabled, we are getting kernel
+> oops while doing a clk_get() on other clocks provided by AUDSS. Though
+> user manual doesn't specify this dependency, we came across this issue
+> while disabling the parent of AUDSS mux clocks.
+
+Hi Tushar,
+
+Can you help me understand better what the actual problem is? What is
+the root cause of the kernel oops?
+
+You mention calling clk_get on child clocks of the AUDSS mux fails, but
+I cannot imagine why. How can the enable/disable state of a clock affect
+the ability to clk_get other clocks?
+
+Regards,
+Mike
+
 > 
->> diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
->> index efc5cab..1695eab 100644
->> --- a/arch/arm/mm/cache-l2x0.c
->> +++ b/arch/arm/mm/cache-l2x0.c
->> @@ -72,7 +72,7 @@ static void l2c_write_sec(unsigned long val, void __iomem *base, unsigned reg)
->>         if (val == readl_relaxed(base + reg))
->>                 return;
->>         if (outer_cache.write_sec)
->> -               outer_cache.write_sec(val, reg);
->> +               outer_cache.write_sec(base, val, reg);
->>         else
->>                 writel_relaxed(val, base + reg);
->>  }
+> Keeping the parents of AUDSS mux always enabled fixes this issue.
 > 
-> The parameter order (base, val, reg) seems very non-intuitive.
-> Are you matching some existing prototype or adhering to some
-> backwards compatibility issue?  If not wouldn't, say, (base, reg, val)
-> or (val, base, reg) be more intuitive?
-
-Hmm, I didn't think too much about this, so this order is just whatever
-first came to my mind, probably because I'm used to xxx_write(ctx, val,
-reg) accessors found in many drivers.
-
-Anyway, l2c_write_sec() in arm/mm/cache-l2x0.c, which calls
-outer_cache.write_sec(), already uses (val, base, reg) convention, so
-probably this one would be most suitable. I'll change in v2.
-
-Best regards,
-Tomasz
+> Signed-off-by: Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/clk/samsung/clk-exynos-audss.c |   17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+> index 13eae14c..1542f30 100644
+> --- a/drivers/clk/samsung/clk-exynos-audss.c
+> +++ b/drivers/clk/samsung/clk-exynos-audss.c
+> @@ -30,6 +30,8 @@ static struct clk **clk_table;
+>  static void __iomem *reg_base;
+>  static struct clk_onecell_data clk_data;
+>  
+> +static struct clk *pll_ref, *pll_in;
+> +
+>  #define ASS_CLK_SRC 0x0
+>  #define ASS_CLK_DIV 0x4
+>  #define ASS_CLK_GATE 0x8
+> @@ -83,7 +85,7 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>         const char *mout_audss_p[] = {"fin_pll", "fout_epll"};
+>         const char *mout_i2s_p[] = {"mout_audss", "cdclk0", "sclk_audio0"};
+>         const char *sclk_pcm_p = "sclk_pcm0";
+> -       struct clk *pll_ref, *pll_in, *cdclk, *sclk_audio, *sclk_pcm_in;
+> +       struct clk *cdclk, *sclk_audio, *sclk_pcm_in;
+>         const struct of_device_id *match;
+>         enum exynos_audss_clk_type variant;
+>  
+> @@ -113,10 +115,14 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  
+>         pll_ref = devm_clk_get(&pdev->dev, "pll_ref");
+>         pll_in = devm_clk_get(&pdev->dev, "pll_in");
+> -       if (!IS_ERR(pll_ref))
+> +       if (!IS_ERR(pll_ref)) {
+>                 mout_audss_p[0] = __clk_get_name(pll_ref);
+> -       if (!IS_ERR(pll_in))
+> +               clk_prepare_enable(pll_ref);
+> +       }
+> +       if (!IS_ERR(pll_in)) {
+>                 mout_audss_p[1] = __clk_get_name(pll_in);
+> +               clk_prepare_enable(pll_in);
+> +       }
+>         clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
+>                                 mout_audss_p, ARRAY_SIZE(mout_audss_p),
+>                                 CLK_SET_RATE_NO_REPARENT,
+> @@ -217,6 +223,11 @@ static int exynos_audss_clk_remove(struct platform_device *pdev)
+>                         clk_unregister(clk_table[i]);
+>         }
+>  
+> +       if (!IS_ERR(pll_in))
+> +               clk_disable_unprepare(pll_in);
+> +       if (!IS_ERR(pll_ref))
+> +               clk_disable_unprepare(pll_ref);
+> +
+>         return 0;
+>  }
+>  
+> -- 
+> 1.7.9.5
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
