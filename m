@@ -1,151 +1,43 @@
-From: Jonghwa Lee <jonghwa3.lee@samsung.com>
-Subject: [RESEND PATCH v2] clk: exynos4: Add PPMU IP block source clocks.
-Date: Wed, 11 Jun 2014 09:22:51 +0900
-Message-ID: <1402446171-3560-1-git-send-email-jonghwa3.lee@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RESEND PATCH v2] clk: exynos4: Add PPMU IP block source clocks.
+Date: Wed, 11 Jun 2014 02:30:17 +0200
+Message-ID: <5397A319.8030209@gmail.com>
+References: <1402446171-3560-1-git-send-email-jonghwa3.lee@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1402446171-3560-1-git-send-email-jonghwa3.lee@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, mturquette@linaro.org, Jonghwa Lee <jonghwa3.lee@samsung.com>
+To: Jonghwa Lee <jonghwa3.lee@samsung.com>, linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, mturquette@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos4 has saveral PPMUs and each of them has operation clock which
-can be gated through CMU's SFR control.
+Hi Jonghwa,
 
-New clocks are listed below. All clocks are added as a gate-typed clock.
+On 11.06.2014 02:22, Jonghwa Lee wrote:
+> Exynos4 has saveral PPMUs and each of them has operation clock which
+> can be gated through CMU's SFR control.
+> 
+> New clocks are listed below. All clocks are added as a gate-typed clock.
+> 
+> CLK_PPMULEFT, CLK_PPMURIGHT, CLK_PPMUCAMIF, CLK_PPMUTV, CLK_PPMUMFC_L,
+> CLK_PPMUMFC_R, CLK_G3D, CLK_PPMUIMAGE, CLK_PPMULCD0, CLK_PPMULCD1,
+> CLK_PPMUFILE, CLK_PPMUGPS, CLK_PPMUDMC0, CLK_PPMUDMC1, CLK_PPMUCPU,
+> CLK_PPMUACP,
+> 
+> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  V2 :
+>     - Change clock definition order.
+> 
+>  drivers/clk/samsung/clk-exynos4.c   |   19 +++++++++++++++++++
+>  include/dt-bindings/clock/exynos4.h |   18 ++++++++++++++++++
+>  2 files changed, 37 insertions(+)
 
-CLK_PPMULEFT, CLK_PPMURIGHT, CLK_PPMUCAMIF, CLK_PPMUTV, CLK_PPMUMFC_L,
-CLK_PPMUMFC_R, CLK_G3D, CLK_PPMUIMAGE, CLK_PPMULCD0, CLK_PPMULCD1,
-CLK_PPMUFILE, CLK_PPMUGPS, CLK_PPMUDMC0, CLK_PPMUDMC1, CLK_PPMUCPU,
-CLK_PPMUACP,
+I have already queued the original v2 you sent, just waiting for
+3.16-rc1 to be released to apply. :)
 
-Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- V2 :
-    - Change clock definition order.
-
- drivers/clk/samsung/clk-exynos4.c   |   19 +++++++++++++++++++
- include/dt-bindings/clock/exynos4.h |   18 ++++++++++++++++++
- 2 files changed, 37 insertions(+)
-
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index b4f9672..bed19b9 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -680,6 +680,8 @@ static struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
- 	 * the device name and clock alias names specified below for some
- 	 * of the clocks can be removed.
- 	 */
-+	GATE(CLK_PPMULEFT, "ppmuleft", "aclk200", GATE_IP_LEFTBUS, 1, 0, 0),
-+	GATE(CLK_PPMURIGHT, "ppmuright", "aclk200", GATE_IP_RIGHTBUS, 1, 0, 0),
- 	GATE(CLK_SCLK_HDMI, "sclk_hdmi", "mout_hdmi", SRC_MASK_TV, 0, 0, 0),
- 	GATE(CLK_SCLK_SPDIF, "sclk_spdif", "mout_spdif", SRC_MASK_PERIL1, 8, 0,
- 		0),
-@@ -695,11 +697,13 @@ static struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
- 	GATE(CLK_SROMC, "sromc", "aclk133", GATE_IP_FSYS, 11, 0, 0),
- 	GATE(CLK_SCLK_G3D, "sclk_g3d", "div_g3d", GATE_IP_G3D, 0,
- 			CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_PPMUG3D, "ppmug3d", "aclk200", GATE_IP_G3D, 1, 0, 0),
- 	GATE(CLK_USB_DEVICE, "usb_device", "aclk133", GATE_IP_FSYS, 13, 0, 0),
- 	GATE(CLK_ONENAND, "onenand", "aclk133", GATE_IP_FSYS, 15, 0, 0),
- 	GATE(CLK_NFCON, "nfcon", "aclk133", GATE_IP_FSYS, 16, 0, 0),
- 	GATE(CLK_GPS, "gps", "aclk133", GATE_IP_GPS, 0, 0, 0),
- 	GATE(CLK_SMMU_GPS, "smmu_gps", "aclk133", GATE_IP_GPS, 1, 0, 0),
-+	GATE(CLK_PPMUGPS, "ppmugps", "aclk200", GATE_IP_GPS, 2, 0, 0),
- 	GATE(CLK_SLIMBUS, "slimbus", "aclk100", GATE_IP_PERIL, 25, 0, 0),
- 	GATE(CLK_SCLK_CAM0, "sclk_cam0", "div_cam0", GATE_SCLK_CAM, 4,
- 			CLK_SET_RATE_PARENT, 0),
-@@ -781,19 +785,24 @@ static struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
- 			0, 0),
- 	GATE(CLK_SMMU_JPEG, "smmu_jpeg", "aclk160", GATE_IP_CAM, 11,
- 			0, 0),
-+	GATE(CLK_PPMUCAMIF, "ppmucamif", "aclk160", GATE_IP_CAM, 16, 0, 0),
- 	GATE(CLK_PIXELASYNCM0, "pxl_async0", "aclk160", GATE_IP_CAM, 17, 0, 0),
- 	GATE(CLK_PIXELASYNCM1, "pxl_async1", "aclk160", GATE_IP_CAM, 18, 0, 0),
- 	GATE(CLK_SMMU_TV, "smmu_tv", "aclk160", GATE_IP_TV, 4,
- 			0, 0),
-+	GATE(CLK_PPMUTV, "ppmutv", "aclk160", GATE_IP_TV, 5, 0, 0),
- 	GATE(CLK_MFC, "mfc", "aclk100", GATE_IP_MFC, 0, 0, 0),
- 	GATE(CLK_SMMU_MFCL, "smmu_mfcl", "aclk100", GATE_IP_MFC, 1,
- 			0, 0),
- 	GATE(CLK_SMMU_MFCR, "smmu_mfcr", "aclk100", GATE_IP_MFC, 2,
- 			0, 0),
-+	GATE(CLK_PPMUMFC_L, "ppmumfc_l", "aclk100", GATE_IP_MFC, 3, 0, 0),
-+	GATE(CLK_PPMUMFC_R, "ppmumfc_r", "aclk100", GATE_IP_MFC, 4, 0, 0),
- 	GATE(CLK_FIMD0, "fimd0", "aclk160", GATE_IP_LCD0, 0,
- 			0, 0),
- 	GATE(CLK_SMMU_FIMD0, "smmu_fimd0", "aclk160", GATE_IP_LCD0, 4,
- 			0, 0),
-+	GATE(CLK_PPMULCD0, "ppmulcd0", "aclk160", GATE_IP_LCD0, 5, 0, 0),
- 	GATE(CLK_PDMA0, "pdma0", "aclk133", GATE_IP_FSYS, 0,
- 			0, 0),
- 	GATE(CLK_PDMA1, "pdma1", "aclk133", GATE_IP_FSYS, 1,
-@@ -806,6 +815,7 @@ static struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
- 			0, 0),
- 	GATE(CLK_SDMMC3, "sdmmc3", "aclk133", GATE_IP_FSYS, 8,
- 			0, 0),
-+	GATE(CLK_PPMUFILE, "ppmufile", "aclk133", GATE_IP_FSYS, 17, 0, 0),
- 	GATE(CLK_UART0, "uart0", "aclk100", GATE_IP_PERIL, 0,
- 			0, 0),
- 	GATE(CLK_UART1, "uart1", "aclk100", GATE_IP_PERIL, 1,
-@@ -852,6 +862,10 @@ static struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
- 			0, 0),
- 	GATE(CLK_AC97, "ac97", "aclk100", GATE_IP_PERIL, 27,
- 			0, 0),
-+	GATE(CLK_PPMUDMC0, "ppmudmc0", "aclk133", GATE_IP_DMC, 8, 0, 0),
-+	GATE(CLK_PPMUDMC1, "ppmudmc1", "aclk133", GATE_IP_DMC, 9, 0, 0),
-+	GATE(CLK_PPMUCPU, "ppmucpu", "aclk133", GATE_IP_DMC, 10, 0, 0),
-+	GATE(CLK_PPMUACP, "ppmuacp", "aclk133", GATE_IP_DMC, 16, 0, 0),
- };
- 
- /* list of gate clocks supported in exynos4210 soc */
-@@ -863,6 +877,9 @@ static struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
- 	GATE(CLK_SMMU_G2D, "smmu_g2d", "aclk200", E4210_GATE_IP_IMAGE, 3, 0, 0),
- 	GATE(CLK_SMMU_MDMA, "smmu_mdma", "aclk200", E4210_GATE_IP_IMAGE, 5, 0,
- 		0),
-+	GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4210_GATE_IP_IMAGE, 9, 0,
-+		0),
-+	GATE(CLK_PPMULCD1, "ppmulcd1", "aclk160", E4210_GATE_IP_LCD1, 5, 0, 0),
- 	GATE(CLK_PCIE_PHY, "pcie_phy", "aclk133", GATE_IP_FSYS, 2, 0, 0),
- 	GATE(CLK_SATA_PHY, "sata_phy", "aclk133", GATE_IP_FSYS, 3, 0, 0),
- 	GATE(CLK_SATA, "sata", "aclk133", GATE_IP_FSYS, 10, 0, 0),
-@@ -906,6 +923,8 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
- 	GATE(CLK_MDMA2, "mdma2", "aclk200", E4X12_GATE_IP_IMAGE, 2, 0, 0),
- 	GATE(CLK_SMMU_MDMA, "smmu_mdma", "aclk200", E4X12_GATE_IP_IMAGE, 5, 0,
- 		0),
-+	GATE(CLK_PPMUIMAGE, "ppmuimage", "aclk200", E4X12_GATE_IP_IMAGE, 9, 0,
-+		0),
- 	GATE(CLK_MIPI_HSI, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
- 	GATE(CLK_CHIPID, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
- 	GATE(CLK_SYSREG, "sysreg", "aclk100", E4X12_GATE_IP_PERIR, 1,
-diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
-index 75aff33..7dd7ec1 100644
---- a/include/dt-bindings/clock/exynos4.h
-+++ b/include/dt-bindings/clock/exynos4.h
-@@ -230,6 +230,24 @@
- #define CLK_MOUT_G3D		394
- #define CLK_ACLK400_MCUISP	395 /* Exynos4x12 only */
- 
-+/* gate clocks - ppmu */
-+#define CLK_PPMULEFT		400
-+#define CLK_PPMURIGHT		401
-+#define CLK_PPMUCAMIF		402
-+#define CLK_PPMUTV		403
-+#define CLK_PPMUMFC_L		404
-+#define CLK_PPMUMFC_R		405
-+#define CLK_PPMUG3D		406
-+#define CLK_PPMUIMAGE		407
-+#define CLK_PPMULCD0		408
-+#define CLK_PPMULCD1		409 /* Exynos4210 only */
-+#define CLK_PPMUFILE		410
-+#define CLK_PPMUGPS		411
-+#define CLK_PPMUDMC0		412
-+#define CLK_PPMUDMC1		413
-+#define CLK_PPMUCPU		414
-+#define CLK_PPMUACP		415
-+
- /* div clocks */
- #define CLK_DIV_ISP0		450 /* Exynos4x12 only */
- #define CLK_DIV_ISP1		451 /* Exynos4x12 only */
--- 
-1.7.9.5
+Best regards,
+Tomasz
