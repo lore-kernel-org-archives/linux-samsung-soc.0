@@ -1,70 +1,83 @@
-From: Tushar Behera <trblinux@gmail.com>
-Subject: Re: exynos5420-peach-pi: linux-next boot fails unless mau_epll left
- enabled?
-Date: Wed, 11 Jun 2014 11:09:37 +0530
-Message-ID: <5397EB99.1070209@gmail.com>
-References: <7hoay6sxjl.fsf@paris.lan> <CAGa+x86ko1N+T+QAqnY+md4+nyzza_cDt0wa-s06TdCX+27fSA@mail.gmail.com> <CAOD6ATpZWEg9d7WnZ8tg9_uQJ29vMoucaOwh0_tbdRSDRj25cw@mail.gmail.com> <CAD=FV=UsVQm_pLNtPwZMNCQQSSVrx=6M8eJrNRS8VyWMQzYtAQ@mail.gmail.com> <539764AF.4090409@collabora.co.uk> <CAD=FV=UdCp0dG7tnzaSnWxhtnU46ttMOUht00DL=bfvbbt7mXQ@mail.gmail.com>
+From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/2 v2] spi: s3c64xx: use "cs-gpios" from spi node instead
+ of "cs-gpio"
+Date: Wed, 11 Jun 2014 11:40:40 +0530
+Message-ID: <CAHfPSqBrAPa6eo63OFk0-TQtKY9GcOv1AXrN0rtsCxfU6fC5uQ@mail.gmail.com>
+References: <1402394881-31564-1-git-send-email-ch.naveen@samsung.com>
+ <1402394881-31564-2-git-send-email-ch.naveen@samsung.com> <CAD=FV=WgvyF-P+69SdmCGX0jxJ3FVxpa+AcgQKg-Emya_W-w3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f50.google.com ([209.85.160.50]:47419 "EHLO
-	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751127AbaFKFjn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jun 2014 01:39:43 -0400
-Received: by mail-pb0-f50.google.com with SMTP id rp16so1621670pbb.37
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jun 2014 22:39:42 -0700 (PDT)
-In-Reply-To: <CAD=FV=UdCp0dG7tnzaSnWxhtnU46ttMOUht00DL=bfvbbt7mXQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAD=FV=WgvyF-P+69SdmCGX0jxJ3FVxpa+AcgQKg-Emya_W-w3Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Jaswinder Singh <jaswinder.singh-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@linaro.org>
-Cc: Doug Anderson <dianders@google.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shaik Ameer Basha <shaik.samsung@gmail.com>, Olof Johansson <olof@lixom.net>, "Turquette, Mike" <mturquette@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-On 06/11/2014 01:56 AM, Doug Anderson wrote:
-> Javier,
-> 
-> On Tue, Jun 10, 2014 at 1:03 PM, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
->> Yes, I did not have this issue before. However... I installed the latest Peach
->> pit recovery image you provided me and mainline kernel started to hang on boot.
->> I remembered this thread so tested Kevin's patch which make it boot again.
+Hello Doug,
+
+On 10 June 2014 23:56, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> Naveen,
+>
+> Not a full review, but a few quick things I happened to notice:
+>
+> On Tue, Jun 10, 2014 at 3:08 AM, Naveen Krishna Chatradhi
+> <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> @@ -94,7 +93,6 @@ Example:
+>>                         spi-max-frequency = <10000>;
 >>
->> You said that chain-booting u-boot runs the sound init code but did you try
->> booting a signed FIT image using the verified u-boot?
-> 
-> Right, I'd bet that it's actually verified boot that's calling the
-> sound init code (probably just in case it needs to beep at the user).
-> ...so this would happen even without chain booting.  I haven't tried
-> signing / booting without chain booting, but I can totally believe it
-> would hang just as easily.
-> 
-> 
->> I'm asking because I'm see the hang both when chain-booting nv-u-boot from a
->> kernel partition and booting a signed FIT image with the verified u-boot.
+>>                         controller-data {
+>> -                               cs-gpio = <&gpa2 5 1 0 3>;
+>>                                 samsung,spi-feedback-delay = <0>;
+>
+> In a future patch (not this one!) it might make sense to also move
+> spi-feedback-delay out.
+After this change, "cs->line" in the struct s3c64xx_spi_csinfo {} is useless.
+Will take others opinion and remove "fb_delay" too.
+>
+>
+>> +static struct s3c64xx_spi_csinfo *s3c64xx_get_cs_gpios(struct spi_device *spi)
+>
+> I believe that you can make use of the fact that the SPI core already
+> got these GPIOs for you.  See of_spi_register_master().  Everything
+> you need ought to be in master->num_chipselect and master->cs_gpios.
+cs->line is a duplicate and can be replaced with master->cs_gpios from SPI core.
+>
+> Strangely, it doesn't look like any other drivers use this, so
+> possibly I'm confused...
+>
+>
+>> @@ -806,9 +815,14 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>>         struct s3c64xx_spi_info *sci;
+>>         int err;
 >>
->> So it seems this is a regression in latest U-boot and I didn't run into this
->> before due having an older RW U-Boot on my Peach pit?
-> 
-> You must have had a very old RW U-Boot, possibly one before audio
-> support was added.  I think we just need to fix this in the kernel so
-> it doesn't hang.
-> 
+>> +       if (!spi->dev.of_node) {
+>> +               dev_err(&spi->dev, "device node not found\n");
+>> +               return -EINVAL;
+>> +       }
+>
+> This seems incredibly broken.  You're saying that the SPI driver no
+> longer works without the device tree?  I don't think that's desirable,
+> but I suppose I could be wrong.
+I will move this check to the s3c64xx_get_slave_ctrldata() function.
+
+
+I guess the non-DT version of the driver is broken too.
+For non-DT driver sdd->cs_gpio is true, but the cs->line is never initialized.
+>
+> Also note that you still left an "if" test below for trying to deal
+> with the fact that there is no "of_node".
+
+>
+>
 > -Doug
-> 
 
-Hi Kevin,
 
-I have posted the fixes[1] in the mailing list. Please test and update.
-
-Changes:
-1 patch in drivers/clk/samsung/clk-exynos-audss.c
-1 patch in arch/arm/boot/dts/exynos5420.dtsi
-
-For testing audio in Peach-pi,
-1 patch in arch/arm/boot/dts/exynos5800-peach-pi.dts
-
-[1] [PATCH 0/3] Fix boot-hang on Peach-pit and Enable audio
 
 -- 
-Tushar Behera
+Shine bright,
+(: Nav :)
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
