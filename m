@@ -1,95 +1,233 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH v3 5/7] mfd: cros_ec: Sync to the latest
- cros_ec_commands.h from EC sources
-Date: Wed, 11 Jun 2014 12:37:48 +0200
-Message-ID: <1402483068.3798.82.camel@x220>
-References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
-	 <1398879850-9111-6-git-send-email-dianders@chromium.org>
-	 <20140520084602.GF24991@lee--X1>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/2 v3] spi: s3c64xx: use "cs-gpios" from spi node instead
+ of "cs-gpio"
+Date: Wed, 11 Jun 2014 13:13:26 +0200
+Message-ID: <539839D6.1050305@collabora.co.uk>
+References: <1402468318-7342-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews01.kpnxchange.com ([213.75.39.4]:50871 "EHLO
-	cpsmtpb-ews01.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751050AbaFKKhv (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:51194 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751726AbaFKLNd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jun 2014 06:37:51 -0400
-In-Reply-To: <20140520084602.GF24991@lee--X1>
+	Wed, 11 Jun 2014 07:13:33 -0400
+In-Reply-To: <1402468318-7342-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bill Richardson <wfrichar@chromium.org>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Lee Jones <lee.jones@linaro.org>
-Cc: swarren@nvidia.com, wsa@the-dreams.de, abrestic@chromium.org, dgreid@chromium.org, olof@lixom.net, sameo@linux.intel.com, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>
 
-On Tue, 2014-05-20 at 09:46 +0100, Lee Jones wrote:
-> On Wed, 30 Apr 2014, Doug Anderson wrote:
-> > From: Bill Richardson <wfrichar@chromium.org>
-> > 
-> > This just updates include/linux/mfd/cros_ec_commands.h to match the
-> > latest EC version (which is the One True Source for such things).  See
-> > <https://chromium.googlesource.com/chromiumos/platform/ec>
-> > 
-> > [dianders: took today's ToT version from the Chromium OS EC; deleted
-> > references to cros_ec_dev and cros_ec_lpc since those aren't upstream
-> > yet]
-> > 
-> > Signed-off-by: Bill Richardson <wfrichar@chromium.org>
-> > Signed-off-by: Doug Anderson <dianders@chromium.org>
-> > Acked-by: Lee Jones <lee.jones@linaro.org>
-> > Reviewed-by: Simon Glass <sjg@chromium.org>
-> > Tested-by: Andrew Bresticker <abrestic@chromium.org>
-> > Tested-by: Stephen Warren <swarren@nvidia.com>
-> > ---
-> > Changes in v3: None
-> > Changes in v2: None
-> > 
-> >  drivers/mfd/cros_ec.c                |    2 +-
-> >  include/linux/mfd/cros_ec.h          |    4 +-
-> >  include/linux/mfd/cros_ec_commands.h | 1128 +++++++++++++++++++++++++++++++---
-> >  3 files changed, 1059 insertions(+), 75 deletions(-)
+Hello Naveen,
+
+Thanks a lot for your patches and sorry that I didn't review your prior two
+versions but I didn't have the time yesterday.
+
+On 06/11/2014 08:31 AM, Naveen Krishna Chatradhi wrote:
+> Currently, spi-s3c64xx.c needs "cs-gpio" chip select GPIO to be
+> defined under "controller-data" node under each slave node.
 > 
-> Applied, thanks.
 
-This patch is included in linux-next since next-20140521. I'm not sure
-why I waited three weeks before sending this question...
+I think that the commit message is not clear enough about the intentions behind
+your patch.
 
-> > [...]
-> > diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-> > index 86fd069..7853a64 100644
-> > --- a/include/linux/mfd/cros_ec_commands.h
-> > +++ b/include/linux/mfd/cros_ec_commands.h
->> [...]
-> > @@ -1206,14 +1865,231 @@ struct ec_params_force_idle {
-> > [...]
-> > +/*
-> > + * Known param numbers are defined here. Ranges are reserved for board-specific
-> > + * params, which are handled by the particular implementations.
-> > + */
-> > +enum charge_state_params {
-> > +	CS_PARAM_CHG_VOLTAGE,	      /* charger voltage limit */
-> > +	CS_PARAM_CHG_CURRENT,	      /* charger current limit */
-> > +	CS_PARAM_CHG_INPUT_CURRENT,   /* charger input current limit */
-> > +	CS_PARAM_CHG_STATUS,	      /* charger-specific status */
-> > +	CS_PARAM_CHG_OPTION,	      /* charger-specific options */
-> > +	/* How many so far? */
-> > +	CS_NUM_BASE_PARAMS,
-> > +
-> > +	/* Range for CONFIG_CHARGER_PROFILE_OVERRIDE params */
+It's not only that spi-s3c64xx needs a cs-gpio chip to be defined under
+controller-data dev node while all other SPI drivers expects cs-gpios at the top
+level, but more important that currently s3c64xx driver expects to have both
+cs-gpio (singular) at the top level *and* cs-gpio in controller data which
+doesn't make too much sense.
 
-CONFIG_CHARGER_PROFILE_OVERRIDE doesn't match anything in linux-next. Is
-a Kconfig symbol CHARGER_PROFILE_OVERRIDE perhaps queued somewhere?
+> &spi_x {
+> 	cs-gpios <>;
+> 	...
 
-> > +	CS_PARAM_CUSTOM_PROFILE_MIN = 0x10000,
-> > +	CS_PARAM_CUSTOM_PROFILE_MAX = 0x1ffff,
-> > +
+As I said, currently it expects cs-gpio (singular) not cs-gpios (plural) as your
+example. It's important to have a correct commit message so future code
+archaeologists can have a proper picture of the situation if needed.
 
-I guess so, because these two constants aren't used anywhere.
+> 	slave_node {
+> 
+> 		controller-data {
+> 			cs-gpio = <>;
+> 			...
+> 		};
+> 		...
+> 	};
+> 	...
+> };
+> 
+> Where as, SPI core and many other drivers uses "cs-gpios" for
+> from device tree node.
+> 
+> Hence, make changes in spi-s3c64xx.c driver to make use of
+> "cs-gpios" from SPI node(parent) instead of "cs-gpio" defined in
+> slaves "controller-data"(child) node.
+> 
 
-> > +	/* Other custom param ranges go here... */
-> > +};
-> > [...]
+So, the problem is not that the binding is not consistent with other SPI drivers
+(that would have been bad but acceptable IMHO) but that it is completely broken.
+And since we have to fix it which means breaking the ABI anyways, it is better
+to make it consistent with other drivers and SPI core.
 
-Thanks,
+> Also updates the Device tree Documentation.
+> 
 
+While I agree with others that a binding that has been broken for a year is a
+binding that appears to not be used a lot, we should be more vocal about this
+and why breaking backward compatibility is the right approach in this case.
 
-Paul Bolle
+So, in the (theoretical?) case that users find that their platform stopped to
+work with their current FDT, it will be easy for them to figure out what commit
+break it, what was the motivation to break the ABI and what changes are needed
+on their DTS to make it work again.
+
+Adding the sha1 of the culprit commit (3146bee spi: s3c64xx: Added provision for
+dedicated cs pin) that puts us in this situation will also be useful. Since the
+date of that commit is part of the rationale behind this change. (e.g: nobody
+cared about this binding and so can be changed).
+
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Tomasz Figa <t.figa@samsung.com>
+> ---
+> Changes since v2:
+> 1. updated the gpios usage in Documentation
+> 2. use the spi->cs_gpio in the driver, instead of parsing the node again.
+> 3. Corrected error check of the of.node and during gpio_free
+> 
+>  .../devicetree/bindings/spi/spi-samsung.txt        |    8 +++-----
+>  drivers/spi/spi-s3c64xx.c                          |   18 ++++++------------
+>  2 files changed, 9 insertions(+), 17 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> index 86aa061..2d29dac 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> +++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> @@ -42,15 +42,13 @@ Optional Board Specific Properties:
+>  - num-cs: Specifies the number of chip select lines supported. If
+>    not specified, the default number of chip select lines is set to 1.
+>  
+> +- cs-gpios: should specify GPIOs used for chipselects (see spi-bus.txt)
+> +
+>  SPI Controller specific data in SPI slave nodes:
+>  
+>  - The spi slave nodes should provide the following information which is required
+>    by the spi controller.
+>  
+> -  - cs-gpio: A gpio specifier that specifies the gpio line used as
+> -    the slave select line by the spi controller. The format of the gpio
+> -    specifier depends on the gpio controller.
+> -
+>    - samsung,spi-feedback-delay: The sampling phase shift to be applied on the
+>      miso line (to account for any lag in the miso line). The following are the
+>      valid values.
+> @@ -85,6 +83,7 @@ Example:
+>  		#size-cells = <0>;
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&spi0_bus>;
+> +		cs-gpios = <&gpa2 5 0>;
+>  
+>  		w25q80bw@0 {
+>  			#address-cells = <1>;
+> @@ -94,7 +93,6 @@ Example:
+>  			spi-max-frequency = <10000>;
+>  
+>  			controller-data {
+> -				cs-gpio = <&gpa2 5 1 0 3>;
+>  				samsung,spi-feedback-delay = <0>;
+>  			};
+>  
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 75a5696..842b148 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -772,24 +772,19 @@ static struct s3c64xx_spi_csinfo *s3c64xx_get_slave_ctrldata(
+>  
+>  	cs = kzalloc(sizeof(*cs), GFP_KERNEL);
+>  	if (!cs) {
+> -		of_node_put(data_np);
+
+Why are you removing this?
+
+You are not removing the call to of_get_child_by_name(slave_np,
+"controller-data") so on failure data_np reference counter still needs to be
+decremented.
+
+>  		return ERR_PTR(-ENOMEM);
+>  	}
+>  
+> -	/* The CS line is asserted/deasserted by the gpio pin */
+> -	if (sdd->cs_gpio)
+> -		cs->line = of_get_named_gpio(data_np, "cs-gpio", 0);
+> -
+> -	if (!gpio_is_valid(cs->line)) {
+> +	if (!gpio_is_valid(spi->cs_gpio)) {
+>  		dev_err(&spi->dev, "chip select gpio is not specified or invalid\n");
+> -		kfree(cs);
+> -		of_node_put(data_np);
+
+Again, it's wrong to remove this of_node_put(data_np) call.
+
+>  		return ERR_PTR(-EINVAL);
+>  	}
+> +	cs->line = spi->cs_gpio;
+>  
+
+I wonder why are you keeping cs->line? AFAICT it's only used in
+s3c64xx_spi_setup() to request the GPIO and since you get the struct spi_device
+pointer as a parameter then you can just use spi->s_gpio instead.
+
+>  	of_property_read_u32(data_np, "samsung,spi-feedback-delay", &fb_delay);
+>  	cs->fb_delay = fb_delay;
+>  	of_node_put(data_np);
+> +
+
+Usually is better to not mix style and functionality changes in the same patch
+since it makes harder to review.
+
+>  	return cs;
+>  }
+>  
+> @@ -828,8 +823,6 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>  					cs->line, err);
+>  				goto err_gpio_req;
+>  			}
+> -
+> -			spi->cs_gpio = cs->line;
+>  		}
+>  
+>  		spi_set_ctldata(spi, cs);
+> @@ -884,7 +877,8 @@ setup_exit:
+>  	/* setup() returns with device de-selected */
+>  	writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
+>  
+> -	gpio_free(cs->line);
+> +	if (cs->line)
+> +		gpio_free(cs->line);
+
+Same here, we can just get rid of cs->line and use gpio_free(spi->cs_gpio) instead.
+
+>  	spi_set_ctldata(spi, NULL);
+>  
+>  err_gpio_req:
+> @@ -1077,7 +1071,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+>  	sdd->sfr_start = mem_res->start;
+>  	sdd->cs_gpio = true;
+>  	if (pdev->dev.of_node) {
+> -		if (!of_find_property(pdev->dev.of_node, "cs-gpio", NULL))
+> +		if (!of_find_property(pdev->dev.of_node, "cs-gpios", NULL))
+>  			sdd->cs_gpio = false;
+
+I think we can get rid of sdd->cs_gpio as well. You can always use
+gpio_is_valid(spi->cs_gpio) or if (master->cs_gpios) to figure out if the SPI
+device has a cs-gpios array associated.
+
+>  
+>  		ret = of_alias_get_id(pdev->dev.of_node, "spi");
+> 
+
+Best regards,
+Javier
