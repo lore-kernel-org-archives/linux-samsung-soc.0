@@ -1,129 +1,98 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] Exynos4: cpuidle: support dual CPUs with AFTR state
-Date: Wed, 11 Jun 2014 10:50:43 +0200
-Message-ID: <1402476643.32147.6.camel@AMDC1943>
-References: <1396604925-18383-1-git-send-email-daniel.lezcano@linaro.org>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH] ARM: EXYNOS: mcpm: Don't rely on firmware's
+ secondary_cpu_start
+Date: Wed, 11 Jun 2014 11:13:55 +0100
+Message-ID: <20140611101353.GA18781@e102568-lin.cambridge.arm.com>
+References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
+ <20140607181221.GB25068@e102568-lin.cambridge.arm.com>
+ <CAD=FV=X17PeJ6JPE9Qyc1QT07AvA2PTE69Q87gz9a6MdUHgi4A@mail.gmail.com>
+ <20140609223831.GB16889@e102568-lin.cambridge.arm.com>
+ <CANuQgHHxAhTNYX-JAEdRkO=PMYT4A5GwXcuQfiqwE0CEkQyR+w@mail.gmail.com>
+ <CAD=FV=V5_RRNkgA7Rk7XbQw9m1qh6-RJA8arW7ZRU=QbWAPa+w@mail.gmail.com>
+ <alpine.LFD.2.11.1406101146140.25775@knanqh.ubzr>
+ <CADWw7OjqK3MAuqCHuv-WS3Bb2+2Q-FXth+7hqtwFoyAP6pyYhA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:34190 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753092AbaFKIud (ORCPT
+Received: from service87.mimecast.com ([91.220.42.44]:43179 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750817AbaFKKOD convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jun 2014 04:50:33 -0400
-In-reply-to: <1396604925-18383-1-git-send-email-daniel.lezcano@linaro.org>
+	Wed, 11 Jun 2014 06:14:03 -0400
+In-Reply-To: <CADWw7OjqK3MAuqCHuv-WS3Bb2+2Q-FXth+7hqtwFoyAP6pyYhA@mail.gmail.com>
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, ccross@google.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com
+To: Chander Kashyap <k.chander@samsung.com>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, Doug Anderson <dianders@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chander Kashyap <chander.kashyap@linaro.org>, "olof@lixom.net" <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On pi=C4=85, 2014-04-04 at 11:48 +0200, Daniel Lezcano wrote:
-> The following driver is for exynos4210. I did not yet finished the ot=
-her boards, so
-> I created a specific driver for 4210 which could be merged later.
->=20
-> The driver is based on Colin Cross's driver found at:
->=20
-> https://android.googlesource.com/kernel/exynos/+/e686b1ec67423c40b4fd=
-f811f9a4dfa3b393a010%5E%5E!/
->=20
-> This one was based on a 3.4 kernel and an old API.
->=20
-> It has been refreshed, simplified and based on the recent code cleanu=
-p I sent
-> today.
->=20
-> The AFTR could be entered when all the cpus (except cpu0) are down. I=
-n order to
-> reach this situation, the couple idle states are used.
->=20
-> There is a sync barrier at the entry and the exit of the low power fu=
-nction. So
-> all cpus will enter and exit the function at the same time.
->=20
-> At this point, CPU0 knows the other cpu will power down itself. CPU0 =
-waits for
-> the CPU1 to be powered down and then initiate the AFTR power down seq=
-uence.
->=20
-> No interrupts are handled by CPU1, this is why we switch to the timer=
- broadcast
-> even if the local timer is not impacted by the idle state.
->=20
-> When CPU0 wakes up, it powers up CPU1 and waits for it to boot. Then =
-they both
-> exit the idle function.
->=20
-> This driver allows the exynos4210 to have the same power consumption =
-at idle
-> time than the one when we have to unplug CPU1 in order to let CPU0 to=
- reach
-> the AFTR state.
->=20
-> This patch is a RFC because, we have to find a way to remove the macr=
-os
-> definitions and cpu powerdown function without pulling the arch depen=
-dent
-> headers.
->=20
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  arch/arm/mach-exynos/common.c        |   11 +-
->  drivers/cpuidle/Kconfig.arm          |    8 ++
->  drivers/cpuidle/Makefile             |    1 +
->  drivers/cpuidle/cpuidle-exynos4210.c |  226 ++++++++++++++++++++++++=
-++++++++++
->  4 files changed, 245 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/cpuidle/cpuidle-exynos4210.c
+On Wed, Jun 11, 2014 at 05:52:10AM +0100, Chander Kashyap wrote:
+> Hi Doug,
+> 
+> On Tue, Jun 10, 2014 at 9:19 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+> > On Tue, 10 Jun 2014, Doug Anderson wrote:
+> >
+> >> My S-state knowledge is not strong, but I believe that Lorenzo's
+> >> questions matter if we're using S2 for CPUidle (where we actually turn
+> >> off power and hot unplug CPUs) but not when we're using S1 for CPUidle
+> >> (where we just enter WFI/WFE).
+> >>
+> 
+> No Its not plain WFI.
+> 
+> All cores in Exynos5420 can be powered off independently.
+> This functionality has been tested.
+> 
+> Below is the link for the posted patches.
+> 
+> https://lkml.org/lkml/2014/6/10/194
+> 
+> And as Nicolas wrote, these patches need MCPM for that.
 
-(...)
+Chander, I cast a look into the code and I have a question
+(you also told me on CPUidle review that only core off
+is supported in CPUidle).
 
-> diff --git a/drivers/cpuidle/cpuidle-exynos4210.c b/drivers/cpuidle/c=
-puidle-exynos4210.c
-> new file mode 100644
-> index 0000000..56f6d51
-> --- /dev/null
-> +++ b/drivers/cpuidle/cpuidle-exynos4210.c
-> @@ -0,0 +1,226 @@
-> +/*
-> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * Copyright (c) 2014 Linaro : Daniel Lezcano <daniel.lezcano@linaro=
-=2Eorg>
-> + *		http://www.linaro.org
-> + *
-> + * Based on the work of Colin Cross <ccross@android.com>
-> + *
-> + * This program is free software; you can redistribute it and/or mod=
-ify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <linux/cpuidle.h>
-> +#include <linux/cpu_pm.h>
-> +#include <linux/io.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include <asm/proc-fns.h>
-> +#include <asm/suspend.h>
-> +#include <asm/cpuidle.h>
-> +
-> +#include <plat/pm.h>
-> +#include <plat/cpu.h>
-> +#include <plat/map-base.h>
-> +#include <plat/map-s5p.h>
-> +
-> +static atomic_t exynos_idle_barrier;
+When you say all cores can be powered off independently, do
+you also mean that clusters can be powered off (in CPUidle) ?
 
-Hi,
+I am pointing this out since in the MCPM backend I noticed:
 
-Shouldn't the exynos_idle_barrier be initialized here?
+"/* TODO: Turn off the cluster here to save power. */"
 
-I know you sent the patch almost 2 months ago but I stomped on this
-while testing it on Exynos3250.
+I do not see any cluster power down request in the down path.
 
-Best regards,
-Krzysztof
+If I am wrong, ignore my message, I am just writing to help.
+
+If you can only power down cores, but not the clusters on idle,
+please keep in mind that you are currently cleaning and invalidating
+the L2 when last man is running and this must not be taken
+lightly since, if L2 stays on, that's a massive energy waste
+for nothing.
+
+So, if clusters stay up, you _have_ to tweak the MCPM backend slightly
+to avoid cleaning L2, that's pivotal.
+
+Lorenzo
+
+> 
+> >> I believe that in ChromeOS we use S1 CPUidle and that it works fine.
+> >> We've never implemented S2 that I'm aware of.
+> >
+> > You'll have to rely on MCPM for that.  That's probably why it hasn't
+> > been implemented before.
+> >
+> >
+> > Nicolas
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
