@@ -1,95 +1,393 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/2 v3] spi: s3c64xx: use "cs-gpios" from spi node instead
- of "cs-gpio"
-Date: Wed, 11 Jun 2014 20:28:59 +0200
-Message-ID: <53989FEB.1010205@gmail.com>
-References: <1402468318-7342-1-git-send-email-ch.naveen@samsung.com> <539839D6.1050305@collabora.co.uk> <CAHfPSqCYqTRBBH56y81na-t18pvoPmyWobZwXNgkrtq=H_79CQ@mail.gmail.com> <5398918F.4060800@collabora.co.uk> <539896FB.4050702@gmail.com> <CAHfPSqB3V+vBCj03WLkeLQ5e7O4r+pUKQ-yZpK=tdAqVV1GuLw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH V4 04/10] drm/panel: Add driver for lvds/edp based panels
+Date: Wed, 11 Jun 2014 23:57:02 +0530
+Message-ID: <1402511228-18945-5-git-send-email-ajaykumar.rs@samsung.com>
+References: <1402511228-18945-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f49.google.com ([74.125.82.49]:58124 "EHLO
-	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752640AbaFKS3S (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:64049 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752640AbaFKS3U (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jun 2014 14:29:18 -0400
-In-Reply-To: <CAHfPSqB3V+vBCj03WLkeLQ5e7O4r+pUKQ-yZpK=tdAqVV1GuLw@mail.gmail.com>
+	Wed, 11 Jun 2014 14:29:20 -0400
+In-reply-to: <1402511228-18945-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, Kukjin Kim <kgene.kim@samsung.com>, cpgs@samsung.com, devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, thierry.reding@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, marcheu@chromium.org, Ajay Kumar <ajaykumar.rs@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-On 11.06.2014 20:23, Naveen Krishna Ch wrote:
-> Hello Tomasz,
-> 
-> On 11 June 2014 23:20, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> On 11.06.2014 19:27, Javier Martinez Canillas wrote:
->>> On 06/11/2014 01:38 PM, Naveen Krishna Ch wrote:
->>>> On 11 June 2014 16:43, Javier Martinez Canillas
->>>> <javier.martinez@collabora.co.uk> wrote:
->>>>> On 06/11/2014 08:31 AM, Naveen Krishna Chatradhi wrote:
->>
->> [snip]
->>
->>>>>
->>>>>>               return ERR_PTR(-EINVAL);
->>>>>>       }
->>>>>> +     cs->line = spi->cs_gpio;
->>>>>>
->>>>>
->>>>> I wonder why are you keeping cs->line? AFAICT it's only used in
->>>>> s3c64xx_spi_setup() to request the GPIO and since you get the struct spi_device
->>>>> pointer as a parameter then you can just use spi->s_gpio instead.
->>>> I'm trying not to touch the non-DT part of the code.
->>>>
->>>> struct s3c64xx_spi_csinfo *cs = spi->controller_data;
->>>>
->>>> This will update the cs->line and cs->fb_delay in case of non-DT.
->>>
->>> I see, then I prefer the opposite and do something like this on s3c64xx_spi_probe():
->>>
->>> if (!pdev->dev.of_node)
->>>        spi->cs_gpio = cs->line;
->>
->> Hmm, as far as I understand, spi here is spi_device, not spi_master. I
->> don't think you have access to SPI devices on your bus in controller
->> probe().
->>
->> What I think could work is reworking the driver to:
->>
->> - in DT case, don't do anything in the driver about the GPIO chip
->> select, because it will be handled automatically by the core.
-> But, i see that gpio_request_one is needed in _setup function in the driver.
-> Except that no other gpio related operation is needed in the driver.
+This patch adds a simple driver to handle all the LCD and LED
+powerup/down routines needed to support eDP/LVDS panels.
 
-This should be handled by SPI core as well, but apparently it isn't. So
-the scheme of work in s3c64xx_spi_setup() changes as in pseudocode below:
+The LCD and LED units are usually powered up via regulators,
+and almost on all boards, we will have a BACKLIGHT_EN pin to
+enable/ disable the backlight.
+Sometimes, we can have LCD_EN switches as well.
 
-	if (!DT)
-		spi->cs_gpio = cs->line;
+The routines in this driver can be used to control
+panel power sequence on such boards.
 
-	if (gpio_is_valid(spi->cs_gpio))
-		gpio_request_one(spi->cs_gpio);
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+---
+ .../devicetree/bindings/panel/panel-lvds.txt       |   50 ++++
+ drivers/gpu/drm/panel/Kconfig                      |   10 +
+ drivers/gpu/drm/panel/Makefile                     |    1 +
+ drivers/gpu/drm/panel/panel-lvds.c                 |  262 ++++++++++++++++++++
+ 4 files changed, 323 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/panel/panel-lvds.txt
+ create mode 100644 drivers/gpu/drm/panel/panel-lvds.c
 
-and in s3c64xx_spi_cleanup():
-
-	if (gpio_is_valid(spi->cs_gpio))
-		gpio_free(spi->cs_gpio);
-
-	if (!DT)
-		spi->cs_gpio = -ENOENT;
-
->>
->> - in non-DT case, in s3c64xx_spi_setup(), just take the GPIO pin from
->> s3c64xx_spi_csinfo struct passed through spi->controller_data, request
->> it and save it to spi->cs_gpio,
->>
->> - in non-DT case, in s3c64xx_spi_cleanup(), free the GPIO requested in
->> s3c64xx_spi_setup() and set spi->cs_gpio to -ENOENT (as done initially
->> in spi_alloc_device()).
-> Its better going back to the working way.
-
-Hmm?
-
-Best regards,
-Tomasz
+diff --git a/Documentation/devicetree/bindings/panel/panel-lvds.txt b/Documentation/devicetree/bindings/panel/panel-lvds.txt
+new file mode 100644
+index 0000000..7cb6084
+--- /dev/null
++++ b/Documentation/devicetree/bindings/panel/panel-lvds.txt
+@@ -0,0 +1,50 @@
++panel interface for eDP/lvds panels
++
++Required properties:
++  - compatible: "panel-lvds"
++
++Optional properties:
++	-lcd-en-gpio:
++		panel LCD poweron GPIO.
++			Indicates which GPIO needs to be powered up as output
++			to powerup/enable the switch to the LCD panel.
++	-led-en-gpio:
++		panel LED enable GPIO.
++			Indicates which GPIO needs to be powered up as output
++			to enable the backlight.
++	-panel-prepare-delay:
++		delay value in ms required for panel_prepare process
++			Delay in ms needed for the panel LCD unit to
++			powerup completely.
++			ex: delay needed till eDP panel throws HPD.
++			    delay needed so that we cans tart reading edid.
++	-panel-enable-delay:
++		delay value in ms required for panel_enable process
++			Delay in ms needed for the panel backlight/LED unit
++			to powerup, and delay needed between video_enable and
++			backlight_enable.
++	-panel-disable-delay:
++		delay value in ms required for panel_disable process
++			Delay in ms needed for the panel backlight/LED unit
++			powerdown, and delay needed between backlight_disable
++			and video_disable.
++	-panel-unprepare-delay:
++		delay value in ms required for panel_post_disable process
++			Delay in ms needed for the panel LCD unit to
++			to powerdown completely, and the minimum delay needed
++			before powering it on again.
++	-panel-width-mm: physical panel width [mm]
++	-panel-height-mm: physical panel height [mm]
++
++Example:
++
++	panel-lvds {
++		compatible = "panel-lvds";
++		led-en-gpio = <&gpx3 0 1>;
++		panel-prepare-delay = <40>;
++		panel-enable-delay = <20>;
++		panel-disable-delay = <20>;
++		panel-unprepare-delay = <30>;
++		panel-width-mm = <256>;
++		panel-height-mm = <144>;
++	};
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 4ec874d..8fe7ee5 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -30,4 +30,14 @@ config DRM_PANEL_S6E8AA0
+ 	select DRM_MIPI_DSI
+ 	select VIDEOMODE_HELPERS
+ 
++config DRM_PANEL_EDP_LVDS
++	tristate "support for eDP/LVDS panels"
++	depends on OF && DRM_PANEL
++	select VIDEOMODE_HELPERS
++	help
++	  DRM panel driver for direct eDP panels or LVDS connected
++	  via DP bridges, that need at most a regulator for LCD unit,
++	  a regulator for LED unit and/or enable GPIOs for LCD or LED units.
++	  Delay values can also be specified to support powerup and
++	  powerdown process.
+ endmenu
+diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+index 8b92921..eaafa01 100644
+--- a/drivers/gpu/drm/panel/Makefile
++++ b/drivers/gpu/drm/panel/Makefile
+@@ -1,3 +1,4 @@
+ obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
+ obj-$(CONFIG_DRM_PANEL_LD9040) += panel-ld9040.o
+ obj-$(CONFIG_DRM_PANEL_S6E8AA0) += panel-s6e8aa0.o
++obj-$(CONFIG_DRM_PANEL_EDP_LVDS) += panel-lvds.o
+diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
+new file mode 100644
+index 0000000..2124fcb
+--- /dev/null
++++ b/drivers/gpu/drm/panel/panel-lvds.c
+@@ -0,0 +1,262 @@
++/*
++ * panel driver for lvds and eDP panels
++ *
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd
++ *
++ * Ajay Kumar <ajaykumar.rs@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/gpio.h>
++#include <linux/module.h>
++#include <linux/of_gpio.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
++
++#include <video/of_videomode.h>
++#include <video/videomode.h>
++
++#include <drm/drmP.h>
++#include <drm/drm_crtc.h>
++#include <drm/drm_panel.h>
++
++struct panel_lvds {
++	struct drm_panel	base;
++	struct regulator	*backlight_fet;
++	struct regulator	*lcd_fet;
++	struct videomode	vm;
++	int			width_mm;
++	int			height_mm;
++	bool			backlight_fet_enabled;
++	bool			lcd_fet_enabled;
++	int			led_en_gpio;
++	int			lcd_en_gpio;
++	int			panel_prepare_delay;
++	int			panel_enable_delay;
++	int			panel_disable_delay;
++	int			panel_unprepare_delay;
++};
++
++static inline struct panel_lvds *to_panel(struct drm_panel *panel)
++{
++	return container_of(panel, struct panel_lvds, base);
++}
++
++static int panel_lvds_prepare(struct drm_panel *panel)
++{
++	struct panel_lvds *lvds_panel = to_panel(panel);
++
++	if (!IS_ERR_OR_NULL(lvds_panel->lcd_fet))
++		if (!lvds_panel->lcd_fet_enabled) {
++			if (regulator_enable(lvds_panel->lcd_fet))
++				DRM_ERROR("failed to enable LCD fet\n");
++			lvds_panel->lcd_fet_enabled = true;
++		}
++
++	if (gpio_is_valid(lvds_panel->lcd_en_gpio))
++		gpio_set_value(lvds_panel->lcd_en_gpio, 1);
++
++	msleep(lvds_panel->panel_prepare_delay);
++
++	return 0;
++}
++
++static int panel_lvds_enable(struct drm_panel *panel)
++{
++	struct panel_lvds *lvds_panel = to_panel(panel);
++
++	if (!IS_ERR_OR_NULL(lvds_panel->backlight_fet))
++		if (!lvds_panel->backlight_fet_enabled) {
++			if (regulator_enable(lvds_panel->backlight_fet))
++				DRM_ERROR("failed to enable LED fet\n");
++			lvds_panel->backlight_fet_enabled = true;
++		}
++
++	msleep(lvds_panel->panel_enable_delay);
++
++	if (gpio_is_valid(lvds_panel->led_en_gpio))
++		gpio_set_value(lvds_panel->led_en_gpio, 1);
++
++	return 0;
++}
++
++static int panel_lvds_disable(struct drm_panel *panel)
++{
++	struct panel_lvds *lvds_panel = to_panel(panel);
++
++	if (gpio_is_valid(lvds_panel->led_en_gpio))
++		gpio_set_value(lvds_panel->led_en_gpio, 0);
++
++	if (!IS_ERR_OR_NULL(lvds_panel->backlight_fet))
++		if (lvds_panel->backlight_fet_enabled) {
++			regulator_disable(lvds_panel->backlight_fet);
++			lvds_panel->backlight_fet_enabled = false;
++		}
++
++	msleep(lvds_panel->panel_disable_delay);
++
++	return 0;
++}
++
++static int panel_lvds_unprepare(struct drm_panel *panel)
++{
++	struct panel_lvds *lvds_panel = to_panel(panel);
++
++	if (gpio_is_valid(lvds_panel->lcd_en_gpio))
++		gpio_set_value(lvds_panel->lcd_en_gpio, 0);
++
++	if (!IS_ERR_OR_NULL(lvds_panel->lcd_fet))
++		if (lvds_panel->lcd_fet_enabled) {
++			regulator_disable(lvds_panel->lcd_fet);
++			lvds_panel->lcd_fet_enabled = false;
++		}
++
++	msleep(lvds_panel->panel_unprepare_delay);
++
++	return 0;
++}
++
++static int panel_lvds_get_modes(struct drm_panel *panel)
++{
++	struct drm_connector *connector = panel->connector;
++	struct panel_lvds *lvds_panel = to_panel(panel);
++	struct drm_display_mode *mode;
++
++	mode = drm_mode_create(connector->dev);
++	if (!mode) {
++		DRM_ERROR("failed to create a new display mode.\n");
++		return 0;
++	}
++
++	drm_display_mode_from_videomode(&lvds_panel->vm, mode);
++	mode->width_mm = lvds_panel->width_mm;
++	mode->height_mm = lvds_panel->height_mm;
++	connector->display_info.width_mm = mode->width_mm;
++	connector->display_info.height_mm = mode->height_mm;
++
++	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
++	drm_mode_set_name(mode);
++	drm_mode_probed_add(connector, mode);
++
++	return 1;
++}
++
++static const struct drm_panel_funcs panel_lvds_funcs = {
++	.unprepare = panel_lvds_unprepare,
++	.disable = panel_lvds_disable,
++	.prepare = panel_lvds_prepare,
++	.enable = panel_lvds_enable,
++	.get_modes = panel_lvds_get_modes,
++};
++
++static int panel_lvds_probe(struct platform_device *pdev)
++{
++	struct panel_lvds *panel;
++	struct device *dev = &pdev->dev;
++	struct device_node *node = dev->of_node;
++	int ret;
++
++	panel = devm_kzalloc(dev, sizeof(*panel), GFP_KERNEL);
++	if (!panel)
++		return -ENOMEM;
++
++	ret = of_get_videomode(node, &panel->vm, 0);
++	if (ret) {
++		DRM_ERROR("failed: of_get_videomode() : %d\n", ret);
++		return ret;
++	}
++
++	panel->lcd_fet = devm_regulator_get_optional(dev, "lcd_vdd");
++	if (IS_ERR(panel->lcd_fet))
++		return -EPROBE_DEFER;
++
++	panel->backlight_fet = devm_regulator_get_optional(dev, "vcd_led");
++	if (IS_ERR(panel->backlight_fet))
++		return -EPROBE_DEFER;
++
++	panel->lcd_en_gpio = of_get_named_gpio(node, "lcd-en-gpio", 0);
++	panel->led_en_gpio = of_get_named_gpio(node, "led-en-gpio", 0);
++
++	of_property_read_u32(node, "panel-width-mm", &panel->width_mm);
++	of_property_read_u32(node, "panel-height-mm", &panel->height_mm);
++
++	of_property_read_u32(node, "panel-prepare-delay",
++					&panel->panel_prepare_delay);
++	of_property_read_u32(node, "panel-enable-delay",
++					&panel->panel_enable_delay);
++	of_property_read_u32(node, "panel-disable-delay",
++					&panel->panel_disable_delay);
++	of_property_read_u32(node, "panel-unprepare-delay",
++					&panel->panel_unprepare_delay);
++
++	if (gpio_is_valid(panel->lcd_en_gpio)) {
++		ret = devm_gpio_request_one(dev, panel->lcd_en_gpio,
++					GPIOF_OUT_INIT_LOW, "lcd_en_gpio");
++		if (ret) {
++			DRM_ERROR("failed to get lcd-en gpio [%d]\n", ret);
++			return 0;
++		}
++	} else {
++		panel->lcd_en_gpio = -ENODEV;
++	}
++
++	if (gpio_is_valid(panel->led_en_gpio)) {
++		ret = devm_gpio_request_one(dev, panel->led_en_gpio,
++					GPIOF_OUT_INIT_LOW, "led_en_gpio");
++		if (ret) {
++			DRM_ERROR("failed to get led-en gpio [%d]\n", ret);
++			return 0;
++		}
++	} else {
++		panel->led_en_gpio = -ENODEV;
++	}
++
++	drm_panel_init(&panel->base);
++	panel->base.dev = dev;
++	panel->base.funcs = &panel_lvds_funcs;
++
++	ret = drm_panel_add(&panel->base);
++	if (ret < 0)
++		return ret;
++
++	dev_set_drvdata(dev, panel);
++
++	return 0;
++}
++
++static int panel_lvds_remove(struct platform_device *pdev)
++{
++	struct panel_lvds *panel = dev_get_drvdata(&pdev->dev);
++
++	panel_lvds_disable(&panel->base);
++	panel_lvds_unprepare(&panel->base);
++
++	drm_panel_remove(&panel->base);
++
++	return 0;
++}
++
++static const struct of_device_id lvds_panel_dt_match[] = {
++	{ .compatible = "panel-lvds" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, lvds_panel_dt_match);
++
++struct platform_driver lvds_panel_driver = {
++	.driver = {
++		.name = "panel_lvds",
++		.owner = THIS_MODULE,
++		.of_match_table = lvds_panel_dt_match,
++	},
++	.probe = panel_lvds_probe,
++	.remove = panel_lvds_remove,
++};
++module_platform_driver(lvds_panel_driver);
++
++MODULE_AUTHOR("Ajay Kumar <ajaykumar.rs@samsung.com>");
++MODULE_DESCRIPTION("lvds/eDP panel driver");
++MODULE_LICENSE("GPL v2");
+-- 
+1.7.9.5
