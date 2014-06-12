@@ -1,111 +1,62 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 3/3 v4] ARM: DTS: fix the chip select gpios definition
- in the SPI nodes
-Date: Thu, 12 Jun 2014 16:07:53 +0200
-Message-ID: <5399B439.1010300@collabora.co.uk>
-References: <1402578821-27338-1-git-send-email-ch.naveen@samsung.com> <1402578821-27338-3-git-send-email-ch.naveen@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: Crash during S2R on Arndale if CONFIG_SAMSUNG_PM_CHECK enabled
+Date: Thu, 12 Jun 2014 08:20:09 -0700
+Message-ID: <CAD=FV=WKP=_u_UDaFvOgETkAMAoEjJv3dJev8PEvMGWUro0yUA@mail.gmail.com>
+References: <CAGm_ybgakzE3MbQQduBZZ6WFkFm_bFFSyHDzJUXm5ajgQqKFRA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:51993 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756000AbaFLOIA (ORCPT
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:35421 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756057AbaFLPUK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jun 2014 10:08:00 -0400
-In-Reply-To: <1402578821-27338-3-git-send-email-ch.naveen@samsung.com>
+	Thu, 12 Jun 2014 11:20:10 -0400
+Received: by mail-ob0-f179.google.com with SMTP id uz6so1454699obc.38
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2014 08:20:09 -0700 (PDT)
+In-Reply-To: <CAGm_ybgakzE3MbQQduBZZ6WFkFm_bFFSyHDzJUXm5ajgQqKFRA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>
+To: Vikas Sajjan <vikas.sajjan@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Olof Johansson <olof@lixom.net>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-Hello Naveen,
+Vikas,
 
-On 06/12/2014 03:13 PM, Naveen Krishna Chatradhi wrote:
-> This patch replaces the "cs-gpio" from "controller-data" node
-> as was specified in the old binding and use the standard
-> "cs-gpios" property expected by the SPI core as is defined in
-> the new binding.
-> 
-> Respective changes are preposed to spi-s3c64xx.c driver.
-> @ http://www.spinics.net/lists/linux-samsung-soc/msg32282.html
-> 
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Cc: Tomasz Figa <t.figa@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4210-smdkv310.dts |    2 +-
->  arch/arm/boot/dts/exynos4412-trats2.dts   |    2 +-
->  arch/arm/boot/dts/exynos5250-smdk5250.dts |    2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-> index 636d166..9191491 100644
-> --- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-> +++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-> @@ -169,6 +169,7 @@
->  
->  	spi_2: spi@13940000 {
->  		status = "okay";
-> +		cs-gpios = <&gpc1 2 0>;
->  
->  		w25x80@0 {
->  			#address-cells = <1>;
-> @@ -178,7 +179,6 @@
->  			spi-max-frequency = <1000000>;
->  
->  			controller-data {
-> -				cs-gpio = <&gpc1 2 0>;
->  				samsung,spi-feedback-delay = <0>;
->  			};
->  
-> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-> index 8a558b7..204b0de 100644
-> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-> @@ -512,6 +512,7 @@
->  	spi_1: spi@13930000 {
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&spi1_bus>;
-> +		cs-gpios = <&gpb 5 0>;
->  		status = "okay";
->  
->  		s5c73m3_spi: s5c73m3 {
-> @@ -519,7 +520,6 @@
->  			spi-max-frequency = <50000000>;
->  			reg = <0>;
->  			controller-data {
-> -				cs-gpio = <&gpb 5 0>;
->  				samsung,spi-feedback-delay = <2>;
->  			};
->  		};
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index a794a70..0c6433a 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -316,6 +316,7 @@
->  	};
->  
->  	spi_1: spi@12d30000 {
-> +		cs-gpios = <&gpa2 5 0>;
->  		status = "okay";
->  
->  		w25q80bw@0 {
-> @@ -326,7 +327,6 @@
->  			spi-max-frequency = <1000000>;
->  
->  			controller-data {
-> -				cs-gpio = <&gpa2 5 0>;
->  				samsung,spi-feedback-delay = <0>;
->  			};
->  
-> 
+On Fri, May 23, 2014 at 5:14 AM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+> Hi,
+>
+> I notice that if CONFIG_SAMSUNG_PM_CHECK is enabled, we get a crash in
+> function "crc32_le(), as below.
 
-Looks good to me.
+PM_CHECK is nowhere near working in upstream.  ...or at least it
+wasn't when I last checked in 3.8 and I can't imagine that someone has
+fixed everything needed to make it work.
 
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+My best guess (without digging in detail) as to your particular crash
+would be missing kmap_atomic calls.  The old code would just assume
+that all physical memory was accessible and cram though it.  On modern
+systems this just isn't true.  Note that assuming you're on a 2GB
+system you may be able to hack around this particular crash
+temporarily by using a 1G/3G split (VMSPLIT_1G).
 
-Best regards,
-Javier
+If you are serious about getting pm_check working upstream you should
+check out the version in ChromeOS 3.8, clean it up, and land it.  A
+few notes about that, though:
+
+1. In order to get PM_CHECK working on today's modern kernels, you'll
+need to introduce "suspend volatile" like we did in Chrome OS.  This
+is used to mark areas of memory that shouldn't be checked (because
+they change between the two calls pm check).  These markings need to
+go in generic (non-samsung) code.
+
+2. In order to have any chance of getting upstream to accept all of
+the suspend volatile markings, you'll probably need to make pm_check a
+generic kernel feature and not one specific to Samsung.
+
+3. You can ignore the "bitfix" stuff in the ChromeOS tree.  There's
+pretty much zero chance upstream would want this IMHO.  If they want
+it it could always be tacked on later.
+
+
+I'm happy to answer more questions about pm check, so just let me know.
+
+-Doug
