@@ -1,60 +1,47 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 3/3] clocksource: exynos_mct: Optimize register reads with ldmia
-Date: Thu, 12 Jun 2014 09:53:57 -0700
-Message-ID: <CAD=FV=VSPF8rD_JQivxizSkwMfjkKC6QeL_fDC_0RQvHQsYRCA@mail.gmail.com>
-References: <1401903034-20074-1-git-send-email-dianders@chromium.org>
-	<1401903034-20074-3-git-send-email-dianders@chromium.org>
-	<alpine.DEB.2.10.1406042004140.3319@nanos>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: Aw: Re: [PATCH] ARM: dts: Initial ODROID U2 support
+Date: Thu, 12 Jun 2014 20:56:46 +0200
+Message-ID: <5399F7EE.2050001@gmail.com>
+References: <1402577077-7835-1-git-send-email-drake@endlessm.com>, <5399A526.6040303@samsung.com> <trinity-980edcd5-a3eb-42ff-b755-cea7c1c6cd0d-1402579141856@3capp-gmx-bs65>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f169.google.com ([209.85.220.169]:56242 "EHLO
-	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756117AbaFLQx6 (ORCPT
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:64364 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750716AbaFLS5F (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jun 2014 12:53:58 -0400
-Received: by mail-vc0-f169.google.com with SMTP id la4so1092608vcb.14
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2014 09:53:57 -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.10.1406042004140.3319@nanos>
+	Thu, 12 Jun 2014 14:57:05 -0400
+Received: by mail-wi0-f180.google.com with SMTP id hi2so3513409wib.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2014 11:57:03 -0700 (PDT)
+In-Reply-To: <trinity-980edcd5-a3eb-42ff-b755-cea7c1c6cd0d-1402579141856@3capp-gmx-bs65>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Vincent Guittot <vincent.guittot@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Tobias Jakobi <Liquid.Acid@gmx.net>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Daniel Drake <drake@endlessm.com>, ben-linux@fluff.org, kgene.kim@samsung.com, prahal@yahoo.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Thomas,
+Hi Tobias,
 
-On Wed, Jun 4, 2014 at 11:05 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Wed, 4 Jun 2014, Doug Anderson wrote:
->
->> As we saw in (clocksource: exynos_mct: cache mct upper count), the
->> time spent reading the MCT shows up fairly high in real-world
->> profiles.  That means that it's worth some optimization.
->>
->> We get a roughly 10% speedup in userspace gettimeofday() by using an
->> ldmia to read the two halfs of the MCT.  That seems like a worthwhile
->> thing to do.
->>
->> Before: 1173084 us for 1000000 gettimeofday in userspace
->> After:  1045674 us for 1000000 gettimeofday in userspace
->>
->> NOTE: we could actually do better than this if we really wanted to.
->> Technically we could register the clocksource as a 32-bit timer and
->> only use the "lower" half.  Doing so brings us down to 1014429 us for
->> 1000000 gettimeofday in userspace (and doesn't even require assembly
->> code).  That would be an alternative to this change.
->
-> I was about to ask exactly that question: What's the advantage of the
-> 64 bit dance there? AFAICT nothing.
+On 12.06.2014 15:19, Tobias Jakobi wrote:
+> Hello Marek,
+> 
+> since you pointed out HDMI support on the ODROID, I assume you've looked into that. I've posted about some issues with HDMI PHY and mixer some days ago here:
+> http://www.spinics.net/lists/linux-samsung-soc/msg31643.html
+> 
+> Tomasz already suggested on IRC to CC some more people, who have worked in that area. Maybe you have an idea what is going wrong there?
 
-Are you explicitly naking the 64-bit version of these patches?  If so
-I'll send out the 32-bit version right away.  If nothing else we
-should get the ftrace fix (patch 1 in this series) landed ASAP since
-that fixes a regression.  I'd like to make the 32-bit decision first
-though since fixing the regression is easier in the 32-bit version.
+Empirically we have managed to find that after bypassing the Video
+Processor and using the Mixer alone [1], LCD0 power domain is no longer
+needed for HDMI operation.
 
-Roughly: with the 64-bit version there's no question that we're not
-regressing anyone's functionality or performance and it's nearly as
-fast as the 32-bit version.  The 32-bit version is simpler / faster
-but has the potential to cause (unknown) problems.
+However there is still an issue with power-up and/or -down sequences
+causing the whole system to hang when trying to power on and off HDMI
+repeatedly. This is to be investigated yet.
 
--Doug
+[1] This can be achieved by setting .is_vp_enabled of
+exynos4210_mxr_drv_data to 0, assuming that you have a patch applied
+which adds appropriate compatible string to mixer_match_types[],
+pointing to that struct.
+
+Best regards,
+Tomasz
