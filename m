@@ -1,62 +1,247 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: Crash during S2R on Arndale if CONFIG_SAMSUNG_PM_CHECK enabled
-Date: Thu, 12 Jun 2014 08:20:09 -0700
-Message-ID: <CAD=FV=WKP=_u_UDaFvOgETkAMAoEjJv3dJev8PEvMGWUro0yUA@mail.gmail.com>
-References: <CAGm_ybgakzE3MbQQduBZZ6WFkFm_bFFSyHDzJUXm5ajgQqKFRA@mail.gmail.com>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH 1/3 v4] spi: s3c64xx: fix broken "cs_gpios" usage in the driver
+Date: Thu, 12 Jun 2014 21:36:50 +0530
+Message-ID: <CAHfPSqAPKOYWJKw2+16gMcYuiq0syQ-p19_6rRvjbN9kUO-5Rg@mail.gmail.com>
+References: <1402578821-27338-1-git-send-email-ch.naveen@samsung.com> <5399B273.5050500@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:35421 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756057AbaFLPUK (ORCPT
+Received: from mail-qa0-f50.google.com ([209.85.216.50]:53845 "EHLO
+	mail-qa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933649AbaFLQHM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jun 2014 11:20:10 -0400
-Received: by mail-ob0-f179.google.com with SMTP id uz6so1454699obc.38
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2014 08:20:09 -0700 (PDT)
-In-Reply-To: <CAGm_ybgakzE3MbQQduBZZ6WFkFm_bFFSyHDzJUXm5ajgQqKFRA@mail.gmail.com>
+	Thu, 12 Jun 2014 12:07:12 -0400
+In-Reply-To: <5399B273.5050500@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Olof Johansson <olof@lixom.net>, Abhilash Kesavan <a.kesavan@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, Kukjin Kim <kgene.kim@samsung.com>, cpgs@samsung.com, devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>
 
-Vikas,
+Hello Javier,
 
-On Fri, May 23, 2014 at 5:14 AM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
-> Hi,
+On 12 June 2014 19:30, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> Hello Naveen,
 >
-> I notice that if CONFIG_SAMSUNG_PM_CHECK is enabled, we get a crash in
-> function "crc32_le(), as below.
+> On 06/12/2014 03:13 PM, Naveen Krishna Chatradhi wrote:
+>> Since, (3146bee spi: s3c64xx: Added provision for dedicated cs pin)
+>>
+>> spi-s3c64xx.c driver expects
+>> 1. chip select gpios from "cs-gpio"(singular) under the
+>>    "controller-data" node of the client/slave device of the SPI.
+>>
+>> 2. "cs-gpio"(singular) entry to be present in the SPI device node.
+>>
+>> Eg of current broken usage:
+>> &spi_1 {
+>>       cs-gpio <>;     /* this entry is checked during probe */
+>>       ...
+>>       slave_node {
+>>               controller-data {
+>>                       cs-gpio <&gpioa2 5 0>;
+>>                       /* This field is parsed during .setup() */
+>>               }
+>>       };
+>> };
+>>
+>> The following dts files which were using this driver. But,
+>> din't have the "cs-gpio" entry under SPI node.
+>> -- arch/arm/boot/dts/exynos4210-smdkv310.dts
+>> -- arch/arm/boot/dts/exynos4412-trats2.dts
+>> -- arch/arm/boot/dts/exynos5250-smdk5250.dts
+>>
+>> Also, the SPI core and many drivers moved on to using "cs-gpios"
+>> from SPI node and removed the gpio handling code from drivers
+>> (including spi-s3c64xx.c).
+>>
+>> Hence, spi-s3c64xx.c is broken since "Jun 21 11:26:12 2013" and
+>> considering the time with no compliants about the breakage.
+>>
+>> We are assuming it is safe to remove the "cs-gpio"(singular) usage
+>> from device tree binding of spi-samsung.txt and makes appropriate
+>> changes in the driver to use "cs-gpios"(plural) from
+>> SPI device node.
+>>
+>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+>> Acked-by: Rob Herring <robh@kernel.org>
+>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> Cc: Doug Anderson <dianders@chromium.org>
+>> Cc: Tomasz Figa <t.figa@samsung.com>
+>> ---
+>
+> Usually when you send a new version of a series is good to keep a history of the
+> patch-set so reviewers don't have to look at the previous threads in order to
+> see what changed from version to version.
 
-PM_CHECK is nowhere near working in upstream.  ...or at least it
-wasn't when I last checked in 3.8 and I can't imagine that someone has
-fixed everything needed to make it work.
+Yes, I usually keep track of all the changes in my previous CLs.
+But, I missed it in this version my bad.
 
-My best guess (without digging in detail) as to your particular crash
-would be missing kmap_atomic calls.  The old code would just assume
-that all physical memory was accessible and cram though it.  On modern
-systems this just isn't true.  Note that assuming you're on a 2GB
-system you may be able to hack around this particular crash
-temporarily by using a 1G/3G split (VMSPLIT_1G).
+>
+> Anything that is between "---" and the actual diff is not part of a commit and
+> tools like git am omits that part so that's were you usually describe the history.
 
-If you are serious about getting pm_check working upstream you should
-check out the version in ChromeOS 3.8, clean it up, and land it.  A
-few notes about that, though:
+I've used it in my earlier patches.
+Anyway, Thanks for the detailed information.
 
-1. In order to get PM_CHECK working on today's modern kernels, you'll
-need to introduce "suspend volatile" like we did in Chrome OS.  This
-is used to mark areas of memory that shouldn't be checked (because
-they change between the two calls pm check).  These markings need to
-go in generic (non-samsung) code.
+>
+>>  .../devicetree/bindings/spi/spi-samsung.txt        |    8 ++--
+>>  drivers/spi/spi-s3c64xx.c                          |   41 ++++++++------------
+>>  2 files changed, 20 insertions(+), 29 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+>> index 86aa061..2d29dac 100644
+>> --- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
+>> +++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+>> @@ -42,15 +42,13 @@ Optional Board Specific Properties:
+>>  - num-cs: Specifies the number of chip select lines supported. If
+>>    not specified, the default number of chip select lines is set to 1.
+>>
+>> +- cs-gpios: should specify GPIOs used for chipselects (see spi-bus.txt)
+>> +
+>>  SPI Controller specific data in SPI slave nodes:
+>>
+>>  - The spi slave nodes should provide the following information which is required
+>>    by the spi controller.
+>>
+>> -  - cs-gpio: A gpio specifier that specifies the gpio line used as
+>> -    the slave select line by the spi controller. The format of the gpio
+>> -    specifier depends on the gpio controller.
+>> -
+>>    - samsung,spi-feedback-delay: The sampling phase shift to be applied on the
+>>      miso line (to account for any lag in the miso line). The following are the
+>>      valid values.
+>> @@ -85,6 +83,7 @@ Example:
+>>               #size-cells = <0>;
+>>               pinctrl-names = "default";
+>>               pinctrl-0 = <&spi0_bus>;
+>> +             cs-gpios = <&gpa2 5 0>;
+>>
+>>               w25q80bw@0 {
+>>                       #address-cells = <1>;
+>> @@ -94,7 +93,6 @@ Example:
+>>                       spi-max-frequency = <10000>;
+>>
+>>                       controller-data {
+>> -                             cs-gpio = <&gpa2 5 1 0 3>;
+>>                               samsung,spi-feedback-delay = <0>;
+>>                       };
+>>
+>> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+>> index 75a5696..b888c66 100644
+>> --- a/drivers/spi/spi-s3c64xx.c
+>> +++ b/drivers/spi/spi-s3c64xx.c
+>> @@ -197,7 +197,6 @@ struct s3c64xx_spi_driver_data {
+>>       struct s3c64xx_spi_dma_data     tx_dma;
+>>       struct s3c64xx_spi_port_config  *port_conf;
+>>       unsigned int                    port_id;
+>> -     bool                            cs_gpio;
+>>  };
+>>
+>>  static void flush_fifo(struct s3c64xx_spi_driver_data *sdd)
+>> @@ -776,17 +775,6 @@ static struct s3c64xx_spi_csinfo *s3c64xx_get_slave_ctrldata(
+>>               return ERR_PTR(-ENOMEM);
+>>       }
+>>
+>> -     /* The CS line is asserted/deasserted by the gpio pin */
+>> -     if (sdd->cs_gpio)
+>> -             cs->line = of_get_named_gpio(data_np, "cs-gpio", 0);
+>> -
+>> -     if (!gpio_is_valid(cs->line)) {
+>> -             dev_err(&spi->dev, "chip select gpio is not specified or invalid\n");
+>> -             kfree(cs);
+>> -             of_node_put(data_np);
+>> -             return ERR_PTR(-EINVAL);
+>> -     }
+>> -
+>>       of_property_read_u32(data_np, "samsung,spi-feedback-delay", &fb_delay);
+>>       cs->fb_delay = fb_delay;
+>>       of_node_put(data_np);
+>> @@ -812,6 +800,10 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>>               spi->controller_data = cs;
+>>       }
+>>
+>> +     /* For the non-DT platforms derive chip selects from controller data */
+>> +     if (!spi->dev.of_node)
+>> +             spi->cs_gpio = cs->line;
+>> +
+>>       if (IS_ERR_OR_NULL(cs)) {
+>>               dev_err(&spi->dev, "No CS for SPI(%d)\n", spi->chip_select);
+>>               return -ENODEV;
+>> @@ -819,17 +811,19 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>>
+>>       if (!spi_get_ctldata(spi)) {
+>>               /* Request gpio only if cs line is asserted by gpio pins */
+>> -             if (sdd->cs_gpio) {
+>> -                     err = gpio_request_one(cs->line, GPIOF_OUT_INIT_HIGH,
+>> -                                     dev_name(&spi->dev));
+>> +             if (gpio_is_valid(spi->cs_gpio)) {
+>> +                     err = gpio_request_one(spi->cs_gpio,
+>> +                                             GPIOF_OUT_INIT_HIGH,
+>> +                                             dev_name(&spi->dev));
+>>                       if (err) {
+>>                               dev_err(&spi->dev,
+>>                                       "Failed to get /CS gpio [%d]: %d\n",
+>> -                                     cs->line, err);
+>> +                                     spi->cs_gpio, err);
+>>                               goto err_gpio_req;
+>>                       }
+>> -
+>> -                     spi->cs_gpio = cs->line;
+>> +             } else {
+>> +                     dev_err(&spi->dev, "chip select gpio is invalid\n");
+>> +                     return -EINVAL;
+>>               }
+>>
+>>               spi_set_ctldata(spi, cs);
+>> @@ -884,7 +878,8 @@ setup_exit:
+>>       /* setup() returns with device de-selected */
+>>       writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
+>>
+>> -     gpio_free(cs->line);
+>> +     if (gpio_is_valid(spi->cs_gpio))
+>> +             gpio_free(spi->cs_gpio);
+>>       spi_set_ctldata(spi, NULL);
+>>
+>>  err_gpio_req:
+>> @@ -900,10 +895,12 @@ static void s3c64xx_spi_cleanup(struct spi_device *spi)
+>>       struct s3c64xx_spi_driver_data *sdd;
+>>
+>>       sdd = spi_master_get_devdata(spi->master);
+>> -     if (spi->cs_gpio) {
+>> +     if (gpio_is_valid(spi->cs_gpio)) {
+>>               gpio_free(spi->cs_gpio);
+>>               if (spi->dev.of_node)
+>>                       kfree(cs);
+>> +             else
+>> +                     spi->cs_gpio = -ENOENT;
+>>       }
+>>       spi_set_ctldata(spi, NULL);
+>>  }
+>> @@ -1075,11 +1072,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+>>       sdd->cntrlr_info = sci;
+>>       sdd->pdev = pdev;
+>>       sdd->sfr_start = mem_res->start;
+>> -     sdd->cs_gpio = true;
+>>       if (pdev->dev.of_node) {
+>> -             if (!of_find_property(pdev->dev.of_node, "cs-gpio", NULL))
+>> -                     sdd->cs_gpio = false;
+>> -
+>>               ret = of_alias_get_id(pdev->dev.of_node, "spi");
+>>               if (ret < 0) {
+>>                       dev_err(&pdev->dev, "failed to get alias id, errno %d\n",
+>>
+>
+> Your changes look good to me now.
+>
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-2. In order to have any chance of getting upstream to accept all of
-the suspend volatile markings, you'll probably need to make pm_check a
-generic kernel feature and not one specific to Samsung.
-
-3. You can ignore the "bitfix" stuff in the ChromeOS tree.  There's
-pretty much zero chance upstream would want this IMHO.  If they want
-it it could always be tacked on later.
+Thanks for your review.
+>
+> Best regards,
+> Javier
 
 
-I'm happy to answer more questions about pm check, so just let me know.
 
--Doug
+-- 
+Shine bright,
+(: Nav :)
