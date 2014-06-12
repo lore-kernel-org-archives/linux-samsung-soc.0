@@ -1,44 +1,53 @@
 From: Tushar Behera <tushar.b@samsung.com>
 Subject: Re: [PATCH 1/3] clk: exynos-audss: Keep the parent of mout_audss
  always enabled
-Date: Thu, 12 Jun 2014 13:00:53 +0530
-Message-ID: <CAC5m3BwYTSBW9WxH+f002aU1mMQH-0_WbGUiPgsabOh8C-YV+A@mail.gmail.com>
+Date: Thu, 12 Jun 2014 13:10:24 +0530
+Message-ID: <CAC5m3Bwj1HEWSQd7rx6Zn5vbUPKFqeT_X0PL3mAxRw0FNkK=QQ@mail.gmail.com>
 References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
 	<1402464739-19044-2-git-send-email-tushar.b@samsung.com>
-	<539891D0.8090309@gmail.com>
+	<7ha99jjspt.fsf@paris.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f181.google.com ([209.85.128.181]:35357 "EHLO
-	mail-ve0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932147AbaFLHay (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jun 2014 03:30:54 -0400
-In-Reply-To: <539891D0.8090309@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <7ha99jjspt.fsf@paris.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kevin Hilman <khilman@linaro.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, ML Devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, ML Arch-Arm <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@google.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, ML Devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, ML Arch-Arm <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@google.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-On Wed, Jun 11, 2014 at 10:58 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Tushar,
+On Wed, Jun 11, 2014 at 10:20 PM, Kevin Hilman <khilman@linaro.org> wrote:
+> Tushar Behera <tushar.b@samsung.com> writes:
 >
-> On 11.06.2014 07:32, Tushar Behera wrote:
 >> When the output clock of AUDSS mux is disabled, we are getting kernel
->> oops while doing a clk_get() on other clocks provided by AUDSS. Though
->> user manual doesn't specify this dependency, we came across this issue
->> while disabling the parent of AUDSS mux clocks.
+>> oops while doing a clk_get() on other clocks provided by AUDSS.
+>>
+>> Though user manual doesn't specify this dependency, we came across
+>> this issue while disabling the parent of AUDSS mux clocks.
+>>
+>> Keeping the parents of AUDSS mux always enabled fixes this issue.
 >
-> Could you provide more data about this oops? E.g. kernel log, platforms
-> it affects (just peach-pit or also others), test case, extra patches
-> applied on top of mainline (if any).
->
-> I don't like this solution, because keeping a clock always enabled is
-> usually not desirable and this driver is also used on other platforms
-> than peach-pit, so this change will affect all of them.
+> While this patch works (and fixes the boot problem for me), it seems
+> like it's papering over the real problem.
 >
 
-I will update later after doing similar tests on other platforms.
+Thanks for testing.
 
-> Best regards,
-> Tomasz
+> Seems like the right fix is actually modelling the clocks properly so
+> that enabling a child clock ensures that the parent is also enabled.
+>
+
+Patch 2/3 was to ensure we have proper clock tree defined for
+Exynos5420. While testing with audio disabled, that patch alone fixed
+the issue. But when audio was enabled (and hence I2S0 was trying to
+access the clocks), we got some kernel oops during late booting, hence
+I came up this solution.
+
+The solution might be a little half-baked because of the urgency to
+push the fix, but will try to dig more into the issue on Monday when I
+resume office.
+
+> Kevin
+
+Thanks,
+--
+Tushar
