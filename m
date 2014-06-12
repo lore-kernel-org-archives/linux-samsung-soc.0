@@ -1,199 +1,522 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: Re: Crash during S2R on Arndale if CONFIG_SAMSUNG_PM_CHECK enabled
-Date: Thu, 12 Jun 2014 15:42:03 +0530
-Message-ID: <CAGm_ybiC4mpBojbirNeSnBUn8yD=kGLE8zgGw6Aam_SG7DQ8wg@mail.gmail.com>
-References: <CAGm_ybgakzE3MbQQduBZZ6WFkFm_bFFSyHDzJUXm5ajgQqKFRA@mail.gmail.com>
-	<CAGm_ybi-UeJnDxpJvZwpfX_XrvieR2+SgXhhaCHLzGB29RnZ5g@mail.gmail.com>
-	<539978D5.6080800@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Daniel Drake <drake@endlessm.com>
+Subject: [PATCH] ARM: dts: Initial ODROID U2 support
+Date: Thu, 12 Jun 2014 13:44:37 +0100
+Message-ID: <1402577077-7835-1-git-send-email-drake@endlessm.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f49.google.com ([74.125.82.49]:63641 "EHLO
-	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932878AbaFLKMG (ORCPT
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:62999 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752749AbaFLMoq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jun 2014 06:12:06 -0400
-Received: by mail-wg0-f49.google.com with SMTP id y10so1010118wgg.32
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2014 03:12:03 -0700 (PDT)
-In-Reply-To: <539978D5.6080800@samsung.com>
+	Thu, 12 Jun 2014 08:44:46 -0400
+Received: by mail-wi0-f170.google.com with SMTP id cc10so659992wib.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2014 05:44:45 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>
+To: ben-linux@fluff.org, gene.kim@samsung.com
+Cc: prahal@yahoo.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Thu, Jun 12, 2014 at 3:24 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Vikas,
->
-> To me it looks like wrong address range is used for calculating
-> checksums. Unfortunately I don't have time right now to investigate this.
+This dts adds initial support for the popular ODROID U2/U3 development
+boards based on Exynos4412.
 
-Right, the function s3c_pm_run_res() gets the memory start and end
-address based on flag IORESOURCE_MEM and the strcmp "System RAM".
-Looks like wrong range is marked as "System RAM" .
+This file comes from larger work by Alban Browaeys, but I removed the
+items that aren't immediately working on mainline kernels yet (USB,
+HDMI, etc).
 
-what I found is, even if I access the address "0xf0001000" just after
-booting using Trace32 debugger it gives error.
-thats shows that during bootup itself, wrong range is marked as
-"System RAM", which causes crash the during suspend.
+This leaves us with a reasonable starting point for further development:
+basic bootup and shutdown works, plus LED, eMMC, SD, and serial.
 
-Need to dig more.
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+---
+ arch/arm/boot/dts/Makefile                |   1 +
+ arch/arm/boot/dts/exynos4412-odroidu2.dts | 468 ++++++++++++++++++++++++++++++
+ 2 files changed, 469 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos4412-odroidu2.dts
 
-Thanks.
-
-
->
-> Best regards,
-> Tomasz
->
-> On 12.06.2014 11:28, Vikas Sajjan wrote:
->> Any thoughts on this.
->>
->>
->> On Fri, May 23, 2014 at 5:44 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
->>> Hi,
->>>
->>> I notice that if CONFIG_SAMSUNG_PM_CHECK is enabled, we get a crash in
->>> function "crc32_le(), as below.
->>>
->>> wanted to know, if anyone of you came across this.
->>>
->>> Tested on Arndale5250 on kgene's 'for-next' branch
->>>
->>> 19307a0b41ef10a20712827430e1f2074efab3c4 Merge branch
->>> 'v3.16-next/dt-samsung-2' into for-next
->>> 3c8977f17796f0b8816a1a283b0b80b71c83d416 ARM: dts: enable usb nodes
->>> for exynos4412-trats2
->>> ef14d94cdc41c0af1c2713e1ddced903d9d68768 ARM: dts: add hsotg device
->>> node for exynos4
->>> 26bbd41fe1b3b75bb075eaddf26571c7573c4c01 ARM: dts: add exynos_usbphy
->>> node for exynos4
->>> 7b9613aca42a5522d269f89496fef7df10934335 ARM: dts: add PMU syscon node
->>> for exynos4
->>> e8af308549178271bccaa7886f429a7c0b1d8514 ARM: dts: enable usb nodes
->>> for exynos4412-trats2
->>>
->>>
->>> <-------------------------------------------------------------------------------------------------------------->
->>>
->>> / $ echo mem > /sys/power/state
->>> [    9.874440] PM: Syncing filesystems ...
->>> [   10.518085] random: nonblocking pool is initialized
->>> [   10.645255] done.
->>> [   10.646561] Freezing user space processes ... (elapsed 0.000 seconds) done.
->>> [   10.652642] Freezing remaining freezable tasks ... (elapsed 0.001
->>> seconds) done.
->>> [   10.713454] wake enabled for irq 187
->>> [   10.715575] wake enabled for irq 188
->>> [   10.719117] wake enabled for irq 189
->>> [   10.722686] wake enabled for irq 190
->>> [   10.726244] wake enabled for irq 191
->>> [   10.729793] wake enabled for irq 192
->>> [   10.745154] PM: suspend of devices complete after 83.460 msecs
->>> [   10.751576] PM: late suspend of devices complete after 2.051 msecs
->>> [   10.758449] PM: noirq suspend of devices complete after 2.155 msecs
->>> [   10.763253] Disabling non-boot CPUs ...
->>> [   10.767496] IRQ153 no longer affine to CPU1
->>> [   10.767623] CPU1: shutdown
->>> [   10.774637] Unable to handle kernel paging request at virtual
->>> address f0001000
->>> [   10.774637] pgd = edb18000
->>> [   10.774637] [f0001000] *pgd=6e006811, *pte=00000000, *ppte=00000000
->>> [   10.774637] Internal error: Oops: 7 [#1] PREEMPT SMP ARM
->>> [   10.774637] Modules linked in:
->>> [   10.774637] CPU: 0 PID: 1 Comm: sh Not tainted 3.15.0-rc4-00197-g0cb752a #43
->>> [   10.774637] task: ee00e800 ti: ee078000 task.ti: ee078000
->>> [   10.774637] PC is at crc32_le+0x2c/0x13c
->>> [   10.774637] LR is at 0x1e00
->>> [   10.774637] pc : [<c01cb3a0>]    lr : [<00001e00>]    psr: 20000093
->>> [   10.774637] sp : ee079e6c  ip : 700de3b6  fp : efa06222
->>> [   10.774637] r10: 840510ee  r9 : 00000000  r8 : 00002000
->>> [   10.774637] r7 : c05086ac  r6 : 00000000  r5 : 9e16d8c3  r4 : f0000ffc
->>> [   10.774637] r3 : c05083c0  r2 : 00000000  r1 : effffffc  r0 : 20706046
->>> [   10.774637] Flags: nzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
->>> Segment user
->>> [   10.774637] Control: 10c5387d  Table: 6db1806a  DAC: 00000015
->>> [   10.774637] Process sh (pid: 1, stack limit = 0xee078240)
->>> [   10.774637] Stack: (0xee079e6c to 0xee07a000)
->>> [   10.774637] 9e60:                            70000000 ed9cba00
->>> ef7fccc0 00000000 c050f036
->>> [   10.774637] 9e80: 00000000 ee3ca60c beb7da40 c001a8c8 ef7fccc0
->>> ed9cba00 c001a894 c001a880
->>> [   10.774637] 9ea0: c05128a0 ed9c0000 c001a894 c001a850 c05125f0
->>> c05439bc 00000003 c001a0ec
->>> [   10.774637] 9ec0: c05439bc c0057044 beb7da40 c03841a4 c044e1d0
->>> ee079eec 00000000 ee079eec
->>> [   10.774637] 9ee0: 00000003 00000003 00000000 c038f360 00000003
->>> ed899d40 00000004 c00572a0
->>> [   10.774637] 9f00: 0000006d 00000003 c04465bc c00562c4 00000004
->>> 00000000 00000000 ee079f80
->>> [   10.774637] 9f20: ed899d40 00000004 ee3ca600 c0110534 00000000
->>> 00000000 ee203900 b6f3b000
->>> [   10.774637] 9f40: ee079f80 00000004 00000004 b6f3b000 00000000
->>> c00b7ca0 ee00e800 c00d1570
->>> [   10.774637] 9f60: 00000001 00000000 00000000 ee203900 ee203900
->>> 00000004 b6f3b000 c00b8284
->>> [   10.774637] 9f80: 00000000 00000000 ee203900 00000004 b6f3b000
->>> b6e265f8 00000004 c000e4e4
->>> [   10.774637] 9fa0: ee078000 c000e360 00000004 b6f3b000 00000001
->>> b6f3b000 00000004 00000000
->>> [   10.774637] 9fc0: 00000004 b6f3b000 b6e265f8 00000004 00000004
->>> 000ad848 00000974 beb7da40
->>> [   10.774637] 9fe0: b6f3b000 beb7d7c0 b6d6d124 b6dba43c 60000010
->>> 00000001 ffffffff ffffffff
->>> [   10.774637] [<c01cb3a0>] (crc32_le) from [<c001a8c8>]
->>> (s3c_pm_makecheck+0x34/0x54)
->>> [   10.774637] [<c001a8c8>] (s3c_pm_makecheck) from [<c001a880>]
->>> (s3c_pm_run_res+0x6c/0x80)
->>> [   10.774637] [<c001a880>] (s3c_pm_run_res) from [<c001a850>]
->>> (s3c_pm_run_res+0x3c/0x80)
->>> [   10.774637] [<c001a850>] (s3c_pm_run_res) from [<c001a0ec>]
->>> (exynos_suspend_enter+0xa8/0x144)
->>> [   10.774637] [<c001a0ec>] (exynos_suspend_enter) from [<c0057044>]
->>> (suspend_devices_and_enter+0x25c/0x304)
->>> [   10.774637] [<c0057044>] (suspend_devices_and_enter) from
->>> [<c00572a0>] (pm_suspend+0x1b4/0x214)
->>> [   10.774637] [<c00572a0>] (pm_suspend) from [<c00562c4>]
->>> (state_store+0x68/0xb8)
->>> [   10.774637] [<c00562c4>] (state_store) from [<c0110534>]
->>> (kernfs_fop_write+0xc0/0x180)
->>> [   10.774637] [<c0110534>] (kernfs_fop_write) from [<c00b7ca0>]
->>> (vfs_write+0xac/0x188)
->>> [   10.774637] [<c00b7ca0>] (vfs_write) from [<c00b8284>] (SyS_write+0x40/0x94)
->>> [   10.774637] [<c00b8284>] (SyS_write) from [<c000e360>]
->>> (ret_fast_syscall+0x0/0x30)
->>> [   10.774637] Code: e30833c0 e1a04001 e34c3050 e1a0e008 (e5945004)
->>> [   10.774637] ---[ end trace 2ba1a0948b7498ef ]---
->>> [   10.774637] ------------[ cut here ]------------
->>> [   10.774637] WARNING: CPU: 0 PID: 0 at kernel/time/timekeeping.c:345
->>> ktime_get+0x110/0x11c()
->>> [   10.774637] Modules linked in:
->>> [   10.774637] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G      D
->>> 3.15.0-rc4-00197-g0cb752a #43
->>> [   10.774637] [<c0013fe8>] (unwind_backtrace) from [<c00112d4>]
->>> (show_stack+0x10/0x14)
->>> [   10.774637] [<c00112d4>] (show_stack) from [<c0386488>]
->>> (dump_stack+0x80/0xc0)
->>> [   10.774637] [<c0386488>] (dump_stack) from [<c001d2a0>]
->>> (warn_slowpath_common+0x6c/0x88)
->>> [   10.774637] [<c001d2a0>] (warn_slowpath_common) from [<c001d358>]
->>> (warn_slowpath_null+0x1c/0x24)
->>> [   10.774637] [<c001d358>] (warn_slowpath_null) from [<c0065ff8>]
->>> (ktime_get+0x110/0x11c)
->>> [   10.774637] [<c0065ff8>] (ktime_get) from [<c006f330>]
->>> (__tick_nohz_idle_enter+0x1c/0x44c)
->>> [   10.774637] [<c006f330>] (__tick_nohz_idle_enter) from [<c006f7a0>]
->>> (tick_nohz_idle_enter+0x40/0x78)
->>> [   10.774637] [<c006f7a0>] (tick_nohz_idle_enter) from [<c00500d8>]
->>> (cpu_startup_entry+0x48/0x160)
->>> [   10.774637] [<c00500d8>] (cpu_startup_entry) from [<c04caae4>]
->>> (start_kernel+0x344/0x350)
->>> [   10.774637] ---[ end trace 2ba1a0
->>>
->>>
->>> Regards
->>> Vikas Sajjan
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 5986ff6..bd89b23 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -66,6 +66,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos4210-smdkv310.dtb \
+ 	exynos4210-trats.dtb \
+ 	exynos4210-universal_c210.dtb \
++	exynos4412-odroidu2.dtb \
+ 	exynos4412-odroidx.dtb \
+ 	exynos4412-origen.dtb \
+ 	exynos4412-smdk4412.dtb \
+diff --git a/arch/arm/boot/dts/exynos4412-odroidu2.dts b/arch/arm/boot/dts/exynos4412-odroidu2.dts
+new file mode 100644
+index 0000000..a164522
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos4412-odroidu2.dts
+@@ -0,0 +1,468 @@
++/*
++ * Hardkernel's Exynos4412 based ODROID-U2 board device tree source
++ *
++ * Copyright (c) 2013 Alban Browaeys <prahal@yahoo.com>
++ *
++ * Based on exynos4412-odroidx.dts
++ * Copyright (c) 2012 Dongjin Kim <tobetter@gmail.com>
++ *
++ * Based on exynos4412-origen.dts
++ * Copyright (c) 2012-2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Device tree source file for Hardkernel's ODROID-U2 board which is based on
++ * Samsung's Exynos4412 SoC.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++#include "exynos4412.dtsi"
++
++/ {
++	model = "Hardkernel ODROID-U2/U3 board based on Exynos4412";
++	compatible = "hardkernel,odroid-u2", "samsung,exynos4412", "samsung,exynos4";
++
++	chosen {
++		bootargs = "console=ttySAC1,115200";
++	};
++
++	memory {
++		reg = <0x40000000 0x80000000>;
++	};
++
++	firmware@0203F000 {
++		compatible = "samsung,secure-firmware";
++		reg = <0x0203F000 0x1000>;
++	};
++
++	watchdog@10060000 {
++		status = "okay";
++	};
++
++	g2d@10800000 {
++		status = "okay";
++	};
++
++	fixed-rate-clocks {
++		xxti {
++			compatible = "samsung,clock-xxti", "fixed-clock";
++			clock-frequency = <0>;
++		};
++
++		xusbxti {
++			compatible = "samsung,clock-xusbxti", "fixed-clock";
++			clock-frequency = <24000000>;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		led1 {
++			label = "led1:heart";
++			gpios = <&gpc1 0 1>;
++			default-state = "on";
++			linux,default-trigger = "heartbeat";
++		};
++	};
++
++	mmc@12550000 {
++		pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8 &sd4_nreset_out>;
++		pinctrl-names = "default";
++		vmmc-supply = <&ldo20_reg &ldo22_reg>;
++		status = "okay";
++
++		num-slots = <1>;
++		supports-highspeed;
++		broken-cd;
++		keep-power-in-suspend;
++		non-removable;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <1 1>;
++		samsung,dw-mshc-ddr-timing = <2 1>;
++		samsung,dw-mshc-hwreset-gpio = <&gpk1 2 1>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <8>;
++		};
++	};
++
++	regulators {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++
++		reg_p3v3: p3v3@0 {
++			compatible = "regulator-fixed";
++			regulator-name = "p3v3_en";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			gpio = <&gpa1 1 3>;
++			enable-active-high;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		reg_sysvdd: p5v0@1 {
++			compatible = "regulator-fixed";
++			regulator-name = "p5v0";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-always-on;
++			regulator-boot-on;
++		};
++
++		spkvdd:jack@2 {
++			compatible = "regulator-fixed";
++			regulator-name = "spkvdd-supply";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-always-on;
++			vin-supply = <&reg_sysvdd>;
++		};
++	};
++
++	pinctrl@11000000 {
++		sd4_nreset_out: sd4-nreset-out {
++			samsung,pins = "gpk1-2";
++			samsung,pin-function = <4>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
++
++		eint26: ext-int26 {
++			samsung,pins = "gpx3-2";
++			samsung,pin-function = <0xf>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
++	};
++
++	sdhci@12530000 {
++		bus-width = <4>;
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++		pinctrl-names = "default";
++		vmmc-supply = <&ldo4_reg &ldo21_reg>;
++		status = "okay";
++	};
++
++	serial@13800000 {
++		status = "okay";
++	};
++
++	serial@13810000 {
++		status = "okay";
++	};
++
++	serial@13820000 {
++		status = "okay";
++	};
++
++	serial@13830000 {
++		status = "okay";
++	};
++
++	i2c_0: i2c@13860000 {
++		pinctrl-0 = <&i2c0_bus>;
++		pinctrl-names = "default";
++		status = "okay";
++
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-slave-addr = <0x10>;
++		samsung,i2c-max-bus-freq = <400000>;
++
++		max77686_pmic@09 {
++			compatible = "maxim,max77686";
++			interrupts-extended = <&gpx3 2 1>, <&gpx1 2 1>;
++			reg = <0x09>;
++			pinctrl-0 = <&eint26>;
++			pinctrl-names = "default";
++			#clock-cells = <1>;
++
++			voltage-regulators {
++				ldo1_reg: ldo1 {
++					regulator-compatible = "LDO1";
++					regulator-name = "VDD_ALIVE_1.0V";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo2_reg: ldo2 {
++					regulator-compatible = "LDO2";
++					regulator-name = "VDDQ_M1_2_1.8V";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++				};
++
++				ldo3_reg: ldo3 {
++					regulator-compatible = "LDO3";
++					regulator-name = "VDDQ_EXT_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo4_reg: ldo4 {
++					regulator-compatible = "LDO4";
++					regulator-name = "VDDQ_MMC2_2.8V";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				ldo5_reg: ldo5 {
++					regulator-compatible = "LDO5";
++					regulator-name = "VDDQ_MMC1_3_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo6_reg: ldo6 {
++					regulator-compatible = "LDO6";
++					regulator-name = "VDD10_MPLL_1.0V";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo7_reg: ldo7 {
++					regulator-compatible = "LDO7";
++					regulator-name = "VDD10_EPLL_1.0V";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo8_reg: ldo8 {
++					regulator-compatible = "LDO8";
++					regulator-name = "VDD10_MIPI_1.0V";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo9_reg: ldo9 {
++					regulator-compatible = "LDO9";
++					regulator-name = "VT_CORE_1.0V";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++				};
++
++				ldo10_reg: ldo10 {
++					regulator-compatible = "LDO10";
++					regulator-name = "VDD18_MIPI_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-boot-on;
++				};
++
++				ldo11_reg: ldo11 {
++					regulator-compatible = "LDO11";
++					regulator-name = "VDD18_ABB1_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo12_reg: ldo12 {
++					regulator-compatible = "LDO12";
++					regulator-name = "VDD33_USB_3.3V";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3000000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				ldo13_reg: ldo13 {
++					regulator-compatible = "LDO13";
++					regulator-name = "VDDQ_C2C_W_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo14_reg: ldo14 {
++					regulator-compatible = "LDO14";
++					regulator-name = "VDD18_ABB0_2_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo15_reg: ldo15 {
++					regulator-compatible = "LDO15";
++					regulator-name = "VDD10_HSIC_1.0V";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				ldo16_reg: ldo16 {
++					regulator-compatible = "LDO16";
++					regulator-name = "VDD18_HSIC_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo17_reg: ldo17 {
++					regulator-compatible = "LDO17";
++					regulator-name = "VDDQ_CAM_1.2V";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++				};
++
++				ldo18_reg: ldo18 {
++					regulator-compatible = "LDO18";
++					regulator-name = "VDDQ_ISP_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++				};
++
++				ldo19_reg: ldo19 {
++					regulator-compatible = "LDO19";
++					regulator-name = "VT_CAM_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++				};
++
++				ldo20_reg: ldo20 {
++					regulator-compatible = "LDO20";
++					regulator-name = "LDO20_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-boot-on;
++				};
++
++				ldo21_reg: ldo21 {
++					regulator-compatible = "LDO21";
++					regulator-name = "LDO21_3.3V";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				ldo22_reg: ldo22 {
++					regulator-compatible = "LDO22";
++					regulator-name = "VMEM_VDD_2.8V";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				ldo23_reg: ldo23 {
++					regulator-compatible = "LDO23";
++					regulator-name = "VDD_TOUCH_2.8V";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++				};
++
++				ldo24_reg: ldo24 {
++					regulator-compatible = "LDO24";
++					regulator-name = "VDD_TOUCHLED_3.3V";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++				};
++
++				ldo25_reg: ldo25 {
++					regulator-compatible = "LDO25";
++					regulator-name = "VDDQ_LCD_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo26_reg: ldo26 {
++					regulator-compatible = "LDO26";
++					regulator-name = "VDD_MOTOR_3.0V";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3000000>;
++				};
++
++				buck1_reg: buck1 {
++					regulator-compatible = "BUCK1";
++					regulator-name = "vdd_mif";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck2_reg: buck2 {
++					regulator-compatible = "BUCK2";
++					regulator-name = "vdd_arm";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck3_reg: buck3 {
++					regulator-compatible = "BUCK3";
++					regulator-name = "vdd_int";
++					regulator-min-microvolt = <1125000>;
++					regulator-max-microvolt = <1125000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck4_reg: buck4 {
++					regulator-compatible = "BUCK4";
++					regulator-name = "vdd_g3d";
++					regulator-min-microvolt = <850000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck5_reg: buck5 {
++					regulator-compatible = "BUCK5";
++					regulator-name = "VDDQ_CKEM1_2_1.2V";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++				};
++
++				buck6_reg: buck6 {
++					regulator-compatible = "BUCK6";
++					regulator-name = "BUCK6_1.35V";
++					regulator-min-microvolt = <1350000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-always-on;
++				};
++
++				buck7_reg: buck7 {
++					regulator-compatible = "BUCK7";
++					regulator-name = "BUCK7_2.0V";
++					regulator-min-microvolt = <2000000>;
++					regulator-max-microvolt = <2000000>;
++					regulator-always-on;
++				};
++
++				buck8_reg: buck8 {
++					regulator-compatible = "BUCK8";
++					regulator-name = "BUCK8_2.8V";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck9_reg: buck9 {
++					regulator-compatible = "BUCK9";
++					regulator-name = "BUCK9_1.2V";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++				};
++			};
++		};
++	};
++};
+-- 
+1.9.1
