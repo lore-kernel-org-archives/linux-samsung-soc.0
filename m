@@ -1,69 +1,56 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH v2 1/2] usb: ehci-exynos: Make provision for vdd regulators
-Date: Thu, 12 Jun 2014 13:21:09 +0900
-Message-ID: <003801cf85f5$bc7ca200$3575e600$%han@samsung.com>
-References: <1402064411-18244-1-git-send-email-gautam.vivek@samsung.com>
- <Pine.LNX.4.44L0.1406111131200.890-100000@iolanthe.rowland.org>
+From: Tushar Behera <tushar.b@samsung.com>
+Subject: Re: [PATCH 1/3] clk: exynos-audss: Keep the parent of mout_audss
+ always enabled
+Date: Thu, 12 Jun 2014 12:59:23 +0530
+Message-ID: <CAC5m3BwR9WhiiDqUw1A6FjmzAnQ02xCBxOeAaY2nt3CRqTz+oQ@mail.gmail.com>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
+	<1402464739-19044-2-git-send-email-tushar.b@samsung.com>
+	<20140611165027.6562.64928@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:24476 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750869AbaFLEVT (ORCPT
+Received: from mail-vc0-f179.google.com ([209.85.220.179]:60728 "EHLO
+	mail-vc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932161AbaFLH3Y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jun 2014 00:21:19 -0400
-In-reply-to: <Pine.LNX.4.44L0.1406111131200.890-100000@iolanthe.rowland.org>
-Content-language: ko
+	Thu, 12 Jun 2014 03:29:24 -0400
+In-Reply-To: <20140611165027.6562.64928@quantum>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Alan Stern' <stern@rowland.harvard.edu>, 'Vivek Gautam' <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
+To: Mike Turquette <mturquette@linaro.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, ML Devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, ML Arch-Arm <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@google.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-On Thursday, June 12, 2014 12:39 AM, Alan Stern wrote:
-> On Fri, 6 Jun 2014, Vivek Gautam wrote:
-> 
-> > Facilitate getting required 3.3V and 1.0V VDD supply for
-> > EHCI controller on Exynos.
-> >
-> > With patches for regulators' nodes merged in 3.15:
-> > c8c253f ARM: dts: Add regulator entries to smdk5420
-> > 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
-> >
-> > certain perripherals will now need to ensure that,
-> > they request VDD regulators in their drivers, and enable
-> > them so as to make them working.
-> 
-> "Certain peripherals"?  Don't you mean "certain controllers"?
-> 
-> Does this mean some controllers don't need to use the VDD regulators?
-> 
-> > @@ -193,7 +196,31 @@ static int exynos_ehci_probe(struct platform_device *pdev)
-> >
-> >  	err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
-> >  	if (err)
-> > -		goto fail_clk;
-> > +		goto fail_regulator1;
-> > +
-> > +	exynos_ehci->vdd33 = devm_regulator_get(&pdev->dev, "vdd33");
-> > +	if (!IS_ERR(exynos_ehci->vdd33)) {
-> > +		err = regulator_enable(exynos_ehci->vdd33);
-> > +		if (err) {
-> > +			dev_err(&pdev->dev,
-> > +				"Failed to enable 3.3V Vdd supply\n");
-> > +			goto fail_regulator1;
-> > +		}
-> > +	} else {
-> > +		dev_warn(&pdev->dev, "Regulator 3.3V Vdd supply not found\n");
-> > +	}
-> 
-> What if this is one of the controllers that don't need to use a VDD
-> regulator?  Do you really want to print out a warning in that case?
-> Should you call devm_regulator_get_optional() instead?
+On Wed, Jun 11, 2014 at 10:20 PM, Mike Turquette <mturquette@linaro.org> wrote:
+> Quoting Tushar Behera (2014-06-10 22:32:17)
+>> When the output clock of AUDSS mux is disabled, we are getting kernel
+>> oops while doing a clk_get() on other clocks provided by AUDSS. Though
+>> user manual doesn't specify this dependency, we came across this issue
+>> while disabling the parent of AUDSS mux clocks.
+>
+> Hi Tushar,
+>
+> Can you help me understand better what the actual problem is? What is
+> the root cause of the kernel oops?
 
-I agree with Alan's suggestion. This warning message is not
-proper, when USB controllers that don't need a VDD regulator
-are used. The devm_regulator_get_optional() looks better.
+Currently AUDSS mux has two parents, XXTI crystal and MAU_EPLL clock.
+As per observation, when the output of AUDSS mux is gated, we are not
+able to do any operation on the clocks provided by MAU block (mostly
+the clocks used by ADMA and audio blocks).
 
-Best regards,
-Jingoo Han
+>
+> You mention calling clk_get on child clocks of the AUDSS mux fails, but
+> I cannot imagine why. How can the enable/disable state of a clock affect
+> the ability to clk_get other clocks?
+>
+
+I might have a little vogue while updating the commit message
+(mentioning about clk_get which surely is only a s/w operation), but
+there is definitely some issue with handling those clocks under given
+scenario.
+
+I am on leave till end of this week, so I will update you more with
+the logs on Monday.
+
+Thanks,
+--
+Tushar
