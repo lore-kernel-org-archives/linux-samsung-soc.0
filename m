@@ -1,93 +1,50 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH 1/3] clk: exynos-audss: Keep the parent of mout_audss
- always enabled
-Date: Thu, 12 Jun 2014 14:09:20 -0700
-Message-ID: <20140612210920.6562.96815@quantum>
-References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
- <1402464739-19044-2-git-send-email-tushar.b@samsung.com>
- <20140611165027.6562.64928@quantum>
- <CAC5m3BwR9WhiiDqUw1A6FjmzAnQ02xCBxOeAaY2nt3CRqTz+oQ@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 3/3 v4] ARM: DTS: fix the chip select gpios definition in
+ the SPI nodes
+Date: Thu, 12 Jun 2014 16:14:39 -0700
+Message-ID: <CAD=FV=WwkifF6NBtedeTisBEAqgz2MYrER-YFD6DP1Nsu-X9aQ@mail.gmail.com>
+References: <1402578821-27338-1-git-send-email-ch.naveen@samsung.com>
+	<1402578821-27338-3-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAC5m3BwR9WhiiDqUw1A6FjmzAnQ02xCBxOeAaY2nt3CRqTz+oQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tushar Behera <tushar.b@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, ML Devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Tomasz Figa <t.figa@samsung.com>, lkml <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@google.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, ML Arch-Arm <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f181.google.com ([209.85.220.181]:35948 "EHLO
+	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750886AbaFLXOk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Jun 2014 19:14:40 -0400
+Received: by mail-vc0-f181.google.com with SMTP id il7so1491983vcb.26
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2014 16:14:39 -0700 (PDT)
+In-Reply-To: <1402578821-27338-3-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, "broonie@kernel.org" <broonie@kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>
 
-Quoting Tushar Behera (2014-06-12 00:29:23)
-> On Wed, Jun 11, 2014 at 10:20 PM, Mike Turquette <mturquette@linaro.org> wrote:
-> > Quoting Tushar Behera (2014-06-10 22:32:17)
-> >> When the output clock of AUDSS mux is disabled, we are getting kernel
-> >> oops while doing a clk_get() on other clocks provided by AUDSS. Though
-> >> user manual doesn't specify this dependency, we came across this issue
-> >> while disabling the parent of AUDSS mux clocks.
-> >
-> > Hi Tushar,
-> >
-> > Can you help me understand better what the actual problem is? What is
-> > the root cause of the kernel oops?
-> 
-> Currently AUDSS mux has two parents, XXTI crystal and MAU_EPLL clock.
-> As per observation, when the output of AUDSS mux is gated, we are not
-> able to do any operation on the clocks provided by MAU block (mostly
-> the clocks used by ADMA and audio blocks).
+Hi,
 
-I tried to get a datasheet for Exynos 54xx but could not find it. I even
-looked at the public 5250 data sheet, but it is completely missing
-Chapter 34, "Audio Subsystem", which apparently contains Figure 34-3,
-"Clock names and clock tree diagram of MAUDIO_BLK".
+On Thu, Jun 12, 2014 at 6:13 AM, Naveen Krishna Chatradhi
+<ch.naveen@samsung.com> wrote:
+> This patch replaces the "cs-gpio" from "controller-data" node
+> as was specified in the old binding and use the standard
+> "cs-gpios" property expected by the SPI core as is defined in
+> the new binding.
+>
+> Respective changes are preposed to spi-s3c64xx.c driver.
+> @ http://www.spinics.net/lists/linux-samsung-soc/msg32282.html
+>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4210-smdkv310.dts |    2 +-
+>  arch/arm/boot/dts/exynos4412-trats2.dts   |    2 +-
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts |    2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 
-So without any clue about your hardware (not for lack of trying) I would
-guess that somewhere in the parent hierarchy you have an interface clock
-which must be enabled in order for you to touch the registers pertaining
-to the downstream audio clocks.
+This looks fine, though I will note that you're not very consistent
+with the ordering of "cs-gpios" and "status".
 
-The right way to handle this requires two steps:
-
-1) model your interface clock in the Linux clock framework if you
-haven't already (I assume it is a gate clock, or the child of a gate
-clock)
-
-2) the clk_ops callbacks for the affected audio clocks should wrap their
-operations (i.e. critical secion) with a clk_enable/clk_disable pair,
-where the clock being enables/disable is the interface clock mentioned
-above in #1
-
-The CCF is reentrant, so you can do this by simply using the top-level
-clk.h API from within your clk_ops callbacks.
-
-I might be totally wrong about the cause of the hang, but that's my best
-guess based on everyone's bug reports.
-
-Regards,
-Mike
-
-> 
-> >
-> > You mention calling clk_get on child clocks of the AUDSS mux fails, but
-> > I cannot imagine why. How can the enable/disable state of a clock affect
-> > the ability to clk_get other clocks?
-> >
-> 
-> I might have a little vogue while updating the commit message
-> (mentioning about clk_get which surely is only a s/w operation), but
-> there is definitely some issue with handling those clocks under given
-> scenario.
-> 
-> I am on leave till end of this week, so I will update you more with
-> the logs on Monday.
-> 
-> Thanks,
-> --
-> Tushar
+Reviewed-by: Doug Anderson <dianders@chromium.org>
