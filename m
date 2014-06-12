@@ -1,45 +1,170 @@
-From: Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH] ARM: dts: exynos4: fix pwm-cells in pwm node
-Date: Thu, 12 Jun 2014 17:23:12 +0900
-Message-ID: <1402561392-21702-1-git-send-email-jaewon02.kim@samsung.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: linux-next on Chromebook2: DRM failing to allocate
+Date: Thu, 12 Jun 2014 14:14:31 +0530
+Message-ID: <CAEC9eQNff9Kw2hgKoXCjw1ppBnu7=b1FgGdZQiq_7Dr0=qF6aA@mail.gmail.com>
+References: <CAGa+x87EQcHBMc9NUOL_EKx=rKhOjfQ=_aMY5qvyPhqCN5--4w@mail.gmail.com>
+	<CADMs+9a-vMpFOUmF5DO6X_OJfLgPP48DtRA9tcquzzt-Uso89A@mail.gmail.com>
+	<CAGa+x85gXyefMhkpE8nGZkEEPc1X8pAHUvGMQbOPkTKZ6DLNqQ@mail.gmail.com>
+	<CAEC9eQMpukbdekaUeCzs8kqS9543hnnQj95bxHadmOQW1jvmaQ@mail.gmail.com>
+	<CAGa+x86YjQoOv=Z-1+96X2D16zfxNHHF=b=KA6c3ft80jEUZRw@mail.gmail.com>
+	<CAPdUM4MgG_QEfwB+G6d3Lxo-m+p3s0coZYcgb+P9m7JfzR1Kaw@mail.gmail.com>
+	<7hzjhjf8mu.fsf@paris.lan>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:40094 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754632AbaFLIXm (ORCPT
+Received: from mail-vc0-f177.google.com ([209.85.220.177]:61464 "EHLO
+	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932501AbaFLIod convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jun 2014 04:23:42 -0400
+	Thu, 12 Jun 2014 04:44:33 -0400
+Received: by mail-vc0-f177.google.com with SMTP id ij19so463720vcb.22
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jun 2014 01:44:32 -0700 (PDT)
+In-Reply-To: <7hzjhjf8mu.fsf@paris.lan>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: myungjoo.ham@samsung.com, cw00.choi@samsung.com, Jaewon Kim <jaewon02.kim@samsung.com>
+To: Kevin Hilman <khilman@linaro.org>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@chromium.org>, Daniel Kurtz <djkurtz@chromium.org>, Inki Dae <inki.dae@samsung.com>, Naveen Krishna <naveenkrishna.ch@gmail.com>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Olof Johansson <olof@lixom.net>, sunil joshi <joshi@samsung.com>
 
-pwm-cells should be 3. Third cell is optional PWM flags.
-And This flag supported by this binding is PWM_POLARITY_INVERTED
+Kevin,
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index b8ece4b..b687e53 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -548,13 +548,13 @@
- 		status = "disabled";
- 	};
- 
--	pwm@139D0000 {
-+	pwm: pwm@139D0000 {
- 		compatible = "samsung,exynos4210-pwm";
- 		reg = <0x139D0000 0x1000>;
- 		interrupts = <0 37 0>, <0 38 0>, <0 39 0>, <0 40 0>, <0 41 0>;
- 		clocks = <&clock CLK_PWM>;
- 		clock-names = "timers";
--		#pwm-cells = <2>;
-+		#pwm-cells = <3>;
- 		status = "disabled";
- 	};
- 
--- 
-1.7.9.5
+On Thu, Jun 12, 2014 at 2:48 AM, Kevin Hilman <khilman@linaro.org> wrot=
+e:
+> Rahul Sharma <rahul.sharma@samsung.com> writes:
+>
+>> On 11 June 2014 03:48, Kevin Hilman <khilman@linaro.org> wrote:
+>>> Hi Ajay,
+>>>
+>>> On Tue, Jun 10, 2014 at 1:51 PM, Ajay kumar <ajaynumb@gmail.com> wr=
+ote:
+>>>> Hi,
+>>>>
+>>>> On 6/11/14, Kevin Hilman <khilman@linaro.org> wrote:
+>>>>> On Tue, Jun 10, 2014 at 11:04 AM, St=C3=A9phane Marchesin
+>>>>> <marcheu@chromium.org> wrote:
+>>>>>> On Tue, Jun 10, 2014 at 10:56 AM, Kevin Hilman <khilman@linaro.o=
+rg>
+>>>>>> wrote:
+>>>>>>> I'm trying to get the latest linux-next working on my Chromeboo=
+k2
+>>>>>>> (it's booting to a serial console) and am now trying to get the
+>>>>>>> display working (at least for a frambuffer console.)
+>>>>>>>
+>>>>>>> Since the display nodes seem to be present in the exynos5800-pe=
+ach-pi
+>>>>>>> DTS, I tried enabling DRM and it's failing to allocate memory (=
+log
+>>>>>>> below[1]
+>>>>>>>
+>>>>>>> Is there some additional memory setup/allocations I should be d=
+oing?
+>>>>>>> maybe with CMA?
+>>>>>>
+>>>>>> Probably not CMA, but maybe you don't have the iommu enabled?
+>>>>>
+>>>>> Turns out it was missing CMA support.  Specifically:
+>>>>>    CONFIG_CMA=3Dy
+>>>>>    CONFIG_DMA_CMA=3Dy
+>>>>> are needed (my full .config is here: http://hastebin.com/uqopiraz=
+ir.vbs)
+>>>>>
+>>>>> With that, it allocates, appears to detect the panel and even cla=
+ims
+>>>>> "Console: switching to colour frame buffer device", but I don't s=
+ee
+>>>>> tux or any output on the display (DRM debug output below).
+>>>>>
+>>>>> Note that I'm chain-loading nv_uboot from an SD card, and u-boot =
+is
+>>>>> driving the display (black text on white background.)  As soon as=
+ it
+>>>>> starts the kernel though, u-boot seems to shut down the display
+>>>>> (though the backlight seems to still be on.)
+>>>>>
+>>>>> Maybe the DT for peach-pi is missing the regulator used to power =
+the
+>>>>> panel, or maybe a GPIO used to power up the panel?
+>>>>>
+>>>>> Any ideas?
+>>>> Not only the DT patches, but few patches are missing to support th=
+e
+>>>> panel present on peach-pi.
+>>>> You should also take the following patches to be able to get the
+>>>> display up on peach-pi:
+>>>> http://www.spinics.net/lists/linux-samsung-soc/msg32122.html
+>>>
+>>> Excellent, thanks for the pointer to those patches.  I'll have a lo=
+ok.
+>>>
+>>> Can you confirm that this should work even when chain-loading
+>>> nv_uboot?  It appears u-boot is powering down the panel.
+>>
+>> If u-boot is powering down the panel, you also need EC and Tps DT
+>> patches to get regulators up in kernel. Those are not posted yet. I =
+will
+>> send these patches to you.
+>
+> I tested the patches you sent on top of next-2014060 but I'm still no=
+t
+> seeing tux on the framebuffer.  I do see the backlight turn off and b=
+ack
+> on twice during the boot, but nothing else interesting on the display=
+=2E
+
+Your configs seem to be fine, but when I analyzed the logs, I could mak=
+e
+out that lcd_vdd being on from u-boot is the problem:
+[    2.641456] lcd_vdd: no parameters
+[    2.641522] lcd_vdd: supplied by vbat-supply
+
+The eDP panel on peach-pi throws HPD approximately 100-150ms after powe=
+ring
+up lcd_vdd. Since u-boot turns the display on, HPD was thrown at u-boot=
+ itself.
+When kernel boots up, it is not disabling and enabling lcd_vdd, but it
+is left in
+same voltage state. That means panel was not actually "reset", and henc=
+e HPD
+is not thrown again in kernel.
+
+I have already fixed this problem and sent patches yesterday.
+Revert V3 series of bridge chip patches, and take the latest version he=
+re:
+http://www.spinics.net/lists/linux-samsung-soc/msg32393.html
+
+Regarding the new configs, you should enable CONFIG_DRM_PANEL_BINDER
+and CONFIG_DRM_PANEL_EDP_LVDS.
+Same DT changes should work, just make one change:
+Rename the property in exynos5800-peach-pi.dts:
+- "panel-enable-delay =3D <105>"
++ "panel-prepare-delay =3D <105>"
+
+
+Ajay
+
+> I've configured the kernel using the chromeos configs provided:
+>
+>   ./chromeos/scripts/prepareconfig chromeos-exynos5
+>
+> And then I append the some kconfig fragments[1] to enable DT append, =
+and
+> enable the serial port.
+>
+> From the kernel messages, it appears that everything is working ok, b=
+ut
+> I don't see anything on the display yet.  Attached is the .config use=
+d
+> and the boot log with drm.drm_debug=3D0xff.
+>
+> Kevin
+>
+> [1]
+> CONFIG_OF=3Dy
+> CONFIG_PROC_DEVICETREE=3Dy
+> CONFIG_ARM_APPENDED_DTB=3Dy
+> CONFIG_ARM_ATAG_DTB_COMPAT=3Dy
+> CONFIG_SERIAL_SAMSUNG=3Dy
+> CONFIG_SERIAL_SAMSUNG_CONSOLE=3Dy
+> CONFIG_MALI_T6XX=3Dn
+>
