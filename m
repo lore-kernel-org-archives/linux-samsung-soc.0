@@ -1,40 +1,62 @@
-From: SHIRISH S <s.shirish@samsung.com>
-Subject: Re: Exynos HDMI PHY settings for 85.5MHz
-Date: Fri, 13 Jun 2014 07:43:45 +0000 (GMT)
-Message-ID: <13302011.323881402645424401.JavaMail.weblogic@epv6ml11>
-Reply-To: s.shirish@samsung.com
+From: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
+Subject: Re: [PATCH v3 5/7] mfd: cros_ec: Sync to the latest
+ cros_ec_commands.h from EC sources
+Date: Fri, 13 Jun 2014 10:08:22 +0200
+Message-ID: <1402646902.28881.15.camel@x220>
+References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
+	 <1398879850-9111-6-git-send-email-dianders@chromium.org>
+	 <20140520084602.GF24991@lee--X1> <1402483068.3798.82.camel@x220>
+	 <CAD=FV=XL9tnEqza8Zx8mt_Z7-bj8TCzdeyHMhnpewKp_1CR-ig@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:44508 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750855AbaFMHnx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jun 2014 03:43:53 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N7300JE6K50T9E0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 13 Jun 2014 16:43:48 +0900 (KST)
-MIME-version: 1.0
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAD=FV=XL9tnEqza8Zx8mt_Z7-bj8TCzdeyHMhnpewKp_1CR-ig-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-SGkgRGFuaWVsLg0KSSBoYXZlIGFscmVhZHkgc3VibWl0dGVkIHBhdGNoIGZvciA4NS41TUh6ICgx
-MzYweDc2OCksICANCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvYXJjaGl2ZXMvZHJpLWRl
-dmVsLzIwMTQtTWF5LzA2MDM1OC5odG1sDQpIb3dldmVyIGkgY2FudCBoZWxwIGluIGtub3dpbmcg
-aG93IHRvIGdldCB0aGUgbWFnaWMgbnVtYmVycywgYmVjYXVzZSBpdHMgcHJvdmlkZWQgYnkgb3Vy
-IGgvdyB0ZWFtLg0KUmVnYXJkcywNClNoaXJpc2ggUw0KDQotLS0tLS0tIE9yaWdpbmFsIE1lc3Nh
-Z2UgLS0tLS0tLQ0KU2VuZGVyIDogRGFuaWVsIERyYWtlPGRyYWtlQGVuZGxlc3NtLmNvbT4gDQpE
-YXRlICAgOiBKdW4gMTIsIDIwMTQgMTk6MTkgKEdNVCswNTozMCkNClRpdGxlICA6IEV4eW5vcyBI
-RE1JIFBIWSBzZXR0aW5ncyBmb3IgODUuNU1Ieg0KDQpIaSBTaGlyaXNoLA0KDQpUaGFua3MgYSBs
-b3QgZm9yIHlvdXIgcmVjZW50IHBhdGNoIHRpdGxlZCAiZHJtL2V4eW5vczogYWRkIHBoeQ0Kc2V0
-dGluZ3MgZm9yIFJCIHJlc29sdXRpb25zIg0KDQpDYW4geW91IHRlbGwgbWUgbW9yZSBhYm91dCB0
-aGUgcHJvY2VzcyBvZiBnZW5lcmF0aW5nIHRoZXNlIG1hZ2ljIG51bWJlcnM/DQoNCkkgd291bGQg
-YmUgdmVyeSBpbnRlcmVzdGVkIGluIGFkZGluZyA4NS41TUh6LCB3aGljaCBpcyBmb3IgMTM2Nng3
-NjguDQpDYW4geW91IGhlbHAgaW4gc29tZSB3YXk/DQoNClRoYW5rcw0KRGFuaWVsDQo8cD4mbmJz
-cDs8L3A+PHA+Jm5ic3A7PC9wPg==
+Doug,
+
+On Wed, 2014-06-11 at 08:11 -0700, Doug Anderson wrote:
+> On Wed, Jun 11, 2014 at 3:37 AM, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org> wrote:
+> > On Tue, 2014-05-20 at 09:46 +0100, Lee Jones wrote:
+> >> On Wed, 30 Apr 2014, Doug Anderson wrote:
+> >> > From: Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> >> >
+> >> > This just updates include/linux/mfd/cros_ec_commands.h to match the
+> >> > latest EC version (which is the One True Source for such things).  See
+> >> > <https://chromium.googlesource.com/chromiumos/platform/ec>
+> 
+> I believe most of your questions are answered by checking out the git
+> tree referenced above.  ...but see below for details.  This header is
+> a common interface between the kernel and the EC.
+
+I didn't realize that this was a link to a tree.
+
+> > CONFIG_CHARGER_PROFILE_OVERRIDE doesn't match anything in linux-next. Is
+> > a Kconfig symbol CHARGER_PROFILE_OVERRIDE perhaps queued somewhere?
+> 
+> This is a config option on the ChromeOS EC
+> <https://chromium.googlesource.com/chromiumos/platform/ec>.  Doing a
+> grep there:
+> 
+> board/samus/board.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
+> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+> driver/battery/samus.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+> driver/battery/samus.c:#endif   /* CONFIG_CHARGER_PROFILE_OVERRIDE */
+> include/config.h:#undef CONFIG_CHARGER_PROFILE_OVERRIDE
+> include/ec_commands.h:  /* Range for CONFIG_CHARGER_PROFILE_OVERRIDE params */
+> test/test_config.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
+
+I see. So this is not a Kconfig macro but a general macro with a CONFIG_
+prefix. There are quite a bit of those in the tree already, but still,
+would another prefix also do?
+
+Thanks,
+
+
+Paul Bolle
