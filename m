@@ -1,47 +1,73 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
-Date: Fri, 13 Jun 2014 08:10:18 -0700
-Message-ID: <CAD=FV=XkTSfHwt9Ekcy6TPGWJTJ49zMCOA9eaJVaq=q4u4Ri3Q@mail.gmail.com>
-References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
-	<20140607181221.GB25068@e102568-lin.cambridge.arm.com>
-	<CAD=FV=X17PeJ6JPE9Qyc1QT07AvA2PTE69Q87gz9a6MdUHgi4A@mail.gmail.com>
-	<20140609223831.GB16889@e102568-lin.cambridge.arm.com>
-	<CANuQgHHxAhTNYX-JAEdRkO=PMYT4A5GwXcuQfiqwE0CEkQyR+w@mail.gmail.com>
-	<CAD=FV=V5_RRNkgA7Rk7XbQw9m1qh6-RJA8arW7ZRU=QbWAPa+w@mail.gmail.com>
-	<alpine.LFD.2.11.1406101146140.25775@knanqh.ubzr>
-	<CADWw7OjqK3MAuqCHuv-WS3Bb2+2Q-FXth+7hqtwFoyAP6pyYhA@mail.gmail.com>
-	<CAD=FV=ULFx0GPp_mnEfouZF+m4h_RYE6WQu48N0WbFWrFv8-BA@mail.gmail.com>
-	<5398758F.4080306@samsung.com>
-	<CADWw7Oh=A_cg_hqu8DZ1t_iacOGgWediLp3K3viFYHMNAPkqRw@mail.gmail.com>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v3 5/7] mfd: cros_ec: Sync to the latest
+ cros_ec_commands.h from EC sources
+Date: Fri, 13 Jun 2014 08:22:09 -0700
+Message-ID: <CAD=FV=XcK5R1sdNwoJkFPapwWQ9vqxvmQi_L3BqTSt8EKRTNHw@mail.gmail.com>
+References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
+	<1398879850-9111-6-git-send-email-dianders@chromium.org>
+	<20140520084602.GF24991@lee--X1>
+	<1402483068.3798.82.camel@x220>
+	<CAD=FV=XL9tnEqza8Zx8mt_Z7-bj8TCzdeyHMhnpewKp_1CR-ig@mail.gmail.com>
+	<1402646902.28881.15.camel@x220>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CADWw7Oh=A_cg_hqu8DZ1t_iacOGgWediLp3K3viFYHMNAPkqRw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chander Kashyap <k.chander@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chander Kashyap <chander.kashyap@linaro.org>, "olof@lixom.net" <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Thomas Abraham <thomas.ab@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1402646902.28881.15.camel@x220>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
+Cc: Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Chander,
+Paul,
 
-On Fri, Jun 13, 2014 at 4:54 AM, Chander Kashyap <k.chander@samsung.com> wrote:
-> This patch is effectively changing the mcpm_entry_point address from
-> nsbase + 0x1c to nsbase + 0x8
+On Fri, Jun 13, 2014 at 1:08 AM, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org> wrote:
+> Doug,
 >
-> Hence while integrating with mainline u-boot we need to take care for
-> new mcpm_entry_point address.
+> On Wed, 2014-06-11 at 08:11 -0700, Doug Anderson wrote:
+>> On Wed, Jun 11, 2014 at 3:37 AM, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org> wrote:
+>> > On Tue, 2014-05-20 at 09:46 +0100, Lee Jones wrote:
+>> >> On Wed, 30 Apr 2014, Doug Anderson wrote:
+>> >> > From: Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> >> >
+>> >> > This just updates include/linux/mfd/cros_ec_commands.h to match the
+>> >> > latest EC version (which is the One True Source for such things).  See
+>> >> > <https://chromium.googlesource.com/chromiumos/platform/ec>
+>>
+>> I believe most of your questions are answered by checking out the git
+>> tree referenced above.  ...but see below for details.  This header is
+>> a common interface between the kernel and the EC.
 >
-> With Chromebook it works straightforward.
+> I didn't realize that this was a link to a tree.
+>
+>> > CONFIG_CHARGER_PROFILE_OVERRIDE doesn't match anything in linux-next. Is
+>> > a Kconfig symbol CHARGER_PROFILE_OVERRIDE perhaps queued somewhere?
+>>
+>> This is a config option on the ChromeOS EC
+>> <https://chromium.googlesource.com/chromiumos/platform/ec>.  Doing a
+>> grep there:
+>>
+>> board/samus/board.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
+>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+>> driver/battery/samus.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+>> driver/battery/samus.c:#endif   /* CONFIG_CHARGER_PROFILE_OVERRIDE */
+>> include/config.h:#undef CONFIG_CHARGER_PROFILE_OVERRIDE
+>> include/ec_commands.h:  /* Range for CONFIG_CHARGER_PROFILE_OVERRIDE params */
+>> test/test_config.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
+>
+> I see. So this is not a Kconfig macro but a general macro with a CONFIG_
+> prefix. There are quite a bit of those in the tree already, but still,
+> would another prefix also do?
 
-Can you explain more and point to the code that is using the nsbase +
-0x1c?  Specifically the only code I see that uses the nsbase + 0x1c is
-the code that is located at nsbase, which is the code we're
-overwriting here.  I'd imagine you're using U-Boot code that looks
-something like the bits that start at code_base here:
+Given that it's an entirely separate project and this is a valid
+CONFIG option in that project, it seems a lot to ask them not to use
+the CONFIG_ prefix.  Also: the part you are objecting to is only a
+comment, right?
 
-https://chromium.googlesource.com/chromiumos/third_party/u-boot/+/ce358daf5069f1dc145b0f9d403cfbb028271807/arch/arm/cpu/armv7/exynos/lowlevel.S
-
-With my kernel change you can completely eliminate U-Boot's
-installation of this code (or keep it, it makes no difference).
+We could certainly add extra wording in the comment to make it obvious
+that this is a CONFIG option for the EC and not the kernel.  Would
+that be enough?  ...or are you trying to use some scripts to
+automatically process files to look for CONFIG options?
 
 -Doug
