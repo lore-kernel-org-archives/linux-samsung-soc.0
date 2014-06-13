@@ -1,87 +1,90 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH v2 1/2] usb: ehci-exynos: Make provision for vdd regulators
-Date: Fri, 13 Jun 2014 17:03:53 +0530
-Message-ID: <CAFp+6iF9GkKWDcqZNV58Z=U3ZDQdgYr8LJBF9t-BpJW90vsHdQ@mail.gmail.com>
-References: <1402064411-18244-1-git-send-email-gautam.vivek@samsung.com>
-	<Pine.LNX.4.44L0.1406111131200.890-100000@iolanthe.rowland.org>
+From: Chander Kashyap <k.chander@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
+Date: Fri, 13 Jun 2014 17:24:20 +0530
+Message-ID: <CADWw7Oh=A_cg_hqu8DZ1t_iacOGgWediLp3K3viFYHMNAPkqRw@mail.gmail.com>
+References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
+	<20140607181221.GB25068@e102568-lin.cambridge.arm.com>
+	<CAD=FV=X17PeJ6JPE9Qyc1QT07AvA2PTE69Q87gz9a6MdUHgi4A@mail.gmail.com>
+	<20140609223831.GB16889@e102568-lin.cambridge.arm.com>
+	<CANuQgHHxAhTNYX-JAEdRkO=PMYT4A5GwXcuQfiqwE0CEkQyR+w@mail.gmail.com>
+	<CAD=FV=V5_RRNkgA7Rk7XbQw9m1qh6-RJA8arW7ZRU=QbWAPa+w@mail.gmail.com>
+	<alpine.LFD.2.11.1406101146140.25775@knanqh.ubzr>
+	<CADWw7OjqK3MAuqCHuv-WS3Bb2+2Q-FXth+7hqtwFoyAP6pyYhA@mail.gmail.com>
+	<CAD=FV=ULFx0GPp_mnEfouZF+m4h_RYE6WQu48N0WbFWrFv8-BA@mail.gmail.com>
+	<5398758F.4080306@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f173.google.com ([209.85.216.173]:39846 "EHLO
-	mail-qc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751113AbaFMLdy (ORCPT
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:44191 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750817AbaFMLyU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jun 2014 07:33:54 -0400
-In-Reply-To: <Pine.LNX.4.44L0.1406111131200.890-100000@iolanthe.rowland.org>
+	Fri, 13 Jun 2014 07:54:20 -0400
+In-Reply-To: <5398758F.4080306@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Jingoo Han <jg1.han@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, Chander Kashyap <k.chander@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chander Kashyap <chander.kashyap@linaro.org>, "olof@lixom.net" <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Thomas Abraham <thomas.ab@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi,
-
-
-On Wed, Jun 11, 2014 at 9:09 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Fri, 6 Jun 2014, Vivek Gautam wrote:
->
->> Facilitate getting required 3.3V and 1.0V VDD supply for
->> EHCI controller on Exynos.
+On Wed, Jun 11, 2014 at 8:58 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 06/12/14 00:19, Doug Anderson wrote:
 >>
->> With patches for regulators' nodes merged in 3.15:
->> c8c253f ARM: dts: Add regulator entries to smdk5420
->> 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
+>> Chander,
 >>
->> certain perripherals will now need to ensure that,
->> they request VDD regulators in their drivers, and enable
->> them so as to make them working.
->
-> "Certain peripherals"?  Don't you mean "certain controllers"?
-
-Right, 'certain controllers'.
-
->
-> Does this mean some controllers don't need to use the VDD regulators?
-
-Actually until the two patches got merged, the USB controllers were
-depending on bootloader
-for the VDD supply, wherein it was enabled, which ofcourse was bad.
-And by 'certain' i meant that above mentioned dt patches enable only the minimum
-number of regulators for the system, however leaves other for the
-drivers to enable.
-Anyways, i will re-do this commit message.
-
->
->> @@ -193,7 +196,31 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+>> On Tue, Jun 10, 2014 at 9:52 PM, Chander Kashyap<k.chander@samsung.com>
+>> wrote:
+>>>
+>>> Hi Doug,
+>>>
+>>> On Tue, Jun 10, 2014 at 9:19 PM, Nicolas Pitre<nicolas.pitre@linaro.org>
+>>> wrote:
+>>>>
+>>>> On Tue, 10 Jun 2014, Doug Anderson wrote:
+>>>>
+>>>>> My S-state knowledge is not strong, but I believe that Lorenzo's
+>>>>> questions matter if we're using S2 for CPUidle (where we actually turn
+>>>>> off power and hot unplug CPUs) but not when we're using S1 for CPUidle
+>>>>> (where we just enter WFI/WFE).
+>>>>>
+>>>
+>>> No Its not plain WFI.
+>>>
+>>> All cores in Exynos5420 can be powered off independently.
+>>> This functionality has been tested.
+>>>
+>>> Below is the link for the posted patches.
+>>>
+>>> https://lkml.org/lkml/2014/6/10/194
+>>>
+>>> And as Nicolas wrote, these patches need MCPM for that.
 >>
->>       err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
->>       if (err)
->> -             goto fail_clk;
->> +             goto fail_regulator1;
->> +
->> +     exynos_ehci->vdd33 = devm_regulator_get(&pdev->dev, "vdd33");
->> +     if (!IS_ERR(exynos_ehci->vdd33)) {
->> +             err = regulator_enable(exynos_ehci->vdd33);
->> +             if (err) {
->> +                     dev_err(&pdev->dev,
->> +                             "Failed to enable 3.3V Vdd supply\n");
->> +                     goto fail_regulator1;
->> +             }
->> +     } else {
->> +             dev_warn(&pdev->dev, "Regulator 3.3V Vdd supply not found\n");
->> +     }
+>>
+>> Most excellent!  I should have been more clear that I only knew about
+>> how CPUidle worked in our local production kernel.  There I'm pretty
+>> sure CPUidle is just WFI/WFE.  If you've got patches to do better then
+>> that's great!
+>>
+>> ...can you confirm that my patch doesn't interfere with your improved
+>> CPUidle?  It's been Acked by Nicolas (thanks!) so I'd imagine it will
+>> land shortly.  Kukjin: I assume you'll be taking this?
+>>
+
+This patch is effectively changing the mcpm_entry_point address from
+nsbase + 0x1c to nsbase + 0x8
+
+Hence while integrating with mainline u-boot we need to take care for
+new mcpm_entry_point address.
+
+With Chromebook it works straightforward.
+
+
+> Sure, I will ;-)
 >
-> What if this is one of the controllers that don't need to use a VDD
-> regulator?  Do you really want to print out a warning in that case?
-> Should you call devm_regulator_get_optional() instead?
-
-Right, better to use devm_regulator_get_optional(). Thanks for
-pointing this out.
-
-
-
-
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+> Thanks,
+> Kukjin
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
