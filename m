@@ -1,106 +1,33 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 3/3 v5] ARM: DTS: fix the chip select gpios definition in the
- SPI nodes
-Date: Fri, 13 Jun 2014 09:29:52 +0530
-Message-ID: <1402631992-500-3-git-send-email-ch.naveen@samsung.com>
-References: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 0/4] cpufreq: Use cpufreq-cpu0 driver for Exynos3250
+Date: Fri, 13 Jun 2014 15:08:09 +0900
+Message-ID: <1402639693-31108-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:51586 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751274AbaFMECq (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:35951 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751439AbaFMGIX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jun 2014 00:02:46 -0400
-In-reply-to: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
+	Fri, 13 Jun 2014 02:08:23 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
+To: cpufreq@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, shawn.guo@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com, heiko@sntech.de, kyungmin.park@samsung.com, cw00.choi@samsung.com
 
-This patch replaces the "cs-gpio" from "controller-data" node
-as was specified in the old binding and use the standard
-"cs-gpios" property expected by the SPI core as is defined in
-the new binding.
+This patchset use cpufreq-cpu0 driver to support Exynos3250 cpufreq. So, this
+patchset is based on following patchset[1] by Thomas Abraham.
+ [1] http://www.spinics.net/lists/linux-samsung-soc/msg31593.html
 
-Respective changes are preposed to spi-s3c64xx.c driver.
-@ http://www.spinics.net/lists/linux-samsung-soc/msg32282.html
+Chanwoo Choi (4):
+  clk: samsung: exynos3250: Use cpu-clock provider type to support cpufreq
+  clk: samsung: Add support for cpu clocks of Exynos3250
+  Documentation: devicetree: Add cpu clock configuration data binding for Exynos3250
+  ARM: dts: Exynos: Add cpu clock table and armclk divider table for Exynos3250
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Reviewed-by: Doug Anderson <dianders@chromium.org>
-Cc: Tomasz Figa <t.figa@samsung.com>
----
-Changes since v4:
-1. Added reviewed by from Javier and Doug.
-2. Maintained the "status" and "cs-gpios" ordering
+ .../devicetree/bindings/clock/exynos3250-clock.txt | 32 ++++++++++++++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi                  | 28 +++++++++++++++++++
+ drivers/clk/samsung/clk-cpu.c                      | 31 +++++++++++++++++----
+ drivers/clk/samsung/clk-exynos3250.c               | 14 +++++++---
+ 4 files changed, 96 insertions(+), 9 deletions(-)
 
-Changes since v3:
-None
-
- arch/arm/boot/dts/exynos4210-smdkv310.dts |    2 +-
- arch/arm/boot/dts/exynos4412-trats2.dts   |    2 +-
- arch/arm/boot/dts/exynos5250-smdk5250.dts |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 636d166..676e6e0 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -168,6 +168,7 @@
- 	};
- 
- 	spi_2: spi@13940000 {
-+		cs-gpios = <&gpc1 2 0>;
- 		status = "okay";
- 
- 		w25x80@0 {
-@@ -178,7 +179,6 @@
- 			spi-max-frequency = <1000000>;
- 
- 			controller-data {
--				cs-gpio = <&gpc1 2 0>;
- 				samsung,spi-feedback-delay = <0>;
- 			};
- 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 8a558b7..204b0de 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -512,6 +512,7 @@
- 	spi_1: spi@13930000 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&spi1_bus>;
-+		cs-gpios = <&gpb 5 0>;
- 		status = "okay";
- 
- 		s5c73m3_spi: s5c73m3 {
-@@ -519,7 +520,6 @@
- 			spi-max-frequency = <50000000>;
- 			reg = <0>;
- 			controller-data {
--				cs-gpio = <&gpb 5 0>;
- 				samsung,spi-feedback-delay = <2>;
- 			};
- 		};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index a794a70..0c6433a 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -316,6 +316,7 @@
- 	};
- 
- 	spi_1: spi@12d30000 {
-+		cs-gpios = <&gpa2 5 0>;
- 		status = "okay";
- 
- 		w25q80bw@0 {
-@@ -326,7 +327,6 @@
- 			spi-max-frequency = <1000000>;
- 
- 			controller-data {
--				cs-gpio = <&gpa2 5 0>;
- 				samsung,spi-feedback-delay = <0>;
- 			};
- 
 -- 
-1.7.9.5
+1.8.0
