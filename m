@@ -1,62 +1,141 @@
-From: Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>
-Subject: Re: [PATCH v3 5/7] mfd: cros_ec: Sync to the latest
- cros_ec_commands.h from EC sources
-Date: Fri, 13 Jun 2014 10:08:22 +0200
-Message-ID: <1402646902.28881.15.camel@x220>
-References: <1398879850-9111-1-git-send-email-dianders@chromium.org>
-	 <1398879850-9111-6-git-send-email-dianders@chromium.org>
-	 <20140520084602.GF24991@lee--X1> <1402483068.3798.82.camel@x220>
-	 <CAD=FV=XL9tnEqza8Zx8mt_Z7-bj8TCzdeyHMhnpewKp_1CR-ig@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ARM: samsung: make SAMSUNG_DMADEV optional
+Date: Fri, 13 Jun 2014 12:15:56 +0200
+Message-ID: <5267520.dQojiXcaqm@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAD=FV=XL9tnEqza8Zx8mt_Z7-bj8TCzdeyHMhnpewKp_1CR-ig-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.10]:61280 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751613AbaFMKSR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 Jun 2014 06:18:17 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, Russell King <rmk@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, broonie@kernel.org
 
-Doug,
+The only remaining driver using the samsung dmadev code is the broken
+samsung-ac97 sound driver. However, as found by Russell's autobuilder,
+the elaborate dependency chains around it cause problems with
+circular dependencies.
 
-On Wed, 2014-06-11 at 08:11 -0700, Doug Anderson wrote:
-> On Wed, Jun 11, 2014 at 3:37 AM, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org> wrote:
-> > On Tue, 2014-05-20 at 09:46 +0100, Lee Jones wrote:
-> >> On Wed, 30 Apr 2014, Doug Anderson wrote:
-> >> > From: Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> >> >
-> >> > This just updates include/linux/mfd/cros_ec_commands.h to match the
-> >> > latest EC version (which is the One True Source for such things).  See
-> >> > <https://chromium.googlesource.com/chromiumos/platform/ec>
-> 
-> I believe most of your questions are answered by checking out the git
-> tree referenced above.  ...but see below for details.  This header is
-> a common interface between the kernel and the EC.
+This is an attempt to simplify those dependencies by making the
+SAMSUNG_DMADEV option user-selectable. I also try to keep the
+default settings for all related options unchanged, so we don't
+introduce any regressions against earlier testing on linux-next.
 
-I didn't realize that this was a link to a tree.
+In particular, all s3c64xx and s5p* platforms keep selecting the
+pl330 and pl08x drivers they require, but the select statement
+is now moved towards the main platform option, and it remains
+optional by unselecting CONFIG_DMADEVICES.
 
-> > CONFIG_CHARGER_PROFILE_OVERRIDE doesn't match anything in linux-next. Is
-> > a Kconfig symbol CHARGER_PROFILE_OVERRIDE perhaps queued somewhere?
-> 
-> This is a config option on the ChromeOS EC
-> <https://chromium.googlesource.com/chromiumos/platform/ec>.  Doing a
-> grep there:
-> 
-> board/samus/board.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
-> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
-> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
-> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
-> driver/battery/samus.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
-> driver/battery/samus.c:#endif   /* CONFIG_CHARGER_PROFILE_OVERRIDE */
-> include/config.h:#undef CONFIG_CHARGER_PROFILE_OVERRIDE
-> include/ec_commands.h:  /* Range for CONFIG_CHARGER_PROFILE_OVERRIDE params */
-> test/test_config.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+I'd like to apply this into the fixes branch for 3.16. It should
+help with the circular dependencies that Russell is seeing, and
+also simplify the cleanups we have planned for 3.17.
 
-I see. So this is not a Kconfig macro but a general macro with a CONFIG_
-prefix. There are quite a bit of those in the tree already, but still,
-would another prefix also do?
+Any feedback, testing, NAK?
 
-Thanks,
-
-
-Paul Bolle
+diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+index d863722..eff95e9 100644
+--- a/arch/arm/mach-s3c64xx/Kconfig
++++ b/arch/arm/mach-s3c64xx/Kconfig
+@@ -18,9 +18,9 @@ config CPU_S3C6410
+ 	  Enable S3C6410 CPU support
+ 
+ config S3C64XX_PL080
+-	bool "S3C64XX DMA using generic PL08x driver"
++	def_bool DMADEVICES
++	select ARM_AMBA
+ 	select AMBA_PL08X
+-	select SAMSUNG_DMADEV
+ 
+ config S3C64XX_SETUP_SDHCI
+ 	bool
+diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
+index 6480d5c..a564953 100644
+--- a/arch/arm/mach-s5p64x0/Kconfig
++++ b/arch/arm/mach-s5p64x0/Kconfig
+@@ -9,16 +9,18 @@ if ARCH_S5P64X0
+ 
+ config CPU_S5P6440
+ 	bool
++	select ARM_AMBA
++	select PL330_DMA if DMADEVICES
+ 	select S5P_SLEEP if PM
+-	select SAMSUNG_DMADEV
+ 	select SAMSUNG_WAKEMASK if PM
+ 	help
+ 	  Enable S5P6440 CPU support
+ 
+ config CPU_S5P6450
+ 	bool
++	select ARM_AMBA
++	select PL330_DMA if DMADEVICES
+ 	select S5P_SLEEP if PM
+-	select SAMSUNG_DMADEV
+ 	select SAMSUNG_WAKEMASK if PM
+ 	help
+ 	  Enable S5P6450 CPU support
+diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
+index c3d5360..769cb0c 100644
+--- a/arch/arm/mach-s5pc100/Kconfig
++++ b/arch/arm/mach-s5pc100/Kconfig
+@@ -9,8 +9,9 @@ if ARCH_S5PC100
+ 
+ config CPU_S5PC100
+ 	bool
++	select ARM_AMBA
++	select PL330_DMA if DMADEVICES
+ 	select S5P_EXT_INT
+-	select SAMSUNG_DMADEV
+ 	help
+ 	  Enable S5PC100 CPU support
+ 
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index ede09e6..94fbf3b 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -11,10 +11,11 @@ if ARCH_S5PV210
+ 
+ config CPU_S5PV210
+ 	bool
++	select ARM_AMBA
++	select PL330_DMA if DMADEVICES
+ 	select S5P_EXT_INT
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+-	select SAMSUNG_DMADEV
+ 	help
+ 	  Enable S5PV210 CPU support
+ 
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index f8c1bde..d27908c 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -408,17 +408,16 @@ config SAMSUNG_PM_GPIO
+ 	  Include legacy GPIO power management code for platforms not using
+ 	  pinctrl-samsung driver.
+ 
+-endif
+-
+ config SAMSUNG_DMADEV
+-	bool
+-	select ARM_AMBA
++	bool "Use legacy Samsung DMA abstraction"
++	depends on CPU_S5PV210 || CPU_S5PC100 || ARCH_S5P64X0 || ARCH_S3C64XX
+ 	select DMADEVICES
+-	select PL330_DMA if (ARCH_EXYNOS5 || ARCH_EXYNOS4 || CPU_S5PV210 || CPU_S5PC100 || \
+-					CPU_S5P6450 || CPU_S5P6440)
++	default y
+ 	help
+ 	  Use DMA device engine for PL330 DMAC.
+ 
++endif
++
+ config S5P_DEV_MFC
+ 	bool
+ 	help
