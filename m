@@ -1,88 +1,142 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 3/3] ARM: dts: Enable audio support for Peach-pi board
-Date: Fri, 13 Jun 2014 23:04:21 +0100
-Message-ID: <20140613220421.GD5099@sirena.org.uk>
-References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
- <1402464739-19044-4-git-send-email-tushar.b@samsung.com>
- <CAD=FV=XqqP7+xDOAKCixivzgaO0xvJX7L+CCN+unAEuf-6aUbQ@mail.gmail.com>
- <20140613170511.GA20112@sirena.org.uk>
- <CAD=FV=VvkvH1TPiKttm9VXbBRnBo7kmTVK8bZZvexK=bAvaO4Q@mail.gmail.com>
- <CAD=FV=XCk9E-7VPV=LQrdLU5fKsFHviQf79MBmC8va3gsg=Ydw@mail.gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] Exynos4: cpuidle: support dual CPUs with AFTR state
+Date: Sat, 14 Jun 2014 00:43:00 +0200
+Message-ID: <539B7E74.7000605@linaro.org>
+References: <1396604925-18383-1-git-send-email-daniel.lezcano@linaro.org> <1402476643.32147.6.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7459033505561555662=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAD=FV=XCk9E-7VPV=LQrdLU5fKsFHviQf79MBmC8va3gsg=Ydw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Doug Anderson <dianders@google.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Tomasz Figa <t.figa@samsung.com>, Tushar Behera <tushar.b@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Tushar Behera <trblinux@gmail.com>, Rob Herring <robh+dt@kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1402476643.32147.6.camel@AMDC1943>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, ccross@google.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On 06/11/2014 10:50 AM, Krzysztof Kozlowski wrote:
+> On pi=C4=85, 2014-04-04 at 11:48 +0200, Daniel Lezcano wrote:
+>> The following driver is for exynos4210. I did not yet finished the o=
+ther boards, so
+>> I created a specific driver for 4210 which could be merged later.
+>>
+>> The driver is based on Colin Cross's driver found at:
+>>
+>> https://android.googlesource.com/kernel/exynos/+/e686b1ec67423c40b4f=
+df811f9a4dfa3b393a010%5E%5E!/
+>>
+>> This one was based on a 3.4 kernel and an old API.
+>>
+>> It has been refreshed, simplified and based on the recent code clean=
+up I sent
+>> today.
+>>
+>> The AFTR could be entered when all the cpus (except cpu0) are down. =
+In order to
+>> reach this situation, the couple idle states are used.
+>>
+>> There is a sync barrier at the entry and the exit of the low power f=
+unction. So
+>> all cpus will enter and exit the function at the same time.
+>>
+>> At this point, CPU0 knows the other cpu will power down itself. CPU0=
+ waits for
+>> the CPU1 to be powered down and then initiate the AFTR power down se=
+quence.
+>>
+>> No interrupts are handled by CPU1, this is why we switch to the time=
+r broadcast
+>> even if the local timer is not impacted by the idle state.
+>>
+>> When CPU0 wakes up, it powers up CPU1 and waits for it to boot. Then=
+ they both
+>> exit the idle function.
+>>
+>> This driver allows the exynos4210 to have the same power consumption=
+ at idle
+>> time than the one when we have to unplug CPU1 in order to let CPU0 t=
+o reach
+>> the AFTR state.
+>>
+>> This patch is a RFC because, we have to find a way to remove the mac=
+ros
+>> definitions and cpu powerdown function without pulling the arch depe=
+ndent
+>> headers.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
+>>   arch/arm/mach-exynos/common.c        |   11 +-
+>>   drivers/cpuidle/Kconfig.arm          |    8 ++
+>>   drivers/cpuidle/Makefile             |    1 +
+>>   drivers/cpuidle/cpuidle-exynos4210.c |  226 ++++++++++++++++++++++=
+++++++++++++
+>>   4 files changed, 245 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/cpuidle/cpuidle-exynos4210.c
+>
+> (...)
+>
+>> diff --git a/drivers/cpuidle/cpuidle-exynos4210.c b/drivers/cpuidle/=
+cpuidle-exynos4210.c
+>> new file mode 100644
+>> index 0000000..56f6d51
+>> --- /dev/null
+>> +++ b/drivers/cpuidle/cpuidle-exynos4210.c
+>> @@ -0,0 +1,226 @@
+>> +/*
+>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>> + *		http://www.samsung.com
+>> + *
+>> + * Copyright (c) 2014 Linaro : Daniel Lezcano <daniel.lezcano@linar=
+o.org>
+>> + *		http://www.linaro.org
+>> + *
+>> + * Based on the work of Colin Cross <ccross@android.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or mo=
+dify
+>> + * it under the terms of the GNU General Public License version 2 a=
+s
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include <linux/cpuidle.h>
+>> +#include <linux/cpu_pm.h>
+>> +#include <linux/io.h>
+>> +#include <linux/platform_device.h>
+>> +
+>> +#include <asm/proc-fns.h>
+>> +#include <asm/suspend.h>
+>> +#include <asm/cpuidle.h>
+>> +
+>> +#include <plat/pm.h>
+>> +#include <plat/cpu.h>
+>> +#include <plat/map-base.h>
+>> +#include <plat/map-s5p.h>
+>> +
+>> +static atomic_t exynos_idle_barrier;
+>
+> Hi,
+>
+> Shouldn't the exynos_idle_barrier be initialized here?
 
---===============7459033505561555662==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lZ/I5ubSOvRSGe9j"
-Content-Disposition: inline
+As it is a static data it will be initialized to zero.
+
+> I know you sent the patch almost 2 months ago but I stomped on this
+> while testing it on Exynos3250.
+
+No problem. And what results on exynos3250 ?
+
+Thanks !
+
+   -- Daniel
 
 
---lZ/I5ubSOvRSGe9j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
 
-On Fri, Jun 13, 2014 at 02:58:26PM -0700, Doug Anderson wrote:
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-> Anyway, suffice to say that the i2c core needs to be extended to
-> handle the idea that a single device has more than one "compatible"
-> string.  I'll leave it to an eager reader of this thread to implement
-> this since we can also fix our own problem by just listing "max98091"
-> in "sound/soc/codecs/max98090.c" like has always been done in the
-> past.
-
-Why do you need to register multiple compatible strings (I guess for
-fallback purposes?).  A quick fix that is about as good is to take the
-first compatible only.
-
---lZ/I5ubSOvRSGe9j
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTm3ViAAoJELSic+t+oim9u4cP+gLyrS+envDYQbCSY/eJAnXp
-a9lLZdgtRF9Xy8H+ong5D2qiMGJ0aQv5Xs7o3fxECrYQh0jHbUxoP41AacXzgcsq
-kGKOT3jt+nXbG0nFG6IkjasWcL7QzSXvFu9ziU7Fb3hridPMe8UHfLWcTtsL4iLO
-GZHn5sF3RGd+6JOSOP5dOi8cTfT4HFAD21aAhchLUTPor4VOEL6PG9LQ7/ykOxjl
-MrwHbUXAAeTjsmFOIU5aLyEyUEePL5lgteV8DTaWq0IyLN5DKssdI4/KCbg5+lbc
-8rVfvRsARY+hQrxzYSqz5dlTBPSglcIDepLk/Fqad3OtT+0Vufe1WXAwvWrTcC/x
-er+2C7qKnFuOHcl0tM5BFSjodChqM84RqkY+lWN2SEKBRXjnpryIpCMKPs4eLpwR
-jZoNGZ/umb/LYuzOy59ZUyZVcrk2Y4bbhUv8LHeS7hwmKLkFgeDI15RI8YfrAbCJ
-yPV0/RY6gBdT+jZ6NZ2jQWz+zr+GJ4YxmfJio4uMRyIVzsHg80q6fgy3oCtFn94F
-z8MkTh+8LhRTQcbYxo4w10JBgVLTq26QKrmWbll/wiKH0pLWHMsJAX9cgnXH2XBA
-qSqoO9hbQgEXqUVdADWWsGwSLqk/pjZDI6zh7yTMk56sDCS9xtN25sxqsH/o2c3R
-L5DkwPYca0G1ieVtySdY
-=YGt1
------END PGP SIGNATURE-----
-
---lZ/I5ubSOvRSGe9j--
-
-
---===============7459033505561555662==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============7459033505561555662==--
