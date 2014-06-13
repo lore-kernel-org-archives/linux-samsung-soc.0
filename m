@@ -1,141 +1,87 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] ARM: samsung: make SAMSUNG_DMADEV optional
-Date: Fri, 13 Jun 2014 12:15:56 +0200
-Message-ID: <5267520.dQojiXcaqm@wuerfel>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH v2 1/2] usb: ehci-exynos: Make provision for vdd regulators
+Date: Fri, 13 Jun 2014 17:03:53 +0530
+Message-ID: <CAFp+6iF9GkKWDcqZNV58Z=U3ZDQdgYr8LJBF9t-BpJW90vsHdQ@mail.gmail.com>
+References: <1402064411-18244-1-git-send-email-gautam.vivek@samsung.com>
+	<Pine.LNX.4.44L0.1406111131200.890-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:61280 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751613AbaFMKSR (ORCPT
+Received: from mail-qc0-f173.google.com ([209.85.216.173]:39846 "EHLO
+	mail-qc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751113AbaFMLdy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jun 2014 06:18:17 -0400
+	Fri, 13 Jun 2014 07:33:54 -0400
+In-Reply-To: <Pine.LNX.4.44L0.1406111131200.890-100000@iolanthe.rowland.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, Russell King <rmk@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, broonie@kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Jingoo Han <jg1.han@samsung.com>
 
-The only remaining driver using the samsung dmadev code is the broken
-samsung-ac97 sound driver. However, as found by Russell's autobuilder,
-the elaborate dependency chains around it cause problems with
-circular dependencies.
+Hi,
 
-This is an attempt to simplify those dependencies by making the
-SAMSUNG_DMADEV option user-selectable. I also try to keep the
-default settings for all related options unchanged, so we don't
-introduce any regressions against earlier testing on linux-next.
 
-In particular, all s3c64xx and s5p* platforms keep selecting the
-pl330 and pl08x drivers they require, but the select statement
-is now moved towards the main platform option, and it remains
-optional by unselecting CONFIG_DMADEVICES.
+On Wed, Jun 11, 2014 at 9:09 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
+> On Fri, 6 Jun 2014, Vivek Gautam wrote:
+>
+>> Facilitate getting required 3.3V and 1.0V VDD supply for
+>> EHCI controller on Exynos.
+>>
+>> With patches for regulators' nodes merged in 3.15:
+>> c8c253f ARM: dts: Add regulator entries to smdk5420
+>> 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
+>>
+>> certain perripherals will now need to ensure that,
+>> they request VDD regulators in their drivers, and enable
+>> them so as to make them working.
+>
+> "Certain peripherals"?  Don't you mean "certain controllers"?
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-I'd like to apply this into the fixes branch for 3.16. It should
-help with the circular dependencies that Russell is seeing, and
-also simplify the cleanups we have planned for 3.17.
+Right, 'certain controllers'.
 
-Any feedback, testing, NAK?
+>
+> Does this mean some controllers don't need to use the VDD regulators?
 
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index d863722..eff95e9 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -18,9 +18,9 @@ config CPU_S3C6410
- 	  Enable S3C6410 CPU support
- 
- config S3C64XX_PL080
--	bool "S3C64XX DMA using generic PL08x driver"
-+	def_bool DMADEVICES
-+	select ARM_AMBA
- 	select AMBA_PL08X
--	select SAMSUNG_DMADEV
- 
- config S3C64XX_SETUP_SDHCI
- 	bool
-diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index 6480d5c..a564953 100644
---- a/arch/arm/mach-s5p64x0/Kconfig
-+++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -9,16 +9,18 @@ if ARCH_S5P64X0
- 
- config CPU_S5P6440
- 	bool
-+	select ARM_AMBA
-+	select PL330_DMA if DMADEVICES
- 	select S5P_SLEEP if PM
--	select SAMSUNG_DMADEV
- 	select SAMSUNG_WAKEMASK if PM
- 	help
- 	  Enable S5P6440 CPU support
- 
- config CPU_S5P6450
- 	bool
-+	select ARM_AMBA
-+	select PL330_DMA if DMADEVICES
- 	select S5P_SLEEP if PM
--	select SAMSUNG_DMADEV
- 	select SAMSUNG_WAKEMASK if PM
- 	help
- 	  Enable S5P6450 CPU support
-diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
-index c3d5360..769cb0c 100644
---- a/arch/arm/mach-s5pc100/Kconfig
-+++ b/arch/arm/mach-s5pc100/Kconfig
-@@ -9,8 +9,9 @@ if ARCH_S5PC100
- 
- config CPU_S5PC100
- 	bool
-+	select ARM_AMBA
-+	select PL330_DMA if DMADEVICES
- 	select S5P_EXT_INT
--	select SAMSUNG_DMADEV
- 	help
- 	  Enable S5PC100 CPU support
- 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index ede09e6..94fbf3b 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -11,10 +11,11 @@ if ARCH_S5PV210
- 
- config CPU_S5PV210
- 	bool
-+	select ARM_AMBA
-+	select PL330_DMA if DMADEVICES
- 	select S5P_EXT_INT
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
--	select SAMSUNG_DMADEV
- 	help
- 	  Enable S5PV210 CPU support
- 
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index f8c1bde..d27908c 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -408,17 +408,16 @@ config SAMSUNG_PM_GPIO
- 	  Include legacy GPIO power management code for platforms not using
- 	  pinctrl-samsung driver.
- 
--endif
--
- config SAMSUNG_DMADEV
--	bool
--	select ARM_AMBA
-+	bool "Use legacy Samsung DMA abstraction"
-+	depends on CPU_S5PV210 || CPU_S5PC100 || ARCH_S5P64X0 || ARCH_S3C64XX
- 	select DMADEVICES
--	select PL330_DMA if (ARCH_EXYNOS5 || ARCH_EXYNOS4 || CPU_S5PV210 || CPU_S5PC100 || \
--					CPU_S5P6450 || CPU_S5P6440)
-+	default y
- 	help
- 	  Use DMA device engine for PL330 DMAC.
- 
-+endif
-+
- config S5P_DEV_MFC
- 	bool
- 	help
+Actually until the two patches got merged, the USB controllers were
+depending on bootloader
+for the VDD supply, wherein it was enabled, which ofcourse was bad.
+And by 'certain' i meant that above mentioned dt patches enable only the minimum
+number of regulators for the system, however leaves other for the
+drivers to enable.
+Anyways, i will re-do this commit message.
+
+>
+>> @@ -193,7 +196,31 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+>>
+>>       err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
+>>       if (err)
+>> -             goto fail_clk;
+>> +             goto fail_regulator1;
+>> +
+>> +     exynos_ehci->vdd33 = devm_regulator_get(&pdev->dev, "vdd33");
+>> +     if (!IS_ERR(exynos_ehci->vdd33)) {
+>> +             err = regulator_enable(exynos_ehci->vdd33);
+>> +             if (err) {
+>> +                     dev_err(&pdev->dev,
+>> +                             "Failed to enable 3.3V Vdd supply\n");
+>> +                     goto fail_regulator1;
+>> +             }
+>> +     } else {
+>> +             dev_warn(&pdev->dev, "Regulator 3.3V Vdd supply not found\n");
+>> +     }
+>
+> What if this is one of the controllers that don't need to use a VDD
+> regulator?  Do you really want to print out a warning in that case?
+> Should you call devm_regulator_get_optional() instead?
+
+Right, better to use devm_regulator_get_optional(). Thanks for
+pointing this out.
+
+
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
