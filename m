@@ -1,92 +1,134 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 1/3] clocksource: exynos_mct: Fix ftrace
-Date: Sun, 15 Jun 2014 23:18:06 +0200
-Message-ID: <539E0D8E.9080706@linaro.org>
-References: <1401903034-20074-1-git-send-email-dianders@chromium.org>
+From: Ben Hutchings <ben@decadent.org.uk>
+Subject: Re: [PATCH v2 2/2] s5p-mfc: Adding MFC v7 and v8 firmwares
+Date: Mon, 16 Jun 2014 00:31:38 +0100
+Message-ID: <1402875098.7797.65.camel@deadeye.wl.decadent.org.uk>
+References: <1400676064-17819-1-git-send-email-arun.kk@samsung.com>
+	 <1400676064-17819-2-git-send-email-arun.kk@samsung.com>
+	 <1401824047.2412.7.camel@deadeye.wl.decadent.org.uk>
+	 <1401837995.2412.45.camel@deadeye.wl.decadent.org.uk>
+	 <CALt3h7-D1VA5WfyaZDpuOe0L6V2ZhiOsb-wDFx48Nk3-mxBAPA@mail.gmail.com>
+	 <01f601cf7fe5$5b325fa0$11971ee0$%debski@samsung.com>
+	 <1401884009.2412.73.camel@deadeye.wl.decadent.org.uk>
+	 <CALt3h7_BHLwr2yt2bhO8zwNZh9-Q+qWLxkEfvy_mVzSpoRgMEw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1401903034-20074-1-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, olof@lixom.net, linux-samsung-soc@vger.kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-Ip93I4yuYrZVcyPGDAbV"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35577 "EHLO
+	shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751486AbaFOXbt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 15 Jun 2014 19:31:49 -0400
+In-Reply-To: <CALt3h7_BHLwr2yt2bhO8zwNZh9-Q+qWLxkEfvy_mVzSpoRgMEw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-On 06/04/2014 07:30 PM, Doug Anderson wrote:
-> In (93bfb76 clocksource: exynos_mct: register sched_clock callback) w=
-e
-> supported using the MCT as a scheduler clock.  We properly marked
-> exynos4_read_sched_clock() as notrace.  However, we then went and
-> called another function that _wasn't_ notrace.  That means if you do:
->
->    cd /sys/kernel/debug/tracing/
->    echo function_graph > current_tracer
->
-> You'll get a crash.
->
-> Fix this (but still let other readers of the MCT be trace-enabled) by
-> adding an extra function.  It's important to keep other users of MCT
-> traceable because the MCT is actually quite slow.
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: Kamil Debski <k.debski@samsung.com>, David Woodhouse <dwmw2@infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, linux-firmware@kernel.org
 
 
-Hi Doug,
+--=-Ip93I4yuYrZVcyPGDAbV
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-could you elaborate ? I don't get the 'because the MCT ... slow'
+On Thu, 2014-06-05 at 09:54 +0530, Arun Kumar K wrote:
+> Hi Ben,
+>=20
+> On Wed, Jun 4, 2014 at 5:43 PM, Ben Hutchings <ben@decadent.org.uk> wrote=
+:
+> > On Wed, 2014-06-04 at 13:08 +0200, Kamil Debski wrote:
+> >> Hi Arun, Ben,
+> >>
+> >>
+> >> > From: arunkk.samsung@gmail.com [mailto:arunkk.samsung@gmail.com] On
+> >> > Behalf Of Arun Kumar K
+> >> > Sent: Wednesday, June 04, 2014 7:32 AM
+> >> >
+> >> > Hi Ben,
+> >> >
+> >> > On Wed, Jun 4, 2014 at 4:56 AM, Ben Hutchings <ben@decadent.org.uk>
+[...]
+> >> > > Just noticed a problem with all the s5p-mfc firmware: you are putt=
+ing
+> >> > > it in the s5p-mfc subdirectory, so distribution packages will inst=
+all
+> >> > > them in /lib/firmware/s5p-mfc.  However, unless I'm mistaken your
+> >> > > driver requests it with a bare filename (e.g. "s5p-mfc-v7.fw") so =
+it
+> >> > > won't be found.
+> >> > >
+> >> >
+> >> > Yes this issue is there.
+> >> > Kamil, are you ok with changing the fw load path to s5p-mfc/s5p-mfc*=
+.fw
+> >> > in the driver?
+> >>
+> >> We have two options here:
+> >> 1) Change the driver to request s5p-mfc/sp5-mfc-fw*
+> >> 2) Move the files in the firmware repository
+> >>
+> >> I would opt for the second option. The driver was uploaded before the
+> >> firmware. I see that there are many firmware files in the root folder
+> >> of the repository
+> >>
+> >> Ben, what is your opinion? Which is preferred: creating subdirectories
+> >> or storing firmware in the root folder?
+> >
+> > I prefer subdirectories, but compatibility wins.  So I'll apply the
+> > following patch if no-one objects.
+> >
+> > Ben.
+> >
+> > ---
+> > Subject: Move the s5p-mfc firmware out of its subdirectory
+> >
+> > The driver does not include this subdirectory name when requesting
+> > firmware.
+> >
+> > Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+> > ---
+> >  WHENCE                                       |  10 +++++-----
+> >  s5p-mfc/s5p-mfc-v6-v2.fw =3D> s5p-mfc-v6-v2.fw | Bin
+> >  s5p-mfc/s5p-mfc-v6.fw =3D> s5p-mfc-v6.fw       | Bin
+> >  s5p-mfc/s5p-mfc-v7.fw =3D> s5p-mfc-v7.fw       | Bin
+> >  s5p-mfc/s5p-mfc-v8.fw =3D> s5p-mfc-v8.fw       | Bin
+> >  s5p-mfc/s5p-mfc.fw =3D> s5p-mfc.fw             | Bin
+> >  6 files changed, 5 insertions(+), 5 deletions(-)
+> >  rename s5p-mfc/s5p-mfc-v6-v2.fw =3D> s5p-mfc-v6-v2.fw (100%)
+> >  rename s5p-mfc/s5p-mfc-v6.fw =3D> s5p-mfc-v6.fw (100%)
+> >  rename s5p-mfc/s5p-mfc-v7.fw =3D> s5p-mfc-v7.fw (100%)
+> >  rename s5p-mfc/s5p-mfc-v8.fw =3D> s5p-mfc-v8.fw (100%)
+> >  rename s5p-mfc/s5p-mfc.fw =3D> s5p-mfc.fw (100%)
+[...]
+> Looks good to me.
 
-Thanks
+I've made this change.
 
-   -- Daniel
-
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
->   drivers/clocksource/exynos_mct.c | 9 +++++++--
->   1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/e=
-xynos_mct.c
-> index 8d64200..ba3a683 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -165,7 +165,7 @@ static void exynos4_mct_frc_start(u32 hi, u32 lo)
->   	exynos4_mct_write(reg, EXYNOS4_MCT_G_TCON);
->   }
->
-> -static cycle_t exynos4_frc_read(struct clocksource *cs)
-> +static inline cycle_t notrace _exynos4_frc_read(void)
->   {
->   	unsigned int lo, hi;
->   	u32 hi2 =3D __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_U);
-> @@ -179,6 +179,11 @@ static cycle_t exynos4_frc_read(struct clocksour=
-ce *cs)
->   	return ((cycle_t)hi << 32) | lo;
->   }
->
-> +static cycle_t exynos4_frc_read(struct clocksource *cs)
-> +{
-> +	return _exynos4_frc_read();
-> +}
-> +
->   static void exynos4_frc_resume(struct clocksource *cs)
->   {
->   	exynos4_mct_frc_start(0, 0);
-> @@ -195,7 +200,7 @@ struct clocksource mct_frc =3D {
->
->   static u64 notrace exynos4_read_sched_clock(void)
->   {
-> -	return exynos4_frc_read(&mct_frc);
-> +	return _exynos4_frc_read();
->   }
->
->   static void __init exynos4_clocksource_init(void)
->
-
+Ben.
 
 --=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+Ben Hutchings
+When in doubt, use brute force. - Ken Thompson
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--=-Ip93I4yuYrZVcyPGDAbV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIVAwUAU54s3+e/yOyVhhEJAQoFDBAAndmyIE+gRLdMTJ9AJ2OID9eywslHxzOS
+3HWoO0ORdKvpNkTQSiR/cKMcu0O1iXR0awFKyfNi8hiRcrpthvKXbS1hkkIc4u++
+a12IZAuapVZmOjdXqCRcq0npn9e8qlKVtanDO2zBboRn99R4g+XCaKrphVqwRzf0
+VVTGazs57nqG7UetdE7Pw1thRuhQruc/nIKUPqFAda4+f5u0vkjRJ7rqYkC3D9Br
+nq6DRYivhJ3IO5Kj8eUgZlilSyo0ixhxPim+QJgtOxY55ZBn1PbNZ44iEG9QyzxJ
+BDxpZ/6FBkHqSQDCSUVq7j1W2/2yeyXAr3dSlQpW16nACsU3/wbah5koAgnc4OMn
+nriN6MayFFPr77HRdmRC7VoxBBarjg2XFam4uHqP8VreoUptKxZrz8QGsKHrXSum
+AvYWVj5dskSYIpZlDS71JIhcVk6JbFA1nP5J17AfEIhep18OZofuYzITLJ858W2T
+ajaobgMn81aAKo5MS5I2Ldo5jFY22tZ7iMCxVsoBcjdWPBZfHjvxtMyD0203x8oC
+VNKTo/3WLzXxhq9AQCxPBhqlelS7866tvkDnXBuEjE/LhgVuCKXPoFZzADWoBXaf
+DIutQDwKgaTlX2mGIbi7ATnPKGAdPadxO6b2bG6tmp6eQgU3CqCAmqiqOOQ5QRbe
+hRCEeuQ7jZg=
+=6hrK
+-----END PGP SIGNATURE-----
+
+--=-Ip93I4yuYrZVcyPGDAbV--
