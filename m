@@ -1,69 +1,59 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 3/5] clk: Add driver for Maxim 77802 PMIC clocks
-Date: Mon, 16 Jun 2014 10:54:58 +0200
-Message-ID: <539EB0E2.1080307@collabora.co.uk>
-References: <1402306670-17041-1-git-send-email-javier.martinez@collabora.co.uk> <1402306670-17041-4-git-send-email-javier.martinez@collabora.co.uk> <20140616084427.GG14323@lee--X1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:54268 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754285AbaFPIzF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jun 2014 04:55:05 -0400
-In-Reply-To: <20140616084427.GG14323@lee--X1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chander Kashyap <k.chander@samsung.com>
+Subject: [Patch v7 1/6] driver: cpuidle-big-little: add of_device_id structure
+Date: Mon, 16 Jun 2014 15:56:18 +0530
+Message-ID: <1402914383-20471-2-git-send-email-k.chander@samsung.com>
+References: <1402914383-20471-1-git-send-email-k.chander@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1402914383-20471-1-git-send-email-k.chander@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, daniel.lezcano@linaro.org, lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, kgene.kim@samsung.com, tomasz.figa@gmail.com, Chander Kashyap <chander.kashyap@linaro.org>, Chander Kashyap <k.chander@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Lee,
+From: Chander Kashyap <chander.kashyap@linaro.org>
 
-On 06/16/2014 10:44 AM, Lee Jones wrote:
->> The MAX77802 PMIC has two 32.768kHz Buffered Clock Outputs with
->> Low Jitter Mode. This patch adds support for these two clocks.
->> 
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> ---
->>  .../devicetree/bindings/clock/maxim,max77802.txt   |  40 ++++
->>  drivers/clk/Kconfig                                |   6 +
->>  drivers/clk/Makefile                               |   1 +
->>  drivers/clk/clk-max77802.c                         | 253 +++++++++++++++++++++
->>  drivers/mfd/max77802.c                             |   3 +
->>  include/dt-bindings/clock/maxim,max77802.h         |  22 ++
->>  6 files changed, 325 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
->>  create mode 100644 drivers/clk/clk-max77802.c
->>  create mode 100644 include/dt-bindings/clock/maxim,max77802.h
-> 
-> [...]
-> 
->> diff --git a/drivers/mfd/max77802.c b/drivers/mfd/max77802.c
->> index 59696dd..33e8023 100644
->> --- a/drivers/mfd/max77802.c
->> +++ b/drivers/mfd/max77802.c
->> @@ -35,6 +35,9 @@
->>  
->>  static const struct mfd_cell max77802_devs[] = {
->>  	{ .name = "max77802-pmic", },
->> +#if defined(CONFIG_COMMON_CLK_MAX77802)
-> 
-> No, don't do that.  If COMMON_CLK_MAX77802 is not defined it just
-> won't be matched, which is enough to ensure it won't be probed.
->
+This driver will be used by many big.Little Soc's. As of now it does
+string matching of hardcoded compatible string to init the driver. This
+comparison list will keep on growing with addition of new SoC's.
+Hence add of_device_id structure to collect the compatible strings of
+SoC's using this driver.
 
-Thanks a lot for the explanation.
+Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/cpuidle/cpuidle-big_little.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-I'll send a v2 patch-set soon which has changes based on the feedback from Mark
-and Krzysztof. I'll take this point into account as well.
-
->> +	{ .name = "max77802-clk", },
->> +#endif
->>  };
-> 
-> [...]
-> 
-
-Best regards,
-Javier
+diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
+index b45fc62..4cd02bd 100644
+--- a/drivers/cpuidle/cpuidle-big_little.c
++++ b/drivers/cpuidle/cpuidle-big_little.c
+@@ -163,14 +163,23 @@ static int __init bl_idle_driver_init(struct cpuidle_driver *drv, int cpu_id)
+ 	return 0;
+ }
+ 
++static const struct of_device_id compatible_machine_match[] = {
++	{ .compatible = "arm,vexpress,v2p-ca15_a7" },
++	{},
++};
++
+ static int __init bl_idle_init(void)
+ {
+ 	int ret;
++	struct device_node *root = of_find_node_by_path("/");
++
++	if (!root)
++		return -ENODEV;
+ 
+ 	/*
+ 	 * Initialize the driver just for a compliant set of machines
+ 	 */
+-	if (!of_machine_is_compatible("arm,vexpress,v2p-ca15_a7"))
++	if (!of_match_node(compatible_machine_match, root))
+ 		return -ENODEV;
+ 	/*
+ 	 * For now the differentiation between little and big cores
+-- 
+1.7.9.5
