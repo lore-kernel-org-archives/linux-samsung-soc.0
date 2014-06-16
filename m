@@ -1,134 +1,113 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH v2 2/2] s5p-mfc: Adding MFC v7 and v8 firmwares
-Date: Mon, 16 Jun 2014 00:31:38 +0100
-Message-ID: <1402875098.7797.65.camel@deadeye.wl.decadent.org.uk>
-References: <1400676064-17819-1-git-send-email-arun.kk@samsung.com>
-	 <1400676064-17819-2-git-send-email-arun.kk@samsung.com>
-	 <1401824047.2412.7.camel@deadeye.wl.decadent.org.uk>
-	 <1401837995.2412.45.camel@deadeye.wl.decadent.org.uk>
-	 <CALt3h7-D1VA5WfyaZDpuOe0L6V2ZhiOsb-wDFx48Nk3-mxBAPA@mail.gmail.com>
-	 <01f601cf7fe5$5b325fa0$11971ee0$%debski@samsung.com>
-	 <1401884009.2412.73.camel@deadeye.wl.decadent.org.uk>
-	 <CALt3h7_BHLwr2yt2bhO8zwNZh9-Q+qWLxkEfvy_mVzSpoRgMEw@mail.gmail.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH] arm: exynos: Modify pm code to check for cortex A9 rather
+ than the SoC
+Date: Mon, 16 Jun 2014 09:37:14 +0530
+Message-ID: <CAM4voa=3zzo-2KbjDtBOca+uJeSxT2OYpi+rJuSGsDg-vo7GYA@mail.gmail.com>
+References: <1400814061-12813-1-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-Ip93I4yuYrZVcyPGDAbV"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35577 "EHLO
-	shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751486AbaFOXbt (ORCPT
+Received: from mail-qc0-f172.google.com ([209.85.216.172]:42542 "EHLO
+	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750804AbaFPEHP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 15 Jun 2014 19:31:49 -0400
-In-Reply-To: <CALt3h7_BHLwr2yt2bhO8zwNZh9-Q+qWLxkEfvy_mVzSpoRgMEw@mail.gmail.com>
+	Mon, 16 Jun 2014 00:07:15 -0400
+Received: by mail-qc0-f172.google.com with SMTP id o8so7116011qcw.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Jun 2014 21:07:14 -0700 (PDT)
+In-Reply-To: <1400814061-12813-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: Kamil Debski <k.debski@samsung.com>, David Woodhouse <dwmw2@infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, linux-firmware@kernel.org
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: Abhilash Kesavan <a.kesavan@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
 
+Hi Kukjin,
 
---=-Ip93I4yuYrZVcyPGDAbV
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Fri, May 23, 2014 at 8:31 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
+> We have an soc check to ensure that the scu and certain A9 specific
+> registers are not accessed on Exynos5250 (which is A15 based).
+> Rather than adding another soc specific check for 5420 let us test
+> for the Cortex A9 primary part number.
+>
+> This resolves the below crash seen on exynos5420 during core switching
+> after the CPUIdle consolidation series was merged.
+>
+> [  155.975589] [<c0013174>] (scu_enable) from [<c001b0dc>] (exynos_cpu_pm_notifier+0x80/0xc4)
+> [  155.983833] [<c001b0dc>] (exynos_cpu_pm_notifier) from [<c003c1b0>] (notifier_call_chain+0x44/0x84)
+> [  155.992851] [<c003c1b0>] (notifier_call_chain) from [<c007a49c>] (cpu_pm_notify+0x20/0x3c)
+> [  156.001089] [<c007a49c>] (cpu_pm_notify) from [<c007a564>] (cpu_pm_exit+0x20/0x38)
+> [  156.008635] [<c007a564>] (cpu_pm_exit) from [<c0019e98>] (bL_switcher_thread+0x298/0x40c)
+> [  156.016788] [<c0019e98>] (bL_switcher_thread) from [<c003842c>] (kthread+0xcc/0xe8)
+> [  156.024426] [<c003842c>] (kthread) from [<c000e438>] (ret_from_fork+0x14/0x3c)
+> [  156.031621] Code: ea017fec c0530a00 c052e3f8 c0012dcc (e5903000
+>
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 
-On Thu, 2014-06-05 at 09:54 +0530, Arun Kumar K wrote:
-> Hi Ben,
->=20
-> On Wed, Jun 4, 2014 at 5:43 PM, Ben Hutchings <ben@decadent.org.uk> wrote=
-:
-> > On Wed, 2014-06-04 at 13:08 +0200, Kamil Debski wrote:
-> >> Hi Arun, Ben,
-> >>
-> >>
-> >> > From: arunkk.samsung@gmail.com [mailto:arunkk.samsung@gmail.com] On
-> >> > Behalf Of Arun Kumar K
-> >> > Sent: Wednesday, June 04, 2014 7:32 AM
-> >> >
-> >> > Hi Ben,
-> >> >
-> >> > On Wed, Jun 4, 2014 at 4:56 AM, Ben Hutchings <ben@decadent.org.uk>
-[...]
-> >> > > Just noticed a problem with all the s5p-mfc firmware: you are putt=
-ing
-> >> > > it in the s5p-mfc subdirectory, so distribution packages will inst=
-all
-> >> > > them in /lib/firmware/s5p-mfc.  However, unless I'm mistaken your
-> >> > > driver requests it with a bare filename (e.g. "s5p-mfc-v7.fw") so =
-it
-> >> > > won't be found.
-> >> > >
-> >> >
-> >> > Yes this issue is there.
-> >> > Kamil, are you ok with changing the fw load path to s5p-mfc/s5p-mfc*=
-.fw
-> >> > in the driver?
-> >>
-> >> We have two options here:
-> >> 1) Change the driver to request s5p-mfc/sp5-mfc-fw*
-> >> 2) Move the files in the firmware repository
-> >>
-> >> I would opt for the second option. The driver was uploaded before the
-> >> firmware. I see that there are many firmware files in the root folder
-> >> of the repository
-> >>
-> >> Ben, what is your opinion? Which is preferred: creating subdirectories
-> >> or storing firmware in the root folder?
-> >
-> > I prefer subdirectories, but compatibility wins.  So I'll apply the
-> > following patch if no-one objects.
-> >
-> > Ben.
-> >
-> > ---
-> > Subject: Move the s5p-mfc firmware out of its subdirectory
-> >
-> > The driver does not include this subdirectory name when requesting
-> > firmware.
-> >
-> > Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-> > ---
-> >  WHENCE                                       |  10 +++++-----
-> >  s5p-mfc/s5p-mfc-v6-v2.fw =3D> s5p-mfc-v6-v2.fw | Bin
-> >  s5p-mfc/s5p-mfc-v6.fw =3D> s5p-mfc-v6.fw       | Bin
-> >  s5p-mfc/s5p-mfc-v7.fw =3D> s5p-mfc-v7.fw       | Bin
-> >  s5p-mfc/s5p-mfc-v8.fw =3D> s5p-mfc-v8.fw       | Bin
-> >  s5p-mfc/s5p-mfc.fw =3D> s5p-mfc.fw             | Bin
-> >  6 files changed, 5 insertions(+), 5 deletions(-)
-> >  rename s5p-mfc/s5p-mfc-v6-v2.fw =3D> s5p-mfc-v6-v2.fw (100%)
-> >  rename s5p-mfc/s5p-mfc-v6.fw =3D> s5p-mfc-v6.fw (100%)
-> >  rename s5p-mfc/s5p-mfc-v7.fw =3D> s5p-mfc-v7.fw (100%)
-> >  rename s5p-mfc/s5p-mfc-v8.fw =3D> s5p-mfc-v8.fw (100%)
-> >  rename s5p-mfc/s5p-mfc.fw =3D> s5p-mfc.fw (100%)
-[...]
-> Looks good to me.
+Do you have any comments on this patch ?
 
-I've made this change.
-
-Ben.
-
---=20
-Ben Hutchings
-When in doubt, use brute force. - Ken Thompson
-
---=-Ip93I4yuYrZVcyPGDAbV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIVAwUAU54s3+e/yOyVhhEJAQoFDBAAndmyIE+gRLdMTJ9AJ2OID9eywslHxzOS
-3HWoO0ORdKvpNkTQSiR/cKMcu0O1iXR0awFKyfNi8hiRcrpthvKXbS1hkkIc4u++
-a12IZAuapVZmOjdXqCRcq0npn9e8qlKVtanDO2zBboRn99R4g+XCaKrphVqwRzf0
-VVTGazs57nqG7UetdE7Pw1thRuhQruc/nIKUPqFAda4+f5u0vkjRJ7rqYkC3D9Br
-nq6DRYivhJ3IO5Kj8eUgZlilSyo0ixhxPim+QJgtOxY55ZBn1PbNZ44iEG9QyzxJ
-BDxpZ/6FBkHqSQDCSUVq7j1W2/2yeyXAr3dSlQpW16nACsU3/wbah5koAgnc4OMn
-nriN6MayFFPr77HRdmRC7VoxBBarjg2XFam4uHqP8VreoUptKxZrz8QGsKHrXSum
-AvYWVj5dskSYIpZlDS71JIhcVk6JbFA1nP5J17AfEIhep18OZofuYzITLJ858W2T
-ajaobgMn81aAKo5MS5I2Ldo5jFY22tZ7iMCxVsoBcjdWPBZfHjvxtMyD0203x8oC
-VNKTo/3WLzXxhq9AQCxPBhqlelS7866tvkDnXBuEjE/LhgVuCKXPoFZzADWoBXaf
-DIutQDwKgaTlX2mGIbi7ATnPKGAdPadxO6b2bG6tmp6eQgU3CqCAmqiqOOQ5QRbe
-hRCEeuQ7jZg=
-=6hrK
------END PGP SIGNATURE-----
-
---=-Ip93I4yuYrZVcyPGDAbV--
+Regards,
+Abhilash
+> ---
+>  arch/arm/mach-exynos/pm.c |   15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index d10c351..6dd4a11 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -300,7 +300,7 @@ static int exynos_pm_suspend(void)
+>         tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
+>         __raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
+>
+> -       if (!soc_is_exynos5250())
+> +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+>                 exynos_cpu_save_register();
+>
+>         return 0;
+> @@ -334,7 +334,7 @@ static void exynos_pm_resume(void)
+>         if (exynos_pm_central_resume())
+>                 goto early_wakeup;
+>
+> -       if (!soc_is_exynos5250())
+> +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+>                 exynos_cpu_restore_register();
+>
+>         /* For release retention */
+> @@ -353,7 +353,7 @@ static void exynos_pm_resume(void)
+>
+>         s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+>
+> -       if (!soc_is_exynos5250())
+> +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+>                 scu_enable(S5P_VA_SCU);
+>
+>  early_wakeup:
+> @@ -440,15 +440,18 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+>         case CPU_PM_ENTER:
+>                 if (cpu == 0) {
+>                         exynos_pm_central_suspend();
+> -                       exynos_cpu_save_register();
+> +                       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+> +                               exynos_cpu_save_register();
+>                 }
+>                 break;
+>
+>         case CPU_PM_EXIT:
+>                 if (cpu == 0) {
+> -                       if (!soc_is_exynos5250())
+> +                       if (read_cpuid_part_number() ==
+> +                                       ARM_CPU_PART_CORTEX_A9) {
+>                                 scu_enable(S5P_VA_SCU);
+> -                       exynos_cpu_restore_register();
+> +                               exynos_cpu_restore_register();
+> +                       }
+>                         exynos_pm_central_resume();
+>                 }
+>                 break;
+> --
+> 1.7.9.5
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
