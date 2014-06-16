@@ -1,61 +1,117 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 3/3] ARM: dts: Enable audio support for Peach-pi board
-Date: Mon, 16 Jun 2014 17:51:23 +0100
-Message-ID: <20140616165123.GA21661@sirena.org.uk>
-References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
- <1402464739-19044-4-git-send-email-tushar.b@samsung.com>
- <CAD=FV=XqqP7+xDOAKCixivzgaO0xvJX7L+CCN+unAEuf-6aUbQ@mail.gmail.com>
- <539ED2C0.8030405@gmail.com>
- <CAD=FV=UaaRQVq3TmXMTv9OkER+zORC89YfPNjwZwfCQKmuavrw@mail.gmail.com>
+From: Stuart Yoder <stuart.yoder-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Subject: RE: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Mon, 16 Jun 2014 16:56:32 +0000
+Message-ID: <8b0492b4697943a0b1f276ef42cc8223@DM2PR03MB352.namprd03.prod.outlook.com>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+	<4545972.cM7IP1qTXQ@wuerfel>
+	<CAL_Jsq+tkFNpjSEZboT+o69B_Z3a8e-ZVKaYDmLwtkyYoPy6VQ@mail.gmail.com>
+	<5288123.eXagyPAxNq@wuerfel>
+	<20140602104104.GD3855@e103592.cambridge.arm.com>
+	<20140604143509.GF28484@ulmo> <20140604164132.GF6644@arm.com>
+	<07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
+	<20140616152739.GS16758@arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44109 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754490AbaFPQvt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jun 2014 12:51:49 -0400
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=UaaRQVq3TmXMTv9OkER+zORC89YfPNjwZwfCQKmuavrw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140616152739.GS16758-5wv7dgnIgG8@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@google.com>
-Cc: Tushar Behera <trblinux@gmail.com>, Tushar Behera <tushar.b@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@linaro.org>
 
 
---EeQfGwPcQSOJBaQU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, Jun 16, 2014 at 09:49:26AM -0700, Doug Anderson wrote:
+> -----Original Message-----
+> From: Will Deacon [mailto:will.deacon-5wv7dgnIgG8@public.gmane.org]
+> Sent: Monday, June 16, 2014 10:28 AM
+> To: Sethi Varun-B16395
+> Cc: Thierry Reding; Mark Rutland; devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-
+> samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Pawel Moll; Arnd Bergmann; Ian Campbell;
+> Grant Grundler; Stephen Warren; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Marc
+> Zyngier; Linux IOMMU; Rob Herring; Kumar Gala; linux-
+> tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Cho KyongHo; Dave P Martin; linux-arm-
+> kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org; Yoder Stuart-B08248
+> Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree
+> bindings
+> 
+> Hi Varun,
+> 
+> On Thu, Jun 05, 2014 at 08:10:19PM +0100, Varun Sethi wrote:
+> > > The set of StreamIDs that can be generated by a master is fixed in
+> the
+> > > hardware. The SMMU can then be programmed to map these incoming IDs
+> onto
+> > > a context ID (or a set of context IDs), which are the IDs used
+> internally
+> > > by the SMMU to find the page tables etc.
+> > >
+> > > The StreamID -> ContextID mapping is dynamic and controlled by
+> software.
+> > > The Master -> StreamIDs mapping is fixed in the hardware.
+> > The Master -> StreamIDs mapping may not always be fixed in the
+> hardware.
+> > At, least in our case we plan to program these via software. PCI
+> devices
+> > is one place where this mapping would have to be dynamic (based on the
+> > topology i.e. if the devices are connected to a bridge etc). Also, we
+> have
+> > a hot plug device architecture where the stream ID is software
+> > programmable.
+> >
+> > Other than that, based on the isolation requirements (iommu domain)
+> > software programmability offers greater flexibility.
+> 
+> For the sake of consistency, I'd really like to treat the master ->
+> streamIDs mapping as fixed. If that means setting it once during boot in
+> your case, then so be it (ideally in the firmware). That way, we just
+> describe the fixed mapping to the kernel and the driver doesn't have to
+> worry about changing the mapping, especially given that that's likely to
+> be
+> highly error-prone once the SMMU is in us.
+> 
+> Do you have use-cases where you really need to change these mappings
+> dynamically?
 
-> Yes please.  I think there's supposed to be some official ordering of
-> things.  If anyone reading this has a pointer to the official sort
-> order of things in the device tree I'd love to see it!  ;)
+Yes.  In the case of a PCI bus-- you may not know in advance how many
+PCI devices there are until you probe the bus.   We have another FSL
+proprietary bus we call the "fsl-mc" bus that is similar.
 
-Most exact first I believe?
+Another thing to consider-- starting with SMMUv2, as you know, there
+is a new distributed architecture with multiple TBUs and a centralized
+TCU that walks the SMMU page tables.  So instead of sprinkling multiple
+SMMUs all over an SoC you now have the option a 1 central TCU and sprinkling
+multiple TBUs around.   However, this means that the stream ID namespace
+is now global and can be pretty limited.  In the SMMU implementation we 
+have there are only 64 stream ID total for our Soc.  But we have many more
+masters than that.
 
---EeQfGwPcQSOJBaQU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+So we look at stream IDs as really corresponding to an 'isolation context'
+and not to a bus master.  An isolation context is the domain you are
+trying to isolate with the SMMU.  Devices that all belong to the same
+'isolation context' can share the same stream ID, since they share
+the same domain and page tables.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+So, perhaps by default some/most SMMU masters may have a default stream ID
+of 0x0 that is used by the host...and that could be represented
+statically in the device tree.
 
-iQIcBAEBAgAGBQJTnyCIAAoJELSic+t+oim9DaQP/A9OimSgnv5qMFconyQiIIKR
-wRSdKuGqtwMXdM4cm4umb3FDD0zSF0crORL5xxyoRoHMcUDAaigYf6aqf+0FvYyq
-aqxUwpuCKFL63eCsw5r0OkPTu8G6+ZV4aWhCXaouymG2KHVRQcWWUbmhGmaiCtjS
-pizv1rvMvZsf8i+ikG7IKXmoByAuus4MS8XCqzgdITxmKhHeir29Fr61KANqUTkJ
-NM8wNBoLivd4L0kn75EG8pvGWdgOV1hlP3NiJYbgilOcrfiIqTQ+wTKrZtG8E+ld
-Ry9dLzrK6qQUUkxMJv3NAzqgV8a6vT2dqbyM09oVXuEtZs66Vt11bbFPA4bUsebY
-X+vMlS+CkspuXWWx+qX1zOqpsFIXJIAN5I7Rd52HjBlP2GSsaLRChy4+j9Lgorg9
-GUsI6p0XfOKjspwMdI2RC6WAycdcXZUp9Y63mpPyh1z8xP7kKoGrAT9CjTZ/EYCp
-FhnbEVdYBRDsj0TKTxjl8sU9iOZUSy+3KHFfsYVP0i3FUCMVEIAwCtvZLaRaWdVx
-KjkKu2AMDCNZgsj8uAFUI7cJm+dXG3qBPXMjt9ayWs46LEeNNqUPgJ/14D+uVlDZ
-weAk1qP8IjRCji9wlj79n8XtXR56960jQ85dpgunXRlOTE14k1kTGLkbnTsKzeJJ
-E+7JqJWJLAdhF9QN54/7
-=BElH
------END PGP SIGNATURE-----
+But, we absolutely will need to dynamically set new stream IDs
+into masters when a new IOMMU 'domain' is created and devices
+are added to it.   All the devices in a domain will share
+the same stream ID.
 
---EeQfGwPcQSOJBaQU--
+So whatever we do, let's please have an architecture flexible enough
+to allow for this.
+
+Thanks,
+Stuart
