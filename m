@@ -1,66 +1,61 @@
-From: Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: [PATCH 3/3] ARM: dts: Enable audio support for Peach-pi board
-Date: Mon, 16 Jun 2014 09:49:26 -0700
-Message-ID: <CAD=FV=UaaRQVq3TmXMTv9OkER+zORC89YfPNjwZwfCQKmuavrw@mail.gmail.com>
+Date: Mon, 16 Jun 2014 17:51:23 +0100
+Message-ID: <20140616165123.GA21661@sirena.org.uk>
 References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
-	<1402464739-19044-4-git-send-email-tushar.b@samsung.com>
-	<CAD=FV=XqqP7+xDOAKCixivzgaO0xvJX7L+CCN+unAEuf-6aUbQ@mail.gmail.com>
-	<539ED2C0.8030405@gmail.com>
+ <1402464739-19044-4-git-send-email-tushar.b@samsung.com>
+ <CAD=FV=XqqP7+xDOAKCixivzgaO0xvJX7L+CCN+unAEuf-6aUbQ@mail.gmail.com>
+ <539ED2C0.8030405@gmail.com>
+ <CAD=FV=UaaRQVq3TmXMTv9OkER+zORC89YfPNjwZwfCQKmuavrw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <539ED2C0.8030405-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44109 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754490AbaFPQvt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 16 Jun 2014 12:51:49 -0400
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=UaaRQVq3TmXMTv9OkER+zORC89YfPNjwZwfCQKmuavrw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-Tushar,
-
-On Mon, Jun 16, 2014 at 4:19 AM, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On 06/13/2014 10:33 PM, Doug Anderson wrote:
->> Tushar,
->>
->> On Tue, Jun 10, 2014 at 10:32 PM, Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>> Peach-pi board has MAX98090 audio codec connected on HSI2C-7 bus.
->>
->> If you want to be a stickler about it, peach-pi actually has a
->> max98091.  That requires code changes to the i2c driver, though.
->> ...and unfortunately listing two compatible strings for i2c devices is
->> broken.  :(
->>
-> Hi Doug,
->
-> You are right. I checked the boot logs, the detected codec type is
-> MAX98091. Since both these CODECs are supported through a single driver
-> and the detection of chip is done during runtime, I would suggest we go
-> ahead with "max98090" compatible string. I will update the commit
-> message accordingly.
->
-> Does that sound okay to you?
-
-As per my understanding you shouldn't do this.  You should have two patches:
-
-1. Add "max98091".  You could simply post Wonjoon's patch from
-<https://chromium-review.googlesource.com/184091>
-
-2. Change the device tree to refer to "max98091"
-
-The argument that the "current kernel driver has a single driver" is
-an argument that you're not supposed to make for device tree.  The
-same device tree is supposed to work for U-Boot, BSD, or any other
-platform.  On those platforms it might not be a shared driver.
+To: Doug Anderson <dianders@google.com>
+Cc: Tushar Behera <trblinux@gmail.com>, Tushar Behera <tushar.b@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@linaro.org>
 
 
-> If you so desire, I will submit a patch to sort peach-pi device-tree
-> nodes (w.r.t. peach-pit dts file).
+--EeQfGwPcQSOJBaQU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yes please.  I think there's supposed to be some official ordering of
-things.  If anyone reading this has a pointer to the official sort
-order of things in the device tree I'd love to see it!  ;)
+On Mon, Jun 16, 2014 at 09:49:26AM -0700, Doug Anderson wrote:
 
--Doug
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Yes please.  I think there's supposed to be some official ordering of
+> things.  If anyone reading this has a pointer to the official sort
+> order of things in the device tree I'd love to see it!  ;)
+
+Most exact first I believe?
+
+--EeQfGwPcQSOJBaQU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTnyCIAAoJELSic+t+oim9DaQP/A9OimSgnv5qMFconyQiIIKR
+wRSdKuGqtwMXdM4cm4umb3FDD0zSF0crORL5xxyoRoHMcUDAaigYf6aqf+0FvYyq
+aqxUwpuCKFL63eCsw5r0OkPTu8G6+ZV4aWhCXaouymG2KHVRQcWWUbmhGmaiCtjS
+pizv1rvMvZsf8i+ikG7IKXmoByAuus4MS8XCqzgdITxmKhHeir29Fr61KANqUTkJ
+NM8wNBoLivd4L0kn75EG8pvGWdgOV1hlP3NiJYbgilOcrfiIqTQ+wTKrZtG8E+ld
+Ry9dLzrK6qQUUkxMJv3NAzqgV8a6vT2dqbyM09oVXuEtZs66Vt11bbFPA4bUsebY
+X+vMlS+CkspuXWWx+qX1zOqpsFIXJIAN5I7Rd52HjBlP2GSsaLRChy4+j9Lgorg9
+GUsI6p0XfOKjspwMdI2RC6WAycdcXZUp9Y63mpPyh1z8xP7kKoGrAT9CjTZ/EYCp
+FhnbEVdYBRDsj0TKTxjl8sU9iOZUSy+3KHFfsYVP0i3FUCMVEIAwCtvZLaRaWdVx
+KjkKu2AMDCNZgsj8uAFUI7cJm+dXG3qBPXMjt9ayWs46LEeNNqUPgJ/14D+uVlDZ
+weAk1qP8IjRCji9wlj79n8XtXR56960jQ85dpgunXRlOTE14k1kTGLkbnTsKzeJJ
+E+7JqJWJLAdhF9QN54/7
+=BElH
+-----END PGP SIGNATURE-----
+
+--EeQfGwPcQSOJBaQU--
