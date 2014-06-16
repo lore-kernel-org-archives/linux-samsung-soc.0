@@ -1,79 +1,59 @@
 From: Tushar Behera <trblinux@gmail.com>
-Subject: Re: [PATCH 3/3] ARM: dts: Enable audio support for Peach-pi board
-Date: Mon, 16 Jun 2014 16:49:28 +0530
-Message-ID: <539ED2C0.8030405@gmail.com>
-References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>	<1402464739-19044-4-git-send-email-tushar.b@samsung.com> <CAD=FV=XqqP7+xDOAKCixivzgaO0xvJX7L+CCN+unAEuf-6aUbQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
+Date: Mon, 16 Jun 2014 16:56:42 +0530
+Message-ID: <539ED472.5020102@gmail.com>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>	<1402464739-19044-3-git-send-email-tushar.b@samsung.com> <CABxcv=kX07pNCd-YPYp6J8S5hHzG1rsoer1YRfdPE0g-xFqZnQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=XqqP7+xDOAKCixivzgaO0xvJX7L+CCN+unAEuf-6aUbQ@mail.gmail.com>
+In-Reply-To: <CABxcv=kX07pNCd-YPYp6J8S5hHzG1rsoer1YRfdPE0g-xFqZnQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@google.com>, Tushar Behera <tushar.b@samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@linaro.org>, Mark Brown <broonie@linaro.org>
+To: Kevin Hilman <khilman@linaro.org>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, Tushar Behera <tushar.b@samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, mturquette@linaro.org, t.figa@samsung.com, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, dianders@google.com, Shaik Ameer Basha <shaik.ameer@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06/13/2014 10:33 PM, Doug Anderson wrote:
-> Tushar,
-> 
-> On Tue, Jun 10, 2014 at 10:32 PM, Tushar Behera <tushar.b@samsung.com> wrote:
->> Peach-pi board has MAX98090 audio codec connected on HSI2C-7 bus.
-> 
-> If you want to be a stickler about it, peach-pi actually has a
-> max98091.  That requires code changes to the i2c driver, though.
-> ...and unfortunately listing two compatible strings for i2c devices is
-> broken.  :(
-> 
-Hi Doug,
-
-You are right. I checked the boot logs, the detected codec type is
-MAX98091. Since both these CODECs are supported through a single driver
-and the detection of chip is done during runtime, I would suggest we go
-ahead with "max98090" compatible string. I will update the commit
-message accordingly.
-
-Does that sound okay to you?
-
-> 
->> Signed-off-by: Tushar Behera <tushar.b@samsung.com>
->> ---
->>  arch/arm/boot/dts/exynos5800-peach-pi.dts |   31 +++++++++++++++++++++++++++++
->>  1 file changed, 31 insertions(+)
+On 06/11/2014 09:28 PM, Javier Martinez Canillas wrote:
+> On Wed, Jun 11, 2014 at 7:32 AM, Tushar Behera <tushar.b@samsung.com> wrote:
+>> Currently CLK_FOUT_EPLL was set as one of the parents of AUDSS mux.
+>> As per the user manual, it should be CLK_MAU_EPLL.
 >>
->> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> index f3af207..76f5966 100644
->> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
->> @@ -78,9 +78,27 @@
->>                 pinctrl-0 = <&usb301_vbus_en>;
->>                 enable-active-high;
+>> The problem surfaced when the bootloader in Peach-pit board set
+>> the EPLL clock as the parent of AUDSS mux. While booting the kernel,
+>> we used to get a system hang during late boot if CLK_MAU_EPLL was
+>> disabled.
+>>
+>> Signed-off-by: Tushar Behera <tushar.b@samsung.com>
+>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>> Reported-by: Kevin Hilman <khilman@linaro.org>
+>> ---
+>>  arch/arm/boot/dts/exynos5420.dtsi |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index e385322..79e9119 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -167,7 +167,7 @@
+>>                 compatible = "samsung,exynos5420-audss-clock";
+>>                 reg = <0x03810000 0x0C>;
+>>                 #clock-cells = <1>;
+>> -               clocks = <&clock CLK_FIN_PLL>, <&clock CLK_FOUT_EPLL>,
+>> +               clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MAU_EPLL>,
+>>                          <&clock CLK_SCLK_MAUDIO0>, <&clock CLK_SCLK_MAUPCM0>;
+>>                 clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
 >>         };
->> +
->> +       sound {
->> +               compatible = "google,snow-audio-max98090";
->> +
->> +               samsung,i2s-controller = <&i2s0>;
->> +               samsung,audio-codec = <&max98090>;
->> +       };
->> +};
->> +
->> +&i2s0 {
->> +       status = "okay";
+>> --
+>> 1.7.9.5
+>>
+>> --
 > 
-> It would be awfully nice to keep diffs between exynos5420-peach-pit
-> and exynos5800-peach-pi clean.  They're 99% the same.  I know this has
-> already gotten messed up with DP/HDMI were added, but there's no need
-> to make it worse.
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 > 
 
-If you so desire, I will submit a patch to sort peach-pi device-tree
-nodes (w.r.t. peach-pit dts file).
+Kukjin,
 
-> Could you add these nodes in the same place within the dts they were
-> added in exynos5420-peach-pit?
-> 
-
-Okay, I will add it after watchdog node.
+Would you please take this patch as a fix for 3.16?
 
 -- 
 Tushar Behera
