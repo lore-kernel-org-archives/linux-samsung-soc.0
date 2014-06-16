@@ -1,38 +1,79 @@
-From: Chander Kashyap <k.chander@samsung.com>
-Subject: [Patch v7 0/6] add cpuidle support for Exynos5420
-Date: Mon, 16 Jun 2014 15:56:17 +0530
-Message-ID: <1402914383-20471-1-git-send-email-k.chander@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, daniel.lezcano@linaro.org, lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, kgene.kim@samsung.com, tomasz.figa@gmail.com, Chander Kashyap <k.chander@samsung.com>
+From: Tushar Behera <trblinux@gmail.com>
+Subject: Re: [PATCH 3/3] ARM: dts: Enable audio support for Peach-pi board
+Date: Mon, 16 Jun 2014 16:49:28 +0530
+Message-ID: <539ED2C0.8030405@gmail.com>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>	<1402464739-19044-4-git-send-email-tushar.b@samsung.com> <CAD=FV=XqqP7+xDOAKCixivzgaO0xvJX7L+CCN+unAEuf-6aUbQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=XqqP7+xDOAKCixivzgaO0xvJX7L+CCN+unAEuf-6aUbQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@google.com>, Tushar Behera <tushar.b@samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@linaro.org>, Mark Brown <broonie@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos5420 is a big-little Soc from Samsung. It has 4 A15 and 4 A7 cores.
+On 06/13/2014 10:33 PM, Doug Anderson wrote:
+> Tushar,
+> 
+> On Tue, Jun 10, 2014 at 10:32 PM, Tushar Behera <tushar.b@samsung.com> wrote:
+>> Peach-pi board has MAX98090 audio codec connected on HSI2C-7 bus.
+> 
+> If you want to be a stickler about it, peach-pi actually has a
+> max98091.  That requires code changes to the i2c driver, though.
+> ...and unfortunately listing two compatible strings for i2c devices is
+> broken.  :(
+> 
+Hi Doug,
 
-This patchset adds cpuidle support for Exynos5420 SoC based on
-generic big.little cpuidle driver.
+You are right. I checked the boot logs, the detected codec type is
+MAX98091. Since both these CODECs are supported through a single driver
+and the detection of chip is done during runtime, I would suggest we go
+ahead with "max98090" compatible string. I will update the commit
+message accordingly.
 
-Tested on SMDK5420.
-Rebased on 3.16-rc1
+Does that sound okay to you?
 
-Changelog is in respective patches.
-Chander Kashyap (5):
-  driver: cpuidle-big-little: add of_device_id structure
-  arm: exynos: add generic function to calculate cpu number
-  cpuidle: config: Add ARCH_EXYNOS entry to select cpuidle-big-little
-    driver
-  driver: cpuidle: cpuidle-big-little: init driver for Exynos5420
-  exynos: cpuidle: do not allow cpuidle registration for Exynos5420
-  mcpm: exynos: populate suspend and powered_up callbacks
+> 
+>> Signed-off-by: Tushar Behera <tushar.b@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5800-peach-pi.dts |   31 +++++++++++++++++++++++++++++
+>>  1 file changed, 31 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>> index f3af207..76f5966 100644
+>> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+>> @@ -78,9 +78,27 @@
+>>                 pinctrl-0 = <&usb301_vbus_en>;
+>>                 enable-active-high;
+>>         };
+>> +
+>> +       sound {
+>> +               compatible = "google,snow-audio-max98090";
+>> +
+>> +               samsung,i2s-controller = <&i2s0>;
+>> +               samsung,audio-codec = <&max98090>;
+>> +       };
+>> +};
+>> +
+>> +&i2s0 {
+>> +       status = "okay";
+> 
+> It would be awfully nice to keep diffs between exynos5420-peach-pit
+> and exynos5800-peach-pi clean.  They're 99% the same.  I know this has
+> already gotten messed up with DP/HDMI were added, but there's no need
+> to make it worse.
+> 
 
- arch/arm/mach-exynos/exynos.c        |    4 +++-
- arch/arm/mach-exynos/mcpm-exynos.c   |   36 ++++++++++++++++++++++++++++++++++
- arch/arm/mach-exynos/regs-pmu.h      |    9 +++++++++
- drivers/cpuidle/Kconfig.arm          |    2 +-
- drivers/cpuidle/cpuidle-big_little.c |   12 +++++++++++-
- 5 files changed, 60 insertions(+), 3 deletions(-)
+If you so desire, I will submit a patch to sort peach-pi device-tree
+nodes (w.r.t. peach-pit dts file).
+
+> Could you add these nodes in the same place within the dts they were
+> added in exynos5420-peach-pit?
+> 
+
+Okay, I will add it after watchdog node.
 
 -- 
-1.7.9.5
-
+Tushar Behera
