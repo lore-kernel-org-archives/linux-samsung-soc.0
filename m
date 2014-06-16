@@ -1,80 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 06/10] mfd: Add driver for Maxim 77802 Power
- Management IC
-Date: Mon, 16 Jun 2014 20:27:20 +0100
-Message-ID: <20140616192720.GK5099@sirena.org.uk>
-References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk>
- <1402941758-11216-7-git-send-email-javier.martinez@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/OcK+/OmjmyK8lO9"
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH] mfd: cros_ec_spi: set wakeup capability
+Date: Mon, 16 Jun 2014 14:12:23 -0700
+Message-ID: <1402953143-24681-1-git-send-email-dianders@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44254 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751147AbaFPT1m (ORCPT
+Received: from mail-pa0-f73.google.com ([209.85.220.73]:64931 "EHLO
+	mail-pa0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755903AbaFPVMa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jun 2014 15:27:42 -0400
-Content-Disposition: inline
-In-Reply-To: <1402941758-11216-7-git-send-email-javier.martinez@collabora.co.uk>
+	Mon, 16 Jun 2014 17:12:30 -0400
+Received: by mail-pa0-f73.google.com with SMTP id kq14so212653pab.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jun 2014 14:12:29 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: broonie@kernel.org, Andrew Bresticker <abrestic@chromium.org>, swarren@wwwdotorg.org, olof@lixom.net, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc@vger.kernel.org, Prathyush K <prathyush.k@samsung.com>, Doug Anderson <dianders@chromium.org>, sameo@linux.intel.com, linux-kernel@vger.kernel.org
 
+From: Prathyush K <prathyush.k@samsung.com>
 
---/OcK+/OmjmyK8lO9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Set the device as wakeup capable and register the wakeup source.
 
-On Mon, Jun 16, 2014 at 08:02:34PM +0200, Javier Martinez Canillas wrote:
+Note: Though it makes more sense to have the SPI framework do this,
+(either via device tree or by board_info)
+this change is as per an existing mail chain:
+https://lkml.org/lkml/2009/8/27/291
 
-> +- max77802,pmic-buck-dvs-gpios: The DVS GPIOs. We'll try to set these GPIOs
-> +  to match pmic-buck-default-dvs-idx at probe time if they are defined. If
-> +  some or all of these GPIOs are not defined it's assumed that the board has
-> +  any missing GPIOs hardwired to match pmic-buck-default-dvs-idx.
+Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+Note that I don't have suspend/resume actually working upstream, but I
+see that /sys/bus/spi/drivers/cros-ec-spi/spi2.0/power/wakeup exists
+with this patch and doesn't exist without it.
 
-I can't tell from reading this what the property means exactly - I
-expect it is an array of the GPIOs in some order but that order isn't
-specified.
+ drivers/mfd/cros_ec_spi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> +config MFD_MAX77802
-> +	tristate "Maxim Integrated MAX77802 PMIC Support"
-> +	depends on I2C=y
-> +	select MFD_CORE
-> +	select REGMAP_I2C
-> +	select REGMAP_IRQ
-> +	select IRQ_DOMAIN
-> +	help
-> +	  Say yes here to support for Maxim Integrated MAX77802.
-> +	  This is a Power Management IC with RTC on chip.
-> +	  This driver provides common support for accessing the device;
-> +	  additional drivers must be enabled in order to use the functionality
-> +	  of the device.
-> +
-
-It is a bit unorthodox to put the build infrastructure in the same patch
-as the DT binding...
-
---/OcK+/OmjmyK8lO9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTn0UUAAoJELSic+t+oim9+XAP/0k0xAGWLJs4e/JK0xyzjNB0
-Sl0DuDX9IVU5pey7WnyzKGy2WArtwvgRe/5R4m1Ekr3PHaQEZ5rx3R4TZQIlNj1c
-xPkMELl82hJQtrDQIuZfGdU03d8YlnvudfeS82cN6QuKt32eS9PZy+HapYTbB5mc
-DYTTznAMvuoIFhg3t7KYBX18/uSmA2PmqjvpBbSAj7TwkzopbvzTvA223dUkbL++
-Deli/6SBehLsVGi6+akVHpXw9kfpEkutJ3L5yGiaDjH34C/yPs1yAHzQn0lkiOl9
-ziRMb+c/lU+hOVEkIpKSsutiy3sq/GidOWzXU55b2+9d74yTeTmGOLOhnoGtI9gh
-WBqlRYuHs6yW9UC/6lpc6N+BOcLJXblELJPIeJtfk4a0aJwzrwn1n+zlWg2Tow6c
-yiCc0SXT+sEPmovMgDaJQRV8nAW3AddqRmvxCuV8wzwmLUH7aotzqq3UkGWIcdhk
-zWMmTuRooZQ1WID37XwaikIUp4qWPIMv7bgatV1A1C8X7Zu26wDjqy9AOp8+L80m
-AH0JEOlrPTqJVOxpw7iikIEtlzTXziax41zFTLyE6/7xKrcQeSXMELahDKCRw2PY
-Krb/Fqmjo2i9IQDBgDk7s/afF3X02yUAW7ELU2iPkZ+U/RJ2OKuGyIFmBwFQQYyo
-w2yaxMGKIlrO208PVbvc
-=3csc
------END PGP SIGNATURE-----
-
---/OcK+/OmjmyK8lO9--
+diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+index 0b8d328..ef22dd5 100644
+--- a/drivers/mfd/cros_ec_spi.c
++++ b/drivers/mfd/cros_ec_spi.c
+@@ -385,6 +385,8 @@ static int cros_ec_spi_probe(struct spi_device *spi)
+ 		return err;
+ 	}
+ 
++	device_init_wakeup(&spi->dev, true);
++
+ 	return 0;
+ }
+ 
+-- 
+2.0.0.526.g5318336
