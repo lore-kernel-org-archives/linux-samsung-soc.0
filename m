@@ -1,7 +1,7 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH 03/10] mfd: cros_ec: Allow static din/dout buffers with cros_ec_register()
-Date: Mon, 16 Jun 2014 14:39:53 -0700
-Message-ID: <1402954800-28215-4-git-send-email-dianders@chromium.org>
+Subject: [PATCH 09/10] mfd: cros_ec: Check result code from EC messages
+Date: Mon, 16 Jun 2014 14:39:59 -0700
+Message-ID: <1402954800-28215-10-git-send-email-dianders@chromium.org>
 References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1402954800-28215-1-git-send-email-dianders@chromium.org>
@@ -12,34 +12,85 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Bill Richardson <wfrichar@chromium.org>
 
-The lower-level driver may want to provide its own buffers. If so,
-there's no need to allocate new ones.  This already happens to work
-just fine (since we check for size of 0 and use devm allocation), but
-it's good to document it.
+Just because the host was able to talk to the EC doesn't mean that the EC
+was happy with what it was told. Errors in communincation are not the same
+as error messages from the EC itself.
 
-[dianders: Resolved conflicts; documented that no code changes needed
-on mainline]
+This change lets the EC report its errors separately.
 
 Signed-off-by: Bill Richardson <wfrichar@chromium.org>
 Signed-off-by: Doug Anderson <dianders@chromium.org>
 ---
- include/linux/mfd/cros_ec.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mfd/cros_ec_i2c.c | 15 +++++++++++----
+ drivers/mfd/cros_ec_spi.c | 26 ++++++++++++++------------
+ 2 files changed, 25 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index 7e9fe6e..2ee3190 100644
---- a/include/linux/mfd/cros_ec.h
-+++ b/include/linux/mfd/cros_ec.h
-@@ -68,8 +68,8 @@ struct cros_ec_msg {
-  * We use this alignment to keep ARM and x86 happy. Probably word
-  * alignment would be OK, there might be a small performance advantage
-  * to using dword.
-- * @din_size: size of din buffer
-- * @dout_size: size of dout buffer
-+ * @din_size: size of din buffer to allocate (zero to use static din)
-+ * @dout_size: size of dout buffer to allocate (zero to use static dout)
-  * @command_send: send a command
-  * @command_recv: receive a command
-  * @ec_name: name of EC device (e.g. 'chromeos-ec')
+diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/mfd/cros_ec_i2c.c
+index 5bb32f5..2276096 100644
+--- a/drivers/mfd/cros_ec_i2c.c
++++ b/drivers/mfd/cros_ec_i2c.c
+@@ -92,11 +92,18 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device *ec_dev,
+ 	}
+ 
+ 	/* check response error code */
+-	if (i2c_msg[1].buf[0]) {
+-		dev_warn(ec_dev->dev, "command 0x%02x returned an error %d\n",
+-			 msg->command, i2c_msg[1].buf[0]);
+-		ret = -EINVAL;
++	msg->result = i2c_msg[1].buf[0];
++	switch (msg->result) {
++	case EC_RES_SUCCESS:
++		break;
++	case EC_RES_IN_PROGRESS:
++		ret = -EAGAIN;
++		dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
++			msg->command);
+ 		goto done;
++	default:
++		dev_warn(ec_dev->dev, "command 0x%02x returned %d\n",
++			 msg->command, msg->result);
+ 	}
+ 
+ 	/* copy response packet payload and compute checksum */
+diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+index 09ca789..4d34f1c 100644
+--- a/drivers/mfd/cros_ec_spi.c
++++ b/drivers/mfd/cros_ec_spi.c
+@@ -289,21 +289,23 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
+ 		goto exit;
+ 	}
+ 
+-	/* check response error code */
+ 	ptr = ec_dev->din;
+-	if (ptr[0]) {
+-		if (ptr[0] == EC_RES_IN_PROGRESS) {
+-			dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
+-				ec_msg->command);
+-			ret = -EAGAIN;
+-			goto exit;
+-		}
+-		dev_warn(ec_dev->dev, "command 0x%02x returned an error %d\n",
+-			 ec_msg->command, ptr[0]);
+-		debug_packet(ec_dev->dev, "in_err", ptr, len);
+-		ret = -EINVAL;
++
++	/* check response error code */
++	ec_msg->result = ptr[0];
++	switch (ec_msg->result) {
++	case EC_RES_SUCCESS:
++		break;
++	case EC_RES_IN_PROGRESS:
++		ret = -EAGAIN;
++		dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
++			ec_msg->command);
+ 		goto exit;
++	default:
++		dev_warn(ec_dev->dev, "command 0x%02x returned %d\n",
++			 ec_msg->command, ec_msg->result);
+ 	}
++
+ 	len = ptr[1];
+ 	sum = ptr[0] + ptr[1];
+ 	if (len > ec_msg->insize) {
 -- 
 2.0.0.526.g5318336
