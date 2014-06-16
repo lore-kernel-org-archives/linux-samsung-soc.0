@@ -1,55 +1,70 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Mon, 16 Jun 2014 13:57:04 +0100
-Message-ID: <20140616125704.GE16758@arm.com>
-References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
- <538757B6.4010109@wwwdotorg.org>
- <20140530073006.GA24748@ulmo>
- <20140530112728.GB3949@e103592.cambridge.arm.com>
- <20140604211237.GC18710@mithrandir>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 0/2] backlight: remove trivial get_brightness
+ implementations
+Date: Mon, 16 Jun 2014 14:32:34 +0100
+Message-ID: <20140616133234.GX14323@lee--X1>
+References: <1401444650-12267-1-git-send-email-a.hajda@samsung.com>
+ <000701cf895e$6a648f20$3f2dad60$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <20140604211237.GC18710@mithrandir>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TbrhsbdSgBK9A@public.gmane.org>
+In-Reply-To: <000701cf895e$6a648f20$3f2dad60$%han@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Milo Kim' <milo.kim@ti.com>, "'open list:FRAMEBUFFER LAYER'" <linux-fbdev@vger.kernel.org>, 'Benjamin Herrenschmidt' <benh@kernel.crashing.org>, "'open list:X86 PLATFORM DRIVERS'" <platform-driver-x86@vger.kernel.org>, 'Andrzej Hajda' <a.hajda@samsung.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Laurent Pinchart' <laurent.pinchart@ideasonboard.com>, 'Yijing Wang' <wangyijing@huawei.com>, 'Matthew Garrett' <matthew.garrett@nebula.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, 'Geert Uytterhoeven' <geert@linux-m68k.org>, 'Daniel Vetter' <daniel.vetter@ffwll.ch>, 'Jean-Christophe Plagniol-Villard' <plagnioj@jcrosoft.com>, 'Dan Carpenter' <dan.carpenter@oracle.com>, "'open list:PWM SUBSYSTEM'" <linux-pwm@vger.kernel.org>, 'Bryan Wu' <cooloney@gmail.com>, 'moderated list:ARM/S5P EXYN
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 04, 2014 at 10:12:38PM +0100, Thierry Reding wrote:
-> On Fri, May 30, 2014 at 12:27:28PM +0100, Dave Martin wrote:
-> > On Fri, May 30, 2014 at 08:30:08AM +0100, Thierry Reding wrote:
-> [...]
-> > > Arnd, can you take another look at this binding and see if there's
-> > > anything else missing? If not I'll go through the document again and
-> > > update all #address-cells/#size-cells references with #iommu-cells as
-> > > appropriate and submit v3.
-> > 
-> > How do you envisage propagation of the master ID bits downstream of the
-> > IOMMU would be described?
-> > 
-> > We will definitely need a way to describe this for GICv3.  How those
-> > values are propagated is likely to vary between related SoCs and doesn't
-> > feel like it should be baked into a driver, especially for the ARM SMMU
-> > which may get reused in radically different SoC families from different
-> > vendors.
-> 
-> Well, we've had cases like these in the past (power sequences come to
-> mind). Some concepts are just too difficult or unwieldy to be put into
-> device tree. I think that this is one of them.
-> 
-> > The most likely types of remapping are the adding of a base offset or
-> > some extra bits to the ID -- because not all MSIs to the GIC will
-> > necessarily pass through the IOMMU.  It's also possible that we might
-> > see ID squashing or folding in some systems.
-> 
-> It can easily be argued that if the algorithm used to remap the ID
-> varies, the compatibility of the device changes. Therefore I would
-> expect any variant of the GICv3 that deviates from the "standard"
-> mapping (if there is such a thing) to have its own compatible string.
-
-There is no standard mapping; it's a property defined at system integration
-time. I fully expect different SoCs to do different things here.
-
-Will
+T24gTW9uLCAxNiBKdW4gMjAxNCwgSmluZ29vIEhhbiB3cm90ZToKCj4gT24gRnJpZGF5LCBNYXkg
+MzAsIDIwMTQgNzoxMSBQTSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiA+IAo+ID4gVGhpcyBwYXRj
+aHNldCBtYWtlcyBnZXRfYnJpZ2h0bmVzcyBjYWxsYmFjayBvcHRpb25hbAo+ID4gYW5kIHJlbW92
+ZXMgdHJpdmlhbCBpbXBsZW1lbnRhdGlvbnMuCj4gPiBEcml2ZXIgY2hhbmdlcyBhcmUgcXVpdGUg
+b2J2aW91cyBzbyBJIGhhdmUgcHV0IHRoZW0gaW50byBzaW5nbGUKPiA+IHBhdGNoLgo+ID4gCj4g
+PiBUaGUgcGF0Y2hzZXQgaXMgYmFzZWQgb24gdGhlIGN1cnJlbnQgbGludXgtbmV4dCBicmFuY2gu
+Cj4gPiAKPiA+IFJlZ2FyZHMKPiA+IEFuZHJ6ZWoKPiA+IAo+ID4gQW5kcnplaiBIYWpkYSAoMik6
+Cj4gPiAgIGJhY2tsaWdodDogc2hvdyBicmlnaHRuZXNzIGV2ZW4gaWYgZ2V0X2JyaWdodG5lc3Mg
+aXMgbm90IGltcGxlbWVudGVkCj4gPiAgIGJhY2tsaWdodDogcmVtb3ZlIHRyaXZpYWwgZ2V0X2Jy
+aWdodG5lc3MgaW1wbGVtZW50YXRpb25zCj4gCj4gVGhlc2UgcGF0Y2hlcyBsb29rIGdvb2QhCj4g
+QWNrZWQtYnk6IEppbmdvbyBIYW4gPGpnMS5oYW5Ac2Ftc3VuZy5jb20+Cj4gCj4gTGVlIEpvbmVz
+LAo+IFdvdWxkIHlvdSBtZXJnZSB0aGVzZSBwYXRjaGVzIGludG8gYmFja2xpZ2h0IGdpdD8KClll
+cCwgZG9uZS4KCk5COiBZb3UgZG9uJ3QgaGF2ZSB0byBhc2suICBJJ2xsIHNlZSB0aGF0IHlvdSd2
+ZSByZXZpZXdlZC9hY2tlZCB0aGUKcGF0Y2hlcyBhbmQganVzdCBhcHBseSB0aGVtIGF1dG9tYXRp
+Y2FsbHkgKHByb3ZpZGVkIEknbSBvbiB0aGUgQ0MgbGlzdApvZiBjb3Vyc2UpLgoKPiA+ICBkcml2
+ZXJzL21hY2ludG9zaC92aWEtcG11LWJhY2tsaWdodC5jICAgICAgfCA2IC0tLS0tLQo+ID4gIGRy
+aXZlcnMvcGxhdGZvcm0veDg2L3NhbXN1bmctcTEwLmMgICAgICAgICB8IDYgLS0tLS0tCj4gPiAg
+ZHJpdmVycy92aWRlby9iYWNrbGlnaHQvYWF0Mjg3MF9ibC5jICAgICAgIHwgNiAtLS0tLS0KPiA+
+ICBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9hbXMzNjlmZzA2LmMgICAgICAgfCA2IC0tLS0tLQo+
+ID4gIGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L2JhY2tsaWdodC5jICAgICAgICB8IDIgKysKPiA+
+ICBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9iZDYxMDcuYyAgICAgICAgICAgfCA2IC0tLS0tLQo+
+ID4gIGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L2dwaW9fYmFja2xpZ2h0LmMgICB8IDYgLS0tLS0t
+Cj4gPiAgZHJpdmVycy92aWRlby9iYWNrbGlnaHQvbGQ5MDQwLmMgICAgICAgICAgIHwgNiAtLS0t
+LS0KPiA+ICBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9scDg1NXhfYmwuYyAgICAgICAgfCA2IC0t
+LS0tLQo+ID4gIGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L2xwODc4OF9ibC5jICAgICAgICB8IDYg
+LS0tLS0tCj4gPiAgZHJpdmVycy92aWRlby9iYWNrbGlnaHQvbHY1MjA3bHAuYyAgICAgICAgIHwg
+NiAtLS0tLS0KPiA+ICBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9wYW5kb3JhX2JsLmMgICAgICAg
+fCA2IC0tLS0tLQo+ID4gIGRyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L3B3bV9ibC5jICAgICAgICAg
+ICB8IDYgLS0tLS0tCj4gPiAgZHJpdmVycy92aWRlby9iYWNrbGlnaHQvczZlNjNtMC5jICAgICAg
+ICAgIHwgNiAtLS0tLS0KPiA+ICBkcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC90cHM2NTIxN19ibC5j
+ICAgICAgfCA2IC0tLS0tLQo+ID4gIGRyaXZlcnMvdmlkZW8vZmJkZXYvYXR5L2F0eTEyOGZiLmMg
+ICAgICAgICB8IDYgLS0tLS0tCj4gPiAgZHJpdmVycy92aWRlby9mYmRldi9hdHkvYXR5ZmJfYmFz
+ZS5jICAgICAgIHwgNiAtLS0tLS0KPiA+ICBkcml2ZXJzL3ZpZGVvL2ZiZGV2L2F0eS9yYWRlb25f
+YmFja2xpZ2h0LmMgfCA2IC0tLS0tLQo+ID4gIGRyaXZlcnMvdmlkZW8vZmJkZXYvZXh5bm9zL3M2
+ZThheDAuYyAgICAgICB8IDYgLS0tLS0tCj4gPiAgZHJpdmVycy92aWRlby9mYmRldi9udmlkaWEv
+bnZfYmFja2xpZ2h0LmMgIHwgNiAtLS0tLS0KPiA+ICBkcml2ZXJzL3ZpZGVvL2ZiZGV2L3JpdmEv
+ZmJkZXYuYyAgICAgICAgICAgfCA2IC0tLS0tLQo+ID4gIDIxIGZpbGVzIGNoYW5nZWQsIDIgaW5z
+ZXJ0aW9ucygrKSwgMTIwIGRlbGV0aW9ucygtKQo+ID4gCj4gCgotLSAKTGVlIEpvbmVzCkxpbmFy
+byBTVE1pY3JvZWxlY3Ryb25pY3MgTGFuZGluZyBUZWFtIExlYWQKTGluYXJvLm9yZyDilIIgT3Bl
+biBzb3VyY2Ugc29mdHdhcmUgZm9yIEFSTSBTb0NzCkZvbGxvdyBMaW5hcm86IEZhY2Vib29rIHwg
+VHdpdHRlciB8IEJsb2cKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlz
+dHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2xpbnV4LWFybS1rZXJuZWwK
