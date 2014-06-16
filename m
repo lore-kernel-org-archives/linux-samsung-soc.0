@@ -1,113 +1,72 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH] arm: exynos: Modify pm code to check for cortex A9 rather
- than the SoC
-Date: Mon, 16 Jun 2014 09:37:14 +0530
-Message-ID: <CAM4voa=3zzo-2KbjDtBOca+uJeSxT2OYpi+rJuSGsDg-vo7GYA@mail.gmail.com>
-References: <1400814061-12813-1-git-send-email-a.kesavan@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 1/3] clocksource: exynos_mct: Fix ftrace
+Date: Sun, 15 Jun 2014 21:40:39 -0700
+Message-ID: <CAD=FV=XA09XawT-fxAm2tTMw4kZ=7RHceXuww2y6q+zMV71pew@mail.gmail.com>
+References: <1401903034-20074-1-git-send-email-dianders@chromium.org>
+	<539E0D8E.9080706@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f172.google.com ([209.85.216.172]:42542 "EHLO
-	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750804AbaFPEHP (ORCPT
+Received: from mail-ve0-f170.google.com ([209.85.128.170]:60699 "EHLO
+	mail-ve0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751543AbaFPEkk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jun 2014 00:07:15 -0400
-Received: by mail-qc0-f172.google.com with SMTP id o8so7116011qcw.3
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Jun 2014 21:07:14 -0700 (PDT)
-In-Reply-To: <1400814061-12813-1-git-send-email-a.kesavan@samsung.com>
+	Mon, 16 Jun 2014 00:40:40 -0400
+Received: by mail-ve0-f170.google.com with SMTP id i13so2007642veh.29
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Jun 2014 21:40:39 -0700 (PDT)
+In-Reply-To: <539E0D8E.9080706@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
-Cc: Abhilash Kesavan <a.kesavan@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Vincent Guittot <vincent.guittot@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Kukjin,
+Daniel,
 
-On Fri, May 23, 2014 at 8:31 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
-> We have an soc check to ensure that the scu and certain A9 specific
-> registers are not accessed on Exynos5250 (which is A15 based).
-> Rather than adding another soc specific check for 5420 let us test
-> for the Cortex A9 primary part number.
+On Sun, Jun 15, 2014 at 2:18 PM, Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+> On 06/04/2014 07:30 PM, Doug Anderson wrote:
+>>
+>> In (93bfb76 clocksource: exynos_mct: register sched_clock callback) we
+>> supported using the MCT as a scheduler clock.  We properly marked
+>> exynos4_read_sched_clock() as notrace.  However, we then went and
+>> called another function that _wasn't_ notrace.  That means if you do:
+>>
+>>    cd /sys/kernel/debug/tracing/
+>>    echo function_graph > current_tracer
+>>
+>> You'll get a crash.
+>>
+>> Fix this (but still let other readers of the MCT be trace-enabled) by
+>> adding an extra function.  It's important to keep other users of MCT
+>> traceable because the MCT is actually quite slow.
 >
-> This resolves the below crash seen on exynos5420 during core switching
-> after the CPUIdle consolidation series was merged.
 >
-> [  155.975589] [<c0013174>] (scu_enable) from [<c001b0dc>] (exynos_cpu_pm_notifier+0x80/0xc4)
-> [  155.983833] [<c001b0dc>] (exynos_cpu_pm_notifier) from [<c003c1b0>] (notifier_call_chain+0x44/0x84)
-> [  155.992851] [<c003c1b0>] (notifier_call_chain) from [<c007a49c>] (cpu_pm_notify+0x20/0x3c)
-> [  156.001089] [<c007a49c>] (cpu_pm_notify) from [<c007a564>] (cpu_pm_exit+0x20/0x38)
-> [  156.008635] [<c007a564>] (cpu_pm_exit) from [<c0019e98>] (bL_switcher_thread+0x298/0x40c)
-> [  156.016788] [<c0019e98>] (bL_switcher_thread) from [<c003842c>] (kthread+0xcc/0xe8)
-> [  156.024426] [<c003842c>] (kthread) from [<c000e438>] (ret_from_fork+0x14/0x3c)
-> [  156.031621] Code: ea017fec c0530a00 c052e3f8 c0012dcc (e5903000
 >
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Hi Doug,
+>
+> could you elaborate ? I don't get the 'because the MCT ... slow'
 
-Do you have any comments on this patch ?
+Sorry, I was trying to avoid duplication in the series and it's more
+obvious when you look at parts 2 and 3 of the series.  ;)
 
-Regards,
-Abhilash
-> ---
->  arch/arm/mach-exynos/pm.c |   15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index d10c351..6dd4a11 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
-> @@ -300,7 +300,7 @@ static int exynos_pm_suspend(void)
->         tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
->         __raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
->
-> -       if (!soc_is_exynos5250())
-> +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
->                 exynos_cpu_save_register();
->
->         return 0;
-> @@ -334,7 +334,7 @@ static void exynos_pm_resume(void)
->         if (exynos_pm_central_resume())
->                 goto early_wakeup;
->
-> -       if (!soc_is_exynos5250())
-> +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
->                 exynos_cpu_restore_register();
->
->         /* For release retention */
-> @@ -353,7 +353,7 @@ static void exynos_pm_resume(void)
->
->         s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
->
-> -       if (!soc_is_exynos5250())
-> +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
->                 scu_enable(S5P_VA_SCU);
->
->  early_wakeup:
-> @@ -440,15 +440,18 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
->         case CPU_PM_ENTER:
->                 if (cpu == 0) {
->                         exynos_pm_central_suspend();
-> -                       exynos_cpu_save_register();
-> +                       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> +                               exynos_cpu_save_register();
->                 }
->                 break;
->
->         case CPU_PM_EXIT:
->                 if (cpu == 0) {
-> -                       if (!soc_is_exynos5250())
-> +                       if (read_cpuid_part_number() ==
-> +                                       ARM_CPU_PART_CORTEX_A9) {
->                                 scu_enable(S5P_VA_SCU);
-> -                       exynos_cpu_restore_register();
-> +                               exynos_cpu_restore_register();
-> +                       }
->                         exynos_pm_central_resume();
->                 }
->                 break;
-> --
-> 1.7.9.5
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Doing the math (please correct any miscalculations) using the numbers
+from the other patches: You can see that the existing code takes
+1323852 us for 1000000 gettimeofday in userspace.  The fastest
+implementation (just shaving to a 32-bit timer) gets us as fast as
+~1000000 us for 1000000 gettimeofday in userspace.
+
+>From profiling, I believe that gettimeofday from userspace is about
+50% overhead (system call, multiplication, copies, etc) and about 50%
+MCT read.  That means that the fastest you can possibly do an MCT read
+is in .5us or 500ns.
+
+I believe an A15 has something like 1 or 2 cycles per instruction.  If
+it were 2 cycles per instruction, it can execute a normal instruction
+on a 2GHz machine in .5ns.  That means we can execute 1000 normal
+instructions in the time it takes to do a since MCT access.
+
+...so I guess that's what I'd call slow.  ;)  What do you think?  I
+know that the MCT read shows up in whole system profiles of
+gettimeofday.
+
+-Doug
