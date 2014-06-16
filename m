@@ -1,59 +1,51 @@
 From: Tushar Behera <trblinux@gmail.com>
-Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
-Date: Mon, 16 Jun 2014 16:56:42 +0530
-Message-ID: <539ED472.5020102@gmail.com>
-References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>	<1402464739-19044-3-git-send-email-tushar.b@samsung.com> <CABxcv=kX07pNCd-YPYp6J8S5hHzG1rsoer1YRfdPE0g-xFqZnQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: Add missing clock/pin-control entries for I2S0
+ on Exynos4
+Date: Mon, 16 Jun 2014 17:13:26 +0530
+Message-ID: <539ED85E.8050002@gmail.com>
+References: <1402133454-28445-1-git-send-email-tushar.b@samsung.com> <5395841B.8000702@samsung.com> <53958FF0.40101@gmail.com> <5395954A.5070203@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CABxcv=kX07pNCd-YPYp6J8S5hHzG1rsoer1YRfdPE0g-xFqZnQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kevin Hilman <khilman@linaro.org>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, Tushar Behera <tushar.b@samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, mturquette@linaro.org, t.figa@samsung.com, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, dianders@google.com, Shaik Ameer Basha <shaik.ameer@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f44.google.com ([209.85.160.44]:44238 "EHLO
+	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751039AbaFPLnb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 16 Jun 2014 07:43:31 -0400
+Received: by mail-pb0-f44.google.com with SMTP id md12so3584116pbc.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jun 2014 04:43:30 -0700 (PDT)
+In-Reply-To: <5395954A.5070203@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tushar Behera <tushar.b@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On 06/11/2014 09:28 PM, Javier Martinez Canillas wrote:
-> On Wed, Jun 11, 2014 at 7:32 AM, Tushar Behera <tushar.b@samsung.com> wrote:
->> Currently CLK_FOUT_EPLL was set as one of the parents of AUDSS mux.
->> As per the user manual, it should be CLK_MAU_EPLL.
+On 06/09/2014 04:36 PM, Sylwester Nawrocki wrote:
+> On 09/06/14 12:44, Tushar Behera wrote:
+>> IMHO, the clock entries belong here as the audss clock provider
+>> essentially remains same for all Exynos4 based systems.
 >>
->> The problem surfaced when the bootloader in Peach-pit board set
->> the EPLL clock as the parent of AUDSS mux. While booting the kernel,
->> we used to get a system hang during late boot if CLK_MAU_EPLL was
->> disabled.
+>> As for pin-control entry, I believe we can move them to respective SoC
+>> dtsi files.
 >>
->> Signed-off-by: Tushar Behera <tushar.b@samsung.com>
->> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->> Reported-by: Kevin Hilman <khilman@linaro.org>
->> ---
->>  arch/arm/boot/dts/exynos5420.dtsi |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
->> index e385322..79e9119 100644
->> --- a/arch/arm/boot/dts/exynos5420.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->> @@ -167,7 +167,7 @@
->>                 compatible = "samsung,exynos5420-audss-clock";
->>                 reg = <0x03810000 0x0C>;
->>                 #clock-cells = <1>;
->> -               clocks = <&clock CLK_FIN_PLL>, <&clock CLK_FOUT_EPLL>,
->> +               clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MAU_EPLL>,
->>                          <&clock CLK_SCLK_MAUDIO0>, <&clock CLK_SCLK_MAUPCM0>;
->>                 clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
->>         };
->> --
->> 1.7.9.5
->>
->> --
+>> Does that sound okay to you?
 > 
-> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> I guess that's fine, I tend to agree with you about the clocks.
 > 
 
-Kukjin,
+As I was going ahead with the implementation, it felt like repetition
+with the same code. Would it be acceptable to you if we go ahead with
+the earlier approach of adding both clock and pin-control entry to
+exynos4.dtsi?
 
-Would you please take this patch as a fix for 3.16?
+I can see i2c_n and spi_n adding pin-control entries in exynos4.dtsi itself.
+
+> --
+> Thanks,
+> Sylwester
+> 
+
 
 -- 
 Tushar Behera
