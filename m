@@ -1,74 +1,66 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/3] clocksource: exynos_mct: Fix ftrace
-Date: Mon, 16 Jun 2014 09:35:04 -0700
-Message-ID: <CAD=FV=Vmcg_VwPO09OSFCxmqktNg2czc_qtYpaCh1ex5O1nUdw@mail.gmail.com>
-References: <1401903034-20074-1-git-send-email-dianders@chromium.org>
-	<539E0D8E.9080706@linaro.org>
-	<CAD=FV=XA09XawT-fxAm2tTMw4kZ=7RHceXuww2y6q+zMV71pew@mail.gmail.com>
-	<539EB03C.5080100@linaro.org>
+From: Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: dts: Enable audio support for Peach-pi board
+Date: Mon, 16 Jun 2014 09:49:26 -0700
+Message-ID: <CAD=FV=UaaRQVq3TmXMTv9OkER+zORC89YfPNjwZwfCQKmuavrw@mail.gmail.com>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
+	<1402464739-19044-4-git-send-email-tushar.b@samsung.com>
+	<CAD=FV=XqqP7+xDOAKCixivzgaO0xvJX7L+CCN+unAEuf-6aUbQ@mail.gmail.com>
+	<539ED2C0.8030405@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f173.google.com ([209.85.220.173]:45376 "EHLO
-	mail-vc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754714AbaFPQfG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jun 2014 12:35:06 -0400
-Received: by mail-vc0-f173.google.com with SMTP id lf12so5252002vcb.32
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jun 2014 09:35:04 -0700 (PDT)
-In-Reply-To: <539EB03C.5080100@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <539ED2C0.8030405-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Vincent Guittot <vincent.guittot@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Daniel,
+Tushar,
 
-On Mon, Jun 16, 2014 at 1:52 AM, Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
-> Hi Dough,
+On Mon, Jun 16, 2014 at 4:19 AM, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On 06/13/2014 10:33 PM, Doug Anderson wrote:
+>> Tushar,
+>>
+>> On Tue, Jun 10, 2014 at 10:32 PM, Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>> Peach-pi board has MAX98090 audio codec connected on HSI2C-7 bus.
+>>
+>> If you want to be a stickler about it, peach-pi actually has a
+>> max98091.  That requires code changes to the i2c driver, though.
+>> ...and unfortunately listing two compatible strings for i2c devices is
+>> broken.  :(
+>>
+> Hi Doug,
 >
-> thanks for the explanation. I still don't get why it is important to keep
-> others users of mct traceable because it is quite slow ? May be it is what
-> you explained here, but I miss the connection between 'the other users' <->
-> 'traceable' <-> 'because slow'.
+> You are right. I checked the boot logs, the detected codec type is
+> MAX98091. Since both these CODECs are supported through a single driver
+> and the detection of chip is done during runtime, I would suggest we go
+> ahead with "max98090" compatible string. I will update the commit
+> message accordingly.
+>
+> Does that sound okay to you?
 
-It stems from the fact that one use of trace is to figure out why
-things are slow.  In that case you want to make sure that the slow
-things are traceable.
+As per my understanding you shouldn't do this.  You should have two patches:
 
-I can run the following:
+1. Add "max98091".  You could simply post Wonjoon's patch from
+<https://chromium-review.googlesource.com/184091>
 
-cd /sys/kernel/debug/tracing
-echo nop > current_tracer
-echo 0 > options/sleep-time
-echo 0 > options/graph-time
-echo 1 > function_profile_enabled
-~/gettimeofday 100000
-echo 0 > function_profile_enabled
+2. Change the device tree to refer to "max98091"
 
-Then I can see this:
+The argument that the "current kernel driver has a single driver" is
+an argument that you're not supposed to make for device tree.  The
+same device tree is supposed to work for U-Boot, BSD, or any other
+platform.  On those platforms it might not be a shared driver.
 
-  Function                               Hit    Time            Avg
-         s^2
-  --------                               ---    ----            ---
-         ---
- __getnstimeofday                    100005    258267.8 us     2.582
-us        447196.9 us
-  do_gettimeofday                     100004    252395.6 us     2.523
-us        462549.6 us
-  SyS_gettimeofday                    100004    249353.6 us     2.493
-us        1223308 us
-  getnstimeofday                      100005    246217.2 us     2.462
-us        369149.8 us
-  exynos4_frc_read                    101096    181620.0 us     1.796
-us        157413.8 us
 
-...if I mark exynos4_frc_read() as notrace then it doesn't show up in
-the profile, which is unfortunate.
+> If you so desire, I will submit a patch to sort peach-pi device-tree
+> nodes (w.r.t. peach-pit dts file).
 
-NOTE: the above profile is a bit misleading in terms of actual time
-taken my belief is that we end up with some confusing numbers since
-profiling uses the MCT itself (I think) to record how long a function
-took to execute.  Despite this it's still awfully nice that
-exynos4_frc_read() actually shows up in the trace...
+Yes please.  I think there's supposed to be some official ordering of
+things.  If anyone reading this has a pointer to the official sort
+order of things in the device tree I'd love to see it!  ;)
+
+-Doug
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
