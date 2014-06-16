@@ -1,7 +1,7 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH 09/10] mfd: cros_ec: Check result code from EC messages
-Date: Mon, 16 Jun 2014 14:39:59 -0700
-Message-ID: <1402954800-28215-10-git-send-email-dianders@chromium.org>
+Subject: [PATCH 05/10] mdf: cros_ec: Detect in-progress commands
+Date: Mon, 16 Jun 2014 14:39:55 -0700
+Message-ID: <1402954800-28215-6-git-send-email-dianders@chromium.org>
 References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1402954800-28215-1-git-send-email-dianders@chromium.org>
@@ -10,87 +10,33 @@ To: Lee Jones <lee.jones@linaro.org>
 Cc: Andrew Bresticker <abrestic@chromium.org>, swarren@wwwdotorg.org, olof@lixom.net, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, sjg@chromium.org, Wolfram Sang <wsa@the-dreams.de>, broonie@kernel.org, Doug Anderson <dianders@chromium.org>, sameo@linux.intel.com, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Bill Richardson <wfrichar@chromium.org>
+From: Simon Glass <sjg@chromium.org>
 
-Just because the host was able to talk to the EC doesn't mean that the EC
-was happy with what it was told. Errors in communincation are not the same
-as error messages from the EC itself.
+Some commands take a while to execute. Use -EAGAIN to signal this to the
+caller.
 
-This change lets the EC report its errors separately.
-
-Signed-off-by: Bill Richardson <wfrichar@chromium.org>
+Signed-off-by: Simon Glass <sjg@chromium.org>
 Signed-off-by: Doug Anderson <dianders@chromium.org>
 ---
- drivers/mfd/cros_ec_i2c.c | 15 +++++++++++----
- drivers/mfd/cros_ec_spi.c | 26 ++++++++++++++------------
- 2 files changed, 25 insertions(+), 16 deletions(-)
+ drivers/mfd/cros_ec_spi.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/mfd/cros_ec_i2c.c
-index 5bb32f5..2276096 100644
---- a/drivers/mfd/cros_ec_i2c.c
-+++ b/drivers/mfd/cros_ec_i2c.c
-@@ -92,11 +92,18 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_device *ec_dev,
- 	}
- 
- 	/* check response error code */
--	if (i2c_msg[1].buf[0]) {
--		dev_warn(ec_dev->dev, "command 0x%02x returned an error %d\n",
--			 msg->command, i2c_msg[1].buf[0]);
--		ret = -EINVAL;
-+	msg->result = i2c_msg[1].buf[0];
-+	switch (msg->result) {
-+	case EC_RES_SUCCESS:
-+		break;
-+	case EC_RES_IN_PROGRESS:
-+		ret = -EAGAIN;
-+		dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
-+			msg->command);
- 		goto done;
-+	default:
-+		dev_warn(ec_dev->dev, "command 0x%02x returned %d\n",
-+			 msg->command, msg->result);
- 	}
- 
- 	/* copy response packet payload and compute checksum */
 diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index 09ca789..4d34f1c 100644
+index 52d4d7b..c29a2d7 100644
 --- a/drivers/mfd/cros_ec_spi.c
 +++ b/drivers/mfd/cros_ec_spi.c
-@@ -289,21 +289,23 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 		goto exit;
- 	}
- 
--	/* check response error code */
+@@ -292,6 +292,12 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
+ 	/* check response error code */
  	ptr = ec_dev->din;
--	if (ptr[0]) {
--		if (ptr[0] == EC_RES_IN_PROGRESS) {
--			dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
--				ec_msg->command);
--			ret = -EAGAIN;
--			goto exit;
--		}
--		dev_warn(ec_dev->dev, "command 0x%02x returned an error %d\n",
--			 ec_msg->command, ptr[0]);
--		debug_packet(ec_dev->dev, "in_err", ptr, len);
--		ret = -EINVAL;
-+
-+	/* check response error code */
-+	ec_msg->result = ptr[0];
-+	switch (ec_msg->result) {
-+	case EC_RES_SUCCESS:
-+		break;
-+	case EC_RES_IN_PROGRESS:
-+		ret = -EAGAIN;
-+		dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
-+			ec_msg->command);
- 		goto exit;
-+	default:
-+		dev_warn(ec_dev->dev, "command 0x%02x returned %d\n",
-+			 ec_msg->command, ec_msg->result);
- 	}
-+
- 	len = ptr[1];
- 	sum = ptr[0] + ptr[1];
- 	if (len > ec_msg->insize) {
+ 	if (ptr[0]) {
++		if (ptr[0] == EC_RES_IN_PROGRESS) {
++			dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
++				ec_msg->cmd);
++			ret = -EAGAIN;
++			goto exit;
++		}
+ 		dev_warn(ec_dev->dev, "command 0x%02x returned an error %d\n",
+ 			 ec_msg->cmd, ptr[0]);
+ 		debug_packet(ec_dev->dev, "in_err", ptr, len);
 -- 
 2.0.0.526.g5318336
