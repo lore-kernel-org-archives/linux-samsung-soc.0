@@ -1,57 +1,124 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: [PATCH v2] ARM: EXYNOS: mcpm: Don't rely on firmware's
- secondary_cpu_start
-Date: Mon, 16 Jun 2014 14:47:46 -0400 (EDT)
-Message-ID: <alpine.LFD.2.11.1406161447190.16842@knanqh.ubzr>
-References: <1402090985-8061-1-git-send-email-dianders@chromium.org> <1402096465-13218-1-git-send-email-dianders@chromium.org> <7htx7uq7k1.fsf@paris.lan> <CAL1qeaGv+hBCr8oqs-E2j_Qh0Z=ZTVEaM-gdyu286Snu4otbMA@mail.gmail.com> <alpine.LFD.2.11.1406091617181.25775@knanqh.ubzr>
- <CAGa+x87puSoPftG6ddGTVtxOOxoUg_dLmMmZUHm-j6pjFuhr=g@mail.gmail.com> <alpine.LFD.2.11.1406091649290.25775@knanqh.ubzr> <CAD=FV=XYBSkx_3jzZ2G=WuEYweiejna7KionneqUkEVPx3_E-w@mail.gmail.com>
+From: Stuart Yoder <stuart.yoder-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Subject: RE: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Mon, 16 Jun 2014 18:53:52 +0000
+Message-ID: <419e67f783524d208ab3be16bcd94bd9@DM2PR03MB352.namprd03.prod.outlook.com>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+	<4545972.cM7IP1qTXQ@wuerfel>
+	<CAL_Jsq+tkFNpjSEZboT+o69B_Z3a8e-ZVKaYDmLwtkyYoPy6VQ@mail.gmail.com>
+	<5288123.eXagyPAxNq@wuerfel>
+	<20140602104104.GD3855@e103592.cambridge.arm.com>
+	<20140604143509.GF28484@ulmo> <20140604164132.GF6644@arm.com>
+	<07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
+	<20140616152739.GS16758@arm.com>
+	<8b0492b4697943a0b1f276ef42cc8223@DM2PR03MB352.namprd03.prod.outlook.com>
+	<20140616170416.GA16758@arm.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f44.google.com ([209.85.216.44]:45924 "EHLO
-	mail-qa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932860AbaFPSrt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jun 2014 14:47:49 -0400
-Received: by mail-qa0-f44.google.com with SMTP id hw13so6762093qab.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jun 2014 11:47:48 -0700 (PDT)
-In-Reply-To: <CAD=FV=XYBSkx_3jzZ2G=WuEYweiejna7KionneqUkEVPx3_E-w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140616170416.GA16758-5wv7dgnIgG8@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kevin Hilman <khilman@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Inderpal Singh <inderpal.s@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Olof Johansson <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, 16 Jun 2014, Doug Anderson wrote:
 
-> Nicolas,
+
+> -----Original Message-----
+> From: Will Deacon [mailto:will.deacon-5wv7dgnIgG8@public.gmane.org]
+> Sent: Monday, June 16, 2014 12:04 PM
+> To: Yoder Stuart-B08248
+> Cc: Sethi Varun-B16395; Thierry Reding; Mark Rutland;
+> devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Pawel
+> Moll; Arnd Bergmann; Ian Campbell; Grant Grundler; Stephen Warren; linux-
+> kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Marc Zyngier; Linux IOMMU; Rob Herring; Kumar
+> Gala; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Cho KyongHo; Dave P Martin; linux-arm-
+> kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree
+> bindings
 > 
-> On Mon, Jun 9, 2014 at 1:55 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> > On Mon, 9 Jun 2014, Kevin Hilman wrote:
-> >
-> >> On Mon, Jun 9, 2014 at 1:22 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> >> > On Mon, 9 Jun 2014, Andrew Bresticker wrote:
-> >> >
-> >> >> > [1] While waiting for the forth-coming patch from Andrew to enable the
-> >> >> >     CCI port for the boot cluster), I do this from u-boot before starting
-> >> >> >     the kernel (based on earlier email from Doug):
-> >> >> >
-> >> >> >     mw.l 10d25000 3  # Enable CCI from U-Boot
-> >> >>
-> >> >> From the other thread, it sounds like Nicolas wants enabling of the
-> >> >> boot cluster's CCI port to be done unconditionally for all MCPM
-> >> >> platforms.  Nicolas, are you preparing a patch for this or should I?
-> >> >
-> >> > I would like confirmation this indeed solves your problem first before I
-> >> > go ahead with it.
-> >>
-> >> FYI... I confirmed on the other thread.  It works on the Chromebook2.
-> >
-> > OK I'll clean it up for mainline.
+> Hi Stuart,
 > 
-> I just wanted to double-check that this is still on your list of
-> things to do.  If not then please let us know!  :)
+> On Mon, Jun 16, 2014 at 05:56:32PM +0100, Stuart Yoder wrote:
+> > > Do you have use-cases where you really need to change these mappings
+> > > dynamically?
+> >
+> > Yes.  In the case of a PCI bus-- you may not know in advance how many
+> > PCI devices there are until you probe the bus.   We have another FSL
+> > proprietary bus we call the "fsl-mc" bus that is similar.
+> 
+> For that case, though, you could still describe an algorithmic
+> transformation from RequesterID to StreamID which corresponds to a fixed
+> mapping.
+> 
+> > Another thing to consider-- starting with SMMUv2, as you know, there
+> > is a new distributed architecture with multiple TBUs and a centralized
+> > TCU that walks the SMMU page tables.  So instead of sprinkling multiple
+> > SMMUs all over an SoC you now have the option a 1 central TCU and
+> sprinkling
+> > multiple TBUs around.   However, this means that the stream ID
+> namespace
+> > is now global and can be pretty limited.  In the SMMU implementation we
+> > have there are only 64 stream ID total for our Soc.  But we have many
+> more
+> > masters than that.
+> >
+> > So we look at stream IDs as really corresponding to an 'isolation
+> context'
+> > and not to a bus master.  An isolation context is the domain you are
+> > trying to isolate with the SMMU.  Devices that all belong to the same
+> > 'isolation context' can share the same stream ID, since they share
+> > the same domain and page tables.
+> 
+> Ok, this is more compelling.
+> 
+> > So, perhaps by default some/most SMMU masters may have a default stream
+> ID
+> > of 0x0 that is used by the host...and that could be represented
+> > statically in the device tree.
+> >
+> > But, we absolutely will need to dynamically set new stream IDs
+> > into masters when a new IOMMU 'domain' is created and devices
+> > are added to it.   All the devices in a domain will share
+> > the same stream ID.
+> >
+> > So whatever we do, let's please have an architecture flexible enough
+> > to allow for this.
+> 
+> What is the software interface to the logic that assigns the StreamIDs?
+> Is
+> it part of the SMMU, or a separate device (or set of devices)?
 
-It is.
+For us at the hardware level there are a few different ways that the streamIDs
+can be set.  It is not part of the SMMU.  In the cases where there is simply
+1 device to 1 streamID (e.g. USB controller) there is an SoC register where
+you just program the stream ID.   In the case of PCI, our PCI controller
+has a RequesterID-to-streamID table that you set via some PCI controller
+registers.
 
+The way we generally thought it would work was something like
+this:
+   -u-boot/bootloader makes any static streamID allocation if needed,
+    sets a default streamID  (e.g. 0x0) in device and expresses
+    that in the device tree
+   -device tree would express relationship between devices
+    (including bus controllers) and the SMMU through mmu-masters
+    property
+   -u-boot would express the range of unused (or used) streamIDs via a new
+    device tree property so the kernel SMMU driver knows what streamIDs are
+    free
+   -in the SMMU driver a different vendor specific 'add_device' callback
+    could be used to handle our special cases where we need to set/change
+    the stream ID for devices added to a domain
 
-Nicolas
+Thanks,
+Stuart
