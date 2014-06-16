@@ -1,72 +1,62 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/3] clocksource: exynos_mct: Fix ftrace
-Date: Sun, 15 Jun 2014 21:40:39 -0700
-Message-ID: <CAD=FV=XA09XawT-fxAm2tTMw4kZ=7RHceXuww2y6q+zMV71pew@mail.gmail.com>
-References: <1401903034-20074-1-git-send-email-dianders@chromium.org>
-	<539E0D8E.9080706@linaro.org>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
+Date: Mon, 16 Jun 2014 13:10:58 +0530
+Message-ID: <CANuQgHHf_NtL+-=1S14meyT8auBsh0kn6Zn+p6r==qAEgVG1UA@mail.gmail.com>
+References: <1402090985-8061-1-git-send-email-dianders@chromium.org>
+	<20140607181221.GB25068@e102568-lin.cambridge.arm.com>
+	<CAD=FV=X17PeJ6JPE9Qyc1QT07AvA2PTE69Q87gz9a6MdUHgi4A@mail.gmail.com>
+	<20140609223831.GB16889@e102568-lin.cambridge.arm.com>
+	<CANuQgHHxAhTNYX-JAEdRkO=PMYT4A5GwXcuQfiqwE0CEkQyR+w@mail.gmail.com>
+	<CAD=FV=V5_RRNkgA7Rk7XbQw9m1qh6-RJA8arW7ZRU=QbWAPa+w@mail.gmail.com>
+	<alpine.LFD.2.11.1406101146140.25775@knanqh.ubzr>
+	<CADWw7OjqK3MAuqCHuv-WS3Bb2+2Q-FXth+7hqtwFoyAP6pyYhA@mail.gmail.com>
+	<CAD=FV=ULFx0GPp_mnEfouZF+m4h_RYE6WQu48N0WbFWrFv8-BA@mail.gmail.com>
+	<5398758F.4080306@samsung.com>
+	<CADWw7Oh=A_cg_hqu8DZ1t_iacOGgWediLp3K3viFYHMNAPkqRw@mail.gmail.com>
+	<CAD=FV=XkTSfHwt9Ekcy6TPGWJTJ49zMCOA9eaJVaq=q4u4Ri3Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f170.google.com ([209.85.128.170]:60699 "EHLO
-	mail-ve0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751543AbaFPEkk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jun 2014 00:40:40 -0400
-Received: by mail-ve0-f170.google.com with SMTP id i13so2007642veh.29
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Jun 2014 21:40:39 -0700 (PDT)
-In-Reply-To: <539E0D8E.9080706@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=XkTSfHwt9Ekcy6TPGWJTJ49zMCOA9eaJVaq=q4u4Ri3Q@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Chander Kashyap <k.chander@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Inderpal Singh <inderpal.s@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "olof@lixom.net" <olof@lixom.net>, Tushar Behera <trblinux@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Thomas Abraham <thomas.ab@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Vincent Guittot <vincent.guittot@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Daniel,
+Hi Doug,
 
-On Sun, Jun 15, 2014 at 2:18 PM, Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
-> On 06/04/2014 07:30 PM, Doug Anderson wrote:
->>
->> In (93bfb76 clocksource: exynos_mct: register sched_clock callback) we
->> supported using the MCT as a scheduler clock.  We properly marked
->> exynos4_read_sched_clock() as notrace.  However, we then went and
->> called another function that _wasn't_ notrace.  That means if you do:
->>
->>    cd /sys/kernel/debug/tracing/
->>    echo function_graph > current_tracer
->>
->> You'll get a crash.
->>
->> Fix this (but still let other readers of the MCT be trace-enabled) by
->> adding an extra function.  It's important to keep other users of MCT
->> traceable because the MCT is actually quite slow.
+On 13 June 2014 20:40, Doug Anderson <dianders@chromium.org> wrote:
+> Chander,
 >
+> On Fri, Jun 13, 2014 at 4:54 AM, Chander Kashyap <k.chander@samsung.com> wrote:
+>> This patch is effectively changing the mcpm_entry_point address from
+>> nsbase + 0x1c to nsbase + 0x8
+>>
+>> Hence while integrating with mainline u-boot we need to take care for
+>> new mcpm_entry_point address.
+>>
+>> With Chromebook it works straightforward.
 >
+> Can you explain more and point to the code that is using the nsbase +
+> 0x1c?  Specifically the only code I see that uses the nsbase + 0x1c is
+> the code that is located at nsbase, which is the code we're
+> overwriting here.  I'd imagine you're using U-Boot code that looks
+> something like the bits that start at code_base here:
 >
-> Hi Doug,
+> https://chromium.googlesource.com/chromiumos/third_party/u-boot/+/ce358daf5069f1dc145b0f9d403cfbb028271807/arch/arm/cpu/armv7/exynos/lowlevel.S
 >
-> could you elaborate ? I don't get the 'because the MCT ... slow'
+> With my kernel change you can completely eliminate U-Boot's
+> installation of this code (or keep it, it makes no difference).
 
-Sorry, I was trying to avoid duplication in the series and it's more
-obvious when you look at parts 2 and 3 of the series.  ;)
+Yes i agree with your point.
+What i am saying is when there is full support for Exynos5420 in
+mainline u-boot we need to take care for the mcpm_entry_point address.
 
-Doing the math (please correct any miscalculations) using the numbers
-from the other patches: You can see that the existing code takes
-1323852 us for 1000000 gettimeofday in userspace.  The fastest
-implementation (just shaving to a 32-bit timer) gets us as fast as
-~1000000 us for 1000000 gettimeofday in userspace.
+>
+> -Doug
 
->From profiling, I believe that gettimeofday from userspace is about
-50% overhead (system call, multiplication, copies, etc) and about 50%
-MCT read.  That means that the fastest you can possibly do an MCT read
-is in .5us or 500ns.
 
-I believe an A15 has something like 1 or 2 cycles per instruction.  If
-it were 2 cycles per instruction, it can execute a normal instruction
-on a 2GHz machine in .5ns.  That means we can execute 1000 normal
-instructions in the time it takes to do a since MCT access.
 
-...so I guess that's what I'd call slow.  ;)  What do you think?  I
-know that the MCT read shows up in whole system profiles of
-gettimeofday.
-
--Doug
+-- 
+with warm regards,
+Chander Kashyap
