@@ -1,70 +1,78 @@
-From: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
-Subject: Re: Boot warnings on exynos5420 based boards
-Date: Tue, 17 Jun 2014 17:54:49 +0530
-Message-ID: <53A03391.8040207@linux.vnet.ibm.com>
-References: <CAK5sBcEJOJDtt_7ow=q=hiN8-JRHzOUg6t=T3hTNOwzKq5dodw@mail.gmail.com> <53A007F7.6020103@linux.vnet.ibm.com> <CAK5sBcECq5sN9CnUhWLPoYnFnPz64JM_6CVRBwjz8Q2=X5_t=A@mail.gmail.com> <53A01039.2020302@linux.vnet.ibm.com> <CAK5sBcH6Yw0rdfUgTPi2OhqZ5pNeD39_NUguT4NFR4hrK2uZgA@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC
+ regulators
+Date: Tue, 17 Jun 2014 15:12:54 +0100
+Message-ID: <20140617141254.GP5099@sirena.org.uk>
+References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk>
+ <20140616192500.GJ5099@sirena.org.uk>
+ <53A01D54.10506@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="HTXHNxsBjQ105pMi"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from e28smtp02.in.ibm.com ([122.248.162.2]:54388 "EHLO
-	e28smtp02.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932196AbaFQM0f (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45948 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932534AbaFQONk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jun 2014 08:26:35 -0400
-Received: from /spool/local
-	by e28smtp02.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-samsung-soc@vger.kernel.org> from <srivatsa.bhat@linux.vnet.ibm.com>;
-	Tue, 17 Jun 2014 17:56:32 +0530
-In-Reply-To: <CAK5sBcH6Yw0rdfUgTPi2OhqZ5pNeD39_NUguT4NFR4hrK2uZgA@mail.gmail.com>
+	Tue, 17 Jun 2014 10:13:40 -0400
+Content-Disposition: inline
+In-Reply-To: <53A01D54.10506@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@samsung.com>
-Cc: linux-kernel@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nicolas.pitre@linaro.org>, =?UTF-8?B?RnLDqWTDqXJpYyBXZWlz?= =?UTF-8?B?YmVja2Vy?= <fweisbec@gmail.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/17/2014 05:25 PM, Sachin Kamat wrote:
-> Hi Srivatsa,
-> 
-> On Tue, Jun 17, 2014 at 3:24 PM, Srivatsa S. Bhat
-> <srivatsa.bhat@linux.vnet.ibm.com> wrote:
->> On 06/17/2014 03:03 PM, Sachin Kamat wrote:
->>
->>>> Below is an updated patch, please let me know how it goes. (You'll have to
->>>> revert c47a9d7cca first, and then 56e692182, before trying this patch).
->>>
->>> I am unable to apply your below patch on top of the above 2 reverts.
->>> Applying: CPU hotplug, smp: Execute any pending IPI callbacks before CPU offline
->>> fatal: corrupt patch at line 106
->>> Patch failed at 0001 CPU hotplug, smp: Execute any pending IPI
->>> callbacks before CPU offline
->>>
->>> Even with 'patch' I get the below failures:
->>> patching file kernel/smp.c
->>> Hunk #2 FAILED at 53.
->>> Hunk #3 FAILED at 179.
->>> 2 out of 3 hunks FAILED -- saving rejects to file kernel/smp.c.rej
->>>
->>
->> Hmm, weird. My mailer must have screwed it up.
->>
->> Let's try again:
->>
->> [In case this also doesn't work for you, please use this git tree in which
->>  I have reverted the 2 old commits and added this updated patch.
->>
->>  git://github.com/srivatsabhat/linux.git ipi-offline-fix-v3
->> ]
-> 
-> Unfortunately the attached patch did not apply either. Nevertheless, I
-> applied the
-> patch from your above mentioned tree. With that patch I do not see the warnings
-> that I mentioned in my first mail. Thanks for fixing it.
-> 
 
-Sure, thanks for reporting the bug and testing the updated patch!
-By the way, I think there is some problem in the workflow that you use to
-copy-paste/apply the patch. I tried applying both patches (that I sent in
-2 different mails) and both applied properly without any problems.
+--HTXHNxsBjQ105pMi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Regards,
-Srivatsa S. Bhat
+On Tue, Jun 17, 2014 at 12:49:56PM +0200, Javier Martinez Canillas wrote:
+> On 06/16/2014 09:25 PM, Mark Brown wrote:
+
+> >> +	config.dev = &pdev->dev;
+
+> > Are you sure this shouldn't be the MFD?
+
+> I just looked at regulator_register() and saw that it does rdev->dev.parent =
+> dev, so yes this has to be the MFD.
+
+Do the regulators manage to get their supplies?
+
+> So, for now I thought it made sense to set the operating mode to normal on
+> probe() but I'll change it to read from the hardware if that is better.
+
+Yes, otherwise if the device is configured otherwise then when we change
+the configuration we may break something.
+
+> I guess I should check in the datasheet if a sane default operating mode for
+> LDOs is expected when the chip is reseted or if this is left undefined and also
+> if the bootloader already set this.
+
+You can't do anything based on the particular bootloader you're using in
+your current system, this has to work in other systems.
+
+--HTXHNxsBjQ105pMi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJToEzjAAoJELSic+t+oim94pMP/0GKul0j4lmBWAiv6ExCujGe
+2k6gUmT3JjPnAmaVdF158pnvuiIsHgqF8J4FkF9+gpIOdr8bQrbigyAesJM/6QrK
+4+QIiteqcZRu48H7sljyPhOxZeMxUGsKSVF8N79p21YeJwh6XDUr2atflqorTCY4
+exQwtoCmZEou8vp/Thy63T0My2DyAdm5P5+VaPdknOWW6p8PIzIgodET0XpnLWx2
+JJmZE1GiddbVPuLRNbc8YFZDA6vJi0FVs3sIWJ3A1VuIAZ4NiAz5YTVlC/ftB5Qf
+PnxQl0qc6ChJCPdQn0K5zy/8zlVQmt3+kbJUGnKzq1BF/1zhqtbiASOJWU8F901U
+f7sZi5YUYKjmPRRQagV7H5l8WLFQqEc07reanHyXfw5V03CX5VCCQfLJ3O7Pldl5
+agnElJnw8CrxPnZ3b78KTuxI6e/umIKJapt8Nx8+zEHjPmnX83ugMyaBCwzVQX2X
+9sLRPHUTIDhqhTAjKpxK7rv51GodzaM8d8LUm8wfl5RmFibhFH0lDkCZ0PSZ2xO3
+6gaxhghI/t9EbolrgIJRzsUfasfYUXyQbETJLUzf4GWUkGJrIf5AjknEOmVcq1Ov
+2GJFRk5SYMDucx5aS0XiP5LlnZJ/NxwHQrNB2zn/+lLuVmxVDQEoG0nJ+xXW7qh9
+UrRCEyOMpAyk34TJsu/Q
+=UvUW
+-----END PGP SIGNATURE-----
+
+--HTXHNxsBjQ105pMi--
