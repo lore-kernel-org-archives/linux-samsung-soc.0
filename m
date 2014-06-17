@@ -1,78 +1,81 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC regulators
-Date: Tue, 17 Jun 2014 18:05:29 +0200
-Message-ID: <53A06749.1010606@collabora.co.uk>
-References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk> <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk> <20140616192500.GJ5099@sirena.org.uk> <53A01D54.10506@collabora.co.uk> <20140617141254.GP5099@sirena.org.uk>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v3 5/7] mfd: cros_ec: Sync to the latest cros_ec_commands.h
+ from EC sources
+Date: Tue, 17 Jun 2014 10:20:36 -0600
+Message-ID: <53A06AD4.3000704@wwwdotorg.org>
+References: <1398879850-9111-1-git-send-email-dianders@chromium.org>	 <1398879850-9111-6-git-send-email-dianders@chromium.org>	 <20140520084602.GF24991@lee--X1> <1402483068.3798.82.camel@x220>	 <CAD=FV=XL9tnEqza8Zx8mt_Z7-bj8TCzdeyHMhnpewKp_1CR-ig@mail.gmail.com>	 <1402646902.28881.15.camel@x220>	 <CAD=FV=XcK5R1sdNwoJkFPapwWQ9vqxvmQi_L3BqTSt8EKRTNHw@mail.gmail.com> <1402995202.1984.22.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:55360 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755414AbaFQQFg (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:52188 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933321AbaFQQUk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jun 2014 12:05:36 -0400
-In-Reply-To: <20140617141254.GP5099@sirena.org.uk>
+	Tue, 17 Jun 2014 12:20:40 -0400
+In-Reply-To: <1402995202.1984.22.camel@x220>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paul Bolle <pebolle@tiscali.nl>, Doug Anderson <dianders@chromium.org>
+Cc: Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@chromium.org>, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Dylan Reid <dgreid@chromium.org>, Olof Johansson <olof@lixom.net>, Samuel Ortiz <sameo@linux.intel.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hello Mark,
-
-On 06/17/2014 04:12 PM, Mark Brown wrote:
-> On Tue, Jun 17, 2014 at 12:49:56PM +0200, Javier Martinez Canillas wrote:
->> On 06/16/2014 09:25 PM, Mark Brown wrote:
+On 06/17/2014 02:53 AM, Paul Bolle wrote:
+> Doug,
 > 
->> >> +	config.dev = &pdev->dev;
+> On Fri, 2014-06-13 at 08:22 -0700, Doug Anderson wrote:
+>> On Fri, Jun 13, 2014 at 1:08 AM, Paul Bolle <pebolle@tiscali.nl> wrote:
+>>> On Wed, 2014-06-11 at 08:11 -0700, Doug Anderson wrote:
+>>>> This is a config option on the ChromeOS EC
+>>>> <https://chromium.googlesource.com/chromiumos/platform/ec>.  Doing a
+>>>> grep there:
+>>>>
+>>>> board/samus/board.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>> driver/battery/samus.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>> driver/battery/samus.c:#endif   /* CONFIG_CHARGER_PROFILE_OVERRIDE */
+>>>> include/config.h:#undef CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>> include/ec_commands.h:  /* Range for CONFIG_CHARGER_PROFILE_OVERRIDE params */
+>>>> test/test_config.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
+>>>
+>>> I see. So this is not a Kconfig macro but a general macro with a CONFIG_
+>>> prefix. There are quite a bit of those in the tree already, but still,
+>>> would another prefix also do?
+>>
+>> Given that it's an entirely separate project and this is a valid
+>> CONFIG option in that project, it seems a lot to ask them not to use
+>> the CONFIG_ prefix.  Also: the part you are objecting to is only a
+>> comment, right?
 > 
->> > Are you sure this shouldn't be the MFD?
+> So all the hits you quoted above are actually from code that's never
+> going to be included in the kernel tree, right? If so, then yes, we're
+> only discussing a single comment.
 > 
->> I just looked at regulator_register() and saw that it does rdev->dev.parent =
->> dev, so yes this has to be the MFD.
->
-
-I noticed that many drivers set config.dev = &pdev->dev. The original Chrome OS
-max77xxx driver and max77686 are two examples but others drivers do the same:
-
-$ git grep "config.dev = &pdev->dev" drivers/regulator/ | wc -l
-35
-$ git grep "config.dev = pdev->dev.parent" drivers/regulator/ | wc -l
-11
-
-And also I see that mfd_add_device() calls
-devm_regulator_bulk_register_supply_alias(&pdev->dev,...) so I'm confused now
-about what the correct device should be...
-
-> Do the regulators manage to get their supplies?
+>> We could certainly add extra wording in the comment to make it obvious
+>> that this is a CONFIG option for the EC and not the kernel.  Would
+>> that be enough?  ...or are you trying to use some scripts to
+>> automatically process files to look for CONFIG options?
 > 
-
-There are no current support in mainline for the devices that use the regulators
-in this PMIC so I can't tell you if consumers manage to get their supplies
-correctly (e.g: if regulator_dev_lookup succeeds).
-
-But I see in the kernel log that the regulators are registered and configured as
-expected [0] and also the driver in the Chrome OS 3.8 kernel is working for sure
-and sets config.dev to &pdev->dev instead of the MFD.
-
->> So, for now I thought it made sense to set the operating mode to normal on
->> probe() but I'll change it to read from the hardware if that is better.
+> Yes, I'm using a script to check for Kconfig macros, among other things.
+> It doesn't care about comments (because every now and then mistakes are
+> made in comments too, and some of those can get surprisingly confusing).
 > 
-> Yes, otherwise if the device is configured otherwise then when we change
-> the configuration we may break something.
+> Anyhow, the CONFIG_ prefix used in the kernel tree is quite generic, but
+> we're stuck with it. Would it be bothersome to drop it in that comment?
+> Mentioning a preprocessor macro from a separate project is a bit
+> confusing to begin with. How is one supposed to know that this is a
+> reference to something out of tree?
 > 
->> I guess I should check in the datasheet if a sane default operating mode for
->> LDOs is expected when the chip is reseted or if this is left undefined and also
->> if the bootloader already set this.
-> 
-> You can't do anything based on the particular bootloader you're using in
-> your current system, this has to work in other systems.
-> 
+> So, in summary, while we're apparently only discussing a single comment,
+> I would appreciate it if it could be reworded, preferably by dropping
+> that the CONFIG_ prefix. But other people might care very little, as
+> they don't share this particular pet peeve.
 
-Yes, that's why I thought it was a good idea to set to a default operational
-mode but I'll change it to read from the hardware instead.
-
-Thanks a lot and best regards,
-Javier
-
-[0]: http://pastebin.com/raw.php?i=8yyMXcGD
+Can't your tool maintain a whitelist or ignore list? There are many
+cases where the kernel can pull in headers/data from other projects
+(Firmware interfaces to an arbitrarily large set of HW, Device trees,
+IO/network protocools, perhaps more). It feels quite unreasonable for
+the kernel to decide that it exclusively owns the CONFIG_* namespace
+even in comments, and that every other project it interacts with must
+not use that namespace.
