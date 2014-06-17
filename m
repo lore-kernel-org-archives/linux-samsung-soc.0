@@ -1,278 +1,148 @@
-From: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
-Subject: Re: Boot warnings on exynos5420 based boards
-Date: Tue, 17 Jun 2014 15:24:01 +0530
-Message-ID: <53A01039.2020302@linux.vnet.ibm.com>
-References: <CAK5sBcEJOJDtt_7ow=q=hiN8-JRHzOUg6t=T3hTNOwzKq5dodw@mail.gmail.com> <53A007F7.6020103@linux.vnet.ibm.com> <CAK5sBcECq5sN9CnUhWLPoYnFnPz64JM_6CVRBwjz8Q2=X5_t=A@mail.gmail.com>
+From: Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
+Subject: RE: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Tue, 17 Jun 2014 10:26:48 +0000
+Message-ID: <0587e1f4894546398be0798d2bc2c84f@BL2PR03MB468.namprd03.prod.outlook.com>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+	<4545972.cM7IP1qTXQ@wuerfel>
+	<CAL_Jsq+tkFNpjSEZboT+o69B_Z3a8e-ZVKaYDmLwtkyYoPy6VQ@mail.gmail.com>
+	<5288123.eXagyPAxNq@wuerfel>
+	<20140602104104.GD3855@e103592.cambridge.arm.com>
+	<20140604143509.GF28484@ulmo> <20140604164132.GF6644@arm.com>
+	<07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
+	<20140616152739.GS16758@arm.com>
+	<8b0492b4697943a0b1f276ef42cc8223@DM2PR03MB352.namprd03.prod.outlook.com>
+	<20140616170416.GA16758@arm.com>
+	<419e67f783524d208ab3be16bcd94bd9@DM2PR03MB352.namprd03.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from e28smtp05.in.ibm.com ([122.248.162.5]:49499 "EHLO
-	e28smtp05.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750778AbaFQJzf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jun 2014 05:55:35 -0400
-Received: from /spool/local
-	by e28smtp05.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-samsung-soc@vger.kernel.org> from <srivatsa.bhat@linux.vnet.ibm.com>;
-	Tue, 17 Jun 2014 15:25:33 +0530
-In-Reply-To: <CAK5sBcECq5sN9CnUhWLPoYnFnPz64JM_6CVRBwjz8Q2=X5_t=A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <419e67f783524d208ab3be16bcd94bd9-ufbTtyGzTTT8GZusEWM6WuO6mTEJWrR4XA4E9RH9d+qIuWR1G4zioA@public.gmane.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Stuart Yoder <stuart.yoder-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@samsung.com>
-Cc: linux-kernel@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>, nicolas.pitre@linaro.org, fweisbec@gmail.com
 
-On 06/17/2014 03:03 PM, Sachin Kamat wrote:
 
->> Below is an updated patch, please let me know how it goes. (You'll have to
->> revert c47a9d7cca first, and then 56e692182, before trying this patch).
+
+> -----Original Message-----
+> From: Yoder Stuart-B08248
+> Sent: Tuesday, June 17, 2014 12:24 AM
+> To: Will Deacon
+> Cc: Sethi Varun-B16395; Thierry Reding; Mark Rutland;
+> devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Pawel
+> Moll; Arnd Bergmann; Ian Campbell; Grant Grundler; Stephen Warren; linux-
+> kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Marc Zyngier; Linux IOMMU; Rob Herring; Kumar
+> Gala; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Cho KyongHo; Dave P Martin; linux-arm-
+> kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Subject: RE: [PATCH v2] devicetree: Add generic IOMMU device tree
+> bindings
 > 
-> I am unable to apply your below patch on top of the above 2 reverts.
-> Applying: CPU hotplug, smp: Execute any pending IPI callbacks before CPU offline
-> fatal: corrupt patch at line 106
-> Patch failed at 0001 CPU hotplug, smp: Execute any pending IPI
-> callbacks before CPU offline
 > 
-> Even with 'patch' I get the below failures:
-> patching file kernel/smp.c
-> Hunk #2 FAILED at 53.
-> Hunk #3 FAILED at 179.
-> 2 out of 3 hunks FAILED -- saving rejects to file kernel/smp.c.rej
 > 
+> > -----Original Message-----
+> > From: Will Deacon [mailto:will.deacon-5wv7dgnIgG8@public.gmane.org]
+> > Sent: Monday, June 16, 2014 12:04 PM
+> > To: Yoder Stuart-B08248
+> > Cc: Sethi Varun-B16395; Thierry Reding; Mark Rutland;
+> > devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Pawel
+> > Moll; Arnd Bergmann; Ian Campbell; Grant Grundler; Stephen Warren;
+> > linux- kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Marc Zyngier; Linux IOMMU; Rob Herring;
+> > Kumar Gala; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Cho KyongHo; Dave P Martin;
+> > linux-arm- kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> > Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree
+> > bindings
+> >
+> > Hi Stuart,
+> >
+> > On Mon, Jun 16, 2014 at 05:56:32PM +0100, Stuart Yoder wrote:
+> > > > Do you have use-cases where you really need to change these
+> > > > mappings dynamically?
+> > >
+> > > Yes.  In the case of a PCI bus-- you may not know in advance how many
+> > > PCI devices there are until you probe the bus.   We have another FSL
+> > > proprietary bus we call the "fsl-mc" bus that is similar.
+> >
+> > For that case, though, you could still describe an algorithmic
+> > transformation from RequesterID to StreamID which corresponds to a
+> > fixed mapping.
+> >
+> > > Another thing to consider-- starting with SMMUv2, as you know, there
+> > > is a new distributed architecture with multiple TBUs and a
+> > > centralized TCU that walks the SMMU page tables.  So instead of
+> > > sprinkling multiple SMMUs all over an SoC you now have the option a
+> > > 1 central TCU and
+> > sprinkling
+> > > multiple TBUs around.   However, this means that the stream ID
+> > namespace
+> > > is now global and can be pretty limited.  In the SMMU implementation
+> > > we have there are only 64 stream ID total for our Soc.  But we have
+> > > many
+> > more
+> > > masters than that.
+> > >
+> > > So we look at stream IDs as really corresponding to an 'isolation
+> > context'
+> > > and not to a bus master.  An isolation context is the domain you are
+> > > trying to isolate with the SMMU.  Devices that all belong to the
+> > > same 'isolation context' can share the same stream ID, since they
+> > > share the same domain and page tables.
+> >
+> > Ok, this is more compelling.
+> >
+> > > So, perhaps by default some/most SMMU masters may have a default
+> > > stream
+> > ID
+> > > of 0x0 that is used by the host...and that could be represented
+> > > statically in the device tree.
+> > >
+> > > But, we absolutely will need to dynamically set new stream IDs into
+> > > masters when a new IOMMU 'domain' is created and devices
+> > > are added to it.   All the devices in a domain will share
+> > > the same stream ID.
+> > >
+> > > So whatever we do, let's please have an architecture flexible enough
+> > > to allow for this.
+> >
+> > What is the software interface to the logic that assigns the StreamIDs?
+> > Is
+> > it part of the SMMU, or a separate device (or set of devices)?
+> 
+> For us at the hardware level there are a few different ways that the
+> streamIDs can be set.  It is not part of the SMMU.  In the cases where
+> there is simply
+> 1 device to 1 streamID (e.g. USB controller) there is an SoC register
+> where
+> you just program the stream ID.   In the case of PCI, our PCI controller
+> has a RequesterID-to-streamID table that you set via some PCI controller
+> registers.
+> 
+> The way we generally thought it would work was something like
+> this:
+>    -u-boot/bootloader makes any static streamID allocation if needed,
+>     sets a default streamID  (e.g. 0x0) in device and expresses
+>     that in the device tree
+>    -device tree would express relationship between devices
+>     (including bus controllers) and the SMMU through mmu-masters
+>     property
+>    -u-boot would express the range of unused (or used) streamIDs via a
+> new
+>     device tree property so the kernel SMMU driver knows what streamIDs
+> are
+>     free
+>    -in the SMMU driver a different vendor specific 'add_device' callback
+>     could be used to handle our special cases where we need to set/change
+>     the stream ID for devices added to a domain
 
-Hmm, weird. My mailer must have screwed it up.
+Another possibility, could be to program the stream Id in the device registers (reference for the stream ID register can be obtained from the device tree) during device attach. This could be relevant in case of VFIO, when we are assigning multiple devices to a single VM. All the devices can share the same stream ID.
 
-Let's try again:
-
-[In case this also doesn't work for you, please use this git tree in which
- I have reverted the 2 old commits and added this updated patch.
-
- git://github.com/srivatsabhat/linux.git ipi-offline-fix-v3
-]
-
-----------------------------------------------------------------------------
-From: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
-
-[PATCH] CPU hotplug, smp: Execute any pending IPI callbacks before CPU offline
-
-There is a race between the CPU offline code (within stop-machine) and the
-smp-call-function code, which can lead to getting IPIs on the outgoing CPU,
-*after* it has gone offline.
-
-Specifically, this can happen when using smp_call_function_single_async() to
-send the IPI, since this API allows sending asynchronous IPIs from IRQ
-disabled contexts. The exact race condition is described below.
-
-During CPU offline, in stop-machine, we don't enforce any rule in the
-_DISABLE_IRQ stage, regarding the order in which the outgoing CPU and the
-other CPUs disable their local interrupts. Due to this, we can encounter a
-situation in which an IPI is sent by one of the other CPUs to the outgoing CPU
-(while it is *still* online), but the outgoing CPU ends up noticing it only
-*after* it has gone offline.
-
-              CPU 1                                         CPU 2
-          (Online CPU)                               (CPU going offline)
-
-       Enter _PREPARE stage                          Enter _PREPARE stage
-
-                                                     Enter _DISABLE_IRQ stage
-
-                                                   =
-       Got a device interrupt, and                 | Didn't notice the IPI
-       the interrupt handler sent an               | since interrupts were
-       IPI to CPU 2 using                          | disabled on this CPU.
-       smp_call_function_single_async()            |
-                                                   =
-
-       Enter _DISABLE_IRQ stage
-
-       Enter _RUN stage                              Enter _RUN stage
-
-                                  =
-       Busy loop with interrupts  |                  Invoke take_cpu_down()
-       disabled.                  |                  and take CPU 2 offline
-                                  =
-
-       Enter _EXIT stage                             Enter _EXIT stage
-
-       Re-enable interrupts                          Re-enable interrupts
-
-                                                     The pending IPI is noted
-                                                     immediately, but alas,
-                                                     the CPU is offline at
-                                                     this point.
-
-This of course, makes the smp-call-function IPI handler code running on CPU 2
-unhappy and it complains about "receiving an IPI on an offline CPU".
-One real example of the scenario on CPU 1 is the block layer's
-complete-request call-path:
-	__blk_complete_request() [interrupt-handler]
-	    raise_blk_irq()
-	        smp_call_function_single_async()
-
-
-However, if we look closely, the block layer does check that the target CPU is
-online before firing the IPI. So in this case, it is actually the unfortunate
-ordering/timing of events in the stop-machine phase that leads to receiving
-IPIs after the target CPU has gone offline.
-
-In reality, getting a late IPI on an offline CPU is not too bad by itself
-(this can happen even due to hardware latencies in IPI send-receive). It is
-a bug only if the target CPU really went offline without executing all the
-callbacks queued on its list. (Note that a CPU is free to execute its pending
-smp-call-function callbacks in a batch, without waiting for the corresponding
-IPIs to arrive for each one of those callbacks).
-
-So, fixing this issue can be broken up into two parts:
-1. Ensure that a CPU goes offline only after executing all the callbacks
-   queued on it.
-2. Modify the warning condition in the smp-call-function IPI handler code
-   such that it warns only if an offline CPU got an IPI *and* that CPU had
-   gone offline with callbacks still pending in its queue.
-
-Achieving part 1 is straight-forward - just flush (execute) all the queued
-callbacks on the outgoing CPU in the CPU_DYING stage[1], including those
-callbacks for which the source CPU's IPIs might not have been received on
-the outgoing CPU yet. Once we do this, an IPI that arrives late on the CPU
-going offline (either due to the race mentioned above, or due to hardware
-latencies) will be completely harmless, since the outgoing CPU would have
-executed all the queued callbacks before going offline.
-
-Overall, this fix (parts 1 and 2 put together) additionally guarantees that
-we will see a warning only when the *IPI-sender code* is buggy - that is, if
-it queues the callback _after_ the target CPU has gone offline.
-
-
-[1]. The CPU_DYING part needs a little more explanation: by the time we
-execute the CPU_DYING notifier callbacks, the CPU would have already been
-marked offline. But we want to flush out the pending callbacks at this stage,
-ignoring the fact that the CPU is offline. So restructure the IPI handler
-code so that we can by-pass the "is-cpu-offline?" check in this particular
-case. (Of course, the right solution here is to fix CPU hotplug to mark the
-CPU offline _after_ invoking the CPU_DYING notifiers, but this requires a
-lot of audit to ensure that this change doesn't break any existing code;
-hence lets go with the solution proposed above until that is done).
-
-[akpm@linux-foundation.org: coding-style fixes]
-Signed-off-by: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
-Suggested-by: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Gautham R Shenoy <ego@linux.vnet.ibm.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Mike Galbraith <mgalbraith@suse.de>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Rusty Russell <rusty@rustcorp.com.au>
-Cc: Srivatsa S. Bhat <srivatsa.bhat@linux.vnet.ibm.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
----
-
- kernel/smp.c |   57 +++++++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 49 insertions(+), 8 deletions(-)
-
-
-diff --git a/kernel/smp.c b/kernel/smp.c
-index 306f818..80c33f8 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -29,6 +29,8 @@ static DEFINE_PER_CPU_SHARED_ALIGNED(struct call_function_data, cfd_data);
- 
- static DEFINE_PER_CPU_SHARED_ALIGNED(struct llist_head, call_single_queue);
- 
-+static void flush_smp_call_function_queue(bool warn_cpu_offline);
-+
- static int
- hotplug_cfd(struct notifier_block *nfb, unsigned long action, void *hcpu)
- {
-@@ -51,12 +53,27 @@ hotplug_cfd(struct notifier_block *nfb, unsigned long action, void *hcpu)
- #ifdef CONFIG_HOTPLUG_CPU
- 	case CPU_UP_CANCELED:
- 	case CPU_UP_CANCELED_FROZEN:
-+		/* Fall-through to the CPU_DEAD[_FROZEN] case. */
- 
- 	case CPU_DEAD:
- 	case CPU_DEAD_FROZEN:
- 		free_cpumask_var(cfd->cpumask);
- 		free_percpu(cfd->csd);
- 		break;
-+
-+	case CPU_DYING:
-+	case CPU_DYING_FROZEN:
-+		/*
-+		 * The IPIs for the smp-call-function callbacks queued by other
-+		 * CPUs might arrive late, either due to hardware latencies or
-+		 * because this CPU disabled interrupts (inside stop-machine)
-+		 * before the IPIs were sent. So flush out any pending callbacks
-+		 * explicitly (without waiting for the IPIs to arrive), to
-+		 * ensure that the outgoing CPU doesn't go offline with work
-+		 * still pending.
-+		 */
-+		flush_smp_call_function_queue(false);
-+		break;
- #endif
- 	};
- 
-@@ -177,23 +194,47 @@ static int generic_exec_single(int cpu, struct call_single_data *csd,
- 	return 0;
- }
- 
--/*
-- * Invoked by arch to handle an IPI for call function single. Must be
-- * called from the arch with interrupts disabled.
-+/**
-+ * generic_smp_call_function_single_interrupt - Execute SMP IPI callbacks
-+ *
-+ * Invoked by arch to handle an IPI for call function single.
-+ * Must be called with interrupts disabled.
-  */
- void generic_smp_call_function_single_interrupt(void)
- {
-+	flush_smp_call_function_queue(true);
-+}
-+
-+/**
-+ * flush_smp_call_function_queue - Flush pending smp-call-function callbacks
-+ *
-+ * @warn_cpu_offline: If set to 'true', warn if callbacks were queued on an
-+ *		      offline CPU. Skip this check if set to 'false'.
-+ *
-+ * Flush any pending smp-call-function callbacks queued on this CPU. This is
-+ * invoked by the generic IPI handler, as well as by a CPU about to go offline,
-+ * to ensure that all pending IPI callbacks are run before it goes completely
-+ * offline.
-+ *
-+ * Loop through the call_single_queue and run all the queued callbacks.
-+ * Must be called with interrupts disabled.
-+ */
-+static void flush_smp_call_function_queue(bool warn_cpu_offline)
-+{
-+	struct llist_head *head;
- 	struct llist_node *entry;
- 	struct call_single_data *csd, *csd_next;
- 	static bool warned;
- 
--	entry = llist_del_all(&__get_cpu_var(call_single_queue));
-+	WARN_ON(!irqs_disabled());
-+
-+	head = &__get_cpu_var(call_single_queue);
-+	entry = llist_del_all(head);
- 	entry = llist_reverse_order(entry);
- 
--	/*
--	 * Shouldn't receive this interrupt on a cpu that is not yet online.
--	 */
--	if (unlikely(!cpu_online(smp_processor_id()) && !warned)) {
-+	/* There shouldn't be any pending callbacks on an offline CPU. */
-+	if (unlikely(warn_cpu_offline && !cpu_online(smp_processor_id()) &&
-+		     !warned && !llist_empty(head))) {
- 		warned = true;
- 		WARN(1, "IPI on offline CPU %d\n", smp_processor_id());
- 
+-Varun
