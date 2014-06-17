@@ -1,53 +1,213 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH RFC] mfd: syscon: Decouple syscon interface from syscon devices
-Date: Tue, 17 Jun 2014 17:42:14 +0200
-Message-ID: <5027740.B7iVUcUX2T@wuerfel>
-References: <53A05E2D.6020702@samsung.com> <1403019164-12514-1-git-send-email-t.figa@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v4 08/11] ARM: EXYNOS: Refactored code for using PMU
+ address via DT
+Date: Tue, 17 Jun 2014 18:02:06 +0200
+Message-ID: <53A0667E.6000905@samsung.com>
+References: <1399704998-13321-1-git-send-email-pankaj.dubey@samsung.com>
+ <1399704998-13321-9-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:57763 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932989AbaFQPm5 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:17264 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933015AbaFQQC2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jun 2014 11:42:57 -0400
-In-Reply-To: <1403019164-12514-1-git-send-email-t.figa@samsung.com>
+	Tue, 17 Jun 2014 12:02:28 -0400
+In-reply-to: <1399704998-13321-9-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, mark.brown@linaro.org
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Samuel Ortiz <sameo@linux.intel.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, Lee Jones <lee.jones@linaro.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, chow.kim@samsung.com, vikas.sajjan@samsung.com
 
-On Tuesday 17 June 2014 17:32:44 Tomasz Figa wrote:
-> Currently a syscon entity can be only registered directly through a
-> platform device that binds to a dedicated driver. However in certain use
-> cases it is desirable to make a device used with another driver a syscon
-> interface provider. For example, certain SoCs (e.g. Exynos) contain
-> system controller blocks which perform various functions such as power
-> domain control, CPU power management, low power mode control, but in
-> addition contain certain IP integration glue, such as various signal
-> masks, coprocessor power control, etc. In such case, there is a need to
-> have a dedicated driver for such system controller but also share
-> registers with other drivers. The latter is where the syscon interface
-> is helpful.
-> 
-> This patch decouples syscon object from syscon driver, so that it can be
-> registered from any driver in addition to the original "syscon" platform
-> driver.
-> 
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Hi Pankaj,
 
-Hi Tomasz,
+[Dropped yg1004.jang@samsung.com from CC, as apparently his mailbox is
+"temporarily locked", at least from the point of view of my mail server.]
 
-This seems like a reasonable way of solving the problem, but I think
-there is an even better one that we have about in the past: if we
-promote syscon from a platform driver into a a drivers/base/ helper
-that is independent of the platform device matching, we can use
-call syscon_regmap_lookup_* for any device node, whether it's already
-bound to a driver or not, which do what you need. It would also make
-it easier to call the syscon code before the platform_device
-infrastructure gets initialized, which is something a number of
-people have asked for, e.g. for using regmap to do SMP bringup
-or for clock registration.
+Please see my comments inline.
 
-	Arnd
+On 10.05.2014 08:56, Pankaj Dubey wrote:
+> Under "arm/mach-exynos" many files are using PMU register offsets.
+> Since we have added support for accessing PMU base address via DT,
+> now we can remove PMU mapping from exynosX_iodesc. Let's convert
+> all these access using either of iomapped address or regmap handle.
+> This will help us in removing static mapping of PMU base address
+> as well as help in reducing dependency over machine header files.
+> Thus helping for migration of PMU implementation from machine to
+> driver folder which can be reused for ARM64 bsed SoC.
+
+[snip]
+
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 3b1d245..59eb1f1 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+
+[snip]
+
+> @@ -156,7 +147,7 @@ static void exynos_restart(enum reboot_mode mode, const char *cmd)
+>  {
+>  	struct device_node *np;
+>  	u32 val = 0x1;
+> -	void __iomem *addr = EXYNOS_SWRESET;
+> +	void __iomem *addr = NULL;
+
+This will probably change into addr = exynos_pmu_base + EXYNOS_SWRESET.
+
+>  
+>  	if (of_machine_is_compatible("samsung,exynos5440")) {
+>  		u32 status;
+> @@ -169,9 +160,9 @@ static void exynos_restart(enum reboot_mode mode, const char *cmd)
+>  		val = __raw_readl(addr);
+>  
+>  		val = (val & 0xffff0000) | (status & 0xffff);
+> -	}
+> -
+> -	__raw_writel(val, addr);
+> +		__raw_writel(val, addr);
+> +	} else
+> +		regmap_write(exynos_pmu_regmap, EXYNOS_SWRESET, val);
+>  }
+>  
+>  static struct platform_device exynos_cpuidle = {
+> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+> index 73b0b5c..0243ef3 100644
+> --- a/arch/arm/mach-exynos/hotplug.c
+> +++ b/arch/arm/mach-exynos/hotplug.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/smp.h>
+>  #include <linux/io.h>
+> +#include <linux/regmap.h>
+>  
+>  #include <asm/cacheflush.h>
+>  #include <asm/cp15.h>
+> @@ -91,11 +92,12 @@ static inline void cpu_leave_lowpower(void)
+>  
+>  static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+>  {
+> +	struct regmap *pmu_regmap = get_exynos_pmuregmap();
+>  	for (;;) {
+>  
+>  		/* make cpu1 to be turned off at next WFI command */
+>  		if (cpu == 1)
+> -			__raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
+> +			regmap_write(pmu_regmap, S5P_ARM_CORE1_CONFIGURATION, 0);
+
+This change should disappear.
+
+[snip]
+
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index 1f63596..33eb364 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+
+[snip]
+
+> +static void __iomem *pmu_base_addr(void)
+> +{
+> +	struct device_node *np = NULL;
+> +	if (!pmu_base) {
+> +		np = of_find_matching_node(NULL, exynos_dt_pmu_match);
+> +
+> +		if (!np)
+> +			panic("%s, failed to find PMU node\n", __func__);
+> +
+> +		pmu_base = of_iomap(np, 0);
+> +
+> +		if (!pmu_base)
+> +			panic("%s: failed to map registers\n", __func__);
+> +	}
+> +	return pmu_base;
+> +}
+
+As we discussed before, PMU mapping for arch code should be handled in
+the same way as SYSRAM.
+
+>  static DEFINE_SPINLOCK(boot_lock);
+>  
+>  static void exynos_secondary_init(unsigned int cpu)
+> @@ -132,14 +158,14 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+>  	 */
+>  	write_pen_release(phys_cpu);
+>  
+> -	if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
+> +	if (!(__raw_readl(pmu_base + S5P_ARM_CORE1_STATUS)
+> +				& S5P_CORE_LOCAL_PWR_EN)) {
+
+Creating a variable to save register value to would probably make the
+code more readable.
+
+>  		__raw_writel(S5P_CORE_LOCAL_PWR_EN,
+> -			     S5P_ARM_CORE1_CONFIGURATION);
+> -
+> +			pmu_base + S5P_ARM_CORE1_CONFIGURATION);
+>  		timeout = 10;
+>  
+>  		/* wait max 10 ms until cpu1 is on */
+> -		while ((__raw_readl(S5P_ARM_CORE1_STATUS)
+> +		while ((__raw_readl(pmu_base + S5P_ARM_CORE1_STATUS)
+>  			& S5P_CORE_LOCAL_PWR_EN) != S5P_CORE_LOCAL_PWR_EN) {
+
+Ditto.
+
+>  			if (timeout-- == 0)
+>  				break;
+> @@ -238,6 +264,8 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+>  {
+>  	int i;
+>  
+> +	pmu_base = pmu_base_addr();
+> +
+>  	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+>  		scu_enable(scu_base_addr());
+>  
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index f445c49..ee427d7 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/irqchip/arm-gic.h>
+>  #include <linux/err.h>
+>  #include <linux/clk.h>
+> +#include <linux/regmap.h>
+>  
+>  #include <asm/cacheflush.h>
+>  #include <asm/hardware/cache-l2x0.h>
+> @@ -38,6 +39,8 @@
+>  #include "regs-pmu.h"
+>  #include "regs-sys.h"
+>  
+> +static struct regmap *pmu_regmap;
+> +
+
+This and other regmap related changes in this file won't be needed anymore.
+
+>  /**
+>   * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
+>   * @hwirq: Hardware IRQ signal of the GIC
+> @@ -104,10 +107,10 @@ static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
+
+[snip]
+
+> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+> index fd8a19d..a72b1bc 100644
+> --- a/arch/arm/mach-exynos/regs-pmu.h
+> +++ b/arch/arm/mach-exynos/regs-pmu.h
+
+[snip]
+
+>  
+> -#define S5P_WAKEUP_STAT				S5P_PMUREG(0x0600)
+> -#define S5P_EINT_WAKEUP_MASK			S5P_PMUREG(0x0604)
+> -#define S5P_WAKEUP_MASK				S5P_PMUREG(0x0608)
+> +#define S5P_WAKEUP_STAT				0x0600
+> +#define S5P_EINT_WAKEUP_MASK			0x0604
+> +#define S5P_WAKEUP_MASK				0x0608
+
+Is it just my mail client or indentation is inconsistent here?
+
+Best regards,
+Tomasz
