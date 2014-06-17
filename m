@@ -1,78 +1,177 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC
- regulators
-Date: Tue, 17 Jun 2014 15:12:54 +0100
-Message-ID: <20140617141254.GP5099@sirena.org.uk>
-References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk>
- <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk>
- <20140616192500.GJ5099@sirena.org.uk>
- <53A01D54.10506@collabora.co.uk>
+From: Stuart Yoder <stuart.yoder@freescale.com>
+Subject: RE: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Tue, 17 Jun 2014 14:39:28 +0000
+Message-ID: <532f8b002d214824b3125a047fd2b1c4@DM2PR03MB352.namprd03.prod.outlook.com>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+ <4545972.cM7IP1qTXQ@wuerfel>
+ <CAL_Jsq+tkFNpjSEZboT+o69B_Z3a8e-ZVKaYDmLwtkyYoPy6VQ@mail.gmail.com>
+ <5288123.eXagyPAxNq@wuerfel>
+ <20140602104104.GD3855@e103592.cambridge.arm.com>
+ <20140604143509.GF28484@ulmo> <20140604164132.GF6644@arm.com>
+ <07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
+ <20140616152739.GS16758@arm.com>
+ <8b0492b4697943a0b1f276ef42cc8223@DM2PR03MB352.namprd03.prod.outlook.com>
+ <20140616170416.GA16758@arm.com>
+ <419e67f783524d208ab3be16bcd94bd9@DM2PR03MB352.namprd03.prod.outlook.com>
+ <0587e1f4894546398be0798d2bc2c84f@BL2PR03MB468.namprd03.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HTXHNxsBjQ105pMi"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45948 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932534AbaFQONk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jun 2014 10:13:40 -0400
-Content-Disposition: inline
-In-Reply-To: <53A01D54.10506@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <0587e1f4894546398be0798d2bc2c84f@BL2PR03MB468.namprd03.prod.outlook.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Varun Sethi <Varun.Sethi@freescale.com>, Will Deacon <will.deacon@arm.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Arnd Bergmann <arnd@arndb.de>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
---HTXHNxsBjQ105pMi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Jun 17, 2014 at 12:49:56PM +0200, Javier Martinez Canillas wrote:
-> On 06/16/2014 09:25 PM, Mark Brown wrote:
+> -----Original Message-----
+> From: Sethi Varun-B16395
+> Sent: Tuesday, June 17, 2014 5:27 AM
+> To: Yoder Stuart-B08248; Will Deacon
+> Cc: Thierry Reding; Mark Rutland; devicetree@vger.kernel.org; linux-
+> samsung-soc@vger.kernel.org; Pawel Moll; Arnd Bergmann; Ian Campbell;
+> Grant Grundler; Stephen Warren; linux-kernel@vger.kernel.org; Marc
+> Zyngier; Linux IOMMU; Rob Herring; Kumar Gala; linux-
+> tegra@vger.kernel.org; Cho KyongHo; Dave P Martin; linux-arm-
+> kernel@lists.infradead.org
+> Subject: RE: [PATCH v2] devicetree: Add generic IOMMU device tree
+> bindings
+> 
+> 
+> 
+> > -----Original Message-----
+> > From: Yoder Stuart-B08248
+> > Sent: Tuesday, June 17, 2014 12:24 AM
+> > To: Will Deacon
+> > Cc: Sethi Varun-B16395; Thierry Reding; Mark Rutland;
+> > devicetree@vger.kernel.org; linux-samsung-soc@vger.kernel.org; Pawel
+> > Moll; Arnd Bergmann; Ian Campbell; Grant Grundler; Stephen Warren;
+> linux-
+> > kernel@vger.kernel.org; Marc Zyngier; Linux IOMMU; Rob Herring; Kumar
+> > Gala; linux-tegra@vger.kernel.org; Cho KyongHo; Dave P Martin; linux-
+> arm-
+> > kernel@lists.infradead.org
+> > Subject: RE: [PATCH v2] devicetree: Add generic IOMMU device tree
+> > bindings
+> >
+> >
+> >
+> > > -----Original Message-----
+> > > From: Will Deacon [mailto:will.deacon@arm.com]
+> > > Sent: Monday, June 16, 2014 12:04 PM
+> > > To: Yoder Stuart-B08248
+> > > Cc: Sethi Varun-B16395; Thierry Reding; Mark Rutland;
+> > > devicetree@vger.kernel.org; linux-samsung-soc@vger.kernel.org; Pawel
+> > > Moll; Arnd Bergmann; Ian Campbell; Grant Grundler; Stephen Warren;
+> > > linux- kernel@vger.kernel.org; Marc Zyngier; Linux IOMMU; Rob
+> Herring;
+> > > Kumar Gala; linux-tegra@vger.kernel.org; Cho KyongHo; Dave P Martin;
+> > > linux-arm- kernel@lists.infradead.org
+> > > Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree
+> > > bindings
+> > >
+> > > Hi Stuart,
+> > >
+> > > On Mon, Jun 16, 2014 at 05:56:32PM +0100, Stuart Yoder wrote:
+> > > > > Do you have use-cases where you really need to change these
+> > > > > mappings dynamically?
+> > > >
+> > > > Yes.  In the case of a PCI bus-- you may not know in advance how
+> many
+> > > > PCI devices there are until you probe the bus.   We have another
+> FSL
+> > > > proprietary bus we call the "fsl-mc" bus that is similar.
+> > >
+> > > For that case, though, you could still describe an algorithmic
+> > > transformation from RequesterID to StreamID which corresponds to a
+> > > fixed mapping.
+> > >
+> > > > Another thing to consider-- starting with SMMUv2, as you know,
+> there
+> > > > is a new distributed architecture with multiple TBUs and a
+> > > > centralized TCU that walks the SMMU page tables.  So instead of
+> > > > sprinkling multiple SMMUs all over an SoC you now have the option a
+> > > > 1 central TCU and
+> > > sprinkling
+> > > > multiple TBUs around.   However, this means that the stream ID
+> > > namespace
+> > > > is now global and can be pretty limited.  In the SMMU
+> implementation
+> > > > we have there are only 64 stream ID total for our Soc.  But we have
+> > > > many
+> > > more
+> > > > masters than that.
+> > > >
+> > > > So we look at stream IDs as really corresponding to an 'isolation
+> > > context'
+> > > > and not to a bus master.  An isolation context is the domain you
+> are
+> > > > trying to isolate with the SMMU.  Devices that all belong to the
+> > > > same 'isolation context' can share the same stream ID, since they
+> > > > share the same domain and page tables.
+> > >
+> > > Ok, this is more compelling.
+> > >
+> > > > So, perhaps by default some/most SMMU masters may have a default
+> > > > stream
+> > > ID
+> > > > of 0x0 that is used by the host...and that could be represented
+> > > > statically in the device tree.
+> > > >
+> > > > But, we absolutely will need to dynamically set new stream IDs into
+> > > > masters when a new IOMMU 'domain' is created and devices
+> > > > are added to it.   All the devices in a domain will share
+> > > > the same stream ID.
+> > > >
+> > > > So whatever we do, let's please have an architecture flexible
+> enough
+> > > > to allow for this.
+> > >
+> > > What is the software interface to the logic that assigns the
+> StreamIDs?
+> > > Is
+> > > it part of the SMMU, or a separate device (or set of devices)?
+> >
+> > For us at the hardware level there are a few different ways that the
+> > streamIDs can be set.  It is not part of the SMMU.  In the cases where
+> > there is simply
+> > 1 device to 1 streamID (e.g. USB controller) there is an SoC register
+> > where
+> > you just program the stream ID.   In the case of PCI, our PCI
+> controller
+> > has a RequesterID-to-streamID table that you set via some PCI
+> controller
+> > registers.
+> >
+> > The way we generally thought it would work was something like
+> > this:
+> >    -u-boot/bootloader makes any static streamID allocation if needed,
+> >     sets a default streamID  (e.g. 0x0) in device and expresses
+> >     that in the device tree
+> >    -device tree would express relationship between devices
+> >     (including bus controllers) and the SMMU through mmu-masters
+> >     property
+> >    -u-boot would express the range of unused (or used) streamIDs via a
+> > new
+> >     device tree property so the kernel SMMU driver knows what streamIDs
+> > are
+> >     free
+> >    -in the SMMU driver a different vendor specific 'add_device'
+> callback
+> >     could be used to handle our special cases where we need to
+> set/change
+> >     the stream ID for devices added to a domain
+> 
+> Another possibility, could be to program the stream Id in the device
+> registers (reference for the stream ID register can be obtained from the
+> device tree) during device attach. This could be relevant in case of
+> VFIO, when we are assigning multiple devices to a single VM. All the
+> devices can share the same stream ID.
 
-> >> +	config.dev = &pdev->dev;
+Actually, that is what I meant-- do the special case handling during
+device "attach" (not add).
 
-> > Are you sure this shouldn't be the MFD?
-
-> I just looked at regulator_register() and saw that it does rdev->dev.parent =
-> dev, so yes this has to be the MFD.
-
-Do the regulators manage to get their supplies?
-
-> So, for now I thought it made sense to set the operating mode to normal on
-> probe() but I'll change it to read from the hardware if that is better.
-
-Yes, otherwise if the device is configured otherwise then when we change
-the configuration we may break something.
-
-> I guess I should check in the datasheet if a sane default operating mode for
-> LDOs is expected when the chip is reseted or if this is left undefined and also
-> if the bootloader already set this.
-
-You can't do anything based on the particular bootloader you're using in
-your current system, this has to work in other systems.
-
---HTXHNxsBjQ105pMi
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJToEzjAAoJELSic+t+oim94pMP/0GKul0j4lmBWAiv6ExCujGe
-2k6gUmT3JjPnAmaVdF158pnvuiIsHgqF8J4FkF9+gpIOdr8bQrbigyAesJM/6QrK
-4+QIiteqcZRu48H7sljyPhOxZeMxUGsKSVF8N79p21YeJwh6XDUr2atflqorTCY4
-exQwtoCmZEou8vp/Thy63T0My2DyAdm5P5+VaPdknOWW6p8PIzIgodET0XpnLWx2
-JJmZE1GiddbVPuLRNbc8YFZDA6vJi0FVs3sIWJ3A1VuIAZ4NiAz5YTVlC/ftB5Qf
-PnxQl0qc6ChJCPdQn0K5zy/8zlVQmt3+kbJUGnKzq1BF/1zhqtbiASOJWU8F901U
-f7sZi5YUYKjmPRRQagV7H5l8WLFQqEc07reanHyXfw5V03CX5VCCQfLJ3O7Pldl5
-agnElJnw8CrxPnZ3b78KTuxI6e/umIKJapt8Nx8+zEHjPmnX83ugMyaBCwzVQX2X
-9sLRPHUTIDhqhTAjKpxK7rv51GodzaM8d8LUm8wfl5RmFibhFH0lDkCZ0PSZ2xO3
-6gaxhghI/t9EbolrgIJRzsUfasfYUXyQbETJLUzf4GWUkGJrIf5AjknEOmVcq1Ov
-2GJFRk5SYMDucx5aS0XiP5LlnZJ/NxwHQrNB2zn/+lLuVmxVDQEoG0nJ+xXW7qh9
-UrRCEyOMpAyk34TJsu/Q
-=UvUW
------END PGP SIGNATURE-----
-
---HTXHNxsBjQ105pMi--
+Stuart
