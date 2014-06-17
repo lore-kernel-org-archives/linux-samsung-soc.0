@@ -1,67 +1,133 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Tue, 17 Jun 2014 11:43:04 +0100
-Message-ID: <20140617104304.GD13808@arm.com>
-References: <5288123.eXagyPAxNq@wuerfel>
-	<20140602104104.GD3855@e103592.cambridge.arm.com>
-	<20140604143509.GF28484@ulmo> <20140604164132.GF6644@arm.com>
-	<07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
-	<20140616152739.GS16758@arm.com>
-	<8b0492b4697943a0b1f276ef42cc8223@DM2PR03MB352.namprd03.prod.outlook.com>
-	<20140616170416.GA16758@arm.com>
-	<419e67f783524d208ab3be16bcd94bd9@DM2PR03MB352.namprd03.prod.outlook.com>
-	<0587e1f4894546398be0798d2bc2c84f@BL2PR03MB468.namprd03.prod.outlook.com>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC regulators
+Date: Tue, 17 Jun 2014 12:49:56 +0200
+Message-ID: <53A01D54.10506@collabora.co.uk>
+References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk> <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk> <20140616192500.GJ5099@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <0587e1f4894546398be0798d2bc2c84f-AZ66ij2kwaacCcN9WK45f+O6mTEJWrR4XA4E9RH9d+qIuWR1G4zioA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stuart Yoder <stuart.yoder-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140616192500.GJ5099-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Daniel Stone <daniels-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 17, 2014 at 11:26:48AM +0100, Varun Sethi wrote:
-> > The way we generally thought it would work was something like
-> > this:
-> >    -u-boot/bootloader makes any static streamID allocation if needed,
-> >     sets a default streamID  (e.g. 0x0) in device and expresses
-> >     that in the device tree
-> >    -device tree would express relationship between devices
-> >     (including bus controllers) and the SMMU through mmu-masters
-> >     property
-> >    -u-boot would express the range of unused (or used) streamIDs via a
-> > new
-> >     device tree property so the kernel SMMU driver knows what streamIDs
-> > are
-> >     free
-> >    -in the SMMU driver a different vendor specific 'add_device' callback
-> >     could be used to handle our special cases where we need to set/change
-> >     the stream ID for devices added to a domain
+Hello Mark,
+
+Thanks a lot for your feedback.
+
+On 06/16/2014 09:25 PM, Mark Brown wrote:
+> On Mon, Jun 16, 2014 at 08:02:35PM +0200, Javier Martinez Canillas wrote:
 > 
-> Another possibility, could be to program the stream Id in the device
-> registers (reference for the stream ID register can be obtained from the
-> device tree) during device attach. This could be relevant in case of VFIO,
-> when we are assigning multiple devices to a single VM. All the devices can
-> share the same stream ID.
+>> --- a/drivers/mfd/max77802.c
+>> +++ b/drivers/mfd/max77802.c
+>> @@ -37,6 +37,7 @@
+>>  #include <linux/err.h>
+>>  
+>>  static const struct mfd_cell max77802_devs[] = {
+>> +	{ .name = "max77802-pmic", },
+>>  };
+>>  
+>>  static bool max77802_pmic_is_accessible_reg(struct device *dev,
+> 
+> Please don't do things like this, it makes it harder to apply your
+> series.  Just register all the devices in the MFD when you add the MFD
+> driver.
+> 
 
-I think for simple masters (i.e. those that have all their StreamIDs under
-control of one driver), then setting something during attach (or add?)
-based on the DT could work pretty well. The other case is when we have
-masters behind a bridge (such as a PCI RC). In this case, it might actually
-be better to ask the bridge for the IDs and let it sort out the allocation
-itself. That would also move the RequesterID -> StreamID mapping out of
-the SMMU code.
+Ok, I'll do that. After all mfd core just omits the devices that don't match.
 
-What do you think?
+>> +	default:
+>> +		pr_warn("%s: regulator_suspend_mode : 0x%x not supported\n",
+>> +			rdev->desc->name, mode);
+>> +		return -EINVAL;
+> 
+> dev_warn().
+> 
 
-Will
+Ok.
+
+>> +static void max77802_copy_reg(struct device *dev, struct regmap *regmap,
+>> +			      int from_reg, int to_reg)
+>> +{
+>> +	int val;
+>> +	int ret;
+>> +
+>> +	if (from_reg == to_reg)
+>> +		return;
+>> +
+>> +	ret = regmap_read(regmap, from_reg, &val);
+>> +	if (!ret)
+>> +		ret = regmap_write(regmap, to_reg, val);
+>> +
+>> +	if (ret)
+>> +		dev_warn(dev, "Copy err %d => %d (%d)\n",
+>> +			 from_reg, to_reg, ret);
+>> +}
+> 
+> Again, this looks like it should be generic.
+> 
+
+Yes, I missed this from your previous feedback, sorry about that.
+
+I'll add a regmap_copy_reg() function to drivers/base/regmap/regmap.c instead.
+
+>> +static int max77802_pmic_probe(struct platform_device *pdev)
+>> +{
+> 
+>> +	dev_dbg(&pdev->dev, "%s\n", __func__);
+> 
+> This isn't adding anything, just remove it - the core already logs
+> probes if you want.
+> 
+
+Ok.
+
+>> +	config.dev = &pdev->dev;
+> 
+> Are you sure this shouldn't be the MFD?
+> 
+
+I just looked at regulator_register() and saw that it does rdev->dev.parent =
+dev, so yes this has to be the MFD.
+
+>> +	for (i = 0; i < MAX77802_MAX_REGULATORS; i++) {
+>> +		struct regulator_dev *rdev;
+>> +		int id = pdata->regulators[i].id;
+>> +
+>> +		config.init_data = pdata->regulators[i].initdata;
+>> +		config.of_node = pdata->regulators[i].of_node;
+>> +
+>> +		max77802->opmode[id] = MAX77802_OPMODE_NORMAL;
+> 
+> Why isn't this being read from the hardware, this may lead to a
+> configuration change the first time we pay attention?
+> 
+
+The original Chrome OS driver [0] had a "regulator-op-mode" property similar to
+"op_mode" in Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt
+to specify the operating mode using DT.
+
+But I removed that since I didn't want to have a specific property for what
+appears to be a generic need. I wanted to re-post something along the lines of
+what was discussed in [1] and add operating mode support to the generic
+regulator code.
+
+So, for now I thought it made sense to set the operating mode to normal on
+probe() but I'll change it to read from the hardware if that is better.
+
+I guess I should check in the datasheet if a sane default operating mode for
+LDOs is expected when the chip is reseted or if this is left undefined and also
+if the bootloader already set this.
+
+Best regards,
+Javier
+
+[0]:
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/Documentation/devicetree/bindings/mfd/max77xxx.txt
+[1]: https://patchwork.kernel.org/patch/1855331/
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
