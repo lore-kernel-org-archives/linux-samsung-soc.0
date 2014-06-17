@@ -1,12 +1,19 @@
 From: Thomas Abraham <thomas.ab@samsung.com>
 Subject: [PATCH v6 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-Date: Tue, 17 Jun 2014 20:55:26 +0530
-Message-ID: <1403018733-4187-1-git-send-email-thomas.ab@samsung.com>
-Return-path: <cpufreq-owner@vger.kernel.org>
-Sender: cpufreq-owner@vger.kernel.org
+Date: Tue, 17 Jun 2014 20:55:27 +0530
+Message-ID: <1403018733-4187-2-git-send-email-thomas.ab@samsung.com>
+References: <1403018733-4187-1-git-send-email-thomas.ab@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:37512 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932869AbaFQP0V (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 17 Jun 2014 11:26:21 -0400
+In-Reply-To: <1403018733-4187-1-git-send-email-thomas.ab@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: cpufreq@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com, heiko@sntech.de, cw00.choi@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
 
 Changes since v5:
 - Configuration data for cpu clock block is embedded with the code. The cpu clock
@@ -59,5 +66,3 @@ Thomas Abraham (6):
 
 -- 
 1.7.9.5
-
-
