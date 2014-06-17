@@ -1,81 +1,55 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 5/7] mfd: cros_ec: Sync to the latest cros_ec_commands.h
- from EC sources
-Date: Tue, 17 Jun 2014 10:20:36 -0600
-Message-ID: <53A06AD4.3000704@wwwdotorg.org>
-References: <1398879850-9111-1-git-send-email-dianders@chromium.org>	 <1398879850-9111-6-git-send-email-dianders@chromium.org>	 <20140520084602.GF24991@lee--X1> <1402483068.3798.82.camel@x220>	 <CAD=FV=XL9tnEqza8Zx8mt_Z7-bj8TCzdeyHMhnpewKp_1CR-ig@mail.gmail.com>	 <1402646902.28881.15.camel@x220>	 <CAD=FV=XcK5R1sdNwoJkFPapwWQ9vqxvmQi_L3BqTSt8EKRTNHw@mail.gmail.com> <1402995202.1984.22.camel@x220>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 2/2] ARM: dts: Add cros_ec to exynos5420-peach-pit and
+ exynos5800-peach-pi
+Date: Tue, 17 Jun 2014 18:37:04 +0200
+Message-ID: <53A06EB0.909@collabora.co.uk>
+References: <1402683213-23120-1-git-send-email-dianders@chromium.org> <1402683213-23120-2-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:52188 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933321AbaFQQUk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jun 2014 12:20:40 -0400
-In-Reply-To: <1402995202.1984.22.camel@x220>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1402683213-23120-2-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, broonie@kernel.org, sjg@chromium.org, olof@lixom.net, ch.naveen@samsung.com, swarren@wwwdotorg.org, khilman@linaro.org, ajaynumb@gmail.com, rahul.sharma@samsung.com, tushar.b@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>, Doug Anderson <dianders@chromium.org>
-Cc: Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@chromium.org>, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Andrew Bresticker <abrestic@chromium.org>, Dylan Reid <dgreid@chromium.org>, Olof Johansson <olof@lixom.net>, Samuel Ortiz <sameo@linux.intel.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 06/17/2014 02:53 AM, Paul Bolle wrote:
-> Doug,
+On 06/13/2014 08:13 PM, Doug Anderson wrote:
+> This adds cros_ec to exynos5420-peach-pit and exynos5800-peach-pi,
+> including:
+> * The keyboard
+> * The i2c tunnel
+> * The tps65090 under the i2c tunnel
+> * The battery under the i2c tunnel
 > 
-> On Fri, 2014-06-13 at 08:22 -0700, Doug Anderson wrote:
->> On Fri, Jun 13, 2014 at 1:08 AM, Paul Bolle <pebolle@tiscali.nl> wrote:
->>> On Wed, 2014-06-11 at 08:11 -0700, Doug Anderson wrote:
->>>> This is a config option on the ChromeOS EC
->>>> <https://chromium.googlesource.com/chromiumos/platform/ec>.  Doing a
->>>> grep there:
->>>>
->>>> board/samus/board.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
->>>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
->>>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
->>>> common/charge_state_v2.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
->>>> driver/battery/samus.c:#ifdef CONFIG_CHARGER_PROFILE_OVERRIDE
->>>> driver/battery/samus.c:#endif   /* CONFIG_CHARGER_PROFILE_OVERRIDE */
->>>> include/config.h:#undef CONFIG_CHARGER_PROFILE_OVERRIDE
->>>> include/ec_commands.h:  /* Range for CONFIG_CHARGER_PROFILE_OVERRIDE params */
->>>> test/test_config.h:#define CONFIG_CHARGER_PROFILE_OVERRIDE
->>>
->>> I see. So this is not a Kconfig macro but a general macro with a CONFIG_
->>> prefix. There are quite a bit of those in the tree already, but still,
->>> would another prefix also do?
->>
->> Given that it's an entirely separate project and this is a valid
->> CONFIG option in that project, it seems a lot to ask them not to use
->> the CONFIG_ prefix.  Also: the part you are objecting to is only a
->> comment, right?
+> To add extra motivation, it should be noted that tps65090 is one of
+> the things needed to get display-related FETs turned on for pit and
+> pi.
 > 
-> So all the hits you quoted above are actually from code that's never
-> going to be included in the kernel tree, right? If so, then yes, we're
-> only discussing a single comment.
+> Note that this relies on a few outstanding changes:
+> * Needs "cros-ec-keyboard.dtsi" in order to compile properly.  See
+>   (ARM: dts: Create a cros-ec-keyboard fragment) at
+>   <https://patchwork.kernel.org/patch/4297451/>.
+> * Needs (mfd: cros_ec: spi: Fix end of transfer on devices with no
+>   spi-msg-delay) from this series to work properly.
+> * Needs (spi: s3c64xx: fix broken "cs_gpios" usage in the driver) and
+>   (spi: s3c64xx: for DT platofrms always get the chipselect info from
+>   DT node) to work properly and match the documented bindings.  See
+>   <https://patchwork.kernel.org/patch/4346701/> and
+>   <https://patchwork.kernel.org/patch/4346711/>
 > 
->> We could certainly add extra wording in the comment to make it obvious
->> that this is a CONFIG option for the EC and not the kernel.  Would
->> that be enough?  ...or are you trying to use some scripts to
->> automatically process files to look for CONFIG options?
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 146 +++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 146 +++++++++++++++++++++++++++++
+>  2 files changed, 292 insertions(+)
 > 
-> Yes, I'm using a script to check for Kconfig macros, among other things.
-> It doesn't care about comments (because every now and then mistakes are
-> made in comments too, and some of those can get surprisingly confusing).
-> 
-> Anyhow, the CONFIG_ prefix used in the kernel tree is quite generic, but
-> we're stuck with it. Would it be bothersome to drop it in that comment?
-> Mentioning a preprocessor macro from a separate project is a bit
-> confusing to begin with. How is one supposed to know that this is a
-> reference to something out of tree?
-> 
-> So, in summary, while we're apparently only discussing a single comment,
-> I would appreciate it if it could be reworded, preferably by dropping
-> that the CONFIG_ prefix. But other people might care very little, as
-> they don't share this particular pet peeve.
 
-Can't your tool maintain a whitelist or ignore list? There are many
-cases where the kernel can pull in headers/data from other projects
-(Firmware interfaces to an arbitrarily large set of HW, Device trees,
-IO/network protocools, perhaps more). It feels quite unreasonable for
-the kernel to decide that it exclusively owns the CONFIG_* namespace
-even in comments, and that every other project it interacts with must
-not use that namespace.
+After applying all the dependencies and this patch, I see that cros-ec-spi
+driver is probed and also the keyboard is working on my Peach pit when testing
+with: $ evtest /dev/input/event0
+
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+Best regards,
+Javier
