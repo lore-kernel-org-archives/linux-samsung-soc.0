@@ -1,58 +1,70 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Tue, 17 Jun 2014 13:18:11 +0100
-Message-ID: <20140617121811.GG13808@arm.com>
-References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
- <538757B6.4010109@wwwdotorg.org>
- <20140530073006.GA24748@ulmo>
- <20140530112728.GB3949@e103592.cambridge.arm.com>
- <20140604211237.GC18710@mithrandir>
- <20140616125704.GE16758@arm.com>
- <20140617115829.GB18816@ulmo>
+From: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
+Subject: Re: Boot warnings on exynos5420 based boards
+Date: Tue, 17 Jun 2014 17:54:49 +0530
+Message-ID: <53A03391.8040207@linux.vnet.ibm.com>
+References: <CAK5sBcEJOJDtt_7ow=q=hiN8-JRHzOUg6t=T3hTNOwzKq5dodw@mail.gmail.com> <53A007F7.6020103@linux.vnet.ibm.com> <CAK5sBcECq5sN9CnUhWLPoYnFnPz64JM_6CVRBwjz8Q2=X5_t=A@mail.gmail.com> <53A01039.2020302@linux.vnet.ibm.com> <CAK5sBcH6Yw0rdfUgTPi2OhqZ5pNeD39_NUguT4NFR4hrK2uZgA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20140617115829.GB18816@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TbrhsbdSgBK9A@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from e28smtp02.in.ibm.com ([122.248.162.2]:54388 "EHLO
+	e28smtp02.in.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932196AbaFQM0f (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 17 Jun 2014 08:26:35 -0400
+Received: from /spool/local
+	by e28smtp02.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-samsung-soc@vger.kernel.org> from <srivatsa.bhat@linux.vnet.ibm.com>;
+	Tue, 17 Jun 2014 17:56:32 +0530
+In-Reply-To: <CAK5sBcH6Yw0rdfUgTPi2OhqZ5pNeD39_NUguT4NFR4hrK2uZgA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@samsung.com>
+Cc: linux-kernel@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nicolas.pitre@linaro.org>, =?UTF-8?B?RnLDqWTDqXJpYyBXZWlz?= =?UTF-8?B?YmVja2Vy?= <fweisbec@gmail.com>
 
-On Tue, Jun 17, 2014 at 12:58:30PM +0100, Thierry Reding wrote:
-> On Mon, Jun 16, 2014 at 01:57:04PM +0100, Will Deacon wrote:
-> > On Wed, Jun 04, 2014 at 10:12:38PM +0100, Thierry Reding wrote:
-> > > It can easily be argued that if the algorithm used to remap the ID
-> > > varies, the compatibility of the device changes. Therefore I would
-> > > expect any variant of the GICv3 that deviates from the "standard"
-> > > mapping (if there is such a thing) to have its own compatible string.
-> > 
-> > There is no standard mapping; it's a property defined at system integration
-> > time. I fully expect different SoCs to do different things here.
+On 06/17/2014 05:25 PM, Sachin Kamat wrote:
+> Hi Srivatsa,
 > 
-> My point was that the mapping itself seems to be fundamental enough to
-> make devices with different mappings "incompatible". Therefore I think
-> this could probably be handled by using different compatible values,
-> something along the lines of this:
+> On Tue, Jun 17, 2014 at 3:24 PM, Srivatsa S. Bhat
+> <srivatsa.bhat@linux.vnet.ibm.com> wrote:
+>> On 06/17/2014 03:03 PM, Sachin Kamat wrote:
+>>
+>>>> Below is an updated patch, please let me know how it goes. (You'll have to
+>>>> revert c47a9d7cca first, and then 56e692182, before trying this patch).
+>>>
+>>> I am unable to apply your below patch on top of the above 2 reverts.
+>>> Applying: CPU hotplug, smp: Execute any pending IPI callbacks before CPU offline
+>>> fatal: corrupt patch at line 106
+>>> Patch failed at 0001 CPU hotplug, smp: Execute any pending IPI
+>>> callbacks before CPU offline
+>>>
+>>> Even with 'patch' I get the below failures:
+>>> patching file kernel/smp.c
+>>> Hunk #2 FAILED at 53.
+>>> Hunk #3 FAILED at 179.
+>>> 2 out of 3 hunks FAILED -- saving rejects to file kernel/smp.c.rej
+>>>
+>>
+>> Hmm, weird. My mailer must have screwed it up.
+>>
+>> Let's try again:
+>>
+>> [In case this also doesn't work for you, please use this git tree in which
+>>  I have reverted the 2 old commits and added this updated patch.
+>>
+>>  git://github.com/srivatsabhat/linux.git ipi-offline-fix-v3
+>> ]
 > 
-> 	compatible = "vendor,soc-gicv3", "arm,gicv3";
+> Unfortunately the attached patch did not apply either. Nevertheless, I
+> applied the
+> patch from your above mentioned tree. With that patch I do not see the warnings
+> that I mentioned in my first mail. Thanks for fixing it.
 > 
-> Then the mapping can be described in code, which should be a whole lot
-> easier and more flexible than a more or less generic notation in device
-> tree.
 
-I don't think that scales well beyond a handful of unique mappings, and I
-really anticipate everybody doing something different based on their
-integration constraints.
+Sure, thanks for reporting the bug and testing the updated patch!
+By the way, I think there is some problem in the workflow that you use to
+copy-paste/apply the patch. I tried applying both patches (that I sent in
+2 different mails) and both applied properly without any problems.
 
-You'd very quickly end up with sets of tables for each SoC, describing the
-topology and associated IDs in the kernel source, which feels like a giant
-step backwards from where we are today with device tree.
-
-If, for example, the GIC architecture prescribed a fixed set of Device IDs
-and an algorithm for converting from Stream IDs then your approach may have
-some merits, but that's not where we are today (and I also don't think it's
-practical to try and enforce such system-wide properties into an interrupt
-controller architecture).
-
-Will
+Regards,
+Srivatsa S. Bhat
