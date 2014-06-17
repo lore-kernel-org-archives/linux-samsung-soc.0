@@ -1,77 +1,183 @@
-From: Doug Anderson <dianders@google.com>
-Subject: Re: [PATCH 3/3] ARM: dts: Enable audio support for Peach-pi board
-Date: Mon, 16 Jun 2014 21:07:44 -0700
-Message-ID: <CAD=FV=U51f+sL_hSGdzusthC3OEgv3kbQ9t1G28JRgXueFYQEQ@mail.gmail.com>
-References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
-	<1402464739-19044-4-git-send-email-tushar.b@samsung.com>
-	<CAD=FV=XqqP7+xDOAKCixivzgaO0xvJX7L+CCN+unAEuf-6aUbQ@mail.gmail.com>
-	<539ED2C0.8030405@gmail.com>
-	<CAD=FV=UaaRQVq3TmXMTv9OkER+zORC89YfPNjwZwfCQKmuavrw@mail.gmail.com>
-	<CAC5m3Byeu5zdM=PeK5MkgsEOFRjrPd1Vrk1a3FaM7VPTOFyYOg@mail.gmail.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: RE: [PATCH v3 1/6] i2c: s3c2410: Handle i2c sys_cfg register in i2c
+ driver
+Date: Tue, 17 Jun 2014 09:51:39 +0530
+Message-ID: <000301cf89e3$a43d3550$ecb79ff0$@samsung.com>
+References: <1399706287-13919-1-git-send-email-y@samsung.com>
+ <1399706419-13976-1-git-send-email-pankaj.dubey@samsung.com>
+ <1399706419-13976-2-git-send-email-pankaj.dubey@samsung.com>
+ <53970994.8010400@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f181.google.com ([209.85.220.181]:48160 "EHLO
-	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750942AbaFQEHp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jun 2014 00:07:45 -0400
-Received: by mail-vc0-f181.google.com with SMTP id il7so5733577vcb.26
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jun 2014 21:07:45 -0700 (PDT)
-In-Reply-To: <CAC5m3Byeu5zdM=PeK5MkgsEOFRjrPd1Vrk1a3FaM7VPTOFyYOg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <53970994.8010400@samsung.com>
+Content-language: en-us
+Sender: linux-doc-owner@vger.kernel.org
+To: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, arnd@arndb.de, 'Rob Herring' <robh+dt@kernel.org>, 'Randy Dunlap' <rdunlap@infradead.org>, 'Wolfram Sang' <wsa@the-dreams.de>, 'Russell King' <linux@arm.linux.org.uk>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <trblinux@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@linaro.org>, Mark Brown <broonie@linaro.org>
 
-Tushar,
+Hi Tomasz,
 
-On Mon, Jun 16, 2014 at 8:36 PM, Tushar Behera <trblinux@gmail.com> wrote:
-> On Mon, Jun 16, 2014 at 10:19 PM, Doug Anderson <dianders@google.com> wrote:
->> Tushar,
->>
->> On Mon, Jun 16, 2014 at 4:19 AM, Tushar Behera <trblinux@gmail.com> wrote:
->>> On 06/13/2014 10:33 PM, Doug Anderson wrote:
->>>> Tushar,
->>>>
->>>> On Tue, Jun 10, 2014 at 10:32 PM, Tushar Behera <tushar.b@samsung.com> wrote:
->>>>> Peach-pi board has MAX98090 audio codec connected on HSI2C-7 bus.
->>>>
->>>> If you want to be a stickler about it, peach-pi actually has a
->>>> max98091.  That requires code changes to the i2c driver, though.
->>>> ...and unfortunately listing two compatible strings for i2c devices is
->>>> broken.  :(
->>>>
->>> Hi Doug,
->>>
->>> You are right. I checked the boot logs, the detected codec type is
->>> MAX98091. Since both these CODECs are supported through a single driver
->>> and the detection of chip is done during runtime, I would suggest we go
->>> ahead with "max98090" compatible string. I will update the commit
->>> message accordingly.
->>>
->>> Does that sound okay to you?
->>
->> As per my understanding you shouldn't do this.  You should have two patches:
->>
->> 1. Add "max98091".  You could simply post Wonjoon's patch from
->> <https://chromium-review.googlesource.com/184091>
->>
->> 2. Change the device tree to refer to "max98091"
->>
->> The argument that the "current kernel driver has a single driver" is
->> an argument that you're not supposed to make for device tree.  The
->> same device tree is supposed to work for U-Boot, BSD, or any other
->> platform.  On those platforms it might not be a shared driver.
->>
->
-> My argument is that the device type is getting detected during
-> runtime, hence there is no need to differentiate between these two.
->
-> But if you prefer that way, I will repost.
+> 
+> Hi Pankaj,
+> 
+> On 10.05.2014 09:20, Pankaj Dubey wrote:
+> > Let's handle i2c interrupt re-configuration in i2c driver. This will
+> > help us in removing some soc specific checks from machine files.
+> > Since only Exynos5250, and Exynos5420 need to do this, added syscon
+> > based phandle to i2c device nodes of respective SoC DT files.
+> > Also handle saving and restoring of SYS_I2C_CFG register during
+> > suspend and resume of i2c driver. This will help in removing soc
+> > specific check from mach-exynos/pm.c.
+> >
+> > CC: Rob Herring <robh+dt@kernel.org>
+> > CC: Randy Dunlap <rdunlap@infradead.org>
+> > CC: Wolfram Sang <wsa@the-dreams.de>
+> > CC: Russell King <linux@arm.linux.org.uk>
+> > CC: devicetree@vger.kernel.org
+> > CC: linux-doc@vger.kernel.org
+> > CC: linux-i2c@vger.kernel.org
+> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> > ---
+> >  .../devicetree/bindings/arm/samsung/sysreg.txt     |    1 +
+> >  arch/arm/boot/dts/exynos5.dtsi                     |    5 +++
+> >  arch/arm/boot/dts/exynos5250.dtsi                  |    4 +++
+> >  arch/arm/boot/dts/exynos5420.dtsi                  |    4 +++
+> 
+> What about Exynos5410 and Exynos5800?
 
-Yes please.
+OK, I will check user manuals of these two SoCs and if required will update.
 
-True that it is possible to detect 98090 vs. 98091.  ...but it's also
-possible to detect exynos5250 vs. exynos5420 vs. exynos5800.  ...yet
-they have different compatible strings.
+> 
+> >  drivers/i2c/busses/i2c-s3c2410.c                   |   32
+> ++++++++++++++++++++
+> >  5 files changed, 46 insertions(+)
+> 
+> [snip]
+> 
+> > diff --git a/drivers/i2c/busses/i2c-s3c2410.c
+> > b/drivers/i2c/busses/i2c-s3c2410.c
+> > index ae44910..e707062 100644
+> > --- a/drivers/i2c/busses/i2c-s3c2410.c
+> > +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> > @@ -39,6 +39,8 @@
+> >  #include <linux/of.h>
+> >  #include <linux/of_gpio.h>
+> >  #include <linux/pinctrl/consumer.h>
+> > +#include <linux/mfd/syscon.h>
+> > +#include <linux/regmap.h>
+> >
+> >  #include <asm/irq.h>
+> >
+> > @@ -91,6 +93,9 @@
+> >  /* Max time to wait for bus to become idle after a xfer (in us) */
+> >  #define S3C2410_IDLE_TIMEOUT	5000
+> >
+> > +/* Exynos5 Sysreg offset */
+> > +#define EXYNOS5_SYS_I2C_CFG	0x0234
+> > +
+> >  /* i2c controller state */
+> >  enum s3c24xx_i2c_state {
+> >  	STATE_IDLE,
+> > @@ -127,6 +132,8 @@ struct s3c24xx_i2c {  #if
+> > defined(CONFIG_ARM_S3C24XX_CPUFREQ)
+> >  	struct notifier_block	freq_transition;
+> >  #endif
+> > +	struct regmap		*sysreg;
+> > +	unsigned int		sys_i2s_cfg;
+> 
+> typo: s/i2s/i2c/
+
+Oops, sorry I will correct this. 
+
+> 
+> >  };
+> >
+> >  static struct platform_device_id s3c24xx_driver_ids[] = { @@ -1075,6
+> > +1082,8 @@ static void  s3c24xx_i2c_parse_dt(struct device_node *np,
+> > struct s3c24xx_i2c *i2c)  {
+> >  	struct s3c2410_platform_i2c *pdata = i2c->pdata;
+> > +	u32 val = 0;
+> > +	int id;
+> >
+> >  	if (!np)
+> >  		return;
+> > @@ -1084,6 +1093,23 @@ s3c24xx_i2c_parse_dt(struct device_node *np,
+struct
+> s3c24xx_i2c *i2c)
+> >  	of_property_read_u32(np, "samsung,i2c-slave-addr",
+&pdata->slave_addr);
+> >  	of_property_read_u32(np, "samsung,i2c-max-bus-freq",
+> >  				(u32 *)&pdata->frequency);
+> > +	/*
+> > +	 * Exynos5's legacy i2c controller and new high speed i2c
+> > +	 * controller have muxed interrupt sources. By default the
+> 
+> What do you mean by "by default"? Is it a setting from the bootloader or
+reset value?
+> 
+
+It's a reset value.
+
+> Probably to ensure that the mux is set correctly, same thing should be
+also added to
+> hsi2c driver.
+> 
+> > +	 * interrupts for 4-channel HS-I2C controller are enabled.
+> > +	 * If node for first four channels of legacy i2c controller
+> > +	 * are available then re-configure the interrupts via the
+> > +	 * system register.
+> > +	 */
+> > +	id = of_alias_get_id(np, "i2c");
+> > +	i2c->sysreg = syscon_regmap_lookup_by_phandle(np,
+> > +			"samsung,syscon-phandle");
+> > +	if (IS_ERR(i2c->sysreg)) {
+> > +		/* As this is not compulsory do not return error */
+> > +		pr_info("i2c-%d skipping re-configuration of interrutps\n",
+id);
+> > +		return;
+> > +	}
+> > +	regmap_update_bits(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, BIT(id), val);
+> 
+> As Wolfram pointed, val can be replaced with immediate 0 here.
+
+OK, I will take care as per suggestion.
+
+> 
+> >  }
+> >  #else
+> >  static void
+> > @@ -1268,6 +1294,9 @@ static int s3c24xx_i2c_suspend_noirq(struct
+> > device *dev)
+> >
+> >  	i2c->suspended = 1;
+> >
+> > +	if (!IS_ERR(i2c->sysreg))
+> > +		regmap_read(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, &i2c-
+> >sys_i2s_cfg);
+> > +
+> >  	return 0;
+> >  }
+> >
+> > @@ -1276,6 +1305,9 @@ static int s3c24xx_i2c_resume(struct device *dev)
+> >  	struct platform_device *pdev = to_platform_device(dev);
+> >  	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+> >
+> > +	if (!IS_ERR(i2c->sysreg))
+> > +		regmap_write(i2c->sysreg, i2c->sys_i2s_cfg,
+> EXYNOS5_SYS_I2C_CFG);
+> 
+> According to include/linux/regmap.h:
+> 
+> int regmap_write(struct regmap *map, unsigned int reg, unsigned int val);
+> 
+> So in your code reg is swapped with val.
+
+Yes. I will correct this.
+
+> 
+> Best regards,
+> Tomasz
+
