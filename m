@@ -1,57 +1,67 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC
- regulators
-Date: Tue, 17 Jun 2014 22:17:47 +0100
-Message-ID: <20140617211747.GY29841@lee--X1>
-References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk>
- <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH RFC] mfd: syscon: Decouple syscon interface from syscon
+ devices
+Date: Tue, 17 Jun 2014 23:26:22 +0200
+Message-ID: <53A0B27E.5010708@gmail.com>
+References: <53A05E2D.6020702@samsung.com> <1403019164-12514-1-git-send-email-t.figa@samsung.com> <5027740.B7iVUcUX2T@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Daniel Stone <daniels@collabora.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:43669 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964980AbaFQV0n (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 17 Jun 2014 17:26:43 -0400
+In-Reply-To: <5027740.B7iVUcUX2T@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, mark.brown@linaro.org
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Samuel Ortiz <sameo@linux.intel.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, Lee Jones <lee.jones@linaro.org>
 
-PiBUaGUgTUFYNzc4MDIgUE1JQyBoYXMgMTAgaGlnaC1lZmZpY2llbmN5IEJ1Y2sgYW5kIDMyIExv
-dy1kcm9wb3V0Cj4gKExETykgcmVndWxhdG9ycy4gVGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQgZm9y
-IGFsbCB0aGVzZSByZWd1bGF0b3JzCj4gZm91bmQgb24gdGhlIE1BWDc3ODAyIFBNSUMgYW5kIGlz
-IGJhc2VkIG9uIGEgZHJpdmVyIGFkZGVkIGJ5IFNpbW9uCj4gR2xhc3MgdG8gdGhlIENocm9tZSBP
-UyBrZXJuZWwgMy44IHRyZWUuCj4gCj4gU2lnbmVkLW9mZi1ieTogSmF2aWVyIE1hcnRpbmV6IENh
-bmlsbGFzIDxqYXZpZXIubWFydGluZXpAY29sbGFib3JhLmNvLnVrPgo+IC0tLQo+IAo+IENoYW5n
-ZXMgc2luY2UgdjE6Cj4gIC0gUmVtb3ZlIHVubmVlZGVkIGNoZWNrIGlmIG51bV9yZWd1bGF0b3Jz
-ICE9IE1BWDc3ODAyX01BWF9SRUdVTEFUT1JTLgo+ICAtIEZpeCAuc2V0X3N1c3BlbmRfbW9kZSBo
-YW5kbGVyIGNvbW1lbnQgYW5kIHNwbGl0IHJlZ3VsYXRvcnMgb3BzIGZvcgo+ICAgIHJlZ3VsYXRv
-cnMgdGhhdCBiZWhhdmUgZGlmZmVyZW50bHkuIFN1Z2dlc3RlZCBieSBNYXJrIEJyb3duLgo+ICAt
-IFVzZSBtb2R1bGVfcGxhdGZvcm1fZHJpdmVyKCkgaW5zdGVhZCBvZiBoYXZpbmcgaW5pdC9leGl0
-IGZ1bmN0aW9ucy4KPiAgICBTdWdnZXN0ZWQgYnkgTWFyayBCcm93bi4KPiAgLSBVc2UgdGhlIG5l
-dyBkZXNjcmlwdG9yLWJhc2VkIEdQSU8gaW50ZXJmYWNlIGluc3RlYWQgb2YgdGhlIGRlcHJlY2F0
-ZWQKPiAgICBpbnRlZ2VyIGJhc2VkIEdQSU8gb25lLiBTdWdnZXN0ZWQgYnkgTWFyayBCcm93bi4K
-PiAgLSBMb29rIGZvciAicmVndWxhdG9ycyIgY2hpbGQgbm9kZSBpbnN0ZWFkIG9mICJ2b2x0YWdl
-LXJlZ3VsYXRvcnMiIHRvIGJlCj4gICAgY29uc2lzdGVudCB3aXRoIG90aGVyIFBNSUMgZHJpdmVy
-cy4gU3VnZ2VzdGVkIGJ5IE1hcmsgQnJvd24uCj4gCj4gIGRyaXZlcnMvbWZkL21heDc3ODAyLmMg
-ICAgICAgfCAgIDEgKwoKQ2FuIHlvdSByZW1vdmUgYWxsIG9mIHRoZSBNRkQgY2hhbmdlcyBmcm9t
-IHBhdGNoZXMgNywgOCBhbmQgOSBhbmQKY3JlYXRlIG5ldyBvbmUuICBUaGF0IHdheSB0aGVyZSdz
-IG5vIHJlcXVpcmVtZW50IGZvciBhbnkgY3Jvc3MKc3Vic3lzdGVtIG1lc3NpbmVzcy4KCj4gIGRy
-aXZlcnMvcmVndWxhdG9yL0tjb25maWcgICAgfCAgIDkgKwo+ICBkcml2ZXJzL3JlZ3VsYXRvci9N
-YWtlZmlsZSAgIHwgICAxICsKPiAgZHJpdmVycy9yZWd1bGF0b3IvbWF4Nzc4MDIuYyB8IDcwMSAr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4gIDQgZmlsZXMgY2hh
-bmdlZCwgNzEyIGluc2VydGlvbnMoKykKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvcmVn
-dWxhdG9yL21heDc3ODAyLmMKCi0tIApMZWUgSm9uZXMKTGluYXJvIFNUTWljcm9lbGVjdHJvbmlj
-cyBMYW5kaW5nIFRlYW0gTGVhZApMaW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBm
-b3IgQVJNIFNvQ3MKRm9sbG93IExpbmFybzogRmFjZWJvb2sgfCBUd2l0dGVyIHwgQmxvZwoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtl
-cm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0
-dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5l
-bAo=
+Hi Arnd,
+
+On 17.06.2014 17:42, Arnd Bergmann wrote:
+> On Tuesday 17 June 2014 17:32:44 Tomasz Figa wrote:
+>> Currently a syscon entity can be only registered directly through a
+>> platform device that binds to a dedicated driver. However in certain use
+>> cases it is desirable to make a device used with another driver a syscon
+>> interface provider. For example, certain SoCs (e.g. Exynos) contain
+>> system controller blocks which perform various functions such as power
+>> domain control, CPU power management, low power mode control, but in
+>> addition contain certain IP integration glue, such as various signal
+>> masks, coprocessor power control, etc. In such case, there is a need to
+>> have a dedicated driver for such system controller but also share
+>> registers with other drivers. The latter is where the syscon interface
+>> is helpful.
+>>
+>> This patch decouples syscon object from syscon driver, so that it can be
+>> registered from any driver in addition to the original "syscon" platform
+>> driver.
+>>
+>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> 
+> Hi Tomasz,
+> 
+> This seems like a reasonable way of solving the problem, but I think
+> there is an even better one that we have about in the past: if we
+> promote syscon from a platform driver into a a drivers/base/ helper
+> that is independent of the platform device matching, we can use
+> call syscon_regmap_lookup_* for any device node, whether it's already
+> bound to a driver or not, which do what you need. It would also make
+> it easier to call the syscon code before the platform_device
+> infrastructure gets initialized, which is something a number of
+> people have asked for, e.g. for using regmap to do SMP bringup
+> or for clock registration.
+
+Basically, unless I'm missing your point, this is what my patch does,
+except that I don't move it to drivers/base/ and the registration
+function I added require a pointer to struct device. Indeed, decoupling
+it further from the driver model, by adding of_syscon_register() should
+be useful for early users.
+
+Should I move this to drivers/base/, even though from current location
+it can be used outside the platform driver anyway?
+
+Best regards,
+Tomasz
