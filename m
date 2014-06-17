@@ -1,109 +1,94 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Tue, 17 Jun 2014 13:58:30 +0200
-Message-ID: <20140617115829.GB18816@ulmo>
-References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
- <538757B6.4010109@wwwdotorg.org>
- <20140530073006.GA24748@ulmo>
- <20140530112728.GB3949@e103592.cambridge.arm.com>
- <20140604211237.GC18710@mithrandir>
- <20140616125704.GE16758@arm.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 1/3] clocksource: exynos_mct: Fix ftrace
+Date: Tue, 17 Jun 2014 14:13:15 +0200
+Message-ID: <53A030DB.3090009@linaro.org>
+References: <1401903034-20074-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GID0FwUMdk1T2AWN"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f182.google.com ([74.125.82.182]:48254 "EHLO
-	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753608AbaFQMBo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jun 2014 08:01:44 -0400
-Content-Disposition: inline
-In-Reply-To: <20140616125704.GE16758@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1401903034-20074-1-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, olof@lixom.net, linux-samsung-soc@vger.kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: Dave P Martin <Dave.Martin@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Cho KyongHo <pullip.cho@samsung.com>, Grant Grundler <grundler@chromium.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Joerg Roedel <joro@8bytes.org>, Hiroshi Doyu <hdoyu@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.o>
+
+On 06/04/2014 07:30 PM, Doug Anderson wrote:
+> In (93bfb76 clocksource: exynos_mct: register sched_clock callback) w=
+e
+> supported using the MCT as a scheduler clock.  We properly marked
+> exynos4_read_sched_clock() as notrace.  However, we then went and
+> called another function that _wasn't_ notrace.  That means if you do:
+>
+>    cd /sys/kernel/debug/tracing/
+>    echo function_graph > current_tracer
+>
+> You'll get a crash.
+>
+> Fix this (but still let other readers of the MCT be trace-enabled) by
+> adding an extra function.  It's important to keep other users of MCT
+> traceable because the MCT is actually quite slow.
+
+Thanks for the explanation in the other email.
+
+I think the last sentence is a bit confusing because you are implicitly=
+=20
+saying you need these traces to investigate why the timer is slow which=
+=20
+is referring to something not related to this fix.
+
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+>   drivers/clocksource/exynos_mct.c | 9 +++++++--
+>   1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/e=
+xynos_mct.c
+> index 8d64200..ba3a683 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -165,7 +165,7 @@ static void exynos4_mct_frc_start(u32 hi, u32 lo)
+>   	exynos4_mct_write(reg, EXYNOS4_MCT_G_TCON);
+>   }
+>
+> -static cycle_t exynos4_frc_read(struct clocksource *cs)
+> +static inline cycle_t notrace _exynos4_frc_read(void)
+
+Why inline ?
+
+>   {
+>   	unsigned int lo, hi;
+>   	u32 hi2 =3D __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_U);
+> @@ -179,6 +179,11 @@ static cycle_t exynos4_frc_read(struct clocksour=
+ce *cs)
+>   	return ((cycle_t)hi << 32) | lo;
+>   }
+>
+> +static cycle_t exynos4_frc_read(struct clocksource *cs)
+> +{
+> +	return _exynos4_frc_read();
+> +}
+> +
+>   static void exynos4_frc_resume(struct clocksource *cs)
+>   {
+>   	exynos4_mct_frc_start(0, 0);
+> @@ -195,7 +200,7 @@ struct clocksource mct_frc =3D {
+>
+>   static u64 notrace exynos4_read_sched_clock(void)
+>   {
+> -	return exynos4_frc_read(&mct_frc);
+> +	return _exynos4_frc_read();
+>   }
+>
+>   static void __init exynos4_clocksource_init(void)
+>
 
 
---GID0FwUMdk1T2AWN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
 
-On Mon, Jun 16, 2014 at 01:57:04PM +0100, Will Deacon wrote:
-> On Wed, Jun 04, 2014 at 10:12:38PM +0100, Thierry Reding wrote:
-> > On Fri, May 30, 2014 at 12:27:28PM +0100, Dave Martin wrote:
-> > > On Fri, May 30, 2014 at 08:30:08AM +0100, Thierry Reding wrote:
-> > [...]
-> > > > Arnd, can you take another look at this binding and see if there's
-> > > > anything else missing? If not I'll go through the document again and
-> > > > update all #address-cells/#size-cells references with #iommu-cells =
-as
-> > > > appropriate and submit v3.
-> > >=20
-> > > How do you envisage propagation of the master ID bits downstream of t=
-he
-> > > IOMMU would be described?
-> > >=20
-> > > We will definitely need a way to describe this for GICv3.  How those
-> > > values are propagated is likely to vary between related SoCs and does=
-n't
-> > > feel like it should be baked into a driver, especially for the ARM SM=
-MU
-> > > which may get reused in radically different SoC families from differe=
-nt
-> > > vendors.
-> >=20
-> > Well, we've had cases like these in the past (power sequences come to
-> > mind). Some concepts are just too difficult or unwieldy to be put into
-> > device tree. I think that this is one of them.
-> >=20
-> > > The most likely types of remapping are the adding of a base offset or
-> > > some extra bits to the ID -- because not all MSIs to the GIC will
-> > > necessarily pass through the IOMMU.  It's also possible that we might
-> > > see ID squashing or folding in some systems.
-> >=20
-> > It can easily be argued that if the algorithm used to remap the ID
-> > varies, the compatibility of the device changes. Therefore I would
-> > expect any variant of the GICv3 that deviates from the "standard"
-> > mapping (if there is such a thing) to have its own compatible string.
->=20
-> There is no standard mapping; it's a property defined at system integrati=
-on
-> time. I fully expect different SoCs to do different things here.
-
-My point was that the mapping itself seems to be fundamental enough to
-make devices with different mappings "incompatible". Therefore I think
-this could probably be handled by using different compatible values,
-something along the lines of this:
-
-	compatible =3D "vendor,soc-gicv3", "arm,gicv3";
-
-Then the mapping can be described in code, which should be a whole lot
-easier and more flexible than a more or less generic notation in device
-tree.
-
-Thierry
-
---GID0FwUMdk1T2AWN
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJToC1lAAoJEN0jrNd/PrOhoDoQAIrRLnCfk4INnOK9LyQbVali
-ZiChXj0F9DYqy+drqd/trV4ogPjHcaylSGyK4w/3c0kpEr8ENs0axnoDtO34HxFz
-AU1LoFTaNZoevj3ZUC7XN26CUgGRe/Jq9+BolD0c5Jw41mD0mStKpJTSZOPkGpYs
-8b7y+2/04s2uidndI6oOymM2Yp3rC8qAsjI6ppBE0oypwRzzcvBS65JIod3MKIx9
-oYDOMan8+twFIBXl4DP5azQv8sGfCMdM4cv1436jTNRJXW2E2hoN4D3ED6tDOFWK
-ubucFt7o0YPbsJkVgpXt2o8qUw9f99+h0UE9n+92mzpnzykfe1BrNX3TS7Rb/smw
-ZIbgJsCjOsCmPLfpXlaFxf3dHPh2Fz73vXWz/8jm+pFgW+QLZ37tLLRssuTZzMlZ
-cdRivcKVrkN+pDvsJ8atZ/fL2c00kc3l0pjdFUVL8+M5qn8/Xbg2S/GBItL6d2Kk
-Ij9gg/6irAjjnrpyUzCjXU3R2ILeBDHSc1iLUjwx0tV70qVbheFylNsPMJisUDeu
-Bbevv4mMsvxSwiei+FHHGlJ5VGeZx4NoII8a0HnROLdd5T1x8+WnHFQpwnYD8wxz
-pkI7pCIB5RpMw+1bq6XWiwym0TU9Ep3Qkabc0oknnJ8NnikvLStPW3AMFsWeFaKR
-anoBpU795w1snQT2xFWG
-=sthc
------END PGP SIGNATURE-----
-
---GID0FwUMdk1T2AWN--
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
