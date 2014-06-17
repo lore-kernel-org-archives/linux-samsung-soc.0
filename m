@@ -1,14 +1,16 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 01/10] mfd: max77686: Convert to use regmap_irq
-Date: Tue, 17 Jun 2014 13:57:33 -0700
-Message-ID: <CAD=FV=VUPwr6GbR7O-t0q-GaCttZ5vGzLeFqHckzkk-dZYfCFw@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC
+ regulators
+Date: Tue, 17 Jun 2014 22:17:47 +0100
+Message-ID: <20140617211747.GY29841@lee--X1>
 References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk>
- <1402941758-11216-2-git-send-email-javier.martinez@collabora.co.uk>
+ <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1402941758-11216-2-git-send-email-javier.martinez@collabora.co.uk>
+Content-Disposition: inline
+In-Reply-To: <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,92 +21,37 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Stone <daniels@collabora.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Daniel Stone <daniels@collabora.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Javier,
-
-On Mon, Jun 16, 2014 at 11:02 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> @@ -127,15 +175,48 @@ static int max77686_i2c_probe(struct i2c_client *i2c,
->         }
->         i2c_set_clientdata(max77686->rtc, max77686);
->
-> -       max77686_irq_init(max77686);
-> +       max77686->rtc_regmap = devm_regmap_init_i2c(max77686->rtc,
-> +                                                   &max77686_rtc_regmap_config);
-> +       if (IS_ERR(max77686->rtc_regmap)) {
-> +               ret = PTR_ERR(max77686->rtc_regmap);
-> +               dev_err(max77686->dev, "failed to allocate RTC regmap: %d\n",
-> +                       ret);
-> +               goto err_unregister_i2c;
-> +       }
-> +
-> +       ret = regmap_add_irq_chip(max77686->regmap, max77686->irq,
-> +                                 IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
-> +                                 IRQF_SHARED, 0, &max77686_irq_chip,
-> +                                 &max77686->irq_data);
-> +       if (ret != 0) {
-> +               dev_err(&i2c->dev, "failed to add PMIC irq chip: %d\n", ret);
-> +               goto err_unregister_i2c;
-> +       }
-> +       ret = regmap_add_irq_chip(max77686->rtc_regmap, max77686->irq,
-> +                                 IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
-> +                                 IRQF_SHARED, 0, &max77686_rtc_irq_chip,
-> +                                 &max77686->rtc_irq_data);
-> +       if (ret != 0) {
-> +               dev_err(&i2c->dev, "failed to add RTC irq chip: %d\n", ret);
-> +               goto err_del_irqc;
-> +       }
->
->         ret = mfd_add_devices(max77686->dev, -1, max77686_devs,
->                               ARRAY_SIZE(max77686_devs), NULL, 0, NULL);
->         if (ret < 0) {
-> -               mfd_remove_devices(max77686->dev);
-> -               i2c_unregister_device(max77686->rtc);
-> +               dev_err(&i2c->dev, "failed to add MFD devices: %d\n", ret);
-> +               goto err_del_rtc_irqc;
->         }
->
-> +       return 0;
-> +
-> +err_del_rtc_irqc:
-> +       regmap_del_irq_chip(max77686->irq, max77686->rtc_irq_data);
-> +err_del_irqc:
-> +       regmap_del_irq_chip(max77686->irq, max77686->irq_data);
-
-I would imagine you either don't need these regmap_del_irq_chip() here
-or that you _do_ need them in max77686_i2c_remove().
-
-...from looking at other drivers I think the answer is to add them to
-max77686_i2c_remove().
-
-
-> diff --git a/include/linux/mfd/max77686-private.h b/include/linux/mfd/max77686-private.h
-> index 8c75a9c..3a810b1 100644
-> --- a/include/linux/mfd/max77686-private.h
-> +++ b/include/linux/mfd/max77686-private.h
-> @@ -205,7 +205,7 @@ enum max77686_irq {
->         MAX77686_PMICIRQ_140C,
->         MAX77686_PMICIRQ_120C,
->
-> -       MAX77686_RTCIRQ_RTC60S,
-> +       MAX77686_RTCIRQ_RTC60S = 0,
->         MAX77686_RTCIRQ_RTCA1,
->         MAX77686_RTCIRQ_RTCA2,
->         MAX77686_RTCIRQ_SMPL,
-> @@ -215,6 +215,25 @@ enum max77686_irq {
->         MAX77686_IRQ_NR,
-
-Maybe remove MAX77686_IRQ_NR which no longer makes any sense now that
-you start over at 0 partway through.
-
-
-Overall this looks good to me, so once nits above are fixed feel to
-add my Reviewed-by.  I've also built and booted this patch on
-exynos5250-snow and tested that the RTC wakealarm fires and can even
-wake the system up (with some additional work that I'll email you
-about).
-
-Reviewed-by: Doug Anderson <dianders@chromium.org>
-Tested-by: Doug Anderson <dianders@chromium.org>
+PiBUaGUgTUFYNzc4MDIgUE1JQyBoYXMgMTAgaGlnaC1lZmZpY2llbmN5IEJ1Y2sgYW5kIDMyIExv
+dy1kcm9wb3V0Cj4gKExETykgcmVndWxhdG9ycy4gVGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQgZm9y
+IGFsbCB0aGVzZSByZWd1bGF0b3JzCj4gZm91bmQgb24gdGhlIE1BWDc3ODAyIFBNSUMgYW5kIGlz
+IGJhc2VkIG9uIGEgZHJpdmVyIGFkZGVkIGJ5IFNpbW9uCj4gR2xhc3MgdG8gdGhlIENocm9tZSBP
+UyBrZXJuZWwgMy44IHRyZWUuCj4gCj4gU2lnbmVkLW9mZi1ieTogSmF2aWVyIE1hcnRpbmV6IENh
+bmlsbGFzIDxqYXZpZXIubWFydGluZXpAY29sbGFib3JhLmNvLnVrPgo+IC0tLQo+IAo+IENoYW5n
+ZXMgc2luY2UgdjE6Cj4gIC0gUmVtb3ZlIHVubmVlZGVkIGNoZWNrIGlmIG51bV9yZWd1bGF0b3Jz
+ICE9IE1BWDc3ODAyX01BWF9SRUdVTEFUT1JTLgo+ICAtIEZpeCAuc2V0X3N1c3BlbmRfbW9kZSBo
+YW5kbGVyIGNvbW1lbnQgYW5kIHNwbGl0IHJlZ3VsYXRvcnMgb3BzIGZvcgo+ICAgIHJlZ3VsYXRv
+cnMgdGhhdCBiZWhhdmUgZGlmZmVyZW50bHkuIFN1Z2dlc3RlZCBieSBNYXJrIEJyb3duLgo+ICAt
+IFVzZSBtb2R1bGVfcGxhdGZvcm1fZHJpdmVyKCkgaW5zdGVhZCBvZiBoYXZpbmcgaW5pdC9leGl0
+IGZ1bmN0aW9ucy4KPiAgICBTdWdnZXN0ZWQgYnkgTWFyayBCcm93bi4KPiAgLSBVc2UgdGhlIG5l
+dyBkZXNjcmlwdG9yLWJhc2VkIEdQSU8gaW50ZXJmYWNlIGluc3RlYWQgb2YgdGhlIGRlcHJlY2F0
+ZWQKPiAgICBpbnRlZ2VyIGJhc2VkIEdQSU8gb25lLiBTdWdnZXN0ZWQgYnkgTWFyayBCcm93bi4K
+PiAgLSBMb29rIGZvciAicmVndWxhdG9ycyIgY2hpbGQgbm9kZSBpbnN0ZWFkIG9mICJ2b2x0YWdl
+LXJlZ3VsYXRvcnMiIHRvIGJlCj4gICAgY29uc2lzdGVudCB3aXRoIG90aGVyIFBNSUMgZHJpdmVy
+cy4gU3VnZ2VzdGVkIGJ5IE1hcmsgQnJvd24uCj4gCj4gIGRyaXZlcnMvbWZkL21heDc3ODAyLmMg
+ICAgICAgfCAgIDEgKwoKQ2FuIHlvdSByZW1vdmUgYWxsIG9mIHRoZSBNRkQgY2hhbmdlcyBmcm9t
+IHBhdGNoZXMgNywgOCBhbmQgOSBhbmQKY3JlYXRlIG5ldyBvbmUuICBUaGF0IHdheSB0aGVyZSdz
+IG5vIHJlcXVpcmVtZW50IGZvciBhbnkgY3Jvc3MKc3Vic3lzdGVtIG1lc3NpbmVzcy4KCj4gIGRy
+aXZlcnMvcmVndWxhdG9yL0tjb25maWcgICAgfCAgIDkgKwo+ICBkcml2ZXJzL3JlZ3VsYXRvci9N
+YWtlZmlsZSAgIHwgICAxICsKPiAgZHJpdmVycy9yZWd1bGF0b3IvbWF4Nzc4MDIuYyB8IDcwMSAr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4gIDQgZmlsZXMgY2hh
+bmdlZCwgNzEyIGluc2VydGlvbnMoKykKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvcmVn
+dWxhdG9yL21heDc3ODAyLmMKCi0tIApMZWUgSm9uZXMKTGluYXJvIFNUTWljcm9lbGVjdHJvbmlj
+cyBMYW5kaW5nIFRlYW0gTGVhZApMaW5hcm8ub3JnIOKUgiBPcGVuIHNvdXJjZSBzb2Z0d2FyZSBm
+b3IgQVJNIFNvQ3MKRm9sbG93IExpbmFybzogRmFjZWJvb2sgfCBUd2l0dGVyIHwgQmxvZwoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtl
+cm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0
+dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5l
+bAo=
