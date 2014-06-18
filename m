@@ -1,59 +1,52 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [patch] drm/exynos: change zero to NULL for sparse
-Date: Wed, 18 Jun 2014 14:06:59 +0900
-Message-ID: <53A11E73.3070208@samsung.com>
-References: <20140611063623.GA16247@mwanda>
+From: Simon Glass <sjg@chromium.org>
+Subject: Re: [PATCH 10/10] mfd: cros_ec: ec_dev->cmd_xfer() returns number of
+ bytes received from EC
+Date: Tue, 17 Jun 2014 22:07:13 -0700
+Message-ID: <CAPnjgZ1jEDH54Wi06Arc7J1yx6DCk5tG-OEqy1QKrCt7Au3t2A@mail.gmail.com>
+References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
+	<1402954800-28215-11-git-send-email-dianders@chromium.org>
+	<CAPnjgZ1+y6QYpdio9inzLTi9g4Ew7vkco_MU3GO1_gpndp3dxA@mail.gmail.com>
+	<CAD=FV=W0L_D2GkeRb0+JLZAMk=2m2V3hOS4fFbXDtQHNoYxZvA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-In-reply-to: <20140611063623.GA16247@mwanda>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=W0L_D2GkeRb0+JLZAMk=2m2V3hOS4fFbXDtQHNoYxZvA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Vincent Palatin <vpalatin@chromium.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, lk <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2014=EB=85=84 06=EC=9B=94 11=EC=9D=BC 15:36, Dan Carpenter wrote:
-> We recently changed this function to return a pointer instead of an i=
-nt
-> so we need to change this zero to a NULL or Sparse complains:
->=20
-> 	drivers/gpu/drm/exynos/exynos_drm_drv.h:346:47:
-> 	warning: Using plain integer as NULL pointer
+Hi Doug,
 
-Applied.
+On 17 June 2014 21:54, Doug Anderson <dianders@chromium.org> wrote:
+> Simon,
+>
+> On Tue, Jun 17, 2014 at 8:46 PM, Simon Glass <sjg@chromium.org> wrote:
+>> Hi,
+>>
+>> On 16 June 2014 14:40, Doug Anderson <dianders@chromium.org> wrote:
+>>> From: Bill Richardson <wfrichar@chromium.org>
+>>>
+>>> When communicating with the EC, the cmd_xfer() function should return the
+>>> number of bytes it received from the EC, or negative on error.
+>>
+>> This is just for the I2C tunnel feature, right? If so, I think this
+>> should be mentioned here. It seems to be affecting ec_i2c_xfer(), not
+>> cmd_xfer().
+>
+> No, the tunnel feature is implemented just fine without this (and is
+> already landed and working).  It looks like the (not yet upstreamed)
+> ec_i2c_limited_xfer for spring returns this new value directly but I'm
+> not convinced that's technicall correct.
+>
+> Bill can correct me if I'm wrong, but I think this is primarily
+> interesting once we add in cros_ec_dev (the userspace API) which needs
+> this info.  Until that happens this patch doesn't hurt and just
+> returns some extra info.
 
-Thanks,
-Inki Dae
+Agreed.
 
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->=20
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/dr=
-m/exynos/exynos_drm_drv.h
-> index 36535f3..06cde45 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-> @@ -343,7 +343,7 @@ struct exynos_drm_display * exynos_dpi_probe(stru=
-ct device *dev);
->  int exynos_dpi_remove(struct device *dev);
->  #else
->  static inline struct exynos_drm_display *
-> -exynos_dpi_probe(struct device *dev) { return 0; }
-> +exynos_dpi_probe(struct device *dev) { return NULL; }
->  static inline int exynos_dpi_remove(struct device *dev) { return 0; =
-}
->  #endif
-> =20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
+Reviewed-by: Simon Glass <sjg@chromium.org>
 
---
-To unsubscribe from this list: send the line "unsubscribe kernel-janito=
-rs" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards,
+Simon
