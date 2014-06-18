@@ -1,61 +1,76 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 06/10] mfd: Add driver for Maxim 77802 Power
- Management IC
-Date: Wed, 18 Jun 2014 09:32:04 +0100
-Message-ID: <20140618083204.GP21030@lee--X1>
-References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk>
- <1402941758-11216-7-git-send-email-javier.martinez@collabora.co.uk>
- <20140616192720.GK5099@sirena.org.uk>
- <53A01F09.5070106@collabora.co.uk>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCHv4 3/4] iio: devicetree: Add DT binding documentation for
+ Exynos3250 ADC
+Date: Wed, 18 Jun 2014 10:35:25 +0200
+Message-ID: <53A14F4D.7080204@gmail.com>
+References: <1403058061-24271-1-git-send-email-cw00.choi@samsung.com> <1403058061-24271-4-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <53A01F09.5070106@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1403058061-24271-4-git-send-email-cw00.choi@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org, ch.naveen@samsung.com, t.figa@samsung.com, kgene.kim@samsung.com
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sachin.kamat@linaro.org, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-> >> +config MFD_MAX77802
-> >> +	tristate "Maxim Integrated MAX77802 PMIC Support"
-> >> +	depends on I2C=3Dy
-> >> +	select MFD_CORE
-> >> +	select REGMAP_I2C
-> >> +	select REGMAP_IRQ
-> >> +	select IRQ_DOMAIN
-> >> +	help
-> >> +	  Say yes here to support for Maxim Integrated MAX77802.
-> >> +	  This is a Power Management IC with RTC on chip.
-> >> +	  This driver provides common support for accessing the device;
-> >> +	  additional drivers must be enabled in order to use the functio=
-nality
-> >> +	  of the device.
-> >> +
-> >=20
-> > It is a bit unorthodox to put the build infrastructure in the same =
-patch
-> > as the DT binding...
-> >=20
->=20
-> I thought it was the opposite. That a DT binding document has to be a=
-dded along
-> with the first user of the binding but I'll separate the DT doc in an=
-other patch
-> then if that is the right thing to do.
+Hi Chanwoo,
 
-This was the 'old' method, but changed a little over a year ago.
+On 18.06.2014 04:21, Chanwoo Choi wrote:
+> This patch add DT binding documentation for Exynos3250 ADC IP. Exynos3250 has
+> special clock ('sclk_tsadc') for ADC which provide clock to internal ADC.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  .../devicetree/bindings/arm/samsung/exynos-adc.txt   | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> index 5d49f2b..3a5af82 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> @@ -14,6 +14,8 @@ Required properties:
+>  				for exynos4412/5250 controllers.
+>  			Must be "samsung,exynos-adc-v2" for
+>  				future controllers.
+> +			Must be "samsung,exynos3250-adc-v2" for
+> +				for exynos3250 controllers.
 
-> Thanks a lot for all your suggestions, I'll wait a little to see if t=
-here is
-> more feedback and repost a v3 addressing all the issues you pointed o=
-ut.
+You might change the last line for:
 
-Just re-post it.  I'll review the next version.
+for controllers compatible with ADC of Exynos3250.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+This is to make it also account for possible future SoCs which need
+exactly the same handling.
+
+
+>  - reg:			Contains ADC register address range (base address and
+>  			length) and the address of the phy enable register.
+>  - interrupts: 		Contains the interrupt information for the timer. The
+> @@ -21,7 +23,11 @@ Required properties:
+>  			the Samsung device uses.
+>  - #io-channel-cells = <1>; As ADC has multiple outputs
+>  - clocks		From common clock binding: handle to adc clock.
+> +			From common clock binding: handle to sclk_tsadc clock
+> +			if using Exynos3250.
+
+This is not clear. It might sound like the "sclk_tsadc" clock is used on
+Exynos3250 and "adc" on remaining SoCs. I'd write this simply as:
+
+>From common clock bindings: handles to clocks specified in "clock-names"
+property, in the same order.
+
+>  - clock-names		From common clock binding: Shall be "adc".
+> +			From common clock binding: Shall be "sclk_tsadc"
+> +			if using Exynos3250.
+
+This is also not clear. I'd recommend something like:
+
+>From common clock bindings: list of clock input names used by ADC block:
+    - "adc" : ADC bus clock,
+    - "sclk_tsadc" : ADC special clock (only for Exynos3250 and
+compatible ADC blocks).
+
+Best regards,
+Tomasz
