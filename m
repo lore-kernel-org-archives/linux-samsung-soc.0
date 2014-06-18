@@ -1,92 +1,58 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv4 3/4] iio: devicetree: Add DT binding documentation for
- Exynos3250 ADC
-Date: Wed, 18 Jun 2014 17:54:30 +0900
-Message-ID: <53A153C6.1030703@samsung.com>
-References: <1403058061-24271-1-git-send-email-cw00.choi@samsung.com>
- <1403058061-24271-4-git-send-email-cw00.choi@samsung.com>
- <53A14F4D.7080204@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] mfd: cros_ec_spi: set wakeup capability
+Date: Wed, 18 Jun 2014 10:20:12 +0100
+Message-ID: <20140618092012.GF23945@lee--X1>
+References: <1402953143-24681-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <53A14F4D.7080204@gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: jic23@kernel.org, ch.naveen@samsung.com, t.figa@samsung.com, kgene.kim@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sachin.kamat@linaro.org, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1402953143-24681-1-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: broonie@kernel.org, Andrew Bresticker <abrestic@chromium.org>, swarren@wwwdotorg.org, olof@lixom.net, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc@vger.kernel.org, Prathyush K <prathyush.k@samsung.com>, sameo@linux.intel.com, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Tomasz,
+> From: Prathyush K <prathyush.k@samsung.com>
+>=20
+> Set the device as wakeup capable and register the wakeup source.
+>=20
+> Note: Though it makes more sense to have the SPI framework do this,
+> (either via device tree or by board_info)
+> this change is as per an existing mail chain:
+> https://lkml.org/lkml/2009/8/27/291
+>=20
+> Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+> Note that I don't have suspend/resume actually working upstream, but =
+I
+> see that /sys/bus/spi/drivers/cros-ec-spi/spi2.0/power/wakeup exists
+> with this patch and doesn't exist without it.
 
-On 06/18/2014 05:35 PM, Tomasz Figa wrote:
-> Hi Chanwoo,
-> 
-> On 18.06.2014 04:21, Chanwoo Choi wrote:
->> This patch add DT binding documentation for Exynos3250 ADC IP. Exynos3250 has
->> special clock ('sclk_tsadc') for ADC which provide clock to internal ADC.
->>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>  .../devicetree/bindings/arm/samsung/exynos-adc.txt   | 20 ++++++++++++++++++++
->>  1 file changed, 20 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
->> index 5d49f2b..3a5af82 100644
->> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
->> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
->> @@ -14,6 +14,8 @@ Required properties:
->>  				for exynos4412/5250 controllers.
->>  			Must be "samsung,exynos-adc-v2" for
->>  				future controllers.
->> +			Must be "samsung,exynos3250-adc-v2" for
->> +				for exynos3250 controllers.
-> 
-> You might change the last line for:
-> 
-> for controllers compatible with ADC of Exynos3250.
-> 
-> This is to make it also account for possible future SoCs which need
-> exactly the same handling.
+Very well.  Applied, thanks.
 
-OK, I'll modify it as folloiwng according to your comment:
+>  drivers/mfd/cros_ec_spi.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+> index 0b8d328..ef22dd5 100644
+> --- a/drivers/mfd/cros_ec_spi.c
+> +++ b/drivers/mfd/cros_ec_spi.c
+> @@ -385,6 +385,8 @@ static int cros_ec_spi_probe(struct spi_device *s=
+pi)
+>  		return err;
+>  	}
+> =20
+> +	device_init_wakeup(&spi->dev, true);
+> +
+>  	return 0;
+>  }
+> =20
 
->> +			Must be "samsung,exynos3250-adc-v2" for
->> +				for controllers compatible with ADC of Exynos3250.
-
-> 
-> 
->>  - reg:			Contains ADC register address range (base address and
->>  			length) and the address of the phy enable register.
->>  - interrupts: 		Contains the interrupt information for the timer. The
->> @@ -21,7 +23,11 @@ Required properties:
->>  			the Samsung device uses.
->>  - #io-channel-cells = <1>; As ADC has multiple outputs
->>  - clocks		From common clock binding: handle to adc clock.
->> +			From common clock binding: handle to sclk_tsadc clock
->> +			if using Exynos3250.
-> 
-> This is not clear. It might sound like the "sclk_tsadc" clock is used on
-> Exynos3250 and "adc" on remaining SoCs. I'd write this simply as:
-> 
->>From common clock bindings: handles to clocks specified in "clock-names"
-> property, in the same order.
-
-I'll modify it.
-
-> 
->>  - clock-names		From common clock binding: Shall be "adc".
->> +			From common clock binding: Shall be "sclk_tsadc"
->> +			if using Exynos3250.
-> 
-> This is also not clear. I'd recommend something like:
-> 
->>From common clock bindings: list of clock input names used by ADC block:
->     - "adc" : ADC bus clock,
->     - "sclk_tsadc" : ADC special clock (only for Exynos3250 and
-> compatible ADC blocks).
-
-I'll modify it.
-
-Best Regards,
-Chanwoo Choi
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
