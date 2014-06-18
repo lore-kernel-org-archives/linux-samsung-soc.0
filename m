@@ -1,84 +1,39 @@
-From: Sachin Kamat <spk.linux@gmail.com>
-Subject: MMC error on Exynos4210 board
-Date: Wed, 18 Jun 2014 17:03:38 +0530
-Message-ID: <CAK5sBcEB5GnjiR37DXDAeKYBWKw_4NTDM=pKCVK=0oKFDBjSbw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: tim.kryger@gmail.com
-Cc: markus.mayer@linaro.org, mporter@linaro.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH 0/5] drm/exynos: fix for misc issues related to exynos mixer
+Date: Wed, 18 Jun 2014 17:04:48 +0530
+Message-ID: <1403091293-15058-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:49042 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933986AbaFRLgr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Jun 2014 07:36:47 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N7D0051W498QJ60@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Jun 2014 20:36:44 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Hi Tim,
+Fixes for various issues which are to Power On/Off sequence,
+Layer update, waiting for vblank in exynos mixer driver.
 
-I see the below error on Exynos4210 based Origen board with linux-next
-(20140618).
-Reverting the below commit works fine.
+This series is based on exynos-drm-fixes branch in Inki dae's tree.
 
-Commit: 8d02e775a6 "mmc: sdhci: Use mmc core regulator infrastucture"
+Rahul Sharma (5):
+  drm/exynos: set power state variable after enabling clocks and power
+  drm/exynos: stop mixer before gating clocks during poweroff
+  drm/exynos: allow mulitple layer updates per vsync for mixer
+  drm/exynos: soft reset mixer before reconfigure after power-on
+  drm/exynos: enable vsync interrupt while waiting for vblank
 
-Any ideas?
+ drivers/gpu/drm/exynos/exynos_mixer.c |   50 +++++++++++++++++++++++----------
+ drivers/gpu/drm/exynos/regs-mixer.h   |    1 +
+ 2 files changed, 36 insertions(+), 15 deletions(-)
 
-***************
-
--- [    2.068992] sdhci: Secure Digital Host Controller Interface driver
-[    2.075059] sdhci: Copyright(c) Pierre Ossman
-[    2.079762] of_get_named_gpiod_flags: can't parse gpios property of
-node '/sdhci@12510000[0]'
-[    2.088021] s3c-sdhci 12510000.sdhci: clock source 2: mmc_busclk.2
-(50000000 Hz)
-[    2.095322] of_get_named_gpiod_flags: can't parse gpios property of
-node '/sdhci@12510000[0]'
-[    2.103794] of_get_named_gpiod_flags: can't parse gpios property of
-node '/sdhci@12510000[0]'
-[    2.112478] s3c-sdhci 12510000.sdhci: No vqmmc regulator found
-[    2.118117] mmc0: Hardware doesn't report any support voltages.
-[    2.124004] s3c-sdhci 12510000.sdhci: sdhci_add_host() failed
-[    2.130080] of_get_named_gpiod_flags: can't parse gpios property of
-node '/sdhci@12530000[0]'
-[    2.138352] s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2
-(16666667 Hz)
-[    2.145661] of_get_named_gpiod_flags: can't parse gpios property of
-node '/sdhci@12530000[0]'
-[    2.154139] of_get_named_gpiod_flags: can't parse gpios property of
-node '/sdhci@12530000[0]'
-[    2.162834] s3c-sdhci 12530000.sdhci: No vqmmc regulator found
-[    2.168464] mmc0: Hardware doesn't report any support voltages.
-[    2.174349] s3c-sdhci 12530000.sdhci: sdhci_add_host() failed
-[    2.180281] Synopsys Designware Multimedia Card Interface Driver
-[    2.188131] usbcore: registered new interface driver usbhid
-[    2.192287] usbhid: USB HID core driver
-[    2.196329] TCP: cubic registered
-[    2.199362] NET: Registered protocol family 17
-[    2.203917] NET: Registered protocol family 15
-[    2.208404] Registering SWP/SWPB emulation handler
-[    2.214357] of_get_named_gpiod_flags exited with status 0
-[    2.218430] of_get_named_gpiod_flags exited with status 0
-[    2.223803] of_get_named_gpiod_flags exited with status 0
-[    2.229170] of_get_named_gpiod_flags exited with status 0
-[    2.234560] of_get_named_gpiod_flags exited with status 0
-[    2.239953] gpio-229: gpiod_set_debounce: missing set() or
-set_debounce() operations
-[    2.247773] gpio-230: gpiod_set_debounce: missing set() or
-set_debounce() operations
-[    2.255473] gpio-228: gpiod_set_debounce: missing set() or
-set_debounce() operations
-[    2.263221] gpio-227: gpiod_set_debounce: missing set() or
-set_debounce() operations
-[    2.270918] gpio-226: gpiod_set_debounce: missing set() or
-set_debounce() operations
-[    2.278899] input: gpio_keys as /devices/gpio_keys/input/input0
-[    2.285196] s3c-rtc 10070000.rtc: setting system clock to
-2000-01-01 00:00:00 UTC (946684800)
-[    2.295072] VDD_G3D_1.1V: disabling
-[    2.304744] VADC_3.3V: disabling
-[    2.312095] VDD_AUD_1.8V: disabling
-[    2.319714] VMIPI_1.1V: disabling
-[    2.327193] VDD_ABB_3.3V: disabling
-[    2.332779] VMEM_VDD_2.8V: disabling
-[    2.336148] Waiting for root device /dev/mmcblk0p1...
-
-*************
-Regards,
-Sachin.
+-- 
+1.7.9.5
