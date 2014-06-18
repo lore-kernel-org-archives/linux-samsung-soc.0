@@ -1,50 +1,99 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv4 4/4] ARM: dts: Fix wrong compatible string for Exynos3250
- ADC
-Date: Wed, 18 Jun 2014 10:37:00 +0200
-Message-ID: <53A14FAC.3050700@gmail.com>
-References: <1403058061-24271-1-git-send-email-cw00.choi@samsung.com> <1403058061-24271-5-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403058061-24271-5-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv2 1/3] clk: samsung: cpu: Add support for cpu clocks of
+ Exynos3250
+Date: Wed, 18 Jun 2014 17:40:00 +0900
+Message-ID: <1403080802-2794-2-git-send-email-cw00.choi@samsung.com>
+References: <1403080802-2794-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:57723 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756381AbaFRIkH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Jun 2014 04:40:07 -0400
+In-reply-to: <1403080802-2794-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: t.figa@samsung.com, kgene.kim@samsung.com, thomas.ab@samsung.com, viresh.kumar@linaro.org, mturquette@linaro.org, shawn.guo@linaro.org
+Cc: kyungmin.park@samsung.com, cw00.choi@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Chanwoo,
+This patch add support for a new clock type for Exynos3250 CPU clock provider
+and modify little difference of DIV_CPU0 between Exynos4 and Exynos3250.
 
-On 18.06.2014 04:21, Chanwoo Choi wrote:
-> This patchset fix wrong compatible string for Exynos3250 ADC. Exynos3250 SoC
-> need to control only special clock for ADC. Exynos SoC except for Exynos3250
-> has not included special clock for ADC. The exynos ADC driver can control
-> special clock if compatible string is 'exynos3250-adc-v2'.
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm/boot/dts/exynos3250.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> index 6c1fb67..107dc44 100644
-> --- a/arch/arm/boot/dts/exynos3250.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> @@ -414,10 +414,10 @@
->  		};
->  
->  		adc: adc@126C0000 {
-> -			compatible = "samsung,exynos-adc-v3";
-> +			compatible = "samsung,exynos3250-adc-v2";
->  			reg = <0x126C0000 0x100>, <0x10020718 0x4>;
->  			interrupts = <0 137 0>;
-> -			clock-names = "adc", "sclk_tsadc";
-> +			clock-names = "adc", "sclk_adc";
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/clk/samsung/clk-cpu.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-So, is it "sclk_adc" or "sclk_tsadc"? The code uses the former, while
-the documentation mentions the latter. Please fix this.
-
-Best regards,
-Tomasz
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index c40f7b5..0d5a4d6 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -31,6 +31,10 @@
+ #define E4210_DIV0_ATB_SHIFT	16
+ #define E4210_DIV0_ATB_MASK	(DIV_MASK << E4210_DIV0_ATB_SHIFT)
+ 
++#define E3250_CPU_DIV0(apll, pclk_dbg, atb, corem)			\
++		(((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |	\
++		((corem) <<  4))
++
+ #define E4210_CPU_DIV0(apll, pclk_dbg, atb, periph, corem1, corem0)	\
+ 		(((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |	\
+ 		((periph) << 12) | ((corem1) << 8) | ((corem0) <<  4))
+@@ -50,6 +54,7 @@
+ 		(((kpll << 24) | (pclk << 20) | (aclk << 4)))
+ 
+ enum cpuclk_type {
++	EXYNOS3250,
+ 	EXYNOS4210,
+ 	EXYNOS5250,
+ 	EXYNOS5420,
+@@ -426,6 +431,20 @@ static int exynos4210_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+ 	return 0;
+ }
+ 
++static const struct exynos4210_cpuclk_data e3250_armclk_d[] __initconst = {
++	{ 1000000, E3250_CPU_DIV0(1, 7, 4, 1), E4210_CPU_DIV1(7, 7), },
++	{  900000, E3250_CPU_DIV0(1, 7, 3, 1), E4210_CPU_DIV1(7, 7), },
++	{  800000, E3250_CPU_DIV0(1, 7, 3, 1), E4210_CPU_DIV1(7, 7), },
++	{  700000, E3250_CPU_DIV0(1, 7, 3, 1), E4210_CPU_DIV1(7, 7), },
++	{  600000, E3250_CPU_DIV0(1, 7, 3, 1), E4210_CPU_DIV1(7, 7), },
++	{  500000, E3250_CPU_DIV0(1, 7, 3, 1), E4210_CPU_DIV1(7, 7), },
++	{  400000, E3250_CPU_DIV0(1, 7, 3, 1), E4210_CPU_DIV1(7, 7), },
++	{  300000, E3250_CPU_DIV0(1, 5, 3, 1), E4210_CPU_DIV1(7, 7), },
++	{  200000, E3250_CPU_DIV0(1, 3, 3, 1), E4210_CPU_DIV1(7, 7), },
++	{  100000, E3250_CPU_DIV0(1, 1, 1, 1), E4210_CPU_DIV1(7, 7), },
++	{  0 },
++};
++
+ static const struct exynos4210_cpuclk_data e4210_armclk_d[] __initconst = {
+ 	{ 1200000, E4210_CPU_DIV0(7, 1, 4, 3, 7, 3), E4210_CPU_DIV1(0, 5), },
+ 	{ 1000000, E4210_CPU_DIV0(7, 1, 4, 3, 7, 3), E4210_CPU_DIV1(0, 4), },
+@@ -493,6 +512,16 @@ static const struct exynos4210_cpuclk_data e5420_kfcclk_d[] __initconst = {
+ 	{  0 },
+ };
+ 
++static const struct exynos_cpuclk_soc_data e3250_clk_soc_data __initconst = {
++	.ops = &exynos_cpuclk_clk_ops,
++	.offset = 0x14200,
++	.data = e3250_armclk_d,
++	.data_size = sizeof(e3250_armclk_d),
++	.type = EXYNOS3250,
++	.pre_rate_cb = exynos4210_cpuclk_pre_rate_change,
++	.post_rate_cb = exynos4210_cpuclk_post_rate_change,
++};
++
+ static const struct exynos_cpuclk_soc_data e4210_clk_soc_data __initconst = {
+ 	.ops = &exynos_cpuclk_clk_ops,
+ 	.offset = 0x14200,
+@@ -536,6 +565,8 @@ static const struct exynos_cpuclk_soc_data e5420_clk_soc_data[] __initconst = {
+ };
+ 
+ static const struct of_device_id exynos_cpuclk_ids[] __initconst = {
++	{ .compatible = "samsung,exynos3250-cmu",
++			.data = &e3250_clk_soc_data, },
+ 	{ .compatible = "samsung,exynos4210-clock",
+ 			.data = &e4210_clk_soc_data, },
+ 	{ .compatible = "samsung,exynos5250-clock",
+-- 
+1.8.0
