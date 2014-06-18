@@ -1,124 +1,69 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 01/10] mfd: max77686: Convert to use regmap_irq
-Date: Wed, 18 Jun 2014 11:21:56 +0200
-Message-ID: <53A15A34.10805@collabora.co.uk>
-References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk>	<1402941758-11216-2-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=VUPwr6GbR7O-t0q-GaCttZ5vGzLeFqHckzkk-dZYfCFw@mail.gmail.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 18 Jun 2014 10:29:06 +0100
+Message-ID: <20140618092906.GA32699@arm.com>
+References: <20140604164132.GF6644@arm.com>
+ <07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
+ <20140616152739.GS16758@arm.com>
+ <8b0492b4697943a0b1f276ef42cc8223@DM2PR03MB352.namprd03.prod.outlook.com>
+ <20140616170416.GA16758@arm.com>
+ <419e67f783524d208ab3be16bcd94bd9@DM2PR03MB352.namprd03.prod.outlook.com>
+ <0587e1f4894546398be0798d2bc2c84f@BL2PR03MB468.namprd03.prod.outlook.com>
+ <20140617104304.GD13808@arm.com>
+ <32165315f0b84be9948f489fd87bf6a9@BL2PR03MB468.namprd03.prod.outlook.com>
+ <7c03c5cffa174b20962bff3b09de0eb8@DM2PR03MB352.namprd03.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:55764 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964781AbaFRJWG (ORCPT
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:45908 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S965099AbaFRJ3M (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 05:22:06 -0400
-In-Reply-To: <CAD=FV=VUPwr6GbR7O-t0q-GaCttZ5vGzLeFqHckzkk-dZYfCFw@mail.gmail.com>
+	Wed, 18 Jun 2014 05:29:12 -0400
+Content-Disposition: inline
+In-Reply-To: <7c03c5cffa174b20962bff3b09de0eb8@DM2PR03MB352.namprd03.prod.outlook.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stuart Yoder <stuart.yoder@freescale.com>
+Cc: Varun Sethi <Varun.Sethi@freescale.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hello Doug,
-
-On 06/17/2014 10:57 PM, Doug Anderson wrote:
-> Javier,
+On Tue, Jun 17, 2014 at 03:50:25PM +0100, Stuart Yoder wrote:
+> > > I think for simple masters (i.e. those that have all their StreamIDs
+> > > under control of one driver), then setting something during attach (or
+> > > add?) based on the DT could work pretty well. The other case is when we
+> > > have masters behind a bridge (such as a PCI RC). In this case, it might
+> > > actually be better to ask the bridge for the IDs and let it sort out
+> > the
+> > > allocation itself. That would also move the RequesterID -> StreamID
+> > > mapping out of the SMMU code.
+> > >
+> > > What do you think?
+> > The PCI bus iommu group creation code would be part of the SMMU driver
+> > (it is handled by other IOMMU drivers as well). My understanding is that
+> > there would be one is to one correspondence between the requestor ID and
+> > the iommu group. May be, we can have an API provided by the PCI bridge
+> > (architecture specific) for setting the stream ID.
 > 
-> On Mon, Jun 16, 2014 at 11:02 AM, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
->> @@ -127,15 +175,48 @@ static int max77686_i2c_probe(struct i2c_client *i2c,
->>         }
->>         i2c_set_clientdata(max77686->rtc, max77686);
->>
->> -       max77686_irq_init(max77686);
->> +       max77686->rtc_regmap = devm_regmap_init_i2c(max77686->rtc,
->> +                                                   &max77686_rtc_regmap_config);
->> +       if (IS_ERR(max77686->rtc_regmap)) {
->> +               ret = PTR_ERR(max77686->rtc_regmap);
->> +               dev_err(max77686->dev, "failed to allocate RTC regmap: %d\n",
->> +                       ret);
->> +               goto err_unregister_i2c;
->> +       }
->> +
->> +       ret = regmap_add_irq_chip(max77686->regmap, max77686->irq,
->> +                                 IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
->> +                                 IRQF_SHARED, 0, &max77686_irq_chip,
->> +                                 &max77686->irq_data);
->> +       if (ret != 0) {
->> +               dev_err(&i2c->dev, "failed to add PMIC irq chip: %d\n", ret);
->> +               goto err_unregister_i2c;
->> +       }
->> +       ret = regmap_add_irq_chip(max77686->rtc_regmap, max77686->irq,
->> +                                 IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
->> +                                 IRQF_SHARED, 0, &max77686_rtc_irq_chip,
->> +                                 &max77686->rtc_irq_data);
->> +       if (ret != 0) {
->> +               dev_err(&i2c->dev, "failed to add RTC irq chip: %d\n", ret);
->> +               goto err_del_irqc;
->> +       }
->>
->>         ret = mfd_add_devices(max77686->dev, -1, max77686_devs,
->>                               ARRAY_SIZE(max77686_devs), NULL, 0, NULL);
->>         if (ret < 0) {
->> -               mfd_remove_devices(max77686->dev);
->> -               i2c_unregister_device(max77686->rtc);
->> +               dev_err(&i2c->dev, "failed to add MFD devices: %d\n", ret);
->> +               goto err_del_rtc_irqc;
->>         }
->>
->> +       return 0;
->> +
->> +err_del_rtc_irqc:
->> +       regmap_del_irq_chip(max77686->irq, max77686->rtc_irq_data);
->> +err_del_irqc:
->> +       regmap_del_irq_chip(max77686->irq, max77686->irq_data);
+> I think Will is suggesting something along those lines-- I think it's a
+> question of where the streamID allocation happens.  You could
+> either do something like the following in the SMMU driver when attaching
+> a PCI device:
 > 
-> I would imagine you either don't need these regmap_del_irq_chip() here
-> or that you _do_ need them in max77686_i2c_remove().
+>     id = alloc_stream_id(...);
+>     pci_set_streamid(pci-dev, id);
 > 
-> ...from looking at other drivers I think the answer is to add them to
-> max77686_i2c_remove().
+>     or
 > 
->
-
-Yes, I forgot to do the regmap irqchip cleanup in the driver .remove function.
-The same issue is in the max77802 driver btw so I'll fix both on v3.
-
-Thanks a lot for pointing this out.
-
->> diff --git a/include/linux/mfd/max77686-private.h b/include/linux/mfd/max77686-private.h
->> index 8c75a9c..3a810b1 100644
->> --- a/include/linux/mfd/max77686-private.h
->> +++ b/include/linux/mfd/max77686-private.h
->> @@ -205,7 +205,7 @@ enum max77686_irq {
->>         MAX77686_PMICIRQ_140C,
->>         MAX77686_PMICIRQ_120C,
->>
->> -       MAX77686_RTCIRQ_RTC60S,
->> +       MAX77686_RTCIRQ_RTC60S = 0,
->>         MAX77686_RTCIRQ_RTCA1,
->>         MAX77686_RTCIRQ_RTCA2,
->>         MAX77686_RTCIRQ_SMPL,
->> @@ -215,6 +215,25 @@ enum max77686_irq {
->>         MAX77686_IRQ_NR,
+>     id = pci_get_streamid(pci-dev);
 > 
-> Maybe remove MAX77686_IRQ_NR which no longer makes any sense now that
-> you start over at 0 partway through.
+> ...i.e the PCI RC could allocate (from some TBD
+> allocator) and set the stream ID itself.
 > 
-> 
+> Not sure how big a deal it is to extend PCI RC interfaces for 
+> something like that.
 
-Right, it is not needed anymore. I'll remove it when re-spin.
+I think both interfaces have their place; the latter for hotpluggable buses
+and the former for static allocation (i.e. set once). The only way to see
+how well it works is to try implementing it, I guess.
 
-> Overall this looks good to me, so once nits above are fixed feel to
-> add my Reviewed-by.  I've also built and booted this patch on
-> exynos5250-snow and tested that the RTC wakealarm fires and can even
-> wake the system up (with some additional work that I'll email you
-> about).
->
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> Tested-by: Doug Anderson <dianders@chromium.org>
-> 
-
-Great! thanks a lot for testing.
-
-Best regards,
-Javier
+Will
