@@ -1,47 +1,59 @@
-From: Sachin Kamat <sachin.kamat@samsung.com>
-Subject: Re: MMC regression with linux-next on Exynos5250
-Date: Wed, 18 Jun 2014 16:52:36 +0530
-Message-ID: <CAK5sBcFKwCTU+Z-t=BXzd69fY6b9Sr0SkxgXrs9Y8DCP6EonWQ@mail.gmail.com>
-References: <CAK5sBcEVEWwyHLj_y1=eTqWNELuahMUwrtyX2W_YzLe70Dsa4A@mail.gmail.com>
-	<53A167DB.2000701@samsung.com>
-	<CAK5sBcHwteYZBf4S=m8WvL68_qkPqO=BVC6yWMfK3x17a9p5-A@mail.gmail.com>
-	<CAPDyKFp2c8mtCZHHDTgpAHt6t0bh-7O8ugbMxN30L2hfh6-kXA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH] clocksource: exynos-mct: Register the timer for stable udelay
+Date: Wed, 18 Jun 2014 17:01:00 +0530
+Message-ID: <1403091060-5054-1-git-send-email-amit.daniel@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f44.google.com ([209.85.215.44]:48905 "EHLO
-	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965421AbaFRLWi (ORCPT
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:44590 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933182AbaFRLbO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 07:22:38 -0400
-In-Reply-To: <CAPDyKFp2c8mtCZHHDTgpAHt6t0bh-7O8ugbMxN30L2hfh6-kXA@mail.gmail.com>
+	Wed, 18 Jun 2014 07:31:14 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, David Riley <davidriley@chromium.org>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>
 
-Hi Ulf,
+This patch register the exynos mct clocksource as the current timer
+as it has constant clock rate. This will generate correct udelay for the
+exynos platform and avoid using unnecessary calibrated jiffies. This change
+have been tested on exynos5420 based board.
 
-On Wed, Jun 18, 2014 at 4:43 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 18 June 2014 13:10, Sachin Kamat <sachin.kamat@samsung.com> wrote:
->> Hi Jaehoon,
->>
->> On Wed, Jun 18, 2014 at 3:50 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->>> Hi, Sachin.
->>>
->>> Did you check the below patch?
->>> https://patchwork.kernel.org/patch/4346781/
->>
->> Thanks for the patch. But even with this patch, I continue to get the
->> aforementioned crash.
->
-> Hi Sachin / Jaehoon,
->
-> Until we sorted out the problem, I will drop the related patch from my mmc tree.
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+---
 
-OK.
-Also, I feel the mmc patch and the corresponding DT changes should go through
-single tree to avoid dependency issues.
+Patches from David Riley confirmed that udelay is broken in exynos5420.
+Link to those patches are,
+1) https://patchwork.kernel.org/patch/4344911/
+2) https://patchwork.kernel.org/patch/4344881/
 
-Regards,
-Sachin.
+ drivers/clocksource/exynos_mct.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 8d64200..57cb3dc 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -198,10 +198,21 @@ static u64 notrace exynos4_read_sched_clock(void)
+ 	return exynos4_frc_read(&mct_frc);
+ }
+ 
++static struct delay_timer exynos4_delay_timer;
++
++static unsigned long exynos4_read_current_timer(void)
++{
++	return exynos4_frc_read(&mct_frc);
++}
++
+ static void __init exynos4_clocksource_init(void)
+ {
+ 	exynos4_mct_frc_start(0, 0);
+ 
++	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
++	exynos4_delay_timer.freq = clk_rate;
++	register_current_timer_delay(&exynos4_delay_timer);
++
+ 	if (clocksource_register_hz(&mct_frc, clk_rate))
+ 		panic("%s: can't register clocksource\n", mct_frc.name);
+ 
+-- 
+1.9.1
