@@ -1,20 +1,20 @@
 From: Simon Glass <sjg@chromium.org>
-Subject: Re: [PATCH 02/10] mfd: cros_ec: IRQs for cros_ec should be optional
-Date: Tue, 17 Jun 2014 20:29:17 -0700
-Message-ID: <CAPnjgZ3QjefCXHB38hwMf_+iduZq4MPQV9nbZ=WjAFe1RnSdtQ@mail.gmail.com>
+Subject: Re: [PATCH 03/10] mfd: cros_ec: Allow static din/dout buffers with cros_ec_register()
+Date: Tue, 17 Jun 2014 20:29:53 -0700
+Message-ID: <CAPnjgZ3octrMMenuiXYZGTCxRevpLrjUSXOujyVrN1h529PHUA@mail.gmail.com>
 References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
-	<1402954800-28215-3-git-send-email-dianders@chromium.org>
+	<1402954800-28215-4-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f54.google.com ([209.85.216.54]:36625 "EHLO
-	mail-qa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756574AbaFRD3T (ORCPT
+Received: from mail-qc0-f177.google.com ([209.85.216.177]:59755 "EHLO
+	mail-qc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933616AbaFRD3z (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jun 2014 23:29:19 -0400
-Received: by mail-qa0-f54.google.com with SMTP id v10so217927qac.27
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Jun 2014 20:29:18 -0700 (PDT)
-In-Reply-To: <1402954800-28215-3-git-send-email-dianders@chromium.org>
+	Tue, 17 Jun 2014 23:29:55 -0400
+Received: by mail-qc0-f177.google.com with SMTP id r5so231595qcx.22
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Jun 2014 20:29:53 -0700 (PDT)
+In-Reply-To: <1402954800-28215-4-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Doug Anderson <dianders@chromium.org>
@@ -23,8 +23,13 @@ Cc: Lee Jones <lee.jones@linaro.org>, Andrew Bresticker <abrestic@chromium.org>,
 On 16 June 2014 14:39, Doug Anderson <dianders@chromium.org> wrote:
 > From: Bill Richardson <wfrichar@chromium.org>
 >
-> Preparing the way for the LPC device, which is just a plaform_device without
-> interrupts.
+> The lower-level driver may want to provide its own buffers. If so,
+> there's no need to allocate new ones.  This already happens to work
+> just fine (since we check for size of 0 and use devm allocation), but
+> it's good to document it.
+>
+> [dianders: Resolved conflicts; documented that no code changes needed
+> on mainline]
 >
 > Signed-off-by: Bill Richardson <wfrichar@chromium.org>
 > Signed-off-by: Doug Anderson <dianders@chromium.org>
