@@ -1,105 +1,171 @@
-From: Tim Kryger <tim.kryger@gmail.com>
-Subject: Re: MMC error on Exynos4210 board
-Date: Wed, 18 Jun 2014 07:11:11 -0700
-Message-ID: <CAD7vxxJrRd7nrhZBRWH=43r7AMopz1w30aMRHqMO9PvaZYOpHg@mail.gmail.com>
-References: <CAK5sBcEB5GnjiR37DXDAeKYBWKw_4NTDM=pKCVK=0oKFDBjSbw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH] arm: exynos: Support cluster power off on exynos5420/5800
+Date: Wed, 18 Jun 2014 20:48:42 +0530
+Message-ID: <1403104722-14848-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:35711 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752305AbaFROLM (ORCPT
+Received: from mail-pb0-f50.google.com ([209.85.160.50]:59901 "EHLO
+	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751925AbaFRPS5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 10:11:12 -0400
-In-Reply-To: <CAK5sBcEB5GnjiR37DXDAeKYBWKw_4NTDM=pKCVK=0oKFDBjSbw@mail.gmail.com>
+	Wed, 18 Jun 2014 11:18:57 -0400
+Received: by mail-pb0-f50.google.com with SMTP id rp16so850088pbb.23
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 08:18:57 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <spk.linux@gmail.com>
-Cc: markus.mayer@linaro.org, Matt Porter <mporter@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, nicolas.pitre@linaro.org
+Cc: kesavan.abhilash@gmail.com, abrestic@chromium.org
 
-On Wed, Jun 18, 2014 at 4:33 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
-> Hi Tim,
->
-> I see the below error on Exynos4210 based Origen board with linux-next
-> (20140618).
-> Reverting the below commit works fine.
->
-> Commit: 8d02e775a6 "mmc: sdhci: Use mmc core regulator infrastucture"
->
-> Any ideas?
->
-> ***************
->
-> -- [    2.068992] sdhci: Secure Digital Host Controller Interface driver
-> [    2.075059] sdhci: Copyright(c) Pierre Ossman
-> [    2.079762] of_get_named_gpiod_flags: can't parse gpios property of
-> node '/sdhci@12510000[0]'
-> [    2.088021] s3c-sdhci 12510000.sdhci: clock source 2: mmc_busclk.2
-> (50000000 Hz)
-> [    2.095322] of_get_named_gpiod_flags: can't parse gpios property of
-> node '/sdhci@12510000[0]'
-> [    2.103794] of_get_named_gpiod_flags: can't parse gpios property of
-> node '/sdhci@12510000[0]'
-> [    2.112478] s3c-sdhci 12510000.sdhci: No vqmmc regulator found
-> [    2.118117] mmc0: Hardware doesn't report any support voltages.
-> [    2.124004] s3c-sdhci 12510000.sdhci: sdhci_add_host() failed
-> [    2.130080] of_get_named_gpiod_flags: can't parse gpios property of
-> node '/sdhci@12530000[0]'
-> [    2.138352] s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2
-> (16666667 Hz)
-> [    2.145661] of_get_named_gpiod_flags: can't parse gpios property of
-> node '/sdhci@12530000[0]'
-> [    2.154139] of_get_named_gpiod_flags: can't parse gpios property of
-> node '/sdhci@12530000[0]'
-> [    2.162834] s3c-sdhci 12530000.sdhci: No vqmmc regulator found
-> [    2.168464] mmc0: Hardware doesn't report any support voltages.
-> [    2.174349] s3c-sdhci 12530000.sdhci: sdhci_add_host() failed
-> [    2.180281] Synopsys Designware Multimedia Card Interface Driver
-> [    2.188131] usbcore: registered new interface driver usbhid
-> [    2.192287] usbhid: USB HID core driver
-> [    2.196329] TCP: cubic registered
-> [    2.199362] NET: Registered protocol family 17
-> [    2.203917] NET: Registered protocol family 15
-> [    2.208404] Registering SWP/SWPB emulation handler
-> [    2.214357] of_get_named_gpiod_flags exited with status 0
-> [    2.218430] of_get_named_gpiod_flags exited with status 0
-> [    2.223803] of_get_named_gpiod_flags exited with status 0
-> [    2.229170] of_get_named_gpiod_flags exited with status 0
-> [    2.234560] of_get_named_gpiod_flags exited with status 0
-> [    2.239953] gpio-229: gpiod_set_debounce: missing set() or
-> set_debounce() operations
-> [    2.247773] gpio-230: gpiod_set_debounce: missing set() or
-> set_debounce() operations
-> [    2.255473] gpio-228: gpiod_set_debounce: missing set() or
-> set_debounce() operations
-> [    2.263221] gpio-227: gpiod_set_debounce: missing set() or
-> set_debounce() operations
-> [    2.270918] gpio-226: gpiod_set_debounce: missing set() or
-> set_debounce() operations
-> [    2.278899] input: gpio_keys as /devices/gpio_keys/input/input0
-> [    2.285196] s3c-rtc 10070000.rtc: setting system clock to
-> 2000-01-01 00:00:00 UTC (946684800)
-> [    2.295072] VDD_G3D_1.1V: disabling
-> [    2.304744] VADC_3.3V: disabling
-> [    2.312095] VDD_AUD_1.8V: disabling
-> [    2.319714] VMIPI_1.1V: disabling
-> [    2.327193] VDD_ABB_3.3V: disabling
-> [    2.332779] VMEM_VDD_2.8V: disabling
-> [    2.336148] Waiting for root device /dev/mmcblk0p1...
->
-> *************
-> Regards,
-> Sachin.
+Turning off a cluster when all 4 cores of the cluster are powered off
+saves power significantly. Powering off the A15 L2 alone gives around
+100mW in savings. Add support for powering off the A15/A7 clusters on
+exynos5420/5800.
 
-Would you mind reverting just this part of the commit to see if it
-clears up your trouble?
+The patch enables specific register bits which ensure that:
+   - cluster L2 will be turned on before the first man is powered up.
+   - last man will be turned off before the cluster L2 is turned off.
+   - core is powered down before powering it up.
 
->         if (host->ocr_mask)
-> -               ocr_avail = host->ocr_mask;
-> +               ocr_avail &= host->ocr_mask;
->
->         mmc->ocr_avail = ocr_avail;
->         mmc->ocr_avail_sdio = ocr_avail;
+Remove the exynos_cluster_power_control function completely as we can
+rely on the above mentioned bits rather than polling the cluster power
+status register.
 
-Thanks,
-Tim Kryger
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+---
+The patch is based on Linux-next 20140618. It has been tested on an
+exynos5420-based chromebook using the "/dev/bL_switcher" interface as
+well as the script provided by Nicolas Pitre and Dave Martin [1].
+
+Patch depends on:
+[v2] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
+
+[1] http://www.spinics.net/lists/linux-samsung-soc/msg31257.html
+
+ arch/arm/mach-exynos/mcpm-exynos.c | 66 ++++++++++++++++++--------------------
+ 1 file changed, 31 insertions(+), 35 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+index ace0ed6..95b5acf 100644
+--- a/arch/arm/mach-exynos/mcpm-exynos.c
++++ b/arch/arm/mach-exynos/mcpm-exynos.c
+@@ -26,6 +26,10 @@
+ #define EXYNOS5420_CPUS_PER_CLUSTER	4
+ #define EXYNOS5420_NR_CLUSTERS		2
+ 
++#define EXYNOS5420_ENABLE_AUTOMATIC_CORE_DOWN	BIT(9)
++#define EXYNOS5420_USE_ARM_CORE_DOWN_STATE	BIT(29)
++#define EXYNOS5420_USE_L2_COMMON_UP_STATE	BIT(30)
++
+ /*
+  * The common v7_exit_coherency_flush API could not be used because of the
+  * Erratum 799270 workaround. This macro is the same as the common one (in
+@@ -73,36 +77,9 @@ cpu_use_count[EXYNOS5420_CPUS_PER_CLUSTER][EXYNOS5420_NR_CLUSTERS];
+ 
+ #define exynos_cluster_unused(cluster) !exynos_cluster_usecnt(cluster)
+ 
+-static int exynos_cluster_power_control(unsigned int cluster, int enable)
+-{
+-	unsigned int tries = 100;
+-	unsigned int val;
+-
+-	if (enable) {
+-		exynos_cluster_power_up(cluster);
+-		val = S5P_CORE_LOCAL_PWR_EN;
+-	} else {
+-		exynos_cluster_power_down(cluster);
+-		val = 0;
+-	}
+-
+-	/* Wait until cluster power control is applied */
+-	while (tries--) {
+-		if (exynos_cluster_power_state(cluster) == val)
+-			return 0;
+-
+-		cpu_relax();
+-	}
+-	pr_debug("timed out waiting for cluster %u to power %s\n", cluster,
+-		enable ? "on" : "off");
+-
+-	return -ETIMEDOUT;
+-}
+-
+ static int exynos_power_up(unsigned int cpu, unsigned int cluster)
+ {
+ 	unsigned int cpunr = cpu + (cluster * EXYNOS5420_CPUS_PER_CLUSTER);
+-	int err = 0;
+ 
+ 	pr_debug("%s: cpu %u cluster %u\n", __func__, cpu, cluster);
+ 	if (cpu >= EXYNOS5420_CPUS_PER_CLUSTER ||
+@@ -126,12 +103,9 @@ static int exynos_power_up(unsigned int cpu, unsigned int cluster)
+ 		 * cores.
+ 		 */
+ 		if (was_cluster_down)
+-			err = exynos_cluster_power_control(cluster, 1);
++			exynos_cluster_power_up(cluster);
+ 
+-		if (!err)
+-			exynos_cpu_power_up(cpunr);
+-		else
+-			exynos_cluster_power_control(cluster, 0);
++		exynos_cpu_power_up(cpunr);
+ 	} else if (cpu_use_count[cpu][cluster] != 2) {
+ 		/*
+ 		 * The only possible values are:
+@@ -147,7 +121,7 @@ static int exynos_power_up(unsigned int cpu, unsigned int cluster)
+ 	arch_spin_unlock(&exynos_mcpm_lock);
+ 	local_irq_enable();
+ 
+-	return err;
++	return 0;
+ }
+ 
+ /*
+@@ -178,9 +152,10 @@ static void exynos_power_down(void)
+ 	if (cpu_use_count[cpu][cluster] == 0) {
+ 		exynos_cpu_power_down(cpunr);
+ 
+-		if (exynos_cluster_unused(cluster))
+-			/* TODO: Turn off the cluster here to save power. */
++		if (exynos_cluster_unused(cluster)) {
++			exynos_cluster_power_down(cluster);
+ 			last_man = true;
++		}
+ 	} else if (cpu_use_count[cpu][cluster] == 1) {
+ 		/*
+ 		 * A power_up request went ahead of us.
+@@ -299,6 +274,7 @@ static int __init exynos_mcpm_init(void)
+ {
+ 	struct device_node *node;
+ 	void __iomem *ns_sram_base_addr;
++	unsigned int value, i;
+ 	int ret;
+ 
+ 	node = of_find_matching_node(NULL, exynos_dt_mcpm_match);
+@@ -342,6 +318,26 @@ static int __init exynos_mcpm_init(void)
+ 	pr_info("Exynos MCPM support installed\n");
+ 
+ 	/*
++	 * On Exynos5420/5800 for the A15 and A7 clusters:
++	 *
++	 * EXYNOS5420_ENABLE_AUTOMATIC_CORE_DOWN ensures that all the cores
++	 * in a cluster are turned off before turning off the cluster L2.
++	 *
++	 * EXYNOS5420_USE_ARM_CORE_DOWN_STATE ensures that a cores is powered
++	 * off before waking it up.
++	 *
++	 * EXYNOS5420_USE_L2_COMMON_UP_STATE ensures that cluster L2 will be
++	 * turned on before the first man is powered up.
++	 */
++	for (i = 0; i < EXYNOS5420_NR_CLUSTERS; i++) {
++		value = __raw_readl(EXYNOS_COMMON_CONFIGURATION(i) + 0x8);
++		value |= EXYNOS5420_ENABLE_AUTOMATIC_CORE_DOWN |
++			 EXYNOS5420_USE_ARM_CORE_DOWN_STATE    |
++			 EXYNOS5420_USE_L2_COMMON_UP_STATE;
++		__raw_writel(value, EXYNOS_COMMON_CONFIGURATION(i) + 0x8);
++	}
++
++	/*
+ 	 * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
+ 	 * as part of secondary_cpu_start().  Let's redirect it to the
+ 	 * mcpm_entry_point().
+-- 
+2.0.0
