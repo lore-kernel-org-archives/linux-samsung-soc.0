@@ -1,158 +1,97 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCHv4 2/4] iio: adc: exynos_adc: Control special clock of
- ADC to support Exynos3250 ADC
-Date: Wed, 18 Jun 2014 09:58:32 +0200
-Message-ID: <53A146A8.7050501@gmail.com>
-References: <1403058061-24271-1-git-send-email-cw00.choi@samsung.com> <1403058061-24271-3-git-send-email-cw00.choi@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH RFC] mfd: syscon: Decouple syscon interface from syscon
+ devices
+Date: Wed, 18 Jun 2014 09:26:53 +0100
+Message-ID: <20140618082653.GN21030@lee--X1>
+References: <53A05E2D.6020702@samsung.com>
+ <1403019164-12514-1-git-send-email-t.figa@samsung.com>
+ <5027740.B7iVUcUX2T@wuerfel>
+ <53A0B27E.5010708@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1403058061-24271-3-git-send-email-cw00.choi@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org, ch.naveen@samsung.com, t.figa@samsung.com, kgene.kim@samsung.com
-Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sachin.kamat@linaro.org, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53A0B27E.5010708@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, mark.brown@linaro.org, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Samuel Ortiz <sameo@linux.intel.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, michal.simek@xilinx.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Chanwoo,
+On Tue, 17 Jun 2014, Tomasz Figa wrote:
+> On 17.06.2014 17:42, Arnd Bergmann wrote:
+> > On Tuesday 17 June 2014 17:32:44 Tomasz Figa wrote:
+> >> Currently a syscon entity can be only registered directly through =
+a
+> >> platform device that binds to a dedicated driver. However in certa=
+in use
+> >> cases it is desirable to make a device used with another driver a =
+syscon
+> >> interface provider. For example, certain SoCs (e.g. Exynos) contai=
+n
+> >> system controller blocks which perform various functions such as p=
+ower
+> >> domain control, CPU power management, low power mode control, but =
+in
+> >> addition contain certain IP integration glue, such as various sign=
+al
+> >> masks, coprocessor power control, etc. In such case, there is a ne=
+ed to
+> >> have a dedicated driver for such system controller but also share
+> >> registers with other drivers. The latter is where the syscon inter=
+face
+> >> is helpful.
+> >>
+> >> This patch decouples syscon object from syscon driver, so that it =
+can be
+> >> registered from any driver in addition to the original "syscon" pl=
+atform
+> >> driver.
 
-On 18.06.2014 04:20, Chanwoo Choi wrote:
-> This patch control special clock for ADC in Exynos series's FSYS block.
-> If special clock of ADC is registerd on clock list of common clk framework,
-> Exynos ADC drvier have to control this clock.
-> 
-> Exynos3250/Exynos4/Exynos5 has 'adc' clock as following:
-> - 'adc' clock: bus clock for ADC
-> 
-> Exynos3250 has additional 'sclk_adc' clock as following:
-> - 'sclk_adc' clock: special clock for ADC which provide clock to internal ADC
-> 
-> Exynos 4210/4212/4412 and Exynos5250/5420 has not included 'sclk_adc' clock
-> in FSYS_BLK. But, Exynos3250 based on Cortex-A7 has only included 'sclk_adc'
-> clock in FSYS_BLK.
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/iio/adc/exynos_adc.c | 93 ++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 81 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index c30def6..6b026ac 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -41,7 +41,8 @@
->  
->  enum adc_version {
->  	ADC_V1,
-> -	ADC_V2
-> +	ADC_V2,
-> +	ADC_V2_EXYNOS3250,
->  };
->  
->  /* EXYNOS4412/5250 ADC_V1 registers definitions */
-> @@ -85,9 +86,11 @@ enum adc_version {
->  #define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
->  
->  struct exynos_adc {
-> +	struct device		*dev;
->  	void __iomem		*regs;
->  	void __iomem		*enable_reg;
->  	struct clk		*clk;
-> +	struct clk		*sclk;
->  	unsigned int		irq;
->  	struct regulator	*vdd;
->  	struct exynos_adc_ops	*ops;
-> @@ -96,6 +99,7 @@ struct exynos_adc {
->  
->  	u32			value;
->  	unsigned int            version;
-> +	bool			needs_sclk;
++1 for this approach.
 
-This should be rather a part of the variant struct. See my comments to
-patch 1/4.
+Michal, Pankay,
+  Does it also suit your needs?
 
->  };
->  
->  struct exynos_adc_ops {
-> @@ -103,11 +107,21 @@ struct exynos_adc_ops {
->  	void (*clear_irq)(struct exynos_adc *info);
->  	void (*start_conv)(struct exynos_adc *info, unsigned long addr);
->  	void (*stop_conv)(struct exynos_adc *info);
-> +	void (*disable_clk)(struct exynos_adc *info);
-> +	int (*enable_clk)(struct exynos_adc *info);
->  };
->  
->  static const struct of_device_id exynos_adc_match[] = {
-> -	{ .compatible = "samsung,exynos-adc-v1", .data = (void *)ADC_V1 },
-> -	{ .compatible = "samsung,exynos-adc-v2", .data = (void *)ADC_V2 },
-> +	{
-> +		.compatible = "samsung,exynos-adc-v1",
-> +		.data = (void *)ADC_V1,
-> +	}, {
-> +		.compatible = "samsung,exynos-adc-v2",
-> +		.data = (void *)ADC_V2,
-> +	}, {
-> +		.compatible = "samsung,exynos3250-adc-v2",
-> +		.data = (void *)ADC_V2_EXYNOS3250,
-> +	},
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, exynos_adc_match);
-> @@ -156,11 +170,42 @@ static void exynos_adc_v1_stop_conv(struct exynos_adc *info)
->  	writel(con, ADC_V1_CON(info->regs));
->  }
->  
-> +static void exynos_adc_disable_clk(struct exynos_adc *info)
-> +{
-> +	if (info->needs_sclk)
-> +		clk_disable_unprepare(info->sclk);
-> +	clk_disable_unprepare(info->clk);
-> +}
-> +
-> +static int exynos_adc_enable_clk(struct exynos_adc *info)
-> +{
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(info->clk);
-> +	if (ret) {
-> +		dev_err(info->dev, "failed enabling adc clock: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	if (info->needs_sclk) {
-> +		ret = clk_prepare_enable(info->sclk);
-> +		if (ret) {
-> +			clk_disable_unprepare(info->clk);
-> +			dev_err(info->dev,
-> +				"failed enabling sclk_tsadc clock: %d\n", ret);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static struct exynos_adc_ops exynos_adc_v1_ops = {
->  	.init_hw	= exynos_adc_v1_init_hw,
->  	.clear_irq	= exynos_adc_v1_clear_irq,
->  	.start_conv	= exynos_adc_v1_start_conv,
->  	.stop_conv	= exynos_adc_v1_stop_conv,
-> +	.disable_clk	= exynos_adc_disable_clk,
-> +	.enable_clk	= exynos_adc_enable_clk,
->  };
->  
->  static void exynos_adc_v2_init_hw(struct exynos_adc *info)
-> @@ -210,6 +255,8 @@ static struct exynos_adc_ops exynos_adc_v2_ops = {
->  	.start_conv	= exynos_adc_v2_start_conv,
->  	.clear_irq	= exynos_adc_v2_clear_irq,
->  	.stop_conv	= exynos_adc_v2_stop_conv,
-> +	.disable_clk	= exynos_adc_disable_clk,
-> +	.enable_clk	= exynos_adc_enable_clk,
+> >> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> >=20
+> > Hi Tomasz,
+> >=20
+> > This seems like a reasonable way of solving the problem, but I thin=
+k
+> > there is an even better one that we have about in the past: if we
+> > promote syscon from a platform driver into a a drivers/base/ helper
+> > that is independent of the platform device matching, we can use
+> > call syscon_regmap_lookup_* for any device node, whether it's alrea=
+dy
+> > bound to a driver or not, which do what you need. It would also mak=
+e
+> > it easier to call the syscon code before the platform_device
+> > infrastructure gets initialized, which is something a number of
+> > people have asked for, e.g. for using regmap to do SMP bringup
+> > or for clock registration.
+>=20
+> Basically, unless I'm missing your point, this is what my patch does,
+> except that I don't move it to drivers/base/ and the registration
+> function I added require a pointer to struct device. Indeed, decoupli=
+ng
+> it further from the driver model, by adding of_syscon_register() shou=
+ld
+> be useful for early users.
 
-Based on the fact that all variants use the same function, I don't think
-there is a reason to add .{disable,enable}_clk in the ops struct. If
-they diverge in future, they could be added later, but right now it
-doesn't have any value.
+If agreed by Arnd, I think this work can be completed as a subsequent
+patch.
 
-Best regards,
-Tomasz
+> Should I move this to drivers/base/, even though from current locatio=
+n
+> it can be used outside the platform driver anyway?
+
+If I'm being honest with myself, I'd say that Syscon wasn't really an
+MFD driver.  I'm happy to keep it in there any continue maintaining
+it, but wouldn't block a move either.
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
