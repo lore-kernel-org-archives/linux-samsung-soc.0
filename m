@@ -1,59 +1,84 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH] clocksource: exynos-mct: Register the timer for stable udelay
-Date: Wed, 18 Jun 2014 17:01:00 +0530
-Message-ID: <1403091060-5054-1-git-send-email-amit.daniel@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:44590 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933182AbaFRLbO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 07:31:14 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sachin Kamat <spk.linux@gmail.com>
+Subject: MMC error on Exynos4210 board
+Date: Wed, 18 Jun 2014 17:03:38 +0530
+Message-ID: <CAK5sBcEB5GnjiR37DXDAeKYBWKw_4NTDM=pKCVK=0oKFDBjSbw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: tim.kryger@gmail.com
+Cc: markus.mayer@linaro.org, mporter@linaro.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, David Riley <davidriley@chromium.org>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>
 
-This patch register the exynos mct clocksource as the current timer
-as it has constant clock rate. This will generate correct udelay for the
-exynos platform and avoid using unnecessary calibrated jiffies. This change
-have been tested on exynos5420 based board.
+Hi Tim,
 
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
+I see the below error on Exynos4210 based Origen board with linux-next
+(20140618).
+Reverting the below commit works fine.
 
-Patches from David Riley confirmed that udelay is broken in exynos5420.
-Link to those patches are,
-1) https://patchwork.kernel.org/patch/4344911/
-2) https://patchwork.kernel.org/patch/4344881/
+Commit: 8d02e775a6 "mmc: sdhci: Use mmc core regulator infrastucture"
 
- drivers/clocksource/exynos_mct.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Any ideas?
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 8d64200..57cb3dc 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -198,10 +198,21 @@ static u64 notrace exynos4_read_sched_clock(void)
- 	return exynos4_frc_read(&mct_frc);
- }
- 
-+static struct delay_timer exynos4_delay_timer;
-+
-+static unsigned long exynos4_read_current_timer(void)
-+{
-+	return exynos4_frc_read(&mct_frc);
-+}
-+
- static void __init exynos4_clocksource_init(void)
- {
- 	exynos4_mct_frc_start(0, 0);
- 
-+	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
-+	exynos4_delay_timer.freq = clk_rate;
-+	register_current_timer_delay(&exynos4_delay_timer);
-+
- 	if (clocksource_register_hz(&mct_frc, clk_rate))
- 		panic("%s: can't register clocksource\n", mct_frc.name);
- 
--- 
-1.9.1
+***************
+
+-- [    2.068992] sdhci: Secure Digital Host Controller Interface driver
+[    2.075059] sdhci: Copyright(c) Pierre Ossman
+[    2.079762] of_get_named_gpiod_flags: can't parse gpios property of
+node '/sdhci@12510000[0]'
+[    2.088021] s3c-sdhci 12510000.sdhci: clock source 2: mmc_busclk.2
+(50000000 Hz)
+[    2.095322] of_get_named_gpiod_flags: can't parse gpios property of
+node '/sdhci@12510000[0]'
+[    2.103794] of_get_named_gpiod_flags: can't parse gpios property of
+node '/sdhci@12510000[0]'
+[    2.112478] s3c-sdhci 12510000.sdhci: No vqmmc regulator found
+[    2.118117] mmc0: Hardware doesn't report any support voltages.
+[    2.124004] s3c-sdhci 12510000.sdhci: sdhci_add_host() failed
+[    2.130080] of_get_named_gpiod_flags: can't parse gpios property of
+node '/sdhci@12530000[0]'
+[    2.138352] s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2
+(16666667 Hz)
+[    2.145661] of_get_named_gpiod_flags: can't parse gpios property of
+node '/sdhci@12530000[0]'
+[    2.154139] of_get_named_gpiod_flags: can't parse gpios property of
+node '/sdhci@12530000[0]'
+[    2.162834] s3c-sdhci 12530000.sdhci: No vqmmc regulator found
+[    2.168464] mmc0: Hardware doesn't report any support voltages.
+[    2.174349] s3c-sdhci 12530000.sdhci: sdhci_add_host() failed
+[    2.180281] Synopsys Designware Multimedia Card Interface Driver
+[    2.188131] usbcore: registered new interface driver usbhid
+[    2.192287] usbhid: USB HID core driver
+[    2.196329] TCP: cubic registered
+[    2.199362] NET: Registered protocol family 17
+[    2.203917] NET: Registered protocol family 15
+[    2.208404] Registering SWP/SWPB emulation handler
+[    2.214357] of_get_named_gpiod_flags exited with status 0
+[    2.218430] of_get_named_gpiod_flags exited with status 0
+[    2.223803] of_get_named_gpiod_flags exited with status 0
+[    2.229170] of_get_named_gpiod_flags exited with status 0
+[    2.234560] of_get_named_gpiod_flags exited with status 0
+[    2.239953] gpio-229: gpiod_set_debounce: missing set() or
+set_debounce() operations
+[    2.247773] gpio-230: gpiod_set_debounce: missing set() or
+set_debounce() operations
+[    2.255473] gpio-228: gpiod_set_debounce: missing set() or
+set_debounce() operations
+[    2.263221] gpio-227: gpiod_set_debounce: missing set() or
+set_debounce() operations
+[    2.270918] gpio-226: gpiod_set_debounce: missing set() or
+set_debounce() operations
+[    2.278899] input: gpio_keys as /devices/gpio_keys/input/input0
+[    2.285196] s3c-rtc 10070000.rtc: setting system clock to
+2000-01-01 00:00:00 UTC (946684800)
+[    2.295072] VDD_G3D_1.1V: disabling
+[    2.304744] VADC_3.3V: disabling
+[    2.312095] VDD_AUD_1.8V: disabling
+[    2.319714] VMIPI_1.1V: disabling
+[    2.327193] VDD_ABB_3.3V: disabling
+[    2.332779] VMEM_VDD_2.8V: disabling
+[    2.336148] Waiting for root device /dev/mmcblk0p1...
+
+*************
+Regards,
+Sachin.
