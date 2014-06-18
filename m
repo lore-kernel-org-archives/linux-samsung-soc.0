@@ -1,103 +1,105 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC
- regulators
-Date: Wed, 18 Jun 2014 15:10:48 +0100
-Message-ID: <20140618141048.GA15956@lee--X1>
-References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk>
- <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk>
- <20140617211747.GY29841@lee--X1>
- <53A16047.7010409@collabora.co.uk>
+From: Tim Kryger <tim.kryger@gmail.com>
+Subject: Re: MMC error on Exynos4210 board
+Date: Wed, 18 Jun 2014 07:11:11 -0700
+Message-ID: <CAD7vxxJrRd7nrhZBRWH=43r7AMopz1w30aMRHqMO9PvaZYOpHg@mail.gmail.com>
+References: <CAK5sBcEB5GnjiR37DXDAeKYBWKw_4NTDM=pKCVK=0oKFDBjSbw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:60230 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752831AbaFROK4 (ORCPT
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:35711 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752305AbaFROLM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 10:10:56 -0400
-Received: by mail-ie0-f174.google.com with SMTP id lx4so746992iec.33
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 07:10:55 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <53A16047.7010409@collabora.co.uk>
+	Wed, 18 Jun 2014 10:11:12 -0400
+In-Reply-To: <CAK5sBcEB5GnjiR37DXDAeKYBWKw_4NTDM=pKCVK=0oKFDBjSbw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sachin Kamat <spk.linux@gmail.com>
+Cc: markus.mayer@linaro.org, Matt Porter <mporter@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Wed, 18 Jun 2014, Javier Martinez Canillas wrote:
+On Wed, Jun 18, 2014 at 4:33 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
+> Hi Tim,
+>
+> I see the below error on Exynos4210 based Origen board with linux-next
+> (20140618).
+> Reverting the below commit works fine.
+>
+> Commit: 8d02e775a6 "mmc: sdhci: Use mmc core regulator infrastucture"
+>
+> Any ideas?
+>
+> ***************
+>
+> -- [    2.068992] sdhci: Secure Digital Host Controller Interface driver
+> [    2.075059] sdhci: Copyright(c) Pierre Ossman
+> [    2.079762] of_get_named_gpiod_flags: can't parse gpios property of
+> node '/sdhci@12510000[0]'
+> [    2.088021] s3c-sdhci 12510000.sdhci: clock source 2: mmc_busclk.2
+> (50000000 Hz)
+> [    2.095322] of_get_named_gpiod_flags: can't parse gpios property of
+> node '/sdhci@12510000[0]'
+> [    2.103794] of_get_named_gpiod_flags: can't parse gpios property of
+> node '/sdhci@12510000[0]'
+> [    2.112478] s3c-sdhci 12510000.sdhci: No vqmmc regulator found
+> [    2.118117] mmc0: Hardware doesn't report any support voltages.
+> [    2.124004] s3c-sdhci 12510000.sdhci: sdhci_add_host() failed
+> [    2.130080] of_get_named_gpiod_flags: can't parse gpios property of
+> node '/sdhci@12530000[0]'
+> [    2.138352] s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2
+> (16666667 Hz)
+> [    2.145661] of_get_named_gpiod_flags: can't parse gpios property of
+> node '/sdhci@12530000[0]'
+> [    2.154139] of_get_named_gpiod_flags: can't parse gpios property of
+> node '/sdhci@12530000[0]'
+> [    2.162834] s3c-sdhci 12530000.sdhci: No vqmmc regulator found
+> [    2.168464] mmc0: Hardware doesn't report any support voltages.
+> [    2.174349] s3c-sdhci 12530000.sdhci: sdhci_add_host() failed
+> [    2.180281] Synopsys Designware Multimedia Card Interface Driver
+> [    2.188131] usbcore: registered new interface driver usbhid
+> [    2.192287] usbhid: USB HID core driver
+> [    2.196329] TCP: cubic registered
+> [    2.199362] NET: Registered protocol family 17
+> [    2.203917] NET: Registered protocol family 15
+> [    2.208404] Registering SWP/SWPB emulation handler
+> [    2.214357] of_get_named_gpiod_flags exited with status 0
+> [    2.218430] of_get_named_gpiod_flags exited with status 0
+> [    2.223803] of_get_named_gpiod_flags exited with status 0
+> [    2.229170] of_get_named_gpiod_flags exited with status 0
+> [    2.234560] of_get_named_gpiod_flags exited with status 0
+> [    2.239953] gpio-229: gpiod_set_debounce: missing set() or
+> set_debounce() operations
+> [    2.247773] gpio-230: gpiod_set_debounce: missing set() or
+> set_debounce() operations
+> [    2.255473] gpio-228: gpiod_set_debounce: missing set() or
+> set_debounce() operations
+> [    2.263221] gpio-227: gpiod_set_debounce: missing set() or
+> set_debounce() operations
+> [    2.270918] gpio-226: gpiod_set_debounce: missing set() or
+> set_debounce() operations
+> [    2.278899] input: gpio_keys as /devices/gpio_keys/input/input0
+> [    2.285196] s3c-rtc 10070000.rtc: setting system clock to
+> 2000-01-01 00:00:00 UTC (946684800)
+> [    2.295072] VDD_G3D_1.1V: disabling
+> [    2.304744] VADC_3.3V: disabling
+> [    2.312095] VDD_AUD_1.8V: disabling
+> [    2.319714] VMIPI_1.1V: disabling
+> [    2.327193] VDD_ABB_3.3V: disabling
+> [    2.332779] VMEM_VDD_2.8V: disabling
+> [    2.336148] Waiting for root device /dev/mmcblk0p1...
+>
+> *************
+> Regards,
+> Sachin.
 
-> Hello Lee,
->=20
-> Thanks a lot for your feedback.
->=20
-> On 06/17/2014 11:17 PM, Lee Jones wrote:
-> >> The MAX77802 PMIC has 10 high-efficiency Buck and 32 Low-dropout
-> >> (LDO) regulators. This patch adds support for all these regulators
-> >> found on the MAX77802 PMIC and is based on a driver added by Simon
-> >> Glass to the Chrome OS kernel 3.8 tree.
-> >>=20
-> >> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora=
-=2Eco.uk>
-> >> ---
-> >>=20
-> >> Changes since v1:
-> >>  - Remove unneeded check if num_regulators !=3D MAX77802_MAX_REGUL=
-ATORS.
-> >>  - Fix .set_suspend_mode handler comment and split regulators ops =
-for
-> >>    regulators that behave differently. Suggested by Mark Brown.
-> >>  - Use module_platform_driver() instead of having init/exit functi=
-ons.
-> >>    Suggested by Mark Brown.
-> >>  - Use the new descriptor-based GPIO interface instead of the depr=
-ecated
-> >>    integer based GPIO one. Suggested by Mark Brown.
-> >>  - Look for "regulators" child node instead of "voltage-regulators=
-" to be
-> >>    consistent with other PMIC drivers. Suggested by Mark Brown.
-> >>=20
-> >>  drivers/mfd/max77802.c       |   1 +
-> >=20
-> > Can you remove all of the MFD changes from patches 7, 8 and 9 and
-> > create new one.  That way there's no requirement for any cross
-> > subsystem messiness.
-> >=20
->=20
-> Sure, Mark already suggested the same and I'll do it on the next vers=
-ion.
->=20
-> But there still be some cross-subsystem dependency/messiness since th=
-e
-> regulator, clk and rtc drivers include the mfd max77802 headers that =
-are added
-> in Patch 6.
+Would you mind reverting just this part of the commit to see if it
+clears up your trouble?
 
-What I should have said was _avoidable_ or _unnecessary_ messiness.
+>         if (host->ocr_mask)
+> -               ocr_avail = host->ocr_mask;
+> +               ocr_avail &= host->ocr_mask;
+>
+>         mmc->ocr_avail = ocr_avail;
+>         mmc->ocr_avail_sdio = ocr_avail;
 
-> So I guess you should either a) take the whole patch-set through your=
- mfd tree
-> or b) merge the mfd patches and create an immutable branch that can b=
-e pulled by
-> Mark, Mike and Alessandro.
->=20
-> I don't know what's the preferred workflow in these cases...
-
-That's fine.  I'm happy to create shared branches when required.
-
-> >>  drivers/regulator/Kconfig    |   9 +
-> >>  drivers/regulator/Makefile   |   1 +
-> >>  drivers/regulator/max77802.c | 701 ++++++++++++++++++++++++++++++=
-+++++++++++++
-> >>  4 files changed, 712 insertions(+)
-> >>  create mode 100644 drivers/regulator/max77802.c
-> >=20
->=20
-> Best regards,
-> Javier
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Thanks,
+Tim Kryger
