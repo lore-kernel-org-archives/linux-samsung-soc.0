@@ -1,138 +1,111 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 08/10] mfd: cros_ec: cleanup: Remove EC wrapper functions
-Date: Wed, 18 Jun 2014 08:40:49 +0100
-Message-ID: <20140618074049.GD21030@lee--X1>
+Subject: Re: [PATCH 07/10] mfd: cros_ec: cleanup: remove unused fields from
+ struct cros_ec_device
+Date: Wed, 18 Jun 2014 08:41:39 +0100
+Message-ID: <20140618074139.GE21030@lee--X1>
 References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
- <1402954800-28215-9-git-send-email-dianders@chromium.org>
- <CAPnjgZ3GhvHog5Pb3_DxYSWF0t4mgR=7HBe2KrfKcsJ=zwmFhQ@mail.gmail.com>
- <CAD=FV=Ue9OBkXtii4aKrCbKPd--7ZRN_G0pw2ZtX89mcz_hfzQ@mail.gmail.com>
+ <1402954800-28215-8-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:60547 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965136AbaFRHk5 (ORCPT
+Received: from mail-ie0-f171.google.com ([209.85.223.171]:58837 "EHLO
+	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933686AbaFRHlp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 03:40:57 -0400
-Received: by mail-ie0-f180.google.com with SMTP id rl12so390796iec.39
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 00:40:56 -0700 (PDT)
+	Wed, 18 Jun 2014 03:41:45 -0400
+Received: by mail-ie0-f171.google.com with SMTP id x19so392609ier.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 00:41:45 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=Ue9OBkXtii4aKrCbKPd--7ZRN_G0pw2ZtX89mcz_hfzQ@mail.gmail.com>
+In-Reply-To: <1402954800-28215-8-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Doug Anderson <dianders@chromium.org>
-Cc: Simon Glass <sjg@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Vincent Palatin <vpalatin@chromium.org>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, lk <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Cc: Andrew Bresticker <abrestic@chromium.org>, swarren@wwwdotorg.org, olof@lixom.net, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, sjg@chromium.org, Wolfram Sang <wsa@the-dreams.de>, broonie@kernel.org, sameo@linux.intel.com, linux-kernel@vger.kernel.org
 
-> >> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input=
-/keyboard/cros_ec_keyb.c
-> >> index 4083796..dc37b6b 100644
-> >> --- a/drivers/input/keyboard/cros_ec_keyb.c
-> >> +++ b/drivers/input/keyboard/cros_ec_keyb.c
-> >> @@ -191,8 +191,18 @@ static void cros_ec_keyb_close(struct input_d=
-ev *dev)
-> >>
-> >>  static int cros_ec_keyb_get_state(struct cros_ec_keyb *ckdev, uin=
-t8_t *kb_state)
-> >>  {
-> >> -       return ckdev->ec->command_recv(ckdev->ec, EC_CMD_MKBP_STAT=
-E,
-> >> -                                         kb_state, ckdev->cols);
-> >> +       int ret;
-> >> +       struct cros_ec_command msg =3D {
-> >> +               .version =3D 0,
-> >> +               .command =3D EC_CMD_MKBP_STATE,
-> >> +               .outdata =3D NULL,
-> >> +               .outsize =3D 0,
-> >> +               .indata =3D kb_state,
-> >> +               .insize =3D ckdev->cols,
-> >> +       };
-> >> +
-> >> +       ret =3D ckdev->ec->cmd_xfer(ckdev->ec, &msg);
-> >
-> > Do we need ret?
->=20
-> No.  If you wish I will spin without it.  Let me know.
->=20
-> Note that locally this code includes a comment between the above and =
-the return:
->   /* FIXME: This assumes msg.result =3D=3D EC_RES_SUCCESS */
->=20
-> Given that this is not a new problem introduced in this code, that it
-> still hasn't been fixed locally in the ChromeOS tree, and that
-> generally FIXMEs don't seem to be left in the code upstream, I left i=
-t
-> out.
+On Mon, 16 Jun 2014, Doug Anderson wrote:
 
-As you're re-spinning anyway, please fix this and add my:
+> From: Bill Richardson <wfrichar@chromium.org>
+>=20
+> struct cros_ec_device has a superfluous "name" field. We can get all =
+the
+> debugging info we need from the existing ec_name and phys_name fields=
+, so
+> let's take out the extra field.
+>=20
+> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+>  drivers/mfd/cros_ec.c       | 2 +-
+>  drivers/mfd/cros_ec_i2c.c   | 1 -
+>  drivers/mfd/cros_ec_spi.c   | 1 -
+>  include/linux/mfd/cros_ec.h | 2 --
+>  4 files changed, 1 insertion(+), 5 deletions(-)
+
+=46or the re-spin:
   Acked-by: Lee Jones <lee.jones@linaro.org>
 
-> >> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_=
-ec.h
-> >> index 2b0c598..60c0880 100644
-> >> --- a/include/linux/mfd/cros_ec.h
-> >> +++ b/include/linux/mfd/cros_ec.h
-> >> @@ -63,9 +63,10 @@ struct cros_ec_command {
-> >>   * @was_wake_device: true if this device was set to wake the syst=
-em from
-> >>   * sleep at the last suspend
-> >>   * @event_notifier: interrupt event notifier for transport device=
-s
-> >> - * @command_send: send a command
-> >> - * @command_recv: receive a response
-> >> - * @command_sendrecv: send a command and receive a response
-> >> + * @cmd_xfer: send command to EC and get response
-> >> + *     Returns 0 if the communication succeeded, but that doesn't=
- mean the EC
-> >> + *     was happy with the command it got. Caller should check msg=
-=2Eresult for
-> >> + *     the EC's result code.
-> >>   *
-> >>   * @priv: Private data
-> >>   * @irq: Interrupt to use
-> >> @@ -83,7 +84,6 @@ struct cros_ec_command {
-> >>   * @parent: pointer to parent device (e.g. i2c or spi device)
-> >>   * @wake_enabled: true if this device can wake the system from sl=
-eep
-> >>   * @lock: one transaction at a time
-> >> - * @cmd_xfer: low-level channel to the EC
-> >>   */
-> >>  struct cros_ec_device {
-> >>
-> >> @@ -94,13 +94,8 @@ struct cros_ec_device {
-> >>         bool was_wake_device;
-> >>         struct class *cros_class;
-> >>         struct blocking_notifier_head event_notifier;
-> >> -       int (*command_send)(struct cros_ec_device *ec,
-> >> -                           uint16_t cmd, void *out_buf, int out_l=
-en);
-> >> -       int (*command_recv)(struct cros_ec_device *ec,
-> >> -                           uint16_t cmd, void *in_buf, int in_len=
-);
-> >> -       int (*command_sendrecv)(struct cros_ec_device *ec,
-> >> -                               uint16_t cmd, void *out_buf, int o=
-ut_len,
-> >> -                               void *in_buf, int in_len);
-> >> +       int (*cmd_xfer)(struct cros_ec_device *ec,
-> >> +                       struct cros_ec_command *msg);
-> >>
-> >>         /* These are used to implement the platform-specific inter=
-face */
-> >>         void *priv;
-> >> @@ -112,8 +107,6 @@ struct cros_ec_device {
-> >>         struct device *parent;
-> >>         bool wake_enabled;
-> >>         struct mutex lock;
-> >> -       int (*cmd_xfer)(struct cros_ec_device *ec,
-> >> -                       struct cros_ec_command *msg);
-> >
-> > Seems odd - maybe this line move of cmd_xfer() should be in an earl=
-ier patch?
->=20
-> It got moved from "private" to public.  Bill reorganized all the
-> public stuff at the top and the private at the bottom.
->=20
-> -Doug
+> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+> index 9304056..d242714 100644
+> --- a/drivers/mfd/cros_ec.c
+> +++ b/drivers/mfd/cros_ec.c
+> @@ -138,7 +138,7 @@ int cros_ec_register(struct cros_ec_device *ec_de=
+v)
+>  		goto fail_mfd;
+>  	}
+> =20
+> -	dev_info(dev, "Chrome EC (%s)\n", ec_dev->name);
+> +	dev_info(dev, "Chrome EC device registered\n");
+> =20
+>  	return 0;
+> =20
+> diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/mfd/cros_ec_i2c.c
+> index 37ed12f..5bb32f5 100644
+> --- a/drivers/mfd/cros_ec_i2c.c
+> +++ b/drivers/mfd/cros_ec_i2c.c
+> @@ -132,7 +132,6 @@ static int cros_ec_i2c_probe(struct i2c_client *c=
+lient,
+>  		return -ENOMEM;
+> =20
+>  	i2c_set_clientdata(client, ec_dev);
+> -	ec_dev->name =3D "I2C";
+>  	ec_dev->dev =3D dev;
+>  	ec_dev->priv =3D client;
+>  	ec_dev->irq =3D client->irq;
+> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+> index 2d713fe..09ca789 100644
+> --- a/drivers/mfd/cros_ec_spi.c
+> +++ b/drivers/mfd/cros_ec_spi.c
+> @@ -374,7 +374,6 @@ static int cros_ec_spi_probe(struct spi_device *s=
+pi)
+>  	cros_ec_spi_dt_probe(ec_spi, dev);
+> =20
+>  	spi_set_drvdata(spi, ec_dev);
+> -	ec_dev->name =3D "SPI";
+>  	ec_dev->dev =3D dev;
+>  	ec_dev->priv =3D ec_spi;
+>  	ec_dev->irq =3D spi->irq;
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.=
+h
+> index f27c037..2b0c598 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
+> @@ -67,7 +67,6 @@ struct cros_ec_command {
+>   * @command_recv: receive a response
+>   * @command_sendrecv: send a command and receive a response
+>   *
+> - * @name: Name of this EC interface
+>   * @priv: Private data
+>   * @irq: Interrupt to use
+>   * @din: input buffer (for data from EC)
+> @@ -104,7 +103,6 @@ struct cros_ec_device {
+>  				void *in_buf, int in_len);
+> =20
+>  	/* These are used to implement the platform-specific interface */
+> -	const char *name;
+>  	void *priv;
+>  	int irq;
+>  	uint8_t *din;
 
 --=20
 Lee Jones
