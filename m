@@ -1,40 +1,71 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v6 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-Date: Wed, 18 Jun 2014 13:21:24 +0530
-Message-ID: <CAKohpomt4M_V7rMAoh=+UFon3CxnZjVY_9DuVtQW9ddtTTj7Fg@mail.gmail.com>
-References: <1403018733-4187-1-git-send-email-thomas.ab@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 03/10] mfd: cros_ec: Allow static din/dout buffers with
+ cros_ec_register()
+Date: Wed, 18 Jun 2014 08:53:16 +0100
+Message-ID: <20140618075316.GI21030@lee--X1>
+References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
+ <1402954800-28215-4-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:51632 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756231AbaFRHvZ (ORCPT
+Received: from mail-ie0-f176.google.com ([209.85.223.176]:37135 "EHLO
+	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754208AbaFRHxW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 03:51:25 -0400
-Received: by mail-oa0-f41.google.com with SMTP id l6so1050634oag.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 00:51:24 -0700 (PDT)
-In-Reply-To: <1403018733-4187-1-git-send-email-thomas.ab@samsung.com>
+	Wed, 18 Jun 2014 03:53:22 -0400
+Received: by mail-ie0-f176.google.com with SMTP id rd18so397903iec.21
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 00:53:22 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1402954800-28215-4-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Andrew Bresticker <abrestic@chromium.org>, swarren@wwwdotorg.org, olof@lixom.net, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, sjg@chromium.org, Wolfram Sang <wsa@the-dreams.de>, broonie@kernel.org, sameo@linux.intel.com, linux-kernel@vger.kernel.org
 
-On 17 June 2014 20:55, Thomas Abraham <thomas.ab@samsung.com> wrote:
-> Changes since v5:
-> - Configuration data for cpu clock block is embedded with the code. The cpu clock
->   logic can later to extended to obtain this data from DT.
-> - Excluded the support for Exynos4x12 SoC since the work on boost OPP bindings is
->   still incomplete.
-> - Included cpufreq support for Exynos5420 SoC.
-> - Many other minor changes (and so dropped Ack's for some of the patches in v5)
->
-> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
-> drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
-> series also enabled cpufreq support for Exynos5420 using arm_big_little cpufreq
-> driver.
+On Mon, 16 Jun 2014, Doug Anderson wrote:
 
-cpufreq@vger.kernel.org list is deprecated now: dec102a, use linux-pm instead.
+> From: Bill Richardson <wfrichar@chromium.org>
+>=20
+> The lower-level driver may want to provide its own buffers. If so,
+> there's no need to allocate new ones.  This already happens to work
+> just fine (since we check for size of 0 and use devm allocation), but
+> it's good to document it.
+>=20
+> [dianders: Resolved conflicts; documented that no code changes needed
+> on mainline]
+>=20
+> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+>  include/linux/mfd/cros_ec.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.=
+h
+> index 7e9fe6e..2ee3190 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
+> @@ -68,8 +68,8 @@ struct cros_ec_msg {
+>   * We use this alignment to keep ARM and x86 happy. Probably word
+>   * alignment would be OK, there might be a small performance advanta=
+ge
+>   * to using dword.
+> - * @din_size: size of din buffer
+> - * @dout_size: size of dout buffer
+> + * @din_size: size of din buffer to allocate (zero to use static din=
+)
+> + * @dout_size: size of dout buffer to allocate (zero to use static d=
+out)
 
-For patch 5 and 6:
+Why don't these use your new format i.e. doutsize, etc?
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>   * @command_send: send a command
+>   * @command_recv: receive a command
+>   * @ec_name: name of EC device (e.g. 'chromeos-ec')
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
