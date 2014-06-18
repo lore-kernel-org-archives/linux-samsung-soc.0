@@ -1,61 +1,42 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: Re: [PATCH 0/4] Add support for Exynos clock output configuration
-Date: Wed, 18 Jun 2014 17:17:19 +0100
-Message-ID: <CAD8Lp46pFGWSA6c1r-xGUbNDkcACyZZkru+m7+xH+BQRr7ULPg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH V2 0/2] Sound support for Exynos4412 Odroid X2, U3 board
+Date: Wed, 18 Jun 2014 18:22:29 +0200
+Message-ID: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f172.google.com ([74.125.82.172]:34456 "EHLO
-	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751534AbaFRQRV (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:14959 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751534AbaFRQWw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 12:17:21 -0400
-Received: by mail-we0-f172.google.com with SMTP id u57so1137783wes.31
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 09:17:20 -0700 (PDT)
+	Wed, 18 Jun 2014 12:22:52 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Tushar Behera <tushar.behera@linaro.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: devicetree@vger.kernel.org, broonie@kernel.org
+Cc: pawel.moll@arm.com, mark.rutland@arm.com, galak@codeaurora.org, zhen1.chen@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, alsa-devel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hi Tomasz,
+This series adds basic sound support for the Odroid X2/U3 boards.
+It relies on specific Exynos Audio Subsystem clock parent and
+frequencies being pre-configured.
 
-On Tue, May 20, 2014 at 5:43 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Since the block responsible for handling the pin is PMU, not CMU,
-> a separate driver, that binds to PMU node is required and acquires
-> all input clocks by standard DT clock look-up. This way we don't need
-> any cross-IP block drivers and cross-driver register sharing or
-> nodes for fake devices.
->
-> To represent the PMU mux/gate clock, generic composite clock is registered.
->
-> Tested on Odroid U3, with HSIC/USB hub using CLKOUT as reference clock,
-> with some additional patches.
->
-> Depends on:
-> [PATCHv5 0/4] Enable usbphy and hsotg for exynos4
-> (No link, sorry, I could not find it in any archive yet...)
-> for Exynos4210/4x12 PMU binding and DT nodes.
+My full testing git branch has been pushed to:
+git://linuxtv.org/snawrocki/samsung.git v3.16-rc1-odroid-sound-clk
 
-This isn't working for me.
-Testing linus master e99cfa2d0634881b8a41d56c48b5956b9a3ba162 plus:
-    ARM: dts: exynos4: add port sub-nodes to exynos usb host modules
-    ARM: dts: exynos4412-odroidx: enable common hardware blocks
-    ARM: dts: exynos4412-odroidx: add support for USB (phy, host, device)
-    ARM: dts: refactor Odroid DTS file and add support for Odroid X2 and U2/U3
+It can be browsed at:
+http://git.linuxtv.org/cgit.cgi/snawrocki/samsung.git/log/?h=v3.16-rc1-odroid-sound-clk
 
-Testing on ODROID-U2.
+I didn't use the simple-card since there is going to be added
+one more CPU interface using the secondary I2S and IDMA.
 
-I apply the first patch here (clk: samsung: exynos4: Add missing
-CPU/DMC clock hierarchy) and things continue to work. Now when I add
-the second patch "clk: samsung: exynos4: Add CLKOUT clock hierarchy"
-boot hangs at:
+Sylwester Nawrocki (2):
+  ASoC: samsung: Add machine driver for Odroid X2/U3
+  doc: dt bindings: Document Odroid X2/U3 audio subsystem bindings
 
-[    4.753740] s3c-rtc 10070000.rtc: setting system clock to
-2000-01-01 02:43:30 UTC (946694610)
-[    4.753809] ### dt-test ### No testcase data in device tree; not
-running tests
-[    4.791155] gps-power-domain: Power-off latency e
+ .../bindings/sound/samsung,odroidx2-max98090.txt   |   35 ++++
+ sound/soc/samsung/Kconfig                          |    8 +
+ sound/soc/samsung/Makefile                         |    2 +
+ sound/soc/samsung/odroidx2_max98090.c              |  191 ++++++++++++++++++++
+ 4 files changed, 236 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt
+ create mode 100644 sound/soc/samsung/odroidx2_max98090.c
 
-Any ideas?
-Thanks
-Daniel
+--
+1.7.9.5
