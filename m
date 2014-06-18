@@ -1,69 +1,72 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Wed, 18 Jun 2014 10:29:06 +0100
-Message-ID: <20140618092906.GA32699@arm.com>
-References: <20140604164132.GF6644@arm.com>
- <07321368d15d4ad9928ebb83af87e401@DM2PR03MB479.namprd03.prod.outlook.com>
- <20140616152739.GS16758@arm.com>
- <8b0492b4697943a0b1f276ef42cc8223@DM2PR03MB352.namprd03.prod.outlook.com>
- <20140616170416.GA16758@arm.com>
- <419e67f783524d208ab3be16bcd94bd9@DM2PR03MB352.namprd03.prod.outlook.com>
- <0587e1f4894546398be0798d2bc2c84f@BL2PR03MB468.namprd03.prod.outlook.com>
- <20140617104304.GD13808@arm.com>
- <32165315f0b84be9948f489fd87bf6a9@BL2PR03MB468.namprd03.prod.outlook.com>
- <7c03c5cffa174b20962bff3b09de0eb8@DM2PR03MB352.namprd03.prod.outlook.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC regulators
+Date: Wed, 18 Jun 2014 11:47:51 +0200
+Message-ID: <53A16047.7010409@collabora.co.uk>
+References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk> <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk> <20140617211747.GY29841@lee--X1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:45908 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S965099AbaFRJ3M (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:55796 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965007AbaFRJsA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 05:29:12 -0400
-Content-Disposition: inline
-In-Reply-To: <7c03c5cffa174b20962bff3b09de0eb8@DM2PR03MB352.namprd03.prod.outlook.com>
+	Wed, 18 Jun 2014 05:48:00 -0400
+In-Reply-To: <20140617211747.GY29841@lee--X1>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stuart Yoder <stuart.yoder@freescale.com>
-Cc: Varun Sethi <Varun.Sethi@freescale.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Jun 17, 2014 at 03:50:25PM +0100, Stuart Yoder wrote:
-> > > I think for simple masters (i.e. those that have all their StreamIDs
-> > > under control of one driver), then setting something during attach (or
-> > > add?) based on the DT could work pretty well. The other case is when we
-> > > have masters behind a bridge (such as a PCI RC). In this case, it might
-> > > actually be better to ask the bridge for the IDs and let it sort out
-> > the
-> > > allocation itself. That would also move the RequesterID -> StreamID
-> > > mapping out of the SMMU code.
-> > >
-> > > What do you think?
-> > The PCI bus iommu group creation code would be part of the SMMU driver
-> > (it is handled by other IOMMU drivers as well). My understanding is that
-> > there would be one is to one correspondence between the requestor ID and
-> > the iommu group. May be, we can have an API provided by the PCI bridge
-> > (architecture specific) for setting the stream ID.
-> 
-> I think Will is suggesting something along those lines-- I think it's a
-> question of where the streamID allocation happens.  You could
-> either do something like the following in the SMMU driver when attaching
-> a PCI device:
-> 
->     id = alloc_stream_id(...);
->     pci_set_streamid(pci-dev, id);
-> 
->     or
-> 
->     id = pci_get_streamid(pci-dev);
-> 
-> ...i.e the PCI RC could allocate (from some TBD
-> allocator) and set the stream ID itself.
-> 
-> Not sure how big a deal it is to extend PCI RC interfaces for 
-> something like that.
+Hello Lee,
 
-I think both interfaces have their place; the latter for hotpluggable buses
-and the former for static allocation (i.e. set once). The only way to see
-how well it works is to try implementing it, I guess.
+Thanks a lot for your feedback.
 
-Will
+On 06/17/2014 11:17 PM, Lee Jones wrote:
+>> The MAX77802 PMIC has 10 high-efficiency Buck and 32 Low-dropout
+>> (LDO) regulators. This patch adds support for all these regulators
+>> found on the MAX77802 PMIC and is based on a driver added by Simon
+>> Glass to the Chrome OS kernel 3.8 tree.
+>> 
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> ---
+>> 
+>> Changes since v1:
+>>  - Remove unneeded check if num_regulators != MAX77802_MAX_REGULATORS.
+>>  - Fix .set_suspend_mode handler comment and split regulators ops for
+>>    regulators that behave differently. Suggested by Mark Brown.
+>>  - Use module_platform_driver() instead of having init/exit functions.
+>>    Suggested by Mark Brown.
+>>  - Use the new descriptor-based GPIO interface instead of the deprecated
+>>    integer based GPIO one. Suggested by Mark Brown.
+>>  - Look for "regulators" child node instead of "voltage-regulators" to be
+>>    consistent with other PMIC drivers. Suggested by Mark Brown.
+>> 
+>>  drivers/mfd/max77802.c       |   1 +
+> 
+> Can you remove all of the MFD changes from patches 7, 8 and 9 and
+> create new one.  That way there's no requirement for any cross
+> subsystem messiness.
+> 
+
+Sure, Mark already suggested the same and I'll do it on the next version.
+
+But there still be some cross-subsystem dependency/messiness since the
+regulator, clk and rtc drivers include the mfd max77802 headers that are added
+in Patch 6.
+
+So I guess you should either a) take the whole patch-set through your mfd tree
+or b) merge the mfd patches and create an immutable branch that can be pulled by
+Mark, Mike and Alessandro.
+
+I don't know what's the preferred workflow in these cases...
+
+>>  drivers/regulator/Kconfig    |   9 +
+>>  drivers/regulator/Makefile   |   1 +
+>>  drivers/regulator/max77802.c | 701 +++++++++++++++++++++++++++++++++++++++++++
+>>  4 files changed, 712 insertions(+)
+>>  create mode 100644 drivers/regulator/max77802.c
+> 
+
+Best regards,
+Javier
