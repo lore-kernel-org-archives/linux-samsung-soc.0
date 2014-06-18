@@ -1,50 +1,55 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 10/10] mfd: cros_ec: ec_dev->cmd_xfer() returns number of
- bytes received from EC
-Date: Tue, 17 Jun 2014 21:54:03 -0700
-Message-ID: <CAD=FV=W0L_D2GkeRb0+JLZAMk=2m2V3hOS4fFbXDtQHNoYxZvA@mail.gmail.com>
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 08/10] mfd: cros_ec: cleanup: Remove EC wrapper functions
+Date: Tue, 17 Jun 2014 22:05:14 -0700
+Message-ID: <CAPnjgZ22q3-+YGPP3=GeYgk6fxCaaOJV5RZbViiKPgga_bRtGg@mail.gmail.com>
 References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
-	<1402954800-28215-11-git-send-email-dianders@chromium.org>
-	<CAPnjgZ1+y6QYpdio9inzLTi9g4Ew7vkco_MU3GO1_gpndp3dxA@mail.gmail.com>
+	<1402954800-28215-9-git-send-email-dianders@chromium.org>
+	<CAPnjgZ3GhvHog5Pb3_DxYSWF0t4mgR=7HBe2KrfKcsJ=zwmFhQ@mail.gmail.com>
+	<CAD=FV=Ue9OBkXtii4aKrCbKPd--7ZRN_G0pw2ZtX89mcz_hfzQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f182.google.com ([209.85.128.182]:36241 "EHLO
-	mail-ve0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751731AbaFREyF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 00:54:05 -0400
-Received: by mail-ve0-f182.google.com with SMTP id oy12so298893veb.27
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Jun 2014 21:54:03 -0700 (PDT)
-In-Reply-To: <CAPnjgZ1+y6QYpdio9inzLTi9g4Ew7vkco_MU3GO1_gpndp3dxA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAD=FV=Ue9OBkXtii4aKrCbKPd--7ZRN_G0pw2ZtX89mcz_hfzQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Sonny Rao <sonnyrao-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lk <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Simon Glass <sjg@chromium.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Vincent Palatin <vpalatin@chromium.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, lk <linux-kernel@vger.kernel.org>
 
-Simon,
+Hi Doug,
 
-On Tue, Jun 17, 2014 at 8:46 PM, Simon Glass <sjg@chromium.org> wrote:
-> Hi,
+On 17 June 2014 21:27, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> Simon,
 >
-> On 16 June 2014 14:40, Doug Anderson <dianders@chromium.org> wrote:
->> From: Bill Richardson <wfrichar@chromium.org>
+> On Tue, Jun 17, 2014 at 8:42 PM, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>>> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
+>>> index 4083796..dc37b6b 100644
+>>> --- a/drivers/input/keyboard/cros_ec_keyb.c
+>>> +++ b/drivers/input/keyboard/cros_ec_keyb.c
+>>> @@ -191,8 +191,18 @@ static void cros_ec_keyb_close(struct input_dev *dev)
+>>>
+>>>  static int cros_ec_keyb_get_state(struct cros_ec_keyb *ckdev, uint8_t *kb_state)
+>>>  {
+>>> -       return ckdev->ec->command_recv(ckdev->ec, EC_CMD_MKBP_STATE,
+>>> -                                         kb_state, ckdev->cols);
+>>> +       int ret;
+>>> +       struct cros_ec_command msg = {
+>>> +               .version = 0,
+>>> +               .command = EC_CMD_MKBP_STATE,
+>>> +               .outdata = NULL,
+>>> +               .outsize = 0,
+>>> +               .indata = kb_state,
+>>> +               .insize = ckdev->cols,
+>>> +       };
+>>> +
+>>> +       ret = ckdev->ec->cmd_xfer(ckdev->ec, &msg);
 >>
->> When communicating with the EC, the cmd_xfer() function should return the
->> number of bytes it received from the EC, or negative on error.
+>> Do we need ret?
 >
-> This is just for the I2C tunnel feature, right? If so, I think this
-> should be mentioned here. It seems to be affecting ec_i2c_xfer(), not
-> cmd_xfer().
+> No.  If you wish I will spin without it.  Let me know.
+>
+> Note that locally this code includes a comment between the above and the return:
+>   /* FIXME: This assumes msg.result == EC_RES_SUCCESS */
 
-No, the tunnel feature is implemented just fine without this (and is
-already landed and working).  It looks like the (not yet upstreamed)
-ec_i2c_limited_xfer for spring returns this new value directly but I'm
-not convinced that's technicall correct.
+It's not important to me, and you've explained the other question.
 
-Bill can correct me if I'm wrong, but I think this is primarily
-interesting once we add in cros_ec_dev (the userspace API) which needs
-this info.  Until that happens this patch doesn't hurt and just
-returns some extra info.
-
--Doug
+Reviewed-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
