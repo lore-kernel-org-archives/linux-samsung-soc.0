@@ -1,55 +1,79 @@
-From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 08/10] mfd: cros_ec: cleanup: Remove EC wrapper functions
-Date: Tue, 17 Jun 2014 22:05:14 -0700
-Message-ID: <CAPnjgZ22q3-+YGPP3=GeYgk6fxCaaOJV5RZbViiKPgga_bRtGg@mail.gmail.com>
-References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
-	<1402954800-28215-9-git-send-email-dianders@chromium.org>
-	<CAPnjgZ3GhvHog5Pb3_DxYSWF0t4mgR=7HBe2KrfKcsJ=zwmFhQ@mail.gmail.com>
-	<CAD=FV=Ue9OBkXtii4aKrCbKPd--7ZRN_G0pw2ZtX89mcz_hfzQ@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: dpi: Fix NULL pointer dereference with legacy
+ bindings
+Date: Wed, 18 Jun 2014 14:06:12 +0900
+Message-ID: <53A11E44.2090502@samsung.com>
+References: <1402433877-10867-1-git-send-email-tomasz.figa@gmail.com>
+ <53A0D8BC.7050607@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAD=FV=Ue9OBkXtii4aKrCbKPd--7ZRN_G0pw2ZtX89mcz_hfzQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Sonny Rao <sonnyrao-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lk <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:10786 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933925AbaFRFGO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Jun 2014 01:06:14 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N7C004GJM6D5R80@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Jun 2014 14:06:13 +0900 (KST)
+In-reply-to: <53A0D8BC.7050607@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, David Airlie <airlied@linux.ie>, Andrzej Hajda <a.hajda@samsung.com>
 
-Hi Doug,
-
-On 17 June 2014 21:27, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> Simon,
->
-> On Tue, Jun 17, 2014 at 8:42 PM, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->>> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
->>> index 4083796..dc37b6b 100644
->>> --- a/drivers/input/keyboard/cros_ec_keyb.c
->>> +++ b/drivers/input/keyboard/cros_ec_keyb.c
->>> @@ -191,8 +191,18 @@ static void cros_ec_keyb_close(struct input_dev *dev)
->>>
->>>  static int cros_ec_keyb_get_state(struct cros_ec_keyb *ckdev, uint8_t *kb_state)
->>>  {
->>> -       return ckdev->ec->command_recv(ckdev->ec, EC_CMD_MKBP_STATE,
->>> -                                         kb_state, ckdev->cols);
->>> +       int ret;
->>> +       struct cros_ec_command msg = {
->>> +               .version = 0,
->>> +               .command = EC_CMD_MKBP_STATE,
->>> +               .outdata = NULL,
->>> +               .outsize = 0,
->>> +               .indata = kb_state,
->>> +               .insize = ckdev->cols,
->>> +       };
->>> +
->>> +       ret = ckdev->ec->cmd_xfer(ckdev->ec, &msg);
+On 2014=EB=85=84 06=EC=9B=94 18=EC=9D=BC 09:09, Tomasz Figa wrote:
+> On 10.06.2014 22:57, Tomasz Figa wrote:
+>> If there is no panel node in DT and instead display timings are prov=
+ided
+>> directly in FIMD node, there is no panel object created and ctx->pan=
+el
+>> becomes NULL. However during Exynos DRM initialization
+>> drm_helper_hpd_irq_event() is called, which in turns calls
+>> exynos_dpi_detect(), which dereferences ctx->panel without a check,
+>> causing a NULL pointer derefrence.
 >>
->> Do we need ret?
->
-> No.  If you wish I will spin without it.  Let me know.
->
-> Note that locally this code includes a comment between the above and the return:
->   /* FIXME: This assumes msg.result == EC_RES_SUCCESS */
+>> This patch fixes the issue by adding necessary NULL pointer check.
+>>
+>> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_dpi.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/d=
+rm/exynos/exynos_drm_dpi.c
+>> index f1b8587..f44bd90 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+>> @@ -40,7 +40,7 @@ exynos_dpi_detect(struct drm_connector *connector,=
+ bool force)
+>>  {
+>>  	struct exynos_dpi *ctx =3D connector_to_dpi(connector);
+>> =20
+>> -	if (!ctx->panel->connector)
+>> +	if (ctx->panel && !ctx->panel->connector)
+>>  		drm_panel_attach(ctx->panel, &ctx->connector);
+>> =20
+>>  	return connector_status_connected;
+>>
+>=20
+> Ping.
 
-It's not important to me, and you've explained the other question.
+Applied.
 
-Reviewed-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Thanks,
+Inki Dae
+
+>=20
+> Best regards,
+> Tomasz
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
