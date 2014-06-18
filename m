@@ -1,110 +1,138 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 09/10] mfd: cros_ec: Check result code from EC messages
-Date: Wed, 18 Jun 2014 08:35:05 +0100
-Message-ID: <20140618073505.GC21030@lee--X1>
+Subject: Re: [PATCH 08/10] mfd: cros_ec: cleanup: Remove EC wrapper functions
+Date: Wed, 18 Jun 2014 08:40:49 +0100
+Message-ID: <20140618074049.GD21030@lee--X1>
 References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
- <1402954800-28215-10-git-send-email-dianders@chromium.org>
- <CAPnjgZ3qqRiLvgnkCSoUTTkL8XvRHNkrFhfqi_Fofx-5ixU5LQ@mail.gmail.com>
- <CAD=FV=WNWt111t3wYnOA2npPnAUdnFUC5WbLe+t6n0nJPeiqCQ@mail.gmail.com>
+ <1402954800-28215-9-git-send-email-dianders@chromium.org>
+ <CAPnjgZ3GhvHog5Pb3_DxYSWF0t4mgR=7HBe2KrfKcsJ=zwmFhQ@mail.gmail.com>
+ <CAD=FV=Ue9OBkXtii4aKrCbKPd--7ZRN_G0pw2ZtX89mcz_hfzQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f176.google.com ([209.85.213.176]:44186 "EHLO
-	mail-ig0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755328AbaFRHfM (ORCPT
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:60547 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965136AbaFRHk5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 03:35:12 -0400
-Received: by mail-ig0-f176.google.com with SMTP id a13so5062357igq.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 00:35:11 -0700 (PDT)
+	Wed, 18 Jun 2014 03:40:57 -0400
+Received: by mail-ie0-f180.google.com with SMTP id rl12so390796iec.39
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 00:40:56 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=WNWt111t3wYnOA2npPnAUdnFUC5WbLe+t6n0nJPeiqCQ@mail.gmail.com>
+In-Reply-To: <CAD=FV=Ue9OBkXtii4aKrCbKPd--7ZRN_G0pw2ZtX89mcz_hfzQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Doug Anderson <dianders@chromium.org>
-Cc: Simon Glass <sjg@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, lk <linux-kernel@vger.kernel.org>
+Cc: Simon Glass <sjg@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Vincent Palatin <vpalatin@chromium.org>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, lk <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
 
-On Tue, 17 Jun 2014, Doug Anderson wrote:
-
-> Simon,
->=20
-> On Tue, Jun 17, 2014 at 8:43 PM, Simon Glass <sjg@chromium.org> wrote=
-:
-> >> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-> >> index 09ca789..4d34f1c 100644
-> >> --- a/drivers/mfd/cros_ec_spi.c
-> >> +++ b/drivers/mfd/cros_ec_spi.c
-> >> @@ -289,21 +289,23 @@ static int cros_ec_cmd_xfer_spi(struct cros_=
-ec_device *ec_dev,
-> >>                 goto exit;
-> >>         }
+> >> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input=
+/keyboard/cros_ec_keyb.c
+> >> index 4083796..dc37b6b 100644
+> >> --- a/drivers/input/keyboard/cros_ec_keyb.c
+> >> +++ b/drivers/input/keyboard/cros_ec_keyb.c
+> >> @@ -191,8 +191,18 @@ static void cros_ec_keyb_close(struct input_d=
+ev *dev)
 > >>
-> >> -       /* check response error code */
-> >>         ptr =3D ec_dev->din;
-> >> -       if (ptr[0]) {
-> >> -               if (ptr[0] =3D=3D EC_RES_IN_PROGRESS) {
-> >> -                       dev_dbg(ec_dev->dev, "command 0x%02x in pr=
-ogress\n",
-> >> -                               ec_msg->command);
-> >> -                       ret =3D -EAGAIN;
-> >> -                       goto exit;
-> >> -               }
-> >> -               dev_warn(ec_dev->dev, "command 0x%02x returned an =
-error %d\n",
-> >> -                        ec_msg->command, ptr[0]);
-> >> -               debug_packet(ec_dev->dev, "in_err", ptr, len);
-> >> -               ret =3D -EINVAL;
+> >>  static int cros_ec_keyb_get_state(struct cros_ec_keyb *ckdev, uin=
+t8_t *kb_state)
+> >>  {
+> >> -       return ckdev->ec->command_recv(ckdev->ec, EC_CMD_MKBP_STAT=
+E,
+> >> -                                         kb_state, ckdev->cols);
+> >> +       int ret;
+> >> +       struct cros_ec_command msg =3D {
+> >> +               .version =3D 0,
+> >> +               .command =3D EC_CMD_MKBP_STATE,
+> >> +               .outdata =3D NULL,
+> >> +               .outsize =3D 0,
+> >> +               .indata =3D kb_state,
+> >> +               .insize =3D ckdev->cols,
+> >> +       };
 > >> +
-> >> +       /* check response error code */
-> >> +       ec_msg->result =3D ptr[0];
-> >> +       switch (ec_msg->result) {
-> >> +       case EC_RES_SUCCESS:
-> >> +               break;
-> >> +       case EC_RES_IN_PROGRESS:
-> >> +               ret =3D -EAGAIN;
-> >> +               dev_dbg(ec_dev->dev, "command 0x%02x in progress\n=
-",
-> >> +                       ec_msg->command);
-> >>                 goto exit;
-> >> +       default:
-> >> +               dev_warn(ec_dev->dev, "command 0x%02x returned %d\=
-n",
-> >> +                        ec_msg->command, ec_msg->result);
-> >>         }
+> >> +       ret =3D ckdev->ec->cmd_xfer(ckdev->ec, &msg);
 > >
-> > Since this code is the same as the above, should it go in a common
-> > function in cros_ec?
+> > Do we need ret?
 >=20
-> So you are thinking it should be written like:
+> No.  If you wish I will spin without it.  Let me know.
 >=20
-> ec_msg->result =3D ptr[0];
-> ret =3D cros_ec_check_result(ec_dev, ec_msg);
-> if (ret)
->   goto exit;
+> Note that locally this code includes a comment between the above and =
+the return:
+>   /* FIXME: This assumes msg.result =3D=3D EC_RES_SUCCESS */
 >=20
-> ---
->=20
-> int cros_ec_check_result(struct cros_ec_device *ec_dev, struct
-> cros_ec_command *ec_msg)
-> {
->        switch (ec_msg->result) {
->        case EC_RES_SUCCESS:
->                return 0;
->        case EC_RES_IN_PROGRESS:
->                dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
->                        ec_msg->command);
->                return -EAGAIN;
->        default:
->                dev_warn(ec_dev->dev, "command 0x%02x returned %d\n",
->                         ec_msg->command, ec_msg->result);
->                return 0;
-> }
->=20
-> OK, that seems reasonable.  I'll plan to spin tomorrow with that.
+> Given that this is not a new problem introduced in this code, that it
+> still hasn't been fixed locally in the ChromeOS tree, and that
+> generally FIXMEs don't seem to be left in the code upstream, I left i=
+t
+> out.
 
-+1
+As you're re-spinning anyway, please fix this and add my:
+  Acked-by: Lee Jones <lee.jones@linaro.org>
 
-I'll do a proper review when you re-spin the patch.
+> >> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_=
+ec.h
+> >> index 2b0c598..60c0880 100644
+> >> --- a/include/linux/mfd/cros_ec.h
+> >> +++ b/include/linux/mfd/cros_ec.h
+> >> @@ -63,9 +63,10 @@ struct cros_ec_command {
+> >>   * @was_wake_device: true if this device was set to wake the syst=
+em from
+> >>   * sleep at the last suspend
+> >>   * @event_notifier: interrupt event notifier for transport device=
+s
+> >> - * @command_send: send a command
+> >> - * @command_recv: receive a response
+> >> - * @command_sendrecv: send a command and receive a response
+> >> + * @cmd_xfer: send command to EC and get response
+> >> + *     Returns 0 if the communication succeeded, but that doesn't=
+ mean the EC
+> >> + *     was happy with the command it got. Caller should check msg=
+=2Eresult for
+> >> + *     the EC's result code.
+> >>   *
+> >>   * @priv: Private data
+> >>   * @irq: Interrupt to use
+> >> @@ -83,7 +84,6 @@ struct cros_ec_command {
+> >>   * @parent: pointer to parent device (e.g. i2c or spi device)
+> >>   * @wake_enabled: true if this device can wake the system from sl=
+eep
+> >>   * @lock: one transaction at a time
+> >> - * @cmd_xfer: low-level channel to the EC
+> >>   */
+> >>  struct cros_ec_device {
+> >>
+> >> @@ -94,13 +94,8 @@ struct cros_ec_device {
+> >>         bool was_wake_device;
+> >>         struct class *cros_class;
+> >>         struct blocking_notifier_head event_notifier;
+> >> -       int (*command_send)(struct cros_ec_device *ec,
+> >> -                           uint16_t cmd, void *out_buf, int out_l=
+en);
+> >> -       int (*command_recv)(struct cros_ec_device *ec,
+> >> -                           uint16_t cmd, void *in_buf, int in_len=
+);
+> >> -       int (*command_sendrecv)(struct cros_ec_device *ec,
+> >> -                               uint16_t cmd, void *out_buf, int o=
+ut_len,
+> >> -                               void *in_buf, int in_len);
+> >> +       int (*cmd_xfer)(struct cros_ec_device *ec,
+> >> +                       struct cros_ec_command *msg);
+> >>
+> >>         /* These are used to implement the platform-specific inter=
+face */
+> >>         void *priv;
+> >> @@ -112,8 +107,6 @@ struct cros_ec_device {
+> >>         struct device *parent;
+> >>         bool wake_enabled;
+> >>         struct mutex lock;
+> >> -       int (*cmd_xfer)(struct cros_ec_device *ec,
+> >> -                       struct cros_ec_command *msg);
+> >
+> > Seems odd - maybe this line move of cmd_xfer() should be in an earl=
+ier patch?
+>=20
+> It got moved from "private" to public.  Bill reorganized all the
+> public stuff at the top and the private at the bottom.
+>=20
+> -Doug
 
 --=20
 Lee Jones
