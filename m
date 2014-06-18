@@ -1,103 +1,75 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 02/10] mfd: cros_ec: IRQs for cros_ec should be optional
-Date: Wed, 18 Jun 2014 10:45:19 -0700
-Message-ID: <CAD=FV=WJOup3ZT6vGbkpgWCx6q4MOKxROicS_J9bdatNg+OrhQ@mail.gmail.com>
-References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
-	<1402954800-28215-3-git-send-email-dianders@chromium.org>
-	<20140618075551.GJ21030@lee--X1>
-	<CAD=FV=Wn3u+DNerFBNpbbLhBPa+3A5bvrRiBXNq=vyRA00+-uQ@mail.gmail.com>
-	<20140618164621.GB25353@lee--X1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140618164621.GB25353@lee--X1>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, "broonie@kernel.org" <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/10] Batch of cleanup patches for cros_ec
+Date: Wed, 18 Jun 2014 11:13:57 -0700
+Message-ID: <1403115247-8853-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f73.google.com ([209.85.220.73]:62927 "EHLO
+	mail-pa0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753535AbaFRSOO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Jun 2014 14:14:14 -0400
+Received: by mail-pa0-f73.google.com with SMTP id kq14so139297pab.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 11:14:13 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Andrew Bresticker <abrestic@chromium.org>, swarren@wwwdotorg.org, olof@lixom.net, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, sjg@chromium.org, Wolfram Sang <wsa@the-dreams.de>, broonie@kernel.org, Doug Anderson <dianders@chromium.org>, sameo@linux.intel.com, dmitry.torokhov@gmail.com, linux-kernel@vger.kernel.org, geert@linux-m68k.org, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org
 
-Lee,
+This is a batch of cleanup patches picked from the ChromeOS 3.8 kernel
+tree and applied to ToT.  Most of these patches were authored by Bill
+Richardson (CCed).  Where appropriate I've squashed patches together,
+though I have erred on the side of keeping patches logically distinct
+rather than squashing into one big cleanup patch.
 
-On Wed, Jun 18, 2014 at 9:46 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Wed, 18 Jun 2014, Doug Anderson wrote:
->
->> Lee,
->>
->> On Wed, Jun 18, 2014 at 12:55 AM, Lee Jones <lee.jones@linaro.org> wrote:
->> > On Mon, 16 Jun 2014, Doug Anderson wrote:
->> >
->> >> From: Bill Richardson <wfrichar@chromium.org>
->> >>
->> >> Preparing the way for the LPC device, which is just a plaform_device without
->> >> interrupts.
->> >>
->> >> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
->> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> >> ---
->> >>  drivers/mfd/cros_ec.c | 26 +++++++++++++-------------
->> >>  1 file changed, 13 insertions(+), 13 deletions(-)
->> >>
->> >> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
->> >> index 38fe9bf..bd6f936 100644
->> >> --- a/drivers/mfd/cros_ec.c
->> >> +++ b/drivers/mfd/cros_ec.c
->> >> @@ -119,17 +119,15 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->> >>                       return -ENOMEM;
->> >>       }
->> >>
->> >> -     if (!ec_dev->irq) {
->> >> -             dev_dbg(dev, "no valid IRQ: %d\n", ec_dev->irq);
->> >> -             return err;
->> >> -     }
->> >> -
->> >> -     err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
->> >> -                                IRQF_TRIGGER_LOW | IRQF_ONESHOT,
->> >> -                                "chromeos-ec", ec_dev);
->> >> -     if (err) {
->> >> -             dev_err(dev, "request irq %d: error %d\n", ec_dev->irq, err);
->> >> -             return err;
->> >> +     if (ec_dev->irq) {
->> >> +             err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
->> >> +                                     IRQF_TRIGGER_LOW | IRQF_ONESHOT,
->> >> +                                     "chromeos-ec", ec_dev);
->> >
->> > Is there anything stopping you using the devm_* version?
->>
->> I'm generally quite hesitant about using the devm_ IRQ functions.
->> Requesting an IRQ enables the IRQ at the time of request and freeing
->> it disables it, right?  Leaving it up to the the devm subsystem to
->> disable your IRQ tends to be a race waiting to happen if an IRQ
->> happens after you've freed all your memory / cleaned up all your
->> state.
->>
->> Looking at cros_ec in particular though:
->>
->> * Right now the last thing done in cros_ec_remove() (which is the last
->> thing in both cros_ec_i2c_remove and cros_ec_spi_remove) is to free
->> the IRQ.  That means that you're right: we could switch to devm_ in
->> this case and it wouldn't introduce any new bugs.
->>
->> * ...but I'm not convinced that the location of the free_irq() today
->> is quite right.  I couldn't actually get it to crash or hang, but
->> there is a time period where we've called mfd_remove_devices() and the
->> IRQ is still active.  That doesn't seem like a super great situation
->> to be in.  I'll add a move of the irq_free to the patch series.
->
-> I guess if you're concerned about ordering you could always use
-> devm_free_irq() in the places where you think it should be freed
-> earlier than release.  I'm pretty sure that discludes the failure
-> patch in probe() though, so we'd still be able to rid a few lines.
+There is very little functionality added by this series, but this gets
+us closer to how things look in the ChromeOS tree so we can add more
+patches atop it.  In general I took the oldest patches from our tree
+and stopped picking when I got to a reasonable patch size (10
+patches).  There are about 5 more cleanup patches still in the
+ChromeOS tree, then some more major functionality patches.
 
-Hmmm, I'd even vote to move the IRQ request to be the last thing in
-probe (which would also mean that the devm wouldn't be used but would
-then require us to call mfd_remove_devices()).  ...but I can't find
-any good reason that we need to do that.
+Note that I didn't take the "cros_ec_dev" userspace inteface, the
+"LPC" implementation, the "vboot context" implementation, and patches
+relating to exynos5250-spring when picking patches.  These bits are
+very separate (and big!) and can be added and debated separately after
+we've got cleanup in.  Whenever patches touched those pieces of the
+code I ignored that part of the patch.  In general I did take cleanup
+code that was intended to make it easier to later add these bits.
 
-Oh, dang.  I just looked at the next local patch in the list of local
-ones.  ...it totally rips this code out and moves the IRQ to
-cros_ec_keyboard where it belongs (the infrastructure didn't really
-allow more than one person to use this anyway).  I'll just squash this
-patch there and we're done.  Sorry for the noise!  :(
+I have tested basic functionality of these patches on exynos5250-snow
+and exynos5420-peach-pit.
 
+Changes in v2:
+- Include example printouts before/after in commit message.
+- Removed unneeded "ret" variable.
+- Added common function to cros_ec.c
+- Changed to dev_dbg() as per http://crosreview.com/66726
+- IRQs should be optional => move EC interrupt to keyboard.
 
--Doug
+Andrew Bresticker (1):
+  mfd: cros_ec: move EC interrupt to cros_ec_keyb
+
+Bill Richardson (8):
+  mfd: cros_ec: Fix the comment on cros_ec_remove()
+  mfd: cros_ec: Allow static din/dout buffers with cros_ec_register()
+  mfd: cros_ec: Tweak struct cros_ec_device for clarity
+  mfd: cros_ec: Use struct cros_ec_command to communicate with the EC
+  mfd: cros_ec: cleanup: remove unused fields from struct cros_ec_device
+  mfd: cros_ec: cleanup: Remove EC wrapper functions
+  mfd: cros_ec: Check result code from EC messages
+  mfd: cros_ec: ec_dev->cmd_xfer() returns number of bytes received from
+    EC
+
+Simon Glass (1):
+  mdf: cros_ec: Detect in-progress commands
+
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c |  17 +++--
+ drivers/input/keyboard/cros_ec_keyb.c   |  70 ++++++++++++--------
+ drivers/mfd/cros_ec.c                   |  97 ++++++++--------------------
+ drivers/mfd/cros_ec_i2c.c               |  37 +++++------
+ drivers/mfd/cros_ec_spi.c               |  36 +++++------
+ include/linux/mfd/cros_ec.h             | 110 +++++++++++++++++---------------
+ 6 files changed, 172 insertions(+), 195 deletions(-)
+
+-- 
+2.0.0.526.g5318336
