@@ -1,67 +1,37 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH V2 2/2] doc: dt bindings: Document Odroid X2/U3 audio subsystem
- bindings
-Date: Wed, 18 Jun 2014 18:22:31 +0200
-Message-ID: <1403108551-25058-3-git-send-email-s.nawrocki@samsung.com>
-References: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:62758 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753270AbaFRQYE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 12:24:04 -0400
-In-reply-to: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 01/10] mfd: cros_ec: Fix the comment on cros_ec_remove()
+Date: Wed, 18 Jun 2014 09:26:29 -0700
+Message-ID: <CAD=FV=Xytn_6jHoWrr7yK41zep8b4H6C=zUxkrRuPu74siU-4A@mail.gmail.com>
+References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
+	<1402954800-28215-2-git-send-email-dianders@chromium.org>
+	<20140618075704.GK21030@lee--X1>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140618075704.GK21030@lee--X1>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, "broonie@kernel.org" <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree@vger.kernel.org, broonie@kernel.org
-Cc: pawel.moll@arm.com, mark.rutland@arm.com, galak@codeaurora.org, zhen1.chen@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, alsa-devel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- .../bindings/sound/samsung,odroidx2-max98090.txt   |   35 ++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt
+Lee,
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt b/Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt
-new file mode 100644
-index 0000000..9148f72
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt
-@@ -0,0 +1,35 @@
-+Samsung Exynos Odroid X2/U3 audio complex with MAX98090 codec
-+
-+Required properties:
-+ - compatible : "samsung,odroidx2-audio" - for Odroid X2 board,
-+		"samsung,odroidu3-audio" - for Odroid U3 board
-+ - samsung,model : the user-visible name of this sound complex
-+ - samsung,i2s-controller : the phandle of the I2S controller
-+ - samsung,audio-codec : the phandle of the MAX98090 audio codec
-+ - samsung,audio-routing : a list of the connections between audio
-+   components;  each entry is a pair of strings, the first being the
-+   connection's sink, the second being the connection's source;
-+   valid names for sources and sinks are the MAX98090's pins (as
-+   documented in its binding), and the jacks on the board
-+   For Odroid X2:
-+     * Headphone Jack
-+     * Mic Jack
-+     * DMIC
-+
-+   For Odroid U3:
-+     * Headphone Jack
-+     * Speakers
-+
-+Example:
-+
-+sound {
-+	compatible = "samsung,odroidu3-audio";
-+	samsung,i2s-controller = <&i2s0>;
-+	samsung,audio-codec = <&max98090>;
-+	samsung,model = "Odroid-X2";
-+	samsung,audio-routing =
-+		"Headphone Jack", "HPL",
-+		"Headphone Jack", "HPR",
-+		"IN1", "Mic Jack",
-+		"Mic Jack", "MICBIAS";
-+};
--- 
-1.7.9.5
+On Wed, Jun 18, 2014 at 12:57 AM, Lee Jones <lee.jones@linaro.org> wrote:
+> On Mon, 16 Jun 2014, Doug Anderson wrote:
+>
+>> From: Bill Richardson <wfrichar@chromium.org>
+>>
+>> This comment was incorrect, so update it.
+>>
+>> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
+>> Signed-off-by: Simon Glass <sjg@chromium.org>
+>
+> How many people did it take to write this patch? ;)
+>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+
+There's gotta be a joke here about how many Google engineers it takes
+to fix a comment.  In this case I think the answer is 3: one to fix
+the comment, one to clean it up, and one to send it upstream.  ;)
+
+-Doug
