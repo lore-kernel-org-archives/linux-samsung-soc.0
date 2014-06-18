@@ -1,54 +1,45 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 06/10] mfd: Add driver for Maxim 77802 Power Management
- IC
-Date: Wed, 18 Jun 2014 11:50:08 +0200
-Message-ID: <53A160D0.6010306@collabora.co.uk>
-References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk> <1402941758-11216-7-git-send-email-javier.martinez@collabora.co.uk> <20140616192720.GK5099@sirena.org.uk> <53A01F09.5070106@collabora.co.uk> <20140618083204.GP21030@lee--X1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: [PATCH] clk: s3c64xx: Hookup SPI clocks correctly
+Date: Wed, 18 Jun 2014 10:52:23 +0100
+Message-ID: <1403085143-3257-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140618083204.GP21030@lee--X1>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: t.figa@samsung.com, mturquette@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Lee,
+In the move to this clock driver the hookups for the SPI clocks were
+dropped, which causes my system Cragganmore (s3c6410 based) to be unable
+to locate any spibus clocks. This patch adds them back in.
 
-On 06/18/2014 10:32 AM, Lee Jones wrote:
->> >> +config MFD_MAX77802
->> >> +	tristate "Maxim Integrated MAX77802 PMIC Support"
->> >> +	depends on I2C=y
->> >> +	select MFD_CORE
->> >> +	select REGMAP_I2C
->> >> +	select REGMAP_IRQ
->> >> +	select IRQ_DOMAIN
->> >> +	help
->> >> +	  Say yes here to support for Maxim Integrated MAX77802.
->> >> +	  This is a Power Management IC with RTC on chip.
->> >> +	  This driver provides common support for accessing the device;
->> >> +	  additional drivers must be enabled in order to use the functionality
->> >> +	  of the device.
->> >> +
->> > 
->> > It is a bit unorthodox to put the build infrastructure in the same patch
->> > as the DT binding...
->> > 
->> 
->> I thought it was the opposite. That a DT binding document has to be added along
->> with the first user of the binding but I'll separate the DT doc in another patch
->> then if that is the right thing to do.
-> 
-> This was the 'old' method, but changed a little over a year ago.
-> 
->> Thanks a lot for all your suggestions, I'll wait a little to see if there is
->> more feedback and repost a v3 addressing all the issues you pointed out.
-> 
-> Just re-post it.  I'll review the next version.
-> 
+When taking the clock from the epll clock (SCLK) the rates on the SPI
+bus are incorrect, this needs further debugging but the hookup here
+should be correct and the problem should be else where.
 
-Ok, will do. I was waiting for Krzysztof's feedback but he can review v3 as well.
+The USBCLK case has been dropped because this requires the USB PHY to be
+enabled.
 
-Thanks a lot and best regards,
-Javier
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+---
+ drivers/clk/samsung/clk-s3c64xx.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+index efa16ee..8889ff1c 100644
+--- a/drivers/clk/samsung/clk-s3c64xx.c
++++ b/drivers/clk/samsung/clk-s3c64xx.c
+@@ -418,8 +418,10 @@ static struct samsung_clock_alias s3c64xx_clock_aliases[] = {
+ 	ALIAS(SCLK_MMC2, "s3c-sdhci.2", "mmc_busclk.2"),
+ 	ALIAS(SCLK_MMC1, "s3c-sdhci.1", "mmc_busclk.2"),
+ 	ALIAS(SCLK_MMC0, "s3c-sdhci.0", "mmc_busclk.2"),
+-	ALIAS(SCLK_SPI1, "s3c6410-spi.1", "spi-bus"),
+-	ALIAS(SCLK_SPI0, "s3c6410-spi.0", "spi-bus"),
++	ALIAS(PCLK_SPI1, "s3c6410-spi.1", "spi_busclk0"),
++	ALIAS(SCLK_SPI1, "s3c6410-spi.1", "spi_busclk2"),
++	ALIAS(PCLK_SPI0, "s3c6410-spi.0", "spi_busclk0"),
++	ALIAS(SCLK_SPI0, "s3c6410-spi.0", "spi_busclk2"),
+ 	ALIAS(SCLK_AUDIO1, "samsung-pcm.1", "audio-bus"),
+ 	ALIAS(SCLK_AUDIO1, "samsung-i2s.1", "audio-bus"),
+ 	ALIAS(SCLK_AUDIO0, "samsung-pcm.0", "audio-bus"),
+-- 
+1.7.2.5
