@@ -1,59 +1,54 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH 5/5] drm/exynos: enable vsync interrupt while waiting for vblank
-Date: Wed, 18 Jun 2014 17:04:53 +0530
-Message-ID: <1403091293-15058-6-git-send-email-rahul.sharma@samsung.com>
-References: <1403091293-15058-1-git-send-email-rahul.sharma@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH RFC] mfd: syscon: Decouple syscon interface from syscon devices
+Date: Wed, 18 Jun 2014 14:57:47 +0200
+Message-ID: <5537724.LlmJ2hxcKn@wuerfel>
+References: <53A05E2D.6020702@samsung.com> <5027740.B7iVUcUX2T@wuerfel> <53A0B27E.5010708@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:25307 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966279AbaFRLiy (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.130]:51019 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966162AbaFRM6h (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 07:38:54 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N7D00J7O4CTRT00@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Jun 2014 20:38:53 +0900 (KST)
-In-reply-to: <1403091293-15058-1-git-send-email-rahul.sharma@samsung.com>
+	Wed, 18 Jun 2014 08:58:37 -0400
+In-Reply-To: <53A0B27E.5010708@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.brown@linaro.org, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Samuel Ortiz <sameo@linux.intel.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, Lee Jones <lee.jones@linaro.org>
 
-mixer_wait_for_vblank function expects that the upcoming
-vsync interrupt handler routine will clear the
-wait_vsync_event atomic variable.
+On Tuesday 17 June 2014 23:26:22 Tomasz Figa wrote:
+> On 17.06.2014 17:42, Arnd Bergmann wrote:
+> > This seems like a reasonable way of solving the problem, but I think
+> > there is an even better one that we have about in the past: if we
+> > promote syscon from a platform driver into a a drivers/base/ helper
+> > that is independent of the platform device matching, we can use
+> > call syscon_regmap_lookup_* for any device node, whether it's already
+> > bound to a driver or not, which do what you need. It would also make
+> > it easier to call the syscon code before the platform_device
+> > infrastructure gets initialized, which is something a number of
+> > people have asked for, e.g. for using regmap to do SMP bringup
+> > or for clock registration.
+> 
+> Basically, unless I'm missing your point, this is what my patch does,
+> except that I don't move it to drivers/base/ and the registration
+> function I added require a pointer to struct device. Indeed, decoupling
+> it further from the driver model, by adding of_syscon_register() should
+> be useful for early users.
 
-For this to happen, interrupts should be enabled and
-disabled properly.
+I believe the part you are missing is that with the approach I suggested,
+there would be no registration function at all. You can easily do the
+lookup from the client drivers using the DT data structures, with no
+need for the device at all. The only exception today is the clps711x
+platform using syscon_regmap_lookup_by_pdevname(), but that should be
+solved in 3.17 when clps711x becomes DT-only.
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_mixer.c |    4 ++++
- 1 file changed, 4 insertions(+)
+> Should I move this to drivers/base/, even though from current location
+> it can be used outside the platform driver anyway?
 
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 6f18581..7927f2e 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1019,6 +1019,8 @@ static void mixer_wait_for_vblank(struct exynos_drm_manager *mgr)
- 	}
- 	mutex_unlock(&mixer_ctx->mixer_mutex);
- 
-+	mixer_enable_vblank(mgr);
-+
- 	atomic_set(&mixer_ctx->wait_vsync_event, 1);
- 
- 	/*
-@@ -1029,6 +1031,8 @@ static void mixer_wait_for_vblank(struct exynos_drm_manager *mgr)
- 				!atomic_read(&mixer_ctx->wait_vsync_event),
- 				HZ/20))
- 		DRM_DEBUG_KMS("vblank wait timed out.\n");
-+
-+	mixer_disable_vblank(mgr);
- }
- 
- static void mixer_window_suspend(struct exynos_drm_manager *mgr)
--- 
-1.7.9.5
+Thinking about it some more, drivers/of might be better than drivers/base.
+It depends a bit where we are heading with this, in particular if we
+expect to see non-DT users in the future.
+
+	Arnd
