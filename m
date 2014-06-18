@@ -1,90 +1,93 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv4 3/4] iio: devicetree: Add DT binding documentation for
- Exynos3250 ADC
-Date: Wed, 18 Jun 2014 11:42:51 +0530
-Message-ID: <CAHfPSqBepO+73vLyJJox1fP=0-F5KSE3uyjh-HXYXkHRLpw0QA@mail.gmail.com>
-References: <1403058061-24271-1-git-send-email-cw00.choi@samsung.com> <1403058061-24271-4-git-send-email-cw00.choi@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] ARM: dts: remove display power domain for exynos5420
+Date: Wed, 18 Jun 2014 08:16:03 +0200
+Message-ID: <53A12EA3.5010007@samsung.com>
+References: <1402313299-18885-1-git-send-email-rahul.sharma@samsung.com>
+ <CAPdUM4OVjRSqVdQDUJZR7vGm1uUEYr31s-tx7Oxs8tM_xc2v7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403058061-24271-4-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, My self <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:29406 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756579AbaFRGQP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Jun 2014 02:16:15 -0400
+In-reply-to: <CAPdUM4OVjRSqVdQDUJZR7vGm1uUEYr31s-tx7Oxs8tM_xc2v7g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rahul Sharma <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
 
-Hello Chanwoo,
+On 06/17/2014 07:49 AM, Rahul Sharma wrote:
+> Hi All,
+> 
+> Please review this patch.
+> 
+> Regards,
+> Rahul Sharma
+> 
+> On 9 June 2014 16:58, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+>> Display domain is removed due to instability issues. Explaining
+>> the problem below:
+>>
+>> exynos_init_late triggers the pm_genpd_poweroff_unused which
+>> powers off the unused power domains. This call hits before
+>> the trigger to deferred probes.
+>>
+>> DRM DP Panel defers the probe due to supply get failure. By the
+>> time, deferred probe is scheduled again, Display Power Domain is
+>> powered off by pm_genpd_poweroff_unused.
+>>
+>> FIMD and DP drivers are accessing registers during Probe and Bind
+>> callbacks. If display domain is enabled/disabled around register
+>> accesses, display domain gets unstable and we are getting Power
+>> Domain Disable fail notification. Increasing the Timeout also
+>> didn't help.
 
-On 18 June 2014 07:51, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> This patch add DT binding documentation for Exynos3250 ADC IP. Exynos3250 has
-> special clock ('sclk_tsadc') for ADC which provide clock to internal ADC.
->
-> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+As I understand the problem is that fimd and dp drivers access hw
+registers without enabling power domain. So the proper solution is to
+fix these drivers.
 
-Changes look good to me.
-Reviewed-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Btw. there are already patches removing hw access from probe/bind of
+fimd. I guess removing also hw access from dp probe/bind could be a good
+solution.
 
-> ---
->  .../devicetree/bindings/arm/samsung/exynos-adc.txt   | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-> index 5d49f2b..3a5af82 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-> @@ -14,6 +14,8 @@ Required properties:
->                                 for exynos4412/5250 controllers.
->                         Must be "samsung,exynos-adc-v2" for
->                                 future controllers.
-> +                       Must be "samsung,exynos3250-adc-v2" for
-> +                               for exynos3250 controllers.
->  - reg:                 Contains ADC register address range (base address and
->                         length) and the address of the phy enable register.
->  - interrupts:          Contains the interrupt information for the timer. The
-> @@ -21,7 +23,11 @@ Required properties:
->                         the Samsung device uses.
->  - #io-channel-cells = <1>; As ADC has multiple outputs
->  - clocks               From common clock binding: handle to adc clock.
-> +                       From common clock binding: handle to sclk_tsadc clock
-> +                       if using Exynos3250.
->  - clock-names          From common clock binding: Shall be "adc".
-> +                       From common clock binding: Shall be "sclk_tsadc"
-> +                       if using Exynos3250.
->  - vdd-supply           VDD input supply.
->
->  Note: child nodes can be added for auto probing from device tree.
-> @@ -41,6 +47,20 @@ adc: adc@12D10000 {
->         vdd-supply = <&buck5_reg>;
->  };
->
-> +Example: adding device info in dtsi file for Exynos3250 with additional sclk
-> +
-> +adc: adc@126C0000 {
-> +       compatible = "samsung,exynos3250-adc-v2";
-> +       reg = <0x126C0000 0x100>, <0x10020718 0x4>;
-> +       interrupts = <0 137 0>;
-> +       #io-channel-cells = <1>;
-> +       io-channel-ranges;
-> +
-> +       clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
-> +       clock-names = "adc", "sclk_adc";
-> +
-> +       vdd-supply = <&buck5_reg>;
-> +};
->
->  Example: Adding child nodes in dts file
->
-> --
-> 1.8.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Regards
+Andrzej
 
-
-
--- 
-Shine bright,
-(: Nav :)
+>>
+>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> ---
+>> based on Kukjin's for-next branch.
+>>
+>>  arch/arm/boot/dts/exynos5420.dtsi |    6 ------
+>>  1 file changed, 6 deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index e385322..3d528cf 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -262,11 +262,6 @@
+>>                 reg = <0x10044060 0x20>;
+>>         };
+>>
+>> -       disp_pd: power-domain@100440C0 {
+>> -               compatible = "samsung,exynos4210-pd";
+>> -               reg = <0x100440C0 0x20>;
+>> -       };
+>> -
+>>         msc_pd: power-domain@10044120 {
+>>                 compatible = "samsung,exynos4210-pd";
+>>                 reg = <0x10044120 0x20>;
+>> @@ -518,7 +513,6 @@
+>>         };
+>>
+>>         fimd: fimd@14400000 {
+>> -               samsung,power-domain = <&disp_pd>;
+>>                 clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
+>>                 clock-names = "sclk_fimd", "fimd";
+>>         };
+>> --
+>> 1.7.9.5
+>>
