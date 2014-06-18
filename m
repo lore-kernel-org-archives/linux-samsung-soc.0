@@ -1,58 +1,158 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 01/10] mfd: cros_ec: Fix the comment on cros_ec_remove()
-Date: Wed, 18 Jun 2014 08:57:04 +0100
-Message-ID: <20140618075704.GK21030@lee--X1>
-References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
- <1402954800-28215-2-git-send-email-dianders@chromium.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCHv4 2/4] iio: adc: exynos_adc: Control special clock of
+ ADC to support Exynos3250 ADC
+Date: Wed, 18 Jun 2014 09:58:32 +0200
+Message-ID: <53A146A8.7050501@gmail.com>
+References: <1403058061-24271-1-git-send-email-cw00.choi@samsung.com> <1403058061-24271-3-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1402954800-28215-2-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Andrew Bresticker <abrestic@chromium.org>, swarren@wwwdotorg.org, olof@lixom.net, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, sjg@chromium.org, Wolfram Sang <wsa@the-dreams.de>, broonie@kernel.org, sameo@linux.intel.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1403058061-24271-3-git-send-email-cw00.choi@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org, ch.naveen@samsung.com, t.figa@samsung.com, kgene.kim@samsung.com
+Cc: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sachin.kamat@linaro.org, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 16 Jun 2014, Doug Anderson wrote:
+Hi Chanwoo,
 
-> From: Bill Richardson <wfrichar@chromium.org>
->=20
-> This comment was incorrect, so update it.
->=20
-> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
-> Signed-off-by: Simon Glass <sjg@chromium.org>
-
-How many people did it take to write this patch? ;)
-
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+On 18.06.2014 04:20, Chanwoo Choi wrote:
+> This patch control special clock for ADC in Exynos series's FSYS block.
+> If special clock of ADC is registerd on clock list of common clk framework,
+> Exynos ADC drvier have to control this clock.
+> 
+> Exynos3250/Exynos4/Exynos5 has 'adc' clock as following:
+> - 'adc' clock: bus clock for ADC
+> 
+> Exynos3250 has additional 'sclk_adc' clock as following:
+> - 'sclk_adc' clock: special clock for ADC which provide clock to internal ADC
+> 
+> Exynos 4210/4212/4412 and Exynos5250/5420 has not included 'sclk_adc' clock
+> in FSYS_BLK. But, Exynos3250 based on Cortex-A7 has only included 'sclk_adc'
+> clock in FSYS_BLK.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  include/linux/mfd/cros_ec.h | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.=
-h
-> index 887ef4f..7e9fe6e 100644
-> --- a/include/linux/mfd/cros_ec.h
-> +++ b/include/linux/mfd/cros_ec.h
-> @@ -148,8 +148,7 @@ int cros_ec_prepare_tx(struct cros_ec_device *ec_=
-dev,
->  /**
->   * cros_ec_remove - Remove a ChromeOS EC
->   *
-> - * Call this to deregister a ChromeOS EC. After this you should call
-> - * cros_ec_free().
-> + * Call this to deregister a ChromeOS EC, then clean up any private =
-data.
->   *
->   * @ec_dev: Device to register
->   * @return 0 if ok, -ve on error
+>  drivers/iio/adc/exynos_adc.c | 93 ++++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 81 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+> index c30def6..6b026ac 100644
+> --- a/drivers/iio/adc/exynos_adc.c
+> +++ b/drivers/iio/adc/exynos_adc.c
+> @@ -41,7 +41,8 @@
+>  
+>  enum adc_version {
+>  	ADC_V1,
+> -	ADC_V2
+> +	ADC_V2,
+> +	ADC_V2_EXYNOS3250,
+>  };
+>  
+>  /* EXYNOS4412/5250 ADC_V1 registers definitions */
+> @@ -85,9 +86,11 @@ enum adc_version {
+>  #define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
+>  
+>  struct exynos_adc {
+> +	struct device		*dev;
+>  	void __iomem		*regs;
+>  	void __iomem		*enable_reg;
+>  	struct clk		*clk;
+> +	struct clk		*sclk;
+>  	unsigned int		irq;
+>  	struct regulator	*vdd;
+>  	struct exynos_adc_ops	*ops;
+> @@ -96,6 +99,7 @@ struct exynos_adc {
+>  
+>  	u32			value;
+>  	unsigned int            version;
+> +	bool			needs_sclk;
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+This should be rather a part of the variant struct. See my comments to
+patch 1/4.
+
+>  };
+>  
+>  struct exynos_adc_ops {
+> @@ -103,11 +107,21 @@ struct exynos_adc_ops {
+>  	void (*clear_irq)(struct exynos_adc *info);
+>  	void (*start_conv)(struct exynos_adc *info, unsigned long addr);
+>  	void (*stop_conv)(struct exynos_adc *info);
+> +	void (*disable_clk)(struct exynos_adc *info);
+> +	int (*enable_clk)(struct exynos_adc *info);
+>  };
+>  
+>  static const struct of_device_id exynos_adc_match[] = {
+> -	{ .compatible = "samsung,exynos-adc-v1", .data = (void *)ADC_V1 },
+> -	{ .compatible = "samsung,exynos-adc-v2", .data = (void *)ADC_V2 },
+> +	{
+> +		.compatible = "samsung,exynos-adc-v1",
+> +		.data = (void *)ADC_V1,
+> +	}, {
+> +		.compatible = "samsung,exynos-adc-v2",
+> +		.data = (void *)ADC_V2,
+> +	}, {
+> +		.compatible = "samsung,exynos3250-adc-v2",
+> +		.data = (void *)ADC_V2_EXYNOS3250,
+> +	},
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(of, exynos_adc_match);
+> @@ -156,11 +170,42 @@ static void exynos_adc_v1_stop_conv(struct exynos_adc *info)
+>  	writel(con, ADC_V1_CON(info->regs));
+>  }
+>  
+> +static void exynos_adc_disable_clk(struct exynos_adc *info)
+> +{
+> +	if (info->needs_sclk)
+> +		clk_disable_unprepare(info->sclk);
+> +	clk_disable_unprepare(info->clk);
+> +}
+> +
+> +static int exynos_adc_enable_clk(struct exynos_adc *info)
+> +{
+> +	int ret;
+> +
+> +	ret = clk_prepare_enable(info->clk);
+> +	if (ret) {
+> +		dev_err(info->dev, "failed enabling adc clock: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	if (info->needs_sclk) {
+> +		ret = clk_prepare_enable(info->sclk);
+> +		if (ret) {
+> +			clk_disable_unprepare(info->clk);
+> +			dev_err(info->dev,
+> +				"failed enabling sclk_tsadc clock: %d\n", ret);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static struct exynos_adc_ops exynos_adc_v1_ops = {
+>  	.init_hw	= exynos_adc_v1_init_hw,
+>  	.clear_irq	= exynos_adc_v1_clear_irq,
+>  	.start_conv	= exynos_adc_v1_start_conv,
+>  	.stop_conv	= exynos_adc_v1_stop_conv,
+> +	.disable_clk	= exynos_adc_disable_clk,
+> +	.enable_clk	= exynos_adc_enable_clk,
+>  };
+>  
+>  static void exynos_adc_v2_init_hw(struct exynos_adc *info)
+> @@ -210,6 +255,8 @@ static struct exynos_adc_ops exynos_adc_v2_ops = {
+>  	.start_conv	= exynos_adc_v2_start_conv,
+>  	.clear_irq	= exynos_adc_v2_clear_irq,
+>  	.stop_conv	= exynos_adc_v2_stop_conv,
+> +	.disable_clk	= exynos_adc_disable_clk,
+> +	.enable_clk	= exynos_adc_enable_clk,
+
+Based on the fact that all variants use the same function, I don't think
+there is a reason to add .{disable,enable}_clk in the ops struct. If
+they diverge in future, they could be added later, but right now it
+doesn't have any value.
+
+Best regards,
+Tomasz
