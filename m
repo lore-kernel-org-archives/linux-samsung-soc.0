@@ -1,264 +1,86 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH V2 1/2] ASoC: samsung: Add machine driver for Odroid X2/U3
-Date: Wed, 18 Jun 2014 18:22:30 +0200
-Message-ID: <1403108551-25058-2-git-send-email-s.nawrocki@samsung.com>
-References: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 02/10] mfd: cros_ec: IRQs for cros_ec should be optional
+Date: Wed, 18 Jun 2014 09:23:29 -0700
+Message-ID: <CAD=FV=Wn3u+DNerFBNpbbLhBPa+3A5bvrRiBXNq=vyRA00+-uQ@mail.gmail.com>
+References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
+	<1402954800-28215-3-git-send-email-dianders@chromium.org>
+	<20140618075551.GJ21030@lee--X1>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54824 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752021AbaFRQW6 (ORCPT
+Received: from mail-ve0-f181.google.com ([209.85.128.181]:52151 "EHLO
+	mail-ve0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752106AbaFRQXb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 12:22:58 -0400
-In-reply-to: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
+	Wed, 18 Jun 2014 12:23:31 -0400
+Received: by mail-ve0-f181.google.com with SMTP id db11so1054333veb.26
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 09:23:30 -0700 (PDT)
+In-Reply-To: <20140618075551.GJ21030@lee--X1>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree@vger.kernel.org, broonie@kernel.org
-Cc: pawel.moll@arm.com, mark.rutland@arm.com, galak@codeaurora.org, zhen1.chen@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, alsa-devel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, "broonie@kernel.org" <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-This patch adds the sound subsystem driver for Odroid-X2 and
-Odroid-U3 boards. The codec works in I2S master mode; there are
-2 separate audio routing paths defined as there are differences
-in the signal routing between the X2 and U3 boards, i.e. U3 uses
-single jack for headphones and microphone.
+Lee,
 
-Signed-off-by: Chen Zhen <zhen1.chen@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- sound/soc/samsung/Kconfig             |    8 ++
- sound/soc/samsung/Makefile            |    2 +
- sound/soc/samsung/odroidx2_max98090.c |  191 +++++++++++++++++++++++++++++++++
- 3 files changed, 201 insertions(+)
- create mode 100644 sound/soc/samsung/odroidx2_max98090.c
+On Wed, Jun 18, 2014 at 12:55 AM, Lee Jones <lee.jones@linaro.org> wrote:
+> On Mon, 16 Jun 2014, Doug Anderson wrote:
+>
+>> From: Bill Richardson <wfrichar@chromium.org>
+>>
+>> Preparing the way for the LPC device, which is just a plaform_device without
+>> interrupts.
+>>
+>> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
+>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> ---
+>>  drivers/mfd/cros_ec.c | 26 +++++++++++++-------------
+>>  1 file changed, 13 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+>> index 38fe9bf..bd6f936 100644
+>> --- a/drivers/mfd/cros_ec.c
+>> +++ b/drivers/mfd/cros_ec.c
+>> @@ -119,17 +119,15 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+>>                       return -ENOMEM;
+>>       }
+>>
+>> -     if (!ec_dev->irq) {
+>> -             dev_dbg(dev, "no valid IRQ: %d\n", ec_dev->irq);
+>> -             return err;
+>> -     }
+>> -
+>> -     err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
+>> -                                IRQF_TRIGGER_LOW | IRQF_ONESHOT,
+>> -                                "chromeos-ec", ec_dev);
+>> -     if (err) {
+>> -             dev_err(dev, "request irq %d: error %d\n", ec_dev->irq, err);
+>> -             return err;
+>> +     if (ec_dev->irq) {
+>> +             err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
+>> +                                     IRQF_TRIGGER_LOW | IRQF_ONESHOT,
+>> +                                     "chromeos-ec", ec_dev);
+>
+> Is there anything stopping you using the devm_* version?
 
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 7745629..bd2645c 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -243,3 +243,11 @@ config SND_SOC_SNOW
- 	help
- 	  Say Y if you want to add audio support for various Snow
- 	  boards based on Exynos5 series of SoCs.
-+
-+config SND_SOC_ODROIDX2
-+	tristate "Audio support for Odroid-X2 and Odroid-U3"
-+	depends on SND_SOC_SAMSUNG
-+	select SND_SOC_MAX98090
-+	select SND_SAMSUNG_I2S
-+	help
-+	  Say Y here to enable audio support for the Odroid-X2/U3.
-diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
-index 6d0212b..8b1cfbd 100644
---- a/sound/soc/samsung/Makefile
-+++ b/sound/soc/samsung/Makefile
-@@ -46,6 +46,7 @@ snd-soc-tobermory-objs := tobermory.o
- snd-soc-lowland-objs := lowland.o
- snd-soc-littlemill-objs := littlemill.o
- snd-soc-bells-objs := bells.o
-+snd-soc-odroidx2-max98090-objs := odroidx2_max98090.o
- 
- obj-$(CONFIG_SND_SOC_SAMSUNG_JIVE_WM8750) += snd-soc-jive-wm8750.o
- obj-$(CONFIG_SND_SOC_SAMSUNG_NEO1973_WM8753) += snd-soc-neo1973-wm8753.o
-@@ -71,3 +72,4 @@ obj-$(CONFIG_SND_SOC_TOBERMORY) += snd-soc-tobermory.o
- obj-$(CONFIG_SND_SOC_LOWLAND) += snd-soc-lowland.o
- obj-$(CONFIG_SND_SOC_LITTLEMILL) += snd-soc-littlemill.o
- obj-$(CONFIG_SND_SOC_BELLS) += snd-soc-bells.o
-+obj-$(CONFIG_SND_SOC_ODROIDX2) += snd-soc-odroidx2-max98090.o
-diff --git a/sound/soc/samsung/odroidx2_max98090.c b/sound/soc/samsung/odroidx2_max98090.c
-new file mode 100644
-index 0000000..11c0952
---- /dev/null
-+++ b/sound/soc/samsung/odroidx2_max98090.c
-@@ -0,0 +1,191 @@
-+/*
-+ * Copyright (C) 2014 Samsung Electronics Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/of.h>
-+#include <linux/module.h>
-+#include <sound/soc.h>
-+#include <sound/pcm_params.h>
-+#include "i2s.h"
-+
-+struct odroidx2_drv_data {
-+	const struct snd_soc_dapm_widget *dapm_widgets;
-+	unsigned int num_dapm_widgets;
-+};
-+
-+/* The I2S CDCLK output clock frequency to the MAX98090 codec. */
-+#define MAX98090_MCLK 19200000
-+
-+static int odroidx2_hw_params(struct snd_pcm_substream *substream,
-+	struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-+	int ret;
-+
-+	ret = snd_soc_dai_set_sysclk(codec_dai, 0, MAX98090_MCLK,
-+						SND_SOC_CLOCK_IN);
-+	if (ret < 0) {
-+		dev_err(codec_dai->dev,
-+			"Unable to switch to FLL1: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Set the cpu DAI configuration in order to use CDCLK */
-+	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
-+					0, SND_SOC_CLOCK_OUT);
-+	if (ret < 0)
-+		return ret;
-+
-+	dev_dbg(codec_dai->dev, "HiFi DAI %s params: channels: %d, rate: %d\n",
-+		snd_pcm_stream_str(substream), params_channels(params),
-+		params_rate(params));
-+
-+	return 0;
-+}
-+
-+static struct snd_soc_ops odroidx2_ops = {
-+	.hw_params	= odroidx2_hw_params,
-+};
-+
-+static const struct snd_soc_dapm_widget odroidx2_dapm_widgets[] = {
-+	SND_SOC_DAPM_HP("Headphone Jack", NULL),
-+	SND_SOC_DAPM_MIC("Mic Jack", NULL),
-+	SND_SOC_DAPM_MIC("DMIC", NULL),
-+};
-+
-+static const struct snd_soc_dapm_widget odroidu3_dapm_widgets[] = {
-+	SND_SOC_DAPM_HP("Headphone Jack", NULL),
-+	SND_SOC_DAPM_SPK("Speakers", NULL),
-+};
-+
-+static struct snd_soc_dai_link odroidx2_dai[] = {
-+	{
-+		.name		= "MAX98090",
-+		.stream_name	= "MAX98090 PCM",
-+		.codec_dai_name	= "HiFi",
-+		.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
-+				  SND_SOC_DAIFMT_CBM_CFM,
-+		.ops		= &odroidx2_ops,
-+	}
-+};
-+
-+static struct snd_soc_card odroidx2 = {
-+	.owner		= THIS_MODULE,
-+	.dai_link	= odroidx2_dai,
-+	.num_links	= ARRAY_SIZE(odroidx2_dai),
-+	.fully_routed	= true,
-+};
-+
-+struct odroidx2_drv_data odroidx2_drvdata = {
-+	.dapm_widgets		= odroidx2_dapm_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(odroidx2_dapm_widgets),
-+};
-+
-+struct odroidx2_drv_data odroidu3_drvdata = {
-+	.dapm_widgets		= odroidu3_dapm_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(odroidu3_dapm_widgets),
-+};
-+
-+static const struct of_device_id odroidx2_audio_of_match[] = {
-+	{
-+		.compatible	= "samsung,odroidx2-audio",
-+		.data		= &odroidx2_drvdata,
-+	}, {
-+		.compatible	= "samsung,odroidu3-audio",
-+		.data		= &odroidu3_drvdata,
-+	},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, odroidx2_audio_of_match);
-+
-+static int odroidx2_audio_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct snd_soc_card *card = &odroidx2;
-+	struct odroidx2_drv_data *dd;
-+	const struct of_device_id *of_id;
-+	int ret;
-+
-+	card->dev = &pdev->dev;
-+
-+	of_id = of_match_node(odroidx2_audio_of_match, np);
-+	dd = (struct odroidx2_drv_data *)of_id->data;
-+
-+	card->dapm_widgets = dd->dapm_widgets;
-+	card->num_dapm_widgets = dd->num_dapm_widgets;
-+
-+	ret = snd_soc_of_parse_card_name(card, "samsung,model");
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = snd_soc_of_parse_audio_routing(card, "samsung,audio-routing");
-+	if (ret < 0)
-+		return ret;
-+
-+	odroidx2_dai[0].codec_of_node = of_parse_phandle(np,
-+						"samsung,audio-codec", 0);
-+	if (!odroidx2_dai[0].codec_of_node) {
-+		dev_err(&pdev->dev,
-+			"Property 'samsung,audio-codec' missing or invalid\n");
-+		return -EINVAL;
-+	}
-+
-+	odroidx2_dai[0].cpu_of_node = of_parse_phandle(np,
-+						"samsung,i2s-controller", 0);
-+	if (!odroidx2_dai[0].cpu_of_node) {
-+		dev_err(&pdev->dev,
-+			"Property 'samsung,i2s-controller' missing or invalid\n");
-+		ret = -EINVAL;
-+		goto err_put_cod_n;
-+	}
-+
-+	odroidx2_dai[0].platform_of_node = odroidx2_dai[0].cpu_of_node;
-+
-+	ret = snd_soc_register_card(card);
-+	if (ret) {
-+		dev_err(&pdev->dev, "snd_soc_register_card failed: %d\n", ret);
-+		goto err_put_cpu_n;
-+	}
-+
-+	return 0;
-+
-+err_put_cpu_n:
-+	of_node_put(odroidx2_dai[0].cpu_of_node);
-+err_put_cod_n:
-+	of_node_put(odroidx2_dai[0].codec_of_node);
-+	return ret;
-+}
-+
-+static int odroidx2_audio_remove(struct platform_device *pdev)
-+{
-+	struct snd_soc_card *card = platform_get_drvdata(pdev);
-+
-+	snd_soc_unregister_card(card);
-+
-+	of_node_put(odroidx2_dai[0].cpu_of_node);
-+	of_node_put(odroidx2_dai[0].codec_of_node);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver odroidx2_audio_driver = {
-+	.driver = {
-+		.name		= "odroidx2-audio",
-+		.owner		= THIS_MODULE,
-+		.of_match_table	= odroidx2_audio_of_match,
-+	},
-+	.probe	= odroidx2_audio_probe,
-+	.remove	= odroidx2_audio_remove,
-+};
-+module_platform_driver(odroidx2_audio_driver);
-+
-+MODULE_AUTHOR("Chen Zhen <zhen1.chen@samsung.com>");
-+MODULE_DESCRIPTION("ALSA SoC Odroid X2/U3 Audio Support");
-+MODULE_LICENSE("GPL v2");
--- 
-1.7.9.5
+I'm generally quite hesitant about using the devm_ IRQ functions.
+Requesting an IRQ enables the IRQ at the time of request and freeing
+it disables it, right?  Leaving it up to the the devm subsystem to
+disable your IRQ tends to be a race waiting to happen if an IRQ
+happens after you've freed all your memory / cleaned up all your
+state.
+
+Looking at cros_ec in particular though:
+
+* Right now the last thing done in cros_ec_remove() (which is the last
+thing in both cros_ec_i2c_remove and cros_ec_spi_remove) is to free
+the IRQ.  That means that you're right: we could switch to devm_ in
+this case and it wouldn't introduce any new bugs.
+
+* ...but I'm not convinced that the location of the free_irq() today
+is quite right.  I couldn't actually get it to crash or hang, but
+there is a time period where we've called mfd_remove_devices() and the
+IRQ is still active.  That doesn't seem like a super great situation
+to be in.  I'll add a move of the irq_free to the patch series.
+
+-Doug
