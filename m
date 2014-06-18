@@ -1,86 +1,67 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 02/10] mfd: cros_ec: IRQs for cros_ec should be optional
-Date: Wed, 18 Jun 2014 09:23:29 -0700
-Message-ID: <CAD=FV=Wn3u+DNerFBNpbbLhBPa+3A5bvrRiBXNq=vyRA00+-uQ@mail.gmail.com>
-References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
-	<1402954800-28215-3-git-send-email-dianders@chromium.org>
-	<20140618075551.GJ21030@lee--X1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH V2 2/2] doc: dt bindings: Document Odroid X2/U3 audio subsystem
+ bindings
+Date: Wed, 18 Jun 2014 18:22:31 +0200
+Message-ID: <1403108551-25058-3-git-send-email-s.nawrocki@samsung.com>
+References: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f181.google.com ([209.85.128.181]:52151 "EHLO
-	mail-ve0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752106AbaFRQXb (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:62758 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753270AbaFRQYE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 12:23:31 -0400
-Received: by mail-ve0-f181.google.com with SMTP id db11so1054333veb.26
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 09:23:30 -0700 (PDT)
-In-Reply-To: <20140618075551.GJ21030@lee--X1>
+	Wed, 18 Jun 2014 12:24:04 -0400
+In-reply-to: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, "broonie@kernel.org" <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: devicetree@vger.kernel.org, broonie@kernel.org
+Cc: pawel.moll@arm.com, mark.rutland@arm.com, galak@codeaurora.org, zhen1.chen@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, alsa-devel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Lee,
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ .../bindings/sound/samsung,odroidx2-max98090.txt   |   35 ++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt
 
-On Wed, Jun 18, 2014 at 12:55 AM, Lee Jones <lee.jones@linaro.org> wrote:
-> On Mon, 16 Jun 2014, Doug Anderson wrote:
->
->> From: Bill Richardson <wfrichar@chromium.org>
->>
->> Preparing the way for the LPC device, which is just a plaform_device without
->> interrupts.
->>
->> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> ---
->>  drivers/mfd/cros_ec.c | 26 +++++++++++++-------------
->>  1 file changed, 13 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
->> index 38fe9bf..bd6f936 100644
->> --- a/drivers/mfd/cros_ec.c
->> +++ b/drivers/mfd/cros_ec.c
->> @@ -119,17 +119,15 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->>                       return -ENOMEM;
->>       }
->>
->> -     if (!ec_dev->irq) {
->> -             dev_dbg(dev, "no valid IRQ: %d\n", ec_dev->irq);
->> -             return err;
->> -     }
->> -
->> -     err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
->> -                                IRQF_TRIGGER_LOW | IRQF_ONESHOT,
->> -                                "chromeos-ec", ec_dev);
->> -     if (err) {
->> -             dev_err(dev, "request irq %d: error %d\n", ec_dev->irq, err);
->> -             return err;
->> +     if (ec_dev->irq) {
->> +             err = request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
->> +                                     IRQF_TRIGGER_LOW | IRQF_ONESHOT,
->> +                                     "chromeos-ec", ec_dev);
->
-> Is there anything stopping you using the devm_* version?
-
-I'm generally quite hesitant about using the devm_ IRQ functions.
-Requesting an IRQ enables the IRQ at the time of request and freeing
-it disables it, right?  Leaving it up to the the devm subsystem to
-disable your IRQ tends to be a race waiting to happen if an IRQ
-happens after you've freed all your memory / cleaned up all your
-state.
-
-Looking at cros_ec in particular though:
-
-* Right now the last thing done in cros_ec_remove() (which is the last
-thing in both cros_ec_i2c_remove and cros_ec_spi_remove) is to free
-the IRQ.  That means that you're right: we could switch to devm_ in
-this case and it wouldn't introduce any new bugs.
-
-* ...but I'm not convinced that the location of the free_irq() today
-is quite right.  I couldn't actually get it to crash or hang, but
-there is a time period where we've called mfd_remove_devices() and the
-IRQ is still active.  That doesn't seem like a super great situation
-to be in.  I'll add a move of the irq_free to the patch series.
-
--Doug
+diff --git a/Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt b/Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt
+new file mode 100644
+index 0000000..9148f72
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt
+@@ -0,0 +1,35 @@
++Samsung Exynos Odroid X2/U3 audio complex with MAX98090 codec
++
++Required properties:
++ - compatible : "samsung,odroidx2-audio" - for Odroid X2 board,
++		"samsung,odroidu3-audio" - for Odroid U3 board
++ - samsung,model : the user-visible name of this sound complex
++ - samsung,i2s-controller : the phandle of the I2S controller
++ - samsung,audio-codec : the phandle of the MAX98090 audio codec
++ - samsung,audio-routing : a list of the connections between audio
++   components;  each entry is a pair of strings, the first being the
++   connection's sink, the second being the connection's source;
++   valid names for sources and sinks are the MAX98090's pins (as
++   documented in its binding), and the jacks on the board
++   For Odroid X2:
++     * Headphone Jack
++     * Mic Jack
++     * DMIC
++
++   For Odroid U3:
++     * Headphone Jack
++     * Speakers
++
++Example:
++
++sound {
++	compatible = "samsung,odroidu3-audio";
++	samsung,i2s-controller = <&i2s0>;
++	samsung,audio-codec = <&max98090>;
++	samsung,model = "Odroid-X2";
++	samsung,audio-routing =
++		"Headphone Jack", "HPL",
++		"Headphone Jack", "HPR",
++		"IN1", "Mic Jack",
++		"Mic Jack", "MICBIAS";
++};
+-- 
+1.7.9.5
