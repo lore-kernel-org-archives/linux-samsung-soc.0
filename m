@@ -1,54 +1,147 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH RFC] mfd: syscon: Decouple syscon interface from syscon devices
-Date: Wed, 18 Jun 2014 14:57:47 +0200
-Message-ID: <5537724.LlmJ2hxcKn@wuerfel>
-References: <53A05E2D.6020702@samsung.com> <5027740.B7iVUcUX2T@wuerfel> <53A0B27E.5010708@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH] drm/exynos: defer hdmi probe when fail to get regulators
+Date: Wed, 18 Jun 2014 19:12:56 +0530
+Message-ID: <1403098976-6506-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:51019 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966162AbaFRM6h (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:42716 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751312AbaFRNoj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 08:58:37 -0400
-In-Reply-To: <53A0B27E.5010708@gmail.com>
+	Wed, 18 Jun 2014 09:44:39 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N7D00CMDA6D8BC0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Jun 2014 22:44:37 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, mark.brown@linaro.org, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Samuel Ortiz <sameo@linux.intel.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, Lee Jones <lee.jones@linaro.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On Tuesday 17 June 2014 23:26:22 Tomasz Figa wrote:
-> On 17.06.2014 17:42, Arnd Bergmann wrote:
-> > This seems like a reasonable way of solving the problem, but I think
-> > there is an even better one that we have about in the past: if we
-> > promote syscon from a platform driver into a a drivers/base/ helper
-> > that is independent of the platform device matching, we can use
-> > call syscon_regmap_lookup_* for any device node, whether it's already
-> > bound to a driver or not, which do what you need. It would also make
-> > it easier to call the syscon code before the platform_device
-> > infrastructure gets initialized, which is something a number of
-> > people have asked for, e.g. for using regmap to do SMP bringup
-> > or for clock registration.
-> 
-> Basically, unless I'm missing your point, this is what my patch does,
-> except that I don't move it to drivers/base/ and the registration
-> function I added require a pointer to struct device. Indeed, decoupling
-> it further from the driver model, by adding of_syscon_register() should
-> be useful for early users.
+HDMI probe proceeds with dummy regulators when the regulators
+are not provided in DT node or regulator provider has not get
+probed or failed to register the regulators.
 
-I believe the part you are missing is that with the approach I suggested,
-there would be no registration function at all. You can easily do the
-lookup from the client drivers using the DT data structures, with no
-need for the device at all. The only exception today is the clps711x
-platform using syscon_regmap_lookup_by_pdevname(), but that should be
-solved in 3.17 when clps711x becomes DT-only.
+This patch modify hdmi driver to defer the probe in case the
+regulators are not available.
 
-> Should I move this to drivers/base/, even though from current location
-> it can be used outside the platform driver anyway?
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+---
+Based on exynos-drm-fixes branch in Inki dae's tree.
+ drivers/gpu/drm/exynos/exynos_hdmi.c |   69 ++++++++++++++++++++++++----------
+ 1 file changed, 50 insertions(+), 19 deletions(-)
 
-Thinking about it some more, drivers/of might be better than drivers/base.
-It depends a bit where we are heading with this, in particular if we
-expect to see non-DT users in the future.
-
-	Arnd
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index aa259b0..3f24c49 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -83,7 +83,7 @@ struct hdmi_resources {
+ 	struct clk			*sclk_pixel;
+ 	struct clk			*sclk_hdmiphy;
+ 	struct clk			*mout_hdmi;
+-	struct regulator_bulk_data	*regul_bulk;
++	struct regulator		**regulators;
+ 	int				regul_count;
+ };
+ 
+@@ -2022,6 +2022,36 @@ static void hdmi_commit(struct exynos_drm_display *display)
+ 	hdmi_conf_apply(hdata);
+ }
+ 
++int hdmi_regulator_enable(struct hdmi_context *hdata)
++{
++	struct hdmi_resources *res = &hdata->res;
++	int i, ret;
++
++	for (i = 0; i < res->regul_count; ++i) {
++		ret = regulator_enable(res->regulators[i]);
++		if (ret < 0) {
++			DRM_ERROR("fail to enable regulators.\n");
++			return ret;
++		}
++	}
++	return 0;
++}
++
++int hdmi_regulator_disable(struct hdmi_context *hdata)
++{
++	struct hdmi_resources *res = &hdata->res;
++	int i, ret;
++
++	for (i = 0; i < res->regul_count; ++i) {
++		ret = regulator_disable(res->regulators[i]);
++		if (ret < 0) {
++			DRM_ERROR("fail to disable regulators.\n");
++			return ret;
++		}
++	}
++	return 0;
++}
++
+ static void hdmi_poweron(struct exynos_drm_display *display)
+ {
+ 	struct hdmi_context *hdata = display->ctx;
+@@ -2039,8 +2069,8 @@ static void hdmi_poweron(struct exynos_drm_display *display)
+ 
+ 	pm_runtime_get_sync(hdata->dev);
+ 
+-	if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
+-		DRM_DEBUG_KMS("failed to enable regulator bulk\n");
++	if (hdmi_regulator_enable(hdata))
++		DRM_DEBUG_KMS("failed to enable regulators\n");
+ 
+ 	/* set pmu hdmiphy control bit to enable hdmiphy */
+ 	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+@@ -2077,7 +2107,8 @@ static void hdmi_poweroff(struct exynos_drm_display *display)
+ 	regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+ 			PMU_HDMI_PHY_ENABLE_BIT, 0);
+ 
+-	regulator_bulk_disable(res->regul_count, res->regul_bulk);
++	if (hdmi_regulator_disable(hdata))
++		DRM_DEBUG_KMS("failed to disable regulators\n");
+ 
+ 	pm_runtime_put_sync(hdata->dev);
+ 
+@@ -2211,24 +2242,24 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+ 
+ 	clk_set_parent(res->mout_hdmi, res->sclk_pixel);
+ 
+-	res->regul_bulk = devm_kzalloc(dev, ARRAY_SIZE(supply) *
+-		sizeof(res->regul_bulk[0]), GFP_KERNEL);
+-	if (!res->regul_bulk) {
+-		ret = -ENOMEM;
+-		goto fail;
+-	}
++	res->regul_count = ARRAY_SIZE(supply);
++
++	res->regulators = devm_kzalloc(dev, res->regul_count *
++		sizeof(res->regulators[0]), GFP_KERNEL);
++	if (!res->regulators)
++		return -ENOMEM;
++
+ 	for (i = 0; i < ARRAY_SIZE(supply); ++i) {
+-		res->regul_bulk[i].supply = supply[i];
+-		res->regul_bulk[i].consumer = NULL;
+-	}
+-	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(supply), res->regul_bulk);
+-	if (ret) {
+-		DRM_ERROR("failed to get regulators\n");
+-		return ret;
++		res->regulators[i] =
++			devm_regulator_get_optional(dev, supply[i]);
++		if (IS_ERR(res->regulators[i])) {
++			DRM_ERROR("fail to get regulator: %s.\n",
++				supply[i]);
++			return -EPROBE_DEFER;
++		}
+ 	}
+-	res->regul_count = ARRAY_SIZE(supply);
+ 
+-	return ret;
++	return 0;
+ fail:
+ 	DRM_ERROR("HDMI resource init - failed\n");
+ 	return ret;
+-- 
+1.7.9.5
