@@ -1,109 +1,119 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH] ARM: dts: remove display power domain for exynos5420
-Date: Wed, 18 Jun 2014 12:06:54 +0530
-Message-ID: <CAPdUM4OK+ATMMRM67dV5JeeTGMu=XA7Gvi7Uif+Hypf3iP+6jg@mail.gmail.com>
-References: <1402313299-18885-1-git-send-email-rahul.sharma@samsung.com>
-	<CAPdUM4OVjRSqVdQDUJZR7vGm1uUEYr31s-tx7Oxs8tM_xc2v7g@mail.gmail.com>
-	<53A12EA3.5010007@samsung.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 10/10] mfd: cros_ec: ec_dev->cmd_xfer() returns number of
+ bytes received from EC
+Date: Wed, 18 Jun 2014 08:34:01 +0100
+Message-ID: <20140618073401.GB21030@lee--X1>
+References: <1402954800-28215-1-git-send-email-dianders@chromium.org>
+ <1402954800-28215-11-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:52464 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756390AbaFRGg4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 02:36:56 -0400
-In-Reply-To: <53A12EA3.5010007@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1402954800-28215-11-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Sonny Rao <sonnyrao-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
 
-Hi Andrej,
+On Mon, 16 Jun 2014, Doug Anderson wrote:
 
-On 18 June 2014 11:46, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> On 06/17/2014 07:49 AM, Rahul Sharma wrote:
->> Hi All,
->>
->> Please review this patch.
->>
->> Regards,
->> Rahul Sharma
->>
->> On 9 June 2014 16:58, Rahul Sharma <rahul.sharma@samsung.com> wrote:
->>> Display domain is removed due to instability issues. Explaining
->>> the problem below:
->>>
->>> exynos_init_late triggers the pm_genpd_poweroff_unused which
->>> powers off the unused power domains. This call hits before
->>> the trigger to deferred probes.
->>>
->>> DRM DP Panel defers the probe due to supply get failure. By the
->>> time, deferred probe is scheduled again, Display Power Domain is
->>> powered off by pm_genpd_poweroff_unused.
->>>
->>> FIMD and DP drivers are accessing registers during Probe and Bind
->>> callbacks. If display domain is enabled/disabled around register
->>> accesses, display domain gets unstable and we are getting Power
->>> Domain Disable fail notification. Increasing the Timeout also
->>> didn't help.
->
-> As I understand the problem is that fimd and dp drivers access hw
-> registers without enabling power domain. So the proper solution is to
-> fix these drivers.
+> From: Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>=20
+> When communicating with the EC, the cmd_xfer() function should return=
+ the
+> number of bytes it received from the EC, or negative on error.
+>=20
+> Signed-off-by: Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> ---
+>  drivers/i2c/busses/i2c-cros-ec-tunnel.c | 2 +-
+>  drivers/mfd/cros_ec_i2c.c               | 2 +-
+>  drivers/mfd/cros_ec_spi.c               | 2 +-
+>  include/linux/mfd/cros_ec.h             | 8 ++++----
+>  4 files changed, 7 insertions(+), 7 deletions(-)
 
-That is also a problem but I fixed those accesses in my local kernel before
-hitting this issue. If we do register accesses in FIMD/DP probe/bind we
-observes "Prefetch abort" exception. But here the problem is that 'DP
-domain disable' starts failing if we enable/disable multiple times.
+=46or the re-spin:
+  Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
->
-> Btw. there are already patches removing hw access from probe/bind of
-> fimd. I guess removing also hw access from dp probe/bind could be a good
-> solution.
+> diff --git a/drivers/i2c/busses/i2c-cros-ec-tunnel.c b/drivers/i2c/bu=
+sses/i2c-cros-ec-tunnel.c
+> index dd07818..05e033c 100644
+> --- a/drivers/i2c/busses/i2c-cros-ec-tunnel.c
+> +++ b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
+> @@ -228,7 +228,7 @@ static int ec_i2c_xfer(struct i2c_adapter *adap, =
+struct i2c_msg i2c_msgs[],
+>  	msg.insize =3D response_len;
+> =20
+>  	result =3D bus->ec->cmd_xfer(bus->ec, &msg);
+> -	if (result)
+> +	if (result < 0)
+>  		goto exit;
+> =20
+>  	result =3D ec_i2c_parse_response(response, i2c_msgs, &num);
+> diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/mfd/cros_ec_i2c.c
+> index 2276096..dc0ba29 100644
+> --- a/drivers/mfd/cros_ec_i2c.c
+> +++ b/drivers/mfd/cros_ec_i2c.c
+> @@ -120,7 +120,7 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_de=
+vice *ec_dev,
+>  		goto done;
+>  	}
+> =20
+> -	ret =3D 0;
+> +	ret =3D i2c_msg[1].buf[1];
+>   done:
+>  	kfree(in_buf);
+>  	kfree(out_buf);
+> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+> index 4d34f1c..beba1bc 100644
+> --- a/drivers/mfd/cros_ec_spi.c
+> +++ b/drivers/mfd/cros_ec_spi.c
+> @@ -333,7 +333,7 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_de=
+vice *ec_dev,
+>  		goto exit;
+>  	}
+> =20
+> -	ret =3D 0;
+> +	ret =3D len;
+>  exit:
+>  	mutex_unlock(&ec_spi->lock);
+>  	return ret;
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.=
+h
+> index 60c0880..7b65a75 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
+> @@ -41,7 +41,7 @@ enum {
+>   * @outdata: Outgoing data to EC
+>   * @outsize: Outgoing length in bytes
+>   * @indata: Where to put the incoming data from EC
+> - * @insize: Incoming length in bytes (filled in by EC)
+> + * @insize: Max number of bytes to accept from EC
+>   * @result: EC's response to the command (separate from communicatio=
+n failure)
+>   */
+>  struct cros_ec_command {
+> @@ -64,9 +64,9 @@ struct cros_ec_command {
+>   * sleep at the last suspend
+>   * @event_notifier: interrupt event notifier for transport devices
+>   * @cmd_xfer: send command to EC and get response
+> - *     Returns 0 if the communication succeeded, but that doesn't me=
+an the EC
+> - *     was happy with the command it got. Caller should check msg.re=
+sult for
+> - *     the EC's result code.
+> + *     Returns the number of bytes received if the communication suc=
+ceeded, but
+> + *     that doesn't mean the EC was happy with the command. The call=
+er
+> + *     should check msg.result for the EC's result code.
+>   *
+>   * @priv: Private data
+>   * @irq: Interrupt to use
 
-Please let me know the links for posted patches. I will test with those patches.
-
-Regards,
-Rahul Sharma
-
->
-> Regards
-> Andrzej
->
->>>
->>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->>> ---
->>> based on Kukjin's for-next branch.
->>>
->>>  arch/arm/boot/dts/exynos5420.dtsi |    6 ------
->>>  1 file changed, 6 deletions(-)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
->>> index e385322..3d528cf 100644
->>> --- a/arch/arm/boot/dts/exynos5420.dtsi
->>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->>> @@ -262,11 +262,6 @@
->>>                 reg = <0x10044060 0x20>;
->>>         };
->>>
->>> -       disp_pd: power-domain@100440C0 {
->>> -               compatible = "samsung,exynos4210-pd";
->>> -               reg = <0x100440C0 0x20>;
->>> -       };
->>> -
->>>         msc_pd: power-domain@10044120 {
->>>                 compatible = "samsung,exynos4210-pd";
->>>                 reg = <0x10044120 0x20>;
->>> @@ -518,7 +513,6 @@
->>>         };
->>>
->>>         fimd: fimd@14400000 {
->>> -               samsung,power-domain = <&disp_pd>;
->>>                 clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
->>>                 clock-names = "sclk_fimd", "fimd";
->>>         };
->>> --
->>> 1.7.9.5
->>>
->
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
