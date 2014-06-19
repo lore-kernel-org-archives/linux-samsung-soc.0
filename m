@@ -1,58 +1,39 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] i2c: s3c2410: resume the I2C controller earlier
-Date: Wed, 18 Jun 2014 22:23:51 -0700
-Message-ID: <CAD=FV=U0RAS3pi=i7smGo2rBJ+NfijXhmjX1PUs1rrwKkQewPA@mail.gmail.com>
-References: <1403153691-15606-1-git-send-email-dianders@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1403153691-15606-1-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH] clk/exynos5250: fix bit number for tv sysmmu clock
+Date: Thu, 19 Jun 2014 11:17:16 +0530
+Message-ID: <1403156836-24421-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:55423 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751674AbaFSFsY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 19 Jun 2014 01:48:24 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Hi,
+Change bit from 2 to 9 for tv (mixer) sysmmu clock.
 
-On Wed, Jun 18, 2014 at 9:54 PM, Doug Anderson <dianders@chromium.org> wrote:
-> From: Vincent Palatin <vpalatin@chromium.org>
->
-> When the wake-up is triggered by the PMIC RTC, the RTC driver is trying
-> to read the PMIC interrupt status over I2C and fails because the I2C
-> controller is not resumed yet.
-> Let's resume the I2C controller earlier in the _noirq phase
-> (as other hardwares are doing), so we can properly get the wake-up
-> condition.
->
-> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
->  drivers/i2c/busses/i2c-s3c2410.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index e828a1d..b904132 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -1267,7 +1267,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
->         return 0;
->  }
->
-> -static int s3c24xx_i2c_resume(struct device *dev)
-> +static int s3c24xx_i2c_resume_noirq(struct device *dev)
->  {
->         struct platform_device *pdev = to_platform_device(dev);
->         struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
-> @@ -1285,7 +1285,7 @@ static int s3c24xx_i2c_resume(struct device *dev)
->  static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops = {
->  #ifdef CONFIG_PM_SLEEP
->         .suspend_noirq = s3c24xx_i2c_suspend_noirq,
-> -       .resume = s3c24xx_i2c_resume,
-> +       .resume_noirq = s3c24xx_i2c_resume_noirq,
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+---
+Based on Kukjin's for-next branch.
 
-I looked at applying this to another i2c controller and stumbled upon
-feedback from Wolfram suggesting that I should add "poweroff, thaw,
-freeze, restore".  I'm happy to squash that into this patch or send a
-separate patch if people would like it.  Just let me know.
+ drivers/clk/samsung/clk-exynos5250.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--Doug
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 1fad4c5..184f642 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -661,7 +661,7 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+ 	GATE(CLK_RTC, "rtc", "div_aclk66", GATE_IP_PERIS, 20, 0, 0),
+ 	GATE(CLK_TMU, "tmu", "div_aclk66", GATE_IP_PERIS, 21, 0, 0),
+ 	GATE(CLK_SMMU_TV, "smmu_tv", "mout_aclk200_disp1_sub",
+-			GATE_IP_DISP1, 2, 0, 0),
++			GATE_IP_DISP1, 9, 0, 0),
+ 	GATE(CLK_SMMU_FIMD1, "smmu_fimd1", "mout_aclk200_disp1_sub",
+ 			GATE_IP_DISP1, 8, 0, 0),
+ 	GATE(CLK_SMMU_2D, "smmu_2d", "div_aclk200", GATE_IP_ACP, 7, 0, 0),
+-- 
+1.7.9.5
