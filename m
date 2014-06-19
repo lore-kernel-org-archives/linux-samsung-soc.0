@@ -1,168 +1,53 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH v2] clocksource: exynos-mct: Register the timer for stable udelay
-Date: Thu, 19 Jun 2014 16:30:19 +0530
-Message-ID: <CADGdYn67L9StxiojQN0c5rwgDo6jLNOS9uWyj__B6ViGRm080A@mail.gmail.com>
-References: <1403167145-5267-1-git-send-email-amit.daniel@samsung.com>
-	<53A2A936.3070109@linaro.org>
-	<CADGdYn6YObHdRq6A9-L7qbD+EYiPrwhrKkLwyA5Z=0tDoWUzvA@mail.gmail.com>
-	<53A2BBD0.3050106@linaro.org>
+From: Daniel Drake <drake@endlessm.com>
+Subject: Re: [PATCH 1/4] ARM: dts: exynos4: add port sub-nodes to exynos usb
+ host modules
+Date: Thu, 19 Jun 2014 12:44:13 +0100
+Message-ID: <CAD8Lp46jHt53-Ckyrx76LiL-j_hHEW9tqqYQEWrDD5NCVKoSFQ@mail.gmail.com>
+References: <1402997133-13827-1-git-send-email-m.szyprowski@samsung.com>
+	<1402997133-13827-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53A2BBD0.3050106@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Riley <davidriley@chromium.org>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:63041 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757383AbaFSLoO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 19 Jun 2014 07:44:14 -0400
+Received: by mail-wi0-f180.google.com with SMTP id hi2so2690056wib.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2014 04:44:13 -0700 (PDT)
+In-Reply-To: <1402997133-13827-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>
 
-On Thu, Jun 19, 2014 at 4:00 PM, Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
-> On 06/19/2014 12:21 PM, amit daniel kachhap wrote:
->>
->> On Thu, Jun 19, 2014 at 2:41 PM, Daniel Lezcano
->> <daniel.lezcano@linaro.org> wrote:
->>>
->>> On 06/19/2014 10:39 AM, Amit Daniel Kachhap wrote:
->>>>
->>>>
->>>> This patch register the exynos mct clocksource as the current time=
-r
->>>> as it has constant clock rate. This will generate correct udelay f=
-or the
->>>> exynos platform and avoid using unnecessary calibrated jiffies. Th=
-is
->>>> change
->>>> has been tested on exynos5420 based board and udelay is very close=
- to
->>>> expected.
->>>>
->>>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->>>> ---
->>>> Changes in V2:
->>>> * Added #defines for ARM and ARM64 as pointed by Doug Anderson.
->>>>
->>>> Patches from David Riley confirmed that udelay is broken in exynos=
-5420.
->>>> Link to those patches are,
->>>> 1) https://patchwork.kernel.org/patch/4344911/
->>>> 2) https://patchwork.kernel.org/patch/4344881/
->>>>
->>>>    drivers/clocksource/exynos_mct.c | 15 +++++++++++++++
->>>>    1 file changed, 15 insertions(+)
->>>>
->>>> diff --git a/drivers/clocksource/exynos_mct.c
->>>> b/drivers/clocksource/exynos_mct.c
->>>> index f71d55f..02927e2 100644
->>>> --- a/drivers/clocksource/exynos_mct.c
->>>> +++ b/drivers/clocksource/exynos_mct.c
->>>> @@ -195,10 +195,25 @@ static u64 notrace exynos4_read_sched_clock(=
-void)
->>>>          return exynos4_frc_read(&mct_frc);
->>>>    }
->>>>
->>>> +static struct delay_timer exynos4_delay_timer;
->>>> +
->>>> +static unsigned long exynos4_read_current_timer(void)
->>>> +{
->>>> +#ifdef ARM
->>>> +       return __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_L);
->>>> +#else /* ARM64, etc */
->>>> +       return exynos4_frc_read(&mct_frc);
->>>> +#endif
->>>> +}
->>>> +
->>>
->>>
->>>
->>> There isn't another solution than that ? macros definitions in C fi=
-le are
->>> avoided as much as possible.
->>
->> I also didn't want to use macros but used as a last option. you want
->> me to put more comments here?
->> Or something like below is also possible for checking the size of
->> (unsigned long) in runtime.
->>
->> unsigned long x;
->> unsigned int size =3D (char *)(&x + 1) - (char *)(&x);
->> if (size =3D=3D 4)
->>             return __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_L);
->> else
->>             return exynos4_frc_read(&mct_frc);
->>
->> But this involves extra computation which should not be used for tim=
-e
->> critical functions.
->> Any suggestion?
+On Tue, Jun 17, 2014 at 10:25 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> This patch adds port sub-nodes to exynos4 ehci and ohci modules, which
+> are required by recently merged new exynos4 usb2 phy support.
 >
->
-> AFAIU, Doug may change the exynos4_frc_read to be 32 bits. So may not=
- need
-> those macros as 'exynos4_frc_read' could be used instead.
-right, its better to wait till those patches are out.
->
-> Doug may confirm this.
->
->
->>>>    static void __init exynos4_clocksource_init(void)
->>>>    {
->>>>          exynos4_mct_frc_start();
->>>>
->>>> +       exynos4_delay_timer.read_current_timer =3D
->>>> &exynos4_read_current_timer;
->>>
->>>
->>>
->>> &exynos4_read_current_timer ?
->>
->> Any issue in the naming?
->
->
-> No problem with the naming. As Tomasz pointed also, you are passing '=
-&' for
-> the function pointer.
-yes my mistake.
->
->
->>>> +       exynos4_delay_timer.freq =3D clk_rate;
->>>> +       register_current_timer_delay(&exynos4_delay_timer);
->>>> +
->>>>          if (clocksource_register_hz(&mct_frc, clk_rate))
->>>>                  panic("%s: can't register clocksource\n",
->>>> mct_frc.name);
->>>>
->>>>
->>>
->>>
->>> --
->>>   <http://www.linaro.org/> Linaro.org =E2=94=82 Open source softwar=
-e for ARM SoCs
->>>
->>> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
->>> <http://twitter.com/#!/linaroorg> Twitter |
->>> <http://www.linaro.org/linaro-blog/> Blog
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe
->>> linux-samsung-soc"
->>> in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->
-> --
->  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software f=
-or ARM SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+I checked this against the DT binding documentation for the
+samsung,exynos4210-ohci and samsung,exynos4210-ehci nodes, and also
+the usb2 phy binding docs. Looks fine.
+
+Also tested on ODROID-U2, seems to be working:
+
+ehci-exynos: EHCI EXYNOS driver
+exynos-ehci 12580000.ehci: EHCI Host Controller
+exynos-ehci 12580000.ehci: new USB bus registered, assigned bus number 1
+exynos-ehci 12580000.ehci: irq 102, io mem 0x12580000
+exynos-ehci 12580000.ehci: USB 2.0 started, EHCI 1.00
+ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
+ohci-exynos: OHCI EXYNOS driver
+
+...and the onboard USB (EHCI) ethernet adapter works. Nice.
+
+The only thing I don't quite understand is the relationship between
+EHCI and OHCI controllers, one being at 12580000 and the other at
+1259000; the SoC docs (which I have not studied in detail) don't make
+this very clear to me - no registers listed at base address 12590000?
+Anyway,
+
+Reviewed-by: Daniel Drake <drake@endlessm.com>
