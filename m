@@ -1,55 +1,58 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH] i2c: exynos5: Properly use the "noirq" variants of suspend/resume
-Date: Wed, 18 Jun 2014 22:21:13 -0700
-Message-ID: <1403155273-1057-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jdelvare-l3A5Bk7waGM@public.gmane.org, sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org, standby24x7-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] i2c: s3c2410: resume the I2C controller earlier
+Date: Wed, 18 Jun 2014 22:23:51 -0700
+Message-ID: <CAD=FV=U0RAS3pi=i7smGo2rBJ+NfijXhmjX1PUs1rrwKkQewPA@mail.gmail.com>
+References: <1403153691-15606-1-git-send-email-dianders@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1403153691-15606-1-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The original code for the exynos i2c controller registered for the
-"noirq" variants.  However during review feedback it was moved to
-SIMPLE_DEV_PM_OPS without anyone noticing that it meant we were no
-longer actually "noirq" (despite functions named
-exynos5_i2c_suspend_noirq and exynos5_i2c_resume_noirq).
+Hi,
 
-i2c controllers that might have wakeup sources on them seem to need to
-resume at noirq time so that the individual drivers can actually read
-the i2c bus to handle their wakeup.
+On Wed, Jun 18, 2014 at 9:54 PM, Doug Anderson <dianders@chromium.org> wrote:
+> From: Vincent Palatin <vpalatin@chromium.org>
+>
+> When the wake-up is triggered by the PMIC RTC, the RTC driver is trying
+> to read the PMIC interrupt status over I2C and fails because the I2C
+> controller is not resumed yet.
+> Let's resume the I2C controller earlier in the _noirq phase
+> (as other hardwares are doing), so we can properly get the wake-up
+> condition.
+>
+> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+>  drivers/i2c/busses/i2c-s3c2410.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index e828a1d..b904132 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -1267,7 +1267,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
+>         return 0;
+>  }
+>
+> -static int s3c24xx_i2c_resume(struct device *dev)
+> +static int s3c24xx_i2c_resume_noirq(struct device *dev)
+>  {
+>         struct platform_device *pdev = to_platform_device(dev);
+>         struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+> @@ -1285,7 +1285,7 @@ static int s3c24xx_i2c_resume(struct device *dev)
+>  static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops = {
+>  #ifdef CONFIG_PM_SLEEP
+>         .suspend_noirq = s3c24xx_i2c_suspend_noirq,
+> -       .resume = s3c24xx_i2c_resume,
+> +       .resume_noirq = s3c24xx_i2c_resume_noirq,
 
-NOTE: I took the original review feedback from Wolfram and added
-poweroff, thaw, freeze, restore.
+I looked at applying this to another i2c controller and stumbled upon
+feedback from Wolfram suggesting that I should add "poweroff, thaw,
+freeze, restore".  I'm happy to squash that into this patch or send a
+separate patch if people would like it.  Just let me know.
 
-This patch has only been compile-tested since I don't have all the
-patches needed to make my machine using this i2c driver actually
-suspend/resume.
-
-Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- drivers/i2c/busses/i2c-exynos5.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 63d2292..cba740c 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -789,8 +789,14 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
- }
- #endif
- 
--static SIMPLE_DEV_PM_OPS(exynos5_i2c_dev_pm_ops, exynos5_i2c_suspend_noirq,
--			 exynos5_i2c_resume_noirq);
-+const struct dev_pm_ops exynos5_i2c_dev_pm_ops = {
-+	.suspend_noirq = exynos5_i2c_suspend_noirq,
-+	.resume_noirq = exynos5_i2c_resume_noirq,
-+	.freeze_noirq = exynos5_i2c_suspend_noirq,
-+	.thaw_noirq = exynos5_i2c_resume_noirq,
-+	.poweroff_noirq = exynos5_i2c_suspend_noirq,
-+	.restore_noirq = exynos5_i2c_resume_noirq,
-+};
- 
- static struct platform_driver exynos5_i2c_driver = {
- 	.probe		= exynos5_i2c_probe,
--- 
-2.0.0.526.g5318336
+-Doug
