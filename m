@@ -1,122 +1,267 @@
-From: Sachin Kamat <spk.linux@gmail.com>
-Subject: Re: MMC error on Exynos4210 board
-Date: Thu, 19 Jun 2014 16:10:40 +0530
-Message-ID: <CAK5sBcF=5NYd-tuvRrQk7Yq_r_oUYftpNuHcz7iJ8TGNWkG0iA@mail.gmail.com>
-References: <CAK5sBcEB5GnjiR37DXDAeKYBWKw_4NTDM=pKCVK=0oKFDBjSbw@mail.gmail.com>
-	<CAD7vxxJrRd7nrhZBRWH=43r7AMopz1w30aMRHqMO9PvaZYOpHg@mail.gmail.com>
-	<CAK5sBcHqjmT7rcXLPkP3WHBdcphJjhm2aBfy4ksbXakNUfVYYw@mail.gmail.com>
-	<CAD7vxxJ2mrk9Wrhw+0rB1Afk5zUsR05a1P8aeyou9JPVk6sCrA@mail.gmail.com>
-	<CAK5sBcFCbhBCbgss=KU=__gxpb7KUm6GWhO_MWQAqRgkvCagwQ@mail.gmail.com>
-	<CAD7vxxK5a_Nc4DjP8x4-=Um6xi=kPa=3sRZdvBuNBXMLUEEimA@mail.gmail.com>
+From: Daniel Thompson <daniel.thompson@linaro.org>
+Subject: [PATCH v4 06/13] irqchip: vic: Add support for FIQ management
+Date: Thu, 19 Jun 2014 11:38:16 +0100
+Message-ID: <1403174303-25456-7-git-send-email-daniel.thompson@linaro.org>
+References: <1401961994-18033-1-git-send-email-daniel.thompson@linaro.org>
+ <1403174303-25456-1-git-send-email-daniel.thompson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:52329 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757207AbaFSKkm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jun 2014 06:40:42 -0400
-In-Reply-To: <CAD7vxxK5a_Nc4DjP8x4-=Um6xi=kPa=3sRZdvBuNBXMLUEEimA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1403174303-25456-1-git-send-email-daniel.thompson@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, kernel@stlinux.com, kgdb-bugreport@lists.sourceforge.net, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Jiri Slaby <jslaby@suse.cz>, Daniel Thompson <daniel.thompson@linaro.org>, Dirk Behme <dirk.behme@de.bosch.com>, Russell King <linux@arm.linux.org.uk>, Nicolas Pitre <nico@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Anton Vorontsov <anton.vorontsov@linaro.org>, "David A. Long" <dave.long@linaro.org>, linux-serial@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, kernel-team@android.com, devicetree@vger.kernel.org, linaro-kernel@lists.linaro.org, Jason Cooper <jason@lakedaemon.net>, Pawel Moll <pawel.moll@arm.com>, patches@linaro.org, Kumar Gala <galak@codeaurora.org>, Rob Herring <robh+dt@kernel.org>, John Stultz <john.stultz@linaro.org>, linux-samsung-soc@vger.kernel.org, Ben
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tim Kryger <tim.kryger@gmail.com>
-Cc: Markus Mayer <markus.mayer@linaro.org>, Matt Porter <mporter@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Yuvaraj C D <yuvaraj.cd@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>
 
-On Thu, Jun 19, 2014 at 2:40 PM, Tim Kryger <tim.kryger@gmail.com> wrote:
-> On Thu, Jun 19, 2014 at 1:49 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
->> +cc Some relevant guys from Samsung
->>
->> On Thu, Jun 19, 2014 at 2:12 PM, Tim Kryger <tim.kryger@gmail.com> wrote:
->>> On Wed, Jun 18, 2014 at 8:54 PM, Sachin Kamat <spk.linux@gmail.com> wrote:
->>>
->>>>> On Wed, Jun 18, 2014 at 4:33 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
->>>
->>>>>> I see the below error on Exynos4210 based Origen board with linux-next
->>>>>> (20140618).
->>>>>> Reverting the below commit works fine.
->>>>>>
->>>>>> Commit: 8d02e775a6 "mmc: sdhci: Use mmc core regulator infrastucture"
->>>
->>>>>>
->>>>>> -- [    2.068992] sdhci: Secure Digital Host Controller Interface driver
->>>>>> [    2.075059] sdhci: Copyright(c) Pierre Ossman
->>>>>> [    2.079762] of_get_named_gpiod_flags: can't parse gpios property of
->>>>>> node '/sdhci@12510000[0]'
->>>>>> [    2.088021] s3c-sdhci 12510000.sdhci: clock source 2: mmc_busclk.2
->>>>>> (50000000 Hz)
->>>>>> [    2.095322] of_get_named_gpiod_flags: can't parse gpios property of
->>>>>> node '/sdhci@12510000[0]'
->>>>>> [    2.103794] of_get_named_gpiod_flags: can't parse gpios property of
->>>>>> node '/sdhci@12510000[0]'
->>>>>> [    2.112478] s3c-sdhci 12510000.sdhci: No vqmmc regulator found
->>>>>> [    2.118117] mmc0: Hardware doesn't report any support voltages.
->>>>>> [    2.124004] s3c-sdhci 12510000.sdhci: sdhci_add_host() failed
->>>>>> [    2.130080] of_get_named_gpiod_flags: can't parse gpios property of
->>>>>> node '/sdhci@12530000[0]'
->>>>>> [    2.138352] s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2
->>>>>> (16666667 Hz)
->>>>>> [    2.145661] of_get_named_gpiod_flags: can't parse gpios property of
->>>>>> node '/sdhci@12530000[0]'
->>>>>> [    2.154139] of_get_named_gpiod_flags: can't parse gpios property of
->>>>>> node '/sdhci@12530000[0]'
->>>>>> [    2.162834] s3c-sdhci 12530000.sdhci: No vqmmc regulator found
->>>>>> [    2.168464] mmc0: Hardware doesn't report any support voltages.
->>>>>> [    2.174349] s3c-sdhci 12530000.sdhci: sdhci_add_host() failed
->>>
->>>>>> [    2.336148] Waiting for root device /dev/mmcblk0p1...
->>>
->>>> FYI, the board has a 2.8V fixed regulator supply connected to the MMC.
->>>> You may refer to arch/arm/boot/dts/exynos4210-origen.dts for more details.
->>>
->>> A 2.8v regulator results in mmc->ocr_avail being set to MMC_VDD_27_28
->>> | MMC_VDD_28_29.
->>>
->>> The SDHCI capabilities register only indicates support of three voltage levels
->>>   - 1.8v: SDHCI_CAN_VDD_180 => MMC_VDD_165_195
->>>   - 3.0v: SDHCI_CAN_VDD_300 => MMC_VDD_29_30 | MMC_VDD_30_31
->>>   - 3.3v: SDHCI_CAN_VDD_330 => MMC_VDD_32_33 | MMC_VDD_33_34
->>>
->>> Even if all capability bits of the host controller were set, there
->>> still wouldn't be any overlap.  Thus you see a "Hardware doesn't
->>> report any support voltages" message.
->>>
->>> Previously, this issue was being swept under the rug by cec2e21 mmc:
->>> sdhci: Use regulator min/max voltage range according to spec.  That
->>> change hacked up the voltage range checks such that with your 2.8v
->>> fixed regulator, the driver would believe the host could support
->>> MMC_VDD_29_30 | MMC_VDD_30_31 | MMC_VDD_32_33 | MMC_VDD_33_34.  The
->>> driver would start down the path of commanding 3.3v-3.4v (the highest
->>> voltage range believed to be supported).  At the last second, the
->>> driver would see the regulator was fixed and blindly skip over the set
->>> voltage operation, saving it from failure.
->>>
->>> Since my patch eliminates the bogus voltage range checks, your board
->>> is now getting caught playing too loose with the SDHCI regulator
->>> voltages.
->>>
->>> Furthermore, the fixed regulator special-case logic that helped hide
->>> your issue should also be considered for removal given that fixed
->>> regulators now behave properly thanks to c00dc35 regulator: core:
->>> Allow regulator_set_voltage for fixed regulators.
->>
->> Thanks for the detailed explanation. What do you propose to get this fixed?
->
-> I'm not really sure of the best path forward.  I suppose you could
-> modify your device tree to lie about the voltage of the fixed
-> regulator.  Changing it to 3.0v should allow it to boot up but that is
-> definitely a hack.
+This patch introduces callbacks to route interrupts to or away
+from the FIQ signal. It also causes these callbacks to be registered
+with the FIQ infrastructure.
 
-Or I could simply remove the vmmc-supply property altogether (as it is optional)
-and get the board to work.
+This patch enable FIQ support for mach-versatile whilst mach-ep93xx,
+mach-netx, mach-s3c64xx and plat-samsung are unmodified (and can therefore
+continue to use init_FIQ() as before).
 
-> It would be nice if the driver could be extended
-> to handle the peculiarities of your board in a deliberate manner but
-> limiting the common sdhci driver to supporting only the three voltages
-> from the spec also seems sensible.
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Hartley Sweeten <hsweeten@visionengravers.com>
+Cc: Ryan Mallon <rmallon@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: linux-samsung-soc@vger.kernel.org
+---
+ arch/arm/mach-versatile/core.c  |  2 +-
+ drivers/irqchip/irq-vic.c       | 92 ++++++++++++++++++++++++++++++++---------
+ include/linux/irqchip/arm-vic.h |  6 ++-
+ 3 files changed, 78 insertions(+), 22 deletions(-)
 
-Until such time that the driver gets fixed to handle 2.8V fixed supply your
-current patch leaves several of Exynos boards broken for now.
-
+diff --git a/arch/arm/mach-versatile/core.c b/arch/arm/mach-versatile/core.c
+index be83ba2..1abf360 100644
+--- a/arch/arm/mach-versatile/core.c
++++ b/arch/arm/mach-versatile/core.c
+@@ -108,7 +108,7 @@ void __init versatile_init_irq(void)
+ 
+ 	np = of_find_matching_node_by_address(NULL, vic_of_match,
+ 					      VERSATILE_VIC_BASE);
+-	__vic_init(VA_VIC_BASE, 0, IRQ_VIC_START, ~0, 0, np);
++	__vic_init(VA_VIC_BASE, 0, IRQ_VIC_START, ~0, 0, np ? false : true, np);
+ 
+ 	writel(~0, VA_SIC_BASE + SIC_IRQ_ENABLE_CLEAR);
+ 
+diff --git a/drivers/irqchip/irq-vic.c b/drivers/irqchip/irq-vic.c
+index 7d35287..22aa126 100644
+--- a/drivers/irqchip/irq-vic.c
++++ b/drivers/irqchip/irq-vic.c
+@@ -36,6 +36,9 @@
+ 
+ #include <asm/exception.h>
+ #include <asm/irq.h>
++#ifdef CONFIG_FIQ
++#include <asm/fiq.h>
++#endif
+ 
+ #include "irqchip.h"
+ 
+@@ -261,11 +264,53 @@ static struct irq_domain_ops vic_irqdomain_ops = {
+ 	.xlate = irq_domain_xlate_onetwocell,
+ };
+ 
++#ifdef CONFIG_FIQ
++static DEFINE_RAW_SPINLOCK(irq_controller_lock);
++
++static void vic_set_fiq(struct irq_data *d, bool enable)
++{
++	void __iomem *base = irq_data_get_irq_chip_data(d);
++	unsigned int irq = d->hwirq;
++	u32 val;
++
++	raw_spin_lock(&irq_controller_lock);
++	val = readl(base + VIC_INT_SELECT);
++	if (enable)
++		val |= 1 << irq;
++	else
++		val &= ~(1 << irq);
++	writel(val, base + VIC_INT_SELECT);
++	raw_spin_unlock(&irq_controller_lock);
++}
++
++static void vic_enable_fiq(struct irq_data *d)
++{
++	vic_set_fiq(d, true);
++}
++
++static void vic_disable_fiq(struct irq_data *d)
++{
++	vic_set_fiq(d, false);
++}
++
++struct fiq_chip vic_fiq = {
++	.fiq_enable = vic_enable_fiq,
++	.fiq_disable = vic_disable_fiq,
++};
++
++static void vic_register_fiq(int irq)
++{
++	fiq_register_mapping(irq, &vic_fiq);
++}
++#else /* CONFIG_FIQ */
++static inline void vic_register_fiq(int irq) {}
++#endif /* CONFIG_FIQ */
++
+ /**
+  * vic_register() - Register a VIC.
+  * @base: The base address of the VIC.
+  * @parent_irq: The parent IRQ if cascaded, else 0.
+- * @irq: The base IRQ for the VIC.
++ * @irq_start: The base IRQ for the VIC.
+  * @valid_sources: bitmask of valid interrupts
+  * @resume_sources: bitmask of interrupts allowed for resume sources.
+  * @node: The device tree node associated with the VIC.
+@@ -277,12 +322,13 @@ static struct irq_domain_ops vic_irqdomain_ops = {
+  * This also configures the IRQ domain for the VIC.
+  */
+ static void __init vic_register(void __iomem *base, unsigned int parent_irq,
+-				unsigned int irq,
++				unsigned int irq_start,
+ 				u32 valid_sources, u32 resume_sources,
+-				struct device_node *node)
++				bool map_fiqs, struct device_node *node)
+ {
+ 	struct vic_device *v;
+ 	int i;
++	unsigned int irq;
+ 
+ 	if (vic_id >= ARRAY_SIZE(vic_devices)) {
+ 		printk(KERN_ERR "%s: too few VICs, increase CONFIG_ARM_VIC_NR\n", __func__);
+@@ -301,15 +347,19 @@ static void __init vic_register(void __iomem *base, unsigned int parent_irq,
+ 		irq_set_chained_handler(parent_irq, vic_handle_irq_cascaded);
+ 	}
+ 
+-	v->domain = irq_domain_add_simple(node, fls(valid_sources), irq,
++	v->domain = irq_domain_add_simple(node, fls(valid_sources), irq_start,
+ 					  &vic_irqdomain_ops, v);
+ 	/* create an IRQ mapping for each valid IRQ */
+-	for (i = 0; i < fls(valid_sources); i++)
+-		if (valid_sources & (1 << i))
+-			irq_create_mapping(v->domain, i);
++	for (i = 0; i < fls(valid_sources); i++) {
++		if (valid_sources & (1 << i)) {
++			irq = irq_create_mapping(v->domain, i);
++			vic_register_fiq(irq);
++		}
++	}
++
+ 	/* If no base IRQ was passed, figure out our allocated base */
+-	if (irq)
+-		v->irq = irq;
++	if (irq_start)
++		v->irq = irq_start;
+ 	else
+ 		v->irq = irq_find_mapping(v->domain, 0);
+ }
+@@ -413,7 +463,8 @@ static void __init vic_clear_interrupts(void __iomem *base)
+  *  and 020 within the page. We call this "second block".
+  */
+ static void __init vic_init_st(void __iomem *base, unsigned int irq_start,
+-			       u32 vic_sources, struct device_node *node)
++			       u32 vic_sources, bool map_fiqs,
++			       struct device_node *node)
+ {
+ 	unsigned int i;
+ 	int vic_2nd_block = ((unsigned long)base & ~PAGE_MASK) != 0;
+@@ -439,12 +490,12 @@ static void __init vic_init_st(void __iomem *base, unsigned int irq_start,
+ 		writel(32, base + VIC_PL190_DEF_VECT_ADDR);
+ 	}
+ 
+-	vic_register(base, 0, irq_start, vic_sources, 0, node);
++	vic_register(base, 0, irq_start, vic_sources, 0, map_fiqs, node);
+ }
+ 
+ void __init __vic_init(void __iomem *base, int parent_irq, int irq_start,
+-			      u32 vic_sources, u32 resume_sources,
+-			      struct device_node *node)
++		       u32 vic_sources, u32 resume_sources,
++		       bool map_fiqs, struct device_node *node)
+ {
+ 	unsigned int i;
+ 	u32 cellid = 0;
+@@ -462,7 +513,7 @@ void __init __vic_init(void __iomem *base, int parent_irq, int irq_start,
+ 
+ 	switch(vendor) {
+ 	case AMBA_VENDOR_ST:
+-		vic_init_st(base, irq_start, vic_sources, node);
++		vic_init_st(base, irq_start, vic_sources, map_fiqs, node);
+ 		return;
+ 	default:
+ 		printk(KERN_WARNING "VIC: unknown vendor, continuing anyways\n");
+@@ -479,7 +530,8 @@ void __init __vic_init(void __iomem *base, int parent_irq, int irq_start,
+ 
+ 	vic_init2(base);
+ 
+-	vic_register(base, parent_irq, irq_start, vic_sources, resume_sources, node);
++	vic_register(base, parent_irq, irq_start, vic_sources, resume_sources,
++		     map_fiqs, node);
+ }
+ 
+ /**
+@@ -492,7 +544,8 @@ void __init __vic_init(void __iomem *base, int parent_irq, int irq_start,
+ void __init vic_init(void __iomem *base, unsigned int irq_start,
+ 		     u32 vic_sources, u32 resume_sources)
+ {
+-	__vic_init(base, 0, irq_start, vic_sources, resume_sources, NULL);
++	__vic_init(base, 0, irq_start, vic_sources, resume_sources,
++		   false, NULL);
+ }
+ 
+ /**
+@@ -511,7 +564,8 @@ int __init vic_init_cascaded(void __iomem *base, unsigned int parent_irq,
+ 	struct vic_device *v;
+ 
+ 	v = &vic_devices[vic_id];
+-	__vic_init(base, parent_irq, 0, vic_sources, resume_sources, NULL);
++	__vic_init(base, parent_irq, 0, vic_sources, resume_sources, false,
++		   NULL);
+ 	/* Return out acquired base */
+ 	return v->irq;
+ }
+@@ -535,9 +589,9 @@ int __init vic_of_init(struct device_node *node, struct device_node *parent)
+ 	of_property_read_u32(node, "valid-wakeup-mask", &wakeup_mask);
+ 
+ 	/*
+-	 * Passing 0 as first IRQ makes the simple domain allocate descriptors
++	 * Passing 0 as first IRQ makes the domain allocate descriptors.
+ 	 */
+-	__vic_init(regs, 0, 0, interrupt_mask, wakeup_mask, node);
++	__vic_init(regs, 0, 0, interrupt_mask, wakeup_mask, true, node);
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/irqchip/arm-vic.h b/include/linux/irqchip/arm-vic.h
+index ba46c79..30ab39f 100644
+--- a/include/linux/irqchip/arm-vic.h
++++ b/include/linux/irqchip/arm-vic.h
+@@ -30,8 +30,10 @@ struct device_node;
+ struct pt_regs;
+ 
+ void __vic_init(void __iomem *base, int parent_irq, int irq_start,
+-		u32 vic_sources, u32 resume_sources, struct device_node *node);
+-void vic_init(void __iomem *base, unsigned int irq_start, u32 vic_sources, u32 resume_sources);
++		u32 vic_sources, u32 resume_sources,
++		bool map_fiqs, struct device_node *node);
++void vic_init(void __iomem *base, unsigned int irq_start, u32 vic_sources,
++	      u32 resume_sources);
+ int vic_init_cascaded(void __iomem *base, unsigned int parent_irq,
+ 		      u32 vic_sources, u32 resume_sources);
+ 
 -- 
-Regards,
-Sachin.
+1.9.3
