@@ -1,119 +1,101 @@
-From: Sachin Kamat <spk.linux@gmail.com>
-Subject: Re: MMC error on Exynos4210 board
-Date: Thu, 19 Jun 2014 09:24:04 +0530
-Message-ID: <CAK5sBcHqjmT7rcXLPkP3WHBdcphJjhm2aBfy4ksbXakNUfVYYw@mail.gmail.com>
-References: <CAK5sBcEB5GnjiR37DXDAeKYBWKw_4NTDM=pKCVK=0oKFDBjSbw@mail.gmail.com>
-	<CAD7vxxJrRd7nrhZBRWH=43r7AMopz1w30aMRHqMO9PvaZYOpHg@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: defer hdmi probe when fail to get regulators
+Date: Thu, 19 Jun 2014 13:04:11 +0900
+Message-ID: <53A2613B.1020402@samsung.com>
+References: <1403098976-6506-1-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAD7vxxJrRd7nrhZBRWH=43r7AMopz1w30aMRHqMO9PvaZYOpHg@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Tim Kryger <tim.kryger@gmail.com>
-Cc: Markus Mayer <markus.mayer@linaro.org>, Matt Porter <mporter@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1403098976-6506-1-git-send-email-rahul.sharma@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, joshi@samsung.com, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 18, 2014 at 7:41 PM, Tim Kryger <tim.kryger@gmail.com> wrote:
-> On Wed, Jun 18, 2014 at 4:33 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
->> Hi Tim,
->>
->> I see the below error on Exynos4210 based Origen board with linux-next
->> (20140618).
->> Reverting the below commit works fine.
->>
->> Commit: 8d02e775a6 "mmc: sdhci: Use mmc core regulator infrastucture"
->>
->> Any ideas?
->>
->> ***************
->>
->> -- [    2.068992] sdhci: Secure Digital Host Controller Interface driver
->> [    2.075059] sdhci: Copyright(c) Pierre Ossman
->> [    2.079762] of_get_named_gpiod_flags: can't parse gpios property of
->> node '/sdhci@12510000[0]'
->> [    2.088021] s3c-sdhci 12510000.sdhci: clock source 2: mmc_busclk.2
->> (50000000 Hz)
->> [    2.095322] of_get_named_gpiod_flags: can't parse gpios property of
->> node '/sdhci@12510000[0]'
->> [    2.103794] of_get_named_gpiod_flags: can't parse gpios property of
->> node '/sdhci@12510000[0]'
->> [    2.112478] s3c-sdhci 12510000.sdhci: No vqmmc regulator found
->> [    2.118117] mmc0: Hardware doesn't report any support voltages.
->> [    2.124004] s3c-sdhci 12510000.sdhci: sdhci_add_host() failed
->> [    2.130080] of_get_named_gpiod_flags: can't parse gpios property of
->> node '/sdhci@12530000[0]'
->> [    2.138352] s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2
->> (16666667 Hz)
->> [    2.145661] of_get_named_gpiod_flags: can't parse gpios property of
->> node '/sdhci@12530000[0]'
->> [    2.154139] of_get_named_gpiod_flags: can't parse gpios property of
->> node '/sdhci@12530000[0]'
->> [    2.162834] s3c-sdhci 12530000.sdhci: No vqmmc regulator found
->> [    2.168464] mmc0: Hardware doesn't report any support voltages.
->> [    2.174349] s3c-sdhci 12530000.sdhci: sdhci_add_host() failed
->> [    2.180281] Synopsys Designware Multimedia Card Interface Driver
->> [    2.188131] usbcore: registered new interface driver usbhid
->> [    2.192287] usbhid: USB HID core driver
->> [    2.196329] TCP: cubic registered
->> [    2.199362] NET: Registered protocol family 17
->> [    2.203917] NET: Registered protocol family 15
->> [    2.208404] Registering SWP/SWPB emulation handler
->> [    2.214357] of_get_named_gpiod_flags exited with status 0
->> [    2.218430] of_get_named_gpiod_flags exited with status 0
->> [    2.223803] of_get_named_gpiod_flags exited with status 0
->> [    2.229170] of_get_named_gpiod_flags exited with status 0
->> [    2.234560] of_get_named_gpiod_flags exited with status 0
->> [    2.239953] gpio-229: gpiod_set_debounce: missing set() or
->> set_debounce() operations
->> [    2.247773] gpio-230: gpiod_set_debounce: missing set() or
->> set_debounce() operations
->> [    2.255473] gpio-228: gpiod_set_debounce: missing set() or
->> set_debounce() operations
->> [    2.263221] gpio-227: gpiod_set_debounce: missing set() or
->> set_debounce() operations
->> [    2.270918] gpio-226: gpiod_set_debounce: missing set() or
->> set_debounce() operations
->> [    2.278899] input: gpio_keys as /devices/gpio_keys/input/input0
->> [    2.285196] s3c-rtc 10070000.rtc: setting system clock to
->> 2000-01-01 00:00:00 UTC (946684800)
->> [    2.295072] VDD_G3D_1.1V: disabling
->> [    2.304744] VADC_3.3V: disabling
->> [    2.312095] VDD_AUD_1.8V: disabling
->> [    2.319714] VMIPI_1.1V: disabling
->> [    2.327193] VDD_ABB_3.3V: disabling
->> [    2.332779] VMEM_VDD_2.8V: disabling
->> [    2.336148] Waiting for root device /dev/mmcblk0p1...
->>
->> *************
->> Regards,
->> Sachin.
->
-> Would you mind reverting just this part of the commit to see if it
-> clears up your trouble?
->
->>         if (host->ocr_mask)
->> -               ocr_avail = host->ocr_mask;
->> +               ocr_avail &= host->ocr_mask;
-
-Reverting this did not help. I still get the above error. My diff:
-
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index c23a87285a95..f4135094320d 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -3096,7 +3096,7 @@ int sdhci_add_host(struct sdhci_host *host)
-                ocr_avail &= mmc->ocr_avail;
-
-        if (host->ocr_mask)
--               ocr_avail &= host->ocr_mask;
-+               ocr_avail = host->ocr_mask;
-
-        mmc->ocr_avail = ocr_avail;
-        mmc->ocr_avail_sdio = ocr_avail;
-
-FYI, the board has a 2.8V fixed regulator supply connected to the MMC.
-You may refer to arch/arm/boot/dts/exynos4210-origen.dts for more details.
-
--- 
-Regards,
-Sachin.
+T24gMjAxNOuFhCAwNuyblCAxOOydvCAyMjo0MiwgUmFodWwgU2hhcm1hIHdyb3RlOgo+IEhETUkg
+cHJvYmUgcHJvY2VlZHMgd2l0aCBkdW1teSByZWd1bGF0b3JzIHdoZW4gdGhlIHJlZ3VsYXRvcnMK
+PiBhcmUgbm90IHByb3ZpZGVkIGluIERUIG5vZGUgb3IgcmVndWxhdG9yIHByb3ZpZGVyIGhhcyBu
+b3QgZ2V0Cj4gcHJvYmVkIG9yIGZhaWxlZCB0byByZWdpc3RlciB0aGUgcmVndWxhdG9ycy4KPiAK
+PiBUaGlzIHBhdGNoIG1vZGlmeSBoZG1pIGRyaXZlciB0byBkZWZlciB0aGUgcHJvYmUgaW4gY2Fz
+ZSB0aGUKPiByZWd1bGF0b3JzIGFyZSBub3QgYXZhaWxhYmxlLgoKTm8sIGFscmVhZHkgYXZhaWxh
+YmxlLiBTZWUgdGhlIGJlbG93IGNvbW1lbnRzLgoKPiAKPiBTaWduZWQtb2ZmLWJ5OiBSYWh1bCBT
+aGFybWEgPHJhaHVsLnNoYXJtYUBzYW1zdW5nLmNvbT4KPiAtLS0KPiBCYXNlZCBvbiBleHlub3Mt
+ZHJtLWZpeGVzIGJyYW5jaCBpbiBJbmtpIGRhZSdzIHRyZWUuCj4gIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2hkbWkuYyB8ICAgNjkgKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0t
+LS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgNTAgaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRpb25zKC0p
+Cj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwo+IGluZGV4IGFhMjU5YjAuLjNm
+MjRjNDkgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5j
+Cj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCj4gQEAgLTgzLDcg
+KzgzLDcgQEAgc3RydWN0IGhkbWlfcmVzb3VyY2VzIHsKPiAgCXN0cnVjdCBjbGsJCQkqc2Nsa19w
+aXhlbDsKPiAgCXN0cnVjdCBjbGsJCQkqc2Nsa19oZG1pcGh5Owo+ICAJc3RydWN0IGNsawkJCSpt
+b3V0X2hkbWk7Cj4gLQlzdHJ1Y3QgcmVndWxhdG9yX2J1bGtfZGF0YQkqcmVndWxfYnVsazsKPiAr
+CXN0cnVjdCByZWd1bGF0b3IJCSoqcmVndWxhdG9yczsKPiAgCWludAkJCQlyZWd1bF9jb3VudDsK
+PiAgfTsKPiAgCj4gQEAgLTIwMjIsNiArMjAyMiwzNiBAQCBzdGF0aWMgdm9pZCBoZG1pX2NvbW1p
+dChzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5KQo+ICAJaGRtaV9jb25mX2FwcGx5
+KGhkYXRhKTsKPiAgfQo+ICAKPiAraW50IGhkbWlfcmVndWxhdG9yX2VuYWJsZShzdHJ1Y3QgaGRt
+aV9jb250ZXh0ICpoZGF0YSkKPiArewo+ICsJc3RydWN0IGhkbWlfcmVzb3VyY2VzICpyZXMgPSAm
+aGRhdGEtPnJlczsKPiArCWludCBpLCByZXQ7Cj4gKwo+ICsJZm9yIChpID0gMDsgaSA8IHJlcy0+
+cmVndWxfY291bnQ7ICsraSkgewo+ICsJCXJldCA9IHJlZ3VsYXRvcl9lbmFibGUocmVzLT5yZWd1
+bGF0b3JzW2ldKTsKPiArCQlpZiAocmV0IDwgMCkgewo+ICsJCQlEUk1fRVJST1IoImZhaWwgdG8g
+ZW5hYmxlIHJlZ3VsYXRvcnMuXG4iKTsKPiArCQkJcmV0dXJuIHJldDsKPiArCQl9Cj4gKwl9Cj4g
+KwlyZXR1cm4gMDsKPiArfQo+ICsKPiAraW50IGhkbWlfcmVndWxhdG9yX2Rpc2FibGUoc3RydWN0
+IGhkbWlfY29udGV4dCAqaGRhdGEpCj4gK3sKPiArCXN0cnVjdCBoZG1pX3Jlc291cmNlcyAqcmVz
+ID0gJmhkYXRhLT5yZXM7Cj4gKwlpbnQgaSwgcmV0Owo+ICsKPiArCWZvciAoaSA9IDA7IGkgPCBy
+ZXMtPnJlZ3VsX2NvdW50OyArK2kpIHsKPiArCQlyZXQgPSByZWd1bGF0b3JfZGlzYWJsZShyZXMt
+PnJlZ3VsYXRvcnNbaV0pOwo+ICsJCWlmIChyZXQgPCAwKSB7Cj4gKwkJCURSTV9FUlJPUigiZmFp
+bCB0byBkaXNhYmxlIHJlZ3VsYXRvcnMuXG4iKTsKPiArCQkJcmV0dXJuIHJldDsKPiArCQl9Cj4g
+Kwl9Cj4gKwlyZXR1cm4gMDsKPiArfQo+ICsKPiAgc3RhdGljIHZvaWQgaGRtaV9wb3dlcm9uKHN0
+cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXkpCj4gIHsKPiAgCXN0cnVjdCBoZG1pX2Nv
+bnRleHQgKmhkYXRhID0gZGlzcGxheS0+Y3R4Owo+IEBAIC0yMDM5LDggKzIwNjksOCBAQCBzdGF0
+aWMgdm9pZCBoZG1pX3Bvd2Vyb24oc3RydWN0IGV4eW5vc19kcm1fZGlzcGxheSAqZGlzcGxheSkK
+PiAgCj4gIAlwbV9ydW50aW1lX2dldF9zeW5jKGhkYXRhLT5kZXYpOwo+ICAKPiAtCWlmIChyZWd1
+bGF0b3JfYnVsa19lbmFibGUocmVzLT5yZWd1bF9jb3VudCwgcmVzLT5yZWd1bF9idWxrKSkKPiAt
+CQlEUk1fREVCVUdfS01TKCJmYWlsZWQgdG8gZW5hYmxlIHJlZ3VsYXRvciBidWxrXG4iKTsKPiAr
+CWlmIChoZG1pX3JlZ3VsYXRvcl9lbmFibGUoaGRhdGEpKQo+ICsJCURSTV9ERUJVR19LTVMoImZh
+aWxlZCB0byBlbmFibGUgcmVndWxhdG9yc1xuIik7Cj4gIAo+ICAJLyogc2V0IHBtdSBoZG1pcGh5
+IGNvbnRyb2wgYml0IHRvIGVuYWJsZSBoZG1pcGh5ICovCj4gIAlyZWdtYXBfdXBkYXRlX2JpdHMo
+aGRhdGEtPnBtdXJlZywgUE1VX0hETUlfUEhZX0NPTlRST0wsCj4gQEAgLTIwNzcsNyArMjEwNyw4
+IEBAIHN0YXRpYyB2b2lkIGhkbWlfcG93ZXJvZmYoc3RydWN0IGV4eW5vc19kcm1fZGlzcGxheSAq
+ZGlzcGxheSkKPiAgCXJlZ21hcF91cGRhdGVfYml0cyhoZGF0YS0+cG11cmVnLCBQTVVfSERNSV9Q
+SFlfQ09OVFJPTCwKPiAgCQkJUE1VX0hETUlfUEhZX0VOQUJMRV9CSVQsIDApOwo+ICAKPiAtCXJl
+Z3VsYXRvcl9idWxrX2Rpc2FibGUocmVzLT5yZWd1bF9jb3VudCwgcmVzLT5yZWd1bF9idWxrKTsK
+PiArCWlmIChoZG1pX3JlZ3VsYXRvcl9kaXNhYmxlKGhkYXRhKSkKPiArCQlEUk1fREVCVUdfS01T
+KCJmYWlsZWQgdG8gZGlzYWJsZSByZWd1bGF0b3JzXG4iKTsKPiAgCj4gIAlwbV9ydW50aW1lX3B1
+dF9zeW5jKGhkYXRhLT5kZXYpOwo+ICAKPiBAQCAtMjIxMSwyNCArMjI0MiwyNCBAQCBzdGF0aWMg
+aW50IGhkbWlfcmVzb3VyY2VzX2luaXQoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4gIAo+
+ICAJY2xrX3NldF9wYXJlbnQocmVzLT5tb3V0X2hkbWksIHJlcy0+c2Nsa19waXhlbCk7Cj4gIAo+
+IC0JcmVzLT5yZWd1bF9idWxrID0gZGV2bV9remFsbG9jKGRldiwgQVJSQVlfU0laRShzdXBwbHkp
+ICoKPiAtCQlzaXplb2YocmVzLT5yZWd1bF9idWxrWzBdKSwgR0ZQX0tFUk5FTCk7Cj4gLQlpZiAo
+IXJlcy0+cmVndWxfYnVsaykgewo+IC0JCXJldCA9IC1FTk9NRU07Cj4gLQkJZ290byBmYWlsOwo+
+IC0JfQo+ICsJcmVzLT5yZWd1bF9jb3VudCA9IEFSUkFZX1NJWkUoc3VwcGx5KTsKPiArCj4gKwly
+ZXMtPnJlZ3VsYXRvcnMgPSBkZXZtX2t6YWxsb2MoZGV2LCByZXMtPnJlZ3VsX2NvdW50ICoKPiAr
+CQlzaXplb2YocmVzLT5yZWd1bGF0b3JzWzBdKSwgR0ZQX0tFUk5FTCk7Cj4gKwlpZiAoIXJlcy0+
+cmVndWxhdG9ycykKPiArCQlyZXR1cm4gLUVOT01FTTsKPiArCj4gIAlmb3IgKGkgPSAwOyBpIDwg
+QVJSQVlfU0laRShzdXBwbHkpOyArK2kpIHsKPiAtCQlyZXMtPnJlZ3VsX2J1bGtbaV0uc3VwcGx5
+ID0gc3VwcGx5W2ldOwo+IC0JCXJlcy0+cmVndWxfYnVsa1tpXS5jb25zdW1lciA9IE5VTEw7Cj4g
+LQl9Cj4gLQlyZXQgPSBkZXZtX3JlZ3VsYXRvcl9idWxrX2dldChkZXYsIEFSUkFZX1NJWkUoc3Vw
+cGx5KSwgcmVzLT5yZWd1bF9idWxrKTsKPiAtCWlmIChyZXQpIHsKPiAtCQlEUk1fRVJST1IoImZh
+aWxlZCB0byBnZXQgcmVndWxhdG9yc1xuIik7Cj4gLQkJcmV0dXJuIHJldDsKPiArCQlyZXMtPnJl
+Z3VsYXRvcnNbaV0gPQo+ICsJCQlkZXZtX3JlZ3VsYXRvcl9nZXRfb3B0aW9uYWwoZGV2LCBzdXBw
+bHlbaV0pOwo+ICsJCWlmIChJU19FUlIocmVzLT5yZWd1bGF0b3JzW2ldKSkgewo+ICsJCQlEUk1f
+RVJST1IoImZhaWwgdG8gZ2V0IHJlZ3VsYXRvcjogJXMuXG4iLAo+ICsJCQkJc3VwcGx5W2ldKTsK
+PiArCQkJcmV0dXJuIC1FUFJPQkVfREVGRVI7CgpkZXZtX3JlZ3VsYXRvcl9nZXRfb3B0aW9uYWwg
+ZnVuY3Rpb24gd291bGQgcmV0dXJuIC1FUFJPQkVfREVGRVIgaWYKbmVlZGVkLiBTbyBpdCdzIG5v
+dCBnb29kIHRvIGZvcmNlIHJldHVybmluZyAtRVBST0JFX0RFRkVSIGluIGNhc2Ugb2YgYWxsCmVy
+cm9ycy4KClRoYW5rcywKSW5raSBEYWUKCj4gKwkJfQo+ICAJfQo+IC0JcmVzLT5yZWd1bF9jb3Vu
+dCA9IEFSUkFZX1NJWkUoc3VwcGx5KTsKPiAgCj4gLQlyZXR1cm4gcmV0Owo+ICsJcmV0dXJuIDA7
+Cj4gIGZhaWw6Cj4gIAlEUk1fRVJST1IoIkhETUkgcmVzb3VyY2UgaW5pdCAtIGZhaWxlZFxuIik7
+Cj4gIAlyZXR1cm4gcmV0Owo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
