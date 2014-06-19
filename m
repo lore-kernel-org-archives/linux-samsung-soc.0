@@ -1,48 +1,50 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: Re: [PATCH 4/4] ARM: dts: refactor Odroid DTS file and add support
- for Odroid X2 and U2/U3
-Date: Thu, 19 Jun 2014 13:43:04 +0100
-Message-ID: <CAD8Lp46oYP6wiT_Ehor6O-LZ8Z+vgJLh0fKivKKCdzVG+SGNgQ@mail.gmail.com>
-References: <1402997133-13827-1-git-send-email-m.szyprowski@samsung.com>
-	<1402997133-13827-5-git-send-email-m.szyprowski@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 2/4] ARM: dts: exynos4412-odroidx: enable common hardware
+ blocks
+Date: Thu, 19 Jun 2014 15:08:34 +0200
+Message-ID: <53A2E0D2.5010200@gmail.com>
+References: <1402997133-13827-1-git-send-email-m.szyprowski@samsung.com>	<1402997133-13827-3-git-send-email-m.szyprowski@samsung.com> <CAD8Lp46az1w9K8ad-KOrnt1SvCgWS75OGjCw1vBNh3HOc4cSMg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:34799 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750881AbaFSMnG (ORCPT
+Received: from mail-we0-f174.google.com ([74.125.82.174]:54204 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752434AbaFSNI4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jun 2014 08:43:06 -0400
-Received: by mail-wi0-f182.google.com with SMTP id bs8so2769507wib.9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2014 05:43:04 -0700 (PDT)
-In-Reply-To: <1402997133-13827-5-git-send-email-m.szyprowski@samsung.com>
+	Thu, 19 Jun 2014 09:08:56 -0400
+Received: by mail-we0-f174.google.com with SMTP id u57so2315427wes.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2014 06:08:55 -0700 (PDT)
+In-Reply-To: <CAD8Lp46az1w9K8ad-KOrnt1SvCgWS75OGjCw1vBNh3HOc4cSMg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Daniel Drake <drake@endlessm.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>
 
-On Tue, Jun 17, 2014 at 10:25 AM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> This patch moves some parts of exynos4412-odroidx.dts to common
-> exynos4412-odroid-common.dtsi file and adds support for Odroid X2 and
-> U2/U3 boards. X2 is same as X, but it has faster SoC module (1.7GHz
-> instead of 1.4GHz), while U2/U3 differs from X2 by different way of
-> routing signals to host USB hub. It also lacks some hw modules not yet
-> supported by those dts files (i.e. LCD & touch panel).
+On 19.06.2014 14:21, Daniel Drake wrote:
+> On Tue, Jun 17, 2014 at 10:25 AM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> This patch adds support for common hardware modules available on all
+>> Exynos4412-based Odroid boards, which already have complete support in
+>> mainline kernel. This includes secure firmware calls, watchdog, g2d and
+>> fimc (mem2mem) multimedia accelerators.
+> 
+> For the secure firmware, this is indeed required for U2/U3, otherwise
+> the system crashes in weird ways during early boot. If this entry also
+> makes sense for ODROID-X, I'm surprised it was not there already, does
+> it boot without it?
 
-Thanks for this! It is working on ODROID-U2: at least eMMC/SD, LED, serial.
+It probably does, but certain things fail, such as secondary CPU bring-up.
 
-Just 2 minor questions from reviewing:
+> 
+> As for the watchdog, g2d and fimc, is there really any Exynos4412
+> configuration where such components are not available?
+> Sorry if that is a silly question - just wondering why we wouldn't
+> enable these in exynos4412.dtsi.
 
-Odroid-X DTS used to have serial ports at 13820000 and 13830000, this
-patch removes them, but leaves 2.
-I can understand the idea of removing entries for ports that are not
-available on the board, but I've never seen an ODROID with 2 serial
-ports - should we bring this down to just the 1 enabled serial port
-that is accessible?
+I believe they should all be enabled at highest possible level, as they
+don't have any board-specific hardware dependencies. Probably even in
+exynos4.dtsi for some of them (watchdog likely).
 
-Odroid-X DTS used to enable EHCI port 2, but with this refactoring, no
-longer does. Intentional?
-
-Thanks
-Daniel
+Best regards,
+Tomasz
