@@ -1,75 +1,100 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] clocksource: exynos-mct: Register the timer for stable udelay
-Date: Wed, 18 Jun 2014 16:17:01 -0700
-Message-ID: <CAD=FV=WHK7TDdqcAd6aVs2g8rcHJx834im_4nTKHJAkUisWq4A@mail.gmail.com>
-References: <1403091060-5054-1-git-send-email-amit.daniel@samsung.com>
+From: Michal Simek <monstr@monstr.eu>
+Subject: Re: [PATCH RFC] mfd: syscon: Decouple syscon interface from syscon
+ devices
+Date: Thu, 19 Jun 2014 02:06:20 +0200
+Message-ID: <53A2297C.106@monstr.eu>
+References: <53A05E2D.6020702@samsung.com> <5027740.B7iVUcUX2T@wuerfel> <53A0B27E.5010708@gmail.com> <5537724.LlmJ2hxcKn@wuerfel>
+Reply-To: monstr@monstr.eu
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1403091060-5054-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Riley <davidriley@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="RrIbSI64TSdon8cUeSarWUaWltGJclnho"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:48681 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756178AbaFSAGc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Jun 2014 20:06:32 -0400
+Received: by mail-pa0-f46.google.com with SMTP id eu11so1255328pac.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 17:06:31 -0700 (PDT)
+In-Reply-To: <5537724.LlmJ2hxcKn@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.brown@linaro.org, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Samuel Ortiz <sameo@linux.intel.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, Lee Jones <lee.jones@linaro.org>
 
-Amit,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--RrIbSI64TSdon8cUeSarWUaWltGJclnho
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for posting!
+Hi,
 
-On Wed, Jun 18, 2014 at 4:31 AM, Amit Daniel Kachhap
-<amit.daniel@samsung.com> wrote:
-> This patch register the exynos mct clocksource as the current timer
-> as it has constant clock rate. This will generate correct udelay for the
-> exynos platform and avoid using unnecessary calibrated jiffies. This change
-> have been tested on exynos5420 based board.
->
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->
-> Patches from David Riley confirmed that udelay is broken in exynos5420.
-> Link to those patches are,
-> 1) https://patchwork.kernel.org/patch/4344911/
-> 2) https://patchwork.kernel.org/patch/4344881/
->
->  drivers/clocksource/exynos_mct.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index 8d64200..57cb3dc 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -198,10 +198,21 @@ static u64 notrace exynos4_read_sched_clock(void)
->         return exynos4_frc_read(&mct_frc);
->  }
->
-> +static struct delay_timer exynos4_delay_timer;
-> +
-> +static unsigned long exynos4_read_current_timer(void)
-> +{
-> +       return exynos4_frc_read(&mct_frc);
+On 06/18/2014 02:57 PM, Arnd Bergmann wrote:
+> On Tuesday 17 June 2014 23:26:22 Tomasz Figa wrote:
+>> On 17.06.2014 17:42, Arnd Bergmann wrote:
+>>> This seems like a reasonable way of solving the problem, but I think
+>>> there is an even better one that we have about in the past: if we
+>>> promote syscon from a platform driver into a a drivers/base/ helper
+>>> that is independent of the platform device matching, we can use
+>>> call syscon_regmap_lookup_* for any device node, whether it's already=
 
-This is terribly inefficient to read all 64-bits and then cast back to
-a 32-bit value.  Replace with:
+>>> bound to a driver or not, which do what you need. It would also make
+>>> it easier to call the syscon code before the platform_device
+>>> infrastructure gets initialized, which is something a number of
+>>> people have asked for, e.g. for using regmap to do SMP bringup
+>>> or for clock registration.
+>>
+>> Basically, unless I'm missing your point, this is what my patch does,
+>> except that I don't move it to drivers/base/ and the registration
+>> function I added require a pointer to struct device. Indeed, decouplin=
+g
+>> it further from the driver model, by adding of_syscon_register() shoul=
+d
+>> be useful for early users.
+>=20
+> I believe the part you are missing is that with the approach I suggeste=
+d,
+> there would be no registration function at all. You can easily do the
+> lookup from the client drivers using the DT data structures, with no
+> need for the device at all. The only exception today is the clps711x
+> platform using syscon_regmap_lookup_by_pdevname(), but that should be
+> solved in 3.17 when clps711x becomes DT-only.
 
-return __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_L);
+I agree with Arnd. This patch is doing the part of what we wanted to do w=
+ith it.
+It means create a list of registered devices.
+But you are working with struct device which you can't use in early phase=
+
+which is the feature we wanted to use. But currently we have workaround
+in the kernel and clk subsystem is not able to work with regmap anyway.
+
+Moving to proper location is just the last step.
+
+Thanks,
+Michal
+
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Microblaze cpu - http://www.monstr.eu/fdt/
+Maintainer of Linux kernel - Xilinx Zynq ARM architecture
+Microblaze U-BOOT custodian and responsible for u-boot arm zynq platform
 
 
-> +}
-> +
->  static void __init exynos4_clocksource_init(void)
->  {
->         exynos4_mct_frc_start(0, 0);
 
-Please rebase atop (1d80415 clocksource: exynos_mct: Don't reset the
-counter during boot and resume), which is in linuxnext among other
-places.
+--RrIbSI64TSdon8cUeSarWUaWltGJclnho
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
->
-> +       exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
-> +       exynos4_delay_timer.freq = clk_rate;
-> +       register_current_timer_delay(&exynos4_delay_timer);
-> +
->         if (clocksource_register_hz(&mct_frc, clk_rate))
->                 panic("%s: can't register clocksource\n", mct_frc.name);
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-It does seem to work for me though.  :)
+iEYEARECAAYFAlOiKYAACgkQykllyylKDCEG1wCfbiLH4jcSjhO9Kmyvi69mjx1M
+vH8An39Cz8WiE9xDIiLUkkt3IHym5SKi
+=emaA
+-----END PGP SIGNATURE-----
+
+--RrIbSI64TSdon8cUeSarWUaWltGJclnho--
