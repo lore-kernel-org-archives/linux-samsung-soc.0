@@ -1,64 +1,46 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/4] ARM: dts: exynos4: add port sub-nodes to exynos usb
- host modules
-Date: Thu, 19 Jun 2014 15:12:39 +0200
-Message-ID: <53A2E1C7.3080805@gmail.com>
-References: <1402997133-13827-1-git-send-email-m.szyprowski@samsung.com>	<1402997133-13827-2-git-send-email-m.szyprowski@samsung.com> <CAD8Lp46jHt53-Ckyrx76LiL-j_hHEW9tqqYQEWrDD5NCVKoSFQ@mail.gmail.com>
+From: Alessandro Zummo <a.zummo@towertech.it>
+Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC
+ regulators
+Date: Thu, 19 Jun 2014 15:32:35 +0200
+Message-ID: <20140619153235.09b2de40@linux.lan.towertech.it>
+References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk>
+	<20140617211747.GY29841@lee--X1>
+	<53A16047.7010409@collabora.co.uk>
+	<20140618141048.GA15956@lee--X1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:38495 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752664AbaFSNNB (ORCPT
+Received: from zabrina.hetzner-de.towertech.it ([178.63.16.19]:51593 "EHLO
+	zabrina.hetzner-de.towertech.it" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753878AbaFSNci (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jun 2014 09:13:01 -0400
-Received: by mail-wi0-f170.google.com with SMTP id cc10so10077067wib.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2014 06:13:00 -0700 (PDT)
-In-Reply-To: <CAD8Lp46jHt53-Ckyrx76LiL-j_hHEW9tqqYQEWrDD5NCVKoSFQ@mail.gmail.com>
+	Thu, 19 Jun 2014 09:32:38 -0400
+In-Reply-To: <20140618141048.GA15956@lee--X1>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 19.06.2014 13:44, Daniel Drake wrote:
-> On Tue, Jun 17, 2014 at 10:25 AM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> This patch adds port sub-nodes to exynos4 ehci and ohci modules, which
->> are required by recently merged new exynos4 usb2 phy support.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On Wed, 18 Jun 2014 15:10:48 +0100
+Lee Jones <lee.jones@linaro.org> wrote:
+
+> > So I guess you should either a) take the whole patch-set through your mfd tree
+> > or b) merge the mfd patches and create an immutable branch that can be pulled by
+> > Mark, Mike and Alessandro.
+> > 
+> > I don't know what's the preferred workflow in these cases...  
 > 
-> I checked this against the DT binding documentation for the
-> samsung,exynos4210-ohci and samsung,exynos4210-ehci nodes, and also
-> the usb2 phy binding docs. Looks fine.
-> 
-> Also tested on ODROID-U2, seems to be working:
+> That's fine.  I'm happy to create shared branches when required.
 
-Thanks for testing.
+ mfd tree will be ok.
 
-> 
-> ehci-exynos: EHCI EXYNOS driver
-> exynos-ehci 12580000.ehci: EHCI Host Controller
-> exynos-ehci 12580000.ehci: new USB bus registered, assigned bus number 1
-> exynos-ehci 12580000.ehci: irq 102, io mem 0x12580000
-> exynos-ehci 12580000.ehci: USB 2.0 started, EHCI 1.00
-> ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
-> ohci-exynos: OHCI EXYNOS driver
-> 
-> ...and the onboard USB (EHCI) ethernet adapter works. Nice.
-> 
-> The only thing I don't quite understand is the relationship between
-> EHCI and OHCI controllers, one being at 12580000 and the other at
-> 1259000; the SoC docs (which I have not studied in detail) don't make
-> this very clear to me - no registers listed at base address 12590000?
-> Anyway,
+-- 
 
-Well, that's exactly the same relationship as on PCs, where you have
-both EHCI and UHCI/OHCI and depending on what kind of device you connect
-the proper controller will pick it up.
+ Best regards,
 
-AFAIK the base address is good, but I believe it was already tested anyway.
+ Alessandro Zummo,
+  Tower Technologies - Torino, Italy
 
-Best regards,
-Tomasz
+  http://www.towertech.it
