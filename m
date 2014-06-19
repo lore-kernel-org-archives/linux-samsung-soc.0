@@ -1,51 +1,103 @@
-From: Sachin Kamat <sachin.kamat@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: exynos4: fix pwm-cells in pwm node
-Date: Thu, 19 Jun 2014 11:37:48 +0530
-Message-ID: <CAK5sBcFJpSvpwXGPckDcUoZP_Xqqo3Bm6p5qjF_mnZg6b7+T3g@mail.gmail.com>
-References: <1403143414-6242-1-git-send-email-jaewon02.kim@samsung.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH] clocksource: exynos-mct: Register the timer for stable udelay
+Date: Thu, 19 Jun 2014 13:59:59 +0530
+Message-ID: <CADGdYn6-SnwgTiOi5f8waXBStPaxndep6T6swfkuAcU4=KdcUQ@mail.gmail.com>
+References: <1403091060-5054-1-git-send-email-amit.daniel@samsung.com>
+	<CAD=FV=WHK7TDdqcAd6aVs2g8rcHJx834im_4nTKHJAkUisWq4A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f45.google.com ([209.85.215.45]:40021 "EHLO
-	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750762AbaFSGHu (ORCPT
+Received: from mail-yk0-f174.google.com ([209.85.160.174]:40084 "EHLO
+	mail-yk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757466AbaFSIaA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jun 2014 02:07:50 -0400
-Received: by mail-la0-f45.google.com with SMTP id hr17so1145383lab.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jun 2014 23:07:48 -0700 (PDT)
-In-Reply-To: <1403143414-6242-1-git-send-email-jaewon02.kim@samsung.com>
+	Thu, 19 Jun 2014 04:30:00 -0400
+In-Reply-To: <CAD=FV=WHK7TDdqcAd6aVs2g8rcHJx834im_4nTKHJAkUisWq4A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaewon Kim <jaewon02.kim@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Riley <davidriley@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>
 
-Hi Jaewon,
+On Thu, Jun 19, 2014 at 4:47 AM, Doug Anderson <dianders@chromium.org> wrote:
+> Amit,
+>
+> Thanks for posting!
+>
+> On Wed, Jun 18, 2014 at 4:31 AM, Amit Daniel Kachhap
+> <amit.daniel@samsung.com> wrote:
+>> This patch register the exynos mct clocksource as the current timer
+>> as it has constant clock rate. This will generate correct udelay for the
+>> exynos platform and avoid using unnecessary calibrated jiffies. This change
+>> have been tested on exynos5420 based board.
+>>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>
+>> Patches from David Riley confirmed that udelay is broken in exynos5420.
+>> Link to those patches are,
+>> 1) https://patchwork.kernel.org/patch/4344911/
+>> 2) https://patchwork.kernel.org/patch/4344881/
+>>
+>>  drivers/clocksource/exynos_mct.c | 11 +++++++++++
+>>  1 file changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+>> index 8d64200..57cb3dc 100644
+>> --- a/drivers/clocksource/exynos_mct.c
+>> +++ b/drivers/clocksource/exynos_mct.c
+>> @@ -198,10 +198,21 @@ static u64 notrace exynos4_read_sched_clock(void)
+>>         return exynos4_frc_read(&mct_frc);
+>>  }
+>>
+>> +static struct delay_timer exynos4_delay_timer;
+>> +
+>> +static unsigned long exynos4_read_current_timer(void)
+>> +{
+>> +       return exynos4_frc_read(&mct_frc);
+>
+> This is terribly inefficient to read all 64-bits and then cast back to
+> a 32-bit value.  Replace with:
+Yes agree.
+This unsigned long strangely behaves as 32 bits for arm32 and 64 bits for arm64.
+So I think it better is to do something like this,
++static unsigned long exynos4_read_current_timer(void)
++{
++#ifdef ARM
++       return __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_L);
++#else /* ARM64, etc */
++       return exynos4_frc_read(&mct_frc);
++#endif
++}
++
+I will post V2 version like above and see what the maintainer says.
 
-On Thu, Jun 19, 2014 at 7:33 AM, Jaewon Kim <jaewon02.kim@samsung.com> wrote:
-> pwm-cells should be 3. Third cell is optional PWM flags. And This flag
-> supported by this binding is PWM_POLARITY_INVERTED.
 >
-> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-> ---
+> return __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_L);
 >
-> Changes in v2:
->  - Remove unnecessary handle.
 >
->  arch/arm/boot/dts/exynos4.dtsi |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>> +}
+>> +
+>>  static void __init exynos4_clocksource_init(void)
+>>  {
+>>         exynos4_mct_frc_start(0, 0);
 >
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index b8ece4b..e118356 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -554,7 +554,7 @@
->                 interrupts = <0 37 0>, <0 38 0>, <0 39 0>, <0 40 0>, <0 41 0>;
->                 clocks = <&clock CLK_PWM>;
->                 clock-names = "timers";
-> -               #pwm-cells = <2>;
-> +               #pwm-cells = <3>;
->                 status = "disabled";
->         };
+> Please rebase atop (1d80415 clocksource: exynos_mct: Don't reset the
+> counter during boot and resume), which is in linuxnext among other
+> places.
+OK will re base my patch on top of this.
+>
+>>
+>> +       exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
+>> +       exynos4_delay_timer.freq = clk_rate;
+>> +       register_current_timer_delay(&exynos4_delay_timer);
+>> +
+>>         if (clocksource_register_hz(&mct_frc, clk_rate))
+>>                 panic("%s: can't register clocksource\n", mct_frc.name);
+>
+> It does seem to work for me though.  :)
+thanks,
 
-I think I had already reviewed this patch. Anyway,
-Reviewed-by: Sachin Kamat <sachin.kamat@samsung.com>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
