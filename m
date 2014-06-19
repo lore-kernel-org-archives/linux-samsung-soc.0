@@ -1,48 +1,53 @@
 From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v6 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-Date: Thu, 19 Jun 2014 09:43:48 +0530
-Message-ID: <CAJuA9ajzUTRL7An-BGEAro7cyFO8YXQnBVPBx7LyOd-tLGuc1w@mail.gmail.com>
-References: <1403018733-4187-1-git-send-email-thomas.ab@samsung.com>
-	<CAKohpomt4M_V7rMAoh=+UFon3CxnZjVY_9DuVtQW9ddtTTj7Fg@mail.gmail.com>
+Subject: Re: [PATCHv2 0/3] cpufreq: Use cpufreq-cpu0 driver for Exynos3250
+Date: Thu, 19 Jun 2014 09:51:23 +0530
+Message-ID: <CAJuA9aiYGXYYORkbB66ZJs3rTjAu4a7HcPhMSOZs_qUJyy_o7g@mail.gmail.com>
+References: <1403080802-2794-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <CAKohpomt4M_V7rMAoh=+UFon3CxnZjVY_9DuVtQW9ddtTTj7Fg@mail.gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1403080802-2794-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, Mike Turquette <mturquette@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 18, 2014 at 1:21 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 17 June 2014 20:55, Thomas Abraham <thomas.ab@samsung.com> wrote:
->> Changes since v5:
->> - Configuration data for cpu clock block is embedded with the code. The cpu clock
->>   logic can later to extended to obtain this data from DT.
->> - Excluded the support for Exynos4x12 SoC since the work on boost OPP bindings is
->>   still incomplete.
->> - Included cpufreq support for Exynos5420 SoC.
->> - Many other minor changes (and so dropped Ack's for some of the patches in v5)
->>
->> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
->> drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
->> series also enabled cpufreq support for Exynos5420 using arm_big_little cpufreq
->> driver.
+On Wed, Jun 18, 2014 at 2:09 PM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> This patchset use cpufreq-cpu0 driver to support Exynos3250 cpufreq. So, this
+> patchset is based on following patchset[1] by Thomas Abraham.
+>  [1] http://www.spinics.net/lists/arm-kernel/msg339392.html
 >
-> cpufreq@vger.kernel.org list is deprecated now: dec102a, use linux-pm instead.
-
-Ok. Will take care next time.
-
+> Changes from v1:
+> - Rebased on new patchset[1] by Thomas Abraham
+> - Modify clk-cpu.c to support Exynos3250
+> - Drop documentation patch on previous patchset[2]
+>  [2] http://www.spinics.net/lists/cpufreq/msg10265.html
+> - Add only operating-points for Exynos3250 without armclk-divider-table
 >
-> For patch 5 and 6:
+> Chanwoo Choi (3):
+>   clk: samsung: cpu: Add support for cpu clocks of Exynos3250
+>   clk: samsung: exynos3250: Use cpu-clock provider type to support cpufreq
+>   ARM: dts: Exynos: Add cpu clock table for Exynos3250
 >
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>  arch/arm/boot/dts/exynos3250.dtsi    | 15 +++++++++++++++
+>  drivers/clk/samsung/clk-cpu.c        | 31 +++++++++++++++++++++++++++++++
+>  drivers/clk/samsung/clk-exynos3250.c | 14 ++++++++++----
+>  3 files changed, 56 insertions(+), 4 deletions(-)
 
-Thanks Viresh.
+Hi Chanwoo,
 
-Regards,
+I have reviewed this series and it looks fine. If the cpu clock type
+is merged without any further changes, please add
+Reviewed-by: Thomas Abraham <thomas.ab@samsung.com>
+
+Thanks,
 Thomas.
 
+>
 > --
-> To unsubscribe from this list: send the line "unsubscribe cpufreq" in
+> 1.8.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
