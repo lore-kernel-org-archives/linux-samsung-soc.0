@@ -1,141 +1,122 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v2] clocksource: exynos-mct: Register the timer for stable
- udelay
-Date: Thu, 19 Jun 2014 12:30:40 +0200
-Message-ID: <53A2BBD0.3050106@linaro.org>
-References: <1403167145-5267-1-git-send-email-amit.daniel@samsung.com>	<53A2A936.3070109@linaro.org> <CADGdYn6YObHdRq6A9-L7qbD+EYiPrwhrKkLwyA5Z=0tDoWUzvA@mail.gmail.com>
+From: Sachin Kamat <spk.linux@gmail.com>
+Subject: Re: MMC error on Exynos4210 board
+Date: Thu, 19 Jun 2014 16:10:40 +0530
+Message-ID: <CAK5sBcF=5NYd-tuvRrQk7Yq_r_oUYftpNuHcz7iJ8TGNWkG0iA@mail.gmail.com>
+References: <CAK5sBcEB5GnjiR37DXDAeKYBWKw_4NTDM=pKCVK=0oKFDBjSbw@mail.gmail.com>
+	<CAD7vxxJrRd7nrhZBRWH=43r7AMopz1w30aMRHqMO9PvaZYOpHg@mail.gmail.com>
+	<CAK5sBcHqjmT7rcXLPkP3WHBdcphJjhm2aBfy4ksbXakNUfVYYw@mail.gmail.com>
+	<CAD7vxxJ2mrk9Wrhw+0rB1Afk5zUsR05a1P8aeyou9JPVk6sCrA@mail.gmail.com>
+	<CAK5sBcFCbhBCbgss=KU=__gxpb7KUm6GWhO_MWQAqRgkvCagwQ@mail.gmail.com>
+	<CAD7vxxK5a_Nc4DjP8x4-=Um6xi=kPa=3sRZdvBuNBXMLUEEimA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CADGdYn6YObHdRq6A9-L7qbD+EYiPrwhrKkLwyA5Z=0tDoWUzvA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: amit daniel kachhap <amit.daniel@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Riley <davidriley@chromium.org>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:52329 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757207AbaFSKkm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 19 Jun 2014 06:40:42 -0400
+In-Reply-To: <CAD7vxxK5a_Nc4DjP8x4-=Um6xi=kPa=3sRZdvBuNBXMLUEEimA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tim Kryger <tim.kryger@gmail.com>
+Cc: Markus Mayer <markus.mayer@linaro.org>, Matt Porter <mporter@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Yuvaraj C D <yuvaraj.cd@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>
 
-On 06/19/2014 12:21 PM, amit daniel kachhap wrote:
-> On Thu, Jun 19, 2014 at 2:41 PM, Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
->> On 06/19/2014 10:39 AM, Amit Daniel Kachhap wrote:
->>>
->>> This patch register the exynos mct clocksource as the current timer
->>> as it has constant clock rate. This will generate correct udelay fo=
-r the
->>> exynos platform and avoid using unnecessary calibrated jiffies. Thi=
-s
->>> change
->>> has been tested on exynos5420 based board and udelay is very close =
-to
->>> expected.
->>>
->>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->>> ---
->>> Changes in V2:
->>> * Added #defines for ARM and ARM64 as pointed by Doug Anderson.
->>>
->>> Patches from David Riley confirmed that udelay is broken in exynos5=
-420.
->>> Link to those patches are,
->>> 1) https://patchwork.kernel.org/patch/4344911/
->>> 2) https://patchwork.kernel.org/patch/4344881/
->>>
->>>    drivers/clocksource/exynos_mct.c | 15 +++++++++++++++
->>>    1 file changed, 15 insertions(+)
->>>
->>> diff --git a/drivers/clocksource/exynos_mct.c
->>> b/drivers/clocksource/exynos_mct.c
->>> index f71d55f..02927e2 100644
->>> --- a/drivers/clocksource/exynos_mct.c
->>> +++ b/drivers/clocksource/exynos_mct.c
->>> @@ -195,10 +195,25 @@ static u64 notrace exynos4_read_sched_clock(v=
-oid)
->>>          return exynos4_frc_read(&mct_frc);
->>>    }
->>>
->>> +static struct delay_timer exynos4_delay_timer;
->>> +
->>> +static unsigned long exynos4_read_current_timer(void)
->>> +{
->>> +#ifdef ARM
->>> +       return __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_L);
->>> +#else /* ARM64, etc */
->>> +       return exynos4_frc_read(&mct_frc);
->>> +#endif
->>> +}
->>> +
+On Thu, Jun 19, 2014 at 2:40 PM, Tim Kryger <tim.kryger@gmail.com> wrote:
+> On Thu, Jun 19, 2014 at 1:49 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
+>> +cc Some relevant guys from Samsung
 >>
+>> On Thu, Jun 19, 2014 at 2:12 PM, Tim Kryger <tim.kryger@gmail.com> wrote:
+>>> On Wed, Jun 18, 2014 at 8:54 PM, Sachin Kamat <spk.linux@gmail.com> wrote:
+>>>
+>>>>> On Wed, Jun 18, 2014 at 4:33 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
+>>>
+>>>>>> I see the below error on Exynos4210 based Origen board with linux-next
+>>>>>> (20140618).
+>>>>>> Reverting the below commit works fine.
+>>>>>>
+>>>>>> Commit: 8d02e775a6 "mmc: sdhci: Use mmc core regulator infrastucture"
+>>>
+>>>>>>
+>>>>>> -- [    2.068992] sdhci: Secure Digital Host Controller Interface driver
+>>>>>> [    2.075059] sdhci: Copyright(c) Pierre Ossman
+>>>>>> [    2.079762] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>> node '/sdhci@12510000[0]'
+>>>>>> [    2.088021] s3c-sdhci 12510000.sdhci: clock source 2: mmc_busclk.2
+>>>>>> (50000000 Hz)
+>>>>>> [    2.095322] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>> node '/sdhci@12510000[0]'
+>>>>>> [    2.103794] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>> node '/sdhci@12510000[0]'
+>>>>>> [    2.112478] s3c-sdhci 12510000.sdhci: No vqmmc regulator found
+>>>>>> [    2.118117] mmc0: Hardware doesn't report any support voltages.
+>>>>>> [    2.124004] s3c-sdhci 12510000.sdhci: sdhci_add_host() failed
+>>>>>> [    2.130080] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>> node '/sdhci@12530000[0]'
+>>>>>> [    2.138352] s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2
+>>>>>> (16666667 Hz)
+>>>>>> [    2.145661] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>> node '/sdhci@12530000[0]'
+>>>>>> [    2.154139] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>> node '/sdhci@12530000[0]'
+>>>>>> [    2.162834] s3c-sdhci 12530000.sdhci: No vqmmc regulator found
+>>>>>> [    2.168464] mmc0: Hardware doesn't report any support voltages.
+>>>>>> [    2.174349] s3c-sdhci 12530000.sdhci: sdhci_add_host() failed
+>>>
+>>>>>> [    2.336148] Waiting for root device /dev/mmcblk0p1...
+>>>
+>>>> FYI, the board has a 2.8V fixed regulator supply connected to the MMC.
+>>>> You may refer to arch/arm/boot/dts/exynos4210-origen.dts for more details.
+>>>
+>>> A 2.8v regulator results in mmc->ocr_avail being set to MMC_VDD_27_28
+>>> | MMC_VDD_28_29.
+>>>
+>>> The SDHCI capabilities register only indicates support of three voltage levels
+>>>   - 1.8v: SDHCI_CAN_VDD_180 => MMC_VDD_165_195
+>>>   - 3.0v: SDHCI_CAN_VDD_300 => MMC_VDD_29_30 | MMC_VDD_30_31
+>>>   - 3.3v: SDHCI_CAN_VDD_330 => MMC_VDD_32_33 | MMC_VDD_33_34
+>>>
+>>> Even if all capability bits of the host controller were set, there
+>>> still wouldn't be any overlap.  Thus you see a "Hardware doesn't
+>>> report any support voltages" message.
+>>>
+>>> Previously, this issue was being swept under the rug by cec2e21 mmc:
+>>> sdhci: Use regulator min/max voltage range according to spec.  That
+>>> change hacked up the voltage range checks such that with your 2.8v
+>>> fixed regulator, the driver would believe the host could support
+>>> MMC_VDD_29_30 | MMC_VDD_30_31 | MMC_VDD_32_33 | MMC_VDD_33_34.  The
+>>> driver would start down the path of commanding 3.3v-3.4v (the highest
+>>> voltage range believed to be supported).  At the last second, the
+>>> driver would see the regulator was fixed and blindly skip over the set
+>>> voltage operation, saving it from failure.
+>>>
+>>> Since my patch eliminates the bogus voltage range checks, your board
+>>> is now getting caught playing too loose with the SDHCI regulator
+>>> voltages.
+>>>
+>>> Furthermore, the fixed regulator special-case logic that helped hide
+>>> your issue should also be considered for removal given that fixed
+>>> regulators now behave properly thanks to c00dc35 regulator: core:
+>>> Allow regulator_set_voltage for fixed regulators.
 >>
->> There isn't another solution than that ? macros definitions in C fil=
-e are
->> avoided as much as possible.
-> I also didn't want to use macros but used as a last option. you want
-> me to put more comments here?
-> Or something like below is also possible for checking the size of
-> (unsigned long) in runtime.
+>> Thanks for the detailed explanation. What do you propose to get this fixed?
 >
-> unsigned long x;
-> unsigned int size =3D (char *)(&x + 1) - (char *)(&x);
-> if (size =3D=3D 4)
->             return __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_L);
-> else
->             return exynos4_frc_read(&mct_frc);
->
-> But this involves extra computation which should not be used for time
-> critical functions.
-> Any suggestion?
+> I'm not really sure of the best path forward.  I suppose you could
+> modify your device tree to lie about the voltage of the fixed
+> regulator.  Changing it to 3.0v should allow it to boot up but that is
+> definitely a hack.
 
-AFAIU, Doug may change the exynos4_frc_read to be 32 bits. So may not=20
-need those macros as 'exynos4_frc_read' could be used instead.
+Or I could simply remove the vmmc-supply property altogether (as it is optional)
+and get the board to work.
 
-Doug may confirm this.
+> It would be nice if the driver could be extended
+> to handle the peculiarities of your board in a deliberate manner but
+> limiting the common sdhci driver to supporting only the three voltages
+> from the spec also seems sensible.
 
->>>    static void __init exynos4_clocksource_init(void)
->>>    {
->>>          exynos4_mct_frc_start();
->>>
->>> +       exynos4_delay_timer.read_current_timer =3D
->>> &exynos4_read_current_timer;
->>
->>
->> &exynos4_read_current_timer ?
-> Any issue in the naming?
+Until such time that the driver gets fixed to handle 2.8V fixed supply your
+current patch leaves several of Exynos boards broken for now.
 
-No problem with the naming. As Tomasz pointed also, you are passing '&'=
-=20
-for the function pointer.
-
->>> +       exynos4_delay_timer.freq =3D clk_rate;
->>> +       register_current_timer_delay(&exynos4_delay_timer);
->>> +
->>>          if (clocksource_register_hz(&mct_frc, clk_rate))
->>>                  panic("%s: can't register clocksource\n", mct_frc.=
-name);
->>>
->>>
->>
->>
->> --
->>   <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software=
- for ARM SoCs
->>
->> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
->> <http://twitter.com/#!/linaroorg> Twitter |
->> <http://www.linaro.org/linaro-blog/> Blog
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-sams=
-ung-soc"
->> in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+-- 
+Regards,
+Sachin.
