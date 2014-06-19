@@ -1,85 +1,45 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2] clocksource: exynos-mct: Register the timer for stable
- udelay
-Date: Thu, 19 Jun 2014 12:21:55 +0200
-Message-ID: <53A2B9C3.1050906@gmail.com>
-References: <1403167145-5267-1-git-send-email-amit.daniel@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2] clocksource: exynos-mct: Register the timer for stable udelay
+Date: Thu, 19 Jun 2014 12:29:55 +0200
+Message-ID: <4808230.DmzmRfAocp@wuerfel>
+References: <1403167145-5267-1-git-send-email-amit.daniel@samsung.com> <53A2A936.3070109@linaro.org> <CADGdYn6YObHdRq6A9-L7qbD+EYiPrwhrKkLwyA5Z=0tDoWUzvA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:46970 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757454AbaFSKWS (ORCPT
+Received: from mout.kundenserver.de ([212.227.17.13]:62570 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751399AbaFSKaE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jun 2014 06:22:18 -0400
-In-Reply-To: <1403167145-5267-1-git-send-email-amit.daniel@samsung.com>
+	Thu, 19 Jun 2014 06:30:04 -0400
+In-Reply-To: <CADGdYn6YObHdRq6A9-L7qbD+EYiPrwhrKkLwyA5Z=0tDoWUzvA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, David Riley <davidriley@chromium.org>, Doug Anderson <dianders@chromium.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: amit daniel kachhap <amit.daniel@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, David Riley <davidriley@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>
 
-Hi Amit,
-
-Please see my comments inline.
-
-On 19.06.2014 10:39, Amit Daniel Kachhap wrote:
-> This patch register the exynos mct clocksource as the current timer
-> as it has constant clock rate. This will generate correct udelay for the
-> exynos platform and avoid using unnecessary calibrated jiffies. This change
-> has been tested on exynos5420 based board and udelay is very close to
-> expected.
+On Thursday 19 June 2014 15:51:58 amit daniel kachhap wrote:
+> I also didn't want to use macros but used as a last option. you want
+> me to put more comments here?
+> Or something like below is also possible for checking the size of
+> (unsigned long) in runtime.
 > 
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
-> Changes in V2:
-> * Added #defines for ARM and ARM64 as pointed by Doug Anderson.
+> unsigned long x;
+> unsigned int size = (char *)(&x + 1) - (char *)(&x);
+
+reimplementing "sizeof (long)"?
+
+> if (size == 4)
+>            return __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_L);
+
+readl_relaxed(), certainly
+
+> else
+>            return exynos4_frc_read(&mct_frc);
 > 
-> Patches from David Riley confirmed that udelay is broken in exynos5420.
-> Link to those patches are,
-> 1) https://patchwork.kernel.org/patch/4344911/
-> 2) https://patchwork.kernel.org/patch/4344881/
-> 
->  drivers/clocksource/exynos_mct.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index f71d55f..02927e2 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -195,10 +195,25 @@ static u64 notrace exynos4_read_sched_clock(void)
->  	return exynos4_frc_read(&mct_frc);
->  }
->  
-> +static struct delay_timer exynos4_delay_timer;
-> +
-> +static unsigned long exynos4_read_current_timer(void)
-> +{
-> +#ifdef ARM
-> +	return __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_L);
-> +#else /* ARM64, etc */
-> +	return exynos4_frc_read(&mct_frc);
-> +#endif
-> +}
-> +
+> But this involves extra computation which should not be used for time
+> critical functions.
 
-No need for anything like this. Even if running on ARM64, the delay
-timer code should be able to cope with different timer widths. For
-delays, 32 bits are enough, so just always read the lower part.
+sizeof is a constant expression, the compiler will optimize this.
 
-Also use of raw accessors in drivers is discouraged - please use
-readl_relaxed().
-
-Btw. I don't even see support for this on ARM64 in mainline, where arch
-timer is always used for delays and AFAIK this is a platform requirement.
-
->  static void __init exynos4_clocksource_init(void)
->  {
->  	exynos4_mct_frc_start();
->  
-> +	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
-
-nit: No need for & for function pointers.
-
-Best regards,
-Tomasz
+	Arnd
