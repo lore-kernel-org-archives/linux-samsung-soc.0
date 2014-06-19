@@ -1,48 +1,62 @@
-From: Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH v2] ARM: dts: exynos4: fix pwm-cells in pwm node
-Date: Thu, 19 Jun 2014 11:03:34 +0900
-Message-ID: <1403143414-6242-1-git-send-email-jaewon02.kim@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: MMC regression with linux-next on Exynos5250
+Date: Thu, 19 Jun 2014 11:29:08 +0900
+Message-ID: <53A24AF4.5080503@samsung.com>
+References: <CAK5sBcEVEWwyHLj_y1=eTqWNELuahMUwrtyX2W_YzLe70Dsa4A@mail.gmail.com>
+ <53A167DB.2000701@samsung.com>
+ <CAK5sBcHwteYZBf4S=m8WvL68_qkPqO=BVC6yWMfK3x17a9p5-A@mail.gmail.com>
+ <CAPDyKFp2c8mtCZHHDTgpAHt6t0bh-7O8ugbMxN30L2hfh6-kXA@mail.gmail.com>
+ <CAK5sBcFKwCTU+Z-t=BXzd69fY6b9Sr0SkxgXrs9Y8DCP6EonWQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:64425 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:13597 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752726AbaFSCDx (ORCPT
+	with ESMTP id S1757033AbaFSC3K (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jun 2014 22:03:53 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N7E009QC8EF1T40@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 19 Jun 2014 11:03:51 +0900 (KST)
+	Wed, 18 Jun 2014 22:29:10 -0400
+In-reply-to: <CAK5sBcFKwCTU+Z-t=BXzd69fY6b9Sr0SkxgXrs9Y8DCP6EonWQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Tomasz Figa <t.figa@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Jaewon Kim <jaewon02.kim@samsung.com>
+To: Sachin Kamat <sachin.kamat@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-pwm-cells should be 3. Third cell is optional PWM flags. And This flag
-supported by this binding is PWM_POLARITY_INVERTED.
+Hi, all.
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
----
+On 06/18/2014 08:22 PM, Sachin Kamat wrote:
+> Hi Ulf,
+> 
+> On Wed, Jun 18, 2014 at 4:43 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> On 18 June 2014 13:10, Sachin Kamat <sachin.kamat@samsung.com> wrote:
+>>> Hi Jaehoon,
+>>>
+>>> On Wed, Jun 18, 2014 at 3:50 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>>> Hi, Sachin.
+>>>>
+>>>> Did you check the below patch?
+>>>> https://patchwork.kernel.org/patch/4346781/
+>>>
+>>> Thanks for the patch. But even with this patch, I continue to get the
+>>> aforementioned crash.
+>>
+>> Hi Sachin / Jaehoon,
+>>
+>> Until we sorted out the problem, I will drop the related patch from my mmc tree.
+> 
+> OK.
+> Also, I feel the mmc patch and the corresponding DT changes should go through
+> single tree to avoid dependency issues.
 
-Changes in v2:
- - Remove unnecessary handle.
+Thanks, I will send the patch on today. Sorry for late.
 
- arch/arm/boot/dts/exynos4.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index b8ece4b..e118356 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -554,7 +554,7 @@
- 		interrupts = <0 37 0>, <0 38 0>, <0 39 0>, <0 40 0>, <0 41 0>;
- 		clocks = <&clock CLK_PWM>;
- 		clock-names = "timers";
--		#pwm-cells = <2>;
-+		#pwm-cells = <3>;
- 		status = "disabled";
- 	};
- 
--- 
-1.7.9.5
+Best Regards,
+Jaehoon Chung
+> 
+> Regards,
+> Sachin.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
