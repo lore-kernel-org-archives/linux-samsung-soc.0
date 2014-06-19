@@ -1,50 +1,64 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 2/4] ARM: dts: exynos4412-odroidx: enable common hardware
- blocks
-Date: Thu, 19 Jun 2014 15:08:34 +0200
-Message-ID: <53A2E0D2.5010200@gmail.com>
-References: <1402997133-13827-1-git-send-email-m.szyprowski@samsung.com>	<1402997133-13827-3-git-send-email-m.szyprowski@samsung.com> <CAD8Lp46az1w9K8ad-KOrnt1SvCgWS75OGjCw1vBNh3HOc4cSMg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] ARM: dts: exynos4: add port sub-nodes to exynos usb
+ host modules
+Date: Thu, 19 Jun 2014 15:12:39 +0200
+Message-ID: <53A2E1C7.3080805@gmail.com>
+References: <1402997133-13827-1-git-send-email-m.szyprowski@samsung.com>	<1402997133-13827-2-git-send-email-m.szyprowski@samsung.com> <CAD8Lp46jHt53-Ckyrx76LiL-j_hHEW9tqqYQEWrDD5NCVKoSFQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:54204 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752434AbaFSNI4 (ORCPT
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:38495 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752664AbaFSNNB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jun 2014 09:08:56 -0400
-Received: by mail-we0-f174.google.com with SMTP id u57so2315427wes.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2014 06:08:55 -0700 (PDT)
-In-Reply-To: <CAD8Lp46az1w9K8ad-KOrnt1SvCgWS75OGjCw1vBNh3HOc4cSMg@mail.gmail.com>
+	Thu, 19 Jun 2014 09:13:01 -0400
+Received: by mail-wi0-f170.google.com with SMTP id cc10so10077067wib.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2014 06:13:00 -0700 (PDT)
+In-Reply-To: <CAD8Lp46jHt53-Ckyrx76LiL-j_hHEW9tqqYQEWrDD5NCVKoSFQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Daniel Drake <drake@endlessm.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>
 
-On 19.06.2014 14:21, Daniel Drake wrote:
+On 19.06.2014 13:44, Daniel Drake wrote:
 > On Tue, Jun 17, 2014 at 10:25 AM, Marek Szyprowski
 > <m.szyprowski@samsung.com> wrote:
->> This patch adds support for common hardware modules available on all
->> Exynos4412-based Odroid boards, which already have complete support in
->> mainline kernel. This includes secure firmware calls, watchdog, g2d and
->> fimc (mem2mem) multimedia accelerators.
+>> This patch adds port sub-nodes to exynos4 ehci and ohci modules, which
+>> are required by recently merged new exynos4 usb2 phy support.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > 
-> For the secure firmware, this is indeed required for U2/U3, otherwise
-> the system crashes in weird ways during early boot. If this entry also
-> makes sense for ODROID-X, I'm surprised it was not there already, does
-> it boot without it?
+> I checked this against the DT binding documentation for the
+> samsung,exynos4210-ohci and samsung,exynos4210-ehci nodes, and also
+> the usb2 phy binding docs. Looks fine.
+> 
+> Also tested on ODROID-U2, seems to be working:
 
-It probably does, but certain things fail, such as secondary CPU bring-up.
+Thanks for testing.
 
 > 
-> As for the watchdog, g2d and fimc, is there really any Exynos4412
-> configuration where such components are not available?
-> Sorry if that is a silly question - just wondering why we wouldn't
-> enable these in exynos4412.dtsi.
+> ehci-exynos: EHCI EXYNOS driver
+> exynos-ehci 12580000.ehci: EHCI Host Controller
+> exynos-ehci 12580000.ehci: new USB bus registered, assigned bus number 1
+> exynos-ehci 12580000.ehci: irq 102, io mem 0x12580000
+> exynos-ehci 12580000.ehci: USB 2.0 started, EHCI 1.00
+> ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
+> ohci-exynos: OHCI EXYNOS driver
+> 
+> ...and the onboard USB (EHCI) ethernet adapter works. Nice.
+> 
+> The only thing I don't quite understand is the relationship between
+> EHCI and OHCI controllers, one being at 12580000 and the other at
+> 1259000; the SoC docs (which I have not studied in detail) don't make
+> this very clear to me - no registers listed at base address 12590000?
+> Anyway,
 
-I believe they should all be enabled at highest possible level, as they
-don't have any board-specific hardware dependencies. Probably even in
-exynos4.dtsi for some of them (watchdog likely).
+Well, that's exactly the same relationship as on PCs, where you have
+both EHCI and UHCI/OHCI and depending on what kind of device you connect
+the proper controller will pick it up.
+
+AFAIK the base address is good, but I believe it was already tested anyway.
 
 Best regards,
 Tomasz
