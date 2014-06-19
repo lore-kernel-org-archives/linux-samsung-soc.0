@@ -1,56 +1,119 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv2 0/3] cpufreq: Use cpufreq-cpu0 driver for Exynos3250
-Date: Thu, 19 Jun 2014 13:26:36 +0900
-Message-ID: <53A2667C.9060604@samsung.com>
-References: <1403080802-2794-1-git-send-email-cw00.choi@samsung.com>
- <CAJuA9aiYGXYYORkbB66ZJs3rTjAu4a7HcPhMSOZs_qUJyy_o7g@mail.gmail.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH] drm/exynos: defer hdmi probe when fail to get regulators
+Date: Thu, 19 Jun 2014 10:07:41 +0530
+Message-ID: <CAPdUM4MAwt8y17FZ93Qj-LeS_N2_XPbpiNWD6eEr4HChF-e9LQ@mail.gmail.com>
+References: <1403098976-6506-1-git-send-email-rahul.sharma@samsung.com>
+ <53A2613B.1020402@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:37373 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750708AbaFSE0j (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jun 2014 00:26:39 -0400
-In-reply-to: <CAJuA9aiYGXYYORkbB66ZJs3rTjAu4a7HcPhMSOZs_qUJyy_o7g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <53A2613B.1020402@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, Mike Turquette <mturquette@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-kernel@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Thomas,
-
-On 06/19/2014 01:21 PM, Thomas Abraham wrote:
-> On Wed, Jun 18, 2014 at 2:09 PM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->> This patchset use cpufreq-cpu0 driver to support Exynos3250 cpufreq. So, this
->> patchset is based on following patchset[1] by Thomas Abraham.
->>  [1] http://www.spinics.net/lists/arm-kernel/msg339392.html
->>
->> Changes from v1:
->> - Rebased on new patchset[1] by Thomas Abraham
->> - Modify clk-cpu.c to support Exynos3250
->> - Drop documentation patch on previous patchset[2]
->>  [2] http://www.spinics.net/lists/cpufreq/msg10265.html
->> - Add only operating-points for Exynos3250 without armclk-divider-table
->>
->> Chanwoo Choi (3):
->>   clk: samsung: cpu: Add support for cpu clocks of Exynos3250
->>   clk: samsung: exynos3250: Use cpu-clock provider type to support cpufreq
->>   ARM: dts: Exynos: Add cpu clock table for Exynos3250
->>
->>  arch/arm/boot/dts/exynos3250.dtsi    | 15 +++++++++++++++
->>  drivers/clk/samsung/clk-cpu.c        | 31 +++++++++++++++++++++++++++++++
->>  drivers/clk/samsung/clk-exynos3250.c | 14 ++++++++++----
->>  3 files changed, 56 insertions(+), 4 deletions(-)
-> 
-> Hi Chanwoo,
-> 
-> I have reviewed this series and it looks fine. If the cpu clock type
-> is merged without any further changes, please add
-> Reviewed-by: Thomas Abraham <thomas.ab@samsung.com>
-
-Thanks for your review.
-
-Best Regards,
-Chanwoo Choi
+VGhhbmtzIElua2ksCgpPbiAxOSBKdW5lIDIwMTQgMDk6MzQsIElua2kgRGFlIDxpbmtpLmRhZUBz
+YW1zdW5nLmNvbT4gd3JvdGU6Cj4gT24gMjAxNOuFhCAwNuyblCAxOOydvCAyMjo0MiwgUmFodWwg
+U2hhcm1hIHdyb3RlOgo+PiBIRE1JIHByb2JlIHByb2NlZWRzIHdpdGggZHVtbXkgcmVndWxhdG9y
+cyB3aGVuIHRoZSByZWd1bGF0b3JzCj4+IGFyZSBub3QgcHJvdmlkZWQgaW4gRFQgbm9kZSBvciBy
+ZWd1bGF0b3IgcHJvdmlkZXIgaGFzIG5vdCBnZXQKPj4gcHJvYmVkIG9yIGZhaWxlZCB0byByZWdp
+c3RlciB0aGUgcmVndWxhdG9ycy4KPj4KPj4gVGhpcyBwYXRjaCBtb2RpZnkgaGRtaSBkcml2ZXIg
+dG8gZGVmZXIgdGhlIHByb2JlIGluIGNhc2UgdGhlCj4+IHJlZ3VsYXRvcnMgYXJlIG5vdCBhdmFp
+bGFibGUuCj4KPiBObywgYWxyZWFkeSBhdmFpbGFibGUuIFNlZSB0aGUgYmVsb3cgY29tbWVudHMu
+Cj4KPj4KPj4gU2lnbmVkLW9mZi1ieTogUmFodWwgU2hhcm1hIDxyYWh1bC5zaGFybWFAc2Ftc3Vu
+Zy5jb20+Cj4+IC0tLQo+PiBCYXNlZCBvbiBleHlub3MtZHJtLWZpeGVzIGJyYW5jaCBpbiBJbmtp
+IGRhZSdzIHRyZWUuCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgfCAg
+IDY5ICsrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0KPj4gIDEgZmlsZSBjaGFuZ2Vk
+LCA1MCBpbnNlcnRpb25zKCspLCAxOSBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2hkbWkuYwo+PiBpbmRleCBhYTI1OWIwLi4zZjI0YzQ5IDEwMDY0NAo+PiAtLS0g
+YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKPj4gKysrIGIvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCj4+IEBAIC04Myw3ICs4Myw3IEBAIHN0cnVjdCBo
+ZG1pX3Jlc291cmNlcyB7Cj4+ICAgICAgIHN0cnVjdCBjbGsgICAgICAgICAgICAgICAgICAgICAg
+KnNjbGtfcGl4ZWw7Cj4+ICAgICAgIHN0cnVjdCBjbGsgICAgICAgICAgICAgICAgICAgICAgKnNj
+bGtfaGRtaXBoeTsKPj4gICAgICAgc3RydWN0IGNsayAgICAgICAgICAgICAgICAgICAgICAqbW91
+dF9oZG1pOwo+PiAtICAgICBzdHJ1Y3QgcmVndWxhdG9yX2J1bGtfZGF0YSAgICAgICpyZWd1bF9i
+dWxrOwo+PiArICAgICBzdHJ1Y3QgcmVndWxhdG9yICAgICAgICAgICAgICAgICoqcmVndWxhdG9y
+czsKPj4gICAgICAgaW50ICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZWd1bF9jb3VudDsK
+Pj4gIH07Cj4+Cj4+IEBAIC0yMDIyLDYgKzIwMjIsMzYgQEAgc3RhdGljIHZvaWQgaGRtaV9jb21t
+aXQoc3RydWN0IGV4eW5vc19kcm1fZGlzcGxheSAqZGlzcGxheSkKPj4gICAgICAgaGRtaV9jb25m
+X2FwcGx5KGhkYXRhKTsKPj4gIH0KPj4KPj4gK2ludCBoZG1pX3JlZ3VsYXRvcl9lbmFibGUoc3Ry
+dWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4+ICt7Cj4+ICsgICAgIHN0cnVjdCBoZG1pX3Jlc291
+cmNlcyAqcmVzID0gJmhkYXRhLT5yZXM7Cj4+ICsgICAgIGludCBpLCByZXQ7Cj4+ICsKPj4gKyAg
+ICAgZm9yIChpID0gMDsgaSA8IHJlcy0+cmVndWxfY291bnQ7ICsraSkgewo+PiArICAgICAgICAg
+ICAgIHJldCA9IHJlZ3VsYXRvcl9lbmFibGUocmVzLT5yZWd1bGF0b3JzW2ldKTsKPj4gKyAgICAg
+ICAgICAgICBpZiAocmV0IDwgMCkgewo+PiArICAgICAgICAgICAgICAgICAgICAgRFJNX0VSUk9S
+KCJmYWlsIHRvIGVuYWJsZSByZWd1bGF0b3JzLlxuIik7Cj4+ICsgICAgICAgICAgICAgICAgICAg
+ICByZXR1cm4gcmV0Owo+PiArICAgICAgICAgICAgIH0KPj4gKyAgICAgfQo+PiArICAgICByZXR1
+cm4gMDsKPj4gK30KPj4gKwo+PiAraW50IGhkbWlfcmVndWxhdG9yX2Rpc2FibGUoc3RydWN0IGhk
+bWlfY29udGV4dCAqaGRhdGEpCj4+ICt7Cj4+ICsgICAgIHN0cnVjdCBoZG1pX3Jlc291cmNlcyAq
+cmVzID0gJmhkYXRhLT5yZXM7Cj4+ICsgICAgIGludCBpLCByZXQ7Cj4+ICsKPj4gKyAgICAgZm9y
+IChpID0gMDsgaSA8IHJlcy0+cmVndWxfY291bnQ7ICsraSkgewo+PiArICAgICAgICAgICAgIHJl
+dCA9IHJlZ3VsYXRvcl9kaXNhYmxlKHJlcy0+cmVndWxhdG9yc1tpXSk7Cj4+ICsgICAgICAgICAg
+ICAgaWYgKHJldCA8IDApIHsKPj4gKyAgICAgICAgICAgICAgICAgICAgIERSTV9FUlJPUigiZmFp
+bCB0byBkaXNhYmxlIHJlZ3VsYXRvcnMuXG4iKTsKPj4gKyAgICAgICAgICAgICAgICAgICAgIHJl
+dHVybiByZXQ7Cj4+ICsgICAgICAgICAgICAgfQo+PiArICAgICB9Cj4+ICsgICAgIHJldHVybiAw
+Owo+PiArfQo+PiArCj4+ICBzdGF0aWMgdm9pZCBoZG1pX3Bvd2Vyb24oc3RydWN0IGV4eW5vc19k
+cm1fZGlzcGxheSAqZGlzcGxheSkKPj4gIHsKPj4gICAgICAgc3RydWN0IGhkbWlfY29udGV4dCAq
+aGRhdGEgPSBkaXNwbGF5LT5jdHg7Cj4+IEBAIC0yMDM5LDggKzIwNjksOCBAQCBzdGF0aWMgdm9p
+ZCBoZG1pX3Bvd2Vyb24oc3RydWN0IGV4eW5vc19kcm1fZGlzcGxheSAqZGlzcGxheSkKPj4KPj4g
+ICAgICAgcG1fcnVudGltZV9nZXRfc3luYyhoZGF0YS0+ZGV2KTsKPj4KPj4gLSAgICAgaWYgKHJl
+Z3VsYXRvcl9idWxrX2VuYWJsZShyZXMtPnJlZ3VsX2NvdW50LCByZXMtPnJlZ3VsX2J1bGspKQo+
+PiAtICAgICAgICAgICAgIERSTV9ERUJVR19LTVMoImZhaWxlZCB0byBlbmFibGUgcmVndWxhdG9y
+IGJ1bGtcbiIpOwo+PiArICAgICBpZiAoaGRtaV9yZWd1bGF0b3JfZW5hYmxlKGhkYXRhKSkKPj4g
+KyAgICAgICAgICAgICBEUk1fREVCVUdfS01TKCJmYWlsZWQgdG8gZW5hYmxlIHJlZ3VsYXRvcnNc
+biIpOwo+Pgo+PiAgICAgICAvKiBzZXQgcG11IGhkbWlwaHkgY29udHJvbCBiaXQgdG8gZW5hYmxl
+IGhkbWlwaHkgKi8KPj4gICAgICAgcmVnbWFwX3VwZGF0ZV9iaXRzKGhkYXRhLT5wbXVyZWcsIFBN
+VV9IRE1JX1BIWV9DT05UUk9MLAo+PiBAQCAtMjA3Nyw3ICsyMTA3LDggQEAgc3RhdGljIHZvaWQg
+aGRtaV9wb3dlcm9mZihzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5KQo+PiAgICAg
+ICByZWdtYXBfdXBkYXRlX2JpdHMoaGRhdGEtPnBtdXJlZywgUE1VX0hETUlfUEhZX0NPTlRST0ws
+Cj4+ICAgICAgICAgICAgICAgICAgICAgICBQTVVfSERNSV9QSFlfRU5BQkxFX0JJVCwgMCk7Cj4+
+Cj4+IC0gICAgIHJlZ3VsYXRvcl9idWxrX2Rpc2FibGUocmVzLT5yZWd1bF9jb3VudCwgcmVzLT5y
+ZWd1bF9idWxrKTsKPj4gKyAgICAgaWYgKGhkbWlfcmVndWxhdG9yX2Rpc2FibGUoaGRhdGEpKQo+
+PiArICAgICAgICAgICAgIERSTV9ERUJVR19LTVMoImZhaWxlZCB0byBkaXNhYmxlIHJlZ3VsYXRv
+cnNcbiIpOwo+Pgo+PiAgICAgICBwbV9ydW50aW1lX3B1dF9zeW5jKGhkYXRhLT5kZXYpOwo+Pgo+
+PiBAQCAtMjIxMSwyNCArMjI0MiwyNCBAQCBzdGF0aWMgaW50IGhkbWlfcmVzb3VyY2VzX2luaXQo
+c3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4+Cj4+ICAgICAgIGNsa19zZXRfcGFyZW50KHJl
+cy0+bW91dF9oZG1pLCByZXMtPnNjbGtfcGl4ZWwpOwo+Pgo+PiAtICAgICByZXMtPnJlZ3VsX2J1
+bGsgPSBkZXZtX2t6YWxsb2MoZGV2LCBBUlJBWV9TSVpFKHN1cHBseSkgKgo+PiAtICAgICAgICAg
+ICAgIHNpemVvZihyZXMtPnJlZ3VsX2J1bGtbMF0pLCBHRlBfS0VSTkVMKTsKPj4gLSAgICAgaWYg
+KCFyZXMtPnJlZ3VsX2J1bGspIHsKPj4gLSAgICAgICAgICAgICByZXQgPSAtRU5PTUVNOwo+PiAt
+ICAgICAgICAgICAgIGdvdG8gZmFpbDsKPj4gLSAgICAgfQo+PiArICAgICByZXMtPnJlZ3VsX2Nv
+dW50ID0gQVJSQVlfU0laRShzdXBwbHkpOwo+PiArCj4+ICsgICAgIHJlcy0+cmVndWxhdG9ycyA9
+IGRldm1fa3phbGxvYyhkZXYsIHJlcy0+cmVndWxfY291bnQgKgo+PiArICAgICAgICAgICAgIHNp
+emVvZihyZXMtPnJlZ3VsYXRvcnNbMF0pLCBHRlBfS0VSTkVMKTsKPj4gKyAgICAgaWYgKCFyZXMt
+PnJlZ3VsYXRvcnMpCj4+ICsgICAgICAgICAgICAgcmV0dXJuIC1FTk9NRU07Cj4+ICsKPj4gICAg
+ICAgZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUoc3VwcGx5KTsgKytpKSB7Cj4+IC0gICAgICAg
+ICAgICAgcmVzLT5yZWd1bF9idWxrW2ldLnN1cHBseSA9IHN1cHBseVtpXTsKPj4gLSAgICAgICAg
+ICAgICByZXMtPnJlZ3VsX2J1bGtbaV0uY29uc3VtZXIgPSBOVUxMOwo+PiAtICAgICB9Cj4+IC0g
+ICAgIHJldCA9IGRldm1fcmVndWxhdG9yX2J1bGtfZ2V0KGRldiwgQVJSQVlfU0laRShzdXBwbHkp
+LCByZXMtPnJlZ3VsX2J1bGspOwo+PiAtICAgICBpZiAocmV0KSB7Cj4+IC0gICAgICAgICAgICAg
+RFJNX0VSUk9SKCJmYWlsZWQgdG8gZ2V0IHJlZ3VsYXRvcnNcbiIpOwo+PiAtICAgICAgICAgICAg
+IHJldHVybiByZXQ7Cj4+ICsgICAgICAgICAgICAgcmVzLT5yZWd1bGF0b3JzW2ldID0KPj4gKyAg
+ICAgICAgICAgICAgICAgICAgIGRldm1fcmVndWxhdG9yX2dldF9vcHRpb25hbChkZXYsIHN1cHBs
+eVtpXSk7Cj4+ICsgICAgICAgICAgICAgaWYgKElTX0VSUihyZXMtPnJlZ3VsYXRvcnNbaV0pKSB7
+Cj4+ICsgICAgICAgICAgICAgICAgICAgICBEUk1fRVJST1IoImZhaWwgdG8gZ2V0IHJlZ3VsYXRv
+cjogJXMuXG4iLAo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdXBwbHlbaV0pOwo+
+PiArICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIC1FUFJPQkVfREVGRVI7Cj4KPiBkZXZtX3Jl
+Z3VsYXRvcl9nZXRfb3B0aW9uYWwgZnVuY3Rpb24gd291bGQgcmV0dXJuIC1FUFJPQkVfREVGRVIg
+aWYKPiBuZWVkZWQuIFNvIGl0J3Mgbm90IGdvb2QgdG8gZm9yY2UgcmV0dXJuaW5nIC1FUFJPQkVf
+REVGRVIgaW4gY2FzZSBvZiBhbGwKPiBlcnJvcnMuCj4KClllYSB5b3UgYXJlIHJpZ2h0LiBJdHMg
+cmV0dXJuaW5nICAtRVBST0JFX0RFRkVSLiBJIHdpbGwgY2hhbmdlIHRoaXMgaW4gbmV4dAp2ZXJz
+aW9uLgoKUmVnYXJkcywKUmFodWwgU2hhcm1hLgoKPiBUaGFua3MsCj4gSW5raSBEYWUKPgo+PiAr
+ICAgICAgICAgICAgIH0KPj4gICAgICAgfQo+PiAtICAgICByZXMtPnJlZ3VsX2NvdW50ID0gQVJS
+QVlfU0laRShzdXBwbHkpOwo+Pgo+PiAtICAgICByZXR1cm4gcmV0Owo+PiArICAgICByZXR1cm4g
+MDsKPj4gIGZhaWw6Cj4+ICAgICAgIERSTV9FUlJPUigiSERNSSByZXNvdXJjZSBpbml0IC0gZmFp
+bGVkXG4iKTsKPj4gICAgICAgcmV0dXJuIHJldDsKPj4KPgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
