@@ -1,79 +1,96 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2] clocksource: exynos_mct: Fix ftrace
-Date: Thu, 19 Jun 2014 10:08:26 -0700
-Message-ID: <1403197706-29966-1-git-send-email-dianders@chromium.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v3 00/14] Add Maxim 77802 PMIC support
+Date: Thu, 19 Jun 2014 20:20:26 +0200
+Message-ID: <1403202040-12641-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f201.google.com ([209.85.220.201]:54269 "EHLO
-	mail-vc0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933062AbaFSRId (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:56743 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933173AbaFSSVJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jun 2014 13:08:33 -0400
-Received: by mail-vc0-f201.google.com with SMTP id ij19so346129vcb.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2014 10:08:33 -0700 (PDT)
+	Thu, 19 Jun 2014 14:21:09 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, olof@lixom.net, linux-samsung-soc@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>, javier.martinez@collabora.co.uk, Doug Anderson <dianders@chromium.org>, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-In (93bfb76 clocksource: exynos_mct: register sched_clock callback) we
-supported using the MCT as a scheduler clock.  We properly marked
-exynos4_read_sched_clock() as notrace.  However, we then went and
-called another function that _wasn't_ notrace.  That means if you do:
+MAX77802 is a PMIC that contains 10 high efficiency Buck regulators,
+32 Low-dropout (LDO) regulators, two 32kHz buffered clock outputs,
+a Real-Time-Clock (RTC) and a I2C interface to program the individual
+regulators, clocks and the RTC.
 
-  cd /sys/kernel/debug/tracing/
-  echo function_graph > current_tracer
+This third version of the patch-set addresses several issues pointed
+out by Mark Brown, Lee Jones and Doug Anderson. The individual changes
+are added on each patch change log.
 
-You'll get a crash.
+This series are based on drivers added by Simon Glass to the Chrome OS
+kernel and adds support for the Maxim 77802 Power Management IC, their
+regulators, clocks, RTC and I2C interface.
 
-Fix this (but still let other readers of the MCT be trace-enabled) by
-adding an extra function.  It's important to keep other users of MCT
-traceable because the MCT is actually quite slow to access and we want
-exynos4_frc_read() to show up in ftrace profiles if it's the
-bottleneck.
+The patch-set has been tested on both Daisy/Snow (max77686) and Peach
+pit (max77802) Chromebooks and it's composed of the following patches:
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
-Changes in v2:
-- Split out from other patches so this can go into 3.16.
-- Better comment about why exynos4_frc_read() should be traceable.
-- No more useless inline.
+Doug Anderson (1):
+  mfd: max77686: Allow the max77686 rtc to wakeup the system
 
- drivers/clocksource/exynos_mct.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Javier Martinez Canillas (13):
+  mfd: max77686: Convert to use regmap_irq
+  clk: max77686: Add DT include for MAX77686 PMIC clock
+  clk: max77686: Improve Maxim 77686 PMIC clocks binding
+  clk: Add generic driver for Maxim PMIC clocks
+  clk: max77686: Convert to the generic max clock driver
+  mfd: Add driver for Maxim 77802 Power Management IC
+  mfd: max77802: Add DT binding documentation
+  regmap: Add regmap_reg_copy function
+  regulator: Add driver for Maxim 77802 PMIC regulators
+  clk: Add driver for Maxim 77802 PMIC clocks
+  clk: max77802: Add DT binding documentation
+  rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
+  ARM: dts: Add max77802 device node for exynos5420-peach-pit
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index f71d55f..5ce99c0 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -162,7 +162,7 @@ static void exynos4_mct_frc_start(void)
- 	exynos4_mct_write(reg, EXYNOS4_MCT_G_TCON);
- }
- 
--static cycle_t exynos4_frc_read(struct clocksource *cs)
-+static cycle_t notrace _exynos4_frc_read(void)
- {
- 	unsigned int lo, hi;
- 	u32 hi2 = __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_U);
-@@ -176,6 +176,11 @@ static cycle_t exynos4_frc_read(struct clocksource *cs)
- 	return ((cycle_t)hi << 32) | lo;
- }
- 
-+static cycle_t exynos4_frc_read(struct clocksource *cs)
-+{
-+	return _exynos4_frc_read();
-+}
-+
- static void exynos4_frc_resume(struct clocksource *cs)
- {
- 	exynos4_mct_frc_start();
-@@ -192,7 +197,7 @@ struct clocksource mct_frc = {
- 
- static u64 notrace exynos4_read_sched_clock(void)
- {
--	return exynos4_frc_read(&mct_frc);
-+	return _exynos4_frc_read();
- }
- 
- static void __init exynos4_clocksource_init(void)
+ .../devicetree/bindings/clock/maxim,max77686.txt   |  15 +-
+ .../devicetree/bindings/clock/maxim,max77802.txt   |  42 ++
+ Documentation/devicetree/bindings/mfd/max77802.txt |  97 +++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         | 320 ++++++++++
+ drivers/base/regmap/regmap.c                       |  34 +
+ drivers/clk/Kconfig                                |  11 +
+ drivers/clk/Makefile                               |   2 +
+ drivers/clk/clk-max-gen.c                          | 197 ++++++
+ drivers/clk/clk-max-gen.h                          |  32 +
+ drivers/clk/clk-max77686.c                         | 183 +-----
+ drivers/clk/clk-max77802.c                         |  99 +++
+ drivers/mfd/Kconfig                                |  15 +
+ drivers/mfd/Makefile                               |   3 +-
+ drivers/mfd/max77686-irq.c                         | 319 ----------
+ drivers/mfd/max77686.c                             |  97 ++-
+ drivers/mfd/max77802.c                             | 368 +++++++++++
+ drivers/regulator/Kconfig                          |   9 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/max77802.c                       | 691 +++++++++++++++++++++
+ drivers/rtc/Kconfig                                |  10 +
+ drivers/rtc/Makefile                               |   1 +
+ drivers/rtc/rtc-max77686.c                         |  55 +-
+ drivers/rtc/rtc-max77802.c                         | 637 +++++++++++++++++++
+ include/dt-bindings/clock/maxim,max77686.h         |  23 +
+ include/dt-bindings/clock/maxim,max77802.h         |  22 +
+ include/linux/mfd/max77686-private.h               |  28 +-
+ include/linux/mfd/max77686.h                       |   2 -
+ include/linux/mfd/max77802-private.h               | 307 +++++++++
+ include/linux/mfd/max77802.h                       | 124 ++++
+ include/linux/regmap.h                             |   9 +
+ 30 files changed, 3221 insertions(+), 532 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
+ create mode 100644 drivers/clk/clk-max-gen.c
+ create mode 100644 drivers/clk/clk-max-gen.h
+ create mode 100644 drivers/clk/clk-max77802.c
+ delete mode 100644 drivers/mfd/max77686-irq.c
+ create mode 100644 drivers/mfd/max77802.c
+ create mode 100644 drivers/regulator/max77802.c
+ create mode 100644 drivers/rtc/rtc-max77802.c
+ create mode 100644 include/dt-bindings/clock/maxim,max77686.h
+ create mode 100644 include/dt-bindings/clock/maxim,max77802.h
+ create mode 100644 include/linux/mfd/max77802-private.h
+ create mode 100644 include/linux/mfd/max77802.h
+
 -- 
-2.0.0.526.g5318336
+2.0.0.rc2
