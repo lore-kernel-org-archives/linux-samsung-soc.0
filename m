@@ -1,192 +1,139 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH v2] arm: exynos: Support cluster power off on exynos5420/5800
-Date: Thu, 19 Jun 2014 18:10:17 +0530
-Message-ID: <1403181617-19743-1-git-send-email-a.kesavan@samsung.com>
-References: <1403104722-14848-1-git-send-email-a.kesavan@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: MMC error on Exynos4210 board
+Date: Thu, 19 Jun 2014 21:41:58 +0900
+Message-ID: <53A2DA96.3070500@samsung.com>
+References: <CAK5sBcEB5GnjiR37DXDAeKYBWKw_4NTDM=pKCVK=0oKFDBjSbw@mail.gmail.com>
+ <CAD7vxxJrRd7nrhZBRWH=43r7AMopz1w30aMRHqMO9PvaZYOpHg@mail.gmail.com>
+ <CAK5sBcHqjmT7rcXLPkP3WHBdcphJjhm2aBfy4ksbXakNUfVYYw@mail.gmail.com>
+ <CAD7vxxJ2mrk9Wrhw+0rB1Afk5zUsR05a1P8aeyou9JPVk6sCrA@mail.gmail.com>
+ <CAK5sBcFCbhBCbgss=KU=__gxpb7KUm6GWhO_MWQAqRgkvCagwQ@mail.gmail.com>
+ <CAD7vxxK5a_Nc4DjP8x4-=Um6xi=kPa=3sRZdvBuNBXMLUEEimA@mail.gmail.com>
+ <CAK5sBcF=5NYd-tuvRrQk7Yq_r_oUYftpNuHcz7iJ8TGNWkG0iA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f44.google.com ([209.85.160.44]:58430 "EHLO
-	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754089AbaFSMka (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:20546 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750881AbaFSMmA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jun 2014 08:40:30 -0400
-Received: by mail-pb0-f44.google.com with SMTP id md12so1902752pbc.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2014 05:40:29 -0700 (PDT)
-In-Reply-To: <1403104722-14848-1-git-send-email-a.kesavan@samsung.com>
+	Thu, 19 Jun 2014 08:42:00 -0400
+In-reply-to: <CAK5sBcF=5NYd-tuvRrQk7Yq_r_oUYftpNuHcz7iJ8TGNWkG0iA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, nicolas.pitre@linaro.org
-Cc: kesavan.abhilash@gmail.com, abrestic@chromium.org
+To: Sachin Kamat <spk.linux@gmail.com>, Tim Kryger <tim.kryger@gmail.com>
+Cc: Markus Mayer <markus.mayer@linaro.org>, Matt Porter <mporter@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Yuvaraj C D <yuvaraj.cd@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>
 
-Turning off a cluster when all 4 cores of the cluster are powered off
-saves power significantly. Powering off the A15 L2 alone gives around
-100mW in savings. Add support for powering off the A15/A7 clusters on
-exynos5420/5800.
+On 06/19/2014 07:40 PM, Sachin Kamat wrote:
+> On Thu, Jun 19, 2014 at 2:40 PM, Tim Kryger <tim.kryger@gmail.com> wrote:
+>> On Thu, Jun 19, 2014 at 1:49 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
+>>> +cc Some relevant guys from Samsung
+>>>
+>>> On Thu, Jun 19, 2014 at 2:12 PM, Tim Kryger <tim.kryger@gmail.com> wrote:
+>>>> On Wed, Jun 18, 2014 at 8:54 PM, Sachin Kamat <spk.linux@gmail.com> wrote:
+>>>>
+>>>>>> On Wed, Jun 18, 2014 at 4:33 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
+>>>>
+>>>>>>> I see the below error on Exynos4210 based Origen board with linux-next
+>>>>>>> (20140618).
+>>>>>>> Reverting the below commit works fine.
+>>>>>>>
+>>>>>>> Commit: 8d02e775a6 "mmc: sdhci: Use mmc core regulator infrastucture"
+>>>>
+>>>>>>>
+>>>>>>> -- [    2.068992] sdhci: Secure Digital Host Controller Interface driver
+>>>>>>> [    2.075059] sdhci: Copyright(c) Pierre Ossman
+>>>>>>> [    2.079762] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>>> node '/sdhci@12510000[0]'
+>>>>>>> [    2.088021] s3c-sdhci 12510000.sdhci: clock source 2: mmc_busclk.2
+>>>>>>> (50000000 Hz)
+>>>>>>> [    2.095322] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>>> node '/sdhci@12510000[0]'
+>>>>>>> [    2.103794] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>>> node '/sdhci@12510000[0]'
+>>>>>>> [    2.112478] s3c-sdhci 12510000.sdhci: No vqmmc regulator found
+>>>>>>> [    2.118117] mmc0: Hardware doesn't report any support voltages.
+>>>>>>> [    2.124004] s3c-sdhci 12510000.sdhci: sdhci_add_host() failed
+>>>>>>> [    2.130080] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>>> node '/sdhci@12530000[0]'
+>>>>>>> [    2.138352] s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2
+>>>>>>> (16666667 Hz)
+>>>>>>> [    2.145661] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>>> node '/sdhci@12530000[0]'
+>>>>>>> [    2.154139] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>>> node '/sdhci@12530000[0]'
+>>>>>>> [    2.162834] s3c-sdhci 12530000.sdhci: No vqmmc regulator found
+>>>>>>> [    2.168464] mmc0: Hardware doesn't report any support voltages.
+>>>>>>> [    2.174349] s3c-sdhci 12530000.sdhci: sdhci_add_host() failed
+>>>>
+>>>>>>> [    2.336148] Waiting for root device /dev/mmcblk0p1...
+>>>>
+>>>>> FYI, the board has a 2.8V fixed regulator supply connected to the MMC.
+>>>>> You may refer to arch/arm/boot/dts/exynos4210-origen.dts for more details.
+>>>>
+>>>> A 2.8v regulator results in mmc->ocr_avail being set to MMC_VDD_27_28
+>>>> | MMC_VDD_28_29.
+>>>>
+>>>> The SDHCI capabilities register only indicates support of three voltage levels
+>>>>   - 1.8v: SDHCI_CAN_VDD_180 => MMC_VDD_165_195
+>>>>   - 3.0v: SDHCI_CAN_VDD_300 => MMC_VDD_29_30 | MMC_VDD_30_31
+>>>>   - 3.3v: SDHCI_CAN_VDD_330 => MMC_VDD_32_33 | MMC_VDD_33_34
 
-The patch enables specific register bits which ensure that:
-   - cluster L2 will be turned on before the first man is powered up.
-   - last man will be turned off before the cluster L2 is turned off.
-   - core is powered down before powering it up.
+Right. sdhci capabilities only indicated them.
+But I think SoC can be support the specific VDD range.
 
-Remove the exynos_cluster_power_control function completely as we can
-rely on the above mentioned bits rather than polling the cluster power
-status register.
+>>>>
+>>>> Even if all capability bits of the host controller were set, there
+>>>> still wouldn't be any overlap.  Thus you see a "Hardware doesn't
+>>>> report any support voltages" message.
+>>>>
+>>>> Previously, this issue was being swept under the rug by cec2e21 mmc:
+>>>> sdhci: Use regulator min/max voltage range according to spec.  That
+>>>> change hacked up the voltage range checks such that with your 2.8v
+>>>> fixed regulator, the driver would believe the host could support
+>>>> MMC_VDD_29_30 | MMC_VDD_30_31 | MMC_VDD_32_33 | MMC_VDD_33_34.  The
+>>>> driver would start down the path of commanding 3.3v-3.4v (the highest
+>>>> voltage range believed to be supported).  At the last second, the
+>>>> driver would see the regulator was fixed and blindly skip over the set
+>>>> voltage operation, saving it from failure.
+>>>>
+>>>> Since my patch eliminates the bogus voltage range checks, your board
+>>>> is now getting caught playing too loose with the SDHCI regulator
+>>>> voltages.
+>>>>
+>>>> Furthermore, the fixed regulator special-case logic that helped hide
+>>>> your issue should also be considered for removal given that fixed
+>>>> regulators now behave properly thanks to c00dc35 regulator: core:
+>>>> Allow regulator_set_voltage for fixed regulators.
+>>>
+>>> Thanks for the detailed explanation. What do you propose to get this fixed?
+>>
+>> I'm not really sure of the best path forward.  I suppose you could
+>> modify your device tree to lie about the voltage of the fixed
+>> regulator.  Changing it to 3.0v should allow it to boot up but that is
+>> definitely a hack.
+I don't want to change the 3.0V at dt file...is it hack? i don't think so.
+Almost exynos4 Series is used the fixed regulator(2.8V).
+I didn't know exactly why we used the 2.8V. But i guess there is some reason.(H/W design).
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Acked-by: Nicolas Pitre <nico@linaro.org>
----
-Change in v2:
-Added a macro for the COMMON_OPTION register and used it in the MCPM
-back-end.
+If we need to change ocr value, 
+then i will add the quirk or controlling function for exynos into sdhci-s3c.c
+How about?
 
-The patch is based on Linux-next 20140619. It has been tested on an
-exynos5420-based chromebook using the "/dev/bL_switcher" interface as
-well as the script provided by Nicolas Pitre and Dave Martin [1].
+> 
+> Or I could simply remove the vmmc-supply property altogether (as it is optional)
+> and get the board to work.
+Then is it supported the power "always-on"?
+> 
+>> It would be nice if the driver could be extended
+>> to handle the peculiarities of your board in a deliberate manner but
+>> limiting the common sdhci driver to supporting only the three voltages
+>> from the spec also seems sensible.
+> 
+> Until such time that the driver gets fixed to handle 2.8V fixed supply your
+> current patch leaves several of Exynos boards broken for now.
 
-Patch depends on:
-[v2] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
+the all of exynos used the fixed-regulator(2.8v) should be broken.
+(Maybe exynos4 series??)
 
-[1] http://www.spinics.net/lists/linux-samsung-soc/msg31257.html
-
- arch/arm/mach-exynos/mcpm-exynos.c |   66 +++++++++++++++++-------------------
- arch/arm/mach-exynos/regs-pmu.h    |    2 ++
- 2 files changed, 33 insertions(+), 35 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
-index ace0ed6..619cbc6 100644
---- a/arch/arm/mach-exynos/mcpm-exynos.c
-+++ b/arch/arm/mach-exynos/mcpm-exynos.c
-@@ -26,6 +26,10 @@
- #define EXYNOS5420_CPUS_PER_CLUSTER	4
- #define EXYNOS5420_NR_CLUSTERS		2
- 
-+#define EXYNOS5420_ENABLE_AUTOMATIC_CORE_DOWN	BIT(9)
-+#define EXYNOS5420_USE_ARM_CORE_DOWN_STATE	BIT(29)
-+#define EXYNOS5420_USE_L2_COMMON_UP_STATE	BIT(30)
-+
- /*
-  * The common v7_exit_coherency_flush API could not be used because of the
-  * Erratum 799270 workaround. This macro is the same as the common one (in
-@@ -73,36 +77,9 @@ cpu_use_count[EXYNOS5420_CPUS_PER_CLUSTER][EXYNOS5420_NR_CLUSTERS];
- 
- #define exynos_cluster_unused(cluster) !exynos_cluster_usecnt(cluster)
- 
--static int exynos_cluster_power_control(unsigned int cluster, int enable)
--{
--	unsigned int tries = 100;
--	unsigned int val;
--
--	if (enable) {
--		exynos_cluster_power_up(cluster);
--		val = S5P_CORE_LOCAL_PWR_EN;
--	} else {
--		exynos_cluster_power_down(cluster);
--		val = 0;
--	}
--
--	/* Wait until cluster power control is applied */
--	while (tries--) {
--		if (exynos_cluster_power_state(cluster) == val)
--			return 0;
--
--		cpu_relax();
--	}
--	pr_debug("timed out waiting for cluster %u to power %s\n", cluster,
--		enable ? "on" : "off");
--
--	return -ETIMEDOUT;
--}
--
- static int exynos_power_up(unsigned int cpu, unsigned int cluster)
- {
- 	unsigned int cpunr = cpu + (cluster * EXYNOS5420_CPUS_PER_CLUSTER);
--	int err = 0;
- 
- 	pr_debug("%s: cpu %u cluster %u\n", __func__, cpu, cluster);
- 	if (cpu >= EXYNOS5420_CPUS_PER_CLUSTER ||
-@@ -126,12 +103,9 @@ static int exynos_power_up(unsigned int cpu, unsigned int cluster)
- 		 * cores.
- 		 */
- 		if (was_cluster_down)
--			err = exynos_cluster_power_control(cluster, 1);
-+			exynos_cluster_power_up(cluster);
- 
--		if (!err)
--			exynos_cpu_power_up(cpunr);
--		else
--			exynos_cluster_power_control(cluster, 0);
-+		exynos_cpu_power_up(cpunr);
- 	} else if (cpu_use_count[cpu][cluster] != 2) {
- 		/*
- 		 * The only possible values are:
-@@ -147,7 +121,7 @@ static int exynos_power_up(unsigned int cpu, unsigned int cluster)
- 	arch_spin_unlock(&exynos_mcpm_lock);
- 	local_irq_enable();
- 
--	return err;
-+	return 0;
- }
- 
- /*
-@@ -178,9 +152,10 @@ static void exynos_power_down(void)
- 	if (cpu_use_count[cpu][cluster] == 0) {
- 		exynos_cpu_power_down(cpunr);
- 
--		if (exynos_cluster_unused(cluster))
--			/* TODO: Turn off the cluster here to save power. */
-+		if (exynos_cluster_unused(cluster)) {
-+			exynos_cluster_power_down(cluster);
- 			last_man = true;
-+		}
- 	} else if (cpu_use_count[cpu][cluster] == 1) {
- 		/*
- 		 * A power_up request went ahead of us.
-@@ -299,6 +274,7 @@ static int __init exynos_mcpm_init(void)
- {
- 	struct device_node *node;
- 	void __iomem *ns_sram_base_addr;
-+	unsigned int value, i;
- 	int ret;
- 
- 	node = of_find_matching_node(NULL, exynos_dt_mcpm_match);
-@@ -342,6 +318,26 @@ static int __init exynos_mcpm_init(void)
- 	pr_info("Exynos MCPM support installed\n");
- 
- 	/*
-+	 * On Exynos5420/5800 for the A15 and A7 clusters:
-+	 *
-+	 * EXYNOS5420_ENABLE_AUTOMATIC_CORE_DOWN ensures that all the cores
-+	 * in a cluster are turned off before turning off the cluster L2.
-+	 *
-+	 * EXYNOS5420_USE_ARM_CORE_DOWN_STATE ensures that a cores is powered
-+	 * off before waking it up.
-+	 *
-+	 * EXYNOS5420_USE_L2_COMMON_UP_STATE ensures that cluster L2 will be
-+	 * turned on before the first man is powered up.
-+	 */
-+	for (i = 0; i < EXYNOS5420_NR_CLUSTERS; i++) {
-+		value = __raw_readl(EXYNOS_COMMON_OPTION(i));
-+		value |= EXYNOS5420_ENABLE_AUTOMATIC_CORE_DOWN |
-+			 EXYNOS5420_USE_ARM_CORE_DOWN_STATE    |
-+			 EXYNOS5420_USE_L2_COMMON_UP_STATE;
-+		__raw_writel(value, EXYNOS_COMMON_OPTION(i));
-+	}
-+
-+	/*
- 	 * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
- 	 * as part of secondary_cpu_start().  Let's redirect it to the
- 	 * mcpm_entry_point().
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index 1d13b08..bda8df0 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -117,6 +117,8 @@
- 			(EXYNOS_ARM_COMMON_CONFIGURATION + (0x80 * (_nr)))
- #define EXYNOS_COMMON_STATUS(_nr)		\
- 			(EXYNOS_COMMON_CONFIGURATION(_nr) + 0x4)
-+#define EXYNOS_COMMON_OPTION(_nr)		\
-+			(EXYNOS_COMMON_CONFIGURATION(_nr) + 0x8)
- 
- #define S5P_PAD_RET_MAUDIO_OPTION		S5P_PMUREG(0x3028)
- #define S5P_PAD_RET_GPIO_OPTION			S5P_PMUREG(0x3108)
--- 
-1.7.9.5
+> 
