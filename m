@@ -1,58 +1,123 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [RFC] drm/exynos: abort commit when framebuffer is removed from plane
-Date: Thu, 19 Jun 2014 20:43:29 +0530
-Message-ID: <1403190809-8413-1-git-send-email-rahul.sharma@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] clocksource: exynos-mct: Register the timer for stable udelay
+Date: Thu, 19 Jun 2014 08:49:07 -0700
+Message-ID: <CAD=FV=VUomY-h2euRVWNO=ND0pUNLO5mZr_=sMm_oUSrwBssnA@mail.gmail.com>
+References: <1403091060-5054-1-git-send-email-amit.daniel@samsung.com>
+	<CAD=FV=WHK7TDdqcAd6aVs2g8rcHJx834im_4nTKHJAkUisWq4A@mail.gmail.com>
+	<53A2A86E.4090903@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:23908 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756959AbaFSPOs (ORCPT
+Received: from mail-ve0-f175.google.com ([209.85.128.175]:45146 "EHLO
+	mail-ve0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757912AbaFSPtI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jun 2014 11:14:48 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N7F0000590MRX30@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Jun 2014 00:14:46 +0900 (KST)
+	Thu, 19 Jun 2014 11:49:08 -0400
+Received: by mail-ve0-f175.google.com with SMTP id jx11so2464035veb.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2014 08:49:08 -0700 (PDT)
+In-Reply-To: <53A2A86E.4090903@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Riley <davidriley@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>
 
-This situation arises when userspace remove the frambuffer object
-and call setmode ioctl.
+Daniel,
 
-drm_mode_rmfb --> drm_plane_force_disable --> plane->crtc = NULL;
-and
-drm_mode_setcrtc --> exynos_plane_commit --> passes plane->crtc to
-exynos_drm_crtc_plane_commit which is NULL.
+On Thu, Jun 19, 2014 at 2:07 AM, Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+> On 06/19/2014 01:17 AM, Doug Anderson wrote:
+>>
+>> Amit,
+>>
+>> Thanks for posting!
+>>
+>> On Wed, Jun 18, 2014 at 4:31 AM, Amit Daniel Kachhap
+>> <amit.daniel@samsung.com> wrote:
+>>>
+>>> This patch register the exynos mct clocksource as the current timer
+>>> as it has constant clock rate. This will generate correct udelay for the
+>>> exynos platform and avoid using unnecessary calibrated jiffies. This
+>>> change
+>>> have been tested on exynos5420 based board.
+>>>
+>>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>>> ---
+>>>
+>>> Patches from David Riley confirmed that udelay is broken in exynos5420.
+>>> Link to those patches are,
+>>> 1) https://patchwork.kernel.org/patch/4344911/
+>>> 2) https://patchwork.kernel.org/patch/4344881/
+>>>
+>>>   drivers/clocksource/exynos_mct.c | 11 +++++++++++
+>>>   1 file changed, 11 insertions(+)
+>>>
+>>> diff --git a/drivers/clocksource/exynos_mct.c
+>>> b/drivers/clocksource/exynos_mct.c
+>>> index 8d64200..57cb3dc 100644
+>>> --- a/drivers/clocksource/exynos_mct.c
+>>> +++ b/drivers/clocksource/exynos_mct.c
+>>> @@ -198,10 +198,21 @@ static u64 notrace exynos4_read_sched_clock(void)
+>>>          return exynos4_frc_read(&mct_frc);
+>>>   }
+>>>
+>>> +static struct delay_timer exynos4_delay_timer;
+>>> +
+>>> +static unsigned long exynos4_read_current_timer(void)
+>>> +{
+>>> +       return exynos4_frc_read(&mct_frc);
+>>
+>>
+>> This is terribly inefficient to read all 64-bits and then cast back to
+>> a 32-bit value.  Replace with:
+>>
+>> return __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_L);
+>>
+>>
+>>> +}
+>>> +
+>>>   static void __init exynos4_clocksource_init(void)
+>>>   {
+>>>          exynos4_mct_frc_start(0, 0);
+>>
+>>
+>> Please rebase atop (1d80415 clocksource: exynos_mct: Don't reset the
+>> counter during boot and resume), which is in linuxnext among other
+>> places.
+>>
+>>>
+>>> +       exynos4_delay_timer.read_current_timer =
+>>> &exynos4_read_current_timer;
+>>> +       exynos4_delay_timer.freq = clk_rate;
+>>> +       register_current_timer_delay(&exynos4_delay_timer);
+>>> +
+>>>          if (clocksource_register_hz(&mct_frc, clk_rate))
+>>>                  panic("%s: can't register clocksource\n", mct_frc.name);
+>>
+>>
+>> It does seem to work for me though.  :)
+>
+>
+> Doug,
+>
+> aren't you working on a 32 bits version ? So this patch could be simplified
 
-This crashes the system.
+I could do that if someone told me that they'll land it.
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
----
-This works fine but I am not confident on the correctness of the
-solution.
+My understanding of the current status is:
+* I posed the 64-bit version that's almost as fast as the 32-bit version.
+* I asked if people want the 32-bit version: no answer
+* I asked if anyone is opposed to the 64-bit version: no answer
 
- drivers/gpu/drm/exynos/exynos_drm_crtc.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+I know that you wanted me to clean up the description of the 64-bit
+version so I was going to do that and repost.  If there's someone
+willing to review / ack the 32-bit version I'd be happy to do that
+instead.  Possibly I'll do both and a maintainer can choose which to
+apply?
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 95c9435..da4efe4 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -165,6 +165,12 @@ static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
- 		return -EPERM;
- 	}
- 
-+	/* when framebuffer is removed, commit should not proceed. */
-+	if(!plane->fb){
-+		DRM_ERROR("framebuffer has been removed from plane.\n");
-+		return -EFAULT;
-+	}
-+
- 	crtc_w = crtc->primary->fb->width - x;
- 	crtc_h = crtc->primary->fb->height - y;
- 
--- 
-1.7.9.5
+
+In the case here I was suggesting using the 32-bit version just
+because on ARM32 there's totally no reason to read 64-bits.  I hadn't
+given a thought to ARM64.  More on that in response to the other
+messages.
+
+-Doug
