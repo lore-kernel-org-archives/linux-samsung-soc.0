@@ -1,101 +1,48 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: defer hdmi probe when fail to get regulators
-Date: Thu, 19 Jun 2014 13:04:11 +0900
-Message-ID: <53A2613B.1020402@samsung.com>
-References: <1403098976-6506-1-git-send-email-rahul.sharma@samsung.com>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v6 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
+Date: Thu, 19 Jun 2014 09:43:48 +0530
+Message-ID: <CAJuA9ajzUTRL7An-BGEAro7cyFO8YXQnBVPBx7LyOd-tLGuc1w@mail.gmail.com>
+References: <1403018733-4187-1-git-send-email-thomas.ab@samsung.com>
+	<CAKohpomt4M_V7rMAoh=+UFon3CxnZjVY_9DuVtQW9ddtTTj7Fg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1403098976-6506-1-git-send-email-rahul.sharma@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, joshi@samsung.com, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <CAKohpomt4M_V7rMAoh=+UFon3CxnZjVY_9DuVtQW9ddtTTj7Fg@mail.gmail.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNOuFhCAwNuyblCAxOOydvCAyMjo0MiwgUmFodWwgU2hhcm1hIHdyb3RlOgo+IEhETUkg
-cHJvYmUgcHJvY2VlZHMgd2l0aCBkdW1teSByZWd1bGF0b3JzIHdoZW4gdGhlIHJlZ3VsYXRvcnMK
-PiBhcmUgbm90IHByb3ZpZGVkIGluIERUIG5vZGUgb3IgcmVndWxhdG9yIHByb3ZpZGVyIGhhcyBu
-b3QgZ2V0Cj4gcHJvYmVkIG9yIGZhaWxlZCB0byByZWdpc3RlciB0aGUgcmVndWxhdG9ycy4KPiAK
-PiBUaGlzIHBhdGNoIG1vZGlmeSBoZG1pIGRyaXZlciB0byBkZWZlciB0aGUgcHJvYmUgaW4gY2Fz
-ZSB0aGUKPiByZWd1bGF0b3JzIGFyZSBub3QgYXZhaWxhYmxlLgoKTm8sIGFscmVhZHkgYXZhaWxh
-YmxlLiBTZWUgdGhlIGJlbG93IGNvbW1lbnRzLgoKPiAKPiBTaWduZWQtb2ZmLWJ5OiBSYWh1bCBT
-aGFybWEgPHJhaHVsLnNoYXJtYUBzYW1zdW5nLmNvbT4KPiAtLS0KPiBCYXNlZCBvbiBleHlub3Mt
-ZHJtLWZpeGVzIGJyYW5jaCBpbiBJbmtpIGRhZSdzIHRyZWUuCj4gIGRyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2hkbWkuYyB8ICAgNjkgKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0t
-LS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgNTAgaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRpb25zKC0p
-Cj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwo+IGluZGV4IGFhMjU5YjAuLjNm
-MjRjNDkgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5j
-Cj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCj4gQEAgLTgzLDcg
-KzgzLDcgQEAgc3RydWN0IGhkbWlfcmVzb3VyY2VzIHsKPiAgCXN0cnVjdCBjbGsJCQkqc2Nsa19w
-aXhlbDsKPiAgCXN0cnVjdCBjbGsJCQkqc2Nsa19oZG1pcGh5Owo+ICAJc3RydWN0IGNsawkJCSpt
-b3V0X2hkbWk7Cj4gLQlzdHJ1Y3QgcmVndWxhdG9yX2J1bGtfZGF0YQkqcmVndWxfYnVsazsKPiAr
-CXN0cnVjdCByZWd1bGF0b3IJCSoqcmVndWxhdG9yczsKPiAgCWludAkJCQlyZWd1bF9jb3VudDsK
-PiAgfTsKPiAgCj4gQEAgLTIwMjIsNiArMjAyMiwzNiBAQCBzdGF0aWMgdm9pZCBoZG1pX2NvbW1p
-dChzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5KQo+ICAJaGRtaV9jb25mX2FwcGx5
-KGhkYXRhKTsKPiAgfQo+ICAKPiAraW50IGhkbWlfcmVndWxhdG9yX2VuYWJsZShzdHJ1Y3QgaGRt
-aV9jb250ZXh0ICpoZGF0YSkKPiArewo+ICsJc3RydWN0IGhkbWlfcmVzb3VyY2VzICpyZXMgPSAm
-aGRhdGEtPnJlczsKPiArCWludCBpLCByZXQ7Cj4gKwo+ICsJZm9yIChpID0gMDsgaSA8IHJlcy0+
-cmVndWxfY291bnQ7ICsraSkgewo+ICsJCXJldCA9IHJlZ3VsYXRvcl9lbmFibGUocmVzLT5yZWd1
-bGF0b3JzW2ldKTsKPiArCQlpZiAocmV0IDwgMCkgewo+ICsJCQlEUk1fRVJST1IoImZhaWwgdG8g
-ZW5hYmxlIHJlZ3VsYXRvcnMuXG4iKTsKPiArCQkJcmV0dXJuIHJldDsKPiArCQl9Cj4gKwl9Cj4g
-KwlyZXR1cm4gMDsKPiArfQo+ICsKPiAraW50IGhkbWlfcmVndWxhdG9yX2Rpc2FibGUoc3RydWN0
-IGhkbWlfY29udGV4dCAqaGRhdGEpCj4gK3sKPiArCXN0cnVjdCBoZG1pX3Jlc291cmNlcyAqcmVz
-ID0gJmhkYXRhLT5yZXM7Cj4gKwlpbnQgaSwgcmV0Owo+ICsKPiArCWZvciAoaSA9IDA7IGkgPCBy
-ZXMtPnJlZ3VsX2NvdW50OyArK2kpIHsKPiArCQlyZXQgPSByZWd1bGF0b3JfZGlzYWJsZShyZXMt
-PnJlZ3VsYXRvcnNbaV0pOwo+ICsJCWlmIChyZXQgPCAwKSB7Cj4gKwkJCURSTV9FUlJPUigiZmFp
-bCB0byBkaXNhYmxlIHJlZ3VsYXRvcnMuXG4iKTsKPiArCQkJcmV0dXJuIHJldDsKPiArCQl9Cj4g
-Kwl9Cj4gKwlyZXR1cm4gMDsKPiArfQo+ICsKPiAgc3RhdGljIHZvaWQgaGRtaV9wb3dlcm9uKHN0
-cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXkpCj4gIHsKPiAgCXN0cnVjdCBoZG1pX2Nv
-bnRleHQgKmhkYXRhID0gZGlzcGxheS0+Y3R4Owo+IEBAIC0yMDM5LDggKzIwNjksOCBAQCBzdGF0
-aWMgdm9pZCBoZG1pX3Bvd2Vyb24oc3RydWN0IGV4eW5vc19kcm1fZGlzcGxheSAqZGlzcGxheSkK
-PiAgCj4gIAlwbV9ydW50aW1lX2dldF9zeW5jKGhkYXRhLT5kZXYpOwo+ICAKPiAtCWlmIChyZWd1
-bGF0b3JfYnVsa19lbmFibGUocmVzLT5yZWd1bF9jb3VudCwgcmVzLT5yZWd1bF9idWxrKSkKPiAt
-CQlEUk1fREVCVUdfS01TKCJmYWlsZWQgdG8gZW5hYmxlIHJlZ3VsYXRvciBidWxrXG4iKTsKPiAr
-CWlmIChoZG1pX3JlZ3VsYXRvcl9lbmFibGUoaGRhdGEpKQo+ICsJCURSTV9ERUJVR19LTVMoImZh
-aWxlZCB0byBlbmFibGUgcmVndWxhdG9yc1xuIik7Cj4gIAo+ICAJLyogc2V0IHBtdSBoZG1pcGh5
-IGNvbnRyb2wgYml0IHRvIGVuYWJsZSBoZG1pcGh5ICovCj4gIAlyZWdtYXBfdXBkYXRlX2JpdHMo
-aGRhdGEtPnBtdXJlZywgUE1VX0hETUlfUEhZX0NPTlRST0wsCj4gQEAgLTIwNzcsNyArMjEwNyw4
-IEBAIHN0YXRpYyB2b2lkIGhkbWlfcG93ZXJvZmYoc3RydWN0IGV4eW5vc19kcm1fZGlzcGxheSAq
-ZGlzcGxheSkKPiAgCXJlZ21hcF91cGRhdGVfYml0cyhoZGF0YS0+cG11cmVnLCBQTVVfSERNSV9Q
-SFlfQ09OVFJPTCwKPiAgCQkJUE1VX0hETUlfUEhZX0VOQUJMRV9CSVQsIDApOwo+ICAKPiAtCXJl
-Z3VsYXRvcl9idWxrX2Rpc2FibGUocmVzLT5yZWd1bF9jb3VudCwgcmVzLT5yZWd1bF9idWxrKTsK
-PiArCWlmIChoZG1pX3JlZ3VsYXRvcl9kaXNhYmxlKGhkYXRhKSkKPiArCQlEUk1fREVCVUdfS01T
-KCJmYWlsZWQgdG8gZGlzYWJsZSByZWd1bGF0b3JzXG4iKTsKPiAgCj4gIAlwbV9ydW50aW1lX3B1
-dF9zeW5jKGhkYXRhLT5kZXYpOwo+ICAKPiBAQCAtMjIxMSwyNCArMjI0MiwyNCBAQCBzdGF0aWMg
-aW50IGhkbWlfcmVzb3VyY2VzX2luaXQoc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEpCj4gIAo+
-ICAJY2xrX3NldF9wYXJlbnQocmVzLT5tb3V0X2hkbWksIHJlcy0+c2Nsa19waXhlbCk7Cj4gIAo+
-IC0JcmVzLT5yZWd1bF9idWxrID0gZGV2bV9remFsbG9jKGRldiwgQVJSQVlfU0laRShzdXBwbHkp
-ICoKPiAtCQlzaXplb2YocmVzLT5yZWd1bF9idWxrWzBdKSwgR0ZQX0tFUk5FTCk7Cj4gLQlpZiAo
-IXJlcy0+cmVndWxfYnVsaykgewo+IC0JCXJldCA9IC1FTk9NRU07Cj4gLQkJZ290byBmYWlsOwo+
-IC0JfQo+ICsJcmVzLT5yZWd1bF9jb3VudCA9IEFSUkFZX1NJWkUoc3VwcGx5KTsKPiArCj4gKwly
-ZXMtPnJlZ3VsYXRvcnMgPSBkZXZtX2t6YWxsb2MoZGV2LCByZXMtPnJlZ3VsX2NvdW50ICoKPiAr
-CQlzaXplb2YocmVzLT5yZWd1bGF0b3JzWzBdKSwgR0ZQX0tFUk5FTCk7Cj4gKwlpZiAoIXJlcy0+
-cmVndWxhdG9ycykKPiArCQlyZXR1cm4gLUVOT01FTTsKPiArCj4gIAlmb3IgKGkgPSAwOyBpIDwg
-QVJSQVlfU0laRShzdXBwbHkpOyArK2kpIHsKPiAtCQlyZXMtPnJlZ3VsX2J1bGtbaV0uc3VwcGx5
-ID0gc3VwcGx5W2ldOwo+IC0JCXJlcy0+cmVndWxfYnVsa1tpXS5jb25zdW1lciA9IE5VTEw7Cj4g
-LQl9Cj4gLQlyZXQgPSBkZXZtX3JlZ3VsYXRvcl9idWxrX2dldChkZXYsIEFSUkFZX1NJWkUoc3Vw
-cGx5KSwgcmVzLT5yZWd1bF9idWxrKTsKPiAtCWlmIChyZXQpIHsKPiAtCQlEUk1fRVJST1IoImZh
-aWxlZCB0byBnZXQgcmVndWxhdG9yc1xuIik7Cj4gLQkJcmV0dXJuIHJldDsKPiArCQlyZXMtPnJl
-Z3VsYXRvcnNbaV0gPQo+ICsJCQlkZXZtX3JlZ3VsYXRvcl9nZXRfb3B0aW9uYWwoZGV2LCBzdXBw
-bHlbaV0pOwo+ICsJCWlmIChJU19FUlIocmVzLT5yZWd1bGF0b3JzW2ldKSkgewo+ICsJCQlEUk1f
-RVJST1IoImZhaWwgdG8gZ2V0IHJlZ3VsYXRvcjogJXMuXG4iLAo+ICsJCQkJc3VwcGx5W2ldKTsK
-PiArCQkJcmV0dXJuIC1FUFJPQkVfREVGRVI7CgpkZXZtX3JlZ3VsYXRvcl9nZXRfb3B0aW9uYWwg
-ZnVuY3Rpb24gd291bGQgcmV0dXJuIC1FUFJPQkVfREVGRVIgaWYKbmVlZGVkLiBTbyBpdCdzIG5v
-dCBnb29kIHRvIGZvcmNlIHJldHVybmluZyAtRVBST0JFX0RFRkVSIGluIGNhc2Ugb2YgYWxsCmVy
-cm9ycy4KClRoYW5rcywKSW5raSBEYWUKCj4gKwkJfQo+ICAJfQo+IC0JcmVzLT5yZWd1bF9jb3Vu
-dCA9IEFSUkFZX1NJWkUoc3VwcGx5KTsKPiAgCj4gLQlyZXR1cm4gcmV0Owo+ICsJcmV0dXJuIDA7
-Cj4gIGZhaWw6Cj4gIAlEUk1fRVJST1IoIkhETUkgcmVzb3VyY2UgaW5pdCAtIGZhaWxlZFxuIik7
-Cj4gIAlyZXR1cm4gcmV0Owo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwK
+On Wed, Jun 18, 2014 at 1:21 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 17 June 2014 20:55, Thomas Abraham <thomas.ab@samsung.com> wrote:
+>> Changes since v5:
+>> - Configuration data for cpu clock block is embedded with the code. The cpu clock
+>>   logic can later to extended to obtain this data from DT.
+>> - Excluded the support for Exynos4x12 SoC since the work on boost OPP bindings is
+>>   still incomplete.
+>> - Included cpufreq support for Exynos5420 SoC.
+>> - Many other minor changes (and so dropped Ack's for some of the patches in v5)
+>>
+>> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
+>> drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
+>> series also enabled cpufreq support for Exynos5420 using arm_big_little cpufreq
+>> driver.
+>
+> cpufreq@vger.kernel.org list is deprecated now: dec102a, use linux-pm instead.
+
+Ok. Will take care next time.
+
+>
+> For patch 5 and 6:
+>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+Thanks Viresh.
+
+Regards,
+Thomas.
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe cpufreq" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
