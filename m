@@ -1,69 +1,85 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH v2] clocksource: exynos-mct: Register the timer for stable udelay
-Date: Fri, 20 Jun 2014 16:49:47 +0530
-Message-ID: <CADGdYn6ZCvnfod3smE_mdJhK-BdkHMtno2GCH8jzX=BRWDCRPQ@mail.gmail.com>
-References: <1403167145-5267-1-git-send-email-amit.daniel@samsung.com>
-	<53A2B9C3.1050906@gmail.com>
-	<CAD=FV=VmC-p4_R1GV3U3bg1JojTzNYKyFTa8o8QMJ=3m=WuRYA@mail.gmail.com>
-	<53A30D08.6070107@gmail.com>
-	<CAD=FV=UjFJ9utR9i=Xu4DRQ7gdULCtXQXgsQ8gUYm6-V5U4GaQ@mail.gmail.com>
-	<53A31291.9000007@gmail.com>
-	<20140620081509.GA25104@arm.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: Re: [PATCH 1/2] drm/exynos/fbdev: don't set fix.smem/mmio_{start,len}
+Date: Fri, 20 Jun 2014 20:15:06 +0800
+Message-ID: <CAGS+omCT6u6rBz0QKTju3d=_+G29RD515M5BeX_KEbvWyANg9Q@mail.gmail.com>
+References: <1396603322-13585-1-git-send-email-djkurtz@chromium.org> <20140620025938.2e80efa0@i7>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f46.google.com ([209.85.213.46]:63067 "EHLO
-	mail-yh0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966470AbaFTLTr (ORCPT
+Received: from mail-vc0-f177.google.com ([209.85.220.177]:50624 "EHLO
+	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966976AbaFTMP1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Jun 2014 07:19:47 -0400
-In-Reply-To: <20140620081509.GA25104@arm.com>
+	Fri, 20 Jun 2014 08:15:27 -0400
+Received: by mail-vc0-f177.google.com with SMTP id ij19so3314249vcb.22
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jun 2014 05:15:26 -0700 (PDT)
+In-Reply-To: <20140620025938.2e80efa0@i7>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, David Riley <davidriley@chromium.org>, Jonathan Austin <Jonathan.Austin@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Siarhei Siamashka <siarhei.siamashka@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Fri, Jun 20, 2014 at 1:45 PM, Will Deacon <will.deacon@arm.com> wrote:
-> On Thu, Jun 19, 2014 at 05:40:49PM +0100, Tomasz Figa wrote:
->> On 19.06.2014 18:31, Doug Anderson wrote:
->> >>> My personal vote would be to submit a patch to change "cycles_t" to
->> >>> always be 32-bits.  Given that 32-bits was fine for udelay() for ARM
->> >>> that seems sane and simple.  If someone later comes up with a super
->> >>> compelling reason why we need 64-bit timers for udelay (really??) then
->> >>> they can later add all the complexity needed.
->> >>
->> >> Yes, this could work. I'm not sure what else cycles_t is used for, though.
->> >
->> > True, it is a bit questionable to change this since it's a type that's
->> > not obviously just for udelay().  Perhaps a better option would be to
->> > make a new typedef for the result of read_current_timer().  ...or just
->> > change it to return a u32?
->> >
->>
->> Sounds good to me, but let's hear other opinions. I'm adding Will and
->> Jonathan as they wrote the ARM delay timer code.
+On Fri, Jun 20, 2014 at 7:59 AM, Siarhei Siamashka
+<siarhei.siamashka@gmail.com> wrote:
 >
-> I think cycles_t is only used for small interval calculations at the moment,
-> but I remember Ted mentioning something about using it (or something
-> similar) as a source of early entropy, in which case the more bits the
-> better.
+> On Fri,  4 Apr 2014 17:22:01 +0800
+> Daniel Kurtz <djkurtz@chromium.org> wrote:
 >
-Will,
-Thanks for the clarification that cycles_t is used for short
-intervals. So it is safe to return lower 32 bit
-counter for read_current_timer.
+> > Kernel access to the eyxnos fbdev framebuffer is via its gem object's
+> > kernel mapping (kvaddr, stored in info->screen_base).
+> >
+> > User space access is provided by mmap(), read() and write() of /dev/fb/fb0.
+> > These functions also only use screen_base/screen_size().
+> >
+> > Therefore, it is not necessary to set fix->smem_{start,len} or
+> > fix->mmio_{start,len} fields.
+> >
+> > This avoids leaking kernel, physical and dma mapped addresses to user
+> > space via the ioctls FBIOGET_VSCREENINFO and FBIOGET_FSCREENINFO.
+> >
+> > Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 7 -------
+> >  1 file changed, 7 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> > index 5fa342e..2dcc589 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> > @@ -123,14 +123,7 @@ static int exynos_drm_fbdev_update(struct drm_fb_helper *helper,
+> >
+> >       dev->mode_config.fb_base = (resource_size_t)buffer->dma_addr;
+> >       fbi->screen_base = buffer->kvaddr + offset;
+> > -     if (is_drm_iommu_supported(dev))
+> > -             fbi->fix.smem_start = (unsigned long)
+> > -                     (page_to_phys(sg_page(buffer->sgt->sgl)) + offset);
+> > -     else
+> > -             fbi->fix.smem_start = (unsigned long)buffer->dma_addr;
+> > -
+> >       fbi->screen_size = size;
+> > -     fbi->fix.smem_len = size;
+>
+> Can we keep proper initialization of 'smem_len'? Some userland
+> applications use it for calculating the size for mmap:
+>
+>     http://cgit.freedesktop.org/xorg/xserver/tree/hw/xfree86/fbdevhw/fbdevhw.c?id=xorg-server-1.15.99.903#n571
+>
+> >
+> >       return 0;
+> >  }
+>
+> Basically, this patch breaks the xf86-video-fbdev ddx and some users
+> are already unhappy.
 
-Tomasz, Doug,
-As of now let me send a minimal implementation of this read delay
-timer to fix the broken udelay for exynos platforms so that it goes to
-upstream in rc releases. I will also prepare a fix for all
-raw_readl/writel in mct to relaxed version to make it consistent.
 
-> That said, I can't find any code in the tree to that effect.
+I'm so sorry this patch broke things for some users.
+Can you upload a patch to correct it?
+I'll happily review it.
+
+-djk
+
 >
-> Will
 >
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> --
+> Best regards,
+> Siarhei Siamashka
