@@ -1,80 +1,110 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH 5/5] drm/exynos: enable vsync interrupt while waiting for
- vblank
-Date: Fri, 20 Jun 2014 20:21:07 +0530
-Message-ID: <CAPdUM4OL93KZOcTLMySv_+LLHjdCGDG0X2hhb5NxV7zp1xpP+g@mail.gmail.com>
-References: <1403091293-15058-1-git-send-email-rahul.sharma@samsung.com>
- <1403091293-15058-6-git-send-email-rahul.sharma@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v2] clocksource: exynos_mct: Fix ftrace
+Date: Fri, 20 Jun 2014 17:02:56 +0200
+Message-ID: <53A44D20.2070507@linaro.org>
+References: <1403197706-29966-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1403091293-15058-6-git-send-email-rahul.sharma@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rahul Sharma <rahul.sharma@samsung.com>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f179.google.com ([209.85.212.179]:54969 "EHLO
+	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755140AbaFTPC4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Jun 2014 11:02:56 -0400
+Received: by mail-wi0-f179.google.com with SMTP id cc10so982558wib.6
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jun 2014 08:02:55 -0700 (PDT)
+In-Reply-To: <1403197706-29966-1-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, olof@lixom.net, linux-samsung-soc@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>, javier.martinez@collabora.co.uk, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi All,
+On 06/19/2014 07:08 PM, Doug Anderson wrote:
+> In (93bfb76 clocksource: exynos_mct: register sched_clock callback) w=
+e
+> supported using the MCT as a scheduler clock.
 
-On 18 June 2014 17:04, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> mixer_wait_for_vblank function expects that the upcoming
-> vsync interrupt handler routine will clear the
-> wait_vsync_event atomic variable.
+Hi Thomas,
+
+is it possible you update the tip/timers/core so I can get visibility o=
+n=20
+the above patch to apply this one ?
+
+Thanks
+   -- Daniel
+
+
+> We properly marked
+> exynos4_read_sched_clock() as notrace.  However, we then went and
+> called another function that _wasn't_ notrace.  That means if you do:
 >
-> For this to happen, interrupts should be enabled and
-> disabled properly.
+>    cd /sys/kernel/debug/tracing/
+>    echo function_graph > current_tracer
 >
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> You'll get a crash.
+>
+> Fix this (but still let other readers of the MCT be trace-enabled) by
+> adding an extra function.  It's important to keep other users of MCT
+> traceable because the MCT is actually quite slow to access and we wan=
+t
+> exynos4_frc_read() to show up in ftrace profiles if it's the
+> bottleneck.
+>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
 > ---
->  drivers/gpu/drm/exynos/exynos_mixer.c |    4 ++++
->  1 file changed, 4 insertions(+)
+> Changes in v2:
+> - Split out from other patches so this can go into 3.16.
+> - Better comment about why exynos4_frc_read() should be traceable.
+> - No more useless inline.
 >
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-> index 6f18581..7927f2e 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -1019,6 +1019,8 @@ static void mixer_wait_for_vblank(struct exynos_drm_manager *mgr)
->         }
->         mutex_unlock(&mixer_ctx->mixer_mutex);
+>   drivers/clocksource/exynos_mct.c | 9 +++++++--
+>   1 file changed, 7 insertions(+), 2 deletions(-)
 >
-> +       mixer_enable_vblank(mgr);
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/e=
+xynos_mct.c
+> index f71d55f..5ce99c0 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -162,7 +162,7 @@ static void exynos4_mct_frc_start(void)
+>   	exynos4_mct_write(reg, EXYNOS4_MCT_G_TCON);
+>   }
+>
+> -static cycle_t exynos4_frc_read(struct clocksource *cs)
+> +static cycle_t notrace _exynos4_frc_read(void)
+>   {
+>   	unsigned int lo, hi;
+>   	u32 hi2 =3D __raw_readl(reg_base + EXYNOS4_MCT_G_CNT_U);
+> @@ -176,6 +176,11 @@ static cycle_t exynos4_frc_read(struct clocksour=
+ce *cs)
+>   	return ((cycle_t)hi << 32) | lo;
+>   }
+>
+> +static cycle_t exynos4_frc_read(struct clocksource *cs)
+> +{
+> +	return _exynos4_frc_read();
+> +}
 > +
->         atomic_set(&mixer_ctx->wait_vsync_event, 1);
+>   static void exynos4_frc_resume(struct clocksource *cs)
+>   {
+>   	exynos4_mct_frc_start();
+> @@ -192,7 +197,7 @@ struct clocksource mct_frc =3D {
 >
->         /*
-> @@ -1029,6 +1031,8 @@ static void mixer_wait_for_vblank(struct exynos_drm_manager *mgr)
->                                 !atomic_read(&mixer_ctx->wait_vsync_event),
->                                 HZ/20))
->                 DRM_DEBUG_KMS("vblank wait timed out.\n");
-> +
-> +       mixer_disable_vblank(mgr);
->  }
-
-I found issue with this patch. It is causing deadlock by bypassing
-vblank refcounting
-and manually disabling the Interrupt.
-
-I switched to following and it is back on track.
-
-drm_vblank_get(mgr->crtc->dev, mixer_ctx->pipe);
-drm_vblank_put(mgr->crtc->dev, mixer_ctx->pipe);
-
-I will include this change in next version.
-
-Regards,
-Rahul Sharma.
-
+>   static u64 notrace exynos4_read_sched_clock(void)
+>   {
+> -	return exynos4_frc_read(&mct_frc);
+> +	return _exynos4_frc_read();
+>   }
 >
->  static void mixer_window_suspend(struct exynos_drm_manager *mgr)
-> --
-> 1.7.9.5
+>   static void __init exynos4_clocksource_init(void)
 >
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
