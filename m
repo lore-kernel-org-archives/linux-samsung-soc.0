@@ -1,172 +1,52 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v3 3/3] clocksource: exynos_mct: Only use 32-bits where possible
-Date: Fri, 20 Jun 2014 10:47:52 -0700
-Message-ID: <1403286472-6817-4-git-send-email-dianders@chromium.org>
-References: <1403286472-6817-1-git-send-email-dianders@chromium.org>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Fri, 20 Jun 2014 18:50:51 +0100
+Message-ID: <20140620175051.GE30656@arm.com>
+References: <1400877395-4235-1-git-send-email-thierry.reding@gmail.com>
+ <20140617233714.GD25525@mithrandir>
+ <20140618101439.GF32699@arm.com>
+ <39682213.otHMo6zoRf@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1403286472-6817-1-git-send-email-dianders@chromium.org>
+Content-Disposition: inline
+In-Reply-To: <39682213.otHMo6zoRf@wuerfel>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, olof@lixom.net, linux-samsung-soc@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>, javier.martinez@collabora.co.uk, Doug Anderson <dianders@chromium.org>, tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thierry Reding <thierry.reding@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, Hiroshi Doyu <hd>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The MCT has a nice 64-bit counter.  That means that we _can_ register
-as a 64-bit clocksource and sched_clock.  ...but that doesn't mean we
-should.
+On Fri, Jun 20, 2014 at 04:53:08PM +0100, Arnd Bergmann wrote:
+> On Wednesday 18 June 2014 11:14:39 Will Deacon wrote:
+> > On Wed, Jun 18, 2014 at 12:37:16AM +0100, Thierry Reding wrote:
+> >   - Each master has a set of fixed StreamIDs
+> >   - StreamIDs can be remastered by adding a constant offset (this could also
+> >     be used to describe RequesterID -> StreamID mapping)
+> > 
+> > I'd hope this would be sufficient for most people. Dynamic ID assignment can
+> > be worked out later (I'm not even sure it belongs in this binding) and any
+> > mappings other than `add a constant offset' can be treated on a case-by-case
+> > basis. We don't want to throw the kitchen sink at a language for describing
+> > arbitrary transformations!
+> > 
+> > > We've had similar discussions before (power sequences anyone?) where we
+> > > tried to come up with a generic way to describe something in device tree
+> > > that just didn't work out too well. Some things are better done in code,
+> > > so I think we should at least consider that possibility rather than
+> > > blindly try and force everything into device tree.
+> > 
+> > If we can support 90% of SoCs with a simple DT-based description, we can
+> > address the corner cases as they arise. I'm not ruling our hardcoding
+> > topology if we have no choice, but I don't think that's a healthy place to
+> > start from.
+> 
+> So we could use the "arm,gicv3" comaptible string for all those that
+> have a relatively simple mapping, and describe that mapping entirely
+> in DT properties, but use a different compatible string for those
+> SoCs that have a mapping which we can't easily describe, and then
+> put that into code?
 
-The 64-bit counter is read by reading two 32-bit registers.  That
-means reading needs to be something like:
-- Read upper half
-- Read lower half
-- Read upper half and confirm that it hasn't changed.
+That doesn't sound unreasonable, but I don't think we should commit to
+putting things into code until they come along and we can't describe them.
 
-That wouldn't be terrible, but:
-- THe MCT isn't very fast to access (hundreds of nanoseconds).
-- The clocksource is queried _all the time_.
-
-In total system profiles of real workloads on ChromeOS, we've seen
-exynos_frc_read() taking 2% or more of CPU time even after optimizing
-the 3 reads above to 2 (see below).
-
-The MCT is clocked at ~24MHz on all known systems.  That means that
-the 32-bit half of the counter rolls over every ~178 seconds.  This
-inspired an optimization in ChromeOS to cache the upper half between
-calls, moving 3 reads to 2.  ...but we can do better!  Having a 32-bit
-timer that flips every 178 seconds is more than sufficient for Linux.
-Let's just use the lower half of the MCT.
-
-Times on 5420 to do 1000000 gettimeofday() calls from userspace:
-* Original code:                      1323852 us
-* ChromeOS cache upper half:          1173084 us
-* ChromeOS + ldmia to optimize:       1045674 us
-* Use lower 32-bit only (this code):  1014429 us
-
-As you can see, the time used doesn't increase linearly with the
-number of reads and we can make 64-bit work almost as fast as 32-bit
-with a bit of assembly code.  But since there's no real gain for
-64-bit, let's go with the simplest and fastest implementation.
-
-Note: with this change roughly half the time for gettimeofday() is
-spent in exynos_frc_read().  The rest is timer / system call overhead.
-
-Also note: this patch disables the use of the MCT on ARM64 systems
-until we've sorted out how to make "cycles_t" always 32-bit.  Really
-ARM64 systems should be using arch timers anyway.
-
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
-Changes in v3:
-- Now 32-bit version instead of ldmia version
-
-Changes in v2: None
-
- drivers/clocksource/Kconfig      |  1 +
- drivers/clocksource/exynos_mct.c | 39 ++++++++++++++++++++++++++++++++-------
- 2 files changed, 33 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 065131c..a7aeee8 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -125,6 +125,7 @@ config CLKSRC_METAG_GENERIC
- 
- config CLKSRC_EXYNOS_MCT
- 	def_bool y if ARCH_EXYNOS
-+	depends on !ARM64
- 	help
- 	  Support for Multi Core Timer controller on Exynos SoCs.
- 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 2df03e2..9403061 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -162,7 +162,17 @@ static void exynos4_mct_frc_start(void)
- 	exynos4_mct_write(reg, EXYNOS4_MCT_G_TCON);
- }
- 
--static cycle_t notrace _exynos4_frc_read(void)
-+/**
-+ * exynos4_read_count_64 - Read all 64-bits of the global counter
-+ *
-+ * This will read all 64-bits of the global counter taking care to make sure
-+ * that the upper and lower half match.  Note that reading the MCT can be quite
-+ * slow (hundreds of nanoseconds) so you should use the 32-bit (lower half
-+ * only) version when possible.
-+ *
-+ * Returns the number of cycles in the global counter.
-+ */
-+static u64 exynos4_read_count_64(void)
- {
- 	unsigned int lo, hi;
- 	u32 hi2 = readl_relaxed(reg_base + EXYNOS4_MCT_G_CNT_U);
-@@ -176,9 +186,22 @@ static cycle_t notrace _exynos4_frc_read(void)
- 	return ((cycle_t)hi << 32) | lo;
- }
- 
-+/**
-+ * exynos4_read_count_32 - Read the lower 32-bits of the global counter
-+ *
-+ * This will read just the lower 32-bits of the global counter.  This is marked
-+ * as notrace so it can be used by the scheduler clock.
-+ *
-+ * Returns the number of cycles in the global counter (lower 32 bits).
-+ */
-+static u32 notrace exynos4_read_count_32(void)
-+{
-+	return readl_relaxed(reg_base + EXYNOS4_MCT_G_CNT_L);
-+}
-+
- static cycle_t exynos4_frc_read(struct clocksource *cs)
- {
--	return _exynos4_frc_read();
-+	return exynos4_read_count_32();
- }
- 
- static void exynos4_frc_resume(struct clocksource *cs)
-@@ -190,21 +213,23 @@ struct clocksource mct_frc = {
- 	.name		= "mct-frc",
- 	.rating		= 400,
- 	.read		= exynos4_frc_read,
--	.mask		= CLOCKSOURCE_MASK(64),
-+	.mask		= CLOCKSOURCE_MASK(32),
- 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
- 	.resume		= exynos4_frc_resume,
- };
- 
- static u64 notrace exynos4_read_sched_clock(void)
- {
--	return _exynos4_frc_read();
-+	return exynos4_read_count_32();
- }
- 
- static struct delay_timer exynos4_delay_timer;
- 
- static cycles_t exynos4_read_current_timer(void)
- {
--	return _exynos4_frc_read();
-+	BUILD_BUG_ON_MSG(sizeof(cycles_t) != sizeof(u32),
-+			 "cycles_t needs to move to 32-bit for ARM64 usage");
-+	return exynos4_read_count_32();
- }
- 
- static void __init exynos4_clocksource_init(void)
-@@ -218,7 +243,7 @@ static void __init exynos4_clocksource_init(void)
- 	if (clocksource_register_hz(&mct_frc, clk_rate))
- 		panic("%s: can't register clocksource\n", mct_frc.name);
- 
--	sched_clock_register(exynos4_read_sched_clock, 64, clk_rate);
-+	sched_clock_register(exynos4_read_sched_clock, 32, clk_rate);
- }
- 
- static void exynos4_mct_comp0_stop(void)
-@@ -245,7 +270,7 @@ static void exynos4_mct_comp0_start(enum clock_event_mode mode,
- 		exynos4_mct_write(cycles, EXYNOS4_MCT_G_COMP0_ADD_INCR);
- 	}
- 
--	comp_cycle = exynos4_frc_read(&mct_frc) + cycles;
-+	comp_cycle = exynos4_read_count_64() + cycles;
- 	exynos4_mct_write((u32)comp_cycle, EXYNOS4_MCT_G_COMP0_L);
- 	exynos4_mct_write((u32)(comp_cycle >> 32), EXYNOS4_MCT_G_COMP0_U);
- 
--- 
-2.0.0.526.g5318336
+Will
