@@ -1,18 +1,18 @@
 From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V4 02/10] drm/panel: add prepare and unprepare routines
-Date: Fri, 20 Jun 2014 13:37:10 +0530
-Message-ID: <CAEC9eQPnSSaPn-9J32gmQaMuNXjaV6p7FayeL81iHaihQE-SUQ@mail.gmail.com>
+Subject: Re: [PATCH V4 01/10] drm/exynos: Move DP setup out of hotplug workqueue
+Date: Fri, 20 Jun 2014 13:37:03 +0530
+Message-ID: <CAEC9eQOfUw+oiNh8UzTRCyZ1yzuNgc9GVLTHDnJJUqJY7iw07w@mail.gmail.com>
 References: <1402511228-18945-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1402511228-18945-3-git-send-email-ajaykumar.rs@samsung.com>
+	<1402511228-18945-2-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f172.google.com ([209.85.128.172]:57097 "EHLO
-	mail-ve0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934766AbaFTIHL (ORCPT
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:54514 "EHLO
+	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934828AbaFTIHE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Jun 2014 04:07:11 -0400
-In-Reply-To: <1402511228-18945-3-git-send-email-ajaykumar.rs@samsung.com>
+	Fri, 20 Jun 2014 04:07:04 -0400
+In-Reply-To: <1402511228-18945-2-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Ajay Kumar <ajaykumar.rs@samsung.com>
@@ -20,82 +20,52 @@ Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-
 
 ping.
 
-On Wed, Jun 11, 2014 at 11:57 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
-> Most of the panels need an init sequence as mentioned below:
->         -- poweron LCD unit/LCD_EN
->         -- start video data
->         -- poweron LED unit/BACKLIGHT_EN
-> And, a de-init sequence as mentioned below:
->         -- poweroff LED unit/BACKLIGHT_EN
->         -- stop video data
->         -- poweroff LCD unit/LCD_EN
-> With existing callbacks for drm panel, we cannot accomodate such panels,
-> since only two callbacks, i.e "panel_enable" and panel_disable are supported.
+On Wed, Jun 11, 2014 at 11:56 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+> Move the DP training and video enable from the hotplug handler into
+> a seperate function and call the same during dpms ON.
 >
-> This patch adds:
->         -- "prepare" callback which can be called before
->         the actual video data is on, and then call the "enable"
->         callback after the video data is available.
+> With existing code, DP HPD should be generated just few ms before
+> calling enable_irq in dp_poweron.
 >
->         -- "unprepare" callback which can be called after
->         the video data is off, and use "disable" callback
->         to do something before switching off the video data.
->
-> Now, we can easily map the above scenario as shown below:
->         poweron LCD unit/LCD_EN = "prepare" callback
->         poweron LED unit/BACKLIGHT_EN = "enable" callback
->         poweroff LED unit/BACKLIGHT_EN = "disable" callback
->         poweroff LCD unit/LCD_EN = "unprepare" callback
+> This patch removes that stringent time constraint.
 >
 > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 > ---
->  include/drm/drm_panel.h |   18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+>  drivers/gpu/drm/exynos/exynos_dp_core.c |   11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 >
-> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-> index c2ab77a..9addc69 100644
-> --- a/include/drm/drm_panel.h
-> +++ b/include/drm/drm_panel.h
-> @@ -31,7 +31,9 @@ struct drm_device;
->  struct drm_panel;
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> index 5e05dbc..96b4e82 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> @@ -875,10 +875,18 @@ static irqreturn_t exynos_dp_irq_handler(int irq, void *arg)
+>  static void exynos_dp_hotplug(struct work_struct *work)
+>  {
+>         struct exynos_dp_device *dp;
+> -       int ret;
 >
->  struct drm_panel_funcs {
-> +       int (*unprepare)(struct drm_panel *panel);
->         int (*disable)(struct drm_panel *panel);
-> +       int (*prepare)(struct drm_panel *panel);
->         int (*enable)(struct drm_panel *panel);
->         int (*get_modes)(struct drm_panel *panel);
->  };
-> @@ -46,6 +48,14 @@ struct drm_panel {
->         struct list_head list;
->  };
+>         dp = container_of(work, struct exynos_dp_device, hotplug_work);
 >
-> +static inline int drm_panel_unprepare(struct drm_panel *panel)
-> +{
-> +       if (panel && panel->funcs && panel->funcs->unprepare)
-> +               return panel->funcs->unprepare(panel);
-> +
-> +       return panel ? -ENOSYS : -EINVAL;
+> +       if (dp->drm_dev)
+> +               drm_helper_hpd_irq_event(dp->drm_dev);
 > +}
 > +
->  static inline int drm_panel_disable(struct drm_panel *panel)
->  {
->         if (panel && panel->funcs && panel->funcs->disable)
-> @@ -54,6 +64,14 @@ static inline int drm_panel_disable(struct drm_panel *panel)
->         return panel ? -ENOSYS : -EINVAL;
+> +static void exynos_dp_setup(void *in_ctx)
+> +{
+> +       struct exynos_dp_device *dp = in_ctx;
+> +       int ret;
+> +
+>         ret = exynos_dp_detect_hpd(dp);
+>         if (ret) {
+>                 /* Cable has been disconnected, we're done */
+> @@ -1059,6 +1067,7 @@ static void exynos_dp_poweron(struct exynos_dp_device *dp)
+>         exynos_dp_phy_init(dp);
+>         exynos_dp_init_dp(dp);
+>         enable_irq(dp->irq);
+> +       exynos_dp_setup(dp);
 >  }
 >
-> +static inline int drm_panel_prepare(struct drm_panel *panel)
-> +{
-> +       if (panel && panel->funcs && panel->funcs->prepare)
-> +               return panel->funcs->prepare(panel);
-> +
-> +       return panel ? -ENOSYS : -EINVAL;
-> +}
-> +
->  static inline int drm_panel_enable(struct drm_panel *panel)
->  {
->         if (panel && panel->funcs && panel->funcs->enable)
+>  static void exynos_dp_poweroff(struct exynos_dp_device *dp)
 > --
 > 1.7.9.5
 >
