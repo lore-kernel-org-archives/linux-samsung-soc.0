@@ -1,73 +1,260 @@
-From: Siarhei Siamashka <siarhei.siamashka@gmail.com>
-Subject: Re: [PATCH 1/2] drm/exynos/fbdev: don't set
- fix.smem/mmio_{start,len}
-Date: Fri, 20 Jun 2014 02:59:38 +0300
-Message-ID: <20140620025938.2e80efa0@i7>
-References: <1396603322-13585-1-git-send-email-djkurtz@chromium.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv4 1/4] iio: adc: exynos_adc: Add exynos_adc_ops structure
+ to improve readability
+Date: Fri, 20 Jun 2014 09:20:20 +0900
+Message-ID: <53A37E44.6040501@samsung.com>
+References: <1403058061-24271-1-git-send-email-cw00.choi@samsung.com>
+ <1403058061-24271-2-git-send-email-cw00.choi@samsung.com>
+ <53A145F7.8080000@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f176.google.com ([209.85.217.176]:41661 "EHLO
-	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965771AbaFSX7o (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jun 2014 19:59:44 -0400
-In-Reply-To: <1396603322-13585-1-git-send-email-djkurtz@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <53A145F7.8080000@gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: jic23@kernel.org, ch.naveen@samsung.com, t.figa@samsung.com, kgene.kim@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sachin.kamat@linaro.org, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org, Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Fri,  4 Apr 2014 17:22:01 +0800
-Daniel Kurtz <djkurtz@chromium.org> wrote:
+Hi Tomasz,
 
-> Kernel access to the eyxnos fbdev framebuffer is via its gem object's
-> kernel mapping (kvaddr, stored in info->screen_base).
+On 06/18/2014 04:55 PM, Tomasz Figa wrote:
+> Hi Chanwoo,
 > 
-> User space access is provided by mmap(), read() and write() of /dev/fb/fb0.
-> These functions also only use screen_base/screen_size().
+> On 18.06.2014 04:20, Chanwoo Choi wrote:
+>> This patchset add 'exynos_adc_ops' structure which includes some functions
+>> to control ADC operation according to ADC version (v1 or v2).
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  drivers/iio/adc/exynos_adc.c | 174 +++++++++++++++++++++++++++++--------------
+>>  1 file changed, 120 insertions(+), 54 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+>> index 010578f..c30def6 100644
+>> --- a/drivers/iio/adc/exynos_adc.c
+>> +++ b/drivers/iio/adc/exynos_adc.c
+>> @@ -90,6 +90,7 @@ struct exynos_adc {
+>>  	struct clk		*clk;
+>>  	unsigned int		irq;
+>>  	struct regulator	*vdd;
+>> +	struct exynos_adc_ops	*ops;
+>>  
+>>  	struct completion	completion;
+>>  
+>> @@ -97,6 +98,13 @@ struct exynos_adc {
+>>  	unsigned int            version;
+>>  };
+>>  
+>> +struct exynos_adc_ops {
+>> +	void (*init_hw)(struct exynos_adc *info);
+>> +	void (*clear_irq)(struct exynos_adc *info);
+>> +	void (*start_conv)(struct exynos_adc *info, unsigned long addr);
+>> +	void (*stop_conv)(struct exynos_adc *info);
+>> +};
+>> +
+>>  static const struct of_device_id exynos_adc_match[] = {
+>>  	{ .compatible = "samsung,exynos-adc-v1", .data = (void *)ADC_V1 },
+>>  	{ .compatible = "samsung,exynos-adc-v2", .data = (void *)ADC_V2 },
+>> @@ -112,30 +120,98 @@ static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
+>>  	return (unsigned int)match->data;
+>>  }
+>>  
+>> -static void exynos_adc_hw_init(struct exynos_adc *info)
+>> +static void exynos_adc_v1_init_hw(struct exynos_adc *info)
+>> +{
+>> +	u32 con1;
+>> +
+>> +	/* set default prescaler values and Enable prescaler */
+>> +	con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
+>> +
+>> +	/* Enable 12-bit ADC resolution */
+>> +	con1 |= ADC_V1_CON_RES;
+>> +	writel(con1, ADC_V1_CON(info->regs));
+>> +}
+>> +
+>> +static void exynos_adc_v1_start_conv(struct exynos_adc *info, unsigned long addr)
+>> +{
+>> +	u32 con1;
+>> +
+>> +	writel(addr, ADC_V1_MUX(info->regs));
+>> +
+>> +	con1 = readl(ADC_V1_CON(info->regs));
+>> +	writel(con1 | ADC_CON_EN_START, ADC_V1_CON(info->regs));
+>> +}
+>> +
+>> +static void exynos_adc_v1_clear_irq(struct exynos_adc *info)
+>> +{
+>> +	writel(1, ADC_V1_INTCLR(info->regs));
+>> +}
+>> +
+>> +static void exynos_adc_v1_stop_conv(struct exynos_adc *info)
+>> +{
+>> +	u32 con;
+>> +
+>> +	con = readl(ADC_V1_CON(info->regs));
+>> +	con |= ADC_V1_CON_STANDBY;
+>> +	writel(con, ADC_V1_CON(info->regs));
+>> +}
+>> +
+>> +static struct exynos_adc_ops exynos_adc_v1_ops = {
+>> +	.init_hw	= exynos_adc_v1_init_hw,
+>> +	.clear_irq	= exynos_adc_v1_clear_irq,
+>> +	.start_conv	= exynos_adc_v1_start_conv,
+>> +	.stop_conv	= exynos_adc_v1_stop_conv,
+>> +};
+>> +
+>> +static void exynos_adc_v2_init_hw(struct exynos_adc *info)
+>>  {
+>>  	u32 con1, con2;
+>>  
+>> -	if (info->version == ADC_V2) {
+>> -		con1 = ADC_V2_CON1_SOFT_RESET;
+>> -		writel(con1, ADC_V2_CON1(info->regs));
+>> +	con1 = ADC_V2_CON1_SOFT_RESET;
+>> +	writel(con1, ADC_V2_CON1(info->regs));
+>>  
+>> -		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
+>> -			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
+>> -		writel(con2, ADC_V2_CON2(info->regs));
+>> +	con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
+>> +		ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
+>> +	writel(con2, ADC_V2_CON2(info->regs));
+>>  
+>> -		/* Enable interrupts */
+>> -		writel(1, ADC_V2_INT_EN(info->regs));
+>> -	} else {
+>> -		/* set default prescaler values and Enable prescaler */
+>> -		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
+>> +	/* Enable interrupts */
+>> +	writel(1, ADC_V2_INT_EN(info->regs));
+>> +}
+>>  
+>> -		/* Enable 12-bit ADC resolution */
+>> -		con1 |= ADC_V1_CON_RES;
+>> -		writel(con1, ADC_V1_CON(info->regs));
+>> -	}
+>> +static void exynos_adc_v2_start_conv(struct exynos_adc *info, unsigned long addr)
+>> +{
+>> +	u32 con1, con2;
+>> +
+>> +	con2 = readl(ADC_V2_CON2(info->regs));
+>> +	con2 &= ~ADC_V2_CON2_ACH_MASK;
+>> +	con2 |= ADC_V2_CON2_ACH_SEL(addr);
+>> +	writel(con2, ADC_V2_CON2(info->regs));
+>> +
+>> +	con1 = readl(ADC_V2_CON1(info->regs));
+>> +	writel(con1 | ADC_CON_EN_START, ADC_V2_CON1(info->regs));
+>> +}
+>> +
+>> +static void exynos_adc_v2_clear_irq(struct exynos_adc *info)
+>> +{
+>> +	writel(1, ADC_V2_INT_ST(info->regs));
+>> +}
+>> +
+>> +static void exynos_adc_v2_stop_conv(struct exynos_adc *info)
+>> +{
+>> +	u32 con;
+>> +
+>> +	con = readl(ADC_V2_CON1(info->regs));
+>> +	con &= ~ADC_CON_EN_START;
+>> +	writel(con, ADC_V2_CON1(info->regs));
+>>  }
+>>  
+>> +static struct exynos_adc_ops exynos_adc_v2_ops = {
+>> +	.init_hw	= exynos_adc_v2_init_hw,
+>> +	.start_conv	= exynos_adc_v2_start_conv,
+>> +	.clear_irq	= exynos_adc_v2_clear_irq,
+>> +	.stop_conv	= exynos_adc_v2_stop_conv,
+>> +};
+>> +
+>>  static int exynos_read_raw(struct iio_dev *indio_dev,
+>>  				struct iio_chan_spec const *chan,
+>>  				int *val,
+>> @@ -144,7 +220,6 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+>>  {
+>>  	struct exynos_adc *info = iio_priv(indio_dev);
+>>  	unsigned long timeout;
+>> -	u32 con1, con2;
+>>  	int ret;
+>>  
+>>  	if (mask != IIO_CHAN_INFO_RAW)
+>> @@ -154,28 +229,15 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+>>  	reinit_completion(&info->completion);
+>>  
+>>  	/* Select the channel to be used and Trigger conversion */
+>> -	if (info->version == ADC_V2) {
+>> -		con2 = readl(ADC_V2_CON2(info->regs));
+>> -		con2 &= ~ADC_V2_CON2_ACH_MASK;
+>> -		con2 |= ADC_V2_CON2_ACH_SEL(chan->address);
+>> -		writel(con2, ADC_V2_CON2(info->regs));
+>> -
+>> -		con1 = readl(ADC_V2_CON1(info->regs));
+>> -		writel(con1 | ADC_CON_EN_START,
+>> -				ADC_V2_CON1(info->regs));
+>> -	} else {
+>> -		writel(chan->address, ADC_V1_MUX(info->regs));
+>> -
+>> -		con1 = readl(ADC_V1_CON(info->regs));
+>> -		writel(con1 | ADC_CON_EN_START,
+>> -				ADC_V1_CON(info->regs));
+>> -	}
+>> +	if (info->ops->start_conv)
+>> +		info->ops->start_conv(info, chan->address);
+>>  
+>>  	timeout = wait_for_completion_timeout
+>>  			(&info->completion, EXYNOS_ADC_TIMEOUT);
+>>  	if (timeout == 0) {
+>>  		dev_warn(&indio_dev->dev, "Conversion timed out! Resetting\n");
+>> -		exynos_adc_hw_init(info);
+>> +		if (info->ops->init_hw)
+>> +			info->ops->init_hw(info);
+>>  		ret = -ETIMEDOUT;
+>>  	} else {
+>>  		*val = info->value;
+>> @@ -193,13 +255,11 @@ static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
+>>  	struct exynos_adc *info = (struct exynos_adc *)dev_id;
+>>  
+>>  	/* Read value */
+>> -	info->value = readl(ADC_V1_DATX(info->regs)) &
+>> -						ADC_DATX_MASK;
+>> +	info->value = readl(ADC_V1_DATX(info->regs)) & ADC_DATX_MASK;
+>> +
+>>  	/* clear irq */
+>> -	if (info->version == ADC_V2)
+>> -		writel(1, ADC_V2_INT_ST(info->regs));
+>> -	else
+>> -		writel(1, ADC_V1_INTCLR(info->regs));
+>> +	if (info->ops->clear_irq)
+>> +		info->ops->clear_irq(info);
+>>  
+>>  	complete(&info->completion);
+>>  
+>> @@ -277,6 +337,19 @@ static int exynos_adc_probe(struct platform_device *pdev)
+>>  
+>>  	info = iio_priv(indio_dev);
+>>  
+>> +	info->version = exynos_adc_get_version(pdev);
+>> +	switch (info->version) {
+>> +	case ADC_V1:
+>> +		info->ops = &exynos_adc_v1_ops;
+>> +		break;
+>> +	case ADC_V2:
+>> +		info->ops = &exynos_adc_v2_ops;
+>> +		break;
+>> +	default:
+>> +		dev_err(&pdev->dev, "failed to identify ADC version\n");
+>> +		return -EINVAL;
+>> +	};
 > 
-> Therefore, it is not necessary to set fix->smem_{start,len} or
-> fix->mmio_{start,len} fields.
-> 
-> This avoids leaking kernel, physical and dma mapped addresses to user
-> space via the ioctls FBIOGET_VSCREENINFO and FBIOGET_FSCREENINFO.
-> 
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 7 -------
->  1 file changed, 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index 5fa342e..2dcc589 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -123,14 +123,7 @@ static int exynos_drm_fbdev_update(struct drm_fb_helper *helper,
->  
->  	dev->mode_config.fb_base = (resource_size_t)buffer->dma_addr;
->  	fbi->screen_base = buffer->kvaddr + offset;
-> -	if (is_drm_iommu_supported(dev))
-> -		fbi->fix.smem_start = (unsigned long)
-> -			(page_to_phys(sg_page(buffer->sgt->sgl)) + offset);
-> -	else
-> -		fbi->fix.smem_start = (unsigned long)buffer->dma_addr;
-> -
->  	fbi->screen_size = size;
-> -	fbi->fix.smem_len = size;
+> Just drop the enum completely and assign the struct pointer directly to
+> driver data fields in match tables. I also suspect that the struct
+> should be "variant" not "ops", because it will also require other data
+> than function pointers, e.g. "needs_sclk".
 
-Can we keep proper initialization of 'smem_len'? Some userland
-applications use it for calculating the size for mmap:
+OK, I will use "variant" structure instead of "ops" and drop enum vairable of ADC version.
 
-    http://cgit.freedesktop.org/xorg/xserver/tree/hw/xfree86/fbdevhw/fbdevhw.c?id=xorg-server-1.15.99.903#n571
+Best Regards,
+Chanwoo Choi
 
->  
->  	return 0;
->  }
-
-Basically, this patch breaks the xf86-video-fbdev ddx and some users
-are already unhappy.
-
--- 
-Best regards,
-Siarhei Siamashka
