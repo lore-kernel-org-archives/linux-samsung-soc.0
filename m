@@ -1,80 +1,117 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Kevin Hilman <khilman@linaro.org>
 Subject: Re: [PATCH] i2c: exynos5: Properly use the "noirq" variants of suspend/resume
-Date: Fri, 20 Jun 2014 15:05:56 -0700
-Message-ID: <CAD=FV=Uz9O0i2gmuk2+BHa-Tksvyxv0+MTi2UEjVREAMNCK7Ug@mail.gmail.com>
+Date: Fri, 20 Jun 2014 16:13:59 -0700
+Message-ID: <7h7g4brx6w.fsf@paris.lan>
 References: <1403155273-1057-1-git-send-email-dianders@chromium.org>
 	<7h8uosyc3k.fsf@paris.lan>
 	<CAD=FV=XxNVmF+N5HF4SnZoJRJvkSUkpEx6ct4v2gtmAQ9n28-Q@mail.gmail.com>
 	<7hwqcbs166.fsf@paris.lan>
+	<CAD=FV=Uz9O0i2gmuk2+BHa-Tksvyxv0+MTi2UEjVREAMNCK7Ug@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <7hwqcbs166.fsf-4poPxKt068f/PtFMR13I2A@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, naveen krishna <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>, Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, standby24x7-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:39114 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752551AbaFTXOC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Jun 2014 19:14:02 -0400
+Received: by mail-pd0-f170.google.com with SMTP id z10so3490423pdj.29
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jun 2014 16:14:01 -0700 (PDT)
+In-Reply-To: <CAD=FV=Uz9O0i2gmuk2+BHa-Tksvyxv0+MTi2UEjVREAMNCK7Ug@mail.gmail.com>
+	(Doug Anderson's message of "Fri, 20 Jun 2014 15:05:56 -0700")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, naveen krishna <ch.naveen@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Jean Delvare <jdelvare@suse.de>, Simon Glass <sjg@google.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, standby24x7@gmail.com, Sachin Kamat <sachin.kamat@linaro.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Kevin,
+Doug Anderson <dianders@chromium.org> writes:
 
-On Fri, Jun 20, 2014 at 2:48 PM, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> Hi Doug,
+> Kevin,
 >
-> Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> writes:
->
->> On Thu, Jun 19, 2014 at 11:43 AM, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->>> Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> writes:
->>>
->>>> The original code for the exynos i2c controller registered for the
->>>> "noirq" variants.  However during review feedback it was moved to
->>>> SIMPLE_DEV_PM_OPS without anyone noticing that it meant we were no
->>>> longer actually "noirq" (despite functions named
->>>> exynos5_i2c_suspend_noirq and exynos5_i2c_resume_noirq).
->>>>
->>>> i2c controllers that might have wakeup sources on them seem to need to
->>>> resume at noirq time so that the individual drivers can actually read
->>>> the i2c bus to handle their wakeup.
->>>
->>> I suspect usage of the noirq variants pre-dates the existence of the
->>> late/early callbacks in the PM core, but based on the description above,
->>> I suspect what you actually want is the late/early callbacks.
+> On Fri, Jun 20, 2014 at 2:48 PM, Kevin Hilman <khilman@linaro.org> wrote:
+>> Hi Doug,
 >>
->> I think it actually really needs noirq.  ;)
+>> Doug Anderson <dianders@chromium.org> writes:
+>>
+>>> On Thu, Jun 19, 2014 at 11:43 AM, Kevin Hilman <khilman@linaro.org> wrote:
+>>>> Doug Anderson <dianders@chromium.org> writes:
+>>>>
+>>>>> The original code for the exynos i2c controller registered for the
+>>>>> "noirq" variants.  However during review feedback it was moved to
+>>>>> SIMPLE_DEV_PM_OPS without anyone noticing that it meant we were no
+>>>>> longer actually "noirq" (despite functions named
+>>>>> exynos5_i2c_suspend_noirq and exynos5_i2c_resume_noirq).
+>>>>>
+>>>>> i2c controllers that might have wakeup sources on them seem to need to
+>>>>> resume at noirq time so that the individual drivers can actually read
+>>>>> the i2c bus to handle their wakeup.
+>>>>
+>>>> I suspect usage of the noirq variants pre-dates the existence of the
+>>>> late/early callbacks in the PM core, but based on the description above,
+>>>> I suspect what you actually want is the late/early callbacks.
+>>>
+>>> I think it actually really needs noirq.  ;)
+>>
+>> Yes, it appears it does.   Objection withdrawn.
+>>
+>> I just wanted to be sure because since the introduction of late/early,
+>> the need for noirq should be pretty rare, but there certainly are needs.
+>>
+>> <tangent>
+>> In this case though, the need for it has more to do with the
+>> lack of a way for us to describe non parent-child device dependencies
+>> than whether or not IRQs are enabled or not.
+>> </tangent>
 >
-> Yes, it appears it does.   Objection withdrawn.
+> Actually, I'm not sure that's true, but I'll talk through it and you
+> can point to where I'm wrong (I often am!)
 >
-> I just wanted to be sure because since the introduction of late/early,
-> the need for noirq should be pretty rare, but there certainly are needs.
+> If you're a wakeup device then you need to be ready to handle
+> interrupts as soon as the "noirq" phase of resume is done, right?
+
+As soon as the noirq phase of your own driver is done, correct.
+
+> Said another way: you need to be ready to handle interrupts _before_
+> the normal resume code is called and be ready to handle interrupts
+> even _before_ the early resume code is called.
+
+Correct.
+
+> That means if you are implementing a bus that's needed by any devices
+> with wakeup interrupts then it's your responsibility to also be
+> prepared to run this early.
 >
-> <tangent>
-> In this case though, the need for it has more to do with the
-> lack of a way for us to describe non parent-child device dependencies
-> than whether or not IRQs are enabled or not.
-> </tangent>
+> In this particular case the max77686 driver doesn't need to do
+> anything at all to be ready to handle interrupts.  It's suspend and
+> resume code is just boilerplate "enable wakeups / disable wakeups" and
+> it has no "noirq" code.  The max77686 driver doesn't have any "noirq"
+> wake call because it would just be empty.
+>
+> Said another way: the problem isn't that the max77686 wakeup gets
+> called before the i2c wakeup.  The problem is that i2c is needed ASAP
+> once IRQs are enabled and thus needs to be run noirq.
+>
+> Does that sound semi-correct?
 
-Actually, I'm not sure that's true, but I'll talk through it and you
-can point to where I'm wrong (I often am!)
+Yes that's correct.
 
-If you're a wakeup device then you need to be ready to handle
-interrupts as soon as the "noirq" phase of resume is done, right?
-Said another way: you need to be ready to handle interrupts _before_
-the normal resume code is called and be ready to handle interrupts
-even _before_ the early resume code is called.
+My point above was (trying to be) that ultimately this is an ordering
+issue.  e.g. the bus device needs to be "ready" before wakeup devices on
+that bus can handle wakeup interrupts etc.  The way we're handling that
+ordering is by the implied ordering of noirq, late/early and "normal"
+callbacks.  That's convenient, but not exactly obvious.   
 
-That means if you are implementing a bus that's needed by any devices
-with wakeup interrupts then it's your responsibility to also be
-prepared to run this early.
+It works because we dont' typically need too many layers here, but it
+would be much more understandable if we could describe this kind of
+dependency in a way that the suspend/resume code would suspend/resume
+things in the right order rather than by tinkering with callback levels
+(since otherwise suspend/resume ordering just depends on probe order.)
 
-In this particular case the max77686 driver doesn't need to do
-anything at all to be ready to handle interrupts.  It's suspend and
-resume code is just boilerplate "enable wakeups / disable wakeups" and
-it has no "noirq" code.  The max77686 driver doesn't have any "noirq"
-wake call because it would just be empty.
+This issue then usually gets me headed down my usual rant path about how
+I think runtime PM is much better suited for handling ordering and
+dependencies becuase it automatically handles parent/child dependencies
+and non parent/child dependencies can be handled by taking advantage of
+the get/put APIs which are refcounted, ect etc. but that's another can
+worms.
 
-Said another way: the problem isn't that the max77686 wakeup gets
-called before the i2c wakeup.  The problem is that i2c is needed ASAP
-once IRQs are enabled and thus needs to be run noirq.
-
-Does that sound semi-correct?
-
--Doug
+Kevin
