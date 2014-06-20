@@ -1,38 +1,67 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: Re: [PATCH v2 10/10] mfd: cros_ec: move EC interrupt to cros_ec_keyb
-Date: Thu, 19 Jun 2014 21:45:07 -0600
-Message-ID: <CAPnjgZ1=J+4GC6r1piVcmEbHJUJnM-N0jZmnhOQS5fNTGUySaA@mail.gmail.com>
-References: <1403115247-8853-1-git-send-email-dianders@chromium.org>
-	<1403115247-8853-11-git-send-email-dianders@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1403115247-8853-11-git-send-email-dianders@chromium.org>
-Sender: linux-input-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, lk <linux-kernel@vger.kernel.org>
+From: Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 1/2] ASoC: max98090: Add max98091 compatible string
+Date: Fri, 20 Jun 2014 13:33:15 +0530
+Message-ID: <1403251396-17487-1-git-send-email-tushar.b@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Wonjoon Lee <woojoo.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 18 June 2014 12:14, Doug Anderson <dianders@chromium.org> wrote:
-> From: Andrew Bresticker <abrestic@chromium.org>
->
-> If we receive EC interrupts after the cros_ec driver has probed, but
-> before the cros_ec_keyb driver has probed, the cros_ec IRQ handler
-> will not run the cros_ec_keyb notifier and the EC will leave the IRQ
-> line asserted.  The cros_ec IRQ handler then returns IRQ_HANDLED and
-> the resulting flood of interrupts causes the machine to hang.
->
-> Since the EC interrupt is currently only used for the keyboard, move
-> the setup and handling of the EC interrupt to the cros_ec_keyb driver.
->
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+From: Wonjoon Lee <woojoo.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Reviewed-by: Simon Glass <sjg@chromium.org>
+The MAX98091 CODEC is the same as MAX98090 CODEC, but with an extra
+microphone. Existing driver for MAX98090 CODEC already has support
+for MAX98091 CODEC. Adding proper compatible string so that MAX98091
+CODEC can be specified from device tree.
 
-We never needed an EC-level interrupt, and have shipped at least three
-products now that use this code, so I think it is safe enough to
-declare that we won't need it.
+Signed-off-by: Wonjoon Lee <woojoo.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Signed-off-by: Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
 
-Regards,
-Simon
+Picked from https://chromium-review.googlesource.com/#/c/184091/
+
+ .../devicetree/bindings/sound/max98090.txt         |    2 +-
+ sound/soc/codecs/max98090.c                        |    2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/max98090.txt b/Documentation/devicetree/bindings/sound/max98090.txt
+index a5e63fa..c454e67 100644
+--- a/Documentation/devicetree/bindings/sound/max98090.txt
++++ b/Documentation/devicetree/bindings/sound/max98090.txt
+@@ -4,7 +4,7 @@ This device supports I2C only.
+ 
+ Required properties:
+ 
+-- compatible : "maxim,max98090".
++- compatible : "maxim,max98090" or "maxim,max98091".
+ 
+ - reg : The I2C address of the device.
+ 
+diff --git a/sound/soc/codecs/max98090.c b/sound/soc/codecs/max98090.c
+index f5fccc7..4f5534d 100644
+--- a/sound/soc/codecs/max98090.c
++++ b/sound/soc/codecs/max98090.c
+@@ -2460,12 +2460,14 @@ static const struct dev_pm_ops max98090_pm = {
+ 
+ static const struct i2c_device_id max98090_i2c_id[] = {
+ 	{ "max98090", MAX98090 },
++	{ "max98091", MAX98091 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, max98090_i2c_id);
+ 
+ static const struct of_device_id max98090_of_match[] = {
+ 	{ .compatible = "maxim,max98090", },
++	{ .compatible = "maxim,max98091", },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, max98090_of_match);
+-- 
+1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
