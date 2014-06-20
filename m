@@ -1,85 +1,80 @@
-From: Daniel Kurtz <djkurtz@chromium.org>
-Subject: Re: [PATCH 1/2] drm/exynos/fbdev: don't set fix.smem/mmio_{start,len}
-Date: Fri, 20 Jun 2014 20:15:06 +0800
-Message-ID: <CAGS+omCT6u6rBz0QKTju3d=_+G29RD515M5BeX_KEbvWyANg9Q@mail.gmail.com>
-References: <1396603322-13585-1-git-send-email-djkurtz@chromium.org> <20140620025938.2e80efa0@i7>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH 5/5] drm/exynos: enable vsync interrupt while waiting for
+ vblank
+Date: Fri, 20 Jun 2014 20:21:07 +0530
+Message-ID: <CAPdUM4OL93KZOcTLMySv_+LLHjdCGDG0X2hhb5NxV7zp1xpP+g@mail.gmail.com>
+References: <1403091293-15058-1-git-send-email-rahul.sharma@samsung.com>
+ <1403091293-15058-6-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f177.google.com ([209.85.220.177]:50624 "EHLO
-	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966976AbaFTMP1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Jun 2014 08:15:27 -0400
-Received: by mail-vc0-f177.google.com with SMTP id ij19so3314249vcb.22
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jun 2014 05:15:26 -0700 (PDT)
-In-Reply-To: <20140620025938.2e80efa0@i7>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1403091293-15058-6-git-send-email-rahul.sharma@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rahul Sharma <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Siarhei Siamashka <siarhei.siamashka@gmail.com>
-Cc: Inki Dae <inki.dae@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Fri, Jun 20, 2014 at 7:59 AM, Siarhei Siamashka
-<siarhei.siamashka@gmail.com> wrote:
->
-> On Fri,  4 Apr 2014 17:22:01 +0800
-> Daniel Kurtz <djkurtz@chromium.org> wrote:
->
-> > Kernel access to the eyxnos fbdev framebuffer is via its gem object's
-> > kernel mapping (kvaddr, stored in info->screen_base).
-> >
-> > User space access is provided by mmap(), read() and write() of /dev/fb/fb0.
-> > These functions also only use screen_base/screen_size().
-> >
-> > Therefore, it is not necessary to set fix->smem_{start,len} or
-> > fix->mmio_{start,len} fields.
-> >
-> > This avoids leaking kernel, physical and dma mapped addresses to user
-> > space via the ioctls FBIOGET_VSCREENINFO and FBIOGET_FSCREENINFO.
-> >
-> > Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 7 -------
-> >  1 file changed, 7 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> > index 5fa342e..2dcc589 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> > @@ -123,14 +123,7 @@ static int exynos_drm_fbdev_update(struct drm_fb_helper *helper,
-> >
-> >       dev->mode_config.fb_base = (resource_size_t)buffer->dma_addr;
-> >       fbi->screen_base = buffer->kvaddr + offset;
-> > -     if (is_drm_iommu_supported(dev))
-> > -             fbi->fix.smem_start = (unsigned long)
-> > -                     (page_to_phys(sg_page(buffer->sgt->sgl)) + offset);
-> > -     else
-> > -             fbi->fix.smem_start = (unsigned long)buffer->dma_addr;
-> > -
-> >       fbi->screen_size = size;
-> > -     fbi->fix.smem_len = size;
->
-> Can we keep proper initialization of 'smem_len'? Some userland
-> applications use it for calculating the size for mmap:
->
->     http://cgit.freedesktop.org/xorg/xserver/tree/hw/xfree86/fbdevhw/fbdevhw.c?id=xorg-server-1.15.99.903#n571
->
-> >
-> >       return 0;
-> >  }
->
-> Basically, this patch breaks the xf86-video-fbdev ddx and some users
-> are already unhappy.
+Hi All,
 
+On 18 June 2014 17:04, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> mixer_wait_for_vblank function expects that the upcoming
+> vsync interrupt handler routine will clear the
+> wait_vsync_event atomic variable.
+>
+> For this to happen, interrupts should be enabled and
+> disabled properly.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_mixer.c |    4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index 6f18581..7927f2e 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -1019,6 +1019,8 @@ static void mixer_wait_for_vblank(struct exynos_drm_manager *mgr)
+>         }
+>         mutex_unlock(&mixer_ctx->mixer_mutex);
+>
+> +       mixer_enable_vblank(mgr);
+> +
+>         atomic_set(&mixer_ctx->wait_vsync_event, 1);
+>
+>         /*
+> @@ -1029,6 +1031,8 @@ static void mixer_wait_for_vblank(struct exynos_drm_manager *mgr)
+>                                 !atomic_read(&mixer_ctx->wait_vsync_event),
+>                                 HZ/20))
+>                 DRM_DEBUG_KMS("vblank wait timed out.\n");
+> +
+> +       mixer_disable_vblank(mgr);
+>  }
 
-I'm so sorry this patch broke things for some users.
-Can you upload a patch to correct it?
-I'll happily review it.
+I found issue with this patch. It is causing deadlock by bypassing
+vblank refcounting
+and manually disabling the Interrupt.
 
--djk
+I switched to following and it is back on track.
+
+drm_vblank_get(mgr->crtc->dev, mixer_ctx->pipe);
+drm_vblank_put(mgr->crtc->dev, mixer_ctx->pipe);
+
+I will include this change in next version.
+
+Regards,
+Rahul Sharma.
 
 >
->
+>  static void mixer_window_suspend(struct exynos_drm_manager *mgr)
 > --
-> Best regards,
-> Siarhei Siamashka
+> 1.7.9.5
+>
