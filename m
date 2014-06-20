@@ -1,71 +1,69 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 0/4] Add support for Exynos clock output configuration
-Date: Fri, 20 Jun 2014 12:33:13 +0200
-Message-ID: <53A40DE9.4030100@gmail.com>
-References: <CAD8Lp46pFGWSA6c1r-xGUbNDkcACyZZkru+m7+xH+BQRr7ULPg@mail.gmail.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH v2] clocksource: exynos-mct: Register the timer for stable udelay
+Date: Fri, 20 Jun 2014 16:49:47 +0530
+Message-ID: <CADGdYn6ZCvnfod3smE_mdJhK-BdkHMtno2GCH8jzX=BRWDCRPQ@mail.gmail.com>
+References: <1403167145-5267-1-git-send-email-amit.daniel@samsung.com>
+	<53A2B9C3.1050906@gmail.com>
+	<CAD=FV=VmC-p4_R1GV3U3bg1JojTzNYKyFTa8o8QMJ=3m=WuRYA@mail.gmail.com>
+	<53A30D08.6070107@gmail.com>
+	<CAD=FV=UjFJ9utR9i=Xu4DRQ7gdULCtXQXgsQ8gUYm6-V5U4GaQ@mail.gmail.com>
+	<53A31291.9000007@gmail.com>
+	<20140620081509.GA25104@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAD8Lp46pFGWSA6c1r-xGUbNDkcACyZZkru+m7+xH+BQRr7ULPg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>, Tomasz Figa <t.figa@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Tushar Behera <tushar.behera@linaro.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f46.google.com ([209.85.213.46]:63067 "EHLO
+	mail-yh0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966470AbaFTLTr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Jun 2014 07:19:47 -0400
+In-Reply-To: <20140620081509.GA25104@arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Will Deacon <will.deacon@arm.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, David Riley <davidriley@chromium.org>, Jonathan Austin <Jonathan.Austin@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Daniel,
-
-On 18.06.2014 18:17, Daniel Drake wrote:
-> Hi Tomasz,
-> 
-> On Tue, May 20, 2014 at 5:43 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->> Since the block responsible for handling the pin is PMU, not CMU,
->> a separate driver, that binds to PMU node is required and acquires
->> all input clocks by standard DT clock look-up. This way we don't need
->> any cross-IP block drivers and cross-driver register sharing or
->> nodes for fake devices.
+On Fri, Jun 20, 2014 at 1:45 PM, Will Deacon <will.deacon@arm.com> wrote:
+> On Thu, Jun 19, 2014 at 05:40:49PM +0100, Tomasz Figa wrote:
+>> On 19.06.2014 18:31, Doug Anderson wrote:
+>> >>> My personal vote would be to submit a patch to change "cycles_t" to
+>> >>> always be 32-bits.  Given that 32-bits was fine for udelay() for ARM
+>> >>> that seems sane and simple.  If someone later comes up with a super
+>> >>> compelling reason why we need 64-bit timers for udelay (really??) then
+>> >>> they can later add all the complexity needed.
+>> >>
+>> >> Yes, this could work. I'm not sure what else cycles_t is used for, though.
+>> >
+>> > True, it is a bit questionable to change this since it's a type that's
+>> > not obviously just for udelay().  Perhaps a better option would be to
+>> > make a new typedef for the result of read_current_timer().  ...or just
+>> > change it to return a u32?
+>> >
 >>
->> To represent the PMU mux/gate clock, generic composite clock is registered.
->>
->> Tested on Odroid U3, with HSIC/USB hub using CLKOUT as reference clock,
->> with some additional patches.
->>
->> Depends on:
->> [PATCHv5 0/4] Enable usbphy and hsotg for exynos4
->> (No link, sorry, I could not find it in any archive yet...)
->> for Exynos4210/4x12 PMU binding and DT nodes.
-> 
-> This isn't working for me.
-> Testing linus master e99cfa2d0634881b8a41d56c48b5956b9a3ba162 plus:
->     ARM: dts: exynos4: add port sub-nodes to exynos usb host modules
->     ARM: dts: exynos4412-odroidx: enable common hardware blocks
->     ARM: dts: exynos4412-odroidx: add support for USB (phy, host, device)
->     ARM: dts: refactor Odroid DTS file and add support for Odroid X2 and U2/U3
-> 
-> Testing on ODROID-U2.
-> 
-> I apply the first patch here (clk: samsung: exynos4: Add missing
-> CPU/DMC clock hierarchy) and things continue to work. Now when I add
-> the second patch "clk: samsung: exynos4: Add CLKOUT clock hierarchy"
-> boot hangs at:
-> 
-> [    4.753740] s3c-rtc 10070000.rtc: setting system clock to
-> 2000-01-01 02:43:30 UTC (946694610)
-> [    4.753809] ### dt-test ### No testcase data in device tree; not
-> running tests
-> [    4.791155] gps-power-domain: Power-off latency e
-> 
-> Any ideas?
+>> Sounds good to me, but let's hear other opinions. I'm adding Will and
+>> Jonathan as they wrote the ARM delay timer code.
+>
+> I think cycles_t is only used for small interval calculations at the moment,
+> but I remember Ted mentioning something about using it (or something
+> similar) as a source of early entropy, in which case the more bits the
+> better.
+>
+Will,
+Thanks for the clarification that cycles_t is used for short
+intervals. So it is safe to return lower 32 bit
+counter for read_current_timer.
 
-Thanks for testing.
+Tomasz, Doug,
+As of now let me send a minimal implementation of this read delay
+timer to fix the broken udelay for exynos platforms so that it goes to
+upstream in rc releases. I will also prepare a fix for all
+raw_readl/writel in mct to relaxed version to make it consistent.
 
-It's most likely an issue with ISP power domain. Certain clock
-controller registers are located there and there is no proper handling
-of this in the clock driver yet. You can test things by skipping patch 3
-and this should give you a working clkout, just limited to clocks not
-going through clkout hierarchies of clock domains, e.g. xxti and xusbxti.
-
-I'm aware of the problem and will fix it in next version.
-
-Best regards,
-Tomasz
+> That said, I can't find any code in the tree to that effect.
+>
+> Will
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
