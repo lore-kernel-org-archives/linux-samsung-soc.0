@@ -1,147 +1,144 @@
-From: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Fri, 20 Jun 2014 16:16:25 -0700
-Message-ID: <53A4C0C9.2050908@codeaurora.org>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
-	<CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
-	<4545972.cM7IP1qTXQ@wuerfel>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] i2c: exynos5: Properly use the "noirq" variants of suspend/resume
+Date: Fri, 20 Jun 2014 16:53:09 -0700
+Message-ID: <CAD=FV=VmPMf6tCNmKJ1o5J7PyAXoU8fb6+s+Fkv18FH2WaQp7A@mail.gmail.com>
+References: <1403155273-1057-1-git-send-email-dianders@chromium.org>
+	<7h8uosyc3k.fsf@paris.lan>
+	<CAD=FV=XxNVmF+N5HF4SnZoJRJvkSUkpEx6ct4v2gtmAQ9n28-Q@mail.gmail.com>
+	<7hwqcbs166.fsf@paris.lan>
+	<CAD=FV=Uz9O0i2gmuk2+BHa-Tksvyxv0+MTi2UEjVREAMNCK7Ug@mail.gmail.com>
+	<7h7g4brx6w.fsf@paris.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <4545972.cM7IP1qTXQ@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <7h7g4brx6w.fsf@paris.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kevin Hilman <khilman@linaro.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, naveen krishna <ch.naveen@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Jean Delvare <jdelvare@suse.de>, Simon Glass <sjg@google.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Masanari Iida <standby24x7@gmail.com>, Sachin Kamat <sachin.kamat@linaro.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 5/30/2014 12:06 PM, Arnd Bergmann wrote:
-> On Friday 30 May 2014 08:16:05 Rob Herring wrote:
->> On Fri, May 23, 2014 at 3:33 PM, Thierry Reding
->> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> +IOMMU master node:
->>> +==================
->>> +
->>> +Devices that access memory through an IOMMU are called masters. A device can
->>> +have multiple master interfaces (to one or more IOMMU devices).
->>> +
->>> +Required properties:
->>> +--------------------
->>> +- iommus: A list of phandle and IOMMU specifier pairs that describe the IOMMU
->>> +  master interfaces of the device. One entry in the list describes one master
->>> +  interface of the device.
->>> +
->>> +When an "iommus" property is specified in a device tree node, the IOMMU will
->>> +be used for address translation. If a "dma-ranges" property exists in the
->>> +device's parent node it will be ignored. An exception to this rule is if the
->>> +referenced IOMMU is disabled, in which case the "dma-ranges" property of the
->>> +parent shall take effect.
+Kevin,
+
+On Fri, Jun 20, 2014 at 4:13 PM, Kevin Hilman <khilman@linaro.org> wrote:
+> Doug Anderson <dianders@chromium.org> writes:
+>
+>> Kevin,
 >>
->> Just thinking out loud, could you have dma-ranges in the iommu node
->> for the case when the iommu is enabled rather than putting the DMA
->> window information into the iommus property?
+>> On Fri, Jun 20, 2014 at 2:48 PM, Kevin Hilman <khilman@linaro.org> wrote:
+>>> Hi Doug,
+>>>
+>>> Doug Anderson <dianders@chromium.org> writes:
+>>>
+>>>> On Thu, Jun 19, 2014 at 11:43 AM, Kevin Hilman <khilman@linaro.org> wrote:
+>>>>> Doug Anderson <dianders@chromium.org> writes:
+>>>>>
+>>>>>> The original code for the exynos i2c controller registered for the
+>>>>>> "noirq" variants.  However during review feedback it was moved to
+>>>>>> SIMPLE_DEV_PM_OPS without anyone noticing that it meant we were no
+>>>>>> longer actually "noirq" (despite functions named
+>>>>>> exynos5_i2c_suspend_noirq and exynos5_i2c_resume_noirq).
+>>>>>>
+>>>>>> i2c controllers that might have wakeup sources on them seem to need to
+>>>>>> resume at noirq time so that the individual drivers can actually read
+>>>>>> the i2c bus to handle their wakeup.
+>>>>>
+>>>>> I suspect usage of the noirq variants pre-dates the existence of the
+>>>>> late/early callbacks in the PM core, but based on the description above,
+>>>>> I suspect what you actually want is the late/early callbacks.
+>>>>
+>>>> I think it actually really needs noirq.  ;)
+>>>
+>>> Yes, it appears it does.   Objection withdrawn.
+>>>
+>>> I just wanted to be sure because since the introduction of late/early,
+>>> the need for noirq should be pretty rare, but there certainly are needs.
+>>>
+>>> <tangent>
+>>> In this case though, the need for it has more to do with the
+>>> lack of a way for us to describe non parent-child device dependencies
+>>> than whether or not IRQs are enabled or not.
+>>> </tangent>
 >>
->> This would probably mean that you need both #iommu-cells and #address-cells.
-> 
-> The reason for doing like this was that you may need a different window
-> for each device, while there can only be one dma-ranges property in 
-> an iommu node.
-> 
->>> +
->>> +Optional properties:
->>> +--------------------
->>> +- iommu-names: A list of names identifying each entry in the "iommus"
->>> +  property.
+>> Actually, I'm not sure that's true, but I'll talk through it and you
+>> can point to where I'm wrong (I often am!)
 >>
->> Do we really need a name here? I would not expect that you have
->> clearly documented names here from the datasheet like you would for
->> interrupts or clocks, so you'd just be making up names. Sorry, but I'm
->> not a fan of names properties in general.
-> 
-> Good point, this was really overdesign by modeling it after other
-> subsystems that can have a use for names.
->  
->>> +Multiple-master IOMMU:
->>> +----------------------
->>> +
->>> +       iommu {
->>> +               /* the specifier represents the ID of the master */
->>> +               #address-cells = <1>;
->>> +               #size-cells = <0>;
->>> +       };
->>> +
->>> +       master {
->>> +               /* device has master ID 42 in the IOMMU */
->>> +               iommus = <&/iommu 42>;
->>> +       };
+>> If you're a wakeup device then you need to be ready to handle
+>> interrupts as soon as the "noirq" phase of resume is done, right?
+>
+> As soon as the noirq phase of your own driver is done, correct.
+>
+>> Said another way: you need to be ready to handle interrupts _before_
+>> the normal resume code is called and be ready to handle interrupts
+>> even _before_ the early resume code is called.
+>
+> Correct.
+>
+>> That means if you are implementing a bus that's needed by any devices
+>> with wakeup interrupts then it's your responsibility to also be
+>> prepared to run this early.
 >>
->> Presumably the ID would be the streamID on ARM's SMMU. How would a
->> master with 8 streamIDs be described? This is what Calxeda midway has
->> for SATA and I would expect that to be somewhat common. Either you
->> need some ID masking or you'll have lots of duplication when you have
->> windows.
-> 
-> I don't understand the problem. If you have stream IDs 0 through 7,
-> you would have
-> 
-> 	master@a {
-> 		...
-> 		iommus = <&smmu 0>;
-> 	};
-> 
-> 	master@b {
-> 		...
-> 		iommus = <&smmu 1;
-> 	};
-> 
-> 	...
-> 
-> 	master@12 {
-> 		...
-> 		iommus = <&smmu 7;
-> 	};
-> 
-> and you don't need a window at all. Why would you need a mask of
-> some sort?
+>> In this particular case the max77686 driver doesn't need to do
+>> anything at all to be ready to handle interrupts.  It's suspend and
+>> resume code is just boilerplate "enable wakeups / disable wakeups" and
+>> it has no "noirq" code.  The max77686 driver doesn't have any "noirq"
+>> wake call because it would just be empty.
+>>
+>> Said another way: the problem isn't that the max77686 wakeup gets
+>> called before the i2c wakeup.  The problem is that i2c is needed ASAP
+>> once IRQs are enabled and thus needs to be run noirq.
+>>
+>> Does that sound semi-correct?
+>
+> Yes that's correct.
+>
+> My point above was (trying to be) that ultimately this is an ordering
+> issue.  e.g. the bus device needs to be "ready" before wakeup devices on
+> that bus can handle wakeup interrupts etc.  The way we're handling that
+> ordering is by the implied ordering of noirq, late/early and "normal"
+> callbacks.  That's convenient, but not exactly obvious.
+>
+> It works because we dont' typically need too many layers here, but it
+> would be much more understandable if we could describe this kind of
+> dependency in a way that the suspend/resume code would suspend/resume
+> things in the right order rather than by tinkering with callback levels
+> (since otherwise suspend/resume ordering just depends on probe order.)
+>
+> This issue then usually gets me headed down my usual rant path about how
+> I think runtime PM is much better suited for handling ordering and
+> dependencies becuase it automatically handles parent/child dependencies
+> and non parent/child dependencies can be handled by taking advantage of
+> the get/put APIs which are refcounted, ect etc. but that's another can
+> worms.
 
-We have multiple-master SMMUs and each master emits a variable number of
-StreamIDs. However, we have to apply a mask (the ARM SMMU spec allows
-for this) to the StreamIDs due to limited number of StreamID 2 Context
-Bank entries in the SMMU. If my understanding is correct we would
-represent this in the DT like this:
+Ah, I gotcha.  Yes, I'm a fan of having explicit dependency orderings too.
 
-	iommu {
-		#address-cells = <2>;
-		#size-cells = <0>;
-	};
+So I guess in this case the truly correct way to handle it is:
 
-	master@a {
-		...
-		iommus = <&iommu StreamID0 MASK0>,
-			 <&iommu StreamID1 MASK1>,
-			 <&iommu StreamID2 MASK2>;
-	};
+1. i2c controller should have Runtime PM even though (as per the code
+now) there's nothing you can do to it to save power under normal
+circumstances.  So the runtime "suspend" code would be a no-op.
 
-	master@b {
-		...
-		iommus = <&iommu StreamID3 MASK3>,
-			 <&iommu StreamID4 MASK4>;
-	};
+2. When the i2c controller is told to runtime resume, it should
+double-check if a full SoC poweroff has happened since the last time
+it checked.  In this case it should reinit its hardware.
+
+3. If the i2c controller gets a full "resume" callback then it should
+also reinit the hardware just so it's not sitting in a half-configured
+state until the first peripheral uses it.
+
+If later someone finds a way to power gate the i2c controller when no
+active transfers are going (and we actually save non-trivial power
+doing this) then we've got a nice place to put that code.
+
+NOTE: Unless we can actually save power by power gating the i2c
+peripheral when there are no active transfers, we would also just have
+the i2c_xfer() init the hardware if needed.  Maybe that's kinda gross,
+though.
 
 
-Thanks,
+-Doug
 
-Olav Haugan
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+P.S. Just to confirm: you're not opposed to landing the noirq code
+as-is.  This discussion is about how someone could make it better in
+the future...
