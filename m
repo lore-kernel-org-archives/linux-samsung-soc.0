@@ -1,108 +1,68 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: [PATCH] swiotlb: Correct kernel command line handler
-Date: Fri, 20 Jun 2014 16:20:17 -0400
-Message-ID: <20140620202017.GB5558@laptop.dumpdata.com>
-References: <011801cf4d4c$f7ba51f0$e72ef5d0$@samsung.com>
- <20140401124606.GA7135@phenom.dumpdata.com>
- <004c01cf4e2d$1d84a1c0$588de540$@samsung.com>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 1/2] ASoC: max98090: Add max98091 compatible string
+Date: Fri, 20 Jun 2014 13:32:26 -0700
+Message-ID: <CAD=FV=XX1XAX-jZTJaQYTHbeXkHu2uX_6==vHYbSnVpjJe6+tQ@mail.gmail.com>
+References: <1403251396-17487-1-git-send-email-tushar.b@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:42010 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751731AbaFTUUY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Jun 2014 16:20:24 -0400
-Content-Disposition: inline
-In-Reply-To: <004c01cf4e2d$1d84a1c0$588de540$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403251396-17487-1-git-send-email-tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, tiwai-l3A5Bk7waGM@public.gmane.org, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wonjoon Lee <woojoo.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jungseok Lee <jays.lee@samsung.com>
-Cc: linux-kernel@vger.kernel.org, sungjinn.chung@samsung.com, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-On Wed, Apr 02, 2014 at 01:36:29PM +0900, Jungseok Lee wrote:
-> On Tuesday, April 01, 2014 9:46 PM, Konrad Rzeszutek Wilk wrote:
-> > On Tue, Apr 01, 2014 at 10:51:58AM +0900, Jungseok Lee wrote:
-> > > This patch corrects kernel command line handler when io_tlb_nslabs is
-> > > set to 0.
-> > >
-> > > A current implementation allocates default size memory (64MB) when
-> > > 0 is given to io_tlb_nslabs ("swiotlb=0") by kernel command line.
-> > > In other words, memory is allocated unintentionally.
-> > 
-> > What are the other IOMMUs that end up taking over the DMA ops?
-> 
-> I think that no other IOMMUs take over it on ARM64 system, except Xen.
-> 
-> > Or do you end up with no DMA ops?
-> 
-> I focus on ARM64 system which uses swiotlb as default DMA ops.
-> 
-> If some ARM64 platforms would like to use memory only from
-> __get_free_pages in swiotlb_alloc_coherent function, an
-> interface would be needed to configure reserved memory size.
-> 
-> Thus, I add it to kernel command line handler.
+Tushar,
 
-OK. I somehow have lost track of this patch. Is this patch
-still valid?
+On Fri, Jun 20, 2014 at 1:03 AM, Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> From: Wonjoon Lee <woojoo.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>
+> The MAX98091 CODEC is the same as MAX98090 CODEC, but with an extra
+> microphone. Existing driver for MAX98090 CODEC already has support
+> for MAX98091 CODEC. Adding proper compatible string so that MAX98091
+> CODEC can be specified from device tree.
+>
+> Signed-off-by: Wonjoon Lee <woojoo.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Signed-off-by: Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>
+> Picked from https://chromium-review.googlesource.com/#/c/184091/
+>
+>  .../devicetree/bindings/sound/max98090.txt         |    2 +-
+>  sound/soc/codecs/max98090.c                        |    2 ++
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/sound/max98090.txt b/Documentation/devicetree/bindings/sound/max98090.txt
+> index a5e63fa..c454e67 100644
+> --- a/Documentation/devicetree/bindings/sound/max98090.txt
+> +++ b/Documentation/devicetree/bindings/sound/max98090.txt
+> @@ -4,7 +4,7 @@ This device supports I2C only.
+>
+>  Required properties:
+>
+> -- compatible : "maxim,max98090".
+> +- compatible : "maxim,max98090" or "maxim,max98091".
+>
+>  - reg : The I2C address of the device.
+>
+> diff --git a/sound/soc/codecs/max98090.c b/sound/soc/codecs/max98090.c
+> index f5fccc7..4f5534d 100644
+> --- a/sound/soc/codecs/max98090.c
+> +++ b/sound/soc/codecs/max98090.c
+> @@ -2460,12 +2460,14 @@ static const struct dev_pm_ops max98090_pm = {
+>
+>  static const struct i2c_device_id max98090_i2c_id[] = {
+>         { "max98090", MAX98090 },
+> +       { "max98091", MAX98091 },
 
-> 
-> Best Regards
-> Jungseok Lee
-> 
-> > >
-> > > Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
-> > > Signed-off-by: Sungjinn Chung <sungjinn.chung@samsung.com>
-> > > ---
-> > >  lib/swiotlb.c |    8 ++++++--
-> > >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/lib/swiotlb.c b/lib/swiotlb.c index b604b83..9fe9f71
-> > > 100644
-> > > --- a/lib/swiotlb.c
-> > > +++ b/lib/swiotlb.c
-> > > @@ -55,6 +55,8 @@
-> > >
-> > >  int swiotlb_force;
-> > >
-> > > +static int swiotlb_no_use;
-> > > +
-> > >  /*
-> > >   * Used to do a quick range check in swiotlb_tbl_unmap_single and
-> > >   * swiotlb_tbl_sync_single_*, to see if the memory was in fact
-> > > allocated by this @@ -102,6 +104,8 @@ setup_io_tlb_npages(char *str)
-> > >  		io_tlb_nslabs = simple_strtoul(str, &str, 0);
-> > >  		/* avoid tail segment of size < IO_TLB_SEGSIZE */
-> > >  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
-> > > +		if (!io_tlb_nslabs)
-> > > +			swiotlb_no_use = 1;
-> > >  	}
-> > >  	if (*str == ',')
-> > >  		++str;
-> > > @@ -212,7 +216,7 @@ swiotlb_init(int verbose)
-> > >  	unsigned char *vstart;
-> > >  	unsigned long bytes;
-> > >
-> > > -	if (!io_tlb_nslabs) {
-> > > +	if (!swiotlb_no_use && !io_tlb_nslabs) {
-> > >  		io_tlb_nslabs = (default_size >> IO_TLB_SHIFT);
-> > >  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
-> > >  	}
-> > > @@ -244,7 +248,7 @@ swiotlb_late_init_with_default_size(size_t default_size)
-> > >  	unsigned int order;
-> > >  	int rc = 0;
-> > >
-> > > -	if (!io_tlb_nslabs) {
-> > > +	if (!swiotlb_no_use && !io_tlb_nslabs) {
-> > >  		io_tlb_nslabs = (default_size >> IO_TLB_SHIFT);
-> > >  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
-> > >  	}
-> > > --
-> > > 1.7.10.4
-> > >
-> > >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in the body of a message
-> > to majordomo@vger.kernel.org More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+optional: This would allow you to add some extra error checking in
+max98090_probe() to make sure that the device-tree specified device
+matched the device that was detected.  That could be in a future
+patch, though.
+
+Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
