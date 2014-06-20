@@ -1,21 +1,20 @@
 From: Simon Glass <sjg@chromium.org>
-Subject: Re: [PATCH v2 05/10] mfd: cros_ec: Use struct cros_ec_command to
- communicate with the EC
-Date: Thu, 19 Jun 2014 21:40:55 -0600
-Message-ID: <CAPnjgZ0VfWx6EFrqPZ71OCr7K+fBQ0STBYAbXPTaL4bsbQ3qow@mail.gmail.com>
+Subject: Re: [PATCH v2 08/10] mfd: cros_ec: Check result code from EC messages
+Date: Thu, 19 Jun 2014 21:42:12 -0600
+Message-ID: <CAPnjgZ1TbeTNMAvJOUAMi5t3_AEUMHptex=aR08iX5-ZLcsxoQ@mail.gmail.com>
 References: <1403115247-8853-1-git-send-email-dianders@chromium.org>
-	<1403115247-8853-6-git-send-email-dianders@chromium.org>
+	<1403115247-8853-9-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f179.google.com ([209.85.216.179]:50499 "EHLO
-	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753775AbaFTDk4 (ORCPT
+Received: from mail-qc0-f176.google.com ([209.85.216.176]:53516 "EHLO
+	mail-qc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933718AbaFTDmM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jun 2014 23:40:56 -0400
-Received: by mail-qc0-f179.google.com with SMTP id x3so2991432qcv.38
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2014 20:40:55 -0700 (PDT)
-In-Reply-To: <1403115247-8853-6-git-send-email-dianders@chromium.org>
+	Thu, 19 Jun 2014 23:42:12 -0400
+Received: by mail-qc0-f176.google.com with SMTP id w7so3018054qcr.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jun 2014 20:42:12 -0700 (PDT)
+In-Reply-To: <1403115247-8853-9-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Doug Anderson <dianders@chromium.org>
@@ -24,12 +23,17 @@ Cc: Lee Jones <lee.jones@linaro.org>, Andrew Bresticker <abrestic@chromium.org>,
 On 18 June 2014 12:14, Doug Anderson <dianders@chromium.org> wrote:
 > From: Bill Richardson <wfrichar@chromium.org>
 >
-> This is some internal structure reorganization / renaming to prepare
-> for future patches that will add a userspace API to cros_ec.  There
-> should be no visible changes.
+> Just because the host was able to talk to the EC doesn't mean that the EC
+> was happy with what it was told. Errors in communincation are not the same
+> as error messages from the EC itself.
+>
+> This change lets the EC report its errors separately.
+>
+> [dianders: Added common function to cros_ec.c]
 >
 > Signed-off-by: Bill Richardson <wfrichar@chromium.org>
 > Signed-off-by: Doug Anderson <dianders@chromium.org>
-> Acked-by: Lee Jones <lee.jones@linaro.org>
+
+This is better.
 
 Reviewed-by: Simon Glass <sjg@chromium.org>
