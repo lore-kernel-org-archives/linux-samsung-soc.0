@@ -1,36 +1,108 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 1/2] ARM: dts: Enable audio support for Peach-pi board
-Date: Fri, 20 Jun 2014 13:10:04 -0700
-Message-ID: <CAD=FV=Xkk55CBOd4B=4ikY0_Qt0u=pcu-p9TyMc9MrqqXHJaCQ@mail.gmail.com>
-References: <1403252419-28352-1-git-send-email-tushar.b@samsung.com>
-	<1403252419-28352-2-git-send-email-tushar.b@samsung.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [PATCH] swiotlb: Correct kernel command line handler
+Date: Fri, 20 Jun 2014 16:20:17 -0400
+Message-ID: <20140620202017.GB5558@laptop.dumpdata.com>
+References: <011801cf4d4c$f7ba51f0$e72ef5d0$@samsung.com>
+ <20140401124606.GA7135@phenom.dumpdata.com>
+ <004c01cf4e2d$1d84a1c0$588de540$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f169.google.com ([209.85.220.169]:37231 "EHLO
-	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753833AbaFTUKF (ORCPT
+Received: from aserp1040.oracle.com ([141.146.126.69]:42010 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751731AbaFTUUY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Jun 2014 16:10:05 -0400
-Received: by mail-vc0-f169.google.com with SMTP id la4so3882493vcb.14
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jun 2014 13:10:04 -0700 (PDT)
-In-Reply-To: <1403252419-28352-2-git-send-email-tushar.b@samsung.com>
+	Fri, 20 Jun 2014 16:20:24 -0400
+Content-Disposition: inline
+In-Reply-To: <004c01cf4e2d$1d84a1c0$588de540$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.b@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "broonie@kernel.org" <broonie@kernel.org>, Tushar Behera <trblinux@gmail.com>
+To: Jungseok Lee <jays.lee@samsung.com>
+Cc: linux-kernel@vger.kernel.org, sungjinn.chung@samsung.com, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-Tushar,
+On Wed, Apr 02, 2014 at 01:36:29PM +0900, Jungseok Lee wrote:
+> On Tuesday, April 01, 2014 9:46 PM, Konrad Rzeszutek Wilk wrote:
+> > On Tue, Apr 01, 2014 at 10:51:58AM +0900, Jungseok Lee wrote:
+> > > This patch corrects kernel command line handler when io_tlb_nslabs is
+> > > set to 0.
+> > >
+> > > A current implementation allocates default size memory (64MB) when
+> > > 0 is given to io_tlb_nslabs ("swiotlb=0") by kernel command line.
+> > > In other words, memory is allocated unintentionally.
+> > 
+> > What are the other IOMMUs that end up taking over the DMA ops?
+> 
+> I think that no other IOMMUs take over it on ARM64 system, except Xen.
+> 
+> > Or do you end up with no DMA ops?
+> 
+> I focus on ARM64 system which uses swiotlb as default DMA ops.
+> 
+> If some ARM64 platforms would like to use memory only from
+> __get_free_pages in swiotlb_alloc_coherent function, an
+> interface would be needed to configure reserved memory size.
+> 
+> Thus, I add it to kernel command line handler.
 
-On Fri, Jun 20, 2014 at 1:20 AM, Tushar Behera <tushar.b@samsung.com> wrote:
-> Peach-pi board has MAX98091 audio codec connected on HSI2C-7 bus.
->
-> Signed-off-by: Tushar Behera <tushar.b@samsung.com>
-> ---
-> Changes for v2:
-> * Replaced max98090 with max98091.
->
->  arch/arm/boot/dts/exynos5800-peach-pi.dts |   31 +++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
+OK. I somehow have lost track of this patch. Is this patch
+still valid?
 
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+> 
+> Best Regards
+> Jungseok Lee
+> 
+> > >
+> > > Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
+> > > Signed-off-by: Sungjinn Chung <sungjinn.chung@samsung.com>
+> > > ---
+> > >  lib/swiotlb.c |    8 ++++++--
+> > >  1 file changed, 6 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/lib/swiotlb.c b/lib/swiotlb.c index b604b83..9fe9f71
+> > > 100644
+> > > --- a/lib/swiotlb.c
+> > > +++ b/lib/swiotlb.c
+> > > @@ -55,6 +55,8 @@
+> > >
+> > >  int swiotlb_force;
+> > >
+> > > +static int swiotlb_no_use;
+> > > +
+> > >  /*
+> > >   * Used to do a quick range check in swiotlb_tbl_unmap_single and
+> > >   * swiotlb_tbl_sync_single_*, to see if the memory was in fact
+> > > allocated by this @@ -102,6 +104,8 @@ setup_io_tlb_npages(char *str)
+> > >  		io_tlb_nslabs = simple_strtoul(str, &str, 0);
+> > >  		/* avoid tail segment of size < IO_TLB_SEGSIZE */
+> > >  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
+> > > +		if (!io_tlb_nslabs)
+> > > +			swiotlb_no_use = 1;
+> > >  	}
+> > >  	if (*str == ',')
+> > >  		++str;
+> > > @@ -212,7 +216,7 @@ swiotlb_init(int verbose)
+> > >  	unsigned char *vstart;
+> > >  	unsigned long bytes;
+> > >
+> > > -	if (!io_tlb_nslabs) {
+> > > +	if (!swiotlb_no_use && !io_tlb_nslabs) {
+> > >  		io_tlb_nslabs = (default_size >> IO_TLB_SHIFT);
+> > >  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
+> > >  	}
+> > > @@ -244,7 +248,7 @@ swiotlb_late_init_with_default_size(size_t default_size)
+> > >  	unsigned int order;
+> > >  	int rc = 0;
+> > >
+> > > -	if (!io_tlb_nslabs) {
+> > > +	if (!swiotlb_no_use && !io_tlb_nslabs) {
+> > >  		io_tlb_nslabs = (default_size >> IO_TLB_SHIFT);
+> > >  		io_tlb_nslabs = ALIGN(io_tlb_nslabs, IO_TLB_SEGSIZE);
+> > >  	}
+> > > --
+> > > 1.7.10.4
+> > >
+> > >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in the body of a message
+> > to majordomo@vger.kernel.org More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
