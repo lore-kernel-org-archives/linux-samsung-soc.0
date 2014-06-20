@@ -1,231 +1,152 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCHv4 2/4] iio: adc: exynos_adc: Control special clock of ADC
- to support Exynos3250 ADC
-Date: Fri, 20 Jun 2014 08:51:49 +0530
-Message-ID: <CAHfPSqD73W7tdNxgmb4BaVCazYkuNY5Q87=dT7PtZTsPfqMx9g@mail.gmail.com>
-References: <1403058061-24271-1-git-send-email-cw00.choi@samsung.com>
- <1403058061-24271-3-git-send-email-cw00.choi@samsung.com> <53A146A8.7050501@gmail.com>
- <53A37EDA.2030403@samsung.com> <53A37F34.1010808@gmail.com>
- <53A38016.1000308@samsung.com> <53A380AD.3090307@gmail.com>
+From: Sachin Kamat <spk.linux@gmail.com>
+Subject: Re: MMC error on Exynos4210 board
+Date: Fri, 20 Jun 2014 09:03:06 +0530
+Message-ID: <CAK5sBcEoNm85qtY2gfWAo1FZoVWXNj1f3FFFngB7FjpTBTnJdQ@mail.gmail.com>
+References: <CAK5sBcEB5GnjiR37DXDAeKYBWKw_4NTDM=pKCVK=0oKFDBjSbw@mail.gmail.com>
+	<CAD7vxxJrRd7nrhZBRWH=43r7AMopz1w30aMRHqMO9PvaZYOpHg@mail.gmail.com>
+	<CAK5sBcHqjmT7rcXLPkP3WHBdcphJjhm2aBfy4ksbXakNUfVYYw@mail.gmail.com>
+	<CAD7vxxJ2mrk9Wrhw+0rB1Afk5zUsR05a1P8aeyou9JPVk6sCrA@mail.gmail.com>
+	<CAK5sBcFCbhBCbgss=KU=__gxpb7KUm6GWhO_MWQAqRgkvCagwQ@mail.gmail.com>
+	<CAD7vxxK5a_Nc4DjP8x4-=Um6xi=kPa=3sRZdvBuNBXMLUEEimA@mail.gmail.com>
+	<CAK5sBcF=5NYd-tuvRrQk7Yq_r_oUYftpNuHcz7iJ8TGNWkG0iA@mail.gmail.com>
+	<53A2DA96.3070500@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53A380AD.3090307@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org, My self <ch.naveen@samsung.com>, t.figa@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sachin.kamat@linaro.org, linux-iio@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f54.google.com ([209.85.215.54]:42857 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932975AbaFTDdJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 19 Jun 2014 23:33:09 -0400
+In-Reply-To: <53A2DA96.3070500@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Tim Kryger <tim.kryger@gmail.com>, Markus Mayer <markus.mayer@linaro.org>, Matt Porter <mporter@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Yuvaraj C D <yuvaraj.cd@samsung.com>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>
 
-Hello Tomasz,
-
-On 20 June 2014 06:00, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On 20.06.2014 02:28, Chanwoo Choi wrote:
->> On 06/20/2014 09:24 AM, Tomasz Figa wrote:
->>> On 20.06.2014 02:22, Chanwoo Choi wrote:
->>>> Hi Tomasz,
+On Thu, Jun 19, 2014 at 6:11 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> On 06/19/2014 07:40 PM, Sachin Kamat wrote:
+>> On Thu, Jun 19, 2014 at 2:40 PM, Tim Kryger <tim.kryger@gmail.com> wrote:
+>>> On Thu, Jun 19, 2014 at 1:49 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
+>>>> +cc Some relevant guys from Samsung
 >>>>
->>>> On 06/18/2014 04:58 PM, Tomasz Figa wrote:
->>>>> Hi Chanwoo,
+>>>> On Thu, Jun 19, 2014 at 2:12 PM, Tim Kryger <tim.kryger@gmail.com> wrote:
+>>>>> On Wed, Jun 18, 2014 at 8:54 PM, Sachin Kamat <spk.linux@gmail.com> wrote:
 >>>>>
->>>>> On 18.06.2014 04:20, Chanwoo Choi wrote:
->>>>>> This patch control special clock for ADC in Exynos series's FSYS block.
->>>>>> If special clock of ADC is registerd on clock list of common clk framework,
->>>>>> Exynos ADC drvier have to control this clock.
->>>>>>
->>>>>> Exynos3250/Exynos4/Exynos5 has 'adc' clock as following:
->>>>>> - 'adc' clock: bus clock for ADC
->>>>>>
->>>>>> Exynos3250 has additional 'sclk_adc' clock as following:
->>>>>> - 'sclk_adc' clock: special clock for ADC which provide clock to internal ADC
->>>>>>
->>>>>> Exynos 4210/4212/4412 and Exynos5250/5420 has not included 'sclk_adc' clock
->>>>>> in FSYS_BLK. But, Exynos3250 based on Cortex-A7 has only included 'sclk_adc'
->>>>>> clock in FSYS_BLK.
->>>>>>
->>>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>>>> ---
->>>>>>  drivers/iio/adc/exynos_adc.c | 93 ++++++++++++++++++++++++++++++++++++++------
->>>>>>  1 file changed, 81 insertions(+), 12 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
->>>>>> index c30def6..6b026ac 100644
->>>>>> --- a/drivers/iio/adc/exynos_adc.c
->>>>>> +++ b/drivers/iio/adc/exynos_adc.c
->>>>>> @@ -41,7 +41,8 @@
->>>>>>
->>>>>>  enum adc_version {
->>>>>>   ADC_V1,
->>>>>> - ADC_V2
->>>>>> + ADC_V2,
->>>>>> + ADC_V2_EXYNOS3250,
->>>>>>  };
->>>>>>
->>>>>>  /* EXYNOS4412/5250 ADC_V1 registers definitions */
->>>>>> @@ -85,9 +86,11 @@ enum adc_version {
->>>>>>  #define EXYNOS_ADC_TIMEOUT       (msecs_to_jiffies(100))
->>>>>>
->>>>>>  struct exynos_adc {
->>>>>> + struct device           *dev;
->>>>>>   void __iomem            *regs;
->>>>>>   void __iomem            *enable_reg;
->>>>>>   struct clk              *clk;
->>>>>> + struct clk              *sclk;
->>>>>>   unsigned int            irq;
->>>>>>   struct regulator        *vdd;
->>>>>>   struct exynos_adc_ops   *ops;
->>>>>> @@ -96,6 +99,7 @@ struct exynos_adc {
->>>>>>
->>>>>>   u32                     value;
->>>>>>   unsigned int            version;
->>>>>> + bool                    needs_sclk;
+>>>>>>> On Wed, Jun 18, 2014 at 4:33 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
 >>>>>
->>>>> This should be rather a part of the variant struct. See my comments to
->>>>> patch 1/4.
+>>>>>>>> I see the below error on Exynos4210 based Origen board with linux-next
+>>>>>>>> (20140618).
+>>>>>>>> Reverting the below commit works fine.
+>>>>>>>>
+>>>>>>>> Commit: 8d02e775a6 "mmc: sdhci: Use mmc core regulator infrastucture"
+>>>>>
+>>>>>>>>
+>>>>>>>> -- [    2.068992] sdhci: Secure Digital Host Controller Interface driver
+>>>>>>>> [    2.075059] sdhci: Copyright(c) Pierre Ossman
+>>>>>>>> [    2.079762] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>>>> node '/sdhci@12510000[0]'
+>>>>>>>> [    2.088021] s3c-sdhci 12510000.sdhci: clock source 2: mmc_busclk.2
+>>>>>>>> (50000000 Hz)
+>>>>>>>> [    2.095322] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>>>> node '/sdhci@12510000[0]'
+>>>>>>>> [    2.103794] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>>>> node '/sdhci@12510000[0]'
+>>>>>>>> [    2.112478] s3c-sdhci 12510000.sdhci: No vqmmc regulator found
+>>>>>>>> [    2.118117] mmc0: Hardware doesn't report any support voltages.
+>>>>>>>> [    2.124004] s3c-sdhci 12510000.sdhci: sdhci_add_host() failed
+>>>>>>>> [    2.130080] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>>>> node '/sdhci@12530000[0]'
+>>>>>>>> [    2.138352] s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2
+>>>>>>>> (16666667 Hz)
+>>>>>>>> [    2.145661] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>>>> node '/sdhci@12530000[0]'
+>>>>>>>> [    2.154139] of_get_named_gpiod_flags: can't parse gpios property of
+>>>>>>>> node '/sdhci@12530000[0]'
+>>>>>>>> [    2.162834] s3c-sdhci 12530000.sdhci: No vqmmc regulator found
+>>>>>>>> [    2.168464] mmc0: Hardware doesn't report any support voltages.
+>>>>>>>> [    2.174349] s3c-sdhci 12530000.sdhci: sdhci_add_host() failed
+>>>>>
+>>>>>>>> [    2.336148] Waiting for root device /dev/mmcblk0p1...
+>>>>>
+>>>>>> FYI, the board has a 2.8V fixed regulator supply connected to the MMC.
+>>>>>> You may refer to arch/arm/boot/dts/exynos4210-origen.dts for more details.
+>>>>>
+>>>>> A 2.8v regulator results in mmc->ocr_avail being set to MMC_VDD_27_28
+>>>>> | MMC_VDD_28_29.
+>>>>>
+>>>>> The SDHCI capabilities register only indicates support of three voltage levels
+>>>>>   - 1.8v: SDHCI_CAN_VDD_180 => MMC_VDD_165_195
+>>>>>   - 3.0v: SDHCI_CAN_VDD_300 => MMC_VDD_29_30 | MMC_VDD_30_31
+>>>>>   - 3.3v: SDHCI_CAN_VDD_330 => MMC_VDD_32_33 | MMC_VDD_33_34
+>
+> Right. sdhci capabilities only indicated them.
+> But I think SoC can be support the specific VDD range.
+>
+>>>>>
+>>>>> Even if all capability bits of the host controller were set, there
+>>>>> still wouldn't be any overlap.  Thus you see a "Hardware doesn't
+>>>>> report any support voltages" message.
+>>>>>
+>>>>> Previously, this issue was being swept under the rug by cec2e21 mmc:
+>>>>> sdhci: Use regulator min/max voltage range according to spec.  That
+>>>>> change hacked up the voltage range checks such that with your 2.8v
+>>>>> fixed regulator, the driver would believe the host could support
+>>>>> MMC_VDD_29_30 | MMC_VDD_30_31 | MMC_VDD_32_33 | MMC_VDD_33_34.  The
+>>>>> driver would start down the path of commanding 3.3v-3.4v (the highest
+>>>>> voltage range believed to be supported).  At the last second, the
+>>>>> driver would see the regulator was fixed and blindly skip over the set
+>>>>> voltage operation, saving it from failure.
+>>>>>
+>>>>> Since my patch eliminates the bogus voltage range checks, your board
+>>>>> is now getting caught playing too loose with the SDHCI regulator
+>>>>> voltages.
+>>>>>
+>>>>> Furthermore, the fixed regulator special-case logic that helped hide
+>>>>> your issue should also be considered for removal given that fixed
+>>>>> regulators now behave properly thanks to c00dc35 regulator: core:
+>>>>> Allow regulator_set_voltage for fixed regulators.
 >>>>
->>>> OK, I'll include 'needs_sclk' in "variant" structure.
->>>>
->>>>>
->>>>>>  };
->>>>>>
->>>>>>  struct exynos_adc_ops {
->>>>>> @@ -103,11 +107,21 @@ struct exynos_adc_ops {
->>>>>>   void (*clear_irq)(struct exynos_adc *info);
->>>>>>   void (*start_conv)(struct exynos_adc *info, unsigned long addr);
->>>>>>   void (*stop_conv)(struct exynos_adc *info);
->>>>>> + void (*disable_clk)(struct exynos_adc *info);
->>>>>> + int (*enable_clk)(struct exynos_adc *info);
->>>>>>  };
->>>>>>
->>>>>>  static const struct of_device_id exynos_adc_match[] = {
->>>>>> - { .compatible = "samsung,exynos-adc-v1", .data = (void *)ADC_V1 },
->>>>>> - { .compatible = "samsung,exynos-adc-v2", .data = (void *)ADC_V2 },
->>>>>> + {
->>>>>> +         .compatible = "samsung,exynos-adc-v1",
->>>>>> +         .data = (void *)ADC_V1,
->>>>>> + }, {
->>>>>> +         .compatible = "samsung,exynos-adc-v2",
->>>>>> +         .data = (void *)ADC_V2,
->>>>>> + }, {
->>>>>> +         .compatible = "samsung,exynos3250-adc-v2",
->>>>>> +         .data = (void *)ADC_V2_EXYNOS3250,
->>>>>> + },
->>>>>>   {},
->>>>>>  };
->>>>>>  MODULE_DEVICE_TABLE(of, exynos_adc_match);
->>>>>> @@ -156,11 +170,42 @@ static void exynos_adc_v1_stop_conv(struct exynos_adc *info)
->>>>>>   writel(con, ADC_V1_CON(info->regs));
->>>>>>  }
->>>>>>
->>>>>> +static void exynos_adc_disable_clk(struct exynos_adc *info)
->>>>>> +{
->>>>>> + if (info->needs_sclk)
->>>>>> +         clk_disable_unprepare(info->sclk);
->>>>>> + clk_disable_unprepare(info->clk);
->>>>>> +}
->>>>>> +
->>>>>> +static int exynos_adc_enable_clk(struct exynos_adc *info)
->>>>>> +{
->>>>>> + int ret;
->>>>>> +
->>>>>> + ret = clk_prepare_enable(info->clk);
->>>>>> + if (ret) {
->>>>>> +         dev_err(info->dev, "failed enabling adc clock: %d\n", ret);
->>>>>> +         return ret;
->>>>>> + }
->>>>>> +
->>>>>> + if (info->needs_sclk) {
->>>>>> +         ret = clk_prepare_enable(info->sclk);
->>>>>> +         if (ret) {
->>>>>> +                 clk_disable_unprepare(info->clk);
->>>>>> +                 dev_err(info->dev,
->>>>>> +                         "failed enabling sclk_tsadc clock: %d\n", ret);
->>>>>> +         }
->>>>>> + }
->>>>>> +
->>>>>> + return 0;
->>>>>> +}
->>>>>> +
->>>>>>  static struct exynos_adc_ops exynos_adc_v1_ops = {
->>>>>>   .init_hw        = exynos_adc_v1_init_hw,
->>>>>>   .clear_irq      = exynos_adc_v1_clear_irq,
->>>>>>   .start_conv     = exynos_adc_v1_start_conv,
->>>>>>   .stop_conv      = exynos_adc_v1_stop_conv,
->>>>>> + .disable_clk    = exynos_adc_disable_clk,
->>>>>> + .enable_clk     = exynos_adc_enable_clk,
->>>>>>  };
->>>>>>
->>>>>>  static void exynos_adc_v2_init_hw(struct exynos_adc *info)
->>>>>> @@ -210,6 +255,8 @@ static struct exynos_adc_ops exynos_adc_v2_ops = {
->>>>>>   .start_conv     = exynos_adc_v2_start_conv,
->>>>>>   .clear_irq      = exynos_adc_v2_clear_irq,
->>>>>>   .stop_conv      = exynos_adc_v2_stop_conv,
->>>>>> + .disable_clk    = exynos_adc_disable_clk,
->>>>>> + .enable_clk     = exynos_adc_enable_clk,
->>>>>
->>>>> Based on the fact that all variants use the same function, I don't think
->>>>> there is a reason to add .{disable,enable}_clk in the ops struct. If
->>>>> they diverge in future, they could be added later, but right now it
->>>>> doesn't have any value.
->>>>
->>>> OK, I'll not add .{disable,enable}_clk and then just use following functions for clock control:
->>>> - exynos_adc_prepare_clk() : once execute this function in _probe()
->>>> - exynos_adc_unprepare_clk() : once execute this function in _remove()
->>>> - exynos_adc_enable_clk()
->>>> - exynos_adc_disable_clk()
+>>>> Thanks for the detailed explanation. What do you propose to get this fixed?
 >>>
->>> Is there any need to separate prepare/unprepare from enable/disable?
->>> Otherwise sounds good, thanks.
->>
->> Naveen Krishna Chatradhi want to execute once prepare/unpreare in probe/remove function.
->>
->> - Following comment of Naveen Krishna Chatradhi
->>> +static void exynos_adc_disable_clk(struct exynos_adc *info)
->>> +{
->>> +       if (info->needs_sclk)
->>> +               clk_disable_unprepare(info->sclk);
->>> +       clk_disable_unprepare(info->clk);
->>
->> (Just a nit pick) As a part of cleanup can we also change to use
->> clk_disable() here and clk_unprepare() once and for all at the end.
->>
->>> +}
->>> +
->>> +static int exynos_adc_enable_clk(struct exynos_adc *info)
->>> +{
->>> +       int ret;
->>> +
->>> +       ret = clk_prepare_enable(info->clk);
->>> +       if (ret) {
->>> +               dev_err(info->dev, "failed enabling adc clock: %d\n", ret);
->>> +               return ret;
->>> +       }
->>> +
->>> +       if (info->needs_sclk) {
->>> +               ret = clk_prepare_enable(info->sclk);
->> Can we use clk_enable() here and clk_prepare() some where during the probe.
+>>> I'm not really sure of the best path forward.  I suppose you could
+>>> modify your device tree to lie about the voltage of the fixed
+>>> regulator.  Changing it to 3.0v should allow it to boot up but that is
+>>> definitely a hack.
+> I don't want to change the 3.0V at dt file...is it hack? i don't think so.
+> Almost exynos4 Series is used the fixed regulator(2.8V).
+> I didn't know exactly why we used the 2.8V. But i guess there is some reason.(H/W design).
 >
-> I still don't see any reason to do it. Naveen, what's the motivation for
-> this change? For me, it only complicates the code, without any added value.
+> If we need to change ocr value,
+> then i will add the quirk or controlling function for exynos into sdhci-s3c.c
+> How about?
 
-clk_prepare() and clk_unprepare() maintains the clk prepare count.
-Which we may not need for every transaction.
-
-We just need to  clk_enable() and clk_disable() the clock carefully.
-
-Thus, using clk_prepare() and clk_unprepare() once should reduce a set of
-instructions for every transaction. Right ?
+That sounds good compared to adding hacks in DT files.
 
 >
-> Best regards,
-> Tomasz
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>> Or I could simply remove the vmmc-supply property altogether (as it is optional)
+>> and get the board to work.
+> Then is it supported the power "always-on"?
 
+Atleast on Exynos 4210 and 4412 Origen boards the 2.8V MMC supply is derived
+directly from the 5V input DC supply and hence it is always on.
 
+>>
+>>> It would be nice if the driver could be extended
+>>> to handle the peculiarities of your board in a deliberate manner but
+>>> limiting the common sdhci driver to supporting only the three voltages
+>>> from the spec also seems sensible.
+>>
+>> Until such time that the driver gets fixed to handle 2.8V fixed supply your
+>> current patch leaves several of Exynos boards broken for now.
+>
+> the all of exynos used the fixed-regulator(2.8v) should be broken.
+> (Maybe exynos4 series??)
+
+Probably. I haven't verified for the other boards. Hence would be good to handle
+this case in the driver itself.
 
 -- 
-Shine bright,
-(: Nav :)
+Regards,
+Sachin.
