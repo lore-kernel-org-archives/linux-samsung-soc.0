@@ -1,48 +1,35 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v2] clocksource: exynos-mct: Register the timer for
- stable udelay
-Date: Fri, 20 Jun 2014 09:15:09 +0100
-Message-ID: <20140620081509.GA25104@arm.com>
-References: <1403167145-5267-1-git-send-email-amit.daniel@samsung.com>
- <53A2B9C3.1050906@gmail.com>
- <CAD=FV=VmC-p4_R1GV3U3bg1JojTzNYKyFTa8o8QMJ=3m=WuRYA@mail.gmail.com>
- <53A30D08.6070107@gmail.com>
- <CAD=FV=UjFJ9utR9i=Xu4DRQ7gdULCtXQXgsQ8gUYm6-V5U4GaQ@mail.gmail.com>
- <53A31291.9000007@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <53A31291.9000007@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Doug Anderson <dianders@chromium.org>, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, David Riley <davidriley@chromium.org>, Jonathan Austin <Jonathan.Austin@arm.com>
+From: Tushar Behera <tushar.b@samsung.com>
+Subject: [PATCH v2 0/2] ARM: dts: Peach-pi audio support and cleanup
+Date: Fri, 20 Jun 2014 13:50:17 +0530
+Message-ID: <1403252419-28352-1-git-send-email-tushar.b@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f54.google.com ([209.85.160.54]:58544 "EHLO
+	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965273AbaFTIXY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Jun 2014 04:23:24 -0400
+Received: by mail-pb0-f54.google.com with SMTP id un15so2853159pbc.41
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jun 2014 01:23:23 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, broonie@kernel.org, dianders@chromium.org, trblinux@gmail.com
 
-On Thu, Jun 19, 2014 at 05:40:49PM +0100, Tomasz Figa wrote:
-> On 19.06.2014 18:31, Doug Anderson wrote:
-> >>> My personal vote would be to submit a patch to change "cycles_t" to
-> >>> always be 32-bits.  Given that 32-bits was fine for udelay() for ARM
-> >>> that seems sane and simple.  If someone later comes up with a super
-> >>> compelling reason why we need 64-bit timers for udelay (really??) then
-> >>> they can later add all the complexity needed.
-> >>
-> >> Yes, this could work. I'm not sure what else cycles_t is used for, though.
-> > 
-> > True, it is a bit questionable to change this since it's a type that's
-> > not obviously just for udelay().  Perhaps a better option would be to
-> > make a new typedef for the result of read_current_timer().  ...or just
-> > change it to return a u32?
-> > 
-> 
-> Sounds good to me, but let's hear other opinions. I'm adding Will and
-> Jonathan as they wrote the ARM delay timer code.
+The patchset is dependent on following patch.
+[1] ARM: dts: Update the parent for Audss clocks in Exynos5420
+https://lkml.org/lkml/2014/6/11/36
 
-I think cycles_t is only used for small interval calculations at the moment,
-but I remember Ted mentioning something about using it (or something
-similar) as a source of early entropy, in which case the more bits the
-better.
+During the review of v1, it was pointed out that it would be better to
+sort DTS files for Peach-pit and Peach-pi boards. Patch 2 is a step
+towards that activity.
 
-That said, I can't find any code in the tree to that effect.
+Tushar Behera (2):
+  ARM: dts: Enable audio support for Peach-pi board
+  ARM: dts: Sort nodes within Peach-pit/Peach-pi dts files
 
-Will
+ arch/arm/boot/dts/exynos5420-peach-pit.dts |  236 ++++++++++++++--------------
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  |  218 ++++++++++++++-----------
+ 2 files changed, 245 insertions(+), 209 deletions(-)
+
+-- 
+1.7.9.5
