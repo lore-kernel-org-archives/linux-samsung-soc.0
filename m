@@ -1,53 +1,59 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: Sort nodes within Peach-pit/Peach-pi dts
- files
-Date: Sat, 21 Jun 2014 21:51:32 +0900
-Message-ID: <53A57FD4.7050003@samsung.com>
-References: <1403252419-28352-1-git-send-email-tushar.b@samsung.com>	<1403252419-28352-3-git-send-email-tushar.b@samsung.com> <CAD=FV=X1EJ4HFQcSR2nBZTnmpOaKRkEy04d21LBSKS3Vj1XAUA@mail.gmail.com>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH 1/3 v5] spi: s3c64xx: fix broken "cs_gpios" usage in the driver
+Date: Sat, 21 Jun 2014 22:53:14 +0530
+Message-ID: <CAHfPSqCvHRMxPAVgRDrP-BSwuwJRP5O8Z+xy5Xot8t8mASNyAA@mail.gmail.com>
+References: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
+ <CAD=FV=Ua+P0CBAfNj4SWWMWRKcEFdmh=akwy1-ZWoGOt2P9=cQ@mail.gmail.com> <20140621095149.GY5099@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:38965 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758234AbaFUMvi (ORCPT
+Received: from mail-qa0-f42.google.com ([209.85.216.42]:33943 "EHLO
+	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752353AbaFURXf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 21 Jun 2014 08:51:38 -0400
-Received: by mail-pd0-f181.google.com with SMTP id v10so3885687pde.26
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Jun 2014 05:51:37 -0700 (PDT)
-In-Reply-To: <CAD=FV=X1EJ4HFQcSR2nBZTnmpOaKRkEy04d21LBSKS3Vj1XAUA@mail.gmail.com>
+	Sat, 21 Jun 2014 13:23:35 -0400
+In-Reply-To: <20140621095149.GY5099@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Tushar Behera <tushar.b@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "broonie@kernel.org" <broonie@kernel.org>, Tushar Behera <trblinux@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
 
-On 06/21/14 05:09, Doug Anderson wrote:
-> Tushar / Kukjin,
->
-> On Fri, Jun 20, 2014 at 1:20 AM, Tushar Behera<tushar.b@samsung.com>  wrote:
->> Peach-pit and Peach-pi boards are almost similar, hence the DTS file
->> is also very similar. Sorting nodes in both these files will allow
->> us to figure out the difference easily.
->>
->> All the node aliases are sorted in alphabetically increasing order.
->> There is no functional change with this patch.
->>
->> Signed-off-by: Tushar Behera<tushar.b@samsung.com>
->> ---
->>   arch/arm/boot/dts/exynos5420-peach-pit.dts |  236 ++++++++++++++--------------
->>   arch/arm/boot/dts/exynos5800-peach-pi.dts  |  225 +++++++++++++-------------
->>   2 files changed, 233 insertions(+), 228 deletions(-)
->
-> Thanks, this looks much better.  I tried against next-20140620 and it
-> applied cleanly, gave a good diff between pit and pi, and looked sane.
->
-> This is gonna be a pain in the butt if Kukjin doesn't apply it ASAP.
-> It will conflict with every single other dts patch to pi.
->
-So I've applied both in my tree just now ;-)
+Hello Mark,
 
-> Reviewed-by: Doug Anderson<dianders@chromium.org>
+On 21 June 2014 15:21, Mark Brown <broonie@kernel.org> wrote:
+> On Fri, Jun 20, 2014 at 02:18:08PM -0700, Doug Anderson wrote:
+>
+>> Is one of you two planning to apply (parts 1 and 2)?  I know that
+>> Kukjin needs to handle the part 3 (the .dts files)...
+>
+>> Ideally it seems like it could go to 3.16 since it is a bugfix...
+>
+> Don't nag, it just means yet more mail to look at which makes things
+> worse not better.  Given all the problems the DT code for this driver
+> has I need to review carefully, and the fact that this has got to v5
+> before I had a chance to look at it sets off alarm bells too.
 
-Thanks for your review.
+The revisions were pretty quick
+v1 to v2 : Updated DT Documentation for the change
+v2 to v3 : use spi->cs_gpio in the driver
+v3 to v4 : use gpio_is_valid() instead of using sdd->cs_gpio (local variable,
+              also remove sdd->cs_gpio)
+v4 to v5 : Added Acked-by and Revewied-by from Javier and Rob Herring
 
-- Kukjin
+Major discussion in this thread was about keeping the old DT bindings
+to support legacy or move on with the new bindings.
+
+Tomasz Figa, Javier Martinez Canillas, Doug Anderson and
+Rob Herring agreed with the latter.
+
+Kindly review and let us know your comments.
+
+Thanks
+>
+> There's a couple of months to get bug fixes in yet.
+
+
+
+-- 
+Shine bright,
+(: Nav :)
