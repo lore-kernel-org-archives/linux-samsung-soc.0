@@ -1,65 +1,101 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/3 v5] spi: s3c64xx: fix broken "cs_gpios" usage in the
- driver
-Date: Sat, 21 Jun 2014 10:51:49 +0100
-Message-ID: <20140621095149.GY5099@sirena.org.uk>
-References: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
- <CAD=FV=Ua+P0CBAfNj4SWWMWRKcEFdmh=akwy1-ZWoGOt2P9=cQ@mail.gmail.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH v2] clocksource: exynos-mct: Register the timer for stable udelay
+Date: Sat, 21 Jun 2014 15:23:39 +0530
+Message-ID: <CADGdYn6O+njzhYx+P4s3KENc5tot+Cdm8JEY5-128wu-3Gc++Q@mail.gmail.com>
+References: <1403167145-5267-1-git-send-email-amit.daniel@samsung.com>
+	<53A2B9C3.1050906@gmail.com>
+	<CAD=FV=VmC-p4_R1GV3U3bg1JojTzNYKyFTa8o8QMJ=3m=WuRYA@mail.gmail.com>
+	<53A30D08.6070107@gmail.com>
+	<CAD=FV=UjFJ9utR9i=Xu4DRQ7gdULCtXQXgsQ8gUYm6-V5U4GaQ@mail.gmail.com>
+	<53A31291.9000007@gmail.com>
+	<20140620081509.GA25104@arm.com>
+	<CADGdYn6ZCvnfod3smE_mdJhK-BdkHMtno2GCH8jzX=BRWDCRPQ@mail.gmail.com>
+	<CAD=FV=UJFnDj_fuehfTUjMEzS52dWxVUjHSFxPS9oj63pNKT4A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zf2GVRt1JP70ixMf"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51686 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758167AbaFUJwk (ORCPT
+Received: from mail-yh0-f49.google.com ([209.85.213.49]:44371 "EHLO
+	mail-yh0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758167AbaFUJxk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 21 Jun 2014 05:52:40 -0400
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=Ua+P0CBAfNj4SWWMWRKcEFdmh=akwy1-ZWoGOt2P9=cQ@mail.gmail.com>
+	Sat, 21 Jun 2014 05:53:40 -0400
+In-Reply-To: <CAD=FV=UJFnDj_fuehfTUjMEzS52dWxVUjHSFxPS9oj63pNKT4A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
+Cc: Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, David Riley <davidriley@chromium.org>, Jonathan Austin <Jonathan.Austin@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-
---zf2GVRt1JP70ixMf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Jun 20, 2014 at 02:18:08PM -0700, Doug Anderson wrote:
-
-> Is one of you two planning to apply (parts 1 and 2)?  I know that
-> Kukjin needs to handle the part 3 (the .dts files)...
-
-> Ideally it seems like it could go to 3.16 since it is a bugfix...
-
-Don't nag, it just means yet more mail to look at which makes things
-worse not better.  Given all the problems the DT code for this driver
-has I need to review carefully, and the fact that this has got to v5
-before I had a chance to look at it sets off alarm bells too.
-
-There's a couple of months to get bug fixes in yet.
-
---zf2GVRt1JP70ixMf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTpVWyAAoJELSic+t+oim9gQgP+wdFJ1qWZRFGMWZbep79ZPl+
-OQkGtvCSq6nAJ1pAZYo4YyVnRAfSsOkQLVtfMoqz1vuaueqxxjV3Ti7cix0uqZlR
-Bdq4KYVsaGMpf6YH6roUm0w1NKkrbdwchhVMP4HSmBII5UKZNzVxSgagtWeifsiQ
-FvXwrEW8Vj72UmrxJWhk28iF3lrhJ7Hhqq7RfFaOaN1Ezej8R7odY/0CHDuVMcTb
-zmVsPztVmGmXOaQbIgZ7ZxxZpixNl7L5kAcfH1T3tfpiE+yk9fOUAapsl4aNzJtA
-fuTaXrmcrtEzA3Xsr2RJOYezxncGtOThG4jiKrcXVbCaKfRlGXUl34lolGqJDXrM
-QJWk65gVHm51bGb46NtyWjr33Q+3AV7swg4Ym1RCvtqGOlv2FjLSgW+eN9aexidx
-z8i6UMFT02ddom2NzZvFQha5Qyu+56SSB2V7AgHw0aKPJTiHGStgf1rQiG8jzyXl
-b8YLNxvbVCfX9OV81FGEXPUHi0V16RfvRUZP6jhOL49dn8Y03S7/9gOUSBQ/BGJ4
-N+Qiss5xEdnElVhQ7JD3+POnBnVU4OQ6b0nD9ryuNuzA92blFsvdFHoBXi1cC1nO
-4do9/sPPaRpj3i/DaXyex/pI6Xdkxar75x2ajzmx6YcXVZ6AE9zoHCrmL3ZL7VHc
-mMVtLWn2aQtiDEkWMaQE
-=ax2N
------END PGP SIGNATURE-----
-
---zf2GVRt1JP70ixMf--
+On Fri, Jun 20, 2014 at 11:17 PM, Doug Anderson <dianders@chromium.org> wrote:
+> Hi,
+>
+> On Fri, Jun 20, 2014 at 4:19 AM, amit daniel kachhap
+> <amit.daniel@samsung.com> wrote:
+>> On Fri, Jun 20, 2014 at 1:45 PM, Will Deacon <will.deacon@arm.com> wrote:
+>>> On Thu, Jun 19, 2014 at 05:40:49PM +0100, Tomasz Figa wrote:
+>>>> On 19.06.2014 18:31, Doug Anderson wrote:
+>>>> >>> My personal vote would be to submit a patch to change "cycles_t" to
+>>>> >>> always be 32-bits.  Given that 32-bits was fine for udelay() for ARM
+>>>> >>> that seems sane and simple.  If someone later comes up with a super
+>>>> >>> compelling reason why we need 64-bit timers for udelay (really??) then
+>>>> >>> they can later add all the complexity needed.
+>>>> >>
+>>>> >> Yes, this could work. I'm not sure what else cycles_t is used for, though.
+>>>> >
+>>>> > True, it is a bit questionable to change this since it's a type that's
+>>>> > not obviously just for udelay().  Perhaps a better option would be to
+>>>> > make a new typedef for the result of read_current_timer().  ...or just
+>>>> > change it to return a u32?
+>>>> >
+>>>>
+>>>> Sounds good to me, but let's hear other opinions. I'm adding Will and
+>>>> Jonathan as they wrote the ARM delay timer code.
+>>>
+>>> I think cycles_t is only used for small interval calculations at the moment,
+>>> but I remember Ted mentioning something about using it (or something
+>>> similar) as a source of early entropy, in which case the more bits the
+>>> better.
+>>>
+>> Will,
+>> Thanks for the clarification that cycles_t is used for short
+>> intervals. So it is safe to return lower 32 bit
+>> counter for read_current_timer.
+>
+> As I looked at it more, I realized that we have two types in Linux.
+> There's cycle_t and cycles_t.  Whoa, confusing!
+>
+> I'd perhaps advocate a wholesale rename of cycles_t to avoid the
+> confusion.  I don't have a good name for it, though.  cycle32_t?  Or
+> we could just use u32 for the function...  :-/
+or cycles_t can be renamed as short_cycle_t
+>
+>
+>> Tomasz, Doug,
+>> As of now let me send a minimal implementation of this read delay
+>> timer to fix the broken udelay for exynos platforms so that it goes to
+>> upstream in rc releases. I will also prepare a fix for all
+>> raw_readl/writel in mct to relaxed version to make it consistent.
+>
+> I'm reworking my 32-bit conversion patches right now and it's getting
+> messy to intermingle this with yours.  I'm going to pick up your patch
+> and include it in my series.  I hope that's OK.
+its fine and thanks for posting the series.
+>
+> My plan is:
+>
+> 1. For 3.16 I think it's important to fix the udelay() problems and
+> trying to rework cycle_t there doesn't seem like it makes sense.  I'll
+> just use Amit's original code that uses exynos_frc_read().  It might
+> not be quite as optimal but it's good as a safe bugfix.
+>
+> 2. I'll post the cleanup patch moving away from the __raw_readl / __raw_writel
+>
+> 3. I'll post a patch moving to 32-bit, including moving Amit's code to
+> 32-bit but with a compile time warning for now.  I'll add a KConfig
+> depends to keep it from compiling on ARM64.  We can improve this once
+> we change the delay timer to always request 32-bits.
+>
+> -Doug
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
