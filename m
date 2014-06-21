@@ -1,59 +1,82 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH 1/3 v5] spi: s3c64xx: fix broken "cs_gpios" usage in the driver
-Date: Sat, 21 Jun 2014 22:53:14 +0530
-Message-ID: <CAHfPSqCvHRMxPAVgRDrP-BSwuwJRP5O8Z+xy5Xot8t8mASNyAA@mail.gmail.com>
-References: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
- <CAD=FV=Ua+P0CBAfNj4SWWMWRKcEFdmh=akwy1-ZWoGOt2P9=cQ@mail.gmail.com> <20140621095149.GY5099@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC
+ regulators
+Date: Sat, 21 Jun 2014 21:40:26 +0100
+Message-ID: <20140621204026.GH22657@sirena.org.uk>
+References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk>
+ <20140616192500.GJ5099@sirena.org.uk>
+ <53A01D54.10506@collabora.co.uk>
+ <20140617141254.GP5099@sirena.org.uk>
+ <53A06749.1010606@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WIIRZ1HQ6FgrlPgb"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f42.google.com ([209.85.216.42]:33943 "EHLO
-	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752353AbaFURXf (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52588 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755336AbaFUUlK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 21 Jun 2014 13:23:35 -0400
-In-Reply-To: <20140621095149.GY5099@sirena.org.uk>
+	Sat, 21 Jun 2014 16:41:10 -0400
+Content-Disposition: inline
+In-Reply-To: <53A06749.1010606@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
-
-Hello Mark,
-
-On 21 June 2014 15:21, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Jun 20, 2014 at 02:18:08PM -0700, Doug Anderson wrote:
->
->> Is one of you two planning to apply (parts 1 and 2)?  I know that
->> Kukjin needs to handle the part 3 (the .dts files)...
->
->> Ideally it seems like it could go to 3.16 since it is a bugfix...
->
-> Don't nag, it just means yet more mail to look at which makes things
-> worse not better.  Given all the problems the DT code for this driver
-> has I need to review carefully, and the fact that this has got to v5
-> before I had a chance to look at it sets off alarm bells too.
-
-The revisions were pretty quick
-v1 to v2 : Updated DT Documentation for the change
-v2 to v3 : use spi->cs_gpio in the driver
-v3 to v4 : use gpio_is_valid() instead of using sdd->cs_gpio (local variable,
-              also remove sdd->cs_gpio)
-v4 to v5 : Added Acked-by and Revewied-by from Javier and Rob Herring
-
-Major discussion in this thread was about keeping the old DT bindings
-to support legacy or move on with the new bindings.
-
-Tomasz Figa, Javier Martinez Canillas, Doug Anderson and
-Rob Herring agreed with the latter.
-
-Kindly review and let us know your comments.
-
-Thanks
->
-> There's a couple of months to get bug fixes in yet.
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
+--WIIRZ1HQ6FgrlPgb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Shine bright,
-(: Nav :)
+On Tue, Jun 17, 2014 at 06:05:29PM +0200, Javier Martinez Canillas wrote:
+> On 06/17/2014 04:12 PM, Mark Brown wrote:
+
+> >> I just looked at regulator_register() and saw that it does rdev->dev.parent =
+> >> dev, so yes this has to be the MFD.
+
+> I noticed that many drivers set config.dev = &pdev->dev. The original Chrome OS
+> max77xxx driver and max77686 are two examples but others drivers do the same:
+
+Not all drivers are DT drivers that bother specifying supplies.
+
+> And also I see that mfd_add_device() calls
+> devm_regulator_bulk_register_supply_alias(&pdev->dev,...) so I'm confused now
+> about what the correct device should be...
+
+Right, but to do that you need to set those aliases up - have you done
+so?
+
+> > Do the regulators manage to get their supplies?
+
+> There are no current support in mainline for the devices that use the regulators
+> in this PMIC so I can't tell you if consumers manage to get their supplies
+> correctly (e.g: if regulator_dev_lookup succeeds).
+
+That's not really relevant here - I'm asking if the regulators get their
+own supplies rather than if anything uses them.
+
+--WIIRZ1HQ6FgrlPgb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTpe23AAoJELSic+t+oim9ByMP+wYqiynHTb+Xzz0LdWDlo0u1
+Ybojhgpg93PB0jwTEijpHnFI3hDTyP1Ozn+EgvSrMkFFs9zd3yZrEUGZrpC8k8Rs
+CnCNzv9z+A7phmVIwzOH5cgO2lN7OOQIuQwmoozTFj+H/fpOVux+AaHhMRswx5HB
+5a48oHkbZT3CoJtY33wEBtcd31R34X4T5nwIrAik+myvFl27yFjQW7ofGCk3Fd6r
+Kj4evF+NbJFTZB2DzpRsyj2b+H6YA1WPC+3aJHCow0EU9dwL9TqPW5rXLvK22fAs
+/ulY2m3LFdK2gsugor4RSF0srkXITAkjsXPEjSkDT5gs38eyPFB4vlOSHuvzPd8b
+4sEWw9YsWPQHhTF9l5RkZKlvfxAnYyEUBSScAmBYYKtVqiSDJHPhLphKC5NLdDYT
+5txobNxpELaj1sTeuN7pzXM42OhxNT5P+Xn4jqip+N40PZPDIp6gAeHtdgrV3Bsz
+2+AfZnh+WO4PeD7nlMj5dG5YIh/jp0jKR6JFgZ62ZFWTsdIQ2+Wl3fkqlsYpD371
+oBYAQT83Zm7LNun1zwZeDLsRC1gU8cIXque1A/s7DS1HajrP4Hih5NoTvYTtQQjO
+7+/Tt0velX53qq2x2/fNmk3sbedfJm9NOmA9G9DMFPk34EfKW3N47FsoBf5Ax55t
+8CqmWZjvMm7cz6bXpCV/
+=Qdml
+-----END PGP SIGNATURE-----
+
+--WIIRZ1HQ6FgrlPgb--
