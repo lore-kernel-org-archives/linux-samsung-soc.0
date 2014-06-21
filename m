@@ -1,154 +1,65 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] i2c: exynos5: Properly use the "noirq" variants of suspend/resume
-Date: Sat, 21 Jun 2014 01:59:22 +0200
-Message-ID: <53A4CADA.4030002@gmail.com>
-References: <1403155273-1057-1-git-send-email-dianders@chromium.org>	<7h8uosyc3k.fsf@paris.lan>	<CAD=FV=XxNVmF+N5HF4SnZoJRJvkSUkpEx6ct4v2gtmAQ9n28-Q@mail.gmail.com>	<7hwqcbs166.fsf@paris.lan>	<CAD=FV=Uz9O0i2gmuk2+BHa-Tksvyxv0+MTi2UEjVREAMNCK7Ug@mail.gmail.com>	<7h7g4brx6w.fsf@paris.lan> <CAD=FV=VmPMf6tCNmKJ1o5J7PyAXoU8fb6+s+Fkv18FH2WaQp7A@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/3 v5] spi: s3c64xx: fix broken "cs_gpios" usage in the
+ driver
+Date: Sat, 21 Jun 2014 10:51:49 +0100
+Message-ID: <20140621095149.GY5099@sirena.org.uk>
+References: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
+ <CAD=FV=Ua+P0CBAfNj4SWWMWRKcEFdmh=akwy1-ZWoGOt2P9=cQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAD=FV=VmPMf6tCNmKJ1o5J7PyAXoU8fb6+s+Fkv18FH2WaQp7A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, naveen krishna <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>, Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Masanari Iida <standby24x7-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zf2GVRt1JP70ixMf"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51686 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758167AbaFUJwk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 21 Jun 2014 05:52:40 -0400
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=Ua+P0CBAfNj4SWWMWRKcEFdmh=akwy1-ZWoGOt2P9=cQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
 
-On 21.06.2014 01:53, Doug Anderson wrote:
-> Kevin,
-> 
-> On Fri, Jun 20, 2014 at 4:13 PM, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->> Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> writes:
->>
->>> Kevin,
->>>
->>> On Fri, Jun 20, 2014 at 2:48 PM, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->>>> Hi Doug,
->>>>
->>>> Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> writes:
->>>>
->>>>> On Thu, Jun 19, 2014 at 11:43 AM, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->>>>>> Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> writes:
->>>>>>
->>>>>>> The original code for the exynos i2c controller registered for the
->>>>>>> "noirq" variants.  However during review feedback it was moved to
->>>>>>> SIMPLE_DEV_PM_OPS without anyone noticing that it meant we were no
->>>>>>> longer actually "noirq" (despite functions named
->>>>>>> exynos5_i2c_suspend_noirq and exynos5_i2c_resume_noirq).
->>>>>>>
->>>>>>> i2c controllers that might have wakeup sources on them seem to need to
->>>>>>> resume at noirq time so that the individual drivers can actually read
->>>>>>> the i2c bus to handle their wakeup.
->>>>>>
->>>>>> I suspect usage of the noirq variants pre-dates the existence of the
->>>>>> late/early callbacks in the PM core, but based on the description above,
->>>>>> I suspect what you actually want is the late/early callbacks.
->>>>>
->>>>> I think it actually really needs noirq.  ;)
->>>>
->>>> Yes, it appears it does.   Objection withdrawn.
->>>>
->>>> I just wanted to be sure because since the introduction of late/early,
->>>> the need for noirq should be pretty rare, but there certainly are needs.
->>>>
->>>> <tangent>
->>>> In this case though, the need for it has more to do with the
->>>> lack of a way for us to describe non parent-child device dependencies
->>>> than whether or not IRQs are enabled or not.
->>>> </tangent>
->>>
->>> Actually, I'm not sure that's true, but I'll talk through it and you
->>> can point to where I'm wrong (I often am!)
->>>
->>> If you're a wakeup device then you need to be ready to handle
->>> interrupts as soon as the "noirq" phase of resume is done, right?
->>
->> As soon as the noirq phase of your own driver is done, correct.
->>
->>> Said another way: you need to be ready to handle interrupts _before_
->>> the normal resume code is called and be ready to handle interrupts
->>> even _before_ the early resume code is called.
->>
->> Correct.
->>
->>> That means if you are implementing a bus that's needed by any devices
->>> with wakeup interrupts then it's your responsibility to also be
->>> prepared to run this early.
->>>
->>> In this particular case the max77686 driver doesn't need to do
->>> anything at all to be ready to handle interrupts.  It's suspend and
->>> resume code is just boilerplate "enable wakeups / disable wakeups" and
->>> it has no "noirq" code.  The max77686 driver doesn't have any "noirq"
->>> wake call because it would just be empty.
->>>
->>> Said another way: the problem isn't that the max77686 wakeup gets
->>> called before the i2c wakeup.  The problem is that i2c is needed ASAP
->>> once IRQs are enabled and thus needs to be run noirq.
->>>
->>> Does that sound semi-correct?
->>
->> Yes that's correct.
->>
->> My point above was (trying to be) that ultimately this is an ordering
->> issue.  e.g. the bus device needs to be "ready" before wakeup devices on
->> that bus can handle wakeup interrupts etc.  The way we're handling that
->> ordering is by the implied ordering of noirq, late/early and "normal"
->> callbacks.  That's convenient, but not exactly obvious.
->>
->> It works because we dont' typically need too many layers here, but it
->> would be much more understandable if we could describe this kind of
->> dependency in a way that the suspend/resume code would suspend/resume
->> things in the right order rather than by tinkering with callback levels
->> (since otherwise suspend/resume ordering just depends on probe order.)
->>
->> This issue then usually gets me headed down my usual rant path about how
->> I think runtime PM is much better suited for handling ordering and
->> dependencies becuase it automatically handles parent/child dependencies
->> and non parent/child dependencies can be handled by taking advantage of
->> the get/put APIs which are refcounted, ect etc. but that's another can
->> worms.
-> 
-> Ah, I gotcha.  Yes, I'm a fan of having explicit dependency orderings too.
-> 
-> So I guess in this case the truly correct way to handle it is:
-> 
-> 1. i2c controller should have Runtime PM even though (as per the code
-> now) there's nothing you can do to it to save power under normal
-> circumstances.  So the runtime "suspend" code would be a no-op.
-> 
-> 2. When the i2c controller is told to runtime resume, it should
-> double-check if a full SoC poweroff has happened since the last time
-> it checked.  In this case it should reinit its hardware.
-> 
-> 3. If the i2c controller gets a full "resume" callback then it should
-> also reinit the hardware just so it's not sitting in a half-configured
-> state until the first peripheral uses it.
-> 
-> If later someone finds a way to power gate the i2c controller when no
-> active transfers are going (and we actually save non-trivial power
-> doing this) then we've got a nice place to put that code.
-> 
-> NOTE: Unless we can actually save power by power gating the i2c
-> peripheral when there are no active transfers, we would also just have
-> the i2c_xfer() init the hardware if needed.  Maybe that's kinda gross,
-> though.
-> 
-> 
-> -Doug
-> 
-> 
-> P.S. Just to confirm: you're not opposed to landing the noirq code
-> as-is.  This discussion is about how someone could make it better in
-> the future...
-> 
 
-I'm not sure noirq is going to work correctly, at least not with current
-callbacks. I can see a call to clk_prepare_enable() there which needs to
-acquire a mutex.
+--zf2GVRt1JP70ixMf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Would disabling the irq in suspend callback of your wakeup device and
-reenabling it in resume, while keeping their wakeup capability enabled,
-work for you? Then you could resume i2c in .resume_early callback
-without any issues.
+On Fri, Jun 20, 2014 at 02:18:08PM -0700, Doug Anderson wrote:
 
-Best regards,
-Tomasz
+> Is one of you two planning to apply (parts 1 and 2)?  I know that
+> Kukjin needs to handle the part 3 (the .dts files)...
+
+> Ideally it seems like it could go to 3.16 since it is a bugfix...
+
+Don't nag, it just means yet more mail to look at which makes things
+worse not better.  Given all the problems the DT code for this driver
+has I need to review carefully, and the fact that this has got to v5
+before I had a chance to look at it sets off alarm bells too.
+
+There's a couple of months to get bug fixes in yet.
+
+--zf2GVRt1JP70ixMf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTpVWyAAoJELSic+t+oim9gQgP+wdFJ1qWZRFGMWZbep79ZPl+
+OQkGtvCSq6nAJ1pAZYo4YyVnRAfSsOkQLVtfMoqz1vuaueqxxjV3Ti7cix0uqZlR
+Bdq4KYVsaGMpf6YH6roUm0w1NKkrbdwchhVMP4HSmBII5UKZNzVxSgagtWeifsiQ
+FvXwrEW8Vj72UmrxJWhk28iF3lrhJ7Hhqq7RfFaOaN1Ezej8R7odY/0CHDuVMcTb
+zmVsPztVmGmXOaQbIgZ7ZxxZpixNl7L5kAcfH1T3tfpiE+yk9fOUAapsl4aNzJtA
+fuTaXrmcrtEzA3Xsr2RJOYezxncGtOThG4jiKrcXVbCaKfRlGXUl34lolGqJDXrM
+QJWk65gVHm51bGb46NtyWjr33Q+3AV7swg4Ym1RCvtqGOlv2FjLSgW+eN9aexidx
+z8i6UMFT02ddom2NzZvFQha5Qyu+56SSB2V7AgHw0aKPJTiHGStgf1rQiG8jzyXl
+b8YLNxvbVCfX9OV81FGEXPUHi0V16RfvRUZP6jhOL49dn8Y03S7/9gOUSBQ/BGJ4
+N+Qiss5xEdnElVhQ7JD3+POnBnVU4OQ6b0nD9ryuNuzA92blFsvdFHoBXi1cC1nO
+4do9/sPPaRpj3i/DaXyex/pI6Xdkxar75x2ajzmx6YcXVZ6AE9zoHCrmL3ZL7VHc
+mMVtLWn2aQtiDEkWMaQE
+=ax2N
+-----END PGP SIGNATURE-----
+
+--zf2GVRt1JP70ixMf--
