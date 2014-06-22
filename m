@@ -1,69 +1,73 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung fixes-1 for 3.16
-Date: Sun, 22 Jun 2014 17:22:16 +0900
-Message-ID: <53A69238.5070709@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/3 v5] spi: s3c64xx: fix broken "cs_gpios" usage in the
+ driver
+Date: Sun, 22 Jun 2014 11:35:02 +0100
+Message-ID: <20140622103502.GJ24291@sirena.org.uk>
+References: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
+ <CAD=FV=Ua+P0CBAfNj4SWWMWRKcEFdmh=akwy1-ZWoGOt2P9=cQ@mail.gmail.com>
+ <20140621095149.GY5099@sirena.org.uk>
+ <CAHfPSqCvHRMxPAVgRDrP-BSwuwJRP5O8Z+xy5Xot8t8mASNyAA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="6J7GEvtanOfV9oXA"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f42.google.com ([209.85.160.42]:60627 "EHLO
-	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751679AbaFVIWW (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53340 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751699AbaFVKfq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 22 Jun 2014 04:22:22 -0400
-Received: by mail-pb0-f42.google.com with SMTP id ma3so4653668pbc.29
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Jun 2014 01:22:22 -0700 (PDT)
+	Sun, 22 Jun 2014 06:35:46 -0400
+Content-Disposition: inline
+In-Reply-To: <CAHfPSqCvHRMxPAVgRDrP-BSwuwJRP5O8Z+xy5Xot8t8mASNyAA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Cc: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
 
-The following changes since commit 7171511eaec5bf23fb06078f59784a3a0626b38f:
 
-   Linux 3.16-rc1 (2014-06-15 17:45:28 -1000)
+--6J7GEvtanOfV9oXA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-are available in the git repository at:
+On Sat, Jun 21, 2014 at 10:53:14PM +0530, Naveen Krishna Ch wrote:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/samsung-fixes-1
+> The revisions were pretty quick
 
-for you to fetch changes up to 7cbcb9d46f9194eb1f88c253a08c0292b2883acc:
+Yes, this is part of what I'm concerned about - it often means that
+there are problems, either the review wasn't very detailed or the code
+is being written too hastily.  In this case this is coupled with the
+fact that it's an area of the code that has had problems in general is
+setting off alarm bells.
 
-   ARM: EXYNOS: Don't rely on firmware's secondary_cpu_start for mcpm 
-(2014-06-21 19:30:53 +0900)
+> v4 to v5 : Added Acked-by and Revewied-by from Javier and Rob Herring
 
-----------------------------------------------------------------
-Samsung fixes for 3.16
+Don't resend for tags - you should include tags if you do resend but
+they're not a good reason to do so.
 
-- use WFI macro in platform_do_lowpower because exynos cpuhotplug
-   includes a hardcoded WFI instruction and it causes compile error
-   in Thumb-2 mode.
-- fix GIC reg sizes for exynos4 SoCs
-- remove reset timer counter value during boot and resume for mct
-   to fix a big jump in printk timestamps
-- fix pm code to check cortex-A9 for another exynos SoCs
-- don't rely on firmware's secondary_cpu_start for mcpm
+> Kindly review and let us know your comments.
 
-----------------------------------------------------------------
-Abhilash Kesavan (1):
-       ARM: EXYNOS: fix pm code to check for cortex A9 rather than the SoC
+I will review it when I get to it, this isn't the only thing I've got
+sitting for review.
 
-Chirantan Ekbote (1):
-       clocksource: exynos_mct: Don't reset the counter during boot and 
-resume
+--6J7GEvtanOfV9oXA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Doug Anderson (1):
-       ARM: EXYNOS: Don't rely on firmware's secondary_cpu_start for mcpm
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Leela Krishna Amudala (1):
-       ARM: EXYNOS: Use wfi macro in platform_do_lowpower
+iQIcBAEBAgAGBQJTprFSAAoJELSic+t+oim9Yf8P/0xhZ+89RfO1xc0sn8pzQQC7
+KfSQDozEL7a6h69K7t/SjdPIELPM4WXud9aVAKxZFiikxk9FJr7aLP5RfTrEfXJs
+PbFhXF4WXotJ0fLeo6ZsX4QcUdMb2zYgWyJdsN10y4nVTzFSLPLt8dkdwTLRP43I
+RRFIA5+fzjlaoFsCt/SlWLH3LUYUc1zWPjNEvheFsVPogFuRvps6WYXRnbfbwi01
+1Q7T6ULH6YVY6ghcVsX7roygh9bz80mztA0vZSlWXbjrh1rYpPIARTWniS91CzEe
+31G1LbWD67xwiJIZNnCzLppLjByfm6MuA1rfKUDppSddUh366D3+ArsdPQjlZIkH
+VO1Uh3lsxuDB5hexm3JQE4rpLdGNOvQkXqSAw4ufmgZXRuH0tqVHOlXeyQPM8fP4
+v6DJUOQZ2ojfZ0bzQYz5Mpmhnh80ixdCzcv5J119zEaiVQlE0YWnGUoOUSI5uQNY
+fVoZ8PkhOOOGb4S1KbSwG4E5NjmbaAv4hOpcIlQzEsiT6+gjIh4SSIc5wb6cWwmU
+Q2L20DEUiuIbpiWYcVvLiqkz9+H1md1WeHqFAaS0K/+QxDCvPzwBFltDv7LdGucf
+VvWGMnc8DpBD7NpHk6DcJqkLdJxY3EyPxcW6gUqz8bdghg4xBkVoS9Mh1pBo5Nxd
+Hweu9dPRe/dgHVPyYhsf
+=vHRT
+-----END PGP SIGNATURE-----
 
-Tomasz Figa (1):
-       ARM: dts: fix reg sizes of GIC for exynos4
-
-  arch/arm/boot/dts/exynos4.dtsi     |  2 +-
-  arch/arm/mach-exynos/hotplug.c     |  8 +-------
-  arch/arm/mach-exynos/mcpm-exynos.c | 11 ++++++-----
-  arch/arm/mach-exynos/pm.c          | 15 +++++++++------
-  drivers/clocksource/exynos_mct.c   |  9 +++------
-  5 files changed, 20 insertions(+), 25 deletions(-)
+--6J7GEvtanOfV9oXA--
