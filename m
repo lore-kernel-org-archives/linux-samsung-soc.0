@@ -1,47 +1,51 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: Boot regression on Arndale Octa
-Date: Sun, 22 Jun 2014 19:55:29 +0200
-Message-ID: <53A71891.2080403@gmail.com>
-References: <53A7009C.3090003@suse.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Samsung fixes-1 for 3.16
+Date: Sun, 22 Jun 2014 20:50:32 +0200
+Message-ID: <6202115.rEhZ2ZRvNc@wuerfel>
+References: <53A69238.5070709@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:39070 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751042AbaFVRz5 (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.131]:60863 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751743AbaFVSuh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 22 Jun 2014 13:55:57 -0400
-Received: by mail-wi0-f181.google.com with SMTP id n3so2985821wiv.14
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Jun 2014 10:55:55 -0700 (PDT)
-In-Reply-To: <53A7009C.3090003@suse.de>
+	Sun, 22 Jun 2014 14:50:37 -0400
+In-Reply-To: <53A69238.5070709@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: "arm@kernel.org" <arm@kernel.org>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Andreas,
+On Sunday 22 June 2014 17:22:16 Kukjin Kim wrote:
+> The following changes since commit 7171511eaec5bf23fb06078f59784a3a0626b38f:
+> 
+>    Linux 3.16-rc1 (2014-06-15 17:45:28 -1000)
+> 
+> are available in the git repository at:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+> tags/samsung-fixes-1
+> 
+> for you to fetch changes up to 7cbcb9d46f9194eb1f88c253a08c0292b2883acc:
+> 
+>    ARM: EXYNOS: Don't rely on firmware's secondary_cpu_start for mcpm 
+> (2014-06-21 19:30:53 +0900)
+> 
+> ----------------------------------------------------------------
+> Samsung fixes for 3.16
+> 
+> - use WFI macro in platform_do_lowpower because exynos cpuhotplug
+>    includes a hardcoded WFI instruction and it causes compile error
+>    in Thumb-2 mode.
+> - fix GIC reg sizes for exynos4 SoCs
+> - remove reset timer counter value during boot and resume for mct
+>    to fix a big jump in printk timestamps
+> - fix pm code to check cortex-A9 for another exynos SoCs
+> - don't rely on firmware's secondary_cpu_start for mcpm
+> 
 
-On 22.06.2014 18:13, Andreas F=C3=A4rber wrote:
-> Hello,
->=20
-> Both on kgene's for-next 053341b6993a3e838cfa35c9f594fb94ee3da9ce and=
- on
-> Linus' 401c58fcbbf570e7e4a8ee0e21ffd829deb4de0b my Arndale Octa board
-> fails to boot with an "Unhandled fault: synchronous external abort
-> (0x210)". This is a regression from v3.15, 100% reproducible.
->=20
+Pulled into fixes branch, thanks!
 
-A couple of ideas to get more information:
-
- - What config do you use?
- - Does it boot with exynos devfreq disabled in kernel config?
- - Why the "> [    6.268412] clk: Not disabling unused clocks" line is
-there? What's your kernel command line?
- - The log seems to start quite late. Could you provide full boot log a=
-s
-well?
- - Could you try bisecting the changes between 3.15 and Kukjin's for-ne=
-xt?
-
-Best regards,
-Tomasz
+	Arnd
