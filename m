@@ -1,56 +1,75 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RESEND PATCH v2 1/2] ASoC: samsung: s3c24{xx,12}-i2s: port to
- use generic dmaengine API
-Date: Sun, 22 Jun 2014 11:53:41 +0100
-Message-ID: <20140622105340.GN24291@sirena.org.uk>
-References: <1401642958-6236-1-git-send-email-anarsoul@gmail.com>
+From: Tushar Behera <tushar.b@samsung.com>
+Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
+Date: Sun, 22 Jun 2014 21:23:37 +0530
+Message-ID: <CAC5m3Byht1TRGu28Y-_mRY8iZT+=rrzpQS1jx5rxQaJ7XLKxTw@mail.gmail.com>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
+	<1402464739-19044-3-git-send-email-tushar.b@samsung.com>
+	<CABxcv=kX07pNCd-YPYp6J8S5hHzG1rsoer1YRfdPE0g-xFqZnQ@mail.gmail.com>
+	<539ED472.5020102@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dPW7zu3hTOhZvCDO"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53391 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751551AbaFVKyA (ORCPT
+Received: from mail-ve0-f170.google.com ([209.85.128.170]:37229 "EHLO
+	mail-ve0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751129AbaFVPxi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 22 Jun 2014 06:54:00 -0400
-Content-Disposition: inline
-In-Reply-To: <1401642958-6236-1-git-send-email-anarsoul@gmail.com>
+	Sun, 22 Jun 2014 11:53:38 -0400
+In-Reply-To: <539ED472.5020102@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, Tushar Behera <tushar.b@samsung.com>, Kevin Hilman <khilman@linaro.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Doug Anderson <dianders@google.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
+On Mon, Jun 16, 2014 at 4:56 PM, Tushar Behera <trblinux@gmail.com> wrote:
+> On 06/11/2014 09:28 PM, Javier Martinez Canillas wrote:
+>> On Wed, Jun 11, 2014 at 7:32 AM, Tushar Behera <tushar.b@samsung.com> wrote:
+>>> Currently CLK_FOUT_EPLL was set as one of the parents of AUDSS mux.
+>>> As per the user manual, it should be CLK_MAU_EPLL.
+>>>
+>>> The problem surfaced when the bootloader in Peach-pit board set
+>>> the EPLL clock as the parent of AUDSS mux. While booting the kernel,
+>>> we used to get a system hang during late boot if CLK_MAU_EPLL was
+>>> disabled.
+>>>
+>>> Signed-off-by: Tushar Behera <tushar.b@samsung.com>
+>>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>>> Reported-by: Kevin Hilman <khilman@linaro.org>
+>>> ---
+>>>  arch/arm/boot/dts/exynos5420.dtsi |    2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>>> index e385322..79e9119 100644
+>>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>>> @@ -167,7 +167,7 @@
+>>>                 compatible = "samsung,exynos5420-audss-clock";
+>>>                 reg = <0x03810000 0x0C>;
+>>>                 #clock-cells = <1>;
+>>> -               clocks = <&clock CLK_FIN_PLL>, <&clock CLK_FOUT_EPLL>,
+>>> +               clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MAU_EPLL>,
+>>>                          <&clock CLK_SCLK_MAUDIO0>, <&clock CLK_SCLK_MAUPCM0>;
+>>>                 clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
+>>>         };
+>>> --
+>>> 1.7.9.5
+>>>
+>>> --
+>>
+>> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>>
+>
+> Kukjin,
+>
+> Would you please take this patch as a fix for 3.16?
+>
+> --
+> Tushar Behera
 
---dPW7zu3hTOhZvCDO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Kukjin,
 
-On Sun, Jun 01, 2014 at 08:15:57PM +0300, Vasily Khoruzhick wrote:
-> Use dmaengine instead of legacy s3c24xx DMA API for s3c24xx and s3c2412
+Please pick this patch for 3.16. This is an essential fix required for
+Peach-pit/Peach-pi board.
 
-These fail to apply against current code, can you please check and
-resend?
-
---dPW7zu3hTOhZvCDO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTprWxAAoJELSic+t+oim9e9QQAIbWT3LN0esWBkE2B8zKw/gJ
-uJhX8SR/DH6Mc6QFDp55CxsWARw2Y4ZaTSxn7//rr9Lpr8u+gngltRcsGsp+ZfTz
-Amq1cR696QLi7baU5ytqgirv6Ub018pSnlHFaQ2U8EBsQsu/36aSUF+AbiiwmdLH
-A2rP/AgStrKtYZhogsPBBlVRVUlb4yDKrQ8cq4+XnUmECIOJuuMfugXws0KjcX0j
-YolpKncvh1/UvFsDpDrdHxwK2mObw2HCspNjpmzc5mBEmPEYeAFHDrixIwTyt6mj
-G4LQyHm9bwF97W49RUvB7IvPRQs51+MWiv1qJzqsE+8b3AujCaYTz9uqpDDuCK6q
-XnJ9B7Y5ZzWqraxkGNCYgxrqQDrjRbfZuRz+k6uhTTkaX4Vse+Vqk3cnUgr/sS8E
-BmW7KNE8sDhP5bgCY/VYVICprpWTRUIU3oD6VZ7CXEtB7OCnfhcNO6Pax8FbPRKe
-pwoEx//QaW3F4eSTWKz2xR7hSn/UtlK/eLXH+AdfYnPaXMxOCbH9d9vbSGxMDNcT
-qbZE0pxvRP+SeU8KlJHptDxa5sssGsJtb1h26/r3hR2R+L6w9/NSlSGrQQNzrwVh
-GTwulvGJELVd2uB1CP5qvn1xgbw+7nM4XrMwIelJRN4M01am2uEQd1I/yDvtTMlQ
-ZSI3GSqcxXCXsFu4dwIJ
-=G+I+
------END PGP SIGNATURE-----
-
---dPW7zu3hTOhZvCDO--
+--
+Tushar Behera
