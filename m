@@ -1,73 +1,56 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/3 v5] spi: s3c64xx: fix broken "cs_gpios" usage in the
- driver
-Date: Sun, 22 Jun 2014 11:35:02 +0100
-Message-ID: <20140622103502.GJ24291@sirena.org.uk>
-References: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
- <CAD=FV=Ua+P0CBAfNj4SWWMWRKcEFdmh=akwy1-ZWoGOt2P9=cQ@mail.gmail.com>
- <20140621095149.GY5099@sirena.org.uk>
- <CAHfPSqCvHRMxPAVgRDrP-BSwuwJRP5O8Z+xy5Xot8t8mASNyAA@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2 1/2] ASoC: samsung: s3c24{xx,12}-i2s: port to
+ use generic dmaengine API
+Date: Sun, 22 Jun 2014 11:53:41 +0100
+Message-ID: <20140622105340.GN24291@sirena.org.uk>
+References: <1401642958-6236-1-git-send-email-anarsoul@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="6J7GEvtanOfV9oXA"
+	protocol="application/pgp-signature"; boundary="dPW7zu3hTOhZvCDO"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53340 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53391 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751699AbaFVKfq (ORCPT
+	with ESMTP id S1751551AbaFVKyA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 22 Jun 2014 06:35:46 -0400
+	Sun, 22 Jun 2014 06:54:00 -0400
 Content-Disposition: inline
-In-Reply-To: <CAHfPSqCvHRMxPAVgRDrP-BSwuwJRP5O8Z+xy5Xot8t8mASNyAA@mail.gmail.com>
+In-Reply-To: <1401642958-6236-1-git-send-email-anarsoul@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
 
 
---6J7GEvtanOfV9oXA
+--dPW7zu3hTOhZvCDO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sat, Jun 21, 2014 at 10:53:14PM +0530, Naveen Krishna Ch wrote:
+On Sun, Jun 01, 2014 at 08:15:57PM +0300, Vasily Khoruzhick wrote:
+> Use dmaengine instead of legacy s3c24xx DMA API for s3c24xx and s3c2412
 
-> The revisions were pretty quick
+These fail to apply against current code, can you please check and
+resend?
 
-Yes, this is part of what I'm concerned about - it often means that
-there are problems, either the review wasn't very detailed or the code
-is being written too hastily.  In this case this is coupled with the
-fact that it's an area of the code that has had problems in general is
-setting off alarm bells.
-
-> v4 to v5 : Added Acked-by and Revewied-by from Javier and Rob Herring
-
-Don't resend for tags - you should include tags if you do resend but
-they're not a good reason to do so.
-
-> Kindly review and let us know your comments.
-
-I will review it when I get to it, this isn't the only thing I've got
-sitting for review.
-
---6J7GEvtanOfV9oXA
+--dPW7zu3hTOhZvCDO
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTprFSAAoJELSic+t+oim9Yf8P/0xhZ+89RfO1xc0sn8pzQQC7
-KfSQDozEL7a6h69K7t/SjdPIELPM4WXud9aVAKxZFiikxk9FJr7aLP5RfTrEfXJs
-PbFhXF4WXotJ0fLeo6ZsX4QcUdMb2zYgWyJdsN10y4nVTzFSLPLt8dkdwTLRP43I
-RRFIA5+fzjlaoFsCt/SlWLH3LUYUc1zWPjNEvheFsVPogFuRvps6WYXRnbfbwi01
-1Q7T6ULH6YVY6ghcVsX7roygh9bz80mztA0vZSlWXbjrh1rYpPIARTWniS91CzEe
-31G1LbWD67xwiJIZNnCzLppLjByfm6MuA1rfKUDppSddUh366D3+ArsdPQjlZIkH
-VO1Uh3lsxuDB5hexm3JQE4rpLdGNOvQkXqSAw4ufmgZXRuH0tqVHOlXeyQPM8fP4
-v6DJUOQZ2ojfZ0bzQYz5Mpmhnh80ixdCzcv5J119zEaiVQlE0YWnGUoOUSI5uQNY
-fVoZ8PkhOOOGb4S1KbSwG4E5NjmbaAv4hOpcIlQzEsiT6+gjIh4SSIc5wb6cWwmU
-Q2L20DEUiuIbpiWYcVvLiqkz9+H1md1WeHqFAaS0K/+QxDCvPzwBFltDv7LdGucf
-VvWGMnc8DpBD7NpHk6DcJqkLdJxY3EyPxcW6gUqz8bdghg4xBkVoS9Mh1pBo5Nxd
-Hweu9dPRe/dgHVPyYhsf
-=vHRT
+iQIcBAEBAgAGBQJTprWxAAoJELSic+t+oim9e9QQAIbWT3LN0esWBkE2B8zKw/gJ
+uJhX8SR/DH6Mc6QFDp55CxsWARw2Y4ZaTSxn7//rr9Lpr8u+gngltRcsGsp+ZfTz
+Amq1cR696QLi7baU5ytqgirv6Ub018pSnlHFaQ2U8EBsQsu/36aSUF+AbiiwmdLH
+A2rP/AgStrKtYZhogsPBBlVRVUlb4yDKrQ8cq4+XnUmECIOJuuMfugXws0KjcX0j
+YolpKncvh1/UvFsDpDrdHxwK2mObw2HCspNjpmzc5mBEmPEYeAFHDrixIwTyt6mj
+G4LQyHm9bwF97W49RUvB7IvPRQs51+MWiv1qJzqsE+8b3AujCaYTz9uqpDDuCK6q
+XnJ9B7Y5ZzWqraxkGNCYgxrqQDrjRbfZuRz+k6uhTTkaX4Vse+Vqk3cnUgr/sS8E
+BmW7KNE8sDhP5bgCY/VYVICprpWTRUIU3oD6VZ7CXEtB7OCnfhcNO6Pax8FbPRKe
+pwoEx//QaW3F4eSTWKz2xR7hSn/UtlK/eLXH+AdfYnPaXMxOCbH9d9vbSGxMDNcT
+qbZE0pxvRP+SeU8KlJHptDxa5sssGsJtb1h26/r3hR2R+L6w9/NSlSGrQQNzrwVh
+GTwulvGJELVd2uB1CP5qvn1xgbw+7nM4XrMwIelJRN4M01am2uEQd1I/yDvtTMlQ
+ZSI3GSqcxXCXsFu4dwIJ
+=G+I+
 -----END PGP SIGNATURE-----
 
---6J7GEvtanOfV9oXA--
+--dPW7zu3hTOhZvCDO--
