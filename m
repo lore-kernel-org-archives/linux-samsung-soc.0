@@ -1,82 +1,69 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC
- regulators
-Date: Sat, 21 Jun 2014 21:40:26 +0100
-Message-ID: <20140621204026.GH22657@sirena.org.uk>
-References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk>
- <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk>
- <20140616192500.GJ5099@sirena.org.uk>
- <53A01D54.10506@collabora.co.uk>
- <20140617141254.GP5099@sirena.org.uk>
- <53A06749.1010606@collabora.co.uk>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung fixes-1 for 3.16
+Date: Sun, 22 Jun 2014 17:22:16 +0900
+Message-ID: <53A69238.5070709@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WIIRZ1HQ6FgrlPgb"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52588 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755336AbaFUUlK (ORCPT
+Received: from mail-pb0-f42.google.com ([209.85.160.42]:60627 "EHLO
+	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751679AbaFVIWW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 21 Jun 2014 16:41:10 -0400
-Content-Disposition: inline
-In-Reply-To: <53A06749.1010606@collabora.co.uk>
+	Sun, 22 Jun 2014 04:22:22 -0400
+Received: by mail-pb0-f42.google.com with SMTP id ma3so4653668pbc.29
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Jun 2014 01:22:22 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
+The following changes since commit 7171511eaec5bf23fb06078f59784a3a0626b38f:
 
---WIIRZ1HQ6FgrlPgb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   Linux 3.16-rc1 (2014-06-15 17:45:28 -1000)
 
-On Tue, Jun 17, 2014 at 06:05:29PM +0200, Javier Martinez Canillas wrote:
-> On 06/17/2014 04:12 PM, Mark Brown wrote:
+are available in the git repository at:
 
-> >> I just looked at regulator_register() and saw that it does rdev->dev.parent =
-> >> dev, so yes this has to be the MFD.
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+tags/samsung-fixes-1
 
-> I noticed that many drivers set config.dev = &pdev->dev. The original Chrome OS
-> max77xxx driver and max77686 are two examples but others drivers do the same:
+for you to fetch changes up to 7cbcb9d46f9194eb1f88c253a08c0292b2883acc:
 
-Not all drivers are DT drivers that bother specifying supplies.
+   ARM: EXYNOS: Don't rely on firmware's secondary_cpu_start for mcpm 
+(2014-06-21 19:30:53 +0900)
 
-> And also I see that mfd_add_device() calls
-> devm_regulator_bulk_register_supply_alias(&pdev->dev,...) so I'm confused now
-> about what the correct device should be...
+----------------------------------------------------------------
+Samsung fixes for 3.16
 
-Right, but to do that you need to set those aliases up - have you done
-so?
+- use WFI macro in platform_do_lowpower because exynos cpuhotplug
+   includes a hardcoded WFI instruction and it causes compile error
+   in Thumb-2 mode.
+- fix GIC reg sizes for exynos4 SoCs
+- remove reset timer counter value during boot and resume for mct
+   to fix a big jump in printk timestamps
+- fix pm code to check cortex-A9 for another exynos SoCs
+- don't rely on firmware's secondary_cpu_start for mcpm
 
-> > Do the regulators manage to get their supplies?
+----------------------------------------------------------------
+Abhilash Kesavan (1):
+       ARM: EXYNOS: fix pm code to check for cortex A9 rather than the SoC
 
-> There are no current support in mainline for the devices that use the regulators
-> in this PMIC so I can't tell you if consumers manage to get their supplies
-> correctly (e.g: if regulator_dev_lookup succeeds).
+Chirantan Ekbote (1):
+       clocksource: exynos_mct: Don't reset the counter during boot and 
+resume
 
-That's not really relevant here - I'm asking if the regulators get their
-own supplies rather than if anything uses them.
+Doug Anderson (1):
+       ARM: EXYNOS: Don't rely on firmware's secondary_cpu_start for mcpm
 
---WIIRZ1HQ6FgrlPgb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Leela Krishna Amudala (1):
+       ARM: EXYNOS: Use wfi macro in platform_do_lowpower
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Tomasz Figa (1):
+       ARM: dts: fix reg sizes of GIC for exynos4
 
-iQIcBAEBAgAGBQJTpe23AAoJELSic+t+oim9ByMP+wYqiynHTb+Xzz0LdWDlo0u1
-Ybojhgpg93PB0jwTEijpHnFI3hDTyP1Ozn+EgvSrMkFFs9zd3yZrEUGZrpC8k8Rs
-CnCNzv9z+A7phmVIwzOH5cgO2lN7OOQIuQwmoozTFj+H/fpOVux+AaHhMRswx5HB
-5a48oHkbZT3CoJtY33wEBtcd31R34X4T5nwIrAik+myvFl27yFjQW7ofGCk3Fd6r
-Kj4evF+NbJFTZB2DzpRsyj2b+H6YA1WPC+3aJHCow0EU9dwL9TqPW5rXLvK22fAs
-/ulY2m3LFdK2gsugor4RSF0srkXITAkjsXPEjSkDT5gs38eyPFB4vlOSHuvzPd8b
-4sEWw9YsWPQHhTF9l5RkZKlvfxAnYyEUBSScAmBYYKtVqiSDJHPhLphKC5NLdDYT
-5txobNxpELaj1sTeuN7pzXM42OhxNT5P+Xn4jqip+N40PZPDIp6gAeHtdgrV3Bsz
-2+AfZnh+WO4PeD7nlMj5dG5YIh/jp0jKR6JFgZ62ZFWTsdIQ2+Wl3fkqlsYpD371
-oBYAQT83Zm7LNun1zwZeDLsRC1gU8cIXque1A/s7DS1HajrP4Hih5NoTvYTtQQjO
-7+/Tt0velX53qq2x2/fNmk3sbedfJm9NOmA9G9DMFPk34EfKW3N47FsoBf5Ax55t
-8CqmWZjvMm7cz6bXpCV/
-=Qdml
------END PGP SIGNATURE-----
-
---WIIRZ1HQ6FgrlPgb--
+  arch/arm/boot/dts/exynos4.dtsi     |  2 +-
+  arch/arm/mach-exynos/hotplug.c     |  8 +-------
+  arch/arm/mach-exynos/mcpm-exynos.c | 11 ++++++-----
+  arch/arm/mach-exynos/pm.c          | 15 +++++++++------
+  drivers/clocksource/exynos_mct.c   |  9 +++------
+  5 files changed, 20 insertions(+), 25 deletions(-)
