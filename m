@@ -1,51 +1,65 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] Samsung fixes-1 for 3.16
-Date: Sun, 22 Jun 2014 20:50:32 +0200
-Message-ID: <6202115.rEhZ2ZRvNc@wuerfel>
-References: <53A69238.5070709@samsung.com>
+From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Subject: [PATCH] ARM: dts: exynos5410: Fill in CPU clock-frequency
+Date: Sun, 22 Jun 2014 21:49:55 +0200
+Message-ID: <1403466596-3347-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:60863 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751743AbaFVSuh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 22 Jun 2014 14:50:37 -0400
-In-Reply-To: <53A69238.5070709@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "moderated list:ARM/SAMSUNG ARM
+	A..." <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "open list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "arm@kernel.org" <arm@kernel.org>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Sunday 22 June 2014 17:22:16 Kukjin Kim wrote:
-> The following changes since commit 7171511eaec5bf23fb06078f59784a3a0626b38f:
-> 
->    Linux 3.16-rc1 (2014-06-15 17:45:28 -1000)
-> 
-> are available in the git repository at:
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-> tags/samsung-fixes-1
-> 
-> for you to fetch changes up to 7cbcb9d46f9194eb1f88c253a08c0292b2883acc:
-> 
->    ARM: EXYNOS: Don't rely on firmware's secondary_cpu_start for mcpm 
-> (2014-06-21 19:30:53 +0900)
-> 
-> ----------------------------------------------------------------
-> Samsung fixes for 3.16
-> 
-> - use WFI macro in platform_do_lowpower because exynos cpuhotplug
->    includes a hardcoded WFI instruction and it causes compile error
->    in Thumb-2 mode.
-> - fix GIC reg sizes for exynos4 SoCs
-> - remove reset timer counter value during boot and resume for mct
->    to fix a big jump in printk timestamps
-> - fix pm code to check cortex-A9 for another exynos SoCs
-> - don't rely on firmware's secondary_cpu_start for mcpm
-> 
+It's 1.6 GHz for the Cortex-A15.
 
-Pulled into fixes branch, thanks!
+Avoids warnings like "/cpus/cpu@0 missing clock-frequency property".
 
-	Arnd
+Signed-off-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos5410.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exyn=
+os5410.dtsi
+index 3839c26..9d0b8cc 100644
+--- a/arch/arm/boot/dts/exynos5410.dtsi
++++ b/arch/arm/boot/dts/exynos5410.dtsi
+@@ -28,24 +28,28 @@
+ 			device_type =3D "cpu";
+ 			compatible =3D "arm,cortex-a15";
+ 			reg =3D <0x0>;
++			clock-frequency =3D <1600000000>;
+ 		};
+=20
+ 		CPU1: cpu@1 {
+ 			device_type =3D "cpu";
+ 			compatible =3D "arm,cortex-a15";
+ 			reg =3D <0x1>;
++			clock-frequency =3D <1600000000>;
+ 		};
+=20
+ 		CPU2: cpu@2 {
+ 			device_type =3D "cpu";
+ 			compatible =3D "arm,cortex-a15";
+ 			reg =3D <0x2>;
++			clock-frequency =3D <1600000000>;
+ 		};
+=20
+ 		CPU3: cpu@3 {
+ 			device_type =3D "cpu";
+ 			compatible =3D "arm,cortex-a15";
+ 			reg =3D <0x3>;
++			clock-frequency =3D <1600000000>;
+ 		};
+ 	};
+=20
+--=20
+1.9.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
