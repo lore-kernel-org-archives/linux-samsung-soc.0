@@ -1,424 +1,57 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2] ARM: dts: Add cros_ec to exynos5420-peach-pit and exynos5800-peach-pi
-Date: Mon, 23 Jun 2014 13:49:36 -0700
-Message-ID: <1403556576-8038-1-git-send-email-dianders@chromium.org>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 1/2] clk: samsung: fix several typos to fix boot on s3c2410
+Date: Mon, 23 Jun 2014 23:16:33 +0200
+Message-ID: <1492854.pz7FvnzIM4@diego>
+References: <1403555350-14895-1-git-send-email-anarsoul@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f74.google.com ([209.85.160.74]:62704 "EHLO
-	mail-pb0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756648AbaFWUuB (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:38585 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753830AbaFWVPU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Jun 2014 16:50:01 -0400
-Received: by mail-pb0-f74.google.com with SMTP id rq2so830373pbb.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jun 2014 13:50:00 -0700 (PDT)
+	Mon, 23 Jun 2014 17:15:20 -0400
+In-Reply-To: <1403555350-14895-1-git-send-email-anarsoul@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, sjg@chromium.org, olof@lixom.net, javier.martinez@collabora.co.uk, ch.naveen@samsung.com, swarren@wwwdotorg.org, khilman@linaro.org, ajaynumb@gmail.com, rahul.sharma@samsung.com, tushar.b@samsung.com, Doug Anderson <dianders@chromium.org>, ben-linux@fluff.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-This adds cros_ec to exynos5420-peach-pit and exynos5800-peach-pi,
-including:
-* The keyboard
-* The i2c tunnel
-* The tps65090 under the i2c tunnel
-* The battery under the i2c tunnel
+Am Montag, 23. Juni 2014, 23:29:09 schrieb Vasily Khoruzhick:
+> There's a several typos in a driver: 2410 instead of S3C2410
+> and wrong argument to ARRAY_SIZE(). They prevent s3c2410
+> from properly booting.
+> 
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
 
-To add extra motivation, it should be noted that tps65090 is one of
-the things needed to get display-related FETs turned on for pit and
-pi.
+Thanks for catching these.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Note that this relies on a few outstanding changes:
-* Needs (spi: s3c64xx: fix broken "cs_gpios" usage in the driver) and
-  (spi: s3c64xx: for DT platofrms always get the chipselect info from
-  DT node) to work properly and match the documented bindings.  See
-  <https://patchwork.kernel.org/patch/4346701/> and
-  <https://patchwork.kernel.org/patch/4346711/>
-
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
-Changes in v2:
-- Now just one patch since mfd patch landed.
-- Rebased to ToT linux-next
-
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 145 +++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 145 +++++++++++++++++++++++++++++
- 2 files changed, 290 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 7649982..581f385 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -25,6 +25,11 @@
- 		"google,pit", "google,peach","samsung,exynos5420",
- 		"samsung,exynos5";
- 
-+	aliases {
-+		/* Assign 20 so we don't get confused w/ builtin ones */
-+		i2c20 = "/spi@12d40000/cros-ec@0/i2c-tunnel";
-+	};
-+
- 	backlight {
- 		compatible = "pwm-backlight";
- 		pwms = <&pwm 0 1000000 0>;
-@@ -87,6 +92,13 @@
- 		pinctrl-0 = <&usb301_vbus_en>;
- 		enable-active-high;
- 	};
-+
-+	vbat: fixed-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vbat-supply";
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
- };
- 
- &dp {
-@@ -231,6 +243,20 @@
- 		samsung,pin-drv = <0>;
- 	};
- 
-+	ec_irq: ec-irq {
-+		samsung,pins = "gpx1-5";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	tps65090_irq: tps65090-irq {
-+		samsung,pins = "gpx2-5";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
- 	dp_hpd_gpio: dp_hpd_gpio {
- 		samsung,pins = "gpx2-6";
- 		samsung,pin-function = <0>;
-@@ -247,6 +273,19 @@
- };
- 
- &pinctrl_3 {
-+	/* Drive SPI lines at x2 for better integrity */
-+	spi2-bus {
-+		samsung,pin-drv = <2>;
-+	};
-+
-+	/* Drive SPI chip select at x2 for better integrity */
-+	ec_spi_cs: ec-spi-cs {
-+		samsung,pins = "gpb1-2";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <2>;
-+	};
-+
- 	usb300_vbus_en: usb300-vbus-en {
- 		samsung,pins = "gph0-0";
- 		samsung,pin-function = <1>;
-@@ -266,6 +305,111 @@
- 	status = "okay";
- };
- 
-+&spi_2 {
-+	status = "okay";
-+	num-cs = <1>;
-+	samsung,spi-src-clk = <0>;
-+	cs-gpios = <&gpb1 2 0>;
-+
-+	cros_ec: cros-ec@0 {
-+		compatible = "google,cros-ec-spi";
-+		interrupt-parent = <&gpx1>;
-+		interrupts = <5 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&ec_spi_cs &ec_irq>;
-+		reg = <0>;
-+		spi-max-frequency = <3125000>;
-+
-+		controller-data {
-+			samsung,spi-feedback-delay = <1>;
-+		};
-+
-+		i2c-tunnel {
-+			compatible = "google,cros-ec-i2c-tunnel";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			google,remote-bus = <0>;
-+
-+			battery: sbs-battery@b {
-+				compatible = "sbs,sbs-battery";
-+				reg = <0xb>;
-+				sbs,poll-retry-count = <1>;
-+				sbs,i2c-retry-count = <2>;
-+			};
-+
-+			power-regulator@48 {
-+				compatible = "ti,tps65090";
-+				reg = <0x48>;
-+
-+				/*
-+				 * Config irq to disable internal pulls
-+				 * even though we run in polling mode.
-+				 */
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&tps65090_irq>;
-+
-+				vsys1-supply = <&vbat>;
-+				vsys2-supply = <&vbat>;
-+				vsys3-supply = <&vbat>;
-+				infet1-supply = <&vbat>;
-+				infet2-supply = <&vbat>;
-+				infet3-supply = <&vbat>;
-+				infet4-supply = <&vbat>;
-+				infet5-supply = <&vbat>;
-+				infet6-supply = <&vbat>;
-+				infet7-supply = <&vbat>;
-+				vsys-l1-supply = <&vbat>;
-+				vsys-l2-supply = <&vbat>;
-+
-+				regulators {
-+					dcdc1 {
-+						ti,enable-ext-control;
-+					};
-+					dcdc2 {
-+						ti,enable-ext-control;
-+					};
-+					dcdc3 {
-+						ti,enable-ext-control;
-+					};
-+					fet1 {
-+						regulator-name = "vcd_led";
-+					};
-+					tps65090_fet2: fet2 {
-+						regulator-name = "video_mid";
-+						regulator-always-on;
-+					};
-+					fet3 {
-+						regulator-name = "wwan_r";
-+						regulator-always-on;
-+					};
-+					fet4 {
-+						regulator-name = "sdcard";
-+						regulator-always-on;
-+					};
-+					fet5 {
-+						regulator-name = "camout";
-+					};
-+					fet6 {
-+						regulator-name = "lcd_vdd";
-+					};
-+					tps65090_fet7: fet7 {
-+						regulator-name = "video_mid_1a";
-+						regulator-always-on;
-+					};
-+					ldo1 {
-+					};
-+					ldo2 {
-+					};
-+				};
-+
-+				charger {
-+					compatible = "ti,tps65090-charger";
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &uart_3 {
- 	status = "okay";
- };
-@@ -287,3 +431,4 @@
- 	timeout-sec = <32>;
- };
- 
-+#include "cros-ec-keyboard.dtsi"
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 2c2c137..b2dc290 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -23,6 +23,11 @@
- 		"google,pi", "google,peach", "samsung,exynos5800",
- 		"samsung,exynos5";
- 
-+	aliases {
-+		/* Assign 20 so we don't get confused w/ builtin ones */
-+		i2c20 = "/spi@12d40000/cros-ec@0/i2c-tunnel";
-+	};
-+
- 	backlight {
- 		compatible = "pwm-backlight";
- 		pwms = <&pwm 0 1000000 0>;
-@@ -85,6 +90,13 @@
- 		pinctrl-0 = <&usb301_vbus_en>;
- 		enable-active-high;
- 	};
-+
-+	vbat: fixed-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vbat-supply";
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
- };
- 
- &dp {
-@@ -229,6 +241,20 @@
- 		samsung,pin-drv = <0>;
- 	};
- 
-+	ec_irq: ec-irq {
-+		samsung,pins = "gpx1-5";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	tps65090_irq: tps65090-irq {
-+		samsung,pins = "gpx2-5";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
- 	dp_hpd_gpio: dp_hpd_gpio {
- 		samsung,pins = "gpx2-6";
- 		samsung,pin-function = <0>;
-@@ -245,6 +271,19 @@
- };
- 
- &pinctrl_3 {
-+	/* Drive SPI lines at x2 for better integrity */
-+	spi2-bus {
-+		samsung,pin-drv = <2>;
-+	};
-+
-+	/* Drive SPI chip select at x2 for better integrity */
-+	ec_spi_cs: ec-spi-cs {
-+		samsung,pins = "gpb1-2";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <2>;
-+	};
-+
- 	usb300_vbus_en: usb300-vbus-en {
- 		samsung,pins = "gph0-0";
- 		samsung,pin-function = <1>;
-@@ -264,6 +303,111 @@
- 	status = "okay";
- };
- 
-+&spi_2 {
-+	status = "okay";
-+	num-cs = <1>;
-+	samsung,spi-src-clk = <0>;
-+	cs-gpios = <&gpb1 2 0>;
-+
-+	cros_ec: cros-ec@0 {
-+		compatible = "google,cros-ec-spi";
-+		interrupt-parent = <&gpx1>;
-+		interrupts = <5 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&ec_spi_cs &ec_irq>;
-+		reg = <0>;
-+		spi-max-frequency = <3125000>;
-+
-+		controller-data {
-+			samsung,spi-feedback-delay = <1>;
-+		};
-+
-+		i2c-tunnel {
-+			compatible = "google,cros-ec-i2c-tunnel";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			google,remote-bus = <0>;
-+
-+			battery: sbs-battery@b {
-+				compatible = "sbs,sbs-battery";
-+				reg = <0xb>;
-+				sbs,poll-retry-count = <1>;
-+				sbs,i2c-retry-count = <2>;
-+			};
-+
-+			power-regulator@48 {
-+				compatible = "ti,tps65090";
-+				reg = <0x48>;
-+
-+				/*
-+				 * Config irq to disable internal pulls
-+				 * even though we run in polling mode.
-+				 */
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&tps65090_irq>;
-+
-+				vsys1-supply = <&vbat>;
-+				vsys2-supply = <&vbat>;
-+				vsys3-supply = <&vbat>;
-+				infet1-supply = <&vbat>;
-+				infet2-supply = <&vbat>;
-+				infet3-supply = <&vbat>;
-+				infet4-supply = <&vbat>;
-+				infet5-supply = <&vbat>;
-+				infet6-supply = <&vbat>;
-+				infet7-supply = <&vbat>;
-+				vsys-l1-supply = <&vbat>;
-+				vsys-l2-supply = <&vbat>;
-+
-+				regulators {
-+					dcdc1 {
-+						ti,enable-ext-control;
-+					};
-+					dcdc2 {
-+						ti,enable-ext-control;
-+					};
-+					dcdc3 {
-+						ti,enable-ext-control;
-+					};
-+					fet1 {
-+						regulator-name = "vcd_led";
-+					};
-+					tps65090_fet2: fet2 {
-+						regulator-name = "video_mid";
-+						regulator-always-on;
-+					};
-+					fet3 {
-+						regulator-name = "wwan_r";
-+						regulator-always-on;
-+					};
-+					fet4 {
-+						regulator-name = "sdcard";
-+						regulator-always-on;
-+					};
-+					fet5 {
-+						regulator-name = "camout";
-+					};
-+					fet6 {
-+						regulator-name = "lcd_vdd";
-+					};
-+					tps65090_fet7: fet7 {
-+						regulator-name = "video_mid_1a";
-+						regulator-always-on;
-+					};
-+					ldo1 {
-+					};
-+					ldo2 {
-+					};
-+				};
-+
-+				charger {
-+					compatible = "ti,tps65090-charger";
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &uart_3 {
- 	status = "okay";
- };
-@@ -285,3 +429,4 @@
- 	timeout-sec = <32>;
- };
- 
-+#include "cros-ec-keyboard.dtsi"
--- 
-2.0.0.526.g5318336
+> ---
+>  drivers/clk/samsung/clk-s3c2410.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-s3c2410.c
+> b/drivers/clk/samsung/clk-s3c2410.c index ba07168..bd9a873 100644
+> --- a/drivers/clk/samsung/clk-s3c2410.c
+> +++ b/drivers/clk/samsung/clk-s3c2410.c
+> @@ -378,7 +378,7 @@ void __init s3c2410_common_clk_init(struct device_node
+> *np, unsigned long xti_f, if (!np)
+>  		s3c2410_common_clk_register_fixed_ext(ctx, xti_f);
+> 
+> -	if (current_soc == 2410) {
+> +	if (current_soc == S3C2410) {
+>  		if (_get_rate("xti") == 12 * MHZ) {
+>  			s3c2410_plls[mpll].rate_table = pll_s3c2410_12mhz_tbl;
+>  			s3c2410_plls[upll].rate_table = pll_s3c2410_12mhz_tbl;
+> @@ -432,7 +432,7 @@ void __init s3c2410_common_clk_init(struct device_node
+> *np, unsigned long xti_f, samsung_clk_register_fixed_factor(ctx,
+> s3c2410_ffactor,
+>  				ARRAY_SIZE(s3c2410_ffactor));
+>  		samsung_clk_register_alias(ctx, s3c2410_aliases,
+> -			ARRAY_SIZE(s3c2410_common_aliases));
+> +			ARRAY_SIZE(s3c2410_aliases));
+>  		break;
+>  	case S3C2440:
+>  		samsung_clk_register_mux(ctx, s3c2440_muxes,
