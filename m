@@ -1,54 +1,68 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: Re: [PATCH V2 0/2] Sound support for Exynos4412 Odroid X2, U3 board
-Date: Mon, 23 Jun 2014 10:40:39 +0100
-Message-ID: <CAD8Lp44h6zc2Rt2MGLjhmNG-YB0kYCWf5G7hX5JmdmBfc1PvKg@mail.gmail.com>
-References: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC
+ regulators
+Date: Mon, 23 Jun 2014 10:47:34 +0100
+Message-ID: <20140623094734.GV24291@sirena.org.uk>
+References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk>
+ <20140616192500.GJ5099@sirena.org.uk>
+ <53A01D54.10506@collabora.co.uk>
+ <20140617141254.GP5099@sirena.org.uk>
+ <53A06749.1010606@collabora.co.uk>
+ <20140621204026.GH22657@sirena.org.uk>
+ <53A7F339.7050608@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f180.google.com ([74.125.82.180]:36599 "EHLO
-	mail-we0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752671AbaFWJkk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Jun 2014 05:40:40 -0400
-Received: by mail-we0-f180.google.com with SMTP id x48so6563502wes.39
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jun 2014 02:40:39 -0700 (PDT)
-In-Reply-To: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="6qFdnjy6dKaiDX/E"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53A7F339.7050608-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Daniel Stone <daniels-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, pawel.moll@arm.com, zhen1.chen@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, galak@codeaurora.org, alsa-devel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Wed, Jun 18, 2014 at 5:22 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> This series adds basic sound support for the Odroid X2/U3 boards.
-> It relies on specific Exynos Audio Subsystem clock parent and
-> frequencies being pre-configured.
->
-> My full testing git branch has been pushed to:
-> git://linuxtv.org/snawrocki/samsung.git v3.16-rc1-odroid-sound-clk
 
-Thanks for this! I tested these patches plus the ones in your branch
-to integrate with the ODROID.
-I tested ODROID-U2's 3.5mm analog headphone jack output with:
+--6qFdnjy6dKaiDX/E
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-# speaker-test -c 2 -t wav -l 2
+On Mon, Jun 23, 2014 at 11:28:25AM +0200, Javier Martinez Canillas wrote:
+> On 06/21/2014 10:40 PM, Mark Brown wrote:
 
-On my x86 laptop this command takes ~6 seconds and produces audible output:
-"Front left, front right, front left, front right"
+> > That's not really relevant here - I'm asking if the regulators get their
+> > own supplies rather than if anything uses them.
 
-When those words are reproduced over the speakers, there is a
-corresponding message printed to stdout which synchronizes nicely.
+> Sorry if I keep misunderstanding your question but the regulators in this PMIC
+> don't have a parent supply/regulator node.
 
-On ODROID-U2 the same command doesn't work quite right - execution
-takes only 3.5 seconds and the audible output is truncated:
-"Front left, front right, front"
-and the stdout messages do not really coincide with the audio being
-reproduced at that time.
+They should, I'm pretty sure the device does actually regulate one
+supply into another.
 
-No pulseaudio or anything like that.
+--6qFdnjy6dKaiDX/E
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Can you reproduce this?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Thanks
-Daniel
+iQIcBAEBAgAGBQJTp/ezAAoJELSic+t+oim9E4sQAJi2kzIJpgcPKot+Qf54PELp
+qJ9WtYpSj3JJ4wlco5MFkvpwhopDBid+s2FISAGL882quUOrkw4jsYRI4IeNTcz/
+w5KiX9v40Au0ybcwglsHkDLYUQKdeHfZReno0JcPvLrNBb6n7V0m4oUkerOQ2kak
+29EbRwVaGEARK1Vjob2EzGGzlKIrop/O1TjCfoVcC2xnJbgg/8ERINs81gy14wVE
+15MoIQ2r7nEvWNJyGR3qYUwSnkZo20toZFNnEFl4B9C6SjWTvZWUpClW4CG22HwQ
+9tmxvrY54mViWD024GD8/9D3nYR/zU/l26bzjy9wTpHkEsyOhzj5cvBYn6dR4fzw
+Oy8QHiGAwFCRCdNcnIUdEURKZkVQXi9bDrRHe296oGWZH2V9b+57/wiWIxtfyWm1
+5H0aKPTum8Xy3xECxQ8cuvDDwONcHktqJEl5Kde9TAia19EEEwnqMmy+KZThCDjh
+OxGYDERal1ctVZyYW7UWpQezV7UKtbAzmhM0lJ0LGlHb1/jmzTYULXgWieDtLTf6
+q8xlLijEpq3FJ5gk9D/5lYb6pR5tZ8PbJGnvGxQX2KIeVOSzHFUMsDTzpq9wp9Pm
+GRJnVflHhUR6y4vkAUNuKYSQ+9B2mN24GKMM3CunxiAoW6FfxxsL1/XtvdWDJA0M
+T7jZx+7vgHd223MNo7ex
+=NTZb
+-----END PGP SIGNATURE-----
+
+--6qFdnjy6dKaiDX/E--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
