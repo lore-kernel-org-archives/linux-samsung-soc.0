@@ -1,86 +1,203 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [RFC 0/4] ARM: dts: exynos: Prepare Spring
-Date: Mon, 23 Jun 2014 23:24:28 +0200
-Message-ID: <53A89B0C.5000206@suse.de>
-References: <1403486483-4063-1-git-send-email-afaerber@suse.de>	<CAD=FV=X4qGeWRZ9kcFGGr_tznruJkpzUJ5MU3hp-Q+mo2R1a4g@mail.gmail.com> <CANLzEksRmsk1y2ZEjRVE8F8DjSUeW3AebaaDWL71Z4Gc9NvZeg@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] i2c: exynos5: Properly use the "noirq" variants of suspend/resume
+Date: Mon, 23 Jun 2014 15:01:39 -0700
+Message-ID: <CAD=FV=VkxA01eEFiXSp+c+GDuVJi7TctAdnyrMggk1gRw6BStQ@mail.gmail.com>
+References: <1403155273-1057-1-git-send-email-dianders@chromium.org>
+	<7h8uosyc3k.fsf@paris.lan>
+	<CAD=FV=XxNVmF+N5HF4SnZoJRJvkSUkpEx6ct4v2gtmAQ9n28-Q@mail.gmail.com>
+	<7hwqcbs166.fsf@paris.lan>
+	<CAD=FV=Uz9O0i2gmuk2+BHa-Tksvyxv0+MTi2UEjVREAMNCK7Ug@mail.gmail.com>
+	<7h7g4brx6w.fsf@paris.lan>
+	<CAD=FV=VmPMf6tCNmKJ1o5J7PyAXoU8fb6+s+Fkv18FH2WaQp7A@mail.gmail.com>
+	<53A4CADA.4030002@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <opensuse-arm+bounces-3068-glsa-opensusearm=m.gmane.org-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
-List-Post: <mailto:opensuse-arm-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
-List-Help: <mailto:opensuse-arm+help-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
-List-Subscribe: <mailto:opensuse-arm+subscribe-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
-List-Unsubscribe: <mailto:opensuse-arm+unsubscribe-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
-List-Owner: <mailto:opensuse-arm+owner-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
-List-archive: <http://lists.opensuse.org/opensuse-arm>
-In-Reply-To: <CANLzEksRmsk1y2ZEjRVE8F8DjSUeW3AebaaDWL71Z4Gc9NvZeg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-To: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephan van Schaik <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, openSUSE ARM ML <opensuse-arm-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53A4CADA.4030002@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kevin Hilman <khilman@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, naveen krishna <ch.naveen@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Jean Delvare <jdelvare@suse.de>, Simon Glass <sjg@google.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Masanari Iida <standby24x7@gmail.com>, Sachin Kamat <sachin.kamat@linaro.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Am 23.06.2014 22:11, schrieb Benson Leung:
-> On Mon, Jun 23, 2014 at 12:57 PM, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>=
- wrote:
->>> Also when the screen stayed on, the embedded controller's keymap seem=
-s
->>> hardcoded to US English with system settings not taking effect; but
->>> surely we don't want per-keyboard device tree files to remedy that.
+Tomasz,
+
+On Fri, Jun 20, 2014 at 4:59 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On 21.06.2014 01:53, Doug Anderson wrote:
+>> Kevin,
 >>
->> +Benson may be able to answer this.  I believe generally non-US
->> keyboard layouts are handled at a higher level.
->=20
-> There's no such thing as a notion of US versus non-US keyboard layouts
-> at the embedded controller level or even in the kernel. Indeed, this
-> should all be handled in user space.
->=20
-> The chromeos firmware and kernel should return the correct key codes
-> for every key pressed on keyboards with the ANSI layout (US based), or
-> ISO (UK and most other countries).
->=20
-> The only differences are :
-> * the ISO keyboard has an extra key, which is immediately to the right
-> of the Left Shift key. This must return KEY_102ND key code from the
-> input layer.
-> * the ISO keyboard has a  different location for the | \ key, which
-> accomodates the upside L shaped Enter key on the right side of the
-> keyboard. The keycode for this key is KEY_BACKSLASH.
->=20
-> Basically, all of this should be verified using evtest to test that
-> the ec and kernel have the keys right.
+>> On Fri, Jun 20, 2014 at 4:13 PM, Kevin Hilman <khilman@linaro.org> wrote:
+>>> Doug Anderson <dianders@chromium.org> writes:
+>>>
+>>>> Kevin,
+>>>>
+>>>> On Fri, Jun 20, 2014 at 2:48 PM, Kevin Hilman <khilman@linaro.org> wrote:
+>>>>> Hi Doug,
+>>>>>
+>>>>> Doug Anderson <dianders@chromium.org> writes:
+>>>>>
+>>>>>> On Thu, Jun 19, 2014 at 11:43 AM, Kevin Hilman <khilman@linaro.org> wrote:
+>>>>>>> Doug Anderson <dianders@chromium.org> writes:
+>>>>>>>
+>>>>>>>> The original code for the exynos i2c controller registered for the
+>>>>>>>> "noirq" variants.  However during review feedback it was moved to
+>>>>>>>> SIMPLE_DEV_PM_OPS without anyone noticing that it meant we were no
+>>>>>>>> longer actually "noirq" (despite functions named
+>>>>>>>> exynos5_i2c_suspend_noirq and exynos5_i2c_resume_noirq).
+>>>>>>>>
+>>>>>>>> i2c controllers that might have wakeup sources on them seem to need to
+>>>>>>>> resume at noirq time so that the individual drivers can actually read
+>>>>>>>> the i2c bus to handle their wakeup.
+>>>>>>>
+>>>>>>> I suspect usage of the noirq variants pre-dates the existence of the
+>>>>>>> late/early callbacks in the PM core, but based on the description above,
+>>>>>>> I suspect what you actually want is the late/early callbacks.
+>>>>>>
+>>>>>> I think it actually really needs noirq.  ;)
+>>>>>
+>>>>> Yes, it appears it does.   Objection withdrawn.
+>>>>>
+>>>>> I just wanted to be sure because since the introduction of late/early,
+>>>>> the need for noirq should be pretty rare, but there certainly are needs.
+>>>>>
+>>>>> <tangent>
+>>>>> In this case though, the need for it has more to do with the
+>>>>> lack of a way for us to describe non parent-child device dependencies
+>>>>> than whether or not IRQs are enabled or not.
+>>>>> </tangent>
+>>>>
+>>>> Actually, I'm not sure that's true, but I'll talk through it and you
+>>>> can point to where I'm wrong (I often am!)
+>>>>
+>>>> If you're a wakeup device then you need to be ready to handle
+>>>> interrupts as soon as the "noirq" phase of resume is done, right?
+>>>
+>>> As soon as the noirq phase of your own driver is done, correct.
+>>>
+>>>> Said another way: you need to be ready to handle interrupts _before_
+>>>> the normal resume code is called and be ready to handle interrupts
+>>>> even _before_ the early resume code is called.
+>>>
+>>> Correct.
+>>>
+>>>> That means if you are implementing a bus that's needed by any devices
+>>>> with wakeup interrupts then it's your responsibility to also be
+>>>> prepared to run this early.
+>>>>
+>>>> In this particular case the max77686 driver doesn't need to do
+>>>> anything at all to be ready to handle interrupts.  It's suspend and
+>>>> resume code is just boilerplate "enable wakeups / disable wakeups" and
+>>>> it has no "noirq" code.  The max77686 driver doesn't have any "noirq"
+>>>> wake call because it would just be empty.
+>>>>
+>>>> Said another way: the problem isn't that the max77686 wakeup gets
+>>>> called before the i2c wakeup.  The problem is that i2c is needed ASAP
+>>>> once IRQs are enabled and thus needs to be run noirq.
+>>>>
+>>>> Does that sound semi-correct?
+>>>
+>>> Yes that's correct.
+>>>
+>>> My point above was (trying to be) that ultimately this is an ordering
+>>> issue.  e.g. the bus device needs to be "ready" before wakeup devices on
+>>> that bus can handle wakeup interrupts etc.  The way we're handling that
+>>> ordering is by the implied ordering of noirq, late/early and "normal"
+>>> callbacks.  That's convenient, but not exactly obvious.
+>>>
+>>> It works because we dont' typically need too many layers here, but it
+>>> would be much more understandable if we could describe this kind of
+>>> dependency in a way that the suspend/resume code would suspend/resume
+>>> things in the right order rather than by tinkering with callback levels
+>>> (since otherwise suspend/resume ordering just depends on probe order.)
+>>>
+>>> This issue then usually gets me headed down my usual rant path about how
+>>> I think runtime PM is much better suited for handling ordering and
+>>> dependencies becuase it automatically handles parent/child dependencies
+>>> and non parent/child dependencies can be handled by taking advantage of
+>>> the get/put APIs which are refcounted, ect etc. but that's another can
+>>> worms.
+>>
+>> Ah, I gotcha.  Yes, I'm a fan of having explicit dependency orderings too.
+>>
+>> So I guess in this case the truly correct way to handle it is:
+>>
+>> 1. i2c controller should have Runtime PM even though (as per the code
+>> now) there's nothing you can do to it to save power under normal
+>> circumstances.  So the runtime "suspend" code would be a no-op.
+>>
+>> 2. When the i2c controller is told to runtime resume, it should
+>> double-check if a full SoC poweroff has happened since the last time
+>> it checked.  In this case it should reinit its hardware.
+>>
+>> 3. If the i2c controller gets a full "resume" callback then it should
+>> also reinit the hardware just so it's not sitting in a half-configured
+>> state until the first peripheral uses it.
+>>
+>> If later someone finds a way to power gate the i2c controller when no
+>> active transfers are going (and we actually save non-trivial power
+>> doing this) then we've got a nice place to put that code.
+>>
+>> NOTE: Unless we can actually save power by power gating the i2c
+>> peripheral when there are no active transfers, we would also just have
+>> the i2c_xfer() init the hardware if needed.  Maybe that's kinda gross,
+>> though.
+>>
+>>
+>> -Doug
+>>
+>>
+>> P.S. Just to confirm: you're not opposed to landing the noirq code
+>> as-is.  This discussion is about how someone could make it better in
+>> the future...
+>>
+>
+> I'm not sure noirq is going to work correctly, at least not with current
+> callbacks. I can see a call to clk_prepare_enable() there which needs to
+> acquire a mutex.
 
-Hm, we may be talking about two different things here? I have been doing
-a minimum system bring-up for 3.16, with openSUSE userspace.
-My YaST-selected system keymap (German with deadkeys) is not taking
-effect on German Spring at the *framebuffer console* (tty1) - evdev is
-not involved at that level AIUI.
+Nice catch, thanks!  :)
 
-Backspace and L-shaped enter keys work okay. The keymap here should be
-identical to that in the original German device and seemed to match that
-in the exynos5250-snow.dts file.
+OK, looking at that now.  Interestingly this doesn't seem to cause us
+problems in our ChromeOS 3.8 tree.  I just tried enabling:
+  CONFIG_DEBUG_ATOMIC_SLEEP=y
 
-I just checked (w/ dp-controller, hdmi, fimd commented out in my patch):
-* An external USB keyboard does not work correctly either.
-* In X11 (xdm), both internal and USB keyboard work as expected.
+...and confirmed that I got it on right:
 
-Similar situation in ChromeOS IIRC, with keymap correct at graphical
-login but not on the right-arrow console - although I don't know the
-ChromeOS userland too well to judge if it was configured correctly.
+# zgrep -i atomic /proc/config.gz
+CONFIG_DEBUG_ATOMIC_SLEEP=y
 
-> If you are having other problems with keyboard layout being stuck to
-> US QWERTY, please check your user space.
+I can suspend/resume with no problems.  My bet is that it works fine because:
 
-On my Raspberry Pi for instance, the equivalent openSUSE Factory works
-just fine with German keymap for USB keyboard. Might any related kernel
-config options be missing in exynos_defconfig? Anything in particular I
-should check in user space?
+* resume_noirq is not considered "atomic" in the sense enforced by
+CONFIG_DEBUG_ATOMIC_SLEEP (at least not in 3.8--I haven't tried on
+ToT)
 
-Cheers,
-Andreas
+* At resume_noirq time nobody else is running so nobody else could be
+holding the mutex.  Thus: no sleep
 
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=BC=
-rnberg
---=20
-To unsubscribe, e-mail: opensuse-arm+unsubscribe-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org
-To contact the owner, e-mail: opensuse-arm+owner-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org
+* The clock being used doesn't really have a prepare stage so it
+doesn't sleep either.
+
+That being said it doesn't seem so ideal to have a
+clk_prepare_enable() in the noirq callback.  How about I add a
+suspend/resume callback that does the prepare stage?
+
+
+> Would disabling the irq in suspend callback of your wakeup device and
+> reenabling it in resume, while keeping their wakeup capability enabled,
+> work for you? Then you could resume i2c in .resume_early callback
+> without any issues.
+
+I will do it if that's what people want and I'll bet it will work.
+...but I'm not a huge fan because:
+
+* It seems to me that it's working around the kernel and not working
+with the kernel.  The kernel's noirq stage is specifically for
+handling any wakeup that needs to happen before IRQs are enabled.
+
+* If any other i2c devices need wakeup they'll also need this workaround.
+
+* We still need to change the i2c driver to use the early/late, which
+is an implicit ordering.
+
+...all that being said if we have a goal to avoid "noirq" then this
+would accomplish that goal.
