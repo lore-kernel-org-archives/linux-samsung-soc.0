@@ -1,51 +1,109 @@
-From: Sachin Kamat <sachin.kamat@samsung.com>
-Subject: Re: [PATCH v2 Resend 1/2] ARM: EXYNOS: Update secondary boot addr for
- secure mode
-Date: Mon, 23 Jun 2014 10:03:16 +0530
-Message-ID: <CAK5sBcETe20PWRV+z5Gb=hQNk13wE0PbmcvEmC9TM6nD2mi=ew@mail.gmail.com>
-References: <1401250382-24046-1-git-send-email-sachin.kamat@linaro.org>
-	<5388CBB9.1050003@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Tushar Behera <tushar.b@samsung.com>
+Subject: [PATCH] ARM: dts: Move display-timings node under fimd node
+Date: Mon, 23 Jun 2014 10:29:12 +0530
+Message-ID: <1403499552-12464-1-git-send-email-tushar.b@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f180.google.com ([209.85.217.180]:37395 "EHLO
-	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751405AbaFWEdS convert rfc822-to-8bit (ORCPT
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:48854 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751066AbaFWFCW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Jun 2014 00:33:18 -0400
-Received: by mail-lb0-f180.google.com with SMTP id w7so3729963lbi.39
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Jun 2014 21:33:17 -0700 (PDT)
-In-Reply-To: <5388CBB9.1050003@suse.de>
+	Mon, 23 Jun 2014 01:02:22 -0400
+Received: by mail-pb0-f52.google.com with SMTP id rq2so5354692pbb.25
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Jun 2014 22:02:21 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tushar Behera <tushar.behera@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sachin Kamat <spk.linux@gmail.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, trblinux@gmail.com
 
-On Fri, May 30, 2014 at 11:49 PM, Andreas F=C3=A4rber <afaerber@suse.de=
-> wrote:
-> Am 28.05.2014 06:13, schrieb Sachin Kamat:
->> Almost all Exynos-series of SoCs that run in secure mode don't need
->> additional offset for every CPU, with Exynos4412 being the only
->> exception.
->>
->> Tested on Origen-Quad (Exynos4412) and Arndale-Octa (Exynos5420).
->>
->> While at it, fix the coding style (space around *).
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->> ---
->>  arch/arm/mach-exynos/firmware.c |    9 +++++++--
->>  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> Fixes ODROID-XU (Exynos5410) as well - thought it had been a prereq t=
-o
-> applying the 5410 patches...
->
-> Tested-by: Andreas F=C3=A4rber <afaerber@suse.de>
->
+'display-timings' should be a subnode for fimd node. Moving this
+node appropriately gets the display back on Origen/Origen-Quad boards.
 
-Kukjin, this patch is required to bring up 4 A15 cores on some 5410
-and 5420 based
-boards. Can you please queue this up for the upcoming rc as fixes?
+Signed-off-by: Tushar Behera <tushar.b@samsung.com>
+---
+Based on next-20140620.
+
+Tested on Exynos4210-Origen board. Looks like there are still some pending
+bits on Exynos4412-Origen to get display working.
+
+ arch/arm/boot/dts/exynos4210-origen.dts |   26 +++++++++++++-------------
+ arch/arm/boot/dts/exynos4412-origen.dts |   26 +++++++++++++-------------
+ 2 files changed, 26 insertions(+), 26 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index f767c42..a39323f 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -317,20 +317,20 @@
+ 		pinctrl-0 = <&lcd_en &lcd_clk &lcd_data24 &pwm0_out>;
+ 		pinctrl-names = "default";
+ 		status = "okay";
+-	};
+ 
+-	display-timings {
+-		native-mode = <&timing0>;
+-		timing0: timing {
+-			clock-frequency = <47500000>;
+-			hactive = <1024>;
+-			vactive = <600>;
+-			hfront-porch = <64>;
+-			hback-porch = <16>;
+-			hsync-len = <48>;
+-			vback-porch = <64>;
+-			vfront-porch = <16>;
+-			vsync-len = <3>;
++		display-timings {
++			native-mode = <&timing0>;
++			timing0: timing {
++				clock-frequency = <47500000>;
++				hactive = <1024>;
++				vactive = <600>;
++				hfront-porch = <64>;
++				hback-porch = <16>;
++				hsync-len = <48>;
++				vback-porch = <64>;
++				vfront-porch = <16>;
++				vsync-len = <3>;
++			};
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index e925c9f..0604220 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -160,20 +160,20 @@
+ 		pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
+ 		pinctrl-names = "default";
+ 		status = "okay";
+-	};
+ 
+-	display-timings {
+-		native-mode = <&timing0>;
+-		timing0: timing {
+-			clock-frequency = <47500000>;
+-			hactive = <1024>;
+-			vactive = <600>;
+-			hfront-porch = <64>;
+-			hback-porch = <16>;
+-			hsync-len = <48>;
+-			vback-porch = <64>;
+-			vfront-porch = <16>;
+-			vsync-len = <3>;
++		display-timings {
++			native-mode = <&timing0>;
++			timing0: timing {
++				clock-frequency = <47500000>;
++				hactive = <1024>;
++				vactive = <600>;
++				hfront-porch = <64>;
++				hback-porch = <16>;
++				hsync-len = <48>;
++				vback-porch = <64>;
++				vfront-porch = <16>;
++				vsync-len = <3>;
++			};
+ 		};
+ 	};
+ 
+-- 
+1.7.9.5
