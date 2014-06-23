@@ -1,182 +1,37 @@
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH v3 3/3] clocksource: exynos_mct: Only use 32-bits where possible
-Date: Mon, 23 Jun 2014 11:53:23 +0200
-Message-ID: <CAKfTPtDKRsxxre-RGet6FeMBJY_8Mk_Vr3DJvcc_6APNGJC2Uw@mail.gmail.com>
-References: <1403286472-6817-1-git-send-email-dianders@chromium.org> <1403286472-6817-4-git-send-email-dianders@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1403286472-6817-4-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Chirantan Ekbote <chirantan@chromium.org>, David Riley <davidriley@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Amit Daniel Kachhap <amit.daniel@samsung.com>, javier.martinez@collabora.co.uk, Thomas Gleixner <tglx@linutronix.de>, linux-kernel <linux-kernel@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [PATCH 0/3] Adding UHS support for dw_mmc driver
+Date: Mon, 23 Jun 2014 16:15:18 +0530
+Message-ID: <1403520321-2431-1-git-send-email-yuvaraj.cd@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:59027 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752535AbaFWKph (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Jun 2014 06:45:37 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jh80.chung@samsung.com, cjb@laptop.org, tgih.jun@samsung.com, linux-mmc@vger.kernel.org, ulf.hansson@linaro.org
+Cc: sonnyrao@chromium.org, t.figa@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, ks.giri@samsung.com, prashanth.g@samsung.com, alim.akhtar@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Hi Doug,
+This series adds UHS support for dw_mmc driver.
+Patch[1] reworks the handling of vmmc and vqmmc regulators.
+Patch[2] handles the case where in some boards uses built-in CD line for
+card detection and connected to a same voltage domain as of the IO rails.
+Patch[3] was taken from chrome tree originally developed by Doug Anderson.
 
-Acked-by Vincent Guittot <vincent.guittot@linaro.org>
+These patches were tested on exynos based chromebook with 3.16-rc1.
 
-Vincent
+Doug Anderson (1):
+  mmc: dw_mmc: Support voltage changes
 
-On 20 June 2014 19:47, Doug Anderson <dianders@chromium.org> wrote:
-> The MCT has a nice 64-bit counter.  That means that we _can_ register
-> as a 64-bit clocksource and sched_clock.  ...but that doesn't mean we
-> should.
->
-> The 64-bit counter is read by reading two 32-bit registers.  That
-> means reading needs to be something like:
-> - Read upper half
-> - Read lower half
-> - Read upper half and confirm that it hasn't changed.
->
-> That wouldn't be terrible, but:
-> - THe MCT isn't very fast to access (hundreds of nanoseconds).
-> - The clocksource is queried _all the time_.
->
-> In total system profiles of real workloads on ChromeOS, we've seen
-> exynos_frc_read() taking 2% or more of CPU time even after optimizing
-> the 3 reads above to 2 (see below).
->
-> The MCT is clocked at ~24MHz on all known systems.  That means that
-> the 32-bit half of the counter rolls over every ~178 seconds.  This
-> inspired an optimization in ChromeOS to cache the upper half between
-> calls, moving 3 reads to 2.  ...but we can do better!  Having a 32-bit
-> timer that flips every 178 seconds is more than sufficient for Linux.
-> Let's just use the lower half of the MCT.
->
-> Times on 5420 to do 1000000 gettimeofday() calls from userspace:
-> * Original code:                      1323852 us
-> * ChromeOS cache upper half:          1173084 us
-> * ChromeOS + ldmia to optimize:       1045674 us
-> * Use lower 32-bit only (this code):  1014429 us
->
-> As you can see, the time used doesn't increase linearly with the
-> number of reads and we can make 64-bit work almost as fast as 32-bit
-> with a bit of assembly code.  But since there's no real gain for
-> 64-bit, let's go with the simplest and fastest implementation.
->
-> Note: with this change roughly half the time for gettimeofday() is
-> spent in exynos_frc_read().  The rest is timer / system call overhead.
->
-> Also note: this patch disables the use of the MCT on ARM64 systems
-> until we've sorted out how to make "cycles_t" always 32-bit.  Really
-> ARM64 systems should be using arch timers anyway.
->
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
-> Changes in v3:
-> - Now 32-bit version instead of ldmia version
->
-> Changes in v2: None
->
->  drivers/clocksource/Kconfig      |  1 +
->  drivers/clocksource/exynos_mct.c | 39 ++++++++++++++++++++++++++++++++-------
->  2 files changed, 33 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index 065131c..a7aeee8 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -125,6 +125,7 @@ config CLKSRC_METAG_GENERIC
->
->  config CLKSRC_EXYNOS_MCT
->         def_bool y if ARCH_EXYNOS
-> +       depends on !ARM64
->         help
->           Support for Multi Core Timer controller on Exynos SoCs.
->
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index 2df03e2..9403061 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -162,7 +162,17 @@ static void exynos4_mct_frc_start(void)
->         exynos4_mct_write(reg, EXYNOS4_MCT_G_TCON);
->  }
->
-> -static cycle_t notrace _exynos4_frc_read(void)
-> +/**
-> + * exynos4_read_count_64 - Read all 64-bits of the global counter
-> + *
-> + * This will read all 64-bits of the global counter taking care to make sure
-> + * that the upper and lower half match.  Note that reading the MCT can be quite
-> + * slow (hundreds of nanoseconds) so you should use the 32-bit (lower half
-> + * only) version when possible.
-> + *
-> + * Returns the number of cycles in the global counter.
-> + */
-> +static u64 exynos4_read_count_64(void)
->  {
->         unsigned int lo, hi;
->         u32 hi2 = readl_relaxed(reg_base + EXYNOS4_MCT_G_CNT_U);
-> @@ -176,9 +186,22 @@ static cycle_t notrace _exynos4_frc_read(void)
->         return ((cycle_t)hi << 32) | lo;
->  }
->
-> +/**
-> + * exynos4_read_count_32 - Read the lower 32-bits of the global counter
-> + *
-> + * This will read just the lower 32-bits of the global counter.  This is marked
-> + * as notrace so it can be used by the scheduler clock.
-> + *
-> + * Returns the number of cycles in the global counter (lower 32 bits).
-> + */
-> +static u32 notrace exynos4_read_count_32(void)
-> +{
-> +       return readl_relaxed(reg_base + EXYNOS4_MCT_G_CNT_L);
-> +}
-> +
->  static cycle_t exynos4_frc_read(struct clocksource *cs)
->  {
-> -       return _exynos4_frc_read();
-> +       return exynos4_read_count_32();
->  }
->
->  static void exynos4_frc_resume(struct clocksource *cs)
-> @@ -190,21 +213,23 @@ struct clocksource mct_frc = {
->         .name           = "mct-frc",
->         .rating         = 400,
->         .read           = exynos4_frc_read,
-> -       .mask           = CLOCKSOURCE_MASK(64),
-> +       .mask           = CLOCKSOURCE_MASK(32),
->         .flags          = CLOCK_SOURCE_IS_CONTINUOUS,
->         .resume         = exynos4_frc_resume,
->  };
->
->  static u64 notrace exynos4_read_sched_clock(void)
->  {
-> -       return _exynos4_frc_read();
-> +       return exynos4_read_count_32();
->  }
->
->  static struct delay_timer exynos4_delay_timer;
->
->  static cycles_t exynos4_read_current_timer(void)
->  {
-> -       return _exynos4_frc_read();
-> +       BUILD_BUG_ON_MSG(sizeof(cycles_t) != sizeof(u32),
-> +                        "cycles_t needs to move to 32-bit for ARM64 usage");
-> +       return exynos4_read_count_32();
->  }
->
->  static void __init exynos4_clocksource_init(void)
-> @@ -218,7 +243,7 @@ static void __init exynos4_clocksource_init(void)
->         if (clocksource_register_hz(&mct_frc, clk_rate))
->                 panic("%s: can't register clocksource\n", mct_frc.name);
->
-> -       sched_clock_register(exynos4_read_sched_clock, 64, clk_rate);
-> +       sched_clock_register(exynos4_read_sched_clock, 32, clk_rate);
->  }
->
->  static void exynos4_mct_comp0_stop(void)
-> @@ -245,7 +270,7 @@ static void exynos4_mct_comp0_start(enum clock_event_mode mode,
->                 exynos4_mct_write(cycles, EXYNOS4_MCT_G_COMP0_ADD_INCR);
->         }
->
-> -       comp_cycle = exynos4_frc_read(&mct_frc) + cycles;
-> +       comp_cycle = exynos4_read_count_64() + cycles;
->         exynos4_mct_write((u32)comp_cycle, EXYNOS4_MCT_G_COMP0_L);
->         exynos4_mct_write((u32)(comp_cycle >> 32), EXYNOS4_MCT_G_COMP0_U);
->
-> --
-> 2.0.0.526.g5318336
->
+Yuvaraj Kumar C D (2):
+  mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators
+  mmc: dw_mmc: Dont cut off vqmmc and vmmc
+
+ drivers/mmc/host/dw_mmc.c  |  239 +++++++++++++++++++++++++++++++++++---------
+ drivers/mmc/host/dw_mmc.h  |    7 +-
+ include/linux/mmc/dw_mmc.h |    2 +
+ 3 files changed, 201 insertions(+), 47 deletions(-)
+
+-- 
+1.7.10.4
