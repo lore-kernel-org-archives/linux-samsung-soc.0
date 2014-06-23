@@ -1,109 +1,41 @@
-From: Tushar Behera <tushar.b@samsung.com>
-Subject: [PATCH] ARM: dts: Move display-timings node under fimd node
-Date: Mon, 23 Jun 2014 10:29:12 +0530
-Message-ID: <1403499552-12464-1-git-send-email-tushar.b@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH 0/5 v2] drm/exynos: fix for misc issues related to exynos mixer
+Date: Mon, 23 Jun 2014 11:02:20 +0530
+Message-ID: <1403501545-16482-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:48854 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751066AbaFWFCW (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:42819 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751122AbaFWFdZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Jun 2014 01:02:22 -0400
-Received: by mail-pb0-f52.google.com with SMTP id rq2so5354692pbb.25
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Jun 2014 22:02:21 -0700 (PDT)
+	Mon, 23 Jun 2014 01:33:25 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N7L00KJSWRNDZD0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 23 Jun 2014 14:33:23 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, trblinux@gmail.com
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-'display-timings' should be a subnode for fimd node. Moving this
-node appropriately gets the display back on Origen/Origen-Quad boards.
+Fixes for various issues which are to Power On/Off sequence,
+Layer update, waiting for vblank in exynos mixer driver.
 
-Signed-off-by: Tushar Behera <tushar.b@samsung.com>
----
-Based on next-20140620.
+v2: 1) Repalce mixer_enable_vblank with drm_vblank_get.
 
-Tested on Exynos4210-Origen board. Looks like there are still some pending
-bits on Exynos4412-Origen to get display working.
+This series is based on exynos-drm-fixes branch in Inki dae's tree.
 
- arch/arm/boot/dts/exynos4210-origen.dts |   26 +++++++++++++-------------
- arch/arm/boot/dts/exynos4412-origen.dts |   26 +++++++++++++-------------
- 2 files changed, 26 insertions(+), 26 deletions(-)
+Rahul Sharma (5):
+  drm/exynos: set power state variable after enabling clocks and power
+  drm/exynos: stop mixer before gating clocks during poweroff
+  drm/exynos: allow mulitple layer updates per vsync for mixer
+  drm/exynos: soft reset mixer before reconfigure after power-on
+  drm/exynos: enable vsync interrupt while waiting for vblank
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index f767c42..a39323f 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -317,20 +317,20 @@
- 		pinctrl-0 = <&lcd_en &lcd_clk &lcd_data24 &pwm0_out>;
- 		pinctrl-names = "default";
- 		status = "okay";
--	};
- 
--	display-timings {
--		native-mode = <&timing0>;
--		timing0: timing {
--			clock-frequency = <47500000>;
--			hactive = <1024>;
--			vactive = <600>;
--			hfront-porch = <64>;
--			hback-porch = <16>;
--			hsync-len = <48>;
--			vback-porch = <64>;
--			vfront-porch = <16>;
--			vsync-len = <3>;
-+		display-timings {
-+			native-mode = <&timing0>;
-+			timing0: timing {
-+				clock-frequency = <47500000>;
-+				hactive = <1024>;
-+				vactive = <600>;
-+				hfront-porch = <64>;
-+				hback-porch = <16>;
-+				hsync-len = <48>;
-+				vback-porch = <64>;
-+				vfront-porch = <16>;
-+				vsync-len = <3>;
-+			};
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index e925c9f..0604220 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -160,20 +160,20 @@
- 		pinctrl-0 = <&lcd_clk &lcd_data24 &pwm1_out>;
- 		pinctrl-names = "default";
- 		status = "okay";
--	};
- 
--	display-timings {
--		native-mode = <&timing0>;
--		timing0: timing {
--			clock-frequency = <47500000>;
--			hactive = <1024>;
--			vactive = <600>;
--			hfront-porch = <64>;
--			hback-porch = <16>;
--			hsync-len = <48>;
--			vback-porch = <64>;
--			vfront-porch = <16>;
--			vsync-len = <3>;
-+		display-timings {
-+			native-mode = <&timing0>;
-+			timing0: timing {
-+				clock-frequency = <47500000>;
-+				hactive = <1024>;
-+				vactive = <600>;
-+				hfront-porch = <64>;
-+				hback-porch = <16>;
-+				hsync-len = <48>;
-+				vback-porch = <64>;
-+				vfront-porch = <16>;
-+				vsync-len = <3>;
-+			};
- 		};
- 	};
- 
+ drivers/gpu/drm/exynos/exynos_mixer.c |   50 +++++++++++++++++++++++----------
+ drivers/gpu/drm/exynos/regs-mixer.h   |    1 +
+ 2 files changed, 36 insertions(+), 15 deletions(-)
+
 -- 
 1.7.9.5
