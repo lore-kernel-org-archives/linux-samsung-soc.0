@@ -1,45 +1,78 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/4] Documentation: devicetree: Fix s2mps11 and s5m8767 typos
-Date: Mon, 23 Jun 2014 16:20:39 -0700
-Message-ID: <CAD=FV=Wvu9WzTACovCjmOsce7KUStfAH7PX8rgROA0007HrahA@mail.gmail.com>
-References: <1403486483-4063-1-git-send-email-afaerber@suse.de>
-	<1403486483-4063-2-git-send-email-afaerber@suse.de>
-	<CAK5sBcGM6TLiMfhktGaeL9hvPFbAXN6mWFq=irWUVHnZi=BWNg@mail.gmail.com>
-	<53A8B306.1010903@suse.de>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH] i2c: exynos5: Properly use the "noirq" variants of suspend/resume
+Date: Mon, 23 Jun 2014 16:31:21 -0700
+Message-ID: <7hwqc7nqye.fsf@paris.lan>
+References: <1403155273-1057-1-git-send-email-dianders@chromium.org>
+	<7h8uosyc3k.fsf@paris.lan>
+	<CAD=FV=XxNVmF+N5HF4SnZoJRJvkSUkpEx6ct4v2gtmAQ9n28-Q@mail.gmail.com>
+	<7hwqcbs166.fsf@paris.lan>
+	<CAD=FV=Uz9O0i2gmuk2+BHa-Tksvyxv0+MTi2UEjVREAMNCK7Ug@mail.gmail.com>
+	<7h7g4brx6w.fsf@paris.lan>
+	<CAD=FV=VmPMf6tCNmKJ1o5J7PyAXoU8fb6+s+Fkv18FH2WaQp7A@mail.gmail.com>
+	<7h38evp8ng.fsf@paris.lan>
+	<CAD=FV=VBcWC2Z2WCmsiZUPCrakqrdd9Cd6QL9TLYS4c23+sMkA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <53A8B306.1010903@suse.de>
-Sender: linux-doc-owner@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: Sachin Kamat <sachin.kamat@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, DOCUMENTATION <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:48939 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750931AbaFWXbX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Jun 2014 19:31:23 -0400
+Received: by mail-pd0-f180.google.com with SMTP id fp1so6223874pdb.39
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jun 2014 16:31:23 -0700 (PDT)
+In-Reply-To: <CAD=FV=VBcWC2Z2WCmsiZUPCrakqrdd9Cd6QL9TLYS4c23+sMkA@mail.gmail.com>
+	(Doug Anderson's message of "Mon, 23 Jun 2014 15:42:01 -0700")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, naveen krishna <ch.naveen@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Jean Delvare <jdelvare@suse.de>, Simon Glass <sjg@google.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Masanari Iida <standby24x7@gmail.com>, Sachin Kamat <sachin.kamat@linaro.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Andreas,
+Doug Anderson <dianders@chromium.org> writes:
 
-On Mon, Jun 23, 2014 at 4:06 PM, Andreas F=C3=A4rber <afaerber@suse.de>=
- wrote:
-> I was wondering which character to type, and found two undocumented
-> s5m8767_pmic properties downstream (s5m-core,enable-low-jitter and
-> s5m-core,device_type =3D <0x2>), which I then left out.
+> Kevin,
+>
+> On Mon, Jun 23, 2014 at 3:23 PM, Kevin Hilman <khilman@linaro.org> wrote:
+>>> So I guess in this case the truly correct way to handle it is:
+>>>
+>>> 1. i2c controller should have Runtime PM even though (as per the code
+>>> now) there's nothing you can do to it to save power under normal
+>>> circumstances.  So the runtime "suspend" code would be a no-op.
+>>>
+>>> 2. When the i2c controller is told to runtime resume, it should
+>>> double-check if a full SoC poweroff has happened since the last time
+>>> it checked.  In this case it should reinit its hardware.
+>>>
+>>> 3. If the i2c controller gets a full "resume" callback then it should
+>>> also reinit the hardware just so it's not sitting in a half-configured
+>>> state until the first peripheral uses it.
+>>>
+>>> If later someone finds a way to power gate the i2c controller when no
+>>> active transfers are going (and we actually save non-trivial power
+>>> doing this) then we've got a nice place to put that code.
+>>>
+>>> NOTE: Unless we can actually save power by power gating the i2c
+>>> peripheral when there are no active transfers, we would also just have
+>>> the i2c_xfer() init the hardware if needed.  Maybe that's kinda gross,
+>>> though.
+>>
+>> Yes, this is how we manage the i2c controller on OMAP.
+>>
+>> Essentially, between every xfer, the hw is disabled and can potentially
+>> lose context, so eveery xfer requires a hw init.  We use the runtime PM
+>> "autosuspend" feature so that it stays alive for X milliseconds so
+>> bursty i2c xfers are not punished.
+>>
+>> Have a look at drivers/i2c/busses/i2c-omap.c.
+>>
+>> You'll notice there are not callbacks for system suspend/resume, it's
+>> only doing runtime PM.
+>
+> OK, cool!  That might be a bit too aggressive of a change for what I
+> can take on right now.  I've filed http://crbug.com/388007 to see if
+> Samsung can take a look at this.
 
-I don't know much about "s5m-core,device_type", but I doubt it's
-needed.  You can see <http://crosreview.com/42202> for details.  I
-haven't looked but I'd bet that we just get this from the compatible
-string now.
+Sure.  While I think moving to runtime PM is the right thing to do, that
+alone shouldn't block this patch.
 
-I did do a (very!) quick look and I see that low-jitter was originally
-implemented in the local 3.4 kernel at <http://crosreview.com/43624>.
-=2E..and the local 3.8 kernel at <http://crosreview.com/66037>.
-
-NOTE: it's pretty important to make sure low-jitter is turned on for
-Chromebooks if you actually want full functionality.  At least on
-exynos5250-snow (with the max77686 PMIC) you'd get occasional (and
-very strange and very hard to debug) TPM errors if you didn't have
-low-jitter.  The TPM is part of the security model on Chromebooks and
-you might have a hard time accessing the encrypted parts of the disk
-without it.
-
-
--Doug
+Kevin
