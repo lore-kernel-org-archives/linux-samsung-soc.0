@@ -1,81 +1,54 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC regulators
-Date: Mon, 23 Jun 2014 11:28:25 +0200
-Message-ID: <53A7F339.7050608@collabora.co.uk>
-References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk> <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk> <20140616192500.GJ5099@sirena.org.uk> <53A01D54.10506@collabora.co.uk> <20140617141254.GP5099@sirena.org.uk> <53A06749.1010606@collabora.co.uk> <20140621204026.GH22657@sirena.org.uk>
+From: Daniel Drake <drake@endlessm.com>
+Subject: Re: [PATCH V2 0/2] Sound support for Exynos4412 Odroid X2, U3 board
+Date: Mon, 23 Jun 2014 10:40:39 +0100
+Message-ID: <CAD8Lp44h6zc2Rt2MGLjhmNG-YB0kYCWf5G7hX5JmdmBfc1PvKg@mail.gmail.com>
+References: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:58739 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751613AbaFWJ2g (ORCPT
+Received: from mail-we0-f180.google.com ([74.125.82.180]:36599 "EHLO
+	mail-we0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752671AbaFWJkk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Jun 2014 05:28:36 -0400
-In-Reply-To: <20140621204026.GH22657@sirena.org.uk>
+	Mon, 23 Jun 2014 05:40:40 -0400
+Received: by mail-we0-f180.google.com with SMTP id x48so6563502wes.39
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jun 2014 02:40:39 -0700 (PDT)
+In-Reply-To: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, pawel.moll@arm.com, zhen1.chen@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, galak@codeaurora.org, alsa-devel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hello Mark,
-
-On 06/21/2014 10:40 PM, Mark Brown wrote:
-> On Tue, Jun 17, 2014 at 06:05:29PM +0200, Javier Martinez Canillas wrote:
->> On 06/17/2014 04:12 PM, Mark Brown wrote:
-> 
->> >> I just looked at regulator_register() and saw that it does rdev->dev.parent =
->> >> dev, so yes this has to be the MFD.
-> 
->> I noticed that many drivers set config.dev = &pdev->dev. The original Chrome OS
->> max77xxx driver and max77686 are two examples but others drivers do the same:
-> 
-> Not all drivers are DT drivers that bother specifying supplies.
-> 
->> And also I see that mfd_add_device() calls
->> devm_regulator_bulk_register_supply_alias(&pdev->dev,...) so I'm confused now
->> about what the correct device should be...
-> 
-> Right, but to do that you need to set those aliases up - have you done
-> so?
-> 
->> > Do the regulators manage to get their supplies?
-> 
->> There are no current support in mainline for the devices that use the regulators
->> in this PMIC so I can't tell you if consumers manage to get their supplies
->> correctly (e.g: if regulator_dev_lookup succeeds).
-> 
-> That's not really relevant here - I'm asking if the regulators get their
-> own supplies rather than if anything uses them.
+On Wed, Jun 18, 2014 at 5:22 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> This series adds basic sound support for the Odroid X2/U3 boards.
+> It relies on specific Exynos Audio Subsystem clock parent and
+> frequencies being pre-configured.
 >
+> My full testing git branch has been pushed to:
+> git://linuxtv.org/snawrocki/samsung.git v3.16-rc1-odroid-sound-clk
 
-Sorry if I keep misunderstanding your question but the regulators in this PMIC
-don't have a parent supply/regulator node.
+Thanks for this! I tested these patches plus the ones in your branch
+to integrate with the ODROID.
+I tested ODROID-U2's 3.5mm analog headphone jack output with:
 
-If by own supplies you mean the regulators power outputs (voltage/current
-constraints), then yes, the regulators manage to get their own voltage output
-correctly regardless of the value set in config.dev (&pdev->dev or
-pdev->dev.parent).
+# speaker-test -c 2 -t wav -l 2
 
-I see in regulator_register() that config.dev is used to set the value of struct
-regulator_dev .dev.parent and that is used in two places in regulator core:
+On my x86 laptop this command takes ~6 seconds and produces audible output:
+"Front left, front right, front left, front right"
 
-1) In regulator_register() to get the regmap if config->regmap is not set.
-2) In regulator_dev_lookup() checks if r->dev.parent is set.
+When those words are reproduced over the speakers, there is a
+corresponding message printed to stdout which synchronizes nicely.
 
-For 1) config.regmap is explicitly set to the MFD regmap in max77802 driver so
-config.dev is not used in this case and for 2) the value does not matter since
-it only checks that it's not NULL.
+On ODROID-U2 the same command doesn't work quite right - execution
+takes only 3.5 seconds and the audible output is truncated:
+"Front left, front right, front"
+and the stdout messages do not really coincide with the audio being
+reproduced at that time.
 
-Having said that, when I was preparing v3 of the patch-set I noticed that
-regulator_register() does:
+No pulseaudio or anything like that.
 
-dev = config->dev;
-...
-rdev->dev.parent = dev;
+Can you reproduce this?
 
-So I changed to use MFD device instead of &pdev->dev in the version I posted
-last week since the MFD device is the regulator parent.
-
-Best regards,
-Javier
+Thanks
+Daniel
