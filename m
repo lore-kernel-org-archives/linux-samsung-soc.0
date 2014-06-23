@@ -1,44 +1,429 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH V4 00/10] drm: exynos: few patches to enhance bridge chip
- support
-Date: Mon, 23 Jun 2014 16:38:22 +0200
-Message-ID: <53A83BDE.7080005@gmail.com>
+From: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH V4 04/10] drm/panel: Add driver for lvds/edp based panels
+Date: Mon, 23 Jun 2014 17:30:40 +0200
+Message-ID: <CABxcv=naPZMfNnU1a88JVjH_Q+rfZN8pdiUv8n3LwPtGmg76dA@mail.gmail.com>
 References: <1402511228-18945-1-git-send-email-ajaykumar.rs@samsung.com>
- <CAEC9eQOp0jiZC-XqqQX7S7Dbu-_bi2unpVU2P4zAQ7VmopD27A@mail.gmail.com>
- <CAAQKjZPHc2KfmNyfchP68BJiPUFyAO_keCHMBc1YuYTj_J0kVQ@mail.gmail.com>
- <CAPdUM4Mpo_9A_+4k9ctcXKnctKOdgxkEH4Sv0TO-4Y8dZ8aiow@mail.gmail.com>
+	<1402511228-18945-5-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAPdUM4Mpo_9A_+4k9ctcXKnctKOdgxkEH4Sv0TO-4Y8dZ8aiow@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, =?ISO-8859-1?Q?St=E9phane_Marchesin?= <marcheu@chromium.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1402511228-18945-5-git-send-email-ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, daniel.vetter-/w4YWyX8dFk@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, marcheu-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Rahul,
+Hello Ajay,
 
-On 23.06.2014 15:58, Rahul Sharma wrote:
-> Hi Ajay, Inki,
-> 
-> I tested this series for Exynos5420 based peach-pit board,
-> Exynos5800 based Peach-pi board and Exynos5250 based
-> Snow board. I verified with the chrome test environment and
-> able to see upto Login Screen. DPMS on/off functionality and
-> S2R is also working fine for Display. therefore:
+Not an extensive review since I'm not familiar with the graphics stack
+but a few things I noticed are commented below.
 
-What tree did you apply this patches onto? I don't see S2R support for
-Exynos5420 or 5800 in current linux-next (e.g. there are no PMU tables
-present for these SoCs).
+On Wed, Jun 11, 2014 at 8:27 PM, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This patch adds a simple driver to handle all the LCD and LED
+> powerup/down routines needed to support eDP/LVDS panels.
+>
+> The LCD and LED units are usually powered up via regulators,
+> and almost on all boards, we will have a BACKLIGHT_EN pin to
+> enable/ disable the backlight.
+> Sometimes, we can have LCD_EN switches as well.
+>
+> The routines in this driver can be used to control
+> panel power sequence on such boards.
+>
+> Signed-off-by: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Rahul Sharma <Rahul.Sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  .../devicetree/bindings/panel/panel-lvds.txt       |   50 ++++
+>  drivers/gpu/drm/panel/Kconfig                      |   10 +
+>  drivers/gpu/drm/panel/Makefile                     |    1 +
+>  drivers/gpu/drm/panel/panel-lvds.c                 |  262 ++++++++++++++++++++
+>  4 files changed, 323 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/panel/panel-lvds.txt
+>  create mode 100644 drivers/gpu/drm/panel/panel-lvds.c
+>
+> diff --git a/Documentation/devicetree/bindings/panel/panel-lvds.txt b/Documentation/devicetree/bindings/panel/panel-lvds.txt
+> new file mode 100644
+> index 0000000..7cb6084
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/panel/panel-lvds.txt
+> @@ -0,0 +1,50 @@
+> +panel interface for eDP/lvds panels
+> +
+> +Required properties:
+> +  - compatible: "panel-lvds"
+> +
+> +Optional properties:
+> +       -lcd-en-gpio:
+> +               panel LCD poweron GPIO.
+> +                       Indicates which GPIO needs to be powered up as output
+> +                       to powerup/enable the switch to the LCD panel.
+> +       -led-en-gpio:
+> +               panel LED enable GPIO.
+> +                       Indicates which GPIO needs to be powered up as output
+> +                       to enable the backlight.
+> +       -panel-prepare-delay:
+> +               delay value in ms required for panel_prepare process
+> +                       Delay in ms needed for the panel LCD unit to
+> +                       powerup completely.
+> +                       ex: delay needed till eDP panel throws HPD.
+> +                           delay needed so that we cans tart reading edid.
+> +       -panel-enable-delay:
+> +               delay value in ms required for panel_enable process
+> +                       Delay in ms needed for the panel backlight/LED unit
+> +                       to powerup, and delay needed between video_enable and
+> +                       backlight_enable.
+> +       -panel-disable-delay:
+> +               delay value in ms required for panel_disable process
+> +                       Delay in ms needed for the panel backlight/LED unit
+> +                       powerdown, and delay needed between backlight_disable
+> +                       and video_disable.
+> +       -panel-unprepare-delay:
+> +               delay value in ms required for panel_post_disable process
+> +                       Delay in ms needed for the panel LCD unit to
+> +                       to powerdown completely, and the minimum delay needed
+> +                       before powering it on again.
+> +       -panel-width-mm: physical panel width [mm]
+> +       -panel-height-mm: physical panel height [mm]
+> +
+> +Example:
+> +
+> +       panel-lvds {
+> +               compatible = "panel-lvds";
+> +               led-en-gpio = <&gpx3 0 1>;
+> +               panel-prepare-delay = <40>;
+> +               panel-enable-delay = <20>;
+> +               panel-disable-delay = <20>;
+> +               panel-unprepare-delay = <30>;
+> +               panel-width-mm = <256>;
+> +               panel-height-mm = <144>;
+> +       };
+
+Recently it's considered a good practice to have the DT binding
+documentation in a separate patch.
+
+> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> index 4ec874d..8fe7ee5 100644
+> --- a/drivers/gpu/drm/panel/Kconfig
+> +++ b/drivers/gpu/drm/panel/Kconfig
+> @@ -30,4 +30,14 @@ config DRM_PANEL_S6E8AA0
+>         select DRM_MIPI_DSI
+>         select VIDEOMODE_HELPERS
+>
+> +config DRM_PANEL_EDP_LVDS
+> +       tristate "support for eDP/LVDS panels"
+> +       depends on OF && DRM_PANEL
+> +       select VIDEOMODE_HELPERS
+> +       help
+> +         DRM panel driver for direct eDP panels or LVDS connected
+> +         via DP bridges, that need at most a regulator for LCD unit,
+> +         a regulator for LED unit and/or enable GPIOs for LCD or LED units.
+> +         Delay values can also be specified to support powerup and
+> +         powerdown process.
+>  endmenu
+> diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+> index 8b92921..eaafa01 100644
+> --- a/drivers/gpu/drm/panel/Makefile
+> +++ b/drivers/gpu/drm/panel/Makefile
+> @@ -1,3 +1,4 @@
+>  obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
+>  obj-$(CONFIG_DRM_PANEL_LD9040) += panel-ld9040.o
+>  obj-$(CONFIG_DRM_PANEL_S6E8AA0) += panel-s6e8aa0.o
+> +obj-$(CONFIG_DRM_PANEL_EDP_LVDS) += panel-lvds.o
+> diff --git a/drivers/gpu/drm/panel/panel-lvds.c b/drivers/gpu/drm/panel/panel-lvds.c
+> new file mode 100644
+> index 0000000..2124fcb
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panel/panel-lvds.c
+> @@ -0,0 +1,262 @@
+> +/*
+> + * panel driver for lvds and eDP panels
+> + *
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd
+> + *
+> + * Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/gpio.h>
+> +#include <linux/module.h>
+> +#include <linux/of_gpio.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regulator/consumer.h>
+> +
+> +#include <video/of_videomode.h>
+> +#include <video/videomode.h>
+> +
+> +#include <drm/drmP.h>
+> +#include <drm/drm_crtc.h>
+> +#include <drm/drm_panel.h>
+> +
+> +struct panel_lvds {
+> +       struct drm_panel        base;
+> +       struct regulator        *backlight_fet;
+> +       struct regulator        *lcd_fet;
+> +       struct videomode        vm;
+> +       int                     width_mm;
+> +       int                     height_mm;
+> +       bool                    backlight_fet_enabled;
+> +       bool                    lcd_fet_enabled;
+> +       int                     led_en_gpio;
+> +       int                     lcd_en_gpio;
+> +       int                     panel_prepare_delay;
+> +       int                     panel_enable_delay;
+> +       int                     panel_disable_delay;
+> +       int                     panel_unprepare_delay;
+> +};
+> +
+> +static inline struct panel_lvds *to_panel(struct drm_panel *panel)
+> +{
+> +       return container_of(panel, struct panel_lvds, base);
+> +}
+> +
+> +static int panel_lvds_prepare(struct drm_panel *panel)
+> +{
+> +       struct panel_lvds *lvds_panel = to_panel(panel);
+> +
+> +       if (!IS_ERR_OR_NULL(lvds_panel->lcd_fet))
+> +               if (!lvds_panel->lcd_fet_enabled) {
+> +                       if (regulator_enable(lvds_panel->lcd_fet))
+> +                               DRM_ERROR("failed to enable LCD fet\n");
+> +                       lvds_panel->lcd_fet_enabled = true;
+
+If this is an expected condition then using DRM_INFO() instead? It
+looks like an error to me though so maybe should return an error in
+this case?
+
+> +               }
+> +
+> +       if (gpio_is_valid(lvds_panel->lcd_en_gpio))
+> +               gpio_set_value(lvds_panel->lcd_en_gpio, 1);
+> +
+> +       msleep(lvds_panel->panel_prepare_delay);
+> +
+> +       return 0;
+> +}
+> +
+> +static int panel_lvds_enable(struct drm_panel *panel)
+> +{
+> +       struct panel_lvds *lvds_panel = to_panel(panel);
+> +
+> +       if (!IS_ERR_OR_NULL(lvds_panel->backlight_fet))
+> +               if (!lvds_panel->backlight_fet_enabled) {
+> +                       if (regulator_enable(lvds_panel->backlight_fet))
+> +                               DRM_ERROR("failed to enable LED fet\n");
+> +                       lvds_panel->backlight_fet_enabled = true;
+
+Same here.
+
+> +               }
+> +
+> +       msleep(lvds_panel->panel_enable_delay);
+> +
+> +       if (gpio_is_valid(lvds_panel->led_en_gpio))
+> +               gpio_set_value(lvds_panel->led_en_gpio, 1);
+> +
+> +       return 0;
+> +}
+> +
+> +static int panel_lvds_disable(struct drm_panel *panel)
+> +{
+> +       struct panel_lvds *lvds_panel = to_panel(panel);
+> +
+> +       if (gpio_is_valid(lvds_panel->led_en_gpio))
+> +               gpio_set_value(lvds_panel->led_en_gpio, 0);
+> +
+> +       if (!IS_ERR_OR_NULL(lvds_panel->backlight_fet))
+> +               if (lvds_panel->backlight_fet_enabled) {
+> +                       regulator_disable(lvds_panel->backlight_fet);
+> +                       lvds_panel->backlight_fet_enabled = false;
+> +               }
+> +
+> +       msleep(lvds_panel->panel_disable_delay);
+> +
+> +       return 0;
+> +}
+> +
+> +static int panel_lvds_unprepare(struct drm_panel *panel)
+> +{
+> +       struct panel_lvds *lvds_panel = to_panel(panel);
+> +
+> +       if (gpio_is_valid(lvds_panel->lcd_en_gpio))
+> +               gpio_set_value(lvds_panel->lcd_en_gpio, 0);
+> +
+> +       if (!IS_ERR_OR_NULL(lvds_panel->lcd_fet))
+> +               if (lvds_panel->lcd_fet_enabled) {
+> +                       regulator_disable(lvds_panel->lcd_fet);
+> +                       lvds_panel->lcd_fet_enabled = false;
+> +               }
+> +
+> +       msleep(lvds_panel->panel_unprepare_delay);
+> +
+> +       return 0;
+> +}
+> +
+> +static int panel_lvds_get_modes(struct drm_panel *panel)
+> +{
+> +       struct drm_connector *connector = panel->connector;
+> +       struct panel_lvds *lvds_panel = to_panel(panel);
+> +       struct drm_display_mode *mode;
+> +
+> +       mode = drm_mode_create(connector->dev);
+> +       if (!mode) {
+> +               DRM_ERROR("failed to create a new display mode.\n");
+> +               return 0;
+> +       }
+> +
+> +       drm_display_mode_from_videomode(&lvds_panel->vm, mode);
+> +       mode->width_mm = lvds_panel->width_mm;
+> +       mode->height_mm = lvds_panel->height_mm;
+> +       connector->display_info.width_mm = mode->width_mm;
+> +       connector->display_info.height_mm = mode->height_mm;
+> +
+> +       mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+> +       drm_mode_set_name(mode);
+> +       drm_mode_probed_add(connector, mode);
+> +
+> +       return 1;
+> +}
+> +
+> +static const struct drm_panel_funcs panel_lvds_funcs = {
+> +       .unprepare = panel_lvds_unprepare,
+> +       .disable = panel_lvds_disable,
+> +       .prepare = panel_lvds_prepare,
+> +       .enable = panel_lvds_enable,
+> +       .get_modes = panel_lvds_get_modes,
+> +};
+> +
+> +static int panel_lvds_probe(struct platform_device *pdev)
+> +{
+> +       struct panel_lvds *panel;
+> +       struct device *dev = &pdev->dev;
+> +       struct device_node *node = dev->of_node;
+> +       int ret;
+> +
+> +       panel = devm_kzalloc(dev, sizeof(*panel), GFP_KERNEL);
+> +       if (!panel)
+> +               return -ENOMEM;
+> +
+> +       ret = of_get_videomode(node, &panel->vm, 0);
+> +       if (ret) {
+> +               DRM_ERROR("failed: of_get_videomode() : %d\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       panel->lcd_fet = devm_regulator_get_optional(dev, "lcd_vdd");
+> +       if (IS_ERR(panel->lcd_fet))
+> +               return -EPROBE_DEFER;
+> +
+> +       panel->backlight_fet = devm_regulator_get_optional(dev, "vcd_led");
+> +       if (IS_ERR(panel->backlight_fet))
+> +               return -EPROBE_DEFER;
+> +
+> +       panel->lcd_en_gpio = of_get_named_gpio(node, "lcd-en-gpio", 0);
+> +       panel->led_en_gpio = of_get_named_gpio(node, "led-en-gpio", 0);
+> +
+
+The old integer-based GPIO API has been deprecated and new drivers
+should use the new descriptor-based interface
+(Documentation/gpio/consumer.txt) instead if possible.
+
+> +       of_property_read_u32(node, "panel-width-mm", &panel->width_mm);
+> +       of_property_read_u32(node, "panel-height-mm", &panel->height_mm);
+> +
+> +       of_property_read_u32(node, "panel-prepare-delay",
+> +                                       &panel->panel_prepare_delay);
+> +       of_property_read_u32(node, "panel-enable-delay",
+> +                                       &panel->panel_enable_delay);
+> +       of_property_read_u32(node, "panel-disable-delay",
+> +                                       &panel->panel_disable_delay);
+> +       of_property_read_u32(node, "panel-unprepare-delay",
+> +                                       &panel->panel_unprepare_delay);
+> +
+> +       if (gpio_is_valid(panel->lcd_en_gpio)) {
+> +               ret = devm_gpio_request_one(dev, panel->lcd_en_gpio,
+> +                                       GPIOF_OUT_INIT_LOW, "lcd_en_gpio");
+> +               if (ret) {
+> +                       DRM_ERROR("failed to get lcd-en gpio [%d]\n", ret);
+> +                       return 0;
+
+The probe() function returning 0 means success to the driver core but
+here is returning early due an error.
+
+> +               }
+> +       } else {
+> +               panel->lcd_en_gpio = -ENODEV;
+> +       }
+> +
+> +       if (gpio_is_valid(panel->led_en_gpio)) {
+> +               ret = devm_gpio_request_one(dev, panel->led_en_gpio,
+> +                                       GPIOF_OUT_INIT_LOW, "led_en_gpio");
+> +               if (ret) {
+> +                       DRM_ERROR("failed to get led-en gpio [%d]\n", ret);
+> +                       return 0;
+
+Same here, it should return an error code instead 0.
+
+> +               }
+> +       } else {
+> +               panel->led_en_gpio = -ENODEV;
+> +       }
+> +
+> +       drm_panel_init(&panel->base);
+> +       panel->base.dev = dev;
+> +       panel->base.funcs = &panel_lvds_funcs;
+> +
+> +       ret = drm_panel_add(&panel->base);
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       dev_set_drvdata(dev, panel);
+> +
+> +       return 0;
+> +}
+> +
+> +static int panel_lvds_remove(struct platform_device *pdev)
+> +{
+> +       struct panel_lvds *panel = dev_get_drvdata(&pdev->dev);
+> +
+> +       panel_lvds_disable(&panel->base);
+> +       panel_lvds_unprepare(&panel->base);
+> +
+> +       drm_panel_remove(&panel->base);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id lvds_panel_dt_match[] = {
+> +       { .compatible = "panel-lvds" },
+> +       {},
+> +};
+> +MODULE_DEVICE_TABLE(of, lvds_panel_dt_match);
+> +
+> +struct platform_driver lvds_panel_driver = {
+> +       .driver = {
+> +               .name = "panel_lvds",
+> +               .owner = THIS_MODULE,
+> +               .of_match_table = lvds_panel_dt_match,
+> +       },
+> +       .probe = panel_lvds_probe,
+> +       .remove = panel_lvds_remove,
+> +};
+> +module_platform_driver(lvds_panel_driver);
+> +
+> +MODULE_AUTHOR("Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
+> +MODULE_DESCRIPTION("lvds/eDP panel driver");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 1.7.9.5
+>
 
 Best regards,
-Tomasz
+Javier
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
