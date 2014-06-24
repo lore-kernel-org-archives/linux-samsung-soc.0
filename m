@@ -1,67 +1,57 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: [PATCH 2/3] ARM: TC2: test the MCPM loopback during boot
-Date: Tue, 24 Jun 2014 00:11:10 -0400
-Message-ID: <1403583071-5650-3-git-send-email-nicolas.pitre@linaro.org>
-References: <1403583071-5650-1-git-send-email-nicolas.pitre@linaro.org>
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from relais.videotron.ca ([24.201.245.36]:28686 "EHLO
-	relais.videotron.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751147AbaFXELS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 00:11:18 -0400
-Received: from yoda.home ([66.130.143.177]) by VL-VM-MR004.ip.videotron.ca
- (Oracle Communications Messaging Exchange Server 7u4-22.01 64bit (built Apr 21
- 2011)) with ESMTP id <0N7N005WONMSFOJ2@VL-VM-MR004.ip.videotron.ca> for
- linux-samsung-soc@vger.kernel.org; Tue, 24 Jun 2014 00:11:16 -0400 (EDT)
-In-reply-to: <1403583071-5650-1-git-send-email-nicolas.pitre@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 3/5 v2] drm/exynos: allow mulitple layer updates per vsync
+ for mixer
+Date: Tue, 24 Jun 2014 14:21:30 +0900
+Message-ID: <53A90ADA.2040306@samsung.com>
+References: <1403501545-16482-1-git-send-email-rahul.sharma@samsung.com>
+ <1403501545-16482-4-git-send-email-rahul.sharma@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1403501545-16482-4-git-send-email-rahul.sharma@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, joshi@samsung.com, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Doug Anderson <dianders@google.com>, Andrew Bresticker <abrestic@chromium.org>
-Cc: Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org
 
-This is not strictly needed on TC2 but still a good thing to exercise
-that code.
-
-Signed-off-by: nicolas Pitre <nico@linaro.org>
----
- arch/arm/mach-vexpress/tc2_pm.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/arm/mach-vexpress/tc2_pm.c b/arch/arm/mach-vexpress/tc2_pm.c
-index b743a0ae02..54a9fff77c 100644
---- a/arch/arm/mach-vexpress/tc2_pm.c
-+++ b/arch/arm/mach-vexpress/tc2_pm.c
-@@ -323,6 +323,21 @@ static void __naked tc2_pm_power_up_setup(unsigned int affinity_level)
- "	b	cci_enable_port_for_self ");
- }
- 
-+static void __init tc2_cache_off(void)
-+{
-+	pr_info("TC2: disabling cache during MCPM loopback test\n");
-+	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A15) {
-+		/* disable L2 prefetching on the Cortex-A15 */
-+		asm volatile(
-+		"mcr	p15, 1, %0, c15, c0, 3 \n\t"
-+		"isb	\n\t"
-+		"dsb	"
-+		: : "r" (0x400) );
-+	}
-+	v7_exit_coherency_flush(all);
-+	cci_disable_port_by_cpu(read_cpuid_mpidr());
-+}
-+
- static int __init tc2_pm_init(void)
- {
- 	int ret, irq;
-@@ -370,6 +385,8 @@ static int __init tc2_pm_init(void)
- 	ret = mcpm_platform_register(&tc2_pm_power_ops);
- 	if (!ret) {
- 		mcpm_sync_init(tc2_pm_power_up_setup);
-+		/* test if we can (re)enable the CCI on our own */
-+		BUG_ON(mcpm_loopback(tc2_cache_off) != 0);
- 		pr_info("TC2 power management initialized\n");
- 	}
- 	return ret;
--- 
-1.8.4.108.g55ea5f6
+T24gMjAxNOuFhCAwNuyblCAyM+ydvCAxNDozMiwgUmFodWwgU2hhcm1hIHdyb3RlOgo+IEFsbG93
+aW5nIG9ubHkgb25lIGxheWVyIHVwZGF0ZSBwZXIgdnN5bmMgY2FuIGNhdXNlIGlzc3Vlcwo+IHdo
+aWxlIHRoZXJlIGFyZSB1cGRhdGUgYXZhaWxhYmxlIGZvciBib3RoIGxheWVycy4gVGhlcmUgaXMK
+PiBhIGdvb2QgYW1vdW50IG9mIHBvc3NpYmlsaXR5IHRvIGxvb3NlIHVwZGF0ZXMgaWYgd2UgYWxs
+b3cKPiBzaW5nbGUgdXBkYXRlIHBlciB2c3luYy4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBSYWh1bCBT
+aGFybWEgPHJhaHVsLnNoYXJtYUBzYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfbWl4ZXIuYyB8ICAgIDcgKy0tLS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwg
+MSBpbnNlcnRpb24oKyksIDYgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19taXhlci5jCj4gaW5kZXggZDM1OTUwMS4uNjc3M2IwMyAxMDA2NDQKPiAtLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+IEBAIC01MTEsMTMgKzUxMSw4IEBAIHN0YXRpYyB2b2lk
+IHZwX3ZpZGVvX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4LCBpbnQgd2luKQo+ICBz
+dGF0aWMgdm9pZCBtaXhlcl9sYXllcl91cGRhdGUoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCkK
+PiAgewo+ICAJc3RydWN0IG1peGVyX3Jlc291cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJfcmVzOwo+
+IC0JdTMyIHZhbDsKPiAtCj4gLQl2YWwgPSBtaXhlcl9yZWdfcmVhZChyZXMsIE1YUl9DRkcpOwo+
+ICAKPiAtCS8qIGFsbG93IG9uZSB1cGRhdGUgcGVyIHZzeW5jIG9ubHkgKi8KPiAtCWlmICghKHZh
+bCAmIE1YUl9DRkdfTEFZRVJfVVBEQVRFX0NPVU5UX01BU0spKQo+IC0JCW1peGVyX3JlZ193cml0
+ZW1hc2socmVzLCBNWFJfQ0ZHLCB+MCwgTVhSX0NGR19MQVlFUl9VUERBVEUpOwo+ICsJbWl4ZXJf
+cmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcsIH4wLCBNWFJfQ0ZHX0xBWUVSX1VQREFURSk7CgpS
+YWh1bCwgaXQgbG9va3MgZ29vZCB0byBtZSBhbmQgb2sgYXMgaXMuIEJ1dCBhYm92ZSBjb2RlcyBk
+b24ndCBjb25zaWRlcgpFeHlub3M0IHNlcmllcy4gSW4gY2FzZSBvZiBFeHlub3M0eHh4IFNvQywK
+TVhSX0NGR19MQVlFUl9VUERBVEVfQ09VTlRfTUFTSyBhbmQgTVhSX0NGR19MQVlFUl9VUERBVEUg
+b2YgTUlYRVJfQ0ZHCnJlZ2lzdGVyIGFyZSByZXNlcnZlZCBmaWVsZHMuIFNvIGNhbiB5b3Ugd29y
+ayB0aGF0IHBhdGNoIHRvIGJlCmNvbnNpZGVyZWQgZm9yIEV4eW5vczR4eHggU29DPyBUaGF0IHBh
+dGNoIHdvdWxkIGJlIGFkZGl0aW9uYWwgb25lLgoKQW55d2F5LCB3aWxsIGFwcGx5IGl0IGFzIGlz
+LCBhbmQgSSB3aWxsIHdhaXQgZm9yIHRoZSBhZGRpdGlvbmFsIHBhdGNoLgoKVGhhbmtzLApJbmtp
+IERhZQoKPiAgfQo+ICAKPiAgc3RhdGljIHZvaWQgbWl4ZXJfZ3JhcGhfYnVmZmVyKHN0cnVjdCBt
+aXhlcl9jb250ZXh0ICpjdHgsIGludCB3aW4pCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
