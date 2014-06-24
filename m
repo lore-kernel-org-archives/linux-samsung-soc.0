@@ -1,90 +1,67 @@
-From: Doug Anderson <dianders@google.com>
-Subject: Re: [PATCH 2/3] mmc: dw_mmc: Dont cut off vqmmc and vmmc
-Date: Tue, 24 Jun 2014 11:10:48 -0700
-Message-ID: <CAD=FV=XxdWEpoTMfJmUHpY7ykF+ZWrvP-GAoF+=mEeSeP7+ekA@mail.gmail.com>
-References: <1403520321-2431-1-git-send-email-yuvaraj.cd@samsung.com>
-	<1403520321-2431-3-git-send-email-yuvaraj.cd@samsung.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Tue, 24 Jun 2014 19:11:50 +0100
+Message-ID: <20140624181150.GB4067@arm.com>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+ <CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
+ <4545972.cM7IP1qTXQ@wuerfel>
+ <53A4C0C9.2050908@codeaurora.org>
+ <20140624091808.GC26013@arm.com>
+ <53A9BC18.2090106@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1403520321-2431-3-git-send-email-yuvaraj.cd@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, ks.giri@samsung.com, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:59253 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751590AbaFXSLw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 24 Jun 2014 14:11:52 -0400
+Content-Disposition: inline
+In-Reply-To: <53A9BC18.2090106@codeaurora.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olav Haugan <ohaugan@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robherring2@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm->
 
-Yuvaraj,
+On Tue, Jun 24, 2014 at 06:57:44PM +0100, Olav Haugan wrote:
+> On 6/24/2014 2:18 AM, Will Deacon wrote:
+> > On Sat, Jun 21, 2014 at 12:16:25AM +0100, Olav Haugan wrote:
+> >> We have multiple-master SMMUs and each master emits a variable number of
+> >> StreamIDs. However, we have to apply a mask (the ARM SMMU spec allows
+> >> for this) to the StreamIDs due to limited number of StreamID 2 Context
+> >> Bank entries in the SMMU. If my understanding is correct we would
+> >> represent this in the DT like this:
+> >>
+> >> 	iommu {
+> >> 		#address-cells = <2>;
+> >> 		#size-cells = <0>;
+> >> 	};
+> >>
+> >> 	master@a {
+> >> 		...
+> >> 		iommus = <&iommu StreamID0 MASK0>,
+> >> 			 <&iommu StreamID1 MASK1>,
+> >> 			 <&iommu StreamID2 MASK2>;
+> >> 	};
+> > 
+> > Stupid question, but why not simply describe the masked IDs? What use does
+> > the `raw' ID have to Linux?
+> 
+> We do describe the masked StreamID (SID) but we need to specify the mask
+> that the SMMU should apply to the incoming SIDs, right?
+> 
+> We have a bus master that emits 43 unique SIDs. However, we have only 40
+> SMMU_SMRn registers in the SMMU. So we need to mask out some of the
+> incoming SID bits so that the 43 SIDs can match one of 40 entries in the
+> SMR.
 
-On Mon, Jun 23, 2014 at 3:45 AM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
-> On exynos 5250 and 5420 based boards which uses built-in CD# line
-> for card detection.But unfortunately CD# line is on the same voltage
-> rails as of I/O voltage rails.When we cut off vqmmc,the consequent
-> card detection will break in these boards.
->
-> Also if we let alone the vqmmc turned on when vmmc turned off, the
-> card could have half way powered and this can damage the card.So
-> this patch adds a check so that, if the board used the built-in
-> card detection mechanism i.e through CDETECT, it will not turned
-> down vqmmc and vmmc both.
->
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> ---
->  drivers/mmc/host/dw_mmc.c |   23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
+Hmm, so you're talking about stream matching, right? That doesn't belong in
+the device-tree. I appreciate that the current driver does a terrible job at
+allocating the SMRs (it's bloody difficult!), but we should try to improve
+the dynamic behaviour instead of moving configuration of the SMMU out into
+device-tree, where it's inflexible at best.
 
-Yes, but...
+There have been patches previously posted by Andreas Herrmann helping here.
+I'd be glad to see them revived.
 
-As I mentioned in our separate email thread about this you're now
-preventing mmc_power_cycle() from working properly.
-
-IMHO you need the patch I sent you back on April 24th (was it that
-long ago?).  Due to the brokenness of exynos (and anyone else that
-powers CD off of vqmmc) you need to extend the MMC core to
-differentiate several different types of "power off":
-
-* power off because no card is plugged in: you should keep your card on.
-* power off because you're power cycling: you should power off your card.
-* power off because the system is suspending: you should power off your card.
-
-...the third bullet point is something I hadn't though of until just
-now and probably isn't addressed in my old patch...
-
-
-Also: as we've discussed privately: you could imagine someone
-designing an exynos5-based board where they've put the CD on a
-separate GPIO.  On a system like this then all these hacks won't be
-necessary.
-
----
-
-Verbatim from my email about this topic on May 28th:
-
-There are two important cases to handle:
-
-1. Properly power cycle both vmmc and vqmmc (at the same time!) in
-mmc_power_cycle().
-
-2. DON'T power off for mmc_power_off() unless it's part of
-mmc_power_cycle().  Specifically note that mmc_power_off() is called
-in a whole bunch of places other than mmc_power_cycle().  For
-instance, if we fail to probe a card we'll call mmc_power_off().  All
-of these _must_ not turn off power to card detect or else we won't be
-able to see future card insertions.  Note that mmc_power_off() might
-be called on its own even when a card is inserted.  Look at the end of
-mmc_rescan_try_freq().  It will be called if there are errors
-attaching a card.
-
-
-Rules to always remember:
-
-* On all boards you should turn on vmmc and vqmmc at the same time.
-It's illegal to have vqmmc on without vmmc and not good to have vmmc
-on without vqmmc.
-
-* On exynos you must ensure that vqmmc is on at all times, except
-during power cycling of a card.  If vqmmc is not on you can't detect
-card insertions or removals since the card detect line won't be
-powered.
-
-* To handle errors, you must ensure that mmc_power_cycle() actually
-cycles power to the card.
+Will
