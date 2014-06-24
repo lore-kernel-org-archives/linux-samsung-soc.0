@@ -1,55 +1,48 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 0/4] hwmon: ntc_thermistor: prepose vendor prefix change
-Date: Tue, 24 Jun 2014 17:49:12 +0530
-Message-ID: <1403612356-23685-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:11285 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751407AbaFXMXA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 08:23:00 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 1/4] devicetree: bindings: Document murata vendor prefix
+Date: Tue, 24 Jun 2014 17:49:13 +0530
+Message-ID: <1403612356-23685-2-git-send-email-ch.naveen@samsung.com>
+References: <1403612356-23685-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1403612356-23685-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, cpgs@samsung.com, devicetree@vger.kernel.org, lars@metafoo.de
 
-As Murata is the manufacturer of the NTC (Negative Temperature coefficient)
-based Thermistors. ntc_thermistor driver extensively used the prefix "ntc".
-But, vendor-prefix should be "murata" instead of "ntc".
+Add Murata Manufacturing Co., Ltd. to the list of device tree
+vendor prefixes.
 
-This patchset
-1. Updates the vendor-prefix, DT bindings and Documentation,
-   where ever necessary.
-2. Adds thermistor nodes to Exynos5420 and Exynos5800 based boards.
+Murata manufactures NTC (Negative Temperature Coefficient) based
+Thermistors for small scale applications like Mobiles and PDAs.
 
-Patches:
-1/4. devicetree: bindings: Document murata vendor prefix
-     Adds the vendor prefix "murata" to vendor-prefixes.txt.
-2/4. hwmon: ntc_thermistor: Use the manufacturer name properly
-     Updates the driver, Kconfig, device tree bindings and Documentation
-     with the Manufacturer/vendor information.
-3/4. ARM: DTS: use new compatible string as per the documentation
-     Updates the device node in Exynos4412 based Trats2 board
-     with the new device tree bindings.
-4/4. ARM: DTS: Add NTC thermistor nodes as child nodes to ADC
-     Adds Thermistor nodes to Exynos5420 and Exynos5800 based boards.
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+---
+This changes is needed for the following reasons
 
-This patchset
-Naveen Krishna Chatradhi (4):
-  devicetree: bindings: Document murata vendor prefix
-  hwmon: ntc_thermistor: Use the manufacturer name properly
-  ARM: DTS: Add NTC thermistor nodes as child nodes to ADC
-  ARM: DTS: use new compatible string as per the documentation
+1. The vendor prefix "ntc" is not defined in vendor-prefixes.txt
+   Thus, giving an error when checked with scripts/checkpatch.pl
+2. Murata Manufacturing Co., Ltd. Is the vendor for the
+   NTC (Negative Temperature Coefficient) based thermistors.
+   Hence, "murata" is the right vendor-prefix, Not "ntc".
+3. NTC is a technology used, But the prefix "ntc" is wrongly
+   and heavily used in the driver and the documentation.
 
- .../devicetree/bindings/arm/samsung/exynos-adc.txt |    2 +-
- .../devicetree/bindings/hwmon/ntc_thermistor.txt   |   12 ++++----
  .../devicetree/bindings/vendor-prefixes.txt        |    1 +
- Documentation/hwmon/ntc_thermistor                 |    8 ++---
- arch/arm/boot/dts/exynos4412-trats2.dts            |    4 +--
- arch/arm/boot/dts/exynos5420-peach-pit.dts         |   32 ++++++++++++++++++++
- drivers/hwmon/Kconfig                              |    5 +--
- drivers/hwmon/ntc_thermistor.c                     |   12 ++++----
- 8 files changed, 55 insertions(+), 21 deletions(-)
+ 1 file changed, 1 insertion(+)
 
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 4d7f375..a39b7d7 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -84,6 +84,7 @@ moxa	Moxa
+ mpl	MPL AG
+ mundoreader	Mundo Reader S.L.
+ mxicy	Macronix International Co., Ltd.
++murata	Murata Manufacturing Co., Ltd.
+ national	National Semiconductor
+ neonode		Neonode Inc.
+ netgear	NETGEAR
 -- 
 1.7.9.5
