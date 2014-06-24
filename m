@@ -1,86 +1,79 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 3/3] mmc: dw_mmc: Support voltage changes
-Date: Tue, 24 Jun 2014 11:17:28 -0700
-Message-ID: <CAD=FV=XV7umnSWbLh3t_euC1kpvNiiC8rYu_eXvoHbFC_GGnCQ@mail.gmail.com>
-References: <1403520321-2431-1-git-send-email-yuvaraj.cd@samsung.com>
-	<1403520321-2431-4-git-send-email-yuvaraj.cd@samsung.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Tue, 24 Jun 2014 20:20:56 +0200
+Message-ID: <4855051.rhxSrNMNLg@wuerfel>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+	<53A9BC18.2090106@codeaurora.org> <20140624181150.GB4067@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f171.google.com ([209.85.220.171]:46426 "EHLO
-	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753578AbaFXSR3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 14:17:29 -0400
-Received: by mail-vc0-f171.google.com with SMTP id id10so730334vcb.16
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2014 11:17:28 -0700 (PDT)
-In-Reply-To: <1403520321-2431-4-git-send-email-yuvaraj.cd@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140624181150.GB4067-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, ks.giri@samsung.com, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Yuvaraj,
+On Tuesday 24 June 2014 19:11:50 Will Deacon wrote:
+> On Tue, Jun 24, 2014 at 06:57:44PM +0100, Olav Haugan wrote:
+> > On 6/24/2014 2:18 AM, Will Deacon wrote:
+> > > On Sat, Jun 21, 2014 at 12:16:25AM +0100, Olav Haugan wrote:
+> > >> We have multiple-master SMMUs and each master emits a variable number of
+> > >> StreamIDs. However, we have to apply a mask (the ARM SMMU spec allows
+> > >> for this) to the StreamIDs due to limited number of StreamID 2 Context
+> > >> Bank entries in the SMMU. If my understanding is correct we would
+> > >> represent this in the DT like this:
+> > >>
+> > >>    iommu {
+> > >>            #address-cells = <2>;
+> > >>            #size-cells = <0>;
+> > >>    };
+> > >>
+> > >>    master@a {
+> > >>            ...
+> > >>            iommus = <&iommu StreamID0 MASK0>,
+> > >>                     <&iommu StreamID1 MASK1>,
+> > >>                     <&iommu StreamID2 MASK2>;
+> > >>    };
+> > > 
+> > > Stupid question, but why not simply describe the masked IDs? What use does
+> > > the `raw' ID have to Linux?
+> > 
+> > We do describe the masked StreamID (SID) but we need to specify the mask
+> > that the SMMU should apply to the incoming SIDs, right?
+> > 
+> > We have a bus master that emits 43 unique SIDs. However, we have only 40
+> > SMMU_SMRn registers in the SMMU. So we need to mask out some of the
+> > incoming SID bits so that the 43 SIDs can match one of 40 entries in the
+> > SMR.
+> 
+> Hmm, so you're talking about stream matching, right? That doesn't belong in
+> the device-tree. I appreciate that the current driver does a terrible job at
+> allocating the SMRs (it's bloody difficult!), but we should try to improve
+> the dynamic behaviour instead of moving configuration of the SMMU out into
+> device-tree, where it's inflexible at best.
+> 
+> There have been patches previously posted by Andreas Herrmann helping here.
+> I'd be glad to see them revived.
 
-On Mon, Jun 23, 2014 at 3:45 AM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
-> From: Doug Anderson <dianders@chromium.org>
->
-> For UHS cards we need the ability to switch voltages from 3.3V to
-> 1.8V.  Add support to the dw_mmc driver to handle this.  Note that
-> dw_mmc needs a little bit of extra code since the interface needs a
-> special bit programmed to the CMD register while CMD11 is progressing.
-> This means adding a few extra states to the state machine to track.
->
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
->
-> ---
->  drivers/mmc/host/dw_mmc.c  |  145 +++++++++++++++++++++++++++++++++++++++++---
->  drivers/mmc/host/dw_mmc.h  |    5 +-
->  include/linux/mmc/dw_mmc.h |    2 +
->  3 files changed, 142 insertions(+), 10 deletions(-)
+Note that there are areas where we have in the past decided that dynamic
+configuration is just too hard for the kernel to do and that we're better
+off putting the configuration into DT. Pinctrl and clocks are at least
+partially in that category.
 
-I will note to other interested parties that in the ChromeOS tree we
-never actually cleaned up the MMC voltage change stuff enough to make
-use of this functionality to actually get UHS cards working (though
-the code is exercised as part of WiFi).
+It's always best if you can get the kernel to do things in the ideal
+way where that is possible, but getting there may be just not worth it.
 
+I have no idea where it should be for SMMU, but it's something to consider:
+if you can take reasonable shortcuts by reading parts of the configuration
+from DT, you may just as well do that.
 
-> @@ -254,6 +258,32 @@ static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command *cmd)
->         else if (cmd->opcode != MMC_SEND_STATUS && cmd->data)
->                 cmdr |= SDMMC_CMD_PRV_DAT_WAIT;
->
-> +       if (cmd->opcode == SD_SWITCH_VOLTAGE) {
-> +               u32 clk_en_a;
-> +
-> +               /* Special bit makes CMD11 not die */
-> +               cmdr |= SDMMC_CMD_VOLT_SWITCH;
-> +
-> +               /* Change state to continue to handle CMD11 weirdness */
-> +               WARN_ON(slot->host->state != STATE_SENDING_CMD);
-> +               slot->host->state = STATE_SENDING_CMD11;
-> +
-> +               /*
-> +                * We need to disable clock stop while doing voltage switch
-> +                * according to 7.4.1.2 Voltage Switch Normal Scenario.
-
-I think upstream hasn't tended to like the chapter number references,
-though Grant really liked them locally.
-
-> +static int dw_mci_switch_voltage(struct mmc_host *mmc, struct mmc_ios *ios)
-> +{
-> +       struct dw_mci_slot *slot = mmc_priv(mmc);
-> +       struct dw_mci *host = slot->host;
-> +       u32 uhs;
-> +       u32 v18 = SDMMC_UHS_18V << slot->id;
-> +       int min_uv, max_uv;
-> +       int ret;
-> +
-> +       /*
-> +        * Program the voltage.  Note that some instances of dw_mmc may use
-> +        * the UHS_REG for this.  For other instances (like exynos) the UHS_REG
-> +        * does no harm but you need to set the regulator directly.  Try both.
-
-I've only worked with exynos which doesn't use UHS_REG for anything,
-so the setting of this bit was a best-guess.  If anyone actually had a
-chip that uses it then please comment / test.
+	Arnd
