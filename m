@@ -1,41 +1,36 @@
-From: Doug Anderson <dianders@google.com>
-Subject: Re: [PATCH 3/3] ARM: exynos: activate the CCI on boot CPU/cluster
- with the MCPM loopback
-Date: Tue, 24 Jun 2014 09:15:51 -0700
-Message-ID: <CAD=FV=W2KK1XPQiHnxzdBs8fXxsnsuggZg_hJU0zyHcvHt3Khw@mail.gmail.com>
-References: <1403583071-5650-1-git-send-email-nicolas.pitre@linaro.org>
-	<1403583071-5650-4-git-send-email-nicolas.pitre@linaro.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] arm: exynos: Modify pm code to check for cortex A9
+	rather than the SoC
+Date: Tue, 24 Jun 2014 17:20:48 +0100
+Message-ID: <20140624162048.GX32514@n2100.arm.linux.org.uk>
+References: <1400814061-12813-1-git-send-email-a.kesavan@samsung.com> <CAM4voa=3zzo-2KbjDtBOca+uJeSxT2OYpi+rJuSGsDg-vo7GYA@mail.gmail.com> <20140624161114.GW32514@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f178.google.com ([209.85.220.178]:33637 "EHLO
-	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932140AbaFXQPw (ORCPT
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:40769 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754033AbaFXQU5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 12:15:52 -0400
-Received: by mail-vc0-f178.google.com with SMTP id ij19so557165vcb.37
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2014 09:15:51 -0700 (PDT)
-In-Reply-To: <1403583071-5650-4-git-send-email-nicolas.pitre@linaro.org>
+	Tue, 24 Jun 2014 12:20:57 -0400
+Content-Disposition: inline
+In-Reply-To: <20140624161114.GW32514@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Nicolas,
+On Tue, Jun 24, 2014 at 05:11:14PM +0100, Russell King - ARM Linux wrote:
+> Another point: exynos have taken it upon themselves to add code which
+> saves various ARM core registers.  This is a bad idea, it brings us
+> back to the days where every platform did their own suspend implementations.
+> 
+> CPU level registers should be handled by CPU level code, not by platform
+> code.  Is there a reason why this can't be added to the Cortex-A9
+> support code in proc-v7.S ?
 
-On Mon, Jun 23, 2014 at 9:11 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> The Chromebook firmware doesn't enable the CCI for the boot cpu, and
-> arguably it shouldn't have to either. Let's have the kernel handle the
-> CCI on its own for the boot CPU the same way it does it for secondary CPUs
-> by using the MCPM loopback.
->
-> Signed-off-by: Nicolas Pitre <nico@linaro.org>
-> ---
->  arch/arm/mach-exynos/mcpm-exynos.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+BTW, Shawn Guo recently posted a patch to add the diagnostic register
+save/restore to proc-v7.S.
 
-Thank you very much for posting!  With your series I'm able to boot
-all 8 cores on exynos5420-peach-pit and exynos5800-peach-pi sitting on
-my desk.
-
-Tested-by: Doug Anderson <dianders@chromium.org>
+-- 
+FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
+improving, and getting towards what was expected from it.
