@@ -1,78 +1,57 @@
-From: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Tue, 24 Jun 2014 14:35:54 -0700
-Message-ID: <53A9EF3A.2070704@codeaurora.org>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
-	<CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
-	<4545972.cM7IP1qTXQ@wuerfel> <53A4C0C9.2050908@codeaurora.org>
-	<20140624091808.GC26013@arm.com> <53A9BC18.2090106@codeaurora.org>
-	<20140624181150.GB4067@arm.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 4/4] ARM: DTS: Add NTC thermistor nodes as child nodes to ADC
+Date: Tue, 24 Jun 2014 14:54:03 -0700
+Message-ID: <CAD=FV=Wmi73S4c5TPUqnNyycQ5xX5SbYy_ES-cbbJF2Hr0tqvQ@mail.gmail.com>
+References: <1403612356-23685-1-git-send-email-ch.naveen@samsung.com>
+	<1403612356-23685-5-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20140624181150.GB4067-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:44561 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753542AbaFXVyE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 24 Jun 2014 17:54:04 -0400
+Received: by mail-ob0-f181.google.com with SMTP id wp4so1114060obc.12
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2014 14:54:03 -0700 (PDT)
+In-Reply-To: <1403612356-23685-5-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-iio <linux-iio@vger.kernel.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Tushar Behera <tushar.b@samsung.com>
 
-On 6/24/2014 11:11 AM, Will Deacon wrote:
-> On Tue, Jun 24, 2014 at 06:57:44PM +0100, Olav Haugan wrote:
->> On 6/24/2014 2:18 AM, Will Deacon wrote:
->>> On Sat, Jun 21, 2014 at 12:16:25AM +0100, Olav Haugan wrote:
->>>> We have multiple-master SMMUs and each master emits a variable number of
->>>> StreamIDs. However, we have to apply a mask (the ARM SMMU spec allows
->>>> for this) to the StreamIDs due to limited number of StreamID 2 Context
->>>> Bank entries in the SMMU. If my understanding is correct we would
->>>> represent this in the DT like this:
->>>>
->>>> 	iommu {
->>>> 		#address-cells = <2>;
->>>> 		#size-cells = <0>;
->>>> 	};
->>>>
->>>> 	master@a {
->>>> 		...
->>>> 		iommus = <&iommu StreamID0 MASK0>,
->>>> 			 <&iommu StreamID1 MASK1>,
->>>> 			 <&iommu StreamID2 MASK2>;
->>>> 	};
->>>
->>> Stupid question, but why not simply describe the masked IDs? What use does
->>> the `raw' ID have to Linux?
->>
->> We do describe the masked StreamID (SID) but we need to specify the mask
->> that the SMMU should apply to the incoming SIDs, right?
->>
->> We have a bus master that emits 43 unique SIDs. However, we have only 40
->> SMMU_SMRn registers in the SMMU. So we need to mask out some of the
->> incoming SID bits so that the 43 SIDs can match one of 40 entries in the
->> SMR.
-> 
-> Hmm, so you're talking about stream matching, right? That doesn't belong in
-> the device-tree. I appreciate that the current driver does a terrible job at
-> allocating the SMRs (it's bloody difficult!), but we should try to improve
-> the dynamic behaviour instead of moving configuration of the SMMU out into
-> device-tree, where it's inflexible at best.
+Naveen,
 
-I am talking about SMMU_SMRn[MASK] register bits. This is not something
-that can be dynamically detected at run-time. It is configuration at the
-same level as the actual StreamIDs.
+On Tue, Jun 24, 2014 at 5:19 AM, Naveen Krishna Chatradhi
+<ch.naveen@samsung.com> wrote:
+> Exynos5420 based Peach PIT and Exynos5800 based PI boards have
+> 4 NTC thermistors to measure temperatures at various points on the
+> board.
+>
+> IIO based ADC becomes the parent and NTC thermistors are the childs,
+> via the HWMON interface.
+>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Cc: Doug Anderson <dianders@chromium.org>
+> ---
+> This patch needs
+> 1. MAX77802 PMIC device tree nodes (for ldo9)
+>    https://www.mail-archive.com/devicetree@vger.kernel.org/msg31430.html
+> 2. Uses the DT documentation for NTC thermistors updated with vendor-prefix
+>
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   32 ++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 
-Thanks,
+* You forgot: status="okay" for the ADC.  One might question how this
+patch was tested.
+
+* Please also include this change for pi.
+
+* We just got through the painful process of sorting this .dts file.
+Please sort "&adc" alphabetically.  Kukjin: please confirm that you
+will keep an eye on patches and make sure that they are sorted OK.
 
 
-Olav Haugan
+Other than those problems this seems to work fine to me.
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+-Doug
