@@ -1,95 +1,242 @@
-From: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Tue, 24 Jun 2014 10:57:44 -0700
-Message-ID: <53A9BC18.2090106@codeaurora.org>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
-	<CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
-	<4545972.cM7IP1qTXQ@wuerfel> <53A4C0C9.2050908@codeaurora.org>
-	<20140624091808.GC26013@arm.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators
+Date: Tue, 24 Jun 2014 11:00:38 -0700
+Message-ID: <CAD=FV=UGjm9y3XoBgWKjw9kp9W=ZrwB-S6Lh7T_LBUgCQZn1ag@mail.gmail.com>
+References: <1403520321-2431-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1403520321-2431-2-git-send-email-yuvaraj.cd@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20140624091808.GC26013-5wv7dgnIgG8@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f172.google.com ([209.85.220.172]:41654 "EHLO
+	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751827AbaFXSAj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 24 Jun 2014 14:00:39 -0400
+Received: by mail-vc0-f172.google.com with SMTP id hy10so701830vcb.31
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2014 11:00:38 -0700 (PDT)
+In-Reply-To: <1403520321-2431-2-git-send-email-yuvaraj.cd@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, ks.giri@samsung.com, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On 6/24/2014 2:18 AM, Will Deacon wrote:
-> On Sat, Jun 21, 2014 at 12:16:25AM +0100, Olav Haugan wrote:
->> On 5/30/2014 12:06 PM, Arnd Bergmann wrote:
->>> On Friday 30 May 2014 08:16:05 Rob Herring wrote:
->>>> Presumably the ID would be the streamID on ARM's SMMU. How would a
->>>> master with 8 streamIDs be described? This is what Calxeda midway has
->>>> for SATA and I would expect that to be somewhat common. Either you
->>>> need some ID masking or you'll have lots of duplication when you have
->>>> windows.
->>>
->>> I don't understand the problem. If you have stream IDs 0 through 7,
->>> you would have
->>>
->>> 	master@a {
->>> 		...
->>> 		iommus = <&smmu 0>;
->>> 	};
->>>
->>> 	master@b {
->>> 		...
->>> 		iommus = <&smmu 1;
->>> 	};
->>>
->>> 	...
->>>
->>> 	master@12 {
->>> 		...
->>> 		iommus = <&smmu 7;
->>> 	};
->>>
->>> and you don't need a window at all. Why would you need a mask of
->>> some sort?
->>
->> We have multiple-master SMMUs and each master emits a variable number of
->> StreamIDs. However, we have to apply a mask (the ARM SMMU spec allows
->> for this) to the StreamIDs due to limited number of StreamID 2 Context
->> Bank entries in the SMMU. If my understanding is correct we would
->> represent this in the DT like this:
->>
->> 	iommu {
->> 		#address-cells = <2>;
->> 		#size-cells = <0>;
->> 	};
->>
->> 	master@a {
->> 		...
->> 		iommus = <&iommu StreamID0 MASK0>,
->> 			 <&iommu StreamID1 MASK1>,
->> 			 <&iommu StreamID2 MASK2>;
->> 	};
-> 
-> Stupid question, but why not simply describe the masked IDs? What use does
-> the `raw' ID have to Linux?
+Yuvaraj,
 
-We do describe the masked StreamID (SID) but we need to specify the mask
-that the SMMU should apply to the incoming SIDs, right?
+On Mon, Jun 23, 2014 at 3:45 AM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+> This patch makes use of mmc_regulator_get_supply() to handle
+> the vmmc and vqmmc regulators.Also it moves the code handling
+> the these regulators to dw_mci_set_ios().It turned on the vmmc
+> and vqmmc during MMC_POWER_UP and MMC_POWER_ON,and turned off
+> during MMC_POWER_OFF.
+>
+> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> ---
+>  drivers/mmc/host/dw_mmc.c |   71 ++++++++++++++++++++++-----------------------
+>  drivers/mmc/host/dw_mmc.h |    2 ++
+>  2 files changed, 36 insertions(+), 37 deletions(-)
 
-We have a bus master that emits 43 unique SIDs. However, we have only 40
-SMMU_SMRn registers in the SMMU. So we need to mask out some of the
-incoming SID bits so that the 43 SIDs can match one of 40 entries in the
-SMR.
+Perhaps you could CC me on the whole series for the next version since
+I was involved in privately reviewing previous versions?
 
-Thanks,
+Overall caveat for my review is that I'm nowhere near an SD/MMC expert.
 
-Olav Haugan
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 1ac227c..f5cabce 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -937,6 +937,7 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>         struct dw_mci_slot *slot = mmc_priv(mmc);
+>         const struct dw_mci_drv_data *drv_data = slot->host->drv_data;
+>         u32 regs;
+> +       int ret;
+>
+>         switch (ios->bus_width) {
+>         case MMC_BUS_WIDTH_4:
+> @@ -975,16 +976,41 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>
+>         switch (ios->power_mode) {
+>         case MMC_POWER_UP:
+> +               if ((!IS_ERR(mmc->supply.vmmc)) &&
+> +                               !test_bit(DW_MMC_CARD_POWERED, &slot->flags)) {
+> +                       ret = regulator_enable(mmc->supply.vmmc);
+> +                       if (!ret)
+> +                               set_bit(DW_MMC_CARD_POWERED, &slot->flags);
+> +               }
+
+As per below, I'm not sure why you'd want to turn on vqmmc and vmmc at
+different times.
+
+Also: if you fail to turn on either of the regulators it feels like
+you should print a pretty nasty error message since your device will
+almost certainly not work.
+
+
+>                 set_bit(DW_MMC_CARD_NEED_INIT, &slot->flags);
+>                 regs = mci_readl(slot->host, PWREN);
+>                 regs |= (1 << slot->id);
+>                 mci_writel(slot->host, PWREN, regs);
+>                 break;
+>         case MMC_POWER_OFF:
+> +               if (!IS_ERR(mmc->supply.vqmmc) &&
+> +                               test_bit(DW_MMC_IO_POWERED, &slot->flags)) {
+> +                       ret = regulator_disable(mmc->supply.vqmmc);
+> +                       if (!ret)
+> +                               clear_bit(DW_MMC_IO_POWERED, &slot->flags);
+> +               }
+> +               if (!IS_ERR(mmc->supply.vmmc) &&
+> +                               test_bit(DW_MMC_CARD_POWERED, &slot->flags)) {
+> +                       ret = regulator_disable(mmc->supply.vmmc);
+> +                       if (!ret)
+> +                               clear_bit(DW_MMC_CARD_POWERED, &slot->flags);
+> +               }
+>                 regs = mci_readl(slot->host, PWREN);
+>                 regs &= ~(1 << slot->id);
+>                 mci_writel(slot->host, PWREN, regs);
+>                 break;
+> +       case MMC_POWER_ON:
+> +               if (!IS_ERR(mmc->supply.vqmmc) &&
+> +                               !test_bit(DW_MMC_IO_POWERED, &slot->flags)) {
+> +                       ret = regulator_enable(mmc->supply.vqmmc);
+> +                       if (!ret)
+> +                               set_bit(DW_MMC_IO_POWERED, &slot->flags);
+> +               }
+>         default:
+>                 break;
+>         }
+> @@ -2067,7 +2093,13 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+>                 mmc->f_max = freq[1];
+>         }
+>
+> -       mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
+> +       /*if there are external regulators, get them*/
+> +       ret = mmc_regulator_get_supply(mmc);
+> +       if (ret == -EPROBE_DEFER)
+> +               goto err_setup_bus;
+> +
+> +       if (!mmc->ocr_avail)
+> +               mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
+>
+>         if (host->pdata->caps)
+>                 mmc->caps = host->pdata->caps;
+> @@ -2133,7 +2165,7 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+>
+>  err_setup_bus:
+>         mmc_free_host(mmc);
+> -       return -EINVAL;
+> +       return ret;
+>  }
+>
+>  static void dw_mci_cleanup_slot(struct dw_mci_slot *slot, unsigned int id)
+> @@ -2375,24 +2407,6 @@ int dw_mci_probe(struct dw_mci *host)
+>                 }
+>         }
+>
+> -       host->vmmc = devm_regulator_get_optional(host->dev, "vmmc");
+> -       if (IS_ERR(host->vmmc)) {
+> -               ret = PTR_ERR(host->vmmc);
+> -               if (ret == -EPROBE_DEFER)
+> -                       goto err_clk_ciu;
+> -
+> -               dev_info(host->dev, "no vmmc regulator found: %d\n", ret);
+> -               host->vmmc = NULL;
+> -       } else {
+> -               ret = regulator_enable(host->vmmc);
+> -               if (ret) {
+> -                       if (ret != -EPROBE_DEFER)
+> -                               dev_err(host->dev,
+> -                                       "regulator_enable fail: %d\n", ret);
+> -                       goto err_clk_ciu;
+> -               }
+> -       }
+> -
+>         host->quirks = host->pdata->quirks;
+>
+>         spin_lock_init(&host->lock);
+> @@ -2536,8 +2550,6 @@ err_workqueue:
+>  err_dmaunmap:
+>         if (host->use_dma && host->dma_ops->exit)
+>                 host->dma_ops->exit(host);
+> -       if (host->vmmc)
+> -               regulator_disable(host->vmmc);
+>
+>  err_clk_ciu:
+>         if (!IS_ERR(host->ciu_clk))
+> @@ -2573,9 +2585,6 @@ void dw_mci_remove(struct dw_mci *host)
+>         if (host->use_dma && host->dma_ops->exit)
+>                 host->dma_ops->exit(host);
+>
+> -       if (host->vmmc)
+> -               regulator_disable(host->vmmc);
+> -
+>         if (!IS_ERR(host->ciu_clk))
+>                 clk_disable_unprepare(host->ciu_clk);
+>
+> @@ -2592,9 +2601,6 @@ EXPORT_SYMBOL(dw_mci_remove);
+>   */
+>  int dw_mci_suspend(struct dw_mci *host)
+>  {
+> -       if (host->vmmc)
+> -               regulator_disable(host->vmmc);
+> -
+
+Just to check: have you tested suspend/resume with the various
+combinations of "keep-power-in-suspend" and "non-removable" with your
+patch.  I remember some of the logic being a bit complicated...
+
+
+>         return 0;
+>  }
+>  EXPORT_SYMBOL(dw_mci_suspend);
+> @@ -2603,15 +2609,6 @@ int dw_mci_resume(struct dw_mci *host)
+>  {
+>         int i, ret;
+>
+> -       if (host->vmmc) {
+> -               ret = regulator_enable(host->vmmc);
+> -               if (ret) {
+> -                       dev_err(host->dev,
+> -                               "failed to enable regulator: %d\n", ret);
+> -                       return ret;
+> -               }
+> -       }
+> -
+>         if (!dw_mci_ctrl_all_reset(host)) {
+>                 ret = -ENODEV;
+>                 return ret;
+> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+> index 738fa24..5c95d00 100644
+> --- a/drivers/mmc/host/dw_mmc.h
+> +++ b/drivers/mmc/host/dw_mmc.h
+
+As I mentioned in my previous review, you should be removing "struct
+regulator *vmmc; /* Power regulator */" from "struct dw_mci" since
+you're no longer populating it.
+
+
+> @@ -225,6 +225,8 @@ struct dw_mci_slot {
+>         unsigned long           flags;
+>  #define DW_MMC_CARD_PRESENT    0
+>  #define DW_MMC_CARD_NEED_INIT  1
+> +#define DW_MMC_CARD_POWERED    2
+> +#define DW_MMC_IO_POWERED      3
+
+I don't really think you should have two bits here.  From my
+understanding of SD cards there should be very little reason to have
+vqmmc and vmmc not powered at the same time.
+
+If vqmmc is powered but vmmc is not powered then you'll get leakage
+and the card can pull power through the IO lines which is bad for the
+card.
+
+I don't think that powering vmmc without vqmmc for a short time is
+terribly bad but I can't quite see a good use case.  Essentially
+you're powering the card but not able to talk to it, right?  I'm not
+sure what the state of the IO lines would be (either driven low or
+floating) since presumably the pullups on the lines are powered by
+vqmmc too.
+
+
+>         int                     id;
+>         int                     last_detect_state;
+>  };
