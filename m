@@ -1,65 +1,66 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 4/6] ARM: SAMSUNG: Restore Samsung PM Debug functionality
-Date: Tue, 24 Jun 2014 15:57:13 +0200
-Message-ID: <1403618235-19353-5-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 3/6] clk: samsung: exynos4: Remove SRC_MASK_ISP gates
+Date: Tue, 24 Jun 2014 15:57:12 +0200
+Message-ID: <1403618235-19353-4-git-send-email-t.figa@samsung.com>
 References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Due to recently merged patches and previous merge conflicts, the Samsung
-PM Debug functionality no longer can be enabled. This patch fixes
-incorrect dependency of SAMSUNG_PM_DEBUG on an integer symbol and adds
-missing header inclusion.
+ISP special clocks have dedicated gating registers and so MUX SRC_MASK
+register should not be used. This patch fixes the problem of
+Exynos4x12-based boards freezing on system suspend, because those
+mux outputs need not to be masked while suspending.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Cc: Mike Turquette <mturquette@linaro.org>
 ---
- arch/arm/plat-samsung/Kconfig    | 8 +++++++-
- arch/arm/plat-samsung/pm-debug.c | 1 +
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos4.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 301b892..483c959 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -412,9 +412,14 @@ config S5P_DEV_MFC
- 
- comment "Power management"
- 
-+config HAVE_SAMSUNG_PM_DEBUG
-+	bool
-+	help
-+	  Allow compilation of Samsung PM debugging code.
-+
- config SAMSUNG_PM_DEBUG
- 	bool "S3C2410 PM Suspend debug"
--	depends on PM && DEBUG_KERNEL && DEBUG_S3C_UART
-+	depends on PM && DEBUG_KERNEL && HAVE_SAMSUNG_PM_DEBUG
- 	help
- 	  Say Y here if you want verbose debugging from the PM Suspend and
- 	  Resume code. See <file:Documentation/arm/Samsung-S3C24XX/Suspend.txt>
-@@ -484,6 +489,7 @@ config S5P_SLEEP
- 
- config DEBUG_S3C_UART
- 	depends on PLAT_SAMSUNG
-+	select HAVE_SAMSUNG_PM_DEBUG
- 	int
- 	default "0" if DEBUG_S3C_UART0
- 	default "1" if DEBUG_S3C_UART1
-diff --git a/arch/arm/plat-samsung/pm-debug.c b/arch/arm/plat-samsung/pm-debug.c
-index 8f19f66..3960960 100644
---- a/arch/arm/plat-samsung/pm-debug.c
-+++ b/arch/arm/plat-samsung/pm-debug.c
-@@ -14,6 +14,7 @@
-  */
- 
- #include <linux/serial_core.h>
-+#include <linux/serial_s3c.h>
- #include <linux/io.h>
- 
- #include <asm/mach/map.h>
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 4f150c9..7f4a473 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -925,21 +925,13 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+ 	GATE(CLK_RTC, "rtc", "aclk100", E4X12_GATE_IP_PERIR, 15,
+ 			0, 0),
+ 	GATE(CLK_KEYIF, "keyif", "aclk100", E4X12_GATE_IP_PERIR, 16, 0, 0),
+-	GATE(CLK_SCLK_PWM_ISP, "sclk_pwm_isp", "div_pwm_isp",
+-			E4X12_SRC_MASK_ISP, 0, CLK_SET_RATE_PARENT, 0),
+-	GATE(CLK_SCLK_SPI0_ISP, "sclk_spi0_isp", "div_spi0_isp_pre",
+-			E4X12_SRC_MASK_ISP, 4, CLK_SET_RATE_PARENT, 0),
+-	GATE(CLK_SCLK_SPI1_ISP, "sclk_spi1_isp", "div_spi1_isp_pre",
+-			E4X12_SRC_MASK_ISP, 8, CLK_SET_RATE_PARENT, 0),
+-	GATE(CLK_SCLK_UART_ISP, "sclk_uart_isp", "div_uart_isp",
+-			E4X12_SRC_MASK_ISP, 12, CLK_SET_RATE_PARENT, 0),
+-	GATE(CLK_PWM_ISP_SCLK, "pwm_isp_sclk", "sclk_pwm_isp",
++	GATE(CLK_PWM_ISP_SCLK, "pwm_isp_sclk", "div_pwm_isp",
+ 			E4X12_GATE_IP_ISP, 0, 0, 0),
+-	GATE(CLK_SPI0_ISP_SCLK, "spi0_isp_sclk", "sclk_spi0_isp",
++	GATE(CLK_SPI0_ISP_SCLK, "spi0_isp_sclk", "div_spi0_isp_pre",
+ 			E4X12_GATE_IP_ISP, 1, 0, 0),
+-	GATE(CLK_SPI1_ISP_SCLK, "spi1_isp_sclk", "sclk_spi1_isp",
++	GATE(CLK_SPI1_ISP_SCLK, "spi1_isp_sclk", "div_spi1_isp_pre",
+ 			E4X12_GATE_IP_ISP, 2, 0, 0),
+-	GATE(CLK_UART_ISP_SCLK, "uart_isp_sclk", "sclk_uart_isp",
++	GATE(CLK_UART_ISP_SCLK, "uart_isp_sclk", "div_uart_isp",
+ 			E4X12_GATE_IP_ISP, 3, 0, 0),
+ 	GATE(CLK_WDT, "watchdog", "aclk100", E4X12_GATE_IP_PERIR, 14, 0, 0),
+ 	GATE(CLK_PCM0, "pcm0", "aclk100", E4X12_GATE_IP_MAUDIO, 2,
 -- 
 1.9.3
