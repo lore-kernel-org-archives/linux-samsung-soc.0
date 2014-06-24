@@ -1,57 +1,130 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 4/4] ARM: DTS: Add NTC thermistor nodes as child nodes to ADC
-Date: Tue, 24 Jun 2014 14:54:03 -0700
-Message-ID: <CAD=FV=Wmi73S4c5TPUqnNyycQ5xX5SbYy_ES-cbbJF2Hr0tqvQ@mail.gmail.com>
-References: <1403612356-23685-1-git-send-email-ch.naveen@samsung.com>
-	<1403612356-23685-5-git-send-email-ch.naveen@samsung.com>
+From: Laura Abbott <lauraa@codeaurora.org>
+Subject: Re: mainline boot: 64 boots: 62 pass, 2 fail (v3.16-rc1-2-gebe0618)
+Date: Tue, 24 Jun 2014 15:29:09 -0700
+Message-ID: <53A9FBB5.60709@codeaurora.org>
+References: <539fdd37.e7bc420a.76b9.ffffb583@mx.google.com> <CAGa+x85nqPbH-sye28ni=gUEdgjGdUDqHhv1+0pV5aO8y1+wHQ@mail.gmail.com> <53A106F1.10201@gmail.com> <CAGa+x8527FEPk6fg5kv-fbOzK3MzcFooFGE9Me12b9C_Pv=UzA@mail.gmail.com> <53A2AE11.2050208@gmail.com> <53A2BE94.2010308@gmail.com> <53A7A579.4010702@gmail.com> <CAGa+x85H510fNGTXJHGYfQybRa2FGgg2NyCgJ8rmjJ6TE7GNbA@mail.gmail.com> <53A9B99F.4040806@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:44561 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753542AbaFXVyE (ORCPT
+Received: from smtp.codeaurora.org ([198.145.11.231]:34281 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751826AbaFXW3M (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 17:54:04 -0400
-Received: by mail-ob0-f181.google.com with SMTP id wp4so1114060obc.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2014 14:54:03 -0700 (PDT)
-In-Reply-To: <1403612356-23685-5-git-send-email-ch.naveen@samsung.com>
+	Tue, 24 Jun 2014 18:29:12 -0400
+In-Reply-To: <53A9B99F.4040806@codeaurora.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-iio <linux-iio@vger.kernel.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Tushar Behera <tushar.b@samsung.com>
+To: Kevin Hilman <khilman@linaro.org>, Tushar Behera <trblinux@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, kernel-build-reports@lists.linaro.org, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Naveen,
+On 6/24/2014 10:47 AM, Laura Abbott wrote:
+> On 6/23/2014 11:32 AM, Kevin Hilman wrote:
+>> On Sun, Jun 22, 2014 at 8:56 PM, Tushar Behera <trblinux@gmail.com> wrote:
+>>> Adding linux-samsung-soc and linux-arm-kernel ML for wider audience.
+>>>
+>>> On 06/19/2014 04:12 PM, Tushar Behera wrote:
+>>>> On 06/19/2014 03:02 PM, Tushar Behera wrote:
+>>>>> On 06/18/2014 09:22 AM, Kevin Hilman wrote:
+>>>>>> On Tue, Jun 17, 2014 at 8:26 PM, Tushar Behera <trblinux@gmail.com> wrote:
+>>>>>>> On 06/17/2014 10:23 PM, Kevin Hilman wrote:
+>>>>>>>> Sachin,
+>>>>>>>>
+>>>>>>>> On Mon, Jun 16, 2014 at 11:16 PM, Kevin's boot bot <khilman@linaro.org> wrote:
+>>>>>>>>>
+>>>>>>>>> Tree/Branch: mainline
+>>>>>>>>> Git describe: v3.16-rc1-2-gebe0618
+>>>>>>>>> Failed boot tests (console logs at the end)
+>>>>>>>>> ===========================================
+>>>>>>>>>      exynos5420-arndale-octa:     FAIL:    arm-exynos_defconfig
+>>>>>>>>>                 ste-snowball:     FAIL:    arm-u8500_defconfig
+>>>>>>>>
+>>>>>>>> FYI... these failures are getting more consistent on my octa board,
+>>>>>>>> but still not failing every time.
+>>>>>>>>
+>>>>>>>> Kevin
+>>>>>>>>
+>>>>>>>
+>>>>>>> Hi Kevin,
+>>>>>>>
+>>>>>>> Same here.
+>>>>>>>
+>>>>>>> Observation: If you soft-reset the board (through the jumpers) after
+>>>>>>> getting this problem, the problem keeps repeating. But if you hard-reset
+>>>>>>> the board (by removing the power cord), the problem doesn't occur during
+>>>>>>> next iteration.
+>>>>>>
+>>>>>> I don't ever use the soft-reset, I only toggle the wall power.  I
+>>>>>> don't ever actually remove the power cord though, I'm using a
+>>>>>> USB-controlled relay to toggle the wall power.
+>>>>>>
+>>>>>> Kevin
+>>>>>>
+>>>>>
+>>>>> Laura,
+>>>>>
+>>>>> We are getting following kernel panic [1] (not always, but quite
+>>>>> regularly) while booting Arndale-Octa (based on Samsung's Exynos5420)
+>>>>> board with upstream kernel. I haven't observed this issue with other
+>>>>> boards yet.
+>>>>>
+>>>>> This issue is observed when I am booting with uImage + dtb (within
+>>>>> roughly ~10 iterations).
+>>>>>
+>>>>
+>>>> Some more information:
+>>>>
+>>>> The boot logs are provided in pastebin, okay[2] and failed[3].
+>>>>
+>>>> In case of boot failures, I am getting a higher value for vm_total_pages
+>>>> (684424 in [3]). In case of successful boot on my board, it is always
+>>>> 521232 [2] on my board.
+>>
+>> I can confirm that reverting the "Get rid of meminfo" patch gets the
+>> Octa board booting reliably again for me also.
+>>
+>> In case it helps, some boot logs for failures from the last copule
+>> linux-next build/boot cycles can be seen here:
+>> http://armcloud.us/kernel-ci/next/next-20140623/arm-exynos_defconfig/boot-exynos5420-arndale-octa.log
+>> http://armcloud.us/kernel-ci/next/next-20140620/arm-exynos_defconfig/boot-exynos5420-arndale-octa.log
+>>
+> 
+> Sorry, I missed this yesterday. I'm going to take a look.
+> 
 
-On Tue, Jun 24, 2014 at 5:19 AM, Naveen Krishna Chatradhi
-<ch.naveen@samsung.com> wrote:
-> Exynos5420 based Peach PIT and Exynos5800 based PI boards have
-> 4 NTC thermistors to measure temperatures at various points on the
-> board.
->
-> IIO based ADC becomes the parent and NTC thermistors are the childs,
-> via the HWMON interface.
->
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Cc: Doug Anderson <dianders@chromium.org>
-> ---
-> This patch needs
-> 1. MAX77802 PMIC device tree nodes (for ldo9)
->    https://www.mail-archive.com/devicetree@vger.kernel.org/msg31430.html
-> 2. Uses the DT documentation for NTC thermistors updated with vendor-prefix
->
->  arch/arm/boot/dts/exynos5420-peach-pit.dts |   32 ++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
+Were all of 
 
-* You forgot: status="okay" for the ADC.  One might question how this
-patch was tested.
+http://pastebin.com/1iLaizuL
+http://pastebin.com/5tdDt4GL
+http://armcloud.us/kernel-ci/next/next-20140623/arm-exynos_defconfig/boot-exynos5420-arndale-octa.log
+http://armcloud.us/kernel-ci/next/next-20140620/arm-exynos_defconfig/boot-exynos5420-arndale-octa.log
 
-* Please also include this change for pi.
+collected on the same type of board with the same amount of DRAM? I'm seeing a
+different amount of total pages across all those logs. All the logs have the
+same lowmem limit so it seems like the upper bound was being calculated
+incorrectly for passing to free_area_init_node. Nothing is immediately jumping
+out at me so can you boot up with a small debug patch?
 
-* We just got through the painful process of sorting this .dts file.
-Please sort "&adc" alphabetically.  Kukjin: please confirm that you
-will keep an eye on patches and make sure that they are sorted OK.
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index 659c75d..88eac1f 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -187,6 +187,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
+        unsigned long zone_size[MAX_NR_ZONES], zhole_size[MAX_NR_ZONES];
+        struct memblock_region *reg;
+ 
++       pr_err("XXXXXXX min %lx max_low %lx max_high %lx\n", min, max_low, max_high);
++       __memblock_dump_all();
+        /*
+         * initialise the zones.
+         */
 
+It would be helpful to do this across a few bootups to see if the values are
+actually consistent. I'll keep looking in the meantime.
 
-Other than those problems this seems to work fine to me.
+Thanks,
+Laura
 
--Doug
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
