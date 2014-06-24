@@ -1,42 +1,1057 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: sdhci_s3c_consider_clock scheduling while atomic - clk_round_rate
-Date: Tue, 24 Jun 2014 10:48:59 +0100
-Message-ID: <CAD8Lp45QV4ZcfXA86hoseKfJLLV_BJ-g0UABnOGPkJW1pMXhFw@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [RFC 4/4] ARM: dts: exynos5250: Add Spring device tree
+Date: Tue, 24 Jun 2014 12:06:25 +0200
+Message-ID: <53A94DA1.50703@collabora.co.uk>
+References: <1403486483-4063-1-git-send-email-afaerber@suse.de>	<1403486483-4063-5-git-send-email-afaerber@suse.de>	<CAD=FV=WHAqASC+bp8mGVnhfr79F5LapJCTLtSfgUG8XuRUSCqw@mail.gmail.com>	<53A8AE4C.6080702@suse.de> <CAD=FV=W96QpDhh1NSaVwrXYjL6Jr-v4sq1-eRSfT=tErw_KCOQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: linux-mmc@vger.kernel.org, ben-linux@fluff.org, Tomasz Figa <tomasz.figa@gmail.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAD=FV=W96QpDhh1NSaVwrXYjL6Jr-v4sq1-eRSfT=tErw_KCOQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephan van Schaik <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ARM PORT <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-sdhci_s3c_set_clock is called from sdhci_do_set_ios with interrupts
-disabled, and this calls into sdhci_s3c_consider_clock().
+Hello Doug,
 
-The patch "mmc: sdhci-s3c: Cache bus clock rates" addressed some
-scheduling while atomic in this function, but there are more issues
-here, seen while testing 3.16-rc2 on exynos4412:
+On 06/24/2014 06:05 AM, Doug Anderson wrote:
+> Andreas,
+>=20
+> On Mon, Jun 23, 2014 at 3:46 PM, Andreas F=C3=A4rber <afaerber@suse.d=
+e> wrote:
+>> Hi Doug,
+>>
+>> Am 23.06.2014 21:47, schrieb Doug Anderson:
+>>> Thanks for posting!  A first pass on this is below...
+>>
+>> Thanks a lot for your quick review! My first big .dts patch, and no
+>> datasheets for the hardware at hand as a user.
+>>
+>> A first pass of replies to my defense. ;)
+>>
+>>> On Sun, Jun 22, 2014 at 6:21 PM, Andreas F=C3=A4rber <afaerber@suse=
+=2Ede> wrote:
+>> [...]
+>>>> diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/bo=
+ot/dts/exynos5250-spring.dts
+>>>> new file mode 100644
+>>>> index 0000000..e857d44
+>>>> --- /dev/null
+>>>> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
+>>>> @@ -0,0 +1,556 @@
+>>>> +/*
+>>>> + * Google Spring board device tree source
+>>>> + *
+>>>> + * Copyright (c) 2013 Google, Inc
+>>>> + * Copyright (c) 2014 SUSE LINUX Products GmbH
+>>>> + *
+>>>> + * This program is free software; you can redistribute it and/or =
+modify
+>>>> + * it under the terms of the GNU General Public License version 2=
+ as
+>>>> + * published by the Free Software Foundation.
+>>>> + */
+>>>> +
+>>>> +/dts-v1/;
+>>>> +#include "exynos5250.dtsi"
+>>>> +#include "exynos5250-cros-common.dtsi"
+>>>
+>>> It is possible we may want to backpedal on the use of
+>>> "exynos5250-cros-common.dtsi".  I know that Olof (now CCed) said he
+>>> wasn't a fan of how it turned out.
+>>>
+>>> The original idea was that it should include the arbitrary set of
+>>> things that are common between a chunk of Chrome OS boards.  As mor=
+e
+>>> boards were introduced things would need to migrate from the "commo=
+n"
+>>> file to the board files.
+>>>
+>>> At the moment the current conventional wisdom is that some duplicat=
+ion
+>>> is better than the confusing movement of everything back and forth.
+>>> See exynos5420-peach-pit and exynos5800-peach-pi in ToT linux-next.
+>>>
+>>>
 
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:103
-in_atomic(): 1, irqs_disabled(): 128, pid: 75, name: mmcqd/0
-Preemption disabled at:[<  (null)>]   (null)
+Another option is to identify DTS fragments that are common across boar=
+ds and
+create .dtsi files for these specific chunks instead of trying to group=
+ all set
+of common things on a single .dtsi file.
 
-CPU: 0 PID: 75 Comm: mmcqd/0 Not tainted 3.16.0-rc2-00028-ge9fe7eb-dirty #77
-[<c0016140>] (unwind_backtrace) from [<c0011e14>] (show_stack+0x10/0x14)
-[<c0011e14>] (show_stack) from [<c05ce8a8>] (dump_stack+0x84/0xc4)
-[<c05ce8a8>] (dump_stack) from [<c05d2de0>] (mutex_lock+0x1c/0x3c)
-[<c05d2de0>] (mutex_lock) from [<c046214c>] (clk_prepare_lock+0x6c/0xf4)
-[<c046214c>] (clk_prepare_lock) from [<c04625ac>] (clk_round_rate+0x10/0x2c)
-[<c04625ac>] (clk_round_rate) from [<c0447628>] (sdhci_s3c_set_clock+0x4c/0x1e8)
-[<c0447628>] (sdhci_s3c_set_clock) from [<c0447818>]
-(sdhci_cmu_set_clock+0x54/0x140)
-[<c0447818>] (sdhci_cmu_set_clock) from [<c0443a38>]
-(sdhci_do_set_ios+0x138/0x58c)
-[<c0443a38>] (sdhci_do_set_ios) from [<c0443864>] (sdhci_set_ios+0x28/0x34)
+=46or example, a quite common design for OMAP2+ based boards is to use =
+a SMSC LAN
+chip connected to OMAP's General-Purpose Memory Controller (GPMC). So t=
+he
+following files were created to reduce DTS duplication:
 
-clk_round_rate cannot be called here because it takes a mutex.
+arch/arm/boot/dts/omap-gpmc-smsc911x.dtsi
+arch/arm/boot/dts/omap-gpmc-smsc9221.dtsi
 
-sdhci_s3c_set_clock() also calls into clk_prepare_enable() which looks
-like it could trigger this problem too.
+Now that I think about it, is the same that what you did for
+arm/boot/dts/cros-ec-keyboard.dtsi.
 
-Daniel
+Maybe splitting exynos5250-cros-common.dtsi in a set of .dtsi files wil=
+l make it
+more flexible/reusable?
+
+>>>> +/ {
+>>>> +       model =3D "Google Spring";
+>>>> +       compatible =3D "google,spring", "samsung,exynos5250", "sam=
+sung,exynos5";
+>>>> +
+>>>> +       pinctrl@11400000 {
+>>>
+>>> The new best way to do things is to put this down at the bottom.  S=
+ee
+>>> exynos5420-peach-pit as an example:
+>>>
+>>> &pinctrl_0 {
+>>>   ...
+>>> }
+>>>
+>>> Note that I believe it was decided that top-level references like t=
+hat
+>>> should be sorted alphabetically.
+>>
+>> Thanks for the hint. (My chosen sort order here was by address.)
+>>
+>>> If you wanted to apply that run to exynos5250-snow I don't think it
+>>> would be a terrible idea.
+>>
+>> I can of course apply changes to Snow, but I cannot test them myself=
+=2E
+>=20
+> If you want to send up a patch like that I'm happy to give it a once
+> over and also to test it.  ...but don't feel obligated
+>=20
+>=20
+>>>> +               s5m8767_dvs: s5m8767-dvs {
+>>>> +                       samsung,pins =3D "gpd1-0", "gpd1-1", "gpd1=
+-2";
+>>>> +                       samsung,pin-function =3D <0>;
+>>>> +                       samsung,pin-pud =3D <1>;
+>>>> +                       samsung,pin-drv =3D <0>;
+>>>> +               };
+>>>> +
+>>>> +               s5m8767_ds: s5m8767-ds {
+>>>> +                       samsung,pins =3D "gpx2-3", "gpx2-4", "gpx2=
+-5";
+>>>> +                       samsung,pin-function =3D <0>;
+>>>> +                       samsung,pin-pud =3D <1>;
+>>>> +                       samsung,pin-drv =3D <0>;
+>>>> +               };
+>>>> +
+>>>> +               tps65090_irq: tps65090-irq {
+>>>> +                       samsung,pins =3D "gpx2-6";
+>>>> +                       samsung,pin-function =3D <0>;
+>>>> +                       samsung,pin-pud =3D <0>;
+>>>> +                       samsung,pin-drv =3D <0>;
+>>>> +               };
+>>>> +
+>>>> +               s5m8767_irq: s5m8767-irq {
+>>>> +                       samsung,pins =3D "gpx3-2";
+>>>> +                       samsung,pin-function =3D <0>;
+>>>> +                       samsung,pin-pud =3D <0>;
+>>>> +                       samsung,pin-drv =3D <0>;
+>>>> +               };
+>>>> +
+>>>> +               hdmi_hpd_irq: hdmi-hpd-irq {
+>>>> +                       samsung,pins =3D "gpx3-7";
+>>>> +                       samsung,pin-function =3D <0>;
+>>>> +                       samsung,pin-pud =3D <1>;
+>>>> +                       samsung,pin-drv =3D <0>;
+>>>> +               };
+>>>> +       };
+>>>> +
+>>>> +       pinctrl@13400000 {
+>>>> +               hsic_reset: hsic-reset {
+>>>> +                       samsung,pins =3D "gpe1-0";
+>>>> +                       samsung,pin-function =3D <1>;
+>>>> +                       samsung,pin-pud =3D <0>;
+>>>> +                       samsung,pin-drv =3D <0>;
+>>>> +               };
+>>>
+>>> I'm pretty sure that the HSIC reset needed some funky code to make =
+it
+>>> work and I'm not sure what the status of that is upstream
+>>
+>> Yeah, you mentioned something along those lines. However it's the
+>> equivalent of the usb3-vbus-en in -snow.dts. Rename or drop?
+>=20
+> On snow locally I see USB2 vbus is gpx1-1 and USB3 vbus is gpx2-7.  I
+> don't see that in spring.
+>=20
+> This will take more time than I have right now to track down.  I adde=
+d
+> Julius to the thread in case he has time to answer and can suggest
+> what to do for upstream purposes.  I may be able to look more
+> tomorrow.
+>=20
+> You can always send up the next version and include this and we'll
+> look at it again.
+>=20
+>=20
+>>>> +       };
+>>>> +
+>>>> +       vbat: vbat-fixed-regulator {
+>>>> +               compatible =3D "regulator-fixed";
+>>>> +               regulator-name =3D "vbat-supply";
+>>>> +               regulator-boot-on;
+>>>> +       };
+>>>> +
+>>>> +       usb@12000000 {
+>>>> +               status =3D "okay";
+>>>> +       };
+>>>> +
+>>>> +       usb3_vbus_reg: regulator-usb3 {
+>>>> +               compatible =3D "regulator-fixed";
+>>>> +               regulator-name =3D "P5.0V_USB3CON";
+>>>> +               regulator-min-microvolt =3D <5000000>;
+>>>> +               regulator-max-microvolt =3D <5000000>;
+>>>> +               gpio =3D <&gpe1 0 1>;
+>>>> +               pinctrl-names =3D "default";
+>>>> +               pinctrl-0 =3D <&hsic_reset>;
+>>>> +               enable-active-high;
+>>>> +       };
+>>>> +
+>>>> +       phy@12100000 {
+>>>> +               vbus-supply =3D <&usb3_vbus_reg>;
+>>>> +       };
+>>>> +
+>>>> +       usb@12110000 {
+>>>> +               samsung,vbus-gpio =3D <&gpx1 1 0>;
+>>>> +               status =3D "okay";
+>>>> +       };
+>>>> +
+>>>> +       usb@12120000 {
+>>>> +               status =3D "okay";
+>>>> +       };
+>>>> +
+>>>> +       mmc@12220000 {
+>>>> +               /* MMC2 pins are used as GPIO for eDP bridge contr=
+ol. */
+>>>> +               status =3D "disabled";
+>>>> +       };
+>>>> +
+>>>> +       mmc@12230000 {
+>>>> +               status =3D "disabled";
+>>>> +       };
+>>>> +
+>>>> +       i2c@12C60000 {
+>>>> +               max77686@09 {
+>>>
+>>> There is no max77686 on spring.  It uses s5m8767 in the place of ma=
+x77686.
+>>>
+>>> ...you've got "status =3D disabled", just remove it.
+>>
+>> That's because it's inherited from exynos5250-cros-common.dtsi.
+>=20
+> Ah, right.  So if we're keeping cros-common the proper thing to do is
+> to move it out of cros-common in a patch before this one.  ...but I
+> think people might be happier if you simply don't include cros-common=
+=2E
+>=20
+>=20
+>> The rtc that the system successfully uses is "s5m-rtc", which I gues=
+s is
+>> on the s5m8767 then? (Confusing that 3.8 Spring had this rtc node
+>> despite Snow's max77686 not having it.)
+>=20
+> I think it's not really supposed to.  It was a bit of a hack to handl=
+e
+> the fact that the RTC has two different i2c addresses on both the
+> 77686 and this PMIC.  The max77686 driver upstream handles it all in
+> code and doesn't ask the device tree to list both addresses.
+>=20
+> I think that _upstream_ snow doesn't have the node but _downstream_
+> spring might have the node (though having a child of a disabled node
+> isn't particularly useful).
+>=20
+>=20
+
+Personally I think that "status =3D [enabled | disabled]" only makes se=
+nse for IP
+blocks that are part of the SoC but may or may not be used by a board (=
+e.g: i2c
+and spi buses, sdhci and usb host controllers, etc).
+
+DTS should be a description of the hardware so I agree that having a di=
+sabled
+node for a device that is not present in the board is not right.
+
+>>>> +                       #address-cells =3D <1>;
+>>>> +                       #size-cells =3D <0>;
+>>>> +                       status =3D "disabled";
+>>>> +
+>>>> +                       rtc {
+>>>> +                               reg =3D <0x6>;
+>>>> +                       };
+>>>> +               };
+>>>> +
+>>>> +               s5m8767_pmic@66 {
+>>>> +                       compatible =3D "samsung,s5m8767-pmic";
+>>>> +                       reg =3D <0x66>;
+>>>> +                       interrupt-parent =3D <&gpx3>;
+>>>> +                       interrupts =3D <2 0>;
+>>>> +                       pinctrl-names =3D "default";
+>>>> +                       pinctrl-0 =3D <&s5m8767_irq &s5m8767_dvs &=
+s5m8767_ds>;
+>>>> +                       wakeup-source;
+>>>> +
+>>>> +                       s5m8767,pmic-buck-dvs-gpios =3D <&gpd1 0 1=
+>, /* DVS1 */
+>>>> +                                                     <&gpd1 1 1>,=
+ /* DVS2 */
+>>>> +                                                     <&gpd1 2 1>;=
+ /* DVS3 */
+>>>> +
+>>>> +                       s5m8767,pmic-buck-ds-gpios =3D <&gpx2 3 1>=
+, /* SET1 */
+>>>> +                                                    <&gpx2 4 1>, =
+/* SET2 */
+>>>> +                                                    <&gpx2 5 1>; =
+/* SET3 */
+>>>
+>>> The final "1" in each of the GPIO specifiers above should be GPIO_A=
+CTIVE_LOW.
+>>>
+>>>
+>>>> +
+>>>> +                       /*
+>>>> +                        * The following arrays of DVS voltages ar=
+e not used, since we are
+>>>> +                        * not using GPIOs to control PMIC bucks, =
+but they must be defined
+>>>> +                        * to please the driver.
+>>>> +                        */
+>>>> +                       s5m8767,pmic-buck2-dvs-voltage =3D <135000=
+0>, <1300000>,
+>>>> +                                                        <1250000>=
+, <1200000>,
+>>>> +                                                        <1150000>=
+, <1100000>,
+>>>> +                                                        <1000000>=
+, <950000>;
+>>>> +
+>>>> +                       s5m8767,pmic-buck3-dvs-voltage =3D <110000=
+0>, <1100000>,
+>>>> +                                                        <1100000>=
+, <1100000>,
+>>>> +                                                        <1000000>=
+, <1000000>,
+>>>> +                                                        <1000000>=
+, <1000000>;
+>>>> +
+>>>> +                       s5m8767,pmic-buck4-dvs-voltage =3D <120000=
+0>, <1200000>,
+>>>> +                                                        <1200000>=
+, <1200000>,
+>>>> +                                                        <1200000>=
+, <1200000>,
+>>>> +                                                        <1200000>=
+, <1200000>;
+>>>> +
+>>>> +                       clocks {
+>>>> +                               compatible =3D "samsung,s5m8767-cl=
+k";
+>>>> +                               #clock-cells =3D <1>;
+>>>> +                               clock-output-names =3D "en32khz_ap=
+",
+>>>> +                                                    "en32khz_cp",
+>>>> +                                                    "en32khz_bt";
+>>>> +                       };
+>>>> +
+>>>> +                       regulators {
+>>>> +                               s5m_ldo4_reg: LDO4 {
+>>>> +                                       regulator-name =3D "P1.0V_=
+LDO_OUT4";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1000000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1000000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <0>;
+>>>
+>>> I think that "op_mode" here is questionable.  Adding Javier to the
+>>> thread who was looking at this for max77802 and possibly max77686.
+>>
+>> Confirming that this op_mode is present in the original 3.8 device t=
+ree.
+>=20
+> Yes and it needs to be handled eventually.  It makes suspend/resume
+> work properly.  ...but I think it needs to be thought out better.
+>=20
+> ...but given that other users of this PMIC have it I guess it makes
+> sense to leave it in.  Javier was going to try to think it through
+> better for max77686 and max77802.
+>=20
+>
+
+The op_mode property is supported in mainline for this driver. I think =
+that is
+not a great binding tbh since the property has a generic name while it'=
+s
+specific to the s5m8767 PMIC. But the driver uses it so makes sense to =
+have it
+in the DTS.
+
+I've on my TODO list after the Max 77802 PMIC driver is merged to propo=
+se a
+property for the generic regulator binding along the lines of what you =
+proposed
+in [0].
+
+If a generic property is added to the regulator binding, the
+exynos5250-spring.dts can later be changed to use this new property or =
+keep
+using the s5m8767 specific one since the driver has to keep supporting =
+it for
+backward compatibility.
+
+>> (I used dtc to compile my /proc/device-tree tarball back to .dts, so=
+ it
+>> has hexadecimal <0x0> but that shouldn't matter to dtc AFAIU.)
+>>
+>>>> +                               };
+>>>> +
+>>>> +                               s5m_ldo5_reg: LDO5 {
+>>>> +                                       regulator-name =3D "P1.0V_=
+LDO_OUT5";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1000000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1000000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <0>;
+>>>> +                               };
+>>>> +
+>>>> +                               s5m_ldo6_reg: LDO6 {
+>>>> +                                       regulator-name =3D "vdd_my=
+dp";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1000000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1000000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <3>;
+>>>> +                               };
+>>>> +
+>>>> +                               s5m_ldo7_reg: LDO7 {
+>>>> +                                       regulator-name =3D "P1.1V_=
+LDO_OUT7";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1100000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1100000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <3>;
+>>>> +                               };
+>>>> +
+>>>> +                               s5m_ldo8_reg: LDO8 {
+>>>> +                                       regulator-name =3D "P1.0V_=
+LDO_OUT8";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1000000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1000000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <3>;
+>>>> +                               };
+>>>> +
+>>>> +                               s5m_ldo10_reg: LDO10 {
+>>>> +                                       regulator-name =3D "P1.8V_=
+LDO_OUT10";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1800000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1800000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <3>;
+>>>> +                               };
+>>>> +
+>>>> +                               s5m_ldo11_reg: LDO11 {
+>>>> +                                       regulator-name =3D "P1.8V_=
+LDO_OUT11";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1800000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1800000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <0>;
+>>>> +                               };
+>>>> +
+>>>> +                               s5m_ldo12_reg: LDO12 {
+>>>> +                                       regulator-name =3D "P3.0V_=
+LDO_OUT12";
+>>>> +                                       regulator-min-microvolt =3D=
+ <3000000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <3000000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <3>;
+>>>> +                               };
+>>>> +
+>>>> +                               s5m_ldo13_reg: LDO13 {
+>>>> +                                       regulator-name =3D "P1.8V_=
+LDO_OUT13";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1800000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1800000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <0>;
+>>>> +                               };
+>>>> +
+>>>> +                               s5m_ldo14_reg: LDO14 {
+>>>> +                                       regulator-name =3D "P1.8V_=
+LDO_OUT14";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1800000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1800000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <3>;
+>>>> +                               };
+>>>> +
+>>>> +                               s5m_ldo15_reg: LDO15 {
+>>>> +                                       regulator-name =3D "P1.0V_=
+LDO_OUT15";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1000000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1000000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <3>;
+>>>> +                               };
+>>>> +
+>>>> +                               s5m_ldo16_reg: LDO16 {
+>>>> +                                       regulator-name =3D "P1.8V_=
+LDO_OUT16";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1800000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1800000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <3>;
+>>>> +                               };
+>>>> +
+>>>> +                               s5m_ldo17_reg: LDO17 {
+>>>> +                                       regulator-name =3D "P2.8V_=
+LDO_OUT17";
+>>>> +                                       regulator-min-microvolt =3D=
+ <2800000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <2800000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <0>;
+>>>> +                               };
+>>>> +
+>>>> +                               s5m_ldo25_reg: LDO25 {
+>>>> +                                       regulator-name =3D "vdd_br=
+idge";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1200000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1200000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       op_mode =3D <1>;
+>>>> +                               };
+>>>> +
+>>>> +                               BUCK1 {
+>>>> +                                       regulator-name =3D "vdd_mi=
+f";
+>>>> +                                       regulator-min-microvolt =3D=
+ <950000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1300000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       regulator-boot-on;
+>>>> +                                       op_mode =3D <3>;
+>>>> +                               };
+>>>> +
+>>>> +                               BUCK2 {
+>>>> +                                       regulator-name =3D "vdd_ar=
+m";
+>>>> +                                       regulator-min-microvolt =3D=
+ <850000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1350000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       regulator-boot-on;
+>>>> +                                       op_mode =3D <3>;
+>>>> +                               };
+>>>> +
+>>>> +                               BUCK3 {
+>>>> +                                       regulator-name =3D "vdd_in=
+t";
+>>>> +                                       regulator-min-microvolt =3D=
+ <900000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1200000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       regulator-boot-on;
+>>>> +                                       op_mode =3D <3>;
+>>>> +                               };
+>>>> +
+>>>> +                               BUCK4 {
+>>>> +                                       regulator-name =3D "vdd_g3=
+d";
+>>>> +                                       regulator-min-microvolt =3D=
+ <850000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1300000>;
+>>>> +                                       regulator-boot-on;
+>>>> +                                       op_mode =3D <3>;
+>>>> +                               };
+>>>> +
+>>>> +                               BUCK5 {
+>>>> +                                       regulator-name =3D "P1.8V_=
+BUCK_OUT5";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1800000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1800000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       regulator-boot-on;
+>>>> +                                       op_mode =3D <1>;
+>>>> +                               };
+>>>> +
+>>>> +                               BUCK6 {
+>>>> +                                       regulator-name =3D "P1.2V_=
+BUCK_OUT6";
+>>>> +                                       regulator-min-microvolt =3D=
+ <1200000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <1200000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       regulator-boot>
+>>>
+>> -on;
+>>>> +                                       op_mode =3D <0>;
+>>>> +                               };
+>>>> +
+>>>> +                               BUCK9 {
+>>>> +                                       regulator-name =3D "vdd_um=
+mc";
+>>>> +                                       regulator-min-microvolt =3D=
+ <950000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <3000000>;
+>>>> +                                       regulator-always-on;
+>>>> +                                       regulator-boot-on;
+>>>> +                                       op_mode =3D <3>;
+>>>> +                               };
+>>>> +                       };
+>>>> +               };
+>>>> +       };
+>>>> +
+>>>> +       i2c@12C70000 {
+>>>> +               trackpad {
+>>>> +                       status =3D "disabled";
+>>>
+>>> Having this bogus entry here doesn't add anything.  Remove it until
+>>> the trackpad should be added.  See http://crbug.com/371114 for a
+>>> slightly stale bug about trackpad.
+>>
+>> You misunderstand: This resolves an error about the cypress,cyapa
+>> inherited from -cros-common.dtsi. Spring uses a different device and=
+ two
+>> different I2C addresses.
+>=20
+> Ah, right.  I forgot about cros5250-common.
+>=20
+>=20
+>> Nodes named trackpad-bootloader and trackpad-alt are prepared here:
+>> https://github.com/afaerber/linux/commits/spring-next
+>=20
+> It might work, but you run into pinctrl problems.  You need to put th=
+e
+> pinctrl node _somewhere_ and if you put it with the trackpad entries
+> themselves then you get conflicts.  ...and it doesn't belong in the
+> i2c bus (though that's what we have locally in our tree)
+>=20
+> See <http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/30953>
+> for some background.
+>=20
+>=20
+>>>> +               };
+>>>> +       };
+>>>> +
+>>>> +       i2c@12CA0000 {
+>>>> +               embedded-controller {
+>>>
+>>> Add "cros_ec" alias like snow.
+>>>
+>>>
+>>>> +                       compatible =3D "google,cros-ec-i2c";
+>>>> +                       reg =3D <0x1e>;
+>>>> +                       interrupts =3D <6 0>;
+>>>> +                       interrupt-parent =3D <&gpx1>;
+>>>> +                       wakeup-source;
+>>>> +
+>>>> +                       keyboard-controller {
+>>>
+>>> Don't include keyboard-controller here.  Add:
+>>>
+>>> #include "cros-ec-keyboard.dtsi"
+>>>
+>>> ...at the bottom.  Note that I think that the spring EC has a speci=
+al
+>>> "charger" key that it uses to indicate when a charger was plugged i=
+n
+>>> and unplugged.  I'm not sure how that will end up getting supported
+>>> upstream but you could just leave it out for now.
+>>
+>> Is there such a pending patch for snow? That's what I modeled after.
+>=20
+> Yeah, and it appears to be in linux-next.  (1a395e3 ARM: dts: Use the
+> cros-ec-keyboard fragment in exynos5250-snow).  It actually ended up
+> going through the tegra tree since it was in a series with a similar
+> tegra change.  I asked Kukjin to pick it up via merge but he didn't
+> appear to.
+>=20
+>=20
+>> Where is cros-ec-keyboard.dtsi? Don't see it in
+>> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/=
+tree/arch/arm/boot/dts?h=3Dfor-next
+>> or
+>> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/=
+tree/include/dt-bindings?h=3Dfor-next
+>>
+>> Are you proposing I factor it out?
+>>
+>>>> +                               compatible =3D "google,cros-ec-key=
+b";
+>>>> +                               keypad,num-rows =3D <8>;
+>>>> +                               keypad,num-columns =3D <13>;
+>>>
+>>> Don't you need pinctrl here?
+>>
+>> The keyboard is usable; what would pinctrl be needed for? There's no=
+ne
+>> in the 3.8 device tree.
+>=20
+> Generally it's good to have the pinctrl listed to configure the IRQ
+> properly (get the pulls right).  It might work without it but it's a
+> little less ideal I think.
+>=20
+> I see this, right?
+>=20
+>                         pinctrl-names =3D "default";
+>                         pinctrl-0 =3D <&ec_irq>;
+>=20
+> ...in the downstream "arch/arm/boot/dts/exynos5250-spring.dts"
+>=20
+>=20
+>>>> +                               google,needs-ghost-filter;
+>>>> +                               linux,keymap =3D <
+>>>> +                                       0x0001007d      /* L_META =
+*/
+>>>> +                                       0x0002003b      /* F1 */
+>>>> +                                       0x00030030      /* B */
+>>>> +                                       0x00040044      /* F10 */
+>>>> +                                       0x00060031      /* N */
+>>>> +                                       0x0008000d      /* =3D */
+>>>> +                                       0x000a0064      /* R_ALT *=
+/
+>>>> +
+>>>> +                                       0x01010001      /* ESC */
+>>>> +                                       0x0102003e      /* F4 */
+>>>> +                                       0x01030022      /* G */
+>>>> +                                       0x01040041      /* F7 */
+>>>> +                                       0x01060023      /* H */
+>>>> +                                       0x01080028      /* ' */
+>>>> +                                       0x01090043      /* F9 */
+>>>> +                                       0x010b000e      /* BKSPACE=
+ */
+>>>> +
+>>>> +                                       0x0200001d      /* L_CTRL =
+*/
+>>>> +                                       0x0201000f      /* TAB */
+>>>> +                                       0x0202003d      /* F3 */
+>>>> +                                       0x02030014      /* T */
+>>>> +                                       0x02040040      /* F6 */
+>>>> +                                       0x0205001b      /* ] */
+>>>> +                                       0x02060015      /* Y */
+>>>> +                                       0x02070056      /* 102ND *=
+/
+>>>> +                                       0x0208001a      /* [ */
+>>>> +                                       0x02090042      /* F8 */
+>>>> +
+>>>> +                                       0x03010029      /* GRAVE *=
+/
+>>>> +                                       0x0302003c      /* F2 */
+>>>> +                                       0x03030006      /* 5 */
+>>>> +                                       0x0304003f      /* F5 */
+>>>> +                                       0x03060007      /* 6 */
+>>>> +                                       0x0308000c      /* - */
+>>>> +                                       0x030b002b      /* \ */
+>>>> +
+>>>> +                                       0x04000061      /* R_CTRL =
+*/
+>>>> +                                       0x0401001e      /* A */
+>>>> +                                       0x04020020      /* D */
+>>>> +                                       0x04030021      /* F */
+>>>> +                                       0x0404001f      /* S */
+>>>> +                                       0x04050025      /* K */
+>>>> +                                       0x04060024      /* J */
+>>>> +                                       0x04080027      /* ; */
+>>>> +                                       0x04090026      /* L */
+>>>> +                                       0x040a002b      /* \ */
+>>>> +                                       0x040b001c      /* ENTER *=
+/
+>>>> +
+>>>> +                                       0x0501002c      /* Z */
+>>>> +                                       0x0502002e      /* C */
+>>>> +                                       0x0503002f      /* V */
+>>>> +                                       0x0504002d      /* X */
+>>>> +                                       0x05050033      /* , */
+>>>> +                                       0x05060032      /* M */
+>>>> +                                       0x0507002a      /* L_SHIFT=
+ */
+>>>> +                                       0x05080035      /* / */
+>>>> +                                       0x05090034      /* . */
+>>>> +                                       0x050B0039      /* SPACE *=
+/
+>>>> +
+>>>> +                                       0x06010002      /* 1 */
+>>>> +                                       0x06020004      /* 3 */
+>>>> +                                       0x06030005      /* 4 */
+>>>> +                                       0x06040003      /* 2 */
+>>>> +                                       0x06050009      /* 8 */
+>>>> +                                       0x06060008      /* 7 */
+>>>> +                                       0x0608000b      /* 0 */
+>>>> +                                       0x0609000a      /* 9 */
+>>>> +                                       0x060a0038      /* L_ALT *=
+/
+>>>> +                                       0x060b006c      /* DOWN */
+>>>> +                                       0x060c006a      /* RIGHT *=
+/
+>>>> +
+>>>> +                                       0x07010010      /* Q */
+>>>> +                                       0x07020012      /* E */
+>>>> +                                       0x07030013      /* R */
+>>>> +                                       0x07040011      /* W */
+>>>> +                                       0x07050017      /* I */
+>>>> +                                       0x07060016      /* U */
+>>>> +                                       0x07070036      /* R_SHIFT=
+ */
+>>>> +                                       0x07080019      /* P */
+>>>> +                                       0x07090018      /* O */
+>>>> +                                       0x070b0067      /* UP */
+>>>> +                                       0x070c0069      /* LEFT */
+>>>> +                               >;
+>>>> +                       };
+>>>> +               };
+>>>> +
+>>>> +               power-regulator {
+>>>> +                       compatible =3D "ti,tps65090";
+>>>
+>>> I doubt tps65090 will "just work".  Does it?
+>>
+>> Good question. How to tell? :) Not familiar with clocks and regulato=
+rs.
+>> I don't see the nodes referenced anywhere, so I could just try to dr=
+op
+>> (as I would, as per my cover letter, propose for anything non-essent=
+ial
+>> that turns controversial).
+>=20
+> What does "dmesg | grep tps65090" say?
+>=20
+> What does this show:
+>   grep "" /sys/class/regulator/*/name
+>=20
+>=20
+>> If we drop tps65090, can we safely drop vbat-fixed-regulator as well=
+?
+>=20
+> Yes
+>=20
+>=20
+>>> On spring the tps65090 is not directly on the same i2c bus as the E=
+C.
+>>> It's actually hidden behind the EC.
+>>>
+>>> Locally in the ChromeOS tree there appears to be a forked copy of t=
+he
+>>> 65090 regulator driver that's in use just for spring.  See this fro=
+m
+>>> the ChromeOS 3.8 tree:
+>>>
+>>> ./drivers/regulator/tps65090-regulator.c
+>>> ./drivers/regulator/cros_ec-tps65090.c
+>>>
+>>> The Spring version of the driver sends EC commands directly to acce=
+ss
+>>> the tps65090.
+>>>
+>>> It is possible (untested) that you could also talk to tps65090 over=
+ an
+>>> i2c tunnel.  On exynos5420-peach-pit we have a full fledged i2c
+>>> tunnel, but you may be able to extend the tunnel to export an i2c
+>>> tunnel for spring using something like
+>>> <https://chromium-review.googlesource.com/66116>
+>>
+>> The SBS battery thingy (not in this patch) should also be behind som=
+e
+>> tunnel. There's none defined in -cros-common.dtsi or in my patch, an=
+d
+>> still it shows up in dmesg to my surprise, complaining "Couldn't rea=
+d
+>> remote-bus property".
+>=20
+> Might be due to the cros5250-common.  ...but yes, the battery should
+> be behind the tunnel too and the patches needed for Spring haven't
+> been posted by anyone yet.  I picked up a whole bunch of cros_ec
+> cleanup patches and thought that the tunnel patches for spring could
+> possible go up after those land.
+>=20
+>=20
+>>>> +                       reg =3D <0x48>;
+>>>> +
+>>>> +                       /*
+>>>> +                        * Config irq to disable internal pulls
+>>>> +                        * even though we run in polling mode.
+>>>> +                        */
+>>>> +                       pinctrl-names =3D "default";
+>>>> +                       pinctrl-0 =3D <&tps65090_irq>;
+>>>> +
+>>>> +                       vsys1-supply =3D <&vbat>;
+>>>> +                       vsys2-supply =3D <&vbat>;
+>>>> +                       vsys3-supply =3D <&vbat>;
+>>>> +                       infet1-supply =3D <&vbat>;
+>>>> +                       infet2-supply =3D <&vbat>;
+>>>> +                       infet3-supply =3D <&vbat>;
+>>>> +                       infet4-supply =3D <&vbat>;
+>>>> +                       infet5-supply =3D <&vbat>;
+>>>> +                       infet6-supply =3D <&vbat>;
+>>>> +                       infet7-supply =3D <&vbat>;
+>>>> +                       vsys-l1-supply =3D <&vbat>;
+>>>> +                       vsys-l2-supply =3D <&vbat>;
+>>>> +
+>>>> +                       regulators {
+>>>> +                               fet1 {
+>>>> +                                       regulator-name =3D "vcd_le=
+d";
+>>>> +                                       regulator-min-microvolt =3D=
+ <12000000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <12000000>;
+>>>> +                               };
+>>>> +                               fet3 {
+>>>> +                                       regulator-name =3D "wwan_r=
+";
+>>>> +                                       regulator-min-microvolt =3D=
+ <3300000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <3300000>;
+>>>> +                                       regulator-always-on;
+>>>> +                               };
+>>>> +                               fet5 {
+>>>> +                                       regulator-name =3D "cam";
+>>>> +                                       regulator-min-microvolt =3D=
+ <3300000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <3300000>;
+>>>> +                                       regulator-always-on;
+>>>> +                               };
+>>>> +                               fet6 {
+>>>> +                                       regulator-name =3D "lcd_vd=
+d";
+>>>> +                                       regulator-min-microvolt =3D=
+ <3300000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <3300000>;
+>>>> +                               };
+>>>> +                               fet7 {
+>>>> +                                       regulator-name =3D "ts";
+>>>> +                                       regulator-min-microvolt =3D=
+ <5000000>;
+>>>> +                                       regulator-max-microvolt =3D=
+ <5000000>;
+>>>> +                               };
+>>>> +                       };
+>>>> +
+>>>> +                       charger {
+>>>> +                               compatible =3D "ti,tps65090-charge=
+r";
+>>>> +                       };
+>>>> +               };
+>>>> +       };
+>>>> +
+>>>> +       hdmi {
+>>>> +               hdmi-en-supply =3D <&s5m_ldo8_reg>;
+>>>> +               vdd-supply =3D <&s5m_ldo8_reg>;
+>>>> +               vdd_osc-supply =3D <&s5m_ldo10_reg>;
+>>>> +               vdd_pll-supply =3D <&s5m_ldo8_reg>;
+>>>> +       };
+>>>> +
+>>>> +       fimd@14400000 {
+>>>> +               status =3D "okay";
+>>>> +               samsung,invert-vclk;
+>>>> +       };
+>>>> +
+>>>> +       dp-controller@145B0000 {
+>>>> +               status =3D "okay";
+>>>> +               pinctrl-names =3D "default";
+>>>> +               pinctrl-0 =3D <&dp_hpd>;
+>>>
+>>> This is probably not right.  It looks as if spring uses gpc3-0 for
+>>> display port HPD (as a GPIO).  The upstream has this in the
+>>> exynos5250-pinctrl.dtsi as a different pin.
+>>>
+>>> I think you'll need to define your own pinctrl here.
+>>>
+>>>
+>>>> +               samsung,color-space =3D <0>;
+>>>> +               samsung,dynamic-range =3D <0>;
+>>>> +               samsung,ycbcr-coeff =3D <0>;
+>>>> +               samsung,color-depth =3D <1>;
+>>>> +               samsung,link-rate =3D <0x0a>;
+>>>> +               samsung,lane-count =3D <1>;
+>>>> +               samsung,hpd-gpio =3D <&gpc3 0 0>;
+>>>> +
+>>>> +               display-timings {
+>>>> +                       native-mode =3D <&timing1>;
+>>>> +
+>>>> +                       timing1: timing@1 {
+>>>> +                               clock-frequency =3D <70589280>;
+>>>> +                               hactive =3D <1366>;
+>>>> +                               vactive =3D <768>;
+>>>> +                               hfront-porch =3D <40>;
+>>>> +                               hback-porch =3D <40>;
+>>>> +                               hsync-len =3D <32>;
+>>>> +                               vback-porch =3D <10>;
+>>>> +                               vfront-porch =3D <12>;
+>>>> +                               vsync-len =3D <6>;
+>>>> +                       };
+>>>> +               };
+>>>> +       };
+>>>> +
+>>>> +       fixed-rate-clocks {
+>>>> +               xxti {
+>>>> +                       compatible =3D "samsung,clock-xxti";
+>>>> +                       clock-frequency =3D <24000000>;
+>>>> +               };
+>>>> +       };
+>>>> +};
+>>
+>> Will check on the other suggestions.
+>=20
+> -Doug
+>=20
+
+Best regards,
+Javier
+
+[0]: https://patchwork.kernel.org/patch/1855331/
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
