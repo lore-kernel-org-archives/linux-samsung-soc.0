@@ -1,48 +1,72 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH 0/3] MCPM: clarify boot CPU situation wrt CCI
-Date: Tue, 24 Jun 2014 08:35:51 -0700
-Message-ID: <7hd2dymiaw.fsf@paris.lan>
-References: <1403583071-5650-1-git-send-email-nicolas.pitre@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:41119 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754619AbaFXPfy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 11:35:54 -0400
-Received: by mail-pd0-f178.google.com with SMTP id r10so381394pdi.37
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2014 08:35:53 -0700 (PDT)
-In-Reply-To: <1403583071-5650-1-git-send-email-nicolas.pitre@linaro.org>
-	(Nicolas Pitre's message of "Tue, 24 Jun 2014 00:11:08 -0400")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH v2 0/4] Add support for Exynos clock output configuration
+Date: Tue, 24 Jun 2014 18:08:23 +0200
+Message-ID: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Drake <drake@endlessm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Doug Anderson <dianders@google.com>, Andrew Bresticker <abrestic@chromium.org>, Olof Johansson <olof@lixom.net>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org
 
-Nicolas Pitre <nicolas.pitre@linaro.org> writes:
+On all Exynos SoCs there is a dedicated CLKOUT pin that allows many of
+internal SoC clocks to be output from the SoC. The hardware structure
+of CLKOUT related clocks looks as follows:
 
-> For the background story, please see:
->
-> http://news.gmane.org/group/gmane.linux.kernel.samsung-soc/thread=32807
->
-> I sat on those patches for a while but they are the best I could think of
-> in terms of implementation.  To ease merging I suggest I collect all the
-> ACK's and Tested-by's and submit them all at once to RMK's patch system.
+	CMU	|---> clock0 --------->	|	PMU	|
+		|			|		|
+    several	|---> clock1 ---------> |	mux	|
+    muxes	|			|	+	|---> CLKOUT
+    dividers	|       ...		|	gate	|
+    and gates	|			|		|
+		|---> clockN ---------> |		|
 
-Reviewed-by: Kevin Hilman <khilman@linaro.org>
-Tested-by: Kevin Hilman <khilman@linaro.org>
+Since the block responsible for handling the pin is PMU, not CMU,
+a separate driver, that binds to PMU node is required and acquires
+all input clocks by standard DT clock look-up. This way we don't need
+any cross-IP block drivers and cross-driver register sharing or
+nodes for fake devices.
 
-I tested this series on Exynos5 Peach Pi (a.k.a. 13" ARM Chromebook 2)
-and verified all 8 cores are booting up.
+To represent the PMU mux/gate clock, generic composite clock is registered.
 
-Kevin
+Tested on Odroid U3, with HSIC/USB hub using CLKOUT as reference clock,
+with some additional patches.
 
-P.S. FYI for anyone else wanting to try this on peach-pi, I still need a
-couple other out of tree clock related patches in order to boot fully.
-Until the final versions are merged, I'm using these:
+Changes since v1:
+(http://www.spinics.net/lists/arm-kernel/msg333276.html)
+ - rebased onto next-20140624,
+ - fixed #clock-cells values in exynos5250.dtsi and exynos5420.dtsi,
+ - temporarily removed ISP CLKOUT clocks on Exynos4x12, until ISP clock
+   domain handling gets fixed in Exynos4 clock driver.
+Changes since RFC v1:
+(https://lkml.org/lkml/2014/5/15/506)
+ - rebased onto v5 of "Enable usbphy and hsotg for exynos4" series and
+   current HEAD of samsung-clk tree,
+ - added handling of suspend/resume in the driver,
+ - added missing CPU clocks on Exynos4,
+ - added CLK_SET_RATE_PARENT to CMU CLKOUT gates on Exynos4,
+ - fixed bit field width on Exynos4,
+ - added CLKOUT CMU registers of Exynos4 to save/restore list,
+ - added CLK_SET_RATE_PARENT and CLK_SET_RATE_NO_REPARENT to clkout clock,
+ - changed the binding to use 1-cell clock specifier to allow extension
+   with further PMU clocks in future, if needed.
 
-- Doug's aclk66 clock removal for earlyprintk support
-  http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/262225.html
-- Leave mau_epll enabled
-  http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/262259.html
+Tomasz Figa (4):
+  clk: samsung: exynos4: Add missing CPU/DMC clock hierarchy
+  clk: samsung: exynos4: Add CLKOUT clock hierarchy
+  clk: samsung: Add driver to control CLKOUT line on Exynos SoCs
+  ARM: dts: exynos: Update PMU node with CLKOUT related data
+
+ .../devicetree/bindings/arm/samsung/pmu.txt        |  30 ++++
+ arch/arm/boot/dts/exynos4210.dtsi                  |  10 ++
+ arch/arm/boot/dts/exynos4x12.dtsi                  |   7 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |   3 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |   3 +
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-exynos-clkout.c            | 153 +++++++++++++++++++
+ drivers/clk/samsung/clk-exynos4.c                  | 166 ++++++++++++++++++++-
+ include/dt-bindings/clock/exynos4.h                |   5 +
+ 9 files changed, 374 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/clk/samsung/clk-exynos-clkout.c
+
+-- 
+1.9.3
