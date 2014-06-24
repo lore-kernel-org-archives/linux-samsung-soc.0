@@ -1,77 +1,42 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Tue, 24 Jun 2014 10:18:08 +0100
-Message-ID: <20140624091808.GC26013@arm.com>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
- <CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
- <4545972.cM7IP1qTXQ@wuerfel>
- <53A4C0C9.2050908@codeaurora.org>
+From: Daniel Drake <drake@endlessm.com>
+Subject: sdhci_s3c_consider_clock scheduling while atomic - clk_round_rate
+Date: Tue, 24 Jun 2014 10:48:59 +0100
+Message-ID: <CAD8Lp45QV4ZcfXA86hoseKfJLLV_BJ-g0UABnOGPkJW1pMXhFw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:52705 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751360AbaFXJSN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 05:18:13 -0400
-Content-Disposition: inline
-In-Reply-To: <53A4C0C9.2050908@codeaurora.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: linux-mmc@vger.kernel.org, ben-linux@fluff.org, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olav Haugan <ohaugan@codeaurora.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robherring2@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm->
 
-On Sat, Jun 21, 2014 at 12:16:25AM +0100, Olav Haugan wrote:
-> On 5/30/2014 12:06 PM, Arnd Bergmann wrote:
-> > On Friday 30 May 2014 08:16:05 Rob Herring wrote:
-> >> Presumably the ID would be the streamID on ARM's SMMU. How would a
-> >> master with 8 streamIDs be described? This is what Calxeda midway has
-> >> for SATA and I would expect that to be somewhat common. Either you
-> >> need some ID masking or you'll have lots of duplication when you have
-> >> windows.
-> > 
-> > I don't understand the problem. If you have stream IDs 0 through 7,
-> > you would have
-> > 
-> > 	master@a {
-> > 		...
-> > 		iommus = <&smmu 0>;
-> > 	};
-> > 
-> > 	master@b {
-> > 		...
-> > 		iommus = <&smmu 1;
-> > 	};
-> > 
-> > 	...
-> > 
-> > 	master@12 {
-> > 		...
-> > 		iommus = <&smmu 7;
-> > 	};
-> > 
-> > and you don't need a window at all. Why would you need a mask of
-> > some sort?
-> 
-> We have multiple-master SMMUs and each master emits a variable number of
-> StreamIDs. However, we have to apply a mask (the ARM SMMU spec allows
-> for this) to the StreamIDs due to limited number of StreamID 2 Context
-> Bank entries in the SMMU. If my understanding is correct we would
-> represent this in the DT like this:
-> 
-> 	iommu {
-> 		#address-cells = <2>;
-> 		#size-cells = <0>;
-> 	};
-> 
-> 	master@a {
-> 		...
-> 		iommus = <&iommu StreamID0 MASK0>,
-> 			 <&iommu StreamID1 MASK1>,
-> 			 <&iommu StreamID2 MASK2>;
-> 	};
+sdhci_s3c_set_clock is called from sdhci_do_set_ios with interrupts
+disabled, and this calls into sdhci_s3c_consider_clock().
 
-Stupid question, but why not simply describe the masked IDs? What use does
-the `raw' ID have to Linux?
+The patch "mmc: sdhci-s3c: Cache bus clock rates" addressed some
+scheduling while atomic in this function, but there are more issues
+here, seen while testing 3.16-rc2 on exynos4412:
 
-Will
+BUG: sleeping function called from invalid context at kernel/locking/mutex.c:103
+in_atomic(): 1, irqs_disabled(): 128, pid: 75, name: mmcqd/0
+Preemption disabled at:[<  (null)>]   (null)
+
+CPU: 0 PID: 75 Comm: mmcqd/0 Not tainted 3.16.0-rc2-00028-ge9fe7eb-dirty #77
+[<c0016140>] (unwind_backtrace) from [<c0011e14>] (show_stack+0x10/0x14)
+[<c0011e14>] (show_stack) from [<c05ce8a8>] (dump_stack+0x84/0xc4)
+[<c05ce8a8>] (dump_stack) from [<c05d2de0>] (mutex_lock+0x1c/0x3c)
+[<c05d2de0>] (mutex_lock) from [<c046214c>] (clk_prepare_lock+0x6c/0xf4)
+[<c046214c>] (clk_prepare_lock) from [<c04625ac>] (clk_round_rate+0x10/0x2c)
+[<c04625ac>] (clk_round_rate) from [<c0447628>] (sdhci_s3c_set_clock+0x4c/0x1e8)
+[<c0447628>] (sdhci_s3c_set_clock) from [<c0447818>]
+(sdhci_cmu_set_clock+0x54/0x140)
+[<c0447818>] (sdhci_cmu_set_clock) from [<c0443a38>]
+(sdhci_do_set_ios+0x138/0x58c)
+[<c0443a38>] (sdhci_do_set_ios) from [<c0443864>] (sdhci_set_ios+0x28/0x34)
+
+clk_round_rate cannot be called here because it takes a mutex.
+
+sdhci_s3c_set_clock() also calls into clk_prepare_enable() which looks
+like it could trigger this problem too.
+
+Daniel
