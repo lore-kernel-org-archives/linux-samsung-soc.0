@@ -1,98 +1,35 @@
-From: Laura Abbott <lauraa@codeaurora.org>
-Subject: Re: mainline boot: 64 boots: 62 pass, 2 fail (v3.16-rc1-2-gebe0618)
-Date: Tue, 24 Jun 2014 10:47:11 -0700
-Message-ID: <53A9B99F.4040806@codeaurora.org>
-References: <539fdd37.e7bc420a.76b9.ffffb583@mx.google.com> <CAGa+x85nqPbH-sye28ni=gUEdgjGdUDqHhv1+0pV5aO8y1+wHQ@mail.gmail.com> <53A106F1.10201@gmail.com> <CAGa+x8527FEPk6fg5kv-fbOzK3MzcFooFGE9Me12b9C_Pv=UzA@mail.gmail.com> <53A2AE11.2050208@gmail.com> <53A2BE94.2010308@gmail.com> <53A7A579.4010702@gmail.com> <CAGa+x85H510fNGTXJHGYfQybRa2FGgg2NyCgJ8rmjJ6TE7GNbA@mail.gmail.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH 3/3] ARM: exynos: activate the CCI on boot CPU/cluster
+ with the MCPM loopback
+Date: Tue, 24 Jun 2014 13:50:57 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1406241347070.16842@knanqh.ubzr>
+References: <1403583071-5650-1-git-send-email-nicolas.pitre@linaro.org> <1403583071-5650-4-git-send-email-nicolas.pitre@linaro.org> <CAD=FV=W2KK1XPQiHnxzdBs8fXxsnsuggZg_hJU0zyHcvHt3Khw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:36235 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751826AbaFXRrO (ORCPT
+Received: from mail-qa0-f53.google.com ([209.85.216.53]:64787 "EHLO
+	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753521AbaFXRvA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 13:47:14 -0400
-In-Reply-To: <CAGa+x85H510fNGTXJHGYfQybRa2FGgg2NyCgJ8rmjJ6TE7GNbA@mail.gmail.com>
+	Tue, 24 Jun 2014 13:51:00 -0400
+Received: by mail-qa0-f53.google.com with SMTP id j15so540951qaq.26
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2014 10:50:59 -0700 (PDT)
+In-Reply-To: <CAD=FV=W2KK1XPQiHnxzdBs8fXxsnsuggZg_hJU0zyHcvHt3Khw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@linaro.org>, Tushar Behera <trblinux@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kernel-build-reports@lists.linaro.org, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Russell King <linux@arm.linux.org.uk>, Sachin Kamat <spk.linux@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Doug Anderson <dianders@google.com>
+Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>
 
-On 6/23/2014 11:32 AM, Kevin Hilman wrote:
-> On Sun, Jun 22, 2014 at 8:56 PM, Tushar Behera <trblinux@gmail.com> wrote:
->> Adding linux-samsung-soc and linux-arm-kernel ML for wider audience.
->>
->> On 06/19/2014 04:12 PM, Tushar Behera wrote:
->>> On 06/19/2014 03:02 PM, Tushar Behera wrote:
->>>> On 06/18/2014 09:22 AM, Kevin Hilman wrote:
->>>>> On Tue, Jun 17, 2014 at 8:26 PM, Tushar Behera <trblinux@gmail.com> wrote:
->>>>>> On 06/17/2014 10:23 PM, Kevin Hilman wrote:
->>>>>>> Sachin,
->>>>>>>
->>>>>>> On Mon, Jun 16, 2014 at 11:16 PM, Kevin's boot bot <khilman@linaro.org> wrote:
->>>>>>>>
->>>>>>>> Tree/Branch: mainline
->>>>>>>> Git describe: v3.16-rc1-2-gebe0618
->>>>>>>> Failed boot tests (console logs at the end)
->>>>>>>> ===========================================
->>>>>>>>      exynos5420-arndale-octa:     FAIL:    arm-exynos_defconfig
->>>>>>>>                 ste-snowball:     FAIL:    arm-u8500_defconfig
->>>>>>>
->>>>>>> FYI... these failures are getting more consistent on my octa board,
->>>>>>> but still not failing every time.
->>>>>>>
->>>>>>> Kevin
->>>>>>>
->>>>>>
->>>>>> Hi Kevin,
->>>>>>
->>>>>> Same here.
->>>>>>
->>>>>> Observation: If you soft-reset the board (through the jumpers) after
->>>>>> getting this problem, the problem keeps repeating. But if you hard-reset
->>>>>> the board (by removing the power cord), the problem doesn't occur during
->>>>>> next iteration.
->>>>>
->>>>> I don't ever use the soft-reset, I only toggle the wall power.  I
->>>>> don't ever actually remove the power cord though, I'm using a
->>>>> USB-controlled relay to toggle the wall power.
->>>>>
->>>>> Kevin
->>>>>
->>>>
->>>> Laura,
->>>>
->>>> We are getting following kernel panic [1] (not always, but quite
->>>> regularly) while booting Arndale-Octa (based on Samsung's Exynos5420)
->>>> board with upstream kernel. I haven't observed this issue with other
->>>> boards yet.
->>>>
->>>> This issue is observed when I am booting with uImage + dtb (within
->>>> roughly ~10 iterations).
->>>>
->>>
->>> Some more information:
->>>
->>> The boot logs are provided in pastebin, okay[2] and failed[3].
->>>
->>> In case of boot failures, I am getting a higher value for vm_total_pages
->>> (684424 in [3]). In case of successful boot on my board, it is always
->>> 521232 [2] on my board.
+On Tue, 24 Jun 2014, Doug Anderson wrote:
+
+> Thank you very much for posting!  With your series I'm able to boot
+> all 8 cores on exynos5420-peach-pit and exynos5800-peach-pi sitting on
+> my desk.
 > 
-> I can confirm that reverting the "Get rid of meminfo" patch gets the
-> Octa board booting reliably again for me also.
-> 
-> In case it helps, some boot logs for failures from the last copule
-> linux-next build/boot cycles can be seen here:
-> http://armcloud.us/kernel-ci/next/next-20140623/arm-exynos_defconfig/boot-exynos5420-arndale-octa.log
-> http://armcloud.us/kernel-ci/next/next-20140620/arm-exynos_defconfig/boot-exynos5420-arndale-octa.log
-> 
+> Tested-by: Doug Anderson <dianders@chromium.org>
 
-Sorry, I missed this yesterday. I'm going to take a look.
+Thanks to all.  I've submitted those patches, with minor nits fixed, to 
+RMK's system as patches 8081 to 8083.
 
-Thanks,
-Laura
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+Nicolas
