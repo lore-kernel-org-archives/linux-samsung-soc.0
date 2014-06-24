@@ -1,113 +1,331 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] arm: exynos: Modify pm code to check for cortex A9
-	rather than the SoC
-Date: Tue, 24 Jun 2014 17:11:14 +0100
-Message-ID: <20140624161114.GW32514@n2100.arm.linux.org.uk>
-References: <1400814061-12813-1-git-send-email-a.kesavan@samsung.com> <CAM4voa=3zzo-2KbjDtBOca+uJeSxT2OYpi+rJuSGsDg-vo7GYA@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH v2 2/4] clk: samsung: exynos4: Add CLKOUT clock hierarchy
+Date: Tue, 24 Jun 2014 18:08:25 +0200
+Message-ID: <1403626107-12073-3-git-send-email-t.figa@samsung.com>
+References: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:40678 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S965087AbaFXQLU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 12:11:20 -0400
-Content-Disposition: inline
-In-Reply-To: <CAM4voa=3zzo-2KbjDtBOca+uJeSxT2OYpi+rJuSGsDg-vo7GYA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Daniel Drake <drake@endlessm.com>, Rob Herring <robh+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
 
-On Mon, Jun 16, 2014 at 09:37:14AM +0530, Abhilash Kesavan wrote:
-> Hi Kukjin,
-> 
-> On Fri, May 23, 2014 at 8:31 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
-> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> 
-> Do you have any comments on this patch ?
+This patch adds definitions of clocks that are used to drive clock
+output signals of particular CMU sub-blocks that are then fed to PMU and
+handled by Exynos CLKOUT driver added in further patch.
 
-I do.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c   | 116 ++++++++++++++++++++++++++++++++++--
+ include/dt-bindings/clock/exynos4.h |   5 ++
+ 2 files changed, 117 insertions(+), 4 deletions(-)
 
-> > diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> > index d10c351..6dd4a11 100644
-> > --- a/arch/arm/mach-exynos/pm.c
-> > +++ b/arch/arm/mach-exynos/pm.c
-> > @@ -300,7 +300,7 @@ static int exynos_pm_suspend(void)
-> >         tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
-> >         __raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
-> >
-> > -       if (!soc_is_exynos5250())
-> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> >                 exynos_cpu_save_register();
-...
-> > @@ -334,7 +334,7 @@ static void exynos_pm_resume(void)
-> >         if (exynos_pm_central_resume())
-> >                 goto early_wakeup;
-> >
-> > -       if (!soc_is_exynos5250())
-> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> >                 exynos_cpu_restore_register();
-
-It is invalid to check just the part number.  The part number on its
-own is meaningless without taking account of the implementor.  Both
-the implementor and the part number should be checked at each of these
-sites.
-
-Another point: exynos have taken it upon themselves to add code which
-saves various ARM core registers.  This is a bad idea, it brings us
-back to the days where every platform did their own suspend implementations.
-
-CPU level registers should be handled by CPU level code, not by platform
-code.  Is there a reason why this can't be added to the Cortex-A9
-support code in proc-v7.S ?
-
-> > @@ -353,7 +353,7 @@ static void exynos_pm_resume(void)
-> >
-> >         s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-> >
-> > -       if (!soc_is_exynos5250())
-> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> >                 scu_enable(S5P_VA_SCU);
-> >
-> >  early_wakeup:
-> > @@ -440,15 +440,18 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
-> >         case CPU_PM_ENTER:
-> >                 if (cpu == 0) {
-> >                         exynos_pm_central_suspend();
-> > -                       exynos_cpu_save_register();
-> > +                       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> > +                               exynos_cpu_save_register();
-> >                 }
-> >                 break;
-> >
-> >         case CPU_PM_EXIT:
-> >                 if (cpu == 0) {
-> > -                       if (!soc_is_exynos5250())
-> > +                       if (read_cpuid_part_number() ==
-> > +                                       ARM_CPU_PART_CORTEX_A9) {
-> >                                 scu_enable(S5P_VA_SCU);
-> > -                       exynos_cpu_restore_register();
-> > +                               exynos_cpu_restore_register();
-> > +                       }
-> >                         exynos_pm_central_resume();
-> >                 }
-> >                 break;
-
-And presumably with the CPU level code dealing with those registers,
-you don't need the calls to save and restore these registers in this
-notifier.
-
-Which, by the way, is probably illegal to run as it runs in a read-
-lock code path and with the SCU disabled.  As you're calling
-scu_enable() that means you're non-coherent with the other CPUs,
-and therefore locks don't work.
-
-I think this code is very broken and wrongly architected, and shows
-that we're continuing to make the same mistakes that we made all
-through the 2000s with platforms doing their own crap rather than
-properly thinking about this stuff.
-
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index f95ae6c..7d1fb99 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -25,10 +25,12 @@
+ #define DIV_LEFTBUS		0x4500
+ #define GATE_IP_LEFTBUS		0x4800
+ #define E4X12_GATE_IP_IMAGE	0x4930
++#define CLKOUT_CMU_LEFTBUS	0x4a00
+ #define SRC_RIGHTBUS		0x8200
+ #define DIV_RIGHTBUS		0x8500
+ #define GATE_IP_RIGHTBUS	0x8800
+ #define E4X12_GATE_IP_PERIR	0x8960
++#define CLKOUT_CMU_RIGHTBUS	0x8a00
+ #define EPLL_LOCK		0xc010
+ #define VPLL_LOCK		0xc020
+ #define EPLL_CON0		0xc110
+@@ -98,6 +100,7 @@
+ #define GATE_IP_PERIL		0xc950
+ #define E4210_GATE_IP_PERIR	0xc960
+ #define GATE_BLOCK		0xc970
++#define CLKOUT_CMU_TOP		0xca00
+ #define E4X12_MPLL_LOCK		0x10008
+ #define E4X12_MPLL_CON0		0x10108
+ #define SRC_DMC			0x10200
+@@ -105,6 +108,7 @@
+ #define DIV_DMC0		0x10500
+ #define DIV_DMC1		0x10504
+ #define GATE_IP_DMC		0x10900
++#define CLKOUT_CMU_DMC		0x10a00
+ #define APLL_LOCK		0x14000
+ #define E4210_MPLL_LOCK		0x14008
+ #define APLL_CON0		0x14100
+@@ -114,6 +118,7 @@
+ #define DIV_CPU1		0x14504
+ #define GATE_SCLK_CPU		0x14800
+ #define GATE_IP_CPU		0x14900
++#define CLKOUT_CMU_CPU		0x14a00
+ #define E4X12_DIV_ISP0		0x18300
+ #define E4X12_DIV_ISP1		0x18304
+ #define E4X12_GATE_ISP0		0x18800
+@@ -242,6 +247,11 @@ static unsigned long exynos4_clk_regs[] __initdata = {
+ 	DIV_CPU1,
+ 	GATE_SCLK_CPU,
+ 	GATE_IP_CPU,
++	CLKOUT_CMU_LEFTBUS,
++	CLKOUT_CMU_RIGHTBUS,
++	CLKOUT_CMU_TOP,
++	CLKOUT_CMU_DMC,
++	CLKOUT_CMU_CPU,
+ };
+ 
+ static const struct samsung_clk_reg_dump src_mask_suspend[] = {
+@@ -400,6 +410,23 @@ PNAME(mout_dac_p4210)	= { "sclk_vpll", "sclk_hdmiphy", };
+ PNAME(mout_pwi_p4210) = { "xxti", "xusbxti", "sclk_hdmi24m", "sclk_usbphy0",
+ 				"sclk_usbphy1", "sclk_hdmiphy", "none",
+ 				"sclk_epll", "sclk_vpll" };
++PNAME(clkout_left_p4210) = { "sclk_mpll_div_2", "sclk_apll_div_2",
++				"div_gdl", "div_gpl" };
++PNAME(clkout_right_p4210) = { "sclk_mpll_div_2", "sclk_apll_div_2",
++				"div_gdr", "div_gpr" };
++PNAME(clkout_top_p4210) = { "fout_epll", "fout_vpll", "sclk_hdmi24m",
++				"sclk_usbphy0", "sclk_usbphy1", "sclk_hdmiphy",
++				"cdclk0", "cdclk1", "cdclk2", "spdif_extclk",
++				"aclk160", "aclk133", "aclk200", "aclk100",
++				"sclk_mfc", "sclk_g3d", "sclk_g2d",
++				"cam_a_pclk", "cam_b_pclk", "s_rxbyteclkhs0_2l",
++				"s_rxbyteclkhs0_4l" };
++PNAME(clkout_dmc_p4210) = { "div_dmcd", "div_dmcp", "div_acp_pclk", "div_dmc",
++				"div_dphy", "none", "div_pwi" };
++PNAME(clkout_cpu_p4210) = { "fout_apll_div_2", "none", "fout_mpll_div_2",
++				"none", "arm_clk_div_2", "div_corem0",
++				"div_corem1", "div_corem0", "div_atb",
++				"div_periph", "div_pclk_dbg", "div_hpm" };
+ 
+ /* Exynos 4x12-specific parent groups */
+ PNAME(mout_mpll_user_p4x12) = { "fin_pll", "sclk_mpll", };
+@@ -426,6 +453,29 @@ PNAME(mout_user_aclk266_gps_p4x12) = {"fin_pll", "div_aclk266_gps", };
+ PNAME(mout_pwi_p4x12) = { "xxti", "xusbxti", "sclk_hdmi24m", "sclk_usbphy0",
+ 				"none", "sclk_hdmiphy", "sclk_mpll",
+ 				"sclk_epll", "sclk_vpll" };
++PNAME(clkout_left_p4x12) = { "sclk_mpll_user_l_div_2", "sclk_apll_div_2",
++				"div_gdl", "div_gpl" };
++PNAME(clkout_right_p4x12) = { "sclk_mpll_user_r_div_2", "sclk_apll_div_2",
++				"div_gdr", "div_gpr" };
++PNAME(clkout_top_p4x12) = { "fout_epll", "fout_vpll", "sclk_hdmi24m",
++				"sclk_usbphy0", "none", "sclk_hdmiphy",
++				"cdclk0", "cdclk1", "cdclk2", "spdif_extclk",
++				"aclk160", "aclk133", "aclk200", "aclk100",
++				"sclk_mfc", "sclk_g3d", "aclk400_mcuisp",
++				"cam_a_pclk", "cam_b_pclk", "s_rxbyteclkhs0_2l",
++				"s_rxbyteclkhs0_4l", "rx_half_byte_clk_csis0",
++				"rx_half_byte_clk_csis1", "div_jpeg",
++				"sclk_pwm_isp", "sclk_spi0_isp",
++				"sclk_spi1_isp", "sclk_uart_isp",
++				"sclk_mipihsi", "sclk_hdmi", "sclk_fimd0",
++				"sclk_pcm0" };
++PNAME(clkout_dmc_p4x12) = { "div_dmcd", "div_dmcp", "aclk_acp", "div_acp_pclk",
++				"div_dmc", "div_dphy", "fout_mpll_div_2",
++				"div_pwi", "none", "div_c2c", "div_c2c_aclk" };
++PNAME(clkout_cpu_p4x12) = { "fout_apll_div_2", "none", "none", "none",
++				"arm_clk_div_2", "div_corem0", "div_corem1",
++				"div_cores", "div_atb", "div_periph",
++				"div_pclk_dbg", "div_hpm" };
+ 
+ /* fixed rate clocks generated outside the soc */
+ static struct samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata = {
+@@ -444,6 +494,24 @@ static struct samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata =
+ 	FRATE(0, "sclk_usbphy1", NULL, CLK_IS_ROOT, 48000000),
+ };
+ 
++static struct samsung_fixed_factor_clock exynos4_fixed_factor_clks[] __initdata = {
++	FFACTOR(0, "sclk_apll_div_2", "sclk_apll", 1, 2, 0),
++	FFACTOR(0, "fout_mpll_div_2", "fout_mpll", 1, 2, 0),
++	FFACTOR(0, "fout_apll_div_2", "fout_apll", 1, 2, 0),
++	FFACTOR(0, "arm_clk_div_2", "arm_clk", 1, 2, 0),
++};
++
++static struct samsung_fixed_factor_clock exynos4210_fixed_factor_clks[] __initdata = {
++	FFACTOR(0, "sclk_mpll_div_2", "sclk_mpll", 1, 2, 0),
++};
++
++static struct samsung_fixed_factor_clock exynos4x12_fixed_factor_clks[] __initdata = {
++	FFACTOR(0, "sclk_mpll_user_l_div_2", "mout_mpll_user_l", 1, 2, 0),
++	FFACTOR(0, "sclk_mpll_user_r_div_2", "mout_mpll_user_r", 1, 2, 0),
++	FFACTOR(0, "sclk_mpll_user_t_div_2", "mout_mpll_user_t", 1, 2, 0),
++	FFACTOR(0, "sclk_mpll_user_c_div_2", "mout_mpll_user_c", 1, 2, 0),
++};
++
+ /* list of mux clocks supported in all exynos4 soc's */
+ static struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
+ 	MUX_FA(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+@@ -471,8 +539,12 @@ static struct samsung_mux_clock exynos4210_mux_early[] __initdata = {
+ 
+ static struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
+ 	MUX(0, "mout_gdl", sclk_ampll_p4210, SRC_LEFTBUS, 0, 1),
++	MUX(0, "mout_clkout_leftbus", clkout_left_p4210,
++			CLKOUT_CMU_LEFTBUS, 0, 5),
+ 
+ 	MUX(0, "mout_gdr", sclk_ampll_p4210, SRC_RIGHTBUS, 0, 1),
++	MUX(0, "mout_clkout_rightbus", clkout_right_p4210,
++			CLKOUT_CMU_RIGHTBUS, 0, 5),
+ 
+ 	MUX(0, "mout_aclk200", sclk_ampll_p4210, SRC_TOP0, 12, 1),
+ 	MUX(0, "mout_aclk100", sclk_ampll_p4210, SRC_TOP0, 16, 1),
+@@ -519,20 +591,30 @@ static struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
+ 	MUX(0, "mout_spi0", group1_p4210, SRC_PERIL1, 16, 4),
+ 	MUX(0, "mout_spi1", group1_p4210, SRC_PERIL1, 20, 4),
+ 	MUX(0, "mout_spi2", group1_p4210, SRC_PERIL1, 24, 4),
++	MUX(0, "mout_clkout_top", clkout_top_p4210, CLKOUT_CMU_TOP, 0, 5),
+ 
+ 	MUX(0, "mout_pwi", mout_pwi_p4210, SRC_DMC, 16, 4),
++	MUX(0, "mout_clkout_dmc", clkout_dmc_p4210, CLKOUT_CMU_DMC, 0, 5),
++
++	MUX(0, "mout_clkout_cpu", clkout_cpu_p4210, CLKOUT_CMU_CPU, 0, 5),
+ };
+ 
+ /* list of mux clocks supported in exynos4x12 soc */
+ static struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
+ 	MUX(0, "mout_mpll_user_l", mout_mpll_p, SRC_LEFTBUS, 4, 1),
+ 	MUX(0, "mout_gdl", mout_gdl_p4x12, SRC_LEFTBUS, 0, 1),
++	MUX(0, "mout_clkout_leftbus", clkout_left_p4x12,
++			CLKOUT_CMU_LEFTBUS, 0, 5),
+ 
+ 	MUX(0, "mout_mpll_user_r", mout_mpll_p, SRC_RIGHTBUS, 4, 1),
+ 	MUX(0, "mout_gdr", mout_gdr_p4x12, SRC_RIGHTBUS, 0, 1),
++	MUX(0, "mout_clkout_rightbus", clkout_right_p4x12,
++			CLKOUT_CMU_RIGHTBUS, 0, 5),
+ 
+ 	MUX(CLK_MOUT_MPLL_USER_C, "mout_mpll_user_c", mout_mpll_user_p4x12,
+ 			SRC_CPU, 24, 1),
++	MUX(0, "mout_clkout_cpu", clkout_cpu_p4x12, CLKOUT_CMU_CPU, 0, 5),
++
+ 	MUX(0, "mout_aclk266_gps", aclk_p4412, SRC_TOP1, 4, 1),
+ 	MUX(0, "mout_aclk400_mcuisp", aclk_p4412, SRC_TOP1, 8, 1),
+ 	MUX(CLK_MOUT_MPLL_USER_T, "mout_mpll_user_t", mout_mpll_user_p4x12,
+@@ -586,24 +668,27 @@ static struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
+ 	MUX(0, "mout_spi0", group1_p4x12, SRC_PERIL1, 16, 4),
+ 	MUX(0, "mout_spi1", group1_p4x12, SRC_PERIL1, 20, 4),
+ 	MUX(0, "mout_spi2", group1_p4x12, SRC_PERIL1, 24, 4),
+-	MUX(0, "mout_pwm_isp", group1_p4x12, E4X12_SRC_ISP, 0, 4),
+-	MUX(0, "mout_spi0_isp", group1_p4x12, E4X12_SRC_ISP, 4, 4),
+-	MUX(0, "mout_spi1_isp", group1_p4x12, E4X12_SRC_ISP, 8, 4),
+-	MUX(0, "mout_uart_isp", group1_p4x12, E4X12_SRC_ISP, 12, 4),
++	MUX(0, "mout_clkout_top", clkout_top_p4x12, CLKOUT_CMU_TOP, 0, 5),
++
+ 	MUX(0, "mout_c2c", sclk_ampll_p4210, SRC_DMC, 0, 1),
+ 	MUX(0, "mout_pwi", mout_pwi_p4x12, SRC_DMC, 16, 4),
+ 	MUX(0, "mout_g2d0", sclk_ampll_p4210, SRC_DMC, 20, 1),
+ 	MUX(0, "mout_g2d1", sclk_evpll_p, SRC_DMC, 24, 1),
+ 	MUX(0, "mout_g2d", mout_g2d_p, SRC_DMC, 28, 1),
++	MUX(0, "mout_clkout_dmc", clkout_dmc_p4x12, CLKOUT_CMU_DMC, 0, 5),
+ };
+ 
+ /* list of divider clocks supported in all exynos4 soc's */
+ static struct samsung_div_clock exynos4_div_clks[] __initdata = {
+ 	DIV(0, "div_gdl", "mout_gdl", DIV_LEFTBUS, 0, 3),
+ 	DIV(0, "div_gpl", "div_gdl", DIV_LEFTBUS, 4, 3),
++	DIV(0, "div_clkout_leftbus", "mout_clkout_leftbus",
++			CLKOUT_CMU_LEFTBUS, 8, 6),
+ 
+ 	DIV(0, "div_gdr", "mout_gdr", DIV_RIGHTBUS, 0, 3),
+ 	DIV(0, "div_gpr", "div_gdr", DIV_RIGHTBUS, 4, 3),
++	DIV(0, "div_clkout_rightbus", "mout_clkout_rightbus",
++			CLKOUT_CMU_RIGHTBUS, 8, 6),
+ 
+ 	DIV(0, "div_core", "mout_core", DIV_CPU0, 0, 3),
+ 	DIV(0, "div_corem0", "div_core2", DIV_CPU0, 4, 3),
+@@ -614,6 +699,8 @@ static struct samsung_div_clock exynos4_div_clks[] __initdata = {
+ 	DIV(0, "div_core2", "div_core", DIV_CPU0, 28, 3),
+ 	DIV(0, "div_copy", "mout_hpm", DIV_CPU1, 0, 3),
+ 	DIV(0, "div_hpm", "div_copy", DIV_CPU1, 4, 3),
++	DIV(0, "div_clkout_cpu", "mout_clkout_cpu", CLKOUT_CMU_CPU, 8, 6),
++
+ 	DIV(0, "div_fimc0", "mout_fimc0", DIV_CAM, 0, 4),
+ 	DIV(0, "div_fimc1", "mout_fimc1", DIV_CAM, 4, 4),
+ 	DIV(0, "div_fimc2", "mout_fimc2", DIV_CAM, 8, 4),
+@@ -671,6 +758,7 @@ static struct samsung_div_clock exynos4_div_clks[] __initdata = {
+ 			CLK_SET_RATE_PARENT, 0),
+ 	DIV_F(0, "div_mmc_pre3", "div_mmc3", DIV_FSYS2, 24, 8,
+ 			CLK_SET_RATE_PARENT, 0),
++	DIV(0, "div_clkout_top", "mout_clkout_top", CLKOUT_CMU_TOP, 8, 6),
+ 
+ 	DIV(0, "div_acp", "mout_dmc_bus", DIV_DMC0, 0, 3),
+ 	DIV(0, "div_acp_pclk", "div_acp", DIV_DMC0, 4, 3),
+@@ -679,6 +767,7 @@ static struct samsung_div_clock exynos4_div_clks[] __initdata = {
+ 	DIV(0, "div_dmcd", "div_dmc", DIV_DMC0, 16, 3),
+ 	DIV(0, "div_dmcp", "div_dmcd", DIV_DMC0, 20, 3),
+ 	DIV(0, "div_pwi", "mout_pwi", DIV_DMC1, 8, 4),
++	DIV(0, "div_clkout_dmc", "mout_clkout_dmc", CLKOUT_CMU_DMC, 8, 6),
+ };
+ 
+ /* list of divider clocks supported in exynos4210 soc */
+@@ -902,6 +991,17 @@ static struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
+ 			0, 0),
+ 	GATE(CLK_AC97, "ac97", "aclk100", GATE_IP_PERIL, 27,
+ 			0, 0),
++
++	GATE(CLK_OUT_LEFTBUS, "clkout_leftbus", "div_clkout_leftbus",
++			CLKOUT_CMU_LEFTBUS, 16, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_OUT_RIGHTBUS, "clkout_rightbus", "div_clkout_rightbus",
++			CLKOUT_CMU_RIGHTBUS, 16, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_OUT_TOP, "clkout_top", "div_clkout_top",
++			CLKOUT_CMU_TOP, 16, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_OUT_DMC, "clkout_dmc", "div_clkout_dmc",
++			CLKOUT_CMU_DMC, 16, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_OUT_CPU, "clkout_cpu", "div_clkout_cpu",
++			CLKOUT_CMU_CPU, 16, CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ /* list of gate clocks supported in exynos4210 soc */
+@@ -1282,6 +1382,8 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 			ARRAY_SIZE(exynos4_div_clks));
+ 	samsung_clk_register_gate(ctx, exynos4_gate_clks,
+ 			ARRAY_SIZE(exynos4_gate_clks));
++	samsung_clk_register_fixed_factor(ctx, exynos4_fixed_factor_clks,
++			ARRAY_SIZE(exynos4_fixed_factor_clks));
+ 
+ 	if (exynos4_soc == EXYNOS4210) {
+ 		samsung_clk_register_fixed_rate(ctx, exynos4210_fixed_rate_clks,
+@@ -1294,6 +1396,9 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 			ARRAY_SIZE(exynos4210_gate_clks));
+ 		samsung_clk_register_alias(ctx, exynos4210_aliases,
+ 			ARRAY_SIZE(exynos4210_aliases));
++		samsung_clk_register_fixed_factor(ctx,
++			exynos4210_fixed_factor_clks,
++			ARRAY_SIZE(exynos4210_fixed_factor_clks));
+ 	} else {
+ 		samsung_clk_register_mux(ctx, exynos4x12_mux_clks,
+ 			ARRAY_SIZE(exynos4x12_mux_clks));
+@@ -1303,6 +1408,9 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 			ARRAY_SIZE(exynos4x12_gate_clks));
+ 		samsung_clk_register_alias(ctx, exynos4x12_aliases,
+ 			ARRAY_SIZE(exynos4x12_aliases));
++		samsung_clk_register_fixed_factor(ctx,
++			exynos4x12_fixed_factor_clks,
++			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
+ 	}
+ 
+ 	samsung_clk_register_alias(ctx, exynos4_aliases,
+diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
+index 1106ca5..e0c4673 100644
+--- a/include/dt-bindings/clock/exynos4.h
++++ b/include/dt-bindings/clock/exynos4.h
+@@ -34,6 +34,11 @@
+ #define CLK_MOUT_CORE		19
+ #define CLK_MOUT_APLL		20
+ #define CLK_SCLK_HDMIPHY	22
++#define CLK_OUT_DMC		23
++#define CLK_OUT_TOP		24
++#define CLK_OUT_LEFTBUS		25
++#define CLK_OUT_RIGHTBUS	26
++#define CLK_OUT_CPU		27
+ 
+ /* gate for special clocks (sclk) */
+ #define CLK_SCLK_FIMC0		128
 -- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+1.9.3
