@@ -1,58 +1,77 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH V2 0/2] Sound support for Exynos4412 Odroid X2, U3 board
-Date: Tue, 24 Jun 2014 11:02:01 +0200
-Message-ID: <53A93E89.2030901@samsung.com>
-References: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
- <CAD8Lp44h6zc2Rt2MGLjhmNG-YB0kYCWf5G7hX5JmdmBfc1PvKg@mail.gmail.com>
- <53A856AE.1030202@samsung.com>
- <CAD8Lp46gqbV9gDfrH2hbVnF7s6wK6ASBdsX7vn0L0CFAHXSemg@mail.gmail.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Tue, 24 Jun 2014 10:18:08 +0100
+Message-ID: <20140624091808.GC26013@arm.com>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+ <CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
+ <4545972.cM7IP1qTXQ@wuerfel>
+ <53A4C0C9.2050908@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:65381 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751699AbaFXJCM (ORCPT
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:52705 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751360AbaFXJSN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 05:02:12 -0400
-In-reply-to: <CAD8Lp46gqbV9gDfrH2hbVnF7s6wK6ASBdsX7vn0L0CFAHXSemg@mail.gmail.com>
+	Tue, 24 Jun 2014 05:18:13 -0400
+Content-Disposition: inline
+In-Reply-To: <53A4C0C9.2050908@codeaurora.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, pawel.moll@arm.com, zhen1.chen@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, Kumar Gala <galak@codeaurora.org>, alsa-devel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Olav Haugan <ohaugan@codeaurora.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robherring2@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm->
 
-Hello,
+On Sat, Jun 21, 2014 at 12:16:25AM +0100, Olav Haugan wrote:
+> On 5/30/2014 12:06 PM, Arnd Bergmann wrote:
+> > On Friday 30 May 2014 08:16:05 Rob Herring wrote:
+> >> Presumably the ID would be the streamID on ARM's SMMU. How would a
+> >> master with 8 streamIDs be described? This is what Calxeda midway has
+> >> for SATA and I would expect that to be somewhat common. Either you
+> >> need some ID masking or you'll have lots of duplication when you have
+> >> windows.
+> > 
+> > I don't understand the problem. If you have stream IDs 0 through 7,
+> > you would have
+> > 
+> > 	master@a {
+> > 		...
+> > 		iommus = <&smmu 0>;
+> > 	};
+> > 
+> > 	master@b {
+> > 		...
+> > 		iommus = <&smmu 1;
+> > 	};
+> > 
+> > 	...
+> > 
+> > 	master@12 {
+> > 		...
+> > 		iommus = <&smmu 7;
+> > 	};
+> > 
+> > and you don't need a window at all. Why would you need a mask of
+> > some sort?
+> 
+> We have multiple-master SMMUs and each master emits a variable number of
+> StreamIDs. However, we have to apply a mask (the ARM SMMU spec allows
+> for this) to the StreamIDs due to limited number of StreamID 2 Context
+> Bank entries in the SMMU. If my understanding is correct we would
+> represent this in the DT like this:
+> 
+> 	iommu {
+> 		#address-cells = <2>;
+> 		#size-cells = <0>;
+> 	};
+> 
+> 	master@a {
+> 		...
+> 		iommus = <&iommu StreamID0 MASK0>,
+> 			 <&iommu StreamID1 MASK1>,
+> 			 <&iommu StreamID2 MASK2>;
+> 	};
 
-On 2014-06-24 10:35, Daniel Drake wrote:
-> On Mon, Jun 23, 2014 at 5:32 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> I could reproduce such behaviour on the U3 board, but only with u-boot
->> which sets the MPLL clock frequency (fout_mpll) to 880 MHz, rather
->> than 800 MHz, which was the case in my original environment.
->> All fout_mpll child clocks have then different frequency values
->> in both cases.
->> It's a bit strange though, because frequencies of all the audio
->> subsystem clocks seem to be same anyway:
-> I'm using the standard uboot from hardkernel.
->
->> # cat /sys/kernel/debug/clk/clk_summary
-> This command makes the kernel totally hang, weird.
+Stupid question, but why not simply describe the masked IDs? What use does
+the `raw' ID have to Linux?
 
-This is known issue with clocks vs. ISP power domain. We should really 
-fix this in exynos4 clock driver.
-
-> # speaker-test -c 2 -t wav -l 2 -p 1024
->
-> This plays back fine.
->
-> Could it be a problem with the samsung-i2s driver, not correctly
-> flushing at the right times?
-> Or do you think the problem is more likely to be clock-related?
-
-Hard to say right now, but at least we need to test a bit more our 
-solutions with different initial clocks configuration.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Will
