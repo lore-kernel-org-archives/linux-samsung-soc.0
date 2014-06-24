@@ -1,99 +1,113 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 4/4] ARM: dts: exynos: Update PMU node with CLKOUT related
- data
-Date: Tue, 24 Jun 2014 18:08:27 +0200
-Message-ID: <1403626107-12073-5-git-send-email-t.figa@samsung.com>
-References: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] arm: exynos: Modify pm code to check for cortex A9
+	rather than the SoC
+Date: Tue, 24 Jun 2014 17:11:14 +0100
+Message-ID: <20140624161114.GW32514@n2100.arm.linux.org.uk>
+References: <1400814061-12813-1-git-send-email-a.kesavan@samsung.com> <CAM4voa=3zzo-2KbjDtBOca+uJeSxT2OYpi+rJuSGsDg-vo7GYA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:17343 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965173AbaFXQJi (ORCPT
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:40678 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S965087AbaFXQLU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 12:09:38 -0400
-In-reply-to: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
+	Tue, 24 Jun 2014 12:11:20 -0400
+Content-Disposition: inline
+In-Reply-To: <CAM4voa=3zzo-2KbjDtBOca+uJeSxT2OYpi+rJuSGsDg-vo7GYA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Drake <drake@endlessm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
 
-This patch extends nodes of PMU system controller on Exynos4210, 4x12,
-5250 and 5420 SoCs with newly defined properties used by Exynos CLKOUT
-driver.
+On Mon, Jun 16, 2014 at 09:37:14AM +0530, Abhilash Kesavan wrote:
+> Hi Kukjin,
+> 
+> On Fri, May 23, 2014 at 8:31 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
+> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> 
+> Do you have any comments on this patch ?
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/boot/dts/exynos4210.dtsi | 10 ++++++++++
- arch/arm/boot/dts/exynos4x12.dtsi |  7 +++++++
- arch/arm/boot/dts/exynos5250.dtsi |  3 +++
- arch/arm/boot/dts/exynos5420.dtsi |  3 +++
- 4 files changed, 23 insertions(+)
+I do.
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index ee3001f..97ea7a9 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -31,6 +31,16 @@
- 		pinctrl2 = &pinctrl_2;
- 	};
- 
-+	pmu_system_controller: system-controller@10020000 {
-+		clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
-+				"clkout4", "clkout8", "clkout9";
-+		clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
-+			<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
-+			<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
-+			<&clock CLK_XUSBXTI>;
-+		#clock-cells = <1>;
-+	};
-+
- 	sysram@02020000 {
- 		compatible = "mmio-sram";
- 		reg = <0x02020000 0x20000>;
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index c5a943d..de1f9c7 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -139,6 +139,13 @@
- 
- 	pmu_system_controller: system-controller@10020000 {
- 		compatible = "samsung,exynos4212-pmu", "syscon";
-+		clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
-+				"clkout4", "clkout8", "clkout9";
-+		clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
-+			<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
-+			<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
-+			<&clock CLK_XUSBXTI>;
-+		#clock-cells = <1>;
- 	};
- 
- 	g2d@10800000 {
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 834fb5a..492e1ef 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -191,6 +191,9 @@
- 	pmu_system_controller: system-controller@10040000 {
- 		compatible = "samsung,exynos5250-pmu", "syscon";
- 		reg = <0x10040000 0x5000>;
-+		clock-names = "clkout16";
-+		clocks = <&clock CLK_FIN_PLL>;
-+		#clock-cells = <1>;
- 	};
- 
- 	sysreg_system_controller: syscon@10050000 {
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index e385322..481beec 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -724,6 +724,9 @@
- 	pmu_system_controller: system-controller@10040000 {
- 		compatible = "samsung,exynos5420-pmu", "syscon";
- 		reg = <0x10040000 0x5000>;
-+		clock-names = "clkout16";
-+		clocks = <&clock CLK_FIN_PLL>;
-+		#clock-cells = <1>;
- 	};
- 
- 	sysreg_system_controller: syscon@10050000 {
+> > diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> > index d10c351..6dd4a11 100644
+> > --- a/arch/arm/mach-exynos/pm.c
+> > +++ b/arch/arm/mach-exynos/pm.c
+> > @@ -300,7 +300,7 @@ static int exynos_pm_suspend(void)
+> >         tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
+> >         __raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
+> >
+> > -       if (!soc_is_exynos5250())
+> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+> >                 exynos_cpu_save_register();
+...
+> > @@ -334,7 +334,7 @@ static void exynos_pm_resume(void)
+> >         if (exynos_pm_central_resume())
+> >                 goto early_wakeup;
+> >
+> > -       if (!soc_is_exynos5250())
+> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+> >                 exynos_cpu_restore_register();
+
+It is invalid to check just the part number.  The part number on its
+own is meaningless without taking account of the implementor.  Both
+the implementor and the part number should be checked at each of these
+sites.
+
+Another point: exynos have taken it upon themselves to add code which
+saves various ARM core registers.  This is a bad idea, it brings us
+back to the days where every platform did their own suspend implementations.
+
+CPU level registers should be handled by CPU level code, not by platform
+code.  Is there a reason why this can't be added to the Cortex-A9
+support code in proc-v7.S ?
+
+> > @@ -353,7 +353,7 @@ static void exynos_pm_resume(void)
+> >
+> >         s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+> >
+> > -       if (!soc_is_exynos5250())
+> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+> >                 scu_enable(S5P_VA_SCU);
+> >
+> >  early_wakeup:
+> > @@ -440,15 +440,18 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+> >         case CPU_PM_ENTER:
+> >                 if (cpu == 0) {
+> >                         exynos_pm_central_suspend();
+> > -                       exynos_cpu_save_register();
+> > +                       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+> > +                               exynos_cpu_save_register();
+> >                 }
+> >                 break;
+> >
+> >         case CPU_PM_EXIT:
+> >                 if (cpu == 0) {
+> > -                       if (!soc_is_exynos5250())
+> > +                       if (read_cpuid_part_number() ==
+> > +                                       ARM_CPU_PART_CORTEX_A9) {
+> >                                 scu_enable(S5P_VA_SCU);
+> > -                       exynos_cpu_restore_register();
+> > +                               exynos_cpu_restore_register();
+> > +                       }
+> >                         exynos_pm_central_resume();
+> >                 }
+> >                 break;
+
+And presumably with the CPU level code dealing with those registers,
+you don't need the calls to save and restore these registers in this
+notifier.
+
+Which, by the way, is probably illegal to run as it runs in a read-
+lock code path and with the SCU disabled.  As you're calling
+scu_enable() that means you're non-coherent with the other CPUs,
+and therefore locks don't work.
+
+I think this code is very broken and wrongly architected, and shows
+that we're continuing to make the same mistakes that we made all
+through the 2000s with platforms doing their own crap rather than
+properly thinking about this stuff.
+
 -- 
-1.9.3
+FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
+improving, and getting towards what was expected from it.
