@@ -1,62 +1,41 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: sdhci_s3c_consider_clock scheduling while atomic - clk_round_rate
-Date: Tue, 24 Jun 2014 17:52:21 +0200
-Message-ID: <53A99EB5.6010907@samsung.com>
-References: <CAD8Lp45QV4ZcfXA86hoseKfJLLV_BJ-g0UABnOGPkJW1pMXhFw@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2 07/10] regulator: Add driver for Maxim 77802 PMIC regulators
+Date: Tue, 24 Jun 2014 18:43:13 +0200
+Message-ID: <53A9AAA1.4030005@collabora.co.uk>
+References: <1402941758-11216-1-git-send-email-javier.martinez@collabora.co.uk> <1402941758-11216-8-git-send-email-javier.martinez@collabora.co.uk> <20140616192500.GJ5099@sirena.org.uk> <53A01D54.10506@collabora.co.uk> <20140617141254.GP5099@sirena.org.uk> <53A06749.1010606@collabora.co.uk> <20140621204026.GH22657@sirena.org.uk> <53A7F339.7050608@collabora.co.uk> <20140623094734.GV24291@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46456 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755523AbaFXPwr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 11:52:47 -0400
-In-reply-to: <CAD8Lp45QV4ZcfXA86hoseKfJLLV_BJ-g0UABnOGPkJW1pMXhFw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140623094734.GV24291@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: linux-mmc@vger.kernel.org, ben-linux@fluff.org, Tomasz Figa <tomasz.figa@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Mike Turquette <mturquette@linaro.org>
 
-Hi Daniel,
+Hello Mark,
 
-[adding Ulf, Chris and Mike to the discussion]
+On 06/23/2014 11:47 AM, Mark Brown wrote:
+> On Mon, Jun 23, 2014 at 11:28:25AM +0200, Javier Martinez Canillas wrote:
+>> On 06/21/2014 10:40 PM, Mark Brown wrote:
+> 
+>> > That's not really relevant here - I'm asking if the regulators get their
+>> > own supplies rather than if anything uses them.
+> 
+>> Sorry if I keep misunderstanding your question but the regulators in this PMIC
+>> don't have a parent supply/regulator node.
+> 
+> They should, I'm pretty sure the device does actually regulate one
+> supply into another.
+> 
 
-On 24.06.2014 11:48, Daniel Drake wrote:
-> sdhci_s3c_set_clock is called from sdhci_do_set_ios with interrupts
-> disabled, and this calls into sdhci_s3c_consider_clock().
-> 
-> The patch "mmc: sdhci-s3c: Cache bus clock rates" addressed some
-> scheduling while atomic in this function, but there are more issues
-> here, seen while testing 3.16-rc2 on exynos4412:
-> 
-> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:103
-> in_atomic(): 1, irqs_disabled(): 128, pid: 75, name: mmcqd/0
-> Preemption disabled at:[<  (null)>]   (null)
-> 
-> CPU: 0 PID: 75 Comm: mmcqd/0 Not tainted 3.16.0-rc2-00028-ge9fe7eb-dirty #77
-> [<c0016140>] (unwind_backtrace) from [<c0011e14>] (show_stack+0x10/0x14)
-> [<c0011e14>] (show_stack) from [<c05ce8a8>] (dump_stack+0x84/0xc4)
-> [<c05ce8a8>] (dump_stack) from [<c05d2de0>] (mutex_lock+0x1c/0x3c)
-> [<c05d2de0>] (mutex_lock) from [<c046214c>] (clk_prepare_lock+0x6c/0xf4)
-> [<c046214c>] (clk_prepare_lock) from [<c04625ac>] (clk_round_rate+0x10/0x2c)
-> [<c04625ac>] (clk_round_rate) from [<c0447628>] (sdhci_s3c_set_clock+0x4c/0x1e8)
-> [<c0447628>] (sdhci_s3c_set_clock) from [<c0447818>]
-> (sdhci_cmu_set_clock+0x54/0x140)
-> [<c0447818>] (sdhci_cmu_set_clock) from [<c0443a38>]
-> (sdhci_do_set_ios+0x138/0x58c)
-> [<c0443a38>] (sdhci_do_set_ios) from [<c0443864>] (sdhci_set_ios+0x28/0x34)
-> 
-> clk_round_rate cannot be called here because it takes a mutex.
-> 
-> sdhci_s3c_set_clock() also calls into clk_prepare_enable() which looks
-> like it could trigger this problem too.
+Thanks a lot for the clarification. This was not evident to me when I read the
+PMIC datasheet and because both the max77xxx Chrome OS 3.8 and mainline max77686
+drivers used a simplistic model of the power scheme.
 
-Apparently this is related to generic sdhci code calling .set_clock()
-under spin_lock_irqsave(). For reference, see sdhci_do_set_ios() and
-sdhci_tasklet_finish().
-
-Chris, Ulf, any suggestions?
+But Doug confirmed to me that some regulators on this PMIC do indeed use others
+regulators as a power supply so I'll change this in the next version of the
+patch-set.
 
 Best regards,
-Tomasz
+Javier
