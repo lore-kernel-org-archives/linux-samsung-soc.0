@@ -1,107 +1,79 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH RFC] mfd: syscon: Decouple syscon interface from syscon
- devices
-Date: Tue, 24 Jun 2014 16:33:28 +0530
-Message-ID: <007901cf8f9b$fe27ae70$fa770b50$@samsung.com>
-References: <53A05E2D.6020702@samsung.com>
- <1403019164-12514-1-git-send-email-t.figa@samsung.com>
- <5027740.B7iVUcUX2T@wuerfel> <53A0B27E.5010708@gmail.com>
- <20140618082653.GN21030@lee--X1>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20140618082653.GN21030@lee--X1>
-Content-language: en-us
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Lee Jones' <lee.jones@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, mark.brown@linaro.org, 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Samuel Ortiz' <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, michal.simek@xilinx.com
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH] drm/exynos: Support DP CLKCON register in FIMD driver
+Date: Tue, 24 Jun 2014 16:39:24 +0530
+Message-ID: <1403608164-23728-1-git-send-email-ajaykumar.rs@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:60781 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750806AbaFXLMK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 24 Jun 2014 07:12:10 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N7O00FT473G8660@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Jun 2014 20:11:40 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Hi,
+Add the missing setting for DP CLKCON register.
 
-On Wednesday, June 18 2014, Lee Jones wrote:
-> On Tue, 17 Jun 2014, Tomasz Figa wrote:
-> > On 17.06.2014 17:42, Arnd Bergmann wrote:
-> > > On Tuesday 17 June 2014 17:32:44 Tomasz Figa wrote:
-> > >> Currently a syscon entity can be only registered directly throug=
-h a
-> > >> platform device that binds to a dedicated driver. However in
-> > >> certain use cases it is desirable to make a device used with
-> > >> another driver a syscon interface provider. For example, certain
-> > >> SoCs (e.g. Exynos) contain system controller blocks which perfor=
-m
-> > >> various functions such as power domain control, CPU power
-> > >> management, low power mode control, but in addition contain cert=
-ain
-> > >> IP integration glue, such as various signal masks, coprocessor
-> > >> power control, etc. In such case, there is a need to have a
-> > >> dedicated driver for such system controller but also share
-> > >> registers with other drivers. The latter is where the syscon int=
-erface is helpful.
-> > >>
-> > >> This patch decouples syscon object from syscon driver, so that i=
-t
-> > >> can be registered from any driver in addition to the original
-> > >> "syscon" platform driver.
->=20
-> +1 for this approach.
->=20
-> Michal, Pankay,
->   Does it also suit your needs?
->=20
+This register is present on Exynos5 based FIMD controllers,
+and needs to be used if we are using DP.
 
-Sorry for late reply.=20
-I tested this patch after changing exynos PMU to be a syscon provider a=
-nd it's working well.
-So if we can address Arnd's comments, this patch will be helpful in mak=
-ing exynos PMU a=20
-complete platform driver.
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c |    5 +++++
+ include/video/samsung_fimd.h             |    4 ++++
+ 2 files changed, 9 insertions(+)
 
-Thanks,
-Pankaj Dubey
-
-> > >> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > >
-> > > Hi Tomasz,
-> > >
-> > > This seems like a reasonable way of solving the problem, but I th=
-ink
-> > > there is an even better one that we have about in the past: if we
-> > > promote syscon from a platform driver into a a drivers/base/ help=
-er
-> > > that is independent of the platform device matching, we can use c=
-all
-> > > syscon_regmap_lookup_* for any device node, whether it's already
-> > > bound to a driver or not, which do what you need. It would also m=
-ake
-> > > it easier to call the syscon code before the platform_device
-> > > infrastructure gets initialized, which is something a number of
-> > > people have asked for, e.g. for using regmap to do SMP bringup or
-> > > for clock registration.
-> >
-> > Basically, unless I'm missing your point, this is what my patch doe=
-s,
-> > except that I don't move it to drivers/base/ and the registration
-> > function I added require a pointer to struct device. Indeed,
-> > decoupling it further from the driver model, by adding
-> > of_syscon_register() should be useful for early users.
->=20
-> If agreed by Arnd, I think this work can be completed as a subsequent=
- patch.
->=20
-> > Should I move this to drivers/base/, even though from current locat=
-ion
-> > it can be used outside the platform driver anyway?
->=20
-> If I'm being honest with myself, I'd say that Syscon wasn't really an=
- MFD driver.  I'm
-> happy to keep it in there any continue maintaining it, but wouldn't b=
-lock a move
-> either.
->=20
-> --
-> Lee Jones
-> Linaro STMicroelectronics Landing Team Lead Linaro.org =E2=94=82 Open=
- source software
-> for ARM SoCs Follow Linaro: Facebook | Twitter | Blog
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 33161ad..5d3045d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -72,6 +72,7 @@ struct fimd_driver_data {
+ 	unsigned int has_shadowcon:1;
+ 	unsigned int has_clksel:1;
+ 	unsigned int has_limited_fmt:1;
++	unsigned int has_dp_clkcon:1;
+ };
+ 
+ static struct fimd_driver_data s3c64xx_fimd_driver_data = {
+@@ -88,6 +89,7 @@ static struct fimd_driver_data exynos4_fimd_driver_data = {
+ static struct fimd_driver_data exynos5_fimd_driver_data = {
+ 	.timing_base = 0x20000,
+ 	.has_shadowcon = 1,
++	.has_dp_clkcon = 1,
+ };
+ 
+ struct fimd_win_data {
+@@ -331,6 +333,9 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
+ 	if (clkdiv > 1)
+ 		val |= VIDCON0_CLKVAL_F(clkdiv - 1) | VIDCON0_CLKDIR;
+ 
++	if (ctx->driver_data->has_dp_clkcon)
++		writel(DP_CLK_ENABLE, ctx->regs + DP_CLKCON);
++
+ 	writel(val, ctx->regs + VIDCON0);
+ }
+ 
+diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
+index b039320..d8f4b0b 100644
+--- a/include/video/samsung_fimd.h
++++ b/include/video/samsung_fimd.h
+@@ -435,6 +435,10 @@
+ #define BLENDCON_NEW_8BIT_ALPHA_VALUE		(1 << 0)
+ #define BLENDCON_NEW_4BIT_ALPHA_VALUE		(0 << 0)
+ 
++/* Video clock enable for DP */
++#define DP_CLKCON				0x27C
++#define DP_CLK_ENABLE				0x2
++
+ /* Notes on per-window bpp settings
+  *
+  * Value	Win0	 Win1	  Win2	   Win3	    Win 4
+-- 
+1.7.9.5
