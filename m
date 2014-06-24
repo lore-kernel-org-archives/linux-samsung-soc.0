@@ -1,7 +1,7 @@
 From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 1/4] devicetree: bindings: Document murata vendor prefix
-Date: Tue, 24 Jun 2014 17:49:13 +0530
-Message-ID: <1403612356-23685-2-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 2/4] hwmon: ntc_thermistor: Use the manufacturer name properly
+Date: Tue, 24 Jun 2014 17:49:14 +0530
+Message-ID: <1403612356-23685-3-git-send-email-ch.naveen@samsung.com>
 References: <1403612356-23685-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1403612356-23685-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -10,11 +10,12 @@ To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL
 Cc: naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add Murata Manufacturing Co., Ltd. to the list of device tree
-vendor prefixes.
+Murata Manufacturing Co., Ltd is the vendor for
+NTC (Negative Temperature coefficient) based Thermistors.
+But, the driver extensively uses "NTC" as the vendor name.
 
-Murata manufactures NTC (Negative Temperature Coefficient) based
-Thermistors for small scale applications like Mobiles and PDAs.
+This patch corrects the vendor name also updates the
+compatibility strings according to the vendor-prefix.txt
 
 Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
@@ -29,20 +30,138 @@ This changes is needed for the following reasons
 3. NTC is a technology used, But the prefix "ntc" is wrongly
    and heavily used in the driver and the documentation.
 
- .../devicetree/bindings/vendor-prefixes.txt        |    1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/arm/samsung/exynos-adc.txt |    2 +-
+ .../devicetree/bindings/hwmon/ntc_thermistor.txt   |   12 ++++++------
+ Documentation/hwmon/ntc_thermistor                 |    8 ++++----
+ drivers/hwmon/Kconfig                              |    5 +++--
+ drivers/hwmon/ntc_thermistor.c                     |   12 ++++++------
+ 5 files changed, 20 insertions(+), 19 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 4d7f375..a39b7d7 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -84,6 +84,7 @@ moxa	Moxa
- mpl	MPL AG
- mundoreader	Mundo Reader S.L.
- mxicy	Macronix International Co., Ltd.
-+murata	Murata Manufacturing Co., Ltd.
- national	National Semiconductor
- neonode		Neonode Inc.
- netgear	NETGEAR
+diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+index 5d49f2b..832fe8c 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+@@ -48,7 +48,7 @@ adc@12D10000 {
+ 
+ 	/* NTC thermistor is a hwmon device */
+ 	ncp15wb473@0 {
+-		compatible = "ntc,ncp15wb473";
++		compatible = "murata,ncp15wb473";
+ 		pullup-uv = <1800000>;
+ 		pullup-ohm = <47000>;
+ 		pulldown-ohm = <0>;
+diff --git a/Documentation/devicetree/bindings/hwmon/ntc_thermistor.txt b/Documentation/devicetree/bindings/hwmon/ntc_thermistor.txt
+index c6f6667..4e9f344 100644
+--- a/Documentation/devicetree/bindings/hwmon/ntc_thermistor.txt
++++ b/Documentation/devicetree/bindings/hwmon/ntc_thermistor.txt
+@@ -3,11 +3,11 @@ NTC Thermistor hwmon sensors
+ 
+ Requires node properties:
+ - "compatible" value : one of
+-	"ntc,ncp15wb473"
+-	"ntc,ncp18wb473"
+-	"ntc,ncp21wb473"
+-	"ntc,ncp03wb473"
+-	"ntc,ncp15wl333"
++	"murata,ncp15wb473"
++	"murata,ncp18wb473"
++	"murata,ncp21wb473"
++	"murata,ncp03wb473"
++	"murata,ncp15wl333"
+ - "pullup-uv"	Pull up voltage in micro volts
+ - "pullup-ohm"	Pull up resistor value in ohms
+ - "pulldown-ohm" Pull down resistor value in ohms
+@@ -21,7 +21,7 @@ Read more about iio bindings at
+ 
+ Example:
+ 	ncp15wb473@0 {
+-		compatible = "ntc,ncp15wb473";
++		compatible = "murata,ncp15wb473";
+ 		pullup-uv = <1800000>;
+ 		pullup-ohm = <47000>;
+ 		pulldown-ohm = <0>;
+diff --git a/Documentation/hwmon/ntc_thermistor b/Documentation/hwmon/ntc_thermistor
+index 3bfda94..057b770 100644
+--- a/Documentation/hwmon/ntc_thermistor
++++ b/Documentation/hwmon/ntc_thermistor
+@@ -1,7 +1,7 @@
+ Kernel driver ntc_thermistor
+ =================
+ 
+-Supported thermistors:
++Supported thermistors from Murata:
+ * Murata NTC Thermistors NCP15WB473, NCP18WB473, NCP21WB473, NCP03WB473, NCP15WL333
+   Prefixes: 'ncp15wb473', 'ncp18wb473', 'ncp21wb473', 'ncp03wb473', 'ncp15wl333'
+   Datasheet: Publicly available at Murata
+@@ -15,9 +15,9 @@ Authors:
+ Description
+ -----------
+ 
+-The NTC thermistor is a simple thermistor that requires users to provide the
+-resistance and lookup the corresponding compensation table to get the
+-temperature input.
++The NTC (Negative Temperature Coefficient) thermistor is a simple thermistor
++that requires users to provide the resistance and lookup the corresponding
++compensation table to get the temperature input.
+ 
+ The NTC driver provides lookup tables with a linear approximation function
+ and four circuit models with an option not to use any of the four models.
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index 08531a1..154851b 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -1052,7 +1052,7 @@ config SENSORS_PC87427
+ 	  will be called pc87427.
+ 
+ config SENSORS_NTC_THERMISTOR
+-	tristate "NTC thermistor support"
++	tristate "NTC based thermistor support from Murata"
+ 	depends on !OF || IIO=n || IIO
+ 	help
+ 	  This driver supports NTC thermistors sensor reading and its
+@@ -1060,7 +1060,8 @@ config SENSORS_NTC_THERMISTOR
+ 	  send notifications about the temperature.
+ 
+ 	  Currently, this driver supports
+-	  NCP15WB473, NCP18WB473, NCP21WB473, NCP03WB473, and NCP15WL333.
++	  NCP15WB473, NCP18WB473, NCP21WB473, NCP03WB473, and NCP15WL333
++	  from Murata.
+ 
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called ntc-thermistor.
+diff --git a/drivers/hwmon/ntc_thermistor.c b/drivers/hwmon/ntc_thermistor.c
+index e76feb86..6c38fc8 100644
+--- a/drivers/hwmon/ntc_thermistor.c
++++ b/drivers/hwmon/ntc_thermistor.c
+@@ -163,15 +163,15 @@ static int ntc_adc_iio_read(struct ntc_thermistor_platform_data *pdata)
+ }
+ 
+ static const struct of_device_id ntc_match[] = {
+-	{ .compatible = "ntc,ncp15wb473",
++	{ .compatible = "murata,ncp15wb473",
+ 		.data = &ntc_thermistor_id[0] },
+-	{ .compatible = "ntc,ncp18wb473",
++	{ .compatible = "murata,ncp18wb473",
+ 		.data = &ntc_thermistor_id[1] },
+-	{ .compatible = "ntc,ncp21wb473",
++	{ .compatible = "murata,ncp21wb473",
+ 		.data = &ntc_thermistor_id[2] },
+-	{ .compatible = "ntc,ncp03wb473",
++	{ .compatible = "murata,ncp03wb473",
+ 		.data = &ntc_thermistor_id[3] },
+-	{ .compatible = "ntc,ncp15wl333",
++	{ .compatible = "murata,ncp15wl333",
+ 		.data = &ntc_thermistor_id[4] },
+ 	{ },
+ };
+@@ -534,7 +534,7 @@ static struct platform_driver ntc_thermistor_driver = {
+ 
+ module_platform_driver(ntc_thermistor_driver);
+ 
+-MODULE_DESCRIPTION("NTC Thermistor Driver");
++MODULE_DESCRIPTION("NTC based Thermistor Driver from Murata");
+ MODULE_AUTHOR("MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:ntc-thermistor");
 -- 
 1.7.9.5
