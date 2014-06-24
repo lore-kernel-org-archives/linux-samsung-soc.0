@@ -1,224 +1,93 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: [PATCH] phy: phy-samsung-usb2: Change phy power on/power off sequence
-Date: Tue, 24 Jun 2014 14:54:55 +0200
-Message-ID: <1403614495-9291-1-git-send-email-k.debski@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] drm/exynos: Support DP CLKCON register in FIMD driver
+Date: Tue, 24 Jun 2014 15:01:14 +0200
+Message-ID: <53A9769A.5030907@samsung.com>
+References: <1403608164-23728-1-git-send-email-ajaykumar.rs@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:17573 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751774AbaFXMzU (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:15990 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751401AbaFXNBf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 08:55:20 -0400
+	Tue, 24 Jun 2014 09:01:35 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N7O0035FC65G630@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Jun 2014 14:01:17 +0100 (BST)
+In-reply-to: <1403608164-23728-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
-Cc: kishon@ti.com, t.figa@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, k.debski@samsung.com
+To: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com
 
-The Exynos4412 USB 2.0 PHY hardware differs from the description provided
-in the documentation. Some register bits have different function. This
-patch fixes the defines of register bits and changes the way how phys are
-powered on and off.
+Hi Ajay,
 
-Signed-off-by: Kamil Debski <k.debski@samsung.com>
----
- drivers/phy/phy-exynos4x12-usb2.c |  112 +++++++++++++++++++++++++------------
- drivers/phy/phy-samsung-usb2.h    |    3 +-
- 2 files changed, 77 insertions(+), 38 deletions(-)
+On 06/24/2014 01:09 PM, Ajay Kumar wrote:
+> Add the missing setting for DP CLKCON register.
+> 
+> This register is present on Exynos5 based FIMD controllers,
+> and needs to be used if we are using DP.
+> 
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c |    5 +++++
+>  include/video/samsung_fimd.h             |    4 ++++
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index 33161ad..5d3045d 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -72,6 +72,7 @@ struct fimd_driver_data {
+>  	unsigned int has_shadowcon:1;
+>  	unsigned int has_clksel:1;
+>  	unsigned int has_limited_fmt:1;
+> +	unsigned int has_dp_clkcon:1;
+>  };
+>  
+>  static struct fimd_driver_data s3c64xx_fimd_driver_data = {
+> @@ -88,6 +89,7 @@ static struct fimd_driver_data exynos4_fimd_driver_data = {
+>  static struct fimd_driver_data exynos5_fimd_driver_data = {
+>  	.timing_base = 0x20000,
+>  	.has_shadowcon = 1,
+> +	.has_dp_clkcon = 1,
+>  };
+>  
+>  struct fimd_win_data {
+> @@ -331,6 +333,9 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
+>  	if (clkdiv > 1)
+>  		val |= VIDCON0_CLKVAL_F(clkdiv - 1) | VIDCON0_CLKDIR;
+>  
+> +	if (ctx->driver_data->has_dp_clkcon)
+> +		writel(DP_CLK_ENABLE, ctx->regs + DP_CLKCON);
+> +
 
-diff --git a/drivers/phy/phy-exynos4x12-usb2.c b/drivers/phy/phy-exynos4x12-usb2.c
-index d92a7cc..59d8dd3 100644
---- a/drivers/phy/phy-exynos4x12-usb2.c
-+++ b/drivers/phy/phy-exynos4x12-usb2.c
-@@ -86,13 +86,23 @@
- #define EXYNOS_4x12_URSTCON_OTG_HLINK		BIT(1)
- #define EXYNOS_4x12_URSTCON_OTG_PHYLINK		BIT(2)
- #define EXYNOS_4x12_URSTCON_HOST_PHY		BIT(3)
-+/* The following bit defines are presented in the
-+ * order taken from the Exynos4412 reference manual.
-+ *
-+ * During experiments with the hardware and debugging
-+ * it was determined that the hardware behaves contrary
-+ * to the manual.
-+ *
-+ * The following bit values were chaned accordingly to the
-+ * results of real hardware experiments.
-+ */
- #define EXYNOS_4x12_URSTCON_PHY1		BIT(4)
--#define EXYNOS_4x12_URSTCON_HSIC0		BIT(5)
--#define EXYNOS_4x12_URSTCON_HSIC1		BIT(6)
-+#define EXYNOS_4x12_URSTCON_HSIC0		BIT(6)
-+#define EXYNOS_4x12_URSTCON_HSIC1		BIT(5)
- #define EXYNOS_4x12_URSTCON_HOST_LINK_ALL	BIT(7)
--#define EXYNOS_4x12_URSTCON_HOST_LINK_P0	BIT(8)
-+#define EXYNOS_4x12_URSTCON_HOST_LINK_P0	BIT(10)
- #define EXYNOS_4x12_URSTCON_HOST_LINK_P1	BIT(9)
--#define EXYNOS_4x12_URSTCON_HOST_LINK_P2	BIT(10)
-+#define EXYNOS_4x12_URSTCON_HOST_LINK_P2	BIT(8)
- 
- /* Isolation, configured in the power management unit */
- #define EXYNOS_4x12_USB_ISOL_OFFSET		0x704
-@@ -188,6 +198,7 @@ static void exynos4x12_setup_clk(struct samsung_usb2_phy_instance *inst)
- 	clk = readl(drv->reg_phy + EXYNOS_4x12_UPHYCLK);
- 	clk &= ~EXYNOS_4x12_UPHYCLK_PHYFSEL_MASK;
- 	clk |= drv->ref_reg_val << EXYNOS_4x12_UPHYCLK_PHYFSEL_OFFSET;
-+	clk |= EXYNOS_4x12_UPHYCLK_PHY1_COMMON_ON;
- 	writel(clk, drv->reg_phy + EXYNOS_4x12_UPHYCLK);
- }
- 
-@@ -198,27 +209,22 @@ static void exynos4x12_phy_pwr(struct samsung_usb2_phy_instance *inst, bool on)
- 	u32 phypwr = 0;
- 	u32 rst;
- 	u32 pwr;
--	u32 mode = 0;
--	u32 switch_mode = 0;
- 
- 	switch (inst->cfg->id) {
- 	case EXYNOS4x12_DEVICE:
- 		phypwr =	EXYNOS_4x12_UPHYPWR_PHY0;
- 		rstbits =	EXYNOS_4x12_URSTCON_PHY0;
--		mode =		EXYNOS_4x12_MODE_SWITCH_DEVICE;
--		switch_mode =	1;
- 		break;
- 	case EXYNOS4x12_HOST:
- 		phypwr =	EXYNOS_4x12_UPHYPWR_PHY1;
--		rstbits =	EXYNOS_4x12_URSTCON_HOST_PHY;
--		mode =		EXYNOS_4x12_MODE_SWITCH_HOST;
--		switch_mode =	1;
-+		rstbits =	EXYNOS_4x12_URSTCON_HOST_PHY |
-+				EXYNOS_4x12_URSTCON_PHY1 |
-+				EXYNOS_4x12_URSTCON_HOST_LINK_P0;
- 		break;
- 	case EXYNOS4x12_HSIC0:
- 		phypwr =	EXYNOS_4x12_UPHYPWR_HSIC0;
--		rstbits =	EXYNOS_4x12_URSTCON_HSIC1 |
--				EXYNOS_4x12_URSTCON_HOST_LINK_P0 |
--				EXYNOS_4x12_URSTCON_HOST_PHY;
-+		rstbits =	EXYNOS_4x12_URSTCON_HSIC0 |
-+				EXYNOS_4x12_URSTCON_HOST_LINK_P1 ;
- 		break;
- 	case EXYNOS4x12_HSIC1:
- 		phypwr =	EXYNOS_4x12_UPHYPWR_HSIC1;
-@@ -228,11 +234,6 @@ static void exynos4x12_phy_pwr(struct samsung_usb2_phy_instance *inst, bool on)
- 	};
- 
- 	if (on) {
--		if (switch_mode)
--			regmap_update_bits(drv->reg_sys,
--					   EXYNOS_4x12_MODE_SWITCH_OFFSET,
--					   EXYNOS_4x12_MODE_SWITCH_MASK, mode);
--
- 		pwr = readl(drv->reg_phy + EXYNOS_4x12_UPHYPWR);
- 		pwr &= ~phypwr;
- 		writel(pwr, drv->reg_phy + EXYNOS_4x12_UPHYPWR);
-@@ -253,41 +254,78 @@ static void exynos4x12_phy_pwr(struct samsung_usb2_phy_instance *inst, bool on)
- 	}
- }
- 
--static int exynos4x12_power_on(struct samsung_usb2_phy_instance *inst)
-+static void exynos4x12_power_on_internal(struct samsung_usb2_phy_instance *inst)
- {
--	struct samsung_usb2_phy_driver *drv = inst->drv;
-+	if (inst->int_cnt++ > 0)
-+		return;
- 
--	inst->enabled = 1;
- 	exynos4x12_setup_clk(inst);
--	exynos4x12_phy_pwr(inst, 1);
- 	exynos4x12_isol(inst, 0);
-+	exynos4x12_phy_pwr(inst, 1);
-+}
-+
-+static int exynos4x12_power_on(struct samsung_usb2_phy_instance *inst)
-+{
-+	struct samsung_usb2_phy_driver *drv = inst->drv;
-+
-+	if (inst->ext_cnt++ > 0)
-+		return 0;
- 
--	/* Power on the device, as it is necessary for HSIC to work */
--	if (inst->cfg->id == EXYNOS4x12_HSIC0) {
--		struct samsung_usb2_phy_instance *device =
--					&drv->instances[EXYNOS4x12_DEVICE];
--		exynos4x12_phy_pwr(device, 1);
--		exynos4x12_isol(device, 0);
-+	if (inst->cfg->id == EXYNOS4x12_HOST) {
-+		regmap_update_bits(drv->reg_sys, EXYNOS_4x12_MODE_SWITCH_OFFSET,
-+						EXYNOS_4x12_MODE_SWITCH_MASK,
-+						EXYNOS_4x12_MODE_SWITCH_HOST);
-+		exynos4x12_power_on_internal(&drv->instances[EXYNOS4x12_DEVICE]);
- 	}
- 
-+	if (inst->cfg->id == EXYNOS4x12_DEVICE)
-+		regmap_update_bits(drv->reg_sys, EXYNOS_4x12_MODE_SWITCH_OFFSET,
-+						EXYNOS_4x12_MODE_SWITCH_MASK,
-+						EXYNOS_4x12_MODE_SWITCH_DEVICE);
-+
-+	if (inst->cfg->id == EXYNOS4x12_HSIC0 ||
-+		inst->cfg->id == EXYNOS4x12_HSIC1) {
-+		exynos4x12_power_on_internal(&drv->instances[EXYNOS4x12_DEVICE]);
-+		exynos4x12_power_on_internal(&drv->instances[EXYNOS4x12_HOST]);
-+	}
-+
-+	exynos4x12_power_on_internal(inst);
-+
- 	return 0;
- }
- 
--static int exynos4x12_power_off(struct samsung_usb2_phy_instance *inst)
-+static void exynos4x12_power_off_internal(struct samsung_usb2_phy_instance *inst)
- {
--	struct samsung_usb2_phy_driver *drv = inst->drv;
--	struct samsung_usb2_phy_instance *device =
--					&drv->instances[EXYNOS4x12_DEVICE];
-+	if (inst->int_cnt-- > 1)
-+		return;
- 
--	inst->enabled = 0;
- 	exynos4x12_isol(inst, 1);
- 	exynos4x12_phy_pwr(inst, 0);
-+}
- 
--	if (inst->cfg->id == EXYNOS4x12_HSIC0 && !device->enabled) {
--		exynos4x12_isol(device, 1);
--		exynos4x12_phy_pwr(device, 0);
-+static int exynos4x12_power_off(struct samsung_usb2_phy_instance *inst)
-+{
-+	struct samsung_usb2_phy_driver *drv = inst->drv;
-+
-+	if (inst->ext_cnt-- > 1)
-+		return 0;
-+
-+	if (inst->cfg->id == EXYNOS4x12_DEVICE)
-+		regmap_update_bits(drv->reg_sys, EXYNOS_4x12_MODE_SWITCH_OFFSET,
-+						EXYNOS_4x12_MODE_SWITCH_MASK,
-+						EXYNOS_4x12_MODE_SWITCH_HOST);
-+
-+	if (inst->cfg->id == EXYNOS4x12_HOST)
-+		exynos4x12_power_off_internal(&drv->instances[EXYNOS4x12_DEVICE]);
-+
-+	if (inst->cfg->id == EXYNOS4x12_HSIC0 ||
-+		inst->cfg->id == EXYNOS4x12_HSIC1) {
-+		exynos4x12_power_off_internal(&drv->instances[EXYNOS4x12_DEVICE]);
-+		exynos4x12_power_off_internal(&drv->instances[EXYNOS4x12_HOST]);
- 	}
- 
-+	exynos4x12_power_off_internal(inst);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/phy/phy-samsung-usb2.h b/drivers/phy/phy-samsung-usb2.h
-index 45b3170..9188478 100644
---- a/drivers/phy/phy-samsung-usb2.h
-+++ b/drivers/phy/phy-samsung-usb2.h
-@@ -29,7 +29,8 @@ struct samsung_usb2_phy_instance {
- 	const struct samsung_usb2_common_phy *cfg;
- 	struct phy *phy;
- 	struct samsung_usb2_phy_driver *drv;
--	bool enabled;
-+	int int_cnt;
-+	int ext_cnt;
- };
- 
- struct samsung_usb2_phy_driver {
--- 
-1.7.9.5
+This code always enables the clock on exynos5. As I understand it should
+be enabled only if DP is used.
+
+Regards
+Andrzej
+
+
+>  	writel(val, ctx->regs + VIDCON0);
+>  }
+>  
+> diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
+> index b039320..d8f4b0b 100644
+> --- a/include/video/samsung_fimd.h
+> +++ b/include/video/samsung_fimd.h
+> @@ -435,6 +435,10 @@
+>  #define BLENDCON_NEW_8BIT_ALPHA_VALUE		(1 << 0)
+>  #define BLENDCON_NEW_4BIT_ALPHA_VALUE		(0 << 0)
+>  
+> +/* Video clock enable for DP */
+> +#define DP_CLKCON				0x27C
+> +#define DP_CLK_ENABLE				0x2
+> +
+>  /* Notes on per-window bpp settings
+>   *
+>   * Value	Win0	 Win1	  Win2	   Win3	    Win 4
+> 
