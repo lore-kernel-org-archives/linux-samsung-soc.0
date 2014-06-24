@@ -1,71 +1,73 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH 3/5 v2] drm/exynos: allow mulitple layer updates per vsync
- for mixer
-Date: Tue, 24 Jun 2014 13:38:37 +0200
-Message-ID: <53A9633D.4050800@suse.de>
-References: <1403501545-16482-1-git-send-email-rahul.sharma@samsung.com> <1403501545-16482-4-git-send-email-rahul.sharma@samsung.com> <53A90ADA.2040306@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 4/4] ARM: dts: refactor Odroid DTS file and add support for
+ Odroid X2 and U2/U3
+Date: Tue, 24 Jun 2014 13:47:53 +0200
+Message-ID: <53A96569.6020705@samsung.com>
+References: <1402997133-13827-1-git-send-email-m.szyprowski@samsung.com>
+ <1402997133-13827-5-git-send-email-m.szyprowski@samsung.com>
+ <CAD8Lp46oYP6wiT_Ehor6O-LZ8Z+vgJLh0fKivKKCdzVG+SGNgQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:41003 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750806AbaFXLil (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:11216 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751466AbaFXLr4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 07:38:41 -0400
-In-Reply-To: <53A90ADA.2040306@samsung.com>
+	Tue, 24 Jun 2014 07:47:56 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N7O000IB8RFF810@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Jun 2014 12:47:39 +0100 (BST)
+In-reply-to: <CAD8Lp46oYP6wiT_Ehor6O-LZ8Z+vgJLh0fKivKKCdzVG+SGNgQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
+To: Daniel Drake <drake@endlessm.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>
 
-Am 24.06.2014 07:21, schrieb Inki Dae:
-> On 2014=EB=85=84 06=EC=9B=94 23=EC=9D=BC 14:32, Rahul Sharma wrote:
->> Allowing only one layer update per vsync can cause issues
->> while there are update available for both layers. There is
->> a good amount of possibility to loose updates if we allow
->> single update per vsync.
->>
->> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_mixer.c |    7 +------
->>  1 file changed, 1 insertion(+), 6 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm=
-/exynos/exynos_mixer.c
->> index d359501..6773b03 100644
->> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->> @@ -511,13 +511,8 @@ static void vp_video_buffer(struct mixer_contex=
-t *ctx, int win)
->>  static void mixer_layer_update(struct mixer_context *ctx)
->>  {
->>  	struct mixer_resources *res =3D &ctx->mixer_res;
->> -	u32 val;
->> -
->> -	val =3D mixer_reg_read(res, MXR_CFG);
->> =20
->> -	/* allow one update per vsync only */
->> -	if (!(val & MXR_CFG_LAYER_UPDATE_COUNT_MASK))
->> -		mixer_reg_writemask(res, MXR_CFG, ~0, MXR_CFG_LAYER_UPDATE);
->> +	mixer_reg_writemask(res, MXR_CFG, ~0, MXR_CFG_LAYER_UPDATE);
->=20
-> Rahul, it looks good to me and ok as is. But above codes don't consid=
-er
-> Exynos4 series. In case of Exynos4xxx SoC,
-> MXR_CFG_LAYER_UPDATE_COUNT_MASK and MXR_CFG_LAYER_UPDATE of MIXER_CFG
-> register are reserved fields. So can you work that patch to be
-> considered for Exynos4xxx SoC? That patch would be additional one.
->=20
-> Anyway, will apply it as is, and I will wait for the additional patch=
-=2E
+Hello,
 
-If it's not too late, could you fix up "multiple" in the subject? :)
+On 2014-06-19 14:43, Daniel Drake wrote:
+> On Tue, Jun 17, 2014 at 10:25 AM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> This patch moves some parts of exynos4412-odroidx.dts to common
+>> exynos4412-odroid-common.dtsi file and adds support for Odroid X2 and
+>> U2/U3 boards. X2 is same as X, but it has faster SoC module (1.7GHz
+>> instead of 1.4GHz), while U2/U3 differs from X2 by different way of
+>> routing signals to host USB hub. It also lacks some hw modules not yet
+>> supported by those dts files (i.e. LCD & touch panel).
+> Thanks for this! It is working on ODROID-U2: at least eMMC/SD, LED, serial.
+>
+> Just 2 minor questions from reviewing:
+>
+> Odroid-X DTS used to have serial ports at 13820000 and 13830000, this
+> patch removes them, but leaves 2.
 
-Cheers,
-Andreas
+Right. I've forgot the UART port change. Now I've checked it again and
+schematics reveals that Odroid X/X2 and U2/U3 has UART1 available on UART
+connector. On the other hand U2/U3 have UART0 RX/TX lines on GPIO connector,
+while X/X2 has UART3 lines on the LCD/GPIO connector.
 
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+> I can understand the idea of removing entries for ports that are not
+> available on the board, but I've never seen an ODROID with 2 serial
+> ports - should we bring this down to just the 1 enabled serial port
+> that is accessible?
+
+That would be best solution, but this way the tty driver name will change
+from ttySAC1 to ttySAC0 for UART1 port. Until uart driver gets fixed, I
+would keep all 4 uart defined on X/X2 and define only uart 0 and 1 on
+U2/U3. I will fix this in the next version of Odroid patches.
+
+> Odroid-X DTS used to enable EHCI port 2, but with this refactoring, no
+> longer does. Intentional?
+
+This was a bug in the initial patch adding usb support. X and X2 uses only
+HSCI0 port (ehci port 1).
+
+Thanks for your review!
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
