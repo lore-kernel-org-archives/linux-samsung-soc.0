@@ -1,99 +1,65 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
-Date: Tue, 24 Jun 2014 21:03:03 +0530
-Message-ID: <CAM4voanJ_auOJoauvsMOVz3nhjx3hGgpbzccMMwn2ouvjwWy2g@mail.gmail.com>
-References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
-	<1403618235-19353-6-git-send-email-t.figa@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: [PATCH] phy: phy-samsung-usb2: Change phy power on/power off
+ sequence
+Date: Tue, 24 Jun 2014 17:35:20 +0200
+Message-ID: <074a01cf8fc1$e906f0c0$bb14d240$%debski@samsung.com>
+References: <1403614495-9291-1-git-send-email-k.debski@samsung.com>
+ <CAD8Lp441832-ZVV8FQChEXcLqVpZqygv3iaF95_SfZOH_xkFPg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f175.google.com ([209.85.216.175]:55002 "EHLO
-	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753125AbaFXPdE (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:33376 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753032AbaFXPfY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 11:33:04 -0400
-In-Reply-To: <1403618235-19353-6-git-send-email-t.figa@samsung.com>
+	Tue, 24 Jun 2014 11:35:24 -0400
+In-reply-to: <CAD8Lp441832-ZVV8FQChEXcLqVpZqygv3iaF95_SfZOH_xkFPg@mail.gmail.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+To: 'Daniel Drake' <drake@endlessm.com>
+Cc: linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-usb@vger.kernel.org, kishon@ti.com, Tomasz Figa <t.figa@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, gautam.vivek@samsung.com
 
-Hi Tomasz,
+Hi Daniel,
 
-On Tue, Jun 24, 2014 at 7:27 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Due to recent consolidation of Exynos suspend and cpuidle code, some
-> parts of suspend and resume sequences are executed two times, once from
-> exynos_pm_syscore_ops and then from exynos_cpu_pm_notifier() and thus it
-> breaks suspend, at least on Exynos4-based boards.
->
-> This patch fixes the issue by removing exynos_pm_syscore_ops completely
-> and making the code rely only on CPU PM notifier.
->
-> Tested on Exynos4210-based Trats board.
->
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> ---
->  arch/arm/mach-exynos/pm.c | 20 ++++----------------
->  1 file changed, 4 insertions(+), 16 deletions(-)
->
-A patch from me has recently gone in which converts the soc_is checks
-for A9 specific registers to  the A9 part number. This patch will
-probably have to be rebased atop it.
+> From: Daniel Drake [mailto:drake@endlessm.com]
+> Sent: Tuesday, June 24, 2014 5:09 PM
+> 
+> On Tue, Jun 24, 2014 at 1:54 PM, Kamil Debski <k.debski@samsung.com>
+> wrote:
+> > The Exynos4412 USB 2.0 PHY hardware differs from the description
+> > provided in the documentation. Some register bits have different
+> > function. This patch fixes the defines of register bits and changes
+> > the way how phys are powered on and off.
+> 
+> I guess this replaces the patch titled "drivers: phy: exynos4x12-phy:
+> fix HSIC1 power on/off sequence"
 
-Regards,
-Abhilash
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index 87c0d34..98d4926 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
-> @@ -364,11 +364,6 @@ early_wakeup:
->         return;
->  }
->
-> -static struct syscore_ops exynos_pm_syscore_ops = {
-> -       .suspend        = exynos_pm_suspend,
-> -       .resume         = exynos_pm_resume,
-> -};
-> -
->  /*
->   * Suspend Ops
->   */
-> @@ -438,19 +433,13 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
->
->         switch (cmd) {
->         case CPU_PM_ENTER:
-> -               if (cpu == 0) {
-> -                       exynos_pm_central_suspend();
-> -                       exynos_cpu_save_register();
-> -               }
-> +               if (cpu == 0)
-> +                       exynos_pm_suspend();
->                 break;
->
->         case CPU_PM_EXIT:
-> -               if (cpu == 0) {
-> -                       if (!soc_is_exynos5250())
-> -                               scu_enable(S5P_VA_SCU);
-> -                       exynos_cpu_restore_register();
-> -                       exynos_pm_central_resume();
-> -               }
-> +               if (cpu == 0)
-> +                       exynos_pm_resume();
->                 break;
->         }
->
-> @@ -475,6 +464,5 @@ void __init exynos_pm_init(void)
->         tmp |= ((0xFF << 8) | (0x1F << 1));
->         __raw_writel(tmp, S5P_WAKEUP_MASK);
->
-> -       register_syscore_ops(&exynos_pm_syscore_ops);
->         suspend_set_ops(&exynos_suspend_ops);
->  }
-> --
-> 1.9.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Yes, indeed it replaces this patch. I did some more research on how the
+hardware actually behaves.
+
+> 
+> Tested on ODROID-U2. Seems to be working as well as the previous patch:
+
+Thank you very much for testing.
+
+> - Internal SMSC hub works on boot and after reboot, tested with USB
+> mouse
+> - Internal SMSC ethernet device works on boot, but disappears upon
+> reboot. (same as previous patch, also reproduced by Marek)
+
+By reboot I guess that you mean typing "reboot" or by using SysRq magic
+and not power cycling?
+
+If so, I had experienced the same symptoms. I guess that the Ethernet
+chip is not reset properly and fails to enumerate without power cycling
+(it's nRESET pin is connected to P3V3).
+
+I found that removing regulator-always-on from buck8_reg: BUCK8 in the
+dts file fixes this problem.
+
+Best wishes,
+-- 
+Kamil Debski
+Samsung R&D Institute Poland
