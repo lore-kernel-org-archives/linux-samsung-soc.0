@@ -1,15 +1,16 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm/exynos: Support DP CLKCON register in FIMD driver
-Date: Tue, 24 Jun 2014 16:15:02 +0200
-Message-ID: <53A987E6.8090609@samsung.com>
-References: <1403608164-23728-1-git-send-email-ajaykumar.rs@samsung.com>
- <53A9769A.5030907@samsung.com>
- <CAEC9eQNWrejZmXtYNoc3w6SF05kOXh2QPjDM0A73pssE=kEeTQ@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 3/5 v2] drm/exynos: allow mulitple layer updates per vsync
+ for mixer
+Date: Tue, 24 Jun 2014 23:50:49 +0900
+Message-ID: <CAAQKjZMkn4BCrJOPA793A5CBLpDfJLZ-4w85=TsZr0P3L0bAHQ@mail.gmail.com>
+References: <1403501545-16482-1-git-send-email-rahul.sharma@samsung.com>
+ <1403501545-16482-4-git-send-email-rahul.sharma@samsung.com>
+ <53A90ADA.2040306@samsung.com> <53A9633D.4050800@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAEC9eQNWrejZmXtYNoc3w6SF05kOXh2QPjDM0A73pssE=kEeTQ@mail.gmail.com>
+In-Reply-To: <53A9633D.4050800@suse.de>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -19,93 +20,49 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Cc: kgene.kim@samsung.com, joshi@samsung.com, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Rahul Sharma <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 06/24/2014 03:14 PM, Ajay kumar wrote:
-> On Tue, Jun 24, 2014 at 9:01 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
->> Hi Ajay,
->>
->> On 06/24/2014 01:09 PM, Ajay Kumar wrote:
->>> Add the missing setting for DP CLKCON register.
->>>
->>> This register is present on Exynos5 based FIMD controllers,
->>> and needs to be used if we are using DP.
->>>
->>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->>> ---
->>>  drivers/gpu/drm/exynos/exynos_drm_fimd.c |    5 +++++
->>>  include/video/samsung_fimd.h             |    4 ++++
->>>  2 files changed, 9 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->>> index 33161ad..5d3045d 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->>> @@ -72,6 +72,7 @@ struct fimd_driver_data {
->>>       unsigned int has_shadowcon:1;
->>>       unsigned int has_clksel:1;
->>>       unsigned int has_limited_fmt:1;
->>> +     unsigned int has_dp_clkcon:1;
->>>  };
->>>
->>>  static struct fimd_driver_data s3c64xx_fimd_driver_data = {
->>> @@ -88,6 +89,7 @@ static struct fimd_driver_data exynos4_fimd_driver_data = {
->>>  static struct fimd_driver_data exynos5_fimd_driver_data = {
->>>       .timing_base = 0x20000,
->>>       .has_shadowcon = 1,
->>> +     .has_dp_clkcon = 1,
->>>  };
->>>
->>>  struct fimd_win_data {
->>> @@ -331,6 +333,9 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
->>>       if (clkdiv > 1)
->>>               val |= VIDCON0_CLKVAL_F(clkdiv - 1) | VIDCON0_CLKDIR;
->>>
->>> +     if (ctx->driver_data->has_dp_clkcon)
->>> +             writel(DP_CLK_ENABLE, ctx->regs + DP_CLKCON);
->>> +
->> This code always enables the clock on exynos5. As I understand it should
->> be enabled only if DP is used.
-> Right!
-> But, when I searched for the display interface,
-> only exynos4 based boards use MIPI/DPI, and all exynos5 based boards use DP.
-> So, I thought adding this in driver_data for exynos5 should be fine.
-
-Arndale and Arndale-Octa have MIPI/DSI interface with MIPI/LVDS bridge.
-
->
-> Inki/Andrej - Shall I add it as an optional DT property?
-
-No, property is redundant. The simplest solution could be to use
-CONFIG_DRM_EXYNOS_DP
-macro but it is quite ugly.
-I guess extending little bit exynos_drm framework to allow detection of
-DP in fimd would be better.
-
-Regards
-Andrzej
-
->
-> Ajay
->>
->>>       writel(val, ctx->regs + VIDCON0);
->>>  }
->>>
->>> diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
->>> index b039320..d8f4b0b 100644
->>> --- a/include/video/samsung_fimd.h
->>> +++ b/include/video/samsung_fimd.h
->>> @@ -435,6 +435,10 @@
->>>  #define BLENDCON_NEW_8BIT_ALPHA_VALUE                (1 << 0)
->>>  #define BLENDCON_NEW_4BIT_ALPHA_VALUE                (0 << 0)
->>>
->>> +/* Video clock enable for DP */
->>> +#define DP_CLKCON                            0x27C
->>> +#define DP_CLK_ENABLE                                0x2
->>> +
->>>  /* Notes on per-window bpp settings
->>>   *
->>>   * Value     Win0     Win1     Win2     Win3     Win 4
->>>
+MjAxNC0wNi0yNCAyMDozOCBHTVQrMDk6MDAgQW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJlckBzdXNl
+LmRlPjoKPiBBbSAyNC4wNi4yMDE0IDA3OjIxLCBzY2hyaWViIElua2kgRGFlOgo+PiBPbiAyMDE0
+64WEIDA27JuUIDIz7J28IDE0OjMyLCBSYWh1bCBTaGFybWEgd3JvdGU6Cj4+PiBBbGxvd2luZyBv
+bmx5IG9uZSBsYXllciB1cGRhdGUgcGVyIHZzeW5jIGNhbiBjYXVzZSBpc3N1ZXMKPj4+IHdoaWxl
+IHRoZXJlIGFyZSB1cGRhdGUgYXZhaWxhYmxlIGZvciBib3RoIGxheWVycy4gVGhlcmUgaXMKPj4+
+IGEgZ29vZCBhbW91bnQgb2YgcG9zc2liaWxpdHkgdG8gbG9vc2UgdXBkYXRlcyBpZiB3ZSBhbGxv
+dwo+Pj4gc2luZ2xlIHVwZGF0ZSBwZXIgdnN5bmMuCj4+Pgo+Pj4gU2lnbmVkLW9mZi1ieTogUmFo
+dWwgU2hhcm1hIDxyYWh1bC5zaGFybWFAc2Ftc3VuZy5jb20+Cj4+PiAtLS0KPj4+ICBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIHwgICAgNyArLS0tLS0tCj4+PiAgMSBmaWxl
+IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCA2IGRlbGV0aW9ucygtKQo+Pj4KPj4+IGRpZmYgLS1n
+aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYwo+Pj4gaW5kZXggZDM1OTUwMS4uNjc3M2IwMyAxMDA2
+NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4+ICsr
+KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4+IEBAIC01MTEsMTMg
+KzUxMSw4IEBAIHN0YXRpYyB2b2lkIHZwX3ZpZGVvX2J1ZmZlcihzdHJ1Y3QgbWl4ZXJfY29udGV4
+dCAqY3R4LCBpbnQgd2luKQo+Pj4gIHN0YXRpYyB2b2lkIG1peGVyX2xheWVyX3VwZGF0ZShzdHJ1
+Y3QgbWl4ZXJfY29udGV4dCAqY3R4KQo+Pj4gIHsKPj4+ICAgICAgc3RydWN0IG1peGVyX3Jlc291
+cmNlcyAqcmVzID0gJmN0eC0+bWl4ZXJfcmVzOwo+Pj4gLSAgICB1MzIgdmFsOwo+Pj4gLQo+Pj4g
+LSAgICB2YWwgPSBtaXhlcl9yZWdfcmVhZChyZXMsIE1YUl9DRkcpOwo+Pj4KPj4+IC0gICAgLyog
+YWxsb3cgb25lIHVwZGF0ZSBwZXIgdnN5bmMgb25seSAqLwo+Pj4gLSAgICBpZiAoISh2YWwgJiBN
+WFJfQ0ZHX0xBWUVSX1VQREFURV9DT1VOVF9NQVNLKSkKPj4+IC0gICAgICAgICAgICBtaXhlcl9y
+ZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgfjAsIE1YUl9DRkdfTEFZRVJfVVBEQVRFKTsKPj4+
+ICsgICAgbWl4ZXJfcmVnX3dyaXRlbWFzayhyZXMsIE1YUl9DRkcsIH4wLCBNWFJfQ0ZHX0xBWUVS
+X1VQREFURSk7Cj4+Cj4+IFJhaHVsLCBpdCBsb29rcyBnb29kIHRvIG1lIGFuZCBvayBhcyBpcy4g
+QnV0IGFib3ZlIGNvZGVzIGRvbid0IGNvbnNpZGVyCj4+IEV4eW5vczQgc2VyaWVzLiBJbiBjYXNl
+IG9mIEV4eW5vczR4eHggU29DLAo+PiBNWFJfQ0ZHX0xBWUVSX1VQREFURV9DT1VOVF9NQVNLIGFu
+ZCBNWFJfQ0ZHX0xBWUVSX1VQREFURSBvZiBNSVhFUl9DRkcKPj4gcmVnaXN0ZXIgYXJlIHJlc2Vy
+dmVkIGZpZWxkcy4gU28gY2FuIHlvdSB3b3JrIHRoYXQgcGF0Y2ggdG8gYmUKPj4gY29uc2lkZXJl
+ZCBmb3IgRXh5bm9zNHh4eCBTb0M/IFRoYXQgcGF0Y2ggd291bGQgYmUgYWRkaXRpb25hbCBvbmUu
+Cj4+Cj4+IEFueXdheSwgd2lsbCBhcHBseSBpdCBhcyBpcywgYW5kIEkgd2lsbCB3YWl0IGZvciB0
+aGUgYWRkaXRpb25hbCBwYXRjaC4KPgo+IElmIGl0J3Mgbm90IHRvbyBsYXRlLCBjb3VsZCB5b3Ug
+Zml4IHVwICJtdWx0aXBsZSIgaW4gdGhlIHN1YmplY3Q/IDopCgpDb3JyZWN0ZWQuIDopCgpUaGFu
+a3MsCklua2kgRGFlCgo+Cj4gQ2hlZXJzLAo+IEFuZHJlYXMKPgo+IC0tCj4gU1VTRSBMSU5VWCBQ
+cm9kdWN0cyBHbWJILCBNYXhmZWxkc3RyLiA1LCA5MDQwOSBOw7xybmJlcmcsIEdlcm1hbnkKPiBH
+RjogSmVmZiBIYXduLCBKZW5uaWZlciBHdWlsZCwgRmVsaXggSW1lbmTDtnJmZmVyOyBIUkIgMTY3
+NDYgQUcgTsO8cm5iZXJnCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2Vu
+ZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkg
+b2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9t
+byBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
+aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
