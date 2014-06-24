@@ -1,66 +1,76 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 3/6] clk: samsung: exynos4: Remove SRC_MASK_ISP gates
-Date: Tue, 24 Jun 2014 15:57:12 +0200
-Message-ID: <1403618235-19353-4-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
+Date: Tue, 24 Jun 2014 15:57:14 +0200
+Message-ID: <1403618235-19353-6-git-send-email-t.figa@samsung.com>
 References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-ISP special clocks have dedicated gating registers and so MUX SRC_MASK
-register should not be used. This patch fixes the problem of
-Exynos4x12-based boards freezing on system suspend, because those
-mux outputs need not to be masked while suspending.
+Due to recent consolidation of Exynos suspend and cpuidle code, some
+parts of suspend and resume sequences are executed two times, once from
+exynos_pm_syscore_ops and then from exynos_cpu_pm_notifier() and thus it
+breaks suspend, at least on Exynos4-based boards.
+
+This patch fixes the issue by removing exynos_pm_syscore_ops completely
+and making the code rely only on CPU PM notifier.
+
+Tested on Exynos4210-based Trats board.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Cc: Mike Turquette <mturquette@linaro.org>
 ---
- drivers/clk/samsung/clk-exynos4.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+ arch/arm/mach-exynos/pm.c | 20 ++++----------------
+ 1 file changed, 4 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 4f150c9..7f4a473 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -925,21 +925,13 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
- 	GATE(CLK_RTC, "rtc", "aclk100", E4X12_GATE_IP_PERIR, 15,
- 			0, 0),
- 	GATE(CLK_KEYIF, "keyif", "aclk100", E4X12_GATE_IP_PERIR, 16, 0, 0),
--	GATE(CLK_SCLK_PWM_ISP, "sclk_pwm_isp", "div_pwm_isp",
--			E4X12_SRC_MASK_ISP, 0, CLK_SET_RATE_PARENT, 0),
--	GATE(CLK_SCLK_SPI0_ISP, "sclk_spi0_isp", "div_spi0_isp_pre",
--			E4X12_SRC_MASK_ISP, 4, CLK_SET_RATE_PARENT, 0),
--	GATE(CLK_SCLK_SPI1_ISP, "sclk_spi1_isp", "div_spi1_isp_pre",
--			E4X12_SRC_MASK_ISP, 8, CLK_SET_RATE_PARENT, 0),
--	GATE(CLK_SCLK_UART_ISP, "sclk_uart_isp", "div_uart_isp",
--			E4X12_SRC_MASK_ISP, 12, CLK_SET_RATE_PARENT, 0),
--	GATE(CLK_PWM_ISP_SCLK, "pwm_isp_sclk", "sclk_pwm_isp",
-+	GATE(CLK_PWM_ISP_SCLK, "pwm_isp_sclk", "div_pwm_isp",
- 			E4X12_GATE_IP_ISP, 0, 0, 0),
--	GATE(CLK_SPI0_ISP_SCLK, "spi0_isp_sclk", "sclk_spi0_isp",
-+	GATE(CLK_SPI0_ISP_SCLK, "spi0_isp_sclk", "div_spi0_isp_pre",
- 			E4X12_GATE_IP_ISP, 1, 0, 0),
--	GATE(CLK_SPI1_ISP_SCLK, "spi1_isp_sclk", "sclk_spi1_isp",
-+	GATE(CLK_SPI1_ISP_SCLK, "spi1_isp_sclk", "div_spi1_isp_pre",
- 			E4X12_GATE_IP_ISP, 2, 0, 0),
--	GATE(CLK_UART_ISP_SCLK, "uart_isp_sclk", "sclk_uart_isp",
-+	GATE(CLK_UART_ISP_SCLK, "uart_isp_sclk", "div_uart_isp",
- 			E4X12_GATE_IP_ISP, 3, 0, 0),
- 	GATE(CLK_WDT, "watchdog", "aclk100", E4X12_GATE_IP_PERIR, 14, 0, 0),
- 	GATE(CLK_PCM0, "pcm0", "aclk100", E4X12_GATE_IP_MAUDIO, 2,
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 87c0d34..98d4926 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -364,11 +364,6 @@ early_wakeup:
+ 	return;
+ }
+ 
+-static struct syscore_ops exynos_pm_syscore_ops = {
+-	.suspend	= exynos_pm_suspend,
+-	.resume		= exynos_pm_resume,
+-};
+-
+ /*
+  * Suspend Ops
+  */
+@@ -438,19 +433,13 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+ 
+ 	switch (cmd) {
+ 	case CPU_PM_ENTER:
+-		if (cpu == 0) {
+-			exynos_pm_central_suspend();
+-			exynos_cpu_save_register();
+-		}
++		if (cpu == 0)
++			exynos_pm_suspend();
+ 		break;
+ 
+ 	case CPU_PM_EXIT:
+-		if (cpu == 0) {
+-			if (!soc_is_exynos5250())
+-				scu_enable(S5P_VA_SCU);
+-			exynos_cpu_restore_register();
+-			exynos_pm_central_resume();
+-		}
++		if (cpu == 0)
++			exynos_pm_resume();
+ 		break;
+ 	}
+ 
+@@ -475,6 +464,5 @@ void __init exynos_pm_init(void)
+ 	tmp |= ((0xFF << 8) | (0x1F << 1));
+ 	__raw_writel(tmp, S5P_WAKEUP_MASK);
+ 
+-	register_syscore_ops(&exynos_pm_syscore_ops);
+ 	suspend_set_ops(&exynos_suspend_ops);
+ }
 -- 
 1.9.3
