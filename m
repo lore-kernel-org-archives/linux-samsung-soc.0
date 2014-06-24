@@ -1,81 +1,99 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [RFC 4/4] ARM: dts: exynos5250: Add Spring device tree
-Date: Tue, 24 Jun 2014 08:20:30 -0700
-Message-ID: <CAD=FV=VEVwPzW4hdR1kSdZS741Hn6VnDr+yXetTPsN4hEym2xA@mail.gmail.com>
-References: <1403486483-4063-1-git-send-email-afaerber@suse.de>
-	<1403486483-4063-5-git-send-email-afaerber@suse.de>
-	<CAD=FV=WHAqASC+bp8mGVnhfr79F5LapJCTLtSfgUG8XuRUSCqw@mail.gmail.com>
-	<53A8AE4C.6080702@suse.de>
-	<CAD=FV=W96QpDhh1NSaVwrXYjL6Jr-v4sq1-eRSfT=tErw_KCOQ@mail.gmail.com>
-	<53A94DA1.50703@collabora.co.uk>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
+Date: Tue, 24 Jun 2014 21:03:03 +0530
+Message-ID: <CAM4voanJ_auOJoauvsMOVz3nhjx3hGgpbzccMMwn2ouvjwWy2g@mail.gmail.com>
+References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
+	<1403618235-19353-6-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f172.google.com ([209.85.220.172]:40700 "EHLO
-	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753819AbaFXPUc (ORCPT
+Received: from mail-qc0-f175.google.com ([209.85.216.175]:55002 "EHLO
+	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753125AbaFXPdE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 11:20:32 -0400
-Received: by mail-vc0-f172.google.com with SMTP id hy10so474102vcb.31
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2014 08:20:31 -0700 (PDT)
-In-Reply-To: <53A94DA1.50703@collabora.co.uk>
+	Tue, 24 Jun 2014 11:33:04 -0400
+In-Reply-To: <1403618235-19353-6-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, ARM PORT <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Todd Broch <tbroch@chromium.org>, Tomasz Figa <t.figa@samsung.com>, jwerner@chromium.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-Javier,
+Hi Tomasz,
 
-On Tue, Jun 24, 2014 at 3:06 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> Hello Doug,
+On Tue, Jun 24, 2014 at 7:27 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Due to recent consolidation of Exynos suspend and cpuidle code, some
+> parts of suspend and resume sequences are executed two times, once from
+> exynos_pm_syscore_ops and then from exynos_cpu_pm_notifier() and thus it
+> breaks suspend, at least on Exynos4-based boards.
 >
-> On 06/24/2014 06:05 AM, Doug Anderson wrote:
-> Another option is to identify DTS fragments that are common across boards and
-> create .dtsi files for these specific chunks instead of trying to group all set
-> of common things on a single .dtsi file.
+> This patch fixes the issue by removing exynos_pm_syscore_ops completely
+> and making the code rely only on CPU PM notifier.
 >
-> For example, a quite common design for OMAP2+ based boards is to use a SMSC LAN
-> chip connected to OMAP's General-Purpose Memory Controller (GPMC). So the
-> following files were created to reduce DTS duplication:
+> Tested on Exynos4210-based Trats board.
 >
-> arch/arm/boot/dts/omap-gpmc-smsc911x.dtsi
-> arch/arm/boot/dts/omap-gpmc-smsc9221.dtsi
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  arch/arm/mach-exynos/pm.c | 20 ++++----------------
+>  1 file changed, 4 insertions(+), 16 deletions(-)
 >
-> Now that I think about it, is the same that what you did for
-> arm/boot/dts/cros-ec-keyboard.dtsi.
+A patch from me has recently gone in which converts the soc_is checks
+for A9 specific registers to  the A9 part number. This patch will
+probably have to be rebased atop it.
+
+Regards,
+Abhilash
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index 87c0d34..98d4926 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -364,11 +364,6 @@ early_wakeup:
+>         return;
+>  }
 >
-> Maybe splitting exynos5250-cros-common.dtsi in a set of .dtsi files will make it
-> more flexible/reusable?
-
-Yes, I think the config fragments can be cleaner but I think we have
-to be judicious about using them.  There are definitely tradeoffs
-involved.  The keyboard was such an excessively large thing and
-totally duplicated, so moving it out made sense.  Other bits are less
-obvious (to me) because there are so many interactions / combinations
-and you end up with a bit of spaghetti in terms of which labels are
-used by and provided by each fragment.  I guess possibly you could
-codify that better...
-
-A few thoughts looking at exynos5420-peach-pit:
-
-* backlight: seems (?) too board specific
-* samsung,exynos5420-oscclk: could totally be a fragment, but very small.
-* power key: could be a fragment for all boards that happen to use
-gpx1-2 for this
-* sound: could be a fragment for all devices using
-"google,snow-audio-max98090", possibly.
-
-
-> Personally I think that "status = [enabled | disabled]" only makes sense for IP
-> blocks that are part of the SoC but may or may not be used by a board (e.g: i2c
-> and spi buses, sdhci and usb host controllers, etc).
+> -static struct syscore_ops exynos_pm_syscore_ops = {
+> -       .suspend        = exynos_pm_suspend,
+> -       .resume         = exynos_pm_resume,
+> -};
+> -
+>  /*
+>   * Suspend Ops
+>   */
+> @@ -438,19 +433,13 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
 >
-> DTS should be a description of the hardware so I agree that having a disabled
-> node for a device that is not present in the board is not right.
-
-Right.  We'll take a look again in v2 when cros-common isn't used.  I
-think this could go in steps:
-1. Don't use cros-common for spring
-2. Don't use cros-common for snow (fold stuff in)
-3. Introduce some fragments.
+>         switch (cmd) {
+>         case CPU_PM_ENTER:
+> -               if (cpu == 0) {
+> -                       exynos_pm_central_suspend();
+> -                       exynos_cpu_save_register();
+> -               }
+> +               if (cpu == 0)
+> +                       exynos_pm_suspend();
+>                 break;
+>
+>         case CPU_PM_EXIT:
+> -               if (cpu == 0) {
+> -                       if (!soc_is_exynos5250())
+> -                               scu_enable(S5P_VA_SCU);
+> -                       exynos_cpu_restore_register();
+> -                       exynos_pm_central_resume();
+> -               }
+> +               if (cpu == 0)
+> +                       exynos_pm_resume();
+>                 break;
+>         }
+>
+> @@ -475,6 +464,5 @@ void __init exynos_pm_init(void)
+>         tmp |= ((0xFF << 8) | (0x1F << 1));
+>         __raw_writel(tmp, S5P_WAKEUP_MASK);
+>
+> -       register_syscore_ops(&exynos_pm_syscore_ops);
+>         suspend_set_ops(&exynos_suspend_ops);
+>  }
+> --
+> 1.9.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
