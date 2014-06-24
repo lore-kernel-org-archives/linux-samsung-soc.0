@@ -1,119 +1,107 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] arm: exynos: Modify pm code to check for cortex A9
-	rather than the SoC
-Date: Tue, 24 Jun 2014 17:30:30 +0100
-Message-ID: <20140624163030.GY32514@n2100.arm.linux.org.uk>
-References: <1400814061-12813-1-git-send-email-a.kesavan@samsung.com> <CAM4voa=3zzo-2KbjDtBOca+uJeSxT2OYpi+rJuSGsDg-vo7GYA@mail.gmail.com> <20140624161114.GW32514@n2100.arm.linux.org.uk> <53A9A568.6060108@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2] ARM: dts: Add cros_ec to exynos5420-peach-pit and
+ exynos5800-peach-pi
+Date: Tue, 24 Jun 2014 18:33:37 +0200
+Message-ID: <53A9A861.4020502@collabora.co.uk>
+References: <1403556576-8038-1-git-send-email-dianders@chromium.org>	<53A91E09.7050603@gmail.com> <CAD=FV=WwmjyH4Uq_SeRMf9-f6pgu+HpkZYRx_Sv-CJV-z8rkmA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:40797 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S932353AbaFXQah (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:59808 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753257AbaFXQdo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 12:30:37 -0400
-Content-Disposition: inline
-In-Reply-To: <53A9A568.6060108@samsung.com>
+	Tue, 24 Jun 2014 12:33:44 -0400
+In-Reply-To: <CAD=FV=WwmjyH4Uq_SeRMf9-f6pgu+HpkZYRx_Sv-CJV-z8rkmA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Doug Anderson <dianders@chromium.org>, Tushar Behera <trblinux@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Tushar Behera <tushar.b@samsung.com>, Olof Johansson <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>, Ben Dooks <ben-linux@fluff.org>, naveen krishna <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rahul Sharma <rahul.sharma@samsung.com>, Simon Glass <sjg@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>, Ajay kumar <ajaynumb@gmail.co>
 
-On Tue, Jun 24, 2014 at 06:20:56PM +0200, Tomasz Figa wrote:
-> Hi Russell,
+Hello Doug,
+
+On 06/24/2014 06:28 PM, Doug Anderson wrote:
+> Tushar,
 > 
-> On 24.06.2014 18:11, Russell King - ARM Linux wrote:
-> > On Mon, Jun 16, 2014 at 09:37:14AM +0530, Abhilash Kesavan wrote:
-> >> Hi Kukjin,
-> >>
-> >> On Fri, May 23, 2014 at 8:31 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
-> >>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> >>
-> >> Do you have any comments on this patch ?
-> > 
-> > I do.
-> > 
-> >>> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> >>> index d10c351..6dd4a11 100644
-> >>> --- a/arch/arm/mach-exynos/pm.c
-> >>> +++ b/arch/arm/mach-exynos/pm.c
-> >>> @@ -300,7 +300,7 @@ static int exynos_pm_suspend(void)
-> >>>         tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
-> >>>         __raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
-> >>>
-> >>> -       if (!soc_is_exynos5250())
-> >>> +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> >>>                 exynos_cpu_save_register();
-> > ...
-> >>> @@ -334,7 +334,7 @@ static void exynos_pm_resume(void)
-> >>>         if (exynos_pm_central_resume())
-> >>>                 goto early_wakeup;
-> >>>
-> >>> -       if (!soc_is_exynos5250())
-> >>> +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> >>>                 exynos_cpu_restore_register();
-> > 
-> > It is invalid to check just the part number.  The part number on its
-> > own is meaningless without taking account of the implementor.  Both
-> > the implementor and the part number should be checked at each of these
-> > sites.
+> On Mon, Jun 23, 2014 at 11:43 PM, Tushar Behera <trblinux@gmail.com> wrote:
+>> On 06/24/2014 02:19 AM, Doug Anderson wrote:
+>>> This adds cros_ec to exynos5420-peach-pit and exynos5800-peach-pi,
+>>> including:
+>>> * The keyboard
+>>> * The i2c tunnel
+>>> * The tps65090 under the i2c tunnel
+>>> * The battery under the i2c tunnel
+>>>
+>>> To add extra motivation, it should be noted that tps65090 is one of
+>>> the things needed to get display-related FETs turned on for pit and
+>>> pi.
+>>>
+>>> Note that this relies on a few outstanding changes:
+>>> * Needs (spi: s3c64xx: fix broken "cs_gpios" usage in the driver) and
+>>>   (spi: s3c64xx: for DT platofrms always get the chipselect info from
+>>>   DT node) to work properly and match the documented bindings.  See
+>>>   <https://patchwork.kernel.org/patch/4346701/> and
+>>>   <https://patchwork.kernel.org/patch/4346711/>
+>>>
+>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>>> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>>
+>> Along with the dependency patches on next-20140623, tested keyboard on
+>> Peach-Pi board.
+>>
+>> Tested-by: Tushar Behera <tushar.b@samsung.com>
+>>
+>> Some comments below.
+>>
+>>> ---
+>>> Changes in v2:
+>>> - Now just one patch since mfd patch landed.
+>>> - Rebased to ToT linux-next
+>>>
+>>>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 145 +++++++++++++++++++++++++++++
+>>>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 145 +++++++++++++++++++++++++++++
+>>>  2 files changed, 290 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>> index 7649982..581f385 100644
+>>> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>
+>>> +                             regulators {
+>>> +                                     dcdc1 {
+>>> +                                             ti,enable-ext-control;
+>>> +                                     };
+>>> +                                     dcdc2 {
+>>> +                                             ti,enable-ext-control;
+>>> +                                     };
+>>> +                                     dcdc3 {
+>>> +                                             ti,enable-ext-control;
+>>> +                                     };
+>>> +                                     fet1 {
+>>
+>> "tps65090_fet1: fet1 {" ?
+>>
+>>> +                                             regulator-name = "vcd_led";
+>>> +                                     };
+>>> +                                     tps65090_fet2: fet2 {
+>>
+>> I would suggest we add similar labels to fet1, fet3, fet4, fet5 and fet6
+>> also. That way it would be easy to reference them in subsequent DT nodes.
+>>
+>> Same comment for Peach-Pi dts file too.
 > 
-> Just out of curiosity, are you aware of more than one implementor of
-> Cortex A9 on Exynos SoCs that would differ in having the need for save
-> and restore of those registers?
+> OK.  I added it to all the regulators in tps65090.  That'll probably
+> be useful for Javier in his max77802 work.
+>
 
-That doesn't stop stuff changing in the future.  We've been here before.
-Let's do the job properly if we're going to do the job at all.
+Thanks, in fact I did add both tps65090_dcdc1 and tps65090_dcdc2 labels to be
+able to use these regulators as supply for some of the max77802 regulators.
 
-If people still whine about this, I will force a change to make it
-harder to do the wrong thing - I will get rid of the _part_number
-interface replacing it with one which always returns the implementor
-as well as the part number so both have to be checked.
+Will rebase on top of this.
 
-> > Another point: exynos have taken it upon themselves to add code which
-> > saves various ARM core registers.  This is a bad idea, it brings us
-> > back to the days where every platform did their own suspend implementations.
-> > 
-> > CPU level registers should be handled by CPU level code, not by platform
-> > code.  Is there a reason why this can't be added to the Cortex-A9
-> > support code in proc-v7.S ?
+Best regards,
+Javier
+
+> -Doug
 > 
-> I agree that there is nothing platform specific in saving and restoring
-> those registers and that this should be probably handled by generic code.
-> 
-> However, when running in non-secure world, the only way to restore this
-> is to call a firmware operation, which is platform specific. Is there a
-> way to do something like this from proc-v7.S?
-
-We never call firmware operations from assembly code.  However, in exynos'
-case, it's not running in non-secure mode because it's happily reading
-and writing these registers with no issue.
-
-Platforms running in non-secure mode already have to ensure that various
-work-arounds are implemented in their firmware/boot loader, and this
-really is no different (we wouldn't need this code in the kernel in the
-first place if the firmware/boot loader would get its act together.)
-
-> > And presumably with the CPU level code dealing with those registers,
-> > you don't need the calls to save and restore these registers in this
-> > notifier.
-> > 
-> > Which, by the way, is probably illegal to run as it runs in a read-
-> > lock code path and with the SCU disabled.  As you're calling
-> > scu_enable() that means you're non-coherent with the other CPUs,
-> > and therefore locks don't work.
-> 
-> I don't see the read lock code path you mention. Could you elaborate on
-> this? By the way, other CPUs are still offline at this point.
-
-We get there from kernel/cpu_pm.c, when the notifier chain is called.
-The notifier chain is called while taking a read lock on
-cpu_pm_notifier_lock.
-
-If this is about the last CPU going down, then why the notifier?  Why
-not put the code in exynos_suspend_enter() ?  Why add this needless
-complexity?
-
--- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
