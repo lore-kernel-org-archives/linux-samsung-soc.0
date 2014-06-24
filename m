@@ -1,62 +1,89 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH 2/4] usb: host: xhci-plat: Add support to get PHYs
-Date: Tue, 24 Jun 2014 11:40:07 +0530
-Message-ID: <CAFp+6iHUX0jn0xW6ijXmRpgXodp43_mBtVxnCcOb2H6duHvigQ@mail.gmail.com>
-References: <1402056736-12674-1-git-send-email-gautam.vivek@samsung.com>
-	<1402056736-12674-3-git-send-email-gautam.vivek@samsung.com>
-	<CAODwPW-2tbDht8P=KsTyTyeBivFtFMiyCpxd0QFa-cUSRTpJjQ@mail.gmail.com>
+From: Tushar Behera <trblinux@gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: Add cros_ec to exynos5420-peach-pit and
+ exynos5800-peach-pi
+Date: Tue, 24 Jun 2014 12:13:21 +0530
+Message-ID: <53A91E09.7050603@gmail.com>
+References: <1403556576-8038-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f52.google.com ([209.85.192.52]:35325 "EHLO
-	mail-qg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750838AbaFXGKI (ORCPT
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:50871 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751332AbaFXGn3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 02:10:08 -0400
-In-Reply-To: <CAODwPW-2tbDht8P=KsTyTyeBivFtFMiyCpxd0QFa-cUSRTpJjQ@mail.gmail.com>
+	Tue, 24 Jun 2014 02:43:29 -0400
+In-Reply-To: <1403556576-8038-1-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Julius Werner <jwerner@chromium.org>
-Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Mathias Nyman <mathias.nyman@intel.com>, LKML <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: mark.rutland@arm.com, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, ijc+devicetree@hellion.org.uk, devicetree@vger.kernel.org, khilman@linaro.org, pawel.moll@arm.com, swarren@wwwdotorg.org, tushar.b@samsung.com, olof@lixom.net, robh+dt@kernel.org, ben-linux@fluff.org, ch.naveen@samsung.com, linux-arm-kernel@lists.infradead.org, rahul.sharma@samsung.com, sjg@chromium.org, linux-kernel@vger.kernel.org, galak@codeaurora.org, ajaynumb@gmail.com, javier.martinez@collabora.co.uk
 
-Hi,
+On 06/24/2014 02:19 AM, Doug Anderson wrote:
+> This adds cros_ec to exynos5420-peach-pit and exynos5800-peach-pi,
+> including:
+> * The keyboard
+> * The i2c tunnel
+> * The tps65090 under the i2c tunnel
+> * The battery under the i2c tunnel
+> 
+> To add extra motivation, it should be noted that tps65090 is one of
+> the things needed to get display-related FETs turned on for pit and
+> pi.
+> 
+> Note that this relies on a few outstanding changes:
+> * Needs (spi: s3c64xx: fix broken "cs_gpios" usage in the driver) and
+>   (spi: s3c64xx: for DT platofrms always get the chipselect info from
+>   DT node) to work properly and match the documented bindings.  See
+>   <https://patchwork.kernel.org/patch/4346701/> and
+>   <https://patchwork.kernel.org/patch/4346711/>
+> 
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
+Along with the dependency patches on next-20140623, tested keyboard on
+Peach-Pi board.
 
-On Tue, Jun 10, 2014 at 1:52 AM, Julius Werner <jwerner@chromium.org> wrote:
->> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
->> index 9ffecd5..453d89e 100644
->> --- a/drivers/usb/host/xhci.h
->> +++ b/drivers/usb/host/xhci.h
->> @@ -1582,6 +1582,9 @@ struct xhci_hcd {
->>         u32                     port_status_u0;
->>  /* Compliance Mode Timer Triggered every 2 seconds */
->>  #define COMP_MODE_RCVRY_MSECS 2000
->> +       /* phys for the controller */
->> +       struct phy              *phy2_gen;
->> +       struct phy              *phy3_gen;
->>  };
->
-> I don't think adding new variables here and restricting most of this
-> logic to xhci-plat.c (in the next patch) is the best way to do it.
-> There's no conceptual reason why other host controllers (e.g. xhci-pci
-> or even EHCI) could not have a similar need to tune their PHY after
-> reset. PHYs are universal to all host controllers.
->
-> There is already a 'phy' member in struct usb_hcd which I think is
-> mostly unused right now. I think it would be much less
-> confusing/redundant to reuse that member for this purpose (you could
-> still set it up from xhci_plat_probe(), and then call it from
-> hcd_bus_resume() or something like that). Since XHCI host controllers
-> already conveniently have two struct usb_hcd (one for 2.0 and one for
-> 3.0), you can cleanly store references to your two PHYs in there.
+Tested-by: Tushar Behera <tushar.b@samsung.com>
 
-Ok, i will look into the suggested approach, and raise flag in case i
-have doubts.
+Some comments below.
 
+> ---
+> Changes in v2:
+> - Now just one patch since mfd patch landed.
+> - Rebased to ToT linux-next
+> 
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 145 +++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 145 +++++++++++++++++++++++++++++
+>  2 files changed, 290 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> index 7649982..581f385 100644
+> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
 
+> +				regulators {
+> +					dcdc1 {
+> +						ti,enable-ext-control;
+> +					};
+> +					dcdc2 {
+> +						ti,enable-ext-control;
+> +					};
+> +					dcdc3 {
+> +						ti,enable-ext-control;
+> +					};
+> +					fet1 {
+
+"tps65090_fet1: fet1 {" ?
+
+> +						regulator-name = "vcd_led";
+> +					};
+> +					tps65090_fet2: fet2 {
+
+I would suggest we add similar labels to fet1, fet3, fet4, fet5 and fet6
+also. That way it would be easy to reference them in subsequent DT nodes.
+
+Same comment for Peach-Pi dts file too.
 
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+Tushar Behera
