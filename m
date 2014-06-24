@@ -1,58 +1,63 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [RFC 0/4] ARM: dts: exynos: Prepare Spring
-Date: Wed, 25 Jun 2014 01:56:44 +0200
-Message-ID: <53AA103C.5040709@suse.de>
-References: <1403486483-4063-1-git-send-email-afaerber@suse.de> <53AA074C.3090904@suse.de> <CAP_ceTzu530D8X13hhRRzpJ67zBvjJp7cVW5y=S+ZrTY6GXJ3Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH v2] i2c: s3c2410: resume the I2C controller earlier
+Date: Tue, 24 Jun 2014 16:56:54 -0700
+Message-ID: <1403654214-25072-1-git-send-email-dianders@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:55088 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752381AbaFXX4r (ORCPT
+Received: from mail-yh0-f74.google.com ([209.85.213.74]:38411 "EHLO
+	mail-yh0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752381AbaFXX46 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 19:56:47 -0400
-In-Reply-To: <CAP_ceTzu530D8X13hhRRzpJ67zBvjJp7cVW5y=S+ZrTY6GXJ3Q@mail.gmail.com>
+	Tue, 24 Jun 2014 19:56:58 -0400
+Received: by mail-yh0-f74.google.com with SMTP id b6so109780yha.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2014 16:56:57 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>
+To: Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, javier.martinez@collabora.co.uk, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Vincent and Doug,
+From: Vincent Palatin <vpalatin@chromium.org>
 
-Am 25.06.2014 01:44, schrieb Vincent Palatin:
-> On Tue, Jun 24, 2014 at 4:18 PM, Andreas F=C3=A4rber <afaerber@suse.d=
-e> wrote:
->> Am 23.06.2014 03:21, schrieb Andreas F=C3=A4rber:
->>> The display goes dark unfortunately (drm bridge series not yet test=
-ed),
->>> but I am able to log in via ssh over USB ethernet adapter okay.
->>
->> Tracked this down to the dp-controller@145B0000 node: The pinctrl se=
-ems
->> irrelevant, only commenting out the whole node helps keep the displa=
-y.
->> That is, hdmi and fimd nodes don't interfere.
->>
->> Adding a pwm backlight node like on snow did not help.
->=20
-> On this board, the backlight is driven by the Parade PS8622 DP-to-LVD=
-S
-> bridge (rather than a SoC PWM as on Snow).
-> You need to ensure that the PS8622 GPIOs (Reset/Sleep) are correctly =
-driven
-> oh, it seems that the PS8622 DRM bridge driver is still in-flight :
-> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg322=
-43.html
+When the wake-up is triggered by the PMIC RTC, the RTC driver is trying
+to read the PMIC interrupt status over I2C and fails because the I2C
+controller is not resumed yet.
+Let's resume the I2C controller earlier in the _noirq phase
+(as other hardwares are doing), so we can properly get the wake-up
+condition.
 
-Yeah, that's the one I meant with "drm bridge series" above. :)
+Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+Changes in v2:
+- Added missing freeze/thaw/poweroff/restore
 
-Thanks for confirming.
+ drivers/i2c/busses/i2c-s3c2410.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Cheers,
-Andreas
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index e828a1d..ecb389c 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1267,7 +1267,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int s3c24xx_i2c_resume(struct device *dev)
++static int s3c24xx_i2c_resume_noirq(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+@@ -1285,7 +1285,11 @@ static int s3c24xx_i2c_resume(struct device *dev)
+ static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops = {
+ #ifdef CONFIG_PM_SLEEP
+ 	.suspend_noirq = s3c24xx_i2c_suspend_noirq,
+-	.resume = s3c24xx_i2c_resume,
++	.resume_noirq = s3c24xx_i2c_resume_noirq,
++	.freeze_noirq = s3c24xx_i2c_suspend_noirq,
++	.thaw_noirq = s3c24xx_i2c_resume_noirq,
++	.poweroff_noirq = s3c24xx_i2c_suspend_noirq,
++	.restore_noirq = s3c24xx_i2c_resume_noirq,
+ #endif
+ };
+ 
+-- 
+2.0.0.526.g5318336
