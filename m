@@ -1,92 +1,279 @@
-From: Sachin Kamat <sachin.kamat@samsung.com>
-Subject: [PATCH 1/1] ARM: Kconfig.debug: Update Samsung UART config options
-Date: Tue, 24 Jun 2014 15:49:31 +0530
-Message-ID: <1403605171-31805-1-git-send-email-sachin.kamat@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:57993 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752809AbaFXKWt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 06:22:49 -0400
-Received: by mail-pd0-f173.google.com with SMTP id r10so77315pdi.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2014 03:22:48 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 10/10] mfd: cros_ec: move EC interrupt to cros_ec_keyb
+Date: Tue, 24 Jun 2014 11:25:22 +0100
+Message-ID: <20140624102522.GI13803@lee--X1>
+References: <1403115247-8853-1-git-send-email-dianders@chromium.org>
+ <1403115247-8853-11-git-send-email-dianders@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1403115247-8853-11-git-send-email-dianders@chromium.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Andrew Bresticker <abrestic@chromium.org>, swarren@wwwdotorg.org, olof@lixom.net, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, sjg@chromium.org, Wolfram Sang <wsa@the-dreams.de>, broonie@kernel.org, dmitry.torokhov@gmail.com, sameo@linux.intel.com, geert@linux-m68k.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, arnd@arndb.de, kgene.kim@samsung.com, spk.linux@gmail.com
 
-In a multiplatform config, the low level debug option shows several
-UART port entries. Improve the user visible string so that it becomes
-clear to the user about Samsung UART ports.
-While at it also remove some lines from the help text that are no
-longer applicable across all Samsung platforms.
+On Wed, 18 Jun 2014, Doug Anderson wrote:
 
-Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
----
- arch/arm/Kconfig.debug |   20 ++++----------------
- 1 file changed, 4 insertions(+), 16 deletions(-)
+> From: Andrew Bresticker <abrestic@chromium.org>
+>=20
+> If we receive EC interrupts after the cros_ec driver has probed, but
+> before the cros_ec_keyb driver has probed, the cros_ec IRQ handler
+> will not run the cros_ec_keyb notifier and the EC will leave the IRQ
+> line asserted.  The cros_ec IRQ handler then returns IRQ_HANDLED and
+> the resulting flood of interrupts causes the machine to hang.
+>=20
+> Since the EC interrupt is currently only used for the keyboard, move
+> the setup and handling of the EC interrupt to the cros_ec_keyb driver=
+=2E
+>=20
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+> Changes in v2:
+> - IRQs should be optional =3D> move EC interrupt to keyboard.
+>=20
+>  drivers/input/keyboard/cros_ec_keyb.c | 58 ++++++++++++++++++++-----=
+----------
+>  drivers/mfd/cros_ec.c                 | 35 +--------------------
+>  include/linux/mfd/cros_ec.h           |  2 --
+>  3 files changed, 34 insertions(+), 61 deletions(-)
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index 3548612b0bfe..b92993e59a12 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -617,53 +617,41 @@ choice
- 		depends on PLAT_SAMSUNG
- 		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
- 		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
--		bool "Use S3C UART 0 for low-level debug"
-+		bool "Use Samsung S3C UART 0 for low-level debug"
- 		help
- 		  Say Y here if you want the debug print routines to direct
- 		  their output to UART 0. The port must have been initialised
- 		  by the boot-loader before use.
- 
--		  The uncompressor code port configuration is now handled
--		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
--
- 	config DEBUG_S3C_UART1
- 		depends on PLAT_SAMSUNG
- 		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
- 		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
--		bool "Use S3C UART 1 for low-level debug"
-+		bool "Use Samsung S3C UART 1 for low-level debug"
- 		help
- 		  Say Y here if you want the debug print routines to direct
- 		  their output to UART 1. The port must have been initialised
- 		  by the boot-loader before use.
- 
--		  The uncompressor code port configuration is now handled
--		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
--
- 	config DEBUG_S3C_UART2
- 		depends on PLAT_SAMSUNG
- 		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
- 		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
--		bool "Use S3C UART 2 for low-level debug"
-+		bool "Use Samsung S3C UART 2 for low-level debug"
- 		help
- 		  Say Y here if you want the debug print routines to direct
- 		  their output to UART 2. The port must have been initialised
- 		  by the boot-loader before use.
- 
--		  The uncompressor code port configuration is now handled
--		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
--
- 	config DEBUG_S3C_UART3
- 		depends on PLAT_SAMSUNG && ARCH_EXYNOS
- 		select DEBUG_EXYNOS_UART
--		bool "Use S3C UART 3 for low-level debug"
-+		bool "Use Samsung S3C UART 3 for low-level debug"
- 		help
- 		  Say Y here if you want the debug print routines to direct
- 		  their output to UART 3. The port must have been initialised
- 		  by the boot-loader before use.
- 
--		  The uncompressor code port configuration is now handled
--		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
--
- 	config DEBUG_S3C2410_UART0
- 		depends on ARCH_S3C24XX
- 		select DEBUG_S3C2410_UART
--- 
-1.7.9.5
+=46or the MFD changes:
+  Acked-by: Lee Jones <lee.jones@linaro.org>
+=20
+> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/ke=
+yboard/cros_ec_keyb.c
+> index b8341ab..791781a 100644
+> --- a/drivers/input/keyboard/cros_ec_keyb.c
+> +++ b/drivers/input/keyboard/cros_ec_keyb.c
+> @@ -24,8 +24,8 @@
+>  #include <linux/module.h>
+>  #include <linux/i2c.h>
+>  #include <linux/input.h>
+> +#include <linux/interrupt.h>
+>  #include <linux/kernel.h>
+> -#include <linux/notifier.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+>  #include <linux/input/matrix_keypad.h>
+> @@ -42,7 +42,6 @@
+>   * @dev: Device pointer
+>   * @idev: Input device
+>   * @ec: Top level ChromeOS device to use to talk to EC
+> - * @event_notifier: interrupt event notifier for transport devices
+>   */
+>  struct cros_ec_keyb {
+>  	unsigned int rows;
+> @@ -55,7 +54,6 @@ struct cros_ec_keyb {
+>  	struct device *dev;
+>  	struct input_dev *idev;
+>  	struct cros_ec_device *ec;
+> -	struct notifier_block notifier;
+>  };
+> =20
+> =20
+> @@ -173,22 +171,6 @@ static void cros_ec_keyb_process(struct cros_ec_=
+keyb *ckdev,
+>  	input_sync(ckdev->idev);
+>  }
+> =20
+> -static int cros_ec_keyb_open(struct input_dev *dev)
+> -{
+> -	struct cros_ec_keyb *ckdev =3D input_get_drvdata(dev);
+> -
+> -	return blocking_notifier_chain_register(&ckdev->ec->event_notifier,
+> -						&ckdev->notifier);
+> -}
+> -
+> -static void cros_ec_keyb_close(struct input_dev *dev)
+> -{
+> -	struct cros_ec_keyb *ckdev =3D input_get_drvdata(dev);
+> -
+> -	blocking_notifier_chain_unregister(&ckdev->ec->event_notifier,
+> -					   &ckdev->notifier);
+> -}
+> -
+>  static int cros_ec_keyb_get_state(struct cros_ec_keyb *ckdev, uint8_=
+t *kb_state)
+>  {
+>  	struct cros_ec_command msg =3D {
+> @@ -203,19 +185,41 @@ static int cros_ec_keyb_get_state(struct cros_e=
+c_keyb *ckdev, uint8_t *kb_state)
+>  	return ckdev->ec->cmd_xfer(ckdev->ec, &msg);
+>  }
+> =20
+> -static int cros_ec_keyb_work(struct notifier_block *nb,
+> -		     unsigned long state, void *_notify)
+> +static irqreturn_t cros_ec_keyb_irq(int irq, void *data)
+>  {
+> +	struct cros_ec_keyb *ckdev =3D data;
+> +	struct cros_ec_device *ec =3D ckdev->ec;
+>  	int ret;
+> -	struct cros_ec_keyb *ckdev =3D container_of(nb, struct cros_ec_keyb=
+,
+> -						    notifier);
+>  	uint8_t kb_state[ckdev->cols];
+> =20
+> +	if (device_may_wakeup(ec->dev))
+> +		pm_wakeup_event(ec->dev, 0);
+> +
+>  	ret =3D cros_ec_keyb_get_state(ckdev, kb_state);
+>  	if (ret >=3D 0)
+>  		cros_ec_keyb_process(ckdev, kb_state, ret);
+> +	else
+> +		dev_err(ec->dev, "failed to get keyboard state: %d\n", ret);
+> =20
+> -	return NOTIFY_DONE;
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int cros_ec_keyb_open(struct input_dev *dev)
+> +{
+> +	struct cros_ec_keyb *ckdev =3D input_get_drvdata(dev);
+> +	struct cros_ec_device *ec =3D ckdev->ec;
+> +
+> +	return request_threaded_irq(ec->irq, NULL, cros_ec_keyb_irq,
+> +					IRQF_TRIGGER_LOW | IRQF_ONESHOT,
+> +					"cros_ec_keyb", ckdev);
+> +}
+> +
+> +static void cros_ec_keyb_close(struct input_dev *dev)
+> +{
+> +	struct cros_ec_keyb *ckdev =3D input_get_drvdata(dev);
+> +	struct cros_ec_device *ec =3D ckdev->ec;
+> +
+> +	free_irq(ec->irq, ckdev);
+>  }
+> =20
+>  static int cros_ec_keyb_probe(struct platform_device *pdev)
+> @@ -246,8 +250,12 @@ static int cros_ec_keyb_probe(struct platform_de=
+vice *pdev)
+>  	if (!idev)
+>  		return -ENOMEM;
+> =20
+> +	if (!ec->irq) {
+> +		dev_err(dev, "no EC IRQ specified\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	ckdev->ec =3D ec;
+> -	ckdev->notifier.notifier_call =3D cros_ec_keyb_work;
+>  	ckdev->dev =3D dev;
+>  	dev_set_drvdata(&pdev->dev, ckdev);
+> =20
+> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+> index 83e30c6..4873f9c 100644
+> --- a/drivers/mfd/cros_ec.c
+> +++ b/drivers/mfd/cros_ec.c
+> @@ -62,18 +62,6 @@ int cros_ec_check_result(struct cros_ec_device *ec=
+_dev,
+>  }
+>  EXPORT_SYMBOL(cros_ec_check_result);
+> =20
+> -static irqreturn_t ec_irq_thread(int irq, void *data)
+> -{
+> -	struct cros_ec_device *ec_dev =3D data;
+> -
+> -	if (device_may_wakeup(ec_dev->dev))
+> -		pm_wakeup_event(ec_dev->dev, 0);
+> -
+> -	blocking_notifier_call_chain(&ec_dev->event_notifier, 1, ec_dev);
+> -
+> -	return IRQ_HANDLED;
+> -}
+> -
+>  static const struct mfd_cell cros_devs[] =3D {
+>  	{
+>  		.name =3D "cros-ec-keyb",
+> @@ -92,8 +80,6 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+>  	struct device *dev =3D ec_dev->dev;
+>  	int err =3D 0;
+> =20
+> -	BLOCKING_INIT_NOTIFIER_HEAD(&ec_dev->event_notifier);
+> -
+>  	if (ec_dev->din_size) {
+>  		ec_dev->din =3D devm_kzalloc(dev, ec_dev->din_size, GFP_KERNEL);
+>  		if (!ec_dev->din)
+> @@ -105,42 +91,23 @@ int cros_ec_register(struct cros_ec_device *ec_d=
+ev)
+>  			return -ENOMEM;
+>  	}
+> =20
+> -	if (!ec_dev->irq) {
+> -		dev_dbg(dev, "no valid IRQ: %d\n", ec_dev->irq);
+> -		return err;
+> -	}
+> -
+> -	err =3D request_threaded_irq(ec_dev->irq, NULL, ec_irq_thread,
+> -				   IRQF_TRIGGER_LOW | IRQF_ONESHOT,
+> -				   "chromeos-ec", ec_dev);
+> -	if (err) {
+> -		dev_err(dev, "request irq %d: error %d\n", ec_dev->irq, err);
+> -		return err;
+> -	}
+> -
+>  	err =3D mfd_add_devices(dev, 0, cros_devs,
+>  			      ARRAY_SIZE(cros_devs),
+>  			      NULL, ec_dev->irq, NULL);
+>  	if (err) {
+>  		dev_err(dev, "failed to add mfd devices\n");
+> -		goto fail_mfd;
+> +		return err;
+>  	}
+> =20
+>  	dev_info(dev, "Chrome EC device registered\n");
+> =20
+>  	return 0;
+> -
+> -fail_mfd:
+> -	free_irq(ec_dev->irq, ec_dev);
+> -
+> -	return err;
+>  }
+>  EXPORT_SYMBOL(cros_ec_register);
+> =20
+>  int cros_ec_remove(struct cros_ec_device *ec_dev)
+>  {
+>  	mfd_remove_devices(ec_dev->dev);
+> -	free_irq(ec_dev->irq, ec_dev);
+> =20
+>  	return 0;
+>  }
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.=
+h
+> index 0ebf26f..fcbe9d1 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
+> @@ -62,7 +62,6 @@ struct cros_ec_command {
+>   * @dev: Device pointer
+>   * @was_wake_device: true if this device was set to wake the system =
+from
+>   * sleep at the last suspend
+> - * @event_notifier: interrupt event notifier for transport devices
+>   * @cmd_xfer: send command to EC and get response
+>   *     Returns the number of bytes received if the communication suc=
+ceeded, but
+>   *     that doesn't mean the EC was happy with the command. The call=
+er
+> @@ -93,7 +92,6 @@ struct cros_ec_device {
+>  	struct device *dev;
+>  	bool was_wake_device;
+>  	struct class *cros_class;
+> -	struct blocking_notifier_head event_notifier;
+>  	int (*cmd_xfer)(struct cros_ec_device *ec,
+>  			struct cros_ec_command *msg);
+> =20
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-input" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
