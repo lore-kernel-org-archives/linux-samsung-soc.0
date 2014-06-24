@@ -1,71 +1,44 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 1/6] mmc: sdhci-s3c: Fix local I/O clock gating
-Date: Tue, 24 Jun 2014 15:57:10 +0200
-Message-ID: <1403618235-19353-2-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 6/6] ARM: EXYNOS: Register cpuidle device only on Exynos4210
+ and 5250
+Date: Tue, 24 Jun 2014 15:57:15 +0200
+Message-ID: <1403618235-19353-7-git-send-email-t.figa@samsung.com>
 References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-For internal card detection mechanism it is required that the local I/O
-clock is always running. However while current implementation accounts
-for this, it does so incorrectly leading to race conditions and warnings
-about unbalanced clock disables.
-
-This patch fixes it by inverting the logic, which now increases local
-I/O clock enable count when internal card detect is used, instead of
-decreasing it otherwise.
+Currently, the Exynos cpuidle driver works correctly only on Exynos4210
+and 5250. Trying to use it with just one CPU online on any other Exynos
+SoC will lead to system failure, due to unsupported AFTR mode on other
+SoCs. This patch fixes the problem by registering the driver only on
+supported SoCs and letting others simply use default WFI mode until
+support for them is added.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>
-Cc: Chris Ball <chris@printf.net>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org
 ---
- drivers/mmc/host/sdhci-s3c.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ arch/arm/mach-exynos/exynos.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index fa5954a..1795e1f 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -487,8 +487,13 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
- 		goto err_pdata_io_clk;
- 	}
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index f38cf7c..176bbf5 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -173,10 +173,8 @@ static struct platform_device exynos_cpuidle = {
  
--	/* enable the local io clock and keep it running for the moment. */
--	clk_prepare_enable(sc->clk_io);
-+	/*
-+	 * Keep local I/O clock enabled for internal card detect pin
-+	 * or runtime PM is disabled.
-+	 */
-+	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL
-+	    || !IS_ENABLED(CONFIG_PM_RUNTIME))
-+		clk_prepare_enable(sc->clk_io);
+ void __init exynos_cpuidle_init(void)
+ {
+-	if (soc_is_exynos5440())
+-		return;
+-
+-	platform_device_register(&exynos_cpuidle);
++	if (soc_is_exynos4210() || soc_is_exynos5250())
++		platform_device_register(&exynos_cpuidle);
+ }
  
- 	for (clks = 0, ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
- 		char name[14];
-@@ -611,15 +616,13 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
- 		goto err_req_regs;
- 	}
- 
--#ifdef CONFIG_PM_RUNTIME
--	if (pdata->cd_type != S3C_SDHCI_CD_INTERNAL)
--		clk_disable_unprepare(sc->clk_io);
--#endif
- 	return 0;
- 
-  err_req_regs:
-  err_no_busclks:
--	clk_disable_unprepare(sc->clk_io);
-+	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL
-+	    || !IS_ENABLED(CONFIG_PM_RUNTIME))
-+		clk_disable_unprepare(sc->clk_io);
- 
-  err_pdata_io_clk:
- 	sdhci_free_host(host);
+ void __init exynos_cpufreq_init(void)
 -- 
 1.9.3
