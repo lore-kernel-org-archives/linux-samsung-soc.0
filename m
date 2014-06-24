@@ -1,89 +1,654 @@
-From: Tushar Behera <trblinux@gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: Add cros_ec to exynos5420-peach-pit and
- exynos5800-peach-pi
-Date: Tue, 24 Jun 2014 12:13:21 +0530
-Message-ID: <53A91E09.7050603@gmail.com>
-References: <1403556576-8038-1-git-send-email-dianders@chromium.org>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V4 09/10] drm/bridge: Add ps8622/ps8625 bridge driver
+Date: Tue, 24 Jun 2014 04:15:04 -0400
+Message-ID: <CAEC9eQPmCOLN3g1_73LGFLX3qLvVwBpWRa0L0Y7RvRURvuhcPA@mail.gmail.com>
+References: <1402511228-18945-1-git-send-email-ajaykumar.rs@samsung.com>
+	<1402511228-18945-10-git-send-email-ajaykumar.rs@samsung.com>
+	<CABxcv=mDQ=uXAgefu9shV55tAHWo0iJSV=DNHwG+D+4E4YzFyg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:50871 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751332AbaFXGn3 (ORCPT
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:48035 "EHLO
+	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751475AbaFXIPG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 02:43:29 -0400
-In-Reply-To: <1403556576-8038-1-git-send-email-dianders@chromium.org>
+	Tue, 24 Jun 2014 04:15:06 -0400
+In-Reply-To: <CABxcv=mDQ=uXAgefu9shV55tAHWo0iJSV=DNHwG+D+4E4YzFyg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: mark.rutland@arm.com, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, ijc+devicetree@hellion.org.uk, devicetree@vger.kernel.org, khilman@linaro.org, pawel.moll@arm.com, swarren@wwwdotorg.org, tushar.b@samsung.com, olof@lixom.net, robh+dt@kernel.org, ben-linux@fluff.org, ch.naveen@samsung.com, linux-arm-kernel@lists.infradead.org, rahul.sharma@samsung.com, sjg@chromium.org, linux-kernel@vger.kernel.org, galak@codeaurora.org, ajaynumb@gmail.com, javier.martinez@collabora.co.uk
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Sean Paul <seanpaul@google.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Reding <thierry.reding@gmail.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Vincent Palatin <vpalatin@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Sean Paul <seanpaul@chromium.org>, Rahul Sharma <rahul.sharma@samsung.com>
 
-On 06/24/2014 02:19 AM, Doug Anderson wrote:
-> This adds cros_ec to exynos5420-peach-pit and exynos5800-peach-pi,
-> including:
-> * The keyboard
-> * The i2c tunnel
-> * The tps65090 under the i2c tunnel
-> * The battery under the i2c tunnel
-> 
-> To add extra motivation, it should be noted that tps65090 is one of
-> the things needed to get display-related FETs turned on for pit and
-> pi.
-> 
-> Note that this relies on a few outstanding changes:
-> * Needs (spi: s3c64xx: fix broken "cs_gpios" usage in the driver) and
->   (spi: s3c64xx: for DT platofrms always get the chipselect info from
->   DT node) to work properly and match the documented bindings.  See
->   <https://patchwork.kernel.org/patch/4346701/> and
->   <https://patchwork.kernel.org/patch/4346711/>
-> 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Hi Javier,
 
-Along with the dependency patches on next-20140623, tested keyboard on
-Peach-Pi board.
+Thanks for the review.
 
-Tested-by: Tushar Behera <tushar.b@samsung.com>
+On Mon, Jun 23, 2014 at 12:05 PM, Javier Martinez Canillas
+<javier@dowhile0.org> wrote:
+> Hello Ajay,
+>
+> On Wed, Jun 11, 2014 at 8:27 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+>> From: Vincent Palatin <vpalatin@chromium.org>
+>>
+>> This patch adds drm_bridge driver for parade DisplayPort
+>> to LVDS bridge chip.
+>>
+>> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>> ---
+>>  .../devicetree/bindings/drm/bridge/ps8622.txt      |   21 +
+>>  drivers/gpu/drm/bridge/Kconfig                     |    8 +
+>>  drivers/gpu/drm/bridge/Makefile                    |    1 +
+>>  drivers/gpu/drm/bridge/ps8622.c                    |  475 ++++++++++++++++++++
+>>  include/drm/bridge/ps8622.h                        |   41 ++
+>>  5 files changed, 546 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/drm/bridge/ps8622.txt
+>>  create mode 100644 drivers/gpu/drm/bridge/ps8622.c
+>>  create mode 100644 include/drm/bridge/ps8622.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/drm/bridge/ps8622.txt b/Documentation/devicetree/bindings/drm/bridge/ps8622.txt
+>> new file mode 100644
+>> index 0000000..1afbd9c
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/drm/bridge/ps8622.txt
+>> @@ -0,0 +1,21 @@
+>> +ps8622-bridge bindings
+>> +
+>> +Required properties:
+>> +       - compatible: "parade,ps8622"
+>> +       - reg: first i2c address of the bridge
+>> +       - sleep-gpio: OF device-tree gpio specification
+>> +       - reset-gpio: OF device-tree gpio specification
+>> +
+>> +Optional properties:
+>> +       - lane-count: number of DP lanes to use
+>> +       - use-external-pwm: backlight will be controlled by an external PWM
+>> +
+>> +Example:
+>> +       ps8622-bridge@48 {
+>> +               compatible = "parade,ps8622";
+>> +               reg = <0x48>;
+>> +               sleep-gpio = <&gpc3 6 1 0 0>;
+>> +               reset-gpio = <&gpc3 1 1 0 0>;
+>> +               display-timings = <&lcd_display_timings>;
+>> +               lane-count = <1>
+>> +       };
+>> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+>> index e3fb487..7b843c8 100644
+>> --- a/drivers/gpu/drm/bridge/Kconfig
+>> +++ b/drivers/gpu/drm/bridge/Kconfig
+>> @@ -10,3 +10,11 @@ config DRM_PANEL_BINDER
+>>         select DRM_KMS_HELPER
+>>         select DRM_PANEL
+>>         ---help---
+>> +
+>> +config DRM_PS8622
+>> +       tristate "Parade eDP/LVDS bridge"
+>> +       depends on DRM
+>> +       select DRM_KMS_HELPER
+>> +       select BACKLIGHT_LCD_SUPPORT
+>> +       select BACKLIGHT_CLASS_DEVICE
+>> +       ---help---
+>> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+>> index ba8b5b8..b494d4b 100644
+>> --- a/drivers/gpu/drm/bridge/Makefile
+>> +++ b/drivers/gpu/drm/bridge/Makefile
+>> @@ -2,3 +2,4 @@ ccflags-y := -Iinclude/drm
+>>
+>>  obj-$(CONFIG_DRM_PTN3460) += ptn3460.o
+>>  obj-$(CONFIG_DRM_PANEL_BINDER) += panel_binder.o
+>> +obj-$(CONFIG_DRM_PS8622) += ps8622.o
+>> diff --git a/drivers/gpu/drm/bridge/ps8622.c b/drivers/gpu/drm/bridge/ps8622.c
+>> new file mode 100644
+>> index 0000000..387d332
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/bridge/ps8622.c
+>> @@ -0,0 +1,475 @@
+>> +/*
+>> + * Parade PS8622 eDP/LVDS bridge driver
+>> + *
+>> + * Copyright (C) 2014 Google, Inc.
+>> + *
+>> + * This software is licensed under the terms of the GNU General Public
+>> + * License version 2, as published by the Free Software Foundation, and
+>> + * may be copied, distributed, and modified under those terms.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + */
+>> +
+>> +#include <linux/module.h>
+>> +#include <linux/backlight.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/err.h>
+>> +#include <linux/fb.h>
+>> +#include <linux/gpio.h>
+>> +#include <linux/i2c.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_gpio.h>
+>> +#include <linux/pm.h>
+>> +#include <linux/regulator/consumer.h>
+>> +
+>> +#include "drmP.h"
+>> +#include "drm_crtc.h"
+>> +#include "drm_crtc_helper.h"
+>> +
+>> +struct ps8622_bridge {
+>> +       struct drm_bridge *bridge;
+>> +       struct drm_encoder *encoder;
+>> +       struct i2c_client *client;
+>> +       struct regulator *v12;
+>> +       struct backlight_device *bl;
+>> +       struct mutex enable_mutex;
+>> +
+>> +       int gpio_slp_n;
+>> +       int gpio_rst_n;
+>> +
+>> +       u8 max_lane_count;
+>> +       u8 lane_count;
+>> +
+>> +       bool enabled;
+>> +};
+>> +
+>> +struct ps8622_device_data {
+>> +       u8 max_lane_count;
+>> +};
+>> +
+>> +static const struct ps8622_device_data ps8622_data = {
+>> +       .max_lane_count = 1,
+>> +};
+>> +
+>> +static const struct ps8622_device_data ps8625_data = {
+>> +       .max_lane_count = 2,
+>> +};
+>> +
+>> +/* Brightness scale on the Parade chip */
+>> +#define PS8622_MAX_BRIGHTNESS 0xff
+>> +
+>> +/* Timings taken from the version 1.7 datasheet for the PS8622/PS8625 */
+>> +#define PS8622_POWER_RISE_T1_MIN_US 10
+>> +#define PS8622_POWER_RISE_T1_MAX_US 10000
+>> +#define PS8622_RST_HIGH_T2_MIN_US 3000
+>> +#define PS8622_RST_HIGH_T2_MAX_US 30000
+>> +#define PS8622_PWMO_END_T12_MS 200
+>> +#define PS8622_POWER_FALL_T16_MAX_US 10000
+>> +#define PS8622_POWER_OFF_T17_MS 500
+>> +
+>> +#if ((PS8622_RST_HIGH_T2_MIN_US + PS8622_POWER_RISE_T1_MAX_US) > \
+>> +       (PS8622_RST_HIGH_T2_MAX_US + PS8622_POWER_RISE_T1_MIN_US))
+>> +#error "T2.min + T1.max must be less than T2.max + T1.min"
+>> +#endif
+>> +
+>> +static int ps8622_set(struct i2c_client *client, u8 page, u8 reg, u8 val)
+>> +{
+>> +       int ret;
+>> +       struct i2c_adapter *adap = client->adapter;
+>> +       struct i2c_msg msg;
+>> +       u8 data[] = {reg, val};
+>> +
+>> +       msg.addr = client->addr + page;
+>> +       msg.flags = 0;
+>> +       msg.len = sizeof(data);
+>> +       msg.buf = data;
+>> +
+>> +       ret = i2c_transfer(adap, &msg, 1);
+>> +       if (ret != 1)
+>> +               pr_warn("PS8622 I2C write (0x%02x,0x%02x,0x%02x) failed: %d\n",
+>> +                       client->addr + page, reg, val, ret);
+>> +       return !(ret == 1);
+>> +}
+>> +
+>> +static int ps8622_send_config(struct ps8622_bridge *ps_bridge)
+>> +{
+>> +       struct i2c_client *cl = ps_bridge->client;
+>> +       int err = 0;
+>> +
+>> +       /* wait 20ms after power ON */
+>> +       usleep_range(20000, 30000);
+>> +
+>> +       err |= ps8622_set(cl, 0x02, 0xa1, 0x01); /* HPD low */
+>> +       /* SW setting */
+>> +       err |= ps8622_set(cl, 0x04, 0x14, 0x01); /* [1:0] SW output 1.2V voltage
+>> +                                                 * is lower to 96% */
+>> +       /* RCO SS setting */
+>> +       err |= ps8622_set(cl, 0x04, 0xe3, 0x20); /* [5:4] = b01 0.5%, b10 1%,
+>> +                                                 * b11 1.5% */
+>> +       err |= ps8622_set(cl, 0x04, 0xe2, 0x80); /* [7] RCO SS enable */
+>> +       /* RPHY Setting */
+>> +       err |= ps8622_set(cl, 0x04, 0x8a, 0x0c); /* [3:2] CDR tune wait cycle
+>> +                                                 * before measure for fine tune
+>> +                                                 * b00: 1us b01: 0.5us b10:2us
+>> +                                                 * b11: 4us */
+>> +       err |= ps8622_set(cl, 0x04, 0x89, 0x08); /* [3] RFD always on */
+>> +       err |= ps8622_set(cl, 0x04, 0x71, 0x2d); /* CTN lock in/out:
+>> +                                                 * 20000ppm/80000ppm.
+>> +                                                 * Lock out 2 times. */
+>> +       /* 2.7G CDR settings */
+>> +       err |= ps8622_set(cl, 0x04, 0x7d, 0x07); /* NOF=40LSB for HBR CDR
+>> +                                                 * setting */
+>> +       err |= ps8622_set(cl, 0x04, 0x7b, 0x00); /* [1:0] Fmin=+4bands */
+>> +       err |= ps8622_set(cl, 0x04, 0x7a, 0xfd); /* [7:5] DCO_FTRNG=+-40% */
+>> +       /* 1.62G CDR settings */
+>> +       err |= ps8622_set(cl, 0x04, 0xc0, 0x12); /* [5:2]NOF=64LSB [1:0]DCO
+>> +                                                 * scale is 2/5 */
+>> +       err |= ps8622_set(cl, 0x04, 0xc1, 0x92); /* Gitune=-37% */
+>> +       err |= ps8622_set(cl, 0x04, 0xc2, 0x1c); /* Fbstep=100% */
+>> +       err |= ps8622_set(cl, 0x04, 0x32, 0x80); /* [7] LOS signal disable */
+>> +       /* RPIO Setting */
+>> +       err |= ps8622_set(cl, 0x04, 0x00, 0xb0); /* [7:4] LVDS driver bias
+>> +                                                 * current : 75% (250mV swing)
+>> +                                                 * */
+>> +       err |= ps8622_set(cl, 0x04, 0x15, 0x40); /* [7:6] Right-bar GPIO output
+>> +                                                 * strength is 8mA */
+>> +       /* EQ Training State Machine Setting */
+>> +       err |= ps8622_set(cl, 0x04, 0x54, 0x10); /* RCO calibration start */
+>> +       /* Logic, needs more than 10 I2C command */
+>> +       err |= ps8622_set(cl, 0x01, 0x02, 0x80 | ps_bridge->max_lane_count);
+>> +                                                /* [4:0] MAX_LANE_COUNT set to
+>> +                                                 * max supported lanes */
+>> +       err |= ps8622_set(cl, 0x01, 0x21, 0x80 | ps_bridge->lane_count);
+>> +                                                /* [4:0] LANE_COUNT_SET set to
+>> +                                                 * chosen lane count */
+>> +       err |= ps8622_set(cl, 0x00, 0x52, 0x20);
+>> +       err |= ps8622_set(cl, 0x00, 0xf1, 0x03); /* HPD CP toggle enable */
+>> +       err |= ps8622_set(cl, 0x00, 0x62, 0x41);
+>> +       err |= ps8622_set(cl, 0x00, 0xf6, 0x01); /* Counter number, add 1ms
+>> +                                                 * counter delay */
+>> +       err |= ps8622_set(cl, 0x00, 0x77, 0x06); /* [6]PWM function control by
+>> +                                                 * DPCD0040f[7], default is PWM
+>> +                                                 * block always works. */
+>> +       err |= ps8622_set(cl, 0x00, 0x4c, 0x04); /* 04h Adjust VTotal tolerance
+>> +                                                 * to fix the 30Hz no display
+>> +                                                 * issue */
+>> +       err |= ps8622_set(cl, 0x01, 0xc0, 0x00); /* DPCD00400='h00, Parade OUI =
+>> +                                                 * 'h001cf8 */
+>> +       err |= ps8622_set(cl, 0x01, 0xc1, 0x1c); /* DPCD00401='h1c */
+>> +       err |= ps8622_set(cl, 0x01, 0xc2, 0xf8); /* DPCD00402='hf8 */
+>> +       err |= ps8622_set(cl, 0x01, 0xc3, 0x44); /* DPCD403~408 = ASCII code
+>> +                                                 * D2SLV5='h4432534c5635 */
+>> +       err |= ps8622_set(cl, 0x01, 0xc4, 0x32); /* DPCD404 */
+>> +       err |= ps8622_set(cl, 0x01, 0xc5, 0x53); /* DPCD405 */
+>> +       err |= ps8622_set(cl, 0x01, 0xc6, 0x4c); /* DPCD406 */
+>> +       err |= ps8622_set(cl, 0x01, 0xc7, 0x56); /* DPCD407 */
+>> +       err |= ps8622_set(cl, 0x01, 0xc8, 0x35); /* DPCD408 */
+>> +       err |= ps8622_set(cl, 0x01, 0xca, 0x01); /* DPCD40A, Initial Code major
+>> +                                                 * revision '01' */
+>> +       err |= ps8622_set(cl, 0x01, 0xcb, 0x05); /* DPCD40B, Initial Code minor
+>> +                                                 * revision '05' */
+>> +       if (ps_bridge->bl) {
+>> +               err |= ps8622_set(cl, 0x01, 0xa5, 0xa0);
+>> +                                               /* DPCD720, internal PWM */
+>> +               err |= ps8622_set(cl, 0x01, 0xa7,
+>> +                               ps_bridge->bl->props.brightness);
+>> +                                                /* FFh for 100% brightness,
+>> +                                                 *  0h for 0% brightness */
+>> +       } else {
+>> +               err |= ps8622_set(cl, 0x01, 0xa5, 0x80);
+>> +                                               /* DPCD720, external PWM */
+>> +       }
+>> +       err |= ps8622_set(cl, 0x01, 0xcc, 0x13); /* Set LVDS output as 6bit-VESA
+>> +                                                 * mapping, single LVDS channel
+>> +                                                 * */
+>> +       err |= ps8622_set(cl, 0x02, 0xb1, 0x20); /* Enable SSC set by register
+>> +                                                 * */
+>> +       err |= ps8622_set(cl, 0x04, 0x10, 0x16); /* Set SSC enabled and +/-1%
+>> +                                                 * central spreading */
+>> +       /* Logic end */
+>> +       err |= ps8622_set(cl, 0x04, 0x59, 0x60); /* MPU Clock source: LC => RCO
+>> +                                                 * */
+>> +       err |= ps8622_set(cl, 0x04, 0x54, 0x14); /* LC -> RCO */
+>> +       err |= ps8622_set(cl, 0x02, 0xa1, 0x91); /* HPD high */
+>> +
+>> +       return err ? -EIO : 0;
+>> +}
+>> +
+>> +static int ps8622_backlight_update(struct backlight_device *bl)
+>> +{
+>> +       struct ps8622_bridge *ps_bridge = dev_get_drvdata(&bl->dev);
+>> +       int ret, brightness = bl->props.brightness;
+>> +
+>> +       if (bl->props.power != FB_BLANK_UNBLANK ||
+>> +           bl->props.state & (BL_CORE_SUSPENDED | BL_CORE_FBBLANK))
+>> +               brightness = 0;
+>> +
+>> +       mutex_lock(&ps_bridge->enable_mutex);
+>> +
+>> +       if (!ps_bridge->enabled) {
+>> +               ret = -EINVAL;
+>> +               goto out;
+>> +       }
+>> +
+>> +       ret = ps8622_set(ps_bridge->client, 0x01, 0xa7, brightness);
+>> +
+>> +out:
+>> +       mutex_unlock(&ps_bridge->enable_mutex);
+>> +       return ret;
+>> +}
+>> +
+>> +static int ps8622_backlight_get(struct backlight_device *bl)
+>> +{
+>> +       return bl->props.brightness;
+>> +}
+>> +
+>> +static const struct backlight_ops ps8622_backlight_ops = {
+>> +       .update_status  = ps8622_backlight_update,
+>> +       .get_brightness = ps8622_backlight_get,
+>> +};
+>> +
+>> +static void ps8622_pre_enable(struct drm_bridge *bridge)
+>> +{
+>> +       struct ps8622_bridge *ps_bridge = bridge->driver_private;
+>> +       int ret;
+>> +
+>> +       mutex_lock(&ps_bridge->enable_mutex);
+>> +       if (ps_bridge->enabled)
+>> +               goto out;
+>> +
+>> +       if (gpio_is_valid(ps_bridge->gpio_rst_n))
+>> +               gpio_set_value(ps_bridge->gpio_rst_n, 0);
+>> +
+>> +       if (ps_bridge->v12) {
+>> +               ret = regulator_enable(ps_bridge->v12);
+>> +               if (ret)
+>> +                       DRM_ERROR("fails to enable ps_bridge->v12");
+>> +       }
+>> +
+>> +       drm_next_bridge_pre_enable(bridge);
+>> +
+>> +       if (gpio_is_valid(ps_bridge->gpio_slp_n))
+>> +               gpio_set_value(ps_bridge->gpio_slp_n, 1);
+>> +
+>> +       /*
+>> +        * T1 is the range of time that it takes for the power to rise after we
+>> +        * enable the lcd fet. T2 is the range of time in which the data sheet
+>> +        * specifies we should deassert the reset pin.
+>> +        *
+>> +        * If it takes T1.max for the power to rise, we need to wait atleast
+>> +        * T2.min before deasserting the reset pin. If it takes T1.min for the
+>> +        * power to rise, we need to wait at most T2.max before deasserting the
+>> +        * reset pin.
+>> +        */
+>> +       usleep_range(PS8622_RST_HIGH_T2_MIN_US + PS8622_POWER_RISE_T1_MAX_US,
+>> +                    PS8622_RST_HIGH_T2_MAX_US + PS8622_POWER_RISE_T1_MIN_US);
+>> +
+>> +       if (gpio_is_valid(ps_bridge->gpio_rst_n))
+>> +               gpio_set_value(ps_bridge->gpio_rst_n, 1);
+>> +
+>> +       ret = ps8622_send_config(ps_bridge);
+>> +       if (ret)
+>> +               DRM_ERROR("Failed to send config to bridge (%d)\n", ret);
+>> +
+>> +       ps_bridge->enabled = true;
+>> +
+>> +out:
+>> +       mutex_unlock(&ps_bridge->enable_mutex);
+>> +}
+>> +
+>> +static void ps8622_enable(struct drm_bridge *bridge)
+>> +{
+>> +       struct ps8622_bridge *ps_bridge = bridge->driver_private;
+>> +
+>> +       mutex_lock(&ps_bridge->enable_mutex);
+>> +       drm_next_bridge_enable(bridge);
+>> +       mutex_unlock(&ps_bridge->enable_mutex);
+>> +}
+>> +
+>> +static void ps8622_disable(struct drm_bridge *bridge)
+>> +{
+>> +       struct ps8622_bridge *ps_bridge = bridge->driver_private;
+>> +
+>> +       mutex_lock(&ps_bridge->enable_mutex);
+>> +
+>> +       if (!ps_bridge->enabled)
+>> +               goto out;
+>> +
+>> +       ps_bridge->enabled = false;
+>> +
+>> +       drm_next_bridge_disable(bridge);
+>> +       msleep(PS8622_PWMO_END_T12_MS);
+>> +
+>> +       /*
+>> +        * This doesn't matter if the regulators are turned off, but something
+>> +        * else might keep them on. In that case, we want to assert the slp gpio
+>> +        * to lower power.
+>> +        */
+>> +       if (gpio_is_valid(ps_bridge->gpio_slp_n))
+>> +               gpio_set_value(ps_bridge->gpio_slp_n, 0);
+>> +
+>> +       if (ps_bridge->v12)
+>> +               regulator_disable(ps_bridge->v12);
+>> +
+>> +       /*
+>> +        * Sleep for at least the amount of time that it takes the power rail to
+>> +        * fall to prevent asserting the rst gpio from doing anything.
+>> +        */
+>> +       usleep_range(PS8622_POWER_FALL_T16_MAX_US,
+>> +                    2 * PS8622_POWER_FALL_T16_MAX_US);
+>> +       if (gpio_is_valid(ps_bridge->gpio_rst_n))
+>> +               gpio_set_value(ps_bridge->gpio_rst_n, 0);
+>> +
+>> +       msleep(PS8622_POWER_OFF_T17_MS);
+>> +
+>> +out:
+>> +       mutex_unlock(&ps_bridge->enable_mutex);
+>> +}
+>> +
+>> +static void ps8622_post_disable(struct drm_bridge *bridge)
+>> +{
+>> +       drm_next_bridge_post_disable(bridge);
+>> +}
+>> +
+>> +static void ps8622_destroy(struct drm_bridge *bridge)
+>> +{
+>> +       struct ps8622_bridge *ps_bridge = bridge->driver_private;
+>> +
+>> +       drm_bridge_cleanup(bridge);
+>> +       if (ps_bridge->bl)
+>> +               backlight_device_unregister(ps_bridge->bl);
+>> +
+>> +       put_device(&ps_bridge->client->dev);
+>> +}
+>> +
+>> +static const struct drm_bridge_funcs ps8622_bridge_funcs = {
+>> +       .pre_enable = ps8622_pre_enable,
+>> +       .enable = ps8622_enable,
+>> +       .disable = ps8622_disable,
+>> +       .post_disable = ps8622_post_disable,
+>> +       .destroy = ps8622_destroy,
+>> +};
+>> +
+>> +static const struct of_device_id ps8622_devices[] = {
+>> +       {
+>> +               .compatible = "parade,ps8622",
+>> +               .data   = &ps8622_data,
+>> +       }, {
+>> +               .compatible = "parade,ps8625",
+>> +               .data   = &ps8625_data,
+>> +       }, {
+>> +               /* end node */
+>> +       }
+>> +};
+>> +
+>> +struct drm_bridge *ps8622_init(struct drm_device *dev,
+>> +                               struct drm_encoder *encoder,
+>> +                               struct i2c_client *client,
+>> +                               struct device_node *node)
+>> +{
+>> +       int ret;
+>> +       const struct of_device_id *match;
+>> +       const struct ps8622_device_data *device_data;
+>> +       struct drm_bridge *bridge;
+>> +       struct ps8622_bridge *ps_bridge;
+>> +
+>> +       node = of_find_matching_node_and_match(NULL, ps8622_devices, &match);
+>> +       if (!node)
+>> +               return NULL;
+>> +
+>> +       bridge = devm_kzalloc(dev->dev, sizeof(*bridge), GFP_KERNEL);
+>> +       if (!bridge) {
+>> +               DRM_ERROR("Failed to allocate drm bridge\n");
+>> +               return NULL;
+>> +       }
+>> +
+>> +       ps_bridge = devm_kzalloc(dev->dev, sizeof(*ps_bridge), GFP_KERNEL);
+>> +       if (!ps_bridge) {
+>> +               DRM_ERROR("could not allocate ps bridge\n");
+>
+> It's not necessary to log OOM errors since the mm subsystem already
+> logs this and calls dump_stack().
+Ok. Will remove it.
 
-Some comments below.
+>> +               return NULL;
+>> +       }
+>> +
+>> +       mutex_init(&ps_bridge->enable_mutex);
+>> +
+>> +       device_data = match->data;
+>> +       ps_bridge->client = client;
+>> +       ps_bridge->encoder = encoder;
+>> +       ps_bridge->bridge = bridge;
+>> +       ps_bridge->v12 = devm_regulator_get(&client->dev, "vdd_bridge");
+>> +       if (IS_ERR(ps_bridge->v12)) {
+>> +               DRM_INFO("no 1.2v regulator found for PS8622\n");
+>> +               ps_bridge->v12 = NULL;
+>> +       }
+>> +
+>> +       ps_bridge->gpio_slp_n = of_get_named_gpio(node, "sleep-gpio", 0);
+>
+> The new descriptor-based GPIO interface should be used if possible
+> instead of the deprecated integer-based API.
+Ok, will use the same.
 
-> ---
-> Changes in v2:
-> - Now just one patch since mfd patch landed.
-> - Rebased to ToT linux-next
-> 
->  arch/arm/boot/dts/exynos5420-peach-pit.dts | 145 +++++++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 145 +++++++++++++++++++++++++++++
->  2 files changed, 290 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> index 7649982..581f385 100644
-> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> +       if (gpio_is_valid(ps_bridge->gpio_slp_n)) {
+>> +               ret = devm_gpio_request_one(&client->dev, ps_bridge->gpio_slp_n,
+>> +                                           GPIOF_OUT_INIT_HIGH,
+>> +                                           "PS8622_SLP_N");
+>> +               if (ret)
+>> +                       goto err_client;
+>> +       }
+>> +
+>> +       ps_bridge->gpio_rst_n = of_get_named_gpio(node, "reset-gpio", 0);
+>> +       if (gpio_is_valid(ps_bridge->gpio_rst_n)) {
+>> +               /*
+>> +                * Assert the reset pin high to avoid the bridge being
+>> +                * initialized prematurely
+>> +                */
+>> +               ret = devm_gpio_request_one(&client->dev, ps_bridge->gpio_rst_n,
+>> +                                           GPIOF_OUT_INIT_HIGH,
+>> +                                           "PS8622_RST_N");
+>> +               if (ret)
+>> +                       goto err_client;
+>> +       }
+>> +
+>> +       ps_bridge->max_lane_count = device_data->max_lane_count;
+>> +
+>> +       if (of_property_read_u8(node, "lane-count", &ps_bridge->lane_count))
+>> +               ps_bridge->lane_count = ps_bridge->max_lane_count;
+>> +       else if (ps_bridge->lane_count > ps_bridge->max_lane_count) {
+>> +               DRM_ERROR("lane-count property is too high for DP bridge\n");
+>
+> DRM_INFO() instead?
+Right. Will change it.
 
-> +				regulators {
-> +					dcdc1 {
-> +						ti,enable-ext-control;
-> +					};
-> +					dcdc2 {
-> +						ti,enable-ext-control;
-> +					};
-> +					dcdc3 {
-> +						ti,enable-ext-control;
-> +					};
-> +					fet1 {
+>> +               ps_bridge->lane_count = ps_bridge->max_lane_count;
+>> +       }
+>> +
+>> +       if (!of_find_property(node, "use-external-pwm", NULL)) {
+>> +               ps_bridge->bl = backlight_device_register("ps8622-backlight",
+>> +                               dev->dev, ps_bridge, &ps8622_backlight_ops,
+>> +                               NULL);
+>> +               if (IS_ERR(ps_bridge->bl)) {
+>> +                       DRM_ERROR("failed to register backlight\n");
+>> +                       ret = PTR_ERR(ps_bridge->bl);
+>> +                       ps_bridge->bl = NULL;
+>> +                       goto err_client;
+>> +               }
+>> +               ps_bridge->bl->props.max_brightness = PS8622_MAX_BRIGHTNESS;
+>> +               ps_bridge->bl->props.brightness = PS8622_MAX_BRIGHTNESS;
+>> +       }
+>> +
+>> +       ret = drm_bridge_init(dev, ps_bridge->bridge, &ps8622_bridge_funcs);
+>> +       if (ret) {
+>> +               DRM_ERROR("Failed to initialize bridge with drm\n");
+>> +               goto err_backlight;
+>> +       }
+>> +
+>> +       ps_bridge->bridge->driver_private = ps_bridge;
+>> +       ps_bridge->enabled = false;
+>> +
+>> +       if (!encoder->bridge)
+>> +               /* First entry in the bridge chain */
+>> +               encoder->bridge = bridge;
+>> +
+>> +       return bridge;
+>> +
+>> +err_backlight:
+>> +       if (ps_bridge->bl)
+>> +               backlight_device_unregister(ps_bridge->bl);
+>> +err_client:
+>> +       put_device(&client->dev);
+>> +       DRM_ERROR("device probe failed : %d\n", ret);
+>> +       return NULL;
+>> +}
+>> +EXPORT_SYMBOL(ps8622_init);
+>> diff --git a/include/drm/bridge/ps8622.h b/include/drm/bridge/ps8622.h
+>> new file mode 100644
+>> index 0000000..22f37b6
+>> --- /dev/null
+>> +++ b/include/drm/bridge/ps8622.h
+>> @@ -0,0 +1,41 @@
+>> +/*
+>> + * Copyright (C) 2014 Google, Inc.
+>> + *
+>> + * This software is licensed under the terms of the GNU General Public
+>> + * License version 2, as published by the Free Software Foundation, and
+>> + * may be copied, distributed, and modified under those terms.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + */
+>> +
+>> +#ifndef _DRM_BRIDGE_PS8622_H_
+>> +#define _DRM_BRIDGE_PS8622_H_
+>> +
+>> +struct drm_device;
+>> +struct drm_encoder;
+>> +struct i2c_client;
+>> +struct device_node;
+>> +
+>> +#ifdef CONFIG_DRM_PS8622
+>> +
+>> +struct drm_bridge *ps8622_init(struct drm_device *dev,
+>> +                               struct drm_encoder *encoder,
+>> +                               struct i2c_client *client,
+>> +                               struct device_node *node);
+>> +
+>> +#else
+>> +
+>> +static inline struct drm_bridge *ps8622_init(struct drm_device *dev,
+>> +                               struct drm_encoder *encoder,
+>> +                               struct i2c_client *client,
+>> +                               struct device_node *node)
+>> +{
+>> +       return -ENODEV;
+>> +}
+>> +
+>> +#endif
+>> +
+>> +#endif
+>> --
+>> 1.7.9.5
+>>
+>
+> Best regards,
+> Javier
 
-"tps65090_fet1: fet1 {" ?
-
-> +						regulator-name = "vcd_led";
-> +					};
-> +					tps65090_fet2: fet2 {
-
-I would suggest we add similar labels to fet1, fet3, fet4, fet5 and fet6
-also. That way it would be easy to reference them in subsequent DT nodes.
-
-Same comment for Peach-Pi dts file too.
-
--- 
-Tushar Behera
+Regards,
+Ajay
