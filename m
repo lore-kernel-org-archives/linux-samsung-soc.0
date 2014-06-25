@@ -1,43 +1,75 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3 04/14] clk: max77686: Improve Maxim 77686 PMIC clocks binding
-Date: Wed, 25 Jun 2014 11:06:30 -0700
-Message-ID: <CAD=FV=VezCMpYiD6vj_SkPYVM30GWF_YiRZVGyLHDD0-EbD+7Q@mail.gmail.com>
-References: <1403202040-12641-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1403202040-12641-5-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2] i2c: s3c2410: resume the I2C controller earlier
+Date: Wed, 25 Jun 2014 20:09:42 +0200
+Message-ID: <53AB1066.8000305@collabora.co.uk>
+References: <1403654214-25072-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f50.google.com ([209.85.219.50]:53266 "EHLO
-	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754597AbaFYSGb (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:60616 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932296AbaFYSJt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 14:06:31 -0400
-Received: by mail-oa0-f50.google.com with SMTP id n16so2547271oag.37
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2014 11:06:31 -0700 (PDT)
-In-Reply-To: <1403202040-12641-5-git-send-email-javier.martinez@collabora.co.uk>
+	Wed, 25 Jun 2014 14:09:49 -0400
+In-Reply-To: <1403654214-25072-1-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Doug Anderson <dianders@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Vincent Palatin <vpalatin@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Javier,
+Hello Doug,
 
-On Thu, Jun 19, 2014 at 11:20 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> @@ -33,6 +38,6 @@ Example: Clock consumer node
->         foo@0 {
->                 compatible = "bar,foo";
->                 /* ... */
-> -               clock-names = "my-clock";
-> -               clocks = <&max77686 2>;
-> +               clock-names = "32khz_pmic";
-> +               clocks = <&max77686 MAX77686_CLK_PMIC>;
+On 06/25/2014 01:56 AM, Doug Anderson wrote:
+> From: Vincent Palatin <vpalatin@chromium.org>
+> 
+> When the wake-up is triggered by the PMIC RTC, the RTC driver is trying
+> to read the PMIC interrupt status over I2C and fails because the I2C
+> controller is not resumed yet.
+> Let's resume the I2C controller earlier in the _noirq phase
+> (as other hardwares are doing), so we can properly get the wake-up
+> condition.
+> 
+> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+> Changes in v2:
+> - Added missing freeze/thaw/poweroff/restore
+> 
+>  drivers/i2c/busses/i2c-s3c2410.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index e828a1d..ecb389c 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -1267,7 +1267,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
+>  	return 0;
+>  }
+>  
+> -static int s3c24xx_i2c_resume(struct device *dev)
+> +static int s3c24xx_i2c_resume_noirq(struct device *dev)
+>  {
+>  	struct platform_device *pdev = to_platform_device(dev);
+>  	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+> @@ -1285,7 +1285,11 @@ static int s3c24xx_i2c_resume(struct device *dev)
+>  static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops = {
+>  #ifdef CONFIG_PM_SLEEP
+>  	.suspend_noirq = s3c24xx_i2c_suspend_noirq,
+> -	.resume = s3c24xx_i2c_resume,
+> +	.resume_noirq = s3c24xx_i2c_resume_noirq,
+> +	.freeze_noirq = s3c24xx_i2c_suspend_noirq,
+> +	.thaw_noirq = s3c24xx_i2c_resume_noirq,
+> +	.poweroff_noirq = s3c24xx_i2c_suspend_noirq,
+> +	.restore_noirq = s3c24xx_i2c_resume_noirq,
+>  #endif
+>  };
+>  
+> 
 
-A minor comment here is that you probably shouldn't change "clock-names".
+Looks good to me.
 
-The "clock-names" is the consumer's concept of the clock name and not
-the producer's concept.  If this clock were specified as going into
-the TPM, for instance, the TPM might call it "32k-reference".  Then
-the TPM would get the clock by referring to this name in its driver.
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
--Doug
+Best regards,
+Javier
