@@ -1,39 +1,37 @@
 From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 2/4 v2] hwmon: ntc_thermistor: Use the manufacturer name
- properly
-Date: Wed, 25 Jun 2014 07:10:51 -0700
-Message-ID: <53AAD86B.6080905@roeck-us.net>
-References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com> <1403677773-21141-3-git-send-email-ch.naveen@samsung.com>
+Subject: Re: [PATCH 0/4 v2] hwmon: ntc_thermistor: prepose vendor prefix change
+Date: Wed, 25 Jun 2014 07:12:24 -0700
+Message-ID: <53AAD8C8.3080506@roeck-us.net>
+References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com> <02b501cf9064$34f16b80$9ed44280$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:54667 "EHLO
+Received: from mail.active-venture.com ([67.228.131.205]:52681 "EHLO
 	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754202AbaFYOLD (ORCPT
+	with ESMTP id S1757239AbaFYOMg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 10:11:03 -0400
-In-Reply-To: <1403677773-21141-3-git-send-email-ch.naveen@samsung.com>
+	Wed, 25 Jun 2014 10:12:36 -0400
+In-Reply-To: <02b501cf9064$34f16b80$9ed44280$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, cpgs@samsung.com, devicetree@vger.kernel.org, lars@metafoo.de
+To: Kukjin Kim <kgene.kim@samsung.com>, 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org, jdelvare@suse.de
+Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, lars@metafoo.de
 
-On 06/24/2014 11:29 PM, Naveen Krishna Chatradhi wrote:
-> Murata Manufacturing Co., Ltd is the vendor for
-> NTC (Negative Temperature coefficient) based Thermistors.
-> But, the driver extensively uses "NTC" as the vendor name.
+On 06/25/2014 03:57 AM, Kukjin Kim wrote:
+> Naveen Krishna Chatradhi wrote:
+>>
+> + Jean Delvare, Guenter Roeck
 >
-> This patch corrects the vendor name also updates the
-> compatibility strings according to the vendor-prefix.txt
+> I'm adding maintainers for drivers/hwmon/ntc* but I'm not sure.
 >
-> Note: Drivers continue to support the previous compatible strings
-> but further addition of these compatible strings in device tree
-> is deprecated.
+> Hi,
 >
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
+> This series looks good to me. I will take 3/4 and 4/4 for exynos DT changes once
+> hwmon/ntc maintainer pick the others.
+>
 
-Applied.
+I applied both patches. Currently going through my test cycle.
+I'll send them to Linus Thursday or Friday.
 
 Guenter
