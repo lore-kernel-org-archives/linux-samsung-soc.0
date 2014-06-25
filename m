@@ -1,148 +1,88 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] arm: exynos: Modify pm code to check for cortex A9 rather
- than the SoC
-Date: Wed, 25 Jun 2014 20:02:09 +0900
-Message-ID: <02c501cf9064$e8d164c0$ba742e40$@samsung.com>
-References: <1400814061-12813-1-git-send-email-a.kesavan@samsung.com>
- <CAM4voa=3zzo-2KbjDtBOca+uJeSxT2OYpi+rJuSGsDg-vo7GYA@mail.gmail.com>
- <20140624161114.GW32514@n2100.arm.linux.org.uk>
- <CAM4voak4ZD0OHWoto7j2TyYBmpaWH3JH4ug3+hsxeL+WUhE9jA@mail.gmail.com>
+Subject: RE: [PATCH v2] i2c: exynos5: Properly use the "noirq" variants of
+ suspend/resume
+Date: Wed, 25 Jun 2014 20:13:10 +0900
+Message-ID: <02e701cf9066$7332b280$59981780$@samsung.com>
+References: <1403654093-24134-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:33593 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751413AbaFYLCL convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:37763 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756654AbaFYLN0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 07:02:11 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N7Q000SU1BLLD30@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 25 Jun 2014 20:02:09 +0900 (KST)
-In-reply-to: <CAM4voak4ZD0OHWoto7j2TyYBmpaWH3JH4ug3+hsxeL+WUhE9jA@mail.gmail.com>
+	Wed, 25 Jun 2014 07:13:26 -0400
+In-reply-to: <1403654093-24134-1-git-send-email-dianders@chromium.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Abhilash Kesavan' <kesavan.abhilash@gmail.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Arnd Bergmann' <arnd@arndb.de>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Daniel Lezcano' <daniel.lezcano@linaro.org>
+To: 'Doug Anderson' <dianders@chromium.org>, 'Wolfram Sang' <wsa@the-dreams.de>
+Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, javier.martinez@collabora.co.uk, ch.naveen@samsung.com, jg1.han@samsung.com, jdelvare@suse.de, sjg@google.com, paul.gortmaker@windriver.com, standby24x7@gmail.com, sachin.kamat@linaro.org, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Abhilash Kesavan wrote:
+Doug Anderson wrote:
 > 
-> Hi Russell and Tomasz,
+> The original code for the exynos i2c controller registered for the
+> "noirq" variants.  However during review feedback it was moved to
+> SIMPLE_DEV_PM_OPS without anyone noticing that it meant we were no
+> longer actually "noirq" (despite functions named
+> exynos5_i2c_suspend_noirq and exynos5_i2c_resume_noirq).
 > 
-> +Arnd
-> On Tue, Jun 24, 2014 at 9:41 PM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
-> > On Mon, Jun 16, 2014 at 09:37:14AM +0530, Abhilash Kesavan wrote:
-> >> Hi Kukjin,
-> >>
-> >> On Fri, May 23, 2014 at 8:31 AM, Abhilash Kesavan <a.kesavan@samsung.com>
-> wrote:
-> >> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> >>
-> >> Do you have any comments on this patch ?
-> >
-> > I do.
-> >
-> >> > diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> >> > index d10c351..6dd4a11 100644
-> >> > --- a/arch/arm/mach-exynos/pm.c
-> >> > +++ b/arch/arm/mach-exynos/pm.c
-> >> > @@ -300,7 +300,7 @@ static int exynos_pm_suspend(void)
-> >> >         tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
-> >> >         __raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
-> >> >
-> >> > -       if (!soc_is_exynos5250())
-> >> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> >> >                 exynos_cpu_save_register();
-> > ...
-> >> > @@ -334,7 +334,7 @@ static void exynos_pm_resume(void)
-> >> >         if (exynos_pm_central_resume())
-> >> >                 goto early_wakeup;
-> >> >
-> >> > -       if (!soc_is_exynos5250())
-> >> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> >> >                 exynos_cpu_restore_register();
-> >
-> > It is invalid to check just the part number.  The part number on its
-> > own is meaningless without taking account of the implementor.  Both
-> > the implementor and the part number should be checked at each of these
-> > sites.
-> Thanks for pointing this out. I was not aware of  the implementor id
-> check requirement.
-> >
-> > Another point: exynos have taken it upon themselves to add code which
-> > saves various ARM core registers.  This is a bad idea, it brings us
-> > back to the days where every platform did their own suspend implementations.
-> >
-> > CPU level registers should be handled by CPU level code, not by platform
-> > code.  Is there a reason why this can't be added to the Cortex-A9
-> > support code in proc-v7.S ?
-> >
-Got it. Thanks for pointing out.
+> i2c controllers that might have wakeup sources on them seem to need to
+> resume at noirq time so that the individual drivers can actually read
+> the i2c bus to handle their wakeup.
+> 
+> NOTE: I took the original review feedback from Wolfram and added
+> poweroff, thaw, freeze, restore.
+> 
+Yeah I'm not sure except .suspend_noirq and .resume_noirq but I'm fine if
+Wolfram suggested ;-)
 
-> >> > @@ -353,7 +353,7 @@ static void exynos_pm_resume(void)
-> >> >
-> >> >         s3c_pm_do_restore_core(exynos_core_save,
-> ARRAY_SIZE(exynos_core_save));
-> >> >
-> >> > -       if (!soc_is_exynos5250())
-> >> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> >> >                 scu_enable(S5P_VA_SCU);
-> >> >
-> >> >  early_wakeup:
-> >> > @@ -440,15 +440,18 @@ static int exynos_cpu_pm_notifier(struct
-> notifier_block *self,
-> >> >         case CPU_PM_ENTER:
-> >> >                 if (cpu == 0) {
-> >> >                         exynos_pm_central_suspend();
-> >> > -                       exynos_cpu_save_register();
-> >> > +                       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> >> > +                               exynos_cpu_save_register();
-> >> >                 }
-> >> >                 break;
-> >> >
-> >> >         case CPU_PM_EXIT:
-> >> >                 if (cpu == 0) {
-> >> > -                       if (!soc_is_exynos5250())
-> >> > +                       if (read_cpuid_part_number() ==
-> >> > +                                       ARM_CPU_PART_CORTEX_A9) {
-> >> >                                 scu_enable(S5P_VA_SCU);
-> >> > -                       exynos_cpu_restore_register();
-> >> > +                               exynos_cpu_restore_register();
-> >> > +                       }
-> >> >                         exynos_pm_central_resume();
-> >> >                 }
-> >> >                 break;
-> >
-> > And presumably with the CPU level code dealing with those registers,
-> > you don't need the calls to save and restore these registers in this
-> > notifier.
-> Regarding save/restore of these registers, I could send out a patch
-> cleaning these out once Shawn's patch gets merged. I'd need some help
-> testing it out on Exynos4 boards though. For now, is it OK if I just
-> update to the new function ?
-> >
-> > Which, by the way, is probably illegal to run as it runs in a read-
-> > lock code path and with the SCU disabled.  As you're calling
-> > scu_enable() that means you're non-coherent with the other CPUs,
-> > and therefore locks don't work.
-> >
-> > I think this code is very broken and wrongly architected, and shows
-> > that we're continuing to make the same mistakes that we made all
-> > through the 2000s with platforms doing their own crap rather than
-> > properly thinking about this stuff.
-> I see that you have sent a patch out that ensures both part and
-> implementor number are checked. Currently, my patch has been applied
-> to the fixes branch of the arm-soc tree and I wanted to know how to
-> proceed (without it there is a crash on the 5420):
-> Should I request Arnd to drop it (if possible) and send out a new
-> patch using your updated function ?
+> This patch has only been compile-tested since I don't have all the
+> patches needed to make my machine using this i2c driver actually
+> suspend/resume.
 > 
-Oops, Abhilash please send new fix on top of the current patch.
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+> Changes in v2:
+> - Added missing CONFIG_PM_SLEEP
+> 
+>  drivers/i2c/busses/i2c-exynos5.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-
+> exynos5.c
+> index 63d2292..348b1cd 100644
+> --- a/drivers/i2c/busses/i2c-exynos5.c
+> +++ b/drivers/i2c/busses/i2c-exynos5.c
+> @@ -789,8 +789,16 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
+>  }
+>  #endif
+> 
+> -static SIMPLE_DEV_PM_OPS(exynos5_i2c_dev_pm_ops, exynos5_i2c_suspend_noirq,
+> -			 exynos5_i2c_resume_noirq);
+> +const struct dev_pm_ops exynos5_i2c_dev_pm_ops = {
+
+Maybe static const struct...?
+
+> +#ifdef CONFIG_PM_SLEEP
+> +	.suspend_noirq = exynos5_i2c_suspend_noirq,
+> +	.resume_noirq = exynos5_i2c_resume_noirq,
+> +	.freeze_noirq = exynos5_i2c_suspend_noirq,
+> +	.thaw_noirq = exynos5_i2c_resume_noirq,
+> +	.poweroff_noirq = exynos5_i2c_suspend_noirq,
+> +	.restore_noirq = exynos5_i2c_resume_noirq,
+> +#endif
+> +};
+> 
+>  static struct platform_driver exynos5_i2c_driver = {
+>  	.probe		= exynos5_i2c_probe,
+> --
+> 2.0.0.526.g5318336
+
+Others look good to me,
+
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
 Thanks,
 Kukjin
