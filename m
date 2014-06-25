@@ -1,111 +1,88 @@
-From: Tushar Behera <trblinux@gmail.com>
-Subject: Re: [alsa-devel] [PATCH V2 1/2] ASoC: samsung: Add machine driver
- for Odroid X2/U3
-Date: Wed, 25 Jun 2014 09:01:47 +0530
-Message-ID: <53AA42A3.7030004@gmail.com>
-References: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com> <1403108551-25058-2-git-send-email-s.nawrocki@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators
+Date: Tue, 24 Jun 2014 21:00:34 -0700
+Message-ID: <CAD=FV=WXWttq294yn+eB5x3N0ztoMhpwacqdLB3OfRk+UK+Abg@mail.gmail.com>
+References: <1403520321-2431-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1403520321-2431-2-git-send-email-yuvaraj.cd@samsung.com>
+	<CAD=FV=UGjm9y3XoBgWKjw9kp9W=ZrwB-S6Lh7T_LBUgCQZn1ag@mail.gmail.com>
+	<53AA3F78.3080804@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:39651 "EHLO
-	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752787AbaFYDbx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 23:31:53 -0400
-In-Reply-To: <1403108551-25058-2-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <53AA3F78.3080804@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, ks.giri@samsung.com, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, alsa-devel@alsa-project.org
-Cc: mark.rutland@arm.com, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, zhen1.chen@samsung.com, kyungmin.park@samsung.com, galak@codeaurora.org, alsa-devel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 
-On 06/18/2014 09:52 PM, Sylwester Nawrocki wrote:
-> This patch adds the sound subsystem driver for Odroid-X2 and
-> Odroid-U3 boards. The codec works in I2S master mode; there are
-> 2 separate audio routing paths defined as there are differences
-> in the signal routing between the X2 and U3 boards, i.e. U3 uses
-> single jack for headphones and microphone.
-> 
-> Signed-off-by: Chen Zhen <zhen1.chen@samsung.com>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  sound/soc/samsung/Kconfig             |    8 ++
->  sound/soc/samsung/Makefile            |    2 +
->  sound/soc/samsung/odroidx2_max98090.c |  191 +++++++++++++++++++++++++++++++++
->  3 files changed, 201 insertions(+)
->  create mode 100644 sound/soc/samsung/odroidx2_max98090.c
-> 
+Jaehoon,
 
-[ ... ]
+On Tue, Jun 24, 2014 at 8:18 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> On 06/25/2014 03:00 AM, Doug Anderson wrote:
+>> Yuvaraj,
+>>
+>> On Mon, Jun 23, 2014 at 3:45 AM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>>> This patch makes use of mmc_regulator_get_supply() to handle
+>>> the vmmc and vqmmc regulators.Also it moves the code handling
+>>> the these regulators to dw_mci_set_ios().It turned on the vmmc
+>>> and vqmmc during MMC_POWER_UP and MMC_POWER_ON,and turned off
+>>> during MMC_POWER_OFF.
+>>>
+>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>>> ---
+>>>  drivers/mmc/host/dw_mmc.c |   71 ++++++++++++++++++++++-----------------------
+>>>  drivers/mmc/host/dw_mmc.h |    2 ++
+>>>  2 files changed, 36 insertions(+), 37 deletions(-)
+>>
+>> Perhaps you could CC me on the whole series for the next version since
+>> I was involved in privately reviewing previous versions?
+>>
+>> Overall caveat for my review is that I'm nowhere near an SD/MMC expert.
+>>
+>>
+>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>>> index 1ac227c..f5cabce 100644
+>>> --- a/drivers/mmc/host/dw_mmc.c
+>>> +++ b/drivers/mmc/host/dw_mmc.c
+>>> @@ -937,6 +937,7 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>>>         struct dw_mci_slot *slot = mmc_priv(mmc);
+>>>         const struct dw_mci_drv_data *drv_data = slot->host->drv_data;
+>>>         u32 regs;
+>>> +       int ret;
+>>>
+>>>         switch (ios->bus_width) {
+>>>         case MMC_BUS_WIDTH_4:
+>>> @@ -975,16 +976,41 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>>>
+>>>         switch (ios->power_mode) {
+>>>         case MMC_POWER_UP:
+>>> +               if ((!IS_ERR(mmc->supply.vmmc)) &&
+>>> +                               !test_bit(DW_MMC_CARD_POWERED, &slot->flags)) {
+>>> +                       ret = regulator_enable(mmc->supply.vmmc);
+>>> +                       if (!ret)
+>>> +                               set_bit(DW_MMC_CARD_POWERED, &slot->flags);
+>
+> MMC_CARD_POWERED? I didn't know why it needs.
 
-> +static int odroidx2_hw_params(struct snd_pcm_substream *substream,
-> +	struct snd_pcm_hw_params *params)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-> +	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-> +	int ret;
-> +
-> +	ret = snd_soc_dai_set_sysclk(codec_dai, 0, MAX98090_MCLK,
-> +						SND_SOC_CLOCK_IN);
-> +	if (ret < 0) {
-> +		dev_err(codec_dai->dev,
-> +			"Unable to switch to FLL1: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/* Set the cpu DAI configuration in order to use CDCLK */
-> +	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
-> +					0, SND_SOC_CLOCK_OUT);
-> +	if (ret < 0)
-> +		return ret;
-> +
+I think the idea was to make sure that regulator enables/disables were
+balanced.  ...but if the mmc core does this for us then we probably
+don't need to worry.
 
-While upstreaming sound-card driver for Snow board, I had a comment from
-Mark to move this to probe, if possible. That way, the clock operations
-would be done only once and this function and odroidx2_ops can be
-removed altogether.
 
-> +	dev_dbg(codec_dai->dev, "HiFi DAI %s params: channels: %d, rate: %d\n",
-> +		snd_pcm_stream_str(substream), params_channels(params),
-> +		params_rate(params));
-> +
-> +	return 0;
-> +}
-> +
-> +static struct snd_soc_ops odroidx2_ops = {
-> +	.hw_params	= odroidx2_hw_params,
-> +};
-> +
+>>> +               }
+>>
+>> As per below, I'm not sure why you'd want to turn on vqmmc and vmmc at
+>> different times.
+> In my case, in order to prevent the H/W mis-operation, it turns on vqmmc and vmmc at different times.
 
-[ ... ]
+OK!  Can you explain more?  What instance is one powered but not the other?
 
-> +
-> +	ret = snd_soc_register_card(card);
+I know that we talked to an SD Card manufacturer who told us that
+powering their IO lines without their main power rail was a bad thing
+(and we in fact saw this causing problems on SD cards).  I would guess
+that means that you're either powering vmmc before vqmmc or that vqmmc
+somehow doesn't directly enable pullups for IO lines.
 
-devm_snd_soc_register_card ?
+If you need vmmc before vqmmc then I'm curious about why...
 
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "snd_soc_register_card failed: %d\n", ret);
-> +		goto err_put_cpu_n;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_put_cpu_n:
-> +	of_node_put(odroidx2_dai[0].cpu_of_node);
-> +err_put_cod_n:
-> +	of_node_put(odroidx2_dai[0].codec_of_node);
-> +	return ret;
-> +}
-> +
-> +static int odroidx2_audio_remove(struct platform_device *pdev)
-> +{
-> +	struct snd_soc_card *card = platform_get_drvdata(pdev);
-> +
-> +	snd_soc_unregister_card(card);
-
-This can be removed when devm_snd_soc_register_card is used.
-
--- 
-Tushar Behera
+-Doug
