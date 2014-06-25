@@ -1,102 +1,203 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH 3/5 v2] drm/exynos: allow mulitple layer updates per vsync
- for mixer
-Date: Wed, 25 Jun 2014 16:12:36 +0530
-Message-ID: <CAPdUM4OLCjCW-wiUEaN90eSjkNxJi--c4ThBb7fyKy_K2H_R9w@mail.gmail.com>
-References: <1403501545-16482-1-git-send-email-rahul.sharma@samsung.com>
-	<1403501545-16482-4-git-send-email-rahul.sharma@samsung.com>
-	<53A90ADA.2040306@samsung.com>
-	<53A9633D.4050800@suse.de>
-	<CAAQKjZMkn4BCrJOPA793A5CBLpDfJLZ-4w85=TsZr0P3L0bAHQ@mail.gmail.com>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH 2/4 v2] hwmon: ntc_thermistor: Use the manufacturer name properly
+Date: Wed, 25 Jun 2014 16:12:24 +0530
+Message-ID: <CAHfPSqCuAfaJyseYRaZTxLmPpeguXA6D=AX6jPjUFSmBJDdF9w@mail.gmail.com>
+References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
+ <1403677773-21141-3-git-send-email-ch.naveen@samsung.com> <CABxcv=knKWT6kJYWBV59U_jeV2yeQJkuRof9qZaGgxOVLJ5WDQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:49609 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753712AbaFYKmh convert rfc822-to-8bit (ORCPT
+Received: from mail-qc0-f175.google.com ([209.85.216.175]:46181 "EHLO
+	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753055AbaFYKmp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 06:42:37 -0400
-Received: by mail-wg0-f42.google.com with SMTP id z12so1784661wgg.25
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2014 03:42:36 -0700 (PDT)
-In-Reply-To: <CAAQKjZMkn4BCrJOPA793A5CBLpDfJLZ-4w85=TsZr0P3L0bAHQ@mail.gmail.com>
+	Wed, 25 Jun 2014 06:42:45 -0400
+In-Reply-To: <CABxcv=knKWT6kJYWBV59U_jeV2yeQJkuRof9qZaGgxOVLJ5WDQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-iio <linux-iio@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Guenter Roeck <linux@roeck-us.net>
 
-Thanks Inki,
+Hello Javier,
 
-One more thing. mixer_layer_update is only called on for mixer version;
-MXR_VER_16_0_33_0, MXR_VER_128_0_0_184. This condition
-should have taken care of Exynos4 scenarios. What you say?
-
-Regards,
-Rahul Sharma.
-
-On 24 June 2014 20:20, Inki Dae <inki.dae@samsung.com> wrote:
-> 2014-06-24 20:38 GMT+09:00 Andreas F=C3=A4rber <afaerber@suse.de>:
->> Am 24.06.2014 07:21, schrieb Inki Dae:
->>> On 2014=EB=85=84 06=EC=9B=94 23=EC=9D=BC 14:32, Rahul Sharma wrote:
->>>> Allowing only one layer update per vsync can cause issues
->>>> while there are update available for both layers. There is
->>>> a good amount of possibility to loose updates if we allow
->>>> single update per vsync.
->>>>
->>>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->>>> ---
->>>>  drivers/gpu/drm/exynos/exynos_mixer.c |    7 +------
->>>>  1 file changed, 1 insertion(+), 6 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/d=
-rm/exynos/exynos_mixer.c
->>>> index d359501..6773b03 100644
->>>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->>>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->>>> @@ -511,13 +511,8 @@ static void vp_video_buffer(struct mixer_cont=
-ext *ctx, int win)
->>>>  static void mixer_layer_update(struct mixer_context *ctx)
->>>>  {
->>>>      struct mixer_resources *res =3D &ctx->mixer_res;
->>>> -    u32 val;
->>>> -
->>>> -    val =3D mixer_reg_read(res, MXR_CFG);
->>>>
->>>> -    /* allow one update per vsync only */
->>>> -    if (!(val & MXR_CFG_LAYER_UPDATE_COUNT_MASK))
->>>> -            mixer_reg_writemask(res, MXR_CFG, ~0, MXR_CFG_LAYER_U=
-PDATE);
->>>> +    mixer_reg_writemask(res, MXR_CFG, ~0, MXR_CFG_LAYER_UPDATE);
->>>
->>> Rahul, it looks good to me and ok as is. But above codes don't cons=
-ider
->>> Exynos4 series. In case of Exynos4xxx SoC,
->>> MXR_CFG_LAYER_UPDATE_COUNT_MASK and MXR_CFG_LAYER_UPDATE of MIXER_C=
-=46G
->>> register are reserved fields. So can you work that patch to be
->>> considered for Exynos4xxx SoC? That patch would be additional one.
->>>
->>> Anyway, will apply it as is, and I will wait for the additional pat=
-ch.
+On 25 June 2014 16:06, Javier Martinez Canillas <javier@dowhile0.org> wrote:
+> Hello Naveen,
+>
+> On Wed, Jun 25, 2014 at 8:29 AM, Naveen Krishna Chatradhi
+> <ch.naveen@samsung.com> wrote:
+>> Murata Manufacturing Co., Ltd is the vendor for
+>> NTC (Negative Temperature coefficient) based Thermistors.
+>> But, the driver extensively uses "NTC" as the vendor name.
 >>
->> If it's not too late, could you fix up "multiple" in the subject? :)
->
-> Corrected. :)
->
-> Thanks,
-> Inki Dae
->
+>> This patch corrects the vendor name also updates the
+>> compatibility strings according to the vendor-prefix.txt
 >>
->> Cheers,
->> Andreas
+>> Note: Drivers continue to support the previous compatible strings
+>> but further addition of these compatible strings in device tree
+>> is deprecated.
+>>
+>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+>> Cc: Guenter Roeck <linux@roeck-us.net>
+>> ---
+>> Changes since v1:
+>> 1. Kept the old compatible string marked as <DEPRECATED> in code and
+>>    in the Documentation.
+>>
+>>  .../devicetree/bindings/arm/samsung/exynos-adc.txt |    2 +-
+>>  .../devicetree/bindings/hwmon/ntc_thermistor.txt   |   20 ++++++++++++++------
+>>  Documentation/hwmon/ntc_thermistor                 |    8 ++++----
+>>  drivers/hwmon/Kconfig                              |    5 +++--
+>>  drivers/hwmon/ntc_thermistor.c                     |   14 +++++++++++++-
+>>  5 files changed, 35 insertions(+), 14 deletions(-)
+>>
+>
+> Looks good to me.
+>
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Thanks for the review.
+>
+>> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+>> index 5d49f2b..832fe8c 100644
+>> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+>> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+>> @@ -48,7 +48,7 @@ adc@12D10000 {
+>>
+>>         /* NTC thermistor is a hwmon device */
+>>         ncp15wb473@0 {
+>> -               compatible = "ntc,ncp15wb473";
+>> +               compatible = "murata,ncp15wb473";
+>>                 pullup-uv = <1800000>;
+>>                 pullup-ohm = <47000>;
+>>                 pulldown-ohm = <0>;
+>> diff --git a/Documentation/devicetree/bindings/hwmon/ntc_thermistor.txt b/Documentation/devicetree/bindings/hwmon/ntc_thermistor.txt
+>> index c6f6667..b117b2e 100644
+>> --- a/Documentation/devicetree/bindings/hwmon/ntc_thermistor.txt
+>> +++ b/Documentation/devicetree/bindings/hwmon/ntc_thermistor.txt
+>> @@ -3,11 +3,19 @@ NTC Thermistor hwmon sensors
+>>
+>>  Requires node properties:
+>>  - "compatible" value : one of
+>> -       "ntc,ncp15wb473"
+>> -       "ntc,ncp18wb473"
+>> -       "ntc,ncp21wb473"
+>> -       "ntc,ncp03wb473"
+>> -       "ntc,ncp15wl333"
+>> +       "murata,ncp15wb473"
+>> +       "murata,ncp18wb473"
+>> +       "murata,ncp21wb473"
+>> +       "murata,ncp03wb473"
+>> +       "murata,ncp15wl333"
+>> +
+>> +/* Usage of vendor name "ntc" is deprecated */
+>> +<DEPRECATED>   "ntc,ncp15wb473"
+>> +<DEPRECATED>   "ntc,ncp18wb473"
+>> +<DEPRECATED>   "ntc,ncp21wb473"
+>> +<DEPRECATED>   "ntc,ncp03wb473"
+>> +<DEPRECATED>   "ntc,ncp15wl333"
+>> +
+>>  - "pullup-uv"  Pull up voltage in micro volts
+>>  - "pullup-ohm" Pull up resistor value in ohms
+>>  - "pulldown-ohm" Pull down resistor value in ohms
+>> @@ -21,7 +29,7 @@ Read more about iio bindings at
+>>
+>>  Example:
+>>         ncp15wb473@0 {
+>> -               compatible = "ntc,ncp15wb473";
+>> +               compatible = "murata,ncp15wb473";
+>>                 pullup-uv = <1800000>;
+>>                 pullup-ohm = <47000>;
+>>                 pulldown-ohm = <0>;
+>> diff --git a/Documentation/hwmon/ntc_thermistor b/Documentation/hwmon/ntc_thermistor
+>> index 3bfda94..057b770 100644
+>> --- a/Documentation/hwmon/ntc_thermistor
+>> +++ b/Documentation/hwmon/ntc_thermistor
+>> @@ -1,7 +1,7 @@
+>>  Kernel driver ntc_thermistor
+>>  =================
+>>
+>> -Supported thermistors:
+>> +Supported thermistors from Murata:
+>>  * Murata NTC Thermistors NCP15WB473, NCP18WB473, NCP21WB473, NCP03WB473, NCP15WL333
+>>    Prefixes: 'ncp15wb473', 'ncp18wb473', 'ncp21wb473', 'ncp03wb473', 'ncp15wl333'
+>>    Datasheet: Publicly available at Murata
+>> @@ -15,9 +15,9 @@ Authors:
+>>  Description
+>>  -----------
+>>
+>> -The NTC thermistor is a simple thermistor that requires users to provide the
+>> -resistance and lookup the corresponding compensation table to get the
+>> -temperature input.
+>> +The NTC (Negative Temperature Coefficient) thermistor is a simple thermistor
+>> +that requires users to provide the resistance and lookup the corresponding
+>> +compensation table to get the temperature input.
+>>
+>>  The NTC driver provides lookup tables with a linear approximation function
+>>  and four circuit models with an option not to use any of the four models.
+>> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+>> index 08531a1..154851b 100644
+>> --- a/drivers/hwmon/Kconfig
+>> +++ b/drivers/hwmon/Kconfig
+>> @@ -1052,7 +1052,7 @@ config SENSORS_PC87427
+>>           will be called pc87427.
+>>
+>>  config SENSORS_NTC_THERMISTOR
+>> -       tristate "NTC thermistor support"
+>> +       tristate "NTC thermistor support from Murata"
+>>         depends on !OF || IIO=n || IIO
+>>         help
+>>           This driver supports NTC thermistors sensor reading and its
+>> @@ -1060,7 +1060,8 @@ config SENSORS_NTC_THERMISTOR
+>>           send notifications about the temperature.
+>>
+>>           Currently, this driver supports
+>> -         NCP15WB473, NCP18WB473, NCP21WB473, NCP03WB473, and NCP15WL333.
+>> +         NCP15WB473, NCP18WB473, NCP21WB473, NCP03WB473, and NCP15WL333
+>> +         from Murata.
+>>
+>>           This driver can also be built as a module.  If so, the module
+>>           will be called ntc-thermistor.
+>> diff --git a/drivers/hwmon/ntc_thermistor.c b/drivers/hwmon/ntc_thermistor.c
+>> index e76feb86..bdfbe91 100644
+>> --- a/drivers/hwmon/ntc_thermistor.c
+>> +++ b/drivers/hwmon/ntc_thermistor.c
+>> @@ -163,6 +163,18 @@ static int ntc_adc_iio_read(struct ntc_thermistor_platform_data *pdata)
+>>  }
+>>
+>>  static const struct of_device_id ntc_match[] = {
+>> +       { .compatible = "murata,ncp15wb473",
+>> +               .data = &ntc_thermistor_id[0] },
+>> +       { .compatible = "murata,ncp18wb473",
+>> +               .data = &ntc_thermistor_id[1] },
+>> +       { .compatible = "murata,ncp21wb473",
+>> +               .data = &ntc_thermistor_id[2] },
+>> +       { .compatible = "murata,ncp03wb473",
+>> +               .data = &ntc_thermistor_id[3] },
+>> +       { .compatible = "murata,ncp15wl333",
+>> +               .data = &ntc_thermistor_id[4] },
+>> +
+>> +       /* Usage of vendor name "ntc" is deprecated */
+>>         { .compatible = "ntc,ncp15wb473",
+>>                 .data = &ntc_thermistor_id[0] },
+>>         { .compatible = "ntc,ncp18wb473",
+>> @@ -534,7 +546,7 @@ static struct platform_driver ntc_thermistor_driver = {
+>>
+>>  module_platform_driver(ntc_thermistor_driver);
+>>
+>> -MODULE_DESCRIPTION("NTC Thermistor Driver");
+>> +MODULE_DESCRIPTION("NTC Thermistor Driver from Murata");
+>>  MODULE_AUTHOR("MyungJoo Ham <myungjoo.ham@samsung.com>");
+>>  MODULE_LICENSE("GPL");
+>>  MODULE_ALIAS("platform:ntc-thermistor");
+>> --
+>> 1.7.9.5
 >>
 >> --
->> SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, German=
-y
->> GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG =
-N=C3=BCrnberg
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-sams=
-ung-soc" in
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
 >> the body of a message to majordomo@vger.kernel.org
 >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Shine bright,
+(: Nav :)
