@@ -1,60 +1,77 @@
-From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Wed, 25 Jun 2014 11:14:09 +0100
-Message-ID: <20140625101409.GJ6153@arm.com>
-References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
-	<130361958.xFghHXmZkz@wuerfel> <20140625095735.GI6153@arm.com>
-	<6589024.32Qh7fFhXo@wuerfel>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2] arm: exynos: Support cluster power off on
+ exynos5420/5800
+Date: Wed, 25 Jun 2014 19:14:53 +0900
+Message-ID: <01b501cf905e$4e95cf00$ebc16d00$@samsung.com>
+References: <1403104722-14848-1-git-send-email-a.kesavan@samsung.com>
+ <1403181617-19743-1-git-send-email-a.kesavan@samsung.com>
+ <7hy4wsvdsm.fsf@paris.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <6589024.32Qh7fFhXo@wuerfel>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:58989 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752683AbaFYKO4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jun 2014 06:14:56 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N7P000O4Z4UXL00@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Jun 2014 19:14:54 +0900 (KST)
+In-reply-to: <7hy4wsvdsm.fsf@paris.lan>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kevin Hilman' <khilman@linaro.org>, 'Abhilash Kesavan' <a.kesavan@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, nicolas.pitre@linaro.org, kesavan.abhilash@gmail.com, abrestic@chromium.org
 
-On Wed, Jun 25, 2014 at 11:12:13AM +0100, Arnd Bergmann wrote:
-> On Wednesday 25 June 2014 10:57:36 Will Deacon wrote:
-> > So far, I've been avoiding the hardcoding. However, you could potentially
-> > build a system with a small number of SMRs (compared to the number of
-> > StreamIDs) and allocate the StreamIDs in such a way that I think the dynamic
-> > configuration would be NP complete if we require an optimal SMR allocation.
-> > 
-> > However:
-> > 
-> >   (1) I don't know of a system where this is the case
-> >   (2) Not much work has been done on improving the dynamic allocator yet
-> > 
-> > which is why I'm still favouring dynamic configuration in the driver.
-> > 
-> > The other thing I forgot to mention earlier is that we need to support
-> > device hotplug in the future, so some level of dynamic configuration
-> > will always be required.
+Kevin Hilman wrote:
 > 
-> Ok, got it. So we just hope that we can make dynamic configuration
-> work all the time, but if it all fails, then we come up with a
-> hardcoded configuration method.
+> Abhilash Kesavan <a.kesavan@samsung.com> writes:
 > 
-> I guess this could be done similarly to how we handle clocks on
-> a lot of systems: generally these are dynamic, but you have the
-> option to provide hints in the clock controller node about how
-> you expect things to be configured.
-> 
-> For the SMMU that could mean that (if we get into the situation you
-> describe), we add optional properties to the SMMU node itself
-> describing how we expect the SMRs to be used.
+Hi,
 
-That sounds good to me! Thanks for the discussion.
+> > Turning off a cluster when all 4 cores of the cluster are powered off
+> > saves power significantly. Powering off the A15 L2 alone gives around
+> > 100mW in savings. Add support for powering off the A15/A7 clusters on
+> > exynos5420/5800.
+> >
+> > The patch enables specific register bits which ensure that:
+> >    - cluster L2 will be turned on before the first man is powered up.
+> >    - last man will be turned off before the cluster L2 is turned off.
+> >    - core is powered down before powering it up.
+> >
+> > Remove the exynos_cluster_power_control function completely as we can
+> > rely on the above mentioned bits rather than polling the cluster power
+> > status register.
+> >
+> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> > Acked-by: Nicolas Pitre <nico@linaro.org>
+> > ---
+> > Change in v2:
+> > Added a macro for the COMMON_OPTION register and used it in the MCPM
+> > back-end.
+> >
+> > The patch is based on Linux-next 20140619. It has been tested on an
+> > exynos5420-based chromebook using the "/dev/bL_switcher" interface as
+> > well as the script provided by Nicolas Pitre and Dave Martin [1].
+> >
+> > Patch depends on:
+> > [v2] ARM: EXYNOS: mcpm: Don't rely on firmware's secondary_cpu_start
+> >
+> > [1] http://www.spinics.net/lists/linux-samsung-soc/msg31257.html
+> 
+> Tested on exynos5800/Chromebook2 along with the dependency patch and using
+> the script from Dave and Nico.
+> 
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+> 
+Kevin, thanks for your test on the board ;-)
 
-Will
+Applied into samsung tree.
+
+Thanks,
+Kukjin
