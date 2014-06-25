@@ -1,109 +1,88 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: mainline boot: 64 boots: 62 pass, 2 fail (v3.16-rc1-2-gebe0618)
-Date: Wed, 25 Jun 2014 04:07:43 +0200
-Message-ID: <53AA2EEF.6090100@suse.de>
-References: <539fdd37.e7bc420a.76b9.ffffb583@mx.google.com>	<CAGa+x85nqPbH-sye28ni=gUEdgjGdUDqHhv1+0pV5aO8y1+wHQ@mail.gmail.com>	<53A106F1.10201@gmail.com>	<CAGa+x8527FEPk6fg5kv-fbOzK3MzcFooFGE9Me12b9C_Pv=UzA@mail.gmail.com>	<53A2AE11.2050208@gmail.com>	<53A2BE94.2010308@gmail.com>	<53A7A579.4010702@gmail.com> <CAGa+x85H510fNGTXJHGYfQybRa2FGgg2NyCgJ8rmjJ6TE7GNbA@mail.gmail.com>
+From: Tushar Behera <trblinux@gmail.com>
+Subject: Re: [PATCH 1/3] clk: exynos-audss: Keep the parent of mout_audss
+ always enabled
+Date: Wed, 25 Jun 2014 08:39:37 +0530
+Message-ID: <53AA3D71.5010000@gmail.com>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>	<1402464739-19044-2-git-send-email-tushar.b@samsung.com>	<7ha99jjspt.fsf@paris.lan>	<CAC5m3Bwj1HEWSQd7rx6Zn5vbUPKFqeT_X0PL3mAxRw0FNkK=QQ@mail.gmail.com> <CAD=FV=VP4-+B6oV8Skb3rxxPRbOWmzu=6PJbWbxCU=86ZvRuYQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:56222 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752322AbaFYCHs (ORCPT
+Received: from mail-pb0-f54.google.com ([209.85.160.54]:57086 "EHLO
+	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752423AbaFYDJp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 22:07:48 -0400
-In-Reply-To: <CAGa+x85H510fNGTXJHGYfQybRa2FGgg2NyCgJ8rmjJ6TE7GNbA@mail.gmail.com>
+	Tue, 24 Jun 2014 23:09:45 -0400
+In-Reply-To: <CAD=FV=VP4-+B6oV8Skb3rxxPRbOWmzu=6PJbWbxCU=86ZvRuYQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@linaro.org>, Tushar Behera <trblinux@gmail.com>, Laura Abbott <lauraa@codeaurora.org>
-Cc: Sachin Kamat <spk.linux@gmail.com>, kernel-build-reports@lists.linaro.org, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Russell King <linux@arm.linux.org.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Doug Anderson <dianders@google.com>, Tushar Behera <tushar.b@samsung.com>
+Cc: Kevin Hilman <khilman@linaro.org>, lkml <linux-kernel@vger.kernel.org>, ML Devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, ML Arch-Arm <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-Am 23.06.2014 20:32, schrieb Kevin Hilman:
-> On Sun, Jun 22, 2014 at 8:56 PM, Tushar Behera <trblinux@gmail.com> w=
-rote:
->> Adding linux-samsung-soc and linux-arm-kernel ML for wider audience.
+On 06/25/2014 04:29 AM, Doug Anderson wrote:
+> Tushar,
+> 
+> On Thu, Jun 12, 2014 at 12:40 AM, Tushar Behera <tushar.b@samsung.com> wrote:
+>> On Wed, Jun 11, 2014 at 10:20 PM, Kevin Hilman <khilman@linaro.org> wrote:
+>>> Tushar Behera <tushar.b@samsung.com> writes:
+>>>
+>>>> When the output clock of AUDSS mux is disabled, we are getting kernel
+>>>> oops while doing a clk_get() on other clocks provided by AUDSS.
+>>>>
+>>>> Though user manual doesn't specify this dependency, we came across
+>>>> this issue while disabling the parent of AUDSS mux clocks.
+>>>>
+>>>> Keeping the parents of AUDSS mux always enabled fixes this issue.
+>>>
+>>> While this patch works (and fixes the boot problem for me), it seems
+>>> like it's papering over the real problem.
+>>>
 >>
->> On 06/19/2014 04:12 PM, Tushar Behera wrote:
->>> On 06/19/2014 03:02 PM, Tushar Behera wrote:
->>>> On 06/18/2014 09:22 AM, Kevin Hilman wrote:
->>>>> On Tue, Jun 17, 2014 at 8:26 PM, Tushar Behera <trblinux@gmail.co=
-m> wrote:
->>>>>> On 06/17/2014 10:23 PM, Kevin Hilman wrote:
->>>>>>> Sachin,
->>>>>>>
->>>>>>> On Mon, Jun 16, 2014 at 11:16 PM, Kevin's boot bot <khilman@lin=
-aro.org> wrote:
->>>>>>>>
->>>>>>>> Tree/Branch: mainline
->>>>>>>> Git describe: v3.16-rc1-2-gebe0618
->>>>>>>> Failed boot tests (console logs at the end)
->>>>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>>>>>>      exynos5420-arndale-octa:     FAIL:    arm-exynos_defconfi=
-g
->>>>>>>>                 ste-snowball:     FAIL:    arm-u8500_defconfig
->>>>>>>
->>>>>>> FYI... these failures are getting more consistent on my octa bo=
-ard,
->>>>>>> but still not failing every time.
->>>>>>>
->>>>>>> Kevin
->>>>>>>
->>>>>>
->>>>>> Hi Kevin,
->>>>>>
->>>>>> Same here.
->>>>>>
->>>>>> Observation: If you soft-reset the board (through the jumpers) a=
-fter
->>>>>> getting this problem, the problem keeps repeating. But if you ha=
-rd-reset
->>>>>> the board (by removing the power cord), the problem doesn't occu=
-r during
->>>>>> next iteration.
->>>>>
->>>>> I don't ever use the soft-reset, I only toggle the wall power.  I
->>>>> don't ever actually remove the power cord though, I'm using a
->>>>> USB-controlled relay to toggle the wall power.
->>>>>
->>>>> Kevin
->>>>>
->>>>
->>>> Laura,
->>>>
->>>> We are getting following kernel panic [1] (not always, but quite
->>>> regularly) while booting Arndale-Octa (based on Samsung's Exynos54=
-20)
->>>> board with upstream kernel. I haven't observed this issue with oth=
-er
->>>> boards yet.
->>>>
->>>> This issue is observed when I am booting with uImage + dtb (within
->>>> roughly ~10 iterations).
->>>>
+>> Thanks for testing.
+>>
+>>> Seems like the right fix is actually modelling the clocks properly so
+>>> that enabling a child clock ensures that the parent is also enabled.
 >>>
->>> Some more information:
->>>
->>> The boot logs are provided in pastebin, okay[2] and failed[3].
->>>
->>> In case of boot failures, I am getting a higher value for vm_total_=
-pages
->>> (684424 in [3]). In case of successful boot on my board, it is alwa=
-ys
->>> 521232 [2] on my board.
->=20
-> I can confirm that reverting the "Get rid of meminfo" patch gets the
-> Octa board booting reliably again for me also.
+>>
+>> Patch 2/3 was to ensure we have proper clock tree defined for
+>> Exynos5420. While testing with audio disabled, that patch alone fixed
+>> the issue. But when audio was enabled (and hence I2S0 was trying to
+>> access the clocks), we got some kernel oops during late booting, hence
+>> I came up this solution.
+>>
+>> The solution might be a little half-baked because of the urgency to
+>> push the fix, but will try to dig more into the issue on Monday when I
+>> resume office.
+> 
+> Which Monday were you referring to?  ;)
+> 
 
-Confirming that the revert [1] fixes also the issue I was reporting for
-my Arndale Octa. I'm using zImage + dtb and had been resetting via J10.
+Sorry that I couldn't get deeper into this issue. Thanks for reminding
+though.
 
-Regards,
-Andreas
+> ...but in all seriousness do you have an official status update on
+> this patch?  It seems as if it's not needed and all you need is
+> <https://patchwork.kernel.org/patch/4333581/>, but it would be nice to
+> get an official confirmation.
 
-[1] https://github.com/afaerber/linux/commits/arndale-octa-next
+I have tested various scenarios with only patch 2/3, which seems to be
+sufficient for the time being. I have not encountered the older issue
+till now. I was thinking of testing a bit further, but given that you
+have already asked for, we can go ahead with only patch 2/3 right now.
 
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+In case any further issue comes up, I will post patch 1/3 as per the
+review comments that I have got.
+
+> 
+> Thanks!
+> 
+> -Doug
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+
+-- 
+Tushar Behera
