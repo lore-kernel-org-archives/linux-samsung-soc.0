@@ -1,47 +1,91 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v2 0/6] Enable L2 cache support on Exynos4210/4x12 SoCs
-Date: Wed, 25 Jun 2014 14:50:39 +0100
-Message-ID: <20140625135039.GM3705@n2100.arm.linux.org.uk>
-References: <1403703451-12233-1-git-send-email-t.figa@samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH v2 3/5] ARM: dts: exynos4412-odroidx: add support for USB
+ (phy, host, device)
+Date: Wed, 25 Jun 2014 19:28:31 +0530
+Message-ID: <CAFp+6iHScs_wycE9XcDN46xg_N8hYf_BtJKNdtUVwg36sfZqMA@mail.gmail.com>
+References: <1403702773-9141-1-git-send-email-m.szyprowski@samsung.com>
+	<1403702773-9141-4-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:42524 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1756983AbaFYNus (ORCPT
+Received: from mail-qc0-f175.google.com ([209.85.216.175]:45442 "EHLO
+	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754202AbaFYN6c (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 09:50:48 -0400
-Content-Disposition: inline
-In-Reply-To: <1403703451-12233-1-git-send-email-t.figa@samsung.com>
+	Wed, 25 Jun 2014 09:58:32 -0400
+Received: by mail-qc0-f175.google.com with SMTP id i8so1707029qcq.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2014 06:58:31 -0700 (PDT)
+In-Reply-To: <1403702773-9141-4-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Laura Abbott <lauraa@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Tony Lindgren <tony@atomide.com>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Drake <drake@endlessm.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>
 
-On Wed, Jun 25, 2014 at 03:37:25PM +0200, Tomasz Figa wrote:
-> This series intends to add support for L2 cache on Exynos4 SoCs on boards
-> running under secure firmware, which requires certain initialization steps
-> to be done with help of firmware, as selected registers are writable only
-> from secure mode.
+On Wed, Jun 25, 2014 at 6:56 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> From: Kamil Debski <k.debski@samsung.com>
+>
+> This patch adds basic support for USB modules (host and device) on
+> OdroidX board.
+>
+> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+> [removed incorrect port@2 node]
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4412-odroidx.dts | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
+> index fda9ac23dd55..4c853fbf7202 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroidx.dts
+> +++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
+> @@ -148,6 +148,16 @@
+>                 pinctrl-names = "default";
+>                 status = "okay";
+>
+> +               usb3503@08 {
+> +                       compatible = "smsc,usb3503";
+> +                       reg = <0x08>;
+> +
+> +                       intn-gpios = <&gpx3 0 0>;
+> +                       connect-gpios = <&gpx3 4 0>;
+> +                       reset-gpios = <&gpx3 5 0>;
+> +                       initial-mode = <1>;
+> +               };
+> +
+>                 max77686: pmic@09 {
+>                         compatible = "maxim,max77686";
+>                         reg = <0x09>;
+> @@ -338,4 +348,21 @@
+>                         };
+>                 };
+>         };
+> +
+> +       exynos-usbphy@125B0000 {
+> +               status = "okay";
+> +       };
+> +
+> +       hsotg@12480000 {
+> +               status = "okay";
+> +               vusb_d-supply = <&ldo15_reg>;
+> +               vusb_a-supply = <&ldo12_reg>;
 
-What I said in my message on June 12th applies to this series.  I'm
-not having the virtual address exposed via the write_sec call.
+Can you please point me to the documentation for these two properties
+in the DT bindings ?
+Which tree i should grep to find that ?
+We have similar supplies for ehci/ohci and other host controllers too,
+so just wondering
+if we can use similar nomenclature for hsotg as well as host.
 
-Yes, you need to read other registers in order to use your secure
-firmware implementation.  Let's fix that by providing a better write_sec
-interface so you don't have to read back these registers, rather than
-working around this short-coming.
+I have posted driver side patches for host (with DT documentation) a
+while back :
+https://lkml.org/lkml/2014/6/25/363
 
-That's exactly what I meant when I talked on June 12th about turning
-cache-l2x0.c back into a pile of crap.  You're working around problems
-rather than fixing the underlying issue, as seems to be standard
-platform maintainer behaviour when things like core ARM code is
-concerned.  This is why things devolve over time into piles of crap,
-because platforms just hack around problems rather than fixing the
-root cause of the problem.
+[snip]
 
-So... I'm NAKing the entire series.
 
 -- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
