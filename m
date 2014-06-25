@@ -1,99 +1,50 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/3 v5] spi: s3c64xx: fix broken "cs_gpios" usage in the
- driver
-Date: Wed, 25 Jun 2014 20:29:42 +0900
-Message-ID: <03a101cf9068$c2378250$46a686f0$@samsung.com>
-References: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
- <CAD=FV=Ua+P0CBAfNj4SWWMWRKcEFdmh=akwy1-ZWoGOt2P9=cQ@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v2 2/3] clk: exynos5420: Add IDs for clocks used in PD mfc
+Date: Wed, 25 Jun 2014 13:36:42 +0200
+Message-ID: <53AAB44A.3070908@samsung.com>
+References: <1401105384-8678-1-git-send-email-shaik.ameer@samsung.com>
+ <1401105384-8678-3-git-send-email-shaik.ameer@samsung.com>
+ <539726A1.4040209@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:41967 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754325AbaFYL3p convert rfc822-to-8bit (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:10847 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753432AbaFYLhI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 07:29:45 -0400
-In-reply-to: <CAD=FV=Ua+P0CBAfNj4SWWMWRKcEFdmh=akwy1-ZWoGOt2P9=cQ@mail.gmail.com>
-Content-language: ko
+	Wed, 25 Jun 2014 07:37:08 -0400
+In-reply-to: <539726A1.4040209@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Doug Anderson' <dianders@chromium.org>, broonie@kernel.org, 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Naveen Krishna' <naveenkrishna.ch@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Jaswinder Singh' <jaswinder.singh@linaro.org>, "'cpgs .'" <cpgs@samsung.com>, devicetree@vger.kernel.org, 'Tomasz Figa' <t.figa@samsung.com>
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, prathyush.k@samsung.com, abrestic@chromium.org, arunkk.samsung@gmail.com, joshi@samsung.com, Arun Kumar K <arun.kk@samsung.com>
 
-Doug Anderson wrote:
+On 10.06.2014 17:39, Tomasz Figa wrote:
+> Hi,
 > 
-> Mark or Kukjin,
+> On 26.05.2014 13:56, Shaik Ameer Basha wrote:
+>> From: Arun Kumar K <arun.kk@samsung.com>
+>>
+>> Adds IDs for MUX clocks to be used by power domain for MFC
+>> for doing re-parenting while pd on/off.
+>>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>> ---
+>>  drivers/clk/samsung/clk-exynos5420.c   |    6 ++++--
+>>  include/dt-bindings/clock/exynos5420.h |    2 ++
+>>  2 files changed, 6 insertions(+), 2 deletions(-)
+>>
 > 
-Hi,
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-> On Thu, Jun 12, 2014 at 8:59 PM, Naveen Krishna Chatradhi
-> <ch.naveen@samsung.com> wrote:
-> > Since, (3146bee spi: s3c64xx: Added provision for dedicated cs pin)
-> >
-> > spi-s3c64xx.c driver expects
-> > 1. chip select gpios from "cs-gpio"(singular) under the
-> >    "controller-data" node of the client/slave device of the SPI.
-> >
-> > 2. "cs-gpio"(singular) entry to be present in the SPI device node.
-> >
-> > Eg of current broken usage:
-> > &spi_1 {
-> >         cs-gpio <>;     /* this entry is checked during probe */
-> >         ...
-> >         slave_node {
-> >                 controller-data {
-> >                         cs-gpio <&gpioa2 5 0>;
-> >                         /* This field is parsed during .setup() */
-> >                 }
-> >         };
-> > };
-> >
-> > The following dts files which were using this driver. But,
-> > din't have the "cs-gpio" entry under SPI node.
-> > -- arch/arm/boot/dts/exynos4210-smdkv310.dts
-> > -- arch/arm/boot/dts/exynos4412-trats2.dts
-> > -- arch/arm/boot/dts/exynos5250-smdk5250.dts
-> >
-> > Also, the SPI core and many drivers moved on to using "cs-gpios"
-> > from SPI node and removed the gpio handling code from drivers
-> > (including spi-s3c64xx.c).
-> >
-> > Hence, spi-s3c64xx.c is broken since "Jun 21 11:26:12 2013" and
-> > considering the time with no compliants about the breakage.
-> >
-> > We are assuming it is safe to remove the "cs-gpio"(singular) usage
-> > from device tree binding of spi-samsung.txt and makes appropriate
-> > changes in the driver to use "cs-gpios"(plural) from
-> > SPI device node.
-> >
-> > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> > Tested-by: Doug Anderson <dianders@chromium.org>
-> > Cc: Tomasz Figa <t.figa@samsung.com>
-> > ---
-> > Changes since v4:
-> > 1. Added reviewed by from Javier and Tested by from Doug
-> >
-> > Changes since v3:
-> > 1. Remove the sdd->cs_gpio and use gpio_is_valid(spi->cs_gpio) instead
-> > 2. Keep cs->line only for Non-DT platforms and use spi->cs_gpio
-> >    for DT platforms
-> >
-> >  .../devicetree/bindings/spi/spi-samsung.txt        |    8 ++--
-> >  drivers/spi/spi-s3c64xx.c                          |   41 ++++++++------------
-> >  2 files changed, 20 insertions(+), 29 deletions(-)
-> 
-> Is one of you two planning to apply (parts 1 and 2)?  I know that
-> Kukjin needs to handle the part 3 (the .dts files)...
-> 
-Once Mark takes spi driver related patches, I will pick DT related patches into
-samsung tree.
+Actually, since this patch shouldn't generate any serious conflicts,
+feel free to add my
 
-> Ideally it seems like it could go to 3.16 since it is a bugfix...
-> 
-I think so but it depends on Mark's comments ;-)
+Acked-by: Tomasz Figa <t.figa@samsung.com>
 
-Thanks,
-Kukjin
+to let the whole series go through Samsung tree.
+
+Best regards,
+Tomasz
