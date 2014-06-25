@@ -1,42 +1,36 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] clk/exynos5250: fix bit number for tv sysmmu clock
-Date: Wed, 25 Jun 2014 20:26:04 +0900
-Message-ID: <036401cf9068$40106ad0$c0314070$@samsung.com>
-References: <1403156836-24421-1-git-send-email-rahul.sharma@samsung.com>
- <CAK5sBcHOCPvr2Kr0GDOyYCEAjaXcUKKPsEWKYDK9BFKtPioc4Q@mail.gmail.com>
- <CAPdUM4Nx1g=aicFYAYEd1d2VVWPdbJXCZxFAmqRK0ooR8+E=9g@mail.gmail.com>
- <53AAB154.7010403@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: fix several typos to fix boot on s3c2410
+Date: Wed, 25 Jun 2014 13:26:13 +0200
+Message-ID: <53AAB1D5.1090404@samsung.com>
+References: <1403555350-14895-1-git-send-email-anarsoul@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:41545 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754205AbaFYL0P (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59750 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752942AbaFYL0j (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 07:26:15 -0400
-In-reply-to: <53AAB154.7010403@samsung.com>
-Content-language: ko
+	Wed, 25 Jun 2014 07:26:39 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N7Q0049V2FY4WA0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Jun 2014 12:26:22 +0100 (BST)
+In-reply-to: <1403555350-14895-1-git-send-email-anarsoul@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <t.figa@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Sachin Kamat' <sachin.kamat@samsung.com>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Mike Turquette' <mturquette@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'sunil joshi' <joshi@samsung.com>
+To: Vasily Khoruzhick <anarsoul@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
 
-Tomasz Figa wrote:
-> 
-> Hi Rahul,
-> 
-> On 25.06.2014 13:22, Rahul Sharma wrote:
-> > Hi Kukjin,
-> >
-> > Please take this fix in your tree.
-> 
-> This is a patch for Samsung clock drivers, so I'll apply it when about
-> to send fixes pull request to Mike.
-> 
-Yes, I also checked the datasheet and this change is correct.
+Hi Vasily,
 
-If you want, please add my ack on the patch.
+On 23.06.2014 22:29, Vasily Khoruzhick wrote:
+> There's a several typos in a driver: 2410 instead of S3C2410
+> and wrong argument to ARRAY_SIZE(). They prevent s3c2410
+> from properly booting.
 
-Thanks,
-Kukjin
+Thanks for fixing this. I will apply and send to Mike with other fixes.
+Same for patch 2/2.
+
+Best regards,
+Tomasz
