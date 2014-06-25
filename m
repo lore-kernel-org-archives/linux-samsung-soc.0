@@ -1,50 +1,111 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 2/3] clk: exynos5420: Add IDs for clocks used in PD mfc
-Date: Wed, 25 Jun 2014 13:36:42 +0200
-Message-ID: <53AAB44A.3070908@samsung.com>
-References: <1401105384-8678-1-git-send-email-shaik.ameer@samsung.com>
- <1401105384-8678-3-git-send-email-shaik.ameer@samsung.com>
- <539726A1.4040209@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/1] ARM: Kconfig.debug: Update Samsung UART config options
+Date: Wed, 25 Jun 2014 20:41:13 +0900
+Message-ID: <03dd01cf906a$5e22b620$1a682260$@samsung.com>
+References: <1403605171-31805-1-git-send-email-sachin.kamat@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:10847 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753432AbaFYLhI (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:40905 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756063AbaFYLlQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 07:37:08 -0400
-In-reply-to: <539726A1.4040209@samsung.com>
+	Wed, 25 Jun 2014 07:41:16 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N7Q0087K34P9Y80@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Jun 2014 20:41:14 +0900 (KST)
+In-reply-to: <1403605171-31805-1-git-send-email-sachin.kamat@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, prathyush.k@samsung.com, abrestic@chromium.org, arunkk.samsung@gmail.com, joshi@samsung.com, Arun Kumar K <arun.kk@samsung.com>
+To: 'Sachin Kamat' <sachin.kamat@samsung.com>, linux-arm-kernel@lists.infradead.org, Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, arnd@arndb.de, spk.linux@gmail.com
 
-On 10.06.2014 17:39, Tomasz Figa wrote:
-> Hi,
+Sachin Kamat wrote:
 > 
-> On 26.05.2014 13:56, Shaik Ameer Basha wrote:
->> From: Arun Kumar K <arun.kk@samsung.com>
->>
->> Adds IDs for MUX clocks to be used by power domain for MFC
->> for doing re-parenting while pd on/off.
->>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-exynos5420.c   |    6 ++++--
->>  include/dt-bindings/clock/exynos5420.h |    2 ++
->>  2 files changed, 6 insertions(+), 2 deletions(-)
->>
++ Russell
+
+> In a multiplatform config, the low level debug option shows several
+> UART port entries. Improve the user visible string so that it becomes
+> clear to the user about Samsung UART ports.
+> While at it also remove some lines from the help text that are no
+> longer applicable across all Samsung platforms.
 > 
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Looks good to me and will apply into cleanup.
 
-Actually, since this patch shouldn't generate any serious conflicts,
-feel free to add my
+Thanks,
+Kukjin
 
-Acked-by: Tomasz Figa <t.figa@samsung.com>
-
-to let the whole series go through Samsung tree.
-
-Best regards,
-Tomasz
+> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
+> ---
+>  arch/arm/Kconfig.debug |   20 ++++----------------
+>  1 file changed, 4 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+> index 3548612b0bfe..b92993e59a12 100644
+> --- a/arch/arm/Kconfig.debug
+> +++ b/arch/arm/Kconfig.debug
+> @@ -617,53 +617,41 @@ choice
+>  		depends on PLAT_SAMSUNG
+>  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+>  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
+> -		bool "Use S3C UART 0 for low-level debug"
+> +		bool "Use Samsung S3C UART 0 for low-level debug"
+>  		help
+>  		  Say Y here if you want the debug print routines to direct
+>  		  their output to UART 0. The port must have been initialised
+>  		  by the boot-loader before use.
+> 
+> -		  The uncompressor code port configuration is now handled
+> -		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
+> -
+>  	config DEBUG_S3C_UART1
+>  		depends on PLAT_SAMSUNG
+>  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+>  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
+> -		bool "Use S3C UART 1 for low-level debug"
+> +		bool "Use Samsung S3C UART 1 for low-level debug"
+>  		help
+>  		  Say Y here if you want the debug print routines to direct
+>  		  their output to UART 1. The port must have been initialised
+>  		  by the boot-loader before use.
+> 
+> -		  The uncompressor code port configuration is now handled
+> -		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
+> -
+>  	config DEBUG_S3C_UART2
+>  		depends on PLAT_SAMSUNG
+>  		select DEBUG_EXYNOS_UART if ARCH_EXYNOS
+>  		select DEBUG_S3C24XX_UART if ARCH_S3C24XX
+> -		bool "Use S3C UART 2 for low-level debug"
+> +		bool "Use Samsung S3C UART 2 for low-level debug"
+>  		help
+>  		  Say Y here if you want the debug print routines to direct
+>  		  their output to UART 2. The port must have been initialised
+>  		  by the boot-loader before use.
+> 
+> -		  The uncompressor code port configuration is now handled
+> -		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
+> -
+>  	config DEBUG_S3C_UART3
+>  		depends on PLAT_SAMSUNG && ARCH_EXYNOS
+>  		select DEBUG_EXYNOS_UART
+> -		bool "Use S3C UART 3 for low-level debug"
+> +		bool "Use Samsung S3C UART 3 for low-level debug"
+>  		help
+>  		  Say Y here if you want the debug print routines to direct
+>  		  their output to UART 3. The port must have been initialised
+>  		  by the boot-loader before use.
+> 
+> -		  The uncompressor code port configuration is now handled
+> -		  by CONFIG_S3C_LOWLEVEL_UART_PORT.
+> -
+>  	config DEBUG_S3C2410_UART0
+>  		depends on ARCH_S3C24XX
+>  		select DEBUG_S3C2410_UART
+> --
+> 1.7.9.5
