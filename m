@@ -1,63 +1,46 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 3/4 v2] ARM: DTS: use new compatible string for thermistors
- in trats2
-Date: Wed, 25 Jun 2014 15:35:52 +0900
-Message-ID: <53AA6DC8.8030201@samsung.com>
-References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
- <1403677773-21141-4-git-send-email-ch.naveen@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] Exynos4: cpuidle: support dual CPUs with AFTR state
+Date: Wed, 25 Jun 2014 09:36:40 +0200
+Message-ID: <1403681800.19087.8.camel@AMDC1943>
+References: <1396604925-18383-1-git-send-email-daniel.lezcano@linaro.org>
+ <1402476643.32147.6.camel@AMDC1943> <539B7E74.7000605@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1403677773-21141-4-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:34935 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752565AbaFYHgo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jun 2014 03:36:44 -0400
+In-reply-to: <539B7E74.7000605@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, ccross@google.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, b.zolnierkie@samsung.com
 
-On 06/25/2014 03:29 PM, Naveen Krishna Chatradhi wrote:
-> As Murata Manufactures the NTC based thermistors. The vendor
-> name in the compatibility is preposed to change to "murata"
+On sob, 2014-06-14 at 00:43 +0200, Daniel Lezcano wrote:
+> On 06/11/2014 10:50 AM, Krzysztof Kozlowski wrote:
+(...)
+> >
+> > Hi,
+> >
+> > Shouldn't the exynos_idle_barrier be initialized here?
 > 
-> This patch uses the new compatibility string in exynos4412 based
-> Trats2 board.
+> As it is a static data it will be initialized to zero.
 > 
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-> Changes since v1:
-> None
+> > I know you sent the patch almost 2 months ago but I stomped on this
+> > while testing it on Exynos3250.
 > 
->  arch/arm/boot/dts/exynos4412-trats2.dts |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-> index 11967f4..d35755a 100644
-> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-> @@ -771,7 +771,7 @@
->  	};
->  
->  	thermistor-ap@0 {
-> -		compatible = "ntc,ncp15wb473";
-> +		compatible = "murata,ncp15wb473";
->  		pullup-uv = <1800000>;	 /* VCC_1.8V_AP */
->  		pullup-ohm = <100000>;	 /* 100K */
->  		pulldown-ohm = <100000>; /* 100K */
-> @@ -779,7 +779,7 @@
->  	};
->  
->  	thermistor-battery@1 {
-> -		compatible = "ntc,ncp15wb473";
-> +		compatible = "murata,ncp15wb473";
->  		pullup-uv = <1800000>;	 /* VCC_1.8V_AP */
->  		pullup-ohm = <100000>;	 /* 100K */
->  		pulldown-ohm = <100000>; /* 100K */
-> 
+> No problem. And what results on exynos3250 ?
 
-Looks good to me.
+I had to change some of the ways for synchronization two cores (boot
+vector behaves differently) so actually the driver is different except
+the general idea. As for the results (on dual-core Exynos3250) - the
+mode (AFTR+CPU1 off) consumes about 5% less energy than idle-WFI state.
 
-Reviewed-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+I expect there will be much more savings in deeper mode (called here
+W-AFTR).
 
-Thanks,
-Chanwoo Choi
+Best regards,
+Krzysztof
