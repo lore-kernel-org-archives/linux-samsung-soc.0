@@ -1,38 +1,99 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] clk: s3c64xx: Hookup SPI clocks correctly
-Date: Wed, 25 Jun 2014 13:29:01 +0200
-Message-ID: <53AAB27D.3030409@samsung.com>
-References: <1403085143-3257-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/3 v5] spi: s3c64xx: fix broken "cs_gpios" usage in the
+ driver
+Date: Wed, 25 Jun 2014 20:29:42 +0900
+Message-ID: <03a101cf9068$c2378250$46a686f0$@samsung.com>
+References: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
+ <CAD=FV=Ua+P0CBAfNj4SWWMWRKcEFdmh=akwy1-ZWoGOt2P9=cQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1403085143-3257-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, mturquette@linaro.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:41967 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754325AbaFYL3p convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jun 2014 07:29:45 -0400
+In-reply-to: <CAD=FV=Ua+P0CBAfNj4SWWMWRKcEFdmh=akwy1-ZWoGOt2P9=cQ@mail.gmail.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Doug Anderson' <dianders@chromium.org>, broonie@kernel.org, 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Naveen Krishna' <naveenkrishna.ch@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Jaswinder Singh' <jaswinder.singh@linaro.org>, "'cpgs .'" <cpgs@samsung.com>, devicetree@vger.kernel.org, 'Tomasz Figa' <t.figa@samsung.com>
 
-Hi Charles,
-
-On 18.06.2014 11:52, Charles Keepax wrote:
-> In the move to this clock driver the hookups for the SPI clocks were
-> dropped, which causes my system Cragganmore (s3c6410 based) to be unable
-> to locate any spibus clocks. This patch adds them back in.
+Doug Anderson wrote:
 > 
-> When taking the clock from the epll clock (SCLK) the rates on the SPI
-> bus are incorrect, this needs further debugging but the hookup here
-> should be correct and the problem should be else where.
+> Mark or Kukjin,
 > 
-> The USBCLK case has been dropped because this requires the USB PHY to be
-> enabled.
+Hi,
+
+> On Thu, Jun 12, 2014 at 8:59 PM, Naveen Krishna Chatradhi
+> <ch.naveen@samsung.com> wrote:
+> > Since, (3146bee spi: s3c64xx: Added provision for dedicated cs pin)
+> >
+> > spi-s3c64xx.c driver expects
+> > 1. chip select gpios from "cs-gpio"(singular) under the
+> >    "controller-data" node of the client/slave device of the SPI.
+> >
+> > 2. "cs-gpio"(singular) entry to be present in the SPI device node.
+> >
+> > Eg of current broken usage:
+> > &spi_1 {
+> >         cs-gpio <>;     /* this entry is checked during probe */
+> >         ...
+> >         slave_node {
+> >                 controller-data {
+> >                         cs-gpio <&gpioa2 5 0>;
+> >                         /* This field is parsed during .setup() */
+> >                 }
+> >         };
+> > };
+> >
+> > The following dts files which were using this driver. But,
+> > din't have the "cs-gpio" entry under SPI node.
+> > -- arch/arm/boot/dts/exynos4210-smdkv310.dts
+> > -- arch/arm/boot/dts/exynos4412-trats2.dts
+> > -- arch/arm/boot/dts/exynos5250-smdk5250.dts
+> >
+> > Also, the SPI core and many drivers moved on to using "cs-gpios"
+> > from SPI node and removed the gpio handling code from drivers
+> > (including spi-s3c64xx.c).
+> >
+> > Hence, spi-s3c64xx.c is broken since "Jun 21 11:26:12 2013" and
+> > considering the time with no compliants about the breakage.
+> >
+> > We are assuming it is safe to remove the "cs-gpio"(singular) usage
+> > from device tree binding of spi-samsung.txt and makes appropriate
+> > changes in the driver to use "cs-gpios"(plural) from
+> > SPI device node.
+> >
+> > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> > Acked-by: Rob Herring <robh@kernel.org>
+> > Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> > Tested-by: Doug Anderson <dianders@chromium.org>
+> > Cc: Tomasz Figa <t.figa@samsung.com>
+> > ---
+> > Changes since v4:
+> > 1. Added reviewed by from Javier and Tested by from Doug
+> >
+> > Changes since v3:
+> > 1. Remove the sdd->cs_gpio and use gpio_is_valid(spi->cs_gpio) instead
+> > 2. Keep cs->line only for Non-DT platforms and use spi->cs_gpio
+> >    for DT platforms
+> >
+> >  .../devicetree/bindings/spi/spi-samsung.txt        |    8 ++--
+> >  drivers/spi/spi-s3c64xx.c                          |   41 ++++++++------------
+> >  2 files changed, 20 insertions(+), 29 deletions(-)
 > 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> ---
->  drivers/clk/samsung/clk-s3c64xx.c |    6 ++++--
->  1 files changed, 4 insertions(+), 2 deletions(-)
+> Is one of you two planning to apply (parts 1 and 2)?  I know that
+> Kukjin needs to handle the part 3 (the .dts files)...
+> 
+Once Mark takes spi driver related patches, I will pick DT related patches into
+samsung tree.
 
-Thanks for fixing this. Will apply to my fixes branch.
+> Ideally it seems like it could go to 3.16 since it is a bugfix...
+> 
+I think so but it depends on Mark's comments ;-)
 
-Best regards,
-Tomasz
+Thanks,
+Kukjin
