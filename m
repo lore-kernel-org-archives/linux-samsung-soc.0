@@ -1,63 +1,77 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 0/4] Add support for Exynos clock output configuration
-Date: Wed, 25 Jun 2014 12:50:42 +0200
-Message-ID: <53AAA982.9050308@samsung.com>
-References: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
- <026001cf9061$5fef9d00$1fced700$@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 0/4 v2] hwmon: ntc_thermistor: prepose vendor prefix change
+Date: Wed, 25 Jun 2014 19:57:07 +0900
+Message-ID: <02b501cf9064$34f16b80$9ed44280$@samsung.com>
+References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <026001cf9061$5fef9d00$1fced700$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Mike Turquette' <mturquette@linaro.org>, 'Rob Herring' <robh+dt@kernel.org>, 'Mark Rutland' <mark.rutland@arm.com>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Mark Brown' <broonie@kernel.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Daniel Drake' <drake@endlessm.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:65092 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752751AbaFYK5K (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jun 2014 06:57:10 -0400
+In-reply-to: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org, jdelvare@suse.de, linux@roeck-us.net
+Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, lars@metafoo.de
 
-Hi Kukjin,
-
-On 25.06.2014 12:36, Kukjin Kim wrote:
-> Tomasz Figa wrote:
->>
-> Hi Tomasz,
+Naveen Krishna Chatradhi wrote:
 > 
->> On all Exynos SoCs there is a dedicated CLKOUT pin that allows many of
->> internal SoC clocks to be output from the SoC. The hardware structure
-> 
-> Yeah, because the CLKOUT pin is used for measure of the clock for debug on all
-> of exynos SoCs commonly.
-> 
->> of CLKOUT related clocks looks as follows:
->>
->> 	CMU	|---> clock0 --------->	|	PMU	|
->> 		|			|		|
->>     several	|---> clock1 ---------> |	mux	|
->>     muxes	|			|	+	|---> CLKOUT
->>     dividers	|       ...		|	gate	|
->>     and gates	|			|		|
->> 		|---> clockN ---------> |		|
->>
->> Since the block responsible for handling the pin is PMU, not CMU,
->> a separate driver, that binds to PMU node is required and acquires
->> all input clocks by standard DT clock look-up. This way we don't need
->> any cross-IP block drivers and cross-driver register sharing or
->> nodes for fake devices.
->>
-> BTW, upcoming exynos5 SoCs have two muxs for CLKOUT and each mux is controlled
-> by CMU and PMU, so
-> 
-> The mux1 for CLKOUT in CMU is used to decide which clock in each sub-domain
-> will be out and the mux2 in PMU is used to decide which sub-domain will be out
-> via CLKOUT. So I want you to consider of all of exynos SoCs including upcoming
-> SoCs.
++ Jean Delvare, Guenter Roeck
 
-Is it something similar to what I implemented for Exynos4 in patch 2/4?
-The same has to be done for other Exynos SoCs as well, but i don't have
-any board on which I could test this, so I just added a subset of
-available inputs of PMU mux in current implementation.
+I'm adding maintainers for drivers/hwmon/ntc* but I'm not sure.
 
-Anyway, anything in CMU can be handled in normal SoC clock driver, so I
-don't think this poses any problem for this series.
+Hi,
 
-Best regards,
-Tomasz
+This series looks good to me. I will take 3/4 and 4/4 for exynos DT changes once
+hwmon/ntc maintainer pick the others.
+
+Thanks,
+Kukjin
+
+> As Murata is the manufacturer of the NTC (Negative Temperature coefficient)
+> based Thermistors. ntc_thermistor driver extensively used the prefix "ntc".
+> But, vendor-prefix should be "murata" instead of "ntc".
+> 
+> This patchset
+> 1. Updates the vendor-prefix, DT bindings and Documentation,
+>    where ever necessary.
+> 2. Adds thermistor nodes to Exynos5420 based Peach PIT board.
+> 
+> Patches:
+> 1/4. devicetree: bindings: Document murata vendor prefix
+>      Adds the vendor prefix "murata" to vendor-prefixes.txt.
+> 2/4. hwmon: ntc_thermistor: Use the manufacturer name properly
+>      Updates the driver, Kconfig, device tree bindings and Documentation
+>      with the Manufacturer/vendor information.
+>      Keeps the old bindings marked as <DEPRECATED> in code and Documentation
+> 3/4. ARM: DTS: use new compatible string as per the documentation
+>      Updates the device node in Exynos4412 based Trats2 board
+>      with the new device tree bindings.
+> 4/4. ARM: DTS: Add NTC thermistor nodes as child nodes to ADC
+>      Adds Thermistor nodes to Exynos5420 based Peach PIT board.
+> 
+> This patchset
+> Naveen Krishna Chatradhi (4):
+>   devicetree: bindings: Document murata vendor prefix
+>   hwmon: ntc_thermistor: Use the manufacturer name properly
+>   ARM: DTS: use new compatible string as per the documentation
+>   ARM: DTS: Add NTC thermistor nodes to Exynos5420 based Peach_PIT
+> 
+>  .../devicetree/bindings/arm/samsung/exynos-adc.txt |    2 +-
+>  .../devicetree/bindings/hwmon/ntc_thermistor.txt   |   20 ++++++++----
+>  .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+>  Documentation/hwmon/ntc_thermistor                 |    8 ++---
+>  arch/arm/boot/dts/exynos4412-trats2.dts            |    4 +--
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts         |   34
+++++++++++++++++++++
+>  drivers/hwmon/Kconfig                              |    5 +--
+>  drivers/hwmon/ntc_thermistor.c                     |   14 +++++++-
+>  8 files changed, 72 insertions(+), 16 deletions(-)
+> 
+> --
+> 1.7.9.5
