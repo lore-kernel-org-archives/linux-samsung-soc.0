@@ -1,65 +1,58 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 Resend 1/2] ARM: EXYNOS: Update secondary boot addr for
- secure mode
-Date: Wed, 25 Jun 2014 20:43:22 +0900
-Message-ID: <03f301cf906a$ab25d470$01717d50$@samsung.com>
-References: <1401250382-24046-1-git-send-email-sachin.kamat@linaro.org>
- <5388CBB9.1050003@suse.de>
- <CAK5sBcETe20PWRV+z5Gb=hQNk13wE0PbmcvEmC9TM6nD2mi=ew@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH v2 4/6] ARM: SAMSUNG: Restore Samsung PM Debug functionality
+Date: Wed, 25 Jun 2014 13:43:54 +0200
+Message-ID: <1403696634-12779-1-git-send-email-t.figa@samsung.com>
+References: <1403618235-19353-5-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:13326 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754459AbaFYLnY convert rfc822-to-8bit (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:11222 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753432AbaFYLoc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 07:43:24 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N7Q00L4E38BQE70@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 25 Jun 2014 20:43:23 +0900 (KST)
-In-reply-to: <CAK5sBcETe20PWRV+z5Gb=hQNk13wE0PbmcvEmC9TM6nD2mi=ew@mail.gmail.com>
-Content-language: ko
+	Wed, 25 Jun 2014 07:44:32 -0400
+In-reply-to: <1403618235-19353-5-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@samsung.com>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Tushar Behera' <tushar.behera@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sachin Kamat' <spk.linux@gmail.com>, =?utf-8?Q?'Andreas_F=C3=A4rber'?= <afaerber@suse.de>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Drake <drake@endlessm.com>, Tomasz Figa <t.figa@samsung.com>
 
-Sachin Kamat wrote:
->=20
-> On Fri, May 30, 2014 at 11:49 PM, Andreas F=C3=A4rber <afaerber@suse.=
-de> wrote:
-> > Am 28.05.2014 06:13, schrieb Sachin Kamat:
-> >> Almost all Exynos-series of SoCs that run in secure mode don't nee=
-d
-> >> additional offset for every CPU, with Exynos4412 being the only
-> >> exception.
-> >>
-> >> Tested on Origen-Quad (Exynos4412) and Arndale-Octa (Exynos5420).
-> >>
-> >> While at it, fix the coding style (space around *).
-> >>
-> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> >> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> >> ---
-> >>  arch/arm/mach-exynos/firmware.c |    9 +++++++--
-> >>  1 file changed, 7 insertions(+), 2 deletions(-)
-> >
-> > Fixes ODROID-XU (Exynos5410) as well - thought it had been a prereq=
- to
-> > applying the 5410 patches...
-> >
-> > Tested-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> >
->=20
-> Kukjin, this patch is required to bring up 4 A15 cores on some 5410
-> and 5420 based
-> boards. Can you please queue this up for the upcoming rc as fixes?
+Due to recently merged patches and previous merge conflicts, the Samsung
+PM Debug functionality no longer can be enabled. This patch fixes
+incorrect dependency of SAMSUNG_PM_DEBUG on an integer symbol and adds
+missing header inclusion.
 
-Sure, I will take this into fixes.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+---
+ arch/arm/plat-samsung/Kconfig    | 5 +++--
+ arch/arm/plat-samsung/pm-debug.c | 1 +
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-Thanks,
-Kukjin
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 301b892..ad9515f 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -413,8 +413,9 @@ config S5P_DEV_MFC
+ comment "Power management"
+ 
+ config SAMSUNG_PM_DEBUG
+-	bool "S3C2410 PM Suspend debug"
+-	depends on PM && DEBUG_KERNEL && DEBUG_S3C_UART
++	bool "Samsung PM Suspend debug"
++	depends on PM && DEBUG_KERNEL
++	depends on DEBUG_EXYNOS_UART || DEBUG_S3C24XX_UART || DEBUG_S3C2410_UART
+ 	help
+ 	  Say Y here if you want verbose debugging from the PM Suspend and
+ 	  Resume code. See <file:Documentation/arm/Samsung-S3C24XX/Suspend.txt>
+diff --git a/arch/arm/plat-samsung/pm-debug.c b/arch/arm/plat-samsung/pm-debug.c
+index 8f19f66..3960960 100644
+--- a/arch/arm/plat-samsung/pm-debug.c
++++ b/arch/arm/plat-samsung/pm-debug.c
+@@ -14,6 +14,7 @@
+  */
+ 
+ #include <linux/serial_core.h>
++#include <linux/serial_s3c.h>
+ #include <linux/io.h>
+ 
+ #include <asm/mach/map.h>
+-- 
+1.9.3
