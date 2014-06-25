@@ -1,162 +1,96 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 2/2] ARM: EXYNOS: Add support for firmware-assisted
- suspend/resume
-Date: Wed, 25 Jun 2014 18:18:34 +0200
-Message-ID: <1403713114-18923-3-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 1/2] ARM: firmware: Introduce suspend and resume operations
+Date: Wed, 25 Jun 2014 18:18:33 +0200
+Message-ID: <1403713114-18923-2-git-send-email-t.figa@samsung.com>
 References: <1403713114-18923-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:65029 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757479AbaFYQTQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jun 2014 12:19:16 -0400
 In-reply-to: <1403713114-18923-1-git-send-email-t.figa@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Alexandre Courbot <acourbot@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-On a numer of Exynos-based boards Linux kernel is running in non-secure
-mode under a secure firmware. This means that certain operations need to
-be handled in special way, with firmware assistance. System-wide
-suspend/resume is an example of such operations.
+This patch extends the firmware_ops structure with two new callbacks:
+.suspend() and .resume(). The former is intended to ask the firmware to
+save all its volatile state and suspend the system, without returning
+back to the kernel in between. The latter is to be called early by
+very low level platform suspend code after waking up to restore low
+level hardware state, which can't be restored in non-secure mode.
 
-This patch adds support for firmware-assisted suspend/resume by
-leveraging recently introduced suspend and resume firmware operations
-and modifying existing suspend/resume paths to account for presence of
-secure firmware.
+While at it, outdated version of the structure is removed from the
+documentation and replaced with a reference to the header file.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/mach-exynos/firmware.c | 47 +++++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-exynos/pm.c       | 16 +++++++++-----
- 2 files changed, 58 insertions(+), 5 deletions(-)
+ Documentation/arm/firmware.txt  | 28 +++++-----------------------
+ arch/arm/include/asm/firmware.h |  8 ++++++++
+ 2 files changed, 13 insertions(+), 23 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-index def7bb4..cd554a1 100644
---- a/arch/arm/mach-exynos/firmware.c
-+++ b/arch/arm/mach-exynos/firmware.c
-@@ -14,15 +14,21 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
+diff --git a/Documentation/arm/firmware.txt b/Documentation/arm/firmware.txt
+index c2e468f..da6713a 100644
+--- a/Documentation/arm/firmware.txt
++++ b/Documentation/arm/firmware.txt
+@@ -7,32 +7,14 @@ world, which changes the way some things have to be initialized. This makes
+ a need to provide an interface for such platforms to specify available firmware
+ operations and call them when needed.
  
-+#include <asm/cacheflush.h>
- #include <asm/cputype.h>
- #include <asm/firmware.h>
- #include <asm/hardware/cache-l2x0.h>
-+#include <asm/suspend.h>
+-Firmware operations can be specified using struct firmware_ops
+-
+-	struct firmware_ops {
+-		/*
+-		* Enters CPU idle mode
+-		*/
+-		int (*do_idle)(void);
+-		/*
+-		* Sets boot address of specified physical CPU
+-		*/
+-		int (*set_cpu_boot_addr)(int cpu, unsigned long boot_addr);
+-		/*
+-		* Boots specified physical CPU
+-		*/
+-		int (*cpu_boot)(int cpu);
+-		/*
+-		* Initializes L2 cache
+-		*/
+-		int (*l2x0_init)(void);
+-	};
+-
+-and then registered with register_firmware_ops function
++Firmware operations can be specified by filling in a struct firmware_ops
++with appropriate callbacks and then registering it with register_firmware_ops()
++function.
  
- #include <mach/map.h>
+ 	void register_firmware_ops(const struct firmware_ops *ops)
  
- #include "common.h"
- #include "smc.h"
+-the ops pointer must be non-NULL.
++The ops pointer must be non-NULL. More information about struct firmware_ops
++and its members can be found in arch/arm/include/asm/firmware.h header.
  
-+#define EXYNOS_SLEEP_MAGIC	0x00000bad
-+#define EXYNOS_BOOT_ADDR	0x8
-+#define EXYNOS_BOOT_FLAG	0xc
-+
- static int exynos_do_idle(void)
- {
- 	exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
-@@ -66,10 +72,51 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
- 	return 0;
- }
- 
-+/* For Cortex-A9 Diagnostic and Power control register */
-+static unsigned int cp15_power;
-+static unsigned int cp15_diag;
-+
-+static int exynos_cpu_suspend(unsigned long arg)
-+{
-+	flush_cache_all();
-+	outer_flush_all();
-+
-+	exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
-+
-+	pr_info("Failed to suspend the system\n");
-+	writel(0, sysram_ns_base_addr + EXYNOS_BOOT_FLAG);
-+	return 1;
-+}
-+
-+static int exynos_suspend(void)
-+{
-+	/* Save Power control and Diagnostic registers */
-+	asm ("mrc p15, 0, %0, c15, c0, 0\n"
-+		"mrc p15, 0, %1, c15, c0, 1\n"
-+		: "=r" (cp15_power), "=r" (cp15_diag) : : "cc");
-+
-+	writel(EXYNOS_SLEEP_MAGIC, sysram_ns_base_addr + EXYNOS_BOOT_FLAG);
-+	writel(virt_to_phys(cpu_resume),
-+		sysram_ns_base_addr + EXYNOS_BOOT_ADDR);
-+
-+	return cpu_suspend(0, exynos_cpu_suspend);
-+}
-+
-+static int exynos_resume(void)
-+{
-+	exynos_smc(SMC_CMD_C15RESUME, cp15_power, cp15_diag, 0);
-+	writel(0, sysram_ns_base_addr + EXYNOS_BOOT_FLAG);
-+	outer_resume();
-+
-+	return 0;
-+}
-+
- static const struct firmware_ops exynos_firmware_ops = {
- 	.do_idle		= exynos_do_idle,
- 	.set_cpu_boot_addr	= exynos_set_cpu_boot_addr,
- 	.cpu_boot		= exynos_cpu_boot,
-+	.suspend		= exynos_suspend,
-+	.resume			= exynos_resume,
+ There is a default, empty set of operations provided, so there is no need to
+ set anything if platform does not require firmware operations.
+diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
+index 2c9f10d..5904f59 100644
+--- a/arch/arm/include/asm/firmware.h
++++ b/arch/arm/include/asm/firmware.h
+@@ -41,6 +41,14 @@ struct firmware_ops {
+ 	 * Initializes L2 cache
+ 	 */
+ 	int (*l2x0_init)(void);
++	/*
++	 * Enter system-wide suspend.
++	 */
++	int (*suspend)(void);
++	/*
++	 * Restore state of privileged hardware after system-wide suspend.
++	 */
++	int (*resume)(void);
  };
  
- static void exynos_l2_write_sec(unsigned long val, void __iomem *base,
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index f23cc77..ed20318 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -23,6 +23,7 @@
- #include <linux/clk.h>
- 
- #include <asm/cacheflush.h>
-+#include <asm/firmware.h>
- #include <asm/hardware/cache-l2x0.h>
- #include <asm/smp_scu.h>
- #include <asm/suspend.h>
-@@ -331,12 +332,11 @@ static int exynos_pm_central_resume(void)
- 
- static void exynos_pm_resume(void)
- {
-+	u32 cpuid = read_cpuid_part_number();
-+
- 	if (exynos_pm_central_resume())
- 		goto early_wakeup;
- 
--	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
--		exynos_cpu_restore_register();
--
- 	/* For release retention */
- 
- 	__raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
-@@ -353,9 +353,13 @@ static void exynos_pm_resume(void)
- 
- 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
- 
--	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-+	if (cpuid == ARM_CPU_PART_CORTEX_A9)
- 		scu_enable(S5P_VA_SCU);
- 
-+	if (call_firmware_op(resume) == -ENOSYS
-+	    && cpuid == ARM_CPU_PART_CORTEX_A9)
-+		exynos_cpu_restore_register();
-+
- early_wakeup:
- 
- 	/* Clear SLEEP mode set in INFORM1 */
-@@ -391,7 +395,9 @@ static int exynos_suspend_enter(suspend_state_t state)
- 	flush_cache_all();
- 	s3c_pm_check_store();
- 
--	ret = cpu_suspend(0, exynos_cpu_suspend);
-+	ret = call_firmware_op(suspend);
-+	if (ret == -ENOSYS)
-+		ret = cpu_suspend(0, exynos_cpu_suspend);
- 	if (ret)
- 		return ret;
- 
+ /* Global pointer for current firmware_ops structure, can't be NULL. */
 -- 
 1.9.3
