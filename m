@@ -1,132 +1,72 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH] arm: exynos: Modify pm code to check for cortex A9 rather
- than the SoC
-Date: Wed, 25 Jun 2014 10:30:46 +0530
-Message-ID: <CAM4voak4ZD0OHWoto7j2TyYBmpaWH3JH4ug3+hsxeL+WUhE9jA@mail.gmail.com>
-References: <1400814061-12813-1-git-send-email-a.kesavan@samsung.com>
-	<CAM4voa=3zzo-2KbjDtBOca+uJeSxT2OYpi+rJuSGsDg-vo7GYA@mail.gmail.com>
-	<20140624161114.GW32514@n2100.arm.linux.org.uk>
+From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 4/4] ARM: DTS: Add NTC thermistor nodes as child nodes to ADC
+Date: Wed, 25 Jun 2014 10:34:03 +0530
+Message-ID: <CAHfPSqAAWFtCQQrKBhLFuE2OuO_fwmUOhcOX9zKk8eMRMNSVvg@mail.gmail.com>
+References: <1403612356-23685-1-git-send-email-ch.naveen@samsung.com>
+ <1403612356-23685-5-git-send-email-ch.naveen@samsung.com> <CAD=FV=Wmi73S4c5TPUqnNyycQ5xX5SbYy_ES-cbbJF2Hr0tqvQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f50.google.com ([209.85.216.50]:39260 "EHLO
-	mail-qa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751368AbaFYFAr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 01:00:47 -0400
-Received: by mail-qa0-f50.google.com with SMTP id m5so1097890qaj.23
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2014 22:00:46 -0700 (PDT)
-In-Reply-To: <20140624161114.GW32514@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAD=FV=Wmi73S4c5TPUqnNyycQ5xX5SbYy_ES-cbbJF2Hr0tqvQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Hi Russell and Tomasz,
+Doug,
 
-+Arnd
-On Tue, Jun 24, 2014 at 9:41 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Mon, Jun 16, 2014 at 09:37:14AM +0530, Abhilash Kesavan wrote:
->> Hi Kukjin,
+On 25 June 2014 03:24, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> Naveen,
+>
+> On Tue, Jun 24, 2014 at 5:19 AM, Naveen Krishna Chatradhi
+> <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> Exynos5420 based Peach PIT and Exynos5800 based PI boards have
+>> 4 NTC thermistors to measure temperatures at various points on the
+>> board.
 >>
->> On Fri, May 23, 2014 at 8:31 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
->> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>> IIO based ADC becomes the parent and NTC thermistors are the childs,
+>> via the HWMON interface.
 >>
->> Do you have any comments on this patch ?
+>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> ---
+>> This patch needs
+>> 1. MAX77802 PMIC device tree nodes (for ldo9)
+>>    https://www.mail-archive.com/devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg31430.html
+>> 2. Uses the DT documentation for NTC thermistors updated with vendor-prefix
+>>
+>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   32 ++++++++++++++++++++++++++++
+>>  1 file changed, 32 insertions(+)
 >
-> I do.
->
->> > diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
->> > index d10c351..6dd4a11 100644
->> > --- a/arch/arm/mach-exynos/pm.c
->> > +++ b/arch/arm/mach-exynos/pm.c
->> > @@ -300,7 +300,7 @@ static int exynos_pm_suspend(void)
->> >         tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
->> >         __raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
->> >
->> > -       if (!soc_is_exynos5250())
->> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
->> >                 exynos_cpu_save_register();
-> ...
->> > @@ -334,7 +334,7 @@ static void exynos_pm_resume(void)
->> >         if (exynos_pm_central_resume())
->> >                 goto early_wakeup;
->> >
->> > -       if (!soc_is_exynos5250())
->> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
->> >                 exynos_cpu_restore_register();
->
-> It is invalid to check just the part number.  The part number on its
-> own is meaningless without taking account of the implementor.  Both
-> the implementor and the part number should be checked at each of these
-> sites.
-Thanks for pointing this out. I was not aware of  the implementor id
-check requirement.
->
-> Another point: exynos have taken it upon themselves to add code which
-> saves various ARM core registers.  This is a bad idea, it brings us
-> back to the days where every platform did their own suspend implementations.
->
-> CPU level registers should be handled by CPU level code, not by platform
-> code.  Is there a reason why this can't be added to the Cortex-A9
-> support code in proc-v7.S ?
->
->> > @@ -353,7 +353,7 @@ static void exynos_pm_resume(void)
->> >
->> >         s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
->> >
->> > -       if (!soc_is_exynos5250())
->> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
->> >                 scu_enable(S5P_VA_SCU);
->> >
->> >  early_wakeup:
->> > @@ -440,15 +440,18 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
->> >         case CPU_PM_ENTER:
->> >                 if (cpu == 0) {
->> >                         exynos_pm_central_suspend();
->> > -                       exynos_cpu_save_register();
->> > +                       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
->> > +                               exynos_cpu_save_register();
->> >                 }
->> >                 break;
->> >
->> >         case CPU_PM_EXIT:
->> >                 if (cpu == 0) {
->> > -                       if (!soc_is_exynos5250())
->> > +                       if (read_cpuid_part_number() ==
->> > +                                       ARM_CPU_PART_CORTEX_A9) {
->> >                                 scu_enable(S5P_VA_SCU);
->> > -                       exynos_cpu_restore_register();
->> > +                               exynos_cpu_restore_register();
->> > +                       }
->> >                         exynos_pm_central_resume();
->> >                 }
->> >                 break;
->
-> And presumably with the CPU level code dealing with those registers,
-> you don't need the calls to save and restore these registers in this
-> notifier.
-Regarding save/restore of these registers, I could send out a patch
-cleaning these out once Shawn's patch gets merged. I'd need some help
-testing it out on Exynos4 boards though. For now, is it OK if I just
-update to the new function ?
->
-> Which, by the way, is probably illegal to run as it runs in a read-
-> lock code path and with the SCU disabled.  As you're calling
-> scu_enable() that means you're non-coherent with the other CPUs,
-> and therefore locks don't work.
->
-> I think this code is very broken and wrongly architected, and shows
-> that we're continuing to make the same mistakes that we made all
-> through the 2000s with platforms doing their own crap rather than
-> properly thinking about this stuff.
-I see that you have sent a patch out that ensures both part and
-implementor number are checked. Currently, my patch has been applied
-to the fixes branch of the arm-soc tree and I wanted to know how to
-proceed (without it there is a crash on the 5420):
-Should I request Arnd to drop it (if possible) and send out a new
-patch using your updated function ?
+> * You forgot: status="okay" for the ADC.  One might question how this
+> patch was tested.
 
-Regards,
-Abhilash
+Will correct it.
+
+>
+> * Please also include this change for pi.
+
+MAX77802 device node was not added for Peach_PI (exynos5800-peach-pi.dts).
+I guess, Javier have a plan to send.
+
+I will edit the commit message to remove Peach_PI for now.
+
+Also, we have few similar nodes on Peach PI  and Peach PIT.
+Any plans or discussion on merging the common nodes ?
+
+>
+> * We just got through the painful process of sorting this .dts file.
+> Please sort "&adc" alphabetically.  Kukjin: please confirm that you
+> will keep an eye on patches and make sure that they are sorted OK.
+>
+>
+> Other than those problems this seems to work fine to me.
+>
+> -Doug
+
+Thanks for the Review.
+
+
+-- 
+Shine bright,
+(: Nav :)
