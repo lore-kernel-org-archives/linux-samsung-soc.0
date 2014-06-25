@@ -1,20 +1,20 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 3/5] ARM: dts: exynos4412-odroidx: add support for USB (phy,
- host, device)
-Date: Wed, 25 Jun 2014 15:26:11 +0200
-Message-ID: <1403702773-9141-4-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v2 5/5] ARM: dts: exynos4412-odroid-common: disable 'always on'
+ for BUCK8 regulator
+Date: Wed, 25 Jun 2014 15:26:13 +0200
+Message-ID: <1403702773-9141-6-git-send-email-m.szyprowski@samsung.com>
 References: <1403702773-9141-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:17380 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752780AbaFYN00 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:9716 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752780AbaFYN02 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 09:26:26 -0400
+	Wed, 25 Jun 2014 09:26:28 -0400
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N7Q00ENG7ZZ0K10@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 25 Jun 2014 14:26:24 +0100 (BST)
+ 17 2011)) with ESMTP id <0N7Q00KBH7ZMSH10@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Jun 2014 14:26:10 +0100 (BST)
 In-reply-to: <1403702773-9141-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -23,58 +23,28 @@ Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.c
 
 From: Kamil Debski <k.debski@samsung.com>
 
-This patch adds basic support for USB modules (host and device) on
-OdroidX board.
+On Odroid U2/U3 BUCK8 is used for providing power to also to P3V3
+source, which is also connected to LAN9730 chip's nRESET signal. To
+reset lan chip on system reboot, the BUCK8 output should not be used in
+'always on' mode. This change has no impact on X/X2 boards.
 
 Signed-off-by: Kamil Debski <k.debski@samsung.com>
-[removed incorrect port@2 node]
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos4412-odroidx.dts | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index fda9ac23dd55..4c853fbf7202 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -148,6 +148,16 @@
- 		pinctrl-names = "default";
- 		status = "okay";
- 
-+		usb3503@08 {
-+			compatible = "smsc,usb3503";
-+			reg = <0x08>;
-+
-+			intn-gpios = <&gpx3 0 0>;
-+			connect-gpios = <&gpx3 4 0>;
-+			reset-gpios = <&gpx3 5 0>;
-+			initial-mode = <1>;
-+		};
-+
- 		max77686: pmic@09 {
- 			compatible = "maxim,max77686";
- 			reg = <0x09>;
-@@ -338,4 +348,21 @@
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index f793f3b8f0b9..ad2cb32a3439 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -297,7 +297,6 @@
+ 					regulator-name = "BUCK8_2.8V";
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
+-					regulator-always-on;
+ 				};
  			};
  		};
- 	};
-+
-+	exynos-usbphy@125B0000 {
-+		status = "okay";
-+	};
-+
-+	hsotg@12480000 {
-+		status = "okay";
-+		vusb_d-supply = <&ldo15_reg>;
-+		vusb_a-supply = <&ldo12_reg>;
-+	};
-+
-+	ehci@12580000 {
-+		status = "okay";
-+		port@1 {
-+			status = "okay";
-+		};
-+	};
- };
 -- 
 1.9.2
