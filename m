@@ -1,46 +1,114 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 0/2] Firmware-assisted suspend/resume of Exynos SoCs
-Date: Wed, 25 Jun 2014 18:18:32 +0200
-Message-ID: <1403713114-18923-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:18635 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757421AbaFYQTL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 12:19:11 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v2] i2c: exynos5: Properly use the "noirq" variants of suspend/resume
+Date: Wed, 25 Jun 2014 09:33:32 -0700
+Message-ID: <CAD=FV=WSuxbTg2g-Cb79fFQKV4+_Gtc4PUQ4poovNM0eUkkMeg@mail.gmail.com>
+References: <1403654093-24134-1-git-send-email-dianders@chromium.org>
+	<02e701cf9066$7332b280$59981780$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <02e701cf9066$7332b280$59981780$@samsung.com>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, naveen krishna <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>, Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Masanari Iida <standby24x7-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Alexandre Courbot <acourbot@nvidia.com>, Stephen Warren <swarren@nvidia.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>
 
-On Exynos-based boards running secure firmware the sequence of low level
-operations to enter and leave system-wide sleep mode is different than
-on those without the firmware. Namely:
- - CP15 power control and diagnostic registers cannot be written directly,
- - the way of setting boot address and boot flag is different,
- - different resume handler needs to be used (generic cpu_resume() vs
-   exynos_cpu_resume()),
- - dedicated SMC call needs to be performed instead of letting the CPU enter
-   WFI.
+Kukjin,
 
-This series introduces .suspend() and .resume() firmware operations to
-perform low level firmware-specific suspend and resume and then leverages
-them to provide suspend-resume path meeting the above requirements.
+On Wed, Jun 25, 2014 at 4:13 AM, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Doug Anderson wrote:
+>>
+>> The original code for the exynos i2c controller registered for the
+>> "noirq" variants.  However during review feedback it was moved to
+>> SIMPLE_DEV_PM_OPS without anyone noticing that it meant we were no
+>> longer actually "noirq" (despite functions named
+>> exynos5_i2c_suspend_noirq and exynos5_i2c_resume_noirq).
+>>
+>> i2c controllers that might have wakeup sources on them seem to need to
+>> resume at noirq time so that the individual drivers can actually read
+>> the i2c bus to handle their wakeup.
+>>
+>> NOTE: I took the original review feedback from Wolfram and added
+>> poweroff, thaw, freeze, restore.
+>>
+> Yeah I'm not sure except .suspend_noirq and .resume_noirq but I'm fine if
+> Wolfram suggested ;-)
 
-The series is based on Kgene's for-next branch and tested on
-Exynos4412-based Trats2 board (with few board-specific fixes that will be
-sent separately) and Exynos4210-based Trats board (without any extra
-patches).
- 
-Tomasz Figa (2):
-  ARM: firmware: Introduce suspend and resume operations
-  ARM: EXYNOS: Add support for firmware-assisted suspend/resume
+Sorry, I didn't mean to imply that Wolfram suggested the "noirq" versions.
 
- Documentation/arm/firmware.txt  | 28 +++++-------------------
- arch/arm/include/asm/firmware.h |  8 +++++++
- arch/arm/mach-exynos/firmware.c | 47 +++++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-exynos/pm.c       | 16 +++++++++-----
- 4 files changed, 71 insertions(+), 28 deletions(-)
+Specifically in <https://lkml.org/lkml/2013/9/8/133> Naveen had:
 
--- 
-1.9.3
+> +static const struct dev_pm_ops exynos5_i2c_dev_pm_ops = {
+> + .suspend_noirq = exynos5_i2c_suspend_noirq,
+> + .resume_noirq = exynos5_i2c_resume_noirq,
+> +};
+> +
+> +#define EXYNOS5_DEV_PM_OPS (&exynos5_i2c_dev_pm_ops)
+> +#else
+> +#define EXYNOS5_DEV_PM_OPS NULL
+> +#endif
+
+And Wolfram said:
+
+> Isn't there a macro for this? SIMPLE_DEV_PM_OPS*? Not sure, I always mix
+> them up...
+
+That had the side effect of getting freeze, restore, ...
+
+Ah, I also see that Felipe Balbi was the one that gave earlier
+feedback about this also at <https://lkml.org/lkml/2012/11/27/262>.
+He said "you need to define poweroff, thaw, freeze, restore."
+
+
+>> This patch has only been compile-tested since I don't have all the
+>> patches needed to make my machine using this i2c driver actually
+>> suspend/resume.
+>>
+>> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> ---
+>> Changes in v2:
+>> - Added missing CONFIG_PM_SLEEP
+>>
+>>  drivers/i2c/busses/i2c-exynos5.c | 12 ++++++++++--
+>>  1 file changed, 10 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-
+>> exynos5.c
+>> index 63d2292..348b1cd 100644
+>> --- a/drivers/i2c/busses/i2c-exynos5.c
+>> +++ b/drivers/i2c/busses/i2c-exynos5.c
+>> @@ -789,8 +789,16 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
+>>  }
+>>  #endif
+>>
+>> -static SIMPLE_DEV_PM_OPS(exynos5_i2c_dev_pm_ops, exynos5_i2c_suspend_noirq,
+>> -                      exynos5_i2c_resume_noirq);
+>> +const struct dev_pm_ops exynos5_i2c_dev_pm_ops = {
+>
+> Maybe static const struct...?
+
+Duh, right.  Fixing and will spin.
+
+
+>> +#ifdef CONFIG_PM_SLEEP
+>> +     .suspend_noirq = exynos5_i2c_suspend_noirq,
+>> +     .resume_noirq = exynos5_i2c_resume_noirq,
+>> +     .freeze_noirq = exynos5_i2c_suspend_noirq,
+>> +     .thaw_noirq = exynos5_i2c_resume_noirq,
+>> +     .poweroff_noirq = exynos5_i2c_suspend_noirq,
+>> +     .restore_noirq = exynos5_i2c_resume_noirq,
+>> +#endif
+>> +};
+>>
+>>  static struct platform_driver exynos5_i2c_driver = {
+>>       .probe          = exynos5_i2c_probe,
+>> --
+>> 2.0.0.526.g5318336
+>
+> Others look good to me,
+>
+> Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>
+> Thanks,
+> Kukjin
+>
