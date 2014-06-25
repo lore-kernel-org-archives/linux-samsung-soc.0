@@ -1,49 +1,56 @@
-From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [PATCH v2] Documentation: devicetree: Fix tps65090 typos in example
-Date: Thu, 26 Jun 2014 01:07:40 +0200
-Message-ID: <1403737664-6426-1-git-send-email-afaerber@suse.de>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
+Date: Wed, 25 Jun 2014 16:21:39 -0700
+Message-ID: <7hpphwlgn0.fsf@paris.lan>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
+	<1402464739-19044-3-git-send-email-tushar.b@samsung.com>
+	<CAD=FV=W5yh58fYTwRZxmZt=BORcZMSRV0oRe12yA74Q5h2S4YQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:50098 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756585AbaFYXJT (ORCPT
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:62939 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753181AbaFYXVm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 19:09:19 -0400
+	Wed, 25 Jun 2014 19:21:42 -0400
+Received: by mail-pb0-f52.google.com with SMTP id rq2so2309011pbb.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2014 16:21:41 -0700 (PDT)
+In-Reply-To: <CAD=FV=W5yh58fYTwRZxmZt=BORcZMSRV0oRe12yA74Q5h2S4YQ@mail.gmail.com>
+	(Doug Anderson's message of "Tue, 24 Jun 2014 16:00:38 -0700")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Mark Brown <broonie@linaro.org>, Michael Spang <spang@chromium.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: Doug Anderson <dianders@google.com>
+Cc: Tushar Behera <tushar.b@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Tushar Behera <trblinux@gmail.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-Specification and existing device trees use vsys-l{1,2}-supply,
-not vsys_l{1,2}-supply. Fix the example to match the specification.
+Doug Anderson <dianders@google.com> writes:
 
-Reviewed-by: Doug Anderson <dianders@chromium.org>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
----
- v1 -> v2:
- * More verbose commit message (requested by Mark Rutland)
+> Tushar,
+>
+> On Tue, Jun 10, 2014 at 10:32 PM, Tushar Behera <tushar.b@samsung.com> wrote:
+>> Currently CLK_FOUT_EPLL was set as one of the parents of AUDSS mux.
+>> As per the user manual, it should be CLK_MAU_EPLL.
+>>
+>> The problem surfaced when the bootloader in Peach-pit board set
+>> the EPLL clock as the parent of AUDSS mux. While booting the kernel,
+>> we used to get a system hang during late boot if CLK_MAU_EPLL was
+>> disabled.
+>>
+>> Signed-off-by: Tushar Behera <tushar.b@samsung.com>
+>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>> Reported-by: Kevin Hilman <khilman@linaro.org>
+>> ---
+>>  arch/arm/boot/dts/exynos5420.dtsi |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> I've tested this myself now as well.
+>
+> Tested-by: Doug Anderson <dianders@chromium.org>
 
- Documentation/devicetree/bindings/regulator/tps65090.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+For me, this patch alone (on top of -next) doesn't solve the boot hang.
+I still need clk_ignore_unused for a successful boot.
 
-diff --git a/Documentation/devicetree/bindings/regulator/tps65090.txt b=
-/Documentation/devicetree/bindings/regulator/tps65090.txt
-index 34098023..ca69f5e 100644
---- a/Documentation/devicetree/bindings/regulator/tps65090.txt
-+++ b/Documentation/devicetree/bindings/regulator/tps65090.txt
-@@ -45,8 +45,8 @@ Example:
- 		infet5-supply =3D <&some_reg>;
- 		infet6-supply =3D <&some_reg>;
- 		infet7-supply =3D <&some_reg>;
--		vsys_l1-supply =3D <&some_reg>;
--		vsys_l2-supply =3D <&some_reg>;
-+		vsys-l1-supply =3D <&some_reg>;
-+		vsys-l2-supply =3D <&some_reg>;
-=20
- 		regulators {
- 			dcdc1 {
---=20
-1.9.3
+So, this patch might be correct, but it doesn't prevent a boot hang
+using a chain-loaded nv_uboot on peach-pi.  There's still another clock
+being disabled that causes a hang.
+
+Kevin
