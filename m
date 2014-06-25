@@ -1,56 +1,160 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
-Date: Wed, 25 Jun 2014 16:21:39 -0700
-Message-ID: <7hpphwlgn0.fsf@paris.lan>
-References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
-	<1402464739-19044-3-git-send-email-tushar.b@samsung.com>
-	<CAD=FV=W5yh58fYTwRZxmZt=BORcZMSRV0oRe12yA74Q5h2S4YQ@mail.gmail.com>
+From: YoungJun Cho <yj44.cho@gmail.com>
+Subject: Re: [PATCH 0/3] drm/exynos: add framework to control DISP1BLK setting
+Date: Thu, 26 Jun 2014 08:54:28 +0900
+Message-ID: <CAOt82ecshdX9ALWYWT4u8QcF+NqJTEfUb6pka0D-9-btHJGM1Q@mail.gmail.com>
+References: <1403705752-24469-1-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:62939 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753181AbaFYXVm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 19:21:42 -0400
-Received: by mail-pb0-f52.google.com with SMTP id rq2so2309011pbb.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2014 16:21:41 -0700 (PDT)
-In-Reply-To: <CAD=FV=W5yh58fYTwRZxmZt=BORcZMSRV0oRe12yA74Q5h2S4YQ@mail.gmail.com>
-	(Doug Anderson's message of "Tue, 24 Jun 2014 16:00:38 -0700")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============2133300781=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1403705752-24469-1-git-send-email-ajaykumar.rs@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, seanpaul@google.com, joshi@samsung.com, dri-devel@lists.freedesktop.org, vikas.sajjan@samsung.com, ajaynumb@gmail.com, prashanth.g@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@google.com>
-Cc: Tushar Behera <tushar.b@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Tushar Behera <trblinux@gmail.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-Doug Anderson <dianders@google.com> writes:
+--===============2133300781==
+Content-Type: multipart/alternative; boundary=047d7b3a81e8f6b7e804fcb1cba0
 
-> Tushar,
+--047d7b3a81e8f6b7e804fcb1cba0
+Content-Type: text/plain; charset=UTF-8
+
+Hi Ajay,
+
+I'm sorry for say that the patchset for exynos drm supporting I80 i/f
+includes yours.
+
+The patchset is still in reviewing and I'm preparing v5.
+
+Please check this:
+http://www.spinics.net/lists/dri-devel/msg60943.html
+
+Thank you.
+Best regards YJ
+
+On Jun 25, 2014 11:19 PM, "Ajay Kumar" <ajaykumar.rs@samsung.com> wrote:
 >
-> On Tue, Jun 10, 2014 at 10:32 PM, Tushar Behera <tushar.b@samsung.com> wrote:
->> Currently CLK_FOUT_EPLL was set as one of the parents of AUDSS mux.
->> As per the user manual, it should be CLK_MAU_EPLL.
->>
->> The problem surfaced when the bootloader in Peach-pit board set
->> the EPLL clock as the parent of AUDSS mux. While booting the kernel,
->> we used to get a system hang during late boot if CLK_MAU_EPLL was
->> disabled.
->>
->> Signed-off-by: Tushar Behera <tushar.b@samsung.com>
->> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->> Reported-by: Kevin Hilman <khilman@linaro.org>
->> ---
->>  arch/arm/boot/dts/exynos5420.dtsi |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
+> This series is based on exynos-drm-next branch of Inki Dae's tree at:
+> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
 >
-> I've tested this myself now as well.
+> Exynos SOC have a DISP1BLK register where we can select
+> the path for FIMD output. We can redirect the video data
+> directly to DP/MIPI interface, or we can pass it via
+> image enhancement chips.
 >
-> Tested-by: Doug Anderson <dianders@chromium.org>
+> Since we don't use any image enhancement chips in exynos-drm,
+> we need to set FIMD BYPASS in DISP1BLK.
+>
+> This patchset is tested for basic display + DPMS + S2R on snow and
+peach_pit.
+>
+> Ajay Kumar (3):
+>   [PATCH 1/3] drm/exynos: Control DISP1BLK system register in FIMD
+>   [PATCH 2/3] ARM: dts: exynos5420: Add sysreg phandle to FIMD node
+>   [PATCH 3/3] ARM: dts: exynos5250: Add sysreg phandle to FIMD node
+>
+>  .../devicetree/bindings/video/samsung-fimd.txt     |    2 ++
+>  arch/arm/boot/dts/exynos5250.dtsi                  |    1 +
+>  arch/arm/boot/dts/exynos5420.dtsi                  |    1 +
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   19
++++++++++++++++++++
+>  include/video/samsung_fimd.h                       |    5 +++++
+>  5 files changed, 28 insertions(+)
+>
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe
+linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-For me, this patch alone (on top of -next) doesn't solve the boot hang.
-I still need clk_ignore_unused for a successful boot.
+--047d7b3a81e8f6b7e804fcb1cba0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-So, this patch might be correct, but it doesn't prevent a boot hang
-using a chain-loaded nv_uboot on peach-pi.  There's still another clock
-being disabled that causes a hang.
+<p dir=3D"ltr">Hi Ajay,</p>
+<p dir=3D"ltr">I&#39;m sorry for say that the patchset for exynos drm suppo=
+rting I80 i/f includes yours.</p>
+<p dir=3D"ltr">The patchset is still in reviewing and I&#39;m preparing v5.=
+</p>
+<p dir=3D"ltr">Please check this:<br>
+<a href=3D"http://www.spinics.net/lists/dri-devel/msg60943.html">http://www=
+.spinics.net/lists/dri-devel/msg60943.html</a></p>
+<p dir=3D"ltr">Thank you.<br>
+Best regards YJ</p>
+<p dir=3D"ltr">On Jun 25, 2014 11:19 PM, &quot;Ajay Kumar&quot; &lt;<a href=
+=3D"mailto:ajaykumar.rs@samsung.com">ajaykumar.rs@samsung.com</a>&gt; wrote=
+:<br>
+&gt;<br>
+&gt; This series is based on exynos-drm-next branch of Inki Dae&#39;s tree =
+at:<br>
+&gt; git://<a href=3D"http://git.kernel.org/pub/scm/linux/kernel/git/daeink=
+i/drm-exynos.git">git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exyno=
+s.git</a><br>
+&gt;<br>
+&gt; Exynos SOC have a DISP1BLK register where we can select<br>
+&gt; the path for FIMD output. We can redirect the video data<br>
+&gt; directly to DP/MIPI interface, or we can pass it via<br>
+&gt; image enhancement chips.<br>
+&gt;<br>
+&gt; Since we don&#39;t use any image enhancement chips in exynos-drm,<br>
+&gt; we need to set FIMD BYPASS in DISP1BLK.<br>
+&gt;<br>
+&gt; This patchset is tested for basic display + DPMS + S2R on snow and pea=
+ch_pit.<br>
+&gt;<br>
+&gt; Ajay Kumar (3):<br>
+&gt; =C2=A0 [PATCH 1/3] drm/exynos: Control DISP1BLK system register in FIM=
+D<br>
+&gt; =C2=A0 [PATCH 2/3] ARM: dts: exynos5420: Add sysreg phandle to FIMD no=
+de<br>
+&gt; =C2=A0 [PATCH 3/3] ARM: dts: exynos5250: Add sysreg phandle to FIMD no=
+de<br>
+&gt;<br>
+&gt; =C2=A0.../devicetree/bindings/video/samsung-fimd.txt =C2=A0 =C2=A0 | =
+=C2=A0 =C2=A02 ++<br>
+&gt; =C2=A0arch/arm/boot/dts/exynos5250.dtsi =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0| =C2=A0 =C2=A01 +<br>
+&gt; =C2=A0arch/arm/boot/dts/exynos5420.dtsi =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0| =C2=A0 =C2=A01 +<br>
+&gt; =C2=A0drivers/gpu/drm/exynos/exynos_drm_fimd.c =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 | =C2=A0 19 +++++++++++++++++++<br>
+&gt; =C2=A0include/video/samsung_fimd.h =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 | =C2=A0 =C2=A05 +++++<br>
+&gt; =C2=A05 files changed, 28 insertions(+)<br>
+&gt;<br>
+&gt; --<br>
+&gt; 1.7.9.5<br>
+&gt;<br>
+&gt; --<br>
+&gt; To unsubscribe from this list: send the line &quot;unsubscribe linux-s=
+amsung-soc&quot; in<br>
+&gt; the body of a message to <a href=3D"mailto:majordomo@vger.kernel.org">=
+majordomo@vger.kernel.org</a><br>
+&gt; More majordomo info at =C2=A0<a href=3D"http://vger.kernel.org/majordo=
+mo-info.html">http://vger.kernel.org/majordomo-info.html</a><br>
+</p>
 
-Kevin
+--047d7b3a81e8f6b7e804fcb1cba0--
+
+--===============2133300781==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============2133300781==--
