@@ -1,117 +1,132 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH v4 10/11] ARM: EXYNOS: Add platform driver support for
- Exynos PMU.
-Date: Wed, 25 Jun 2014 10:00:59 +0530
-Message-ID: <000101cf902e$452790f0$cf76b2d0$@samsung.com>
-References: <1399704998-13321-1-git-send-email-pankaj.dubey@samsung.com>
- <1399704998-13321-11-git-send-email-pankaj.dubey@samsung.com>
- <53A07719.7050206@samsung.com> <007a01cf8f9f$7909c850$6b1d58f0$@samsung.com>
- <53AA13BD.9060800@gmail.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH] arm: exynos: Modify pm code to check for cortex A9 rather
+ than the SoC
+Date: Wed, 25 Jun 2014 10:30:46 +0530
+Message-ID: <CAM4voak4ZD0OHWoto7j2TyYBmpaWH3JH4ug3+hsxeL+WUhE9jA@mail.gmail.com>
+References: <1400814061-12813-1-git-send-email-a.kesavan@samsung.com>
+	<CAM4voa=3zzo-2KbjDtBOca+uJeSxT2OYpi+rJuSGsDg-vo7GYA@mail.gmail.com>
+	<20140624161114.GW32514@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:10577 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750737AbaFYE3q (ORCPT
+Received: from mail-qa0-f50.google.com ([209.85.216.50]:39260 "EHLO
+	mail-qa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751368AbaFYFAr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 00:29:46 -0400
-In-reply-to: <53AA13BD.9060800@gmail.com>
-Content-language: en-us
+	Wed, 25 Jun 2014 01:00:47 -0400
+Received: by mail-qa0-f50.google.com with SMTP id m5so1097890qaj.23
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2014 22:00:46 -0700 (PDT)
+In-Reply-To: <20140624161114.GW32514@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: vikas.sajjan@samsung.com, chow.kim@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Hi,
+Hi Russell and Tomasz,
 
-On Wednesday, June 25 2014 Tomasz Figa write:
-> On 24.06.2014 13:28, Pankaj Dubey wrote:
-> > On Tuesday, June 17 2014, Tomasz Figa wrote:
-> >> On 10.05.2014 08:56, Pankaj Dubey wrote:
-> 
-> [snip]
-> 
-> >>> +
-> >>> +	ret = platform_driver_register(&exynos_pmu_driver);
-> >>> +	if (ret < 0)
-> >>> +		goto out;
-> >>> +
-> >>> +	exynos_pmu_pdev = platform_device_register_simple("exynos-pmu",
-> -1,
-> >>> +			NULL, 0);
-> >>
-> >> Hmm, I don't see the point of making this a platform driver only to
-> > register respective
-> >> platform device few lines below. If you take into account the patch
-> >> for
-> > syscon I
-> >> posted as a reply to patch 06/11, you will be able to make this a
-> >> normal
-> > platform
-> >> driver that binds to DT node directly and then register a syscon in
-> >> probe
-> > function
-> >> above.
-> >>
-> >
-> > Well I updated PMU to be a syscon provider using your patch. It worked
-well.
-> > I have following two points to mention here:
-> >
-> > 1: For making PMU a normal platform driver, other than making PMU a
-> > syscon provider we need to change PMU's DT binding. Basically we need
-> > to remove "syscon"
-> > as second compatibility string. I hope this should not be an issue.
-> 
-> I don't see the reason for this. Could you elaborate on this?
-> 
-
-Currently syscon driver is registered via postcore_initcall whereas exynos
-pmu has
-arch_initcall. So if we keep syscon as second compatibility in exynos pmu
-node,
-syscon will be registered first and hence only syscon will be probed.
-
-> I know that the way Linux currently handles multiple compatible strings is
-broken,
-> but despite this, if you just make sure your platform driver registers
-before syscon
-> platform driver, it should be fine.
++Arnd
+On Tue, Jun 24, 2014 at 9:41 PM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Mon, Jun 16, 2014 at 09:37:14AM +0530, Abhilash Kesavan wrote:
+>> Hi Kukjin,
+>>
+>> On Fri, May 23, 2014 at 8:31 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
+>> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>>
+>> Do you have any comments on this patch ?
 >
+> I do.
+>
+>> > diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+>> > index d10c351..6dd4a11 100644
+>> > --- a/arch/arm/mach-exynos/pm.c
+>> > +++ b/arch/arm/mach-exynos/pm.c
+>> > @@ -300,7 +300,7 @@ static int exynos_pm_suspend(void)
+>> >         tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
+>> >         __raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
+>> >
+>> > -       if (!soc_is_exynos5250())
+>> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+>> >                 exynos_cpu_save_register();
+> ...
+>> > @@ -334,7 +334,7 @@ static void exynos_pm_resume(void)
+>> >         if (exynos_pm_central_resume())
+>> >                 goto early_wakeup;
+>> >
+>> > -       if (!soc_is_exynos5250())
+>> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+>> >                 exynos_cpu_restore_register();
+>
+> It is invalid to check just the part number.  The part number on its
+> own is meaningless without taking account of the implementor.  Both
+> the implementor and the part number should be checked at each of these
+> sites.
+Thanks for pointing this out. I was not aware of  the implementor id
+check requirement.
+>
+> Another point: exynos have taken it upon themselves to add code which
+> saves various ARM core registers.  This is a bad idea, it brings us
+> back to the days where every platform did their own suspend implementations.
+>
+> CPU level registers should be handled by CPU level code, not by platform
+> code.  Is there a reason why this can't be added to the Cortex-A9
+> support code in proc-v7.S ?
+>
+>> > @@ -353,7 +353,7 @@ static void exynos_pm_resume(void)
+>> >
+>> >         s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+>> >
+>> > -       if (!soc_is_exynos5250())
+>> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+>> >                 scu_enable(S5P_VA_SCU);
+>> >
+>> >  early_wakeup:
+>> > @@ -440,15 +440,18 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+>> >         case CPU_PM_ENTER:
+>> >                 if (cpu == 0) {
+>> >                         exynos_pm_central_suspend();
+>> > -                       exynos_cpu_save_register();
+>> > +                       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+>> > +                               exynos_cpu_save_register();
+>> >                 }
+>> >                 break;
+>> >
+>> >         case CPU_PM_EXIT:
+>> >                 if (cpu == 0) {
+>> > -                       if (!soc_is_exynos5250())
+>> > +                       if (read_cpuid_part_number() ==
+>> > +                                       ARM_CPU_PART_CORTEX_A9) {
+>> >                                 scu_enable(S5P_VA_SCU);
+>> > -                       exynos_cpu_restore_register();
+>> > +                               exynos_cpu_restore_register();
+>> > +                       }
+>> >                         exynos_pm_central_resume();
+>> >                 }
+>> >                 break;
+>
+> And presumably with the CPU level code dealing with those registers,
+> you don't need the calls to save and restore these registers in this
+> notifier.
+Regarding save/restore of these registers, I could send out a patch
+cleaning these out once Shawn's patch gets merged. I'd need some help
+testing it out on Exynos4 boards though. For now, is it OK if I just
+update to the new function ?
+>
+> Which, by the way, is probably illegal to run as it runs in a read-
+> lock code path and with the SCU disabled.  As you're calling
+> scu_enable() that means you're non-coherent with the other CPUs,
+> and therefore locks don't work.
+>
+> I think this code is very broken and wrongly architected, and shows
+> that we're continuing to make the same mistakes that we made all
+> through the 2000s with platforms doing their own crap rather than
+> properly thinking about this stuff.
+I see that you have sent a patch out that ensures both part and
+implementor number are checked. Currently, my patch has been applied
+to the fixes branch of the arm-soc tree and I wanted to know how to
+proceed (without it there is a crash on the 5420):
+Should I request Arnd to drop it (if possible) and send out a new
+patch using your updated function ?
 
-Yes, this could be possible if I convert arch_initcall of exynos pmu to
-postcore_initcall.
-
-As after converting arch_initcall to postcore_initcall, syscon driver will
-not be probed
-for exynos pmu node. Also as exynos pmu driver will now register itself as
-syscon provider,
-I could not see any use of keeping second compatibility as "syscon" in
-exynos pmu
-node.  Do you think it is still required?
-
-After removing "syscon" compatibility string from exynos pmu node, I have
-tested
-S2R as well as watchdog driver functionality, which is user of regmap handle
-of exynos pmu
-and both are working fine on exynos5250.
- 
-> >
-> > 2: I can see for your syscon patch Arnd has some comments, hopefully
-> > we can address his concern.
-> >
-> 
-> Yes. I will get to it after sorting out few other things from my queue.
-> Or you can do it if you want - the purpose of that RFC patch was just to
-> show the idea I had in my mind.
-> 
-
-OK, let me post exynos pmu v5, based on your patch, and then if time permits
-I will have a look in it.
-
-> Best regards,
-> Tomasz
-
-Thanks,
-Pankaj Dubey
+Regards,
+Abhilash
