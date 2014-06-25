@@ -1,80 +1,65 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH 3/4] Documentation: devicetree: Fix tps65090 typos
-Date: Wed, 25 Jun 2014 13:43:18 +0200
-Message-ID: <53AAB5D6.50500@suse.de>
-References: <1403486483-4063-1-git-send-email-afaerber@suse.de> <1403486483-4063-4-git-send-email-afaerber@suse.de> <CAD=FV=UUGQ_ULm+juj0hMxCKhhcXTa2aJT50Y=WrePy9g8u-zA@mail.gmail.com> <20140625104732.GE14495@leverpostej>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 Resend 1/2] ARM: EXYNOS: Update secondary boot addr for
+ secure mode
+Date: Wed, 25 Jun 2014 20:43:22 +0900
+Message-ID: <03f301cf906a$ab25d470$01717d50$@samsung.com>
+References: <1401250382-24046-1-git-send-email-sachin.kamat@linaro.org>
+ <5388CBB9.1050003@suse.de>
+ <CAK5sBcETe20PWRV+z5Gb=hQNk13wE0PbmcvEmC9TM6nD2mi=ew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20140625104732.GE14495@leverpostej>
-Sender: linux-doc-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>, Doug Anderson <dianders@chromium.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Mark Brown <broonie@linaro.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, DOCUMENTATION <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:13326 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754459AbaFYLnY convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jun 2014 07:43:24 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N7Q00L4E38BQE70@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Jun 2014 20:43:23 +0900 (KST)
+In-reply-to: <CAK5sBcETe20PWRV+z5Gb=hQNk13wE0PbmcvEmC9TM6nD2mi=ew@mail.gmail.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Sachin Kamat' <sachin.kamat@samsung.com>
+Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Tushar Behera' <tushar.behera@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sachin Kamat' <spk.linux@gmail.com>, =?utf-8?Q?'Andreas_F=C3=A4rber'?= <afaerber@suse.de>
 
-Am 25.06.2014 12:47, schrieb Mark Rutland:
-> On Mon, Jun 23, 2014 at 06:27:04PM +0100, Doug Anderson wrote:
->> Andreas,
->>
->> On Sun, Jun 22, 2014 at 6:21 PM, Andreas F=C3=A4rber <afaerber@suse.=
+Sachin Kamat wrote:
+>=20
+> On Fri, May 30, 2014 at 11:49 PM, Andreas F=C3=A4rber <afaerber@suse.=
 de> wrote:
->>> It's vsys-l{1,2}-supply, not vsys_l{1,2}-supply.
->>>
->>> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
->>> ---
->>>  Documentation/devicetree/bindings/regulator/tps65090.txt | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/regulator/tps65090.t=
-xt b/Documentation/devicetree/bindings/regulator/tps65090.txt
->>> index 34098023..ca69f5e 100644
->>> --- a/Documentation/devicetree/bindings/regulator/tps65090.txt
->>> +++ b/Documentation/devicetree/bindings/regulator/tps65090.txt
->>> @@ -45,8 +45,8 @@ Example:
->>>                 infet5-supply =3D <&some_reg>;
->>>                 infet6-supply =3D <&some_reg>;
->>>                 infet7-supply =3D <&some_reg>;
->>> -               vsys_l1-supply =3D <&some_reg>;
->>> -               vsys_l2-supply =3D <&some_reg>;
->>> +               vsys-l1-supply =3D <&some_reg>;
->>> +               vsys-l2-supply =3D <&some_reg>;
->>
->> Your change matches the code and all existing device trees in the
->> Linux kernel.
+> > Am 28.05.2014 06:13, schrieb Sachin Kamat:
+> >> Almost all Exynos-series of SoCs that run in secure mode don't nee=
+d
+> >> additional offset for every CPU, with Exynos4412 being the only
+> >> exception.
+> >>
+> >> Tested on Origen-Quad (Exynos4412) and Arndale-Octa (Exynos5420).
+> >>
+> >> While at it, fix the coding style (space around *).
+> >>
+> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> >> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> >> ---
+> >>  arch/arm/mach-exynos/firmware.c |    9 +++++++--
+> >>  1 file changed, 7 insertions(+), 2 deletions(-)
+> >
+> > Fixes ODROID-XU (Exynos5410) as well - thought it had been a prereq=
+ to
+> > applying the 5410 patches...
+> >
+> > Tested-by: Andreas F=C3=A4rber <afaerber@suse.de>
+> >
 >=20
-> Could this fact please be mentioned in the commit message?
+> Kukjin, this patch is required to bring up 4 A15 cores on some 5410
+> and 5420 based
+> boards. Can you please queue this up for the upcoming rc as fixes?
 
-Yes, I admit the commit message could've been clearer in stating that
-only the example is modified, not the actual specification. What about:
+Sure, I will take this into fixes.
 
-"Specification and existing device trees use vsys-l{1,2}-supply, not
-vsys_l{1,2}-supply. Fix the example to match the specification."
-
-Maybe also "... typos in example" in the subject.
-
-Let me know whether I should send a v2 or let maintainers fix it up.
-
-Regards,
-Andreas
-
-> Given that:
->=20
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
->=20
->> I also see plenty of other bindings with dashes, so this seems
->> reasonable.
->=20
-> Dashes rather than underscores are preferred/correct for property nam=
-es
-> and compatible strings. Given no-one can possibly be using the
-> bad/incorrect form with underscores, fixing the documentation to use
-> dashes makes sense.
->=20
-> Thanks,
-> Mark.
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+Thanks,
+Kukjin
