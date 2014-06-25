@@ -1,43 +1,52 @@
 From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 1/4 v2] devicetree: bindings: Document murata vendor prefix
-Date: Wed, 25 Jun 2014 11:59:30 +0530
-Message-ID: <1403677773-21141-2-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 3/4 v2] ARM: DTS: use new compatible string for thermistors in
+ trats2
+Date: Wed, 25 Jun 2014 11:59:32 +0530
+Message-ID: <1403677773-21141-4-git-send-email-ch.naveen@samsung.com>
 References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1403677773-21141-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add Murata Manufacturing Co., Ltd. to the list of device tree
-vendor prefixes.
+As Murata Manufactures the NTC based thermistors. The vendor
+name in the compatibility is preposed to change to "murata"
 
-Murata manufactures NTC (Negative Temperature Coefficient) based
-Thermistors for small scale applications like Mobiles and PDAs.
+This patch uses the new compatibility string in exynos4412 based
+Trats2 board.
 
 Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
 Changes since v1:
-1. Rearranged vendor-prefix alphabetically
-2. Added Acked-by from Mark Rutland
+None
 
- .../devicetree/bindings/vendor-prefixes.txt        |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/exynos4412-trats2.dts |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 4d7f375..46a311e 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -83,6 +83,7 @@ mosaixtech	Mosaix Technologies, Inc.
- moxa	Moxa
- mpl	MPL AG
- mundoreader	Mundo Reader S.L.
-+murata	Murata Manufacturing Co., Ltd.
- mxicy	Macronix International Co., Ltd.
- national	National Semiconductor
- neonode		Neonode Inc.
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 11967f4..d35755a 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -771,7 +771,7 @@
+ 	};
+ 
+ 	thermistor-ap@0 {
+-		compatible = "ntc,ncp15wb473";
++		compatible = "murata,ncp15wb473";
+ 		pullup-uv = <1800000>;	 /* VCC_1.8V_AP */
+ 		pullup-ohm = <100000>;	 /* 100K */
+ 		pulldown-ohm = <100000>; /* 100K */
+@@ -779,7 +779,7 @@
+ 	};
+ 
+ 	thermistor-battery@1 {
+-		compatible = "ntc,ncp15wb473";
++		compatible = "murata,ncp15wb473";
+ 		pullup-uv = <1800000>;	 /* VCC_1.8V_AP */
+ 		pullup-ohm = <100000>;	 /* 100K */
+ 		pulldown-ohm = <100000>; /* 100K */
 -- 
 1.7.9.5
