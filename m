@@ -1,75 +1,68 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2] i2c: s3c2410: resume the I2C controller earlier
-Date: Wed, 25 Jun 2014 20:09:42 +0200
-Message-ID: <53AB1066.8000305@collabora.co.uk>
-References: <1403654214-25072-1-git-send-email-dianders@chromium.org>
+Subject: Re: [PATCH v3 02/14] mfd: max77686: Allow the max77686 rtc to wakeup
+ the system
+Date: Wed, 25 Jun 2014 20:11:12 +0200
+Message-ID: <53AB10C0.9050803@collabora.co.uk>
+References: <1403202040-12641-1-git-send-email-javier.martinez@collabora.co.uk>	<1403202040-12641-3-git-send-email-javier.martinez@collabora.co.uk>	<1403690742.22107.7.camel@AMDC1943>	<53AAA4A3.50400@collabora.co.uk> <CAD=FV=UQfJfUUN4rnnCw2Pah-5BukL2SzhTskRVcvvzp8f+isA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:60616 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:60623 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932296AbaFYSJt (ORCPT
+	with ESMTP id S1752600AbaFYSLT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 14:09:49 -0400
-In-Reply-To: <1403654214-25072-1-git-send-email-dianders@chromium.org>
+	Wed, 25 Jun 2014 14:11:19 -0400
+In-Reply-To: <CAD=FV=UQfJfUUN4rnnCw2Pah-5BukL2SzhTskRVcvvzp8f+isA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Vincent Palatin <vpalatin@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hello Doug,
-
-On 06/25/2014 01:56 AM, Doug Anderson wrote:
-> From: Vincent Palatin <vpalatin@chromium.org>
+On 06/25/2014 07:24 PM, Doug Anderson wrote:
+> Hi,
 > 
-> When the wake-up is triggered by the PMIC RTC, the RTC driver is trying
-> to read the PMIC interrupt status over I2C and fails because the I2C
-> controller is not resumed yet.
-> Let's resume the I2C controller earlier in the _noirq phase
-> (as other hardwares are doing), so we can properly get the wake-up
-> condition.
+> On Wed, Jun 25, 2014 at 3:29 AM, Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk> wrote:
+>> Yes, the original Chrome OS 3.8 max77xxx also called the irq worker thread to
+>> ack the interrupt.
+>>
+>> So the real problem is that an interrupt occurs before the I2C bus controller is
+>> resumed and so the interrupt handler is not able to access the registers over I2C.
+>>
+>> Doug posted the following patches [0,1] that AFAIU solves the issue by making
+>> I2C controllers to be resumed in the noirq time to ensure that drivers will be
+>> able to use the I2C bus to handler their wakeup.
 > 
-> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
-> Changes in v2:
-> - Added missing freeze/thaw/poweroff/restore
+> Yup, that's the solution as far as I know.  I know that in ChromeOS we
+> still have the extra call to the worker thread (despite the controller
+> waking up early), but that might be related to some other problem?
 > 
->  drivers/i2c/busses/i2c-s3c2410.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+> I was able to successfully suspend/resume multiple times once I woke
+> the i2c controller up earlier.
 > 
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index e828a1d..ecb389c 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -1267,7 +1267,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
->  	return 0;
->  }
->  
-> -static int s3c24xx_i2c_resume(struct device *dev)
-> +static int s3c24xx_i2c_resume_noirq(struct device *dev)
->  {
->  	struct platform_device *pdev = to_platform_device(dev);
->  	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
-> @@ -1285,7 +1285,11 @@ static int s3c24xx_i2c_resume(struct device *dev)
->  static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops = {
->  #ifdef CONFIG_PM_SLEEP
->  	.suspend_noirq = s3c24xx_i2c_suspend_noirq,
-> -	.resume = s3c24xx_i2c_resume,
-> +	.resume_noirq = s3c24xx_i2c_resume_noirq,
-> +	.freeze_noirq = s3c24xx_i2c_suspend_noirq,
-> +	.thaw_noirq = s3c24xx_i2c_resume_noirq,
-> +	.poweroff_noirq = s3c24xx_i2c_suspend_noirq,
-> +	.restore_noirq = s3c24xx_i2c_resume_noirq,
->  #endif
->  };
->  
+> If you feel like adding Reviewed-by / Tested-by to my i2c patch then
+> feel free!  ;)
+> 
 > 
 
-Looks good to me.
+Done :)
 
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> In fact, Doug's original patch had this as a part of the commit message:
+>>
+>> NOTE: due to wakeup ordering problems this patch alone doesn't work so
+>> well on exynos5250-snow.  You also need something that brings the i2c
+>> bus up before the max77686 wakeup runs.
+>>
+>> I removed that note since I (probably wrong) thought that he didn't mean it to
+>> be part of the commit message but just was side information.
+> 
+> I probably would have left that in the patch, but I'm not objecting to
+> you taking it out.  :)
+> 
+
+Yes, I should had left that as well. I'll send a v4 shortly and will include the
+note again.
 
 Best regards,
 Javier
