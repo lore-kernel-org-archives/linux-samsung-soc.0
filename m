@@ -1,169 +1,79 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v3 2/2] usb: ohci-exynos: Make provision for vdd regulators
-Date: Wed, 25 Jun 2014 18:13:55 +0530
-Message-ID: <1403700235-30763-1-git-send-email-gautam.vivek@samsung.com>
-References: <1402064411-18244-2-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1402064411-18244-2-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Alan Stern <stern@rowland.harvard.edu>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v5 0/6] Cleanup patches for mach-exynos
+Date: Wed, 25 Jun 2014 18:15:36 +0530
+Message-ID: <1403700342-9678-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:44823 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752596AbaFYMs0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jun 2014 08:48:26 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, chow.kim@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Facilitate getting required 3.3V and 1.0V VDD supply for
-OHCI controller on Exynos.
+This series is doing code cleanup under arch/arm/mach-exynos.
+These patches have been separated from main exynos pmu v4 patch
+posted here [1].
 
-With patches for regulators' nodes merged in 3.15:
-c8c253f ARM: dts: Add regulator entries to smdk5420
-275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
-the exynos systems turn on only minimal number of regulators.
+[1]: https://lkml.org/lkml/2014/5/10/29
 
-Until now, the VDD regulator supplies were either turned on
-by the bootloader, or the regulators were enabled by default
-in the kernel, so that the controller drivers did not need to
-care about turning on these regulators on their own.
-This was rather bad about these controller drivers.
-So ensuring now that the controller driver requests the necessary
-VDD regulators (if available, unless there are direct VDD rails),
-and enable them so as to make them working.
+Changes Since v4:
+ - Rebased on latest for-next of Kukjin Kim's tree.
+ - Removing file path comment from mach-exynos/headsmp.S also.
+ - Removed signed-off-by of Young-Gun Jang <yg1004.jang@samsung.com>,
+   as this id is no more valid. Taking ownership of all his patches.
+ - Separated these patches from main exynos pmu v4 patch series as
+   suggested by Tomasz Figa.
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Jingoo Han <jg1.han@samsung.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
----
+Changes Since v3:
+ - Addressed build fail issue in exynos.c as reported by Sachin Kamat.
+ - Rebased on top of Sysram patches by Sachin Kamat.
 
-Changes from v2:
- - replaced devm_regulator_get() with devm_regulator_get_optional().
- - Added Documentation for the vdd supplies for the controller.
- - Re-did the commit message.
+Changes Since v2:
+ - Rebased on top of Daniel Lezcano's Exynos cpuidle refactor patches.
+ - Removed exynos_cpuidle_init and exynos_cpufreq_init code as suggested
+   by Tomasz Figa.
 
- .../devicetree/bindings/usb/exynos-usb.txt         |    4 ++
- drivers/usb/host/ohci-exynos.c                     |   55 +++++++++++++++++++-
- 2 files changed, 58 insertions(+), 1 deletion(-)
+Changes Since v1:
+ - Rebased on latest for-next of Kukjin Kim's tree.
+ - Added patch: "Make exynos machine_ops as static". 
+	For making more cleanup in "mach-exynos/common.h"
+	as suggested by Tomasz Figa.
+ - Addressed comments of Tomasz Figa for cleaning "mach-exynos/common.h".
+ - Updated patch: Remove file path from comment section
+	As suggested by Michel Simek, instead of updating file path
+	lets remove them from each file under "mach-exynos".
+	Even though Kukjin pointed out that there is similar patch pending from
+	Sachin/Tushar but since I could not find I have included this here. If
+	I have missed something please point to any existing such patch.
+ - Added patch: Remove "linux/bug.h" from pmu.c.
+ - Added patch: Move "mach/map.h" inclusion from regs-pmu.h to platsmp.c
 
-diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-index b04b015..3991c50 100644
---- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
-+++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-@@ -63,6 +63,10 @@ Required properties:
- 			      port 2 is HSIC phy1
- 	- phys: from the *Generic PHY* bindings, specifying phy used by port.
- 
-+Optional properties:
-+ - vdd33-supply: handle to 3.3V Vdd supply regulator for the controller.
-+ - vdd10-supply: handle to 1.0V Vdd supply regulator for the controller.
-+
- Example:
- 	usb@12120000 {
- 		compatible = "samsung,exynos4210-ohci";
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 060a6a4..57c807c 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -19,6 +19,7 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/phy/phy.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/usb/phy.h>
- #include <linux/usb/samsung_usb_phy.h>
- #include <linux/usb.h>
-@@ -41,6 +42,8 @@ struct exynos_ohci_hcd {
- 	struct usb_phy *phy;
- 	struct usb_otg *otg;
- 	struct phy *phy_g[PHY_NUMBER];
-+	struct regulator *vdd33;
-+	struct regulator *vdd10;
- };
- 
- static int exynos_ohci_get_phy(struct device *dev,
-@@ -172,7 +175,27 @@ static int exynos_ohci_probe(struct platform_device *pdev)
- 
- 	err = exynos_ohci_get_phy(&pdev->dev, exynos_ohci);
- 	if (err)
--		goto fail_clk;
-+		goto fail_regulator1;
-+
-+	exynos_ohci->vdd33 = devm_regulator_get_optional(&pdev->dev, "vdd33");
-+	if (!IS_ERR(exynos_ohci->vdd33)) {
-+		err = regulator_enable(exynos_ohci->vdd33);
-+		if (err) {
-+			dev_err(&pdev->dev,
-+				"Failed to enable 3.3V Vdd supply\n");
-+			goto fail_regulator1;
-+		}
-+	}
-+
-+	exynos_ohci->vdd10 = devm_regulator_get_optional(&pdev->dev, "vdd10");
-+	if (!IS_ERR(exynos_ohci->vdd10)) {
-+		err = regulator_enable(exynos_ohci->vdd10);
-+		if (err) {
-+			dev_err(&pdev->dev,
-+				"Failed to enable 1.0V Vdd supply\n");
-+			goto fail_regulator2;
-+		}
-+	}
- 
- skip_phy:
- 	exynos_ohci->clk = devm_clk_get(&pdev->dev, "usbhost");
-@@ -233,6 +256,10 @@ fail_add_hcd:
- fail_io:
- 	clk_disable_unprepare(exynos_ohci->clk);
- fail_clk:
-+	regulator_disable(exynos_ohci->vdd10);
-+fail_regulator2:
-+	regulator_disable(exynos_ohci->vdd33);
-+fail_regulator1:
- 	usb_put_hcd(hcd);
- 	return err;
- }
-@@ -251,6 +278,11 @@ static int exynos_ohci_remove(struct platform_device *pdev)
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
-+	if (!IS_ERR(exynos_ohci->vdd33))
-+		regulator_disable(exynos_ohci->vdd33);
-+	if (!IS_ERR(exynos_ohci->vdd10))
-+		regulator_disable(exynos_ohci->vdd10);
-+
- 	usb_put_hcd(hcd);
- 
- 	return 0;
-@@ -282,6 +314,11 @@ static int exynos_ohci_suspend(struct device *dev)
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
-+	if (!IS_ERR(exynos_ohci->vdd33))
-+		regulator_disable(exynos_ohci->vdd33);
-+	if (!IS_ERR(exynos_ohci->vdd10))
-+		regulator_disable(exynos_ohci->vdd10);
-+
- 	return 0;
- }
- 
-@@ -291,6 +328,22 @@ static int exynos_ohci_resume(struct device *dev)
- 	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
- 	int ret;
- 
-+	if (!IS_ERR(exynos_ohci->vdd33)) {
-+		ret = regulator_enable(exynos_ohci->vdd33);
-+		if (ret) {
-+			dev_err(dev, "Failed to enable 3.3V Vdd supply\n");
-+			return ret;
-+		}
-+	}
-+
-+	if (!IS_ERR(exynos_ohci->vdd10)) {
-+		ret = regulator_enable(exynos_ohci->vdd10);
-+		if (ret) {
-+			dev_err(dev, "Failed to enable 1.0V Vdd supply\n");
-+			return ret;
-+		}
-+	}
-+
- 	clk_prepare_enable(exynos_ohci->clk);
- 
- 	if (exynos_ohci->otg)
+Pankaj Dubey (6):
+  ARM: EXYNOS: Make exynos machine_ops as static
+  ARM: EXYNOS: Move cpufreq and cpuidle device registration to
+    init_machine
+  ARM: EXYNOS: Move SYSREG definition into sys-reg specific file
+  ARM: EXYNOS: Remove file path from comment section
+  ARM: EXYNOS: Remove regs-pmu.h header dependency from pm_domain
+  ARM: EXYNOS: Remove "linux/bug.h" from pmu.c
+
+ arch/arm/mach-exynos/common.h              |    8 --------
+ arch/arm/mach-exynos/exynos.c              |   26 ++++++++------------------
+ arch/arm/mach-exynos/headsmp.S             |    1 -
+ arch/arm/mach-exynos/hotplug.c             |    3 +--
+ arch/arm/mach-exynos/include/mach/map.h    |    3 +--
+ arch/arm/mach-exynos/include/mach/memory.h |    3 +--
+ arch/arm/mach-exynos/platsmp.c             |    3 +--
+ arch/arm/mach-exynos/pm.c                  |    1 +
+ arch/arm/mach-exynos/pm_domains.c          |    8 ++++----
+ arch/arm/mach-exynos/pmu.c                 |    1 -
+ arch/arm/mach-exynos/regs-pmu.h            |    4 ----
+ arch/arm/mach-exynos/regs-sys.h            |   22 ++++++++++++++++++++++
+ 12 files changed, 39 insertions(+), 44 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/regs-sys.h
+
 -- 
-1.7.10.4
-
+1.7.9.5
