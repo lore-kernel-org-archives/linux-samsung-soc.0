@@ -1,43 +1,57 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v4 04/14] clk: max77686: Improve Maxim 77686 PMIC clocks binding
-Date: Wed, 25 Jun 2014 12:54:31 -0700
-Message-ID: <CAD=FV=Udt1G4MwSOAS-KmJa=zm4OBkPPxFO81ezY+ywG6zKRgw@mail.gmail.com>
-References: <1403723019-6212-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1403723019-6212-5-git-send-email-javier.martinez@collabora.co.uk>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 4/4 v2] ARM: DTS: Add NTC thermistor nodes to Exynos5420
+ based Peach_PIT
+Date: Wed, 25 Jun 2014 13:40:47 -0700
+Message-ID: <CAD=FV=WeuFhGK=JNEm20CT73J=c1Zc_dZGQT6bKeob895M+kQA@mail.gmail.com>
+References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
+	<1403677773-21141-5-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1403723019-6212-5-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403677773-21141-5-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Naveen Krishna <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Javier,
+Naveen,
 
-On Wed, Jun 25, 2014 at 12:03 PM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> Like most clock drivers, the Maxim 77686 PMIC clock binding
-> follows the convention that the "#clock-cells" property is
-> used to specify the number of cells in a clock provider.
+On Tue, Jun 24, 2014 at 11:29 PM, Naveen Krishna Chatradhi
+<ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Exynos5420 based Peach PIT board has 4 NTC thermistors to measure
+> temperatures at various points on the board.
 >
-> But the binding document is not clear enough that it shall
-> be set to 1 since the PMIC support multiple clocks outputs.
+> IIO based ADC becomes the parent and NTC thermistors are the childs,
+> via the HWMON interface.
 >
-> Also, explain that the clocks identifiers are defined in a
-> header file that can be included by Device Tree source with
-> client nodes to avoid using magic numbers.
->
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 > ---
+> Changes since v1:
+> 1. Arranged the ADC node alphabetical
+> 2. Added "status = "okay"" to the ADC node
 >
-> Changes since v3:
->  - Don't change clock-names property to make clear that it's
->    the consumer clock name and should not match the producer clock.
->    Suggested by Doug Anderson.
+> This patch needs
+> 1. MAX77802 PMIC device tree nodes (for ldo9)
+>    https://www.mail-archive.com/devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg31430.html
+> 2. Uses the DT documentation for NTC thermistors updated with vendor-prefix
 >
->  Documentation/devicetree/bindings/clock/maxim,max77686.txt | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
+> This patch set is tested
+> 1. On Peach PIT board via sysfs entry exposed by hwmon
+> localhost ~ # cat /sys/class/hwmon/hwmon*/device/temp1_input
+> 37436
+> 36449
+> 38560
+> 38059
+>
+> 2. Backward compatibility is tested by replacing "murata" with "ntc"
+>    in the dts nodes and running the above test.
+>
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   34 ++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
 
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+Now that Javier has spun his patch, perhaps you can fold the "pi"
+version in here too?
+
+Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Tested-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
