@@ -1,19 +1,19 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v3 1/2] usb: ehci-exynos: Make provision for vdd regulators
-Date: Wed, 25 Jun 2014 18:12:24 +0530
-Message-ID: <1403700144-30720-1-git-send-email-gautam.vivek@samsung.com>
-References: <CAFp+6iF9GkKWDcqZNV58Z=U3ZDQdgYr8LJBF9t-BpJW90vsHdQ@mail.gmail.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAFp+6iF9GkKWDcqZNV58Z=U3ZDQdgYr8LJBF9t-BpJW90vsHdQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v3 2/2] usb: ohci-exynos: Make provision for vdd regulators
+Date: Wed, 25 Jun 2014 18:13:55 +0530
+Message-ID: <1403700235-30763-1-git-send-email-gautam.vivek@samsung.com>
+References: <1402064411-18244-2-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1402064411-18244-2-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Alan Stern <stern@rowland.harvard.edu>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Facilitate getting required 3.3V and 1.0V VDD supply for
-EHCI controller on Exynos.
+OHCI controller on Exynos.
 
-With the patches for regulators' nodes merged in 3.15:
+With patches for regulators' nodes merged in 3.15:
 c8c253f ARM: dts: Add regulator entries to smdk5420
 275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
 the exynos systems turn on only minimal number of regulators.
@@ -27,9 +27,9 @@ So ensuring now that the controller driver requests the necessary
 VDD regulators (if available, unless there are direct VDD rails),
 and enable them so as to make them working.
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Jingoo Han <jg1.han@samsung.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
 ---
 
 Changes from v2:
@@ -37,36 +37,38 @@ Changes from v2:
  - Added Documentation for the vdd supplies for the controller.
  - Re-did the commit message.
 
- .../devicetree/bindings/usb/exynos-usb.txt         |    2 +
- drivers/usb/host/ehci-exynos.c                     |   55 +++++++++++++++++++-
- 2 files changed, 56 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/usb/exynos-usb.txt         |    4 ++
+ drivers/usb/host/ohci-exynos.c                     |   55 +++++++++++++++++++-
+ 2 files changed, 58 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-index a3b5990..b04b015 100644
+index b04b015..3991c50 100644
 --- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
 +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-@@ -23,6 +23,8 @@ Required properties:
- Optional properties:
-  - samsung,vbus-gpio:  if present, specifies the GPIO that
-    needs to be pulled up for the bus to be powered.
+@@ -63,6 +63,10 @@ Required properties:
+ 			      port 2 is HSIC phy1
+ 	- phys: from the *Generic PHY* bindings, specifying phy used by port.
+ 
++Optional properties:
 + - vdd33-supply: handle to 3.3V Vdd supply regulator for the controller.
 + - vdd10-supply: handle to 1.0V Vdd supply regulator for the controller.
- 
++
  Example:
- 
-diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-index d1c7621..b920642 100644
---- a/drivers/usb/host/ehci-exynos.c
-+++ b/drivers/usb/host/ehci-exynos.c
-@@ -21,6 +21,7 @@
- #include <linux/of_gpio.h>
- #include <linux/phy/phy.h>
+ 	usb@12120000 {
+ 		compatible = "samsung,exynos4210-ohci";
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index 060a6a4..57c807c 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -19,6 +19,7 @@
+ #include <linux/of.h>
  #include <linux/platform_device.h>
+ #include <linux/phy/phy.h>
 +#include <linux/regulator/consumer.h>
  #include <linux/usb/phy.h>
  #include <linux/usb/samsung_usb_phy.h>
  #include <linux/usb.h>
-@@ -50,6 +51,8 @@ struct exynos_ehci_hcd {
+@@ -41,6 +42,8 @@ struct exynos_ohci_hcd {
  	struct usb_phy *phy;
  	struct usb_otg *otg;
  	struct phy *phy_g[PHY_NUMBER];
@@ -74,17 +76,17 @@ index d1c7621..b920642 100644
 +	struct regulator *vdd10;
  };
  
- #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
-@@ -193,7 +196,27 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+ static int exynos_ohci_get_phy(struct device *dev,
+@@ -172,7 +175,27 @@ static int exynos_ohci_probe(struct platform_device *pdev)
  
- 	err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
+ 	err = exynos_ohci_get_phy(&pdev->dev, exynos_ohci);
  	if (err)
 -		goto fail_clk;
 +		goto fail_regulator1;
 +
-+	exynos_ehci->vdd33 = devm_regulator_get_optional(&pdev->dev, "vdd33");
-+	if (!IS_ERR(exynos_ehci->vdd33)) {
-+		err = regulator_enable(exynos_ehci->vdd33);
++	exynos_ohci->vdd33 = devm_regulator_get_optional(&pdev->dev, "vdd33");
++	if (!IS_ERR(exynos_ohci->vdd33)) {
++		err = regulator_enable(exynos_ohci->vdd33);
 +		if (err) {
 +			dev_err(&pdev->dev,
 +				"Failed to enable 3.3V Vdd supply\n");
@@ -92,9 +94,9 @@ index d1c7621..b920642 100644
 +		}
 +	}
 +
-+	exynos_ehci->vdd10 = devm_regulator_get_optional(&pdev->dev, "vdd10");
-+	if (!IS_ERR(exynos_ehci->vdd10)) {
-+		err = regulator_enable(exynos_ehci->vdd10);
++	exynos_ohci->vdd10 = devm_regulator_get_optional(&pdev->dev, "vdd10");
++	if (!IS_ERR(exynos_ohci->vdd10)) {
++		err = regulator_enable(exynos_ohci->vdd10);
 +		if (err) {
 +			dev_err(&pdev->dev,
 +				"Failed to enable 1.0V Vdd supply\n");
@@ -103,69 +105,65 @@ index d1c7621..b920642 100644
 +	}
  
  skip_phy:
- 
-@@ -262,6 +285,10 @@ fail_add_hcd:
+ 	exynos_ohci->clk = devm_clk_get(&pdev->dev, "usbhost");
+@@ -233,6 +256,10 @@ fail_add_hcd:
  fail_io:
- 	clk_disable_unprepare(exynos_ehci->clk);
+ 	clk_disable_unprepare(exynos_ohci->clk);
  fail_clk:
-+	regulator_disable(exynos_ehci->vdd10);
++	regulator_disable(exynos_ohci->vdd10);
 +fail_regulator2:
-+	regulator_disable(exynos_ehci->vdd33);
++	regulator_disable(exynos_ohci->vdd33);
 +fail_regulator1:
  	usb_put_hcd(hcd);
  	return err;
  }
-@@ -280,6 +307,11 @@ static int exynos_ehci_remove(struct platform_device *pdev)
+@@ -251,6 +278,11 @@ static int exynos_ohci_remove(struct platform_device *pdev)
  
- 	clk_disable_unprepare(exynos_ehci->clk);
+ 	clk_disable_unprepare(exynos_ohci->clk);
  
-+	if (!IS_ERR(exynos_ehci->vdd33))
-+		regulator_disable(exynos_ehci->vdd33);
-+	if (!IS_ERR(exynos_ehci->vdd10))
-+		regulator_disable(exynos_ehci->vdd10);
++	if (!IS_ERR(exynos_ohci->vdd33))
++		regulator_disable(exynos_ohci->vdd33);
++	if (!IS_ERR(exynos_ohci->vdd10))
++		regulator_disable(exynos_ohci->vdd10);
 +
  	usb_put_hcd(hcd);
  
  	return 0;
-@@ -305,6 +337,11 @@ static int exynos_ehci_suspend(struct device *dev)
+@@ -282,6 +314,11 @@ static int exynos_ohci_suspend(struct device *dev)
  
- 	clk_disable_unprepare(exynos_ehci->clk);
+ 	clk_disable_unprepare(exynos_ohci->clk);
  
-+	if (!IS_ERR(exynos_ehci->vdd33))
-+		regulator_disable(exynos_ehci->vdd33);
-+	if (!IS_ERR(exynos_ehci->vdd10))
-+		regulator_disable(exynos_ehci->vdd10);
++	if (!IS_ERR(exynos_ohci->vdd33))
++		regulator_disable(exynos_ohci->vdd33);
++	if (!IS_ERR(exynos_ohci->vdd10))
++		regulator_disable(exynos_ohci->vdd10);
 +
- 	return rc;
+ 	return 0;
  }
  
-@@ -314,6 +351,22 @@ static int exynos_ehci_resume(struct device *dev)
- 	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
+@@ -291,6 +328,22 @@ static int exynos_ohci_resume(struct device *dev)
+ 	struct exynos_ohci_hcd *exynos_ohci	= to_exynos_ohci(hcd);
  	int ret;
  
-+	if (!IS_ERR(exynos_ehci->vdd33)) {
-+		ret = regulator_enable(exynos_ehci->vdd33);
++	if (!IS_ERR(exynos_ohci->vdd33)) {
++		ret = regulator_enable(exynos_ohci->vdd33);
 +		if (ret) {
 +			dev_err(dev, "Failed to enable 3.3V Vdd supply\n");
 +			return ret;
 +		}
 +	}
 +
-+	if (!IS_ERR(exynos_ehci->vdd10)) {
-+		ret = regulator_enable(exynos_ehci->vdd10);
++	if (!IS_ERR(exynos_ohci->vdd10)) {
++		ret = regulator_enable(exynos_ohci->vdd10);
 +		if (ret) {
 +			dev_err(dev, "Failed to enable 1.0V Vdd supply\n");
 +			return ret;
 +		}
 +	}
 +
- 	clk_prepare_enable(exynos_ehci->clk);
+ 	clk_prepare_enable(exynos_ohci->clk);
  
- 	if (exynos_ehci->otg)
+ 	if (exynos_ohci->otg)
 -- 
 1.7.10.4
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
