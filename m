@@ -1,49 +1,171 @@
-From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] arm/arm64: DT: Fix GICv2 CPU interface size
-Date: Wed, 25 Jun 2014 13:32:31 +0100
-Message-ID: <86simtjhk0.fsf@arm.com>
-References: <1403692675-26503-1-git-send-email-marc.zyngier@arm.com>
-	<CAL_Jsq+rS3FE8_F-4qdUUTaJ6X9XNFP2d2h7CdU9hDRG0KG9uA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL_Jsq+rS3FE8_F-4qdUUTaJ6X9XNFP2d2h7CdU9hDRG0KG9uA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-	(Rob Herring's message of "Wed, 25 Jun 2014 13:21:17 +0100")
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "devicetree@vger.kernel.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>l
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 1/2] usb: ehci-exynos: Make provision for vdd regulators
+Date: Wed, 25 Jun 2014 18:12:24 +0530
+Message-ID: <1403700144-30720-1-git-send-email-gautam.vivek@samsung.com>
+References: <CAFp+6iF9GkKWDcqZNV58Z=U3ZDQdgYr8LJBF9t-BpJW90vsHdQ@mail.gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAFp+6iF9GkKWDcqZNV58Z=U3ZDQdgYr8LJBF9t-BpJW90vsHdQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 25 2014 at 01:21:17 PM, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Wed, Jun 25, 2014 at 5:37 AM, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org> wrote:
->> All the Cortex-{A7,A15} implementations are using a GICv2. Same for
->> the current arm64 platforms.
->>
->> Turns out that most of these platforms have described their GIC CPU
->> interface size as being 4kB. while it is actually 8kB (the GICC_DIR
->> register lives at offset 0x1000).
->>
->> This was found when converting the GIC driver to use EOImode==1 on
->> GICv2-based systems. It uses the GICC_DIR register, and the result
->> is a very early firework...
->
-> What's your plan for making the kernel change? Updating the dts files
-> is good, but that doesn't immediately help you if you have old dtbs.
+Facilitate getting required 3.3V and 1.0V VDD supply for
+EHCI controller on Exynos.
 
-See at the end of https://lkml.org/lkml/2014/6/25/243
+With the patches for regulators' nodes merged in 3.15:
+c8c253f ARM: dts: Add regulator entries to smdk5420
+275dcd2 ARM: dts: add max77686 pmic node for smdk5250,
+the exynos systems turn on only minimal number of regulators.
 
-Basically, we stay with a GICv1 behaviour if we detect the mess.
+Until now, the VDD regulator supplies were either turned on
+by the bootloader, or the regulators were enabled by default
+in the kernel, so that the controller drivers did not need to
+care about turning on these regulators on their own.
+This was rather bad about these controller drivers.
+So ensuring now that the controller driver requests the necessary
+VDD regulators (if available, unless there are direct VDD rails),
+and enable them so as to make them working.
 
->> Signed-off-by: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
->> ---
->>  arch/arm/boot/dts/axm55xx.dtsi              | 2 +-
->>  arch/arm/boot/dts/dra7.dtsi                 | 2 +-
->>  arch/arm/boot/dts/ecx-2000.dts              | 2 +-
->
-> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+---
 
-Thanks,
+Changes from v2:
+ - replaced devm_regulator_get() with devm_regulator_get_optional().
+ - Added Documentation for the vdd supplies for the controller.
+ - Re-did the commit message.
 
-	M.
+ .../devicetree/bindings/usb/exynos-usb.txt         |    2 +
+ drivers/usb/host/ehci-exynos.c                     |   55 +++++++++++++++++++-
+ 2 files changed, 56 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+index a3b5990..b04b015 100644
+--- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
++++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+@@ -23,6 +23,8 @@ Required properties:
+ Optional properties:
+  - samsung,vbus-gpio:  if present, specifies the GPIO that
+    needs to be pulled up for the bus to be powered.
++ - vdd33-supply: handle to 3.3V Vdd supply regulator for the controller.
++ - vdd10-supply: handle to 1.0V Vdd supply regulator for the controller.
+ 
+ Example:
+ 
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+index d1c7621..b920642 100644
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -21,6 +21,7 @@
+ #include <linux/of_gpio.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/usb/phy.h>
+ #include <linux/usb/samsung_usb_phy.h>
+ #include <linux/usb.h>
+@@ -50,6 +51,8 @@ struct exynos_ehci_hcd {
+ 	struct usb_phy *phy;
+ 	struct usb_otg *otg;
+ 	struct phy *phy_g[PHY_NUMBER];
++	struct regulator *vdd33;
++	struct regulator *vdd10;
+ };
+ 
+ #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
+@@ -193,7 +196,27 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+ 
+ 	err = exynos_ehci_get_phy(&pdev->dev, exynos_ehci);
+ 	if (err)
+-		goto fail_clk;
++		goto fail_regulator1;
++
++	exynos_ehci->vdd33 = devm_regulator_get_optional(&pdev->dev, "vdd33");
++	if (!IS_ERR(exynos_ehci->vdd33)) {
++		err = regulator_enable(exynos_ehci->vdd33);
++		if (err) {
++			dev_err(&pdev->dev,
++				"Failed to enable 3.3V Vdd supply\n");
++			goto fail_regulator1;
++		}
++	}
++
++	exynos_ehci->vdd10 = devm_regulator_get_optional(&pdev->dev, "vdd10");
++	if (!IS_ERR(exynos_ehci->vdd10)) {
++		err = regulator_enable(exynos_ehci->vdd10);
++		if (err) {
++			dev_err(&pdev->dev,
++				"Failed to enable 1.0V Vdd supply\n");
++			goto fail_regulator2;
++		}
++	}
+ 
+ skip_phy:
+ 
+@@ -262,6 +285,10 @@ fail_add_hcd:
+ fail_io:
+ 	clk_disable_unprepare(exynos_ehci->clk);
+ fail_clk:
++	regulator_disable(exynos_ehci->vdd10);
++fail_regulator2:
++	regulator_disable(exynos_ehci->vdd33);
++fail_regulator1:
+ 	usb_put_hcd(hcd);
+ 	return err;
+ }
+@@ -280,6 +307,11 @@ static int exynos_ehci_remove(struct platform_device *pdev)
+ 
+ 	clk_disable_unprepare(exynos_ehci->clk);
+ 
++	if (!IS_ERR(exynos_ehci->vdd33))
++		regulator_disable(exynos_ehci->vdd33);
++	if (!IS_ERR(exynos_ehci->vdd10))
++		regulator_disable(exynos_ehci->vdd10);
++
+ 	usb_put_hcd(hcd);
+ 
+ 	return 0;
+@@ -305,6 +337,11 @@ static int exynos_ehci_suspend(struct device *dev)
+ 
+ 	clk_disable_unprepare(exynos_ehci->clk);
+ 
++	if (!IS_ERR(exynos_ehci->vdd33))
++		regulator_disable(exynos_ehci->vdd33);
++	if (!IS_ERR(exynos_ehci->vdd10))
++		regulator_disable(exynos_ehci->vdd10);
++
+ 	return rc;
+ }
+ 
+@@ -314,6 +351,22 @@ static int exynos_ehci_resume(struct device *dev)
+ 	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
+ 	int ret;
+ 
++	if (!IS_ERR(exynos_ehci->vdd33)) {
++		ret = regulator_enable(exynos_ehci->vdd33);
++		if (ret) {
++			dev_err(dev, "Failed to enable 3.3V Vdd supply\n");
++			return ret;
++		}
++	}
++
++	if (!IS_ERR(exynos_ehci->vdd10)) {
++		ret = regulator_enable(exynos_ehci->vdd10);
++		if (ret) {
++			dev_err(dev, "Failed to enable 1.0V Vdd supply\n");
++			return ret;
++		}
++	}
++
+ 	clk_prepare_enable(exynos_ehci->clk);
+ 
+ 	if (exynos_ehci->otg)
 -- 
-Jazz is not dead. It just smells funny.
+1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
