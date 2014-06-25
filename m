@@ -1,37 +1,60 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: Re: [PATCH v2 0/4] Add support for Exynos clock output configuration
-Date: Wed, 25 Jun 2014 09:56:25 +0100
-Message-ID: <CAD8Lp45r4yMq2Ew9Eijs-udLUyteZjriG_86XcQfELvdTbJVNA@mail.gmail.com>
-References: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 25 Jun 2014 10:17:02 +0100
+Message-ID: <20140625091702.GF6153@arm.com>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+ <53A9BC18.2090106@codeaurora.org>
+ <20140624181150.GB4067@arm.com>
+ <4855051.rhxSrNMNLg@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f173.google.com ([74.125.82.173]:47403 "EHLO
-	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751024AbaFYI42 (ORCPT
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:34063 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752529AbaFYJRE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 04:56:28 -0400
-Received: by mail-we0-f173.google.com with SMTP id t60so1655230wes.18
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2014 01:56:26 -0700 (PDT)
-In-Reply-To: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
+	Wed, 25 Jun 2014 05:17:04 -0400
+Content-Disposition: inline
+In-Reply-To: <4855051.rhxSrNMNLg@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Olav Haugan <ohaugan@codeaurora.org>, Rob Herring <robherring2@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, Dave P Martin <Dave.Martin@arm.com>"linux-arm-kernel@lists.infradead.org" <li>
 
-Hi,
+On Tue, Jun 24, 2014 at 07:20:56PM +0100, Arnd Bergmann wrote:
+> On Tuesday 24 June 2014 19:11:50 Will Deacon wrote:
+> > On Tue, Jun 24, 2014 at 06:57:44PM +0100, Olav Haugan wrote:
+> > > We do describe the masked StreamID (SID) but we need to specify the mask
+> > > that the SMMU should apply to the incoming SIDs, right?
+> > > 
+> > > We have a bus master that emits 43 unique SIDs. However, we have only 40
+> > > SMMU_SMRn registers in the SMMU. So we need to mask out some of the
+> > > incoming SID bits so that the 43 SIDs can match one of 40 entries in the
+> > > SMR.
+> > 
+> > Hmm, so you're talking about stream matching, right? That doesn't belong in
+> > the device-tree. I appreciate that the current driver does a terrible job at
+> > allocating the SMRs (it's bloody difficult!), but we should try to improve
+> > the dynamic behaviour instead of moving configuration of the SMMU out into
+> > device-tree, where it's inflexible at best.
+> > 
+> > There have been patches previously posted by Andreas Herrmann helping here.
+> > I'd be glad to see them revived.
+> 
+> Note that there are areas where we have in the past decided that dynamic
+> configuration is just too hard for the kernel to do and that we're better
+> off putting the configuration into DT. Pinctrl and clocks are at least
+> partially in that category.
+> 
+> It's always best if you can get the kernel to do things in the ideal
+> way where that is possible, but getting there may be just not worth it.
+> 
+> I have no idea where it should be for SMMU, but it's something to consider:
+> if you can take reasonable shortcuts by reading parts of the configuration
+> from DT, you may just as well do that.
 
-On Tue, Jun 24, 2014 at 5:08 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Tested on Odroid U3, with HSIC/USB hub using CLKOUT as reference clock,
-> with some additional patches.
+I treat this in the same manner as the topology bindings we discussed
+previously; we should do a best-effort to configure things dynamically and
+solve corner-cases and quirks as special cases.
 
-for all the patches:
-Tested-by: Daniel Drake <drake@endlessm.com>
-
-Tested on ODROID-U2 alongside
-    phy: phy-samsung-usb2: Change phy power on/power off sequence
-
-now USB is working fine.
-
-Thanks!
-Daniel
+Will
