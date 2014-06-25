@@ -1,54 +1,76 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH 1/1] i2c: Kconfig: Enable HSI2C for Exynos5 platform
-Date: Wed, 25 Jun 2014 19:20:27 +0900
-Message-ID: <01d701cf905f$158def70$40a9ce50$@samsung.com>
-References: <1403690523-1863-1-git-send-email-sachin.kamat@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: dts: update mmc node with hs-200 mode
+Date: Wed, 25 Jun 2014 19:24:57 +0900
+Message-ID: <01ed01cf905f$b6b21250$241636f0$@samsung.com>
+References: <1403689886-14573-1-git-send-email-yuvaraj.cd@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1403690523-1863-1-git-send-email-sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:33613 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752609AbaFYKZM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jun 2014 06:25:12 -0400
+In-reply-to: <1403689886-14573-1-git-send-email-yuvaraj.cd@samsung.com>
 Content-language: ko
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Sachin Kamat' <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, spk.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, 'Doug Anderson' <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Yuvaraj Kumar C D' <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jh80.chung@samsung.com, cjb@laptop.org, tgih.jun@samsung.com, linux-mmc@vger.kernel.org, ulf.hansson@linaro.org, devicetree@vger.kernel.org, 'Doug Anderson' <dianders@chromium.org>
+Cc: sonnyrao@chromium.org, t.figa@samsung.com, joshi@samsung.com, ks.giri@samsung.com, prashanth.g@samsung.com, alim.akhtar@samsung.com, rahul.sharma@samsung.com, 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>
 
-Sachin Kamat wrote:
+Yuvaraj Kumar C D wrote:
 > 
-> All Exynos5 platforms have HSI2C controllers and are needed by
-> various IPs connected to the boards based on these SoCs. Thus
-> select this by default for Exynos5 platforms.
++ Doug
+
+Hi,
+
+> This patch updates hs-200 device tree property from
+> caps2-mmc-hs200-1.8v to mmc-hs200-1.8v for peach-pit
+> and peach-pi boards.
 > 
-Yeah right, even upcoming exynos5 SoCs have only HS-I2C not I2C ;-)
+> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-> Signed-off-by: Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Already I've queued same patch into my local but waiting for dependencies for
+push to my tree in git.kernel.org:
 
-Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+http://www.spinics.net/lists/arm-kernel/msg341198.html
 
 Thanks,
 Kukjin
 
 > ---
->  drivers/i2c/busses/Kconfig |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts |    2 +-
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts  |    2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index 9f7d5859cf65..c7918cffe790 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -465,9 +465,9 @@ config I2C_EG20T
->  config I2C_EXYNOS5
->  	tristate "Exynos5 high-speed I2C driver"
->  	depends on ARCH_EXYNOS5 && OF
-> +	default y
->  	help
-> -	  Say Y here to include support for high-speed I2C controller in the
-> -	  Exynos5 based Samsung SoCs.
-> +	  High-speed I2C controller on Exynos5 based Samsung SoCs.
-> 
->  config I2C_GPIO
->  	tristate "GPIO-based bitbanging I2C"
+> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-
+> peach-pit.dts
+> index 1cf9df0..056a6fa 100644
+> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> @@ -186,7 +186,7 @@
+>  	status = "okay";
+>  	num-slots = <1>;
+>  	broken-cd;
+> -	caps2-mmc-hs200-1_8v;
+> +	mmc-hs200-1_8v;
+>  	supports-highspeed;
+>  	non-removable;
+>  	card-detect-delay = <200>;
+> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-
+> peach-pi.dts
+> index 2c2c137..bb3ee76 100644
+> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> @@ -171,7 +171,7 @@
+>  	status = "okay";
+>  	num-slots = <1>;
+>  	broken-cd;
+> -	caps2-mmc-hs200-1_8v;
+> +	mmc-hs200-1_8v;
+>  	supports-highspeed;
+>  	non-removable;
+>  	card-detect-delay = <200>;
 > --
-> 1.7.9.5
+> 1.7.10.4
