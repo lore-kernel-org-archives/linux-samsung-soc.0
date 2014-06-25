@@ -1,92 +1,37 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH 2/4] usb: host: xhci-plat: Add support to get PHYs
-Date: Wed, 25 Jun 2014 14:14:42 +0530
-Message-ID: <CAFp+6iGYZdRL17UqPhskyDDhfD++His3mO2v7uzG5OF1Hd3TrQ@mail.gmail.com>
-References: <1402056736-12674-1-git-send-email-gautam.vivek@samsung.com>
-	<1402056736-12674-3-git-send-email-gautam.vivek@samsung.com>
-	<CAODwPW-2tbDht8P=KsTyTyeBivFtFMiyCpxd0QFa-cUSRTpJjQ@mail.gmail.com>
-	<53A9FCDB.6060805@cogentembedded.com>
+From: Daniel Drake <drake@endlessm.com>
+Subject: Re: [PATCH v2 0/4] Add support for Exynos clock output configuration
+Date: Wed, 25 Jun 2014 09:56:25 +0100
+Message-ID: <CAD8Lp45r4yMq2Ew9Eijs-udLUyteZjriG_86XcQfELvdTbJVNA@mail.gmail.com>
+References: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53A9FCDB.6060805@cogentembedded.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc: Julius Werner <jwerner@chromium.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Mathias Nyman <mathias.nyman@intel.com>, LKML <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f173.google.com ([74.125.82.173]:47403 "EHLO
+	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751024AbaFYI42 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jun 2014 04:56:28 -0400
+Received: by mail-we0-f173.google.com with SMTP id t60so1655230wes.18
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2014 01:56:26 -0700 (PDT)
+In-Reply-To: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
 Hi,
 
+On Tue, Jun 24, 2014 at 5:08 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Tested on Odroid U3, with HSIC/USB hub using CLKOUT as reference clock,
+> with some additional patches.
 
-On Wed, Jun 25, 2014 at 4:04 AM, Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Hello.
->
->
-> On 06/10/2014 12:22 AM, Julius Werner wrote:
->
->>> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
->>> index 9ffecd5..453d89e 100644
->>> --- a/drivers/usb/host/xhci.h
->>> +++ b/drivers/usb/host/xhci.h
->>> @@ -1582,6 +1582,9 @@ struct xhci_hcd {
->>>          u32                     port_status_u0;
->>>   /* Compliance Mode Timer Triggered every 2 seconds */
->>>   #define COMP_MODE_RCVRY_MSECS 2000
->>> +       /* phys for the controller */
->>> +       struct phy              *phy2_gen;
->>> +       struct phy              *phy3_gen;
->>>   };
->
->
->> I don't think adding new variables here and restricting most of this
->> logic to xhci-plat.c (in the next patch) is the best way to do it.
->
->
->    Indeed.
->
->
->> There's no conceptual reason why other host controllers (e.g. xhci-pci
->> or even EHCI) could not have a similar need to tune their PHY after
->> reset. PHYs are universal to all host controllers.
->
->
->> There is already a 'phy' member in struct usb_hcd which I think is
->> mostly unused right now. I think it would be much less
->> confusing/redundant to reuse that member for this purpose (you could
->> still set it up from xhci_plat_probe(), and then call it from
->> hcd_bus_resume() or something like that).
->
->
->    That member has type 'struct usb_phy *' while here we have 'struct phy *'
-> -- feel the difference.
->    I have already tried adding 'struct phy *gen_phy' to 'struct usb_hcd',
+for all the patches:
+Tested-by: Daniel Drake <drake@endlessm.com>
 
-So the 'struct phy *' available in the usb_hcd is requested in usb_add_hcd().
-This is requested with the constant string 'usb' :
-           struct phy *phy = phy_get(hcd->self.controller, "usb");
+Tested on ODROID-U2 alongside
+    phy: phy-samsung-usb2: Change phy power on/power off sequence
 
-This can get the phy with string 'usb' only if, either the host
-controller has a device node wherein the phys are given.
-Even in this case one can't give same constant string for two
-different phys, UTMI+ and PIPE3 phy, isn't it ?
+now USB is working fine.
 
-Or, the other way can be when host gets a lookup table to look into to
-find the relevant phys, something like
-Heikki has suggested:
-usb: dwc3: host: convey the PHYs to xhci
-(https://lkml.org/lkml/2014/6/5/585) and related patch series.
-
-So if we use this second approach, we would need to override the
-'phy_get()' that has been done in usb_add_hcd()
-in xhci_plat_probe(), and then use them in later operations.
-
-am i getting the things correctly ?
-
-
-
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+Thanks!
+Daniel
