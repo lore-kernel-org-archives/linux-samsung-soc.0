@@ -1,80 +1,210 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 3/5 v2] drm/exynos: allow mulitple layer updates per vsync
- for mixer
-Date: Wed, 25 Jun 2014 20:57:30 +0900
-Message-ID: <53AAB92A.4070208@samsung.com>
-References: <1403501545-16482-1-git-send-email-rahul.sharma@samsung.com>
- <1403501545-16482-4-git-send-email-rahul.sharma@samsung.com>
- <53A90ADA.2040306@samsung.com> <53A9633D.4050800@suse.de>
- <CAAQKjZMkn4BCrJOPA793A5CBLpDfJLZ-4w85=TsZr0P3L0bAHQ@mail.gmail.com>
- <CAPdUM4OLCjCW-wiUEaN90eSjkNxJi--c4ThBb7fyKy_K2H_R9w@mail.gmail.com>
+From: Tushar Behera <trblinux@gmail.com>
+Subject: Re: mainline boot: 64 boots: 62 pass, 2 fail (v3.16-rc1-2-gebe0618)
+Date: Wed, 25 Jun 2014 17:43:41 +0530
+Message-ID: <53AABCF5.4050403@gmail.com>
+References: <539fdd37.e7bc420a.76b9.ffffb583@mx.google.com> <CAGa+x85nqPbH-sye28ni=gUEdgjGdUDqHhv1+0pV5aO8y1+wHQ@mail.gmail.com> <53A106F1.10201@gmail.com> <CAGa+x8527FEPk6fg5kv-fbOzK3MzcFooFGE9Me12b9C_Pv=UzA@mail.gmail.com> <53A2AE11.2050208@gmail.com> <53A2BE94.2010308@gmail.com> <53A7A579.4010702@gmail.com> <CAGa+x85H510fNGTXJHGYfQybRa2FGgg2NyCgJ8rmjJ6TE7GNbA@mail.gmail.com> <53A9B99F.4040806@codeaurora.org> <53A9FBB5.60709@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAPdUM4OLCjCW-wiUEaN90eSjkNxJi--c4ThBb7fyKy_K2H_R9w@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, sunil joshi <joshi@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f49.google.com ([209.85.160.49]:54479 "EHLO
+	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756555AbaFYMNq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jun 2014 08:13:46 -0400
+Received: by mail-pb0-f49.google.com with SMTP id rr13so1634301pbb.22
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2014 05:13:46 -0700 (PDT)
+In-Reply-To: <53A9FBB5.60709@codeaurora.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Laura Abbott <lauraa@codeaurora.org>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, kernel-build-reports@lists.linaro.org, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-T24gMjAxNOuFhCAwNuyblCAyNeydvCAxOTo0MiwgUmFodWwgU2hhcm1hIHdyb3RlOgo+IFRoYW5r
-cyBJbmtpLAo+IAo+IE9uZSBtb3JlIHRoaW5nLiBtaXhlcl9sYXllcl91cGRhdGUgaXMgb25seSBj
-YWxsZWQgb24gZm9yIG1peGVyIHZlcnNpb247Cj4gTVhSX1ZFUl8xNl8wXzMzXzAsIE1YUl9WRVJf
-MTI4XzBfMF8xODQuIFRoaXMgY29uZGl0aW9uCj4gc2hvdWxkIGhhdmUgdGFrZW4gY2FyZSBvZiBF
-eHlub3M0IHNjZW5hcmlvcy4gV2hhdCB5b3Ugc2F5Pwo+IAoKVGhlcmUgd2FzIG15IG1pc3Npbmcg
-cG9pbnQuIDopIEFscmVhZHkgY29uc2lkZXJlZC4gaWdub3JlIG15IGNvbW1lbnQuCgpUaGFua3Ms
-Cklua2kgRGFlCgo+IFJlZ2FyZHMsCj4gUmFodWwgU2hhcm1hLgo+IAo+IE9uIDI0IEp1bmUgMjAx
-NCAyMDoyMCwgSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPiB3cm90ZToKPj4gMjAxNC0w
-Ni0yNCAyMDozOCBHTVQrMDk6MDAgQW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJlckBzdXNlLmRlPjoK
-Pj4+IEFtIDI0LjA2LjIwMTQgMDc6MjEsIHNjaHJpZWIgSW5raSBEYWU6Cj4+Pj4gT24gMjAxNOuF
-hCAwNuyblCAyM+ydvCAxNDozMiwgUmFodWwgU2hhcm1hIHdyb3RlOgo+Pj4+PiBBbGxvd2luZyBv
-bmx5IG9uZSBsYXllciB1cGRhdGUgcGVyIHZzeW5jIGNhbiBjYXVzZSBpc3N1ZXMKPj4+Pj4gd2hp
-bGUgdGhlcmUgYXJlIHVwZGF0ZSBhdmFpbGFibGUgZm9yIGJvdGggbGF5ZXJzLiBUaGVyZSBpcwo+
-Pj4+PiBhIGdvb2QgYW1vdW50IG9mIHBvc3NpYmlsaXR5IHRvIGxvb3NlIHVwZGF0ZXMgaWYgd2Ug
-YWxsb3cKPj4+Pj4gc2luZ2xlIHVwZGF0ZSBwZXIgdnN5bmMuCj4+Pj4+Cj4+Pj4+IFNpZ25lZC1v
-ZmYtYnk6IFJhaHVsIFNoYXJtYSA8cmFodWwuc2hhcm1hQHNhbXN1bmcuY29tPgo+Pj4+PiAtLS0K
-Pj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAgICA3ICstLS0t
-LS0KPj4+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgNiBkZWxldGlvbnMoLSkK
-Pj4+Pj4KPj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
-eGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+Pj4+IGluZGV4
-IGQzNTk1MDEuLjY3NzNiMDMgMTAwNjQ0Cj4+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX21peGVyLmMKPj4+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfbWl4ZXIuYwo+Pj4+PiBAQCAtNTExLDEzICs1MTEsOCBAQCBzdGF0aWMgdm9pZCB2cF92aWRl
-b19idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgaW50IHdpbikKPj4+Pj4gIHN0YXRp
-YyB2b2lkIG1peGVyX2xheWVyX3VwZGF0ZShzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4KQo+Pj4+
-PiAgewo+Pj4+PiAgICAgIHN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVy
-X3JlczsKPj4+Pj4gLSAgICB1MzIgdmFsOwo+Pj4+PiAtCj4+Pj4+IC0gICAgdmFsID0gbWl4ZXJf
-cmVnX3JlYWQocmVzLCBNWFJfQ0ZHKTsKPj4+Pj4KPj4+Pj4gLSAgICAvKiBhbGxvdyBvbmUgdXBk
-YXRlIHBlciB2c3luYyBvbmx5ICovCj4+Pj4+IC0gICAgaWYgKCEodmFsICYgTVhSX0NGR19MQVlF
-Ul9VUERBVEVfQ09VTlRfTUFTSykpCj4+Pj4+IC0gICAgICAgICAgICBtaXhlcl9yZWdfd3JpdGVt
-YXNrKHJlcywgTVhSX0NGRywgfjAsIE1YUl9DRkdfTEFZRVJfVVBEQVRFKTsKPj4+Pj4gKyAgICBt
-aXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgfjAsIE1YUl9DRkdfTEFZRVJfVVBEQVRF
-KTsKPj4+Pgo+Pj4+IFJhaHVsLCBpdCBsb29rcyBnb29kIHRvIG1lIGFuZCBvayBhcyBpcy4gQnV0
-IGFib3ZlIGNvZGVzIGRvbid0IGNvbnNpZGVyCj4+Pj4gRXh5bm9zNCBzZXJpZXMuIEluIGNhc2Ug
-b2YgRXh5bm9zNHh4eCBTb0MsCj4+Pj4gTVhSX0NGR19MQVlFUl9VUERBVEVfQ09VTlRfTUFTSyBh
-bmQgTVhSX0NGR19MQVlFUl9VUERBVEUgb2YgTUlYRVJfQ0ZHCj4+Pj4gcmVnaXN0ZXIgYXJlIHJl
-c2VydmVkIGZpZWxkcy4gU28gY2FuIHlvdSB3b3JrIHRoYXQgcGF0Y2ggdG8gYmUKPj4+PiBjb25z
-aWRlcmVkIGZvciBFeHlub3M0eHh4IFNvQz8gVGhhdCBwYXRjaCB3b3VsZCBiZSBhZGRpdGlvbmFs
-IG9uZS4KPj4+Pgo+Pj4+IEFueXdheSwgd2lsbCBhcHBseSBpdCBhcyBpcywgYW5kIEkgd2lsbCB3
-YWl0IGZvciB0aGUgYWRkaXRpb25hbCBwYXRjaC4KPj4+Cj4+PiBJZiBpdCdzIG5vdCB0b28gbGF0
-ZSwgY291bGQgeW91IGZpeCB1cCAibXVsdGlwbGUiIGluIHRoZSBzdWJqZWN0PyA6KQo+Pgo+PiBD
-b3JyZWN0ZWQuIDopCj4+Cj4+IFRoYW5rcywKPj4gSW5raSBEYWUKPj4KPj4+Cj4+PiBDaGVlcnMs
-Cj4+PiBBbmRyZWFzCj4+Pgo+Pj4gLS0KPj4+IFNVU0UgTElOVVggUHJvZHVjdHMgR21iSCwgTWF4
-ZmVsZHN0ci4gNSwgOTA0MDkgTsO8cm5iZXJnLCBHZXJtYW55Cj4+PiBHRjogSmVmZiBIYXduLCBK
-ZW5uaWZlciBHdWlsZCwgRmVsaXggSW1lbmTDtnJmZmVyOyBIUkIgMTY3NDYgQUcgTsO8cm5iZXJn
-Cj4+PiAtLQo+Pj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUg
-InVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+Pj4gdGhlIGJvZHkgb2YgYSBtZXNz
-YWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4+IE1vcmUgbWFqb3Jkb21vIGluZm8g
-YXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 06/25/2014 03:59 AM, Laura Abbott wrote:
+> On 6/24/2014 10:47 AM, Laura Abbott wrote:
+>> On 6/23/2014 11:32 AM, Kevin Hilman wrote:
+>>> On Sun, Jun 22, 2014 at 8:56 PM, Tushar Behera <trblinux@gmail.com> wrote:
+>>>> Adding linux-samsung-soc and linux-arm-kernel ML for wider audience.
+>>>>
+>>>> On 06/19/2014 04:12 PM, Tushar Behera wrote:
+>>>>> On 06/19/2014 03:02 PM, Tushar Behera wrote:
+>>>>>> On 06/18/2014 09:22 AM, Kevin Hilman wrote:
+>>>>>>> On Tue, Jun 17, 2014 at 8:26 PM, Tushar Behera <trblinux@gmail.com> wrote:
+>>>>>>>> On 06/17/2014 10:23 PM, Kevin Hilman wrote:
+>>>>>>>>> Sachin,
+>>>>>>>>>
+>>>>>>>>> On Mon, Jun 16, 2014 at 11:16 PM, Kevin's boot bot <khilman@linaro.org> wrote:
+>>>>>>>>>>
+>>>>>>>>>> Tree/Branch: mainline
+>>>>>>>>>> Git describe: v3.16-rc1-2-gebe0618
+>>>>>>>>>> Failed boot tests (console logs at the end)
+>>>>>>>>>> ===========================================
+>>>>>>>>>>      exynos5420-arndale-octa:     FAIL:    arm-exynos_defconfig
+>>>>>>>>>>                 ste-snowball:     FAIL:    arm-u8500_defconfig
+>>>>>>>>>
+>>>>>>>>> FYI... these failures are getting more consistent on my octa board,
+>>>>>>>>> but still not failing every time.
+>>>>>>>>>
+>>>>>>>>> Kevin
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Hi Kevin,
+>>>>>>>>
+>>>>>>>> Same here.
+>>>>>>>>
+>>>>>>>> Observation: If you soft-reset the board (through the jumpers) after
+>>>>>>>> getting this problem, the problem keeps repeating. But if you hard-reset
+>>>>>>>> the board (by removing the power cord), the problem doesn't occur during
+>>>>>>>> next iteration.
+>>>>>>>
+>>>>>>> I don't ever use the soft-reset, I only toggle the wall power.  I
+>>>>>>> don't ever actually remove the power cord though, I'm using a
+>>>>>>> USB-controlled relay to toggle the wall power.
+>>>>>>>
+>>>>>>> Kevin
+>>>>>>>
+>>>>>>
+>>>>>> Laura,
+>>>>>>
+>>>>>> We are getting following kernel panic [1] (not always, but quite
+>>>>>> regularly) while booting Arndale-Octa (based on Samsung's Exynos5420)
+>>>>>> board with upstream kernel. I haven't observed this issue with other
+>>>>>> boards yet.
+>>>>>>
+>>>>>> This issue is observed when I am booting with uImage + dtb (within
+>>>>>> roughly ~10 iterations).
+>>>>>>
+>>>>>
+>>>>> Some more information:
+>>>>>
+>>>>> The boot logs are provided in pastebin, okay[2] and failed[3].
+>>>>>
+>>>>> In case of boot failures, I am getting a higher value for vm_total_pages
+>>>>> (684424 in [3]). In case of successful boot on my board, it is always
+>>>>> 521232 [2] on my board.
+>>>
+>>> I can confirm that reverting the "Get rid of meminfo" patch gets the
+>>> Octa board booting reliably again for me also.
+>>>
+>>> In case it helps, some boot logs for failures from the last copule
+>>> linux-next build/boot cycles can be seen here:
+>>> http://armcloud.us/kernel-ci/next/next-20140623/arm-exynos_defconfig/boot-exynos5420-arndale-octa.log
+>>> http://armcloud.us/kernel-ci/next/next-20140620/arm-exynos_defconfig/boot-exynos5420-arndale-octa.log
+>>>
+>>
+>> Sorry, I missed this yesterday. I'm going to take a look.
+>>
+> 
+> Were all of 
+> 
+> http://pastebin.com/1iLaizuL
+> http://pastebin.com/5tdDt4GL
+> http://armcloud.us/kernel-ci/next/next-20140623/arm-exynos_defconfig/boot-exynos5420-arndale-octa.log
+> http://armcloud.us/kernel-ci/next/next-20140620/arm-exynos_defconfig/boot-exynos5420-arndale-octa.log
+> 
+> collected on the same type of board with the same amount of DRAM? I'm seeing a
+> different amount of total pages across all those logs. All the logs have the
+> same lowmem limit so it seems like the upper bound was being calculated
+> incorrectly for passing to free_area_init_node. Nothing is immediately jumping
+> out at me so can you boot up with a small debug patch?
+> 
+> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+> index 659c75d..88eac1f 100644
+> --- a/arch/arm/mm/init.c
+> +++ b/arch/arm/mm/init.c
+> @@ -187,6 +187,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
+>         unsigned long zone_size[MAX_NR_ZONES], zhole_size[MAX_NR_ZONES];
+>         struct memblock_region *reg;
+>  
+> +       pr_err("XXXXXXX min %lx max_low %lx max_high %lx\n", min, max_low, max_high);
+> +       __memblock_dump_all();
+>         /*
+>          * initialise the zones.
+>          */
+> 
+> It would be helpful to do this across a few bootups to see if the values are
+> actually consistent. I'll keep looking in the meantime.
+> 
+> Thanks,
+> Laura
+> 
+
+Thanks Laura for the pointer. In case of error, I am getting some random
+memblock_add() calls from drivers/of/fdt.c:early_init_dt_scan_memory.
+
+The issue seems to be from u-boot, where it is not updating the memory
+subnode properly. I have got a fix for the u-boot, which I am testing
+right now. I will update tomorrow after I do some more test.
+
+Additional changes in kernel.
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index c4cddf0..bca82b3 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -817,7 +817,7 @@ int __init early_init_dt_scan_memory(unsigned long
+node, const char *uname,
+
+        endp = reg + (l / sizeof(__be32));
+
+-       pr_debug("memory scan node %s, reg size %d, data: %x %x %x %x,\n",
++       pr_err("memory scan node %s, reg size %d, data: %x %x %x %x,\n",
+            uname, l, reg[0], reg[1], reg[2], reg[3]);
+
+        while ((endp - reg) >= (dt_root_addr_cells + dt_root_size_cells)) {
+@@ -891,6 +891,7 @@ void __init __weak early_init_dt_add_memory_arch(u64
+base, u64 size)
+                size -= phys_offset - base;
+                base = phys_offset;
+        }
++       printk("trb: memblock_add base (%llx) size(%llx)\n", base, size);
+        memblock_add(base, size);
+ }
+
+
+Kernel log:
+
+memory scan node memory, reg size 96, data: 20 10 30 10,
+trb: memblock_add base (20000000) size(10000000)
+trb: memblock_add base (30000000) size(10000000)
+trb: memblock_add base (40000000) size(10000000)
+trb: memblock_add base (50000000) size(10000000)
+trb: memblock_add base (60000000) size(10000000)
+trb: memblock_add base (70000000) size(10000000)
+trb: memblock_add base (80000000) size(10000000)
+trb: memblock_add base (90000000) size(fa00000)
+trb: memblock_add base (fffff000) size(fffff000)
+trb: memblock_add base (ffeff000) size(fffff000)
+trb: memblock_add base (fbfff000) size(fffff000)
+trb: memblock_add base (fffff000) size(effff000)
+Machine model: Insignal Arndale Octa evaluation board based on EXYNOS5420
+bootconsole [earlycon0] enabled
+Memory policy: Data cache writealloc
+XXXXXXX min 20000 max_low 4f800 max_high fffff
+MEMBLOCK configuration:
+ memory size = 0x82a00fff reserved size = 0x75e947
+ memory.cnt  = 0x4
+ memory[0x0]     [0x00000020000000-0x00000042ffffff], 0x23000000 bytes
+flags: 0x0
+ memory[0x1]     [0x00000043800000-0x00000050ffffff], 0xd800000 bytes
+flags: 0x0
+ memory[0x2]     [0x00000051800000-0x0000009f9fffff], 0x4e200000 bytes
+flags: 0x0
+ memory[0x3]     [0x000000fbfff000-0x000000fffffffe], 0x4000fff bytes
+flags: 0x0
+ reserved.cnt  = 0x6
+ reserved[0x0]   [0x00000020004000-0x00000020007fff], 0x4000 bytes
+flags: 0x0
+ reserved[0x1]   [0x000000200082c0-0x0000002059cb7f], 0x5948c0 bytes
+flags: 0x0
+ reserved[0x2]   [0x0000002fe45000-0x0000002fe4fea7], 0xaea8 bytes
+flags: 0x0
+ reserved[0x3]   [0x0000002fe50000-0x0000002ffff09e], 0x1af09f bytes
+flags: 0x0
+ reserved[0x4]   [0x0000004f7f3000-0x0000004f7fbfff], 0x9000 bytes
+flags: 0x0
+ reserved[0x5]   [0x0000004f7fcec0-0x0000004f7fffff], 0x3140 bytes
+flags: 0x0
+
+
+-- 
+Tushar Behera
