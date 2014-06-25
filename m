@@ -1,92 +1,79 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v4 02/14] mfd: max77686: Allow the max77686 rtc to wakeup the
- system
-Date: Wed, 25 Jun 2014 21:03:26 +0200
-Message-ID: <1403723019-6212-3-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v4 12/14] clk: max77802: Add DT binding documentation
+Date: Wed, 25 Jun 2014 21:03:36 +0200
+Message-ID: <1403723019-6212-13-git-send-email-javier.martinez@collabora.co.uk>
 References: <1403723019-6212-1-git-send-email-javier.martinez@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1403723019-6212-1-git-send-email-javier.martinez@collabora.co.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Daniel Stone <daniels@collabora.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Doug Anderson <dianders@chromium.org>
+Add Device Tree binding documentation for the clocks
+outputs in the Maxim 77802 Power Management IC.
 
-The max77686 includes an RTC that keeps power during suspend.  It's
-convenient to be able to use it as a wakeup source.
-
-NOTE: due to wakeup ordering problems this patch alone doesn't work so
-well on exynos5250-snow.  You also need something that brings the i2c
-bus up before the max77686 wakeup runs.
-
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
 
 Changes since v3:
- - Keep the note that this patch needs another change due wakeup
-   ordering problems.
+ - Don't use the same clock driver name in clock-names since it's a consumer
+   concept and most probably will be different. Suggested by Doug Anderson.
 
- drivers/rtc/rtc-max77686.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Changes since v2:
+ - Split the DT binding documentation in a separate patch.
 
-diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
-index d20a7f0..c1c6055 100644
---- a/drivers/rtc/rtc-max77686.c
-+++ b/drivers/rtc/rtc-max77686.c
-@@ -583,6 +583,33 @@ static void max77686_rtc_shutdown(struct platform_device *pdev)
- #endif /* MAX77686_RTC_WTSR_SMPL */
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int max77686_rtc_suspend(struct device *dev)
-+{
-+	if (device_may_wakeup(dev)) {
-+		struct max77686_rtc_info *info = dev_get_drvdata(dev);
+ .../devicetree/bindings/clock/maxim,max77802.txt   | 42 ++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max77802.txt b/Documentation/devicetree/bindings/clock/maxim,max77802.txt
+new file mode 100644
+index 0000000..26bc4f7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/maxim,max77802.txt
+@@ -0,0 +1,42 @@
++Binding for Maxim MAX77802 32k clock generator block
 +
-+		return enable_irq_wake(info->virq);
-+	}
++This is a part of device tree bindings of MAX77802 multi-function device.
++More information can be found in bindings/mfd/max77802.txt file.
 +
-+	return 0;
-+}
++The MAX77802 contains two 32.768khz clock outputs that can be controlled
++(gated/ungated) over I2C.
 +
-+static int max77686_rtc_resume(struct device *dev)
-+{
-+	if (device_may_wakeup(dev)) {
-+		struct max77686_rtc_info *info = dev_get_drvdata(dev);
++Following properties should be presend in main device node of the MFD chip.
 +
-+		return disable_irq_wake(info->virq);
-+	}
++Required properties:
 +
-+	return 0;
-+}
-+#endif
++- #clock-cells: from common clock binding; shall be set to 1.
 +
-+static SIMPLE_DEV_PM_OPS(max77686_rtc_pm_ops,
-+			 max77686_rtc_suspend, max77686_rtc_resume);
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. Following indices are allowed:
++     - 0: 32khz_ap clock,
++     - 1: 32khz_cp clock.
 +
- static const struct platform_device_id rtc_id[] = {
- 	{ "max77686-rtc", 0 },
- 	{},
-@@ -592,6 +619,7 @@ static struct platform_driver max77686_rtc_driver = {
- 	.driver		= {
- 		.name	= "max77686-rtc",
- 		.owner	= THIS_MODULE,
-+		.pm	= &max77686_rtc_pm_ops,
- 	},
- 	.probe		= max77686_rtc_probe,
- 	.shutdown	= max77686_rtc_shutdown,
++Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77802.h
++header and can be used in device tree sources.
++
++Example: Node of the MFD chip
++
++	max77802: max77802@09 {
++		compatible = "maxim,max77802";
++		interrupt-parent = <&wakeup_eint>;
++		interrupts = <26 0>;
++		reg = <0x09>;
++		#clock-cells = <1>;
++
++		/* ... */
++	};
++
++Example: Clock consumer node
++
++	foo@0 {
++		compatible = "bar,foo";
++		/* ... */
++		clock-names = "my-clock";
++		clocks = <&max77802 MAX77802_CLK_32K_AP>;
++	};
 -- 
 2.0.0.rc2
