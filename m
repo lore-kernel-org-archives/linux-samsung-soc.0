@@ -1,67 +1,55 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 3/6] clk: samsung: exynos4: Remove SRC_MASK_ISP gates
-Date: Wed, 25 Jun 2014 12:10:50 +0200
-Message-ID: <53AAA02A.1090601@samsung.com>
-References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
- <1403618235-19353-4-git-send-email-t.figa@samsung.com>
- <CAD8Lp45a0kQocSFVeXGY99jE+Rx7PVwv6ZZKbE8iFp7G4=X12A@mail.gmail.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 25 Jun 2014 12:12:13 +0200
+Message-ID: <6589024.32Qh7fFhXo@wuerfel>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+	<130361958.xFghHXmZkz@wuerfel> <20140625095735.GI6153@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:17769 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754485AbaFYKLQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 06:11:16 -0400
-In-reply-to: <CAD8Lp45a0kQocSFVeXGY99jE+Rx7PVwv6ZZKbE8iFp7G4=X12A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20140625095735.GI6153-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>
 
-Hi Daniel,
+On Wednesday 25 June 2014 10:57:36 Will Deacon wrote:
+> So far, I've been avoiding the hardcoding. However, you could potentially
+> build a system with a small number of SMRs (compared to the number of
+> StreamIDs) and allocate the StreamIDs in such a way that I think the dynamic
+> configuration would be NP complete if we require an optimal SMR allocation.
+> 
+> However:
+> 
+>   (1) I don't know of a system where this is the case
+>   (2) Not much work has been done on improving the dynamic allocator yet
+> 
+> which is why I'm still favouring dynamic configuration in the driver.
+> 
+> The other thing I forgot to mention earlier is that we need to support
+> device hotplug in the future, so some level of dynamic configuration
+> will always be required.
 
-On 25.06.2014 11:58, Daniel Drake wrote:
-> Hi Tomasz,
-> 
-> On Tue, Jun 24, 2014 at 2:57 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->> ISP special clocks have dedicated gating registers and so MUX SRC_MASK
->> register should not be used. This patch fixes the problem of
->> Exynos4x12-based boards freezing on system suspend, because those
->> mux outputs need not to be masked while suspending.
-> 
-> Not sure if you will be interested in this, as your plate must be
-> pretty full already, and I am probably the first person to try
-> suspend/resume on ODROID, but:
-> 
-> ODROID-U2 fails to suspend/resume. I am testing with rtcwake, trying
-> to raise a wakeup alarm on the internal Exynos4412 RTC. For this,
-> CONFIG_COMMON_CLK_MAX77686 must be disabled (otherwise it disables the
-> upstream 32KHz clock source for the RTC), I also have
-> CONFIG_RTC_DRV_MAX77686 disabled so that there is only one RTC to
-> worry about.
-> 
-> Then:
->  rtcwake --utc -m mem -s 10 -v
-> 
-> Before this patch, it would totally hang after calling cpu_suspend()
-> (checked with S3C_PMDBG) - not sure if it hangs before sleeping, or if
-> it sleeps but simply fails to wake up.
-> 
-> With this patch, now it seems like the RTC alarm does wake up the
-> system after the desired time, however it immediately goes back into
-> uboot rather than resuming into Linux. So this patch does make some
-> progress at least.
-> 
-> The power light is on at all times during these tests (not sure if
-> that means anything, but I was wondering if it should go out when the
-> system suspends).
+Ok, got it. So we just hope that we can make dynamic configuration
+work all the time, but if it all fails, then we come up with a
+hardcoded configuration method.
 
-As far as I'm aware of, all Exynos4412-based ODROIDs run secure
-firmware, which needs special handling of suspend/resume. I already have
-a series to address this, but there is one more issue that I'd like to
-fix, until I send it. The patches should hit the ML this week, though.
+I guess this could be done similarly to how we handle clocks on
+a lot of systems: generally these are dynamic, but you have the
+option to provide hints in the clock controller node about how
+you expect things to be configured.
 
-Best regards,
-Tomasz
+For the SMMU that could mean that (if we get into the situation you
+describe), we add optional properties to the SMMU node itself
+describing how we expect the SMRs to be used.
+
+	Arnd
