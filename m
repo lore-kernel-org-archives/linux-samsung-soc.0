@@ -1,26 +1,25 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH 0/3] drm/exynos: add framework to control DISP1BLK setting
-Date: Wed, 25 Jun 2014 19:45:49 +0530
-Message-ID: <1403705752-24469-1-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [PATCH 1/3] drm/exynos: Control DISP1BLK system register in FIMD
+Date: Wed, 25 Jun 2014 19:45:50 +0530
+Message-ID: <1403705752-24469-2-git-send-email-ajaykumar.rs@samsung.com>
+References: <1403705752-24469-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:55197 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756775AbaFYOS1 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:57339 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757254AbaFYOSr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 10:18:27 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Wed, 25 Jun 2014 10:18:47 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N7Q008MAAEP0WD0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 25 Jun 2014 23:18:25 +0900 (KST)
+ with ESMTP id <0N7Q00IXQAFAHC30@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Jun 2014 23:18:46 +0900 (KST)
+In-reply-to: <1403705752-24469-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, vikas.sajjan@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
-
-This series is based on exynos-drm-next branch of Inki Dae's tree at:
-git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
 
 Exynos SOC have a DISP1BLK register where we can select
 the path for FIMD output. We can redirect the video data
@@ -30,19 +29,108 @@ image enhancement chips.
 Since we don't use any image enhancement chips in exynos-drm,
 we need to set FIMD BYPASS in DISP1BLK.
 
-This patchset is tested for basic display + DPMS + S2R on snow and peach_pit.
-
-Ajay Kumar (3):
-  [PATCH 1/3] drm/exynos: Control DISP1BLK system register in FIMD
-  [PATCH 2/3] ARM: dts: exynos5420: Add sysreg phandle to FIMD node
-  [PATCH 3/3] ARM: dts: exynos5250: Add sysreg phandle to FIMD node
-
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+---
  .../devicetree/bindings/video/samsung-fimd.txt     |    2 ++
- arch/arm/boot/dts/exynos5250.dtsi                  |    1 +
- arch/arm/boot/dts/exynos5420.dtsi                  |    1 +
  drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   19 +++++++++++++++++++
  include/video/samsung_fimd.h                       |    5 +++++
- 5 files changed, 28 insertions(+)
+ 3 files changed, 26 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+index 2dad41b..034e3458 100644
+--- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
++++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+@@ -44,6 +44,8 @@ Optional Properties:
+ - display-timings: timing settings for FIMD, as described in document [1].
+ 		Can be used in case timings cannot be provided otherwise
+ 		or to override timings provided by the panel.
++- samsung,sysreg-phandle - handle to syscon node, used to control the system
++			   registers for DISP1BLK.
+ 
+ The device node can contain 'port' child nodes according to the bindings defined
+ in [2]. The following are properties specific to those nodes:
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 33161ad..a3c855b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -20,6 +20,8 @@
+ #include <linux/of_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/component.h>
++#include <linux/mfd/syscon.h>
++#include <linux/regmap.h>
+ 
+ #include <video/of_display_timing.h>
+ #include <video/of_videomode.h>
+@@ -68,6 +70,7 @@
+ 
+ struct fimd_driver_data {
+ 	unsigned int timing_base;
++	unsigned int sysreg_disp1blk_offset;
+ 
+ 	unsigned int has_shadowcon:1;
+ 	unsigned int has_clksel:1;
+@@ -83,11 +86,13 @@ static struct fimd_driver_data s3c64xx_fimd_driver_data = {
+ static struct fimd_driver_data exynos4_fimd_driver_data = {
+ 	.timing_base = 0x0,
+ 	.has_shadowcon = 1,
++	.sysreg_disp1blk_offset = 0x210,
+ };
+ 
+ static struct fimd_driver_data exynos5_fimd_driver_data = {
+ 	.timing_base = 0x20000,
+ 	.has_shadowcon = 1,
++	.sysreg_disp1blk_offset = 0x214,
+ };
+ 
+ struct fimd_win_data {
+@@ -112,6 +117,7 @@ struct fimd_context {
+ 	struct clk			*bus_clk;
+ 	struct clk			*lcd_clk;
+ 	void __iomem			*regs;
++	struct regmap			*sysreg;
+ 	struct drm_display_mode		mode;
+ 	struct fimd_win_data		win_data[WINDOWS_NR];
+ 	unsigned int			default_win;
+@@ -760,6 +766,12 @@ static int fimd_poweron(struct exynos_drm_manager *mgr)
+ 
+ 	pm_runtime_get_sync(ctx->dev);
+ 
++	if (ctx->sysreg)
++		regmap_update_bits(ctx->sysreg,
++				   ctx->driver_data->sysreg_disp1blk_offset,
++				   FIMDBYPASS_MASK,
++				   FIMDBYPASS << FIMDBYPASS_SHIFT);
++
+ 	ret = clk_prepare_enable(ctx->bus_clk);
+ 	if (ret < 0) {
+ 		DRM_ERROR("Failed to prepare_enable the bus clk [%d]\n", ret);
+@@ -998,6 +1010,13 @@ static int fimd_probe(struct platform_device *pdev)
+ 	if (IS_ERR(ctx->display))
+ 		return PTR_ERR(ctx->display);
+ 
++	ctx->sysreg = syscon_regmap_lookup_by_phandle(
++				pdev->dev.of_node, "samsung,sysreg-phandle");
++	if (IS_ERR(ctx->sysreg)) {
++		DRM_INFO("DISP1BLK system register is not configured\n");
++		ctx->sysreg = NULL;
++	}
++
+ 	pm_runtime_enable(&pdev->dev);
+ 
+ 	ret = component_add(&pdev->dev, &fimd_component_ops);
+diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
+index b039320..b92267d 100644
+--- a/include/video/samsung_fimd.h
++++ b/include/video/samsung_fimd.h
+@@ -462,3 +462,8 @@
+ #define FIMD_V8_VIDTCON2	0x20018
+ #define FIMD_V8_VIDTCON3	0x2001C
+ #define FIMD_V8_VIDCON1		0x20004
++
++/* SYSREG DISP1BLK definitions */
++#define FIMDBYPASS_SHIFT			15
++#define FIMDBYPASS_MASK			(1 << FIMDBYPASS_SHIFT)
++#define FIMDBYPASS				1
 -- 
 1.7.9.5
