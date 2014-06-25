@@ -1,88 +1,85 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators
-Date: Tue, 24 Jun 2014 21:00:34 -0700
-Message-ID: <CAD=FV=WXWttq294yn+eB5x3N0ztoMhpwacqdLB3OfRk+UK+Abg@mail.gmail.com>
-References: <1403520321-2431-1-git-send-email-yuvaraj.cd@samsung.com>
-	<1403520321-2431-2-git-send-email-yuvaraj.cd@samsung.com>
-	<CAD=FV=UGjm9y3XoBgWKjw9kp9W=ZrwB-S6Lh7T_LBUgCQZn1ag@mail.gmail.com>
-	<53AA3F78.3080804@samsung.com>
+From: Doug Anderson <dianders@google.com>
+Subject: Re: [PATCH 1/3] clk: exynos-audss: Keep the parent of mout_audss
+ always enabled
+Date: Tue, 24 Jun 2014 21:02:33 -0700
+Message-ID: <CAD=FV=X2C9yTQ-OPXe+8X4c8-CErBNUhjOX6PCWEdFCr8Tn+2Q@mail.gmail.com>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
+	<1402464739-19044-2-git-send-email-tushar.b@samsung.com>
+	<7ha99jjspt.fsf@paris.lan>
+	<CAC5m3Bwj1HEWSQd7rx6Zn5vbUPKFqeT_X0PL3mAxRw0FNkK=QQ@mail.gmail.com>
+	<CAD=FV=VP4-+B6oV8Skb3rxxPRbOWmzu=6PJbWbxCU=86ZvRuYQ@mail.gmail.com>
+	<53AA3D71.5010000@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <53AA3F78.3080804@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, ks.giri@samsung.com, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53AA3D71.5010000@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tushar Behera <trblinux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tushar Behera <tushar.b@samsung.com>, Kevin Hilman <khilman@linaro.org>, lkml <linux-kernel@vger.kernel.org>, ML Devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, ML Arch-Arm <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Jaehoon,
+Tushar,
 
-On Tue, Jun 24, 2014 at 8:18 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> On 06/25/2014 03:00 AM, Doug Anderson wrote:
->> Yuvaraj,
+On Tue, Jun 24, 2014 at 8:09 PM, Tushar Behera <trblinux@gmail.com> wrote:
+> On 06/25/2014 04:29 AM, Doug Anderson wrote:
+>> Tushar,
 >>
->> On Mon, Jun 23, 2014 at 3:45 AM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
->>> This patch makes use of mmc_regulator_get_supply() to handle
->>> the vmmc and vqmmc regulators.Also it moves the code handling
->>> the these regulators to dw_mci_set_ios().It turned on the vmmc
->>> and vqmmc during MMC_POWER_UP and MMC_POWER_ON,and turned off
->>> during MMC_POWER_OFF.
+>> On Thu, Jun 12, 2014 at 12:40 AM, Tushar Behera <tushar.b@samsung.com> wrote:
+>>> On Wed, Jun 11, 2014 at 10:20 PM, Kevin Hilman <khilman@linaro.org> wrote:
+>>>> Tushar Behera <tushar.b@samsung.com> writes:
+>>>>
+>>>>> When the output clock of AUDSS mux is disabled, we are getting kernel
+>>>>> oops while doing a clk_get() on other clocks provided by AUDSS.
+>>>>>
+>>>>> Though user manual doesn't specify this dependency, we came across
+>>>>> this issue while disabling the parent of AUDSS mux clocks.
+>>>>>
+>>>>> Keeping the parents of AUDSS mux always enabled fixes this issue.
+>>>>
+>>>> While this patch works (and fixes the boot problem for me), it seems
+>>>> like it's papering over the real problem.
+>>>>
 >>>
->>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
->>> ---
->>>  drivers/mmc/host/dw_mmc.c |   71 ++++++++++++++++++++++-----------------------
->>>  drivers/mmc/host/dw_mmc.h |    2 ++
->>>  2 files changed, 36 insertions(+), 37 deletions(-)
->>
->> Perhaps you could CC me on the whole series for the next version since
->> I was involved in privately reviewing previous versions?
->>
->> Overall caveat for my review is that I'm nowhere near an SD/MMC expert.
->>
->>
->>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->>> index 1ac227c..f5cabce 100644
->>> --- a/drivers/mmc/host/dw_mmc.c
->>> +++ b/drivers/mmc/host/dw_mmc.c
->>> @@ -937,6 +937,7 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->>>         struct dw_mci_slot *slot = mmc_priv(mmc);
->>>         const struct dw_mci_drv_data *drv_data = slot->host->drv_data;
->>>         u32 regs;
->>> +       int ret;
+>>> Thanks for testing.
 >>>
->>>         switch (ios->bus_width) {
->>>         case MMC_BUS_WIDTH_4:
->>> @@ -975,16 +976,41 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>>>> Seems like the right fix is actually modelling the clocks properly so
+>>>> that enabling a child clock ensures that the parent is also enabled.
+>>>>
 >>>
->>>         switch (ios->power_mode) {
->>>         case MMC_POWER_UP:
->>> +               if ((!IS_ERR(mmc->supply.vmmc)) &&
->>> +                               !test_bit(DW_MMC_CARD_POWERED, &slot->flags)) {
->>> +                       ret = regulator_enable(mmc->supply.vmmc);
->>> +                       if (!ret)
->>> +                               set_bit(DW_MMC_CARD_POWERED, &slot->flags);
+>>> Patch 2/3 was to ensure we have proper clock tree defined for
+>>> Exynos5420. While testing with audio disabled, that patch alone fixed
+>>> the issue. But when audio was enabled (and hence I2S0 was trying to
+>>> access the clocks), we got some kernel oops during late booting, hence
+>>> I came up this solution.
+>>>
+>>> The solution might be a little half-baked because of the urgency to
+>>> push the fix, but will try to dig more into the issue on Monday when I
+>>> resume office.
+>>
+>> Which Monday were you referring to?  ;)
+>>
 >
-> MMC_CARD_POWERED? I didn't know why it needs.
+> Sorry that I couldn't get deeper into this issue. Thanks for reminding
+> though.
 
-I think the idea was to make sure that regulator enables/disables were
-balanced.  ...but if the mmc core does this for us then we probably
-don't need to worry.
+No problem.  I know how it is.  I was trying to be funny though
+sometimes that doesn't come through very well over email.
 
 
->>> +               }
->>
->> As per below, I'm not sure why you'd want to turn on vqmmc and vmmc at
->> different times.
-> In my case, in order to prevent the H/W mis-operation, it turns on vqmmc and vmmc at different times.
+>> ...but in all seriousness do you have an official status update on
+>> this patch?  It seems as if it's not needed and all you need is
+>> <https://patchwork.kernel.org/patch/4333581/>, but it would be nice to
+>> get an official confirmation.
+>
+> I have tested various scenarios with only patch 2/3, which seems to be
+> sufficient for the time being. I have not encountered the older issue
+> till now. I was thinking of testing a bit further, but given that you
+> have already asked for, we can go ahead with only patch 2/3 right now.
+>
+> In case any further issue comes up, I will post patch 1/3 as per the
+> review comments that I have got.
 
-OK!  Can you explain more?  What instance is one powered but not the other?
+Sounds like a plan.  Thanks for getting the original patch sent out so
+quickly after I reported it.
 
-I know that we talked to an SD Card manufacturer who told us that
-powering their IO lines without their main power rail was a bad thing
-(and we in fact saw this causing problems on SD cards).  I would guess
-that means that you're either powering vmmc before vqmmc or that vqmmc
-somehow doesn't directly enable pullups for IO lines.
-
-If you need vmmc before vqmmc then I'm curious about why...
-
--Doug
+Hopefully Kukjin will apply pack 2/3 soon (today?)
