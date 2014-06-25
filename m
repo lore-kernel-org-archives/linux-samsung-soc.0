@@ -1,70 +1,80 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH v2 Resend 1/2] ARM: EXYNOS: Update secondary boot addr
- for secure mode
-Date: Wed, 25 Jun 2014 13:54:02 +0200
-Message-ID: <53AAB85A.7060804@suse.de>
-References: <1401250382-24046-1-git-send-email-sachin.kamat@linaro.org> <5388CBB9.1050003@suse.de> <CAK5sBcETe20PWRV+z5Gb=hQNk13wE0PbmcvEmC9TM6nD2mi=ew@mail.gmail.com> <03f301cf906a$ab25d470$01717d50$@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 3/5 v2] drm/exynos: allow mulitple layer updates per vsync
+ for mixer
+Date: Wed, 25 Jun 2014 20:57:30 +0900
+Message-ID: <53AAB92A.4070208@samsung.com>
+References: <1403501545-16482-1-git-send-email-rahul.sharma@samsung.com>
+ <1403501545-16482-4-git-send-email-rahul.sharma@samsung.com>
+ <53A90ADA.2040306@samsung.com> <53A9633D.4050800@suse.de>
+ <CAAQKjZMkn4BCrJOPA793A5CBLpDfJLZ-4w85=TsZr0P3L0bAHQ@mail.gmail.com>
+ <CAPdUM4OLCjCW-wiUEaN90eSjkNxJi--c4ThBb7fyKy_K2H_R9w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:37547 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754459AbaFYLyH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 07:54:07 -0400
-In-Reply-To: <03f301cf906a$ab25d470$01717d50$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAPdUM4OLCjCW-wiUEaN90eSjkNxJi--c4ThBb7fyKy_K2H_R9w@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, sunil joshi <joshi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Sachin Kamat' <sachin.kamat@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Tushar Behera' <tushar.behera@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sachin Kamat' <spk.linux@gmail.com>
 
-Am 25.06.2014 13:43, schrieb Kukjin Kim:
-> Sachin Kamat wrote:
->>
->> On Fri, May 30, 2014 at 11:49 PM, Andreas F=C3=A4rber <afaerber@suse=
-=2Ede> wrote:
->>> Am 28.05.2014 06:13, schrieb Sachin Kamat:
->>>> Almost all Exynos-series of SoCs that run in secure mode don't nee=
-d
->>>> additional offset for every CPU, with Exynos4412 being the only
->>>> exception.
->>>>
->>>> Tested on Origen-Quad (Exynos4412) and Arndale-Octa (Exynos5420).
->>>>
->>>> While at it, fix the coding style (space around *).
->>>>
->>>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->>>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->>>> ---
->>>>  arch/arm/mach-exynos/firmware.c |    9 +++++++--
->>>>  1 file changed, 7 insertions(+), 2 deletions(-)
->>>
->>> Fixes ODROID-XU (Exynos5410) as well - thought it had been a prereq=
- to
->>> applying the 5410 patches...
->>>
->>> Tested-by: Andreas F=C3=A4rber <afaerber@suse.de>
-
-=46WIW meanwhile I also successfully tested it on 5420 based Arndale Oc=
-ta.
-
-I can also check on 5250 based Spring, now that it's working, if that
-helps build confidence in the patch.
-
-Cheers,
-Andreas
-
->> Kukjin, this patch is required to bring up 4 A15 cores on some 5410
->> and 5420 based
->> boards. Can you please queue this up for the upcoming rc as fixes?
->=20
-> Sure, I will take this into fixes.
->=20
-> Thanks,
-> Kukjin
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+T24gMjAxNOuFhCAwNuyblCAyNeydvCAxOTo0MiwgUmFodWwgU2hhcm1hIHdyb3RlOgo+IFRoYW5r
+cyBJbmtpLAo+IAo+IE9uZSBtb3JlIHRoaW5nLiBtaXhlcl9sYXllcl91cGRhdGUgaXMgb25seSBj
+YWxsZWQgb24gZm9yIG1peGVyIHZlcnNpb247Cj4gTVhSX1ZFUl8xNl8wXzMzXzAsIE1YUl9WRVJf
+MTI4XzBfMF8xODQuIFRoaXMgY29uZGl0aW9uCj4gc2hvdWxkIGhhdmUgdGFrZW4gY2FyZSBvZiBF
+eHlub3M0IHNjZW5hcmlvcy4gV2hhdCB5b3Ugc2F5Pwo+IAoKVGhlcmUgd2FzIG15IG1pc3Npbmcg
+cG9pbnQuIDopIEFscmVhZHkgY29uc2lkZXJlZC4gaWdub3JlIG15IGNvbW1lbnQuCgpUaGFua3Ms
+Cklua2kgRGFlCgo+IFJlZ2FyZHMsCj4gUmFodWwgU2hhcm1hLgo+IAo+IE9uIDI0IEp1bmUgMjAx
+NCAyMDoyMCwgSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPiB3cm90ZToKPj4gMjAxNC0w
+Ni0yNCAyMDozOCBHTVQrMDk6MDAgQW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJlckBzdXNlLmRlPjoK
+Pj4+IEFtIDI0LjA2LjIwMTQgMDc6MjEsIHNjaHJpZWIgSW5raSBEYWU6Cj4+Pj4gT24gMjAxNOuF
+hCAwNuyblCAyM+ydvCAxNDozMiwgUmFodWwgU2hhcm1hIHdyb3RlOgo+Pj4+PiBBbGxvd2luZyBv
+bmx5IG9uZSBsYXllciB1cGRhdGUgcGVyIHZzeW5jIGNhbiBjYXVzZSBpc3N1ZXMKPj4+Pj4gd2hp
+bGUgdGhlcmUgYXJlIHVwZGF0ZSBhdmFpbGFibGUgZm9yIGJvdGggbGF5ZXJzLiBUaGVyZSBpcwo+
+Pj4+PiBhIGdvb2QgYW1vdW50IG9mIHBvc3NpYmlsaXR5IHRvIGxvb3NlIHVwZGF0ZXMgaWYgd2Ug
+YWxsb3cKPj4+Pj4gc2luZ2xlIHVwZGF0ZSBwZXIgdnN5bmMuCj4+Pj4+Cj4+Pj4+IFNpZ25lZC1v
+ZmYtYnk6IFJhaHVsIFNoYXJtYSA8cmFodWwuc2hhcm1hQHNhbXN1bmcuY29tPgo+Pj4+PiAtLS0K
+Pj4+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMgfCAgICA3ICstLS0t
+LS0KPj4+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgNiBkZWxldGlvbnMoLSkK
+Pj4+Pj4KPj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21p
+eGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+Pj4+IGluZGV4
+IGQzNTk1MDEuLjY3NzNiMDMgMTAwNjQ0Cj4+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX21peGVyLmMKPj4+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfbWl4ZXIuYwo+Pj4+PiBAQCAtNTExLDEzICs1MTEsOCBAQCBzdGF0aWMgdm9pZCB2cF92aWRl
+b19idWZmZXIoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCwgaW50IHdpbikKPj4+Pj4gIHN0YXRp
+YyB2b2lkIG1peGVyX2xheWVyX3VwZGF0ZShzdHJ1Y3QgbWl4ZXJfY29udGV4dCAqY3R4KQo+Pj4+
+PiAgewo+Pj4+PiAgICAgIHN0cnVjdCBtaXhlcl9yZXNvdXJjZXMgKnJlcyA9ICZjdHgtPm1peGVy
+X3JlczsKPj4+Pj4gLSAgICB1MzIgdmFsOwo+Pj4+PiAtCj4+Pj4+IC0gICAgdmFsID0gbWl4ZXJf
+cmVnX3JlYWQocmVzLCBNWFJfQ0ZHKTsKPj4+Pj4KPj4+Pj4gLSAgICAvKiBhbGxvdyBvbmUgdXBk
+YXRlIHBlciB2c3luYyBvbmx5ICovCj4+Pj4+IC0gICAgaWYgKCEodmFsICYgTVhSX0NGR19MQVlF
+Ul9VUERBVEVfQ09VTlRfTUFTSykpCj4+Pj4+IC0gICAgICAgICAgICBtaXhlcl9yZWdfd3JpdGVt
+YXNrKHJlcywgTVhSX0NGRywgfjAsIE1YUl9DRkdfTEFZRVJfVVBEQVRFKTsKPj4+Pj4gKyAgICBt
+aXhlcl9yZWdfd3JpdGVtYXNrKHJlcywgTVhSX0NGRywgfjAsIE1YUl9DRkdfTEFZRVJfVVBEQVRF
+KTsKPj4+Pgo+Pj4+IFJhaHVsLCBpdCBsb29rcyBnb29kIHRvIG1lIGFuZCBvayBhcyBpcy4gQnV0
+IGFib3ZlIGNvZGVzIGRvbid0IGNvbnNpZGVyCj4+Pj4gRXh5bm9zNCBzZXJpZXMuIEluIGNhc2Ug
+b2YgRXh5bm9zNHh4eCBTb0MsCj4+Pj4gTVhSX0NGR19MQVlFUl9VUERBVEVfQ09VTlRfTUFTSyBh
+bmQgTVhSX0NGR19MQVlFUl9VUERBVEUgb2YgTUlYRVJfQ0ZHCj4+Pj4gcmVnaXN0ZXIgYXJlIHJl
+c2VydmVkIGZpZWxkcy4gU28gY2FuIHlvdSB3b3JrIHRoYXQgcGF0Y2ggdG8gYmUKPj4+PiBjb25z
+aWRlcmVkIGZvciBFeHlub3M0eHh4IFNvQz8gVGhhdCBwYXRjaCB3b3VsZCBiZSBhZGRpdGlvbmFs
+IG9uZS4KPj4+Pgo+Pj4+IEFueXdheSwgd2lsbCBhcHBseSBpdCBhcyBpcywgYW5kIEkgd2lsbCB3
+YWl0IGZvciB0aGUgYWRkaXRpb25hbCBwYXRjaC4KPj4+Cj4+PiBJZiBpdCdzIG5vdCB0b28gbGF0
+ZSwgY291bGQgeW91IGZpeCB1cCAibXVsdGlwbGUiIGluIHRoZSBzdWJqZWN0PyA6KQo+Pgo+PiBD
+b3JyZWN0ZWQuIDopCj4+Cj4+IFRoYW5rcywKPj4gSW5raSBEYWUKPj4KPj4+Cj4+PiBDaGVlcnMs
+Cj4+PiBBbmRyZWFzCj4+Pgo+Pj4gLS0KPj4+IFNVU0UgTElOVVggUHJvZHVjdHMgR21iSCwgTWF4
+ZmVsZHN0ci4gNSwgOTA0MDkgTsO8cm5iZXJnLCBHZXJtYW55Cj4+PiBHRjogSmVmZiBIYXduLCBK
+ZW5uaWZlciBHdWlsZCwgRmVsaXggSW1lbmTDtnJmZmVyOyBIUkIgMTY3NDYgQUcgTsO8cm5iZXJn
+Cj4+PiAtLQo+Pj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUg
+InVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+Pj4gdGhlIGJvZHkgb2YgYSBtZXNz
+YWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4+IE1vcmUgbWFqb3Jkb21vIGluZm8g
+YXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
