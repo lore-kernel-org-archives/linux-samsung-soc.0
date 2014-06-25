@@ -1,65 +1,49 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 3/4] Documentation: devicetree: Fix tps65090 typos
-Date: Wed, 25 Jun 2014 07:23:20 -0500
-Message-ID: <CAL_Jsq+TC4wtAJh96V2AC6nqoym0PuZmJP0Ho8qehFH99zgBiw@mail.gmail.com>
-References: <1403486483-4063-1-git-send-email-afaerber@suse.de>
- <1403486483-4063-4-git-send-email-afaerber@suse.de> <CAD=FV=UUGQ_ULm+juj0hMxCKhhcXTa2aJT50Y=WrePy9g8u-zA@mail.gmail.com>
- <20140625104732.GE14495@leverpostej> <53AAB5D6.50500@suse.de>
+From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH] arm/arm64: DT: Fix GICv2 CPU interface size
+Date: Wed, 25 Jun 2014 13:32:31 +0100
+Message-ID: <86simtjhk0.fsf@arm.com>
+References: <1403692675-26503-1-git-send-email-marc.zyngier@arm.com>
+	<CAL_Jsq+rS3FE8_F-4qdUUTaJ6X9XNFP2d2h7CdU9hDRG0KG9uA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <53AAB5D6.50500@suse.de>
-Sender: linux-doc-owner@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: Mark Rutland <mark.rutland@arm.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Mark Brown <broonie@linaro.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, DOCUMENTATION <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAL_Jsq+rS3FE8_F-4qdUUTaJ6X9XNFP2d2h7CdU9hDRG0KG9uA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+	(Rob Herring's message of "Wed, 25 Jun 2014 13:21:17 +0100")
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "devicetree@vger.kernel.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>l
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 25, 2014 at 6:43 AM, Andreas F=C3=A4rber <afaerber@suse.de>=
- wrote:
-> Am 25.06.2014 12:47, schrieb Mark Rutland:
->> On Mon, Jun 23, 2014 at 06:27:04PM +0100, Doug Anderson wrote:
->>> Andreas,
->>>
->>> On Sun, Jun 22, 2014 at 6:21 PM, Andreas F=C3=A4rber <afaerber@suse=
-=2Ede> wrote:
->>>> It's vsys-l{1,2}-supply, not vsys_l{1,2}-supply.
->>>>
->>>> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
->>>> ---
->>>>  Documentation/devicetree/bindings/regulator/tps65090.txt | 4 ++--
->>>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/regulator/tps65090.=
-txt b/Documentation/devicetree/bindings/regulator/tps65090.txt
->>>> index 34098023..ca69f5e 100644
->>>> --- a/Documentation/devicetree/bindings/regulator/tps65090.txt
->>>> +++ b/Documentation/devicetree/bindings/regulator/tps65090.txt
->>>> @@ -45,8 +45,8 @@ Example:
->>>>                 infet5-supply =3D <&some_reg>;
->>>>                 infet6-supply =3D <&some_reg>;
->>>>                 infet7-supply =3D <&some_reg>;
->>>> -               vsys_l1-supply =3D <&some_reg>;
->>>> -               vsys_l2-supply =3D <&some_reg>;
->>>> +               vsys-l1-supply =3D <&some_reg>;
->>>> +               vsys-l2-supply =3D <&some_reg>;
->>>
->>> Your change matches the code and all existing device trees in the
->>> Linux kernel.
+On Wed, Jun 25 2014 at 01:21:17 PM, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Wed, Jun 25, 2014 at 5:37 AM, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org> wrote:
+>> All the Cortex-{A7,A15} implementations are using a GICv2. Same for
+>> the current arm64 platforms.
 >>
->> Could this fact please be mentioned in the commit message?
+>> Turns out that most of these platforms have described their GIC CPU
+>> interface size as being 4kB. while it is actually 8kB (the GICC_DIR
+>> register lives at offset 0x1000).
+>>
+>> This was found when converting the GIC driver to use EOImode==1 on
+>> GICv2-based systems. It uses the GICC_DIR register, and the result
+>> is a very early firework...
 >
-> Yes, I admit the commit message could've been clearer in stating that
-> only the example is modified, not the actual specification. What abou=
-t:
->
-> "Specification and existing device trees use vsys-l{1,2}-supply, not
-> vsys_l{1,2}-supply. Fix the example to match the specification."
->
-> Maybe also "... typos in example" in the subject.
->
-> Let me know whether I should send a v2 or let maintainers fix it up.
+> What's your plan for making the kernel change? Updating the dts files
+> is good, but that doesn't immediately help you if you have old dtbs.
 
-Please send v2.
+See at the end of https://lkml.org/lkml/2014/6/25/243
 
-Rob
+Basically, we stay with a GICv1 behaviour if we detect the mess.
+
+>> Signed-off-by: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+>> ---
+>>  arch/arm/boot/dts/axm55xx.dtsi              | 2 +-
+>>  arch/arm/boot/dts/dra7.dtsi                 | 2 +-
+>>  arch/arm/boot/dts/ecx-2000.dts              | 2 +-
+>
+> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny.
