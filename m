@@ -1,57 +1,48 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 0/6] Enable L2 cache support on Exynos4210/4x12 SoCs
-Date: Wed, 25 Jun 2014 16:13:16 +0200
-Message-ID: <53AAD8FC.9040306@samsung.com>
-References: <1403703451-12233-1-git-send-email-t.figa@samsung.com>
- <20140625135039.GM3705@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-reply-to: <20140625135039.GM3705@n2100.arm.linux.org.uk>
-Sender: linux-omap-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Laura Abbott <lauraa@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Tony Lindgren <tony@atomide.com>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Drake <drake@endlessm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH 0/3] drm/exynos: add framework to control DISP1BLK setting
+Date: Wed, 25 Jun 2014 19:45:49 +0530
+Message-ID: <1403705752-24469-1-git-send-email-ajaykumar.rs@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:55197 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756775AbaFYOS1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jun 2014 10:18:27 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N7Q008MAAEP0WD0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Jun 2014 23:18:25 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, vikas.sajjan@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-On 25.06.2014 15:50, Russell King - ARM Linux wrote:
-> On Wed, Jun 25, 2014 at 03:37:25PM +0200, Tomasz Figa wrote:
->> This series intends to add support for L2 cache on Exynos4 SoCs on boards
->> running under secure firmware, which requires certain initialization steps
->> to be done with help of firmware, as selected registers are writable only
->> from secure mode.
-> 
-> What I said in my message on June 12th applies to this series.  I'm
-> not having the virtual address exposed via the write_sec call.
-> 
-> Yes, you need to read other registers in order to use your secure
-> firmware implementation.  Let's fix that by providing a better write_sec
-> interface so you don't have to read back these registers, rather than
-> working around this short-coming.
+This series is based on exynos-drm-next branch of Inki Dae's tree at:
+git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
 
-Do you have anything in particular in mind? I would be glad to implement
-it and send patches.
+Exynos SOC have a DISP1BLK register where we can select
+the path for FIMD output. We can redirect the video data
+directly to DP/MIPI interface, or we can pass it via
+image enhancement chips.
 
-> 
-> That's exactly what I meant when I talked on June 12th about turning
-> cache-l2x0.c back into a pile of crap.  You're working around problems
-> rather than fixing the underlying issue, as seems to be standard
-> platform maintainer behaviour when things like core ARM code is
-> concerned.  This is why things devolve over time into piles of crap,
-> because platforms just hack around problems rather than fixing the
-> root cause of the problem.
+Since we don't use any image enhancement chips in exynos-drm,
+we need to set FIMD BYPASS in DISP1BLK.
 
-I'm not sure what part of my patches exactly is turning cache-l2x0.c
-into a pile of crap. On the contrary, I believe that working around the
-firmware brokenness on platform level, while keeping the core code
-simple does the opposite.
+This patchset is tested for basic display + DPMS + S2R on snow and peach_pit.
 
-However, I'll be happy to rework my series if you have some more
-specific suggestions.
+Ajay Kumar (3):
+  [PATCH 1/3] drm/exynos: Control DISP1BLK system register in FIMD
+  [PATCH 2/3] ARM: dts: exynos5420: Add sysreg phandle to FIMD node
+  [PATCH 3/3] ARM: dts: exynos5250: Add sysreg phandle to FIMD node
 
-> So... I'm NAKing the entire series.
+ .../devicetree/bindings/video/samsung-fimd.txt     |    2 ++
+ arch/arm/boot/dts/exynos5250.dtsi                  |    1 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |    1 +
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   19 +++++++++++++++++++
+ include/video/samsung_fimd.h                       |    5 +++++
+ 5 files changed, 28 insertions(+)
 
-Your opinion is always appreciated, thanks.
-
-Best regards,
-Tomasz
+-- 
+1.7.9.5
