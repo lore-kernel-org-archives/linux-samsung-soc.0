@@ -1,68 +1,78 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] phy: phy-samsung-usb2: Change phy power on/power off
- sequence
-Date: Wed, 25 Jun 2014 07:42:20 +0200
-Message-ID: <53AA613C.4060807@samsung.com>
-References: <1403614495-9291-1-git-send-email-k.debski@samsung.com>
- <CAD8Lp441832-ZVV8FQChEXcLqVpZqygv3iaF95_SfZOH_xkFPg@mail.gmail.com>
- <074a01cf8fc1$e906f0c0$bb14d240$%debski@samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH 2/4] usb: host: xhci-plat: Add support to get PHYs
+Date: Wed, 25 Jun 2014 11:19:55 +0530
+Message-ID: <CAFp+6iH_rxNpHZyFH6k5Got6YJ_RQMsm=95=pkRPitsxopsosA@mail.gmail.com>
+References: <1402056736-12674-1-git-send-email-gautam.vivek@samsung.com>
+	<1402056736-12674-3-git-send-email-gautam.vivek@samsung.com>
+	<CAODwPW-2tbDht8P=KsTyTyeBivFtFMiyCpxd0QFa-cUSRTpJjQ@mail.gmail.com>
+	<53A9FCDB.6060805@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:29456 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751774AbaFYFm2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 01:42:28 -0400
-In-reply-to: <074a01cf8fc1$e906f0c0$bb14d240$%debski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53A9FCDB.6060805@cogentembedded.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Julius Werner <jwerner@chromium.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Mathias Nyman <mathias.nyman@intel.com>, LKML <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>, 'Daniel Drake' <drake@endlessm.com>
-Cc: linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-usb@vger.kernel.org, kishon@ti.com, Tomasz Figa <t.figa@samsung.com>, gautam.vivek@samsung.com
 
-Hello,
+HI Sergei,
 
-On 2014-06-24 17:35, Kamil Debski wrote:
-> On Tue, Jun 24, 2014 at 1:54 PM, Kamil Debski <k.debski@samsung.com> 
-> wrote:
->>> The Exynos4412 USB 2.0 PHY hardware differs from the description
->>> provided in the documentation. Some register bits have different
->>> function. This patch fixes the defines of register bits and changes
->>> the way how phys are powered on and off.
->> I guess this replaces the patch titled "drivers: phy: exynos4x12-phy:
->> fix HSIC1 power on/off sequence"
-> Yes, indeed it replaces this patch. I did some more research on how the
-> hardware actually behaves.
 
-My patch was a quick hack to get HSIC1 working. Kamil spent much more time
-trying to figure out how the hardware actually behaves. Please drop my patch
-and replace it with this one.
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
+On Wed, Jun 25, 2014 at 4:04 AM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Hello.
 >
->> Tested on ODROID-U2. Seems to be working as well as the previous patch:
-> Thank you very much for testing.
 >
->> - Internal SMSC hub works on boot and after reboot, tested with USB
->> mouse
->> - Internal SMSC ethernet device works on boot, but disappears upon
->> reboot. (same as previous patch, also reproduced by Marek)
-> By reboot I guess that you mean typing "reboot" or by using SysRq magic
-> and not power cycling?
+> On 06/10/2014 12:22 AM, Julius Werner wrote:
 >
-> If so, I had experienced the same symptoms. I guess that the Ethernet
-> chip is not reset properly and fails to enumerate without power cycling
-> (it's nRESET pin is connected to P3V3).
+>>> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+>>> index 9ffecd5..453d89e 100644
+>>> --- a/drivers/usb/host/xhci.h
+>>> +++ b/drivers/usb/host/xhci.h
+>>> @@ -1582,6 +1582,9 @@ struct xhci_hcd {
+>>>          u32                     port_status_u0;
+>>>   /* Compliance Mode Timer Triggered every 2 seconds */
+>>>   #define COMP_MODE_RCVRY_MSECS 2000
+>>> +       /* phys for the controller */
+>>> +       struct phy              *phy2_gen;
+>>> +       struct phy              *phy3_gen;
+>>>   };
 >
-> I found that removing regulator-always-on from buck8_reg: BUCK8 in the
-> dts file fixes this problem.
+>
+>> I don't think adding new variables here and restricting most of this
+>> logic to xhci-plat.c (in the next patch) is the best way to do it.
+>
+>
+>    Indeed.
+>
+>
+>> There's no conceptual reason why other host controllers (e.g. xhci-pci
+>> or even EHCI) could not have a similar need to tune their PHY after
+>> reset. PHYs are universal to all host controllers.
+>
+>
+>> There is already a 'phy' member in struct usb_hcd which I think is
+>> mostly unused right now. I think it would be much less
+>> confusing/redundant to reuse that member for this purpose (you could
+>> still set it up from xhci_plat_probe(), and then call it from
+>> hcd_bus_resume() or something like that).
+>
+>
+>    That member has type 'struct usb_phy *' while here we have 'struct phy *'
+> -- feel the difference.
+>    I have already tried adding 'struct phy *gen_phy' to 'struct usb_hcd',
+> however Greg wasn't eager to pick that up so far. Here's the last posting of
+> my patch:
+>
+> http://marc.info/?l=linux-usb&m=140145917506582
 
-Thanks for investigating this issue! I will add this fix to next version
-of Odroid patches.
+Thanks for pointing to the patch, i have also been tracking this patch.
+I will try to rework using this patch and post the relevant patches.
 
-Best regards
+
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
