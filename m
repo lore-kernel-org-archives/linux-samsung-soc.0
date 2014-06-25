@@ -1,30 +1,39 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: [PATCH 1/4 v2] devicetree: bindings: Document murata vendor prefix
-Date: Wed, 25 Jun 2014 07:10:07 -0700
-Message-ID: <53AAD83F.5060801@roeck-us.net>
-References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com> <1403677773-21141-2-git-send-email-ch.naveen@samsung.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 2/4 v2] hwmon: ntc_thermistor: Use the manufacturer name
+ properly
+Date: Wed, 25 Jun 2014 07:10:51 -0700
+Message-ID: <53AAD86B.6080905@roeck-us.net>
+References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com> <1403677773-21141-3-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403677773-21141-2-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.active-venture.com ([67.228.131.205]:54667 "EHLO
+	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754202AbaFYOLD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jun 2014 10:11:03 -0400
+In-Reply-To: <1403677773-21141-3-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, cpgs@samsung.com, devicetree@vger.kernel.org, lars@metafoo.de
 
 On 06/24/2014 11:29 PM, Naveen Krishna Chatradhi wrote:
-> Add Murata Manufacturing Co., Ltd. to the list of device tree
-> vendor prefixes.
+> Murata Manufacturing Co., Ltd is the vendor for
+> NTC (Negative Temperature coefficient) based Thermistors.
+> But, the driver extensively uses "NTC" as the vendor name.
 >
-> Murata manufactures NTC (Negative Temperature Coefficient) based
-> Thermistors for small scale applications like Mobiles and PDAs.
+> This patch corrects the vendor name also updates the
+> compatibility strings according to the vendor-prefix.txt
 >
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+> Note: Drivers continue to support the previous compatible strings
+> but further addition of these compatible strings in device tree
+> is deprecated.
+>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
 
 Applied.
 
-Thanks,
 Guenter
