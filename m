@@ -1,42 +1,80 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 4/6] ARM: SAMSUNG: Restore Samsung PM Debug functionality
-Date: Wed, 25 Jun 2014 13:41:43 +0200
-Message-ID: <53AAB577.4010009@samsung.com>
-References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
- <1403618235-19353-5-git-send-email-t.figa@samsung.com>
- <CAD8Lp46GpaGzq+2bkyujRtSVYJt7PWWT47NvjifoxzJk7aKs6A@mail.gmail.com>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [PATCH 3/4] Documentation: devicetree: Fix tps65090 typos
+Date: Wed, 25 Jun 2014 13:43:18 +0200
+Message-ID: <53AAB5D6.50500@suse.de>
+References: <1403486483-4063-1-git-send-email-afaerber@suse.de> <1403486483-4063-4-git-send-email-afaerber@suse.de> <CAD=FV=UUGQ_ULm+juj0hMxCKhhcXTa2aJT50Y=WrePy9g8u-zA@mail.gmail.com> <20140625104732.GE14495@leverpostej>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:50347 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751598AbaFYLmK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 07:42:10 -0400
-In-reply-to: <CAD8Lp46GpaGzq+2bkyujRtSVYJt7PWWT47NvjifoxzJk7aKs6A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20140625104732.GE14495@leverpostej>
+Sender: linux-doc-owner@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>, Doug Anderson <dianders@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Mark Brown <broonie@linaro.org>, Simon Glass <sjg@chromium.org>, Michael Spang <spang@chromium.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, DOCUMENTATION <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-On 25.06.2014 12:09, Daniel Drake wrote:
-> Hi Tomasz,
-> 
-> On Tue, Jun 24, 2014 at 2:57 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->> Due to recently merged patches and previous merge conflicts, the Samsung
->> PM Debug functionality no longer can be enabled. This patch fixes
->> incorrect dependency of SAMSUNG_PM_DEBUG on an integer symbol and adds
->> missing header inclusion.
-> 
-> Testing against 3.16-rc2, this doesn't quite work for me.
-> SAMSUNG_PM_DEBUG still doesn't appear in menuconfig.
-> 
-> HAVE_SAMSUNG_PM_DEBUG is 'n'. Looks like the select from
-> DEBUG_S3C_UART is not working, but I'm not sure why.
+Am 25.06.2014 12:47, schrieb Mark Rutland:
+> On Mon, Jun 23, 2014 at 06:27:04PM +0100, Doug Anderson wrote:
+>> Andreas,
+>>
+>> On Sun, Jun 22, 2014 at 6:21 PM, Andreas F=C3=A4rber <afaerber@suse.=
+de> wrote:
+>>> It's vsys-l{1,2}-supply, not vsys_l{1,2}-supply.
+>>>
+>>> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+>>> ---
+>>>  Documentation/devicetree/bindings/regulator/tps65090.txt | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/regulator/tps65090.t=
+xt b/Documentation/devicetree/bindings/regulator/tps65090.txt
+>>> index 34098023..ca69f5e 100644
+>>> --- a/Documentation/devicetree/bindings/regulator/tps65090.txt
+>>> +++ b/Documentation/devicetree/bindings/regulator/tps65090.txt
+>>> @@ -45,8 +45,8 @@ Example:
+>>>                 infet5-supply =3D <&some_reg>;
+>>>                 infet6-supply =3D <&some_reg>;
+>>>                 infet7-supply =3D <&some_reg>;
+>>> -               vsys_l1-supply =3D <&some_reg>;
+>>> -               vsys_l2-supply =3D <&some_reg>;
+>>> +               vsys-l1-supply =3D <&some_reg>;
+>>> +               vsys-l2-supply =3D <&some_reg>;
+>>
+>> Your change matches the code and all existing device trees in the
+>> Linux kernel.
+>=20
+> Could this fact please be mentioned in the commit message?
 
-I hastily changed this to something simpler in last minute before
-sending without proper testing. Let me send something that works.
+Yes, I admit the commit message could've been clearer in stating that
+only the example is modified, not the actual specification. What about:
 
-Best regards,
-Tomasz
+"Specification and existing device trees use vsys-l{1,2}-supply, not
+vsys_l{1,2}-supply. Fix the example to match the specification."
+
+Maybe also "... typos in example" in the subject.
+
+Let me know whether I should send a v2 or let maintainers fix it up.
+
+Regards,
+Andreas
+
+> Given that:
+>=20
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+>=20
+>> I also see plenty of other bindings with dashes, so this seems
+>> reasonable.
+>=20
+> Dashes rather than underscores are preferred/correct for property nam=
+es
+> and compatible strings. Given no-one can possibly be using the
+> bad/incorrect form with underscores, fixing the documentation to use
+> dashes makes sense.
+>=20
+> Thanks,
+> Mark.
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
