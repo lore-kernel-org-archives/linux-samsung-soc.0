@@ -1,72 +1,68 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/4] ARM: DTS: Add NTC thermistor nodes as child nodes to ADC
-Date: Wed, 25 Jun 2014 10:34:03 +0530
-Message-ID: <CAHfPSqAAWFtCQQrKBhLFuE2OuO_fwmUOhcOX9zKk8eMRMNSVvg@mail.gmail.com>
-References: <1403612356-23685-1-git-send-email-ch.naveen@samsung.com>
- <1403612356-23685-5-git-send-email-ch.naveen@samsung.com> <CAD=FV=Wmi73S4c5TPUqnNyycQ5xX5SbYy_ES-cbbJF2Hr0tqvQ@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] phy: phy-samsung-usb2: Change phy power on/power off
+ sequence
+Date: Wed, 25 Jun 2014 07:42:20 +0200
+Message-ID: <53AA613C.4060807@samsung.com>
+References: <1403614495-9291-1-git-send-email-k.debski@samsung.com>
+ <CAD8Lp441832-ZVV8FQChEXcLqVpZqygv3iaF95_SfZOH_xkFPg@mail.gmail.com>
+ <074a01cf8fc1$e906f0c0$bb14d240$%debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAD=FV=Wmi73S4c5TPUqnNyycQ5xX5SbYy_ES-cbbJF2Hr0tqvQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:29456 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751774AbaFYFm2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jun 2014 01:42:28 -0400
+In-reply-to: <074a01cf8fc1$e906f0c0$bb14d240$%debski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>, 'Daniel Drake' <drake@endlessm.com>
+Cc: linux-kernel@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-usb@vger.kernel.org, kishon@ti.com, Tomasz Figa <t.figa@samsung.com>, gautam.vivek@samsung.com
 
-Doug,
+Hello,
 
-On 25 June 2014 03:24, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> Naveen,
->
-> On Tue, Jun 24, 2014 at 5:19 AM, Naveen Krishna Chatradhi
-> <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> Exynos5420 based Peach PIT and Exynos5800 based PI boards have
->> 4 NTC thermistors to measure temperatures at various points on the
->> board.
->>
->> IIO based ADC becomes the parent and NTC thermistors are the childs,
->> via the HWMON interface.
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> ---
->> This patch needs
->> 1. MAX77802 PMIC device tree nodes (for ldo9)
->>    https://www.mail-archive.com/devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg31430.html
->> 2. Uses the DT documentation for NTC thermistors updated with vendor-prefix
->>
->>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   32 ++++++++++++++++++++++++++++
->>  1 file changed, 32 insertions(+)
->
-> * You forgot: status="okay" for the ADC.  One might question how this
-> patch was tested.
+On 2014-06-24 17:35, Kamil Debski wrote:
+> On Tue, Jun 24, 2014 at 1:54 PM, Kamil Debski <k.debski@samsung.com> 
+> wrote:
+>>> The Exynos4412 USB 2.0 PHY hardware differs from the description
+>>> provided in the documentation. Some register bits have different
+>>> function. This patch fixes the defines of register bits and changes
+>>> the way how phys are powered on and off.
+>> I guess this replaces the patch titled "drivers: phy: exynos4x12-phy:
+>> fix HSIC1 power on/off sequence"
+> Yes, indeed it replaces this patch. I did some more research on how the
+> hardware actually behaves.
 
-Will correct it.
+My patch was a quick hack to get HSIC1 working. Kamil spent much more time
+trying to figure out how the hardware actually behaves. Please drop my patch
+and replace it with this one.
+
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
 >
-> * Please also include this change for pi.
-
-MAX77802 device node was not added for Peach_PI (exynos5800-peach-pi.dts).
-I guess, Javier have a plan to send.
-
-I will edit the commit message to remove Peach_PI for now.
-
-Also, we have few similar nodes on Peach PI  and Peach PIT.
-Any plans or discussion on merging the common nodes ?
-
+>> Tested on ODROID-U2. Seems to be working as well as the previous patch:
+> Thank you very much for testing.
 >
-> * We just got through the painful process of sorting this .dts file.
-> Please sort "&adc" alphabetically.  Kukjin: please confirm that you
-> will keep an eye on patches and make sure that they are sorted OK.
+>> - Internal SMSC hub works on boot and after reboot, tested with USB
+>> mouse
+>> - Internal SMSC ethernet device works on boot, but disappears upon
+>> reboot. (same as previous patch, also reproduced by Marek)
+> By reboot I guess that you mean typing "reboot" or by using SysRq magic
+> and not power cycling?
 >
+> If so, I had experienced the same symptoms. I guess that the Ethernet
+> chip is not reset properly and fails to enumerate without power cycling
+> (it's nRESET pin is connected to P3V3).
 >
-> Other than those problems this seems to work fine to me.
->
-> -Doug
+> I found that removing regulator-always-on from buck8_reg: BUCK8 in the
+> dts file fixes this problem.
 
-Thanks for the Review.
+Thanks for investigating this issue! I will add this fix to next version
+of Odroid patches.
 
-
+Best regards
 -- 
-Shine bright,
-(: Nav :)
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
