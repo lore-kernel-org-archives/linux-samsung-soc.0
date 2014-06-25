@@ -1,63 +1,72 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2] i2c: s3c2410: resume the I2C controller earlier
-Date: Tue, 24 Jun 2014 16:56:54 -0700
-Message-ID: <1403654214-25072-1-git-send-email-dianders@chromium.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 10/11] ARM: EXYNOS: Add platform driver support for
+ Exynos PMU.
+Date: Wed, 25 Jun 2014 02:11:41 +0200
+Message-ID: <53AA13BD.9060800@gmail.com>
+References: <1399704998-13321-1-git-send-email-pankaj.dubey@samsung.com> <1399704998-13321-11-git-send-email-pankaj.dubey@samsung.com> <53A07719.7050206@samsung.com> <007a01cf8f9f$7909c850$6b1d58f0$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f74.google.com ([209.85.213.74]:38411 "EHLO
-	mail-yh0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752381AbaFXX46 (ORCPT
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:37272 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751731AbaFYAME (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jun 2014 19:56:58 -0400
-Received: by mail-yh0-f74.google.com with SMTP id b6so109780yha.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Jun 2014 16:56:57 -0700 (PDT)
+	Tue, 24 Jun 2014 20:12:04 -0400
+In-Reply-To: <007a01cf8f9f$7909c850$6b1d58f0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, javier.martinez@collabora.co.uk, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: vikas.sajjan@samsung.com, chow.kim@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk
 
-From: Vincent Palatin <vpalatin@chromium.org>
+On 24.06.2014 13:28, Pankaj Dubey wrote:
+> On Tuesday, June 17 2014, Tomasz Figa wrote:
+>> On 10.05.2014 08:56, Pankaj Dubey wrote:
 
-When the wake-up is triggered by the PMIC RTC, the RTC driver is trying
-to read the PMIC interrupt status over I2C and fails because the I2C
-controller is not resumed yet.
-Let's resume the I2C controller earlier in the _noirq phase
-(as other hardwares are doing), so we can properly get the wake-up
-condition.
+[snip]
 
-Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
-Changes in v2:
-- Added missing freeze/thaw/poweroff/restore
+>>> +
+>>> +	ret = platform_driver_register(&exynos_pmu_driver);
+>>> +	if (ret < 0)
+>>> +		goto out;
+>>> +
+>>> +	exynos_pmu_pdev = platform_device_register_simple("exynos-pmu", -1,
+>>> +			NULL, 0);
+>>
+>> Hmm, I don't see the point of making this a platform driver only to
+> register respective
+>> platform device few lines below. If you take into account the patch for
+> syscon I
+>> posted as a reply to patch 06/11, you will be able to make this a normal
+> platform
+>> driver that binds to DT node directly and then register a syscon in probe
+> function
+>> above.
+>>
+> 
+> Well I updated PMU to be a syscon provider using your patch. It worked well.
+> I have following two points to mention here:
+> 
+> 1: For making PMU a normal platform driver, other than making PMU a syscon
+> provider we need to change PMU's DT binding. Basically we need to remove
+> "syscon"
+> as second compatibility string. I hope this should not be an issue.
 
- drivers/i2c/busses/i2c-s3c2410.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+I don't see the reason for this. Could you elaborate on this?
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index e828a1d..ecb389c 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1267,7 +1267,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
- 	return 0;
- }
- 
--static int s3c24xx_i2c_resume(struct device *dev)
-+static int s3c24xx_i2c_resume_noirq(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
-@@ -1285,7 +1285,11 @@ static int s3c24xx_i2c_resume(struct device *dev)
- static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops = {
- #ifdef CONFIG_PM_SLEEP
- 	.suspend_noirq = s3c24xx_i2c_suspend_noirq,
--	.resume = s3c24xx_i2c_resume,
-+	.resume_noirq = s3c24xx_i2c_resume_noirq,
-+	.freeze_noirq = s3c24xx_i2c_suspend_noirq,
-+	.thaw_noirq = s3c24xx_i2c_resume_noirq,
-+	.poweroff_noirq = s3c24xx_i2c_suspend_noirq,
-+	.restore_noirq = s3c24xx_i2c_resume_noirq,
- #endif
- };
- 
--- 
-2.0.0.526.g5318336
+I know that the way Linux currently handles multiple compatible strings
+is broken, but despite this, if you just make sure your platform driver
+registers before syscon platform driver, it should be fine.
+
+> 
+> 2: I can see for your syscon patch Arnd has some comments, hopefully we can
+> address
+> his concern.
+> 
+
+Yes. I will get to it after sorting out few other things from my queue.
+Or you can do it if you want - the purpose of that RFC patch was just to
+show the idea I had in my mind.
+
+Best regards,
+Tomasz
