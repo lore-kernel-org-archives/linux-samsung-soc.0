@@ -1,112 +1,188 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v3 02/14] mfd: max77686: Allow the max77686 rtc to wakeup
- the system
-Date: Wed, 25 Jun 2014 12:29:55 +0200
-Message-ID: <53AAA4A3.50400@collabora.co.uk>
-References: <1403202040-12641-1-git-send-email-javier.martinez@collabora.co.uk> <1403202040-12641-3-git-send-email-javier.martinez@collabora.co.uk> <1403690742.22107.7.camel@AMDC1943>
+From: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 2/4 v2] hwmon: ntc_thermistor: Use the manufacturer name properly
+Date: Wed, 25 Jun 2014 12:36:18 +0200
+Message-ID: <CABxcv=knKWT6kJYWBV59U_jeV2yeQJkuRof9qZaGgxOVLJ5WDQ@mail.gmail.com>
+References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
+	<1403677773-21141-3-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1403690742.22107.7.camel@AMDC1943>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403677773-21141-3-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
+Hello Naveen,
 
-On 06/25/2014 12:05 PM, Krzysztof Kozlowski wrote:
-> On czw, 2014-06-19 at 20:20 +0200, Javier Martinez Canillas wrote:
->> From: Doug Anderson <dianders@chromium.org>
->> 
->> The max77686 includes an RTC that keeps power during suspend.  It's
->> convenient to be able to use it as a wakeup source.
->> 
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> ---
->>  drivers/rtc/rtc-max77686.c | 28 ++++++++++++++++++++++++++++
->>  1 file changed, 28 insertions(+)
->> 
->> diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
->> index d20a7f0..c1c6055 100644
->> --- a/drivers/rtc/rtc-max77686.c
->> +++ b/drivers/rtc/rtc-max77686.c
->> @@ -583,6 +583,33 @@ static void max77686_rtc_shutdown(struct platform_device *pdev)
->>  #endif /* MAX77686_RTC_WTSR_SMPL */
->>  }
->>  
->> +#ifdef CONFIG_PM_SLEEP
->> +static int max77686_rtc_suspend(struct device *dev)
->> +{
->> +	if (device_may_wakeup(dev)) {
->> +		struct max77686_rtc_info *info = dev_get_drvdata(dev);
->> +
->> +		return enable_irq_wake(info->virq);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int max77686_rtc_resume(struct device *dev)
->> +{
->> +	if (device_may_wakeup(dev)) {
->> +		struct max77686_rtc_info *info = dev_get_drvdata(dev);
->> +
->> +		return disable_irq_wake(info->virq);
->> +	}
->> +
->> +	return 0;
->> +}
->> +#endif
-> 
-> Haven't you noticed un-acked interrupts after first resume? Does the
-> alarm IRQ works after first suspend-resume?
-> 
-> This happens quite often (at least on boards with max14577, max77836 and
-> s2m/s5m). The drivers implementing own irq_chip often just call irq
-> worker thread (see max77693_irq_resume [1]). With regmap_irq_chip you
-> can disable/enable the IRQ [2][3].
-> 
+On Wed, Jun 25, 2014 at 8:29 AM, Naveen Krishna Chatradhi
+<ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Murata Manufacturing Co., Ltd is the vendor for
+> NTC (Negative Temperature coefficient) based Thermistors.
+> But, the driver extensively uses "NTC" as the vendor name.
+>
+> This patch corrects the vendor name also updates the
+> compatibility strings according to the vendor-prefix.txt
+>
+> Note: Drivers continue to support the previous compatible strings
+> but further addition of these compatible strings in device tree
+> is deprecated.
+>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+> ---
+> Changes since v1:
+> 1. Kept the old compatible string marked as <DEPRECATED> in code and
+>    in the Documentation.
+>
+>  .../devicetree/bindings/arm/samsung/exynos-adc.txt |    2 +-
+>  .../devicetree/bindings/hwmon/ntc_thermistor.txt   |   20 ++++++++++++++------
+>  Documentation/hwmon/ntc_thermistor                 |    8 ++++----
+>  drivers/hwmon/Kconfig                              |    5 +++--
+>  drivers/hwmon/ntc_thermistor.c                     |   14 +++++++++++++-
+>  5 files changed, 35 insertions(+), 14 deletions(-)
+>
 
-Yes, the original Chrome OS 3.8 max77xxx also called the irq worker thread to
-ack the interrupt.
+Looks good to me.
 
-So the real problem is that an interrupt occurs before the I2C bus controller is
-resumed and so the interrupt handler is not able to access the registers over I2C.
+Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 
-Doug posted the following patches [0,1] that AFAIU solves the issue by making
-I2C controllers to be resumed in the noirq time to ensure that drivers will be
-able to use the I2C bus to handler their wakeup.
-
-In fact, Doug's original patch had this as a part of the commit message:
-
-NOTE: due to wakeup ordering problems this patch alone doesn't work so
-well on exynos5250-snow.  You also need something that brings the i2c
-bus up before the max77686 wakeup runs.
-
-I removed that note since I (probably wrong) thought that he didn't mean it to
-be part of the commit message but just was side information.
-
-> 
-> P.S. Sorry for late reply. I was on holidays.
-> 
-
-No worries, thanks a lot for your feedback.
-
-> 
-> [1] http://lxr.free-electrons.com/source/drivers/mfd/max77693-irq.c#L233
-> [2] http://lxr.free-electrons.com/source/drivers/mfd/max14577.c#L181
-> [2] http://lxr.free-electrons.com/source/drivers/mfd/sec-core.c#L444
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-> 
-
-Best regards,
-Javier
-
-[0]: https://patchwork.kernel.org/patch/4414851/
-[1]: https://patchwork.kernel.org/patch/4414871/
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> index 5d49f2b..832fe8c 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> @@ -48,7 +48,7 @@ adc@12D10000 {
+>
+>         /* NTC thermistor is a hwmon device */
+>         ncp15wb473@0 {
+> -               compatible = "ntc,ncp15wb473";
+> +               compatible = "murata,ncp15wb473";
+>                 pullup-uv = <1800000>;
+>                 pullup-ohm = <47000>;
+>                 pulldown-ohm = <0>;
+> diff --git a/Documentation/devicetree/bindings/hwmon/ntc_thermistor.txt b/Documentation/devicetree/bindings/hwmon/ntc_thermistor.txt
+> index c6f6667..b117b2e 100644
+> --- a/Documentation/devicetree/bindings/hwmon/ntc_thermistor.txt
+> +++ b/Documentation/devicetree/bindings/hwmon/ntc_thermistor.txt
+> @@ -3,11 +3,19 @@ NTC Thermistor hwmon sensors
+>
+>  Requires node properties:
+>  - "compatible" value : one of
+> -       "ntc,ncp15wb473"
+> -       "ntc,ncp18wb473"
+> -       "ntc,ncp21wb473"
+> -       "ntc,ncp03wb473"
+> -       "ntc,ncp15wl333"
+> +       "murata,ncp15wb473"
+> +       "murata,ncp18wb473"
+> +       "murata,ncp21wb473"
+> +       "murata,ncp03wb473"
+> +       "murata,ncp15wl333"
+> +
+> +/* Usage of vendor name "ntc" is deprecated */
+> +<DEPRECATED>   "ntc,ncp15wb473"
+> +<DEPRECATED>   "ntc,ncp18wb473"
+> +<DEPRECATED>   "ntc,ncp21wb473"
+> +<DEPRECATED>   "ntc,ncp03wb473"
+> +<DEPRECATED>   "ntc,ncp15wl333"
+> +
+>  - "pullup-uv"  Pull up voltage in micro volts
+>  - "pullup-ohm" Pull up resistor value in ohms
+>  - "pulldown-ohm" Pull down resistor value in ohms
+> @@ -21,7 +29,7 @@ Read more about iio bindings at
+>
+>  Example:
+>         ncp15wb473@0 {
+> -               compatible = "ntc,ncp15wb473";
+> +               compatible = "murata,ncp15wb473";
+>                 pullup-uv = <1800000>;
+>                 pullup-ohm = <47000>;
+>                 pulldown-ohm = <0>;
+> diff --git a/Documentation/hwmon/ntc_thermistor b/Documentation/hwmon/ntc_thermistor
+> index 3bfda94..057b770 100644
+> --- a/Documentation/hwmon/ntc_thermistor
+> +++ b/Documentation/hwmon/ntc_thermistor
+> @@ -1,7 +1,7 @@
+>  Kernel driver ntc_thermistor
+>  =================
+>
+> -Supported thermistors:
+> +Supported thermistors from Murata:
+>  * Murata NTC Thermistors NCP15WB473, NCP18WB473, NCP21WB473, NCP03WB473, NCP15WL333
+>    Prefixes: 'ncp15wb473', 'ncp18wb473', 'ncp21wb473', 'ncp03wb473', 'ncp15wl333'
+>    Datasheet: Publicly available at Murata
+> @@ -15,9 +15,9 @@ Authors:
+>  Description
+>  -----------
+>
+> -The NTC thermistor is a simple thermistor that requires users to provide the
+> -resistance and lookup the corresponding compensation table to get the
+> -temperature input.
+> +The NTC (Negative Temperature Coefficient) thermistor is a simple thermistor
+> +that requires users to provide the resistance and lookup the corresponding
+> +compensation table to get the temperature input.
+>
+>  The NTC driver provides lookup tables with a linear approximation function
+>  and four circuit models with an option not to use any of the four models.
+> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+> index 08531a1..154851b 100644
+> --- a/drivers/hwmon/Kconfig
+> +++ b/drivers/hwmon/Kconfig
+> @@ -1052,7 +1052,7 @@ config SENSORS_PC87427
+>           will be called pc87427.
+>
+>  config SENSORS_NTC_THERMISTOR
+> -       tristate "NTC thermistor support"
+> +       tristate "NTC thermistor support from Murata"
+>         depends on !OF || IIO=n || IIO
+>         help
+>           This driver supports NTC thermistors sensor reading and its
+> @@ -1060,7 +1060,8 @@ config SENSORS_NTC_THERMISTOR
+>           send notifications about the temperature.
+>
+>           Currently, this driver supports
+> -         NCP15WB473, NCP18WB473, NCP21WB473, NCP03WB473, and NCP15WL333.
+> +         NCP15WB473, NCP18WB473, NCP21WB473, NCP03WB473, and NCP15WL333
+> +         from Murata.
+>
+>           This driver can also be built as a module.  If so, the module
+>           will be called ntc-thermistor.
+> diff --git a/drivers/hwmon/ntc_thermistor.c b/drivers/hwmon/ntc_thermistor.c
+> index e76feb86..bdfbe91 100644
+> --- a/drivers/hwmon/ntc_thermistor.c
+> +++ b/drivers/hwmon/ntc_thermistor.c
+> @@ -163,6 +163,18 @@ static int ntc_adc_iio_read(struct ntc_thermistor_platform_data *pdata)
+>  }
+>
+>  static const struct of_device_id ntc_match[] = {
+> +       { .compatible = "murata,ncp15wb473",
+> +               .data = &ntc_thermistor_id[0] },
+> +       { .compatible = "murata,ncp18wb473",
+> +               .data = &ntc_thermistor_id[1] },
+> +       { .compatible = "murata,ncp21wb473",
+> +               .data = &ntc_thermistor_id[2] },
+> +       { .compatible = "murata,ncp03wb473",
+> +               .data = &ntc_thermistor_id[3] },
+> +       { .compatible = "murata,ncp15wl333",
+> +               .data = &ntc_thermistor_id[4] },
+> +
+> +       /* Usage of vendor name "ntc" is deprecated */
+>         { .compatible = "ntc,ncp15wb473",
+>                 .data = &ntc_thermistor_id[0] },
+>         { .compatible = "ntc,ncp18wb473",
+> @@ -534,7 +546,7 @@ static struct platform_driver ntc_thermistor_driver = {
+>
+>  module_platform_driver(ntc_thermistor_driver);
+>
+> -MODULE_DESCRIPTION("NTC Thermistor Driver");
+> +MODULE_DESCRIPTION("NTC Thermistor Driver from Murata");
+>  MODULE_AUTHOR("MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
+>  MODULE_LICENSE("GPL");
+>  MODULE_ALIAS("platform:ntc-thermistor");
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
