@@ -1,126 +1,277 @@
 From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: [PATCH v5 3/3] clk: samsung: exynos5420: Setup clocks before system
- suspend
-Date: Thu, 26 Jun 2014 16:42:15 +0530
-Message-ID: <1403781135-6538-4-git-send-email-vikas.sajjan@samsung.com>
+Subject: [PATCH v5 2/3] arm: exynos5: Add Suspend-to-RAM support for 5420
+Date: Thu, 26 Jun 2014 16:42:14 +0530
+Message-ID: <1403781135-6538-3-git-send-email-vikas.sajjan@samsung.com>
 References: <1403781135-6538-1-git-send-email-vikas.sajjan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:12296 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756715AbaFZLOm (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:16133 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755947AbaFZLOl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 07:14:42 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Thu, 26 Jun 2014 07:14:41 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N7R00NM5WKH4E80@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Jun 2014 20:14:41 +0900 (KST)
+ with ESMTP id <0N7R00EQOWKFJXC0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 26 Jun 2014 20:14:39 +0900 (KST)
 In-reply-to: <1403781135-6538-1-git-send-email-vikas.sajjan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, Vikas Sajjan <vikas.sajjan@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, Abhilash Kesavan <a.kesavan@samsung.com>, Vikas Sajjan <vikas.sajjan@samsung.com>
 
-Prior to suspending the system, we need to ensure that certain
-clock source and gate registers are unmasked.
+From: Abhilash Kesavan <a.kesavan@samsung.com>
 
-while at it, add these clks to save/restore list also.
+Adds Suspend-to-RAM support for EXYNOS5420
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5420.c |   29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ arch/arm/mach-exynos/pm.c |  150 ++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 134 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 9d7d7ee..7e87d7c 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -28,6 +28,7 @@
- #define GATE_BUS_CPU		0x700
- #define GATE_SCLK_CPU		0x800
- #define CLKOUT_CMU_CPU		0xa00
-+#define SRC_MASK_CPERI		0x4300
- #define GATE_IP_G2D		0x8800
- #define CPLL_LOCK		0x10020
- #define DPLL_LOCK		0x10030
-@@ -70,6 +71,8 @@
- #define SRC_TOP11		0x10284
- #define SRC_TOP12		0x10288
- #define SRC_TOP13		0x1028c /* 5800 specific */
-+#define SRC_MASK_TOP0		0x10300
-+#define SRC_MASK_TOP1		0x10304
- #define SRC_MASK_TOP2		0x10308
- #define SRC_MASK_TOP7		0x1031c
- #define SRC_MASK_DISP10		0x1032c
-@@ -77,6 +80,7 @@
- #define SRC_MASK_FSYS		0x10340
- #define SRC_MASK_PERIC0		0x10350
- #define SRC_MASK_PERIC1		0x10354
-+#define SRC_MASK_ISP		0x10370
- #define DIV_TOP0		0x10500
- #define DIV_TOP1		0x10504
- #define DIV_TOP2		0x10508
-@@ -98,6 +102,7 @@
- #define DIV2_RATIO0		0x10590
- #define DIV4_RATIO		0x105a0
- #define GATE_BUS_TOP		0x10700
-+#define GATE_BUS_DISP1		0x10728
- #define GATE_BUS_GEN		0x1073c
- #define GATE_BUS_FSYS0		0x10740
- #define GATE_BUS_FSYS2		0x10748
-@@ -190,6 +195,10 @@ static unsigned long exynos5x_clk_regs[] __initdata = {
- 	SRC_MASK_FSYS,
- 	SRC_MASK_PERIC0,
- 	SRC_MASK_PERIC1,
-+	SRC_MASK_TOP0,
-+	SRC_MASK_TOP1,
-+	SRC_MASK_MAU,
-+	SRC_MASK_ISP,
- 	SRC_ISP,
- 	DIV_TOP0,
- 	DIV_TOP1,
-@@ -208,6 +217,7 @@ static unsigned long exynos5x_clk_regs[] __initdata = {
- 	SCLK_DIV_ISP1,
- 	DIV2_RATIO0,
- 	DIV4_RATIO,
-+	GATE_BUS_DISP1,
- 	GATE_BUS_TOP,
- 	GATE_BUS_GEN,
- 	GATE_BUS_FSYS0,
-@@ -249,6 +259,22 @@ static unsigned long exynos5800_clk_regs[] __initdata = {
- 	GATE_IP_CAM,
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index de61d48..bf8564a 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -38,9 +38,13 @@
+ #include "regs-pmu.h"
+ #include "regs-sys.h"
+ 
++#define EXYNOS5420_CPU_STATE	0x28
++
+ #define pmu_raw_writel(val, offset) \
+ 		__raw_writel(val, pmu_base_addr + offset)
+ 
++static int exynos5420_cpu_state;
++
+ /**
+  * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
+  * @hwirq: Hardware IRQ signal of the GIC
+@@ -64,6 +68,10 @@ static struct sleep_save exynos_core_save[] = {
+ 	SAVE_ITEM(S5P_SROM_BC3),
  };
  
-+static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
-+	{ .offset = SRC_MASK_CPERI,		.value = 0xffffffff, },
-+	{ .offset = SRC_MASK_TOP0,		.value = 0x11111111, },
-+	{ .offset = SRC_MASK_TOP1,		.value = 0x11101111, },
-+	{ .offset = SRC_MASK_TOP2,		.value = 0x11111110, },
-+	{ .offset = SRC_MASK_TOP7,		.value = 0x00111100, },
-+	{ .offset = SRC_MASK_DISP10,		.value = 0x11111110, },
-+	{ .offset = SRC_MASK_MAU,		.value = 0x10000000, },
-+	{ .offset = SRC_MASK_FSYS,		.value = 0x11111110, },
-+	{ .offset = SRC_MASK_PERIC0,		.value = 0x11111110, },
-+	{ .offset = SRC_MASK_PERIC1,		.value = 0x11111100, },
-+	{ .offset = SRC_MASK_ISP,		.value = 0x11111000, },
-+	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
-+	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
++static struct sleep_save exynos5420_pmu_reg_save[] = {
++	SAVE_ITEM((void __iomem *)S5P_PMU_SPARE3),
 +};
 +
- static int exynos5420_clk_suspend(void)
+ /*
+  * GIC wake-up support
+  */
+@@ -86,7 +94,7 @@ static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
  {
- 	samsung_clk_save(reg_base, exynos5x_save,
-@@ -258,6 +284,9 @@ static int exynos5420_clk_suspend(void)
- 		samsung_clk_save(reg_base, exynos5800_save,
- 				ARRAY_SIZE(exynos5800_clk_regs));
+ 	const struct exynos_wkup_irq *wkup_irq;
  
-+	samsung_clk_restore(reg_base, exynos5420_set_clksrc,
-+				ARRAY_SIZE(exynos5420_set_clksrc));
+-	if (soc_is_exynos5250())
++	if (soc_is_exynos5250() || soc_is_exynos5420())
+ 		wkup_irq = exynos5250_wkup_irq;
+ 	else
+ 		wkup_irq = exynos4_wkup_irq;
+@@ -250,7 +258,16 @@ static int exynos_cpu_suspend(unsigned long arg)
+ 	outer_flush_all();
+ #endif
+ 
+-	if (soc_is_exynos5250())
++	/*
++	 * Clear sysram register for cpu state so that primary CPU does
++	 * not enter low power start in U-Boot.
++	 * This is specific to exynos5420 SoC only.
++	 */
++	if (soc_is_exynos5420())
++		__raw_writel(0x0,
++			sysram_base_addr + EXYNOS5420_CPU_STATE);
 +
- 	return 0;
++	if (soc_is_exynos5250() || soc_is_exynos5420())
+ 		flush_cache_all();
+ 
+ 	/* issue the standby signal into the pm unit. */
+@@ -276,6 +293,22 @@ static void exynos_pm_prepare(void)
+ 		tmp = __raw_readl(pmu_base_addr + EXYNOS5_JPEG_MEM_OPTION);
+ 		tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
+ 		pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
++	} else if (soc_is_exynos5420()) {
++		unsigned int i;
++
++		for (i = 0; i < ARRAY_SIZE(exynos5420_pmu_reg_save); i++)
++			exynos5420_pmu_reg_save[i].val =
++				__raw_readl(pmu_base_addr +
++				(unsigned int)exynos5420_pmu_reg_save[i].reg);
++		/*
++		 * The cpu state needs to be saved and restored so that the
++		 * secondary CPUs will enter low power start. Though the U-Boot
++		 * is setting the cpu state with low power flag, the kernel
++		 * needs to restore it back in case, the primary cpu fails to
++		 * suspend for any reason.
++		 */
++		exynos5420_cpu_state =
++		__raw_readl(sysram_base_addr + EXYNOS5420_CPU_STATE);
+ 	}
+ 
+ 	/* Set value of power down register for sleep mode */
+@@ -286,6 +319,27 @@ static void exynos_pm_prepare(void)
+ 	/* ensure at least INFORM0 has the resume address */
+ 
+ 	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
++
++	if (soc_is_exynos5420()) {
++		tmp = __raw_readl(pmu_base_addr + EXYNOS5_ARM_L2_OPTION);
++		tmp &= ~EXYNOS5_USE_RETENTION;
++		pmu_raw_writel(tmp, EXYNOS5_ARM_L2_OPTION);
++
++		tmp = __raw_readl(pmu_base_addr + EXYNOS5420_SFR_AXI_CGDIS1);
++		tmp |= EXYNOS5420_UFS;
++		pmu_raw_writel(tmp, EXYNOS5420_SFR_AXI_CGDIS1);
++
++		tmp = __raw_readl(pmu_base_addr +
++				EXYNOS5420_ARM_COMMON_OPTION);
++		tmp &= ~EXYNOS5420_L2RSTDISABLE_VALUE;
++		pmu_raw_writel(tmp, EXYNOS5420_ARM_COMMON_OPTION);
++		tmp = __raw_readl(pmu_base_addr + EXYNOS5420_FSYS2_OPTION);
++		tmp |= EXYNOS5420_EMULATION;
++		pmu_raw_writel(tmp, EXYNOS5420_FSYS2_OPTION);
++		tmp = __raw_readl(pmu_base_addr + EXYNOS5420_PSGEN_OPTION);
++		tmp |= EXYNOS5420_EMULATION;
++		pmu_raw_writel(tmp, EXYNOS5420_PSGEN_OPTION);
++	}
  }
  
+ static void exynos_pm_central_suspend(void)
+@@ -301,13 +355,24 @@ static void exynos_pm_central_suspend(void)
+ static int exynos_pm_suspend(void)
+ {
+ 	unsigned long tmp;
++	unsigned int  this_cluster;
+ 
+ 	exynos_pm_central_suspend();
+ 
+ 	/* Setting SEQ_OPTION register */
+ 
+-	tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
+-	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
++	if (soc_is_exynos5420()) {
++		this_cluster = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 1);
++		if (!this_cluster)
++			pmu_raw_writel(EXYNOS5420_ARM_USE_STANDBY_WFI0,
++					S5P_CENTRAL_SEQ_OPTION);
++		else
++			pmu_raw_writel(EXYNOS5420_KFC_USE_STANDBY_WFI0,
++					S5P_CENTRAL_SEQ_OPTION);
++	} else {
++		tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
++		pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
++	}
+ 
+ 	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+ 		exynos_cpu_save_register();
+@@ -340,6 +405,17 @@ static int exynos_pm_central_resume(void)
+ 
+ static void exynos_pm_resume(void)
+ {
++	unsigned int tmp;
++
++	if (soc_is_exynos5420()) {
++		/* Restore the sysram cpu state register */
++		__raw_writel(exynos5420_cpu_state,
++		sysram_base_addr + EXYNOS5420_CPU_STATE);
++
++		pmu_raw_writel(EXYNOS5420_USE_STANDBY_WFI_ALL,
++				S5P_CENTRAL_SEQ_OPTION);
++	}
++
+ 	if (exynos_pm_central_resume())
+ 		goto early_wakeup;
+ 
+@@ -347,18 +423,42 @@ static void exynos_pm_resume(void)
+ 		exynos_cpu_restore_register();
+ 
+ 	/* For release retention */
++	if (soc_is_exynos5420()) {
++		pmu_raw_writel((1 << 28), EXYNOS_PAD_RET_DRAM_OPTION);
++		pmu_raw_writel((1 << 28), EXYNOS_PAD_RET_MAUDIO_OPTION);
++		pmu_raw_writel((1 << 28), EXYNOS_PAD_RET_JTAG_OPTION);
++		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_GPIO_OPTION);
++		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_UART_OPTION);
++		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_MMCA_OPTION);
++		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_MMCB_OPTION);
++		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_MMCC_OPTION);
++		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_HSI_OPTION);
++		pmu_raw_writel((1 << 28), EXYNOS_PAD_RET_EBIA_OPTION);
++		pmu_raw_writel((1 << 28), EXYNOS_PAD_RET_EBIB_OPTION);
++		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_SPI_OPTION);
++		pmu_raw_writel((1 << 28),
++				EXYNOS5420_PAD_RET_DRAM_COREBLK_OPTION);
++	} else {
++		pmu_raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
++		pmu_raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
++		pmu_raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
++		pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
++		pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
++		pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
++		pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
++	}
+ 
+-	pmu_raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
+-	pmu_raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
+-	pmu_raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
+-	pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
+-	pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
+-	pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
+-	pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
+-
+-	if (soc_is_exynos5250())
++	if (soc_is_exynos5250()) {
+ 		s3c_pm_do_restore(exynos5_sys_save,
+ 			ARRAY_SIZE(exynos5_sys_save));
++	} else if (soc_is_exynos5420()) {
++		unsigned int i;
++
++		for (i = 0; i < ARRAY_SIZE(exynos5420_pmu_reg_save); i++)
++			pmu_raw_writel(
++			(unsigned int)exynos5420_pmu_reg_save[i].val,
++			(unsigned int)exynos5420_pmu_reg_save[i].reg);
++	}
+ 
+ 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+ 
+@@ -367,6 +467,18 @@ static void exynos_pm_resume(void)
+ 
+ early_wakeup:
+ 
++	if (soc_is_exynos5420()) {
++		tmp = __raw_readl(pmu_base_addr + EXYNOS5420_SFR_AXI_CGDIS1);
++		tmp &= ~EXYNOS5420_UFS;
++		pmu_raw_writel(tmp, EXYNOS5420_SFR_AXI_CGDIS1);
++		tmp = __raw_readl(pmu_base_addr + EXYNOS5420_FSYS2_OPTION);
++		tmp &= ~EXYNOS5420_EMULATION;
++		pmu_raw_writel(tmp, EXYNOS5420_FSYS2_OPTION);
++		tmp = __raw_readl(pmu_base_addr + EXYNOS5420_PSGEN_OPTION);
++		tmp &= ~EXYNOS5420_EMULATION;
++		pmu_raw_writel(tmp, EXYNOS5420_PSGEN_OPTION);
++	}
++
+ 	/* Clear SLEEP mode set in INFORM1 */
+ 	pmu_raw_writel(0x0, S5P_INFORM1);
+ 
+@@ -483,9 +595,15 @@ void __init exynos_pm_init(void)
+ 	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
+ 
+ 	/* All wakeup disable */
+-	tmp = __raw_readl(pmu_base_addr + S5P_WAKEUP_MASK);
+-	tmp |= ((0xFF << 8) | (0x1F << 1));
+-	pmu_raw_writel(tmp, S5P_WAKEUP_MASK);
++	if (soc_is_exynos5420()) {
++		tmp = __raw_readl(pmu_base_addr + S5P_WAKEUP_MASK);
++		tmp |= ((0x7F << 7) | (0x1F << 1));
++		pmu_raw_writel(tmp, S5P_WAKEUP_MASK);
++	} else {
++		tmp = __raw_readl(pmu_base_addr + S5P_WAKEUP_MASK);
++		tmp |= ((0xFF << 8) | (0x1F << 1));
++		pmu_raw_writel(tmp, S5P_WAKEUP_MASK);
++	}
+ 
+ 	register_syscore_ops(&exynos_pm_syscore_ops);
+ 	suspend_set_ops(&exynos_suspend_ops);
 -- 
 1.7.9.5
