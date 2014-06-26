@@ -1,176 +1,141 @@
-From: Laura Abbott <lauraa@codeaurora.org>
-Subject: Re: mainline boot: 64 boots: 62 pass, 2 fail (v3.16-rc1-2-gebe0618)
-Date: Thu, 26 Jun 2014 12:42:26 -0700
-Message-ID: <53AC77A2.4090207@codeaurora.org>
-References: <53A2AE11.2050208@gmail.com> <53A2BE94.2010308@gmail.com> <53A7A579.4010702@gmail.com> <CAGa+x85H510fNGTXJHGYfQybRa2FGgg2NyCgJ8rmjJ6TE7GNbA@mail.gmail.com> <53A9B99F.4040806@codeaurora.org> <53A9FBB5.60709@codeaurora.org> <53AABCF5.4050403@gmail.com> <53AB45D1.90909@codeaurora.org> <53ABC13C.8030908@gmail.com> <CAGa+x84UTbmFc2Twg9zEcr+ZP2xsq68gFvk=385+_cFM5hvGHg@mail.gmail.com> <20140626151756.GU32514@n2100.arm.linux.org.uk>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Restore the entry address setup code
+ post-resume
+Date: Thu, 26 Jun 2014 16:06:25 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1406261550060.16842@knanqh.ubzr>
+References: <1403780312-22885-1-git-send-email-a.kesavan@samsung.com> <CAM4voa=AYDkHG49EEnr0097Dw4eS__T95oDrhswcfHEzY=PTcw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:56415 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751996AbaFZTm1 (ORCPT
+Received: from mail-qa0-f41.google.com ([209.85.216.41]:55422 "EHLO
+	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750930AbaFZUG2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 15:42:27 -0400
-In-Reply-To: <20140626151756.GU32514@n2100.arm.linux.org.uk>
+	Thu, 26 Jun 2014 16:06:28 -0400
+Received: by mail-qa0-f41.google.com with SMTP id cm18so3262319qab.14
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2014 13:06:27 -0700 (PDT)
+In-Reply-To: <CAM4voa=AYDkHG49EEnr0097Dw4eS__T95oDrhswcfHEzY=PTcw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kernel-build-reports@lists.linaro.org, Tushar Behera <trblinux@gmail.com>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Douglas Anderson <dianders@chromium.org>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-On 6/26/2014 8:17 AM, Russell King - ARM Linux wrote:
-> On Thu, Jun 26, 2014 at 07:59:19AM -0700, Kevin Hilman wrote:
->> I agree that the u-boot bug needs to be fixed, and FWIW, I updated my
->> u-boot and haven't seen the boot failure yet after several boots with
->> next-20140625.
->>
->> That being said, since it's not always feasible/practical to update
->> u-boot, and when it comes down to it, this is still a kernel
->> regression, we should also fix the kernel to sanity check the values
->> coming from u-boot, like it was doing before.
+On Thu, 26 Jun 2014, Abhilash Kesavan wrote:
+
+> Hi,
 > 
-> It wasn't sanity checking the values (there is some sanity checking,
-> but the sanity checking doesn't catch this).
+> On Thu, Jun 26, 2014 at 4:28 PM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
+> > Setup the mcpm entry address again on system resume as the
+> > iRAM contents are lost across an s2r cycle.
+> >
+> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> > ---
+> > This has been tested after applying the Exynos5420 S2R support series
+> > along with Nicolas Pitre's boot cluster CCI enablement patches on Peach
+> > Pit.
+> >
+> >  arch/arm/mach-exynos/mcpm-exynos.c | 31 +++++++++++++++++++++----------
+> >  1 file changed, 21 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+> > index 8c610e2..0bf734d 100644
+> > --- a/arch/arm/mach-exynos/mcpm-exynos.c
+> > +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+> > @@ -15,6 +15,7 @@
+> >  #include <linux/delay.h>
+> >  #include <linux/io.h>
+> >  #include <linux/of_address.h>
+> > +#include <linux/syscore_ops.h>
+> >
+> >  #include <asm/cputype.h>
+> >  #include <asm/cp15.h>
+> > @@ -26,6 +27,7 @@
+> >  #define EXYNOS5420_CPUS_PER_CLUSTER    4
+> >  #define EXYNOS5420_NR_CLUSTERS         2
+> >
+> > +static void __iomem *ns_sram_base_addr;
+> >  /*
+> >   * The common v7_exit_coherency_flush API could not be used because of the
+> >   * Erratum 799270 workaround. This macro is the same as the common one (in
+> > @@ -308,10 +310,26 @@ static const struct of_device_id exynos_dt_mcpm_match[] = {
+> >         {},
+> >  };
+> >
+> > +static void exynos_mcpm_setup_entry_point(void)
+> > +{
+> > +       /*
+> > +        * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
+> > +        * as part of secondary_cpu_start().  Let's redirect it to the
+> > +        * mcpm_entry_point(). This is done during both secondary boot-up as
+> > +        * well as system resume.
+> > +        */
+> > +       __raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
+> > +       __raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
+> > +       __raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
+> > +}
+> > +
+> > +static struct syscore_ops exynos_mcpm_syscore_ops = {
+> > +       .resume = exynos_mcpm_setup_entry_point,
+> > +};
+> > +
+> >  static int __init exynos_mcpm_init(void)
+> >  {
+> >         struct device_node *node;
+> > -       void __iomem *ns_sram_base_addr;
+> >         int ret;
+> >
+> >         node = of_find_matching_node(NULL, exynos_dt_mcpm_match);
+> > @@ -357,16 +375,9 @@ static int __init exynos_mcpm_init(void)
+> >
+> >         pr_info("Exynos MCPM support installed\n");
+> >
+> > -       /*
+> > -        * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
+> > -        * as part of secondary_cpu_start().  Let's redirect it to the
+> > -        * mcpm_entry_point().
+> > -        */
+> > -       __raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
+> > -       __raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
+> > -       __raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
+> > +       exynos_mcpm_setup_entry_point();
+> >
+> > -       iounmap(ns_sram_base_addr);
+> > +       register_syscore_ops(&exynos_mcpm_syscore_ops);
+> >
+> >         return ret;
+> >  }
 > 
-> What caught it was that the kernel was configured to only look at the
-> first 8 of the 12 meminfo entries with ATAGs.  Since we no longer have
-> that limit, all meminfo entries are now looked at (since the kernel
-> doesn't need the limit.)
+> This patch alone is not enough to bring the 8 cores back up post
+> resume on exynos5420, We need to enable the boot cluster snoops as
+> well.
 > 
-> We could add back a soft-limit on the number of meminfo entries, but
-> this has to be platform specific.  Another entry to go into the
-> mach_info structures?
-> 
+> Nicolas, if I add code to enable the boot cluster CCI in
+> mach-exynos/sleep.S, all 8 cores come up. However, if I use
+> mcpm_loopback as part of the newly added resume function to do the
+> same, I get a hang on resume.
+> Is there anything else that I need to take care of while doing this ?
 
-This is the least bad option I've come up with. It brings back
-early_init_dt_add_memory_arch so we can use arm_add_memory and stop
-adding memory if it reaches an upper threshold. I was debating setting
-the default at 12 or 8 but setting at 12 seems like it would involve the
-fewest platform changes.
+No no no.
 
-Thanks,
-Laura
+Forget about the MCPM loopback -- that's for boot time setup of the 
+booting cluster nothing else.
 
-----8<----
->From 1a5265fd178fea0da432fa9d49ce28e78bd25e04 Mon Sep 17 00:00:00 2001
-From: Laura Abbott <lauraa@codeaurora.org>
-Date: Thu, 26 Jun 2014 11:23:44 -0700
-Subject: [PATCH] arm: Add back maximum bank limit
+The snoops are enabled in a ***race free way*** by the low-level MCPM 
+code.  But of course you must call it upon resume.  Nothing else than 
+MCPM should ever play with the snoops enable/disable.  Certainly not 
+mach-exynos/sleep.S.
 
-Commit 1c2f87c22566cd057bc8cde10c37ae9da1a1bb76
-(ARM: 8025/1: Get rid of meminfo) dropped the upper bound on
-the number of memory banks that can be added as there was no
-technical need in the kernel. It turns out though, some bootloaders
-(specifically the arndale-octa exynos boards) may pass invalid memory
-information and rely on the kernel to not parse this data. This is a
-bug in the bootloader but we still need to work around this.
-Re-introduce a maximum bank limit per board to prevent invalid banks
-from being passed to the kernel.
+You must tell your firmware to resume execution after suspend at 
+mcpm_entry_point.  Before suspending, you tell MCPM where it should 
+branch to after it is done with its resuming business by calling 
+mcpm_set_entry_vector(), passing the address for exynos_cpu_resume for 
+example.
 
-Signed-off-by: Laura Abbott <lauraa@codeaurora.org>
----
- arch/arm/include/asm/mach/arch.h |  8 ++++++--
- arch/arm/kernel/devtree.c        |  4 ++++
- arch/arm/kernel/setup.c          | 16 ++++++++++++++++
- arch/arm/mach-exynos/exynos.c    |  1 +
- 4 files changed, 27 insertions(+), 2 deletions(-)
+And of course the CPU shutdown during idle has to go through MCPM too.
 
-diff --git a/arch/arm/include/asm/mach/arch.h b/arch/arm/include/asm/mach/arch.h
-index 060a75e..2a436ac 100644
---- a/arch/arm/include/asm/mach/arch.h
-+++ b/arch/arm/include/asm/mach/arch.h
-@@ -40,6 +40,8 @@ struct machine_desc {
- 	unsigned int		video_start;	/* start of video RAM	*/
- 	unsigned int		video_end;	/* end of video RAM	*/
- 
-+	unsigned int		bank_limit;	/* maximum number of memory
-+						 * banks to add */
- 	unsigned char		reserve_lp0 :1;	/* never has lp0	*/
- 	unsigned char		reserve_lp1 :1;	/* never has lp1	*/
- 	unsigned char		reserve_lp2 :1;	/* never has lp2	*/
-@@ -85,7 +87,8 @@ static const struct machine_desc __mach_desc_##_type	\
-  __used							\
-  __attribute__((__section__(".arch.info.init"))) = {	\
- 	.nr		= MACH_TYPE_##_type,		\
--	.name		= _name,
-+	.name		= _name,			\
-+	.bank_limit	= 12,
- 
- #define MACHINE_END				\
- };
-@@ -95,6 +98,7 @@ static const struct machine_desc __mach_desc_##_name	\
-  __used							\
-  __attribute__((__section__(".arch.info.init"))) = {	\
- 	.nr		= ~0,				\
--	.name		= _namestr,
-+	.name		= _namestr,			\
-+	.bank_limit	= 12,
- 
- #endif
-diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
-index e94a157..ea9ce92 100644
---- a/arch/arm/kernel/devtree.c
-+++ b/arch/arm/kernel/devtree.c
-@@ -27,6 +27,10 @@
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
- 
-+void __init early_init_dt_add_memory_arch(u64 base, u64 size)
-+{
-+	arm_add_memory(base, size);
-+}
- 
- #ifdef CONFIG_SMP
- extern struct of_cpu_method __cpu_method_of_table[];
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index 8a16ee5..3ab94d1 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -629,11 +629,26 @@ void __init dump_machine_table(void)
- 		/* can't use cpu_relax() here as it may require MMU setup */;
- }
- 
-+static unsigned int bank_cnt;
-+static unsigned int max_cnt;
-+
- int __init arm_add_memory(u64 start, u64 size)
- {
- 	u64 aligned_start;
- 
- 	/*
-+	 * Some buggy bootloaders rely on the old meminfo behavior of not adding
-+	 * more than n banks since anything past that may contain invalid data.
-+	 */
-+	if (bank_cnt >= max_cnt) {
-+		pr_crit("Max banks too low, ignoring memory at 0x%08llx\n",
-+			(long long)start);
-+		return -EINVAL;
-+	}
-+
-+	bank_cnt++;
-+
-+	/*
- 	 * Ensure that start/size are aligned to a page boundary.
- 	 * Size is appropriately rounded down, start is rounded up.
- 	 */
-@@ -879,6 +894,7 @@ void __init setup_arch(char **cmdline_p)
- 		mdesc = setup_machine_tags(__atags_pointer, __machine_arch_type);
- 	machine_desc = mdesc;
- 	machine_name = mdesc->name;
-+	max_cnt = mdesc->bank_limit;
- 
- 	if (mdesc->reboot_mode != REBOOT_HARD)
- 		reboot_mode = mdesc->reboot_mode;
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index f38cf7c..91283fd 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -350,4 +350,5 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
- 	.dt_compat	= exynos_dt_compat,
- 	.restart	= exynos_restart,
- 	.reserve	= exynos_reserve,
-+	.bank_limit     = 8,
- MACHINE_END
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-hosted by The Linux Foundation
+When resumed, you also have to call mcpm_cpu_powered_up().
+
+See how it is done in cpuidle-big_little.c for example.
+
+
+Nicolas
