@@ -1,85 +1,176 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v5 04/14] clk: max77686: Improve Maxim 77686 PMIC clocks
- binding
-Date: Thu, 26 Jun 2014 20:15:36 +0200
-Message-ID: <1403806546-31122-5-git-send-email-javier.martinez@collabora.co.uk>
-References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Laura Abbott <lauraa@codeaurora.org>
+Subject: Re: mainline boot: 64 boots: 62 pass, 2 fail (v3.16-rc1-2-gebe0618)
+Date: Thu, 26 Jun 2014 12:42:26 -0700
+Message-ID: <53AC77A2.4090207@codeaurora.org>
+References: <53A2AE11.2050208@gmail.com> <53A2BE94.2010308@gmail.com> <53A7A579.4010702@gmail.com> <CAGa+x85H510fNGTXJHGYfQybRa2FGgg2NyCgJ8rmjJ6TE7GNbA@mail.gmail.com> <53A9B99F.4040806@codeaurora.org> <53A9FBB5.60709@codeaurora.org> <53AABCF5.4050403@gmail.com> <53AB45D1.90909@codeaurora.org> <53ABC13C.8030908@gmail.com> <CAGa+x84UTbmFc2Twg9zEcr+ZP2xsq68gFvk=385+_cFM5hvGHg@mail.gmail.com> <20140626151756.GU32514@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, Daniel Stone <daniels@collabora.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.11.231]:56415 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751996AbaFZTm1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Jun 2014 15:42:27 -0400
+In-Reply-To: <20140626151756.GU32514@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kernel-build-reports@lists.linaro.org, Tushar Behera <trblinux@gmail.com>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Like most clock drivers, the Maxim 77686 PMIC clock binding
-follows the convention that the "#clock-cells" property is
-used to specify the number of cells in a clock provider.
+On 6/26/2014 8:17 AM, Russell King - ARM Linux wrote:
+> On Thu, Jun 26, 2014 at 07:59:19AM -0700, Kevin Hilman wrote:
+>> I agree that the u-boot bug needs to be fixed, and FWIW, I updated my
+>> u-boot and haven't seen the boot failure yet after several boots with
+>> next-20140625.
+>>
+>> That being said, since it's not always feasible/practical to update
+>> u-boot, and when it comes down to it, this is still a kernel
+>> regression, we should also fix the kernel to sanity check the values
+>> coming from u-boot, like it was doing before.
+> 
+> It wasn't sanity checking the values (there is some sanity checking,
+> but the sanity checking doesn't catch this).
+> 
+> What caught it was that the kernel was configured to only look at the
+> first 8 of the 12 meminfo entries with ATAGs.  Since we no longer have
+> that limit, all meminfo entries are now looked at (since the kernel
+> doesn't need the limit.)
+> 
+> We could add back a soft-limit on the number of meminfo entries, but
+> this has to be platform specific.  Another entry to go into the
+> mach_info structures?
+> 
 
-But the binding document is not clear enough that it shall
-be set to 1 since the PMIC support multiple clocks outputs.
+This is the least bad option I've come up with. It brings back
+early_init_dt_add_memory_arch so we can use arm_add_memory and stop
+adding memory if it reaches an upper threshold. I was debating setting
+the default at 12 or 8 but setting at 12 seems like it would involve the
+fewest platform changes.
 
-Also, explain that the clocks identifiers are defined in a
-header file that can be included by Device Tree source with
-client nodes to avoid using magic numbers.
+Thanks,
+Laura
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+----8<----
+>From 1a5265fd178fea0da432fa9d49ce28e78bd25e04 Mon Sep 17 00:00:00 2001
+From: Laura Abbott <lauraa@codeaurora.org>
+Date: Thu, 26 Jun 2014 11:23:44 -0700
+Subject: [PATCH] arm: Add back maximum bank limit
+
+Commit 1c2f87c22566cd057bc8cde10c37ae9da1a1bb76
+(ARM: 8025/1: Get rid of meminfo) dropped the upper bound on
+the number of memory banks that can be added as there was no
+technical need in the kernel. It turns out though, some bootloaders
+(specifically the arndale-octa exynos boards) may pass invalid memory
+information and rely on the kernel to not parse this data. This is a
+bug in the bootloader but we still need to work around this.
+Re-introduce a maximum bank limit per board to prevent invalid banks
+from being passed to the kernel.
+
+Signed-off-by: Laura Abbott <lauraa@codeaurora.org>
 ---
+ arch/arm/include/asm/mach/arch.h |  8 ++++++--
+ arch/arm/kernel/devtree.c        |  4 ++++
+ arch/arm/kernel/setup.c          | 16 ++++++++++++++++
+ arch/arm/mach-exynos/exynos.c    |  1 +
+ 4 files changed, 27 insertions(+), 2 deletions(-)
 
-Changes since v4: None
-
-Changes since v3:
- - Don't change clock-names property to make clear that it's
-   the consumer clock name and should not match the producer clock.
-   Suggested by Doug Anderson.
-
- Documentation/devicetree/bindings/clock/maxim,max77686.txt | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-index 96ce71b..48e00bb 100644
---- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-+++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-@@ -9,13 +9,18 @@ The MAX77686 contains three 32.768khz clock outputs that can be controlled
- Following properties should be presend in main device node of the MFD chip.
+diff --git a/arch/arm/include/asm/mach/arch.h b/arch/arm/include/asm/mach/arch.h
+index 060a75e..2a436ac 100644
+--- a/arch/arm/include/asm/mach/arch.h
++++ b/arch/arm/include/asm/mach/arch.h
+@@ -40,6 +40,8 @@ struct machine_desc {
+ 	unsigned int		video_start;	/* start of video RAM	*/
+ 	unsigned int		video_end;	/* end of video RAM	*/
  
- Required properties:
--- #clock-cells: simple one-cell clock specifier format is used, where the
--  only cell is used as an index of the clock inside the provider. Following
--  indices are allowed:
-+
-+- #clock-cells: from common clock binding; shall be set to 1.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. Following indices are allowed:
-     - 0: 32khz_ap clock,
-     - 1: 32khz_cp clock,
-     - 2: 32khz_pmic clock.
++	unsigned int		bank_limit;	/* maximum number of memory
++						 * banks to add */
+ 	unsigned char		reserve_lp0 :1;	/* never has lp0	*/
+ 	unsigned char		reserve_lp1 :1;	/* never has lp1	*/
+ 	unsigned char		reserve_lp2 :1;	/* never has lp2	*/
+@@ -85,7 +87,8 @@ static const struct machine_desc __mach_desc_##_type	\
+  __used							\
+  __attribute__((__section__(".arch.info.init"))) = {	\
+ 	.nr		= MACH_TYPE_##_type,		\
+-	.name		= _name,
++	.name		= _name,			\
++	.bank_limit	= 12,
  
-+Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77686.h
-+header and can be used in device tree sources.
-+
- Example: Node of the MFD chip
+ #define MACHINE_END				\
+ };
+@@ -95,6 +98,7 @@ static const struct machine_desc __mach_desc_##_name	\
+  __used							\
+  __attribute__((__section__(".arch.info.init"))) = {	\
+ 	.nr		= ~0,				\
+-	.name		= _namestr,
++	.name		= _namestr,			\
++	.bank_limit	= 12,
  
- 	max77686: max77686@09 {
-@@ -34,5 +39,5 @@ Example: Clock consumer node
- 		compatible = "bar,foo";
- 		/* ... */
- 		clock-names = "my-clock";
--		clocks = <&max77686 2>;
-+		clocks = <&max77686 MAX77686_CLK_PMIC>;
- 	};
+ #endif
+diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
+index e94a157..ea9ce92 100644
+--- a/arch/arm/kernel/devtree.c
++++ b/arch/arm/kernel/devtree.c
+@@ -27,6 +27,10 @@
+ #include <asm/mach/arch.h>
+ #include <asm/mach-types.h>
+ 
++void __init early_init_dt_add_memory_arch(u64 base, u64 size)
++{
++	arm_add_memory(base, size);
++}
+ 
+ #ifdef CONFIG_SMP
+ extern struct of_cpu_method __cpu_method_of_table[];
+diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
+index 8a16ee5..3ab94d1 100644
+--- a/arch/arm/kernel/setup.c
++++ b/arch/arm/kernel/setup.c
+@@ -629,11 +629,26 @@ void __init dump_machine_table(void)
+ 		/* can't use cpu_relax() here as it may require MMU setup */;
+ }
+ 
++static unsigned int bank_cnt;
++static unsigned int max_cnt;
++
+ int __init arm_add_memory(u64 start, u64 size)
+ {
+ 	u64 aligned_start;
+ 
+ 	/*
++	 * Some buggy bootloaders rely on the old meminfo behavior of not adding
++	 * more than n banks since anything past that may contain invalid data.
++	 */
++	if (bank_cnt >= max_cnt) {
++		pr_crit("Max banks too low, ignoring memory at 0x%08llx\n",
++			(long long)start);
++		return -EINVAL;
++	}
++
++	bank_cnt++;
++
++	/*
+ 	 * Ensure that start/size are aligned to a page boundary.
+ 	 * Size is appropriately rounded down, start is rounded up.
+ 	 */
+@@ -879,6 +894,7 @@ void __init setup_arch(char **cmdline_p)
+ 		mdesc = setup_machine_tags(__atags_pointer, __machine_arch_type);
+ 	machine_desc = mdesc;
+ 	machine_name = mdesc->name;
++	max_cnt = mdesc->bank_limit;
+ 
+ 	if (mdesc->reboot_mode != REBOOT_HARD)
+ 		reboot_mode = mdesc->reboot_mode;
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index f38cf7c..91283fd 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -350,4 +350,5 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+ 	.dt_compat	= exynos_dt_compat,
+ 	.restart	= exynos_restart,
+ 	.reserve	= exynos_reserve,
++	.bank_limit     = 8,
+ MACHINE_END
 -- 
-2.0.0.rc2
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+hosted by The Linux Foundation
