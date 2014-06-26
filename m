@@ -1,79 +1,82 @@
-From: Tushar Behera <trblinux@gmail.com>
-Subject: Re: [PATCH 2/2] usb: dwc3: Kconfig: Select PHY drivers for Exynos
- DWC3
-Date: Thu, 26 Jun 2014 11:26:28 +0530
-Message-ID: <53ABB60C.5060103@gmail.com>
-References: <1403761178-5371-1-git-send-email-sachin.kamat@samsung.com> <1403761178-5371-2-git-send-email-sachin.kamat@samsung.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH 0/3] drm/exynos: add framework to control DISP1BLK setting
+Date: Thu, 26 Jun 2014 11:26:55 +0530
+Message-ID: <CAEC9eQOWubNjbiiKc5iQq3BzS3rEkDxykmhQpBj3ydFvstKgXA@mail.gmail.com>
+References: <1403705752-24469-1-git-send-email-ajaykumar.rs@samsung.com>
+	<CAOt82ecshdX9ALWYWT4u8QcF+NqJTEfUb6pka0D-9-btHJGM1Q@mail.gmail.com>
+	<CAEC9eQM-JDtQc_wN2Wyqw+ihFRixaOhc5wTq3jztckUwZMREHg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f180.google.com ([209.85.192.180]:56526 "EHLO
-	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752176AbaFZF4e (ORCPT
+Received: from mail-ve0-f178.google.com ([209.85.128.178]:60834 "EHLO
+	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752176AbaFZF44 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 01:56:34 -0400
-In-Reply-To: <1403761178-5371-2-git-send-email-sachin.kamat@samsung.com>
+	Thu, 26 Jun 2014 01:56:56 -0400
+Received: by mail-ve0-f178.google.com with SMTP id oy12so3146432veb.37
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2014 22:56:55 -0700 (PDT)
+In-Reply-To: <CAEC9eQM-JDtQc_wN2Wyqw+ihFRixaOhc5wTq3jztckUwZMREHg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@samsung.com>, linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, balbi@ti.com, gregkh@linuxfoundation.org, dianders@chromium.org, gautam.vivek@samsung.com, spk.linux@gmail.com, Kishon Vijay Abraham I <kishon@ti.com>
+To: YoungJun Cho <yj44.cho@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Sean Paul <seanpaul@google.com>, vikas.sajjan@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, InKi Dae <inki.dae@samsung.com>
 
-On 06/26/2014 11:09 AM, Sachin Kamat wrote:
-> USB DWC3 driver on Exynos platforms does not work without its
-> corresponding phy driver. Hence it makes no sense to keep the
-> phy driver as user selectable. Instead select it from USB config
-> to make things easier for the end user.
-> While at it make the config depend on ARCH_EXYNOS5 instead of
-> ARCH_EXYNOS as this IP is available only on Exynos5 platforms.
-> 
-> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
+Hi YoungJun,
 
-Reviewed-by: Tushar Behera <tushar.b@samsung.com>
+On Thu, Jun 26, 2014 at 11:23 AM, Ajay kumar <ajaynumb@gmail.com> wrote:
+> On Thu, Jun 26, 2014 at 5:24 AM, YoungJun Cho <yj44.cho@gmail.com> wrote:
+>> Hi Ajay,
+>>
+>> I'm sorry for say that the patchset for exynos drm supporting I80 i/f
+>> includes yours.
+>>
+>> The patchset is still in reviewing and I'm preparing v5.
+>>
+>> Please check this:
+>> http://www.spinics.net/lists/dri-devel/msg60943.html
+>>
+>> Thank you.
+>> Best regards YJ
+Thanks for the link. I saw your code. This functionality is already
+included in the patch "drm/exynos: fimd: support LCD I80 interface".
+I hope your patchset gets merged soon!
 
->  drivers/phy/Kconfig      |    8 +-------
->  drivers/usb/dwc3/Kconfig |    3 ++-
->  2 files changed, 3 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 7fe7ef5f1322..6be353c9dc4c 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -138,15 +138,9 @@ config PHY_EXYNOS5250_USB2
->  	bool
->  
->  config PHY_EXYNOS5_USBDRD
-> -	tristate "Exynos5 SoC series USB DRD PHY driver"
-> -	depends on ARCH_EXYNOS5 && OF
-> -	depends on HAS_IOMEM
-> +	tristate
->  	select GENERIC_PHY
->  	select MFD_SYSCON
-> -	help
-> -	  Enable USB DRD PHY support for Exynos 5 SoC series.
-> -	  This driver provides PHY interface for USB 3.0 DRD controller
-> -	  present on Exynos5 SoC series.
->  
->  config PHY_XGENE
->  	tristate "APM X-Gene 15Gbps PHY support"
-> diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-> index 261c3b428220..501477452ad8 100644
-> --- a/drivers/usb/dwc3/Kconfig
-> +++ b/drivers/usb/dwc3/Kconfig
-> @@ -55,7 +55,8 @@ config USB_DWC3_OMAP
->  
->  config USB_DWC3_EXYNOS
->  	tristate "Samsung Exynos Platform"
-> -	depends on ARCH_EXYNOS || COMPILE_TEST
-> +	depends on ARCH_EXYNOS5 || COMPILE_TEST
-> +	select PHY_EXYNOS5_USBDRD
->  	default USB_DWC3
->  	help
->  	  Recent Exynos5 SoCs ship with one DesignWare Core USB3 IP inside,
-> 
-
-
--- 
-Tushar Behera
+Thanks and regards,
+Ajay
+>> On Jun 25, 2014 11:19 PM, "Ajay Kumar" <ajaykumar.rs@samsung.com> wrote:
+>>>
+>>> This series is based on exynos-drm-next branch of Inki Dae's tree at:
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+>>>
+>>> Exynos SOC have a DISP1BLK register where we can select
+>>> the path for FIMD output. We can redirect the video data
+>>> directly to DP/MIPI interface, or we can pass it via
+>>> image enhancement chips.
+>>>
+>>> Since we don't use any image enhancement chips in exynos-drm,
+>>> we need to set FIMD BYPASS in DISP1BLK.
+>>>
+>>> This patchset is tested for basic display + DPMS + S2R on snow and
+>>> peach_pit.
+>>>
+>>> Ajay Kumar (3):
+>>>   [PATCH 1/3] drm/exynos: Control DISP1BLK system register in FIMD
+>>>   [PATCH 2/3] ARM: dts: exynos5420: Add sysreg phandle to FIMD node
+>>>   [PATCH 3/3] ARM: dts: exynos5250: Add sysreg phandle to FIMD node
+>>>
+>>>  .../devicetree/bindings/video/samsung-fimd.txt     |    2 ++
+>>>  arch/arm/boot/dts/exynos5250.dtsi                  |    1 +
+>>>  arch/arm/boot/dts/exynos5420.dtsi                  |    1 +
+>>>  drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   19
+>>> +++++++++++++++++++
+>>>  include/video/samsung_fimd.h                       |    5 +++++
+>>>  5 files changed, 28 insertions(+)
+>>>
+>>> --
+>>> 1.7.9.5
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe
+>>> linux-samsung-soc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
