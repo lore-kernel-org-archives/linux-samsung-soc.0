@@ -1,68 +1,104 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: DTS: Add NTC thermistor nodes to Exynos5250
- based Snow
-Date: Thu, 26 Jun 2014 08:46:14 -0700
-Message-ID: <CAD=FV=W=e-5LJRacxA-sSUUn8cBB5oCHJkwz=Py7iU2fdERVRA@mail.gmail.com>
-References: <1403785148-20792-1-git-send-email-ch.naveen@samsung.com>
-	<1403785148-20792-3-git-send-email-ch.naveen@samsung.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
+Date: Thu, 26 Jun 2014 09:08:17 -0700
+Message-ID: <7h8uojk61a.fsf@paris.lan>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
+	<1402464739-19044-3-git-send-email-tushar.b@samsung.com>
+	<CAD=FV=W5yh58fYTwRZxmZt=BORcZMSRV0oRe12yA74Q5h2S4YQ@mail.gmail.com>
+	<7hpphwlgn0.fsf@paris.lan>
+	<CAC5m3Bzey-YoPLmjAq4YNPQ13rojtVFWAbnhX6-ZFtYZwEdMWg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403785148-20792-3-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Naveen Krishna <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f54.google.com ([209.85.160.54]:65020 "EHLO
+	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752149AbaFZQIU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Jun 2014 12:08:20 -0400
+Received: by mail-pb0-f54.google.com with SMTP id un15so3356986pbc.27
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2014 09:08:19 -0700 (PDT)
+In-Reply-To: <CAC5m3Bzey-YoPLmjAq4YNPQ13rojtVFWAbnhX6-ZFtYZwEdMWg@mail.gmail.com>
+	(Tushar Behera's message of "Thu, 26 Jun 2014 08:50:50 +0530")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <trblinux@gmail.com>
+Cc: Doug Anderson <dianders@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-Naveen,
+Tushar Behera <trblinux@gmail.com> writes:
 
-On Thu, Jun 26, 2014 at 5:19 AM, Naveen Krishna Chatradhi
-<ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Exynos5250 based Snow board has 4 NTC thermistors to measure
-> temperatures at various points on the board.
+> On Thu, Jun 26, 2014 at 4:51 AM, Kevin Hilman <khilman@linaro.org> wrote:
+>> Doug Anderson <dianders@google.com> writes:
+>>
+>>> Tushar,
+>>>
+>>> On Tue, Jun 10, 2014 at 10:32 PM, Tushar Behera <tushar.b@samsung.com> wrote:
+>>>> Currently CLK_FOUT_EPLL was set as one of the parents of AUDSS mux.
+>>>> As per the user manual, it should be CLK_MAU_EPLL.
+>>>>
+>>>> The problem surfaced when the bootloader in Peach-pit board set
+>>>> the EPLL clock as the parent of AUDSS mux. While booting the kernel,
+>>>> we used to get a system hang during late boot if CLK_MAU_EPLL was
+>>>> disabled.
+>>>>
+>>>> Signed-off-by: Tushar Behera <tushar.b@samsung.com>
+>>>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>>>> Reported-by: Kevin Hilman <khilman@linaro.org>
+>>>> ---
+>>>>  arch/arm/boot/dts/exynos5420.dtsi |    2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> I've tested this myself now as well.
+>>>
+>>> Tested-by: Doug Anderson <dianders@chromium.org>
+>>
+>> For me, this patch alone (on top of -next) doesn't solve the boot hang.
+>> I still need clk_ignore_unused for a successful boot.
+>>
+>> So, this patch might be correct, but it doesn't prevent a boot hang
+>> using a chain-loaded nv_uboot on peach-pi.  There's still another clock
+>> being disabled that causes a hang.
+>>
+>> Kevin
 >
-> IIO based ADC becomes the parent and NTC thermistors are the childs,
-> via the HWMON interface.
+> Kevin,
 >
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-> Posted earlier by Doug Anderson @ https://lkml.org/lkml/2013/3/27/453
->
-> This patch depends on (1/4 and 2/4 patches of) patchset posted
-> http://www.spinics.net/lists/linux-iio/msg13486.html
-> Which were applied on to Guenter Roeck's tree.
->
-> cat sysfs entries exported by hwmon for 4 thermistors
-> and verified the values on Snow.
->
->  arch/arm/boot/dts/exynos5250-snow.dts |   34 +++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
+> Can you please check if adding patch 1/3 alongwith patch 2/3 fixes the
+> issue for you?
 
-NAK.
+Yes, using patch 1/3 along with 2/3 fixes the issue.
 
-The first chunk of exynos5250-snow devices have the thermistors
-populated, but a huge chunk of devices also _don't_ have them
-populated.
+> Also can you please confirm that setting CLK_IGNORE_UNUSED flag
+> CLK_MAU_EPLL alone fixes the issue, without any need for
+> clk_ignore_unused in u-boot bootargs?
 
-If I remember my history properly, rev3 and earlier all had
-thermistors.  Some of rev4 might have thermistors (I never got a clear
-answer).  ...and rev5 definitely doesn't have resistors.  Aside from
-thermistors there's no good reason to differentiate rev3 and rev4
-(they just have different memory).  The upstream kernel may eventually
-need to differentiate rev4 and rev5 since they have a different audio
-codec.
+Yes, I have this patch[1] in my local branch which fixes the issue
+alone, without clk_ignore_unused on the command line.
 
-See <https://chromium-review.googlesource.com/#/c/170841/> for some
-descriptions of the different revisions of snow and how they were
-handled in the Chrome OS tree.
+Kevin
 
-See <https://chromium-review.googlesource.com/#/c/186357/> for
-thermistors talk.  Patch set #1 actually split out rev3, but we then
-decided that we really didn't need to use the thermistors on any of
-the revisions so the later patchsets just totally take them out.
 
--Doug
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+[1]
+>From ab1627127730ef4507ce96cbf95047d626bbb53f Mon Sep 17 00:00:00 2001
+From: Kevin Hilman <khilman@linaro.org>
+Date: Thu, 5 Jun 2014 17:12:28 -0700
+Subject: [PATCH] KJH: leave mau_epll enabled
+
+---
+ drivers/clk/samsung/clk-exynos5420.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 61eccf0dd72f..ed175088ee7e 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -911,7 +911,7 @@ static struct samsung_gate_clock exynos5x_gate_clks[] __initdata = {
+ 			SRC_MASK_TOP2, 24, 0, 0),
+ 
+ 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
+-			SRC_MASK_TOP7, 20, 0, 0),
++			SRC_MASK_TOP7, 20, CLK_IGNORE_UNUSED, 0),
+ 
+ 	/* sclk */
+ 	GATE(CLK_SCLK_UART0, "sclk_uart0", "dout_uart0",
+-- 
+1.9.2
