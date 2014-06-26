@@ -1,62 +1,107 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: mainline boot: 64 boots: 62 pass, 2 fail (v3.16-rc1-2-gebe0618)
-Date: Thu, 26 Jun 2014 19:04:19 +0200
-Message-ID: <53AC5293.90209@suse.de>
-References: <539fdd37.e7bc420a.76b9.ffffb583@mx.google.com>	<CAGa+x85nqPbH-sye28ni=gUEdgjGdUDqHhv1+0pV5aO8y1+wHQ@mail.gmail.com>	<53A106F1.10201@gmail.com>	<CAGa+x8527FEPk6fg5kv-fbOzK3MzcFooFGE9Me12b9C_Pv=UzA@mail.gmail.com>	<53A2AE11.2050208@gmail.com>	<53A2BE94.2010308@gmail.com>	<53A7A579.4010702@gmail.com>	<CAGa+x85H510fNGTXJHGYfQybRa2FGgg2NyCgJ8rmjJ6TE7GNbA@mail.gmail.com>	<53A9B99F.4040806@codeaurora.org>	<53A9FBB5.60709@codeaurora.org>	<53AABCF5.4050403@gmail.com>	<53AB45D1.90909@codeaurora.org>	<53ABC13C.8030908@gmail.com> <CAGa+x84UTbmFc2Twg9zEcr+ZP2xsq68gFvk=385+_cFM5hvGHg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:38953 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757295AbaFZREW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 13:04:22 -0400
-In-Reply-To: <CAGa+x84UTbmFc2Twg9zEcr+ZP2xsq68gFvk=385+_cFM5hvGHg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: [PATCH v5 00/14] Add Maxim 77802 PMIC support
+Date: Thu, 26 Jun 2014 20:15:32 +0200
+Message-ID: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Daniel Stone <daniels-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@linaro.org>, Tushar Behera <trblinux@gmail.com>
-Cc: Laura Abbott <lauraa@codeaurora.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, kernel-build-reports@lists.linaro.org, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Kevin and Tushar,
+MAX77802 is a PMIC that contains 10 high efficiency Buck regulators,
+32 Low-dropout (LDO) regulators, two 32kHz buffered clock outputs,
+a Real-Time-Clock (RTC) and a I2C interface to program the individual
+regulators, clocks and the RTC.
 
-Am 26.06.2014 16:59, schrieb Kevin Hilman:
->> IMO, the bug is in u-boot and we should fix that.
->=20
-> I agree that the u-boot bug needs to be fixed, and FWIW, I updated my
-> u-boot and haven't seen the boot failure yet after several boots with
-> next-20140625.
+This fifth version of the patch-set addresses several issues pointed
+out by Krzysztof Kozlowski and Yadwinder Singh Brar. The individual
+changes are added on each patch change log.
 
-Could you clarify your test setup: Are you using the original InSignal
-SPL [1] with just your own u-boot.bin? Or do you have access to some
-newer Samsung-signed SPL?
+This series are based on drivers added by Simon Glass to the Chrome OS
+kernel and adds support for the Maxim 77802 Power Management IC, their
+regulators, clocks, RTC and I2C interface.
 
-> That being said, since it's not always feasible/practical to update
-> u-boot, and when it comes down to it, this is still a kernel
-> regression, we should also fix the kernel to sanity check the values
-> coming from u-boot, like it was doing before.
+NOTE: This version of the series model the real power scheme for Maxim
+77802 regulators instead of a simplistic model like in older versions.
+So these changes depend on patch:
 
-Sounds good.
+"[PATCH v3] ARM: dts: Add cros_ec to exynos5420-peach-pit and exynos5800-peach-pi"
+https://patchwork.kernel.org/patch/4411351/
 
-Apart from this memory issue here, I noticed that CPUs don't appear to
-be in HYP mode for virtualization, which had required a signed SPL
-update for the ODROID-XU [2]. And to me it looks as if there's no
-Arndale Octa support in upstream U-Boot [3], no real maintenance on the
-InSignal fork [4] and a policy of not cooperating with others [5].
+which adds tps65090 support to Peach boards since regulators from this
+PMIC supply power to a set of MAX77802 regulators.
 
-Thanks,
-Andreas
+The patch-set has been tested on both Daisy/Snow (max77686) and Peach
+pit (max77802) Chromebooks and it's composed of the following patches:
 
-[1] http://forum.insignal.co.kr/viewtopic.php?f=3D6&t=3D3199
-[2] http://forum.odroid.com/viewtopic.php?f=3D64&t=3D2778&start=3D40#p3=
-2581
-[3]
-http://git.denx.de/?p=3Du-boot.git;a=3Dblob;f=3Dboards.cfg;h=3D947f2bc5=
-ba2794c94b3b2cea04664f005e025f9f;hb=3DHEAD#l286
-[4] http://git.insignal.co.kr/insignal/arndale_octa-jb_mr1.1/u-boot/
-[5] http://forum.insignal.co.kr/viewtopic.php?f=3D40&t=3D3613
+Doug Anderson (1):
+  mfd: max77686: Allow the max77686 rtc to wakeup the system
 
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+Javier Martinez Canillas (13):
+  mfd: max77686: Convert to use regmap_irq
+  clk: max77686: Add DT include for MAX77686 PMIC clock
+  clk: max77686: Improve Maxim 77686 PMIC clocks binding
+  clk: Add generic driver for Maxim PMIC clocks
+  clk: max77686: Convert to the generic max clock driver
+  mfd: Add driver for Maxim 77802 Power Management IC
+  mfd: max77802: Add DT binding documentation
+  regmap: Add regmap_reg_copy function
+  regulator: Add driver for Maxim 77802 PMIC regulators
+  clk: Add driver for Maxim 77802 PMIC clocks
+  clk: max77802: Add DT binding documentation
+  rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
+  ARM: dts: Add max77802 to exynos5420-peach-pit and exynos5800-peach-pi
+
+ .../devicetree/bindings/clock/maxim,max77686.txt   |  13 +-
+ .../devicetree/bindings/clock/maxim,max77802.txt   |  42 ++
+ Documentation/devicetree/bindings/mfd/max77802.txt |  97 +++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         | 343 ++++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          | 343 ++++++++++
+ drivers/base/regmap/regmap.c                       |  34 +
+ drivers/clk/Kconfig                                |  11 +
+ drivers/clk/Makefile                               |   2 +
+ drivers/clk/clk-max-gen.c                          | 198 ++++++
+ drivers/clk/clk-max-gen.h                          |  32 +
+ drivers/clk/clk-max77686.c                         | 183 +-----
+ drivers/clk/clk-max77802.c                         |  99 +++
+ drivers/mfd/Kconfig                                |  15 +
+ drivers/mfd/Makefile                               |   3 +-
+ drivers/mfd/max77686-irq.c                         | 319 ----------
+ drivers/mfd/max77686.c                             |  97 ++-
+ drivers/mfd/max77802.c                             | 372 +++++++++++
+ drivers/regulator/Kconfig                          |   9 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/max77802.c                       | 694 +++++++++++++++++++++
+ drivers/rtc/Kconfig                                |  10 +
+ drivers/rtc/Makefile                               |   1 +
+ drivers/rtc/rtc-max77686.c                         |  55 +-
+ drivers/rtc/rtc-max77802.c                         | 637 +++++++++++++++++++
+ include/dt-bindings/clock/maxim,max77686.h         |  23 +
+ include/dt-bindings/clock/maxim,max77802.h         |  22 +
+ include/linux/mfd/max77686-private.h               |  31 +-
+ include/linux/mfd/max77686.h                       |   2 -
+ include/linux/mfd/max77802-private.h               | 304 +++++++++
+ include/linux/mfd/max77802.h                       | 121 ++++
+ include/linux/regmap.h                             |   9 +
+ 31 files changed, 3588 insertions(+), 534 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
+ create mode 100644 drivers/clk/clk-max-gen.c
+ create mode 100644 drivers/clk/clk-max-gen.h
+ create mode 100644 drivers/clk/clk-max77802.c
+ delete mode 100644 drivers/mfd/max77686-irq.c
+ create mode 100644 drivers/mfd/max77802.c
+ create mode 100644 drivers/regulator/max77802.c
+ create mode 100644 drivers/rtc/rtc-max77802.c
+ create mode 100644 include/dt-bindings/clock/maxim,max77686.h
+ create mode 100644 include/dt-bindings/clock/maxim,max77802.h
+ create mode 100644 include/linux/mfd/max77802-private.h
+ create mode 100644 include/linux/mfd/max77802.h
+
+-- 
+2.0.0.rc2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
