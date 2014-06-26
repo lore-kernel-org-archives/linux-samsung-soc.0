@@ -1,39 +1,63 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 0/3] ARM: DTS: create common dtsi for Peach pit and pi boards
-Date: Thu, 26 Jun 2014 17:49:05 +0530
-Message-ID: <1403785148-20792-1-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 1/3] ARM: DTS: use new compatible string for thermistors in
+ trats2
+Date: Thu, 26 Jun 2014 17:49:06 +0530
+Message-ID: <1403785148-20792-2-git-send-email-ch.naveen@samsung.com>
+References: <1403785148-20792-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:9700 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757431AbaFZMWb (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:49376 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757493AbaFZMWq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 08:22:31 -0400
+	Thu, 26 Jun 2014 08:22:46 -0400
+In-reply-to: <1403785148-20792-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, cpgs@samsung.com
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, cpgs@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>
 
-This patchset does the following
-1. Create a common dtsi file cros-exynos-peach.dtsi for
-   exynos5420-peach-pit.dts and exynos5800-peach-pi.dts
-2. Adds the ADC based Thermistor nodes and enables them in peach_pit.dts
-   and peach_pi.dts
-3. Adds the ADC based Thermistor nodes for Exynos5250 based Snow
-4. Corrects the vendor prefix for thermistors in exynos4412-trats2.dts
+As Murata Manufactures the NTC based thermistors. The vendor
+name in the compatibility is preposed to change to "murata"
 
-Naveen Krishna Chatradhi (3):
-  ARM: DTS: use new compatible string for thermistors in trats2
-  ARM: DTS: Add NTC thermistor nodes to Exynos5250 based Snow
-  ARM: DTS: Add common dts file for Peach PIT and PI along with ADC
-    nodes
+This patch uses the new compatibility string in exynos4412 based
+Trats2 board.
 
- arch/arm/boot/dts/cros-exynos-peach.dtsi   |   41 ++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos4412-trats2.dts    |    4 +--
- arch/arm/boot/dts/exynos5250-snow.dts      |   34 +++++++++++++++++++++++
- arch/arm/boot/dts/exynos5420-peach-pit.dts |    6 ++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts  |    6 ++++
- 5 files changed, 89 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm/boot/dts/cros-exynos-peach.dtsi
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+This patch is carried forward (tracking purpose) along with the other
+dts changes in the patch set discussed
+http://www.spinics.net/lists/linux-iio/msg13486.html
 
+This patch was posted
+http://www.spinics.net/lists/linux-samsung-soc/msg33037.html
+
+
+ arch/arm/boot/dts/exynos4412-trats2.dts |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 11967f4..d35755a 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -771,7 +771,7 @@
+ 	};
+ 
+ 	thermistor-ap@0 {
+-		compatible = "ntc,ncp15wb473";
++		compatible = "murata,ncp15wb473";
+ 		pullup-uv = <1800000>;	 /* VCC_1.8V_AP */
+ 		pullup-ohm = <100000>;	 /* 100K */
+ 		pulldown-ohm = <100000>; /* 100K */
+@@ -779,7 +779,7 @@
+ 	};
+ 
+ 	thermistor-battery@1 {
+-		compatible = "ntc,ncp15wb473";
++		compatible = "murata,ncp15wb473";
+ 		pullup-uv = <1800000>;	 /* VCC_1.8V_AP */
+ 		pullup-ohm = <100000>;	 /* 100K */
+ 		pulldown-ohm = <100000>; /* 100K */
 -- 
 1.7.9.5
