@@ -1,159 +1,126 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v4 10/14] regulator: Add driver for Maxim 77802 PMIC regulators
-Date: Thu, 26 Jun 2014 13:26:47 +0200
-Message-ID: <53AC0377.40104@collabora.co.uk>
-References: <1403723019-6212-1-git-send-email-javier.martinez@collabora.co.uk> <1403723019-6212-11-git-send-email-javier.martinez@collabora.co.uk> <1403777337.27156.19.camel@AMDC1943>
+From: Vikas Sajjan <vikas.sajjan@samsung.com>
+Subject: Re: [PATCH v5 0/5] ARM: Exynos: PMU cleanup and refactoring for using DT
+Date: Thu, 26 Jun 2014 17:00:05 +0530
+Message-ID: <CAGm_ybjparwowjYPxYSU8XPxUtETUDG2bNWZ+GDgbO_2z8Q4pA@mail.gmail.com>
+References: <1403705032-14835-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:33024 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757371AbaFZL0y (ORCPT
+Received: from mail-wi0-f181.google.com ([209.85.212.181]:56050 "EHLO
+	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755979AbaFZLaH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 07:26:54 -0400
-In-Reply-To: <1403777337.27156.19.camel@AMDC1943>
+	Thu, 26 Jun 2014 07:30:07 -0400
+In-Reply-To: <1403705032-14835-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux@arm.linux.org.uk, Tomasz Figa <t.figa@samsung.com>, sunil joshi <joshi@samsung.com>, naushad@samsung.com, Thomas Abraham <thomas.ab@samsung.com>, chow.kim@samsung.com
 
-Hello Krzysztof,
-
-Thanks a lot for your feedback.
-
-On 06/26/2014 12:08 PM, Krzysztof Kozlowski wrote:
-> On =C5=9Bro, 2014-06-25 at 21:03 +0200, Javier Martinez Canillas wrot=
-e:
->> The MAX77802 PMIC has 10 high-efficiency Buck and 32 Low-dropout
->> (LDO) regulators. This patch adds support for all these regulators
->> found on the MAX77802 PMIC and is based on a driver added by Simon
->> Glass to the Chrome OS kernel 3.8 tree.
->>=20
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.c=
-o.uk>
->> ---
->>=20
->> Changes since v3:
->>  - Set the supply_name for regulators to lookup their parent supply =
-node.
->>    Suggested by Mark Brown.
->>  - Change Exyno5 for Exynos5420/Exynos5800 in regulator driver Kconf=
-ig.
->>    Suggested by Doug Anderson.
->>=20
->> Changes since v2:
->>  - Use dev_warn() instead pr_warn(). Suggested by Mark Brown.
->>  - Add a generic function to regmap core to copy registers instead o=
-f
->>    having a driver-specific function. Suggested by Mark Brown.
->>  - Remove unnecessary probe debug log. Suggested by Mark Brown.
->>  - Set struct regulator_config dev field to MFD instead of the platf=
-orm dev.
->>    Suggested by Mark Brown.
->>  - Read the regulators operational mode from the hardware registers =
-instead
->>    of setting to normal as default on probe. Suggested by Mark Brown=
-=2E
->>  - Remove unnecessary cross-subsystem dependencies. Suggested by Lee=
- Jones.
->>=20
->> Changes since v1:
->>  - Remove unneeded check if num_regulators !=3D MAX77802_MAX_REGULAT=
-ORS.
->>  - Fix .set_suspend_mode handler comment and split regulators ops fo=
-r
->>    regulators that behave differently. Suggested by Mark Brown.
->>  - Use module_platform_driver() instead of having init/exit function=
-s.
->>    Suggested by Mark Brown.
->>  - Use the new descriptor-based GPIO interface instead of the deprec=
-ated
->>    integer based GPIO one. Suggested by Mark Brown.
->>  - Look for "regulators" child node instead of "voltage-regulators" =
-to be
->>    consistent with other PMIC drivers. Suggested by Mark Brown.
->=20
-> (...)
->=20
->> +
->> +#ifdef CONFIG_OF
->> +static int max77802_pmic_dt_parse_pdata(struct platform_device *pde=
-v,
->> +					struct max77802_platform_data *pdata)
->> +{
->> +	struct max77802_dev *iodev =3D dev_get_drvdata(pdev->dev.parent);
->> +	struct device_node *pmic_np, *regulators_np;
->> +	struct max77802_regulator_data *rdata;
->> +	struct of_regulator_match rmatch;
->> +	unsigned int i;
->> +
->> +	pmic_np =3D iodev->dev->of_node;
->> +	regulators_np =3D of_get_child_by_name(pmic_np, "regulators");
->> +	if (!regulators_np) {
->> +		dev_err(&pdev->dev, "could not find regulators sub-node\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	pdata->num_regulators =3D ARRAY_SIZE(regulators);
->> +	rdata =3D devm_kzalloc(&pdev->dev, sizeof(*rdata) *
->> +			     pdata->num_regulators, GFP_KERNEL);
->> +	if (!rdata) {
->> +		of_node_put(regulators_np);
->> +		return -ENOMEM;
->> +	}
->> +
->> +	for (i =3D 0; i < pdata->num_regulators; i++) {
->> +		rmatch.name =3D regulators[i].name;
->> +		rmatch.init_data =3D NULL;
->> +		rmatch.of_node =3D NULL;
->> +		if (of_regulator_match(&pdev->dev, regulators_np, &rmatch,
->> +				       1) !=3D 1) {
->> +			dev_warn(&pdev->dev, "No matching regulator for '%s'\n",
->> +				 rmatch.name);
->> +			continue;
->> +		}
->> +		rdata[i].initdata =3D rmatch.init_data;
->> +		rdata[i].of_node =3D rmatch.of_node;
->> +		rdata[i].id =3D regulators[i].id;
->> +	}
->=20
-> I think instead of matching one by one you can alternatively match
-> everything at once:
->=20
-> static struct of_regulator_match regulator_matches[] =3D {
-> 	{ .name =3D "LDO1", },
-> 	....
-> };
->=20
-> if (of_regulator_match(&pdev->dev, regulators_np, regulator_matches,
-> 			ARRAY_SIZE(regulator_matches)) {
->=20
-> The code would be smaller although you would have to create an array
-> with names of regulators. I'll leave it up to you since I don't have
-> preference for it.
+On Wed, Jun 25, 2014 at 7:33 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> This patch series, modifies Exynos Power Management Unit (PMU) related code
+> for converting it into a platform_driver. This is also preparation for moving
+> PMU related code out of machine folder into a either "drivers/mfd", or
+> "drivers/power" or some other suitable place so that ARM64 based SoC can
+> utilize common piece of code.
+>
+> These patches are created on top of Kukjin Kim's for-next.
+> I have tested this patches on Exynos5250 Snow board for system boot and S2R.
+>
+> This patch series depends on following two patch series:
+> [1]: mfd: syscon: Decouple syscon interface from syscon devices.
+>      https://lkml.org/lkml/2014/6/24/188
+>
+> [2]: Cleanup patches for mach-exynos.
+>      http://www.spinics.net/lists/arm-kernel/msg341474.html
+>
+> Patch v4 and discussion can be found here:
+> https://lkml.org/lkml/2014/5/10/29
+>
+> Changes Since v4:
+>  - Splitted patch series in two parts. Part 1 has code cleanup under mach-exynos
+>    and posted as separate patch [2]. Current patchset is part 2 which modified
+>    exynos pmu implementation for making it platform driver.
+>  - Removed dependency over early_syscon API.
+>  - Removed usage of regmap read/write APIs.
+>  - Modified probe function to register exynos pmu as syscon provider using
+>    Tomasz Figa's syscon patch [1].
+>  - Address various other review comments from Tomasz Figa.
+>  - Removed signed-off-by of Young-Gun Jang <yg1004.jang@samsung.com>,
+>    as this id is no more valid. Taking ownership of all his patches.
+>
+> Changes Since v3:
+>  - Optimized exynos_pmu_probe function by removing exynos_pmu_data_init
+>    as suggested by Vikas Sajjan.
+>  - Modified syscon_early_regmap_lookup_by_phandle and
+>    syscon_regmap_lookup_by_phandle function call to pass property as NULL.
+>
+> Changes Since v2:
+>  - Rebased on top of Daniel Lezcano's Exynos cpuidle refactor patches.
+>  - Removed early mapping of PMU base address from exynos.c and removed
+>    "get_exynos_pmuaddr" function. Instead of this added code in platsmp.c
+>    to get PMU base address using of_iomap as suggested by Tomasz Figa.
+>  - Converted PMU implementation into platform_driver by using static
+>    platform_device method.
+>
+> Changes Since v1:
+>  - Rebased on latest for-next of Kukjin Kim's tree.
+>  - Updated patch: Add support for mapping PMU base address via DT
+>         - Removed __initdata from declaration of "exynos_pmu_base", as it caused
+>         kernel crash as pointed out by Vikas Sajjan.
+>         - Added support for Syscon initialization and getting PMU regmap handle
+>         as suggested by Sylwester. Since current implementation of early
+>         intialization [1] has limitation that "early_syscon_init" requires
+>         DT to be unflattened and system should be able to allocate memory,
+>         we can't use regmap handles for platsmp.c file as "smp_secondary_init"
+>         will be called before DT unflattening. So I have kept both method for
+>         accessing PMU base address. platsmp.c will use ioremmaped address where
+>         as rest other files can use regmap handle.
+>  - Updated patch: Refactored code for PMU register mapping via DT
+>         - Modified to use regmap_read/write when using regmap handle.
+>  - Added patch: Add device tree based initialization support for PMU.
+>         - Convert existing PMU implementation to be a device tree based
+>          before moving it to "drivers/mfd" folder. As suggested by Bartlomiej.
+>         - Dropped making a platform_driver for PMU, as currently PMU binding
+>         has two compatibility strings as "samsung, exynosxxx-pmu", "syscon",
+>         once we enable MFD_SYSCON config option, current "syscon" driver probe
+>         gets called and PMU probe never gets called. So modified PMU
+>         initialization code to scan DT and match against supported compatiblity
+>         string in driver code, and once we get matching node use that for
+>         accessing PMU regmap handle using "syscon_early_regmap_lookup_by_phandle".
+>         If there is any better solution please suggest.
+>
+> Pankaj Dubey (5):
+>   ARM: EXYNOS: Add support for mapping PMU base address via DT
+>   ARM: EXYNOS: Refactored code for using PMU address via DT
+>   ARM: EXYNOS: Move "mach/map.h" inclusion from regs-pmu.h to platsmp.c
+>   ARM: EXYNOS: Add platform driver support for Exynos PMU
+>   ARM: EXYNOS: Move PMU specific definitions from common.h
+>
+>  arch/arm/mach-exynos/Kconfig                 |    1 +
+>  arch/arm/mach-exynos/common.h                |   18 +-
+>  arch/arm/mach-exynos/exynos-pmu.h            |   31 ++
+>  arch/arm/mach-exynos/exynos.c                |   63 +++-
+>  arch/arm/mach-exynos/include/mach/map.h      |    3 -
+>  arch/arm/mach-exynos/mcpm-exynos.c           |    5 +-
+>  arch/arm/mach-exynos/platsmp.c               |    4 +-
+>  arch/arm/mach-exynos/pm.c                    |   80 ++--
+>  arch/arm/mach-exynos/pmu.c                   |  223 ++++++++---
+>  arch/arm/mach-exynos/regs-pmu.h              |  510 +++++++++++++-------------
+>  arch/arm/plat-samsung/include/plat/map-s5p.h |    1 -
+>  11 files changed, 556 insertions(+), 383 deletions(-)
+>  create mode 100644 arch/arm/mach-exynos/exynos-pmu.h
 >
 
-It's true that the code will be smaller and even more efficient by pass=
-ing an
-array of struct of_regulator_match instad but as you said I'll have to =
-add
-yet-another-table with duplicates information that is already present i=
-n the
-struct regulator_desc regulators[] array.
+Tested S2R with the entire series on exynos5420 based Chromebook.
 
-That's why I prefer the code as it right now since I think that there a=
-re just
-too many data structures in this driver. But I don't mind to use the ot=
-her
-approach though if you think that it's better.
+Tested-by: Vikas Sajjan <vikas.sajjan@samsung.com>
 
-> Best regards,
-> Krzysztof
->=20
->=20
->=20
->=20
 
-Best regards,
-Javier
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
