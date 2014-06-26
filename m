@@ -1,108 +1,68 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
-Date: Thu, 26 Jun 2014 08:25:10 -0700
-Message-ID: <CAD=FV=Vwgdis6FzJ8MHDwfuohB1kN8Mf--2N=rxGNeAfKjJMig@mail.gmail.com>
-References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>
-	<53ABED5B.8010506@samsung.com>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 2/3] ARM: DTS: Add NTC thermistor nodes to Exynos5250
+ based Snow
+Date: Thu, 26 Jun 2014 08:46:14 -0700
+Message-ID: <CAD=FV=W=e-5LJRacxA-sSUUn8cBB5oCHJkwz=Py7iU2fdERVRA@mail.gmail.com>
+References: <1403785148-20792-1-git-send-email-ch.naveen@samsung.com>
+	<1403785148-20792-3-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f172.google.com ([209.85.220.172]:51336 "EHLO
-	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751765AbaFZPZL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 11:25:11 -0400
-Received: by mail-vc0-f172.google.com with SMTP id hy10so3681953vcb.17
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2014 08:25:10 -0700 (PDT)
-In-Reply-To: <53ABED5B.8010506@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403785148-20792-3-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Naveen Krishna <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Vikas Sajjan <vikas.sajjan@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>
 
-Tomasz,
+Naveen,
 
-On Thu, Jun 26, 2014 at 2:52 AM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Vikas, Doug,
+On Thu, Jun 26, 2014 at 5:19 AM, Naveen Krishna Chatradhi
+<ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Exynos5250 based Snow board has 4 NTC thermistors to measure
+> temperatures at various points on the board.
 >
-> On 26.06.2014 11:15, Vikas Sajjan wrote:
->> From: Doug Anderson <dianders@chromium.org>
->>
->> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
->> being reset across sleep/wake.  If we don't set it to anything then
->> the TPM will be reset.  U-Boot will detect this as invalid
->> and will reset the system on resume time. This GPIO can always be low
->> and not hurt anything.  It will get pulled back high again during a
->> normal warm reset when it will default back to an input.
->>
->> To properly preserve the TPM state across suspend/resume and to make
->> the chrome U-Boot happy, properly set the GPIO to mask the
->> reset to the TPM.
->>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
->> ---
->>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   20 ++++++++++++++++++++
->>  1 file changed, 20 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> index 7649982..8fd990a 100644
->> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->> @@ -87,6 +87,18 @@
->>               pinctrl-0 = <&usb301_vbus_en>;
->>               enable-active-high;
->>       };
->> +
->> +     /* We need GPX0_6 to be low at sleep time; just keep it low always */
->> +     mask_tpm_reset_regulator: mask-tpm-reset-regulator {
->> +     compatible = "regulator-fixed";
->> +     regulator-name = "mask-tpm-reset ";
->> +             gpio = <&gpx0 6 0>;
->> +             enable-active-low;
->> +             regulator-boot-on;
->> +             regulator-always-on;
->> +             pinctrl-names = "default";
->> +             pinctrl-0 = <&mask_tpm_reset>;
->> +     };
+> IIO based ADC becomes the parent and NTC thermistors are the childs,
+> via the HWMON interface.
 >
-> I don't think this pin is supposed to be a real regulator. If I'm right,
-> you should just add a hog for it, if you don't have a proper driver to
-> handle it.
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+> Posted earlier by Doug Anderson @ https://lkml.org/lkml/2013/3/27/453
+>
+> This patch depends on (1/4 and 2/4 patches of) patchset posted
+> http://www.spinics.net/lists/linux-iio/msg13486.html
+> Which were applied on to Guenter Roeck's tree.
+>
+> cat sysfs entries exported by hwmon for 4 thermistors
+> and verified the values on Snow.
+>
+>  arch/arm/boot/dts/exynos5250-snow.dts |   34 +++++++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
 
-Yes, I agree that it shouldn't really be a regulator, but there's not
-a whole lot of choice.  The pin needs to actually be driven low, not
-just pulled low.  Without your proposed patch (pinctrl: samsung: Allow
-pin value to be initialized using pinfunc) I don't think it's possible
-to actually drive a pin low with a hog.  I could be wrong, though.
+NAK.
 
+The first chunk of exynos5250-snow devices have the thermistors
+populated, but a huge chunk of devices also _don't_ have them
+populated.
 
-So I think our options are:
+If I remember my history properly, rev3 and earlier all had
+thermistors.  Some of rev4 might have thermistors (I never got a clear
+answer).  ...and rev5 definitely doesn't have resistors.  Aside from
+thermistors there's no good reason to differentiate rev3 and rev4
+(they just have different memory).  The upstream kernel may eventually
+need to differentiate rev4 and rev5 since they have a different audio
+codec.
 
-* Begrudgingly use the regulator this way.
+See <https://chromium-review.googlesource.com/#/c/170841/> for some
+descriptions of the different revisions of snow and how they were
+handled in the Chrome OS tree.
 
-* Re-propose your pinctrl patch and use hogs.
-
-* Implement a tiny driver that will just hold a GPIO in a certain
-state and instantiate that driver here.
-
-* Decide that really the firmware should have set this pin and that if
-someone wants suspend/resume to work then they'll just have to update
-their firmware.  Queue the debate about what firmware vs. kernel's job
-is and commence yelling about the fact that it's hard to get an
-official RW firmware update approved.  Note: I'm not quite sure why I
-didn't have the firmware init this GPIO to begin with (so that if the
-kernel didn't do anything it would just work).  Probably just me being
-stupid.
-
-
-Ah, one other thing that could justify this being its own special
-driver (though you might be able to use the regulator framework for it
-too?).  Technically you'll save a tiny amount of power in the system
-if you leave this GPIO high while the system is running and only drive
-it low when the system goes to suspend.  That's because there's a
-pretty strong external pullup on this pin.  The amount of power is
-probably not noticeable and the savings is only possible when the
-system is on (and in high power state) anyway, but...
+See <https://chromium-review.googlesource.com/#/c/186357/> for
+thermistors talk.  Patch set #1 actually split out rev3, but we then
+decided that we really didn't need to use the thermistors on any of
+the revisions so the later patchsets just totally take them out.
 
 -Doug
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
