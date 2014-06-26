@@ -1,103 +1,92 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v4 07/14] mfd: Add driver for Maxim 77802 Power Management
- IC
-Date: Thu, 26 Jun 2014 13:13:02 +0200
-Message-ID: <53AC003E.2010608@collabora.co.uk>
-References: <1403723019-6212-1-git-send-email-javier.martinez@collabora.co.uk> <1403723019-6212-8-git-send-email-javier.martinez@collabora.co.uk> <1403775093.27156.13.camel@AMDC1943>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Vikas Sajjan <vikas.sajjan@samsung.com>
+Subject: [PATCH v5 0/3] Adds PMU and S2R support for exynos5420
+Date: Thu, 26 Jun 2014 16:42:12 +0530
+Message-ID: <1403781135-6538-1-git-send-email-vikas.sajjan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:33010 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754661AbaFZLNM (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:12280 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755947AbaFZLOi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 07:13:12 -0400
-In-Reply-To: <1403775093.27156.13.camel@AMDC1943>
+	Thu, 26 Jun 2014 07:14:38 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N7R0014RWKBIZ70@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 26 Jun 2014 20:14:35 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, Vikas Sajjan <vikas.sajjan@samsung.com>
 
-Hello Krzysztof,
+Rebased on
+1] Kukjin Kim's tree, for-next branch
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+2] Pankaj Dubey's v5 PMU patchset
+http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg671625.html
 
-Thanks a lot for your feedback.
+changes since v4:
+	- Adressed comments from Tomasz figa and rebased on Pankaj Dubey's v5 PMU patchset
 
-On 06/26/2014 11:31 AM, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Just a few nit-picks below but overall everything looks fine:
-> 
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> 
+changes since v3:
+Addressed the following comments from Pankaj Dubey, Bartlomiej Zolnierkiewicz,
+Tomasz Figa and Alim Akhtar:
+        - Moved EXYNOS5420_USE_STANDBY_WFI_ALL define to regs-pmu.h.
+        - Merged exynos5420_set_core_flag function into powerdown_conf.
+        - Removed XXTI_DURATION3 register setting.
+        - Updated the commit message and ordered the clock registers in clock
+          patch.
+        - Removed the code for SYS_DISP1_BLK_CFG handling.
+        - Modified SoC checks to A9 specific checks in PM code.
+        - Updated some comments in the code and added macros for register offsets.
+        - Fixed code which was changing pad retention code for older SoCs.
 
->> +
->> +static int max77802_i2c_probe(struct i2c_client *i2c,
->> +			      const struct i2c_device_id *id)
->> +{
->> +	struct max77802_dev *max77802 = NULL;
->> +	struct max77802_platform_data *pdata = dev_get_platdata(&i2c->dev);
->> +	unsigned int data;
->> +	int ret = 0;
->> +
->> +	if (i2c->dev.of_node)
->> +		pdata = max77802_i2c_parse_dt_pdata(&i2c->dev);
->> +
->> +	if (!pdata) {
->> +		dev_err(&i2c->dev, "No platform data found.\n");
->> +		return -EIO;
->> +	}
->> +
->> +	max77802 = devm_kzalloc(&i2c->dev, sizeof(struct max77802_dev),
->> +				GFP_KERNEL);
->> +	if (max77802 == NULL)
-> 
-> It is inconsistent. Before you used "(!pd)" and "(!pdata)" so maybe
-> stick to one format?
->
+changes since v2:
+        - Addressed comments from Tomasz figa
+        - rebased on Pankaj's V3 patchset https://lkml.org/lkml/2014/5/2/612
+        - dropped patch "ARM: dts: Add node for GPIO keys on SMDK5420",
+          will be sent separately.
 
-Right, I'll change to "(!max77802)" as well to be consistent.
+changes since v1:
+        - Addressed comments from Tomasz figa.
+        - restructured/consolidated as per Tomasz figa's PM consolidations for exynos
 
->> +
->> +#ifdef CONFIG_PM_SLEEP
->> +static int max77802_suspend(struct device *dev)
->> +{
->> +	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
->> +	struct max77802_dev *max77802 = i2c_get_clientdata(i2c);
->> +
->> +	if (device_may_wakeup(dev))
->> +		enable_irq_wake(max77802->irq);
->> +
->> +	disable_irq(max77802->irq);
-> 
-> Can you add short comment why this is needed? I know why but just for
-> future generations which will wonder: "why do we need to disable the IRQ
-> while suspending?" :). Especially that this is rather a workaround for
-> issue in other driver (I2C bus).
->
+Tested on Kukjin Kim's tree, for-next branch +
+	1] http://www.spinics.net/lists/arm-kernel/msg341884.html
+	2] http://www.spinics.net/lists/linux-samsung-soc/msg32923.html
+	3] http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg33067.html
+on Exynos5420 based chromebook (peach-pit board).
 
-Good idea, I'll add a comment here on next version so code archaeologists can
-figure out what what's going on here.
+NOTE: After system resume we are enabling boot cluster CCI in exynos_cpu_resume
+in sleep.S.
 
->> +
->> +#define MAX77802_IRQSRC_PMIC            (0)
-> 
-> Shouldn't it be BIT(0) or BIT(1)? It looks odd.
-> 
->> +#define MAX77802_IRQSRC_RTC	        BIT(0)
-> 
-> Anyway, are these defines used anywhere? Seems not. 
-> 
+Below procedures were followed to test S2R:
+Procedure A:
+	1. make multi_v7_defconfig 
+	2  enable MCPM for 5420
+	3. enable S3C RTC
+	4. pass "no_console_suspend" in bootargs
+	5. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
+Procedure B:
+	1. make exynos_defconfig 
+	2  enable MCPM for 5420
+	3  enable CONFIG_PL330_DMA
+	4. enable CONFIG_PM_RUNTIME
+	5. pass "no_console_suspend" in bootargs
+	6. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
 
-Yes, these defines were used in the max77802-irq.c so is a left over from the
-regmap IRQ chip refactoring. I'll remove these and also the ones from max77686
-driver.
+Abhilash Kesavan (2):
+  arm: exynos5: Add PMU support for 5420
+  arm: exynos5: Add Suspend-to-RAM support for 5420
 
-> Best regards,
-> Krzysztof
-> 
-> 
+Vikas Sajjan (1):
+  clk: samsung: exynos5420: Setup clocks before system suspend
 
-Best regards
-Javier
+ arch/arm/mach-exynos/pm.c            |  150 ++++++++++++++++--
+ arch/arm/mach-exynos/pmu.c           |  290 ++++++++++++++++++++++++++++++++++
+ arch/arm/mach-exynos/regs-pmu.h      |  229 +++++++++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5420.c |   29 ++++
+ 4 files changed, 682 insertions(+), 16 deletions(-)
+
+-- 
+1.7.9.5
