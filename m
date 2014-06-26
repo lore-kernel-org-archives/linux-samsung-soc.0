@@ -1,38 +1,39 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH RESEND 2/2] ARM: exynos_defconfig: Enable clock and RTC driver
- for S2M and S5M
-Date: Thu, 26 Jun 2014 14:15:44 +0200
-Message-ID: <1403784944-12890-2-git-send-email-k.kozlowski@samsung.com>
-References: <1403784944-12890-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1403784944-12890-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH 0/3] ARM: DTS: create common dtsi for Peach pit and pi boards
+Date: Thu, 26 Jun 2014 17:49:05 +0530
+Message-ID: <1403785148-20792-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:9700 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757431AbaFZMWb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Jun 2014 08:22:31 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, cpgs@samsung.com
 
-The config enables already Samsung's PMIC-s MFD and regulator (S2MPS11
-and S5M8767) drivers. Enable also drivers for the rest of these PMIC-s
-features: clock and RTC.
+This patchset does the following
+1. Create a common dtsi file cros-exynos-peach.dtsi for
+   exynos5420-peach-pit.dts and exynos5800-peach-pi.dts
+2. Adds the ADC based Thermistor nodes and enables them in peach_pit.dts
+   and peach_pi.dts
+3. Adds the ADC based Thermistor nodes for Exynos5250 based Snow
+4. Corrects the vendor prefix for thermistors in exynos4412-trats2.dts
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/configs/exynos_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Naveen Krishna Chatradhi (3):
+  ARM: DTS: use new compatible string for thermistors in trats2
+  ARM: DTS: Add NTC thermistor nodes to Exynos5250 based Snow
+  ARM: DTS: Add common dts file for Peach PIT and PI along with ADC
+    nodes
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index e07a227ec0db..f69b86b650fa 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -109,7 +109,9 @@ CONFIG_MMC_DW_IDMAC=y
- CONFIG_MMC_DW_EXYNOS=y
- CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_S3C=y
-+CONFIG_RTC_DRV_S5M=y
- CONFIG_COMMON_CLK_MAX77686=y
-+CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_EXT2_FS=y
- CONFIG_EXT3_FS=y
- CONFIG_EXT4_FS=y
+ arch/arm/boot/dts/cros-exynos-peach.dtsi   |   41 ++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4412-trats2.dts    |    4 +--
+ arch/arm/boot/dts/exynos5250-snow.dts      |   34 +++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts |    6 ++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  |    6 ++++
+ 5 files changed, 89 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm/boot/dts/cros-exynos-peach.dtsi
+
 -- 
-1.9.1
+1.7.9.5
