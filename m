@@ -1,135 +1,85 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v5 08/14] mfd: max77802: Add DT binding documentation
-Date: Thu, 26 Jun 2014 20:15:40 +0200
-Message-ID: <1403806546-31122-9-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v5 04/14] clk: max77686: Improve Maxim 77686 PMIC clocks
+ binding
+Date: Thu, 26 Jun 2014 20:15:36 +0200
+Message-ID: <1403806546-31122-5-git-send-email-javier.martinez@collabora.co.uk>
 References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, Daniel Stone <daniels@collabora.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add Device Tree binding documentation for Maxim 77802 PMIC.
+Like most clock drivers, the Maxim 77686 PMIC clock binding
+follows the convention that the "#clock-cells" property is
+used to specify the number of cells in a clock provider.
+
+But the binding document is not clear enough that it shall
+be set to 1 since the PMIC support multiple clocks outputs.
+
+Also, explain that the clocks identifiers are defined in a
+header file that can be included by Device Tree source with
+client nodes to avoid using magic numbers.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Doug Anderson <dianders@chromium.org>
 ---
 
 Changes since v4: None
 
-Changes since v3: None
+Changes since v3:
+ - Don't change clock-names property to make clear that it's
+   the consumer clock name and should not match the producer clock.
+   Suggested by Doug Anderson.
 
-Changes since v2:
- - Explain better the Dynamic Voltage Scaling (DVS) support in some Buck
-   regulators and the max77802,pmic-buck-{dvs,selb}-gpios properties.
-   Suggested by Mark Brown.
+ Documentation/devicetree/bindings/clock/maxim,max77686.txt | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
- Documentation/devicetree/bindings/mfd/max77802.txt | 97 ++++++++++++++++++++++
- 1 file changed, 97 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
-
-diff --git a/Documentation/devicetree/bindings/mfd/max77802.txt b/Documentation/devicetree/bindings/mfd/max77802.txt
-new file mode 100644
-index 0000000..f3b67c5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/max77802.txt
-@@ -0,0 +1,97 @@
-+Maxim MAX77802 multi-function device
+diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+index 96ce71b..48e00bb 100644
+--- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
++++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
+@@ -9,13 +9,18 @@ The MAX77686 contains three 32.768khz clock outputs that can be controlled
+ Following properties should be presend in main device node of the MFD chip.
+ 
+ Required properties:
+-- #clock-cells: simple one-cell clock specifier format is used, where the
+-  only cell is used as an index of the clock inside the provider. Following
+-  indices are allowed:
 +
-+MAX77802 is a Mulitifunction device with PMIC, RTC and Charger on chip. It is
-+interfaced to host controller using i2c interface. PMIC, Charger and RTC
-+submodules are addressed using same i2c slave address.
++- #clock-cells: from common clock binding; shall be set to 1.
 +
-+Buck regulators 1, 2, 3, 4 and 6 include Dynamic Voltage Scaling (DVS) that
-+allows each output voltage to change dynamically. Each Buck output voltage
-+is selected using a set of external inputs: DVS1-3 and SELB1, 2, 3 and 6.
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume. Following indices are allowed:
+     - 0: 32khz_ap clock,
+     - 1: 32khz_cp clock,
+     - 2: 32khz_pmic clock.
+ 
++Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77686.h
++header and can be used in device tree sources.
 +
-+There are 8 DVS registers that can be used to configure the output voltage
-+for each Buck regulator and which one is active is controled by DVSx lines.
-+
-+SELBx lines are used to control if individual Buck lines are ON or OFF.
-+
-+This document describes the binding for mfd device and PMIC submodule.
-+
-+Binding for the built-in 32k clock generator block is defined separately
-+in bindings/clk/maxim,max77802.txt file.
-+
-+Required properties:
-+- compatible : Must be "maxim,max77802";
-+- reg : Specifies the i2c slave address of PMIC block.
-+- interrupts : This i2c device has an IRQ line connected to the main SoC.
-+- interrupt-parent : The parent interrupt controller.
-+
-+Optional properties:
-+- max77802,pmic-buck-default-dvs-idx: We'll always write this DVS index in the
-+  PMIC for Bucks with DVS.
-+  NOTE: at the moment these bindings don't include enough details for actual
-+  GPIO-DVS--this just lets you choose which single slot to use.
-+
-+- max77802,pmic-buck-dvs-gpios: A GPIO array where each GPIO is connected to a
-+  DVS line. We'll try to set these GPIOs to match pmic-buck-default-dvs-idx at
-+  probe time if they are defined. If some or all of these GPIOs are not defined
-+  it's assumed that the board has any missing GPIOs hardwired to match
-+  pmic-buck-default-dvs-idx.
-+
-+- max77802,pmic-buck-selb-gpios: A GPIO array where each GPIO is connected to a
-+  SELBx line. Should be five values: 1, 2, 3, 4, 6. It is strongly suggested to
-+  include these GPIOs if there's any chance that changing DVS GPIOs one line at
-+  a time might glitch your DVS values.
-+
-+Optional node:
-+- regulators : The regulators of max77802 have to be instantiated
-+  under subnode named "regulators" using the following format.
-+
-+	regulator_name {
-+		standard regulator constraints....
-+	};
-+	refer Documentation/devicetree/bindings/regulator/regulator.txt
-+
-+  The regulator node name should be initialized with a string
-+to get matched with their hardware counterparts as follow:
-+
-+	-LDOn 	:	for LDOs, where n can lie in range 1 to 35.
-+			example: LDO1, LDO2, LDO35.
-+	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 10.
-+			example: BUCK1, BUCK5, BUCK10.
-+Example:
-+
-+	max77802@09 {
-+		compatible = "maxim,max77802";
-+		interrupt-parent = <&wakeup_eint>;
-+		interrupts = <26 0>;
-+		reg = <0x09>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		max77802,pmic-buck-default-dvs-idx = <1>;
-+		max77802,pmic-buck-dvs-gpios = <&gpy7 6 0>,
-+					       <&gpj4 2 0>,
-+					       <&gpj4 3 0>;
-+		max77802,pmic-buck-selb-gpios = <&gph0 2 0>,
-+						<&gph0 3 0>,
-+						<&gph0 4 0>,
-+						<&gph0 5 0>,
-+						<&gph0 6 0>;
-+
-+		regulators {
-+			ldo11_reg: LDO11 {
-+				regulator-compatible = "LDO11";
-+				regulator-name = "vdd_ldo11";
-+				regulator-min-microvolt = <1900000>;
-+				regulator-max-microvolt = <1900000>;
-+				regulator-always-on;
-+			};
-+
-+			buck1_reg {
-+				regulator-compatible = "BUCK1";
-+				regulator-name = "vdd_mif";
-+				regulator-min-microvolt = <950000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+	};
+ Example: Node of the MFD chip
+ 
+ 	max77686: max77686@09 {
+@@ -34,5 +39,5 @@ Example: Clock consumer node
+ 		compatible = "bar,foo";
+ 		/* ... */
+ 		clock-names = "my-clock";
+-		clocks = <&max77686 2>;
++		clocks = <&max77686 MAX77686_CLK_PMIC>;
+ 	};
 -- 
 2.0.0.rc2
