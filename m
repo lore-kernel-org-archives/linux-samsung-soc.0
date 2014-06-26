@@ -1,88 +1,108 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 0/3] ARM: DTS: create common dtsi for Peach pit and pi boards
-Date: Thu, 26 Jun 2014 17:21:16 +0200
-Message-ID: <CABxcv=nTfkRkpz_zZuxYHznjDuNgpiKO+FD4MnHi2C_2e32eqA@mail.gmail.com>
-References: <1403785148-20792-1-git-send-email-ch.naveen@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
+Date: Thu, 26 Jun 2014 08:25:10 -0700
+Message-ID: <CAD=FV=Vwgdis6FzJ8MHDwfuohB1kN8Mf--2N=rxGNeAfKjJMig@mail.gmail.com>
+References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>
+	<53ABED5B.8010506@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f180.google.com ([74.125.82.180]:63744 "EHLO
-	mail-we0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754076AbaFZPVV (ORCPT
+Received: from mail-vc0-f172.google.com ([209.85.220.172]:51336 "EHLO
+	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751765AbaFZPZL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 11:21:21 -0400
-Received: by mail-we0-f180.google.com with SMTP id x48so3773079wes.39
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2014 08:21:17 -0700 (PDT)
-In-Reply-To: <1403785148-20792-1-git-send-email-ch.naveen@samsung.com>
+	Thu, 26 Jun 2014 11:25:11 -0400
+Received: by mail-vc0-f172.google.com with SMTP id hy10so3681953vcb.17
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2014 08:25:10 -0700 (PDT)
+In-Reply-To: <53ABED5B.8010506@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-iio <linux-iio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, "cpgs ." <cpgs@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Vikas Sajjan <vikas.sajjan@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>
 
-Hello Naveen,
+Tomasz,
 
-On Thu, Jun 26, 2014 at 2:19 PM, Naveen Krishna Chatradhi
-<ch.naveen@samsung.com> wrote:
-> This patchset does the following
-> 1. Create a common dtsi file cros-exynos-peach.dtsi for
->    exynos5420-peach-pit.dts and exynos5800-peach-pi.dts
-
-There was some previous discussion in this list about what's the best
-approach to handle common DTS chunks, please take a look to
-http://patchwork.ozlabs.org/patch/362633/.
-
-In summary, there is a common .dtsi file for Daisy based boards
-(arch/arm/boot/dts/exynos5250-cros-common.dtsi) but it seems it turned
-out to do more harm than good since having a single .dtsi for all the
-common DTS chunks is not quite flexible. As more boards gets
-introduced you have to start moving stuff from the common .dtsi file
-to the board .dts.
-
-The same was tried to do for OMAP2+ boards and it turned out that you
-need to either a) create a hierarchy of .dtsi files to model all the
-different board combinations that have similar fragments or b) split
-out isolated DTS fragments on an .dtsi and include a set of this
-fragments.
-
- For an example of a) you can take a look to
-arch/arm/boot/dts/omap3-overo* and for b) to
-arch/arm/boot/dts/omap-gpmc-smsc9*.dtsi.
-
-For a Peach Pit/Pi specific example of b) you can look at the recent
-arch/arm/boot/dts/cros-ec-keyboard.dtsi file that Doug added for Peach
-Pit/Pi keyboard.
-
-Personally I think that b) is a more flexible and reusable approach.
-So, maybe instead of creating a cros-exynos-peach.dts to contain all
-the common DT nodes you can add a cros-ec-thermistor.dsti file that
-only includes the ADC based Thermistor nodes?
-
-Thanks a lot and best regards,
-Javier
-
-> 2. Adds the ADC based Thermistor nodes and enables them in peach_pit.dts
->    and peach_pi.dts
-> 3. Adds the ADC based Thermistor nodes for Exynos5250 based Snow
-> 4. Corrects the vendor prefix for thermistors in exynos4412-trats2.dts
+On Thu, Jun 26, 2014 at 2:52 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Vikas, Doug,
 >
-> Naveen Krishna Chatradhi (3):
->   ARM: DTS: use new compatible string for thermistors in trats2
->   ARM: DTS: Add NTC thermistor nodes to Exynos5250 based Snow
->   ARM: DTS: Add common dts file for Peach PIT and PI along with ADC
->     nodes
+> On 26.06.2014 11:15, Vikas Sajjan wrote:
+>> From: Doug Anderson <dianders@chromium.org>
+>>
+>> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
+>> being reset across sleep/wake.  If we don't set it to anything then
+>> the TPM will be reset.  U-Boot will detect this as invalid
+>> and will reset the system on resume time. This GPIO can always be low
+>> and not hurt anything.  It will get pulled back high again during a
+>> normal warm reset when it will default back to an input.
+>>
+>> To properly preserve the TPM state across suspend/resume and to make
+>> the chrome U-Boot happy, properly set the GPIO to mask the
+>> reset to the TPM.
+>>
+>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   20 ++++++++++++++++++++
+>>  1 file changed, 20 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> index 7649982..8fd990a 100644
+>> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>> @@ -87,6 +87,18 @@
+>>               pinctrl-0 = <&usb301_vbus_en>;
+>>               enable-active-high;
+>>       };
+>> +
+>> +     /* We need GPX0_6 to be low at sleep time; just keep it low always */
+>> +     mask_tpm_reset_regulator: mask-tpm-reset-regulator {
+>> +     compatible = "regulator-fixed";
+>> +     regulator-name = "mask-tpm-reset ";
+>> +             gpio = <&gpx0 6 0>;
+>> +             enable-active-low;
+>> +             regulator-boot-on;
+>> +             regulator-always-on;
+>> +             pinctrl-names = "default";
+>> +             pinctrl-0 = <&mask_tpm_reset>;
+>> +     };
 >
->  arch/arm/boot/dts/cros-exynos-peach.dtsi   |   41 ++++++++++++++++++++++++++++
->  arch/arm/boot/dts/exynos4412-trats2.dts    |    4 +--
->  arch/arm/boot/dts/exynos5250-snow.dts      |   34 +++++++++++++++++++++++
->  arch/arm/boot/dts/exynos5420-peach-pit.dts |    6 ++++
->  arch/arm/boot/dts/exynos5800-peach-pi.dts  |    6 ++++
->  5 files changed, 89 insertions(+), 2 deletions(-)
->  create mode 100644 arch/arm/boot/dts/cros-exynos-peach.dtsi
->
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> I don't think this pin is supposed to be a real regulator. If I'm right,
+> you should just add a hog for it, if you don't have a proper driver to
+> handle it.
+
+Yes, I agree that it shouldn't really be a regulator, but there's not
+a whole lot of choice.  The pin needs to actually be driven low, not
+just pulled low.  Without your proposed patch (pinctrl: samsung: Allow
+pin value to be initialized using pinfunc) I don't think it's possible
+to actually drive a pin low with a hog.  I could be wrong, though.
+
+
+So I think our options are:
+
+* Begrudgingly use the regulator this way.
+
+* Re-propose your pinctrl patch and use hogs.
+
+* Implement a tiny driver that will just hold a GPIO in a certain
+state and instantiate that driver here.
+
+* Decide that really the firmware should have set this pin and that if
+someone wants suspend/resume to work then they'll just have to update
+their firmware.  Queue the debate about what firmware vs. kernel's job
+is and commence yelling about the fact that it's hard to get an
+official RW firmware update approved.  Note: I'm not quite sure why I
+didn't have the firmware init this GPIO to begin with (so that if the
+kernel didn't do anything it would just work).  Probably just me being
+stupid.
+
+
+Ah, one other thing that could justify this being its own special
+driver (though you might be able to use the regulator framework for it
+too?).  Technically you'll save a tiny amount of power in the system
+if you leave this GPIO high while the system is running and only drive
+it low when the system goes to suspend.  That's because there's a
+pretty strong external pullup on this pin.  The amount of power is
+probably not noticeable and the savings is only possible when the
+system is on (and in high power state) anyway, but...
+
+-Doug
