@@ -1,32 +1,44 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH 1/2] ARM: firmware: Introduce suspend and resume operations
-Date: Thu, 26 Jun 2014 11:33:30 +0900
-Message-ID: <53AB867A.901@nvidia.com>
-References: <1403713114-18923-1-git-send-email-t.figa@samsung.com> <1403713114-18923-2-git-send-email-t.figa@samsung.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH 0/3] MCPM: clarify boot CPU situation wrt CCI
+Date: Wed, 25 Jun 2014 19:41:03 -0700
+Message-ID: <CAGa+x853xBjmb5Pe37wM9Q5jRVJExn_4xmM+bXyFspnzKb+9tw@mail.gmail.com>
+References: <1403583071-5650-1-git-send-email-nicolas.pitre@linaro.org>
+	<7hd2dymiaw.fsf@paris.lan>
+	<CAD=FV=WHU0TDkjXVCCw6odBFSF7uvv3joCP+oW4cBS_tsSgF+Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13993 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757262AbaFZCdf (ORCPT
+Received: from mail-qc0-f172.google.com ([209.85.216.172]:58018 "EHLO
+	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754177AbaFZClE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 22:33:35 -0400
-In-Reply-To: <1403713114-18923-2-git-send-email-t.figa@samsung.com>
+	Wed, 25 Jun 2014 22:41:04 -0400
+Received: by mail-qc0-f172.google.com with SMTP id o8so2609682qcw.31
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2014 19:41:03 -0700 (PDT)
+In-Reply-To: <CAD=FV=WHU0TDkjXVCCw6odBFSF7uvv3joCP+oW4cBS_tsSgF+Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Warren <swarren@nvidia.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Doug Anderson <dianders@google.com>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, Olof Johansson <olof@lixom.net>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Tushar Behera <tushar.b@samsung.com>
 
-On 06/26/2014 01:18 AM, Tomasz Figa wrote:
-> This patch extends the firmware_ops structure with two new callbacks:
-> .suspend() and .resume(). The former is intended to ask the firmware to
-> save all its volatile state and suspend the system, without returning
-> back to the kernel in between. The latter is to be called early by
-> very low level platform suspend code after waking up to restore low
-> level hardware state, which can't be restored in non-secure mode.
+On Tue, Jun 24, 2014 at 3:57 PM, Doug Anderson <dianders@google.com> wrote:
+> Kevin,
 >
-> While at it, outdated version of the structure is removed from the
-> documentation and replaced with a reference to the header file.
+> On Tue, Jun 24, 2014 at 8:35 AM, Kevin Hilman <khilman@linaro.org> wrote:
+>> - Leave mau_epll enabled
+>>   http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/262259.html
+>
+> Can you drop your mau_epll one and instead pick just
+> <https://patchwork.kernel.org/patch/4333581/>?
+>
+> I noticed that Tushar has only been pushing for that patch to be
+> applied and I'm going to guess that the "leave mau_epll enabled" isn't
+> needed.  I just tested myself and confirmed that things are happy.
 
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+I replied on the other thread too, but just to be thorough...
+
+Picking the above patch alone, I still get the boot hang.  Adding
+'clk_ignore_unused' to the command line gets things booting again,
+which suggest there's still a missing piece of the puzzle.
+
+Kevin
