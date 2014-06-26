@@ -1,82 +1,106 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 0/3] drm/exynos: add framework to control DISP1BLK setting
-Date: Thu, 26 Jun 2014 11:26:55 +0530
-Message-ID: <CAEC9eQOWubNjbiiKc5iQq3BzS3rEkDxykmhQpBj3ydFvstKgXA@mail.gmail.com>
-References: <1403705752-24469-1-git-send-email-ajaykumar.rs@samsung.com>
-	<CAOt82ecshdX9ALWYWT4u8QcF+NqJTEfUb6pka0D-9-btHJGM1Q@mail.gmail.com>
-	<CAEC9eQM-JDtQc_wN2Wyqw+ihFRixaOhc5wTq3jztckUwZMREHg@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 3/5] ARM: dts: exynos4412-odroidx: add support for USB
+ (phy, host, device)
+Date: Thu, 26 Jun 2014 08:07:00 +0200
+Message-ID: <53ABB884.8040209@samsung.com>
+References: <1403702773-9141-1-git-send-email-m.szyprowski@samsung.com>
+ <1403702773-9141-4-git-send-email-m.szyprowski@samsung.com>
+ <CAFp+6iHScs_wycE9XcDN46xg_N8hYf_BtJKNdtUVwg36sfZqMA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f178.google.com ([209.85.128.178]:60834 "EHLO
-	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752176AbaFZF44 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:50134 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752109AbaFZGHE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 01:56:56 -0400
-Received: by mail-ve0-f178.google.com with SMTP id oy12so3146432veb.37
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2014 22:56:55 -0700 (PDT)
-In-Reply-To: <CAEC9eQM-JDtQc_wN2Wyqw+ihFRixaOhc5wTq3jztckUwZMREHg@mail.gmail.com>
+	Thu, 26 Jun 2014 02:07:04 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N7R002IOIBK5I00@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 26 Jun 2014 07:06:56 +0100 (BST)
+In-reply-to: <CAFp+6iHScs_wycE9XcDN46xg_N8hYf_BtJKNdtUVwg36sfZqMA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: YoungJun Cho <yj44.cho@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Sean Paul <seanpaul@google.com>, vikas.sajjan@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, InKi Dae <inki.dae@samsung.com>
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>
 
-Hi YoungJun,
+Hello,
 
-On Thu, Jun 26, 2014 at 11:23 AM, Ajay kumar <ajaynumb@gmail.com> wrote:
-> On Thu, Jun 26, 2014 at 5:24 AM, YoungJun Cho <yj44.cho@gmail.com> wrote:
->> Hi Ajay,
+On 2014-06-25 15:58, Vivek Gautam wrote:
+> On Wed, Jun 25, 2014 at 6:56 PM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> From: Kamil Debski <k.debski@samsung.com>
 >>
->> I'm sorry for say that the patchset for exynos drm supporting I80 i/f
->> includes yours.
+>> This patch adds basic support for USB modules (host and device) on
+>> OdroidX board.
 >>
->> The patchset is still in reviewing and I'm preparing v5.
+>> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+>> [removed incorrect port@2 node]
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   arch/arm/boot/dts/exynos4412-odroidx.dts | 27 +++++++++++++++++++++++++++
+>>   1 file changed, 27 insertions(+)
 >>
->> Please check this:
->> http://www.spinics.net/lists/dri-devel/msg60943.html
+>> diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
+>> index fda9ac23dd55..4c853fbf7202 100644
+>> --- a/arch/arm/boot/dts/exynos4412-odroidx.dts
+>> +++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
+>> @@ -148,6 +148,16 @@
+>>                  pinctrl-names = "default";
+>>                  status = "okay";
 >>
->> Thank you.
->> Best regards YJ
-Thanks for the link. I saw your code. This functionality is already
-included in the patch "drm/exynos: fimd: support LCD I80 interface".
-I hope your patchset gets merged soon!
+>> +               usb3503@08 {
+>> +                       compatible = "smsc,usb3503";
+>> +                       reg = <0x08>;
+>> +
+>> +                       intn-gpios = <&gpx3 0 0>;
+>> +                       connect-gpios = <&gpx3 4 0>;
+>> +                       reset-gpios = <&gpx3 5 0>;
+>> +                       initial-mode = <1>;
+>> +               };
+>> +
+>>                  max77686: pmic@09 {
+>>                          compatible = "maxim,max77686";
+>>                          reg = <0x09>;
+>> @@ -338,4 +348,21 @@
+>>                          };
+>>                  };
+>>          };
+>> +
+>> +       exynos-usbphy@125B0000 {
+>> +               status = "okay";
+>> +       };
+>> +
+>> +       hsotg@12480000 {
+>> +               status = "okay";
+>> +               vusb_d-supply = <&ldo15_reg>;
+>> +               vusb_a-supply = <&ldo12_reg>;
+> Can you please point me to the documentation for these two properties
+> in the DT bindings ?
 
-Thanks and regards,
-Ajay
->> On Jun 25, 2014 11:19 PM, "Ajay Kumar" <ajaykumar.rs@samsung.com> wrote:
->>>
->>> This series is based on exynos-drm-next branch of Inki Dae's tree at:
->>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
->>>
->>> Exynos SOC have a DISP1BLK register where we can select
->>> the path for FIMD output. We can redirect the video data
->>> directly to DP/MIPI interface, or we can pass it via
->>> image enhancement chips.
->>>
->>> Since we don't use any image enhancement chips in exynos-drm,
->>> we need to set FIMD BYPASS in DISP1BLK.
->>>
->>> This patchset is tested for basic display + DPMS + S2R on snow and
->>> peach_pit.
->>>
->>> Ajay Kumar (3):
->>>   [PATCH 1/3] drm/exynos: Control DISP1BLK system register in FIMD
->>>   [PATCH 2/3] ARM: dts: exynos5420: Add sysreg phandle to FIMD node
->>>   [PATCH 3/3] ARM: dts: exynos5250: Add sysreg phandle to FIMD node
->>>
->>>  .../devicetree/bindings/video/samsung-fimd.txt     |    2 ++
->>>  arch/arm/boot/dts/exynos5250.dtsi                  |    1 +
->>>  arch/arm/boot/dts/exynos5420.dtsi                  |    1 +
->>>  drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   19
->>> +++++++++++++++++++
->>>  include/video/samsung_fimd.h                       |    5 +++++
->>>  5 files changed, 28 insertions(+)
->>>
->>> --
->>> 1.7.9.5
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe
->>> linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Documentation/devicetree/bindings/usb/samsung-hsotg.txt:
+- vusb_d-supply: phandle to voltage regulator of digital section,
+- vusb_a-supply: phandle to voltage regulator of analog section.
+
+> Which tree i should grep to find that ?
+
+Support for vusb_d and vusb_a regulators is already in s3c-hsotg driver
+(now a part of dwc2/gadget driver) since v3.5.
+
+> We have similar supplies for ehci/ohci and other host controllers too,
+> so just wondering
+> if we can use similar nomenclature for hsotg as well as host.
+>
+> I have posted driver side patches for host (with DT documentation) a
+> while back :
+> https://lkml.org/lkml/2014/6/25/363
+
+Ok, I will take a look into your patches, but I'm not sure if it makes
+sense to change the s3c-hsotg bindings now.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
