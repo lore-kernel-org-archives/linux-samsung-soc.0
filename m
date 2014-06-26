@@ -1,52 +1,45 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 2/2 v2] i2c: exynos5: remove extra line and fix an assignment
-Date: Thu, 26 Jun 2014 10:44:58 +0530
-Message-ID: <1403759698-15624-2-git-send-email-ch.naveen@samsung.com>
-References: <1403759698-15624-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1403759698-15624-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, sjg@chromium.org, linux-kernel@vger.kernel.org, wsa@the-dreams.de, cpgs@samsung.com, broonie@kernel.org
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH] ARM: dts: add hdmi regulators for exynos5800 based peach-pi
+ board
+Date: Thu, 26 Jun 2014 10:56:22 +0530
+Message-ID: <1403760382-12533-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:55545 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752799AbaFZF1M (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Jun 2014 01:27:12 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-This patch does the following in exynos5_i2c_message_start() function
-1. Fixes an assignment
-   As, "i2c_auto_conf" is initialized to '0' at the beginning of the
-   function and HSI2C_READ_WRITE is defined as (1u << 16)
+Adding regulators for HDMI for exynos5800 based Peach-pi board.
 
-   Using "|=" for the first assignment is more readable.
-
-2. Removes an extra line 
-
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 ---
-Changes since v1:
-Edited commit message for clarity
+Based on Kukjin's for-next branch.
+Depends on:
+1) PMIC addition to Peach-pi: http://www.spinics.net/lists/linux-samsung-soc/msg33166.html
+2) tps65090 addition to Peach-pi: http://www.spinics.net/lists/linux-samsung-soc/msg32464.html
 
- drivers/i2c/busses/i2c-exynos5.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos5800-peach-pi.dts |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 0d1a7bc..4c2e6f3 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -525,7 +525,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
- 	if (i2c->msg->flags & I2C_M_RD) {
- 		i2c_ctl |= HSI2C_RXCHON;
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 2c2c137..30d1a26 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -127,6 +127,10 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&hdmi_hpd_irq>;
+ 	ddc = <&i2c_2>;
++	hdmi-en-supply = <&tps65090_fet7>;
++	vdd-supply = <&ldo8_reg>;
++	vdd_osc-supply = <&ldo10_reg>;
++	vdd_pll-supply = <&ldo8_reg>;
+ };
  
--		i2c_auto_conf = HSI2C_READ_WRITE;
-+		i2c_auto_conf |= HSI2C_READ_WRITE;
- 
- 		trig_lvl = (i2c->msg->len > i2c->variant->fifo_depth) ?
- 			(i2c->variant->fifo_depth * 3 / 4) : i2c->msg->len;
-@@ -548,7 +548,6 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
- 	writel(fifo_ctl, i2c->regs + HSI2C_FIFO_CTL);
- 	writel(i2c_ctl, i2c->regs + HSI2C_CTL);
- 
--
- 	/*
- 	 * Enable interrupts before starting the transfer so that we don't
- 	 * miss any INT_I2C interrupts.
+ &hsi2c_7 {
 -- 
 1.7.9.5
