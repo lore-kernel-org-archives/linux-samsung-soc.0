@@ -1,277 +1,251 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: [PATCH v5 2/3] arm: exynos5: Add Suspend-to-RAM support for 5420
-Date: Thu, 26 Jun 2014 16:42:14 +0530
-Message-ID: <1403781135-6538-3-git-send-email-vikas.sajjan@samsung.com>
-References: <1403781135-6538-1-git-send-email-vikas.sajjan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:16133 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755947AbaFZLOl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 07:14:41 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N7R00EQOWKFJXC0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Jun 2014 20:14:39 +0900 (KST)
-In-reply-to: <1403781135-6538-1-git-send-email-vikas.sajjan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
+Subject: Re: [PATCH 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators
+Date: Thu, 26 Jun 2014 16:51:22 +0530
+Message-ID: <CAKuRcO+OaknUtj9mJ+SQJPMj70hdLTMkDYCXq4L5JdwzDKdj6g@mail.gmail.com>
+References: <1403520321-2431-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1403520321-2431-2-git-send-email-yuvaraj.cd@samsung.com>
+	<CAD=FV=UGjm9y3XoBgWKjw9kp9W=ZrwB-S6Lh7T_LBUgCQZn1ag@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=UGjm9y3XoBgWKjw9kp9W=ZrwB-S6Lh7T_LBUgCQZn1ag@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, ks.giri@samsung.com, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, Abhilash Kesavan <a.kesavan@samsung.com>, Vikas Sajjan <vikas.sajjan@samsung.com>
 
-From: Abhilash Kesavan <a.kesavan@samsung.com>
+Doug
 
-Adds Suspend-to-RAM support for EXYNOS5420
-
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
----
- arch/arm/mach-exynos/pm.c |  150 ++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 134 insertions(+), 16 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index de61d48..bf8564a 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -38,9 +38,13 @@
- #include "regs-pmu.h"
- #include "regs-sys.h"
- 
-+#define EXYNOS5420_CPU_STATE	0x28
-+
- #define pmu_raw_writel(val, offset) \
- 		__raw_writel(val, pmu_base_addr + offset)
- 
-+static int exynos5420_cpu_state;
-+
- /**
-  * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
-  * @hwirq: Hardware IRQ signal of the GIC
-@@ -64,6 +68,10 @@ static struct sleep_save exynos_core_save[] = {
- 	SAVE_ITEM(S5P_SROM_BC3),
- };
- 
-+static struct sleep_save exynos5420_pmu_reg_save[] = {
-+	SAVE_ITEM((void __iomem *)S5P_PMU_SPARE3),
-+};
-+
- /*
-  * GIC wake-up support
-  */
-@@ -86,7 +94,7 @@ static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
- {
- 	const struct exynos_wkup_irq *wkup_irq;
- 
--	if (soc_is_exynos5250())
-+	if (soc_is_exynos5250() || soc_is_exynos5420())
- 		wkup_irq = exynos5250_wkup_irq;
- 	else
- 		wkup_irq = exynos4_wkup_irq;
-@@ -250,7 +258,16 @@ static int exynos_cpu_suspend(unsigned long arg)
- 	outer_flush_all();
- #endif
- 
--	if (soc_is_exynos5250())
-+	/*
-+	 * Clear sysram register for cpu state so that primary CPU does
-+	 * not enter low power start in U-Boot.
-+	 * This is specific to exynos5420 SoC only.
-+	 */
-+	if (soc_is_exynos5420())
-+		__raw_writel(0x0,
-+			sysram_base_addr + EXYNOS5420_CPU_STATE);
-+
-+	if (soc_is_exynos5250() || soc_is_exynos5420())
- 		flush_cache_all();
- 
- 	/* issue the standby signal into the pm unit. */
-@@ -276,6 +293,22 @@ static void exynos_pm_prepare(void)
- 		tmp = __raw_readl(pmu_base_addr + EXYNOS5_JPEG_MEM_OPTION);
- 		tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
- 		pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
-+	} else if (soc_is_exynos5420()) {
-+		unsigned int i;
-+
-+		for (i = 0; i < ARRAY_SIZE(exynos5420_pmu_reg_save); i++)
-+			exynos5420_pmu_reg_save[i].val =
-+				__raw_readl(pmu_base_addr +
-+				(unsigned int)exynos5420_pmu_reg_save[i].reg);
-+		/*
-+		 * The cpu state needs to be saved and restored so that the
-+		 * secondary CPUs will enter low power start. Though the U-Boot
-+		 * is setting the cpu state with low power flag, the kernel
-+		 * needs to restore it back in case, the primary cpu fails to
-+		 * suspend for any reason.
-+		 */
-+		exynos5420_cpu_state =
-+		__raw_readl(sysram_base_addr + EXYNOS5420_CPU_STATE);
- 	}
- 
- 	/* Set value of power down register for sleep mode */
-@@ -286,6 +319,27 @@ static void exynos_pm_prepare(void)
- 	/* ensure at least INFORM0 has the resume address */
- 
- 	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
-+
-+	if (soc_is_exynos5420()) {
-+		tmp = __raw_readl(pmu_base_addr + EXYNOS5_ARM_L2_OPTION);
-+		tmp &= ~EXYNOS5_USE_RETENTION;
-+		pmu_raw_writel(tmp, EXYNOS5_ARM_L2_OPTION);
-+
-+		tmp = __raw_readl(pmu_base_addr + EXYNOS5420_SFR_AXI_CGDIS1);
-+		tmp |= EXYNOS5420_UFS;
-+		pmu_raw_writel(tmp, EXYNOS5420_SFR_AXI_CGDIS1);
-+
-+		tmp = __raw_readl(pmu_base_addr +
-+				EXYNOS5420_ARM_COMMON_OPTION);
-+		tmp &= ~EXYNOS5420_L2RSTDISABLE_VALUE;
-+		pmu_raw_writel(tmp, EXYNOS5420_ARM_COMMON_OPTION);
-+		tmp = __raw_readl(pmu_base_addr + EXYNOS5420_FSYS2_OPTION);
-+		tmp |= EXYNOS5420_EMULATION;
-+		pmu_raw_writel(tmp, EXYNOS5420_FSYS2_OPTION);
-+		tmp = __raw_readl(pmu_base_addr + EXYNOS5420_PSGEN_OPTION);
-+		tmp |= EXYNOS5420_EMULATION;
-+		pmu_raw_writel(tmp, EXYNOS5420_PSGEN_OPTION);
-+	}
- }
- 
- static void exynos_pm_central_suspend(void)
-@@ -301,13 +355,24 @@ static void exynos_pm_central_suspend(void)
- static int exynos_pm_suspend(void)
- {
- 	unsigned long tmp;
-+	unsigned int  this_cluster;
- 
- 	exynos_pm_central_suspend();
- 
- 	/* Setting SEQ_OPTION register */
- 
--	tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
--	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
-+	if (soc_is_exynos5420()) {
-+		this_cluster = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 1);
-+		if (!this_cluster)
-+			pmu_raw_writel(EXYNOS5420_ARM_USE_STANDBY_WFI0,
-+					S5P_CENTRAL_SEQ_OPTION);
-+		else
-+			pmu_raw_writel(EXYNOS5420_KFC_USE_STANDBY_WFI0,
-+					S5P_CENTRAL_SEQ_OPTION);
-+	} else {
-+		tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
-+		pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
-+	}
- 
- 	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
- 		exynos_cpu_save_register();
-@@ -340,6 +405,17 @@ static int exynos_pm_central_resume(void)
- 
- static void exynos_pm_resume(void)
- {
-+	unsigned int tmp;
-+
-+	if (soc_is_exynos5420()) {
-+		/* Restore the sysram cpu state register */
-+		__raw_writel(exynos5420_cpu_state,
-+		sysram_base_addr + EXYNOS5420_CPU_STATE);
-+
-+		pmu_raw_writel(EXYNOS5420_USE_STANDBY_WFI_ALL,
-+				S5P_CENTRAL_SEQ_OPTION);
-+	}
-+
- 	if (exynos_pm_central_resume())
- 		goto early_wakeup;
- 
-@@ -347,18 +423,42 @@ static void exynos_pm_resume(void)
- 		exynos_cpu_restore_register();
- 
- 	/* For release retention */
-+	if (soc_is_exynos5420()) {
-+		pmu_raw_writel((1 << 28), EXYNOS_PAD_RET_DRAM_OPTION);
-+		pmu_raw_writel((1 << 28), EXYNOS_PAD_RET_MAUDIO_OPTION);
-+		pmu_raw_writel((1 << 28), EXYNOS_PAD_RET_JTAG_OPTION);
-+		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_GPIO_OPTION);
-+		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_UART_OPTION);
-+		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_MMCA_OPTION);
-+		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_MMCB_OPTION);
-+		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_MMCC_OPTION);
-+		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_HSI_OPTION);
-+		pmu_raw_writel((1 << 28), EXYNOS_PAD_RET_EBIA_OPTION);
-+		pmu_raw_writel((1 << 28), EXYNOS_PAD_RET_EBIB_OPTION);
-+		pmu_raw_writel((1 << 28), EXYNOS5420_PAD_RET_SPI_OPTION);
-+		pmu_raw_writel((1 << 28),
-+				EXYNOS5420_PAD_RET_DRAM_COREBLK_OPTION);
-+	} else {
-+		pmu_raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
-+		pmu_raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
-+		pmu_raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
-+		pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
-+		pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
-+		pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
-+		pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
-+	}
- 
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
--
--	if (soc_is_exynos5250())
-+	if (soc_is_exynos5250()) {
- 		s3c_pm_do_restore(exynos5_sys_save,
- 			ARRAY_SIZE(exynos5_sys_save));
-+	} else if (soc_is_exynos5420()) {
-+		unsigned int i;
-+
-+		for (i = 0; i < ARRAY_SIZE(exynos5420_pmu_reg_save); i++)
-+			pmu_raw_writel(
-+			(unsigned int)exynos5420_pmu_reg_save[i].val,
-+			(unsigned int)exynos5420_pmu_reg_save[i].reg);
-+	}
- 
- 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
- 
-@@ -367,6 +467,18 @@ static void exynos_pm_resume(void)
- 
- early_wakeup:
- 
-+	if (soc_is_exynos5420()) {
-+		tmp = __raw_readl(pmu_base_addr + EXYNOS5420_SFR_AXI_CGDIS1);
-+		tmp &= ~EXYNOS5420_UFS;
-+		pmu_raw_writel(tmp, EXYNOS5420_SFR_AXI_CGDIS1);
-+		tmp = __raw_readl(pmu_base_addr + EXYNOS5420_FSYS2_OPTION);
-+		tmp &= ~EXYNOS5420_EMULATION;
-+		pmu_raw_writel(tmp, EXYNOS5420_FSYS2_OPTION);
-+		tmp = __raw_readl(pmu_base_addr + EXYNOS5420_PSGEN_OPTION);
-+		tmp &= ~EXYNOS5420_EMULATION;
-+		pmu_raw_writel(tmp, EXYNOS5420_PSGEN_OPTION);
-+	}
-+
- 	/* Clear SLEEP mode set in INFORM1 */
- 	pmu_raw_writel(0x0, S5P_INFORM1);
- 
-@@ -483,9 +595,15 @@ void __init exynos_pm_init(void)
- 	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
- 
- 	/* All wakeup disable */
--	tmp = __raw_readl(pmu_base_addr + S5P_WAKEUP_MASK);
--	tmp |= ((0xFF << 8) | (0x1F << 1));
--	pmu_raw_writel(tmp, S5P_WAKEUP_MASK);
-+	if (soc_is_exynos5420()) {
-+		tmp = __raw_readl(pmu_base_addr + S5P_WAKEUP_MASK);
-+		tmp |= ((0x7F << 7) | (0x1F << 1));
-+		pmu_raw_writel(tmp, S5P_WAKEUP_MASK);
-+	} else {
-+		tmp = __raw_readl(pmu_base_addr + S5P_WAKEUP_MASK);
-+		tmp |= ((0xFF << 8) | (0x1F << 1));
-+		pmu_raw_writel(tmp, S5P_WAKEUP_MASK);
-+	}
- 
- 	register_syscore_ops(&exynos_pm_syscore_ops);
- 	suspend_set_ops(&exynos_suspend_ops);
--- 
-1.7.9.5
+On Tue, Jun 24, 2014 at 11:30 PM, Doug Anderson <dianders@chromium.org> wrote:
+> Yuvaraj,
+>
+> On Mon, Jun 23, 2014 at 3:45 AM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>> This patch makes use of mmc_regulator_get_supply() to handle
+>> the vmmc and vqmmc regulators.Also it moves the code handling
+>> the these regulators to dw_mci_set_ios().It turned on the vmmc
+>> and vqmmc during MMC_POWER_UP and MMC_POWER_ON,and turned off
+>> during MMC_POWER_OFF.
+>>
+>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>> ---
+>>  drivers/mmc/host/dw_mmc.c |   71 ++++++++++++++++++++++-----------------------
+>>  drivers/mmc/host/dw_mmc.h |    2 ++
+>>  2 files changed, 36 insertions(+), 37 deletions(-)
+>
+> Perhaps you could CC me on the whole series for the next version since
+> I was involved in privately reviewing previous versions?
+It was just accidental missing you in the CC .Surely i will add you in
+CC for next versions.
+>
+> Overall caveat for my review is that I'm nowhere near an SD/MMC expert.
+>
+>
+>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>> index 1ac227c..f5cabce 100644
+>> --- a/drivers/mmc/host/dw_mmc.c
+>> +++ b/drivers/mmc/host/dw_mmc.c
+>> @@ -937,6 +937,7 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>>         struct dw_mci_slot *slot = mmc_priv(mmc);
+>>         const struct dw_mci_drv_data *drv_data = slot->host->drv_data;
+>>         u32 regs;
+>> +       int ret;
+>>
+>>         switch (ios->bus_width) {
+>>         case MMC_BUS_WIDTH_4:
+>> @@ -975,16 +976,41 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>>
+>>         switch (ios->power_mode) {
+>>         case MMC_POWER_UP:
+>> +               if ((!IS_ERR(mmc->supply.vmmc)) &&
+>> +                               !test_bit(DW_MMC_CARD_POWERED, &slot->flags)) {
+>> +                       ret = regulator_enable(mmc->supply.vmmc);
+>> +                       if (!ret)
+>> +                               set_bit(DW_MMC_CARD_POWERED, &slot->flags);
+>> +               }
+>
+> As per below, I'm not sure why you'd want to turn on vqmmc and vmmc at
+> different times.
+As you can see people's have different opinion on this.When i had a
+look at the other drivers in the subsystem which does in the same flow
+as above.However i will change in the next version.
+>
+> Also: if you fail to turn on either of the regulators it feels like
+> you should print a pretty nasty error message since your device will
+> almost certainly not work.
+Yes. I will add a error message.
+>
+>
+>>                 set_bit(DW_MMC_CARD_NEED_INIT, &slot->flags);
+>>                 regs = mci_readl(slot->host, PWREN);
+>>                 regs |= (1 << slot->id);
+>>                 mci_writel(slot->host, PWREN, regs);
+>>                 break;
+>>         case MMC_POWER_OFF:
+>> +               if (!IS_ERR(mmc->supply.vqmmc) &&
+>> +                               test_bit(DW_MMC_IO_POWERED, &slot->flags)) {
+>> +                       ret = regulator_disable(mmc->supply.vqmmc);
+>> +                       if (!ret)
+>> +                               clear_bit(DW_MMC_IO_POWERED, &slot->flags);
+>> +               }
+>> +               if (!IS_ERR(mmc->supply.vmmc) &&
+>> +                               test_bit(DW_MMC_CARD_POWERED, &slot->flags)) {
+>> +                       ret = regulator_disable(mmc->supply.vmmc);
+>> +                       if (!ret)
+>> +                               clear_bit(DW_MMC_CARD_POWERED, &slot->flags);
+>> +               }
+>>                 regs = mci_readl(slot->host, PWREN);
+>>                 regs &= ~(1 << slot->id);
+>>                 mci_writel(slot->host, PWREN, regs);
+>>                 break;
+>> +       case MMC_POWER_ON:
+>> +               if (!IS_ERR(mmc->supply.vqmmc) &&
+>> +                               !test_bit(DW_MMC_IO_POWERED, &slot->flags)) {
+>> +                       ret = regulator_enable(mmc->supply.vqmmc);
+>> +                       if (!ret)
+>> +                               set_bit(DW_MMC_IO_POWERED, &slot->flags);
+>> +               }
+>>         default:
+>>                 break;
+>>         }
+>> @@ -2067,7 +2093,13 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+>>                 mmc->f_max = freq[1];
+>>         }
+>>
+>> -       mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
+>> +       /*if there are external regulators, get them*/
+>> +       ret = mmc_regulator_get_supply(mmc);
+>> +       if (ret == -EPROBE_DEFER)
+>> +               goto err_setup_bus;
+>> +
+>> +       if (!mmc->ocr_avail)
+>> +               mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
+>>
+>>         if (host->pdata->caps)
+>>                 mmc->caps = host->pdata->caps;
+>> @@ -2133,7 +2165,7 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+>>
+>>  err_setup_bus:
+>>         mmc_free_host(mmc);
+>> -       return -EINVAL;
+>> +       return ret;
+>>  }
+>>
+>>  static void dw_mci_cleanup_slot(struct dw_mci_slot *slot, unsigned int id)
+>> @@ -2375,24 +2407,6 @@ int dw_mci_probe(struct dw_mci *host)
+>>                 }
+>>         }
+>>
+>> -       host->vmmc = devm_regulator_get_optional(host->dev, "vmmc");
+>> -       if (IS_ERR(host->vmmc)) {
+>> -               ret = PTR_ERR(host->vmmc);
+>> -               if (ret == -EPROBE_DEFER)
+>> -                       goto err_clk_ciu;
+>> -
+>> -               dev_info(host->dev, "no vmmc regulator found: %d\n", ret);
+>> -               host->vmmc = NULL;
+>> -       } else {
+>> -               ret = regulator_enable(host->vmmc);
+>> -               if (ret) {
+>> -                       if (ret != -EPROBE_DEFER)
+>> -                               dev_err(host->dev,
+>> -                                       "regulator_enable fail: %d\n", ret);
+>> -                       goto err_clk_ciu;
+>> -               }
+>> -       }
+>> -
+>>         host->quirks = host->pdata->quirks;
+>>
+>>         spin_lock_init(&host->lock);
+>> @@ -2536,8 +2550,6 @@ err_workqueue:
+>>  err_dmaunmap:
+>>         if (host->use_dma && host->dma_ops->exit)
+>>                 host->dma_ops->exit(host);
+>> -       if (host->vmmc)
+>> -               regulator_disable(host->vmmc);
+>>
+>>  err_clk_ciu:
+>>         if (!IS_ERR(host->ciu_clk))
+>> @@ -2573,9 +2585,6 @@ void dw_mci_remove(struct dw_mci *host)
+>>         if (host->use_dma && host->dma_ops->exit)
+>>                 host->dma_ops->exit(host);
+>>
+>> -       if (host->vmmc)
+>> -               regulator_disable(host->vmmc);
+>> -
+>>         if (!IS_ERR(host->ciu_clk))
+>>                 clk_disable_unprepare(host->ciu_clk);
+>>
+>> @@ -2592,9 +2601,6 @@ EXPORT_SYMBOL(dw_mci_remove);
+>>   */
+>>  int dw_mci_suspend(struct dw_mci *host)
+>>  {
+>> -       if (host->vmmc)
+>> -               regulator_disable(host->vmmc);
+>> -
+>
+> Just to check: have you tested suspend/resume with the various
+> combinations of "keep-power-in-suspend" and "non-removable" with your
+> patch.  I remember some of the logic being a bit complicated...
+Tested suspend/resume with the non-removable.Will do more testing with
+combination of "keep-power-in-suspend" and "non-removable".
+>
+>
+>>         return 0;
+>>  }
+>>  EXPORT_SYMBOL(dw_mci_suspend);
+>> @@ -2603,15 +2609,6 @@ int dw_mci_resume(struct dw_mci *host)
+>>  {
+>>         int i, ret;
+>>
+>> -       if (host->vmmc) {
+>> -               ret = regulator_enable(host->vmmc);
+>> -               if (ret) {
+>> -                       dev_err(host->dev,
+>> -                               "failed to enable regulator: %d\n", ret);
+>> -                       return ret;
+>> -               }
+>> -       }
+>> -
+>>         if (!dw_mci_ctrl_all_reset(host)) {
+>>                 ret = -ENODEV;
+>>                 return ret;
+>> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+>> index 738fa24..5c95d00 100644
+>> --- a/drivers/mmc/host/dw_mmc.h
+>> +++ b/drivers/mmc/host/dw_mmc.h
+>
+> As I mentioned in my previous review, you should be removing "struct
+> regulator *vmmc; /* Power regulator */" from "struct dw_mci" since
+> you're no longer populating it.
+ok
+>
+>
+>> @@ -225,6 +225,8 @@ struct dw_mci_slot {
+>>         unsigned long           flags;
+>>  #define DW_MMC_CARD_PRESENT    0
+>>  #define DW_MMC_CARD_NEED_INIT  1
+>> +#define DW_MMC_CARD_POWERED    2
+>> +#define DW_MMC_IO_POWERED      3
+>
+> I don't really think you should have two bits here.  From my
+> understanding of SD cards there should be very little reason to have
+> vqmmc and vmmc not powered at the same time.
+I think if i can use mmc_regulator_set_ocr(), we don't need additional
+flag.But for tps65090 mmc_regulator_get_ocr() and
+mmc_regulator_set_ocr() is failing as its a fixed-regulator.
+>
+> If vqmmc is powered but vmmc is not powered then you'll get leakage
+> and the card can pull power through the IO lines which is bad for the
+> card.
+>
+> I don't think that powering vmmc without vqmmc for a short time is
+> terribly bad but I can't quite see a good use case.  Essentially
+> you're powering the card but not able to talk to it, right?  I'm not
+> sure what the state of the IO lines would be (either driven low or
+> floating) since presumably the pullups on the lines are powered by
+> vqmmc too.
+>
+>
+>>         int                     id;
+>>         int                     last_detect_state;
+>>  };
