@@ -1,44 +1,67 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH 0/3] MCPM: clarify boot CPU situation wrt CCI
-Date: Wed, 25 Jun 2014 19:41:03 -0700
-Message-ID: <CAGa+x853xBjmb5Pe37wM9Q5jRVJExn_4xmM+bXyFspnzKb+9tw@mail.gmail.com>
-References: <1403583071-5650-1-git-send-email-nicolas.pitre@linaro.org>
-	<7hd2dymiaw.fsf@paris.lan>
-	<CAD=FV=WHU0TDkjXVCCw6odBFSF7uvv3joCP+oW4cBS_tsSgF+Q@mail.gmail.com>
+From: Tushar Behera <trblinux@gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
+Date: Thu, 26 Jun 2014 08:50:50 +0530
+Message-ID: <CAC5m3Bzey-YoPLmjAq4YNPQ13rojtVFWAbnhX6-ZFtYZwEdMWg@mail.gmail.com>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
+	<1402464739-19044-3-git-send-email-tushar.b@samsung.com>
+	<CAD=FV=W5yh58fYTwRZxmZt=BORcZMSRV0oRe12yA74Q5h2S4YQ@mail.gmail.com>
+	<7hpphwlgn0.fsf@paris.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f172.google.com ([209.85.216.172]:58018 "EHLO
-	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754177AbaFZClE (ORCPT
+Received: from mail-ve0-f179.google.com ([209.85.128.179]:45952 "EHLO
+	mail-ve0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752104AbaFZDUv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jun 2014 22:41:04 -0400
-Received: by mail-qc0-f172.google.com with SMTP id o8so2609682qcw.31
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jun 2014 19:41:03 -0700 (PDT)
-In-Reply-To: <CAD=FV=WHU0TDkjXVCCw6odBFSF7uvv3joCP+oW4cBS_tsSgF+Q@mail.gmail.com>
+	Wed, 25 Jun 2014 23:20:51 -0400
+In-Reply-To: <7hpphwlgn0.fsf@paris.lan>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@google.com>
-Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, Olof Johansson <olof@lixom.net>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Tushar Behera <tushar.b@samsung.com>
+To: Kevin Hilman <khilman@linaro.org>
+Cc: Doug Anderson <dianders@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-On Tue, Jun 24, 2014 at 3:57 PM, Doug Anderson <dianders@google.com> wrote:
-> Kevin,
+On Thu, Jun 26, 2014 at 4:51 AM, Kevin Hilman <khilman@linaro.org> wrote:
+> Doug Anderson <dianders@google.com> writes:
 >
-> On Tue, Jun 24, 2014 at 8:35 AM, Kevin Hilman <khilman@linaro.org> wrote:
->> - Leave mau_epll enabled
->>   http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/262259.html
+>> Tushar,
+>>
+>> On Tue, Jun 10, 2014 at 10:32 PM, Tushar Behera <tushar.b@samsung.com> wrote:
+>>> Currently CLK_FOUT_EPLL was set as one of the parents of AUDSS mux.
+>>> As per the user manual, it should be CLK_MAU_EPLL.
+>>>
+>>> The problem surfaced when the bootloader in Peach-pit board set
+>>> the EPLL clock as the parent of AUDSS mux. While booting the kernel,
+>>> we used to get a system hang during late boot if CLK_MAU_EPLL was
+>>> disabled.
+>>>
+>>> Signed-off-by: Tushar Behera <tushar.b@samsung.com>
+>>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>>> Reported-by: Kevin Hilman <khilman@linaro.org>
+>>> ---
+>>>  arch/arm/boot/dts/exynos5420.dtsi |    2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> I've tested this myself now as well.
+>>
+>> Tested-by: Doug Anderson <dianders@chromium.org>
 >
-> Can you drop your mau_epll one and instead pick just
-> <https://patchwork.kernel.org/patch/4333581/>?
+> For me, this patch alone (on top of -next) doesn't solve the boot hang.
+> I still need clk_ignore_unused for a successful boot.
 >
-> I noticed that Tushar has only been pushing for that patch to be
-> applied and I'm going to guess that the "leave mau_epll enabled" isn't
-> needed.  I just tested myself and confirmed that things are happy.
+> So, this patch might be correct, but it doesn't prevent a boot hang
+> using a chain-loaded nv_uboot on peach-pi.  There's still another clock
+> being disabled that causes a hang.
+>
+> Kevin
 
-I replied on the other thread too, but just to be thorough...
+Kevin,
 
-Picking the above patch alone, I still get the boot hang.  Adding
-'clk_ignore_unused' to the command line gets things booting again,
-which suggest there's still a missing piece of the puzzle.
+Can you please check if adding patch 1/3 alongwith patch 2/3 fixes the
+issue for you?
 
-Kevin
+Also can you please confirm that setting CLK_IGNORE_UNUSED flag
+CLK_MAU_EPLL alone fixes the issue, without any need for
+clk_ignore_unused in u-boot bootargs?
+
+-- 
+Tushar Behera
