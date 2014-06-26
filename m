@@ -1,49 +1,96 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH RESEND] ARM: EXYNOS: Do not calculate boot address twice
-Date: Thu, 26 Jun 2014 13:46:03 +0200
-Message-ID: <1403783163-28638-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:12566 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757039AbaFZLqL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 07:46:11 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 4/4 v2] ARM: DTS: Add NTC thermistor nodes to Exynos5420
+ based Peach_PIT
+Date: Thu, 26 Jun 2014 17:16:14 +0530
+Message-ID: <CAHfPSqBx7o2Lcoz89VgnUbCKVAxi6mG_j3piTe=fWrF853gWhQ@mail.gmail.com>
+References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
+ <1403677773-21141-5-git-send-email-ch.naveen@samsung.com> <CAD=FV=WeuFhGK=JNEm20CT73J=c1Zc_dZGQT6bKeob895M+kQA@mail.gmail.com>
+ <CAHfPSqBL9hH+r8Fy4GbbY1E_sJVCP-gpDHATDJgRHP4wKrFaiA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAHfPSqBL9hH+r8Fy4GbbY1E_sJVCP-gpDHATDJgRHP4wKrFaiA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Commit b3205dea8fbf ("ARM: EXYNOS: Map SYSRAM through generic DT
-bindings") introduced local variable boot_reg where boot address from
-cpu_boot_reg() call is stored. Re-use it instead calling cpu_boot_reg()
-again.
+Hello Kukjin,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/mach-exynos/platsmp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 26 June 2014 11:46, Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Doug,
+>
+> On 26 June 2014 02:10, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+>> Naveen,
+>>
+>> On Tue, Jun 24, 2014 at 11:29 PM, Naveen Krishna Chatradhi
+>> <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>> Exynos5420 based Peach PIT board has 4 NTC thermistors to measure
+>>> temperatures at various points on the board.
+>>>
+>>> IIO based ADC becomes the parent and NTC thermistors are the childs,
+>>> via the HWMON interface.
+>>>
+>>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>>> ---
+>>> Changes since v1:
+>>> 1. Arranged the ADC node alphabetical
+>>> 2. Added "status = "okay"" to the ADC node
+>>>
+>>> This patch needs
+>>> 1. MAX77802 PMIC device tree nodes (for ldo9)
+>>>    https://www.mail-archive.com/devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg31430.html
+>>> 2. Uses the DT documentation for NTC thermistors updated with vendor-prefix
+>>>
+>>> This patch set is tested
+>>> 1. On Peach PIT board via sysfs entry exposed by hwmon
+>>> localhost ~ # cat /sys/class/hwmon/hwmon*/device/temp1_input
+>>> 37436
+>>> 36449
+>>> 38560
+>>> 38059
+>>>
+>>> 2. Backward compatibility is tested by replacing "murata" with "ntc"
+>>>    in the dts nodes and running the above test.
+>>>
+>>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   34 ++++++++++++++++++++++++++++
+>>>  1 file changed, 34 insertions(+)
+>>
+>> Now that Javier has spun his patch, perhaps you can fold the "pi"
+>> version in here too?
+>
+> Sure, thanks for the information.
+>
+> Snow also needs the adc nodes.
+> Will try to implement an adc fragment for PIT, PI and Snow.
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 1c8d31e39520..55ed2e6729c5 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -155,7 +155,7 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 				ret = PTR_ERR(boot_reg);
- 				goto fail;
- 			}
--			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
-+			__raw_writel(boot_addr, boot_reg);
- 		}
- 
- 		call_firmware_op(cpu_boot, phys_cpu);
-@@ -242,7 +242,7 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
- 
- 			if (IS_ERR(boot_reg))
- 				break;
--			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
-+			__raw_writel(boot_addr, boot_reg);
- 		}
- 	}
- }
+I've a plan to create a common file (cros-exynos-peach.dts) for
+exynos5420-peach-pit.dts and exynos5800-peach-pi.dts
+And add the ADC nodes directly into that.
+
+In favor of the above, can you abandon the following patches
+
+1. [PATCH 3/4 v2] ARM: DTS: use new compatible string for thermistors in trats2
+    http://www.spinics.net/lists/linux-samsung-soc/msg33037.html
+
+2. [PATCH 4/4 v2] ARM: DTS: Add NTC thermistor nodes to Exynos5420
+based Peach_PIT
+http://www.spinics.net/lists/linux-samsung-soc/msg33038.html
+
+>
+>>
+>> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> Tested-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>
+>
+>
+> --
+> Shine bright,
+> (: Nav :)
+
+
+
 -- 
-1.9.1
+Thanks,
+(: Nav :)
