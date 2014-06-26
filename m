@@ -1,36 +1,52 @@
-From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 1/2 v2] i2c: exynos5: remove an unnecessary read of FIFO_STATUS
- register
-Date: Thu, 26 Jun 2014 10:44:57 +0530
-Message-ID: <1403759698-15624-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH 2/2 v2] i2c: exynos5: remove extra line and fix an assignment
+Date: Thu, 26 Jun 2014 10:44:58 +0530
+Message-ID: <1403759698-15624-2-git-send-email-ch.naveen@samsung.com>
+References: <1403759698-15624-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1403759698-15624-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, sjg@chromium.org, linux-kernel@vger.kernel.org, wsa@the-dreams.de, cpgs@samsung.com, broonie@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch removes an extra read of FIFO_STATUS register in the interrrupt
-service routine. Which is read again before the actual use.
+This patch does the following in exynos5_i2c_message_start() function
+1. Fixes an assignment
+   As, "i2c_auto_conf" is initialized to '0' at the beginning of the
+   function and HSI2C_READ_WRITE is defined as (1u << 16)
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+   Using "|=" for the first assignment is more readable.
+
+2. Removes an extra line 
+
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 ---
 Changes since v1:
-None
+Edited commit message for clarity
 
- drivers/i2c/busses/i2c-exynos5.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/i2c/busses/i2c-exynos5.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 63d2292..0d1a7bc 100644
+index 0d1a7bc..4c2e6f3 100644
 --- a/drivers/i2c/busses/i2c-exynos5.c
 +++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -405,7 +405,6 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+@@ -525,7 +525,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+ 	if (i2c->msg->flags & I2C_M_RD) {
+ 		i2c_ctl |= HSI2C_RXCHON;
  
- 	int_status = readl(i2c->regs + HSI2C_INT_STATUS);
- 	writel(int_status, i2c->regs + HSI2C_INT_STATUS);
--	fifo_status = readl(i2c->regs + HSI2C_FIFO_STATUS);
+-		i2c_auto_conf = HSI2C_READ_WRITE;
++		i2c_auto_conf |= HSI2C_READ_WRITE;
  
- 	/* handle interrupt related to the transfer status */
- 	if (int_status & HSI2C_INT_I2C) {
+ 		trig_lvl = (i2c->msg->len > i2c->variant->fifo_depth) ?
+ 			(i2c->variant->fifo_depth * 3 / 4) : i2c->msg->len;
+@@ -548,7 +548,6 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+ 	writel(fifo_ctl, i2c->regs + HSI2C_FIFO_CTL);
+ 	writel(i2c_ctl, i2c->regs + HSI2C_CTL);
+ 
+-
+ 	/*
+ 	 * Enable interrupts before starting the transfer so that we don't
+ 	 * miss any INT_I2C interrupts.
 -- 
 1.7.9.5
