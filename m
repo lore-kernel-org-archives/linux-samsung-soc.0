@@ -1,155 +1,129 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v4 00/14] Add Maxim 77802 PMIC support
-Date: Thu, 26 Jun 2014 15:56:39 +0200
-Message-ID: <53AC2697.2000806@collabora.co.uk>
-References: <1403723019-6212-1-git-send-email-javier.martinez@collabora.co.uk> <CAHfPSqB9620OiHxd_w3ReS6gg7PzYK1eN11rH6Z6boai0x=2og@mail.gmail.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Restore the entry address setup code
+ post-resume
+Date: Thu, 26 Jun 2014 15:35:34 +0100
+Message-ID: <20140626143533.GA26956@e102568-lin.cambridge.arm.com>
+References: <1403780312-22885-1-git-send-email-a.kesavan@samsung.com>
+ <CAM4voa=AYDkHG49EEnr0097Dw4eS__T95oDrhswcfHEzY=PTcw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAHfPSqB9620OiHxd_w3ReS6gg7PzYK1eN11rH6Z6boai0x=2og-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Daniel Stone <daniels-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:41906 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751765AbaFZOfj convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Jun 2014 10:35:39 -0400
+In-Reply-To: <CAM4voa=AYDkHG49EEnr0097Dw4eS__T95oDrhswcfHEzY=PTcw@mail.gmail.com>
+Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Douglas Anderson <dianders@chromium.org>
 
-Hello Naveen,
+On Thu, Jun 26, 2014 at 01:25:30PM +0100, Abhilash Kesavan wrote:
+> Hi,
+> 
+> On Thu, Jun 26, 2014 at 4:28 PM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
+> > Setup the mcpm entry address again on system resume as the
+> > iRAM contents are lost across an s2r cycle.
+> >
+> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> > ---
+> > This has been tested after applying the Exynos5420 S2R support series
+> > along with Nicolas Pitre's boot cluster CCI enablement patches on Peach
+> > Pit.
+> >
+> >  arch/arm/mach-exynos/mcpm-exynos.c | 31 +++++++++++++++++++++----------
+> >  1 file changed, 21 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+> > index 8c610e2..0bf734d 100644
+> > --- a/arch/arm/mach-exynos/mcpm-exynos.c
+> > +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+> > @@ -15,6 +15,7 @@
+> >  #include <linux/delay.h>
+> >  #include <linux/io.h>
+> >  #include <linux/of_address.h>
+> > +#include <linux/syscore_ops.h>
+> >
+> >  #include <asm/cputype.h>
+> >  #include <asm/cp15.h>
+> > @@ -26,6 +27,7 @@
+> >  #define EXYNOS5420_CPUS_PER_CLUSTER    4
+> >  #define EXYNOS5420_NR_CLUSTERS         2
+> >
+> > +static void __iomem *ns_sram_base_addr;
+> >  /*
+> >   * The common v7_exit_coherency_flush API could not be used because of the
+> >   * Erratum 799270 workaround. This macro is the same as the common one (in
+> > @@ -308,10 +310,26 @@ static const struct of_device_id exynos_dt_mcpm_match[] = {
+> >         {},
+> >  };
+> >
+> > +static void exynos_mcpm_setup_entry_point(void)
+> > +{
+> > +       /*
+> > +        * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
+> > +        * as part of secondary_cpu_start().  Let's redirect it to the
+> > +        * mcpm_entry_point(). This is done during both secondary boot-up as
+> > +        * well as system resume.
+> > +        */
+> > +       __raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
+> > +       __raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
+> > +       __raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
+> > +}
+> > +
+> > +static struct syscore_ops exynos_mcpm_syscore_ops = {
+> > +       .resume = exynos_mcpm_setup_entry_point,
+> > +};
+> > +
+> >  static int __init exynos_mcpm_init(void)
+> >  {
+> >         struct device_node *node;
+> > -       void __iomem *ns_sram_base_addr;
+> >         int ret;
+> >
+> >         node = of_find_matching_node(NULL, exynos_dt_mcpm_match);
+> > @@ -357,16 +375,9 @@ static int __init exynos_mcpm_init(void)
+> >
+> >         pr_info("Exynos MCPM support installed\n");
+> >
+> > -       /*
+> > -        * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
+> > -        * as part of secondary_cpu_start().  Let's redirect it to the
+> > -        * mcpm_entry_point().
+> > -        */
+> > -       __raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
+> > -       __raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
+> > -       __raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
+> > +       exynos_mcpm_setup_entry_point();
+> >
+> > -       iounmap(ns_sram_base_addr);
+> > +       register_syscore_ops(&exynos_mcpm_syscore_ops);
+> >
+> >         return ret;
+> >  }
+> 
+> This patch alone is not enough to bring the 8 cores back up post
+> resume on exynos5420, We need to enable the boot cluster snoops as
+> well.
+> 
+> Nicolas, if I add code to enable the boot cluster CCI in
+> mach-exynos/sleep.S, all 8 cores come up. However, if I use
+> mcpm_loopback as part of the newly added resume function to do the
+> same, I get a hang on resume.
+> Is there anything else that I need to take care of while doing this ?
 
-Thanks a lot for testing!
+Why do not you use MCPM to suspend the CPU for S2R ? Put it differently,
+plug the MCPM suspend call in the suspend ops, it should work, right ?
 
-On 06/26/2014 03:32 PM, Naveen Krishna Ch wrote:
-> Hello Javier,
-> 
-> On 26 June 2014 00:33, Javier Martinez Canillas
-> <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org> wrote:
->> MAX77802 is a PMIC that contains 10 high efficiency Buck regulators,
->> 32 Low-dropout (LDO) regulators, two 32kHz buffered clock outputs,
->> a Real-Time-Clock (RTC) and a I2C interface to program the individual
->> regulators, clocks and the RTC.
->>
->> This fourth version of the patch-set addresses several issues pointed
->> out by Mark Brown, Doug Anderson and Krzysztof Kozlowski The individual
->> changes are added on each patch change log.
->>
->> This series are based on drivers added by Simon Glass to the Chrome OS
->> kernel and adds support for the Maxim 77802 Power Management IC, their
->> regulators, clocks, RTC and I2C interface.
->>
->> NOTE: This version of the series model the real power scheme for Maxim
->> 77802 regulators instead of a simplistic model like in older versions.
->> So these changes depend on patch:
->>
->> "[PATCH v3] ARM: dts: Add cros_ec to exynos5420-peach-pit and exynos5800-peach-pi"
->> https://patchwork.kernel.org/patch/4411351/
->>
->> which adds tps65090 support to Peach boards since regulators from this
->> PMIC supply power to a set of MAX77802 regulators.
->>
->> The patch-set has been tested on both Daisy/Snow (max77686) and Peach
->> pit (max77802) Chromebooks and it's composed of the following patches:
->>
->> Doug Anderson (1):
->>   mfd: max77686: Allow the max77686 rtc to wakeup the system
->>
->> Javier Martinez Canillas (13):
->>   mfd: max77686: Convert to use regmap_irq
->>   clk: max77686: Add DT include for MAX77686 PMIC clock
->>   clk: max77686: Improve Maxim 77686 PMIC clocks binding
->>   clk: Add generic driver for Maxim PMIC clocks
->>   clk: max77686: Convert to the generic max clock driver
->>   mfd: Add driver for Maxim 77802 Power Management IC
->>   mfd: max77802: Add DT binding documentation
->>   regmap: Add regmap_reg_copy function
->>   regulator: Add driver for Maxim 77802 PMIC regulators
->>   clk: Add driver for Maxim 77802 PMIC clocks
->>   clk: max77802: Add DT binding documentation
->>   rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
->>   ARM: dts: Add max77802 to exynos5420-peach-pit and exynos5800-peach-pi
->>
->>  .../devicetree/bindings/clock/maxim,max77686.txt   |  15 +-
->>  .../devicetree/bindings/clock/maxim,max77802.txt   |  42 ++
->>  Documentation/devicetree/bindings/mfd/max77802.txt |  97 +++
->>  arch/arm/boot/dts/exynos5420-peach-pit.dts         | 343 ++++++++++
->>  arch/arm/boot/dts/exynos5800-peach-pi.dts          | 343 ++++++++++
->>  drivers/base/regmap/regmap.c                       |  34 +
->>  drivers/clk/Kconfig                                |  11 +
->>  drivers/clk/Makefile                               |   2 +
->>  drivers/clk/clk-max-gen.c                          | 195 ++++++
->>  drivers/clk/clk-max-gen.h                          |  32 +
->>  drivers/clk/clk-max77686.c                         | 183 +-----
->>  drivers/clk/clk-max77802.c                         |  99 +++
->>  drivers/mfd/Kconfig                                |  15 +
->>  drivers/mfd/Makefile                               |   3 +-
->>  drivers/mfd/max77686-irq.c                         | 319 ----------
->>  drivers/mfd/max77686.c                             |  97 ++-
->>  drivers/mfd/max77802.c                             | 366 +++++++++++
->>  drivers/regulator/Kconfig                          |   9 +
->>  drivers/regulator/Makefile                         |   1 +
->>  drivers/regulator/max77802.c                       | 694 +++++++++++++++++++++
->>  drivers/rtc/Kconfig                                |  10 +
->>  drivers/rtc/Makefile                               |   1 +
->>  drivers/rtc/rtc-max77686.c                         |  55 +-
->>  drivers/rtc/rtc-max77802.c                         | 637 +++++++++++++++++++
->>  include/dt-bindings/clock/maxim,max77686.h         |  23 +
->>  include/dt-bindings/clock/maxim,max77802.h         |  22 +
->>  include/linux/mfd/max77686-private.h               |  28 +-
->>  include/linux/mfd/max77686.h                       |   2 -
->>  include/linux/mfd/max77802-private.h               | 307 +++++++++
->>  include/linux/mfd/max77802.h                       | 121 ++++
->>  include/linux/regmap.h                             |   9 +
->>  31 files changed, 3583 insertions(+), 532 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
->>  create mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
->>  create mode 100644 drivers/clk/clk-max-gen.c
->>  create mode 100644 drivers/clk/clk-max-gen.h
->>  create mode 100644 drivers/clk/clk-max77802.c
->>  delete mode 100644 drivers/mfd/max77686-irq.c
->>  create mode 100644 drivers/mfd/max77802.c
->>  create mode 100644 drivers/regulator/max77802.c
->>  create mode 100644 drivers/rtc/rtc-max77802.c
->>  create mode 100644 include/dt-bindings/clock/maxim,max77686.h
->>  create mode 100644 include/dt-bindings/clock/maxim,max77802.h
->>  create mode 100644 include/linux/mfd/max77802-private.h
->>  create mode 100644 include/linux/mfd/max77802.h
->>
->> --
->> 2.0.0.rc2
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> With this patchset
-> +
-> [PATCH 0/4 v2] hwmon: ntc_thermistor: prepose vendor prefix change
-> http://www.spinics.net/lists/linux-samsung-soc/msg33034.html
-> +
-> spi: s3c64xx: fix broken "cs_gpios" usage in the driver
-> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/33102
-> +
-> [PATCH v2] ARM: dts: Add cros_ec to exynos5420-peach-pit and exynos5800-peach-pi
-> http://www.gossamer-threads.com/lists/linux/kernel/1951591
-> 
-> Tested on Peach PIT and PI boards.
-> 
-> 1. Max77802 seems to probe and configure the supplies properly.
->     Verified via the sysfs entries exported by the regulators.
-> 
-> 2. ADC probes fine and Thermistors report proper values,
->     ADC requires vdd_supply = "ldo09_reg".
-> 
-> Tested-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> 
+I think you should chuck the MCPM entry point in the register used for
+jumping back to the kernel when resuming to the kernel, then by restoring
+RAM code through syscore_ops you ensure you can bring secondaries
+back up again (done by suspend core), if I understand how firmware
+behaves.
 
-I'll post another version today which addresses some minor nits suggested by
-Krzysztof Kozlowski and Yadwinder Singh Brar.
+I do not see why you need the MCPM loopback interface for that.
 
-will add your Tested-by tag to the patches in the series related to max77802
-related patches and Peach Pit/Pi.
-
-Best regards,
-Javier
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Lorenzo
