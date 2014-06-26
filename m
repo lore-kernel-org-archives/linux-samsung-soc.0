@@ -1,295 +1,159 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 3/3] ARM: dts: SAMSUNG: Add aliases of UART nodes
-Date: Thu, 26 Jun 2014 13:24:35 +0200
-Message-ID: <1403781875-5425-4-git-send-email-t.figa@samsung.com>
-References: <1403781875-5425-1-git-send-email-t.figa@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v4 10/14] regulator: Add driver for Maxim 77802 PMIC regulators
+Date: Thu, 26 Jun 2014 13:26:47 +0200
+Message-ID: <53AC0377.40104@collabora.co.uk>
+References: <1403723019-6212-1-git-send-email-javier.martinez@collabora.co.uk> <1403723019-6212-11-git-send-email-javier.martinez@collabora.co.uk> <1403777337.27156.19.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1403781875-5425-1-git-send-email-t.figa@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <t.figa@samsung.com>, linux-kernel@vger.kernel.org, Daniel Drake <drake@endlessm.com>, Rob Herring <robh+dt@kernel.org>, linux-serial@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Jiri Slaby <jslaby@suse.cz>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:33024 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757371AbaFZL0y (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Jun 2014 07:26:54 -0400
+In-Reply-To: <1403777337.27156.19.camel@AMDC1943>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch adds alias entries for UART nodes of all SoCs using
-samsung-uart compatible UART controllers, so that the dependency on
-probe order is removed and deterministic device naming is assured.
+Hello Krzysztof,
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/boot/dts/exynos3250.dtsi |  2 ++
- arch/arm/boot/dts/exynos4.dtsi    | 12 ++++++++----
- arch/arm/boot/dts/exynos5.dtsi    | 15 +++++++++++----
- arch/arm/boot/dts/exynos5260.dtsi |  4 ++++
- arch/arm/boot/dts/exynos5410.dtsi |  6 ++++++
- arch/arm/boot/dts/exynos5440.dtsi |  6 ++++--
- arch/arm/boot/dts/s3c2416.dtsi    |  6 +++++-
- arch/arm/boot/dts/s3c24xx.dtsi    |  9 ++++++---
- arch/arm/boot/dts/s3c64xx.dtsi    |  4 ++++
- 9 files changed, 50 insertions(+), 14 deletions(-)
+Thanks a lot for your feedback.
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 3e678fa..f4b5411 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -39,6 +39,8 @@
- 		i2c5 = &i2c_5;
- 		i2c6 = &i2c_6;
- 		i2c7 = &i2c_7;
-+		serial0 = &serial_0;
-+		serial1 = &serial_1;
- 	};
- 
- 	cpus {
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index fbaf426..536d3c3 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -44,6 +44,10 @@
- 		fimc1 = &fimc_1;
- 		fimc2 = &fimc_2;
- 		fimc3 = &fimc_3;
-+		serial0 = &serial_0;
-+		serial1 = &serial_1;
-+		serial2 = &serial_2;
-+		serial3 = &serial_3;
- 	};
- 
- 	clock_audss: clock-controller@03810000 {
-@@ -363,7 +367,7 @@
- 		status = "disabled";
- 	};
- 
--	serial@13800000 {
-+	serial_0: serial@13800000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x13800000 0x100>;
- 		interrupts = <0 52 0>;
-@@ -372,7 +376,7 @@
- 		status = "disabled";
- 	};
- 
--	serial@13810000 {
-+	serial_1: serial@13810000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x13810000 0x100>;
- 		interrupts = <0 53 0>;
-@@ -381,7 +385,7 @@
- 		status = "disabled";
- 	};
- 
--	serial@13820000 {
-+	serial_2: serial@13820000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x13820000 0x100>;
- 		interrupts = <0 54 0>;
-@@ -390,7 +394,7 @@
- 		status = "disabled";
- 	};
- 
--	serial@13830000 {
-+	serial_3: serial@13830000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x13830000 0x100>;
- 		interrupts = <0 55 0>;
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index 79d0608..ff2d2cb 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -18,6 +18,13 @@
- / {
- 	interrupt-parent = <&gic>;
- 
-+	aliases {
-+		serial0 = &serial_0;
-+		serial1 = &serial_1;
-+		serial2 = &serial_2;
-+		serial3 = &serial_3;
-+	};
-+
- 	chipid@10000000 {
- 		compatible = "samsung,exynos4210-chipid";
- 		reg = <0x10000000 0x100>;
-@@ -50,25 +57,25 @@
- 		interrupts = <1 9 0xf04>;
- 	};
- 
--	serial@12C00000 {
-+	serial_0: serial@12C00000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x12C00000 0x100>;
- 		interrupts = <0 51 0>;
- 	};
- 
--	serial@12C10000 {
-+	serial_1: serial@12C10000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x12C10000 0x100>;
- 		interrupts = <0 52 0>;
- 	};
- 
--	serial@12C20000 {
-+	serial_2: serial@12C20000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x12C20000 0x100>;
- 		interrupts = <0 53 0>;
- 	};
- 
--	serial@12C30000 {
-+	serial_3: serial@12C30000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x12C30000 0x100>;
- 		interrupts = <0 54 0>;
-diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
-index 5398a60..4539a0a 100644
---- a/arch/arm/boot/dts/exynos5260.dtsi
-+++ b/arch/arm/boot/dts/exynos5260.dtsi
-@@ -21,6 +21,10 @@
- 		pinctrl0 = &pinctrl_0;
- 		pinctrl1 = &pinctrl_1;
- 		pinctrl2 = &pinctrl_2;
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+		serial3 = &uart3;
- 	};
- 
- 	cpus {
-diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
-index 3839c26..52070e5 100644
---- a/arch/arm/boot/dts/exynos5410.dtsi
-+++ b/arch/arm/boot/dts/exynos5410.dtsi
-@@ -20,6 +20,12 @@
- 	compatible = "samsung,exynos5410", "samsung,exynos5";
- 	interrupt-parent = <&gic>;
- 
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-index ae3a17c..8f3373c 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -18,6 +18,8 @@
- 	interrupt-parent = <&gic>;
- 
- 	aliases {
-+		serial0 = &serial_0;
-+		serial1 = &serial_1;
- 		spi0 = &spi_0;
- 		tmuctrl0 = &tmuctrl_0;
- 		tmuctrl1 = &tmuctrl_1;
-@@ -102,7 +104,7 @@
- 		>;
- 	};
- 
--	serial@B0000 {
-+	serial_0: serial@B0000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0xB0000 0x1000>;
- 		interrupts = <0 2 0>;
-@@ -110,7 +112,7 @@
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
- 
--	serial@C0000 {
-+	serial_1: serial@C0000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0xC0000 0x1000>;
- 		interrupts = <0 3 0>;
-diff --git a/arch/arm/boot/dts/s3c2416.dtsi b/arch/arm/boot/dts/s3c2416.dtsi
-index 955e4a4..30b8f7e 100644
---- a/arch/arm/boot/dts/s3c2416.dtsi
-+++ b/arch/arm/boot/dts/s3c2416.dtsi
-@@ -16,6 +16,10 @@
- 	model = "Samsung S3C2416 SoC";
- 	compatible = "samsung,s3c2416";
- 
-+	aliases {
-+		serial3 = &uart3;
-+	};
-+
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-@@ -68,7 +72,7 @@
- 				<&clocks SCLK_UART>;
- 	};
- 
--	serial@5000C000 {
-+	uart3: serial@5000C000 {
- 		compatible = "samsung,s3c2440-uart";
- 		reg = <0x5000C000 0x4000>;
- 		interrupts = <1 18 24 4>, <1 18 25 4>;
-diff --git a/arch/arm/boot/dts/s3c24xx.dtsi b/arch/arm/boot/dts/s3c24xx.dtsi
-index 2d1d7dc..5ed43b8 100644
---- a/arch/arm/boot/dts/s3c24xx.dtsi
-+++ b/arch/arm/boot/dts/s3c24xx.dtsi
-@@ -16,6 +16,9 @@
- 
- 	aliases {
- 		pinctrl0 = &pinctrl_0;
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
- 	};
- 
- 	intc:interrupt-controller@4a000000 {
-@@ -46,21 +49,21 @@
- 		#pwm-cells = <4>;
- 	};
- 
--	serial@50000000 {
-+	uart0: serial@50000000 {
- 		compatible = "samsung,s3c2410-uart";
- 		reg = <0x50000000 0x4000>;
- 		interrupts = <1 28 0 4>, <1 28 1 4>;
- 		status = "disabled";
- 	};
- 
--	serial@50004000 {
-+	uart1: serial@50004000 {
- 		compatible = "samsung,s3c2410-uart";
- 		reg = <0x50004000 0x4000>;
- 		interrupts = <1 23 3 4>, <1 23 4 4>;
- 		status = "disabled";
- 	};
- 
--	serial@50008000 {
-+	uart2: serial@50008000 {
- 		compatible = "samsung,s3c2410-uart";
- 		reg = <0x50008000 0x4000>;
- 		interrupts = <1 15 6 4>, <1 15 7 4>;
-diff --git a/arch/arm/boot/dts/s3c64xx.dtsi b/arch/arm/boot/dts/s3c64xx.dtsi
-index 4e3be4d..ff5bdaa 100644
---- a/arch/arm/boot/dts/s3c64xx.dtsi
-+++ b/arch/arm/boot/dts/s3c64xx.dtsi
-@@ -23,6 +23,10 @@
- 	aliases {
- 		i2c0 = &i2c0;
- 		pinctrl0 = &pinctrl0;
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+		serial3 = &uart3;
- 	};
- 
- 	cpus {
--- 
-1.9.3
+On 06/26/2014 12:08 PM, Krzysztof Kozlowski wrote:
+> On =C5=9Bro, 2014-06-25 at 21:03 +0200, Javier Martinez Canillas wrot=
+e:
+>> The MAX77802 PMIC has 10 high-efficiency Buck and 32 Low-dropout
+>> (LDO) regulators. This patch adds support for all these regulators
+>> found on the MAX77802 PMIC and is based on a driver added by Simon
+>> Glass to the Chrome OS kernel 3.8 tree.
+>>=20
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.c=
+o.uk>
+>> ---
+>>=20
+>> Changes since v3:
+>>  - Set the supply_name for regulators to lookup their parent supply =
+node.
+>>    Suggested by Mark Brown.
+>>  - Change Exyno5 for Exynos5420/Exynos5800 in regulator driver Kconf=
+ig.
+>>    Suggested by Doug Anderson.
+>>=20
+>> Changes since v2:
+>>  - Use dev_warn() instead pr_warn(). Suggested by Mark Brown.
+>>  - Add a generic function to regmap core to copy registers instead o=
+f
+>>    having a driver-specific function. Suggested by Mark Brown.
+>>  - Remove unnecessary probe debug log. Suggested by Mark Brown.
+>>  - Set struct regulator_config dev field to MFD instead of the platf=
+orm dev.
+>>    Suggested by Mark Brown.
+>>  - Read the regulators operational mode from the hardware registers =
+instead
+>>    of setting to normal as default on probe. Suggested by Mark Brown=
+=2E
+>>  - Remove unnecessary cross-subsystem dependencies. Suggested by Lee=
+ Jones.
+>>=20
+>> Changes since v1:
+>>  - Remove unneeded check if num_regulators !=3D MAX77802_MAX_REGULAT=
+ORS.
+>>  - Fix .set_suspend_mode handler comment and split regulators ops fo=
+r
+>>    regulators that behave differently. Suggested by Mark Brown.
+>>  - Use module_platform_driver() instead of having init/exit function=
+s.
+>>    Suggested by Mark Brown.
+>>  - Use the new descriptor-based GPIO interface instead of the deprec=
+ated
+>>    integer based GPIO one. Suggested by Mark Brown.
+>>  - Look for "regulators" child node instead of "voltage-regulators" =
+to be
+>>    consistent with other PMIC drivers. Suggested by Mark Brown.
+>=20
+> (...)
+>=20
+>> +
+>> +#ifdef CONFIG_OF
+>> +static int max77802_pmic_dt_parse_pdata(struct platform_device *pde=
+v,
+>> +					struct max77802_platform_data *pdata)
+>> +{
+>> +	struct max77802_dev *iodev =3D dev_get_drvdata(pdev->dev.parent);
+>> +	struct device_node *pmic_np, *regulators_np;
+>> +	struct max77802_regulator_data *rdata;
+>> +	struct of_regulator_match rmatch;
+>> +	unsigned int i;
+>> +
+>> +	pmic_np =3D iodev->dev->of_node;
+>> +	regulators_np =3D of_get_child_by_name(pmic_np, "regulators");
+>> +	if (!regulators_np) {
+>> +		dev_err(&pdev->dev, "could not find regulators sub-node\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	pdata->num_regulators =3D ARRAY_SIZE(regulators);
+>> +	rdata =3D devm_kzalloc(&pdev->dev, sizeof(*rdata) *
+>> +			     pdata->num_regulators, GFP_KERNEL);
+>> +	if (!rdata) {
+>> +		of_node_put(regulators_np);
+>> +		return -ENOMEM;
+>> +	}
+>> +
+>> +	for (i =3D 0; i < pdata->num_regulators; i++) {
+>> +		rmatch.name =3D regulators[i].name;
+>> +		rmatch.init_data =3D NULL;
+>> +		rmatch.of_node =3D NULL;
+>> +		if (of_regulator_match(&pdev->dev, regulators_np, &rmatch,
+>> +				       1) !=3D 1) {
+>> +			dev_warn(&pdev->dev, "No matching regulator for '%s'\n",
+>> +				 rmatch.name);
+>> +			continue;
+>> +		}
+>> +		rdata[i].initdata =3D rmatch.init_data;
+>> +		rdata[i].of_node =3D rmatch.of_node;
+>> +		rdata[i].id =3D regulators[i].id;
+>> +	}
+>=20
+> I think instead of matching one by one you can alternatively match
+> everything at once:
+>=20
+> static struct of_regulator_match regulator_matches[] =3D {
+> 	{ .name =3D "LDO1", },
+> 	....
+> };
+>=20
+> if (of_regulator_match(&pdev->dev, regulators_np, regulator_matches,
+> 			ARRAY_SIZE(regulator_matches)) {
+>=20
+> The code would be smaller although you would have to create an array
+> with names of regulators. I'll leave it up to you since I don't have
+> preference for it.
+>
+
+It's true that the code will be smaller and even more efficient by pass=
+ing an
+array of struct of_regulator_match instad but as you said I'll have to =
+add
+yet-another-table with duplicates information that is already present i=
+n the
+struct regulator_desc regulators[] array.
+
+That's why I prefer the code as it right now since I think that there a=
+re just
+too many data structures in this driver. But I don't mind to use the ot=
+her
+approach though if you think that it's better.
+
+> Best regards,
+> Krzysztof
+>=20
+>=20
+>=20
+>=20
+
+Best regards,
+Javier
