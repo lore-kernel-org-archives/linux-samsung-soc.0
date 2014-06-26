@@ -1,71 +1,55 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v4 07/14] mfd: Add driver for Maxim 77802 Power Management
- IC
-Date: Thu, 26 Jun 2014 18:18:43 +0200
-Message-ID: <53AC47E3.2030306@collabora.co.uk>
-References: <1403723019-6212-1-git-send-email-javier.martinez@collabora.co.uk>	<1403723019-6212-8-git-send-email-javier.martinez@collabora.co.uk>	<1403775093.27156.13.camel@AMDC1943>	<53AC003E.2010608@collabora.co.uk> <CAD=FV=U5sBQ4VDG65D4rTnfruo5XzQH_EMs4SMpO4BjY1UHA5Q@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators
+Date: Thu, 26 Jun 2014 09:20:51 -0700
+Message-ID: <CAD=FV=VP6Exg-iJiAk=zNFpFzY8jFbU8HSR=wQQ7S+mfZWTJ=Q@mail.gmail.com>
+References: <1403520321-2431-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1403520321-2431-2-git-send-email-yuvaraj.cd@samsung.com>
+	<CAD=FV=UGjm9y3XoBgWKjw9kp9W=ZrwB-S6Lh7T_LBUgCQZn1ag@mail.gmail.com>
+	<53AA3F78.3080804@samsung.com>
+	<001201cf9067$3c5b2070$b5116150$%jun@samsung.com>
+	<CAD=FV=UCinFuZQW+_GYFw=M046ziTLRNvvHUvsx_GQ0kjw5DfQ@mail.gmail.com>
+	<004f01cf9129$b4ac9690$1e05c3b0$%jun@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAD=FV=U5sBQ4VDG65D4rTnfruo5XzQH_EMs4SMpO4BjY1UHA5Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Daniel Stone <daniels-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ve0-f174.google.com ([209.85.128.174]:63876 "EHLO
+	mail-ve0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755410AbaFZQUw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Jun 2014 12:20:52 -0400
+Received: by mail-ve0-f174.google.com with SMTP id jx11so3917700veb.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2014 09:20:51 -0700 (PDT)
+In-Reply-To: <004f01cf9129$b4ac9690$1e05c3b0$%jun@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, ks.giri@samsung.com, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Hello Doug,
+Seungwon,
 
-On 06/26/2014 06:12 PM, Doug Anderson wrote:
-> Javier,
-> 
-> On Thu, Jun 26, 2014 at 4:13 AM, Javier Martinez Canillas
-> <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org> wrote:
->>>> +
->>>> +#ifdef CONFIG_PM_SLEEP
->>>> +static int max77802_suspend(struct device *dev)
->>>> +{
->>>> +    struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
->>>> +    struct max77802_dev *max77802 = i2c_get_clientdata(i2c);
->>>> +
->>>> +    if (device_may_wakeup(dev))
->>>> +            enable_irq_wake(max77802->irq);
->>>> +
->>>> +    disable_irq(max77802->irq);
->>>
->>> Can you add short comment why this is needed? I know why but just for
->>> future generations which will wonder: "why do we need to disable the IRQ
->>> while suspending?" :). Especially that this is rather a workaround for
->>> issue in other driver (I2C bus).
->>>
+On Thu, Jun 26, 2014 at 3:30 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> Hi Doug,
+>
+> On Thu, June 26, 2014, Doug Anderson wrote:
+>> Seungwon,
 >>
->> Good idea, I'll add a comment here on next version so code archaeologists can
->> figure out what what's going on here.
-> 
-> Is the disable_irq() needed if you have
-> <https://patchwork.kernel.org/patch/4421891/>?
-> 
+>> On Wed, Jun 25, 2014 at 4:18 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+>> >> >> +       case MMC_POWER_ON:
+>> >> >> +               if (!IS_ERR(mmc->supply.vqmmc) &&
+>> >> >> +                               !test_bit(DW_MMC_IO_POWERED, &slot->flags)) {
+>> > You can use regulator_is_enabled() instead of flag bit, DW_MMC_IO_POWERED.
+>>
+>> I'd be a little worried about regulator_is_enabled() since regulators
+>> are reference counted.  What if someone else is sharing this
+>> regulator?  The regulator might happen to be enabled when you check it
+>> but unless you add your own dw_mmc reference count they might turn it
+>> off.
+> Cool, that's a possibility. Some assumption may need.
+> If mmc's core can guarantee its balance, I think we don't need to consider some flag.
 
-Probably not but I added the following comment:
+I notice that the mmc core seems to keep a flag itself for vdd (the
+mmc->regulator_enabled flag).  That would imply that the core thought
+it was important to have the extra flag and that we should keep our
+own flag for vqmmc.
 
-	/*
-	 * The IRQ must be disabled during suspend since due wakeup
-	 * ordering issues it may be possible that the I2C controller
-	 * is still suspended when the interrupt happens so the IRQ
-	 * handler will fail to read the I2C bus.
-	 */
-	disable_irq(max77802->irq);
-
-since in theory this PMIC can be used in other SoCs besides
-Exynos5420/Exynos5800 and it may be possible that the I2C controller driver for
-these other SoCs may not resume at noirq time.
-
-But on a second thought, this PMIC seems to be designed specially for these two
-Exynos SoCs so I guess it's safe to assume that it is not needed?
-
-Best regards,
-Javier
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-Doug
