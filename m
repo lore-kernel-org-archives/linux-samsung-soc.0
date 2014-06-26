@@ -1,123 +1,59 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [alsa-devel] [PATCH V2 1/2] ASoC: samsung: Add machine driver for
- Odroid X2/U3
-Date: Thu, 26 Jun 2014 10:47:59 +0200
-Message-ID: <53ABDE3F.2070203@samsung.com>
-References: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
- <1403108551-25058-2-git-send-email-s.nawrocki@samsung.com>
- <53AA42A3.7030004@gmail.com>
+From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 1/2] usb: host: Kconfig: Select PHY drivers for Exynos
+ EHCI/OHCI
+Date: Thu, 26 Jun 2014 14:19:20 +0530
+Message-ID: <53ABDE90.2010103@ti.com>
+References: <1403761178-5371-1-git-send-email-sachin.kamat@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:47979 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753385AbaFZIsF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 04:48:05 -0400
-In-reply-to: <53AA42A3.7030004@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403761178-5371-1-git-send-email-sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, spk.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <trblinux@gmail.com>
-Cc: alsa-devel@alsa-project.org, mark.rutland@arm.com, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, zhen1.chen@samsung.com, kyungmin.park@samsung.com, galak@codeaurora.org, alsa-devel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 
-On 25/06/14 05:31, Tushar Behera wrote:
-> On 06/18/2014 09:52 PM, Sylwester Nawrocki wrote:
->> This patch adds the sound subsystem driver for Odroid-X2 and
->> Odroid-U3 boards. The codec works in I2S master mode; there are
->> 2 separate audio routing paths defined as there are differences
->> in the signal routing between the X2 and U3 boards, i.e. U3 uses
->> single jack for headphones and microphone.
->>
->> Signed-off-by: Chen Zhen <zhen1.chen@samsung.com>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>  sound/soc/samsung/Kconfig             |    8 ++
->>  sound/soc/samsung/Makefile            |    2 +
->>  sound/soc/samsung/odroidx2_max98090.c |  191 +++++++++++++++++++++++++++++++++
->>  3 files changed, 201 insertions(+)
->>  create mode 100644 sound/soc/samsung/odroidx2_max98090.c
->>
-> 
-> [ ... ]
-> 
->> +static int odroidx2_hw_params(struct snd_pcm_substream *substream,
->> +	struct snd_pcm_hw_params *params)
->> +{
->> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
->> +	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
->> +	struct snd_soc_dai *codec_dai = rtd->codec_dai;
->> +	int ret;
->> +
->> +	ret = snd_soc_dai_set_sysclk(codec_dai, 0, MAX98090_MCLK,
->> +						SND_SOC_CLOCK_IN);
->> +	if (ret < 0) {
->> +		dev_err(codec_dai->dev,
->> +			"Unable to switch to FLL1: %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	/* Set the cpu DAI configuration in order to use CDCLK */
->> +	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
->> +					0, SND_SOC_CLOCK_OUT);
->> +	if (ret < 0)
->> +		return ret;
->> +
-> 
-> While upstreaming sound-card driver for Snow board, I had a comment from
-> Mark to move this to probe, if possible. That way, the clock operations
-> would be done only once and this function and odroidx2_ops can be
-> removed altogether.
+Hi Sachin,
 
-Thanks for the suggestion, I'll change it for the next iteration.
-
->> +	dev_dbg(codec_dai->dev, "HiFi DAI %s params: channels: %d, rate: %d\n",
->> +		snd_pcm_stream_str(substream), params_channels(params),
->> +		params_rate(params));
->> +
->> +	return 0;
->> +}
->> +
->> +static struct snd_soc_ops odroidx2_ops = {
->> +	.hw_params	= odroidx2_hw_params,
->> +};
->> +
+On Thursday 26 June 2014 11:09 AM, Sachin Kamat wrote:
+> EHCI and OHCI drivers on Exynos platforms do not work without their
+> corresponding SoC specific phy drivers. Hence it makes no sense to
+> keep these phy drivers as user selectable. Instead select them from
+> the respective USB configs to make things easier for the end user.
+> While at it enable 5250 phy for Exynos 5420 SoC too.
 > 
-> [ ... ]
+> Signed-off-by: Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+> ---
+>  drivers/phy/Kconfig      |   37 +++++++------------------------------
+>  drivers/usb/host/Kconfig |   10 ++++++----
+>  2 files changed, 13 insertions(+), 34 deletions(-)
 > 
->> +
->> +	ret = snd_soc_register_card(card);
-> 
-> devm_snd_soc_register_card ?
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 16a2f067c242..7fe7ef5f1322 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
 
-Could be, although snd_soc_unregister_card() wouldn't release references
-to the OF nodes, i.e. there would be no related of_node_put() calls.
-And for correctness, the of_node_put() calls should be made _after_
-a snd_soc_unregister_card() call, and I can't see how it could be possible
-if I left only of_node_put() calls in the odroidx2_audio_remove() callback.
+<snip>
 
->> +	if (ret) {
->> +		dev_err(&pdev->dev, "snd_soc_register_card failed: %d\n", ret);
->> +		goto err_put_cpu_n;
->> +	}
->> +
->> +	return 0;
->> +
->> +err_put_cpu_n:
->> +	of_node_put(odroidx2_dai[0].cpu_of_node);
->> +err_put_cod_n:
->> +	of_node_put(odroidx2_dai[0].codec_of_node);
->> +	return ret;
->> +}
->> +
->> +static int odroidx2_audio_remove(struct platform_device *pdev)
->> +{
->> +	struct snd_soc_card *card = platform_get_drvdata(pdev);
->> +
->> +	snd_soc_unregister_card(card);
-> 
-> This can be removed when devm_snd_soc_register_card is used.
+>  
+>  config USB_EHCI_EXYNOS
+> -       tristate "EHCI support for Samsung S5P/EXYNOS SoC Series"
+> -       depends on PLAT_S5P || ARCH_EXYNOS
+> -       help
+> -	Enable support for the Samsung Exynos SOC's on-chip EHCI controller.
+> +	tristate "EHCI support for Samsung S5P/EXYNOS SoC Series"
+> +	depends on PLAT_S5P || ARCH_EXYNOS
+> +	select PHY_SAMSUNG_USB2 if ARCH_EXYNOS
 
+I am skeptical to add select after the problems it created during previous
+releases.
+Maybe use 'default y if ARCH_EXYNOS' in PHY_SAMSUNG_USB2 Kconfig?
+
+Thanks
+Kishon
 --
-Regards,
-Sylwester
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
