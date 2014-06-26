@@ -1,45 +1,88 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: mainline boot: 64 boots: 62 pass, 2 fail (v3.16-rc1-2-gebe0618)
-Date: Thu, 26 Jun 2014 16:17:57 +0100
-Message-ID: <20140626151756.GU32514@n2100.arm.linux.org.uk>
-References: <53A2AE11.2050208@gmail.com> <53A2BE94.2010308@gmail.com> <53A7A579.4010702@gmail.com> <CAGa+x85H510fNGTXJHGYfQybRa2FGgg2NyCgJ8rmjJ6TE7GNbA@mail.gmail.com> <53A9B99F.4040806@codeaurora.org> <53A9FBB5.60709@codeaurora.org> <53AABCF5.4050403@gmail.com> <53AB45D1.90909@codeaurora.org> <53ABC13C.8030908@gmail.com> <CAGa+x84UTbmFc2Twg9zEcr+ZP2xsq68gFvk=385+_cFM5hvGHg@mail.gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 0/3] ARM: DTS: create common dtsi for Peach pit and pi boards
+Date: Thu, 26 Jun 2014 17:21:16 +0200
+Message-ID: <CABxcv=nTfkRkpz_zZuxYHznjDuNgpiKO+FD4MnHi2C_2e32eqA@mail.gmail.com>
+References: <1403785148-20792-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:44118 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1757114AbaFZPSG (ORCPT
+Received: from mail-we0-f180.google.com ([74.125.82.180]:63744 "EHLO
+	mail-we0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754076AbaFZPVV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 11:18:06 -0400
-Content-Disposition: inline
-In-Reply-To: <CAGa+x84UTbmFc2Twg9zEcr+ZP2xsq68gFvk=385+_cFM5hvGHg@mail.gmail.com>
+	Thu, 26 Jun 2014 11:21:21 -0400
+Received: by mail-we0-f180.google.com with SMTP id x48so3773079wes.39
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2014 08:21:17 -0700 (PDT)
+In-Reply-To: <1403785148-20792-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@linaro.org>
-Cc: Tushar Behera <trblinux@gmail.com>, Laura Abbott <lauraa@codeaurora.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kernel-build-reports@lists.linaro.org, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-iio <linux-iio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, "cpgs ." <cpgs@samsung.com>
 
-On Thu, Jun 26, 2014 at 07:59:19AM -0700, Kevin Hilman wrote:
-> I agree that the u-boot bug needs to be fixed, and FWIW, I updated my
-> u-boot and haven't seen the boot failure yet after several boots with
-> next-20140625.
-> 
-> That being said, since it's not always feasible/practical to update
-> u-boot, and when it comes down to it, this is still a kernel
-> regression, we should also fix the kernel to sanity check the values
-> coming from u-boot, like it was doing before.
+Hello Naveen,
 
-It wasn't sanity checking the values (there is some sanity checking,
-but the sanity checking doesn't catch this).
+On Thu, Jun 26, 2014 at 2:19 PM, Naveen Krishna Chatradhi
+<ch.naveen@samsung.com> wrote:
+> This patchset does the following
+> 1. Create a common dtsi file cros-exynos-peach.dtsi for
+>    exynos5420-peach-pit.dts and exynos5800-peach-pi.dts
 
-What caught it was that the kernel was configured to only look at the
-first 8 of the 12 meminfo entries with ATAGs.  Since we no longer have
-that limit, all meminfo entries are now looked at (since the kernel
-doesn't need the limit.)
+There was some previous discussion in this list about what's the best
+approach to handle common DTS chunks, please take a look to
+http://patchwork.ozlabs.org/patch/362633/.
 
-We could add back a soft-limit on the number of meminfo entries, but
-this has to be platform specific.  Another entry to go into the
-mach_info structures?
+In summary, there is a common .dtsi file for Daisy based boards
+(arch/arm/boot/dts/exynos5250-cros-common.dtsi) but it seems it turned
+out to do more harm than good since having a single .dtsi for all the
+common DTS chunks is not quite flexible. As more boards gets
+introduced you have to start moving stuff from the common .dtsi file
+to the board .dts.
 
--- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+The same was tried to do for OMAP2+ boards and it turned out that you
+need to either a) create a hierarchy of .dtsi files to model all the
+different board combinations that have similar fragments or b) split
+out isolated DTS fragments on an .dtsi and include a set of this
+fragments.
+
+ For an example of a) you can take a look to
+arch/arm/boot/dts/omap3-overo* and for b) to
+arch/arm/boot/dts/omap-gpmc-smsc9*.dtsi.
+
+For a Peach Pit/Pi specific example of b) you can look at the recent
+arch/arm/boot/dts/cros-ec-keyboard.dtsi file that Doug added for Peach
+Pit/Pi keyboard.
+
+Personally I think that b) is a more flexible and reusable approach.
+So, maybe instead of creating a cros-exynos-peach.dts to contain all
+the common DT nodes you can add a cros-ec-thermistor.dsti file that
+only includes the ADC based Thermistor nodes?
+
+Thanks a lot and best regards,
+Javier
+
+> 2. Adds the ADC based Thermistor nodes and enables them in peach_pit.dts
+>    and peach_pi.dts
+> 3. Adds the ADC based Thermistor nodes for Exynos5250 based Snow
+> 4. Corrects the vendor prefix for thermistors in exynos4412-trats2.dts
+>
+> Naveen Krishna Chatradhi (3):
+>   ARM: DTS: use new compatible string for thermistors in trats2
+>   ARM: DTS: Add NTC thermistor nodes to Exynos5250 based Snow
+>   ARM: DTS: Add common dts file for Peach PIT and PI along with ADC
+>     nodes
+>
+>  arch/arm/boot/dts/cros-exynos-peach.dtsi   |   41 ++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos4412-trats2.dts    |    4 +--
+>  arch/arm/boot/dts/exynos5250-snow.dts      |   34 +++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts |    6 ++++
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts  |    6 ++++
+>  5 files changed, 89 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/cros-exynos-peach.dtsi
+>
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
