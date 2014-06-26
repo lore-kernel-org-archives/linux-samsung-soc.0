@@ -1,88 +1,123 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/4 v2] ARM: DTS: Add NTC thermistor nodes to Exynos5420
- based Peach_PIT
-Date: Thu, 26 Jun 2014 14:15:15 +0530
-Message-ID: <CAHfPSqBAurQtiVg8KjxJkgvdB7XUHdQkEfjRtgUCKncE2feCdA@mail.gmail.com>
-References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
- <1403677773-21141-5-git-send-email-ch.naveen@samsung.com> <CAD=FV=WeuFhGK=JNEm20CT73J=c1Zc_dZGQT6bKeob895M+kQA@mail.gmail.com>
- <CAHfPSqBL9hH+r8Fy4GbbY1E_sJVCP-gpDHATDJgRHP4wKrFaiA@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [alsa-devel] [PATCH V2 1/2] ASoC: samsung: Add machine driver for
+ Odroid X2/U3
+Date: Thu, 26 Jun 2014 10:47:59 +0200
+Message-ID: <53ABDE3F.2070203@samsung.com>
+References: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
+ <1403108551-25058-2-git-send-email-s.nawrocki@samsung.com>
+ <53AA42A3.7030004@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAHfPSqBL9hH+r8Fy4GbbY1E_sJVCP-gpDHATDJgRHP4wKrFaiA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:47979 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753385AbaFZIsF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Jun 2014 04:48:05 -0400
+In-reply-to: <53AA42A3.7030004@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <trblinux@gmail.com>
+Cc: alsa-devel@alsa-project.org, mark.rutland@arm.com, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, zhen1.chen@samsung.com, kyungmin.park@samsung.com, galak@codeaurora.org, alsa-devel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 
-Hello Doug, Kukjin,
-
-On 26 June 2014 11:46, Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Doug,
->
-> On 26 June 2014 02:10, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->> Naveen,
+On 25/06/14 05:31, Tushar Behera wrote:
+> On 06/18/2014 09:52 PM, Sylwester Nawrocki wrote:
+>> This patch adds the sound subsystem driver for Odroid-X2 and
+>> Odroid-U3 boards. The codec works in I2S master mode; there are
+>> 2 separate audio routing paths defined as there are differences
+>> in the signal routing between the X2 and U3 boards, i.e. U3 uses
+>> single jack for headphones and microphone.
 >>
->> On Tue, Jun 24, 2014 at 11:29 PM, Naveen Krishna Chatradhi
->> <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>> Exynos5420 based Peach PIT board has 4 NTC thermistors to measure
->>> temperatures at various points on the board.
->>>
->>> IIO based ADC becomes the parent and NTC thermistors are the childs,
->>> via the HWMON interface.
->>>
->>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->>> ---
->>> Changes since v1:
->>> 1. Arranged the ADC node alphabetical
->>> 2. Added "status = "okay"" to the ADC node
->>>
->>> This patch needs
->>> 1. MAX77802 PMIC device tree nodes (for ldo9)
->>>    https://www.mail-archive.com/devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg31430.html
->>> 2. Uses the DT documentation for NTC thermistors updated with vendor-prefix
->>>
->>> This patch set is tested
->>> 1. On Peach PIT board via sysfs entry exposed by hwmon
->>> localhost ~ # cat /sys/class/hwmon/hwmon*/device/temp1_input
->>> 37436
->>> 36449
->>> 38560
->>> 38059
->>>
->>> 2. Backward compatibility is tested by replacing "murata" with "ntc"
->>>    in the dts nodes and running the above test.
->>>
->>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   34 ++++++++++++++++++++++++++++
->>>  1 file changed, 34 insertions(+)
+>> Signed-off-by: Chen Zhen <zhen1.chen@samsung.com>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> ---
+>>  sound/soc/samsung/Kconfig             |    8 ++
+>>  sound/soc/samsung/Makefile            |    2 +
+>>  sound/soc/samsung/odroidx2_max98090.c |  191 +++++++++++++++++++++++++++++++++
+>>  3 files changed, 201 insertions(+)
+>>  create mode 100644 sound/soc/samsung/odroidx2_max98090.c
 >>
->> Now that Javier has spun his patch, perhaps you can fold the "pi"
->> version in here too?
->
-> Sure, thanks for the information.
->
-> Snow also needs the adc nodes.
-> Will try to implement an adc fragment for PIT, PI and Snow.
+> 
+> [ ... ]
+> 
+>> +static int odroidx2_hw_params(struct snd_pcm_substream *substream,
+>> +	struct snd_pcm_hw_params *params)
+>> +{
+>> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+>> +	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+>> +	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+>> +	int ret;
+>> +
+>> +	ret = snd_soc_dai_set_sysclk(codec_dai, 0, MAX98090_MCLK,
+>> +						SND_SOC_CLOCK_IN);
+>> +	if (ret < 0) {
+>> +		dev_err(codec_dai->dev,
+>> +			"Unable to switch to FLL1: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* Set the cpu DAI configuration in order to use CDCLK */
+>> +	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
+>> +					0, SND_SOC_CLOCK_OUT);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+> 
+> While upstreaming sound-card driver for Snow board, I had a comment from
+> Mark to move this to probe, if possible. That way, the clock operations
+> would be done only once and this function and odroidx2_ops can be
+> removed altogether.
 
-I just found out  https://lkml.org/lkml/2013/3/27/453
+Thanks for the suggestion, I'll change it for the next iteration.
 
-Adding ADC based Thermistor nodes to Exynos5250-snow.dts din't make it in.
+>> +	dev_dbg(codec_dai->dev, "HiFi DAI %s params: channels: %d, rate: %d\n",
+>> +		snd_pcm_stream_str(substream), params_channels(params),
+>> +		params_rate(params));
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static struct snd_soc_ops odroidx2_ops = {
+>> +	.hw_params	= odroidx2_hw_params,
+>> +};
+>> +
+> 
+> [ ... ]
+> 
+>> +
+>> +	ret = snd_soc_register_card(card);
+> 
+> devm_snd_soc_register_card ?
 
+Could be, although snd_soc_unregister_card() wouldn't release references
+to the OF nodes, i.e. there would be no related of_node_put() calls.
+And for correctness, the of_node_put() calls should be made _after_
+a snd_soc_unregister_card() call, and I can't see how it could be possible
+if I left only of_node_put() calls in the odroidx2_audio_remove() callback.
 
->
->>
->> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> Tested-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->
->
->
-> --
-> Shine bright,
-> (: Nav :)
+>> +	if (ret) {
+>> +		dev_err(&pdev->dev, "snd_soc_register_card failed: %d\n", ret);
+>> +		goto err_put_cpu_n;
+>> +	}
+>> +
+>> +	return 0;
+>> +
+>> +err_put_cpu_n:
+>> +	of_node_put(odroidx2_dai[0].cpu_of_node);
+>> +err_put_cod_n:
+>> +	of_node_put(odroidx2_dai[0].codec_of_node);
+>> +	return ret;
+>> +}
+>> +
+>> +static int odroidx2_audio_remove(struct platform_device *pdev)
+>> +{
+>> +	struct snd_soc_card *card = platform_get_drvdata(pdev);
+>> +
+>> +	snd_soc_unregister_card(card);
+> 
+> This can be removed when devm_snd_soc_register_card is used.
 
-
-
--- 
-Shine bright,
-(: Nav :)
+--
+Regards,
+Sylwester
