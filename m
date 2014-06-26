@@ -1,72 +1,68 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/4 v2] ARM: DTS: Add NTC thermistor nodes to Exynos5420
- based Peach_PIT
-Date: Thu, 26 Jun 2014 11:46:59 +0530
-Message-ID: <CAHfPSqBL9hH+r8Fy4GbbY1E_sJVCP-gpDHATDJgRHP4wKrFaiA@mail.gmail.com>
-References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
- <1403677773-21141-5-git-send-email-ch.naveen@samsung.com> <CAD=FV=WeuFhGK=JNEm20CT73J=c1Zc_dZGQT6bKeob895M+kQA@mail.gmail.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: Using s5p-sss hw crypto causes ipsec to break
+Date: Thu, 26 Jun 2014 14:35:44 +0800
+Message-ID: <20140626063544.GA17608@gondor.apana.org.au>
+References: <CAPz6YkUtGt61YNcGh2sYhaL=U5JMSOu26DvuKXuvp-oxi9ftBw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAD=FV=WeuFhGK=JNEm20CT73J=c1Zc_dZGQT6bKeob895M+kQA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from helcar.apana.org.au ([209.40.204.226]:41070 "EHLO
+	helcar.apana.org.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752838AbaFZGfz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Jun 2014 02:35:55 -0400
+Content-Disposition: inline
+In-Reply-To: <CAPz6YkUtGt61YNcGh2sYhaL=U5JMSOu26DvuKXuvp-oxi9ftBw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sonny Rao <sonnyrao@chromium.org>
+Cc: linux-crypto@vger.kernel.org, dianders@chromium.org, ch.naveen@samsung.com, linux-samsung-soc@vger.kernel.org, vzapolskiy@gmail.com
 
-Doug,
+Sonny Rao <sonnyrao@chromium.org> wrote:
+> Hi, I've been investigating an issue relating to hardware crypto which
+> is that when I enable the s5p-sss module for hardware cryptographic
+> acceleration on Samsung Exynos SoCs the in-kernel IPSec seems to
+> break, although cryptographic operations on filesystems/block devices
+> using this driver seem to work fine.
+> 
+> Originally we were looking at an older kernel (3.8 with patches), but
+> I've now verified on linux-next from 20140612 (after 3.15) with a few
+> additional patches (to enable both s5p-sss and Exynos5420) that this
+> is still the case.
+> 
+> It looks like what is happening in the kernel is that IPsec ends up
+> with this callstack
+> 
+> esp_output()-> crypto_aead_givencrypt()->
+> crypto_authenc_givencrypt()-> eseqiv_givencrypt() ->
+> crypto_ablkcipher_encrypt()
+> 
+> 
+> which calls into the s5p-sss driver and that is returning -EINPROGRESS
+> (or possibly -EBUSY), and that is passed all the way back up the call
+> stack and that seems to be treated as an error condition by the ipsec
+> stack.
+> 
+> For example esp_output does this:
+> 
+>       err = crypto_aead_givencrypt(req);
+>        if (err == -EINPROGRESS)
+>                goto error;
+> 
+>        if (err == -EBUSY)
+>                err = NET_XMIT_DROP;
+> 
+> So, I'm not sure how this is supposed to work, or if s5p-sss is doing
+> something wrong.
 
-On 26 June 2014 02:10, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> Naveen,
->
-> On Tue, Jun 24, 2014 at 11:29 PM, Naveen Krishna Chatradhi
-> <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> Exynos5420 based Peach PIT board has 4 NTC thermistors to measure
->> temperatures at various points on the board.
->>
->> IIO based ADC becomes the parent and NTC thermistors are the childs,
->> via the HWMON interface.
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> ---
->> Changes since v1:
->> 1. Arranged the ADC node alphabetical
->> 2. Added "status = "okay"" to the ADC node
->>
->> This patch needs
->> 1. MAX77802 PMIC device tree nodes (for ldo9)
->>    https://www.mail-archive.com/devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg31430.html
->> 2. Uses the DT documentation for NTC thermistors updated with vendor-prefix
->>
->> This patch set is tested
->> 1. On Peach PIT board via sysfs entry exposed by hwmon
->> localhost ~ # cat /sys/class/hwmon/hwmon*/device/temp1_input
->> 37436
->> 36449
->> 38560
->> 38059
->>
->> 2. Backward compatibility is tested by replacing "murata" with "ntc"
->>    in the dts nodes and running the above test.
->>
->>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   34 ++++++++++++++++++++++++++++
->>  1 file changed, 34 insertions(+)
->
-> Now that Javier has spun his patch, perhaps you can fold the "pi"
-> version in here too?
+Something else must be happening because EINPROGRESS is meant to
+be handled by xfrm_output_resume (which gets called on the normal
+path as well as on the actual resume path).
 
-Sure, thanks for the information.
+So I don't think this is your problem.
 
-Snow also needs the adc nodes.
-Will try to implement an adc fragment for PIT, PI and Snow.
-
->
-> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> Tested-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-
-
-
+Cheers,
 -- 
-Shine bright,
-(: Nav :)
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
