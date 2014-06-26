@@ -1,96 +1,200 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/4 v2] ARM: DTS: Add NTC thermistor nodes to Exynos5420
- based Peach_PIT
-Date: Thu, 26 Jun 2014 17:16:14 +0530
-Message-ID: <CAHfPSqBx7o2Lcoz89VgnUbCKVAxi6mG_j3piTe=fWrF853gWhQ@mail.gmail.com>
-References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
- <1403677773-21141-5-git-send-email-ch.naveen@samsung.com> <CAD=FV=WeuFhGK=JNEm20CT73J=c1Zc_dZGQT6bKeob895M+kQA@mail.gmail.com>
- <CAHfPSqBL9hH+r8Fy4GbbY1E_sJVCP-gpDHATDJgRHP4wKrFaiA@mail.gmail.com>
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [PATCH v4 05/14] clk: Add generic driver for Maxim PMIC clocks
+Date: Thu, 26 Jun 2014 17:21:29 +0530
+Message-ID: <CAKew6eWt-0c4gxGX7C7KtRrxR=9h9BSUmN3a2aWQtuT40cva1w@mail.gmail.com>
+References: <1403723019-6212-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1403723019-6212-6-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAHfPSqBL9hH+r8Fy4GbbY1E_sJVCP-gpDHATDJgRHP4wKrFaiA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f181.google.com ([209.85.223.181]:61493 "EHLO
+	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756280AbaFZLva (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Jun 2014 07:51:30 -0400
+In-Reply-To: <1403723019-6212-6-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-Hello Kukjin,
+Hi Javier,
 
-On 26 June 2014 11:46, Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Doug,
->
-> On 26 June 2014 02:10, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
->> Naveen,
->>
->> On Tue, Jun 24, 2014 at 11:29 PM, Naveen Krishna Chatradhi
->> <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>> Exynos5420 based Peach PIT board has 4 NTC thermistors to measure
->>> temperatures at various points on the board.
->>>
->>> IIO based ADC becomes the parent and NTC thermistors are the childs,
->>> via the HWMON interface.
->>>
->>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->>> ---
->>> Changes since v1:
->>> 1. Arranged the ADC node alphabetical
->>> 2. Added "status = "okay"" to the ADC node
->>>
->>> This patch needs
->>> 1. MAX77802 PMIC device tree nodes (for ldo9)
->>>    https://www.mail-archive.com/devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg31430.html
->>> 2. Uses the DT documentation for NTC thermistors updated with vendor-prefix
->>>
->>> This patch set is tested
->>> 1. On Peach PIT board via sysfs entry exposed by hwmon
->>> localhost ~ # cat /sys/class/hwmon/hwmon*/device/temp1_input
->>> 37436
->>> 36449
->>> 38560
->>> 38059
->>>
->>> 2. Backward compatibility is tested by replacing "murata" with "ntc"
->>>    in the dts nodes and running the above test.
->>>
->>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   34 ++++++++++++++++++++++++++++
->>>  1 file changed, 34 insertions(+)
->>
->> Now that Javier has spun his patch, perhaps you can fold the "pi"
->> version in here too?
->
-> Sure, thanks for the information.
->
-> Snow also needs the adc nodes.
-> Will try to implement an adc fragment for PIT, PI and Snow.
+Sorry for jumping in late, but just one concern mentioned inline.
 
-I've a plan to create a common file (cros-exynos-peach.dts) for
-exynos5420-peach-pit.dts and exynos5800-peach-pi.dts
-And add the ADC nodes directly into that.
+[ .. ]
 
-In favor of the above, can you abandon the following patches
+> +
+> +static unsigned long max_gen_recalc_rate(struct clk_hw *hw,
+> +                                        unsigned long parent_rate)
+> +{
+> +       return 32768;
+> +}
 
-1. [PATCH 3/4 v2] ARM: DTS: use new compatible string for thermistors in trats2
-    http://www.spinics.net/lists/linux-samsung-soc/msg33037.html
+Isn't more safer(correct), if it check and return 0 when clk is
+disabled(unprepared) ?
 
-2. [PATCH 4/4 v2] ARM: DTS: Add NTC thermistor nodes to Exynos5420
-based Peach_PIT
-http://www.spinics.net/lists/linux-samsung-soc/msg33038.html
+Regards,
+Yadwinder
 
->
->>
->> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> Tested-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->
->
+> +
+> +struct clk_ops max_gen_clk_ops = {
+> +       .prepare        = max_gen_clk_prepare,
+> +       .unprepare      = max_gen_clk_unprepare,
+> +       .is_prepared    = max_gen_clk_is_prepared,
+> +       .recalc_rate    = max_gen_recalc_rate,
+> +};
+> +EXPORT_SYMBOL_GPL(max_gen_clk_ops);
+> +
+> +static struct clk *max_gen_clk_register(struct device *dev,
+> +                                       struct max_gen_clk *max_gen)
+> +{
+> +       struct clk *clk;
+> +       struct clk_hw *hw = &max_gen->hw;
+> +
+> +       clk = clk_register(dev, hw);
+> +       if (IS_ERR(clk))
+> +               return clk;
+> +
+> +       max_gen->lookup = kzalloc(sizeof(struct clk_lookup), GFP_KERNEL);
+> +       if (!max_gen->lookup)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       max_gen->lookup->con_id = hw->init->name;
+> +       max_gen->lookup->clk = clk;
+> +
+> +       clkdev_add(max_gen->lookup);
+> +
+> +       return clk;
+> +}
+> +
+> +int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
+> +                     u32 reg, struct clk_init_data *clks_init, int num_init)
+> +{
+> +       int i, ret;
+> +       struct max_gen_clk *max_gen_clks;
+> +       struct clk **clocks;
+> +       struct device *dev = &pdev->dev;
+> +
+> +       clocks = devm_kzalloc(dev, sizeof(struct clk *) * num_init, GFP_KERNEL);
+> +       if (!clocks)
+> +               return -ENOMEM;
+> +
+> +       max_gen_clks = devm_kzalloc(dev, sizeof(struct max_gen_clk)
+> +                                   * num_init, GFP_KERNEL);
+> +       if (!max_gen_clks)
+> +               return -ENOMEM;
+> +
+> +       for (i = 0; i < num_init; i++) {
+> +               max_gen_clks[i].regmap = regmap;
+> +               max_gen_clks[i].mask = 1 << i;
+> +               max_gen_clks[i].reg = reg;
+> +               max_gen_clks[i].hw.init = &clks_init[i];
+> +
+> +               clocks[i] = max_gen_clk_register(dev, &max_gen_clks[i]);
+> +               if (IS_ERR(clocks[i])) {
+> +                       ret = PTR_ERR(clocks[i]);
+> +                       dev_err(dev, "failed to register %s\n",
+> +                               max_gen_clks[i].hw.init->name);
+> +                       goto err_clocks;
+> +               }
+> +       }
+> +
+> +       platform_set_drvdata(pdev, clocks);
+> +
+> +       if (dev->of_node) {
+> +               struct clk_onecell_data *of_data;
+> +
+> +               of_data = devm_kzalloc(dev, sizeof(*of_data), GFP_KERNEL);
+> +               if (!of_data) {
+> +                       ret = -ENOMEM;
+> +                       goto err_clocks;
+> +               }
+> +
+> +               of_data->clks = clocks;
+> +               of_data->clk_num = num_init;
+> +               ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
+> +                                         of_data);
+> +
+> +               if (ret) {
+> +                       dev_err(dev, "failed to register OF clock provider\n");
+> +                       goto err_clocks;
+> +               }
+> +       }
+> +
+> +       return 0;
+> +
+> +err_clocks:
+> +       for (--i; i >= 0; --i) {
+> +               clkdev_drop(max_gen_clks[i].lookup);
+> +               clk_unregister(max_gen_clks[i].hw.clk);
+> +       }
+> +
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(max_gen_clk_probe);
+> +
+> +int max_gen_clk_remove(struct platform_device *pdev, int num_init)
+> +{
+> +       struct clk **clocks = platform_get_drvdata(pdev);
+> +       struct device *dev = pdev->dev.parent;
+> +       int i;
+> +
+> +       if (dev->of_node)
+> +               of_clk_del_provider(dev->of_node);
+> +
+> +       for (i = 0; i < num_init; i++) {
+> +               struct clk_hw *hw = __clk_get_hw(clocks[i]);
+> +               struct max_gen_clk *max_gen = to_max_gen_clk(hw);
+> +
+> +               clkdev_drop(max_gen->lookup);
+> +               clk_unregister(clocks[i]);
+> +       }
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(max_gen_clk_remove);
+> diff --git a/drivers/clk/clk-max-gen.h b/drivers/clk/clk-max-gen.h
+> new file mode 100644
+> index 0000000..997e86f
+> --- /dev/null
+> +++ b/drivers/clk/clk-max-gen.h
+> @@ -0,0 +1,32 @@
+> +/*
+> + * clk-max-gen.h - Generic clock driver for Maxim PMICs clocks
+> + *
+> + * Copyright (C) 2014 Google, Inc
+> + *
+> + * This program is free software; you can redistribute  it and/or modify it
+> + * under  the terms of  the GNU General  Public License as published by the
+> + * Free Software Foundation;  either version 2 of the  License, or (at your
+> + * option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + */
+> +
+> +#ifndef __CLK_MAX_GEN_H__
+> +#define __CLK_MAX_GEN_H__
+> +
+> +#include <linux/types.h>
+> +#include <linux/device.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/regmap.h>
+> +#include <linux/platform_device.h>
+> +
+> +int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
+> +                     u32 reg, struct clk_init_data *clks_init, int num_init);
+> +int max_gen_clk_remove(struct platform_device *pdev, int num_init);
+> +extern struct clk_ops max_gen_clk_ops;
+> +
+> +#endif /* __CLK_MAX_GEN_H__ */
+> --
+> 2.0.0.rc2
 >
 > --
-> Shine bright,
-> (: Nav :)
-
-
-
--- 
-Thanks,
-(: Nav :)
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
