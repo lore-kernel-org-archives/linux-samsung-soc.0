@@ -1,31 +1,108 @@
-From: Sachin Kamat <sachin.kamat@samsung.com>
-Subject: Re: [PATCH RESEND] ARM: EXYNOS: Do not calculate boot address twice
-Date: Thu, 26 Jun 2014 17:21:45 +0530
-Message-ID: <CAK5sBcGdYZRdOK7nDhGFn=TTsFmmp2ReajA+0o5w9u6WxSDR9A@mail.gmail.com>
-References: <1403783163-28638-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1403783163-28638-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH RESEND] clk: samsung: Make of_device_id array const
+Date: Thu, 26 Jun 2014 14:00:06 +0200
+Message-ID: <1403784006-17605-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:39795 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753929AbaFZMAU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Jun 2014 08:00:20 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hi Krzysztof,
+Array of struct of_device_id may be be const as expected by
+of_match_table field and of_find_matching_node_and_match() function.
 
-On Thu, Jun 26, 2014 at 5:16 PM, Krzysztof Kozlowski
-<k.kozlowski@samsung.com> wrote:
-> Commit b3205dea8fbf ("ARM: EXYNOS: Map SYSRAM through generic DT
-> bindings") introduced local variable boot_reg where boot address from
-> cpu_boot_reg() call is stored. Re-use it instead calling cpu_boot_reg()
-> again.
->
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c    | 2 +-
+ drivers/clk/samsung/clk-exynos5250.c | 2 +-
+ drivers/clk/samsung/clk-exynos5420.c | 2 +-
+ drivers/clk/samsung/clk-exynos5440.c | 2 +-
+ drivers/clk/samsung/clk.c            | 2 +-
+ drivers/clk/samsung/clk.h            | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-Thanks for the patch.
-Reviewed-by: Sachin Kamat <sachin.kamat@samsung.com>
-
-Regards,
-Sachin.
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 4f150c9dd38c..ca6688483390 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1070,7 +1070,7 @@ static void __init exynos4_clk_register_finpll(struct samsung_clk_provider *ctx)
+ 
+ }
+ 
+-static struct of_device_id ext_clk_match[] __initdata = {
++static const struct of_device_id ext_clk_match[] __initconst = {
+ 	{ .compatible = "samsung,clock-xxti", .data = (void *)0, },
+ 	{ .compatible = "samsung,clock-xusbxti", .data = (void *)1, },
+ 	{},
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 1fad4c5e3f5d..0af3e4ff0eb5 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -748,7 +748,7 @@ static struct samsung_pll_clock exynos5250_plls[nr_plls] __initdata = {
+ 		VPLL_LOCK, VPLL_CON0, NULL),
+ };
+ 
+-static struct of_device_id ext_clk_match[] __initdata = {
++static const struct of_device_id ext_clk_match[] __initconst = {
+ 	{ .compatible = "samsung,clock-xxti", .data = (void *)0, },
+ 	{ },
+ };
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 9d7d7eed03fd..007b5ef8bc1c 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1167,7 +1167,7 @@ static struct samsung_pll_clock exynos5x_plls[nr_plls] __initdata = {
+ 		KPLL_CON0, NULL),
+ };
+ 
+-static struct of_device_id ext_clk_match[] __initdata = {
++static const struct of_device_id ext_clk_match[] __initconst = {
+ 	{ .compatible = "samsung,exynos5420-oscclk", .data = (void *)0, },
+ 	{ },
+ };
+diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
+index 647f1440aa6a..6e8b40a3b143 100644
+--- a/drivers/clk/samsung/clk-exynos5440.c
++++ b/drivers/clk/samsung/clk-exynos5440.c
+@@ -84,7 +84,7 @@ static struct samsung_gate_clock exynos5440_gate_clks[] __initdata = {
+ 	GATE(CLK_CS250_O, "cs250_o", "cs250", CLKEN_OV_VAL, 19, 0, 0),
+ };
+ 
+-static struct of_device_id ext_clk_match[] __initdata = {
++static const struct of_device_id ext_clk_match[] __initconst = {
+ 	{ .compatible = "samsung,clock-xtal", .data = (void *)0, },
+ 	{},
+ };
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 49629c71c9e7..2413677b42fe 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -284,7 +284,7 @@ void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
+ void __init samsung_clk_of_register_fixed_ext(struct samsung_clk_provider *ctx,
+ 			struct samsung_fixed_rate_clock *fixed_rate_clk,
+ 			unsigned int nr_fixed_rate_clk,
+-			struct of_device_id *clk_matches)
++			const struct of_device_id *clk_matches)
+ {
+ 	const struct of_device_id *match;
+ 	struct device_node *clk_np;
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index 9693b80d924f..150a9ebc0266 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -331,7 +331,7 @@ extern void __init samsung_clk_of_register_fixed_ext(
+ 			struct samsung_clk_provider *ctx,
+ 			struct samsung_fixed_rate_clock *fixed_rate_clk,
+ 			unsigned int nr_fixed_rate_clk,
+-			struct of_device_id *clk_matches);
++			const struct of_device_id *clk_matches);
+ 
+ extern void samsung_clk_add_lookup(struct samsung_clk_provider *ctx,
+ 			struct clk *clk, unsigned int id);
+-- 
+1.9.1
