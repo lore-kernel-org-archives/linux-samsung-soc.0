@@ -1,151 +1,82 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Restore the entry address setup code post-resume
-Date: Fri, 27 Jun 2014 07:19:40 +0530
-Message-ID: <CAM4voa=U-Z=dOedfzBXFOckW_nS-mEGv76dJwPhcMPEfvQdRMA@mail.gmail.com>
-References: <1403780312-22885-1-git-send-email-a.kesavan@samsung.com>
-	<CAM4voa=AYDkHG49EEnr0097Dw4eS__T95oDrhswcfHEzY=PTcw@mail.gmail.com>
-	<alpine.LFD.2.11.1406261550060.16842@knanqh.ubzr>
+From: Tushar Behera <trblinux@gmail.com>
+Subject: Re: mainline boot: 64 boots: 62 pass, 2 fail (v3.16-rc1-2-gebe0618)
+Date: Fri, 27 Jun 2014 08:36:42 +0530
+Message-ID: <53ACDFC2.5020206@gmail.com>
+References: <53A2AE11.2050208@gmail.com> <53A2BE94.2010308@gmail.com> <53A7A579.4010702@gmail.com> <CAGa+x85H510fNGTXJHGYfQybRa2FGgg2NyCgJ8rmjJ6TE7GNbA@mail.gmail.com> <53A9B99F.4040806@codeaurora.org> <53A9FBB5.60709@codeaurora.org> <53AABCF5.4050403@gmail.com> <53AB45D1.90909@codeaurora.org> <53ABC13C.8030908@gmail.com> <CAGa+x84UTbmFc2Twg9zEcr+ZP2xsq68gFvk=385+_cFM5hvGHg@mail.gmail.com> <20140626151756.GU32514@n2100.arm.linux.org.uk> <53AC77A2.4090207@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f182.google.com ([209.85.216.182]:60063 "EHLO
-	mail-qc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751139AbaF0Btl (ORCPT
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:62211 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751139AbaF0DGr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 21:49:41 -0400
-Received: by mail-qc0-f182.google.com with SMTP id m20so3973953qcx.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2014 18:49:40 -0700 (PDT)
-In-Reply-To: <alpine.LFD.2.11.1406261550060.16842@knanqh.ubzr>
+	Thu, 26 Jun 2014 23:06:47 -0400
+Received: by mail-pd0-f175.google.com with SMTP id v10so3826089pde.20
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2014 20:06:47 -0700 (PDT)
+In-Reply-To: <53AC77A2.4090207@codeaurora.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Douglas Anderson <dianders@chromium.org>
+To: Laura Abbott <lauraa@codeaurora.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kernel-build-reports@lists.linaro.org, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi,
+On 06/27/2014 01:12 AM, Laura Abbott wrote:
 
-On Fri, Jun 27, 2014 at 1:36 AM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> On Thu, 26 Jun 2014, Abhilash Kesavan wrote:
->
->> Hi,
->>
->> On Thu, Jun 26, 2014 at 4:28 PM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
->> > Setup the mcpm entry address again on system resume as the
->> > iRAM contents are lost across an s2r cycle.
->> >
->> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->> > ---
->> > This has been tested after applying the Exynos5420 S2R support series
->> > along with Nicolas Pitre's boot cluster CCI enablement patches on Peach
->> > Pit.
->> >
->> >  arch/arm/mach-exynos/mcpm-exynos.c | 31 +++++++++++++++++++++----------
->> >  1 file changed, 21 insertions(+), 10 deletions(-)
->> >
->> > diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
->> > index 8c610e2..0bf734d 100644
->> > --- a/arch/arm/mach-exynos/mcpm-exynos.c
->> > +++ b/arch/arm/mach-exynos/mcpm-exynos.c
->> > @@ -15,6 +15,7 @@
->> >  #include <linux/delay.h>
->> >  #include <linux/io.h>
->> >  #include <linux/of_address.h>
->> > +#include <linux/syscore_ops.h>
->> >
->> >  #include <asm/cputype.h>
->> >  #include <asm/cp15.h>
->> > @@ -26,6 +27,7 @@
->> >  #define EXYNOS5420_CPUS_PER_CLUSTER    4
->> >  #define EXYNOS5420_NR_CLUSTERS         2
->> >
->> > +static void __iomem *ns_sram_base_addr;
->> >  /*
->> >   * The common v7_exit_coherency_flush API could not be used because of the
->> >   * Erratum 799270 workaround. This macro is the same as the common one (in
->> > @@ -308,10 +310,26 @@ static const struct of_device_id exynos_dt_mcpm_match[] = {
->> >         {},
->> >  };
->> >
->> > +static void exynos_mcpm_setup_entry_point(void)
->> > +{
->> > +       /*
->> > +        * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
->> > +        * as part of secondary_cpu_start().  Let's redirect it to the
->> > +        * mcpm_entry_point(). This is done during both secondary boot-up as
->> > +        * well as system resume.
->> > +        */
->> > +       __raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
->> > +       __raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
->> > +       __raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
->> > +}
->> > +
->> > +static struct syscore_ops exynos_mcpm_syscore_ops = {
->> > +       .resume = exynos_mcpm_setup_entry_point,
->> > +};
->> > +
->> >  static int __init exynos_mcpm_init(void)
->> >  {
->> >         struct device_node *node;
->> > -       void __iomem *ns_sram_base_addr;
->> >         int ret;
->> >
->> >         node = of_find_matching_node(NULL, exynos_dt_mcpm_match);
->> > @@ -357,16 +375,9 @@ static int __init exynos_mcpm_init(void)
->> >
->> >         pr_info("Exynos MCPM support installed\n");
->> >
->> > -       /*
->> > -        * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
->> > -        * as part of secondary_cpu_start().  Let's redirect it to the
->> > -        * mcpm_entry_point().
->> > -        */
->> > -       __raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
->> > -       __raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
->> > -       __raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
->> > +       exynos_mcpm_setup_entry_point();
->> >
->> > -       iounmap(ns_sram_base_addr);
->> > +       register_syscore_ops(&exynos_mcpm_syscore_ops);
->> >
->> >         return ret;
->> >  }
->>
->> This patch alone is not enough to bring the 8 cores back up post
->> resume on exynos5420, We need to enable the boot cluster snoops as
->> well.
->>
->> Nicolas, if I add code to enable the boot cluster CCI in
->> mach-exynos/sleep.S, all 8 cores come up. However, if I use
->> mcpm_loopback as part of the newly added resume function to do the
->> same, I get a hang on resume.
->> Is there anything else that I need to take care of while doing this ?
->
-> No no no.
->
-> Forget about the MCPM loopback -- that's for boot time setup of the
-> booting cluster nothing else.
-Ok, I thought this is to be used at resume too.
->
-> The snoops are enabled in a ***race free way*** by the low-level MCPM
-> code.  But of course you must call it upon resume.  Nothing else than
-> MCPM should ever play with the snoops enable/disable.  Certainly not
-> mach-exynos/sleep.S.
-The sleep.S change was something I tried to isolate where I was going
-wrong. Of course, in this case my basic premise of using mcpm_loopback
-to enable snoops itself was flawed.
->
-> You must tell your firmware to resume execution after suspend at
-> mcpm_entry_point.  Before suspending, you tell MCPM where it should
-> branch to after it is done with its resuming business by calling
-> mcpm_set_entry_vector(), passing the address for exynos_cpu_resume for
-> example.
-Thanks for the explantion, will re-work the patch.
->
-> And of course the CPU shutdown during idle has to go through MCPM too.
->
-> When resumed, you also have to call mcpm_cpu_powered_up().
->
-> See how it is done in cpuidle-big_little.c for example
-Will check the cpuidle big.LITTLE driver also.
+>  
+> +static unsigned int bank_cnt;
+> +static unsigned int max_cnt;
+> +
+>  int __init arm_add_memory(u64 start, u64 size)
+>  {
+>  	u64 aligned_start;
+>  
+>  	/*
+> +	 * Some buggy bootloaders rely on the old meminfo behavior of not adding
+> +	 * more than n banks since anything past that may contain invalid data.
+> +	 */
+> +	if (bank_cnt >= max_cnt) {
+> +		pr_crit("Max banks too low, ignoring memory at 0x%08llx\n",
+> +			(long long)start);
+> +		return -EINVAL;
+> +	}
+> +
+> +	bank_cnt++;
+> +
+> +	/*
+>  	 * Ensure that start/size are aligned to a page boundary.
+>  	 * Size is appropriately rounded down, start is rounded up.
+>  	 */
+> @@ -879,6 +894,7 @@ void __init setup_arch(char **cmdline_p)
+>  		mdesc = setup_machine_tags(__atags_pointer, __machine_arch_type);
+>  	machine_desc = mdesc;
+>  	machine_name = mdesc->name;
+> +	max_cnt = mdesc->bank_limit;
 
-Regards,
-Abhilash
+arm_add_memory is getting called before this is being set, resulting in
+none of the memory banks getting added[1].
+
+setup_machine_fdt -> early_init_dt_scan -> early_init_dt_scan_memory
+
+Would it make sense to re-introduce the config option ARM_NR_BANKS and
+replace max_cnt with NR_BANKS?
+
+[1] http://pastebin.com/MawYD7kb
+
+>  
+>  	if (mdesc->reboot_mode != REBOOT_HARD)
+>  		reboot_mode = mdesc->reboot_mode;
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index f38cf7c..91283fd 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -350,4 +350,5 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+>  	.dt_compat	= exynos_dt_compat,
+>  	.restart	= exynos_restart,
+>  	.reserve	= exynos_reserve,
+> +	.bank_limit     = 8,
+>  MACHINE_END
+> 
+
+
+-- 
+Tushar Behera
