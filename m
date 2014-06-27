@@ -1,34 +1,129 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 0/3] ARM: DTS: create common dtsi for Peach pit and pi boards
-Date: Thu, 26 Jun 2014 16:53:31 -0700
-Message-ID: <CAD=FV=U4NA2TaQWf8f4bL48dFG6T+k3vh_nRnWSM_VWivUFjoQ@mail.gmail.com>
-References: <1403785148-20792-1-git-send-email-ch.naveen@samsung.com>
-	<CABxcv=nTfkRkpz_zZuxYHznjDuNgpiKO+FD4MnHi2C_2e32eqA@mail.gmail.com>
-	<CAHfPSqC2sjkrpYz53QzW1PDSV2E9yfSEnE734JHH1zUONnh=rw@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V2] drm/exynos: Support DP CLKCON register in FIMD driver
+Date: Fri, 27 Jun 2014 10:16:06 +0900
+Message-ID: <000001cf91a5$5edf2f30$1c9d8d90$%han@samsung.com>
+References: <1403793398-31593-1-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f170.google.com ([209.85.220.170]:33764 "EHLO
-	mail-vc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750699AbaFZXxc (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:13537 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751139AbaF0BQJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jun 2014 19:53:32 -0400
-Received: by mail-vc0-f170.google.com with SMTP id hy10so4325096vcb.15
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Jun 2014 16:53:31 -0700 (PDT)
-In-Reply-To: <CAHfPSqC2sjkrpYz53QzW1PDSV2E9yfSEnE734JHH1zUONnh=rw@mail.gmail.com>
+	Thu, 26 Jun 2014 21:16:09 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N7S006LJZIVXH40@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 27 Jun 2014 10:16:07 +0900 (KST)
+In-reply-to: <1403793398-31593-1-git-send-email-ajaykumar.rs@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-iio <linux-iio@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "cpgs ." <cpgs@samsung.com>
+To: 'Ajay Kumar' <ajaykumar.rs@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
 
-Naveen,
+On Thursday, June 26, 2014 11:37 PM, Ajay Kumar wrote:
+> 
+> Add the missing setting for DP CLKCON register.
+> 
+> This register is present on Exynos5 based FIMD controllers,
+> and needs to be used if we are using DP.
+> 
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 
-On Thu, Jun 26, 2014 at 9:38 AM, Naveen Krishna Ch
-<naveenkrishna.ch@gmail.com> wrote:
-> Will wait for few more opinions and make a fragment instead of common dtsi.
-> Thank you a lot for the information and the references.
+It looks better than V1 patch.
 
-Just in case you're waiting for my opinion, I'll say that I'm of the
-opinion that fragments will work better.
+Reviewed-by: Jingoo Han <jg1.han@samsung.com>
 
--Doug
+Best regards,
+Jingoo Han
+
+> ---
+> Changes since V1:
+>  - Remove usage of driver_data to configure DP CLKCON register
+>  drivers/gpu/drm/exynos/exynos_dp_core.c  | 2 ++
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h  | 8 ++++++++
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 5 +++++
+>  include/video/samsung_fimd.h             | 4 ++++
+>  4 files changed, 19 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> index 2e77a15..d8868f3 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> @@ -1336,6 +1336,8 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+> 
+>  	platform_set_drvdata(pdev, &exynos_dp_display);
+> 
+> +	exynos_fimd_output_type = EXYNOS_FIMD_OUTPUT_DP;
+> +
+>  	return exynos_drm_create_enc_conn(drm_dev, &exynos_dp_display);
+>  }
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> index 36535f3..1089744 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> @@ -60,6 +60,12 @@ enum exynos_drm_output_type {
+>  	EXYNOS_DISPLAY_TYPE_VIDI,
+>  };
+> 
+> +enum exynos_fimd_output_type {
+> +	EXYNOS_FIMD_OUTPUT_MIPI,
+> +	EXYNOS_FIMD_OUTPUT_DPI,
+> +	EXYNOS_FIMD_OUTPUT_DP,
+> +};
+> +
+>  /*
+>   * Exynos drm common overlay structure.
+>   *
+> @@ -380,4 +386,6 @@ extern struct platform_driver fimc_driver;
+>  extern struct platform_driver rotator_driver;
+>  extern struct platform_driver gsc_driver;
+>  extern struct platform_driver ipp_driver;
+> +
+> +extern enum exynos_fimd_output_type exynos_fimd_output_type;
+>  #endif
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index bb45ab2..a46a9c4 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -90,6 +90,8 @@ static struct fimd_driver_data exynos5_fimd_driver_data = {
+>  	.has_shadowcon = 1,
+>  };
+> 
+> +enum exynos_fimd_output_type exynos_fimd_output_type;
+> +
+>  struct fimd_win_data {
+>  	unsigned int		offset_x;
+>  	unsigned int		offset_y;
+> @@ -331,6 +333,9 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
+>  	if (clkdiv > 1)
+>  		val |= VIDCON0_CLKVAL_F(clkdiv - 1) | VIDCON0_CLKDIR;
+> 
+> +	if (exynos_fimd_output_type == EXYNOS_FIMD_OUTPUT_DP)
+> +		writel(DP_CLK_ENABLE, ctx->regs + DP_CLKCON);
+> +
+>  	writel(val, ctx->regs + VIDCON0);
+>  }
+> 
+> diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
+> index b039320..d8f4b0b 100644
+> --- a/include/video/samsung_fimd.h
+> +++ b/include/video/samsung_fimd.h
+> @@ -435,6 +435,10 @@
+>  #define BLENDCON_NEW_8BIT_ALPHA_VALUE		(1 << 0)
+>  #define BLENDCON_NEW_4BIT_ALPHA_VALUE		(0 << 0)
+> 
+> +/* Video clock enable for DP */
+> +#define DP_CLKCON				0x27C
+> +#define DP_CLK_ENABLE				0x2
+> +
+>  /* Notes on per-window bpp settings
+>   *
+>   * Value	Win0	 Win1	  Win2	   Win3	    Win 4
+> --
+> 1.8.3.2
