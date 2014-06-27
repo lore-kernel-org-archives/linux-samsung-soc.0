@@ -1,212 +1,98 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
-Date: Fri, 27 Jun 2014 07:48:48 -0700
-Message-ID: <CAGa+x87LHiYGb03=GRcZisK1=TyakW1htd1E2vOQ6ijZKw8syg@mail.gmail.com>
-References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
-	<1402464739-19044-3-git-send-email-tushar.b@samsung.com>
-	<CAD=FV=W5yh58fYTwRZxmZt=BORcZMSRV0oRe12yA74Q5h2S4YQ@mail.gmail.com>
-	<7hpphwlgn0.fsf@paris.lan>
-	<CAC5m3Bzey-YoPLmjAq4YNPQ13rojtVFWAbnhX6-ZFtYZwEdMWg@mail.gmail.com>
-	<7h8uojk61a.fsf@paris.lan>
-	<53ACE724.7090606@gmail.com>
-	<CAGa+x86COQz+cYtrXWrP-sjFGz-gi2tf6GEvLiKYoQwg1zMivQ@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
+Date: Fri, 27 Jun 2014 08:10:28 -0700
+Message-ID: <CAD=FV=Wz5nB=fe-snzdNC-Tb50wXz9h3S5z4jAHzKxH3N66UVw@mail.gmail.com>
+References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>
+	<53ABED5B.8010506@samsung.com>
+	<CAD=FV=Vwgdis6FzJ8MHDwfuohB1kN8Mf--2N=rxGNeAfKjJMig@mail.gmail.com>
+	<53AD60D7.4040404@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary=001a11c3de5e34947e04fcd2684d
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f49.google.com ([209.85.192.49]:61816 "EHLO
-	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753173AbaF0Ost (ORCPT
+Received: from mail-vc0-f182.google.com ([209.85.220.182]:47086 "EHLO
+	mail-vc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752740AbaF0PK3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jun 2014 10:48:49 -0400
-Received: by mail-qg0-f49.google.com with SMTP id f51so4429608qge.8
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2014 07:48:48 -0700 (PDT)
-In-Reply-To: <CAGa+x86COQz+cYtrXWrP-sjFGz-gi2tf6GEvLiKYoQwg1zMivQ@mail.gmail.com>
+	Fri, 27 Jun 2014 11:10:29 -0400
+Received: by mail-vc0-f182.google.com with SMTP id il7so5238778vcb.13
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2014 08:10:28 -0700 (PDT)
+In-Reply-To: <53AD60D7.4040404@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <trblinux@gmail.com>
-Cc: Doug Anderson <dianders@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>
+To: Vikas Sajjan <sajjan.linux@gmail.com>, Vikas Sajjan <vikas.sajjan@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <tomasz.figa@gmail.com>
 
---001a11c3de5e34947e04fcd2684d
-Content-Type: text/plain; charset=UTF-8
+Tomasz and Vikas,
 
-On Fri, Jun 27, 2014 at 7:18 AM, Kevin Hilman <khilman@linaro.org> wrote:
-> On Thu, Jun 26, 2014 at 8:38 PM, Tushar Behera <trblinux@gmail.com> wrote:
+On Fri, Jun 27, 2014 at 5:17 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Doug,
 >
->> Would you please provide me the environment setting of your u-boot?
->> U-boot environment on my board has been over-written, I would like to
->> set it same as yours and try to reproduce the issue at my end. With only
->> 'sound init', I don't seem to hit this issue anymore.
+> On 26.06.2014 17:25, Doug Anderson wrote:
+>> Tomasz,
+>>
+>> On Thu, Jun 26, 2014 at 2:52 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+>>> Hi Vikas, Doug,
+>>>
+>>> On 26.06.2014 11:15, Vikas Sajjan wrote:
+>>>> From: Doug Anderson <dianders@chromium.org>
+>>>>
+>>>> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
+>>>> being reset across sleep/wake.  If we don't set it to anything then
+>>>> the TPM will be reset.  U-Boot will detect this as invalid
+>>>> and will reset the system on resume time. This GPIO can always be low
+>>>> and not hurt anything.  It will get pulled back high again during a
+>>>> normal warm reset when it will default back to an input.
+>>>>
+>>>> To properly preserve the TPM state across suspend/resume and to make
+>>>> the chrome U-Boot happy, properly set the GPIO to mask the
+>>>> reset to the TPM.
+>>>>
+>>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>>>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+>>>> ---
+>>>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   20 ++++++++++++++++++++
+>>>>  1 file changed, 20 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>>> index 7649982..8fd990a 100644
+>>>> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>>> @@ -87,6 +87,18 @@
+>>>>               pinctrl-0 = <&usb301_vbus_en>;
+>>>>               enable-active-high;
+>>>>       };
+>>>> +
+>>>> +     /* We need GPX0_6 to be low at sleep time; just keep it low always */
+>>>> +     mask_tpm_reset_regulator: mask-tpm-reset-regulator {
+>>>> +     compatible = "regulator-fixed";
+>>>> +     regulator-name = "mask-tpm-reset ";
+>>>> +             gpio = <&gpx0 6 0>;
+>>>> +             enable-active-low;
+>>>> +             regulator-boot-on;
+>>>> +             regulator-always-on;
+>>>> +             pinctrl-names = "default";
+>>>> +             pinctrl-0 = <&mask_tpm_reset>;
+>>>> +     };
+>>>
+>>> I don't think this pin is supposed to be a real regulator. If I'm right,
+>>> you should just add a hog for it, if you don't have a proper driver to
+>>> handle it.
+>>
+>> Yes, I agree that it shouldn't really be a regulator, but there's not
+>> a whole lot of choice.  The pin needs to actually be driven low, not
+>> just pulled low.  Without your proposed patch (pinctrl: samsung: Allow
+>> pin value to be initialized using pinfunc) I don't think it's possible
+>> to actually drive a pin low with a hog.  I could be wrong, though.
+>>
 >
-> Attached is a full boot log using v3.16-rc2 with my patch adding
-> CLK_IGNORE_UNUSED to mau_epll and Doug's aclk66_peric patch.  In the
-> boot log, you'll see the output of 'printenv' inside u-boot where the
-> environment is dumped.
+> Uhm, I was convinced that this patch was already in. So I think your use
+> case is definitely a good reason to get back to this patch and use the
+> facility it provides to solve your problem.
 
-Oops, I sent you a boot log for the octa board.  Here's the one for
-peach-pi with the same kernel (built with upstream exynos_defconfig)
+Thanks, that seems very reasonable to me, too.
 
-Kevin
+Are you going to pick up revitalizing this patch series or are you
+hoping Vikas will?  IIRC I was in favor of your patch but it generated
+a whole bunch of discussion and never actually landed.
 
---001a11c3de5e34947e04fcd2684d
-Content-Type: application/x-gzip; name="boot-chromebook2.log.gz"
-Content-Disposition: attachment; filename="boot-chromebook2.log.gz"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_hwxm75sh1
-
-H4sICBqErVMAA2Jvb3QtY2hyb21lYm9vazIubG9nAMxbe3PbRpL/H5+iL3FtJB9JYfAGVLxa62Fb
-a8ti9Ihzl0qxQGBIIgIBLB6ymJT3s1/3DACC0IPK5q4SpkwRM92/7unp1wDIcZokPCh5CGUKwTJP
-V3yWprcaBGlSpDGHn4KljyQxDUjKn2HvX6/+WUUlsfD7qNxX9qqC597tMopXfrIPUQF+nHM/XG+4
-FOVfr5Z+Hua84KWiHKcrJA33HhG5/1+wIewhXxJp2VVUUZSb4RENairTR6oxXMxch4eqC3tvshx0
-lSYMGAKzPNP2dLYP8zSHCfeDJeoxufFO79dJWpiGpv2dOap6/v5XRTlKUQUP3qXpAo0giGESDSDn
-d4BiLOVMO/YAQKxSObl8c45X+siEd9GRMjk/O4aVf2/bjqoNs1UUQJREZeTH0a9oiSdkXk+uLFN1
-VRDsp8eCRzk/F3JOf/zvTxdXcPJZXKuD3gBTrt56cMJLuZefNfN7XTv5DF+icgmZv+BQoGgw4EN0
-NMB9K/0YdA3OUdnXr1/DZz9PomSBRpr5IRxfHg+gKmgg5HO/ikvgyV2Up8mKJ7h3ZwlpBEGeFkMe
-DG/5eqZcVCUNxkGonOZ58/PfVur048U7D07vUN4es/fBD0NEEIyCh+nKJy4kfkIfLJc8T3iJ+1ol
-4Uh5j67pJ2tAxchFizLNwK/KlFwHWVRQlL1Lvl+Ufl7CzdXRaDRS8I9KcJd8ERUlz9FpVHQbFT7N
-8kmalwVoyhUxkFVQHjlrmadxzHPihR/fH58BG6mqUgQYL0Q1qwqURb4W8rso4AXKAY0Eok1oYK/Y
-lyoTAvt/kM760tmj0kF+WtaqmAlGNFxOu9QBUOGqHnwpSLs5HRSl9jcP/OJerV3t/M0xbTOGfQFz
-DG/YMCkMThuYvlz03iP0WUkopKrw+vXvHF6tAkZZK6jyHF2uEbvg5TQjq5dRmkyjZJ5O+TzygELm
-9PLy4tKDs+QOozqElgySajXDHWQakZHAhyRijqbQeUU+m0cxmXkeJejlUh91j+hB3X9Er2c4n5mS
-KQdOJiKxQJgmXJGJ7VvAVIshjjseplWJVznmKqWdfZbsjucFLkqp50i0ny+KJpuPy3LNuhdXb471
-AWMmujhqN6sWwP08Xmd5lJS3kH+BHBHGB7jUAzTDLL5lmS7GvvioNf2YF+U642N+X+oQ5quRQBmr
-9/P5RuVGqz9SHPx8dWf7Q5Hn4iip7oeLpOL+LBougmCEmT+GPWNkj7RpkBbTxWIaOHPL5bhlNIrU
-sniQaJWhlL0s5zmPuV/wfeXdpxuIQ9ibIXAZxcVQG2ktkLYPdNm3+59q22gOJS9KGCbw6jfyINTo
-6yFlowTyKoF66BD9TtmixVWT4l3aekjQtov8PQIe5XleUG1DKgRxijkgSQ+hMyZCJkmVcBlkSt/w
-u5gacsF8dHFxPYFZjvSBj7ox5eT98QSCOKIQnlHWorLU5DrmaiNmOSOG3+aDSOM5enKUdag05bm5
-Rw2DeZPcpmuYeujhbu2gbfDLeZmBem8wVXy6OnjlKjvodGjDaXT3fvH9QXW2wsIxvDnNp8Vn5Q8D
-3IiqIQpInRav36LdRemQpuliHkJa5XA2ac0e9S3/FtNl4q84fPcS8d+NlI/kEDWc11mKmBDV7fW3
-f/SjwF8DQhvZ1JcdFIooG0drdBgocz8p5hxLUwhj0BzDNS0d9rSZPWMzWPL7/dZdRAZCp1XaH034
-jDF8mvCi3zO/CnO/5GOZxpQm543/lHpC0oNVOBZhgD0ABdw84uGUJsRsyGN/PVbr33fTVl8hdvLm
-8vrm5uxkbGgut/ncGFp+wIaaa7DhTAuDoT9TbX+u+vp85nS1EnhUwcfpys+02vmUAI9NqMbGKFib
-pjFf+MH6xTZRBFOLf0C/Du5WosKNqmi1UHAdFAm/T3vBVa3QFPhDGBTNrYRJEWXjTiCahoItoR+U
-YwpdBY2uCV2EiXO+4Mm0HZNZB9MTjYj8++q3Gvyr/IkCv3qvfiPDUbtEo0RHUUm/t1bapLQm3b36
-7RZbSkn6H2P45pt6ngfLFL6R6WWGyTpG9yZKHiMFga26rIfzaDPaysZRhWTSxbhNDDRCx5exDBFl
-gX7+xV8/MNDSL6ZU7fIQrblMi1LsRkaxNMwwX9OUv5oXG8NRNp1iXaiyQ9gYckMYJXjaieOOVelX
-JoxLvKKQbduOhpsSQzama2mGzC+XjTEfrhx4XHBpxO/qJvk4rWKqnSWITZQoMlNTzv7uUNxGkLVI
-LHu6jBZLEYHyUw/TNr9ozRvKZxZLNM8tVjoVLhX+9jc62vzf2qmrwAtsRrQHzxouE762XdPoHCEN
-VvcMMmRAlRbDaZnIBF2zvqdpO8YWxm8DVRygHhPEHgrabGAPEv9Nw6i4FQTTIkB7loc0gTTTOiVJ
-yi25EoKSDQndpIVDwkenoBNp27TV2YOmFGxrpC6bhCAz03Y62Mxu7bSgUUfiv4ekybx4llLUk3nR
-uilt4WGHf5MBavZveo1wx8Vr72ln2swgQeU/Wu3KL27HmmmOmn+q0tXhmaDqkv2l00fH7uPa5MqD
-uj2mc7+4+3PY9Le1vegKJztXrWO3lzKgFGkYzKnj/uEMy852la5rFYVL7osr8Wtrvt8+fFUeqYVd
-UV1i2eJIz8cg+dptJLrbiNoquyrDkzLiYjVapWEV82mcBrdYHcequAc4RfuJkBWAcmiOYZTm6wZd
-DhY8qHL+jELbafvp1XZ7OhSqAn6JzCGKq8no7tmWao/L7Hv1kwLxQgpDDoPE15zj7UBvGxGqGeiA
-dBpEt5VLe6BCnfzHxxef3p69m559Oru+PJm+OTm5PL26UpqOZqwrDWa3SfAO0gzrwS/LA9nAonaz
-yE8O/HzF40Eu7GCorjX40v4UOFUVhS/r5h7LxpQp5375XCcmCaePNWP1FDaYTfQXeCYL+Hb4YxBv
-CMcH1VC0p/Q1wnHZn3aEjAOlDfjeGbmpGWNxI41Wvrt9bGzULRjiUNi2wpKaaL4qBbpJno/lfbAB
-3fDGkShpBrZukMt7ZvWUsl0+n8m8vV74L5p2N7o3MbQtFw4adbcOGq2Vu+1Wh1ZGzjbphozfZ2le
-HtSxePjwXo3SNUZbDpr8Pu61BDi+teub1uffaUwQjZoJCvDA8Wa6Z+ueoXvc9WauopxuHqeI5xke
-6K7JDpilOyrM6HDdnpzlVnVulIDyyNC33wLd5qQjS3efPsqToTg7gl9Cy0GPPLCllROfUH96+vCR
-NoaGj3OOJ5PQk7f06Q7pULWGmg3ADM+wPKbBzfXxBuAa7UfEby7PJQh8kErI6b0qwYqY0X0SHu4T
-24lf+nAlFk4CHMM1XBfkXYVxc7OBCMU9ljfNPZb2IEUPxJIyX8MEsys905Ezhpj5gWr9mkxxvOTB
-bYEbSQ8dLj7Q5I9nk23l6qnN45XafmQh5Tpa8RwQYeWjsAjrf0RBzfGoHRZe88zj3M9v6e9p7KO7
-hQCIhWd1aD/q1k/5YBN1HmiGM1Ada+vnjB48inI4nQsi3VAHlqoJblcbmGybKBdEhmsODMsiGmYa
-A8cyADDTW0Y96w6YZkoN9IFlugArP0qwkKeZoDBVA4drPc2BScQUKKJLQgp3oNnmwLJNIrZtNlCJ
-AiU4amfW2qyTAT356fE7qtnOay7IbNbQMHWA3j9wDQdnB0w1B8zQNzSkaENidgQ5Ug1WzyIn+Wkt
-xGZyVhOztqoNbOYII2hsYLoM6qxba8AGtq7KcVqhPXBsXQIYnVlta5UCQNwUwzUNdBThWEIB09Zo
-0XIFq1ZGQ+NuUDQhg9WT9sDSDTmBprakmbXOpNXn1OWkqQ6YqUtG8hNbTBqdSWNLc5w0O5Nmf9Lq
-TNp9mazBxW1iaqOua0p72e2ksECNWq+FNVLtgW7Vi9EGKlldGGkqI1BR3gRBtapiX7ydgJHodUKq
-/lgoEnW7mpyJJ/FKEHM/qbLpjM/THBtVSkZYmGIelFTQ5CsNOcZvTndosZmJ6O7OHtv/K75G8BOt
-EEuW+PzcJniZYdMEsuW6iAI/BpSO5UDtM0jC+kkYojJrpA7zQBvStDZc+DNmaTbGC/o17NXvWPwd
-G6Go2Ie9RRC0vPQ8S4e9m1mVlNUB4vp5KgeHrBKDaI59+FaDq/MJTC5PT88n1/A2j+AfWBUxIFXb
-Y7qH3jE5uRaG7OtKBqT6cWfDJE8DTPdo3J8Mps0Dda7/TAaL5DJwP4hsf4Ad/pipgak7dvgo3OQM
-lTiAH+gPHgL9OPLlSw1UfQLcCj6QNHRKyatAPJsV4324s0WS5sS64is81uB5I8HSod5ral1Ph1SO
-64s+8zkiRgkHPDzx+IEvwCW5gvqfD7ikpCyNo2DtyYopdIMveVRyPEKkQZ/ngm5Sh6iYfJmCXrHA
-qmljNdBZn3aecz710e9kGSE+r+YeQLZAG0GgmkYww/Ijxqe49unKz4CH87nxyDrpXYx8he74K2ZD
-D+jus3jLo8BKgkFG0YIQiLCDseGiOom924O97ctxDdOqeQbw8eztBcz8Mlh6D9cM8D5aLNGyNath
-acZLVdzmxBrhYHF5idDJ6aXwxtPVjIu3WGzJdhBkFfwdjWnPyIMKm6l4tnTwEAMh03UsppWu2ZbT
-x8uQbyi233uaCQTB2HktTn7PIPyE16r4ZuJbE9+6+DbEtym+LfFtw4OkVEVxibxkljgqyoK6pP/B
-C8AUy/MBev0siqNyDYs8rTKKoTQZAVyLt31aDzVc9sBwdZsWyDfFAHM5Gv5PeQrU39GzE1j6xRJK
-f4aRjE18HtEyyNawJ9btYUUDaucN2c7v9zFOuOhfZUQ/BsZ0ptpaC2cPwNQMzXGewDujEB0+DWeZ
-pr5RzhqAZmnMeEo7mXzwVMKYgTb9cKAzA/sZ4wP4d1gyBfSebmv6h6ZdDlA8gur2BzQ2JVhcPrM1
-vErllWYiN6UaEu18gFmBgaNjZ0E0daQTgGUbDlLSAwAMxQea/RDlZYWeU4ut83Hsr/Fw7T2MWsAS
-RneiAOgJLT1KaNM1XTBxeoI9al7g9uiBNPrMo3vKejVAoHYAuLxAAE3FtvUJgLuViDUJ0C0Y8/pK
-aKAZKpw/DhCnX3CdUoOgC8DnzgbAtp4EyG7FCgTArNF62EWTNtCeApD3/YoaoKPBrGMDOh0+BQAw
-KjGy2iU4Gw2MUFVnAQEYjms/ZUQEEG8teTUP2wCYDPlrI2IX+zSAqPtezaN1AIzQ4jWA/uQ2EgI6
-bQNAPEED4Kp2s43Y2D8CcPXx5siD95+xB1kkeCwbwAVF4lgd6gM86yYXs1/QT4sx1losFsXYGWCR
-C3kxflhOsG6vsjKiEFxGPPdz7C6oCbw8voFolcWc7ir41MuM+ryfLqdnl99feXiETPJplP+zoJ/s
-QYH4SE1p3RuXqYhaD4bM3aIzfoYCs004Deh2MOYUTCYR5n9sHDQDm19qcjE7V6KrMliC4f4lxwMy
-cOwq13jot3RMLyZzbcNIig40HmJ+bnp1SvgxvbkR4hl83by356j3erf90ImjfWGZSsPPmPkoS3Wb
-B8xXiIs7MMv9Ur7cinkD6AxMNwF00zVGuIijdJGen02uYC/Ofhk7rmNhl7DZUB2RbKyhUYjN0L3X
-vCGLuVLU3RUaa1Wt8FJlHR7GUPZ5ip3yMzlaJJEmRbMBiLLeS9AIpRk1VEY3P/4wnmGadb98zQth
-F9FgwqzCBJejWZc85wn1oOlth80yDcGmelBlGFkcsKuYBn7mB1TtcRPNLrVlNtTlkg476E4D4qBu
-s0D/4SX9WqFZc3DqrNThty2UdsVLoV+V0UGxpLeqQ1wsiaP8Rt0bdeG64zgYxsP2wq2R2Ei10A00
-oQnrerh8M3io182WNqJ4NixBqD1DiAdFVNZyBaH+DKExUl3KeoLQeIbQHFFmc21BaD5DaI3w3M1U
-RxBazxDaI8x1TJOLsXcSGij6CFu1xbIkQzORj7oE5C54yvPqFi6dI03WHNkw/PEYdUdH9lGXyWp8
-7E0sjqv0/q447KMm2DBe/XAsjkddHsNFa9HN2VU2R2fuvkDfEpmag8A/vJ1AUWV0Nxju1BHuQ5sH
-0SUMBiJH0lvoVU6vm4vnAXjkvcOTrp+UMBfHcbUDa+rUJkdJUObU2uR8S347U1SzYl2UfNVhtVyX
-TqsLum+R5kORt+hgRVL9FS/xRN1S64ZrY+b6dHrtta9+E3yelinmPdyqVRSv2wRNHCajuDs5f+PR
-u42isRD3R1AwvUaP50Xiw2WjdPr/DurwLaEmxWTckW/bGqbKRRalaKBs6oehR7o3irybnF0U4jSJ
-nT9mcZl+PWRY210Q3dwJ4hAIM7dR7tUuiuHsRMFqhTCa3oNhXRhL3QmDpz6E0VkPRuvC2LsNo2sC
-xu3B6BsYR6dasQPGEAY2ehYO1C6MtntRhjCx2TNxwLowlPt2wJjCxJbWg9G6MIaxE8bSBYzVg9my
-jbnbbSxbwDg9GKMLY+02MTZl5MM9bcIt29i73c8W2jg926y3dspxd8eCsI3T02bd1cZQd2+4I7Rx
-+9p0d8pguzfcFdpg1enhdLfK0PTdsakyCdTbrHV3s4wXpAqmit1irG8gswtE1XkXEBMWwoapB9TJ
-p9gcvGBpmimA9J6teXfnXfYCjXRpbL2nEe/uvau9IBHqUiOjt2vzLY303b6I53sJ1Nu1+ZZG5u5k
-yAy5a2Zv1xZbGlm7/ZEeNhCQ1bPRYksje3cKoucNAqivUTdCXOcFDimzELN7xv6l49muzl4AZEtj
-2z1j+2oXSNudz5gtje30bOSzLtBLtt+RNupnEV/rAr1k++s04vbK2GxradYLYu1/izuy3baR5Lu/
-ooF9iL2wqL7ZLWCAZOxJHMw48UZOgt1FYFAiZXGjgyNKdpKH/fat6ualwzocDdZJFInuOvqqrqqu
-Kll3jnG6wlFvqWvh7sHmVHhEK9PfW+qa2b1pOXXTz9nKYPdEE5HdvWk5Ux7RKkfNdSTZHvqLF2x8
-VbANm4MNdutuRF6w8VVV6EeFR1KDsj9xd1utaBHneas/+kqEcTfuQfkETLhWnZTYIS4YBH23oIjP
-Gyq7VCEuAp+92iE31x9dhEmhvjcaaljjsMengzvMwsMQi/gOexPfDUbRfe5iT6qUULAGMdmyAWwp
-rNkbFdBPdx+7v4qL9+/A9FTo8xl/InU7TrHdM4lwipO+RIRtJALCAWymi+7b2mLYaM9o4Xwfi7zn
-bY7GfE2SR4KZE7NB1E9IPEsxvwUaDvIGNEcZtDf0cNFrwIpQPw1b+F1qsg1A+POF5KLfSnkfTsq+
-s94D+ACLYBQ9JFXGDf2maBMOpcpmOMxdHcySPxfod8Cl5JRARX6/+tFAEKI/ZzMCeGmB3d4VF+Qt
-x7TSKIPO1LBSIfEuzCt6sFzqO67gIh5t3J+3BrN+1TzkXMjdZhpvACg0eG8vbkiSo1MmzZHMJh+N
-88mUPhpxXniRmk4ah0+j0wfx9dLJHohUcflA1zFBZxymDrmqsLiEwkF6v8BunTZZ9i4jpInvlvAU
-PcS1AtZtvWCabUI4yj5e3mxkWDHevCzhKBnW2TVUORStP9An9Xw8ToXZaWjXAJKhD2awmCffdvvW
-cLj9dc0KXSNDtE4+vL9+3SXXt5fk9OIMc7tD4CKGCZifk7eTftBob9H/Ms7vx5MU6ZJekkzKHQDC
-s3bVGKVxx2I6IcpsZ/f7UDJd3Gk2m6IvJZ16h+0CBDQI3Wm2adKMClEiLrWNkyjG27eN7TUVq7j7
-gz+bAuS0cJFWw8IF5YqjPw9jIWHpckXboK0pWkiYc3TSYNo7DM+Hf5B8GLnL9zjNGz5dxMOkxJtL
-7u8xgrxA6O8DKbqir6/fvgfJUzYhp+nsT/ILmGDnpBflyR2mm8Fnn2YdocTQYHu1GW0QCdF5BhjY
-BiJsmQhbIiL3JwKLgjsifAMRvkyELxFRBxDhxg+X2EBELBMRS0T0fkRMQEHzQEu66Y1H5CsOeWjI
-QbWAvd3D+Bh/v+TiTJstjEY1Hx30TzUR1KJk3PvMi/L0Ww2sKZpa+wN/Mwa0kjvQ36MKieTsIA76
-cf/O1USoMYRWHcJGPs77ofpW90MJjd6qgxDYJQRWHjQQk2QOZn4951pRdegYoCaUzCsUITXoON0b
-xY9oMVvkNbhW4pAeIAeT/riCN1xK34OXrAjqcTopHAoPcQxWOyqpruBEVRnFXUhVjt4ak9GFFrYJ
-E6P7Y7IwrzCtGTwdTGdjUqIL4se+6JBL3xP8QJyuhMEXcKL1XNGHZDaLRiUqRlk5usCU/InuwbTz
-YqlswnRA9xiTFhW4Rvfkc7vHmRAoYYb99G7YB3mCVU54QMmL3ybDCM7H+AW5muZzvFUsLBRy+tvV
-xduzgkyNCVQW6zG1vM3TIdiwLLcTLzcXzFr+tP3QIf1o8mKOrv88cbaY60KWzObf8eLEhVu9aPvB
-ZO7s+Df98qJCL6k73wrjC5kiZbsAgNy1AvzPMRKwocLV8MqYcGmIm8DFCDex7xpoJTjqJ4cYKK2i
-ikyNwzrNfzzFkKvkAWzAbpv7j6Wd4fOn/DXGaIRB1zW4hmUTer1/Nu+j19FFIATwAfiBJ6WWgPfP
-LXfowCqswEPK0ax8GnytY9AUjg38Ha2xaI6H3GYsj2Vxm7Qo/PLh9oLAu0VC8mlt9+HeSCsByKyR
-eMc5z8Z3YL1gsRnQuGAQbAs0A7BdWcDJ7c01alM4Ri3AC+f0q7MSATfKMPOlGMLWOMoyVE3B/J/D
-ES8DHga05T5htAoTLUZbAs/xgp8c4/3jcQvgk9FL6PgwmgcwERV+ixou9DmGhQKmlcvlIpfpfYq3
-gKu76+3KSqixYKhEheVimn2fpffD+Wn/jNykWEqAvM/zcTQpAQQVEgG6sEgzMJ3JZZKn9xMY44Rc
-g1KZwpZLI3IRzeIG0eVdDUqCc2LEj5gu6tc77AUvTgN45jbSg08XLcSUl2GNqAdAw5RCKboFjU8a
-d9tgAqNyef2qUakpqBBxZvV2RJ+KwNu3l6hogX4c1cChxLW3BfjyM+hxFw3KqNmhIgcTeF7EaRBM
-K/eRsI9pPB+653GSZGSQDqYVMaEt2+KF2VPAAVcvSxabAk6EYKzRrX1hJB9NXVThirsEoU2IV0ir
-0PzAaTXSbJoNfvC0Wjga2VZEW6bVmnDTtPK9ptUeNq2Saqc2H2da+eq0Ysig2OJW+1n0WGdk+1Bt
-WTVSSXcCHHKGDdMGuGUGiGMicIf8+vv7m+7db+/c0MOMOldmrdVKLaTweheg8GrJFcw9El4RjFKH
-HA1v51HpL3ppf83ahkYhlWwfP0ZYQ0iL/rmdEKqGAEEPwrJsjCu/+/mmDf9+JYlLx8AVDGpVPGqw
-bySzyg3LnVuCxfgscpJnCToBcELQbvzFOUjx5+pH8RS0DqJ4+fAcQ0gwxLNq9y840x+c1VmRs8Jp
-AUfQjYGKO2COoIcqONrQUbjPIBSZbM8YBVaNgmLaRWH9Reqn4ophwIDvBe6Ny8sPXgThaQvCp/Ls
-0jLYDaGs8yA9V2lVQim8IfBR2kDYkUcK5PrVG/7mgjDp82NIDWKPq+cqWBFMVTxgnNQmRhoF/TDA
-i7qkxRKFEhTdRs+4WkBgI/AaqEGfbaXP1+lrlML+AqjFTId42j5jtXQajtPcnWzw9PSMYMXHxq/x
-CSyVZsgQoA2ZQdFecDbLxr2tjIl1xuCYUzAw6STDkqGOv68JKHagY7eLGpHt6mnbNfOv9fCAsEHv
-8zF2v6Wc86c0+bwIOCyubNwdgb9TpLRFGfyFpd9xfzEhlpxaqTWoE7SWVAqWJlNHES+aKrcqVi+c
-vMHTMHI0NZbbv0wuaBY6K3D1dm2dD44O8C/kzc1tpy6j6RIf7iLo2fe7/qwvuLeNcixICUyNXRoN
-2DZxRKmJTA/rn9BvRoehijmvcVuuxPPFDJzMEu9+kbebWerye4dJFMNczIfp5GtOXo3mQfmoONpB
-5GHx1WQS4zDhW0wLrxRA2HJm5Sj5OTmkMSKeeibBcnI/OBwCVoLSYaXCahDV5UAD26ilzhP8VPK/
-D/Owq6zeg5bmFO13bAeKMZB595Hc+EhOvEebgg3Xnzvi0JfpLK8paBAeGExfifaMkQwmSJBMkkyR
-TJOs0lx0KIRotC6E4GLydTJ9nDREjLuYqaHApGDLUHQ3lGEu+vAIAkUbI9Bp/TlKnehAHwZmF5Wu
-jeUMJEwyLwGt4NQcRVCAFkLNz+vfT+3/EN2J+vlbL2RK49Y92jYJNVchW9a72CHKJ1dralf1aF3t
-CkNqlDcBmNeLupdrKpGRSVQDgIYiy0PTn+Ssgy1I9yPlbwgLjGxoNBYNBy5NA8JtJbBaGa2rLpap
-rOdwTrkcJ2E0QJlzMpkReO2PY0zByOD4xlxVS+m5Z7NUN765G/NeGWgPZEPOWdggO0tAVvtqzu4c
-hJdRQnruHHT51iWg0Qb18Rqy3Np1C7CbjnFmAyoL4u4YR6oFjZ1ZPFL/kp0C6OEJe/ZOQfhj7hTG
-A8pRmn/B/OV4Okbyk15RzMnfIKfrNjMTgVWwrGABf/3PdIEekNjH7gNUQAhW8kfrF+3mBzRYSFEf
-w0PLQCgGZzXG/NyK1iAnp5X4O+sUC6tyrRQESlDFGEcLZyMopvG7VKIyyqiGkpo+RXCMmTOY64u1
-GL1e53Rwd5UPz53vBHMRKmycuSPl0+tux+fdJL4cHzl1uaI1orM6iAoj9DpCBRUSjM2RzXyGgo+6
-gQgV6GyvZ0niNtzEZSQvpTl2QCrx38lpI//NZb9R1DcdZ2Vyh6venrjqB9B/4KoNHLYHebt42HF1
-8/NFf+irhGOV+HTmpMh3z5ECMR0adBL57K9s9B04ng9bi8zNfas3S+P7xJURKdM/yCljEqQszOU4
-nUSr5g2rMHNj0MQ7ADNoLd6jn2fR46TUMRGXAmPJHsql2odLLQw7rP9Pc2ngyFAHcyn24NJYg7Hi
-x+DSUM1EeDCXajeXMJAcT+ijcCkw/PtgLsM9uBRWG30kLkFyY0THgVzaPbjUMsS77qNwabRWB3Op
-2R5cWlmY+T/PpYVDTxwmL5BLuZtLy6wwR9o9VmjKDt49Wu/BpZT8wFl6mktg0hy2epBLsweX2qoD
-pcfTXBol5cFchntIdQtM0p3So+YIbNopnKr5/Nx9j0xWntg6AKUzlNWsLFAdjtDcXj8Snxbj3uvO
-DIoLQcVzFH6OyeTPUvg5BdVMusjS7fmwXARMgkoV7sqH5RKUc0PtzjRXrkEVVVayXdmreGstuSww
-bsmw5XgfSKW1uxJnuQ2EthqvOJ7Ohz3xlY5QMaOS/HHbJZg8OULjMnDvQHvGWS6C205Oql9Dw/t0
-0ikURKxFOHaZyu7x2cnJH1Hd5na48PWRMAe/Q1WHurp6vtDUtMb+ORmBipsgi2t8nb5597HtCz3t
-KPDkvs1kBCyQv5PLaX9RlQkAZXA4n2d5p90eJqMs8AWd8O6/7WqGvqw61/nv32BBzUkbV3cblhtG
-hZ5sePL/KNKyzurCVe5szU6qN9uHaHtvswV+AdDJ+pMq+blD6Ikr8kQmrqLiajkrzDIW5NTNwusk
-wmxkMATyx4wMoxG65BbjnpM1Y/zKrYcBllrKM+LCQODTgyDzUe7eSZLG6UPkXl3LWHAyyqKEYCWy
-Ov0ZI0CwTqR72syC7pDQPStSoLEVdw/QQ+YrXAzc57LuVofAKr8CYYKRFx3SfXXd/fjuTRkWdfoa
-LNR5gl805L+fidyCHXN28qGCxuE+KQN+6crPhoH/G7n5J36RCuwSrPxGFA+0KS3L4KT+9Yckd+UX
-bl51uyf/A17r52fObgAA
---001a11c3de5e34947e04fcd2684d--
+-Doug
