@@ -1,93 +1,85 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 1/2] usb: host: Kconfig: Select PHY drivers for Exynos EHCI/OHCI
-Date: Fri, 27 Jun 2014 09:53:23 -0700
-Message-ID: <CAOesGMiRqCQjr3_YPCs052ba1QUei2nJdKg6MyL7D4gqFbwy+g@mail.gmail.com>
-References: <1403761178-5371-1-git-send-email-sachin.kamat@samsung.com>
-	<20140627154608.GI8069@saruman.home>
-	<CAD=FV=Xaf-vH79a88q94vOgc+nDhxhtnFdnRMxi1pmLd-mKYBg@mail.gmail.com>
-	<20140627155900.GN8069@saruman.home>
-	<CAD=FV=WCf1rdLSf91xs6aLPJVeTc1k+P_wcm94zWW04u_hUNVw@mail.gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
+Date: Fri, 27 Jun 2014 12:20:21 -0600
+Message-ID: <53ADB5E5.10102@wwwdotorg.org>
+References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>	<53ABED5B.8010506@samsung.com>	<CAD=FV=Vwgdis6FzJ8MHDwfuohB1kN8Mf--2N=rxGNeAfKjJMig@mail.gmail.com>	<53AD60D7.4040404@gmail.com>	<53AD978D.8060703@wwwdotorg.org> <CAD=FV=UUFARvreHdWNsB1O1dEW6nX_E_C92t8Nma0vL=nAT5Rw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f173.google.com ([209.85.220.173]:50132 "EHLO
-	mail-vc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751496AbaF0QxY (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:49846 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751234AbaF0SUZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jun 2014 12:53:24 -0400
-Received: by mail-vc0-f173.google.com with SMTP id lf12so5301663vcb.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2014 09:53:23 -0700 (PDT)
-In-Reply-To: <CAD=FV=WCf1rdLSf91xs6aLPJVeTc1k+P_wcm94zWW04u_hUNVw@mail.gmail.com>
+	Fri, 27 Jun 2014 14:20:25 -0400
+In-Reply-To: <CAD=FV=UUFARvreHdWNsB1O1dEW6nX_E_C92t8Nma0vL=nAT5Rw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Doug Anderson <dianders@chromium.org>
-Cc: Felipe Balbi <balbi@ti.com>, Sachin Kamat <sachin.kamat@samsung.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vivek Gautam <gautam.vivek@samsung.com>, Sachin Kamat <spk.linux@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <vikas.sajjan@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Fri, Jun 27, 2014 at 9:32 AM, Doug Anderson <dianders@chromium.org> wrote:
-> Felipe,
->
-> On Fri, Jun 27, 2014 at 8:59 AM, Felipe Balbi <balbi@ti.com> wrote:
->>> I'll admit to not having been involved with the previous discussions,
->>> but this seems strange to me.  Are we throwing in the towel and
->>> deciding that it's too hard to get the Kconfigs right and that we'll
->>> just rely on individual users to figure out the right answer for
->>> themselves?
+On 06/27/2014 10:45 AM, Doug Anderson wrote:
+> Stephen,
+> 
+> On Fri, Jun 27, 2014 at 9:10 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>> Surely there's a driver (or could be a driver) for the TPM chip, and
+>> that driver should have a reset-mask-gpios property, so the driver can
+>> call gpio_get() and gpio_set_output() on the GPIO?
 >>
->> no. select prevents a driver from be built as a dynamically linked
->> module and distro-kernels might want to enable everything as modules.
->
-> Ah, that's what the problem was!  I wasn't aware of this issue with
-> SELECT.  Sorry for the noob-ness.
+>> Faking this out via a not-really-a-regulator or pinctrl hogs seems like
+>> an abuse of those features to me.
+> 
+> This totally doesn't belong in the TPM chip driver.  This is an
+> unabashed HACK at the board level.  Without a hog we need a board
+> driver for this.
+> 
+> To be more specific:
+> 
+> * The TPM needs to be reset when the full system gets reset.  This
+> unlocks the TPM and allows certain types of updates by the firmware.
+> The firmware then locks the TPM before jumping to the kernel.
+> 
+> * The TPM is hooked up to the "reset out" line of the CPU so that when
+> the system does a warm reset it will reset the TPM.
+> 
+> * Unfortunately the CPU asserts the "reset out" line when it's
+> sleeping (because, of course, sleep is a reset).  This would allow the
+> kernel to unlock the TPM which it's not supposed to be able to do.
 
-Select is also fragile, for example if a main subsystem isn't enabled,
-the specific option will still be enabled (or there'll be a
-warning/error about it). Overall it tends to cause headaches so many
-maintainers are starting to push back against it.
+To me, this does sound precisely like something that should be in the
+TPM driver. I guess an overall board driver would be reasonable too,
+since the issue probably doesn't to all boards with the TPM.
 
-> Really we want the PHY to be "=y" if the USB driver is "=y" or "=m" if
-> the USB driver is "=m", I think.  You could argue that one might want
-> to build the main USB driver into the kernel but have the phy drivers
-> as modules, so you could possibly also try to support that...
->
-> If there's not a good way to specify that, I guess we'll just have to
-> use "default" and rely on the user not to purposely choose the wrong
-> thing.  Like the following (untested):
->
-> config PHY_SAMSUNG_USB2
->   depends on USB_OHCI_EXYNOS || USB_EHCI_EXYNOS
->   default y if ARCH_EXYNOS=y && (USB_OHCI_EXYNOS=y || USB_EHCI_EXYNOS=y)
->   default m if ARCH_EXYNOS=m && (USB_OHCI_EXYNOS=m || USB_EHCI_EXYNOS=m)
->   ...
->
-> I see some syntax like that elsewhere in Kconfig so I assume it's reasonable...
+This kind of thing is *exactly* the kind of thing that's been discussed
+in the past re: doing it in pinmux hogs, or GPIO initialization tables
+that aren't specific to a driver, and has been rejected. I guess if
+people want to change the decisions that's fine, but doing so will open
+up the door to all the previously rejected similar use-cases. I'm not
+sure how much I care either way, but we really should be consistent
+instead of flip-flopping on this kind of issue.
 
-I think you can take out the test for ARCH_EXYNOS here (first of all,
-it can never be modular).
+As an aside, why do we even care about this? The kernel clearly can
+unlock the TPM simply by failing to set the GPIO up correctly, so at
+best this is security through obscurity. If someone actively wanted to
+do something bad to the TPM, they'd simply comment out this piece of
+code in the kernel. At least that's true with usptream kernels which
+aren't validated at all during boot. For a downstream signed kernel,
+perhaps this patch makes sense (although I haven't thought about all the
+security angles), but then it'd make sense to keep this patch downstream.
 
-I'm not sure it makes sense to work so hard to set the default right
-either, as long as the dependencies are correct. I.e. it'll still mess
-up randconfig if the combination doesn't build, and distros can still
-downgrade to 'm' if they want to. That'll just leave:
-
-config PHY_SAMSUNG_USB2
-  tristate "foo"
-  depends on USB_OHCI_EXYNOS || USB_EHCI_EXYNOS
-  default y     (no need to add an if since it's taken care of by the depends)
-
-> With the above the user could purposely enable the OHCI or EHCI driver
-> and disable the PHY driver which is not really sensible.  ...but it
-> wouldn't cause a compile failure or crash--USB just won't work.
-
-Just make the sub-drivers silent options with defaults. I.e:
-
- config PHY_EXYNOS5250_USB2
-        bool SOC_EXYNOS5250
-        depends on PHY_SAMSUNG_USB2
-
-and so on. Note that it doesn't actually scale to make it depend on a
-specific SoC though, so it should probably just be cut down the line
-of EXYNOS4/5 and err on the side of including a bit too much code
-instead.
-
-
--Olof
+> * To solve the problem, it's up to the kernel to "mask" out the reset
+> line before going to sleep.  Then it's up to the read only firmware to
+> validate that the kernel properly masked the reset before resuming
+> from sleep.  If the firmware finds that the kernel cheated and didn't
+> mask the reset then it will not resume to the kernel and will instead
+> restart the system.
+> 
+> 
+> The above is not beautiful in the least sense.  Getting suspend/resume
+> working happened very late in the exynos5250-snow project and the
+> above workaround was the best that we could come up with without
+> slipping schedules.  It also had the side effect of being less
+> expensive than other solutions.  Given that the solution was "proven
+> out" for exynos5250-snow, it was kept in place for similar products.
+> 
+> -Doug
