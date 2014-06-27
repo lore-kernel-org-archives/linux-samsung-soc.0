@@ -1,57 +1,122 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v5 02/14] mfd: max77686: Allow the max77686 rtc to wakeup
- the system
-Date: Fri, 27 Jun 2014 10:21:49 +0100
-Message-ID: <20140627092149.GH19645@lee--X1>
+Subject: Re: [PATCH v5 10/14] regulator: Add driver for Maxim 77802 PMIC
+ regulators
+Date: Fri, 27 Jun 2014 10:26:11 +0100
+Message-ID: <20140627092611.GI19645@lee--X1>
 References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk>
- <1403806546-31122-3-git-send-email-javier.martinez@collabora.co.uk>
+ <1403806546-31122-11-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:49392 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752652AbaF0JV5 (ORCPT
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:55758 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752603AbaF0J0T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jun 2014 05:21:57 -0400
-Received: by mail-ig0-f178.google.com with SMTP id hn18so1725136igb.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2014 02:21:56 -0700 (PDT)
+	Fri, 27 Jun 2014 05:26:19 -0400
+Received: by mail-ie0-f179.google.com with SMTP id tr6so4186270ieb.38
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2014 02:26:18 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1403806546-31122-3-git-send-email-javier.martinez@collabora.co.uk>
+In-Reply-To: <1403806546-31122-11-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Cc: Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 On Thu, 26 Jun 2014, Javier Martinez Canillas wrote:
-
-> From: Doug Anderson <dianders@chromium.org>
+> The MAX77802 PMIC has 10 high-efficiency Buck and 32 Low-dropout
+> (LDO) regulators. This patch adds support for all these regulators
+> found on the MAX77802 PMIC and is based on a driver added by Simon
+> Glass to the Chrome OS kernel 3.8 tree.
 >=20
-> The max77686 includes an RTC that keeps power during suspend.  It's
-> convenient to be able to use it as a wakeup source.
->=20
-> NOTE: due to wakeup ordering problems this patch alone doesn't work s=
-o
-> well on exynos5250-snow.  You also need something that brings the i2c
-> bus up before the max77686 wakeup runs.
->=20
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.u=
-k>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
+> Tested-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 > ---
 >=20
 > Changes since v4: None
 >=20
 > Changes since v3:
->  - Keep the note that this patch needs another change due wakeup
->    ordering problems.
+>  - Set the supply_name for regulators to lookup their parent supply n=
+ode.
+>    Suggested by Mark Brown.
+>  - Change Exyno5 for Exynos5420/Exynos5800 in regulator driver Kconfi=
+g.
+>    Suggested by Doug Anderson.
 >=20
->  drivers/rtc/rtc-max77686.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
+> Changes since v2:
+>  - Use dev_warn() instead pr_warn(). Suggested by Mark Brown.
+>  - Add a generic function to regmap core to copy registers instead of
+>    having a driver-specific function. Suggested by Mark Brown.
+>  - Remove unnecessary probe debug log. Suggested by Mark Brown.
+>  - Set struct regulator_config dev field to MFD instead of the platfo=
+rm dev.
+>    Suggested by Mark Brown.
+>  - Read the regulators operational mode from the hardware registers i=
+nstead
+>    of setting to normal as default on probe. Suggested by Mark Brown.
+>  - Remove unnecessary cross-subsystem dependencies. Suggested by Lee =
+Jones.
+>=20
+> Changes since v1:
+>  - Remove unneeded check if num_regulators !=3D MAX77802_MAX_REGULATO=
+RS.
+>  - Fix .set_suspend_mode handler comment and split regulators ops for
+>    regulators that behave differently. Suggested by Mark Brown.
+>  - Use module_platform_driver() instead of having init/exit functions=
+=2E
+>    Suggested by Mark Brown.
+>  - Use the new descriptor-based GPIO interface instead of the depreca=
+ted
+>    integer based GPIO one. Suggested by Mark Brown.
+>  - Look for "regulators" child node instead of "voltage-regulators" t=
+o be
+>    consistent with other PMIC drivers. Suggested by Mark Brown.
+>=20
+>  drivers/mfd/max77802.c               |   8 +-
+>  drivers/regulator/Kconfig            |   9 +
+>  drivers/regulator/Makefile           |   1 +
+>  drivers/regulator/max77802.c         | 694 +++++++++++++++++++++++++=
+++++++++++
+>  include/linux/mfd/max77802-private.h |   3 -
+>  5 files changed, 711 insertions(+), 4 deletions(-)
+>  create mode 100644 drivers/regulator/max77802.c
+>=20
+> diff --git a/drivers/mfd/max77802.c b/drivers/mfd/max77802.c
+> index 3d477fb..79d36b6 100644
+> --- a/drivers/mfd/max77802.c
+> +++ b/drivers/mfd/max77802.c
+> @@ -228,7 +228,7 @@ static int max77802_i2c_probe(struct i2c_client *=
+i2c,
+> =20
+>  	max77802 =3D devm_kzalloc(&i2c->dev, sizeof(struct max77802_dev),
+>  				GFP_KERNEL);
+> -	if (max77802 =3D=3D NULL)
+> +	if (!max77802)
+>  		return -ENOMEM;
+> =20
+>  	i2c_set_clientdata(i2c, max77802);
+> @@ -315,6 +315,12 @@ static int max77802_suspend(struct device *dev)
+>  	if (device_may_wakeup(dev))
+>  		enable_irq_wake(max77802->irq);
+> =20
+> +	/*
+> +	 * The IRQ must be disabled during suspend since due wakeup
+> +	 * ordering issues it may be possible that the I2C controller
+> +	 * is still suspended when the interrupt happens so the IRQ
+> +	 * handler will fail to read the I2C bus.
+> +	 */
 
-This patch doesn't actually touch the MFD subsystem directly.  Can you
-change the $SUBJECT line accordingly please?
+Please re-word this, the English is a little off.
+
+>  	disable_irq(max77802->irq);
+> =20
+>  	return 0;
+
+Please separate the MFD changes out.  There is no need for them to be
+munged in with regulator changes.
+
+[...]
 
 --=20
 Lee Jones
