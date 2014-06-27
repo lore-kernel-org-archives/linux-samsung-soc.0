@@ -1,184 +1,198 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V2] drm/exynos: Support DP CLKCON register in FIMD driver
-Date: Fri, 27 Jun 2014 14:00:55 +0530
-Message-ID: <CAEC9eQMgYHV2YFOATScPzvP8uFjtxs68ABdJfDx7c0=e49+06g@mail.gmail.com>
-References: <1403793398-31593-1-git-send-email-ajaykumar.rs@samsung.com>
-	<53AD1E9A.2030904@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v5 08/14] mfd: max77802: Add DT binding documentation
+Date: Fri, 27 Jun 2014 10:50:26 +0200
+Message-ID: <53AD3052.40901@collabora.co.uk>
+References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk> <1403806546-31122-9-git-send-email-javier.martinez@collabora.co.uk> <53AD25F6.6030007@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f173.google.com ([209.85.128.173]:40785 "EHLO
-	mail-ve0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751836AbaF0Ia4 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jun 2014 04:30:56 -0400
-Received: by mail-ve0-f173.google.com with SMTP id db11so4987915veb.32
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2014 01:30:55 -0700 (PDT)
-In-Reply-To: <53AD1E9A.2030904@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53AD25F6.6030007@suse.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>, Lee Jones <lee.jones@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, "cpgs ." <cpgs@samsung.com>
 
-Hi Inki,
+Hello Andreas,
 
-Thanks for the review.
+Thanks a lot for your feedback.
 
-On Fri, Jun 27, 2014 at 1:04 PM, Inki Dae <inki.dae@samsung.com> wrote:
-> On 2014=EB=85=84 06=EC=9B=94 26=EC=9D=BC 23:36, Ajay Kumar wrote:
->> Add the missing setting for DP CLKCON register.
->>
->> This register is present on Exynos5 based FIMD controllers,
->> and needs to be used if we are using DP.
->>
->> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+On 06/27/2014 10:06 AM, Andreas F=E4rber wrote:
+> Am 26.06.2014 20:15, schrieb Javier Martinez Canillas:
+>> Add Device Tree binding documentation for Maxim 77802 PMIC.
+>>=20
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.c=
+o.uk>
 >> ---
->> Changes since V1:
->>  - Remove usage of driver_data to configure DP CLKCON register
->>  drivers/gpu/drm/exynos/exynos_dp_core.c  | 2 ++
->>  drivers/gpu/drm/exynos/exynos_drm_drv.h  | 8 ++++++++
->>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 5 +++++
->>  include/video/samsung_fimd.h             | 4 ++++
->>  4 files changed, 19 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/d=
-rm/exynos/exynos_dp_core.c
->> index 2e77a15..d8868f3 100644
->> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
->> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
->> @@ -1336,6 +1336,8 @@ static int exynos_dp_bind(struct device *dev, =
-struct device *master, void *data)
->>
->>       platform_set_drvdata(pdev, &exynos_dp_display);
->>
->> +     exynos_fimd_output_type =3D EXYNOS_FIMD_OUTPUT_DP;
+>>=20
+>> Changes since v4: None
+>>=20
+>> Changes since v3: None
+>>=20
+>> Changes since v2:
+>>  - Explain better the Dynamic Voltage Scaling (DVS) support in some =
+Buck
+>>    regulators and the max77802,pmic-buck-{dvs,selb}-gpios properties=
+=2E
+>>    Suggested by Mark Brown.
+>>=20
+>>  Documentation/devicetree/bindings/mfd/max77802.txt | 97 +++++++++++=
++++++++++++
+>>  1 file changed, 97 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/max77802.t=
+xt
+>>=20
+>> diff --git a/Documentation/devicetree/bindings/mfd/max77802.txt b/Do=
+cumentation/devicetree/bindings/mfd/max77802.txt
+>> new file mode 100644
+>> index 0000000..f3b67c5
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/max77802.txt
+>> @@ -0,0 +1,97 @@
+>> +Maxim MAX77802 multi-function device
 >> +
->>       return exynos_drm_create_enc_conn(drm_dev, &exynos_dp_display)=
-;
->>  }
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/d=
-rm/exynos/exynos_drm_drv.h
->> index 36535f3..1089744 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
->> @@ -60,6 +60,12 @@ enum exynos_drm_output_type {
->>       EXYNOS_DISPLAY_TYPE_VIDI,
->>  };
->>
->> +enum exynos_fimd_output_type {
->> +     EXYNOS_FIMD_OUTPUT_MIPI,
->> +     EXYNOS_FIMD_OUTPUT_DPI,
->> +     EXYNOS_FIMD_OUTPUT_DP,
->> +};
->> +
->>  /*
->>   * Exynos drm common overlay structure.
->>   *
->> @@ -380,4 +386,6 @@ extern struct platform_driver fimc_driver;
->>  extern struct platform_driver rotator_driver;
->>  extern struct platform_driver gsc_driver;
->>  extern struct platform_driver ipp_driver;
->> +
->> +extern enum exynos_fimd_output_type exynos_fimd_output_type;
->>  #endif
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/=
-drm/exynos/exynos_drm_fimd.c
->> index bb45ab2..a46a9c4 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
->> @@ -90,6 +90,8 @@ static struct fimd_driver_data exynos5_fimd_driver=
-_data =3D {
->>       .has_shadowcon =3D 1,
->>  };
->>
->> +enum exynos_fimd_output_type exynos_fimd_output_type;
->> +
->>  struct fimd_win_data {
->>       unsigned int            offset_x;
->>       unsigned int            offset_y;
->> @@ -331,6 +333,9 @@ static void fimd_commit(struct exynos_drm_manage=
-r *mgr)
->>       if (clkdiv > 1)
->>               val |=3D VIDCON0_CLKVAL_F(clkdiv - 1) | VIDCON0_CLKDIR=
-;
->>
->> +     if (exynos_fimd_output_type =3D=3D EXYNOS_FIMD_OUTPUT_DP)
->> +             writel(DP_CLK_ENABLE, ctx->regs + DP_CLKCON);
->
->
-> You are passing output type directly from dp driver to fimd driver us=
-ing
-> extern variable. This is really not good. Is that really only way for=
- it?
->
-> One is,
-> it's to add a dt property in fimd node and use it; ex.
-> samsung,output_type. Whether fimd output should be DPI, DSI, or eDP
-> would be dependent on Machine.
->
-> Other is,
-> crtc driver is to get output type though encoder callback. At this
-> moment, crtc driver already knows encoder/connector driver. So I thin=
-k
-> you can use a callback of encoder to get output type like below,
->
-> exynos_display_ops {
->         ...
->         ...get_output(struct drm_crtc *crtc);
-> };
->
-> at exynos_drm_encoder.c,
-> ... exynos_drm_get_output_type(struct drm_crtc *crtc)
-> {
->         ...
->         return display_ops->get_output(...);
-> }
->
-> at fimd_commit function,
->         ...
->         ctx->output_type =3D exynos_drm_get_output_type(mgr->crtc);
->
->
-> I think first way is more simple and reasonable.
->
-> One more thing, does FIMD ip of Exynos4 series have DP_CLKCON registe=
-r?
-> No, they have no any DP_CLKCON register so you would need to consider
-> other SoC without DP_CLKCON. For this, a proper volunteer would be
-> fimd_driver_data.
-Right, I should also consider putting DP CLKCON register inside driver_=
-data.
-And, I will use the DT property you mentioned.
-Will send a patchset ASAP.
+>> +MAX77802 is a Mulitifunction device with PMIC, RTC and Charger on c=
+hip. It is
+>=20
+> "Multifunction"?
+>=20
 
-Regards,
-Ajay Kumar
+Yes, another typo. I'll fix it on the next series as well.
 
-> Thanks,
-> Inki Dae
->
->
+>> +interfaced to host controller using i2c interface. PMIC, Charger an=
+d RTC
+>> +submodules are addressed using same i2c slave address.
 >> +
->>       writel(val, ctx->regs + VIDCON0);
->>  }
->>
->> diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fi=
-md.h
->> index b039320..d8f4b0b 100644
->> --- a/include/video/samsung_fimd.h
->> +++ b/include/video/samsung_fimd.h
->> @@ -435,6 +435,10 @@
->>  #define BLENDCON_NEW_8BIT_ALPHA_VALUE                (1 << 0)
->>  #define BLENDCON_NEW_4BIT_ALPHA_VALUE                (0 << 0)
->>
->> +/* Video clock enable for DP */
->> +#define DP_CLKCON                            0x27C
->> +#define DP_CLK_ENABLE                                0x2
+>> +Buck regulators 1, 2, 3, 4 and 6 include Dynamic Voltage Scaling (D=
+VS) that
+>> +allows each output voltage to change dynamically. Each Buck output =
+voltage
+>> +is selected using a set of external inputs: DVS1-3 and SELB1, 2, 3 =
+and 6.
 >> +
->>  /* Notes on per-window bpp settings
->>   *
->>   * Value     Win0     Win1     Win2     Win3     Win 4
->>
->
+>> +There are 8 DVS registers that can be used to configure the output =
+voltage
+>> +for each Buck regulator and which one is active is controled by DVS=
+x lines.
+>> +
+>> +SELBx lines are used to control if individual Buck lines are ON or =
+OFF.
+>> +
+>> +This document describes the binding for mfd device and PMIC submodu=
+le.
+>> +
+>> +Binding for the built-in 32k clock generator block is defined separ=
+ately
+>> +in bindings/clk/maxim,max77802.txt file.
+>> +
+>> +Required properties:
+>> +- compatible : Must be "maxim,max77802";
+>> +- reg : Specifies the i2c slave address of PMIC block.
+>> +- interrupts : This i2c device has an IRQ line connected to the mai=
+n SoC.
+>> +- interrupt-parent : The parent interrupt controller.
+>> +
+>> +Optional properties:
+>> +- max77802,pmic-buck-default-dvs-idx: We'll always write this DVS i=
+ndex in the
+>> +  PMIC for Bucks with DVS.
+>> +  NOTE: at the moment these bindings don't include enough details f=
+or actual
+>> +  GPIO-DVS--this just lets you choose which single slot to use.
+>> +
+>> +- max77802,pmic-buck-dvs-gpios: A GPIO array where each GPIO is con=
+nected to a
+>> +  DVS line. We'll try to set these GPIOs to match pmic-buck-default=
+-dvs-idx at
+>> +  probe time if they are defined. If some or all of these GPIOs are=
+ not defined
+>> +  it's assumed that the board has any missing GPIOs hardwired to ma=
+tch
+>> +  pmic-buck-default-dvs-idx.
+>> +
+>> +- max77802,pmic-buck-selb-gpios: A GPIO array where each GPIO is co=
+nnected to a
+>> +  SELBx line. Should be five values: 1, 2, 3, 4, 6. It is strongly =
+suggested to
+>> +  include these GPIOs if there's any chance that changing DVS GPIOs=
+ one line at
+>> +  a time might glitch your DVS values.
+>> +
+>> +Optional node:
+>> +- regulators : The regulators of max77802 have to be instantiated
+>> +  under subnode named "regulators" using the following format.
+>> +
+>> +	regulator_name {
+>=20
+> The convention, I was told, would be regulator-name as node name.
+>=20
+
+Ok, I'll change this to regulator-name. It is a symbolic name to refer =
+to the
+regulator node name anyways since now that the regulator-compatible pro=
+perty is
+deprecated, the regulator node name is used for matching. So the list o=
+f valid
+regulator node names is properly defined below:
+
+>> +
+>> +  The regulator node name should be initialized with a string
+>> +to get matched with their hardware counterparts as follow:
+>> +
+>> +	-LDOn 	:	for LDOs, where n can lie in range 1 to 35.
+>> +			example: LDO1, LDO2, LDO35.
+>> +	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 10.
+>> +			example: BUCK1, BUCK5, BUCK10.
+>> +Example:
+>> +
+>> +	max77802@09 {
+>> +		compatible =3D "maxim,max77802";
+>> +		interrupt-parent =3D <&wakeup_eint>;
+>> +		interrupts =3D <26 0>;
+>> +		reg =3D <0x09>;
+>> +		#address-cells =3D <1>;
+>> +		#size-cells =3D <0>;
+>> +
+>> +		max77802,pmic-buck-default-dvs-idx =3D <1>;
+>> +		max77802,pmic-buck-dvs-gpios =3D <&gpy7 6 0>,
+>> +					       <&gpj4 2 0>,
+>> +					       <&gpj4 3 0>;
+>> +		max77802,pmic-buck-selb-gpios =3D <&gph0 2 0>,
+>> +						<&gph0 3 0>,
+>> +						<&gph0 4 0>,
+>> +						<&gph0 5 0>,
+>> +						<&gph0 6 0>;
+>> +
+>> +		regulators {
+>> +			ldo11_reg: LDO11 {
+>> +				regulator-compatible =3D "LDO11";
+>> +				regulator-name =3D "vdd_ldo11";
+>> +				regulator-min-microvolt =3D <1900000>;
+>> +				regulator-max-microvolt =3D <1900000>;
+>> +				regulator-always-on;
+>> +			};
+>> +
+>> +			buck1_reg {
+>=20
+> Missing ": BUCK1"
+>=20
+
+Ups, since it was documentation and not the DTS I completely missed tha=
+t. Thanks
+for pointing out!
+
+>> +				regulator-compatible =3D "BUCK1";
+>> +				regulator-name =3D "vdd_mif";
+>> +				regulator-min-microvolt =3D <950000>;
+>> +				regulator-max-microvolt =3D <1300000>;
+>> +				regulator-always-on;
+>> +				regulator-boot-on;
+>> +			};
+>> +	};
+>=20
+> Regards,
+> Andreas
+>=20
+
+Best regards,
+Javier
