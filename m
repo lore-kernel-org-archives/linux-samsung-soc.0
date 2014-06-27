@@ -1,62 +1,147 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to handle
- regulators
-Date: Fri, 27 Jun 2014 20:19:26 +0900
-Message-ID: <001201cf91f9$a7924920$f6b6db60$%jun@samsung.com>
-References: <1403520321-2431-1-git-send-email-yuvaraj.cd@samsung.com>
- <1403520321-2431-2-git-send-email-yuvaraj.cd@samsung.com>
- <CAD=FV=UGjm9y3XoBgWKjw9kp9W=ZrwB-S6Lh7T_LBUgCQZn1ag@mail.gmail.com>
- <53AA3F78.3080804@samsung.com>
- <001201cf9067$3c5b2070$b5116150$%jun@samsung.com>
- <CAD=FV=UCinFuZQW+_GYFw=M046ziTLRNvvHUvsx_GQ0kjw5DfQ@mail.gmail.com>
- <004f01cf9129$b4ac9690$1e05c3b0$%jun@samsung.com>
- <CAD=FV=VP6Exg-iJiAk=zNFpFzY8jFbU8HSR=wQQ7S+mfZWTJ=Q@mail.gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH V3 1/7] drm/exynos: Support DP CLKCON register in FIMD
+ driver
+Date: Fri, 27 Jun 2014 13:22:12 +0200
+Message-ID: <53AD53E4.2020706@samsung.com>
+References: <1403863946-15492-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1403863946-15492-2-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <CAD=FV=VP6Exg-iJiAk=zNFpFzY8jFbU8HSR=wQQ7S+mfZWTJ=Q@mail.gmail.com>
-Content-language: ko
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Doug Anderson' <dianders@chromium.org>
-Cc: 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Yuvaraj Kumar C D' <yuvaraj.cd@gmail.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Chris Ball' <cjb@laptop.org>, linux-mmc@vger.kernel.org, 'Ulf Hansson' <ulf.hansson@linaro.org>, 'Sonny Rao' <sonnyrao@chromium.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'sunil joshi' <joshi@samsung.com>, ks.giri@samsung.com, 'Prashanth G' <prashanth.g@samsung.com>, 'Alim Akhtar' <alim.akhtar@samsung.com>, 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:24849 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753137AbaF0LWS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 27 Jun 2014 07:22:18 -0400
+In-reply-to: <1403863946-15492-2-git-send-email-ajaykumar.rs@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>
 
-On Fri, June 27, 2014, Doug Anderson wrote:
-> Seungwon,
-> 
-> On Thu, Jun 26, 2014 at 3:30 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> > Hi Doug,
-> >
-> > On Thu, June 26, 2014, Doug Anderson wrote:
-> >> Seungwon,
-> >>
-> >> On Wed, Jun 25, 2014 at 4:18 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> >> >> >> +       case MMC_POWER_ON:
-> >> >> >> +               if (!IS_ERR(mmc->supply.vqmmc) &&
-> >> >> >> +                               !test_bit(DW_MMC_IO_POWERED, &slot->flags)) {
-> >> > You can use regulator_is_enabled() instead of flag bit, DW_MMC_IO_POWERED.
-> >>
-> >> I'd be a little worried about regulator_is_enabled() since regulators
-> >> are reference counted.  What if someone else is sharing this
-> >> regulator?  The regulator might happen to be enabled when you check it
-> >> but unless you add your own dw_mmc reference count they might turn it
-> >> off.
-> > Cool, that's a possibility. Some assumption may need.
-> > If mmc's core can guarantee its balance, I think we don't need to consider some flag.
-> 
-> I notice that the mmc core seems to keep a flag itself for vdd (the
-> mmc->regulator_enabled flag).  That would imply that the core thought
-> it was important to have the extra flag and that we should keep our
-> own flag for vqmmc.
-Ok, Good.
+Hi Ajay,
 
-Thanks,
-Seungwon Jeon
-> 
-> -Doug
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
++CC DT
 
+On 06/27/2014 12:12 PM, Ajay Kumar wrote:
+> Add the missing setting for DP CLKCON register.
+> 
+> This register is present on Exynos5 based FIMD controllers,
+> and needs to be set if we are using DP.
+> 
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  .../devicetree/bindings/video/samsung-fimd.txt     |    1 +
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   23 ++++++++++++++++++++
+>  include/video/samsung_fimd.h                       |    4 ++++
+>  3 files changed, 28 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/video/samsung-fimd.txt b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+> index 2dad41b..12f3d7a 100644
+> --- a/Documentation/devicetree/bindings/video/samsung-fimd.txt
+> +++ b/Documentation/devicetree/bindings/video/samsung-fimd.txt
+> @@ -41,6 +41,7 @@ Optional Properties:
+>  - samsung,power-domain: a phandle to FIMD power domain node.
+>  - samsung,invert-vden: video enable signal is inverted
+>  - samsung,invert-vclk: video clock signal is inverted
+> +- samsung,output-type: Type of display output interface(DPI=0, DSI=1, DP=2)
+
+There is no point in introducing this property. Exynos DRM have already
+logic which creates pipeline: fimd --> DPI|DSI|DP, this logic can be
+reused to determine display type. It can be done even without any
+additional callbacks, just by checking if there is connector of
+DRM_MODE_CONNECTOR_eDP type connected to fimd.
+
+
+Regards
+Andrzej
+
+>  - display-timings: timing settings for FIMD, as described in document [1].
+>  		Can be used in case timings cannot be provided otherwise
+>  		or to override timings provided by the panel.
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index 33161ad..aa74e90 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -72,6 +72,7 @@ struct fimd_driver_data {
+>  	unsigned int has_shadowcon:1;
+>  	unsigned int has_clksel:1;
+>  	unsigned int has_limited_fmt:1;
+> +	unsigned int has_dp_clkcon:1;
+>  };
+>  
+>  static struct fimd_driver_data s3c64xx_fimd_driver_data = {
+> @@ -88,6 +89,13 @@ static struct fimd_driver_data exynos4_fimd_driver_data = {
+>  static struct fimd_driver_data exynos5_fimd_driver_data = {
+>  	.timing_base = 0x20000,
+>  	.has_shadowcon = 1,
+> +	.has_dp_clkcon = 1,
+> +};
+> +
+> +enum exynos_fimd_output_type {
+> +	EXYNOS_FIMD_OUTPUT_DPI,
+> +	EXYNOS_FIMD_OUTPUT_DSI,
+> +	EXYNOS_FIMD_OUTPUT_DP,
+>  };
+>  
+>  struct fimd_win_data {
+> @@ -125,6 +133,8 @@ struct fimd_context {
+>  	struct exynos_drm_panel_info panel;
+>  	struct fimd_driver_data *driver_data;
+>  	struct exynos_drm_display *display;
+> +
+> +	enum exynos_fimd_output_type exynos_fimd_output_type;
+>  };
+>  
+>  static const struct of_device_id fimd_driver_dt_match[] = {
+> @@ -331,6 +341,10 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
+>  	if (clkdiv > 1)
+>  		val |= VIDCON0_CLKVAL_F(clkdiv - 1) | VIDCON0_CLKDIR;
+>  
+> +	if (ctx->driver_data->has_dp_clkcon &&
+> +		ctx->exynos_fimd_output_type == EXYNOS_FIMD_OUTPUT_DP)
+> +		writel(DP_CLK_ENABLE, ctx->regs + DP_CLKCON);
+> +
+>  	writel(val, ctx->regs + VIDCON0);
+>  }
+>  
+> @@ -924,6 +938,7 @@ static int fimd_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct fimd_context *ctx;
+>  	struct resource *res;
+> +	u32 fimd_output_type;
+>  	int ret = -EINVAL;
+>  
+>  	ret = exynos_drm_component_add(&pdev->dev, EXYNOS_DEVICE_TYPE_CRTC,
+> @@ -949,6 +964,14 @@ static int fimd_probe(struct platform_device *pdev)
+>  		ctx->vidcon1 |= VIDCON1_INV_VDEN;
+>  	if (of_property_read_bool(dev->of_node, "samsung,invert-vclk"))
+>  		ctx->vidcon1 |= VIDCON1_INV_VCLK;
+> +	if (!of_property_read_u32(dev->of_node, "samsung,output-type",
+> +				&fimd_output_type)) {
+> +		if ((fimd_output_type < EXYNOS_FIMD_OUTPUT_DPI) ||
+> +		    (fimd_output_type > EXYNOS_FIMD_OUTPUT_DP))
+> +			dev_err(dev, "invalid output type for FIMD\n");
+> +		else
+> +			ctx->exynos_fimd_output_type = fimd_output_type;
+> +	}
+>  
+>  	ctx->bus_clk = devm_clk_get(dev, "fimd");
+>  	if (IS_ERR(ctx->bus_clk)) {
+> diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
+> index b039320..d8f4b0b 100644
+> --- a/include/video/samsung_fimd.h
+> +++ b/include/video/samsung_fimd.h
+> @@ -435,6 +435,10 @@
+>  #define BLENDCON_NEW_8BIT_ALPHA_VALUE		(1 << 0)
+>  #define BLENDCON_NEW_4BIT_ALPHA_VALUE		(0 << 0)
+>  
+> +/* Video clock enable for DP */
+> +#define DP_CLKCON				0x27C
+> +#define DP_CLK_ENABLE				0x2
+> +
+>  /* Notes on per-window bpp settings
+>   *
+>   * Value	Win0	 Win1	  Win2	   Win3	    Win 4
+> 
