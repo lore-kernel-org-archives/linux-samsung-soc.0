@@ -1,69 +1,75 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v5 03/14] clk: max77686: Add DT include for MAX77686 PMIC
- clock
-Date: Fri, 27 Jun 2014 10:54:04 +0200
-Message-ID: <53AD312C.90005@collabora.co.uk>
-References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk> <1403806546-31122-4-git-send-email-javier.martinez@collabora.co.uk> <53AD21E5.1030609@suse.de> <53AD22ED.5040303@collabora.co.uk> <53AD2AB7.1090000@suse.de>
+From: Laura Abbott <lauraa@codeaurora.org>
+Subject: Re: mainline boot: 64 boots: 62 pass, 2 fail (v3.16-rc1-2-gebe0618)
+Date: Fri, 27 Jun 2014 02:09:58 -0700
+Message-ID: <53AD34E6.8000302@codeaurora.org>
+References: <53A2AE11.2050208@gmail.com> <53A2BE94.2010308@gmail.com> <53A7A579.4010702@gmail.com> <CAGa+x85H510fNGTXJHGYfQybRa2FGgg2NyCgJ8rmjJ6TE7GNbA@mail.gmail.com> <53A9B99F.4040806@codeaurora.org> <53A9FBB5.60709@codeaurora.org> <53AABCF5.4050403@gmail.com> <53AB45D1.90909@codeaurora.org> <53ABC13C.8030908@gmail.com> <CAGa+x84UTbmFc2Twg9zEcr+ZP2xsq68gFvk=385+_cFM5hvGHg@mail.gmail.com> <20140626151756.GU32514@n2100.arm.linux.org.uk> <53AC77A2.4090207@codeaurora.org> <53ACDFC2.5020206@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53AD2AB7.1090000-l3A5Bk7waGM@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Daniel Stone <daniels-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.11.231]:48185 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753227AbaF0JKB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 27 Jun 2014 05:10:01 -0400
+In-Reply-To: <53ACDFC2.5020206@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <trblinux@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, kernel-build-reports@lists.linaro.org
 
-Hello Andreas,
+On 6/26/2014 8:06 PM, Tushar Behera wrote:
+> On 06/27/2014 01:12 AM, Laura Abbott wrote:
+>
+>>
+>> +static unsigned int bank_cnt;
+>> +static unsigned int max_cnt;
+>> +
+>>   int __init arm_add_memory(u64 start, u64 size)
+>>   {
+>>   	u64 aligned_start;
+>>
+>>   	/*
+>> +	 * Some buggy bootloaders rely on the old meminfo behavior of not adding
+>> +	 * more than n banks since anything past that may contain invalid data.
+>> +	 */
+>> +	if (bank_cnt >= max_cnt) {
+>> +		pr_crit("Max banks too low, ignoring memory at 0x%08llx\n",
+>> +			(long long)start);
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	bank_cnt++;
+>> +
+>> +	/*
+>>   	 * Ensure that start/size are aligned to a page boundary.
+>>   	 * Size is appropriately rounded down, start is rounded up.
+>>   	 */
+>> @@ -879,6 +894,7 @@ void __init setup_arch(char **cmdline_p)
+>>   		mdesc = setup_machine_tags(__atags_pointer, __machine_arch_type);
+>>   	machine_desc = mdesc;
+>>   	machine_name = mdesc->name;
+>> +	max_cnt = mdesc->bank_limit;
+>
+> arm_add_memory is getting called before this is being set, resulting in
+> none of the memory banks getting added[1].
+>
+> setup_machine_fdt -> early_init_dt_scan -> early_init_dt_scan_memory
+>
+> Would it make sense to re-introduce the config option ARM_NR_BANKS and
+> replace max_cnt with NR_BANKS?
+>
+> [1] http://pastebin.com/MawYD7kb
+>
 
-On 06/27/2014 10:26 AM, Andreas F=E4rber wrote:
-> Hi Javier,
->=20
-> Am 27.06.2014 09:53, schrieb Javier Martinez Canillas:
->> Hello Andreas,
->>=20
->> On 06/27/2014 09:48 AM, Andreas F=E4rber wrote:
->>> Am 26.06.2014 20:15, schrieb Javier Martinez Canillas:
->>>> This patch adds a dt-binding include for Maxim 77686
->>>> PMIC clock IDs that can be to be shared between the
->>>
->>> "can be shared"?
->>>
->>=20
->> As it should be quite clear right now I'm not a native English speak=
-er.
->=20
-> Guessed so, me neither. But since it's v5 already and no native speak=
-er
-> pointed it out, I took the liberty to do so while verifying that the
-> LD02 typo didn't propagate into your bindings documentation (it didn'=
-t).
->=20
->> I meant
->> that the header file can be included by both Device Tree source file=
-s and the
->> max77802 driver.
->=20
-> AFAIU "clock IDs to be shared" and "clock IDs that can be shared" wou=
-ld
-> both be valid, but above a verb is missing (e.g., "can be used to").
->=20
-> Thanks for your upstreaming efforts, and don't let me discourage you.
->=20
+I was hoping to avoid re-introducing the config option but that may be
+the case if we can't make the machine_info work. I'll take a better
+look tomorrow.
 
-No discourage at all, your feedback is highly appreciated and sorry tha=
-t I
-didn't catch all these typos when working on the DT documentation.
+Thanks,
+Laura
 
-> Best regards,
->=20
-> Andreas
->=20
 
-Best regards,
-Javier
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
