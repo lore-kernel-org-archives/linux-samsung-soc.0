@@ -1,49 +1,56 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2 07/10] mfd: cros_ec: cleanup: Remove EC wrapper functions
-Date: Fri, 27 Jun 2014 11:47:55 -0700
-Message-ID: <CAKdAkRRuG2sAbwD+WU-w95AkLsHC7CBHmB60+rLn=ZqhSUF+sA@mail.gmail.com>
-References: <1403115247-8853-1-git-send-email-dianders@chromium.org>
-	<1403115247-8853-8-git-send-email-dianders@chromium.org>
-	<20140627123109.GA29156@katana>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
+Date: Fri, 27 Jun 2014 13:56:46 -0600
+Message-ID: <53ADCC7E.4000703@wwwdotorg.org>
+References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>	<53ABED5B.8010506@samsung.com>	<CAD=FV=Vwgdis6FzJ8MHDwfuohB1kN8Mf--2N=rxGNeAfKjJMig@mail.gmail.com>	<53AD60D7.4040404@gmail.com>	<53AD978D.8060703@wwwdotorg.org>	<CAD=FV=UUFARvreHdWNsB1O1dEW6nX_E_C92t8Nma0vL=nAT5Rw@mail.gmail.com>	<53ADB5E5.10102@wwwdotorg.org> <CAD=FV=XYFy_QpBtFPc-EURXmV9qMMyOkk0Ybhoy5E6r+hXGywA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:41696 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751179AbaF0Srz (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:36036 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752731AbaF0T4u (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jun 2014 14:47:55 -0400
-In-Reply-To: <20140627123109.GA29156@katana>
+	Fri, 27 Jun 2014 15:56:50 -0400
+In-Reply-To: <CAD=FV=XYFy_QpBtFPc-EURXmV9qMMyOkk0Ybhoy5E6r+hXGywA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Doug Anderson <dianders@chromium.org>, Lee Jones <lee.jones@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@chromium.org>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-i2c@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <vikas.sajjan@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Fri, Jun 27, 2014 at 5:31 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
-> On Wed, Jun 18, 2014 at 11:14:04AM -0700, Doug Anderson wrote:
->> From: Bill Richardson <wfrichar@chromium.org>
->>
->> Remove the three wrapper functions that talk to the EC without passing all
->> the desired arguments and just use the underlying communication function
->> that passes everything in a struct intead.
->>
->> This is internal code refactoring only. Nothing should change.
->>
->> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> Acked-by: Lee Jones <lee.jones@linaro.org>
->> Reviewed-by: Simon Glass <sjg@chromium.org>
->
-> For the I2C part:
->
-> Acked-by: Wolfram Sang <wsa@the-dreams.de>
->
+On 06/27/2014 12:30 PM, Doug Anderson wrote:
+> Stephen,
+> 
+> On Fri, Jun 27, 2014 at 11:20 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>> On 06/27/2014 10:45 AM, Doug Anderson wrote:
+>>> Stephen,
+>>>
+>>> On Fri, Jun 27, 2014 at 9:10 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>>>> Surely there's a driver (or could be a driver) for the TPM chip, and
+>>>> that driver should have a reset-mask-gpios property, so the driver can
+>>>> call gpio_get() and gpio_set_output() on the GPIO?
+>>>>
+>>>> Faking this out via a not-really-a-regulator or pinctrl hogs seems like
+>>>> an abuse of those features to me.
+...
+>> As an aside, why do we even care about this? The kernel clearly can
+>> unlock the TPM simply by failing to set the GPIO up correctly, so at
+>> best this is security through obscurity. If someone actively wanted to
+>> do something bad to the TPM, they'd simply comment out this piece of
+>> code in the kernel. At least that's true with usptream kernels which
+>> aren't validated at all during boot. For a downstream signed kernel,
+>> perhaps this patch makes sense (although I haven't thought about all the
+>> security angles), but then it'd make sense to keep this patch downstream.
+> 
+> Check out the bullet point about the firmware checking for kernel
+> cheats.  At resume time the chip actually re-loads read only firmware
+> out of SPI flash (no choice about this).  This read only firmware can
+> check the state of the mask pin (which is preserved across sleep wake)
+> to see if the kernel cheated.
 
-I'm good with input bits as well.
+Ah, that covers the security issues then.
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-
-Thanks.
-
--- 
-Dmitry
+I'd argue that the RO firmware should be setting up GPIOs like this
+myself (and the pinmux, from a nice big table), and the kernel simply
+not touch it all since it has no direct use for the pin. But I suppose
+if the firmware is already baked and read only, that's not possible.
