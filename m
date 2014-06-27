@@ -1,101 +1,165 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
-Date: Fri, 27 Jun 2014 17:14:38 +0200
-Message-ID: <53AD8A5E.9090904@gmail.com>
-References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>	<53ABED5B.8010506@samsung.com>	<CAD=FV=Vwgdis6FzJ8MHDwfuohB1kN8Mf--2N=rxGNeAfKjJMig@mail.gmail.com>	<53AD60D7.4040404@gmail.com> <CAD=FV=Wz5nB=fe-snzdNC-Tb50wXz9h3S5z4jAHzKxH3N66UVw@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v3 1/4] drm/fb-helper: Fix hpd vs. initial
+	config races
+Date: Fri, 27 Jun 2014 17:19:22 +0200
+Message-ID: <1403882365-18337-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:42234 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753831AbaF0PPA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jun 2014 11:15:00 -0400
-Received: by mail-wi0-f182.google.com with SMTP id bs8so3017339wib.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2014 08:14:58 -0700 (PDT)
-In-Reply-To: <CAD=FV=Wz5nB=fe-snzdNC-Tb50wXz9h3S5z4jAHzKxH3N66UVw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-tegra@vger.kernel.org, intel-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Vikas Sajjan <sajjan.linux@gmail.com>, Vikas Sajjan <vikas.sajjan@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>
 
-On 27.06.2014 17:10, Doug Anderson wrote:
-> Tomasz and Vikas,
-> 
-> On Fri, Jun 27, 2014 at 5:17 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> Hi Doug,
->>
->> On 26.06.2014 17:25, Doug Anderson wrote:
->>> Tomasz,
->>>
->>> On Thu, Jun 26, 2014 at 2:52 AM, Tomasz Figa <t.figa@samsung.com> wrote:
->>>> Hi Vikas, Doug,
->>>>
->>>> On 26.06.2014 11:15, Vikas Sajjan wrote:
->>>>> From: Doug Anderson <dianders@chromium.org>
->>>>>
->>>>> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
->>>>> being reset across sleep/wake.  If we don't set it to anything then
->>>>> the TPM will be reset.  U-Boot will detect this as invalid
->>>>> and will reset the system on resume time. This GPIO can always be low
->>>>> and not hurt anything.  It will get pulled back high again during a
->>>>> normal warm reset when it will default back to an input.
->>>>>
->>>>> To properly preserve the TPM state across suspend/resume and to make
->>>>> the chrome U-Boot happy, properly set the GPIO to mask the
->>>>> reset to the TPM.
->>>>>
->>>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
->>>>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
->>>>> ---
->>>>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   20 ++++++++++++++++++++
->>>>>  1 file changed, 20 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>>>> index 7649982..8fd990a 100644
->>>>> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>>>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>>>> @@ -87,6 +87,18 @@
->>>>>               pinctrl-0 = <&usb301_vbus_en>;
->>>>>               enable-active-high;
->>>>>       };
->>>>> +
->>>>> +     /* We need GPX0_6 to be low at sleep time; just keep it low always */
->>>>> +     mask_tpm_reset_regulator: mask-tpm-reset-regulator {
->>>>> +     compatible = "regulator-fixed";
->>>>> +     regulator-name = "mask-tpm-reset ";
->>>>> +             gpio = <&gpx0 6 0>;
->>>>> +             enable-active-low;
->>>>> +             regulator-boot-on;
->>>>> +             regulator-always-on;
->>>>> +             pinctrl-names = "default";
->>>>> +             pinctrl-0 = <&mask_tpm_reset>;
->>>>> +     };
->>>>
->>>> I don't think this pin is supposed to be a real regulator. If I'm right,
->>>> you should just add a hog for it, if you don't have a proper driver to
->>>> handle it.
->>>
->>> Yes, I agree that it shouldn't really be a regulator, but there's not
->>> a whole lot of choice.  The pin needs to actually be driven low, not
->>> just pulled low.  Without your proposed patch (pinctrl: samsung: Allow
->>> pin value to be initialized using pinfunc) I don't think it's possible
->>> to actually drive a pin low with a hog.  I could be wrong, though.
->>>
->>
->> Uhm, I was convinced that this patch was already in. So I think your use
->> case is definitely a good reason to get back to this patch and use the
->> facility it provides to solve your problem.
-> 
-> Thanks, that seems very reasonable to me, too.
-> 
-> Are you going to pick up revitalizing this patch series or are you
-> hoping Vikas will?  IIRC I was in favor of your patch but it generated
-> a whole bunch of discussion and never actually landed.
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-I will respin it along with few other patches for pinctrl-samsung, but
-obviously not before Monday.
+Some drivers need to be able to have a perfect race-free fbcon setup.
+Current drivers only enable hotplug processing after the call to
+drm_fb_helper_initial_config which leaves a tiny but important race.
 
-Best regards,
-Tomasz
+This race is especially noticable on embedded platforms where the
+driver itself enables the voltage for the hdmi output, since only then
+will monitors (after a bit of delay, as usual) respond by asserting
+the hpd pin.
+
+Most of the infrastructure is already there with the split-out
+drm_fb_helper_init. And drm_fb_helper_initial_config already has all
+the required locking to handle concurrent hpd events since
+
+commit 53f1904bced78d7c00f5d874c662ec3ac85d0f9f
+Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Thu Mar 20 14:26:35 2014 +0100
+
+    drm/fb-helper: improve drm_fb_helper_initial_config locking
+
+The only missing bit is making drm_fb_helper_hotplug_event save
+against concurrent calls of drm_fb_helper_initial_config. The only
+unprotected bit is the check for fb_helper->fb.
+
+With that drivers can first initialize the fb helper, then enabel
+hotplug processing and then set up the initial config all in a
+completely race-free manner. Update kerneldoc and convert i915 as a
+proof of concept.
+
+Feature requested by Thierry since his tegra driver atm reliably boots
+slowly enough to misses the hotplug event for an external hdmi screen,
+but also reliably boots to quickly for the hpd pin to be asserted when
+the fb helper calls into the hdmi ->detect function.
+
+Cc: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Changes in v3:
+- remove an additional occurrence of i915's enable_hotplug_processing
+  that was introduced after the original patch
+
+ drivers/gpu/drm/drm_fb_helper.c | 11 +++++------
+ drivers/gpu/drm/i915/i915_dma.c |  3 ---
+ drivers/gpu/drm/i915/i915_drv.c |  2 --
+ drivers/gpu/drm/i915/i915_drv.h |  1 -
+ drivers/gpu/drm/i915/i915_irq.c |  4 ----
+ 5 files changed, 5 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index d5d8cea1a679..13a098c9af31 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -1613,8 +1613,10 @@ EXPORT_SYMBOL(drm_fb_helper_initial_config);
+  * either the output polling work or a work item launched from the driver's
+  * hotplug interrupt).
+  *
+- * Note that the driver must ensure that this is only called _after_ the fb has
+- * been fully set up, i.e. after the call to drm_fb_helper_initial_config.
++ * Note that drivers may call this even before calling
++ * drm_fb_helper_initial_config but only aftert drm_fb_helper_init. This allows
++ * for a race-free fbcon setup and will make sure that the fbdev emulation will
++ * not miss any hotplug events.
+  *
+  * RETURNS:
+  * 0 on success and a non-zero error code otherwise.
+@@ -1624,11 +1626,8 @@ int drm_fb_helper_hotplug_event(struct drm_fb_helper *fb_helper)
+ 	struct drm_device *dev = fb_helper->dev;
+ 	u32 max_width, max_height;
+ 
+-	if (!fb_helper->fb)
+-		return 0;
+-
+ 	mutex_lock(&fb_helper->dev->mode_config.mutex);
+-	if (!drm_fb_helper_is_bound(fb_helper)) {
++	if (!fb_helper->fb || !drm_fb_helper_is_bound(fb_helper)) {
+ 		fb_helper->delayed_hotplug = true;
+ 		mutex_unlock(&fb_helper->dev->mode_config.mutex);
+ 		return 0;
+diff --git a/drivers/gpu/drm/i915/i915_dma.c b/drivers/gpu/drm/i915/i915_dma.c
+index 5e583a1838f8..84b55665bd87 100644
+--- a/drivers/gpu/drm/i915/i915_dma.c
++++ b/drivers/gpu/drm/i915/i915_dma.c
+@@ -1377,9 +1377,6 @@ static int i915_load_modeset_init(struct drm_device *dev)
+ 	 */
+ 	intel_fbdev_initial_config(dev);
+ 
+-	/* Only enable hotplug handling once the fbdev is fully set up. */
+-	dev_priv->enable_hotplug_processing = true;
+-
+ 	drm_kms_helper_poll_init(dev);
+ 
+ 	return 0;
+diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+index 6eb45ac7a7d5..b0955fffca98 100644
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -521,7 +521,6 @@ static int i915_drm_freeze(struct drm_device *dev)
+ 		}
+ 
+ 		intel_runtime_pm_disable_interrupts(dev);
+-		dev_priv->enable_hotplug_processing = false;
+ 
+ 		intel_suspend_gt_powersave(dev);
+ 
+@@ -659,7 +658,6 @@ static int __i915_drm_thaw(struct drm_device *dev, bool restore_gtt_mappings)
+ 		 * notifications.
+ 		 * */
+ 		intel_hpd_init(dev);
+-		dev_priv->enable_hotplug_processing = true;
+ 		/* Config may have changed between suspend and resume */
+ 		drm_helper_hpd_irq_event(dev);
+ 	}
+diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+index 8cea59649ef2..df6a98cd702f 100644
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -1404,7 +1404,6 @@ struct drm_i915_private {
+ 	u32 pipestat_irq_mask[I915_MAX_PIPES];
+ 
+ 	struct work_struct hotplug_work;
+-	bool enable_hotplug_processing;
+ 	struct {
+ 		unsigned long hpd_last_jiffies;
+ 		int hpd_cnt;
+diff --git a/drivers/gpu/drm/i915/i915_irq.c b/drivers/gpu/drm/i915/i915_irq.c
+index 1c1ec22bc7ef..c0d7674c45cd 100644
+--- a/drivers/gpu/drm/i915/i915_irq.c
++++ b/drivers/gpu/drm/i915/i915_irq.c
+@@ -1109,10 +1109,6 @@ static void i915_hotplug_work_func(struct work_struct *work)
+ 	bool changed = false;
+ 	u32 hpd_event_bits;
+ 
+-	/* HPD irq before everything is fully set up. */
+-	if (!dev_priv->enable_hotplug_processing)
+-		return;
+-
+ 	mutex_lock(&mode_config->mutex);
+ 	DRM_DEBUG_KMS("running encoder hotplug functions\n");
+ 
+-- 
+2.0.0
