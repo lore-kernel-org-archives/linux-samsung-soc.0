@@ -1,118 +1,52 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
-Date: Fri, 27 Jun 2014 21:19:29 +0530
-Message-ID: <CAGm_ybi6y1AyXP80S_jQv0DDM4YGZSbqhAhtHr3ZXhs27-Z2Ww@mail.gmail.com>
-References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>
-	<53ABED5B.8010506@samsung.com>
-	<CAD=FV=Vwgdis6FzJ8MHDwfuohB1kN8Mf--2N=rxGNeAfKjJMig@mail.gmail.com>
-	<53AD60D7.4040404@gmail.com>
-	<CAD=FV=Wz5nB=fe-snzdNC-Tb50wXz9h3S5z4jAHzKxH3N66UVw@mail.gmail.com>
-	<53AD8A5E.9090904@gmail.com>
-	<CAD=FV=U3XPca_tQn4VO-b6FS4t+jUeMs9dSfsBoLYqjNb3V11w@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 1/2] usb: host: Kconfig: Select PHY drivers for Exynos EHCI/OHCI
+Date: Fri, 27 Jun 2014 08:55:31 -0700
+Message-ID: <CAD=FV=Xaf-vH79a88q94vOgc+nDhxhtnFdnRMxi1pmLd-mKYBg@mail.gmail.com>
+References: <1403761178-5371-1-git-send-email-sachin.kamat@samsung.com>
+	<20140627154608.GI8069@saruman.home>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:61223 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753446AbaF0Ptb (ORCPT
+Received: from mail-ve0-f172.google.com ([209.85.128.172]:36846 "EHLO
+	mail-ve0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751150AbaF0Pzc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jun 2014 11:49:31 -0400
-Received: by mail-wg0-f47.google.com with SMTP id k14so5317157wgh.6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2014 08:49:29 -0700 (PDT)
-In-Reply-To: <CAD=FV=U3XPca_tQn4VO-b6FS4t+jUeMs9dSfsBoLYqjNb3V11w@mail.gmail.com>
+	Fri, 27 Jun 2014 11:55:32 -0400
+Received: by mail-ve0-f172.google.com with SMTP id jz11so5477701veb.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2014 08:55:31 -0700 (PDT)
+In-Reply-To: <20140627154608.GI8069@saruman.home>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>
+To: Felipe Balbi <balbi@ti.com>
+Cc: Sachin Kamat <sachin.kamat@samsung.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vivek Gautam <gautam.vivek@samsung.com>, Sachin Kamat <spk.linux@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
 
-Doug,
+Felipe,
 
-On Fri, Jun 27, 2014 at 8:52 PM, Doug Anderson <dianders@chromium.org> wrote:
-> Tomasz,
->
-> On Fri, Jun 27, 2014 at 8:14 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> On 27.06.2014 17:10, Doug Anderson wrote:
->>> Tomasz and Vikas,
->>>
->>> On Fri, Jun 27, 2014 at 5:17 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>>> Hi Doug,
->>>>
->>>> On 26.06.2014 17:25, Doug Anderson wrote:
->>>>> Tomasz,
->>>>>
->>>>> On Thu, Jun 26, 2014 at 2:52 AM, Tomasz Figa <t.figa@samsung.com> wrote:
->>>>>> Hi Vikas, Doug,
->>>>>>
->>>>>> On 26.06.2014 11:15, Vikas Sajjan wrote:
->>>>>>> From: Doug Anderson <dianders@chromium.org>
->>>>>>>
->>>>>>> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
->>>>>>> being reset across sleep/wake.  If we don't set it to anything then
->>>>>>> the TPM will be reset.  U-Boot will detect this as invalid
->>>>>>> and will reset the system on resume time. This GPIO can always be low
->>>>>>> and not hurt anything.  It will get pulled back high again during a
->>>>>>> normal warm reset when it will default back to an input.
->>>>>>>
->>>>>>> To properly preserve the TPM state across suspend/resume and to make
->>>>>>> the chrome U-Boot happy, properly set the GPIO to mask the
->>>>>>> reset to the TPM.
->>>>>>>
->>>>>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
->>>>>>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
->>>>>>> ---
->>>>>>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   20 ++++++++++++++++++++
->>>>>>>  1 file changed, 20 insertions(+)
->>>>>>>
->>>>>>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>>>>>> index 7649982..8fd990a 100644
->>>>>>> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>>>>>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>>>>>> @@ -87,6 +87,18 @@
->>>>>>>               pinctrl-0 = <&usb301_vbus_en>;
->>>>>>>               enable-active-high;
->>>>>>>       };
->>>>>>> +
->>>>>>> +     /* We need GPX0_6 to be low at sleep time; just keep it low always */
->>>>>>> +     mask_tpm_reset_regulator: mask-tpm-reset-regulator {
->>>>>>> +     compatible = "regulator-fixed";
->>>>>>> +     regulator-name = "mask-tpm-reset ";
->>>>>>> +             gpio = <&gpx0 6 0>;
->>>>>>> +             enable-active-low;
->>>>>>> +             regulator-boot-on;
->>>>>>> +             regulator-always-on;
->>>>>>> +             pinctrl-names = "default";
->>>>>>> +             pinctrl-0 = <&mask_tpm_reset>;
->>>>>>> +     };
->>>>>>
->>>>>> I don't think this pin is supposed to be a real regulator. If I'm right,
->>>>>> you should just add a hog for it, if you don't have a proper driver to
->>>>>> handle it.
->>>>>
->>>>> Yes, I agree that it shouldn't really be a regulator, but there's not
->>>>> a whole lot of choice.  The pin needs to actually be driven low, not
->>>>> just pulled low.  Without your proposed patch (pinctrl: samsung: Allow
->>>>> pin value to be initialized using pinfunc) I don't think it's possible
->>>>> to actually drive a pin low with a hog.  I could be wrong, though.
->>>>>
->>>>
->>>> Uhm, I was convinced that this patch was already in. So I think your use
->>>> case is definitely a good reason to get back to this patch and use the
->>>> facility it provides to solve your problem.
->>>
->>> Thanks, that seems very reasonable to me, too.
->>>
->>> Are you going to pick up revitalizing this patch series or are you
->>> hoping Vikas will?  IIRC I was in favor of your patch but it generated
->>> a whole bunch of discussion and never actually landed.
+On Fri, Jun 27, 2014 at 8:46 AM, Felipe Balbi <balbi@ti.com> wrote:
+> On Thu, Jun 26, 2014 at 11:09:37AM +0530, Sachin Kamat wrote:
+>> EHCI and OHCI drivers on Exynos platforms do not work without their
+>> corresponding SoC specific phy drivers. Hence it makes no sense to
+>> keep these phy drivers as user selectable. Instead select them from
+>> the respective USB configs to make things easier for the end user.
+>> While at it enable 5250 phy for Exynos 5420 SoC too.
 >>
->> I will respin it along with few other patches for pinctrl-samsung, but
->> obviously not before Monday.
+>> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
+>> Cc: Kishon Vijay Abraham I <kishon@ti.com>
 >
-> Sounds like a plan.  Vikas: I'll assume you're going to redo this
-> patch atop Tomasz's once he posts up his.
+> no more selects, please. We've already had way too many issues because
+> of misused selects.
 
-Sure, will respin atop Tomasz's patch series.
+I'll admit to not having been involved with the previous discussions,
+but this seems strange to me.  Are we throwing in the towel and
+deciding that it's too hard to get the Kconfigs right and that we'll
+just rely on individual users to figure out the right answer for
+themselves?
 
+Certainly the Exynos USB driver is not useful without the Exynos USB
+Phy driver, so it seems awfully strange to allow the user to select
+one without getting the other...  ...and if including an extra USB Phy
+driver will break something then it seems like we have bigger problems
+(aren't we supposed to have one kernel that works across a wide
+variety of boards?)
 
->
-> -Doug
+-Doug
