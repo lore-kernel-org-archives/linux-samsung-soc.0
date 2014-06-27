@@ -1,45 +1,136 @@
-From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 0/2 v2] ARM: DTS: create thermistor fragment dtsi for Peach
- boards
-Date: Fri, 27 Jun 2014 11:38:13 +0530
-Message-ID: <1403849295-29538-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH v2 2/2] ARM: DTS: Add thermistor dts fragment used by exynos
+ based Peach boards
+Date: Fri, 27 Jun 2014 11:38:15 +0530
+Message-ID: <1403849295-29538-3-git-send-email-ch.naveen@samsung.com>
+References: <1403849295-29538-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:16990 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752652AbaF0GL1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 27 Jun 2014 02:11:27 -0400
+In-reply-to: <1403849295-29538-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, cpgs@samsung.com
 
-This patchset does the following
-1. Create a thermistor dtsi fragment file cros-adc-thermistors.dtsi for
-   exynos5420-peach-pit.dts and exynos5800-peach-pi.dts
-2. Adds the ADC based Thermistor nodes and enables them in peach_pit.dts
-   and peach_pi.dts
-3. Corrects the vendor prefix for thermistors in exynos4412-trats2.dts
+This patch creates a thermistor fragment carrying the NTC Thermistor
+nodes as children of the IIO based ADC.
 
-This patch depends on (1/4 and 2/4 patches of) patchset posted
-http://www.spinics.net/lists/linux-iio/msg13486.html
-Which were applied on to Guenter Roeck's tree.
+This fragment is included in exynos5420-peach-pit.dts and
+exynos5800-peach-pi.dts.
+
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+---
+Changes since v1:
+As per the comments https://lkml.org/lkml/2014/6/26/271
+and discussion about fragments vs common dtsi
+@ http://patchwork.ozlabs.org/patch/362633/.
+
+Created a thermistors fragment instead of a common dtsi file
 
 cat sysfs entries exported by hwmon for 4 thermistors
 and verified the values on Peach pit and pi boards.
 
-Changes since v1:
-1. Dropped 2/3 "ARM: DTS: Add NTC thermistor nodes to Exynos5250 based Snow"
-   https://lkml.org/lkml/2014/6/26/192
-   As large number of Snow boards dint have thermistors.
-2. Created a thermistor fragment instead of common dtsi file
-
-Naveen Krishna Chatradhi (2):
-  ARM: DTS: use new compatible string for thermistors in trats2
-  ARM: DTS: Add thermistor dts fragment needed by exynos based peach
-    boards
-
  arch/arm/boot/dts/cros-adc-thermistors.dtsi |   44 +++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos4412-trats2.dts     |    4 +--
  arch/arm/boot/dts/exynos5420-peach-pit.dts  |    6 ++++
  arch/arm/boot/dts/exynos5800-peach-pi.dts   |    6 ++++
- 4 files changed, 58 insertions(+), 2 deletions(-)
+ 3 files changed, 56 insertions(+)
  create mode 100644 arch/arm/boot/dts/cros-adc-thermistors.dtsi
 
+diff --git a/arch/arm/boot/dts/cros-adc-thermistors.dtsi b/arch/arm/boot/dts/cros-adc-thermistors.dtsi
+new file mode 100644
+index 0000000..17fce72
+--- /dev/null
++++ b/arch/arm/boot/dts/cros-adc-thermistors.dtsi
+@@ -0,0 +1,44 @@
++/*
++ * Thermistor dts fragment for devices that use Thermistors as
++ * children of the IIO based ADC.
++ *
++ * Currently, used by Exynos5420 based Peach PIT and
++ * Exynos5800 based Peach PI.
++ *
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++&adc {
++	ncp15wb473@3 {
++		compatible = "murata,ncp15wb473";
++		pullup-uv = <1800000>;
++		pullup-ohm = <47000>;
++		pulldown-ohm = <0>;
++		io-channels = <&adc 3>;
++	};
++	ncp15wb473@4 {
++		compatible = "murata,ncp15wb473";
++		pullup-uv = <1800000>;
++		pullup-ohm = <47000>;
++		pulldown-ohm = <0>;
++		io-channels = <&adc 4>;
++	};
++	ncp15wb473@5 {
++		compatible = "murata,ncp15wb473";
++		pullup-uv = <1800000>;
++		pullup-ohm = <47000>;
++		pulldown-ohm = <0>;
++		io-channels = <&adc 5>;
++	};
++	ncp15wb473@6 {
++		compatible = "murata,ncp15wb473";
++		pullup-uv = <1800000>;
++		pullup-ohm = <47000>;
++		pulldown-ohm = <0>;
++		io-channels = <&adc 6>;
++	};
++};
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index d124394..7c64009 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -101,6 +101,11 @@
+ 	};
+ };
+ 
++&adc {
++	status = "okay";
++	vdd-supply = <&ldo9_reg>;
++};
++
+ &dp {
+ 	status = "okay";
+ 	pinctrl-names = "default";
+@@ -775,3 +780,4 @@
+ };
+ 
+ #include "cros-ec-keyboard.dtsi"
++#include "cros-adc-thermistors.dtsi"
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index c36c9ce..4fd48b9 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -99,6 +99,11 @@
+ 	};
+ };
+ 
++&adc {
++	status = "okay";
++	vdd-supply = <&ldo9_reg>;
++};
++
+ &dp {
+ 	status = "okay";
+ 	pinctrl-names = "default";
+@@ -773,3 +778,4 @@
+ };
+ 
+ #include "cros-ec-keyboard.dtsi"
++#include "cros-adc-thermistors.dtsi"
 -- 
 1.7.9.5
