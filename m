@@ -1,93 +1,86 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 1/2] usb: host: Kconfig: Select PHY drivers for Exynos
- EHCI/OHCI
-Date: Fri, 27 Jun 2014 10:59:00 -0500
-Message-ID: <20140627155900.GN8069@saruman.home>
-References: <1403761178-5371-1-git-send-email-sachin.kamat@samsung.com>
- <20140627154608.GI8069@saruman.home>
- <CAD=FV=Xaf-vH79a88q94vOgc+nDhxhtnFdnRMxi1pmLd-mKYBg@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
+Date: Fri, 27 Jun 2014 10:10:53 -0600
+Message-ID: <53AD978D.8060703@wwwdotorg.org>
+References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>	<53ABED5B.8010506@samsung.com> <CAD=FV=Vwgdis6FzJ8MHDwfuohB1kN8Mf--2N=rxGNeAfKjJMig@mail.gmail.com> <53AD60D7.4040404@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UExESr5xZTMxdOWv"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:38597 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751874AbaF0P7L (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:45479 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751755AbaF0QK5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jun 2014 11:59:11 -0400
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=Xaf-vH79a88q94vOgc+nDhxhtnFdnRMxi1pmLd-mKYBg@mail.gmail.com>
+	Fri, 27 Jun 2014 12:10:57 -0400
+In-Reply-To: <53AD60D7.4040404@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Felipe Balbi <balbi@ti.com>, Sachin Kamat <sachin.kamat@samsung.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vivek Gautam <gautam.vivek@samsung.com>, Sachin Kamat <spk.linux@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>
+Cc: Vikas Sajjan <vikas.sajjan@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
---UExESr5xZTMxdOWv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 06/27/2014 06:17 AM, Tomasz Figa wrote:
+> Hi Doug,
+> 
+> On 26.06.2014 17:25, Doug Anderson wrote:
+>> Tomasz,
+>>
+>> On Thu, Jun 26, 2014 at 2:52 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+>>> Hi Vikas, Doug,
+>>>
+>>> On 26.06.2014 11:15, Vikas Sajjan wrote:
+>>>> From: Doug Anderson <dianders@chromium.org>
+>>>>
+>>>> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
+>>>> being reset across sleep/wake.  If we don't set it to anything then
+>>>> the TPM will be reset.  U-Boot will detect this as invalid
+>>>> and will reset the system on resume time. This GPIO can always be low
+>>>> and not hurt anything.  It will get pulled back high again during a
+>>>> normal warm reset when it will default back to an input.
+>>>>
+>>>> To properly preserve the TPM state across suspend/resume and to make
+>>>> the chrome U-Boot happy, properly set the GPIO to mask the
+>>>> reset to the TPM.
+>>>>
+>>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>>>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+>>>> ---
+>>>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   20 ++++++++++++++++++++
+>>>>  1 file changed, 20 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>>> index 7649982..8fd990a 100644
+>>>> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+>>>> @@ -87,6 +87,18 @@
+>>>>               pinctrl-0 = <&usb301_vbus_en>;
+>>>>               enable-active-high;
+>>>>       };
+>>>> +
+>>>> +     /* We need GPX0_6 to be low at sleep time; just keep it low always */
+>>>> +     mask_tpm_reset_regulator: mask-tpm-reset-regulator {
+>>>> +     compatible = "regulator-fixed";
+>>>> +     regulator-name = "mask-tpm-reset ";
+>>>> +             gpio = <&gpx0 6 0>;
+>>>> +             enable-active-low;
+>>>> +             regulator-boot-on;
+>>>> +             regulator-always-on;
+>>>> +             pinctrl-names = "default";
+>>>> +             pinctrl-0 = <&mask_tpm_reset>;
+>>>> +     };
+>>>
+>>> I don't think this pin is supposed to be a real regulator. If I'm right,
+>>> you should just add a hog for it, if you don't have a proper driver to
+>>> handle it.
+>>
+>> Yes, I agree that it shouldn't really be a regulator, but there's not
+>> a whole lot of choice.  The pin needs to actually be driven low, not
+>> just pulled low.  Without your proposed patch (pinctrl: samsung: Allow
+>> pin value to be initialized using pinfunc) I don't think it's possible
+>> to actually drive a pin low with a hog.  I could be wrong, though.
 
-On Fri, Jun 27, 2014 at 08:55:31AM -0700, Doug Anderson wrote:
-> Felipe,
->=20
-> On Fri, Jun 27, 2014 at 8:46 AM, Felipe Balbi <balbi@ti.com> wrote:
-> > On Thu, Jun 26, 2014 at 11:09:37AM +0530, Sachin Kamat wrote:
-> >> EHCI and OHCI drivers on Exynos platforms do not work without their
-> >> corresponding SoC specific phy drivers. Hence it makes no sense to
-> >> keep these phy drivers as user selectable. Instead select them from
-> >> the respective USB configs to make things easier for the end user.
-> >> While at it enable 5250 phy for Exynos 5420 SoC too.
-> >>
-> >> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
-> >> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> >
-> > no more selects, please. We've already had way too many issues because
-> > of misused selects.
->=20
-> I'll admit to not having been involved with the previous discussions,
-> but this seems strange to me.  Are we throwing in the towel and
-> deciding that it's too hard to get the Kconfigs right and that we'll
-> just rely on individual users to figure out the right answer for
-> themselves?
+Surely there's a driver (or could be a driver) for the TPM chip, and
+that driver should have a reset-mask-gpios property, so the driver can
+call gpio_get() and gpio_set_output() on the GPIO?
 
-no. select prevents a driver from be built as a dynamically linked
-module and distro-kernels might want to enable everything as modules.
-
-> Certainly the Exynos USB driver is not useful without the Exynos USB
-> Phy driver, so it seems awfully strange to allow the user to select
-> one without getting the other...  ...and if including an extra USB Phy
-> driver will break something then it seems like we have bigger problems
-> (aren't we supposed to have one kernel that works across a wide
-> variety of boards?)
-
-yeah, but for the kernel to "work" it doesn't depend on the PHY driver,
-does it ? The USB parts of the SoC depend on the PHY, but even PHY
-drivers should be allowed to be built as modules. Find another way
-
---=20
-balbi
-
---UExESr5xZTMxdOWv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJTrZTEAAoJEIaOsuA1yqREk3cP/jGpKB17nBOVnQwWQY+76tiE
-+U964LJVHXJve+PG5mdlcroxar4T7F4PgQDZuOAlg3dPRoB46FzKyod54kdMA72l
-+hBqLeAZ9X46g8UGOnf3TMDc8ecG2x80PJ5fia/h5T5fJ4w+EEm6sRsQ6/grxK2q
-9f16bNeZGFd5OopwVAbUJzY3fLnxKTJfpAC+myeILfZ7nWJWZFs4jUdZ7Nu4niHI
-bWhaTJ4szM34Yz13Pc01fem0bSnZwwPbx4JVcVKV4R5OmzUKstYlcUIthQTrr3QL
-HedNzh81Epbkc0hwFzwlg0VS4SSWyZp+Y4TcGgxepsGcsPbi5fid9eNa6X53aSNY
-Ej5oXbprmth2c0KiFBfr6P6fnJwcK/cpWd8lfUpTMpOeyAMNb/4Uc9KPtTsYEevV
-WRimlqzLu1C/iD6/wUBt7Cqg0N4tnalS52xipQ5tsKCgd3oplWutgpG7pCFtKl5q
-oGSIOo0c+zVpL4zpjFMICZB2ddYfEUV+raOQBVusnzub8TCGewVXBTgj+f7MOIuL
-HGSimS2rVgur72XEgAPmRXzjDujoEA5hsoO2e758pmZcREa4G4GynkcbAaZU0lK7
-sYXhsxWf/s8HiiSdta69bsue9X+XYsq0O8vRmdehP9Sb3tCh0QC6AJrFXRsKrcuB
-RMy0MeGiejqhOSVc/SFF
-=8eFc
------END PGP SIGNATURE-----
-
---UExESr5xZTMxdOWv--
+Faking this out via a not-really-a-regulator or pinctrl hogs seems like
+an abuse of those features to me.
