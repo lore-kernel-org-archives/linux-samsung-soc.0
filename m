@@ -1,181 +1,57 @@
 From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH v5 08/14] mfd: max77802: Add DT binding documentation
-Date: Fri, 27 Jun 2014 10:06:14 +0200
-Message-ID: <53AD25F6.6030007@suse.de>
-References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk> <1403806546-31122-9-git-send-email-javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v5 03/14] clk: max77686: Add DT include for MAX77686 PMIC
+ clock
+Date: Fri, 27 Jun 2014 10:26:31 +0200
+Message-ID: <53AD2AB7.1090000@suse.de>
+References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk> <1403806546-31122-4-git-send-email-javier.martinez@collabora.co.uk> <53AD21E5.1030609@suse.de> <53AD22ED.5040303@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:50215 "EHLO mx2.suse.de"
+Received: from cantor2.suse.de ([195.135.220.15]:50622 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751836AbaF0IGT (ORCPT
+	id S1752606AbaF0I0h (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jun 2014 04:06:19 -0400
-In-Reply-To: <1403806546-31122-9-git-send-email-javier.martinez@collabora.co.uk>
+	Fri, 27 Jun 2014 04:26:37 -0400
+In-Reply-To: <53AD22ED.5040303@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Lee Jones <lee.jones@linaro.org>
 Cc: Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Am 26.06.2014 20:15, schrieb Javier Martinez Canillas:
-> Add Device Tree binding documentation for Maxim 77802 PMIC.
+Hi Javier,
+
+Am 27.06.2014 09:53, schrieb Javier Martinez Canillas:
+> Hello Andreas,
 >=20
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
-=2Euk>
-> ---
+> On 06/27/2014 09:48 AM, Andreas F=E4rber wrote:
+>> Am 26.06.2014 20:15, schrieb Javier Martinez Canillas:
+>>> This patch adds a dt-binding include for Maxim 77686
+>>> PMIC clock IDs that can be to be shared between the
+>>
+>> "can be shared"?
+>>
 >=20
-> Changes since v4: None
->=20
-> Changes since v3: None
->=20
-> Changes since v2:
->  - Explain better the Dynamic Voltage Scaling (DVS) support in some B=
-uck
->    regulators and the max77802,pmic-buck-{dvs,selb}-gpios properties.
->    Suggested by Mark Brown.
->=20
->  Documentation/devicetree/bindings/mfd/max77802.txt | 97 ++++++++++++=
-++++++++++
->  1 file changed, 97 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/max77802.tx=
-t
->=20
-> diff --git a/Documentation/devicetree/bindings/mfd/max77802.txt b/Doc=
-umentation/devicetree/bindings/mfd/max77802.txt
-> new file mode 100644
-> index 0000000..f3b67c5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/max77802.txt
-> @@ -0,0 +1,97 @@
-> +Maxim MAX77802 multi-function device
-> +
-> +MAX77802 is a Mulitifunction device with PMIC, RTC and Charger on ch=
-ip. It is
+> As it should be quite clear right now I'm not a native English speake=
+r.
 
-"Multifunction"?
+Guessed so, me neither. But since it's v5 already and no native speaker
+pointed it out, I took the liberty to do so while verifying that the
+LD02 typo didn't propagate into your bindings documentation (it didn't)=
+=2E
 
-> +interfaced to host controller using i2c interface. PMIC, Charger and=
- RTC
-> +submodules are addressed using same i2c slave address.
-> +
-> +Buck regulators 1, 2, 3, 4 and 6 include Dynamic Voltage Scaling (DV=
-S) that
-> +allows each output voltage to change dynamically. Each Buck output v=
-oltage
-> +is selected using a set of external inputs: DVS1-3 and SELB1, 2, 3 a=
-nd 6.
-> +
-> +There are 8 DVS registers that can be used to configure the output v=
-oltage
-> +for each Buck regulator and which one is active is controled by DVSx=
- lines.
-> +
-> +SELBx lines are used to control if individual Buck lines are ON or O=
-=46F.
-> +
-> +This document describes the binding for mfd device and PMIC submodul=
-e.
-> +
-> +Binding for the built-in 32k clock generator block is defined separa=
-tely
-> +in bindings/clk/maxim,max77802.txt file.
-> +
-> +Required properties:
-> +- compatible : Must be "maxim,max77802";
-> +- reg : Specifies the i2c slave address of PMIC block.
-> +- interrupts : This i2c device has an IRQ line connected to the main=
- SoC.
-> +- interrupt-parent : The parent interrupt controller.
-> +
-> +Optional properties:
-> +- max77802,pmic-buck-default-dvs-idx: We'll always write this DVS in=
-dex in the
-> +  PMIC for Bucks with DVS.
-> +  NOTE: at the moment these bindings don't include enough details fo=
-r actual
-> +  GPIO-DVS--this just lets you choose which single slot to use.
-> +
-> +- max77802,pmic-buck-dvs-gpios: A GPIO array where each GPIO is conn=
-ected to a
-> +  DVS line. We'll try to set these GPIOs to match pmic-buck-default-=
-dvs-idx at
-> +  probe time if they are defined. If some or all of these GPIOs are =
-not defined
-> +  it's assumed that the board has any missing GPIOs hardwired to mat=
-ch
-> +  pmic-buck-default-dvs-idx.
-> +
-> +- max77802,pmic-buck-selb-gpios: A GPIO array where each GPIO is con=
-nected to a
-> +  SELBx line. Should be five values: 1, 2, 3, 4, 6. It is strongly s=
-uggested to
-> +  include these GPIOs if there's any chance that changing DVS GPIOs =
-one line at
-> +  a time might glitch your DVS values.
-> +
-> +Optional node:
-> +- regulators : The regulators of max77802 have to be instantiated
-> +  under subnode named "regulators" using the following format.
-> +
-> +	regulator_name {
+> I meant
+> that the header file can be included by both Device Tree source files=
+ and the
+> max77802 driver.
 
-The convention, I was told, would be regulator-name as node name.
+AFAIU "clock IDs to be shared" and "clock IDs that can be shared" would
+both be valid, but above a verb is missing (e.g., "can be used to").
 
-> +		standard regulator constraints....
-> +	};
-> +	refer Documentation/devicetree/bindings/regulator/regulator.txt
-> +
-> +  The regulator node name should be initialized with a string
-> +to get matched with their hardware counterparts as follow:
-> +
-> +	-LDOn 	:	for LDOs, where n can lie in range 1 to 35.
-> +			example: LDO1, LDO2, LDO35.
-> +	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 10.
-> +			example: BUCK1, BUCK5, BUCK10.
-> +Example:
-> +
-> +	max77802@09 {
-> +		compatible =3D "maxim,max77802";
-> +		interrupt-parent =3D <&wakeup_eint>;
-> +		interrupts =3D <26 0>;
-> +		reg =3D <0x09>;
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +
-> +		max77802,pmic-buck-default-dvs-idx =3D <1>;
-> +		max77802,pmic-buck-dvs-gpios =3D <&gpy7 6 0>,
-> +					       <&gpj4 2 0>,
-> +					       <&gpj4 3 0>;
-> +		max77802,pmic-buck-selb-gpios =3D <&gph0 2 0>,
-> +						<&gph0 3 0>,
-> +						<&gph0 4 0>,
-> +						<&gph0 5 0>,
-> +						<&gph0 6 0>;
-> +
-> +		regulators {
-> +			ldo11_reg: LDO11 {
-> +				regulator-compatible =3D "LDO11";
-> +				regulator-name =3D "vdd_ldo11";
-> +				regulator-min-microvolt =3D <1900000>;
-> +				regulator-max-microvolt =3D <1900000>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			buck1_reg {
+Thanks for your upstreaming efforts, and don't let me discourage you.
 
-Missing ": BUCK1"
+Best regards,
 
-> +				regulator-compatible =3D "BUCK1";
-> +				regulator-name =3D "vdd_mif";
-> +				regulator-min-microvolt =3D <950000>;
-> +				regulator-max-microvolt =3D <1300000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +			};
-> +	};
-
-Regards,
 Andreas
 
 --=20
