@@ -1,97 +1,49 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
-Date: Fri, 27 Jun 2014 11:30:07 -0700
-Message-ID: <CAD=FV=XYFy_QpBtFPc-EURXmV9qMMyOkk0Ybhoy5E6r+hXGywA@mail.gmail.com>
-References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>
-	<53ABED5B.8010506@samsung.com>
-	<CAD=FV=Vwgdis6FzJ8MHDwfuohB1kN8Mf--2N=rxGNeAfKjJMig@mail.gmail.com>
-	<53AD60D7.4040404@gmail.com>
-	<53AD978D.8060703@wwwdotorg.org>
-	<CAD=FV=UUFARvreHdWNsB1O1dEW6nX_E_C92t8Nma0vL=nAT5Rw@mail.gmail.com>
-	<53ADB5E5.10102@wwwdotorg.org>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v2 07/10] mfd: cros_ec: cleanup: Remove EC wrapper functions
+Date: Fri, 27 Jun 2014 11:47:55 -0700
+Message-ID: <CAKdAkRRuG2sAbwD+WU-w95AkLsHC7CBHmB60+rLn=ZqhSUF+sA@mail.gmail.com>
+References: <1403115247-8853-1-git-send-email-dianders@chromium.org>
+	<1403115247-8853-8-git-send-email-dianders@chromium.org>
+	<20140627123109.GA29156@katana>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f174.google.com ([209.85.128.174]:56752 "EHLO
-	mail-ve0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751786AbaF0SaI (ORCPT
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:41696 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751179AbaF0Srz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jun 2014 14:30:08 -0400
-Received: by mail-ve0-f174.google.com with SMTP id jx11so5625790veb.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2014 11:30:07 -0700 (PDT)
-In-Reply-To: <53ADB5E5.10102@wwwdotorg.org>
+	Fri, 27 Jun 2014 14:47:55 -0400
+In-Reply-To: <20140627123109.GA29156@katana>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <vikas.sajjan@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Doug Anderson <dianders@chromium.org>, Lee Jones <lee.jones@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Sonny Rao <sonnyrao@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@chromium.org>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-i2c@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
 
-Stephen,
-
-On Fri, Jun 27, 2014 at 11:20 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 06/27/2014 10:45 AM, Doug Anderson wrote:
->> Stephen,
+On Fri, Jun 27, 2014 at 5:31 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> On Wed, Jun 18, 2014 at 11:14:04AM -0700, Doug Anderson wrote:
+>> From: Bill Richardson <wfrichar@chromium.org>
 >>
->> On Fri, Jun 27, 2014 at 9:10 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
->>> Surely there's a driver (or could be a driver) for the TPM chip, and
->>> that driver should have a reset-mask-gpios property, so the driver can
->>> call gpio_get() and gpio_set_output() on the GPIO?
->>>
->>> Faking this out via a not-really-a-regulator or pinctrl hogs seems like
->>> an abuse of those features to me.
+>> Remove the three wrapper functions that talk to the EC without passing all
+>> the desired arguments and just use the underlying communication function
+>> that passes everything in a struct intead.
 >>
->> This totally doesn't belong in the TPM chip driver.  This is an
->> unabashed HACK at the board level.  Without a hog we need a board
->> driver for this.
+>> This is internal code refactoring only. Nothing should change.
 >>
->> To be more specific:
->>
->> * The TPM needs to be reset when the full system gets reset.  This
->> unlocks the TPM and allows certain types of updates by the firmware.
->> The firmware then locks the TPM before jumping to the kernel.
->>
->> * The TPM is hooked up to the "reset out" line of the CPU so that when
->> the system does a warm reset it will reset the TPM.
->>
->> * Unfortunately the CPU asserts the "reset out" line when it's
->> sleeping (because, of course, sleep is a reset).  This would allow the
->> kernel to unlock the TPM which it's not supposed to be able to do.
+>> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
+>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> Acked-by: Lee Jones <lee.jones@linaro.org>
+>> Reviewed-by: Simon Glass <sjg@chromium.org>
 >
-> To me, this does sound precisely like something that should be in the
-> TPM driver. I guess an overall board driver would be reasonable too,
-> since the issue probably doesn't to all boards with the TPM.
-
-Right.  In fact I'd be willing to bet that there are zero other boards
-(other than the ChromeOS boards with similar heritage) with this TPM
-that do this.  It does seem unfair to burden an Infineon driver with a
-board hack when it's something they didn't have anything to do with.
-
-...but if that's the way it has to be then that's the way it has to be...
-
-If consensus is a board driver that's fine too.  It's really all about
-coming up with some solution that will make folks happy.
-
-
-> This kind of thing is *exactly* the kind of thing that's been discussed
-> in the past re: doing it in pinmux hogs, or GPIO initialization tables
-> that aren't specific to a driver, and has been rejected. I guess if
-> people want to change the decisions that's fine, but doing so will open
-> up the door to all the previously rejected similar use-cases. I'm not
-> sure how much I care either way, but we really should be consistent
-> instead of flip-flopping on this kind of issue.
+> For the I2C part:
 >
-> As an aside, why do we even care about this? The kernel clearly can
-> unlock the TPM simply by failing to set the GPIO up correctly, so at
-> best this is security through obscurity. If someone actively wanted to
-> do something bad to the TPM, they'd simply comment out this piece of
-> code in the kernel. At least that's true with usptream kernels which
-> aren't validated at all during boot. For a downstream signed kernel,
-> perhaps this patch makes sense (although I haven't thought about all the
-> security angles), but then it'd make sense to keep this patch downstream.
+> Acked-by: Wolfram Sang <wsa@the-dreams.de>
+>
 
-Check out the bullet point about the firmware checking for kernel
-cheats.  At resume time the chip actually re-loads read only firmware
-out of SPI flash (no choice about this).  This read only firmware can
-check the state of the mask pin (which is preserved across sleep wake)
-to see if the kernel cheated.
+I'm good with input bits as well.
 
--Doug
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+Thanks.
+
+-- 
+Dmitry
