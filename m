@@ -1,133 +1,66 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
-Date: Fri, 27 Jun 2014 14:17:27 +0200
-Message-ID: <53AD60D7.4040404@gmail.com>
-References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>	<53ABED5B.8010506@samsung.com> <CAD=FV=Vwgdis6FzJ8MHDwfuohB1kN8Mf--2N=rxGNeAfKjJMig@mail.gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v2 07/10] mfd: cros_ec: cleanup: Remove EC wrapper
+ functions
+Date: Fri, 27 Jun 2014 14:31:09 +0200
+Message-ID: <20140627123109.GA29156@katana>
+References: <1403115247-8853-1-git-send-email-dianders@chromium.org>
+ <1403115247-8853-8-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:51585 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753039AbaF0MRu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jun 2014 08:17:50 -0400
-Received: by mail-we0-f174.google.com with SMTP id u57so5269854wes.33
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2014 05:17:48 -0700 (PDT)
-In-Reply-To: <CAD=FV=Vwgdis6FzJ8MHDwfuohB1kN8Mf--2N=rxGNeAfKjJMig@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1403115247-8853-8-git-send-email-dianders@chromium.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, swarren@wwwdotorg.org, olof@lixom.net, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, sjg@chromium.org, broonie@kernel.org, dmitry.torokhov@gmail.com, sameo@linux.intel.com, geert@linux-m68k.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>
-Cc: Vikas Sajjan <vikas.sajjan@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>
 
-Hi Doug,
 
-On 26.06.2014 17:25, Doug Anderson wrote:
-> Tomasz,
-> 
-> On Thu, Jun 26, 2014 at 2:52 AM, Tomasz Figa <t.figa@samsung.com> wrote:
->> Hi Vikas, Doug,
->>
->> On 26.06.2014 11:15, Vikas Sajjan wrote:
->>> From: Doug Anderson <dianders@chromium.org>
->>>
->>> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
->>> being reset across sleep/wake.  If we don't set it to anything then
->>> the TPM will be reset.  U-Boot will detect this as invalid
->>> and will reset the system on resume time. This GPIO can always be low
->>> and not hurt anything.  It will get pulled back high again during a
->>> normal warm reset when it will default back to an input.
->>>
->>> To properly preserve the TPM state across suspend/resume and to make
->>> the chrome U-Boot happy, properly set the GPIO to mask the
->>> reset to the TPM.
->>>
->>> Signed-off-by: Doug Anderson <dianders@chromium.org>
->>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
->>> ---
->>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   20 ++++++++++++++++++++
->>>  1 file changed, 20 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>> index 7649982..8fd990a 100644
->>> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
->>> @@ -87,6 +87,18 @@
->>>               pinctrl-0 = <&usb301_vbus_en>;
->>>               enable-active-high;
->>>       };
->>> +
->>> +     /* We need GPX0_6 to be low at sleep time; just keep it low always */
->>> +     mask_tpm_reset_regulator: mask-tpm-reset-regulator {
->>> +     compatible = "regulator-fixed";
->>> +     regulator-name = "mask-tpm-reset ";
->>> +             gpio = <&gpx0 6 0>;
->>> +             enable-active-low;
->>> +             regulator-boot-on;
->>> +             regulator-always-on;
->>> +             pinctrl-names = "default";
->>> +             pinctrl-0 = <&mask_tpm_reset>;
->>> +     };
->>
->> I don't think this pin is supposed to be a real regulator. If I'm right,
->> you should just add a hog for it, if you don't have a proper driver to
->> handle it.
-> 
-> Yes, I agree that it shouldn't really be a regulator, but there's not
-> a whole lot of choice.  The pin needs to actually be driven low, not
-> just pulled low.  Without your proposed patch (pinctrl: samsung: Allow
-> pin value to be initialized using pinfunc) I don't think it's possible
-> to actually drive a pin low with a hog.  I could be wrong, though.
-> 
+--6c2NcOVqGQ03X4Wi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Uhm, I was convinced that this patch was already in. So I think your use
-case is definitely a good reason to get back to this patch and use the
-facility it provides to solve your problem.
+On Wed, Jun 18, 2014 at 11:14:04AM -0700, Doug Anderson wrote:
+> From: Bill Richardson <wfrichar@chromium.org>
+>=20
+> Remove the three wrapper functions that talk to the EC without passing all
+> the desired arguments and just use the underlying communication function
+> that passes everything in a struct intead.
+>=20
+> This is internal code refactoring only. Nothing should change.
+>=20
+> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> Reviewed-by: Simon Glass <sjg@chromium.org>
 
-> 
-> So I think our options are:
-> 
-> * Begrudgingly use the regulator this way.
-> 
-> * Re-propose your pinctrl patch and use hogs.
+For the I2C part:
 
-I'd prefer this one, as stated above. I think the reasons are obvious:
-no made up devices and re-using infrastructure useful for other purposes
-as well.
+Acked-by: Wolfram Sang <wsa@the-dreams.de>
 
-> 
-> * Implement a tiny driver that will just hold a GPIO in a certain
-> state and instantiate that driver here.
-> 
-> * Decide that really the firmware should have set this pin and that if
-> someone wants suspend/resume to work then they'll just have to update
-> their firmware.  Queue the debate about what firmware vs. kernel's job
-> is and commence yelling about the fact that it's hard to get an
-> official RW firmware update approved.  Note: I'm not quite sure why I
-> didn't have the firmware init this GPIO to begin with (so that if the
-> kernel didn't do anything it would just work).  Probably just me being
-> stupid.
-> 
 
-Right, ideally the firmware should be making operating system's life
-easier not harder, but we all know that even if there are examples of
-good firmware, there will always be the opposite as well... So the
-kernel should be able to work anyway.
+--6c2NcOVqGQ03X4Wi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> 
-> Ah, one other thing that could justify this being its own special
-> driver (though you might be able to use the regulator framework for it
-> too?).  Technically you'll save a tiny amount of power in the system
-> if you leave this GPIO high while the system is running and only drive
-> it low when the system goes to suspend.  That's because there's a
-> pretty strong external pullup on this pin.  The amount of power is
-> probably not noticeable and the savings is only possible when the
-> system is on (and in high power state) anyway, but...
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-This could be also handled by adding a sleep hog, i.e. "sleep" state for
-the pinctrl device itself and adding proper suspend/resume callbacks to
-the pinctrl-samsung driver (I'm not sure whether a call to
-pinctrl_select_state() would work in syscore ops).
+iQIcBAEBAgAGBQJTrWQMAAoJEBQN5MwUoCm22xAP/0CrHAEE9+JkDSmZAsY3SNtg
+yJLcUySCx0tG+3OwPHCpuhWjQxUgBmfQjI1Z+jcANR6It1xQMbym9KntbjpkDFkn
+UIJzO6qANakBKotnfx+baBuIDg5XgTrikaGVkwaUBH8RhzEV+RSFGNar2L/OMS12
+L/jRrJv+mB2cRsECxuxm4BQnrUckFza0pSmxVxXoTQh+/6Ip4YobmUnrmfGNxr3Q
+uMC6YM2Cqm+rTLaaB3IDHL7xY6B6TEk19baYk8Yj4ayVOrSgTlSdOvmyldCMUbtV
+lI29oJaIkg8/keiWJWX5273iRZHDiCodHyYnw5FZ94JR/DUPrFe7WQGZbfzlBrkF
++c5u41mgT8s9FB7gLwdiyHryq2LkHyloHjAF/vNCKRAPuJDdrpAoTo+jmOSuC84i
+vHeaeF9nk5kg47K3AihzYc3TY4ivGOMRSzFEcrFSm+li2oZkTHYYvDxwm+nmxdCd
+60pLuMXh2tte5ZMpbrZHXJHeHvePemilPK1w6qdxNyyEcIDyz0/4vxERTyxtgvCa
+54CXbRnIIOGdgc2H8T6phFbYg4FhtiLaff/JC0fpFPumcrDv96UN+fVWppdJ8oZf
+uN881vD3wdtLD993pn8Z5EYklLxsjPhmmcZcYOz2d3D1y0O130Fh/6wsCeVFnVos
+LpdIvoj6xSOdD0pM7pae
+=qTdx
+-----END PGP SIGNATURE-----
 
-Best regards,
-Tomasz
+--6c2NcOVqGQ03X4Wi--
