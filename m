@@ -1,57 +1,87 @@
-From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCHv5 0/4] iio: adc: exynos_adc: Support Exynos3250 ADC and
- code clean
-Date: Sun, 29 Jun 2014 12:50:01 +0100
-Message-ID: <53AFFD69.8060702@kernel.org>
-References: <1403843406-28229-1-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403843406-28229-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Laura Abbott <lauraa@codeaurora.org>
+Subject: [PATCH 1/2] of: Split early_init_dt_scan into two parts
+Date: Sun, 29 Jun 2014 12:06:23 -0700
+Message-ID: <1404068784-27604-1-git-send-email-lauraa@codeaurora.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.11.231]:60091 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751062AbaF2TGa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 29 Jun 2014 15:06:30 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <trblinux@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robherring2@gmail.com>
+Cc: Laura Abbott <lauraa@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, afaerber@suse.de, devicetree@vger.kernel.org
 
-On 27/06/14 05:30, Chanwoo Choi wrote:
-> Changes from v4:
-> - Use 'exynos_adc_data' structure instead of 'exynos_adc_ops' structure
->    and remove enum variable of ADC version
-> - Fix wrong name of special clock (sclk_tsadc -> sclk_adc)
-> - Add reviewed message by Naveen Krishna Chatradhi
-> - Add functions for ADC clock control
->
-> Changes from v3:
-> - Add new 'exynos_adc_ops' structure to improve readability according to
->   Tomasz Figa comment[1]
->   [1] https://lkml.org/lkml/2014/4/16/238
-> - Add new 'exynos3250-adc-v2' compatible string to support Exynos3250 ADC
-> - Fix wrong compaitlbe string of ADC in Exynos3250 dtsi file
->
-> Changes from v2:
-> - Check return value of clock function to deal with error exception
-> - Fix minor coding style to improve readability
->
-> Changes from v1:
-> - Add new "samsung,exynos-adc-v3" compatible to support Exynos3250 ADC
-> - Add a patch about DT binding documentation
->
-> Chanwoo Choi (4):
->    iio: adc: exynos_adc: Add exynos_adc_data structure to improve readability
->    iio: adc: exynos_adc: Control special clock of ADC to support Exynos3250 ADC
->    iio: devicetree: Add DT binding documentation for Exynos3250 ADC
->    ARM: dts: Fix wrong compatible string for Exynos3250 ADC
->
->   .../devicetree/bindings/arm/samsung/exynos-adc.txt |  26 +-
->   arch/arm/boot/dts/exynos3250.dtsi                  |   4 +-
->   drivers/iio/adc/exynos_adc.c                       | 326 +++++++++++++++------
->   3 files changed, 268 insertions(+), 88 deletions(-)
->
-I am happy with this series, but given it touches some exynos bindings, I would
-like an ack from Kukjin Kim (or according to MAINTAINERS Ben Dooks) before taking it
-all through IIO.
+Currently, early_init_dt_scan validates the header, sets the
+boot params, and scans for chosen/memory all in one function.
+Split this up into two separate functions (validation/setting
+boot params in one, scanning in another) to allow for
+additional setup between boot params and scanning the memory.
 
-Thanks,
+Signed-off-by: Laura Abbott <lauraa@codeaurora.org>
+---
+ drivers/of/fdt.c       | 18 +++++++++++++++++-
+ include/linux/of_fdt.h |  2 ++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-Jonathan
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index c4cddf0..55bfca9 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -922,7 +922,7 @@ int __init __weak early_init_dt_reserve_memory_arch(phys_addr_t base,
+ }
+ #endif
+ 
+-bool __init early_init_dt_scan(void *params)
++bool __init early_init_dt_verify(void *params)
+ {
+ 	if (!params)
+ 		return false;
+@@ -936,6 +936,12 @@ bool __init early_init_dt_scan(void *params)
+ 		return false;
+ 	}
+ 
++	return true;
++}
++
++
++void __init early_init_dt_scan_all(void)
++{
+ 	/* Retrieve various information from the /chosen node */
+ 	of_scan_flat_dt(early_init_dt_scan_chosen, boot_command_line);
+ 
+@@ -944,7 +950,17 @@ bool __init early_init_dt_scan(void *params)
+ 
+ 	/* Setup memory, calling early_init_dt_add_memory_arch */
+ 	of_scan_flat_dt(early_init_dt_scan_memory, NULL);
++}
++
++bool __init early_init_dt_scan(void *params)
++{
++	bool status;
++
++	status = early_init_dt_verify(params);
++	if (!status)
++		return false;
+ 
++	early_init_dt_scan_all();
+ 	return true;
+ }
+ 
+diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
+index 0511789..d600993 100644
+--- a/include/linux/of_fdt.h
++++ b/include/linux/of_fdt.h
+@@ -73,6 +73,8 @@ extern int early_init_dt_scan_root(unsigned long node, const char *uname,
+ 				   int depth, void *data);
+ 
+ extern bool early_init_dt_scan(void *params);
++extern bool early_init_dt_verify(void *params);
++extern void early_init_dt_scan_all(void);
+ 
+ extern const char *of_flat_dt_get_machine_name(void);
+ extern const void *of_flat_dt_match_machine(const void *default_match,
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+hosted by The Linux Foundation
