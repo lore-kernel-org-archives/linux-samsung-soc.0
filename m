@@ -1,81 +1,57 @@
 From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCHv5 3/4] iio: devicetree: Add DT binding documentation for
- Exynos3250 ADC
-Date: Sun, 29 Jun 2014 12:37:42 +0100
-Message-ID: <53AFFA86.6000403@kernel.org>
-References: <1403843406-28229-1-git-send-email-cw00.choi@samsung.com> <1403843406-28229-4-git-send-email-cw00.choi@samsung.com>
+Subject: Re: [PATCHv5 0/4] iio: adc: exynos_adc: Support Exynos3250 ADC and
+ code clean
+Date: Sun, 29 Jun 2014 12:50:01 +0100
+Message-ID: <53AFFD69.8060702@kernel.org>
+References: <1403843406-28229-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1403843406-28229-4-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1403843406-28229-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On 27/06/14 05:30, Chanwoo Choi wrote:
-> This patch add DT binding documentation for Exynos3250 ADC IP. Exynos3250 has
-> special clock ('sclk_adc') for ADC which provide clock to internal ADC.
+> Changes from v4:
+> - Use 'exynos_adc_data' structure instead of 'exynos_adc_ops' structure
+>    and remove enum variable of ADC version
+> - Fix wrong name of special clock (sclk_tsadc -> sclk_adc)
+> - Add reviewed message by Naveen Krishna Chatradhi
+> - Add functions for ADC clock control
 >
-> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-One trivial inline.  As a fairly obvious extension of the existing bindings
-'probably' doesn't really need a dt maintainer ack (or the 3 weeks)
-> ---
->   .../devicetree/bindings/arm/samsung/exynos-adc.txt | 26 ++++++++++++++++++++--
->   1 file changed, 24 insertions(+), 2 deletions(-)
+> Changes from v3:
+> - Add new 'exynos_adc_ops' structure to improve readability according to
+>   Tomasz Figa comment[1]
+>   [1] https://lkml.org/lkml/2014/4/16/238
+> - Add new 'exynos3250-adc-v2' compatible string to support Exynos3250 ADC
+> - Fix wrong compaitlbe string of ADC in Exynos3250 dtsi file
 >
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-> index 5d49f2b..b87749a 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-> @@ -14,14 +14,22 @@ Required properties:
->   				for exynos4412/5250 controllers.
->   			Must be "samsung,exynos-adc-v2" for
->   				future controllers.
-> +			Must be "samsung,exynos3250-adc-v2" for
-> +				for controllers compatible with ADC of
-for for
-> +				Exynos3250.
->   - reg:			Contains ADC register address range (base address and
->   			length) and the address of the phy enable register.
->   - interrupts: 		Contains the interrupt information for the timer. The
->   			format is being dependent on which interrupt controller
->   			the Samsung device uses.
->   - #io-channel-cells = <1>; As ADC has multiple outputs
-> -- clocks		From common clock binding: handle to adc clock.
-> -- clock-names		From common clock binding: Shall be "adc".
-> +- clocks		From common clock bindings: handles to clocks specified
-> +			in "clock-names" property, in the same order.
-> +- clock-names		From common clock bindings: list of clock input names
-> +			used by ADC block:
-> +			- "adc" : ADC bus clock
-> +			- "sclk_adc" : ADC special clock (only for Exynos3250
-> +				       and compatible ADC block)
->   - vdd-supply		VDD input supply.
+> Changes from v2:
+> - Check return value of clock function to deal with error exception
+> - Fix minor coding style to improve readability
 >
->   Note: child nodes can be added for auto probing from device tree.
-> @@ -41,6 +49,20 @@ adc: adc@12D10000 {
->   	vdd-supply = <&buck5_reg>;
->   };
+> Changes from v1:
+> - Add new "samsung,exynos-adc-v3" compatible to support Exynos3250 ADC
+> - Add a patch about DT binding documentation
 >
-> +Example: adding device info in dtsi file for Exynos3250 with additional sclk
-> +
-> +adc: adc@126C0000 {
-> +	compatible = "samsung,exynos3250-adc-v2";
-> +	reg = <0x126C0000 0x100>, <0x10020718 0x4>;
-> +	interrupts = <0 137 0>;
-> +	#io-channel-cells = <1>;
-> +	io-channel-ranges;
-> +
-> +	clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
-> +	clock-names = "adc", "sclk_adc";
-> +
-> +	vdd-supply = <&buck5_reg>;
-> +};
+> Chanwoo Choi (4):
+>    iio: adc: exynos_adc: Add exynos_adc_data structure to improve readability
+>    iio: adc: exynos_adc: Control special clock of ADC to support Exynos3250 ADC
+>    iio: devicetree: Add DT binding documentation for Exynos3250 ADC
+>    ARM: dts: Fix wrong compatible string for Exynos3250 ADC
 >
->   Example: Adding child nodes in dts file
+>   .../devicetree/bindings/arm/samsung/exynos-adc.txt |  26 +-
+>   arch/arm/boot/dts/exynos3250.dtsi                  |   4 +-
+>   drivers/iio/adc/exynos_adc.c                       | 326 +++++++++++++++------
+>   3 files changed, 268 insertions(+), 88 deletions(-)
 >
->
+I am happy with this series, but given it touches some exynos bindings, I would
+like an ack from Kukjin Kim (or according to MAINTAINERS Ben Dooks) before taking it
+all through IIO.
+
+Thanks,
+
+Jonathan
