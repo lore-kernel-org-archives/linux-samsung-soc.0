@@ -1,51 +1,81 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators
-Date: Fri, 27 Jun 2014 15:47:22 -0700
-Message-ID: <CAD=FV=WhTdyinkmZFVW5VxK1m-1Z=gMmofBU1RC0t82oEDEZzA@mail.gmail.com>
-References: <1403520321-2431-1-git-send-email-yuvaraj.cd@samsung.com>
-	<1403520321-2431-2-git-send-email-yuvaraj.cd@samsung.com>
-	<CAD=FV=UGjm9y3XoBgWKjw9kp9W=ZrwB-S6Lh7T_LBUgCQZn1ag@mail.gmail.com>
-	<CAKuRcO+OaknUtj9mJ+SQJPMj70hdLTMkDYCXq4L5JdwzDKdj6g@mail.gmail.com>
-	<CAD=FV=Vy5vRan0KEDFFwVO0omgsUMwJK6WwCsWxGYynzT-e5ig@mail.gmail.com>
-	<CAKuRcOLDCFQnw01ReKqNNfiiCwSWwi6Rd7UZFph+JzK2CQ4T_w@mail.gmail.com>
+From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCHv5 3/4] iio: devicetree: Add DT binding documentation for
+ Exynos3250 ADC
+Date: Sun, 29 Jun 2014 12:37:42 +0100
+Message-ID: <53AFFA86.6000403@kernel.org>
+References: <1403843406-28229-1-git-send-email-cw00.choi@samsung.com> <1403843406-28229-4-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f182.google.com ([209.85.128.182]:48512 "EHLO
-	mail-ve0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751447AbaF0WrX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jun 2014 18:47:23 -0400
-Received: by mail-ve0-f182.google.com with SMTP id oy12so6054350veb.27
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Jun 2014 15:47:22 -0700 (PDT)
-In-Reply-To: <CAKuRcOLDCFQnw01ReKqNNfiiCwSWwi6Rd7UZFph+JzK2CQ4T_w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403843406-28229-4-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, ks.giri@samsung.com, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Yuvaraj,
-
-On Fri, Jun 27, 2014 at 3:59 AM, Yuvaraj Kumar <yuvaraj.cd@gmail.com> wrote:
->>> mmc_regulator_set_ocr() is failing as its a fixed-regulator.
->>
->> Can you explain more about what's failing?  It sure looks like mmc
->> core is supposed to handle this given comments below
->>
->> /*
->> * If we're using a fixed/static regulator, don't call
->> * regulator_set_voltage; it would fail.
->> */
-> tps65090 driver does not register through fixed regulator framework.It
-> uses normal regulator framework and supports only
-> enable/disable/is_enabled callbacks.Also it lacks certain callbacks
-> for list_voltage, get_voltage ,set_voltage etc.
-> [    2.306476] dwmmc_exynos 12220000.mmc: Failed getting OCR mask: -22
-> [    2.393403] dwmmc_exynos 12220000.mmc: could not set regulator OCR (-22)
-> For the above reason,regulator framework treats fet4 as unused
-> regulator and disables the vmmc regulator.
-
-Ah.  Perhaps tps65090 needs to be fixed then...  I'm not sure any
-other drivers cared before so maybe that's why it was never caught?
-
--Doug
+On 27/06/14 05:30, Chanwoo Choi wrote:
+> This patch add DT binding documentation for Exynos3250 ADC IP. Exynos3250 has
+> special clock ('sclk_adc') for ADC which provide clock to internal ADC.
+>
+> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+One trivial inline.  As a fairly obvious extension of the existing bindings
+'probably' doesn't really need a dt maintainer ack (or the 3 weeks)
+> ---
+>   .../devicetree/bindings/arm/samsung/exynos-adc.txt | 26 ++++++++++++++++++++--
+>   1 file changed, 24 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> index 5d49f2b..b87749a 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> @@ -14,14 +14,22 @@ Required properties:
+>   				for exynos4412/5250 controllers.
+>   			Must be "samsung,exynos-adc-v2" for
+>   				future controllers.
+> +			Must be "samsung,exynos3250-adc-v2" for
+> +				for controllers compatible with ADC of
+for for
+> +				Exynos3250.
+>   - reg:			Contains ADC register address range (base address and
+>   			length) and the address of the phy enable register.
+>   - interrupts: 		Contains the interrupt information for the timer. The
+>   			format is being dependent on which interrupt controller
+>   			the Samsung device uses.
+>   - #io-channel-cells = <1>; As ADC has multiple outputs
+> -- clocks		From common clock binding: handle to adc clock.
+> -- clock-names		From common clock binding: Shall be "adc".
+> +- clocks		From common clock bindings: handles to clocks specified
+> +			in "clock-names" property, in the same order.
+> +- clock-names		From common clock bindings: list of clock input names
+> +			used by ADC block:
+> +			- "adc" : ADC bus clock
+> +			- "sclk_adc" : ADC special clock (only for Exynos3250
+> +				       and compatible ADC block)
+>   - vdd-supply		VDD input supply.
+>
+>   Note: child nodes can be added for auto probing from device tree.
+> @@ -41,6 +49,20 @@ adc: adc@12D10000 {
+>   	vdd-supply = <&buck5_reg>;
+>   };
+>
+> +Example: adding device info in dtsi file for Exynos3250 with additional sclk
+> +
+> +adc: adc@126C0000 {
+> +	compatible = "samsung,exynos3250-adc-v2";
+> +	reg = <0x126C0000 0x100>, <0x10020718 0x4>;
+> +	interrupts = <0 137 0>;
+> +	#io-channel-cells = <1>;
+> +	io-channel-ranges;
+> +
+> +	clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
+> +	clock-names = "adc", "sclk_adc";
+> +
+> +	vdd-supply = <&buck5_reg>;
+> +};
+>
+>   Example: Adding child nodes in dts file
+>
+>
