@@ -1,91 +1,62 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V3 1/7] drm/exynos: Support DP CLKCON register in FIMD
- driver
-Date: Mon, 30 Jun 2014 10:14:17 +0900
-Message-ID: <00a501cf9400$9d396950$d7ac3bf0$%han@samsung.com>
-References: <1403863946-15492-1-git-send-email-ajaykumar.rs@samsung.com>
- <1403863946-15492-2-git-send-email-ajaykumar.rs@samsung.com>
- <53AD53E4.2020706@samsung.com>
- <CAEC9eQMXEEq_VBiZY+BHUuVWvbi7q4MkbbQ-XkcigtZBdgwO9w@mail.gmail.com>
- <53AD6734.9080909@samsung.com>
- <CAEC9eQPY+W_Wni7PLtWkHr0QrHW+G8x_+XWapV5tDiKebn=zpA@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv5 0/4] iio: adc: exynos_adc: Support Exynos3250 ADC and
+ code clean
+Date: Mon, 30 Jun 2014 10:51:39 +0900
+Message-ID: <53B0C2AB.4030201@samsung.com>
+References: <1403843406-28229-1-git-send-email-cw00.choi@samsung.com>
+ <53AFFD69.8060702@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAEC9eQPY+W_Wni7PLtWkHr0QrHW+G8x_+XWapV5tDiKebn=zpA@mail.gmail.com>
-Content-language: ko
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: 'Ajay kumar' <ajaynumb@gmail.com>, 'Andrzej Hajda' <a.hajda@samsung.com>
-Cc: "'open list:OPEN FIRMWARE AND...'" <devicetree@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, 'Sean Paul' <seanpaul@google.com>, 'sunil joshi' <joshi@samsung.com>, dri-devel@lists.freedesktop.org, 'Prashanth G' <prashanth.g@samsung.com>, 'Ajay Kumar' <ajaykumar.rs@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <53AFFD69.8060702@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: Jonathan Cameron <jic23@kernel.org>, ch.naveen@samsung.com, t.figa@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, sachin.kamat@linaro.org, kyungmin.park@samsung.com, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday, June 27, 2014 10:03 PM, Ajay kumar wrote:
-> On Fri, Jun 27, 2014 at 6:14 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> > On 06/27/2014 01:48 PM, Ajay kumar wrote:
-> >> On Fri, Jun 27, 2014 at 4:52 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> >>> +CC DT
-> >>>
-> >>> On 06/27/2014 12:12 PM, Ajay Kumar wrote:
-> >>>> Add the missing setting for DP CLKCON register.
-> >>>>
-> >>>> This register is present on Exynos5 based FIMD controllers,
-> >>>> and needs to be set if we are using DP.
-> >>>>
-> >>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> >>>> ---
-> >>>>  .../devicetree/bindings/video/samsung-fimd.txt     |    1 +
-> >>>>  drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   23 ++++++++++++++++++++
-> >>>>  include/video/samsung_fimd.h                       |    4 ++++
-> >>>>  3 files changed, 28 insertions(+)
+Dear Kukjin,
 
-[.....]
+On 06/29/2014 08:50 PM, Jonathan Cameron wrote:
+> On 27/06/14 05:30, Chanwoo Choi wrote:
+>> Changes from v4:
+>> - Use 'exynos_adc_data' structure instead of 'exynos_adc_ops' structure
+>>    and remove enum variable of ADC version
+>> - Fix wrong name of special clock (sclk_tsadc -> sclk_adc)
+>> - Add reviewed message by Naveen Krishna Chatradhi
+>> - Add functions for ADC clock control
+>>
+>> Changes from v3:
+>> - Add new 'exynos_adc_ops' structure to improve readability according to
+>>   Tomasz Figa comment[1]
+>>   [1] https://lkml.org/lkml/2014/4/16/238
+>> - Add new 'exynos3250-adc-v2' compatible string to support Exynos3250 ADC
+>> - Fix wrong compaitlbe string of ADC in Exynos3250 dtsi file
+>>
+>> Changes from v2:
+>> - Check return value of clock function to deal with error exception
+>> - Fix minor coding style to improve readability
+>>
+>> Changes from v1:
+>> - Add new "samsung,exynos-adc-v3" compatible to support Exynos3250 ADC
+>> - Add a patch about DT binding documentation
+>>
+>> Chanwoo Choi (4):
+>>    iio: adc: exynos_adc: Add exynos_adc_data structure to improve readability
+>>    iio: adc: exynos_adc: Control special clock of ADC to support Exynos3250 ADC
+>>    iio: devicetree: Add DT binding documentation for Exynos3250 ADC
+>>    ARM: dts: Fix wrong compatible string for Exynos3250 ADC
+>>
+>>   .../devicetree/bindings/arm/samsung/exynos-adc.txt |  26 +-
+>>   arch/arm/boot/dts/exynos3250.dtsi                  |   4 +-
+>>   drivers/iio/adc/exynos_adc.c                       | 326 +++++++++++++++------
+>>   3 files changed, 268 insertions(+), 88 deletions(-)
+>>
+> I am happy with this series, but given it touches some exynos bindings, I would
+> like an ack from Kukjin Kim (or according to MAINTAINERS Ben Dooks) before taking it
+> all through IIO.
 
-> >>>>  static const struct of_device_id fimd_driver_dt_match[] = {
-> >>>> @@ -331,6 +341,10 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
-> >>>>       if (clkdiv > 1)
-> >>>>               val |= VIDCON0_CLKVAL_F(clkdiv - 1) | VIDCON0_CLKDIR;
-> >>>>
-> >>>> +     if (ctx->driver_data->has_dp_clkcon &&
-> >>>> +             ctx->exynos_fimd_output_type == EXYNOS_FIMD_OUTPUT_DP)
-> >>>> +             writel(DP_CLK_ENABLE, ctx->regs + DP_CLKCON);
-> >>>> +
-> >>>>       writel(val, ctx->regs + VIDCON0);
-> >
-> > New code should not split VIDCON0 related code.It should be moved few
-> > lines above or few lines below.
-> Ok, for better readability.
-> 
-> > Anyway this code should be rather placed in power related functions of
-> > dp encoder, as it enables dp. The only question
-> > is if DP_CLKCON update can be performed after VIDCON0 update. If yes the
-> > solution of the whole problem
-> I will check this.
-> 
-> > seems to be simple:
-> > - fimd should provide function fimd_set_dp_clk_gate or sth similar,
-> > - this function should be called in exynos_dp_poweron/exynos_dp_poweroff.
-> > I hope I have not missed anything this time.
-> But, it won't look good to export a FIMD function which sets a FIMD register,
-> and call it in DP driver!
-> What does Inki/Jingoo have to say about this?
+Could you please review this patchset about exynos dtsi and bindings?
 
-I agree with Ajay Kumar's opinion.
-It doesn't look good to export the function to set FIMD register
-and call it by DP driver.
-
-Best regards,
-Jingoo Han
-> 
-> Regards,
-> Ajay
-> 
-[....]
+Best Regards,
+Chanwoo Choi
