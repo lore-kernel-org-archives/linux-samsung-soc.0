@@ -1,71 +1,55 @@
-From: Tushar Behera <trblinux@gmail.com>
-Subject: Re: [PATCH 00/17] ARM: S5P64X0, S5PC100: no more support in mainline
-Date: Mon, 30 Jun 2014 21:01:34 +0530
-Message-ID: <53B182D6.5050608@gmail.com>
-References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v5 05/14] clk: Add generic driver for Maxim PMIC clocks
+Date: Mon, 30 Jun 2014 18:00:04 +0200
+Message-ID: <53B18984.7010607@collabora.co.uk>
+References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk> <1403806546-31122-6-git-send-email-javier.martinez@collabora.co.uk> <CAKew6eU5X=WxhECtwUUwbXe_fCRU4bD6B7caWiA2dwcBfThd-g@mail.gmail.com> <53B142F1.1050407@collabora.co.uk> <20140630113539.GX32514@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:38629 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750815AbaF3Pbi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 11:31:38 -0400
-Received: by mail-pd0-f169.google.com with SMTP id g10so8491905pdj.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jun 2014 08:31:37 -0700 (PDT)
-In-Reply-To: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140630113539.GX32514@n2100.arm.linux.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Stone <daniels@collabora.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 07/01/2014 03:02 AM, Kukjin Kim wrote:
-> This series removes S5P64X0 and S5PC100 related codes in mainline,
-> because no more user now. And if its supporting is required later,
-> it will be done with using device tree.
-> 
-> [PATCH 01/17] ARM: S5P64X0: no more support S5P6440 and S5P6450 SoCs
-> [PATCH 02/17] gpio: samsung: remove s5p64x0 related gpio codes
-> [PATCH 03/17] spi: s3c64xx: remove s5p64x0 related spi codes
-> [PATCH 04/17] ASoC: samsung: no more support for S5P6440 and S5P6450
-> [PATCH 05/17] pwm: samsung: remove s5p64x0 related pwm codes
-> [PATCH 06/17] video: fbdev: s3c-fb: remove s5p64x0 related fimd
-> [PATCH 07/17] serial: samsung: no more support for S5P6440 and
-> [PATCH 08/17] ARM: S5PC100: no more support S5PC100 SoC
-> [PATCH 09/17] gpio: samsung: remov s5pc100 related gpio codes
-> [PATCH 10/17] spi: s3c64xx: remove s5pc100 related spi codes
-> [PATCH 11/17] pwm: samsung: remove s5pc100 related pwm codes
-> [PATCH 12/17] serial: samsung: no more support for S5PC100 SoC
-> [PATCH 13/17] ata: pata_samsung_cf: removes s5pc100 related ata
-> [PATCH 14/17] mtd: onenand: remove s5pc100 related onenand codes
-> [PATCH 15/17] video: fbdev: s3c-fb: remove s5pc100 related fimd and
-> [PATCH 16/17] [media] exynos4-is: removes s5pc100 related fimc codes
-> [PATCH 17/17] ASoC: Samsung: remove s5pc100 related codes
-> 
+Hello Russell,
 
-One more reference to S5PC100 can be found at drivers/irqchip/Kconfig.
+Thanks a lot for your suggestion.
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 131f185..9f39cc6 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -23,7 +23,6 @@ config ARM_VIC
- config ARM_VIC_NR
-        int
-        default 4 if ARCH_S5PV210
--       default 3 if ARCH_S5PC100
-        default 2
-        depends on ARM_VIC
-        help
-
+On 06/30/2014 01:35 PM, Russell King - ARM Linux wrote:
+> On Mon, Jun 30, 2014 at 12:58:57PM +0200, Javier Martinez Canillas wrote:
+>> >> +       if (!max_gen->lookup)
+>> >> +               return ERR_PTR(-ENOMEM);
+>> >> +
+>> >> +       max_gen->lookup->con_id = hw->init->name;
+>> > 
+>> > Also IMO,  init->name should be over-written if name is provided in DT,
+>> > otherwise generic "clock-output-names" property will go futile,
+>> > perhaps it should be done before clk_register.
+>> > 
+>> 
+>> Even though Documentation/devicetree/bindings/clock/clock-bindings.txt says that
+>> the "clock-output-names" property is optional I agree with you that will be
+>> better to support it. So I'll add it on the next version as well.
 > 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> However, remember that con_id is the _DEVICE_ specific connection name,
+> not the _CLOCK_ name.  You will get a NAK from me if you violate this
+> rule.
 > 
 
+Yes I know that con_id is the device specific connection name that is set by the
+consumers using the "clock-names" property. But AFAIU the clk_lookup structs
+added by clockdev_add() are only used by legacy non-DT drivers which don't set
+their clock names and instead is the clock driver the one that set con_id to the
+struct clk_init_data .name field.
 
--- 
-Tushar Behera
+I see that other drivers do the same, is that wrong as well? What value should
+have con_id when registering clkdevs for legacy non-DT drivers?
+
+DT enabled drivers whose devices define their "clock-names" are not affected by
+this since the clock lookup is made by matching OF "clock-names" property + and
+index.
+
+Best regards,
+Javier
