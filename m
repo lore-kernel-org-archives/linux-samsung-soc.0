@@ -1,41 +1,91 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 00/17] ARM: S5P64X0, S5PC100: no more support in mainline
-Date: Tue, 01 Jul 2014 06:32:10 +0900
-Message-ID: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 11/17] pwm: samsung: remove s5pc100 related pwm codes
+Date: Tue, 01 Jul 2014 06:32:21 +0900
+Message-ID: <1404163947-3105-12-git-send-email-kgene.kim@samsung.com>
+References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:62589 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752526AbaF3NTH (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:60295 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752864AbaF3NTK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 09:19:07 -0400
+	Mon, 30 Jun 2014 09:19:10 -0400
 Received: from epcpsbgr3.samsung.com
  (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N7Z00D5BGZTWS90@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 30 Jun 2014 22:19:05 +0900 (KST)
+ with ESMTP id <0N7Z004A2GZVR860@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 30 Jun 2014 22:19:07 +0900 (KST)
+In-reply-to: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
 
-This series removes S5P64X0 and S5PC100 related codes in mainline,
-because no more user now. And if its supporting is required later,
-it will be done with using device tree.
+This patch removes supporting s5pc100 related pwm codes.
 
-[PATCH 01/17] ARM: S5P64X0: no more support S5P6440 and S5P6450 SoCs
-[PATCH 02/17] gpio: samsung: remove s5p64x0 related gpio codes
-[PATCH 03/17] spi: s3c64xx: remove s5p64x0 related spi codes
-[PATCH 04/17] ASoC: samsung: no more support for S5P6440 and S5P6450
-[PATCH 05/17] pwm: samsung: remove s5p64x0 related pwm codes
-[PATCH 06/17] video: fbdev: s3c-fb: remove s5p64x0 related fimd
-[PATCH 07/17] serial: samsung: no more support for S5P6440 and
-[PATCH 08/17] ARM: S5PC100: no more support S5PC100 SoC
-[PATCH 09/17] gpio: samsung: remov s5pc100 related gpio codes
-[PATCH 10/17] spi: s3c64xx: remove s5pc100 related spi codes
-[PATCH 11/17] pwm: samsung: remove s5pc100 related pwm codes
-[PATCH 12/17] serial: samsung: no more support for S5PC100 SoC
-[PATCH 13/17] ata: pata_samsung_cf: removes s5pc100 related ata
-[PATCH 14/17] mtd: onenand: remove s5pc100 related onenand codes
-[PATCH 15/17] video: fbdev: s3c-fb: remove s5pc100 related fimd and
-[PATCH 16/17] [media] exynos4-is: removes s5pc100 related fimc codes
-[PATCH 17/17] ASoC: Samsung: remove s5pc100 related codes
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+---
+ Documentation/devicetree/bindings/pwm/pwm-samsung.txt |    2 --
+ drivers/clocksource/samsung_pwm_timer.c               |   12 ------------
+ drivers/pwm/pwm-samsung.c                             |    8 --------
+ 3 files changed, 22 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+index 43925d3..82c7f6b 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+@@ -11,8 +11,6 @@ Required properties:
+ - compatible : should be one of following:
+     samsung,s3c2410-pwm - for 16-bit timers present on S3C24xx SoCs
+     samsung,s3c6400-pwm - for 32-bit timers present on S3C64xx SoCs
+-    samsung,s5pc100-pwm - for 32-bit timers present on S5PC100, S5PV210,
+-			  Exynos4210 rev0 SoCs
+     samsung,exynos4210-pwm - for 32-bit timers present on Exynos4210,
+                           Exynos4x12, Exynos5250 and Exynos5420 SoCs
+ - reg: base address and size of register area
+diff --git a/drivers/clocksource/samsung_pwm_timer.c b/drivers/clocksource/samsung_pwm_timer.c
+index e35a9b7..d846caa 100644
+--- a/drivers/clocksource/samsung_pwm_timer.c
++++ b/drivers/clocksource/samsung_pwm_timer.c
+@@ -480,16 +480,4 @@ static void __init s3c64xx_pwm_clocksource_init(struct device_node *np)
+ }
+ CLOCKSOURCE_OF_DECLARE(s3c6400_pwm, "samsung,s3c6400-pwm", s3c64xx_pwm_clocksource_init);
+ 
+-static const struct samsung_pwm_variant s5p_variant = {
+-	.bits		= 32,
+-	.div_base	= 0,
+-	.has_tint_cstat	= true,
+-	.tclk_mask	= (1 << 5),
+-};
+-
+-static void __init s5p_pwm_clocksource_init(struct device_node *np)
+-{
+-	samsung_pwm_alloc(np, &s5p_variant);
+-}
+-CLOCKSOURCE_OF_DECLARE(s5pc100_pwm, "samsung,s5pc100-pwm", s5p_pwm_clocksource_init);
+ #endif
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 68f3471..d40364a 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -411,17 +411,9 @@ static const struct samsung_pwm_variant exynos4210_variant = {
+ 	.tclk_mask	= 0,
+ };
+ 
+-static const struct samsung_pwm_variant s5pc100_variant = {
+-	.bits		= 32,
+-	.div_base	= 0,
+-	.has_tint_cstat	= true,
+-	.tclk_mask	= BIT(5),
+-};
+-
+ static const struct of_device_id samsung_pwm_matches[] = {
+ 	{ .compatible = "samsung,s3c2410-pwm", .data = &s3c24xx_variant },
+ 	{ .compatible = "samsung,s3c6400-pwm", .data = &s3c64xx_variant },
+-	{ .compatible = "samsung,s5pc100-pwm", .data = &s5pc100_variant },
+ 	{ .compatible = "samsung,exynos4210-pwm", .data = &exynos4210_variant },
+ 	{},
+ };
+-- 
+1.7.10.4
