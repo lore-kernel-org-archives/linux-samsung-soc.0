@@ -1,219 +1,134 @@
-From: Grant Likely <grant.likely@linaro.org>
-Subject: Re: [PATCH 2/2] arm: Add back maximum bank limit
-Date: Mon, 30 Jun 2014 11:43:50 +0100
-Message-ID: <20140630104350.600EDC40F52@trevor.secretlab.ca>
-References: <1404068784-27604-1-git-send-email-lauraa@codeaurora.org>
-	<1404068784-27604-2-git-send-email-lauraa@codeaurora.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v5 05/14] clk: Add generic driver for Maxim PMIC clocks
+Date: Mon, 30 Jun 2014 12:58:57 +0200
+Message-ID: <53B142F1.1050407@collabora.co.uk>
+References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk>	<1403806546-31122-6-git-send-email-javier.martinez@collabora.co.uk> <CAKew6eU5X=WxhECtwUUwbXe_fCRU4bD6B7caWiA2dwcBfThd-g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:46518 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752155AbaF3KoL (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:35486 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750825AbaF3K7H (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 06:44:11 -0400
-Received: by mail-wg0-f50.google.com with SMTP id m15so7735266wgh.33
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jun 2014 03:44:10 -0700 (PDT)
-In-Reply-To: <1404068784-27604-2-git-send-email-lauraa@codeaurora.org>
+	Mon, 30 Jun 2014 06:59:07 -0400
+In-Reply-To: <CAKew6eU5X=WxhECtwUUwbXe_fCRU4bD6B7caWiA2dwcBfThd-g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <trblinux@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Rob Herring <robherring2@gmail.com>
-Cc: Laura Abbott <lauraa@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, afaerber@suse.de, devicetree@vger.kernel.org
+To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-On Sun, 29 Jun 2014 12:06:24 -0700, Laura Abbott <lauraa@codeaurora.org> wrote:
-> Commit 1c2f87c22566cd057bc8cde10c37ae9da1a1bb76
-> (ARM: 8025/1: Get rid of meminfo) dropped the upper bound on
-> the number of memory banks that can be added as there was no
-> technical need in the kernel. It turns out though, some bootloaders
-> (specifically the arndale-octa exynos boards) may pass invalid memory
-> information and rely on the kernel to not parse this data. This is a
-> bug in the bootloader but we still need to work around this.
-> Re-introduce a maximum bank limit per board to prevent invalid banks
-> from being passed to the kernel.
+Hello Yadwinder,
+
+Thanks a lot for your feedback.
+
+On 06/30/2014 06:01 AM, Yadwinder Singh Brar wrote:
+> Hi Javier,
 > 
-> Reported-by: Tushar Behera <trblinux@gmail.com>
-> Signed-off-by: Laura Abbott <lauraa@codeaurora.org>
-
-Hi Laura,
-
-This is more invasive than I'd like. I think it can be fixed more
-elegantly. Some suggestions below...
-
-> ---
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/265615.html
+> On Thu, Jun 26, 2014 at 11:45 PM, Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk> wrote:
+>> Maxim Integrated Power Management ICs are very similar with
+>> regard to their clock outputs. Most of the clock drivers for
+>> these chips are duplicating code and are simpler enough that
+>> can be converted to use a generic driver to consolidate code
+>> and avoid duplication.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> ---
+>>
+>> Changes since v4:
+>>  - Return recalc 0 if clock isn't enabled in Suggested by Yadwinder Singh Brar.
+>>
 > 
-> For those who did not see the discussion before
-> ---
->  arch/arm/include/asm/mach/arch.h | 10 ++++++++--
->  arch/arm/kernel/atags_parse.c    |  1 +
->  arch/arm/kernel/devtree.c        |  9 ++++++++-
->  arch/arm/kernel/setup.c          | 20 ++++++++++++++++++++
->  arch/arm/mach-exynos/exynos.c    |  1 +
->  5 files changed, 38 insertions(+), 3 deletions(-)
+> It seems you didn't implement or posted same patch again :) .
 > 
-> diff --git a/arch/arm/include/asm/mach/arch.h b/arch/arm/include/asm/mach/arch.h
-> index 060a75e..ebcc543 100644
-> --- a/arch/arm/include/asm/mach/arch.h
-> +++ b/arch/arm/include/asm/mach/arch.h
-> @@ -40,6 +40,8 @@ struct machine_desc {
->  	unsigned int		video_start;	/* start of video RAM	*/
->  	unsigned int		video_end;	/* end of video RAM	*/
->  
-> +	unsigned int		bank_limit;	/* maximum number of memory
-> +						 * banks to add */
->  	unsigned char		reserve_lp0 :1;	/* never has lp0	*/
->  	unsigned char		reserve_lp1 :1;	/* never has lp1	*/
->  	unsigned char		reserve_lp2 :1;	/* never has lp2	*/
-> @@ -76,6 +78,8 @@ extern const struct machine_desc __arch_info_begin[], __arch_info_end[];
->  #define for_each_machine_desc(p)			\
->  	for (p = __arch_info_begin; p < __arch_info_end; p++)
->  
-> +extern void set_max_bank_limit(const struct machine_desc *mdesc);
-> +
->  /*
->   * Set of macros to define architecture features.  This is built into
->   * a table by the linker.
-> @@ -85,7 +89,8 @@ static const struct machine_desc __mach_desc_##_type	\
->   __used							\
->   __attribute__((__section__(".arch.info.init"))) = {	\
->  	.nr		= MACH_TYPE_##_type,		\
-> -	.name		= _name,
-> +	.name		= _name,			\
-> +	.bank_limit	= 12,
 
-The hard limit of 12 seems entirely arbitrary. I don't like the idea of
-reintroducing it.  There shouldn't be any need for a default at all.
-Leave it as zero, and the limit will only apply if a value has been set.
-12 seems like an artificial limit. (more below)
+Yeah, I did implement it but seems I was sleepy when I posted the series since I
+managed to completely screw up the patch-set... More on that below.
 
->  
->  #define MACHINE_END				\
->  };
-> @@ -95,6 +100,7 @@ static const struct machine_desc __mach_desc_##_name	\
->   __used							\
->   __attribute__((__section__(".arch.info.init"))) = {	\
->  	.nr		= ~0,				\
-> -	.name		= _namestr,
-> +	.name		= _namestr,			\
-> +	.bank_limit	= 12,
->  
->  #endif
-> diff --git a/arch/arm/kernel/atags_parse.c b/arch/arm/kernel/atags_parse.c
-> index 7807ef5..6b01d20 100644
-> --- a/arch/arm/kernel/atags_parse.c
-> +++ b/arch/arm/kernel/atags_parse.c
-> @@ -204,6 +204,7 @@ setup_machine_tags(phys_addr_t __atags_pointer, unsigned int machine_nr)
->  		dump_machine_table(); /* does not return */
->  	}
->  
-> +	set_max_bank_limit(mdesc);
-
-Is there actually a bug on any atags booting? If this is firmly in the
-realm of firmware workaround then I would drop the change from the atags
-boot path.
-
->  	if (__atags_pointer)
->  		tags = phys_to_virt(__atags_pointer);
->  	else if (mdesc->atag_offset)
-> diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
-> index e94a157..04213ce 100644
-> --- a/arch/arm/kernel/devtree.c
-> +++ b/arch/arm/kernel/devtree.c
-> @@ -27,6 +27,10 @@
->  #include <asm/mach/arch.h>
->  #include <asm/mach-types.h>
->  
-> +void __init early_init_dt_add_memory_arch(u64 base, u64 size)
-> +{
-> +	arm_add_memory(base, size);
-> +}
->  
->  #ifdef CONFIG_SMP
->  extern struct of_cpu_method __cpu_method_of_table[];
-> @@ -212,7 +216,7 @@ const struct machine_desc * __init setup_machine_fdt(unsigned int dt_phys)
->  	mdesc_best = &__mach_desc_GENERIC_DT;
->  #endif
->  
-> -	if (!dt_phys || !early_init_dt_scan(phys_to_virt(dt_phys)))
-> +	if (!dt_phys || !early_init_dt_verify(phys_to_virt(dt_phys)))
->  		return NULL;
-
-Instead of splitting early_init_dt_scan(), the call to
-early_init_dt_scan() could probably be moved after the
-of_flat_dt_match_machine() call. It's at least worth a try. Looking at
-the code I don't see anything obvious that requires the
-early_init_dt_scan() code to run first.
-
-Once you've got the mdesc pointer, you've could set the limit before
-doing the full scan. Or, better yet because this is a fix for broken
-data, you could call a dt_fixup hook on the mdesc. Then exynos is the
-only platform that needs special treatment. The best thing for exynos to
-do is fix the buggy data by clearing the bogus entries. Then there's no
-need to reintroduce early_init_dt_add_memory_arch() for ARM.
-
->  
->  	mdesc = of_flat_dt_match_machine(mdesc_best, arch_get_next_mach);
-> @@ -237,6 +241,9 @@ const struct machine_desc * __init setup_machine_fdt(unsigned int dt_phys)
->  		dump_machine_table(); /* does not return */
->  	}
->  
-> +	set_max_bank_limit(mdesc);
-> +	early_init_dt_scan_all();
-> +
->  	/* Change machine number to match the mdesc we're using */
->  	__machine_arch_type = mdesc->nr;
->  
-> diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-> index 8a16ee5..bc796e3 100644
-> --- a/arch/arm/kernel/setup.c
-> +++ b/arch/arm/kernel/setup.c
-> @@ -629,11 +629,31 @@ void __init dump_machine_table(void)
->  		/* can't use cpu_relax() here as it may require MMU setup */;
->  }
->  
-> +static unsigned int bank_cnt;
-> +static unsigned int max_cnt;
-> +
-> +void set_max_bank_limit(const struct machine_desc *mdesc)
-> +{
-> +	max_cnt = mdesc->bank_limit;
-> +}
-> +
->  int __init arm_add_memory(u64 start, u64 size)
->  {
->  	u64 aligned_start;
->  
->  	/*
-> +	 * Some buggy bootloaders rely on the old meminfo behavior of not adding
-> +	 * more than n banks since anything past that may contain invalid data.
-> +	 */
-> +	if (bank_cnt >= max_cnt) {
-
-if (max_cnt && (bank_cnt >= max_cnt)) {
-
-(But unnecessary if the suggestion to reorganize setup_machine_fdt()
-works).
-
-> +		pr_crit("Max banks too low, ignoring memory at 0x%08llx\n",
-> +			(long long)start);
-> +		return -EINVAL;
-> +	}
-> +
-> +	bank_cnt++;
-> +
-> +	/*
->  	 * Ensure that start/size are aligned to a page boundary.
->  	 * Size is appropriately rounded down, start is rounded up.
->  	 */
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index f38cf7c..91283fd 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -350,4 +350,5 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
->  	.dt_compat	= exynos_dt_compat,
->  	.restart	= exynos_restart,
->  	.reserve	= exynos_reserve,
-> +	.bank_limit     = 8,
->  MACHINE_END
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> hosted by The Linux Foundation
+>> Changes since v3:
+>>  - Add current copyright information. Suggested by Krzysztof Kozlowski
+>>  - Do a single allocation for struct max_gen_clk. Suggested by Krzysztof Kozlowski
+>>  - Add EXPORT_SYMBOL() for exported symbols. Suggested by Krzysztof Kozlowski
+>>
+>>  drivers/clk/Kconfig       |   3 +
+>>  drivers/clk/Makefile      |   1 +
+>>  drivers/clk/clk-max-gen.c | 195 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  drivers/clk/clk-max-gen.h |  32 ++++++++
+>>  4 files changed, 231 insertions(+)
+>>  create mode 100644 drivers/clk/clk-max-gen.c
+>>  create mode 100644 drivers/clk/clk-max-gen.h
+>>
 > 
+> [ .. ]
+> 
+>> +
+>> +static unsigned long max_gen_recalc_rate(struct clk_hw *hw,
+>> +                                        unsigned long parent_rate)
+>> +{
+>> +       return 32768;
+>> +}
+> 
+> Its still same here.
+> 
+
+Instead of squashing the delta in this patch I did on "[PATCH v4 05/14] clk: Add
+generic driver for Maxim PMIC clocks" [0] so you can look the
+max_gen_recalc_rate() on that patch.
+
+I made the same mistake when squashing the mfd changes into the patch adding the
+regulator driver [1] :-(
+
+Sorry for the mess... I'll fix that for the next version.
+
+>> +
+>> +struct clk_ops max_gen_clk_ops = {
+>> +       .prepare        = max_gen_clk_prepare,
+>> +       .unprepare      = max_gen_clk_unprepare,
+>> +       .is_prepared    = max_gen_clk_is_prepared,
+>> +       .recalc_rate    = max_gen_recalc_rate,
+>> +};
+>> +EXPORT_SYMBOL_GPL(max_gen_clk_ops);
+>> +
+>> +static struct clk *max_gen_clk_register(struct device *dev,
+>> +                                       struct max_gen_clk *max_gen)
+>> +{
+>> +       struct clk *clk;
+>> +       struct clk_hw *hw = &max_gen->hw;
+>> +
+>> +       clk = clk_register(dev, hw);
+>> +       if (IS_ERR(clk))
+>> +               return clk;
+>> +
+>> +       max_gen->lookup = kzalloc(sizeof(struct clk_lookup), GFP_KERNEL);
+> 
+> As I suggested in other patch[1] also, its better to use
+> clkdev_alloc() instead of kzalloc() here.
+> 
+
+Perfect, I'll do it on the next version.
+
+>> +       if (!max_gen->lookup)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       max_gen->lookup->con_id = hw->init->name;
+> 
+> Also IMO,  init->name should be over-written if name is provided in DT,
+> otherwise generic "clock-output-names" property will go futile,
+> perhaps it should be done before clk_register.
+> 
+
+Even though Documentation/devicetree/bindings/clock/clock-bindings.txt says that
+the "clock-output-names" property is optional I agree with you that will be
+better to support it. So I'll add it on the next version as well.
+
+> Regards,
+> Yadwinder
+> 
+
+Best regards,
+Javier
+
+[0]: http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg33085.html
+[1]: http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg33168.html
