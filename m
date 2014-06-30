@@ -1,40 +1,48 @@
 From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH 1/6] ARM: s3c24xx: Remove S3C24XX_DMA dependency from S3C2410_DMA
-Date: Mon, 30 Jun 2014 22:20:04 +0300
-Message-ID: <1404156009-3919-1-git-send-email-anarsoul@gmail.com>
+Subject: [PATCH 2/6] ARM: s3c24xx: add dma_coherent_mask for DMA devices
+Date: Mon, 30 Jun 2014 22:20:05 +0300
+Message-ID: <1404156009-3919-2-git-send-email-anarsoul@gmail.com>
+References: <1404156009-3919-1-git-send-email-anarsoul@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:46349 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754543AbaF3TWf (ORCPT
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:64812 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754543AbaF3TWg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 15:22:35 -0400
-Received: by mail-wg0-f45.google.com with SMTP id l18so8508362wgh.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jun 2014 12:22:33 -0700 (PDT)
+	Mon, 30 Jun 2014 15:22:36 -0400
+Received: by mail-wi0-f175.google.com with SMTP id r20so6644373wiv.14
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jun 2014 12:22:35 -0700 (PDT)
+In-Reply-To: <1404156009-3919-1-git-send-email-anarsoul@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
 Cc: Vasily Khoruzhick <anarsoul@gmail.com>
 
-S3C24XX_DMA enables legacy DMA driver, and since we want to
-move to introduced generic dmaengine s3c24xx-dma driver,
-it's necessary to remove this redundant dependency.
+Otherwise dma_alloc_coherent() fails.
 
 Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
 ---
- arch/arm/mach-s3c24xx/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/mach-s3c24xx/common.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index 04284de..8c2a7f3 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -133,7 +133,6 @@ config S3C2410_DMA_DEBUG
- 
- config S3C2410_DMA
- 	bool
--	depends on S3C24XX_DMA && (CPU_S3C2410 || CPU_S3C2442)
- 	help
- 	  DMA device selection for S3C2410 and compatible CPUs
- 
+diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+index c0763b8..2fa0a99 100644
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -358,6 +358,7 @@ struct platform_device s3c2410_device_dma = {
+ 	.resource	= s3c2410_dma_resource,
+ 	.dev	= {
+ 		.platform_data	= &s3c2410_dma_platdata,
++		.coherent_dma_mask = ~0,
+ 	},
+ };
+ #endif
+@@ -455,6 +456,7 @@ struct platform_device s3c2440_device_dma = {
+ 	.resource	= s3c2410_dma_resource,
+ 	.dev	= {
+ 		.platform_data	= &s3c2440_dma_platdata,
++		.coherent_dma_mask = ~0,
+ 	},
+ };
+ #endif
 -- 
 2.0.0
