@@ -1,236 +1,100 @@
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Subject: Re: [PATCH v5 05/14] clk: Add generic driver for Maxim PMIC clocks
-Date: Mon, 30 Jun 2014 09:31:36 +0530
-Message-ID: <CAKew6eU5X=WxhECtwUUwbXe_fCRU4bD6B7caWiA2dwcBfThd-g@mail.gmail.com>
-References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1403806546-31122-6-git-send-email-javier.martinez@collabora.co.uk>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH V3 1/7] drm/exynos: Support DP CLKCON register in FIMD
+ driver
+Date: Mon, 30 Jun 2014 07:31:32 +0200
+Message-ID: <53B0F634.7090200@samsung.com>
+References: <1403863946-15492-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1403863946-15492-2-git-send-email-ajaykumar.rs@samsung.com>
+ <53AD53E4.2020706@samsung.com>
+ <CAEC9eQMXEEq_VBiZY+BHUuVWvbi7q4MkbbQ-XkcigtZBdgwO9w@mail.gmail.com>
+ <53AD6734.9080909@samsung.com>
+ <CAEC9eQPY+W_Wni7PLtWkHr0QrHW+G8x_+XWapV5tDiKebn=zpA@mail.gmail.com>
+ <00a501cf9400$9d396950$d7ac3bf0$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f171.google.com ([209.85.213.171]:57060 "EHLO
-	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750716AbaF3EBh (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:22279 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751316AbaF3Fbv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 00:01:37 -0400
-In-Reply-To: <1403806546-31122-6-git-send-email-javier.martinez@collabora.co.uk>
+	Mon, 30 Jun 2014 01:31:51 -0400
+In-reply-to: <00a501cf9400$9d396950$d7ac3bf0$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Jingoo Han <jg1.han@samsung.com>, 'Ajay kumar' <ajaynumb@gmail.com>
+Cc: 'Ajay Kumar' <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, 'InKi Dae' <inki.dae@samsung.com>, 'Sean Paul' <seanpaul@google.com>, 'sunil joshi' <joshi@samsung.com>, 'Prashanth G' <prashanth.g@samsung.com>, "'open list:OPEN FIRMWARE AND...'" <devicetree@vger.kernel.org>
 
-Hi Javier,
-
-On Thu, Jun 26, 2014 at 11:45 PM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> Maxim Integrated Power Management ICs are very similar with
-> regard to their clock outputs. Most of the clock drivers for
-> these chips are duplicating code and are simpler enough that
-> can be converted to use a generic driver to consolidate code
-> and avoid duplication.
+On 06/30/2014 03:14 AM, Jingoo Han wrote:
+> On Friday, June 27, 2014 10:03 PM, Ajay kumar wrote:
+>> On Fri, Jun 27, 2014 at 6:14 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+>>> On 06/27/2014 01:48 PM, Ajay kumar wrote:
+>>>> On Fri, Jun 27, 2014 at 4:52 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+>>>>> +CC DT
+>>>>>
+>>>>> On 06/27/2014 12:12 PM, Ajay Kumar wrote:
+>>>>>> Add the missing setting for DP CLKCON register.
+>>>>>>
+>>>>>> This register is present on Exynos5 based FIMD controllers,
+>>>>>> and needs to be set if we are using DP.
+>>>>>>
+>>>>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>>>>>> ---
+>>>>>>  .../devicetree/bindings/video/samsung-fimd.txt     |    1 +
+>>>>>>  drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   23 ++++++++++++++++++++
+>>>>>>  include/video/samsung_fimd.h                       |    4 ++++
+>>>>>>  3 files changed, 28 insertions(+)
+> [.....]
 >
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
+>>>>>>  static const struct of_device_id fimd_driver_dt_match[] = {
+>>>>>> @@ -331,6 +341,10 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
+>>>>>>       if (clkdiv > 1)
+>>>>>>               val |= VIDCON0_CLKVAL_F(clkdiv - 1) | VIDCON0_CLKDIR;
+>>>>>>
+>>>>>> +     if (ctx->driver_data->has_dp_clkcon &&
+>>>>>> +             ctx->exynos_fimd_output_type == EXYNOS_FIMD_OUTPUT_DP)
+>>>>>> +             writel(DP_CLK_ENABLE, ctx->regs + DP_CLKCON);
+>>>>>> +
+>>>>>>       writel(val, ctx->regs + VIDCON0);
+>>> New code should not split VIDCON0 related code.It should be moved few
+>>> lines above or few lines below.
+>> Ok, for better readability.
+>>
+>>> Anyway this code should be rather placed in power related functions of
+>>> dp encoder, as it enables dp. The only question
+>>> is if DP_CLKCON update can be performed after VIDCON0 update. If yes the
+>>> solution of the whole problem
+>> I will check this.
+>>
+>>> seems to be simple:
+>>> - fimd should provide function fimd_set_dp_clk_gate or sth similar,
+>>> - this function should be called in exynos_dp_poweron/exynos_dp_poweroff.
+>>> I hope I have not missed anything this time.
+>> But, it won't look good to export a FIMD function which sets a FIMD register,
+>> and call it in DP driver!
+>> What does Inki/Jingoo have to say about this?
+> I agree with Ajay Kumar's opinion.
+> It doesn't look good to export the function to set FIMD register
+> and call it by DP driver.
+
+DP_CLKCON HW register shows clearly there is direct hardware dependency
+between DP and FIMD.
+Reflecting this dependency in drivers is just a consequence of HW design.
+Moreover the register gates also clock for MDNIE, this solution can be
+used there as well.
+
+Anyway the most important is that we should avoid adding DT bindings for
+things we can evaluate in drivers.
+
+Regards
+Andrzej
+
 >
-> Changes since v4:
->  - Return recalc 0 if clock isn't enabled in Suggested by Yadwinder Singh Brar.
+> Best regards,
+> Jingoo Han
+>> Regards,
+>> Ajay
+>>
+> [....]
 >
-
-It seems you didn't implement or posted same patch again :) .
-
-> Changes since v3:
->  - Add current copyright information. Suggested by Krzysztof Kozlowski
->  - Do a single allocation for struct max_gen_clk. Suggested by Krzysztof Kozlowski
->  - Add EXPORT_SYMBOL() for exported symbols. Suggested by Krzysztof Kozlowski
->
->  drivers/clk/Kconfig       |   3 +
->  drivers/clk/Makefile      |   1 +
->  drivers/clk/clk-max-gen.c | 195 ++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/clk-max-gen.h |  32 ++++++++
->  4 files changed, 231 insertions(+)
->  create mode 100644 drivers/clk/clk-max-gen.c
->  create mode 100644 drivers/clk/clk-max-gen.h
->
-
-[ .. ]
-
-> +
-> +static unsigned long max_gen_recalc_rate(struct clk_hw *hw,
-> +                                        unsigned long parent_rate)
-> +{
-> +       return 32768;
-> +}
-
-Its still same here.
-
-> +
-> +struct clk_ops max_gen_clk_ops = {
-> +       .prepare        = max_gen_clk_prepare,
-> +       .unprepare      = max_gen_clk_unprepare,
-> +       .is_prepared    = max_gen_clk_is_prepared,
-> +       .recalc_rate    = max_gen_recalc_rate,
-> +};
-> +EXPORT_SYMBOL_GPL(max_gen_clk_ops);
-> +
-> +static struct clk *max_gen_clk_register(struct device *dev,
-> +                                       struct max_gen_clk *max_gen)
-> +{
-> +       struct clk *clk;
-> +       struct clk_hw *hw = &max_gen->hw;
-> +
-> +       clk = clk_register(dev, hw);
-> +       if (IS_ERR(clk))
-> +               return clk;
-> +
-> +       max_gen->lookup = kzalloc(sizeof(struct clk_lookup), GFP_KERNEL);
-
-As I suggested in other patch[1] also, its better to use
-clkdev_alloc() instead of kzalloc() here.
-
-> +       if (!max_gen->lookup)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       max_gen->lookup->con_id = hw->init->name;
-
-Also IMO,  init->name should be over-written if name is provided in DT,
-otherwise generic "clock-output-names" property will go futile,
-perhaps it should be done before clk_register.
-
-Regards,
-Yadwinder
-
-[1] : https://lkml.org/lkml/2014/6/27/197
-
-> +       max_gen->lookup->clk = clk;
-> +
-> +       clkdev_add(max_gen->lookup);
-> +
-> +       return clk;
-> +}
-> +
-> +int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
-> +                     u32 reg, struct clk_init_data *clks_init, int num_init)
-> +{
-> +       int i, ret;
-> +       struct max_gen_clk *max_gen_clks;
-> +       struct clk **clocks;
-> +       struct device *dev = &pdev->dev;
-> +
-> +       clocks = devm_kzalloc(dev, sizeof(struct clk *) * num_init, GFP_KERNEL);
-> +       if (!clocks)
-> +               return -ENOMEM;
-> +
-> +       max_gen_clks = devm_kzalloc(dev, sizeof(struct max_gen_clk)
-> +                                   * num_init, GFP_KERNEL);
-> +       if (!max_gen_clks)
-> +               return -ENOMEM;
-> +
-> +       for (i = 0; i < num_init; i++) {
-> +               max_gen_clks[i].regmap = regmap;
-> +               max_gen_clks[i].mask = 1 << i;
-> +               max_gen_clks[i].reg = reg;
-> +               max_gen_clks[i].hw.init = &clks_init[i];
-> +
-> +               clocks[i] = max_gen_clk_register(dev, &max_gen_clks[i]);
-> +               if (IS_ERR(clocks[i])) {
-> +                       ret = PTR_ERR(clocks[i]);
-> +                       dev_err(dev, "failed to register %s\n",
-> +                               max_gen_clks[i].hw.init->name);
-> +                       goto err_clocks;
-> +               }
-> +       }
-> +
-> +       platform_set_drvdata(pdev, clocks);
-> +
-> +       if (dev->of_node) {
-> +               struct clk_onecell_data *of_data;
-> +
-> +               of_data = devm_kzalloc(dev, sizeof(*of_data), GFP_KERNEL);
-> +               if (!of_data) {
-> +                       ret = -ENOMEM;
-> +                       goto err_clocks;
-> +               }
-> +
-> +               of_data->clks = clocks;
-> +               of_data->clk_num = num_init;
-> +               ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
-> +                                         of_data);
-> +
-> +               if (ret) {
-> +                       dev_err(dev, "failed to register OF clock provider\n");
-> +                       goto err_clocks;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +
-> +err_clocks:
-> +       for (--i; i >= 0; --i) {
-> +               clkdev_drop(max_gen_clks[i].lookup);
-> +               clk_unregister(max_gen_clks[i].hw.clk);
-> +       }
-> +
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(max_gen_clk_probe);
-> +
-> +int max_gen_clk_remove(struct platform_device *pdev, int num_init)
-> +{
-> +       struct clk **clocks = platform_get_drvdata(pdev);
-> +       struct device *dev = pdev->dev.parent;
-> +       int i;
-> +
-> +       if (dev->of_node)
-> +               of_clk_del_provider(dev->of_node);
-> +
-> +       for (i = 0; i < num_init; i++) {
-> +               struct clk_hw *hw = __clk_get_hw(clocks[i]);
-> +               struct max_gen_clk *max_gen = to_max_gen_clk(hw);
-> +
-> +               clkdev_drop(max_gen->lookup);
-> +               clk_unregister(clocks[i]);
-> +       }
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(max_gen_clk_remove);
-> diff --git a/drivers/clk/clk-max-gen.h b/drivers/clk/clk-max-gen.h
-> new file mode 100644
-> index 0000000..997e86f
-> --- /dev/null
-> +++ b/drivers/clk/clk-max-gen.h
-> @@ -0,0 +1,32 @@
-> +/*
-> + * clk-max-gen.h - Generic clock driver for Maxim PMICs clocks
-> + *
-> + * Copyright (C) 2014 Google, Inc
-> + *
-> + * This program is free software; you can redistribute  it and/or modify it
-> + * under  the terms of  the GNU General  Public License as published by the
-> + * Free Software Foundation;  either version 2 of the  License, or (at your
-> + * option) any later version.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
-> + */
-> +
-> +#ifndef __CLK_MAX_GEN_H__
-> +#define __CLK_MAX_GEN_H__
-> +
-> +#include <linux/types.h>
-> +#include <linux/device.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/regmap.h>
-> +#include <linux/platform_device.h>
-> +
-> +int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
-> +                     u32 reg, struct clk_init_data *clks_init, int num_init);
-> +int max_gen_clk_remove(struct platform_device *pdev, int num_init);
-> +extern struct clk_ops max_gen_clk_ops;
-> +
-> +#endif /* __CLK_MAX_GEN_H__ */
-> --
-> 2.0.0.rc2
 >
