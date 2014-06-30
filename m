@@ -1,67 +1,61 @@
 From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH] ARM: Samsung: ADC: Move to clk_prepare_enable/clk_disable_unprepare
-Date: Mon, 30 Jun 2014 22:08:08 +0300
-Message-ID: <1404155288-2787-1-git-send-email-anarsoul@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:41002 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753797AbaF3TKi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 15:10:38 -0400
-Received: by mail-wg0-f47.google.com with SMTP id k14so8699821wgh.30
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jun 2014 12:10:36 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
+Subject: [PATCH] Input: s3c2410_ts: Move to clk_prepare_enable/clk_disable_unprepare
+Date: Mon, 30 Jun 2014 22:09:37 +0300
+Message-ID: <1404155377-2862-1-git-send-email-anarsoul@gmail.com>
+Return-path: <linux-input-owner@vger.kernel.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org
 Cc: Vasily Khoruzhick <anarsoul@gmail.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Use clk_prepare_enable/clk_disable_unprepare to make the driver
 work properly with common clock framework.
 
 Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
 ---
- arch/arm/plat-samsung/adc.c | 8 ++++----
+ drivers/input/touchscreen/s3c2410_ts.c | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index 79690f2..c5831b49 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -389,7 +389,7 @@ static int s3c_adc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
+index 19cb247..c0e0baa 100644
+--- a/drivers/input/touchscreen/s3c2410_ts.c
++++ b/drivers/input/touchscreen/s3c2410_ts.c
+@@ -264,7 +264,7 @@ static int s3c2410ts_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 	}
  
--	clk_enable(adc->clk);
-+	clk_prepare_enable(adc->clk);
+-	clk_enable(ts.clock);
++	clk_prepare_enable(ts.clock);
+ 	dev_dbg(dev, "got and enabled clocks\n");
  
- 	tmp = adc->prescale | S3C2410_ADCCON_PRSCEN;
+ 	ts.irq_tc = ret = platform_get_irq(pdev, 0);
+@@ -369,7 +369,7 @@ static int s3c2410ts_remove(struct platform_device *pdev)
+ 	free_irq(ts.irq_tc, ts.input);
+ 	del_timer_sync(&touch_timer);
  
-@@ -413,7 +413,7 @@ static int s3c_adc_remove(struct platform_device *pdev)
+-	clk_disable(ts.clock);
++	clk_disable_unprepare(ts.clock);
+ 	clk_put(ts.clock);
+ 
+ 	input_unregister_device(ts.input);
+@@ -383,7 +383,7 @@ static int s3c2410ts_suspend(struct device *dev)
  {
- 	struct adc_device *adc = platform_get_drvdata(pdev);
- 
--	clk_disable(adc->clk);
-+	clk_disable_unprepare(adc->clk);
- 	regulator_disable(adc->vdd);
- 
- 	return 0;
-@@ -436,7 +436,7 @@ static int s3c_adc_suspend(struct device *dev)
- 
- 	disable_irq(adc->irq);
- 	spin_unlock_irqrestore(&adc->lock, flags);
--	clk_disable(adc->clk);
-+	clk_disable_unprepare(adc->clk);
- 	regulator_disable(adc->vdd);
+ 	writel(TSC_SLEEP, ts.io + S3C2410_ADCTSC);
+ 	disable_irq(ts.irq_tc);
+-	clk_disable(ts.clock);
++	clk_disable_unprepare(ts.clock);
  
  	return 0;
-@@ -454,7 +454,7 @@ static int s3c_adc_resume(struct device *dev)
- 	ret = regulator_enable(adc->vdd);
- 	if (ret)
- 		return ret;
--	clk_enable(adc->clk);
-+	clk_prepare_enable(adc->clk);
- 	enable_irq(adc->irq);
+ }
+@@ -393,7 +393,7 @@ static int s3c2410ts_resume(struct device *dev)
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct s3c2410_ts_mach_info *info = dev_get_platdata(&pdev->dev);
  
- 	tmp = adc->prescale | S3C2410_ADCCON_PRSCEN;
+-	clk_enable(ts.clock);
++	clk_prepare_enable(ts.clock);
+ 	enable_irq(ts.irq_tc);
+ 
+ 	/* Initialise registers */
 -- 
 2.0.0
+
