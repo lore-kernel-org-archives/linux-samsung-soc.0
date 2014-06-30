@@ -1,59 +1,54 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 0/4] Add Exynos4412 based Odroid X2 and U2/U3/U3+ support
-Date: Mon, 30 Jun 2014 07:34:09 +0200
-Message-ID: <53B0F6D1.4090006@samsung.com>
-References: <1403702773-9141-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH 0/4] ARM: remove the sub-node and deprecated supports-highspeed
+ property.
+Date: Mon, 30 Jun 2014 16:22:27 +0900
+Message-ID: <1404112951-29467-1-git-send-email-jh80.chung@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:32454 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751316AbaF3FeQ (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:61604 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752251AbaF3HWj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 01:34:16 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N7Y00DRUVGIBG50@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 30 Jun 2014 06:33:54 +0100 (BST)
-In-reply-to: <1403702773-9141-1-git-send-email-m.szyprowski@samsung.com>
+	Mon, 30 Jun 2014 03:22:39 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Przemyslaw Marczak <p.marczak@samsung.com>
+To: linux-mmc <linux-mmc@vger.kernel.org>
+Cc: Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, tgih.jun@samsung.com, devicetree@vger.kernel.org, heiko@sntech.de, dinguyen@altera.com, Mark Rutland <mark.rutland@arm.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jaehoon Chung <jh80.chung@samsung.com>
 
-Hello,
+Since used the mmc_of_parse(), didn't parse the sub-node.
+So we can remove the sub-node, because almost SoC used the only one card per a host.
+And supports-highspeed can be replaced to "cap-mmc/sd-highspeed" property.
 
-On 2014-06-25 15:26, Marek Szyprowski wrote:
-> Hello,
->
-> This is the second version of the initial patch series adding support
-> for Exynos 4412 based Odroid X2 and U2/U3/U3+ boards and improving
-> support for Odroid X.
->
-> Complete USB support for Odroid U2/U3/U3+ still requires some fixes in
-> Exynos4 USB2 Phy driver and clock driver for CLKOUT:
-> http://thread.gmane.org/gmane.linux.kernel/1731843/
-> http://www.spinics.net/lists/linux-usb/msg109587.html
-> The above changes however don't affect Odroid DTS files, but without
-> them, usb3503 hub is not yet functional.
->
-> Support for audio codec will be posted separately by Sylwester Nawrocki
-> soon. Support for HDMI video output will be also posted separately
-> together with the required ExynosDRM-HDMI fixes.
->
-> If one is interested in more complete and open-source Odroid board
-> support, there are also patches for u-boot project:
-> http://thread.gmane.org/gmane.comp.boot-loaders.u-boot/188295/focus=188610
+Jaehoon Chung (4):
+  mmc: dw_mmc: modify the dt-binding for removing slot-node and
+    supports-highspeed
+  ARM: dts: exynos: unuse the slot-node and deprecated the
+    supports-highspeed for dw-mmc
+  ARM: dts: socfpga: unuse the slot-node and deprecated the
+    supports-highspeed for dw-mmc
+  ARM: dts: rockchip: unuse the slot-node and deprecated the
+    supports-highspeed for dw-mmc
 
-Just to let everyone knows - updated Odroid patches for uboot has been
-posted in the following thread:
-http://www.mail-archive.com/u-boot@lists.denx.de/msg141234.html
-You can also download them here:
-http://patchwork.ozlabs.org/project/uboot/list/?submitter=23519
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   17 ++++---------
+ .../devicetree/bindings/mmc/k3-dw-mshc.txt         |   12 ++++-----
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |   12 ++++-----
+ arch/arm/boot/dts/exynos4412-odroidx.dts           |    8 ++----
+ arch/arm/boot/dts/exynos4412-origen.dts            |    8 ++----
+ arch/arm/boot/dts/exynos4412-trats2.dts            |    8 ++----
+ arch/arm/boot/dts/exynos5250-arndale.dts           |   18 ++++----------
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi      |   26 ++++++--------------
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   18 ++++----------
+ arch/arm/boot/dts/exynos5250-snow.dts              |    6 ++---
+ arch/arm/boot/dts/exynos5260-xyref5260.dts         |   18 ++++----------
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |   18 ++++----------
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |   16 +++---------
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |   16 +++---------
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   16 +++---------
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |   16 +++---------
+ arch/arm/boot/dts/rk3066a-bqcurie2.dts             |   16 +++---------
+ arch/arm/boot/dts/socfpga_arria5.dtsi              |    9 +++----
+ arch/arm/boot/dts/socfpga_cyclone5.dtsi            |    9 +++----
+ arch/arm/boot/dts/socfpga_vt.dts                   |    9 +++----
+ 20 files changed, 79 insertions(+), 197 deletions(-)
 
-Best regards
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+1.7.9.5
