@@ -1,60 +1,68 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [PATCH 1/2] clk: samsung: fix several typos to fix boot on s3c2410
-Date: Mon, 30 Jun 2014 17:16:53 +0300
-Message-ID: <2414590.ONaMigMLUH@vasilykh-desktop-i5>
-References: <1403555350-14895-1-git-send-email-anarsoul@gmail.com> <1519968.Vijxn8Mc9S@vasilykh-desktop-i5> <53B16F1C.4040206@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 00/17] ARM: S5P64X0, S5PC100: no more support in mainline
+Date: Mon, 30 Jun 2014 16:22:25 +0200
+Message-ID: <20140630142224.GA30417@ulmo>
+References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
+ <6153646.CZ57BgYKf3@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:49027 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752007AbaF3OSJ (ORCPT
+Received: from mail-wi0-f179.google.com ([209.85.212.179]:36793 "EHLO
+	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752007AbaF3OW2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 10:18:09 -0400
-Received: by mail-wg0-f45.google.com with SMTP id l18so8048691wgh.28
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jun 2014 07:18:08 -0700 (PDT)
-In-Reply-To: <53B16F1C.4040206@samsung.com>
+	Mon, 30 Jun 2014 10:22:28 -0400
+Received: by mail-wi0-f179.google.com with SMTP id cc10so6118336wib.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jun 2014 07:22:27 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <6153646.CZ57BgYKf3@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-On 30 June 2014 16:07:24 Tomasz Figa wrote:
-> Hi Vasily,
-> 
-> On 30.06.2014 16:02, Vasily Khoruzhick wrote:
-> > On 30 June 2014 15:49:58 Tomasz Figa wrote:
-> >> On 23.06.2014 22:29, Vasily Khoruzhick wrote:
-> >>> There's a several typos in a driver: 2410 instead of S3C2410
-> >>> and wrong argument to ARRAY_SIZE(). They prevent s3c2410
-> >>> from properly booting.
-> >>> 
-> >>> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-> >>> ---
-> >>> 
-> >>>  drivers/clk/samsung/clk-s3c2410.c | 4 ++--
-> >>>  1 file changed, 2 insertions(+), 2 deletions(-)
-> >> 
-> >> Applied as a fix for 3.16.
-> > 
-> > Hi Tomasz,
-> > 
-> > I also have clk fixes for s3c24xx touchscreen, framebuffer, adc, usb and
-> > nand drivers (to replace clk_enable with clk_prepare_enable and
-> > clk_disable with clk_disable_unprepare),
-> > 
-> > Should they be merged through different trees or it's possible to merge
-> > them through a single tree?
-> 
-> I'd say they should all go through respective subsystem trees, unless
-> they directly depend on patches I already applied, which is not the case
-> as far as I can see.
 
-Hm, they aren't necessary for compiling the kernel, but system fails to boot 
-without these patches due to merge of common clk changes for s3c24xx.
+--ZPt4rx8FFjLCG7dd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Best regards,
-> Tomasz
+On Mon, Jun 30, 2014 at 03:34:27PM +0200, Arnd Bergmann wrote:
+> On Tuesday 01 July 2014 06:32:10 Kukjin Kim wrote:
+> > This series removes S5P64X0 and S5PC100 related codes in mainline,
+> > because no more user now. And if its supporting is required later,
+> > it will be done with using device tree.
+> >=20
+>=20
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-P.S. Sorry for 2nd mail, Tomasz, I've occassionally omited MLs.
+It seems like I'm not completely up-to-date. What happened to our prime
+directive never to remove support for boards? Why is this special? What
+about people that still use this hardware? The commit message says that
+there are no longer any users. How was this determined?
+
+Thierry
+
+--ZPt4rx8FFjLCG7dd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTsXKgAAoJEN0jrNd/PrOhZTgQALm6kMsbUMEvoihoMKT0ffbS
+wsqYhbSXTh98pnW4/ggCEMbgGXwzb7HOlp1O/uRpMSAGK58gp/1hiGKvcQn0zxSY
+EhCq8+9y9saf612E0D2C/LXdBMun9GZolhodflnAEnLOzhAtShVtpHTWNSeuYYcf
+tRhxMfyZe7HDZ1y8IfSLOd6X+7+pPBPm41lL2m9JYYKqRGZjW/bjl81FQAkjpB0I
+AHdhrBMx98dDUcc6Q1sF8ZYqxmRLtMG/qnRoGOpc+zmAmklVz3fHkIpDBjFooC20
+gVCM9EyA4mRmyUDigude4vsWxkmHMQ3YklHlunxTix9GsP/ZMOdirA0EV4TSez6V
+6GyGJnMMOK/k33C8N0O13TqtPBNYdcOxQn/dV+63ZC7vY1fM5zrnbfZma7ZTD5af
+9uBjigaUQl4rsSQJxhqO09O8a24NcY0NVdT2vjnOtT1/gMGl3wtTKE/csnPRjzZi
+pdM+kiwSo4JWF/ZZ94Bgs1/88qkPmxkPIaReD7yarTmsIx1ZqTZGUC8zZ33Mx0HL
+Q9dUJX3lzWQNHBQYblWukkteO80lKq48y9/c5TKR77thdCzxZDUCWwa8WRaioRBV
+/yIngxaj9Fv1IhAFboDH07g42/2RkNPZGUSdw3Y9IXyFyOdIng9R4++WSjTcYR5u
+Q74pYaQa2NMTAyr/oiKa
+=lSXA
+-----END PGP SIGNATURE-----
+
+--ZPt4rx8FFjLCG7dd--
