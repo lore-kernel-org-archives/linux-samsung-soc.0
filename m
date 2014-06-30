@@ -1,72 +1,60 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2 1/2] ASoC: samsung: Add machine driver for Odroid X2/U3
-Date: Mon, 30 Jun 2014 19:46:58 +0100
-Message-ID: <20140630184658.GE23300@sirena.org.uk>
-References: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
- <1403108551-25058-2-git-send-email-s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/2] ASoC: max98090: Add max98091 compatible string
+Date: Mon, 30 Jun 2014 19:51:39 +0100
+Message-ID: <20140630185139.GF23300@sirena.org.uk>
+References: <1403251396-17487-1-git-send-email-tushar.b@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hobqzgJMeQ3bIoso"
+	protocol="application/pgp-signature"; boundary="OM63UbYQsNeyh2dn"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38823 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38852 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753797AbaF3SrW (ORCPT
+	with ESMTP id S1754162AbaF3Svw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 14:47:22 -0400
+	Mon, 30 Jun 2014 14:51:52 -0400
 Content-Disposition: inline
-In-Reply-To: <1403108551-25058-2-git-send-email-s.nawrocki@samsung.com>
+In-Reply-To: <1403251396-17487-1-git-send-email-tushar.b@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, galak@codeaurora.org, zhen1.chen@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, alsa-devel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Tushar Behera <tushar.b@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, dianders@chromium.org, kgene.kim@samsung.com, tiwai@suse.de, lgirdwood@gmail.com, galak@codeaurora.org, ijc+devicetree@hellion.org.uk, mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org, trblinux@gmail.com, Wonjoon Lee <woojoo.lee@samsung.com>
 
 
---hobqzgJMeQ3bIoso
+--OM63UbYQsNeyh2dn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 18, 2014 at 06:22:30PM +0200, Sylwester Nawrocki wrote:
+On Fri, Jun 20, 2014 at 01:33:15PM +0530, Tushar Behera wrote:
+> From: Wonjoon Lee <woojoo.lee@samsung.com>
+>=20
+> The MAX98091 CODEC is the same as MAX98090 CODEC, but with an extra
+> microphone. Existing driver for MAX98090 CODEC already has support
+> for MAX98091 CODEC. Adding proper compatible string so that MAX98091
+> CODEC can be specified from device tree.
 
-> +struct odroidx2_drv_data odroidx2_drvdata = {
-> +	.dapm_widgets		= odroidx2_dapm_widgets,
-> +	.num_dapm_widgets	= ARRAY_SIZE(odroidx2_dapm_widgets),
-> +};
-> +
-> +struct odroidx2_drv_data odroidu3_drvdata = {
-> +	.dapm_widgets		= odroidu3_dapm_widgets,
-> +	.num_dapm_widgets	= ARRAY_SIZE(odroidu3_dapm_widgets),
-> +};
+Applied, thanks.
 
-> +	ret = snd_soc_of_parse_audio_routing(card, "samsung,audio-routing");
-> +	if (ret < 0)
-> +		return ret;
-
-Given that the widgets don't have any actions defined and the routing is
-all done by DT it might be easier and more flexible to just define all
-the widgets all the time and let them hang there if they're not in use,
-that way you don't need multiple compatible strings.  If you do that
-you're then very close to being able to use simple-card...
-
---hobqzgJMeQ3bIoso
+--OM63UbYQsNeyh2dn
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTsbCeAAoJELSic+t+oim9bYUP/i+ywW+Yl67NWQKW0fQIDKDW
-oZFdfsjqruHE+0N0snlFM731QEZ6J9nxbHm4ltBdTwNWQZJRB+FqLUMO/tLySn3E
-DT23UOCKdDNveJxLBpa8c+xKNI+Er/DyQSp1ncOcCh9Wxzbj+lAo/31whqT5k/Zo
-xbWV6Uq9V/vVM+KU8lRtJKeTXEXWN85hAnOPxlGor4fEOooR7vwwow7+qPouVz3t
-SXPtL+Z1rlWKiV+nfnuDaqfnK8FUn7r+4jPUA1YBbfnyODHmPlxZyyX2hwloz1P9
-gV+Cz3ZPDETeAkibw3kiimL5PTs1Wh6Gh4/U+VIUCN0rP6488fXPsjfBNqIZLaKh
-poDDuR1tW9s+1THPxv59JuV5yJFtpT87gh0a6bWbeTD3eYsdfEJ7UmqxOxEx8o1j
-goLB5e7IP1pu2QdeVmLAWNfR0sGn+NgOfXqslZXgGAk1jmrC4q/uXinNtjdcK41d
-b80Vo93KMout5k3VJHtSRQmInGPhxudkDfe4i3ziEEd9qiTrJsaGv2NGAUWJxJ9I
-1mespzvc7638qYbu+pT7spHkJ87FiWRp+btfE2jCazN/t+qE2X3k2YiVrXmzN621
-C6hD6GcQUIHBFFJ6eXSgPvX2lK1x+aqD9rLodWvWq5n5dZgjpgyz4ZM7pgvlL5h+
-9E6paQ5aEQ5v7vtxXeuo
-=oZyg
+iQIcBAEBAgAGBQJTsbG4AAoJELSic+t+oim9MmcP/RKT93/dRKmZEoSXaeISq6Up
+n+4O0BDxLY+Awb895ctTuP0Nlq5yAx8GMh27mcTL5skUWRcxbNP8GMbFPUduNoVF
+G1F6rsYPCAgr7EoC1EJfMe0LpXXq+sFfw9Zw4knKReTqBxEwAfhyOqcmOiiLf9hD
+ERsT+0mCoGbuk5Wr8egINRtdpFwkSONCyoINRKirw59W/DzehuUF5YDiaoNdcieF
+3d5kYF96cbyIK+nLFhDMQz7xoXuWkM6cJjCRZXqxqyIhLarN6Jkpv22xGXNgn7mJ
+qA1YXH/tuM8DRb5hyKw9HOXdsaiiDzIBmNxbxjIYNfD8XkKGWrAdFNK+tOmNtB+z
+VhjISgq9Te58LzsoftE7t9mwzNdH+JbP9FWiWBpwAf7aP0q3qtbW97EoADM4dfp0
+aThc1okSM5klz/R/2R0LLuoIW+Ps+AKWAWwTrPTuFBSZGTcnMT/kPWGq7KMFHAyF
+tklNAayw1KfH2fQGRF0ICQKnHvmcaCiHgvQYseapBwPE6jiK6I8ZRcNxZVCVx2+p
+yC1y3pU0mn1EJ0KfdLtSmde9HvJZLv1L13ErKZ4/u+ns3r9ejXGEeSvb4AceYMew
+iPk/lkyLtSdGP/Gn2gq7bcPKqrQNTGduIXYAZonhFTu/UF/zQ7GH8aJs8JB+oKlM
+GwRbDYyp0RGjXiagz/AN
+=Fqkg
 -----END PGP SIGNATURE-----
 
---hobqzgJMeQ3bIoso--
+--OM63UbYQsNeyh2dn--
