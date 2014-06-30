@@ -1,95 +1,68 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V3 1/7] drm/exynos: Support DP CLKCON register in FIMD driver
-Date: Mon, 30 Jun 2014 14:31:50 +0530
-Message-ID: <CAEC9eQOBsnCG3PT_vEkEBt46erXPK_zZE80E1-ivpbGn+YmVrA@mail.gmail.com>
-References: <1403863946-15492-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1403863946-15492-2-git-send-email-ajaykumar.rs@samsung.com>
-	<53AD53E4.2020706@samsung.com>
-	<CAEC9eQMXEEq_VBiZY+BHUuVWvbi7q4MkbbQ-XkcigtZBdgwO9w@mail.gmail.com>
-	<53AD6734.9080909@samsung.com>
-	<CAEC9eQPY+W_Wni7PLtWkHr0QrHW+G8x_+XWapV5tDiKebn=zpA@mail.gmail.com>
-	<00a501cf9400$9d396950$d7ac3bf0$%han@samsung.com>
-	<53B0F634.7090200@samsung.com>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Mon, 30 Jun 2014 10:52:20 +0100
+Message-ID: <20140630095220.GA25779@arm.com>
+References: <1400877218-4113-1-git-send-email-thierry.reding@gmail.com>
+ <CAL_JsqKumG1PSFoVfeGpLLG+MjXFeF4aUjun=vv1BJpaxk0Byg@mail.gmail.com>
+ <4545972.cM7IP1qTXQ@wuerfel>
+ <53A4C0C9.2050908@codeaurora.org>
+ <20140624091808.GC26013@arm.com>
+ <53A9BC18.2090106@codeaurora.org>
+ <20140624181150.GB4067@arm.com>
+ <53A9EF3A.2070704@codeaurora.org>
+ <20140625091858.GG6153@arm.com>
+ <53ADEEDF.7060902@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f172.google.com ([209.85.220.172]:42650 "EHLO
-	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932077AbaF3JBw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 05:01:52 -0400
-In-Reply-To: <53B0F634.7090200@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53ADEEDF.7060902-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hiroshi
 List-Id: linux-samsung-soc@vger.kernel.org
-To: InKi Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>
 
-Hi Inki,
+Hi Olav,
 
-On Mon, Jun 30, 2014 at 11:01 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> On 06/30/2014 03:14 AM, Jingoo Han wrote:
->> On Friday, June 27, 2014 10:03 PM, Ajay kumar wrote:
->>> On Fri, Jun 27, 2014 at 6:14 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
->>>> On 06/27/2014 01:48 PM, Ajay kumar wrote:
->>>>> On Fri, Jun 27, 2014 at 4:52 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
->>>>>> +CC DT
->>>>>>
->>>>>> On 06/27/2014 12:12 PM, Ajay Kumar wrote:
->>>>>>> Add the missing setting for DP CLKCON register.
->>>>>>>
->>>>>>> This register is present on Exynos5 based FIMD controllers,
->>>>>>> and needs to be set if we are using DP.
->>>>>>>
->>>>>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->>>>>>> ---
->>>>>>>  .../devicetree/bindings/video/samsung-fimd.txt     |    1 +
->>>>>>>  drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   23 ++++++++++++++++++++
->>>>>>>  include/video/samsung_fimd.h                       |    4 ++++
->>>>>>>  3 files changed, 28 insertions(+)
->> [.....]
->>
->>>>>>>  static const struct of_device_id fimd_driver_dt_match[] = {
->>>>>>> @@ -331,6 +341,10 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
->>>>>>>       if (clkdiv > 1)
->>>>>>>               val |= VIDCON0_CLKVAL_F(clkdiv - 1) | VIDCON0_CLKDIR;
->>>>>>>
->>>>>>> +     if (ctx->driver_data->has_dp_clkcon &&
->>>>>>> +             ctx->exynos_fimd_output_type == EXYNOS_FIMD_OUTPUT_DP)
->>>>>>> +             writel(DP_CLK_ENABLE, ctx->regs + DP_CLKCON);
->>>>>>> +
->>>>>>>       writel(val, ctx->regs + VIDCON0);
->>>> New code should not split VIDCON0 related code.It should be moved few
->>>> lines above or few lines below.
->>> Ok, for better readability.
->>>
->>>> Anyway this code should be rather placed in power related functions of
->>>> dp encoder, as it enables dp. The only question
->>>> is if DP_CLKCON update can be performed after VIDCON0 update. If yes the
->>>> solution of the whole problem
->>> I will check this.
->>>
->>>> seems to be simple:
->>>> - fimd should provide function fimd_set_dp_clk_gate or sth similar,
->>>> - this function should be called in exynos_dp_poweron/exynos_dp_poweroff.
->>>> I hope I have not missed anything this time.
->>> But, it won't look good to export a FIMD function which sets a FIMD register,
->>> and call it in DP driver!
->>> What does Inki/Jingoo have to say about this?
->> I agree with Ajay Kumar's opinion.
->> It doesn't look good to export the function to set FIMD register
->> and call it by DP driver.
->
-> DP_CLKCON HW register shows clearly there is direct hardware dependency
-> between DP and FIMD.
-> Reflecting this dependency in drivers is just a consequence of HW design.
-> Moreover the register gates also clock for MDNIE, this solution can be
-> used there as well.
->
-> Anyway the most important is that we should avoid adding DT bindings for
-> things we can evaluate in drivers.
+On Fri, Jun 27, 2014 at 11:23:27PM +0100, Olav Haugan wrote:
+> On 6/25/2014 2:18 AM, Will Deacon wrote:
+> > Why can't it be dynamically detected? Whilst the StreamIDs are fixed in
+> > hardware (from the SMMU architecture perspective), the SMRs are completely
+> > programmable. Why doesn't something like Andreas's proposal work for you?
+> > The idea there was to find the constant bits among the StreamIDs for a
+> > master and create the mask accordingly.
+> > 
+> Lets say I have an IOMMU with 2 masters and 2 SMRn slots with the
+> following stream IDs coming from the masters:
+> 
+> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
+> Master 2: 0x30
+> 
+> To make this work I would program SMR[0] with StreamID 0x20 and mask 0xF
+> to ignore lower 4 bits. SMR[1] would just be StreamID 0x30 with mask 0x0.
+> 
+> However, I could also have an IOMMU with 2 masters and 9 SMRn slots with
+> the following stream IDs:
+> 
+> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
+> Master 2: 0x29
+> 
+> Here I would program all SMRn and leave the mask to be 0 for all SMRn's.
+> So how do I detect when to apply a mask or not?
 
-Which approach do you think is better?
-I shall make the patch for the same!
+You would aim to use the smallest number of SMRs per master possible.
+You could probably use:
 
-Thanks and regards,
-Ajay Kumar
+  Master 1: SMR[0].id == 0x20, SMR[0].mask = 0x07
+            SMR[1].id == 0x28, SMR[1].mask = 0x00
+
+  Master 2: SMR[2].id == 0x29, SMR[2].mask = 0x00
+
+> I am not familiar with Andreas's proposal. Do you have a link?
+
+  http://marc.info/?l=linux-arm-kernel&m=139110598005846&w=2
+
+Note that since Calxeda went under, Andreas is unfortunately no longer
+working on this.
+
+Will
