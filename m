@@ -1,134 +1,41 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 Subject: Re: [PATCH v5 05/14] clk: Add generic driver for Maxim PMIC clocks
-Date: Mon, 30 Jun 2014 12:58:57 +0200
-Message-ID: <53B142F1.1050407@collabora.co.uk>
-References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk>	<1403806546-31122-6-git-send-email-javier.martinez@collabora.co.uk> <CAKew6eU5X=WxhECtwUUwbXe_fCRU4bD6B7caWiA2dwcBfThd-g@mail.gmail.com>
+Date: Mon, 30 Jun 2014 12:35:39 +0100
+Message-ID: <20140630113539.GX32514@n2100.arm.linux.org.uk>
+References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk> <1403806546-31122-6-git-send-email-javier.martinez@collabora.co.uk> <CAKew6eU5X=WxhECtwUUwbXe_fCRU4bD6B7caWiA2dwcBfThd-g@mail.gmail.com> <53B142F1.1050407@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:35486 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750825AbaF3K7H (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 06:59:07 -0400
-In-Reply-To: <CAKew6eU5X=WxhECtwUUwbXe_fCRU4bD6B7caWiA2dwcBfThd-g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53B142F1.1050407-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Daniel Stone <daniels-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-Hello Yadwinder,
-
-Thanks a lot for your feedback.
-
-On 06/30/2014 06:01 AM, Yadwinder Singh Brar wrote:
-> Hi Javier,
+On Mon, Jun 30, 2014 at 12:58:57PM +0200, Javier Martinez Canillas wrote:
+> >> +       if (!max_gen->lookup)
+> >> +               return ERR_PTR(-ENOMEM);
+> >> +
+> >> +       max_gen->lookup->con_id = hw->init->name;
+> > 
+> > Also IMO,  init->name should be over-written if name is provided in DT,
+> > otherwise generic "clock-output-names" property will go futile,
+> > perhaps it should be done before clk_register.
+> > 
 > 
-> On Thu, Jun 26, 2014 at 11:45 PM, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
->> Maxim Integrated Power Management ICs are very similar with
->> regard to their clock outputs. Most of the clock drivers for
->> these chips are duplicating code and are simpler enough that
->> can be converted to use a generic driver to consolidate code
->> and avoid duplication.
->>
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->> ---
->>
->> Changes since v4:
->>  - Return recalc 0 if clock isn't enabled in Suggested by Yadwinder Singh Brar.
->>
-> 
-> It seems you didn't implement or posted same patch again :) .
-> 
+> Even though Documentation/devicetree/bindings/clock/clock-bindings.txt says that
+> the "clock-output-names" property is optional I agree with you that will be
+> better to support it. So I'll add it on the next version as well.
 
-Yeah, I did implement it but seems I was sleepy when I posted the series since I
-managed to completely screw up the patch-set... More on that below.
+However, remember that con_id is the _DEVICE_ specific connection name,
+not the _CLOCK_ name.  You will get a NAK from me if you violate this
+rule.
 
->> Changes since v3:
->>  - Add current copyright information. Suggested by Krzysztof Kozlowski
->>  - Do a single allocation for struct max_gen_clk. Suggested by Krzysztof Kozlowski
->>  - Add EXPORT_SYMBOL() for exported symbols. Suggested by Krzysztof Kozlowski
->>
->>  drivers/clk/Kconfig       |   3 +
->>  drivers/clk/Makefile      |   1 +
->>  drivers/clk/clk-max-gen.c | 195 ++++++++++++++++++++++++++++++++++++++++++++++
->>  drivers/clk/clk-max-gen.h |  32 ++++++++
->>  4 files changed, 231 insertions(+)
->>  create mode 100644 drivers/clk/clk-max-gen.c
->>  create mode 100644 drivers/clk/clk-max-gen.h
->>
-> 
-> [ .. ]
-> 
->> +
->> +static unsigned long max_gen_recalc_rate(struct clk_hw *hw,
->> +                                        unsigned long parent_rate)
->> +{
->> +       return 32768;
->> +}
-> 
-> Its still same here.
-> 
-
-Instead of squashing the delta in this patch I did on "[PATCH v4 05/14] clk: Add
-generic driver for Maxim PMIC clocks" [0] so you can look the
-max_gen_recalc_rate() on that patch.
-
-I made the same mistake when squashing the mfd changes into the patch adding the
-regulator driver [1] :-(
-
-Sorry for the mess... I'll fix that for the next version.
-
->> +
->> +struct clk_ops max_gen_clk_ops = {
->> +       .prepare        = max_gen_clk_prepare,
->> +       .unprepare      = max_gen_clk_unprepare,
->> +       .is_prepared    = max_gen_clk_is_prepared,
->> +       .recalc_rate    = max_gen_recalc_rate,
->> +};
->> +EXPORT_SYMBOL_GPL(max_gen_clk_ops);
->> +
->> +static struct clk *max_gen_clk_register(struct device *dev,
->> +                                       struct max_gen_clk *max_gen)
->> +{
->> +       struct clk *clk;
->> +       struct clk_hw *hw = &max_gen->hw;
->> +
->> +       clk = clk_register(dev, hw);
->> +       if (IS_ERR(clk))
->> +               return clk;
->> +
->> +       max_gen->lookup = kzalloc(sizeof(struct clk_lookup), GFP_KERNEL);
-> 
-> As I suggested in other patch[1] also, its better to use
-> clkdev_alloc() instead of kzalloc() here.
-> 
-
-Perfect, I'll do it on the next version.
-
->> +       if (!max_gen->lookup)
->> +               return ERR_PTR(-ENOMEM);
->> +
->> +       max_gen->lookup->con_id = hw->init->name;
-> 
-> Also IMO,  init->name should be over-written if name is provided in DT,
-> otherwise generic "clock-output-names" property will go futile,
-> perhaps it should be done before clk_register.
-> 
-
-Even though Documentation/devicetree/bindings/clock/clock-bindings.txt says that
-the "clock-output-names" property is optional I agree with you that will be
-better to support it. So I'll add it on the next version as well.
-
-> Regards,
-> Yadwinder
-> 
-
-Best regards,
-Javier
-
-[0]: http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg33085.html
-[1]: http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg33168.html
+-- 
+FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
+improving, and getting towards what was expected from it.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
