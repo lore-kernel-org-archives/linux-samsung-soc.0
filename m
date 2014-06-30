@@ -1,75 +1,41 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 03/17] spi: s3c64xx: remove s5p64x0 related spi codes
-Date: Tue, 01 Jul 2014 06:32:13 +0900
-Message-ID: <1404163947-3105-4-git-send-email-kgene.kim@samsung.com>
-References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 00/17] ARM: S5P64X0, S5PC100: no more support in mainline
+Date: Tue, 01 Jul 2014 06:32:10 +0900
+Message-ID: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:31178 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752582AbaF3NTH (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:62589 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752526AbaF3NTH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Mon, 30 Jun 2014 09:19:07 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N7Z00815GZU2Z20@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 30 Jun 2014 22:19:06 +0900 (KST)
-In-reply-to: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
+ with ESMTP id <0N7Z00D5BGZTWS90@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 30 Jun 2014 22:19:05 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@linaro.org>
 
-This patch removes s5p64x0 related spi because of no more support for
-s5p64x0 SoCs. Meanwhile, cleanup SPI DT bindings for s5p6440-spi, it
-should be s5p64x0-spi instead.
+This series removes S5P64X0 and S5PC100 related codes in mainline,
+because no more user now. And if its supporting is required later,
+it will be done with using device tree.
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Mark Brown <broonie@linaro.org>
----
- Documentation/devicetree/bindings/spi/spi-samsung.txt |    1 -
- drivers/spi/spi-s3c64xx.c                             |    9 ---------
- 2 files changed, 10 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-index 86aa061..fe6f903 100644
---- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-@@ -8,7 +8,6 @@ Required SoC Specific Properties:
- - compatible: should be one of the following.
-     - samsung,s3c2443-spi: for s3c2443, s3c2416 and s3c2450 platforms
-     - samsung,s3c6410-spi: for s3c6410 platforms
--    - samsung,s5p6440-spi: for s5p6440 and s5p6450 platforms
-     - samsung,s5pv210-spi: for s5pv210 and s5pc110 platforms
-     - samsung,exynos4210-spi: for exynos4 and exynos5 platforms
- 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 75a5696..4a1890a 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1323,12 +1323,6 @@ static struct s3c64xx_spi_port_config s3c6410_spi_port_config = {
- 	.tx_st_done	= 21,
- };
- 
--static struct s3c64xx_spi_port_config s5p64x0_spi_port_config = {
--	.fifo_lvl_mask	= { 0x1ff, 0x7F },
--	.rx_lvl_offset	= 15,
--	.tx_st_done	= 25,
--};
--
- static struct s3c64xx_spi_port_config s5pc100_spi_port_config = {
- 	.fifo_lvl_mask	= { 0x7f, 0x7F },
- 	.rx_lvl_offset	= 13,
-@@ -1368,9 +1362,6 @@ static struct platform_device_id s3c64xx_spi_driver_ids[] = {
- 		.name		= "s3c6410-spi",
- 		.driver_data	= (kernel_ulong_t)&s3c6410_spi_port_config,
- 	}, {
--		.name		= "s5p64x0-spi",
--		.driver_data	= (kernel_ulong_t)&s5p64x0_spi_port_config,
--	}, {
- 		.name		= "s5pc100-spi",
- 		.driver_data	= (kernel_ulong_t)&s5pc100_spi_port_config,
- 	}, {
--- 
-1.7.10.4
+[PATCH 01/17] ARM: S5P64X0: no more support S5P6440 and S5P6450 SoCs
+[PATCH 02/17] gpio: samsung: remove s5p64x0 related gpio codes
+[PATCH 03/17] spi: s3c64xx: remove s5p64x0 related spi codes
+[PATCH 04/17] ASoC: samsung: no more support for S5P6440 and S5P6450
+[PATCH 05/17] pwm: samsung: remove s5p64x0 related pwm codes
+[PATCH 06/17] video: fbdev: s3c-fb: remove s5p64x0 related fimd
+[PATCH 07/17] serial: samsung: no more support for S5P6440 and
+[PATCH 08/17] ARM: S5PC100: no more support S5PC100 SoC
+[PATCH 09/17] gpio: samsung: remov s5pc100 related gpio codes
+[PATCH 10/17] spi: s3c64xx: remove s5pc100 related spi codes
+[PATCH 11/17] pwm: samsung: remove s5pc100 related pwm codes
+[PATCH 12/17] serial: samsung: no more support for S5PC100 SoC
+[PATCH 13/17] ata: pata_samsung_cf: removes s5pc100 related ata
+[PATCH 14/17] mtd: onenand: remove s5pc100 related onenand codes
+[PATCH 15/17] video: fbdev: s3c-fb: remove s5pc100 related fimd and
+[PATCH 16/17] [media] exynos4-is: removes s5pc100 related fimc codes
+[PATCH 17/17] ASoC: Samsung: remove s5pc100 related codes
