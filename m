@@ -1,105 +1,71 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators
-Date: Mon, 30 Jun 2014 08:06:46 -0700
-Message-ID: <CAD=FV=WCFFvb1+d3XEhTNXgzSksC__t4g1OLvhO-iDXSHHPFsQ@mail.gmail.com>
-References: <1403520321-2431-1-git-send-email-yuvaraj.cd@samsung.com>
-	<1403520321-2431-2-git-send-email-yuvaraj.cd@samsung.com>
-	<CAD=FV=UGjm9y3XoBgWKjw9kp9W=ZrwB-S6Lh7T_LBUgCQZn1ag@mail.gmail.com>
-	<CAKuRcO+OaknUtj9mJ+SQJPMj70hdLTMkDYCXq4L5JdwzDKdj6g@mail.gmail.com>
-	<CAD=FV=Vy5vRan0KEDFFwVO0omgsUMwJK6WwCsWxGYynzT-e5ig@mail.gmail.com>
-	<53B15476.4030000@samsung.com>
+From: Tushar Behera <trblinux@gmail.com>
+Subject: Re: [PATCH 00/17] ARM: S5P64X0, S5PC100: no more support in mainline
+Date: Mon, 30 Jun 2014 21:01:34 +0530
+Message-ID: <53B182D6.5050608@gmail.com>
+References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f171.google.com ([209.85.128.171]:54822 "EHLO
-	mail-ve0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751005AbaF3PGr (ORCPT
+Received: from mail-pd0-f169.google.com ([209.85.192.169]:38629 "EHLO
+	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750815AbaF3Pbi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 11:06:47 -0400
-Received: by mail-ve0-f171.google.com with SMTP id jz11so8261952veb.16
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jun 2014 08:06:46 -0700 (PDT)
-In-Reply-To: <53B15476.4030000@samsung.com>
+	Mon, 30 Jun 2014 11:31:38 -0400
+Received: by mail-pd0-f169.google.com with SMTP id g10so8491905pdj.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jun 2014 08:31:37 -0700 (PDT)
+In-Reply-To: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Yuvaraj Kumar <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, ks.giri@samsung.com, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Jaehoon,
+On 07/01/2014 03:02 AM, Kukjin Kim wrote:
+> This series removes S5P64X0 and S5PC100 related codes in mainline,
+> because no more user now. And if its supporting is required later,
+> it will be done with using device tree.
+> 
+> [PATCH 01/17] ARM: S5P64X0: no more support S5P6440 and S5P6450 SoCs
+> [PATCH 02/17] gpio: samsung: remove s5p64x0 related gpio codes
+> [PATCH 03/17] spi: s3c64xx: remove s5p64x0 related spi codes
+> [PATCH 04/17] ASoC: samsung: no more support for S5P6440 and S5P6450
+> [PATCH 05/17] pwm: samsung: remove s5p64x0 related pwm codes
+> [PATCH 06/17] video: fbdev: s3c-fb: remove s5p64x0 related fimd
+> [PATCH 07/17] serial: samsung: no more support for S5P6440 and
+> [PATCH 08/17] ARM: S5PC100: no more support S5PC100 SoC
+> [PATCH 09/17] gpio: samsung: remov s5pc100 related gpio codes
+> [PATCH 10/17] spi: s3c64xx: remove s5pc100 related spi codes
+> [PATCH 11/17] pwm: samsung: remove s5pc100 related pwm codes
+> [PATCH 12/17] serial: samsung: no more support for S5PC100 SoC
+> [PATCH 13/17] ata: pata_samsung_cf: removes s5pc100 related ata
+> [PATCH 14/17] mtd: onenand: remove s5pc100 related onenand codes
+> [PATCH 15/17] video: fbdev: s3c-fb: remove s5pc100 related fimd and
+> [PATCH 16/17] [media] exynos4-is: removes s5pc100 related fimc codes
+> [PATCH 17/17] ASoC: Samsung: remove s5pc100 related codes
+> 
 
-On Mon, Jun 30, 2014 at 5:13 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> On 06/27/2014 01:18 AM, Doug Anderson wrote:
->> Yuvaraj,
->>
->> On Thu, Jun 26, 2014 at 4:21 AM, Yuvaraj Kumar <yuvaraj.cd@gmail.com> wrote:
->>> Doug
->>>
->>> On Tue, Jun 24, 2014 at 11:30 PM, Doug Anderson <dianders@chromium.org> wrote:
->>>> Yuvaraj,
->>>>
->>>> On Mon, Jun 23, 2014 at 3:45 AM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
->>>>> This patch makes use of mmc_regulator_get_supply() to handle
->>>>> the vmmc and vqmmc regulators.Also it moves the code handling
->>>>> the these regulators to dw_mci_set_ios().It turned on the vmmc
->>>>> and vqmmc during MMC_POWER_UP and MMC_POWER_ON,and turned off
->>>>> during MMC_POWER_OFF.
->>>>>
->>>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
->>>>> ---
->>>>>  drivers/mmc/host/dw_mmc.c |   71 ++++++++++++++++++++++-----------------------
->>>>>  drivers/mmc/host/dw_mmc.h |    2 ++
->>>>>  2 files changed, 36 insertions(+), 37 deletions(-)
->>>>
->>>> Perhaps you could CC me on the whole series for the next version since
->>>> I was involved in privately reviewing previous versions?
->>> It was just accidental missing you in the CC .Surely i will add you in
->>> CC for next versions.
->>>>
->>>> Overall caveat for my review is that I'm nowhere near an SD/MMC expert.
->>>>
->>>>
->>>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->>>>> index 1ac227c..f5cabce 100644
->>>>> --- a/drivers/mmc/host/dw_mmc.c
->>>>> +++ b/drivers/mmc/host/dw_mmc.c
->>>>> @@ -937,6 +937,7 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->>>>>         struct dw_mci_slot *slot = mmc_priv(mmc);
->>>>>         const struct dw_mci_drv_data *drv_data = slot->host->drv_data;
->>>>>         u32 regs;
->>>>> +       int ret;
->>>>>
->>>>>         switch (ios->bus_width) {
->>>>>         case MMC_BUS_WIDTH_4:
->>>>> @@ -975,16 +976,41 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->>>>>
->>>>>         switch (ios->power_mode) {
->>>>>         case MMC_POWER_UP:
->>>>> +               if ((!IS_ERR(mmc->supply.vmmc)) &&
->>>>> +                               !test_bit(DW_MMC_CARD_POWERED, &slot->flags)) {
->>>>> +                       ret = regulator_enable(mmc->supply.vmmc);
->>>>> +                       if (!ret)
->>>>> +                               set_bit(DW_MMC_CARD_POWERED, &slot->flags);
->>>>> +               }
->>>>
->>>> As per below, I'm not sure why you'd want to turn on vqmmc and vmmc at
->>>> different times.
->>> As you can see people's have different opinion on this.When i had a
->>> look at the other drivers in the subsystem which does in the same flow
->>> as above.However i will change in the next version.
->>
->> Given my self proclaimed lack of SD/MMC knowledge, if others have a
->> good reason for doing them separate then you should do it that way.
->> So far I haven't heard that reason but I certainly could be wrong.
->
-> At first time, i had believed nothing problem that it turns on vmmc and vqmmc at different time.
-> It could have the potential problem.
+One more reference to S5PC100 can be found at drivers/irqchip/Kconfig.
 
-OK.  As I said I'm nowhere near an expert on SD/MMC, so if there's
-something out there that says that turning vmmc on before vqmmc is the
-right thing to do then I guess that's the answer.  I would still be
-very curious to get more details on what the potential problem is.
-Could you provide a reference to documentation that says vmmc should
-be on before vqmmc or describe a situation where it's important?
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 131f185..9f39cc6 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -23,7 +23,6 @@ config ARM_VIC
+ config ARM_VIC_NR
+        int
+        default 4 if ARCH_S5PV210
+-       default 3 if ARCH_S5PC100
+        default 2
+        depends on ARM_VIC
+        help
 
-Thanks!
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
 
--Doug
+
+-- 
+Tushar Behera
