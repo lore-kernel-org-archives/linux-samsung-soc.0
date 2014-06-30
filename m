@@ -1,45 +1,69 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v5 3/3] clk: samsung: exynos5420: Setup clocks before
- system suspend
-Date: Mon, 30 Jun 2014 19:58:58 +0200
-Message-ID: <53B1A562.6000300@samsung.com>
-References: <1403781135-6538-1-git-send-email-vikas.sajjan@samsung.com>
- <1403781135-6538-4-git-send-email-vikas.sajjan@samsung.com>
+Subject: Re: [PATCH v2] i2c: s3c2410: resume the I2C controller earlier
+Date: Mon, 30 Jun 2014 20:00:52 +0200
+Message-ID: <53B1A5D4.6050904@samsung.com>
+References: <1403654214-25072-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:8649 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754652AbaF3R72 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 13:59:28 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N7Z00MCGTYU0KC0@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 30 Jun 2014 18:59:18 +0100 (BST)
-In-reply-to: <1403781135-6538-4-git-send-email-vikas.sajjan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1403654214-25072-1-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, Wolfram Sang <wsa@the-dreams.de>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, javier.martinez@collabora.co.uk, Vincent Palatin <vpalatin@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, Abhilash Kesavan <a.kesavan@samsung.com>
 
-Hi Vikas, Abhilash,
+Hi Doug,
 
-On 26.06.2014 13:12, Vikas Sajjan wrote:
-> Prior to suspending the system, we need to ensure that certain
-> clock source and gate registers are unmasked.
+On 25.06.2014 01:56, Doug Anderson wrote:
+> From: Vincent Palatin <vpalatin@chromium.org>
 > 
-> while at it, add these clks to save/restore list also.
+> When the wake-up is triggered by the PMIC RTC, the RTC driver is trying
+> to read the PMIC interrupt status over I2C and fails because the I2C
+> controller is not resumed yet.
+> Let's resume the I2C controller earlier in the _noirq phase
+> (as other hardwares are doing), so we can properly get the wake-up
+> condition.
 > 
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
 > ---
->  drivers/clk/samsung/clk-exynos5420.c |   29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
+> Changes in v2:
+> - Added missing freeze/thaw/poweroff/restore
+> 
+>  drivers/i2c/busses/i2c-s3c2410.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index e828a1d..ecb389c 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -1267,7 +1267,7 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
+>  	return 0;
+>  }
+>  
+> -static int s3c24xx_i2c_resume(struct device *dev)
+> +static int s3c24xx_i2c_resume_noirq(struct device *dev)
+>  {
+>  	struct platform_device *pdev = to_platform_device(dev);
+>  	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+> @@ -1285,7 +1285,11 @@ static int s3c24xx_i2c_resume(struct device *dev)
+>  static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops = {
+>  #ifdef CONFIG_PM_SLEEP
+>  	.suspend_noirq = s3c24xx_i2c_suspend_noirq,
+> -	.resume = s3c24xx_i2c_resume,
+> +	.resume_noirq = s3c24xx_i2c_resume_noirq,
+> +	.freeze_noirq = s3c24xx_i2c_suspend_noirq,
+> +	.thaw_noirq = s3c24xx_i2c_resume_noirq,
+> +	.poweroff_noirq = s3c24xx_i2c_suspend_noirq,
+> +	.restore_noirq = s3c24xx_i2c_resume_noirq,
+>  #endif
+>  };
 
-Looks good. Will apply.
+Also fixes certain issues on Exynos4-based boards.
 
+Acked-by: Tomasz Figa <t.figa@samsung.com>
+
+--
 Best regards,
 Tomasz
