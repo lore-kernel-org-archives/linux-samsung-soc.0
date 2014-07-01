@@ -1,94 +1,46 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 08/17] ARM: S5PC100: no more support S5PC100 SoC
-Date: Tue, 01 Jul 2014 21:18:07 +0900
-Message-ID: <03ef01cf9526$83e93b70$8bbbb250$@samsung.com>
-References: <1404210076-2362-1-git-send-email-kgene.kim@samsung.com>
- <1404210076-2362-2-git-send-email-kgene.kim@samsung.com>
- <5806444.UHVgoFeOY3@wuerfel>
+From: Yuvaraj Cd <yuvaraj.lkml@gmail.com>
+Subject: Re: mwifiex card reset
+Date: Tue, 1 Jul 2014 17:50:08 +0530
+Message-ID: <CA+NduCAuRFTQneJUBiKP2Aeq2HCxe71yxg_iDDStkNvhzRg-Rg@mail.gmail.com>
+References: <CALtMJEBWPM+75wxM2Mp5EX_o6NWtZUJdYRCv6psbvdUn4k295w@mail.gmail.com>
+	<20140628052220.GG10407@us.netrek.org>
+	<20140628072322.GC7410@atomide.com>
+	<CALtMJED5vfgkAhMBXKaDP6u9U9n41c-wziyTxt6e_7XTSxG3oQ@mail.gmail.com>
+	<20140630061912.GA2461@atomide.com>
+	<53B1BAC1.3090902@zonque.org>
+	<477F20668A386D41ADCC57781B1F70430FE5F37540@SC-VEXCH1.marvell.com>
+	<20140701065721.GM24891@us.netrek.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:28795 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751171AbaGAMSK (ORCPT
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:47060 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751171AbaGAMUK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jul 2014 08:18:10 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N81003IC8U7KU80@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 01 Jul 2014 21:18:07 +0900 (KST)
-In-reply-to: <5806444.UHVgoFeOY3@wuerfel>
-Content-language: ko
+	Tue, 1 Jul 2014 08:20:10 -0400
+In-Reply-To: <20140701065721.GM24891@us.netrek.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, t.figa@samsung.com
+To: James Cameron <quozl@laptop.org>
+Cc: Bing Zhao <bzhao@marvell.com>, Daniel Mack <daniel@zonque.org>, Tony Lindgren <tony@atomide.com>, Andreas Fenkart <afenkart@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>, sunil joshi <joshi@samsung.com>, prashanth.g@samsung.com
 
-Arnd Bergmann wrote:
-> 
-> On Tuesday 01 July 2014 19:21:16 Kukjin Kim wrote:
-> > --- a/arch/arm/plat-samsung/Kconfig
-> > +++ b/arch/arm/plat-samsung/Kconfig
-> > @@ -15,7 +15,7 @@ config PLAT_SAMSUNG
-> >
-> >  config PLAT_S5P
-> >         bool
-> > -       depends on (ARCH_S5PC100 || ARCH_S5PV210)
-> > +       depends on ARCH_S5PV210
-> >         default y
-> >         select ARCH_REQUIRE_GPIOLIB
-> >         select ARM_VIC
-> > @@ -78,14 +78,14 @@ config SAMSUNG_CLKSRC
-> >           used by newer systems such as the S3C64XX.
-> >
-> >  config S5P_CLOCK
-> > -       def_bool (ARCH_S5PC100 || ARCH_S5PV210)
-> > +       def_bool ARCH_S5PV210
-> >         help
-> >           Support common clock part for ARCH_S5P and ARCH_EXYNOS SoCs
-> >
-> >  # options for IRQ support
-> >
-> >  config S5P_IRQ
-> > -       def_bool (ARCH_S5PC100 || ARCH_S5PV210)
-> > +       def_bool ARCH_S5PV210
-> >         help
-> >           Support common interrupt part for ARCH_S5P SoCs
-> >
-> > @@ -142,7 +142,7 @@ config S3C_GPIO_TRACK
-> >
-> >  config S5P_DEV_UART
-> >         def_bool y
-> > -       depends on (ARCH_S5PC100 || ARCH_S5PV210)
-> > +       depends on ARCH_S5PV210
-> >
-> >  # ADC driver
-> >
-> 
-> I guess the next logical step would be to either remove these entirely
-> after the move to DT-only ARCH_S5PV210 obsoletes them, or to move the
-> code back to mach-s5pv210, right?
-> 
-Yeah both are possible, but the latter would be more possible at this moment,
-I think. I will cleanup stuff in plat-samsung as you suggested :-)
-
-> 
-> >  config SAMSUNG_DMADEV
-> >        bool "Use legacy Samsung DMA abstraction"
-> > -       depends on CPU_S5PV210 || CPU_S5PC100 || ARCH_S3C64XX
-> > +       depends on CPU_S5PV210 || ARCH_S3C64XX
-> >         select DMADEVICES
-> >         default y
-> >        help
-> 
-> It would be good to just kill this one off now, as nothing uses it
-> any more, but that's also a separate patch.
-> 
-Maybe it is still used for s5pv210 and s3c64xx? If I misunderstand your
-comments, please kindly let me know.
-
-Thanks,
-Kukjin
+On Tue, Jul 1, 2014 at 12:27 PM, James Cameron <quozl@laptop.org> wrote:
+> On Mon, Jun 30, 2014 at 11:44:29PM -0700, Bing Zhao wrote:
+>> I may have missed something, but doesn't the MMC_POWER_OFF and
+>> MMC_POWER_ON|UP handling in controller driver help?
+>> Anyway the clocks/GPIOs/regulators are sort of platform
+>> dependent. Would it be better putting it in /arch/arm/mach-xxxxx/?
+>
+> Wouldn't device tree for mmc be better?
+I have come across same problem.Below is the thread in which more
+discussions happened on this.
+ http://patchwork.ozlabs.org/patch/312444/
+I am adding few more those who are interested in this solution.
+>
+> --
+> James Cameron
+> http://quozl.linux.org.au/
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
