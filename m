@@ -1,41 +1,38 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 7/7] ARM: dts: exynos4210-universal_c210: enable hdmi support
-Date: Tue, 01 Jul 2014 10:10:11 +0200
-Message-ID: <1404202211-15788-8-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 6/7] ARM: dts: exynos4412-odroid: enable hdmi support
+Date: Tue, 01 Jul 2014 10:10:10 +0200
+Message-ID: <1404202211-15788-7-git-send-email-m.szyprowski@samsung.com>
 References: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:27046 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755725AbaGAIKi (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58779 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757405AbaGAIKh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jul 2014 04:10:38 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
+	Tue, 1 Jul 2014 04:10:37 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N8000DH0XDBUY80@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 01 Jul 2014 09:10:23 +0100 (BST)
+ 17 2011)) with ESMTP id <0N80006GXXDE7580@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 01 Jul 2014 09:10:26 +0100 (BST)
 In-reply-to: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+This patch adds nodes specific to Exynos4412 based Odroid X/X2/U2/U3
+boards required for enabling HDMI display.
 
-This patch adds configuration of hw modules required to enable HDMI
-support on Universal C210 board.
-
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos4210-universal_c210.dts | 65 +++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 52 +++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index d50eb3aa708e..585082397d5a 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -43,6 +43,14 @@
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index d1b33a8efa9d..2856242d640a 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -52,6 +52,14 @@
  		};
  	};
  
@@ -47,36 +44,36 @@ index d50eb3aa708e..585082397d5a 100644
 +		domain-always-on;
 +	};
 +
- 	mct@10050000 {
- 		compatible = "none";
+ 	watchdog@10060000 {
+ 		status = "okay";
  	};
-@@ -487,6 +495,63 @@
- 			status = "okay";
- 		};
+@@ -186,6 +194,20 @@
+ 					regulator-always-on;
+ 				};
+ 
++				ldo8_reg: ldo@8 {
++					regulator-compatible = "LDO8";
++					regulator-name = "VDD10_HDMI_1.0V";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++				};
++
++				ldo10_reg: ldo@10 {
++					regulator-compatible = "LDO10";
++					regulator-name = "VDDQ_MIPIHSI_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++				};
++
+ 				ldo11_reg: LDO11 {
+ 					regulator-name = "VDD18_ABB1_1.8V";
+ 					regulator-min-microvolt = <1800000>;
+@@ -332,6 +354,31 @@
+ 	ehci: ehci@12580000 {
+ 		status = "okay";
  	};
 +
-+	hdmi_en: voltage-regulator-hdmi-5v {
-+	        compatible = "regulator-fixed";
-+		regulator-name = "HDMI_5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpe0 1 0>;
-+		enable-active-high;
-+	};
-+
-+	hdmi_ddc: i2c-ddc {
-+		compatible = "i2c-gpio";
-+		gpios = <&gpe4 2 0 &gpe4 3 0>;
-+		i2c-gpio,delay-us = <100>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		pinctrl-0 = <&i2c_ddc_bus>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+	};
-+
-+	mixer@12C10000 {
++	mixer: mixer@12C10000 {
 +		status = "okay";
 +	};
 +
@@ -84,35 +81,34 @@ index d50eb3aa708e..585082397d5a 100644
 +		hpd-gpio = <&gpx3 7 0>;
 +		pinctrl-names = "default";
 +		pinctrl-0 = <&hdmi_hpd>;
-+		hdmi-en-supply = <&hdmi_en>;
-+		vdd-supply = <&ldo3_reg>;
-+		vdd_osc-supply = <&ldo4_reg>;
-+		vdd_pll-supply = <&ldo3_reg>;
++		vdd-supply = <&ldo8_reg>;
++		vdd_osc-supply = <&ldo10_reg>;
++		vdd_pll-supply = <&ldo8_reg>;
 +		ddc = <&hdmi_ddc>;
 +		status = "okay";
++	};
++
++	hdmi_ddc: i2c@13880000 {
++		status = "okay";
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c2_bus>;
 +	};
 +
 +	i2c@138E0000 {
 +		status = "okay";
 +	};
-+};
-+
-+&pinctrl_1 {
-+	hdmi_hpd: hdmi-hpd {
-+		samsung,pins = "gpx3-7";
-+		samsung,pin-pud = <0>;
-+	};
-+};
-+
-+&pinctrl_0 {
-+	i2c_ddc_bus: i2c-ddc-bus {
-+		samsung,pins = "gpe4-2", "gpe4-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
  };
  
- &mdma1 {
+ &pinctrl_1 {
+@@ -339,4 +386,9 @@
+ 		samsung,pins = "gpx1-3";
+ 		samsung,pin-pud = <0>;
+ 	};
++
++	hdmi_hpd: hdmi-hpd {
++		samsung,pins = "gpx3-7";
++		samsung,pin-pud = <1>;
++	};
+ };
 -- 
 1.9.2
