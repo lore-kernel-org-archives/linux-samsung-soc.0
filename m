@@ -1,38 +1,67 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH 08/17] ARM: S5PC100: no more support S5PC100 SoC
-Date: Tue, 1 Jul 2014 08:55:49 -0400
-Message-ID: <20140701125549.GG23978@titan.lakedaemon.net>
-References: <1404210076-2362-1-git-send-email-kgene.kim@samsung.com>
- <1404210076-2362-2-git-send-email-kgene.kim@samsung.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH v2] ARM: EXYNOS: Use MCPM call-backs to support S2R on Exynos5420
+Date: Tue, 1 Jul 2014 18:44:49 +0530
+Message-ID: <CAM4voama9omO4=x2+GaQesLQOh+5U2q8FQSe4+VwA0_4pOukkg@mail.gmail.com>
+References: <1403780312-22885-1-git-send-email-a.kesavan@samsung.com>
+	<1404152927-11168-1-git-send-email-a.kesavan@samsung.com>
+	<alpine.LFD.2.11.1407010012150.16842@knanqh.ubzr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:16709 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1753780AbaGAMz6 (ORCPT
+Received: from mail-qg0-f53.google.com ([209.85.192.53]:61313 "EHLO
+	mail-qg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751513AbaGANOu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jul 2014 08:55:58 -0400
-Content-Disposition: inline
-In-Reply-To: <1404210076-2362-2-git-send-email-kgene.kim@samsung.com>
+	Tue, 1 Jul 2014 09:14:50 -0400
+Received: by mail-qg0-f53.google.com with SMTP id i50so3251755qgf.40
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Jul 2014 06:14:50 -0700 (PDT)
+In-Reply-To: <alpine.LFD.2.11.1407010012150.16842@knanqh.ubzr>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, arnd@arndb.de
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Andrew Bresticker <abrestic@chromium.org>, Douglas Anderson <dianders@chromium.org>
 
-Kukjin,
+Hi Nicolas,
 
-On Tue, Jul 01, 2014 at 07:21:16PM +0900, Kukjin Kim wrote:
-> This patch removes supporting codes for s5pc100 because no more used
-> now.
-> 
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
-...
->  drivers/irqchip/Kconfig                            |    1 -
+On Tue, Jul 1, 2014 at 9:49 AM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+> On Mon, 30 Jun 2014, Abhilash Kesavan wrote:
+>
+>> Use the MCPM layer to handle core suspend/resume on Exynos5420.
+>> Also, restore the entry address setup code post-resume.
+>>
+>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>> ---
+> [...]
+>
+> Could you tell me more about this?
+>
+>> @@ -150,7 +153,13 @@ static void exynos_power_down(void)
+>>       BUG_ON(__mcpm_cluster_state(cluster) != CLUSTER_UP);
+>>       cpu_use_count[cpu][cluster]--;
+>>       if (cpu_use_count[cpu][cluster] == 0) {
+>> -             exynos_cpu_power_down(cpunr);
+>> +             /*
+>> +              * Bypass power down for CPU0 during suspend. This is being
+>> +              * taken care by the SYS_PWR_CFG bit in CORE0_SYS_PWR_REG.
+>> +              */
+>> +             if ((cpunr != 0) ||
+>> +             (__raw_readl(pmu_base_addr + S5P_INFORM1) != S5P_CHECK_SLEEP))
+>> +                     exynos_cpu_power_down(cpunr);
+>
+> What happens if CPU0 is the first in the cluster to be idled?  Will it
+> remain powered up until all the others have gone idle too?
+This check is only for handling the S2R CPU0 case. In case of
+idle/switching the S5P_CHECK_SLEEP flag would not be set and hence
+there would be no change in behavior for them.
+During suspend, we enable the ARM_USE_STANDBY_WFI0 bit which tells the
+PMU when the CPU0 is ready to be suspended. This in conjunction with
+the sleep state core configuration (setting SYS_PWR_REG low) causes
+the CPU0 to go down. We should not write to the CPU0 power
+configuration register (exynos_cpu_power_down) along with this during
+suspend.
 
-Acked-by: Jason Cooper <jason@lakedaemon.net>
-
-thx,
-
-Jason.
+Regards,
+Abhilash
+>
+>
+> Nicolas
