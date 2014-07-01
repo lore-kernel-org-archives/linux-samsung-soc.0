@@ -1,72 +1,56 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH v2 0/9] thermal: exynos: various cleanups
-Date: Tue, 01 Jul 2014 10:09:13 +0800
-Message-ID: <1404180553.8366.16.camel@rzhang1-toshiba>
-References: <1403026045-16024-1-git-send-email-b.zolnierkie@samsung.com>
+From: Sachin Kamat <spk.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: Add TMU dt node to monitor the temperature for Exynos3250
+Date: Tue, 1 Jul 2014 09:03:18 +0530
+Message-ID: <CAK5sBcFJMK-y+MZPXCufKEmp=v1nFJHstvNTczsQ3ez3SUPbKw@mail.gmail.com>
+References: <1404175210-9278-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1403026045-16024-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Eduardo Valentin <eduardo.valentin@gmail.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1404175210-9278-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "open list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Eduardo,
+Hi Chanwoo,
 
-what do you think of this patch set?
+On Tue, Jul 1, 2014 at 6:10 AM, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This patch add TMU (Thermal Management Unit) dt node to monitor the high
+> temperature for Exynos3250.
+>
+> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+> This patch has a dependency on following patch [1]:
+>  [1] https://lkml.org/lkml/2014/6/30/805
+>
+>  arch/arm/boot/dts/exynos3250.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+> index 3660cab..1e566af 100644
+> --- a/arch/arm/boot/dts/exynos3250.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+> @@ -192,6 +192,16 @@
+>                         status = "disabled";
+>                 };
+>
+> +               tmu: tmu@100C0000 {
+> +                       compatible = "samsung,exynos3250-tmu";
+> +                       interrupt-parent = <&gic>;
+> +                       reg = <0x100C0000 0x100>;
+> +                       interrupts = <0 216 0>;
+> +                       clocks = <&cmu CLK_TMU_APBIF>;
+> +                       clock-names = "tmu_apbif";
+> +                       status = "disabled";
 
-thanks,
-rui
+I don't think there would be any board specific properties needed. Hence
+leave the status as enabled (by deleting the above line).
 
-On Tue, 2014-06-17 at 19:27 +0200, Bartlomiej Zolnierkiewicz wrote:
-> Hi,
-> 
-> This patch series contains various cleanups for EXYNOS thermal
-> driver.  Overall it decreases driver's LOC by 12%.  It is based
-> on next-20140617 kernel.  It should not cause any functionality
-> changes.
-> 
-> Changes since v1:
-> - synced patches against next-20140617
-> - merged patch "thermal: exynos: remove unused defines" into
->   "thermal: exynos: remove unused struct exynos_tmu_registers
->   entries" one (per request from Eduardo)
-> - improved patch descriptions for patches #1-5
-> - fixed documentation for pdata->gain and pdata->reference_voltage
-> - added Reviewed-by from Amit to patches #6, #7 and #10
-> - added missing Acked-by from Kyungmin Park
-> 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> 
-> Bartlomiej Zolnierkiewicz (9):
->   thermal: exynos: remove unused struct exynos_tmu_registers entries
->   thermal: exynos: remove dead code for HW_MODE calibration
->   thermal: exynos: remove dead code for TYPE_TWO_POINT_TRIMMING
->     calibration
->   thermal: exynos: remove redundant pdata checks from
->     exynos_tmu_initialize()
->   thermal: exynos: remove redundant threshold_code checks from
->     exynos_tmu_initialize()
->   thermal: exynos: simplify temp_to_code() and code_to_temp()
->   thermal: exynos: cache non_hw_trigger_levels in pdata
->   thermal: exynos: remove redundant pdata checks from
->     exynos_tmu_control()
->   thermal: exynos: remove identical values from exynos*_tmu_registers
->     structures
-> 
->  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
->  drivers/thermal/samsung/exynos_tmu.c            | 181 ++++--------------------
->  drivers/thermal/samsung/exynos_tmu.h            |  90 +-----------
->  drivers/thermal/samsung/exynos_tmu_data.c       |  64 +--------
->  drivers/thermal/samsung/exynos_tmu_data.h       |  33 +----
->  5 files changed, 41 insertions(+), 328 deletions(-)
-> 
-
-
+-- 
+Regards,
+Sachin.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
