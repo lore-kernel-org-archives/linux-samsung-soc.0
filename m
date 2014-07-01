@@ -1,65 +1,61 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+
- (part1)
-Date: Tue, 1 Jul 2014 18:35:47 +0100
-Message-ID: <20140701173547.GW28164@arm.com>
-References: <E1X20mL-00083I-Sv@rmk-PC.arm.linux.org.uk>
- <yw1x4mz1f2t9.fsf@unicorn.mansr.com>
- <20140701171346.GP3705@n2100.arm.linux.org.uk>
- <yw1xzjgtdmas.fsf@unicorn.mansr.com>
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: Re: [PATCH 1/7] clk: exynos4: add support for MOUT_HDMI and MOUT_MIXER
+ clocks
+Date: Tue, 01 Jul 2014 19:44:26 +0200
+Message-ID: <53B2F37A.30208@gmx.net>
+References: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com> <1404202211-15788-2-git-send-email-m.szyprowski@samsung.com> <53B27565.8090703@gmx.net> <53B277EE.1060704@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-crypto-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <yw1xzjgtdmas.fsf@unicorn.mansr.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.gmx.net ([212.227.15.19]:59517 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755607AbaGARom (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 1 Jul 2014 13:44:42 -0400
+In-Reply-To: <53B277EE.1060704@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>
 
-Hi Mans,
+Hi,
 
-On Tue, Jul 01, 2014 at 06:24:43PM +0100, M=E5ns Rullg=E5rd wrote:
-> Russell King - ARM Linux <linux@arm.linux.org.uk> writes:
-> > As you point out, "bx lr" /may/ be treated specially (I've actually=
- been
->=20
-> Most, if not all, Cortex-A cores do this according the public TRMs.
-> They also do the same thing for "mov pc, lr" so there will probably b=
-e
-> no performance gain from this change.  It's still a good idea though,
-> since we don't know what future cores will do.
 
-=46unnily enough, that's not actually true (and is more or less what pr=
-ompted
-this patch after discussion with Russell). There are cores out there th=
-at
-don't predict mov pc, lr at all (let alone do anything with the return
-stack).
+Marek Szyprowski wrote:
+> Hello,
+> 
+> On 2014-07-01 10:46, Tobias Jakobi wrote:
+>> Hello Marek,
+>>
+>> I think this particular clock setup should already be handled by this
+>> patch:
+>> http://www.spinics.net/lists/arm-kernel/msg320013.html
+>>
+>> Or am I missing something here?
+> 
+> The patch you have pointed requires adding support for SET_PARENT_PARENT
+> feature to clock core, which has not been accepted yet. Only then Exynod
+> DRM drivers can be updated to correctly handle the changed clock tree.
+I'm aware of this, but my point is: Wouldn't it be better to get the
+SET_PARENT_PARENT upstream instead of applying a work-around (I am
+assuming of course that SET_PARENT_PARENT is the correct way of handling
+these clocks), which would be reverted later anyway?
 
-> > discussing this with Will Deacon over the last couple of days, who =
-has
-> > also been talking to the hardware people in ARM, and Will is happy =
-with
-> > this patch as in its current form.)  This is why I've changed all
-> > "mov pc, reg" instructions which return in some way to use this mac=
-ro,
-> > and left others (those which are used to call some function and ret=
-urn
-> > back to the same point) alone.
->=20
-> In that case the patch should be fine.  Your patch description didn't
-> make it clear that only actual returns were being changed.
+Also this looks like similar to the work duplication issue that was
+raised before here on the ml. Different groups working on the same
+thing, but with no or little coordination between them. Might be just me
+though...
 
-I'm led to believe that some predictors require lr in order to update t=
-he
-return stack, whilst others don't. That part is all horribly
-micro-architectural, so the current patch is doing the right thing by
-sticking to the ARM ARM but enabling us to hook into other registers la=
-ter
-on if we choose.
 
-Cheers,
+> My approach is to introduce minimal changes and use the code which is
+> already in the exynos drm/hdmi driver (it already manages 'mout_hdmi/mixer'
+> clocks). If other solution is finally accepted, the code can be simplified
+> and mout_hdmi/mixer clocks simply ignored. For now - my changes are needed
+> to get HDMI output working and have least dependencies.
+> 
+> Best regards
 
-Will
+
+With best wishes,
+Tobias
