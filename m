@@ -1,52 +1,94 @@
-From: Tushar Behera <trblinux@gmail.com>
-Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
-Date: Tue, 01 Jul 2014 17:29:33 +0530
-Message-ID: <53B2A2A5.4070203@gmail.com>
-References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>	<1402464739-19044-3-git-send-email-tushar.b@samsung.com>	<CAD=FV=W5yh58fYTwRZxmZt=BORcZMSRV0oRe12yA74Q5h2S4YQ@mail.gmail.com>	<7hpphwlgn0.fsf@paris.lan>	<CAC5m3Bzey-YoPLmjAq4YNPQ13rojtVFWAbnhX6-ZFtYZwEdMWg@mail.gmail.com>	<7h8uojk61a.fsf@paris.lan>	<53ACE724.7090606@gmail.com>	<CAGa+x86COQz+cYtrXWrP-sjFGz-gi2tf6GEvLiKYoQwg1zMivQ@mail.gmail.com> <CAGa+x87LHiYGb03=GRcZisK1=TyakW1htd1E2vOQ6ijZKw8syg@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 08/17] ARM: S5PC100: no more support S5PC100 SoC
+Date: Tue, 01 Jul 2014 21:18:07 +0900
+Message-ID: <03ef01cf9526$83e93b70$8bbbb250$@samsung.com>
+References: <1404210076-2362-1-git-send-email-kgene.kim@samsung.com>
+ <1404210076-2362-2-git-send-email-kgene.kim@samsung.com>
+ <5806444.UHVgoFeOY3@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:37609 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751171AbaGAL7k (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:28795 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751171AbaGAMSK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jul 2014 07:59:40 -0400
-In-Reply-To: <CAGa+x87LHiYGb03=GRcZisK1=TyakW1htd1E2vOQ6ijZKw8syg@mail.gmail.com>
+	Tue, 1 Jul 2014 08:18:10 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N81003IC8U7KU80@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 01 Jul 2014 21:18:07 +0900 (KST)
+In-reply-to: <5806444.UHVgoFeOY3@wuerfel>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@linaro.org>
-Cc: Doug Anderson <dianders@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>
+To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, t.figa@samsung.com
 
-On 06/27/2014 08:18 PM, Kevin Hilman wrote:
-> On Fri, Jun 27, 2014 at 7:18 AM, Kevin Hilman <khilman@linaro.org> wrote:
->> On Thu, Jun 26, 2014 at 8:38 PM, Tushar Behera <trblinux@gmail.com> wrote:
->>
->>> Would you please provide me the environment setting of your u-boot?
->>> U-boot environment on my board has been over-written, I would like to
->>> set it same as yours and try to reproduce the issue at my end. With only
->>> 'sound init', I don't seem to hit this issue anymore.
->>
->> Attached is a full boot log using v3.16-rc2 with my patch adding
->> CLK_IGNORE_UNUSED to mau_epll and Doug's aclk66_peric patch.  In the
->> boot log, you'll see the output of 'printenv' inside u-boot where the
->> environment is dumped.
+Arnd Bergmann wrote:
 > 
-> Oops, I sent you a boot log for the octa board.  Here's the one for
-> peach-pi with the same kernel (built with upstream exynos_defconfig)
+> On Tuesday 01 July 2014 19:21:16 Kukjin Kim wrote:
+> > --- a/arch/arm/plat-samsung/Kconfig
+> > +++ b/arch/arm/plat-samsung/Kconfig
+> > @@ -15,7 +15,7 @@ config PLAT_SAMSUNG
+> >
+> >  config PLAT_S5P
+> >         bool
+> > -       depends on (ARCH_S5PC100 || ARCH_S5PV210)
+> > +       depends on ARCH_S5PV210
+> >         default y
+> >         select ARCH_REQUIRE_GPIOLIB
+> >         select ARM_VIC
+> > @@ -78,14 +78,14 @@ config SAMSUNG_CLKSRC
+> >           used by newer systems such as the S3C64XX.
+> >
+> >  config S5P_CLOCK
+> > -       def_bool (ARCH_S5PC100 || ARCH_S5PV210)
+> > +       def_bool ARCH_S5PV210
+> >         help
+> >           Support common clock part for ARCH_S5P and ARCH_EXYNOS SoCs
+> >
+> >  # options for IRQ support
+> >
+> >  config S5P_IRQ
+> > -       def_bool (ARCH_S5PC100 || ARCH_S5PV210)
+> > +       def_bool ARCH_S5PV210
+> >         help
+> >           Support common interrupt part for ARCH_S5P SoCs
+> >
+> > @@ -142,7 +142,7 @@ config S3C_GPIO_TRACK
+> >
+> >  config S5P_DEV_UART
+> >         def_bool y
+> > -       depends on (ARCH_S5PC100 || ARCH_S5PV210)
+> > +       depends on ARCH_S5PV210
+> >
+> >  # ADC driver
+> >
 > 
-> Kevin
+> I guess the next logical step would be to either remove these entirely
+> after the move to DT-only ARCH_S5PV210 obsoletes them, or to move the
+> code back to mach-s5pv210, right?
 > 
+Yeah both are possible, but the latter would be more possible at this moment,
+I think. I will cleanup stuff in plat-samsung as you suggested :-)
 
-The u-boot version is a little different on my Peach-Pi as compared to
-the market release version. Not sure if that is making any difference.
+> 
+> >  config SAMSUNG_DMADEV
+> >        bool "Use legacy Samsung DMA abstraction"
+> > -       depends on CPU_S5PV210 || CPU_S5PC100 || ARCH_S3C64XX
+> > +       depends on CPU_S5PV210 || ARCH_S3C64XX
+> >         select DMADEVICES
+> >         default y
+> >        help
+> 
+> It would be good to just kill this one off now, as nothing uses it
+> any more, but that's also a separate patch.
+> 
+Maybe it is still used for s5pv210 and s3c64xx? If I misunderstand your
+comments, please kindly let me know.
 
-Peach # version
-
-U-Boot 2013.04 (Feb 13 2014 - 16:35:03) for Peach
-armv7a-cros-linux-gnueabi-gcc.real (4.8.1_cos_gg_feea904_4.8.1-r66)
-4.8.x-google 20130905 (prerelease)
-GNU ld (binutils-2.22_cos_gg_2) 2.22
-
--- 
-Tushar Behera
+Thanks,
+Kukjin
