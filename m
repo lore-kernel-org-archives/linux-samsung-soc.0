@@ -1,72 +1,126 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH 06/17] video: fbdev: s3c-fb: remove s5p64x0 related fimd
- codes
-Date: Tue, 1 Jul 2014 09:25:59 +0300
-Message-ID: <53B25477.4020902@ti.com>
-References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com> <1404163947-3105-7-git-send-email-kgene.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="lq2rE6rxeR4ONDpOwP3txKWCmwSGX25Xt"
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: dts: exynos4412-odroid: add support for GPIO buttons
+Date: Tue, 01 Jul 2014 09:20:09 +0200
+Message-ID: <1404199209-9722-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:51886 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751164AbaGAG00 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:23773 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753109AbaGAHUZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jul 2014 02:26:26 -0400
-In-Reply-To: <1404163947-3105-7-git-send-email-kgene.kim@samsung.com>
+	Tue, 1 Jul 2014 03:20:25 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N8000F7AV1QRS70@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 01 Jul 2014 08:20:15 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>
 
---lq2rE6rxeR4ONDpOwP3txKWCmwSGX25Xt
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+This patch adds support for simple GPIO-based button availabled on
+Exynos4 based Odroid boards. All supported boards have POWER button,
+which has been defined in exynos4412-odroid-common.dtsi. X/X2 boards
+also have additional user-configurable button which has been mapped to
+KEY_HOME. All defined keys have been marked as possible wakeup source.
 
-On 01/07/14 00:32, Kukjin Kim wrote:
-> This patch removes fimd codes for s5p6440 and s5p6450 SoCs.
->=20
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> ---
->  .../devicetree/bindings/video/samsung-fimd.txt     |    1 -
->  drivers/video/fbdev/Kconfig                        |    2 +-
->  drivers/video/fbdev/s3c-fb.c                       |   30 ------------=
---------
->  3 files changed, 1 insertion(+), 32 deletions(-)
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+Hello,
 
-Shall I queue this and patch 15/17 via fbdev tree, or are there
-dependencies and the whole series should go as one?
+This patch is a continuation of the '[PATCH v2 0/4] Add Exynos4412 based
+Odroid X2 and U2/U3/U3+ support' series
+(http://www.spinics.net/lists/linux-samsung-soc/msg33115.html).
 
-If the latter, for this and 15/17:
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+---
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 24 ++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4412-odroidx.dts        | 21 +++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
 
-Acked-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-
- Tomi
-
-
-
---lq2rE6rxeR4ONDpOwP3txKWCmwSGX25Xt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJTslR3AAoJEPo9qoy8lh71kRYP/RNYJ7R9Szv7OrWZaoZlEzEk
-ZF5oGkJXn06RPzPsPcGr/HasqNNf/rsKi8CGcO+yOYG1QILjQIsYMGomijrQ1aTt
-iqqogOZWYaJk2kx8nsTu/stSJfCh8omZ9Ws0zB9AfP5FMUH4sji/yNfid6hwNNDm
-SsFTVabpFlcens2CaIjuUEHQXXS4P2EgjIZ8JrLfVjypuEOHMiNaI/Sw069NcTrj
-ViIiZ5MDo9NYwkOqVi8JKoOdFeOmmjIT13kzgxWukxBEkueCpzw17h3pV7Gx3wEE
-ctcP/OAOVmSnFTRH2KZfRWHRSNMw1jAaiKbFPwhur0HeErGEu8P9b4AfZLj02Aja
-JpMDe+Gmg8T4QqpicOLfevxZO48ehANZzaR3B1jXXwIlppwWBI+h9PW23m7eUxY5
-5N933hugaoVP2m0zINFqk66pw14CzmTkJveADsF/tAF1YXDGjguNc5FZRtVw60T1
-sQgyd9ujXMmRywoORoSH38sy6td+ATnd8YIN/Cbpoavdf+zYmq8Qb/oJuOp5vvAP
-/in1RBV5FLiaiFIUKaTo7q8iKE6GLWvtq0uJAX/QeMyNbmF0u42+7yMfl0fgEmGg
-GRTQ+0hYM3NtKHXB2Yww3Z6TUg12GQvM9hpB+TsRWvMdXbEP2+4bI7uSoF7x8mhU
-3vLcziNmDXCvYUUbaSVd
-=mUik
------END PGP SIGNATURE-----
-
---lq2rE6rxeR4ONDpOwP3txKWCmwSGX25Xt--
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index ad2cb32a3439..d1b33a8efa9d 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -7,6 +7,7 @@
+  * published by the Free Software Foundation.
+ */
+ 
++#include <dt-bindings/input/input.h>
+ #include "exynos4412.dtsi"
+ 
+ / {
+@@ -15,6 +16,22 @@
+ 		reg = <0x0204F000 0x1000>;
+ 	};
+ 
++	gpio_keys {
++		compatible = "gpio-keys";
++		pinctrl-names = "default";
++		pinctrl-0 = <&gpio_power_key>;
++
++		power_key {
++			interrupt-parent = <&gpx1>;
++			interrupts = <3 0>;
++			gpios = <&gpx1 3 1>;
++			linux,code = <KEY_POWER>;
++			label = "power key";
++			debounce-interval = <10>;
++			gpio-key,wakeup;
++		};
++	};
++
+ 	mmc@12550000 {
+ 		pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
+ 		pinctrl-names = "default";
+@@ -316,3 +333,10 @@
+ 		status = "okay";
+ 	};
+ };
++
++&pinctrl_1 {
++	gpio_power_key: power_key {
++		samsung,pins = "gpx1-3";
++		samsung,pin-pud = <0>;
++	};
++};
+diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
+index 990a04760313..18c567f5dbea 100644
+--- a/arch/arm/boot/dts/exynos4412-odroidx.dts
++++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
+@@ -46,6 +46,20 @@
+ 		status = "okay";
+ 	};
+ 
++	gpio_keys {
++		pinctrl-0 = <&gpio_power_key &gpio_home_key>;
++
++		home_key {
++			interrupt-parent = <&gpx2>;
++			interrupts = <2 0>;
++			gpios = <&gpx2 2 0>;
++			linux,code = <KEY_HOME>;
++			label = "home key";
++			debounce-interval = <10>;
++			gpio-key,wakeup;
++		};
++	};
++
+ 	regulator_p3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "p3v3_en";
+@@ -62,3 +76,10 @@
+ 		status = "okay";
+ 	};
+ };
++
++&pinctrl_1 {
++	gpio_home_key: home_key {
++		samsung,pins = "gpx2-2";
++		samsung,pin-pud = <0>;
++	};
++};
+-- 
+1.9.2
