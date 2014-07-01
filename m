@@ -1,114 +1,47 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 6/7] ARM: dts: exynos4412-odroid: enable hdmi support
-Date: Tue, 01 Jul 2014 10:10:10 +0200
-Message-ID: <1404202211-15788-7-git-send-email-m.szyprowski@samsung.com>
-References: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com>
+From: Sachin Kamat <spk.linux@gmail.com>
+Subject: Re: [PATCHv2 0/5] ARM: remove the sub-node and deprecated
+ supports-highspeed property for dwmmc.
+Date: Tue, 1 Jul 2014 13:56:29 +0530
+Message-ID: <CAK5sBcEa5bRKUBB0n422m-K7A7YSshm2kTBUCNPgzwQkws3H8w@mail.gmail.com>
+References: <1404128960-27225-1-git-send-email-jh80.chung@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58779 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757405AbaGAIKh (ORCPT
+Received: from mail-lb0-f169.google.com ([209.85.217.169]:50646 "EHLO
+	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757595AbaGAI0c (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jul 2014 04:10:37 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N80006GXXDE7580@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 01 Jul 2014 09:10:26 +0100 (BST)
-In-reply-to: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com>
+	Tue, 1 Jul 2014 04:26:32 -0400
+In-Reply-To: <1404128960-27225-1-git-send-email-jh80.chung@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, dinguyen@altera.com, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-This patch adds nodes specific to Exynos4412 based Odroid X/X2/U2/U3
-boards required for enabling HDMI display.
+Hi Jaehoon,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 52 +++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+On Mon, Jun 30, 2014 at 5:19 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Since used the mmc_of_parse(), didn't parse the sub-node.
+> So we can remove the sub-node, because almost SoC used the only one card per a host.
+> And supports-highspeed can be replaced to "cap-mmc/sd-highspeed" property.
+>
+> Jaehoon Chung (5):
+>   mmc: dw_mmc: modify the dt-binding for removing slot-node and
+>     supports-highspeed
+>   ARM: dts: exynos: unuse the slot-node and deprecated the
+>     supports-highspeed for dw-mmc
+>   ARM: dts: socfpga: unuse the slot-node and deprecated the
+>     supports-highspeed for dw-mmc
+>   ARM: dts: rockchip: unuse the slot-node and deprecated the
+>     supports-highspeed for dw-mmc
+>   mmc: dw_mmc: replace "disable-wp" from slot's quirk to host's quirk
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index d1b33a8efa9d..2856242d640a 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -52,6 +52,14 @@
- 		};
- 	};
- 
-+	lcd0-power-domain@10023C80 {
-+		domain-always-on;
-+	};
-+
-+	tv-power-domain@10023C20 {
-+		domain-always-on;
-+	};
-+
- 	watchdog@10060000 {
- 		status = "okay";
- 	};
-@@ -186,6 +194,20 @@
- 					regulator-always-on;
- 				};
- 
-+				ldo8_reg: ldo@8 {
-+					regulator-compatible = "LDO8";
-+					regulator-name = "VDD10_HDMI_1.0V";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+				};
-+
-+				ldo10_reg: ldo@10 {
-+					regulator-compatible = "LDO10";
-+					regulator-name = "VDDQ_MIPIHSI_1.8V";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+				};
-+
- 				ldo11_reg: LDO11 {
- 					regulator-name = "VDD18_ABB1_1.8V";
- 					regulator-min-microvolt = <1800000>;
-@@ -332,6 +354,31 @@
- 	ehci: ehci@12580000 {
- 		status = "okay";
- 	};
-+
-+	mixer: mixer@12C10000 {
-+		status = "okay";
-+	};
-+
-+	hdmi@12D00000 {
-+		hpd-gpio = <&gpx3 7 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hdmi_hpd>;
-+		vdd-supply = <&ldo8_reg>;
-+		vdd_osc-supply = <&ldo10_reg>;
-+		vdd_pll-supply = <&ldo8_reg>;
-+		ddc = <&hdmi_ddc>;
-+		status = "okay";
-+	};
-+
-+	hdmi_ddc: i2c@13880000 {
-+		status = "okay";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c2_bus>;
-+	};
-+
-+	i2c@138E0000 {
-+		status = "okay";
-+	};
- };
- 
- &pinctrl_1 {
-@@ -339,4 +386,9 @@
- 		samsung,pins = "gpx1-3";
- 		samsung,pin-pud = <0>;
- 	};
-+
-+	hdmi_hpd: hdmi-hpd {
-+		samsung,pins = "gpx3-7";
-+		samsung,pin-pud = <1>;
-+	};
- };
+It is a good practice to include revision history for subsequent versions.
+
+Tested on Exynos 5250 based Snow and Arndale boards. Works fine now.
+
+Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
+
 -- 
-1.9.2
+Regards,
+Sachin.
