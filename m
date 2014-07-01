@@ -1,37 +1,92 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+
- (part1)
-Date: Tue, 01 Jul 2014 13:26:18 -0600
-Message-ID: <53B30B5A.5030600@wwwdotorg.org>
-References: <E1X20mL-00083I-Sv@rmk-PC.arm.linux.org.uk>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH v2] ARM: EXYNOS: Use MCPM call-backs to support S2R on
+ Exynos5420
+Date: Tue, 1 Jul 2014 16:02:16 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1407011556530.16842@knanqh.ubzr>
+References: <1403780312-22885-1-git-send-email-a.kesavan@samsung.com> <1404152927-11168-1-git-send-email-a.kesavan@samsung.com> <alpine.LFD.2.11.1407010012150.16842@knanqh.ubzr> <CAM4voama9omO4=x2+GaQesLQOh+5U2q8FQSe4+VwA0_4pOukkg@mail.gmail.com>
+ <20140701135037.GB7023@e102568-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <E1X20mL-00083I-Sv-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, xen-devel-GuqFBffKawtpuQazS67q72D2FQJk+8+b@public.gmane.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f169.google.com ([209.85.216.169]:43825 "EHLO
+	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758639AbaGAUCT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 1 Jul 2014 16:02:19 -0400
+Received: by mail-qc0-f169.google.com with SMTP id c9so8999672qcz.28
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Jul 2014 13:02:18 -0700 (PDT)
+In-Reply-To: <20140701135037.GB7023@e102568-lin.cambridge.arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Douglas Anderson <dianders@chromium.org>
 
-On 07/01/2014 10:19 AM, Russell King wrote:
-> ARMv6 and greater introduced a new instruction ("bx") which can be used
-> to return from function calls.  Recent CPUs perform better when the
-> "bx lr" instruction is used rather than the "mov pc, lr" instruction,
-> and this sequence is strongly recommended to be used by the ARM
-> architecture manual (section A.4.1.1).
+On Tue, 1 Jul 2014, Lorenzo Pieralisi wrote:
+
+> On Tue, Jul 01, 2014 at 02:14:49PM +0100, Abhilash Kesavan wrote:
+> > Hi Nicolas,
+> > 
+> > On Tue, Jul 1, 2014 at 9:49 AM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+> > > On Mon, 30 Jun 2014, Abhilash Kesavan wrote:
+> > >
+> > >> Use the MCPM layer to handle core suspend/resume on Exynos5420.
+> > >> Also, restore the entry address setup code post-resume.
+> > >>
+> > >> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> > >> ---
+> > > [...]
+> > >
+> > > Could you tell me more about this?
+> > >
+> > >> @@ -150,7 +153,13 @@ static void exynos_power_down(void)
+> > >>       BUG_ON(__mcpm_cluster_state(cluster) != CLUSTER_UP);
+> > >>       cpu_use_count[cpu][cluster]--;
+> > >>       if (cpu_use_count[cpu][cluster] == 0) {
+> > >> -             exynos_cpu_power_down(cpunr);
+> > >> +             /*
+> > >> +              * Bypass power down for CPU0 during suspend. This is being
+> > >> +              * taken care by the SYS_PWR_CFG bit in CORE0_SYS_PWR_REG.
+> > >> +              */
+> > >> +             if ((cpunr != 0) ||
+> > >> +             (__raw_readl(pmu_base_addr + S5P_INFORM1) != S5P_CHECK_SLEEP))
+> > >> +                     exynos_cpu_power_down(cpunr);
+> > >
+> > > What happens if CPU0 is the first in the cluster to be idled?  Will it
+> > > remain powered up until all the others have gone idle too?
+> > This check is only for handling the S2R CPU0 case. In case of
+> > idle/switching the S5P_CHECK_SLEEP flag would not be set and hence
+> > there would be no change in behavior for them.
+> > During suspend, we enable the ARM_USE_STANDBY_WFI0 bit which tells the
+> > PMU when the CPU0 is ready to be suspended. This in conjunction with
+> > the sleep state core configuration (setting SYS_PWR_REG low) causes
+> > the CPU0 to go down. We should not write to the CPU0 power
+> > configuration register (exynos_cpu_power_down) along with this during
+> > suspend.
 > 
-> We provide a new macro "ret" with all its variants for the condition
-> code which will resolve to the appropriate instruction.
+> I think this should be part of a refactoring that includes the exynos MCPM
+> suspend call parameters. In particular, at the moment there is no code in
+> the back-end to detect if the last man should request core gating or cluster
+> gating (ie last man _always_ request cluster gating, that might not be what
+> we want), there is the residency value that can be also be used to imply a
+> S2R request (eg residency = ~0 ?).
 > 
-> Rather than doing this piecemeal, and miss some instances, change all
-> the "mov pc" instances to use the new macro, with the exception of
-> the "movs" instruction and the kprobes code.  This allows us to detect
-> the "mov pc, lr" case and fix it up - and also gives us the possibility
-> of deploying this for other registers depending on the CPU selection.
+> The command sent must be implied by the state that is entered, not by
+> peeking at registers that should contain magic values, and that's true
+> not only for exynos but for all ARM platforms out there.
+> 
+> What I mean is: we can pass the requested state as a suspend parameter
+> and the power_down state machine will send the required command
+> accordingly.
+> 
+> It can be done using the residency value or by passing the power state "index"
+> as suspend parameter, the power down MCPM code will do a look-up and send
+> the respective command.
+> 
+> Thoughts appreciated.
 
-Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+I agree.  Having the MCPM abstraction having to rely on some magic value 
+to be set in a register beforehand for things to work properly is not 
+nice.
 
-(On an NVIDIA Tegra Jetson TK1 board, both CPU hotplug and system sleep
-were tested, which are the use-cases that actually use the edited
-assembly files)
+
+Nicolas
