@@ -1,126 +1,90 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ARM: dts: exynos4412-odroid: add support for GPIO buttons
-Date: Tue, 01 Jul 2014 09:20:09 +0200
-Message-ID: <1404199209-9722-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 0/7] Exynos4: enable HDMI support for Odroid and UniversalC210
+Date: Tue, 01 Jul 2014 10:10:04 +0200
+Message-ID: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:23773 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753109AbaGAHUZ (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:45220 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753150AbaGAIKa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jul 2014 03:20:25 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
+	Tue, 1 Jul 2014 04:10:30 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N8000F7AV1QRS70@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 01 Jul 2014 08:20:15 +0100 (BST)
+ 17 2011)) with ESMTP id <0N80002AGXDFZ280@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 01 Jul 2014 09:10:27 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>
+To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-This patch adds support for simple GPIO-based button availabled on
-Exynos4 based Odroid boards. All supported boards have POWER button,
-which has been defined in exynos4412-odroid-common.dtsi. X/X2 boards
-also have additional user-configurable button which has been mapped to
-KEY_HOME. All defined keys have been marked as possible wakeup source.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
 Hello,
 
-This patch is a continuation of the '[PATCH v2 0/4] Add Exynos4412 based
-Odroid X2 and U2/U3/U3+ support' series
-(http://www.spinics.net/lists/linux-samsung-soc/msg33115.html).
+This is a long awaited patch series enabling support for HDMI output
+available on Exynos4412-based Odroid boards (X/X2/U2/U3/U3+) and
+Exynos4210 Universal C210 board.
+
+This patch consists of 3 groups of patches, which are aimed to be merged
+to respective maintainer kernel trees.
+
+First patch ("clk: exynos4: add support for MOUT_HDMI and MOUT_MIXER
+clocks") adds missing device tree support for hdmi related clocks. It is
+prepared for clk kernel tree.
+
+Next two patches ("drm: exynos: hdmi: make 'hdmi-en' regulator optional
+and keep it enabled" and "drm: hdmi/mixer: enable exynos 4210 and 4x12
+soc support") add proper support for Exynos4 SoCs to Exynos DRM drivers.
+Those patches should go to exynos-drm kernel tree.
+
+Last patches ("Exynos: add support for 'domain-always-on' property",
+"ARM: dts: exynos4: add hdmi related nodes", "ARM: dts:
+exynos4412-odroid: enable hdmi support" and "ARM: dts:
+exynos4210-universal_c210: enable hdmi support") adds changes to all DTS
+files and adds 'domain-always-on' property to Exynos power-domain
+driver. This property is needed to resolve the non-trivial dependences
+between TV and LCD0 power domains and the power on/off sequence of the
+TV and mixer modules.
+
+Patches are prepared on top of v3.16-rc3 with '[PATCH v2 0/4] Add
+Exynos4412 based Odroid X2 and U2/U3/U3+ support' series and '[PATCH]
+ARM: dts: exynos4412-odroid: add support for GPIO buttons' patch
+applied:
+http://www.spinics.net/lists/linux-samsung-soc/msg33115.html
+http://www.spinics.net/lists/linux-samsung-soc/msg33497.html
+
+Kernel tree with all Odroid related patches is available at
+http://git.linaro.org/git-ro/people/marek.szyprowski/linux-srpol.git
+on v3.16-odroid branch.
 
 Best regards
 Marek Szyprowski
 Samsung R&D Institute Poland
----
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 24 ++++++++++++++++++++++++
- arch/arm/boot/dts/exynos4412-odroidx.dts        | 21 +++++++++++++++++++++
- 2 files changed, 45 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index ad2cb32a3439..d1b33a8efa9d 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -7,6 +7,7 @@
-  * published by the Free Software Foundation.
- */
- 
-+#include <dt-bindings/input/input.h>
- #include "exynos4412.dtsi"
- 
- / {
-@@ -15,6 +16,22 @@
- 		reg = <0x0204F000 0x1000>;
- 	};
- 
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio_power_key>;
-+
-+		power_key {
-+			interrupt-parent = <&gpx1>;
-+			interrupts = <3 0>;
-+			gpios = <&gpx1 3 1>;
-+			linux,code = <KEY_POWER>;
-+			label = "power key";
-+			debounce-interval = <10>;
-+			gpio-key,wakeup;
-+		};
-+	};
-+
- 	mmc@12550000 {
- 		pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
- 		pinctrl-names = "default";
-@@ -316,3 +333,10 @@
- 		status = "okay";
- 	};
- };
-+
-+&pinctrl_1 {
-+	gpio_power_key: power_key {
-+		samsung,pins = "gpx1-3";
-+		samsung,pin-pud = <0>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index 990a04760313..18c567f5dbea 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -46,6 +46,20 @@
- 		status = "okay";
- 	};
- 
-+	gpio_keys {
-+		pinctrl-0 = <&gpio_power_key &gpio_home_key>;
-+
-+		home_key {
-+			interrupt-parent = <&gpx2>;
-+			interrupts = <2 0>;
-+			gpios = <&gpx2 2 0>;
-+			linux,code = <KEY_HOME>;
-+			label = "home key";
-+			debounce-interval = <10>;
-+			gpio-key,wakeup;
-+		};
-+	};
-+
- 	regulator_p3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "p3v3_en";
-@@ -62,3 +76,10 @@
- 		status = "okay";
- 	};
- };
-+
-+&pinctrl_1 {
-+	gpio_home_key: home_key {
-+		samsung,pins = "gpx2-2";
-+		samsung,pin-pud = <0>;
-+	};
-+};
+Marek Szyprowski (6):
+  clk: exynos4: add support for MOUT_HDMI and MOUT_MIXER clocks
+  drm: exynos: hdmi: make 'hdmi-en' regulator optional and keep it
+    enabled
+  drm: hdmi/mixer: enable exynos 4210 and 4x12 soc support
+  Exynos: add support for 'domain-always-on' property
+  ARM: dts: exynos4: add hdmi related nodes
+  ARM: dts: exynos4412-odroid: enable hdmi support
+
+Tomasz Stanislawski (1):
+  ARM: dts: exynos4210-universal_c210: enable hdmi support
+
+ .../bindings/arm/exynos/power_domain.txt           |  2 +
+ .../devicetree/bindings/video/exynos_mixer.txt     |  5 +-
+ arch/arm/boot/dts/exynos4.dtsi                     | 37 ++++++++++++
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    | 65 ++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4210.dtsi                  |  5 ++
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    | 52 +++++++++++++++++
+ arch/arm/boot/dts/exynos4x12.dtsi                  | 10 ++++
+ arch/arm/mach-exynos/pm_domains.c                  |  6 +-
+ drivers/clk/samsung/clk-exynos4.c                  |  4 +-
+ drivers/gpu/drm/exynos/exynos_hdmi.c               | 29 +++++++++-
+ drivers/gpu/drm/exynos/exynos_mixer.c              | 51 ++++++++++++-----
+ include/dt-bindings/clock/exynos4.h                |  2 +
+ 12 files changed, 247 insertions(+), 21 deletions(-)
+
 -- 
 1.9.2
