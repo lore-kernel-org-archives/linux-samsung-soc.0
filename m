@@ -1,169 +1,81 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: Fix NULL pointer exception when suspending
- without components
-Date: Tue, 01 Jul 2014 17:39:02 +0900
-Message-ID: <53B273A6.1010808@samsung.com>
-References: <1404134744-15852-1-git-send-email-k.kozlowski@samsung.com>
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: Re: [PATCH 1/7] clk: exynos4: add support for MOUT_HDMI and MOUT_MIXER
+ clocks
+Date: Tue, 01 Jul 2014 10:46:29 +0200
+Message-ID: <53B27565.8090703@gmx.net>
+References: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com> <1404202211-15788-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1404134744-15852-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.gmx.net ([212.227.15.19]:53030 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754237AbaGAIqu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 1 Jul 2014 04:46:50 -0400
+In-Reply-To: <1404202211-15788-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>
 
-T24gMjAxNOuFhCAwNuyblCAzMOydvCAyMjoyNSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
-PiBGaXggYSBOVUxMIHBvaW50ZXIgZXhjZXB0aW9uIHdoZW4gbWFpbiBleHlub3MgZHJtIGRyaXZl
-ciB3YXMgcHJvYmVkCj4gc3VjY2Vzc2Z1bGx5IGJ1dCBubyBjb21wb25lbnRzIHdlcmUgYWRkZWQg
-KGUuZy4gYnkgaW5jb21wbGV0ZSBEVFMpLiBJbgo+IHN1Y2ggY2FzZSB0aGUgZXh5bm9zX2RybV9s
-b2FkKCkgaXMgbmV2ZXIgY2FsbGVkIGFuZCBkcnZkYXRhIGlzIE5VTEwuCj4gCgpSaWdodCwgaXQn
-cyBnb29kIHJlcG9ydC4gQXBwbGllZC4KClRoYW5rcywKSW5raSBEYWUKCgo+IFRoZSBOVUxMIHBv
-aW50ZXIgZXhjZXB0aW9uIG1heSB0aGVvcmV0aWNhbGx5IGFsc28gaGFwcGVuIGFzIGEgZWZmZWN0
-IG9mIHJhY2UgYmV0d2Vlbgo+IGFkZGluZyBjb21wb25lbnRzIGFuZCBtYWluIGRyaXZlcjogaWYg
-c3VzcGVuZCBvZiB0aGUgZHJpdmVyIGhhcHBlbnMKPiBiZWZvcmUgYWRkaW5nIGNvbXBvbmVudHMu
-Cj4gCj4gVHJhY2U6Cj4gWyAgICAxLjE5MDI5NV0gW2RybV0gSW5pdGlhbGl6ZWQgZHJtIDEuMS4w
-IDIwMDYwODEwCj4gWyAgICAxLjE5NTIwOV0gZXh5bm9zLWRybS1pcHAgZXh5bm9zLWRybS1pcHA6
-IGRybSBpcHAgcmVnaXN0ZXJlZCBzdWNjZXNzZnVsbHkuCj4gKC4uLikKPiBbICAgMjQuMDAxNzQz
-XSBQTTogU3luY2luZyBmaWxlc3lzdGVtcyAuLi4gZG9uZS4KPiBbICAgMjQuMDAyMTc3XSBGcmVl
-emluZyB1c2VyIHNwYWNlIHByb2Nlc3NlcyAuLi4gKGVsYXBzZWQgMC4wMDAgc2Vjb25kcykgZG9u
-ZS4KPiBbICAgMjQuMDA3NDAzXSBGcmVlemluZyByZW1haW5pbmcgZnJlZXphYmxlIHRhc2tzIC4u
-LiAoZWxhcHNlZCAwLjAwMSBzZWNvbmRzKSBkb25lLgo+IFsgICAyNC4wMzI1NTldIFVuYWJsZSB0
-byBoYW5kbGUga2VybmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBhdCB2aXJ0dWFsIGFkZHJl
-c3MgMDAwMDAxMzQKPiBbICAgMjQuMDM1MDA3XSBwZ2QgPSBkZWRkODAwMAo+IFsgICAyNC4wMzc3
-MzRdIFswMDAwMDEzNF0gKnBnZD01ZWUxMzgzMSwgKnB0ZT0wMDAwMDAwMCwgKnBwdGU9MDAwMDAw
-MDAKPiBbICAgMjQuMDQzOTUzXSBJbnRlcm5hbCBlcnJvcjogT29wczogMTcgWyMxXSBQUkVFTVBU
-IFNNUCBBUk0KPiBbICAgMjQuMDQ5MzI5XSBNb2R1bGVzIGxpbmtlZCBpbjoKPiBbICAgMjQuMDUy
-MzcxXSBDUFU6IDAgUElEOiAxIENvbW06IHNoIE5vdCB0YWludGVkIDMuMTYuMC1yYzMtMDAwMzUt
-Z2ViYTIwYmJkZGUwNC1kaXJ0eSAjNTEKPiBbICAgMjQuMDYwMzU0XSB0YXNrOiBkZjQ3ODAwMCB0
-aTogZGY0ODAwMDAgdGFzay50aTogZGY0ODAwMDAKPiBbICAgMjQuMDY1NzQzXSBQQyBpcyBhdCBt
-dXRleF9sb2NrKzB4MTAvMHg1MAo+IFsgICAyNC4wNjk3MzNdIExSIGlzIGF0IGRybV9tb2Rlc2V0
-X2xvY2tfYWxsKzB4MzAvMHhiYwo+IFsgICAyNC4wNzQ1OTBdIHBjIDogWzxjMDQ4NTE2Yz5dICAg
-IGxyIDogWzxjMDJhMTRiND5dICAgIHBzcjogYTAwMDAwMTMKPiBbICAgMjQuMDc0NTkwXSBzcCA6
-IGRmNDgxZGI4ICBpcCA6IDAwMDAwMDAwICBmcCA6IGMwNWU1MjRjCj4gWyAgIDI0LjA4NjA0NV0g
-cjEwOiAwMDAwMDAwMiAgcjkgOiBjMDJjMWZlNCAgcjggOiBkZWNhNWU0NAo+IFsgICAyNC4wOTEy
-NTNdIHI3IDogMDAwMDAwMDAgIHI2IDogMDAwMDAwMDAgIHI1IDogMDAwMDAxNGMgIHI0IDogMDAw
-MDAxMzQKPiBbICAgMjQuMDk3NzYzXSByMyA6IDAwMDAwMDAwICByMiA6IDAwMDAwMDAwICByMSA6
-IDAwMDAwMDAwICByMCA6IDAwMDAwMTM0Cj4gWyAgIDI0LjEwNDI3NV0gRmxhZ3M6IE56Q3YgIElS
-UXMgb24gIEZJUXMgb24gIE1vZGUgU1ZDXzMyICBJU0EgQVJNICBTZWdtZW50IHVzZXIKPiBbICAg
-MjQuMTExMzkxXSBDb250cm9sOiAxMGM1M2M3ZCAgVGFibGU6IDVlZGQ4MDZhICBEQUM6IDAwMDAw
-MDE1Cj4gWyAgIDI0LjExNzEyMF0gUHJvY2VzcyBzaCAocGlkOiAxLCBzdGFjayBsaW1pdCA9IDB4
-ZGY0ODAyNDApCj4gWyAgIDI0LjEyMjUwMl0gU3RhY2s6ICgweGRmNDgxZGI4IHRvIDB4ZGY0ODIw
-MDApCj4gWyAgIDI0LjEyNjg0M10gMWRhMDogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgZGVlMDFkODAgYzAyYTE0YjQKPiBbICAgMjQuMTM1MDA0
-XSAxZGMwOiAwMDAwMDAwMCAwMDAwMDAwMCBjMDdhZmY5OCBjMDJhZWM3YyAwMDAwMDAwMiAwMDAw
-MDAwMCAwMDAwMDAwMCBjMDdhZmY5OAo+IFsgICAyNC4xNDMxNjRdIDFkZTA6IGRlY2E1ZTEwIGMw
-MmFlY2Y0IGMwMmFlY2Q0IGMwMmMyMDEwIDAwMDAwMDAwIGMwMmM5NDcwIDAwMDAwMDAwIDAwMDAw
-MDAwCj4gWyAgIDI0LjE1MTMyMl0gMWUwMDogMDAwMDAwMDAgMDAwMDAwMDAgZGVjYTVlMTAgZGVj
-YTVlMTAgMDAwMDAwMDAgYzA3YWZmOTggMDAwMDAwMDIgZGVjYTVlNDQKPiBbICAgMjQuMTU5NDgy
-XSAxZTIwOiBjMDZkOGY3OCBjMDZmYjgwMCBkZWNhNWU3OCBjMDJjYTY2MCBkZjdiYWYwMCAwMDdi
-MGFhMCBkZWNhNWUxMCBjMDZmYjdjOAo+IFsgICAyNC4xNjc2NDFdIDFlNDA6IGMwN2FmZjk4IDAw
-MDAwMDAwIDAwMDAwMDAyIGMwMmNiZTE4IDk3NTdhZWM1IDAwMDAwMDA1IDk3NTdhZWM1IDAwMDAw
-MDA1Cj4gWyAgIDI0LjE3NTgwMV0gMWU2MDogZGVkMWQzODAgMDAwMDAwMDMgMDAwMDAwMDMgYzA1
-Yzc0ZDggZGVkMWQzODAgYzA3MjA5ZDQgYzA1Yzc1MTQgYzA3MTA1ZDgKPiBbICAgMjQuMTgzOTYw
-XSAxZTgwOiAwMWUyYTczOCBjMDA2OGE3NCAwMDAwMDAwMCBjMDVjNzUxNCBkZWQxZDM4MCBjMDcx
-YzZlMCAwMDAwMDAwNCBjMDcxMDVkOAo+IFsgICAyNC4xOTIxMTldIDFlYTA6IDAxZTJhNzM4IGMw
-NDdmMWUwIGMwNjAwY2MwIGRmNDgxZWM0IDAwMDAwMDAzIDAwMDAwMDAwIDAwMDAwMDAzIGMwNWM3
-NGQ4Cj4gWyAgIDI0LjIwMDI3OF0gMWVjMDogZGVkMWQzODAgYzA3MWM2ZTAgYzA1Yzc1MTQgYzA3
-MTA1ZDggMDFlMmE3MzggYzAwNjk0NDQgYzA2ZDkwNWMgMDAwMDAwMDMKPiBbICAgMjQuMjA4NDM4
-XSAxZWUwOiAwMDAwMDAwMyBkZWQxZDM4MCBjMDZkOTA2NCAwMDAwMDAwNCBjMDVjM2ZjMCBjMDA2
-N2Q0YyBkZjUzNWFiMCBkZWQxZDM4MAo+IFsgICAyNC4yMTY1OTZdIDFmMDA6IGRmNDgxZjgwIGRl
-ZDFkMzgwIDAwMDAwMDA0IGRlZDFkMWNjIGRlZDFkMWMwIGMwMjIxNzI0IDAwMDAwMDA0IGMwMTZj
-YTZjCj4gWyAgIDI0LjIyNDc1Nl0gMWYyMDogYzAxNmNhMjggMDAwMDAwMDAgMDAwMDAwMDAgYzAx
-NmMxZDQgMDAwMDAwMDAgMDAwMDAwMDAgYjZmMzcwMDAgZGY0ODFmODAKPiBbICAgMjQuMjMyOTE1
-XSAxZjQwOiBkZWNlZGQ4MCAwMDAwMDAwNCBkZjQ4MDAwMCBkZjQ4MDAwMCBiNmYzNzAwMCBjMDEx
-MDkyMCBkZjQ3ODM5YyA2MDAwMDAxMwo+IFsgICAyNC4yNDEwNzRdIDFmNjA6IDAwMDAwMDAwIDAw
-MDAwMDAwIGRlY2VkZDgwIGRlY2VkZDgwIDAwMDAwMDA0IGRmNDgwMDAwIGI2ZjM3MDAwIGMwMTEw
-ZGE4Cj4gWyAgIDI0LjI0OTIzM10gMWY4MDogMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDQgYjZl
-ZGY1ZDggMDAwMDAwMDQgYjZmMzcwMDAgMDAwMDAwMDQgYzAwMGYyYTgKPiBbICAgMjQuMjU3Mzkz
-XSAxZmEwOiAwMDAwMTAwMCBjMDAwZjBlMCBiNmVkZjVkOCAwMDAwMDAwNCAwMDAwMDAwMSBiNmYz
-NzAwMCAwMDAwMDAwNCAwMDAwMDAwMAo+IFsgICAyNC4yNjU1NTFdIDFmYzA6IGI2ZWRmNWQ4IDAw
-MDAwMDA0IGI2ZjM3MDAwIDAwMDAwMDA0IDAwMDAwMDA0IDAwMDAwMDAxIDAwMDAwMDAwIDAxZTJh
-NzM4Cj4gWyAgIDI0LjI3MzcxMV0gMWZlMDogMDAwMDAwMDAgYmViYTBhMjAgYjZlMWY0ZjAgYjZl
-NzAyMmMgNjAwMDAwMTAgMDAwMDAwMDEgZmZmZmZmZmYgZmZmZmZmZmYKPiBbICAgMjQuMjgxODg1
-XSBbPGMwNDg1MTZjPl0gKG11dGV4X2xvY2spIGZyb20gWzxjMDJhMTRiND5dIChkcm1fbW9kZXNl
-dF9sb2NrX2FsbCsweDMwLzB4YmMpCj4gWyAgIDI0LjI4OTk1MF0gWzxjMDJhMTRiND5dIChkcm1f
-bW9kZXNldF9sb2NrX2FsbCkgZnJvbSBbPGMwMmFlYzdjPl0gKGV4eW5vc19kcm1fc3VzcGVuZCsw
-eGMvMHg2NCkKPiBbICAgMjQuMjk4NjI3XSBbPGMwMmFlYzdjPl0gKGV4eW5vc19kcm1fc3VzcGVu
-ZCkgZnJvbSBbPGMwMmFlY2Y0Pl0gKGV4eW5vc19kcm1fc3lzX3N1c3BlbmQrMHgyMC8weDM0KQo+
-IFsgICAyNC4zMDc1NjhdIFs8YzAyYWVjZjQ+XSAoZXh5bm9zX2RybV9zeXNfc3VzcGVuZCkgZnJv
-bSBbPGMwMmMyMDEwPl0gKHBsYXRmb3JtX3BtX3N1c3BlbmQrMHgyYy8weDU0KQo+IFsgICAyNC4z
-MTY1OTddIFs8YzAyYzIwMTA+XSAocGxhdGZvcm1fcG1fc3VzcGVuZCkgZnJvbSBbPGMwMmM5NDcw
-Pl0gKGRwbV9ydW5fY2FsbGJhY2srMHg0OC8weDE3MCkKPiBbICAgMjQuMzI1MTg4XSBbPGMwMmM5
-NDcwPl0gKGRwbV9ydW5fY2FsbGJhY2spIGZyb20gWzxjMDJjYTY2MD5dIChfX2RldmljZV9zdXNw
-ZW5kKzB4MTI4LzB4MzljKQo+IFsgICAyNC4zMzM2MDZdIFs8YzAyY2E2NjA+XSAoX19kZXZpY2Vf
-c3VzcGVuZCkgZnJvbSBbPGMwMmNiZTE4Pl0gKGRwbV9zdXNwZW5kKzB4NWMvMHgzMTQpCj4gWyAg
-IDI0LjM0MTUwNl0gWzxjMDJjYmUxOD5dIChkcG1fc3VzcGVuZCkgZnJvbSBbPGMwMDY4YTc0Pl0g
-KHN1c3BlbmRfZGV2aWNlc19hbmRfZW50ZXIrMHg4Yy8weDU5OCkKPiBbICAgMjQuMzUwMTg1XSBb
-PGMwMDY4YTc0Pl0gKHN1c3BlbmRfZGV2aWNlc19hbmRfZW50ZXIpIGZyb20gWzxjMDA2OTQ0ND5d
-IChwbV9zdXNwZW5kKzB4NGM0LzB4NWQwKQo+IFsgICAyNC4zNTg4NjJdIFs8YzAwNjk0NDQ+XSAo
-cG1fc3VzcGVuZCkgZnJvbSBbPGMwMDY3ZDRjPl0gKHN0YXRlX3N0b3JlKzB4NzAvMHhkNCkKPiBb
-ICAgMjQuMzY2MTU2XSBbPGMwMDY3ZDRjPl0gKHN0YXRlX3N0b3JlKSBmcm9tIFs8YzAyMjE3MjQ+
-XSAoa29ial9hdHRyX3N0b3JlKzB4MTQvMHgyMCkKPiBbICAgMjQuMzczODg1XSBbPGMwMjIxNzI0
-Pl0gKGtvYmpfYXR0cl9zdG9yZSkgZnJvbSBbPGMwMTZjYTZjPl0gKHN5c2ZzX2tmX3dyaXRlKzB4
-NDQvMHg0OCkKPiBbICAgMjQuMzgxODY3XSBbPGMwMTZjYTZjPl0gKHN5c2ZzX2tmX3dyaXRlKSBm
-cm9tIFs8YzAxNmMxZDQ+XSAoa2VybmZzX2ZvcF93cml0ZSsweGMwLzB4MTdjKQo+IFsgICAyNC4z
-OTAwMjddIFs8YzAxNmMxZDQ+XSAoa2VybmZzX2ZvcF93cml0ZSkgZnJvbSBbPGMwMTEwOTIwPl0g
-KHZmc193cml0ZSsweGEwLzB4MWM0KQo+IFsgICAyNC4zOTc3NTBdIFs8YzAxMTA5MjA+XSAodmZz
-X3dyaXRlKSBmcm9tIFs8YzAxMTBkYTg+XSAoU3lTX3dyaXRlKzB4NDAvMHg4YykKPiBbICAgMjQu
-NDA0NzgyXSBbPGMwMTEwZGE4Pl0gKFN5U193cml0ZSkgZnJvbSBbPGMwMDBmMGUwPl0gKHJldF9m
-YXN0X3N5c2NhbGwrMHgwLzB4M2MpCj4gWyAgIDI0LjQxMjMzMl0gQ29kZTogZTkyZDQwMTAgZTFh
-MDQwMDAgZjU3ZmYwNWIgZjU5MGYwMDAgKGUxOTAzZjlmKQo+IFsgICAyNC40MTg0NDhdIC0tLVsg
-ZW5kIHRyYWNlIGNmYTA2NjkwZWFiZThkZDUgXS0tLQo+IFsgICAyNC40MjMwMzJdIEtlcm5lbCBw
-YW5pYyAtIG5vdCBzeW5jaW5nOiBGYXRhbCBleGNlcHRpb24KPiBbICAgMjQuNDI4MjIwXSBDUFUx
-OiBzdG9wcGluZwo+IFsgICAyNC40MzA5MDVdIENQVTogMSBQSUQ6IDAgQ29tbTogc3dhcHBlci8x
-IFRhaW50ZWQ6IEcgICAgICBEICAgICAgIDMuMTYuMC1yYzMtMDAwMzUtZ2ViYTIwYmJkZGUwNC1k
-aXJ0eSAjNTEKPiBbICAgMjQuNDQwNTQ5XSBbPGMwMDE2NDQwPl0gKHVud2luZF9iYWNrdHJhY2Up
-IGZyb20gWzxjMDAxMjk0Yz5dIChzaG93X3N0YWNrKzB4MTAvMHgxNCkKPiBbICAgMjQuNDQ4MjY5
-XSBbPGMwMDEyOTRjPl0gKHNob3dfc3RhY2spIGZyb20gWzxjMDQ4MTFlOD5dIChkdW1wX3N0YWNr
-KzB4ODAvMHhjYykKPiBbICAgMjQuNDU1NDcyXSBbPGMwNDgxMWU4Pl0gKGR1bXBfc3RhY2spIGZy
-b20gWzxjMDAxNDk1Yz5dIChoYW5kbGVfSVBJKzB4MTMwLzB4MTVjKQo+IFsgICAyNC40NjI4NTBd
-IFs8YzAwMTQ5NWM+XSAoaGFuZGxlX0lQSSkgZnJvbSBbPGMwMDA4NjJjPl0gKGdpY19oYW5kbGVf
-aXJxKzB4NjAvMHg2OCkKPiBbICAgMjQuNDcwNDAwXSBbPGMwMDA4NjJjPl0gKGdpY19oYW5kbGVf
-aXJxKSBmcm9tIFs8YzAwMTM0NDA+XSAoX19pcnFfc3ZjKzB4NDAvMHg3MCkKPiBbICAgMjQuNDc3
-ODYwXSBFeGNlcHRpb24gc3RhY2soMHhkZjRiZGY4OCB0byAweGRmNGJkZmQwKQo+IFsgICAyNC40
-ODI4OThdIGRmODA6ICAgICAgICAgICAgICAgICAgIGZmZmZmZmVkIDAwMDAwMDAwIDAwMDAwMDAw
-IDAwMDAwMDAwIGRmNGJjMDAwIGMwNmQwNDJjCj4gWyAgIDI0LjQ5MTA1OF0gZGZhMDogMDAwMDAw
-MDAgZmZmZmZmZWQgYzA2ZDAzYzAgMDAwMDAwMDAgYzA3MGMyODggMDAwMDAwMDAgMDAwMDAwMDAg
-ZGY0YmRmZDAKPiBbICAgMjQuNDk5MjE0XSBkZmMwOiBjMDAxMDMyNCBjMDAxMDMyOCA2MDAwMDAx
-MyBmZmZmZmZmZgo+IFsgICAyNC41MDQyNTRdIFs8YzAwMTM0NDA+XSAoX19pcnFfc3ZjKSBmcm9t
-IFs8YzAwMTAzMjg+XSAoYXJjaF9jcHVfaWRsZSsweDI4LzB4MzApCj4gWyAgIDI0LjUxMTYzNF0g
-WzxjMDAxMDMyOD5dIChhcmNoX2NwdV9pZGxlKSBmcm9tIFs8YzAwNWYxMTA+XSAoY3B1X3N0YXJ0
-dXBfZW50cnkrMHgyYzQvMHgzZjApCj4gWyAgIDI0LjUxOTg3OF0gWzxjMDA1ZjExMD5dIChjcHVf
-c3RhcnR1cF9lbnRyeSkgZnJvbSBbPDQwMDA4NmM0Pl0gKDB4NDAwMDg2YzQpCj4gWyAgIDI0LjUy
-NjgyMV0gLS0tWyBlbmQgS2VybmVsIHBhbmljIC0gbm90IHN5bmNpbmc6IEZhdGFsIGV4Y2VwdGlv
-bgo+IAo+IFNpZ25lZC1vZmYtYnk6IEtyenlzenRvZiBLb3psb3dza2kgPGsua296bG93c2tpQHNh
-bXN1bmcuY29tPgo+IENjOiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+IENj
-OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Cj4gRml4ZXM6IGFmNjVjODA0ODc3MCAo
-ImRybS9leHlub3M6IENvbnNvbGlkYXRlIHN1c3BlbmQvcmVzdW1lIGluIGRybV9kcnYiKQo+IENj
-OiA8c3RhYmxlQHZnZXIua2VybmVsLm9yZz4KPiAKPiAtLS0KPiBQcm9iYWJseSBvdGhlciBEUk0g
-ZHJpdmVycyBtYXkgYmUgYWxzbyBhZmZlY3RlZCBieSB0aGlzIGlzc3VlIChlLmcuCj4gbXNtKS4K
-PiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIHwgNCArKy0t
-Cj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCj4gCj4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+IGluZGV4IGFiN2QxODIwNjNj
-My4uZTk4YTg4MmMxYmJhIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9kcnYuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
-cnYuYwo+IEBAIC0zNjIsNyArMzYyLDcgQEAgc3RhdGljIGludCBleHlub3NfZHJtX3N5c19zdXNw
-ZW5kKHN0cnVjdCBkZXZpY2UgKmRldikKPiAgCXN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2ID0g
-ZGV2X2dldF9kcnZkYXRhKGRldik7Cj4gIAlwbV9tZXNzYWdlX3QgbWVzc2FnZTsKPiAgCj4gLQlp
-ZiAocG1fcnVudGltZV9zdXNwZW5kZWQoZGV2KSkKPiArCWlmIChwbV9ydW50aW1lX3N1c3BlbmRl
-ZChkZXYpIHx8ICFkcm1fZGV2KQo+ICAJCXJldHVybiAwOwo+ICAKPiAgCW1lc3NhZ2UuZXZlbnQg
-PSBQTV9FVkVOVF9TVVNQRU5EOwo+IEBAIC0zNzMsNyArMzczLDcgQEAgc3RhdGljIGludCBleHlu
-b3NfZHJtX3N5c19yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQo+ICB7Cj4gIAlzdHJ1Y3QgZHJt
-X2RldmljZSAqZHJtX2RldiA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwo+ICAKPiAtCWlmIChwbV9y
-dW50aW1lX3N1c3BlbmRlZChkZXYpKQo+ICsJaWYgKHBtX3J1bnRpbWVfc3VzcGVuZGVkKGRldikg
-fHwgIWRybV9kZXYpCj4gIAkJcmV0dXJuIDA7Cj4gIAo+ICAJcmV0dXJuIGV4eW5vc19kcm1fcmVz
-dW1lKGRybV9kZXYpOwo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+Hello Marek,
+
+I think this particular clock setup should already be handled by this patch:
+http://www.spinics.net/lists/arm-kernel/msg320013.html
+
+Or am I missing something here?
+
+With best wishes,
+Tobias
+
+
+Marek Szyprowski wrote:
+> This patch adds support for exporting mout_hdmi and mout_mixer to device
+> tree. Access to those clocks is required to correctly setup HDMI module
+> on Exynos 4210 and 4x12 SoCs.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> CC: Mike Turquette <mturquette@linaro.org>
+> CC: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos4.c   | 4 ++--
+>  include/dt-bindings/clock/exynos4.h | 2 ++
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index 4f150c9dd38c..a30a779869eb 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -440,7 +440,7 @@ static struct samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata =
+>  static struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
+>  	MUX_FA(CLK_MOUT_APLL, "mout_apll", mout_apll_p, SRC_CPU, 0, 1,
+>  			CLK_SET_RATE_PARENT, 0, "mout_apll"),
+> -	MUX(0, "mout_hdmi", mout_hdmi_p, SRC_TV, 0, 1),
+> +	MUX(CLK_MOUT_HDMI, "mout_hdmi", mout_hdmi_p, SRC_TV, 0, 1),
+>  	MUX(0, "mout_mfc1", sclk_evpll_p, SRC_MFC, 4, 1),
+>  	MUX(0, "mout_mfc", mout_mfc_p, SRC_MFC, 8, 1),
+>  	MUX_F(CLK_MOUT_G3D1, "mout_g3d1", sclk_evpll_p, SRC_G3D, 4, 1,
+> @@ -463,7 +463,7 @@ static struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
+>  	MUX(0, "mout_aclk100", sclk_ampll_p4210, SRC_TOP0, 16, 1),
+>  	MUX(0, "mout_aclk160", sclk_ampll_p4210, SRC_TOP0, 20, 1),
+>  	MUX(0, "mout_aclk133", sclk_ampll_p4210, SRC_TOP0, 24, 1),
+> -	MUX(0, "mout_mixer", mout_mixer_p4210, SRC_TV, 4, 1),
+> +	MUX(CLK_MOUT_MIXER, "mout_mixer", mout_mixer_p4210, SRC_TV, 4, 1),
+>  	MUX(0, "mout_dac", mout_dac_p4210, SRC_TV, 8, 1),
+>  	MUX(0, "mout_g2d0", sclk_ampll_p4210, E4210_SRC_IMAGE, 0, 1),
+>  	MUX(0, "mout_g2d1", sclk_evpll_p, E4210_SRC_IMAGE, 4, 1),
+> diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
+> index 1106ca540a96..5bfb3509ee3c 100644
+> --- a/include/dt-bindings/clock/exynos4.h
+> +++ b/include/dt-bindings/clock/exynos4.h
+> @@ -229,6 +229,8 @@
+>  #define CLK_MOUT_G3D1		393
+>  #define CLK_MOUT_G3D		394
+>  #define CLK_ACLK400_MCUISP	395 /* Exynos4x12 only */
+> +#define CLK_MOUT_HDMI		396
+> +#define CLK_MOUT_MIXER		397
+>  
+>  /* div clocks */
+>  #define CLK_DIV_ISP0		450 /* Exynos4x12 only */
+> 
