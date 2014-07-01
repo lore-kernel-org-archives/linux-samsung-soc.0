@@ -1,116 +1,95 @@
-From: Karol Wrona <k.wrona@samsung.com>
-Subject: [PATCH v2] clk: s2mps11: Fix clk_ops
-Date: Tue, 01 Jul 2014 19:13:59 +0200
-Message-ID: <1404234839-6005-1-git-send-email-k.wrona@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:12187 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755335AbaGARPX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jul 2014 13:15:23 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+ (part1)
+Date: Tue, 01 Jul 2014 18:24:43 +0100
+Message-ID: <yw1xzjgtdmas.fsf@unicorn.mansr.com>
+References: <E1X20mL-00083I-Sv@rmk-PC.arm.linux.org.uk>
+	<yw1x4mz1f2t9.fsf@unicorn.mansr.com>
+	<20140701171346.GP3705@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20140701171346.GP3705@n2100.arm.linux.org.uk> (Russell King's
+	message of "Tue, 1 Jul 2014 18:13:46 +0100")
+Sender: linux-omap-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, xen-devel@lists.xenproject.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Karol Wrona <k.wrona@samsung.com>
 
-s2mps11 clocks had registered callbacks for prepare ,unprepare and is_enabled.
-During disabling unused clocks the lack of is_prepared caused that unused
-s2mps11 clocks were not unprepared and stayed active.
+Russell King - ARM Linux <linux@arm.linux.org.uk> writes:
 
-Regmap_read is cached so it can be called in is_prepare callback
-to achieve this information. Enabled field was removed from struct s2mps11_clk.
+> On Tue, Jul 01, 2014 at 05:42:42PM +0100, M=E5ns Rullg=E5rd wrote:
+>> Russell King <rmk+kernel@arm.linux.org.uk> writes:
+>>=20
+>> > ARMv6 and greater introduced a new instruction ("bx") which can be=
+ used
+>> > to return from function calls.  Recent CPUs perform better when th=
+e
+>> > "bx lr" instruction is used rather than the "mov pc, lr" instructi=
+on,
+>> > and this sequence is strongly recommended to be used by the ARM
+>> > architecture manual (section A.4.1.1).
+>> >
+>> > We provide a new macro "ret" with all its variants for the conditi=
+on
+>> > code which will resolve to the appropriate instruction.
+>>=20
+>> When the source register is not "lr" the name "ret" is a misnomer si=
+nce
+>> only the "bx lr" instruction is predicted as a function return.  The
+>> "bx" instruction with other source registers uses the normal predict=
+ion
+>> mechanisms, leaving the return stack alone, and should not be used f=
+or
+>> function returns.  Any code currently using another register to retu=
+rn
+>> from a function should probably be modified to use lr instead, unles=
+s
+>> there are special reasons for doing otherwise.  If code jumping to a=
+n
+>> address in a non-lr register is not a return, using the "ret" name w=
+ill
+>> make for some rather confusing reading.
+>>=20
+>> I would suggest either using a more neutral name than "ret" or addin=
+g an
+>> alias to be used for non-return jumps so as to make the intent clear=
+er.
+>
+> If you read the patch, the branches which are changed are those which
+> do indeed return in some way.  There are those which do this having
+> moved lr to a different register.
 
-Signed-off-by: Karol Wrona <k.wrona@samsung.com>
----
- drivers/clk/clk-s2mps11.c |   33 +++++++++++----------------------
- 1 file changed, 11 insertions(+), 22 deletions(-)
+The patch is huge, and it wasn't obvious (to me) from the diff context
+what the non-lr jumps were doing.
 
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index b5274a9..5df99a4 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -45,7 +45,6 @@ struct s2mps11_clk {
- 	struct clk *clk;
- 	struct clk_lookup *lookup;
- 	u32 mask;
--	bool enabled;
- 	unsigned int reg;
- };
- 
-@@ -62,8 +61,6 @@ static int s2mps11_clk_prepare(struct clk_hw *hw)
- 	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic,
- 				 s2mps11->reg,
- 				 s2mps11->mask, s2mps11->mask);
--	if (!ret)
--		s2mps11->enabled = true;
- 
- 	return ret;
- }
-@@ -75,32 +72,32 @@ static void s2mps11_clk_unprepare(struct clk_hw *hw)
- 
- 	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
- 			   s2mps11->mask, ~s2mps11->mask);
--
--	if (!ret)
--		s2mps11->enabled = false;
- }
- 
--static int s2mps11_clk_is_enabled(struct clk_hw *hw)
-+static int s2mps11_clk_is_prepared(struct clk_hw *hw)
- {
-+	int ret;
-+	u32 val;
- 	struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
- 
--	return s2mps11->enabled;
-+	ret = regmap_read(s2mps11->iodev->regmap_pmic,
-+				s2mps11->reg, &val);
-+	if (ret < 0)
-+		return -EINVAL;
-+
-+	return val & s2mps11->mask;
- }
- 
- static unsigned long s2mps11_clk_recalc_rate(struct clk_hw *hw,
- 					     unsigned long parent_rate)
- {
--	struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
--	if (s2mps11->enabled)
--		return 32768;
--	else
--		return 0;
-+	return 32768;
- }
- 
- static struct clk_ops s2mps11_clk_ops = {
- 	.prepare	= s2mps11_clk_prepare,
- 	.unprepare	= s2mps11_clk_unprepare,
--	.is_enabled	= s2mps11_clk_is_enabled,
-+	.is_prepared	= s2mps11_clk_is_prepared,
- 	.recalc_rate	= s2mps11_clk_recalc_rate,
- };
- 
-@@ -174,7 +171,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	unsigned int s2mps11_reg;
- 	struct clk_init_data *clks_init;
- 	int i, ret = 0;
--	u32 val;
- 
- 	s2mps11_clks = devm_kzalloc(&pdev->dev, sizeof(*s2mps11_clk) *
- 					S2MPS11_CLKS_NUM, GFP_KERNEL);
-@@ -213,13 +209,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 		s2mps11_clk->mask = 1 << i;
- 		s2mps11_clk->reg = s2mps11_reg;
- 
--		ret = regmap_read(s2mps11_clk->iodev->regmap_pmic,
--				  s2mps11_clk->reg, &val);
--		if (ret < 0)
--			goto err_reg;
--
--		s2mps11_clk->enabled = val & s2mps11_clk->mask;
--
- 		s2mps11_clk->clk = devm_clk_register(&pdev->dev,
- 							&s2mps11_clk->hw);
- 		if (IS_ERR(s2mps11_clk->clk)) {
--- 
-1.7.9.5
+> As you point out, "bx lr" /may/ be treated specially (I've actually b=
+een
+
+Most, if not all, Cortex-A cores do this according the public TRMs.
+They also do the same thing for "mov pc, lr" so there will probably be
+no performance gain from this change.  It's still a good idea though,
+since we don't know what future cores will do.
+
+> discussing this with Will Deacon over the last couple of days, who ha=
+s
+> also been talking to the hardware people in ARM, and Will is happy wi=
+th
+> this patch as in its current form.)  This is why I've changed all
+> "mov pc, reg" instructions which return in some way to use this macro=
+,
+> and left others (those which are used to call some function and retur=
+n
+> back to the same point) alone.
+
+In that case the patch should be fine.  Your patch description didn't
+make it clear that only actual returns were being changed.
+
+--=20
+M=E5ns Rullg=E5rd
+mans@mansr.com
+--
+To unsubscribe from this list: send the line "unsubscribe linux-omap" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
