@@ -1,54 +1,69 @@
-From: Tushar Behera <tushar.b@samsung.com>
-Subject: [PATCH] ARM: dts: disable MDMA1 node for exynos5420
-Date: Tue,  1 Jul 2014 15:37:49 +0530
-Message-ID: <1404209269-652-1-git-send-email-tushar.b@samsung.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: stable@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, khilman@linaro.org, Seungwon Jeon <tgih.jun@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+From: Grant Likely <grant.likely@linaro.org>
+Subject: Re: [PATCH 2/2] arm: Add back maximum bank limit
+Date: Tue, 1 Jul 2014 11:57:36 +0100
+Message-ID: <CACxGe6sKVjAaQL+6jRGAd8fJxBByF-THJ6A-ygY43LdVA7YKMQ@mail.gmail.com>
+References: <1404068784-27604-1-git-send-email-lauraa@codeaurora.org>
+ <1404068784-27604-2-git-send-email-lauraa@codeaurora.org>
+ <20140630104350.600EDC40F52@trevor.secretlab.ca>
+ <53B1A65E.6050806@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <53B1A65E.6050806@codeaurora.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Laura Abbott <lauraa@codeaurora.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>, Tushar Behera <trblinux@gmail.com>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Seungwon Jeon <tgih.jun@samsung.com>
+On Mon, Jun 30, 2014 at 7:03 PM, Laura Abbott <lauraa@codeaurora.org> wrote:
+> On 6/30/2014 3:43 AM, Grant Likely wrote:
+>>
+>> Instead of splitting early_init_dt_scan(), the call to
+>> early_init_dt_scan() could probably be moved after the
+>> of_flat_dt_match_machine() call. It's at least worth a try. Looking at
+>> the code I don't see anything obvious that requires the
+>> early_init_dt_scan() code to run first.
+>>
+>
+> of_flat_dt_match_machine -> of_flat_dt_match which uses
+> initial_boot_params which isn't set until early_init_dt_scan. I had the
+> same thought about just rearranging but we still need something to be
+> set before doing the scan, hence the split.
 
-commit e6015c1f8a9032c2aecb78d23edf49582563bd47 upstream.
+Fair enough.
 
-This change places MDMA1 in disabled node for Exynos5420.
-If MDMA1 region is configured with secure mode, it makes
-the boot failure with the following on smdk5420 board.
-("Unhandled fault: imprecise external abort (0x1406) at 0x00000000")
-Thus, arndale-octa board don't need to do the same thing anymore.
+>> Once you've got the mdesc pointer, you've could set the limit before
+>> doing the full scan. Or, better yet because this is a fix for broken
+>> data, you could call a dt_fixup hook on the mdesc. Then exynos is the
+>> only platform that needs special treatment. The best thing for exynos to
+>> do is fix the buggy data by clearing the bogus entries. Then there's no
+>> need to reintroduce early_init_dt_add_memory_arch() for ARM.
+>>
+>
+> The fixup hook does sound better. The flow would become
+>
+> setup_machine_fdt
+>         - early_init_dt_verify
+>         - of_flat_dt_match_machine
+>         - mdesc->dt_fixup
+>         - early_init_dt_scan_all
+>
+> I notice that powerpc already has a DT fixup infrastructure but I don't see
+> any such thing for ARM. How much of that do you think could and should be
+> leveraged for ARM?
 
-Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
-Tested-by: Javi Merino <javi.merino@arm.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Tushar Behera <tushar.b@samsung.com>
----
+Not much. The PowerPC fixup infrastructure is based on having an
+OpenFirmware implementation and the fixups are performed by executing
+Forth commands in OFW before flattening the tree and killing OFW
+context. For ARM, any DT fixup hooks should directly use libfdt calls.
 
-Tested on top of v3.14.10.
-Fixes issue reported at [1].
-[1]
-http://armcloud.us/kernel-ci/stable/v3.14.10/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
-
- arch/arm/boot/dts/exynos5420.dtsi |    7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 8db792b..15eb8d4 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -323,6 +323,13 @@
- 			#dma-cells = <1>;
- 			#dma-channels = <8>;
- 			#dma-requests = <1>;
-+			/*
-+			 * MDMA1 can support both secure and non-secure
-+			 * AXI transactions. When this is enabled in the kernel
-+			 * for boards that run in secure mode, we are getting
-+			 * imprecise external aborts causing the kernel to oops.
-+			 */
-+			status = "disabled";
- 		};
- 	};
- 
--- 
-1.7.9.5
+g.
