@@ -1,37 +1,116 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 0/2] cpuidle fixes and cleanup
-Date: Tue, 1 Jul 2014 15:52:44 +0100
-Message-ID: <20140701145244.GX32514@n2100.arm.linux.org.uk>
-References: <1404225158-8453-1-git-send-email-k.chander@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Karol Wrona <k.wrona@samsung.com>
+Subject: [PATCH] clk: s2mps11: Fix clk_ops
+Date: Tue, 01 Jul 2014 16:57:02 +0200
+Message-ID: <1404226622-25423-1-git-send-email-k.wrona@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:50049 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754348AbaGAOwt (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:63894 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932176AbaGAO7p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jul 2014 10:52:49 -0400
-Content-Disposition: inline
-In-Reply-To: <1404225158-8453-1-git-send-email-k.chander@samsung.com>
+	Tue, 1 Jul 2014 10:59:45 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <k.chander@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, daniel.lezcano@linaro.org, linux-pm@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Karol Wrona <k.wrona@samsung.com>
 
-On Tue, Jul 01, 2014 at 08:02:36PM +0530, Chander Kashyap wrote:
-> This patch series fixes the cpuidle for different states. Also removes arm
-> diagnostic and power register save/restore code as it is made generic.
-> 
-> Based on:
-> ARM: save/restore diagnostic register on Cortex-A9 suspend/resume
->  http://www.spinics.net/lists/arm-kernel/msg340506.html
+s32mps11 clocks had registered callbacks for prepare ,unprepare and is_enable
+what was wrong and caused i.e. that unused clocks were not disabled.
 
-As there is an outstanding issue with this patch, we can't proceed with
-this set of changes until we know what's going on there.
+Regmap_read is cached so it can be called in is_prepare callback
+to achieve this information. Enabled field was removed from struct s2mps11_clk.
 
-Also, bear in mind that I have changes which conflict with this in my
-tree (which I've just updated.)
+Change-Id: I4a850aef9034ece4e45760291d0a6fdceffb3304
+Signed-off-by: Karol Wrona <k.wrona@samsung.com>
+---
+ drivers/clk/clk-s2mps11.c |   33 +++++++++++----------------------
+ 1 file changed, 11 insertions(+), 22 deletions(-)
 
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index b5274a9..5df99a4 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -45,7 +45,6 @@ struct s2mps11_clk {
+ 	struct clk *clk;
+ 	struct clk_lookup *lookup;
+ 	u32 mask;
+-	bool enabled;
+ 	unsigned int reg;
+ };
+ 
+@@ -62,8 +61,6 @@ static int s2mps11_clk_prepare(struct clk_hw *hw)
+ 	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic,
+ 				 s2mps11->reg,
+ 				 s2mps11->mask, s2mps11->mask);
+-	if (!ret)
+-		s2mps11->enabled = true;
+ 
+ 	return ret;
+ }
+@@ -75,32 +72,32 @@ static void s2mps11_clk_unprepare(struct clk_hw *hw)
+ 
+ 	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
+ 			   s2mps11->mask, ~s2mps11->mask);
+-
+-	if (!ret)
+-		s2mps11->enabled = false;
+ }
+ 
+-static int s2mps11_clk_is_enabled(struct clk_hw *hw)
++static int s2mps11_clk_is_prepared(struct clk_hw *hw)
+ {
++	int ret;
++	u32 val;
+ 	struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
+ 
+-	return s2mps11->enabled;
++	ret = regmap_read(s2mps11->iodev->regmap_pmic,
++				s2mps11->reg, &val);
++	if (ret < 0)
++		return -EINVAL;
++
++	return val & s2mps11->mask;
+ }
+ 
+ static unsigned long s2mps11_clk_recalc_rate(struct clk_hw *hw,
+ 					     unsigned long parent_rate)
+ {
+-	struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
+-	if (s2mps11->enabled)
+-		return 32768;
+-	else
+-		return 0;
++	return 32768;
+ }
+ 
+ static struct clk_ops s2mps11_clk_ops = {
+ 	.prepare	= s2mps11_clk_prepare,
+ 	.unprepare	= s2mps11_clk_unprepare,
+-	.is_enabled	= s2mps11_clk_is_enabled,
++	.is_prepared	= s2mps11_clk_is_prepared,
+ 	.recalc_rate	= s2mps11_clk_recalc_rate,
+ };
+ 
+@@ -174,7 +171,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 	unsigned int s2mps11_reg;
+ 	struct clk_init_data *clks_init;
+ 	int i, ret = 0;
+-	u32 val;
+ 
+ 	s2mps11_clks = devm_kzalloc(&pdev->dev, sizeof(*s2mps11_clk) *
+ 					S2MPS11_CLKS_NUM, GFP_KERNEL);
+@@ -213,13 +209,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 		s2mps11_clk->mask = 1 << i;
+ 		s2mps11_clk->reg = s2mps11_reg;
+ 
+-		ret = regmap_read(s2mps11_clk->iodev->regmap_pmic,
+-				  s2mps11_clk->reg, &val);
+-		if (ret < 0)
+-			goto err_reg;
+-
+-		s2mps11_clk->enabled = val & s2mps11_clk->mask;
+-
+ 		s2mps11_clk->clk = devm_clk_register(&pdev->dev,
+ 							&s2mps11_clk->hw);
+ 		if (IS_ERR(s2mps11_clk->clk)) {
 -- 
-FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-improving, and getting towards what was expected from it.
+1.7.9.5
