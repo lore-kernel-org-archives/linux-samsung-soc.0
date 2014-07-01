@@ -1,51 +1,42 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] ARM: dts: Add TMU dt node to monitor the temperature for
- Exynos3250
-Date: Tue, 01 Jul 2014 09:40:10 +0900
-Message-ID: <1404175210-9278-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH RESEND] clk: samsung: Make of_device_id array const
+Date: Tue, 01 Jul 2014 10:55:58 +0900
+Message-ID: <00a201cf94cf$9a8ee1b0$cfaca510$%han@samsung.com>
+References: <1403784006-17605-1-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:40925 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750742AbaGAB4B (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 Jun 2014 21:56:01 -0400
+In-reply-to: <1403784006-17605-1-git-send-email-k.kozlowski@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>
+Cc: 'Tomasz Figa' <t.figa@samsung.com>, 'Mike Turquette' <mturquette@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-This patch add TMU (Thermal Management Unit) dt node to monitor the high
-temperature for Exynos3250.
+On Thursday, June 26, 2014 9:00 PM, Krzysztof Kozlowski wrote:
+> 
+> Array of struct of_device_id may be be const as expected by
+> of_match_table field and of_find_matching_node_and_match() function.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
-This patch has a dependency on following patch [1]:
- [1] https://lkml.org/lkml/2014/6/30/805
+Reviewed-by: Jingoo Han <jg1.han@samsung.com>
 
- arch/arm/boot/dts/exynos3250.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Best regards,
+Jingoo Han
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 3660cab..1e566af 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -192,6 +192,16 @@
- 			status = "disabled";
- 		};
- 
-+		tmu: tmu@100C0000 {
-+			compatible = "samsung,exynos3250-tmu";
-+			interrupt-parent = <&gic>;
-+			reg = <0x100C0000 0x100>;
-+			interrupts = <0 216 0>;
-+			clocks = <&cmu CLK_TMU_APBIF>;
-+			clock-names = "tmu_apbif";
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@10481000 {
- 			compatible = "arm,cortex-a15-gic";
- 			#interrupt-cells = <3>;
--- 
-1.8.0
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> ---
+>  drivers/clk/samsung/clk-exynos4.c    | 2 +-
+>  drivers/clk/samsung/clk-exynos5250.c | 2 +-
+>  drivers/clk/samsung/clk-exynos5420.c | 2 +-
+>  drivers/clk/samsung/clk-exynos5440.c | 2 +-
+>  drivers/clk/samsung/clk.c            | 2 +-
+>  drivers/clk/samsung/clk.h            | 2 +-
+>  6 files changed, 6 insertions(+), 6 deletions(-)
+> 
