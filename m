@@ -1,31 +1,87 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+ (part1)
-Date: Wed, 02 Jul 2014 00:42:06 +0200
-Message-ID: <87y4wcog5d.fsf@free.fr>
-References: <E1X20mL-00083I-Sv@rmk-PC.arm.linux.org.uk>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Add TMU dt node to monitor the temperature for
+ Exynos3250
+Date: Wed, 02 Jul 2014 08:52:15 +0900
+Message-ID: <53B349AF.4080606@samsung.com>
+References: <1404175210-9278-1-git-send-email-cw00.choi@samsung.com>
+ <CAK5sBcFJMK-y+MZPXCufKEmp=v1nFJHstvNTczsQ3ez3SUPbKw@mail.gmail.com>
+ <53B23362.7080103@samsung.com>
+ <CAK5sBcER-rFmqe74b8uS=ZxKnTNGtkE0x6f7zaLphmyuHJz7Yg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <kvm-owner@vger.kernel.org>
-In-Reply-To: <E1X20mL-00083I-Sv@rmk-PC.arm.linux.org.uk> (Russell King's
-	message of "Tue, 01 Jul 2014 17:19:33 +0100")
-Sender: kvm-owner@vger.kernel.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, davinci-linux-open-source@linux.davincidsp.com, linux-samsung-soc@vger.kernel.org, kvm@vger.kernel.org, linux-sh@vger.kernel.org, linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org, xen-devel@lists.xenproject.org, linux-omap@vger.kernel.org, kvmarm@lists.cs.columbia.edu
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:15133 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759256AbaGAXwS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 1 Jul 2014 19:52:18 -0400
+In-reply-to: <CAK5sBcER-rFmqe74b8uS=ZxKnTNGtkE0x6f7zaLphmyuHJz7Yg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <spk.linux@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kyungmin Park <kyungmin.park@samsung.com>, Russell King <linux@arm.linux.org.uk>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Russell King <rmk+kernel@arm.linux.org.uk> writes:
+On 07/01/2014 01:10 PM, Sachin Kamat wrote:
+> Hi Chanwoo,
+> 
+> On Tue, Jul 1, 2014 at 9:34 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>> Hi Sachin,
+>>
+>> On 07/01/2014 12:33 PM, Sachin Kamat wrote:
+>>> Hi Chanwoo,
+>>>
+>>> On Tue, Jul 1, 2014 at 6:10 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>>>> This patch add TMU (Thermal Management Unit) dt node to monitor the high
+>>>> temperature for Exynos3250.
+>>>>
+>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>> ---
+>>>> This patch has a dependency on following patch [1]:
+>>>>  [1] https://lkml.org/lkml/2014/6/30/805
+>>>>
+>>>>  arch/arm/boot/dts/exynos3250.dtsi | 10 ++++++++++
+>>>>  1 file changed, 10 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+>>>> index 3660cab..1e566af 100644
+>>>> --- a/arch/arm/boot/dts/exynos3250.dtsi
+>>>> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+>>>> @@ -192,6 +192,16 @@
+>>>>                         status = "disabled";
+>>>>                 };
+>>>>
+>>>> +               tmu: tmu@100C0000 {
+>>>> +                       compatible = "samsung,exynos3250-tmu";
+>>>> +                       interrupt-parent = <&gic>;
+>>>> +                       reg = <0x100C0000 0x100>;
+>>>> +                       interrupts = <0 216 0>;
+>>>> +                       clocks = <&cmu CLK_TMU_APBIF>;
+>>>> +                       clock-names = "tmu_apbif";
+>>>> +                       status = "disabled";
+>>>
+>>> I don't think there would be any board specific properties needed. Hence
+>>> leave the status as enabled (by deleting the above line).
+>>>
+>>
+>> I think that if specific board need TMU feature, dts file for specific board
+>> should include tmu dt node with 'okay' status. The specific board based on
+>> Exynos3250 might not need TMU feature.
+> 
+> The status field in DT node is not meant for stating the build configuration but
+> represents the readiness of the hardware for usage on the platform. If
+> a particular
+> board does not need this feature it needs to be disabled in the build
+> config and only
+> for any special requirements disable it in board file.
 
-> ARMv6 and greater introduced a new instruction ("bx") which can be used
-> to return from function calls.  Recent CPUs perform better when the
-> "bx lr" instruction is used rather than the "mov pc, lr" instruction,
-> and this sequence is strongly recommended to be used by the ARM
-> architecture manual (section A.4.1.1).
+TMU (Thermal Management Unit) needs specific regulator for TMU power as following:
+The regulator for TMU is dependent on board.
 
-For ARMv5 - XScale, and more specificaly the mioa701_bootresume.S path (suspend
-to RAM) :
-Tested-by: Robert Jarzmik <robert.jarzmik@free.fr>
+For exmaple: in board dts file including tmu dt
 
-Cheers.
-
---
-Robert
+	&tmu {
+		vtmu-supply = <&ldo7_reg>;
+		status = "okay";
+	};
