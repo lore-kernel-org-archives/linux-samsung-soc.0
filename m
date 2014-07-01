@@ -1,87 +1,49 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: Re: [PATCH 4/7] Exynos: add support for 'domain-always-on' property
-Date: Tue, 01 Jul 2014 19:54:08 +0200
-Message-ID: <53B2F5C0.1000509@gmx.net>
-References: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com>
- <1404202211-15788-5-git-send-email-m.szyprowski@samsung.com>
- <53B276BE.2090509@gmx.net> <53B27AA3.5030000@samsung.com>
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+
+Date: Tue, 1 Jul 2014 19:51:26 +0200
+Message-ID: <20140701175126.GA20086@lunn.ch>
+References: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <53B27AA3.5030000@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, kvm@vger.kernel.org, linux-sh@vger.kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Sekhar Nori <nsekhar@ti.com>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, kvmarm@lists.cs.columbia.edu, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Magnus Damm <magnus.damm@gmail.com>, Gleb Natapov <gleb@kernel.org>, Tony Lindgren <tony@atomide.com>, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Marc Zyngier <marc.zyngier@arm.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Simon Horman <horms@verge.net.>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-
-Marek Szyprowski wrote:
-> Hello,
+On Tue, Jul 01, 2014 at 04:58:24PM +0100, Russell King wrote:
+> ARMv6 and greater introduced a new instruction ("bx") which can be used
+> to return from function calls.  Recent CPUs perform better when the
+> "bx lr" instruction is used rather than the "mov pc, lr" instruction,
+> and this sequence is strongly recommended to be used by the ARM
+> architecture manual (section A.4.1.1).
 > 
-> On 2014-07-01 10:52, Tobias Jakobi wrote:
->> Hello Marek,
->>
->> I think you had a similar patch in the tizen tree, but according to
->> Tomasz Figa, it was considered a hack. I don't quite see how this is
->> different.
->>
->> Also, if I have been following the discussion correctly, then the
->> powerdomain issue essentially is about the question which SoC block
->> needs the LCD0 domain and how the proper power on/off sequences should
->> look like.
->>
->> At least the mixer power issue, which I pointed out some time ago, seems
->> to be deal with now:
->> https://git.kernel.org/cgit/linux/kernel/git/daeinki/drm-exynos.git/commit/?h=exynos-drm-next&id=381be025ac1a6dc8efebdf146ced0d4a6007f77b
->>
+> We provide a new macro "ret" with all its variants for the condition
+> code which will resolve to the appropriate instruction.
 > 
-> Well, that patch solves power on/off sequence issue with mixer and hdmi,
-> but it didn't solve the issue with additional managing of power domain
-> on/off. You can check that if you remove always on property, system will
-> freeze when hdmi cable is connected for the second time. I've investigated
-> it for some time, but right now I didn't find any 100% reliable solution
-> other than keeping the power domain enabled all the time. At least for
-> now, this patch lets you use HDMI without any stability issues.
-Hmm, I have also applied a similar hack to force TV and LCD0 pd on on my
-system, but I didn't experience this behaviour (cable reconnecting).
-Guess I have to recheck with some more recent tree to make sure.
-
-
-> I've only found that there are still at least 2 issues with power domains.
-> One is Mixer/Video Processor dependency on LCD0 domain, second is the
-> proper
-> power on/off sequence of HDMI/Mixer and TV domain. Forcing both domains to
-> 'always on' workarounds both issues for now. Right now I have no better
-> idea.
-I had the impression that the patch from above, plus this one
-https://git.kernel.org/cgit/linux/kernel/git/daeinki/drm-exynos.git/commit/?h=exynos-drm-next&id=245f98f269714c08dc6d66d021d166cf36059bc4
-were supposed to fix these issues. I haven't tested them yet, because of
-lack of time, but Rahul's patch appears to fix mixer poweroff, and
-Inki's patch the sequencing (VP, Mixer and last but not least, the HDMI).
-
-
-> Later, once the proper sequence is found we can remove those properties
-> from Odroid DTS.
-I dunno, because you would have to support the property to the end of
-time then, even though it's not used anymore. Isn't that the kind of
-thing that shouldn't end up in DT bindings specs?
-
-
-
+> Rather than doing this piecemeal, and miss some instances, change all
+> the "mov pc" instances to use the new macro, with the exception of
+> the "movs" instruction and the kprobes code.  This allows us to detect
+> the "mov pc, lr" case and fix it up - and also gives us the possibility
+> of deploying this for other registers depending on the CPU selection.
 > 
-> Best regards
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 
+Hi Russell
 
-With best wishes,
-Tobias
+Boot tested on kirkwood.
+
+Tested-by: Andrew Lunn <andrew@lunn.ch>
+
+	   Andrew
