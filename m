@@ -1,58 +1,52 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [Patch v7 0/6] add cpuidle support for Exynos5420
-Date: Tue, 01 Jul 2014 20:52:21 +0900
-Message-ID: <03d501cf9522$eaf67200$c0e35600$@samsung.com>
-References: <1402914383-20471-1-git-send-email-k.chander@samsung.com>
+From: Tushar Behera <trblinux@gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
+Date: Tue, 01 Jul 2014 17:29:33 +0530
+Message-ID: <53B2A2A5.4070203@gmail.com>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>	<1402464739-19044-3-git-send-email-tushar.b@samsung.com>	<CAD=FV=W5yh58fYTwRZxmZt=BORcZMSRV0oRe12yA74Q5h2S4YQ@mail.gmail.com>	<7hpphwlgn0.fsf@paris.lan>	<CAC5m3Bzey-YoPLmjAq4YNPQ13rojtVFWAbnhX6-ZFtYZwEdMWg@mail.gmail.com>	<7h8uojk61a.fsf@paris.lan>	<53ACE724.7090606@gmail.com>	<CAGa+x86COQz+cYtrXWrP-sjFGz-gi2tf6GEvLiKYoQwg1zMivQ@mail.gmail.com> <CAGa+x87LHiYGb03=GRcZisK1=TyakW1htd1E2vOQ6ijZKw8syg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1402914383-20471-1-git-send-email-k.chander@samsung.com>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Chander Kashyap' <k.chander@samsung.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, nicolas.pitre@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, daniel.lezcano@linaro.org, lorenzo.pieralisi@arm.com, rjw@rjwysocki.net, tomasz.figa@gmail.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:37609 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751171AbaGAL7k (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 1 Jul 2014 07:59:40 -0400
+In-Reply-To: <CAGa+x87LHiYGb03=GRcZisK1=TyakW1htd1E2vOQ6ijZKw8syg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kevin Hilman <khilman@linaro.org>
+Cc: Doug Anderson <dianders@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-Chander Kashyap wrote:
+On 06/27/2014 08:18 PM, Kevin Hilman wrote:
+> On Fri, Jun 27, 2014 at 7:18 AM, Kevin Hilman <khilman@linaro.org> wrote:
+>> On Thu, Jun 26, 2014 at 8:38 PM, Tushar Behera <trblinux@gmail.com> wrote:
+>>
+>>> Would you please provide me the environment setting of your u-boot?
+>>> U-boot environment on my board has been over-written, I would like to
+>>> set it same as yours and try to reproduce the issue at my end. With only
+>>> 'sound init', I don't seem to hit this issue anymore.
+>>
+>> Attached is a full boot log using v3.16-rc2 with my patch adding
+>> CLK_IGNORE_UNUSED to mau_epll and Doug's aclk66_peric patch.  In the
+>> boot log, you'll see the output of 'printenv' inside u-boot where the
+>> environment is dumped.
 > 
-> Exynos5420 is a big-little Soc from Samsung. It has 4 A15 and 4 A7 cores.
+> Oops, I sent you a boot log for the octa board.  Here's the one for
+> peach-pi with the same kernel (built with upstream exynos_defconfig)
 > 
-> This patchset adds cpuidle support for Exynos5420 SoC based on
-> generic big.little cpuidle driver.
-> 
-> Tested on SMDK5420.
-> Rebased on 3.16-rc1
-> 
-> Changelog is in respective patches.
-> Chander Kashyap (5):
->   driver: cpuidle-big-little: add of_device_id structure
->   arm: exynos: add generic function to calculate cpu number
->   cpuidle: config: Add ARCH_EXYNOS entry to select cpuidle-big-little
->     driver
->   driver: cpuidle: cpuidle-big-little: init driver for Exynos5420
->   exynos: cpuidle: do not allow cpuidle registration for Exynos5420
->   mcpm: exynos: populate suspend and powered_up callbacks
-> 
->  arch/arm/mach-exynos/exynos.c        |    4 +++-
->  arch/arm/mach-exynos/mcpm-exynos.c   |   36 ++++++++++++++++++++++++++++++++++
->  arch/arm/mach-exynos/regs-pmu.h      |    9 +++++++++
->  drivers/cpuidle/Kconfig.arm          |    2 +-
->  drivers/cpuidle/cpuidle-big_little.c |   12 +++++++++++-
->  5 files changed, 60 insertions(+), 3 deletions(-)
+> Kevin
 > 
 
-+ Nicolas
+The u-boot version is a little different on my Peach-Pi as compared to
+the market release version. Not sure if that is making any difference.
 
-Hi,
+Peach # version
 
-This series looks good to me and I asked Chander to test this series with
-Nico's mcpm patches on smdk5420 and he said it works fine. So I will apply
-this into samsung tree if Nicolas has no objection on 6/6.
+U-Boot 2013.04 (Feb 13 2014 - 16:35:03) for Peach
+armv7a-cros-linux-gnueabi-gcc.real (4.8.1_cos_gg_feea904_4.8.1-r66)
+4.8.x-google 20130905 (prerelease)
+GNU ld (binutils-2.22_cos_gg_2) 2.22
 
-BTW, one more, there are duplicated sign-off from Chander with different
-e-mail address, I'm not sure it should be fine or not because I didn't see
-same thing before.
-
-Thanks,
-Kukjin
+-- 
+Tushar Behera
