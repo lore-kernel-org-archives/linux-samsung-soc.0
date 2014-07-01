@@ -1,80 +1,72 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 00/17] ARM: S5P64X0, S5PC100: no more support in mainline
-Date: Tue, 01 Jul 2014 11:08:35 +0900
-Message-ID: <02c101cf94d1$5d783b30$1868b190$@samsung.com>
-References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
- <6153646.CZ57BgYKf3@wuerfel> <20140630142224.GA30417@ulmo>
- <4717633.z8gH3C8KXB@wuerfel>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: [PATCH v2 0/9] thermal: exynos: various cleanups
+Date: Tue, 01 Jul 2014 10:09:13 +0800
+Message-ID: <1404180553.8366.16.camel@rzhang1-toshiba>
+References: <1403026045-16024-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46651 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751237AbaGACIg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jun 2014 22:08:36 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N8000H2GGMBAR20@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 01 Jul 2014 11:08:35 +0900 (KST)
-In-reply-to: <4717633.z8gH3C8KXB@wuerfel>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1403026045-16024-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Eduardo Valentin <eduardo.valentin@gmail.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: 'Thierry Reding' <thierry.reding@gmail.com>, linux-samsung-soc@vger.kernel.org
 
-Arnd Bergmann wrote:
+Eduardo,
+
+what do you think of this patch set?
+
+thanks,
+rui
+
+On Tue, 2014-06-17 at 19:27 +0200, Bartlomiej Zolnierkiewicz wrote:
+> Hi,
 > 
-> On Monday 30 June 2014 16:22:25 Thierry Reding wrote:
-> > On Mon, Jun 30, 2014 at 03:34:27PM +0200, Arnd Bergmann wrote:
-> > > On Tuesday 01 July 2014 06:32:10 Kukjin Kim wrote:
-> > > > This series removes S5P64X0 and S5PC100 related codes in mainline,
-> > > > because no more user now. And if its supporting is required later,
-> > > > it will be done with using device tree.
-> > > >
-> > >
-> > > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> >
-> > It seems like I'm not completely up-to-date. What happened to our prime
-> > directive never to remove support for boards? Why is this special? What
-> > about people that still use this hardware? The commit message says that
-> > there are no longer any users. How was this determined?
+> This patch series contains various cleanups for EXYNOS thermal
+> driver.  Overall it decreases driver's LOC by 12%.  It is based
+> on next-20140617 kernel.  It should not cause any functionality
+> changes.
 > 
-I asked whether we may remove its supporting in mainline before not just one
-time and then no objection at that time...
-
-> From what I can tell, the supported machines on these two platforms are
-> all the official development prototypes, not production boards, and they
-> came out in rather small quantities, probably Samsung-internal for the
-> most part. The maintainers have previously assured me they are not aware
-> of anybody using it, and I trust their judgment.
+> Changes since v1:
+> - synced patches against next-20140617
+> - merged patch "thermal: exynos: remove unused defines" into
+>   "thermal: exynos: remove unused struct exynos_tmu_registers
+>   entries" one (per request from Eduardo)
+> - improved patch descriptions for patches #1-5
+> - fixed documentation for pdata->gain and pdata->reference_voltage
+> - added Reviewed-by from Amit to patches #6, #7 and #10
+> - added missing Acked-by from Kyungmin Park
 > 
-Yeah, I think so ;-)
-
-> I'm totally fine with removing support for these machines, and we have
-> removed a number of similar platforms in the past. The rule is not that
-
-S5P6442. I did commit a73ddc61 'ARM: S5P6442: Removing ARCH_S5P6442' in 2011
-because that could not be mass-produced.
-
-> we never remove stuff, the rule is that we never break things for
-> active users.
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
 > 
-YES.
-
-> As always, if it turns out that we missed some active users, we will
-> revert these patches, or bring support back another way.
 > 
-Sure, so please let us know if you have any objection on this removing.
-
-> This should probably all be spelled out explicitly in the changelog
-> for patch 1, which I admit I have not seen.
+> Bartlomiej Zolnierkiewicz (9):
+>   thermal: exynos: remove unused struct exynos_tmu_registers entries
+>   thermal: exynos: remove dead code for HW_MODE calibration
+>   thermal: exynos: remove dead code for TYPE_TWO_POINT_TRIMMING
+>     calibration
+>   thermal: exynos: remove redundant pdata checks from
+>     exynos_tmu_initialize()
+>   thermal: exynos: remove redundant threshold_code checks from
+>     exynos_tmu_initialize()
+>   thermal: exynos: simplify temp_to_code() and code_to_temp()
+>   thermal: exynos: cache non_hw_trigger_levels in pdata
+>   thermal: exynos: remove redundant pdata checks from
+>     exynos_tmu_control()
+>   thermal: exynos: remove identical values from exynos*_tmu_registers
+>     structures
 > 
-It's my fault, sorry I forgot it and I'm resending 1/17 and 8/17 with -D.
+>  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
+>  drivers/thermal/samsung/exynos_tmu.c            | 181 ++++--------------------
+>  drivers/thermal/samsung/exynos_tmu.h            |  90 +-----------
+>  drivers/thermal/samsung/exynos_tmu_data.c       |  64 +--------
+>  drivers/thermal/samsung/exynos_tmu_data.h       |  33 +----
+>  5 files changed, 41 insertions(+), 328 deletions(-)
+> 
 
-Thanks,
-Kukjin
+
