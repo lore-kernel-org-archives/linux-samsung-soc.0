@@ -1,61 +1,54 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH] phy: phy-samsung-usb2: Change phy power on/power off
- sequence
-Date: Tue, 1 Jul 2014 15:29:21 +0530
-Message-ID: <53B28679.1000509@ti.com>
-References: <1403614495-9291-1-git-send-email-k.debski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:51832 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751273AbaGAJ7m (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jul 2014 05:59:42 -0400
-In-Reply-To: <1403614495-9291-1-git-send-email-k.debski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tushar Behera <tushar.b@samsung.com>
+Subject: [PATCH] ARM: dts: disable MDMA1 node for exynos5420
+Date: Tue,  1 Jul 2014 15:37:49 +0530
+Message-ID: <1404209269-652-1-git-send-email-tushar.b@samsung.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: stable@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, khilman@linaro.org, Seungwon Jeon <tgih.jun@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
-Cc: t.figa@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com
 
-Hi Kamil,
+From: Seungwon Jeon <tgih.jun@samsung.com>
 
-On Tuesday 24 June 2014 06:24 PM, Kamil Debski wrote:
-> The Exynos4412 USB 2.0 PHY hardware differs from the description provided
-> in the documentation. Some register bits have different function. This
-> patch fixes the defines of register bits and changes the way how phys are
-> powered on and off.
-> 
-> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+commit e6015c1f8a9032c2aecb78d23edf49582563bd47 upstream.
 
-Can you fix these checkpatch warnings?
+This change places MDMA1 in disabled node for Exynos5420.
+If MDMA1 region is configured with secure mode, it makes
+the boot failure with the following on smdk5420 board.
+("Unhandled fault: imprecise external abort (0x1406) at 0x00000000")
+Thus, arndale-octa board don't need to do the same thing anymore.
 
-WARNING: space prohibited before semicolon
-#149: FILE: drivers/phy/phy-exynos4x12-usb2.c:227:
-+				EXYNOS_4x12_URSTCON_HOST_LINK_P1 ;
+Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+Tested-by: Javi Merino <javi.merino@arm.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Tushar Behera <tushar.b@samsung.com>
+---
 
-WARNING: line over 80 characters
-#200: FILE: drivers/phy/phy-exynos4x12-usb2.c:278:
-+		exynos4x12_power_on_internal(&drv->instances[EXYNOS4x12_DEVICE]);
+Tested on top of v3.14.10.
+Fixes issue reported at [1].
+[1]
+http://armcloud.us/kernel-ci/stable/v3.14.10/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
 
-WARNING: line over 80 characters
-#210: FILE: drivers/phy/phy-exynos4x12-usb2.c:288:
-+		exynos4x12_power_on_internal(&drv->instances[EXYNOS4x12_DEVICE]);
+ arch/arm/boot/dts/exynos5420.dtsi |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-WARNING: line over 80 characters
-#220: FILE: drivers/phy/phy-exynos4x12-usb2.c:297:
-+static void exynos4x12_power_off_internal(struct samsung_usb2_phy_instance *inst)
-
-WARNING: line over 80 characters
-#249: FILE: drivers/phy/phy-exynos4x12-usb2.c:319:
-+		exynos4x12_power_off_internal(&drv->instances[EXYNOS4x12_DEVICE]);
-
-WARNING: line over 80 characters
-#253: FILE: drivers/phy/phy-exynos4x12-usb2.c:323:
-+		exynos4x12_power_off_internal(&drv->instances[EXYNOS4x12_DEVICE]);
-
-total: 0 errors, 6 warnings, 182 lines checked
-
-Thanks
-Kishon
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 8db792b..15eb8d4 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -323,6 +323,13 @@
+ 			#dma-cells = <1>;
+ 			#dma-channels = <8>;
+ 			#dma-requests = <1>;
++			/*
++			 * MDMA1 can support both secure and non-secure
++			 * AXI transactions. When this is enabled in the kernel
++			 * for boards that run in secure mode, we are getting
++			 * imprecise external aborts causing the kernel to oops.
++			 */
++			status = "disabled";
+ 		};
+ 	};
+ 
+-- 
+1.7.9.5
