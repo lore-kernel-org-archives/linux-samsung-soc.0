@@ -1,116 +1,50 @@
-From: Karol Wrona <k.wrona@samsung.com>
-Subject: [PATCH] clk: s2mps11: Fix clk_ops
-Date: Tue, 01 Jul 2014 16:57:02 +0200
-Message-ID: <1404226622-25423-1-git-send-email-k.wrona@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:63894 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932176AbaGAO7p (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jul 2014 10:59:45 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: mwifiex card reset
+Date: Tue, 1 Jul 2014 08:09:38 -0700
+Message-ID: <CAD=FV=Xi5B2=tssgQSgjeKtYVcw-x9pS6Ci580M6OfroPCb+RA@mail.gmail.com>
+References: <CALtMJEBWPM+75wxM2Mp5EX_o6NWtZUJdYRCv6psbvdUn4k295w@mail.gmail.com>
+	<20140628052220.GG10407@us.netrek.org>
+	<20140628072322.GC7410@atomide.com>
+	<CALtMJED5vfgkAhMBXKaDP6u9U9n41c-wziyTxt6e_7XTSxG3oQ@mail.gmail.com>
+	<20140630061912.GA2461@atomide.com>
+	<53B1BAC1.3090902@zonque.org>
+	<477F20668A386D41ADCC57781B1F70430FE5F37540@SC-VEXCH1.marvell.com>
+	<20140701065721.GM24891@us.netrek.org>
+	<CA+NduCAuRFTQneJUBiKP2Aeq2HCxe71yxg_iDDStkNvhzRg-Rg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CA+NduCAuRFTQneJUBiKP2Aeq2HCxe71yxg_iDDStkNvhzRg-Rg@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Yuvaraj Cd <yuvaraj.lkml@gmail.com>, Olof Johansson <olof@lixom.net>
+Cc: James Cameron <quozl@laptop.org>, Bing Zhao <bzhao@marvell.com>, Daniel Mack <daniel@zonque.org>, Tony Lindgren <tony@atomide.com>, Andreas Fenkart <afenkart@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Karol Wrona <k.wrona@samsung.com>
 
-s32mps11 clocks had registered callbacks for prepare ,unprepare and is_enable
-what was wrong and caused i.e. that unused clocks were not disabled.
++Olof who posted the patch that Yuvaraj referenced.
 
-Regmap_read is cached so it can be called in is_prepare callback
-to achieve this information. Enabled field was removed from struct s2mps11_clk.
+On Tue, Jul 1, 2014 at 5:20 AM, Yuvaraj Cd <yuvaraj.lkml@gmail.com> wrote:
+> On Tue, Jul 1, 2014 at 12:27 PM, James Cameron <quozl@laptop.org> wrote:
+>> On Mon, Jun 30, 2014 at 11:44:29PM -0700, Bing Zhao wrote:
+>>> I may have missed something, but doesn't the MMC_POWER_OFF and
+>>> MMC_POWER_ON|UP handling in controller driver help?
+>>> Anyway the clocks/GPIOs/regulators are sort of platform
+>>> dependent. Would it be better putting it in /arch/arm/mach-xxxxx/?
+>>
+>> Wouldn't device tree for mmc be better?
+> I have come across same problem.Below is the thread in which more
+> discussions happened on this.
+>  http://patchwork.ozlabs.org/patch/312444/
+> I am adding few more those who are interested in this solution.
 
-Change-Id: I4a850aef9034ece4e45760291d0a6fdceffb3304
-Signed-off-by: Karol Wrona <k.wrona@samsung.com>
----
- drivers/clk/clk-s2mps11.c |   33 +++++++++++----------------------
- 1 file changed, 11 insertions(+), 22 deletions(-)
+Thanks to Yuvaraj for referencing the old thread.
 
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index b5274a9..5df99a4 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -45,7 +45,6 @@ struct s2mps11_clk {
- 	struct clk *clk;
- 	struct clk_lookup *lookup;
- 	u32 mask;
--	bool enabled;
- 	unsigned int reg;
- };
- 
-@@ -62,8 +61,6 @@ static int s2mps11_clk_prepare(struct clk_hw *hw)
- 	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic,
- 				 s2mps11->reg,
- 				 s2mps11->mask, s2mps11->mask);
--	if (!ret)
--		s2mps11->enabled = true;
- 
- 	return ret;
- }
-@@ -75,32 +72,32 @@ static void s2mps11_clk_unprepare(struct clk_hw *hw)
- 
- 	ret = regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
- 			   s2mps11->mask, ~s2mps11->mask);
--
--	if (!ret)
--		s2mps11->enabled = false;
- }
- 
--static int s2mps11_clk_is_enabled(struct clk_hw *hw)
-+static int s2mps11_clk_is_prepared(struct clk_hw *hw)
- {
-+	int ret;
-+	u32 val;
- 	struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
- 
--	return s2mps11->enabled;
-+	ret = regmap_read(s2mps11->iodev->regmap_pmic,
-+				s2mps11->reg, &val);
-+	if (ret < 0)
-+		return -EINVAL;
-+
-+	return val & s2mps11->mask;
- }
- 
- static unsigned long s2mps11_clk_recalc_rate(struct clk_hw *hw,
- 					     unsigned long parent_rate)
- {
--	struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
--	if (s2mps11->enabled)
--		return 32768;
--	else
--		return 0;
-+	return 32768;
- }
- 
- static struct clk_ops s2mps11_clk_ops = {
- 	.prepare	= s2mps11_clk_prepare,
- 	.unprepare	= s2mps11_clk_unprepare,
--	.is_enabled	= s2mps11_clk_is_enabled,
-+	.is_prepared	= s2mps11_clk_is_prepared,
- 	.recalc_rate	= s2mps11_clk_recalc_rate,
- };
- 
-@@ -174,7 +171,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	unsigned int s2mps11_reg;
- 	struct clk_init_data *clks_init;
- 	int i, ret = 0;
--	u32 val;
- 
- 	s2mps11_clks = devm_kzalloc(&pdev->dev, sizeof(*s2mps11_clk) *
- 					S2MPS11_CLKS_NUM, GFP_KERNEL);
-@@ -213,13 +209,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 		s2mps11_clk->mask = 1 << i;
- 		s2mps11_clk->reg = s2mps11_reg;
- 
--		ret = regmap_read(s2mps11_clk->iodev->regmap_pmic,
--				  s2mps11_clk->reg, &val);
--		if (ret < 0)
--			goto err_reg;
--
--		s2mps11_clk->enabled = val & s2mps11_clk->mask;
--
- 		s2mps11_clk->clk = devm_clk_register(&pdev->dev,
- 							&s2mps11_clk->hw);
- 		if (IS_ERR(s2mps11_clk->clk)) {
--- 
-1.7.9.5
+It seems like there are already enough chefs in the kitchen so I'm not
+going to add any more suggestions myself.  I'll point out that on all
+ARM Chromebooks (which to date have a Marvell part connected via SDIO)
+all face the same problem.  In production kernels we've continued to
+get by with various hacks.  The current kernels use a hack with
+regulator chaining and assumptions about 32K clocks already being on.
+This is less egregious than the hacks in older kernels which initted
+WiFi in the LCD backlight function (dont ask) but is still a hack.
+
+-Doug
