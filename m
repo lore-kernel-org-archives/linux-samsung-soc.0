@@ -1,42 +1,66 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: ASoC: samsung: MACH_SMDK6450
-Date: Thu, 03 Jul 2014 07:37:07 +0900
-Message-ID: <53B48993.5020809@samsung.com>
-References: <1404287238.12021.7.camel@x220> <20140702092347.GB410@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2 04/17] ASoC: samsung: no more support for S5P6440 and S5P6450 SoCs
+Date: Thu,  3 Jul 2014 07:40:17 +0900
+Message-ID: <1404340817-28902-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:39665 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751535AbaGBWha (ORCPT
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:59256 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750920AbaGBWkd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jul 2014 18:37:30 -0400
-Received: by mail-pa0-f48.google.com with SMTP id et14so13252431pad.7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jul 2014 15:37:30 -0700 (PDT)
-In-Reply-To: <20140702092347.GB410@sirena.org.uk>
+	Wed, 2 Jul 2014 18:40:33 -0400
+Received: by mail-pd0-f175.google.com with SMTP id v10so12672348pde.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jul 2014 15:40:33 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Paul Bolle <pebolle@tiscali.nl>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: pebolle@tiscali.nl, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@linaro.org>
 
-On 07/02/14 18:23, Mark Brown wrote:
-> On Wed, Jul 02, 2014 at 09:47:18AM +0200, Paul Bolle wrote:
->
->> Your commit 0aeaa68cf509 ("ASoC: samsung: no more support for S5P6440
->> and S5P6450 SoCs") landed in next-20140702. It removed references to
->> MACH_SMDK6440 and MACH_SMDK6450 from sound/soc/samsung/.
->
-Yeah, I missed the removing when I created the patch. Paul, thanks for 
-your pointing out and I'm resending the updated patch.
+This patch removes s5p64x0 related WM8580 because of removing support
+for s5p64x0 SoCs.
 
-> This also wasn't sent to me for review, please always send patches to
-> maintainers.
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Mark Brown <broonie@linaro.org>
+[pebolle@tiscali.nl: reported missing dependency for smdk6450]
+Reported-by: Paul Bolle <pebolle@tiscali.nl>
+---
+ sound/soc/samsung/Kconfig          | 4 ++--
+ sound/soc/samsung/smdk_wm8580pcm.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Mark, I always send patches to regarding maintainers and in this case 
-the patch missed the change. I'm resending new patch and if any 
-problems, please let me know. Just note, I just wanted to check whether 
-there is no problem with other maintainers' tree early in -next tree.
-
-Thanks,
-Kukjin
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index 753b8c9..4f8d22f 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -63,7 +63,7 @@ config SND_SOC_SAMSUNG_JIVE_WM8750
+ 
+ config SND_SOC_SAMSUNG_SMDK_WM8580
+ 	tristate "SoC I2S Audio support for WM8580 on SMDK"
+-	depends on SND_SOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDK6440 || MACH_SMDK6450 || MACH_SMDKV210 || MACH_SMDKC110)
++	depends on SND_SOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110)
+ 	depends on REGMAP_I2C
+ 	select SND_SOC_WM8580
+ 	select SND_SAMSUNG_I2S
+@@ -178,7 +178,7 @@ config SND_SOC_SAMSUNG_SMDK_SPDIF
+ 
+ config SND_SOC_SMDK_WM8580_PCM
+ 	tristate "SoC PCM Audio support for WM8580 on SMDK"
+-	depends on SND_SOC_SAMSUNG && (MACH_SMDK6450 || MACH_SMDKV210 || MACH_SMDKC110)
++	depends on SND_SOC_SAMSUNG && (MACH_SMDKV210 || MACH_SMDKC110)
+ 	depends on REGMAP_I2C
+ 	select SND_SOC_WM8580
+ 	select SND_SAMSUNG_PCM
+diff --git a/sound/soc/samsung/smdk_wm8580pcm.c b/sound/soc/samsung/smdk_wm8580pcm.c
+index e119aaa..63d0793 100644
+--- a/sound/soc/samsung/smdk_wm8580pcm.c
++++ b/sound/soc/samsung/smdk_wm8580pcm.c
+@@ -25,7 +25,7 @@
+  *  o '0' means 'OFF'
+  *  o 'X' means 'Don't care'
+  *
+- * SMDK6410, SMDK6440, SMDK6450 Base B/D: CFG1-0000, CFG2-1111
++ * SMDK6410 Base B/D: CFG1-0000, CFG2-1111
+  * SMDKC110, SMDKV210: CFGB11-100100, CFGB12-0000
+  */
+ 
+-- 
+1.8.2.1.339.g52a3e01
