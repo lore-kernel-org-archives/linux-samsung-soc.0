@@ -1,70 +1,109 @@
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: [PATCH 1/3] ARM: exynos: remove unused <mach/memory.h>
-Date: Wed,  2 Jul 2014 11:57:21 +0200
-Message-ID: <1404295043-6661-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v5 05/14] clk: Add generic driver for Maxim PMIC clocks
+Date: Wed, 02 Jul 2014 12:13:29 +0200
+Message-ID: <53B3DB49.6020604@collabora.co.uk>
+References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk> <1403806546-31122-6-git-send-email-javier.martinez@collabora.co.uk> <CAKew6eU5X=WxhECtwUUwbXe_fCRU4bD6B7caWiA2dwcBfThd-g@mail.gmail.com> <20140701172616.32686.44374@quantum>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:36745 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751228AbaGBJ5h (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jul 2014 05:57:37 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140701172616.32686.44374@quantum>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: kernel@pengutronix.de, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-ARCH_EXYNOS doesn't select NEED_MACH_MEMORY_H, so <asm/memory.h> doesn'=
-t
-include <mach/memory.h> and so this file is not used and can go away.
+Hello Mike,
 
-Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
----
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
----
- arch/arm/mach-exynos/include/mach/memory.h | 27 ----------------------=
------
- 1 file changed, 27 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/include/mach/memory.h
+On 07/01/2014 07:26 PM, Mike Turquette wrote:
+> Quoting Yadwinder Singh Brar (2014-06-29 21:01:36)
+>> Hi Javier,
+>> 
+>> On Thu, Jun 26, 2014 at 11:45 PM, Javier Martinez Canillas
+>> <javier.martinez@collabora.co.uk> wrote:
+>> > Maxim Integrated Power Management ICs are very similar with
+>> > regard to their clock outputs. Most of the clock drivers for
+>> > these chips are duplicating code and are simpler enough that
+>> > can be converted to use a generic driver to consolidate code
+>> > and avoid duplication.
+>> >
+>> > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> > ---
+>> >
+>> > Changes since v4:
+>> >  - Return recalc 0 if clock isn't enabled in Suggested by Yadwinder Singh Brar.
+>> >
+>> 
+>> It seems you didn't implement or posted same patch again :) .
+>> 
+>> > Changes since v3:
+>> >  - Add current copyright information. Suggested by Krzysztof Kozlowski
+>> >  - Do a single allocation for struct max_gen_clk. Suggested by Krzysztof Kozlowski
+>> >  - Add EXPORT_SYMBOL() for exported symbols. Suggested by Krzysztof Kozlowski
+>> >
+>> >  drivers/clk/Kconfig       |   3 +
+>> >  drivers/clk/Makefile      |   1 +
+>> >  drivers/clk/clk-max-gen.c | 195 ++++++++++++++++++++++++++++++++++++++++++++++
+>> >  drivers/clk/clk-max-gen.h |  32 ++++++++
+>> >  4 files changed, 231 insertions(+)
+>> >  create mode 100644 drivers/clk/clk-max-gen.c
+>> >  create mode 100644 drivers/clk/clk-max-gen.h
+>> >
+>> 
+>> [ .. ]
+>> 
+>> > +
+>> > +static unsigned long max_gen_recalc_rate(struct clk_hw *hw,
+>> > +                                        unsigned long parent_rate)
+>> > +{
+>> > +       return 32768;
+>> > +}
+>> 
+>> Its still same here.
+> 
+> Changing this would be a new behavior. I do not know of any other clock
+> drivers that conditionally returns a rate of 0 based on whether or not
+> the clock is gated.
+> 
 
-diff --git a/arch/arm/mach-exynos/include/mach/memory.h b/arch/arm/mach=
--exynos/include/mach/memory.h
-deleted file mode 100644
-index 2a4cdb7cb326..000000000000
---- a/arch/arm/mach-exynos/include/mach/memory.h
-+++ /dev/null
-@@ -1,27 +0,0 @@
--/* linux/arch/arm/mach-exynos4/include/mach/memory.h
-- *
-- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * EXYNOS4 - Memory definitions
-- *
-- * This program is free software; you can redistribute it and/or modif=
-y
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_MEMORY_H
--#define __ASM_ARCH_MEMORY_H __FILE__
--
--#define PLAT_PHYS_OFFSET		UL(0x40000000)
--
--#ifndef CONFIG_ARM_LPAE
--/* Maximum of 256MiB in one bank */
--#define MAX_PHYSMEM_BITS	32
--#define SECTION_SIZE_BITS	28
--#else
--#define MAX_PHYSMEM_BITS	36
--#define SECTION_SIZE_BITS	31
--#endif
--
--#endif /* __ASM_ARCH_MEMORY_H */
---=20
-2.0.0
+After Yadwinder feedback I searched for clock drivers that returned 0 when the
+clock was not enabled/prepared and found for example drivers/clk/clk-s2mps11.c:
+
+
+static unsigned long s2mps11_clk_recalc_rate(struct clk_hw *hw,
+                                             unsigned long parent_rate)
+{
+        struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
+        if (s2mps11->enabled)
+                return 32768;
+        else
+                return 0;
+}
+
+> It is also buggy since calls to clk_enable and clk_disable do not invoke
+> .recalc_rate, so the rate of your clock would not be updated from the
+> framework's perspective until some later point where you call
+> clk_set_rate or something.
+>
+
+s2ps11->enabled is set in the driver's clk_ops .prepare and .unprepare function
+handlers and calls to clk_prepare and clk_unprepare also don't seems to invoke
+.recalc_rate so I guess that driver is wrong as well and should just return the
+clock rate unconditionally?
+
+> If your driver needs to know whether or not the clock is enabled then we
+> could introduce a new bool clk_is_enabled(struct clk *clk); to clk.h,
+> but I'd rather not do that. Instead if a driver needs a clock then it
+> calls clk_enable on it without any knowledge about the internal state of
+> the clock enable_count.
+> 
+> Regards,
+> Mike
+>
+
+Thanks a lot for the explanation, I'll revert that change then and return the
+clock rate unconditionally on the next version of the patch-set.
+
+Best regards,
+Javier
