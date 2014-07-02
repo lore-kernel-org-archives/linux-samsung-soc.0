@@ -1,90 +1,46 @@
-From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH] ARM: dts: Remove outdated usb2 phy entry from exynos5250.dtsi
-Date: Wed, 02 Jul 2014 06:50:16 +0200
-Message-ID: <53B38F88.1040608@suse.de>
-References: <1403881475-2001-1-git-send-email-sjoerd.simons@collabora.co.uk>
+From: Shawn Guo <shawn.guo@freescale.com>
+Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+
+Date: Wed, 2 Jul 2014 13:10:27 +0800
+Message-ID: <20140702051026.GD16176@dragon>
+References: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:45820 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750893AbaGBEuU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jul 2014 00:50:20 -0400
-In-Reply-To: <1403881475-2001-1-git-send-email-sjoerd.simons@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, kvm@vger.kernel.org, linux-sh@vger.kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Sekhar Nori <nsekhar@ti.com>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, kvmarm@lists.cs.columbia.edu, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Magnus Damm <magnus.damm@gmail.com>, Gleb Natapov <gleb@kernel.org>, Tony Lindgren <tony@atomide.com>, xen-devel@lists.xenproject.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Marc Zyngier <marc.zyngier@arm.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Simon Horman <horms@verge.net.au>, Ben Dooks <ben-linux@fluff.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>
 
-+ kgene, devicetree
-
-Am 27.06.2014 17:04, schrieb Sjoerd Simons:
-> The exynos5250.dtsi has two entries for describing the usb2 phy. One =
-for
-> the newer driver using the generic PHY framework and one for its
-> predecessor. The older node is only referenced by the arndale dts, wh=
-ich
-> seems redundant given starting from dba2f05880c the common dtsi also
-> includes the phy entries.
->=20
-> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+On Tue, Jul 01, 2014 at 04:58:24PM +0100, Russell King wrote:
+> ARMv6 and greater introduced a new instruction ("bx") which can be used
+> to return from function calls.  Recent CPUs perform better when the
+> "bx lr" instruction is used rather than the "mov pc, lr" instruction,
+> and this sequence is strongly recommended to be used by the ARM
+> architecture manual (section A.4.1.1).
+> 
+> We provide a new macro "ret" with all its variants for the condition
+> code which will resolve to the appropriate instruction.
+> 
+> Rather than doing this piecemeal, and miss some instances, change all
+> the "mov pc" instances to use the new macro, with the exception of
+> the "movs" instruction and the kprobes code.  This allows us to detect
+> the "mov pc, lr" case and fix it up - and also gives us the possibility
+> of deploying this for other registers depending on the CPU selection.
+> 
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 > ---
->  arch/arm/boot/dts/exynos5250-arndale.dts |  4 ----
->  arch/arm/boot/dts/exynos5250.dtsi        | 15 ---------------
->  2 files changed, 19 deletions(-)
->=20
-> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot=
-/dts/exynos5250-arndale.dts
-> index d0de1f5..dad8f9b 100644
-> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
-> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-> @@ -570,8 +570,4 @@
->  			connect-gpios =3D <&gpd1 7 1>;
->  		};
->  	};
-> -
-> -	usb@12110000 {
-> -		usb-phy =3D <&usb2_phy>;
-> -	};
->  };
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/ex=
-ynos5250.dtsi
-> index 834fb5a..7c545d50 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -600,21 +600,6 @@
->  		};
->  	};
-> =20
-> -	usb2_phy: usbphy@12130000 {
-> -		compatible =3D "samsung,exynos5250-usb2phy";
-> -		reg =3D <0x12130000 0x100>;
-> -		clocks =3D <&clock CLK_FIN_PLL>, <&clock CLK_USB2>;
-> -		clock-names =3D "ext_xtal", "usbhost";
-> -		#address-cells =3D <1>;
-> -		#size-cells =3D <1>;
-> -		ranges;
-> -
-> -		usbphy-sys {
-> -			reg =3D <0x10040704 0x8>,
-> -			      <0x10050230 0x4>;
-> -		};
-> -	};
-> -
->  	usb2_phy_gen: phy@12130000 {
->  		compatible =3D "samsung,exynos5250-usb2-phy";
->  		reg =3D <0x12130000 0x100>;
+...
+>  arch/arm/mach-imx/suspend-imx6.S         |  5 ++--
 
-I've stumbled over the same duplication in the .dtsi, LGTM,
-
-Reviewed-by: Andreas F=E4rber <afaerber@suse.de>
-
-Regards,
-Andreas
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
-berg
+Tested-by: Shawn Guo <shawn.guo@freescale.com>
