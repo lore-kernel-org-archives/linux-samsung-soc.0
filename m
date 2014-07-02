@@ -1,104 +1,93 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [RFC 0/4] ARM: dts: exynos: Prepare Spring
-Date: Wed, 02 Jul 2014 06:18:39 +0200
-Message-ID: <53B3881F.7040304@suse.de>
-References: <1403486483-4063-1-git-send-email-afaerber@suse.de>	<CAD=FV=X4qGeWRZ9kcFGGr_tznruJkpzUJ5MU3hp-Q+mo2R1a4g@mail.gmail.com> <CANLzEksRmsk1y2ZEjRVE8F8DjSUeW3AebaaDWL71Z4Gc9NvZeg@mail.gmail.com> <53A89B0C.5000206@suse.de>
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: Add TMU dt node to monitor the temperature for
+ Exynos3250
+Date: Wed, 02 Jul 2014 13:27:55 +0900
+Message-ID: <53B38A4B.4020407@samsung.com>
+References: <1404175210-9278-1-git-send-email-cw00.choi@samsung.com>
+ <CAK5sBcFJMK-y+MZPXCufKEmp=v1nFJHstvNTczsQ3ez3SUPbKw@mail.gmail.com>
+ <53B23362.7080103@samsung.com>
+ <CAK5sBcER-rFmqe74b8uS=ZxKnTNGtkE0x6f7zaLphmyuHJz7Yg@mail.gmail.com>
+ <53B349AF.4080606@samsung.com>
+ <CAK5sBcHrMPweMSxfde0SSDOtRHbf7t7WQZkf0wAZNTc+N2=Wgg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <opensuse-arm+bounces-3094-glsa-opensusearm=m.gmane.org-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
-List-Post: <mailto:opensuse-arm-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
-List-Help: <mailto:opensuse-arm+help-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
-List-Subscribe: <mailto:opensuse-arm+subscribe-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
-List-Unsubscribe: <mailto:opensuse-arm+unsubscribe-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
-List-Owner: <mailto:opensuse-arm+owner-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
-List-archive: <http://lists.opensuse.org/opensuse-arm>
-In-Reply-To: <53A89B0C.5000206-l3A5Bk7waGM@public.gmane.org>
-To: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephan van Schaik <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, openSUSE ARM ML <opensuse-arm-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>, Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <CAK5sBcHrMPweMSxfde0SSDOtRHbf7t7WQZkf0wAZNTc+N2=Wgg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sachin Kamat <spk.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "open list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Am 23.06.2014 23:24, schrieb Andreas F=C3=A4rber:
-> Am 23.06.2014 22:11, schrieb Benson Leung:
->> On Mon, Jun 23, 2014 at 12:57 PM, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org=
-> wrote:
->>>> Also when the screen stayed on, the embedded controller's keymap see=
-ms
->>>> hardcoded to US English with system settings not taking effect; but
->>>> surely we don't want per-keyboard device tree files to remedy that.
+Hi Sachin,
+
+On 07/02/2014 12:09 PM, Sachin Kamat wrote:
+> On Wed, Jul 2, 2014 at 5:22 AM, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> On 07/01/2014 01:10 PM, Sachin Kamat wrote:
+>>> Hi Chanwoo,
 >>>
->>> +Benson may be able to answer this.  I believe generally non-US
->>> keyboard layouts are handled at a higher level.
+>>> On Tue, Jul 1, 2014 at 9:34 AM, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>>> Hi Sachin,
+>>>>
+>>>> On 07/01/2014 12:33 PM, Sachin Kamat wrote:
+>>>>> Hi Chanwoo,
+>>>>>
+>>>>> On Tue, Jul 1, 2014 at 6:10 AM, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>>>>> This patch add TMU (Thermal Management Unit) dt node to monitor the high
+>>>>>> temperature for Exynos3250.
+>>>>>>
+>>>>>> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>>> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>>>>> ---
+>>>>>> This patch has a dependency on following patch [1]:
+>>>>>>  [1] https://lkml.org/lkml/2014/6/30/805
+>>>>>>
+>>>>>>  arch/arm/boot/dts/exynos3250.dtsi | 10 ++++++++++
+>>>>>>  1 file changed, 10 insertions(+)
+>>>>>>
+>>>>>> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+>>>>>> index 3660cab..1e566af 100644
+>>>>>> --- a/arch/arm/boot/dts/exynos3250.dtsi
+>>>>>> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+>>>>>> @@ -192,6 +192,16 @@
+>>>>>>                         status = "disabled";
+>>>>>>                 };
+>>>>>>
+>>>>>> +               tmu: tmu@100C0000 {
+>>>>>> +                       compatible = "samsung,exynos3250-tmu";
+>>>>>> +                       interrupt-parent = <&gic>;
+>>>>>> +                       reg = <0x100C0000 0x100>;
+>>>>>> +                       interrupts = <0 216 0>;
+>>>>>> +                       clocks = <&cmu CLK_TMU_APBIF>;
+>>>>>> +                       clock-names = "tmu_apbif";
+>>>>>> +                       status = "disabled";
+>>>>>
+>>>>> I don't think there would be any board specific properties needed. Hence
+>>>>> leave the status as enabled (by deleting the above line).
+>>>>>
+>>>>
+>>>> I think that if specific board need TMU feature, dts file for specific board
+>>>> should include tmu dt node with 'okay' status. The specific board based on
+>>>> Exynos3250 might not need TMU feature.
+>>>
+>>> The status field in DT node is not meant for stating the build configuration but
+>>> represents the readiness of the hardware for usage on the platform. If
+>>> a particular
+>>> board does not need this feature it needs to be disabled in the build
+>>> config and only
+>>> for any special requirements disable it in board file.
 >>
->> There's no such thing as a notion of US versus non-US keyboard layouts
->> at the embedded controller level or even in the kernel. Indeed, this
->> should all be handled in user space.
->>
->> The chromeos firmware and kernel should return the correct key codes
->> for every key pressed on keyboards with the ANSI layout (US based), or
->> ISO (UK and most other countries).
->>
->> The only differences are :
->> * the ISO keyboard has an extra key, which is immediately to the right
->> of the Left Shift key. This must return KEY_102ND key code from the
->> input layer.
->> * the ISO keyboard has a  different location for the | \ key, which
->> accomodates the upside L shaped Enter key on the right side of the
->> keyboard. The keycode for this key is KEY_BACKSLASH.
->>
->> Basically, all of this should be verified using evtest to test that
->> the ec and kernel have the keys right.
->=20
-> Hm, we may be talking about two different things here? I have been doin=
-g
-> a minimum system bring-up for 3.16, with openSUSE userspace.
-> My YaST-selected system keymap (German with deadkeys) is not taking
-> effect on German Spring at the *framebuffer console* (tty1) - evdev is
-> not involved at that level AIUI.
->=20
-> Backspace and L-shaped enter keys work okay. The keymap here should be
-> identical to that in the original German device and seemed to match tha=
-t
-> in the exynos5250-snow.dts file.
->=20
-> I just checked (w/ dp-controller, hdmi, fimd commented out in my patch)=
-:
-> * An external USB keyboard does not work correctly either.
-> * In X11 (xdm), both internal and USB keyboard work as expected.
+>> TMU (Thermal Management Unit) needs specific regulator for TMU power as following:
+>> The regulator for TMU is dependent on board.
+> 
+> In this case it makes sense to leave it disabled in dtsi.
+> 
 
-Another observation: Ctrl+o does not work on the Chromebook keyboard,
-whereas o and Shift+o or Ctrl+x do work as expected. On an external USB
-keyboard it works just fine. Same at the console and in X11.
+Thanks for your review.
 
-Testcases are nano (saving) and gEdit (opening).
-
-I tried the new cros-ec-keyboard.dtsi, no change; and given that the key
-itself works okay, I assume it's not the dt linux,keymap.
-
-Anyone any suggestion how to debug?
-
-Thanks,
-Andreas
-
-> Similar situation in ChromeOS IIRC, with keymap correct at graphical
-> login but not on the right-arrow console - although I don't know the
-> ChromeOS userland too well to judge if it was configured correctly.
->=20
->> If you are having other problems with keyboard layout being stuck to
->> US QWERTY, please check your user space.
->=20
-> On my Raspberry Pi for instance, the equivalent openSUSE Factory works
-> just fine with German keymap for USB keyboard. Might any related kernel
-> config options be missing in exynos_defconfig? Anything in particular I
-> should check in user space?
->=20
-> Cheers,
-> Andreas
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=BC=
-rnberg
---=20
-To unsubscribe, e-mail: opensuse-arm+unsubscribe-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org
-To contact the owner, e-mail: opensuse-arm+owner-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org
+Best Regards,
+Chanwoo Choi
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
