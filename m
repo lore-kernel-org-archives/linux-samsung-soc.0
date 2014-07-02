@@ -1,87 +1,88 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Add TMU dt node to monitor the temperature for
- Exynos3250
-Date: Wed, 02 Jul 2014 08:52:15 +0900
-Message-ID: <53B349AF.4080606@samsung.com>
-References: <1404175210-9278-1-git-send-email-cw00.choi@samsung.com>
- <CAK5sBcFJMK-y+MZPXCufKEmp=v1nFJHstvNTczsQ3ez3SUPbKw@mail.gmail.com>
- <53B23362.7080103@samsung.com>
- <CAK5sBcER-rFmqe74b8uS=ZxKnTNGtkE0x6f7zaLphmyuHJz7Yg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Laura Abbott <lauraa@codeaurora.org>
+Subject: [PATCHv2 1/3] of: Split early_init_dt_scan into two parts
+Date: Tue,  1 Jul 2014 19:03:26 -0700
+Message-ID: <1404266608-3274-1-git-send-email-lauraa@codeaurora.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:15133 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759256AbaGAXwS (ORCPT
+Received: from smtp.codeaurora.org ([198.145.11.231]:50466 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964931AbaGBCDe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jul 2014 19:52:18 -0400
-In-reply-to: <CAK5sBcER-rFmqe74b8uS=ZxKnTNGtkE0x6f7zaLphmyuHJz7Yg@mail.gmail.com>
+	Tue, 1 Jul 2014 22:03:34 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <spk.linux@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kyungmin Park <kyungmin.park@samsung.com>, Russell King <linux@arm.linux.org.uk>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Tushar Behera <trblinux@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robherring2@gmail.com>
+Cc: Laura Abbott <lauraa@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, afaerber@suse.de, devicetree@vger.kernel.org
 
-On 07/01/2014 01:10 PM, Sachin Kamat wrote:
-> Hi Chanwoo,
-> 
-> On Tue, Jul 1, 2014 at 9:34 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->> Hi Sachin,
->>
->> On 07/01/2014 12:33 PM, Sachin Kamat wrote:
->>> Hi Chanwoo,
->>>
->>> On Tue, Jul 1, 2014 at 6:10 AM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->>>> This patch add TMU (Thermal Management Unit) dt node to monitor the high
->>>> temperature for Exynos3250.
->>>>
->>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>> ---
->>>> This patch has a dependency on following patch [1]:
->>>>  [1] https://lkml.org/lkml/2014/6/30/805
->>>>
->>>>  arch/arm/boot/dts/exynos3250.dtsi | 10 ++++++++++
->>>>  1 file changed, 10 insertions(+)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
->>>> index 3660cab..1e566af 100644
->>>> --- a/arch/arm/boot/dts/exynos3250.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos3250.dtsi
->>>> @@ -192,6 +192,16 @@
->>>>                         status = "disabled";
->>>>                 };
->>>>
->>>> +               tmu: tmu@100C0000 {
->>>> +                       compatible = "samsung,exynos3250-tmu";
->>>> +                       interrupt-parent = <&gic>;
->>>> +                       reg = <0x100C0000 0x100>;
->>>> +                       interrupts = <0 216 0>;
->>>> +                       clocks = <&cmu CLK_TMU_APBIF>;
->>>> +                       clock-names = "tmu_apbif";
->>>> +                       status = "disabled";
->>>
->>> I don't think there would be any board specific properties needed. Hence
->>> leave the status as enabled (by deleting the above line).
->>>
->>
->> I think that if specific board need TMU feature, dts file for specific board
->> should include tmu dt node with 'okay' status. The specific board based on
->> Exynos3250 might not need TMU feature.
-> 
-> The status field in DT node is not meant for stating the build configuration but
-> represents the readiness of the hardware for usage on the platform. If
-> a particular
-> board does not need this feature it needs to be disabled in the build
-> config and only
-> for any special requirements disable it in board file.
 
-TMU (Thermal Management Unit) needs specific regulator for TMU power as following:
-The regulator for TMU is dependent on board.
+Currently, early_init_dt_scan validates the header, sets the
+boot params, and scans for chosen/memory all in one function.
+Split this up into two separate functions (validation/setting
+boot params in one, scanning in another) to allow for
+additional setup between boot params and scanning the memory.
 
-For exmaple: in board dts file including tmu dt
+Signed-off-by: Laura Abbott <lauraa@codeaurora.org>
+---
+ drivers/of/fdt.c       | 18 +++++++++++++++++-
+ include/linux/of_fdt.h |  2 ++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-	&tmu {
-		vtmu-supply = <&ldo7_reg>;
-		status = "okay";
-	};
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index c4cddf0..55bfca9 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -922,7 +922,7 @@ int __init __weak early_init_dt_reserve_memory_arch(phys_addr_t base,
+ }
+ #endif
+ 
+-bool __init early_init_dt_scan(void *params)
++bool __init early_init_dt_verify(void *params)
+ {
+ 	if (!params)
+ 		return false;
+@@ -936,6 +936,12 @@ bool __init early_init_dt_scan(void *params)
+ 		return false;
+ 	}
+ 
++	return true;
++}
++
++
++void __init early_init_dt_scan_all(void)
++{
+ 	/* Retrieve various information from the /chosen node */
+ 	of_scan_flat_dt(early_init_dt_scan_chosen, boot_command_line);
+ 
+@@ -944,7 +950,17 @@ bool __init early_init_dt_scan(void *params)
+ 
+ 	/* Setup memory, calling early_init_dt_add_memory_arch */
+ 	of_scan_flat_dt(early_init_dt_scan_memory, NULL);
++}
++
++bool __init early_init_dt_scan(void *params)
++{
++	bool status;
++
++	status = early_init_dt_verify(params);
++	if (!status)
++		return false;
+ 
++	early_init_dt_scan_all();
+ 	return true;
+ }
+ 
+diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
+index 0511789..d600993 100644
+--- a/include/linux/of_fdt.h
++++ b/include/linux/of_fdt.h
+@@ -73,6 +73,8 @@ extern int early_init_dt_scan_root(unsigned long node, const char *uname,
+ 				   int depth, void *data);
+ 
+ extern bool early_init_dt_scan(void *params);
++extern bool early_init_dt_verify(void *params);
++extern void early_init_dt_scan_all(void);
+ 
+ extern const char *of_flat_dt_get_machine_name(void);
+ extern const void *of_flat_dt_match_machine(const void *default_match,
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+hosted by The Linux Foundation
