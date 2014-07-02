@@ -1,31 +1,34 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: ASoC: samsung: MACH_SMDK6450
-Date: Wed, 02 Jul 2014 09:47:18 +0200
-Message-ID: <1404287238.12021.7.camel@x220>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: [PATCH] drivers: phy: exynos4x12-phy: Add missing MODULE_DEVICE_TABLE
+Date: Wed,  2 Jul 2014 09:48:42 +0200
+Message-ID: <1404287322-25730-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews06.kpnxchange.com ([213.75.39.9]:54996 "EHLO
-	cpsmtpb-ews06.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750895AbaGBHrV (ORCPT
+Received: from cube.luon.net ([37.72.100.20]:49905 "EHLO cube.luon.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750888AbaGBHtQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jul 2014 03:47:21 -0400
+	Wed, 2 Jul 2014 03:49:16 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Kamil Debski <k.debski@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-Kukjin,
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+---
+ drivers/phy/phy-samsung-usb2.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Your commit 0aeaa68cf509 ("ASoC: samsung: no more support for S5P6440
-and S5P6450 SoCs") landed in next-20140702. It removed references to
-MACH_SMDK6440 and MACH_SMDK6450 from sound/soc/samsung/.
-
-It seems to have missed one reference to MACH_SMDK6450 in
-sound/soc/samsung/Kconfig (an optional dependency of
-SND_SOC_SMDK_WM8580_PCM). Is the oneliner to remove that optional
-dependency queued somewhere?
-
-
-Paul Bolle
+diff --git a/drivers/phy/phy-samsung-usb2.c b/drivers/phy/phy-samsung-usb2.c
+index 8a8c6bc..1e69a32 100644
+--- a/drivers/phy/phy-samsung-usb2.c
++++ b/drivers/phy/phy-samsung-usb2.c
+@@ -107,6 +107,7 @@ static const struct of_device_id samsung_usb2_phy_of_match[] = {
+ #endif
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, samsung_usb2_phy_of_match);
+ 
+ static int samsung_usb2_phy_probe(struct platform_device *pdev)
+ {
+-- 
+2.0.0
