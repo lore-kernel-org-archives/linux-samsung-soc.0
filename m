@@ -1,97 +1,56 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [GIT PULL] Samsung clock fixes for v3.16
-Date: Wed, 02 Jul 2014 10:13:23 -0700
-Message-ID: <20140702171323.7440.76631@quantum>
-References: <1404319926-6178-1-git-send-email-t.figa@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 00/17] ARM: S5P64X0, S5PC100: no more support in mainline
+Date: Wed, 02 Jul 2014 20:02:51 +0200
+Message-ID: <53B4494B.1030909@samsung.com>
+References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:63526 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752269AbaGBRNi convert rfc822-to-8bit (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:47537 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752211AbaGBSDW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jul 2014 13:13:38 -0400
-Received: by mail-pd0-f172.google.com with SMTP id w10so12343075pde.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jul 2014 10:13:37 -0700 (PDT)
-In-Reply-To: <1404319926-6178-1-git-send-email-t.figa@samsung.com>
+	Wed, 2 Jul 2014 14:03:22 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N83009M5JHCES60@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 02 Jul 2014 19:03:12 +0100 (BST)
+In-reply-to: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Quoting Tomasz Figa (2014-07-02 09:52:06)
-> The following changes since commit b640a6037c9ecd1f0ad23a8e9b4ca5f5b4112508:
-> 
->   Merge tag 'sunxi-clk-for-3.16-2' of https://github.com/mripard/linux into clk-next (2014-06-11 07:11:59 -0700)
-> 
-> are available in the git repository at:
-> 
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/for_3.16/samsung-clk-fixes
-> 
-> for you to fetch changes up to 44ff0254b89079a8a95e652635e760d93196ac1f:
-> 
->   clk: exynos5420: Remove aclk66_peric from the clock tree description (2014-06-30 14:47:33 +0200)
+Hi Kukjin,
 
-Pulled into clk-fixes. Thanks for the great tag description as well.
+On 30.06.2014 23:32, Kukjin Kim wrote:
+> This series removes S5P64X0 and S5PC100 related codes in mainline,
+> because no more user now. And if its supporting is required later,
+> it will be done with using device tree.
+> 
+> [PATCH 01/17] ARM: S5P64X0: no more support S5P6440 and S5P6450 SoCs
+> [PATCH 02/17] gpio: samsung: remove s5p64x0 related gpio codes
+> [PATCH 03/17] spi: s3c64xx: remove s5p64x0 related spi codes
+> [PATCH 04/17] ASoC: samsung: no more support for S5P6440 and S5P6450
+> [PATCH 05/17] pwm: samsung: remove s5p64x0 related pwm codes
+> [PATCH 06/17] video: fbdev: s3c-fb: remove s5p64x0 related fimd
+> [PATCH 07/17] serial: samsung: no more support for S5P6440 and
+> [PATCH 08/17] ARM: S5PC100: no more support S5PC100 SoC
+> [PATCH 09/17] gpio: samsung: remov s5pc100 related gpio codes
+> [PATCH 10/17] spi: s3c64xx: remove s5pc100 related spi codes
+> [PATCH 11/17] pwm: samsung: remove s5pc100 related pwm codes
+> [PATCH 12/17] serial: samsung: no more support for S5PC100 SoC
+> [PATCH 13/17] ata: pata_samsung_cf: removes s5pc100 related ata
+> [PATCH 14/17] mtd: onenand: remove s5pc100 related onenand codes
+> [PATCH 15/17] video: fbdev: s3c-fb: remove s5pc100 related fimd and
+> [PATCH 16/17] [media] exynos4-is: removes s5pc100 related fimc codes
+> [PATCH 17/17] ASoC: Samsung: remove s5pc100 related codes
 
-Regards,
-Mike
+Thanks for this series.
 
-> 
-> ----------------------------------------------------------------
-> Samsung clock fixes for v3.16.
-> 
-> This pull request contains fixes for various issues found while testing
-> -rc versions of Linux 3.16. Mostly two kinds of patches:
-> 
-> * Fixes of incorrectly defined clocks
-> 
-> 1) a37c82a clk: samsung: exynos4: Remove SRC_MASK_ISP gates
-> 
->     Issue present since v3.10.
-> 
-> 2) 0b1643b clk/exynos5250: fix bit number for tv sysmmu clock
-> 
->     Issue present since v3.16.
-> 
-> 3) 44ff025 clk: exynos5420: Remove aclk66_peric from the clock tree description
-> 
->     Issue present since v3.11.
-> 
-> * Adding things missed by original patches
-> 
-> 1) cec1cde clk: samsung: fix several typos to fix boot on s3c2410
-> 2) 34ece9e clk: samsung: add more aliases for s3c24xx
-> 
->     Both issues present since the driver was added in v3.16.
-> 
-> 3) a92dda4 clk: s3c64xx: Hookup SPI clocks correctly
-> 
->     Issue present since v3.12.
-> 
-> ----------------------------------------------------------------
-> Charles Keepax (1):
->       clk: s3c64xx: Hookup SPI clocks correctly
-> 
-> Doug Anderson (1):
->       clk: exynos5420: Remove aclk66_peric from the clock tree description
-> 
-> Rahul Sharma (1):
->       clk/exynos5250: fix bit number for tv sysmmu clock
-> 
-> Tomasz Figa (1):
->       clk: samsung: exynos4: Remove SRC_MASK_ISP gates
-> 
-> Vasily Khoruzhick (2):
->       clk: samsung: fix several typos to fix boot on s3c2410
->       clk: samsung: add more aliases for s3c24xx
-> 
->  drivers/clk/samsung/clk-exynos4.c      | 16 ++-----
->  drivers/clk/samsung/clk-exynos5250.c   |  2 +-
->  drivers/clk/samsung/clk-exynos5420.c   | 85 ++++++++++++++++++++++------------
->  drivers/clk/samsung/clk-s3c2410.c      |  9 +++-
->  drivers/clk/samsung/clk-s3c64xx.c      |  6 ++-
->  include/dt-bindings/clock/exynos5420.h |  1 -
->  6 files changed, 71 insertions(+), 48 deletions(-)
+Just letting you know that I have rebased my s5pv210 DT migration series
+on top of this and will be sending the patches after some more testing.
+
+Best regards,
+Tomasz
