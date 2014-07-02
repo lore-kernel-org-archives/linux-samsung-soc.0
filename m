@@ -1,89 +1,88 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [GIT PULL] Samsung clock fixes for v3.16
-Date: Wed, 02 Jul 2014 18:52:06 +0200
-Message-ID: <1404319926-6178-1-git-send-email-t.figa@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/3 v5] spi: s3c64xx: fix broken "cs_gpios" usage in the
+ driver
+Date: Wed, 2 Jul 2014 17:56:51 +0100
+Message-ID: <20140702165651.GK410@sirena.org.uk>
+References: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="d6d1KVhp94hk3Jrm"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43924 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964769AbaGBQ5Y (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Jul 2014 12:57:24 -0400
+Content-Disposition: inline
+In-Reply-To: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-The following changes since commit b640a6037c9ecd1f0ad23a8e9b4ca5f5b4112508:
-
-  Merge tag 'sunxi-clk-for-3.16-2' of https://github.com/mripard/linux into clk-next (2014-06-11 07:11:59 -0700)
-
-are available in the git repository at:
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, naveenkrishna.ch@gmail.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
 
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/for_3.16/samsung-clk-fixes
+--d6d1KVhp94hk3Jrm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-for you to fetch changes up to 44ff0254b89079a8a95e652635e760d93196ac1f:
+On Fri, Jun 13, 2014 at 09:29:50AM +0530, Naveen Krishna Chatradhi wrote:
 
-  clk: exynos5420: Remove aclk66_peric from the clock tree description (2014-06-30 14:47:33 +0200)
+> Hence, spi-s3c64xx.c is broken since "Jun 21 11:26:12 2013" and
+> considering the time with no compliants about the breakage.
 
-----------------------------------------------------------------
-Samsung clock fixes for v3.16.
+I'm not clear what the breakage is?  Some boards are broken but what's
+the driver issue?
 
-This pull request contains fixes for various issues found while testing
--rc versions of Linux 3.16. Mostly two kinds of patches:
+>  	if (!spi_get_ctldata(spi)) {
+>  		/* Request gpio only if cs line is asserted by gpio pins */
+> -		if (sdd->cs_gpio) {
+> -			err = gpio_request_one(cs->line, GPIOF_OUT_INIT_HIGH,
+> -					dev_name(&spi->dev));
+> +		if (gpio_is_valid(spi->cs_gpio)) {
+> +			err = gpio_request_one(spi->cs_gpio,
+> +						GPIOF_OUT_INIT_HIGH,
+> +						dev_name(&spi->dev));
+>  			if (err) {
+>  				dev_err(&spi->dev,
+>  					"Failed to get /CS gpio [%d]: %d\n",
+> -					cs->line, err);
+> +					spi->cs_gpio, err);
+>  				goto err_gpio_req;
+>  			}
+> -
+> -			spi->cs_gpio = cs->line;
+> +		} else {
+> +			dev_err(&spi->dev, "chip select gpio is invalid\n");
+> +			return -EINVAL;
+>  		}
 
-* Fixes of incorrectly defined clocks
+This appears to be making it mandatory to specify a GPIO when previously
+it was not mandatory which I believe breaks some SoCs - the native chip
+select has to be used on some devices as there is no pinmux option to
+make it a GPIO (this was why the native chip select support was added).
 
-1) a37c82a clk: samsung: exynos4: Remove SRC_MASK_ISP gates
+Also I'd need to check but are you sure that GPIO 0 is not valid?
 
-    Issue present since v3.10.
+--d6d1KVhp94hk3Jrm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-2) 0b1643b clk/exynos5250: fix bit number for tv sysmmu clock
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-    Issue present since v3.16.
+iQIcBAEBAgAGBQJTtDnPAAoJELSic+t+oim9dCwP/0hLN5l2CNp2YeupNQ5L4pGa
+UnIJLuovAICJDzeqh1PrKPlX7iArMZ4G3JPoExDZ8Mr3ng7mK1+8aiIhXfy+ZMre
+H8imblIh5VE1vx83yb6M1oh8uyh4VcUq+xvS6W92KtS+w3VihZDcc3wpfZHO0qEf
+WzaeLXPhzSd6fpfAdueTOwOEX12lFVnpXGcbveeLaqX8whiiI7sd5YphiYoh6N8U
+VYtt1PP443l3JRJy3v4ZW6WOU4lQWRxdUND7mt4klPENe7C8TRW3lvD8mZfbeDq6
+mcvJG0y20tQWrFZKPHcH+JTXugTFCRzPEGulZ20E0xH9G7Rd28SA8co4wnBV0PZ7
+F8HUC03SuXaqzf7zuJq5k1Y6z93plEQ5r/UCAMjIapi1oQwBM3ArYPVALHApXAp9
+eFJCaTbGR0ijXafOTP8Brq7PCNPXTgPuw/7sKDNUY6yIIDREILY/Ka1nUiL73cSu
+mhJ8/Q3RgRDn139gDOL1RYzfKASwrnD/z5NziVmkoOlQO4oC6QSYuCvqw1/2Q6DI
+8e02KNktszNIheIY3u6gxkgnLPwHwz3gFZPw9NVQNKF2U9Qc0Y0gMYoR+SyHhm1q
+gyl6FUzTaLDYALa54Kk1XtGL3Y38UOePlzkU7q1WylgpdIyXAN3hb2ydIQF+pCQT
+h/KGLvsC5cJFo8DtYJj7
+=xynw
+-----END PGP SIGNATURE-----
 
-3) 44ff025 clk: exynos5420: Remove aclk66_peric from the clock tree description
-
-    Issue present since v3.11.
-
-* Adding things missed by original patches
-
-1) cec1cde clk: samsung: fix several typos to fix boot on s3c2410
-2) 34ece9e clk: samsung: add more aliases for s3c24xx
-
-    Both issues present since the driver was added in v3.16.
-
-3) a92dda4 clk: s3c64xx: Hookup SPI clocks correctly
-
-    Issue present since v3.12.
-
-----------------------------------------------------------------
-Charles Keepax (1):
-      clk: s3c64xx: Hookup SPI clocks correctly
-
-Doug Anderson (1):
-      clk: exynos5420: Remove aclk66_peric from the clock tree description
-
-Rahul Sharma (1):
-      clk/exynos5250: fix bit number for tv sysmmu clock
-
-Tomasz Figa (1):
-      clk: samsung: exynos4: Remove SRC_MASK_ISP gates
-
-Vasily Khoruzhick (2):
-      clk: samsung: fix several typos to fix boot on s3c2410
-      clk: samsung: add more aliases for s3c24xx
-
- drivers/clk/samsung/clk-exynos4.c      | 16 ++-----
- drivers/clk/samsung/clk-exynos5250.c   |  2 +-
- drivers/clk/samsung/clk-exynos5420.c   | 85 ++++++++++++++++++++++------------
- drivers/clk/samsung/clk-s3c2410.c      |  9 +++-
- drivers/clk/samsung/clk-s3c64xx.c      |  6 ++-
- include/dt-bindings/clock/exynos5420.h |  1 -
- 6 files changed, 71 insertions(+), 48 deletions(-)
+--d6d1KVhp94hk3Jrm--
