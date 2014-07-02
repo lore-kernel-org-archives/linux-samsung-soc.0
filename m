@@ -1,50 +1,67 @@
-From: Chander Kashyap <k.chander@samsung.com>
-Subject: Re: [PATCH 0/2] cpuidle fixes and cleanup
-Date: Wed, 2 Jul 2014 08:41:56 +0530
-Message-ID: <CADWw7OgCgg8aE4W6LwmU3axDdmt-5uH=a+0fSSErfqDci3nNUA@mail.gmail.com>
-References: <1404225158-8453-1-git-send-email-k.chander@samsung.com>
-	<20140701145244.GX32514@n2100.arm.linux.org.uk>
+From: Nicolas Pitre <nico@fluxnic.net>
+Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+
+ (part1)
+Date: Tue, 01 Jul 2014 23:17:22 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1407012314100.16842@knanqh.ubzr>
+References: <E1X20mL-00083I-Sv@rmk-PC.arm.linux.org.uk>
+ <yw1x4mz1f2t9.fsf@unicorn.mansr.com>
+ <20140701171346.GP3705@n2100.arm.linux.org.uk>
+ <yw1xzjgtdmas.fsf@unicorn.mansr.com> <20140701173547.GW28164@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:42451 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751364AbaGBDL5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jul 2014 23:11:57 -0400
-In-Reply-To: <20140701145244.GX32514@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="Boundary_(ID_mgw8uSma0Mmji5Peh3Zp8w)"
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-reply-to: <20140701173547.GW28164@arm.com>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Will Deacon <will.deacon@arm.com>
+Cc: =?ISO-8859-15?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Chander Kashyap <k.chander@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 
-On Tue, Jul 1, 2014 at 8:22 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Tue, Jul 01, 2014 at 08:02:36PM +0530, Chander Kashyap wrote:
->> This patch series fixes the cpuidle for different states. Also removes arm
->> diagnostic and power register save/restore code as it is made generic.
->>
->> Based on:
->> ARM: save/restore diagnostic register on Cortex-A9 suspend/resume
->>  http://www.spinics.net/lists/arm-kernel/msg340506.html
->
-> As there is an outstanding issue with this patch, we can't proceed with
-> this set of changes until we know what's going on there.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Sure, I will wait for the conclusion.
+--Boundary_(ID_mgw8uSma0Mmji5Peh3Zp8w)
+Content-type: TEXT/PLAIN; charset=iso-8859-1
+Content-transfer-encoding: 8BIT
 
->
-> Also, bear in mind that I have changes which conflict with this in my
-> tree (which I've just updated.)
+On Tue, 1 Jul 2014, Will Deacon wrote:
 
-I will resend after your changes are posted.
+> Hi Mans,
+> 
+> On Tue, Jul 01, 2014 at 06:24:43PM +0100, Måns Rullgård wrote:
+> > Russell King - ARM Linux <linux@arm.linux.org.uk> writes:
+> > > As you point out, "bx lr" /may/ be treated specially (I've actually been
+> > 
+> > Most, if not all, Cortex-A cores do this according the public TRMs.
+> > They also do the same thing for "mov pc, lr" so there will probably be
+> > no performance gain from this change.  It's still a good idea though,
+> > since we don't know what future cores will do.
+> 
+> Funnily enough, that's not actually true (and is more or less what prompted
+> this patch after discussion with Russell). There are cores out there that
+> don't predict mov pc, lr at all (let alone do anything with the return
+> stack).
+> 
+> > > discussing this with Will Deacon over the last couple of days, who has
+> > > also been talking to the hardware people in ARM, and Will is happy with
+> > > this patch as in its current form.)  This is why I've changed all
+> > > "mov pc, reg" instructions which return in some way to use this macro,
+> > > and left others (those which are used to call some function and return
+> > > back to the same point) alone.
+> > 
+> > In that case the patch should be fine.  Your patch description didn't
+> > make it clear that only actual returns were being changed.
+> 
+> I'm led to believe that some predictors require lr in order to update the
+> return stack, whilst others don't. That part is all horribly
+> micro-architectural, so the current patch is doing the right thing by
+> sticking to the ARM ARM but enabling us to hook into other registers later
+> on if we choose.
 
-Thanks
->
-> --
-> FTTC broadband for 0.8mile line: now at 9.7Mbps down 460kbps up... slowly
-> improving, and getting towards what was expected from it.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+May I suggest to have a patch with only the macro definition in it and 
+all this discussion in the commit log please?  The usage sites should be 
+done in a separate patch to make it clearer.
+
+
+Nicolas
+
+--Boundary_(ID_mgw8uSma0Mmji5Peh3Zp8w)--
