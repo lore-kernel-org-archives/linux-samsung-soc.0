@@ -1,46 +1,84 @@
-From: Shawn Guo <shawn.guo@freescale.com>
-Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+
-Date: Wed, 2 Jul 2014 13:10:27 +0800
-Message-ID: <20140702051026.GD16176@dragon>
-References: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
+From: Tushar Behera <trblinux@gmail.com>
+Subject: Re: [PATCHv2 1/3] of: Split early_init_dt_scan into two parts
+Date: Wed, 02 Jul 2014 11:30:33 +0530
+Message-ID: <53B3A001.1090909@gmail.com>
+References: <1404266608-3274-1-git-send-email-lauraa@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, kvm@vger.kernel.org, linux-sh@vger.kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Sekhar Nori <nsekhar@ti.com>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, kvmarm@lists.cs.columbia.edu, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Magnus Damm <magnus.damm@gmail.com>, Gleb Natapov <gleb@kernel.org>, Tony Lindgren <tony@atomide.com>, xen-devel@lists.xenproject.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Marc Zyngier <marc.zyngier@arm.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Simon Horman <horms@verge.net.au>, Ben Dooks <ben-linux@fluff.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f178.google.com ([209.85.192.178]:47556 "EHLO
+	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750888AbaGBGAi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Jul 2014 02:00:38 -0400
+In-Reply-To: <1404266608-3274-1-git-send-email-lauraa@codeaurora.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Laura Abbott <lauraa@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robherring2@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, afaerber@suse.de, devicetree@vger.kernel.org
 
-On Tue, Jul 01, 2014 at 04:58:24PM +0100, Russell King wrote:
-> ARMv6 and greater introduced a new instruction ("bx") which can be used
-> to return from function calls.  Recent CPUs perform better when the
-> "bx lr" instruction is used rather than the "mov pc, lr" instruction,
-> and this sequence is strongly recommended to be used by the ARM
-> architecture manual (section A.4.1.1).
+On 07/02/2014 07:33 AM, Laura Abbott wrote:
+> Currently, early_init_dt_scan validates the header, sets the
+> boot params, and scans for chosen/memory all in one function.
+> Split this up into two separate functions (validation/setting
+> boot params in one, scanning in another) to allow for
+> additional setup between boot params and scanning the memory.
 > 
-> We provide a new macro "ret" with all its variants for the condition
-> code which will resolve to the appropriate instruction.
-> 
-> Rather than doing this piecemeal, and miss some instances, change all
-> the "mov pc" instances to use the new macro, with the exception of
-> the "movs" instruction and the kprobes code.  This allows us to detect
-> the "mov pc, lr" case and fix it up - and also gives us the possibility
-> of deploying this for other registers depending on the CPU selection.
-> 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> Signed-off-by: Laura Abbott <lauraa@codeaurora.org>
 > ---
-...
->  arch/arm/mach-imx/suspend-imx6.S         |  5 ++--
 
-Tested-by: Shawn Guo <shawn.guo@freescale.com>
+Tested the patchset on top of Linus' tree.
+
+Verified after enabling following debug message.
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -865,7 +865,7 @@ int __init early_init_dt_scan_memory(unsigned long
+node, const char *uname,
+
+        endp = reg + (l / sizeof(__be32));
+
+-       pr_debug("memory scan node %s, reg size %d, data: %x %x %x %x,\n",
++       pr_err("memory scan node %s, reg size %d, data: %x %x %x %x,\n",
+
+
+Output before:
+memory scan node memory, reg size 96, data: 20 10 30 10,
+
+Output after:
+memory scan node memory, reg size 64, data: 20 10 30 10,
+
+Tested-by: Tushar Behera <trblinux@gmail.com>
+
+One minor nit below ...
+
+>  drivers/of/fdt.c       | 18 +++++++++++++++++-
+>  include/linux/of_fdt.h |  2 ++
+>  2 files changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+> index c4cddf0..55bfca9 100644
+> --- a/drivers/of/fdt.c
+> +++ b/drivers/of/fdt.c
+> @@ -922,7 +922,7 @@ int __init __weak early_init_dt_reserve_memory_arch(phys_addr_t base,
+>  }
+>  #endif
+>  
+> -bool __init early_init_dt_scan(void *params)
+> +bool __init early_init_dt_verify(void *params)
+>  {
+>  	if (!params)
+>  		return false;
+> @@ -936,6 +936,12 @@ bool __init early_init_dt_scan(void *params)
+>  		return false;
+>  	}
+>  
+> +	return true;
+> +}
+> +
+> +
+
+Extra blank line here. Can be removed.
+
+-- 
+Tushar Behera
