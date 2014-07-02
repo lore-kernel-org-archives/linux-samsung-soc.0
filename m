@@ -1,67 +1,104 @@
-From: Nicolas Pitre <nico@fluxnic.net>
-Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+
- (part1)
-Date: Tue, 01 Jul 2014 23:17:22 -0400 (EDT)
-Message-ID: <alpine.LFD.2.11.1407012314100.16842@knanqh.ubzr>
-References: <E1X20mL-00083I-Sv@rmk-PC.arm.linux.org.uk>
- <yw1x4mz1f2t9.fsf@unicorn.mansr.com>
- <20140701171346.GP3705@n2100.arm.linux.org.uk>
- <yw1xzjgtdmas.fsf@unicorn.mansr.com> <20140701173547.GW28164@arm.com>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Subject: Re: [RFC 0/4] ARM: dts: exynos: Prepare Spring
+Date: Wed, 02 Jul 2014 06:18:39 +0200
+Message-ID: <53B3881F.7040304@suse.de>
+References: <1403486483-4063-1-git-send-email-afaerber@suse.de>	<CAD=FV=X4qGeWRZ9kcFGGr_tznruJkpzUJ5MU3hp-Q+mo2R1a4g@mail.gmail.com> <CANLzEksRmsk1y2ZEjRVE8F8DjSUeW3AebaaDWL71Z4Gc9NvZeg@mail.gmail.com> <53A89B0C.5000206@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="Boundary_(ID_mgw8uSma0Mmji5Peh3Zp8w)"
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-reply-to: <20140701173547.GW28164@arm.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: =?ISO-8859-15?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <opensuse-arm+bounces-3094-glsa-opensusearm=m.gmane.org-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
+List-Post: <mailto:opensuse-arm-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
+List-Help: <mailto:opensuse-arm+help-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
+List-Subscribe: <mailto:opensuse-arm+subscribe-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
+List-Unsubscribe: <mailto:opensuse-arm+unsubscribe-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
+List-Owner: <mailto:opensuse-arm+owner-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
+List-archive: <http://lists.opensuse.org/opensuse-arm>
+In-Reply-To: <53A89B0C.5000206-l3A5Bk7waGM@public.gmane.org>
+To: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephan van Schaik <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, openSUSE ARM ML <opensuse-arm-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>, Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Am 23.06.2014 23:24, schrieb Andreas F=C3=A4rber:
+> Am 23.06.2014 22:11, schrieb Benson Leung:
+>> On Mon, Jun 23, 2014 at 12:57 PM, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org=
+> wrote:
+>>>> Also when the screen stayed on, the embedded controller's keymap see=
+ms
+>>>> hardcoded to US English with system settings not taking effect; but
+>>>> surely we don't want per-keyboard device tree files to remedy that.
+>>>
+>>> +Benson may be able to answer this.  I believe generally non-US
+>>> keyboard layouts are handled at a higher level.
+>>
+>> There's no such thing as a notion of US versus non-US keyboard layouts
+>> at the embedded controller level or even in the kernel. Indeed, this
+>> should all be handled in user space.
+>>
+>> The chromeos firmware and kernel should return the correct key codes
+>> for every key pressed on keyboards with the ANSI layout (US based), or
+>> ISO (UK and most other countries).
+>>
+>> The only differences are :
+>> * the ISO keyboard has an extra key, which is immediately to the right
+>> of the Left Shift key. This must return KEY_102ND key code from the
+>> input layer.
+>> * the ISO keyboard has a  different location for the | \ key, which
+>> accomodates the upside L shaped Enter key on the right side of the
+>> keyboard. The keycode for this key is KEY_BACKSLASH.
+>>
+>> Basically, all of this should be verified using evtest to test that
+>> the ec and kernel have the keys right.
+>=20
+> Hm, we may be talking about two different things here? I have been doin=
+g
+> a minimum system bring-up for 3.16, with openSUSE userspace.
+> My YaST-selected system keymap (German with deadkeys) is not taking
+> effect on German Spring at the *framebuffer console* (tty1) - evdev is
+> not involved at that level AIUI.
+>=20
+> Backspace and L-shaped enter keys work okay. The keymap here should be
+> identical to that in the original German device and seemed to match tha=
+t
+> in the exynos5250-snow.dts file.
+>=20
+> I just checked (w/ dp-controller, hdmi, fimd commented out in my patch)=
+:
+> * An external USB keyboard does not work correctly either.
+> * In X11 (xdm), both internal and USB keyboard work as expected.
 
---Boundary_(ID_mgw8uSma0Mmji5Peh3Zp8w)
-Content-type: TEXT/PLAIN; charset=iso-8859-1
-Content-transfer-encoding: 8BIT
+Another observation: Ctrl+o does not work on the Chromebook keyboard,
+whereas o and Shift+o or Ctrl+x do work as expected. On an external USB
+keyboard it works just fine. Same at the console and in X11.
 
-On Tue, 1 Jul 2014, Will Deacon wrote:
+Testcases are nano (saving) and gEdit (opening).
 
-> Hi Mans,
-> 
-> On Tue, Jul 01, 2014 at 06:24:43PM +0100, Måns Rullgård wrote:
-> > Russell King - ARM Linux <linux@arm.linux.org.uk> writes:
-> > > As you point out, "bx lr" /may/ be treated specially (I've actually been
-> > 
-> > Most, if not all, Cortex-A cores do this according the public TRMs.
-> > They also do the same thing for "mov pc, lr" so there will probably be
-> > no performance gain from this change.  It's still a good idea though,
-> > since we don't know what future cores will do.
-> 
-> Funnily enough, that's not actually true (and is more or less what prompted
-> this patch after discussion with Russell). There are cores out there that
-> don't predict mov pc, lr at all (let alone do anything with the return
-> stack).
-> 
-> > > discussing this with Will Deacon over the last couple of days, who has
-> > > also been talking to the hardware people in ARM, and Will is happy with
-> > > this patch as in its current form.)  This is why I've changed all
-> > > "mov pc, reg" instructions which return in some way to use this macro,
-> > > and left others (those which are used to call some function and return
-> > > back to the same point) alone.
-> > 
-> > In that case the patch should be fine.  Your patch description didn't
-> > make it clear that only actual returns were being changed.
-> 
-> I'm led to believe that some predictors require lr in order to update the
-> return stack, whilst others don't. That part is all horribly
-> micro-architectural, so the current patch is doing the right thing by
-> sticking to the ARM ARM but enabling us to hook into other registers later
-> on if we choose.
+I tried the new cros-ec-keyboard.dtsi, no change; and given that the key
+itself works okay, I assume it's not the dt linux,keymap.
 
-May I suggest to have a patch with only the macro definition in it and 
-all this discussion in the commit log please?  The usage sites should be 
-done in a separate patch to make it clearer.
+Anyone any suggestion how to debug?
 
+Thanks,
+Andreas
 
-Nicolas
+> Similar situation in ChromeOS IIRC, with keymap correct at graphical
+> login but not on the right-arrow console - although I don't know the
+> ChromeOS userland too well to judge if it was configured correctly.
+>=20
+>> If you are having other problems with keyboard layout being stuck to
+>> US QWERTY, please check your user space.
+>=20
+> On my Raspberry Pi for instance, the equivalent openSUSE Factory works
+> just fine with German keymap for USB keyboard. Might any related kernel
+> config options be missing in exynos_defconfig? Anything in particular I
+> should check in user space?
+>=20
+> Cheers,
+> Andreas
 
---Boundary_(ID_mgw8uSma0Mmji5Peh3Zp8w)--
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=BC=
+rnberg
+--=20
+To unsubscribe, e-mail: opensuse-arm+unsubscribe-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org
+To contact the owner, e-mail: opensuse-arm+owner-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org
