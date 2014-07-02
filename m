@@ -1,60 +1,70 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+
-Date: Wed, 02 Jul 2014 11:24:28 +0200
-Message-ID: <53B3CFCC.50506@free-electrons.com>
-References: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 1/3] ARM: exynos: remove unused <mach/memory.h>
+Date: Wed,  2 Jul 2014 11:57:21 +0200
+Message-ID: <1404295043-6661-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
-Cc: Andrew Lunn <andrew@lunn.ch>, kvm@vger.kernel.org, linux-sh@vger.kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Sekhar Nori <nsekhar@ti.com>, Thierry Reding <thierry.reding@gmail.com>, kvmarm@lists.cs.columbia.edu, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Magnus Damm <magnus.damm@gmail.com>, Gleb Natapov <gleb@kernel.org>, Tony Lindgren <tony@atomide.com>, xen-devel@lists.xenproject.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Marc Zyngier <marc.zyngier@arm.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Simon Horman <horms@verge.net.au>, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:36745 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751228AbaGBJ5h (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Jul 2014 05:57:37 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: kernel@pengutronix.de, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Hi Russell,
+ARCH_EXYNOS doesn't select NEED_MACH_MEMORY_H, so <asm/memory.h> doesn'=
+t
+include <mach/memory.h> and so this file is not used and can go away.
 
-On 01/07/2014 17:58, Russell King wrote:
-> ARMv6 and greater introduced a new instruction ("bx") which can be used
-> to return from function calls.  Recent CPUs perform better when the
-> "bx lr" instruction is used rather than the "mov pc, lr" instruction,
-> and this sequence is strongly recommended to be used by the ARM
-> architecture manual (section A.4.1.1).
-> 
-> We provide a new macro "ret" with all its variants for the condition
-> code which will resolve to the appropriate instruction.
-> 
-> Rather than doing this piecemeal, and miss some instances, change all
-> the "mov pc" instances to use the new macro, with the exception of
-> the "movs" instruction and the kprobes code.  This allows us to detect
-> the "mov pc, lr" case and fix it up - and also gives us the possibility
-> of deploying this for other registers depending on the CPU selection.
-> 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+---
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+---
+ arch/arm/mach-exynos/include/mach/memory.h | 27 ----------------------=
+-----
+ 1 file changed, 27 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/include/mach/memory.h
 
-It booted on Armada XP, Armada 370, Armada 385 and Armada 375
-
-Tested-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
-
-Thanks,
-
-Gregory
-
-
-> ---
-
-
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+diff --git a/arch/arm/mach-exynos/include/mach/memory.h b/arch/arm/mach=
+-exynos/include/mach/memory.h
+deleted file mode 100644
+index 2a4cdb7cb326..000000000000
+--- a/arch/arm/mach-exynos/include/mach/memory.h
++++ /dev/null
+@@ -1,27 +0,0 @@
+-/* linux/arch/arm/mach-exynos4/include/mach/memory.h
+- *
+- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * EXYNOS4 - Memory definitions
+- *
+- * This program is free software; you can redistribute it and/or modif=
+y
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#ifndef __ASM_ARCH_MEMORY_H
+-#define __ASM_ARCH_MEMORY_H __FILE__
+-
+-#define PLAT_PHYS_OFFSET		UL(0x40000000)
+-
+-#ifndef CONFIG_ARM_LPAE
+-/* Maximum of 256MiB in one bank */
+-#define MAX_PHYSMEM_BITS	32
+-#define SECTION_SIZE_BITS	28
+-#else
+-#define MAX_PHYSMEM_BITS	36
+-#define SECTION_SIZE_BITS	31
+-#endif
+-
+-#endif /* __ASM_ARCH_MEMORY_H */
+--=20
+2.0.0
