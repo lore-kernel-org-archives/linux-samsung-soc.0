@@ -1,93 +1,90 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: Add TMU dt node to monitor the temperature for
- Exynos3250
-Date: Wed, 02 Jul 2014 13:27:55 +0900
-Message-ID: <53B38A4B.4020407@samsung.com>
-References: <1404175210-9278-1-git-send-email-cw00.choi@samsung.com>
- <CAK5sBcFJMK-y+MZPXCufKEmp=v1nFJHstvNTczsQ3ez3SUPbKw@mail.gmail.com>
- <53B23362.7080103@samsung.com>
- <CAK5sBcER-rFmqe74b8uS=ZxKnTNGtkE0x6f7zaLphmyuHJz7Yg@mail.gmail.com>
- <53B349AF.4080606@samsung.com>
- <CAK5sBcHrMPweMSxfde0SSDOtRHbf7t7WQZkf0wAZNTc+N2=Wgg@mail.gmail.com>
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH] ARM: dts: Remove outdated usb2 phy entry from exynos5250.dtsi
+Date: Wed, 02 Jul 2014 06:50:16 +0200
+Message-ID: <53B38F88.1040608@suse.de>
+References: <1403881475-2001-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <CAK5sBcHrMPweMSxfde0SSDOtRHbf7t7WQZkf0wAZNTc+N2=Wgg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sachin Kamat <spk.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "open list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:45820 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750893AbaGBEuU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Jul 2014 00:50:20 -0400
+In-Reply-To: <1403881475-2001-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>
 
-Hi Sachin,
++ kgene, devicetree
 
-On 07/02/2014 12:09 PM, Sachin Kamat wrote:
-> On Wed, Jul 2, 2014 at 5:22 AM, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> On 07/01/2014 01:10 PM, Sachin Kamat wrote:
->>> Hi Chanwoo,
->>>
->>> On Tue, Jul 1, 2014 at 9:34 AM, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>>> Hi Sachin,
->>>>
->>>> On 07/01/2014 12:33 PM, Sachin Kamat wrote:
->>>>> Hi Chanwoo,
->>>>>
->>>>> On Tue, Jul 1, 2014 at 6:10 AM, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>>>>> This patch add TMU (Thermal Management Unit) dt node to monitor the high
->>>>>> temperature for Exynos3250.
->>>>>>
->>>>>> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>>>> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>>>> ---
->>>>>> This patch has a dependency on following patch [1]:
->>>>>>  [1] https://lkml.org/lkml/2014/6/30/805
->>>>>>
->>>>>>  arch/arm/boot/dts/exynos3250.dtsi | 10 ++++++++++
->>>>>>  1 file changed, 10 insertions(+)
->>>>>>
->>>>>> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
->>>>>> index 3660cab..1e566af 100644
->>>>>> --- a/arch/arm/boot/dts/exynos3250.dtsi
->>>>>> +++ b/arch/arm/boot/dts/exynos3250.dtsi
->>>>>> @@ -192,6 +192,16 @@
->>>>>>                         status = "disabled";
->>>>>>                 };
->>>>>>
->>>>>> +               tmu: tmu@100C0000 {
->>>>>> +                       compatible = "samsung,exynos3250-tmu";
->>>>>> +                       interrupt-parent = <&gic>;
->>>>>> +                       reg = <0x100C0000 0x100>;
->>>>>> +                       interrupts = <0 216 0>;
->>>>>> +                       clocks = <&cmu CLK_TMU_APBIF>;
->>>>>> +                       clock-names = "tmu_apbif";
->>>>>> +                       status = "disabled";
->>>>>
->>>>> I don't think there would be any board specific properties needed. Hence
->>>>> leave the status as enabled (by deleting the above line).
->>>>>
->>>>
->>>> I think that if specific board need TMU feature, dts file for specific board
->>>> should include tmu dt node with 'okay' status. The specific board based on
->>>> Exynos3250 might not need TMU feature.
->>>
->>> The status field in DT node is not meant for stating the build configuration but
->>> represents the readiness of the hardware for usage on the platform. If
->>> a particular
->>> board does not need this feature it needs to be disabled in the build
->>> config and only
->>> for any special requirements disable it in board file.
->>
->> TMU (Thermal Management Unit) needs specific regulator for TMU power as following:
->> The regulator for TMU is dependent on board.
-> 
-> In this case it makes sense to leave it disabled in dtsi.
-> 
+Am 27.06.2014 17:04, schrieb Sjoerd Simons:
+> The exynos5250.dtsi has two entries for describing the usb2 phy. One =
+for
+> the newer driver using the generic PHY framework and one for its
+> predecessor. The older node is only referenced by the arndale dts, wh=
+ich
+> seems redundant given starting from dba2f05880c the common dtsi also
+> includes the phy entries.
+>=20
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> ---
+>  arch/arm/boot/dts/exynos5250-arndale.dts |  4 ----
+>  arch/arm/boot/dts/exynos5250.dtsi        | 15 ---------------
+>  2 files changed, 19 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot=
+/dts/exynos5250-arndale.dts
+> index d0de1f5..dad8f9b 100644
+> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -570,8 +570,4 @@
+>  			connect-gpios =3D <&gpd1 7 1>;
+>  		};
+>  	};
+> -
+> -	usb@12110000 {
+> -		usb-phy =3D <&usb2_phy>;
+> -	};
+>  };
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/ex=
+ynos5250.dtsi
+> index 834fb5a..7c545d50 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -600,21 +600,6 @@
+>  		};
+>  	};
+> =20
+> -	usb2_phy: usbphy@12130000 {
+> -		compatible =3D "samsung,exynos5250-usb2phy";
+> -		reg =3D <0x12130000 0x100>;
+> -		clocks =3D <&clock CLK_FIN_PLL>, <&clock CLK_USB2>;
+> -		clock-names =3D "ext_xtal", "usbhost";
+> -		#address-cells =3D <1>;
+> -		#size-cells =3D <1>;
+> -		ranges;
+> -
+> -		usbphy-sys {
+> -			reg =3D <0x10040704 0x8>,
+> -			      <0x10050230 0x4>;
+> -		};
+> -	};
+> -
+>  	usb2_phy_gen: phy@12130000 {
+>  		compatible =3D "samsung,exynos5250-usb2-phy";
+>  		reg =3D <0x12130000 0x100>;
 
-Thanks for your review.
+I've stumbled over the same duplication in the .dtsi, LGTM,
 
-Best Regards,
-Chanwoo Choi
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Andreas F=E4rber <afaerber@suse.de>
+
+Regards,
+Andreas
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
+berg
