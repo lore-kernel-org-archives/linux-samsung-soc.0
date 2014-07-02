@@ -1,47 +1,42 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [GIT PULL] Samsung clock fixes for v3.16
-Date: Wed, 02 Jul 2014 20:05:45 +0200
-Message-ID: <53B449F9.8020001@samsung.com>
-References: <1404319926-6178-1-git-send-email-t.figa@samsung.com>
- <20140702171323.7440.76631@quantum>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: ASoC: samsung: MACH_SMDK6450
+Date: Thu, 03 Jul 2014 07:37:07 +0900
+Message-ID: <53B48993.5020809@samsung.com>
+References: <1404287238.12021.7.camel@x220> <20140702092347.GB410@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58381 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754729AbaGBSGQ (ORCPT
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:39665 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751535AbaGBWha (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jul 2014 14:06:16 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N83009PEJLY2Z60@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 02 Jul 2014 19:05:58 +0100 (BST)
-In-reply-to: <20140702171323.7440.76631@quantum>
+	Wed, 2 Jul 2014 18:37:30 -0400
+Received: by mail-pa0-f48.google.com with SMTP id et14so13252431pad.7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jul 2014 15:37:30 -0700 (PDT)
+In-Reply-To: <20140702092347.GB410@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Paul Bolle <pebolle@tiscali.nl>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
-On 02.07.2014 19:13, Mike Turquette wrote:
-> Quoting Tomasz Figa (2014-07-02 09:52:06)
->> The following changes since commit b640a6037c9ecd1f0ad23a8e9b4ca5f5b4112508:
->>
->>   Merge tag 'sunxi-clk-for-3.16-2' of https://github.com/mripard/linux into clk-next (2014-06-11 07:11:59 -0700)
->>
->> are available in the git repository at:
->>
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/for_3.16/samsung-clk-fixes
->>
->> for you to fetch changes up to 44ff0254b89079a8a95e652635e760d93196ac1f:
->>
->>   clk: exynos5420: Remove aclk66_peric from the clock tree description (2014-06-30 14:47:33 +0200)
-> 
-> Pulled into clk-fixes. Thanks for the great tag description as well.
+On 07/02/14 18:23, Mark Brown wrote:
+> On Wed, Jul 02, 2014 at 09:47:18AM +0200, Paul Bolle wrote:
+>
+>> Your commit 0aeaa68cf509 ("ASoC: samsung: no more support for S5P6440
+>> and S5P6450 SoCs") landed in next-20140702. It removed references to
+>> MACH_SMDK6440 and MACH_SMDK6450 from sound/soc/samsung/.
+>
+Yeah, I missed the removing when I created the patch. Paul, thanks for 
+your pointing out and I'm resending the updated patch.
 
-Thanks.
+> This also wasn't sent to me for review, please always send patches to
+> maintainers.
 
-Best regards,
-Tomasz
+Mark, I always send patches to regarding maintainers and in this case 
+the patch missed the change. I'm resending new patch and if any 
+problems, please let me know. Just note, I just wanted to check whether 
+there is no problem with other maintainers' tree early in -next tree.
+
+Thanks,
+Kukjin
