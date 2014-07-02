@@ -1,141 +1,279 @@
-From: Vincent Palatin <vpalatin@chromium.org>
-Subject: Re: [RFC 0/4] ARM: dts: exynos: Prepare Spring
-Date: Wed, 2 Jul 2014 07:56:14 -0700
-Message-ID: <CAP_ceTy-Z5y6QAH57XcMVqFcfxEq+yhuukWGYthS-xZJk3j8dQ@mail.gmail.com>
-References: <1403486483-4063-1-git-send-email-afaerber@suse.de>
- <CAD=FV=X4qGeWRZ9kcFGGr_tznruJkpzUJ5MU3hp-Q+mo2R1a4g@mail.gmail.com>
- <CANLzEksRmsk1y2ZEjRVE8F8DjSUeW3AebaaDWL71Z4Gc9NvZeg@mail.gmail.com>
- <53A89B0C.5000206@suse.de> <53B3881F.7040304@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [RFC PATCH v3] ARM: EXYNOS: Use MCPM call-backs to support S2R on Exynos5420
+Date: Wed,  2 Jul 2014 20:29:02 +0530
+Message-ID: <1404313142-1278-1-git-send-email-a.kesavan@samsung.com>
+References: <1404152927-11168-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:57367 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751839AbaGBO4f convert rfc822-to-8bit (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:50677 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750880AbaGBO7R (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jul 2014 10:56:35 -0400
-Received: by mail-vc0-f174.google.com with SMTP id hy4so10385031vcb.5
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jul 2014 07:56:35 -0700 (PDT)
-In-Reply-To: <53B3881F.7040304@suse.de>
+	Wed, 2 Jul 2014 10:59:17 -0400
+Received: by mail-pa0-f42.google.com with SMTP id lj1so12739593pab.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jul 2014 07:59:16 -0700 (PDT)
+In-Reply-To: <1404152927-11168-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: Benson Leung <bleung@chromium.org>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, openSUSE ARM ML <opensuse-arm@opensuse.org>, Alexander Graf <agraf@suse.de>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, nicolas.pitre@linaro.org, lorenzo.pieralisi@arm.com
+Cc: abrestic@chromium.org, dianders@chromium.org, kesavan.abhilash@gmail.com
 
-On Tue, Jul 1, 2014 at 9:18 PM, Andreas F=C3=A4rber <afaerber@suse.de> =
-wrote:
-> Am 23.06.2014 23:24, schrieb Andreas F=C3=A4rber:
->> Am 23.06.2014 22:11, schrieb Benson Leung:
->>> On Mon, Jun 23, 2014 at 12:57 PM, Doug Anderson <dianders@chromium.=
-org> wrote:
->>>>> Also when the screen stayed on, the embedded controller's keymap =
-seems
->>>>> hardcoded to US English with system settings not taking effect; b=
-ut
->>>>> surely we don't want per-keyboard device tree files to remedy tha=
-t.
->>>>
->>>> +Benson may be able to answer this.  I believe generally non-US
->>>> keyboard layouts are handled at a higher level.
->>>
->>> There's no such thing as a notion of US versus non-US keyboard layo=
-uts
->>> at the embedded controller level or even in the kernel. Indeed, thi=
-s
->>> should all be handled in user space.
->>>
->>> The chromeos firmware and kernel should return the correct key code=
-s
->>> for every key pressed on keyboards with the ANSI layout (US based),=
- or
->>> ISO (UK and most other countries).
->>>
->>> The only differences are :
->>> * the ISO keyboard has an extra key, which is immediately to the ri=
-ght
->>> of the Left Shift key. This must return KEY_102ND key code from the
->>> input layer.
->>> * the ISO keyboard has a  different location for the | \ key, which
->>> accomodates the upside L shaped Enter key on the right side of the
->>> keyboard. The keycode for this key is KEY_BACKSLASH.
->>>
->>> Basically, all of this should be verified using evtest to test that
->>> the ec and kernel have the keys right.
->>
->> Hm, we may be talking about two different things here? I have been d=
-oing
->> a minimum system bring-up for 3.16, with openSUSE userspace.
->> My YaST-selected system keymap (German with deadkeys) is not taking
->> effect on German Spring at the *framebuffer console* (tty1) - evdev =
-is
->> not involved at that level AIUI.
->>
->> Backspace and L-shaped enter keys work okay. The keymap here should =
-be
->> identical to that in the original German device and seemed to match =
-that
->> in the exynos5250-snow.dts file.
->>
->> I just checked (w/ dp-controller, hdmi, fimd commented out in my pat=
-ch):
->> * An external USB keyboard does not work correctly either.
->> * In X11 (xdm), both internal and USB keyboard work as expected.
->
-> Another observation: Ctrl+o does not work on the Chromebook keyboard,
-> whereas o and Shift+o or Ctrl+x do work as expected. On an external U=
-SB
-> keyboard it works just fine. Same at the console and in X11.
->
-> Testcases are nano (saving) and gEdit (opening).
->
-> I tried the new cros-ec-keyboard.dtsi, no change; and given that the =
-key
-> itself works okay, I assume it's not the dt linux,keymap.
->
-> Anyone any suggestion how to debug?
+Use the MCPM layer to handle core suspend/resume on Exynos5420.
+Also, restore the entry address setup code post-resume.
 
-I guess Ctrl+U is not working either.
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+---
+Hi Lorenzo and Nicolas,
 
-That's the combination of 2 factors :
-a. a magic feature on Spring
-b. a pre-existing bug in the cros_ec_keyb keyboard driver
+I have re-worked the patch to use the residency value as an indicator of the
+current state. This is untested and I haven't taken care of any changes that
+tc2 might require. Posting this as an RFC to check if this is the expected
+approach.
 
-a. On Spring, the AC adapter events are exported as a virtual key in
-the keyboard matrix
-(mapped as KEY_BATTERY in the ChromeOS kernel)
-b. the de-ghosting algorithm in the driver is slightly wrong.
+Depencies remain the same as v2.
 
-In your case, the driver is seeing a (non existing) ghost when Ctrl +
-O + KEY_BATTERY are pressed, and discarding the key press. As
-KEY_BATTERY is a virtual key, this ghost obviously cannot exist.
-To verify that hypothesis, you can try to disconnect your charger (or
-connect it), and see if the key combination is now working.
+ arch/arm/include/asm/mcpm.h          |  6 +++++
+ arch/arm/mach-exynos/mcpm-exynos.c   | 50 ++++++++++++++++++++++++++----------
+ arch/arm/mach-exynos/pm.c            | 38 ++++++++++++++++++++++++---
+ arch/arm/mach-exynos/regs-pmu.h      |  1 +
+ drivers/cpuidle/cpuidle-big_little.c |  2 +-
+ 5 files changed, 79 insertions(+), 18 deletions(-)
 
-We might need to upstream a patch similar to :
-https://chromium-review.googlesource.com/#/c/178539/
-to fix the de-ghosting and exclude KEY_BATTERY.
-
->> Similar situation in ChromeOS IIRC, with keymap correct at graphical
->> login but not on the right-arrow console - although I don't know the
->> ChromeOS userland too well to judge if it was configured correctly.
->>
->>> If you are having other problems with keyboard layout being stuck t=
-o
->>> US QWERTY, please check your user space.
->>
->> On my Raspberry Pi for instance, the equivalent openSUSE Factory wor=
-ks
->> just fine with German keymap for USB keyboard. Might any related ker=
-nel
->> config options be missing in exynos_defconfig? Anything in particula=
-r I
->> should check in user space?
->>
->> Cheers,
->> Andreas
->
-> --
-> SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-> GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=
-=C3=BCrnberg
+diff --git a/arch/arm/include/asm/mcpm.h b/arch/arm/include/asm/mcpm.h
+index ff73aff..0848829 100644
+--- a/arch/arm/include/asm/mcpm.h
++++ b/arch/arm/include/asm/mcpm.h
+@@ -272,4 +272,10 @@ void __init mcpm_smp_set_ops(void);
+ #define MCPM_SYNC_CLUSTER_SIZE \
+ 	(MCPM_SYNC_CLUSTER_INBOUND + __CACHE_WRITEBACK_GRANULE)
+ 
++/* Definitions for various MCPM scenarios that might need special handling */
++#define MCPM_CPU_IDLE		0x0
++#define MCPM_CPU_SUSPEND	0x1
++#define MCPM_CPU_SWITCH		0x2
++#define MCPM_CPU_HOTPLUG	0x3
++
+ #endif
+diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+index 1baca55..c3673bd 100644
+--- a/arch/arm/mach-exynos/mcpm-exynos.c
++++ b/arch/arm/mach-exynos/mcpm-exynos.c
+@@ -15,6 +15,7 @@
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/of_address.h>
++#include <linux/syscore_ops.h>
+ 
+ #include <asm/cputype.h>
+ #include <asm/cp15.h>
+@@ -30,6 +31,8 @@
+ #define EXYNOS5420_USE_ARM_CORE_DOWN_STATE	BIT(29)
+ #define EXYNOS5420_USE_L2_COMMON_UP_STATE	BIT(30)
+ 
++static void __iomem *ns_sram_base_addr;
++
+ /*
+  * The common v7_exit_coherency_flush API could not be used because of the
+  * Erratum 799270 workaround. This macro is the same as the common one (in
+@@ -129,7 +132,7 @@ static int exynos_power_up(unsigned int cpu, unsigned int cluster)
+  * and can only be executed on processors like A15 and A7 that hit the cache
+  * with the C bit clear in the SCTLR register.
+  */
+-static void exynos_power_down(void)
++static void exynos_mcpm_power_down(u64 residency)
+ {
+ 	unsigned int mpidr, cpu, cluster;
+ 	bool last_man = false, skip_wfi = false;
+@@ -150,7 +153,12 @@ static void exynos_power_down(void)
+ 	BUG_ON(__mcpm_cluster_state(cluster) != CLUSTER_UP);
+ 	cpu_use_count[cpu][cluster]--;
+ 	if (cpu_use_count[cpu][cluster] == 0) {
+-		exynos_cpu_power_down(cpunr);
++		/*
++		 * Bypass power down for CPU0 during suspend. This is being
++		 * taken care by the SYS_PWR_CFG bit in CORE0_SYS_PWR_REG.
++		 */
++		if ((cpunr != 0) || (residency != MCPM_CPU_SUSPEND))
++			exynos_cpu_power_down(cpunr);
+ 
+ 		if (exynos_cluster_unused(cluster)) {
+ 			exynos_cluster_power_down(cluster);
+@@ -209,6 +217,11 @@ static void exynos_power_down(void)
+ 	/* Not dead at this point?  Let our caller cope. */
+ }
+ 
++static void exynos_power_down(void)
++{
++	exynos_mcpm_power_down(MCPM_CPU_SWITCH | MCPM_CPU_HOTPLUG);
++}
++
+ static int exynos_wait_for_powerdown(unsigned int cpu, unsigned int cluster)
+ {
+ 	unsigned int tries = 100;
+@@ -250,11 +263,11 @@ static void exynos_suspend(u64 residency)
+ {
+ 	unsigned int mpidr, cpunr;
+ 
+-	exynos_power_down();
++	exynos_mcpm_power_down(residency);
+ 
+ 	/*
+ 	 * Execution reaches here only if cpu did not power down.
+-	 * Hence roll back the changes done in exynos_power_down function.
++	 * Hence roll back the changes done in exynos_mcpm_power_down function.
+ 	 *
+ 	 * CAUTION: "This function requires the stack data to be visible through
+ 	 * power down and can only be executed on processors like A15 and A7
+@@ -319,10 +332,26 @@ static const struct of_device_id exynos_dt_mcpm_match[] = {
+ 	{},
+ };
+ 
++static void exynos_mcpm_setup_entry_point(void)
++{
++	/*
++	 * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
++	 * as part of secondary_cpu_start().  Let's redirect it to the
++	 * mcpm_entry_point(). This is done during both secondary boot-up as
++	 * well as system resume.
++	 */
++	__raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
++	__raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
++	__raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
++}
++
++static struct syscore_ops exynos_mcpm_syscore_ops = {
++	.resume	= exynos_mcpm_setup_entry_point,
++};
++
+ static int __init exynos_mcpm_init(void)
+ {
+ 	struct device_node *node;
+-	void __iomem *ns_sram_base_addr;
+ 	unsigned int value, i;
+ 	int ret;
+ 
+@@ -389,16 +418,9 @@ static int __init exynos_mcpm_init(void)
+ 		__raw_writel(value, EXYNOS_COMMON_OPTION(i));
+ 	}
+ 
+-	/*
+-	 * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
+-	 * as part of secondary_cpu_start().  Let's redirect it to the
+-	 * mcpm_entry_point().
+-	 */
+-	__raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
+-	__raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
+-	__raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
++	exynos_mcpm_setup_entry_point();
+ 
+-	iounmap(ns_sram_base_addr);
++	register_syscore_ops(&exynos_mcpm_syscore_ops);
+ 
+ 	return ret;
+ }
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index bf8564a..1dce5d2 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -24,6 +24,7 @@
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/hardware/cache-l2x0.h>
++#include <asm/mcpm.h>
+ #include <asm/smp_scu.h>
+ #include <asm/suspend.h>
+ 
+@@ -191,7 +192,6 @@ int exynos_cluster_power_state(int cluster)
+ 			pmu_base_addr + S5P_INFORM1))
+ 
+ #define S5P_CHECK_AFTR  0xFCBA0D10
+-#define S5P_CHECK_SLEEP 0x00000BAD
+ 
+ /* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
+ static void exynos_set_wakeupmask(long mask)
+@@ -318,7 +318,10 @@ static void exynos_pm_prepare(void)
+ 
+ 	/* ensure at least INFORM0 has the resume address */
+ 
+-	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
++	if (soc_is_exynos5420())
++		pmu_raw_writel(virt_to_phys(mcpm_entry_point), S5P_INFORM0);
++	else
++		pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
+ 
+ 	if (soc_is_exynos5420()) {
+ 		tmp = __raw_readl(pmu_base_addr + EXYNOS5_ARM_L2_OPTION);
+@@ -490,6 +493,28 @@ static struct syscore_ops exynos_pm_syscore_ops = {
+ 	.resume		= exynos_pm_resume,
+ };
+ 
++static int notrace exynos_mcpm_cpu_suspend(unsigned long arg)
++{
++	/* MCPM works with HW CPU identifiers */
++	unsigned int mpidr = read_cpuid_mpidr();
++	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
++	unsigned int cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
++
++	__raw_writel(0x0, sysram_base_addr + EXYNOS5420_CPU_STATE);
++
++	mcpm_set_entry_vector(cpu, cluster, exynos_cpu_resume);
++
++	/*
++	 * Residency value passed to mcpm_cpu_suspend back-end
++	 * has to be given clear semantics. Set to 0 as a
++	 * temporary value.
++	 */
++	mcpm_cpu_suspend(MCPM_CPU_SUSPEND);
++
++	/* return value != 0 means failure */
++	return 1;
++}
++
+ /*
+  * Suspend Ops
+  */
+@@ -517,10 +542,17 @@ static int exynos_suspend_enter(suspend_state_t state)
+ 	flush_cache_all();
+ 	s3c_pm_check_store();
+ 
+-	ret = cpu_suspend(0, exynos_cpu_suspend);
++	/* Use the MCPM layer to suspend 5420 which is a multi-cluster SoC */
++	if (soc_is_exynos5420())
++		ret = cpu_suspend(0, exynos_mcpm_cpu_suspend);
++	else
++		ret = cpu_suspend(0, exynos_cpu_suspend);
+ 	if (ret)
+ 		return ret;
+ 
++	if (soc_is_exynos5420())
++		mcpm_cpu_powered_up();
++
+ 	s3c_pm_restore_uarts();
+ 
+ 	S3C_PMDBG("%s: wakeup stat: %08x\n", __func__,
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index 3cf0454..e8c75db 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -152,6 +152,7 @@
+ #define S5P_PAD_RET_EBIB_OPTION			0x31A8
+ 
+ #define S5P_CORE_LOCAL_PWR_EN			0x3
++#define S5P_CHECK_SLEEP				0x00000BAD
+ 
+ /* Only for EXYNOS4210 */
+ #define S5P_CMU_CLKSTOP_LCD1_LOWPWR	0x1154
+diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
+index 344d79fa..fab2270 100644
+--- a/drivers/cpuidle/cpuidle-big_little.c
++++ b/drivers/cpuidle/cpuidle-big_little.c
+@@ -108,7 +108,7 @@ static int notrace bl_powerdown_finisher(unsigned long arg)
+ 	 * has to be given clear semantics. Set to 0 as a
+ 	 * temporary value.
+ 	 */
+-	mcpm_cpu_suspend(0);
++	mcpm_cpu_suspend(MCPM_CPU_IDLE);
+ 
+ 	/* return value != 0 means failure */
+ 	return 1;
+-- 
+2.0.0
