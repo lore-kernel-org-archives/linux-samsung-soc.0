@@ -1,88 +1,132 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/3 v5] spi: s3c64xx: fix broken "cs_gpios" usage in the
- driver
-Date: Wed, 2 Jul 2014 17:56:51 +0100
-Message-ID: <20140702165651.GK410@sirena.org.uk>
-References: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v2] clk: s2mps11: Fix clk_ops
+Date: Wed, 02 Jul 2014 10:01:04 -0700
+Message-ID: <20140702170104.7440.66617@quantum>
+References: <1404234839-6005-1-git-send-email-k.wrona@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="d6d1KVhp94hk3Jrm"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43924 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964769AbaGBQ5Y (ORCPT
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:58989 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932270AbaGBRBS convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jul 2014 12:57:24 -0400
-Content-Disposition: inline
-In-Reply-To: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
+	Wed, 2 Jul 2014 13:01:18 -0400
+Received: by mail-pa0-f53.google.com with SMTP id ey11so12816185pad.12
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jul 2014 10:01:18 -0700 (PDT)
+In-Reply-To: <1404234839-6005-1-git-send-email-k.wrona@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, naveenkrishna.ch@gmail.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Karol Wrona <k.wrona@samsung.com>
 
+Quoting Karol Wrona (2014-07-01 10:13:59)
+> s2mps11 clocks had registered callbacks for prepare ,unprepare and is_enabled.
+> During disabling unused clocks the lack of is_prepared caused that unused
+> s2mps11 clocks were not unprepared and stayed active.
+> 
+> Regmap_read is cached so it can be called in is_prepare callback
+> to achieve this information. Enabled field was removed from struct s2mps11_clk.
+> 
+> Signed-off-by: Karol Wrona <k.wrona@samsung.com>
 
---d6d1KVhp94hk3Jrm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to clk-next. I didn't take it into clk-fixes since I don't think
+the disable_unused bug was introduced any time recently.
 
-On Fri, Jun 13, 2014 at 09:29:50AM +0530, Naveen Krishna Chatradhi wrote:
+Regards,
+Mike
 
-> Hence, spi-s3c64xx.c is broken since "Jun 21 11:26:12 2013" and
-> considering the time with no compliants about the breakage.
-
-I'm not clear what the breakage is?  Some boards are broken but what's
-the driver issue?
-
->  	if (!spi_get_ctldata(spi)) {
->  		/* Request gpio only if cs line is asserted by gpio pins */
-> -		if (sdd->cs_gpio) {
-> -			err = gpio_request_one(cs->line, GPIOF_OUT_INIT_HIGH,
-> -					dev_name(&spi->dev));
-> +		if (gpio_is_valid(spi->cs_gpio)) {
-> +			err = gpio_request_one(spi->cs_gpio,
-> +						GPIOF_OUT_INIT_HIGH,
-> +						dev_name(&spi->dev));
->  			if (err) {
->  				dev_err(&spi->dev,
->  					"Failed to get /CS gpio [%d]: %d\n",
-> -					cs->line, err);
-> +					spi->cs_gpio, err);
->  				goto err_gpio_req;
->  			}
+> ---
+>  drivers/clk/clk-s2mps11.c |   33 +++++++++++----------------------
+>  1 file changed, 11 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+> index b5274a9..5df99a4 100644
+> --- a/drivers/clk/clk-s2mps11.c
+> +++ b/drivers/clk/clk-s2mps11.c
+> @@ -45,7 +45,6 @@ struct s2mps11_clk {
+>         struct clk *clk;
+>         struct clk_lookup *lookup;
+>         u32 mask;
+> -       bool enabled;
+>         unsigned int reg;
+>  };
+>  
+> @@ -62,8 +61,6 @@ static int s2mps11_clk_prepare(struct clk_hw *hw)
+>         ret = regmap_update_bits(s2mps11->iodev->regmap_pmic,
+>                                  s2mps11->reg,
+>                                  s2mps11->mask, s2mps11->mask);
+> -       if (!ret)
+> -               s2mps11->enabled = true;
+>  
+>         return ret;
+>  }
+> @@ -75,32 +72,32 @@ static void s2mps11_clk_unprepare(struct clk_hw *hw)
+>  
+>         ret = regmap_update_bits(s2mps11->iodev->regmap_pmic, s2mps11->reg,
+>                            s2mps11->mask, ~s2mps11->mask);
 > -
-> -			spi->cs_gpio = cs->line;
-> +		} else {
-> +			dev_err(&spi->dev, "chip select gpio is invalid\n");
-> +			return -EINVAL;
->  		}
-
-This appears to be making it mandatory to specify a GPIO when previously
-it was not mandatory which I believe breaks some SoCs - the native chip
-select has to be used on some devices as there is no pinmux option to
-make it a GPIO (this was why the native chip select support was added).
-
-Also I'd need to check but are you sure that GPIO 0 is not valid?
-
---d6d1KVhp94hk3Jrm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTtDnPAAoJELSic+t+oim9dCwP/0hLN5l2CNp2YeupNQ5L4pGa
-UnIJLuovAICJDzeqh1PrKPlX7iArMZ4G3JPoExDZ8Mr3ng7mK1+8aiIhXfy+ZMre
-H8imblIh5VE1vx83yb6M1oh8uyh4VcUq+xvS6W92KtS+w3VihZDcc3wpfZHO0qEf
-WzaeLXPhzSd6fpfAdueTOwOEX12lFVnpXGcbveeLaqX8whiiI7sd5YphiYoh6N8U
-VYtt1PP443l3JRJy3v4ZW6WOU4lQWRxdUND7mt4klPENe7C8TRW3lvD8mZfbeDq6
-mcvJG0y20tQWrFZKPHcH+JTXugTFCRzPEGulZ20E0xH9G7Rd28SA8co4wnBV0PZ7
-F8HUC03SuXaqzf7zuJq5k1Y6z93plEQ5r/UCAMjIapi1oQwBM3ArYPVALHApXAp9
-eFJCaTbGR0ijXafOTP8Brq7PCNPXTgPuw/7sKDNUY6yIIDREILY/Ka1nUiL73cSu
-mhJ8/Q3RgRDn139gDOL1RYzfKASwrnD/z5NziVmkoOlQO4oC6QSYuCvqw1/2Q6DI
-8e02KNktszNIheIY3u6gxkgnLPwHwz3gFZPw9NVQNKF2U9Qc0Y0gMYoR+SyHhm1q
-gyl6FUzTaLDYALa54Kk1XtGL3Y38UOePlzkU7q1WylgpdIyXAN3hb2ydIQF+pCQT
-h/KGLvsC5cJFo8DtYJj7
-=xynw
------END PGP SIGNATURE-----
-
---d6d1KVhp94hk3Jrm--
+> -       if (!ret)
+> -               s2mps11->enabled = false;
+>  }
+>  
+> -static int s2mps11_clk_is_enabled(struct clk_hw *hw)
+> +static int s2mps11_clk_is_prepared(struct clk_hw *hw)
+>  {
+> +       int ret;
+> +       u32 val;
+>         struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
+>  
+> -       return s2mps11->enabled;
+> +       ret = regmap_read(s2mps11->iodev->regmap_pmic,
+> +                               s2mps11->reg, &val);
+> +       if (ret < 0)
+> +               return -EINVAL;
+> +
+> +       return val & s2mps11->mask;
+>  }
+>  
+>  static unsigned long s2mps11_clk_recalc_rate(struct clk_hw *hw,
+>                                              unsigned long parent_rate)
+>  {
+> -       struct s2mps11_clk *s2mps11 = to_s2mps11_clk(hw);
+> -       if (s2mps11->enabled)
+> -               return 32768;
+> -       else
+> -               return 0;
+> +       return 32768;
+>  }
+>  
+>  static struct clk_ops s2mps11_clk_ops = {
+>         .prepare        = s2mps11_clk_prepare,
+>         .unprepare      = s2mps11_clk_unprepare,
+> -       .is_enabled     = s2mps11_clk_is_enabled,
+> +       .is_prepared    = s2mps11_clk_is_prepared,
+>         .recalc_rate    = s2mps11_clk_recalc_rate,
+>  };
+>  
+> @@ -174,7 +171,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>         unsigned int s2mps11_reg;
+>         struct clk_init_data *clks_init;
+>         int i, ret = 0;
+> -       u32 val;
+>  
+>         s2mps11_clks = devm_kzalloc(&pdev->dev, sizeof(*s2mps11_clk) *
+>                                         S2MPS11_CLKS_NUM, GFP_KERNEL);
+> @@ -213,13 +209,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+>                 s2mps11_clk->mask = 1 << i;
+>                 s2mps11_clk->reg = s2mps11_reg;
+>  
+> -               ret = regmap_read(s2mps11_clk->iodev->regmap_pmic,
+> -                                 s2mps11_clk->reg, &val);
+> -               if (ret < 0)
+> -                       goto err_reg;
+> -
+> -               s2mps11_clk->enabled = val & s2mps11_clk->mask;
+> -
+>                 s2mps11_clk->clk = devm_clk_register(&pdev->dev,
+>                                                         &s2mps11_clk->hw);
+>                 if (IS_ERR(s2mps11_clk->clk)) {
+> -- 
+> 1.7.9.5
+> 
