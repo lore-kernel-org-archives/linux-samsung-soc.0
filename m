@@ -1,57 +1,35 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Subject: Re: ABBA deadlock in Common Clock Framework
-Date: Wed, 2 Jul 2014 14:49:24 +0300
-Message-ID: <20140702114924.GC3679@tbergstrom-lnx.Nvidia.com>
+Date: Wed, 02 Jul 2014 14:41:54 +0200
+Message-ID: <53B3FE12.3000608@samsung.com>
 References: <53B3E5F8.80501@samsung.com>
+ <20140702114924.GC3679@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13385 "EHLO
-	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751005AbaGBLt1 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:45513 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751297AbaGBMl7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jul 2014 07:49:27 -0400
-Content-Disposition: inline
-In-Reply-To: <53B3E5F8.80501@samsung.com>
+	Wed, 2 Jul 2014 08:41:59 -0400
+In-reply-to: <20140702114924.GC3679@tbergstrom-lnx.Nvidia.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz =?utf-8?Q?Stanis=C5=82awski?= <t.stanislaws@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Andrzej Hajda <a.hajda@samsung.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?B?VG9tYXN6IFN0YW5pc8WCYXdza2k=?= <t.stanislaws@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Andrzej Hajda <a.hajda@samsung.com>, Mark Brown <broonie@kernel.org>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, Jul 02, 2014 at 12:59:04PM +0200, Tomasz Figa wrote:
-> Hi All,
-> 
-> While testing linux-next (next-20140625) on Exynos4412-based TRATS2
-> board, from time to time I hit a deadlock between clk_disable_unused()
-> of Common Clock Framework and parallel clk_prepare() from s3c24xx-i2c
-> driver.
-> 
-> I believe the following is happening (in processes 1 and 2):
->  1: clk_disable_unused()
->  1: clk_prepare_lock()
->  1: mutex_lock(clk prepare mutex) // lock A
->  1: max77686_clk_is_prepared()
->  1: regmap_read()
->  2: regulator_set_voltage()
->  2: regmap_read()
->  2: mutex_lock(max77686 regmap mutex) // lock B
->  2: i2c_transfer()
->  2: s3c24xx_i2c_xfer()
->  2: clk_unprepare()
->  2: clk_prepare_lock()
->  2: mutex_lock(clk prepare mutex) // lock A
->  1: mutex_lock(max77686 regmap mutex) // lock B
->  1,2: BOOM!
-> 
-> I suppose this is a general problem affecting any MFD device that is
-> also a clock provider, but I clearly don't have a good idea what to do
-> about it.
-> 
+On 02/07/14 13:49, Peter De Schrijver wrote:
+> Or if you use notifiers which use i2c... See also
+> http://comments.gmane.org/gmane.linux.kernel/1553699. One workaround is to
+> always leave the clock of the i2c controller in a prepared state.
 
-Or if you use notifiers which use i2c... See also
-http://comments.gmane.org/gmane.linux.kernel/1553699. One workaround is to
-always leave the clock of the i2c controller in a prepared state.
+Keeping the clock always prepared might not be that bad, given
+prepare/unprepare ops are empty on Exynos and I'd say chances
+this ever changes are very low. Now we have just an overhead
+of calling to the clock core before and after each single I2C
+transfer.
 
-Cheers,
-
-Peter.
+--
+Regards,
+Sylwester
