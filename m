@@ -1,96 +1,58 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v5 14/14] ARM: dts: Add max77802 to exynos5420-peach-pit
- and exynos5800-peach-pi
-Date: Wed, 02 Jul 2014 11:22:42 +0200
-Message-ID: <53B3CF62.2020205@collabora.co.uk>
-References: <1403806546-31122-1-git-send-email-javier.martinez@collabora.co.uk> <1403806546-31122-15-git-send-email-javier.martinez@collabora.co.uk> <53B3CED8.4020808@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: ASoC: samsung: MACH_SMDK6450
+Date: Wed, 2 Jul 2014 10:23:47 +0100
+Message-ID: <20140702092347.GB410@sirena.org.uk>
+References: <1404287238.12021.7.camel@x220>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="cmJC7u66zC7hs+87"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:36748 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751525AbaGBJWt (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43323 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751226AbaGBJYj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jul 2014 05:22:49 -0400
-In-Reply-To: <53B3CED8.4020808@gmail.com>
+	Wed, 2 Jul 2014 05:24:39 -0400
+Content-Disposition: inline
+In-Reply-To: <1404287238.12021.7.camel@x220>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <trblinux@gmail.com>, Lee Jones <lee.jones@linaro.org>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Daniel Stone <daniels@collabora.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
-Hello Tushar,
 
-Thanks a lot for your feedback.
+--cmJC7u66zC7hs+87
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 07/02/2014 11:20 AM, Tushar Behera wrote:
-> On 06/26/2014 11:45 PM, Javier Martinez Canillas wrote:
->> Peach pit and pi boards uses a Maxim 77802 power management
->> IC to drive regulators and its Real Time Clock. This patch
->> adds support for this chip.
->> 
->> These are the device nodes and pinctrl configuration that
->> are present on the Peach pit DeviceTree source file in the
->> the Chrome OS kernel 3.8 tree.
->> 
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> Tested-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> ---
-> 
-> [ ... ]
-> 
->> +
->> +		regulators {
->> +			buck1_reg: BUCK1 {
->> +				regulator-name = "vdd_mif";
->> +				regulator-min-microvolt = <800000>;
->> +				regulator-max-microvolt = <1300000>;
->> +				regulator-always-on;
->> +				regulator-boot-on;
->> +				regulator-ramp-delay = <12500>;
->> +			};
-> 
-> IMO, adding a blank line between sub-nodes would be better.
-> 
+On Wed, Jul 02, 2014 at 09:47:18AM +0200, Paul Bolle wrote:
 
-Ok
+> Your commit 0aeaa68cf509 ("ASoC: samsung: no more support for S5P6440
+> and S5P6450 SoCs") landed in next-20140702. It removed references to
+> MACH_SMDK6440 and MACH_SMDK6450 from sound/soc/samsung/.
 
->> +			buck2_reg: BUCK2 {
->> +				regulator-name = "vdd_arm_real";
->> +				regulator-min-microvolt = <800000>;
->> +				regulator-max-microvolt = <1500000>;
->> +				regulator-always-on;
->> +				regulator-boot-on;
->> +				regulator-ramp-delay = <12500>;
->> +			};
-> 
-> [ ... ]
-> 
->> +			vqmmc_sdcard: ldo4_reg: LDO4 {
->> +				regulator-name = "vdd_sd";
->> +				regulator-min-microvolt = <1800000>;
->> +				regulator-max-microvolt = <2800000>;
->> +				regulator-always-on;
->> +
-> 
-> Blank line, can be removed.
->
+This also wasn't sent to me for review, please always send patches to
+maintainers.
 
-Ok
+--cmJC7u66zC7hs+87
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
->> +			};
-> 
-> [ ... ]
->> +			ldo23_reg: LDO23 {
->> +				regulator-name = "ld0_23";
-> 
-> ldo_23, 'o' in place of '0'.
->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Right, missed that. Thanks for pointing out.
+iQIcBAEBAgAGBQJTs8+fAAoJELSic+t+oim9licP/3/vf5TpN1dMGkST292fCGvt
+Xip354mFvfMhv7GfdxbtBefLb1GnVhbhilFZ0dm30uz+71z+9dmeA6d0PWN6C1A/
+QxjpGUq2qoCp9X3YU000SOya21OlIa/HiV5NuTjB/8VZ7xG97IxPkMVOAnF/Giv+
+J7iWySPJEnqx10XPIL/TkT5yaEAt1O22O/aAuhINAdmlgTL1SKDwtXwOjoS3ZTMm
+q29grQP7VTHYv/JrW16kHhFSIkWouVV2fFH6eVt4AVNzz5zM0UnTalkPh14znkue
+9ImkhuqB94uhGCEPVAFMlO4DvBLvcByeAHz+ju86sqwYJOe9Tt0vkzqiWG/++t1u
+FAWHbhWydOclDxR+Cq83SPKYsuRLdgR/k0jEMkdR1Kr95smFhRwVGXV4iJDnlmBE
+94tez8HZC03K4aW/3H1IA4WxA39Y3pzsn8ARIexi9V8GFG805yPuN36xWXFfq5Z7
+aZFYrYD1t/jLh3Ws/mRWnF9gbVCLbDibEXzXJ6m9YBhfrjzwMgCMq2Nn2xzRt4xD
+17Ne2wfMDzA8Kw1BGd4s4VN8wbIs0gw3LjCddsRRocHt7ZxfZNUDeaAiEkb0cJtN
+phCR8xvOPodGJ90tTk2EUjN0tRVsm8Y8Uq/WJXgiIXYXwyFJVwz84R6e1ufsyobf
+64yKhlnpM1+D7f+hV7Xv
+=ido/
+-----END PGP SIGNATURE-----
 
-> Similar comments for peach-pi DTS file.
-> 
-
-Best regards,
-Javier
+--cmJC7u66zC7hs+87--
