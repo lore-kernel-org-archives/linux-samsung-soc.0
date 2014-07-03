@@ -1,60 +1,128 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH v2] Documentation: devicetree: Fix tps65090 typos in example
-Date: Thu, 03 Jul 2014 17:40:39 +0200
-Message-ID: <53B57977.6010309@suse.de>
-References: <1403737664-6426-1-git-send-email-afaerber@suse.de>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: several messages
+Date: Thu, 3 Jul 2014 11:45:32 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1407031111100.6220@knanqh.ubzr>
+References: <1404363737-26222-1-git-send-email-a.kesavan@samsung.com> <1404398818-6859-1-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:37660 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756403AbaGCPkm (ORCPT
+Received: from mail-qg0-f46.google.com ([209.85.192.46]:38005 "EHLO
+	mail-qg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964959AbaGCPpf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Jul 2014 11:40:42 -0400
-In-Reply-To: <1403737664-6426-1-git-send-email-afaerber@suse.de>
+	Thu, 3 Jul 2014 11:45:35 -0400
+Received: by mail-qg0-f46.google.com with SMTP id q107so376700qgd.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Jul 2014 08:45:34 -0700 (PDT)
+In-Reply-To: <1404398818-6859-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Randy Dunlap <rdunlap@infradead.org>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Mark Brown <broonie@linaro.org>, Michael Spang <spang@chromium.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Andrew Bresticker <abrestic@chromium.org>, Douglas Anderson <dianders@chromium.org>
 
-Am 26.06.2014 01:07, schrieb Andreas F=C3=A4rber:
-> Specification and existing device trees use vsys-l{1,2}-supply,
-> not vsys_l{1,2}-supply. Fix the example to match the specification.
->=20
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> ---
->  v1 -> v2:
->  * More verbose commit message (requested by Mark Rutland)
+On Thu, 3 Jul 2014, Abhilash Kesavan wrote:
 
-Ping! Any issue remaining or maintainers/lists missing in CC?
+> On Thu, Jul 3, 2014 at 6:59 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+> > Please, let's avoid going that route.  There is no such special handling
+> > needed if the API is sufficient.  And the provided API allows you to
+> > suspend a CPU or shut it down.  It shouldn't matter at that level if
+> > this is due to a cluster switch or a hotplug event. Do you really need
+> > something else?
+> No, just one local flag for suspend should be enough for me. Will remove these.
 
-Thanks,
-Andreas
+[...]
 
->  Documentation/devicetree/bindings/regulator/tps65090.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/regulator/tps65090.txt=
- b/Documentation/devicetree/bindings/regulator/tps65090.txt
-> index 34098023..ca69f5e 100644
-> --- a/Documentation/devicetree/bindings/regulator/tps65090.txt
-> +++ b/Documentation/devicetree/bindings/regulator/tps65090.txt
-> @@ -45,8 +45,8 @@ Example:
->  		infet5-supply =3D <&some_reg>;
->  		infet6-supply =3D <&some_reg>;
->  		infet7-supply =3D <&some_reg>;
-> -		vsys_l1-supply =3D <&some_reg>;
-> -		vsys_l2-supply =3D <&some_reg>;
-> +		vsys-l1-supply =3D <&some_reg>;
-> +		vsys-l2-supply =3D <&some_reg>;
-> =20
->  		regulators {
->  			dcdc1 {
+> Changes in v5:
+> 	- Removed the MCPM flags and just used a local flag to
+> 	indicate that we are suspending.
 
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+[...]
+
+> -static void exynos_power_down(void)
+> +static void exynos_mcpm_power_down(u64 residency)
+>  {
+>  	unsigned int mpidr, cpu, cluster;
+>  	bool last_man = false, skip_wfi = false;
+> @@ -150,7 +153,12 @@ static void exynos_power_down(void)
+>  	BUG_ON(__mcpm_cluster_state(cluster) != CLUSTER_UP);
+>  	cpu_use_count[cpu][cluster]--;
+>  	if (cpu_use_count[cpu][cluster] == 0) {
+> -		exynos_cpu_power_down(cpunr);
+> +		/*
+> +		 * Bypass power down for CPU0 during suspend. This is being
+> +		 * taken care by the SYS_PWR_CFG bit in CORE0_SYS_PWR_REG.
+> +		 */
+> +		if ((cpunr != 0) || (residency != S5P_CHECK_SLEEP))
+> +			exynos_cpu_power_down(cpunr);
+>  
+>  		if (exynos_cluster_unused(cluster)) {
+>  			exynos_cluster_power_down(cluster);
+> @@ -209,6 +217,11 @@ static void exynos_power_down(void)
+>  	/* Not dead at this point?  Let our caller cope. */
+>  }
+>  
+> +static void exynos_power_down(void)
+> +{
+> +	exynos_mcpm_power_down(0);
+> +}
+
+[...]
+
+> +static int notrace exynos_mcpm_cpu_suspend(unsigned long arg)
+> +{
+> +	/* MCPM works with HW CPU identifiers */
+> +	unsigned int mpidr = read_cpuid_mpidr();
+> +	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+> +	unsigned int cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+> +
+> +	__raw_writel(0x0, sysram_base_addr + EXYNOS5420_CPU_STATE);
+> +
+> +	mcpm_set_entry_vector(cpu, cluster, exynos_cpu_resume);
+> +
+> +	/*
+> +	 * Pass S5P_CHECK_SLEEP flag to the MCPM back-end to indicate that
+> +	 * we are suspending the system and need to skip CPU0 power down.
+> +	 */
+> +	mcpm_cpu_suspend(S5P_CHECK_SLEEP);
+
+NAK.
+
+When I say "local flag with local meaning", I don't want you to smuggle 
+that flag through a public interface either.  I find it rather inelegant 
+to have the notion of special handling for CPU0 being spread around like 
+that.
+
+If CPU0 is special, then it should be dealth with in one place only, 
+ideally in the MCPM backend, so the rest of the kernel doesn't have to 
+care.
+
+Again, here's what I mean:
+
+static void exynos_mcpm_down_handler(int flags)
+{
+	[...]
+	if ((cpunr != 0) || !(flags & SKIP_CPU_POWERDOWN_IF_CPU0))
+		exynos_cpu_power_down(cpunr);
+	[...]
+}
+
+static void exynos_mcpm_power_down()
+{
+	exynos_mcpm_down_handler(0);
+}
+
+static void exynos_mcpm_suspend(u64 residency)
+{
+	/*
+	 * Theresidency argument is ignored for now.
+	 * However, in the CPU suspend case, we bypass power down for 
+	 * CPU0 as this is being taken care by the SYS_PWR_CFG bit in
+	 * CORE0_SYS_PWR_REG.
+	 */
+	exynos_mcpm_down_handler(SKIP_CPU_POWERDOWN_IF_CPU0);
+}
+
+And SKIP_CPU_POWERDOWN_IF_CPU0 is defined in and visible to 
+mcpm-exynos.c only.
+
+
+Nicolas
