@@ -1,180 +1,94 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: several messages
-Date: Fri, 4 Jul 2014 01:30:50 +0530
-Message-ID: <CAM4voamgOkJ5+OgX577YrGJc3gdxQAcWYkQziw9Uv92PJQAgRQ@mail.gmail.com>
-References: <1404363737-26222-1-git-send-email-a.kesavan@samsung.com>
-	<1404398818-6859-1-git-send-email-a.kesavan@samsung.com>
-	<alpine.LFD.2.11.1407031111100.6220@knanqh.ubzr>
-	<CAM4voanVAA4KOHWemQf59WjBpZXxVG_0P49xfzeq8KOvOwg4xg@mail.gmail.com>
-	<alpine.LFD.2.11.1407031442210.6220@knanqh.ubzr>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 2/4] usb: host: xhci-plat: Add support to get PHYs
+Date: Fri, 04 Jul 2014 02:39:53 +0400
+Message-ID: <53B5DBB9.3080202@cogentembedded.com>
+References: <1402056736-12674-1-git-send-email-gautam.vivek@samsung.com>	<1402056736-12674-3-git-send-email-gautam.vivek@samsung.com>	<CAODwPW-2tbDht8P=KsTyTyeBivFtFMiyCpxd0QFa-cUSRTpJjQ@mail.gmail.com>	<53A9FCDB.6060805@cogentembedded.com> <CAFp+6iGYZdRL17UqPhskyDDhfD++His3mO2v7uzG5OF1Hd3TrQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f46.google.com ([209.85.216.46]:33173 "EHLO
-	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751292AbaGCUAv (ORCPT
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:41818 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752275AbaGCWjr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Jul 2014 16:00:51 -0400
-Received: by mail-qa0-f46.google.com with SMTP id i13so585575qae.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Jul 2014 13:00:50 -0700 (PDT)
-In-Reply-To: <alpine.LFD.2.11.1407031442210.6220@knanqh.ubzr>
+	Thu, 3 Jul 2014 18:39:47 -0400
+Received: by mail-lb0-f173.google.com with SMTP id s7so639082lbd.32
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Jul 2014 15:39:45 -0700 (PDT)
+In-Reply-To: <CAFp+6iGYZdRL17UqPhskyDDhfD++His3mO2v7uzG5OF1Hd3TrQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Andrew Bresticker <abrestic@chromium.org>, Douglas Anderson <dianders@chromium.org>
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Julius Werner <jwerner@chromium.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Mathias Nyman <mathias.nyman@intel.com>, LKML <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Nicolas,
+Hello.
 
-On Fri, Jul 4, 2014 at 12:30 AM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> On Thu, 3 Jul 2014, Abhilash Kesavan wrote:
->
->> Hi Nicolas,
->>
->> On Thu, Jul 3, 2014 at 9:15 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
->> > On Thu, 3 Jul 2014, Abhilash Kesavan wrote:
->> >
->> >> On Thu, Jul 3, 2014 at 6:59 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
->> >> > Please, let's avoid going that route.  There is no such special handling
->> >> > needed if the API is sufficient.  And the provided API allows you to
->> >> > suspend a CPU or shut it down.  It shouldn't matter at that level if
->> >> > this is due to a cluster switch or a hotplug event. Do you really need
->> >> > something else?
->> >> No, just one local flag for suspend should be enough for me. Will remove these.
->> >
->> > [...]
->> >
->> >> Changes in v5:
->> >>       - Removed the MCPM flags and just used a local flag to
->> >>       indicate that we are suspending.
->> >
->> > [...]
->> >
->> >> -static void exynos_power_down(void)
->> >> +static void exynos_mcpm_power_down(u64 residency)
->> >>  {
->> >>       unsigned int mpidr, cpu, cluster;
->> >>       bool last_man = false, skip_wfi = false;
->> >> @@ -150,7 +153,12 @@ static void exynos_power_down(void)
->> >>       BUG_ON(__mcpm_cluster_state(cluster) != CLUSTER_UP);
->> >>       cpu_use_count[cpu][cluster]--;
->> >>       if (cpu_use_count[cpu][cluster] == 0) {
->> >> -             exynos_cpu_power_down(cpunr);
->> >> +             /*
->> >> +              * Bypass power down for CPU0 during suspend. This is being
->> >> +              * taken care by the SYS_PWR_CFG bit in CORE0_SYS_PWR_REG.
->> >> +              */
->> >> +             if ((cpunr != 0) || (residency != S5P_CHECK_SLEEP))
->> >> +                     exynos_cpu_power_down(cpunr);
->> >>
->> >>               if (exynos_cluster_unused(cluster)) {
->> >>                       exynos_cluster_power_down(cluster);
->> >> @@ -209,6 +217,11 @@ static void exynos_power_down(void)
->> >>       /* Not dead at this point?  Let our caller cope. */
->> >>  }
->> >>
->> >> +static void exynos_power_down(void)
->> >> +{
->> >> +     exynos_mcpm_power_down(0);
->> >> +}
->> >
->> > [...]
->> >
->> >> +static int notrace exynos_mcpm_cpu_suspend(unsigned long arg)
->> >> +{
->> >> +     /* MCPM works with HW CPU identifiers */
->> >> +     unsigned int mpidr = read_cpuid_mpidr();
->> >> +     unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
->> >> +     unsigned int cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
->> >> +
->> >> +     __raw_writel(0x0, sysram_base_addr + EXYNOS5420_CPU_STATE);
->> >> +
->> >> +     mcpm_set_entry_vector(cpu, cluster, exynos_cpu_resume);
->> >> +
->> >> +     /*
->> >> +      * Pass S5P_CHECK_SLEEP flag to the MCPM back-end to indicate that
->> >> +      * we are suspending the system and need to skip CPU0 power down.
->> >> +      */
->> >> +     mcpm_cpu_suspend(S5P_CHECK_SLEEP);
->> >
->> > NAK.
->> >
->> > When I say "local flag with local meaning", I don't want you to smuggle
->> > that flag through a public interface either.  I find it rather inelegant
->> > to have the notion of special handling for CPU0 being spread around like
->> > that.
->> >
->> > If CPU0 is special, then it should be dealth with in one place only,
->> > ideally in the MCPM backend, so the rest of the kernel doesn't have to
->> > care.
->> >
->> > Again, here's what I mean:
->> >
->> > static void exynos_mcpm_down_handler(int flags)
->> > {
->> >         [...]
->> >         if ((cpunr != 0) || !(flags & SKIP_CPU_POWERDOWN_IF_CPU0))
->> >                 exynos_cpu_power_down(cpunr);
->> >         [...]
->> > }
->> >
->> > static void exynos_mcpm_power_down()
->> > {
->> >         exynos_mcpm_down_handler(0);
->> > }
->> >
->> > static void exynos_mcpm_suspend(u64 residency)
->> > {
->> >         /*
->> >          * Theresidency argument is ignored for now.
->> >          * However, in the CPU suspend case, we bypass power down for
->> >          * CPU0 as this is being taken care by the SYS_PWR_CFG bit in
->> >          * CORE0_SYS_PWR_REG.
->> >          */
->> >         exynos_mcpm_down_handler(SKIP_CPU_POWERDOWN_IF_CPU0);
->> > }
->> >
->> > And SKIP_CPU_POWERDOWN_IF_CPU0 is defined in and visible to
->> > mcpm-exynos.c only.
->> Sorry if I am being dense, but the exynos_mcpm_suspend function would
->> get called from both the bL cpuidle driver as well the exynos pm code.
->
-> What is that exynos pm code actually doing?
-exynos pm code is shared across Exynos4 and 5 SoCs. It primarily does
-a series of register configurations which are required to put the
-system to sleep (some parts of these are SoC specific and others
-common). It also populates the suspend_ops for exynos. In the current
-patch, exynos_suspend_enter() is where I have plugged in the
-mcpm_cpu_suspend call.
+On 06/25/2014 12:44 PM, Vivek Gautam wrote:
 
-This patch is based on the S2R series for 5420
-(http://comments.gmane.org/gmane.linux.kernel.samsung-soc/33898), you
-may also have a look at that for a clearer picture.
->
->> We want to skip CPU0 only in case of the S2R case i.e. the pm code and
->> keep the CPU0 power down code for all other cases including CPUIdle.
->
-> OK.  If so I missed that somehow (hint hint).
->
->> If I call exynos_mcpm_down_handler with the flag in
->> exynos_mcpm_suspend(), CPUIdle will also skip CPU0 isn't it ?
->
-> As it is, yes.  You could logically use an infinite residency time
-> (something like U64_MAX) to distinguish S2RAM from other types of
-> suspend.
-OK, I will use this rather than the S5P_CHECK_SLEEP macro.
->
-> Yet, why is this SYS_PWR_CFG bit set outside of MCPM?  Couldn't the MCPM
-> backend handle it directly instead of expecting some other entity to do
-> it?
-Low power modes such as Sleep, Low Power Audio, AFTR (ARM Off Top
-Running) require a series of register configurations as specified by
-the UM to enter/exit them. All the exynos SoCs including 5420, do such
-configurations (including sys_pwr_reg setup) as part of the
-exynos_pm_prepare function in pm.c and so we just need to skip the cpu
-power down.
+>>>> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+>>>> index 9ffecd5..453d89e 100644
+>>>> --- a/drivers/usb/host/xhci.h
+>>>> +++ b/drivers/usb/host/xhci.h
+>>>> @@ -1582,6 +1582,9 @@ struct xhci_hcd {
+>>>>           u32                     port_status_u0;
+>>>>    /* Compliance Mode Timer Triggered every 2 seconds */
+>>>>    #define COMP_MODE_RCVRY_MSECS 2000
+>>>> +       /* phys for the controller */
+>>>> +       struct phy              *phy2_gen;
+>>>> +       struct phy              *phy3_gen;
+>>>>    };
 
-Regards,
-Abhilash
->
->
-> Nicolas
+>>> I don't think adding new variables here and restricting most of this
+>>> logic to xhci-plat.c (in the next patch) is the best way to do it.
+
+>>     Indeed.
+
+    Actually, I haven't given enough thought to this...
+
+>>> There's no conceptual reason why other host controllers (e.g. xhci-pci
+>>> or even EHCI) could not have a similar need to tune their PHY after
+>>> reset. PHYs are universal to all host controllers.
+
+>>> There is already a 'phy' member in struct usb_hcd which I think is
+>>> mostly unused right now. I think it would be much less
+>>> confusing/redundant to reuse that member for this purpose (you could
+>>> still set it up from xhci_plat_probe(), and then call it from
+>>> hcd_bus_resume() or something like that).
+
+>>     That member has type 'struct usb_phy *' while here we have 'struct phy *'
+>> -- feel the difference.
+>>     I have already tried adding 'struct phy *gen_phy' to 'struct usb_hcd',
+
+> So the 'struct phy *' available in the usb_hcd is requested in usb_add_hcd().
+> This is requested with the constant string 'usb' :
+>             struct phy *phy = phy_get(hcd->self.controller, "usb");
+
+> This can get the phy with string 'usb' only if, either the host
+> controller has a device node wherein the phys are given.
+
+    Yes, that was the plan. Currently, the PHY driver for which this was 
+written can be probed from the device tree only.
+
+> Even in this case one can't give same constant string for two
+> different phys, UTMI+ and PIPE3 phy, isn't it ?
+
+    Yes, you're right. I didn't really consider the case of some host needing 
+2 distinct PHY.
+
+> Or, the other way can be when host gets a lookup table to look into to
+> find the relevant phys, something like
+> Heikki has suggested:
+> usb: dwc3: host: convey the PHYs to xhci
+> (https://lkml.org/lkml/2014/6/5/585) and related patch series.
+
+    Well, AFAIK the look-up table method is already provided by the current 
+PHY core for non-DT use cases; this doesn't seem to have changed with that 
+patch set, does it?
+
+> So if we use this second approach, we would need to override the
+> 'phy_get()' that has been done in usb_add_hcd()
+> in xhci_plat_probe(), and then use them in later operations.
+
+    I guess it'd probably be simpler to ignore the 'gen_phy' member of 'struct 
+usb_hcd' in your case (if it gets eventually added).
+
+WBR, Sergei
