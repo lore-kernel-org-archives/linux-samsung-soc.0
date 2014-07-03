@@ -1,102 +1,130 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 11/12] drm/exynos/ipp: simplify ipp_create_id
-Date: Thu, 03 Jul 2014 15:10:36 +0200
-Message-ID: <1404393037-17299-12-git-send-email-a.hajda@samsung.com>
-References: <1404393037-17299-1-git-send-email-a.hajda@samsung.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [RFC PATCH v4] ARM: EXYNOS: Use MCPM call-backs to support S2R
+ on Exynos5420
+Date: Thu, 3 Jul 2014 09:29:06 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1407030912210.6220@knanqh.ubzr>
+References: <1404313142-1278-1-git-send-email-a.kesavan@samsung.com> <1404363737-26222-1-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1404393037-17299-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f169.google.com ([209.85.216.169]:58906 "EHLO
+	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752078AbaGCN3J (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 3 Jul 2014 09:29:09 -0400
+Received: by mail-qc0-f169.google.com with SMTP id c9so205069qcz.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Jul 2014 06:29:08 -0700 (PDT)
+In-Reply-To: <1404363737-26222-1-git-send-email-a.kesavan@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, lorenzo.pieralisi@arm.com, kesavan.abhilash@gmail.com, abrestic@chromium.org, dianders@chromium.org
 
-There is no gain in passing id by pointer to be filled.
+On Thu, 3 Jul 2014, Abhilash Kesavan wrote:
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 28 +++++++++-------------------
- 1 file changed, 9 insertions(+), 19 deletions(-)
+> Use the MCPM layer to handle core suspend/resume on Exynos5420.
+> Also, restore the entry address setup code post-resume.
+> 
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> ---
+> Changes in v2:
+> 	- Made use of the MCPM suspend/powered_up call-backs
+> Changes in v3:
+> 	- Used the residency value to indicate the entered state
+> Changes in v4:
+> 	- Checked if MCPM has been enabled to prevent build error
+> 
+> This has been tested both on an SMDK5420 and Peach Pit Chromebook on
+> 3.16-rc3/next-20140702.
+> 
+> Here are the dependencies (some of these patches did not apply cleanly):
+> 1) Cleanup patches for mach-exynos
+> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/33772
+> 
+> 2) PMU cleanup and refactoring for using DT
+> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg671625.html
+> 
+> 3) Exynos5420 PMU/S2R Series
+> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/33898
+> 
+> 4) MCPM boot CPU CCI enablement patches
+> www.spinics.net/lists/linux-samsung-soc/msg32923.html
+> 
+> 5) Exynos5420 CPUIdle Series which populates MCPM suspend/powered_up
+> call-backs.
+> www.gossamer-threads.com/lists/linux/kernel/1945347
+> https://patchwork.kernel.org/patch/4357461/
+> 
+> 6) Exynos5420 MCPM cluster power down support
+> http://www.spinics.net/lists/arm-kernel/msg339988.html
+> 
+> 7) TPM reset mask patch
+> http://www.spinics.net/lists/arm-kernel/msg341884.html
+> 
+>  arch/arm/include/asm/mcpm.h          |    6 ++++
+>  arch/arm/mach-exynos/mcpm-exynos.c   |   50 ++++++++++++++++++++++++----------
+>  arch/arm/mach-exynos/pm.c            |   38 ++++++++++++++++++++++++--
+>  arch/arm/mach-exynos/regs-pmu.h      |    1 +
+>  drivers/cpuidle/cpuidle-big_little.c |    2 +-
+>  5 files changed, 79 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/mcpm.h b/arch/arm/include/asm/mcpm.h
+> index ff73aff..051fbf1 100644
+> --- a/arch/arm/include/asm/mcpm.h
+> +++ b/arch/arm/include/asm/mcpm.h
+> @@ -272,4 +272,10 @@ void __init mcpm_smp_set_ops(void);
+>  #define MCPM_SYNC_CLUSTER_SIZE \
+>  	(MCPM_SYNC_CLUSTER_INBOUND + __CACHE_WRITEBACK_GRANULE)
+>  
+> +/* Definitions for various MCPM scenarios that might need special handling */
+> +#define MCPM_CPU_IDLE		0x0
+> +#define MCPM_CPU_SUSPEND	0x1
+> +#define MCPM_CPU_SWITCH		0x2
+> +#define MCPM_CPU_HOTPLUG	0x3
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index 0552f62..ae75a1d 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -145,20 +145,15 @@ int exynos_drm_ippdrv_unregister(struct exynos_drm_ippdrv *ippdrv)
- 	return 0;
- }
- 
--static int ipp_create_id(struct idr *id_idr, struct mutex *lock, void *obj,
--		u32 *idp)
-+static int ipp_create_id(struct idr *id_idr, struct mutex *lock, void *obj)
- {
- 	int ret;
- 
--	/* do the allocation under our mutexlock */
- 	mutex_lock(lock);
- 	ret = idr_alloc(id_idr, obj, 1, 0, GFP_KERNEL);
- 	mutex_unlock(lock);
--	if (ret < 0)
--		return ret;
- 
--	*idp = ret;
--	return 0;
-+	return ret;
- }
- 
- static void ipp_remove_id(struct idr *id_idr, struct mutex *lock, u32 id)
-@@ -471,13 +466,12 @@ int exynos_drm_ipp_set_property(struct drm_device *drm_dev, void *data,
- 	if (!c_node)
- 		return -ENOMEM;
- 
--	/* create property id */
--	ret = ipp_create_id(&ctx->prop_idr, &ctx->prop_lock, c_node,
--		&property->prop_id);
--	if (ret) {
-+	ret = ipp_create_id(&ctx->prop_idr, &ctx->prop_lock, c_node);
-+	if (ret < 0) {
- 		DRM_ERROR("failed to create id.\n");
- 		goto err_clear;
- 	}
-+	property->prop_id = ret;
- 
- 	DRM_DEBUG_KMS("created prop_id[%d]cmd[%d]ippdrv[0x%x]\n",
- 		property->prop_id, property->cmd, (int)ippdrv);
-@@ -1636,21 +1630,17 @@ static int ipp_subdrv_probe(struct drm_device *drm_dev, struct device *dev)
- 
- 	/* get ipp driver entry */
- 	list_for_each_entry(ippdrv, &exynos_drm_ippdrv_list, drv_list) {
--		u32 ipp_id;
--
- 		ippdrv->drm_dev = drm_dev;
- 
--		ret = ipp_create_id(&ctx->ipp_idr, &ctx->ipp_lock, ippdrv,
--				    &ipp_id);
--		if (ret || ipp_id == 0) {
-+		ret = ipp_create_id(&ctx->ipp_idr, &ctx->ipp_lock, ippdrv);
-+		if (ret < 0) {
- 			DRM_ERROR("failed to create id.\n");
- 			goto err;
- 		}
-+		ippdrv->prop_list.ipp_id = ret;
- 
- 		DRM_DEBUG_KMS("count[%d]ippdrv[0x%x]ipp_id[%d]\n",
--			count++, (int)ippdrv, ipp_id);
--
--		ippdrv->prop_list.ipp_id = ipp_id;
-+			count++, (int)ippdrv, ret);
- 
- 		/* store parent device for node */
- 		ippdrv->parent_dev = dev;
--- 
-1.9.1
+Please, let's avoid going that route.  There is no such special handling 
+needed if the API is sufficient.  And the provided API allows you to 
+suspend a CPU or shut it down.  It shouldn't matter at that level if 
+this is due to a cluster switch or a hotplug event. Do you really need 
+something else?
+
+[...]
+> @@ -129,7 +132,7 @@ static int exynos_power_up(unsigned int cpu, unsigned int cluster)
+>   * and can only be executed on processors like A15 and A7 that hit the cache
+>   * with the C bit clear in the SCTLR register.
+>   */
+> -static void exynos_power_down(void)
+> +static void exynos_mcpm_power_down(u64 residency)
+>  {
+>  	unsigned int mpidr, cpu, cluster;
+>  	bool last_man = false, skip_wfi = false;
+> @@ -150,7 +153,12 @@ static void exynos_power_down(void)
+>  	BUG_ON(__mcpm_cluster_state(cluster) != CLUSTER_UP);
+>  	cpu_use_count[cpu][cluster]--;
+>  	if (cpu_use_count[cpu][cluster] == 0) {
+> -		exynos_cpu_power_down(cpunr);
+> +		/*
+> +		 * Bypass power down for CPU0 during suspend. This is being
+> +		 * taken care by the SYS_PWR_CFG bit in CORE0_SYS_PWR_REG.
+> +		 */
+> +		if ((cpunr != 0) || (residency != MCPM_CPU_SUSPEND))
+> +			exynos_cpu_power_down(cpunr);
+>  
+>  		if (exynos_cluster_unused(cluster)) {
+>  			exynos_cluster_power_down(cluster);
+> @@ -209,6 +217,11 @@ static void exynos_power_down(void)
+>  	/* Not dead at this point?  Let our caller cope. */
+>  }
+>  
+> +static void exynos_power_down(void)
+> +{
+> +	exynos_mcpm_power_down(MCPM_CPU_SWITCH | MCPM_CPU_HOTPLUG);
+> +}
+
+To distinguish between a suspend and a power-down, you can simply use 
+exynos_power_down() as your common handler, and have 
+exynos_mcpm_power_down() and exynos_mcpm_suspend() as wrappers around it 
+passing the appropriate private flags with local meanings.
+
+
+Nicolas
