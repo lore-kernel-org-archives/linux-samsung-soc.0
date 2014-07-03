@@ -1,163 +1,122 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 08/10] mfd: cros_ec: Check result code from EC messages
-Date: Thu, 3 Jul 2014 08:31:29 +0100
-Message-ID: <20140703073129.GF30534@lee--X1>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 09/10] mfd: cros_ec: ec_dev->cmd_xfer() returns number
+ of bytes received from EC
+Date: Thu, 3 Jul 2014 08:31:55 +0100
+Message-ID: <20140703073155.GG30534@lee--X1>
 References: <1403115247-8853-1-git-send-email-dianders@chromium.org>
- <1403115247-8853-9-git-send-email-dianders@chromium.org>
+ <1403115247-8853-10-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1403115247-8853-9-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Andrew Bresticker <abrestic@chromium.org>, swarren@wwwdotorg.org, olof@lixom.net, Sonny Rao <sonnyrao@chromium.org>, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Bill Richardson <wfrichar@chromium.org>, sjg@chromium.org, Wolfram Sang <wsa@the-dreams.de>, broonie@kernel.org, sameo@linux.intel.com, linux-kernel@vger.kernel.org
+In-Reply-To: <1403115247-8853-10-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Sonny Rao <sonnyrao-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On Wed, 18 Jun 2014, Doug Anderson wrote:
 
-> From: Bill Richardson <wfrichar@chromium.org>
+> From: Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 >=20
-> Just because the host was able to talk to the EC doesn't mean that th=
-e EC
-> was happy with what it was told. Errors in communincation are not the=
- same
-> as error messages from the EC itself.
+> When communicating with the EC, the cmd_xfer() function should return=
+ the
+> number of bytes it received from the EC, or negative on error.
 >=20
-> This change lets the EC report its errors separately.
->=20
-> [dianders: Added common function to cros_ec.c]
->=20
-> Signed-off-by: Bill Richardson <wfrichar@chromium.org>
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Reviewed-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 > ---
-> Changes in v2:
-> - Added common function to cros_ec.c
-> - Changed to dev_dbg() as per http://crosreview.com/66726
+> Changes in v2: None
 >=20
->  drivers/mfd/cros_ec.c       | 18 ++++++++++++++++++
->  drivers/mfd/cros_ec_i2c.c   |  8 +++-----
->  drivers/mfd/cros_ec_spi.c   | 19 ++++++-------------
->  include/linux/mfd/cros_ec.h | 12 ++++++++++++
->  4 files changed, 39 insertions(+), 18 deletions(-)
+>  drivers/i2c/busses/i2c-cros-ec-tunnel.c | 2 +-
+>  drivers/mfd/cros_ec_i2c.c               | 2 +-
+>  drivers/mfd/cros_ec_spi.c               | 2 +-
+>  include/linux/mfd/cros_ec.h             | 8 ++++----
+>  4 files changed, 7 insertions(+), 7 deletions(-)
 
-Patch applied with Simon's Reviewed-by.
+Patch applied with Wolfram's Ack.
 
 Clause: There is a chance that this patch might not be seen in -next
 for ~24-48hrs.  If it's not there by 72hrs, feel free to poke.
 
-> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-> index 4851ed2..83e30c6 100644
-> --- a/drivers/mfd/cros_ec.c
-> +++ b/drivers/mfd/cros_ec.c
-> @@ -44,6 +44,24 @@ int cros_ec_prepare_tx(struct cros_ec_device *ec_d=
-ev,
->  }
->  EXPORT_SYMBOL(cros_ec_prepare_tx);
+> diff --git a/drivers/i2c/busses/i2c-cros-ec-tunnel.c b/drivers/i2c/bu=
+sses/i2c-cros-ec-tunnel.c
+> index dd07818..05e033c 100644
+> --- a/drivers/i2c/busses/i2c-cros-ec-tunnel.c
+> +++ b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
+> @@ -228,7 +228,7 @@ static int ec_i2c_xfer(struct i2c_adapter *adap, =
+struct i2c_msg i2c_msgs[],
+>  	msg.insize =3D response_len;
 > =20
-> +int cros_ec_check_result(struct cros_ec_device *ec_dev,
-> +			 struct cros_ec_command *msg)
-> +{
-> +	switch (msg->result) {
-> +	case EC_RES_SUCCESS:
-> +		return 0;
-> +	case EC_RES_IN_PROGRESS:
-> +		dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
-> +			msg->command);
-> +		return -EAGAIN;
-> +	default:
-> +		dev_dbg(ec_dev->dev, "command 0x%02x returned %d\n",
-> +			msg->command, msg->result);
-> +		return 0;
-> +	}
-> +}
-> +EXPORT_SYMBOL(cros_ec_check_result);
-> +
->  static irqreturn_t ec_irq_thread(int irq, void *data)
->  {
->  	struct cros_ec_device *ec_dev =3D data;
+>  	result =3D bus->ec->cmd_xfer(bus->ec, &msg);
+> -	if (result)
+> +	if (result < 0)
+>  		goto exit;
+> =20
+>  	result =3D ec_i2c_parse_response(response, i2c_msgs, &num);
 > diff --git a/drivers/mfd/cros_ec_i2c.c b/drivers/mfd/cros_ec_i2c.c
-> index 5bb32f5..189e7d1 100644
+> index 189e7d1..fd7a546 100644
 > --- a/drivers/mfd/cros_ec_i2c.c
 > +++ b/drivers/mfd/cros_ec_i2c.c
-> @@ -92,12 +92,10 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_de=
+> @@ -111,7 +111,7 @@ static int cros_ec_cmd_xfer_i2c(struct cros_ec_de=
 vice *ec_dev,
+>  		goto done;
 >  	}
 > =20
->  	/* check response error code */
-> -	if (i2c_msg[1].buf[0]) {
-> -		dev_warn(ec_dev->dev, "command 0x%02x returned an error %d\n",
-> -			 msg->command, i2c_msg[1].buf[0]);
-> -		ret =3D -EINVAL;
-> +	msg->result =3D i2c_msg[1].buf[0];
-> +	ret =3D cros_ec_check_result(ec_dev, msg);
-> +	if (ret)
->  		goto done;
-> -	}
-> =20
->  	/* copy response packet payload and compute checksum */
->  	sum =3D in_buf[0] + in_buf[1];
+> -	ret =3D 0;
+> +	ret =3D i2c_msg[1].buf[1];
+>   done:
+>  	kfree(in_buf);
+>  	kfree(out_buf);
 > diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-> index 09ca789..c975087 100644
+> index c975087..2ad6815 100644
 > --- a/drivers/mfd/cros_ec_spi.c
 > +++ b/drivers/mfd/cros_ec_spi.c
-> @@ -289,21 +289,14 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_=
-device *ec_dev,
+> @@ -324,7 +324,7 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_de=
+vice *ec_dev,
 >  		goto exit;
 >  	}
 > =20
-> -	/* check response error code */
->  	ptr =3D ec_dev->din;
-> -	if (ptr[0]) {
-> -		if (ptr[0] =3D=3D EC_RES_IN_PROGRESS) {
-> -			dev_dbg(ec_dev->dev, "command 0x%02x in progress\n",
-> -				ec_msg->command);
-> -			ret =3D -EAGAIN;
-> -			goto exit;
-> -		}
-> -		dev_warn(ec_dev->dev, "command 0x%02x returned an error %d\n",
-> -			 ec_msg->command, ptr[0]);
-> -		debug_packet(ec_dev->dev, "in_err", ptr, len);
-> -		ret =3D -EINVAL;
-> +
-> +	/* check response error code */
-> +	ec_msg->result =3D ptr[0];
-> +	ret =3D cros_ec_check_result(ec_dev, ec_msg);
-> +	if (ret)
->  		goto exit;
-> -	}
-> +
->  	len =3D ptr[1];
->  	sum =3D ptr[0] + ptr[1];
->  	if (len > ec_msg->insize) {
+> -	ret =3D 0;
+> +	ret =3D len;
+>  exit:
+>  	mutex_unlock(&ec_spi->lock);
+>  	return ret;
 > diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.=
 h
-> index 60c0880..1f79f16 100644
+> index 1f79f16..0ebf26f 100644
 > --- a/include/linux/mfd/cros_ec.h
 > +++ b/include/linux/mfd/cros_ec.h
-> @@ -143,6 +143,18 @@ int cros_ec_prepare_tx(struct cros_ec_device *ec=
-_dev,
->  		       struct cros_ec_command *msg);
-> =20
->  /**
-> + * cros_ec_check_result - Check ec_msg->result
-> + *
-> + * This is used by ChromeOS EC drivers to check the ec_msg->result f=
-or
-> + * errors and to warn about them.
-> + *
-> + * @ec_dev: EC device
-> + * @msg: Message to check
-> + */
-> +int cros_ec_check_result(struct cros_ec_device *ec_dev,
-> +			 struct cros_ec_command *msg);
-> +
-> +/**
->   * cros_ec_remove - Remove a ChromeOS EC
+> @@ -41,7 +41,7 @@ enum {
+>   * @outdata: Outgoing data to EC
+>   * @outsize: Outgoing length in bytes
+>   * @indata: Where to put the incoming data from EC
+> - * @insize: Incoming length in bytes (filled in by EC)
+> + * @insize: Max number of bytes to accept from EC
+>   * @result: EC's response to the command (separate from communicatio=
+n failure)
+>   */
+>  struct cros_ec_command {
+> @@ -64,9 +64,9 @@ struct cros_ec_command {
+>   * sleep at the last suspend
+>   * @event_notifier: interrupt event notifier for transport devices
+>   * @cmd_xfer: send command to EC and get response
+> - *     Returns 0 if the communication succeeded, but that doesn't me=
+an the EC
+> - *     was happy with the command it got. Caller should check msg.re=
+sult for
+> - *     the EC's result code.
+> + *     Returns the number of bytes received if the communication suc=
+ceeded, but
+> + *     that doesn't mean the EC was happy with the command. The call=
+er
+> + *     should check msg.result for the EC's result code.
 >   *
->   * Call this to deregister a ChromeOS EC, then clean up any private =
-data.
+>   * @priv: Private data
+>   * @irq: Interrupt to use
 
 --=20
 Lee Jones
