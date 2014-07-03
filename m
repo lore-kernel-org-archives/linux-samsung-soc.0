@@ -1,7 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 04/12] drm/exynos/ipp: correct address type
-Date: Thu, 03 Jul 2014 15:10:29 +0200
-Message-ID: <1404393037-17299-5-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 08/12] drm/exynos/ipp: remove useless registration checks
+Date: Thu, 03 Jul 2014 15:10:33 +0200
+Message-ID: <1404393037-17299-9-git-send-email-a.hajda@samsung.com>
 References: <1404393037-17299-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,43 +21,37 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-exynos_drm_gem_get_dma_addr returns dma_addr_t, type casting to void* and
-back is not necessary.
+Argument checks are redundant, clients always check ippdrv before calling
+these functions.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index 34d185c..f3d8b5c 100644
+index b7ce14e..26c8a2c 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -681,7 +681,6 @@ static struct drm_exynos_ipp_mem_node
+@@ -129,9 +129,6 @@ void exynos_platform_device_ipp_unregister(void)
+ 
+ int exynos_drm_ippdrv_register(struct exynos_drm_ippdrv *ippdrv)
  {
- 	struct drm_exynos_ipp_mem_node *m_node;
- 	struct drm_exynos_ipp_buf_info buf_info;
--	void *addr;
- 	int i;
+-	if (!ippdrv)
+-		return -EINVAL;
+-
+ 	mutex_lock(&exynos_drm_ippdrv_lock);
+ 	list_add_tail(&ippdrv->drv_list, &exynos_drm_ippdrv_list);
+ 	mutex_unlock(&exynos_drm_ippdrv_lock);
+@@ -141,9 +138,6 @@ int exynos_drm_ippdrv_register(struct exynos_drm_ippdrv *ippdrv)
  
- 	m_node = kzalloc(sizeof(*m_node), GFP_KERNEL);
-@@ -704,6 +703,8 @@ static struct drm_exynos_ipp_mem_node
- 
- 		/* get dma address by handle */
- 		if (qbuf->handle[i]) {
-+			dma_addr_t *addr;
-+
- 			addr = exynos_drm_gem_get_dma_addr(drm_dev,
- 					qbuf->handle[i], file);
- 			if (IS_ERR(addr)) {
-@@ -712,7 +713,7 @@ static struct drm_exynos_ipp_mem_node
- 			}
- 
- 			buf_info.handles[i] = qbuf->handle[i];
--			buf_info.base[i] = *(dma_addr_t *) addr;
-+			buf_info.base[i] = *addr;
- 			DRM_DEBUG_KMS("i[%d]base[0x%x]hd[0x%x]\n",
- 				i, buf_info.base[i], (int)buf_info.handles[i]);
- 		}
+ int exynos_drm_ippdrv_unregister(struct exynos_drm_ippdrv *ippdrv)
+ {
+-	if (!ippdrv)
+-		return -EINVAL;
+-
+ 	mutex_lock(&exynos_drm_ippdrv_lock);
+ 	list_del(&ippdrv->drv_list);
+ 	mutex_unlock(&exynos_drm_ippdrv_lock);
 -- 
 1.9.1
