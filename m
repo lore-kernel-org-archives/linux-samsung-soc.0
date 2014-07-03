@@ -1,7 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 12/12] drm/exynos/ipp: simplify ipp_find_driver
-Date: Thu, 03 Jul 2014 15:10:37 +0200
-Message-ID: <1404393037-17299-13-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 07/12] drm/exynos/ipp: simplify memory check function
+Date: Thu, 03 Jul 2014 15:10:32 +0200
+Message-ID: <1404393037-17299-8-git-send-email-a.hajda@samsung.com>
 References: <1404393037-17299-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,120 +21,70 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch puts repeated code sequence into one function, removes verbose
-comments and decreases log verbosity.
+The only thing function should check is if there are buffers in respective
+queues.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 74 ++++++++++-----------------------
- 1 file changed, 21 insertions(+), 53 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 44 ++++++++-------------------------
+ 1 file changed, 10 insertions(+), 34 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index ae75a1d..c411399 100644
+index 89ff7e3..b7ce14e 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -174,18 +174,18 @@ static void *ipp_find_obj(struct idr *id_idr, struct mutex *lock, u32 id)
- 	return obj;
+@@ -574,42 +574,18 @@ static void ipp_clean_cmd_node(struct ipp_context *ctx,
+ 	kfree(c_node);
  }
  
--static inline bool ipp_check_dedicated(struct exynos_drm_ippdrv *ippdrv,
--		enum drm_exynos_ipp_cmd	cmd)
-+static int ipp_check_driver(struct exynos_drm_ippdrv *ippdrv,
-+			    struct drm_exynos_ipp_property *property)
+-static int ipp_check_mem_list(struct drm_exynos_ipp_cmd_node *c_node)
++static bool ipp_check_mem_list(struct drm_exynos_ipp_cmd_node *c_node)
  {
--	/*
--	 * check dedicated flag and WB, OUTPUT operation with
--	 * power on state.
--	 */
--	if (ippdrv->dedicated || (!ipp_is_m2m_cmd(cmd) &&
--	    !pm_runtime_suspended(ippdrv->dev)))
--		return true;
-+	if (ippdrv->dedicated || (!ipp_is_m2m_cmd(property->cmd) &&
-+				  !pm_runtime_suspended(ippdrv->dev)))
-+		return -EBUSY;
- 
--	return false;
-+	if (ippdrv->check_property &&
-+	    ippdrv->check_property(ippdrv->dev, property))
-+		return -EINVAL;
-+
-+	return 0;
- }
- 
- static struct exynos_drm_ippdrv *ipp_find_driver(struct ipp_context *ctx,
-@@ -193,62 +193,30 @@ static struct exynos_drm_ippdrv *ipp_find_driver(struct ipp_context *ctx,
- {
- 	struct exynos_drm_ippdrv *ippdrv;
- 	u32 ipp_id = property->ipp_id;
+-	struct drm_exynos_ipp_property *property = &c_node->property;
+-	struct drm_exynos_ipp_mem_node *m_node;
+-	struct list_head *head;
+-	int ret, i, count[EXYNOS_DRM_OPS_MAX] = { 0, };
 -
--	DRM_DEBUG_KMS("ipp_id[%d]\n", ipp_id);
-+	int ret;
- 
- 	if (ipp_id) {
--		/* find ipp driver using idr */
--		ippdrv = ipp_find_obj(&ctx->ipp_idr, &ctx->ipp_lock,
--			ipp_id);
-+		ippdrv = ipp_find_obj(&ctx->ipp_idr, &ctx->ipp_lock, ipp_id);
- 		if (!ippdrv) {
--			DRM_ERROR("not found ipp%d driver.\n", ipp_id);
-+			DRM_DEBUG("ipp%d driver not found\n", ipp_id);
- 			return ERR_PTR(-ENODEV);
- 		}
- 
--		/*
--		 * WB, OUTPUT opertion not supported multi-operation.
--		 * so, make dedicated state at set property ioctl.
--		 * when ipp driver finished operations, clear dedicated flags.
--		 */
--		if (ipp_check_dedicated(ippdrv, property->cmd)) {
--			DRM_ERROR("already used choose device.\n");
--			return ERR_PTR(-EBUSY);
+-	for_each_ipp_ops(i) {
+-		/* source/destination memory list */
+-		head = &c_node->mem_list[i];
+-
+-		/* find memory node entry */
+-		list_for_each_entry(m_node, head, list) {
+-			DRM_DEBUG_KMS("%s,count[%d]m_node[0x%x]\n",
+-				i ? "dst" : "src", count[i], (int)m_node);
+-			count[i]++;
 -		}
--
--		/*
--		 * This is necessary to find correct device in ipp drivers.
--		 * ipp drivers have different abilities,
--		 * so need to check property.
--		 */
--		if (ippdrv->check_property &&
--		    ippdrv->check_property(ippdrv->dev, property)) {
--			DRM_ERROR("not support property.\n");
--			return ERR_PTR(-EINVAL);
-+		ret = ipp_check_driver(ippdrv, property);
-+		if (ret < 0) {
-+			DRM_DEBUG("ipp%d driver check error %d\n", ipp_id, ret);
-+			return ERR_PTR(ret);
- 		}
- 
- 		return ippdrv;
- 	} else {
--		/*
--		 * This case is search all ipp driver for finding.
--		 * user application don't set ipp_id in this case,
--		 * so ipp subsystem search correct driver in driver list.
--		 */
- 		list_for_each_entry(ippdrv, &exynos_drm_ippdrv_list, drv_list) {
--			if (ipp_check_dedicated(ippdrv, property->cmd)) {
--				DRM_DEBUG_KMS("used device.\n");
--				continue;
--			}
--
--			if (ippdrv->check_property &&
--			    ippdrv->check_property(ippdrv->dev, property)) {
--				DRM_DEBUG_KMS("not support property.\n");
--				continue;
--			}
--
--			return ippdrv;
-+			ret = ipp_check_driver(ippdrv, property);
-+			if (ret == 0)
-+				return ippdrv;
- 		}
- 
--		DRM_ERROR("not support ipp driver operations.\n");
-+		DRM_DEBUG("cannot find driver suitable for given property.\n");
++	switch (c_node->property.cmd) {
++	case IPP_CMD_WB:
++		return !list_empty(&c_node->mem_list[EXYNOS_DRM_OPS_DST]);
++	case IPP_CMD_OUTPUT:
++		return !list_empty(&c_node->mem_list[EXYNOS_DRM_OPS_SRC]);
++	case IPP_CMD_M2M:
++	default:
++		return !list_empty(&c_node->mem_list[EXYNOS_DRM_OPS_SRC]) &&
++		       !list_empty(&c_node->mem_list[EXYNOS_DRM_OPS_DST]);
  	}
+-
+-	DRM_DEBUG_KMS("min[%d]max[%d]\n",
+-		min(count[EXYNOS_DRM_OPS_SRC], count[EXYNOS_DRM_OPS_DST]),
+-		max(count[EXYNOS_DRM_OPS_SRC], count[EXYNOS_DRM_OPS_DST]));
+-
+-	/*
+-	 * M2M operations should be need paired memory address.
+-	 * so, need to check minimum count about src, dst.
+-	 * other case not use paired memory, so use maximum count
+-	 */
+-	if (ipp_is_m2m_cmd(property->cmd))
+-		ret = min(count[EXYNOS_DRM_OPS_SRC],
+-			count[EXYNOS_DRM_OPS_DST]);
+-	else
+-		ret = max(count[EXYNOS_DRM_OPS_SRC],
+-			count[EXYNOS_DRM_OPS_DST]);
+-
+-	return ret;
+ }
  
- 	return ERR_PTR(-ENODEV);
+ static struct drm_exynos_ipp_mem_node
 -- 
 1.9.1
