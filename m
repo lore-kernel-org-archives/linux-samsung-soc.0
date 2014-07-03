@@ -1,32 +1,74 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [PATCH] mtd: s3c2410: Move to
- clk_prepare_enable/clk_disable_unprepare
-Date: Wed, 2 Jul 2014 17:26:41 -0700
-Message-ID: <20140703002641.GP3599@ld-irv-0074>
-References: <1404155536-3032-1-git-send-email-anarsoul@gmail.com>
+From: Sachin Kamat <spk.linux@gmail.com>
+Subject: Re: [PATCH 00/17] ARM: S5P64X0, S5PC100: no more support in mainline
+Date: Thu, 3 Jul 2014 09:05:23 +0530
+Message-ID: <CAK5sBcHbs1ZSu=ZTWvEOeWO-kTCBh1OjTJc-YYxQzgV5QGOLNw@mail.gmail.com>
+References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
+	<53B4494B.1030909@samsung.com>
+	<53B48BCB.4010308@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:48815 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751754AbaGCA0p (ORCPT
+Received: from mail-lb0-f176.google.com ([209.85.217.176]:40946 "EHLO
+	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755076AbaGCDfZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jul 2014 20:26:45 -0400
-Received: by mail-pd0-f182.google.com with SMTP id y13so12745209pdi.41
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jul 2014 17:26:44 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1404155536-3032-1-git-send-email-anarsoul@gmail.com>
+	Wed, 2 Jul 2014 23:35:25 -0400
+Received: by mail-lb0-f176.google.com with SMTP id w7so8511547lbi.7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 Jul 2014 20:35:23 -0700 (PDT)
+In-Reply-To: <53B48BCB.4010308@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mtd@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Mon, Jun 30, 2014 at 10:12:16PM +0300, Vasily Khoruzhick wrote:
-> Use clk_prepare_enable/clk_disable_unprepare to make the driver
-> work properly with common clock framework.
-> 
-> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Hi Kukjin,
 
-Pushed to l2-mtd.git. Thanks!
+On Thu, Jul 3, 2014 at 4:16 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 07/03/14 03:02, Tomasz Figa wrote:
+>>
+>> Hi Kukjin,
+>>
+> Hi,
+>
+>
+>> On 30.06.2014 23:32, Kukjin Kim wrote:
+>>>
+>>> This series removes S5P64X0 and S5PC100 related codes in mainline,
+>>> because no more user now. And if its supporting is required later,
+>>> it will be done with using device tree.
+>>>
+>>> [PATCH 01/17] ARM: S5P64X0: no more support S5P6440 and S5P6450 SoCs
+>>> [PATCH 02/17] gpio: samsung: remove s5p64x0 related gpio codes
+>>> [PATCH 03/17] spi: s3c64xx: remove s5p64x0 related spi codes
+>>> [PATCH 04/17] ASoC: samsung: no more support for S5P6440 and S5P6450
+>>> [PATCH 05/17] pwm: samsung: remove s5p64x0 related pwm codes
+>>> [PATCH 06/17] video: fbdev: s3c-fb: remove s5p64x0 related fimd
+>>> [PATCH 07/17] serial: samsung: no more support for S5P6440 and
+>>> [PATCH 08/17] ARM: S5PC100: no more support S5PC100 SoC
+>>> [PATCH 09/17] gpio: samsung: remov s5pc100 related gpio codes
+>>> [PATCH 10/17] spi: s3c64xx: remove s5pc100 related spi codes
+>>> [PATCH 11/17] pwm: samsung: remove s5pc100 related pwm codes
+>>> [PATCH 12/17] serial: samsung: no more support for S5PC100 SoC
+>>> [PATCH 13/17] ata: pata_samsung_cf: removes s5pc100 related ata
+>>> [PATCH 14/17] mtd: onenand: remove s5pc100 related onenand codes
+>>> [PATCH 15/17] video: fbdev: s3c-fb: remove s5pc100 related fimd and
+>>> [PATCH 16/17] [media] exynos4-is: removes s5pc100 related fimc codes
+>>> [PATCH 17/17] ASoC: Samsung: remove s5pc100 related codes
+>>
+>>
+>> Thanks for this series.
+>>
+>> Just letting you know that I have rebased my s5pv210 DT migration series
+>> on top of this and will be sending the patches after some more testing.
+>>
+> Just note since I've missed one more change in the series, I amended it just
+> now but it should be fine with your series I think.
+>
+> Please see v3.17-next/cleanup-s5p branch.
 
-Brian
+Can you please push out the other patches that you applied last week?
+
+Thanks.
+-- 
+Regards,
+Sachin.
