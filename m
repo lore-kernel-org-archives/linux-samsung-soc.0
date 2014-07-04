@@ -1,205 +1,68 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v6 22/23] rtc: Add driver for Maxim 77802 PMIC
- Real-Time-Clock
-Date: Fri, 04 Jul 2014 15:11:18 +0200
-Message-ID: <1404479478.2653.5.camel@AMDC1943>
-References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk>
- <1404467722-26687-23-git-send-email-javier.martinez@collabora.co.uk>
- <1404474972.14069.20.camel@AMDC1943> <53B6A3A3.9090300@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH V3 1/2] doc: dt bindings: Document Odroid X2/U3 audio subsystem
+ bindings
+Date: Fri, 04 Jul 2014 15:13:44 +0200
+Message-ID: <1404479625-25385-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:24353 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752786AbaGDNLU (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:59850 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751299AbaGDNOR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 09:11:20 -0400
-In-reply-to: <53B6A3A3.9090300@collabora.co.uk>
+	Fri, 4 Jul 2014 09:14:17 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: broonie@kernel.org
+Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On pi=C4=85, 2014-07-04 at 14:52 +0200, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
->=20
-> Thanks a lot for your feedback.
->=20
-> On 07/04/2014 01:56 PM, Krzysztof Kozlowski wrote:
-> > On pi=C4=85, 2014-07-04 at 11:55 +0200, Javier Martinez Canillas wr=
-ote:
-> >> The MAX7802 PMIC has a Real-Time-Clock (RTC) with two alarms.
-> >> This patch adds support for the RTC and is based on a driver
-> >> added by Simon Glass to the Chrome OS kernel 3.8 tree.
-> >>=20
-> >> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora=
-=2Eco.uk>
-> >> ---
-> >>=20
-> >> Changes since v5: None
-> >>=20
-> >> Changes since v4: None
-> >>=20
-> >> Changes since v3: None
-> >> ---
-> >>  drivers/rtc/Kconfig        |  10 +
-> >>  drivers/rtc/Makefile       |   1 +
-> >>  drivers/rtc/rtc-max77802.c | 637 ++++++++++++++++++++++++++++++++=
-+++++++++++++
-> >>  3 files changed, 648 insertions(+)
-> >>  create mode 100644 drivers/rtc/rtc-max77802.c
-> >>=20
-> >> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-> >> index a672dd1..243ac72 100644
-> >> --- a/drivers/rtc/Kconfig
-> >> +++ b/drivers/rtc/Kconfig
-> >> @@ -288,6 +288,16 @@ config RTC_DRV_MAX77686
-> >>  	  This driver can also be built as a module. If so, the module
-> >>  	  will be called rtc-max77686.
-> >> =20
-> >> +config RTC_DRV_MAX77802
-> >> +	tristate "Maxim 77802 RTC"
-> >> +	depends on MFD_MAX77686
-> >> +	help
-> >> +	  If you say yes here you will get support for the
-> >> +	  RTC of Maxim MAX77802 PMIC.
-> >> +
-> >> +	  This driver can also be built as a module. If so, the module
-> >> +	  will be called rtc-max77802.
-> >> +
-> >>  config RTC_DRV_RS5C372
-> >>  	tristate "Ricoh R2025S/D, RS5C372A/B, RV5C386, RV5C387A"
-> >>  	help
-> >> diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-> >> index 70347d0..247de78 100644
-> >> --- a/drivers/rtc/Makefile
-> >> +++ b/drivers/rtc/Makefile
-> >> @@ -81,6 +81,7 @@ obj-$(CONFIG_RTC_DRV_MAX8998)	+=3D rtc-max8998.o
-> >>  obj-$(CONFIG_RTC_DRV_MAX8997)	+=3D rtc-max8997.o
-> >>  obj-$(CONFIG_RTC_DRV_MAX6902)	+=3D rtc-max6902.o
-> >>  obj-$(CONFIG_RTC_DRV_MAX77686)	+=3D rtc-max77686.o
-> >> +obj-$(CONFIG_RTC_DRV_MAX77802)  +=3D rtc-max77802.o
-> >>  obj-$(CONFIG_RTC_DRV_MC13XXX)	+=3D rtc-mc13xxx.o
-> >>  obj-$(CONFIG_RTC_DRV_MCP795)	+=3D rtc-mcp795.o
-> >>  obj-$(CONFIG_RTC_DRV_MSM6242)	+=3D rtc-msm6242.o
-> >> diff --git a/drivers/rtc/rtc-max77802.c b/drivers/rtc/rtc-max77802=
-=2Ec
-> >> new file mode 100644
-> >> index 0000000..2f4fc2e
-> >> --- /dev/null
-> >> +++ b/drivers/rtc/rtc-max77802.c
-> >> @@ -0,0 +1,637 @@
-> >> +/*
-> >> + * RTC driver for Maxim MAX77802
-> >> + *
-> >> + * Copyright (C) 2013 Google, Inc
-> >> + *
-> >> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
-> >> + *
-> >> + *  based on rtc-max8997.c
-> >> + *
-> >> + *  This program is free software; you can redistribute  it and/o=
-r modify it
-> >> + *  under  the terms of  the GNU General  Public License as publi=
-shed by the
-> >> + *  Free Software Foundation;  either version 2 of the  License, =
-or (at your
-> >> + *  option) any later version.
-> >> + *
-> >> + */
-> >> +
-> >> +#include <linux/slab.h>
-> >> +#include <linux/rtc.h>
-> >> +#include <linux/delay.h>
-> >> +#include <linux/mutex.h>
-> >> +#include <linux/module.h>
-> >> +#include <linux/platform_device.h>
-> >> +#include <linux/mfd/max77686-private.h>
-> >> +#include <linux/irqdomain.h>
-> >> +#include <linux/regmap.h>
-> >> +
-> >> +/* RTC Control Register */
-> >> +#define BCD_EN_SHIFT			0
-> >> +#define BCD_EN_MASK			(1 << BCD_EN_SHIFT)
-> >> +#define MODEL24_SHIFT			1
-> >> +#define MODEL24_MASK			(1 << MODEL24_SHIFT)
-> >> +/* RTC Update Register1 */
-> >> +#define RTC_UDR_SHIFT			0
-> >> +#define RTC_UDR_MASK			(1 << RTC_UDR_SHIFT)
-> >> +#define RTC_RBUDR_SHIFT			4
-> >> +#define RTC_RBUDR_MASK			(1 << RTC_RBUDR_SHIFT)
-> >> +/* WTSR and SMPL Register */
-> >> +#define WTSRT_SHIFT			0
-> >> +#define SMPLT_SHIFT			2
-> >> +#define WTSR_EN_SHIFT			6
-> >> +#define SMPL_EN_SHIFT			7
-> >> +#define WTSRT_MASK			(3 << WTSRT_SHIFT)
-> >> +#define SMPLT_MASK			(3 << SMPLT_SHIFT)
-> >> +#define WTSR_EN_MASK			(1 << WTSR_EN_SHIFT)
-> >> +#define SMPL_EN_MASK			(1 << SMPL_EN_SHIFT)
-> >> +/* RTC Hour register */
-> >> +#define HOUR_PM_SHIFT			6
-> >> +#define HOUR_PM_MASK			(1 << HOUR_PM_SHIFT)
-> >> +/* RTC Alarm Enable */
-> >> +#define ALARM_ENABLE_SHIFT		7
-> >> +#define ALARM_ENABLE_MASK		(1 << ALARM_ENABLE_SHIFT)
-> >> +
-> >> +/* For the RTCAE1 register, we write this value to enable the ala=
-rm */
-> >> +#define ALARM_ENABLE_VALUE		0x77
-> >> +
-> >> +#define MAX77802_RTC_UPDATE_DELAY_US	200
-> >> +#undef MAX77802_RTC_WTSR_SMPL
-> >=20
-> > Hmmm... I am not sure what is the purpose of this undef. It disable=
-s
-> > some functions below. I saw same code in 77686 RTC driver but this =
-does
-> > not help me :).
-> >=20
-> > If this is on purpose can you add a comment explaining the
-> > purpose/cause?
-> >=20
->=20
-> This is a left over from when a combined 77686/802 driver was attempt=
-ed since as
-> you said the 77686 RTC driver does the same.
->=20
-> I just checked MAX77802 data sheet and the MAX77802_RTC_WTSR_SMPL reg=
-ister is to
-> control the SMPL (Sudden Momentary Power Loss) and WTSR (Watchdog Tim=
-eout and
-> Software Resets) features.
->=20
-> Now, I wanted to figure out why the 77686 driver unset that register =
-and have
-> those conditionals but git blame shows me that this was already in th=
-e original
-> commit that added the driver: fca1dd03 ("rtc: max77686: add Maxim 776=
-86 driver").
->=20
-> Also, I see that the MAX8997 driver (drivers/rtc/rtc-max8997.c) also =
-has a
-> similar register but actually uses it and doesn't have the conditiona=
-ls if is
-> disabled. But this driver has two module parameters to control if the=
-se features
-> are enabled or not (wtsr_en and smpl_en).
->=20
-> If these two features have been disabled since the max77686 driver wa=
-s merged
-> then I guess that the dead code should be removed from that driver as=
- well? Or
-> do you have more hints about why it has been disabled?
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+Changes since v2:
+ - none.
+---
+ .../bindings/sound/samsung,odroidx2-max98090.txt   |   35 ++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt
 
-If the max77802 driver in current form works fine for your setup then I
-think these functions can be removed completely. It should not harm
-since this is dead code anyway and it will simplify the driver.
-
-I think the same applies to max77686 (especially that as you said - thi=
-s
-is dead since beginning). Just remove it in separate patch.
-
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt b/Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt
+new file mode 100644
+index 0000000..9148f72
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/samsung,odroidx2-max98090.txt
+@@ -0,0 +1,35 @@
++Samsung Exynos Odroid X2/U3 audio complex with MAX98090 codec
++
++Required properties:
++ - compatible : "samsung,odroidx2-audio" - for Odroid X2 board,
++		"samsung,odroidu3-audio" - for Odroid U3 board
++ - samsung,model : the user-visible name of this sound complex
++ - samsung,i2s-controller : the phandle of the I2S controller
++ - samsung,audio-codec : the phandle of the MAX98090 audio codec
++ - samsung,audio-routing : a list of the connections between audio
++   components;  each entry is a pair of strings, the first being the
++   connection's sink, the second being the connection's source;
++   valid names for sources and sinks are the MAX98090's pins (as
++   documented in its binding), and the jacks on the board
++   For Odroid X2:
++     * Headphone Jack
++     * Mic Jack
++     * DMIC
++
++   For Odroid U3:
++     * Headphone Jack
++     * Speakers
++
++Example:
++
++sound {
++	compatible = "samsung,odroidu3-audio";
++	samsung,i2s-controller = <&i2s0>;
++	samsung,audio-codec = <&max98090>;
++	samsung,model = "Odroid-X2";
++	samsung,audio-routing =
++		"Headphone Jack", "HPL",
++		"Headphone Jack", "HPR",
++		"IN1", "Mic Jack",
++		"Mic Jack", "MICBIAS";
++};
+-- 
+1.7.9.5
