@@ -1,75 +1,71 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 11/17] pwm: samsung: remove s5pc100 related pwm codes
-Date: Fri, 04 Jul 2014 10:07:59 +0200
-Message-ID: <53B660DF.8060100@gmail.com>
-References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com> <1404163947-3105-12-git-send-email-kgene.kim@samsung.com> <53B55021.9020307@samsung.com> <02ca01cf975a$1848aaa0$48d9ffe0$@samsung.com>
+Subject: Re: [PATCH 05/17] pwm: samsung: remove s5p64x0 related pwm codes
+Date: Fri, 04 Jul 2014 10:10:50 +0200
+Message-ID: <53B6618A.3050504@gmail.com>
+References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com> <1404163947-3105-6-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:52594 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752028AbaGDIIU (ORCPT
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:54154 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751082AbaGDILK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 04:08:20 -0400
-Received: by mail-wi0-f176.google.com with SMTP id n3so12601269wiv.9
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Jul 2014 01:08:18 -0700 (PDT)
-In-Reply-To: <02ca01cf975a$1848aaa0$48d9ffe0$@samsung.com>
+	Fri, 4 Jul 2014 04:11:10 -0400
+Received: by mail-wg0-f44.google.com with SMTP id k14so1268338wgh.15
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Jul 2014 01:11:08 -0700 (PDT)
+In-Reply-To: <1404163947-3105-6-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Thierry Reding' <thierry.reding@gmail.com>
+To: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>
 
-On 04.07.2014 09:32, Kukjin Kim wrote:
-> Tomasz Figa wrote:
->>
->> Hi Kukjin,
->>
-> Hi,
+Hi Kukjin,
+
+On 30.06.2014 23:32, Kukjin Kim wrote:
+> This patch removes supporting s5p64x0 related pwm codes because of
+> no more support for S5P6440 and S5P6450 SoCs. And this patch changes
+> the name of s5p6440-pwm to exynos-pwm instead.
 > 
->> On 30.06.2014 23:32, Kukjin Kim wrote:
->>> This patch removes supporting s5pc100 related pwm codes.
->>>
->>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->>> Cc: Thierry Reding <thierry.reding@gmail.com>
->>> ---
->>>  Documentation/devicetree/bindings/pwm/pwm-samsung.txt |    2 --
->>>  drivers/clocksource/samsung_pwm_timer.c               |   12 ------------
->>>  drivers/pwm/pwm-samsung.c                             |    8 --------
->>>  3 files changed, 22 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
->> b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
->>> index 43925d3..82c7f6b 100644
->>> --- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
->>> +++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
->>> @@ -11,8 +11,6 @@ Required properties:
->>>  - compatible : should be one of following:
->>>      samsung,s3c2410-pwm - for 16-bit timers present on S3C24xx SoCs
->>>      samsung,s3c6400-pwm - for 32-bit timers present on S3C64xx SoCs
->>> -    samsung,s5pc100-pwm - for 32-bit timers present on S5PC100, S5PV210,
->>> -			  Exynos4210 rev0 SoCs
->>
->> As you can see here, this variant is used for more than S5PC100. It is
->> needed for S5PV210 and Exynos4210 rev0 SoCs as well. So this patch
->> should be dropped.
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/pwm/pwm-samsung.txt |    1 -
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts       |    2 +-
+>  drivers/clocksource/samsung_pwm_timer.c               |   13 -------------
+>  drivers/pwm/pwm-samsung.c                             |    5 ++---
+>  4 files changed, 3 insertions(+), 18 deletions(-)
 > 
-> Oh, I just now checked its datasheets and s5pv210 and early exynos4210 are
-> using BIT(5) for tclk_mask. You're right. But I couldn't its usage in mainline
-> when I created the patch. Anyway it can be used for s5pv210 so how about
-> following?
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+> index 5538de9..43925d3 100644
+> --- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+> @@ -11,7 +11,6 @@ Required properties:
+>  - compatible : should be one of following:
+>      samsung,s3c2410-pwm - for 16-bit timers present on S3C24xx SoCs
+>      samsung,s3c6400-pwm - for 32-bit timers present on S3C64xx SoCs
+> -    samsung,s5p6440-pwm - for 32-bit timers present on S5P64x0 SoCs
+>      samsung,s5pc100-pwm - for 32-bit timers present on S5PC100, S5PV210,
+>  			  Exynos4210 rev0 SoCs
+>      samsung,exynos4210-pwm - for 32-bit timers present on Exynos4210,
+> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> index d50eb3a..0ca26e0 100644
+> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> @@ -461,7 +461,7 @@
+>  	};
+>  
+>  	pwm@139D0000 {
+> -		compatible = "samsung,s5p6440-pwm";
+> +		compatible = "samsung,exynos4210-pwm";
 
-Hmm, sorry for the confusion, but actually this seems to be a mistake in
-the binding documentation. On Exynos4210 rev0, "samsung,s5p6440-pwm" is
-supposed to be used and "samsung,s5pc100" supports both S5PC100 and S5PV210.
+There is a reason to use a different compatible string for Exynos4210
+rev0. The PWM block is used as a timer there, while on newer revs MCT is
+used. Sorry, but I have to NAK this patch.
 
-However I'm not sure why you want to change existing DT bindings. The
-rule is to name the compatible string after first existing SoC for which
-it can be used, so removing support for this SoC doesn't imply removing
-this compatible string because it can be used for future SoCs as well,
-if they turn out to be compatible.
-
-My suggestion is to keep this as it was.
+As I explained in my reply to patch 11/17, I'd suggest keeping the PWM
+drivers as is, because there is no need to remove support for DT
+compatible strings.
 
 Best regards,
 Tomasz
