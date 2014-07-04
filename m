@@ -1,62 +1,97 @@
-From: Tushar Behera <tushar.b@samsung.com>
-Subject: [PATCH] drm/exynos: fimd: Keep power enabled during fimd_bind
-Date: Fri,  4 Jul 2014 16:03:19 +0530
-Message-ID: <1404469999-21147-1-git-send-email-tushar.b@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v6 02/23] mfd: max77686: Add power management support
+Date: Fri, 04 Jul 2014 12:51:12 +0200
+Message-ID: <1404471072.14069.0.camel@AMDC1943>
+References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1404467722-26687-3-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:31941 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752764AbaGDKvO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 4 Jul 2014 06:51:14 -0400
+In-reply-to: <1404467722-26687-3-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Under some conditions (when IOMMU is enabled), fimd_bind() accesses
-hardware registers and power-domain should be enabled during that time.
+On pi=C4=85, 2014-07-04 at 11:55 +0200, Javier Martinez Canillas wrote:
+> The driver doesn't have PM operations defined so add a suspend
+> and resume function handlers to allow the PMIC IRQ to wakeup
+> the system when it is put into a sleep state.
+>=20
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
+> ---
+>  drivers/mfd/max77686.c | 40 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
 
-fimd_bind --> fimd_mgr_initialize --> fimd_clear_channel
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-If the power-domain is disabled by that time, we get a boot-time crash.
-It would be better to keep power-domain enabled explicitly.
+Best regards,
+Krzysztof
 
-Unhandled fault: external abort on non-linefetch (0x1008) at 0xf0180034
-Internal error: : 1008 [#1] PREEMPT SMP ARM
-...
-PC is at fimd_bind+0x84/0x134
-LR is at component_bind_all+0xb4/0x1d8
 
-Signed-off-by: Tushar Behera <tushar.b@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 33161ad..34275fb 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -888,11 +888,15 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
- 	struct fimd_context *ctx = fimd_manager.ctx;
- 	struct drm_device *drm_dev = data;
- 
-+	pm_runtime_get_sync(dev);
-+
- 	fimd_mgr_initialize(&fimd_manager, drm_dev);
- 	exynos_drm_crtc_create(&fimd_manager);
- 	if (ctx->display)
- 		exynos_drm_create_enc_conn(drm_dev, ctx->display);
- 
-+	pm_runtime_put_sync(dev);
-+
- 	return 0;
- 
- }
--- 
-1.7.9.5
+> diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
+> index 3cb41d0..a38e9ee 100644
+> --- a/drivers/mfd/max77686.c
+> +++ b/drivers/mfd/max77686.c
+> @@ -240,10 +240,50 @@ static const struct i2c_device_id max77686_i2c_=
+id[] =3D {
+>  };
+>  MODULE_DEVICE_TABLE(i2c, max77686_i2c_id);
+> =20
+> +#ifdef CONFIG_PM_SLEEP
+> +static int max77686_suspend(struct device *dev)
+> +{
+> +	struct i2c_client *i2c =3D container_of(dev, struct i2c_client, dev=
+);
+> +	struct max77686_dev *max77686 =3D i2c_get_clientdata(i2c);
+> +
+> +	if (device_may_wakeup(dev))
+> +		enable_irq_wake(max77686->irq);
+> +
+> +	/*
+> +	 * IRQ must be disabled during suspend because if it happens
+> +	 * while suspended it will be handled before resuming I2C.
+> +	 *
+> +	 * When device is woken up from suspend (e.g. by RTC wake alarm),
+> +	 * an interrupt occurs before resuming I2C bus controller.
+> +	 * Interrupt handler tries to read registers but this read
+> +	 * will fail because I2C is still suspended.
+> +	 */
+> +	disable_irq(max77686->irq);
+> +
+> +	return 0;
+> +}
+> +
+> +static int max77686_resume(struct device *dev)
+> +{
+> +	struct i2c_client *i2c =3D container_of(dev, struct i2c_client, dev=
+);
+> +	struct max77686_dev *max77686 =3D i2c_get_clientdata(i2c);
+> +
+> +	if (device_may_wakeup(dev))
+> +		disable_irq_wake(max77686->irq);
+> +
+> +	enable_irq(max77686->irq);
+> +
+> +	return 0;
+> +}
+> +#endif /* CONFIG_PM_SLEEP */
+> +
+> +static SIMPLE_DEV_PM_OPS(max77686_pm, max77686_suspend, max77686_res=
+ume);
+> +
+>  static struct i2c_driver max77686_i2c_driver =3D {
+>  	.driver =3D {
+>  		   .name =3D "max77686",
+>  		   .owner =3D THIS_MODULE,
+> +		   .pm =3D &max77686_pm,
+>  		   .of_match_table =3D of_match_ptr(max77686_pmic_dt_match),
+>  	},
+>  	.probe =3D max77686_i2c_probe,
