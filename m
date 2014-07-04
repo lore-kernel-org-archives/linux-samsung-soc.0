@@ -1,35 +1,58 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: [PATCH v6] ARM: EXYNOS: Use MCPM call-backs to support S2R on
- Exynos5420
-Date: Fri, 4 Jul 2014 17:03:57 -0400 (EDT)
-Message-ID: <alpine.LFD.2.11.1407041702310.22282@knanqh.ubzr>
-References: <alpine.LFD.2.11.1407041408120.22282@knanqh.ubzr> <CAM4voamqpCj=Zw69DGjzhouwu=6RE6e3Px5WL8akc-TUAts0Xg@mail.gmail.com> <CAM4voa=K6s0FFmeuiqWZh6HSQZAfSpxL8A_kMTxCi+2t3tzydw@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: dts: exynos5410: Fill in CPU clock-frequency
+Date: Sat, 05 Jul 2014 06:06:35 +0900
+Message-ID: <53B7175B.1030109@samsung.com>
+References: <1403466596-3347-1-git-send-email-afaerber@suse.de> <53A7DCF8.4090108@samsung.com> <53B690B9.2090906@suse.de>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f170.google.com ([209.85.216.170]:38307 "EHLO
-	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752011AbaGDVEA (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:37830 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752725AbaGDVGo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 17:04:00 -0400
-Received: by mail-qc0-f170.google.com with SMTP id l6so1894438qcy.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Jul 2014 14:03:59 -0700 (PDT)
-In-Reply-To: <CAM4voa=K6s0FFmeuiqWZh6HSQZAfSpxL8A_kMTxCi+2t3tzydw@mail.gmail.com>
+	Fri, 4 Jul 2014 17:06:44 -0400
+In-Reply-To: <53B690B9.2090906@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Andrew Bresticker <abrestic@chromium.org>, Douglas Anderson <dianders@chromium.org>
+To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Tarek Dakhran <t.dakhran@samsung.com>, Kevin Hilman <khilman@linaro.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, LKML <linux-kernel@vger.kernel.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Ben Dooks <ben-linux@fluff.org>, Kumar Gala <galak@codeaurora.org>, "ARM/SAMSUNG ARM A..." <linux-arm-kernel@lists.infradead.org>
 
-On Sat, 5 Jul 2014, Abhilash Kesavan wrote:
+On 07/04/14 20:32, Andreas F=C3=A4rber wrote:
+> Am 23.06.2014 09:53, schrieb Tarek Dakhran:
+>> On 06/22/2014 11:49 PM, Andreas F=C3=A4rber wrote:
+>>> It's 1.6 GHz for the Cortex-A15.
+>>>
+>>> Avoids warnings like "/cpus/cpu@0 missing clock-frequency property"=
+=2E
+>>>
+>>> Signed-off-by: Andreas afaerber@suse.de>
+>>> ---
+>>>    arch/arm/boot/dts/exynos5410.dtsi | 4 ++++
+>>>    1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5410.dtsi
+>>> b/arch/arm/boot/dts/exynos5410.dtsi
+>>> index 3839c26..9d0b8cc 100644
+>>> --- a/arch/arm/boot/dts/exynos5410.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+>>> @@ -28,24 +28,28 @@
+>>>                device_type =3D "cpu";
+>>>                compatible =3D "arm,cortex-a15";
+>>>                reg =3D<0x0>;
+>>> +            clock-frequency =3D<1600000000>;
+>>>
+>>
+>> Reviewed-by: Tarek Dakhran<t.dakhran@samsung.com>
+>
+> Ping? Seems really trivial...
+>
+Will apply.
 
-> On a different note, I have been using the cpuidle patchset
-> (https://patchwork.kernel.org/patch/4357421/) as base for S2R support
-> and had a question. Rather than making the driver depend on
-> ARCH_EXYNOS should it depend on EXYNOS5420_MCPM which in turn depends
-> on MCPM (like TC2) or should we just be making the bL cpuidle driver
-> depend on MCPM ?
+BTW Andreas, I can't use 'F=C3=A4rber' in my git tree so which one is r=
+ight=20
+or more preferred? Farber, Faerber, Ferber? Sorry.
 
-Probably making it depend on MCPM directly is the best approach.
-
-
-Nicolas
+Thanks,
+Kukjin
