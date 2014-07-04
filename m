@@ -1,77 +1,61 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 04/17] ASoC: samsung: no more support for S5P6440 and
- S5P6450 SoCs
-Date: Fri, 4 Jul 2014 23:17:08 +0100
-Message-ID: <20140704221708.GA18374@sirena.org.uk>
-References: <1404340817-28902-1-git-send-email-kgene.kim@samsung.com>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] drivers: phy: exynos-usb2: add support for Exynos 3250
+Date: Sat, 05 Jul 2014 00:21:17 +0200
+Message-ID: <53B728DD.1000703@gmail.com>
+References: <1404475989-30588-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5825544812352684557=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1404340817-28902-1-git-send-email-kgene.kim@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: pebolle@tiscali.nl, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1404475989-30588-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Marek,
 
---===============5825544812352684557==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
-Content-Disposition: inline
+Please see my comments inline.
 
+On 04.07.2014 14:13, Marek Szyprowski wrote:
+> This patch adds support for Exynos3250 SoC to Exynos2USB PHY driver.
+> Although Exynos3250 has only one device phy interface, the register
+> layout and all operations that are required to get it enabled are almost
+> same as on Exynos4x12. The only different is one more register
+> (REFCLKSEL) which need to be set.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/phy/Kconfig               | 12 ++++++------
+>  drivers/phy/phy-exynos4x12-usb2.c | 18 ++++++++++++++++++
+>  drivers/phy/phy-samsung-usb2.c    |  6 ++++++
+>  drivers/phy/phy-samsung-usb2.h    |  2 ++
 
---x+6KMIRAuhnl3hBn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch adds new compatible string, but there is no respective change
+to the documentation. Please add it.
 
-On Thu, Jul 03, 2014 at 07:40:17AM +0900, Kukjin Kim wrote:
-> This patch removes s5p64x0 related WM8580 because of removing support
-> for s5p64x0 SoCs.
+>  4 files changed, 32 insertions(+), 6 deletions(-)
+> 
 
-Acked-by: Mark Brown <broonie@linaro.org>
+[snip]
 
---x+6KMIRAuhnl3hBn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> diff --git a/drivers/phy/phy-exynos4x12-usb2.c b/drivers/phy/phy-exynos4x12-usb2.c
+> index 59d8dd3ff390..b29bbfacd4b5 100644
+> --- a/drivers/phy/phy-exynos4x12-usb2.c
+> +++ b/drivers/phy/phy-exynos4x12-usb2.c
+> @@ -67,6 +67,12 @@
+>  #define EXYNOS_4x12_UPHYCLK_PHYFSEL_24MHZ	(0x5 << 0)
+>  #define EXYNOS_4x12_UPHYCLK_PHYFSEL_50MHZ	(0x7 << 0)
+>  
+> +#define EXYNOS_4212_UPHYCLK_PHY0_ID_PULLUP	(0x1 << 3)
+> +#define EXYNOS_4212_UPHYCLK_PHY0_COMMON_ON	(0x1 << 4)
+> +#define EXYNOS_4212_UPHYCLK_PHY1_COMMON_ON	(0x1 << 7)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+The 3 macros above don't seem to be used anywhere in this patch.
 
-iQIcBAEBAgAGBQJTtyfhAAoJELSic+t+oim9ZQYP/3UEmXSPluHd8u8uvRwiP9+M
-2/cVZmwvFZaDkCR0paEDKOhDe6riF2xZZA32i86tVvmuPbZuSe/YwETPWhnaOppk
-L0z58sjvMMmr5GEOXDjbFxtq7ZPuCTZueu69rox+Wy7phShg54y7LuS1tpmsPgbq
-Syb1Zffv+CYrDD8lih1FE2vrfGb4Ek9I+UCL9E5XqE2kX3uX7SEFL1heSAF/5vC4
-+hCdoGH8f8x1Fp+EFYQ/8bWryt/TKSwboxTBZ5Sgb1RVNtLjEtyET+d2n+Z0IN2Q
-t9GAAA6A1sq31D5xrXgux0Wl5zs8Q50N24m5CHoQC+fBp/+kfHk0gMXXy6O1oIuu
-i7d8IAgsAni7I3SgIix8gZ9oaA9McxtfpH3MFueYcuFrCZoIj7HuCP4w20Jh2NwT
-JYttgfbTaVpNDoiSs/s/rnViVNbZNetXCwGIJRBF0j1tiPBujU9W9C99bBqBU0SJ
-mX4MgcsvQSqt8v7IPa9ht8SIewikIkRIdk6cLOFQ0EdaO+2IUVYHx8LmPNOs2n7G
-lsZ7beV9IWddqMmKeEihr8bVpN+fLOCFOlWgl9G3Zmm4c6EVmaDVyz0irdoQypqL
-CYR7qHWZq4eyCBRIUBQsaEz+tO0esA4USrx0CCriAB64GGXRHG4GaYHzEMQZCnGN
-i6bSRsz8Ude1O30uBKGq
-=5zu2
------END PGP SIGNATURE-----
-
---x+6KMIRAuhnl3hBn--
-
-
---===============5825544812352684557==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============5825544812352684557==--
+Best regards,
+Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
