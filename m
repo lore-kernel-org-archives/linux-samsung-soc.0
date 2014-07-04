@@ -1,78 +1,69 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v6 02/23] mfd: max77686: Add power management support
-Date: Fri,  4 Jul 2014 11:55:01 +0200
-Message-ID: <1404467722-26687-3-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v6 06/23] mfd: max77686: Make error checking consistent
+Date: Fri,  4 Jul 2014 11:55:05 +0200
+Message-ID: <1404467722-26687-7-git-send-email-javier.martinez@collabora.co.uk>
 References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:38026 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750999AbaGDJzt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 4 Jul 2014 05:55:49 -0400
 In-Reply-To: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>
 Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-The driver doesn't have PM operations defined so add a suspend
-and resume function handlers to allow the PMIC IRQ to wakeup
-the system when it is put into a sleep state.
+Error checking across the driver is mostly consistent besides
+a few exceptions, so change these exceptions for consistency.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- drivers/mfd/max77686.c | 40 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ drivers/mfd/max77686.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
-index 3cb41d0..a38e9ee 100644
+index ada4976..87fe52e 100644
 --- a/drivers/mfd/max77686.c
 +++ b/drivers/mfd/max77686.c
-@@ -240,10 +240,50 @@ static const struct i2c_device_id max77686_i2c_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, max77686_i2c_id);
+@@ -134,7 +134,7 @@ static int max77686_i2c_probe(struct i2c_client *i2c,
  
-+#ifdef CONFIG_PM_SLEEP
-+static int max77686_suspend(struct device *dev)
-+{
-+	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
-+	struct max77686_dev *max77686 = i2c_get_clientdata(i2c);
-+
-+	if (device_may_wakeup(dev))
-+		enable_irq_wake(max77686->irq);
-+
-+	/*
-+	 * IRQ must be disabled during suspend because if it happens
-+	 * while suspended it will be handled before resuming I2C.
-+	 *
-+	 * When device is woken up from suspend (e.g. by RTC wake alarm),
-+	 * an interrupt occurs before resuming I2C bus controller.
-+	 * Interrupt handler tries to read registers but this read
-+	 * will fail because I2C is still suspended.
-+	 */
-+	disable_irq(max77686->irq);
-+
-+	return 0;
-+}
-+
-+static int max77686_resume(struct device *dev)
-+{
-+	struct i2c_client *i2c = container_of(dev, struct i2c_client, dev);
-+	struct max77686_dev *max77686 = i2c_get_clientdata(i2c);
-+
-+	if (device_may_wakeup(dev))
-+		disable_irq_wake(max77686->irq);
-+
-+	enable_irq(max77686->irq);
-+
-+	return 0;
-+}
-+#endif /* CONFIG_PM_SLEEP */
-+
-+static SIMPLE_DEV_PM_OPS(max77686_pm, max77686_suspend, max77686_resume);
-+
- static struct i2c_driver max77686_i2c_driver = {
- 	.driver = {
- 		   .name = "max77686",
- 		   .owner = THIS_MODULE,
-+		   .pm = &max77686_pm,
- 		   .of_match_table = of_match_ptr(max77686_pmic_dt_match),
- 	},
- 	.probe = max77686_i2c_probe,
+ 	max77686 = devm_kzalloc(&i2c->dev,
+ 				sizeof(struct max77686_dev), GFP_KERNEL);
+-	if (max77686 == NULL)
++	if (!max77686)
+ 		return -ENOMEM;
+ 
+ 	i2c_set_clientdata(i2c, max77686);
+@@ -153,8 +153,8 @@ static int max77686_i2c_probe(struct i2c_client *i2c,
+ 		return ret;
+ 	}
+ 
+-	if (regmap_read(max77686->regmap,
+-			 MAX77686_REG_DEVICE_ID, &data) < 0) {
++	ret = regmap_read(max77686->regmap, MAX77686_REG_DEVICE_ID, &data);
++	if (ret < 0) {
+ 		dev_err(max77686->dev,
+ 			"device not found on this channel (this is not an error)\n");
+ 		return -ENODEV;
+@@ -180,7 +180,7 @@ static int max77686_i2c_probe(struct i2c_client *i2c,
+ 				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
+ 				  IRQF_SHARED, 0, &max77686_irq_chip,
+ 				  &max77686->irq_data);
+-	if (ret != 0) {
++	if (ret) {
+ 		dev_err(&i2c->dev, "failed to add PMIC irq chip: %d\n", ret);
+ 		goto err_unregister_i2c;
+ 	}
+@@ -188,7 +188,7 @@ static int max77686_i2c_probe(struct i2c_client *i2c,
+ 				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
+ 				  IRQF_SHARED, 0, &max77686_rtc_irq_chip,
+ 				  &max77686->rtc_irq_data);
+-	if (ret != 0) {
++	if (ret) {
+ 		dev_err(&i2c->dev, "failed to add RTC irq chip: %d\n", ret);
+ 		goto err_del_irqc;
+ 	}
 -- 
 2.0.0.rc2
