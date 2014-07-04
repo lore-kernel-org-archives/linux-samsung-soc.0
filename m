@@ -1,46 +1,311 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v7 04/24] mfd: max77686: Make platform data over-rule DT
-Date: Fri,  4 Jul 2014 22:24:07 +0200
-Message-ID: <1404505467-26526-5-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v7 12/24] clk: Add generic driver for Maxim PMIC clocks
+Date: Fri,  4 Jul 2014 22:24:15 +0200
+Message-ID: <1404505467-26526-13-git-send-email-javier.martinez@collabora.co.uk>
 References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Tushar Behera <trblinux@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
+Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The function max77802_i2c_parse_dt_pdata() should only be called
-if there isn't already platform data for the device.
+Maxim Integrated Power Management ICs are very similar with
+regard to their clock outputs. Most of the clock drivers for
+these chips are duplicating code and are simpler enough that
+can be converted to use a generic driver to consolidate code
+and avoid duplication.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- drivers/mfd/max77686.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+--
 
-diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
-index d1f9d04..12d4c17 100644
---- a/drivers/mfd/max77686.c
-+++ b/drivers/mfd/max77686.c
-@@ -124,7 +124,7 @@ static int max77686_i2c_probe(struct i2c_client *i2c,
- 	unsigned int data;
- 	int ret = 0;
+Changes since v6: None
+
+Changes since v5:
+ - Fix generic driver changes merged into max77802 clock patch by mistake.
+   Suggested by Yadwinder Singh Brar.
+ - Register clock lookups using clk_register_clkdev() instead of doing manually.
+ - Use the managed devm_clk_register() function and remove clk un-registration.
+ - Add "clock-output-names" property support. Suggested by Yadwinder Singh Brar.
+ - Return the rate unconditionally in recalc_rate. Suggested by Mike Turquette.
+
+Changes since v4: None
+
+Changes since v3:
+ - Don't change clock-names property to make clear that it's
+   the consumer clock name and should not match the producer clock.
+   Suggested by Doug Anderson.
+---
+ drivers/clk/Kconfig       |   3 +
+ drivers/clk/Makefile      |   1 +
+ drivers/clk/clk-max-gen.c | 192 ++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/clk-max-gen.h |  32 ++++++++
+ 4 files changed, 228 insertions(+)
+ create mode 100644 drivers/clk/clk-max-gen.c
+ create mode 100644 drivers/clk/clk-max-gen.h
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 9f9c5ae..73f78e8 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -32,6 +32,9 @@ config COMMON_CLK_WM831X
  
--	if (IS_ENABLED(CONFIG_OF) && i2c->dev.of_node)
-+	if (IS_ENABLED(CONFIG_OF) && i2c->dev.of_node && !pdata)
- 		pdata = max77686_i2c_parse_dt_pdata(&i2c->dev);
+ source "drivers/clk/versatile/Kconfig"
  
- 	if (!pdata) {
++config COMMON_CLK_MAX_GEN
++        bool
++
+ config COMMON_CLK_MAX77686
+ 	tristate "Clock driver for Maxim 77686 MFD"
+ 	depends on MFD_MAX77686
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 567f102..6c1aff6 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -18,6 +18,7 @@ obj-$(CONFIG_ARCH_BCM2835)		+= clk-bcm2835.o
+ obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
+ obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
+ obj-$(CONFIG_MACH_LOONGSON1)		+= clk-ls1x.o
++obj-$(CONFIG_COMMON_CLK_MAX_GEN)	+= clk-max-gen.o
+ obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
+ obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
+ obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
+diff --git a/drivers/clk/clk-max-gen.c b/drivers/clk/clk-max-gen.c
+new file mode 100644
+index 0000000..6505049
+--- /dev/null
++++ b/drivers/clk/clk-max-gen.c
+@@ -0,0 +1,192 @@
++/*
++ * clk-max-gen.c - Generic clock driver for Maxim PMICs clocks
++ *
++ * Copyright (C) 2014 Google, Inc
++ *
++ * Copyright (C) 2012 Samsung Electornics
++ * Jonghwa Lee <jonghwa3.lee@samsung.com>
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * This driver is based on clk-max77686.c
++ *
++ */
++
++#include <linux/kernel.h>
++#include <linux/slab.h>
++#include <linux/err.h>
++#include <linux/regmap.h>
++#include <linux/platform_device.h>
++#include <linux/clk-provider.h>
++#include <linux/mutex.h>
++#include <linux/clkdev.h>
++#include <linux/of.h>
++#include <linux/export.h>
++
++struct max_gen_clk {
++	struct regmap *regmap;
++	u32 mask;
++	u32 reg;
++	struct clk_hw hw;
++};
++
++static struct max_gen_clk *to_max_gen_clk(struct clk_hw *hw)
++{
++	return container_of(hw, struct max_gen_clk, hw);
++}
++
++static int max_gen_clk_prepare(struct clk_hw *hw)
++{
++	struct max_gen_clk *max_gen = to_max_gen_clk(hw);
++
++	return regmap_update_bits(max_gen->regmap, max_gen->reg,
++				  max_gen->mask, max_gen->mask);
++}
++
++static void max_gen_clk_unprepare(struct clk_hw *hw)
++{
++	struct max_gen_clk *max_gen = to_max_gen_clk(hw);
++
++	regmap_update_bits(max_gen->regmap, max_gen->reg,
++			   max_gen->mask, ~max_gen->mask);
++}
++
++static int max_gen_clk_is_prepared(struct clk_hw *hw)
++{
++	struct max_gen_clk *max_gen = to_max_gen_clk(hw);
++	int ret;
++	u32 val;
++
++	ret = regmap_read(max_gen->regmap, max_gen->reg, &val);
++
++	if (ret < 0)
++		return -EINVAL;
++
++	return val & max_gen->mask;
++}
++
++static unsigned long max_gen_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	return 32768;
++}
++
++struct clk_ops max_gen_clk_ops = {
++	.prepare	= max_gen_clk_prepare,
++	.unprepare	= max_gen_clk_unprepare,
++	.is_prepared	= max_gen_clk_is_prepared,
++	.recalc_rate	= max_gen_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(max_gen_clk_ops);
++
++static struct clk *max_gen_clk_register(struct device *dev,
++					struct max_gen_clk *max_gen)
++{
++	struct clk *clk;
++	struct clk_hw *hw = &max_gen->hw;
++	int ret;
++
++	clk = devm_clk_register(dev, hw);
++	if (IS_ERR(clk))
++		return clk;
++
++	ret = clk_register_clkdev(clk, hw->init->name, NULL);
++
++	if (ret)
++		return ERR_PTR(ret);
++
++	return clk;
++}
++
++int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
++		      u32 reg, struct clk_init_data *clks_init, int num_init)
++{
++	int i, ret;
++	struct max_gen_clk *max_gen_clks;
++	struct clk **clocks;
++	struct device *dev = pdev->dev.parent;
++	const char *clk_name;
++	struct clk_init_data *init;
++
++	clocks = devm_kzalloc(dev, sizeof(struct clk *) * num_init, GFP_KERNEL);
++	if (!clocks)
++		return -ENOMEM;
++
++	max_gen_clks = devm_kzalloc(dev, sizeof(struct max_gen_clk)
++				    * num_init, GFP_KERNEL);
++	if (!max_gen_clks)
++		return -ENOMEM;
++
++	for (i = 0; i < num_init; i++) {
++		max_gen_clks[i].regmap = regmap;
++		max_gen_clks[i].mask = 1 << i;
++		max_gen_clks[i].reg = reg;
++
++		init = devm_kzalloc(dev, sizeof(*init), GFP_KERNEL);
++		if (!init)
++			return -ENOMEM;
++
++		if (dev->of_node &&
++		    !of_property_read_string_index(dev->of_node,
++						   "clock-output-names",
++						   i, &clk_name))
++			init->name = clk_name;
++		else
++			init->name = clks_init[i].name;
++
++		init->ops = clks_init[i].ops;
++		init->flags = clks_init[i].flags;
++
++		max_gen_clks[i].hw.init = init;
++
++		clocks[i] = max_gen_clk_register(dev, &max_gen_clks[i]);
++		if (IS_ERR(clocks[i])) {
++			ret = PTR_ERR(clocks[i]);
++			dev_err(dev, "failed to register %s\n",
++				max_gen_clks[i].hw.init->name);
++			return ret;
++		}
++	}
++
++	platform_set_drvdata(pdev, clocks);
++
++	if (dev->of_node) {
++		struct clk_onecell_data *of_data;
++
++		of_data = devm_kzalloc(dev, sizeof(*of_data), GFP_KERNEL);
++		if (!of_data)
++			return -ENOMEM;
++
++		of_data->clks = clocks;
++		of_data->clk_num = num_init;
++		ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
++					  of_data);
++
++		if (ret) {
++			dev_err(dev, "failed to register OF clock provider\n");
++			return ret;
++		}
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(max_gen_clk_probe);
++
++int max_gen_clk_remove(struct platform_device *pdev, int num_init)
++{
++	struct device *dev = pdev->dev.parent;
++
++	if (dev->of_node)
++		of_clk_del_provider(dev->of_node);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(max_gen_clk_remove);
+diff --git a/drivers/clk/clk-max-gen.h b/drivers/clk/clk-max-gen.h
+new file mode 100644
+index 0000000..997e86f
+--- /dev/null
++++ b/drivers/clk/clk-max-gen.h
+@@ -0,0 +1,32 @@
++/*
++ * clk-max-gen.h - Generic clock driver for Maxim PMICs clocks
++ *
++ * Copyright (C) 2014 Google, Inc
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
++
++#ifndef __CLK_MAX_GEN_H__
++#define __CLK_MAX_GEN_H__
++
++#include <linux/types.h>
++#include <linux/device.h>
++#include <linux/clkdev.h>
++#include <linux/regmap.h>
++#include <linux/platform_device.h>
++
++int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
++		      u32 reg, struct clk_init_data *clks_init, int num_init);
++int max_gen_clk_remove(struct platform_device *pdev, int num_init);
++extern struct clk_ops max_gen_clk_ops;
++
++#endif /* __CLK_MAX_GEN_H__ */
 -- 
 2.0.0.rc2
