@@ -1,319 +1,96 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v6 17/23] mfd: max77686: Add Maxim 77802 PMIC support
-Date: Fri, 04 Jul 2014 13:35:56 +0200
-Message-ID: <53B6919C.7050502@collabora.co.uk>
-References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk> <1404467722-26687-18-git-send-email-javier.martinez@collabora.co.uk> <1404473434.14069.10.camel@AMDC1943>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: ASoC: samsung: MACH_SMDK6450
+Date: Fri, 4 Jul 2014 12:45:05 +0100
+Message-ID: <20140704114505.GA19453@sirena.org.uk>
+References: <1404287238.12021.7.camel@x220>
+ <023d01cf9720$5ed32fc0$1c798f40$@samsung.com>
+ <CAOesGMjdVrOfyrF6X3KoMQxBBYzNZskUsaMaHH653LJgwqpA+Q@mail.gmail.com>
+ <4203198.qV4EZfpui2@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="UlVJffcvxoiEqYs2"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:38296 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751158AbaGDLgE (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46427 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752409AbaGDLpk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 07:36:04 -0400
-In-Reply-To: <1404473434.14069.10.camel@AMDC1943>
+	Fri, 4 Jul 2014 07:45:40 -0400
+Content-Disposition: inline
+In-Reply-To: <4203198.qV4EZfpui2@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Paul Bolle <pebolle@tiscali.nl>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Ben Dooks <ben-linux@fluff.org>
 
-Hello Krzysztof,
 
-On 07/04/2014 01:30 PM, Krzysztof Kozlowski wrote:
-> On pi=C4=85, 2014-07-04 at 11:55 +0200, Javier Martinez Canillas wrot=
+--UlVJffcvxoiEqYs2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jul 04, 2014 at 11:01:52AM +0200, Arnd Bergmann wrote:
+> On Thursday 03 July 2014 20:39:41 Olof Johansson wrote:
+> > On Thu, Jul 3, 2014 at 5:39 PM, Kukjin Kim <kgene.kim@samsung.com> wrot=
 e:
->> Maxim MAX77802 is a power management chip that contains 10 high
->> efficiency Buck regulators, 32 Low-dropout (LDO) regulators used
->> to power up application processors and peripherals, a 2-channel
->> 32kHz clock outputs, a Real-Time-Clock (RTC) and a I2C interface
->> to program the individual regulators, clocks outputs and the RTC.
->>=20
->> This patch adds support for MAX77802 to the MAX77686 driver and is
->> based on a driver added to the Chrome OS kernel 3.8 by Simon Glass.
->>=20
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.c=
-o.uk>
->> ---
->>=20
->>     NOTE: I didn't carry previous {Review,Acked,Tested}-by tags sinc=
-e
->>     this patch extending MAX77686 is quite different than the old on=
-e
->>     adding a new mfd driver. So review and test is highly appreciate=
-d.
->>=20
->>     Changes since v5:
->>      - Extend the 77686 driver to support 77802 instead of adding a =
-new driver.
->>        Suggested by Lee Jones.
->>=20
->>     Changes since v4:
->>      - Use consistent expressions when checking for NULL values.
->>        Suggested by Krzysztof Kozlowski.
->>      - Remove unused defines. Suggested by Krzysztof Kozlowski.
->>      - Explain why IRQ is disabled on suspend. Suggested by Krzyszto=
-f Kozlowski.
->>=20
->>     Changes since v3:
->>      - Remove unnecessary OOM error message since the mm subsystem a=
-lready logs it.
->>=20
->>     Changes since v2:
->>      - Split the DT binding docs in a separate patch and improve the=
- documentation.
->>        Suggested by Mark Brown.
->>      - Add all the devices in the MFD driver instead of doing in sep=
-arate patches.
->>        Suggested by Mark Brown.
->>=20
->>     Changes since v1:
->>      - Convert max77{686,802} to regmap irq API and get rid of max77=
-{686,802}-irq.c
->>        Suggested by Krzysztof Kozlowski.
->>      - Don't protect max77802 mfd_cells using Kconfig options since =
-mfd core omits
->>        devices that don't match. Suggested by Lee Jones.
->>      - Change mfd driver to be tristate instead of boolean. Suggeste=
-d by Mark Brown.
->>      - Change binding "voltage-regulators" property to "regulators" =
-to be consistent
->>        with other PMIC drivers. Suggested by Mark Brown.
->>      - Use regulators node names instead of the deprecated "regulato=
-r-compatible"
->>        property. Suggested by Mark Brown.
->>      - Use the new descriptor-based GPIO interface instead of the de=
-precated
->> ---
->>  drivers/mfd/Kconfig                  |   6 +-
->>  drivers/mfd/max77686.c               | 187 ++++++++++++++++++++++++=
-++-----
->>  include/linux/mfd/max77686-private.h | 208 ++++++++++++++++++++++++=
-++++++++++-
->>  include/linux/mfd/max77686.h         |  60 +++++++++-
->>  4 files changed, 428 insertions(+), 33 deletions(-)
->>=20
->=20
-> Three comments below, after fixing:
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->=20
-> (...)
->=20
->> @@ -55,6 +123,17 @@ static struct regmap_config max77686_rtc_regmap_=
-config =3D {
->>  	.val_bits =3D 8,
->>  };
->> =20
->> +static struct regmap_config max77802_regmap_config =3D {
->> +	.reg_bits =3D 8,
->> +	.val_bits =3D 8,
->> +	.writeable_reg =3D max77802_is_accessible_reg,
->> +	.readable_reg =3D max77802_is_accessible_reg,
->> +	.precious_reg =3D max77802_is_precious_reg,
->> +	.volatile_reg =3D max77802_is_volatile_reg,
->> +	.name =3D "max77802-pmic",
->> +	.cache_type =3D REGCACHE_RBTREE,
->> +};
->> +
->>  static const struct regmap_irq max77686_irqs[] =3D {
->>  	/* INT1 interrupts */
->>  	{ .reg_offset =3D 0, .mask =3D MAX77686_INT1_PWRONF_MSK, },
->> @@ -98,9 +177,34 @@ static const struct regmap_irq_chip max77686_rtc=
-_irq_chip =3D {
->>  	.num_irqs		=3D ARRAY_SIZE(max77686_rtc_irqs),
->>  };
->> =20
->> +static const struct regmap_irq_chip max77802_irq_chip =3D {
->> +	.name			=3D "max77802-pmic",
->> +	.status_base		=3D MAX77802_REG_INT1,
->> +	.mask_base		=3D MAX77802_REG_INT1MSK,
->> +	.num_regs		=3D 2,
->> +	.irqs			=3D max77686_irqs, /* same masks than 77686 */
->=20
-> "same masks as 77686"
->
 
-Ok
+> > Mark is the _only_ linux developer in the world who will give you crap
+> > for sending him patches to the very same email that he signs off all
+> > his work with.
 
->> +	.num_irqs		=3D ARRAY_SIZE(max77686_irqs),
->> +};
->> +
->> +static const struct regmap_irq_chip max77802_rtc_irq_chip =3D {
->> +	.name			=3D "max77802-rtc",
->> +	.status_base		=3D MAX77802_RTC_INT,
->> +	.mask_base		=3D MAX77802_RTC_INTM,
->> +	.num_regs		=3D 1,
->> +	.irqs			=3D max77686_rtc_irqs, /* same masks than 77686 */
->=20
-> Ditto
->=20
+> > I really wish Linaro would just let him sign off with his
+> > long-standing kernel.org email address instead so the rest of us
+> > wouldn't have to keep track of this.=20
 
-Ok
+Me too, it's a constant source of aggrivation.
 
->> +	.num_irqs		=3D ARRAY_SIZE(max77686_rtc_irqs),
->> +};
->> +
->>  static const struct of_device_id max77686_pmic_dt_match[] =3D {
->> -	{.compatible =3D "maxim,max77686", .data =3D NULL},
->> -	{},
->> +	{
->> +		.compatible =3D "maxim,max77686",
->> +		.data =3D (void *)TYPE_MAX77686,
->> +	},
->> +	{
->> +		.compatible =3D "maxim,max77802",
->> +		.data =3D (void *)TYPE_MAX77802,
->> +	},
->> +	{ },
->>  };
->> =20
->>  static void max77686_dt_parse_dvs_gpio(struct device *dev)
->> @@ -236,6 +340,12 @@ static int max77686_i2c_probe(struct i2c_client=
- *i2c,
->>  	struct max77686_platform_data *pdata =3D dev_get_platdata(&i2c->de=
-v);
->>  	unsigned int data;
->>  	int ret =3D 0;
->> +	const struct regmap_config *config;
->> +	const struct regmap_irq_chip *irq_chip;
->> +	const struct regmap_irq_chip *rtc_irq_chip;
->> +	struct regmap **rtc_regmap;
->> +	const struct mfd_cell *cells;
->> +	int n_devs;
->> =20
->>  	if (IS_ENABLED(CONFIG_OF) && i2c->dev.of_node && !pdata)
->>  		pdata =3D max77686_i2c_parse_dt_pdata(&i2c->dev);
->> @@ -258,56 +368,77 @@ static int max77686_i2c_probe(struct i2c_clien=
-t *i2c,
->>  	max77686->wakeup =3D pdata->wakeup;
->>  	max77686->irq =3D i2c->irq;
->> =20
->> -	max77686->regmap =3D devm_regmap_init_i2c(i2c, &max77686_regmap_co=
-nfig);
->> +	if (max77686->type =3D=3D TYPE_MAX77686) {
->> +		config =3D &max77686_regmap_config;
->> +		irq_chip =3D &max77686_irq_chip;
->> +		rtc_irq_chip =3D &max77686_rtc_irq_chip;
->> +		rtc_regmap =3D &max77686->rtc_regmap;
->> +		cells =3D  max77686_devs;
->> +		n_devs =3D ARRAY_SIZE(max77686_devs);
->> +	} else {
->> +		config =3D &max77802_regmap_config;
->> +		irq_chip =3D &max77802_irq_chip;
->> +		rtc_irq_chip =3D &max77802_rtc_irq_chip;
->> +		rtc_regmap =3D &max77686->regmap;
->> +		cells =3D  max77802_devs;
->> +		n_devs =3D ARRAY_SIZE(max77802_devs);
->> +	}
->> +
->> +	max77686->regmap =3D devm_regmap_init_i2c(i2c, config);
->>  	if (IS_ERR(max77686->regmap)) {
->>  		ret =3D PTR_ERR(max77686->regmap);
->>  		dev_err(max77686->dev, "Failed to allocate register map: %d\n",
->> -				ret);
->> +			ret);
->>  		return ret;
->>  	}
->> =20
->>  	ret =3D regmap_read(max77686->regmap, MAX77686_REG_DEVICE_ID, &dat=
-a);
->>  	if (ret < 0) {
->>  		dev_err(max77686->dev,
->> -			"device not found on this channel (this is not an error)\n");
->> -		return -ENODEV;
->> -	}
->> -
->> -	max77686->rtc =3D i2c_new_dummy(i2c->adapter, I2C_ADDR_RTC);
->> -	if (!max77686->rtc) {
->> -		dev_err(max77686->dev, "Failed to allocate I2C device for RTC\n")=
-;
->> +			"device not found on this channel\n");
->>  		return -ENODEV;
->>  	}
->> -	i2c_set_clientdata(max77686->rtc, max77686);
->> =20
->> -	max77686->rtc_regmap =3D devm_regmap_init_i2c(max77686->rtc,
->> -						    &max77686_rtc_regmap_config);
->> -	if (IS_ERR(max77686->rtc_regmap)) {
->> -		ret =3D PTR_ERR(max77686->rtc_regmap);
->> -		dev_err(max77686->dev, "failed to allocate RTC regmap: %d\n",
->> -			ret);
->> -		goto err_unregister_i2c;
->> +	if (max77686->type =3D=3D TYPE_MAX77686) {
->> +		max77686->rtc =3D i2c_new_dummy(i2c->adapter, I2C_ADDR_RTC);
->> +		if (!max77686->rtc) {
->> +			dev_err(max77686->dev,
->> +				"Failed to allocate I2C device for RTC\n");
->> +			return -ENODEV;
->> +		}
->> +		i2c_set_clientdata(max77686->rtc, max77686);
->> +
->> +		max77686->rtc_regmap =3D
->> +			devm_regmap_init_i2c(max77686->rtc,
->> +					     &max77686_rtc_regmap_config);
->> +		if (IS_ERR(max77686->rtc_regmap)) {
->> +			ret =3D PTR_ERR(max77686->rtc_regmap);
->> +			dev_err(max77686->dev,
->> +				"failed to allocate RTC regmap: %d\n",
->> +				ret);
->> +			goto err_unregister_i2c;
->> +		}
->>  	}
->> =20
->>  	ret =3D regmap_add_irq_chip(max77686->regmap, max77686->irq,
->>  				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
->> -				  IRQF_SHARED, 0, &max77686_irq_chip,
->> +				  IRQF_SHARED, 0, irq_chip,
->>  				  &max77686->irq_data);
->>  	if (ret) {
->>  		dev_err(&i2c->dev, "failed to add PMIC irq chip: %d\n", ret);
->>  		goto err_unregister_i2c;
->>  	}
->> -	ret =3D regmap_add_irq_chip(max77686->rtc_regmap, max77686->irq,
->> +
->> +	ret =3D regmap_add_irq_chip(*rtc_regmap, max77686->irq,
->>  				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
->> -				  IRQF_SHARED, 0, &max77686_rtc_irq_chip,
->> +				  IRQF_SHARED, 0, rtc_irq_chip,
->>  				  &max77686->rtc_irq_data);
->>  	if (ret) {
->>  		dev_err(&i2c->dev, "failed to add RTC irq chip: %d\n", ret);
->>  		goto err_del_irqc;
->>  	}
->> =20
->> -	ret =3D mfd_add_devices(max77686->dev, -1, max77686_devs,
->> -			      ARRAY_SIZE(max77686_devs), NULL, 0, NULL);
->> +	ret =3D mfd_add_devices(max77686->dev, -1, cells, n_devs, NULL, 0,=
- NULL);
->>  	if (ret < 0) {
->>  		dev_err(&i2c->dev, "failed to add MFD devices: %d\n", ret);
->>  		goto err_del_rtc_irqc;
->> @@ -320,7 +451,8 @@ err_del_rtc_irqc:
->>  err_del_irqc:
->>  	regmap_del_irq_chip(max77686->irq, max77686->irq_data);
->>  err_unregister_i2c:
->> -	i2c_unregister_device(max77686->rtc);
->> +	if (max77686->type =3D=3D TYPE_MAX77686)
->> +		i2c_unregister_device(max77686->rtc);
->> =20
->>  	return ret;
->>  }
->> @@ -341,6 +473,7 @@ static int max77686_i2c_remove(struct i2c_client=
- *i2c)
->=20
-> In remove() you should unregister dummy RTC I2C device only on MAX776=
-86
-> (77802 does not add it).
->
+> FWIW David Miller has a similar policy: he only applies networking
+> patches that are sent to the netdev mailing list. This seems like
+> a good idea in general (to ensure they are getting exposed to the
+> public).
 
-Yes, I added the check to the probe()'s error path but forgot about the=
- remove()
-function. Thanks a lot for pointing this out.
+Right, I do tend to insist on this as well (I also think some other
+patchwork users do this as well as davem, things need to hit the list to
+go into patchwork), plus including comaintainers where that's relevant.
+For the most part anything that ends up going to the work address also
+has one of those problems.
 
-> Best regards,
-> Krzysztof
->=20
->=20
+> Mark, any chance we could convince to pick up patches from
+> alsa-devel in the future even if they are sent to the wrong
+> personal email account of yours? I would assume that would only
+> require a small change in your filter rules, not a change in your
+> workflow.
 
-Best regards,
-Javier
+I do look at the lists but it's very easy for things that only go there
+to get missed and it's fairly low priority, the volume is very high and
+obviously there's a lot of duplication from things that do land in my
+inbox.  Copying things into my inbox causes duplication problems due to
+things going to lkml, lakml and subsystem specific lists and alsa-devel
+being moderated for non-subscribers and subject mangling doesn't help
+anything.
+
+What's more likely to happen is that I just start ignoring the work
+policy which is something I've been considering anyway.
+
+--UlVJffcvxoiEqYs2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTtpO9AAoJELSic+t+oim9CXgP/37k6EolG1DjJQUOJw9Ax3LR
+QiEofSrDa+xgy7+SJOWeYhKOglaGhmRNrXpzdBXsaHO+gjqDPDDnqeuSv3axwQDp
+l86hGn49MBVQ5bSYj01uOVJ5gw4YpdRyvqVMQiPhLUlicFJljW5LYYZ7xflEEQr9
+zDSW2tmHJNpaVrBjnStSm/3TeQ0CwT36d+06PKRQt6vVqdMJsa1LB6oKntRYya4c
+NNqGGesVNjZJu+JiqER0w5ROgzG3K+x04QxEu7zl3yjZHjUhqWx7FGlvUyqcXVUT
+m+BN6txHW0DFTFEjhskwujHBSA96hnlFJq8Th1U2NnjY3CjyOwsbGogtxNG9A3Sm
+6xx2lVazPcFAucF1pXBiTPkmtM35c6o39YH8+QaFDXXLRHQFVu442EE6U5ry8QyN
+8gKzbcPIZdawPRHQ4HW62QI43wXG77+A3OjOEwCHnvZh8UKTotci01JkbP5bx+x/
+pzHRH10WMWtlNL3i7zo3eGSrDhT7n/2/hJuwtJKh8otEWBpS2J37Yk+AYiHe1fVZ
+NIXDWTMCwps0PadyvUYkFu+U0U+00yKysZ0b/wB72B3j/pBOyJknByAvsi80fZv0
+cFecmcaK0hej18Vdo5yUv90WwOqEBaHtod58VRqaou7t8dOwjsR702pjLj3wBS/j
+1Tj3tmv0bmqZSoJ5vUK5
+=Gdbm
+-----END PGP SIGNATURE-----
+
+--UlVJffcvxoiEqYs2--
