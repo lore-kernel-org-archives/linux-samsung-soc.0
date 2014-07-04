@@ -1,255 +1,222 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH V3 2/2] ASoC: samsung: Add machine driver for Odroid X2/U3
-Date: Fri, 04 Jul 2014 15:13:45 +0200
-Message-ID: <1404479625-25385-2-git-send-email-s.nawrocki@samsung.com>
-References: <1404479625-25385-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:18908 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752350AbaGDNOh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 09:14:37 -0400
-In-reply-to: <1404479625-25385-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH v6 22/23] rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
+Date: Fri, 04 Jul 2014 15:23:48 +0200
+Message-ID: <53B6AAE4.4020700@collabora.co.uk>
+References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk> <1404467722-26687-23-git-send-email-javier.martinez@collabora.co.uk> <1404474972.14069.20.camel@AMDC1943> <53B6A3A3.9090300@collabora.co.uk> <1404479478.2653.5.camel@AMDC1943>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1404479478.2653.5.camel@AMDC1943>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andreas Farber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org
-Cc: alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chen Zhen <zhen1.chen@samsung.com>
 
-This patch adds the sound subsystem driver for Odroid-X2 and
-Odroid-U3 boards. The codec works in I2S master mode; there
-are two separate audio routing paths defined, as there are
-differences in the signal routing between the X2 and U3 boards,
-i.e. U3 uses single jack for headphones and microphone.
+Hello Krzysztof,
 
-Signed-off-by: Chen Zhen <zhen1.chen@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-Changes since v2:
- - clock settings moved to late_probe, odroidx2_ops removed;
- - added missing driver.pm ops initialization;
- - minor cleanups.
----
- sound/soc/samsung/Kconfig             |    8 ++
- sound/soc/samsung/Makefile            |    2 +
- sound/soc/samsung/odroidx2_max98090.c |  177 +++++++++++++++++++++++++++++++++
- 3 files changed, 187 insertions(+)
- create mode 100644 sound/soc/samsung/odroidx2_max98090.c
+On 07/04/2014 03:11 PM, Krzysztof Kozlowski wrote:
+> On pi=C4=85, 2014-07-04 at 14:52 +0200, Javier Martinez Canillas wrot=
+e:
+>> Hello Krzysztof,
+>>=20
+>> Thanks a lot for your feedback.
+>>=20
+>> On 07/04/2014 01:56 PM, Krzysztof Kozlowski wrote:
+>> > On pi=C4=85, 2014-07-04 at 11:55 +0200, Javier Martinez Canillas w=
+rote:
+>> >> The MAX7802 PMIC has a Real-Time-Clock (RTC) with two alarms.
+>> >> This patch adds support for the RTC and is based on a driver
+>> >> added by Simon Glass to the Chrome OS kernel 3.8 tree.
+>> >>=20
+>> >> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabor=
+a.co.uk>
+>> >> ---
+>> >>=20
+>> >> Changes since v5: None
+>> >>=20
+>> >> Changes since v4: None
+>> >>=20
+>> >> Changes since v3: None
+>> >> ---
+>> >>  drivers/rtc/Kconfig        |  10 +
+>> >>  drivers/rtc/Makefile       |   1 +
+>> >>  drivers/rtc/rtc-max77802.c | 637 +++++++++++++++++++++++++++++++=
+++++++++++++++
+>> >>  3 files changed, 648 insertions(+)
+>> >>  create mode 100644 drivers/rtc/rtc-max77802.c
+>> >>=20
+>> >> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+>> >> index a672dd1..243ac72 100644
+>> >> --- a/drivers/rtc/Kconfig
+>> >> +++ b/drivers/rtc/Kconfig
+>> >> @@ -288,6 +288,16 @@ config RTC_DRV_MAX77686
+>> >>  	  This driver can also be built as a module. If so, the module
+>> >>  	  will be called rtc-max77686.
+>> >> =20
+>> >> +config RTC_DRV_MAX77802
+>> >> +	tristate "Maxim 77802 RTC"
+>> >> +	depends on MFD_MAX77686
+>> >> +	help
+>> >> +	  If you say yes here you will get support for the
+>> >> +	  RTC of Maxim MAX77802 PMIC.
+>> >> +
+>> >> +	  This driver can also be built as a module. If so, the module
+>> >> +	  will be called rtc-max77802.
+>> >> +
+>> >>  config RTC_DRV_RS5C372
+>> >>  	tristate "Ricoh R2025S/D, RS5C372A/B, RV5C386, RV5C387A"
+>> >>  	help
+>> >> diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+>> >> index 70347d0..247de78 100644
+>> >> --- a/drivers/rtc/Makefile
+>> >> +++ b/drivers/rtc/Makefile
+>> >> @@ -81,6 +81,7 @@ obj-$(CONFIG_RTC_DRV_MAX8998)	+=3D rtc-max8998.=
+o
+>> >>  obj-$(CONFIG_RTC_DRV_MAX8997)	+=3D rtc-max8997.o
+>> >>  obj-$(CONFIG_RTC_DRV_MAX6902)	+=3D rtc-max6902.o
+>> >>  obj-$(CONFIG_RTC_DRV_MAX77686)	+=3D rtc-max77686.o
+>> >> +obj-$(CONFIG_RTC_DRV_MAX77802)  +=3D rtc-max77802.o
+>> >>  obj-$(CONFIG_RTC_DRV_MC13XXX)	+=3D rtc-mc13xxx.o
+>> >>  obj-$(CONFIG_RTC_DRV_MCP795)	+=3D rtc-mcp795.o
+>> >>  obj-$(CONFIG_RTC_DRV_MSM6242)	+=3D rtc-msm6242.o
+>> >> diff --git a/drivers/rtc/rtc-max77802.c b/drivers/rtc/rtc-max7780=
+2.c
+>> >> new file mode 100644
+>> >> index 0000000..2f4fc2e
+>> >> --- /dev/null
+>> >> +++ b/drivers/rtc/rtc-max77802.c
+>> >> @@ -0,0 +1,637 @@
+>> >> +/*
+>> >> + * RTC driver for Maxim MAX77802
+>> >> + *
+>> >> + * Copyright (C) 2013 Google, Inc
+>> >> + *
+>> >> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
+>> >> + *
+>> >> + *  based on rtc-max8997.c
+>> >> + *
+>> >> + *  This program is free software; you can redistribute  it and/=
+or modify it
+>> >> + *  under  the terms of  the GNU General  Public License as publ=
+ished by the
+>> >> + *  Free Software Foundation;  either version 2 of the  License,=
+ or (at your
+>> >> + *  option) any later version.
+>> >> + *
+>> >> + */
+>> >> +
+>> >> +#include <linux/slab.h>
+>> >> +#include <linux/rtc.h>
+>> >> +#include <linux/delay.h>
+>> >> +#include <linux/mutex.h>
+>> >> +#include <linux/module.h>
+>> >> +#include <linux/platform_device.h>
+>> >> +#include <linux/mfd/max77686-private.h>
+>> >> +#include <linux/irqdomain.h>
+>> >> +#include <linux/regmap.h>
+>> >> +
+>> >> +/* RTC Control Register */
+>> >> +#define BCD_EN_SHIFT			0
+>> >> +#define BCD_EN_MASK			(1 << BCD_EN_SHIFT)
+>> >> +#define MODEL24_SHIFT			1
+>> >> +#define MODEL24_MASK			(1 << MODEL24_SHIFT)
+>> >> +/* RTC Update Register1 */
+>> >> +#define RTC_UDR_SHIFT			0
+>> >> +#define RTC_UDR_MASK			(1 << RTC_UDR_SHIFT)
+>> >> +#define RTC_RBUDR_SHIFT			4
+>> >> +#define RTC_RBUDR_MASK			(1 << RTC_RBUDR_SHIFT)
+>> >> +/* WTSR and SMPL Register */
+>> >> +#define WTSRT_SHIFT			0
+>> >> +#define SMPLT_SHIFT			2
+>> >> +#define WTSR_EN_SHIFT			6
+>> >> +#define SMPL_EN_SHIFT			7
+>> >> +#define WTSRT_MASK			(3 << WTSRT_SHIFT)
+>> >> +#define SMPLT_MASK			(3 << SMPLT_SHIFT)
+>> >> +#define WTSR_EN_MASK			(1 << WTSR_EN_SHIFT)
+>> >> +#define SMPL_EN_MASK			(1 << SMPL_EN_SHIFT)
+>> >> +/* RTC Hour register */
+>> >> +#define HOUR_PM_SHIFT			6
+>> >> +#define HOUR_PM_MASK			(1 << HOUR_PM_SHIFT)
+>> >> +/* RTC Alarm Enable */
+>> >> +#define ALARM_ENABLE_SHIFT		7
+>> >> +#define ALARM_ENABLE_MASK		(1 << ALARM_ENABLE_SHIFT)
+>> >> +
+>> >> +/* For the RTCAE1 register, we write this value to enable the al=
+arm */
+>> >> +#define ALARM_ENABLE_VALUE		0x77
+>> >> +
+>> >> +#define MAX77802_RTC_UPDATE_DELAY_US	200
+>> >> +#undef MAX77802_RTC_WTSR_SMPL
+>> >=20
+>> > Hmmm... I am not sure what is the purpose of this undef. It disabl=
+es
+>> > some functions below. I saw same code in 77686 RTC driver but this=
+ does
+>> > not help me :).
+>> >=20
+>> > If this is on purpose can you add a comment explaining the
+>> > purpose/cause?
+>> >=20
+>>=20
+>> This is a left over from when a combined 77686/802 driver was attemp=
+ted since as
+>> you said the 77686 RTC driver does the same.
+>>=20
+>> I just checked MAX77802 data sheet and the MAX77802_RTC_WTSR_SMPL re=
+gister is to
+>> control the SMPL (Sudden Momentary Power Loss) and WTSR (Watchdog Ti=
+meout and
+>> Software Resets) features.
+>>=20
+>> Now, I wanted to figure out why the 77686 driver unset that register=
+ and have
+>> those conditionals but git blame shows me that this was already in t=
+he original
+>> commit that added the driver: fca1dd03 ("rtc: max77686: add Maxim 77=
+686 driver").
+>>=20
+>> Also, I see that the MAX8997 driver (drivers/rtc/rtc-max8997.c) also=
+ has a
+>> similar register but actually uses it and doesn't have the condition=
+als if is
+>> disabled. But this driver has two module parameters to control if th=
+ese features
+>> are enabled or not (wtsr_en and smpl_en).
+>>=20
+>> If these two features have been disabled since the max77686 driver w=
+as merged
+>> then I guess that the dead code should be removed from that driver a=
+s well? Or
+>> do you have more hints about why it has been disabled?
+>=20
+> If the max77802 driver in current form works fine for your setup then=
+ I
+> think these functions can be removed completely. It should not harm
+> since this is dead code anyway and it will simplify the driver.
+>=20
 
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 3be49cd..333d645 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -237,3 +237,11 @@ config SND_SOC_SNOW
- 	help
- 	  Say Y if you want to add audio support for various Snow
- 	  boards based on Exynos5 series of SoCs.
-+
-+config SND_SOC_ODROIDX2
-+	tristate "Audio support for Odroid-X2 and Odroid-U3"
-+	depends on SND_SOC_SAMSUNG
-+	select SND_SOC_MAX98090
-+	select SND_SAMSUNG_I2S
-+	help
-+	  Say Y here to enable audio support for the Odroid-X2/U3.
-diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
-index 6469199..e8d9ccd 100644
---- a/sound/soc/samsung/Makefile
-+++ b/sound/soc/samsung/Makefile
-@@ -44,6 +44,7 @@ snd-soc-tobermory-objs := tobermory.o
- snd-soc-lowland-objs := lowland.o
- snd-soc-littlemill-objs := littlemill.o
- snd-soc-bells-objs := bells.o
-+snd-soc-odroidx2-max98090-objs := odroidx2_max98090.o
+Agreed, I'll just remove it.
 
- obj-$(CONFIG_SND_SOC_SAMSUNG_JIVE_WM8750) += snd-soc-jive-wm8750.o
- obj-$(CONFIG_SND_SOC_SAMSUNG_NEO1973_WM8753) += snd-soc-neo1973-wm8753.o
-@@ -69,3 +70,4 @@ obj-$(CONFIG_SND_SOC_TOBERMORY) += snd-soc-tobermory.o
- obj-$(CONFIG_SND_SOC_LOWLAND) += snd-soc-lowland.o
- obj-$(CONFIG_SND_SOC_LITTLEMILL) += snd-soc-littlemill.o
- obj-$(CONFIG_SND_SOC_BELLS) += snd-soc-bells.o
-+obj-$(CONFIG_SND_SOC_ODROIDX2) += snd-soc-odroidx2-max98090.o
-diff --git a/sound/soc/samsung/odroidx2_max98090.c b/sound/soc/samsung/odroidx2_max98090.c
-new file mode 100644
-index 0000000..278edf9
---- /dev/null
-+++ b/sound/soc/samsung/odroidx2_max98090.c
-@@ -0,0 +1,177 @@
-+/*
-+ * Copyright (C) 2014 Samsung Electronics Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ */
-+
-+#include <linux/of.h>
-+#include <linux/module.h>
-+#include <sound/soc.h>
-+#include <sound/pcm_params.h>
-+#include "i2s.h"
-+
-+struct odroidx2_drv_data {
-+	const struct snd_soc_dapm_widget *dapm_widgets;
-+	unsigned int num_dapm_widgets;
-+};
-+
-+/* The I2S CDCLK output clock frequency for the MAX98090 codec */
-+#define MAX98090_MCLK 19200000
-+
-+static int odroidx2_late_probe(struct snd_soc_card *card)
-+{
-+	struct snd_soc_dai *codec_dai = card->rtd[0].codec_dai;
-+	struct snd_soc_dai *cpu_dai = card->rtd[0].cpu_dai;
-+	int ret;
-+
-+	ret = snd_soc_dai_set_sysclk(codec_dai, 0, MAX98090_MCLK,
-+						SND_SOC_CLOCK_IN);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Set the cpu DAI configuration in order to use CDCLK */
-+	return snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
-+					0, SND_SOC_CLOCK_OUT);
-+}
-+
-+static const struct snd_soc_dapm_widget odroidx2_dapm_widgets[] = {
-+	SND_SOC_DAPM_HP("Headphone Jack", NULL),
-+	SND_SOC_DAPM_MIC("Mic Jack", NULL),
-+	SND_SOC_DAPM_MIC("DMIC", NULL),
-+};
-+
-+static const struct snd_soc_dapm_widget odroidu3_dapm_widgets[] = {
-+	SND_SOC_DAPM_HP("Headphone Jack", NULL),
-+	SND_SOC_DAPM_SPK("Speakers", NULL),
-+};
-+
-+static struct snd_soc_dai_link odroidx2_dai[] = {
-+	{
-+		.name		= "MAX98090",
-+		.stream_name	= "MAX98090 PCM",
-+		.codec_dai_name	= "HiFi",
-+		.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
-+				  SND_SOC_DAIFMT_CBM_CFM,
-+	}
-+};
-+
-+static struct snd_soc_card odroidx2 = {
-+	.owner			= THIS_MODULE,
-+	.dai_link		= odroidx2_dai,
-+	.num_links		= ARRAY_SIZE(odroidx2_dai),
-+	.fully_routed		= true,
-+	.late_probe		= odroidx2_late_probe,
-+};
-+
-+struct odroidx2_drv_data odroidx2_drvdata = {
-+	.dapm_widgets		= odroidx2_dapm_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(odroidx2_dapm_widgets),
-+};
-+
-+struct odroidx2_drv_data odroidu3_drvdata = {
-+	.dapm_widgets		= odroidu3_dapm_widgets,
-+	.num_dapm_widgets	= ARRAY_SIZE(odroidu3_dapm_widgets),
-+};
-+
-+static const struct of_device_id odroidx2_audio_of_match[] = {
-+	{
-+		.compatible	= "samsung,odroidx2-audio",
-+		.data		= &odroidx2_drvdata,
-+	}, {
-+		.compatible	= "samsung,odroidu3-audio",
-+		.data		= &odroidu3_drvdata,
-+	},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, odroidx2_audio_of_match);
-+
-+static int odroidx2_audio_probe(struct platform_device *pdev)
-+{
-+	struct device_node *snd_node = pdev->dev.of_node;
-+	struct snd_soc_card *card = &odroidx2;
-+	struct device_node *i2s_node, *codec_node;
-+	struct odroidx2_drv_data *dd;
-+	const struct of_device_id *of_id;
-+	int ret;
-+
-+	of_id = of_match_node(odroidx2_audio_of_match, snd_node);
-+	dd = (struct odroidx2_drv_data *)of_id->data;
-+
-+	card->num_dapm_widgets = dd->num_dapm_widgets;
-+	card->dapm_widgets = dd->dapm_widgets;
-+
-+	card->dev = &pdev->dev;
-+
-+	ret = snd_soc_of_parse_card_name(card, "samsung,model");
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = snd_soc_of_parse_audio_routing(card, "samsung,audio-routing");
-+	if (ret < 0)
-+		return ret;
-+
-+	codec_node = of_parse_phandle(snd_node, "samsung,audio-codec", 0);
-+	if (!codec_node) {
-+		dev_err(&pdev->dev,
-+			"Failed parsing samsung,i2s-codec property\n");
-+		return -EINVAL;
-+	}
-+
-+	i2s_node = of_parse_phandle(snd_node, "samsung,i2s-controller", 0);
-+	if (!i2s_node) {
-+		dev_err(&pdev->dev,
-+			"Failed parsing samsung,i2s-controller property\n");
-+		ret = -EINVAL;
-+		goto err_put_codec_n;
-+	}
-+
-+	odroidx2_dai[0].codec_of_node = codec_node;
-+	odroidx2_dai[0].cpu_of_node = i2s_node;
-+	odroidx2_dai[0].platform_of_node = i2s_node;
-+
-+	ret = snd_soc_register_card(card);
-+	if (ret) {
-+		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n",
-+			ret);
-+		goto err_put_i2s_n;
-+	}
-+	return 0;
-+
-+err_put_i2s_n:
-+	of_node_put(i2s_node);
-+err_put_codec_n:
-+	of_node_put(codec_node);
-+	return ret;
-+}
-+
-+static int odroidx2_audio_remove(struct platform_device *pdev)
-+{
-+	struct snd_soc_card *card = platform_get_drvdata(pdev);
-+
-+	snd_soc_unregister_card(card);
-+
-+	of_node_put((struct device_node *)odroidx2_dai[0].cpu_of_node);
-+	of_node_put((struct device_node *)odroidx2_dai[0].codec_of_node);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver odroidx2_audio_driver = {
-+	.driver = {
-+		.name		= "odroidx2-audio",
-+		.owner		= THIS_MODULE,
-+		.of_match_table	= odroidx2_audio_of_match,
-+		.pm		= &snd_soc_pm_ops,
-+	},
-+	.probe	= odroidx2_audio_probe,
-+	.remove	= odroidx2_audio_remove,
-+};
-+module_platform_driver(odroidx2_audio_driver);
-+
-+MODULE_AUTHOR("Chen Zhen <zhen1.chen@samsung.com>");
-+MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
-+MODULE_DESCRIPTION("ALSA SoC Odroid X2/U3 Audio Support");
-+MODULE_LICENSE("GPL v2");
+> I think the same applies to max77686 (especially that as you said - t=
+his
+> is dead since beginning). Just remove it in separate patch.
+>=20
+
+Ok, I'll add that as a separate cleanup patch in the next version of th=
+e series
+as well.
+
+> Best regards,
+> Krzysztof
+>=20
+>=20
+
+Best regards,
+Javier
+
 --
-1.7.9.5
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
