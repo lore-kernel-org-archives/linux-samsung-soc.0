@@ -1,35 +1,61 @@
-From: Sachin Kamat <spk.linux@gmail.com>
-Subject: Re: [PATCH] thermal: Add missing cpumask_clear
-Date: Fri, 4 Jul 2014 16:53:41 +0530
-Message-ID: <CAK5sBcHDTgyj67xVWgtNH-Z7XU1Ykp6m650_mWBVp=Az2P6f=Q@mail.gmail.com>
-References: <000001cf9771$e2f465c0$a8dd3140$@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [alsa-devel] [PATCH 2/2] ASoC: samsung: Add machine driver for
+ odroidx2
+Date: Fri, 04 Jul 2014 13:24:36 +0200
+Message-ID: <53B68EF4.1090101@samsung.com>
+References: <1400759708-25831-1-git-send-email-s.nawrocki@samsung.com>
+ <1400759708-25831-2-git-send-email-s.nawrocki@samsung.com>
+ <20140522185334.GT12304@sirena.org.uk> <53B68A32.8000203@samsung.com>
+ <53B68B96.9010708@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f51.google.com ([209.85.215.51]:39808 "EHLO
-	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754129AbaGDLXn (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:56985 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753015AbaGDLYj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 07:23:43 -0400
-Received: by mail-la0-f51.google.com with SMTP id mc6so1087753lab.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Jul 2014 04:23:41 -0700 (PDT)
-In-Reply-To: <000001cf9771$e2f465c0$a8dd3140$@samsung.com>
+	Fri, 4 Jul 2014 07:24:39 -0400
+In-reply-to: <53B68B96.9010708@metafoo.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jonghwan Choi <jhbird.choi@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chen Zhen <zhen1.chen@samsung.com>
 
-Hi Jonghwan,
+On 04/07/14 13:10, Lars-Peter Clausen wrote:
+> On 07/04/2014 01:04 PM, Sylwester Nawrocki wrote:
+>> On 22/05/14 20:53, Mark Brown wrote:
+>>>> +	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_I2S
+>>>>> +					| SND_SOC_DAIFMT_NB_NF
+>>>>> +					| SND_SOC_DAIFMT_CBM_CFM);
+>>>>> +	if (ret < 0)
+>>>>> +		return ret;
+>>>>> +
+>>>>> +	ret = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_I2S
+>>>>> +					| SND_SOC_DAIFMT_NB_NF
+>>>>> +					| SND_SOC_DAIFMT_CBM_CFM);
+>>>>> +	if (ret < 0)
+>>>>> +		return ret;
+>>>
+>>> These are constant, set these in the dai_link.
+>>
+>> set_fmt also sets master/slave mode of the I2S DAI, after I moved
+>> this into the cpu_dai link data structure after suspend/resume cycle
+>> the I2S IP block is not being properly re-configured. Should the
+>> format setting be added in resume_post callback, or is there any
+>> other preferred way ? Similarly the syclk settings are being lost
+>> over suspend/resume cycle and nothing restores them.
+> 
+> The I2S driver should save and restore it's register during suspend/resume.
 
-On Fri, Jul 4, 2014 at 3:52 PM, Jonghwan Choi <jhbird.choi@samsung.com> wrote:
-> Cpumasks should be cleared before using.
+OK, thanks. I checked the I2S driver does it, but only when dai->active
+flags is set [1]. However, during system resume this flag is not set
+(in situation where playback or capture wasn't active right before
+system suspend). Is the dai->active test wrong in that driver then ?
+I'm not sure if it could just be removed.
 
-Please explain why and what is issue observed without this.
+[1] http://lxr.free-electrons.com/source/sound/soc/samsung/i2s.c#L913
 
->
-> Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
-> ---
-
--- 
+--
 Regards,
-Sachin.
+Sylwester
