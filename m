@@ -1,66 +1,99 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: ASoC: samsung: MACH_SMDK6450
-Date: Fri, 04 Jul 2014 11:01:52 +0200
-Message-ID: <4203198.qV4EZfpui2@wuerfel>
-References: <1404287238.12021.7.camel@x220> <023d01cf9720$5ed32fc0$1c798f40$@samsung.com> <CAOesGMjdVrOfyrF6X3KoMQxBBYzNZskUsaMaHH653LJgwqpA+Q@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Add I2S dt node for Exynos3250
+Date: Fri, 04 Jul 2014 18:18:14 +0900
+Message-ID: <53B67156.2020702@samsung.com>
+References: <1404373939-10510-1-git-send-email-cw00.choi@samsung.com>
+ <53B66066.4030202@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:58557 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751412AbaGDJCl (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:21595 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752028AbaGDJSR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 05:02:41 -0400
-In-Reply-To: <CAOesGMjdVrOfyrF6X3KoMQxBBYzNZskUsaMaHH653LJgwqpA+Q@mail.gmail.com>
+	Fri, 4 Jul 2014 05:18:17 -0400
+In-reply-to: <53B66066.4030202@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Paul Bolle <pebolle@tiscali.nl>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>, Ben Dooks <ben-linux@fluff.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux@arm.linux.org.uk, kgene.kim@samsung.com, t.figa@samsung.com, kyungmin.park@samsung.com, ideal.song@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thursday 03 July 2014 20:39:41 Olof Johansson wrote:
-> On Thu, Jul 3, 2014 at 5:39 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > Mark Brown wrote:
-> >>
-> >> On Thu, Jul 03, 2014 at 07:37:07AM +0900, Kukjin Kim wrote:
-> >> > On 07/02/14 18:23, Mark Brown wrote:
-> >>
-> >> > >This also wasn't sent to me for review, please always send patches to
-> >> > >maintainers.
-> >>
-> >> > Mark, I always send patches to regarding maintainers and in this case the
-> >> > patch missed the change. I'm resending new patch and if any problems, please
-> >> > let me know. Just note, I just wanted to check whether there is no problem
-> >> > with other maintainers' tree early in -next tree.
-> >>
-> >> It looks like you've sent it to broonie@linaro.org not broonie@kernel.org
-> >> which is listed in MAINTAINERS and what I use for e-mail - upstream mail
-> >> that goes to my work address often just gets dropped on the floor (and
-> >> generally ends up at the bottom of my queue to look at) since it ends up
-> >> in a completely different place to my personal mail.
-> >
-> > Mark, oh, I see. But I checked your e-mail address from recent your sign-off
-> > in git commit so, just thought it should be fine.
-> >
-> > I will use kernel.org for your e-mail address next time 
+Dear Kukjin and Tomasz,
+
+On 07/04/2014 05:05 PM, Tomasz Figa wrote:
+> Hi Chanwoo,
 > 
-> Mark is the _only_ linux developer in the world who will give you crap
-> for sending him patches to the very same email that he signs off all
-> his work with.
+> On 03.07.2014 09:52, Chanwoo Choi wrote:
+>> From: Tomasz Figa <t.figa@samsung.com>
+>>
+>> This patch add I2S (Inter-IC Sound) dt node which supports 1-port stereo
+>> (1 channels) IIS-bus for audio interface with DMA-based operation.
+>>
+>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+>> Signed-off-by: Inha Song <ideal.song@samsung.com>
+>> Tested-by: Inha Song <ideal.song@samsung.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos3250.dtsi | 13 +++++++++++++
+>>  1 file changed, 13 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+>> index 1f8384f..e9017ef 100644
+>> --- a/arch/arm/boot/dts/exynos3250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+>> @@ -644,6 +644,19 @@
+>>  			status = "disabled";
+>>  		};
+>>  
+>> +		i2s: i2s@13970000 {
 > 
-> I really wish Linaro would just let him sign off with his
-> long-standing kernel.org email address instead so the rest of us
-> wouldn't have to keep track of this. 
+> Shouldn't the label be rather called "i2s2" as the pinctrl entry below
+> suggests?
+> 
+>> +			compatible = "samsung,s3c6410-i2s";
+>> +			reg = <0x13970000 0x100>;
+>> +			interrupts = <0 126 0>;
+>> +			clocks = <&cmu CLK_I2S>, <&cmu CLK_SCLK_I2S>;
+>> +			clock-names = "iis", "i2s_opclk0";
+>> +			dmas = <&pdma0 14>, <&pdma0 13>;
+>> +			dma-names = "tx", "rx";
+>> +			pinctrl-0 = <&i2s2_bus>;
+>> +			pinctrl-name = "default";
+> 
+> "pinctrl-name" is not a valid property. I suppose it should be
+> "pinctrl-names".
 
-FWIW David Miller has a similar policy: he only applies networking
-patches that are sent to the netdev mailing list. This seems like
-a good idea in general (to ensure they are getting exposed to the
-public).
+I modify this patch as following. If you confirm following patch, I'll re-send patchset(v2).
 
-Mark, any chance we could convince to pick up patches from
-alsa-devel in the future even if they are sent to the wrong
-personal email account of yours? I would assume that would only
-require a small change in your filter rules, not a change in your
-workflow.
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 3e678fa..77a06df 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -425,6 +425,19 @@
+ 			status = "disabled";
+ 		};
+ 
++		i2s2: i2s@13970000 {
++			compatible = "samsung,s3c6410-i2s";
++			reg = <0x13970000 0x100>;
++			interrupts = <0 126 0>;
++			clocks = <&cmu CLK_I2S>, <&cmu CLK_SCLK_I2S>;
++			clock-names = "iis", "i2s_opclk0";
++			dmas = <&pdma0 14>, <&pdma0 13>;
++			dma-names = "tx", "rx";
++			pinctrl-0 = <&i2s2_bus>;
++			pinctrl-names = "default";
++			status = "disabled";
++		};
++
+ 		pwm: pwm@139D0000 {
+ 			compatible = "samsung,exynos4210-pwm";
+ 			reg = <0x139D0000 0x1000>;
+-- 
+1.8.0
 
-	Arnd
+
+Best Regards,
+Chanwoo Choi
