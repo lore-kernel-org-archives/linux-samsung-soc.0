@@ -1,877 +1,233 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v7 24/24] ARM: dts: Add max77802 to exynos5420-peach-pit and exynos5800-peach-pi
-Date: Fri,  4 Jul 2014 22:24:27 +0200
-Message-ID: <1404505467-26526-25-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v7 08/24] mfd: max77686: Add Dynamic Voltage Scaling (DVS)
+ support
+Date: Fri,  4 Jul 2014 22:24:11 +0200
+Message-ID: <1404505467-26526-9-git-send-email-javier.martinez@collabora.co.uk>
 References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Tushar Behera <trblinux@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Peach pit and pi boards uses a Maxim 77802 power management
-IC to drive regulators and its Real Time Clock. This patch
-adds support for this chip.
+Some regulators on the MAX77686 PMIC have Dynamic Voltage Scaling
+(DVS) support that allows output voltage to change dynamically.
 
-These are the device nodes and pinctrl configuration that
-are present on the Peach pit DeviceTree source file in the
-the Chrome OS kernel 3.8 tree.
+For MAX77686, these regulators are Buck regulators 2, 3 and 4.
+
+Each Buck output voltage is selected using a set of external
+inputs: DVS1-3 and SELB2-4.
+
+DVS registers can be used to configure the output voltages for each
+Buck regulator and which one is active is controled by DVSx lines.
+
+SELBx lines are used to control if individual Buck lines are ON or OFF.
+
+This patch adds support to configure the DVSx and SELBx lines
+from DT and to setup and read the GPIO lines connected to them.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Tested-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
 
-Changes since v6: None
-
-Changes since v5:
- - Fix style issues and a typo on peach pit and pi DTS.
-   Suggested by Tushar Behera.
-
-Changes since v4: None
-
-Changes since v3:
- - Add support for Exynos5800 based Peach pi board. Suggested by Doug Anderson.
- - Model the actual regulators relationship instead of a simplistic model.
-   Suggested by Mark Brown.
-
-Changes since v2: None
-
-Changes since v1:
- - Use "regulators" for child node instead of "voltage-regulators" to be
-   consistent with other PMIC. Suggested by Mark Brown.
- - Use regulators node names instead of the deprecated "regulator-compatible"
-   property. Suggested by Mark Brown.
+Changes since v6:
+ - Add a comment that max77686_read_gpios() function can sleep.
+   Sugggested by Krzysztof Kozlowski
 ---
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 382 +++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 382 +++++++++++++++++++++++++++++
- 2 files changed, 764 insertions(+)
+ drivers/mfd/max77686.c       | 119 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/max77686.h |  18 ++++---
+ 2 files changed, 129 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index b2f1237..99768d7 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -143,6 +143,350 @@
- 	ddc = <&i2c_2>;
+diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
+index 8650832..d193873 100644
+--- a/drivers/mfd/max77686.c
++++ b/drivers/mfd/max77686.c
+@@ -32,8 +32,10 @@
+ #include <linux/mfd/core.h>
+ #include <linux/mfd/max77686.h>
+ #include <linux/mfd/max77686-private.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
++#include <linux/export.h>
+ 
+ #define I2C_ADDR_RTC	(0x0C >> 1)
+ 
+@@ -101,9 +103,119 @@ static const struct of_device_id max77686_pmic_dt_match[] = {
+ 	{},
  };
  
-+&hsi2c_4 {
-+	status = "okay";
-+	clock-frequency = <400000>;
++static void max77686_dt_parse_dvs_gpio(struct device *dev)
++{
++	struct max77686_platform_data *pd = dev_get_platdata(dev);
++	int i;
 +
-+	max77802-pmic@9 {
-+		compatible = "maxim,max77802";
-+		interrupt-parent = <&gpx3>;
-+		interrupts = <1 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&max77802_irq>, <&pmic_selb>,
-+			    <&pmic_dvs_1>, <&pmic_dvs_2>, <&pmic_dvs_3>;
-+		wakeup-source;
-+		reg = <0x9>;
-+		#clock-cells = <1>;
++	/*
++	 * NOTE: we don't consider GPIO errors fatal; board may have some lines
++	 * directly pulled high or low and thus doesn't specify them.
++	 */
++	for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_dvs); i++)
++		pd->buck_gpio_dvs[i] =
++			devm_gpiod_get_index(dev, "max77686,pmic-buck-dvs", i);
 +
-+		/* Using idx 1 means warm reset will get good voltage */
-+		max77686,pmic-buck-default-dvs-idx = <1>;
-+		max77686,pmic-buck-dvs-gpios = <&gpy7 6 GPIO_ACTIVE_HIGH>,
-+					       <&gpj4 2 GPIO_ACTIVE_HIGH>,
-+					       <&gpj4 3 GPIO_ACTIVE_HIGH>;
-+		max77686,pmic-buck-selb-gpios = <&gph0 2 GPIO_ACTIVE_HIGH>,
-+						<&gph0 3 GPIO_ACTIVE_HIGH>,
-+						<&gph0 4 GPIO_ACTIVE_HIGH>,
-+						<&gph0 5 GPIO_ACTIVE_HIGH>,
-+						<&gph0 6 GPIO_ACTIVE_HIGH>;
++	for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++)
++		pd->buck_gpio_selb[i] =
++			devm_gpiod_get_index(dev, "max77686,pmic-buck-selb", i);
++}
 +
-+		inb1-supply = <&tps65090_dcdc2>;
-+		inb2-supply = <&tps65090_dcdc1>;
-+		inb3-supply = <&tps65090_dcdc2>;
-+		inb4-supply = <&tps65090_dcdc2>;
-+		inb5-supply = <&tps65090_dcdc1>;
-+		inb6-supply = <&tps65090_dcdc2>;
-+		inb7-supply = <&tps65090_dcdc1>;
-+		inb8-supply = <&tps65090_dcdc1>;
-+		inb9-supply = <&tps65090_dcdc1>;
-+		inb10-supply = <&tps65090_dcdc1>;
++/**
++ * max77686_setup_gpios() - init DVS-related GPIOs
++ * @dev: device whose platform data contains the dvs GPIOs information
++ *
++ * This function claims / initalizations GPIOs related to DVS if they are
++ * defined. This may have the effect of switching voltages if the
++ * pdata->buck_default_idx does not match the boot time state of pins.
++ */
++int max77686_setup_gpios(struct device *dev)
++{
++	struct max77686_platform_data *pd = dev_get_platdata(dev);
++	int buck_default_idx = pd->buck_default_idx;
++	int ret;
++	int i;
 +
-+		inl1-supply = <&buck5_reg>;
-+		inl2-supply = <&buck7_reg>;
-+		inl3-supply = <&buck9_reg>;
-+		inl4-supply = <&buck9_reg>;
-+		inl5-supply = <&buck9_reg>;
-+		inl6-supply = <&tps65090_dcdc2>;
-+		inl7-supply = <&buck9_reg>;
-+		inl9-supply = <&tps65090_dcdc2>;
-+		inl10-supply = <&buck7_reg>;
++	/* Set all SELB high to avoid glitching while DVS is changing */
++	for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++) {
++		struct gpio_desc *gpio = pd->buck_gpio_selb[i];
 +
-+		regulators {
-+			buck1_reg: BUCK1 {
-+				regulator-name = "vdd_mif";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <12500>;
-+			};
++		/* OK if some GPIOs aren't defined */
++		if (IS_ERR(gpio))
++			continue;
 +
-+			buck2_reg: BUCK2 {
-+				regulator-name = "vdd_arm_real";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <12500>;
-+			};
++		ret = gpiod_direction_output_raw(gpio, 1);
++		if (ret) {
++			dev_err(dev, "can't set gpio[%d] dir: %d\n", i, ret);
++			return ret;
++		}
++	}
 +
-+			buck3_reg: BUCK3 {
-+				regulator-name = "vdd_int_real";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1400000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <12500>;
-+			};
++	/* Set our initial setting */
++	for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_dvs); i++) {
++		struct gpio_desc *gpio = pd->buck_gpio_dvs[i];
 +
-+			buck4_reg: BUCK4 {
-+				regulator-name = "vdd_g3d";
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1400000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <12500>;
-+			};
++		/* OK if some GPIOs aren't defined */
++		if (IS_ERR(gpio))
++			continue;
 +
-+			buck5_reg: BUCK5 {
-+				regulator-name = "vdd_1v2";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
++		/* If a GPIO is valid, set it */
++		gpiod_direction_output(gpio, (buck_default_idx >> i) & 1);
++		if (ret) {
++			dev_err(dev, "can't set gpio[%d]: dir %d\n", i, ret);
++			return ret;
++		}
++	}
 +
-+			buck6_reg: BUCK6 {
-+				regulator-name = "vdd_kfc";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <12500>;
-+			};
++	/* Now set SELB low to take effect */
++	for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++) {
++		struct gpio_desc *gpio = pd->buck_gpio_selb[i];
 +
-+			buck7_reg: BUCK7 {
-+				regulator-name = "vdd_1v35";
-+				regulator-min-microvolt = <1350000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
++		if (!IS_ERR(gpio))
++			gpiod_set_value(gpio, 0);
++	}
 +
-+			buck8_reg: BUCK8 {
-+				regulator-name = "vdd_emmc";
-+				regulator-min-microvolt = <2850000>;
-+				regulator-max-microvolt = <2850000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
++	return 0;
++}
++EXPORT_SYMBOL_GPL(max77686_setup_gpios);
 +
-+			buck9_reg: BUCK9 {
-+				regulator-name = "vdd_2v";
-+				regulator-min-microvolt = <2000000>;
-+				regulator-max-microvolt = <2000000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
++/**
++ * max77686_read_gpios() - read the current state of the dvs GPIOs
++ * @pdata: platform data that contains the dvs GPIOs information
++ *
++ * We call this function at bootup to detect what slot the firmware was
++ * using for the DVS GPIOs.  That way we can properly preserve the firmware's
++ * voltage settings
++ *
++ * This function can sleep so must not be called from atomic context.
++ */
++int max77686_read_gpios(struct max77686_platform_data *pdata)
++{
++	int buck_default_idx = pdata->buck_default_idx;
++	int result = 0;
++	int i;
 +
-+			buck10_reg: BUCK10 {
-+				regulator-name = "vdd_1v8";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
++	for (i = 0; i < ARRAY_SIZE(pdata->buck_gpio_dvs); i++) {
++		struct gpio_desc *gpio = pdata->buck_gpio_dvs[i];
 +
-+			ldo1_reg: LDO1 {
-+				regulator-name = "vdd_1v0";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+			};
++		/* OK if some GPIOs aren't defined; we'll use default */
++		if (IS_ERR(gpio)) {
++			result |= buck_default_idx & (1 << i);
++			continue;
++		}
 +
-+			ldo2_reg: LDO2 {
-+				regulator-name = "vdd_1v2_2";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+			};
++		if (gpiod_get_value_cansleep(gpio))
++			result |= 1 << i;
++	}
 +
-+			ldo3_reg: LDO3 {
-+				regulator-name = "vdd_1v8_3";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
++	return result;
++}
++EXPORT_SYMBOL_GPL(max77686_read_gpios);
 +
-+			vqmmc_sdcard: ldo4_reg: LDO4 {
-+				regulator-name = "vdd_sd";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo5_reg: LDO5 {
-+				regulator-name = "vdd_1v8_5";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo6_reg: LDO6 {
-+				regulator-name = "vdd_1v8_6";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo7_reg: LDO7 {
-+				regulator-name = "vdd_1v8_7";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			ldo8_reg: LDO8 {
-+				regulator-name = "vdd_ldo8";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo9_reg: LDO9 {
-+				regulator-name = "vdd_ldo9";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo10_reg: LDO10 {
-+				regulator-name = "vdd_ldo10";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo11_reg: LDO11 {
-+				regulator-name = "vdd_ldo11";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo12_reg: LDO12 {
-+				regulator-name = "vdd_ldo12";
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo13_reg: LDO13 {
-+				regulator-name = "vdd_ldo13";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo14_reg: LDO14 {
-+				regulator-name = "vdd_ldo14";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo15_reg: LDO15 {
-+				regulator-name = "vdd_ldo15";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo17_reg: LDO17 {
-+				regulator-name = "vdd_g3ds";
-+				regulator-min-microvolt = <900000>;
-+				regulator-max-microvolt = <1400000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo18_reg: LDO18 {
-+				regulator-name = "ldo_18";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			ldo19_reg: LDO19 {
-+				regulator-name = "ldo_19";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			ldo20_reg: LDO20 {
-+				regulator-name = "ldo_20";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo21_reg: LDO21 {
-+				regulator-name = "ldo_21";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+			};
-+
-+			ldo23_reg: LDO23 {
-+				regulator-name = "ldo_23";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+			ldo24_reg: LDO24 {
-+				regulator-name = "ldo_24";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+			};
-+
-+			ldo25_reg: LDO25 {
-+				regulator-name = "ldo_25";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+
-+			ldo26_reg: LDO26 {
-+				regulator-name = "ldo_26";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+			};
-+
-+			ldo27_reg: LDO27 {
-+				regulator-name = "ldo_27";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+			};
-+
-+			ldo28_reg: LDO28 {
-+				regulator-name = "ldo_28";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			ldo29_reg: LDO29 {
-+				regulator-name = "ldo_29";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			ldo30_reg: LDO30 {
-+				regulator-name = "vdd_mifs";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo32_reg: LDO32 {
-+				regulator-name = "ldo_32";
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+			};
-+
-+			ldo33_reg: LDO33 {
-+				regulator-name = "ldo_33";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+			};
-+
-+			ldo34_reg: LDO34 {
-+				regulator-name = "ldo_34";
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+			};
-+
-+			ldo35_reg: LDO35 {
-+				regulator-name = "ldo_35";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				inl2-supply = <&buck7_reg>;
-+			};
-+		};
-+	};
-+};
-+
- &hsi2c_7 {
- 	status = "okay";
+ static struct max77686_platform_data *max77686_i2c_parse_dt_pdata(struct device
+ 								  *dev)
+ {
++	struct device_node *np = dev->of_node;
+ 	struct max77686_platform_data *pd;
  
-@@ -264,12 +608,42 @@
- 		samsung,pin-drv = <0>;
- 	};
+ 	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
+@@ -111,6 +223,13 @@ static struct max77686_platform_data *max77686_i2c_parse_dt_pdata(struct device
+ 		return NULL;
  
-+	max77802_irq: max77802-irq {
-+		samsung,pins = "gpx3-1";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
+ 	dev->platform_data = pd;
 +
- 	hdmi_hpd_irq: hdmi-hpd-irq {
- 		samsung,pins = "gpx3-7";
- 		samsung,pin-function = <0>;
- 		samsung,pin-pud = <1>;
- 		samsung,pin-drv = <0>;
- 	};
++	/* Read default index and ignore errors, since default is 0 */
++	of_property_read_u32(np, "max77686,pmic-buck-default-dvs-idx",
++			     &pd->buck_default_idx);
 +
-+	pmic_dvs_1: pmic-dvs-1 {
-+		samsung,pins = "gpy7-6";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
++	max77686_dt_parse_dvs_gpio(dev);
 +
-+&pinctrl_2 {
-+	pmic_dvs_2: pmic-dvs-2 {
-+		samsung,pins = "gpj4-2";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
+ 	return pd;
+ }
+ 
+diff --git a/include/linux/mfd/max77686.h b/include/linux/mfd/max77686.h
+index 4cbcc13..46a736b 100644
+--- a/include/linux/mfd/max77686.h
++++ b/include/linux/mfd/max77686.h
+@@ -99,15 +99,17 @@ struct max77686_platform_data {
+ 	struct max77686_opmode_data *opmode_data;
+ 
+ 	/*
+-	 * GPIO-DVS feature is not enabled with the current version of
+-	 * MAX77686 driver. Buck2/3/4_voltages[0] is used as the default
+-	 * voltage at probe. DVS/SELB gpios are set as OUTPUT-LOW.
++	 * GPIO-DVS feature is not fully enabled with the current version of
++	 * MAX77686 driver, but the driver does support using a DVS index other
++	 * than the default of 0.
+ 	 */
+-	int buck234_gpio_dvs[3]; /* GPIO of [0]DVS1, [1]DVS2, [2]DVS3 */
+-	int buck234_gpio_selb[3]; /* [0]SELB2, [1]SELB3, [2]SELB4 */
+-	unsigned int buck2_voltage[8]; /* buckx_voltage in uV */
+-	unsigned int buck3_voltage[8];
+-	unsigned int buck4_voltage[8];
++	struct gpio_desc *buck_gpio_dvs[3]; /* GPIO of [0]DVS1, [1]DVS2, [2]DVS3 */
++	int buck_default_idx; /* Default value of DVS1, 2, 3 */
 +
-+	pmic_dvs_3: pmic-dvs-3 {
-+		samsung,pins = "gpj4-3";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
++	struct gpio_desc *buck_gpio_selb[3]; /* Buck regulators 2, 3, 4 */
  };
  
- &pinctrl_3 {
-@@ -299,6 +673,14 @@
- 		samsung,pin-pud = <0>;
- 		samsung,pin-drv = <0>;
- 	};
++extern int max77686_setup_gpios(struct device *dev);
++extern int max77686_read_gpios(struct max77686_platform_data *pdata);
 +
-+	pmic_selb: pmic-selb {
-+		samsung,pins = "gph0-2", "gph0-3", "gph0-4", "gph0-5",
-+			       "gph0-6";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
- };
- 
- &rtc {
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 5c60bbe..eba5e47 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -141,6 +141,350 @@
- 	ddc = <&i2c_2>;
- };
- 
-+&hsi2c_4 {
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	max77802-pmic@9 {
-+		compatible = "maxim,max77802";
-+		interrupt-parent = <&gpx3>;
-+		interrupts = <1 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&max77802_irq>, <&pmic_selb>,
-+			    <&pmic_dvs_1>, <&pmic_dvs_2>, <&pmic_dvs_3>;
-+		wakeup-source;
-+		reg = <0x9>;
-+		#clock-cells = <1>;
-+
-+		/* Using idx 1 means warm reset will get good voltage */
-+		max77686,pmic-buck-default-dvs-idx = <1>;
-+		max77686,pmic-buck-dvs-gpios = <&gpy7 6 GPIO_ACTIVE_HIGH>,
-+					       <&gpj4 2 GPIO_ACTIVE_HIGH>,
-+					       <&gpj4 3 GPIO_ACTIVE_HIGH>;
-+		max77686,pmic-buck-selb-gpios = <&gph0 2 GPIO_ACTIVE_HIGH>,
-+						<&gph0 3 GPIO_ACTIVE_HIGH>,
-+						<&gph0 4 GPIO_ACTIVE_HIGH>,
-+						<&gph0 5 GPIO_ACTIVE_HIGH>,
-+						<&gph0 6 GPIO_ACTIVE_HIGH>;
-+
-+		inb1-supply = <&tps65090_dcdc2>;
-+		inb2-supply = <&tps65090_dcdc1>;
-+		inb3-supply = <&tps65090_dcdc2>;
-+		inb4-supply = <&tps65090_dcdc2>;
-+		inb5-supply = <&tps65090_dcdc1>;
-+		inb6-supply = <&tps65090_dcdc2>;
-+		inb7-supply = <&tps65090_dcdc1>;
-+		inb8-supply = <&tps65090_dcdc1>;
-+		inb9-supply = <&tps65090_dcdc1>;
-+		inb10-supply = <&tps65090_dcdc1>;
-+
-+		inl1-supply = <&buck5_reg>;
-+		inl2-supply = <&buck7_reg>;
-+		inl3-supply = <&buck9_reg>;
-+		inl4-supply = <&buck9_reg>;
-+		inl5-supply = <&buck9_reg>;
-+		inl6-supply = <&tps65090_dcdc2>;
-+		inl7-supply = <&buck9_reg>;
-+		inl9-supply = <&tps65090_dcdc2>;
-+		inl10-supply = <&buck7_reg>;
-+
-+		regulators {
-+			buck1_reg: BUCK1 {
-+				regulator-name = "vdd_mif";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <12500>;
-+			};
-+
-+			buck2_reg: BUCK2 {
-+				regulator-name = "vdd_arm_real";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <12500>;
-+			};
-+
-+			buck3_reg: BUCK3 {
-+				regulator-name = "vdd_int_real";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1400000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <12500>;
-+			};
-+
-+			buck4_reg: BUCK4 {
-+				regulator-name = "vdd_g3d";
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1400000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <12500>;
-+			};
-+
-+			buck5_reg: BUCK5 {
-+				regulator-name = "vdd_1v2";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+
-+			buck6_reg: BUCK6 {
-+				regulator-name = "vdd_kfc";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1500000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				regulator-ramp-delay = <12500>;
-+			};
-+
-+			buck7_reg: BUCK7 {
-+				regulator-name = "vdd_1v35";
-+				regulator-min-microvolt = <1350000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+
-+			buck8_reg: BUCK8 {
-+				regulator-name = "vdd_emmc";
-+				regulator-min-microvolt = <2850000>;
-+				regulator-max-microvolt = <2850000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+
-+			buck9_reg: BUCK9 {
-+				regulator-name = "vdd_2v";
-+				regulator-min-microvolt = <2000000>;
-+				regulator-max-microvolt = <2000000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+
-+			buck10_reg: BUCK10 {
-+				regulator-name = "vdd_1v8";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+
-+			ldo1_reg: LDO1 {
-+				regulator-name = "vdd_1v0";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo2_reg: LDO2 {
-+				regulator-name = "vdd_1v2_2";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+			};
-+
-+			ldo3_reg: LDO3 {
-+				regulator-name = "vdd_1v8_3";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			vqmmc_sdcard: ldo4_reg: LDO4 {
-+				regulator-name = "vdd_sd";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <2800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo5_reg: LDO5 {
-+				regulator-name = "vdd_1v8_5";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo6_reg: LDO6 {
-+				regulator-name = "vdd_1v8_6";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo7_reg: LDO7 {
-+				regulator-name = "vdd_1v8_7";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			ldo8_reg: LDO8 {
-+				regulator-name = "vdd_ldo8";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo9_reg: LDO9 {
-+				regulator-name = "vdd_ldo9";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo10_reg: LDO10 {
-+				regulator-name = "vdd_ldo10";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo11_reg: LDO11 {
-+				regulator-name = "vdd_ldo11";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo12_reg: LDO12 {
-+				regulator-name = "vdd_ldo12";
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo13_reg: LDO13 {
-+				regulator-name = "vdd_ldo13";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo14_reg: LDO14 {
-+				regulator-name = "vdd_ldo14";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo15_reg: LDO15 {
-+				regulator-name = "vdd_ldo15";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo17_reg: LDO17 {
-+				regulator-name = "vdd_g3ds";
-+				regulator-min-microvolt = <900000>;
-+				regulator-max-microvolt = <1400000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo18_reg: LDO18 {
-+				regulator-name = "ldo_18";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			ldo19_reg: LDO19 {
-+				regulator-name = "ldo_19";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			ldo20_reg: LDO20 {
-+				regulator-name = "ldo_20";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo21_reg: LDO21 {
-+				regulator-name = "ldo_21";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+			};
-+
-+			ldo23_reg: LDO23 {
-+				regulator-name = "ldo_23";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+			ldo24_reg: LDO24 {
-+				regulator-name = "ldo_24";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+			};
-+
-+			ldo25_reg: LDO25 {
-+				regulator-name = "ldo_25";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+
-+			ldo26_reg: LDO26 {
-+				regulator-name = "ldo_26";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+			};
-+
-+			ldo27_reg: LDO27 {
-+				regulator-name = "ldo_27";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+			};
-+
-+			ldo28_reg: LDO28 {
-+				regulator-name = "ldo_28";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			ldo29_reg: LDO29 {
-+				regulator-name = "ldo_29";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			ldo30_reg: LDO30 {
-+				regulator-name = "vdd_mifs";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo32_reg: LDO32 {
-+				regulator-name = "ldo_32";
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+			};
-+
-+			ldo33_reg: LDO33 {
-+				regulator-name = "ldo_33";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+			};
-+
-+			ldo34_reg: LDO34 {
-+				regulator-name = "ldo_34";
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+			};
-+
-+			ldo35_reg: LDO35 {
-+				regulator-name = "ldo_35";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				inl2-supply = <&buck7_reg>;
-+			};
-+		};
-+	};
-+};
-+
- &hsi2c_7 {
- 	status = "okay";
- 
-@@ -262,12 +606,42 @@
- 		samsung,pin-drv = <0>;
- 	};
- 
-+	max77802_irq: max77802-irq {
-+		samsung,pins = "gpx3-1";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
- 	hdmi_hpd_irq: hdmi-hpd-irq {
- 		samsung,pins = "gpx3-7";
- 		samsung,pin-function = <0>;
- 		samsung,pin-pud = <1>;
- 		samsung,pin-drv = <0>;
- 	};
-+
-+	pmic_dvs_1: pmic-dvs-1 {
-+		samsung,pins = "gpy7-6";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-+
-+&pinctrl_2 {
-+	pmic_dvs_2: pmic-dvs-2 {
-+		samsung,pins = "gpj4-2";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	pmic_dvs_3: pmic-dvs-3 {
-+		samsung,pins = "gpj4-3";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
- };
- 
- &pinctrl_3 {
-@@ -297,6 +671,14 @@
- 		samsung,pin-pud = <0>;
- 		samsung,pin-drv = <0>;
- 	};
-+
-+	pmic_selb: pmic-selb {
-+		samsung,pins = "gph0-2", "gph0-3", "gph0-4", "gph0-5",
-+			       "gph0-6";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
- };
- 
- &rtc {
+ #endif /* __LINUX_MFD_MAX77686_H */
 -- 
 2.0.0.rc2
