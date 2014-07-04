@@ -1,57 +1,45 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [alsa-devel] [PATCH 2/2] ASoC: samsung: Add machine driver for
- odroidx2
-Date: Fri, 04 Jul 2014 13:28:22 +0200
-Message-ID: <53B68FD6.4090601@metafoo.de>
-References: <1400759708-25831-1-git-send-email-s.nawrocki@samsung.com> <1400759708-25831-2-git-send-email-s.nawrocki@samsung.com> <20140522185334.GT12304@sirena.org.uk> <53B68A32.8000203@samsung.com> <53B68B96.9010708@metafoo.de> <53B68EF4.1090101@samsung.com>
+From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for
+ ARMv6+
+Date: Fri, 4 Jul 2014 12:27:10 +0100
+Message-ID: <alpine.DEB.2.02.1407041226530.17694@kaball.uk.xensource.com>
+References: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-out-187.synserver.de ([212.40.185.187]:1044 "EHLO
-	smtp-out-187.synserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756860AbaGDL2Y (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 07:28:24 -0400
-In-Reply-To: <53B68EF4.1090101@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, kvm@vger.kernel.org, linux-sh@vger.kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Sekhar Nori <nsekhar@ti.com>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, kvmarm@lists.cs.columbia.edu, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Magnus Damm <magnus.damm@gmail.com>, Gleb Natapov <gleb@kernel.org>, Tony Lindgren <tony@atomide.com>, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Marc Zyngier <marc.zyngier@arm.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Simon Horman <horms@verge.net.>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Chen Zhen <zhen1.chen@samsung.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-On 07/04/2014 01:24 PM, Sylwester Nawrocki wrote:
-> On 04/07/14 13:10, Lars-Peter Clausen wrote:
->> On 07/04/2014 01:04 PM, Sylwester Nawrocki wrote:
->>> On 22/05/14 20:53, Mark Brown wrote:
->>>>> +	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_I2S
->>>>>> +					| SND_SOC_DAIFMT_NB_NF
->>>>>> +					| SND_SOC_DAIFMT_CBM_CFM);
->>>>>> +	if (ret < 0)
->>>>>> +		return ret;
->>>>>> +
->>>>>> +	ret = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_I2S
->>>>>> +					| SND_SOC_DAIFMT_NB_NF
->>>>>> +					| SND_SOC_DAIFMT_CBM_CFM);
->>>>>> +	if (ret < 0)
->>>>>> +		return ret;
->>>>
->>>> These are constant, set these in the dai_link.
->>>
->>> set_fmt also sets master/slave mode of the I2S DAI, after I moved
->>> this into the cpu_dai link data structure after suspend/resume cycle
->>> the I2S IP block is not being properly re-configured. Should the
->>> format setting be added in resume_post callback, or is there any
->>> other preferred way ? Similarly the syclk settings are being lost
->>> over suspend/resume cycle and nothing restores them.
->>
->> The I2S driver should save and restore it's register during suspend/resume.
->
-> OK, thanks. I checked the I2S driver does it, but only when dai->active
-> flags is set [1]. However, during system resume this flag is not set
-> (in situation where playback or capture wasn't active right before
-> system suspend). Is the dai->active test wrong in that driver then ?
-> I'm not sure if it could just be removed.
+On Tue, 1 Jul 2014, Russell King wrote:
+> ARMv6 and greater introduced a new instruction ("bx") which can be used
+> to return from function calls.  Recent CPUs perform better when the
+> "bx lr" instruction is used rather than the "mov pc, lr" instruction,
+> and this sequence is strongly recommended to be used by the ARM
+> architecture manual (section A.4.1.1).
+> 
+> We provide a new macro "ret" with all its variants for the condition
+> code which will resolve to the appropriate instruction.
+> 
+> Rather than doing this piecemeal, and miss some instances, change all
+> the "mov pc" instances to use the new macro, with the exception of
+> the "movs" instruction and the kprobes code.  This allows us to detect
+> the "mov pc, lr" case and fix it up - and also gives us the possibility
+> of deploying this for other registers depending on the CPU selection.
+> 
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 
-Yes, just remove the check.
+For the Xen changes:
 
-- Lars
+Acked-by: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
