@@ -1,67 +1,67 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ASoC: samsung: Correct I2S DAI suspend/resume ops
-Date: Fri, 04 Jul 2014 16:05:45 +0200
-Message-ID: <1404482745-29177-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:31048 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752600AbaGDOGB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 10:06:01 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N86005DBXU0FVB0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Jul 2014 23:06:00 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] ARM: convert all "mov.* pc, reg" to "bx reg" for ARMv6+
+Date: Fri, 4 Jul 2014 16:24:38 +0200
+Message-ID: <20140704142438.GA7827@pengutronix.de>
+References: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <E1X20Rs-00082S-KI@rmk-PC.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, kvm@vger.kernel.org, linux-sh@vger.kernel.org, Kevin Hilman <khilman@deeprootsystems.com>, Sekhar Nori <nsekhar@ti.com>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, kvmarm@lists.cs.columbia.edu, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Herbert Xu <herbert@gondor.apana.org.au>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Magnus Damm <magnus.damm@gmail.com>, Gleb Natapov <gleb@kernel.org>, Tony Lindgren <tony@atomide.com>, linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Marc Zyngier <marc.zyngier@arm.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Simon Horman <horms@verge.net.>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org
-Cc: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-We should save/restore relevant I2S registers regardless of
-the dai->active flag, otherwise some settings are being lost
-after system suspend/resume cycle. E.g. I2S slave mode set only
-during dai initialization is not preserved and the device ends
-up in master mode after system resume.
+On Tue, Jul 01, 2014 at 04:58:24PM +0100, Russell King wrote:
+> ARMv6 and greater introduced a new instruction ("bx") which can be used
+> to return from function calls.  Recent CPUs perform better when the
+> "bx lr" instruction is used rather than the "mov pc, lr" instruction,
+> and this sequence is strongly recommended to be used by the ARM
+> architecture manual (section A.4.1.1).
+> =
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- sound/soc/samsung/i2s.c |   16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+> We provide a new macro "ret" with all its variants for the condition
+> code which will resolve to the appropriate instruction.
+> =
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 2ac76fa..5f9b255 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -920,11 +920,9 @@ static int i2s_suspend(struct snd_soc_dai *dai)
- {
- 	struct i2s_dai *i2s = to_info(dai);
- 
--	if (dai->active) {
--		i2s->suspend_i2smod = readl(i2s->addr + I2SMOD);
--		i2s->suspend_i2scon = readl(i2s->addr + I2SCON);
--		i2s->suspend_i2spsr = readl(i2s->addr + I2SPSR);
--	}
-+	i2s->suspend_i2smod = readl(i2s->addr + I2SMOD);
-+	i2s->suspend_i2scon = readl(i2s->addr + I2SCON);
-+	i2s->suspend_i2spsr = readl(i2s->addr + I2SPSR);
- 
- 	return 0;
- }
-@@ -933,11 +931,9 @@ static int i2s_resume(struct snd_soc_dai *dai)
- {
- 	struct i2s_dai *i2s = to_info(dai);
- 
--	if (dai->active) {
--		writel(i2s->suspend_i2scon, i2s->addr + I2SCON);
--		writel(i2s->suspend_i2smod, i2s->addr + I2SMOD);
--		writel(i2s->suspend_i2spsr, i2s->addr + I2SPSR);
--	}
-+	writel(i2s->suspend_i2scon, i2s->addr + I2SCON);
-+	writel(i2s->suspend_i2smod, i2s->addr + I2SMOD);
-+	writel(i2s->suspend_i2spsr, i2s->addr + I2SPSR);
- 
- 	return 0;
- }
--- 
-1.7.9.5
+> Rather than doing this piecemeal, and miss some instances, change all
+> the "mov pc" instances to use the new macro, with the exception of
+> the "movs" instruction and the kprobes code.  This allows us to detect
+> the "mov pc, lr" case and fix it up - and also gives us the possibility
+> of deploying this for other registers depending on the CPU selection.
+> =
+
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Works fine on my ARM-v7M machine:
+
+$ objdump -d vmlinux | grep -E 'mov.*pc'
+8c000022:	46e7      	mov	pc, ip
+8c000028:	46ef      	mov	pc, sp
+8c000b26:	46af      	movne	pc, r5
+8c0037e0:	4687      	mov	pc, r0
+8c0828d2:	4697      	mov	pc, r2
+8c1213ee:	469f      	mov	pc, r3
+
+Also boots fine.
+
+Tested-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+but I wonder what is the reason to not use bx if \reg !=3D lr.
+
+Thanks
+Uwe
+
+-- =
+
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
