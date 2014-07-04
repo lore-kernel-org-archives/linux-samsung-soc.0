@@ -1,54 +1,56 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ARM: dts: Add sound-card name for Snow/Peach-Pit/Peach-Pi
-Date: Fri, 4 Jul 2014 20:31:09 +0100
-Message-ID: <20140704193109.GI14896@sirena.org.uk>
-References: <1404465652-26637-1-git-send-email-tushar.b@samsung.com>
+Subject: Re: [PATCH 1/2] ASoC: samsung: Update sound-card name for Snow
+Date: Fri, 4 Jul 2014 20:32:11 +0100
+Message-ID: <20140704193211.GJ14896@sirena.org.uk>
+References: <1404463980-25027-1-git-send-email-tushar.b@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CD/aTaZybdUisKIc"
+	protocol="application/pgp-signature"; boundary="9aCKuHbn5v2q3RVc"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47324 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47329 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759559AbaGDTbR (ORCPT
+	with ESMTP id S1753115AbaGDTca (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 15:31:17 -0400
+	Fri, 4 Jul 2014 15:32:30 -0400
 Content-Disposition: inline
-In-Reply-To: <1404465652-26637-1-git-send-email-tushar.b@samsung.com>
+In-Reply-To: <1404463980-25027-1-git-send-email-tushar.b@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tushar Behera <tushar.b@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dianders@chromium.org
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, dianders@chromium.org, tiwai@suse.de, perex@perex.cz, lgirdwood@gmail.com, galak@codeaurora.org, kgene.kim@samsung.com, ijc+devicetree@hellion.org.uk, mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org, trblinux@gmail.com
 
 
---CD/aTaZybdUisKIc
+--9aCKuHbn5v2q3RVc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Jul 04, 2014 at 02:50:52PM +0530, Tushar Behera wrote:
-> Add sound-card name property to Snow/Peach-Pit/Peach-Pi boards.
+On Fri, Jul 04, 2014 at 02:22:59PM +0530, Tushar Behera wrote:
+> Snow sound-card driver supports multiple boards with different
+> audio codecs. Updating the sound card name per board basis would provide
+> some more information to the end-user.
 
-Acked-by: Mark Brown <broonie@linaro.org>
+Applied, thanks.
 
---CD/aTaZybdUisKIc
+--9aCKuHbn5v2q3RVc
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTtwD6AAoJELSic+t+oim9H04P/14BSfLbQwWzGuLX8/OogZM+
-99x+dqhtt6shcGlQz1rkx3qTh3KNJ4fiPvy68OFCM+1rU9u/kMI2GX5DIduX1zxn
-hP3x2M4RdSbSBmlNaCQtVlM57gFuSlW8AvmGuBa0h3OOXxQVvAkAHShDWpUuQ3kW
-MSea8IO7/Acsl2NIE3TCiysGGJu3eQV+3gm4UkEji2FDQSrqMz4clBfsUStpI1oI
-k34+LXzwqYG2kAxdBhf2O2PeLJbtGZItR8WExzxqsHjyViylpXUADPdEXhnsJ8Vb
-JmgMaDDN7+zeusiEiCGUdrPO8xSXxgCSpVIPCgoBDWyko/f2bPM38t5wO60CBoAq
-yx5BbroO08olXpNjXgIqZlkahITPl8GkW91JwCXgU5z3XfQ2LzkGOSQCZHdJd2fn
-vqZbHNePH2QFDF3juMkqCaqtjmbzm3/e3CFOsjFO7lUeKGnhCStrPq+U97AgfwK2
-nydRgI8AKVUVU9OFELbVLLASwMYNodLMs4NowhIkgzDLU4/AfWPK/7/PSPemTmkC
-OFNQ5SnH+ItCsK4j71Qx4wtMOtipdyqHuEEjgV/kTkxnGEAZdUnHRfKuBEij4BaV
-OFfJvlR0WLQWEN02SQsMRnXgZPGwgYDHXpnQCYWm21k12SVq1dknPS3AAKHY381M
-AlweUMmLgRIkUW4eHzr5
-=AD1x
+iQIcBAEBAgAGBQJTtwE4AAoJELSic+t+oim9eBQP+wSTOTDTRhu+W6zH+JqKRs1z
+4k5RWU2uTnqSmdJQ3nP9NzbSg4r1RstICOwHY+SC39eTbTpG6J4aYyw0wUAgaQv/
+UnDeNqPFTiW9WMzJ01fIFlac8kiSONvB35si1uLf3NSEl3mLdOGd3HSub4sVrfE4
+VT156VXGg9oxDhWBWiqX/0ukV9xwW3x+TJ0raXTXGbB+AiQol2MU+bXxURs+v//y
+soVUPK1cTUApAU1KNVMOqzS7hIxa5Ijan6LafljJc4+Ef4nF0IN+rI1TF1ubHBDu
+QdMNrLKchEXRiGohqNhNjDLMby3lTLtnyDsrLhx/YeY836SGrgxh573rseQ47Dq/
+NnY8d5tnhgnv4y+8/BTgiEGJLwECEvMHL0EA0xPLWkPMSKUphhgtMqGACd+zljdV
+NsQjMTUWUtRYuO9+I9Nx0wjzWp5qZjtdFNHx5LeAiQz5urGoQN7kgyCw7KaWBAuo
+CF0+YULm1ifVl49i9DL3PuwmzKgPDKjdrESmQPs/KLJoZGDOAcmQhiKqAKjy8M/r
+adjnCzhTGlHanIpYYcihZlHW4sEiEnI1h37W9Wlwxvm0CL8julgLnPZWhm775RRj
+3ARGVrmw1RDMgV/zTur6RNBQotBtxWTBKm1kbMApCJw5hwbsINZJ/iEYAb+7RAuv
+R7vGX6KxRhf+fKpWxN8q
+=M42b
 -----END PGP SIGNATURE-----
 
---CD/aTaZybdUisKIc--
+--9aCKuHbn5v2q3RVc--
