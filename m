@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v7 10/24] rtc: max77686: Remove dead code for SMPL and WTSR.
-Date: Fri,  4 Jul 2014 22:24:13 +0200
-Message-ID: <1404505467-26526-11-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v7 17/24] mfd: max77686: Add documentation for DVS bindings
+Date: Fri,  4 Jul 2014 22:24:20 +0200
+Message-ID: <1404505467-26526-18-git-send-email-javier.martinez@collabora.co.uk>
 References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
@@ -10,167 +10,72 @@ To: Lee Jones <lee.jones@linaro.org>
 Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The MAX77686 RTC chip has two features called SMPL (Sudden Momentary
-Power Loss) and WTSR (Watchdog Timeout and Software Resets).
-Support for these features seems to be implemented in the driver but
-compilation is disabled using a C pre-processor conditional.
-
-This code has been disabled since the driver was original merged in
-commit fca1dd03 ("rtc: max77686: add Maxim 77686 driver").
-
-So, since this code has never been built, let's just remove it.
+The MAX77686 PMIC submodule has Dynamic Voltage Scaling (DVS)
+support on some regulators. Now that the regulator driver has
+bindings to configure it, these bindings have to be documented.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- drivers/rtc/rtc-max77686.c | 101 ---------------------------------------------
- 1 file changed, 101 deletions(-)
+ Documentation/devicetree/bindings/mfd/max77686.txt | 34 ++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
-index c1c6055..7bb5433 100644
---- a/drivers/rtc/rtc-max77686.c
-+++ b/drivers/rtc/rtc-max77686.c
-@@ -32,15 +32,6 @@
- #define RTC_UDR_MASK			(1 << RTC_UDR_SHIFT)
- #define RTC_RBUDR_SHIFT			4
- #define RTC_RBUDR_MASK			(1 << RTC_RBUDR_SHIFT)
--/* WTSR and SMPL Register */
--#define WTSRT_SHIFT			0
--#define SMPLT_SHIFT			2
--#define WTSR_EN_SHIFT			6
--#define SMPL_EN_SHIFT			7
--#define WTSRT_MASK			(3 << WTSRT_SHIFT)
--#define SMPLT_MASK			(3 << SMPLT_SHIFT)
--#define WTSR_EN_MASK			(1 << WTSR_EN_SHIFT)
--#define SMPL_EN_MASK			(1 << SMPL_EN_SHIFT)
- /* RTC Hour register */
- #define HOUR_PM_SHIFT			6
- #define HOUR_PM_MASK			(1 << HOUR_PM_SHIFT)
-@@ -49,7 +40,6 @@
- #define ALARM_ENABLE_MASK		(1 << ALARM_ENABLE_SHIFT)
+diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
+index 678f3cf..daf1c07 100644
+--- a/Documentation/devicetree/bindings/mfd/max77686.txt
++++ b/Documentation/devicetree/bindings/mfd/max77686.txt
+@@ -10,12 +10,38 @@ PMIC submodule.
+ Binding for the built-in 32k clock generator block is defined separately
+ in bindings/clk/maxim,max77686.txt file.
  
- #define MAX77686_RTC_UPDATE_DELAY	16
--#undef MAX77686_RTC_WTSR_SMPL
++Buck regulators 2, 3 and 4 include Dynamic Voltage Scaling (DVS) that allows
++each output voltage to change dynamically. Each Buck output voltage is selected
++using a set of external inputs: DVS1-3 and SELB2, 3 and 4.
++
++There are 8 DVS registers that can be used to configure the output voltage
++for each Buck regulator and which one is active is controled by DVSx lines.
++
++SELBx lines are used to control if individual Buck lines are ON or OFF.
++
+ Required properties:
+ - compatible : Must be "maxim,max77686";
+ - reg : Specifies the i2c slave address of PMIC block.
+ - interrupts : This i2c device has an IRQ line connected to the main SoC.
+ - interrupt-parent : The parent interrupt controller.
  
- enum {
- 	RTC_SEC = 0,
-@@ -412,64 +402,6 @@ static const struct rtc_class_ops max77686_rtc_ops = {
- 	.alarm_irq_enable = max77686_rtc_alarm_irq_enable,
- };
++Optional properties:
++- max77686,pmic-buck-default-dvs-idx: We'll always write this DVS index in the
++  PMIC for Bucks with DVS.
++  NOTE: at the moment these bindings don't include enough details for actual
++  GPIO-DVS--this just lets you choose which single slot to use.
++
++- max77686,pmic-buck-dvs-gpios: A GPIO array where each GPIO is connected to a
++  DVS line. We'll try to set these GPIOs to match pmic-buck-default-dvs-idx at
++  probe time if they are defined. If some or all of these GPIOs are not defined
++  it's assumed that the board has any missing GPIOs hardwired to match
++  pmic-buck-default-dvs-idx.
++
++- max77686,pmic-buck-selb-gpios: A GPIO array where each GPIO is connected to a
++  SELBx line. Should be three values: 2, 3 and 4. It is strongly suggested to
++  include these GPIOs if there's any chance that changing DVS GPIOs one line at
++  a time might glitch your DVS values.
++
+ Optional node:
+ - voltage-regulators : The regulators of max77686 have to be instantiated
+   under subnode named "voltage-regulators" using the following format.
+@@ -42,6 +68,14 @@ Example:
+ 		interrupts = <26 0>;
+ 		reg = <0x09>;
  
--#ifdef MAX77686_RTC_WTSR_SMPL
--static void max77686_rtc_enable_wtsr(struct max77686_rtc_info *info, bool enable)
--{
--	int ret;
--	unsigned int val, mask;
--
--	if (enable)
--		val = (1 << WTSR_EN_SHIFT) | (3 << WTSRT_SHIFT);
--	else
--		val = 0;
--
--	mask = WTSR_EN_MASK | WTSRT_MASK;
--
--	dev_info(info->dev, "%s: %s WTSR\n", __func__,
--			enable ? "enable" : "disable");
--
--	ret = regmap_update_bits(info->max77686->rtc_regmap,
--				 MAX77686_WTSR_SMPL_CNTL, mask, val);
--	if (ret < 0) {
--		dev_err(info->dev, "%s: fail to update WTSR reg(%d)\n",
--				__func__, ret);
--		return;
--	}
--
--	max77686_rtc_update(info, MAX77686_RTC_WRITE);
--}
--
--static void max77686_rtc_enable_smpl(struct max77686_rtc_info *info, bool enable)
--{
--	int ret;
--	unsigned int val, mask;
--
--	if (enable)
--		val = (1 << SMPL_EN_SHIFT) | (0 << SMPLT_SHIFT);
--	else
--		val = 0;
--
--	mask = SMPL_EN_MASK | SMPLT_MASK;
--
--	dev_info(info->dev, "%s: %s SMPL\n", __func__,
--			enable ? "enable" : "disable");
--
--	ret = regmap_update_bits(info->max77686->rtc_regmap,
--				 MAX77686_WTSR_SMPL_CNTL, mask, val);
--	if (ret < 0) {
--		dev_err(info->dev, "%s: fail to update SMPL reg(%d)\n",
--				__func__, ret);
--		return;
--	}
--
--	max77686_rtc_update(info, MAX77686_RTC_WRITE);
--
--	val = 0;
--	regmap_read(info->max77686->rtc_regmap, MAX77686_WTSR_SMPL_CNTL, &val);
--	dev_info(info->dev, "%s: WTSR_SMPL(0x%02x)\n", __func__, val);
--}
--#endif /* MAX77686_RTC_WTSR_SMPL */
--
- static int max77686_rtc_init_reg(struct max77686_rtc_info *info)
- {
- 	u8 data[2];
-@@ -519,11 +451,6 @@ static int max77686_rtc_probe(struct platform_device *pdev)
- 		goto err_rtc;
- 	}
- 
--#ifdef MAX77686_RTC_WTSR_SMPL
--	max77686_rtc_enable_wtsr(info, true);
--	max77686_rtc_enable_smpl(info, true);
--#endif
--
- 	device_init_wakeup(&pdev->dev, 1);
- 
- 	info->rtc_dev = devm_rtc_device_register(&pdev->dev, "max77686-rtc",
-@@ -556,33 +483,6 @@ err_rtc:
- 	return ret;
- }
- 
--static void max77686_rtc_shutdown(struct platform_device *pdev)
--{
--#ifdef MAX77686_RTC_WTSR_SMPL
--	struct max77686_rtc_info *info = platform_get_drvdata(pdev);
--	int i;
--	u8 val = 0;
--
--	for (i = 0; i < 3; i++) {
--		max77686_rtc_enable_wtsr(info, false);
--		regmap_read(info->max77686->rtc_regmap, MAX77686_WTSR_SMPL_CNTL, &val);
--		dev_info(info->dev, "%s: WTSR_SMPL reg(0x%02x)\n", __func__,
--				val);
--		if (val & WTSR_EN_MASK) {
--			dev_emerg(info->dev, "%s: fail to disable WTSR\n",
--					__func__);
--		} else {
--			dev_info(info->dev, "%s: success to disable WTSR\n",
--					__func__);
--			break;
--		}
--	}
--
--	/* Disable SMPL when power off */
--	max77686_rtc_enable_smpl(info, false);
--#endif /* MAX77686_RTC_WTSR_SMPL */
--}
--
- #ifdef CONFIG_PM_SLEEP
- static int max77686_rtc_suspend(struct device *dev)
- {
-@@ -622,7 +522,6 @@ static struct platform_driver max77686_rtc_driver = {
- 		.pm	= &max77686_rtc_pm_ops,
- 	},
- 	.probe		= max77686_rtc_probe,
--	.shutdown	= max77686_rtc_shutdown,
- 	.id_table	= rtc_id,
- };
- 
++		max77686,pmic-buck-default-dvs-idx = <1>;
++		max77686,pmic-buck-dvs-gpios = <&gpy7 6 0>,
++					       <&gpj4 2 0>,
++					       <&gpj4 3 0>;
++		max77686,pmic-buck-selb-gpios = <&gph0 1 0>,
++						<&gph0 2 0>,
++						<&gph0 3 0>,
++
+ 		voltage-regulators {
+ 			ldo11_reg {
+ 				regulator-compatible = "LDO11";
 -- 
 2.0.0.rc2
