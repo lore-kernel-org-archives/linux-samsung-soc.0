@@ -1,181 +1,319 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v6 08/23] mfd: max77686: Add Dynamic Voltage Scaling (DVS)
- support
-Date: Fri, 04 Jul 2014 13:32:57 +0200
-Message-ID: <53B690E9.4000003@collabora.co.uk>
-References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk> <1404467722-26687-9-git-send-email-javier.martinez@collabora.co.uk> <1404472510.14069.6.camel@AMDC1943>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v6 17/23] mfd: max77686: Add Maxim 77802 PMIC support
+Date: Fri, 04 Jul 2014 13:35:56 +0200
+Message-ID: <53B6919C.7050502@collabora.co.uk>
+References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk> <1404467722-26687-18-git-send-email-javier.martinez@collabora.co.uk> <1404473434.14069.10.camel@AMDC1943>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1404472510.14069.6.camel@AMDC1943>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andreas Farber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:38296 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751158AbaGDLgE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 4 Jul 2014 07:36:04 -0400
+In-Reply-To: <1404473434.14069.10.camel@AMDC1943>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello Krzysztof,
 
-Again, thanks a lot for taking the time to review the series.
-
-On 07/04/2014 01:15 PM, Krzysztof Kozlowski wrote:
+On 07/04/2014 01:30 PM, Krzysztof Kozlowski wrote:
 > On pi=C4=85, 2014-07-04 at 11:55 +0200, Javier Martinez Canillas wrot=
 e:
->> Some regulators on the MAX77686 PMIC have Dynamic Voltage Scaling
->> (DVS) support that allows output voltage to change dynamically.
+>> Maxim MAX77802 is a power management chip that contains 10 high
+>> efficiency Buck regulators, 32 Low-dropout (LDO) regulators used
+>> to power up application processors and peripherals, a 2-channel
+>> 32kHz clock outputs, a Real-Time-Clock (RTC) and a I2C interface
+>> to program the individual regulators, clocks outputs and the RTC.
 >>=20
->> For MAX77686, these regulators are Buck regulators 2, 3 and 4.
->>=20
->> Each Buck output voltage is selected using a set of external
->> inputs: DVS1-3 and SELB2-4.
->>=20
->> DVS registers can be used to configure the output voltages for each
->> Buck regulator and which one is active is controled by DVSx lines.
->>=20
->> SELBx lines are used to control if individual Buck lines are ON or O=
-=46F.
->>=20
->> This patch adds support to configure the DVSx and SELBx lines
->> from DT and to setup and read the GPIO lines connected to them.
+>> This patch adds support for MAX77802 to the MAX77686 driver and is
+>> based on a driver added to the Chrome OS kernel 3.8 by Simon Glass.
 >>=20
 >> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.c=
 o.uk>
 >> ---
->>  drivers/mfd/max77686.c       | 115 ++++++++++++++++++++++++++++++++=
-+++++++++++
->>  include/linux/mfd/max77686.h |  18 ++++---
->>  2 files changed, 125 insertions(+), 8 deletions(-)
+>>=20
+>>     NOTE: I didn't carry previous {Review,Acked,Tested}-by tags sinc=
+e
+>>     this patch extending MAX77686 is quite different than the old on=
+e
+>>     adding a new mfd driver. So review and test is highly appreciate=
+d.
+>>=20
+>>     Changes since v5:
+>>      - Extend the 77686 driver to support 77802 instead of adding a =
+new driver.
+>>        Suggested by Lee Jones.
+>>=20
+>>     Changes since v4:
+>>      - Use consistent expressions when checking for NULL values.
+>>        Suggested by Krzysztof Kozlowski.
+>>      - Remove unused defines. Suggested by Krzysztof Kozlowski.
+>>      - Explain why IRQ is disabled on suspend. Suggested by Krzyszto=
+f Kozlowski.
+>>=20
+>>     Changes since v3:
+>>      - Remove unnecessary OOM error message since the mm subsystem a=
+lready logs it.
+>>=20
+>>     Changes since v2:
+>>      - Split the DT binding docs in a separate patch and improve the=
+ documentation.
+>>        Suggested by Mark Brown.
+>>      - Add all the devices in the MFD driver instead of doing in sep=
+arate patches.
+>>        Suggested by Mark Brown.
+>>=20
+>>     Changes since v1:
+>>      - Convert max77{686,802} to regmap irq API and get rid of max77=
+{686,802}-irq.c
+>>        Suggested by Krzysztof Kozlowski.
+>>      - Don't protect max77802 mfd_cells using Kconfig options since =
+mfd core omits
+>>        devices that don't match. Suggested by Lee Jones.
+>>      - Change mfd driver to be tristate instead of boolean. Suggeste=
+d by Mark Brown.
+>>      - Change binding "voltage-regulators" property to "regulators" =
+to be consistent
+>>        with other PMIC drivers. Suggested by Mark Brown.
+>>      - Use regulators node names instead of the deprecated "regulato=
+r-compatible"
+>>        property. Suggested by Mark Brown.
+>>      - Use the new descriptor-based GPIO interface instead of the de=
+precated
+>> ---
+>>  drivers/mfd/Kconfig                  |   6 +-
+>>  drivers/mfd/max77686.c               | 187 ++++++++++++++++++++++++=
+++-----
+>>  include/linux/mfd/max77686-private.h | 208 ++++++++++++++++++++++++=
+++++++++++-
+>>  include/linux/mfd/max77686.h         |  60 +++++++++-
+>>  4 files changed, 428 insertions(+), 33 deletions(-)
+>>=20
 >=20
-> One minor comment below, but overall looks good to me:
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Three comments below, after fixing:
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 >=20
+> (...)
 >=20
->> diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
->> index 8650832..648d564 100644
->> --- a/drivers/mfd/max77686.c
->> +++ b/drivers/mfd/max77686.c
->> @@ -32,8 +32,10 @@
->>  #include <linux/mfd/core.h>
->>  #include <linux/mfd/max77686.h>
->>  #include <linux/mfd/max77686-private.h>
->> +#include <linux/gpio/consumer.h>
->>  #include <linux/err.h>
->>  #include <linux/of.h>
->> +#include <linux/export.h>
->> =20
->>  #define I2C_ADDR_RTC	(0x0C >> 1)
->> =20
->> @@ -101,9 +103,115 @@ static const struct of_device_id max77686_pmic=
-_dt_match[] =3D {
->>  	{},
+>> @@ -55,6 +123,17 @@ static struct regmap_config max77686_rtc_regmap_=
+config =3D {
+>>  	.val_bits =3D 8,
 >>  };
 >> =20
->> +static void max77686_dt_parse_dvs_gpio(struct device *dev)
->> +{
->> +	struct max77686_platform_data *pd =3D dev_get_platdata(dev);
->> +	int i;
+>> +static struct regmap_config max77802_regmap_config =3D {
+>> +	.reg_bits =3D 8,
+>> +	.val_bits =3D 8,
+>> +	.writeable_reg =3D max77802_is_accessible_reg,
+>> +	.readable_reg =3D max77802_is_accessible_reg,
+>> +	.precious_reg =3D max77802_is_precious_reg,
+>> +	.volatile_reg =3D max77802_is_volatile_reg,
+>> +	.name =3D "max77802-pmic",
+>> +	.cache_type =3D REGCACHE_RBTREE,
+>> +};
 >> +
->> +	/*
->> +	 * NOTE: we don't consider GPIO errors fatal; board may have some =
-lines
->> +	 * directly pulled high or low and thus doesn't specify them.
->> +	 */
->> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_dvs); i++)
->> +		pd->buck_gpio_dvs[i] =3D
->> +			devm_gpiod_get_index(dev, "max77686,pmic-buck-dvs", i);
->> +
->> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++)
->> +		pd->buck_gpio_selb[i] =3D
->> +			devm_gpiod_get_index(dev, "max77686,pmic-buck-selb", i);
->> +}
->> +
->> +/**
->> + * max77686_setup_gpios - init DVS-related GPIOs
->> + *
->> + * This function claims / initalizations GPIOs related to DVS if th=
-ey are
->> + * defined. This may have the effect of switching voltages if the
->> + * pdata->buck_default_idx does not match the boot time state of pi=
-ns.
->> + */
->> +int max77686_setup_gpios(struct device *dev)
->> +{
->> +	struct max77686_platform_data *pd =3D dev_get_platdata(dev);
->> +	int buck_default_idx =3D pd->buck_default_idx;
->> +	int ret;
->> +	int i;
->> +
->> +	/* Set all SELB high to avoid glitching while DVS is changing */
->> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++) {
->> +		struct gpio_desc *gpio =3D pd->buck_gpio_selb[i];
->> +
->> +		/* OK if some GPIOs aren't defined */
->> +		if (IS_ERR(gpio))
->> +			continue;
->> +
->> +		ret =3D gpiod_direction_output_raw(gpio, 1);
->> +		if (ret) {
->> +			dev_err(dev, "can't set gpio[%d] dir: %d\n", i, ret);
->> +			return ret;
->> +		}
->> +	}
->> +
->> +	/* Set our initial setting */
->> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_dvs); i++) {
->> +		struct gpio_desc *gpio =3D pd->buck_gpio_dvs[i];
->> +
->> +		/* OK if some GPIOs aren't defined */
->> +		if (IS_ERR(gpio))
->> +			continue;
->> +
->> +		/* If a GPIO is valid, set it */
->> +		gpiod_direction_output(gpio, (buck_default_idx >> i) & 1);
->> +		if (ret) {
->> +			dev_err(dev, "can't set gpio[%d]: dir %d\n", i, ret);
->> +			return ret;
->> +		}
->> +	}
->> +
->> +	/* Now set SELB low to take effect */
->> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++) {
->> +		struct gpio_desc *gpio =3D pd->buck_gpio_selb[i];
->> +
->> +		if (!IS_ERR(gpio))
->> +			gpiod_set_value(gpio, 0);
->> +	}
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(max77686_setup_gpios);
->> +
->> +/**
->> + * max77686_read_gpios - read the current state of the dvs GPIOs
->> + *
->> + * We call this function at bootup to detect what slot the firmware=
- was
->> + * using for the DVS GPIOs.  That way we can properly preserve the =
-firmware's
->> + * voltage settings
->> + */
->> +int max77686_read_gpios(struct max77686_platform_data *pdata)
->> +{
+>>  static const struct regmap_irq max77686_irqs[] =3D {
+>>  	/* INT1 interrupts */
+>>  	{ .reg_offset =3D 0, .mask =3D MAX77686_INT1_PWRONF_MSK, },
+>> @@ -98,9 +177,34 @@ static const struct regmap_irq_chip max77686_rtc=
+_irq_chip =3D {
+>>  	.num_irqs		=3D ARRAY_SIZE(max77686_rtc_irqs),
+>>  };
+>> =20
+>> +static const struct regmap_irq_chip max77802_irq_chip =3D {
+>> +	.name			=3D "max77802-pmic",
+>> +	.status_base		=3D MAX77802_REG_INT1,
+>> +	.mask_base		=3D MAX77802_REG_INT1MSK,
+>> +	.num_regs		=3D 2,
+>> +	.irqs			=3D max77686_irqs, /* same masks than 77686 */
 >=20
-> Can you document that this function can sleep? It is quite obvious bu=
-t
-> the function is exported so maybe it is worth noting.
+> "same masks as 77686"
+>
+
+Ok
+
+>> +	.num_irqs		=3D ARRAY_SIZE(max77686_irqs),
+>> +};
+>> +
+>> +static const struct regmap_irq_chip max77802_rtc_irq_chip =3D {
+>> +	.name			=3D "max77802-rtc",
+>> +	.status_base		=3D MAX77802_RTC_INT,
+>> +	.mask_base		=3D MAX77802_RTC_INTM,
+>> +	.num_regs		=3D 1,
+>> +	.irqs			=3D max77686_rtc_irqs, /* same masks than 77686 */
+>=20
+> Ditto
 >=20
 
-Sure, I'll add that to the comment.
+Ok
+
+>> +	.num_irqs		=3D ARRAY_SIZE(max77686_rtc_irqs),
+>> +};
+>> +
+>>  static const struct of_device_id max77686_pmic_dt_match[] =3D {
+>> -	{.compatible =3D "maxim,max77686", .data =3D NULL},
+>> -	{},
+>> +	{
+>> +		.compatible =3D "maxim,max77686",
+>> +		.data =3D (void *)TYPE_MAX77686,
+>> +	},
+>> +	{
+>> +		.compatible =3D "maxim,max77802",
+>> +		.data =3D (void *)TYPE_MAX77802,
+>> +	},
+>> +	{ },
+>>  };
+>> =20
+>>  static void max77686_dt_parse_dvs_gpio(struct device *dev)
+>> @@ -236,6 +340,12 @@ static int max77686_i2c_probe(struct i2c_client=
+ *i2c,
+>>  	struct max77686_platform_data *pdata =3D dev_get_platdata(&i2c->de=
+v);
+>>  	unsigned int data;
+>>  	int ret =3D 0;
+>> +	const struct regmap_config *config;
+>> +	const struct regmap_irq_chip *irq_chip;
+>> +	const struct regmap_irq_chip *rtc_irq_chip;
+>> +	struct regmap **rtc_regmap;
+>> +	const struct mfd_cell *cells;
+>> +	int n_devs;
+>> =20
+>>  	if (IS_ENABLED(CONFIG_OF) && i2c->dev.of_node && !pdata)
+>>  		pdata =3D max77686_i2c_parse_dt_pdata(&i2c->dev);
+>> @@ -258,56 +368,77 @@ static int max77686_i2c_probe(struct i2c_clien=
+t *i2c,
+>>  	max77686->wakeup =3D pdata->wakeup;
+>>  	max77686->irq =3D i2c->irq;
+>> =20
+>> -	max77686->regmap =3D devm_regmap_init_i2c(i2c, &max77686_regmap_co=
+nfig);
+>> +	if (max77686->type =3D=3D TYPE_MAX77686) {
+>> +		config =3D &max77686_regmap_config;
+>> +		irq_chip =3D &max77686_irq_chip;
+>> +		rtc_irq_chip =3D &max77686_rtc_irq_chip;
+>> +		rtc_regmap =3D &max77686->rtc_regmap;
+>> +		cells =3D  max77686_devs;
+>> +		n_devs =3D ARRAY_SIZE(max77686_devs);
+>> +	} else {
+>> +		config =3D &max77802_regmap_config;
+>> +		irq_chip =3D &max77802_irq_chip;
+>> +		rtc_irq_chip =3D &max77802_rtc_irq_chip;
+>> +		rtc_regmap =3D &max77686->regmap;
+>> +		cells =3D  max77802_devs;
+>> +		n_devs =3D ARRAY_SIZE(max77802_devs);
+>> +	}
+>> +
+>> +	max77686->regmap =3D devm_regmap_init_i2c(i2c, config);
+>>  	if (IS_ERR(max77686->regmap)) {
+>>  		ret =3D PTR_ERR(max77686->regmap);
+>>  		dev_err(max77686->dev, "Failed to allocate register map: %d\n",
+>> -				ret);
+>> +			ret);
+>>  		return ret;
+>>  	}
+>> =20
+>>  	ret =3D regmap_read(max77686->regmap, MAX77686_REG_DEVICE_ID, &dat=
+a);
+>>  	if (ret < 0) {
+>>  		dev_err(max77686->dev,
+>> -			"device not found on this channel (this is not an error)\n");
+>> -		return -ENODEV;
+>> -	}
+>> -
+>> -	max77686->rtc =3D i2c_new_dummy(i2c->adapter, I2C_ADDR_RTC);
+>> -	if (!max77686->rtc) {
+>> -		dev_err(max77686->dev, "Failed to allocate I2C device for RTC\n")=
+;
+>> +			"device not found on this channel\n");
+>>  		return -ENODEV;
+>>  	}
+>> -	i2c_set_clientdata(max77686->rtc, max77686);
+>> =20
+>> -	max77686->rtc_regmap =3D devm_regmap_init_i2c(max77686->rtc,
+>> -						    &max77686_rtc_regmap_config);
+>> -	if (IS_ERR(max77686->rtc_regmap)) {
+>> -		ret =3D PTR_ERR(max77686->rtc_regmap);
+>> -		dev_err(max77686->dev, "failed to allocate RTC regmap: %d\n",
+>> -			ret);
+>> -		goto err_unregister_i2c;
+>> +	if (max77686->type =3D=3D TYPE_MAX77686) {
+>> +		max77686->rtc =3D i2c_new_dummy(i2c->adapter, I2C_ADDR_RTC);
+>> +		if (!max77686->rtc) {
+>> +			dev_err(max77686->dev,
+>> +				"Failed to allocate I2C device for RTC\n");
+>> +			return -ENODEV;
+>> +		}
+>> +		i2c_set_clientdata(max77686->rtc, max77686);
+>> +
+>> +		max77686->rtc_regmap =3D
+>> +			devm_regmap_init_i2c(max77686->rtc,
+>> +					     &max77686_rtc_regmap_config);
+>> +		if (IS_ERR(max77686->rtc_regmap)) {
+>> +			ret =3D PTR_ERR(max77686->rtc_regmap);
+>> +			dev_err(max77686->dev,
+>> +				"failed to allocate RTC regmap: %d\n",
+>> +				ret);
+>> +			goto err_unregister_i2c;
+>> +		}
+>>  	}
+>> =20
+>>  	ret =3D regmap_add_irq_chip(max77686->regmap, max77686->irq,
+>>  				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
+>> -				  IRQF_SHARED, 0, &max77686_irq_chip,
+>> +				  IRQF_SHARED, 0, irq_chip,
+>>  				  &max77686->irq_data);
+>>  	if (ret) {
+>>  		dev_err(&i2c->dev, "failed to add PMIC irq chip: %d\n", ret);
+>>  		goto err_unregister_i2c;
+>>  	}
+>> -	ret =3D regmap_add_irq_chip(max77686->rtc_regmap, max77686->irq,
+>> +
+>> +	ret =3D regmap_add_irq_chip(*rtc_regmap, max77686->irq,
+>>  				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
+>> -				  IRQF_SHARED, 0, &max77686_rtc_irq_chip,
+>> +				  IRQF_SHARED, 0, rtc_irq_chip,
+>>  				  &max77686->rtc_irq_data);
+>>  	if (ret) {
+>>  		dev_err(&i2c->dev, "failed to add RTC irq chip: %d\n", ret);
+>>  		goto err_del_irqc;
+>>  	}
+>> =20
+>> -	ret =3D mfd_add_devices(max77686->dev, -1, max77686_devs,
+>> -			      ARRAY_SIZE(max77686_devs), NULL, 0, NULL);
+>> +	ret =3D mfd_add_devices(max77686->dev, -1, cells, n_devs, NULL, 0,=
+ NULL);
+>>  	if (ret < 0) {
+>>  		dev_err(&i2c->dev, "failed to add MFD devices: %d\n", ret);
+>>  		goto err_del_rtc_irqc;
+>> @@ -320,7 +451,8 @@ err_del_rtc_irqc:
+>>  err_del_irqc:
+>>  	regmap_del_irq_chip(max77686->irq, max77686->irq_data);
+>>  err_unregister_i2c:
+>> -	i2c_unregister_device(max77686->rtc);
+>> +	if (max77686->type =3D=3D TYPE_MAX77686)
+>> +		i2c_unregister_device(max77686->rtc);
+>> =20
+>>  	return ret;
+>>  }
+>> @@ -341,6 +473,7 @@ static int max77686_i2c_remove(struct i2c_client=
+ *i2c)
+>=20
+> In remove() you should unregister dummy RTC I2C device only on MAX776=
+86
+> (77802 does not add it).
+>
+
+Yes, I added the check to the probe()'s error path but forgot about the=
+ remove()
+function. Thanks a lot for pointing this out.
 
 > Best regards,
 > Krzysztof
 >=20
+>=20
 
 Best regards,
 Javier
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
