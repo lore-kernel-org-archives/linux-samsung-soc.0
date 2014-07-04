@@ -1,89 +1,205 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH V4 00/10] drm: exynos: few patches to enhance bridge chip
- support
-Date: Fri, 04 Jul 2014 15:06:56 +0200
-Message-ID: <53B6A6F0.1070108@suse.de>
-References: <1402511228-18945-1-git-send-email-ajaykumar.rs@samsung.com>	<53B4E7D6.6000204@suse.de> <CAEC9eQPee1CYQa01V93pTwwNbAZ=h5wVznQ-_PGoWmxSZV3Tbg@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v6 22/23] rtc: Add driver for Maxim 77802 PMIC
+ Real-Time-Clock
+Date: Fri, 04 Jul 2014 15:11:18 +0200
+Message-ID: <1404479478.2653.5.camel@AMDC1943>
+References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1404467722-26687-23-git-send-email-javier.martinez@collabora.co.uk>
+ <1404474972.14069.20.camel@AMDC1943> <53B6A3A3.9090300@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:54234 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752935AbaGDNHC (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:24353 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752786AbaGDNLU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 09:07:02 -0400
-In-Reply-To: <CAEC9eQPee1CYQa01V93pTwwNbAZ=h5wVznQ-_PGoWmxSZV3Tbg@mail.gmail.com>
+	Fri, 4 Jul 2014 09:11:20 -0400
+In-reply-to: <53B6A3A3.9090300@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay kumar <ajaynumb@gmail.com>, Doug Anderson <dianders@chromium.org>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, InKi Dae <inki.dae@samsung.com>, Sean Paul <seanpaul@google.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Reding <thierry.reding@gmail.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <marcheu@chromium.org>, Rahul Sharma <rahul.sharma@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Ajay,
-
-Am 03.07.2014 16:55, schrieb Ajay kumar:
-> On Thu, Jul 3, 2014 at 10:49 AM, Andreas F=C3=A4rber <afaerber@suse.d=
-e> wrote:
->> Am 11.06.2014 20:26, schrieb Ajay Kumar:
->>> This series is based on exynos-drm-next branch of Inki Dae's tree a=
-t:
->>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.gi=
-t
->>>
->>> I have tested this after adding few DT changes for exynos5250-snow,
->>> exynos5420-peach-pit and exynos5800-peach-pi boards.
->>
->> Unfortunately this series per se does not yet fix my display issues =
-on
->> the Spring Chromebook. Can you share what dt changes you made for Sn=
-ow?
->>
->> Before, if the dp-controller dt node was present, I would get a dark
->> screen immediately and I could ssh into the system shortly after.
->> I worked around that by commenting the node out, which would allow m=
-e to
->> graphically boot pretty much instantly.
->>
->> With these 10 patches applied on top of my dt on top of kgene's tree=
-,
->> the last U-Boot screen stays visible for ~50 seconds, then the scree=
-n
->> goes blank, and I can ssh in some time later.
->> If I comment out the dp-controller node again, it takes long for the
->> kernel boot to graphically proceed but works okay then.
->> In both cases there's a gap of ~2900 seconds visible in dmesg.
-[...]
->> https://github.com/afaerber/linux/commits/spring-next
->> https://github.com/afaerber/u-boot/commits/spring
-> You need to add bridge chip node and panel node to use my patch serie=
-s.
-> Also, to support that you need to enable tps65090 regulator on spring=
-=2E
+On pi=C4=85, 2014-07-04 at 14:52 +0200, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
 >=20
-> I have attached a patch which adds the bridge chip node and panel nod=
-e.
+> Thanks a lot for your feedback.
+>=20
+> On 07/04/2014 01:56 PM, Krzysztof Kozlowski wrote:
+> > On pi=C4=85, 2014-07-04 at 11:55 +0200, Javier Martinez Canillas wr=
+ote:
+> >> The MAX7802 PMIC has a Real-Time-Clock (RTC) with two alarms.
+> >> This patch adds support for the RTC and is based on a driver
+> >> added by Simon Glass to the Chrome OS kernel 3.8 tree.
+> >>=20
+> >> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora=
+=2Eco.uk>
+> >> ---
+> >>=20
+> >> Changes since v5: None
+> >>=20
+> >> Changes since v4: None
+> >>=20
+> >> Changes since v3: None
+> >> ---
+> >>  drivers/rtc/Kconfig        |  10 +
+> >>  drivers/rtc/Makefile       |   1 +
+> >>  drivers/rtc/rtc-max77802.c | 637 ++++++++++++++++++++++++++++++++=
++++++++++++++
+> >>  3 files changed, 648 insertions(+)
+> >>  create mode 100644 drivers/rtc/rtc-max77802.c
+> >>=20
+> >> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> >> index a672dd1..243ac72 100644
+> >> --- a/drivers/rtc/Kconfig
+> >> +++ b/drivers/rtc/Kconfig
+> >> @@ -288,6 +288,16 @@ config RTC_DRV_MAX77686
+> >>  	  This driver can also be built as a module. If so, the module
+> >>  	  will be called rtc-max77686.
+> >> =20
+> >> +config RTC_DRV_MAX77802
+> >> +	tristate "Maxim 77802 RTC"
+> >> +	depends on MFD_MAX77686
+> >> +	help
+> >> +	  If you say yes here you will get support for the
+> >> +	  RTC of Maxim MAX77802 PMIC.
+> >> +
+> >> +	  This driver can also be built as a module. If so, the module
+> >> +	  will be called rtc-max77802.
+> >> +
+> >>  config RTC_DRV_RS5C372
+> >>  	tristate "Ricoh R2025S/D, RS5C372A/B, RV5C386, RV5C387A"
+> >>  	help
+> >> diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+> >> index 70347d0..247de78 100644
+> >> --- a/drivers/rtc/Makefile
+> >> +++ b/drivers/rtc/Makefile
+> >> @@ -81,6 +81,7 @@ obj-$(CONFIG_RTC_DRV_MAX8998)	+=3D rtc-max8998.o
+> >>  obj-$(CONFIG_RTC_DRV_MAX8997)	+=3D rtc-max8997.o
+> >>  obj-$(CONFIG_RTC_DRV_MAX6902)	+=3D rtc-max6902.o
+> >>  obj-$(CONFIG_RTC_DRV_MAX77686)	+=3D rtc-max77686.o
+> >> +obj-$(CONFIG_RTC_DRV_MAX77802)  +=3D rtc-max77802.o
+> >>  obj-$(CONFIG_RTC_DRV_MC13XXX)	+=3D rtc-mc13xxx.o
+> >>  obj-$(CONFIG_RTC_DRV_MCP795)	+=3D rtc-mcp795.o
+> >>  obj-$(CONFIG_RTC_DRV_MSM6242)	+=3D rtc-msm6242.o
+> >> diff --git a/drivers/rtc/rtc-max77802.c b/drivers/rtc/rtc-max77802=
+=2Ec
+> >> new file mode 100644
+> >> index 0000000..2f4fc2e
+> >> --- /dev/null
+> >> +++ b/drivers/rtc/rtc-max77802.c
+> >> @@ -0,0 +1,637 @@
+> >> +/*
+> >> + * RTC driver for Maxim MAX77802
+> >> + *
+> >> + * Copyright (C) 2013 Google, Inc
+> >> + *
+> >> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
+> >> + *
+> >> + *  based on rtc-max8997.c
+> >> + *
+> >> + *  This program is free software; you can redistribute  it and/o=
+r modify it
+> >> + *  under  the terms of  the GNU General  Public License as publi=
+shed by the
+> >> + *  Free Software Foundation;  either version 2 of the  License, =
+or (at your
+> >> + *  option) any later version.
+> >> + *
+> >> + */
+> >> +
+> >> +#include <linux/slab.h>
+> >> +#include <linux/rtc.h>
+> >> +#include <linux/delay.h>
+> >> +#include <linux/mutex.h>
+> >> +#include <linux/module.h>
+> >> +#include <linux/platform_device.h>
+> >> +#include <linux/mfd/max77686-private.h>
+> >> +#include <linux/irqdomain.h>
+> >> +#include <linux/regmap.h>
+> >> +
+> >> +/* RTC Control Register */
+> >> +#define BCD_EN_SHIFT			0
+> >> +#define BCD_EN_MASK			(1 << BCD_EN_SHIFT)
+> >> +#define MODEL24_SHIFT			1
+> >> +#define MODEL24_MASK			(1 << MODEL24_SHIFT)
+> >> +/* RTC Update Register1 */
+> >> +#define RTC_UDR_SHIFT			0
+> >> +#define RTC_UDR_MASK			(1 << RTC_UDR_SHIFT)
+> >> +#define RTC_RBUDR_SHIFT			4
+> >> +#define RTC_RBUDR_MASK			(1 << RTC_RBUDR_SHIFT)
+> >> +/* WTSR and SMPL Register */
+> >> +#define WTSRT_SHIFT			0
+> >> +#define SMPLT_SHIFT			2
+> >> +#define WTSR_EN_SHIFT			6
+> >> +#define SMPL_EN_SHIFT			7
+> >> +#define WTSRT_MASK			(3 << WTSRT_SHIFT)
+> >> +#define SMPLT_MASK			(3 << SMPLT_SHIFT)
+> >> +#define WTSR_EN_MASK			(1 << WTSR_EN_SHIFT)
+> >> +#define SMPL_EN_MASK			(1 << SMPL_EN_SHIFT)
+> >> +/* RTC Hour register */
+> >> +#define HOUR_PM_SHIFT			6
+> >> +#define HOUR_PM_MASK			(1 << HOUR_PM_SHIFT)
+> >> +/* RTC Alarm Enable */
+> >> +#define ALARM_ENABLE_SHIFT		7
+> >> +#define ALARM_ENABLE_MASK		(1 << ALARM_ENABLE_SHIFT)
+> >> +
+> >> +/* For the RTCAE1 register, we write this value to enable the ala=
+rm */
+> >> +#define ALARM_ENABLE_VALUE		0x77
+> >> +
+> >> +#define MAX77802_RTC_UPDATE_DELAY_US	200
+> >> +#undef MAX77802_RTC_WTSR_SMPL
+> >=20
+> > Hmmm... I am not sure what is the purpose of this undef. It disable=
+s
+> > some functions below. I saw same code in 77686 RTC driver but this =
+does
+> > not help me :).
+> >=20
+> > If this is on purpose can you add a comment explaining the
+> > purpose/cause?
+> >=20
+>=20
+> This is a left over from when a combined 77686/802 driver was attempt=
+ed since as
+> you said the 77686 RTC driver does the same.
+>=20
+> I just checked MAX77802 data sheet and the MAX77802_RTC_WTSR_SMPL reg=
+ister is to
+> control the SMPL (Sudden Momentary Power Loss) and WTSR (Watchdog Tim=
+eout and
+> Software Resets) features.
+>=20
+> Now, I wanted to figure out why the 77686 driver unset that register =
+and have
+> those conditionals but git blame shows me that this was already in th=
+e original
+> commit that added the driver: fca1dd03 ("rtc: max77686: add Maxim 776=
+86 driver").
+>=20
+> Also, I see that the MAX8997 driver (drivers/rtc/rtc-max8997.c) also =
+has a
+> similar register but actually uses it and doesn't have the conditiona=
+ls if is
+> disabled. But this driver has two module parameters to control if the=
+se features
+> are enabled or not (wtsr_en and smpl_en).
+>=20
+> If these two features have been disabled since the max77686 driver wa=
+s merged
+> then I guess that the dead code should be removed from that driver as=
+ well? Or
+> do you have more hints about why it has been disabled?
 
-Wow, that's more help than I expected! Many thanks.
+If the max77802 driver in current form works fine for your setup then I
+think these functions can be removed completely. It should not harm
+since this is dead code anyway and it will simplify the driver.
 
-I'll strip down dp-controller accordingly for my v2.
+I think the same applies to max77686 (especially that as you said - thi=
+s
+is dead since beginning). Just remove it in separate patch.
 
-Your dt changes level again with my commenting out dp-controller. So I
-take it, the minute-long delay is regulator-induced somehow.
-
-> Also, I have attached a sample config which I used to compile the ker=
-nel.
-
-I simply answered y to all your new options. :)
-
-> Doug can help you in adding changes required for tps65090.
-
-Hm, Doug had pointed out an issue with tps65090 in my v1, so I dropped
-it: https://patchwork.kernel.org/patch/4397321/
-
-Regards,
-Andreas
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+Best regards,
+Krzysztof
