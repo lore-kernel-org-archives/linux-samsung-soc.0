@@ -1,69 +1,52 @@
-From: Tushar Behera <tushar.b@samsung.com>
-Subject: [PATCH] ARM: dts: Add sound-card name for Snow/Peach-Pit/Peach-Pi
-Date: Fri,  4 Jul 2014 14:50:52 +0530
-Message-ID: <1404465652-26637-1-git-send-email-tushar.b@samsung.com>
+From: Sachin Kamat <spk.linux@gmail.com>
+Subject: Re: [PATCH 2/6] pinctrl: samsung: Handle GPIO request and free using
+ pinctrl helpers
+Date: Fri, 4 Jul 2014 15:11:39 +0530
+Message-ID: <CAK5sBcFHFg7u-40NVovp9D2ro=MnQbOyiP6MtMss2PJmByR4iQ@mail.gmail.com>
+References: <1404315664-3174-1-git-send-email-t.figa@samsung.com>
+	<1404315664-3174-3-git-send-email-t.figa@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:53701 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751729AbaGDJYY (ORCPT
+Received: from mail-lb0-f177.google.com ([209.85.217.177]:51005 "EHLO
+	mail-lb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750999AbaGDJlk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 05:24:24 -0400
-Received: by mail-pd0-f176.google.com with SMTP id ft15so1704522pdb.21
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Jul 2014 02:24:24 -0700 (PDT)
+	Fri, 4 Jul 2014 05:41:40 -0400
+Received: by mail-lb0-f177.google.com with SMTP id u10so970579lbd.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Jul 2014 02:41:39 -0700 (PDT)
+In-Reply-To: <1404315664-3174-3-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, broonie@kernel.org, dianders@chromium.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Doug Anderson <dianders@chromium.org>
 
-Add sound-card name property to Snow/Peach-Pit/Peach-Pi boards.
+Hi Tomasz,
 
-Signed-off-by: Tushar Behera <tushar.b@samsung.com>
----
-Patch to update driver is submitted here[1].
+On Wed, Jul 2, 2014 at 9:11 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> This patch adds .request() and .free() operations to gpio_chip of
+> pinctrl-samsung driver, which call pinctrl request and free helpers to
+> request and free pinctrl pin along with GPIO pin.
+>
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  drivers/pinctrl/pinctrl-samsung.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
+> index 779c8bc..6e099d6 100644
+> --- a/drivers/pinctrl/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/pinctrl-samsung.c
+> @@ -779,7 +779,8 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
+>                 pin_bank = &drvdata->ctrl->pin_banks[bank];
+>                 pin_bank->grange.name = pin_bank->name;
+>                 pin_bank->grange.id = bank;
+> -               pin_bank->grange.pin_base = pin_bank->pin_base;
+> +               pin_bank->grange.pin_base = drvdata->ctrl->base
+> +                                               + pin_bank->pin_base;
 
-[1] ASoC: samsung: Update sound-card name for Snow
-https://lkml.org/lkml/2014/7/4/125
+Is this a fix?
 
- arch/arm/boot/dts/exynos5250-snow.dts      |    1 +
- arch/arm/boot/dts/exynos5420-peach-pit.dts |    1 +
- arch/arm/boot/dts/exynos5800-peach-pi.dts  |    1 +
- 3 files changed, 3 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 7bd2df1..c682c88 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -262,6 +262,7 @@
- 	sound {
- 		compatible = "google,snow-audio-max98095";
- 
-+		samsung,model = "Snow-I2S-MAX98095";
- 		samsung,i2s-controller = <&i2s0>;
- 		samsung,audio-codec = <&max98095>;
- 	};
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 7649982..6c7cab0 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -62,6 +62,7 @@
- 	sound {
- 		compatible = "google,snow-audio-max98090";
- 
-+		samsung,model = "Peach-Pit-I2S-MAX98090";
- 		samsung,i2s-controller = <&i2s0>;
- 		samsung,audio-codec = <&max98090>;
- 	};
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 2c2c137..28f2a25 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -60,6 +60,7 @@
- 	sound {
- 		compatible = "google,snow-audio-max98091";
- 
-+		samsung,model = "Peach-Pi-I2S-MAX98091";
- 		samsung,i2s-controller = <&i2s0>;
- 		samsung,audio-codec = <&max98091>;
- 	};
 -- 
-1.7.9.5
+Regards,
+Sachin.
