@@ -1,87 +1,97 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v6 09/23] rtc: max77686: Allow the max77686 rtc to wakeup the system
-Date: Fri,  4 Jul 2014 11:55:08 +0200
-Message-ID: <1404467722-26687-10-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v6 15/23] regulator: max77686: Setup DVS-related GPIOs on probe
+Date: Fri,  4 Jul 2014 11:55:14 +0200
+Message-ID: <1404467722-26687-16-git-send-email-javier.martinez@collabora.co.uk>
 References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Doug Anderson <dianders@chromium.org>
+MAX77686 PMIC support Dyamic Voltage Scaling (DVS) on a set
+of Buck regulators. A number of GPIO are connected to these
+lines and are requested by the mfd driver. Setup the GPIO
+pins from the regulator driver.
 
-The max77686 includes an RTC that keeps power during suspend.  It's
-convenient to be able to use it as a wakeup source.
-
-NOTE: due to wakeup ordering problems this patch alone doesn't work so
-well on exynos5250-snow.  You also need something that brings the i2c
-bus up before the max77686 wakeup runs.
-
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
+ drivers/regulator/max77686.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-Changes since v5:
- - Fix $SUBJECT since the patch does not actually touch the mfd subsys.
-   Suggested by Lee Jones.
-
-Changes since v4: None
-
-Changes since v3:
- - Keep the note that this patch needs another change due wakeup
-   ordering problems.
----
- drivers/rtc/rtc-max77686.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
-index d20a7f0..c1c6055 100644
---- a/drivers/rtc/rtc-max77686.c
-+++ b/drivers/rtc/rtc-max77686.c
-@@ -583,6 +583,33 @@ static void max77686_rtc_shutdown(struct platform_device *pdev)
- #endif /* MAX77686_RTC_WTSR_SMPL */
+diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
+index ef1af2d..ecce77a 100644
+--- a/drivers/regulator/max77686.c
++++ b/drivers/regulator/max77686.c
+@@ -435,6 +435,12 @@ static int max77686_pmic_dt_parse_pdata(struct platform_device *pdev,
+ }
+ #endif /* CONFIG_OF */
+ 
++static inline bool max77686_is_dvs_buck(int id)
++{
++	/* BUCK 2,3 and 4 support DVS */
++	return (id >= MAX77686_BUCK2 && id <= MAX77686_BUCK4);
++}
++
+ static int max77686_pmic_probe(struct platform_device *pdev)
+ {
+ 	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+@@ -442,6 +448,9 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+ 	struct max77686_data *max77686;
+ 	int i, ret = 0;
+ 	struct regulator_config config = { };
++	unsigned int reg;
++	int buck_default_idx;
++	int buck_old_idx;
+ 
+ 	dev_dbg(&pdev->dev, "%s\n", __func__);
+ 
+@@ -472,13 +481,34 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+ 	config.driver_data = max77686;
+ 	platform_set_drvdata(pdev, max77686);
+ 
++	buck_default_idx = pdata->buck_default_idx;
++	buck_old_idx = max77686_read_gpios(pdata);
++
+ 	for (i = 0; i < MAX77686_REGULATORS; i++) {
+ 		struct regulator_dev *rdev;
++		int id = pdata->regulators[i].id;
+ 
+ 		config.init_data = pdata->regulators[i].initdata;
+ 		config.of_node = pdata->regulators[i].of_node;
+ 
+ 		max77686->opmode[i] = regulators[i].enable_mask;
++
++		if (max77686_is_dvs_buck(id)) {
++			/* Try to copy over data so we keep firmware settings */
++			reg = regulators[i].vsel_reg;
++
++			ret = regmap_reg_copy(iodev->regmap,
++					      reg + buck_default_idx,
++					      reg + buck_old_idx);
++
++			if (ret)
++				dev_warn(&pdev->dev, "Copy err %d => %d (%d)\n",
++					 reg + buck_old_idx,
++					 reg + buck_default_idx, ret);
++
++			regulators[i].vsel_reg += buck_default_idx;
++		}
++
+ 		rdev = devm_regulator_register(&pdev->dev,
+ 						&regulators[i], &config);
+ 		if (IS_ERR(rdev)) {
+@@ -488,6 +518,10 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	ret = max77686_setup_gpios(iodev->dev);
++	if (ret)
++		return ret;
++
+ 	return 0;
  }
  
-+#ifdef CONFIG_PM_SLEEP
-+static int max77686_rtc_suspend(struct device *dev)
-+{
-+	if (device_may_wakeup(dev)) {
-+		struct max77686_rtc_info *info = dev_get_drvdata(dev);
-+
-+		return enable_irq_wake(info->virq);
-+	}
-+
-+	return 0;
-+}
-+
-+static int max77686_rtc_resume(struct device *dev)
-+{
-+	if (device_may_wakeup(dev)) {
-+		struct max77686_rtc_info *info = dev_get_drvdata(dev);
-+
-+		return disable_irq_wake(info->virq);
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(max77686_rtc_pm_ops,
-+			 max77686_rtc_suspend, max77686_rtc_resume);
-+
- static const struct platform_device_id rtc_id[] = {
- 	{ "max77686-rtc", 0 },
- 	{},
-@@ -592,6 +619,7 @@ static struct platform_driver max77686_rtc_driver = {
- 	.driver		= {
- 		.name	= "max77686-rtc",
- 		.owner	= THIS_MODULE,
-+		.pm	= &max77686_rtc_pm_ops,
- 	},
- 	.probe		= max77686_rtc_probe,
- 	.shutdown	= max77686_rtc_shutdown,
 -- 
 2.0.0.rc2
