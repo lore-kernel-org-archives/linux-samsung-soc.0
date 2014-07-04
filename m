@@ -1,172 +1,148 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: several messages
-Date: Fri, 4 Jul 2014 00:13:18 -0400 (EDT)
-Message-ID: <alpine.LFD.2.11.1407040007370.19626@knanqh.ubzr>
-References: <1404363737-26222-1-git-send-email-a.kesavan@samsung.com> <1404398818-6859-1-git-send-email-a.kesavan@samsung.com> <alpine.LFD.2.11.1407031111100.6220@knanqh.ubzr> <CAM4voanVAA4KOHWemQf59WjBpZXxVG_0P49xfzeq8KOvOwg4xg@mail.gmail.com>
- <alpine.LFD.2.11.1407031442210.6220@knanqh.ubzr> <CAM4voamgOkJ5+OgX577YrGJc3gdxQAcWYkQziw9Uv92PJQAgRQ@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 11/17] pwm: samsung: remove s5pc100 related pwm codes
+Date: Fri, 04 Jul 2014 16:32:22 +0900
+Message-ID: <02ca01cf975a$1848aaa0$48d9ffe0$@samsung.com>
+References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
+ <1404163947-3105-12-git-send-email-kgene.kim@samsung.com>
+ <53B55021.9020307@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f48.google.com ([209.85.192.48]:39725 "EHLO
-	mail-qg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750839AbaGDENV (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:29962 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755361AbaGDHcc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 00:13:21 -0400
-Received: by mail-qg0-f48.google.com with SMTP id q108so1050920qgd.35
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Jul 2014 21:13:20 -0700 (PDT)
-In-Reply-To: <CAM4voamgOkJ5+OgX577YrGJc3gdxQAcWYkQziw9Uv92PJQAgRQ@mail.gmail.com>
+	Fri, 4 Jul 2014 03:32:32 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N8600GNIFLZ7900@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 Jul 2014 16:32:23 +0900 (KST)
+In-reply-to: <53B55021.9020307@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Andrew Bresticker <abrestic@chromium.org>, Douglas Anderson <dianders@chromium.org>
+To: 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Thierry Reding' <thierry.reding@gmail.com>
 
-On Fri, 4 Jul 2014, Abhilash Kesavan wrote:
-
-> Hi Nicolas,
+Tomasz Figa wrote:
 > 
-> On Fri, Jul 4, 2014 at 12:30 AM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> > On Thu, 3 Jul 2014, Abhilash Kesavan wrote:
-> >
-> >> Hi Nicolas,
-> >>
-> >> On Thu, Jul 3, 2014 at 9:15 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> >> > On Thu, 3 Jul 2014, Abhilash Kesavan wrote:
-> >> >
-> >> >> On Thu, Jul 3, 2014 at 6:59 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> >> >> > Please, let's avoid going that route.  There is no such special handling
-> >> >> > needed if the API is sufficient.  And the provided API allows you to
-> >> >> > suspend a CPU or shut it down.  It shouldn't matter at that level if
-> >> >> > this is due to a cluster switch or a hotplug event. Do you really need
-> >> >> > something else?
-> >> >> No, just one local flag for suspend should be enough for me. Will remove these.
-> >> >
-> >> > [...]
-> >> >
-> >> >> Changes in v5:
-> >> >>       - Removed the MCPM flags and just used a local flag to
-> >> >>       indicate that we are suspending.
-> >> >
-> >> > [...]
-> >> >
-> >> >> -static void exynos_power_down(void)
-> >> >> +static void exynos_mcpm_power_down(u64 residency)
-> >> >>  {
-> >> >>       unsigned int mpidr, cpu, cluster;
-> >> >>       bool last_man = false, skip_wfi = false;
-> >> >> @@ -150,7 +153,12 @@ static void exynos_power_down(void)
-> >> >>       BUG_ON(__mcpm_cluster_state(cluster) != CLUSTER_UP);
-> >> >>       cpu_use_count[cpu][cluster]--;
-> >> >>       if (cpu_use_count[cpu][cluster] == 0) {
-> >> >> -             exynos_cpu_power_down(cpunr);
-> >> >> +             /*
-> >> >> +              * Bypass power down for CPU0 during suspend. This is being
-> >> >> +              * taken care by the SYS_PWR_CFG bit in CORE0_SYS_PWR_REG.
-> >> >> +              */
-> >> >> +             if ((cpunr != 0) || (residency != S5P_CHECK_SLEEP))
-> >> >> +                     exynos_cpu_power_down(cpunr);
-> >> >>
-> >> >>               if (exynos_cluster_unused(cluster)) {
-> >> >>                       exynos_cluster_power_down(cluster);
-> >> >> @@ -209,6 +217,11 @@ static void exynos_power_down(void)
-> >> >>       /* Not dead at this point?  Let our caller cope. */
-> >> >>  }
-> >> >>
-> >> >> +static void exynos_power_down(void)
-> >> >> +{
-> >> >> +     exynos_mcpm_power_down(0);
-> >> >> +}
-> >> >
-> >> > [...]
-> >> >
-> >> >> +static int notrace exynos_mcpm_cpu_suspend(unsigned long arg)
-> >> >> +{
-> >> >> +     /* MCPM works with HW CPU identifiers */
-> >> >> +     unsigned int mpidr = read_cpuid_mpidr();
-> >> >> +     unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
-> >> >> +     unsigned int cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
-> >> >> +
-> >> >> +     __raw_writel(0x0, sysram_base_addr + EXYNOS5420_CPU_STATE);
-> >> >> +
-> >> >> +     mcpm_set_entry_vector(cpu, cluster, exynos_cpu_resume);
-> >> >> +
-> >> >> +     /*
-> >> >> +      * Pass S5P_CHECK_SLEEP flag to the MCPM back-end to indicate that
-> >> >> +      * we are suspending the system and need to skip CPU0 power down.
-> >> >> +      */
-> >> >> +     mcpm_cpu_suspend(S5P_CHECK_SLEEP);
-> >> >
-> >> > NAK.
-> >> >
-> >> > When I say "local flag with local meaning", I don't want you to smuggle
-> >> > that flag through a public interface either.  I find it rather inelegant
-> >> > to have the notion of special handling for CPU0 being spread around like
-> >> > that.
-> >> >
-> >> > If CPU0 is special, then it should be dealth with in one place only,
-> >> > ideally in the MCPM backend, so the rest of the kernel doesn't have to
-> >> > care.
-> >> >
-> >> > Again, here's what I mean:
-> >> >
-> >> > static void exynos_mcpm_down_handler(int flags)
-> >> > {
-> >> >         [...]
-> >> >         if ((cpunr != 0) || !(flags & SKIP_CPU_POWERDOWN_IF_CPU0))
-> >> >                 exynos_cpu_power_down(cpunr);
-> >> >         [...]
-> >> > }
-> >> >
-> >> > static void exynos_mcpm_power_down()
-> >> > {
-> >> >         exynos_mcpm_down_handler(0);
-> >> > }
-> >> >
-> >> > static void exynos_mcpm_suspend(u64 residency)
-> >> > {
-> >> >         /*
-> >> >          * Theresidency argument is ignored for now.
-> >> >          * However, in the CPU suspend case, we bypass power down for
-> >> >          * CPU0 as this is being taken care by the SYS_PWR_CFG bit in
-> >> >          * CORE0_SYS_PWR_REG.
-> >> >          */
-> >> >         exynos_mcpm_down_handler(SKIP_CPU_POWERDOWN_IF_CPU0);
-> >> > }
-> >> >
-> >> > And SKIP_CPU_POWERDOWN_IF_CPU0 is defined in and visible to
-> >> > mcpm-exynos.c only.
-> >> Sorry if I am being dense, but the exynos_mcpm_suspend function would
-> >> get called from both the bL cpuidle driver as well the exynos pm code.
-> >
-> > What is that exynos pm code actually doing?
-> exynos pm code is shared across Exynos4 and 5 SoCs. It primarily does
-> a series of register configurations which are required to put the
-> system to sleep (some parts of these are SoC specific and others
-> common). It also populates the suspend_ops for exynos. In the current
-> patch, exynos_suspend_enter() is where I have plugged in the
-> mcpm_cpu_suspend call.
+> Hi Kukjin,
 > 
-> This patch is based on the S2R series for 5420
-> (http://comments.gmane.org/gmane.linux.kernel.samsung-soc/33898), you
-> may also have a look at that for a clearer picture.
-> >
-> >> We want to skip CPU0 only in case of the S2R case i.e. the pm code and
-> >> keep the CPU0 power down code for all other cases including CPUIdle.
-> >
-> > OK.  If so I missed that somehow (hint hint).
-> >
-> >> If I call exynos_mcpm_down_handler with the flag in
-> >> exynos_mcpm_suspend(), CPUIdle will also skip CPU0 isn't it ?
-> >
-> > As it is, yes.  You could logically use an infinite residency time
-> > (something like U64_MAX) to distinguish S2RAM from other types of
-> > suspend.
-> OK, I will use this rather than the S5P_CHECK_SLEEP macro.
+Hi,
 
-Another suggestion which might possibly be better: why not looking for 
-the SYS_PWR_CFG bit in exynos_cpu_power_down() directly?  After all, 
-exynos_cpu_power_down() is semantically supposed to do what its name 
-suggest and could simply do nothing if the proper conditions are already 
-in place.
+> On 30.06.2014 23:32, Kukjin Kim wrote:
+> > This patch removes supporting s5pc100 related pwm codes.
+> >
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > Cc: Thierry Reding <thierry.reding@gmail.com>
+> > ---
+> >  Documentation/devicetree/bindings/pwm/pwm-samsung.txt |    2 --
+> >  drivers/clocksource/samsung_pwm_timer.c               |   12 ------------
+> >  drivers/pwm/pwm-samsung.c                             |    8 --------
+> >  3 files changed, 22 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+> b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+> > index 43925d3..82c7f6b 100644
+> > --- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+> > +++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+> > @@ -11,8 +11,6 @@ Required properties:
+> >  - compatible : should be one of following:
+> >      samsung,s3c2410-pwm - for 16-bit timers present on S3C24xx SoCs
+> >      samsung,s3c6400-pwm - for 32-bit timers present on S3C64xx SoCs
+> > -    samsung,s5pc100-pwm - for 32-bit timers present on S5PC100, S5PV210,
+> > -			  Exynos4210 rev0 SoCs
+> 
+> As you can see here, this variant is used for more than S5PC100. It is
+> needed for S5PV210 and Exynos4210 rev0 SoCs as well. So this patch
+> should be dropped.
 
+Oh, I just now checked its datasheets and s5pv210 and early exynos4210 are
+using BIT(5) for tclk_mask. You're right. But I couldn't its usage in mainline
+when I created the patch. Anyway it can be used for s5pv210 so how about
+following?
 
-Nicolas
+pwm: samsung: change s5pc100-pwm to s5pv210-pwm for support s5pv210 SoC
+
+Reported-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+
+---
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+index 43925d3..ce005c0 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+@@ -11,8 +11,8 @@ Required properties:
+ - compatible : should be one of following:
+     samsung,s3c2410-pwm - for 16-bit timers present on S3C24xx SoCs
+     samsung,s3c6400-pwm - for 32-bit timers present on S3C64xx SoCs
+-    samsung,s5pc100-pwm - for 32-bit timers present on S5PC100, S5PV210,
+-			  Exynos4210 rev0 SoCs
++    samsung,s5pv210-pwm - for 32-bit timers present on S5PV210 and
++                          Exynos4210 rev0 SoCs
+     samsung,exynos4210-pwm - for 32-bit timers present on Exynos4210,
+                           Exynos4x12, Exynos5250 and Exynos5420 SoCs
+ - reg: base address and size of register area
+diff --git a/drivers/clocksource/samsung_pwm_timer.c b/drivers/clocksource/samsung_pwm_timer.c
+index e35a9b7..f0a5918 100644
+--- a/drivers/clocksource/samsung_pwm_timer.c
++++ b/drivers/clocksource/samsung_pwm_timer.c
+@@ -480,16 +480,16 @@ static void __init s3c64xx_pwm_clocksource_init(struct device_node *np)
+ }
+ CLOCKSOURCE_OF_DECLARE(s3c6400_pwm, "samsung,s3c6400-pwm", s3c64xx_pwm_clocksource_init);
+ 
+-static const struct samsung_pwm_variant s5p_variant = {
++static const struct samsung_pwm_variant s5pv210_variant = {
+ 	.bits		= 32,
+ 	.div_base	= 0,
+ 	.has_tint_cstat	= true,
+ 	.tclk_mask	= (1 << 5),
+ };
+ 
+-static void __init s5p_pwm_clocksource_init(struct device_node *np)
++static void __init s5pv210_pwm_clocksource_init(struct device_node *np)
+ {
+-	samsung_pwm_alloc(np, &s5p_variant);
++	samsung_pwm_alloc(np, &s5pv210_variant);
+ }
+-CLOCKSOURCE_OF_DECLARE(s5pc100_pwm, "samsung,s5pc100-pwm", s5p_pwm_clocksource_init);
++CLOCKSOURCE_OF_DECLARE(s5pv210_pwm, "samsung,s5pv210-pwm", s5pv210_pwm_clocksource_init);
+ #endif
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 68f3471..a2bafc9 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -404,24 +404,24 @@ static const struct samsung_pwm_variant s3c64xx_variant = {
+ 	.tclk_mask	= BIT(7) | BIT(6) | BIT(5),
+ };
+ 
+-static const struct samsung_pwm_variant exynos4210_variant = {
++static const struct samsung_pwm_variant s5pv210_variant = {
+ 	.bits		= 32,
+ 	.div_base	= 0,
+ 	.has_tint_cstat	= true,
+-	.tclk_mask	= 0,
++	.tclk_mask	= BIT(5),
+ };
+ 
+-static const struct samsung_pwm_variant s5pc100_variant = {
++static const struct samsung_pwm_variant exynos4210_variant = {
+ 	.bits		= 32,
+ 	.div_base	= 0,
+ 	.has_tint_cstat	= true,
+-	.tclk_mask	= BIT(5),
++	.tclk_mask	= 0,
+ };
+ 
+ static const struct of_device_id samsung_pwm_matches[] = {
+ 	{ .compatible = "samsung,s3c2410-pwm", .data = &s3c24xx_variant },
+ 	{ .compatible = "samsung,s3c6400-pwm", .data = &s3c64xx_variant },
+-	{ .compatible = "samsung,s5pc100-pwm", .data = &s5pc100_variant },
++	{ .compatible = "samsung,s5pv210-pwm", .data = &s5pv210_variant },
+ 	{ .compatible = "samsung,exynos4210-pwm", .data = &exynos4210_variant },
+ 	{},
+ };
