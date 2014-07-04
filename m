@@ -1,84 +1,64 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v6 06/23] mfd: max77686: Make error checking consistent
-Date: Fri, 04 Jul 2014 12:54:05 +0200
-Message-ID: <1404471245.14069.1.camel@AMDC1943>
-References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk>
- <1404467722-26687-7-git-send-email-javier.martinez@collabora.co.uk>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 2/6] pinctrl: samsung: Handle GPIO request and free using
+ pinctrl helpers
+Date: Fri, 04 Jul 2014 13:00:36 +0200
+Message-ID: <53B68954.30300@samsung.com>
+References: <1404315664-3174-1-git-send-email-t.figa@samsung.com>
+ <1404315664-3174-3-git-send-email-t.figa@samsung.com>
+ <CAK5sBcFHFg7u-40NVovp9D2ro=MnQbOyiP6MtMss2PJmByR4iQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:17067 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752990AbaGDKyH (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:55784 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752869AbaGDLBJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 06:54:07 -0400
-In-reply-to: <1404467722-26687-7-git-send-email-javier.martinez@collabora.co.uk>
+	Fri, 4 Jul 2014 07:01:09 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N8600E5YP9M6M40@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 Jul 2014 12:00:58 +0100 (BST)
+In-reply-to: <CAK5sBcFHFg7u-40NVovp9D2ro=MnQbOyiP6MtMss2PJmByR4iQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sachin Kamat <spk.linux@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Doug Anderson <dianders@chromium.org>
 
-On pi=C4=85, 2014-07-04 at 11:55 +0200, Javier Martinez Canillas wrote:
-> Error checking across the driver is mostly consistent besides
-> a few exceptions, so change these exceptions for consistency.
->=20
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
-=2Euk>
-> ---
->  drivers/mfd/max77686.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+On 04.07.2014 11:41, Sachin Kamat wrote:
+> Hi Tomasz,
+> 
+> On Wed, Jul 2, 2014 at 9:11 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> This patch adds .request() and .free() operations to gpio_chip of
+>> pinctrl-samsung driver, which call pinctrl request and free helpers to
+>> request and free pinctrl pin along with GPIO pin.
+>>
+>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+>> ---
+>>  drivers/pinctrl/pinctrl-samsung.c | 15 ++++++++++++++-
+>>  1 file changed, 14 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
+>> index 779c8bc..6e099d6 100644
+>> --- a/drivers/pinctrl/pinctrl-samsung.c
+>> +++ b/drivers/pinctrl/pinctrl-samsung.c
+>> @@ -779,7 +779,8 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
+>>                 pin_bank = &drvdata->ctrl->pin_banks[bank];
+>>                 pin_bank->grange.name = pin_bank->name;
+>>                 pin_bank->grange.id = bank;
+>> -               pin_bank->grange.pin_base = pin_bank->pin_base;
+>> +               pin_bank->grange.pin_base = drvdata->ctrl->base
+>> +                                               + pin_bank->pin_base;
+> 
+> Is this a fix?
+> 
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Hmm, could be.
+
+I haven't observed any issues due to this without further patches from
+this series, so I'm not sure if this needs to be sent as a separate fix,
+but I might split this patch into two if necessary.
 
 Best regards,
-Krzysztof
-
-
-> diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
-> index ada4976..87fe52e 100644
-> --- a/drivers/mfd/max77686.c
-> +++ b/drivers/mfd/max77686.c
-> @@ -134,7 +134,7 @@ static int max77686_i2c_probe(struct i2c_client *=
-i2c,
-> =20
->  	max77686 =3D devm_kzalloc(&i2c->dev,
->  				sizeof(struct max77686_dev), GFP_KERNEL);
-> -	if (max77686 =3D=3D NULL)
-> +	if (!max77686)
->  		return -ENOMEM;
-> =20
->  	i2c_set_clientdata(i2c, max77686);
-> @@ -153,8 +153,8 @@ static int max77686_i2c_probe(struct i2c_client *=
-i2c,
->  		return ret;
->  	}
-> =20
-> -	if (regmap_read(max77686->regmap,
-> -			 MAX77686_REG_DEVICE_ID, &data) < 0) {
-> +	ret =3D regmap_read(max77686->regmap, MAX77686_REG_DEVICE_ID, &data=
-);
-> +	if (ret < 0) {
->  		dev_err(max77686->dev,
->  			"device not found on this channel (this is not an error)\n");
->  		return -ENODEV;
-> @@ -180,7 +180,7 @@ static int max77686_i2c_probe(struct i2c_client *=
-i2c,
->  				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
->  				  IRQF_SHARED, 0, &max77686_irq_chip,
->  				  &max77686->irq_data);
-> -	if (ret !=3D 0) {
-> +	if (ret) {
->  		dev_err(&i2c->dev, "failed to add PMIC irq chip: %d\n", ret);
->  		goto err_unregister_i2c;
->  	}
-> @@ -188,7 +188,7 @@ static int max77686_i2c_probe(struct i2c_client *=
-i2c,
->  				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
->  				  IRQF_SHARED, 0, &max77686_rtc_irq_chip,
->  				  &max77686->rtc_irq_data);
-> -	if (ret !=3D 0) {
-> +	if (ret) {
->  		dev_err(&i2c->dev, "failed to add RTC irq chip: %d\n", ret);
->  		goto err_del_irqc;
->  	}
+Tomasz
