@@ -1,138 +1,116 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v6 18/23] mfd: max77802: Add DT binding documentation
-Date: Fri,  4 Jul 2014 11:55:17 +0200
-Message-ID: <1404467722-26687-19-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v6 14/23] regmap: Add regmap_reg_copy function
+Date: Fri,  4 Jul 2014 11:55:13 +0200
+Message-ID: <1404467722-26687-15-git-send-email-javier.martinez@collabora.co.uk>
 References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Tushar Behera <trblinux@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add Device Tree binding documentation for Maxim 77802 PMIC.
+Some device drivers using the register map API need to copy the
+value from one register to another. Even though it can be done
+with a combination of regmap_read() and regmap_write(), it is
+better to have a function to avoid code duplication and also it
+sanity check and do it atomically by holding the regmap lock.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
 
-Changes since v5:
- - Use max77686,* properties instead of max77802,* since the support is
-   now in the max77686 driver and that IP defined the properties first.
- - Fix issues in DT binding documentation. Suggested by Andreas Farber.
+Changes since v5: None
 
 Changes since v4: None
 
 Changes since v3: None
-
-Changes since v2:
- - Explain better the Dynamic Voltage Scaling (DVS) support in some Buck
-   regulators and the max77802,pmic-buck-{dvs,selb}-gpios properties.
-   Suggested by Mark Brown.
 ---
- Documentation/devicetree/bindings/mfd/max77802.txt | 95 ++++++++++++++++++++++
- 1 file changed, 95 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/max77802.txt
+ drivers/base/regmap/regmap.c | 34 ++++++++++++++++++++++++++++++++++
+ include/linux/regmap.h       |  9 +++++++++
+ 2 files changed, 43 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77802.txt b/Documentation/devicetree/bindings/mfd/max77802.txt
-new file mode 100644
-index 0000000..5460e20
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/max77802.txt
-@@ -0,0 +1,95 @@
-+Maxim MAX77802 multi-function device
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 74d8c06..a2e0b04 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -2555,6 +2555,40 @@ int regmap_parse_val(struct regmap *map, const void *buf,
+ }
+ EXPORT_SYMBOL_GPL(regmap_parse_val);
+ 
++/**
++ * regmap_reg_copy(): Copy a value from a single register to another one
++ *
++ * @map: Register map to operate on
++ * @dest: Register to copy the value to
++ * @src: Register to copy the value from
++ *
++ * A value of zero will be returned on success, a negative errno will
++ * be returned in error cases.
++ */
++int regmap_reg_copy(struct regmap *map, unsigned int dest, unsigned int src)
++{
++	int val;
++	int ret = 0;
 +
-+MAX77802 is a Multifunction device with PMIC, RTC and Charger on chip. It is
-+interfaced to host controller using i2c interface. PMIC, Charger and RTC
-+submodules are addressed using same i2c slave address.
++	if (dest == src)
++		return ret;
 +
-+Buck regulators 1, 2, 3, 4 and 6 include Dynamic Voltage Scaling (DVS) that
-+allows each output voltage to change dynamically. Each Buck output voltage
-+is selected using a set of external inputs: DVS1-3 and SELB1, 2, 3, 4 and 6.
++	if (dest % map->reg_stride ||
++	    src % map->reg_stride)
++		return -EINVAL;
 +
-+There are 8 DVS registers that can be used to configure the output voltage
-+for each Buck regulator and which one is active is controled by DVSx lines.
++	map->lock(map->lock_arg);
 +
-+SELBx lines are used to control if individual Buck lines are ON or OFF.
++	ret = _regmap_read(map, src, &val);
++	if (!ret)
++		ret = _regmap_write(map, dest, val);
 +
-+This document describes the binding for mfd device and PMIC submodule.
++	map->unlock(map->lock_arg);
 +
-+Binding for the built-in 32k clock generator block is defined separately
-+in bindings/clk/maxim,max77802.txt file.
++	return ret;
++}
++EXPORT_SYMBOL_GPL(regmap_reg_copy);
 +
-+Required properties:
-+- compatible : Must be "maxim,max77802";
-+- reg : Specifies the i2c slave address of PMIC block.
-+- interrupts : This i2c device has an IRQ line connected to the main SoC.
-+- interrupt-parent : The parent interrupt controller.
+ static int __init regmap_initcall(void)
+ {
+ 	regmap_debugfs_initcall();
+diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+index 7b0e4b4..116c22b 100644
+--- a/include/linux/regmap.h
++++ b/include/linux/regmap.h
+@@ -445,6 +445,8 @@ int regmap_register_patch(struct regmap *map, const struct reg_default *regs,
+ int regmap_parse_val(struct regmap *map, const void *buf,
+ 				unsigned int *val);
+ 
++int regmap_reg_copy(struct regmap *map, unsigned int dest, unsigned int src);
 +
-+Optional properties:
-+- max77686,pmic-buck-default-dvs-idx: We'll always write this DVS index in the
-+  PMIC for Bucks with DVS.
-+  NOTE: at the moment these bindings don't include enough details for actual
-+  GPIO-DVS--this just lets you choose which single slot to use.
+ static inline bool regmap_reg_in_range(unsigned int reg,
+ 				       const struct regmap_range *range)
+ {
+@@ -723,6 +725,13 @@ static inline int regmap_parse_val(struct regmap *map, const void *buf,
+ 	return -EINVAL;
+ }
+ 
++static inline int regmap_reg_copy(struct regmap *map, unsigned int dest,
++				  unsigned int src)
++{
++	WARN_ONCE(1, "regmap API is disabled");
++	return -EINVAL;
++}
 +
-+- max77686,pmic-buck-dvs-gpios: A GPIO array where each GPIO is connected to a
-+  DVS line. We'll try to set these GPIOs to match pmic-buck-default-dvs-idx at
-+  probe time if they are defined. If some or all of these GPIOs are not defined
-+  it's assumed that the board has any missing GPIOs hardwired to match
-+  pmic-buck-default-dvs-idx.
-+
-+- max77686,pmic-buck-selb-gpios: A GPIO array where each GPIO is connected to a
-+  SELBx line. Should be five values: 1, 2, 3, 4, 6. It is strongly suggested to
-+  include these GPIOs if there's any chance that changing DVS GPIOs one line at
-+  a time might glitch your DVS values.
-+
-+Optional node:
-+- regulators : The regulators of max77802 have to be instantiated
-+  under subnode named "regulators" using the following format.
-+
-+	regulator-name {
-+		standard regulator constraints....
-+	};
-+	refer Documentation/devicetree/bindings/regulator/regulator.txt
-+
-+  The regulator node name should be initialized with a string
-+to get matched with their hardware counterparts as follow. The valid names are:
-+
-+	-LDOn 	:	for LDOs, where n can lie in range 1 to 35.
-+			example: LDO1, LDO2, LDO35.
-+	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 10.
-+			example: BUCK1, BUCK5, BUCK10.
-+Example:
-+
-+	max77802@09 {
-+		compatible = "maxim,max77802";
-+		interrupt-parent = <&wakeup_eint>;
-+		interrupts = <26 0>;
-+		reg = <0x09>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		max77686,pmic-buck-default-dvs-idx = <1>;
-+		max77686,pmic-buck-dvs-gpios = <&gpy7 6 0>,
-+					       <&gpj4 2 0>,
-+					       <&gpj4 3 0>;
-+		max77686,pmic-buck-selb-gpios = <&gph0 2 0>,
-+						<&gph0 3 0>,
-+						<&gph0 4 0>,
-+						<&gph0 5 0>,
-+						<&gph0 6 0>;
-+
-+		regulators {
-+			ldo11_reg: LDO11 {
-+				regulator-name = "vdd_ldo11";
-+				regulator-min-microvolt = <1900000>;
-+				regulator-max-microvolt = <1900000>;
-+				regulator-always-on;
-+			};
-+
-+			buck1_reg: BUCK1 {
-+				regulator-name = "vdd_mif";
-+				regulator-min-microvolt = <950000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+	};
+ static inline struct regmap *dev_get_regmap(struct device *dev,
+ 					    const char *name)
+ {
 -- 
 2.0.0.rc2
