@@ -1,65 +1,72 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v3 0/3] Exynos MCT udelay, MCT cleanup, MCT to 32-bits
-Date: Sat, 05 Jul 2014 06:44:05 +0900
-Message-ID: <53B72025.5030902@samsung.com>
-References: <1403286472-6817-1-git-send-email-dianders@chromium.org>
+Subject: Re: [PATCH 1/1] ARM: EXYNOS: Remove unused code in common.h
+Date: Sat, 05 Jul 2014 06:53:56 +0900
+Message-ID: <53B72274.1040305@samsung.com>
+References: <1403524814-14735-1-git-send-email-sachin.kamat@samsung.com> <CAK5sBcFjTMjTG=+gAdKh77q=vrRqonfZDe_vJEkyOkE9W0FK7g@mail.gmail.com> <53B666E3.4090106@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:50188 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753595AbaGDVoN (ORCPT
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:56639 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755939AbaGDVyC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 17:44:13 -0400
-In-Reply-To: <1403286472-6817-1-git-send-email-dianders@chromium.org>
+	Fri, 4 Jul 2014 17:54:02 -0400
+Received: by mail-pa0-f47.google.com with SMTP id kq14so2431867pab.20
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Jul 2014 14:54:01 -0700 (PDT)
+In-Reply-To: <53B666E3.4090106@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, David Riley <davidriley@chromium.org>, Chirantan Ekbote <chirantan@chromium.org>, linux-kernel@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>, olof@lixom.net, Vincent Guittot <vincent.guittot@linaro.org>, tglx@linutronix.de, javier.martinez@collabora.co.uk, linux-arm-kernel@lists.infradead.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Sachin Kamat <sachin.kamat@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-On 06/21/14 02:47, Doug Anderson wrote:
-> This is a series of 3 patches related to the exynos MCT (multi core
-> timer).  The first allows MCT to function as a udelay() timer which
-> fixes broken udelay on 5400, 5800, and even (to a lesser extent) on
-> 5250.  The second is some general cleanup.  The third moves MCT to
-> 32-bits where possible to give us a nice speedup.
+On 07/04/14 17:33, Tomasz Figa wrote:
+> Hi Sachin,
 >
-> The first probably ought to be destined for 3.16 as a bugfix whereas
-> the others could land in a future kernel release.
+> On 04.07.2014 10:29, Sachin Kamat wrote:
+>> On Mon, Jun 23, 2014 at 5:30 PM, Sachin Kamat<sachin.kamat@samsung.com>  wrote:
+>>> PINCTRL_EXYNOS is always selected by Exynos platform in its
+>>> machine Kconfig. Thus the code in the else part is never used.
+>>> Remove it.
+>>>
+>>> Signed-off-by: Sachin Kamat<sachin.kamat@samsung.com>
+>>> ---
+>>>   arch/arm/mach-exynos/common.h |    4 ----
+>>>   1 file changed, 4 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+>>> index 1ee91763fa7c..3371669dabc6 100644
+>>> --- a/arch/arm/mach-exynos/common.h
+>>> +++ b/arch/arm/mach-exynos/common.h
+>>> @@ -125,11 +125,7 @@ void exynos_init_late(void);
+>>>
+>>>   void exynos_firmware_init(void);
+>>>
+>>> -#ifdef CONFIG_PINCTRL_EXYNOS
+>>>   extern u32 exynos_get_eint_wake_mask(void);
+>>> -#else
+>>> -static inline u32 exynos_get_eint_wake_mask(void) { return 0xffffffff; }
+>>> -#endif
+>>>
+>>>   #ifdef CONFIG_PM_SLEEP
+>>>   extern void __init exynos_pm_init(void);
+>>> --
+>>> 1.7.9.5
+>>>
+>>
+>> Ping..
+>>
 >
-> This series is based on (clocksource: exynos_mct: Fix ftrace).
+> For this change alone:
 >
-> With this series we can drop the patches I submitted:
-> - clocksource: exynos_mct: cache mct upper count
-> - clocksource: exynos_mct: Optimize register reads with ldmia
+> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
 >
-> Changes in v3:
-> - Back to exynos_frc_read for now until 32/64 is resolved.
-> - Now returns cycles_t which matches arch/arm/include/asm/timex.h.
-> - Rebased.
-> - Moved registration to its own function.
-> - __raw_readl / __raw_writel patch new for version 3
-> - Now 32-bit version instead of ldmia version
->
-> Changes in v2:
-> - Added #defines for ARM and ARM64 as pointed by Doug Anderson.
->
-> Amit Daniel Kachhap (1):
->    clocksource: exynos_mct: Register the timer for stable udelay
->
-> Doug Anderson (2):
->    clocksource: exynos_mct: __raw_readl/__raw_writel =>
->      readl_relaxed/writel_relaxed
->    clocksource: exynos_mct: Only use 32-bits where possible
->
->   drivers/clocksource/Kconfig      |  1 +
->   drivers/clocksource/exynos_mct.c | 72 ++++++++++++++++++++++++++++++----------
->   2 files changed, 55 insertions(+), 18 deletions(-)
->
+Applied, thanks.
 
-Sorry for late taking this series...looks good to me and applied 
-including previous 'fix ftrace'.
+- Kukjin
 
-Thanks,
-Kukjin
+
+> However I can see much more unused code in that header, more
+> specifically prototypes of mct_init() (replaced with DT-based init) and
+> most of other *init*() functions (which are now all in one file). Do you
+> plan to remove them as well?
