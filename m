@@ -1,72 +1,62 @@
-From: Jonghwan Choi <jhbird.choi@samsung.com>
-Subject: [PATCH] thermal: Add missing cpumask_clear
-Date: Fri, 04 Jul 2014 19:22:40 +0900
-Message-ID: <000001cf9771$e2f465c0$a8dd3140$@samsung.com>
+From: Tushar Behera <tushar.b@samsung.com>
+Subject: [PATCH] drm/exynos: fimd: Keep power enabled during fimd_bind
+Date: Fri,  4 Jul 2014 16:03:19 +0530
+Message-ID: <1404469999-21147-1-git-send-email-tushar.b@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:33320 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752705AbaGDKWn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Jul 2014 06:22:43 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N86003UNNHTVV30@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Jul 2014 19:22:41 +0900 (KST)
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Eduardo Valentin' <eduardo.valentin@ti.com>, 'Jonghwa Lee' <jonghwa3.lee@samsung.com>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>
 
-Cpumasks should be cleared before using.
+Under some conditions (when IOMMU is enabled), fimd_bind() accesses
+hardware registers and power-domain should be enabled during that time.
 
-Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+fimd_bind --> fimd_mgr_initialize --> fimd_clear_channel
+
+If the power-domain is disabled by that time, we get a boot-time crash.
+It would be better to keep power-domain enabled explicitly.
+
+Unhandled fault: external abort on non-linefetch (0x1008) at 0xf0180034
+Internal error: : 1008 [#1] PREEMPT SMP ARM
+...
+PC is at fimd_bind+0x84/0x134
+LR is at component_bind_all+0xb4/0x1d8
+
+Signed-off-by: Tushar Behera <tushar.b@samsung.com>
 ---
- drivers/thermal/db8500_cpufreq_cooling.c        |    1 +
- drivers/thermal/imx_thermal.c                   |    1 +
- drivers/thermal/samsung/exynos_thermal_common.c |    1 +
- 3 files changed, 3 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/thermal/db8500_cpufreq_cooling.c b/drivers/thermal/db8500_cpufreq_cooling.c
-index 786d192..1fa46ff 100644
---- a/drivers/thermal/db8500_cpufreq_cooling.c
-+++ b/drivers/thermal/db8500_cpufreq_cooling.c
-@@ -34,6 +34,7 @@ static int db8500_cpufreq_cooling_probe(struct platform_device *pdev)
- 	if (!cpufreq_frequency_get_table(0))
- 		return -EPROBE_DEFER;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 33161ad..34275fb 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -888,11 +888,15 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+ 	struct fimd_context *ctx = fimd_manager.ctx;
+ 	struct drm_device *drm_dev = data;
  
-+	cpumask_clear(&mask_val);
- 	cpumask_set_cpu(0, &mask_val);
- 	cdev = cpufreq_cooling_register(&mask_val);
++	pm_runtime_get_sync(dev);
++
+ 	fimd_mgr_initialize(&fimd_manager, drm_dev);
+ 	exynos_drm_crtc_create(&fimd_manager);
+ 	if (ctx->display)
+ 		exynos_drm_create_enc_conn(drm_dev, ctx->display);
  
-diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
-index a99c631..a21acf8 100644
---- a/drivers/thermal/imx_thermal.c
-+++ b/drivers/thermal/imx_thermal.c
-@@ -449,6 +449,7 @@ static int imx_thermal_probe(struct platform_device *pdev)
- 	regmap_write(map, MISC0 + REG_SET, MISC0_REFTOP_SELBIASOFF);
- 	regmap_write(map, TEMPSENSE0 + REG_SET, TEMPSENSE0_POWER_DOWN);
++	pm_runtime_put_sync(dev);
++
+ 	return 0;
  
-+	cpumask_clear(&clip_cpus);
- 	cpumask_set_cpu(0, &clip_cpus);
- 	data->cdev = cpufreq_cooling_register(&clip_cpus);
- 	if (IS_ERR(data->cdev)) {
-diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/thermal/samsung/exynos_thermal_common.c
-index 3f5ad25..47efa4c 100644
---- a/drivers/thermal/samsung/exynos_thermal_common.c
-+++ b/drivers/thermal/samsung/exynos_thermal_common.c
-@@ -361,6 +361,7 @@ int exynos_register_thermal(struct thermal_sensor_conf *sensor_conf)
- 		return -ENOMEM;
- 
- 	th_zone->sensor_conf = sensor_conf;
-+	cpumask_clear(&mask_val);
- 	/*
- 	 * TODO: 1) Handle multiple cooling devices in a thermal zone
- 	 *	 2) Add a flag/name in cooling info to map to specific
+ }
 -- 
-1.7.10.4
+1.7.9.5
