@@ -1,94 +1,57 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 2/4] usb: host: xhci-plat: Add support to get PHYs
-Date: Fri, 04 Jul 2014 02:39:53 +0400
-Message-ID: <53B5DBB9.3080202@cogentembedded.com>
-References: <1402056736-12674-1-git-send-email-gautam.vivek@samsung.com>	<1402056736-12674-3-git-send-email-gautam.vivek@samsung.com>	<CAODwPW-2tbDht8P=KsTyTyeBivFtFMiyCpxd0QFa-cUSRTpJjQ@mail.gmail.com>	<53A9FCDB.6060805@cogentembedded.com> <CAFp+6iGYZdRL17UqPhskyDDhfD++His3mO2v7uzG5OF1Hd3TrQ@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: ASoC: samsung: MACH_SMDK6450
+Date: Fri, 04 Jul 2014 09:39:06 +0900
+Message-ID: <023d01cf9720$5ed32fc0$1c798f40$@samsung.com>
+References: <1404287238.12021.7.camel@x220>
+ <20140702092347.GB410@sirena.org.uk> <53B48993.5020809@samsung.com>
+ <20140703111442.GW410@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:41818 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752275AbaGCWjr (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:27371 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755557AbaGDAjV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Jul 2014 18:39:47 -0400
-Received: by mail-lb0-f173.google.com with SMTP id s7so639082lbd.32
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Jul 2014 15:39:45 -0700 (PDT)
-In-Reply-To: <CAFp+6iGYZdRL17UqPhskyDDhfD++His3mO2v7uzG5OF1Hd3TrQ@mail.gmail.com>
+	Thu, 3 Jul 2014 20:39:21 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N8500BV2WHA9880@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 Jul 2014 09:39:10 +0900 (KST)
+In-reply-to: <20140703111442.GW410@sirena.org.uk>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Julius Werner <jwerner@chromium.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Mathias Nyman <mathias.nyman@intel.com>, LKML <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Mark Brown' <broonie@kernel.org>
+Cc: 'Paul Bolle' <pebolle@tiscali.nl>, 'Ben Dooks' <ben-linux@fluff.org>, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Liam Girdwood' <lgirdwood@gmail.com>, 'Jaroslav Kysela' <perex@perex.cz>, 'Takashi Iwai' <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
-Hello.
+Mark Brown wrote:
+> 
+> On Thu, Jul 03, 2014 at 07:37:07AM +0900, Kukjin Kim wrote:
+> > On 07/02/14 18:23, Mark Brown wrote:
+> 
+> > >This also wasn't sent to me for review, please always send patches to
+> > >maintainers.
+> 
+> > Mark, I always send patches to regarding maintainers and in this case the
+> > patch missed the change. I'm resending new patch and if any problems, please
+> > let me know. Just note, I just wanted to check whether there is no problem
+> > with other maintainers' tree early in -next tree.
+> 
+> It looks like you've sent it to broonie@linaro.org not broonie@kernel.org
+> which is listed in MAINTAINERS and what I use for e-mail - upstream mail
+> that goes to my work address often just gets dropped on the floor (and
+> generally ends up at the bottom of my queue to look at) since it ends up
+> in a completely different place to my personal mail.
 
-On 06/25/2014 12:44 PM, Vivek Gautam wrote:
+Mark, oh, I see. But I checked your e-mail address from recent your sign-off
+in git commit so, just thought it should be fine.
 
->>>> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
->>>> index 9ffecd5..453d89e 100644
->>>> --- a/drivers/usb/host/xhci.h
->>>> +++ b/drivers/usb/host/xhci.h
->>>> @@ -1582,6 +1582,9 @@ struct xhci_hcd {
->>>>           u32                     port_status_u0;
->>>>    /* Compliance Mode Timer Triggered every 2 seconds */
->>>>    #define COMP_MODE_RCVRY_MSECS 2000
->>>> +       /* phys for the controller */
->>>> +       struct phy              *phy2_gen;
->>>> +       struct phy              *phy3_gen;
->>>>    };
+I will use kernel.org for your e-mail address next time ;-)
 
->>> I don't think adding new variables here and restricting most of this
->>> logic to xhci-plat.c (in the next patch) is the best way to do it.
+And you have any comments or ack on the series, please kindly let me know.
 
->>     Indeed.
-
-    Actually, I haven't given enough thought to this...
-
->>> There's no conceptual reason why other host controllers (e.g. xhci-pci
->>> or even EHCI) could not have a similar need to tune their PHY after
->>> reset. PHYs are universal to all host controllers.
-
->>> There is already a 'phy' member in struct usb_hcd which I think is
->>> mostly unused right now. I think it would be much less
->>> confusing/redundant to reuse that member for this purpose (you could
->>> still set it up from xhci_plat_probe(), and then call it from
->>> hcd_bus_resume() or something like that).
-
->>     That member has type 'struct usb_phy *' while here we have 'struct phy *'
->> -- feel the difference.
->>     I have already tried adding 'struct phy *gen_phy' to 'struct usb_hcd',
-
-> So the 'struct phy *' available in the usb_hcd is requested in usb_add_hcd().
-> This is requested with the constant string 'usb' :
->             struct phy *phy = phy_get(hcd->self.controller, "usb");
-
-> This can get the phy with string 'usb' only if, either the host
-> controller has a device node wherein the phys are given.
-
-    Yes, that was the plan. Currently, the PHY driver for which this was 
-written can be probed from the device tree only.
-
-> Even in this case one can't give same constant string for two
-> different phys, UTMI+ and PIPE3 phy, isn't it ?
-
-    Yes, you're right. I didn't really consider the case of some host needing 
-2 distinct PHY.
-
-> Or, the other way can be when host gets a lookup table to look into to
-> find the relevant phys, something like
-> Heikki has suggested:
-> usb: dwc3: host: convey the PHYs to xhci
-> (https://lkml.org/lkml/2014/6/5/585) and related patch series.
-
-    Well, AFAIK the look-up table method is already provided by the current 
-PHY core for non-DT use cases; this doesn't seem to have changed with that 
-patch set, does it?
-
-> So if we use this second approach, we would need to override the
-> 'phy_get()' that has been done in usb_add_hcd()
-> in xhci_plat_probe(), and then use them in later operations.
-
-    I guess it'd probably be simpler to ignore the 'gen_phy' member of 'struct 
-usb_hcd' in your case (if it gets eventually added).
-
-WBR, Sergei
+Thanks,
+Kukjin
