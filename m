@@ -1,61 +1,54 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] drivers: phy: exynos-usb2: add support for Exynos 3250
-Date: Sat, 05 Jul 2014 00:21:17 +0200
-Message-ID: <53B728DD.1000703@gmail.com>
-References: <1404475989-30588-1-git-send-email-m.szyprowski@samsung.com>
+From: Jonghwan Choi <jhbird.choi@samsung.com>
+Subject: RE: [PATCH] thermal: Add missing cpumask_clear
+Date: Sat, 05 Jul 2014 08:37:53 +0900
+Message-ID: <000101cf97e0$f9ba7a50$ed2f6ef0$@samsung.com>
+References: <000001cf9771$e2f465c0$a8dd3140$@samsung.com>
+ <CAK5sBcHDTgyj67xVWgtNH-Z7XU1Ykp6m650_mWBVp=Az2P6f=Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1404475989-30588-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:55802 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753619AbaGDXhz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 4 Jul 2014 19:37:55 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N8700198OB5KY50@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 05 Jul 2014 08:37:53 +0900 (KST)
+In-reply-to: <CAK5sBcHDTgyj67xVWgtNH-Z7XU1Ykp6m650_mWBVp=Az2P6f=Q@mail.gmail.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Sachin Kamat' <spk.linux@gmail.com>
+Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Eduardo Valentin' <eduardo.valentin@ti.com>, 'Jonghwa Lee' <jonghwa3.lee@samsung.com>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>
 
-Hi Marek,
+On Fri, Jul 4, 2014 at 8:23 PM, Sachin Kamat <spk.linux@gmail.com> wrote:
 
-Please see my comments inline.
-
-On 04.07.2014 14:13, Marek Szyprowski wrote:
-> This patch adds support for Exynos3250 SoC to Exynos2USB PHY driver.
-> Although Exynos3250 has only one device phy interface, the register
-> layout and all operations that are required to get it enabled are almost
-> same as on Exynos4x12. The only different is one more register
-> (REFCLKSEL) which need to be set.
+> > Cpumasks should be cleared before using.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/phy/Kconfig               | 12 ++++++------
->  drivers/phy/phy-exynos4x12-usb2.c | 18 ++++++++++++++++++
->  drivers/phy/phy-samsung-usb2.c    |  6 ++++++
->  drivers/phy/phy-samsung-usb2.h    |  2 ++
+> Please explain why and what is issue observed without this.
+>
 
-This patch adds new compatible string, but there is no respective change
-to the documentation. Please add it.
+-> When I checked the mask value, I knew that unwanted bit is set.
 
->  4 files changed, 32 insertions(+), 6 deletions(-)
-> 
+Test code without cpumask_clear.
 
-[snip]
++       cpumask_set_cpu(0, &mask_val);
++       cpulist_scnprintf(buf, 64, &mask_val);
++       printk("--ID [ %d] = %s \n", id, buf);
++       th_zone->cool_dev[id] = cpufreq_cooling_register(&mask_val);
 
-> diff --git a/drivers/phy/phy-exynos4x12-usb2.c b/drivers/phy/phy-exynos4x12-usb2.c
-> index 59d8dd3ff390..b29bbfacd4b5 100644
-> --- a/drivers/phy/phy-exynos4x12-usb2.c
-> +++ b/drivers/phy/phy-exynos4x12-usb2.c
-> @@ -67,6 +67,12 @@
->  #define EXYNOS_4x12_UPHYCLK_PHYFSEL_24MHZ	(0x5 << 0)
->  #define EXYNOS_4x12_UPHYCLK_PHYFSEL_50MHZ	(0x7 << 0)
->  
-> +#define EXYNOS_4212_UPHYCLK_PHY0_ID_PULLUP	(0x1 << 3)
-> +#define EXYNOS_4212_UPHYCLK_PHY0_COMMON_ON	(0x1 << 4)
-> +#define EXYNOS_4212_UPHYCLK_PHY1_COMMON_ON	(0x1 << 7)
 
-The 3 macros above don't seem to be used anywhere in this patch.
+Console message-> 4.861157] [c6] --ID [ 1] = 0,4-5,7 (4,5,7 cpu bit was set.)
 
-Best regards,
-Tomasz
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+And when I tried to register two cooling devices with cpumask_set_cpu(0, &mask_val) and cpumask_set_cpu(4, &mask_val). 
+
+I found that cpu 0 bit is also set in latter cpumask. (I hope latter cpumask has a cpu 4 bit.)
+
+So I think that cpumask_clear should be inserted.
+
+Thanks.
