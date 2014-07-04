@@ -1,7 +1,7 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 08/19] ARM: s5pv210: Add board file for boot using Device Tree
-Date: Fri, 04 Jul 2014 19:48:08 +0200
-Message-ID: <1404496099-26708-9-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 16/19] ARM: s5pv210: Enable multi-platform build support
+Date: Fri, 04 Jul 2014 19:48:16 +0200
+Message-ID: <1404496099-26708-17-git-send-email-t.figa@samsung.com>
 References: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
@@ -10,133 +10,190 @@ To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+This makes it possible to enable the s5pv210 platform as part of a
+multiplatform kernel. Also redundant Kconfig options are removed.
 
-This patch adds board file that will be used to boot S5PV210/S5PC110-based
-boards using Device Tree.
-
-Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-[t.figa: Rebased and cleaned-up a bit.]
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/mach-s5pv210/Kconfig   | 14 +++++++++
- arch/arm/mach-s5pv210/Makefile  |  2 +-
- arch/arm/mach-s5pv210/s5pv210.c | 68 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 83 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/mach-s5pv210/s5pv210.c
+ arch/arm/Kconfig                    | 23 ++---------------------
+ arch/arm/Makefile                   |  4 ++--
+ arch/arm/mach-s5pv210/Kconfig       | 36 ++++++++++++++++--------------------
+ arch/arm/mach-s5pv210/Makefile      |  7 +++----
+ arch/arm/mach-s5pv210/Makefile.boot |  2 --
+ arch/arm/plat-samsung/Makefile      |  1 -
+ arch/arm/plat-samsung/cpu.c         |  2 +-
+ 7 files changed, 24 insertions(+), 51 deletions(-)
+ delete mode 100644 arch/arm/mach-s5pv210/Makefile.boot
 
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index c0c1c3f..756711f 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -758,26 +758,6 @@ config ARCH_S3C64XX
+ 	help
+ 	  Samsung S3C64XX series based systems
+ 
+-config ARCH_S5PV210
+-	bool "Samsung S5PV210/S5PC110"
+-	select ARCH_HAS_HOLES_MEMORYMODEL
+-	select ARCH_SPARSEMEM_ENABLE
+-	select ATAGS
+-	select CLKDEV_LOOKUP
+-	select CLKSRC_SAMSUNG_PWM
+-	select COMMON_CLK_SAMSUNG
+-	select CPU_V7
+-	select GENERIC_CLOCKEVENTS
+-	select GPIO_SAMSUNG
+-	select HAVE_S3C2410_I2C if I2C
+-	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+-	select HAVE_S3C_RTC if RTC_CLASS
+-	select NEED_MACH_GPIO_H
+-	select NEED_MACH_MEMORY_H
+-	select SAMSUNG_ATAGS
+-	help
+-	  Samsung S5PV210/S5PC110 series based systems
+-
+ config ARCH_DAVINCI
+ 	bool "TI DaVinci"
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+@@ -1515,7 +1495,8 @@ config ARM_PSCI
+ config ARCH_NR_GPIO
+ 	int
+ 	default 1024 if ARCH_SHMOBILE || ARCH_TEGRA
+-	default 512 if ARCH_EXYNOS || ARCH_KEYSTONE || SOC_OMAP5 || SOC_DRA7XX || ARCH_S3C24XX || ARCH_S3C64XX
++	default 512 if ARCH_EXYNOS || ARCH_KEYSTONE || SOC_OMAP5 || \
++		SOC_DRA7XX || ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210
+ 	default 416 if ARCH_SUNXI
+ 	default 392 if ARCH_U8500
+ 	default 352 if ARCH_VT8500
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index d3f470c..c133061 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -210,11 +210,11 @@ machine-$(CONFIG_PLAT_SPEAR)		+= spear
+ plat-$(CONFIG_ARCH_EXYNOS)	+= samsung
+ plat-$(CONFIG_ARCH_OMAP)	+= omap
+ plat-$(CONFIG_ARCH_S3C64XX)	+= samsung
++plat-$(CONFIG_ARCH_S5PV210)	+= samsung
+ plat-$(CONFIG_PLAT_IOP)		+= iop
+ plat-$(CONFIG_PLAT_ORION)	+= orion
+ plat-$(CONFIG_PLAT_PXA)		+= pxa
+ plat-$(CONFIG_PLAT_S3C24XX)	+= samsung
+-plat-$(CONFIG_PLAT_S5P)		+= samsung
+ plat-$(CONFIG_PLAT_VERSATILE)	+= versatile
+ 
+ ifeq ($(CONFIG_ARCH_EBSA110),y)
+@@ -238,7 +238,7 @@ MACHINE  :=
+ endif
+ 
+ machdirs := $(patsubst %,arch/arm/mach-%/,$(machine-y))
+-platdirs := $(patsubst %,arch/arm/plat-%/,$(plat-y))
++platdirs := $(patsubst %,arch/arm/plat-%/,$(sort $(plat-y)))
+ 
+ ifneq ($(CONFIG_ARCH_MULTIPLATFORM),y)
+ ifeq ($(KBUILD_SRC),)
 diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index f60f286..ed492cf 100644
+index ffc777d..330bfc8 100644
 --- a/arch/arm/mach-s5pv210/Kconfig
 +++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -194,6 +194,20 @@ config MACH_TORBRECK
- 	help
- 	  Machine support for aESOP Torbreck
+@@ -7,32 +7,28 @@
  
-+config MACH_S5PV210_DT
-+	bool "Samsung S5PV210/S5PC110 machine using Device Tree"
-+	select CLKSRC_OF
-+	select CPU_S5PV210
+ # Configuration options for the S5PV210/S5PC110
+ 
++config ARCH_S5PV210
++	bool "Samsung S5PV210/S5PC110" if ARCH_MULTI_V7
++	select ARCH_HAS_HOLES_MEMORYMODEL
++	select ARCH_REQUIRE_GPIOLIB
++	select ARM_VIC
++	select CLKSRC_SAMSUNG_PWM
++	select COMMON_CLK_SAMSUNG
++	select HAVE_S3C2410_I2C if I2C
++	select HAVE_S3C2410_WATCHDOG if WATCHDOG
++	select HAVE_S3C_RTC if RTC_CLASS
 +	select PINCTRL
 +	select PINCTRL_EXYNOS
-+	select USE_OF
 +	help
-+	  Machine support for Samsung S5PV210/S5PC110 machines with Device Tree
-+	  enabled.
-+	  Select this if a fdt blob is available for your S5PV210 SoC based
-+	  board.
-+	  Note: This is under development and not all peripherals can be
-+	  supported with this machine file.
- endmenu
++	  Samsung S5PV210/S5PC110 series based systems
++
+ if ARCH_S5PV210
  
+ config CPU_S5PV210
+-	bool
++	def_bool y
+ 	select ARM_AMBA
+ 	select PL330_DMA if DMADEVICES
+-	select S5P_EXT_INT
+ 	help
+ 	  Enable S5PV210 CPU support
+ 
+-menu "S5PV210 Machines"
+-
+-config MACH_S5PV210_DT
+-	bool "Samsung S5PV210/S5PC110 machine using Device Tree"
+-	select CLKSRC_OF
+-	select CPU_S5PV210
+-	select PINCTRL
+-	select PINCTRL_EXYNOS
+-	select USE_OF
+-	help
+-	  Machine support for Samsung S5PV210/S5PC110 machines with Device Tree
+-	  enabled.
+-	  Select this if a fdt blob is available for your S5PV210 SoC based
+-	  board.
+-	  Note: This is under development and not all peripherals can be
+-	  supported with this machine file.
+-endmenu
+-
  endif
 diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
-index 08358bb..8d87b10 100644
+index 5308225..7dc2d0e 100644
 --- a/arch/arm/mach-s5pv210/Makefile
 +++ b/arch/arm/mach-s5pv210/Makefile
-@@ -24,7 +24,7 @@ obj-$(CONFIG_MACH_GONI)		+= mach-goni.o
- obj-$(CONFIG_MACH_SMDKC110)	+= mach-smdkc110.o
- obj-$(CONFIG_MACH_SMDKV210)	+= mach-smdkv210.o
- obj-$(CONFIG_MACH_TORBRECK)	+= mach-torbreck.o
--
-+obj-$(CONFIG_MACH_S5PV210_DT)	+= s5pv210.o
- # device support
+@@ -5,6 +5,8 @@
+ #
+ # Licensed under GPLv2
  
- obj-y				+= dev-audio.o
-diff --git a/arch/arm/mach-s5pv210/s5pv210.c b/arch/arm/mach-s5pv210/s5pv210.c
-new file mode 100644
-index 0000000..c244ccb
---- /dev/null
-+++ b/arch/arm/mach-s5pv210/s5pv210.c
-@@ -0,0 +1,68 @@
-+/*
-+ * Samsung's S5PC110/S5PV210 flattened device tree enabled machine.
-+ *
-+ * Copyright (c) 2013-2014 Samsung Electronics Co., Ltd.
-+ * Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-+ * Tomasz Figa <t.figa@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
++ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)/arch/arm/plat-samsung/include
 +
-+#include <linux/of_fdt.h>
-+#include <linux/of_platform.h>
-+
-+#include <asm/mach/arch.h>
-+#include <asm/mach/map.h>
-+#include <asm/system_misc.h>
-+
+ obj-y				:=
+ obj-m				:=
+ obj-n				:=
+@@ -16,7 +18,4 @@ obj-$(CONFIG_PM_SLEEP)		+= pm.o sleep.o
+ 
+ # machine support
+ 
+-obj-$(CONFIG_MACH_S5PV210_DT)	+= s5pv210.o
+-# device support
+-
+-obj-y					+= setup-i2c0.o
++obj-y				+= s5pv210.o
+diff --git a/arch/arm/mach-s5pv210/Makefile.boot b/arch/arm/mach-s5pv210/Makefile.boot
+deleted file mode 100644
+index 79ece40..0000000
+diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+index 906f54b..97fc15e 100644
+--- a/arch/arm/plat-samsung/Makefile
++++ b/arch/arm/plat-samsung/Makefile
+@@ -5,7 +5,6 @@
+ # Licensed under GPLv2
+ 
+ ccflags-$(CONFIG_ARCH_MULTI_V7) += -I$(srctree)/$(src)/include
+-ccflags-$(CONFIG_ARCH_EXYNOS)	+= -I$(srctree)/arch/arm/mach-exynos/include
+ 
+ obj-y				:=
+ obj-m				:=
+diff --git a/arch/arm/plat-samsung/cpu.c b/arch/arm/plat-samsung/cpu.c
+index 364963a..945fc3f 100644
+--- a/arch/arm/plat-samsung/cpu.c
++++ b/arch/arm/plat-samsung/cpu.c
+@@ -16,7 +16,7 @@
+ #include <linux/io.h>
+ 
+ 
+-#include <mach/map.h>
 +#include <plat/map-base.h>
-+#include <mach/regs-clock.h>
-+
-+static int __init s5pv210_fdt_map_sys(unsigned long node, const char *uname,
-+					int depth, void *data)
-+{
-+	struct map_desc iodesc;
-+	const __be32 *reg;
-+	int len;
-+
-+	if (!of_flat_dt_is_compatible(node, "samsung,s5pv210-clock"))
-+		return 0;
-+
-+	reg = of_get_flat_dt_prop(node, "reg", &len);
-+	if (reg == NULL || len != (sizeof(unsigned long) * 2))
-+		return 0;
-+
-+	iodesc.pfn = __phys_to_pfn(be32_to_cpu(reg[0]));
-+	iodesc.length = be32_to_cpu(reg[1]) - 1;
-+	iodesc.virtual = (unsigned long)S3C_VA_SYS;
-+	iodesc.type = MT_DEVICE;
-+	iotable_init(&iodesc, 1);
-+
-+	return 1;
-+}
-+
-+static void __init s5pv210_dt_map_io(void)
-+{
-+	debug_ll_io_init();
-+
-+	of_scan_flat_dt(s5pv210_fdt_map_sys, NULL);
-+}
-+
-+static void s5pv210_dt_restart(enum reboot_mode mode, const char *cmd)
-+{
-+	__raw_writel(0x1, S5P_SWRESET);
-+}
-+
-+static char const *s5pv210_dt_compat[] __initconst = {
-+	"samsung,s5pc110",
-+	"samsung,s5pv210",
-+	NULL
-+};
-+
-+DT_MACHINE_START(S5PV210_DT, "Samsung S5PC110/S5PV210-based board")
-+	.dt_compat = s5pv210_dt_compat,
-+	.map_io = s5pv210_dt_map_io,
-+	.restart = s5pv210_dt_restart,
-+MACHINE_END
+ #include <plat/cpu.h>
+ 
+ unsigned long samsung_cpu_id;
 -- 
 1.9.3
