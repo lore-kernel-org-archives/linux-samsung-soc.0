@@ -1,97 +1,256 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v7 16/24] regulator: max77686: Setup DVS-related GPIOs on probe
-Date: Fri,  4 Jul 2014 22:24:19 +0200
-Message-ID: <1404505467-26526-17-git-send-email-javier.martinez@collabora.co.uk>
-References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH v7] ARM: EXYNOS: Use MCPM call-backs to support S2R on
+ Exynos5420
+Date: Fri, 4 Jul 2014 17:00:03 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1407041659330.22282@knanqh.ubzr>
+References: <1404496024-7113-1-git-send-email-a.kesavan@samsung.com> <1404503133-19760-1-git-send-email-a.kesavan@samsung.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f171.google.com ([209.85.216.171]:63322 "EHLO
+	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752648AbaGDVAG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 4 Jul 2014 17:00:06 -0400
+Received: by mail-qc0-f171.google.com with SMTP id w7so1837143qcr.16
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 04 Jul 2014 14:00:05 -0700 (PDT)
+In-Reply-To: <1404503133-19760-1-git-send-email-a.kesavan@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, lorenzo.pieralisi@arm.com, abrestic@chromium.org, dianders@chromium.org, kesavan.abhilash@gmail.com
 
-MAX77686 PMIC support Dyamic Voltage Scaling (DVS) on a set
-of Buck regulators. A number of GPIO are connected to these
-lines and are requested by the mfd driver. Setup the GPIO
-pins from the regulator driver.
+On Sat, 5 Jul 2014, Abhilash Kesavan wrote:
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- drivers/regulator/max77686.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+> Use the MCPM layer to handle core suspend/resume on Exynos5420.
+> Also, restore the entry address setup code post-resume.
+> 
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 
-diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
-index ef1af2d..ecce77a 100644
---- a/drivers/regulator/max77686.c
-+++ b/drivers/regulator/max77686.c
-@@ -435,6 +435,12 @@ static int max77686_pmic_dt_parse_pdata(struct platform_device *pdev,
- }
- #endif /* CONFIG_OF */
- 
-+static inline bool max77686_is_dvs_buck(int id)
-+{
-+	/* BUCK 2,3 and 4 support DVS */
-+	return (id >= MAX77686_BUCK2 && id <= MAX77686_BUCK4);
-+}
-+
- static int max77686_pmic_probe(struct platform_device *pdev)
- {
- 	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
-@@ -442,6 +448,9 @@ static int max77686_pmic_probe(struct platform_device *pdev)
- 	struct max77686_data *max77686;
- 	int i, ret = 0;
- 	struct regulator_config config = { };
-+	unsigned int reg;
-+	int buck_default_idx;
-+	int buck_old_idx;
- 
- 	dev_dbg(&pdev->dev, "%s\n", __func__);
- 
-@@ -472,13 +481,34 @@ static int max77686_pmic_probe(struct platform_device *pdev)
- 	config.driver_data = max77686;
- 	platform_set_drvdata(pdev, max77686);
- 
-+	buck_default_idx = pdata->buck_default_idx;
-+	buck_old_idx = max77686_read_gpios(pdata);
-+
- 	for (i = 0; i < MAX77686_REGULATORS; i++) {
- 		struct regulator_dev *rdev;
-+		int id = pdata->regulators[i].id;
- 
- 		config.init_data = pdata->regulators[i].initdata;
- 		config.of_node = pdata->regulators[i].of_node;
- 
- 		max77686->opmode[i] = regulators[i].enable_mask;
-+
-+		if (max77686_is_dvs_buck(id)) {
-+			/* Try to copy over data so we keep firmware settings */
-+			reg = regulators[i].vsel_reg;
-+
-+			ret = regmap_reg_copy(iodev->regmap,
-+					      reg + buck_default_idx,
-+					      reg + buck_old_idx);
-+
-+			if (ret)
-+				dev_warn(&pdev->dev, "Copy err %d => %d (%d)\n",
-+					 reg + buck_old_idx,
-+					 reg + buck_default_idx, ret);
-+
-+			regulators[i].vsel_reg += buck_default_idx;
-+		}
-+
- 		rdev = devm_regulator_register(&pdev->dev,
- 						&regulators[i], &config);
- 		if (IS_ERR(rdev)) {
-@@ -488,6 +518,10 @@ static int max77686_pmic_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	ret = max77686_setup_gpios(iodev->dev);
-+	if (ret)
-+		return ret;
-+
- 	return 0;
- }
- 
--- 
-2.0.0.rc2
+Acked-by: Nicolas Pitre <nico@linaro.org>
+
+
+> ---
+> Changes in v2:
+> 	- Made use of the MCPM suspend/powered_up call-backs
+> Changes in v3:
+> 	- Used the residency value to indicate the entered state
+> Changes in v4:
+> 	- Checked if MCPM has been enabled to prevent build error
+> Changes in v5:
+> 	- Removed the MCPM flags and just used a local flag to
+> 	indicate that we are suspending.
+> Changes in v6:
+> 	- Read the SYS_PWR_REG value to decide if we are suspending
+> 	the system.
+> 	- Restore the SYS_PWR_REG value post-resume.
+> 	- Modified the comments to reflect the first change.
+> Changes in v7:
+> 	- Add the suspend check in exynos_cpu_power_down() rather
+> 	than the MCPM back-end.
+> 	- Clean-up unnecessary changes related to earlier versions.
+> 
+> This has been tested both on an SMDK5420 and Peach Pit Chromebook on
+> next-20140704. Nicolas' boot cluster CCI enablement patches are in
+> linux-next now.
+> 
+> Here are the dependencies (some of these patches did not apply cleanly):
+> 1) Cleanup patches for mach-exynos
+> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/33772
+> 
+> 2) PMU cleanup and refactoring for using DT
+> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg671625.html
+> 
+> 3) Exynos5420 PMU/S2R Series
+> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/33898
+> 
+> 4) Exynos5420 CPUIdle Series which populates MCPM suspend/powered_up
+> call-backs.
+> www.gossamer-threads.com/lists/linux/kernel/1945347
+> https://patchwork.kernel.org/patch/4357461/
+> 
+> 5) Exynos5420 MCPM cluster power down support
+> http://www.spinics.net/lists/arm-kernel/msg339988.html
+> 
+> 6) TPM reset mask patch
+> http://www.spinics.net/lists/arm-kernel/msg341884.html
+>  
+>  arch/arm/mach-exynos/mcpm-exynos.c | 32 +++++++++++++++-------
+>  arch/arm/mach-exynos/pm.c          | 54 ++++++++++++++++++++++++++++++++++++--
+>  2 files changed, 74 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+> index 2dd51cc..74ad772 100644
+> --- a/arch/arm/mach-exynos/mcpm-exynos.c
+> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/io.h>
+>  #include <linux/of_address.h>
+> +#include <linux/syscore_ops.h>
+>  
+>  #include <asm/cputype.h>
+>  #include <asm/cp15.h>
+> @@ -30,6 +31,8 @@
+>  #define EXYNOS5420_USE_ARM_CORE_DOWN_STATE	BIT(29)
+>  #define EXYNOS5420_USE_L2_COMMON_UP_STATE	BIT(30)
+>  
+> +static void __iomem *ns_sram_base_addr;
+> +
+>  /*
+>   * The common v7_exit_coherency_flush API could not be used because of the
+>   * Erratum 799270 workaround. This macro is the same as the common one (in
+> @@ -319,10 +322,26 @@ static const struct of_device_id exynos_dt_mcpm_match[] = {
+>  	{},
+>  };
+>  
+> +static void exynos_mcpm_setup_entry_point(void)
+> +{
+> +	/*
+> +	 * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
+> +	 * as part of secondary_cpu_start().  Let's redirect it to the
+> +	 * mcpm_entry_point(). This is done during both secondary boot-up as
+> +	 * well as system resume.
+> +	 */
+> +	__raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
+> +	__raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
+> +	__raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
+> +}
+> +
+> +static struct syscore_ops exynos_mcpm_syscore_ops = {
+> +	.resume	= exynos_mcpm_setup_entry_point,
+> +};
+> +
+>  static int __init exynos_mcpm_init(void)
+>  {
+>  	struct device_node *node;
+> -	void __iomem *ns_sram_base_addr;
+>  	unsigned int value, i;
+>  	int ret;
+>  
+> @@ -389,16 +408,9 @@ static int __init exynos_mcpm_init(void)
+>  		__raw_writel(value, pmu_base_addr + EXYNOS_COMMON_OPTION(i));
+>  	}
+>  
+> -	/*
+> -	 * U-Boot SPL is hardcoded to jump to the start of ns_sram_base_addr
+> -	 * as part of secondary_cpu_start().  Let's redirect it to the
+> -	 * mcpm_entry_point().
+> -	 */
+> -	__raw_writel(0xe59f0000, ns_sram_base_addr);     /* ldr r0, [pc, #0] */
+> -	__raw_writel(0xe12fff10, ns_sram_base_addr + 4); /* bx  r0 */
+> -	__raw_writel(virt_to_phys(mcpm_entry_point), ns_sram_base_addr + 8);
+> +	exynos_mcpm_setup_entry_point();
+>  
+> -	iounmap(ns_sram_base_addr);
+> +	register_syscore_ops(&exynos_mcpm_syscore_ops);
+>  
+>  	return ret;
+>  }
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index 69cf678..e2ba1e5 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -24,6 +24,7 @@
+>  
+>  #include <asm/cacheflush.h>
+>  #include <asm/hardware/cache-l2x0.h>
+> +#include <asm/mcpm.h>
+>  #include <asm/smp_scu.h>
+>  #include <asm/suspend.h>
+>  
+> @@ -123,6 +124,17 @@ static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
+>   */
+>  void exynos_cpu_power_down(int cpu)
+>  {
+> +	if (soc_is_exynos5420() && cpu == 0) {
+> +		/*
+> +		 * Bypass power down for CPU0 during suspend. Check for
+> +		 * the SYS_PWR_REG value to decide if we are suspending
+> +		 * the system.
+> +		 */
+> +		int val = __raw_readl(pmu_base_addr +
+> +				EXYNOS5_ARM_CORE0_SYS_PWR_REG);
+> +		if (!(val & S5P_CORE_LOCAL_PWR_EN))
+> +			return;
+> +	}
+>  	pmu_raw_writel(0, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+>  }
+>  
+> @@ -318,7 +330,10 @@ static void exynos_pm_prepare(void)
+>  
+>  	/* ensure at least INFORM0 has the resume address */
+>  
+> -	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
+> +	if (soc_is_exynos5420() && IS_ENABLED(CONFIG_MCPM))
+> +		pmu_raw_writel(virt_to_phys(mcpm_entry_point), S5P_INFORM0);
+> +	else
+> +		pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
+>  
+>  	if (soc_is_exynos5420()) {
+>  		tmp = __raw_readl(pmu_base_addr + EXYNOS5_ARM_L2_OPTION);
+> @@ -408,6 +423,12 @@ static void exynos_pm_resume(void)
+>  	unsigned int tmp;
+>  
+>  	if (soc_is_exynos5420()) {
+> +		/* Restore the CPU0 low power state register */
+> +		tmp = __raw_readl(pmu_base_addr +
+> +			EXYNOS5_ARM_CORE0_SYS_PWR_REG);
+> +		pmu_raw_writel(tmp | S5P_CORE_LOCAL_PWR_EN,
+> +			EXYNOS5_ARM_CORE0_SYS_PWR_REG);
+> +
+>  		/* Restore the sysram cpu state register */
+>  		__raw_writel(exynos5420_cpu_state,
+>  		sysram_base_addr + EXYNOS5420_CPU_STATE);
+> @@ -490,6 +511,28 @@ static struct syscore_ops exynos_pm_syscore_ops = {
+>  	.resume		= exynos_pm_resume,
+>  };
+>  
+> +static int notrace exynos_mcpm_cpu_suspend(unsigned long arg)
+> +{
+> +	/* MCPM works with HW CPU identifiers */
+> +	unsigned int mpidr = read_cpuid_mpidr();
+> +	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+> +	unsigned int cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+> +
+> +	__raw_writel(0x0, sysram_base_addr + EXYNOS5420_CPU_STATE);
+> +
+> +	mcpm_set_entry_vector(cpu, cluster, exynos_cpu_resume);
+> +
+> +	/*
+> +	 * Residency value passed to mcpm_cpu_suspend back-end
+> +	 * has to be given clear semantics. Set to 0 as a
+> +	 * temporary value.
+> +	 */
+> +	mcpm_cpu_suspend(0);
+> +
+> +	/* return value != 0 means failure */
+> +	return 1;
+> +}
+> +
+>  /*
+>   * Suspend Ops
+>   */
+> @@ -517,10 +560,17 @@ static int exynos_suspend_enter(suspend_state_t state)
+>  	flush_cache_all();
+>  	s3c_pm_check_store();
+>  
+> -	ret = cpu_suspend(0, exynos_cpu_suspend);
+> +	/* Use the MCPM layer to suspend 5420 which is a multi-cluster SoC */
+> +	if (soc_is_exynos5420() && IS_ENABLED(CONFIG_MCPM))
+> +		ret = cpu_suspend(0, exynos_mcpm_cpu_suspend);
+> +	else
+> +		ret = cpu_suspend(0, exynos_cpu_suspend);
+>  	if (ret)
+>  		return ret;
+>  
+> +	if (soc_is_exynos5420() && IS_ENABLED(CONFIG_MCPM))
+> +		mcpm_cpu_powered_up();
+> +
+>  	s3c_pm_restore_uarts();
+>  
+>  	S3C_PMDBG("%s: wakeup stat: %08x\n", __func__,
+> -- 
+> 2.0.0
+> 
+> 
