@@ -1,8 +1,7 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 02/19] ARM: s5pv210: Migrate clock handling to Common Clock
- Framework
-Date: Fri, 04 Jul 2014 19:48:02 +0200
-Message-ID: <1404496099-26708-3-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 12/19] ARM: S5PV210: Untie PM support from legacy code
+Date: Fri, 04 Jul 2014 19:48:12 +0200
+Message-ID: <1404496099-26708-13-git-send-email-t.figa@samsung.com>
 References: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,186 +21,284 @@ To: linux-samsung-soc@vger.kernel.org
 Cc: Kukjin Kim <kgene.kim@samsung.com>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+This patch makes S5PV210 not rely on legacy suspend helpers in
+plat-samsung and implements platform suspend logic locally, similarly to
+Exynos.
 
-This patch migrates the s5pv210 platform to use new clock driver
-using Common Clock Framework.
-
-Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-[t.figa: Rebased and fixed merge conflicts.]
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/mach-s5pv210/Kconfig         |  9 +++++++++
- arch/arm/mach-s5pv210/Makefile        |  4 ++--
- arch/arm/mach-s5pv210/common.c        | 16 ++++++++++++++++
- arch/arm/mach-s5pv210/common.h        |  9 +++++++++
- arch/arm/mach-s5pv210/mach-goni.c     |  2 +-
- arch/arm/mach-s5pv210/mach-smdkv210.c |  2 +-
- arch/arm/plat-samsung/Kconfig         |  2 +-
- 7 files changed, 39 insertions(+), 5 deletions(-)
+ arch/arm/mach-s5pv210/Kconfig   |   2 -
+ arch/arm/mach-s5pv210/Makefile  |   2 +-
+ arch/arm/mach-s5pv210/common.h  |   7 +++
+ arch/arm/mach-s5pv210/pm.c      | 101 +++++++++++++++++++++++++++++++++++-----
+ arch/arm/mach-s5pv210/s5pv210.c |   8 ++++
+ arch/arm/mach-s5pv210/sleep.S   |  36 ++++++++++++++
+ 6 files changed, 141 insertions(+), 15 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv210/sleep.S
 
 diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index f60f286..60785ce 100644
+index d6d0f92..ffc777d 100644
 --- a/arch/arm/mach-s5pv210/Kconfig
 +++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -13,6 +13,7 @@ config CPU_S5PV210
- 	bool
+@@ -14,8 +14,6 @@ config CPU_S5PV210
  	select ARM_AMBA
  	select PL330_DMA if DMADEVICES
-+	select S5P_CLOCK if !COMMON_CLK
  	select S5P_EXT_INT
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
-@@ -70,6 +71,14 @@ config S5PV210_SETUP_USB_PHY
+-	select S5P_PM if PM
+-	select S5P_SLEEP if PM
  	help
- 	  Common setup code for USB PHY controller
+ 	  Enable S5PV210 CPU support
  
-+config COMMON_CLK_S5PV210
-+	bool "Common Clock Framework support"
-+	default y
-+	select COMMON_CLK_SAMSUNG
-+	help
-+	  Enable this option to use new clock driver
-+	  based on Common Clock Framework.
-+
- menu "S5PC110 Machines"
- 
- config MACH_AQUILA
 diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
-index 1c4e419..d1a493a 100644
+index 83993fc..5308225 100644
 --- a/arch/arm/mach-s5pv210/Makefile
 +++ b/arch/arm/mach-s5pv210/Makefile
-@@ -12,8 +12,8 @@ obj-				:=
+@@ -12,7 +12,7 @@ obj-				:=
  
  # Core
  
--obj-y				+= common.o clock.o
--
-+obj-y				+= common.o
-+obj-$(CONFIG_S5P_CLOCK)		+= clock.o
- obj-$(CONFIG_PM)		+= pm.o
+-obj-$(CONFIG_PM)		+= pm.o
++obj-$(CONFIG_PM_SLEEP)		+= pm.o sleep.o
  
- obj-y				+= dma.o
-diff --git a/arch/arm/mach-s5pv210/common.c b/arch/arm/mach-s5pv210/common.c
-index 7024dcd..2e2202a 100644
---- a/arch/arm/mach-s5pv210/common.c
-+++ b/arch/arm/mach-s5pv210/common.c
-@@ -25,6 +25,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/serial_core.h>
- #include <linux/serial_s3c.h>
-+#include <linux/of.h>
+ # machine support
  
- #include <asm/proc-fns.h>
- #include <asm/mach/arch.h>
-@@ -35,7 +36,13 @@
- #include <mach/regs-clock.h>
- 
- #include <plat/cpu.h>
-+
-+#ifdef CONFIG_S5P_CLOCK
- #include <plat/clock.h>
-+#else
-+#include <linux/clk-provider.h>
-+#endif
-+
- #include <plat/devs.h>
- #include <plat/sdhci.h>
- #include <plat/adc-core.h>
-@@ -50,6 +57,9 @@
- 
- #include "common.h"
- 
-+/* External clock frequency */
-+static unsigned long xusbxti_f;
-+
- static const char name_s5pv210[] = "S5PV210/S5PC110";
- 
- static struct cpu_table cpu_ids[] __initdata = {
-@@ -229,18 +239,24 @@ void __init s5pv210_map_io(void)
- 
- void __init s5pv210_init_clocks(int xtal)
- {
-+#ifdef CONFIG_S5P_CLOCK
- 	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
- 
- 	s3c24xx_register_baseclocks(xtal);
- 	s5p_register_clocks(xtal);
- 	s5pv210_register_clocks();
- 	s5pv210_setup_clocks();
-+#else
-+	xusbxti_f = xtal;
-+#endif
- }
- 
- void __init s5pv210_init_irq(void)
- {
- 	u32 vic[4];	/* S5PV210 supports 4 VIC */
- 
-+	s5pv210_clk_init(0, xusbxti_f, S3C_VA_SYS);
-+
- 	/* All the VICs are fully populated. */
- 	vic[0] = ~0;
- 	vic[1] = ~0;
 diff --git a/arch/arm/mach-s5pv210/common.h b/arch/arm/mach-s5pv210/common.h
-index fe1beb5..a2e85cb 100644
+index 0b694c7..2ad387c 100644
 --- a/arch/arm/mach-s5pv210/common.h
 +++ b/arch/arm/mach-s5pv210/common.h
-@@ -14,6 +14,15 @@
+@@ -12,5 +12,12 @@
+ #ifndef __ARCH_ARM_MACH_S5PV210_COMMON_H
+ #define __ARCH_ARM_MACH_S5PV210_COMMON_H
  
- #include <linux/reboot.h>
- 
-+#ifdef CONFIG_COMMON_CLK_S5PV210
-+void s5pv210_clk_init(unsigned long xxti_f, unsigned long xusbxti_f,
-+		      void __iomem *reg_base);
++#ifdef CONFIG_PM_SLEEP
++u32 exynos_get_eint_wake_mask(void);
++void s5pv210_cpu_resume(void);
++void s5pv210_pm_init(void);
 +#else
-+static inline void s5pv210_clk_init(unsigned long xxti_f,
-+				    unsigned long xusbxti_f,
-+				    void __iomem *reg_base) {}
++static inline void s5pv210_pm_init(void) {}
 +#endif
+ 
+ #endif /* __ARCH_ARM_MACH_S5PV210_COMMON_H */
+diff --git a/arch/arm/mach-s5pv210/pm.c b/arch/arm/mach-s5pv210/pm.c
+index 00d1523..123163d 100644
+--- a/arch/arm/mach-s5pv210/pm.c
++++ b/arch/arm/mach-s5pv210/pm.c
+@@ -1,6 +1,6 @@
+ /* linux/arch/arm/mach-s5pv210/pm.c
+  *
+- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2010-2014 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
+  * S5PV210 - Power Management support
+@@ -19,17 +19,28 @@
+ #include <linux/syscore_ops.h>
+ #include <linux/io.h>
+ 
+-#include <plat/cpu.h>
+-#include <plat/pm.h>
++#include <asm/cacheflush.h>
++#include <asm/suspend.h>
 +
- void s5pv210_init_io(struct map_desc *mach_desc, int size);
- void s5pv210_init_irq(void);
++#include <plat/pm-common.h>
  
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index c1ce921..0fc71be 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -849,7 +849,7 @@ static void __init goni_sound_init(void)
- static void __init goni_map_io(void)
+-#include <mach/regs-irq.h>
+ #include <mach/regs-clock.h>
+ 
++#include "common.h"
++
+ static struct sleep_save s5pv210_core_save[] = {
+ 	/* Clock ETC */
+ 	SAVE_ITEM(S5P_MDNIE_SEL),
+ };
+ 
++/*
++ * VIC wake-up support (TODO)
++ */
++static u32 s5pv210_irqwake_intmask = 0xffffffff;
++
++/*
++ * Suspend helpers.
++ */
+ static int s5pv210_cpu_suspend(unsigned long arg)
  {
- 	s5pv210_init_io(NULL, 0);
--	s3c24xx_init_clocks(clk_xusbxti.rate);
-+	s3c24xx_init_clocks(24000000);
- 	s3c24xx_init_uarts(goni_uartcfgs, ARRAY_SIZE(goni_uartcfgs));
- 	samsung_set_timer_source(SAMSUNG_PWM3, SAMSUNG_PWM4);
- }
-diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
-index 2a6655f..1bde3a3 100644
---- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-@@ -285,7 +285,7 @@ static struct platform_pwm_backlight_data smdkv210_bl_data = {
- static void __init smdkv210_map_io(void)
+ 	unsigned long tmp;
+@@ -54,8 +65,12 @@ static void s5pv210_pm_prepare(void)
  {
- 	s5pv210_init_io(NULL, 0);
--	s3c24xx_init_clocks(clk_xusbxti.rate);
-+	s3c24xx_init_clocks(24000000);
- 	s3c24xx_init_uarts(smdkv210_uartcfgs, ARRAY_SIZE(smdkv210_uartcfgs));
- 	samsung_set_timer_source(SAMSUNG_PWM2, SAMSUNG_PWM4);
+ 	unsigned int tmp;
+ 
++	/* Set wake-up mask registers */
++	__raw_writel(exynos_get_eint_wake_mask(), S5P_EINT_WAKEUP_MASK);
++	__raw_writel(s5pv210_irqwake_intmask, S5P_WAKEUP_MASK);
++
+ 	/* ensure at least INFORM0 has the resume address */
+-	__raw_writel(virt_to_phys(s3c_cpu_resume), S5P_INFORM0);
++	__raw_writel(virt_to_phys(s5pv210_cpu_resume), S5P_INFORM0);
+ 
+ 	tmp = __raw_readl(S5P_SLEEP_CFG);
+ 	tmp &= ~(S5P_SLEEP_CFG_OSC_EN | S5P_SLEEP_CFG_USBOSC_EN);
+@@ -75,6 +90,70 @@ static void s5pv210_pm_prepare(void)
+ 	s3c_pm_do_save(s5pv210_core_save, ARRAY_SIZE(s5pv210_core_save));
  }
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 1c629c2..42f5d5b 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -78,7 +78,7 @@ config SAMSUNG_CLKSRC
- 	  used by newer systems such as the S3C64XX.
  
- config S5P_CLOCK
--	def_bool ARCH_S5PV210
-+	bool
- 	help
- 	  Support common clock part for ARCH_S5P and ARCH_EXYNOS SoCs
++/*
++ * Suspend operations.
++ */
++static int s5pv210_suspend_enter(suspend_state_t state)
++{
++	int ret;
++
++	s3c_pm_debug_init();
++
++	S3C_PMDBG("%s: suspending the system...\n", __func__);
++
++	S3C_PMDBG("%s: wakeup masks: %08x,%08x\n", __func__,
++			s5pv210_irqwake_intmask, exynos_get_eint_wake_mask());
++
++	if (s5pv210_irqwake_intmask == -1U
++	    && exynos_get_eint_wake_mask() == -1U) {
++		pr_err("%s: No wake-up sources!\n", __func__);
++		pr_err("%s: Aborting sleep\n", __func__);
++		return -EINVAL;
++	}
++
++	s3c_pm_save_uarts();
++	s5pv210_pm_prepare();
++	flush_cache_all();
++	s3c_pm_check_store();
++
++	ret = cpu_suspend(0, s5pv210_cpu_suspend);
++	if (ret)
++		return ret;
++
++	s3c_pm_restore_uarts();
++
++	S3C_PMDBG("%s: wakeup stat: %08x\n", __func__,
++			__raw_readl(S5P_WAKEUP_STAT));
++
++	s3c_pm_check_restore();
++
++	S3C_PMDBG("%s: resuming the system...\n", __func__);
++
++	return 0;
++}
++
++static int s5pv210_suspend_prepare(void)
++{
++	s3c_pm_check_prepare();
++
++	return 0;
++}
++
++static void s5pv210_suspend_finish(void)
++{
++	s3c_pm_check_cleanup();
++}
++
++static const struct platform_suspend_ops s5pv210_suspend_ops = {
++	.enter		= s5pv210_suspend_enter,
++	.prepare	= s5pv210_suspend_prepare,
++	.finish		= s5pv210_suspend_finish,
++	.valid		= suspend_valid_only_mem,
++};
++
++/*
++ * Syscore operations used to delay restore of certain registers.
++ */
+ static void s5pv210_pm_resume(void)
+ {
+ 	u32 tmp;
+@@ -91,13 +170,11 @@ static struct syscore_ops s5pv210_pm_syscore_ops = {
+ 	.resume		= s5pv210_pm_resume,
+ };
  
+-static __init int s5pv210_pm_syscore_init(void)
++/*
++ * Initialization entry point.
++ */
++void __init s5pv210_pm_init(void)
+ {
+ 	register_syscore_ops(&s5pv210_pm_syscore_ops);
+-
+-	pm_cpu_prep = s5pv210_pm_prepare;
+-	pm_cpu_sleep = s5pv210_cpu_suspend;
+-
+-	return 0;
++	suspend_set_ops(&s5pv210_suspend_ops);
+ }
+-arch_initcall(s5pv210_pm_syscore_init);
+diff --git a/arch/arm/mach-s5pv210/s5pv210.c b/arch/arm/mach-s5pv210/s5pv210.c
+index c244ccb..35db1ce 100644
+--- a/arch/arm/mach-s5pv210/s5pv210.c
++++ b/arch/arm/mach-s5pv210/s5pv210.c
+@@ -20,6 +20,8 @@
+ #include <plat/map-base.h>
+ #include <mach/regs-clock.h>
+ 
++#include "common.h"
++
+ static int __init s5pv210_fdt_map_sys(unsigned long node, const char *uname,
+ 					int depth, void *data)
+ {
+@@ -55,6 +57,11 @@ static void s5pv210_dt_restart(enum reboot_mode mode, const char *cmd)
+ 	__raw_writel(0x1, S5P_SWRESET);
+ }
+ 
++static void __init s5pv210_dt_init_late(void)
++{
++	s5pv210_pm_init();
++}
++
+ static char const *s5pv210_dt_compat[] __initconst = {
+ 	"samsung,s5pc110",
+ 	"samsung,s5pv210",
+@@ -65,4 +72,5 @@ DT_MACHINE_START(S5PV210_DT, "Samsung S5PC110/S5PV210-based board")
+ 	.dt_compat = s5pv210_dt_compat,
+ 	.map_io = s5pv210_dt_map_io,
+ 	.restart = s5pv210_dt_restart,
++	.init_late = s5pv210_dt_init_late,
+ MACHINE_END
+diff --git a/arch/arm/mach-s5pv210/sleep.S b/arch/arm/mach-s5pv210/sleep.S
+new file mode 100644
+index 0000000..7c43ddd
+--- /dev/null
++++ b/arch/arm/mach-s5pv210/sleep.S
+@@ -0,0 +1,36 @@
++/*
++ * Copyright (c) 2011-2014 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * S5PV210 Sleep Code
++ * Based on S3C64XX sleep code by:
++ *	Ben Dooks, (c) 2008 Simtec Electronics
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#include <linux/linkage.h>
++
++	.data
++	.align
++
++	/*
++	 * sleep magic, to allow the bootloader to check for an valid
++	 * image to resume to. Must be the first word before the
++	 * s3c_cpu_resume entry.
++	 */
++
++	.word	0x2bedf00d
++
++	/*
++	 * s3c_cpu_resume
++	 *
++	 * resume code entry for bootloader to call
++	 */
++
++ENTRY(s5pv210_cpu_resume)
++	b	cpu_resume
++ENDPROC(s5pv210_cpu_resume)
 -- 
 1.9.3
