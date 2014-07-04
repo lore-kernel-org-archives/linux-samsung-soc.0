@@ -1,89 +1,97 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v7 22/24] clk: max77802: Add DT binding documentation
-Date: Fri,  4 Jul 2014 22:24:25 +0200
-Message-ID: <1404505467-26526-23-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v7 11/24] clk: max77686: Add DT include for MAX77686 PMIC clock
+Date: Fri,  4 Jul 2014 22:24:14 +0200
+Message-ID: <1404505467-26526-12-git-send-email-javier.martinez@collabora.co.uk>
 References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Lee Jones <lee.jones@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Tushar Behera <trblinux@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add Device Tree binding documentation for the clocks
-outputs in the Maxim 77802 Power Management IC.
+This patch adds a dt-binding include for Maxim 77686
+PMIC clock IDs that can be used by both the max77686
+clock driver and Device Tree source files.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Mike Turquette <mturquette@linaro.org>
 ---
 
 Changes since v6: None
 
 Changes since v5:
- - Fix typo error in DT binding. Suggested by Andreas Farber.
- - Add "clock-output-names" as an optional property since now is supported.
+ - Improve wording in commit message. Suggested by Andreas Farber.
 
 Changes since v4: None
 
 Changes since v3:
- - Don't use the same clock driver name in clock-names since it's a consumer
-   concept and most probably will be different. Suggested by Doug Anderson.
-
-Changes since v2:
- - Split the DT binding documentation in a separate patch.
+ - Keep the note that this patch needs another change due wakeup
+   ordering problems.
 ---
- .../devicetree/bindings/clock/maxim,max77802.txt   | 44 ++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
+ drivers/clk/clk-max77686.c                 |  7 +------
+ include/dt-bindings/clock/maxim,max77686.h | 23 +++++++++++++++++++++++
+ 2 files changed, 24 insertions(+), 6 deletions(-)
+ create mode 100644 include/dt-bindings/clock/maxim,max77686.h
 
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max77802.txt b/Documentation/devicetree/bindings/clock/maxim,max77802.txt
+diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+index 3d7e8dd..185b611 100644
+--- a/drivers/clk/clk-max77686.c
++++ b/drivers/clk/clk-max77686.c
+@@ -30,12 +30,7 @@
+ #include <linux/mutex.h>
+ #include <linux/clkdev.h>
+ 
+-enum {
+-	MAX77686_CLK_AP = 0,
+-	MAX77686_CLK_CP,
+-	MAX77686_CLK_PMIC,
+-	MAX77686_CLKS_NUM,
+-};
++#include <dt-bindings/clock/maxim,max77686.h>
+ 
+ struct max77686_clk {
+ 	struct max77686_dev *iodev;
+diff --git a/include/dt-bindings/clock/maxim,max77686.h b/include/dt-bindings/clock/maxim,max77686.h
 new file mode 100644
-index 0000000..c6dc783
+index 0000000..7b28b09
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/maxim,max77802.txt
-@@ -0,0 +1,44 @@
-+Binding for Maxim MAX77802 32k clock generator block
++++ b/include/dt-bindings/clock/maxim,max77686.h
+@@ -0,0 +1,23 @@
++/*
++ * Copyright (C) 2014 Google, Inc
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * Device Tree binding constants clocks for the Maxim 77686 PMIC.
++ */
 +
-+This is a part of device tree bindings of MAX77802 multi-function device.
-+More information can be found in bindings/mfd/max77802.txt file.
++#ifndef _DT_BINDINGS_CLOCK_MAXIM_MAX77686_CLOCK_H
++#define _DT_BINDINGS_CLOCK_MAXIM_MAX77686_CLOCK_H
 +
-+The MAX77802 contains two 32.768khz clock outputs that can be controlled
-+(gated/ungated) over I2C.
++/* Fixed rate clocks. */
 +
-+Following properties should be present in main device node of the MFD chip.
++#define MAX77686_CLK_AP		0
++#define MAX77686_CLK_CP		1
++#define MAX77686_CLK_PMIC	2
 +
-+Required properties:
-+- #clock-cells: From common clock binding; shall be set to 1.
++/* Total number of clocks. */
++#define MAX77686_CLKS_NUM		(MAX77686_CLK_PMIC + 1)
 +
-+Optional properties:
-+- clock-output-names: From common clock binding.
-+
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume. Following indices are allowed:
-+     - 0: 32khz_ap clock,
-+     - 1: 32khz_cp clock.
-+
-+Clocks are defined as preprocessor macros in dt-bindings/clock/maxim,max77802.h
-+header and can be used in device tree sources.
-+
-+Example: Node of the MFD chip
-+
-+	max77802: max77802@09 {
-+		compatible = "maxim,max77802";
-+		interrupt-parent = <&wakeup_eint>;
-+		interrupts = <26 0>;
-+		reg = <0x09>;
-+		#clock-cells = <1>;
-+
-+		/* ... */
-+	};
-+
-+Example: Clock consumer node
-+
-+	foo@0 {
-+		compatible = "bar,foo";
-+		/* ... */
-+		clock-names = "my-clock";
-+		clocks = <&max77802 MAX77802_CLK_32K_AP>;
-+	};
++#endif /* _DT_BINDINGS_CLOCK_MAXIM_MAX77686_CLOCK_H */
 -- 
 2.0.0.rc2
