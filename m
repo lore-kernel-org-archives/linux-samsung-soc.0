@@ -1,74 +1,76 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH v5 5/5] ARM: EXYNOS: Move PMU specific definitions from
- common.h
-Date: Sat, 05 Jul 2014 12:40:45 +0530
-Message-ID: <001f01cf9820$3f0ee570$bd2cb050$@samsung.com>
-References: <1403705032-14835-1-git-send-email-pankaj.dubey@samsung.com>
- <1403705032-14835-6-git-send-email-pankaj.dubey@samsung.com>
- <53B19B42.1040006@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 00/19] ARM: SAMSUNG: S5PV210 platform clean-up
+Date: Sat, 05 Jul 2014 13:00:43 +0200
+Message-ID: <53B7DADB.5080700@gmail.com>
+References: <1404495893-26371-1-git-send-email-t.figa@samsung.com> <CAOh2x==dHrJkKw4h7y2nwYgFCv6s5ndU2DMiga302tzDaiaBWA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <53B19B42.1040006@samsung.com>
-Content-language: en-us
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:60689 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754872AbaGELBF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 5 Jul 2014 07:01:05 -0400
+In-Reply-To: <CAOh2x==dHrJkKw4h7y2nwYgFCv6s5ndU2DMiga302tzDaiaBWA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-Hi Tomasz,
-
-On Monday, June 30, 2014 Tomasz Figa wrote:
-> Hi Pankaj,
+On 05.07.2014 06:46, Viresh Kumar wrote:
+> On Fri, Jul 4, 2014 at 11:14 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> This huge series is a (hopefully final) attempt to convert Samsung S5PV210
+>> into a DT-only and multiplatform-aware platform. It consists of several
+>> steps to gradually replace legacy code with one meeting current standards
+>> and then finally remove unused remnants.
+>>
+>> Patches 1-6 migrate the platform to fully use the Common Clock Framework
+>> and get rid of legacy private clock code, of which s5pv210 was the last
+>> user. Then patch 7 adds generic PHY driver for USB PHY on S5PV210 to allow
+>> USB to be supported when using DT. Further three patches (8-10) add DT
+>> support for mach-s5pv210 and necessary DT sources for currently supported
+>> boards. Patch 11 removes board files and code directly related to them,
+>> effectively making s5pv210 a DT-only platform. In next step, patches 12-15
+>> prepare remaining code for multiplatform enablement, which is finally done
+>> in patch 16. Patches 17-19 are a final clean-up, which remove a lot of
+>> unused code left after making the last S5P platform DT-only.
+>>
+>> Build tested patch by patch on following configs:
+>>  - s3c2410_defconfig (with DT support enabled),
+>>  - s3c6400_defconfig (with DT support enabled),
+>>  - s5pv210_defconfig (with DT support enabled after patches adding it),
+>>  - exynos_defconfig,
+>>  - exynos_defconfig with S5PV210 enabled in multiplatform configuration.
+>>
+>> Boot tested on s5pv210-goni board.
+>>
+>> Note that support for smdkc110, smdkv210 and torbreck boards is provided
+>> by moving data from existing board files to new device tree sources. No
+>> testing was performed due to mentioned board not being available anymore.
+>> However I believe we agreed on this approach, because apparently there
+>> are no active users of them. See the RFC from August 2013 asking for
+>> removal of the whole platform [1].
+>>
+>> [1] http://www.mail-archive.com/linux-samsung-soc%40vger.kernel.org/msg21882.html
 > 
-> On 25.06.2014 16:03, Pankaj Dubey wrote:
-> > This patch moves PMU specific definitions into a new file as
-> > exynos-pmu.h.
-> > This will help in reducing dependency of common.h in pmu.c.
-> >
-> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> > ---
-> >  arch/arm/mach-exynos/common.h     |   17 -----------------
-> >  arch/arm/mach-exynos/exynos-pmu.h |   31
-> +++++++++++++++++++++++++++++++
-> >  arch/arm/mach-exynos/pm.c         |    1 +
-> >  arch/arm/mach-exynos/pmu.c        |    2 +-
-> >  4 files changed, 33 insertions(+), 18 deletions(-)  create mode
-> > 100644 arch/arm/mach-exynos/exynos-pmu.h
-> >
-> > diff --git a/arch/arm/mach-exynos/common.h
-> > b/arch/arm/mach-exynos/common.h index 296c6e1..0326ca2 100644
-> > --- a/arch/arm/mach-exynos/common.h
-> > +++ b/arch/arm/mach-exynos/common.h
-> > @@ -135,23 +135,6 @@ extern struct smp_operations exynos_smp_ops;
-> >
-> >  extern void exynos_cpu_die(unsigned int cpu);
-> >
-> > -/* PMU(Power Management Unit) support */
-> > -
-> > -#define PMU_TABLE_END	(-1U)
-> > -
-> > -enum sys_powerdown {
-> > -	SYS_AFTR,
-> > -	SYS_LPA,
-> > -	SYS_SLEEP,
-> > -	NUM_SYS_POWERDOWN,
-> > -};
-> > -
-> > -struct exynos_pmu_conf {
-> > -	unsigned int offset;
-> > -	unsigned int val[NUM_SYS_POWERDOWN];
-> > -};
+>> Tomasz Figa (13):
+>>   cpufreq: s3c24xx: Remove some dead code
+>>   cpufreq: s5pv210: Make the driver multiplatform aware
 > 
-> While at it, I'd say this struct could be moved to pmu.c, along with the
-> PMU_TABLE_END macro as they are both private to this file.
+> Looks like you used --suppress-cc=all while sending these and none of
+> CPUFreq/PM guys received it :(
+
+Oops, I had a feeling that I has screwed up something with this series
+and now we know what. Sorry for this. Will resend properly next Tuesday.
+
+> 
+> Anyways, for cpufreq part:
+> 
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 > 
 
-OK, I will update this.
+Thanks. Will add to the patches when resending.
 
-> Best regards,
-> Tomasz
-
-Thanks,
-Pankaj Dubey
+Best regards,
+Tomasz
