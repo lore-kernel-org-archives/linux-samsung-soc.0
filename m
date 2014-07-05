@@ -1,64 +1,115 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 00/19] ARM: SAMSUNG: S5PV210 platform clean-up
-Date: Sat, 5 Jul 2014 10:16:10 +0530
-Message-ID: <CAOh2x==dHrJkKw4h7y2nwYgFCv6s5ndU2DMiga302tzDaiaBWA@mail.gmail.com>
-References: <1404495893-26371-1-git-send-email-t.figa@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: RE: [PATCH v5 1/5] ARM: EXYNOS: Add support for mapping PMU base
+ address via DT
+Date: Sat, 05 Jul 2014 12:01:19 +0530
+Message-ID: <001b01cf981a$bd5dda90$38198fb0$@samsung.com>
+References: <1403705032-14835-1-git-send-email-pankaj.dubey@samsung.com>
+ <1403705032-14835-2-git-send-email-pankaj.dubey@samsung.com>
+ <53B18C46.9010405@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f169.google.com ([209.85.128.169]:43694 "EHLO
-	mail-ve0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751172AbaGEEqL (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:25575 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752164AbaGEGal (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 5 Jul 2014 00:46:11 -0400
-In-Reply-To: <1404495893-26371-1-git-send-email-t.figa@samsung.com>
+	Sat, 5 Jul 2014 02:30:41 -0400
+In-reply-to: <53B18C46.9010405@samsung.com>
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com
 
-On Fri, Jul 4, 2014 at 11:14 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> This huge series is a (hopefully final) attempt to convert Samsung S5PV210
-> into a DT-only and multiplatform-aware platform. It consists of several
-> steps to gradually replace legacy code with one meeting current standards
-> and then finally remove unused remnants.
->
-> Patches 1-6 migrate the platform to fully use the Common Clock Framework
-> and get rid of legacy private clock code, of which s5pv210 was the last
-> user. Then patch 7 adds generic PHY driver for USB PHY on S5PV210 to allow
-> USB to be supported when using DT. Further three patches (8-10) add DT
-> support for mach-s5pv210 and necessary DT sources for currently supported
-> boards. Patch 11 removes board files and code directly related to them,
-> effectively making s5pv210 a DT-only platform. In next step, patches 12-15
-> prepare remaining code for multiplatform enablement, which is finally done
-> in patch 16. Patches 17-19 are a final clean-up, which remove a lot of
-> unused code left after making the last S5P platform DT-only.
->
-> Build tested patch by patch on following configs:
->  - s3c2410_defconfig (with DT support enabled),
->  - s3c6400_defconfig (with DT support enabled),
->  - s5pv210_defconfig (with DT support enabled after patches adding it),
->  - exynos_defconfig,
->  - exynos_defconfig with S5PV210 enabled in multiplatform configuration.
->
-> Boot tested on s5pv210-goni board.
->
-> Note that support for smdkc110, smdkv210 and torbreck boards is provided
-> by moving data from existing board files to new device tree sources. No
-> testing was performed due to mentioned board not being available anymore.
-> However I believe we agreed on this approach, because apparently there
-> are no active users of them. See the RFC from August 2013 asking for
-> removal of the whole platform [1].
->
-> [1] http://www.mail-archive.com/linux-samsung-soc%40vger.kernel.org/msg21882.html
+Hi Tomasz,
 
-> Tomasz Figa (13):
->   cpufreq: s3c24xx: Remove some dead code
->   cpufreq: s5pv210: Make the driver multiplatform aware
+On Monday, June 30, 2014 Tomasz Figa wrote:
+> 
+> Hi Pankaj,
+> 
+> In general the patch seems quite nice, but please see few comments inline.
+> 
+> On 25.06.2014 16:03, Pankaj Dubey wrote:
+> > Add support for mapping Samsung Power Management Unit (PMU) base
+> > address from device tree.
+> >
+> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/common.h |    1 +
+> >  arch/arm/mach-exynos/exynos.c |   45
+> +++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 46 insertions(+)
+> 
+> [snip]
+> 
+> > +static void exynos_map_pmu(void)
+> > +{
+> > +	struct device_node *np = NULL;
+> 
+> nit: Unnecessary variable initialization.
+>
 
-Looks like you used --suppress-cc=all while sending these and none of
-CPUFreq/PM guys received it :(
+OK, will correct it.
+ 
+> > +
+> > +	np = of_find_matching_node(NULL, exynos_dt_pmu_match);
+> > +
+> 
+> nit: Unnecessary blank line.
+> 
 
-Anyways, for cpufreq part:
+OK, will remove this.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > +	if (!np) {
+> > +		pr_err("Failed to find PMU node\n");
+> > +		return;
+> 
+> Returning here probably doesn't make too much sense, especially when you
+just panic
+> if the mapping fails and you remove the static mapping in patch 2/5, so
+backwards
+> compatibility isn't provided anyway.
+> 
+> So something like this might be a better idea:
+> 
+> 	np = of_find_matching_node(NULL, exynos_dt_pmu_match);
+> 	if (np)
+> 		pmu_base_addr = of_iomap(np, 0);
+> 
+> 	if (!pmu_base_addr)
+> 		panic("failed to find exynos pmu register\n");
+> 
+
+Yes, this will be better. I will modify this part.
+
+> > +	}
+> > +
+> > +	pmu_base_addr = of_iomap(np, 0);
+> > +
+> > +	if (!pmu_base_addr)
+> > +		panic("failed to find exynos pmu register\n"); }
+> > +
+> > +static void __init exynos_init_time(void) {
+> > +	/* Nothing to do timer specific.
+> > +	 * Since platsmp.c needs pmu base address by the time
+> > +	 * DT is not unflatten so we can't use DT APIs before
+> > +	 * init_time
+> > +	 */
+> > +	exynos_map_pmu();
+> 
+> Would moving this to .init_irq() callback work too? There are more things
+happening
+> in .init_time() so it seems more fragile and some platforms (e.g.
+mach-tegra) do such
+> platform-specific initialization in
+> .init_irq() instead.
+> 
+
+I need to check this, if it works I will update as suggested.
+
+> Best regards,
+> Tomasz
+
+Thanks,
+Pankaj Dubey
