@@ -1,39 +1,47 @@
-From: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
-Subject: [PATCH] video: fbdev: exynos: s6e8ax0.c:  Cleaning up variable that is never used
-Date: Sun,  6 Jul 2014 20:30:03 +0200
-Message-ID: <1404671404-18025-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, Kukjin Kim <kgene.kim@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sachin Kamat <sachin.kamat@linaro.org>, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: [RFC PATCH 0/3] ARM: restart-notifier support for some architectures
+Date: Sun, 06 Jul 2014 20:42:16 +0200
+Message-ID: <1531376.ijR0PPyvmJ@diego>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:48140 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751812AbaGFSkz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 6 Jul 2014 14:40:55 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Wim Van Sebroeck <wim@iguana.be>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>
 
-Variable ar assigned a value that is never used.
-I have also removed all the code that thereby serves no purpose.
+This series provides restart-notifier integration for the architectures
+I care about - S3C24XX and Rockchip.
 
-This was found using a static code analysis program called cppcheck
+It of course depends on "kernel: Add support for restart notifier call chain"
+from Guenter Roeck.
 
-Signed-off-by: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
----
- drivers/video/fbdev/exynos/s6e8ax0.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Samsung machines can generally be reset using their watchdog, but some
+also provide a special software-reset register in their system controller.
 
-diff --git a/drivers/video/fbdev/exynos/s6e8ax0.c b/drivers/video/fbdev/exynos/s6e8ax0.c
-index 29e70ed..9bd67e7 100644
---- a/drivers/video/fbdev/exynos/s6e8ax0.c
-+++ b/drivers/video/fbdev/exynos/s6e8ax0.c
-@@ -602,11 +602,10 @@ static void s6e8ax0_acl_ctrl_set(struct s6e8ax0 *lcd)
- 
- static void s6e8ax0_read_id(struct s6e8ax0 *lcd, u8 *mtp_id)
- {
--	unsigned int ret;
- 	unsigned int addr = 0xd1;	/* MTP ID */
- 	struct mipi_dsim_master_ops *ops = lcd_to_master_ops(lcd);
- 
--	ret = ops->cmd_read(lcd_to_master(lcd),
-+	ops->cmd_read(lcd_to_master(lcd),
- 			MIPI_DSI_GENERIC_READ_REQUEST_1_PARAM,
- 			addr, 3, mtp_id);
- }
+The rockchip reset integration of course also depends on the core clock
+support series, currently still under review.
+
+
+Heiko Stuebner (3):
+  watchdog: s3c2410: add restart notifier
+  clk: samsung: register restart notifiers for s3c2412 and s3c2443
+  clk: rockchip: add restart notifier
+
+ drivers/clk/rockchip/clk-rk3188.c |  2 ++
+ drivers/clk/rockchip/clk-rk3288.c |  2 ++
+ drivers/clk/rockchip/clk.c        | 23 +++++++++++++++++++++++
+ drivers/clk/rockchip/clk.h        |  1 +
+ drivers/clk/samsung/clk-s3c2412.c | 28 ++++++++++++++++++++++++++++
+ drivers/clk/samsung/clk-s3c2443.c | 18 ++++++++++++++++++
+ drivers/watchdog/s3c2410_wdt.c    | 33 +++++++++++++++++++++++++++++++++
+ 7 files changed, 107 insertions(+)
+
 -- 
-1.7.10.4
+1.9.0
