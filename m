@@ -1,127 +1,331 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v6 4/4] ARM: EXYNOS: Move PMU specific definitions from common.h
-Date: Mon, 07 Jul 2014 10:49:36 +0530
-Message-ID: <1404710376-16448-5-git-send-email-pankaj.dubey@samsung.com>
-References: <1404710376-16448-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1404710376-16448-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH 3/3] mmc: dw_mmc: Support voltage changes
+Date: Mon, 07 Jul 2014 14:23:01 +0900
+Message-ID: <000b01cf99a3$85a2c630$90e85290$%jun@samsung.com>
+References: <1403520321-2431-1-git-send-email-yuvaraj.cd@samsung.com>
+ <1403520321-2431-4-git-send-email-yuvaraj.cd@samsung.com>
+ <001501cf9076$9de45000$d9acf000$%jun@samsung.com>
+ <CAD=FV=UE2LkXZb-UuR8t9kS2+odeVHU59K5fN=veMU8Y513w=A@mail.gmail.com>
+ <005001cf912b$27fb8510$77f28f30$%jun@samsung.com>
+ <CAD=FV=X7h75ktaLG1MYa9Rs0Repu0QNq-p0-4TU2cforgjCdtw@mail.gmail.com>
+ <CAKuRcOJ0=GxmfBTu=Ax0yjLvbXJRjbVDJzHLR=f1nxkGZh9tAg@mail.gmail.com>
+ <001101cf91f9$84111530$8c333f90$%jun@samsung.com>
+ <CAKuRcOL=iQ8_67Bjhd+xpWUxnGmGfrSca1ZwnJm+zqRaapQgmg@mail.gmail.com>
+ <001b01cf976f$e91671c0$bb435540$%jun@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:31620 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751725AbaGGFXE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 Jul 2014 01:23:04 -0400
+In-reply-to: <001b01cf976f$e91671c0$bb435540$%jun@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Seungwon Jeon' <tgih.jun@samsung.com>, 'Yuvaraj Kumar' <yuvaraj.cd@gmail.com>
+Cc: 'Doug Anderson' <dianders@chromium.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Chris Ball' <cjb@laptop.org>, linux-mmc@vger.kernel.org, 'Ulf Hansson' <ulf.hansson@linaro.org>, 'Sonny Rao' <sonnyrao@chromium.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'sunil joshi' <joshi@samsung.com>, ks.giri@samsung.com, 'Prashanth G' <prashanth.g@samsung.com>, 'Alim Akhtar' <alim.akhtar@samsung.com>, 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>
 
-This patch moves PMU specific definitions into a new file
-as exynos-pmu.h.
-This will help in reducing dependency of common.h in pmu.c.
+On Fri, July 04, 2014, Seungwon Jeon wrote:
+> On Tue, July 01, 2014. Yuvaraj Kumar wrote:
+> > On Fri, Jun 27, 2014 at 4:48 PM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> > > Hi Yuvaraj,
+> > >
+> > > On Fri, June 27, 2014, Yuvaraj Kumar wrote:
+> > >> On Thu, Jun 26, 2014 at 10:20 PM, Doug Anderson <dianders@chromium.org> wrote:
+> > >> > Seungwon,
+> > >> >
+> > >> > On Thu, Jun 26, 2014 at 3:41 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> > >> >> On Thu, June 26, 2014, Doug Anderson wrote:
+> > >> >>> Seungwon,
+> > >> >>>
+> > >> >>> On Wed, Jun 25, 2014 at 6:08 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> > >> >>> > On Mon, June 23, 2014, Yuvaraj Kumar C D wrote:
+> > >> >>> >> Subject: [PATCH 3/3] mmc: dw_mmc: Support voltage changes
+> > >> >>> >>
+> > >> >>> >> From: Doug Anderson <dianders@chromium.org>
+> > >> >>> >>
+> > >> >>> >> For UHS cards we need the ability to switch voltages from 3.3V to
+> > >> >>> >> 1.8V.  Add support to the dw_mmc driver to handle this.  Note that
+> > >> >>> >> dw_mmc needs a little bit of extra code since the interface needs a
+> > >> >>> >> special bit programmed to the CMD register while CMD11 is progressing.
+> > >> >>> >> This means adding a few extra states to the state machine to track.
+> > >> >>> >
+> > >> >>> > Overall new additional states makes it complicated.
+> > >> >>> > Can we do that in other way?
+> > >> >>>
+> > >> >>> That was the best I was able to figure out when I thought this
+> > >> >>> through.  If you have ideas for doing it another way I'd imagine that
+> > >> >>> Yuvaraj would be happy to take your feedback.
+> > >> >> Let's clean up SDMMC_CMD_VOLT_SWITCH.
+> > >> >> In turn, we may remove state-handling simply.
+> > >> >>
+> > >> >>>
+> > >> >>>
+> > >> >>> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> > >> >>> >> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> > >> >>> >>
+> > >> >>> >> ---
+> > >> >>> >>  drivers/mmc/host/dw_mmc.c  |  145 +++++++++++++++++++++++++++++++++++++++++---
+> > >> >>> >>  drivers/mmc/host/dw_mmc.h  |    5 +-
+> > >> >>> >>  include/linux/mmc/dw_mmc.h |    2 +
+> > >> >>> >>  3 files changed, 142 insertions(+), 10 deletions(-)
+> > >> >>> >>
+> > >> >>> >> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> > >> >>> >> index e034bce..38eb548 100644
+> > >> >>> >> --- a/drivers/mmc/host/dw_mmc.c
+> > >> >>> >> +++ b/drivers/mmc/host/dw_mmc.c
+> > >> >>> >> @@ -29,6 +29,7 @@
+> > >> >>> >>  #include <linux/irq.h>
+> > >> >>> >>  #include <linux/mmc/host.h>
+> > >> >>> >>  #include <linux/mmc/mmc.h>
+> > >> >>> >> +#include <linux/mmc/sd.h>
+> > >> >>> >>  #include <linux/mmc/sdio.h>
+> > >> >>> >>  #include <linux/mmc/dw_mmc.h>
+> > >> >>> >>  #include <linux/bitops.h>
+> > >> >>> >> @@ -235,10 +236,13 @@ err:
+> > >> >>> >>  }
+> > >> >>> >>  #endif /* defined(CONFIG_DEBUG_FS) */
+> > >> >>> >>
+> > >> >>> >> +static void mci_send_cmd(struct dw_mci_slot *slot, u32 cmd, u32 arg);
+> > >> >>> >> +
+> > >> >>> >>  static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command *cmd)
+> > >> >>> >>  {
+> > >> >>> >>       struct mmc_data *data;
+> > >> >>> >>       struct dw_mci_slot *slot = mmc_priv(mmc);
+> > >> >>> >> +     struct dw_mci *host = slot->host;
+> > >> >>> >>       const struct dw_mci_drv_data *drv_data = slot->host->drv_data;
+> > >> >>> >>       u32 cmdr;
+> > >> >>> >>       cmd->error = -EINPROGRESS;
+> > >> >>> >> @@ -254,6 +258,32 @@ static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct
+> > mmc_command
+> > >> >>> *cmd)
+> > >> >>> >>       else if (cmd->opcode != MMC_SEND_STATUS && cmd->data)
+> > >> >>> >>               cmdr |= SDMMC_CMD_PRV_DAT_WAIT;
+> > >> >>> >>
+> > >> >>> >> +     if (cmd->opcode == SD_SWITCH_VOLTAGE) {
+> > >> >>> >> +             u32 clk_en_a;
+> > >> >>> >> +
+> > >> >>> >> +             /* Special bit makes CMD11 not die */
+> > >> >>> >> +             cmdr |= SDMMC_CMD_VOLT_SWITCH;
+> > >> >>> >> +
+> > >> >>> >> +             /* Change state to continue to handle CMD11 weirdness */
+> > >> >>> >> +             WARN_ON(slot->host->state != STATE_SENDING_CMD);
+> > >> >>> >> +             slot->host->state = STATE_SENDING_CMD11;
+> > >> >>> >> +
+> > >> >>> >> +             /*
+> > >> >>> >> +              * We need to disable clock stop while doing voltage switch
+> > >> >>> >> +              * according to 7.4.1.2 Voltage Switch Normal Scenario.
+> > >> >>> >> +              *
+> > >> >>> >> +              * It's assumed that by the next time the CLKENA is updated
+> > >> >>> >> +              * (when we set the clock next) that the voltage change will
+> > >> >>> >> +              * be over, so we don't bother setting any bits to synchronize
+> > >> >>> >> +              * with dw_mci_setup_bus().
+> > >> >>> >> +              */
+> > >> >>> >> +             clk_en_a = mci_readl(host, CLKENA);
+> > >> >>> >> +             clk_en_a &= ~(SDMMC_CLKEN_LOW_PWR << slot->id);
+> > >> >>> >> +             mci_writel(host, CLKENA, clk_en_a);
+> > >> >>> >> +             mci_send_cmd(slot, SDMMC_CMD_UPD_CLK |
+> > >> >>> >> +                          SDMMC_CMD_PRV_DAT_WAIT, 0);
+> > >> >>> > dw_mci_disable_low_power() can be used here.
+> > >> >>>
+> > >> >>> Ah.  I guess we don't have that locally anymore.  Locally we have variants on:
+> > >> >> I'm checking on cjb/mmc branch.
+> > >> >>
+> > >> >>> * https://patchwork.kernel.org/patch/3070311/
+> > >> >>> * https://patchwork.kernel.org/patch/3070251/
+> > >> >>> * https://patchwork.kernel.org/patch/3070221/
+> > >> >>>
+> > >> >>> ...which removed that function.  ...but I guess upstream never picked
+> > >> >>> up those patches, huh?  Looking back it looks like you had some
+> > >> >>> feedback and it needed another spin but somehow fell off my plate.  :(
+> > >> >>>
+> > >> >>> Maybe this is something Yuvaraj would like to pick up?
+> > >> >> It's long ago. I remember that there is no progress since my last comment.
+> > >> >> In case of patch "3070221", I want to pick up for next Kernel.
+> > >> >
+> > >> > Sounds like Yuvaraj has agreed to look at addressing your comments.  Thanks!
+> > >> >
+> > >> >
+> > >> >>> >> +     }
+> > >> >>> >> +
+> > >> >>> >>       if (cmd->flags & MMC_RSP_PRESENT) {
+> > >> >>> >>               /* We expect a response, so set this bit */
+> > >> >>> >>               cmdr |= SDMMC_CMD_RESP_EXP;
+> > >> >>> >> @@ -776,11 +806,15 @@ static void dw_mci_setup_bus(struct dw_mci_slot *slot, bool
+> > force_clkinit)
+> > >> >>> >>       unsigned int clock = slot->clock;
+> > >> >>> >>       u32 div;
+> > >> >>> >>       u32 clk_en_a;
+> > >> >>> >> +     u32 sdmmc_cmd_bits = SDMMC_CMD_UPD_CLK | SDMMC_CMD_PRV_DAT_WAIT;
+> > >> >>> >> +
+> > >> >>> >> +     /* We must continue to set bit 28 in CMD until the change is complete */
+> > >> >>> >> +     if (host->state == STATE_WAITING_CMD11_DONE)
+> > >> >>> >> +             sdmmc_cmd_bits |= SDMMC_CMD_VOLT_SWITCH;
+> > >> >>> > I didn't get the reason SDMMC_CMD_VOLT_SWITCH is needed during clock update(enable/disable)
+> > >> >>> > Can you explain it in details?
+> > >> >>>
+> > >> >>> Simply put: if I didn't do this then the system hung during voltage
+> > >> >>> switch.  It was not documented in the version of the IP manual that I
+> > >> >>> had access to and it took me a bunch of digging / trial and error to
+> > >> >>> figure this out.  Whatever this bit does internally it's important to
+> > >> >>> set it while the voltage change is happening.  Note that this need was
+> > >> >>> the whole reason for adding the extra state to the state machine.
+> > >> >>>
+> > >> >>> Perhaps Yuvaraj can try without it and I'd assume he'll report the
+> > >> >>> same freeze.
+> > >> >> Clarify the necessity of SDMMC_CMD_VOLT_SWITCH.
+> > >> >> As far as I experience, we didn't apply this bit for several projects.
+> > >> >
+> > >> > I just tried this locally on our ChromeOS 3.8 kernel (which has quite
+> > >> > a few backports and matches dw_mmc upstream pretty closely).  When I
+> > >> > take out "sdmmc_cmd_bits |= SDMMC_CMD_VOLT_SWITCH" and bootup it fails
+> > >> > to bringup WiFi chip.  It prints messages like:
+> > >> >
+> > >> > [    4.400842] mmc_host mmc1: Timeout sending command (cmd 0x202000
+> > >> > arg 0x0 status 0x80202000)
+> > >> >
+> > >> > I will let Yuvaraj comment about his testing too.
+> > >> To make it simple and verify, i have just enabled eMMC and SD channels
+> > >> on 3.16-rc1 and tested.
+> > >> Without "sdmmc_cmd_bits |= SDMMC_CMD_VOLT_SWITCH" bootup fails.
+> > >> [    3.015971] mmc_host mmc1: Timeout sending command (cmd 0x202000
+> > >> arg 0x0 status 0x80202000)
+> > >> [    3.530974] mmc_host mmc1: Timeout sending command (cmd 0x202000
+> > >> arg 0x0 status 0x80202000)
+> > > Thank you for test.
+> > > Hmm, it failed during clock update, right?.
+> > > Can you check HLE interrupt at this time?
+> > > I'll investigate for this.
+> > Yes, it failed during clock update.I am dumping the register contents
+> > just before the dev_err statement.I can observe that 1st timeout does
+> > not have HLE interrupt.But once we set bit 0 of UHS_REG subsequent
+> > timeout's have HLE bit set.I am attaching the complete log.
+> 
+> Before disabling the clocks, we ensure that the card is not busy.(It's from Synopsys's databook)
+> I guess SDMMC_CMD_VOLT_SWITCH flag seems to affect to avoid this limitation if you have no problem.
+> But, I met the following log with HEL when I apply and test this patch .
+> 
+> "mmc_host mmc1: Timeout sending command (cmd 0x202000 arg 0x0 status 0x80202000)"
+> I need to look into it more deeply.
+I confirmed that SDMMC_CMD_VOLT_SWITCH is needed during clock-off/on in voltage switching sequence
+even though there is no description for this in Synopsys's databook.
+And the above-mentioned message("mmc_host mmc1: Timeout sending command (cmd 0x202000 arg 0x0 status 0x80202000)")
+is happened on mmc_power_cycle(), which should be done because of busy status of DAT[3:0].
+It indicates clock-off/on sequence fails when executing mmc_power_cycle().
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- arch/arm/mach-exynos/common.h     |   17 -----------------
- arch/arm/mach-exynos/exynos-pmu.h |   24 ++++++++++++++++++++++++
- arch/arm/mach-exynos/pm.c         |    1 +
- arch/arm/mach-exynos/pmu.c        |   10 +++++++++-
- 4 files changed, 34 insertions(+), 18 deletions(-)
- create mode 100644 arch/arm/mach-exynos/exynos-pmu.h
+> 
+> > >
+> > >> >
+> > >> >
+> > >> >>> >> +static int dw_mci_switch_voltage(struct mmc_host *mmc, struct mmc_ios *ios)
+> > >> >>> >> +{
+> > >> >>> >> +     struct dw_mci_slot *slot = mmc_priv(mmc);
+> > >> >>> >> +     struct dw_mci *host = slot->host;
+> > >> >>> >> +     u32 uhs;
+> > >> >>> >> +     u32 v18 = SDMMC_UHS_18V << slot->id;
+> > >> >>> >> +     int min_uv, max_uv;
+> > >> >>> >> +     int ret;
+> > >> >>> >> +
+> > >> >>> >> +     /*
+> > >> >>> >> +      * Program the voltage.  Note that some instances of dw_mmc may use
+> > >> >>> >> +      * the UHS_REG for this.  For other instances (like exynos) the UHS_REG
+> > >> >>> >> +      * does no harm but you need to set the regulator directly.  Try both.
+> > >> >>> >> +      */
+> > >> >>> >> +     uhs = mci_readl(host, UHS_REG);
+> > >> >>> >> +     if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
+> > >> >>> >> +             min_uv = 2700000;
+> > >> >>> >> +             max_uv = 3600000;
+> > >> >>> >> +             uhs &= ~v18;
+> > >> >>> >> +     } else {
+> > >> >>> >> +             min_uv = 1700000;
+> > >> >>> >> +             max_uv = 1950000;
+> > >> >>> >> +             uhs |= v18;
+> > >> >>> >> +     }
+> > >> >>> >> +     if (!IS_ERR(mmc->supply.vqmmc)) {
+> > >> >>> >> +             ret = regulator_set_voltage(mmc->supply.vqmmc, min_uv, max_uv);
+> > >> >>> >> +
+> > >> >>> >> +             /*
+> > >> >>> >> +              * Only complain if regulator claims that it's not in the 1.8V
+> > >> >>> >> +              * range.  This avoids a bunch of errors in the case that
+> > >> >>> >> +              * we've got a fixed 1.8V regulator but the core SD code still
+> > >> >>> >> +              * thinks it ought to try to switch to 3.3 and then back to 1.8
+> > >> >>> >> +              */
+> > >> >>> >> +             if (ret) {
+> > >> >>> > I think if ret is error, printing message and returning error is good.
+> > >> >>> > Currently, just returning '0' though it fails.
+> > >> >> Any feedback?
+> > >> >
+> > >> > Whoops, right.  I think you're right that in the case it warns it
+> > >> > should also return the error code.  In the case it doesn't warn it
+> > >> > shouldn't.  Also: possibly we should use a trick like the mmc core
+> > >> > does and use "regulator_count_voltages" to figure out if we're going
+> > >> > to be able to switch voltages...
+> > >> >
+> > >> >>> > Artificially adding SDMMC_INT_CMD_DONE to pending is needed to complete cmd handling?
+> > >> >>> > Is there any reason?
+> > >> >>>
+> > >> >>> I don't remember this for sure since I wrote this a long time ago.
+> > >> >>> Maybe it's not needed?  I may have just been modeling on other
+> > >> >>> interrupts.
+> > >> >> If there is no specific reason, please remove it.
+> > >> >
+> > >> > OK, we'll see how Yuvaraj's testing goes without it.  My incredibly
+> > >> > brief testing in our local Chrome OS 3.8 tree shows that the WiFi is
+> > >> > not detected properly if I comment out the line:
+> > >> >   dw_mci_cmd_interrupt(host,
+> > >> >     pending | SDMMC_INT_CMD_DONE);
+> > >> >
+> > >> > It may be sufficient to simply schedule the tasklet or to do some
+> > >> > other subset of dw_mci_cmd_interrupt().  Yuvaraj can confirm on the
+> > >> > latest kernel and also investigate further.
+> > > How about completing CMD without SDMMC_INT_CMD_DONE?
+> > Without this tuning fails.
+> > [    2.525284] mmc_host mmc0: Bus speed (slot 0) = 200000000Hz (slot
+> > req 200000000Hz, actual 200000000HZ div = 0)
+> > [  198.556573] random: nonblocking pool is initialized
+> > [  240.226044] INFO: task kworker/u8:0:6 blocked for more than 120 seconds.
+> > [  240.231276]       Not tainted 3.16.0-rc1-00010-g2f7a756-dirty #55
+> > [  240.237359] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+> > disables this message.
+> > [  240.245150] kworker/u8:0    D c03a58a0     0     6      2 0x00000000
+> > [  240.251487] Workqueue: kmmcd mmc_rescan
+> > [  240.255297] [<c03a58a0>] (__schedule) from [<c03a5330>]
+> > (schedule_timeout+0x130/0x170)
+> > [  240.263201] [<c03a5330>] (schedule_timeout) from [<c03a6540>]
+> > (wait_for_common+0xbc/0x14c)
+> > [  240.271441] [<c03a6540>] (wait_for_common) from [<c02ca6e4>]
+> > (mmc_wait_for_req_done+0x6c/0xf0)
+> > [  240.280031] [<c02ca6e4>] (mmc_wait_for_req_done) from [<c02e3f10>]
+> > (dw_mci_exynos_execute_tuning+0x1d4/0x2c4)
+> > [  240.289919] [<c02e3f10>] (dw_mci_exynos_execute_tuning) from
+> > [<c02e0198>] (dw_mci_execute_tuning+0x54/0xb4)
+> > [  240.299635] [<c02e0198>] (dw_mci_execute_tuning) from [<c02cf47c>]
+> > (mmc_init_card+0xeec/0x14ac)
+> > [  240.308309] [<c02cf47c>] (mmc_init_card) from [<c02cfc34>]
+> > (mmc_attach_mmc+0x8c/0x160)
+> > [  240.316202] [<c02cfc34>] (mmc_attach_mmc) from [<c02cca0c>]
+> > (mmc_rescan+0x2b0/0x308)
+> > [  240.323924] [<c02cca0c>] (mmc_rescan) from [<c0032f60>]
+> > (process_one_work+0xf8/0x364)
+> > [  240.331732] [<c0032f60>] (process_one_work) from [<c0033800>]
+> > (worker_thread+0x50/0x5a0)
+> > [  240.339799] [<c0033800>] (worker_thread) from [<c0038e7c>]
+> > (kthread+0xd8/0xf0)
+> > [  240.346999] [<c0038e7c>] (kthread) from [<c000e438>]
+> > (ret_from_fork+0x14/0x3c)
+> 
+> Thank you for test.
+> I want to clear it why CMD_DONE is related to tuning.
+In my case, SDMMC_INT_CMD_DONE doesn't affect.
+And do you check VOLT_SWITCH interrupt occurs twice during voltage-switching.
+For last one, if-statement in dw_mci_interrupt() disturbs clearing interrupt.
+if ((host->state == STATE_SENDING_CMD11) &&
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 9bf9198..38334bf 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -132,23 +132,6 @@ extern struct smp_operations exynos_smp_ops;
- 
- extern void exynos_cpu_die(unsigned int cpu);
- 
--/* PMU(Power Management Unit) support */
--
--#define PMU_TABLE_END	(-1U)
--
--enum sys_powerdown {
--	SYS_AFTR,
--	SYS_LPA,
--	SYS_SLEEP,
--	NUM_SYS_POWERDOWN,
--};
--
--struct exynos_pmu_conf {
--	unsigned int offset;
--	unsigned int val[NUM_SYS_POWERDOWN];
--};
--
--extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
- extern void exynos_cpu_power_down(int cpu);
- extern void exynos_cpu_power_up(int cpu);
- extern int  exynos_cpu_power_state(int cpu);
-diff --git a/arch/arm/mach-exynos/exynos-pmu.h b/arch/arm/mach-exynos/exynos-pmu.h
-new file mode 100644
-index 0000000..a2ab0d5
---- /dev/null
-+++ b/arch/arm/mach-exynos/exynos-pmu.h
-@@ -0,0 +1,24 @@
-+/*
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Header for EXYNOS PMU Driver support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __EXYNOS_PMU_H
-+#define __EXYNOS_PMU_H
-+
-+enum sys_powerdown {
-+	SYS_AFTR,
-+	SYS_LPA,
-+	SYS_SLEEP,
-+	NUM_SYS_POWERDOWN,
-+};
-+
-+extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
-+
-+#endif /* __EXYNOS_PMU_H */
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index ff96fcd..ba75171 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -34,6 +34,7 @@
- #include <mach/map.h>
- 
- #include "common.h"
-+#include "exynos-pmu.h"
- #include "regs-pmu.h"
- #include "regs-sys.h"
- 
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index 2b16a2d..a4ede73 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -15,9 +15,16 @@
- #include <linux/regmap.h>
- #include <linux/mfd/syscon.h>
- 
--#include "common.h"
-+#include "exynos-pmu.h"
- #include "regs-pmu.h"
- 
-+#define PMU_TABLE_END	(-1U)
-+
-+struct exynos_pmu_conf {
-+	unsigned int offset;
-+	unsigned int val[NUM_SYS_POWERDOWN];
-+};
-+
- struct exynos_pmu_data {
- 	const struct exynos_pmu_conf *pmu_config;
- 	const struct exynos_pmu_conf *pmu_config_extra;
-@@ -31,6 +38,7 @@ struct exynos_pmu_context {
- 	const struct exynos_pmu_data *pmu_data;
- };
- 
-+static void __iomem *pmu_base_addr;
- static struct exynos_pmu_context *pmu_context;
- 
- static inline void pmu_raw_writel(u32 val, u32 offset)
--- 
-1.7.9.5
+In addition, I suggest adding another flag instead of using host's state.
+Can you consider it?
+
+Thanks,
+Seungwon Jeon
