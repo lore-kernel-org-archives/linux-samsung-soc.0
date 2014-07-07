@@ -1,166 +1,113 @@
-From: Jaewon Kim <jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] drivers: phy: exynos-usb2: add support for Exynos 3250
-Date: Mon, 07 Jul 2014 13:55:16 +0900
-Message-ID: <53BA2834.7050404@samsung.com>
-References: <1404475989-30588-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1404475989-30588-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v6 0/4] ARM: Exynos: PMU cleanup and refactoring for using DT
+Date: Mon, 07 Jul 2014 10:49:32 +0530
+Message-ID: <1404710376-16448-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi, Marek
+This patch series, modifies Exynos Power Management Unit (PMU) related code
+for converting it into a platform_driver. This is also preparation for moving
+PMU related code out of machine folder into a either "drivers/mfd", or
+"drivers/power" or some other suitable place so that ARM64 based SoC can
+utilize common piece of code.
 
-2014=B3=E2 07=BF=F9 04=C0=CF 21:13, Marek Szyprowski =BE=B4 =B1=DB:
-> This patch adds support for Exynos3250 SoC to Exynos2USB PHY driver.
-> Although Exynos3250 has only one device phy interface, the register
-> layout and all operations that are required to get it enabled are alm=
-ost
-> same as on Exynos4x12. The only different is one more register
-> (REFCLKSEL) which need to be set.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/phy/Kconfig               | 12 ++++++------
->  drivers/phy/phy-exynos4x12-usb2.c | 18 ++++++++++++++++++
->  drivers/phy/phy-samsung-usb2.c    |  6 ++++++
->  drivers/phy/phy-samsung-usb2.h    |  2 ++
->  4 files changed, 32 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 16a2f067c242..58737b9eaa6e 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -141,14 +141,14 @@ config PHY_EXYNOS4210_USB2
->  	  phys are available - device, host, HSIC0 and HSIC1.
-> =20
->  config PHY_EXYNOS4X12_USB2
-> -	bool "Support for Exynos 4x12"
-> +	bool "Support for Exynos 3250/4x12"
->  	depends on PHY_SAMSUNG_USB2
-> -	depends on (SOC_EXYNOS4212 || SOC_EXYNOS4412)
-> +	depends on (SOC_EXYNOS3250 || SOC_EXYNOS4212 || SOC_EXYNOS4412)
->  	help
-> -	  Enable USB PHY support for Exynos 4x12. This option requires that
-> -	  Samsung USB 2.0 PHY driver is enabled and means that support for =
-this
-> -	  particular SoC is compiled in the driver. In case of Exynos 4x12 =
-four
-> -	  phys are available - device, host, HSIC0 and HSIC1.
-> +	  Enable USB PHY support for Exynos 3250/4x12. This option requires
-> +	  that Samsung USB 2.0 PHY driver is enabled and means that support=
- for
-> +	  this particular SoC is compiled in the driver. In case of Exynos =
-4x12
-> +	  four phys are available - device, host, HSIC0 and HSIC1.
-> =20
->  config PHY_EXYNOS5250_USB2
->  	bool "Support for Exynos 5250"
-> diff --git a/drivers/phy/phy-exynos4x12-usb2.c b/drivers/phy/phy-exyn=
-os4x12-usb2.c
-> index 59d8dd3ff390..b29bbfacd4b5 100644
-> --- a/drivers/phy/phy-exynos4x12-usb2.c
-> +++ b/drivers/phy/phy-exynos4x12-usb2.c
-> @@ -67,6 +67,12 @@
->  #define EXYNOS_4x12_UPHYCLK_PHYFSEL_24MHZ	(0x5 << 0)
->  #define EXYNOS_4x12_UPHYCLK_PHYFSEL_50MHZ	(0x7 << 0)
-> =20
-> +#define EXYNOS_4212_UPHYCLK_PHY0_ID_PULLUP	(0x1 << 3)
-> +#define EXYNOS_4212_UPHYCLK_PHY0_COMMON_ON	(0x1 << 4)
-> +#define EXYNOS_4212_UPHYCLK_PHY1_COMMON_ON	(0x1 << 7)
-> +
-> +#define EXYNOS_3250_UPHYCLK_REFCLKSEL		(0x2 << 8)
-> +
->  #define EXYNOS_4x12_UPHYCLK_PHY0_ID_PULLUP	BIT(3)
->  #define EXYNOS_4x12_UPHYCLK_PHY0_COMMON_ON	BIT(4)
->  #define EXYNOS_4x12_UPHYCLK_PHY1_COMMON_ON	BIT(7)
-> @@ -197,6 +203,10 @@ static void exynos4x12_setup_clk(struct samsung_=
-usb2_phy_instance *inst)
-> =20
->  	clk =3D readl(drv->reg_phy + EXYNOS_4x12_UPHYCLK);
->  	clk &=3D ~EXYNOS_4x12_UPHYCLK_PHYFSEL_MASK;
-> +
-> +	if (drv->cfg->has_refclk_sel)
-> +		clk =3D EXYNOS_3250_UPHYCLK_REFCLKSEL;
-> +
->  	clk |=3D drv->ref_reg_val << EXYNOS_4x12_UPHYCLK_PHYFSEL_OFFSET;
->  	clk |=3D EXYNOS_4x12_UPHYCLK_PHY1_COMMON_ON;
->  	writel(clk, drv->reg_phy + EXYNOS_4x12_UPHYCLK);
-> @@ -358,6 +368,14 @@ static const struct samsung_usb2_common_phy exyn=
-os4x12_phys[] =3D {
->  	{},
->  };
-> =20
-> +const struct samsung_usb2_phy_config exynos3250_usb2_phy_config =3D =
-{
-> +	.has_mode_switch	=3D 1,
-> +	.has_refclk_sel		=3D 1,
-> +	.num_phys		=3D 1,
-> +	.phys			=3D exynos4x12_phys,
-> +	.rate_to_clk		=3D exynos4x12_rate_to_clk,
-> +};
-> +
+These patches are created on top of Kukjin Kim's for-next.
+I have tested this patches on Exynos5250 Snow board for system boot and S2R.
 
-As you were told, exynos3250 has only one device phy interface.
-so, has_mode_switch should be 0.
+This patch series depends on following two patch series:
+[1]: mfd: syscon: Decouple syscon interface from syscon devices.
+     https://lkml.org/lkml/2014/6/24/188
 
-And related change like switch_mode in exynos4x12_phy_pwr should be cha=
-nged.
+[2]: Cleanup patches for mach-exynos.
+     http://www.spinics.net/lists/arm-kernel/msg341474.html
 
->  const struct samsung_usb2_phy_config exynos4x12_usb2_phy_config =3D =
-{
->  	.has_mode_switch	=3D 1,
->  	.num_phys		=3D EXYNOS4x12_NUM_PHYS,
-> diff --git a/drivers/phy/phy-samsung-usb2.c b/drivers/phy/phy-samsung=
--usb2.c
-> index 8a8c6bc8709a..36db8eb8c5f4 100644
-> --- a/drivers/phy/phy-samsung-usb2.c
-> +++ b/drivers/phy/phy-samsung-usb2.c
-> @@ -87,6 +87,12 @@ static struct phy *samsung_usb2_phy_xlate(struct d=
-evice *dev,
->  }
-> =20
->  static const struct of_device_id samsung_usb2_phy_of_match[] =3D {
-> +#ifdef CONFIG_PHY_EXYNOS4X12_USB2
-> +	{
-> +		.compatible =3D "samsung,exynos3250-usb2-phy",
-> +		.data =3D &exynos3250_usb2_phy_config,
-> +	},
-> +#endif
->  #ifdef CONFIG_PHY_EXYNOS4210_USB2
->  	{
->  		.compatible =3D "samsung,exynos4210-usb2-phy",
-> diff --git a/drivers/phy/phy-samsung-usb2.h b/drivers/phy/phy-samsung=
--usb2.h
-> index 918847843a95..b03da0ef39ac 100644
-> --- a/drivers/phy/phy-samsung-usb2.h
-> +++ b/drivers/phy/phy-samsung-usb2.h
-> @@ -60,8 +60,10 @@ struct samsung_usb2_phy_config {
->  	int (*rate_to_clk)(unsigned long, u32 *);
->  	unsigned int num_phys;
->  	bool has_mode_switch;
-> +	bool has_refclk_sel;
->  };
-> =20
-> +extern const struct samsung_usb2_phy_config exynos3250_usb2_phy_conf=
-ig;
->  extern const struct samsung_usb2_phy_config exynos4210_usb2_phy_conf=
-ig;
->  extern const struct samsung_usb2_phy_config exynos4x12_usb2_phy_conf=
-ig;
->  extern const struct samsung_usb2_phy_config exynos5250_usb2_phy_conf=
-ig;
+Patch v5 and discussion can be found here:
+http://www.spinics.net/lists/arm-kernel/msg344841.html
 
-It works fine in rinato 3250 boards.
-but, some property is not right, in my thought.
+Change Since v5:
+ - Squashed patch "Move "mach/map.h" inclusion from regs-pmu.h to platsmp.c"
+   into patch "Refactored code for using PMU address via DT".
+ - Addressed review comments from Tomasz Figa.
+ - Using init_irq machine function to initialize PMU mapping instead
+   of init_time.
+ - Rebased on latest Kukjin Kim's for-next branch.
 
-thanks,
-Jaewon Kim.
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Changes Since v4:
+ - Splitted patch series in two parts. Part 1 has code cleanup under mach-exynos
+   and posted as separate patch [2]. Current patchset is part 2 which modified
+   exynos pmu implementation for making it platform driver.
+ - Removed dependency over early_syscon API.
+ - Removed usage of regmap read/write APIs.
+ - Modified probe function to register exynos pmu as syscon provider using
+   Tomasz Figa's syscon patch [1].
+ - Address various other review comments from Tomasz Figa.
+ - Removed signed-off-by of Young-Gun Jang <yg1004.jang@samsung.com>,
+   as this id is no more valid. Taking ownership of all his patches.
+
+Changes Since v3:
+ - Optimized exynos_pmu_probe function by removing exynos_pmu_data_init
+   as suggested by Vikas Sajjan.
+ - Modified syscon_early_regmap_lookup_by_phandle and
+   syscon_regmap_lookup_by_phandle function call to pass property as NULL.
+
+Changes Since v2:
+ - Rebased on top of Daniel Lezcano's Exynos cpuidle refactor patches.
+ - Removed early mapping of PMU base address from exynos.c and removed
+   "get_exynos_pmuaddr" function. Instead of this added code in platsmp.c
+   to get PMU base address using of_iomap as suggested by Tomasz Figa.
+ - Converted PMU implementation into platform_driver by using static
+   platform_device method. 
+
+Changes Since v1:
+ - Rebased on latest for-next of Kukjin Kim's tree.
+ - Updated patch: Add support for mapping PMU base address via DT
+	- Removed __initdata from declaration of "exynos_pmu_base", as it caused
+	kernel crash as pointed out by Vikas Sajjan.
+	- Added support for Syscon initialization and getting PMU regmap handle
+	as suggested by Sylwester. Since current implementation of early
+	intialization [1] has limitation that "early_syscon_init" requires
+	DT to be unflattened and system should be able to allocate memory,
+	we can't use regmap handles for platsmp.c file as "smp_secondary_init"
+	will be called before DT unflattening. So I have kept both method for
+	accessing PMU base address. platsmp.c will use ioremmaped address where
+	as rest other files can use regmap handle.
+ - Updated patch: Refactored code for PMU register mapping via DT
+	- Modified to use regmap_read/write when using regmap handle.
+ - Added patch: Add device tree based initialization support for PMU.
+	- Convert existing PMU implementation to be a device tree based 
+	 before moving it to "drivers/mfd" folder. As suggested by Bartlomiej.
+	- Dropped making a platform_driver for PMU, as currently PMU binding
+	has two compatibility strings as "samsung, exynosxxx-pmu", "syscon",
+	once we	enable MFD_SYSCON config option, current "syscon" driver probe
+	gets called and PMU probe never gets called. So modified PMU
+	initialization code to scan DT and match against supported compatiblity
+	string in driver code, and once we get matching node use that for
+	accessing PMU regmap handle using "syscon_early_regmap_lookup_by_phandle".
+	If there is any better solution please suggest.
+
+
+Pankaj Dubey (4):
+  ARM: EXYNOS: Add support for mapping PMU base address via DT
+  ARM: EXYNOS: Refactored code for using PMU address via DT
+  ARM: EXYNOS: Add platform driver support for Exynos PMU
+  ARM: EXYNOS: Move PMU specific definitions from common.h
+
+ arch/arm/mach-exynos/Kconfig                 |    1 +
+ arch/arm/mach-exynos/common.h                |   18 +-
+ arch/arm/mach-exynos/exynos-pmu.h            |   24 ++
+ arch/arm/mach-exynos/exynos.c                |   49 ++-
+ arch/arm/mach-exynos/include/mach/map.h      |    3 -
+ arch/arm/mach-exynos/mcpm-exynos.c           |    9 +-
+ arch/arm/mach-exynos/platsmp.c               |    4 +-
+ arch/arm/mach-exynos/pm.c                    |   87 +++--
+ arch/arm/mach-exynos/pmu.c                   |  228 ++++++++---
+ arch/arm/mach-exynos/regs-pmu.h              |  522 +++++++++++++-------------
+ arch/arm/plat-samsung/include/plat/map-s5p.h |    1 -
+ 11 files changed, 559 insertions(+), 387 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/exynos-pmu.h
+
+-- 
+1.7.9.5
