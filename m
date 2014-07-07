@@ -1,108 +1,84 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: [RFC PATCH 3/3] clk: rockchip: add restart notifier
-Date: Sun, 06 Jul 2014 20:43:35 +0200
-Message-ID: <3525040.Bkx5U4OiQ5@diego>
-References: <1531376.ijR0PPyvmJ@diego>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v6 0/6] Cleanup patches for mach-exynos
+Date: Mon, 07 Jul 2014 09:20:50 +0530
+Message-ID: <1404705056-11965-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:48196 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751808AbaGFSmK (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:60128 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750758AbaGGDxd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 6 Jul 2014 14:42:10 -0400
-In-Reply-To: <1531376.ijR0PPyvmJ@diego>
+	Sun, 6 Jul 2014 23:53:33 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Wim Van Sebroeck <wim@iguana.be>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, chow.kim@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Add infrastructure to write the correct value to the restart register and
-register the restart notifier for both rk3188 (including rk3066) and rk3188.
+This series is doing code cleanup under arch/arm/mach-exynos.
+These patches have been separated from main exynos pmu v4 patch
+posted here [1].
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/rockchip/clk-rk3188.c |  2 ++
- drivers/clk/rockchip/clk-rk3288.c |  2 ++
- drivers/clk/rockchip/clk.c        | 23 +++++++++++++++++++++++
- drivers/clk/rockchip/clk.h        |  1 +
- 4 files changed, 28 insertions(+)
+[1]: https://lkml.org/lkml/2014/5/10/29
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index a83a6d8..71b661a 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -631,6 +631,8 @@ static void __init rk3188_common_clk_init(struct device_node *np)
- 
- 	rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CON(0),
- 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-+
-+	rockchip_register_restart_notifier(RK2928_GLB_SRST_FST);
- }
- 
- static void __init rk3066a_clk_init(struct device_node *np)
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 0d8c6c5..b604217 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -713,5 +713,7 @@ static void __init rk3288_clk_init(struct device_node *np)
- 
- 	rockchip_register_softrst(np, 9, reg_base + RK3288_SOFTRST_CON(0),
- 				  ROCKCHIP_SOFTRST_HIWORD_MASK);
-+
-+	rockchip_register_restart_notifier(RK3288_GLB_SRST_FST);
- }
- CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 278cf9d..0594941 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -25,6 +25,7 @@
- #include <linux/clk-provider.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
-+#include <linux/reboot.h>
- #include "clk.h"
- 
- /**
-@@ -242,3 +243,25 @@ void __init rockchip_clk_register_branches(
- 		rockchip_clk_add_lookup(clk, list->id);
- 	}
- }
-+
-+static unsigned int reg_restart;
-+static int rockchip_restart_notify(struct notifier_block *this,
-+				   unsigned long mode, void *cmd)
-+{
-+	writel(0xfdb9, reg_base + reg_restart);
-+	return NOTIFY_DONE;
-+}
-+
-+static struct notifier_block rockchip_restart_notifier = {
-+	.notifier_call = rockchip_restart_notify,
-+};
-+
-+void __init rockchip_register_restart_notifier(unsigned int reg)
-+{
-+	int ret;
-+
-+	reg_restart = reg;
-+	ret = register_restart_notifier(&rockchip_restart_notifier);
-+	if (ret)
-+		pr_err("cannot register restart notifier, %d\n", ret);
-+}
-diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index 887cbde..0b5eab5 100644
---- a/drivers/clk/rockchip/clk.h
-+++ b/drivers/clk/rockchip/clk.h
-@@ -329,6 +329,7 @@ void rockchip_clk_register_branches(struct rockchip_clk_branch *clk_list,
- 				    unsigned int nr_clk);
- void rockchip_clk_register_plls(struct rockchip_pll_clock *pll_list,
- 				unsigned int nr_pll, int grf_lock_offset);
-+void rockchip_register_restart_notifier(unsigned int reg);
- 
- #define ROCKCHIP_SOFTRST_HIWORD_MASK	BIT(0)
- 
+Changes Since v5:
+ - Rebased on latest for-next of Kukjin Kim's tree.
+ - Using of_machine_is_compatible instead of soc_is_exynos in patch 2.
+
+Changes Since v4:
+ - Rebased on latest for-next of Kukjin Kim's tree.
+ - Removing file path comment from mach-exynos/headsmp.S also.
+ - Removed signed-off-by of Young-Gun Jang <yg1004.jang@samsung.com>,
+   as this id is no more valid. Taking ownership of all his patches.
+ - Separated these patches from main exynos pmu v4 patch series as
+   suggested by Tomasz Figa.
+
+Changes Since v3:
+ - Addressed build fail issue in exynos.c as reported by Sachin Kamat.
+ - Rebased on top of Sysram patches by Sachin Kamat.
+
+Changes Since v2:
+ - Rebased on top of Daniel Lezcano's Exynos cpuidle refactor patches.
+ - Removed exynos_cpuidle_init and exynos_cpufreq_init code as suggested
+   by Tomasz Figa.
+
+Changes Since v1:
+ - Rebased on latest for-next of Kukjin Kim's tree.
+ - Added patch: "Make exynos machine_ops as static". 
+	For making more cleanup in "mach-exynos/common.h"
+	as suggested by Tomasz Figa.
+ - Addressed comments of Tomasz Figa for cleaning "mach-exynos/common.h".
+ - Updated patch: Remove file path from comment section
+	As suggested by Michel Simek, instead of updating file path
+	lets remove them from each file under "mach-exynos".
+	Even though Kukjin pointed out that there is similar patch pending from
+	Sachin/Tushar but since I could not find I have included this here. If
+	I have missed something please point to any existing such patch.
+ - Added patch: Remove "linux/bug.h" from pmu.c.
+ - Added patch: Move "mach/map.h" inclusion from regs-pmu.h to platsmp.c
+
+
+Pankaj Dubey (6):
+  ARM: EXYNOS: Make exynos machine_ops as static
+  ARM: EXYNOS: Move cpufreq and cpuidle device registration to
+    init_machine
+  ARM: EXYNOS: Move SYSREG definition into sys-reg specific file
+  ARM: EXYNOS: Remove file path from comment section
+  ARM: EXYNOS: Remove regs-pmu.h header dependency from pm_domain
+  ARM: EXYNOS: Remove "linux/bug.h" from pmu.c
+
+ arch/arm/mach-exynos/common.h              |    8 --------
+ arch/arm/mach-exynos/exynos.c              |   27 ++++++++-------------------
+ arch/arm/mach-exynos/headsmp.S             |    1 -
+ arch/arm/mach-exynos/hotplug.c             |    3 +--
+ arch/arm/mach-exynos/include/mach/map.h    |    3 +--
+ arch/arm/mach-exynos/include/mach/memory.h |    3 +--
+ arch/arm/mach-exynos/platsmp.c             |    3 +--
+ arch/arm/mach-exynos/pm.c                  |    1 +
+ arch/arm/mach-exynos/pm_domains.c          |    8 ++++----
+ arch/arm/mach-exynos/pmu.c                 |    1 -
+ arch/arm/mach-exynos/regs-pmu.h            |    4 ----
+ arch/arm/mach-exynos/regs-sys.h            |   22 ++++++++++++++++++++++
+ 12 files changed, 39 insertions(+), 45 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/regs-sys.h
+
 -- 
-1.9.0
+1.7.9.5
