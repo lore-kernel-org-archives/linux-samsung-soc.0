@@ -1,54 +1,51 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 0/6] Various Samsung fixes for v3.16-rc3
-Date: Tue, 08 Jul 2014 08:25:53 +0900
-Message-ID: <53BB2C81.7000108@samsung.com>
-References: <1403618235-19353-1-git-send-email-t.figa@samsung.com> <53B2BD99.5080704@samsung.com>
+Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
+Date: Tue, 08 Jul 2014 08:34:18 +0900
+Message-ID: <53BB2E7A.5080204@samsung.com>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>	<1402464739-19044-3-git-send-email-tushar.b@samsung.com>	<CAD=FV=W5yh58fYTwRZxmZt=BORcZMSRV0oRe12yA74Q5h2S4YQ@mail.gmail.com>	<7hpphwlgn0.fsf@paris.lan>	<CAC5m3Bzey-YoPLmjAq4YNPQ13rojtVFWAbnhX6-ZFtYZwEdMWg@mail.gmail.com>	<7h8uojk61a.fsf@paris.lan>	<53ACE724.7090606@gmail.com>	<CAGa+x86COQz+cYtrXWrP-sjFGz-gi2tf6GEvLiKYoQwg1zMivQ@mail.gmail.com> <CAGa+x87LHiYGb03=GRcZisK1=TyakW1htd1E2vOQ6ijZKw8syg@mail.gmail.com> <53B2A2A5.4070203@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53B2BD99.5080704@samsung.com>
+In-Reply-To: <53B2A2A5.4070203@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Tushar Behera <trblinux@gmail.com>
+Cc: Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@google.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/01/14 22:54, Tomasz Figa wrote:
-> Hi,
->
-> On 24.06.2014 15:57, Tomasz Figa wrote:
->> This series inteds to fix various issues spotted while testing v3.16-rc2.
->> The patches should be reasonably independent from each other and so could be
->> picked to respective trees. See descriptions of individual patches for more
->> information.
+On 07/01/14 20:59, Tushar Behera wrote:
+> On 06/27/2014 08:18 PM, Kevin Hilman wrote:
+>> On Fri, Jun 27, 2014 at 7:18 AM, Kevin Hilman<khilman@linaro.org>  wrote:
+>>> On Thu, Jun 26, 2014 at 8:38 PM, Tushar Behera<trblinux@gmail.com>  wrote:
+>>>
+>>>> Would you please provide me the environment setting of your u-boot?
+>>>> U-boot environment on my board has been over-written, I would like to
+>>>> set it same as yours and try to reproduce the issue at my end. With only
+>>>> 'sound init', I don't seem to hit this issue anymore.
+>>>
+>>> Attached is a full boot log using v3.16-rc2 with my patch adding
+>>> CLK_IGNORE_UNUSED to mau_epll and Doug's aclk66_peric patch.  In the
+>>> boot log, you'll see the output of 'printenv' inside u-boot where the
+>>> environment is dumped.
 >>
->> Tested on Exynos4412-based Trats2 and Exynos4210-based Trats boards.
+>> Oops, I sent you a boot log for the octa board.  Here's the one for
+>> peach-pi with the same kernel (built with upstream exynos_defconfig)
 >>
->> AFAIK there is no need to backport those fixes to stable.
->>
->> Tomasz Figa (6):
->>    mmc: sdhci-s3c: Fix local I/O clock gating
->>    ARM: EXYNOS: Fix core ID used by platsmp and hotplug code
->>    clk: samsung: exynos4: Remove SRC_MASK_ISP gates
->>    ARM: SAMSUNG: Restore Samsung PM Debug functionality
->>    ARM: EXYNOS: Fix suspend/resume sequencies
->>    ARM: EXYNOS: Register cpuidle device only on Exynos4210 and 5250
->>
->>   arch/arm/mach-exynos/exynos.c     |  6 ++----
->>   arch/arm/mach-exynos/hotplug.c    | 10 ++++++----
->>   arch/arm/mach-exynos/platsmp.c    | 34 +++++++++++++++++++---------------
->>   arch/arm/mach-exynos/pm.c         | 20 ++++----------------
->>   arch/arm/plat-samsung/Kconfig     |  8 +++++++-
->>   arch/arm/plat-samsung/pm-debug.c  |  1 +
->>   drivers/clk/samsung/clk-exynos4.c | 16 ++++------------
->>   drivers/mmc/host/sdhci-s3c.c      | 17 ++++++++++-------
->>   8 files changed, 53 insertions(+), 59 deletions(-)
+>> Kevin
 >>
 >
-> Gentle ping.
+> The u-boot version is a little different on my Peach-Pi as compared to
+> the market release version. Not sure if that is making any difference.
 >
-Oops, I missed this fixes from 2nd samsung fixes for 3.16...let me have 
-a look this series today then will send again soon...
+> Peach # version
+>
+> U-Boot 2013.04 (Feb 13 2014 - 16:35:03) for Peach
+> armv7a-cros-linux-gnueabi-gcc.real (4.8.1_cos_gg_feea904_4.8.1-r66)
+> 4.8.x-google 20130905 (prerelease)
+> GNU ld (binutils-2.22_cos_gg_2) 2.22
+>
 
-Thanks,
-Kukjin
+Note that I've applied this only from this series so I'm not sure how 
+much the problem can be solved...any updates for 1/3 and 3/3?
+
+- Kukjin
