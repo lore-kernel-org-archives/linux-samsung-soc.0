@@ -1,172 +1,104 @@
 From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: [PATCH v6 2/4] ARM: EXYNOS: Refactor the code to use DT based lookup
-Date: Mon, 07 Jul 2014 18:31:30 +0530
-Message-ID: <1404738090-30522-1-git-send-email-vikas.sajjan@samsung.com>
+Subject: [PATCH v6 3/4] arm: exynos5: Add Suspend-to-RAM support for 5420
+Date: Mon, 07 Jul 2014 18:33:35 +0530
+Message-ID: <1404738215-31537-1-git-send-email-vikas.sajjan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:56326 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752709AbaGGNEq (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:46712 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752807AbaGGNHO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Jul 2014 09:04:46 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Mon, 7 Jul 2014 09:07:14 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N8C00DBKEZWC570@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 07 Jul 2014 22:04:44 +0900 (KST)
+ with ESMTP id <0N8C00DJEF40ZK40@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 07 Jul 2014 22:07:12 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, Vikas Sajjan <vikas.sajjan@samsung.com>
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, Abhilash Kesavan <a.kesavan@samsung.com>, Vikas Sajjan <vikas.sajjan@samsung.com>
 
-Refactoring the pm.c to avoid using "soc_is_exynos" checks,
-instead use the DT based lookup.
+From: Abhilash Kesavan <a.kesavan@samsung.com>
 
-While at it, consolidate the common code across SoCs
-and create a static helper functions.
+Adds Suspend-to-RAM support for EXYNOS5420
 
 Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 ---
- arch/arm/mach-exynos/pm.c       |  232 +++++++++++++++++++++++++++++++--------
- arch/arm/mach-exynos/regs-pmu.h |    1 +
- 2 files changed, 189 insertions(+), 44 deletions(-)
+ arch/arm/mach-exynos/pm.c |  146 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 146 insertions(+)
 
 diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index ba75171..c0dae28 100644
+index c0dae28..7edc3d0 100644
 --- a/arch/arm/mach-exynos/pm.c
 +++ b/arch/arm/mach-exynos/pm.c
-@@ -38,6 +38,8 @@
- #include "regs-pmu.h"
- #include "regs-sys.h"
+@@ -40,6 +40,8 @@
  
-+#define REG_TABLE_END (-1U)
+ #define REG_TABLE_END (-1U)
+ 
++#define EXYNOS5420_CPU_STATE	0x28
 +
  /**
   * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
   * @hwirq: Hardware IRQ signal of the GIC
-@@ -61,6 +63,19 @@ static struct sleep_save exynos_core_save[] = {
- 	SAVE_ITEM(S5P_SROM_BC3),
- };
+@@ -76,6 +78,9 @@ struct exynos_pm_data {
  
-+struct exynos_pm_data {
-+	const struct exynos_wkup_irq *wkup_irq;
-+	unsigned int wake_disable_mask;
-+	unsigned int *release_ret_regs;
-+
-+	void (*pm_prepare)(void);
-+	void (*pm_resume)(void);
-+	int (*pm_suspend)(void);
-+	int (*cpu_suspend)(unsigned long);
-+};
-+
-+struct exynos_pm_data *pm_data;
+ struct exynos_pm_data *pm_data;
+ 
++static int exynos5420_cpu_state;
++static unsigned int exynos_pmu_spare3;
 +
  /*
   * GIC wake-up support
   */
-@@ -89,14 +104,21 @@ static inline u32 pmu_raw_readl(u32 offset)
- 	return __raw_readl(pmu_base_addr + offset);
- }
+@@ -115,6 +120,23 @@ unsigned int exynos_release_ret_regs[] = {
+ 	REG_TABLE_END,
+ };
  
-+unsigned int exynos_release_ret_regs[] = {
-+	S5P_PAD_RET_MAUDIO_OPTION,
-+	S5P_PAD_RET_GPIO_OPTION,
-+	S5P_PAD_RET_UART_OPTION,
-+	S5P_PAD_RET_MMCA_OPTION,
-+	S5P_PAD_RET_MMCB_OPTION,
-+	S5P_PAD_RET_EBIA_OPTION,
-+	S5P_PAD_RET_EBIB_OPTION,
++unsigned int exynos5420_release_ret_regs[] = {
++	EXYNOS_PAD_RET_DRAM_OPTION,
++	EXYNOS_PAD_RET_MAUDIO_OPTION,
++	EXYNOS_PAD_RET_JTAG_OPTION,
++	EXYNOS5420_PAD_RET_GPIO_OPTION,
++	EXYNOS5420_PAD_RET_UART_OPTION,
++	EXYNOS5420_PAD_RET_MMCA_OPTION,
++	EXYNOS5420_PAD_RET_MMCB_OPTION,
++	EXYNOS5420_PAD_RET_MMCC_OPTION,
++	EXYNOS5420_PAD_RET_HSI_OPTION,
++	EXYNOS_PAD_RET_EBIA_OPTION,
++	EXYNOS_PAD_RET_EBIB_OPTION,
++	EXYNOS5420_PAD_RET_SPI_OPTION,
++	EXYNOS5420_PAD_RET_DRAM_COREBLK_OPTION,
 +	REG_TABLE_END,
 +};
 +
  static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
  {
  	const struct exynos_wkup_irq *wkup_irq;
--
--	if (soc_is_exynos5250())
--		wkup_irq = exynos5250_wkup_irq;
--	else
--		wkup_irq = exynos4_wkup_irq;
-+	wkup_irq = pm_data->wkup_irq;
+@@ -312,6 +334,17 @@ static int exynos5250_cpu_suspend(unsigned long arg)
+ 	return exynos_cpu_do_idle();
+ }
  
- 	while (wkup_irq->mask) {
- 		if (wkup_irq->hwirq == data->hwirq) {
-@@ -253,13 +275,13 @@ static void exynos_cpu_restore_register(void)
- 
- static int exynos_cpu_suspend(unsigned long arg)
- {
--#ifdef CONFIG_CACHE_L2X0
--	outer_flush_all();
--#endif
--
--	if (soc_is_exynos5250())
--		flush_cache_all();
-+	if (pm_data->cpu_suspend)
-+		return pm_data->cpu_suspend(arg);
-+	return -1;
-+}
- 
-+static int exynos_cpu_do_idle(void)
-+{
- 	/* issue the standby signal into the pm unit. */
- 	cpu_do_idle();
- 
-@@ -269,32 +291,73 @@ static int exynos_cpu_suspend(unsigned long arg)
- 
- static void exynos_pm_prepare(void)
- {
--	unsigned int tmp;
-+	if (pm_data->pm_prepare)
-+		pm_data->pm_prepare();
-+}
-+
-+static int exynos4_cpu_suspend(unsigned long arg)
++static int exynos5420_cpu_suspend(unsigned long arg)
 +{
 +#ifdef CONFIG_CACHE_L2X0
 +	outer_flush_all();
 +#endif
-+	return exynos_cpu_do_idle();
-+}
++	__raw_writel(0x0, sysram_base_addr + EXYNOS5420_CPU_STATE);
 +
-+static int exynos5250_cpu_suspend(unsigned long arg)
-+{
-+#ifdef CONFIG_CACHE_L2X0
-+	outer_flush_all();
-+#endif
 +	flush_cache_all();
 +	return exynos_cpu_do_idle();
 +}
- 
-+static void exynos_pm_set_wakeup_mask(void)
-+{
++
+ static void exynos_pm_set_wakeup_mask(void)
+ {
  	/* Set wake-up mask registers */
- 	pmu_raw_writel(exynos_get_eint_wake_mask(), S5P_EINT_WAKEUP_MASK);
- 	pmu_raw_writel(exynos_irqwake_intmask & ~(1 << 31), S5P_WAKEUP_MASK);
-+}
- 
--	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
--
--	if (soc_is_exynos5250()) {
--		s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
--		/* Disable USE_RETENTION of JPEG_MEM_OPTION */
--		tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
--		tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
--		pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
--	}
--
-+static void exynos_pm_enter_sleep_mode(void)
-+{
- 	/* Set value of power down register for sleep mode */
--
- 	exynos_sys_powerdown_conf(SYS_SLEEP);
- 	pmu_raw_writel(S5P_CHECK_SLEEP, S5P_INFORM1);
- 
- 	/* ensure at least INFORM0 has the resume address */
--
+@@ -329,6 +362,49 @@ static void exynos_pm_enter_sleep_mode(void)
  	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
  }
  
-+static void exynos5250_pm_prepare(void)
++static void exynos5420_pm_prepare(void)
 +{
 +	unsigned int tmp;
 +
@@ -175,217 +107,140 @@ index ba75171..c0dae28 100644
 +
 +	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
 +
-+	s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
-+
-+	/* Disable USE_RETENTION of JPEG_MEM_OPTION */
-+	tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
-+	tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
-+	pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
-+
-+	exynos_pm_enter_sleep_mode();
-+}
-+
-+static void exynos4_pm_prepare(void)
-+{
-+	/* Set wake-up mask registers */
-+	exynos_pm_set_wakeup_mask();
-+
-+	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
++	exynos_pmu_spare3 = pmu_raw_readl(S5P_PMU_SPARE3);
++	/*
++	 * The cpu state needs to be saved and restored so that the
++	 * secondary CPUs will enter low power start. Though the U-Boot
++	 * is setting the cpu state with low power flag, the kernel
++	 * needs to restore it back in case, the primary cpu fails to
++	 * suspend for any reason.
++	 */
++	exynos5420_cpu_state = __raw_readl(sysram_base_addr +
++						EXYNOS5420_CPU_STATE);
 +
 +	exynos_pm_enter_sleep_mode();
++
++	tmp = pmu_raw_readl(EXYNOS5_ARM_L2_OPTION);
++	tmp &= ~EXYNOS5_USE_RETENTION;
++	pmu_raw_writel(tmp, EXYNOS5_ARM_L2_OPTION);
++
++	tmp = pmu_raw_readl(EXYNOS5420_SFR_AXI_CGDIS1);
++	tmp |= EXYNOS5420_UFS;
++	pmu_raw_writel(tmp, EXYNOS5420_SFR_AXI_CGDIS1);
++
++	tmp = pmu_raw_readl(EXYNOS5420_ARM_COMMON_OPTION);
++	tmp &= ~EXYNOS5420_L2RSTDISABLE_VALUE;
++	pmu_raw_writel(tmp, EXYNOS5420_ARM_COMMON_OPTION);
++
++	tmp = pmu_raw_readl(EXYNOS5420_FSYS2_OPTION);
++	tmp |= EXYNOS5420_EMULATION;
++	pmu_raw_writel(tmp, EXYNOS5420_FSYS2_OPTION);
++
++	tmp = pmu_raw_readl(EXYNOS5420_PSGEN_OPTION);
++	tmp |= EXYNOS5420_EMULATION;
++	pmu_raw_writel(tmp, EXYNOS5420_PSGEN_OPTION);
 +}
 +
- static void exynos_pm_central_suspend(void)
+ static void exynos5250_pm_prepare(void)
  {
- 	unsigned long tmp;
-@@ -307,6 +370,13 @@ static void exynos_pm_central_suspend(void)
+ 	unsigned int tmp;
+@@ -403,6 +479,24 @@ static int exynos5250_pm_suspend(void)
+ 	return 0;
+ }
  
- static int exynos_pm_suspend(void)
- {
-+	if (pm_data->pm_suspend)
-+		return pm_data->pm_suspend();
-+	return -1;
-+}
-+
-+static int exynos4_pm_suspend(void)
++static int exynos5420_pm_suspend(void)
 +{
- 	unsigned long tmp;
- 
- 	exynos_pm_central_suspend();
-@@ -316,9 +386,20 @@ static int exynos_pm_suspend(void)
- 	tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
- 	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
- 
--	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
--		exynos_cpu_save_register();
-+	exynos_cpu_save_register();
-+	return 0;
-+}
-+
-+static int exynos5250_pm_suspend(void)
-+{
-+	unsigned long tmp;
++	u32 this_cluster;
 +
 +	exynos_pm_central_suspend();
 +
 +	/* Setting SEQ_OPTION register */
- 
-+	tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
-+	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
- 	return 0;
- }
- 
-@@ -345,39 +426,57 @@ static int exynos_pm_central_resume(void)
- 	return 0;
- }
- 
-+static void exynos_pm_set_release_retention(void)
-+{
-+	unsigned int i;
 +
-+	for (i = 0; (pm_data->release_ret_regs[i] != REG_TABLE_END); i++)
-+		pmu_raw_writel(EXYNOS_WAKEUP_FROM_LOWPWR,
-+				pm_data->release_ret_regs[i]);
++	this_cluster = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 1);
++	if (!this_cluster)
++		pmu_raw_writel(EXYNOS5420_ARM_USE_STANDBY_WFI0,
++				S5P_CENTRAL_SEQ_OPTION);
++	else
++		pmu_raw_writel(EXYNOS5420_KFC_USE_STANDBY_WFI0,
++				S5P_CENTRAL_SEQ_OPTION);
++	return 0;
 +}
 +
- static void exynos_pm_resume(void)
+ static int exynos_pm_central_resume(void)
  {
-+	if (pm_data->pm_resume)
-+		pm_data->pm_resume();
-+}
-+
-+static void exynos4_pm_resume(void)
-+{
- 	if (exynos_pm_central_resume())
- 		goto early_wakeup;
- 
--	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
--		exynos_cpu_restore_register();
-+	exynos_cpu_restore_register();
- 
- 	/* For release retention */
--
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
--
--	if (soc_is_exynos5250())
--		s3c_pm_do_restore(exynos5_sys_save,
--			ARRAY_SIZE(exynos5_sys_save));
-+	exynos_pm_set_release_retention();
- 
- 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
- 
--	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
--		scu_enable(S5P_VA_SCU);
-+	scu_enable(S5P_VA_SCU);
- 
- early_wakeup:
- 
- 	/* Clear SLEEP mode set in INFORM1 */
+ 	unsigned long tmp;
+@@ -479,6 +573,45 @@ early_wakeup:
  	pmu_raw_writel(0x0, S5P_INFORM1);
-+}
-+
-+static void exynos5250_pm_resume(void)
+ }
+ 
++static void exynos5420_pm_resume(void)
 +{
++	unsigned long tmp;
++
++	/* Restore the sysram cpu state register */
++	__raw_writel(exynos5420_cpu_state,
++		sysram_base_addr + EXYNOS5420_CPU_STATE);
++
++	pmu_raw_writel(EXYNOS5420_USE_STANDBY_WFI_ALL,
++			S5P_CENTRAL_SEQ_OPTION);
++
 +	if (exynos_pm_central_resume())
 +		goto early_wakeup;
- 
--	return;
++
 +	/* For release retention */
 +	exynos_pm_set_release_retention();
 +
-+	s3c_pm_do_restore(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
++	pmu_raw_writel(exynos_pmu_spare3, S5P_PMU_SPARE3);
 +
 +	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
 +
 +early_wakeup:
 +
++	tmp = pmu_raw_readl(EXYNOS5420_SFR_AXI_CGDIS1);
++	tmp &= ~EXYNOS5420_UFS;
++	pmu_raw_writel(tmp, EXYNOS5420_SFR_AXI_CGDIS1);
++
++	tmp = pmu_raw_readl(EXYNOS5420_FSYS2_OPTION);
++	tmp &= ~EXYNOS5420_EMULATION;
++	pmu_raw_writel(tmp, EXYNOS5420_FSYS2_OPTION);
++
++	tmp = pmu_raw_readl(EXYNOS5420_PSGEN_OPTION);
++	tmp &= ~EXYNOS5420_EMULATION;
++	pmu_raw_writel(tmp, EXYNOS5420_PSGEN_OPTION);
++
 +	/* Clear SLEEP mode set in INFORM1 */
 +	pmu_raw_writel(0x0, S5P_INFORM1);
- }
- 
++}
++
  static struct syscore_ops exynos_pm_syscore_ops = {
-@@ -480,18 +579,63 @@ static struct notifier_block exynos_cpu_pm_notifier_block = {
- 	.notifier_call = exynos_cpu_pm_notifier,
+ 	.suspend	= exynos_pm_suspend,
+ 	.resume		= exynos_pm_resume,
+@@ -599,6 +732,16 @@ static struct exynos_pm_data exynos5250_pm_data = {
+ 	.cpu_suspend	= exynos5250_cpu_suspend,
  };
  
-+static struct exynos_pm_data exynos4_pm_data = {
-+	.wkup_irq	= exynos4_wkup_irq,
-+	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
-+	.release_ret_regs = exynos_release_ret_regs,
-+	.pm_suspend	= exynos4_pm_suspend,
-+	.pm_resume	= exynos4_pm_resume,
-+	.pm_prepare	= exynos4_pm_prepare,
-+	.cpu_suspend	= exynos4_cpu_suspend,
-+};
-+
-+static struct exynos_pm_data exynos5250_pm_data = {
++static struct exynos_pm_data exynos5420_pm_data = {
 +	.wkup_irq	= exynos5250_wkup_irq,
-+	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
-+	.release_ret_regs = exynos_release_ret_regs,
-+	.pm_suspend	= exynos5250_pm_suspend,
-+	.pm_resume	= exynos5250_pm_resume,
-+	.pm_prepare	= exynos5250_pm_prepare,
-+	.cpu_suspend	= exynos5250_cpu_suspend,
++	.wake_disable_mask = (0x7F << 7) | (0x1F << 1),
++	.release_ret_regs = exynos5420_release_ret_regs,
++	.pm_resume	= exynos5420_pm_resume,
++	.pm_suspend	= exynos5420_pm_suspend,
++	.pm_prepare	= exynos5420_pm_prepare,
++	.cpu_suspend	= exynos5420_cpu_suspend,
 +};
 +
-+static struct of_device_id exynos_pmu_of_device_ids[] = {
-+	{
-+		.compatible = "samsung,exynos4210-pmu",
-+		.data = (void *)&exynos4_pm_data,
+ static struct of_device_id exynos_pmu_of_device_ids[] = {
+ 	{
+ 		.compatible = "samsung,exynos4210-pmu",
+@@ -612,6 +755,9 @@ static struct of_device_id exynos_pmu_of_device_ids[] = {
+ 	}, {
+ 		.compatible = "samsung,exynos5250-pmu",
+ 		.data = (void *)&exynos5250_pm_data,
 +	}, {
-+		.compatible = "samsung,exynos4212-pmu",
-+		.data = (void *)&exynos4_pm_data,
-+	}, {
-+		.compatible = "samsung,exynos4412-pmu",
-+		.data = (void *)&exynos4_pm_data,
-+	}, {
-+		.compatible = "samsung,exynos5250-pmu",
-+		.data = (void *)&exynos5250_pm_data,
-+	},
-+	{ /*sentinel*/ },
-+};
-+
- void __init exynos_pm_init(void)
- {
- 	u32 tmp;
-+	const struct of_device_id *match;
- 
- 	cpu_pm_register_notifier(&exynos_cpu_pm_notifier_block);
- 
-+	of_find_matching_node_and_match(NULL, exynos_pmu_of_device_ids, &match);
-+
-+	if (!match)
-+		panic("Failed to find PMU node\n");
-+
-+	pm_data = (struct exynos_pm_data *) match->data;
-+
- 	/* Platform-specific GIC callback */
- 	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
- 
- 	/* All wakeup disable */
- 	tmp = pmu_raw_readl(S5P_WAKEUP_MASK);
--	tmp |= ((0xFF << 8) | (0x1F << 1));
-+	tmp |= pm_data->wake_disable_mask;
- 	pmu_raw_writel(tmp, S5P_WAKEUP_MASK);
- 
- 	register_syscore_ops(&exynos_pm_syscore_ops);
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index 9b46a52..3a6a559 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -21,6 +21,7 @@
- #define S5P_USE_STANDBY_WFI0			(1 << 16)
- #define S5P_USE_STANDBY_WFE0			(1 << 24)
- 
-+#define EXYNOS_WAKEUP_FROM_LOWPWR		(1 << 28)
- #define EXYNOS_SWRESET				0x0400
- #define EXYNOS5440_SWRESET			0x00C4
- 
++		.compatible = "samsung,exynos5420-pmu",
++		.data = (void *)&exynos5420_pm_data,
+ 	},
+ 	{ /*sentinel*/ },
+ };
 -- 
 1.7.9.5
