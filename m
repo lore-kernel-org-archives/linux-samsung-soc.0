@@ -1,124 +1,72 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: [PATCH v6 4/4] clk: samsung: exynos5420: Setup clocks before system
- suspend
-Date: Mon, 07 Jul 2014 18:35:29 +0530
-Message-ID: <1404738329-511-1-git-send-email-vikas.sajjan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:46828 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752807AbaGGNIl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Jul 2014 09:08:41 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N8C00DLEF6FZK40@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 07 Jul 2014 22:08:39 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RFC PATCH 2/2] phy: core: the node pointer of PHY need not be
+ the same as that of PHY provider
+Date: Mon, 7 Jul 2014 14:12:32 +0100
+Message-ID: <20140707131232.GI6407@lee--X1>
+References: <1404486474-28312-1-git-send-email-kishon@ti.com>
+ <1404486474-28312-3-git-send-email-kishon@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1404486474-28312-3-git-send-email-kishon@ti.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sergei.shtylyov@cogentembedded.com, antoine.tenart@free-electrons.com, kgene.kim@samsung.com, maxime.ripard@free-electrons.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, Vikas Sajjan <vikas.sajjan@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-Prior to suspending the system, we need to ensure that certain
-clock source and gate registers are unmasked.
+On Fri, 04 Jul 2014, Kishon Vijay Abraham I wrote:
 
-while at it, add these clks to save/restore list also.
+> In case of multi-phy PHY providers, each PHY should be modeled as a s=
+ub
+> node of the PHY provider. Then each PHY will have a different node po=
+inter
+> (node pointer of sub node) than that of PHY provider. Added this prov=
+ision
+> in the PHY core.
+> Also fixed all drivers to use the updated API.
+>=20
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  Documentation/phy.txt               |   10 ++++++----
+>  drivers/phy/phy-bcm-kona-usb2.c     |    2 +-
+>  drivers/phy/phy-core.c              |   25 ++++++++++++++++++-------
+>  drivers/phy/phy-exynos-dp-video.c   |    2 +-
+>  drivers/phy/phy-exynos-mipi-video.c |    2 +-
+>  drivers/phy/phy-exynos5-usbdrd.c    |    3 ++-
+>  drivers/phy/phy-exynos5250-sata.c   |    2 +-
+>  drivers/phy/phy-mvebu-sata.c        |    2 +-
+>  drivers/phy/phy-omap-usb2.c         |    2 +-
+>  drivers/phy/phy-samsung-usb2.c      |    3 ++-
+>  drivers/phy/phy-sun4i-usb.c         |    2 +-
+>  drivers/phy/phy-ti-pipe3.c          |    2 +-
+>  drivers/phy/phy-twl4030-usb.c       |    2 +-
+>  drivers/phy/phy-xgene.c             |    2 +-
+>  include/linux/phy/phy.h             |   15 ++++++++++-----
+>  15 files changed, 48 insertions(+), 28 deletions(-)
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c |   29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+I wrote a very similar patch already.  I knew I should have sent it on
+=46riday. :(
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 9d7d7ee..7e87d7c 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -28,6 +28,7 @@
- #define GATE_BUS_CPU		0x700
- #define GATE_SCLK_CPU		0x800
- #define CLKOUT_CMU_CPU		0xa00
-+#define SRC_MASK_CPERI		0x4300
- #define GATE_IP_G2D		0x8800
- #define CPLL_LOCK		0x10020
- #define DPLL_LOCK		0x10030
-@@ -70,6 +71,8 @@
- #define SRC_TOP11		0x10284
- #define SRC_TOP12		0x10288
- #define SRC_TOP13		0x1028c /* 5800 specific */
-+#define SRC_MASK_TOP0		0x10300
-+#define SRC_MASK_TOP1		0x10304
- #define SRC_MASK_TOP2		0x10308
- #define SRC_MASK_TOP7		0x1031c
- #define SRC_MASK_DISP10		0x1032c
-@@ -77,6 +80,7 @@
- #define SRC_MASK_FSYS		0x10340
- #define SRC_MASK_PERIC0		0x10350
- #define SRC_MASK_PERIC1		0x10354
-+#define SRC_MASK_ISP		0x10370
- #define DIV_TOP0		0x10500
- #define DIV_TOP1		0x10504
- #define DIV_TOP2		0x10508
-@@ -98,6 +102,7 @@
- #define DIV2_RATIO0		0x10590
- #define DIV4_RATIO		0x105a0
- #define GATE_BUS_TOP		0x10700
-+#define GATE_BUS_DISP1		0x10728
- #define GATE_BUS_GEN		0x1073c
- #define GATE_BUS_FSYS0		0x10740
- #define GATE_BUS_FSYS2		0x10748
-@@ -190,6 +195,10 @@ static unsigned long exynos5x_clk_regs[] __initdata = {
- 	SRC_MASK_FSYS,
- 	SRC_MASK_PERIC0,
- 	SRC_MASK_PERIC1,
-+	SRC_MASK_TOP0,
-+	SRC_MASK_TOP1,
-+	SRC_MASK_MAU,
-+	SRC_MASK_ISP,
- 	SRC_ISP,
- 	DIV_TOP0,
- 	DIV_TOP1,
-@@ -208,6 +217,7 @@ static unsigned long exynos5x_clk_regs[] __initdata = {
- 	SCLK_DIV_ISP1,
- 	DIV2_RATIO0,
- 	DIV4_RATIO,
-+	GATE_BUS_DISP1,
- 	GATE_BUS_TOP,
- 	GATE_BUS_GEN,
- 	GATE_BUS_FSYS0,
-@@ -249,6 +259,22 @@ static unsigned long exynos5800_clk_regs[] __initdata = {
- 	GATE_IP_CAM,
- };
- 
-+static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
-+	{ .offset = SRC_MASK_CPERI,		.value = 0xffffffff, },
-+	{ .offset = SRC_MASK_TOP0,		.value = 0x11111111, },
-+	{ .offset = SRC_MASK_TOP1,		.value = 0x11101111, },
-+	{ .offset = SRC_MASK_TOP2,		.value = 0x11111110, },
-+	{ .offset = SRC_MASK_TOP7,		.value = 0x00111100, },
-+	{ .offset = SRC_MASK_DISP10,		.value = 0x11111110, },
-+	{ .offset = SRC_MASK_MAU,		.value = 0x10000000, },
-+	{ .offset = SRC_MASK_FSYS,		.value = 0x11111110, },
-+	{ .offset = SRC_MASK_PERIC0,		.value = 0x11111110, },
-+	{ .offset = SRC_MASK_PERIC1,		.value = 0x11111100, },
-+	{ .offset = SRC_MASK_ISP,		.value = 0x11111000, },
-+	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
-+	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
-+};
-+
- static int exynos5420_clk_suspend(void)
- {
- 	samsung_clk_save(reg_base, exynos5x_save,
-@@ -258,6 +284,9 @@ static int exynos5420_clk_suspend(void)
- 		samsung_clk_save(reg_base, exynos5800_save,
- 				ARRAY_SIZE(exynos5800_clk_regs));
- 
-+	samsung_clk_restore(reg_base, exynos5420_set_clksrc,
-+				ARRAY_SIZE(exynos5420_set_clksrc));
-+
- 	return 0;
- }
- 
--- 
-1.7.9.5
+Patch looks good, just a real minor point.
+
+>  	phy->dev.class =3D phy_class;
+>  	phy->dev.parent =3D dev;
+> -	phy->dev.of_node =3D dev->of_node;
+> +	phy->dev.of_node =3D node?node:dev->of_node;
+
+There should be spaces either side of the '?' and ':', or you can do
+this more succinctly by:
+
+phy->dev.of_node =3D node ?: dev->of_node;
+
+Once fixed, feel free to add my:
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
