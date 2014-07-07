@@ -1,72 +1,122 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [RFC PATCH 2/2] phy: core: the node pointer of PHY need not be
- the same as that of PHY provider
-Date: Mon, 7 Jul 2014 14:12:32 +0100
-Message-ID: <20140707131232.GI6407@lee--X1>
-References: <1404486474-28312-1-git-send-email-kishon@ti.com>
- <1404486474-28312-3-git-send-email-kishon@ti.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH] ARM: dts: remove display power domain for exynos5420
+Date: Mon, 7 Jul 2014 19:07:40 +0530
+Message-ID: <CAPdUM4MToVJC5KRS1DUDmYEdUx2PGBE0G1v7p-SGgqpw7SPOhw@mail.gmail.com>
+References: <1402313299-18885-1-git-send-email-rahul.sharma@samsung.com>
+	<CAPdUM4OVjRSqVdQDUJZR7vGm1uUEYr31s-tx7Oxs8tM_xc2v7g@mail.gmail.com>
+	<53A12EA3.5010007@samsung.com>
+	<CAPdUM4OK+ATMMRM67dV5JeeTGMu=XA7Gvi7Uif+Hypf3iP+6jg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1404486474-28312-3-git-send-email-kishon@ti.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sergei.shtylyov@cogentembedded.com, antoine.tenart@free-electrons.com, kgene.kim@samsung.com, maxime.ripard@free-electrons.com
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f171.google.com ([74.125.82.171]:33079 "EHLO
+	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752737AbaGGNhl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 Jul 2014 09:37:41 -0400
+In-Reply-To: <CAPdUM4OK+ATMMRM67dV5JeeTGMu=XA7Gvi7Uif+Hypf3iP+6jg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
 
-On Fri, 04 Jul 2014, Kishon Vijay Abraham I wrote:
+Hi Andrej, Inki,
 
-> In case of multi-phy PHY providers, each PHY should be modeled as a s=
-ub
-> node of the PHY provider. Then each PHY will have a different node po=
-inter
-> (node pointer of sub node) than that of PHY provider. Added this prov=
-ision
-> in the PHY core.
-> Also fixed all drivers to use the updated API.
->=20
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  Documentation/phy.txt               |   10 ++++++----
->  drivers/phy/phy-bcm-kona-usb2.c     |    2 +-
->  drivers/phy/phy-core.c              |   25 ++++++++++++++++++-------
->  drivers/phy/phy-exynos-dp-video.c   |    2 +-
->  drivers/phy/phy-exynos-mipi-video.c |    2 +-
->  drivers/phy/phy-exynos5-usbdrd.c    |    3 ++-
->  drivers/phy/phy-exynos5250-sata.c   |    2 +-
->  drivers/phy/phy-mvebu-sata.c        |    2 +-
->  drivers/phy/phy-omap-usb2.c         |    2 +-
->  drivers/phy/phy-samsung-usb2.c      |    3 ++-
->  drivers/phy/phy-sun4i-usb.c         |    2 +-
->  drivers/phy/phy-ti-pipe3.c          |    2 +-
->  drivers/phy/phy-twl4030-usb.c       |    2 +-
->  drivers/phy/phy-xgene.c             |    2 +-
->  include/linux/phy/phy.h             |   15 ++++++++++-----
->  15 files changed, 48 insertions(+), 28 deletions(-)
+On 18 June 2014 12:06, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> Hi Andrej,
+>
+> On 18 June 2014 11:46, Andrzej Hajda <a.hajda@samsung.com> wrote:
+>> On 06/17/2014 07:49 AM, Rahul Sharma wrote:
+>>> Hi All,
+>>>
+>>> Please review this patch.
+>>>
+>>> Regards,
+>>> Rahul Sharma
+>>>
+>>> On 9 June 2014 16:58, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+>>>> Display domain is removed due to instability issues. Explaining
+>>>> the problem below:
+>>>>
+>>>> exynos_init_late triggers the pm_genpd_poweroff_unused which
+>>>> powers off the unused power domains. This call hits before
+>>>> the trigger to deferred probes.
+>>>>
+>>>> DRM DP Panel defers the probe due to supply get failure. By the
+>>>> time, deferred probe is scheduled again, Display Power Domain is
+>>>> powered off by pm_genpd_poweroff_unused.
+>>>>
+>>>> FIMD and DP drivers are accessing registers during Probe and Bind
+>>>> callbacks. If display domain is enabled/disabled around register
+>>>> accesses, display domain gets unstable and we are getting Power
+>>>> Domain Disable fail notification. Increasing the Timeout also
+>>>> didn't help.
+>>
+>> As I understand the problem is that fimd and dp drivers access hw
+>> registers without enabling power domain. So the proper solution is to
+>> fix these drivers.
+>
+> That is also a problem but I fixed those accesses in my local kernel before
+> hitting this issue. If we do register accesses in FIMD/DP probe/bind we
+> observes "Prefetch abort" exception. But here the problem is that 'DP
+> domain disable' starts failing if we enable/disable multiple times.
+>
+>>
+>> Btw. there are already patches removing hw access from probe/bind of
+>> fimd. I guess removing also hw access from dp probe/bind could be a good
+>> solution.
+>
+> Please let me know the links for posted patches. I will test with those patches.
 
-I wrote a very similar patch already.  I knew I should have sent it on
-=46riday. :(
+Is there any update on this? Please share the patches which fixes the
+above issue or avoid the above scenario of multiple PM Domain enable/disable.
+I will test them for exynos5 based boards. Otherwise we should get this change
+merged else display will remain broken for exynos5 based boards.
 
-Patch looks good, just a real minor point.
+Regards,
+Rahul Sharma.
 
->  	phy->dev.class =3D phy_class;
->  	phy->dev.parent =3D dev;
-> -	phy->dev.of_node =3D dev->of_node;
-> +	phy->dev.of_node =3D node?node:dev->of_node;
-
-There should be spaces either side of the '?' and ':', or you can do
-this more succinctly by:
-
-phy->dev.of_node =3D node ?: dev->of_node;
-
-Once fixed, feel free to add my:
-
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+>
+> Regards,
+> Rahul Sharma
+>
+>>
+>> Regards
+>> Andrzej
+>>
+>>>>
+>>>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>>>> ---
+>>>> based on Kukjin's for-next branch.
+>>>>
+>>>>  arch/arm/boot/dts/exynos5420.dtsi |    6 ------
+>>>>  1 file changed, 6 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>>>> index e385322..3d528cf 100644
+>>>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>>>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>>>> @@ -262,11 +262,6 @@
+>>>>                 reg = <0x10044060 0x20>;
+>>>>         };
+>>>>
+>>>> -       disp_pd: power-domain@100440C0 {
+>>>> -               compatible = "samsung,exynos4210-pd";
+>>>> -               reg = <0x100440C0 0x20>;
+>>>> -       };
+>>>> -
+>>>>         msc_pd: power-domain@10044120 {
+>>>>                 compatible = "samsung,exynos4210-pd";
+>>>>                 reg = <0x10044120 0x20>;
+>>>> @@ -518,7 +513,6 @@
+>>>>         };
+>>>>
+>>>>         fimd: fimd@14400000 {
+>>>> -               samsung,power-domain = <&disp_pd>;
+>>>>                 clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
+>>>>                 clock-names = "sclk_fimd", "fimd";
+>>>>         };
+>>>> --
+>>>> 1.7.9.5
+>>>>
+>>
