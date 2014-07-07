@@ -1,173 +1,66 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] drivers: phy: exynos-usb2: add support for Exynos 3250
-Date: Mon, 07 Jul 2014 11:39:26 +0200
-Message-ID: <1404725966-12331-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v2] ARM: dts: exynos 3250: add hsotg and usb2phy device nodes
+Date: Mon, 07 Jul 2014 11:39:46 +0200
+Message-ID: <1404725986-12377-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:22109 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751355AbaGGJji (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:37157 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751383AbaGGJj5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Jul 2014 05:39:38 -0400
+	Mon, 7 Jul 2014 05:39:57 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N8C00BZP5IEF080@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 07 Jul 2014 10:39:50 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kamil Debski <k.debski@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-This patch adds support for Exynos3250 SoC to Exynos2USB PHY driver.
-Although Exynos3250 has only one device phy interface, the register
-layout and all operations that are required to get it enabled are almost
-same as on Exynos4x12. The only different is one more register
-(REFCLKSEL) which need to be set and lack of MODE SWITCH register.
+This patch adds device tree nodes required to enable support for USB
+device controller.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
-
 Changelog:
 v2:
-- added new binding documentation
-- removed superfluous defines
-- removed mode switch for 3250, because it is not really needed
-
+- removed phandle to syscon, because mode switch register is not needed for 3250.
 ---
- Documentation/devicetree/bindings/phy/samsung-phy.txt |  2 ++
- drivers/phy/Kconfig                                   | 12 ++++++------
- drivers/phy/phy-exynos4x12-usb2.c                     | 17 +++++++++++++++--
- drivers/phy/phy-samsung-usb2.c                        |  6 ++++++
- drivers/phy/phy-samsung-usb2.h                        |  2 ++
- 5 files changed, 31 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/exynos3250.dtsi | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-index 2049261d8c31..6099a5c94283 100644
---- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-@@ -26,6 +26,7 @@ Samsung S5P/EXYNOS SoC series USB PHY
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index eb457620975b..64a0ef44325a 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -309,6 +309,27 @@
+ 			status = "disabled";
+ 		};
  
- Required properties:
- - compatible : should be one of the listed compatibles:
-+	- "samsung,exynos3250-usb2-phy"
- 	- "samsung,exynos4210-usb2-phy"
- 	- "samsung,exynos4x12-usb2-phy"
- 	- "samsung,exynos5250-usb2-phy"
-@@ -46,6 +47,7 @@ and Exynos 4212) it is as follows:
-   1 - USB host ("host"),
-   2 - HSIC0 ("hsic0"),
-   3 - HSIC1 ("hsic1"),
-+Exynos3250 has only USB device phy available as phy 0.
- 
- Exynos 4210 and Exynos 4212 use mode switching and require that mode switch
- register is supplied.
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index 16a2f067c242..50bee8357a7f 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -141,14 +141,14 @@ config PHY_EXYNOS4210_USB2
- 	  phys are available - device, host, HSIC0 and HSIC1.
- 
- config PHY_EXYNOS4X12_USB2
--	bool "Support for Exynos 4x12"
-+	bool "Support for Exynos 3250/4x12"
- 	depends on PHY_SAMSUNG_USB2
--	depends on (SOC_EXYNOS4212 || SOC_EXYNOS4412)
-+	depends on (SOC_EXYNOS3250 || SOC_EXYNOS4212 || SOC_EXYNOS4412)
- 	help
--	  Enable USB PHY support for Exynos 4x12. This option requires that
--	  Samsung USB 2.0 PHY driver is enabled and means that support for this
--	  particular SoC is compiled in the driver. In case of Exynos 4x12 four
--	  phys are available - device, host, HSIC0 and HSIC1.
-+	  Enable USB PHY support for Exynos 3250/4x12. This option requires
-+	  that Samsung USB 2.0 PHY driver is enabled and means that support for
-+	  this particular SoC is compiled in the driver. In case of Exynos 4x12
-+	  four phys are available - device, host, HSIC0 and HSIC1.
- 
- config PHY_EXYNOS5250_USB2
- 	bool "Support for Exynos 5250"
-diff --git a/drivers/phy/phy-exynos4x12-usb2.c b/drivers/phy/phy-exynos4x12-usb2.c
-index 59d8dd3ff390..f26ab22bc9c7 100644
---- a/drivers/phy/phy-exynos4x12-usb2.c
-+++ b/drivers/phy/phy-exynos4x12-usb2.c
-@@ -67,6 +67,8 @@
- #define EXYNOS_4x12_UPHYCLK_PHYFSEL_24MHZ	(0x5 << 0)
- #define EXYNOS_4x12_UPHYCLK_PHYFSEL_50MHZ	(0x7 << 0)
- 
-+#define EXYNOS_3250_UPHYCLK_REFCLKSEL		(0x2 << 8)
++		hsotg: hsotg@12480000 {
++			compatible = "samsung,s3c6400-hsotg";
++			reg = <0x12480000 0x20000>;
++			interrupts = <0 141 0>;
++			clocks = <&cmu CLK_USBOTG>;
++			clock-names = "otg";
++			phys = <&exynos_usbphy 0>;
++			phy-names = "usb2-phy";
++			status = "disabled";
++		};
 +
- #define EXYNOS_4x12_UPHYCLK_PHY0_ID_PULLUP	BIT(3)
- #define EXYNOS_4x12_UPHYCLK_PHY0_COMMON_ON	BIT(4)
- #define EXYNOS_4x12_UPHYCLK_PHY1_COMMON_ON	BIT(7)
-@@ -197,6 +199,10 @@ static void exynos4x12_setup_clk(struct samsung_usb2_phy_instance *inst)
- 
- 	clk = readl(drv->reg_phy + EXYNOS_4x12_UPHYCLK);
- 	clk &= ~EXYNOS_4x12_UPHYCLK_PHYFSEL_MASK;
++		exynos_usbphy: exynos-usbphy@125B0000 {
++			compatible = "samsung,exynos3250-usb2-phy";
++			reg = <0x125B0000 0x100>;
++			samsung,pmureg-phandle = <&pmu_system_controller>;
++			clocks = <&cmu CLK_USBOTG>, <&xusbxti>;
++			clock-names = "phy", "ref";
++			#phy-cells = <1>;
++			status = "disabled";
++		};
 +
-+	if (drv->cfg->has_refclk_sel)
-+		clk = EXYNOS_3250_UPHYCLK_REFCLKSEL;
-+
- 	clk |= drv->ref_reg_val << EXYNOS_4x12_UPHYCLK_PHYFSEL_OFFSET;
- 	clk |= EXYNOS_4x12_UPHYCLK_PHY1_COMMON_ON;
- 	writel(clk, drv->reg_phy + EXYNOS_4x12_UPHYCLK);
-@@ -278,7 +284,7 @@ static int exynos4x12_power_on(struct samsung_usb2_phy_instance *inst)
- 		exynos4x12_power_on_internal(&drv->instances[EXYNOS4x12_DEVICE]);
- 	}
- 
--	if (inst->cfg->id == EXYNOS4x12_DEVICE)
-+	if (inst->cfg->id == EXYNOS4x12_DEVICE && drv->cfg->has_mode_switch)
- 		regmap_update_bits(drv->reg_sys, EXYNOS_4x12_MODE_SWITCH_OFFSET,
- 						EXYNOS_4x12_MODE_SWITCH_MASK,
- 						EXYNOS_4x12_MODE_SWITCH_DEVICE);
-@@ -310,7 +316,7 @@ static int exynos4x12_power_off(struct samsung_usb2_phy_instance *inst)
- 	if (inst->ext_cnt-- > 1)
- 		return 0;
- 
--	if (inst->cfg->id == EXYNOS4x12_DEVICE)
-+	if (inst->cfg->id == EXYNOS4x12_DEVICE && drv->cfg->has_mode_switch)
- 		regmap_update_bits(drv->reg_sys, EXYNOS_4x12_MODE_SWITCH_OFFSET,
- 						EXYNOS_4x12_MODE_SWITCH_MASK,
- 						EXYNOS_4x12_MODE_SWITCH_HOST);
-@@ -358,6 +364,13 @@ static const struct samsung_usb2_common_phy exynos4x12_phys[] = {
- 	{},
- };
- 
-+const struct samsung_usb2_phy_config exynos3250_usb2_phy_config = {
-+	.has_refclk_sel		= 1,
-+	.num_phys		= 1,
-+	.phys			= exynos4x12_phys,
-+	.rate_to_clk		= exynos4x12_rate_to_clk,
-+};
-+
- const struct samsung_usb2_phy_config exynos4x12_usb2_phy_config = {
- 	.has_mode_switch	= 1,
- 	.num_phys		= EXYNOS4x12_NUM_PHYS,
-diff --git a/drivers/phy/phy-samsung-usb2.c b/drivers/phy/phy-samsung-usb2.c
-index 8a8c6bc8709a..36db8eb8c5f4 100644
---- a/drivers/phy/phy-samsung-usb2.c
-+++ b/drivers/phy/phy-samsung-usb2.c
-@@ -87,6 +87,12 @@ static struct phy *samsung_usb2_phy_xlate(struct device *dev,
- }
- 
- static const struct of_device_id samsung_usb2_phy_of_match[] = {
-+#ifdef CONFIG_PHY_EXYNOS4X12_USB2
-+	{
-+		.compatible = "samsung,exynos3250-usb2-phy",
-+		.data = &exynos3250_usb2_phy_config,
-+	},
-+#endif
- #ifdef CONFIG_PHY_EXYNOS4210_USB2
- 	{
- 		.compatible = "samsung,exynos4210-usb2-phy",
-diff --git a/drivers/phy/phy-samsung-usb2.h b/drivers/phy/phy-samsung-usb2.h
-index 918847843a95..b03da0ef39ac 100644
---- a/drivers/phy/phy-samsung-usb2.h
-+++ b/drivers/phy/phy-samsung-usb2.h
-@@ -60,8 +60,10 @@ struct samsung_usb2_phy_config {
- 	int (*rate_to_clk)(unsigned long, u32 *);
- 	unsigned int num_phys;
- 	bool has_mode_switch;
-+	bool has_refclk_sel;
- };
- 
-+extern const struct samsung_usb2_phy_config exynos3250_usb2_phy_config;
- extern const struct samsung_usb2_phy_config exynos4210_usb2_phy_config;
- extern const struct samsung_usb2_phy_config exynos4x12_usb2_phy_config;
- extern const struct samsung_usb2_phy_config exynos5250_usb2_phy_config;
+ 		serial_0: serial@13800000 {
+ 			compatible = "samsung,exynos4210-uart";
+ 			reg = <0x13800000 0x100>;
 -- 
 1.9.2
