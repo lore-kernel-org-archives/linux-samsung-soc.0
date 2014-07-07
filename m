@@ -1,68 +1,83 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v7 23/24] rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
-Date: Mon, 07 Jul 2014 08:57:41 +0200
-Message-ID: <53BA44E5.6070604@collabora.co.uk>
-References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk> <1404505467-26526-24-git-send-email-javier.martinez@collabora.co.uk> <1404713210.4367.0.camel@AMDC1943>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCHv2 2/5] ARM: dts: exynos: unuse the slot-node and deprecated
+ the supports-highspeed for dw-mmc
+Date: Mon, 07 Jul 2014 16:29:36 +0900
+Message-ID: <000c01cf99b5$34ccc8c0$9e665a40$%jun@samsung.com>
+References: <1404128960-27225-1-git-send-email-jh80.chung@samsung.com>
+ <1404128960-27225-3-git-send-email-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1404713210.4367.0.camel@AMDC1943>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andreas Farber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <1404128960-27225-3-git-send-email-jh80.chung@samsung.com>
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Jaehoon Chung' <jh80.chung@samsung.com>, 'linux-mmc' <linux-mmc@vger.kernel.org>
+Cc: 'Chris Ball' <chris@printf.net>, 'Ulf Hansson' <ulf.hansson@linaro.org>, devicetree@vger.kernel.org, heiko@sntech.de, dinguyen@altera.com, 'Mark Rutland' <mark.rutland@arm.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
+Hi Jaehoon,
 
-On 07/07/2014 08:06 AM, Krzysztof Kozlowski wrote:
-> On pi=C4=85, 2014-07-04 at 22:24 +0200, Javier Martinez Canillas wrot=
-e:
->> The MAX7802 PMIC has a Real-Time-Clock (RTC) with two alarms.
->> This patch adds support for the RTC and is based on a driver
->> added by Simon Glass to the Chrome OS kernel 3.8 tree.
->>=20
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.c=
-o.uk>
->> ---
->>=20
->> Changes since v6:
->>  - Remove unused code for SMPL and WTSR. Suggested by Krzysztof Kozl=
-owski.
->>  - Don't spam the kernel log with unimportant info and just print fo=
-r debug.
->>    Suggested by Krzysztof Kozlowski.
->>  - Use ARRAY_SIZE() instead of constant value. Suggested by Krzyszto=
-f Kozlowski.
->>  - Remove duplicated register setup. Suggested by Krzysztof Kozlowsk=
-i.
->>  - Don't free/unregister managed allocated resources.
->>    Suggested by Krzysztof Kozlowski.
->> ---
->>  drivers/rtc/Kconfig        |  10 +
->>  drivers/rtc/Makefile       |   1 +
->>  drivers/rtc/rtc-max77802.c | 508 ++++++++++++++++++++++++++++++++++=
-+++++++++++
->>  3 files changed, 519 insertions(+)
->>  create mode 100644 drivers/rtc/rtc-max77802.c
->=20
->=20
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->=20
+Please check one thing below.
 
-Thanks a lot for the review and for all the feedback you gave me on eac=
-h version
-of the series.
+On Mon, June 30, 2014, Jaehoon Chung wrote:
+> dw-mmc controller can support multiple slots.
+> But, there are no use-cases anywhere. So we don't need to support the
+> slot-node for dw-mmc controller.
+> And "supports-highspeed" property in dw-mmc is deprecated.
+> "supports-highspeed" property can be replaced to "cap-sd/mmc-highspeed".
+> 
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Reviewed-by: Tushar Behera <trblinux@gmail.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
 
-> Best regards,
-> Krzysztof
->=20
->=20
+> diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-
+> octa.dts
+> index 434fd9d..5f37b81 100644
+> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> @@ -50,7 +50,6 @@
+>  	mmc@12200000 {
+>  		status = "okay";
+>  		broken-cd;
+> -		supports-highspeed;
+>  		card-detect-delay = <200>;
+>  		samsung,dw-mshc-ciu-div = <3>;
+>  		samsung,dw-mshc-sdr-timing = <0 4>;
+> @@ -58,16 +57,12 @@
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+>  		vmmc-supply = <&ldo10_reg>;
+> -
+> -		slot@0 {
+> -			reg = <0>;
+> -			bus-width = <8>;
+> -		};
+> +		bus-width = <8>;
+> +		cap-mmc-highspeed;
+>  	};
+> 
+>  	mmc@12220000 {
+>  		status = "okay";
+> -		supports-highspeed;
+>  		card-detect-delay = <200>;
+>  		samsung,dw-mshc-ciu-div = <3>;
+>  		samsung,dw-mshc-sdr-timing = <2 3>;
+> @@ -75,11 +70,8 @@
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+>  		vmmc-supply = <&ldo10_reg>;
+> -
+> -		slot@0 {
+> -			reg = <0>;
+> -			bus-width = <4>;
+> -		};
+> +		bus-width = <8>;
+<4> is correct?
 
-Best regards,
-Javier
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +		cap-mmc-highspeed;
+
+Thanks,
+Seungwon Jeon
+
