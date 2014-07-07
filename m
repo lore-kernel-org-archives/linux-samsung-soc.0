@@ -1,40 +1,79 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH V4 00/10] drm: exynos: few patches to enhance bridge chip support
-Date: Mon, 7 Jul 2014 13:46:42 -0700
-Message-ID: <CAD=FV=UH=sgZKFxH35qfBb-XJGJ9ctSSdVRhTEkt6zk0f+R4mA@mail.gmail.com>
-References: <1402511228-18945-1-git-send-email-ajaykumar.rs@samsung.com>
-	<53B4E7D6.6000204@suse.de>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH 05/17] pwm: samsung: remove s5p64x0 related pwm codes
+Date: Tue, 08 Jul 2014 07:23:25 +0900
+Message-ID: <53BB1DDD.1020307@samsung.com>
+References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com> <1404163947-3105-6-git-send-email-kgene.kim@samsung.com> <53B6618A.3050504@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f176.google.com ([209.85.128.176]:33724 "EHLO
-	mail-ve0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750979AbaGGUqn convert rfc822-to-8bit (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:45378 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751608AbaGGWXd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Jul 2014 16:46:43 -0400
-Received: by mail-ve0-f176.google.com with SMTP id us18so87680veb.21
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Jul 2014 13:46:42 -0700 (PDT)
-In-Reply-To: <53B4E7D6.6000204@suse.de>
+	Mon, 7 Jul 2014 18:23:33 -0400
+Received: by mail-pa0-f41.google.com with SMTP id fb1so6200212pad.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Jul 2014 15:23:33 -0700 (PDT)
+In-Reply-To: <53B6618A.3050504@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, inki.dae@samsung.com, Sean Paul <seanpaul@google.com>, Ajay kumar <ajaynumb@gmail.com>, Rob Clark <robdclark@gmail.com>, daniel.vetter@ffwll.ch, Thierry Reding <thierry.reding@gmail.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, Rahul Sharma <rahul.sharma@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
 
-Hi,
+On 07/04/14 17:10, Tomasz Figa wrote:
+> Hi Kukjin,
+>
+Tomasz,
 
-On Wed, Jul 2, 2014 at 10:19 PM, Andreas F=C3=A4rber <afaerber@suse.de>=
- wrote:
-> With these 10 patches applied on top of my dt on top of kgene's tree,
-> the last U-Boot screen stays visible for ~50 seconds, then the screen
-> goes blank, and I can ssh in some time later.
-> If I comment out the dp-controller node again, it takes long for the
-> kernel boot to graphically proceed but works okay then.
-> In both cases there's a gap of ~2900 seconds visible in dmesg.
+> On 30.06.2014 23:32, Kukjin Kim wrote:
+>> This patch removes supporting s5p64x0 related pwm codes because of
+>> no more support for S5P6440 and S5P6450 SoCs. And this patch changes
+>> the name of s5p6440-pwm to exynos-pwm instead.
+>>
+>> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+>> Cc: Thierry Reding<thierry.reding@gmail.com>
+>> ---
+>>   Documentation/devicetree/bindings/pwm/pwm-samsung.txt |    1 -
+>>   arch/arm/boot/dts/exynos4210-universal_c210.dts       |    2 +-
+>>   drivers/clocksource/samsung_pwm_timer.c               |   13 -------------
+>>   drivers/pwm/pwm-samsung.c                             |    5 ++---
+>>   4 files changed, 3 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+>> index 5538de9..43925d3 100644
+>> --- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+>> +++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+>> @@ -11,7 +11,6 @@ Required properties:
+>>   - compatible : should be one of following:
+>>       samsung,s3c2410-pwm - for 16-bit timers present on S3C24xx SoCs
+>>       samsung,s3c6400-pwm - for 32-bit timers present on S3C64xx SoCs
+>> -    samsung,s5p6440-pwm - for 32-bit timers present on S5P64x0 SoCs
+>>       samsung,s5pc100-pwm - for 32-bit timers present on S5PC100, S5PV210,
+>>   			  Exynos4210 rev0 SoCs
+>>       samsung,exynos4210-pwm - for 32-bit timers present on Exynos4210,
+>> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+>> index d50eb3a..0ca26e0 100644
+>> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+>> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+>> @@ -461,7 +461,7 @@
+>>   	};
+>>
+>>   	pwm@139D0000 {
+>> -		compatible = "samsung,s5p6440-pwm";
+>> +		compatible = "samsung,exynos4210-pwm";
+>
+> There is a reason to use a different compatible string for Exynos4210
+> rev0. The PWM block is used as a timer there, while on newer revs MCT is
+> used. Sorry, but I have to NAK this patch.
+>
+I remember why exynos4210-universal_c210 uses PWM...OK.
 
-I would have imagined that this was fixed by (1d80415 clocksource:
-exynos_mct: Don't reset the counter during boot and resume).
+> As I explained in my reply to patch 11/17, I'd suggest keeping the PWM
+> drivers as is, because there is no need to remove support for DT
+> compatible strings.
+>
+OK, let me remove pwm related patches in this series but I think need to 
+update the compatible strings, at least remove non-support SoC in doc?...
 
-=2E..that should also fix a long delay at bootup (delay was based on ho=
-w
-much time you spent in U-Boot).
+Thanks,
+Kukjin
