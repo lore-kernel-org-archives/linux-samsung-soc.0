@@ -1,164 +1,98 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 1/3 v5] spi: s3c64xx: fix broken "cs_gpios" usage in the driver
-Date: Mon, 7 Jul 2014 13:22:26 +0200
-Message-ID: <CABxcv=mw0ma3MQPsR5sGU7UcORehyyhqOtQ_SUwCNr4kpsK-7g@mail.gmail.com>
-References: <1402631992-500-1-git-send-email-ch.naveen@samsung.com>
-	<20140702165651.GK410@sirena.org.uk>
-	<CAHfPSqAXs=5VLLEV-XVw5YJo=-9QFn9KA8oG_A0CfNykcVwnCQ@mail.gmail.com>
-	<20140707073244.GC30458@sirena.org.uk>
-	<CAHfPSqAf3z9otNJivw5W7oKdRbU085+AWxCMAh8ORh=GkiNiXw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Vikas Sajjan <vikas.sajjan@samsung.com>
+Subject: [PATCH v6 0/4] Adds PMU and S2R support for exynos5420
+Date: Mon, 07 Jul 2014 18:25:59 +0530
+Message-ID: <1404737763-21783-1-git-send-email-vikas.sajjan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:62924 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751392AbaGGLWb (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:19471 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752709AbaGGM7Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Jul 2014 07:22:31 -0400
-Received: by mail-wi0-f182.google.com with SMTP id bs8so6505142wib.15
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Jul 2014 04:22:26 -0700 (PDT)
-In-Reply-To: <CAHfPSqAf3z9otNJivw5W7oKdRbU085+AWxCMAh8ORh=GkiNiXw@mail.gmail.com>
+	Mon, 7 Jul 2014 08:59:16 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N8C0071KEQQHP10@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 07 Jul 2014 21:59:14 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, jaswinder.singh@linaro.org, Kukjin Kim <kgene.kim@samsung.com>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, Vikas Sajjan <vikas.sajjan@samsung.com>
 
-Hello Naveen and Mark,
+Rebased on
+1] Kukjin Kim's tree, for-next branch
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+2] Pankaj Dubey's v6 PMU patchset
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg33660.html
 
-On Mon, Jul 7, 2014 at 10:31 AM, Naveen Krishna Ch
-<naveenkrishna.ch@gmail.com> wrote:
-> Hello Mark,
->
-> On 7 July 2014 13:02, Mark Brown <broonie@kernel.org> wrote:
->> On Mon, Jul 07, 2014 at 11:51:38AM +0530, Naveen Krishna Ch wrote:
->>> On 2 July 2014 22:26, Mark Brown <broonie@kernel.org> wrote:
->>> > On Fri, Jun 13, 2014 at 09:29:50AM +0530, Naveen Krishna Chatradhi wrote:
->>
->>> >> Hence, spi-s3c64xx.c is broken since "Jun 21 11:26:12 2013" and
->>> >> considering the time with no compliants about the breakage.
->>
->>> > I'm not clear what the breakage is?  Some boards are broken but what's
->>> > the driver issue?
->>
->>> ToT was broken for few boards
->>> exynos4412-trats2.dts, exynos4210-smdkv310.dts and exynos5250-smdk5250.dts
->>
->>> With some DTS changes SPI works well, spi-s3c64xx.c driver had no issues.
->>
+changes since v5:
+	- Refactored pm.c to use DT based lookup as suggested by Tomasz Figa.
 
-Correct me if I'm wrong but I think that the driver does have issues
-since the commit mentioned (3146bee) broke DT backward compatibility.
+changes since v4:
+	- Adressed comments from Tomasz figa and rebased on Pankaj Dubey's v5 PMU patchset
 
->> No, you're not answering my question - to repeat, what is the breakage?
->
+changes since v3:
+Addressed the following comments from Pankaj Dubey, Bartlomiej Zolnierkiewicz,
+Tomasz Figa and Alim Akhtar:
+        - Moved EXYNOS5420_USE_STANDBY_WFI_ALL define to regs-pmu.h.
+        - Merged exynos5420_set_core_flag function into powerdown_conf.
+        - Removed XXTI_DURATION3 register setting.
+        - Updated the commit message and ordered the clock registers in clock
+          patch.
+        - Removed the code for SYS_DISP1_BLK_CFG handling.
+        - Modified SoC checks to A9 specific checks in PM code.
+        - Updated some comments in the code and added macros for register offsets.
+        - Fixed code which was changing pad retention code for older SoCs.
 
-As far as I understand, the breakage is that any DTS that followed the
-DT binding documented in
-Documentation/devicetree/bindings/spi/spi-samsung.txt is not working
-with the current driver. So is not that some boards are broken, is
-that the driver is broken and it has been broken for more than a year
-(the commit date is Jun 21 2013).
+changes since v2:
+        - Addressed comments from Tomasz figa
+        - rebased on Pankaj's V3 patchset https://lkml.org/lkml/2014/5/2/612
+        - dropped patch "ARM: dts: Add node for GPIO keys on SMDK5420",
+          will be sent separately.
 
-> The Documentation/devicetree/bindings/spi/spi-samsung.txt
-> describes "cs-gpio" as a controller specific property.
->
-> The dts entries for SPI in exynos4412-trats2.dts, exynos4210-smdkv310.dts
-> and exynos5250-smdk5250.dts boards have the "cs-gpio" property defined
-> under controller-data node, which is inside the SPI device node
-> &spi_1 {
->   controller-data {
->     cs-gpio = <>;
->   };
-> };
->
-> But, _probe() of spi-s3c64xx.c driver looks for "cs-gpio" in the SPI
-> device node and
-> sets a flag "sdd->cs_gpio = false" (If the property is not available)
-> &spi_1 {
->   cs-gpio = <>;
-> };
->
-> the sdd->cs_gpio flag is checked before actually getting the gpios
-> from the controller-data node
->        if (sdd->cs_gpio)
->                 cs->line = of_get_named_gpio(data_np, "cs-gpio", 0);
->
+changes since v1:
+        - Addressed comments from Tomasz figa.
+        - restructured/consolidated as per Tomasz figa's PM consolidations for exynos
 
-I think that if changing the binding is not possible, at least we
-should document this new "cs-gpio" property that is looked in the top
-level SPI node after commit 3146bee and also revert the default in
-order to allow DTs using the old binding to keep working.
+Tested on Kukjin Kim's tree, for-next branch + 
+	1] http://www.spinics.net/lists/linux-samsung-soc/msg33750.html
+	2] http://www.spinics.net/lists/linux-samsung-soc/msg32923.html
+	3] https://www.mail-archive.com/linux-mmc@vger.kernel.org/msg26210.html (for eMMC S2R fail issue)
 
-By default not having the "cs-gpio" property in the SPI dev node
-should mean that the "cs-gpio" property in the controller-data node
-should be used to signal the chip-select and having the "cs-gpio"
-property in the SPI node should mean that the native chip select
-should be used instead of a GPIO. That preserves the old DT binding
-semantic while making the GPIO to be optional.
+on Exynos5420 based chromebook (peach-pit board) and Exynos5250 based chromebook (snow board).
 
-Of course in that case the property name does not make too much sense,
-so probably should be changed to "cs-native" or something like that.
-But I still don't understand why this is needed in the first place
-since according to Documentation/devicetree/bindings/spi/spi-bus.txt
-you can use the cs-gpios property to specify that a native chip-select
-will be used instead of a GPIO by doing:
+PS : Not tested on exynos4 based boards.
 
-cs-gpios = <&gpio1 0 0> <0>
+Tested-by for exynos4 would be appreciated.
 
-cs0 : &gpio1 0 0
-cs1 : native
+Below procedures were followed to test S2R:
+Procedure A:
+	1. make multi_v7_defconfig 
+	2  enable MCPM for 5420
+	3. enable S3C RTC
+	4. pass "no_console_suspend" in bootargs
+	5. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
+Procedure B:
+	1. make exynos_defconfig 
+	2  enable MCPM for 5420
+	3  enable CONFIG_PL330_DMA
+	4. enable CONFIG_PM_RUNTIME
+	5. pass "no_console_suspend" in bootargs
+	6. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
 
-> Hence, SPI was failing on those boards.
->
-> 1. As the SPI core and several drivers were changed to work with
->     DT property "cs-gpios" (plural) defined under SPI node.
-> 2. Since the commit 3146beec21b64f4551fcf0ac148381d54dc41b1b
->     "spi: s3c64xx: Added provision for dedicated cs pin"
->     Dated:   Fri Jun 21 11:26:12 2013 +0530
->
-> For the above 2 reasons, It was decided to drop the backward compatibility
-> of using "cs-gpio"(singular) in controller-data.
-> Instead, start supporting "cs-gpios"(plural) in the SPI node.
->
+Abhilash Kesavan (2):
+  arm: exynos5: Add PMU support for 5420
+  arm: exynos5: Add Suspend-to-RAM support for 5420
 
-Right, since the DT binding has been broken for a year and because is
-not consistent with the bindings used by all other SPI drivers, many
-agreed that it was one of the exceptional cases where the DT binding
-can be rethought and changed to use the generic "cs-gpios" property
-already supported by SPI core. It breaks backward compatibility that's
-true but the DT binding has been broken anyways and nobody noticed
-before.
+Vikas Sajjan (2):
+  ARM: EXYNOS: Refactor the code to use DT based lookup
+  clk: samsung: exynos5420: Setup clocks before system suspend
 
-The other option is what I said above, fixing the DT binding
-compatibility breakage while keeping the custom binding for this SPI
-driver.
+ arch/arm/mach-exynos/pm.c            |  376 ++++++++++++++++++++++++++++++----
+ arch/arm/mach-exynos/pmu.c           |  288 ++++++++++++++++++++++++++
+ arch/arm/mach-exynos/regs-pmu.h      |  230 +++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5420.c |   29 +++
+ 4 files changed, 880 insertions(+), 43 deletions(-)
 
->>
->>> > Also I'd need to check but are you sure that GPIO 0 is not valid?
->>
->>> gpio_is_valid() returns true for
->>> "number >= 0 && number < ARCH_NR_GPIOS"
->>
->> Right, so this means that any board that is using the internal chip
->> select with zero as default in their platform data is broken by this
->> change.
->
-
-I think this problem could be present in other SPI drivers as well? So
-maybe the right fix for this is to convert the SPI core gpio handling
-to use the new descriptor-based gpio API instead of the integer-base
-one?
-
-> using gpio_is_valid() to "sdd->cs_gpio" flag every where to check for the
-> validity was a review comment.
-> Which seems to fail for internal chip select with zero.
->
-> I can submit another version with"sdd->cs_gpio" flag for this purpose.
->
-> --
-> Thanks & Regards,
-> (: Nav :)
-> --
-
-Best regards,
-Javier
+-- 
+1.7.9.5
