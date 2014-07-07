@@ -1,79 +1,93 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 05/17] pwm: samsung: remove s5p64x0 related pwm codes
-Date: Tue, 08 Jul 2014 07:23:25 +0900
-Message-ID: <53BB1DDD.1020307@samsung.com>
-References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com> <1404163947-3105-6-git-send-email-kgene.kim@samsung.com> <53B6618A.3050504@gmail.com>
+Subject: Re: [PATCH v6 0/6] Cleanup patches for mach-exynos
+Date: Tue, 08 Jul 2014 07:48:10 +0900
+Message-ID: <53BB23AA.6060105@samsung.com>
+References: <1404705056-11965-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:45378 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751608AbaGGWXd (ORCPT
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:44837 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751874AbaGGWsR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Jul 2014 18:23:33 -0400
-Received: by mail-pa0-f41.google.com with SMTP id fb1so6200212pad.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Jul 2014 15:23:33 -0700 (PDT)
-In-Reply-To: <53B6618A.3050504@gmail.com>
+	Mon, 7 Jul 2014 18:48:17 -0400
+In-Reply-To: <1404705056-11965-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, chow.kim@samsung.com
 
-On 07/04/14 17:10, Tomasz Figa wrote:
-> Hi Kukjin,
+On 07/07/14 12:50, Pankaj Dubey wrote:
+> This series is doing code cleanup under arch/arm/mach-exynos.
+> These patches have been separated from main exynos pmu v4 patch
+> posted here [1].
 >
-Tomasz,
+> [1]: https://lkml.org/lkml/2014/5/10/29
+>
+> Changes Since v5:
+>   - Rebased on latest for-next of Kukjin Kim's tree.
+>   - Using of_machine_is_compatible instead of soc_is_exynos in patch 2.
+>
+> Changes Since v4:
+>   - Rebased on latest for-next of Kukjin Kim's tree.
+>   - Removing file path comment from mach-exynos/headsmp.S also.
+>   - Removed signed-off-by of Young-Gun Jang<yg1004.jang@samsung.com>,
+>     as this id is no more valid. Taking ownership of all his patches.
+>   - Separated these patches from main exynos pmu v4 patch series as
+>     suggested by Tomasz Figa.
+>
+> Changes Since v3:
+>   - Addressed build fail issue in exynos.c as reported by Sachin Kamat.
+>   - Rebased on top of Sysram patches by Sachin Kamat.
+>
+> Changes Since v2:
+>   - Rebased on top of Daniel Lezcano's Exynos cpuidle refactor patches.
+>   - Removed exynos_cpuidle_init and exynos_cpufreq_init code as suggested
+>     by Tomasz Figa.
+>
+> Changes Since v1:
+>   - Rebased on latest for-next of Kukjin Kim's tree.
+>   - Added patch: "Make exynos machine_ops as static".
+> 	For making more cleanup in "mach-exynos/common.h"
+> 	as suggested by Tomasz Figa.
+>   - Addressed comments of Tomasz Figa for cleaning "mach-exynos/common.h".
+>   - Updated patch: Remove file path from comment section
+> 	As suggested by Michel Simek, instead of updating file path
+> 	lets remove them from each file under "mach-exynos".
+> 	Even though Kukjin pointed out that there is similar patch pending from
+> 	Sachin/Tushar but since I could not find I have included this here. If
+> 	I have missed something please point to any existing such patch.
+>   - Added patch: Remove "linux/bug.h" from pmu.c.
+>   - Added patch: Move "mach/map.h" inclusion from regs-pmu.h to platsmp.c
+>
+>
+> Pankaj Dubey (6):
+>    ARM: EXYNOS: Make exynos machine_ops as static
+>    ARM: EXYNOS: Move cpufreq and cpuidle device registration to
+>      init_machine
+>    ARM: EXYNOS: Move SYSREG definition into sys-reg specific file
+>    ARM: EXYNOS: Remove file path from comment section
+>    ARM: EXYNOS: Remove regs-pmu.h header dependency from pm_domain
+>    ARM: EXYNOS: Remove "linux/bug.h" from pmu.c
+>
+>   arch/arm/mach-exynos/common.h              |    8 --------
+>   arch/arm/mach-exynos/exynos.c              |   27 ++++++++-------------------
+>   arch/arm/mach-exynos/headsmp.S             |    1 -
+>   arch/arm/mach-exynos/hotplug.c             |    3 +--
+>   arch/arm/mach-exynos/include/mach/map.h    |    3 +--
+>   arch/arm/mach-exynos/include/mach/memory.h |    3 +--
+>   arch/arm/mach-exynos/platsmp.c             |    3 +--
+>   arch/arm/mach-exynos/pm.c                  |    1 +
+>   arch/arm/mach-exynos/pm_domains.c          |    8 ++++----
+>   arch/arm/mach-exynos/pmu.c                 |    1 -
+>   arch/arm/mach-exynos/regs-pmu.h            |    4 ----
+>   arch/arm/mach-exynos/regs-sys.h            |   22 ++++++++++++++++++++++
+>   12 files changed, 39 insertions(+), 45 deletions(-)
+>   create mode 100644 arch/arm/mach-exynos/regs-sys.h
+>
+OK, looks good to me, I think we don't need 4/6 patch though :-)
 
-> On 30.06.2014 23:32, Kukjin Kim wrote:
->> This patch removes supporting s5p64x0 related pwm codes because of
->> no more support for S5P6440 and S5P6450 SoCs. And this patch changes
->> the name of s5p6440-pwm to exynos-pwm instead.
->>
->> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
->> Cc: Thierry Reding<thierry.reding@gmail.com>
->> ---
->>   Documentation/devicetree/bindings/pwm/pwm-samsung.txt |    1 -
->>   arch/arm/boot/dts/exynos4210-universal_c210.dts       |    2 +-
->>   drivers/clocksource/samsung_pwm_timer.c               |   13 -------------
->>   drivers/pwm/pwm-samsung.c                             |    5 ++---
->>   4 files changed, 3 insertions(+), 18 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
->> index 5538de9..43925d3 100644
->> --- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
->> +++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
->> @@ -11,7 +11,6 @@ Required properties:
->>   - compatible : should be one of following:
->>       samsung,s3c2410-pwm - for 16-bit timers present on S3C24xx SoCs
->>       samsung,s3c6400-pwm - for 32-bit timers present on S3C64xx SoCs
->> -    samsung,s5p6440-pwm - for 32-bit timers present on S5P64x0 SoCs
->>       samsung,s5pc100-pwm - for 32-bit timers present on S5PC100, S5PV210,
->>   			  Exynos4210 rev0 SoCs
->>       samsung,exynos4210-pwm - for 32-bit timers present on Exynos4210,
->> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
->> index d50eb3a..0ca26e0 100644
->> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
->> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
->> @@ -461,7 +461,7 @@
->>   	};
->>
->>   	pwm@139D0000 {
->> -		compatible = "samsung,s5p6440-pwm";
->> +		compatible = "samsung,exynos4210-pwm";
->
-> There is a reason to use a different compatible string for Exynos4210
-> rev0. The PWM block is used as a timer there, while on newer revs MCT is
-> used. Sorry, but I have to NAK this patch.
->
-I remember why exynos4210-universal_c210 uses PWM...OK.
+I've applied this whole series, thanks.
 
-> As I explained in my reply to patch 11/17, I'd suggest keeping the PWM
-> drivers as is, because there is no need to remove support for DT
-> compatible strings.
->
-OK, let me remove pwm related patches in this series but I think need to 
-update the compatible strings, at least remove non-support SoC in doc?...
-
-Thanks,
-Kukjin
+- Kukjin
