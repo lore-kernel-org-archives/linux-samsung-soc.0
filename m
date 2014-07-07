@@ -1,67 +1,166 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v6 2/6] ARM: EXYNOS: Move cpufreq and cpuidle device
- registration to init_machine
-Date: Mon, 07 Jul 2014 09:20:52 +0530
-Message-ID: <1404705056-11965-3-git-send-email-pankaj.dubey@samsung.com>
-References: <1404705056-11965-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1404705056-11965-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, chow.kim@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+From: Jaewon Kim <jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] drivers: phy: exynos-usb2: add support for Exynos 3250
+Date: Mon, 07 Jul 2014 13:55:16 +0900
+Message-ID: <53BA2834.7050404@samsung.com>
+References: <1404475989-30588-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1404475989-30588-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-As exynos_cpuidle_init and exynos_cpufreq_init function have just one lines
-of code for registering platform devices. We can move these lines to
-exynos_dt_machine_init and delete exynos_cpuidle_init and exynos_cpufreq_init
-function. This will help in reducing lines of code in exynos.c, making it
-more cleaner.
+Hi, Marek
 
-Suggested-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/mach-exynos/exynos.c |   20 ++++----------------
- 1 file changed, 4 insertions(+), 16 deletions(-)
+2014=B3=E2 07=BF=F9 04=C0=CF 21:13, Marek Szyprowski =BE=B4 =B1=DB:
+> This patch adds support for Exynos3250 SoC to Exynos2USB PHY driver.
+> Although Exynos3250 has only one device phy interface, the register
+> layout and all operations that are required to get it enabled are alm=
+ost
+> same as on Exynos4x12. The only different is one more register
+> (REFCLKSEL) which need to be set.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/phy/Kconfig               | 12 ++++++------
+>  drivers/phy/phy-exynos4x12-usb2.c | 18 ++++++++++++++++++
+>  drivers/phy/phy-samsung-usb2.c    |  6 ++++++
+>  drivers/phy/phy-samsung-usb2.h    |  2 ++
+>  4 files changed, 32 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 16a2f067c242..58737b9eaa6e 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -141,14 +141,14 @@ config PHY_EXYNOS4210_USB2
+>  	  phys are available - device, host, HSIC0 and HSIC1.
+> =20
+>  config PHY_EXYNOS4X12_USB2
+> -	bool "Support for Exynos 4x12"
+> +	bool "Support for Exynos 3250/4x12"
+>  	depends on PHY_SAMSUNG_USB2
+> -	depends on (SOC_EXYNOS4212 || SOC_EXYNOS4412)
+> +	depends on (SOC_EXYNOS3250 || SOC_EXYNOS4212 || SOC_EXYNOS4412)
+>  	help
+> -	  Enable USB PHY support for Exynos 4x12. This option requires that
+> -	  Samsung USB 2.0 PHY driver is enabled and means that support for =
+this
+> -	  particular SoC is compiled in the driver. In case of Exynos 4x12 =
+four
+> -	  phys are available - device, host, HSIC0 and HSIC1.
+> +	  Enable USB PHY support for Exynos 3250/4x12. This option requires
+> +	  that Samsung USB 2.0 PHY driver is enabled and means that support=
+ for
+> +	  this particular SoC is compiled in the driver. In case of Exynos =
+4x12
+> +	  four phys are available - device, host, HSIC0 and HSIC1.
+> =20
+>  config PHY_EXYNOS5250_USB2
+>  	bool "Support for Exynos 5250"
+> diff --git a/drivers/phy/phy-exynos4x12-usb2.c b/drivers/phy/phy-exyn=
+os4x12-usb2.c
+> index 59d8dd3ff390..b29bbfacd4b5 100644
+> --- a/drivers/phy/phy-exynos4x12-usb2.c
+> +++ b/drivers/phy/phy-exynos4x12-usb2.c
+> @@ -67,6 +67,12 @@
+>  #define EXYNOS_4x12_UPHYCLK_PHYFSEL_24MHZ	(0x5 << 0)
+>  #define EXYNOS_4x12_UPHYCLK_PHYFSEL_50MHZ	(0x7 << 0)
+> =20
+> +#define EXYNOS_4212_UPHYCLK_PHY0_ID_PULLUP	(0x1 << 3)
+> +#define EXYNOS_4212_UPHYCLK_PHY0_COMMON_ON	(0x1 << 4)
+> +#define EXYNOS_4212_UPHYCLK_PHY1_COMMON_ON	(0x1 << 7)
+> +
+> +#define EXYNOS_3250_UPHYCLK_REFCLKSEL		(0x2 << 8)
+> +
+>  #define EXYNOS_4x12_UPHYCLK_PHY0_ID_PULLUP	BIT(3)
+>  #define EXYNOS_4x12_UPHYCLK_PHY0_COMMON_ON	BIT(4)
+>  #define EXYNOS_4x12_UPHYCLK_PHY1_COMMON_ON	BIT(7)
+> @@ -197,6 +203,10 @@ static void exynos4x12_setup_clk(struct samsung_=
+usb2_phy_instance *inst)
+> =20
+>  	clk =3D readl(drv->reg_phy + EXYNOS_4x12_UPHYCLK);
+>  	clk &=3D ~EXYNOS_4x12_UPHYCLK_PHYFSEL_MASK;
+> +
+> +	if (drv->cfg->has_refclk_sel)
+> +		clk =3D EXYNOS_3250_UPHYCLK_REFCLKSEL;
+> +
+>  	clk |=3D drv->ref_reg_val << EXYNOS_4x12_UPHYCLK_PHYFSEL_OFFSET;
+>  	clk |=3D EXYNOS_4x12_UPHYCLK_PHY1_COMMON_ON;
+>  	writel(clk, drv->reg_phy + EXYNOS_4x12_UPHYCLK);
+> @@ -358,6 +368,14 @@ static const struct samsung_usb2_common_phy exyn=
+os4x12_phys[] =3D {
+>  	{},
+>  };
+> =20
+> +const struct samsung_usb2_phy_config exynos3250_usb2_phy_config =3D =
+{
+> +	.has_mode_switch	=3D 1,
+> +	.has_refclk_sel		=3D 1,
+> +	.num_phys		=3D 1,
+> +	.phys			=3D exynos4x12_phys,
+> +	.rate_to_clk		=3D exynos4x12_rate_to_clk,
+> +};
+> +
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index ff60b4c..47170eb 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -171,19 +171,6 @@ static struct platform_device exynos_cpuidle = {
- 	.id                = -1,
- };
- 
--void __init exynos_cpuidle_init(void)
--{
--	if (soc_is_exynos5440())
--		return;
--
--	platform_device_register(&exynos_cpuidle);
--}
--
--void __init exynos_cpufreq_init(void)
--{
--	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
--}
--
- void __iomem *sysram_base_addr;
- void __iomem *sysram_ns_base_addr;
- 
-@@ -300,10 +287,11 @@ static void __init exynos_dt_machine_init(void)
- 	if (!IS_ENABLED(CONFIG_SMP))
- 		exynos_sysram_init();
- 
--	if (!of_machine_is_compatible("samsung,exynos5420"))
--		exynos_cpuidle_init();
-+	if (!of_machine_is_compatible("samsung,exynos5420") ||
-+			!of_machine_is_compatible("samsung,exynos5440"))
-+		platform_device_register(&exynos_cpuidle);
- 
--	exynos_cpufreq_init();
-+	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
- 
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
- }
--- 
-1.7.9.5
+As you were told, exynos3250 has only one device phy interface.
+so, has_mode_switch should be 0.
+
+And related change like switch_mode in exynos4x12_phy_pwr should be cha=
+nged.
+
+>  const struct samsung_usb2_phy_config exynos4x12_usb2_phy_config =3D =
+{
+>  	.has_mode_switch	=3D 1,
+>  	.num_phys		=3D EXYNOS4x12_NUM_PHYS,
+> diff --git a/drivers/phy/phy-samsung-usb2.c b/drivers/phy/phy-samsung=
+-usb2.c
+> index 8a8c6bc8709a..36db8eb8c5f4 100644
+> --- a/drivers/phy/phy-samsung-usb2.c
+> +++ b/drivers/phy/phy-samsung-usb2.c
+> @@ -87,6 +87,12 @@ static struct phy *samsung_usb2_phy_xlate(struct d=
+evice *dev,
+>  }
+> =20
+>  static const struct of_device_id samsung_usb2_phy_of_match[] =3D {
+> +#ifdef CONFIG_PHY_EXYNOS4X12_USB2
+> +	{
+> +		.compatible =3D "samsung,exynos3250-usb2-phy",
+> +		.data =3D &exynos3250_usb2_phy_config,
+> +	},
+> +#endif
+>  #ifdef CONFIG_PHY_EXYNOS4210_USB2
+>  	{
+>  		.compatible =3D "samsung,exynos4210-usb2-phy",
+> diff --git a/drivers/phy/phy-samsung-usb2.h b/drivers/phy/phy-samsung=
+-usb2.h
+> index 918847843a95..b03da0ef39ac 100644
+> --- a/drivers/phy/phy-samsung-usb2.h
+> +++ b/drivers/phy/phy-samsung-usb2.h
+> @@ -60,8 +60,10 @@ struct samsung_usb2_phy_config {
+>  	int (*rate_to_clk)(unsigned long, u32 *);
+>  	unsigned int num_phys;
+>  	bool has_mode_switch;
+> +	bool has_refclk_sel;
+>  };
+> =20
+> +extern const struct samsung_usb2_phy_config exynos3250_usb2_phy_conf=
+ig;
+>  extern const struct samsung_usb2_phy_config exynos4210_usb2_phy_conf=
+ig;
+>  extern const struct samsung_usb2_phy_config exynos4x12_usb2_phy_conf=
+ig;
+>  extern const struct samsung_usb2_phy_config exynos5250_usb2_phy_conf=
+ig;
+
+It works fine in rinato 3250 boards.
+but, some property is not right, in my thought.
+
+thanks,
+Jaewon Kim.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
