@@ -1,80 +1,68 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH 1/3 v5] spi: s3c64xx: fix broken "cs_gpios" usage in the driver
-Date: Mon, 7 Jul 2014 11:51:38 +0530
-Message-ID: <CAHfPSqAXs=5VLLEV-XVw5YJo=-9QFn9KA8oG_A0CfNykcVwnCQ@mail.gmail.com>
-References: <1402631992-500-1-git-send-email-ch.naveen@samsung.com> <20140702165651.GK410@sirena.org.uk>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH v7 23/24] rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
+Date: Mon, 07 Jul 2014 08:57:41 +0200
+Message-ID: <53BA44E5.6070604@collabora.co.uk>
+References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk> <1404505467-26526-24-git-send-email-javier.martinez@collabora.co.uk> <1404713210.4367.0.camel@AMDC1943>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f44.google.com ([209.85.216.44]:58741 "EHLO
-	mail-qa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750889AbaGGGV7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Jul 2014 02:21:59 -0400
-In-Reply-To: <20140702165651.GK410@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1404713210.4367.0.camel@AMDC1943>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andreas Farber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, Kukjin Kim <kgene.kim@samsung.com>, cpgs@samsung.com, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
 
-Hello Mark,
+Hello Krzysztof,
 
-Thanks for the review.
+On 07/07/2014 08:06 AM, Krzysztof Kozlowski wrote:
+> On pi=C4=85, 2014-07-04 at 22:24 +0200, Javier Martinez Canillas wrot=
+e:
+>> The MAX7802 PMIC has a Real-Time-Clock (RTC) with two alarms.
+>> This patch adds support for the RTC and is based on a driver
+>> added by Simon Glass to the Chrome OS kernel 3.8 tree.
+>>=20
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.c=
+o.uk>
+>> ---
+>>=20
+>> Changes since v6:
+>>  - Remove unused code for SMPL and WTSR. Suggested by Krzysztof Kozl=
+owski.
+>>  - Don't spam the kernel log with unimportant info and just print fo=
+r debug.
+>>    Suggested by Krzysztof Kozlowski.
+>>  - Use ARRAY_SIZE() instead of constant value. Suggested by Krzyszto=
+f Kozlowski.
+>>  - Remove duplicated register setup. Suggested by Krzysztof Kozlowsk=
+i.
+>>  - Don't free/unregister managed allocated resources.
+>>    Suggested by Krzysztof Kozlowski.
+>> ---
+>>  drivers/rtc/Kconfig        |  10 +
+>>  drivers/rtc/Makefile       |   1 +
+>>  drivers/rtc/rtc-max77802.c | 508 ++++++++++++++++++++++++++++++++++=
++++++++++++
+>>  3 files changed, 519 insertions(+)
+>>  create mode 100644 drivers/rtc/rtc-max77802.c
+>=20
+>=20
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>=20
 
-On 2 July 2014 22:26, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Jun 13, 2014 at 09:29:50AM +0530, Naveen Krishna Chatradhi wrote:
->
->> Hence, spi-s3c64xx.c is broken since "Jun 21 11:26:12 2013" and
->> considering the time with no compliants about the breakage.
->
-> I'm not clear what the breakage is?  Some boards are broken but what's
-> the driver issue?
+Thanks a lot for the review and for all the feedback you gave me on eac=
+h version
+of the series.
 
-ToT was broken for few boards
-exynos4412-trats2.dts, exynos4210-smdkv310.dts and exynos5250-smdk5250.dts
+> Best regards,
+> Krzysztof
+>=20
+>=20
 
-With some DTS changes SPI works well, spi-s3c64xx.c driver had no issues.
-
->
->>       if (!spi_get_ctldata(spi)) {
->>               /* Request gpio only if cs line is asserted by gpio pins */
->> -             if (sdd->cs_gpio) {
->> -                     err = gpio_request_one(cs->line, GPIOF_OUT_INIT_HIGH,
->> -                                     dev_name(&spi->dev));
->> +             if (gpio_is_valid(spi->cs_gpio)) {
->> +                     err = gpio_request_one(spi->cs_gpio,
->> +                                             GPIOF_OUT_INIT_HIGH,
->> +                                             dev_name(&spi->dev));
->>                       if (err) {
->>                               dev_err(&spi->dev,
->>                                       "Failed to get /CS gpio [%d]: %d\n",
->> -                                     cs->line, err);
->> +                                     spi->cs_gpio, err);
->>                               goto err_gpio_req;
->>                       }
->> -
->> -                     spi->cs_gpio = cs->line;
->> +             } else {
->> +                     dev_err(&spi->dev, "chip select gpio is invalid\n");
->> +                     return -EINVAL;
->>               }
->
-> This appears to be making it mandatory to specify a GPIO when previously
-> it was not mandatory which I believe breaks some SoCs - the native chip
-> select has to be used on some devices as there is no pinmux option to
-> make it a GPIO (this was why the native chip select support was added).
-
-I read the commit "3146beec21b64f4551fcf0ac148381d54dc41b1b"
-"spi: s3c64xx: Added provision for dedicated cs pin"
-
-I understand "cs_gpio" shouldn't be mandatory. Will remove the else part.
-
->
-> Also I'd need to check but are you sure that GPIO 0 is not valid?
-
-gpio_is_valid() returns true for
-"number >= 0 && number < ARCH_NR_GPIOS"
-
--- 
-Shine bright,
-(: Nav :)
+Best regards,
+Javier
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
