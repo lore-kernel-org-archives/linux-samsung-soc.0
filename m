@@ -1,57 +1,78 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 6/6] ARM: EXYNOS: Register cpuidle device only on
- Exynos4210 and 5250
-Date: Tue, 08 Jul 2014 17:45:55 +0200
-Message-ID: <156099171.AcKbd1QIut@amdc1032>
-References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
- <1403618235-19353-7-git-send-email-t.figa@samsung.com>
- <038b01cf9ab7$0de5a440$29b0ecc0$@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [RFC] drm/exynos: abort commit when framebuffer is removed from
+ plane
+Date: Wed, 9 Jul 2014 00:55:20 +0900
+Message-ID: <CAAQKjZMwVGHrrWNxn9ShrkZcnouOEhrH4kfCv9b3n4Zt1+vGqg@mail.gmail.com>
+References: <1403190809-8413-1-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:55292 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751656AbaGHPqX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 11:46:23 -0400
-In-reply-to: <038b01cf9ab7$0de5a440$29b0ecc0$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1403190809-8413-1-git-send-email-rahul.sharma@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, joshi@samsung.com, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>
 
+2014-06-20 0:13 GMT+09:00 Rahul Sharma <rahul.sharma@samsung.com>:
+> This situation arises when userspace remove the frambuffer object
+> and call setmode ioctl.
+>
+> drm_mode_rmfb --> drm_plane_force_disable --> plane->crtc = NULL;
+> and
+> drm_mode_setcrtc --> exynos_plane_commit --> passes plane->crtc to
+> exynos_drm_crtc_plane_commit which is NULL.
 
-Hi,
+If user process requested drm_mode_rmfb with a fb_id, fb object to the
+fb_id must be removed from crtc_idr table. So drm_mode_setcrtc should
+be failed because there is no the fb object in the crtc_idr table
+anymore.
+I cannot understand how exynos_drm_crtc_plane_commit function could be
+called. Can you give me more details?
 
-On Tuesday, July 08, 2014 11:15:21 PM Kukjin Kim wrote:
-> Tomasz Figa wrote:
-> > 
-> > Currently, the Exynos cpuidle driver works correctly only on Exynos4210
-> > and 5250. Trying to use it with just one CPU online on any other Exynos
-> > SoC will lead to system failure, due to unsupported AFTR mode on other
-> > SoCs. This patch fixes the problem by registering the driver only on
-> > supported SoCs and letting others simply use default WFI mode until
-> > support for them is added.
-> > 
-> Hmm...I thought other SoCs have no problem on cpuidle except exynos5420 and
-> exynos5440....something like this would be helpful to avoid system failure.
-> But unfortunately this conflicts with Pankaj's cleanup cpufreq_init() and
-> cpuidle_init() patch you've reviewed and I've applied in my local...
-> 
-> I'm going to check which exynos is ok on cpuidle and then sort them out.
+Thanks,
+Inki Dae
 
-Tomasz's patch is correct - currently only Exynos4210 and Exynos5250 work
-fine with AFTR mode and upstream kernel (AFTR gets triggered by offlining
-CPUs other than CPU0).
-
-[ Exynos4x12 and Exynos3250 need secure firmware support (patches for this
-  need to be reworked on top of recent PM/firmware/cpuidle changes).
-
-  Exynos5410 should use big_little cpuidle driver. ]
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+>
+> This crashes the system.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+> This works fine but I am not confident on the correctness of the
+> solution.
+>
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c |    6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index 95c9435..da4efe4 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -165,6 +165,12 @@ static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
+>                 return -EPERM;
+>         }
+>
+> +       /* when framebuffer is removed, commit should not proceed. */
+> +       if(!plane->fb){
+> +               DRM_ERROR("framebuffer has been removed from plane.\n");
+> +               return -EFAULT;
+> +       }
+> +
+>         crtc_w = crtc->primary->fb->width - x;
+>         crtc_h = crtc->primary->fb->height - y;
+>
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
