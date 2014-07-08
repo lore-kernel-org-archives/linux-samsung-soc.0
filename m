@@ -1,37 +1,45 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] Input: s3c2410_ts: Move to
- clk_prepare_enable/clk_disable_unprepare
-Date: Tue, 08 Jul 2014 13:50:30 +0200
-Message-ID: <53BBDB06.1020406@samsung.com>
-References: <1404155377-2862-1-git-send-email-anarsoul@gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: use u8 for val[] in struct exynos_pmu_conf
+Date: Tue, 08 Jul 2014 14:03:37 +0200
+Message-ID: <2379473.Yu7PYOQ3m0@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:56226 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754254AbaGHLvF (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:9256 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753833AbaGHMDy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 07:51:05 -0400
-In-reply-to: <1404155377-2862-1-git-send-email-anarsoul@gmail.com>
+	Tue, 8 Jul 2014 08:03:54 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi Vasily,
+Values stored in val[] are never bigger than a byte.
 
-On 30.06.2014 21:09, Vasily Khoruzhick wrote:
-> Use clk_prepare_enable/clk_disable_unprepare to make the driver
-> work properly with common clock framework.
-> 
-> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-> ---
->  drivers/input/touchscreen/s3c2410_ts.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
+   text    data     bss     dec     hex filename
+   5264       4       4    5272    1498 arch/arm/mach-exynos/pmu.o.before
+   2992       4       4    3000     bb8 arch/arm/mach-exynos/pmu.o.after
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/common.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---
-Best regards,
-Tomasz
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index b850db4..55ff019 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -101,7 +101,7 @@ enum sys_powerdown {
+ 
+ struct exynos_pmu_conf {
+ 	void __iomem *reg;
+-	unsigned int val[NUM_SYS_POWERDOWN];
++	u8 val[NUM_SYS_POWERDOWN];
+ };
+ 
+ extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
+-- 
+1.8.2.3
