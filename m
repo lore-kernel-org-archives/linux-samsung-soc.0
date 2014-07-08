@@ -1,57 +1,66 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 18/19] ARM: SAMSUNG: Remove remaining legacy code
-Date: Tue, 08 Jul 2014 16:10:47 +0200
-Message-ID: <53BBFBE7.5080209@samsung.com>
-References: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
- <1404496099-26708-19-git-send-email-t.figa@samsung.com>
- <4267278.JdVSGvRhtr@wuerfel>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 6/6] ARM: EXYNOS: Register cpuidle device only on
+ Exynos4210 and 5250
+Date: Tue, 08 Jul 2014 23:15:21 +0900
+Message-ID: <038b01cf9ab7$0de5a440$29b0ecc0$@samsung.com>
+References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
+ <1403618235-19353-7-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:26439 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750707AbaGHOLW (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:20841 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750707AbaGHOPY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 10:11:22 -0400
-In-reply-to: <4267278.JdVSGvRhtr@wuerfel>
+	Tue, 8 Jul 2014 10:15:24 -0400
+In-reply-to: <1403618235-19353-7-git-send-email-t.figa@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>
 
-On 04.07.2014 22:23, Arnd Bergmann wrote:
-> On Friday 04 July 2014 19:48:18 Tomasz Figa wrote:
->> After refactoring suspend/resume, which was last part with dependencies
->> on legacy code, all Kconfig symbols related to Samsung ATAGS support can
->> be deselected and more unused code removed. This includes most of s5p-*
->> code as well, as s5pv210 was their last user.
->>
->> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Tomasz Figa wrote:
 > 
-> I actually found a few more, see patch below. Feel free to merge it
-> into yours.
-
-Will add your patch to this series, if sending v2. Otherwise I guess it
-could be applied on top of it.
-
+> Currently, the Exynos cpuidle driver works correctly only on Exynos4210
+> and 5250. Trying to use it with just one CPU online on any other Exynos
+> SoC will lead to system failure, due to unsupported AFTR mode on other
+> SoCs. This patch fixes the problem by registering the driver only on
+> supported SoCs and letting others simply use default WFI mode until
+> support for them is added.
 > 
-> As discussed on IRC, I have also done an experimental patch to move
-> the few contents of mach-s5pv210 into mach-exynos, which turned out
-> very simple and should be uncontroversial but needs more testing.
-> 
-> Finally, there is some more cleanup potential in moving things out
-> of plat-samsung into the individual platforms (s3c24xx, s3c64xx,
-> exynos including s5pv210), as a lot of files are now only used
-> on one of them.
-> 
-> I tried moving everything that the combined mach-exynos needs out
-> of plat-samsung, but that resulted in about 500-600 lines of duplication
-> between s3c and exynos for pm-common.c, pm-common.h, pmdebug.c
-> and pm-check.c, so those four files should probably remain shared
-> for now.
+Hmm...I thought other SoCs have no problem on cpuidle except exynos5420 and
+exynos5440....something like this would be helpful to avoid system failure.
+But unfortunately this conflicts with Pankaj's cleanup cpufreq_init() and
+cpuidle_init() patch you've reviewed and I've applied in my local...
 
-OK.
+I'm going to check which exynos is ok on cpuidle and then sort them out.
 
-Best regards,
-Tomasz
+Thanks,
+Kukjin
+
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  arch/arm/mach-exynos/exynos.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index f38cf7c..176bbf5 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -173,10 +173,8 @@ static struct platform_device exynos_cpuidle = {
+> 
+>  void __init exynos_cpuidle_init(void)
+>  {
+> -	if (soc_is_exynos5440())
+> -		return;
+> -
+> -	platform_device_register(&exynos_cpuidle);
+> +	if (soc_is_exynos4210() || soc_is_exynos5250())
+> +		platform_device_register(&exynos_cpuidle);
+>  }
+> 
+>  void __init exynos_cpufreq_init(void)
+> --
+> 1.9.3
