@@ -1,14 +1,11 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v5 01/14] drm/exynos: dsi: move the EoT packets configuration
- point
-Date: Tue, 08 Jul 2014 09:39:34 +0900
-Message-ID: <1404779987-5337-2-git-send-email-yj44.cho@samsung.com>
-References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH v5 00/14] drm/exynos: support LCD I80 interface display
+Date: Tue, 08 Jul 2014 09:39:33 +0900
+Message-ID: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -22,52 +19,96 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This configuration could be used in MIPI DSI command mode also.
-And adds user manual description for display configuration.
+Hi,
 
-Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+This series adds LCD I80 interface display support for Exynos DRM driver.
+The FIMD(display controller) specification describes it as "LCD I80 interface"
+and the DSI specification describes it as "Command mode interface".
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 6302aa6..dad543a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -468,13 +468,19 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
- 	/* DSI configuration */
- 	reg = 0;
- 
-+	/* The first bit of mode_flags specifies display configuration.
-+	 * If this bit is set[= MIPI_DSI_MODE_VIDEO], dsi will support video
-+	 * mode, otherwise it will support command mode.
-+	 */
- 	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO) {
- 		reg |= DSIM_VIDEO_MODE;
- 
-+		/*
-+		 * The user manual describes that following bits are ignored in
-+		 * command mode.
-+		 */
- 		if (!(dsi->mode_flags & MIPI_DSI_MODE_VSYNC_FLUSH))
- 			reg |= DSIM_MFLUSH_VS;
--		if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
--			reg |= DSIM_EOT_DISABLE;
- 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
- 			reg |= DSIM_SYNC_INFORM;
- 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
-@@ -491,6 +497,9 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
- 			reg |= DSIM_HSA_MODE;
- 	}
- 
-+	if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
-+		reg |= DSIM_EOT_DISABLE;
-+
- 	switch (dsi->format) {
- 	case MIPI_DSI_FMT_RGB888:
- 		reg |= DSIM_MAIN_PIX_FORMAT_RGB888;
+This is based on exynos-drm-next branch.
+
+The previous patches,
+RFC: http://www.spinics.net/lists/dri-devel/msg58898.html
+V1: http://www.spinics.net/lists/dri-devel/msg59291.html
+V2: http://www.spinics.net/lists/dri-devel/msg59867.html
+V3: http://www.spinics.net/lists/dri-devel/msg60708.html
+V4: http://www.spinics.net/lists/dri-devel/msg60943.html
+
+Changelog v2:
+- Fixes typo and removes unnecessary error log (commented by Andrzej Hazda)
+- Adds missed pendlig_flip flag clear points (commented by Daniel Kurtz)
+
+Changelog v3:
+- Removes generic command mode and command mode display timing interface.
+- Moves I80 interface timings from panel DT to the FIMD(display controller) DT.
+
+Changelog v4:
+- Removes exynos5 sysreg(syscon) DT bindings and node from dtsi because
+  it was already updated by linux-samsung-soc (commented by Vivek Gautam)
+
+Changelog v5:
+- Fixes FIMD vidcon0 register relevant code
+- Fixes panel gamma table, disable sequence
+- Slitely updates for code cleanup
+
+Patches 1 and 2 fix trivial bugs.
+
+Patches 3, 4, 5 and 6 implement FIMD(display controller) I80 interface.
+The MIPI DSI command mode based panel generates Tearing Effect synchronization
+signal between MCU and FB to display video image, and FIMD should trigger to
+transfer video image at this signal.
+So the panel should receive the TE IRQ and call TE handler chains to notify
+it to the FIMD.
+
+Patches 7 and 8 implement to use Exynos5410 / 5420 / 5440 SoC DSI driver
+which is different from previous Exynos4 SoCs for some registers control.
+
+Patches 9 and 10 introduce MIPI DSI command mode based Samsung S6E3FA0 AMOLED
+5.7" LCD drm panel driver.
+
+The ohters add DT property nodes to support MIPI DSI command mode.
+
+I welcome any comments.
+
+Thank you.
+Best regards YJ
+
+YoungJun Cho (14):
+  drm/exynos: dsi: move the EoT packets configuration point
+  drm/exynos: use wait_event_timeout() for safety usage
+  ARM: dts: samsung-fimd: add LCD I80 interface specific properties
+  drm/exynos: add TE handler to support LCD I80 interface
+  drm/exynos: dsi: add pass TE host ops to support LCD I80 interface
+  drm/exynos: fimd: support LCD I80 interface
+  ARM: dts: exynos_dsim: add exynos5410 compatible to DT bindings
+  drm/exynos: dsi: add driver data to support Exynos5410/5420/5440 SoCs
+  ARM: dts: s6e3fa0: add DT bindings
+  drm/panel: add S6E3FA0 driver
+  ARM: dts: exynos4: add system register property
+  ARM: dts: exynos5: add system register property
+  ARM: dts: exynos5420: add mipi-phy node
+  ARM: dts: exynos5420: add dsi node
+
+ .../devicetree/bindings/panel/samsung,s6e3fa0.txt  |  46 ++
+ .../devicetree/bindings/video/exynos_dsim.txt      |   4 +-
+ .../devicetree/bindings/video/samsung-fimd.txt     |  28 +
+ arch/arm/boot/dts/exynos4.dtsi                     |   1 +
+ arch/arm/boot/dts/exynos5.dtsi                     |   1 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |  20 +
+ drivers/gpu/drm/exynos/Kconfig                     |   1 +
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c           |  15 +-
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h           |   7 +
+ drivers/gpu/drm/exynos/exynos_drm_drv.h            |   3 +
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            | 181 ++++++-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c           | 276 ++++++++--
+ drivers/gpu/drm/panel/Kconfig                      |   7 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-s6e3fa0.c              | 569 +++++++++++++++++++++
+ include/drm/drm_mipi_dsi.h                         |   7 +
+ include/video/samsung_fimd.h                       |   3 +-
+ 17 files changed, 1098 insertions(+), 72 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+ create mode 100644 drivers/gpu/drm/panel/panel-s6e3fa0.c
+
 -- 
 1.9.0
