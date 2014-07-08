@@ -1,50 +1,75 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2] drivers: phy: exynos-usb2: add support for Exynos 3250
-Date: Tue, 08 Jul 2014 16:32:45 +0200
-Message-ID: <53BC010D.1080303@samsung.com>
-References: <1404725966-12331-1-git-send-email-m.szyprowski@samsung.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH v7] ARM: EXYNOS: Use MCPM call-backs to support S2R on
+ Exynos5420
+Date: Tue, 8 Jul 2014 16:19:24 +0100
+Message-ID: <20140708151924.GF24915@e102568-lin.cambridge.arm.com>
+References: <1404496024-7113-1-git-send-email-a.kesavan@samsung.com>
+ <1404503133-19760-1-git-send-email-a.kesavan@samsung.com>
+ <alpine.LFD.2.11.1407041659330.22282@knanqh.ubzr>
+ <CAM4voa=13pvayq2d1Om9U5gCd6Nqf-T8OvuAQ6cbeerGK1fgrg@mail.gmail.com>
+ <20140708105351.GA24915@e102568-lin.cambridge.arm.com>
+ <CAM4voam18g76JKoaEFJnYLEzexxPpSBYjByhg+2aSfANQ2venA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:17851 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751834AbaGHOdT (ORCPT
+Received: from service87.mimecast.com ([91.220.42.44]:42923 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750707AbaGHPT2 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 10:33:19 -0400
-In-reply-to: <1404725966-12331-1-git-send-email-m.szyprowski@samsung.com>
+	Tue, 8 Jul 2014 11:19:28 -0400
+In-Reply-To: <CAM4voam18g76JKoaEFJnYLEzexxPpSBYjByhg+2aSfANQ2venA@mail.gmail.com>
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Kamil Debski <k.debski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Douglas Anderson <dianders@chromium.org>
 
-On 07.07.2014 11:39, Marek Szyprowski wrote:
-> This patch adds support for Exynos3250 SoC to Exynos2USB PHY driver.
-> Although Exynos3250 has only one device phy interface, the register
-> layout and all operations that are required to get it enabled are almost
-> same as on Exynos4x12. The only different is one more register
-> (REFCLKSEL) which need to be set and lack of MODE SWITCH register.
+On Tue, Jul 08, 2014 at 02:39:37PM +0100, Abhilash Kesavan wrote:
+> Hi Lorenzo,
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> 
-> Changelog:
-> v2:
-> - added new binding documentation
-> - removed superfluous defines
-> - removed mode switch for 3250, because it is not really needed
-> 
-> ---
->  Documentation/devicetree/bindings/phy/samsung-phy.txt |  2 ++
->  drivers/phy/Kconfig                                   | 12 ++++++------
->  drivers/phy/phy-exynos4x12-usb2.c                     | 17 +++++++++++++++--
->  drivers/phy/phy-samsung-usb2.c                        |  6 ++++++
->  drivers/phy/phy-samsung-usb2.h                        |  2 ++
->  5 files changed, 31 insertions(+), 8 deletions(-)
-> 
+> On Tue, Jul 8, 2014 at 4:23 PM, Lorenzo Pieralisi
+> <lorenzo.pieralisi@arm.com> wrote:
+> > On Fri, Jul 04, 2014 at 10:21:56PM +0100, Abhilash Kesavan wrote:
+> >> On Sat, Jul 5, 2014 at 2:30 AM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+> >> > On Sat, 5 Jul 2014, Abhilash Kesavan wrote:
+> >> >
+> >> >> Use the MCPM layer to handle core suspend/resume on Exynos5420.
+> >> >> Also, restore the entry address setup code post-resume.
+> >> >>
+> >> >> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> >> >
+> >> > Acked-by: Nicolas Pitre <nico@linaro.org>
+> >> This is one of the last missing bits for exynos MCPM. Thanks for your
+> >> patient reviews of all the exynos mcpm back-end patches.
+> >
+> > Sorry for the delay in getting back to you.
+> Thanks for your comments.
+> >
+> > You still need to handle the residency parameter in the MCPM suspend call
+> > properly to differentiate between core gating and cluster gating.
+> I am not too familiar with the cpuidle driver, but I see only cluster
+> power off state listed in the bL cpuidle driver.
+> >
+> > CPUidle might want to request a state that allows for core gating
+> > residency but not cluster gating one, in that case the last man
+> > standing must not shutdown the cluster.
+> For this, I would have to add another state to the bL cpuidle driver
+> or migrate to using your under-review generic idle state patchset.
+> Then based on the residency value skip/do cluster power down. Is this
+> correct ?
+> >
+> > This must be handled in the power down function, and it can be done
+> > in a separate patch since it is an optimization. Current MCPM interface has
+> > all it is needed to handle this properly, and I am keen on patching the
+> > CPUidle bL driver to pass the actual residency instead of hardcoding it
+> > to 0 (ie on TC2 it was not needed, no core gating).
+> I will look at doing this once the s2r patch gets merged.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Ok, let's get it done once the CPUidle bL driver DT version gets merged,
+I will add a patch that passes the proper residency and you can patch
+the MCPM back-end then, until then CPUidle will be suboptimal but I
+guess we can live with that for now.
 
---
-Best regards,
-Tomasz
+Thanks,
+Lorenzo
