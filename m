@@ -1,92 +1,95 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: dts: remove display power domain for exynos5420
-Date: Tue, 08 Jul 2014 17:34:39 +0200
-Message-ID: <53BC0F8F.4010106@samsung.com>
-References: <1402313299-18885-1-git-send-email-rahul.sharma@samsung.com>
- <CAPdUM4OVjRSqVdQDUJZR7vGm1uUEYr31s-tx7Oxs8tM_xc2v7g@mail.gmail.com>
- <53A12EA3.5010007@samsung.com>
- <CAPdUM4OK+ATMMRM67dV5JeeTGMu=XA7Gvi7Uif+Hypf3iP+6jg@mail.gmail.com>
- <CAPdUM4MToVJC5KRS1DUDmYEdUx2PGBE0G1v7p-SGgqpw7SPOhw@mail.gmail.com>
+Subject: Re: [PATCH 05/17] pwm: samsung: remove s5p64x0 related pwm codes
+Date: Tue, 08 Jul 2014 17:43:37 +0200
+Message-ID: <53BC11A9.5080008@samsung.com>
+References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
+ <1404163947-3105-6-git-send-email-kgene.kim@samsung.com>
+ <53B6618A.3050504@gmail.com> <53BB1DDD.1020307@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:20672 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:21020 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751581AbaGHPfN (ORCPT
+	with ESMTP id S1754086AbaGHPoK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 11:35:13 -0400
-In-reply-to: <CAPdUM4MToVJC5KRS1DUDmYEdUx2PGBE0G1v7p-SGgqpw7SPOhw@mail.gmail.com>
+	Tue, 8 Jul 2014 11:44:10 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N8E009MZH15RD20@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 Jul 2014 16:43:53 +0100 (BST)
+In-reply-to: <53BB1DDD.1020307@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
 
-Hi Rahul,
+Kukjin,
 
-On 07.07.2014 15:37, Rahul Sharma wrote:
-> Hi Andrej, Inki,
+On 08.07.2014 00:23, Kukjin Kim wrote:
+> On 07/04/14 17:10, Tomasz Figa wrote:
+>> Hi Kukjin,
+>>
+> Tomasz,
 > 
-> On 18 June 2014 12:06, Rahul Sharma <rahul.sharma@samsung.com> wrote:
->> Hi Andrej,
->>
->> On 18 June 2014 11:46, Andrzej Hajda <a.hajda@samsung.com> wrote:
->>> On 06/17/2014 07:49 AM, Rahul Sharma wrote:
->>>> Hi All,
->>>>
->>>> Please review this patch.
->>>>
->>>> Regards,
->>>> Rahul Sharma
->>>>
->>>> On 9 June 2014 16:58, Rahul Sharma <rahul.sharma@samsung.com> wrote:
->>>>> Display domain is removed due to instability issues. Explaining
->>>>> the problem below:
->>>>>
->>>>> exynos_init_late triggers the pm_genpd_poweroff_unused which
->>>>> powers off the unused power domains. This call hits before
->>>>> the trigger to deferred probes.
->>>>>
->>>>> DRM DP Panel defers the probe due to supply get failure. By the
->>>>> time, deferred probe is scheduled again, Display Power Domain is
->>>>> powered off by pm_genpd_poweroff_unused.
->>>>>
->>>>> FIMD and DP drivers are accessing registers during Probe and Bind
->>>>> callbacks. If display domain is enabled/disabled around register
->>>>> accesses, display domain gets unstable and we are getting Power
->>>>> Domain Disable fail notification. Increasing the Timeout also
->>>>> didn't help.
+>> On 30.06.2014 23:32, Kukjin Kim wrote:
+>>> This patch removes supporting s5p64x0 related pwm codes because of
+>>> no more support for S5P6440 and S5P6450 SoCs. And this patch changes
+>>> the name of s5p6440-pwm to exynos-pwm instead.
 >>>
->>> As I understand the problem is that fimd and dp drivers access hw
->>> registers without enabling power domain. So the proper solution is to
->>> fix these drivers.
->>
->> That is also a problem but I fixed those accesses in my local kernel before
->> hitting this issue. If we do register accesses in FIMD/DP probe/bind we
->> observes "Prefetch abort" exception. But here the problem is that 'DP
->> domain disable' starts failing if we enable/disable multiple times.
->>
+>>> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+>>> Cc: Thierry Reding<thierry.reding@gmail.com>
+>>> ---
+>>>   Documentation/devicetree/bindings/pwm/pwm-samsung.txt |    1 -
+>>>   arch/arm/boot/dts/exynos4210-universal_c210.dts       |    2 +-
+>>>   drivers/clocksource/samsung_pwm_timer.c               |   13 -------------
+>>>   drivers/pwm/pwm-samsung.c                             |    5 ++---
+>>>   4 files changed, 3 insertions(+), 18 deletions(-)
 >>>
->>> Btw. there are already patches removing hw access from probe/bind of
->>> fimd. I guess removing also hw access from dp probe/bind could be a good
->>> solution.
+>>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+>>> index 5538de9..43925d3 100644
+>>> --- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+>>> +++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+>>> @@ -11,7 +11,6 @@ Required properties:
+>>>   - compatible : should be one of following:
+>>>       samsung,s3c2410-pwm - for 16-bit timers present on S3C24xx SoCs
+>>>       samsung,s3c6400-pwm - for 32-bit timers present on S3C64xx SoCs
+>>> -    samsung,s5p6440-pwm - for 32-bit timers present on S5P64x0 SoCs
+>>>       samsung,s5pc100-pwm - for 32-bit timers present on S5PC100, S5PV210,
+>>>   			  Exynos4210 rev0 SoCs
+>>>       samsung,exynos4210-pwm - for 32-bit timers present on Exynos4210,
+>>> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+>>> index d50eb3a..0ca26e0 100644
+>>> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+>>> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+>>> @@ -461,7 +461,7 @@
+>>>   	};
+>>>
+>>>   	pwm@139D0000 {
+>>> -		compatible = "samsung,s5p6440-pwm";
+>>> +		compatible = "samsung,exynos4210-pwm";
 >>
->> Please let me know the links for posted patches. I will test with those patches.
+>> There is a reason to use a different compatible string for Exynos4210
+>> rev0. The PWM block is used as a timer there, while on newer revs MCT is
+>> used. Sorry, but I have to NAK this patch.
+>>
+> I remember why exynos4210-universal_c210 uses PWM...OK.
 > 
-> Is there any update on this? Please share the patches which fixes the
-> above issue or avoid the above scenario of multiple PM Domain enable/disable.
-> I will test them for exynos5 based boards. Otherwise we should get this change
-> merged else display will remain broken for exynos5 based boards.
+>> As I explained in my reply to patch 11/17, I'd suggest keeping the PWM
+>> drivers as is, because there is no need to remove support for DT
+>> compatible strings.
+>>
+> OK, let me remove pwm related patches in this series but I think need to 
+> update the compatible strings, at least remove non-support SoC in doc?...
 
-Andrzej is on holidays right now, so he won't be able to reply in this
-thread until he's back. Here are two patches I was able to find on the
-related MLs that might be fixing the cause of your issues:
+Device tree bindings are defined according to the first SoC in which
+given hardware variant appeared and since they are stable, they should
+stay as is. I don't think it will have any negative effects on
+maintenance costs and it doesn't imply that the SoC is still supported.
 
-[PATCH] drm/exynos: remove hardware overlays disable from fimd probe
-(https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31629.html)
-
-[PATCH] drm/exynos: fimd: Keep power enabled during fimd_bind
-(https://lkml.org/lkml/2014/7/4/188)
+(Anyway, with DT you can boot virtually any SoC, without the kernel
+being aware of it, as long as it supports all the necessary IP blocks.)
 
 Best regards,
 Tomasz
