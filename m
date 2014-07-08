@@ -1,43 +1,112 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [RESEND PATCHv2 3/3] ARM: dts: Add clock property for mfc_pd in 5420
-Date: Tue,  8 Jul 2014 10:24:34 +0530
-Message-ID: <1404795274-27307-4-git-send-email-arun.kk@samsung.com>
-References: <1404795274-27307-1-git-send-email-arun.kk@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:42473 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751874AbaGHEyx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 00:54:53 -0400
-In-Reply-To: <1404795274-27307-1-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v4 7/8] ARM: Exynos: switch to using generic cpufreq-cpu0 driver
+Date: Tue, 8 Jul 2014 10:45:14 +0530
+Message-ID: <CAKohpomfZZBzVSWzat3QHWv+M-dCN86P29Rsj1zgkwjjaHi+Xg@mail.gmail.com>
+References: <1400029876-5830-1-git-send-email-thomas.ab@samsung.com>
+	<61090198.zodNL4xIig@wuerfel>
+	<CAL_JsqL0Yi=SjAm0BtS_2SO2xg8kOaLsydo9m6qcZgb+Pcpa8Q@mail.gmail.com>
+	<11343238.VgTHVsC3iv@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <11343238.VgTHVsC3iv@wuerfel>
+Sender: cpufreq-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robherring2@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Rob Herring <rob.herring@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, Grant Likely <grant.likely@linaro.org>, Shawn Guo <shawn.guo@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, prathyush.k@samsung.com, abrestic@chromium.org, shaik.ameer@samsung.com, arunkk.samsung@gmail.com
 
-Adding the optional clock property for the mfc_pd for
-handling the re-parenting while pd on/off.
+Hi Arnd/Rob/Mike et al,
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/boot/dts/exynos5420.dtsi |    3 +++
- 1 file changed, 3 insertions(+)
+We didn't conclude anything out of this thread and so kicking it
+again as we need to close bindings to support cpufreq-cpu0
+better for platforms not sharing clock lines across all CPUs.
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 79e9119..1595722 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -260,6 +260,9 @@
- 	mfc_pd: power-domain@10044060 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044060 0x20>;
-+		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
-+			<&clock CLK_MOUT_USER_ACLK333>;
-+		clock-names = "oscclk", "pclk0", "clk0";
- 	};
- 
- 	disp_pd: power-domain@100440C0 {
--- 
-1.7.9.5
+https://lkml.org/lkml/2014/7/1/358
+
+On 14 May 2014 20:03, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wednesday 14 May 2014 08:45:23 Rob Herring wrote:
+
+>> We already have properties which indicate this driver can be used by a
+>> platform: opp table and a clock for the cpu. If this information is
+
+There can be platform drivers which also depend on these properties
+and picking cpufreq-cpu0 on this basis doesn't look correct.
+
+>> not sufficient to determine whether you can use this driver or not,
+>> then you simply need to match against the platform. Perhaps the match
+>> list should be a blacklist rather than a whitelist, so new platforms
+>> work without a kernel change.
+>
+> We'd not only need a blacklist, but also a way to tell whether we
+> want to use the cpu0 or the big/little implementation, which currently
+> have indistinguishable bindings.
+
+Correct and there can be other platform drivers which cannot use
+cpufreq-cpu0 (though I am trying to force people to use cpufreq-cpu0
+instead of a new driver).
+
+Is something terribly wrong with having a property at 'cpus' node
+which can point to the driver we want to use? Like:
+
+        cpus {
+                #address-cells = <1>;
+                #size-cells = <0>;
+                scaling-method = "cpufreq-cpu0"
+
+                cpu@0 {
+                        ....
+                };
+
+                ....
+        };
+
+Or if we can reuse compatibility string some way.
+
+
+[Copying mail from Mike]
+
+On 15 May 2014 02:46, Mike Turquette <mturquette@linaro.org> wrote:
+> The hardware property that matters for cpufreq-cpu0 users is that a
+> multi-core CPU uses a single clock input to scale frequency across all
+> of the cores in that cluster. So an accurate description is:
+>
+> scaling-method = "clock-ganged"; //hardware-people-speak
+>
+> Or,
+>
+> scaling-method = "clock-shared"; //software-people-speak
+>
+> Versus independently scalable CPUs in an SMP cluster:
+>
+> scaling-method = "independent"; //x86, Krait, etc.
+>
+> Or perhaps instead of "independent" at the parent "cpus" node we would
+> put the following in each cpu@N node:
+>
+> scaling-method = "clock";
+>
+> Or "psci" or "acpi" or whatever.
+>
+> Thought exercise: for Hyperthreaded(tm) CPUs with 2 virtual cores for
+> every hard CPU (and multiple CPUs in a cluster):
+>
+> scaling-method = "paired";
+>
+> Or more simply, "hyperthreaded".
+
+Probably we have mixed both the problems. We have two problems to
+solve:
+- Identifying which driver to probe for a platform, earlier explanation
+I tried to gave were around that..
+
+- Identifying if clocks are shared between CPUs? If yes which ones?
+
+Probably Mike's suggestions were around this second problem, but
+I still couldn't make out which CPUs share clock line from his
+examples.
+
+Please see if we can close this thread soon... Few platforms are waiting
+to reuse cpufreq-cpu0 :)
+
+--
+viresh
