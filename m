@@ -1,40 +1,99 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: mixer_check_mode drops Exynos5 display modes
-Date: Tue, 8 Jul 2014 14:59:16 +0100
-Message-ID: <CAD8Lp44L0mAAAoVfuXK7RrRe0VaxB0dx27JExpf2AOBKsqBT-A@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
+Date: Tue, 08 Jul 2014 23:02:33 +0900
+Message-ID: <036c01cf9ab5$43c5d370$cb517a50$@samsung.com>
+References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
+ <1403618235-19353-6-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sean Paul <seanpaul@chromium.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:47823 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753505AbaGHOCj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 8 Jul 2014 10:02:39 -0400
+In-reply-to: <1403618235-19353-6-git-send-email-t.figa@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Jonghwan Choi' <jhbird.choi@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>
 
-Hi Sean,
+Tomasz Figa wrote:
+> 
+> Due to recent consolidation of Exynos suspend and cpuidle code, some
+> parts of suspend and resume sequences are executed two times, once from
+> exynos_pm_syscore_ops and then from exynos_cpu_pm_notifier() and thus it
+> breaks suspend, at least on Exynos4-based boards.
+> 
++ Jonghwan Choi
 
-While looking at the following commit I noticed something:
+Yes, right. We moved the functionality into cpu_pm notifier in the commit ID
+0ebc13e2 ("ARM: EXYNOS: Move the power sequence call in the cpu_pm notifier"),
+so this should be fixed as you pointed out. But I talked to my colleague
+Jonghwan about this and we need more time to have a look in detail for every
+exynos SoCs. Will be back soon.
 
-commit f041b257a8997c8472a1013e9f252c3e2a1d879e
-Author: Sean Paul <seanpaul@chromium.org>
-Date:   Thu Jan 30 16:19:15 2014 -0500
+Thanks,
+Kukjin
 
-    drm/exynos: Remove exynos_drm_hdmi shim
-
-
-This commit changes how mixer_check_mode() is used. It used to just
-exclude certain modes on old mixer versions, but now it seems to be
-called unconditionally, for all mixer versions. I guess the effect
-here is that some modes on exynos5 setups are dropped whereas they
-weren't before. Is that intentional?
-
-Thanks
-Daniel
+> This patch fixes the issue by removing exynos_pm_syscore_ops completely
+> and making the code rely only on CPU PM notifier.
+> 
+> Tested on Exynos4210-based Trats board.
+> 
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  arch/arm/mach-exynos/pm.c | 20 ++++----------------
+>  1 file changed, 4 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index 87c0d34..98d4926 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -364,11 +364,6 @@ early_wakeup:
+>  	return;
+>  }
+> 
+> -static struct syscore_ops exynos_pm_syscore_ops = {
+> -	.suspend	= exynos_pm_suspend,
+> -	.resume		= exynos_pm_resume,
+> -};
+> -
+>  /*
+>   * Suspend Ops
+>   */
+> @@ -438,19 +433,13 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+> 
+>  	switch (cmd) {
+>  	case CPU_PM_ENTER:
+> -		if (cpu == 0) {
+> -			exynos_pm_central_suspend();
+> -			exynos_cpu_save_register();
+> -		}
+> +		if (cpu == 0)
+> +			exynos_pm_suspend();
+>  		break;
+> 
+>  	case CPU_PM_EXIT:
+> -		if (cpu == 0) {
+> -			if (!soc_is_exynos5250())
+> -				scu_enable(S5P_VA_SCU);
+> -			exynos_cpu_restore_register();
+> -			exynos_pm_central_resume();
+> -		}
+> +		if (cpu == 0)
+> +			exynos_pm_resume();
+>  		break;
+>  	}
+> 
+> @@ -475,6 +464,5 @@ void __init exynos_pm_init(void)
+>  	tmp |= ((0xFF << 8) | (0x1F << 1));
+>  	__raw_writel(tmp, S5P_WAKEUP_MASK);
+> 
+> -	register_syscore_ops(&exynos_pm_syscore_ops);
+>  	suspend_set_ops(&exynos_suspend_ops);
+>  }
+> --
+> 1.9.3
