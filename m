@@ -1,38 +1,44 @@
-From: "Javi Merino" <javi.merino@arm.com>
-Subject: Re: [PATCH] thermal: Add missing cpumask_clear
-Date: Tue, 8 Jul 2014 14:56:14 +0100
-Message-ID: <20140708135613.GD2796@e104805>
-References: <000001cf9771$e2f465c0$a8dd3140$@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 0/2] cpuidle fixes and cleanup
+Date: Tue, 08 Jul 2014 15:56:48 +0200
+Message-ID: <53BBF8A0.1050005@samsung.com>
+References: <1404225158-8453-1-git-send-email-k.chander@samsung.com>
+ <20140701145244.GX32514@n2100.arm.linux.org.uk>
+ <CADWw7OgCgg8aE4W6LwmU3axDdmt-5uH=a+0fSSErfqDci3nNUA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:59171 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751931AbaGHN4U convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 09:56:20 -0400
-In-Reply-To: <000001cf9771$e2f465c0$a8dd3140$@samsung.com>
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <CADWw7OgCgg8aE4W6LwmU3axDdmt-5uH=a+0fSSErfqDci3nNUA@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chander Kashyap <k.chander@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Shawn Guo <shawn.guo@freescale.com>, Will Deacon <will.deacon@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jonghwan Choi <jhbird.choi@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 'Eduardo Valentin' <eduardo.valentin@ti.com>, 'Jonghwa Lee' <jonghwa3.lee@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, 'Lukasz Majewski' <l.majewski@samsung.com>
 
-On Fri, Jul 04, 2014 at 11:22:40AM +0100, Jonghwan Choi wrote:
-> Cpumasks should be cleared before using.
+On 02.07.2014 05:11, Chander Kashyap wrote:
+> On Tue, Jul 1, 2014 at 8:22 PM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+>> On Tue, Jul 01, 2014 at 08:02:36PM +0530, Chander Kashyap wrote:
+>>> This patch series fixes the cpuidle for different states. Also removes arm
+>>> diagnostic and power register save/restore code as it is made generic.
+>>>
+>>> Based on:
+>>> ARM: save/restore diagnostic register on Cortex-A9 suspend/resume
+>>>  http://www.spinics.net/lists/arm-kernel/msg340506.html
+
+[Ccing people who participated in discussion in that thread]
+
+>>
+>> As there is an outstanding issue with this patch, we can't proceed with
+>> this set of changes until we know what's going on there.
 > 
-> Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
-> ---
->  drivers/thermal/db8500_cpufreq_cooling.c        |    1 +
->  drivers/thermal/imx_thermal.c                   |    1 +
->  drivers/thermal/samsung/exynos_thermal_common.c |    1 +
->  3 files changed, 3 insertions(+)
+> Sure, I will wait for the conclusion.
 
-Reviewed-by: Javi Merino <javi.merino@arm.com>
+So I believe the conclusion was that this can't be handled in generic
+way, because on systems running in non-secure mode writing to those
+registers faults.
 
-You should send this patch to linux-pm, I think it should go via the
-thermal tree.
+However I believe this could be moved into generic helpers.
 
-Cheers,
-Javi
+Best regards,
+Tomasz
