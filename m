@@ -1,98 +1,73 @@
-From: Sonny Rao <sonnyrao@chromium.org>
-Subject: Re: Using s5p-sss hw crypto causes ipsec to break
-Date: Mon, 7 Jul 2014 17:05:19 -0700
-Message-ID: <CAPz6YkXDUaKh_-4BN9fYrCnkMPT1ir-DVv7sJKzk3_V2AnPdBw@mail.gmail.com>
-References: <CAPz6YkUtGt61YNcGh2sYhaL=U5JMSOu26DvuKXuvp-oxi9ftBw@mail.gmail.com>
- <20140626063544.GA17608@gondor.apana.org.au>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: [PATCH v5 01/14] drm/exynos: dsi: move the EoT packets configuration
+ point
+Date: Tue, 08 Jul 2014 09:39:34 +0900
+Message-ID: <1404779987-5337-2-git-send-email-yj44.cho@samsung.com>
+References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <20140626063544.GA17608@gondor.apana.org.au>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, naveen krishna <ch.naveen@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Vladimir Zapolskiy <vzapolskiy@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 25, 2014 at 11:35 PM, Herbert Xu
-<herbert@gondor.apana.org.au> wrote:
-> Sonny Rao <sonnyrao@chromium.org> wrote:
->> Hi, I've been investigating an issue relating to hardware crypto which
->> is that when I enable the s5p-sss module for hardware cryptographic
->> acceleration on Samsung Exynos SoCs the in-kernel IPSec seems to
->> break, although cryptographic operations on filesystems/block devices
->> using this driver seem to work fine.
->>
->> Originally we were looking at an older kernel (3.8 with patches), but
->> I've now verified on linux-next from 20140612 (after 3.15) with a few
->> additional patches (to enable both s5p-sss and Exynos5420) that this
->> is still the case.
->>
->> It looks like what is happening in the kernel is that IPsec ends up
->> with this callstack
->>
->> esp_output()-> crypto_aead_givencrypt()->
->> crypto_authenc_givencrypt()-> eseqiv_givencrypt() ->
->> crypto_ablkcipher_encrypt()
->>
->>
->> which calls into the s5p-sss driver and that is returning -EINPROGRESS
->> (or possibly -EBUSY), and that is passed all the way back up the call
->> stack and that seems to be treated as an error condition by the ipsec
->> stack.
->>
->> For example esp_output does this:
->>
->>       err = crypto_aead_givencrypt(req);
->>        if (err == -EINPROGRESS)
->>                goto error;
->>
->>        if (err == -EBUSY)
->>                err = NET_XMIT_DROP;
->>
->> So, I'm not sure how this is supposed to work, or if s5p-sss is doing
->> something wrong.
->
-> Something else must be happening because EINPROGRESS is meant to
-> be handled by xfrm_output_resume (which gets called on the normal
-> path as well as on the actual resume path).
->
-> So I don't think this is your problem.
->
-> Cheers,
+This configuration could be used in MIPI DSI command mode also.
+And adds user manual description for display configuration.
 
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-Hi Herbert, thanks for the reply.  Sorry for the delay in my response,
-I just got a chance to look at this again with the information you
-provided.
-
-It looks like the driver is rejecting the encryption request, and is
-calling xfrm_output_resume with -22 (-EINVAL) because in
-s5p_set_indata() this driver is calling sg_dma_len() on the sg lists
-from the crypto request and getting back something that isn't a
-multiple of AES_BLOCK_SIZE, and thus decides that this isn't a valid
-request.
-
-In my particular test, It looks like it's getting a dma size of
-either 92 or 124 bytes while AES_BLOCK_SIZE is 16 bytes, and neither
-of those are multiples of 16. I looked into why this was happening and
-it looks like in eseqiv_givencrypt() we're calling
-ablkcipher_request_set_crypt() with a value of either 80 or 112 (which
-is a multiple of AES_BLOCK_SIZE) while reqctx->src->length is 96 or
-124.
-
-I think this is happening because the sg list associated with the
-request has been set up for a network transfer, which is of a larger
-size than what needs to be encrypted due to additional network
-headers.
-
-So, I'm wondering, is it correct for the HW crypto driver to be using
-this sg list, which is part of the request , or should it somehow be
-using different sg lists with the proper length for it's DMA
-operations, or should that be happening somewhere else in the network
-stack?
-
-
-> --
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: http://gondor.apana.org.au/~herbert/
-> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 6302aa6..dad543a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -468,13 +468,19 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
+ 	/* DSI configuration */
+ 	reg = 0;
+ 
++	/* The first bit of mode_flags specifies display configuration.
++	 * If this bit is set[= MIPI_DSI_MODE_VIDEO], dsi will support video
++	 * mode, otherwise it will support command mode.
++	 */
+ 	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO) {
+ 		reg |= DSIM_VIDEO_MODE;
+ 
++		/*
++		 * The user manual describes that following bits are ignored in
++		 * command mode.
++		 */
+ 		if (!(dsi->mode_flags & MIPI_DSI_MODE_VSYNC_FLUSH))
+ 			reg |= DSIM_MFLUSH_VS;
+-		if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
+-			reg |= DSIM_EOT_DISABLE;
+ 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+ 			reg |= DSIM_SYNC_INFORM;
+ 		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
+@@ -491,6 +497,9 @@ static int exynos_dsi_init_link(struct exynos_dsi *dsi)
+ 			reg |= DSIM_HSA_MODE;
+ 	}
+ 
++	if (!(dsi->mode_flags & MIPI_DSI_MODE_EOT_PACKET))
++		reg |= DSIM_EOT_DISABLE;
++
+ 	switch (dsi->format) {
+ 	case MIPI_DSI_FMT_RGB888:
+ 		reg |= DSIM_MAIN_PIX_FORMAT_RGB888;
+-- 
+1.9.0
