@@ -1,39 +1,72 @@
-From: Sachin Kamat <spk.linux@gmail.com>
-Subject: Re: [PATCH 1/3] ARM: exynos: remove unused <mach/memory.h>
-Date: Tue, 8 Jul 2014 20:50:13 +0530
-Message-ID: <CAK5sBcF_kLbky_88ZR1xTUWj5PsrZrzx7hEC=chqP72QpqP5ug@mail.gmail.com>
-References: <1404295043-6661-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
+Date: Tue, 8 Jul 2014 08:27:47 -0700
+Message-ID: <CAD=FV=WQWBkq5JKttikLkyKEDX-YydQJLr9=bFWifpy2Lf0mSg@mail.gmail.com>
+References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>
+	<CACRpkdZrDJ3xoUYGynf0sO4-U7ZVkJ=Mr_pNVSdar8oM85aVgA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f175.google.com ([209.85.217.175]:42324 "EHLO
-	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753063AbaGHPUP convert rfc822-to-8bit (ORCPT
+Received: from mail-vc0-f172.google.com ([209.85.220.172]:47763 "EHLO
+	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752859AbaGHP1s (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 11:20:15 -0400
-Received: by mail-lb0-f175.google.com with SMTP id n15so4027315lbi.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Jul 2014 08:20:13 -0700 (PDT)
-In-Reply-To: <1404295043-6661-1-git-send-email-u.kleine-koenig@pengutronix.de>
+	Tue, 8 Jul 2014 11:27:48 -0400
+Received: by mail-vc0-f172.google.com with SMTP id hy10so5606954vcb.17
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Jul 2014 08:27:47 -0700 (PDT)
+In-Reply-To: <CACRpkdZrDJ3xoUYGynf0sO4-U7ZVkJ=Mr_pNVSdar8oM85aVgA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Vikas Sajjan <vikas.sajjan@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Houcheng Lin <houcheng@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Vikas Sajjan <sajjan.linux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
 
-On Wed, Jul 2, 2014 at 3:27 PM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> ARCH_EXYNOS doesn't select NEED_MACH_MEMORY_H, so <asm/memory.h> does=
-n't
-> include <mach/memory.h> and so this file is not used and can go away.
+Hi,
+
+On Tue, Jul 8, 2014 at 12:46 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Jun 26, 2014 at 11:15 AM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
 >
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> ---
+>> From: Doug Anderson <dianders@chromium.org>
+>>
+>> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
+>> being reset across sleep/wake.  If we don't set it to anything then
+>> the TPM will be reset.  U-Boot will detect this as invalid
+>> and will reset the system on resume time. This GPIO can always be low
+>> and not hurt anything.  It will get pulled back high again during a
+>> normal warm reset when it will default back to an input.
+>>
+>> To properly preserve the TPM state across suspend/resume and to make
+>> the chrome U-Boot happy, properly set the GPIO to mask the
+>> reset to the TPM.
+>>
+>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> (...)
+>> +       /* We need GPX0_6 to be low at sleep time; just keep it low always */
+>> +       mask_tpm_reset_regulator: mask-tpm-reset-regulator {
+>> +       compatible = "regulator-fixed";
+>
+> No matter how the discussion ends up, regulator-fixed is wrong.
 
-Reviewed-by: Sachin Kamat <sachin.kamat@samsung.com>
+OK, fair enough.
 
-Tested on Arndale octa board (Exynos 5420).
 
- Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
---=20
-Regards,
-Sachin.
+> Either folding it into the TPM driver or using a separate reset driver
+> is fine with me.
+
+OK, Vikas: do you want to code up the driver?
+
+
+> So what about the generic delayed reset GPIO thing?
+> http://marc.info/?l=linux-kernel&m=140309916607115&w=2
+
+That's a neat concept and could be useful in other cases, but I think
+it's just as much of a hack as using a regulator.  This is not a reset
+signal for the TPM.  This is a signal that will mask the CPU's reset
+signal (using a special bit of board-specific logic).
+
+
+Personally I think Tomasz's idea of using hogs (after his patches
+allowing a default output level) is the cleanest, but I think Stephen
+didn't like that.
+
+-Doug
