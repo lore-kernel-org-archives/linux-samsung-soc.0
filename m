@@ -1,66 +1,54 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: Re: [PATCH v5 3/3] clk: samsung: exynos5420: Setup clocks before
- system suspend
-Date: Tue, 8 Jul 2014 14:22:24 +0530
-Message-ID: <CAGm_ybgg+CTPLrPNepLdZwDcpevKPU_qgSyhvAFXLPiiGmM22Q@mail.gmail.com>
-References: <1403781135-6538-1-git-send-email-vikas.sajjan@samsung.com>
-	<1403781135-6538-4-git-send-email-vikas.sajjan@samsung.com>
-	<53B1A562.6000300@samsung.com>
-	<CAGm_ybgLdPrXX-kZJdTeFZxxNZ-Ehtn7M3JxYb0ZYfDZnfszUw@mail.gmail.com>
-	<53BBAF1B.9080309@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/6] pinctrl: samsung: Decouple direction setting from pinctrl
+Date: Tue, 8 Jul 2014 10:54:19 +0200
+Message-ID: <CACRpkdZ_Ec-1BNOema4Y4GfQnpQ931b9DKg4ngndQD_8GSuW7Q@mail.gmail.com>
+References: <1404315664-3174-1-git-send-email-t.figa@samsung.com>
+	<1404315664-3174-2-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f177.google.com ([74.125.82.177]:56838 "EHLO
-	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751842AbaGHIwZ (ORCPT
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:53968 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753013AbaGHIyT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 04:52:25 -0400
-Received: by mail-we0-f177.google.com with SMTP id u56so5561943wes.22
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Jul 2014 01:52:24 -0700 (PDT)
-In-Reply-To: <53BBAF1B.9080309@gmail.com>
+	Tue, 8 Jul 2014 04:54:19 -0400
+Received: by mail-oa0-f47.google.com with SMTP id n16so6022124oag.6
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Jul 2014 01:54:19 -0700 (PDT)
+In-Reply-To: <1404315664-3174-2-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, Doug Anderson <dianders@chromium.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>
 
-On Tue, Jul 8, 2014 at 2:13 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Vikas,
+On Wed, Jul 2, 2014 at 5:40 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+
+> This patch makes the pinctrl-samsung driver configure GPIO direction on
+> its own, without using the pinctrl_gpio_direction_*() "helpers". The
+> rationale behind this change is as follows:
+>  - pinctrl-samsung does not need translation from GPIO namespace to
+>    pinctrl namespace to handle GPIO operations - GPIO chip and offset
+>    therein are enough to calculate necessary offsets and bit masks in
+>    constant time,
+>  - the pinctrl_gpio_direction_*() functions do not do anything useful
+>    other than translating the pin into pinctrl namespace and calling the
+>    .gpio_set_direction() from pinmux_ops of the controller,
+>  - the undesirable side effect of using those helpers is losing the
+>    ability to change GPIO direction in atomic context, because they
+>    explicitly use a mutex for synchronization,
 >
-> On 08.07.2014 06:34, Vikas Sajjan wrote:
->> Hi Kukjin,
->>
->> On Mon, Jun 30, 2014 at 11:28 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->>> Hi Vikas, Abhilash,
->>>
->>> On 26.06.2014 13:12, Vikas Sajjan wrote:
->>>> Prior to suspending the system, we need to ensure that certain
->>>> clock source and gate registers are unmasked.
->>>>
->>>> while at it, add these clks to save/restore list also.
->>>>
->>>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
->>>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->>>> ---
->>>>  drivers/clk/samsung/clk-exynos5420.c |   29 +++++++++++++++++++++++++++++
->>>>  1 file changed, 29 insertions(+)
->>>
->>> Looks good. Will apply.
->>>
->>
->> Can you apply this patch.
+> Results of this patch are:
+>  - fixed warnings about scheduling while atomic in code that needs to
+>    set GPIO direction in atomic context (e.g. interrupt handler),
+>  - reduced overhead of bitbanging drivers that use gpio_direction_*(),
+>    e.g. i2c-gpio.
 >
-> As I said, I will take this through the samsung-clk tree. The patch
-> should appear there soon.
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 
+Well the cross-call function is actually mostly for the case when
+the pinctrl and GPIO drivers are in different files, or you combine
+two IP blocks arbitrarily. It's a bit messy anyway.
 
-OK, Thanks.
+Patch applied.
 
-
->
-> Best regards,
-> Tomasz
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
