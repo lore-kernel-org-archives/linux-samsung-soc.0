@@ -1,88 +1,59 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v5 09/14] ARM: dts: s6e3fa0: add DT bindings
-Date: Tue, 08 Jul 2014 09:39:42 +0900
-Message-ID: <1404779987-5337-10-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH v5 02/14] drm/exynos: use wait_event_timeout() for safety usage
+Date: Tue, 08 Jul 2014 09:39:35 +0900
+Message-ID: <1404779987-5337-3-git-send-email-yj44.cho@samsung.com>
 References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:47666 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754266AbaGHAjz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 Jul 2014 20:39:55 -0400
 In-reply-to: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com
 
-This patch adds DT bindings for s6e3fa0 panel.
-The bindings describes panel resources and display timings.
+There could be the case that the page flip operation isn't finished correctly
+with some abnormal condition such as panel reset. So this patch replaces
+wait_event() with wait_event_timeout() to avoid waiting for page flip completion
+infinitely.
+And clears exynos_crtc->pending_flip in exynos_drm_crtc_page_flip()
+when exynos_drm_crtc_mode_set_commit() is failed.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- .../devicetree/bindings/panel/samsung,s6e3fa0.txt  | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-new file mode 100644
-index 0000000..2cd32f5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-@@ -0,0 +1,46 @@
-+Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
-+
-+Required properties:
-+  - compatible: "samsung,s6e3fa0"
-+  - reg: the virtual channel number of a DSI peripheral
-+  - vdd3-supply: core voltage supply
-+  - vci-supply: voltage supply for analog circuits
-+  - reset-gpios: a GPIO spec for the reset pin
-+  - det-gpios: a GPIO spec for the OLED detection pin
-+  - te-gpios: a GPIO spec for the TE pin
-+  - display-timings: timings for the connected panel as described by [1]
-+
-+Optional properties:
-+
-+The device node can contain one 'port' child node with one child 'endpoint'
-+node, according to the bindings defined in [2]. This node should describe
-+panel's video bus.
-+
-+[1]: Documentation/devicetree/bindings/video/display-timing.txt
-+[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
-+
-+Example:
-+
-+	panel@0 {
-+		compatible = "samsung,s6e3fa0";
-+		reg = <0>;
-+		vdd3-supply = <&vcclcd_reg>;
-+		vci-supply = <&vlcd_reg>;
-+		reset-gpios = <&gpy7 4 0>;
-+		det-gpios = <&gpg0 6 0>;
-+		te-gpios = <&gpd1 7 0>;
-+
-+		display-timings {
-+			timings0 {
-+				clock-frequency = <0>;
-+				hactive = <1080>;
-+				vactive = <1920>;
-+				hfront-porch = <2>;
-+				hback-porch = <2>;
-+				hsync-len = <1>;
-+				vfront-porch = <1>;
-+				vback-porch = <4>;
-+				vsync-len = <1>;
-+			};
-+		};
-+	};
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 95c9435..3bf091d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -69,8 +69,10 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+ 
+ 	if (mode > DRM_MODE_DPMS_ON) {
+ 		/* wait for the completion of page flip. */
+-		wait_event(exynos_crtc->pending_flip_queue,
+-				atomic_read(&exynos_crtc->pending_flip) == 0);
++		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
++				!atomic_read(&exynos_crtc->pending_flip),
++				HZ/20))
++			atomic_set(&exynos_crtc->pending_flip, 0);
+ 		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
+ 	}
+ 
+@@ -259,6 +261,7 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
+ 			spin_lock_irq(&dev->event_lock);
+ 			drm_vblank_put(dev, exynos_crtc->pipe);
+ 			list_del(&event->base.link);
++			atomic_set(&exynos_crtc->pending_flip, 0);
+ 			spin_unlock_irq(&dev->event_lock);
+ 
+ 			goto out;
 -- 
 1.9.0
