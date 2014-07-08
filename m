@@ -1,59 +1,47 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v5 02/14] drm/exynos: use wait_event_timeout() for safety usage
-Date: Tue, 08 Jul 2014 09:39:35 +0900
-Message-ID: <1404779987-5337-3-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH v5 11/14] ARM: dts: exynos4: add system register property
+Date: Tue, 08 Jul 2014 09:39:44 +0900
+Message-ID: <1404779987-5337-12-git-send-email-yj44.cho@samsung.com>
 References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47666 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754266AbaGHAjz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Jul 2014 20:39:55 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-There could be the case that the page flip operation isn't finished correctly
-with some abnormal condition such as panel reset. So this patch replaces
-wait_event() with wait_event_timeout() to avoid waiting for page flip completion
-infinitely.
-And clears exynos_crtc->pending_flip in exynos_drm_crtc_page_flip()
-when exynos_drm_crtc_mode_set_commit() is failed.
+This patch adds sysreg property to fimd device node
+which is required to use I80 interface.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos4.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 95c9435..3bf091d 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -69,8 +69,10 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
- 
- 	if (mode > DRM_MODE_DPMS_ON) {
- 		/* wait for the completion of page flip. */
--		wait_event(exynos_crtc->pending_flip_queue,
--				atomic_read(&exynos_crtc->pending_flip) == 0);
-+		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
-+				!atomic_read(&exynos_crtc->pending_flip),
-+				HZ/20))
-+			atomic_set(&exynos_crtc->pending_flip, 0);
- 		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
- 	}
- 
-@@ -259,6 +261,7 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
- 			spin_lock_irq(&dev->event_lock);
- 			drm_vblank_put(dev, exynos_crtc->pipe);
- 			list_del(&event->base.link);
-+			atomic_set(&exynos_crtc->pending_flip, 0);
- 			spin_unlock_irq(&dev->event_lock);
- 
- 			goto out;
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index b8ece4b..92ee786 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -608,6 +608,7 @@
+ 		clocks = <&clock CLK_SCLK_FIMD0>, <&clock CLK_FIMD0>;
+ 		clock-names = "sclk_fimd", "fimd";
+ 		samsung,power-domain = <&pd_lcd0>;
++		samsung,sysreg = <&sys_reg>;
+ 		status = "disabled";
+ 	};
+ };
 -- 
 1.9.0
