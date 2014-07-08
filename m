@@ -1,96 +1,42 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v5 04/14] drm/exynos: add TE handler to support LCD I80
- interface
-Date: Tue, 08 Jul 2014 09:39:37 +0900
-Message-ID: <1404779987-5337-5-git-send-email-yj44.cho@samsung.com>
-References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
+From: Laura Abbott <lauraa@codeaurora.org>
+Subject: Re: [PATCHv2 1/3] of: Split early_init_dt_scan into two parts
+Date: Mon, 07 Jul 2014 17:54:22 -0700
+Message-ID: <53BB413E.40900@codeaurora.org>
+References: <1404266608-3274-1-git-send-email-lauraa@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.11.231]:51213 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753505AbaGHAyZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 Jul 2014 20:54:25 -0400
+In-Reply-To: <1404266608-3274-1-git-send-email-lauraa@codeaurora.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <trblinux@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robherring2@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, afaerber@suse.de, devicetree@vger.kernel.org
 
-To support LCD I80 interface, the panel should generate
-Tearing Effect synchronization signal between MCU and FB
-to display video images.
-And the display controller should trigger to transfer
-video image at this signal.
-So the panel receives the TE IRQ, then calls these handler
-chains to notify it to the display controller.
+On 7/1/2014 7:03 PM, Laura Abbott wrote:
+> Currently, early_init_dt_scan validates the header, sets the
+> boot params, and scans for chosen/memory all in one function.
+> Split this up into two separate functions (validation/setting
+> boot params in one, scanning in another) to allow for
+> additional setup between boot params and scanning the memory.
+> 
+> Signed-off-by: Laura Abbott <lauraa@codeaurora.org>
 
-Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 8 ++++++++
- drivers/gpu/drm/exynos/exynos_drm_crtc.h | 7 +++++++
- drivers/gpu/drm/exynos/exynos_drm_drv.h  | 3 +++
- 3 files changed, 18 insertions(+)
+I haven't heard anything more on this series but the holiday weekend
+in the US probably affected that.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 3bf091d..b68e58f 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -511,3 +511,11 @@ int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
- 
- 	return -EPERM;
- }
-+
-+void exynos_drm_crtc_te_handler(struct drm_crtc *crtc)
-+{
-+	struct exynos_drm_manager *manager = to_exynos_crtc(crtc)->manager;
-+
-+	if (manager->ops->te_handler)
-+		manager->ops->te_handler(manager);
-+}
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-index 9f74b10..690dcdd 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-@@ -36,4 +36,11 @@ void exynos_drm_crtc_plane_disable(struct drm_crtc *crtc, int zpos);
- int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
- 					unsigned int out_type);
- 
-+/*
-+ * This function calls the crtc device(manager)'s te_handler() callback
-+ * to trigger to transfer video image at the tearing effect synchronization
-+ * signal.
-+ */
-+void exynos_drm_crtc_te_handler(struct drm_crtc *crtc);
-+
- #endif
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 06cde45..d4e0726 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -188,6 +188,8 @@ struct exynos_drm_display {
-  * @win_commit: apply hardware specific overlay data to registers.
-  * @win_enable: enable hardware specific overlay.
-  * @win_disable: disable hardware specific overlay.
-+ * @te_handler: trigger to transfer video image at the tearing effect
-+ *	synchronization signal if there is a page flip request.
-  */
- struct exynos_drm_manager;
- struct exynos_drm_manager_ops {
-@@ -206,6 +208,7 @@ struct exynos_drm_manager_ops {
- 	void (*win_commit)(struct exynos_drm_manager *mgr, int zpos);
- 	void (*win_enable)(struct exynos_drm_manager *mgr, int zpos);
- 	void (*win_disable)(struct exynos_drm_manager *mgr, int zpos);
-+	void (*te_handler)(struct exynos_drm_manager *mgr);
- };
- 
- /*
+Grant/Rob are you okay with taking this through the devicetree tree 
+if this gets a few more acks or would you rather this go through
+an ARM tree?
+
+Thanks,
+Laura
+
 -- 
-1.9.0
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
