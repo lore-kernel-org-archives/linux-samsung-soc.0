@@ -1,46 +1,168 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] thermal: exynos: fix ordering in exynos_tmu_remove()
-Date: Tue, 08 Jul 2014 15:09:56 +0200
-Message-ID: <10113119.9fnj2984Hk@amdc1032>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 2/6] ARM: EXYNOS: Fix core ID used by platsmp and hotplug
+ code
+Date: Tue, 08 Jul 2014 22:21:50 +0900
+Message-ID: <031001cf9aaf$959cf6c0$c0d6e440$@samsung.com>
+References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
+ <1403618235-19353-3-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:15944 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754784AbaGHNLo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 09:11:44 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1403618235-19353-3-git-send-email-t.figa@samsung.com>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-It might not be a problem currently but unregister/uninitialize things
-in the reverse order that they are registered/initialized.
+Tomasz Figa wrote:
+> 
+> When CPU topology is specified in device tree, cpu_logical_map() does
+> not return core ID anymore, but rather full MPIDR value. This breaks
+> existing calculation of PMU register offsets on Exynos SoCs.
+> 
+> This patch fixes the problem by adjusting the code to use only core ID
+> bits of the value returned by cpu_logical_map() to allow CPU topology to
+> be specified in device tree on Exynos SoCs.
+> 
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/thermal/samsung/exynos_tmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Looks good to me, but I think we don't need this fix in 3.16 because the CPU
+topology is not specified in DT yet...if I'm wrong, please correct me.
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index d7ca9f4..6243ba0 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -759,10 +759,10 @@ static int exynos_tmu_remove(struct platform_device *pdev)
- {
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
- 
--	exynos_tmu_control(pdev, false);
--
- 	exynos_unregister_thermal(data->reg_conf);
- 
-+	exynos_tmu_control(pdev, false);
-+
- 	clk_unprepare(data->clk);
- 	if (!IS_ERR(data->clk_sec))
- 		clk_unprepare(data->clk_sec);
--- 
-1.8.2.3
+Will apply for 3.17.
+
+Thanks,
+Kukjin
+
+> ---
+>  arch/arm/mach-exynos/hotplug.c | 10 ++++++----
+>  arch/arm/mach-exynos/platsmp.c | 34 +++++++++++++++++++---------------
+>  2 files changed, 25 insertions(+), 19 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+> index 69fa483..5644dac 100644
+> --- a/arch/arm/mach-exynos/hotplug.c
+> +++ b/arch/arm/mach-exynos/hotplug.c
+> @@ -40,11 +40,13 @@ static inline void cpu_leave_lowpower(void)
+> 
+>  static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+>  {
+> +	u32 mpidr = cpu_logical_map(cpu);
+> +	u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+> +
+>  	for (;;) {
+> 
+> -		/* make cpu1 to be turned off at next WFI command */
+> -		if (cpu == 1)
+> -			exynos_cpu_power_down(cpu);
+> +		/* Turn the CPU off on next WFI instruction. */
+> +		exynos_cpu_power_down(core_id);
+> 
+>  		/*
+>  		 * here's the WFI
+> @@ -54,7 +56,7 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+>  		    :
+>  		    : "memory", "cc");
+> 
+> -		if (pen_release == cpu_logical_map(cpu)) {
+> +		if (pen_release == core_id) {
+>  			/*
+>  			 * OK, proper wakeup, we're done
+>  			 */
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index 1c8d31e..50b9aad 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -90,7 +90,8 @@ static void exynos_secondary_init(unsigned int cpu)
+>  static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+>  {
+>  	unsigned long timeout;
+> -	unsigned long phys_cpu = cpu_logical_map(cpu);
+> +	u32 mpidr = cpu_logical_map(cpu);
+> +	u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+>  	int ret = -ENOSYS;
+> 
+>  	/*
+> @@ -104,17 +105,18 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+>  	 * the holding pen - release it, then wait for it to flag
+>  	 * that it has been released by resetting pen_release.
+>  	 *
+> -	 * Note that "pen_release" is the hardware CPU ID, whereas
+> +	 * Note that "pen_release" is the hardware CPU core ID, whereas
+>  	 * "cpu" is Linux's internal ID.
+>  	 */
+> -	write_pen_release(phys_cpu);
+> +	write_pen_release(core_id);
+> 
+> -	if (!exynos_cpu_power_state(cpu)) {
+> -		exynos_cpu_power_up(cpu);
+> +	if (!exynos_cpu_power_state(core_id)) {
+> +		exynos_cpu_power_up(core_id);
+>  		timeout = 10;
+> 
+>  		/* wait max 10 ms until cpu1 is on */
+> -		while (exynos_cpu_power_state(cpu) != S5P_CORE_LOCAL_PWR_EN) {
+> +		while (exynos_cpu_power_state(core_id)
+> +		       != S5P_CORE_LOCAL_PWR_EN) {
+>  			if (timeout-- == 0)
+>  				break;
+> 
+> @@ -145,20 +147,20 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+>  		 * Try to set boot address using firmware first
+>  		 * and fall back to boot register if it fails.
+>  		 */
+> -		ret = call_firmware_op(set_cpu_boot_addr, phys_cpu, boot_addr);
+> +		ret = call_firmware_op(set_cpu_boot_addr, core_id, boot_addr);
+>  		if (ret && ret != -ENOSYS)
+>  			goto fail;
+>  		if (ret == -ENOSYS) {
+> -			void __iomem *boot_reg = cpu_boot_reg(phys_cpu);
+> +			void __iomem *boot_reg = cpu_boot_reg(core_id);
+> 
+>  			if (IS_ERR(boot_reg)) {
+>  				ret = PTR_ERR(boot_reg);
+>  				goto fail;
+>  			}
+> -			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
+> +			__raw_writel(boot_addr, cpu_boot_reg(core_id));
+>  		}
+> 
+> -		call_firmware_op(cpu_boot, phys_cpu);
+> +		call_firmware_op(cpu_boot, core_id);
+> 
+>  		arch_send_wakeup_ipi_mask(cpumask_of(cpu));
+> 
+> @@ -227,22 +229,24 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+>  	 * boot register if it fails.
+>  	 */
+>  	for (i = 1; i < max_cpus; ++i) {
+> -		unsigned long phys_cpu;
+>  		unsigned long boot_addr;
+> +		u32 mpidr;
+> +		u32 core_id;
+>  		int ret;
+> 
+> -		phys_cpu = cpu_logical_map(i);
+> +		mpidr = cpu_logical_map(i);
+> +		core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+>  		boot_addr = virt_to_phys(exynos4_secondary_startup);
+> 
+> -		ret = call_firmware_op(set_cpu_boot_addr, phys_cpu, boot_addr);
+> +		ret = call_firmware_op(set_cpu_boot_addr, core_id, boot_addr);
+>  		if (ret && ret != -ENOSYS)
+>  			break;
+>  		if (ret == -ENOSYS) {
+> -			void __iomem *boot_reg = cpu_boot_reg(phys_cpu);
+> +			void __iomem *boot_reg = cpu_boot_reg(core_id);
+> 
+>  			if (IS_ERR(boot_reg))
+>  				break;
+> -			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
+> +			__raw_writel(boot_addr, cpu_boot_reg(core_id));
+>  		}
+>  	}
+>  }
+> --
+> 1.9.3
