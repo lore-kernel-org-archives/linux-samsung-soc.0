@@ -1,20 +1,20 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v6 2/4] ARM: EXYNOS: Refactored code for using PMU address
- via DT
-Date: Tue, 08 Jul 2014 16:28:09 +0200
-Message-ID: <53BBFFF9.5020306@samsung.com>
+Subject: Re: [PATCH v6 3/4] ARM: EXYNOS: Add platform driver support for Exynos
+ PMU
+Date: Tue, 08 Jul 2014 16:31:36 +0200
+Message-ID: <53BC00C8.4000204@samsung.com>
 References: <1404710376-16448-1-git-send-email-pankaj.dubey@samsung.com>
- <1404710376-16448-3-git-send-email-pankaj.dubey@samsung.com>
+ <1404710376-16448-4-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:27413 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:27594 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750707AbaGHO2n (ORCPT
+	with ESMTP id S1753811AbaGHOcK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 10:28:43 -0400
-In-reply-to: <1404710376-16448-3-git-send-email-pankaj.dubey@samsung.com>
+	Tue, 8 Jul 2014 10:32:10 -0400
+In-reply-to: <1404710376-16448-4-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
@@ -22,38 +22,33 @@ Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, jos
 
 Hi Pankaj,
 
-Except one minor comment inline, looks good.
+Just one comment I already had to previous version.
 
 On 07.07.2014 07:19, Pankaj Dubey wrote:
 
 [snip]
 
-> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
-> index 9315ba9..8f6a111 100644
-> --- a/arch/arm/mach-exynos/mcpm-exynos.c
-> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
-> @@ -55,7 +55,7 @@
->  	"dsb\n\t" \
->  	"ldmfd	sp!, {fp, ip}" \
->  	: \
-> -	: "Ir" (S5P_INFORM0) \
-> +	: "Ir" (pmu_base_addr + S5P_INFORM0) \
->  	: "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", \
->  	  "r9", "r10", "lr", "memory")
+> -static void exynos5_init_pmu(void)
+> +static void exynos5_powerdown_conf(enum sys_powerdown mode)
+>  {
+>  	unsigned int i;
+>  	unsigned int tmp;
+> @@ -382,51 +398,143 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
+>  {
+>  	unsigned int i;
 >  
-> @@ -337,7 +337,8 @@ static int __init exynos_mcpm_init(void)
->  	 * To increase the stability of KFC reset we need to program
->  	 * the PMU SPARE3 register
->  	 */
-> -	__raw_writel(EXYNOS5420_SWRESET_KFC_SEL, S5P_PMU_SPARE3);
-> +	__raw_writel(EXYNOS5420_SWRESET_KFC_SEL,
-> +			pmu_base_addr + S5P_PMU_SPARE3);
+> -	if (soc_is_exynos5250())
+> -		exynos5_init_pmu();
+> +	const struct exynos_pmu_data *pmu_data = pmu_context->pmu_data;
+> +
+> +	if (!pmu_data)
+> +		return;
 
-Here's yet another place where pmu_raw_writel() helper could be used.
-Maybe move them to a header, even common.h and then use whenever PMU is
-accessed in arch code.
+As I mentioned in my reply to previous version, I don't think there is
+any point in probing this driver when there is no pmu_data. AFAIK the
+generic syscon driver can take over in such case.
 
-With this minor thing fixed, feel free to add
+After fixing this, feel free to add
 
 Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
