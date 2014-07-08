@@ -1,44 +1,40 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 0/2] cpuidle fixes and cleanup
-Date: Tue, 08 Jul 2014 15:56:48 +0200
-Message-ID: <53BBF8A0.1050005@samsung.com>
-References: <1404225158-8453-1-git-send-email-k.chander@samsung.com>
- <20140701145244.GX32514@n2100.arm.linux.org.uk>
- <CADWw7OgCgg8aE4W6LwmU3axDdmt-5uH=a+0fSSErfqDci3nNUA@mail.gmail.com>
+From: Daniel Drake <drake@endlessm.com>
+Subject: mixer_check_mode drops Exynos5 display modes
+Date: Tue, 8 Jul 2014 14:59:16 +0100
+Message-ID: <CAD8Lp44L0mAAAoVfuXK7RrRe0VaxB0dx27JExpf2AOBKsqBT-A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <CADWw7OgCgg8aE4W6LwmU3axDdmt-5uH=a+0fSSErfqDci3nNUA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Chander Kashyap <k.chander@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Shawn Guo <shawn.guo@freescale.com>, Will Deacon <will.deacon@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sean Paul <seanpaul@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02.07.2014 05:11, Chander Kashyap wrote:
-> On Tue, Jul 1, 2014 at 8:22 PM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
->> On Tue, Jul 01, 2014 at 08:02:36PM +0530, Chander Kashyap wrote:
->>> This patch series fixes the cpuidle for different states. Also removes arm
->>> diagnostic and power register save/restore code as it is made generic.
->>>
->>> Based on:
->>> ARM: save/restore diagnostic register on Cortex-A9 suspend/resume
->>>  http://www.spinics.net/lists/arm-kernel/msg340506.html
+Hi Sean,
 
-[Ccing people who participated in discussion in that thread]
+While looking at the following commit I noticed something:
 
->>
->> As there is an outstanding issue with this patch, we can't proceed with
->> this set of changes until we know what's going on there.
-> 
-> Sure, I will wait for the conclusion.
+commit f041b257a8997c8472a1013e9f252c3e2a1d879e
+Author: Sean Paul <seanpaul@chromium.org>
+Date:   Thu Jan 30 16:19:15 2014 -0500
 
-So I believe the conclusion was that this can't be handled in generic
-way, because on systems running in non-secure mode writing to those
-registers faults.
+    drm/exynos: Remove exynos_drm_hdmi shim
 
-However I believe this could be moved into generic helpers.
 
-Best regards,
-Tomasz
+This commit changes how mixer_check_mode() is used. It used to just
+exclude certain modes on old mixer versions, but now it seems to be
+called unconditionally, for all mixer versions. I guess the effect
+here is that some modes on exynos5 setups are dropped whereas they
+weren't before. Is that intentional?
+
+Thanks
+Daniel
