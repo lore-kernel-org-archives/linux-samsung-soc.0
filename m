@@ -1,7 +1,7 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v5 13/14] ARM: dts: exynos5420: add mipi-phy node
-Date: Tue, 08 Jul 2014 09:39:46 +0900
-Message-ID: <1404779987-5337-14-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH v5 09/14] ARM: dts: s6e3fa0: add DT bindings
+Date: Tue, 08 Jul 2014 09:39:42 +0900
+Message-ID: <1404779987-5337-10-git-send-email-yj44.cho@samsung.com>
 References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,31 +21,68 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds mipi-phy node for MIPI DSI device.
+This patch adds DT bindings for s6e3fa0 panel.
+The bindings describes panel resources and display timings.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos5420.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../devicetree/bindings/panel/samsung,s6e3fa0.txt  | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index e385322..0b9d15d 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -517,6 +517,12 @@
- 		phy-names = "dp";
- 	};
- 
-+	mipi_phy: video-phy@10040714 {
-+		compatible = "samsung,s5pv210-mipi-video-phy";
-+		reg = <0x10040714 12>;
-+		#phy-cells = <1>;
-+	};
+diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+new file mode 100644
+index 0000000..2cd32f5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+@@ -0,0 +1,46 @@
++Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
 +
- 	fimd: fimd@14400000 {
- 		samsung,power-domain = <&disp_pd>;
- 		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
++Required properties:
++  - compatible: "samsung,s6e3fa0"
++  - reg: the virtual channel number of a DSI peripheral
++  - vdd3-supply: core voltage supply
++  - vci-supply: voltage supply for analog circuits
++  - reset-gpios: a GPIO spec for the reset pin
++  - det-gpios: a GPIO spec for the OLED detection pin
++  - te-gpios: a GPIO spec for the TE pin
++  - display-timings: timings for the connected panel as described by [1]
++
++Optional properties:
++
++The device node can contain one 'port' child node with one child 'endpoint'
++node, according to the bindings defined in [2]. This node should describe
++panel's video bus.
++
++[1]: Documentation/devicetree/bindings/video/display-timing.txt
++[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
++
++Example:
++
++	panel@0 {
++		compatible = "samsung,s6e3fa0";
++		reg = <0>;
++		vdd3-supply = <&vcclcd_reg>;
++		vci-supply = <&vlcd_reg>;
++		reset-gpios = <&gpy7 4 0>;
++		det-gpios = <&gpg0 6 0>;
++		te-gpios = <&gpd1 7 0>;
++
++		display-timings {
++			timings0 {
++				clock-frequency = <0>;
++				hactive = <1080>;
++				vactive = <1920>;
++				hfront-porch = <2>;
++				hback-porch = <2>;
++				hsync-len = <1>;
++				vfront-porch = <1>;
++				vback-porch = <4>;
++				vsync-len = <1>;
++			};
++		};
++	};
 -- 
 1.9.0
