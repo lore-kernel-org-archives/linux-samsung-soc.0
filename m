@@ -1,12 +1,12 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v5 07/14] ARM: dts: exynos_dsim: add exynos5410 compatible to
- DT bindings
-Date: Tue, 08 Jul 2014 09:39:40 +0900
-Message-ID: <1404779987-5337-8-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH v5 03/14] ARM: dts: samsung-fimd: add LCD I80 interface
+ specific properties
+Date: Tue, 08 Jul 2014 09:39:36 +0900
+Message-ID: <1404779987-5337-4-git-send-email-yj44.cho@samsung.com>
 References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
@@ -22,30 +22,58 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds relevant to exynos5410 compatible
-for exynos5410 / 5420 / 5440 SoCs support.
-
-Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- Documentation/devicetree/bindings/video/exynos_dsim.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt b/Documentation/devicetree/bindings/video/exynos_dsim.txt
-index 33b5730..31036c6 100644
---- a/Documentation/devicetree/bindings/video/exynos_dsim.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
-@@ -1,7 +1,9 @@
- Exynos MIPI DSI Master
- 
- Required properties:
--  - compatible: "samsung,exynos4210-mipi-dsi"
-+  - compatible: value should be one of the following
-+		"samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
-+		"samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
-   - reg: physical base address and length of the registers set for the device
-   - interrupts: should contain DSI interrupt
-   - clocks: list of clock specifiers, must contain an entry for each required
--- 
-1.9.0
+SW4gY2FzZSBvZiB1c2luZyBNSVBJIERTSSBiYXNlZCBJODAgaW50ZXJmYWNlIHBhbmVsLAp0aGUg
+cmVsZXZhbnQgcmVnaXN0ZXJzIHNob3VsZCBiZSBzZXQuClNvIHRoaXMgcGF0Y2ggYWRkcyByZWxl
+dmFudCBEVCBiaW5kaW5ncy4KClNpZ25lZC1vZmYtYnk6IFlvdW5nSnVuIENobyA8eWo0NC5jaG9A
+c2Ftc3VuZy5jb20+CkFja2VkLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+CkFj
+a2VkLWJ5OiBLeXVuZ21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPgotLS0KIC4u
+Li9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVvL3NhbXN1bmctZmltZC50eHQgICAgIHwgMjggKysr
+KysrKysrKysrKysrKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDI4IGluc2VydGlvbnMoKykKCmRp
+ZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdmlkZW8vc2Ftc3Vu
+Zy1maW1kLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9zYW1z
+dW5nLWZpbWQudHh0CmluZGV4IDJkYWQ0MWIuLjU5ZmY2MWUgMTAwNjQ0Ci0tLSBhL0RvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9zYW1zdW5nLWZpbWQudHh0CisrKyBiL0Rv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9zYW1zdW5nLWZpbWQudHh0CkBA
+IC00NCw2ICs0NCwzNCBAQCBPcHRpb25hbCBQcm9wZXJ0aWVzOgogLSBkaXNwbGF5LXRpbWluZ3M6
+IHRpbWluZyBzZXR0aW5ncyBmb3IgRklNRCwgYXMgZGVzY3JpYmVkIGluIGRvY3VtZW50IFsxXS4K
+IAkJQ2FuIGJlIHVzZWQgaW4gY2FzZSB0aW1pbmdzIGNhbm5vdCBiZSBwcm92aWRlZCBvdGhlcndp
+c2UKIAkJb3IgdG8gb3ZlcnJpZGUgdGltaW5ncyBwcm92aWRlZCBieSB0aGUgcGFuZWwuCistIHNh
+bXN1bmcsc3lzcmVnOiBoYW5kbGUgdG8gc3lzY29uIHVzZWQgdG8gY29udHJvbCB0aGUgc3lzdGVt
+IHJlZ2lzdGVycworLSBpODAtaWYtdGltaW5nczogdGltaW5nIGNvbmZpZ3VyYXRpb24gZm9yIGxj
+ZCBpODAgaW50ZXJmYWNlIHN1cHBvcnQuCisgIC0gY3Mtc2V0dXA6IGNsb2NrIGN5Y2xlcyBmb3Ig
+dGhlIGFjdGl2ZSBwZXJpb2Qgb2YgYWRkcmVzcyBzaWduYWwgaXMgZW5hYmxlZAorICAgICAgICAg
+ICAgICB1bnRpbCBjaGlwIHNlbGVjdCBpcyBlbmFibGVkLgorICAgICAgICAgICAgICBJZiBub3Qg
+c3BlY2lmaWVkLCB0aGUgZGVmYXVsdCB2YWx1ZSgwKSB3aWxsIGJlIHVzZWQuCisgIC0gd3Itc2V0
+dXA6IGNsb2NrIGN5Y2xlcyBmb3IgdGhlIGFjdGl2ZSBwZXJpb2Qgb2YgQ1Mgc2lnbmFsIGlzIGVu
+YWJsZWQgdW50aWwKKyAgICAgICAgICAgICAgd3JpdGUgc2lnbmFsIGlzIGVuYWJsZWQuCisgICAg
+ICAgICAgICAgIElmIG5vdCBzcGVjaWZpZWQsIHRoZSBkZWZhdWx0IHZhbHVlKDApIHdpbGwgYmUg
+dXNlZC4KKyAgLSB3ci1hY3RpdmU6IGNsb2NrIGN5Y2xlcyBmb3IgdGhlIGFjdGl2ZSBwZXJpb2Qg
+b2YgQ1MgaXMgZW5hYmxlZC4KKyAgICAgICAgICAgICAgIElmIG5vdCBzcGVjaWZpZWQsIHRoZSBk
+ZWZhdWx0IHZhbHVlKDEpIHdpbGwgYmUgdXNlZC4KKyAgLSB3ci1ob2xkOiBjbG9jayBjeWNsZXMg
+Zm9yIHRoZSBhY3RpdmUgcGVyaW9kIG9mIENTIGlzIGRpc2FibGVkIHVudGlsIHdyaXRlCisgICAg
+ICAgICAgICAgc2lnbmFsIGlzIGRpc2FibGVkLgorICAgICAgICAgICAgIElmIG5vdCBzcGVjaWZp
+ZWQsIHRoZSBkZWZhdWx0IHZhbHVlKDApIHdpbGwgYmUgdXNlZC4KKworICBUaGUgcGFyYW1ldGVy
+cyBhcmUgZGVmaW5lZCBhczoKKworICAgIFZDTEsoaW50ZXJuYWwpICBfX3zCr8Kvwq/Cr8Kvwq98
+X19fX198wq/Cr8Kvwq/Cr8KvfF9fX19ffMKvwq/Cr8Kvwq/Cr3xfX19fX3zCr8Kvwq/Cr8Kvwq98
+X19fX198wq/CrworICAgICAgICAgICAgICAgICAgICAgIDogICAgICAgICAgICA6ICAgICAgICAg
+ICAgOiAgICAgICAgICAgIDogICAgICAgICAgICA6CisgICAgQWRkcmVzcyBPdXRwdXQgIC0tOjxY
+WFhYWFhYWFhYWDpYWFhYWFhYWFhYWFg6WFhYWFhYWFhYWFhYOlhYWFhYWFhYWFhYWDpYWAorICAg
+ICAgICAgICAgICAgICAgICAgIHwgY3Mtc2V0dXArMSB8ICAgICAgICAgICAgOiAgICAgICAgICAg
+IDogICAgICAgICAgICA6CisgICAgICAgICAgICAgICAgICAgICAgfDwtLS0tLS0tLS0tPnwgICAg
+ICAgICAgICA6ICAgICAgICAgICAgOiAgICAgICAgICAgIDoKKyAgICBDaGlwIFNlbGVjdCAgICAg
+wq/Cr8Kvwq/Cr8Kvwq/Cr8Kvwq/Cr8Kvwq/Cr8KvfF9fX19fX19fX19fXzpfX19fX19fX19fX186
+X19fX19fX19fX19ffMKvwq8KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCB3
+ci1zZXR1cCsxIHwgICAgICAgICAgICB8IHdyLWhvbGQrMSAgfAorICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICB8PC0tLS0tLS0tLS0+fCAgICAgICAgICAgIHw8LS0tLS0tLS0tLT58
+CisgICAgV3JpdGUgRW5hYmxlICAgIMKvwq/Cr8Kvwq/Cr8Kvwq/Cr8Kvwq/Cr8Kvwq/Cr8Kvwq/C
+r8Kvwq/Cr8Kvwq/Cr8Kvwq/Cr8KvfF9fX19fX19fX19fX3zCr8Kvwq/Cr8Kvwq/Cr8Kvwq/Cr8Kv
+wq/Cr8Kvwq8KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHwgd3ItYWN0aXZlKzF8CisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICB8PC0tLS0tLS0tLS0+fAorICAgIFZpZGVvIERhdGEgICAgICAtLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tPFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFg+LS0KIAogVGhlIGRldmlj
+ZSBub2RlIGNhbiBjb250YWluICdwb3J0JyBjaGlsZCBub2RlcyBhY2NvcmRpbmcgdG8gdGhlIGJp
+bmRpbmdzIGRlZmluZWQKIGluIFsyXS4gVGhlIGZvbGxvd2luZyBhcmUgcHJvcGVydGllcyBzcGVj
+aWZpYyB0byB0aG9zZSBub2RlczoKLS0gCjEuOS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
