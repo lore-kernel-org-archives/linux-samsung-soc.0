@@ -1,91 +1,53 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH v6 2/6] ARM: EXYNOS: Move cpufreq and cpuidle device
- registration to init_machine
-Date: Tue, 08 Jul 2014 13:05:39 +0530
-Message-ID: <000801cf9a7f$3896e150$a9c4a3f0$@samsung.com>
-References: <1404705056-11965-1-git-send-email-pankaj.dubey@samsung.com>
- <1404705056-11965-3-git-send-email-pankaj.dubey@samsung.com>
- <53BB25B7.6000500@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
+Date: Tue, 8 Jul 2014 09:46:21 +0200
+Message-ID: <CACRpkdZrDJ3xoUYGynf0sO4-U7ZVkJ=Mr_pNVSdar8oM85aVgA@mail.gmail.com>
+References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:25721 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750927AbaGHHeL (ORCPT
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:38959 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752253AbaGHHqW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 03:34:11 -0400
-In-reply-to: <53BB25B7.6000500@samsung.com>
-Content-language: en-us
+	Tue, 8 Jul 2014 03:46:22 -0400
+Received: by mail-ob0-f171.google.com with SMTP id nu7so5975744obb.16
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Jul 2014 00:46:21 -0700 (PDT)
+In-Reply-To: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, naushad@samsung.com, t.figa@samsung.com, joshi@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com
+To: Vikas Sajjan <vikas.sajjan@samsung.com>, Houcheng Lin <houcheng@gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sajjan.linux@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, sunil joshi <joshi@samsung.com>
 
-Hi Kukjin,
+On Thu, Jun 26, 2014 at 11:15 AM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
 
-> 
-> On 07/07/14 12:50, Pankaj Dubey wrote:
-> > As exynos_cpuidle_init and exynos_cpufreq_init function have just one
-> > lines of code for registering platform devices. We can move these
-> > lines to exynos_dt_machine_init and delete exynos_cpuidle_init and
-> > exynos_cpufreq_init function. This will help in reducing lines of code
-> > in exynos.c, making it more cleaner.
-> >
-> > Suggested-by: Tomasz Figa<t.figa@samsung.com>
-> > Signed-off-by: Pankaj Dubey<pankaj.dubey@samsung.com>
-> > Reviewed-by: Tomasz Figa<t.figa@samsung.com>
-> > ---
-> >   arch/arm/mach-exynos/exynos.c |   20 ++++----------------
-> >   1 file changed, 4 insertions(+), 16 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos/exynos.c
-> > b/arch/arm/mach-exynos/exynos.c index ff60b4c..47170eb 100644
-> > --- a/arch/arm/mach-exynos/exynos.c
-> > +++ b/arch/arm/mach-exynos/exynos.c
-> > @@ -171,19 +171,6 @@ static struct platform_device exynos_cpuidle = {
-> >   	.id                = -1,
-> >   };
-> >
-> > -void __init exynos_cpuidle_init(void) -{
-> > -	if (soc_is_exynos5440())
-> > -		return;
-> > -
-> > -	platform_device_register(&exynos_cpuidle);
-> > -}
-> > -
-> > -void __init exynos_cpufreq_init(void) -{
-> > -	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
-> > -}
-> > -
-> >   void __iomem *sysram_base_addr;
-> >   void __iomem *sysram_ns_base_addr;
-> >
-> > @@ -300,10 +287,11 @@ static void __init exynos_dt_machine_init(void)
-> >   	if (!IS_ENABLED(CONFIG_SMP))
-> >   		exynos_sysram_init();
-> >
-> > -	if (!of_machine_is_compatible("samsung,exynos5420"))
-> > -		exynos_cpuidle_init();
-> > +	if (!of_machine_is_compatible("samsung,exynos5420") ||
-> > +			!of_machine_is_compatible("samsung,exynos5440"))
-> > +		platform_device_register(&exynos_cpuidle);
-> >
-> > -	exynos_cpufreq_init();
-> > +	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
-> >
-> >   	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
-> >   }
-> 
-> This cannot be applied in my tree now....
-> 
+> From: Doug Anderson <dianders@chromium.org>
+>
+> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
+> being reset across sleep/wake.  If we don't set it to anything then
+> the TPM will be reset.  U-Boot will detect this as invalid
+> and will reset the system on resume time. This GPIO can always be low
+> and not hurt anything.  It will get pulled back high again during a
+> normal warm reset when it will default back to an input.
+>
+> To properly preserve the TPM state across suspend/resume and to make
+> the chrome U-Boot happy, properly set the GPIO to mask the
+> reset to the TPM.
+>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+(...)
+> +       /* We need GPX0_6 to be low at sleep time; just keep it low always */
+> +       mask_tpm_reset_regulator: mask-tpm-reset-regulator {
+> +       compatible = "regulator-fixed";
 
-May I know what the issue is? As I am able to rebase this patch on today's
-kgene/for-next
-and could not see any merge conflict. 
-If you think I need to respin this patch please let me know.
+No matter how the discussion ends up, regulator-fixed is wrong.
 
-Thanks,
-Pankaj Dubey
+Either folding it into the TPM driver or using a separate reset driver
+is fine with me.
 
-> - Kukjin
+So what about the generic delayed reset GPIO thing?
+http://marc.info/?l=linux-kernel&m=140309916607115&w=2
+
+Yours,
+Linus Walleij
