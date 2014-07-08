@@ -1,71 +1,85 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [RFC PATCH 1/3] watchdog: s3c2410: add restart notifier
-Date: Tue, 8 Jul 2014 09:21:18 -0700
-Message-ID: <20140708162118.GA9157@roeck-us.net>
-References: <1531376.ijR0PPyvmJ@diego>
- <10183342.ZfePbPvRx9@diego>
- <53BBFE55.4080202@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
+Date: Tue, 08 Jul 2014 18:20:51 +0200
+Message-ID: <53BC1A63.80900@samsung.com>
+References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>
+ <CACRpkdZrDJ3xoUYGynf0sO4-U7ZVkJ=Mr_pNVSdar8oM85aVgA@mail.gmail.com>
+ <CAD=FV=WQWBkq5JKttikLkyKEDX-YydQJLr9=bFWifpy2Lf0mSg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:38432 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752106AbaGHQVW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 12:21:22 -0400
-Content-Disposition: inline
-In-Reply-To: <53BBFE55.4080202@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <CAD=FV=WQWBkq5JKttikLkyKEDX-YydQJLr9=bFWifpy2Lf0mSg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Doug Anderson <dianders@chromium.org>, Vikas Sajjan <vikas.sajjan@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Vikas Sajjan <sajjan.linux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Houcheng Lin <houcheng@gmail.com>, sunil joshi <joshi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Wim Van Sebroeck <wim@iguana.be>, linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>
 
-On Tue, Jul 08, 2014 at 04:21:09PM +0200, Tomasz Figa wrote:
-> Hi Heiko,
->=20
-> On 06.07.2014 20:42, Heiko St=FCbner wrote:
-> > On a lot of Samsung systems the watchdog is responsible for restart=
-ing the
-> > system and until now this code was contained in plat-samsung/watchd=
-og-reset.c .
-> >=20
-> > With the introduction of the restart notifiers, this code can now m=
-ove into
-> > driver itself, removing the need for arch-specific code.
-> >=20
-> > Tested on a S3C2442 based GTA02
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> >  drivers/watchdog/s3c2410_wdt.c | 33 ++++++++++++++++++++++++++++++=
-+++
-> >  1 file changed, 33 insertions(+)
-> >=20
-> > diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2=
-410_wdt.c
-> > index 7c6ccd0..3f89912 100644
-> > --- a/drivers/watchdog/s3c2410_wdt.c
-> > +++ b/drivers/watchdog/s3c2410_wdt.c
-> > @@ -41,6 +41,7 @@
-> >  #include <linux/of.h>
-> >  #include <linux/mfd/syscon.h>
-> >  #include <linux/regmap.h>
-> > +#include <linux/reboot.h>
-> > =20
-> >  #define S3C2410_WTCON		0x00
-> >  #define S3C2410_WTDAT		0x04
-> > @@ -438,6 +439,31 @@ static inline void s3c2410wdt_cpufreq_deregist=
-er(struct s3c2410_wdt *wdt)
-> >  }
-> >  #endif
-> > =20
-> > +static struct s3c2410_wdt *s3c2410wdt_restart_ctx;
->=20
-> This isn't the most elegant way to store context data. Maybe you coul=
-d
-> embed the notifier_block struct into s3c2410_wdt struct and then use
-> container of to retrieve it from s3c2410wdt_restart_notify()?
->=20
-Excellent idea. I'll do that for the moxart handler as well.
+On 08.07.2014 17:27, Doug Anderson wrote:
+> Hi,
+> 
+> On Tue, Jul 8, 2014 at 12:46 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> On Thu, Jun 26, 2014 at 11:15 AM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+>>
+>>> From: Doug Anderson <dianders@chromium.org>
+>>>
+>>> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
+>>> being reset across sleep/wake.  If we don't set it to anything then
+>>> the TPM will be reset.  U-Boot will detect this as invalid
+>>> and will reset the system on resume time. This GPIO can always be low
+>>> and not hurt anything.  It will get pulled back high again during a
+>>> normal warm reset when it will default back to an input.
+>>>
+>>> To properly preserve the TPM state across suspend/resume and to make
+>>> the chrome U-Boot happy, properly set the GPIO to mask the
+>>> reset to the TPM.
+>>>
+>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+>> (...)
+>>> +       /* We need GPX0_6 to be low at sleep time; just keep it low always */
+>>> +       mask_tpm_reset_regulator: mask-tpm-reset-regulator {
+>>> +       compatible = "regulator-fixed";
+>>
+>> No matter how the discussion ends up, regulator-fixed is wrong.
+> 
+> OK, fair enough.
+> 
+> 
+>> Either folding it into the TPM driver or using a separate reset driver
+>> is fine with me.
+> 
+> OK, Vikas: do you want to code up the driver?
+> 
+> 
+>> So what about the generic delayed reset GPIO thing?
+>> http://marc.info/?l=linux-kernel&m=140309916607115&w=2
+> 
+> That's a neat concept and could be useful in other cases, but I think
+> it's just as much of a hack as using a regulator.  This is not a reset
+> signal for the TPM.  This is a signal that will mask the CPU's reset
+> signal (using a special bit of board-specific logic).
+> 
+> 
+> Personally I think Tomasz's idea of using hogs (after his patches
+> allowing a default output level) is the cleanest, but I think Stephen
+> didn't like that.
 
-Guenter
+I don't see any benefits of using complex interfaces over simply
+initializing the pin to the right value once at boot-up or at
+suspend/resume. As far as I understand Doug's explanation of the
+problem, nothing else is expected from the OS with respect to this pin.
+Moreover it doesn't affect operation of any drivers.
+
+So I'm still for the simplest and effective solution, i.e. hogs.
+
+Best regards,
+Tomasz
