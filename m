@@ -1,287 +1,156 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v7 08/24] mfd: max77686: Add Dynamic Voltage Scaling
- (DVS) support
-Date: Wed, 9 Jul 2014 16:13:36 +0100
-Message-ID: <20140709151336.GI2635@lee--X1>
-References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
- <1404505467-26526-9-git-send-email-javier.martinez@collabora.co.uk>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v5 05/14] drm/exynos: dsi: add pass TE host ops to
+ support LCD I80 interface
+Date: Wed, 9 Jul 2014 17:22:08 +0200
+Message-ID: <20140709152207.GA17359@ulmo>
+References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
+ <1404779987-5337-6-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:50225 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756009AbaGIPNo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Jul 2014 11:13:44 -0400
-Received: by mail-ie0-f175.google.com with SMTP id tp5so503675ieb.20
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jul 2014 08:13:43 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1404505467-26526-9-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1439631575=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1404779987-5337-6-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-I'd really like Linus Walleij to look over this if possible.
 
-On Fri, 04 Jul 2014, Javier Martinez Canillas wrote:
-> Some regulators on the MAX77686 PMIC have Dynamic Voltage Scaling
-> (DVS) support that allows output voltage to change dynamically.
+--===============1439631575==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Content-Disposition: inline
+
+
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jul 08, 2014 at 09:39:38AM +0900, YoungJun Cho wrote:
+> To support LCD I80 interface, the DSI host calls this function
+> to notify the panel tearing effect synchronization signal to
+> the CRTC device manager to trigger to transfer video image.
 >=20
-> For MAX77686, these regulators are Buck regulators 2, 3 and 4.
->=20
-> Each Buck output voltage is selected using a set of external
-> inputs: DVS1-3 and SELB2-4.
->=20
-> DVS registers can be used to configure the output voltages for each
-> Buck regulator and which one is active is controled by DVSx lines.
->=20
-> SELBx lines are used to control if individual Buck lines are ON or OF=
-=46.
->=20
-> This patch adds support to configure the DVSx and SELBx lines
-> from DT and to setup and read the GPIO lines connected to them.
->=20
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
-=2Euk>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+> Acked-by: Inki Dae <inki.dae@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 11 +++++++++++
+>  include/drm/drm_mipi_dsi.h              |  7 +++++++
+>  2 files changed, 18 insertions(+)
 >=20
-> Changes since v6:
->  - Add a comment that max77686_read_gpios() function can sleep.
->    Sugggested by Krzysztof Kozlowski
-> ---
->  drivers/mfd/max77686.c       | 119 +++++++++++++++++++++++++++++++++=
-++++++++++
->  include/linux/mfd/max77686.h |  18 ++++---
->  2 files changed, 129 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
-> index 8650832..d193873 100644
-> --- a/drivers/mfd/max77686.c
-> +++ b/drivers/mfd/max77686.c
-> @@ -32,8 +32,10 @@
->  #include <linux/mfd/core.h>
->  #include <linux/mfd/max77686.h>
->  #include <linux/mfd/max77686-private.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/err.h>
->  #include <linux/of.h>
-> +#include <linux/export.h>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/ex=
+ynos/exynos_drm_dsi.c
+> index dad543a..76e34ca 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -24,6 +24,7 @@
+>  #include <video/mipi_display.h>
+>  #include <video/videomode.h>
 > =20
->  #define I2C_ADDR_RTC	(0x0C >> 1)
+> +#include "exynos_drm_crtc.h"
+>  #include "exynos_drm_drv.h"
 > =20
-> @@ -101,9 +103,119 @@ static const struct of_device_id max77686_pmic_=
-dt_match[] =3D {
->  	{},
->  };
-> =20
-> +static void max77686_dt_parse_dvs_gpio(struct device *dev)
-> +{
-> +	struct max77686_platform_data *pd =3D dev_get_platdata(dev);
-> +	int i;
-> +
-> +	/*
-> +	 * NOTE: we don't consider GPIO errors fatal; board may have some l=
-ines
-> +	 * directly pulled high or low and thus doesn't specify them.
-> +	 */
-> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_dvs); i++)
-> +		pd->buck_gpio_dvs[i] =3D
-> +			devm_gpiod_get_index(dev, "max77686,pmic-buck-dvs", i);
-> +
-> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++)
-> +		pd->buck_gpio_selb[i] =3D
-> +			devm_gpiod_get_index(dev, "max77686,pmic-buck-selb", i);
-> +}
-
-Not sure why you've pulled this out for parse_dt_pdata()?
-
-> +/**
-> + * max77686_setup_gpios() - init DVS-related GPIOs
-> + * @dev: device whose platform data contains the dvs GPIOs informati=
-on
-> + *
-> + * This function claims / initalizations GPIOs related to DVS if the=
-y are
-
-s/initialzations/initialises
-
-> + * defined. This may have the effect of switching voltages if the
-
-s/if the/if
-
-> + * pdata->buck_default_idx does not match the boot time state of pin=
-s.
-> + */
-> +int max77686_setup_gpios(struct device *dev)
-> +{
-> +	struct max77686_platform_data *pd =3D dev_get_platdata(dev);
-> +	int buck_default_idx =3D pd->buck_default_idx;
-
-You're saving 4 characters once here.  Just use the variable in pd.
-
-> +	int ret;
-> +	int i;
-
-Don't you want some locking around this?
-
-> +	/* Set all SELB high to avoid glitching while DVS is changing */
-> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++) {
-> +		struct gpio_desc *gpio =3D pd->buck_gpio_selb[i];
-> +
-> +		/* OK if some GPIOs aren't defined */
-> +		if (IS_ERR(gpio))
-> +			continue;
-> +
-> +		ret =3D gpiod_direction_output_raw(gpio, 1);
-> +		if (ret) {
-> +			dev_err(dev, "can't set gpio[%d] dir: %d\n", i, ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	/* Set our initial setting */
-> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_dvs); i++) {
-> +		struct gpio_desc *gpio =3D pd->buck_gpio_dvs[i];
-> +
-> +		/* OK if some GPIOs aren't defined */
-> +		if (IS_ERR(gpio))
-> +			continue;
-> +
-> +		/* If a GPIO is valid, set it */
-> +		gpiod_direction_output(gpio, (buck_default_idx >> i) & 1);
-> +		if (ret) {
-> +			dev_err(dev, "can't set gpio[%d]: dir %d\n", i, ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	/* Now set SELB low to take effect */
-> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++) {
-> +		struct gpio_desc *gpio =3D pd->buck_gpio_selb[i];
-> +
-> +		if (!IS_ERR(gpio))
-> +			gpiod_set_value(gpio, 0);
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(max77686_setup_gpios);
-> +
-> +/**
-> + * max77686_read_gpios() - read the current state of the dvs GPIOs
-> + * @pdata: platform data that contains the dvs GPIOs information
-> + *
-> + * We call this function at bootup to detect what slot the firmware =
-was
-> + * using for the DVS GPIOs.  That way we can properly preserve the f=
-irmware's
-> + * voltage settings
-> + *
-> + * This function can sleep so must not be called from atomic context=
-=2E
-> + */
-> +int max77686_read_gpios(struct max77686_platform_data *pdata)
-> +{
-> +	int buck_default_idx =3D pdata->buck_default_idx;
-
-Remove this, it adds very little.
-
-> +	int result =3D 0;
-> +	int i;
-> +
-> +	for (i =3D 0; i < ARRAY_SIZE(pdata->buck_gpio_dvs); i++) {
-> +		struct gpio_desc *gpio =3D pdata->buck_gpio_dvs[i];
-> +
-> +		/* OK if some GPIOs aren't defined; we'll use default */
-> +		if (IS_ERR(gpio)) {
-> +			result |=3D buck_default_idx & (1 << i);
-
-s/(1 << i)/BIT(i)/
-
-> +			continue;
-> +		}
-> +
-> +		if (gpiod_get_value_cansleep(gpio))
-> +			result |=3D 1 << i;
-
-Same here.
-
-> +	}
-> +
-> +	return result;
-> +}
-> +EXPORT_SYMBOL_GPL(max77686_read_gpios);
-> +
->  static struct max77686_platform_data *max77686_i2c_parse_dt_pdata(st=
-ruct device
->  								  *dev)
->  {
-> +	struct device_node *np =3D dev->of_node;
->  	struct max77686_platform_data *pd;
-> =20
->  	pd =3D devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
-> @@ -111,6 +223,13 @@ static struct max77686_platform_data *max77686_i=
-2c_parse_dt_pdata(struct device
->  		return NULL;
-> =20
->  	dev->platform_data =3D pd;
-> +
-> +	/* Read default index and ignore errors, since default is 0 */
-> +	of_property_read_u32(np, "max77686,pmic-buck-default-dvs-idx",
-
-If it doesn't already have one, this needs a DT Ack and associated
-documentation.
-
-> +			     &pd->buck_default_idx);
-> +
-> +	max77686_dt_parse_dvs_gpio(dev);
-
-Bring code back into here and remove the call.
-
->  	return pd;
+>  /* returns true iff both arguments logically differs */
+> @@ -1041,10 +1042,20 @@ static ssize_t exynos_dsi_host_transfer(struct mi=
+pi_dsi_host *host,
+>  	return (ret < 0) ? ret : xfer.rx_done;
 >  }
 > =20
-> diff --git a/include/linux/mfd/max77686.h b/include/linux/mfd/max7768=
-6.h
-> index 4cbcc13..46a736b 100644
-> --- a/include/linux/mfd/max77686.h
-> +++ b/include/linux/mfd/max77686.h
-> @@ -99,15 +99,17 @@ struct max77686_platform_data {
->  	struct max77686_opmode_data *opmode_data;
-> =20
->  	/*
-> -	 * GPIO-DVS feature is not enabled with the current version of
-> -	 * MAX77686 driver. Buck2/3/4_voltages[0] is used as the default
-> -	 * voltage at probe. DVS/SELB gpios are set as OUTPUT-LOW.
-> +	 * GPIO-DVS feature is not fully enabled with the current version o=
-f
-> +	 * MAX77686 driver, but the driver does support using a DVS index o=
-ther
-> +	 * than the default of 0.
->  	 */
-> -	int buck234_gpio_dvs[3]; /* GPIO of [0]DVS1, [1]DVS2, [2]DVS3 */
-> -	int buck234_gpio_selb[3]; /* [0]SELB2, [1]SELB3, [2]SELB4 */
-> -	unsigned int buck2_voltage[8]; /* buckx_voltage in uV */
-> -	unsigned int buck3_voltage[8];
-> -	unsigned int buck4_voltage[8];
-> +	struct gpio_desc *buck_gpio_dvs[3]; /* GPIO of [0]DVS1, [1]DVS2, [2=
-]DVS3 */
-> +	int buck_default_idx; /* Default value of DVS1, 2, 3 */
+> +static void exynos_dsi_host_pass_te(struct mipi_dsi_host *host)
+> +{
+> +	struct exynos_dsi *dsi =3D host_to_dsi(host);
+> +	struct drm_encoder *encoder =3D dsi->encoder;
 > +
-> +	struct gpio_desc *buck_gpio_selb[3]; /* Buck regulators 2, 3, 4 */
+> +	if (dsi->state & DSIM_STATE_ENABLED)
+> +		exynos_drm_crtc_te_handler(encoder->crtc);
+> +}
+> +
+>  static const struct mipi_dsi_host_ops exynos_dsi_ops =3D {
+>  	.attach =3D exynos_dsi_host_attach,
+>  	.detach =3D exynos_dsi_host_detach,
+>  	.transfer =3D exynos_dsi_host_transfer,
+> +	.pass_te =3D exynos_dsi_host_pass_te,
 >  };
 > =20
-> +extern int max77686_setup_gpios(struct device *dev);
-> +extern int max77686_read_gpios(struct max77686_platform_data *pdata)=
-;
-> +
->  #endif /* __LINUX_MFD_MAX77686_H */
+>  static int exynos_dsi_poweron(struct exynos_dsi *dsi)
+> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+> index 944f33f..3f21bea 100644
+> --- a/include/drm/drm_mipi_dsi.h
+> +++ b/include/drm/drm_mipi_dsi.h
+> @@ -49,6 +49,12 @@ struct mipi_dsi_msg {
+>   * @detach: detach DSI device from DSI host
+>   * @transfer: send and/or receive DSI packet, return number of received =
+bytes,
+>   * 	      or error
+> + * @pass_te: call the crtc te_handler() callback from DSI host.
+> + *	     The panel generates tearing effect synchronization signal between
+> + *	     MCU and FB to display video images. And the display controller
+> + *	     should trigger to transfer video image at this signal. So the pa=
+nel
+> + *	     receives the TE IRQ, then calls this function to notify it to the
+> + *	     display controller.
+>   */
+>  struct mipi_dsi_host_ops {
+>  	int (*attach)(struct mipi_dsi_host *host,
+> @@ -57,6 +63,7 @@ struct mipi_dsi_host_ops {
+>  		      struct mipi_dsi_device *dsi);
+>  	ssize_t (*transfer)(struct mipi_dsi_host *host,
+>  			    struct mipi_dsi_msg *msg);
+> +	void (*pass_te)(struct mipi_dsi_host *host);
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+I've objected to this particular change before and that objection still
+stands. I don't see how this is related to DSI. It seems like an
+implementation detail of this particular setup and I think it should be
+handled differently (within the Exynos DSI controller implementation
+possibly).
+
+Laurent also asked you to split this up into two patches, one for the
+core part, the other for the Exynos driver parts, yet this patch
+contains both changes.
+
+Thierry
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTvV4fAAoJEN0jrNd/PrOho7kP/0uscxU3Sn2h4p31rafuykSe
+II1J94ePzmd9+WWwKb7RWPfuJD3rQMIj6+sSx+4uBstcrT518QeJ5qKTfavfQtcO
+zVwCgsZt/3hYzF+YVSO/ECf+nin3QN7sF8+o1fDcoYtqS5VbAB8QOWKuu/BCeJb8
+pHTxZPNbmtkFaAuiJSN2FrbPCZtdadaQl8DIH7y36SXXfKsDqmSq/QfGHA0xsrwu
+piQ4unHnuheo2UMiD8qHBJ438Ji3EYql0VhmzLCp3nIqk+8TAXZZ/xhuHuU4Z9vf
+e+2Z2ASAmTiEMqIKtZWaFRjAyJ+5gpNX5VCrw9PXvOrRj9ySpsQSeQ52xu0FiYbP
+ZFNENguhkyTcw1esFGNo7Y17ZwGu/kJhR4OkhnvsthblWsUQMvLF+S8UXfTI0nb3
+XL0NV4pm/AaFev+WDcKYFdXZRfngeGJsGXKEQs3YbC+c9P5kxNcsdhLQhxmOLw+k
+bAHxG5ArndljkfQvfuvjce1y3DgH9YjYggHXJ5eq+Zc0kGlegEeOPCWm4AdgSnVi
+e9F6jSNf6j3gzdQ6H1RZbb0a1W6txmnBvyyLVEFuUAcbvUXCcAa1hFSwGPUzhjwg
+dgkD6WHn8LNrN0Gk3kgzTb7SkH030qbf1SOglj2+mXxDNvRcyrGmQyRjnixD9sIo
+RZSkorrhYW3A4N2IJh1C
+=2jaq
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
+
+--===============1439631575==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1439631575==--
