@@ -1,158 +1,75 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3 3/4] ARM: EXYNOS: cpuidle: add secure firmware support to
- AFTR mode code
-Date: Wed, 09 Jul 2014 19:17:53 +0200
-Message-ID: <1404926274-18411-4-git-send-email-b.zolnierkie@samsung.com>
-References: <1404926274-18411-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1404926274-18411-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [alsa-devel] [PATCH V3 2/2] ASoC: samsung: Add machine driver for
+ Odroid X2/U3
+Date: Wed, 09 Jul 2014 19:20:05 +0200
+Message-ID: <53BD79C5.3060604@samsung.com>
+References: <1404479625-25385-1-git-send-email-s.nawrocki@samsung.com>
+ <1404479625-25385-2-git-send-email-s.nawrocki@samsung.com>
+ <CAD8Lp44JFtbcD22c+0PVb5S4U1kVTTxHD=PgqiKzhVypFW5Prg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:21632 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755337AbaGIRUJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 9 Jul 2014 13:20:09 -0400
+In-reply-to: <CAD8Lp44JFtbcD22c+0PVb5S4U1kVTTxHD=PgqiKzhVypFW5Prg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Drake <drake@endlessm.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Chen Zhen <zhen1.chen@samsung.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-* Move cp15 registers saving to exynos_save_cp15() helper and add
-  additional helper usage to do_idle firmware method.
+Hi,
 
-* Use sysram_ns_base_addr + 0x24/0x20 addresses instead of the default
-  ones used by exynos_cpu_set_boot_vector() on boards with secure
-  firmware enabled.
+On 08/07/14 11:15, Daniel Drake wrote:
+> On Fri, Jul 4, 2014 at 2:13 PM, Sylwester Nawrocki
+> <s.nawrocki@samsung.com> wrote:
+>> This patch adds the sound subsystem driver for Odroid-X2 and
+>> Odroid-U3 boards. The codec works in I2S master mode; there
+>> are two separate audio routing paths defined, as there are
+>> differences in the signal routing between the X2 and U3 boards,
+>> i.e. U3 uses single jack for headphones and microphone.
+>>
+>> Signed-off-by: Chen Zhen <zhen1.chen@samsung.com>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> 
+> Testing on ODROID-U2, v3 is not quite working for me, but v2 of the
+> patch was fine.
+> I boot up, run:
+> # speaker-test -c 2 -t wav
+> 
+> As soon as I hear the word "front" I press ctrl+c and then run the
+> command again.
+> Now the command hangs with no audible output.
+> 
+> Any ideas? Let me know if you have trouble reproducing.
 
-* Use do_idle firmware method instead of cpu_do_idle() on boards with
-  secure firmware enabled.
+Thanks the feedback, we have also noticed this issue.
+It sounds like a bug in the Samsung I2S driver, which sets the
+CDCLK pin to input mode in the i2s_shutdown callback and never
+restores it. AFAICS this setting should not be lost after a call
+to struct soc_snd_dai_ops::shutdown().
+I'm going will prepare a proper patch soon, until then you could
+try and see if this fixes the problem for you:
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
-v3:
-- make exynos_enter_aftr() return a value
-- add cp15 registers handling to do_idle firmware method
-- set sysram_ns_base_addr + 0x24/0x20 in do_idle firmware method
-- move calling of do_idle firmware method from cpuidle-exynos.c
-  to pm.c
+---8<---
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index d80121e..42c4f3e 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -724,10 +724,6 @@ static void i2s_shutdown(struct snd_pcm_substream *substream,
 
- arch/arm/mach-exynos/common.h    |  2 +-
- arch/arm/mach-exynos/firmware.c  | 26 ++++++++++++++++++--------
- arch/arm/mach-exynos/pm.c        | 11 +++++++++--
- drivers/cpuidle/cpuidle-exynos.c |  6 +++---
- 4 files changed, 31 insertions(+), 14 deletions(-)
+        spin_unlock_irqrestore(&lock, flags);
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index a6a200f..0829808 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -170,7 +170,7 @@ extern int  exynos_cpu_power_state(int cpu);
- extern void exynos_cluster_power_down(int cluster);
- extern void exynos_cluster_power_up(int cluster);
- extern int  exynos_cluster_power_state(int cluster);
--extern void exynos_enter_aftr(void);
-+extern int  exynos_enter_aftr(void);
- 
- extern void s5p_init_cpu(void __iomem *cpuid_addr);
- extern unsigned int samsung_rev(void);
-diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-index 53fbf5c..163f5b9 100644
---- a/arch/arm/mach-exynos/firmware.c
-+++ b/arch/arm/mach-exynos/firmware.c
-@@ -24,13 +24,30 @@
- #include "smc.h"
- 
- #define EXYNOS_SLEEP_MAGIC	0x00000bad
-+#define EXYNOS_AFTR_MAGIC	0xfcba0d10
- #define EXYNOS_BOOT_ADDR	0x8
- #define EXYNOS_BOOT_FLAG	0xc
- 
-+/* For Cortex-A9 Diagnostic and Power control register */
-+static unsigned int cp15_power;
-+static unsigned int cp15_diag;
-+
-+static void exynos_save_cp15(void)
-+{
-+	/* Save Power control and Diagnostic registers */
-+	asm ("mrc p15, 0, %0, c15, c0, 0\n"
-+	     "mrc p15, 0, %1, c15, c0, 1\n"
-+		: "=r" (cp15_power), "=r" (cp15_diag) : : "cc");
-+}
-+
- static int exynos_do_idle(unsigned long mode)
- {
- 	switch (mode) {
- 	case FW_DO_IDLE_AFTR:
-+		exynos_save_cp15();
-+		__raw_writel(virt_to_phys(exynos_cpu_resume),
-+			     sysram_ns_base_addr + 0x24);
-+		__raw_writel(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
- 		exynos_smc(SMC_CMD_CPU0AFTR, 0, 0, 0);
- 		break;
- 	case FW_DO_IDLE_SLEEP:
-@@ -76,10 +93,6 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
- 	return 0;
+-       /* Gate CDCLK by default */
+-       if (!is_opened(other))
+-               i2s_set_sysclk(dai, SAMSUNG_I2S_CDCLK,
+-                               0, SND_SOC_CLOCK_IN);
  }
- 
--/* For Cortex-A9 Diagnostic and Power control register */
--static unsigned int cp15_power;
--static unsigned int cp15_diag;
--
- static int exynos_cpu_suspend(unsigned long arg)
- {
- 	flush_cache_all();
-@@ -94,10 +107,7 @@ static int exynos_cpu_suspend(unsigned long arg)
- 
- static int exynos_suspend(void)
- {
--	/* Save Power control and Diagnostic registers */
--	asm ("mrc p15, 0, %0, c15, c0, 0\n"
--		"mrc p15, 0, %1, c15, c0, 1\n"
--		: "=r" (cp15_power), "=r" (cp15_diag) : : "cc");
-+	exynos_save_cp15();
- 
- 	writel(EXYNOS_SLEEP_MAGIC, sysram_ns_base_addr + EXYNOS_BOOT_FLAG);
- 	writel(virt_to_phys(cpu_resume),
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index c722454..af0d4bf 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -201,12 +201,19 @@ static void exynos_cpu_set_boot_vector(long flags)
- 	__raw_writel(flags, exynos_boot_vector_flag());
- }
- 
--void exynos_enter_aftr(void)
-+int exynos_enter_aftr(void)
- {
-+	int ret;
-+
- 	exynos_set_wakeupmask(0x0000ff3e);
--	exynos_cpu_set_boot_vector(S5P_CHECK_AFTR);
- 	/* Set value of power down register for aftr mode */
- 	exynos_sys_powerdown_conf(SYS_AFTR);
-+
-+	ret = call_firmware_op(do_idle, FW_DO_IDLE_AFTR);
-+	if (ret == -ENOSYS)
-+		exynos_cpu_set_boot_vector(S5P_CHECK_AFTR);
-+
-+	return ret;
- }
- 
- /* For Cortex-A9 Diagnostic and Power control register */
-diff --git a/drivers/cpuidle/cpuidle-exynos.c b/drivers/cpuidle/cpuidle-exynos.c
-index 7c01512..c5b36d3 100644
---- a/drivers/cpuidle/cpuidle-exynos.c
-+++ b/drivers/cpuidle/cpuidle-exynos.c
-@@ -18,12 +18,12 @@
- #include <asm/suspend.h>
- #include <asm/cpuidle.h>
- 
--static void (*exynos_enter_aftr)(void);
-+static int (*exynos_enter_aftr)(void);
- 
- static int idle_finisher(unsigned long flags)
- {
--	exynos_enter_aftr();
--	cpu_do_idle();
-+	if (exynos_enter_aftr() == -ENOSYS)
-+		cpu_do_idle();
- 
- 	return 1;
- }
--- 
-1.8.2.3
+--->8---
+
+--
+Thanks,
+Sylwester
