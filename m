@@ -1,87 +1,99 @@
-From: Sachin Kamat <sachin.kamat@samsung.com>
-Subject: [PATCH v2 1/2] phy: Kconfig: Re-organize Exynos USB 2.0 PHY configs
-Date: Wed,  9 Jul 2014 17:19:28 +0530
-Message-ID: <1404906569-28026-1-git-send-email-sachin.kamat@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, kishon@ti.com, dianders@chromium.org, gautam.vivek@samsung.com, spk.linux@gmail.com, tomasz.figa@gmail.com, jg1.han@samsung.com
+From: Tushar Behera <trblinux@gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
+Date: Wed, 09 Jul 2014 17:41:03 +0530
+Message-ID: <53BD3157.7030804@gmail.com>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>	<1402464739-19044-3-git-send-email-tushar.b@samsung.com>	<CAD=FV=W5yh58fYTwRZxmZt=BORcZMSRV0oRe12yA74Q5h2S4YQ@mail.gmail.com>	<7hpphwlgn0.fsf@paris.lan>	<CAC5m3Bzey-YoPLmjAq4YNPQ13rojtVFWAbnhX6-ZFtYZwEdMWg@mail.gmail.com>	<7h8uojk61a.fsf@paris.lan>	<53ACE724.7090606@gmail.com>	<CAGa+x86COQz+cYtrXWrP-sjFGz-gi2tf6GEvLiKYoQwg1zMivQ@mail.gmail.com>	<CAGa+x87LHiYGb03=GRcZisK1=TyakW1htd1E2vOQ6ijZKw8syg@mail.gmail.com>	<53B2A2A5.4070203@gmail.com>	<53BB2E7A.5080204@samsung.com>	<53BB5EBD.5030607@gmail.com> <CABxcv=ka5UxZ8E3+F4cR4vcY1m3AfX=g7HiaNYqmyQjHfSVqtw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:65278 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755816AbaGIMLK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 9 Jul 2014 08:11:10 -0400
+In-Reply-To: <CABxcv=ka5UxZ8E3+F4cR4vcY1m3AfX=g7HiaNYqmyQjHfSVqtw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@google.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-Since the USB 2.0 PHYs are required with EHCI/OHCI USB drivers and
-USB gadget controller supported by the DWC2 gadget driver, make it
-depend on them and default to ARCH_EXYNOS as they are meant for
-Exynos platforms. Also, make the sub-drivers silent options enabling
-them based on the SoC platforms that they are meant to work with. This
-will make life easier for end users who do not have any way knowing the
-dependencies.
+On 07/09/2014 03:44 PM, Javier Martinez Canillas wrote:
+> Hello Tushar,
+> 
+> On Tue, Jul 8, 2014 at 5:00 AM, Tushar Behera <trblinux@gmail.com> wrote:
+>>>>
+>>>> The u-boot version is a little different on my Peach-Pi as compared to
+>>>> the market release version. Not sure if that is making any difference.
+>>>>
+>>>> Peach # version
+>>>>
+>>>> U-Boot 2013.04 (Feb 13 2014 - 16:35:03) for Peach
+>>>> armv7a-cros-linux-gnueabi-gcc.real (4.8.1_cos_gg_feea904_4.8.1-r66)
+>>>> 4.8.x-google 20130905 (prerelease)
+>>>> GNU ld (binutils-2.22_cos_gg_2) 2.22
+>>>>
+>>>
+> 
+> I'm using the same U-Boot version than Kevin (U-Boot 2013.04-gb98ed09)
+> and on my setup using chained nv-uboot I also need patch 1/3 along
+> with 2/3 to fix the issue.
+> 
+>>> Note that I've applied this only from this series so I'm not sure how
+>>> much the problem can be solved...any updates for 1/3 and 3/3?
+>>>
+>>> - Kukjin
+>>
+>> Thanks for applying 2/3. I am working on 1/3 to see if we are following
+>> the right approach to fix Kevin's issue (unfortunately, I am not hitting
+>> the bug on my board ATM). 3/3 has already been merged through a
+>> different patchset.
+>>
+> 
+> I'm sending as an attachment my complete boot log when booting today's
+> next (20140709) until it hangs and my u-boot env vars. I hope that
+> helps.
+> 
 
-Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
----
-Changes since v1:
-* Added dependency on DWC2 gadget driver as suggested by Tomasz Figa.
----
- drivers/phy/Kconfig |   35 +++++++++++------------------------
- 1 file changed, 11 insertions(+), 24 deletions(-)
+Would you please check the behaviour after enabling following config
+options?
 
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index fcdfe7c0e4a7..128f8b92b55c 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -123,43 +123,30 @@ config PHY_SUN4I_USB
- config PHY_SAMSUNG_USB2
- 	tristate "Samsung USB 2.0 PHY driver"
- 	depends on HAS_IOMEM
-+	depends on USB_EHCI_EXYNOS || USB_OHCI_EXYNOS || USB_DWC2
- 	select GENERIC_PHY
- 	select MFD_SYSCON
-+	default ARCH_EXYNOS
- 	help
- 	  Enable this to support the Samsung USB 2.0 PHY driver for Samsung
--	  SoCs. This driver provides the interface for USB 2.0 PHY. Support for
--	  particular SoCs has to be enabled in addition to this driver. Number
--	  and type of supported phys depends on the SoC.
-+	  SoCs. This driver provides the interface for USB 2.0 PHY. Support
-+	  for particular PHYs will be enabled based on the SoC type in addition
-+	  to this driver.
- 
- config PHY_EXYNOS4210_USB2
--	bool "Support for Exynos 4210"
-+	bool
- 	depends on PHY_SAMSUNG_USB2
--	depends on CPU_EXYNOS4210
--	help
--	  Enable USB PHY support for Exynos 4210. This option requires that
--	  Samsung USB 2.0 PHY driver is enabled and means that support for this
--	  particular SoC is compiled in the driver. In case of Exynos 4210 four
--	  phys are available - device, host, HSIC0 and HSIC1.
-+	default CPU_EXYNOS4210
- 
- config PHY_EXYNOS4X12_USB2
--	bool "Support for Exynos 4x12"
-+	bool
- 	depends on PHY_SAMSUNG_USB2
--	depends on (SOC_EXYNOS4212 || SOC_EXYNOS4412)
--	help
--	  Enable USB PHY support for Exynos 4x12. This option requires that
--	  Samsung USB 2.0 PHY driver is enabled and means that support for this
--	  particular SoC is compiled in the driver. In case of Exynos 4x12 four
--	  phys are available - device, host, HSIC0 and HSIC1.
-+	default SOC_EXYNOS4212 || SOC_EXYNOS4412
- 
- config PHY_EXYNOS5250_USB2
--	bool "Support for Exynos 5250"
-+	bool
- 	depends on PHY_SAMSUNG_USB2
--	depends on SOC_EXYNOS5250
--	help
--	  Enable USB PHY support for Exynos 5250. This option requires that
--	  Samsung USB 2.0 PHY driver is enabled and means that support for this
--	  particular SoC is compiled in the driver. In case of Exynos 5250 four
--	  phys are available - device, host, HSIC0 and HSIC.
-+	default SOC_EXYNOS5250 || SOC_EXYNOS5420
- 
- config PHY_EXYNOS5_USBDRD
- 	tristate "Exynos5 SoC series USB DRD PHY driver"
+diff --git a/arch/arm/configs/exynos_defconfig
+b/arch/arm/configs/exynos_defconfig
+index e07a227..d6056ab 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -93,6 +93,11 @@ CONFIG_FRAMEBUFFER_CONSOLE=y
+ CONFIG_FONTS=y
+ CONFIG_FONT_7x14=y
+ CONFIG_LOGO=y
++CONFIG_SOUND=y
++CONFIG_SND=y
++CONFIG_SND_SOC=y
++CONFIG_SND_SOC_SAMSUNG=y
++CONFIG_SND_SOC_SNOW=y
+ CONFIG_USB=y
+ CONFIG_USB_EHCI_HCD=y
+ CONFIG_USB_EHCI_EXYNOS=y
+@@ -109,6 +114,8 @@ CONFIG_MMC_DW_IDMAC=y
+ CONFIG_MMC_DW_EXYNOS=y
+ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_S3C=y
++CONFIG_DMADEVICES=y
++CONFIG_PL330_DMA=y
+ CONFIG_COMMON_CLK_MAX77686=y
+ CONFIG_EXT2_FS=y
+ CONFIG_EXT3_FS=y
+
+
+>> --
+>> Tushar Behera
+>> --
+> 
+> Best regards,
+> Javier
+> 
+
+
 -- 
-1.7.9.5
+Tushar Behera
