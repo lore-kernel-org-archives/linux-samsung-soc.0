@@ -1,95 +1,85 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v5 05/14] drm/exynos: dsi: add pass TE host ops to support
- LCD I80 interface
-Date: Thu, 10 Jul 2014 01:03:33 +0900
-Message-ID: <53BD67D5.8030900@samsung.com>
-References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
- <1404779987-5337-6-git-send-email-yj44.cho@samsung.com>
- <20140709152207.GA17359@ulmo>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v2 0/4] Add support for Exynos clock output configuration
+Date: Wed, 09 Jul 2014 18:53:27 +0200
+Message-ID: <53BD7387.8040200@samsung.com>
+References: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20140709152207.GA17359@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Drake <drake@endlessm.com>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNOuFhCAwN+yblCAxMOydvCAwMDoyMiwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24g
-VHVlLCBKdWwgMDgsIDIwMTQgYXQgMDk6Mzk6MzhBTSArMDkwMCwgWW91bmdKdW4gQ2hvIHdyb3Rl
-Ogo+PiBUbyBzdXBwb3J0IExDRCBJODAgaW50ZXJmYWNlLCB0aGUgRFNJIGhvc3QgY2FsbHMgdGhp
-cyBmdW5jdGlvbgo+PiB0byBub3RpZnkgdGhlIHBhbmVsIHRlYXJpbmcgZWZmZWN0IHN5bmNocm9u
-aXphdGlvbiBzaWduYWwgdG8KPj4gdGhlIENSVEMgZGV2aWNlIG1hbmFnZXIgdG8gdHJpZ2dlciB0
-byB0cmFuc2ZlciB2aWRlbyBpbWFnZS4KPj4KPj4gU2lnbmVkLW9mZi1ieTogWW91bmdKdW4gQ2hv
-IDx5ajQ0LmNob0BzYW1zdW5nLmNvbT4KPj4gQWNrZWQtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBz
-YW1zdW5nLmNvbT4KPj4gQWNrZWQtYnk6IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ft
-c3VuZy5jb20+Cj4+IC0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
-aS5jIHwgMTEgKysrKysrKysrKysKPj4gIGluY2x1ZGUvZHJtL2RybV9taXBpX2RzaS5oICAgICAg
-ICAgICAgICB8ICA3ICsrKysrKysKPj4gIDIgZmlsZXMgY2hhbmdlZCwgMTggaW5zZXJ0aW9ucygr
-KQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
-aS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCj4+IGluZGV4IGRh
-ZDU0M2EuLjc2ZTM0Y2EgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9kc2kuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZHNpLmMKPj4gQEAgLTI0LDYgKzI0LDcgQEAKPj4gICNpbmNsdWRlIDx2aWRlby9taXBpX2Rpc3Bs
-YXkuaD4KPj4gICNpbmNsdWRlIDx2aWRlby92aWRlb21vZGUuaD4KPj4gIAo+PiArI2luY2x1ZGUg
-ImV4eW5vc19kcm1fY3J0Yy5oIgo+PiAgI2luY2x1ZGUgImV4eW5vc19kcm1fZHJ2LmgiCj4+ICAK
-Pj4gIC8qIHJldHVybnMgdHJ1ZSBpZmYgYm90aCBhcmd1bWVudHMgbG9naWNhbGx5IGRpZmZlcnMg
-Ki8KPj4gQEAgLTEwNDEsMTAgKzEwNDIsMjAgQEAgc3RhdGljIHNzaXplX3QgZXh5bm9zX2RzaV9o
-b3N0X3RyYW5zZmVyKHN0cnVjdCBtaXBpX2RzaV9ob3N0ICpob3N0LAo+PiAgCXJldHVybiAocmV0
-IDwgMCkgPyByZXQgOiB4ZmVyLnJ4X2RvbmU7Cj4+ICB9Cj4+ICAKPj4gK3N0YXRpYyB2b2lkIGV4
-eW5vc19kc2lfaG9zdF9wYXNzX3RlKHN0cnVjdCBtaXBpX2RzaV9ob3N0ICpob3N0KQo+PiArewo+
-PiArCXN0cnVjdCBleHlub3NfZHNpICpkc2kgPSBob3N0X3RvX2RzaShob3N0KTsKPj4gKwlzdHJ1
-Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIgPSBkc2ktPmVuY29kZXI7Cj4+ICsKPj4gKwlpZiAoZHNp
-LT5zdGF0ZSAmIERTSU1fU1RBVEVfRU5BQkxFRCkKPj4gKwkJZXh5bm9zX2RybV9jcnRjX3RlX2hh
-bmRsZXIoZW5jb2Rlci0+Y3J0Yyk7Cj4+ICt9Cj4+ICsKPj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qg
-bWlwaV9kc2lfaG9zdF9vcHMgZXh5bm9zX2RzaV9vcHMgPSB7Cj4+ICAJLmF0dGFjaCA9IGV4eW5v
-c19kc2lfaG9zdF9hdHRhY2gsCj4+ICAJLmRldGFjaCA9IGV4eW5vc19kc2lfaG9zdF9kZXRhY2gs
-Cj4+ICAJLnRyYW5zZmVyID0gZXh5bm9zX2RzaV9ob3N0X3RyYW5zZmVyLAo+PiArCS5wYXNzX3Rl
-ID0gZXh5bm9zX2RzaV9ob3N0X3Bhc3NfdGUsCj4+ICB9Owo+PiAgCj4+ICBzdGF0aWMgaW50IGV4
-eW5vc19kc2lfcG93ZXJvbihzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpKQo+PiBkaWZmIC0tZ2l0IGEv
-aW5jbHVkZS9kcm0vZHJtX21pcGlfZHNpLmggYi9pbmNsdWRlL2RybS9kcm1fbWlwaV9kc2kuaAo+
-PiBpbmRleCA5NDRmMzNmLi4zZjIxYmVhIDEwMDY0NAo+PiAtLS0gYS9pbmNsdWRlL2RybS9kcm1f
-bWlwaV9kc2kuaAo+PiArKysgYi9pbmNsdWRlL2RybS9kcm1fbWlwaV9kc2kuaAo+PiBAQCAtNDks
-NiArNDksMTIgQEAgc3RydWN0IG1pcGlfZHNpX21zZyB7Cj4+ICAgKiBAZGV0YWNoOiBkZXRhY2gg
-RFNJIGRldmljZSBmcm9tIERTSSBob3N0Cj4+ICAgKiBAdHJhbnNmZXI6IHNlbmQgYW5kL29yIHJl
-Y2VpdmUgRFNJIHBhY2tldCwgcmV0dXJuIG51bWJlciBvZiByZWNlaXZlZCBieXRlcywKPj4gICAq
-IAkgICAgICBvciBlcnJvcgo+PiArICogQHBhc3NfdGU6IGNhbGwgdGhlIGNydGMgdGVfaGFuZGxl
-cigpIGNhbGxiYWNrIGZyb20gRFNJIGhvc3QuCj4+ICsgKgkgICAgIFRoZSBwYW5lbCBnZW5lcmF0
-ZXMgdGVhcmluZyBlZmZlY3Qgc3luY2hyb25pemF0aW9uIHNpZ25hbCBiZXR3ZWVuCj4+ICsgKgkg
-ICAgIE1DVSBhbmQgRkIgdG8gZGlzcGxheSB2aWRlbyBpbWFnZXMuIEFuZCB0aGUgZGlzcGxheSBj
-b250cm9sbGVyCj4+ICsgKgkgICAgIHNob3VsZCB0cmlnZ2VyIHRvIHRyYW5zZmVyIHZpZGVvIGlt
-YWdlIGF0IHRoaXMgc2lnbmFsLiBTbyB0aGUgcGFuZWwKPj4gKyAqCSAgICAgcmVjZWl2ZXMgdGhl
-IFRFIElSUSwgdGhlbiBjYWxscyB0aGlzIGZ1bmN0aW9uIHRvIG5vdGlmeSBpdCB0byB0aGUKPj4g
-KyAqCSAgICAgZGlzcGxheSBjb250cm9sbGVyLgo+PiAgICovCj4+ICBzdHJ1Y3QgbWlwaV9kc2lf
-aG9zdF9vcHMgewo+PiAgCWludCAoKmF0dGFjaCkoc3RydWN0IG1pcGlfZHNpX2hvc3QgKmhvc3Qs
-Cj4+IEBAIC01Nyw2ICs2Myw3IEBAIHN0cnVjdCBtaXBpX2RzaV9ob3N0X29wcyB7Cj4+ICAJCSAg
-ICAgIHN0cnVjdCBtaXBpX2RzaV9kZXZpY2UgKmRzaSk7Cj4+ICAJc3NpemVfdCAoKnRyYW5zZmVy
-KShzdHJ1Y3QgbWlwaV9kc2lfaG9zdCAqaG9zdCwKPj4gIAkJCSAgICBzdHJ1Y3QgbWlwaV9kc2lf
-bXNnICptc2cpOwo+PiArCXZvaWQgKCpwYXNzX3RlKShzdHJ1Y3QgbWlwaV9kc2lfaG9zdCAqaG9z
-dCk7Cj4gCj4gSSd2ZSBvYmplY3RlZCB0byB0aGlzIHBhcnRpY3VsYXIgY2hhbmdlIGJlZm9yZSBh
-bmQgdGhhdCBvYmplY3Rpb24gc3RpbGwKPiBzdGFuZHMuIEkgZG9uJ3Qgc2VlIGhvdyB0aGlzIGlz
-IHJlbGF0ZWQgdG8gRFNJLiBJdCBzZWVtcyBsaWtlIGFuCj4gaW1wbGVtZW50YXRpb24gZGV0YWls
-IG9mIHRoaXMgcGFydGljdWxhciBzZXR1cCBhbmQgSSB0aGluayBpdCBzaG91bGQgYmUKPiBoYW5k
-bGVkIGRpZmZlcmVudGx5ICh3aXRoaW4gdGhlIEV4eW5vcyBEU0kgY29udHJvbGxlciBpbXBsZW1l
-bnRhdGlvbgo+IHBvc3NpYmx5KS4KCkkgdGhvdWdodCB3ZSBoYWQgZW5vdWdoIHJldmlldyBidXQg
-eWVzLCAgSSBtaXNzZWQgaXQuIEl0IHNlZW1zIGJldHRlciB0bwpoYW5kbGUgcGFzc190ZSBjYWxs
-YmFjayB3aXRoaW4gRXh5bm9zIHNpZGUgYXMgb2Ygbm93LiBUaGF0IGNvdWxkIGNhdXNlCmNvbnRy
-b3ZlcnN5LiBIb3dldmVyLCB0aGUgb2J2aW91cyBvbmUgaXMgdGhhdCB0ZSBzaWduYWwgc2hvdWxk
-IGJlCm5vdGlmaWVkIHRvIGRpc3BsYXkgY29udHJvbGxlciBkcml2ZXIgc29tZWhvdyBidXQgdGhl
-cmUgaXMgbm8gYSBnb29kIHdheQpmb3IgaXQuIEFueXdheSwgZ290IGl0LiAgUmV2ZXJ0ZWQuCgpU
-aGFua3MsCklua2kgRGFlCgo+IAo+IExhdXJlbnQgYWxzbyBhc2tlZCB5b3UgdG8gc3BsaXQgdGhp
-cyB1cCBpbnRvIHR3byBwYXRjaGVzLCBvbmUgZm9yIHRoZQo+IGNvcmUgcGFydCwgdGhlIG90aGVy
-IGZvciB0aGUgRXh5bm9zIGRyaXZlciBwYXJ0cywgeWV0IHRoaXMgcGF0Y2gKPiBjb250YWlucyBi
-b3RoIGNoYW5nZXMuCj4gCj4gVGhpZXJyeQo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+Kukjin,
+
+On 24.06.2014 18:08, Tomasz Figa wrote:
+> On all Exynos SoCs there is a dedicated CLKOUT pin that allows many of
+> internal SoC clocks to be output from the SoC. The hardware structure
+> of CLKOUT related clocks looks as follows:
+> 
+> 	CMU	|---> clock0 --------->	|	PMU	|
+> 		|			|		|
+>     several	|---> clock1 ---------> |	mux	|
+>     muxes	|			|	+	|---> CLKOUT
+>     dividers	|       ...		|	gate	|
+>     and gates	|			|		|
+> 		|---> clockN ---------> |		|
+> 
+> Since the block responsible for handling the pin is PMU, not CMU,
+> a separate driver, that binds to PMU node is required and acquires
+> all input clocks by standard DT clock look-up. This way we don't need
+> any cross-IP block drivers and cross-driver register sharing or
+> nodes for fake devices.
+> 
+> To represent the PMU mux/gate clock, generic composite clock is registered.
+> 
+> Tested on Odroid U3, with HSIC/USB hub using CLKOUT as reference clock,
+> with some additional patches.
+> 
+> Changes since v1:
+> (http://www.spinics.net/lists/arm-kernel/msg333276.html)
+>  - rebased onto next-20140624,
+>  - fixed #clock-cells values in exynos5250.dtsi and exynos5420.dtsi,
+>  - temporarily removed ISP CLKOUT clocks on Exynos4x12, until ISP clock
+>    domain handling gets fixed in Exynos4 clock driver.
+> Changes since RFC v1:
+> (https://lkml.org/lkml/2014/5/15/506)
+>  - rebased onto v5 of "Enable usbphy and hsotg for exynos4" series and
+>    current HEAD of samsung-clk tree,
+>  - added handling of suspend/resume in the driver,
+>  - added missing CPU clocks on Exynos4,
+>  - added CLK_SET_RATE_PARENT to CMU CLKOUT gates on Exynos4,
+>  - fixed bit field width on Exynos4,
+>  - added CLKOUT CMU registers of Exynos4 to save/restore list,
+>  - added CLK_SET_RATE_PARENT and CLK_SET_RATE_NO_REPARENT to clkout clock,
+>  - changed the binding to use 1-cell clock specifier to allow extension
+>    with further PMU clocks in future, if needed.
+> 
+> Tomasz Figa (4):
+>   clk: samsung: exynos4: Add missing CPU/DMC clock hierarchy
+>   clk: samsung: exynos4: Add CLKOUT clock hierarchy
+>   clk: samsung: Add driver to control CLKOUT line on Exynos SoCs
+>   ARM: dts: exynos: Update PMU node with CLKOUT related data
+> 
+>  .../devicetree/bindings/arm/samsung/pmu.txt        |  30 ++++
+>  arch/arm/boot/dts/exynos4210.dtsi                  |  10 ++
+>  arch/arm/boot/dts/exynos4x12.dtsi                  |   7 +
+>  arch/arm/boot/dts/exynos5250.dtsi                  |   3 +
+>  arch/arm/boot/dts/exynos5420.dtsi                  |   3 +
+>  drivers/clk/samsung/Makefile                       |   1 +
+>  drivers/clk/samsung/clk-exynos-clkout.c            | 153 +++++++++++++++++++
+>  drivers/clk/samsung/clk-exynos4.c                  | 166 ++++++++++++++++++++-
+>  include/dt-bindings/clock/exynos4.h                |   5 +
+>  9 files changed, 374 insertions(+), 4 deletions(-)
+>  create mode 100644 drivers/clk/samsung/clk-exynos-clkout.c
+> 
+
+Is there any progress with consulting this with hardware guys? Could I
+have your Ack for this series, so I could put it in my tree and let
+other patches base on it (especially on patches 1 and 2)? Thanks in advance.
+
+Best regards,
+Tomasz
