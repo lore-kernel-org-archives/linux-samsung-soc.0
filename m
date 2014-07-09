@@ -1,80 +1,78 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCHv5 0/4] iio: adc: exynos_adc: Support Exynos3250 ADC and
- code clean
-Date: Wed, 09 Jul 2014 16:27:29 +0900
-Message-ID: <53BCEEE1.4010403@samsung.com>
-References: <1403843406-28229-1-git-send-email-cw00.choi@samsung.com>
- <53AFFD69.8060702@kernel.org> <53B0C2AB.4030201@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 5/6] pinctrl: samsung: Allow grouping multiple
+ pinmux/pinconf nodes
+Date: Wed, 9 Jul 2014 09:32:30 +0200
+Message-ID: <CACRpkdYG7kc+rUHSMoiZCwDAhzWsbBze3djgiWQna0AG6oTwfw@mail.gmail.com>
+References: <1404315664-3174-1-git-send-email-t.figa@samsung.com>
+	<1404315664-3174-6-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <53B0C2AB.4030201-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:53389 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751114AbaGIHcb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 9 Jul 2014 03:32:31 -0400
+Received: by mail-oa0-f48.google.com with SMTP id m1so1739373oag.35
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jul 2014 00:32:30 -0700 (PDT)
+In-Reply-To: <1404315664-3174-6-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
 
-Dear Kukjin Kim,
+On Wed, Jul 2, 2014 at 5:41 PM, Tomasz Figa <t.figa@samsung.com> wrote:
 
-This patch modified Exynos3250 dtsi to support ADC with IIO.
-Could you please reivew this patchset about exynos3250.dtsi?
+> One of remaining limitations of current pinctrl-samsung driver was
+> the inability to parse multiple pinmux/pinconf group nodes grouped
+> inside a single device tree node. It made defining groups of pins for
+> single purpose, but with different parameters very inconvenient.
+>
+> This patch implements Tegra-like support for grouping multiple pinctrl
+> groups inside one device tree node, by completely changing the way
+> pin groups and functions are parsed from device tree. The code creating
+> pinctrl maps from DT nodes has been borrowed from pinctrl-tegra, while
+> the initial creation of groups and functions has been completely
+> rewritten with following assumptions:
+>  - each group consists of just one pin and does not depend on data
+>    from device tree,
+>  - each function is represented by a device tree child node of the
+>    pin controller, which in turn can contain multiple child nodes
+>    for pins that need to have different configuration values.
+>
+> Device Tree bindings are fully backwards compatible. New functionality
+> can be used by defining a new pinctrl group consisting of several child
+> nodes, as on following example:
+>
+>         sd4_bus8: sd4-bus-width8 {
+>                 part-1 {
+>                         samsung,pins = "gpk0-3", "gpk0-4",
+>                                         "gpk0-5", "gpk0-6";
+>                         samsung,pin-function = <3>;
+>                         samsung,pin-pud = <3>;
+>                         samsung,pin-drv = <3>;
+>                 };
+>                 part-2 {
+>                         samsung,pins = "gpk1-3", "gpk1-4",
+>                                         "gpk1-5", "gpk1-6";
+>                         samsung,pin-function = <4>;
+>                         samsung,pin-pud = <4>;
+>                         samsung,pin-drv = <3>;
+>                 };
+>         };
+>
+> Tested on Exynos4210-Trats board and a custom Exynos4212-based one.
+>
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
 
-Best Regards,
-Chanwoo Choi
+Patch applied.
 
-On 06/30/2014 10:51 AM, Chanwoo Choi wrote:
-> Dear Kukjin,
-> 
-> On 06/29/2014 08:50 PM, Jonathan Cameron wrote:
->> On 27/06/14 05:30, Chanwoo Choi wrote:
->>> Changes from v4:
->>> - Use 'exynos_adc_data' structure instead of 'exynos_adc_ops' structure
->>>    and remove enum variable of ADC version
->>> - Fix wrong name of special clock (sclk_tsadc -> sclk_adc)
->>> - Add reviewed message by Naveen Krishna Chatradhi
->>> - Add functions for ADC clock control
->>>
->>> Changes from v3:
->>> - Add new 'exynos_adc_ops' structure to improve readability according to
->>>   Tomasz Figa comment[1]
->>>   [1] https://lkml.org/lkml/2014/4/16/238
->>> - Add new 'exynos3250-adc-v2' compatible string to support Exynos3250 ADC
->>> - Fix wrong compaitlbe string of ADC in Exynos3250 dtsi file
->>>
->>> Changes from v2:
->>> - Check return value of clock function to deal with error exception
->>> - Fix minor coding style to improve readability
->>>
->>> Changes from v1:
->>> - Add new "samsung,exynos-adc-v3" compatible to support Exynos3250 ADC
->>> - Add a patch about DT binding documentation
->>>
->>> Chanwoo Choi (4):
->>>    iio: adc: exynos_adc: Add exynos_adc_data structure to improve readability
->>>    iio: adc: exynos_adc: Control special clock of ADC to support Exynos3250 ADC
->>>    iio: devicetree: Add DT binding documentation for Exynos3250 ADC
->>>    ARM: dts: Fix wrong compatible string for Exynos3250 ADC
->>>
->>>   .../devicetree/bindings/arm/samsung/exynos-adc.txt |  26 +-
->>>   arch/arm/boot/dts/exynos3250.dtsi                  |   4 +-
->>>   drivers/iio/adc/exynos_adc.c                       | 326 +++++++++++++++------
->>>   3 files changed, 268 insertions(+), 88 deletions(-)
->>>
->> I am happy with this series, but given it touches some exynos bindings, I would
->> like an ack from Kukjin Kim (or according to MAINTAINERS Ben Dooks) before taking it
->> all through IIO.
-> 
-> Could you please review this patchset about exynos dtsi and bindings?
-> 
-> Best Regards,
-> Chanwoo Choi
-> 
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-> 
+(This decision is mainly based on trust, I got lost in the patch :-)
+
+Yours,
+Linus Walleij
