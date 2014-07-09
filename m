@@ -1,156 +1,91 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v5 05/14] drm/exynos: dsi: add pass TE host ops to
- support LCD I80 interface
-Date: Wed, 9 Jul 2014 17:22:08 +0200
-Message-ID: <20140709152207.GA17359@ulmo>
-References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
- <1404779987-5337-6-git-send-email-yj44.cho@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
+Date: Wed, 9 Jul 2014 08:22:05 -0700
+Message-ID: <CAD=FV=XjWu6RQ+9789fzg08Whq-d=XWoeT+dZ7YQLLJvCBUfwQ@mail.gmail.com>
+References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>
+	<CACRpkdZrDJ3xoUYGynf0sO4-U7ZVkJ=Mr_pNVSdar8oM85aVgA@mail.gmail.com>
+	<CAD=FV=WQWBkq5JKttikLkyKEDX-YydQJLr9=bFWifpy2Lf0mSg@mail.gmail.com>
+	<53BC1A63.80900@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1439631575=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1404779987-5337-6-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f175.google.com ([209.85.220.175]:60354 "EHLO
+	mail-vc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756419AbaGIPWG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 9 Jul 2014 11:22:06 -0400
+Received: by mail-vc0-f175.google.com with SMTP id hy4so7067952vcb.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jul 2014 08:22:05 -0700 (PDT)
+In-Reply-To: <53BC1A63.80900@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Houcheng Lin <houcheng@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
+Vikas,
 
---===============1439631575==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
-Content-Disposition: inline
+On Tue, Jul 8, 2014 at 9:20 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+> On 08.07.2014 17:27, Doug Anderson wrote:
+>> Hi,
+>>
+>> On Tue, Jul 8, 2014 at 12:46 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>>> On Thu, Jun 26, 2014 at 11:15 AM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+>>>
+>>>> From: Doug Anderson <dianders@chromium.org>
+>>>>
+>>>> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
+>>>> being reset across sleep/wake.  If we don't set it to anything then
+>>>> the TPM will be reset.  U-Boot will detect this as invalid
+>>>> and will reset the system on resume time. This GPIO can always be low
+>>>> and not hurt anything.  It will get pulled back high again during a
+>>>> normal warm reset when it will default back to an input.
+>>>>
+>>>> To properly preserve the TPM state across suspend/resume and to make
+>>>> the chrome U-Boot happy, properly set the GPIO to mask the
+>>>> reset to the TPM.
+>>>>
+>>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>>>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+>>> (...)
+>>>> +       /* We need GPX0_6 to be low at sleep time; just keep it low always */
+>>>> +       mask_tpm_reset_regulator: mask-tpm-reset-regulator {
+>>>> +       compatible = "regulator-fixed";
+>>>
+>>> No matter how the discussion ends up, regulator-fixed is wrong.
+>>
+>> OK, fair enough.
+>>
+>>
+>>> Either folding it into the TPM driver or using a separate reset driver
+>>> is fine with me.
+>>
+>> OK, Vikas: do you want to code up the driver?
+>>
+>>
+>>> So what about the generic delayed reset GPIO thing?
+>>> http://marc.info/?l=linux-kernel&m=140309916607115&w=2
+>>
+>> That's a neat concept and could be useful in other cases, but I think
+>> it's just as much of a hack as using a regulator.  This is not a reset
+>> signal for the TPM.  This is a signal that will mask the CPU's reset
+>> signal (using a special bit of board-specific logic).
+>>
+>>
+>> Personally I think Tomasz's idea of using hogs (after his patches
+>> allowing a default output level) is the cleanest, but I think Stephen
+>> didn't like that.
+>
+> I don't see any benefits of using complex interfaces over simply
+> initializing the pin to the right value once at boot-up or at
+> suspend/resume. As far as I understand Doug's explanation of the
+> problem, nothing else is expected from the OS with respect to this pin.
+> Moreover it doesn't affect operation of any drivers.
+>
+> So I'm still for the simplest and effective solution, i.e. hogs.
 
+It looks as if Tomasz's patch has landed, so perhaps you could try to
+code it up his way.  It should be very simple.  Please make sure to CC
+Stephen Warren on the patch so that he is included in the discussion
+(and of course include Tomasz, Linus W, etc).
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jul 08, 2014 at 09:39:38AM +0900, YoungJun Cho wrote:
-> To support LCD I80 interface, the DSI host calls this function
-> to notify the panel tearing effect synchronization signal to
-> the CRTC device manager to trigger to transfer video image.
->=20
-> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-> Acked-by: Inki Dae <inki.dae@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 11 +++++++++++
->  include/drm/drm_mipi_dsi.h              |  7 +++++++
->  2 files changed, 18 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_dsi.c
-> index dad543a..76e34ca 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -24,6 +24,7 @@
->  #include <video/mipi_display.h>
->  #include <video/videomode.h>
-> =20
-> +#include "exynos_drm_crtc.h"
->  #include "exynos_drm_drv.h"
-> =20
->  /* returns true iff both arguments logically differs */
-> @@ -1041,10 +1042,20 @@ static ssize_t exynos_dsi_host_transfer(struct mi=
-pi_dsi_host *host,
->  	return (ret < 0) ? ret : xfer.rx_done;
->  }
-> =20
-> +static void exynos_dsi_host_pass_te(struct mipi_dsi_host *host)
-> +{
-> +	struct exynos_dsi *dsi =3D host_to_dsi(host);
-> +	struct drm_encoder *encoder =3D dsi->encoder;
-> +
-> +	if (dsi->state & DSIM_STATE_ENABLED)
-> +		exynos_drm_crtc_te_handler(encoder->crtc);
-> +}
-> +
->  static const struct mipi_dsi_host_ops exynos_dsi_ops =3D {
->  	.attach =3D exynos_dsi_host_attach,
->  	.detach =3D exynos_dsi_host_detach,
->  	.transfer =3D exynos_dsi_host_transfer,
-> +	.pass_te =3D exynos_dsi_host_pass_te,
->  };
-> =20
->  static int exynos_dsi_poweron(struct exynos_dsi *dsi)
-> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-> index 944f33f..3f21bea 100644
-> --- a/include/drm/drm_mipi_dsi.h
-> +++ b/include/drm/drm_mipi_dsi.h
-> @@ -49,6 +49,12 @@ struct mipi_dsi_msg {
->   * @detach: detach DSI device from DSI host
->   * @transfer: send and/or receive DSI packet, return number of received =
-bytes,
->   * 	      or error
-> + * @pass_te: call the crtc te_handler() callback from DSI host.
-> + *	     The panel generates tearing effect synchronization signal between
-> + *	     MCU and FB to display video images. And the display controller
-> + *	     should trigger to transfer video image at this signal. So the pa=
-nel
-> + *	     receives the TE IRQ, then calls this function to notify it to the
-> + *	     display controller.
->   */
->  struct mipi_dsi_host_ops {
->  	int (*attach)(struct mipi_dsi_host *host,
-> @@ -57,6 +63,7 @@ struct mipi_dsi_host_ops {
->  		      struct mipi_dsi_device *dsi);
->  	ssize_t (*transfer)(struct mipi_dsi_host *host,
->  			    struct mipi_dsi_msg *msg);
-> +	void (*pass_te)(struct mipi_dsi_host *host);
-
-I've objected to this particular change before and that objection still
-stands. I don't see how this is related to DSI. It seems like an
-implementation detail of this particular setup and I think it should be
-handled differently (within the Exynos DSI controller implementation
-possibly).
-
-Laurent also asked you to split this up into two patches, one for the
-core part, the other for the Exynos driver parts, yet this patch
-contains both changes.
-
-Thierry
-
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTvV4fAAoJEN0jrNd/PrOho7kP/0uscxU3Sn2h4p31rafuykSe
-II1J94ePzmd9+WWwKb7RWPfuJD3rQMIj6+sSx+4uBstcrT518QeJ5qKTfavfQtcO
-zVwCgsZt/3hYzF+YVSO/ECf+nin3QN7sF8+o1fDcoYtqS5VbAB8QOWKuu/BCeJb8
-pHTxZPNbmtkFaAuiJSN2FrbPCZtdadaQl8DIH7y36SXXfKsDqmSq/QfGHA0xsrwu
-piQ4unHnuheo2UMiD8qHBJ438Ji3EYql0VhmzLCp3nIqk+8TAXZZ/xhuHuU4Z9vf
-e+2Z2ASAmTiEMqIKtZWaFRjAyJ+5gpNX5VCrw9PXvOrRj9ySpsQSeQ52xu0FiYbP
-ZFNENguhkyTcw1esFGNo7Y17ZwGu/kJhR4OkhnvsthblWsUQMvLF+S8UXfTI0nb3
-XL0NV4pm/AaFev+WDcKYFdXZRfngeGJsGXKEQs3YbC+c9P5kxNcsdhLQhxmOLw+k
-bAHxG5ArndljkfQvfuvjce1y3DgH9YjYggHXJ5eq+Zc0kGlegEeOPCWm4AdgSnVi
-e9F6jSNf6j3gzdQ6H1RZbb0a1W6txmnBvyyLVEFuUAcbvUXCcAa1hFSwGPUzhjwg
-dgkD6WHn8LNrN0Gk3kgzTb7SkH030qbf1SOglj2+mXxDNvRcyrGmQyRjnixD9sIo
-RZSkorrhYW3A4N2IJh1C
-=2jaq
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
-
---===============1439631575==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1439631575==--
+-Doug
