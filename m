@@ -1,107 +1,119 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: [PATCH 3/3] arm: exynos: Add PMU and S2R support for exynos5800 SoC
-Date: Wed, 09 Jul 2014 16:55:47 +0530
-Message-ID: <1404905147-30319-4-git-send-email-vikas.sajjan@samsung.com>
-References: <1404905147-30319-1-git-send-email-vikas.sajjan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:45860 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755278AbaGIL2v (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Jul 2014 07:28:51 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N8F00ERYZW2U7D0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 Jul 2014 20:28:50 +0900 (KST)
-In-reply-to: <1404905147-30319-1-git-send-email-vikas.sajjan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: dts: remove display power domain for exynos5420
+Date: Wed, 9 Jul 2014 17:00:07 +0530
+Message-ID: <CAPdUM4NGXDz-bX=qqzC7LXRE5fCapdHGZeUZ29Xov=P7VZykgg@mail.gmail.com>
+References: <1402313299-18885-1-git-send-email-rahul.sharma@samsung.com>
+	<CAPdUM4OVjRSqVdQDUJZR7vGm1uUEYr31s-tx7Oxs8tM_xc2v7g@mail.gmail.com>
+	<53A12EA3.5010007@samsung.com>
+	<CAPdUM4OK+ATMMRM67dV5JeeTGMu=XA7Gvi7Uif+Hypf3iP+6jg@mail.gmail.com>
+	<CAPdUM4MToVJC5KRS1DUDmYEdUx2PGBE0G1v7p-SGgqpw7SPOhw@mail.gmail.com>
+	<53BC0F8F.4010106@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53BC0F8F.4010106-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, Vikas Sajjan <vikas.sajjan@samsung.com>
 
-Adds PMU and S2R support for exynos5800 SoC.
+Hi Tomasz,
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
----
- arch/arm/mach-exynos/pm.c       |    3 +++
- arch/arm/mach-exynos/pmu.c      |   22 ++++++++++++++++++++++
- arch/arm/mach-exynos/regs-pmu.h |    3 ++-
- 3 files changed, 27 insertions(+), 1 deletion(-)
+On 8 July 2014 21:04, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Hi Rahul,
+>
+> On 07.07.2014 15:37, Rahul Sharma wrote:
+>> Hi Andrej, Inki,
+>>
+>> On 18 June 2014 12:06, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>> Hi Andrej,
+>>>
+>>> On 18 June 2014 11:46, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>>> On 06/17/2014 07:49 AM, Rahul Sharma wrote:
+>>>>> Hi All,
+>>>>>
+>>>>> Please review this patch.
+>>>>>
+>>>>> Regards,
+>>>>> Rahul Sharma
+>>>>>
+>>>>> On 9 June 2014 16:58, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>>>>> Display domain is removed due to instability issues. Explaining
+>>>>>> the problem below:
+>>>>>>
+>>>>>> exynos_init_late triggers the pm_genpd_poweroff_unused which
+>>>>>> powers off the unused power domains. This call hits before
+>>>>>> the trigger to deferred probes.
+>>>>>>
+>>>>>> DRM DP Panel defers the probe due to supply get failure. By the
+>>>>>> time, deferred probe is scheduled again, Display Power Domain is
+>>>>>> powered off by pm_genpd_poweroff_unused.
+>>>>>>
+>>>>>> FIMD and DP drivers are accessing registers during Probe and Bind
+>>>>>> callbacks. If display domain is enabled/disabled around register
+>>>>>> accesses, display domain gets unstable and we are getting Power
+>>>>>> Domain Disable fail notification. Increasing the Timeout also
+>>>>>> didn't help.
+>>>>
+>>>> As I understand the problem is that fimd and dp drivers access hw
+>>>> registers without enabling power domain. So the proper solution is to
+>>>> fix these drivers.
+>>>
+>>> That is also a problem but I fixed those accesses in my local kernel before
+>>> hitting this issue. If we do register accesses in FIMD/DP probe/bind we
+>>> observes "Prefetch abort" exception. But here the problem is that 'DP
+>>> domain disable' starts failing if we enable/disable multiple times.
+>>>
+>>>>
+>>>> Btw. there are already patches removing hw access from probe/bind of
+>>>> fimd. I guess removing also hw access from dp probe/bind could be a good
+>>>> solution.
+>>>
+>>> Please let me know the links for posted patches. I will test with those patches.
+>>
+>> Is there any update on this? Please share the patches which fixes the
+>> above issue or avoid the above scenario of multiple PM Domain enable/disable.
+>> I will test them for exynos5 based boards. Otherwise we should get this change
+>> merged else display will remain broken for exynos5 based boards.
+>
+> Andrzej is on holidays right now, so he won't be able to reply in this
+> thread until he's back. Here are two patches I was able to find on the
+> related MLs that might be fixing the cause of your issues:
 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 5052261..908369f 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -807,6 +807,9 @@ static struct of_device_id exynos_pmu_of_device_ids[] = {
- 	}, {
- 		.compatible = "samsung,exynos5420-pmu",
- 		.data = (void *)&exynos5420_pm_data,
-+	}, {
-+		.compatible = "samsung,exynos5800-pmu",
-+		.data = (void *)&exynos5420_pm_data,
- 	},
- 	{ /*sentinel*/ },
- };
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index d8485a4..0dd0be0 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -718,6 +718,19 @@ static void exynos5420_pmu_init(void)
- 	pr_info("EXYNOS5420 PMU initialized\n");
- }
- 
-+static void exynos5800_pmu_init(void)
-+{
-+	unsigned int value;
-+
-+	exynos5420_pmu_init();
-+
-+	value = pmu_raw_readl(EXYNOS5420_LPI_MASK);
-+	value |= EXYNOS5800_POWER_GATE_CTRL;
-+	pmu_raw_writel(value, EXYNOS5420_LPI_MASK);
-+
-+	pr_info("EXYNOS5800 PMU initialized\n");
-+}
-+
- 
- static const struct exynos_pmu_data exynos4210_pmu_data = {
- 	.pmu_config	= exynos4210_pmu_config,
-@@ -744,6 +757,12 @@ static struct exynos_pmu_data exynos5420_pmu_data = {
- 	.powerdown_conf	= exynos5420_powerdown_conf,
- };
- 
-+static struct exynos_pmu_data exynos5800_pmu_data = {
-+	.pmu_config	= exynos5420_pmu_config,
-+	.pmu_init	= exynos5800_pmu_init,
-+	.powerdown_conf	= exynos5420_powerdown_conf,
-+};
-+
- static const struct regmap_config pmu_regmap_config = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
-@@ -769,6 +788,9 @@ static const struct of_device_id exynos_pmu_of_device_ids[] = {
- 	}, {
- 		.compatible = "samsung,exynos5420-pmu",
- 		.data = (void *)&exynos5420_pmu_data,
-+	}, {
-+		.compatible = "samsung,exynos5800-pmu",
-+		.data = (void *)&exynos5800_pmu_data,
- 	},
- 	{ /*sentinel*/ },
- };
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index 3a6a559..3a0140c 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -555,5 +555,6 @@ static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
- 					 | EXYNOS5420_KFC_USE_STANDBY_WFI1  \
- 					 | EXYNOS5420_KFC_USE_STANDBY_WFI2  \
- 					 | EXYNOS5420_KFC_USE_STANDBY_WFI3)
--
-+/* for exynos5800 only */
-+#define EXYNOS5800_POWER_GATE_CTRL                              (1 << 15)
- #endif /* __ASM_ARCH_REGS_PMU_H */
--- 
-1.7.9.5
+Ok. thanks for the update.
+
+We should test with Ajay's patches which includes DP probe deferring
+based on availability of bridge chip. +
+
+few patches which cleanup register access in FIMD and DP probe/bind
+OR
+few patches to enable Display power domain and clocks just before the
+register access. As done in https://lkml.org/lkml/2014/7/4/188.
+
+Later solution results into display power domain enable failure in case of DRM
+probe defer.
+
+I am just curious if Andrej has some solution for the first approach which can
+be tested for defer probe and S2R scenarios.
+
+Regards,
+Rahul Sharma.
+
+>
+> [PATCH] drm/exynos: remove hardware overlays disable from fimd probe
+> (https://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg31629.html)
+>
+> [PATCH] drm/exynos: fimd: Keep power enabled during fimd_bind
+> (https://lkml.org/lkml/2014/7/4/188)
+>
+> Best regards,
+> Tomasz
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
