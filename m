@@ -1,105 +1,50 @@
-From: Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v2 3/4] usb: host: xhci-plat: Caibrate PHY post host reset
-Date: Wed, 9 Jul 2014 10:58:01 -0700
-Message-ID: <CAODwPW92VpQpAK1X57cW7X6Y1q7=ESF7qxxtcpk4CBg1+n8BqA@mail.gmail.com>
-References: <1404900096-1721-1-git-send-email-gautam.vivek@samsung.com>
-	<1404900096-1721-4-git-send-email-gautam.vivek@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v7 04/24] mfd: max77686: Make platform data over-rule
+ DT
+Date: Wed, 09 Jul 2014 20:15:21 +0200
+Message-ID: <53BD86B9.4000907@collabora.co.uk>
+References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk> <1404505467-26526-5-git-send-email-javier.martinez@collabora.co.uk> <20140709145203.GF2635@lee--X1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1404900096-1721-4-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, kishon <kishon-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>, heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, pratyush.anand-qxv4g6HH51o@public.gmane.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140709145203.GF2635@lee--X1>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 9, 2014 at 3:01 AM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Some quirky PHYs may require to be calibrated post the host
-> controller initialization.
-> The USB 3.0 DRD PHY on Exynos5420/5800 systems, coming along with
-> Synopsys's DWC3 controller, is one such PHY which needs to be
-> calibrated post xhci's reset at initialization time and at
-> resume time, to get the controller work at SuperSpeed.
->
-> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/usb/host/xhci-plat.c |   39 +++++++++++++++++++++++++++++++++++++--
->  1 file changed, 37 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-> index e50bd7d..decf349 100644
-> --- a/drivers/usb/host/xhci-plat.c
-> +++ b/drivers/usb/host/xhci-plat.c
-> @@ -35,7 +35,27 @@ static void xhci_plat_quirks(struct device *dev, struct xhci_hcd *xhci)
->  /* called during probe() after chip reset completes */
->  static int xhci_plat_setup(struct usb_hcd *hcd)
->  {
-> -       return xhci_gen_setup(hcd, xhci_plat_quirks);
-> +       struct device *parent;
-> +       int ret;
-> +
-> +       ret = xhci_gen_setup(hcd, xhci_plat_quirks);
-> +       if (ret) {
-> +               dev_err(hcd->self.controller, "xhci setup failed\n");
-> +               return ret;
-> +       }
-> +
-> +       parent = hcd->self.controller->parent;
-> +       if (of_device_is_compatible(parent->of_node, "synopsys,dwc3") ||
-> +           of_device_is_compatible(parent->of_node, "snps,dwc3")) {
-> +               if (!IS_ERR(hcd->gen_phy)) {
-> +                       ret = phy_calibrate(hcd->gen_phy);
-> +                       if (ret < 0 && ret != -ENOTSUPP)
-> +                               dev_err(hcd->self.controller,
-> +                                       "failed to calibrate USB PHY\n");
-> +               }
-> +       }
+Hello Lee,
 
-Here as well, is it really necessary to special-case it so much? I'd
-say if there is a PHY and it has a calibrate function bound we call
-it, and if not we just go ahead.
+On 07/09/2014 04:52 PM, Lee Jones wrote:
+> On Fri, 04 Jul 2014, Javier Martinez Canillas wrote:
+> 
+>> The function max77802_i2c_parse_dt_pdata() should only be called
+>> if there isn't already platform data for the device.
+>> 
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> ---
+>>  drivers/mfd/max77686.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> I assume some of these patches can be applied independently.
+>
 
-I also think that this would fit better in core/hcd.c since it's not
-really XHCI specific... it's conceivable that an EHCI controller might
-also need to tune some PHY settings after reset (in fact Tegra does
-something similar, although it already has another hack for that now),
-so if we introduce this general facility why not offer it to
-everyone?.
+Yes, some patches can be applied independently and it would be quite helpful
+indeed since that will allow me to keep a smaller series :)
 
-> +
-> +       return ret;
->  }
->
->  static int xhci_plat_start(struct usb_hcd *hcd)
-> @@ -288,8 +308,23 @@ static int xhci_plat_resume(struct device *dev)
->  {
->         struct usb_hcd  *hcd = dev_get_drvdata(dev);
->         struct xhci_hcd *xhci = hcd_to_xhci(hcd);
-> +       int ret;
-> +
-> +       ret = xhci_resume(xhci, 0);
-> +       if (ret)
-> +               return ret;
->
-> -       return xhci_resume(xhci, 0);
-> +       if (of_device_is_compatible(dev->parent->of_node, "synopsys,dwc3") ||
-> +           of_device_is_compatible(dev->parent->of_node, "snps,dwc3")) {
-> +               if (!IS_ERR(hcd->gen_phy)) {
-> +                       ret = phy_calibrate(hcd->gen_phy);
-> +                       if (ret < 0 && ret != -ENOTSUPP)
-> +                               dev_err(hcd->self.controller,
-> +                                       "failed to calibrate USB PHY\n");
-> +               }
-> +       }
-> +
-> +       return ret;
->  }
->
->  static const struct dev_pm_ops xhci_plat_pm_ops = {
-> --
-> 1.7.10.4
->
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Let me know which ones and I'll apply them.  In the mean time:
+> 
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> 
+
+Patches 1-7 are just cleanups and improvements for max77686 mfd driver so they
+can be applied safely. You had already acked 1-6 and 7 is just a trivial patch
+so I guess you won't have issues with that one as well.
+
+Patches 11 and 14 are small patches for the max77802 clk driver and Mike already
+gave his Reviewed-by tag so if you are going to take the whole set through your
+tree those two patches are safe to be applied as well.
+
+Thanks a lot for your help and best regards,
+Javier
