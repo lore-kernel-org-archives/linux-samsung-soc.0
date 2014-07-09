@@ -1,67 +1,31 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH 1/4] phy: Add provision for calibrating phy.
-Date: Wed, 9 Jul 2014 14:32:35 +0530
-Message-ID: <CAFp+6iH697pP9UWhYLKJc_S2VZUJQ3y6GDzg78gat=X1kybtiQ@mail.gmail.com>
-References: <1402056736-12674-1-git-send-email-gautam.vivek@samsung.com>
-	<1402056736-12674-2-git-send-email-gautam.vivek@samsung.com>
-	<20140609034902.GA2625@pratyush-vbox>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: Re: [PATCH] Input: s3c2410_ts: Move to clk_prepare_enable/clk_disable_unprepare
+Date: Wed, 09 Jul 2014 12:13:41 +0300
+Message-ID: <2138540.gOK28iFQ6r@vasilykh-desktop-i5>
+References: <1404155377-2862-1-git-send-email-anarsoul@gmail.com> <20140709010049.GC14935@core.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140609034902.GA2625@pratyush-vbox>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pratyush Anand <pratyush.anand@st.com>
-Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "kishon@ti.com" <kishon@ti.com>, "mathias.nyman@intel.com" <mathias.nyman@intel.com>, "jwerner@chromium.org" <jwerner@chromium.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20140709010049.GC14935@core.coreip.homeip.net>
+Sender: linux-input-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On 8 July 2014 18:00:49 Dmitry Torokhov wrote:
 
+Hi Dmitry,
 
-On Mon, Jun 9, 2014 at 9:19 AM, Pratyush Anand <pratyush.anand@st.com> wrote:
-> On Fri, Jun 06, 2014 at 08:12:12PM +0800, Vivek Gautam wrote:
->> Some PHY controllers may need to calibrate certain
->> PHY settings after initialization of the controller and
->> sometimes even after initializing the PHY-consumer too.
->> Add support for the same in order to let consumers do so in need.
->>
->> Signed-off-by: vivek Gautam <gautam.vivek@samsung.com>
->> ---
->>  drivers/phy/phy-core.c  |   36 ++++++++++++++++++++++++++++++++++++
->>  include/linux/phy/phy.h |    7 +++++++
->>  2 files changed, 43 insertions(+)
->>
->> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
->> index 74d4346..92d31a3 100644
->> --- a/drivers/phy/phy-core.c
->> +++ b/drivers/phy/phy-core.c
->> @@ -376,6 +376,42 @@ int phy_power_off(struct phy *phy)
->>  EXPORT_SYMBOL_GPL(phy_power_off);
->>
->>  /**
->> + * phy_calibrate - calibrate a phy post initialization
->> + * @phy: Pointer to 'phy' from consumer
->> + *
->> + * For certain PHYs, it may be needed to calibrate few phy parameters
->> + * post initialization. The need to calibrate may arise after the
->
-> For USB you may need to calibrate phy after each new connection. If
-> so, why not to use already existing struct usb_phy's notify_connect.
+> > 
+> > -	clk_disable(ts.clock);
+> > +	clk_disable_unprepare(ts.clock);
+> 
+> Do we really need to unprepare on suspend? Why simply disabling is not
+> enough here?
 
-The phy_calibrate will rather be a one time phenomenon.
-On exynos atleast the case is : the phy settings for PIPE3 phy on DWC3
-controller need to be
-configured post hcd reset. so that we don't need to re-configure these
-phy settings on every connect.
+You're right, disabling should be enough here. I'll resend a patch after 
+testing on a hardware.
 
-Moreover *there are certain devices* which need these PHY settings
-even to show a connect-status-change.
-So, it would rather be not useful to create a 'phy_notify_connect' API
-in drivers/phy/ and use the same for this purpose.
-
-
-
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+Regards
+Vasily
