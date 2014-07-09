@@ -1,273 +1,47 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support for Exynos PMU
-Date: Wed, 09 Jul 2014 09:30:54 +0530
-Message-ID: <1404878455-31518-4-git-send-email-pankaj.dubey@samsung.com>
-References: <1404878455-31518-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1404878455-31518-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 1/2] phy: Kconfig: Re-organize Exynos USB 2.0 PHY configs
+Date: Wed, 09 Jul 2014 13:07:31 +0900
+Message-ID: <001701cf9b2b$4e228d60$ea67a820$%han@samsung.com>
+References: <1404118582-21993-1-git-send-email-sachin.kamat@samsung.com>
+ <53BC122C.9090505@samsung.com>
+ <CAK5sBcHJeK5=LrYfBO5C4Ht1upLes2ynvofuhBo3_xYsxGO1=g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:27762 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751224AbaGIEHd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 9 Jul 2014 00:07:33 -0400
+In-reply-to: <CAK5sBcHJeK5=LrYfBO5C4Ht1upLes2ynvofuhBo3_xYsxGO1=g@mail.gmail.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Sachin Kamat' <spk.linux@gmail.com>, 'Tomasz Figa' <t.figa@samsung.com>
+Cc: 'open list' <linux-kernel@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Doug Anderson' <dianders@chromium.org>, 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-This patch modifies Exynos Power Management Unit (PMU) initialization
-implementation in following way:
+On Wednesday, July 09, 2014 12:42 PM, Sachin Kamat wrote:
+> On Tue, Jul 8, 2014 at 9:15 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> > On 30.06.2014 10:56, Sachin Kamat wrote:
+> >> Since the USB 2.0 PHYs are required only with EHCI/OHCI USB drivers,
+> >
+> > That's not true. They are also required for USB gadget controller
+> > supported by the DWC2 gadget driver (formerly s3c-hsotg). Otherwise the
+> > change makes sense to me.
+> 
+> Do you propose I amend just the patch description or also add a dependency on
+> USB_DWC2 along with EHCI and OHCI. I do not have anything to test this. Based
+> on your input I will re-spin the patch.
 
-- Added platform driver support and probe function where Exynos PMU
-  driver will register itself as syscon provider with syscon framework.
-- Added platform struct exynos_pmu_data to hold platform specific data.
-- For each SoC's PMU support now we can add platform data and statically
-  bind PMU configuration and SoC specific initialization function.
-- Separate each SoC's PMU initialization function and make it as part of
-  platform data.
-- It also removes uses of soc_is_exynosXYZ().
+I agree with Tomasz Figa's statement. Personally, I think that it would
+be good to amend the commit message and add a dependency on USB_DWC2. :-)
+Thank you.
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/mach-exynos/Kconfig |    1 +
- arch/arm/mach-exynos/pmu.c   |  185 +++++++++++++++++++++++++++++++++---------
- 2 files changed, 146 insertions(+), 40 deletions(-)
+Best regards,
+Jingoo Han
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 8f9b66c..a2944ac 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -24,6 +24,7 @@ menuconfig ARCH_EXYNOS
- 	select PM_GENERIC_DOMAINS if PM_RUNTIME
- 	select S5P_DEV_MFC
- 	select SRAM
-+	select MFD_SYSCON
- 	help
- 	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
- 
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index ff9d23f..5b76728 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2011-2012 Samsung Electronics Co., Ltd.
-+ * Copyright (c) 2011-2014 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com/
-  *
-  * EXYNOS - CPU PMU(Power Management Unit) support
-@@ -10,12 +10,28 @@
-  */
- 
- #include <linux/io.h>
--#include <linux/kernel.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
- 
- #include "common.h"
- #include "regs-pmu.h"
- 
--static const struct exynos_pmu_conf *exynos_pmu_config;
-+struct exynos_pmu_data {
-+	const struct exynos_pmu_conf *pmu_config;
-+	const struct exynos_pmu_conf *pmu_config_extra;
-+
-+	void (*pmu_init)(void);
-+	void (*powerdown_conf)(enum sys_powerdown);
-+};
-+
-+struct exynos_pmu_context {
-+	struct device *dev;
-+	const struct exynos_pmu_data *pmu_data;
-+};
-+
-+static struct exynos_pmu_context *pmu_context;
- 
- static const struct exynos_pmu_conf exynos4210_pmu_config[] = {
- 	/* { .offset = offset, .val = { AFTR, LPA, SLEEP } */
-@@ -335,7 +351,7 @@ static unsigned int const exynos5_list_diable_wfi_wfe[] = {
- 	EXYNOS5_ISP_ARM_OPTION,
- };
- 
--static void exynos5_init_pmu(void)
-+static void exynos5_powerdown_conf(enum sys_powerdown mode)
- {
- 	unsigned int i;
- 	unsigned int tmp;
-@@ -372,51 +388,140 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
- {
- 	unsigned int i;
- 
--	if (soc_is_exynos5250())
--		exynos5_init_pmu();
-+	const struct exynos_pmu_data *pmu_data = pmu_context->pmu_data;
- 
--	for (i = 0; (exynos_pmu_config[i].offset != PMU_TABLE_END) ; i++)
--		pmu_raw_writel(exynos_pmu_config[i].val[mode],
--				exynos_pmu_config[i].offset);
-+	if (pmu_data->powerdown_conf)
-+		pmu_data->powerdown_conf(mode);
- 
--	if (soc_is_exynos4412()) {
--		for (i = 0; exynos4412_pmu_config[i].offset != PMU_TABLE_END ; i++)
--			pmu_raw_writel(exynos4412_pmu_config[i].val[mode],
--					exynos4412_pmu_config[i].offset);
-+	if (pmu_data->pmu_config) {
-+		for (i = 0; (pmu_data->pmu_config[i].offset != PMU_TABLE_END) ; i++)
-+			pmu_raw_writel(pmu_data->pmu_config[i].val[mode],
-+					pmu_data->pmu_config[i].offset);
-+	}
-+
-+	if (pmu_data->pmu_config_extra) {
-+		for (i = 0; pmu_data->pmu_config_extra[i].offset != PMU_TABLE_END; i++)
-+			pmu_raw_writel(pmu_data->pmu_config_extra[i].val[mode],
-+					pmu_data->pmu_config_extra[i].offset);
- 	}
- }
- 
--static int __init exynos_pmu_init(void)
-+static void exynos5250_pmu_init(void)
- {
- 	unsigned int value;
-+	/*
-+	 * When SYS_WDTRESET is set, watchdog timer reset request
-+	 * is ignored by power management unit.
-+	 */
-+	value = pmu_raw_readl(EXYNOS5_AUTO_WDTRESET_DISABLE);
-+	value &= ~EXYNOS5_SYS_WDTRESET;
-+	pmu_raw_writel(value, EXYNOS5_AUTO_WDTRESET_DISABLE);
-+
-+	value = pmu_raw_readl(EXYNOS5_MASK_WDTRESET_REQUEST);
-+	value &= ~EXYNOS5_SYS_WDTRESET;
-+	pmu_raw_writel(value, EXYNOS5_MASK_WDTRESET_REQUEST);
-+}
-+
-+static const struct exynos_pmu_data exynos4210_pmu_data = {
-+	.pmu_config	= exynos4210_pmu_config,
-+};
-+
-+static const struct exynos_pmu_data exynos4212_pmu_data = {
-+	.pmu_config	= exynos4x12_pmu_config,
-+};
-+
-+static const struct exynos_pmu_data exynos4412_pmu_data = {
-+	.pmu_config		= exynos4x12_pmu_config,
-+	.pmu_config_extra	= exynos4412_pmu_config,
-+};
-+
-+static const struct exynos_pmu_data exynos5250_pmu_data = {
-+	.pmu_config	= exynos5250_pmu_config,
-+	.pmu_init	= exynos5250_pmu_init,
-+	.powerdown_conf	= exynos5_powerdown_conf,
-+};
-+
-+static const struct regmap_config pmu_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+};
- 
--	exynos_pmu_config = exynos4210_pmu_config;
--
--	if (soc_is_exynos4210()) {
--		exynos_pmu_config = exynos4210_pmu_config;
--		pr_info("EXYNOS4210 PMU Initialize\n");
--	} else if (soc_is_exynos4212() || soc_is_exynos4412()) {
--		exynos_pmu_config = exynos4x12_pmu_config;
--		pr_info("EXYNOS4x12 PMU Initialize\n");
--	} else if (soc_is_exynos5250()) {
--		/*
--		 * When SYS_WDTRESET is set, watchdog timer reset request
--		 * is ignored by power management unit.
--		 */
--		value = pmu_raw_readl(EXYNOS5_AUTO_WDTRESET_DISABLE);
--		value &= ~EXYNOS5_SYS_WDTRESET;
--		pmu_raw_writel(value, EXYNOS5_AUTO_WDTRESET_DISABLE);
--
--		value = pmu_raw_readl(EXYNOS5_MASK_WDTRESET_REQUEST);
--		value &= ~EXYNOS5_SYS_WDTRESET;
--		pmu_raw_writel(value, EXYNOS5_MASK_WDTRESET_REQUEST);
--
--		exynos_pmu_config = exynos5250_pmu_config;
--		pr_info("EXYNOS5250 PMU Initialize\n");
--	} else {
--		pr_info("EXYNOS: PMU not supported\n");
-+/*
-+ * PMU platform driver and devicetree bindings.
-+ */
-+static const struct of_device_id exynos_pmu_of_device_ids[] = {
-+	{
-+		.compatible = "samsung,exynos4210-pmu",
-+		.data = &exynos4210_pmu_data,
-+	}, {
-+		.compatible = "samsung,exynos4212-pmu",
-+		.data = &exynos4212_pmu_data,
-+	}, {
-+		.compatible = "samsung,exynos4412-pmu",
-+		.data = &exynos4412_pmu_data,
-+	}, {
-+		.compatible = "samsung,exynos5250-pmu",
-+		.data = &exynos5250_pmu_data,
-+	},
-+	{ /*sentinel*/ },
-+};
-+
-+static int exynos_pmu_probe(struct platform_device *pdev)
-+{
-+	const struct of_device_id *match;
-+	struct device *dev = &pdev->dev;
-+	struct regmap *regmap;
-+	struct resource *res;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	pmu_base_addr = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(pmu_base_addr))
-+		return PTR_ERR(pmu_base_addr);
-+
-+	pmu_context = devm_kzalloc(&pdev->dev,
-+			sizeof(struct exynos_pmu_context),
-+			GFP_KERNEL);
-+	if (!pmu_context) {
-+		dev_err(dev, "Cannot allocate memory.\n");
-+		return -ENOMEM;
-+	}
-+	pmu_context->dev = dev;
-+
-+	regmap = devm_regmap_init_mmio(dev, pmu_base_addr,
-+					&pmu_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		dev_err(dev, "regmap init failed\n");
-+		return PTR_ERR(regmap);
- 	}
- 
-+	devm_syscon_register(dev, regmap);
-+
-+	match = of_match_node(exynos_pmu_of_device_ids, pdev->dev.of_node);
-+
-+	pmu_context->pmu_data = match->data;
-+
-+	if (pmu_context->pmu_data->pmu_init)
-+		pmu_context->pmu_data->pmu_init();
-+
-+	platform_set_drvdata(pdev, pmu_context);
-+
-+	dev_dbg(dev, "Exynos PMU Driver probe done\n");
- 	return 0;
- }
--arch_initcall(exynos_pmu_init);
-+
-+static struct platform_driver exynos_pmu_driver = {
-+	.driver  = {
-+		.name   = "exynos-pmu",
-+		.owner	= THIS_MODULE,
-+		.of_match_table = exynos_pmu_of_device_ids,
-+	},
-+	.probe = exynos_pmu_probe,
-+};
-+
-+static int __init exynos_pmu_init(void)
-+{
-+	return platform_driver_register(&exynos_pmu_driver);
-+
-+}
-+postcore_initcall(exynos_pmu_init);
--- 
-1.7.9.5
+> 
+> --
+> Regards,
+> Sachin.
