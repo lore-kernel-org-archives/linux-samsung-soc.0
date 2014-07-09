@@ -1,57 +1,59 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH] thermal: exynos: fix ordering in exynos_tmu_remove()
-Date: Wed, 9 Jul 2014 08:16:33 +0530
-Message-ID: <CADGdYn48PPc=kXxny936cShcwKPy2Qs93d7-86ta2GVLJNutJw@mail.gmail.com>
-References: <10113119.9fnj2984Hk@amdc1032>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv2] ARM: dts: Add I2S dt node for Exynos3250
+Date: Wed, 09 Jul 2014 12:00:19 +0900
+Message-ID: <1404874819-8257-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:47810 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751163AbaGICqe (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:16038 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754320AbaGIDA1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Jul 2014 22:46:34 -0400
-In-Reply-To: <10113119.9fnj2984Hk@amdc1032>
+	Tue, 8 Jul 2014 23:00:27 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux@arm.linux.org.uk, kgene.kim@samsung.com, t.figa@samsung.com
+Cc: kyungmin.park@samsung.com, ideal.song@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Tue, Jul 8, 2014 at 6:39 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
-> It might not be a problem currently but unregister/uninitialize things
-> in the reverse order that they are registered/initialized.
->
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Changes look fine,
-Reviewed-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index d7ca9f4..6243ba0 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -759,10 +759,10 @@ static int exynos_tmu_remove(struct platform_device *pdev)
->  {
->         struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->
-> -       exynos_tmu_control(pdev, false);
-> -
->         exynos_unregister_thermal(data->reg_conf);
->
-> +       exynos_tmu_control(pdev, false);
-> +
->         clk_unprepare(data->clk);
->         if (!IS_ERR(data->clk_sec))
->                 clk_unprepare(data->clk_sec);
-> --
-> 1.8.2.3
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+From: Tomasz Figa <t.figa@samsung.com>
+
+This patch add I2S (Inter-IC Sound) dt node which supports 1-port stereo
+(1 channels) IIS-bus for audio interface with DMA-based operation.
+
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Inha Song <ideal.song@samsung.com>
+Tested-by: Inha Song <ideal.song@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+Changes from v1:
+- Fix wrong name of property (pinctrl-names)
+- Change phanle name (i2s->i2s2)
+
+ arch/arm/boot/dts/exynos3250.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 3e678fa..77a06df 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -425,6 +425,19 @@
+ 			status = "disabled";
+ 		};
+ 
++		i2s2: i2s@13970000 {
++			compatible = "samsung,s3c6410-i2s";
++			reg = <0x13970000 0x100>;
++			interrupts = <0 126 0>;
++			clocks = <&cmu CLK_I2S>, <&cmu CLK_SCLK_I2S>;
++			clock-names = "iis", "i2s_opclk0";
++			dmas = <&pdma0 14>, <&pdma0 13>;
++			dma-names = "tx", "rx";
++			pinctrl-0 = <&i2s2_bus>;
++			pinctrl-names = "default";
++			status = "disabled";
++		};
++
+ 		pwm: pwm@139D0000 {
+ 			compatible = "samsung,exynos4210-pwm";
+ 			reg = <0x139D0000 0x1000>;
+-- 
+1.8.0
