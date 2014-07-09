@@ -1,85 +1,78 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 0/4] Add support for Exynos clock output configuration
-Date: Wed, 09 Jul 2014 18:53:27 +0200
-Message-ID: <53BD7387.8040200@samsung.com>
-References: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1403626107-12073-1-git-send-email-t.figa@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v3 1/4] ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by
+ static inlines
+Date: Wed, 09 Jul 2014 19:17:51 +0200
+Message-ID: <1404926274-18411-2-git-send-email-b.zolnierkie@samsung.com>
+References: <1404926274-18411-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1404926274-18411-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Drake <drake@endlessm.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Kukjin,
+Replace EXYNOS_BOOT_VECTOR_ADDR and EXYNOS_BOOT_VECTOR_FLAG macros
+by exynos_boot_vector_addr() and exynos_boot_vector_flag() static
+inlines.
 
-On 24.06.2014 18:08, Tomasz Figa wrote:
-> On all Exynos SoCs there is a dedicated CLKOUT pin that allows many of
-> internal SoC clocks to be output from the SoC. The hardware structure
-> of CLKOUT related clocks looks as follows:
-> 
-> 	CMU	|---> clock0 --------->	|	PMU	|
-> 		|			|		|
->     several	|---> clock1 ---------> |	mux	|
->     muxes	|			|	+	|---> CLKOUT
->     dividers	|       ...		|	gate	|
->     and gates	|			|		|
-> 		|---> clockN ---------> |		|
-> 
-> Since the block responsible for handling the pin is PMU, not CMU,
-> a separate driver, that binds to PMU node is required and acquires
-> all input clocks by standard DT clock look-up. This way we don't need
-> any cross-IP block drivers and cross-driver register sharing or
-> nodes for fake devices.
-> 
-> To represent the PMU mux/gate clock, generic composite clock is registered.
-> 
-> Tested on Odroid U3, with HSIC/USB hub using CLKOUT as reference clock,
-> with some additional patches.
-> 
-> Changes since v1:
-> (http://www.spinics.net/lists/arm-kernel/msg333276.html)
->  - rebased onto next-20140624,
->  - fixed #clock-cells values in exynos5250.dtsi and exynos5420.dtsi,
->  - temporarily removed ISP CLKOUT clocks on Exynos4x12, until ISP clock
->    domain handling gets fixed in Exynos4 clock driver.
-> Changes since RFC v1:
-> (https://lkml.org/lkml/2014/5/15/506)
->  - rebased onto v5 of "Enable usbphy and hsotg for exynos4" series and
->    current HEAD of samsung-clk tree,
->  - added handling of suspend/resume in the driver,
->  - added missing CPU clocks on Exynos4,
->  - added CLK_SET_RATE_PARENT to CMU CLKOUT gates on Exynos4,
->  - fixed bit field width on Exynos4,
->  - added CLKOUT CMU registers of Exynos4 to save/restore list,
->  - added CLK_SET_RATE_PARENT and CLK_SET_RATE_NO_REPARENT to clkout clock,
->  - changed the binding to use 1-cell clock specifier to allow extension
->    with further PMU clocks in future, if needed.
-> 
-> Tomasz Figa (4):
->   clk: samsung: exynos4: Add missing CPU/DMC clock hierarchy
->   clk: samsung: exynos4: Add CLKOUT clock hierarchy
->   clk: samsung: Add driver to control CLKOUT line on Exynos SoCs
->   ARM: dts: exynos: Update PMU node with CLKOUT related data
-> 
->  .../devicetree/bindings/arm/samsung/pmu.txt        |  30 ++++
->  arch/arm/boot/dts/exynos4210.dtsi                  |  10 ++
->  arch/arm/boot/dts/exynos4x12.dtsi                  |   7 +
->  arch/arm/boot/dts/exynos5250.dtsi                  |   3 +
->  arch/arm/boot/dts/exynos5420.dtsi                  |   3 +
->  drivers/clk/samsung/Makefile                       |   1 +
->  drivers/clk/samsung/clk-exynos-clkout.c            | 153 +++++++++++++++++++
->  drivers/clk/samsung/clk-exynos4.c                  | 166 ++++++++++++++++++++-
->  include/dt-bindings/clock/exynos4.h                |   5 +
->  9 files changed, 374 insertions(+), 4 deletions(-)
->  create mode 100644 drivers/clk/samsung/clk-exynos-clkout.c
-> 
+This patch shouldn't cause any functionality changes.
 
-Is there any progress with consulting this with hardware guys? Could I
-have your Ack for this series, so I could put it in my tree and let
-other patches base on it (especially on patches 1 and 2)? Thanks in advance.
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+v3:
+- added Acked-by from Daniel
 
-Best regards,
-Tomasz
+ arch/arm/mach-exynos/pm.c | 28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index ed20318..c722454 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -167,12 +167,23 @@ int exynos_cluster_power_state(int cluster)
+ 			S5P_CORE_LOCAL_PWR_EN);
+ }
+ 
+-#define EXYNOS_BOOT_VECTOR_ADDR	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
+-			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
+-			(sysram_base_addr + 0x24) : S5P_INFORM0))
+-#define EXYNOS_BOOT_VECTOR_FLAG	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
+-			S5P_INFORM6 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
+-			(sysram_base_addr + 0x20) : S5P_INFORM1))
++static inline void __iomem *exynos_boot_vector_addr(void)
++{
++	if (samsung_rev() == EXYNOS4210_REV_1_1)
++		return S5P_INFORM7;
++	else if (samsung_rev() == EXYNOS4210_REV_1_0)
++		return sysram_base_addr + 0x24;
++	return S5P_INFORM0;
++}
++
++static inline void __iomem *exynos_boot_vector_flag(void)
++{
++	if (samsung_rev() == EXYNOS4210_REV_1_1)
++		return S5P_INFORM6;
++	else if (samsung_rev() == EXYNOS4210_REV_1_0)
++		return sysram_base_addr + 0x20;
++	return S5P_INFORM1;
++}
+ 
+ #define S5P_CHECK_AFTR  0xFCBA0D10
+ #define S5P_CHECK_SLEEP 0x00000BAD
+@@ -185,8 +196,9 @@ static void exynos_set_wakeupmask(long mask)
+ 
+ static void exynos_cpu_set_boot_vector(long flags)
+ {
+-	__raw_writel(virt_to_phys(exynos_cpu_resume), EXYNOS_BOOT_VECTOR_ADDR);
+-	__raw_writel(flags, EXYNOS_BOOT_VECTOR_FLAG);
++	__raw_writel(virt_to_phys(exynos_cpu_resume),
++		     exynos_boot_vector_addr());
++	__raw_writel(flags, exynos_boot_vector_flag());
+ }
+ 
+ void exynos_enter_aftr(void)
+-- 
+1.8.2.3
+
