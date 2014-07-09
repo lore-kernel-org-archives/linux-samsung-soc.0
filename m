@@ -1,102 +1,287 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v5 00/14] drm/exynos: support LCD I80 interface display
-Date: Thu, 10 Jul 2014 00:07:08 +0900
-Message-ID: <53BD5A9C.3010001@samsung.com>
-References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v7 08/24] mfd: max77686: Add Dynamic Voltage Scaling
+ (DVS) support
+Date: Wed, 9 Jul 2014 16:13:36 +0100
+Message-ID: <20140709151336.GI2635@lee--X1>
+References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1404505467-26526-9-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:50225 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756009AbaGIPNo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 9 Jul 2014 11:13:44 -0400
+Received: by mail-ie0-f175.google.com with SMTP id tp5so503675ieb.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jul 2014 08:13:43 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1404505467-26526-9-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gMjAxNOuFhCAwN+yblCAwOOydvCAwOTozOSwgWW91bmdKdW4gQ2hvIHdyb3RlOgo+IEhpLAo+
-IAo+IFRoaXMgc2VyaWVzIGFkZHMgTENEIEk4MCBpbnRlcmZhY2UgZGlzcGxheSBzdXBwb3J0IGZv
-ciBFeHlub3MgRFJNIGRyaXZlci4KPiBUaGUgRklNRChkaXNwbGF5IGNvbnRyb2xsZXIpIHNwZWNp
-ZmljYXRpb24gZGVzY3JpYmVzIGl0IGFzICJMQ0QgSTgwIGludGVyZmFjZSIKPiBhbmQgdGhlIERT
-SSBzcGVjaWZpY2F0aW9uIGRlc2NyaWJlcyBpdCBhcyAiQ29tbWFuZCBtb2RlIGludGVyZmFjZSIu
-Cj4gCj4gVGhpcyBpcyBiYXNlZCBvbiBleHlub3MtZHJtLW5leHQgYnJhbmNoLgoKVGhhbmtzIGZv
-ciBjb250cmlidXRpb25zLiBQaWNrZWQgdGhlbSB1cC4KClRoYW5rcywKSW5raSBEYWUKCj4gCj4g
-VGhlIHByZXZpb3VzIHBhdGNoZXMsCj4gUkZDOiBodHRwOi8vd3d3LnNwaW5pY3MubmV0L2xpc3Rz
-L2RyaS1kZXZlbC9tc2c1ODg5OC5odG1sCj4gVjE6IGh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlz
-dHMvZHJpLWRldmVsL21zZzU5MjkxLmh0bWwKPiBWMjogaHR0cDovL3d3dy5zcGluaWNzLm5ldC9s
-aXN0cy9kcmktZGV2ZWwvbXNnNTk4NjcuaHRtbAo+IFYzOiBodHRwOi8vd3d3LnNwaW5pY3MubmV0
-L2xpc3RzL2RyaS1kZXZlbC9tc2c2MDcwOC5odG1sCj4gVjQ6IGh0dHA6Ly93d3cuc3Bpbmljcy5u
-ZXQvbGlzdHMvZHJpLWRldmVsL21zZzYwOTQzLmh0bWwKPiAKPiBDaGFuZ2Vsb2cgdjI6Cj4gLSBG
-aXhlcyB0eXBvIGFuZCByZW1vdmVzIHVubmVjZXNzYXJ5IGVycm9yIGxvZyAoY29tbWVudGVkIGJ5
-IEFuZHJ6ZWogSGF6ZGEpCj4gLSBBZGRzIG1pc3NlZCBwZW5kbGlnX2ZsaXAgZmxhZyBjbGVhciBw
-b2ludHMgKGNvbW1lbnRlZCBieSBEYW5pZWwgS3VydHopCj4gCj4gQ2hhbmdlbG9nIHYzOgo+IC0g
-UmVtb3ZlcyBnZW5lcmljIGNvbW1hbmQgbW9kZSBhbmQgY29tbWFuZCBtb2RlIGRpc3BsYXkgdGlt
-aW5nIGludGVyZmFjZS4KPiAtIE1vdmVzIEk4MCBpbnRlcmZhY2UgdGltaW5ncyBmcm9tIHBhbmVs
-IERUIHRvIHRoZSBGSU1EKGRpc3BsYXkgY29udHJvbGxlcikgRFQuCj4gCj4gQ2hhbmdlbG9nIHY0
-Ogo+IC0gUmVtb3ZlcyBleHlub3M1IHN5c3JlZyhzeXNjb24pIERUIGJpbmRpbmdzIGFuZCBub2Rl
-IGZyb20gZHRzaSBiZWNhdXNlCj4gICBpdCB3YXMgYWxyZWFkeSB1cGRhdGVkIGJ5IGxpbnV4LXNh
-bXN1bmctc29jIChjb21tZW50ZWQgYnkgVml2ZWsgR2F1dGFtKQo+IAo+IENoYW5nZWxvZyB2NToK
-PiAtIEZpeGVzIEZJTUQgdmlkY29uMCByZWdpc3RlciByZWxldmFudCBjb2RlCj4gLSBGaXhlcyBw
-YW5lbCBnYW1tYSB0YWJsZSwgZGlzYWJsZSBzZXF1ZW5jZQo+IC0gU2xpdGVseSB1cGRhdGVzIGZv
-ciBjb2RlIGNsZWFudXAKPiAKPiBQYXRjaGVzIDEgYW5kIDIgZml4IHRyaXZpYWwgYnVncy4KPiAK
-PiBQYXRjaGVzIDMsIDQsIDUgYW5kIDYgaW1wbGVtZW50IEZJTUQoZGlzcGxheSBjb250cm9sbGVy
-KSBJODAgaW50ZXJmYWNlLgo+IFRoZSBNSVBJIERTSSBjb21tYW5kIG1vZGUgYmFzZWQgcGFuZWwg
-Z2VuZXJhdGVzIFRlYXJpbmcgRWZmZWN0IHN5bmNocm9uaXphdGlvbgo+IHNpZ25hbCBiZXR3ZWVu
-IE1DVSBhbmQgRkIgdG8gZGlzcGxheSB2aWRlbyBpbWFnZSwgYW5kIEZJTUQgc2hvdWxkIHRyaWdn
-ZXIgdG8KPiB0cmFuc2ZlciB2aWRlbyBpbWFnZSBhdCB0aGlzIHNpZ25hbC4KPiBTbyB0aGUgcGFu
-ZWwgc2hvdWxkIHJlY2VpdmUgdGhlIFRFIElSUSBhbmQgY2FsbCBURSBoYW5kbGVyIGNoYWlucyB0
-byBub3RpZnkKPiBpdCB0byB0aGUgRklNRC4KPiAKPiBQYXRjaGVzIDcgYW5kIDggaW1wbGVtZW50
-IHRvIHVzZSBFeHlub3M1NDEwIC8gNTQyMCAvIDU0NDAgU29DIERTSSBkcml2ZXIKPiB3aGljaCBp
-cyBkaWZmZXJlbnQgZnJvbSBwcmV2aW91cyBFeHlub3M0IFNvQ3MgZm9yIHNvbWUgcmVnaXN0ZXJz
-IGNvbnRyb2wuCj4gCj4gUGF0Y2hlcyA5IGFuZCAxMCBpbnRyb2R1Y2UgTUlQSSBEU0kgY29tbWFu
-ZCBtb2RlIGJhc2VkIFNhbXN1bmcgUzZFM0ZBMCBBTU9MRUQKPiA1LjciIExDRCBkcm0gcGFuZWwg
-ZHJpdmVyLgo+IAo+IFRoZSBvaHRlcnMgYWRkIERUIHByb3BlcnR5IG5vZGVzIHRvIHN1cHBvcnQg
-TUlQSSBEU0kgY29tbWFuZCBtb2RlLgo+IAo+IEkgd2VsY29tZSBhbnkgY29tbWVudHMuCj4gCj4g
-VGhhbmsgeW91Lgo+IEJlc3QgcmVnYXJkcyBZSgo+IAo+IFlvdW5nSnVuIENobyAoMTQpOgo+ICAg
-ZHJtL2V4eW5vczogZHNpOiBtb3ZlIHRoZSBFb1QgcGFja2V0cyBjb25maWd1cmF0aW9uIHBvaW50
-Cj4gICBkcm0vZXh5bm9zOiB1c2Ugd2FpdF9ldmVudF90aW1lb3V0KCkgZm9yIHNhZmV0eSB1c2Fn
-ZQo+ICAgQVJNOiBkdHM6IHNhbXN1bmctZmltZDogYWRkIExDRCBJODAgaW50ZXJmYWNlIHNwZWNp
-ZmljIHByb3BlcnRpZXMKPiAgIGRybS9leHlub3M6IGFkZCBURSBoYW5kbGVyIHRvIHN1cHBvcnQg
-TENEIEk4MCBpbnRlcmZhY2UKPiAgIGRybS9leHlub3M6IGRzaTogYWRkIHBhc3MgVEUgaG9zdCBv
-cHMgdG8gc3VwcG9ydCBMQ0QgSTgwIGludGVyZmFjZQo+ICAgZHJtL2V4eW5vczogZmltZDogc3Vw
-cG9ydCBMQ0QgSTgwIGludGVyZmFjZQo+ICAgQVJNOiBkdHM6IGV4eW5vc19kc2ltOiBhZGQgZXh5
-bm9zNTQxMCBjb21wYXRpYmxlIHRvIERUIGJpbmRpbmdzCj4gICBkcm0vZXh5bm9zOiBkc2k6IGFk
-ZCBkcml2ZXIgZGF0YSB0byBzdXBwb3J0IEV4eW5vczU0MTAvNTQyMC81NDQwIFNvQ3MKPiAgIEFS
-TTogZHRzOiBzNmUzZmEwOiBhZGQgRFQgYmluZGluZ3MKPiAgIGRybS9wYW5lbDogYWRkIFM2RTNG
-QTAgZHJpdmVyCj4gICBBUk06IGR0czogZXh5bm9zNDogYWRkIHN5c3RlbSByZWdpc3RlciBwcm9w
-ZXJ0eQo+ICAgQVJNOiBkdHM6IGV4eW5vczU6IGFkZCBzeXN0ZW0gcmVnaXN0ZXIgcHJvcGVydHkK
-PiAgIEFSTTogZHRzOiBleHlub3M1NDIwOiBhZGQgbWlwaS1waHkgbm9kZQo+ICAgQVJNOiBkdHM6
-IGV4eW5vczU0MjA6IGFkZCBkc2kgbm9kZQo+IAo+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9w
-YW5lbC9zYW1zdW5nLHM2ZTNmYTAudHh0ICB8ICA0NiArKwo+ICAuLi4vZGV2aWNldHJlZS9iaW5k
-aW5ncy92aWRlby9leHlub3NfZHNpbS50eHQgICAgICB8ICAgNCArLQo+ICAuLi4vZGV2aWNldHJl
-ZS9iaW5kaW5ncy92aWRlby9zYW1zdW5nLWZpbWQudHh0ICAgICB8ICAyOCArCj4gIGFyY2gvYXJt
-L2Jvb3QvZHRzL2V4eW5vczQuZHRzaSAgICAgICAgICAgICAgICAgICAgIHwgICAxICsKPiAgYXJj
-aC9hcm0vYm9vdC9kdHMvZXh5bm9zNS5kdHNpICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKwo+
-ICBhcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLmR0c2kgICAgICAgICAgICAgICAgICB8ICAy
-MCArCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZpZyAgICAgICAgICAgICAgICAgICAg
-IHwgICAxICsKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyAgICAg
-ICAgICAgfCAgMTUgKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMu
-aCAgICAgICAgICAgfCAgIDcgKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZHJ2LmggICAgICAgICAgICB8ICAgMyArCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9kc2kuYyAgICAgICAgICAgIHwgMTgxICsrKysrKy0KPiAgZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2ZpbWQuYyAgICAgICAgICAgfCAyNzYgKysrKysrKystLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vcGFuZWwvS2NvbmZpZyAgICAgICAgICAgICAgICAgICAgICB8ICAgNyArCj4g
-IGRyaXZlcnMvZ3B1L2RybS9wYW5lbC9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgIHwgICAx
-ICsKPiAgZHJpdmVycy9ncHUvZHJtL3BhbmVsL3BhbmVsLXM2ZTNmYTAuYyAgICAgICAgICAgICAg
-fCA1NjkgKysrKysrKysrKysrKysrKysrKysrCj4gIGluY2x1ZGUvZHJtL2RybV9taXBpX2RzaS5o
-ICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA3ICsKPiAgaW5jbHVkZS92aWRlby9zYW1zdW5n
-X2ZpbWQuaCAgICAgICAgICAgICAgICAgICAgICAgfCAgIDMgKy0KPiAgMTcgZmlsZXMgY2hhbmdl
-ZCwgMTA5OCBpbnNlcnRpb25zKCspLCA3MiBkZWxldGlvbnMoLSkKPiAgY3JlYXRlIG1vZGUgMTAw
-NjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9wYW5lbC9zYW1zdW5nLHM2ZTNm
-YTAudHh0Cj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwt
-czZlM2ZhMC5jCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+I'd really like Linus Walleij to look over this if possible.
+
+On Fri, 04 Jul 2014, Javier Martinez Canillas wrote:
+> Some regulators on the MAX77686 PMIC have Dynamic Voltage Scaling
+> (DVS) support that allows output voltage to change dynamically.
+>=20
+> For MAX77686, these regulators are Buck regulators 2, 3 and 4.
+>=20
+> Each Buck output voltage is selected using a set of external
+> inputs: DVS1-3 and SELB2-4.
+>=20
+> DVS registers can be used to configure the output voltages for each
+> Buck regulator and which one is active is controled by DVSx lines.
+>=20
+> SELBx lines are used to control if individual Buck lines are ON or OF=
+=46.
+>=20
+> This patch adds support to configure the DVSx and SELBx lines
+> from DT and to setup and read the GPIO lines connected to them.
+>=20
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>=20
+> Changes since v6:
+>  - Add a comment that max77686_read_gpios() function can sleep.
+>    Sugggested by Krzysztof Kozlowski
+> ---
+>  drivers/mfd/max77686.c       | 119 +++++++++++++++++++++++++++++++++=
+++++++++++
+>  include/linux/mfd/max77686.h |  18 ++++---
+>  2 files changed, 129 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
+> index 8650832..d193873 100644
+> --- a/drivers/mfd/max77686.c
+> +++ b/drivers/mfd/max77686.c
+> @@ -32,8 +32,10 @@
+>  #include <linux/mfd/core.h>
+>  #include <linux/mfd/max77686.h>
+>  #include <linux/mfd/max77686-private.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/err.h>
+>  #include <linux/of.h>
+> +#include <linux/export.h>
+> =20
+>  #define I2C_ADDR_RTC	(0x0C >> 1)
+> =20
+> @@ -101,9 +103,119 @@ static const struct of_device_id max77686_pmic_=
+dt_match[] =3D {
+>  	{},
+>  };
+> =20
+> +static void max77686_dt_parse_dvs_gpio(struct device *dev)
+> +{
+> +	struct max77686_platform_data *pd =3D dev_get_platdata(dev);
+> +	int i;
+> +
+> +	/*
+> +	 * NOTE: we don't consider GPIO errors fatal; board may have some l=
+ines
+> +	 * directly pulled high or low and thus doesn't specify them.
+> +	 */
+> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_dvs); i++)
+> +		pd->buck_gpio_dvs[i] =3D
+> +			devm_gpiod_get_index(dev, "max77686,pmic-buck-dvs", i);
+> +
+> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++)
+> +		pd->buck_gpio_selb[i] =3D
+> +			devm_gpiod_get_index(dev, "max77686,pmic-buck-selb", i);
+> +}
+
+Not sure why you've pulled this out for parse_dt_pdata()?
+
+> +/**
+> + * max77686_setup_gpios() - init DVS-related GPIOs
+> + * @dev: device whose platform data contains the dvs GPIOs informati=
+on
+> + *
+> + * This function claims / initalizations GPIOs related to DVS if the=
+y are
+
+s/initialzations/initialises
+
+> + * defined. This may have the effect of switching voltages if the
+
+s/if the/if
+
+> + * pdata->buck_default_idx does not match the boot time state of pin=
+s.
+> + */
+> +int max77686_setup_gpios(struct device *dev)
+> +{
+> +	struct max77686_platform_data *pd =3D dev_get_platdata(dev);
+> +	int buck_default_idx =3D pd->buck_default_idx;
+
+You're saving 4 characters once here.  Just use the variable in pd.
+
+> +	int ret;
+> +	int i;
+
+Don't you want some locking around this?
+
+> +	/* Set all SELB high to avoid glitching while DVS is changing */
+> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++) {
+> +		struct gpio_desc *gpio =3D pd->buck_gpio_selb[i];
+> +
+> +		/* OK if some GPIOs aren't defined */
+> +		if (IS_ERR(gpio))
+> +			continue;
+> +
+> +		ret =3D gpiod_direction_output_raw(gpio, 1);
+> +		if (ret) {
+> +			dev_err(dev, "can't set gpio[%d] dir: %d\n", i, ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	/* Set our initial setting */
+> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_dvs); i++) {
+> +		struct gpio_desc *gpio =3D pd->buck_gpio_dvs[i];
+> +
+> +		/* OK if some GPIOs aren't defined */
+> +		if (IS_ERR(gpio))
+> +			continue;
+> +
+> +		/* If a GPIO is valid, set it */
+> +		gpiod_direction_output(gpio, (buck_default_idx >> i) & 1);
+> +		if (ret) {
+> +			dev_err(dev, "can't set gpio[%d]: dir %d\n", i, ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	/* Now set SELB low to take effect */
+> +	for (i =3D 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++) {
+> +		struct gpio_desc *gpio =3D pd->buck_gpio_selb[i];
+> +
+> +		if (!IS_ERR(gpio))
+> +			gpiod_set_value(gpio, 0);
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(max77686_setup_gpios);
+> +
+> +/**
+> + * max77686_read_gpios() - read the current state of the dvs GPIOs
+> + * @pdata: platform data that contains the dvs GPIOs information
+> + *
+> + * We call this function at bootup to detect what slot the firmware =
+was
+> + * using for the DVS GPIOs.  That way we can properly preserve the f=
+irmware's
+> + * voltage settings
+> + *
+> + * This function can sleep so must not be called from atomic context=
+=2E
+> + */
+> +int max77686_read_gpios(struct max77686_platform_data *pdata)
+> +{
+> +	int buck_default_idx =3D pdata->buck_default_idx;
+
+Remove this, it adds very little.
+
+> +	int result =3D 0;
+> +	int i;
+> +
+> +	for (i =3D 0; i < ARRAY_SIZE(pdata->buck_gpio_dvs); i++) {
+> +		struct gpio_desc *gpio =3D pdata->buck_gpio_dvs[i];
+> +
+> +		/* OK if some GPIOs aren't defined; we'll use default */
+> +		if (IS_ERR(gpio)) {
+> +			result |=3D buck_default_idx & (1 << i);
+
+s/(1 << i)/BIT(i)/
+
+> +			continue;
+> +		}
+> +
+> +		if (gpiod_get_value_cansleep(gpio))
+> +			result |=3D 1 << i;
+
+Same here.
+
+> +	}
+> +
+> +	return result;
+> +}
+> +EXPORT_SYMBOL_GPL(max77686_read_gpios);
+> +
+>  static struct max77686_platform_data *max77686_i2c_parse_dt_pdata(st=
+ruct device
+>  								  *dev)
+>  {
+> +	struct device_node *np =3D dev->of_node;
+>  	struct max77686_platform_data *pd;
+> =20
+>  	pd =3D devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
+> @@ -111,6 +223,13 @@ static struct max77686_platform_data *max77686_i=
+2c_parse_dt_pdata(struct device
+>  		return NULL;
+> =20
+>  	dev->platform_data =3D pd;
+> +
+> +	/* Read default index and ignore errors, since default is 0 */
+> +	of_property_read_u32(np, "max77686,pmic-buck-default-dvs-idx",
+
+If it doesn't already have one, this needs a DT Ack and associated
+documentation.
+
+> +			     &pd->buck_default_idx);
+> +
+> +	max77686_dt_parse_dvs_gpio(dev);
+
+Bring code back into here and remove the call.
+
+>  	return pd;
+>  }
+> =20
+> diff --git a/include/linux/mfd/max77686.h b/include/linux/mfd/max7768=
+6.h
+> index 4cbcc13..46a736b 100644
+> --- a/include/linux/mfd/max77686.h
+> +++ b/include/linux/mfd/max77686.h
+> @@ -99,15 +99,17 @@ struct max77686_platform_data {
+>  	struct max77686_opmode_data *opmode_data;
+> =20
+>  	/*
+> -	 * GPIO-DVS feature is not enabled with the current version of
+> -	 * MAX77686 driver. Buck2/3/4_voltages[0] is used as the default
+> -	 * voltage at probe. DVS/SELB gpios are set as OUTPUT-LOW.
+> +	 * GPIO-DVS feature is not fully enabled with the current version o=
+f
+> +	 * MAX77686 driver, but the driver does support using a DVS index o=
+ther
+> +	 * than the default of 0.
+>  	 */
+> -	int buck234_gpio_dvs[3]; /* GPIO of [0]DVS1, [1]DVS2, [2]DVS3 */
+> -	int buck234_gpio_selb[3]; /* [0]SELB2, [1]SELB3, [2]SELB4 */
+> -	unsigned int buck2_voltage[8]; /* buckx_voltage in uV */
+> -	unsigned int buck3_voltage[8];
+> -	unsigned int buck4_voltage[8];
+> +	struct gpio_desc *buck_gpio_dvs[3]; /* GPIO of [0]DVS1, [1]DVS2, [2=
+]DVS3 */
+> +	int buck_default_idx; /* Default value of DVS1, 2, 3 */
+> +
+> +	struct gpio_desc *buck_gpio_selb[3]; /* Buck regulators 2, 3, 4 */
+>  };
+> =20
+> +extern int max77686_setup_gpios(struct device *dev);
+> +extern int max77686_read_gpios(struct max77686_platform_data *pdata)=
+;
+> +
+>  #endif /* __LINUX_MFD_MAX77686_H */
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
