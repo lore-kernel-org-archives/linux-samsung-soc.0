@@ -1,116 +1,95 @@
-From: Doug Anderson <dianders@google.com>
-Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
-Date: Wed, 9 Jul 2014 09:01:08 -0700
-Message-ID: <CAD=FV=XDs8FL3wdmDUF8ch9NuZ4hWn6FHhn8vVK42aa4qwV_Sg@mail.gmail.com>
-References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
-	<1402464739-19044-3-git-send-email-tushar.b@samsung.com>
-	<CAD=FV=W5yh58fYTwRZxmZt=BORcZMSRV0oRe12yA74Q5h2S4YQ@mail.gmail.com>
-	<7hpphwlgn0.fsf@paris.lan>
-	<CAC5m3Bzey-YoPLmjAq4YNPQ13rojtVFWAbnhX6-ZFtYZwEdMWg@mail.gmail.com>
-	<7h8uojk61a.fsf@paris.lan>
-	<53ACE724.7090606@gmail.com>
-	<CAGa+x86COQz+cYtrXWrP-sjFGz-gi2tf6GEvLiKYoQwg1zMivQ@mail.gmail.com>
-	<CAGa+x87LHiYGb03=GRcZisK1=TyakW1htd1E2vOQ6ijZKw8syg@mail.gmail.com>
-	<53B2A2A5.4070203@gmail.com>
-	<53BB2E7A.5080204@samsung.com>
-	<53BB5EBD.5030607@gmail.com>
-	<CABxcv=ka5UxZ8E3+F4cR4vcY1m3AfX=g7HiaNYqmyQjHfSVqtw@mail.gmail.com>
-	<53BD3157.7030804@gmail.com>
-	<CABxcv=mcKNY8TO3Ay+GRs3ha45ptw_w_tig0L8g_syMQdbUmhw@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v5 05/14] drm/exynos: dsi: add pass TE host ops to support
+ LCD I80 interface
+Date: Thu, 10 Jul 2014 01:03:33 +0900
+Message-ID: <53BD67D5.8030900@samsung.com>
+References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
+ <1404779987-5337-6-git-send-email-yj44.cho@samsung.com>
+ <20140709152207.GA17359@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f170.google.com ([209.85.220.170]:61829 "EHLO
-	mail-vc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750951AbaGIQBK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Jul 2014 12:01:10 -0400
-Received: by mail-vc0-f170.google.com with SMTP id hy10so7223791vcb.15
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jul 2014 09:01:09 -0700 (PDT)
-In-Reply-To: <CABxcv=mcKNY8TO3Ay+GRs3ha45ptw_w_tig0L8g_syMQdbUmhw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20140709152207.GA17359@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Tushar Behera <trblinux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-Javier,
-
-On Wed, Jul 9, 2014 at 6:03 AM, Javier Martinez Canillas
-<javier@dowhile0.org> wrote:
-> Hello Tushar,
->
-> On Wed, Jul 9, 2014 at 2:11 PM, Tushar Behera <trblinux@gmail.com> wrote:
->> On 07/09/2014 03:44 PM, Javier Martinez Canillas wrote:
->>> Hello Tushar,
->>>
->>> On Tue, Jul 8, 2014 at 5:00 AM, Tushar Behera <trblinux@gmail.com> wrote:
->>>>>>
->>>>>> The u-boot version is a little different on my Peach-Pi as compared to
->>>>>> the market release version. Not sure if that is making any difference.
->>>>>>
->>>>>> Peach # version
->>>>>>
->>>>>> U-Boot 2013.04 (Feb 13 2014 - 16:35:03) for Peach
->>>>>> armv7a-cros-linux-gnueabi-gcc.real (4.8.1_cos_gg_feea904_4.8.1-r66)
->>>>>> 4.8.x-google 20130905 (prerelease)
->>>>>> GNU ld (binutils-2.22_cos_gg_2) 2.22
->>>>>>
->>>>>
->>>
->>> I'm using the same U-Boot version than Kevin (U-Boot 2013.04-gb98ed09)
->>> and on my setup using chained nv-uboot I also need patch 1/3 along
->>> with 2/3 to fix the issue.
->>>
->>>>> Note that I've applied this only from this series so I'm not sure how
->>>>> much the problem can be solved...any updates for 1/3 and 3/3?
->>>>>
->>>>> - Kukjin
->>>>
->>>> Thanks for applying 2/3. I am working on 1/3 to see if we are following
->>>> the right approach to fix Kevin's issue (unfortunately, I am not hitting
->>>> the bug on my board ATM). 3/3 has already been merged through a
->>>> different patchset.
->>>>
->>>
->>> I'm sending as an attachment my complete boot log when booting today's
->>> next (20140709) until it hangs and my u-boot env vars. I hope that
->>> helps.
->>>
->>
->> Would you please check the behaviour after enabling following config
->> options?
->>
->> diff --git a/arch/arm/configs/exynos_defconfig
->> b/arch/arm/configs/exynos_defconfig
->> index e07a227..d6056ab 100644
->> --- a/arch/arm/configs/exynos_defconfig
->> +++ b/arch/arm/configs/exynos_defconfig
->> @@ -93,6 +93,11 @@ CONFIG_FRAMEBUFFER_CONSOLE=y
->>  CONFIG_FONTS=y
->>  CONFIG_FONT_7x14=y
->>  CONFIG_LOGO=y
->> +CONFIG_SOUND=y
->> +CONFIG_SND=y
->> +CONFIG_SND_SOC=y
->> +CONFIG_SND_SOC_SAMSUNG=y
->> +CONFIG_SND_SOC_SNOW=y
->>  CONFIG_USB=y
->>  CONFIG_USB_EHCI_HCD=y
->>  CONFIG_USB_EHCI_EXYNOS=y
->> @@ -109,6 +114,8 @@ CONFIG_MMC_DW_IDMAC=y
->>  CONFIG_MMC_DW_EXYNOS=y
->>  CONFIG_RTC_CLASS=y
->>  CONFIG_RTC_DRV_S3C=y
->> +CONFIG_DMADEVICES=y
->> +CONFIG_PL330_DMA=y
->>  CONFIG_COMMON_CLK_MAX77686=y
->>  CONFIG_EXT2_FS=y
->>  CONFIG_EXT3_FS=y
->>
->>
->
-> With those Kconfig options enabled the kernel does not hang anymore so
-> patch 1/3 is not needed in that case.
-
-Just checking: did you happen to confirm whether it's the PL330 /
-DMADEVICES that fixes things or do you actually need the sound stuff?
+T24gMjAxNOuFhCAwN+yblCAxMOydvCAwMDoyMiwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24g
+VHVlLCBKdWwgMDgsIDIwMTQgYXQgMDk6Mzk6MzhBTSArMDkwMCwgWW91bmdKdW4gQ2hvIHdyb3Rl
+Ogo+PiBUbyBzdXBwb3J0IExDRCBJODAgaW50ZXJmYWNlLCB0aGUgRFNJIGhvc3QgY2FsbHMgdGhp
+cyBmdW5jdGlvbgo+PiB0byBub3RpZnkgdGhlIHBhbmVsIHRlYXJpbmcgZWZmZWN0IHN5bmNocm9u
+aXphdGlvbiBzaWduYWwgdG8KPj4gdGhlIENSVEMgZGV2aWNlIG1hbmFnZXIgdG8gdHJpZ2dlciB0
+byB0cmFuc2ZlciB2aWRlbyBpbWFnZS4KPj4KPj4gU2lnbmVkLW9mZi1ieTogWW91bmdKdW4gQ2hv
+IDx5ajQ0LmNob0BzYW1zdW5nLmNvbT4KPj4gQWNrZWQtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBz
+YW1zdW5nLmNvbT4KPj4gQWNrZWQtYnk6IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ft
+c3VuZy5jb20+Cj4+IC0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
+aS5jIHwgMTEgKysrKysrKysrKysKPj4gIGluY2x1ZGUvZHJtL2RybV9taXBpX2RzaS5oICAgICAg
+ICAgICAgICB8ICA3ICsrKysrKysKPj4gIDIgZmlsZXMgY2hhbmdlZCwgMTggaW5zZXJ0aW9ucygr
+KQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
+aS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCj4+IGluZGV4IGRh
+ZDU0M2EuLjc2ZTM0Y2EgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9kc2kuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZHNpLmMKPj4gQEAgLTI0LDYgKzI0LDcgQEAKPj4gICNpbmNsdWRlIDx2aWRlby9taXBpX2Rpc3Bs
+YXkuaD4KPj4gICNpbmNsdWRlIDx2aWRlby92aWRlb21vZGUuaD4KPj4gIAo+PiArI2luY2x1ZGUg
+ImV4eW5vc19kcm1fY3J0Yy5oIgo+PiAgI2luY2x1ZGUgImV4eW5vc19kcm1fZHJ2LmgiCj4+ICAK
+Pj4gIC8qIHJldHVybnMgdHJ1ZSBpZmYgYm90aCBhcmd1bWVudHMgbG9naWNhbGx5IGRpZmZlcnMg
+Ki8KPj4gQEAgLTEwNDEsMTAgKzEwNDIsMjAgQEAgc3RhdGljIHNzaXplX3QgZXh5bm9zX2RzaV9o
+b3N0X3RyYW5zZmVyKHN0cnVjdCBtaXBpX2RzaV9ob3N0ICpob3N0LAo+PiAgCXJldHVybiAocmV0
+IDwgMCkgPyByZXQgOiB4ZmVyLnJ4X2RvbmU7Cj4+ICB9Cj4+ICAKPj4gK3N0YXRpYyB2b2lkIGV4
+eW5vc19kc2lfaG9zdF9wYXNzX3RlKHN0cnVjdCBtaXBpX2RzaV9ob3N0ICpob3N0KQo+PiArewo+
+PiArCXN0cnVjdCBleHlub3NfZHNpICpkc2kgPSBob3N0X3RvX2RzaShob3N0KTsKPj4gKwlzdHJ1
+Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIgPSBkc2ktPmVuY29kZXI7Cj4+ICsKPj4gKwlpZiAoZHNp
+LT5zdGF0ZSAmIERTSU1fU1RBVEVfRU5BQkxFRCkKPj4gKwkJZXh5bm9zX2RybV9jcnRjX3RlX2hh
+bmRsZXIoZW5jb2Rlci0+Y3J0Yyk7Cj4+ICt9Cj4+ICsKPj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qg
+bWlwaV9kc2lfaG9zdF9vcHMgZXh5bm9zX2RzaV9vcHMgPSB7Cj4+ICAJLmF0dGFjaCA9IGV4eW5v
+c19kc2lfaG9zdF9hdHRhY2gsCj4+ICAJLmRldGFjaCA9IGV4eW5vc19kc2lfaG9zdF9kZXRhY2gs
+Cj4+ICAJLnRyYW5zZmVyID0gZXh5bm9zX2RzaV9ob3N0X3RyYW5zZmVyLAo+PiArCS5wYXNzX3Rl
+ID0gZXh5bm9zX2RzaV9ob3N0X3Bhc3NfdGUsCj4+ICB9Owo+PiAgCj4+ICBzdGF0aWMgaW50IGV4
+eW5vc19kc2lfcG93ZXJvbihzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpKQo+PiBkaWZmIC0tZ2l0IGEv
+aW5jbHVkZS9kcm0vZHJtX21pcGlfZHNpLmggYi9pbmNsdWRlL2RybS9kcm1fbWlwaV9kc2kuaAo+
+PiBpbmRleCA5NDRmMzNmLi4zZjIxYmVhIDEwMDY0NAo+PiAtLS0gYS9pbmNsdWRlL2RybS9kcm1f
+bWlwaV9kc2kuaAo+PiArKysgYi9pbmNsdWRlL2RybS9kcm1fbWlwaV9kc2kuaAo+PiBAQCAtNDks
+NiArNDksMTIgQEAgc3RydWN0IG1pcGlfZHNpX21zZyB7Cj4+ICAgKiBAZGV0YWNoOiBkZXRhY2gg
+RFNJIGRldmljZSBmcm9tIERTSSBob3N0Cj4+ICAgKiBAdHJhbnNmZXI6IHNlbmQgYW5kL29yIHJl
+Y2VpdmUgRFNJIHBhY2tldCwgcmV0dXJuIG51bWJlciBvZiByZWNlaXZlZCBieXRlcywKPj4gICAq
+IAkgICAgICBvciBlcnJvcgo+PiArICogQHBhc3NfdGU6IGNhbGwgdGhlIGNydGMgdGVfaGFuZGxl
+cigpIGNhbGxiYWNrIGZyb20gRFNJIGhvc3QuCj4+ICsgKgkgICAgIFRoZSBwYW5lbCBnZW5lcmF0
+ZXMgdGVhcmluZyBlZmZlY3Qgc3luY2hyb25pemF0aW9uIHNpZ25hbCBiZXR3ZWVuCj4+ICsgKgkg
+ICAgIE1DVSBhbmQgRkIgdG8gZGlzcGxheSB2aWRlbyBpbWFnZXMuIEFuZCB0aGUgZGlzcGxheSBj
+b250cm9sbGVyCj4+ICsgKgkgICAgIHNob3VsZCB0cmlnZ2VyIHRvIHRyYW5zZmVyIHZpZGVvIGlt
+YWdlIGF0IHRoaXMgc2lnbmFsLiBTbyB0aGUgcGFuZWwKPj4gKyAqCSAgICAgcmVjZWl2ZXMgdGhl
+IFRFIElSUSwgdGhlbiBjYWxscyB0aGlzIGZ1bmN0aW9uIHRvIG5vdGlmeSBpdCB0byB0aGUKPj4g
+KyAqCSAgICAgZGlzcGxheSBjb250cm9sbGVyLgo+PiAgICovCj4+ICBzdHJ1Y3QgbWlwaV9kc2lf
+aG9zdF9vcHMgewo+PiAgCWludCAoKmF0dGFjaCkoc3RydWN0IG1pcGlfZHNpX2hvc3QgKmhvc3Qs
+Cj4+IEBAIC01Nyw2ICs2Myw3IEBAIHN0cnVjdCBtaXBpX2RzaV9ob3N0X29wcyB7Cj4+ICAJCSAg
+ICAgIHN0cnVjdCBtaXBpX2RzaV9kZXZpY2UgKmRzaSk7Cj4+ICAJc3NpemVfdCAoKnRyYW5zZmVy
+KShzdHJ1Y3QgbWlwaV9kc2lfaG9zdCAqaG9zdCwKPj4gIAkJCSAgICBzdHJ1Y3QgbWlwaV9kc2lf
+bXNnICptc2cpOwo+PiArCXZvaWQgKCpwYXNzX3RlKShzdHJ1Y3QgbWlwaV9kc2lfaG9zdCAqaG9z
+dCk7Cj4gCj4gSSd2ZSBvYmplY3RlZCB0byB0aGlzIHBhcnRpY3VsYXIgY2hhbmdlIGJlZm9yZSBh
+bmQgdGhhdCBvYmplY3Rpb24gc3RpbGwKPiBzdGFuZHMuIEkgZG9uJ3Qgc2VlIGhvdyB0aGlzIGlz
+IHJlbGF0ZWQgdG8gRFNJLiBJdCBzZWVtcyBsaWtlIGFuCj4gaW1wbGVtZW50YXRpb24gZGV0YWls
+IG9mIHRoaXMgcGFydGljdWxhciBzZXR1cCBhbmQgSSB0aGluayBpdCBzaG91bGQgYmUKPiBoYW5k
+bGVkIGRpZmZlcmVudGx5ICh3aXRoaW4gdGhlIEV4eW5vcyBEU0kgY29udHJvbGxlciBpbXBsZW1l
+bnRhdGlvbgo+IHBvc3NpYmx5KS4KCkkgdGhvdWdodCB3ZSBoYWQgZW5vdWdoIHJldmlldyBidXQg
+eWVzLCAgSSBtaXNzZWQgaXQuIEl0IHNlZW1zIGJldHRlciB0bwpoYW5kbGUgcGFzc190ZSBjYWxs
+YmFjayB3aXRoaW4gRXh5bm9zIHNpZGUgYXMgb2Ygbm93LiBUaGF0IGNvdWxkIGNhdXNlCmNvbnRy
+b3ZlcnN5LiBIb3dldmVyLCB0aGUgb2J2aW91cyBvbmUgaXMgdGhhdCB0ZSBzaWduYWwgc2hvdWxk
+IGJlCm5vdGlmaWVkIHRvIGRpc3BsYXkgY29udHJvbGxlciBkcml2ZXIgc29tZWhvdyBidXQgdGhl
+cmUgaXMgbm8gYSBnb29kIHdheQpmb3IgaXQuIEFueXdheSwgZ290IGl0LiAgUmV2ZXJ0ZWQuCgpU
+aGFua3MsCklua2kgRGFlCgo+IAo+IExhdXJlbnQgYWxzbyBhc2tlZCB5b3UgdG8gc3BsaXQgdGhp
+cyB1cCBpbnRvIHR3byBwYXRjaGVzLCBvbmUgZm9yIHRoZQo+IGNvcmUgcGFydCwgdGhlIG90aGVy
+IGZvciB0aGUgRXh5bm9zIGRyaXZlciBwYXJ0cywgeWV0IHRoaXMgcGF0Y2gKPiBjb250YWlucyBi
+b3RoIGNoYW5nZXMuCj4gCj4gVGhpZXJyeQo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9kcmktZGV2ZWwK
