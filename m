@@ -1,75 +1,127 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [alsa-devel] [PATCH V3 2/2] ASoC: samsung: Add machine driver for
- Odroid X2/U3
-Date: Wed, 09 Jul 2014 19:20:05 +0200
-Message-ID: <53BD79C5.3060604@samsung.com>
-References: <1404479625-25385-1-git-send-email-s.nawrocki@samsung.com>
- <1404479625-25385-2-git-send-email-s.nawrocki@samsung.com>
- <CAD8Lp44JFtbcD22c+0PVb5S4U1kVTTxHD=PgqiKzhVypFW5Prg@mail.gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 2/3] ARM: dts: Update the parent for Audss clocks in Exynos5420
+Date: Wed, 9 Jul 2014 19:46:36 +0200
+Message-ID: <CABxcv==v9whax3oraJQnTiDwfAUznjQP6WHK-auPv3q-LOmdnA@mail.gmail.com>
+References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
+	<1402464739-19044-3-git-send-email-tushar.b@samsung.com>
+	<CAD=FV=W5yh58fYTwRZxmZt=BORcZMSRV0oRe12yA74Q5h2S4YQ@mail.gmail.com>
+	<7hpphwlgn0.fsf@paris.lan>
+	<CAC5m3Bzey-YoPLmjAq4YNPQ13rojtVFWAbnhX6-ZFtYZwEdMWg@mail.gmail.com>
+	<7h8uojk61a.fsf@paris.lan>
+	<53ACE724.7090606@gmail.com>
+	<CAGa+x86COQz+cYtrXWrP-sjFGz-gi2tf6GEvLiKYoQwg1zMivQ@mail.gmail.com>
+	<CAGa+x87LHiYGb03=GRcZisK1=TyakW1htd1E2vOQ6ijZKw8syg@mail.gmail.com>
+	<53B2A2A5.4070203@gmail.com>
+	<53BB2E7A.5080204@samsung.com>
+	<53BB5EBD.5030607@gmail.com>
+	<CABxcv=ka5UxZ8E3+F4cR4vcY1m3AfX=g7HiaNYqmyQjHfSVqtw@mail.gmail.com>
+	<53BD3157.7030804@gmail.com>
+	<CABxcv=mcKNY8TO3Ay+GRs3ha45ptw_w_tig0L8g_syMQdbUmhw@mail.gmail.com>
+	<CAD=FV=XDs8FL3wdmDUF8ch9NuZ4hWn6FHhn8vVK42aa4qwV_Sg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:21632 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755337AbaGIRUJ (ORCPT
+Received: from mail-wg0-f41.google.com ([74.125.82.41]:51978 "EHLO
+	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756412AbaGIRqh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Jul 2014 13:20:09 -0400
-In-reply-to: <CAD8Lp44JFtbcD22c+0PVb5S4U1kVTTxHD=PgqiKzhVypFW5Prg@mail.gmail.com>
+	Wed, 9 Jul 2014 13:46:37 -0400
+Received: by mail-wg0-f41.google.com with SMTP id k14so5161120wgh.12
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jul 2014 10:46:36 -0700 (PDT)
+In-Reply-To: <CAD=FV=XDs8FL3wdmDUF8ch9NuZ4hWn6FHhn8vVK42aa4qwV_Sg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Chen Zhen <zhen1.chen@samsung.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: Doug Anderson <dianders@google.com>
+Cc: Tushar Behera <trblinux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <robh+dt@kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>
 
-Hi,
+Hello Doug,
 
-On 08/07/14 11:15, Daniel Drake wrote:
-> On Fri, Jul 4, 2014 at 2:13 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> This patch adds the sound subsystem driver for Odroid-X2 and
->> Odroid-U3 boards. The codec works in I2S master mode; there
->> are two separate audio routing paths defined, as there are
->> differences in the signal routing between the X2 and U3 boards,
->> i.e. U3 uses single jack for headphones and microphone.
+On Wed, Jul 9, 2014 at 6:01 PM, Doug Anderson <dianders@google.com> wrote:
+> Javier,
+>
+> On Wed, Jul 9, 2014 at 6:03 AM, Javier Martinez Canillas
+> <javier@dowhile0.org> wrote:
+>> Hello Tushar,
 >>
->> Signed-off-by: Chen Zhen <zhen1.chen@samsung.com>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
-> Testing on ODROID-U2, v3 is not quite working for me, but v2 of the
-> patch was fine.
-> I boot up, run:
-> # speaker-test -c 2 -t wav
-> 
-> As soon as I hear the word "front" I press ctrl+c and then run the
-> command again.
-> Now the command hangs with no audible output.
-> 
-> Any ideas? Let me know if you have trouble reproducing.
+>> On Wed, Jul 9, 2014 at 2:11 PM, Tushar Behera <trblinux@gmail.com> wrote:
+>>> On 07/09/2014 03:44 PM, Javier Martinez Canillas wrote:
+>>>> Hello Tushar,
+>>>>
+>>>> On Tue, Jul 8, 2014 at 5:00 AM, Tushar Behera <trblinux@gmail.com> wrote:
+>>>>>>>
+>>>>>>> The u-boot version is a little different on my Peach-Pi as compared to
+>>>>>>> the market release version. Not sure if that is making any difference.
+>>>>>>>
+>>>>>>> Peach # version
+>>>>>>>
+>>>>>>> U-Boot 2013.04 (Feb 13 2014 - 16:35:03) for Peach
+>>>>>>> armv7a-cros-linux-gnueabi-gcc.real (4.8.1_cos_gg_feea904_4.8.1-r66)
+>>>>>>> 4.8.x-google 20130905 (prerelease)
+>>>>>>> GNU ld (binutils-2.22_cos_gg_2) 2.22
+>>>>>>>
+>>>>>>
+>>>>
+>>>> I'm using the same U-Boot version than Kevin (U-Boot 2013.04-gb98ed09)
+>>>> and on my setup using chained nv-uboot I also need patch 1/3 along
+>>>> with 2/3 to fix the issue.
+>>>>
+>>>>>> Note that I've applied this only from this series so I'm not sure how
+>>>>>> much the problem can be solved...any updates for 1/3 and 3/3?
+>>>>>>
+>>>>>> - Kukjin
+>>>>>
+>>>>> Thanks for applying 2/3. I am working on 1/3 to see if we are following
+>>>>> the right approach to fix Kevin's issue (unfortunately, I am not hitting
+>>>>> the bug on my board ATM). 3/3 has already been merged through a
+>>>>> different patchset.
+>>>>>
+>>>>
+>>>> I'm sending as an attachment my complete boot log when booting today's
+>>>> next (20140709) until it hangs and my u-boot env vars. I hope that
+>>>> helps.
+>>>>
+>>>
+>>> Would you please check the behaviour after enabling following config
+>>> options?
+>>>
+>>> diff --git a/arch/arm/configs/exynos_defconfig
+>>> b/arch/arm/configs/exynos_defconfig
+>>> index e07a227..d6056ab 100644
+>>> --- a/arch/arm/configs/exynos_defconfig
+>>> +++ b/arch/arm/configs/exynos_defconfig
+>>> @@ -93,6 +93,11 @@ CONFIG_FRAMEBUFFER_CONSOLE=y
+>>>  CONFIG_FONTS=y
+>>>  CONFIG_FONT_7x14=y
+>>>  CONFIG_LOGO=y
+>>> +CONFIG_SOUND=y
+>>> +CONFIG_SND=y
+>>> +CONFIG_SND_SOC=y
+>>> +CONFIG_SND_SOC_SAMSUNG=y
+>>> +CONFIG_SND_SOC_SNOW=y
+>>>  CONFIG_USB=y
+>>>  CONFIG_USB_EHCI_HCD=y
+>>>  CONFIG_USB_EHCI_EXYNOS=y
+>>> @@ -109,6 +114,8 @@ CONFIG_MMC_DW_IDMAC=y
+>>>  CONFIG_MMC_DW_EXYNOS=y
+>>>  CONFIG_RTC_CLASS=y
+>>>  CONFIG_RTC_DRV_S3C=y
+>>> +CONFIG_DMADEVICES=y
+>>> +CONFIG_PL330_DMA=y
+>>>  CONFIG_COMMON_CLK_MAX77686=y
+>>>  CONFIG_EXT2_FS=y
+>>>  CONFIG_EXT3_FS=y
+>>>
+>>>
+>>
+>> With those Kconfig options enabled the kernel does not hang anymore so
+>> patch 1/3 is not needed in that case.
+>
+> Just checking: did you happen to confirm whether it's the PL330 /
+> DMADEVICES that fixes things or do you actually need the sound stuff?
 
-Thanks the feedback, we have also noticed this issue.
-It sounds like a bug in the Samsung I2S driver, which sets the
-CDCLK pin to input mode in the i2s_shutdown callback and never
-restores it. AFAICS this setting should not be lost after a call
-to struct soc_snd_dai_ops::shutdown().
-I'm going will prepare a proper patch soon, until then you could
-try and see if this fixes the problem for you:
+Sorry I should had mentioned this before. The DMADEVICES and PL330
+Kconfig are enough to avoid the kernel to hang, the sound config
+options are not actually required.
 
----8<---
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index d80121e..42c4f3e 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -724,10 +724,6 @@ static void i2s_shutdown(struct snd_pcm_substream *substream,
-
-        spin_unlock_irqrestore(&lock, flags);
-
--       /* Gate CDCLK by default */
--       if (!is_opened(other))
--               i2s_set_sysclk(dai, SAMSUNG_I2S_CDCLK,
--                               0, SND_SOC_CLOCK_IN);
- }
---->8---
-
---
-Thanks,
-Sylwester
+Best regards,
+Javier
