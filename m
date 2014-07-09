@@ -1,100 +1,84 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
-Date: Wed,  9 Jul 2014 15:31:34 +0530
-Message-ID: <1404900096-1721-3-git-send-email-gautam.vivek@samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v2 3/4] usb: host: xhci-plat: Caibrate PHY post host reset
+Date: Wed,  9 Jul 2014 15:31:35 +0530
+Message-ID: <1404900096-1721-4-git-send-email-gautam.vivek@samsung.com>
 References: <1404900096-1721-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1404900096-1721-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org, heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, pratyush.anand-qxv4g6HH51o@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1404900096-1721-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, kishon@ti.com, kgene.kim@samsung.com, mathias.nyman@intel.com, jwerner@chromium.org, sergei.shtylyov@cogentembedded.com, heikki.krogerus@linux.intel.com, pratyush.anand@st.com, Vivek Gautam <gautam.vivek@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The host controller by itself may sometimes need to handle PHY
-and/or calibrate some of the PHY settings to get full support out
-of the PHY controller. The PHY core provides a calibration
-funtionality now to do so.
-Therefore, facilitate getting the two possible PHYs, viz.
-USB 2.0 type (UTMI+) and USB 3.0 type (PIPE3), provided
-by the parent - Synopsys's DWC3 controller
+Some quirky PHYs may require to be calibrated post the host
+controller initialization.
+The USB 3.0 DRD PHY on Exynos5420/5800 systems, coming along with
+Synopsys's DWC3 controller, is one such PHY which needs to be
+calibrated post xhci's reset at initialization time and at
+resume time, to get the controller work at SuperSpeed.
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 ---
- drivers/usb/host/xhci-plat.c |   36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ drivers/usb/host/xhci-plat.c |   39 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 37 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 29d8adb..e50bd7d 100644
+index e50bd7d..decf349 100644
 --- a/drivers/usb/host/xhci-plat.c
 +++ b/drivers/usb/host/xhci-plat.c
-@@ -16,6 +16,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/phy/phy.h>
- #include <linux/slab.h>
- 
- #include "xhci.h"
-@@ -101,6 +102,7 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	struct clk              *clk;
- 	int			ret;
- 	int			irq;
-+	struct device		*parent;
- 
- 	if (usb_disabled())
- 		return -ENODEV;
-@@ -165,6 +167,23 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 			goto unmap_registers;
- 	}
- 
-+	parent = pdev->dev.parent;
-+	/*
-+	 * Get possile USB 2.0 type PHY (UTMI+) registered by xhci's parent:
-+	 * Synopsys-dwc3
-+	 */
+@@ -35,7 +35,27 @@ static void xhci_plat_quirks(struct device *dev, struct xhci_hcd *xhci)
+ /* called during probe() after chip reset completes */
+ static int xhci_plat_setup(struct usb_hcd *hcd)
+ {
+-	return xhci_gen_setup(hcd, xhci_plat_quirks);
++	struct device *parent;
++	int ret;
++
++	ret = xhci_gen_setup(hcd, xhci_plat_quirks);
++	if (ret) {
++		dev_err(hcd->self.controller, "xhci setup failed\n");
++		return ret;
++	}
++
++	parent = hcd->self.controller->parent;
 +	if (of_device_is_compatible(parent->of_node, "synopsys,dwc3") ||
 +	    of_device_is_compatible(parent->of_node, "snps,dwc3")) {
-+		hcd->gen_phy = devm_phy_get(&pdev->dev, "usb2-phy");
-+		if (IS_ERR(hcd->gen_phy)) {
-+			ret = PTR_ERR(hcd->gen_phy);
-+			if (ret != -ENOSYS && ret != -ENODEV) {
-+				dev_err(&pdev->dev, "no usb2 phy configured\n");
-+				return ret;
-+			}
++		if (!IS_ERR(hcd->gen_phy)) {
++			ret = phy_calibrate(hcd->gen_phy);
++			if (ret < 0 && ret != -ENOTSUPP)
++				dev_err(hcd->self.controller,
++					"failed to calibrate USB PHY\n");
 +		}
 +	}
 +
- 	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (ret)
- 		goto disable_clk;
-@@ -191,6 +210,23 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
- 		xhci->shared_hcd->can_do_streams = 1;
++	return ret;
+ }
  
-+	/*
-+	 * Get possile USB 3.0 type PHY (PIPE3) registered by xhci's parent:
-+	 * Synopsys-dwc3
-+	 */
-+	if (of_device_is_compatible(parent->of_node, "synopsys,dwc3") ||
-+	    of_device_is_compatible(parent->of_node, "snps,dwc3")) {
-+		xhci->shared_hcd->gen_phy = devm_phy_get(&pdev->dev,
-+							 "usb3-phy");
-+		if (IS_ERR(xhci->shared_hcd->gen_phy)) {
-+			ret = PTR_ERR(xhci->shared_hcd->gen_phy);
-+			if (ret != -ENOSYS && ret != -ENODEV) {
-+				dev_err(&pdev->dev, "no usb3 phy configured\n");
-+				return ret;
-+			}
+ static int xhci_plat_start(struct usb_hcd *hcd)
+@@ -288,8 +308,23 @@ static int xhci_plat_resume(struct device *dev)
+ {
+ 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
++	int ret;
++
++	ret = xhci_resume(xhci, 0);
++	if (ret)
++		return ret;
+ 
+-	return xhci_resume(xhci, 0);
++	if (of_device_is_compatible(dev->parent->of_node, "synopsys,dwc3") ||
++	    of_device_is_compatible(dev->parent->of_node, "snps,dwc3")) {
++		if (!IS_ERR(hcd->gen_phy)) {
++			ret = phy_calibrate(hcd->gen_phy);
++			if (ret < 0 && ret != -ENOTSUPP)
++				dev_err(hcd->self.controller,
++					"failed to calibrate USB PHY\n");
 +		}
 +	}
 +
- 	ret = usb_add_hcd(xhci->shared_hcd, irq, IRQF_SHARED);
- 	if (ret)
- 		goto put_usb3_hcd;
++	return ret;
+ }
+ 
+ static const struct dev_pm_ops xhci_plat_pm_ops = {
 -- 
 1.7.10.4
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
