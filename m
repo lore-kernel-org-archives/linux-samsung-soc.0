@@ -1,166 +1,78 @@
-From: Sachin Kamat <sachin.kamat@samsung.com>
-Subject: [PATCH 1/1] ARM: exynos_defconfig: Update exynos_defconfig
-Date: Wed,  9 Jul 2014 15:52:33 +0530
-Message-ID: <1404901353-14806-1-git-send-email-sachin.kamat@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:35382 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755559AbaGIK0S (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Jul 2014 06:26:18 -0400
-Received: by mail-pa0-f45.google.com with SMTP id rd3so8949990pab.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jul 2014 03:26:18 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Wed, 9 Jul 2014 11:54:41 +0100
+Message-ID: <20140709105441.GE9485@arm.com>
+References: <4545972.cM7IP1qTXQ@wuerfel>
+ <53A4C0C9.2050908@codeaurora.org>
+ <20140624091808.GC26013@arm.com>
+ <53A9BC18.2090106@codeaurora.org>
+ <20140624181150.GB4067@arm.com>
+ <53A9EF3A.2070704@codeaurora.org>
+ <20140625091858.GG6153@arm.com>
+ <53ADEEDF.7060902@codeaurora.org>
+ <20140630095220.GA25779@arm.com>
+ <53BC95DA.1010500@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <53BC95DA.1010500-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Dave P Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Hiroshi
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, dianders@chromium.org, spk.linux@gmail.com
 
-Removed outdated configs. Enabled most of the configs used on latest
-Exynos based platforms. This will provide a reference for users trying
-to verify and test various features on Exynos based platforms and also
-help in detecting breakages by widening the build coverage.
+On Wed, Jul 09, 2014 at 02:07:38AM +0100, Olav Haugan wrote:
+> On 6/30/2014 2:52 AM, Will Deacon wrote:
+> > On Fri, Jun 27, 2014 at 11:23:27PM +0100, Olav Haugan wrote:
+> >> Lets say I have an IOMMU with 2 masters and 2 SMRn slots with the
+> >> following stream IDs coming from the masters:
+> >>
+> >> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
+> >> Master 2: 0x30
+> >>
+> >> To make this work I would program SMR[0] with StreamID 0x20 and mask 0xF
+> >> to ignore lower 4 bits. SMR[1] would just be StreamID 0x30 with mask 0x0.
+> >>
+> >> However, I could also have an IOMMU with 2 masters and 9 SMRn slots with
+> >> the following stream IDs:
+> >>
+> >> Master 1: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
+> >> Master 2: 0x29
+> >>
+> >> Here I would program all SMRn and leave the mask to be 0 for all SMRn's.
+> >> So how do I detect when to apply a mask or not?
+> > 
+> > You would aim to use the smallest number of SMRs per master possible.
+> > You could probably use:
+> > 
+> >   Master 1: SMR[0].id == 0x20, SMR[0].mask = 0x07
+> >             SMR[1].id == 0x28, SMR[1].mask = 0x00
+> > 
+> >   Master 2: SMR[2].id == 0x29, SMR[2].mask = 0x00
+> 
+> So how does an algorithm figure this out in both my examples? The
+> algorithm would have to know about both (all) bus masters and their
+> stream IDs for a specific SMMU. If the algorithm operates on the set of
+> stream IDs for one bus master at a time the algorithm has no way of
+> knowing which bits can be ignored since it doesn't know the value of the
+> other stream IDs for the other bus masters and thus could potentially
+> create a mask that could cause a stream ID to match in two different
+> entries.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
----
- arch/arm/configs/exynos_defconfig |   56 +++++++++++++++++++++++++++++++------
- 1 file changed, 48 insertions(+), 8 deletions(-)
+Complete knowledge of the system topology (i.e. all bus masters) is a
+requirement for being able to configure the SMMU correctly if you want to
+guarantee that you don't have SMR aliasing issues.
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index e07a227ec0db..fc7d1683bf67 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -8,15 +8,17 @@ CONFIG_MODULE_UNLOAD=y
- # CONFIG_BLK_DEV_BSG is not set
- CONFIG_PARTITION_ADVANCED=y
- CONFIG_ARCH_EXYNOS=y
--CONFIG_S3C_LOWLEVEL_UART_PORT=3
--CONFIG_S3C24XX_PWM=y
--CONFIG_ARCH_EXYNOS5=y
--CONFIG_MACH_EXYNOS4_DT=y
-+CONFIG_ARCH_EXYNOS3=y
-+CONFIG_EXYNOS5420_MCPM=y
- CONFIG_SMP=y
-+CONFIG_BIG_LITTLE=y
-+CONFIG_BL_SWITCHER=y
-+CONFIG_BL_SWITCHER_DUMMY_IF=y
- CONFIG_NR_CPUS=8
- CONFIG_PREEMPT=y
- CONFIG_AEABI=y
- CONFIG_HIGHMEM=y
-+CONFIG_CMA=y
- CONFIG_ZBOOT_ROM_TEXT=0x0
- CONFIG_ZBOOT_ROM_BSS=0x0
- CONFIG_ARM_APPENDED_DTB=y
-@@ -24,6 +26,7 @@ CONFIG_ARM_ATAG_DTB_COMPAT=y
- CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc mem=256M"
- CONFIG_VFP=y
- CONFIG_NEON=y
-+CONFIG_PM_RUNTIME=y
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-@@ -34,6 +37,8 @@ CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
- CONFIG_PROC_DEVICETREE=y
-+CONFIG_DMA_CMA=y
-+CONFIG_CMA_SIZE_MBYTES=64
- CONFIG_BLK_DEV_LOOP=y
- CONFIG_BLK_DEV_CRYPTOLOOP=y
- CONFIG_BLK_DEV_RAM=y
-@@ -66,11 +71,22 @@ CONFIG_I2C=y
- CONFIG_I2C_MUX=y
- CONFIG_I2C_ARB_GPIO_CHALLENGE=y
- CONFIG_I2C_EXYNOS5=y
-+CONFIG_I2C_CROS_EC_TUNNEL=y
-+CONFIG_SPI=y
-+CONFIG_SPI_S3C64XX=y
- CONFIG_I2C_S3C2410=y
- CONFIG_DEBUG_GPIO=y
-+CONFIG_POWER_SUPPLY=y
-+CONFIG_CHARGER_TPS65090=y
- # CONFIG_HWMON is not set
-+CONFIG_THERMAL=y
-+CONFIG_EXYNOS_THERMAL=y
-+CONFIG_EXYNOS_THERMAL_CORE=y
-+CONFIG_WATCHDOG=y
-+CONFIG_S3C2410_WATCHDOG=y
- CONFIG_MFD_CROS_EC=y
- CONFIG_MFD_CROS_EC_I2C=y
-+CONFIG_MFD_CROS_EC_SPI=y
- CONFIG_MFD_MAX77686=y
- CONFIG_MFD_MAX8997=y
- CONFIG_MFD_SEC_CORE=y
-@@ -80,6 +96,7 @@ CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_MAX8997=y
- CONFIG_REGULATOR_MAX77686=y
-+CONFIG_REGULATOR_S2MPA01=y
- CONFIG_REGULATOR_S2MPS11=y
- CONFIG_REGULATOR_S5M8767=y
- CONFIG_REGULATOR_TPS65090=y
-@@ -88,28 +105,50 @@ CONFIG_FB_MODE_HELPERS=y
- CONFIG_FB_SIMPLE=y
- CONFIG_EXYNOS_VIDEO=y
- CONFIG_EXYNOS_MIPI_DSI=y
--CONFIG_EXYNOS_DP=y
- CONFIG_FRAMEBUFFER_CONSOLE=y
- CONFIG_FONTS=y
- CONFIG_FONT_7x14=y
- CONFIG_LOGO=y
-+CONFIG_SOUND=y
-+CONFIG_SND=y
-+CONFIG_SND_SOC=y
-+CONFIG_SND_SOC_SAMSUNG=y
-+CONFIG_SND_SOC_SNOW=y
- CONFIG_USB=y
-+CONFIG_USB_XHCI_HCD=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_EHCI_EXYNOS=y
-+CONFIG_USB_OHCI_HCD=y
-+CONFIG_USB_OHCI_EXYNOS=y
- CONFIG_USB_STORAGE=y
- CONFIG_USB_DWC3=y
--CONFIG_USB_PHY=y
--CONFIG_SAMSUNG_USB2PHY=y
--CONFIG_SAMSUNG_USB3PHY=y
-+CONFIG_USB_HSIC_USB3503=y
- CONFIG_MMC=y
- CONFIG_MMC_SDHCI=y
- CONFIG_MMC_SDHCI_S3C=y
-+CONFIG_MMC_SDHCI_S3C_DMA=y
- CONFIG_MMC_DW=y
- CONFIG_MMC_DW_IDMAC=y
- CONFIG_MMC_DW_EXYNOS=y
- CONFIG_RTC_CLASS=y
-+CONFIG_RTC_DRV_MAX77686=y
-+CONFIG_RTC_DRV_S5M=y
- CONFIG_RTC_DRV_S3C=y
-+CONFIG_DMADEVICES=y
-+CONFIG_PL330_DMA=y
- CONFIG_COMMON_CLK_MAX77686=y
-+CONFIG_COMMON_CLK_S2MPS11=y
-+CONFIG_EXYNOS_IOMMU=y
-+CONFIG_IIO=y
-+CONFIG_EXYNOS_ADC=y
-+CONFIG_PWM=y
-+CONFIG_PWM_SAMSUNG=y
-+CONFIG_PHY_EXYNOS5250_SATA=y
-+CONFIG_PHY_SAMSUNG_USB2=y
-+CONFIG_PHY_EXYNOS4210_USB2=y
-+CONFIG_PHY_EXYNOS4X12_USB2=y
-+CONFIG_PHY_EXYNOS5250_USB2=y
-+CONFIG_PHY_EXYNOS5_USBDRD=y
- CONFIG_EXT2_FS=y
- CONFIG_EXT3_FS=y
- CONFIG_EXT4_FS=y
-@@ -123,6 +162,7 @@ CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ASCII=y
- CONFIG_NLS_ISO8859_1=y
- CONFIG_PRINTK_TIME=y
-+CONFIG_DEBUG_FS=y
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_DEBUG_KERNEL=y
- CONFIG_DETECT_HUNG_TASK=y
--- 
-1.7.9.5
+> >> I am not familiar with Andreas's proposal. Do you have a link?
+> > 
+> >   http://marc.info/?l=linux-arm-kernel&m=139110598005846&w=2
+> 
+> Unless I am mistaken the algorithm works on one bus master at a time. I
+> don't think that will work.
+
+IIRC, it works for densely packed SIDs on the master, so it tries to build
+up power-of-2 sized groups for that master then mops up the rest with
+individual entries.
+
+Will
