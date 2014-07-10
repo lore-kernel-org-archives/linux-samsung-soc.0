@@ -1,55 +1,56 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [RESEND PATCHv2 0/3] Power-domain clk handling
-Date: Thu, 10 Jul 2014 22:26:14 +0900
-Message-ID: <024101cf9c42$861966e0$924c34a0$@samsung.com>
-References: <1404795274-27307-1-git-send-email-arun.kk@samsung.com>
+Subject: RE: [PATCH 6/6] ARM: EXYNOS: Register cpuidle device only on
+ Exynos4210 and 5250
+Date: Thu, 10 Jul 2014 22:30:05 +0900
+Message-ID: <026601cf9c43$0faf6ad0$2f0e4070$@samsung.com>
+References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
+ <1403618235-19353-7-git-send-email-t.figa@samsung.com>
+ <038b01cf9ab7$0de5a440$29b0ecc0$@samsung.com> <156099171.AcKbd1QIut@amdc1032>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:10882 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753403AbaGJN0Q (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jul 2014 09:26:16 -0400
-In-reply-to: <1404795274-27307-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <156099171.AcKbd1QIut@amdc1032>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
+Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arun Kumar K' <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: t.figa@samsung.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, prathyush.k@samsung.com, abrestic@chromium.org, shaik.ameer@samsung.com, arunkk.samsung@gmail.com
 
-Arun Kumar K wrote:
+Bartlomiej Zolnierkiewicz wrote:
 > 
-> This patch series for clock handling in power domain is
-> re-send for merging after rebasing onto latest linux-samsung.git,
-> for-next branch.
-> Original series and discussion can be found here:
-> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31550.html
+> Hi,
 > 
-> Arun Kumar K (2):
->   clk: exynos5420: Add IDs for clocks used in PD mfc
->   ARM: dts: Add clock property for mfc_pd in 5420
-> 
-> Prathyush K (1):
->   ARM: EXYNOS: Add support for clock handling in power domain
-> 
->  .../bindings/arm/exynos/power_domain.txt           |   20 +++++++
->  arch/arm/boot/dts/exynos5420.dtsi                  |    3 +
->  arch/arm/mach-exynos/pm_domains.c                  |   61 +++++++++++++++++++-
->  drivers/clk/samsung/clk-exynos5420.c               |    6 +-
->  include/dt-bindings/clock/exynos5420.h             |    2 +
->  5 files changed, 89 insertions(+), 3 deletions(-)
-> 
-> --
-> 1.7.9.5
+Hi Bart,
 
-Yeah, this is required now because regarding clock registers are also powered
-down during pd-off on some exynos SoCs as you mentioned. Just note that you
-know the registers are moved into pd related register on latest exynos SoC's
-anyway. 
-
-OK, I will apply into fixes for 3.16.
+> On Tuesday, July 08, 2014 11:15:21 PM Kukjin Kim wrote:
+> > Tomasz Figa wrote:
+> > >
+> > > Currently, the Exynos cpuidle driver works correctly only on Exynos4210
+> > > and 5250. Trying to use it with just one CPU online on any other Exynos
+> > > SoC will lead to system failure, due to unsupported AFTR mode on other
+> > > SoCs. This patch fixes the problem by registering the driver only on
+> > > supported SoCs and letting others simply use default WFI mode until
+> > > support for them is added.
+> > >
+> > Hmm...I thought other SoCs have no problem on cpuidle except exynos5420 and
+> > exynos5440....something like this would be helpful to avoid system failure.
+> > But unfortunately this conflicts with Pankaj's cleanup cpufreq_init() and
+> > cpuidle_init() patch you've reviewed and I've applied in my local...
+> >
+> > I'm going to check which exynos is ok on cpuidle and then sort them out.
+> 
+> Tomasz's patch is correct - currently only Exynos4210 and Exynos5250 work
+> fine with AFTR mode and upstream kernel (AFTR gets triggered by offlining
+> CPUs other than CPU0).
+> 
+> [ Exynos4x12 and Exynos3250 need secure firmware support (patches for this
+>   need to be reworked on top of recent PM/firmware/cpuidle changes).
+> 
+>   Exynos5410 should use big_little cpuidle driver. ]
+> 
+Agreed that this is required at this moment.
+I will take this into fixes for 3.16.
 
 Thanks,
 Kukjin
