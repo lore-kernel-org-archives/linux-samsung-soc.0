@@ -1,122 +1,33 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v5 05/14] drm/exynos: dsi: add pass TE host ops to support
- LCD I80 interface
-Date: Thu, 10 Jul 2014 11:29:16 +0900
-Message-ID: <53BDFA7C.5040005@samsung.com>
-References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
- <1404779987-5337-6-git-send-email-yj44.cho@samsung.com>
- <20140709152207.GA17359@ulmo> <53BDE6FF.1000600@samsung.com>
- <53BDEA45.7020303@samsung.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH 1/3] regulator: s2mpxxx: Move regulator min/step voltages
+ in common place
+Date: Thu, 10 Jul 2014 08:52:23 +0530
+Message-ID: <CADGdYn4tkt7PAjK8fL9JmF43MW6P0+UeyGzZrrgHTqj08et17w@mail.gmail.com>
+References: <1404822480-31525-1-git-send-email-amit.daniel@samsung.com>
+	<20140709092511.GP30458@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <53BDEA45.7020303@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:51734 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751861AbaGJDWX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 9 Jul 2014 23:22:23 -0400
+In-Reply-To: <20140709092511.GP30458@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-T24gMjAxNOuFhCAwN+yblCAxMOydvCAxMDoyMCwgSW5raSBEYWUgd3JvdGU6Cj4gT24gMjAxNOuF
-hCAwN+yblCAxMOydvCAxMDowNiwgWW91bmdKdW4gQ2hvIHdyb3RlOgo+PiBPbiAwNy8xMC8yMDE0
-IDEyOjIyIEFNLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPj4+IE9uIFR1ZSwgSnVsIDA4LCAyMDE0
-IGF0IDA5OjM5OjM4QU0gKzA5MDAsIFlvdW5nSnVuIENobyB3cm90ZToKPj4+PiBUbyBzdXBwb3J0
-IExDRCBJODAgaW50ZXJmYWNlLCB0aGUgRFNJIGhvc3QgY2FsbHMgdGhpcyBmdW5jdGlvbgo+Pj4+
-IHRvIG5vdGlmeSB0aGUgcGFuZWwgdGVhcmluZyBlZmZlY3Qgc3luY2hyb25pemF0aW9uIHNpZ25h
-bCB0bwo+Pj4+IHRoZSBDUlRDIGRldmljZSBtYW5hZ2VyIHRvIHRyaWdnZXIgdG8gdHJhbnNmZXIg
-dmlkZW8gaW1hZ2UuCj4+Pj4KPj4+PiBTaWduZWQtb2ZmLWJ5OiBZb3VuZ0p1biBDaG8gPHlqNDQu
-Y2hvQHNhbXN1bmcuY29tPgo+Pj4+IEFja2VkLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3Vu
-Zy5jb20+Cj4+Pj4gQWNrZWQtYnk6IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ftc3Vu
-Zy5jb20+Cj4+Pj4gLS0tCj4+Pj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZHNpLmMgfCAxMSArKysrKysrKysrKwo+Pj4+ICAgaW5jbHVkZS9kcm0vZHJtX21pcGlfZHNpLmgg
-ICAgICAgICAgICAgIHwgIDcgKysrKysrKwo+Pj4+ICAgMiBmaWxlcyBjaGFuZ2VkLCAxOCBpbnNl
-cnRpb25zKCspCj4+Pj4KPj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2RzaS5jCj4+Pj4gYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZHNpLmMKPj4+PiBpbmRleCBkYWQ1NDNhLi43NmUzNGNhIDEwMDY0NAo+Pj4+IC0tLSBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+Pj4+IEBAIC0yNCw2ICsyNCw3IEBACj4+Pj4g
-ICAjaW5jbHVkZSA8dmlkZW8vbWlwaV9kaXNwbGF5Lmg+Cj4+Pj4gICAjaW5jbHVkZSA8dmlkZW8v
-dmlkZW9tb2RlLmg+Cj4+Pj4KPj4+PiArI2luY2x1ZGUgImV4eW5vc19kcm1fY3J0Yy5oIgo+Pj4+
-ICAgI2luY2x1ZGUgImV4eW5vc19kcm1fZHJ2LmgiCj4+Pj4KPj4+PiAgIC8qIHJldHVybnMgdHJ1
-ZSBpZmYgYm90aCBhcmd1bWVudHMgbG9naWNhbGx5IGRpZmZlcnMgKi8KPj4+PiBAQCAtMTA0MSwx
-MCArMTA0MiwyMCBAQCBzdGF0aWMgc3NpemVfdAo+Pj4+IGV4eW5vc19kc2lfaG9zdF90cmFuc2Zl
-cihzdHJ1Y3QgbWlwaV9kc2lfaG9zdCAqaG9zdCwKPj4+PiAgICAgICByZXR1cm4gKHJldCA8IDAp
-ID8gcmV0IDogeGZlci5yeF9kb25lOwo+Pj4+ICAgfQo+Pj4+Cj4+Pj4gK3N0YXRpYyB2b2lkIGV4
-eW5vc19kc2lfaG9zdF9wYXNzX3RlKHN0cnVjdCBtaXBpX2RzaV9ob3N0ICpob3N0KQo+Pj4+ICt7
-Cj4+Pj4gKyAgICBzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpID0gaG9zdF90b19kc2koaG9zdCk7Cj4+
-Pj4gKyAgICBzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIgPSBkc2ktPmVuY29kZXI7Cj4+Pj4g
-Kwo+Pj4+ICsgICAgaWYgKGRzaS0+c3RhdGUgJiBEU0lNX1NUQVRFX0VOQUJMRUQpCj4+Pj4gKyAg
-ICAgICAgZXh5bm9zX2RybV9jcnRjX3RlX2hhbmRsZXIoZW5jb2Rlci0+Y3J0Yyk7Cj4+Pj4gK30K
-Pj4+PiArCj4+Pj4gICBzdGF0aWMgY29uc3Qgc3RydWN0IG1pcGlfZHNpX2hvc3Rfb3BzIGV4eW5v
-c19kc2lfb3BzID0gewo+Pj4+ICAgICAgIC5hdHRhY2ggPSBleHlub3NfZHNpX2hvc3RfYXR0YWNo
-LAo+Pj4+ICAgICAgIC5kZXRhY2ggPSBleHlub3NfZHNpX2hvc3RfZGV0YWNoLAo+Pj4+ICAgICAg
-IC50cmFuc2ZlciA9IGV4eW5vc19kc2lfaG9zdF90cmFuc2ZlciwKPj4+PiArICAgIC5wYXNzX3Rl
-ID0gZXh5bm9zX2RzaV9ob3N0X3Bhc3NfdGUsCj4+Pj4gICB9Owo+Pj4+Cj4+Pj4gICBzdGF0aWMg
-aW50IGV4eW5vc19kc2lfcG93ZXJvbihzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpKQo+Pj4+IGRpZmYg
-LS1naXQgYS9pbmNsdWRlL2RybS9kcm1fbWlwaV9kc2kuaCBiL2luY2x1ZGUvZHJtL2RybV9taXBp
-X2RzaS5oCj4+Pj4gaW5kZXggOTQ0ZjMzZi4uM2YyMWJlYSAxMDA2NDQKPj4+PiAtLS0gYS9pbmNs
-dWRlL2RybS9kcm1fbWlwaV9kc2kuaAo+Pj4+ICsrKyBiL2luY2x1ZGUvZHJtL2RybV9taXBpX2Rz
-aS5oCj4+Pj4gQEAgLTQ5LDYgKzQ5LDEyIEBAIHN0cnVjdCBtaXBpX2RzaV9tc2cgewo+Pj4+ICAg
-ICogQGRldGFjaDogZGV0YWNoIERTSSBkZXZpY2UgZnJvbSBEU0kgaG9zdAo+Pj4+ICAgICogQHRy
-YW5zZmVyOiBzZW5kIGFuZC9vciByZWNlaXZlIERTSSBwYWNrZXQsIHJldHVybiBudW1iZXIgb2YK
-Pj4+PiByZWNlaXZlZCBieXRlcywKPj4+PiAgICAqICAgICAgICAgICBvciBlcnJvcgo+Pj4+ICsg
-KiBAcGFzc190ZTogY2FsbCB0aGUgY3J0YyB0ZV9oYW5kbGVyKCkgY2FsbGJhY2sgZnJvbSBEU0kg
-aG9zdC4KPj4+PiArICogICAgICAgICBUaGUgcGFuZWwgZ2VuZXJhdGVzIHRlYXJpbmcgZWZmZWN0
-IHN5bmNocm9uaXphdGlvbiBzaWduYWwKPj4+PiBiZXR3ZWVuCj4+Pj4gKyAqICAgICAgICAgTUNV
-IGFuZCBGQiB0byBkaXNwbGF5IHZpZGVvIGltYWdlcy4gQW5kIHRoZSBkaXNwbGF5Cj4+Pj4gY29u
-dHJvbGxlcgo+Pj4+ICsgKiAgICAgICAgIHNob3VsZCB0cmlnZ2VyIHRvIHRyYW5zZmVyIHZpZGVv
-IGltYWdlIGF0IHRoaXMgc2lnbmFsLiBTbwo+Pj4+IHRoZSBwYW5lbAo+Pj4+ICsgKiAgICAgICAg
-IHJlY2VpdmVzIHRoZSBURSBJUlEsIHRoZW4gY2FsbHMgdGhpcyBmdW5jdGlvbiB0byBub3RpZnkK
-Pj4+PiBpdCB0byB0aGUKPj4+PiArICogICAgICAgICBkaXNwbGF5IGNvbnRyb2xsZXIuCj4+Pj4g
-ICAgKi8KPj4+PiAgIHN0cnVjdCBtaXBpX2RzaV9ob3N0X29wcyB7Cj4+Pj4gICAgICAgaW50ICgq
-YXR0YWNoKShzdHJ1Y3QgbWlwaV9kc2lfaG9zdCAqaG9zdCwKPj4+PiBAQCAtNTcsNiArNjMsNyBA
-QCBzdHJ1Y3QgbWlwaV9kc2lfaG9zdF9vcHMgewo+Pj4+ICAgICAgICAgICAgICAgICBzdHJ1Y3Qg
-bWlwaV9kc2lfZGV2aWNlICpkc2kpOwo+Pj4+ICAgICAgIHNzaXplX3QgKCp0cmFuc2Zlcikoc3Ry
-dWN0IG1pcGlfZHNpX2hvc3QgKmhvc3QsCj4+Pj4gICAgICAgICAgICAgICAgICAgc3RydWN0IG1p
-cGlfZHNpX21zZyAqbXNnKTsKPj4+PiArICAgIHZvaWQgKCpwYXNzX3RlKShzdHJ1Y3QgbWlwaV9k
-c2lfaG9zdCAqaG9zdCk7Cj4+Pgo+Pj4gSSd2ZSBvYmplY3RlZCB0byB0aGlzIHBhcnRpY3VsYXIg
-Y2hhbmdlIGJlZm9yZSBhbmQgdGhhdCBvYmplY3Rpb24gc3RpbGwKPj4+IHN0YW5kcy4gSSBkb24n
-dCBzZWUgaG93IHRoaXMgaXMgcmVsYXRlZCB0byBEU0kuIEl0IHNlZW1zIGxpa2UgYW4KPj4+IGlt
-cGxlbWVudGF0aW9uIGRldGFpbCBvZiB0aGlzIHBhcnRpY3VsYXIgc2V0dXAgYW5kIEkgdGhpbmsg
-aXQgc2hvdWxkIGJlCj4+PiBoYW5kbGVkIGRpZmZlcmVudGx5ICh3aXRoaW4gdGhlIEV4eW5vcyBE
-U0kgY29udHJvbGxlciBpbXBsZW1lbnRhdGlvbgo+Pj4gcG9zc2libHkpLgo+Pj4KPj4KPj4gT2th
-eSwgSSB1bmRlcnN0YW5kIHdoYXQgeW91IG1lYW4uCj4+IEFzIHlvdSBrbm93LCB0aGlzIGZ1bmN0
-aW9uIGlzIGNhbGxlZCBieSBwYW5lbCBURSBpbnRlcnJ1cHQgaGFuZGxlciwgc28KPj4gaXQgY291
-bGQgYmUgYWNjZXNzZWQgYnkgcGFuZWwuCj4+IERvIHlvdSBoYXZlIGFueSBnb29kIGlkZWEgZm9y
-IHBhbmVsIHRvIGFjY2VzcyBleHlub3NfZHJtX2RzaSBkaXJlY3RseQo+PiB3aXRob3V0IG1pcGlf
-ZGlzX2hvc3Rfb3BzPwo+Pgo+IAo+IE1yLiBDaG8sIGxldCdzIGp1c3QgdXNlIG5vdGlmaWVyIGNh
-bGxiYWNrIGZvciB0aGUgbWVhbnRpbWU6IGZpbWQgZHJpdmVyCj4gcmVnaXN0ZXJzIGEgdGUgaGFu
-ZGxlciB0byBFeHlub3MgbWlwaSBkc2kgZHJpdmVyLCBhbmQgdGhlbiBFeHlub3MgbWlwaQo+IGRz
-aSBkcml2ZXIgY2FsbHMgdGhlIHRlIGhhbmRsZXIgd2hlbiB0ZSBpbnRlcnJ1cHQgb2NjdXJzIGZy
-b20gUGFuZWwgZGV2aWNlLgo+IAoKQWdhaW4sIHRoZXJlIHdhcyBteSBtaXNzaW5nIHBvaW50LiB0
-aGVyZSB3b3VsZG4ndCBiZSB3YXkgdGhhdCBFeHlub3MKbWlwaSBkc2kgZHJpdmVyIGNhbiByZWNl
-aXZlIHRlIHNpZ25hbCBmcm9tIHBhbmVsIHdpdGhvdXQgbWlwaV9kc2lfaG9zdF9vcHMuCgpTbyBs
-ZXQncyB1c2UgcmVtb3RlLWVuZHBvaW50IHByb3BlcnR5IG9mIERTSSBkZXZpY2Ugbm9kZS4gRFNJ
-IGRyaXZlciBjYW4KZ2V0IHRlIGdwaW8gZnJvbSBQYW5lbCBub2RlLCBhbmQgY2FuIHJlZ2lzdGVy
-IHRlIGlycSBoYW5kbGVyIGluIGNhc2Ugb2YKaTgwIFBhbmVsLiBBZnRlciB0aGF0LCB0ZSBzaWdu
-YWwgY291bGQgYmUgbm90aWZpZWQgZnJvbSB0ZSBpbnRlcnJ1cHQKaGFuZGxlciBvZiBEU0kgZHJp
-dmVyIHRvIEZJTUQgZHJpdmVyIHRocm91Z2ggbm90aWZpZXIgY2FsbGJhY2sKcmVnaXN0ZXJlZCBh
-bHJlYWR5LgoKVGhhbmtzLApJbmtpIERhZQoKPiBJIHRoaW5rIGFsbCB3ZSBjYW4gY29uc2lkZXIg
-Zm9yIGl0IGlzIHRvIHVzZSBtaXBpX2RzaV9ob3N0X29wcyBvciBjb3JlCj4gZnJhbWV3b3JrIC0g
-Y29ubmVjdG9yL2VuY29kZXIgYW5kIGNydGMuIEhvd2V2ZXIsIGl0IHNlZW1zIHRoYXQgaXQncyBu
-b3QKPiByZWFsbHkgZWFzeSBmb3Igd2UgaGF2ZSBhIGNvbnNlbnN1cyB3aXRoIG90aGVyIG1haW50
-YWluZXJzIHVudGlsIG90aGVyCj4gaTgwIHVzZXJzIGFwcGVhciBhbmQgdGhleSBuZWVkIGNvbW1v
-biBzb21ldGhpbmcgZm9yIGl0Lgo+IAo+IAo+IFRoYW5rcywKPiBJbmtpIERhZQo+IAo+PiBUaGFu
-ayB5b3UuCj4+IEJlc3QgcmVnYXJkcyBZSgo+Pgo+Pj4gTGF1cmVudCBhbHNvIGFza2VkIHlvdSB0
-byBzcGxpdCB0aGlzIHVwIGludG8gdHdvIHBhdGNoZXMsIG9uZSBmb3IgdGhlCj4+PiBjb3JlIHBh
-cnQsIHRoZSBvdGhlciBmb3IgdGhlIEV4eW5vcyBkcml2ZXIgcGFydHMsIHlldCB0aGlzIHBhdGNo
-Cj4+PiBjb250YWlucyBib3RoIGNoYW5nZXMuCj4+Pgo+Pj4gVGhpZXJyeQo+Pj4KPj4KPj4KPiAK
-PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+IGRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0
-cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo+IAoK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Wed, Jul 9, 2014 at 2:55 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Tue, Jul 08, 2014 at 05:57:58PM +0530, Amit Daniel Kachhap wrote:
+>
+>>  include/linux/mfd/samsung/core.h    | 21 ++++++++++++++++
+>>  include/linux/mfd/samsung/s2mpa01.h | 12 ---------
+>>  include/linux/mfd/samsung/s2mps11.h |  9 -------
+>>  include/linux/mfd/samsung/s2mps14.h | 10 --------
+>
+> You need to send patches to the MFD subsystem to the MFD maintainers as
+> well.
+
+Thanks for the pointer. Will submit to MFD maintainers.
