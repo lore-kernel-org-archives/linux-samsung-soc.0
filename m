@@ -1,71 +1,77 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCHv4 0/5] ARM: remove the sub-node and deprecated
- supports-highspeed property for dwmmc.
-Date: Thu, 10 Jul 2014 20:27:46 +0900
-Message-ID: <001f01cf9c31$f91c0f50$eb542df0$%jun@samsung.com>
-References: <1404985718-12203-1-git-send-email-jh80.chung@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <1404985718-12203-1-git-send-email-jh80.chung@samsung.com>
-Content-language: ko
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Jaehoon Chung' <jh80.chung@samsung.com>, 'linux-mmc' <linux-mmc@vger.kernel.org>
-Cc: 'Chris Ball' <chris@printf.net>, 'Ulf Hansson' <ulf.hansson@linaro.org>, devicetree@vger.kernel.org, heiko@sntech.de, dinguyen@altera.com, 'Mark Rutland' <mark.rutland@arm.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: [PATCH 00/16] i2c: drop class based instantiaion for selected drivers
+Date: Thu, 10 Jul 2014 13:46:20 +0200
+Message-ID: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, July 10, 2014, Jaehoon Chung wrote:
-> Since used the mmc_of_parse(), didn't parse the sub-node.
-> So we can remove the sub-node, because almost SoC used the only one card per a host.
-> And supports-highspeed can be replaced to "cap-mmc/sd-highspeed" property.
-> 
-> Changelog V4:
-> 	- Fix the checkpatch error.
-> Changelog V3:
-> 	- Fix the wrong bus-width value.
-> 	- Use the slot->host->quirks instead of brq->quirks.
-> 	- Add tested-by and reviewd-by.
-> Changelog V2:
-> 	- Add the "mmc: dw_mmc: replace "disable-wp" from slot's quirks to host's quirk"
-> 
-> Jaehoon Chung (5):
->   mmc: dw_mmc: modify the dt-binding for removing slot-node and
->     supports-highspeed
->   ARM: dts: exynos: unuse the slot-node and deprecated the
->     supports-highspeed for dw-mmc
->   ARM: dts: socfpga: unuse the slot-node and deprecated the
->     supports-highspeed for dw-mmc
->   ARM: dts: rockchip: unuse the slot-node and deprecated the
->     supports-highspeed for dw-mmc
->   mmc: dw_mmc: replace "disable-wp" from slot's quirk to host's quirk
-> 
->  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   17 ++++---------
->  .../devicetree/bindings/mmc/k3-dw-mshc.txt         |   12 ++++-----
->  .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |   12 ++++-----
->  arch/arm/boot/dts/exynos4412-odroidx.dts           |    8 ++----
->  arch/arm/boot/dts/exynos4412-origen.dts            |    8 ++----
->  arch/arm/boot/dts/exynos4412-trats2.dts            |    8 ++----
->  arch/arm/boot/dts/exynos5250-arndale.dts           |   18 ++++----------
->  arch/arm/boot/dts/exynos5250-cros-common.dtsi      |   26 ++++++--------------
->  arch/arm/boot/dts/exynos5250-smdk5250.dts          |   18 ++++----------
->  arch/arm/boot/dts/exynos5250-snow.dts              |    6 ++---
->  arch/arm/boot/dts/exynos5260-xyref5260.dts         |   18 ++++----------
->  arch/arm/boot/dts/exynos5410-smdk5410.dts          |   18 ++++----------
->  arch/arm/boot/dts/exynos5420-arndale-octa.dts      |   16 +++---------
->  arch/arm/boot/dts/exynos5420-peach-pit.dts         |   16 +++---------
->  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   16 +++---------
->  arch/arm/boot/dts/exynos5800-peach-pi.dts          |   16 +++---------
->  arch/arm/boot/dts/rk3066a-bqcurie2.dts             |   16 +++---------
->  arch/arm/boot/dts/socfpga_arria5.dtsi              |    9 +++----
->  arch/arm/boot/dts/socfpga_cyclone5.dtsi            |    9 +++----
->  arch/arm/boot/dts/socfpga_vt.dts                   |    9 +++----
->  drivers/mmc/host/dw_mmc.c                          |   12 ++++-----
->  21 files changed, 84 insertions(+), 204 deletions(-)
+Some drivers were flagged to remove class based instantiation soon to improve
+boot-up time. Originally, I was planning for a longer deprecation time so users
+could switch over to some other kind of instantiation. However, the demand for
+the speed up is high enough and class based instantiation is used rarely, so
+the removal takes place now. To make up for the deprecation time, another
+warning is added to the i2c core pointing out that the behaviour has now
+changed:
 
-Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
++	/* Warn that the adapter lost class based instantiation */
++	if (adapter->class == I2C_CLASS_DEPRECATED) {
++		dev_dbg(&adapter->dev,
++			"This adapter dropped support for I2C classes and "
++			"won't auto-detect %s devices anymore. If you need it, check "
++			"'Documentation/i2c/instantiating-devices' for alternatives.\n",
++			driver->driver.name);
++		return 0;
++	}
+
+A branch can be found here (with two other cleanups -> driver removals):
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/deprecate_stuff
+
+I hope this meets all the needs. Please comment, ack, test...
 
 Thanks,
-Seungwon Jeon
+
+   Wolfram
 
 
+Wolfram Sang (16):
+  i2c: add debug info when class instantiation was dropped
+  i2c: i2c-at91: Drop class based scanning to improve bootup time
+  i2c: i2c-bcm2835: Drop class based scanning to improve bootup time
+  i2c: i2c-bfin-twi: Drop class based scanning to improve bootup time
+  i2c: i2c-davinci: Drop class based scanning to improve bootup time
+  i2c: i2c-designware-platdrv: Drop class based scanning to improve
+    bootup time
+  i2c: i2c-mv64xxx: Drop class based scanning to improve bootup time
+  i2c: i2c-nomadik: Drop class based scanning to improve bootup time
+  i2c: i2c-ocores: Drop class based scanning to improve bootup time
+  i2c: i2c-omap: Drop class based scanning to improve bootup time
+  i2c: i2c-rcar: Drop class based scanning to improve bootup time
+  i2c: i2c-s3c2410: Drop class based scanning to improve bootup time
+  i2c: i2c-sirf: Drop class based scanning to improve bootup time
+  i2c: i2c-stu300: Drop class based scanning to improve bootup time
+  i2c: i2c-tegra: Drop class based scanning to improve bootup time
+  i2c: i2c-xiic: Drop class based scanning to improve bootup time
+
+ drivers/i2c/busses/i2c-at91.c               |  2 +-
+ drivers/i2c/busses/i2c-bcm2835.c            |  2 +-
+ drivers/i2c/busses/i2c-bfin-twi.c           |  2 +-
+ drivers/i2c/busses/i2c-davinci.c            |  2 +-
+ drivers/i2c/busses/i2c-designware-platdrv.c |  2 +-
+ drivers/i2c/busses/i2c-mv64xxx.c            |  2 +-
+ drivers/i2c/busses/i2c-nomadik.c            |  8 ++++----
+ drivers/i2c/busses/i2c-ocores.c             | 12 ++++++------
+ drivers/i2c/busses/i2c-omap.c               |  2 +-
+ drivers/i2c/busses/i2c-rcar.c               | 14 +++++++-------
+ drivers/i2c/busses/i2c-s3c2410.c            |  8 ++++----
+ drivers/i2c/busses/i2c-sirf.c               |  2 +-
+ drivers/i2c/busses/i2c-stu300.c             |  2 +-
+ drivers/i2c/busses/i2c-tegra.c              |  2 +-
+ drivers/i2c/busses/i2c-xiic.c               | 12 ++++++------
+ drivers/i2c/i2c-core.c                      | 10 ++++++++++
+ 16 files changed, 47 insertions(+), 37 deletions(-)
+
+-- 
+2.0.0
