@@ -1,206 +1,57 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH] mmc: dw_mmc: change to use recommended reset procedure
-Date: Thu, 10 Jul 2014 21:28:18 +0900
-Message-ID: <002201cf9c3a$6de4a150$49ade3f0$%jun@samsung.com>
-References: <CAPz6YkUzGWnOznZ4UXNsLbe=ehDwfMJwUSjahUKVnVz8w9OcsA@mail.gmail.com>
- <1402351255-7423-1-git-send-email-sonnyrao@chromium.org>
+From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW-bxm8fMRDkQLDiMYJYoSAnRvVK+yQ3ZXh@public.gmane.org>
+Subject: Re: [PATCH 00/16] i2c: drop class based instantiaion for selected
+ drivers
+Date: Thu, 10 Jul 2014 14:38:37 +0200
+Message-ID: <20140710143837.558c1d07@ipc1.ka-ro>
+References: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:22001 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751572AbaGJM2V (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jul 2014 08:28:21 -0400
-In-reply-to: <1402351255-7423-1-git-send-email-sonnyrao@chromium.org>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1404992799-3705-1-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sonny Rao' <sonnyrao@chromium.org>, linux-mmc@vger.kernel.org
-Cc: grundler@chromium.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jh80.chung@samsung.com, cjb@laptop.org, kgene.kim@samsung.com, joshi@samsung.com, t.figa@samsung.com, dianders@chromium.org, 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>
 
-Hi Sonny,
+Hi,
 
-I have missed this patch.
+Wolfram Sang wrote:
+> Some drivers were flagged to remove class based instantiation soon to=
+ improve
+> boot-up time. Originally, I was planning for a longer deprecation tim=
+e so users
+> could switch over to some other kind of instantiation. However, the d=
+emand for
+> the speed up is high enough and class based instantiation is used rar=
+ely, so
+> the removal takes place now. To make up for the deprecation time, ano=
+ther
+> warning is added to the i2c core pointing out that the behaviour has =
+now
+> changed:
+>=20
+> +	/* Warn that the adapter lost class based instantiation */
+> +	if (adapter->class =3D=3D I2C_CLASS_DEPRECATED) {
+> +		dev_dbg(&adapter->dev,
+> +			"This adapter dropped support for I2C classes and "
+> +			"won't auto-detect %s devices anymore. If you need it, check "
+> +			"'Documentation/i2c/instantiating-devices' for alternatives.\n",
+>
+It's usually a bad idea to split kernel messages across source lines
+because it makes searching for the corresponding source line for a
+message found in the log difficult.
+You could at least do the split at the sentence boundary.
 
-You finally choose to take extra interrupt handling.
-If it is not harm, it's fine.
 
-Please check one thing below.
+Lothar Wa=C3=9Fmann
+--=20
+___________________________________________________________
 
-On Tue, June 10, 2014, Sonny Rao wrote:
-> This patch changes the fifo reset code to follow the reset procedure
-> outlined in the documentation of Synopsys Mobile storage host databook.
-> 
-> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> ---
-> v2: Add Generic DMA support
->     per the documentation, move interrupt clear before wait
->     make the test for DMA host->use_dma rather than host->using_dma
->     add proper return values (although it appears no caller checks)
-> v3: rename fifo reset function, and change callers
->     use this combined reset function in dw_mci_resume()
->     just one caller left (probe), so get rid of dw_mci_ctrl_all_reset()
->     use DMA reset bit for all systems which use DMA
->     remove extra IDMAC reset in dw_mci_work_routine_card()
->     do CIU clock update in error path, if CIU reset cleared
-> v4: remove comment about FIFO reset in dw_mci_work_routine_card()
->     move down error message when control reset clears but others don't
->      and clarify the error stating that we will still update clocks
->     make flags for all reset bits a macro
-> 
->  drivers/mmc/host/dw_mmc.c | 86 ++++++++++++++++++++++++++++++++++-------------
->  drivers/mmc/host/dw_mmc.h |  5 +++
->  2 files changed, 68 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 55cd110..1d6d984 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -111,8 +111,7 @@ static const u8 tuning_blk_pattern_8bit[] = {
->  	0xff, 0x77, 0x77, 0xff, 0x77, 0xbb, 0xdd, 0xee,
->  };
-> 
-> -static inline bool dw_mci_fifo_reset(struct dw_mci *host);
-> -static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host);
-> +static inline bool dw_mci_reset(struct dw_mci *host);
-> 
->  #if defined(CONFIG_DEBUG_FS)
->  static int dw_mci_req_show(struct seq_file *s, void *v)
-> @@ -1254,7 +1253,7 @@ static int dw_mci_data_complete(struct dw_mci *host, struct mmc_data *data)
->  		 * After an error, there may be data lingering
->  		 * in the FIFO
->  		 */
-> -		dw_mci_fifo_reset(host);
-> +		dw_mci_reset(host);
->  	} else {
->  		data->bytes_xfered = data->blocks * data->blksz;
->  		data->error = 0;
-> @@ -1371,7 +1370,7 @@ static void dw_mci_tasklet_func(unsigned long priv)
-> 
->  			/* CMD error in data command */
->  			if (mrq->cmd->error && mrq->data)
-> -				dw_mci_fifo_reset(host);
-> +				dw_mci_reset(host);
-> 
->  			host->cmd = NULL;
->  			host->data = NULL;
-> @@ -1982,14 +1981,8 @@ static void dw_mci_work_routine_card(struct work_struct *work)
->  			}
-> 
->  			/* Power down slot */
-> -			if (present == 0) {
-> -				/* Clear down the FIFO */
-> -				dw_mci_fifo_reset(host);
-> -#ifdef CONFIG_MMC_DW_IDMAC
-> -				dw_mci_idmac_reset(host);
-> -#endif
-> -
-> -			}
-> +			if (present == 0)
-> +				dw_mci_reset(host);
-> 
->  			spin_unlock_bh(&host->lock);
-> 
-> @@ -2323,8 +2316,11 @@ static bool dw_mci_ctrl_reset(struct dw_mci *host, u32 reset)
->  	return false;
->  }
-> 
-> -static inline bool dw_mci_fifo_reset(struct dw_mci *host)
-> +static inline bool dw_mci_reset(struct dw_mci *host)
->  {
-> +	u32 flags = SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET;
-> +	bool ret = false;
-> +
->  	/*
->  	 * Reseting generates a block interrupt, hence setting
->  	 * the scatter-gather pointer to NULL.
-> @@ -2334,15 +2330,59 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
->  		host->sg = NULL;
->  	}
-> 
-> -	return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
-> -}
-> +	if (host->use_dma)
-> +		flags |= SDMMC_CTRL_DMA_RESET;
-> 
-> -static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
-> -{
-> -	return dw_mci_ctrl_reset(host,
-> -				 SDMMC_CTRL_FIFO_RESET |
-> -				 SDMMC_CTRL_RESET |
-> -				 SDMMC_CTRL_DMA_RESET);
-> +	if (dw_mci_ctrl_reset(host, flags)) {
-> +		/*
-> +		 * In all cases we clear the RAWINTS register to clear any
-> +		 * interrupts.
-> +		 */
-> +		mci_writel(host, RINTSTS, 0xFFFFFFFF);
-> +
-> +		/* if using dma we wait for dma_req to clear */
-> +		if (host->use_dma) {
-> +			unsigned long timeout = jiffies + msecs_to_jiffies(500);
-> +			u32 status;
-> +			do {
-> +				status = mci_readl(host, STATUS);
-> +				if (!(status & SDMMC_STATUS_DMA_REQ))
-> +					break;
-> +				cpu_relax();
-> +			} while (time_before(jiffies, timeout));
-> +
-> +			if (status & SDMMC_STATUS_DMA_REQ) {
-> +				dev_err(host->dev,
-> +					"%s: Timeout waiting for dma_req to "
-> +					"clear during reset", __func__);
-> +				goto ciu_out;
-> +			}
-> +
-> +			/* when using DMA next we reset the fifo again */
-> +			if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET))
-> +				goto ciu_out;
-> +		}
-> +	} else {
-> +		/* if the controller reset bit did clear, then set clock regs */
-> +		if (!(mci_readl(host, CTRL) & SDMMC_CTRL_RESET)) {
-> +			dev_err(host->dev, "%s: fifo/dma reset bits didn't "
-> +				"clear but ciu was reset, doing clock update.",
-> +				__func__);
-> +			goto ciu_out;
-> +		}
-> +	}
-> +
-> +	if (IS_ENABLED(CONFIG_MMC_DW_IDMAC))
-> +		/* It is also recommended that we reset and reprogram idmac */
-> +		dw_mci_idmac_reset(host);
-> +
-> +	ret = true;
-> +
-> +ciu_out:
-> +	/* After a CTRL reset we need to have CIU set clock registers  */
-> +	mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
-> +
-> +	return ret;
->  }
-> 
->  #ifdef CONFIG_OF
-> @@ -2555,7 +2595,7 @@ int dw_mci_probe(struct dw_mci *host)
->  	}
-> 
->  	/* Reset all blocks */
-> -	if (!dw_mci_ctrl_all_reset(host))
-> +	if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_ALL_RESET_FLAGS))
->  		return -ENODEV;
-> 
->  	host->dma_ops = host->pdata->dma_ops;
-> @@ -2744,7 +2784,7 @@ int dw_mci_resume(struct dw_mci *host)
->  		}
->  	}
-> 
-> -	if (!dw_mci_ctrl_all_reset(host)) {
-> +	if (!dw_mci_reset(host)) {
-Do you have any reason to use dw_mci_reset() unlike doing on probing?
+Ka-Ro electronics GmbH | Pascalstra=C3=9Fe 22 | D - 52076 Aachen
+Phone: +49 2408 1402-0 | Fax: +49 2408 1402-10
+Gesch=C3=A4ftsf=C3=BChrer: Matthias Kaussen
+Handelsregistereintrag: Amtsgericht Aachen, HRB 4996
 
-Thanks,
-Seungwon Jeon
+www.karo-electronics.de | info-AvR2QvxeiV7DiMYJYoSAnRvVK+yQ3ZXh@public.gmane.org
+___________________________________________________________
