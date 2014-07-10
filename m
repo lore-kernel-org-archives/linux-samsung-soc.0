@@ -1,56 +1,95 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 6/6] ARM: EXYNOS: Register cpuidle device only on
- Exynos4210 and 5250
-Date: Thu, 10 Jul 2014 22:30:05 +0900
-Message-ID: <026601cf9c43$0faf6ad0$2f0e4070$@samsung.com>
-References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
- <1403618235-19353-7-git-send-email-t.figa@samsung.com>
- <038b01cf9ab7$0de5a440$29b0ecc0$@samsung.com> <156099171.AcKbd1QIut@amdc1032>
+Subject: RE: [PATCH v6 2/6] ARM: EXYNOS: Move cpufreq and cpuidle device
+ registration to init_machine
+Date: Thu, 10 Jul 2014 22:33:55 +0900
+Message-ID: <026701cf9c43$98b20860$ca161920$@samsung.com>
+References: <1404705056-11965-1-git-send-email-pankaj.dubey@samsung.com>
+ <1404705056-11965-3-git-send-email-pankaj.dubey@samsung.com>
+ <53BB25B7.6000500@samsung.com> <000801cf9a7f$3896e150$a9c4a3f0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <156099171.AcKbd1QIut@amdc1032>
+In-reply-to: <000801cf9a7f$3896e150$a9c4a3f0$@samsung.com>
 Content-language: ko
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>
+To: 'Pankaj Dubey' <pankaj.dubey@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, naushad@samsung.com, t.figa@samsung.com, joshi@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Bartlomiej Zolnierkiewicz wrote:
+Pankaj Dubey wrote:
 > 
-> Hi,
+> Hi Kukjin,
 > 
-Hi Bart,
+Hi,
 
-> On Tuesday, July 08, 2014 11:15:21 PM Kukjin Kim wrote:
-> > Tomasz Figa wrote:
-> > >
-> > > Currently, the Exynos cpuidle driver works correctly only on Exynos4210
-> > > and 5250. Trying to use it with just one CPU online on any other Exynos
-> > > SoC will lead to system failure, due to unsupported AFTR mode on other
-> > > SoCs. This patch fixes the problem by registering the driver only on
-> > > supported SoCs and letting others simply use default WFI mode until
-> > > support for them is added.
-> > >
-> > Hmm...I thought other SoCs have no problem on cpuidle except exynos5420 and
-> > exynos5440....something like this would be helpful to avoid system failure.
-> > But unfortunately this conflicts with Pankaj's cleanup cpufreq_init() and
-> > cpuidle_init() patch you've reviewed and I've applied in my local...
 > >
-> > I'm going to check which exynos is ok on cpuidle and then sort them out.
+> > On 07/07/14 12:50, Pankaj Dubey wrote:
+> > > As exynos_cpuidle_init and exynos_cpufreq_init function have just one
+> > > lines of code for registering platform devices. We can move these
+> > > lines to exynos_dt_machine_init and delete exynos_cpuidle_init and
+> > > exynos_cpufreq_init function. This will help in reducing lines of code
+> > > in exynos.c, making it more cleaner.
+> > >
+> > > Suggested-by: Tomasz Figa<t.figa@samsung.com>
+> > > Signed-off-by: Pankaj Dubey<pankaj.dubey@samsung.com>
+> > > Reviewed-by: Tomasz Figa<t.figa@samsung.com>
+> > > ---
+> > >   arch/arm/mach-exynos/exynos.c |   20 ++++----------------
+> > >   1 file changed, 4 insertions(+), 16 deletions(-)
+> > >
+> > > diff --git a/arch/arm/mach-exynos/exynos.c
+> > > b/arch/arm/mach-exynos/exynos.c index ff60b4c..47170eb 100644
+> > > --- a/arch/arm/mach-exynos/exynos.c
+> > > +++ b/arch/arm/mach-exynos/exynos.c
+> > > @@ -171,19 +171,6 @@ static struct platform_device exynos_cpuidle = {
+> > >   	.id                = -1,
+> > >   };
+> > >
+> > > -void __init exynos_cpuidle_init(void) -{
+> > > -	if (soc_is_exynos5440())
+> > > -		return;
+> > > -
+> > > -	platform_device_register(&exynos_cpuidle);
+> > > -}
+> > > -
+> > > -void __init exynos_cpufreq_init(void) -{
+> > > -	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
+> > > -}
+> > > -
+> > >   void __iomem *sysram_base_addr;
+> > >   void __iomem *sysram_ns_base_addr;
+> > >
+> > > @@ -300,10 +287,11 @@ static void __init exynos_dt_machine_init(void)
+> > >   	if (!IS_ENABLED(CONFIG_SMP))
+> > >   		exynos_sysram_init();
+> > >
+> > > -	if (!of_machine_is_compatible("samsung,exynos5420"))
+> > > -		exynos_cpuidle_init();
+> > > +	if (!of_machine_is_compatible("samsung,exynos5420") ||
+> > > +			!of_machine_is_compatible("samsung,exynos5440"))
+> > > +		platform_device_register(&exynos_cpuidle);
+> > >
+> > > -	exynos_cpufreq_init();
+> > > +	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
+> > >
+> > >   	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+> > >   }
+> >
+> > This cannot be applied in my tree now....
+> >
 > 
-> Tomasz's patch is correct - currently only Exynos4210 and Exynos5250 work
-> fine with AFTR mode and upstream kernel (AFTR gets triggered by offlining
-> CPUs other than CPU0).
+> May I know what the issue is? As I am able to rebase this patch on today's
+> kgene/for-next
+> and could not see any merge conflict.
+> If you think I need to respin this patch please let me know.
 > 
-> [ Exynos4x12 and Exynos3250 need secure firmware support (patches for this
->   need to be reworked on top of recent PM/firmware/cpuidle changes).
-> 
->   Exynos5410 should use big_little cpuidle driver. ]
-> 
-Agreed that this is required at this moment.
-I will take this into fixes for 3.16.
+
+Pankaj, I found this is based on cpuidle related branch in my tree, BTW this
+has a dependency with following so please respin your patch once I take the
+patch in my tree maybe tonight.
+
+https://lkml.org/lkml/2014/6/24/286
 
 Thanks,
 Kukjin
