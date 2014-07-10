@@ -1,52 +1,55 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v6 15/23] regulator: max77686: Setup DVS-related GPIOs on
- probe
-Date: Thu, 10 Jul 2014 14:25:34 +0100
-Message-ID: <20140710132534.GD11948@lee--X1>
-References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk>
- <1404467722-26687-16-git-send-email-javier.martinez@collabora.co.uk>
- <CADGdYn4EURaHinWVksQSPzVr=CkZYcrqvWsO7mKDz_gY9XB__Q@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [RESEND PATCHv2 0/3] Power-domain clk handling
+Date: Thu, 10 Jul 2014 22:26:14 +0900
+Message-ID: <024101cf9c42$861966e0$924c34a0$@samsung.com>
+References: <1404795274-27307-1-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CADGdYn4EURaHinWVksQSPzVr=CkZYcrqvWsO7mKDz_gY9XB__Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: amit daniel kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andreas Farber <afaerber-l3A5Bk7waGM@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:10882 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753403AbaGJN0Q (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Jul 2014 09:26:16 -0400
+In-reply-to: <1404795274-27307-1-git-send-email-arun.kk@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Arun Kumar K' <arun.kk@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: t.figa@samsung.com, mark.rutland@arm.com, pawel.moll@arm.com, swarren@wwwdotorg.org, prathyush.k@samsung.com, abrestic@chromium.org, shaik.ameer@samsung.com, arunkk.samsung@gmail.com
 
-On Thu, 10 Jul 2014, amit daniel kachhap wrote:
+Arun Kumar K wrote:
+> 
+> This patch series for clock handling in power domain is
+> re-send for merging after rebasing onto latest linux-samsung.git,
+> for-next branch.
+> Original series and discussion can be found here:
+> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31550.html
+> 
+> Arun Kumar K (2):
+>   clk: exynos5420: Add IDs for clocks used in PD mfc
+>   ARM: dts: Add clock property for mfc_pd in 5420
+> 
+> Prathyush K (1):
+>   ARM: EXYNOS: Add support for clock handling in power domain
+> 
+>  .../bindings/arm/exynos/power_domain.txt           |   20 +++++++
+>  arch/arm/boot/dts/exynos5420.dtsi                  |    3 +
+>  arch/arm/mach-exynos/pm_domains.c                  |   61 +++++++++++++++++++-
+>  drivers/clk/samsung/clk-exynos5420.c               |    6 +-
+>  include/dt-bindings/clock/exynos5420.h             |    2 +
+>  5 files changed, 89 insertions(+), 3 deletions(-)
+> 
+> --
+> 1.7.9.5
 
-> On Fri, Jul 4, 2014 at 3:25 PM, Javier Martinez Canillas
-> <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org> wrote:
-> > MAX77686 PMIC support Dyamic Voltage Scaling (DVS) on a set
-> > of Buck regulators. A number of GPIO are connected to these
-> > lines and are requested by the mfd driver. Setup the GPIO
-> > pins from the regulator driver.
+Yeah, this is required now because regarding clock registers are also powered
+down during pd-off on some exynos SoCs as you mentioned. Just note that you
+know the registers are moved into pd related register on latest exynos SoC's
+anyway. 
 
-> If possible merge this patch with patch 8. Both are adding DVS
-> support. Put regmap_copy dependency patch in very beginning.
+OK, I will apply into fixes for 3.16.
 
-You want to merge two patches which deal with different subsystems?
-
-That's the opposite of what we usually try and achieve.
-
-> > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.=
-co.uk>
-> > ---
-> >  drivers/regulator/max77686.c | 34 ++++++++++++++++++++++++++++++++=
-++
-> >  1 file changed, 34 insertions(+)
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Kukjin
