@@ -1,98 +1,68 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v7 08/24] mfd: max77686: Add Dynamic Voltage Scaling (DVS) support
-Date: Thu, 10 Jul 2014 11:46:20 +0200
-Message-ID: <CACRpkdYs93snBFYZMKN6kd==b9jZehnp1eHV5bHaBNsNRt62pQ@mail.gmail.com>
-References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1404505467-26526-9-git-send-email-javier.martinez@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1404505467-26526-9-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Andreas Farber <afaerber-l3A5Bk7waGM@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Jones <rob.jones-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCHv4 4/5] ARM: dts: rockchip: unuse the slot-node and deprecated
+ the supports-highspeed for dw-mmc
+Date: Thu, 10 Jul 2014 18:48:37 +0900
+Message-ID: <1404985718-12203-5-git-send-email-jh80.chung@samsung.com>
+References: <1404985718-12203-1-git-send-email-jh80.chung@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:43156 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752912AbaGJJsl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Jul 2014 05:48:41 -0400
+In-reply-to: <1404985718-12203-1-git-send-email-jh80.chung@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-mmc <linux-mmc@vger.kernel.org>
+Cc: Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, tgih.jun@samsung.com, devicetree@vger.kernel.org, heiko@sntech.de, dinguyen@altera.com, Mark Rutland <mark.rutland@arm.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jaehoon Chung <jh80.chung@samsung.com>
 
-On Fri, Jul 4, 2014 at 10:24 PM, Javier Martinez Canillas
-<javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org> wrote:
+dw-mmc controller can support multiple slots.
+But, there are no use-cases anywhere. So we don't need to support the
+slot-node for dw-mmc controller.
+And "supports-highspeed" property in dw-mmc is deprecated.
+"supports-highspeed" property can be replaced to "cap-sd/mmc-highspeed".
 
-> Some regulators on the MAX77686 PMIC have Dynamic Voltage Scaling
-> (DVS) support that allows output voltage to change dynamically.
->
-> For MAX77686, these regulators are Buck regulators 2, 3 and 4.
->
-> Each Buck output voltage is selected using a set of external
-> inputs: DVS1-3 and SELB2-4.
->
-> DVS registers can be used to configure the output voltages for each
-> Buck regulator and which one is active is controled by DVSx lines.
->
-> SELBx lines are used to control if individual Buck lines are ON or OFF.
->
-> This patch adds support to configure the DVSx and SELBx lines
-> from DT and to setup and read the GPIO lines connected to them.
->
-> Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Reviewed-by: Tushar Behera <trblinux@gmail.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+---
+ arch/arm/boot/dts/rk3066a-bqcurie2.dts |   16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-(...)
-> +#include <linux/gpio/consumer.h>
-
-THANKS for using modern interfaces!
-
-> +static void max77686_dt_parse_dvs_gpio(struct device *dev)
-> +{
-> +       struct max77686_platform_data *pd = dev_get_platdata(dev);
-> +       int i;
-> +
-> +       /*
-> +        * NOTE: we don't consider GPIO errors fatal; board may have some lines
-> +        * directly pulled high or low and thus doesn't specify them.
-> +        */
-> +       for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_dvs); i++)
-> +               pd->buck_gpio_dvs[i] =
-> +                       devm_gpiod_get_index(dev, "max77686,pmic-buck-dvs", i);
-> +
-> +       for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++)
-> +               pd->buck_gpio_selb[i] =
-> +                       devm_gpiod_get_index(dev, "max77686,pmic-buck-selb", i);
-> +}
-
-Rob Jones has a patch cooking that adds gpio_get_array() so this thing
-merits also adding devm_gpiod_get_array() I think?
-
-> +/**
-> + * max77686_setup_gpios() - init DVS-related GPIOs
-> + * @dev: device whose platform data contains the dvs GPIOs information
-> + *
-> + * This function claims / initalizations GPIOs related to DVS if they are
-> + * defined. This may have the effect of switching voltages if the
-> + * pdata->buck_default_idx does not match the boot time state of pins.
-> + */
-> +int max77686_setup_gpios(struct device *dev)
-> +{
-> +       struct max77686_platform_data *pd = dev_get_platdata(dev);
-> +       int buck_default_idx = pd->buck_default_idx;
-> +       int ret;
-> +       int i;
-> +
-> +       /* Set all SELB high to avoid glitching while DVS is changing */
-> +       for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++) {
-> +               struct gpio_desc *gpio = pd->buck_gpio_selb[i];
-> +
-> +               /* OK if some GPIOs aren't defined */
-> +               if (IS_ERR(gpio))
-> +                       continue;
-> +
-> +               ret = gpiod_direction_output_raw(gpio, 1);
-
-Why does this have to be raw? Usually that is not to be used.
-
-Apart from this it looks OK.
-
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/rk3066a-bqcurie2.dts b/arch/arm/boot/dts/rk3066a-bqcurie2.dts
+index afb3273..ecea889 100644
+--- a/arch/arm/boot/dts/rk3066a-bqcurie2.dts
++++ b/arch/arm/boot/dts/rk3066a-bqcurie2.dts
+@@ -59,12 +59,8 @@
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_cd &sd0_bus4>;
+ 			vmmc-supply = <&vcc_sd0>;
+-
+-			slot@0 {
+-				reg = <0>;
+-				bus-width = <4>;
+-				disable-wp;
+-			};
++			bus-width = <4>;
++			disable-wp;
+ 		};
+ 
+ 		dwmmc@10218000 { /* wifi */
+@@ -74,12 +70,8 @@
+ 
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&sd1_clk &sd1_cmd &sd1_bus4>;
+-
+-			slot@0 {
+-				reg = <0>;
+-				bus-width = <4>;
+-				disable-wp;
+-			};
++			bus-width = <4>;
++			disable-wp;
+ 		};
+ 
+ 		gpio-keys {
+-- 
+1.7.9.5
