@@ -1,47 +1,59 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 12/16] i2c: i2c-s3c2410: Drop class based scanning to improve bootup time
-Date: Thu, 10 Jul 2014 13:46:32 +0200
-Message-ID: <1404992799-3705-13-git-send-email-wsa@the-dreams.de>
-References: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-i2c@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Wolfram Sang <wsa@the-dreams.de>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCHv3 5/5] mmc: dw_mmc: replace "disable-wp" from slot's quirk
+ to host's quirk
+Date: Thu, 10 Jul 2014 20:53:23 +0900
+Message-ID: <002101cf9c35$8da5b240$a8f116c0$%jun@samsung.com>
+References: <1404976119-10777-1-git-send-email-jh80.chung@samsung.com>
+ <1404976119-10777-6-git-send-email-jh80.chung@samsung.com>
+ <CAPDyKFoQ_ER7FAk_jCBURAa3_hVT25GXfQQfiDhMoYypdA=fHg@mail.gmail.com>
+ <53BE5F9F.6070809@samsung.com>
+ <CAPDyKFrLJJn=SGpjtCq+x88EetBQQBCqgef9z9+3oEVut4upTg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <CAPDyKFrLJJn=SGpjtCq+x88EetBQQBCqgef9z9+3oEVut4upTg@mail.gmail.com>
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Ulf Hansson' <ulf.hansson@linaro.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>
+Cc: 'linux-mmc' <linux-mmc@vger.kernel.org>, 'Chris Ball' <chris@printf.net>, devicetree@vger.kernel.org, =?UTF-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>, dinguyen@altera.com, 'Mark Rutland' <mark.rutland@arm.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This driver has been flagged to drop class based instantiation. The removal
-improves boot-up time and is unneeded for embedded controllers. Users have been
-warned to switch for some time now, so we can actually do the removal. Keep the
-DEPRECATED flag, so the core can inform users that the behaviour finally
-changed now. After another transition period, this flag can go, too.
-While we are here, remove the indentation for the array setup because
-such things always break after some time.
+On Thu, July 10, 2014, Ulf Hansson wrote:
+> On 10 July 2014 11:40, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> > Hi, Ulf.
+> >
+> > On 07/10/2014 06:15 PM, Ulf Hansson wrote:
+> >> On 10 July 2014 09:08, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> >>> Replaced the "disable-wp" into host's quirks.
+> >>> (Because the slot-node is removed at dt-file.)
+> >>>
+> >>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> >>
+> >> Hi Jaehoon,
+> >>
+> >> I plan to carry these patches through my mmc tree and I will share
+> >> them through a PR from an immutable branch with the ARM SoC guys.
+> >> Please tell me if you have any concern with this set up.
+> 
+> Hmm, I having a second thought around this. Could I just apply the mmc
+> patches for my next branch instead of involving ARM SoC? In other
+> words, are there any decencies? If not, I might just apply patch 1 and
+> 5.
+> 
 
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
----
- drivers/i2c/busses/i2c-s3c2410.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+[PATCHv4 2/5] ARM: dts: exynos: unuse the slot-node and deprecated the supports-highspeed for dw-mmc
+[PATCHv4 4/5] ARM: dts: rockchip: unuse the slot-node and deprecated the supports-highspeed for dw-mmc
+[PATCHv4 5/5] mmc: dw_mmc: replace "disable-wp" from slot's quirk to host's quirk
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index e828a1dba0e5..6252c051525a 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1128,11 +1128,11 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 		s3c24xx_i2c_parse_dt(pdev->dev.of_node, i2c);
- 
- 	strlcpy(i2c->adap.name, "s3c2410-i2c", sizeof(i2c->adap.name));
--	i2c->adap.owner   = THIS_MODULE;
--	i2c->adap.algo    = &s3c24xx_i2c_algorithm;
-+	i2c->adap.owner = THIS_MODULE;
-+	i2c->adap.algo = &s3c24xx_i2c_algorithm;
- 	i2c->adap.retries = 2;
--	i2c->adap.class   = I2C_CLASS_HWMON | I2C_CLASS_SPD | I2C_CLASS_DEPRECATED;
--	i2c->tx_setup     = 50;
-+	i2c->adap.class = I2C_CLASS_DEPRECATED;
-+	i2c->tx_setup = 50;
- 
- 	init_waitqueue_head(&i2c->wait);
- 
--- 
-2.0.0
+2nd and 4th are closely related 5th.
+I think it shall be picked together. How about taking whole patch?
+And I hope that it is applied for 3.16-rcX fix.
+(Also, 3rd patch is close to fix patch.)
+
+Kukjin,
+Is it fine to be taken in Ulf's?
+
+Thanks,
+Seungwon Jeon
+
