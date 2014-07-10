@@ -1,99 +1,106 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
-Date: Thu, 10 Jul 2014 10:05:02 +0530
-Message-ID: <CAGm_ybjRR_EpxPFOWVSG7D0HTE7PC4wPG_Rd1Xty8x_oAi+Biw@mail.gmail.com>
-References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>
-	<CACRpkdZrDJ3xoUYGynf0sO4-U7ZVkJ=Mr_pNVSdar8oM85aVgA@mail.gmail.com>
-	<CAD=FV=WQWBkq5JKttikLkyKEDX-YydQJLr9=bFWifpy2Lf0mSg@mail.gmail.com>
-	<53BC1A63.80900@samsung.com>
-	<CAD=FV=XjWu6RQ+9789fzg08Whq-d=XWoeT+dZ7YQLLJvCBUfwQ@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH v2 1/2] phy: Kconfig: Re-organize Exynos USB 2.0 PHY configs
+Date: Thu, 10 Jul 2014 15:50:07 +0900
+Message-ID: <003901cf9c0b$2f98f380$8ecada80$%han@samsung.com>
+References: <1404906569-28026-1-git-send-email-sachin.kamat@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f48.google.com ([74.125.82.48]:36161 "EHLO
-	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751128AbaGJEfE (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:16158 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750752AbaGJGuS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jul 2014 00:35:04 -0400
-Received: by mail-wg0-f48.google.com with SMTP id x13so520366wgg.7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Jul 2014 21:35:02 -0700 (PDT)
-In-Reply-To: <CAD=FV=XjWu6RQ+9789fzg08Whq-d=XWoeT+dZ7YQLLJvCBUfwQ@mail.gmail.com>
+	Thu, 10 Jul 2014 02:50:18 -0400
+In-reply-to: <1404906569-28026-1-git-send-email-sachin.kamat@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Houcheng Lin <houcheng@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: 'Sachin Kamat' <sachin.kamat@samsung.com>, linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, kishon@ti.com, dianders@chromium.org, gautam.vivek@samsung.com, spk.linux@gmail.com, tomasz.figa@gmail.com, 'Jingoo Han' <jg1.han@samsung.com>
 
-Doug,
+On Wednesday, July 09, 2014 8:49 PM, Sachin Kamat wrote:
+> 
+> Since the USB 2.0 PHYs are required with EHCI/OHCI USB drivers and
+> USB gadget controller supported by the DWC2 gadget driver, make it
+> depend on them and default to ARCH_EXYNOS as they are meant for
+> Exynos platforms. Also, make the sub-drivers silent options enabling
+> them based on the SoC platforms that they are meant to work with. This
+> will make life easier for end users who do not have any way knowing the
+> dependencies.
+> 
+> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
 
-On Wed, Jul 9, 2014 at 8:52 PM, Doug Anderson <dianders@chromium.org> wrote:
-> Vikas,
->
-> On Tue, Jul 8, 2014 at 9:20 AM, Tomasz Figa <t.figa@samsung.com> wrote:
->> On 08.07.2014 17:27, Doug Anderson wrote:
->>> Hi,
->>>
->>> On Tue, Jul 8, 2014 at 12:46 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>>> On Thu, Jun 26, 2014 at 11:15 AM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
->>>>
->>>>> From: Doug Anderson <dianders@chromium.org>
->>>>>
->>>>> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
->>>>> being reset across sleep/wake.  If we don't set it to anything then
->>>>> the TPM will be reset.  U-Boot will detect this as invalid
->>>>> and will reset the system on resume time. This GPIO can always be low
->>>>> and not hurt anything.  It will get pulled back high again during a
->>>>> normal warm reset when it will default back to an input.
->>>>>
->>>>> To properly preserve the TPM state across suspend/resume and to make
->>>>> the chrome U-Boot happy, properly set the GPIO to mask the
->>>>> reset to the TPM.
->>>>>
->>>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
->>>>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
->>>> (...)
->>>>> +       /* We need GPX0_6 to be low at sleep time; just keep it low always */
->>>>> +       mask_tpm_reset_regulator: mask-tpm-reset-regulator {
->>>>> +       compatible = "regulator-fixed";
->>>>
->>>> No matter how the discussion ends up, regulator-fixed is wrong.
->>>
->>> OK, fair enough.
->>>
->>>
->>>> Either folding it into the TPM driver or using a separate reset driver
->>>> is fine with me.
->>>
->>> OK, Vikas: do you want to code up the driver?
->>>
->>>
->>>> So what about the generic delayed reset GPIO thing?
->>>> http://marc.info/?l=linux-kernel&m=140309916607115&w=2
->>>
->>> That's a neat concept and could be useful in other cases, but I think
->>> it's just as much of a hack as using a regulator.  This is not a reset
->>> signal for the TPM.  This is a signal that will mask the CPU's reset
->>> signal (using a special bit of board-specific logic).
->>>
->>>
->>> Personally I think Tomasz's idea of using hogs (after his patches
->>> allowing a default output level) is the cleanest, but I think Stephen
->>> didn't like that.
->>
->> I don't see any benefits of using complex interfaces over simply
->> initializing the pin to the right value once at boot-up or at
->> suspend/resume. As far as I understand Doug's explanation of the
->> problem, nothing else is expected from the OS with respect to this pin.
->> Moreover it doesn't affect operation of any drivers.
->>
->> So I'm still for the simplest and effective solution, i.e. hogs.
->
-> It looks as if Tomasz's patch has landed, so perhaps you could try to
-> code it up his way.  It should be very simple.  Please make sure to CC
-> Stephen Warren on the patch so that he is included in the discussion
-> (and of course include Tomasz, Linus W, etc).
+Reviewed-by: Jingoo Han <jg1.han@samsung.com>
 
-Can you point me to Tomasz's patchset on which I should rebase this patch on.
+Best regards,
+Jingoo Han
 
-
->
-> -Doug
+> ---
+> Changes since v1:
+> * Added dependency on DWC2 gadget driver as suggested by Tomasz Figa.
+> ---
+>  drivers/phy/Kconfig |   35 +++++++++++------------------------
+>  1 file changed, 11 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index fcdfe7c0e4a7..128f8b92b55c 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -123,43 +123,30 @@ config PHY_SUN4I_USB
+>  config PHY_SAMSUNG_USB2
+>  	tristate "Samsung USB 2.0 PHY driver"
+>  	depends on HAS_IOMEM
+> +	depends on USB_EHCI_EXYNOS || USB_OHCI_EXYNOS || USB_DWC2
+>  	select GENERIC_PHY
+>  	select MFD_SYSCON
+> +	default ARCH_EXYNOS
+>  	help
+>  	  Enable this to support the Samsung USB 2.0 PHY driver for Samsung
+> -	  SoCs. This driver provides the interface for USB 2.0 PHY. Support for
+> -	  particular SoCs has to be enabled in addition to this driver. Number
+> -	  and type of supported phys depends on the SoC.
+> +	  SoCs. This driver provides the interface for USB 2.0 PHY. Support
+> +	  for particular PHYs will be enabled based on the SoC type in addition
+> +	  to this driver.
+> 
+>  config PHY_EXYNOS4210_USB2
+> -	bool "Support for Exynos 4210"
+> +	bool
+>  	depends on PHY_SAMSUNG_USB2
+> -	depends on CPU_EXYNOS4210
+> -	help
+> -	  Enable USB PHY support for Exynos 4210. This option requires that
+> -	  Samsung USB 2.0 PHY driver is enabled and means that support for this
+> -	  particular SoC is compiled in the driver. In case of Exynos 4210 four
+> -	  phys are available - device, host, HSIC0 and HSIC1.
+> +	default CPU_EXYNOS4210
+> 
+>  config PHY_EXYNOS4X12_USB2
+> -	bool "Support for Exynos 4x12"
+> +	bool
+>  	depends on PHY_SAMSUNG_USB2
+> -	depends on (SOC_EXYNOS4212 || SOC_EXYNOS4412)
+> -	help
+> -	  Enable USB PHY support for Exynos 4x12. This option requires that
+> -	  Samsung USB 2.0 PHY driver is enabled and means that support for this
+> -	  particular SoC is compiled in the driver. In case of Exynos 4x12 four
+> -	  phys are available - device, host, HSIC0 and HSIC1.
+> +	default SOC_EXYNOS4212 || SOC_EXYNOS4412
+> 
+>  config PHY_EXYNOS5250_USB2
+> -	bool "Support for Exynos 5250"
+> +	bool
+>  	depends on PHY_SAMSUNG_USB2
+> -	depends on SOC_EXYNOS5250
+> -	help
+> -	  Enable USB PHY support for Exynos 5250. This option requires that
+> -	  Samsung USB 2.0 PHY driver is enabled and means that support for this
+> -	  particular SoC is compiled in the driver. In case of Exynos 5250 four
+> -	  phys are available - device, host, HSIC0 and HSIC.
+> +	default SOC_EXYNOS5250 || SOC_EXYNOS5420
+> 
+>  config PHY_EXYNOS5_USBDRD
+>  	tristate "Exynos5 SoC series USB DRD PHY driver"
+> --
+> 1.7.9.5
