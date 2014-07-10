@@ -1,77 +1,43 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ASoC: samsung-i2s: Maintain CDCLK settings across
- i2s_{shutdown/startup}
-Date: Thu, 10 Jul 2014 18:11:13 +0200
-Message-ID: <1405008673-15994-1-git-send-email-s.nawrocki@samsung.com>
+Subject: Re: [alsa-devel] [PATCH V3 2/2] ASoC: samsung: Add machine driver for
+ Odroid X2/U3
+Date: Thu, 10 Jul 2014 18:15:59 +0200
+Message-ID: <53BEBC3F.6030205@samsung.com>
+References: <1404479625-25385-1-git-send-email-s.nawrocki@samsung.com>
+ <1404479625-25385-2-git-send-email-s.nawrocki@samsung.com>
+ <CAD8Lp44JFtbcD22c+0PVb5S4U1kVTTxHD=PgqiKzhVypFW5Prg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:52034 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751882AbaGJQMN (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:49438 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752722AbaGJQQF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jul 2014 12:12:13 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N8I00D7C7OBDT00@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 11 Jul 2014 01:12:11 +0900 (KST)
+	Thu, 10 Jul 2014 12:16:05 -0400
+In-reply-to: <CAD8Lp44JFtbcD22c+0PVb5S4U1kVTTxHD=PgqiKzhVypFW5Prg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org
-Cc: drake@endlessm.com, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chen Zhen <zhen1.chen@samsung.com>
+To: Daniel Drake <drake@endlessm.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Chen Zhen <zhen1.chen@samsung.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-Currently configuration of the CDCLK pad is being overwritten in
-the i2s_shutdown() callback in order to gate the SoC output clock.
-However if an ASoC machine driver doesn't restore that clock
-settings each time after opening the sound device this results
-in the CDCLK pin being permanently configured into input mode.
-I.e. the output clock will always stay disabled.
-Fix that by saving the CDCLKCON bit state in i2s_shutdown() and
-and restoring it in the i2s_startup() callback.
+Hi Daniel,
 
-Signed-off-by: Chen Zhen <zhen1.chen@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- sound/soc/samsung/i2s.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+On 08/07/14 11:15, Daniel Drake wrote:
+> Testing on ODROID-U2, v3 is not quite working for me, but v2 of the
+> patch was fine.
+> I boot up, run:
+> # speaker-test -c 2 -t wav
+> 
+> As soon as I hear the word "front" I press ctrl+c and then run the
+> command again.
+> Now the command hangs with no audible output.
+> 
+> Any ideas? Let me know if you have trouble reproducing.
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 2ac76fa..3cb3e95 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -68,6 +68,8 @@ struct i2s_dai {
- #define DAI_OPENED	(1 << 0) /* Dai is opened */
- #define DAI_MANAGER	(1 << 1) /* Dai is the manager */
- 	unsigned mode;
-+	/* CDCLK pin direction: 0  - input, 1 - output */
-+	unsigned int cdclk_out:1;
- 	/* Driver for this DAI */
- 	struct snd_soc_dai_driver i2s_dai_drv;
- 	/* DMA parameters */
-@@ -737,6 +739,9 @@ static int i2s_startup(struct snd_pcm_substream *substream,
- 
- 	spin_unlock_irqrestore(&lock, flags);
- 
-+	if (!is_opened(other) && i2s->cdclk_out)
-+		i2s_set_sysclk(dai, SAMSUNG_I2S_CDCLK,
-+				0, SND_SOC_CLOCK_OUT);
- 	return 0;
- }
- 
-@@ -752,9 +757,13 @@ static void i2s_shutdown(struct snd_pcm_substream *substream,
- 	i2s->mode &= ~DAI_OPENED;
- 	i2s->mode &= ~DAI_MANAGER;
- 
--	if (is_opened(other))
-+	if (is_opened(other)) {
- 		other->mode |= DAI_MANAGER;
--
-+	} else {
-+		u32 mod = readl(i2s->addr + I2SMOD);
-+		i2s->cdclk_out = !(mod & MOD_CDCLKCON);
-+		other->cdclk_out = i2s->cdclk_out;
-+	}
- 	/* Reset any constraint on RFS and BFS */
- 	i2s->rfs = 0;
- 	i2s->bfs = 0;
+I just posted a patch addressing this, please let me know
+if there are any further issues.
+
 -- 
-1.7.9.5
+Thanks,
+Sylwester
