@@ -1,59 +1,63 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH v2 2/2] phy: Kconfig: Update config for Exynos USB DRD
-Date: Thu, 10 Jul 2014 15:51:54 +0900
-Message-ID: <003a01cf9c0b$6f8eda40$4eac8ec0$%han@samsung.com>
-References: <1404906569-28026-1-git-send-email-sachin.kamat@samsung.com>
- <1404906569-28026-2-git-send-email-sachin.kamat@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCHv3 0/5] ARM: remove the sub-node and deprecated
+ supports-highspeed property for dwmmc.
+Date: Thu, 10 Jul 2014 16:08:34 +0900
+Message-ID: <1404976119-10777-1-git-send-email-jh80.chung@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:58944 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751507AbaGJGv6 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:20607 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751539AbaGJHIo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jul 2014 02:51:58 -0400
-In-reply-to: <1404906569-28026-2-git-send-email-sachin.kamat@samsung.com>
-Content-language: ko
+	Thu, 10 Jul 2014 03:08:44 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@samsung.com>, linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, kishon@ti.com, dianders@chromium.org, gautam.vivek@samsung.com, spk.linux@gmail.com, tomasz.figa@gmail.com, 'Jingoo Han' <jg1.han@samsung.com>
+To: linux-mmc <linux-mmc@vger.kernel.org>
+Cc: Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, tgih.jun@samsung.com, devicetree@vger.kernel.org, heiko@sntech.de, dinguyen@altera.com, Mark Rutland <mark.rutland@arm.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jaehoon Chung <jh80.chung@samsung.com>
 
-On Wednesday, July 09, 2014 8:49 PM, Sachin Kamat wrote:
-> 
-> USB DWC3 driver on Exynos platform does not work without its
-> corresponding phy driver. Hence make the PHY driver depend on
-> Exynos DWC3 driver and default it to yes to make things easier
-> for the end user.
-> 
-> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
+Since used the mmc_of_parse(), didn't parse the sub-node.
+So we can remove the sub-node, because almost SoC used the only one card per a host.
+And supports-highspeed can be replaced to "cap-mmc/sd-highspeed" property.
 
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+Changelog V3:
+	- Fix the wrong bus-width value.
+	- Use the slot->host->quirks instead of brq->quirks.
+	- Add tested-by and reviewd-by.
+Changelog V2:
+	- Add the "mmc: dw_mmc: replace "disable-wp" from slot's quirks to host's quirk"
 
-Best regards,
-Jingoo Han
+Jaehoon Chung (5):
+  mmc: dw_mmc: modify the dt-binding for removing slot-node and
+    supports-highspeed
+  ARM: dts: exynos: unuse the slot-node and deprecated the
+    supports-highspeed for dw-mmc
+  ARM: dts: socfpga: unuse the slot-node and deprecated the
+    supports-highspeed for dw-mmc
+  ARM: dts: rockchip: unuse the slot-node and deprecated the
+    supports-highspeed for dw-mmc
+  mmc: dw_mmc: replace "disable-wp" from slot's quirk to host's quirk
 
-> ---
-> No changes since v1.
-> ---
->  drivers/phy/Kconfig |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 128f8b92b55c..ee6c80a5392a 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -152,8 +152,10 @@ config PHY_EXYNOS5_USBDRD
->  	tristate "Exynos5 SoC series USB DRD PHY driver"
->  	depends on ARCH_EXYNOS5 && OF
->  	depends on HAS_IOMEM
-> +	depends on USB_DWC3_EXYNOS
->  	select GENERIC_PHY
->  	select MFD_SYSCON
-> +	default y
->  	help
->  	  Enable USB DRD PHY support for Exynos 5 SoC series.
->  	  This driver provides PHY interface for USB 3.0 DRD controller
-> --
-> 1.7.9.5
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   17 ++++---------
+ .../devicetree/bindings/mmc/k3-dw-mshc.txt         |   12 ++++-----
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |   12 ++++-----
+ arch/arm/boot/dts/exynos4412-odroidx.dts           |    8 ++----
+ arch/arm/boot/dts/exynos4412-origen.dts            |    8 ++----
+ arch/arm/boot/dts/exynos4412-trats2.dts            |    8 ++----
+ arch/arm/boot/dts/exynos5250-arndale.dts           |   18 ++++----------
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi      |   26 ++++++--------------
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   18 ++++----------
+ arch/arm/boot/dts/exynos5250-snow.dts              |    6 ++---
+ arch/arm/boot/dts/exynos5260-xyref5260.dts         |   18 ++++----------
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |   18 ++++----------
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |   16 +++---------
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |   16 +++---------
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   16 +++---------
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |   16 +++---------
+ arch/arm/boot/dts/rk3066a-bqcurie2.dts             |   16 +++---------
+ arch/arm/boot/dts/socfpga_arria5.dtsi              |    9 +++----
+ arch/arm/boot/dts/socfpga_cyclone5.dtsi            |    9 +++----
+ arch/arm/boot/dts/socfpga_vt.dts                   |    9 +++----
+ drivers/mmc/host/dw_mmc.c                          |   12 ++++-----
+ 21 files changed, 84 insertions(+), 204 deletions(-)
+
+-- 
+1.7.9.5
