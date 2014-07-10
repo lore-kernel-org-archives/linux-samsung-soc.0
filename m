@@ -1,16 +1,16 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH v5 05/14] drm/exynos: dsi: add pass TE host ops to support
  LCD I80 interface
-Date: Thu, 10 Jul 2014 10:06:07 +0900
-Message-ID: <53BDE6FF.1000600@samsung.com>
+Date: Thu, 10 Jul 2014 10:20:05 +0900
+Message-ID: <53BDEA45.7020303@samsung.com>
 References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
  <1404779987-5337-6-git-send-email-yj44.cho@samsung.com>
- <20140709152207.GA17359@ulmo>
+ <20140709152207.GA17359@ulmo> <53BDE6FF.1000600@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20140709152207.GA17359@ulmo>
+In-reply-to: <53BDE6FF.1000600@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -20,99 +20,88 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, robh+dt@kernel.org, a.hajda@samsung.com, kyungmin.park@samsung.com, dri-devel@lists.freedesktop.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/10/2014 12:22 AM, Thierry Reding wrote:
-> On Tue, Jul 08, 2014 at 09:39:38AM +0900, YoungJun Cho wrote:
->> To support LCD I80 interface, the DSI host calls this function
->> to notify the panel tearing effect synchronization signal to
->> the CRTC device manager to trigger to transfer video image.
->>
->> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
->> Acked-by: Inki Dae <inki.dae@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>   drivers/gpu/drm/exynos/exynos_drm_dsi.c | 11 +++++++++++
->>   include/drm/drm_mipi_dsi.h              |  7 +++++++
->>   2 files changed, 18 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> index dad543a..76e34ca 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> @@ -24,6 +24,7 @@
->>   #include <video/mipi_display.h>
->>   #include <video/videomode.h>
->>
->> +#include "exynos_drm_crtc.h"
->>   #include "exynos_drm_drv.h"
->>
->>   /* returns true iff both arguments logically differs */
->> @@ -1041,10 +1042,20 @@ static ssize_t exynos_dsi_host_transfer(struct mipi_dsi_host *host,
->>   	return (ret < 0) ? ret : xfer.rx_done;
->>   }
->>
->> +static void exynos_dsi_host_pass_te(struct mipi_dsi_host *host)
->> +{
->> +	struct exynos_dsi *dsi = host_to_dsi(host);
->> +	struct drm_encoder *encoder = dsi->encoder;
->> +
->> +	if (dsi->state & DSIM_STATE_ENABLED)
->> +		exynos_drm_crtc_te_handler(encoder->crtc);
->> +}
->> +
->>   static const struct mipi_dsi_host_ops exynos_dsi_ops = {
->>   	.attach = exynos_dsi_host_attach,
->>   	.detach = exynos_dsi_host_detach,
->>   	.transfer = exynos_dsi_host_transfer,
->> +	.pass_te = exynos_dsi_host_pass_te,
->>   };
->>
->>   static int exynos_dsi_poweron(struct exynos_dsi *dsi)
->> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
->> index 944f33f..3f21bea 100644
->> --- a/include/drm/drm_mipi_dsi.h
->> +++ b/include/drm/drm_mipi_dsi.h
->> @@ -49,6 +49,12 @@ struct mipi_dsi_msg {
->>    * @detach: detach DSI device from DSI host
->>    * @transfer: send and/or receive DSI packet, return number of received bytes,
->>    * 	      or error
->> + * @pass_te: call the crtc te_handler() callback from DSI host.
->> + *	     The panel generates tearing effect synchronization signal between
->> + *	     MCU and FB to display video images. And the display controller
->> + *	     should trigger to transfer video image at this signal. So the panel
->> + *	     receives the TE IRQ, then calls this function to notify it to the
->> + *	     display controller.
->>    */
->>   struct mipi_dsi_host_ops {
->>   	int (*attach)(struct mipi_dsi_host *host,
->> @@ -57,6 +63,7 @@ struct mipi_dsi_host_ops {
->>   		      struct mipi_dsi_device *dsi);
->>   	ssize_t (*transfer)(struct mipi_dsi_host *host,
->>   			    struct mipi_dsi_msg *msg);
->> +	void (*pass_te)(struct mipi_dsi_host *host);
->
-> I've objected to this particular change before and that objection still
-> stands. I don't see how this is related to DSI. It seems like an
-> implementation detail of this particular setup and I think it should be
-> handled differently (within the Exynos DSI controller implementation
-> possibly).
->
-
-Okay, I understand what you mean.
-As you know, this function is called by panel TE interrupt handler, so 
-it could be accessed by panel.
-Do you have any good idea for panel to access exynos_drm_dsi directly 
-without mipi_dis_host_ops?
-
-Thank you.
-Best regards YJ
-
-> Laurent also asked you to split this up into two patches, one for the
-> core part, the other for the Exynos driver parts, yet this patch
-> contains both changes.
->
-> Thierry
->
+T24gMjAxNOuFhCAwN+yblCAxMOydvCAxMDowNiwgWW91bmdKdW4gQ2hvIHdyb3RlOgo+IE9uIDA3
+LzEwLzIwMTQgMTI6MjIgQU0sIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+PiBPbiBUdWUsIEp1bCAw
+OCwgMjAxNCBhdCAwOTozOTozOEFNICswOTAwLCBZb3VuZ0p1biBDaG8gd3JvdGU6Cj4+PiBUbyBz
+dXBwb3J0IExDRCBJODAgaW50ZXJmYWNlLCB0aGUgRFNJIGhvc3QgY2FsbHMgdGhpcyBmdW5jdGlv
+bgo+Pj4gdG8gbm90aWZ5IHRoZSBwYW5lbCB0ZWFyaW5nIGVmZmVjdCBzeW5jaHJvbml6YXRpb24g
+c2lnbmFsIHRvCj4+PiB0aGUgQ1JUQyBkZXZpY2UgbWFuYWdlciB0byB0cmlnZ2VyIHRvIHRyYW5z
+ZmVyIHZpZGVvIGltYWdlLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IFlvdW5nSnVuIENobyA8eWo0
+NC5jaG9Ac2Ftc3VuZy5jb20+Cj4+PiBBY2tlZC1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1
+bmcuY29tPgo+Pj4gQWNrZWQtYnk6IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ftc3Vu
+Zy5jb20+Cj4+PiAtLS0KPj4+ICAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
+aS5jIHwgMTEgKysrKysrKysrKysKPj4+ICAgaW5jbHVkZS9kcm0vZHJtX21pcGlfZHNpLmggICAg
+ICAgICAgICAgIHwgIDcgKysrKysrKwo+Pj4gICAyIGZpbGVzIGNoYW5nZWQsIDE4IGluc2VydGlv
+bnMoKykKPj4+Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2RzaS5jCj4+PiBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+
+Pj4gaW5kZXggZGFkNTQzYS4uNzZlMzRjYSAxMDA2NDQKPj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2RzaS5jCj4+PiBAQCAtMjQsNiArMjQsNyBAQAo+Pj4gICAjaW5jbHVkZSA8
+dmlkZW8vbWlwaV9kaXNwbGF5Lmg+Cj4+PiAgICNpbmNsdWRlIDx2aWRlby92aWRlb21vZGUuaD4K
+Pj4+Cj4+PiArI2luY2x1ZGUgImV4eW5vc19kcm1fY3J0Yy5oIgo+Pj4gICAjaW5jbHVkZSAiZXh5
+bm9zX2RybV9kcnYuaCIKPj4+Cj4+PiAgIC8qIHJldHVybnMgdHJ1ZSBpZmYgYm90aCBhcmd1bWVu
+dHMgbG9naWNhbGx5IGRpZmZlcnMgKi8KPj4+IEBAIC0xMDQxLDEwICsxMDQyLDIwIEBAIHN0YXRp
+YyBzc2l6ZV90Cj4+PiBleHlub3NfZHNpX2hvc3RfdHJhbnNmZXIoc3RydWN0IG1pcGlfZHNpX2hv
+c3QgKmhvc3QsCj4+PiAgICAgICByZXR1cm4gKHJldCA8IDApID8gcmV0IDogeGZlci5yeF9kb25l
+Owo+Pj4gICB9Cj4+Pgo+Pj4gK3N0YXRpYyB2b2lkIGV4eW5vc19kc2lfaG9zdF9wYXNzX3RlKHN0
+cnVjdCBtaXBpX2RzaV9ob3N0ICpob3N0KQo+Pj4gK3sKPj4+ICsgICAgc3RydWN0IGV4eW5vc19k
+c2kgKmRzaSA9IGhvc3RfdG9fZHNpKGhvc3QpOwo+Pj4gKyAgICBzdHJ1Y3QgZHJtX2VuY29kZXIg
+KmVuY29kZXIgPSBkc2ktPmVuY29kZXI7Cj4+PiArCj4+PiArICAgIGlmIChkc2ktPnN0YXRlICYg
+RFNJTV9TVEFURV9FTkFCTEVEKQo+Pj4gKyAgICAgICAgZXh5bm9zX2RybV9jcnRjX3RlX2hhbmRs
+ZXIoZW5jb2Rlci0+Y3J0Yyk7Cj4+PiArfQo+Pj4gKwo+Pj4gICBzdGF0aWMgY29uc3Qgc3RydWN0
+IG1pcGlfZHNpX2hvc3Rfb3BzIGV4eW5vc19kc2lfb3BzID0gewo+Pj4gICAgICAgLmF0dGFjaCA9
+IGV4eW5vc19kc2lfaG9zdF9hdHRhY2gsCj4+PiAgICAgICAuZGV0YWNoID0gZXh5bm9zX2RzaV9o
+b3N0X2RldGFjaCwKPj4+ICAgICAgIC50cmFuc2ZlciA9IGV4eW5vc19kc2lfaG9zdF90cmFuc2Zl
+ciwKPj4+ICsgICAgLnBhc3NfdGUgPSBleHlub3NfZHNpX2hvc3RfcGFzc190ZSwKPj4+ICAgfTsK
+Pj4+Cj4+PiAgIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9wb3dlcm9uKHN0cnVjdCBleHlub3NfZHNp
+ICpkc2kpCj4+PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0vZHJtX21pcGlfZHNpLmggYi9pbmNs
+dWRlL2RybS9kcm1fbWlwaV9kc2kuaAo+Pj4gaW5kZXggOTQ0ZjMzZi4uM2YyMWJlYSAxMDA2NDQK
+Pj4+IC0tLSBhL2luY2x1ZGUvZHJtL2RybV9taXBpX2RzaS5oCj4+PiArKysgYi9pbmNsdWRlL2Ry
+bS9kcm1fbWlwaV9kc2kuaAo+Pj4gQEAgLTQ5LDYgKzQ5LDEyIEBAIHN0cnVjdCBtaXBpX2RzaV9t
+c2cgewo+Pj4gICAgKiBAZGV0YWNoOiBkZXRhY2ggRFNJIGRldmljZSBmcm9tIERTSSBob3N0Cj4+
+PiAgICAqIEB0cmFuc2Zlcjogc2VuZCBhbmQvb3IgcmVjZWl2ZSBEU0kgcGFja2V0LCByZXR1cm4g
+bnVtYmVyIG9mCj4+PiByZWNlaXZlZCBieXRlcywKPj4+ICAgICogICAgICAgICAgIG9yIGVycm9y
+Cj4+PiArICogQHBhc3NfdGU6IGNhbGwgdGhlIGNydGMgdGVfaGFuZGxlcigpIGNhbGxiYWNrIGZy
+b20gRFNJIGhvc3QuCj4+PiArICogICAgICAgICBUaGUgcGFuZWwgZ2VuZXJhdGVzIHRlYXJpbmcg
+ZWZmZWN0IHN5bmNocm9uaXphdGlvbiBzaWduYWwKPj4+IGJldHdlZW4KPj4+ICsgKiAgICAgICAg
+IE1DVSBhbmQgRkIgdG8gZGlzcGxheSB2aWRlbyBpbWFnZXMuIEFuZCB0aGUgZGlzcGxheQo+Pj4g
+Y29udHJvbGxlcgo+Pj4gKyAqICAgICAgICAgc2hvdWxkIHRyaWdnZXIgdG8gdHJhbnNmZXIgdmlk
+ZW8gaW1hZ2UgYXQgdGhpcyBzaWduYWwuIFNvCj4+PiB0aGUgcGFuZWwKPj4+ICsgKiAgICAgICAg
+IHJlY2VpdmVzIHRoZSBURSBJUlEsIHRoZW4gY2FsbHMgdGhpcyBmdW5jdGlvbiB0byBub3RpZnkK
+Pj4+IGl0IHRvIHRoZQo+Pj4gKyAqICAgICAgICAgZGlzcGxheSBjb250cm9sbGVyLgo+Pj4gICAg
+Ki8KPj4+ICAgc3RydWN0IG1pcGlfZHNpX2hvc3Rfb3BzIHsKPj4+ICAgICAgIGludCAoKmF0dGFj
+aCkoc3RydWN0IG1pcGlfZHNpX2hvc3QgKmhvc3QsCj4+PiBAQCAtNTcsNiArNjMsNyBAQCBzdHJ1
+Y3QgbWlwaV9kc2lfaG9zdF9vcHMgewo+Pj4gICAgICAgICAgICAgICAgIHN0cnVjdCBtaXBpX2Rz
+aV9kZXZpY2UgKmRzaSk7Cj4+PiAgICAgICBzc2l6ZV90ICgqdHJhbnNmZXIpKHN0cnVjdCBtaXBp
+X2RzaV9ob3N0ICpob3N0LAo+Pj4gICAgICAgICAgICAgICAgICAgc3RydWN0IG1pcGlfZHNpX21z
+ZyAqbXNnKTsKPj4+ICsgICAgdm9pZCAoKnBhc3NfdGUpKHN0cnVjdCBtaXBpX2RzaV9ob3N0ICpo
+b3N0KTsKPj4KPj4gSSd2ZSBvYmplY3RlZCB0byB0aGlzIHBhcnRpY3VsYXIgY2hhbmdlIGJlZm9y
+ZSBhbmQgdGhhdCBvYmplY3Rpb24gc3RpbGwKPj4gc3RhbmRzLiBJIGRvbid0IHNlZSBob3cgdGhp
+cyBpcyByZWxhdGVkIHRvIERTSS4gSXQgc2VlbXMgbGlrZSBhbgo+PiBpbXBsZW1lbnRhdGlvbiBk
+ZXRhaWwgb2YgdGhpcyBwYXJ0aWN1bGFyIHNldHVwIGFuZCBJIHRoaW5rIGl0IHNob3VsZCBiZQo+
+PiBoYW5kbGVkIGRpZmZlcmVudGx5ICh3aXRoaW4gdGhlIEV4eW5vcyBEU0kgY29udHJvbGxlciBp
+bXBsZW1lbnRhdGlvbgo+PiBwb3NzaWJseSkuCj4+Cj4gCj4gT2theSwgSSB1bmRlcnN0YW5kIHdo
+YXQgeW91IG1lYW4uCj4gQXMgeW91IGtub3csIHRoaXMgZnVuY3Rpb24gaXMgY2FsbGVkIGJ5IHBh
+bmVsIFRFIGludGVycnVwdCBoYW5kbGVyLCBzbwo+IGl0IGNvdWxkIGJlIGFjY2Vzc2VkIGJ5IHBh
+bmVsLgo+IERvIHlvdSBoYXZlIGFueSBnb29kIGlkZWEgZm9yIHBhbmVsIHRvIGFjY2VzcyBleHlu
+b3NfZHJtX2RzaSBkaXJlY3RseQo+IHdpdGhvdXQgbWlwaV9kaXNfaG9zdF9vcHM/Cj4gCgpNci4g
+Q2hvLCBsZXQncyBqdXN0IHVzZSBub3RpZmllciBjYWxsYmFjayBmb3IgdGhlIG1lYW50aW1lOiBm
+aW1kIGRyaXZlcgpyZWdpc3RlcnMgYSB0ZSBoYW5kbGVyIHRvIEV4eW5vcyBtaXBpIGRzaSBkcml2
+ZXIsIGFuZCB0aGVuIEV4eW5vcyBtaXBpCmRzaSBkcml2ZXIgY2FsbHMgdGhlIHRlIGhhbmRsZXIg
+d2hlbiB0ZSBpbnRlcnJ1cHQgb2NjdXJzIGZyb20gUGFuZWwgZGV2aWNlLgoKSSB0aGluayBhbGwg
+d2UgY2FuIGNvbnNpZGVyIGZvciBpdCBpcyB0byB1c2UgbWlwaV9kc2lfaG9zdF9vcHMgb3IgY29y
+ZQpmcmFtZXdvcmsgLSBjb25uZWN0b3IvZW5jb2RlciBhbmQgY3J0Yy4gSG93ZXZlciwgaXQgc2Vl
+bXMgdGhhdCBpdCdzIG5vdApyZWFsbHkgZWFzeSBmb3Igd2UgaGF2ZSBhIGNvbnNlbnN1cyB3aXRo
+IG90aGVyIG1haW50YWluZXJzIHVudGlsIG90aGVyCmk4MCB1c2VycyBhcHBlYXIgYW5kIHRoZXkg
+bmVlZCBjb21tb24gc29tZXRoaW5nIGZvciBpdC4KCgpUaGFua3MsCklua2kgRGFlCgo+IFRoYW5r
+IHlvdS4KPiBCZXN0IHJlZ2FyZHMgWUoKPiAKPj4gTGF1cmVudCBhbHNvIGFza2VkIHlvdSB0byBz
+cGxpdCB0aGlzIHVwIGludG8gdHdvIHBhdGNoZXMsIG9uZSBmb3IgdGhlCj4+IGNvcmUgcGFydCwg
+dGhlIG90aGVyIGZvciB0aGUgRXh5bm9zIGRyaXZlciBwYXJ0cywgeWV0IHRoaXMgcGF0Y2gKPj4g
+Y29udGFpbnMgYm90aCBjaGFuZ2VzLgo+Pgo+PiBUaGllcnJ5Cj4+Cj4gCj4gCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
