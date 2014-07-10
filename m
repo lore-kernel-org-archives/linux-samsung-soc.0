@@ -1,108 +1,77 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] ARM: dts: Add mask-tpm-reset to the device tree
-Date: Thu, 10 Jul 2014 08:25:43 -0700
-Message-ID: <CAD=FV=Xype=Mv_zXsAZjUA-ZcAK6n3sf6ZqRkNkSv=aUZ3qDhw@mail.gmail.com>
-References: <1403774127-21892-1-git-send-email-vikas.sajjan@samsung.com>
-	<CACRpkdZrDJ3xoUYGynf0sO4-U7ZVkJ=Mr_pNVSdar8oM85aVgA@mail.gmail.com>
-	<CAD=FV=WQWBkq5JKttikLkyKEDX-YydQJLr9=bFWifpy2Lf0mSg@mail.gmail.com>
-	<53BC1A63.80900@samsung.com>
-	<CAD=FV=XjWu6RQ+9789fzg08Whq-d=XWoeT+dZ7YQLLJvCBUfwQ@mail.gmail.com>
-	<CAGm_ybjRR_EpxPFOWVSG7D0HTE7PC4wPG_Rd1Xty8x_oAi+Biw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ASoC: samsung-i2s: Maintain CDCLK settings across
+ i2s_{shutdown/startup}
+Date: Thu, 10 Jul 2014 18:11:13 +0200
+Message-ID: <1405008673-15994-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:44732 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753513AbaGJPZp (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:52034 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751882AbaGJQMN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jul 2014 11:25:45 -0400
-Received: by mail-vc0-f174.google.com with SMTP id hy4so10770765vcb.5
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jul 2014 08:25:44 -0700 (PDT)
-In-Reply-To: <CAGm_ybjRR_EpxPFOWVSG7D0HTE7PC4wPG_Rd1Xty8x_oAi+Biw@mail.gmail.com>
+	Thu, 10 Jul 2014 12:12:13 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N8I00D7C7OBDT00@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 11 Jul 2014 01:12:11 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Houcheng Lin <houcheng@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: broonie@kernel.org
+Cc: drake@endlessm.com, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chen Zhen <zhen1.chen@samsung.com>
 
-Vikas,
+Currently configuration of the CDCLK pad is being overwritten in
+the i2s_shutdown() callback in order to gate the SoC output clock.
+However if an ASoC machine driver doesn't restore that clock
+settings each time after opening the sound device this results
+in the CDCLK pin being permanently configured into input mode.
+I.e. the output clock will always stay disabled.
+Fix that by saving the CDCLKCON bit state in i2s_shutdown() and
+and restoring it in the i2s_startup() callback.
 
-On Wed, Jul 9, 2014 at 9:35 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
-> Doug,
->
-> On Wed, Jul 9, 2014 at 8:52 PM, Doug Anderson <dianders@chromium.org> wrote:
->> Vikas,
->>
->> On Tue, Jul 8, 2014 at 9:20 AM, Tomasz Figa <t.figa@samsung.com> wrote:
->>> On 08.07.2014 17:27, Doug Anderson wrote:
->>>> Hi,
->>>>
->>>> On Tue, Jul 8, 2014 at 12:46 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>>>> On Thu, Jun 26, 2014 at 11:15 AM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
->>>>>
->>>>>> From: Doug Anderson <dianders@chromium.org>
->>>>>>
->>>>>> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
->>>>>> being reset across sleep/wake.  If we don't set it to anything then
->>>>>> the TPM will be reset.  U-Boot will detect this as invalid
->>>>>> and will reset the system on resume time. This GPIO can always be low
->>>>>> and not hurt anything.  It will get pulled back high again during a
->>>>>> normal warm reset when it will default back to an input.
->>>>>>
->>>>>> To properly preserve the TPM state across suspend/resume and to make
->>>>>> the chrome U-Boot happy, properly set the GPIO to mask the
->>>>>> reset to the TPM.
->>>>>>
->>>>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
->>>>>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
->>>>> (...)
->>>>>> +       /* We need GPX0_6 to be low at sleep time; just keep it low always */
->>>>>> +       mask_tpm_reset_regulator: mask-tpm-reset-regulator {
->>>>>> +       compatible = "regulator-fixed";
->>>>>
->>>>> No matter how the discussion ends up, regulator-fixed is wrong.
->>>>
->>>> OK, fair enough.
->>>>
->>>>
->>>>> Either folding it into the TPM driver or using a separate reset driver
->>>>> is fine with me.
->>>>
->>>> OK, Vikas: do you want to code up the driver?
->>>>
->>>>
->>>>> So what about the generic delayed reset GPIO thing?
->>>>> http://marc.info/?l=linux-kernel&m=140309916607115&w=2
->>>>
->>>> That's a neat concept and could be useful in other cases, but I think
->>>> it's just as much of a hack as using a regulator.  This is not a reset
->>>> signal for the TPM.  This is a signal that will mask the CPU's reset
->>>> signal (using a special bit of board-specific logic).
->>>>
->>>>
->>>> Personally I think Tomasz's idea of using hogs (after his patches
->>>> allowing a default output level) is the cleanest, but I think Stephen
->>>> didn't like that.
->>>
->>> I don't see any benefits of using complex interfaces over simply
->>> initializing the pin to the right value once at boot-up or at
->>> suspend/resume. As far as I understand Doug's explanation of the
->>> problem, nothing else is expected from the OS with respect to this pin.
->>> Moreover it doesn't affect operation of any drivers.
->>>
->>> So I'm still for the simplest and effective solution, i.e. hogs.
->>
->> It looks as if Tomasz's patch has landed, so perhaps you could try to
->> code it up his way.  It should be very simple.  Please make sure to CC
->> Stephen Warren on the patch so that he is included in the discussion
->> (and of course include Tomasz, Linus W, etc).
->
-> Can you point me to Tomasz's patchset on which I should rebase this patch on.
+Signed-off-by: Chen Zhen <zhen1.chen@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ sound/soc/samsung/i2s.c |   13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-You can base it atop (0635c88 pinctrl: samsung: Allow pin value to be
-initialized using pinfunc), which appears to be in linux-next.  That
-gives you "samsung,pin-val".
-
-You can use that together with a pinctrl "hog" to specify the state of
-this pin for the board.
-
--Doug
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 2ac76fa..3cb3e95 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -68,6 +68,8 @@ struct i2s_dai {
+ #define DAI_OPENED	(1 << 0) /* Dai is opened */
+ #define DAI_MANAGER	(1 << 1) /* Dai is the manager */
+ 	unsigned mode;
++	/* CDCLK pin direction: 0  - input, 1 - output */
++	unsigned int cdclk_out:1;
+ 	/* Driver for this DAI */
+ 	struct snd_soc_dai_driver i2s_dai_drv;
+ 	/* DMA parameters */
+@@ -737,6 +739,9 @@ static int i2s_startup(struct snd_pcm_substream *substream,
+ 
+ 	spin_unlock_irqrestore(&lock, flags);
+ 
++	if (!is_opened(other) && i2s->cdclk_out)
++		i2s_set_sysclk(dai, SAMSUNG_I2S_CDCLK,
++				0, SND_SOC_CLOCK_OUT);
+ 	return 0;
+ }
+ 
+@@ -752,9 +757,13 @@ static void i2s_shutdown(struct snd_pcm_substream *substream,
+ 	i2s->mode &= ~DAI_OPENED;
+ 	i2s->mode &= ~DAI_MANAGER;
+ 
+-	if (is_opened(other))
++	if (is_opened(other)) {
+ 		other->mode |= DAI_MANAGER;
+-
++	} else {
++		u32 mod = readl(i2s->addr + I2SMOD);
++		i2s->cdclk_out = !(mod & MOD_CDCLKCON);
++		other->cdclk_out = i2s->cdclk_out;
++	}
+ 	/* Reset any constraint on RFS and BFS */
+ 	i2s->rfs = 0;
+ 	i2s->bfs = 0;
+-- 
+1.7.9.5
