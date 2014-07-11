@@ -1,149 +1,58 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH] mmc: dw_mmc: change to use recommended reset procedure
-Date: Fri, 11 Jul 2014 19:20:48 +0900
-Message-ID: <001301cf9cf1$c91c7310$5b555930$%jun@samsung.com>
-References: <CAPz6YkUzGWnOznZ4UXNsLbe=ehDwfMJwUSjahUKVnVz8w9OcsA@mail.gmail.com>
- <1402351255-7423-1-git-send-email-sonnyrao@chromium.org>
- <002201cf9c3a$6de4a150$49ade3f0$%jun@samsung.com>
- <CAPz6YkXgoKPSQEdNOwAQDhEnFGFVArr_0obbVR_okAEOvLxtzA@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 2/2] clk: exynos-audss: Update as per existing framework
+Date: Fri, 11 Jul 2014 12:40:24 +0200
+Message-ID: <53BFBF18.3080704@samsung.com>
+References: <1405071475-31946-1-git-send-email-tushar.b@samsung.com>
+ <1405071475-31946-3-git-send-email-tushar.b@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:9157 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752757AbaGKKUw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jul 2014 06:20:52 -0400
-In-reply-to: <CAPz6YkXgoKPSQEdNOwAQDhEnFGFVArr_0obbVR_okAEOvLxtzA@mail.gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1405071475-31946-3-git-send-email-tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sonny Rao' <sonnyrao@chromium.org>
-Cc: 'linux-mmc' <linux-mmc@vger.kernel.org>, 'Grant Grundler' <grundler@chromium.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Chris Ball' <cjb@laptop.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'sunil joshi' <joshi@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Douglas Anderson' <dianders@chromium.org>, 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>
 
-On Fri, July 11, 2014, Sonny Rao wrote:
-> On Thu, Jul 10, 2014 at 5:28 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> > Hi Sonny,
-> >
-> > I have missed this patch.
-> >
-> > You finally choose to take extra interrupt handling.
-> > If it is not harm, it's fine.
-> 
-> Hi, thanks for coming back to it.  Based on my tracing, the interrupt
-> seems to be okay and is just ignored.
-> 
-> >> -static inline bool dw_mci_fifo_reset(struct dw_mci *host)
-> >> +static inline bool dw_mci_reset(struct dw_mci *host)
-"inline" is no needed anymore.
+Hi Tushar,
 
-> >>  {
-> >> +     u32 flags = SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET;
-> >> +     bool ret = false;
-> >> +
-> >>       /*
-> >>        * Reseting generates a block interrupt, hence setting
-> >>        * the scatter-gather pointer to NULL.
-> >> @@ -2334,15 +2330,59 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
-> >>               host->sg = NULL;
-> >>       }
-> >>
-> >> -     return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
-> >> -}
-> >> +     if (host->use_dma)
-> >> +             flags |= SDMMC_CTRL_DMA_RESET;
-> >>
-> >> -static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
-> >> -{
-> >> -     return dw_mci_ctrl_reset(host,
-> >> -                              SDMMC_CTRL_FIFO_RESET |
-> >> -                              SDMMC_CTRL_RESET |
-> >> -                              SDMMC_CTRL_DMA_RESET);
-> >> +     if (dw_mci_ctrl_reset(host, flags)) {
-> >> +             /*
-> >> +              * In all cases we clear the RAWINTS register to clear any
-> >> +              * interrupts.
-> >> +              */
-> >> +             mci_writel(host, RINTSTS, 0xFFFFFFFF);
-> >> +
-> >> +             /* if using dma we wait for dma_req to clear */
-> >> +             if (host->use_dma) {
-> >> +                     unsigned long timeout = jiffies + msecs_to_jiffies(500);
-> >> +                     u32 status;
-> >> +                     do {
-> >> +                             status = mci_readl(host, STATUS);
-> >> +                             if (!(status & SDMMC_STATUS_DMA_REQ))
-> >> +                                     break;
-> >> +                             cpu_relax();
-> >> +                     } while (time_before(jiffies, timeout));
-> >> +
-> >> +                     if (status & SDMMC_STATUS_DMA_REQ) {
-> >> +                             dev_err(host->dev,
-> >> +                                     "%s: Timeout waiting for dma_req to "
-> >> +                                     "clear during reset", __func__);
-> >> +                             goto ciu_out;
-> >> +                     }
-> >> +
-> >> +                     /* when using DMA next we reset the fifo again */
-> >> +                     if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET))
-> >> +                             goto ciu_out;
-> >> +             }
-> >> +     } else {
-> >> +             /* if the controller reset bit did clear, then set clock regs */
-> >> +             if (!(mci_readl(host, CTRL) & SDMMC_CTRL_RESET)) {
-> >> +                     dev_err(host->dev, "%s: fifo/dma reset bits didn't "
-> >> +                             "clear but ciu was reset, doing clock update.",
-> >> +                             __func__);
-> >> +                     goto ciu_out;
-> >> +             }
-> >> +     }
-> >> +
-> >> +     if (IS_ENABLED(CONFIG_MMC_DW_IDMAC))
-> >> +             /* It is also recommended that we reset and reprogram idmac */
-> >> +             dw_mci_idmac_reset(host);
-> >> +
-> >> +     ret = true;
-> >> +
-> >> +ciu_out:
-> >> +     /* After a CTRL reset we need to have CIU set clock registers  */
-> >> +     mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
-> >> +
-> >> +     return ret;
-> >>  }
-> >>
-> >>  #ifdef CONFIG_OF
-> >> @@ -2555,7 +2595,7 @@ int dw_mci_probe(struct dw_mci *host)
-> >>       }
-> >>
-> >>       /* Reset all blocks */
-> >> -     if (!dw_mci_ctrl_all_reset(host))
-> >> +     if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_ALL_RESET_FLAGS))
-> >>               return -ENODEV;
-> >>
-> >>       host->dma_ops = host->pdata->dma_ops;
-> >> @@ -2744,7 +2784,7 @@ int dw_mci_resume(struct dw_mci *host)
-> >>               }
-> >>       }
-> >>
-> >> -     if (!dw_mci_ctrl_all_reset(host)) {
-> >> +     if (!dw_mci_reset(host)) {
-> > Do you have any reason to use dw_mci_reset() unlike doing on probing?
-> 
-> I really wanted to use dw_mci_reset() everwhere, including probe,
-> because that would be simplest, where there is just one reset function
-> always, but the host structure is not completely set up at probe time,
-> so the code in dw_mci_reset() where we try to send a command to update
-> clock fails, so that's why I had to just do a reset.
+On 11/07/14 11:37, Tushar Behera wrote:
+> Change exynos-audss clock driver as per existing clock framework from
+> the existing module driver framework.
 
-Yes, if we can keep one interface, it would be good.
-But can you check below?
-Did you see the kernel panic on probing with "host->cur_slot" is NULL?
-If right, resume seems not different from probe in case of removable type.
-And dw_mci_idmac_reset() is redundant when dw_mci_reset() is used at resume.
+Can you explain what's the actual issue you're trying to solve with that
+patch ? What's the problem with this driver being a platform driver ?
+It feels we're moving in circles here, see
 
-I think dw_mci_ctrl_reset() can be also used at resume like at probe for simple way.
-For safety's sake, "host->cur_slot" should be guaranteed it's not NULL.
+commit b37a4224104568198b93fb9831224cfe7d83fff8
+Author: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Date:   Wed Sep 25 14:12:47 2013 -0700
 
+    clk: exynos-audss: convert to platform device
+
+    The Exynos AudioSS clock controller will later be modified to allow
+    input clocks to be specified via device-tree in order to support
+    multiple Exynos SoCs.  This will introduce a dependency on the core
+    SoC clock controller being initialized first so that the AudioSS driver
+    can look up its input clocks, but the order in which clock providers
+    are probed in of_clk_init() is not guaranteed.  Since deferred probing
+    is not supported in of_clk_init() and the AudioSS block is not the core
+    controller, we can initialize it later as a platform device.
+
+    Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+    Acked-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+    Reviewed-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+    Acked-by: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+    Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+    Signed-off-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+I realize of_clk_init() now handles better clock provider dependencies,
+nevertheless do we really need all this churn ?
+
+--
 Thanks,
-Seungwon Jeon
+Sylwester
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
