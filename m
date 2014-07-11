@@ -1,58 +1,142 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/4] Documentation: dt-bindings: move exynos-adc.txt to
- more iio/adc/
-Date: Fri, 11 Jul 2014 14:52:07 +0530
-Message-ID: <CAHfPSqCZqefvqe3DZiBN_g1O6mvhTLbJXLikuBw2YiTtVYeBmg@mail.gmail.com>
-References: <1405069589-10388-1-git-send-email-ch.naveen@samsung.com>
- <1405069589-10388-3-git-send-email-ch.naveen@samsung.com> <CAK5sBcFvPo38LtWAhee0xO=KONM5V-UEDzgjCc=uEXtG32NowA@mail.gmail.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH v6 15/23] regulator: max77686: Setup DVS-related GPIOs on probe
+Date: Fri, 11 Jul 2014 15:01:46 +0530
+Message-ID: <CADGdYn6k8U84Amh_MRAxHFTNNXKy9NKQzV0B-e20v4bjhD-MnA@mail.gmail.com>
+References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1404467722-26687-16-git-send-email-javier.martinez@collabora.co.uk>
+	<CADGdYn4EURaHinWVksQSPzVr=CkZYcrqvWsO7mKDz_gY9XB__Q@mail.gmail.com>
+	<53BF45D4.2000302@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAK5sBcFvPo38LtWAhee0xO=KONM5V-UEDzgjCc=uEXtG32NowA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sachin Kamat <spk.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53BF45D4.2000302@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, LAK <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Sachin,
-
-On 11 July 2014 14:47, Sachin Kamat <spk.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Hi Naveen,
+On Fri, Jul 11, 2014 at 7:33 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> Hello Amit,
 >
-> On Fri, Jul 11, 2014 at 2:36 PM, Naveen Krishna Chatradhi
-> <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> The DT bindings in exynos-adc.txt applies to the ADC
->> driver (exynos-adc.c) developed based on IIO framework.
->>
->> The bindings are more appropriate to be under
->> Documentation/devicetree/bindings/iio/adc/
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> ---
->>  .../devicetree/bindings/arm/samsung/exynos-adc.txt |   82 --------------------
->>  .../devicetree/bindings/iio/adc/exynos-adc.txt     |   82 ++++++++++++++++++++
->>  2 files changed, 82 insertions(+), 82 deletions(-)
->>  delete mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
->>  create mode 100644 Documentation/devicetree/bindings/iio/adc/exynos-adc.txt
+> On 07/10/2014 12:08 PM, amit daniel kachhap wrote:
+>> On Fri, Jul 4, 2014 at 3:25 PM, Javier Martinez Canillas
+>> <javier.martinez@collabora.co.uk> wrote:
+>>> MAX77686 PMIC support Dyamic Voltage Scaling (DVS) on a set
+>>> of Buck regulators. A number of GPIO are connected to these
+>>> lines and are requested by the mfd driver. Setup the GPIO
+>>> pins from the regulator driver.
+>> If possible merge this patch with patch 8. Both are adding DVS
+>> support. Put regmap_copy dependency patch in very beginning.
+>
+> As Lee already said, I split the changes to minimize the cross-subsystem churn.
+Yes agreed. This comment doesn't hold.
+>
+>>>
+>>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>>> ---
+>>>  drivers/regulator/max77686.c | 34 ++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 34 insertions(+)
+>>>
+>>> diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
+>>> index ef1af2d..ecce77a 100644
+>>> --- a/drivers/regulator/max77686.c
+>>> +++ b/drivers/regulator/max77686.c
+>>> @@ -435,6 +435,12 @@ static int max77686_pmic_dt_parse_pdata(struct platform_device *pdev,
+>>>  }
+>>>  #endif /* CONFIG_OF */
+>>>
+>>> +static inline bool max77686_is_dvs_buck(int id)
+>>> +{
+>>> +       /* BUCK 2,3 and 4 support DVS */
+>>> +       return (id >= MAX77686_BUCK2 && id <= MAX77686_BUCK4);
+>> I am just wondering if along with above check, SELB gpios (if present)
+>> can be used to confirm if BUCK's are DVS based or not.
+>
+> I don't know if SELB gpios being present or not should be used to determine
+> whether a BUCK includes the DVS feature. AFAIK boards could have some of these
+> lines hardwired and pulled high or low instead of using a GPIO.
+As per the max77686 data sheet, selb2.3.4 uses logic high for no DVS
+and logic low for DVS enabled.
+So may be if DT is supplying selb gpios then the above checks can be
+put otherwise not required.
+Anyway from your other comments, since this patch series is not
+handling complete DVS scenario.
+So putting this check is not useful in this stage.
+>
+>>> +}
+>>> +
+>>>  static int max77686_pmic_probe(struct platform_device *pdev)
+>>>  {
+>>>         struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+>>> @@ -442,6 +448,9 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+>>>         struct max77686_data *max77686;
+>>>         int i, ret = 0;
+>>>         struct regulator_config config = { };
+>>> +       unsigned int reg;
+>>> +       int buck_default_idx;
+>>> +       int buck_old_idx;
+>>>
+>>>         dev_dbg(&pdev->dev, "%s\n", __func__);
+>>>
+>>> @@ -472,13 +481,34 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+>>>         config.driver_data = max77686;
+>>>         platform_set_drvdata(pdev, max77686);
+>>>
+>>> +       buck_default_idx = pdata->buck_default_idx;
+>>> +       buck_old_idx = max77686_read_gpios(pdata);
+>>> +
+>>>         for (i = 0; i < MAX77686_REGULATORS; i++) {
+>>>                 struct regulator_dev *rdev;
+>>> +               int id = pdata->regulators[i].id;
+>>>
+>>>                 config.init_data = pdata->regulators[i].initdata;
+>>>                 config.of_node = pdata->regulators[i].of_node;
+>>>
+>>>                 max77686->opmode[i] = regulators[i].enable_mask;
+>>> +
+>>> +               if (max77686_is_dvs_buck(id)) {
+>>> +                       /* Try to copy over data so we keep firmware settings */
+>>> +                       reg = regulators[i].vsel_reg;
+>>> +
+>>> +                       ret = regmap_reg_copy(iodev->regmap,
+>>> +                                             reg + buck_default_idx,
+>>> +                                             reg + buck_old_idx);
+>>> +
+>>> +                       if (ret)
+>>> +                               dev_warn(&pdev->dev, "Copy err %d => %d (%d)\n",
+>>> +                                        reg + buck_old_idx,
+>>> +                                        reg + buck_default_idx, ret);
+>>> +
+>>> +                       regulators[i].vsel_reg += buck_default_idx;
+>>> +               }
+>>> +
+>>>                 rdev = devm_regulator_register(&pdev->dev,
+>>>                                                 &regulators[i], &config);
+>>>                 if (IS_ERR(rdev)) {
+>>> @@ -488,6 +518,10 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+>>>                 }
+>>>         }
+>>>
+>>> +       ret = max77686_setup_gpios(iodev->dev);
+>>> +       if (ret)
+>>> +               return ret;
+>>> +
+>>>         return 0;
+>>>  }
+>>>
+>>> --
+>>> 2.0.0.rc2
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >>
 >
-> Tip: For only a file move or rename please use "-M" with git
-> format-patch. That will make the
-> patch concise.
-
-Sure, Thanks.
->
+> Best regards,
+> Javier
 > --
-> Regards,
-> Sachin.
-
-
-
--- 
-Shine bright,
-(: Nav :)
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
