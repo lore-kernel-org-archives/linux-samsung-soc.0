@@ -1,12 +1,12 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 3/4] ASoC: samsung: s3c24xx dmaengine follow-up
-Date: Fri, 11 Jul 2014 15:45:07 +0200
-Message-ID: <1405086308-1461192-6-git-send-email-arnd@arndb.de>
+Subject: [PATCH 4/4] ASoC: samsung: remove unused DMA data
+Date: Fri, 11 Jul 2014 15:45:08 +0200
+Message-ID: <1405086308-1461192-7-git-send-email-arnd@arndb.de>
 References: <1405086308-1461192-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:63765 "EHLO
+Received: from mout.kundenserver.de ([212.227.17.24]:58469 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754436AbaGKNqM (ORCPT
+	with ESMTP id S1753832AbaGKNqM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 11 Jul 2014 09:46:12 -0400
 In-Reply-To: <1405086308-1461192-1-git-send-email-arnd@arndb.de>
@@ -15,28 +15,9 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: alsa-devel@alsa-project.org
 Cc: linux-arm-kernel@lists.infradead.org, broonie@kernel.org, lgirdwood@gmail.com, t.figa@samsung.com, Arnd Bergmann <arnd@arndb.de>, Heiko Stuebner <heiko@sntech.de>, Sangbeom Kim <sbkim73@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Commit ae602456e83c92 ("ASoC: samsung: drop support for legacy
-S3C24XX DMA API") removed the old code for the samsung specific
-DMA interfaces, now that everybody can use dmaengine.
-
-This picks up the few remaining pieces left over by that patch:
-
-The most important one is the removal of the dma_data->ops->started()
-calls in ac97. My understanding is that these are only required
-for drivers that do not support cyclic transfers, which the new dma
-engine driver now does, so we can simply remove them. This would also
-fix at least one bug in the ac97 driver on newer machines, which
-currently gives us a NULL pointer dereference from trying to call
-dma_data->ops->started().
-
-Further, we must no longer 'select' S3C2410_DMA, which conflicts
-with the dmaengine driver. The SND_S3C_DMA symbol is now
-useless, because it is always selected, so we can remove it
-and build the dmaengine support unconditionally.
-
-Finally, we should not 'select' S3C24XX_DMAC or S3C64XX_PL080,
-which may have additional dependencies. This replaces it with
-'depends on', to be more conservative.
+The s3c_dma_client structures and the 'ch' and 'ops' members in
+s3c_dma_params were only used by the legacy DMA driver and serve
+no function any more. This removes any reference to them.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Cc: Heiko Stuebner <heiko@sntech.de>
@@ -45,120 +26,212 @@ Cc: Ben Dooks <ben-linux@fluff.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org
 ---
- sound/soc/samsung/Kconfig  | 10 ++--------
- sound/soc/samsung/Makefile |  2 +-
- sound/soc/samsung/ac97.c   | 17 -----------------
- 3 files changed, 3 insertions(+), 26 deletions(-)
+ sound/soc/samsung/ac97.c        | 15 ---------------
+ sound/soc/samsung/dma.h         |  7 -------
+ sound/soc/samsung/i2s.c         |  6 ------
+ sound/soc/samsung/pcm.c         | 12 ------------
+ sound/soc/samsung/s3c-i2s-v2.c  |  2 --
+ sound/soc/samsung/s3c2412-i2s.c |  4 ----
+ sound/soc/samsung/s3c24xx-i2s.c |  4 ----
+ sound/soc/samsung/spdif.c       |  5 -----
+ 8 files changed, 55 deletions(-)
 
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 7622af82ac4f..afcf95c6e212 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -1,18 +1,14 @@
- config SND_SOC_SAMSUNG
- 	tristate "ASoC support for Samsung"
- 	depends on PLAT_SAMSUNG
--	select S3C24XX_DMAC if ARCH_S3C24XX
--	select S3C64XX_PL080 if ARCH_S3C64XX
--	select SND_S3C_DMA
-+	depends on S3C64XX_PL080 || !ARCH_S3C64XX
-+	depends on S3C24XX_DMAC || !ARCH_S3C24XX
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
- 	help
- 	  Say Y or M if you want to add support for codecs attached to
- 	  the Samsung SoCs' Audio interfaces. You will also need to
- 	  select the audio interfaces to support below.
- 
--config SND_S3C_DMA
--	tristate
--
- config SND_S3C24XX_I2S
- 	tristate
- 
-@@ -77,7 +73,6 @@ config SND_SOC_SAMSUNG_SMDK_WM8994
- config SND_SOC_SAMSUNG_SMDK2443_WM9710
- 	tristate "SoC AC97 Audio support for SMDK2443 - WM9710"
- 	depends on SND_SOC_SAMSUNG && MACH_SMDK2443
--	select S3C2410_DMA
- 	select AC97_BUS
- 	select SND_SOC_AC97_CODEC
- 	select SND_SAMSUNG_AC97
-@@ -88,7 +83,6 @@ config SND_SOC_SAMSUNG_SMDK2443_WM9710
- config SND_SOC_SAMSUNG_LN2440SBC_ALC650
- 	tristate "SoC AC97 Audio support for LN2440SBC - ALC650"
- 	depends on SND_SOC_SAMSUNG && ARCH_S3C24XX
--	select S3C2410_DMA
- 	select AC97_BUS
- 	select SND_SOC_AC97_CODEC
- 	select SND_SAMSUNG_AC97
-diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
-index e8d9ccdc41fd..91505ddaaf95 100644
---- a/sound/soc/samsung/Makefile
-+++ b/sound/soc/samsung/Makefile
-@@ -9,7 +9,7 @@ snd-soc-samsung-spdif-objs := spdif.o
- snd-soc-pcm-objs := pcm.o
- snd-soc-i2s-objs := i2s.o
- 
--obj-$(CONFIG_SND_S3C_DMA) += snd-soc-s3c-dma.o
-+obj-$(CONFIG_SND_SOC_SAMSUNG) += snd-soc-s3c-dma.o
- obj-$(CONFIG_SND_S3C24XX_I2S) += snd-soc-s3c24xx-i2s.o
- obj-$(CONFIG_SND_SAMSUNG_AC97) += snd-soc-ac97.o
- obj-$(CONFIG_SND_S3C2412_SOC_I2S) += snd-soc-s3c2412-i2s.o
 diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
-index 68d9303047e8..2aa24d052a4a 100644
+index 2aa24d052a4a..e1615113fd84 100644
 --- a/sound/soc/samsung/ac97.c
 +++ b/sound/soc/samsung/ac97.c
-@@ -19,7 +19,6 @@
+@@ -38,30 +38,15 @@ struct s3c_ac97_info {
+ };
+ static struct s3c_ac97_info s3c_ac97;
  
+-static struct s3c_dma_client s3c_dma_client_out = {
+-	.name = "AC97 PCMOut"
+-};
+-
+-static struct s3c_dma_client s3c_dma_client_in = {
+-	.name = "AC97 PCMIn"
+-};
+-
+-static struct s3c_dma_client s3c_dma_client_micin = {
+-	.name = "AC97 MicIn"
+-};
+-
+ static struct s3c_dma_params s3c_ac97_pcm_out = {
+-	.client		= &s3c_dma_client_out,
+ 	.dma_size	= 4,
+ };
+ 
+ static struct s3c_dma_params s3c_ac97_pcm_in = {
+-	.client		= &s3c_dma_client_in,
+ 	.dma_size	= 4,
+ };
+ 
+ static struct s3c_dma_params s3c_ac97_mic_in = {
+-	.client		= &s3c_dma_client_micin,
+ 	.dma_size	= 4,
+ };
+ 
+diff --git a/sound/soc/samsung/dma.h b/sound/soc/samsung/dma.h
+index 070ab0f09609..0e85dcfec023 100644
+--- a/sound/soc/samsung/dma.h
++++ b/sound/soc/samsung/dma.h
+@@ -14,17 +14,10 @@
+ 
+ #include <sound/dmaengine_pcm.h>
+ 
+-struct s3c_dma_client {
+-	char *name;
+-};
+-
+ struct s3c_dma_params {
+-	struct s3c_dma_client *client;	/* stream identifier */
+ 	int channel;				/* Channel ID */
+ 	dma_addr_t dma_addr;
+ 	int dma_size;			/* Size of the DMA transfer */
+-	unsigned ch;
+-	struct samsung_dma_ops *ops;
+ 	char *ch_name;
+ 	struct snd_dmaengine_dai_dma_data dma_data;
+ };
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 5f9b255a8b38..db8b29a0d106 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1212,11 +1212,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 
+ 	pri_dai->dma_playback.dma_addr = regs_base + I2STXD;
+ 	pri_dai->dma_capture.dma_addr = regs_base + I2SRXD;
+-	pri_dai->dma_playback.client =
+-		(struct s3c_dma_client *)&pri_dai->dma_playback;
+ 	pri_dai->dma_playback.ch_name = "tx";
+-	pri_dai->dma_capture.client =
+-		(struct s3c_dma_client *)&pri_dai->dma_capture;
+ 	pri_dai->dma_capture.ch_name = "rx";
+ 	pri_dai->dma_playback.dma_size = 4;
+ 	pri_dai->dma_capture.dma_size = 4;
+@@ -1234,8 +1230,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 			goto err;
+ 		}
+ 		sec_dai->dma_playback.dma_addr = regs_base + I2STXDS;
+-		sec_dai->dma_playback.client =
+-			(struct s3c_dma_client *)&sec_dai->dma_playback;
+ 		sec_dai->dma_playback.ch_name = "tx-sec";
+ 
+ 		if (!np) {
+diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
+index 4c5f97fe45c8..bac034b15a27 100644
+--- a/sound/soc/samsung/pcm.c
++++ b/sound/soc/samsung/pcm.c
+@@ -131,32 +131,20 @@ struct s3c_pcm_info {
+ 	struct s3c_dma_params	*dma_capture;
+ };
+ 
+-static struct s3c_dma_client s3c_pcm_dma_client_out = {
+-	.name		= "PCM Stereo out"
+-};
+-
+-static struct s3c_dma_client s3c_pcm_dma_client_in = {
+-	.name		= "PCM Stereo in"
+-};
+-
+ static struct s3c_dma_params s3c_pcm_stereo_out[] = {
+ 	[0] = {
+-		.client		= &s3c_pcm_dma_client_out,
+ 		.dma_size	= 4,
+ 	},
+ 	[1] = {
+-		.client		= &s3c_pcm_dma_client_out,
+ 		.dma_size	= 4,
+ 	},
+ };
+ 
+ static struct s3c_dma_params s3c_pcm_stereo_in[] = {
+ 	[0] = {
+-		.client		= &s3c_pcm_dma_client_in,
+ 		.dma_size	= 4,
+ 	},
+ 	[1] = {
+-		.client		= &s3c_pcm_dma_client_in,
+ 		.dma_size	= 4,
+ 	},
+ };
+diff --git a/sound/soc/samsung/s3c-i2s-v2.c b/sound/soc/samsung/s3c-i2s-v2.c
+index de6c321b8b68..df65c5b494b1 100644
+--- a/sound/soc/samsung/s3c-i2s-v2.c
++++ b/sound/soc/samsung/s3c-i2s-v2.c
+@@ -22,8 +22,6 @@
  #include <sound/soc.h>
+ #include <sound/pcm_params.h>
  
 -#include <mach/dma.h>
- #include "regs-ac97.h"
- #include <linux/platform_data/asoc-s3c.h>
- 
-@@ -225,9 +224,6 @@ static int s3c_ac97_trigger(struct snd_pcm_substream *substream, int cmd,
- 				struct snd_soc_dai *dai)
- {
- 	u32 ac_glbctrl;
--	struct snd_soc_pcm_runtime *rtd = substream->private_data;
--	struct s3c_dma_params *dma_data =
--		snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
- 
- 	ac_glbctrl = readl(s3c_ac97.regs + S3C_AC97_GLBCTRL);
- 	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
-@@ -253,11 +249,6 @@ static int s3c_ac97_trigger(struct snd_pcm_substream *substream, int cmd,
- 
- 	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
- 
--	if (!dma_data->ops)
--		dma_data->ops = samsung_dma_get_ops();
 -
--	dma_data->ops->started(dma_data->channel);
+ #include "regs-i2s-v2.h"
+ #include "s3c-i2s-v2.h"
+ #include "dma.h"
+diff --git a/sound/soc/samsung/s3c2412-i2s.c b/sound/soc/samsung/s3c2412-i2s.c
+index d6bc6dc0aafb..9180310e862a 100644
+--- a/sound/soc/samsung/s3c2412-i2s.c
++++ b/sound/soc/samsung/s3c2412-i2s.c
+@@ -34,16 +34,12 @@
+ #include "s3c2412-i2s.h"
+ 
+ static struct s3c_dma_params s3c2412_i2s_pcm_stereo_out = {
+-	.client		=
+-		(struct s3c_dma_client *)&s3c2412_i2s_pcm_stereo_out,
+ 	.channel	= DMACH_I2S_OUT,
+ 	.ch_name	= "tx",
+ 	.dma_size	= 4,
+ };
+ 
+ static struct s3c_dma_params s3c2412_i2s_pcm_stereo_in = {
+-	.client		=
+-		(struct s3c_dma_client *)&s3c2412_i2s_pcm_stereo_in,
+ 	.channel	= DMACH_I2S_IN,
+ 	.ch_name	= "rx",
+ 	.dma_size	= 4,
+diff --git a/sound/soc/samsung/s3c24xx-i2s.c b/sound/soc/samsung/s3c24xx-i2s.c
+index e8b98528e356..e87d9a2053b8 100644
+--- a/sound/soc/samsung/s3c24xx-i2s.c
++++ b/sound/soc/samsung/s3c24xx-i2s.c
+@@ -32,16 +32,12 @@
+ #include "s3c24xx-i2s.h"
+ 
+ static struct s3c_dma_params s3c24xx_i2s_pcm_stereo_out = {
+-	.client		=
+-		(struct s3c_dma_client *)&s3c24xx_i2s_pcm_stereo_out,
+ 	.channel	= DMACH_I2S_OUT,
+ 	.ch_name	= "tx",
+ 	.dma_size	= 2,
+ };
+ 
+ static struct s3c_dma_params s3c24xx_i2s_pcm_stereo_in = {
+-	.client		=
+-		(struct s3c_dma_client *)&s3c24xx_i2s_pcm_stereo_in,
+ 	.channel	= DMACH_I2S_IN,
+ 	.ch_name	= "rx",
+ 	.dma_size	= 2,
+diff --git a/sound/soc/samsung/spdif.c b/sound/soc/samsung/spdif.c
+index d9ffc48fce5e..d7d2e208f486 100644
+--- a/sound/soc/samsung/spdif.c
++++ b/sound/soc/samsung/spdif.c
+@@ -93,10 +93,6 @@ struct samsung_spdif_info {
+ 	struct s3c_dma_params	*dma_playback;
+ };
+ 
+-static struct s3c_dma_client spdif_dma_client_out = {
+-	.name		= "S/PDIF Stereo out",
+-};
 -
- 	return 0;
- }
+ static struct s3c_dma_params spdif_stereo_out;
+ static struct samsung_spdif_info spdif_info;
  
-@@ -265,9 +256,6 @@ static int s3c_ac97_mic_trigger(struct snd_pcm_substream *substream,
- 				    int cmd, struct snd_soc_dai *dai)
- {
- 	u32 ac_glbctrl;
--	struct snd_soc_pcm_runtime *rtd = substream->private_data;
--	struct s3c_dma_params *dma_data =
--		snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
+@@ -435,7 +431,6 @@ static int spdif_probe(struct platform_device *pdev)
+ 	}
  
- 	ac_glbctrl = readl(s3c_ac97.regs + S3C_AC97_GLBCTRL);
- 	ac_glbctrl &= ~S3C_AC97_GLBCTRL_MICINTM_MASK;
-@@ -287,11 +275,6 @@ static int s3c_ac97_mic_trigger(struct snd_pcm_substream *substream,
- 
- 	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
- 
--	if (!dma_data->ops)
--		dma_data->ops = samsung_dma_get_ops();
--
--	dma_data->ops->started(dma_data->channel);
--
- 	return 0;
- }
+ 	spdif_stereo_out.dma_size = 2;
+-	spdif_stereo_out.client = &spdif_dma_client_out;
+ 	spdif_stereo_out.dma_addr = mem_res->start + DATA_OUTBUF;
+ 	spdif_stereo_out.channel = dma_res->start;
  
 -- 
 1.8.3.2
