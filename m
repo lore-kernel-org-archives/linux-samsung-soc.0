@@ -1,56 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung-i2s: Maintain CDCLK settings across
- i2s_{shutdown/startup}
-Date: Fri, 11 Jul 2014 14:04:21 +0100
-Message-ID: <20140711130421.GR30458@sirena.org.uk>
-References: <1405008673-15994-1-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bebzX59uVWocTrAI"
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Fix build with PM_SLEEP=n
+Date: Fri, 11 Jul 2014 15:43:03 +0200
+Message-ID: <1405086183-24715-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59948 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752661AbaGKNFA (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:44696 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751015AbaGKNnW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jul 2014 09:05:00 -0400
-Content-Disposition: inline
-In-Reply-To: <1405008673-15994-1-git-send-email-s.nawrocki@samsung.com>
+	Fri, 11 Jul 2014 09:43:22 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: drake@endlessm.com, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Chen Zhen <zhen1.chen@samsung.com>
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
+Fix building of exynos defconfig with disabled PM_SLEEP:
+CONFIG_PM_SLEEP=n
+CONFIG_PM_SLEEP_SMP=n
+CONFIG_SUSPEND=n
 
---bebzX59uVWocTrAI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The build error messages:
+arch/arm/mach-exynos/built-in.o: In function `exynos_boot_secondary':
+arch/arm/mach-exynos/platsmp.c:111: undefined reference to `exynos_cpu_power_state'
+arch/arm/mach-exynos/platsmp.c:112: undefined reference to `exynos_cpu_power_up'
+arch/arm/mach-exynos/platsmp.c:116: undefined reference to `exynos_cpu_power_state'
+make: *** [vmlinux] Error 1
 
-On Thu, Jul 10, 2014 at 06:11:13PM +0200, Sylwester Nawrocki wrote:
-> Currently configuration of the CDCLK pad is being overwritten in
-> the i2s_shutdown() callback in order to gate the SoC output clock.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/mach-exynos/common.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Applied, thanks.
-
---bebzX59uVWocTrAI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJTv+DSAAoJELSic+t+oim9TmUP/1AwpMpnHEM3UAVJpbmiaNhL
-pW8lVaVPYAkX7GgM+9PteC5EX5bJrGvbs5rjRttFJprLN1KPiZvsThvD7C3Q3uWA
-tKl8kmB6gIihtWI/9Kbnd92/DgSbjJOKDWoOPQY2fRsYgoRneJFhfIDI6pnQP7+S
-yYeLJS9IX3pgOrcO/FJDuSNnPREn4Z9luB+AFSs/B4RpuJeSvpM2JC9KL2dq1c2t
-Oj6q8P5/J4EZEC3/9Tz4pBdJN86nKvb7iZi6g4p8OUSfvZYyFlilixaDWO9Kb6VY
-+WJ5AujMagUSt6QxuWtRw7gl+V1yIlcYMg2zySuFckl5UaUp//dIcaB5NP15fzNv
-gluEeycsoyhF7/9tuAC7VGjihsbCgWENRoo5dm3Pm7LkNF938BwRTID1r0WTt7WE
-kPTOHQyv2+PKrDII83lJkfb1FY8PWrzKQe1GU0svbuPUEKBEddBv+5Sgj6BzJzuP
-Av2jKa466qbbAnasnTtKyInfLGXU0y+UmALJZkAfFP2fvlM+A/VlE8sOgEbyQ8L6
-5djr8J8hpTLe8ewY1nxofNhWqzfOOhf56wxWznmQ/aKXH5mNtPuxvHr1Hb7fQtsu
-AoO7y5+8QqEKjd9pTnxxQWRqpNdatuWdHx/VAfjWWNo830zRHwwGPGtkvsXwXsgo
-hshItB0K9uKW9cm/LZNw
-=tyXr
------END PGP SIGNATURE-----
-
---bebzX59uVWocTrAI--
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index f8daa9cc5617..966ecf195265 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -149,9 +149,15 @@ struct exynos_pmu_conf {
+ };
+ 
+ extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
++#ifdef CONFIG_PM_SLEEP
+ extern void exynos_cpu_power_down(int cpu);
+ extern void exynos_cpu_power_up(int cpu);
+ extern int  exynos_cpu_power_state(int cpu);
++#else
++extern inline void exynos_cpu_power_down(int cpu) {}
++extern inline void exynos_cpu_power_up(int cpu) {}
++extern inline int  exynos_cpu_power_state(int cpu) { return 0; }
++#endif
+ extern void exynos_cluster_power_down(int cluster);
+ extern void exynos_cluster_power_up(int cluster);
+ extern int  exynos_cluster_power_state(int cluster);
+-- 
+1.9.1
