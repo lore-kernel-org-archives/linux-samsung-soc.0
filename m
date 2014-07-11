@@ -1,56 +1,46 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 9/9] ARM: dts: exynos3250: add JPEG codec device node
-Date: Fri, 11 Jul 2014 16:02:02 +0200
-Message-ID: <53BFEE5A.40306@samsung.com>
-References: <1404750730-22996-1-git-send-email-j.anaszewski@samsung.com>
- <1404750730-22996-10-git-send-email-j.anaszewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1404750730-22996-10-git-send-email-j.anaszewski@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Jacek Anaszewski <j.anaszewski@samsung.com>
-Cc: linux-media@vger.kernel.org, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH v3] ARM: dts: exynos3250 add MFC codec device node
+Date: Fri, 11 Jul 2014 17:30:43 +0200
+Message-ID: <1405092643-29232-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:54640 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753600AbaGKPaq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 11 Jul 2014 11:30:46 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On 07/07/14 18:32, Jacek Anaszewski wrote:
-> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Pawel Moll <pawel.moll@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Ian Campbell <ijc+devicetree@hellion.org.uk>
-> Cc: Kumar Gala <galak@codeaurora.org>
-> Cc: devicetree@vger.kernel.org
-> ---
->  arch/arm/boot/dts/exynos3250.dtsi |   12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> index 3e678fa..351871a 100644
-> --- a/arch/arm/boot/dts/exynos3250.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> @@ -206,6 +206,18 @@
->  			interrupts = <0 240 0>;
->  		};
->  
-> +		jpeg-codec@11830000 {
-> +			compatible = "samsung,exynos3250-jpeg";
-> +			reg = <0x11830000 0x1000>;
-> +			interrupts = <0 171 0>;
-> +			clocks = <&cmu CLK_JPEG>, <&cmu CLK_SCLK_JPEG>;
-> +			clock-names = "jpeg", "sclk-jpeg";
-> +			samsung,power-domain = <&pd_cam>;
-> +			assigned-clock-parents = <&cmu CLK_MOUT_CAM_BLK &cmu CLK_DIV_MPLL_PRE>,
-> +						 <&cmu CLK_SCLK_JPEG &cmu>;
-> +			assigned-clock-rates = <&cmu CLK_SCLK_JPEG 150000000>;
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/boot/dts/exynos3250.dtsi |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-There is no support for the assigned-clock-parents/assigned-clock-rates
-in mainline yet unfortunately. I would suggest removing these two properties
-for now. And please send this patch to relevant maintainer, i.e. Kukjin Kim.
-
-> +		};
-
-Thanks,
-Sylwester
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 351871a..01bf5fa 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -283,6 +283,17 @@
+ 			status = "disabled";
+ 		};
+ 
++		codec@13400000 {
++			compatible = "samsung,mfc-v7";
++			reg = <0x13400000 0x10000>;
++			interrupts = <0 102 0>;
++			clock-names = "mfc", "sclk-mfc";
++			clocks = <&cmu CLK_MFC>, <&cmu CLK_SCLK_MFC>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			samsung,power-domain = <&pd_mfc>;
++		};
++
+ 		serial_0: serial@13800000 {
+ 			compatible = "samsung,exynos4210-uart";
+ 			reg = <0x13800000 0x100>;
+-- 
+1.7.9.5
