@@ -1,75 +1,68 @@
-From: Tushar Behera <tushar.b@samsung.com>
-Subject: [PATCH V2 2/3] clk: samsung: Add API to unregister clocks
-Date: Fri, 11 Jul 2014 17:30:34 +0530
-Message-ID: <1405080036-6651-3-git-send-email-tushar.b@samsung.com>
-References: <1405080036-6651-1-git-send-email-tushar.b@samsung.com>
+From: Tushar Behera <trblinux@gmail.com>
+Subject: Re: [PATCH 2/2] clk: exynos-audss: Update as per existing framework
+Date: Fri, 11 Jul 2014 17:37:43 +0530
+Message-ID: <53BFD38F.5010805@gmail.com>
+References: <1405071475-31946-1-git-send-email-tushar.b@samsung.com> <1405071475-31946-3-git-send-email-tushar.b@samsung.com> <53BFBF18.3080704@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:51258 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753395AbaGKMEa (ORCPT
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:40930 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751667AbaGKMHt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jul 2014 08:04:30 -0400
-In-Reply-To: <1405080036-6651-1-git-send-email-tushar.b@samsung.com>
+	Fri, 11 Jul 2014 08:07:49 -0400
+In-Reply-To: <53BFBF18.3080704@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, mturquette@linaro.org, t.figa@samsung.com, trblinux@gmail.com
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tushar Behera <tushar.b@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, robh+dt@kernel.org, grant.likely@linaro.org, kgene.kim@samsung.com, mturquette@linaro.org, t.figa@samsung.com
 
-Added an API to unregister all the clocks defined within a context. This
-is helpful in case where the clock is registered through a platform
-driver and we want to unregister the clocks during remove callback.
+On 07/11/2014 04:10 PM, Sylwester Nawrocki wrote:
+> Hi Tushar,
+> 
+> On 11/07/14 11:37, Tushar Behera wrote:
+>> Change exynos-audss clock driver as per existing clock framework from
+>> the existing module driver framework.
+> 
+> Can you explain what's the actual issue you're trying to solve with that
+> patch ? What's the problem with this driver being a platform driver ?
+> It feels we're moving in circles here, see
+> 
+> commit b37a4224104568198b93fb9831224cfe7d83fff8
+> Author: Andrew Bresticker <abrestic@chromium.org>
+> Date:   Wed Sep 25 14:12:47 2013 -0700
+> 
+>     clk: exynos-audss: convert to platform device
+> 
+>     The Exynos AudioSS clock controller will later be modified to allow
+>     input clocks to be specified via device-tree in order to support
+>     multiple Exynos SoCs.  This will introduce a dependency on the core
+>     SoC clock controller being initialized first so that the AudioSS driver
+>     can look up its input clocks, but the order in which clock providers
+>     are probed in of_clk_init() is not guaranteed.  Since deferred probing
+>     is not supported in of_clk_init() and the AudioSS block is not the core
+>     controller, we can initialize it later as a platform device.
+> 
+>     Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>     Acked-by: Tomasz Figa <t.figa@samsung.com>
+>     Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>     Acked-by: Mike Turquette <mturquette@linaro.org>
+>     Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>     Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> 
+> I realize of_clk_init() now handles better clock provider dependencies,
+> nevertheless do we really need all this churn ?
+> 
 
-Signed-off-by: Tushar Behera <tushar.b@samsung.com>
----
-Changelog:
-This is new patch required because of changes to patch 3/3.
+I have sent v2 of the patchset while retaining the platform driver
+infrastructure. Awaiting your review comments on that.
 
- drivers/clk/samsung/clk.c |   19 +++++++++++++++++++
- drivers/clk/samsung/clk.h |    2 ++
- 2 files changed, 21 insertions(+)
+> --
+> Thanks,
+> Sylwester
+> 
 
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 49629c7..b9310b9 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -83,6 +83,25 @@ struct samsung_clk_provider *__init samsung_clk_init(struct device_node *np,
- 	return ctx;
- }
- 
-+/* API to remove a clock provider */
-+void samsung_clk_exit(struct device_node *np, struct samsung_clk_provider *ctx)
-+{
-+	int i;
-+
-+	if (np)
-+		of_clk_del_provider(np);
-+
-+	if (!ctx)
-+		return;
-+
-+	for (i = 0; i < ctx->clk_data.clk_num; i++)
-+		if (!IS_ERR(ctx->clk_data.clks[i]))
-+			clk_unregister(ctx->clk_data.clks[i]);
-+
-+	kfree(ctx->clk_data.clks);
-+	kfree(ctx);
-+}
-+
- /* add a clock instance to the clock lookup table used for dt based lookup */
- void samsung_clk_add_lookup(struct samsung_clk_provider *ctx, struct clk *clk,
- 				unsigned int id)
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index 9693b80..8ecc85a 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -327,6 +327,8 @@ struct samsung_pll_clock {
- extern struct samsung_clk_provider *__init samsung_clk_init(
- 			struct device_node *np, void __iomem *base,
- 			unsigned long nr_clks);
-+extern void samsung_clk_exit(struct device_node *np,
-+			struct samsung_clk_provider *ctx);
- extern void __init samsung_clk_of_register_fixed_ext(
- 			struct samsung_clk_provider *ctx,
- 			struct samsung_fixed_rate_clock *fixed_rate_clk,
+Thanks,
 -- 
-1.7.9.5
+Tushar Behera
