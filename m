@@ -1,66 +1,65 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v7 08/24] mfd: max77686: Add Dynamic Voltage Scaling (DVS) support
-Date: Thu, 10 Jul 2014 21:02:35 -0700
-Message-ID: <CAD=FV=XrgKSaOOutRr6wkNa6vu3uXo3ny43zyKCQzbYpe5xb2A@mail.gmail.com>
-References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1404505467-26526-9-git-send-email-javier.martinez@collabora.co.uk>
-	<CADGdYn6tyTBZOjZH8JBUVMJ1kh-tht=tkU4tA+oM=PbfTYkqGw@mail.gmail.com>
-	<53BF41C8.4080304@collabora.co.uk>
+From: Sachin Kamat <spk.linux@gmail.com>
+Subject: Re: [PATCH 12/16] i2c: i2c-s3c2410: Drop class based scanning to
+ improve bootup time
+Date: Fri, 11 Jul 2014 11:29:46 +0530
+Message-ID: <CAK5sBcG_bWS5frTkTCwUeSEe_oNrVP9QDtFjWzwfhv2KWSN3HQ@mail.gmail.com>
+References: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
+	<1404992799-3705-13-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f172.google.com ([209.85.220.172]:52424 "EHLO
-	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751388AbaGKECg (ORCPT
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:58184 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751081AbaGKF7u (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jul 2014 00:02:36 -0400
-Received: by mail-vc0-f172.google.com with SMTP id hy10so965448vcb.31
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Jul 2014 21:02:35 -0700 (PDT)
-In-Reply-To: <53BF41C8.4080304@collabora.co.uk>
+	Fri, 11 Jul 2014 01:59:50 -0400
+In-Reply-To: <1404992799-3705-13-git-send-email-wsa@the-dreams.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: amit daniel kachhap <amit.daniel@samsung.com>, Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Tushar Behera <trblinux@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Andreas Farber <afaerber@suse.de>, LAK <linux-arm-kernel@lists.infradead.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-Hi,
+Hi Wolfram,
 
-On Thu, Jul 10, 2014 at 6:45 PM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
->> I think when DVS gpio is used all the 8 voltage levels are fetched
->> from DT during booting and the registers are programmed accordingly.
->> Any further set/get_voltage just changes the GPIO lines.
->> Any reason why this method is not used?
+On Thu, Jul 10, 2014 at 5:16 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> This driver has been flagged to drop class based instantiation. The removal
+> improves boot-up time and is unneeded for embedded controllers. Users have been
+> warned to switch for some time now, so we can actually do the removal. Keep the
+> DEPRECATED flag, so the core can inform users that the behaviour finally
+> changed now. After another transition period, this flag can go, too.
+> While we are here, remove the indentation for the array setup because
+> such things always break after some time.
 >
-> What are you describing is how the DT binding works for other Maxim PMICs that
-> also have DVS support right? (e.g: max8997).
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> ---
+>  drivers/i2c/busses/i2c-s3c2410.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 >
-> The DVS binding in max77686/802 is actually a subset of the one in max8997 so it
-> let's you only choose which single DVS index is going to be used. The GPIOs in
-> "max77686,pmic-buck-dvs-gpios" should match "pmic-buck-default-dvs-idx".
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index e828a1dba0e5..6252c051525a 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -1128,11 +1128,11 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>                 s3c24xx_i2c_parse_dt(pdev->dev.of_node, i2c);
 >
-> To be honest I just took the DT binding that was used in the max77xxx driver
-> from the Chrome OS 3.8 kernel and didn't compare it with other Maxim PMICs DT
-> bingings.
+>         strlcpy(i2c->adap.name, "s3c2410-i2c", sizeof(i2c->adap.name));
+> -       i2c->adap.owner   = THIS_MODULE;
+> -       i2c->adap.algo    = &s3c24xx_i2c_algorithm;
+> +       i2c->adap.owner = THIS_MODULE;
+> +       i2c->adap.algo = &s3c24xx_i2c_algorithm;
+>         i2c->adap.retries = 2;
+> -       i2c->adap.class   = I2C_CLASS_HWMON | I2C_CLASS_SPD | I2C_CLASS_DEPRECATED;
+> -       i2c->tx_setup     = 50;
+> +       i2c->adap.class = I2C_CLASS_DEPRECATED;
+> +       i2c->tx_setup = 50;
 >
-> I wonder if I should just take the DVS patches out from this initial version to
-> avoid blocking the max77802 support and then we can discuss this in more detail.
+>         init_waitqueue_head(&i2c->wait);
+>
+> --
 
-To give background:
+Tested on Exynos 5250 boards.
+Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
 
-* On exynos5250 / exynos5420 / exynos5800 the CPUFreq driver exposes
-more than 8 different operating points.  You could argue about whether
-that's useful but that's the way it is right now.  That means that
-using the GPIOs is not trivial (you'd have to use a mix of GPIOs and
-i2c and use heuristics).
-
-* On the Samsung Chromebook 2 we use the DVFS GPIOs to get back to a
-sane state after a warm reset.  When the CPU resets itself all GPIOs
-will default back to their reset state.  That will effectively
-transfer us to DVFS slot 0.  We make sure that the kernel always
-modifies a different DVFS slot.
-
-* On all known boards all DVFS GPIOs were hooked up.  I originally
-wrote code assuming that someone could design a board with fewer lines
-hooked up but I don't know of that being done.
-
--Doug
+-- 
+Regards,
+Sachin.
