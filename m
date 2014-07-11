@@ -1,106 +1,43 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 4/4] ARM: dts: exynos: Add sysreg phandle to ADC node
-Date: Fri, 11 Jul 2014 14:36:29 +0530
-Message-ID: <1405069589-10388-5-git-send-email-ch.naveen@samsung.com>
+From: Sachin Kamat <spk.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/4] Documentation: dt-bindings: move exynos-adc.txt to
+ more iio/adc/
+Date: Fri, 11 Jul 2014 14:47:19 +0530
+Message-ID: <CAK5sBcFvPo38LtWAhee0xO=KONM5V-UEDzgjCc=uEXtG32NowA@mail.gmail.com>
 References: <1405069589-10388-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1405069589-10388-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org
+	<1405069589-10388-3-git-send-email-ch.naveen@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1405069589-10388-3-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Naveen Krishna <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Instead of using the ADC_PHY register base address, use sysreg phandle
-in ADC node to control ADC_PHY configuration register.
+Hi Naveen,
 
-This patch adds syscon node for Exynos3250, Exynos4x12, Exynos5250,
-and Exynos5420, Exynos5800.
+On Fri, Jul 11, 2014 at 2:36 PM, Naveen Krishna Chatradhi
+<ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> The DT bindings in exynos-adc.txt applies to the ADC
+> driver (exynos-adc.c) developed based on IIO framework.
+>
+> The bindings are more appropriate to be under
+> Documentation/devicetree/bindings/iio/adc/
+>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> ---
+>  .../devicetree/bindings/arm/samsung/exynos-adc.txt |   82 --------------------
+>  .../devicetree/bindings/iio/adc/exynos-adc.txt     |   82 ++++++++++++++++++++
+>  2 files changed, 82 insertions(+), 82 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/exynos-adc.txt
+>
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
----
- arch/arm/boot/dts/exynos3250.dtsi |    3 ++-
- arch/arm/boot/dts/exynos4x12.dtsi |    3 ++-
- arch/arm/boot/dts/exynos5250.dtsi |    3 ++-
- arch/arm/boot/dts/exynos5420.dtsi |    3 ++-
- 4 files changed, 8 insertions(+), 4 deletions(-)
+Tip: For only a file move or rename please use "-M" with git
+format-patch. That will make the
+patch concise.
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index c5e15db..51c9b0d 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -262,12 +262,13 @@
- 
- 		adc: adc@126C0000 {
- 			compatible = "samsung,exynos3250-adc-v2";
--			reg = <0x126C0000 0x100>, <0x10020718 0x4>;
-+			reg = <0x126C0000 0x100>;
- 			interrupts = <0 137 0>;
- 			clock-names = "adc", "sclk_adc";
- 			clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
- 			#io-channel-cells = <1>;
- 			io-channel-ranges;
-+			samsung,syscon-phandle = <&pmu_system_controller>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index c5a943d..9a18d9b 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -114,13 +114,14 @@
- 
- 	adc: adc@126C0000 {
- 		compatible = "samsung,exynos-adc-v1";
--		reg = <0x126C0000 0x100>, <0x10020718 0x4>;
-+		reg = <0x126C0000 0x100>;
- 		interrupt-parent = <&combiner>;
- 		interrupts = <10 3>;
- 		clocks = <&clock CLK_TSADC>;
- 		clock-names = "adc";
- 		#io-channel-cells = <1>;
- 		io-channel-ranges;
-+		samsung,syscon-phandle = <&pmu_system_controller>;
- 		status = "disabled";
- 	};
- 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 834fb5a..6003777 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -762,12 +762,13 @@
- 
- 	adc: adc@12D10000 {
- 		compatible = "samsung,exynos-adc-v1";
--		reg = <0x12D10000 0x100>, <0x10040718 0x4>;
-+		reg = <0x12D10000 0x100>
- 		interrupts = <0 106 0>;
- 		clocks = <&clock CLK_ADC>;
- 		clock-names = "adc";
- 		#io-channel-cells = <1>;
- 		io-channel-ranges;
-+		samsung,syscon-phandle = <&pmu_system_controller>;
- 		status = "disabled";
- 	};
- 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index e385322..6979da8 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -525,12 +525,13 @@
- 
- 	adc: adc@12D10000 {
- 		compatible = "samsung,exynos-adc-v2";
--		reg = <0x12D10000 0x100>, <0x10040720 0x4>;
-+		reg = <0x12D10000 0x100>;
- 		interrupts = <0 106 0>;
- 		clocks = <&clock CLK_TSADC>;
- 		clock-names = "adc";
- 		#io-channel-cells = <1>;
- 		io-channel-ranges;
-+		samsung,syscon-phandle = <&pmu_system_controller>;
- 		status = "disabled";
- 	};
- 
 -- 
-1.7.9.5
+Regards,
+Sachin.
