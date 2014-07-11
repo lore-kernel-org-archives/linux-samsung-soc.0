@@ -1,85 +1,56 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
-Date: Fri, 11 Jul 2014 13:24:25 +0100
-Message-ID: <20140711122425.GD12899@arm.com>
-References: <20140624091808.GC26013@arm.com>
- <53A9BC18.2090106@codeaurora.org>
- <20140624181150.GB4067@arm.com>
- <53A9EF3A.2070704@codeaurora.org>
- <20140625091858.GG6153@arm.com>
- <53ADEEDF.7060902@codeaurora.org>
- <20140630095220.GA25779@arm.com>
- <53BC95DA.1010500@codeaurora.org>
- <20140709105441.GE9485@arm.com>
- <53BF1470.1000704@codeaurora.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: samsung-i2s: Maintain CDCLK settings across
+ i2s_{shutdown/startup}
+Date: Fri, 11 Jul 2014 14:04:21 +0100
+Message-ID: <20140711130421.GR30458@sirena.org.uk>
+References: <1405008673-15994-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="bebzX59uVWocTrAI"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:38342 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751071AbaGKMYT (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59948 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752661AbaGKNFA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jul 2014 08:24:19 -0400
+	Fri, 11 Jul 2014 09:05:00 -0400
 Content-Disposition: inline
-In-Reply-To: <53BF1470.1000704@codeaurora.org>
+In-Reply-To: <1405008673-15994-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olav Haugan <ohaugan@codeaurora.org>
-Cc: Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, "mitchelh@codeaurora.org" <mitchelh@codeaurora.org>, Dave P Martin <Dave.Martin@arm.com>, linux-arm-kernel@lists.infradead.or
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: drake@endlessm.com, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Chen Zhen <zhen1.chen@samsung.com>
 
-On Thu, Jul 10, 2014 at 11:32:16PM +0100, Olav Haugan wrote:
-> On 7/9/2014 3:54 AM, Will Deacon wrote:
-> > On Wed, Jul 09, 2014 at 02:07:38AM +0100, Olav Haugan wrote:
-> >> So how does an algorithm figure this out in both my examples? The
-> >> algorithm would have to know about both (all) bus masters and their
-> >> stream IDs for a specific SMMU. If the algorithm operates on the set of
-> >> stream IDs for one bus master at a time the algorithm has no way of
-> >> knowing which bits can be ignored since it doesn't know the value of the
-> >> other stream IDs for the other bus masters and thus could potentially
-> >> create a mask that could cause a stream ID to match in two different
-> >> entries.
-> > 
-> > Complete knowledge of the system topology (i.e. all bus masters) is a
-> > requirement for being able to configure the SMMU correctly if you want to
-> > guarantee that you don't have SMR aliasing issues.
-> 
-> So you agree that an algorithm needs to know about all the bus
-> masters/stream IDs for a specific IOMMU before it can figure out the
-> StreamID masks and how many SMRs can be allocated to a specific bus
-> master? Andreas's algorithm does not know about the other bus
-> masters/stream IDs. It operates on one bus master at a time.
 
-Right, but it can certainly be improved. There are certain things you can do
-without complete knowledge, as I mentioned previously (if you can have
-densely packed power-of-2 aligned/sized regions).
+--bebzX59uVWocTrAI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> >>>> I am not familiar with Andreas's proposal. Do you have a link?
-> >>>
-> >>>   http://marc.info/?l=linux-arm-kernel&m=139110598005846&w=2
-> >>
-> >> Unless I am mistaken the algorithm works on one bus master at a time. I
-> >> don't think that will work.
-> > 
-> > IIRC, it works for densely packed SIDs on the master, so it tries to build
-> > up power-of-2 sized groups for that master then mops up the rest with
-> > individual entries.
-> 
-> I ran the algorithm through a few trivial cases:
-> 
-> 1)
-> Stream IDs: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
-> Number of SMRs: 9
-> 
-> In this case the algorithm decided to set mask to 0 for all entries
-> using up 8 of the SMRs.
+On Thu, Jul 10, 2014 at 06:11:13PM +0200, Sylwester Nawrocki wrote:
+> Currently configuration of the CDCLK pad is being overwritten in
+> the i2s_shutdown() callback in order to gate the SoC output clock.
 
-Well think about what it's doing... we don't know about SID 0x20, for
-example so there's not much it can do.
+Applied, thanks.
 
-> 2) Same Stream IDs but only 2 SMRs.
-> The algorithm gave an error saying I did not have enough SMRs.
+--bebzX59uVWocTrAI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-There's a reason this didn't get merged, and it would be great if you could
-try to improve the situation ;).
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-Will
+iQIcBAEBAgAGBQJTv+DSAAoJELSic+t+oim9TmUP/1AwpMpnHEM3UAVJpbmiaNhL
+pW8lVaVPYAkX7GgM+9PteC5EX5bJrGvbs5rjRttFJprLN1KPiZvsThvD7C3Q3uWA
+tKl8kmB6gIihtWI/9Kbnd92/DgSbjJOKDWoOPQY2fRsYgoRneJFhfIDI6pnQP7+S
+yYeLJS9IX3pgOrcO/FJDuSNnPREn4Z9luB+AFSs/B4RpuJeSvpM2JC9KL2dq1c2t
+Oj6q8P5/J4EZEC3/9Tz4pBdJN86nKvb7iZi6g4p8OUSfvZYyFlilixaDWO9Kb6VY
++WJ5AujMagUSt6QxuWtRw7gl+V1yIlcYMg2zySuFckl5UaUp//dIcaB5NP15fzNv
+gluEeycsoyhF7/9tuAC7VGjihsbCgWENRoo5dm3Pm7LkNF938BwRTID1r0WTt7WE
+kPTOHQyv2+PKrDII83lJkfb1FY8PWrzKQe1GU0svbuPUEKBEddBv+5Sgj6BzJzuP
+Av2jKa466qbbAnasnTtKyInfLGXU0y+UmALJZkAfFP2fvlM+A/VlE8sOgEbyQ8L6
+5djr8J8hpTLe8ewY1nxofNhWqzfOOhf56wxWznmQ/aKXH5mNtPuxvHr1Hb7fQtsu
+AoO7y5+8QqEKjd9pTnxxQWRqpNdatuWdHx/VAfjWWNo830zRHwwGPGtkvsXwXsgo
+hshItB0K9uKW9cm/LZNw
+=tyXr
+-----END PGP SIGNATURE-----
+
+--bebzX59uVWocTrAI--
