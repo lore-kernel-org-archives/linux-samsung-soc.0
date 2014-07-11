@@ -1,68 +1,85 @@
-From: Tushar Behera <trblinux@gmail.com>
-Subject: Re: [PATCH 2/2] clk: exynos-audss: Update as per existing framework
-Date: Fri, 11 Jul 2014 17:37:43 +0530
-Message-ID: <53BFD38F.5010805@gmail.com>
-References: <1405071475-31946-1-git-send-email-tushar.b@samsung.com> <1405071475-31946-3-git-send-email-tushar.b@samsung.com> <53BFBF18.3080704@samsung.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v2] devicetree: Add generic IOMMU device tree bindings
+Date: Fri, 11 Jul 2014 13:24:25 +0100
+Message-ID: <20140711122425.GD12899@arm.com>
+References: <20140624091808.GC26013@arm.com>
+ <53A9BC18.2090106@codeaurora.org>
+ <20140624181150.GB4067@arm.com>
+ <53A9EF3A.2070704@codeaurora.org>
+ <20140625091858.GG6153@arm.com>
+ <53ADEEDF.7060902@codeaurora.org>
+ <20140630095220.GA25779@arm.com>
+ <53BC95DA.1010500@codeaurora.org>
+ <20140709105441.GE9485@arm.com>
+ <53BF1470.1000704@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:40930 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751667AbaGKMHt (ORCPT
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:38342 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751071AbaGKMYT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jul 2014 08:07:49 -0400
-In-Reply-To: <53BFBF18.3080704@samsung.com>
+	Fri, 11 Jul 2014 08:24:19 -0400
+Content-Disposition: inline
+In-Reply-To: <53BF1470.1000704@codeaurora.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tushar Behera <tushar.b@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, robh+dt@kernel.org, grant.likely@linaro.org, kgene.kim@samsung.com, mturquette@linaro.org, t.figa@samsung.com
+To: Olav Haugan <ohaugan@codeaurora.org>
+Cc: Mark Rutland <Mark.Rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Linux IOMMU <iommu@lists.linux-foundation.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Cho KyongHo <pullip.cho@samsung.com>, "mitchelh@codeaurora.org" <mitchelh@codeaurora.org>, Dave P Martin <Dave.Martin@arm.com>, linux-arm-kernel@lists.infradead.or
 
-On 07/11/2014 04:10 PM, Sylwester Nawrocki wrote:
-> Hi Tushar,
+On Thu, Jul 10, 2014 at 11:32:16PM +0100, Olav Haugan wrote:
+> On 7/9/2014 3:54 AM, Will Deacon wrote:
+> > On Wed, Jul 09, 2014 at 02:07:38AM +0100, Olav Haugan wrote:
+> >> So how does an algorithm figure this out in both my examples? The
+> >> algorithm would have to know about both (all) bus masters and their
+> >> stream IDs for a specific SMMU. If the algorithm operates on the set of
+> >> stream IDs for one bus master at a time the algorithm has no way of
+> >> knowing which bits can be ignored since it doesn't know the value of the
+> >> other stream IDs for the other bus masters and thus could potentially
+> >> create a mask that could cause a stream ID to match in two different
+> >> entries.
+> > 
+> > Complete knowledge of the system topology (i.e. all bus masters) is a
+> > requirement for being able to configure the SMMU correctly if you want to
+> > guarantee that you don't have SMR aliasing issues.
 > 
-> On 11/07/14 11:37, Tushar Behera wrote:
->> Change exynos-audss clock driver as per existing clock framework from
->> the existing module driver framework.
-> 
-> Can you explain what's the actual issue you're trying to solve with that
-> patch ? What's the problem with this driver being a platform driver ?
-> It feels we're moving in circles here, see
-> 
-> commit b37a4224104568198b93fb9831224cfe7d83fff8
-> Author: Andrew Bresticker <abrestic@chromium.org>
-> Date:   Wed Sep 25 14:12:47 2013 -0700
-> 
->     clk: exynos-audss: convert to platform device
-> 
->     The Exynos AudioSS clock controller will later be modified to allow
->     input clocks to be specified via device-tree in order to support
->     multiple Exynos SoCs.  This will introduce a dependency on the core
->     SoC clock controller being initialized first so that the AudioSS driver
->     can look up its input clocks, but the order in which clock providers
->     are probed in of_clk_init() is not guaranteed.  Since deferred probing
->     is not supported in of_clk_init() and the AudioSS block is not the core
->     controller, we can initialize it later as a platform device.
-> 
->     Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
->     Acked-by: Tomasz Figa <t.figa@samsung.com>
->     Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->     Acked-by: Mike Turquette <mturquette@linaro.org>
->     Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->     Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> 
-> I realize of_clk_init() now handles better clock provider dependencies,
-> nevertheless do we really need all this churn ?
-> 
+> So you agree that an algorithm needs to know about all the bus
+> masters/stream IDs for a specific IOMMU before it can figure out the
+> StreamID masks and how many SMRs can be allocated to a specific bus
+> master? Andreas's algorithm does not know about the other bus
+> masters/stream IDs. It operates on one bus master at a time.
 
-I have sent v2 of the patchset while retaining the platform driver
-infrastructure. Awaiting your review comments on that.
+Right, but it can certainly be improved. There are certain things you can do
+without complete knowledge, as I mentioned previously (if you can have
+densely packed power-of-2 aligned/sized regions).
 
-> --
-> Thanks,
-> Sylwester
+> >>>> I am not familiar with Andreas's proposal. Do you have a link?
+> >>>
+> >>>   http://marc.info/?l=linux-arm-kernel&m=139110598005846&w=2
+> >>
+> >> Unless I am mistaken the algorithm works on one bus master at a time. I
+> >> don't think that will work.
+> > 
+> > IIRC, it works for densely packed SIDs on the master, so it tries to build
+> > up power-of-2 sized groups for that master then mops up the rest with
+> > individual entries.
 > 
+> I ran the algorithm through a few trivial cases:
+> 
+> 1)
+> Stream IDs: 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
+> Number of SMRs: 9
+> 
+> In this case the algorithm decided to set mask to 0 for all entries
+> using up 8 of the SMRs.
 
-Thanks,
--- 
-Tushar Behera
+Well think about what it's doing... we don't know about SID 0x20, for
+example so there's not much it can do.
+
+> 2) Same Stream IDs but only 2 SMRs.
+> The algorithm gave an error saying I did not have enough SMRs.
+
+There's a reason this didn't get merged, and it would be great if you could
+try to improve the situation ;).
+
+Will
