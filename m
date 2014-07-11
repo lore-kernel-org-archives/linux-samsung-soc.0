@@ -1,277 +1,131 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v7 08/24] mfd: max77686: Add Dynamic Voltage Scaling (DVS)
- support
-Date: Fri, 11 Jul 2014 03:45:44 +0200
-Message-ID: <53BF41C8.4080304@collabora.co.uk>
-References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>	<1404505467-26526-9-git-send-email-javier.martinez@collabora.co.uk> <CADGdYn6tyTBZOjZH8JBUVMJ1kh-tht=tkU4tA+oM=PbfTYkqGw@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH v6 15/23] regulator: max77686: Setup DVS-related GPIOs
+ on probe
+Date: Fri, 11 Jul 2014 04:03:00 +0200
+Message-ID: <53BF45D4.2000302@collabora.co.uk>
+References: <1404467722-26687-1-git-send-email-javier.martinez@collabora.co.uk>	<1404467722-26687-16-git-send-email-javier.martinez@collabora.co.uk> <CADGdYn4EURaHinWVksQSPzVr=CkZYcrqvWsO7mKDz_gY9XB__Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:42583 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751721AbaGKBpv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jul 2014 21:45:51 -0400
-In-Reply-To: <CADGdYn6tyTBZOjZH8JBUVMJ1kh-tht=tkU4tA+oM=PbfTYkqGw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CADGdYn4EURaHinWVksQSPzVr=CkZYcrqvWsO7mKDz_gY9XB__Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: amit daniel kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andreas Farber <afaerber-l3A5Bk7waGM@public.gmane.org>, LAK <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: amit daniel kachhap <amit.daniel@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, Yadwinder Singh Brar <yadi.brar01@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, Tushar Behera <trblinux@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Andreas Farber <afaerber@suse.de>, LAK <linux-arm-kernel@lists.infradead.org>
 
 Hello Amit,
 
-On 07/10/2014 11:59 AM, amit daniel kachhap wrote:
-> On Sat, Jul 5, 2014 at 1:54 AM, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
->> Some regulators on the MAX77686 PMIC have Dynamic Voltage Scaling
->> (DVS) support that allows output voltage to change dynamically.
->>
->> For MAX77686, these regulators are Buck regulators 2, 3 and 4.
->>
->> Each Buck output voltage is selected using a set of external
->> inputs: DVS1-3 and SELB2-4.
->>
->> DVS registers can be used to configure the output voltages for each
->> Buck regulator and which one is active is controled by DVSx lines.
->>
->> SELBx lines are used to control if individual Buck lines are ON or OFF.
->>
->> This patch adds support to configure the DVSx and SELBx lines
->> from DT and to setup and read the GPIO lines connected to them.
-> 
-> The entire series looks nice. Few minor comments from my side. I guess
-> still one more version in needed as per other ppls comment.
-> You may add,
-> Reviewed-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->
+On 07/10/2014 12:08 PM, amit daniel kachhap wrote:
+> On Fri, Jul 4, 2014 at 3:25 PM, Javier Martinez Canillas
+> <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org> wrote:
+>> MAX77686 PMIC support Dyamic Voltage Scaling (DVS) on a set
+>> of Buck regulators. A number of GPIO are connected to these
+>> lines and are requested by the mfd driver. Setup the GPIO
+>> pins from the regulator driver.
+> If possible merge this patch with patch 8. Both are adding DVS
+> support. Put regmap_copy dependency patch in very beginning.
 
-Thanks.
+As Lee already said, I split the changes to minimize the cross-subsystem churn.
 
 >>
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 >> ---
+>>  drivers/regulator/max77686.c | 34 ++++++++++++++++++++++++++++++++++
+>>  1 file changed, 34 insertions(+)
 >>
->> Changes since v6:
->>  - Add a comment that max77686_read_gpios() function can sleep.
->>    Sugggested by Krzysztof Kozlowski
->> ---
->>  drivers/mfd/max77686.c       | 119 +++++++++++++++++++++++++++++++++++++++++++
->>  include/linux/mfd/max77686.h |  18 ++++---
->>  2 files changed, 129 insertions(+), 8 deletions(-)
+>> diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
+>> index ef1af2d..ecce77a 100644
+>> --- a/drivers/regulator/max77686.c
+>> +++ b/drivers/regulator/max77686.c
+>> @@ -435,6 +435,12 @@ static int max77686_pmic_dt_parse_pdata(struct platform_device *pdev,
+>>  }
+>>  #endif /* CONFIG_OF */
 >>
->> diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
->> index 8650832..d193873 100644
->> --- a/drivers/mfd/max77686.c
->> +++ b/drivers/mfd/max77686.c
->> @@ -32,8 +32,10 @@
->>  #include <linux/mfd/core.h>
->>  #include <linux/mfd/max77686.h>
->>  #include <linux/mfd/max77686-private.h>
->> +#include <linux/gpio/consumer.h>
->>  #include <linux/err.h>
->>  #include <linux/of.h>
->> +#include <linux/export.h>
->>
->>  #define I2C_ADDR_RTC   (0x0C >> 1)
->>
->> @@ -101,9 +103,119 @@ static const struct of_device_id max77686_pmic_dt_match[] = {
->>         {},
->>  };
->>
->> +static void max77686_dt_parse_dvs_gpio(struct device *dev)
+>> +static inline bool max77686_is_dvs_buck(int id)
 >> +{
->> +       struct max77686_platform_data *pd = dev_get_platdata(dev);
->> +       int i;
->> +
->> +       /*
->> +        * NOTE: we don't consider GPIO errors fatal; board may have some lines
->> +        * directly pulled high or low and thus doesn't specify them.
->> +        */
->> +       for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_dvs); i++)
->> +               pd->buck_gpio_dvs[i] =
->> +                       devm_gpiod_get_index(dev, "max77686,pmic-buck-dvs", i);
->> +
->> +       for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++)
->> +               pd->buck_gpio_selb[i] =
->> +                       devm_gpiod_get_index(dev, "max77686,pmic-buck-selb", i);
+>> +       /* BUCK 2,3 and 4 support DVS */
+>> +       return (id >= MAX77686_BUCK2 && id <= MAX77686_BUCK4);
+> I am just wondering if along with above check, SELB gpios (if present)
+> can be used to confirm if BUCK's are DVS based or not.
+
+I don't know if SELB gpios being present or not should be used to determine
+whether a BUCK includes the DVS feature. AFAIK boards could have some of these
+lines hardwired and pulled high or low instead of using a GPIO.
+
 >> +}
 >> +
->> +/**
->> + * max77686_setup_gpios() - init DVS-related GPIOs
->> + * @dev: device whose platform data contains the dvs GPIOs information
->> + *
->> + * This function claims / initalizations GPIOs related to DVS if they are
->> + * defined. This may have the effect of switching voltages if the
->> + * pdata->buck_default_idx does not match the boot time state of pins.
->> + */
->> +int max77686_setup_gpios(struct device *dev)
->> +{
->> +       struct max77686_platform_data *pd = dev_get_platdata(dev);
->> +       int buck_default_idx = pd->buck_default_idx;
->> +       int ret;
->> +       int i;
->> +
->> +       /* Set all SELB high to avoid glitching while DVS is changing */
->> +       for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++) {
->> +               struct gpio_desc *gpio = pd->buck_gpio_selb[i];
->> +
->> +               /* OK if some GPIOs aren't defined */
->> +               if (IS_ERR(gpio))
->> +                       continue;
->> +
->> +               ret = gpiod_direction_output_raw(gpio, 1);
->> +               if (ret) {
->> +                       dev_err(dev, "can't set gpio[%d] dir: %d\n", i, ret);
->> +                       return ret;
->> +               }
->> +       }
->> +
->> +       /* Set our initial setting */
->> +       for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_dvs); i++) {
->> +               struct gpio_desc *gpio = pd->buck_gpio_dvs[i];
->> +
->> +               /* OK if some GPIOs aren't defined */
->> +               if (IS_ERR(gpio))
->> +                       continue;
->> +
->> +               /* If a GPIO is valid, set it */
->> +               gpiod_direction_output(gpio, (buck_default_idx >> i) & 1);
->> +               if (ret) {
->> +                       dev_err(dev, "can't set gpio[%d]: dir %d\n", i, ret);
->> +                       return ret;
->> +               }
->> +       }
->> +
->> +       /* Now set SELB low to take effect */
->> +       for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++) {
->> +               struct gpio_desc *gpio = pd->buck_gpio_selb[i];
->> +
->> +               if (!IS_ERR(gpio))
->> +                       gpiod_set_value(gpio, 0);
->> +       }
->> +
->> +       return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(max77686_setup_gpios);
->> +
->> +/**
->> + * max77686_read_gpios() - read the current state of the dvs GPIOs
->> + * @pdata: platform data that contains the dvs GPIOs information
->> + *
->> + * We call this function at bootup to detect what slot the firmware was
->> + * using for the DVS GPIOs.  That way we can properly preserve the firmware's
->> + * voltage settings
->> + *
->> + * This function can sleep so must not be called from atomic context.
->> + */
->> +int max77686_read_gpios(struct max77686_platform_data *pdata)
->> +{
->> +       int buck_default_idx = pdata->buck_default_idx;
->> +       int result = 0;
->> +       int i;
->> +
->> +       for (i = 0; i < ARRAY_SIZE(pdata->buck_gpio_dvs); i++) {
->> +               struct gpio_desc *gpio = pdata->buck_gpio_dvs[i];
->> +
->> +               /* OK if some GPIOs aren't defined; we'll use default */
->> +               if (IS_ERR(gpio)) {
->> +                       result |= buck_default_idx & (1 << i);
->> +                       continue;
->> +               }
->> +
->> +               if (gpiod_get_value_cansleep(gpio))
->> +                       result |= 1 << i;
->> +       }
->> +
->> +       return result;
->> +}
->> +EXPORT_SYMBOL_GPL(max77686_read_gpios);
->> +
->>  static struct max77686_platform_data *max77686_i2c_parse_dt_pdata(struct device
->>                                                                   *dev)
+>>  static int max77686_pmic_probe(struct platform_device *pdev)
 >>  {
->> +       struct device_node *np = dev->of_node;
->>         struct max77686_platform_data *pd;
+>>         struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+>> @@ -442,6 +448,9 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+>>         struct max77686_data *max77686;
+>>         int i, ret = 0;
+>>         struct regulator_config config = { };
+>> +       unsigned int reg;
+>> +       int buck_default_idx;
+>> +       int buck_old_idx;
 >>
->>         pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
->> @@ -111,6 +223,13 @@ static struct max77686_platform_data *max77686_i2c_parse_dt_pdata(struct device
->>                 return NULL;
+>>         dev_dbg(&pdev->dev, "%s\n", __func__);
 >>
->>         dev->platform_data = pd;
+>> @@ -472,13 +481,34 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+>>         config.driver_data = max77686;
+>>         platform_set_drvdata(pdev, max77686);
+>>
+>> +       buck_default_idx = pdata->buck_default_idx;
+>> +       buck_old_idx = max77686_read_gpios(pdata);
 >> +
->> +       /* Read default index and ignore errors, since default is 0 */
->> +       of_property_read_u32(np, "max77686,pmic-buck-default-dvs-idx",
->> +                            &pd->buck_default_idx);
-> Any error checking code here. Say if pmic-buck-default-dvs-idx exceed 8?
-
-I'm not a DT expert but AFAIK the kernel should expect the data in a FDT to be
-correct and should not validate it on runtime. There is work-in-progress to add
-a proper schema checking for DTS to the dtc so on build time it can be validated
-that a DTS is valid.
-
-AFAIU the only thing that the kernel should check is if a required property does
-not exist.
-
+>>         for (i = 0; i < MAX77686_REGULATORS; i++) {
+>>                 struct regulator_dev *rdev;
+>> +               int id = pdata->regulators[i].id;
+>>
+>>                 config.init_data = pdata->regulators[i].initdata;
+>>                 config.of_node = pdata->regulators[i].of_node;
+>>
+>>                 max77686->opmode[i] = regulators[i].enable_mask;
 >> +
->> +       max77686_dt_parse_dvs_gpio(dev);
+>> +               if (max77686_is_dvs_buck(id)) {
+>> +                       /* Try to copy over data so we keep firmware settings */
+>> +                       reg = regulators[i].vsel_reg;
 >> +
->>         return pd;
+>> +                       ret = regmap_reg_copy(iodev->regmap,
+>> +                                             reg + buck_default_idx,
+>> +                                             reg + buck_old_idx);
+>> +
+>> +                       if (ret)
+>> +                               dev_warn(&pdev->dev, "Copy err %d => %d (%d)\n",
+>> +                                        reg + buck_old_idx,
+>> +                                        reg + buck_default_idx, ret);
+>> +
+>> +                       regulators[i].vsel_reg += buck_default_idx;
+>> +               }
+>> +
+>>                 rdev = devm_regulator_register(&pdev->dev,
+>>                                                 &regulators[i], &config);
+>>                 if (IS_ERR(rdev)) {
+>> @@ -488,6 +518,10 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+>>                 }
+>>         }
+>>
+>> +       ret = max77686_setup_gpios(iodev->dev);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>>         return 0;
 >>  }
 >>
->> diff --git a/include/linux/mfd/max77686.h b/include/linux/mfd/max77686.h
->> index 4cbcc13..46a736b 100644
->> --- a/include/linux/mfd/max77686.h
->> +++ b/include/linux/mfd/max77686.h
->> @@ -99,15 +99,17 @@ struct max77686_platform_data {
->>         struct max77686_opmode_data *opmode_data;
->>
->>         /*
->> -        * GPIO-DVS feature is not enabled with the current version of
->> -        * MAX77686 driver. Buck2/3/4_voltages[0] is used as the default
->> -        * voltage at probe. DVS/SELB gpios are set as OUTPUT-LOW.
->> +        * GPIO-DVS feature is not fully enabled with the current version of
->> +        * MAX77686 driver, but the driver does support using a DVS index other
->> +        * than the default of 0.
->>          */
->> -       int buck234_gpio_dvs[3]; /* GPIO of [0]DVS1, [1]DVS2, [2]DVS3 */
->> -       int buck234_gpio_selb[3]; /* [0]SELB2, [1]SELB3, [2]SELB4 */
->> -       unsigned int buck2_voltage[8]; /* buckx_voltage in uV */
->> -       unsigned int buck3_voltage[8];
->> -       unsigned int buck4_voltage[8];
-> I think when DVS gpio is used all the 8 voltage levels are fetched
-> from DT during booting and the registers are programmed accordingly.
-> Any further set/get_voltage just changes the GPIO lines.
-> Any reason why this method is not used?
-
-What are you describing is how the DT binding works for other Maxim PMICs that
-also have DVS support right? (e.g: max8997).
-
-The DVS binding in max77686/802 is actually a subset of the one in max8997 so it
-let's you only choose which single DVS index is going to be used. The GPIOs in
-"max77686,pmic-buck-dvs-gpios" should match "pmic-buck-default-dvs-idx".
-
-To be honest I just took the DT binding that was used in the max77xxx driver
-from the Chrome OS 3.8 kernel and didn't compare it with other Maxim PMICs DT
-bingings.
-
-I wonder if I should just take the DVS patches out from this initial version to
-avoid blocking the max77802 support and then we can discuss this in more detail.
-
->> +       struct gpio_desc *buck_gpio_dvs[3]; /* GPIO of [0]DVS1, [1]DVS2, [2]DVS3 */
->> +       int buck_default_idx; /* Default value of DVS1, 2, 3 */
->> +
->> +       struct gpio_desc *buck_gpio_selb[3]; /* Buck regulators 2, 3, 4 */
->>  };
->>
->> +extern int max77686_setup_gpios(struct device *dev);
->> +extern int max77686_read_gpios(struct max77686_platform_data *pdata);
->> +
->>  #endif /* __LINUX_MFD_MAX77686_H */
 >> --
 >> 2.0.0.rc2
 >>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
 Best regards,
 Javier
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
