@@ -1,211 +1,130 @@
-From: Sonny Rao <sonnyrao@chromium.org>
-Subject: Re: [PATCH] mmc: dw_mmc: change to use recommended reset procedure
-Date: Thu, 10 Jul 2014 15:35:30 -0700
-Message-ID: <CAPz6YkXgoKPSQEdNOwAQDhEnFGFVArr_0obbVR_okAEOvLxtzA@mail.gmail.com>
-References: <CAPz6YkUzGWnOznZ4UXNsLbe=ehDwfMJwUSjahUKVnVz8w9OcsA@mail.gmail.com>
- <1402351255-7423-1-git-send-email-sonnyrao@chromium.org> <002201cf9c3a$6de4a150$49ade3f0$%jun@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v7 08/24] mfd: max77686: Add Dynamic Voltage Scaling (DVS)
+ support
+Date: Fri, 11 Jul 2014 02:51:40 +0200
+Message-ID: <53BF351C.8060008@collabora.co.uk>
+References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>	<1404505467-26526-9-git-send-email-javier.martinez@collabora.co.uk> <CACRpkdYs93snBFYZMKN6kd==b9jZehnp1eHV5bHaBNsNRt62pQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <002201cf9c3a$6de4a150$49ade3f0$%jun@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, Grant Grundler <grundler@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Douglas Anderson <dianders@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:42555 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750927AbaGKAvt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Jul 2014 20:51:49 -0400
+In-Reply-To: <CACRpkdYs93snBFYZMKN6kd==b9jZehnp1eHV5bHaBNsNRt62pQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, Tushar Behera <trblinux@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Andreas Farber <afaerber@suse.de>, Alexandre Courbot <gnurou@gmail.com>, Rob Jones <rob.jones@codethink.co.uk>
 
-On Thu, Jul 10, 2014 at 5:28 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> Hi Sonny,
->
-> I have missed this patch.
->
-> You finally choose to take extra interrupt handling.
-> If it is not harm, it's fine.
+Hello Linus,
 
-Hi, thanks for coming back to it.  Based on my tracing, the interrupt
-seems to be okay and is just ignored.
+On 07/10/2014 11:46 AM, Linus Walleij wrote:
+> On Fri, Jul 4, 2014 at 10:24 PM, Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk> wrote:
+> 
+>> Some regulators on the MAX77686 PMIC have Dynamic Voltage Scaling
+>> (DVS) support that allows output voltage to change dynamically.
+>>
+>> For MAX77686, these regulators are Buck regulators 2, 3 and 4.
+>>
+>> Each Buck output voltage is selected using a set of external
+>> inputs: DVS1-3 and SELB2-4.
+>>
+>> DVS registers can be used to configure the output voltages for each
+>> Buck regulator and which one is active is controled by DVSx lines.
+>>
+>> SELBx lines are used to control if individual Buck lines are ON or OFF.
+>>
+>> This patch adds support to configure the DVSx and SELBx lines
+>> from DT and to setup and read the GPIO lines connected to them.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> (...)
+>> +#include <linux/gpio/consumer.h>
+> 
+> THANKS for using modern interfaces!
+> 
 
->
-> Please check one thing below.
->
-> On Tue, June 10, 2014, Sonny Rao wrote:
->> This patch changes the fifo reset code to follow the reset procedure
->> outlined in the documentation of Synopsys Mobile storage host databook.
->>
->> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
->> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
->> ---
->> v2: Add Generic DMA support
->>     per the documentation, move interrupt clear before wait
->>     make the test for DMA host->use_dma rather than host->using_dma
->>     add proper return values (although it appears no caller checks)
->> v3: rename fifo reset function, and change callers
->>     use this combined reset function in dw_mci_resume()
->>     just one caller left (probe), so get rid of dw_mci_ctrl_all_reset()
->>     use DMA reset bit for all systems which use DMA
->>     remove extra IDMAC reset in dw_mci_work_routine_card()
->>     do CIU clock update in error path, if CIU reset cleared
->> v4: remove comment about FIFO reset in dw_mci_work_routine_card()
->>     move down error message when control reset clears but others don't
->>      and clarify the error stating that we will still update clocks
->>     make flags for all reset bits a macro
->>
->>  drivers/mmc/host/dw_mmc.c | 86 ++++++++++++++++++++++++++++++++++-------------
->>  drivers/mmc/host/dw_mmc.h |  5 +++
->>  2 files changed, 68 insertions(+), 23 deletions(-)
->>
->> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->> index 55cd110..1d6d984 100644
->> --- a/drivers/mmc/host/dw_mmc.c
->> +++ b/drivers/mmc/host/dw_mmc.c
->> @@ -111,8 +111,7 @@ static const u8 tuning_blk_pattern_8bit[] = {
->>       0xff, 0x77, 0x77, 0xff, 0x77, 0xbb, 0xdd, 0xee,
->>  };
->>
->> -static inline bool dw_mci_fifo_reset(struct dw_mci *host);
->> -static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host);
->> +static inline bool dw_mci_reset(struct dw_mci *host);
->>
->>  #if defined(CONFIG_DEBUG_FS)
->>  static int dw_mci_req_show(struct seq_file *s, void *v)
->> @@ -1254,7 +1253,7 @@ static int dw_mci_data_complete(struct dw_mci *host, struct mmc_data *data)
->>                * After an error, there may be data lingering
->>                * in the FIFO
->>                */
->> -             dw_mci_fifo_reset(host);
->> +             dw_mci_reset(host);
->>       } else {
->>               data->bytes_xfered = data->blocks * data->blksz;
->>               data->error = 0;
->> @@ -1371,7 +1370,7 @@ static void dw_mci_tasklet_func(unsigned long priv)
->>
->>                       /* CMD error in data command */
->>                       if (mrq->cmd->error && mrq->data)
->> -                             dw_mci_fifo_reset(host);
->> +                             dw_mci_reset(host);
->>
->>                       host->cmd = NULL;
->>                       host->data = NULL;
->> @@ -1982,14 +1981,8 @@ static void dw_mci_work_routine_card(struct work_struct *work)
->>                       }
->>
->>                       /* Power down slot */
->> -                     if (present == 0) {
->> -                             /* Clear down the FIFO */
->> -                             dw_mci_fifo_reset(host);
->> -#ifdef CONFIG_MMC_DW_IDMAC
->> -                             dw_mci_idmac_reset(host);
->> -#endif
->> -
->> -                     }
->> +                     if (present == 0)
->> +                             dw_mci_reset(host);
->>
->>                       spin_unlock_bh(&host->lock);
->>
->> @@ -2323,8 +2316,11 @@ static bool dw_mci_ctrl_reset(struct dw_mci *host, u32 reset)
->>       return false;
->>  }
->>
->> -static inline bool dw_mci_fifo_reset(struct dw_mci *host)
->> +static inline bool dw_mci_reset(struct dw_mci *host)
->>  {
->> +     u32 flags = SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET;
->> +     bool ret = false;
->> +
->>       /*
->>        * Reseting generates a block interrupt, hence setting
->>        * the scatter-gather pointer to NULL.
->> @@ -2334,15 +2330,59 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
->>               host->sg = NULL;
->>       }
->>
->> -     return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
->> -}
->> +     if (host->use_dma)
->> +             flags |= SDMMC_CTRL_DMA_RESET;
->>
->> -static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
->> -{
->> -     return dw_mci_ctrl_reset(host,
->> -                              SDMMC_CTRL_FIFO_RESET |
->> -                              SDMMC_CTRL_RESET |
->> -                              SDMMC_CTRL_DMA_RESET);
->> +     if (dw_mci_ctrl_reset(host, flags)) {
->> +             /*
->> +              * In all cases we clear the RAWINTS register to clear any
->> +              * interrupts.
->> +              */
->> +             mci_writel(host, RINTSTS, 0xFFFFFFFF);
->> +
->> +             /* if using dma we wait for dma_req to clear */
->> +             if (host->use_dma) {
->> +                     unsigned long timeout = jiffies + msecs_to_jiffies(500);
->> +                     u32 status;
->> +                     do {
->> +                             status = mci_readl(host, STATUS);
->> +                             if (!(status & SDMMC_STATUS_DMA_REQ))
->> +                                     break;
->> +                             cpu_relax();
->> +                     } while (time_before(jiffies, timeout));
->> +
->> +                     if (status & SDMMC_STATUS_DMA_REQ) {
->> +                             dev_err(host->dev,
->> +                                     "%s: Timeout waiting for dma_req to "
->> +                                     "clear during reset", __func__);
->> +                             goto ciu_out;
->> +                     }
->> +
->> +                     /* when using DMA next we reset the fifo again */
->> +                     if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET))
->> +                             goto ciu_out;
->> +             }
->> +     } else {
->> +             /* if the controller reset bit did clear, then set clock regs */
->> +             if (!(mci_readl(host, CTRL) & SDMMC_CTRL_RESET)) {
->> +                     dev_err(host->dev, "%s: fifo/dma reset bits didn't "
->> +                             "clear but ciu was reset, doing clock update.",
->> +                             __func__);
->> +                     goto ciu_out;
->> +             }
->> +     }
->> +
->> +     if (IS_ENABLED(CONFIG_MMC_DW_IDMAC))
->> +             /* It is also recommended that we reset and reprogram idmac */
->> +             dw_mci_idmac_reset(host);
->> +
->> +     ret = true;
->> +
->> +ciu_out:
->> +     /* After a CTRL reset we need to have CIU set clock registers  */
->> +     mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
->> +
->> +     return ret;
->>  }
->>
->>  #ifdef CONFIG_OF
->> @@ -2555,7 +2595,7 @@ int dw_mci_probe(struct dw_mci *host)
->>       }
->>
->>       /* Reset all blocks */
->> -     if (!dw_mci_ctrl_all_reset(host))
->> +     if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_ALL_RESET_FLAGS))
->>               return -ENODEV;
->>
->>       host->dma_ops = host->pdata->dma_ops;
->> @@ -2744,7 +2784,7 @@ int dw_mci_resume(struct dw_mci *host)
->>               }
->>       }
->>
->> -     if (!dw_mci_ctrl_all_reset(host)) {
->> +     if (!dw_mci_reset(host)) {
-> Do you have any reason to use dw_mci_reset() unlike doing on probing?
+Thanks to you and Alexandre for keep improving the GPIO subsystem!
 
-I really wanted to use dw_mci_reset() everwhere, including probe,
-because that would be simplest, where there is just one reset function
-always, but the host structure is not completely set up at probe time,
-so the code in dw_mci_reset() where we try to send a command to update
-clock fails, so that's why I had to just do a reset.
+>> +static void max77686_dt_parse_dvs_gpio(struct device *dev)
+>> +{
+>> +       struct max77686_platform_data *pd = dev_get_platdata(dev);
+>> +       int i;
+>> +
+>> +       /*
+>> +        * NOTE: we don't consider GPIO errors fatal; board may have some lines
+>> +        * directly pulled high or low and thus doesn't specify them.
+>> +        */
+>> +       for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_dvs); i++)
+>> +               pd->buck_gpio_dvs[i] =
+>> +                       devm_gpiod_get_index(dev, "max77686,pmic-buck-dvs", i);
+>> +
+>> +       for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++)
+>> +               pd->buck_gpio_selb[i] =
+>> +                       devm_gpiod_get_index(dev, "max77686,pmic-buck-selb", i);
+>> +}
+> 
+> Rob Jones has a patch cooking that adds gpio_get_array() so this thing
+> merits also adding devm_gpiod_get_array() I think?
+> 
 
-> Thanks,
-> Seungwon Jeon
->
+Yes, I just asked [0] Rob on the other thread if he is already implementing the
+descriptor-based version of his devm_request_gpio_array() or if I should go and
+implement it.
+
+Now, I wonder if that can be done in a follow-up patch (e.g: use the new
+devm_gpiod_get_array once it lands in Torvalds tree)  since this series already
+touches several subsystems (mfd, regulators, clk and rtc) so if possible I would
+prefer to not add another cross-subsystem dependency :)
+
+>> +/**
+>> + * max77686_setup_gpios() - init DVS-related GPIOs
+>> + * @dev: device whose platform data contains the dvs GPIOs information
+>> + *
+>> + * This function claims / initalizations GPIOs related to DVS if they are
+>> + * defined. This may have the effect of switching voltages if the
+>> + * pdata->buck_default_idx does not match the boot time state of pins.
+>> + */
+>> +int max77686_setup_gpios(struct device *dev)
+>> +{
+>> +       struct max77686_platform_data *pd = dev_get_platdata(dev);
+>> +       int buck_default_idx = pd->buck_default_idx;
+>> +       int ret;
+>> +       int i;
+>> +
+>> +       /* Set all SELB high to avoid glitching while DVS is changing */
+>> +       for (i = 0; i < ARRAY_SIZE(pd->buck_gpio_selb); i++) {
+>> +               struct gpio_desc *gpio = pd->buck_gpio_selb[i];
+>> +
+>> +               /* OK if some GPIOs aren't defined */
+>> +               if (IS_ERR(gpio))
+>> +                       continue;
+>> +
+>> +               ret = gpiod_direction_output_raw(gpio, 1);
+> 
+> Why does this have to be raw? Usually that is not to be used.
+> 
+
+Right, I can't think of a good reason why this has to be raw and not just use
+gpiod_direction_output() which will check the active-low flag and set the value
+accordingly. I'll change it on the next revision.
+
+> Apart from this it looks OK.
+> 
+
+Great, thanks a lot for your feedback.
+
+> Yours,
+> Linus Walleij
+> 
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/7/10/722
