@@ -1,78 +1,149 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v7 08/24] mfd: max77686: Add Dynamic Voltage Scaling (DVS)
- support
-Date: Fri, 11 Jul 2014 12:15:51 +0200
-Message-ID: <53BFB957.7010307@collabora.co.uk>
-References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk> <1404505467-26526-9-git-send-email-javier.martinez@collabora.co.uk> <CADGdYn6tyTBZOjZH8JBUVMJ1kh-tht=tkU4tA+oM=PbfTYkqGw@mail.gmail.com> <53BF41C8.4080304@collabora.co.uk> <53BFB1BA.6030108@samsung.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH] mmc: dw_mmc: change to use recommended reset procedure
+Date: Fri, 11 Jul 2014 19:20:48 +0900
+Message-ID: <001301cf9cf1$c91c7310$5b555930$%jun@samsung.com>
+References: <CAPz6YkUzGWnOznZ4UXNsLbe=ehDwfMJwUSjahUKVnVz8w9OcsA@mail.gmail.com>
+ <1402351255-7423-1-git-send-email-sonnyrao@chromium.org>
+ <002201cf9c3a$6de4a150$49ade3f0$%jun@samsung.com>
+ <CAPz6YkXgoKPSQEdNOwAQDhEnFGFVArr_0obbVR_okAEOvLxtzA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:42819 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752567AbaGKKQH (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:9157 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752757AbaGKKUw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jul 2014 06:16:07 -0400
-In-Reply-To: <53BFB1BA.6030108@samsung.com>
+	Fri, 11 Jul 2014 06:20:52 -0400
+In-reply-to: <CAPz6YkXgoKPSQEdNOwAQDhEnFGFVArr_0obbVR_okAEOvLxtzA@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, amit daniel kachhap <amit.daniel@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, Yadwinder Singh Brar <yadi.brar01@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, Tushar Behera <trblinux@gmail.com>, Mark Brown <broonie@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Andreas Farber <afaerber@suse.de>, LAK <linux-arm-kernel@lists.infradead.org>
+To: 'Sonny Rao' <sonnyrao@chromium.org>
+Cc: 'linux-mmc' <linux-mmc@vger.kernel.org>, 'Grant Grundler' <grundler@chromium.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Chris Ball' <cjb@laptop.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'sunil joshi' <joshi@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Douglas Anderson' <dianders@chromium.org>, 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>
 
-Hello Tomasz,
+On Fri, July 11, 2014, Sonny Rao wrote:
+> On Thu, Jul 10, 2014 at 5:28 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> > Hi Sonny,
+> >
+> > I have missed this patch.
+> >
+> > You finally choose to take extra interrupt handling.
+> > If it is not harm, it's fine.
+> 
+> Hi, thanks for coming back to it.  Based on my tracing, the interrupt
+> seems to be okay and is just ignored.
+> 
+> >> -static inline bool dw_mci_fifo_reset(struct dw_mci *host)
+> >> +static inline bool dw_mci_reset(struct dw_mci *host)
+"inline" is no needed anymore.
 
-On 07/11/2014 11:43 AM, Tomasz Figa wrote:
-> Hi Javier,
+> >>  {
+> >> +     u32 flags = SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET;
+> >> +     bool ret = false;
+> >> +
+> >>       /*
+> >>        * Reseting generates a block interrupt, hence setting
+> >>        * the scatter-gather pointer to NULL.
+> >> @@ -2334,15 +2330,59 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
+> >>               host->sg = NULL;
+> >>       }
+> >>
+> >> -     return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
+> >> -}
+> >> +     if (host->use_dma)
+> >> +             flags |= SDMMC_CTRL_DMA_RESET;
+> >>
+> >> -static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
+> >> -{
+> >> -     return dw_mci_ctrl_reset(host,
+> >> -                              SDMMC_CTRL_FIFO_RESET |
+> >> -                              SDMMC_CTRL_RESET |
+> >> -                              SDMMC_CTRL_DMA_RESET);
+> >> +     if (dw_mci_ctrl_reset(host, flags)) {
+> >> +             /*
+> >> +              * In all cases we clear the RAWINTS register to clear any
+> >> +              * interrupts.
+> >> +              */
+> >> +             mci_writel(host, RINTSTS, 0xFFFFFFFF);
+> >> +
+> >> +             /* if using dma we wait for dma_req to clear */
+> >> +             if (host->use_dma) {
+> >> +                     unsigned long timeout = jiffies + msecs_to_jiffies(500);
+> >> +                     u32 status;
+> >> +                     do {
+> >> +                             status = mci_readl(host, STATUS);
+> >> +                             if (!(status & SDMMC_STATUS_DMA_REQ))
+> >> +                                     break;
+> >> +                             cpu_relax();
+> >> +                     } while (time_before(jiffies, timeout));
+> >> +
+> >> +                     if (status & SDMMC_STATUS_DMA_REQ) {
+> >> +                             dev_err(host->dev,
+> >> +                                     "%s: Timeout waiting for dma_req to "
+> >> +                                     "clear during reset", __func__);
+> >> +                             goto ciu_out;
+> >> +                     }
+> >> +
+> >> +                     /* when using DMA next we reset the fifo again */
+> >> +                     if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET))
+> >> +                             goto ciu_out;
+> >> +             }
+> >> +     } else {
+> >> +             /* if the controller reset bit did clear, then set clock regs */
+> >> +             if (!(mci_readl(host, CTRL) & SDMMC_CTRL_RESET)) {
+> >> +                     dev_err(host->dev, "%s: fifo/dma reset bits didn't "
+> >> +                             "clear but ciu was reset, doing clock update.",
+> >> +                             __func__);
+> >> +                     goto ciu_out;
+> >> +             }
+> >> +     }
+> >> +
+> >> +     if (IS_ENABLED(CONFIG_MMC_DW_IDMAC))
+> >> +             /* It is also recommended that we reset and reprogram idmac */
+> >> +             dw_mci_idmac_reset(host);
+> >> +
+> >> +     ret = true;
+> >> +
+> >> +ciu_out:
+> >> +     /* After a CTRL reset we need to have CIU set clock registers  */
+> >> +     mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
+> >> +
+> >> +     return ret;
+> >>  }
+> >>
+> >>  #ifdef CONFIG_OF
+> >> @@ -2555,7 +2595,7 @@ int dw_mci_probe(struct dw_mci *host)
+> >>       }
+> >>
+> >>       /* Reset all blocks */
+> >> -     if (!dw_mci_ctrl_all_reset(host))
+> >> +     if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_ALL_RESET_FLAGS))
+> >>               return -ENODEV;
+> >>
+> >>       host->dma_ops = host->pdata->dma_ops;
+> >> @@ -2744,7 +2784,7 @@ int dw_mci_resume(struct dw_mci *host)
+> >>               }
+> >>       }
+> >>
+> >> -     if (!dw_mci_ctrl_all_reset(host)) {
+> >> +     if (!dw_mci_reset(host)) {
+> > Do you have any reason to use dw_mci_reset() unlike doing on probing?
 > 
-> On 11.07.2014 03:45, Javier Martinez Canillas wrote:
->> On 07/10/2014 11:59 AM, amit daniel kachhap wrote:
->>> On Sat, Jul 5, 2014 at 1:54 AM, Javier Martinez Canillas
->>> <javier.martinez@collabora.co.uk> wrote:
-> 
-> [snip]
-> 
->>>> @@ -111,6 +223,13 @@ static struct max77686_platform_data *max77686_i2c_parse_dt_pdata(struct device
->>>>                 return NULL;
->>>>
->>>>         dev->platform_data = pd;
->>>> +
->>>> +       /* Read default index and ignore errors, since default is 0 */
->>>> +       of_property_read_u32(np, "max77686,pmic-buck-default-dvs-idx",
->>>> +                            &pd->buck_default_idx);
->>> Any error checking code here. Say if pmic-buck-default-dvs-idx exceed 8?
->> 
->> I'm not a DT expert but AFAIK the kernel should expect the data in a FDT to be
->> correct and should not validate it on runtime. There is work-in-progress to add
->> a proper schema checking for DTS to the dtc so on build time it can be validated
->> that a DTS is valid.
->> 
->> AFAIU the only thing that the kernel should check is if a required property does
->> not exist.
-> 
-> I'd disagree on this.
-> 
-> IMHO schema (if it progresses further, as unfortunately I can't find
-> time to dedicate to it and looks like it's similar for other people that
-> used to be involved) should be focused on structural checks, i.e. proper
-> layout of nodes and properties, basic data types and so, to figure out
-> common errors earlier than at boot-up time.
-> 
-> On kernel side this should be treated in the same way as platform data.
-> I agree that some existing drivers do little to validate incoming data,
-> but I believe it is a good practice to validate things that the driver
-> has no control over, especially when it's about a PMIC, when invalid
-> data can have quite serious effects and detecting even some of them
-> (e.g. value to big, which would overflow in target bit field) might
-> prevent a failure.
-> 
+> I really wanted to use dw_mci_reset() everwhere, including probe,
+> because that would be simplest, where there is just one reset function
+> always, but the host structure is not completely set up at probe time,
+> so the code in dw_mci_reset() where we try to send a command to update
+> clock fails, so that's why I had to just do a reset.
 
-Thanks a lot for the clarification and I completely agree with your explanation.
-I'll add proper validation for the data obtained by DT then. It would be nice if
-this was documented somewhere (or maybe I missed it).
+Yes, if we can keep one interface, it would be good.
+But can you check below?
+Did you see the kernel panic on probing with "host->cur_slot" is NULL?
+If right, resume seems not different from probe in case of removable type.
+And dw_mci_idmac_reset() is redundant when dw_mci_reset() is used at resume.
 
-> Best regards,
-> Tomasz
-> 
+I think dw_mci_ctrl_reset() can be also used at resume like at probe for simple way.
+For safety's sake, "host->cur_slot" should be guaranteed it's not NULL.
 
-Best regards,
-Javier
+Thanks,
+Seungwon Jeon
