@@ -1,65 +1,61 @@
-From: Olof Johansson <olof@lixom.net>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: [GIT PULL] Samsung cleanup for S5P SoCs for 3.17
-Date: Sat, 12 Jul 2014 09:59:48 -0700
-Message-ID: <20140712165948.GA10012@quad.lixom.net>
+Date: Sat, 12 Jul 2014 20:44:16 +0100
+Message-ID: <20140712194416.GA6800@sirena.org.uk>
 References: <53BB2658.4050808@samsung.com>
+ <20140712165948.GA10012@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:57107 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751255AbaGLQ7Y (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34276 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751911AbaGLTo7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Jul 2014 12:59:24 -0400
-Received: by mail-pa0-f46.google.com with SMTP id eu11so3107290pac.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Jul 2014 09:59:24 -0700 (PDT)
+	Sat, 12 Jul 2014 15:44:59 -0400
 Content-Disposition: inline
-In-Reply-To: <53BB2658.4050808@samsung.com>
+In-Reply-To: <20140712165948.GA10012@quad.lixom.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, broonie@kernel.org
-
-On Tue, Jul 08, 2014 at 07:59:36AM +0900, Kukjin Kim wrote:
-> The following changes since commit a497c3ba1d97fc69c1e78e7b96435ba8c2cb42ee:
-> 
->   Linux 3.16-rc2 (2014-06-21 19:02:54 -1000)
-> 
-> are available in the git repository at:
-> 
-
-> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/s5p-cleanup
-> 
-> for you to fetch changes up to 58595ebd9306691441ccf88973b97d4f8eaa8279:
-> 
->   ASoC: Samsung: remove s5pc100 related codes (2014-07-08 07:29:05 +0900)
-> 
-> ----------------------------------------------------------------
-> Cleanup S5P SoCs for 3.17
-> - removing s5p64x0 SoCs and s5pc100 SoC in mainline because
->   no more user and if it is required next time, it will be
->   supported with DT.
-> 
-> ----------------------------------------------------------------
-> Kukjin Kim (13):
->       ARM: S5P64X0: no more support S5P6440 and S5P6450 SoCs
->       gpio: samsung: remove s5p64x0 related gpio codes
->       spi: s3c64xx: remove s5p64x0 related spi codes
->       ASoC: samsung: no more support for S5P6440 and S5P6450 SoCs
->       video: fbdev: s3c-fb: remove s5p64x0 related fimd codes
->       serial: samsung: no more support for S5P6440 and S5P6450 SoCs
->       ARM: S5PC100: no more support S5PC100 SoC
->       gpio: samsung: remov s5pc100 related gpio codes
->       spi: s3c64xx: remove s5pc100 related spi codes
->       serial: samsung: no more support for S5PC100 SoC
->       mtd: onenand: remove s5pc100 related onenand codes
->       video: fbdev: s3c-fb: remove s5pc100 related fimd and fb codes
->       ASoC: Samsung: remove s5pc100 related codes
-
-I've merged these in. I noticed lack of acked-by from Mark Brown, so I pinged
-him on IRC about it and the branch is currently at the top so it's easy to drop
-in case he has objections (cc:d here too).
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
 
--Olof
+--6TrnltStXW4iwmi0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Sat, Jul 12, 2014 at 09:59:48AM -0700, Olof Johansson wrote:
+
+> I've merged these in. I noticed lack of acked-by from Mark Brown, so I pinged
+> him on IRC about it and the branch is currently at the top so it's easy to drop
+> in case he has objections (cc:d here too).
+
+Don't know if I've seen these changes (though IIRC they might've gone to
+the work account).  I suspect we're going to get some conflicts since
+we've also got other changes going on in ASoC so it is probably going to
+be easier to merge at least that patch via ASoC.
+
+--6TrnltStXW4iwmi0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTwZAHAAoJELSic+t+oim9BwkP/RwvLzgq5j5i0/rY9JwRp/uS
+R1dXJh22LUTER3RD8Y6Wq8KavRPfdeMjVjReIISE8R2f53m+Es33whyU8mwVKIHU
+NzDKIZT/HuZWDhr52qNESMeJ05yC+d0rLpOczNAGlv+qQtVxP5u7MXSNe8Kgegna
+QY57m8KJsVOzJyftYR7YgWd41ynR3Wb8EUYN6YXCJQFfViSpfighDCnwd9elg+FP
+6L/SfkjY1QaY6fMoJ10HKowvA8HpYxeaUJIdiPmK1lqgyV/z78CzSCPTetpmVE6P
+vtkvispU+1jmia1lcWZFS+ATvheujq2wEVzoS03XbFXZqDAwcg9NAi1Z1lOXIAWA
+54ichci1CFaYoYO5hbnL+J6m/rBw5Ow8ljnljSn50swmnepLa5olci5jsma1vELb
+9SpnouSnuqgPCG87hoAwwSXWUhjfMTxlKYSajrnETjJkaySJz+X1up6Roj/Gjqsf
+LaIk2PDIVNcW92QcKrHgtJfKZ9LWvovImPWiNLS1ImySXcbHaHZe8gLeG24vejkm
+SbnK1JUuVuRdJ6U9lV+VuWdt/+Bn398BSf2GdOrnD81eF4DY+EUFhi3M1HbqzuxR
+iShZoUpjA/fK8g9Clw0B53s68RN1C3maRuc6Y0L0a/S+7XE+8L8cuyitLfygzy45
+71uMgafMOFOtc4aK9d+u
+=Vyrv
+-----END PGP SIGNATURE-----
+
+--6TrnltStXW4iwmi0--
