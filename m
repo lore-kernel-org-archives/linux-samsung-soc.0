@@ -1,61 +1,68 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [GIT PULL] Samsung cleanup for S5P SoCs for 3.17
-Date: Sat, 12 Jul 2014 20:44:16 +0100
-Message-ID: <20140712194416.GA6800@sirena.org.uk>
-References: <53BB2658.4050808@samsung.com>
- <20140712165948.GA10012@quad.lixom.net>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung fixes-3 for 3.16
+Date: Sun, 13 Jul 2014 07:23:05 +0900
+Message-ID: <53C1B549.1060706@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34276 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751911AbaGLTo7 (ORCPT
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:39694 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751691AbaGLWX1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Jul 2014 15:44:59 -0400
-Content-Disposition: inline
-In-Reply-To: <20140712165948.GA10012@quad.lixom.net>
+	Sat, 12 Jul 2014 18:23:27 -0400
+Received: by mail-pa0-f44.google.com with SMTP id rd3so3352042pab.3
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Jul 2014 15:23:26 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
+The following changes since commit cd3de83f147601356395b57a8673e9c5ff1e59d1:
 
---6TrnltStXW4iwmi0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+   Linux 3.16-rc4 (2014-07-06 12:37:51 -0700)
 
-On Sat, Jul 12, 2014 at 09:59:48AM -0700, Olof Johansson wrote:
+are available in the git repository at:
 
-> I've merged these in. I noticed lack of acked-by from Mark Brown, so I pinged
-> him on IRC about it and the branch is currently at the top so it's easy to drop
-> in case he has objections (cc:d here too).
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+tags/samsung-fixes-3
 
-Don't know if I've seen these changes (though IIRC they might've gone to
-the work account).  I suspect we're going to get some conflicts since
-we've also got other changes going on in ASoC so it is probably going to
-be easier to merge at least that patch via ASoC.
+for you to fetch changes up to bed7118988ef48063c72f67cc2701c72663b3870:
 
---6TrnltStXW4iwmi0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+   ARM: EXYNOS: Register cpuidle device only on exynos4210 and 5250 
+(2014-07-11 08:15:32 +0900)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+----------------------------------------------------------------
+Samsung fixes-3 for v3.16
+- update the parent for Auudss clock because kernel will be hang
+   during late boot if the parent clock is disabled in bootloader.
+- enable clk handing in power domain because while power domain
+   on/off, its regarding clock source will be reset and it causes
+   a problem so need to handle it.
+- add mux clocks to be used by power domain for exynos5420-mfc
+   during power domain on/off and property in device tree also.
+- register cpuidle only for exynos4210 and exynos5250 because a
+   system failure will be happened on other exynos SoCs.
 
-iQIcBAEBAgAGBQJTwZAHAAoJELSic+t+oim9BwkP/RwvLzgq5j5i0/rY9JwRp/uS
-R1dXJh22LUTER3RD8Y6Wq8KavRPfdeMjVjReIISE8R2f53m+Es33whyU8mwVKIHU
-NzDKIZT/HuZWDhr52qNESMeJ05yC+d0rLpOczNAGlv+qQtVxP5u7MXSNe8Kgegna
-QY57m8KJsVOzJyftYR7YgWd41ynR3Wb8EUYN6YXCJQFfViSpfighDCnwd9elg+FP
-6L/SfkjY1QaY6fMoJ10HKowvA8HpYxeaUJIdiPmK1lqgyV/z78CzSCPTetpmVE6P
-vtkvispU+1jmia1lcWZFS+ATvheujq2wEVzoS03XbFXZqDAwcg9NAi1Z1lOXIAWA
-54ichci1CFaYoYO5hbnL+J6m/rBw5Ow8ljnljSn50swmnepLa5olci5jsma1vELb
-9SpnouSnuqgPCG87hoAwwSXWUhjfMTxlKYSajrnETjJkaySJz+X1up6Roj/Gjqsf
-LaIk2PDIVNcW92QcKrHgtJfKZ9LWvovImPWiNLS1ImySXcbHaHZe8gLeG24vejkm
-SbnK1JUuVuRdJ6U9lV+VuWdt/+Bn398BSf2GdOrnD81eF4DY+EUFhi3M1HbqzuxR
-iShZoUpjA/fK8g9Clw0B53s68RN1C3maRuc6Y0L0a/S+7XE+8L8cuyitLfygzy45
-71uMgafMOFOtc4aK9d+u
-=Vyrv
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+Arun Kumar K (2):
+       clk: exynos5420: Add IDs for clocks used in PD mfc
+       ARM: dts: Add clock property for mfc_pd in exynos5420
 
---6TrnltStXW4iwmi0--
+Prathyush K (1):
+       ARM: EXYNOS: Add support for clock handling in power domain
+
+Tomasz Figa (1):
+       ARM: EXYNOS: Register cpuidle device only on exynos4210 and 5250
+
+Tushar Behera (1):
+       ARM: dts: Update the parent for Audss clocks in Exynos5420
+
+  .../bindings/arm/exynos/power_domain.txt           | 20 +++++++
+  arch/arm/boot/dts/exynos5420.dtsi                  |  5 +-
+  arch/arm/mach-exynos/exynos.c                      |  6 +--
+  arch/arm/mach-exynos/pm_domains.c                  | 61 
++++++++++++++++++++++-
+  drivers/clk/samsung/clk-exynos5420.c               |  6 ++-
+  include/dt-bindings/clock/exynos5420.h             |  2 +
+  6 files changed, 92 insertions(+), 8 deletions(-)
