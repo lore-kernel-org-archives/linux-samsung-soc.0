@@ -1,143 +1,65 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [PATCH 14/17] mtd: onenand: remove s5pc100 related onenand codes
-Date: Sat, 12 Jul 2014 00:12:34 -0700
-Message-ID: <20140712071234.GF23883@brian-ubuntu>
-References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
- <1404163947-3105-15-git-send-email-kgene.kim@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL] Samsung cleanup for S5P SoCs for 3.17
+Date: Sat, 12 Jul 2014 09:59:48 -0700
+Message-ID: <20140712165948.GA10012@quad.lixom.net>
+References: <53BB2658.4050808@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:48536 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751616AbaGLHMh (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:57107 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751255AbaGLQ7Y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Jul 2014 03:12:37 -0400
-Received: by mail-pa0-f53.google.com with SMTP id ey11so2665137pad.12
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Jul 2014 00:12:37 -0700 (PDT)
+	Sat, 12 Jul 2014 12:59:24 -0400
+Received: by mail-pa0-f46.google.com with SMTP id eu11so3107290pac.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Jul 2014 09:59:24 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1404163947-3105-15-git-send-email-kgene.kim@samsung.com>
+In-Reply-To: <53BB2658.4050808@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org
+Cc: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, broonie@kernel.org
 
-+ linux-mtd (please CC for anything driver/mtd/*; see MAINTAINERS)
+On Tue, Jul 08, 2014 at 07:59:36AM +0900, Kukjin Kim wrote:
+> The following changes since commit a497c3ba1d97fc69c1e78e7b96435ba8c2cb42ee:
+> 
+>   Linux 3.16-rc2 (2014-06-21 19:02:54 -1000)
+> 
+> are available in the git repository at:
+> 
 
-On Tue, Jul 01, 2014 at 06:32:24AM +0900, Kukjin Kim wrote:
-> This patch removes s5pc100 related onenand codes because of no more
-> support for S5PC100 SoC in mainline.
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/s5p-cleanup
 > 
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Brian Norris <computersforpeace@gmail.com>
-> ---
->  drivers/mtd/onenand/Kconfig   |    4 ++--
->  drivers/mtd/onenand/samsung.c |   25 +------------------------
->  2 files changed, 3 insertions(+), 26 deletions(-)
+> for you to fetch changes up to 58595ebd9306691441ccf88973b97d4f8eaa8279:
 > 
-> diff --git a/drivers/mtd/onenand/Kconfig b/drivers/mtd/onenand/Kconfig
-> index ab26072..dcae2f6 100644
-> --- a/drivers/mtd/onenand/Kconfig
-> +++ b/drivers/mtd/onenand/Kconfig
-> @@ -32,10 +32,10 @@ config MTD_ONENAND_OMAP2
->  
->  config MTD_ONENAND_SAMSUNG
->          tristate "OneNAND on Samsung SOC controller support"
-> -        depends on ARCH_S3C64XX || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_EXYNOS4
-> +        depends on ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS4
->          help
->            Support for a OneNAND flash device connected to an Samsung SOC.
-> -          S3C64XX/S5PC100 use command mapping method.
-> +          S3C64XX uses command mapping method.
->            S5PC110/S5PC210 use generic OneNAND method.
->  
->  config MTD_ONENAND_OTP
-> diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
-> index efb819c..19cfb97 100644
-> --- a/drivers/mtd/onenand/samsung.c
-> +++ b/drivers/mtd/onenand/samsung.c
-> @@ -10,7 +10,7 @@
->   * published by the Free Software Foundation.
->   *
->   * Implementation:
-> - *	S3C64XX and S5PC100: emulate the pseudo BufferRAM
-> + *	S3C64XX: emulate the pseudo BufferRAM
->   *	S5PC110: use DMA
->   */
->  
-> @@ -32,7 +32,6 @@
->  enum soc_type {
->  	TYPE_S3C6400,
->  	TYPE_S3C6410,
-> -	TYPE_S5PC100,
->  	TYPE_S5PC110,
->  };
->  
-> @@ -59,7 +58,6 @@ enum soc_type {
->  #define MAP_11				(0x3)
->  
->  #define S3C64XX_CMD_MAP_SHIFT		24
-> -#define S5PC100_CMD_MAP_SHIFT		26
->  
->  #define S3C6400_FBA_SHIFT		10
->  #define S3C6400_FPA_SHIFT		4
-> @@ -69,10 +67,6 @@ enum soc_type {
->  #define S3C6410_FPA_SHIFT		6
->  #define S3C6410_FSA_SHIFT		4
->  
-> -#define S5PC100_FBA_SHIFT		13
-> -#define S5PC100_FPA_SHIFT		7
-> -#define S5PC100_FSA_SHIFT		5
-> -
->  /* S5PC110 specific definitions */
->  #define S5PC110_DMA_SRC_ADDR		0x400
->  #define S5PC110_DMA_SRC_CFG		0x404
-> @@ -195,11 +189,6 @@ static unsigned int s3c64xx_cmd_map(unsigned type, unsigned val)
->  	return (type << S3C64XX_CMD_MAP_SHIFT) | val;
->  }
->  
-> -static unsigned int s5pc1xx_cmd_map(unsigned type, unsigned val)
-> -{
-> -	return (type << S5PC100_CMD_MAP_SHIFT) | val;
-> -}
-> -
->  static unsigned int s3c6400_mem_addr(int fba, int fpa, int fsa)
->  {
->  	return (fba << S3C6400_FBA_SHIFT) | (fpa << S3C6400_FPA_SHIFT) |
-> @@ -212,12 +201,6 @@ static unsigned int s3c6410_mem_addr(int fba, int fpa, int fsa)
->  		(fsa << S3C6410_FSA_SHIFT);
->  }
->  
-> -static unsigned int s5pc100_mem_addr(int fba, int fpa, int fsa)
-> -{
-> -	return (fba << S5PC100_FBA_SHIFT) | (fpa << S5PC100_FPA_SHIFT) |
-> -		(fsa << S5PC100_FSA_SHIFT);
-> -}
-> -
->  static void s3c_onenand_reset(void)
->  {
->  	unsigned long timeout = 0x10000;
-> @@ -835,9 +818,6 @@ static void s3c_onenand_setup(struct mtd_info *mtd)
->  	} else if (onenand->type == TYPE_S3C6410) {
->  		onenand->mem_addr = s3c6410_mem_addr;
->  		onenand->cmd_map = s3c64xx_cmd_map;
-> -	} else if (onenand->type == TYPE_S5PC100) {
-> -		onenand->mem_addr = s5pc100_mem_addr;
-> -		onenand->cmd_map = s5pc1xx_cmd_map;
->  	} else if (onenand->type == TYPE_S5PC110) {
->  		/* Use generic onenand functions */
->  		this->read_bufferram = s5pc110_read_bufferram;
-> @@ -1111,9 +1091,6 @@ static struct platform_device_id s3c_onenand_driver_ids[] = {
->  		.name		= "s3c6410-onenand",
->  		.driver_data	= TYPE_S3C6410,
->  	}, {
-> -		.name		= "s5pc100-onenand",
-> -		.driver_data	= TYPE_S5PC100,
-> -	}, {
->  		.name		= "s5pc110-onenand",
->  		.driver_data	= TYPE_S5PC110,
->  	}, { },
-> -- 
-> 1.7.10.4
+>   ASoC: Samsung: remove s5pc100 related codes (2014-07-08 07:29:05 +0900)
 > 
+> ----------------------------------------------------------------
+> Cleanup S5P SoCs for 3.17
+> - removing s5p64x0 SoCs and s5pc100 SoC in mainline because
+>   no more user and if it is required next time, it will be
+>   supported with DT.
+> 
+> ----------------------------------------------------------------
+> Kukjin Kim (13):
+>       ARM: S5P64X0: no more support S5P6440 and S5P6450 SoCs
+>       gpio: samsung: remove s5p64x0 related gpio codes
+>       spi: s3c64xx: remove s5p64x0 related spi codes
+>       ASoC: samsung: no more support for S5P6440 and S5P6450 SoCs
+>       video: fbdev: s3c-fb: remove s5p64x0 related fimd codes
+>       serial: samsung: no more support for S5P6440 and S5P6450 SoCs
+>       ARM: S5PC100: no more support S5PC100 SoC
+>       gpio: samsung: remov s5pc100 related gpio codes
+>       spi: s3c64xx: remove s5pc100 related spi codes
+>       serial: samsung: no more support for S5PC100 SoC
+>       mtd: onenand: remove s5pc100 related onenand codes
+>       video: fbdev: s3c-fb: remove s5pc100 related fimd and fb codes
+>       ASoC: Samsung: remove s5pc100 related codes
+
+I've merged these in. I noticed lack of acked-by from Mark Brown, so I pinged
+him on IRC about it and the branch is currently at the top so it's easy to drop
+in case he has objections (cc:d here too).
+
+
+-Olof
