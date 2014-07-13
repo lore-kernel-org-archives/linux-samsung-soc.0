@@ -1,53 +1,41 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung fixes-3 for 3.16
-Date: Sat, 12 Jul 2014 21:19:45 -0700
-Message-ID: <20140713041945.GA14076@quad.lixom.net>
-References: <53C1B549.1060706@samsung.com>
+Subject: Re: [GIT PULL] Samsung cleanup for S5P SoCs for 3.17
+Date: Sat, 12 Jul 2014 21:20:22 -0700
+Message-ID: <20140713042022.GA14186@quad.lixom.net>
+References: <53BB2658.4050808@samsung.com>
+ <20140712165948.GA10012@quad.lixom.net>
+ <20140712194416.GA6800@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:51278 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750789AbaGMETW (ORCPT
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:51398 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750711AbaGMET6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 13 Jul 2014 00:19:22 -0400
-Received: by mail-pa0-f44.google.com with SMTP id rd3so3596367pab.3
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Jul 2014 21:19:21 -0700 (PDT)
+	Sun, 13 Jul 2014 00:19:58 -0400
+Received: by mail-pd0-f170.google.com with SMTP id g10so1244142pdj.15
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Jul 2014 21:19:58 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <53C1B549.1060706@samsung.com>
+In-Reply-To: <20140712194416.GA6800@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Sun, Jul 13, 2014 at 07:23:05AM +0900, Kukjin Kim wrote:
-> The following changes since commit cd3de83f147601356395b57a8673e9c5ff1e59d1:
+On Sat, Jul 12, 2014 at 08:44:16PM +0100, Mark Brown wrote:
+> On Sat, Jul 12, 2014 at 09:59:48AM -0700, Olof Johansson wrote:
 > 
->   Linux 3.16-rc4 (2014-07-06 12:37:51 -0700)
+> > I've merged these in. I noticed lack of acked-by from Mark Brown, so I pinged
+> > him on IRC about it and the branch is currently at the top so it's easy to drop
+> > in case he has objections (cc:d here too).
 > 
-> are available in the git repository at:
-> 
+> Don't know if I've seen these changes (though IIRC they might've gone to
+> the work account).  I suspect we're going to get some conflicts since
+> we've also got other changes going on in ASoC so it is probably going to
+> be easier to merge at least that patch via ASoC.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/samsung-fixes-3
-> 
-> for you to fetch changes up to bed7118988ef48063c72f67cc2701c72663b3870:
-> 
->   ARM: EXYNOS: Register cpuidle device only on exynos4210 and 5250
-> (2014-07-11 08:15:32 +0900)
-> 
-> ----------------------------------------------------------------
-> Samsung fixes-3 for v3.16
-> - update the parent for Auudss clock because kernel will be hang
->   during late boot if the parent clock is disabled in bootloader.
-> - enable clk handing in power domain because while power domain
->   on/off, its regarding clock source will be reset and it causes
->   a problem so need to handle it.
-> - add mux clocks to be used by power domain for exynos5420-mfc
->   during power domain on/off and property in device tree also.
-> - register cpuidle only for exynos4210 and exynos5250 because a
->   system failure will be happened on other exynos SoCs.
+Ok, no problem -- dropped from arm-soc now (and I'll merge the new
+version shortly).
 
-Pulled, thanks.
 
 -Olof
