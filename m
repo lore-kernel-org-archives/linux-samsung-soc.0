@@ -1,89 +1,91 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: Add mask-tpm-reset to the device tree
-Date: Mon, 14 Jul 2014 18:12:48 +0530
-Message-ID: <CAHfPSqDphnUB27tfp+8peQpbSKAAtatAEnzAHmmDottxv6yy-Q@mail.gmail.com>
-References: <1405319602-29892-1-git-send-email-vikas.sajjan@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3 0/8] Add Exynos4412 based Odroid X2 and U2/U3/U3+ support
+Date: Mon, 14 Jul 2014 14:48:18 +0200
+Message-ID: <1405342106-10585-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f181.google.com ([209.85.216.181]:48584 "EHLO
-	mail-qc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754564AbaGNMnJ (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36145 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754837AbaGNMsj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 08:43:09 -0400
-Received: by mail-qc0-f181.google.com with SMTP id w7so497881qcr.40
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2014 05:43:08 -0700 (PDT)
-In-Reply-To: <1405319602-29892-1-git-send-email-vikas.sajjan@samsung.com>
+	Mon, 14 Jul 2014 08:48:39 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N8P00ED8CWKX870@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 14 Jul 2014 13:48:20 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, linus.walleij@linaro.org, swarren@wwwdotorg.org, olof@lixom.net, Thomas Abraham <thomas.ab@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>
 
-Hello Vikas,
+Hello,
 
+This is the third version of the initial patch series adding support
+for Exynos 4412 based Odroid X2 and U2/U3/U3+ boards and improving
+support for Odroid X.
 
-On 14 July 2014 12:03, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
-> From: Doug Anderson <dianders@chromium.org>
->
-> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
-> being reset across sleep/wake.  If we don't set it to anything then
-> the TPM will be reset.  U-Boot will detect this as invalid
-> and will reset the system on resume time. This GPIO can always be low
-> and not hurt anything.  It will get pulled back high again during a
-> normal warm reset when it will default back to an input.
->
-> To properly preserve the TPM state across suspend/resume and to make
-> the chrome U-Boot happy, properly set the GPIO to mask the
-> reset to the TPM.
->
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+Complete USB support for Odroid U2/U3/U3+ still requires some fixes in
+Exynos4 USB2 Phy driver and clock driver for CLKOUT:
+http://thread.gmane.org/gmane.linux.kernel/1731843/
+http://www.spinics.net/lists/linux-usb/msg109587.html
+The above changes however don't affect Odroid DTS files, but without
+them, usb3503 hub is not yet functional.
 
-After merging Linus Walleij's for-next branch of pinctrl git.
+Support for audio codec and HDMI video output is available in separate patch series.
 
-S2R on Exynos5420 based Peach PIT works fine.
+If one is interested in more complete and open-source Odroid board
+support, there are also patches for u-boot project:
+http://thread.gmane.org/gmane.comp.boot-loaders.u-boot/188295/focus=188610
 
-Tested-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> ---
-> changes since v1:
->         - removed fixed regulator and used hogs instead.
->
->  arch/arm/boot/dts/exynos5420-peach-pit.dts |   12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> index 6c7cab0..c036d9e 100644
-> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> @@ -211,6 +211,18 @@
->
->
->  &pinctrl_0 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&mask_tpm_reset>;
-> +
-> +       /* We need GPX0_6 to be low at sleep time; just keep it low always */
-> +       mask_tpm_reset: mask-tpm-reset {
-> +               samsung,pins = "gpx0-6";
-> +               samsung,pin-function = <1>;
-> +               samsung,pin-pud = <0>;
-> +               samsung,pin-drv = <0>;
-> +               samsung,pin-val = <0>;
-> +       };
-> +
->         max98090_irq: max98090-irq {
->                 samsung,pins = "gpx0-2";
->                 samsung,pin-function = <0>;
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+Changelog:
+
+v3:
+- added fix for total memory size (last megabyte is used by secure firmware
+  and should not be accessed by Linux kernel)
+- added patch defining GPIO button(s)
+- added patch fixing TFLASH (SD card) detection
+
+v2:
+- added fix for broken LAN after reboot (removed BUCK8 always on property)
+- restored all 4 uarts for Odroid X/X2 until correct patch for UART driver
+  is developed
+- rmoved incorrect port@2 node in ehci node for odroidx dts
+- updated links for latest version of CLKOUT and PHY patches
+
+v1: 
+- initial version
 
 
+*** BLURB HERE ***
+
+Kamil Debski (2):
+  ARM: dts: exynos4412-odroidx: add support for USB (phy, host, device)
+  ARM: dts: exynos4412-odroid-common: disable 'always on' for BUCK8
+    regulator
+
+Marek Szyprowski (6):
+  ARM: dts: exynos4: add port sub-nodes to exynos usb host modules
+  ARM: dts: exynos4412-odroidx: enable common hardware blocks
+  ARM: dts: exynos4412-odroidx: correct memory size
+  ARM: dts: refactor Odroid DTS file and add support for Odroid X2 and
+    U2/U3
+  ARM: dts: exynos4412-odroid: add support for GPIO buttons
+  ARM: dts: exynos4412-odroid: fix T-FLASH hotplug detection
+
+ arch/arm/boot/dts/Makefile                      |   2 +
+ arch/arm/boot/dts/exynos4.dtsi                  |  24 ++
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 344 ++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4412-odroidu3.dts       |  49 ++++
+ arch/arm/boot/dts/exynos4412-odroidx.dts        | 279 ++-----------------
+ arch/arm/boot/dts/exynos4412-odroidx2.dts       |  23 ++
+ 6 files changed, 471 insertions(+), 250 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4412-odroidu3.dts
+ create mode 100644 arch/arm/boot/dts/exynos4412-odroidx2.dts
 
 -- 
-Shine bright,
-(: Nav :)
+1.9.2
