@@ -1,120 +1,76 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: dts: Add sound nodes for Odroid-X2/U3 boards
-Date: Mon, 14 Jul 2014 17:12:32 +0200
-Message-ID: <1405350752-25795-1-git-send-email-s.nawrocki@samsung.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH] cpuidle: big.LITTLE: add MCPM dependency
+Date: Mon, 14 Jul 2014 11:18:09 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1407141115500.3647@knanqh.ubzr>
+References: <4345351.RJRQd7ghCF@wuerfel>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:17713 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756263AbaGNPMt (ORCPT
+Received: from mail-qg0-f43.google.com ([209.85.192.43]:55780 "EHLO
+	mail-qg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756033AbaGNPSM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 11:12:49 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N8P009D9JLAP460@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 Jul 2014 00:12:46 +0900 (KST)
+	Mon, 14 Jul 2014 11:18:12 -0400
+Received: by mail-qg0-f43.google.com with SMTP id a108so3496842qge.30
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2014 08:18:11 -0700 (PDT)
+In-Reply-To: <4345351.RJRQd7ghCF@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-arm-kernel@lists.infradead.org, Chander Kashyap <chander.kashyap@linaro.org>
 
-Add MAX98090 audio codec, I2S interface and the sound complex
-nodes to enable audio on Odroid-X2/U3 boards.
+On Mon, 14 Jul 2014, Arnd Bergmann wrote:
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-This patch depends on the series from Marek [1] adding dt sources
-for Odroid X2/U3. My testing branch can be pulled from [2].
+> 662322fcb6d ("cpuidle: big.LITTLE: Add ARCH_EXYNOS entry in config")
+> made it possible for the big-little cpuidle driver to run on exynos,
+> which may or may not include MCPM support at compile time, so we
+> run into a link error when it is disabled:
+> 
+> drivers/built-in.o: In function `bl_enter_powerdown':
+> :(.text+0x1889a0): undefined reference to `mcpm_cpu_powered_up'
+> drivers/built-in.o: In function `bl_powerdown_finisher':
+> :(.text+0x1889e8): undefined reference to `mcpm_set_entry_vector'
+> :(.text+0x1889ec): undefined reference to `mcpm_cpu_suspend'
+> 
+> This adds an explicit dependency to CONFIG_MCPM to avoid that
+> case.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Cc: Chander Kashyap <chander.kashyap@linaro.org>
+> Cc: Tomasz Figa <t.figa@samsung.com>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+> I believe the broken commit is only present in the samsung/for-next
+> tree (through v3.17-next/cpuidle-exynos), so it should be fixed there.
+> 
+> On a side note, I wonder if we should have platform dependencies at
+> all, or just the MCPM dependency by itself.
 
-[1] http://www.spinics.net/lists/linux-samsung-soc/msg32544.html
-[2] git://linuxtv.org/snawrocki/samsung.git v3.16-rc5-odroid-sound
+This was discussed in some other thread already but I'm too lazy to dig 
+a reference to it.
 
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   27 +++++++++++++++++++++++
- arch/arm/boot/dts/exynos4412-odroidu3.dts       |   12 ++++++++++
- arch/arm/boot/dts/exynos4412-odroidx2.dts       |    9 ++++++++
- 3 files changed, 48 insertions(+)
+Only a dependency on MCPM alone is needed here.  And then:
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 0bc1a9b..6d6d23c 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -32,6 +32,21 @@
- 		};
- 	};
+Acked-by: Nicolas Pitre <nico@linaro.org>
 
-+	i2s0: i2s@03830000 {
-+		pinctrl-0 = <&i2s0_bus>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+		clocks = <&clock_audss EXYNOS_I2S_BUS>,
-+			 <&clock_audss EXYNOS_DOUT_AUD_BUS>;
-+		clock-names = "iis", "i2s_opclk0";
-+	};
-+
-+	sound: sound {
-+		compatible = "samsung,odroidx2-audio";
-+		samsung,i2s-controller = <&i2s0>;
-+		samsung,audio-codec = <&max98090>;
-+	};
-+
- 	mmc@12550000 {
- 		pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
- 		pinctrl-names = "default";
-@@ -321,6 +336,18 @@
- 		};
- 	};
-
-+	i2c@13870000 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c1_bus>;
-+		status = "okay";
-+		max98090: max98090@10 {
-+			compatible = "maxim,max98090";
-+			reg = <0x10>;
-+			interrupt-parent = <&gpx0>;
-+			interrupts = <0 0>;
-+		};
-+	};
-+
- 	exynos-usbphy@125B0000 {
- 		status = "okay";
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index 287aa0d..c8a64be 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -47,3 +47,15 @@
- 		status = "okay";
- 	};
- };
-+
-+&sound {
-+	compatible = "samsung,odroidu3-audio";
-+	samsung,model = "Odroid-U3";
-+	samsung,audio-routing =
-+		"Headphone Jack", "HPL",
-+		"Headphone Jack", "HPR",
-+		"Headphone Jack", "MICBIAS",
-+		"IN1", "Headphone Jack",
-+		"Speakers", "SPKL",
-+		"Speakers", "SPKR";
-+};
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx2.dts b/arch/arm/boot/dts/exynos4412-odroidx2.dts
-index e9ae161..96b43f4 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx2.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx2.dts
-@@ -21,3 +21,12 @@
- 		reg = <0x40000000 0x7FF00000>;
- 	};
- };
-+
-+&sound {
-+	samsung,model = "Odroid-X2";
-+	samsung,audio-routing =
-+		"Headphone Jack", "HPL",
-+		"Headphone Jack", "HPR",
-+		"IN1", "Mic Jack",
-+		"Mic Jack", "MICBIAS";
-+};
---
-1.7.9.5
+> 
+> diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
+> index 2f6b33ea6e08..459b7c91407a 100644
+> --- a/drivers/cpuidle/Kconfig.arm
+> +++ b/drivers/cpuidle/Kconfig.arm
+> @@ -10,6 +10,7 @@ config ARM_ARMADA_370_XP_CPUIDLE
+>  config ARM_BIG_LITTLE_CPUIDLE
+>  	bool "Support for ARM big.LITTLE processors"
+>  	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
+> +	depends on MCPM
+>  	select ARM_CPU_SUSPEND
+>  	select CPU_IDLE_MULTIPLE_DRIVERS
+>  	help
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+> 
