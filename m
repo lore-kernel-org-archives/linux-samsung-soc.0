@@ -1,56 +1,56 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 17/17] ASoC: Samsung: remove s5pc100 related codes
-Date: Mon, 14 Jul 2014 19:05:12 +0100
-Message-ID: <20140714180512.GA22213@sirena.org.uk>
-References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
- <1404163947-3105-18-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 04/17] ASoC: samsung: no more support for S5P6440 and
+ S5P6450 SoCs
+Date: Mon, 14 Jul 2014 19:05:58 +0100
+Message-ID: <20140714180558.GB22213@sirena.org.uk>
+References: <1404340817-28902-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+	protocol="application/pgp-signature"; boundary="oLBj+sq0vYjzfsbl"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37245 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37251 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751658AbaGNSFc (ORCPT
+	with ESMTP id S1751658AbaGNSGO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 14:05:32 -0400
+	Mon, 14 Jul 2014 14:06:14 -0400
 Content-Disposition: inline
-In-Reply-To: <1404163947-3105-18-git-send-email-kgene.kim@samsung.com>
+In-Reply-To: <1404340817-28902-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, pebolle@tiscali.nl
 
 
---yrj/dFKFPuw6o+aM
+--oLBj+sq0vYjzfsbl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jul 01, 2014 at 06:32:27AM +0900, Kukjin Kim wrote:
-> This patch removes s5pc100 related codes in
-> <linux/platform_data/asoc-s3c.h>.
+On Thu, Jul 03, 2014 at 07:40:17AM +0900, Kukjin Kim wrote:
+> This patch removes s5p64x0 related WM8580 because of removing support
+> for s5p64x0 SoCs.
 
 Applied, thanks.
 
---yrj/dFKFPuw6o+aM
+--oLBj+sq0vYjzfsbl
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTxBvVAAoJELSic+t+oim9iJUP/iD60BmByq0flLch99kdENn8
-ckXaMpH5+zPCFywda/v67hah5tBaBc31sPsghYPKM+nkRyjQsUxpxVGzT/dIyzb/
-2CAB/NUljNbwEEnqYWqG7h2WlVu9rKGLS2GVmUazUjenLT9rj28rdYg5A/2OCNzZ
-K/Q5e+zCJkXe6WJGMRvkFtigttFj3up9oLwH/wONkQvXZbqUJL+BYXQdLWUZHDID
-1tk8i6IJCEoW1s8PaLef4AlrlnRbRcYM5aDCoe52SXX9dpQipgKy+TLTTRE0NWdg
-d9LHYgbd4PhpeZ2jKgdn1Pme4NnLNp1zUa8CoB1Uy0O0PqcGQt1hrl+Zf3H1TVb9
-G7QLtZc+97uaBh5CzW1n+Ra+rA2Upiknb37FlNPLNJYYjhhklxZsvQNa1oBWKtyg
-Utwe0CTc7AWNjXN34njWhQX266r/MKoBIcIknQt1PIst+nlwsVdOSQiX0bigKhqX
-S1gs7AZAFqI7T+YeowdicjeG2R8KI058ChTRO/ZbfbJgdz1UxOYromPD3S6GlvLB
-OsfXu6dvqMOQ0JxzZ67n4dYAksvbL0EigWDzN9ktaow9IYtFzUSJXmJAZsMPHBGc
-V5AFISojuvNALtggQobYqjWVvkr5oLWp45DwX+PlhYK6+9Ws9M1tA6JIC/kT4U3M
-ciY5mQwcKEnzzqoWyJ4C
-=+oLS
+iQIcBAEBAgAGBQJTxBwDAAoJELSic+t+oim9P7sQAJ1HPVR+WjGSh1zL7v1QsqBZ
+bwe5CqqoTAjOkyIBnHJpNMS66OsFPE2o+XkckXLAElcYgsttua3I5cAIU5DHj5n7
+KOaeMsv5/LuHmduBrZ6PRqGNCTcJIDDmru3mZxhZcsdRhLEhLTZUg6CxewghrpMa
+nHZKX9Rp6jPv/KHsP9xl6PRtqthjM68CFkaLZaRLtUiT7bqh8wJbAD6i0ycCp7Bd
+jmzigFqcMftkwW7OM7EacqgaRX3xv9ex46/dlMsHgc/8CwraoEQxUWf+kRq4wnie
+CdAEli2VEiLBHJw9VYjkW4huJdoiy/CkHhtLDa5zFlnA1995SBPUDnYvOq7+PHOW
+SZ/7HVkTWwNtaUDFg9wCjYEpIyGutY6expuatiLrHPyzKnVFrbD468bbzLETYv+o
+cZ+H/+3ASWPNhXNmCXdNEEYJAGilamlx7ruKIznr3uWK4kVy72xMrlZRCBYgMFHk
+xr82/kt3R50w3Jxv8iPnDISRJE6on01yufhjzjdtNlT02Up6UD1rjKrkzUmYYFM+
+3M8iiJvtCYx8pAFKscXmSMV9nU+wHzcwkj1kbYsIN+q0jRkwbozpLEU4AIVCbMqo
+zXuAI1DjF8u5UascZAkow/5IclfxeqdB/IDoqp6Mq9nmm9gFB8/lYFpAqvqobhcX
+dv+atwvQgOFlmf989AtK
+=uwhP
 -----END PGP SIGNATURE-----
 
---yrj/dFKFPuw6o+aM--
+--oLBj+sq0vYjzfsbl--
