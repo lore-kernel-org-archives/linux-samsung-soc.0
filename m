@@ -1,119 +1,62 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 7/8] ARM: dts: exynos4412-odroid: add support for GPIO
- buttons
-Date: Mon, 14 Jul 2014 14:48:25 +0200
-Message-ID: <1405342106-10585-8-git-send-email-m.szyprowski@samsung.com>
-References: <1405342106-10585-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:47336 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755317AbaGNMsn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 08:48:43 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N8P00E5KCX26770@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 Jul 2014 13:48:38 +0100 (BST)
-In-reply-to: <1405342106-10585-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 0/4] Fine tune USB 3.0 PHY on exynos5420
+Date: Mon, 14 Jul 2014 18:19:54 +0530
+Message-ID: <1405342198-3870-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org, heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, pratyush.anand-qxv4g6HH51o@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>
 
-This patch adds support for simple GPIO-based button availabled on
-Exynos4 based Odroid boards. All supported boards have POWER button,
-which has been defined in exynos4412-odroid-common.dtsi. X/X2 boards
-also have additional user-configurable button which has been mapped to
-KEY_HOME. All defined keys have been marked as possible wakeup source.
+This series is based on Heikki's patches for simpliefied phy lookup table:
+[PATCHv2 0/6] phy: simplified phy lookup [1], applied against 'next' branch
+of Kishon's linux-phy tree.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 24 ++++++++++++++++++++++++
- arch/arm/boot/dts/exynos4412-odroidx.dts        | 21 +++++++++++++++++++++
- 2 files changed, 45 insertions(+)
+Changes since v2:
+1) Removed any check for DWC3 in xhci-plat for getting usb2-phy and usb3-phy,
+   in order to make it more generic.
+2) Moved the phy_calibration calls to core/hcd.c to enable a more generic
+   solution for issues of calibrating the PHYs.
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index ad2cb32a3439..d1b33a8efa9d 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -7,6 +7,7 @@
-  * published by the Free Software Foundation.
- */
- 
-+#include <dt-bindings/input/input.h>
- #include "exynos4412.dtsi"
- 
- / {
-@@ -15,6 +16,22 @@
- 		reg = <0x0204F000 0x1000>;
- 	};
- 
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio_power_key>;
-+
-+		power_key {
-+			interrupt-parent = <&gpx1>;
-+			interrupts = <3 0>;
-+			gpios = <&gpx1 3 1>;
-+			linux,code = <KEY_POWER>;
-+			label = "power key";
-+			debounce-interval = <10>;
-+			gpio-key,wakeup;
-+		};
-+	};
-+
- 	mmc@12550000 {
- 		pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
- 		pinctrl-names = "default";
-@@ -316,3 +333,10 @@
- 		status = "okay";
- 	};
- };
-+
-+&pinctrl_1 {
-+	gpio_power_key: power_key {
-+		samsung,pins = "gpx1-3";
-+		samsung,pin-pud = <0>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index 8b453a31410d..cb1cfe7239c4 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -46,6 +46,20 @@
- 		status = "okay";
- 	};
- 
-+	gpio_keys {
-+		pinctrl-0 = <&gpio_power_key &gpio_home_key>;
-+
-+		home_key {
-+			interrupt-parent = <&gpx2>;
-+			interrupts = <2 0>;
-+			gpios = <&gpx2 2 0>;
-+			linux,code = <KEY_HOME>;
-+			label = "home key";
-+			debounce-interval = <10>;
-+			gpio-key,wakeup;
-+		};
-+	};
-+
- 	regulator_p3v3 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "p3v3_en";
-@@ -62,3 +76,10 @@
- 		status = "okay";
- 	};
- };
-+
-+&pinctrl_1 {
-+	gpio_home_key: home_key {
-+		samsung,pins = "gpx2-2";
-+		samsung,pin-pud = <0>;
-+	};
-+};
+Changes since v1:
+1) Using 'gen_phy' member of 'hcd' instead of declaring more variables
+   to hold phys.
+2) Added a check for compatible match for 'Synopsys-dwc3' controller,
+   since the 'gen_phy' member of 'hcd' already gets the 'usb' PHY
+   in core/hcd.c; but XHCI on Synopsys-dwc3 doesn't need that,
+   instead two separate PHYs for UTMI+ and PIPE3 for the two HCDs
+   (main hcd and shared hcd).
+3) Restructured the code in 'xhci_plat_setup()' and 'xhci_plat_resume()'
+   to use hcd->gen_phy directly. Also added the check for Synopsys's DWC3
+   controller while trying to calibrate the PHY.
+
+Explanation for the need of this patch-series:
+"The DWC3-exynos eXtensible host controller present on Exynos5420/5800
+SoCs is quirky. The PHY serving this controller operates at High-Speed
+by default, so it detects even Super-speed devices as high-speed ones.
+Certain PHY parameters like Tx LOS levels and Boost levels need to be
+calibrated further post initialization of xHCI controller, to get
+SuperSpeed operations working."
+
+[1] https://lkml.org/lkml/2014/6/5/358
+
+Vivek Gautam (4):
+  phy: Add provision for calibrating phy.
+  usb: host: xhci-plat: Get PHYs for xhci's hcds
+  usb: hcd: Caibrate PHY post hcd reset
+  phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800
+
+ drivers/phy/phy-core.c           |   36 ++++++++
+ drivers/phy/phy-exynos5-usbdrd.c |  169 ++++++++++++++++++++++++++++++++++++++
+ drivers/usb/core/hcd.c           |   22 +++++
+ drivers/usb/host/xhci-plat.c     |   17 ++++
+ include/linux/phy/phy.h          |    8 ++
+ 5 files changed, 252 insertions(+)
+
 -- 
-1.9.2
+1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
