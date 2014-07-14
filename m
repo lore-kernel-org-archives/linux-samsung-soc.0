@@ -1,95 +1,52 @@
-From: Nick Krause <xerofoify@gmail.com>
-Subject: Re: [PATCH] mach-s3c64xx: Remove all defintions not related to regs-clocks
-Date: Mon, 14 Jul 2014 14:56:17 -0400
-Message-ID: <CAPDOMVhUiMehj6U5GbukhWiTQ9FObvqphKZv4qzHieH_FsBh5A@mail.gmail.com>
-References: <1405361664-5210-1-git-send-email-xerofoify@gmail.com>
-	<53C4201E.3020708@infradead.org>
-	<1405363234.13661.12.camel@x220>
-	<53C4254A.3040900@infradead.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] cpuidle: big.LITTLE: add MCPM dependency
+Date: Mon, 14 Jul 2014 20:55:53 +0200
+Message-ID: <6876751.hCLZ4zM0XT@wuerfel>
+References: <4345351.RJRQd7ghCF@wuerfel> <53C42522.9060907@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f180.google.com ([209.85.220.180]:33038 "EHLO
-	mail-vc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752433AbaGNS4R (ORCPT
+Received: from mout.kundenserver.de ([212.227.17.10]:57349 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756183AbaGNS4W (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 14:56:17 -0400
-In-Reply-To: <53C4254A.3040900@infradead.org>
+	Mon, 14 Jul 2014 14:56:22 -0400
+In-Reply-To: <53C42522.9060907@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Paul Bolle <pebolle@tiscali.nl>, ben-linux <ben-linux@fluff.org>, "kgene.kim" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "tomasz.figa" <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: kgene.kim@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Mon, Jul 14, 2014 at 2:45 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 07/14/14 11:40, Paul Bolle wrote:
->> On Mon, 2014-07-14 at 11:23 -0700, Randy Dunlap wrote:
->>> On 07/14/14 11:14, Nicholas Krause wrote:
->>>> This patch addresses the fix me message in this file that states to
->>>> remove all definitions not related to reg-clocks in this header
->>>> file.
->>>>
->>>> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
->>>> ---
->>>>  arch/arm/mach-s3c64xx/include/mach/regs-clock.h | 22 +---------------------
->>>>  1 file changed, 1 insertion(+), 21 deletions(-)
->>>>
->>>> diff --git a/arch/arm/mach-s3c64xx/include/mach/regs-cloclinux-kernel@vger.kernel.orgk.h b/arch/arm/mach-s3c64xx/include/mach/regs-clock.h
->>>> index 4f44aac..46e64cc 100644
->>>> --- a/arch/arm/mach-s3c64xx/include/mach/regs-clock.h
->>>> +++ b/arch/arm/mach-s3c64xx/include/mach/regs-clock.h
->>>> @@ -15,24 +15,4 @@
->>>>  #ifndef __PLAT_REGS_CLOCK_H
->>>>  #define __PLAT_REGS_CLOCK_H __FILE__
->>>>
->>>> -/*
->>>> - * FIXME: Remove remaining definitions
->>>> - */
->>>> -
->>>> -#define S3C_CLKREG(x)              (S3C_VA_SYS + (x))
->>>> -
->>>> -#define S3C_PCLK_GATE              S3C_CLKREG(0x34)
->>>> -#define S3C6410_CLK_SRC2   S3C_CLKREG(0x10C)
->>>> -#define S3C_MEM_SYS_CFG            S3C_CLKREG(0x120)
->>>> -
->>>> -/* PCLK GATE Registers */
->>>> -#define S3C_CLKCON_PCLK_UART3              (1<<4)
->>>> -#define S3C_CLKCON_PCLK_UART2              (1<<3)
->>>> -#define S3C_CLKCON_PCLK_UART1              (1<<2)
->>>> -#define S3C_CLKCON_PCLK_UART0              (1<<1)
->>>> -
->>>> -/* MEM_SYS_CFG */
->>>> -#define MEM_SYS_CFG_INDEP_CF               0x4000
->>>> -#define MEM_SYS_CFG_EBI_FIX_PRI_CFCON      0x30
->>>> -
->>>> -#endif /* _PLAT_REGS_CLOCK_H */
->>>> +/#endif /* _PLAT_REGS_CLOCK_H */
->>>
->>> I don't know about the other changes, but that last line looks like an error.
->>> Did you build anything that #includes this header file?
->>
->> I just did
->>     git grep -n S3C_CLKCON_PCLK_UART
->>
->> It was just a guess. I did not cherry pick the defines that covers! The
->> output of that command is, I think, pretty clear.
->>
->> Nicholas, I think you've been told already to stop doing what you're
->> doing again here. I try not to use colorful language on the net, but
->> you're really pushing me here.
->>
->> Please go find something other to do than grepping the kernel tree for
->> FIXMEs!
->linux-kernel@vger.kernel.org
-> Yes.
->
-> FIXMEs are not a suggested starting point for kernel beginners.
-> If they were easy to fix, they would already be fixed or most likely
-> would never have been introduced.
->
->
-> --
-> ~Randy
-Randy,
-My mistake I didn't check the tree for files linking to these definitions.
-I will be more careful ,next time.
-Niclk
+On Monday 14 July 2014 20:44:50 Daniel Lezcano wrote:
+> > --- a/drivers/cpuidle/Kconfig.arm
+> > +++ b/drivers/cpuidle/Kconfig.arm
+> > @@ -10,6 +10,7 @@ config ARM_ARMADA_370_XP_CPUIDLE
+> >   config ARM_BIG_LITTLE_CPUIDLE
+> >       bool "Support for ARM big.LITTLE processors"
+> >       depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
+> > +     depends on MCPM
+> 
+> Why do we want to depend on MCPM ? If I want to enable the cpuidle 
+> driver, the Kconfig should select the dependencies instead of letting 
+> the user to figure out what dependency is missing in order to enable the 
+> cpuidle option, no ?
+> 
+> +       select MCPM
+> 
+
+MCPM is a user-selectable option, which doesn't mix well with 'select'.
+
+If you want to use 'select' here, better also change
+
+	bool "Multi-Cluster Power Management"
+
+to just
+
+	bool
+
+in the ARM global Kconfig. The normal way to deal with these dependencies
+though is to have platforms 'select' the features they allow and have
+device drivers 'depends on' the same symbol.
+
+	Arnd
