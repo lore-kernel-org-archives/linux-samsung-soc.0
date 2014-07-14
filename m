@@ -1,70 +1,61 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Fix MCPM build with SUSPEND=n
-Date: Mon, 14 Jul 2014 14:55:16 +0200
-Message-ID: <1405342516.13970.0.camel@AMDC1943>
-References: <1405337093-15377-1-git-send-email-k.kozlowski@samsung.com>
- <alpine.LFD.2.11.1407140730080.3647@knanqh.ubzr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <stable-owner@vger.kernel.org>
-In-reply-to: <alpine.LFD.2.11.1407140730080.3647@knanqh.ubzr>
-Sender: stable-owner@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
+From: Thomas Abraham <thomas.ab@samsung.com>
+Subject: [PATCH v7 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
+Date: Mon, 14 Jul 2014 19:08:32 +0530
+Message-ID: <1405345118-4269-1-git-send-email-thomas.ab@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:64732 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754251AbaGNNi4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Jul 2014 09:38:56 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com, heiko@sntech.de, cw00.choi@samsung.com
 
-On pon, 2014-07-14 at 07:35 -0400, Nicolas Pitre wrote:
-> On Mon, 14 Jul 2014, Krzysztof Kozlowski wrote:
-> 
-> > Building of EXYNOS5420_MCPM with disabled SUSPEND fails:
-> > arch/arm/mach-exynos/built-in.o: In function `exynos_mcpm_init':
-> > arch/arm/mach-exynos/mcpm-exynos.c:361: undefined reference to `mcpm_loopback'
-> > 
-> > The exynos_mcpm_init() in mcp-exynos.c calls mcpm_loopback() which
-> > depends on cpu_suspend function (ARM_CPU_SUSPEND).
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Cc: <stable@vger.kernel.org>
-> 
-> No need to CC stable here as this code has not reached a released kernel 
-> yet.
-> 
-> > Fixes: a6a4d3152e3cbb6 ("ARM: 8083/1: exynos: activate the CCI on boot CPU/cluster using the MCPM loopback")
-> 
-> And this is not clear yet if this commit ID is stable.
-> 
-> Other than that:
-> 
-> Acked-by: Nicolas Pitre <nico@linaro.org>
-> 
-> Please send to RMK's patch system.
+Changes since v6:
+- Fixes suggested by Amit Daniel <amit.daniel@samsung.com>.
 
-Sure, I'll remove the cc-stable tag, add your ack and send to the patch
-system.
+This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
+drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
+series also enabled cpufreq support for Exynos5420 using arm_big_little cpufreq
+driver.
 
-Thanks,
-Krzysztof
+Thomas Abraham (6):
+  clk: samsung: add infrastructure to register cpu clocks
+  clk: samsung: register exynos5420 apll/kpll configuration data
+  clk: exynos: use cpu-clock provider type to represent arm clock
+  ARM: dts: Exynos: add cpu nodes, opp and cpu clock configuration data
+  ARM: Exynos: switch to using generic cpufreq driver for exynos4210/5250
+  cpufreq: exynos: remove exynos4210/5250 specific cpufreq driver support
 
-> 
-> 
-> > ---
-> >  arch/arm/mach-exynos/Kconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> > index 8f9b66c4ac78..5d4ff6571dcd 100644
-> > --- a/arch/arm/mach-exynos/Kconfig
-> > +++ b/arch/arm/mach-exynos/Kconfig
-> > @@ -119,6 +119,7 @@ config EXYNOS5420_MCPM
-> >  	bool "Exynos5420 Multi-Cluster PM support"
-> >  	depends on MCPM && SOC_EXYNOS5420
-> >  	select ARM_CCI
-> > +	select ARM_CPU_SUSPEND
-> >  	help
-> >  	  This is needed to provide CPU and cluster power management
-> >  	  on Exynos5420 implementing big.LITTLE.
-> > -- 
-> > 1.9.1
-> > 
-> > 
+ arch/arm/boot/dts/exynos4210-origen.dts         |    6 +
+ arch/arm/boot/dts/exynos4210-trats.dts          |    6 +
+ arch/arm/boot/dts/exynos4210-universal_c210.dts |    6 +
+ arch/arm/boot/dts/exynos4210.dtsi               |   27 ++
+ arch/arm/boot/dts/exynos5250-arndale.dts        |    6 +
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi   |    6 +
+ arch/arm/boot/dts/exynos5250-smdk5250.dts       |    6 +
+ arch/arm/boot/dts/exynos5250.dtsi               |   23 +
+ arch/arm/boot/dts/exynos5420-smdk5420.dts       |    6 +
+ arch/arm/boot/dts/exynos5420.dtsi               |   32 ++
+ arch/arm/mach-exynos/exynos.c                   |   15 +-
+ drivers/clk/samsung/Makefile                    |    2 +-
+ drivers/clk/samsung/clk-cpu.c                   |  576 +++++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos4.c               |   25 +-
+ drivers/clk/samsung/clk-exynos5250.c            |   16 +-
+ drivers/clk/samsung/clk-exynos5420.c            |   60 ++-
+ drivers/clk/samsung/clk.h                       |    5 +
+ drivers/cpufreq/Kconfig.arm                     |   22 -
+ drivers/cpufreq/Makefile                        |    2 -
+ drivers/cpufreq/exynos4210-cpufreq.c            |  184 --------
+ drivers/cpufreq/exynos5250-cpufreq.c            |  210 ---------
+ include/dt-bindings/clock/exynos5250.h          |    1 +
+ include/dt-bindings/clock/exynos5420.h          |    2 +
+ 23 files changed, 802 insertions(+), 442 deletions(-)
+ create mode 100644 drivers/clk/samsung/clk-cpu.c
+ delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
+ delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
+
+-- 
+1.7.9.5
