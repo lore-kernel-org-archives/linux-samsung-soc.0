@@ -1,65 +1,67 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2 1/2] ASoC: samsung: Add machine driver for Odroid X2/U3
-Date: Mon, 14 Jul 2014 12:31:18 +0100
-Message-ID: <20140714113118.GE6800@sirena.org.uk>
-References: <1403108551-25058-1-git-send-email-s.nawrocki@samsung.com>
- <1403108551-25058-2-git-send-email-s.nawrocki@samsung.com>
- <20140630184658.GE23300@sirena.org.uk>
- <53C3BEB9.7000706@samsung.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Fix MCPM build with SUSPEND=n
+Date: Mon, 14 Jul 2014 07:35:15 -0400 (EDT)
+Message-ID: <alpine.LFD.2.11.1407140730080.3647@knanqh.ubzr>
+References: <1405337093-15377-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WBsA/oQW3eTA3LlM"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36805 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753869AbaGNLcA (ORCPT
+Received: from mail-qa0-f48.google.com ([209.85.216.48]:58524 "EHLO
+	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754683AbaGNLfS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 07:32:00 -0400
-Content-Disposition: inline
-In-Reply-To: <53C3BEB9.7000706@samsung.com>
+	Mon, 14 Jul 2014 07:35:18 -0400
+Received: by mail-qa0-f48.google.com with SMTP id m5so1035045qaj.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2014 04:35:17 -0700 (PDT)
+In-Reply-To: <1405337093-15377-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, galak@codeaurora.org, zhen1.chen@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, alsa-devel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
+
+On Mon, 14 Jul 2014, Krzysztof Kozlowski wrote:
+
+> Building of EXYNOS5420_MCPM with disabled SUSPEND fails:
+> arch/arm/mach-exynos/built-in.o: In function `exynos_mcpm_init':
+> arch/arm/mach-exynos/mcpm-exynos.c:361: undefined reference to `mcpm_loopback'
+> 
+> The exynos_mcpm_init() in mcp-exynos.c calls mcpm_loopback() which
+> depends on cpu_suspend function (ARM_CPU_SUSPEND).
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Cc: <stable@vger.kernel.org>
+
+No need to CC stable here as this code has not reached a released kernel 
+yet.
+
+> Fixes: a6a4d3152e3cbb6 ("ARM: 8083/1: exynos: activate the CCI on boot CPU/cluster using the MCPM loopback")
+
+And this is not clear yet if this commit ID is stable.
+
+Other than that:
+
+Acked-by: Nicolas Pitre <nico@linaro.org>
+
+Please send to RMK's patch system.
 
 
---WBsA/oQW3eTA3LlM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Jul 14, 2014 at 01:27:53PM +0200, Sylwester Nawrocki wrote:
-
-> Too bad, I noticed this comment only just now.  I'll consider this and
-> will try again and see how simple-card could be used.  There is also the
-> samsung-i2s-sec secondary 'overlay' CPU DAI that would need to be handled,
-> and we have it now internally specified in the machine driver through
-> cpu_dai_name, rather than cpu_of_node.
-> There might be some more work in the driver needed to support the
-> secondary I2S interface generically with DT.
-
-You should be converting the device to DPCM for both that and the
-compressed audio path.
-
---WBsA/oQW3eTA3LlM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTw7+DAAoJELSic+t+oim96UYP/RkReXbBb6THPBdOv4kXm0kk
-5sEjYy8O5VD0bppMmrbhO03dSKH7uF608z04FpD3KNCm4sOJCsKYwqsWY+aSTU43
-xW7mDCdOXgLK6tmxyCX9pTDEadkg3rZIOeVcmTP/YdUyEgc4TSyxyWFjCGqRIzr7
-wRYdIMb8Br4BK/MMoJc8hcQ6aZZZHGkGVMZ3a6Gr02WLSIk1R3tfqWCJgTr3PO+d
-gX2OotvwPBgw3bFboTVKYU1Rrl3uu7QUB46UAqRUAVyAV5aqLxSK1B9rQxT7G45I
-xzpeqBcS7aYGavtcG28gxq2NtElBfGch/9KPCnum8PwgieL01/AYYYIFyLKpXIKQ
-/r19JzEir6uI1rr4OQJZUy/0RjGIb2CGmyCRYEnfPEuzdL8e6Obwl5MdsHY9pKYt
-Mqti4sU96k5a3qhGUbLnCHnAyPqqVGPD+g+FuQedCKLSqZFGonYKSonSlUy45EeH
-Aq49T59yNUhcIY8tBw4eucskCQC9z14sAZ4KTE12gWZuHAJkEyFCXB7TkVBouMQz
-u/VdMolsItZjUAtK2ITPoyVU4oD5oFn+sqrSMUgeXhoAX31j6EMKze1WOr2huu4D
-UTxETrqrjfMFDKPv20CFWv06akWeK4yFoInfecyIXOxVKeDaYKbdZR03hZ6k4Ymk
-a2vKlC6r9FZuZ11mg/nM
-=9i8a
------END PGP SIGNATURE-----
-
---WBsA/oQW3eTA3LlM--
+> ---
+>  arch/arm/mach-exynos/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 8f9b66c4ac78..5d4ff6571dcd 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -119,6 +119,7 @@ config EXYNOS5420_MCPM
+>  	bool "Exynos5420 Multi-Cluster PM support"
+>  	depends on MCPM && SOC_EXYNOS5420
+>  	select ARM_CCI
+> +	select ARM_CPU_SUSPEND
+>  	help
+>  	  This is needed to provide CPU and cluster power management
+>  	  on Exynos5420 implementing big.LITTLE.
+> -- 
+> 1.9.1
+> 
+> 
