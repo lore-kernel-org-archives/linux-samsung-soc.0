@@ -1,56 +1,86 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 04/17] ASoC: samsung: no more support for S5P6440 and
- S5P6450 SoCs
-Date: Mon, 14 Jul 2014 19:05:58 +0100
-Message-ID: <20140714180558.GB22213@sirena.org.uk>
-References: <1404340817-28902-1-git-send-email-kgene.kim@samsung.com>
+From: Julius Werner <jwerner@chromium.org>
+Subject: Re: [PATCH v3 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
+Date: Mon, 14 Jul 2014 11:08:15 -0700
+Message-ID: <CAODwPW_h2EBKtA+XwEvjCtS=FrcdHOjybwALGugd-ccQ-_vMWw@mail.gmail.com>
+References: <1405342198-3870-1-git-send-email-gautam.vivek@samsung.com>
+	<1405342198-3870-3-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oLBj+sq0vYjzfsbl"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37251 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751658AbaGNSGO (ORCPT
+Received: from mail-oa0-f45.google.com ([209.85.219.45]:61119 "EHLO
+	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751658AbaGNSIQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 14:06:14 -0400
-Content-Disposition: inline
-In-Reply-To: <1404340817-28902-1-git-send-email-kgene.kim@samsung.com>
+	Mon, 14 Jul 2014 14:08:16 -0400
+Received: by mail-oa0-f45.google.com with SMTP id i7so3675921oag.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2014 11:08:15 -0700 (PDT)
+In-Reply-To: <1405342198-3870-3-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, pebolle@tiscali.nl
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Mathias Nyman <mathias.nyman@intel.com>, Julius Werner <jwerner@chromium.org>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, heikki.krogerus@linux.intel.com, pratyush.anand@st.com
 
+On Mon, Jul 14, 2014 at 5:49 AM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+> The host controller by itself may sometimes need to handle PHY
+> and/or calibrate some of the PHY settings to get full support out
+> of the PHY controller. The PHY core provides a calibration
+> funtionality now to do so.
+> Therefore, facilitate getting the two possible PHYs, viz.
+> USB 2.0 type (UTMI+) and USB 3.0 type (PIPE3).
+>
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> ---
+>  drivers/usb/host/xhci-plat.c |   17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>
+> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+> index 1a0cf9f..d097d60 100644
+> --- a/drivers/usb/host/xhci-plat.c
+> +++ b/drivers/usb/host/xhci-plat.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/phy/phy.h>
+>  #include <linux/slab.h>
+>  #include <linux/usb/xhci_pdriver.h>
+>
+> @@ -180,6 +181,14 @@ static int xhci_plat_probe(struct platform_device *pdev)
+>                         goto put_hcd;
+>         }
+>
+> +       /* Get possile USB 2.0 type PHY (UTMI+) available with xhci */
+> +       hcd->gen_phy = devm_phy_get(&pdev->dev, "usb2-phy");
+> +       if (IS_ERR(hcd->gen_phy)) {
+> +               ret = PTR_ERR(hcd->gen_phy);
+> +               if (ret != -ENOSYS && ret != -ENODEV)
+> +                       dev_dbg(&pdev->dev, "no usb2 phy configured\n");
 
---oLBj+sq0vYjzfsbl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+nit: This message is not really accurate anymore, right? If there is
+no phy configured, you get ENODEV and (correctly) skip the message
+completely. What you probably want is dev_warn(..., "error retrieving
+usb2 phy: %d\n"); or something like that.
 
-On Thu, Jul 03, 2014 at 07:40:17AM +0900, Kukjin Kim wrote:
-> This patch removes s5p64x0 related WM8580 because of removing support
-> for s5p64x0 SoCs.
-
-Applied, thanks.
-
---oLBj+sq0vYjzfsbl
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTxBwDAAoJELSic+t+oim9P7sQAJ1HPVR+WjGSh1zL7v1QsqBZ
-bwe5CqqoTAjOkyIBnHJpNMS66OsFPE2o+XkckXLAElcYgsttua3I5cAIU5DHj5n7
-KOaeMsv5/LuHmduBrZ6PRqGNCTcJIDDmru3mZxhZcsdRhLEhLTZUg6CxewghrpMa
-nHZKX9Rp6jPv/KHsP9xl6PRtqthjM68CFkaLZaRLtUiT7bqh8wJbAD6i0ycCp7Bd
-jmzigFqcMftkwW7OM7EacqgaRX3xv9ex46/dlMsHgc/8CwraoEQxUWf+kRq4wnie
-CdAEli2VEiLBHJw9VYjkW4huJdoiy/CkHhtLDa5zFlnA1995SBPUDnYvOq7+PHOW
-SZ/7HVkTWwNtaUDFg9wCjYEpIyGutY6expuatiLrHPyzKnVFrbD468bbzLETYv+o
-cZ+H/+3ASWPNhXNmCXdNEEYJAGilamlx7ruKIznr3uWK4kVy72xMrlZRCBYgMFHk
-xr82/kt3R50w3Jxv8iPnDISRJE6on01yufhjzjdtNlT02Up6UD1rjKrkzUmYYFM+
-3M8iiJvtCYx8pAFKscXmSMV9nU+wHzcwkj1kbYsIN+q0jRkwbozpLEU4AIVCbMqo
-zXuAI1DjF8u5UascZAkow/5IclfxeqdB/IDoqp6Mq9nmm9gFB8/lYFpAqvqobhcX
-dv+atwvQgOFlmf989AtK
-=uwhP
------END PGP SIGNATURE-----
-
---oLBj+sq0vYjzfsbl--
+> +       }
+> +
+>         ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
+>         if (ret)
+>                 goto disable_clk;
+> @@ -209,6 +218,14 @@ static int xhci_plat_probe(struct platform_device *pdev)
+>         if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
+>                 xhci->shared_hcd->can_do_streams = 1;
+>
+> +       /* Get possile USB 3.0 type PHY (PIPE3) available with xhci */
+> +       xhci->shared_hcd->gen_phy = devm_phy_get(&pdev->dev, "usb3-phy");
+> +       if (IS_ERR(xhci->shared_hcd->gen_phy)) {
+> +               ret = PTR_ERR(xhci->shared_hcd->gen_phy);
+> +               if (ret != -ENOSYS && ret != -ENODEV)
+> +                       dev_dbg(&pdev->dev, "no usb3 phy configured\n");
+> +       }
+> +
+>         ret = usb_add_hcd(xhci->shared_hcd, irq, IRQF_SHARED);
+>         if (ret)
+>                 goto put_usb3_hcd;
+> --
+> 1.7.10.4
+>
