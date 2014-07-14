@@ -1,55 +1,112 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] cpuidle: big.LITTLE: add MCPM dependency
-Date: Mon, 14 Jul 2014 13:23:47 +0200
-Message-ID: <4345351.RJRQd7ghCF@wuerfel>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH v3 1/2] phy: Kconfig: Re-organize Exynos USB 2.0 PHY configs
+Date: Mon, 14 Jul 2014 16:55:00 +0530
+Message-ID: <CAFp+6iEfP=z=Cjshsq=FugzjLJkbYgPyX9MJjAt4d75Tx7rowA@mail.gmail.com>
+References: <1405332522-6162-1-git-send-email-sachin.kamat@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:58473 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753869AbaGNLXx (ORCPT
+Received: from mail-qg0-f42.google.com ([209.85.192.42]:43228 "EHLO
+	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753869AbaGNLZC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 07:23:53 -0400
+	Mon, 14 Jul 2014 07:25:02 -0400
+In-Reply-To: <1405332522-6162-1-git-send-email-sachin.kamat@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: Chander Kashyap <chander.kashyap@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kishon <kishon@ti.com>, Doug Anderson <dianders@chromium.org>, Sachin Kamat <spk.linux@gmail.com>
 
-662322fcb6d ("cpuidle: big.LITTLE: Add ARCH_EXYNOS entry in config")
-made it possible for the big-little cpuidle driver to run on exynos,
-which may or may not include MCPM support at compile time, so we
-run into a link error when it is disabled:
+On Mon, Jul 14, 2014 at 3:38 PM, Sachin Kamat <sachin.kamat@samsung.com> wrote:
+> Since the USB 2.0 PHYs are required with EHCI/OHCI USB drivers and
+> USB gadget controller supported by the DWC2 gadget driver, make it
+> depend on them and default to ARCH_EXYNOS as they are meant for
+> Exynos platforms. Also, make the sub-drivers silent options enabling
+> them based on the SoC platforms that they are meant to work with. This
+> will make life easier for end users who do not have any way knowing the
+> dependencies.
+>
+> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
+> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+> ---
+> Changes since v3:
+> * Rebased the series on top of latest PHY tree [1].
+> [1] git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git
+> ---
+>  drivers/phy/Kconfig |   35 +++++++++++------------------------
+>  1 file changed, 11 insertions(+), 24 deletions(-)
+>
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 5fceb33..c412ca4 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -132,43 +132,30 @@ config PHY_SUN4I_USB
+>  config PHY_SAMSUNG_USB2
+>         tristate "Samsung USB 2.0 PHY driver"
+>         depends on HAS_IOMEM
+> +       depends on USB_EHCI_EXYNOS || USB_OHCI_EXYNOS || USB_DWC2
+>         select GENERIC_PHY
+>         select MFD_SYSCON
+> +       default ARCH_EXYNOS
+>         help
+>           Enable this to support the Samsung USB 2.0 PHY driver for Samsung
+> -         SoCs. This driver provides the interface for USB 2.0 PHY. Support for
+> -         particular SoCs has to be enabled in addition to this driver. Number
+> -         and type of supported phys depends on the SoC.
+> +         SoCs. This driver provides the interface for USB 2.0 PHY. Support
+> +         for particular PHYs will be enabled based on the SoC type in addition
+> +         to this driver.
+>
+>  config PHY_EXYNOS4210_USB2
+> -       bool "Support for Exynos 4210"
+> +       bool
+>         depends on PHY_SAMSUNG_USB2
+> -       depends on CPU_EXYNOS4210
+> -       help
+> -         Enable USB PHY support for Exynos 4210. This option requires that
+> -         Samsung USB 2.0 PHY driver is enabled and means that support for this
+> -         particular SoC is compiled in the driver. In case of Exynos 4210 four
+> -         phys are available - device, host, HSIC0 and HSIC1.
+> +       default CPU_EXYNOS4210
+>
+>  config PHY_EXYNOS4X12_USB2
+> -       bool "Support for Exynos 3250/4x12"
+> +       bool
+>         depends on PHY_SAMSUNG_USB2
+> -       depends on (SOC_EXYNOS3250 || SOC_EXYNOS4212 || SOC_EXYNOS4412)
+> -       help
+> -         Enable USB PHY support for Exynos 3250/4x12. This option requires
+> -         that Samsung USB 2.0 PHY driver is enabled and means that support for
+> -         this particular SoC is compiled in the driver. In case of Exynos 4x12
+> -         four phys are available - device, host, HSIC0 and HSIC1.
+> +       default SOC_EXYNOS3250 || SOC_EXYNOS4212 || SOC_EXYNOS4412
+>
+>  config PHY_EXYNOS5250_USB2
+> -       bool "Support for Exynos 5250"
+> +       bool
+>         depends on PHY_SAMSUNG_USB2
+> -       depends on SOC_EXYNOS5250
+> -       help
+> -         Enable USB PHY support for Exynos 5250. This option requires that
+> -         Samsung USB 2.0 PHY driver is enabled and means that support for this
+> -         particular SoC is compiled in the driver. In case of Exynos 5250 four
+> -         phys are available - device, host, HSIC0 and HSIC.
+> +       default SOC_EXYNOS5250 || SOC_EXYNOS5420
+>
+>  config PHY_EXYNOS5_USBDRD
+>         tristate "Exynos5 SoC series USB DRD PHY driver"
+> --
+> 1.7.9.5
+>
 
-drivers/built-in.o: In function `bl_enter_powerdown':
-:(.text+0x1889a0): undefined reference to `mcpm_cpu_powered_up'
-drivers/built-in.o: In function `bl_powerdown_finisher':
-:(.text+0x1889e8): undefined reference to `mcpm_set_entry_vector'
-:(.text+0x1889ec): undefined reference to `mcpm_cpu_suspend'
+Tested on Exynos5800 and Exynos5250, with exynos_defconfig patch :
+http://www.spinics.net/lists/linux-samsung-soc/msg33994.html
 
-This adds an explicit dependency to CONFIG_MCPM to avoid that
-case.
+Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Cc: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: Tomasz Figa <t.figa@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
----
-I believe the broken commit is only present in the samsung/for-next
-tree (through v3.17-next/cpuidle-exynos), so it should be fixed there.
 
-On a side note, I wonder if we should have platform dependencies at
-all, or just the MCPM dependency by itself.
-
-diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
-index 2f6b33ea6e08..459b7c91407a 100644
---- a/drivers/cpuidle/Kconfig.arm
-+++ b/drivers/cpuidle/Kconfig.arm
-@@ -10,6 +10,7 @@ config ARM_ARMADA_370_XP_CPUIDLE
- config ARM_BIG_LITTLE_CPUIDLE
- 	bool "Support for ARM big.LITTLE processors"
- 	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
-+	depends on MCPM
- 	select ARM_CPU_SUSPEND
- 	select CPU_IDLE_MULTIPLE_DRIVERS
- 	help
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
