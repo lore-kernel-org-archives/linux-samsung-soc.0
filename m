@@ -1,62 +1,55 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH 2/2] phy: Kconfig: Update config for Exynos USB DRD
-Date: Mon, 14 Jul 2014 16:44:01 +0530
-Message-ID: <CAFp+6iE7XOHMtv1bJ8x7ABSf5r34cwsoYB5wUauz+dTqoDC0gQ@mail.gmail.com>
-References: <1405332522-6162-1-git-send-email-sachin.kamat@samsung.com>
-	<1405332522-6162-2-git-send-email-sachin.kamat@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] cpuidle: big.LITTLE: add MCPM dependency
+Date: Mon, 14 Jul 2014 13:23:47 +0200
+Message-ID: <4345351.RJRQd7ghCF@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f45.google.com ([209.85.192.45]:50223 "EHLO
-	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752252AbaGNLOD (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.130]:58473 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753869AbaGNLXx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 07:14:03 -0400
-In-Reply-To: <1405332522-6162-2-git-send-email-sachin.kamat@samsung.com>
+	Mon, 14 Jul 2014 07:23:53 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kishon <kishon@ti.com>, Doug Anderson <dianders@chromium.org>, Sachin Kamat <spk.linux@gmail.com>
+To: kgene.kim@samsung.com
+Cc: Chander Kashyap <chander.kashyap@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Mon, Jul 14, 2014 at 3:38 PM, Sachin Kamat <sachin.kamat@samsung.com> wrote:
-> USB DWC3 driver on Exynos platform does not work without its
-> corresponding phy driver. Hence make the PHY driver depend on
-> Exynos DWC3 driver and default it to yes to make things easier
-> for the end user.
->
-> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
-> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
-> ---
->  drivers/phy/Kconfig |    2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index c412ca4..c730e85 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -161,8 +161,10 @@ config PHY_EXYNOS5_USBDRD
->         tristate "Exynos5 SoC series USB DRD PHY driver"
->         depends on ARCH_EXYNOS5 && OF
->         depends on HAS_IOMEM
-> +       depends on USB_DWC3_EXYNOS
->         select GENERIC_PHY
->         select MFD_SYSCON
-> +       default y
->         help
->           Enable USB DRD PHY support for Exynos 5 SoC series.
->           This driver provides PHY interface for USB 3.0 DRD controller
-> --
-> 1.7.9.5
+662322fcb6d ("cpuidle: big.LITTLE: Add ARCH_EXYNOS entry in config")
+made it possible for the big-little cpuidle driver to run on exynos,
+which may or may not include MCPM support at compile time, so we
+run into a link error when it is disabled:
 
-Tested on Exynos5800 and Exynos5250, with exynos_defconfig patch :
-http://www.spinics.net/lists/linux-samsung-soc/msg33994.html
+drivers/built-in.o: In function `bl_enter_powerdown':
+:(.text+0x1889a0): undefined reference to `mcpm_cpu_powered_up'
+drivers/built-in.o: In function `bl_powerdown_finisher':
+:(.text+0x1889e8): undefined reference to `mcpm_set_entry_vector'
+:(.text+0x1889ec): undefined reference to `mcpm_cpu_suspend'
 
-Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
+This adds an explicit dependency to CONFIG_MCPM to avoid that
+case.
 
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: Tomasz Figa <t.figa@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+I believe the broken commit is only present in the samsung/for-next
+tree (through v3.17-next/cpuidle-exynos), so it should be fixed there.
 
+On a side note, I wonder if we should have platform dependencies at
+all, or just the MCPM dependency by itself.
 
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
+index 2f6b33ea6e08..459b7c91407a 100644
+--- a/drivers/cpuidle/Kconfig.arm
++++ b/drivers/cpuidle/Kconfig.arm
+@@ -10,6 +10,7 @@ config ARM_ARMADA_370_XP_CPUIDLE
+ config ARM_BIG_LITTLE_CPUIDLE
+ 	bool "Support for ARM big.LITTLE processors"
+ 	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
++	depends on MCPM
+ 	select ARM_CPU_SUSPEND
+ 	select CPU_IDLE_MULTIPLE_DRIVERS
+ 	help
