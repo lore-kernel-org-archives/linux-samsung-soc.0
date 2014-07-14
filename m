@@ -1,61 +1,67 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2] ARM: dts: Add mask-tpm-reset to the device tree
-Date: Mon, 14 Jul 2014 10:02:02 -0700
-Message-ID: <CAD=FV=WTCJJCZ5ZPs34XRGmbp9qrHh7x88qdcRz6dR4-0BpqcQ@mail.gmail.com>
-References: <1405319602-29892-1-git-send-email-vikas.sajjan@samsung.com>
-	<CAD=FV=UQfQpJ3Tp-cBAfPsH9wHXb1yknget6iMQcgOVnH1PwFA@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH V4 00/10] drm: exynos: few patches to enhance bridge chip
+ support
+Date: Mon, 14 Jul 2014 10:22:13 -0700
+Message-ID: <CAOesGMgvLr+14tFP3N-kTwH9wJ8+1=OXoiEo9_KFDyOSFpK7nw@mail.gmail.com>
+References: <1402511228-18945-1-git-send-email-ajaykumar.rs@samsung.com>
+ <53B4E7D6.6000204@suse.de>
+ <CAD=FV=UH=sgZKFxH35qfBb-XJGJ9ctSSdVRhTEkt6zk0f+R4mA@mail.gmail.com>
+ <CAEC9eQO+j8iikztW4Q47xKRM71C6qGaCuBTdSW=odKG0kRsWBg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f169.google.com ([209.85.220.169]:38736 "EHLO
-	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756174AbaGNRCC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 13:02:02 -0400
-Received: by mail-vc0-f169.google.com with SMTP id hu12so2797147vcb.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2014 10:02:02 -0700 (PDT)
-In-Reply-To: <CAD=FV=UQfQpJ3Tp-cBAfPsH9wHXb1yknget6iMQcgOVnH1PwFA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAEC9eQO+j8iikztW4Q47xKRM71C6qGaCuBTdSW=odKG0kRsWBg@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: InKi Dae <inki.dae@samsung.com>, David Airlie <airlied@linux.ie>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Doug Anderson <dianders@chromium.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Andrzej Hajda <a.hajda@samsung.com>, Ajay kumar <ajaynumb@gmail.com>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Thomas P Abraham <thomas.ab@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Vikas,
+Inki,
 
-On Mon, Jul 14, 2014 at 10:00 AM, Doug Anderson <dianders@chromium.org> wrote:
-> Vikas,
+You have acks, and you have the tested-bys you requested. Can you
+please pick this up quickly so that we can have graphics working with
+an upstream kernel on chromebooks?
+
+Dave, if Inki keeps dragging his feet like this can you please apply
+this series directly? These delays are ridiculous and it's hurting
+forward progress on the platform as a whole.
+
+
+Thanks,
+
+-Olof
+
+
+On Tue, Jul 8, 2014 at 11:11 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
+> Hi Daniel, Thierry and Rob,
 >
-> On Sun, Jul 13, 2014 at 11:33 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
->> From: Doug Anderson <dianders@chromium.org>
->>
->> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
->> being reset across sleep/wake.  If we don't set it to anything then
->> the TPM will be reset.  U-Boot will detect this as invalid
->> and will reset the system on resume time. This GPIO can always be low
->> and not hurt anything.  It will get pulled back high again during a
->> normal warm reset when it will default back to an input.
->>
->> To properly preserve the TPM state across suspend/resume and to make
->> the chrome U-Boot happy, properly set the GPIO to mask the
->> reset to the TPM.
->>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
->> ---
->> changes since v1:
->>         - removed fixed regulator and used hogs instead.
->>
->>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   12 ++++++++++++
->>  1 file changed, 12 insertions(+)
+> Currently, the following boards are working fine with the bridge chip series:
+> - snow
+> - spring
+> - peach_pit
+> - peach_pi
+> And, I did change my original patchset based on your comments here:
+> (1) [RFC V2 0/3] drm/bridge: panel and chaining
+>         http://www.spinics.net/lists/linux-samsung-soc/msg30160.html
+> (2) [RFC V3 0/3] drm/bridge: panel and chaining
+>         http://www.spinics.net/lists/linux-samsung-soc/msg30507.html
 >
-> This looks reasonable to me except for two things:
+> If you think this is not the right way of doing it, please come forward with
+> more suggestions, or kindly ACK it.
+> I am just wondering how long can I keep waiting for comments?
 >
-> 1. You need to apply this to pit and pi (not just pi)
-
-Sorry, just realized that you had two patches and they weren't just
-revisions (I got confused when one was v1 and one was v2).  I would
-have just put them in the same patch, but two patches is OK.
-
-
-> 2. The proper sort ordering for elements within a pin control group is
-> by pin number, so this pin should be _after_ gpx0-2, not before.
+> Regards,
+> Ajay
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
