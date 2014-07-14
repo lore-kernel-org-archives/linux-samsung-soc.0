@@ -1,196 +1,80 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2] ARM: EXYNOS: Fix build with PM_SLEEP=n
-Date: Mon, 14 Jul 2014 09:45:53 +0200
-Message-ID: <1405323953-25954-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:11905 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750731AbaGNHrb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 03:47:31 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH 1/6] mmc: sdhci-s3c: Fix local I/O clock gating
+Date: Mon, 14 Jul 2014 17:05:29 +0900
+Message-ID: <53C38F49.7050504@samsung.com>
+References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
+ <1403618235-19353-2-git-send-email-t.figa@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <1403618235-19353-2-git-send-email-t.figa@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Fix building of exynos defconfig with disabled PM_SLEEP:
-CONFIG_PM_SLEEP=n
-CONFIG_PM_SLEEP_SMP=n
-CONFIG_SUSPEND=n
-by moving functions for power up/down of CPU and cluster to platsmp.c
+Looks good to me.
 
-The build error messages:
-arch/arm/mach-exynos/built-in.o: In function `exynos_boot_secondary':
-arch/arm/mach-exynos/platsmp.c:111: undefined reference to `exynos_cpu_power_state'
-arch/arm/mach-exynos/platsmp.c:112: undefined reference to `exynos_cpu_power_up'
-arch/arm/mach-exynos/platsmp.c:116: undefined reference to `exynos_cpu_power_state'
-make: *** [vmlinux] Error 1
+Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On 06/24/2014 10:57 PM, Tomasz Figa wrote:
+> For internal card detection mechanism it is required that the local I/O
+> clock is always running. However while current implementation accounts
+> for this, it does so incorrectly leading to race conditions and warnings
+> about unbalanced clock disables.
+> 
+> This patch fixes it by inverting the logic, which now increases local
+> I/O clock enable count when internal card detect is used, instead of
+> decreasing it otherwise.
+> 
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Chris Ball <chris@printf.net>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: linux-mmc@vger.kernel.org
+> ---
+>  drivers/mmc/host/sdhci-s3c.c | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index fa5954a..1795e1f 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -487,8 +487,13 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
+>  		goto err_pdata_io_clk;
+>  	}
+>  
+> -	/* enable the local io clock and keep it running for the moment. */
+> -	clk_prepare_enable(sc->clk_io);
+> +	/*
+> +	 * Keep local I/O clock enabled for internal card detect pin
+> +	 * or runtime PM is disabled.
+> +	 */
+> +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL
+> +	    || !IS_ENABLED(CONFIG_PM_RUNTIME))
+> +		clk_prepare_enable(sc->clk_io);
+>  
+>  	for (clks = 0, ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
+>  		char name[14];
+> @@ -611,15 +616,13 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
+>  		goto err_req_regs;
+>  	}
+>  
+> -#ifdef CONFIG_PM_RUNTIME
+> -	if (pdata->cd_type != S3C_SDHCI_CD_INTERNAL)
+> -		clk_disable_unprepare(sc->clk_io);
+> -#endif
+>  	return 0;
+>  
+>   err_req_regs:
+>   err_no_busclks:
+> -	clk_disable_unprepare(sc->clk_io);
+> +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL
+> +	    || !IS_ENABLED(CONFIG_PM_RUNTIME))
+> +		clk_disable_unprepare(sc->clk_io);
+>  
+>   err_pdata_io_clk:
+>  	sdhci_free_host(host);
+> 
 
----
-Changes since v1:
-1. Use different solution - just move the power up/down functions to a
-   common place instead of adding stubs in common.h. Suggested by Tomasz
-   Figa.
----
- arch/arm/mach-exynos/platsmp.c | 66 ++++++++++++++++++++++++++++++++++++++++++
- arch/arm/mach-exynos/pm.c      | 66 ------------------------------------------
- 2 files changed, 66 insertions(+), 66 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index b15ea30faa7c..d435175671e0 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -31,6 +31,72 @@
- 
- extern void exynos4_secondary_startup(void);
- 
-+/**
-+ * exynos_core_power_down : power down the specified cpu
-+ * @cpu : the cpu to power down
-+ *
-+ * Power down the specified cpu. The sequence must be finished by a
-+ * call to cpu_do_idle()
-+ *
-+ */
-+void exynos_cpu_power_down(int cpu)
-+{
-+	__raw_writel(0, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-+}
-+
-+/**
-+ * exynos_cpu_power_up : power up the specified cpu
-+ * @cpu : the cpu to power up
-+ *
-+ * Power up the specified cpu
-+ */
-+void exynos_cpu_power_up(int cpu)
-+{
-+	__raw_writel(S5P_CORE_LOCAL_PWR_EN,
-+		     EXYNOS_ARM_CORE_CONFIGURATION(cpu));
-+}
-+
-+/**
-+ * exynos_cpu_power_state : returns the power state of the cpu
-+ * @cpu : the cpu to retrieve the power state from
-+ *
-+ */
-+int exynos_cpu_power_state(int cpu)
-+{
-+	return (__raw_readl(EXYNOS_ARM_CORE_STATUS(cpu)) &
-+			S5P_CORE_LOCAL_PWR_EN);
-+}
-+
-+/**
-+ * exynos_cluster_power_down : power down the specified cluster
-+ * @cluster : the cluster to power down
-+ */
-+void exynos_cluster_power_down(int cluster)
-+{
-+	__raw_writel(0, EXYNOS_COMMON_CONFIGURATION(cluster));
-+}
-+
-+/**
-+ * exynos_cluster_power_up : power up the specified cluster
-+ * @cluster : the cluster to power up
-+ */
-+void exynos_cluster_power_up(int cluster)
-+{
-+	__raw_writel(S5P_CORE_LOCAL_PWR_EN,
-+		     EXYNOS_COMMON_CONFIGURATION(cluster));
-+}
-+
-+/**
-+ * exynos_cluster_power_state : returns the power state of the cluster
-+ * @cluster : the cluster to retrieve the power state from
-+ *
-+ */
-+int exynos_cluster_power_state(int cluster)
-+{
-+	return (__raw_readl(EXYNOS_COMMON_STATUS(cluster)) &
-+			S5P_CORE_LOCAL_PWR_EN);
-+}
-+
- static inline void __iomem *cpu_boot_reg_base(void)
- {
- 	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index fa7218a99580..6ab68a068e93 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -101,72 +101,6 @@ static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
- 	return -ENOENT;
- }
- 
--/**
-- * exynos_core_power_down : power down the specified cpu
-- * @cpu : the cpu to power down
-- *
-- * Power down the specified cpu. The sequence must be finished by a
-- * call to cpu_do_idle()
-- *
-- */
--void exynos_cpu_power_down(int cpu)
--{
--	__raw_writel(0, EXYNOS_ARM_CORE_CONFIGURATION(cpu));
--}
--
--/**
-- * exynos_cpu_power_up : power up the specified cpu
-- * @cpu : the cpu to power up
-- *
-- * Power up the specified cpu
-- */
--void exynos_cpu_power_up(int cpu)
--{
--	__raw_writel(S5P_CORE_LOCAL_PWR_EN,
--		     EXYNOS_ARM_CORE_CONFIGURATION(cpu));
--}
--
--/**
-- * exynos_cpu_power_state : returns the power state of the cpu
-- * @cpu : the cpu to retrieve the power state from
-- *
-- */
--int exynos_cpu_power_state(int cpu)
--{
--	return (__raw_readl(EXYNOS_ARM_CORE_STATUS(cpu)) &
--			S5P_CORE_LOCAL_PWR_EN);
--}
--
--/**
-- * exynos_cluster_power_down : power down the specified cluster
-- * @cluster : the cluster to power down
-- */
--void exynos_cluster_power_down(int cluster)
--{
--	__raw_writel(0, EXYNOS_COMMON_CONFIGURATION(cluster));
--}
--
--/**
-- * exynos_cluster_power_up : power up the specified cluster
-- * @cluster : the cluster to power up
-- */
--void exynos_cluster_power_up(int cluster)
--{
--	__raw_writel(S5P_CORE_LOCAL_PWR_EN,
--		     EXYNOS_COMMON_CONFIGURATION(cluster));
--}
--
--/**
-- * exynos_cluster_power_state : returns the power state of the cluster
-- * @cluster : the cluster to retrieve the power state from
-- *
-- */
--int exynos_cluster_power_state(int cluster)
--{
--	return (__raw_readl(EXYNOS_COMMON_STATUS(cluster)) &
--			S5P_CORE_LOCAL_PWR_EN);
--}
--
- #define EXYNOS_BOOT_VECTOR_ADDR	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
- 			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
- 			(sysram_base_addr + 0x24) : S5P_INFORM0))
--- 
-1.9.1
