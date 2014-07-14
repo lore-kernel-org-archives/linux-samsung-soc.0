@@ -1,97 +1,56 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/3 v6] spi: s3c64xx: fix broken "cs_gpios" usage in the
- driver
-Date: Mon, 14 Jul 2014 18:25:24 +0100
-Message-ID: <20140714172524.GH6800@sirena.org.uk>
-References: <1405316506-27855-1-git-send-email-ch.naveen@samsung.com>
- <1405316506-27855-2-git-send-email-ch.naveen@samsung.com>
+Subject: Re: [PATCH 17/17] ASoC: Samsung: remove s5pc100 related codes
+Date: Mon, 14 Jul 2014 19:05:12 +0100
+Message-ID: <20140714180512.GA22213@sirena.org.uk>
+References: <1404163947-3105-1-git-send-email-kgene.kim@samsung.com>
+ <1404163947-3105-18-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8/pVXlBMPtxfSuJG"
+	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37185 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37245 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751921AbaGNR0F (ORCPT
+	with ESMTP id S1751658AbaGNSFc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 13:26:05 -0400
+	Mon, 14 Jul 2014 14:05:32 -0400
 Content-Disposition: inline
-In-Reply-To: <1405316506-27855-2-git-send-email-ch.naveen@samsung.com>
+In-Reply-To: <1404163947-3105-18-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, naveenkrishna.ch@gmail.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 
---8/pVXlBMPtxfSuJG
+--yrj/dFKFPuw6o+aM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 14, 2014 at 11:11:44AM +0530, Naveen Krishna Chatradhi wrote:
+On Tue, Jul 01, 2014 at 06:32:27AM +0900, Kukjin Kim wrote:
+> This patch removes s5pc100 related codes in
+> <linux/platform_data/asoc-s3c.h>.
 
-> @@ -812,6 +800,10 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
->  		spi->controller_data =3D cs;
->  	}
-> =20
-> +	/* For the non-DT platforms derive chip selects from controller data */
-> +	if (!spi->dev.of_node)
-> +		spi->cs_gpio =3D cs->line;
-> +
->  	if (IS_ERR_OR_NULL(cs)) {
->  		dev_err(&spi->dev, "No CS for SPI(%d)\n", spi->chip_select);
->  		return -ENODEV;
-> @@ -819,17 +811,16 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
-> =20
->  	if (!spi_get_ctldata(spi)) {
->  		/* Request gpio only if cs line is asserted by gpio pins */
-> -		if (sdd->cs_gpio) {
-> -			err =3D gpio_request_one(cs->line, GPIOF_OUT_INIT_HIGH,
-> -					dev_name(&spi->dev));
-> +		if (gpio_is_valid(spi->cs_gpio)) {
+Applied, thanks.
 
-As previously mentioned gpio_is_valid() is *not* a direct substitute for
-checking if the boolean flag cs_gpio has been set since 0 is a valid
-GPIO on at least some of these platforms and as discussed several times
-already some of the SoCs require the use of the built in chip select.
-
-In general it's quite hard to tie the description in the patch to the
-code changes, not helped by the decision to do separate refactorings
-like this conversion to gpio_is_valid() as part of the one patch.  The
-description of the patch now makes some statements about what the
-problem that's intended to be fixed is but it still doesn't seem
-entirely clear that everything has been thought through fully and tied
-to the code.
-
-The original code appears to be buggy which isn't helping anything but
-it's hard to have confidence that this isn't going to break some other
-use case that currently works given the lack of clarity and the number
-of revisions that have been required so far.
-
-I think some combination of smaller changes and a clearer working
-through of the before and after states for both DT and non DT cases to
-show that everything has been considered would help a lot.  I may have
-another stare at this but it's worrying how hard I'm needing to think.
-
---8/pVXlBMPtxfSuJG
+--yrj/dFKFPuw6o+aM
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTxBKBAAoJELSic+t+oim9QP8P/RHc1G9eqFq4SLxSD/ihcMrv
-HQ/QDv2y3sckHIEVOGNPG6KpqYPFL1FZkl6iehQ9IXXJcs+1yQ9n1oRzOz5Ymbfv
-IPkX9vyM33q52Hrtrfnl2Sgv9P3fQRFPUn8mM3Y9V9bB0kvFANWt8ueF72oUTLkZ
-t0sF/yGbvdRHMXCFQmYZqISKTvjiZrYZdjHmmlOADXymlNJh+LlN48YJeU+yMPP3
-b+TGYtCwqYcfl3V1qjXapNnWi8TQJUczk5SiAsbs33U1tIFoavcQCpKisAtSgoBE
-IArMoafrPxpP1KY1kGRD4FMM7/00cb7hziv/WlTlTRzaaoRuQA1h4M2wiogt/FLC
-WfOAP1mjmk55o3kQ0YtrfQOCCsicPAAgDgDdYL9IRpJP0PnrQ7OdEUq0L02Rb4kl
-dQS0qmnRlpF9pGxuuvpDWRmqJcviSGuWLS8HJvg+OFt/Z3K/plMAKKiI0Urv7uTy
-cafFnN5+NUA4Z+4ND0RwDPnqSCG5g0arYs7fvX9JKyUGjvbxd9LaD821QtOg77WA
-4jNFKvFyzykH5enHhmbllBa3gSFqdJfRcLEBThrG4GKco3Qygv4HJ5jF7jo/5wiP
-SwjWqR9QuCuawgvKQzk71qyCavbVv09IpZEMdkH1oKO9uMwXCNOmL605KbqrVMSf
-IcETCjuOa2Zwhl7iM2es
-=9yH/
+iQIcBAEBAgAGBQJTxBvVAAoJELSic+t+oim9iJUP/iD60BmByq0flLch99kdENn8
+ckXaMpH5+zPCFywda/v67hah5tBaBc31sPsghYPKM+nkRyjQsUxpxVGzT/dIyzb/
+2CAB/NUljNbwEEnqYWqG7h2WlVu9rKGLS2GVmUazUjenLT9rj28rdYg5A/2OCNzZ
+K/Q5e+zCJkXe6WJGMRvkFtigttFj3up9oLwH/wONkQvXZbqUJL+BYXQdLWUZHDID
+1tk8i6IJCEoW1s8PaLef4AlrlnRbRcYM5aDCoe52SXX9dpQipgKy+TLTTRE0NWdg
+d9LHYgbd4PhpeZ2jKgdn1Pme4NnLNp1zUa8CoB1Uy0O0PqcGQt1hrl+Zf3H1TVb9
+G7QLtZc+97uaBh5CzW1n+Ra+rA2Upiknb37FlNPLNJYYjhhklxZsvQNa1oBWKtyg
+Utwe0CTc7AWNjXN34njWhQX266r/MKoBIcIknQt1PIst+nlwsVdOSQiX0bigKhqX
+S1gs7AZAFqI7T+YeowdicjeG2R8KI058ChTRO/ZbfbJgdz1UxOYromPD3S6GlvLB
+OsfXu6dvqMOQ0JxzZ67n4dYAksvbL0EigWDzN9ktaow9IYtFzUSJXmJAZsMPHBGc
+V5AFISojuvNALtggQobYqjWVvkr5oLWp45DwX+PlhYK6+9Ws9M1tA6JIC/kT4U3M
+ciY5mQwcKEnzzqoWyJ4C
+=+oLS
 -----END PGP SIGNATURE-----
 
---8/pVXlBMPtxfSuJG--
+--yrj/dFKFPuw6o+aM--
