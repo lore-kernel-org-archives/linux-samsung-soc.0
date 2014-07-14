@@ -1,76 +1,47 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: [PATCH] cpuidle: big.LITTLE: add MCPM dependency
-Date: Mon, 14 Jul 2014 11:18:09 -0400 (EDT)
-Message-ID: <alpine.LFD.2.11.1407141115500.3647@knanqh.ubzr>
-References: <4345351.RJRQd7ghCF@wuerfel>
+From: Daniel Drake <drake@endlessm.com>
+Subject: Re: [alsa-devel] [PATCH V3 2/2] ASoC: samsung: Add machine driver for
+ Odroid X2/U3
+Date: Mon, 14 Jul 2014 16:25:42 +0100
+Message-ID: <CAD8Lp460Ym1y5OS8ya=jddO-spnojyGVWkUWhXmKCfbOOGL61A@mail.gmail.com>
+References: <1404479625-25385-1-git-send-email-s.nawrocki@samsung.com>
+	<1404479625-25385-2-git-send-email-s.nawrocki@samsung.com>
+	<CAD8Lp44JFtbcD22c+0PVb5S4U1kVTTxHD=PgqiKzhVypFW5Prg@mail.gmail.com>
+	<53BEBC3F.6030205@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f43.google.com ([209.85.192.43]:55780 "EHLO
-	mail-qg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756033AbaGNPSM (ORCPT
+Received: from mail-we0-f172.google.com ([74.125.82.172]:49332 "EHLO
+	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755615AbaGNPZn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 11:18:12 -0400
-Received: by mail-qg0-f43.google.com with SMTP id a108so3496842qge.30
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2014 08:18:11 -0700 (PDT)
-In-Reply-To: <4345351.RJRQd7ghCF@wuerfel>
+	Mon, 14 Jul 2014 11:25:43 -0400
+Received: by mail-we0-f172.google.com with SMTP id x48so2545349wes.31
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2014 08:25:42 -0700 (PDT)
+In-Reply-To: <53BEBC3F.6030205@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-arm-kernel@lists.infradead.org, Chander Kashyap <chander.kashyap@linaro.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Chen Zhen <zhen1.chen@samsung.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-On Mon, 14 Jul 2014, Arnd Bergmann wrote:
+On Thu, Jul 10, 2014 at 5:15 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> On 08/07/14 11:15, Daniel Drake wrote:
+>> Testing on ODROID-U2, v3 is not quite working for me, but v2 of the
+>> patch was fine.
+>> I boot up, run:
+>> # speaker-test -c 2 -t wav
+>>
+>> As soon as I hear the word "front" I press ctrl+c and then run the
+>> command again.
+>> Now the command hangs with no audible output.
+>>
+>> Any ideas? Let me know if you have trouble reproducing.
+>
+> I just posted a patch addressing this, please let me know
+> if there are any further issues.
 
-> 662322fcb6d ("cpuidle: big.LITTLE: Add ARCH_EXYNOS entry in config")
-> made it possible for the big-little cpuidle driver to run on exynos,
-> which may or may not include MCPM support at compile time, so we
-> run into a link error when it is disabled:
-> 
-> drivers/built-in.o: In function `bl_enter_powerdown':
-> :(.text+0x1889a0): undefined reference to `mcpm_cpu_powered_up'
-> drivers/built-in.o: In function `bl_powerdown_finisher':
-> :(.text+0x1889e8): undefined reference to `mcpm_set_entry_vector'
-> :(.text+0x1889ec): undefined reference to `mcpm_cpu_suspend'
-> 
-> This adds an explicit dependency to CONFIG_MCPM to avoid that
-> case.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Cc: Chander Kashyap <chander.kashyap@linaro.org>
-> Cc: Tomasz Figa <t.figa@samsung.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
-> I believe the broken commit is only present in the samsung/for-next
-> tree (through v3.17-next/cpuidle-exynos), so it should be fixed there.
-> 
-> On a side note, I wonder if we should have platform dependencies at
-> all, or just the MCPM dependency by itself.
 
-This was discussed in some other thread already but I'm too lazy to dig 
-a reference to it.
+Sorry for not testing sooner. Your patch solves the issue.
 
-Only a dependency on MCPM alone is needed here.  And then:
-
-Acked-by: Nicolas Pitre <nico@linaro.org>
-
-> 
-> diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
-> index 2f6b33ea6e08..459b7c91407a 100644
-> --- a/drivers/cpuidle/Kconfig.arm
-> +++ b/drivers/cpuidle/Kconfig.arm
-> @@ -10,6 +10,7 @@ config ARM_ARMADA_370_XP_CPUIDLE
->  config ARM_BIG_LITTLE_CPUIDLE
->  	bool "Support for ARM big.LITTLE processors"
->  	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
-> +	depends on MCPM
->  	select ARM_CPU_SUSPEND
->  	select CPU_IDLE_MULTIPLE_DRIVERS
->  	help
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
-> 
+Thanks
+Daniel
