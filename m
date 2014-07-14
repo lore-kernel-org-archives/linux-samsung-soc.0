@@ -1,112 +1,38 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH v3 1/2] phy: Kconfig: Re-organize Exynos USB 2.0 PHY configs
-Date: Mon, 14 Jul 2014 16:55:00 +0530
-Message-ID: <CAFp+6iEfP=z=Cjshsq=FugzjLJkbYgPyX9MJjAt4d75Tx7rowA@mail.gmail.com>
-References: <1405332522-6162-1-git-send-email-sachin.kamat@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f42.google.com ([209.85.192.42]:43228 "EHLO
-	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753869AbaGNLZC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 07:25:02 -0400
-In-Reply-To: <1405332522-6162-1-git-send-email-sachin.kamat@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Fix MCPM build with SUSPEND=n
+Date: Mon, 14 Jul 2014 13:24:53 +0200
+Message-ID: <1405337093-15377-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <stable-owner@vger.kernel.org>
+Sender: stable-owner@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Nicolas Pitre <nico@linaro.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, kishon <kishon@ti.com>, Doug Anderson <dianders@chromium.org>, Sachin Kamat <spk.linux@gmail.com>
 
-On Mon, Jul 14, 2014 at 3:38 PM, Sachin Kamat <sachin.kamat@samsung.com> wrote:
-> Since the USB 2.0 PHYs are required with EHCI/OHCI USB drivers and
-> USB gadget controller supported by the DWC2 gadget driver, make it
-> depend on them and default to ARCH_EXYNOS as they are meant for
-> Exynos platforms. Also, make the sub-drivers silent options enabling
-> them based on the SoC platforms that they are meant to work with. This
-> will make life easier for end users who do not have any way knowing the
-> dependencies.
->
-> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
-> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
-> ---
-> Changes since v3:
-> * Rebased the series on top of latest PHY tree [1].
-> [1] git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git
-> ---
->  drivers/phy/Kconfig |   35 +++++++++++------------------------
->  1 file changed, 11 insertions(+), 24 deletions(-)
->
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 5fceb33..c412ca4 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -132,43 +132,30 @@ config PHY_SUN4I_USB
->  config PHY_SAMSUNG_USB2
->         tristate "Samsung USB 2.0 PHY driver"
->         depends on HAS_IOMEM
-> +       depends on USB_EHCI_EXYNOS || USB_OHCI_EXYNOS || USB_DWC2
->         select GENERIC_PHY
->         select MFD_SYSCON
-> +       default ARCH_EXYNOS
->         help
->           Enable this to support the Samsung USB 2.0 PHY driver for Samsung
-> -         SoCs. This driver provides the interface for USB 2.0 PHY. Support for
-> -         particular SoCs has to be enabled in addition to this driver. Number
-> -         and type of supported phys depends on the SoC.
-> +         SoCs. This driver provides the interface for USB 2.0 PHY. Support
-> +         for particular PHYs will be enabled based on the SoC type in addition
-> +         to this driver.
->
->  config PHY_EXYNOS4210_USB2
-> -       bool "Support for Exynos 4210"
-> +       bool
->         depends on PHY_SAMSUNG_USB2
-> -       depends on CPU_EXYNOS4210
-> -       help
-> -         Enable USB PHY support for Exynos 4210. This option requires that
-> -         Samsung USB 2.0 PHY driver is enabled and means that support for this
-> -         particular SoC is compiled in the driver. In case of Exynos 4210 four
-> -         phys are available - device, host, HSIC0 and HSIC1.
-> +       default CPU_EXYNOS4210
->
->  config PHY_EXYNOS4X12_USB2
-> -       bool "Support for Exynos 3250/4x12"
-> +       bool
->         depends on PHY_SAMSUNG_USB2
-> -       depends on (SOC_EXYNOS3250 || SOC_EXYNOS4212 || SOC_EXYNOS4412)
-> -       help
-> -         Enable USB PHY support for Exynos 3250/4x12. This option requires
-> -         that Samsung USB 2.0 PHY driver is enabled and means that support for
-> -         this particular SoC is compiled in the driver. In case of Exynos 4x12
-> -         four phys are available - device, host, HSIC0 and HSIC1.
-> +       default SOC_EXYNOS3250 || SOC_EXYNOS4212 || SOC_EXYNOS4412
->
->  config PHY_EXYNOS5250_USB2
-> -       bool "Support for Exynos 5250"
-> +       bool
->         depends on PHY_SAMSUNG_USB2
-> -       depends on SOC_EXYNOS5250
-> -       help
-> -         Enable USB PHY support for Exynos 5250. This option requires that
-> -         Samsung USB 2.0 PHY driver is enabled and means that support for this
-> -         particular SoC is compiled in the driver. In case of Exynos 5250 four
-> -         phys are available - device, host, HSIC0 and HSIC.
-> +       default SOC_EXYNOS5250 || SOC_EXYNOS5420
->
->  config PHY_EXYNOS5_USBDRD
->         tristate "Exynos5 SoC series USB DRD PHY driver"
-> --
-> 1.7.9.5
->
+Building of EXYNOS5420_MCPM with disabled SUSPEND fails:
+arch/arm/mach-exynos/built-in.o: In function `exynos_mcpm_init':
+arch/arm/mach-exynos/mcpm-exynos.c:361: undefined reference to `mcpm_loopback'
 
-Tested on Exynos5800 and Exynos5250, with exynos_defconfig patch :
-http://www.spinics.net/lists/linux-samsung-soc/msg33994.html
+The exynos_mcpm_init() in mcp-exynos.c calls mcpm_loopback() which
+depends on cpu_suspend function (ARM_CPU_SUSPEND).
 
-Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: <stable@vger.kernel.org>
+Fixes: a6a4d3152e3cbb6 ("ARM: 8083/1: exynos: activate the CCI on boot CPU/cluster using the MCPM loopback")
+---
+ arch/arm/mach-exynos/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 8f9b66c4ac78..5d4ff6571dcd 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -119,6 +119,7 @@ config EXYNOS5420_MCPM
+ 	bool "Exynos5420 Multi-Cluster PM support"
+ 	depends on MCPM && SOC_EXYNOS5420
+ 	select ARM_CCI
++	select ARM_CPU_SUSPEND
+ 	help
+ 	  This is needed to provide CPU and cluster power management
+ 	  on Exynos5420 implementing big.LITTLE.
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+1.9.1
