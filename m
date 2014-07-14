@@ -1,47 +1,61 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: Re: [alsa-devel] [PATCH V3 2/2] ASoC: samsung: Add machine driver for
- Odroid X2/U3
-Date: Mon, 14 Jul 2014 16:25:42 +0100
-Message-ID: <CAD8Lp460Ym1y5OS8ya=jddO-spnojyGVWkUWhXmKCfbOOGL61A@mail.gmail.com>
-References: <1404479625-25385-1-git-send-email-s.nawrocki@samsung.com>
-	<1404479625-25385-2-git-send-email-s.nawrocki@samsung.com>
-	<CAD8Lp44JFtbcD22c+0PVb5S4U1kVTTxHD=PgqiKzhVypFW5Prg@mail.gmail.com>
-	<53BEBC3F.6030205@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH V2 3/3] clk: exynos-audss: Use samsung clock APIs to
+ register/unregister clocks
+Date: Mon, 14 Jul 2014 17:34:34 +0200
+Message-ID: <53C3F88A.8080005@samsung.com>
+References: <1405080036-6651-1-git-send-email-tushar.b@samsung.com>
+ <1405080036-6651-4-git-send-email-tushar.b@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f172.google.com ([74.125.82.172]:49332 "EHLO
-	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755615AbaGNPZn (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:37594 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754890AbaGNPeq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 11:25:43 -0400
-Received: by mail-we0-f172.google.com with SMTP id x48so2545349wes.31
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2014 08:25:42 -0700 (PDT)
-In-Reply-To: <53BEBC3F.6030205@samsung.com>
+	Mon, 14 Jul 2014 11:34:46 -0400
+In-reply-to: <1405080036-6651-4-git-send-email-tushar.b@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Chen Zhen <zhen1.chen@samsung.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
+To: Tushar Behera <tushar.b@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, mturquette@linaro.org, t.figa@samsung.com, trblinux@gmail.com
 
-On Thu, Jul 10, 2014 at 5:15 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> On 08/07/14 11:15, Daniel Drake wrote:
->> Testing on ODROID-U2, v3 is not quite working for me, but v2 of the
->> patch was fine.
->> I boot up, run:
->> # speaker-test -c 2 -t wav
->>
->> As soon as I hear the word "front" I press ctrl+c and then run the
->> command again.
->> Now the command hangs with no audible output.
->>
->> Any ideas? Let me know if you have trouble reproducing.
->
-> I just posted a patch addressing this, please let me know
-> if there are any further issues.
+On 11/07/14 14:00, Tushar Behera wrote:
+> @@ -103,17 +140,11 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+>  		return PTR_ERR(reg_base);
+>  	}
+>  
+> -	clk_table = devm_kzalloc(&pdev->dev,
+> -				sizeof(struct clk *) * EXYNOS_AUDSS_MAX_CLKS,
+> -				GFP_KERNEL);
+> -	if (!clk_table)
+> +	ctx = samsung_clk_init(pdev->dev.of_node, reg_base, nr_clks);
 
+There is an issue here that this registers the clk provider before all
+its clocks are registered with the clk core. Therefore it introduces
+a race condition.
 
-Sorry for not testing sooner. Your patch solves the issue.
+Please have a look at patch [1], you may want to rebase this series
+onto that patch.
 
-Thanks
-Daniel
+> +	samsung_clk_register_div(ctx, exynos_audss_div_clks,
+> +				ARRAY_SIZE(exynos_audss_div_clks));
+[...]
+> +	samsung_clk_register_gate(ctx, exynos_audss_gate_clks,
+> +				ARRAY_SIZE(exynos_audss_gate_clks));
+[...]
+> -	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
+> -					&clk_data);
+> -	if (ret) {
+> -		dev_err(&pdev->dev, "failed to add clock provider\n");
+> -		goto unregister;
+> +		samsung_clk_register_gate(ctx, exynos5420_audss_gate_clks,
+> +					ARRAY_SIZE(exynos5420_audss_gate_clks));
+>  	}
+
+[1]
+https://git.kernel.org/cgit/linux/kernel/git/tfiga/samsung-clk.git/commit/?h=samsung-clk-next&id=d5e136a21b2028fb1f45143ea7112d5869bfc6c7
+
+--
+Regards,
+Sylwester
