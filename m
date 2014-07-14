@@ -1,51 +1,91 @@
-From: Joel Schopp <joel.schopp@amd.com>
-Subject: Re: [PATCH v6 2/7] arm64: Introduce VA_BITS and translation level
- options
-Date: Mon, 14 Jul 2014 15:38:59 -0500
-Message-ID: <53C43FE3.1050008@amd.com>
-References: <000101cf6dc6$3b93d510$b2bb7f30$@samsung.com>
- <CAOZdJXWCu-zHuQoAUdiieqsKqCfG9BsZariFqQP=NCgQP-zpNA@mail.gmail.com>
+From: Valdis.Kletnieks@vt.edu
+Subject: Re: [PATCH] mach-s3c64xx: Remove all defintions not related to
+ regs-clocks
+Date: Mon, 14 Jul 2014 17:43:50 -0400
+Message-ID: <36350.1405374230@turing-police.cc.vt.edu>
+References: <1405361664-5210-1-git-send-email-xerofoify@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bl2lp0203.outbound.protection.outlook.com ([207.46.163.203]:57019
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1756559AbaGNUlP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 16:41:15 -0400
-In-Reply-To: <CAOZdJXWCu-zHuQoAUdiieqsKqCfG9BsZariFqQP=NCgQP-zpNA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============8222025882488137950=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: Your message of "Mon, 14 Jul 2014 14:14:24 -0400."
+ <1405361664-5210-1-git-send-email-xerofoify@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Nicholas Krause <xerofoify@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, tomasz.figa@gmail.com, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Timur Tabi <timur@codeaurora.org>, Jungseok Lee <jungseoklee85@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, steve.capper@linaro.org, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <Marc.Zyngier@arm.com>, Catalin.Marinas@arm.com, lkml <linux-kernel@vger.kernel.org>, ilho215.lee@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, barami97@gmail.com, kvmarm@lists.cs.columbia.edu, Christoffer Dall <christoffer.dall@linaro.org>
 
-I agree that these patches would be very useful.  I just rebased my fix
-for a VTTBR_BADDR_MASK bug on one of these patches that could be pulled
-out independently.  See
-https://lists.cs.columbia.edu/pipermail/kvmarm/2014-July/010480.html
+--===============8222025882488137950==
+Content-Type: multipart/signed; boundary="==_Exmh_1405374230_3151P";
+	 micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
 
-The original author Jungseok Lee is no longer available to work on
-future versions of these patches.  I was thinking that if they didn't
-get picked up as they are that with the original author's blessing I
-would pick them up and keep them forward ported/resubmitted.  I have an
-SOC to test them on.
+--==_Exmh_1405374230_3151P
+Content-Type: text/plain; charset=us-ascii
 
--Joel
-
-On 07/14/2014 02:53 PM, Timur Tabi wrote:
-> On Mon, May 12, 2014 at 4:40 AM, Jungseok Lee <jays.lee@samsung.com> wrote:
->> This patch adds virtual address space size and a level of translation
->> tables to kernel configuration. It facilicates introduction of
->> different MMU options, such as 4KB + 4 levels, 16KB + 4 levels and
->> 64KB + 3 levels, easily.
-> Is there a reason why this patch has not yet been picked up?  It
-> appears to work just fine, and the change is necessary for ARM SOCs
-> that support large amounts of memory.  It seems weird that after so
-> many versions, reviews, and ACKs, that it still not in linux-next.
+On Mon, 14 Jul 2014 14:14:24 -0400, Nicholas Krause said:
+> This patch addresses the fix me message in this file that states to
+> remove all definitions not related to reg-clocks in this header
+> file.
 >
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+> ---
+>  arch/arm/mach-s3c64xx/include/mach/regs-clock.h | 22 +---------------------
+>  1 file changed, 1 insertion(+), 21 deletions(-)
+
+> -#endif /* _PLAT_REGS_CLOCK_H */
+> +/#endif /* _PLAT_REGS_CLOCK_H */
+
+You're kidding us, right? Given that this was obviously *not* compile
+tested at all, why should we believe that in fact all those #defines
+are in fact no longer used?
+
+Hint: There's a very high chance that somebody stuck that FIXME in there rather
+than just cleaning it up themselves precisely *because* it was still in use in
+an inconvenient to fix place in the tree..
+
+
+--==_Exmh_1405374230_3151P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+Comment: Exmh version 2.5 07/13/2001
+
+iQIVAwUBU8RPFgdmEQWDXROgAQKE2BAAiNEw+m4GvURrYCxBkYGaobYQYeMe8Kp6
+fG9WrLClGjiLNr4817Hgaa7tjJsffHwOeGaEno5hk/DBx0i7Cv6+vz9xopNDxPRc
+fN4sUPUbziM9LMfos2hEgXAmGHQjWh+LGL87O7n9o8RD4FM4V7xDKwBfDn8z4pFL
+ImHyP1d+IkeW94go23khXhnksIK42le8gkMB2GvNa2jPdfHqr8SGh58GqL/nHBNI
+ebqWP9SuN8nu/DDW6vqO/O1m4p3akYqH7vuaw1J9qBpUKSTPKAdGi1Mpwh1huI72
+RIn+ikPWCI3cfSmoMFFPUb9ws7yxlj5BSdn8QK1A8bmjGM/oF83lC6rY44WCdJtB
+uBaOdJ5/7DiHsWcZAIEjsX6G/WXGMVgGxv7YLKaJy/BbrmTsui3KfGu3u4CN6JUZ
+2WvZ6mIH+ovagCoZfUyd4YUT2sF20pXvhCKGGqRE4PiZraJdZ9fk5vt0gwCiqh7O
+7eL3NiWNsl6TbntQwbOX5J73uuuCVU9XsMOxcXp3FfJtOBpTgo7ifyhLlz+/tBFT
+xDA6fQ2sszq1x82hc3+AVxWVZywHjoOBU9deiOTn03Nl5k5Kk6gr1U5eUJ40BaJ3
+i/SZFMWnGWVT3i3s4HFXQMMwe4aO/JM+9AE4MFyZ+bCwMneKUTRAJdXWTly4b8ZK
+uuZfJtoC4zs=
+=tNnF
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1405374230_3151P--
+
+
+--===============8222025882488137950==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============8222025882488137950==--
