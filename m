@@ -1,187 +1,75 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/1] ARM: exynos_defconfig: Update exynos_defconfig
-Date: Mon, 14 Jul 2014 10:48:04 +0900
-Message-ID: <05f301cf9f05$a74d7d40$f5e877c0$@samsung.com>
-References: <1404901353-14806-1-git-send-email-sachin.kamat@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [RESPIN PATCH v6] ARM: EXYNOS: Move cpufreq and cpuidle device
+ registration to init_machine
+Date: Mon, 14 Jul 2014 09:28:43 +0530
+Message-ID: <1405310323-3195-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:14542 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752410AbaGNBsF (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:12546 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750703AbaGNEBd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 13 Jul 2014 21:48:05 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N8O00I8IIC3TVE0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 Jul 2014 10:48:03 +0900 (KST)
-In-reply-to: <1404901353-14806-1-git-send-email-sachin.kamat@samsung.com>
-Content-language: ko
+	Mon, 14 Jul 2014 00:01:33 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@samsung.com>, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>, 'Arun Kumar K' <arun.kk@samsung.com>, Chander Kashyap <k.chander@samsung.com>, Tarek Dakhran <t.dakhran@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>
-Cc: dianders@chromium.org, spk.linux@gmail.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Sachin Kamat wrote:
-> 
-+ Some guys who has updated DT files for exynos SoCs.
+As exynos_cpuidle_init and exynos_cpufreq_init function have just one lines
+of code for registering platform devices. We can move these lines to
+exynos_dt_machine_init and delete exynos_cpuidle_init and exynos_cpufreq_init
+function. This will help in reducing lines of code in exynos.c, making it
+more cleaner.
 
-> Removed outdated configs. Enabled most of the configs used on latest
-> Exynos based platforms. This will provide a reference for users trying
-> to verify and test various features on Exynos based platforms and also
-> help in detecting breakages by widening the build coverage.
-> 
-Please test your boards with this update then anything, please let me know.
+Suggested-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+---
 
-Thanks,
-Kukjin
+This patch is part of exynos-cleanup series v6 [1]. Just respinning after
+resolving merge conflicts on latest kgene/for-next.
+
+[1]: https://lkml.org/lkml/2014/7/10/338
 
 
-> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
-> ---
->  arch/arm/configs/exynos_defconfig |   56 +++++++++++++++++++++++++++++++------
->  1 file changed, 48 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index e07a227ec0db..fc7d1683bf67 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -8,15 +8,17 @@ CONFIG_MODULE_UNLOAD=y
->  # CONFIG_BLK_DEV_BSG is not set
->  CONFIG_PARTITION_ADVANCED=y
->  CONFIG_ARCH_EXYNOS=y
-> -CONFIG_S3C_LOWLEVEL_UART_PORT=3
-> -CONFIG_S3C24XX_PWM=y
-> -CONFIG_ARCH_EXYNOS5=y
-> -CONFIG_MACH_EXYNOS4_DT=y
-> +CONFIG_ARCH_EXYNOS3=y
-> +CONFIG_EXYNOS5420_MCPM=y
->  CONFIG_SMP=y
-> +CONFIG_BIG_LITTLE=y
-> +CONFIG_BL_SWITCHER=y
-> +CONFIG_BL_SWITCHER_DUMMY_IF=y
->  CONFIG_NR_CPUS=8
->  CONFIG_PREEMPT=y
->  CONFIG_AEABI=y
->  CONFIG_HIGHMEM=y
-> +CONFIG_CMA=y
->  CONFIG_ZBOOT_ROM_TEXT=0x0
->  CONFIG_ZBOOT_ROM_BSS=0x0
->  CONFIG_ARM_APPENDED_DTB=y
-> @@ -24,6 +26,7 @@ CONFIG_ARM_ATAG_DTB_COMPAT=y
->  CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200
-> init=/linuxrc mem=256M"
->  CONFIG_VFP=y
->  CONFIG_NEON=y
-> +CONFIG_PM_RUNTIME=y
->  CONFIG_NET=y
->  CONFIG_PACKET=y
->  CONFIG_UNIX=y
-> @@ -34,6 +37,8 @@ CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
->  CONFIG_DEVTMPFS=y
->  CONFIG_DEVTMPFS_MOUNT=y
->  CONFIG_PROC_DEVICETREE=y
-> +CONFIG_DMA_CMA=y
-> +CONFIG_CMA_SIZE_MBYTES=64
->  CONFIG_BLK_DEV_LOOP=y
->  CONFIG_BLK_DEV_CRYPTOLOOP=y
->  CONFIG_BLK_DEV_RAM=y
-> @@ -66,11 +71,22 @@ CONFIG_I2C=y
->  CONFIG_I2C_MUX=y
->  CONFIG_I2C_ARB_GPIO_CHALLENGE=y
->  CONFIG_I2C_EXYNOS5=y
-> +CONFIG_I2C_CROS_EC_TUNNEL=y
-> +CONFIG_SPI=y
-> +CONFIG_SPI_S3C64XX=y
->  CONFIG_I2C_S3C2410=y
->  CONFIG_DEBUG_GPIO=y
-> +CONFIG_POWER_SUPPLY=y
-> +CONFIG_CHARGER_TPS65090=y
->  # CONFIG_HWMON is not set
-> +CONFIG_THERMAL=y
-> +CONFIG_EXYNOS_THERMAL=y
-> +CONFIG_EXYNOS_THERMAL_CORE=y
-> +CONFIG_WATCHDOG=y
-> +CONFIG_S3C2410_WATCHDOG=y
->  CONFIG_MFD_CROS_EC=y
->  CONFIG_MFD_CROS_EC_I2C=y
-> +CONFIG_MFD_CROS_EC_SPI=y
->  CONFIG_MFD_MAX77686=y
->  CONFIG_MFD_MAX8997=y
->  CONFIG_MFD_SEC_CORE=y
-> @@ -80,6 +96,7 @@ CONFIG_REGULATOR_FIXED_VOLTAGE=y
->  CONFIG_REGULATOR_GPIO=y
->  CONFIG_REGULATOR_MAX8997=y
->  CONFIG_REGULATOR_MAX77686=y
-> +CONFIG_REGULATOR_S2MPA01=y
->  CONFIG_REGULATOR_S2MPS11=y
->  CONFIG_REGULATOR_S5M8767=y
->  CONFIG_REGULATOR_TPS65090=y
-> @@ -88,28 +105,50 @@ CONFIG_FB_MODE_HELPERS=y
->  CONFIG_FB_SIMPLE=y
->  CONFIG_EXYNOS_VIDEO=y
->  CONFIG_EXYNOS_MIPI_DSI=y
-> -CONFIG_EXYNOS_DP=y
->  CONFIG_FRAMEBUFFER_CONSOLE=y
->  CONFIG_FONTS=y
->  CONFIG_FONT_7x14=y
->  CONFIG_LOGO=y
-> +CONFIG_SOUND=y
-> +CONFIG_SND=y
-> +CONFIG_SND_SOC=y
-> +CONFIG_SND_SOC_SAMSUNG=y
-> +CONFIG_SND_SOC_SNOW=y
->  CONFIG_USB=y
-> +CONFIG_USB_XHCI_HCD=y
->  CONFIG_USB_EHCI_HCD=y
->  CONFIG_USB_EHCI_EXYNOS=y
-> +CONFIG_USB_OHCI_HCD=y
-> +CONFIG_USB_OHCI_EXYNOS=y
->  CONFIG_USB_STORAGE=y
->  CONFIG_USB_DWC3=y
-> -CONFIG_USB_PHY=y
-> -CONFIG_SAMSUNG_USB2PHY=y
-> -CONFIG_SAMSUNG_USB3PHY=y
-> +CONFIG_USB_HSIC_USB3503=y
->  CONFIG_MMC=y
->  CONFIG_MMC_SDHCI=y
->  CONFIG_MMC_SDHCI_S3C=y
-> +CONFIG_MMC_SDHCI_S3C_DMA=y
->  CONFIG_MMC_DW=y
->  CONFIG_MMC_DW_IDMAC=y
->  CONFIG_MMC_DW_EXYNOS=y
->  CONFIG_RTC_CLASS=y
-> +CONFIG_RTC_DRV_MAX77686=y
-> +CONFIG_RTC_DRV_S5M=y
->  CONFIG_RTC_DRV_S3C=y
-> +CONFIG_DMADEVICES=y
-> +CONFIG_PL330_DMA=y
->  CONFIG_COMMON_CLK_MAX77686=y
-> +CONFIG_COMMON_CLK_S2MPS11=y
-> +CONFIG_EXYNOS_IOMMU=y
-> +CONFIG_IIO=y
-> +CONFIG_EXYNOS_ADC=y
-> +CONFIG_PWM=y
-> +CONFIG_PWM_SAMSUNG=y
-> +CONFIG_PHY_EXYNOS5250_SATA=y
-> +CONFIG_PHY_SAMSUNG_USB2=y
-> +CONFIG_PHY_EXYNOS4210_USB2=y
-> +CONFIG_PHY_EXYNOS4X12_USB2=y
-> +CONFIG_PHY_EXYNOS5250_USB2=y
-> +CONFIG_PHY_EXYNOS5_USBDRD=y
->  CONFIG_EXT2_FS=y
->  CONFIG_EXT3_FS=y
->  CONFIG_EXT4_FS=y
-> @@ -123,6 +162,7 @@ CONFIG_NLS_CODEPAGE_437=y
->  CONFIG_NLS_ASCII=y
->  CONFIG_NLS_ISO8859_1=y
->  CONFIG_PRINTK_TIME=y
-> +CONFIG_DEBUG_FS=y
->  CONFIG_MAGIC_SYSRQ=y
->  CONFIG_DEBUG_KERNEL=y
->  CONFIG_DETECT_HUNG_TASK=y
-> --
-> 1.7.9.5
+ arch/arm/mach-exynos/exynos.c |   18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 2a43a17..99dc5aa 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -175,17 +175,6 @@ static struct platform_device exynos_cpuidle = {
+ 	.id                = -1,
+ };
+ 
+-void __init exynos_cpuidle_init(void)
+-{
+-	if (soc_is_exynos4210() || soc_is_exynos5250())
+-		platform_device_register(&exynos_cpuidle);
+-}
+-
+-void __init exynos_cpufreq_init(void)
+-{
+-	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
+-}
+-
+ void __iomem *sysram_base_addr;
+ void __iomem *sysram_ns_base_addr;
+ 
+@@ -335,10 +324,11 @@ static void __init exynos_dt_machine_init(void)
+ 	if (!IS_ENABLED(CONFIG_SMP))
+ 		exynos_sysram_init();
+ 
+-	if (!of_machine_is_compatible("samsung,exynos5420"))
+-		exynos_cpuidle_init();
++	if (of_machine_is_compatible("samsung,exynos4210") ||
++			of_machine_is_compatible("samsung,exynos5250"))
++		platform_device_register(&exynos_cpuidle);
+ 
+-	exynos_cpufreq_init();
++	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
+ 
+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
+-- 
+1.7.9.5
