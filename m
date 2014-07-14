@@ -1,66 +1,49 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: mixer_check_mode drops Exynos5 display modes
-Date: Mon, 14 Jul 2014 09:42:46 -0400
-Message-ID: <CAOw6vbKVKPJk4keH3UT+TLQSK4n72c3vCcsQOsEdtajJotqhgQ@mail.gmail.com>
-References: <CAD8Lp44L0mAAAoVfuXK7RrRe0VaxB0dx27JExpf2AOBKsqBT-A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAD8Lp44L0mAAAoVfuXK7RrRe0VaxB0dx27JExpf2AOBKsqBT-A@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Drake <drake@endlessm.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 0/2] ARM: EXYNOS: Fix builds with PM_SLEEP=n
+Date: Mon, 14 Jul 2014 16:43:58 +0200
+Message-ID: <1405349040-5265-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:59256 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754847AbaGNOoV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Jul 2014 10:44:21 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 
-On Tue, Jul 8, 2014 at 9:59 AM, Daniel Drake <drake@endlessm.com> wrote:
-> Hi Sean,
->
+Hi,
 
-Hi Daniel,
-Sorry for the delay in response.
+This patch series fixes builds with CONFIG_PM_SLEEP config option
+disabled.
 
-> While looking at the following commit I noticed something:
->
-> commit f041b257a8997c8472a1013e9f252c3e2a1d879e
-> Author: Sean Paul <seanpaul@chromium.org>
-> Date:   Thu Jan 30 16:19:15 2014 -0500
->
->     drm/exynos: Remove exynos_drm_hdmi shim
->
->
-> This commit changes how mixer_check_mode() is used. It used to just
-> exclude certain modes on old mixer versions, but now it seems to be
-> called unconditionally, for all mixer versions. I guess the effect
-> here is that some modes on exynos5 setups are dropped whereas they
-> weren't before. Is that intentional?
->
+They are on top of:
+- next-20140714 +
+- "[PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies" +
+  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32809.html)
+- "[PATCH v2] ARM: EXYNOS: Fix build with PM_SLEEP=n"
+  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34007.html)
 
-In a sense, yes. The reason the version check was dropped was b/c we
-have to call mixer_check_mode from the hdmi driver which does not know
-the mixer version (so there's no way to check it).
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-It would probably be prudent to add it back since we have different
-restrictions on the various mixer versions. We've done this in the
-chromium tree, however it looks quite a bit different from upstream
-since we removed all of the abstraction layers and just implement
-mixer as a drm_crtc and hdmi as drm_encoder. You can check it out
-here: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/gpu/drm/exynos/exynos_mixer.c
+Bartlomiej Zolnierkiewicz (2):
+  ARM: EXYNOS: Fix build with PM_SLEEP=n part #2
+  ARM: EXYNOS: Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
 
-Upstreaming our delta is on my TODO stack, unfortunately I have to pop
-a few items off first.
+ arch/arm/mach-exynos/Kconfig   |   5 +
+ arch/arm/mach-exynos/Makefile  |   3 +-
+ arch/arm/mach-exynos/common.h  |   7 ++
+ arch/arm/mach-exynos/exynos.c  |   2 +
+ arch/arm/mach-exynos/pm.c      | 178 +-----------------------------------
+ arch/arm/mach-exynos/suspend.c | 203 +++++++++++++++++++++++++++++++++++++++++
+ arch/arm/plat-samsung/Makefile |   1 +
+ 7 files changed, 224 insertions(+), 175 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/suspend.c
 
-Sean
-
-
-
-> Thanks
-> Daniel
+-- 
+1.8.2.3
