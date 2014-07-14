@@ -1,57 +1,95 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 4/4] ASoC: samsung: remove unused DMA data
-Date: Mon, 14 Jul 2014 19:54:01 +0100
-Message-ID: <20140714185401.GD6800@sirena.org.uk>
-References: <1405086308-1461192-1-git-send-email-arnd@arndb.de>
- <1405086308-1461192-7-git-send-email-arnd@arndb.de>
+From: Nick Krause <xerofoify@gmail.com>
+Subject: Re: [PATCH] mach-s3c64xx: Remove all defintions not related to regs-clocks
+Date: Mon, 14 Jul 2014 14:56:17 -0400
+Message-ID: <CAPDOMVhUiMehj6U5GbukhWiTQ9FObvqphKZv4qzHieH_FsBh5A@mail.gmail.com>
+References: <1405361664-5210-1-git-send-email-xerofoify@gmail.com>
+	<53C4201E.3020708@infradead.org>
+	<1405363234.13661.12.camel@x220>
+	<53C4254A.3040900@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PLVMksexArUZ/iL3"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37404 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752433AbaGNSyX (ORCPT
+Received: from mail-vc0-f180.google.com ([209.85.220.180]:33038 "EHLO
+	mail-vc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752433AbaGNS4R (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 14:54:23 -0400
-Content-Disposition: inline
-In-Reply-To: <1405086308-1461192-7-git-send-email-arnd@arndb.de>
+	Mon, 14 Jul 2014 14:56:17 -0400
+In-Reply-To: <53C4254A.3040900@infradead.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com, t.figa@samsung.com, Heiko Stuebner <heiko@sntech.de>, Sangbeom Kim <sbkim73@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Paul Bolle <pebolle@tiscali.nl>, ben-linux <ben-linux@fluff.org>, "kgene.kim" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "tomasz.figa" <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-
---PLVMksexArUZ/iL3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Jul 11, 2014 at 03:45:08PM +0200, Arnd Bergmann wrote:
-> The s3c_dma_client structures and the 'ch' and 'ops' members in
-> s3c_dma_params were only used by the legacy DMA driver and serve
-> no function any more. This removes any reference to them.
-
-Applied, thanks.
-
---PLVMksexArUZ/iL3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTxCdGAAoJELSic+t+oim9EuwP/ieQi8HP/IYEeO1KjtP6ymOx
-FQSCouwLB0j7OKbYah6DjzpavQHa5EEvA2uCFwC3q9+eHUYBRp/QDQ4U4VfmEgGm
-UQA4gsnvRMlP1n7rFT0kg8OyPJWwT0dcrAyfVvvxr1jZW3mhqd1gxYcfzzdEkCUx
-pjMosidmprvMMBqIydIJOjtjglRMWyAHcyu5QF3MY1iTmPz71RbTpdxGRpx109D2
-QfiB/APcF189GxSGCQW5Jjowf4WgnJaxljBj5CU+rCwzs8mP3txt+yFIqUUbs8g4
-XvYLHe/fhSAxoin1/kRGVsL3XYy3RTAUV2m7lkhXjxSaSOvhTQbPBIkpWe+3j/aj
-KImwsK5L3Q4jgnJBNQTpEldzrQiVNuGYJOVvHx1kansm4DS09HgvsEexJ6YEn7H/
-yLWLMLNE3moQ6xH00dJjtYRcSFm1kzfyBDzOU2Ia4dNk6o+McBpBnzZ2qOUQmeRj
-5n05Mt7RhTrMb9NGLs95i+zOTa/inma7IC0bNvC3FJ1ycJWqy5qpwab1vjhoBJZ0
-5QW29fYqPwgJtyaVQBRMOx/PmSm7etDLJXOA14RubmCGQMySRm2YSfGzhvBjsP95
-39AHA3NPgJpilcCTWlqnmJUWlc979O2Oi+kYhQ0BlhbvzIR6NyxAXA0mb6ZNFy+A
-ILtDTKamgRL8WZeJH/bl
-=jVc0
------END PGP SIGNATURE-----
-
---PLVMksexArUZ/iL3--
+On Mon, Jul 14, 2014 at 2:45 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 07/14/14 11:40, Paul Bolle wrote:
+>> On Mon, 2014-07-14 at 11:23 -0700, Randy Dunlap wrote:
+>>> On 07/14/14 11:14, Nicholas Krause wrote:
+>>>> This patch addresses the fix me message in this file that states to
+>>>> remove all definitions not related to reg-clocks in this header
+>>>> file.
+>>>>
+>>>> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+>>>> ---
+>>>>  arch/arm/mach-s3c64xx/include/mach/regs-clock.h | 22 +---------------------
+>>>>  1 file changed, 1 insertion(+), 21 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm/mach-s3c64xx/include/mach/regs-cloclinux-kernel@vger.kernel.orgk.h b/arch/arm/mach-s3c64xx/include/mach/regs-clock.h
+>>>> index 4f44aac..46e64cc 100644
+>>>> --- a/arch/arm/mach-s3c64xx/include/mach/regs-clock.h
+>>>> +++ b/arch/arm/mach-s3c64xx/include/mach/regs-clock.h
+>>>> @@ -15,24 +15,4 @@
+>>>>  #ifndef __PLAT_REGS_CLOCK_H
+>>>>  #define __PLAT_REGS_CLOCK_H __FILE__
+>>>>
+>>>> -/*
+>>>> - * FIXME: Remove remaining definitions
+>>>> - */
+>>>> -
+>>>> -#define S3C_CLKREG(x)              (S3C_VA_SYS + (x))
+>>>> -
+>>>> -#define S3C_PCLK_GATE              S3C_CLKREG(0x34)
+>>>> -#define S3C6410_CLK_SRC2   S3C_CLKREG(0x10C)
+>>>> -#define S3C_MEM_SYS_CFG            S3C_CLKREG(0x120)
+>>>> -
+>>>> -/* PCLK GATE Registers */
+>>>> -#define S3C_CLKCON_PCLK_UART3              (1<<4)
+>>>> -#define S3C_CLKCON_PCLK_UART2              (1<<3)
+>>>> -#define S3C_CLKCON_PCLK_UART1              (1<<2)
+>>>> -#define S3C_CLKCON_PCLK_UART0              (1<<1)
+>>>> -
+>>>> -/* MEM_SYS_CFG */
+>>>> -#define MEM_SYS_CFG_INDEP_CF               0x4000
+>>>> -#define MEM_SYS_CFG_EBI_FIX_PRI_CFCON      0x30
+>>>> -
+>>>> -#endif /* _PLAT_REGS_CLOCK_H */
+>>>> +/#endif /* _PLAT_REGS_CLOCK_H */
+>>>
+>>> I don't know about the other changes, but that last line looks like an error.
+>>> Did you build anything that #includes this header file?
+>>
+>> I just did
+>>     git grep -n S3C_CLKCON_PCLK_UART
+>>
+>> It was just a guess. I did not cherry pick the defines that covers! The
+>> output of that command is, I think, pretty clear.
+>>
+>> Nicholas, I think you've been told already to stop doing what you're
+>> doing again here. I try not to use colorful language on the net, but
+>> you're really pushing me here.
+>>
+>> Please go find something other to do than grepping the kernel tree for
+>> FIXMEs!
+>linux-kernel@vger.kernel.org
+> Yes.
+>
+> FIXMEs are not a suggested starting point for kernel beginners.
+> If they were easy to fix, they would already be fixed or most likely
+> would never have been introduced.
+>
+>
+> --
+> ~Randy
+Randy,
+My mistake I didn't check the tree for files linking to these definitions.
+I will be more careful ,next time.
+Niclk
