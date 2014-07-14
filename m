@@ -1,88 +1,82 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] mach-s3c64xx: Remove all defintions not related to regs-clocks
-Date: Mon, 14 Jul 2014 11:34:37 -0700
-Message-ID: <53C422BD.3070608@infradead.org>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH] mach-s3c64xx: Remove all defintions not related to
+ regs-clocks
+Date: Mon, 14 Jul 2014 20:40:34 +0200
+Message-ID: <1405363234.13661.12.camel@x220>
 References: <1405361664-5210-1-git-send-email-xerofoify@gmail.com>
+	 <53C4201E.3020708@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:53513 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752442AbaGNSeo (ORCPT
+Received: from cpsmtpb-ews02.kpnxchange.com ([213.75.39.5]:55962 "EHLO
+	cpsmtpb-ews02.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753087AbaGNSkh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 14:34:44 -0400
-In-Reply-To: <1405361664-5210-1-git-send-email-xerofoify@gmail.com>
+	Mon, 14 Jul 2014 14:40:37 -0400
+In-Reply-To: <53C4201E.3020708@infradead.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicholas Krause <xerofoify@gmail.com>, ben-linux@fluff.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Nicholas Krause <xerofoify@gmail.com>, ben-linux@fluff.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/14/14 11:14, Nicholas Krause wrote:
-> This patch addresses the fix me message in this file that states to
-> remove all definitions not related to reg-clocks in this header
-> file.
+On Mon, 2014-07-14 at 11:23 -0700, Randy Dunlap wrote:
+> On 07/14/14 11:14, Nicholas Krause wrote:
+> > This patch addresses the fix me message in this file that states to
+> > remove all definitions not related to reg-clocks in this header
+> > file.
+> > 
+> > Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+> > ---
+> >  arch/arm/mach-s3c64xx/include/mach/regs-clock.h | 22 +---------------------
+> >  1 file changed, 1 insertion(+), 21 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-s3c64xx/include/mach/regs-clock.h b/arch/arm/mach-s3c64xx/include/mach/regs-clock.h
+> > index 4f44aac..46e64cc 100644
+> > --- a/arch/arm/mach-s3c64xx/include/mach/regs-clock.h
+> > +++ b/arch/arm/mach-s3c64xx/include/mach/regs-clock.h
+> > @@ -15,24 +15,4 @@
+> >  #ifndef __PLAT_REGS_CLOCK_H
+> >  #define __PLAT_REGS_CLOCK_H __FILE__
+> >  
+> > -/*
+> > - * FIXME: Remove remaining definitions
+> > - */
+> > -
+> > -#define S3C_CLKREG(x)		(S3C_VA_SYS + (x))
+> > -
+> > -#define S3C_PCLK_GATE		S3C_CLKREG(0x34)
+> > -#define S3C6410_CLK_SRC2	S3C_CLKREG(0x10C)
+> > -#define S3C_MEM_SYS_CFG		S3C_CLKREG(0x120)
+> > -
+> > -/* PCLK GATE Registers */
+> > -#define S3C_CLKCON_PCLK_UART3		(1<<4)
+> > -#define S3C_CLKCON_PCLK_UART2		(1<<3)
+> > -#define S3C_CLKCON_PCLK_UART1		(1<<2)
+> > -#define S3C_CLKCON_PCLK_UART0		(1<<1)
+> > -
+> > -/* MEM_SYS_CFG */
+> > -#define MEM_SYS_CFG_INDEP_CF		0x4000
+> > -#define MEM_SYS_CFG_EBI_FIX_PRI_CFCON	0x30
+> > -
+> > -#endif /* _PLAT_REGS_CLOCK_H */
+> > +/#endif /* _PLAT_REGS_CLOCK_H */
 > 
-> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
-> ---
->  arch/arm/mach-s3c64xx/include/mach/regs-clock.h | 22 +---------------------
->  1 file changed, 1 insertion(+), 21 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s3c64xx/include/mach/regs-clock.h b/arch/arm/mach-s3c64xx/include/mach/regs-clock.h
-> index 4f44aac..46e64cc 100644
-> --- a/arch/arm/mach-s3c64xx/include/mach/regs-clock.h
-> +++ b/arch/arm/mach-s3c64xx/include/mach/regs-clock.h
-> @@ -15,24 +15,4 @@
->  #ifndef __PLAT_REGS_CLOCK_H
->  #define __PLAT_REGS_CLOCK_H __FILE__
->  
-> -/*
-> - * FIXME: Remove remaining definitions
-> - */
-> -
-> -#define S3C_CLKREG(x)		(S3C_VA_SYS + (x))
-> -
-> -#define S3C_PCLK_GATE		S3C_CLKREG(0x34)
+> I don't know about the other changes, but that last line looks like an error.
+> Did you build anything that #includes this header file?
 
-There is another header file that uses the #define S3C_PCLK_GATE above.
-Deleting it here should be causing a problem here:
+I just did
+    git grep -n S3C_CLKCON_PCLK_UART
 
-./arch/arm/mach-s3c64xx/include/mach/pm-core.h:24:	u32 tmp = __raw_readl(S3
-C_PCLK_GATE);
-./arch/arm/mach-s3c64xx/include/mach/pm-core.h:37:	__raw_writel(tmp, S3C_PC
-LK_GATE);
+It was just a guess. I did not cherry pick the defines that covers! The
+output of that command is, I think, pretty clear. 
 
-Please check things like this in advance.
+Nicholas, I think you've been told already to stop doing what you're
+doing again here. I try not to use colorful language on the net, but
+you're really pushing me here.
 
-> -#define S3C6410_CLK_SRC2	S3C_CLKREG(0x10C)
-> -#define S3C_MEM_SYS_CFG		S3C_CLKREG(0x120)
-> -
-> -/* PCLK GATE Registers */
-> -#define S3C_CLKCON_PCLK_UART3		(1<<4)
-
-used by pm-core.h
-
-> -#define S3C_CLKCON_PCLK_UART2		(1<<3)
-
-used by pm-core.h
-
-> -#define S3C_CLKCON_PCLK_UART1		(1<<2)
-
-used by pm-core.h
-
-> -#define S3C_CLKCON_PCLK_UART0		(1<<1)
-
-used by pm-core.h
-
-> -
-> -/* MEM_SYS_CFG */
-> -#define MEM_SYS_CFG_INDEP_CF		0x4000
-> -#define MEM_SYS_CFG_EBI_FIX_PRI_CFCON	0x30
-> -
-> -#endif /* _PLAT_REGS_CLOCK_H */
-> +/#endif /* _PLAT_REGS_CLOCK_H */
-> 
+Please go find something other to do than grepping the kernel tree for
+FIXMEs!
 
 
--- 
-~Randy
+Paul Bolle
