@@ -1,73 +1,70 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v3 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
-Date: Mon, 14 Jul 2014 18:19:56 +0530
-Message-ID: <1405342198-3870-3-git-send-email-gautam.vivek@samsung.com>
-References: <1405342198-3870-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:56138 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755343AbaGNMuU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 08:50:20 -0400
-In-Reply-To: <1405342198-3870-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Fix MCPM build with SUSPEND=n
+Date: Mon, 14 Jul 2014 14:55:16 +0200
+Message-ID: <1405342516.13970.0.camel@AMDC1943>
+References: <1405337093-15377-1-git-send-email-k.kozlowski@samsung.com>
+ <alpine.LFD.2.11.1407140730080.3647@knanqh.ubzr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <stable-owner@vger.kernel.org>
+In-reply-to: <alpine.LFD.2.11.1407140730080.3647@knanqh.ubzr>
+Sender: stable-owner@vger.kernel.org
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, stable@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, kishon@ti.com, kgene.kim@samsung.com, mathias.nyman@intel.com, jwerner@chromium.org, sergei.shtylyov@cogentembedded.com, heikki.krogerus@linux.intel.com, pratyush.anand@st.com, Vivek Gautam <gautam.vivek@samsung.com>
 
-The host controller by itself may sometimes need to handle PHY
-and/or calibrate some of the PHY settings to get full support out
-of the PHY controller. The PHY core provides a calibration
-funtionality now to do so.
-Therefore, facilitate getting the two possible PHYs, viz.
-USB 2.0 type (UTMI+) and USB 3.0 type (PIPE3).
+On pon, 2014-07-14 at 07:35 -0400, Nicolas Pitre wrote:
+> On Mon, 14 Jul 2014, Krzysztof Kozlowski wrote:
+> 
+> > Building of EXYNOS5420_MCPM with disabled SUSPEND fails:
+> > arch/arm/mach-exynos/built-in.o: In function `exynos_mcpm_init':
+> > arch/arm/mach-exynos/mcpm-exynos.c:361: undefined reference to `mcpm_loopback'
+> > 
+> > The exynos_mcpm_init() in mcp-exynos.c calls mcpm_loopback() which
+> > depends on cpu_suspend function (ARM_CPU_SUSPEND).
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > Cc: <stable@vger.kernel.org>
+> 
+> No need to CC stable here as this code has not reached a released kernel 
+> yet.
+> 
+> > Fixes: a6a4d3152e3cbb6 ("ARM: 8083/1: exynos: activate the CCI on boot CPU/cluster using the MCPM loopback")
+> 
+> And this is not clear yet if this commit ID is stable.
+> 
+> Other than that:
+> 
+> Acked-by: Nicolas Pitre <nico@linaro.org>
+> 
+> Please send to RMK's patch system.
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
----
- drivers/usb/host/xhci-plat.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+Sure, I'll remove the cc-stable tag, add your ack and send to the patch
+system.
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 1a0cf9f..d097d60 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -16,6 +16,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/phy/phy.h>
- #include <linux/slab.h>
- #include <linux/usb/xhci_pdriver.h>
- 
-@@ -180,6 +181,14 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 			goto put_hcd;
- 	}
- 
-+	/* Get possile USB 2.0 type PHY (UTMI+) available with xhci */
-+	hcd->gen_phy = devm_phy_get(&pdev->dev, "usb2-phy");
-+	if (IS_ERR(hcd->gen_phy)) {
-+		ret = PTR_ERR(hcd->gen_phy);
-+		if (ret != -ENOSYS && ret != -ENODEV)
-+			dev_dbg(&pdev->dev, "no usb2 phy configured\n");
-+	}
-+
- 	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (ret)
- 		goto disable_clk;
-@@ -209,6 +218,14 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
- 		xhci->shared_hcd->can_do_streams = 1;
- 
-+	/* Get possile USB 3.0 type PHY (PIPE3) available with xhci */
-+	xhci->shared_hcd->gen_phy = devm_phy_get(&pdev->dev, "usb3-phy");
-+	if (IS_ERR(xhci->shared_hcd->gen_phy)) {
-+		ret = PTR_ERR(xhci->shared_hcd->gen_phy);
-+		if (ret != -ENOSYS && ret != -ENODEV)
-+			dev_dbg(&pdev->dev, "no usb3 phy configured\n");
-+	}
-+
- 	ret = usb_add_hcd(xhci->shared_hcd, irq, IRQF_SHARED);
- 	if (ret)
- 		goto put_usb3_hcd;
--- 
-1.7.10.4
+Thanks,
+Krzysztof
+
+> 
+> 
+> > ---
+> >  arch/arm/mach-exynos/Kconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> > index 8f9b66c4ac78..5d4ff6571dcd 100644
+> > --- a/arch/arm/mach-exynos/Kconfig
+> > +++ b/arch/arm/mach-exynos/Kconfig
+> > @@ -119,6 +119,7 @@ config EXYNOS5420_MCPM
+> >  	bool "Exynos5420 Multi-Cluster PM support"
+> >  	depends on MCPM && SOC_EXYNOS5420
+> >  	select ARM_CCI
+> > +	select ARM_CPU_SUSPEND
+> >  	help
+> >  	  This is needed to provide CPU and cluster power management
+> >  	  on Exynos5420 implementing big.LITTLE.
+> > -- 
+> > 1.9.1
+> > 
+> > 
