@@ -1,589 +1,322 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: [PATCH v8 12/13] rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
-Date: Mon, 14 Jul 2014 13:36:08 +0200
-Message-ID: <1405337769-3741-13-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v8 05/13] clk: Add generic driver for Maxim PMIC clocks
+Date: Mon, 14 Jul 2014 13:36:01 +0200
+Message-ID: <1405337769-3741-6-git-send-email-javier.martinez@collabora.co.uk>
 References: <1405337769-3741-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1405337769-3741-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andreas Farber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1405337769-3741-1-git-send-email-javier.martinez@collabora.co.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Tushar Behera <trblinux@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The MAX7802 PMIC has a Real-Time-Clock (RTC) with two alarms.
-This patch adds support for the RTC and is based on a driver
-added by Simon Glass to the Chrome OS kernel 3.8 tree.
+Maxim Integrated Power Management ICs are very similar with
+regard to their clock outputs. Most of the clock drivers for
+these chips are duplicating code and are simpler enough that
+can be converted to use a generic driver to consolidate code
+and avoid duplication.
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
 
-Changes since v6:
- - Remove unused code for SMPL and WTSR. Suggested by Krzysztof Kozlowski.
- - Don't spam the kernel log with unnecessarily info and just print for debug.
-   Suggested by Krzysztof Kozlowski.
- - Use ARRAY_SIZE() instead of constant value. Suggested by Krzysztof Kozlowski.
- - Remove duplicated register setup. Suggested by Krzysztof Kozlowski.
- - Don't free/unregister managed allocated resources.
-   Suggested by Krzysztof Kozlowski.
----
- drivers/rtc/Kconfig        |  10 +
- drivers/rtc/Makefile       |   1 +
- drivers/rtc/rtc-max77802.c | 508 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 519 insertions(+)
- create mode 100644 drivers/rtc/rtc-max77802.c
+Changes since v6: None
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index a672dd1..243ac72 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -288,6 +288,16 @@ config RTC_DRV_MAX77686
- 	  This driver can also be built as a module. If so, the module
- 	  will be called rtc-max77686.
+Changes since v5:
+ - Fix generic driver changes merged into max77802 clock patch by mistake.
+   Suggested by Yadwinder Singh Brar.
+ - Register clock lookups using clk_register_clkdev() instead of doing manually.
+ - Use the managed devm_clk_register() function and remove clk un-registration.
+ - Add "clock-output-names" property support. Suggested by Yadwinder Singh Brar.
+ - Return the rate unconditionally in recalc_rate. Suggested by Mike Turquette.
+
+Changes since v4: None
+
+Changes since v3:
+ - Don't change clock-names property to make clear that it's
+   the consumer clock name and should not match the producer clock.
+   Suggested by Doug Anderson.
+---
+ drivers/clk/Kconfig       |   3 +
+ drivers/clk/Makefile      |   1 +
+ drivers/clk/clk-max-gen.c | 192 ++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/clk-max-gen.h |  32 ++++++++
+ 4 files changed, 228 insertions(+)
+ create mode 100644 drivers/clk/clk-max-gen.c
+ create mode 100644 drivers/clk/clk-max-gen.h
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 9f9c5ae..73f78e8 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -32,6 +32,9 @@ config COMMON_CLK_WM831X
  
-+config RTC_DRV_MAX77802
-+	tristate "Maxim 77802 RTC"
-+	depends on MFD_MAX77686
-+	help
-+	  If you say yes here you will get support for the
-+	  RTC of Maxim MAX77802 PMIC.
+ source "drivers/clk/versatile/Kconfig"
+ 
++config COMMON_CLK_MAX_GEN
++        bool
 +
-+	  This driver can also be built as a module. If so, the module
-+	  will be called rtc-max77802.
-+
- config RTC_DRV_RS5C372
- 	tristate "Ricoh R2025S/D, RS5C372A/B, RV5C386, RV5C387A"
- 	help
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index 70347d0..247de78 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -81,6 +81,7 @@ obj-$(CONFIG_RTC_DRV_MAX8998)	+= rtc-max8998.o
- obj-$(CONFIG_RTC_DRV_MAX8997)	+= rtc-max8997.o
- obj-$(CONFIG_RTC_DRV_MAX6902)	+= rtc-max6902.o
- obj-$(CONFIG_RTC_DRV_MAX77686)	+= rtc-max77686.o
-+obj-$(CONFIG_RTC_DRV_MAX77802)  += rtc-max77802.o
- obj-$(CONFIG_RTC_DRV_MC13XXX)	+= rtc-mc13xxx.o
- obj-$(CONFIG_RTC_DRV_MCP795)	+= rtc-mcp795.o
- obj-$(CONFIG_RTC_DRV_MSM6242)	+= rtc-msm6242.o
-diff --git a/drivers/rtc/rtc-max77802.c b/drivers/rtc/rtc-max77802.c
+ config COMMON_CLK_MAX77686
+ 	tristate "Clock driver for Maxim 77686 MFD"
+ 	depends on MFD_MAX77686
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 567f102..6c1aff6 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -18,6 +18,7 @@ obj-$(CONFIG_ARCH_BCM2835)		+= clk-bcm2835.o
+ obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
+ obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
+ obj-$(CONFIG_MACH_LOONGSON1)		+= clk-ls1x.o
++obj-$(CONFIG_COMMON_CLK_MAX_GEN)	+= clk-max-gen.o
+ obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
+ obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
+ obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
+diff --git a/drivers/clk/clk-max-gen.c b/drivers/clk/clk-max-gen.c
 new file mode 100644
-index 0000000..f8898ff
+index 0000000..6505049
 --- /dev/null
-+++ b/drivers/rtc/rtc-max77802.c
-@@ -0,0 +1,508 @@
++++ b/drivers/clk/clk-max-gen.c
+@@ -0,0 +1,192 @@
 +/*
-+ * RTC driver for Maxim MAX77802
++ * clk-max-gen.c - Generic clock driver for Maxim PMICs clocks
 + *
-+ * Copyright (C) 2013 Google, Inc
++ * Copyright (C) 2014 Google, Inc
 + *
-+ * Copyright (C) 2012 Samsung Electronics Co.Ltd
++ * Copyright (C) 2012 Samsung Electornics
++ * Jonghwa Lee <jonghwa3.lee@samsung.com>
 + *
-+ *  based on rtc-max8997.c
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
 + *
-+ *  This program is free software; you can redistribute  it and/or modify it
-+ *  under  the terms of  the GNU General  Public License as published by the
-+ *  Free Software Foundation;  either version 2 of the  License, or (at your
-+ *  option) any later version.
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * This driver is based on clk-max77686.c
 + *
 + */
 +
++#include <linux/kernel.h>
 +#include <linux/slab.h>
-+#include <linux/rtc.h>
-+#include <linux/delay.h>
-+#include <linux/mutex.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/mfd/max77686-private.h>
-+#include <linux/irqdomain.h>
++#include <linux/err.h>
 +#include <linux/regmap.h>
++#include <linux/platform_device.h>
++#include <linux/clk-provider.h>
++#include <linux/mutex.h>
++#include <linux/clkdev.h>
++#include <linux/of.h>
++#include <linux/export.h>
 +
-+/* RTC Control Register */
-+#define BCD_EN_SHIFT			0
-+#define BCD_EN_MASK			(1 << BCD_EN_SHIFT)
-+#define MODEL24_SHIFT			1
-+#define MODEL24_MASK			(1 << MODEL24_SHIFT)
-+/* RTC Update Register1 */
-+#define RTC_UDR_SHIFT			0
-+#define RTC_UDR_MASK			(1 << RTC_UDR_SHIFT)
-+#define RTC_RBUDR_SHIFT			4
-+#define RTC_RBUDR_MASK			(1 << RTC_RBUDR_SHIFT)
-+/* RTC Hour register */
-+#define HOUR_PM_SHIFT			6
-+#define HOUR_PM_MASK			(1 << HOUR_PM_SHIFT)
-+/* RTC Alarm Enable */
-+#define ALARM_ENABLE_SHIFT		7
-+#define ALARM_ENABLE_MASK		(1 << ALARM_ENABLE_SHIFT)
-+
-+/* For the RTCAE1 register, we write this value to enable the alarm */
-+#define ALARM_ENABLE_VALUE		0x77
-+
-+#define MAX77802_RTC_UPDATE_DELAY_US	200
-+
-+enum {
-+	RTC_SEC = 0,
-+	RTC_MIN,
-+	RTC_HOUR,
-+	RTC_WEEKDAY,
-+	RTC_MONTH,
-+	RTC_YEAR,
-+	RTC_DATE,
-+	RTC_NR_TIME
++struct max_gen_clk {
++	struct regmap *regmap;
++	u32 mask;
++	u32 reg;
++	struct clk_hw hw;
 +};
 +
-+struct max77802_rtc_info {
-+	struct device		*dev;
-+	struct max77686_dev	*max77802;
-+	struct i2c_client	*rtc;
-+	struct rtc_device	*rtc_dev;
-+	struct mutex		lock;
++static struct max_gen_clk *to_max_gen_clk(struct clk_hw *hw)
++{
++	return container_of(hw, struct max_gen_clk, hw);
++}
 +
-+	struct regmap		*regmap;
++static int max_gen_clk_prepare(struct clk_hw *hw)
++{
++	struct max_gen_clk *max_gen = to_max_gen_clk(hw);
 +
-+	int virq;
-+	int rtc_24hr_mode;
++	return regmap_update_bits(max_gen->regmap, max_gen->reg,
++				  max_gen->mask, max_gen->mask);
++}
++
++static void max_gen_clk_unprepare(struct clk_hw *hw)
++{
++	struct max_gen_clk *max_gen = to_max_gen_clk(hw);
++
++	regmap_update_bits(max_gen->regmap, max_gen->reg,
++			   max_gen->mask, ~max_gen->mask);
++}
++
++static int max_gen_clk_is_prepared(struct clk_hw *hw)
++{
++	struct max_gen_clk *max_gen = to_max_gen_clk(hw);
++	int ret;
++	u32 val;
++
++	ret = regmap_read(max_gen->regmap, max_gen->reg, &val);
++
++	if (ret < 0)
++		return -EINVAL;
++
++	return val & max_gen->mask;
++}
++
++static unsigned long max_gen_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	return 32768;
++}
++
++struct clk_ops max_gen_clk_ops = {
++	.prepare	= max_gen_clk_prepare,
++	.unprepare	= max_gen_clk_unprepare,
++	.is_prepared	= max_gen_clk_is_prepared,
++	.recalc_rate	= max_gen_recalc_rate,
 +};
++EXPORT_SYMBOL_GPL(max_gen_clk_ops);
 +
-+enum MAX77802_RTC_OP {
-+	MAX77802_RTC_WRITE,
-+	MAX77802_RTC_READ,
-+};
-+
-+static inline int max77802_rtc_calculate_wday(u8 shifted)
++static struct clk *max_gen_clk_register(struct device *dev,
++					struct max_gen_clk *max_gen)
 +{
-+	int counter = -1;
-+
-+	while (shifted) {
-+		shifted >>= 1;
-+		counter++;
-+	}
-+
-+	return counter;
-+}
-+
-+static void max77802_rtc_data_to_tm(u8 *data, struct rtc_time *tm,
-+				   int rtc_24hr_mode)
-+{
-+	tm->tm_sec = data[RTC_SEC] & 0xff;
-+	tm->tm_min = data[RTC_MIN] & 0xff;
-+	if (rtc_24hr_mode)
-+		tm->tm_hour = data[RTC_HOUR] & 0x1f;
-+	else {
-+		tm->tm_hour = data[RTC_HOUR] & 0x0f;
-+		if (data[RTC_HOUR] & HOUR_PM_MASK)
-+			tm->tm_hour += 12;
-+	}
-+
-+	tm->tm_wday = max77802_rtc_calculate_wday(data[RTC_WEEKDAY] & 0xff);
-+	tm->tm_mday = data[RTC_DATE] & 0x1f;
-+	tm->tm_mon = (data[RTC_MONTH] & 0x0f) - 1;
-+
-+	tm->tm_year = data[RTC_YEAR] & 0xff;
-+	tm->tm_yday = 0;
-+	tm->tm_isdst = 0;
-+}
-+
-+static int max77802_rtc_tm_to_data(struct rtc_time *tm, u8 *data)
-+{
-+	data[RTC_SEC] = tm->tm_sec;
-+	data[RTC_MIN] = tm->tm_min;
-+	data[RTC_HOUR] = tm->tm_hour;
-+	data[RTC_WEEKDAY] = 1 << tm->tm_wday;
-+	data[RTC_DATE] = tm->tm_mday;
-+	data[RTC_MONTH] = tm->tm_mon + 1;
-+	data[RTC_YEAR] = tm->tm_year;
-+
-+	return 0;
-+}
-+
-+static int max77802_rtc_update(struct max77802_rtc_info *info,
-+	enum MAX77802_RTC_OP op)
-+{
-+	int ret;
-+	unsigned int data;
-+
-+	if (op == MAX77802_RTC_WRITE)
-+		data = 1 << RTC_UDR_SHIFT;
-+	else
-+		data = 1 << RTC_RBUDR_SHIFT;
-+
-+	ret = regmap_update_bits(info->max77802->regmap,
-+				 MAX77802_RTC_UPDATE0, data, data);
-+	if (ret < 0)
-+		dev_err(info->dev, "%s: fail to write update reg(ret=%d, data=0x%x)\n",
-+				__func__, ret, data);
-+	else {
-+		/* Minimum delay required before RTC update. */
-+		usleep_range(MAX77802_RTC_UPDATE_DELAY_US,
-+			     MAX77802_RTC_UPDATE_DELAY_US * 2);
-+	}
-+
-+	return ret;
-+}
-+
-+static int max77802_rtc_read_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+	u8 data[RTC_NR_TIME];
++	struct clk *clk;
++	struct clk_hw *hw = &max_gen->hw;
 +	int ret;
 +
-+	mutex_lock(&info->lock);
++	clk = devm_clk_register(dev, hw);
++	if (IS_ERR(clk))
++		return clk;
 +
-+	ret = max77802_rtc_update(info, MAX77802_RTC_READ);
-+	if (ret < 0)
-+		goto out;
++	ret = clk_register_clkdev(clk, hw->init->name, NULL);
 +
-+	ret = regmap_bulk_read(info->max77802->regmap,
-+				MAX77802_RTC_SEC, data, RTC_NR_TIME);
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s: fail to read time reg(%d)\n", __func__,
-+			ret);
-+		goto out;
-+	}
++	if (ret)
++		return ERR_PTR(ret);
 +
-+	max77802_rtc_data_to_tm(data, tm, info->rtc_24hr_mode);
-+
-+	ret = rtc_valid_tm(tm);
-+
-+out:
-+	mutex_unlock(&info->lock);
-+	return ret;
++	return clk;
 +}
 +
-+static int max77802_rtc_set_time(struct device *dev, struct rtc_time *tm)
++int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
++		      u32 reg, struct clk_init_data *clks_init, int num_init)
 +{
-+	struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+	u8 data[RTC_NR_TIME];
-+	int ret;
++	int i, ret;
++	struct max_gen_clk *max_gen_clks;
++	struct clk **clocks;
++	struct device *dev = pdev->dev.parent;
++	const char *clk_name;
++	struct clk_init_data *init;
 +
-+	ret = max77802_rtc_tm_to_data(tm, data);
-+	if (ret < 0)
-+		return ret;
-+
-+	mutex_lock(&info->lock);
-+
-+	ret = regmap_bulk_write(info->max77802->regmap,
-+				 MAX77802_RTC_SEC, data, RTC_NR_TIME);
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s: fail to write time reg(%d)\n", __func__,
-+			ret);
-+		goto out;
-+	}
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_WRITE);
-+
-+out:
-+	mutex_unlock(&info->lock);
-+	return ret;
-+}
-+
-+static int max77802_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+	u8 data[RTC_NR_TIME];
-+	unsigned int val;
-+	int ret;
-+
-+	mutex_lock(&info->lock);
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_READ);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = regmap_bulk_read(info->max77802->regmap,
-+				 MAX77802_ALARM1_SEC, data, RTC_NR_TIME);
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s:%d fail to read alarm reg(%d)\n",
-+				__func__, __LINE__, ret);
-+		goto out;
-+	}
-+
-+	max77802_rtc_data_to_tm(data, &alrm->time, info->rtc_24hr_mode);
-+
-+	alrm->enabled = 0;
-+	ret = regmap_read(info->max77802->regmap,
-+			  MAX77802_RTC_AE1, &val);
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s:%d fail to read alarm enable(%d)\n",
-+			__func__, __LINE__, ret);
-+		goto out;
-+	}
-+	if (val)
-+		alrm->enabled = 1;
-+
-+	alrm->pending = 0;
-+	ret = regmap_read(info->max77802->regmap, MAX77802_REG_STATUS2, &val);
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s:%d fail to read status2 reg(%d)\n",
-+				__func__, __LINE__, ret);
-+		goto out;
-+	}
-+
-+	if (val & (1 << 2)) /* RTCA1 */
-+		alrm->pending = 1;
-+
-+out:
-+	mutex_unlock(&info->lock);
-+	return 0;
-+}
-+
-+static int max77802_rtc_stop_alarm(struct max77802_rtc_info *info)
-+{
-+	int ret;
-+
-+	if (!mutex_is_locked(&info->lock))
-+		dev_warn(info->dev, "%s: should have mutex locked\n", __func__);
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_READ);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = regmap_write(info->max77802->regmap,
-+			   MAX77802_RTC_AE1, 0);
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s: fail to write alarm reg(%d)\n",
-+			__func__, ret);
-+		goto out;
-+	}
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_WRITE);
-+out:
-+	return ret;
-+}
-+
-+static int max77802_rtc_start_alarm(struct max77802_rtc_info *info)
-+{
-+	int ret;
-+
-+	if (!mutex_is_locked(&info->lock))
-+		dev_warn(info->dev, "%s: should have mutex locked\n",
-+			 __func__);
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_READ);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = regmap_write(info->max77802->regmap,
-+				   MAX77802_RTC_AE1,
-+				   ALARM_ENABLE_VALUE);
-+
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s: fail to read alarm reg(%d)\n",
-+				__func__, ret);
-+		goto out;
-+	}
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_WRITE);
-+out:
-+	return ret;
-+}
-+
-+static int max77802_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+	u8 data[RTC_NR_TIME];
-+	int ret;
-+
-+	ret = max77802_rtc_tm_to_data(&alrm->time, data);
-+	if (ret < 0)
-+		return ret;
-+
-+	mutex_lock(&info->lock);
-+
-+	ret = max77802_rtc_stop_alarm(info);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = regmap_bulk_write(info->max77802->regmap,
-+				 MAX77802_ALARM1_SEC, data, RTC_NR_TIME);
-+
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s: fail to write alarm reg(%d)\n",
-+				__func__, ret);
-+		goto out;
-+	}
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_WRITE);
-+	if (ret < 0)
-+		goto out;
-+
-+	if (alrm->enabled)
-+		ret = max77802_rtc_start_alarm(info);
-+out:
-+	mutex_unlock(&info->lock);
-+	return ret;
-+}
-+
-+static int max77802_rtc_alarm_irq_enable(struct device *dev,
-+					 unsigned int enabled)
-+{
-+	struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+	int ret;
-+
-+	mutex_lock(&info->lock);
-+	if (enabled)
-+		ret = max77802_rtc_start_alarm(info);
-+	else
-+		ret = max77802_rtc_stop_alarm(info);
-+	mutex_unlock(&info->lock);
-+
-+	return ret;
-+}
-+
-+static irqreturn_t max77802_rtc_alarm_irq(int irq, void *data)
-+{
-+	struct max77802_rtc_info *info = data;
-+
-+	dev_dbg(info->dev, "%s:irq(%d)\n", __func__, irq);
-+
-+	rtc_update_irq(info->rtc_dev, 1, RTC_IRQF | RTC_AF);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static const struct rtc_class_ops max77802_rtc_ops = {
-+	.read_time = max77802_rtc_read_time,
-+	.set_time = max77802_rtc_set_time,
-+	.read_alarm = max77802_rtc_read_alarm,
-+	.set_alarm = max77802_rtc_set_alarm,
-+	.alarm_irq_enable = max77802_rtc_alarm_irq_enable,
-+};
-+
-+static int max77802_rtc_init_reg(struct max77802_rtc_info *info)
-+{
-+	u8 data[2];
-+	int ret;
-+
-+	max77802_rtc_update(info, MAX77802_RTC_READ);
-+
-+	/* Set RTC control register : Binary mode, 24hour mdoe */
-+	data[0] = (1 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
-+	data[1] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
-+
-+	info->rtc_24hr_mode = 1;
-+
-+	ret = regmap_bulk_write(info->max77802->regmap,
-+				MAX77802_RTC_CONTROLM, data, ARRAY_SIZE(data));
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s: fail to write controlm reg(%d)\n",
-+				__func__, ret);
-+		return ret;
-+	}
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_WRITE);
-+	return ret;
-+}
-+
-+static int max77802_rtc_probe(struct platform_device *pdev)
-+{
-+	struct max77686_dev *max77802 = dev_get_drvdata(pdev->dev.parent);
-+	struct max77802_rtc_info *info;
-+	int ret;
-+
-+	dev_dbg(&pdev->dev, "%s\n", __func__);
-+
-+	info = devm_kzalloc(&pdev->dev, sizeof(struct max77802_rtc_info),
-+			    GFP_KERNEL);
-+	if (!info)
++	clocks = devm_kzalloc(dev, sizeof(struct clk *) * num_init, GFP_KERNEL);
++	if (!clocks)
 +		return -ENOMEM;
 +
-+	mutex_init(&info->lock);
-+	info->dev = &pdev->dev;
-+	info->max77802 = max77802;
-+	info->rtc = max77802->i2c;
++	max_gen_clks = devm_kzalloc(dev, sizeof(struct max_gen_clk)
++				    * num_init, GFP_KERNEL);
++	if (!max_gen_clks)
++		return -ENOMEM;
 +
-+	platform_set_drvdata(pdev, info);
++	for (i = 0; i < num_init; i++) {
++		max_gen_clks[i].regmap = regmap;
++		max_gen_clks[i].mask = 1 << i;
++		max_gen_clks[i].reg = reg;
 +
-+	ret = max77802_rtc_init_reg(info);
++		init = devm_kzalloc(dev, sizeof(*init), GFP_KERNEL);
++		if (!init)
++			return -ENOMEM;
 +
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to initialize RTC reg:%d\n", ret);
-+		return ret;
++		if (dev->of_node &&
++		    !of_property_read_string_index(dev->of_node,
++						   "clock-output-names",
++						   i, &clk_name))
++			init->name = clk_name;
++		else
++			init->name = clks_init[i].name;
++
++		init->ops = clks_init[i].ops;
++		init->flags = clks_init[i].flags;
++
++		max_gen_clks[i].hw.init = init;
++
++		clocks[i] = max_gen_clk_register(dev, &max_gen_clks[i]);
++		if (IS_ERR(clocks[i])) {
++			ret = PTR_ERR(clocks[i]);
++			dev_err(dev, "failed to register %s\n",
++				max_gen_clks[i].hw.init->name);
++			return ret;
++		}
 +	}
 +
-+	device_init_wakeup(&pdev->dev, 1);
++	platform_set_drvdata(pdev, clocks);
 +
-+	info->rtc_dev = devm_rtc_device_register(&pdev->dev, "max77802-rtc",
-+						 &max77802_rtc_ops, THIS_MODULE);
++	if (dev->of_node) {
++		struct clk_onecell_data *of_data;
 +
-+	if (IS_ERR(info->rtc_dev)) {
-+		ret = PTR_ERR(info->rtc_dev);
-+		dev_err(&pdev->dev, "Failed to register RTC device: %d\n", ret);
-+		if (ret == 0)
-+			ret = -EINVAL;
-+		return ret;
-+	}
-+	info->virq = regmap_irq_get_virq(max77802->rtc_irq_data,
-+					 MAX77686_RTCIRQ_RTCA1);
++		of_data = devm_kzalloc(dev, sizeof(*of_data), GFP_KERNEL);
++		if (!of_data)
++			return -ENOMEM;
 +
-+	if (info->virq <= 0) {
-+		dev_err(&pdev->dev, "Failed to get virtual IRQ %d\n",
-+			MAX77686_RTCIRQ_RTCA1);
-+		ret = -EINVAL;
-+		return ret;
-+	}
++		of_data->clks = clocks;
++		of_data->clk_num = num_init;
++		ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
++					  of_data);
 +
-+	ret = devm_request_threaded_irq(&pdev->dev, info->virq, NULL,
-+					max77802_rtc_alarm_irq, 0, "rtc-alarm1",
-+					info);
-+	if (ret < 0)
-+		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
-+			info->virq, ret);
-+
-+	return ret;
-+}
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int max77802_rtc_suspend(struct device *dev)
-+{
-+	if (device_may_wakeup(dev)) {
-+		struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+
-+		return enable_irq_wake(info->virq);
-+	}
-+
-+	return 0;
-+}
-+
-+static int max77802_rtc_resume(struct device *dev)
-+{
-+	if (device_may_wakeup(dev)) {
-+		struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+
-+		return disable_irq_wake(info->virq);
++		if (ret) {
++			dev_err(dev, "failed to register OF clock provider\n");
++			return ret;
++		}
 +	}
 +
 +	return 0;
 +}
-+#endif
++EXPORT_SYMBOL_GPL(max_gen_clk_probe);
 +
-+static SIMPLE_DEV_PM_OPS(max77802_rtc_pm_ops,
-+			 max77802_rtc_suspend, max77802_rtc_resume);
++int max_gen_clk_remove(struct platform_device *pdev, int num_init)
++{
++	struct device *dev = pdev->dev.parent;
 +
-+static const struct platform_device_id rtc_id[] = {
-+	{ "max77802-rtc", 0 },
-+	{},
-+};
++	if (dev->of_node)
++		of_clk_del_provider(dev->of_node);
 +
-+static struct platform_driver max77802_rtc_driver = {
-+	.driver		= {
-+		.name	= "max77802-rtc",
-+		.owner	= THIS_MODULE,
-+		.pm	= &max77802_rtc_pm_ops,
-+	},
-+	.probe		= max77802_rtc_probe,
-+	.id_table	= rtc_id,
-+};
++	return 0;
++}
++EXPORT_SYMBOL_GPL(max_gen_clk_remove);
+diff --git a/drivers/clk/clk-max-gen.h b/drivers/clk/clk-max-gen.h
+new file mode 100644
+index 0000000..997e86f
+--- /dev/null
++++ b/drivers/clk/clk-max-gen.h
+@@ -0,0 +1,32 @@
++/*
++ * clk-max-gen.h - Generic clock driver for Maxim PMICs clocks
++ *
++ * Copyright (C) 2014 Google, Inc
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ */
 +
-+module_platform_driver(max77802_rtc_driver);
++#ifndef __CLK_MAX_GEN_H__
++#define __CLK_MAX_GEN_H__
 +
-+MODULE_DESCRIPTION("Maxim MAX77802 RTC driver");
-+MODULE_AUTHOR("Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>");
-+MODULE_LICENSE("GPL");
++#include <linux/types.h>
++#include <linux/device.h>
++#include <linux/clkdev.h>
++#include <linux/regmap.h>
++#include <linux/platform_device.h>
++
++int max_gen_clk_probe(struct platform_device *pdev, struct regmap *regmap,
++		      u32 reg, struct clk_init_data *clks_init, int num_init);
++int max_gen_clk_remove(struct platform_device *pdev, int num_init);
++extern struct clk_ops max_gen_clk_ops;
++
++#endif /* __CLK_MAX_GEN_H__ */
 -- 
 2.0.0.rc2
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
