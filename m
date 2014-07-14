@@ -1,215 +1,226 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 1/3 v6] spi: s3c64xx: fix broken "cs_gpios" usage in the driver
-Date: Mon, 14 Jul 2014 11:11:44 +0530
-Message-ID: <1405316506-27855-2-git-send-email-ch.naveen@samsung.com>
-References: <1405316506-27855-1-git-send-email-ch.naveen@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCHv5] mmc: dw_mmc: change to use recommended reset procedure
+Date: Mon, 14 Jul 2014 14:52:41 +0900
+Message-ID: <53C37029.20600@samsung.com>
+References: <CAPz6YkUKWUuQrSjPbdhwwZ57kkzJ7tLGpue=mvw6+31kkBhauw@mail.gmail.com>
+ <1405111990-23452-1-git-send-email-sonnyrao@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:24521 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752321AbaGNFpN (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:48186 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752713AbaGNFwn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 01:45:13 -0400
-In-reply-to: <1405316506-27855-1-git-send-email-ch.naveen@samsung.com>
+	Mon, 14 Jul 2014 01:52:43 -0400
+In-reply-to: <1405111990-23452-1-git-send-email-sonnyrao@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
+To: Sonny Rao <sonnyrao@chromium.org>, linux-mmc@vger.kernel.org
+Cc: grundler@chromium.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, tgih.jun@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, t.figa@samsung.com, dianders@chromium.org, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Since, (3146bee spi: s3c64xx: Added provision for dedicated cs pin)
+On 07/12/2014 05:53 AM, Sonny Rao wrote:
+> This patch changes the fifo reset code to follow the reset procedure
+> outlined in the documentation of Synopsys Mobile storage host databook.
+> 
+> Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
+> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> ---
+> v2: Add Generic DMA support
+>     per the documentation, move interrupt clear before wait
+>     make the test for DMA host->use_dma rather than host->using_dma
+>     add proper return values (although it appears no caller checks)
+> v3: rename fifo reset function, and change callers
+>     use this combined reset function in dw_mci_resume()
+>     just one caller left (probe), so get rid of dw_mci_ctrl_all_reset()
+>     use DMA reset bit for all systems which use DMA
+>     remove extra IDMAC reset in dw_mci_work_routine_card()
+>     do CIU clock update in error path, if CIU reset cleared
+> v4: remove comment about FIFO reset in dw_mci_work_routine_card()
+>     move down error message when control reset clears but others don't
+>      and clarify the error stating that we will still update clocks
+>     make flags for all reset bits a macro
+> v5: don't use dw_mci_reset() in dw_mci_resume() and instead match what
+>     is done in dw_mci_probe() and don't force inline dw_mci_resume()
+> ---
+>  drivers/mmc/host/dw_mmc.c | 86 ++++++++++++++++++++++++++++++++++-------------
+>  drivers/mmc/host/dw_mmc.h |  5 +++
+>  2 files changed, 68 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 55cd110..db25494 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -111,8 +111,7 @@ static const u8 tuning_blk_pattern_8bit[] = {
+>  	0xff, 0x77, 0x77, 0xff, 0x77, 0xbb, 0xdd, 0xee,
+>  };
+>  
+> -static inline bool dw_mci_fifo_reset(struct dw_mci *host);
+> -static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host);
+> +static bool dw_mci_reset(struct dw_mci *host);
+>  
+>  #if defined(CONFIG_DEBUG_FS)
+>  static int dw_mci_req_show(struct seq_file *s, void *v)
+> @@ -1254,7 +1253,7 @@ static int dw_mci_data_complete(struct dw_mci *host, struct mmc_data *data)
+>  		 * After an error, there may be data lingering
+>  		 * in the FIFO
+>  		 */
+> -		dw_mci_fifo_reset(host);
+> +		dw_mci_reset(host);
+>  	} else {
+>  		data->bytes_xfered = data->blocks * data->blksz;
+>  		data->error = 0;
+> @@ -1371,7 +1370,7 @@ static void dw_mci_tasklet_func(unsigned long priv)
+>  
+>  			/* CMD error in data command */
+>  			if (mrq->cmd->error && mrq->data)
+> -				dw_mci_fifo_reset(host);
+> +				dw_mci_reset(host);
+>  
+>  			host->cmd = NULL;
+>  			host->data = NULL;
+> @@ -1982,14 +1981,8 @@ static void dw_mci_work_routine_card(struct work_struct *work)
+>  			}
+>  
+>  			/* Power down slot */
+> -			if (present == 0) {
+> -				/* Clear down the FIFO */
+> -				dw_mci_fifo_reset(host);
+> -#ifdef CONFIG_MMC_DW_IDMAC
+> -				dw_mci_idmac_reset(host);
+> -#endif
+> -
+> -			}
+> +			if (present == 0)
+> +				dw_mci_reset(host);
+>  
+>  			spin_unlock_bh(&host->lock);
+>  
+> @@ -2323,8 +2316,11 @@ static bool dw_mci_ctrl_reset(struct dw_mci *host, u32 reset)
+>  	return false;
+>  }
+>  
+> -static inline bool dw_mci_fifo_reset(struct dw_mci *host)
+> +static bool dw_mci_reset(struct dw_mci *host)
+>  {
+> +	u32 flags = SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET;
+> +	bool ret = false;
+> +
+>  	/*
+>  	 * Reseting generates a block interrupt, hence setting
+>  	 * the scatter-gather pointer to NULL.
+> @@ -2334,15 +2330,59 @@ static inline bool dw_mci_fifo_reset(struct dw_mci *host)
+>  		host->sg = NULL;
+>  	}
+>  
+> -	return dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET);
+> -}
+> +	if (host->use_dma)
+> +		flags |= SDMMC_CTRL_DMA_RESET;
+>  
+> -static inline bool dw_mci_ctrl_all_reset(struct dw_mci *host)
+> -{
+> -	return dw_mci_ctrl_reset(host,
+> -				 SDMMC_CTRL_FIFO_RESET |
+> -				 SDMMC_CTRL_RESET |
+> -				 SDMMC_CTRL_DMA_RESET);
+> +	if (dw_mci_ctrl_reset(host, flags)) {
+> +		/*
+> +		 * In all cases we clear the RAWINTS register to clear any
+> +		 * interrupts.
+> +		 */
+> +		mci_writel(host, RINTSTS, 0xFFFFFFFF);
+> +
+> +		/* if using dma we wait for dma_req to clear */
+> +		if (host->use_dma) {
+> +			unsigned long timeout = jiffies + msecs_to_jiffies(500);
+> +			u32 status;
+> +			do {
+> +				status = mci_readl(host, STATUS);
+> +				if (!(status & SDMMC_STATUS_DMA_REQ))
+> +					break;
+> +				cpu_relax();
+> +			} while (time_before(jiffies, timeout));
+> +
+> +			if (status & SDMMC_STATUS_DMA_REQ) {
+> +				dev_err(host->dev,
+> +					"%s: Timeout waiting for dma_req to "
+> +					"clear during reset", __func__);
+Could you add the "\n"?
 
-spi-s3c64xx.c driver expects
-1. chip select gpios from "cs-gpio"(singular) under the
-   "controller-data" node of the client/slave device of the SPI.
+> +				goto ciu_out;
+> +			}
+> +
+> +			/* when using DMA next we reset the fifo again */
+> +			if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_FIFO_RESET))
+> +				goto ciu_out;
+> +		}
+> +	} else {
+> +		/* if the controller reset bit did clear, then set clock regs */
+> +		if (!(mci_readl(host, CTRL) & SDMMC_CTRL_RESET)) {
+> +			dev_err(host->dev, "%s: fifo/dma reset bits didn't "
+> +				"clear but ciu was reset, doing clock update.",
+> +				__func__);
+Ditto.
 
-2. "cs-gpio"(singular) entry to be present in the SPI device node.
 
-Eg of current broken usage:
-&spi_1 {
-	cs-gpio <>;	/* this entry is checked during probe */
-	...
-	slave_node {
-		controller-data {
-			cs-gpio <&gpioa2 5 0>;
-			/* This field is parsed during .setup() */
-		}
-	};
-};
-
-The following dts files which were using this driver. But,
-din't have the "cs-gpio" entry under SPI node.
--- arch/arm/boot/dts/exynos4210-smdkv310.dts
--- arch/arm/boot/dts/exynos4412-trats2.dts
--- arch/arm/boot/dts/exynos5250-smdk5250.dts
-
-Also, the SPI core and many drivers moved on to using "cs-gpios"
-from SPI node and removed the gpio handling code from drivers
-(including spi-s3c64xx.c).
-
-Hence, spi-s3c64xx.c is broken since "Jun 21 11:26:12 2013" and
-considering the time with no compliants about the breakage.
-
-We are assuming it is safe to remove the "cs-gpio"(singular) usage
-from device tree binding of spi-samsung.txt and makes appropriate
-changes in the driver to use "cs-gpios"(plural) from
-SPI device node.
-
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Tested-by: Doug Anderson <dianders@chromium.org>
-Cc: Tomasz Figa <t.figa@samsung.com>
----
-Changes since v5:
-Fixed the "making a GPIO chip select mandatory" bug.
-
-Changes since v4:
-1. Added reviewed by from Javier and Tested by from Doug
-
-Changes since v3:
-1. Remove the sdd->cs_gpio and use gpio_is_valid(spi->cs_gpio) instead
-2. Keep cs->line only for Non-DT platforms and use spi->cs_gpio
-   for DT platforms
- .../devicetree/bindings/spi/spi-samsung.txt        |    8 ++---
- drivers/spi/spi-s3c64xx.c                          |   38 ++++++++------------
- 2 files changed, 17 insertions(+), 29 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-index 655b665..792efba 100644
---- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-@@ -39,15 +39,13 @@ Optional Board Specific Properties:
- - num-cs: Specifies the number of chip select lines supported. If
-   not specified, the default number of chip select lines is set to 1.
- 
-+- cs-gpios: should specify GPIOs used for chipselects (see spi-bus.txt)
-+
- SPI Controller specific data in SPI slave nodes:
- 
- - The spi slave nodes should provide the following information which is required
-   by the spi controller.
- 
--  - cs-gpio: A gpio specifier that specifies the gpio line used as
--    the slave select line by the spi controller. The format of the gpio
--    specifier depends on the gpio controller.
--
-   - samsung,spi-feedback-delay: The sampling phase shift to be applied on the
-     miso line (to account for any lag in the miso line). The following are the
-     valid values.
-@@ -85,6 +83,7 @@ Example:
- 		#size-cells = <0>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&spi0_bus>;
-+		cs-gpios = <&gpa2 5 0>;
- 
- 		w25q80bw@0 {
- 			#address-cells = <1>;
-@@ -94,7 +93,6 @@ Example:
- 			spi-max-frequency = <10000>;
- 
- 			controller-data {
--				cs-gpio = <&gpa2 5 1 0 3>;
- 				samsung,spi-feedback-delay = <0>;
- 			};
- 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 75a5696..b61ff3d 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -197,7 +197,6 @@ struct s3c64xx_spi_driver_data {
- 	struct s3c64xx_spi_dma_data	tx_dma;
- 	struct s3c64xx_spi_port_config	*port_conf;
- 	unsigned int			port_id;
--	bool				cs_gpio;
- };
- 
- static void flush_fifo(struct s3c64xx_spi_driver_data *sdd)
-@@ -776,17 +775,6 @@ static struct s3c64xx_spi_csinfo *s3c64xx_get_slave_ctrldata(
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
--	/* The CS line is asserted/deasserted by the gpio pin */
--	if (sdd->cs_gpio)
--		cs->line = of_get_named_gpio(data_np, "cs-gpio", 0);
--
--	if (!gpio_is_valid(cs->line)) {
--		dev_err(&spi->dev, "chip select gpio is not specified or invalid\n");
--		kfree(cs);
--		of_node_put(data_np);
--		return ERR_PTR(-EINVAL);
--	}
--
- 	of_property_read_u32(data_np, "samsung,spi-feedback-delay", &fb_delay);
- 	cs->fb_delay = fb_delay;
- 	of_node_put(data_np);
-@@ -812,6 +800,10 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
- 		spi->controller_data = cs;
- 	}
- 
-+	/* For the non-DT platforms derive chip selects from controller data */
-+	if (!spi->dev.of_node)
-+		spi->cs_gpio = cs->line;
-+
- 	if (IS_ERR_OR_NULL(cs)) {
- 		dev_err(&spi->dev, "No CS for SPI(%d)\n", spi->chip_select);
- 		return -ENODEV;
-@@ -819,17 +811,16 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
- 
- 	if (!spi_get_ctldata(spi)) {
- 		/* Request gpio only if cs line is asserted by gpio pins */
--		if (sdd->cs_gpio) {
--			err = gpio_request_one(cs->line, GPIOF_OUT_INIT_HIGH,
--					dev_name(&spi->dev));
-+		if (gpio_is_valid(spi->cs_gpio)) {
-+			err = gpio_request_one(spi->cs_gpio,
-+						GPIOF_OUT_INIT_HIGH,
-+						dev_name(&spi->dev));
- 			if (err) {
- 				dev_err(&spi->dev,
- 					"Failed to get /CS gpio [%d]: %d\n",
--					cs->line, err);
-+					spi->cs_gpio, err);
- 				goto err_gpio_req;
- 			}
--
--			spi->cs_gpio = cs->line;
- 		}
- 
- 		spi_set_ctldata(spi, cs);
-@@ -884,7 +875,8 @@ setup_exit:
- 	/* setup() returns with device de-selected */
- 	writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
- 
--	gpio_free(cs->line);
-+	if (gpio_is_valid(spi->cs_gpio))
-+		gpio_free(spi->cs_gpio);
- 	spi_set_ctldata(spi, NULL);
- 
- err_gpio_req:
-@@ -900,10 +892,12 @@ static void s3c64xx_spi_cleanup(struct spi_device *spi)
- 	struct s3c64xx_spi_driver_data *sdd;
- 
- 	sdd = spi_master_get_devdata(spi->master);
--	if (spi->cs_gpio) {
-+	if (gpio_is_valid(spi->cs_gpio)) {
- 		gpio_free(spi->cs_gpio);
- 		if (spi->dev.of_node)
- 			kfree(cs);
-+		else
-+			spi->cs_gpio = -ENOENT;
- 	}
- 	spi_set_ctldata(spi, NULL);
- }
-@@ -1075,11 +1069,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	sdd->cntrlr_info = sci;
- 	sdd->pdev = pdev;
- 	sdd->sfr_start = mem_res->start;
--	sdd->cs_gpio = true;
- 	if (pdev->dev.of_node) {
--		if (!of_find_property(pdev->dev.of_node, "cs-gpio", NULL))
--			sdd->cs_gpio = false;
--
- 		ret = of_alias_get_id(pdev->dev.of_node, "spi");
- 		if (ret < 0) {
- 			dev_err(&pdev->dev, "failed to get alias id, errno %d\n",
--- 
-1.7.9.5
+> +			goto ciu_out;
+> +		}
+> +	}
+> +
+> +	if (IS_ENABLED(CONFIG_MMC_DW_IDMAC))
+> +		/* It is also recommended that we reset and reprogram idmac */
+> +		dw_mci_idmac_reset(host);
+> +
+> +	ret = true;
+> +
+> +ciu_out:
+> +	/* After a CTRL reset we need to have CIU set clock registers  */
+> +	mci_send_cmd(host->cur_slot, SDMMC_CMD_UPD_CLK, 0);
+> +
+> +	return ret;
+>  }
+>  
+>  #ifdef CONFIG_OF
+> @@ -2555,7 +2595,7 @@ int dw_mci_probe(struct dw_mci *host)
+>  	}
+>  
+>  	/* Reset all blocks */
+> -	if (!dw_mci_ctrl_all_reset(host))
+> +	if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_ALL_RESET_FLAGS))
+>  		return -ENODEV;
+>  
+>  	host->dma_ops = host->pdata->dma_ops;
+> @@ -2744,7 +2784,7 @@ int dw_mci_resume(struct dw_mci *host)
+>  		}
+>  	}
+>  
+> -	if (!dw_mci_ctrl_all_reset(host)) {
+> +	if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_ALL_RESET_FLAGS)) {
+>  		ret = -ENODEV;
+>  		return ret;
+>  	}
+> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+> index 6bf24ab..9ab8ccd 100644
+> --- a/drivers/mmc/host/dw_mmc.h
+> +++ b/drivers/mmc/host/dw_mmc.h
+> @@ -129,6 +129,7 @@
+>  #define SDMMC_CMD_INDX(n)		((n) & 0x1F)
+>  /* Status register defines */
+>  #define SDMMC_GET_FCNT(x)		(((x)>>17) & 0x1FFF)
+> +#define SDMMC_STATUS_DMA_REQ		BIT(31)
+>  /* FIFOTH register defines */
+>  #define SDMMC_SET_FIFOTH(m, r, t)	(((m) & 0x7) << 28 | \
+>  					 ((r) & 0xFFF) << 16 | \
+> @@ -150,6 +151,10 @@
+>  /* Card read threshold */
+>  #define SDMMC_SET_RD_THLD(v, x)		(((v) & 0x1FFF) << 16 | (x))
+>  
+> +/* All ctrl reset bits */
+> +#define SDMMC_CTRL_ALL_RESET_FLAGS \
+> +	(SDMMC_CTRL_RESET | SDMMC_CTRL_FIFO_RESET | SDMMC_CTRL_DMA_RESET)
+> +
+>  /* Register access macros */
+>  #define mci_readl(dev, reg)			\
+>  	__raw_readl((dev)->regs + SDMMC_##reg)
+> 
