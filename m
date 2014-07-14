@@ -1,17 +1,17 @@
 From: Randy Dunlap <rdunlap@infradead.org>
 Subject: Re: [PATCH] mach-s3c64xx: Remove all defintions not related to regs-clocks
-Date: Mon, 14 Jul 2014 11:23:26 -0700
-Message-ID: <53C4201E.3020708@infradead.org>
+Date: Mon, 14 Jul 2014 11:34:37 -0700
+Message-ID: <53C422BD.3070608@infradead.org>
 References: <1405361664-5210-1-git-send-email-xerofoify@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:53474 "EHLO
+Received: from casper.infradead.org ([85.118.1.10]:53513 "EHLO
 	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751602AbaGNSXd (ORCPT
+	with ESMTP id S1752442AbaGNSeo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 14:23:33 -0400
+	Mon, 14 Jul 2014 14:34:44 -0400
 In-Reply-To: <1405361664-5210-1-git-send-email-xerofoify@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -43,14 +43,37 @@ On 07/14/14 11:14, Nicholas Krause wrote:
 > -#define S3C_CLKREG(x)		(S3C_VA_SYS + (x))
 > -
 > -#define S3C_PCLK_GATE		S3C_CLKREG(0x34)
+
+There is another header file that uses the #define S3C_PCLK_GATE above.
+Deleting it here should be causing a problem here:
+
+./arch/arm/mach-s3c64xx/include/mach/pm-core.h:24:	u32 tmp = __raw_readl(S3
+C_PCLK_GATE);
+./arch/arm/mach-s3c64xx/include/mach/pm-core.h:37:	__raw_writel(tmp, S3C_PC
+LK_GATE);
+
+Please check things like this in advance.
+
 > -#define S3C6410_CLK_SRC2	S3C_CLKREG(0x10C)
 > -#define S3C_MEM_SYS_CFG		S3C_CLKREG(0x120)
 > -
 > -/* PCLK GATE Registers */
 > -#define S3C_CLKCON_PCLK_UART3		(1<<4)
+
+used by pm-core.h
+
 > -#define S3C_CLKCON_PCLK_UART2		(1<<3)
+
+used by pm-core.h
+
 > -#define S3C_CLKCON_PCLK_UART1		(1<<2)
+
+used by pm-core.h
+
 > -#define S3C_CLKCON_PCLK_UART0		(1<<1)
+
+used by pm-core.h
+
 > -
 > -/* MEM_SYS_CFG */
 > -#define MEM_SYS_CFG_INDEP_CF		0x4000
@@ -58,9 +81,7 @@ On 07/14/14 11:14, Nicholas Krause wrote:
 > -
 > -#endif /* _PLAT_REGS_CLOCK_H */
 > +/#endif /* _PLAT_REGS_CLOCK_H */
-
-I don't know about the other changes, but that last line looks like an error.
-Did you build anything that #includes this header file?
+> 
 
 
 -- 
