@@ -1,213 +1,117 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH v2 2/3] regulator: s2mpa01: Optimize the regulator description macro
-Date: Tue, 15 Jul 2014 16:32:52 +0530
-Message-ID: <1405422173-15050-2-git-send-email-amit.daniel@samsung.com>
-References: <1405422173-15050-1-git-send-email-amit.daniel@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1405422173-15050-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 5/6] ARM: EXYNOS: Fix suspend/resume sequences
+Date: Tue, 15 Jul 2014 13:19:29 +0200
+Message-ID: <2740751.gTMSlJs48H@amdc1032>
+References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
+ <1403697175-13476-1-git-send-email-t.figa@samsung.com>
+ <53C3A8E8.4090009@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:13644 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758039AbaGOLTt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Jul 2014 07:19:49 -0400
+In-reply-to: <53C3A8E8.4090009@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>
 
-This patch makes the regulator description macro take minimum and
-steps voltage as parameter. In this way many repeated macros can be
-removed. Now these macros are repeated only if the the LDO/BUCK ctrl
-registers have non-linear positions. The good thing is these ctrl registers
-are mostly linear so they are not passed as parameters.
 
-This patch reduces the code size and also allow easy addition of more
-s2mpxxx PMIC drivers which differs a lot in minimum/step voltages.
+Hi,
 
-Cc: Sangbeom Kim <sbkim73@samsung.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
-Changes since v1:
-* Removed min parameter from regulator_desc_ldo1 as pointed by Krzysztof
-* Added Cc to maintainers.
-* Added Krzysztof reviewed-by.
+On Monday, July 14, 2014 11:54:48 AM Tomasz Figa wrote:
+> Hi Kukjin,
+> 
+> On 25.06.2014 13:52, Tomasz Figa wrote:
+> > Due to recent consolidation of Exynos suspend and cpuidle code, some
+> > parts of suspend and resume sequences are executed two times, once from
+> > exynos_pm_syscore_ops and then from exynos_cpu_pm_notifier() and thus it
+> > breaks suspend, at least on Exynos4-based boards.
+> > 
+> > This patch fixes the issue by removing exynos_pm_syscore_ops completely
+> > and making the code rely only on CPU PM notifier.
+> > 
+> > Tested on Exynos4210-based Trats board.
+> > 
+> > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/pm.c | 23 ++++-------------------
+> >  1 file changed, 4 insertions(+), 19 deletions(-)
+> > 
+> > Changes since v1:
+> >  - rebased onto Kukjin's fixes branch.
+> > 
+> > diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> > index 202ca73..f23cc77 100644
+> > --- a/arch/arm/mach-exynos/pm.c
+> > +++ b/arch/arm/mach-exynos/pm.c
+> > @@ -364,11 +364,6 @@ early_wakeup:
+> >  	return;
+> >  }
+> >  
+> > -static struct syscore_ops exynos_pm_syscore_ops = {
+> > -	.suspend	= exynos_pm_suspend,
+> > -	.resume		= exynos_pm_resume,
+> > -};
+> > -
+> >  /*
+> >   * Suspend Ops
+> >   */
+> > @@ -438,22 +433,13 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+> >  
+> >  	switch (cmd) {
+> >  	case CPU_PM_ENTER:
+> > -		if (cpu == 0) {
+> > -			exynos_pm_central_suspend();
+> > -			if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+> > -				exynos_cpu_save_register();
+> > -		}
+> > +		if (cpu == 0)
+> > +			exynos_pm_suspend();
+> >  		break;
+> >  
+> >  	case CPU_PM_EXIT:
+> > -		if (cpu == 0) {
+> > -			if (read_cpuid_part_number() ==
+> > -					ARM_CPU_PART_CORTEX_A9) {
+> > -				scu_enable(S5P_VA_SCU);
+> > -				exynos_cpu_restore_register();
+> > -			}
+> > -			exynos_pm_central_resume();
+> > -		}
+> > +		if (cpu == 0)
+> > +			exynos_pm_resume();
+> >  		break;
+> >  	}
+> >  
+> > @@ -478,6 +464,5 @@ void __init exynos_pm_init(void)
+> >  	tmp |= ((0xFF << 8) | (0x1F << 1));
+> >  	__raw_writel(tmp, S5P_WAKEUP_MASK);
+> >  
+> > -	register_syscore_ops(&exynos_pm_syscore_ops);
+> >  	suspend_set_ops(&exynos_suspend_ops);
+> >  }
+> > 
+> 
+> Please consider this patch for next fixes pull request. Without it
+> suspend/resume is broken for Exynos4 and probably other SoCs. This patch
+> just restores the sequence from before the patch moving things to PM
+> notifier, so I don't think it should need any special treatment.
 
- drivers/regulator/s2mpa01.c | 134 ++++++++++++--------------------------------
- 1 file changed, 36 insertions(+), 98 deletions(-)
+Your patch fixes the regression and is a step in the good direction but it
+seems that it needs a bit more work:
 
-diff --git a/drivers/regulator/s2mpa01.c b/drivers/regulator/s2mpa01.c
-index 962c5f1..89fe32c 100644
---- a/drivers/regulator/s2mpa01.c
-+++ b/drivers/regulator/s2mpa01.c
-@@ -235,28 +235,14 @@ static struct regulator_ops s2mpa01_buck_ops = {
- 	.set_ramp_delay		= s2mpa01_set_ramp_delay,
- };
- 
--#define regulator_desc_ldo1(num)	{		\
-+#define regulator_desc_ldo(num, step) {			\
- 	.name		= "LDO"#num,			\
- 	.id		= S2MPA01_LDO##num,		\
- 	.ops		= &s2mpa01_ldo_ops,		\
- 	.type		= REGULATOR_VOLTAGE,		\
- 	.owner		= THIS_MODULE,			\
- 	.min_uV		= MIN_800_MV,			\
--	.uV_step	= STEP_50_MV,			\
--	.n_voltages	= S2MPA01_LDO_N_VOLTAGES,	\
--	.vsel_reg	= S2MPA01_REG_L1CTRL + num - 1,	\
--	.vsel_mask	= S2MPA01_LDO_VSEL_MASK,	\
--	.enable_reg	= S2MPA01_REG_L1CTRL + num - 1,	\
--	.enable_mask	= S2MPA01_ENABLE_MASK		\
--}
--#define regulator_desc_ldo2(num)	{		\
--	.name		= "LDO"#num,			\
--	.id		= S2MPA01_LDO##num,		\
--	.ops		= &s2mpa01_ldo_ops,		\
--	.type		= REGULATOR_VOLTAGE,		\
--	.owner		= THIS_MODULE,			\
--	.min_uV		= MIN_800_MV,			\
--	.uV_step	= STEP_25_MV,			\
-+	.uV_step	= step,				\
- 	.n_voltages	= S2MPA01_LDO_N_VOLTAGES,	\
- 	.vsel_reg	= S2MPA01_REG_L1CTRL + num - 1,	\
- 	.vsel_mask	= S2MPA01_LDO_VSEL_MASK,	\
-@@ -296,14 +282,14 @@ static struct regulator_ops s2mpa01_buck_ops = {
- 	.enable_mask	= S2MPA01_ENABLE_MASK			\
- }
- 
--#define regulator_desc_buck6_7(num)	{			\
-+#define regulator_desc_buck6_10(num, min, step) {			\
- 	.name		= "BUCK"#num,				\
- 	.id		= S2MPA01_BUCK##num,			\
- 	.ops		= &s2mpa01_buck_ops,			\
- 	.type		= REGULATOR_VOLTAGE,			\
- 	.owner		= THIS_MODULE,				\
--	.min_uV		= MIN_600_MV,				\
--	.uV_step	= STEP_6_25_MV,				\
-+	.min_uV		= min,					\
-+	.uV_step	= step,					\
- 	.n_voltages	= S2MPA01_BUCK_N_VOLTAGES,		\
- 	.ramp_delay	= S2MPA01_RAMP_DELAY,			\
- 	.vsel_reg	= S2MPA01_REG_B6CTRL2 + (num - 6) * 2,	\
-@@ -312,91 +298,43 @@ static struct regulator_ops s2mpa01_buck_ops = {
- 	.enable_mask	= S2MPA01_ENABLE_MASK			\
- }
- 
--#define regulator_desc_buck8	{				\
--	.name		= "BUCK8",				\
--	.id		= S2MPA01_BUCK8,			\
--	.ops		= &s2mpa01_buck_ops,			\
--	.type		= REGULATOR_VOLTAGE,			\
--	.owner		= THIS_MODULE,				\
--	.min_uV		= MIN_800_MV,				\
--	.uV_step	= STEP_12_5_MV,				\
--	.n_voltages	= S2MPA01_BUCK_N_VOLTAGES,		\
--	.ramp_delay	= S2MPA01_RAMP_DELAY,			\
--	.vsel_reg	= S2MPA01_REG_B8CTRL2,			\
--	.vsel_mask	= S2MPA01_BUCK_VSEL_MASK,		\
--	.enable_reg	= S2MPA01_REG_B8CTRL1,			\
--	.enable_mask	= S2MPA01_ENABLE_MASK			\
--}
--
--#define regulator_desc_buck9	{				\
--	.name		= "BUCK9",				\
--	.id		= S2MPA01_BUCK9,			\
--	.ops		= &s2mpa01_buck_ops,			\
--	.type		= REGULATOR_VOLTAGE,			\
--	.owner		= THIS_MODULE,				\
--	.min_uV		= MIN_1500_MV,				\
--	.uV_step	= STEP_12_5_MV,				\
--	.n_voltages	= S2MPA01_BUCK_N_VOLTAGES,		\
--	.ramp_delay	= S2MPA01_RAMP_DELAY,			\
--	.vsel_reg	= S2MPA01_REG_B9CTRL2,			\
--	.vsel_mask	= S2MPA01_BUCK_VSEL_MASK,		\
--	.enable_reg	= S2MPA01_REG_B9CTRL1,			\
--	.enable_mask	= S2MPA01_ENABLE_MASK			\
--}
--
--#define regulator_desc_buck10	{				\
--	.name		= "BUCK10",				\
--	.id		= S2MPA01_BUCK10,			\
--	.ops		= &s2mpa01_buck_ops,			\
--	.type		= REGULATOR_VOLTAGE,			\
--	.owner		= THIS_MODULE,				\
--	.min_uV		= MIN_1000_MV,				\
--	.uV_step	= STEP_12_5_MV,				\
--	.n_voltages	= S2MPA01_BUCK_N_VOLTAGES,		\
--	.ramp_delay	= S2MPA01_RAMP_DELAY,			\
--	.vsel_reg	= S2MPA01_REG_B10CTRL2,			\
--	.vsel_mask	= S2MPA01_BUCK_VSEL_MASK,		\
--	.enable_reg	= S2MPA01_REG_B10CTRL1,			\
--	.enable_mask	= S2MPA01_ENABLE_MASK			\
--}
--
- static struct regulator_desc regulators[] = {
--	regulator_desc_ldo2(1),
--	regulator_desc_ldo1(2),
--	regulator_desc_ldo1(3),
--	regulator_desc_ldo1(4),
--	regulator_desc_ldo1(5),
--	regulator_desc_ldo2(6),
--	regulator_desc_ldo1(7),
--	regulator_desc_ldo1(8),
--	regulator_desc_ldo1(9),
--	regulator_desc_ldo1(10),
--	regulator_desc_ldo2(11),
--	regulator_desc_ldo1(12),
--	regulator_desc_ldo1(13),
--	regulator_desc_ldo1(14),
--	regulator_desc_ldo1(15),
--	regulator_desc_ldo1(16),
--	regulator_desc_ldo1(17),
--	regulator_desc_ldo1(18),
--	regulator_desc_ldo1(19),
--	regulator_desc_ldo1(20),
--	regulator_desc_ldo1(21),
--	regulator_desc_ldo2(22),
--	regulator_desc_ldo2(23),
--	regulator_desc_ldo1(24),
--	regulator_desc_ldo1(25),
--	regulator_desc_ldo1(26),
-+	regulator_desc_ldo(1, STEP_25_MV),
-+	regulator_desc_ldo(2, STEP_50_MV),
-+	regulator_desc_ldo(3, STEP_50_MV),
-+	regulator_desc_ldo(4, STEP_50_MV),
-+	regulator_desc_ldo(5, STEP_50_MV),
-+	regulator_desc_ldo(6, STEP_25_MV),
-+	regulator_desc_ldo(7, STEP_50_MV),
-+	regulator_desc_ldo(8, STEP_50_MV),
-+	regulator_desc_ldo(9, STEP_50_MV),
-+	regulator_desc_ldo(10, STEP_50_MV),
-+	regulator_desc_ldo(11, STEP_25_MV),
-+	regulator_desc_ldo(12, STEP_50_MV),
-+	regulator_desc_ldo(13, STEP_50_MV),
-+	regulator_desc_ldo(14, STEP_50_MV),
-+	regulator_desc_ldo(15, STEP_50_MV),
-+	regulator_desc_ldo(16, STEP_50_MV),
-+	regulator_desc_ldo(17, STEP_50_MV),
-+	regulator_desc_ldo(18, STEP_50_MV),
-+	regulator_desc_ldo(19, STEP_50_MV),
-+	regulator_desc_ldo(20, STEP_50_MV),
-+	regulator_desc_ldo(21, STEP_50_MV),
-+	regulator_desc_ldo(22, STEP_25_MV),
-+	regulator_desc_ldo(23, STEP_25_MV),
-+	regulator_desc_ldo(24, STEP_50_MV),
-+	regulator_desc_ldo(25, STEP_50_MV),
-+	regulator_desc_ldo(26, STEP_50_MV),
- 	regulator_desc_buck1_4(1),
- 	regulator_desc_buck1_4(2),
- 	regulator_desc_buck1_4(3),
- 	regulator_desc_buck1_4(4),
- 	regulator_desc_buck5,
--	regulator_desc_buck6_7(6),
--	regulator_desc_buck6_7(7),
--	regulator_desc_buck8,
--	regulator_desc_buck9,
--	regulator_desc_buck10,
-+	regulator_desc_buck6_10(6, MIN_600_MV, STEP_6_25_MV),
-+	regulator_desc_buck6_10(7, MIN_600_MV, STEP_6_25_MV),
-+	regulator_desc_buck6_10(8, MIN_800_MV, STEP_12_5_MV),
-+	regulator_desc_buck6_10(9, MIN_1500_MV, STEP_12_5_MV),
-+	regulator_desc_buck6_10(10, MIN_1000_MV, STEP_12_5_MV),
- };
- 
- static int s2mpa01_pmic_probe(struct platform_device *pdev)
--- 
-1.9.1
+Your patch adds to cpuidle AFTR code path restoring of exynos_core_save and
+exynos5_sys_save registers without saving them first (restoring is done
+through exynos_pm_resume() which is used by both suspend and cpuidle while
+saving is done through exynos_pm_prepare() which is used only by suspend). 
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
