@@ -1,102 +1,70 @@
-From: Laura Abbott <lauraa-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: [RESEND][PATCHv2 2/3] of: Add memory limiting function for flattened devicetrees
-Date: Tue, 15 Jul 2014 10:03:35 -0700
-Message-ID: <1405443816-29917-3-git-send-email-lauraa@codeaurora.org>
-References: <1405443816-29917-1-git-send-email-lauraa@codeaurora.org>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1405443816-29917-1-git-send-email-lauraa-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Laura Abbott <lauraa-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, afaerber-l3A5Bk7waGM@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Sachin Kamat <spk.linux@gmail.com>
+Subject: Re: [PATCH] ARM: config: update multi_v7_defconfig
+Date: Tue, 15 Jul 2014 22:40:00 +0530
+Message-ID: <CAK5sBcGcnG9FMuJLSkFamcTw3VR1KeLNKRRo7Xhp05s=og-+zg@mail.gmail.com>
+References: <1405411346-12471-1-git-send-email-ch.naveen@samsung.com>
+	<CAD=FV=UFknqF_Mt7ArytFq4KdDsGDa+JR2KZzX9Xn+if-_Vw4g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f52.google.com ([209.85.215.52]:44410 "EHLO
+	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754421AbaGORKC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Jul 2014 13:10:02 -0400
+Received: by mail-la0-f52.google.com with SMTP id e16so3002166lan.39
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jul 2014 10:10:00 -0700 (PDT)
+In-Reply-To: <CAD=FV=UFknqF_Mt7ArytFq4KdDsGDa+JR2KZzX9Xn+if-_Vw4g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olofj@chromium.org>
 
+Hi Doug,
 
-Buggy bootloaders may pass bogus memory entries in the devicetree.
-Add of_fdt_limit_memory to add an upper bound on the number of
-entries that can be present in the devicetree.
+On Tue, Jul 15, 2014 at 9:29 PM, Doug Anderson <dianders@chromium.org> wrote:
+> Naveen,
+>
+> On Tue, Jul 15, 2014 at 1:02 AM, Naveen Krishna Chatradhi
+> <ch.naveen@samsung.com> wrote:
+>> Enabled S3C24XX I2C driver and MAX77686 PMIC MFD and Voltage
+>> regulator drivers used on Exynos5250 based Snow board.
+>>
+>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+>> ---
+>> By enabling the symbols to compile S3C24XX I2C driver, MAX77686 PMIC
+>> under MFD and REGULATOR.
+>>
+>> http://arm-soc.lixom.net/bootlogs/next/next-20140711/snow-multi_v7_defconfig.html
+>> The warnings by cpufreq on Snow board are fixed.
+>>
+>> Booted and verified on  on Exynos5420 based Snow board
+>>
+>>  arch/arm/configs/multi_v7_defconfig |    3 +++
+>>  1 file changed, 3 insertions(+)
+>
+> Is there a reason not to add more of the max77686 configs?
+>
+> +CONFIG_RTC_DRV_MAX77686=y
+> +CONFIG_COMMON_CLK_MAX77686=y
+>
+> I also seems like it would be nice to reconcile this with Sacin's
+> latest patch.  For starters I notice that you're missing:
+>   CONFIG_EXYNOS5420_MCPM=y
+>
+> I'll leave it up to you to look for other things that might be
+> missing.  If some of the things in exynos5_defconfig can't go into the
+> multi-config, please explain.
 
-Signed-off-by: Laura Abbott <lauraa-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
----
- drivers/of/fdt.c       | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/of_fdt.h |  1 +
- 2 files changed, 49 insertions(+)
+multi_v7_defconfig update patch, inline with exynos_defconfig is already on my
+TODO list. I wanted to send this one along with the next update of
+exynos_defconfig
+(around -rc7) as Olof preferred to have a single patch updating most
+of the available
+things. By then I believe remaining drivers like 5420/5800 regulators,
+display and cpufreq
+drivers would have been merged.
 
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index 55bfca9..fd5db5a 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -26,6 +26,54 @@
- #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
- #include <asm/page.h>
- 
-+/*
-+ * of_fdt_limit_memory - limit the number of regions in the /memory node
-+ * @limit: maximum entries
-+ *
-+ * Adjust the flattened device tree to have at most 'limit' number of
-+ * memory entries in the /memory node. This function may be called
-+ * any time after initial_boot_param is set.
-+ */
-+void of_fdt_limit_memory(int limit)
-+{
-+	int memory;
-+	int len;
-+	const void *val;
-+	int nr_address_cells = OF_ROOT_NODE_ADDR_CELLS_DEFAULT;
-+	int nr_size_cells = OF_ROOT_NODE_SIZE_CELLS_DEFAULT;
-+	const uint32_t *addr_prop;
-+	const uint32_t *size_prop;
-+	int root_offset;
-+	int cell_size;
-+
-+	root_offset = fdt_path_offset(initial_boot_params, "/");
-+	if (root_offset < 0)
-+		return;
-+
-+	addr_prop = fdt_getprop(initial_boot_params, root_offset,
-+				"#address-cells", NULL);
-+	if (addr_prop)
-+		nr_address_cells = fdt32_to_cpu(*addr_prop);
-+
-+	size_prop = fdt_getprop(initial_boot_params, root_offset,
-+				"#size-cells", NULL);
-+	if (size_prop)
-+		nr_size_cells = fdt32_to_cpu(*size_prop);
-+
-+	cell_size = sizeof(uint32_t)*(nr_address_cells + nr_size_cells);
-+
-+	memory = fdt_path_offset(initial_boot_params, "/memory");
-+	if (memory > 0) {
-+		val = fdt_getprop(initial_boot_params, memory, "reg", &len);
-+		if (len > limit*cell_size) {
-+			len = limit*cell_size;
-+			pr_debug("Limiting number of entries to %d\n", limit);
-+			fdt_setprop(initial_boot_params, memory, "reg", val,
-+					len);
-+		}
-+	}
-+}
-+
- /**
-  * of_fdt_is_compatible - Return true if given node from the given blob has
-  * compat in its compatible list
-diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
-index d600993..1aea25c 100644
---- a/include/linux/of_fdt.h
-+++ b/include/linux/of_fdt.h
-@@ -86,6 +86,7 @@ extern void unflatten_and_copy_device_tree(void);
- extern void early_init_devtree(void *);
- extern void early_get_first_memblock_info(void *, phys_addr_t *);
- extern u64 fdt_translate_address(const void *blob, int node_offset);
-+extern void of_fdt_limit_memory(int limit);
- #else /* CONFIG_OF_FLATTREE */
- static inline void early_init_fdt_scan_reserved_mem(void) {}
- static inline const char *of_flat_dt_get_machine_name(void) { return NULL; }
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-hosted by The Linux Foundation
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ --
+Regards,
+Sachin.
