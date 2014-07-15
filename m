@@ -1,130 +1,129 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: Re: [PATCH v6 0/4] Adds PMU and S2R support for exynos5420
-Date: Tue, 15 Jul 2014 17:35:01 +0530
-Message-ID: <CAGm_ybi0aP0GU4iBRXGYS2KhXGAcv4Q-cA9a_RcLQqJBV1oOog@mail.gmail.com>
-References: <1404737763-21783-1-git-send-email-vikas.sajjan@samsung.com>
-	<CAHfPSqAUnNR7R48hv-=8xq=iGp1m+9P_=BT5Ak1U-RuzGXteTg@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v2 5/6] ARM: EXYNOS: Fix suspend/resume sequences
+Date: Tue, 15 Jul 2014 14:15:19 +0200
+Message-ID: <53C51B57.9040404@samsung.com>
+References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
+ <1403697175-13476-1-git-send-email-t.figa@samsung.com>
+ <53C3A8E8.4090009@gmail.com> <2740751.gTMSlJs48H@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f169.google.com ([74.125.82.169]:32849 "EHLO
-	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758321AbaGOMFD (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51852 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758705AbaGOMQL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 08:05:03 -0400
-Received: by mail-we0-f169.google.com with SMTP id u56so539903wes.28
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jul 2014 05:05:01 -0700 (PDT)
-In-Reply-To: <CAHfPSqAUnNR7R48hv-=8xq=iGp1m+9P_=BT5Ak1U-RuzGXteTg@mail.gmail.com>
+	Tue, 15 Jul 2014 08:16:11 -0400
+In-reply-to: <2740751.gTMSlJs48H@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Chander Kashyap <k.chander@samsung.com>
 
-On Fri, Jul 11, 2014 at 11:45 AM, Naveen Krishna Ch
-<naveenkrishna.ch@gmail.com> wrote:
-> Hello Vikas,
->
-> On 7 July 2014 18:25, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
->> Rebased on
->> 1] Kukjin Kim's tree, for-next branch
->> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
->> 2] Pankaj Dubey's v6 PMU patchset
->> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg33660.html
+On 15.07.2014 13:19, Bartlomiej Zolnierkiewicz wrote:
+> 
+> Hi,
+> 
+> On Monday, July 14, 2014 11:54:48 AM Tomasz Figa wrote:
+>> Hi Kukjin,
 >>
->> changes since v5:
->>         - Refactored pm.c to use DT based lookup as suggested by Tomasz Figa.
+>> On 25.06.2014 13:52, Tomasz Figa wrote:
+>>> Due to recent consolidation of Exynos suspend and cpuidle code, some
+>>> parts of suspend and resume sequences are executed two times, once from
+>>> exynos_pm_syscore_ops and then from exynos_cpu_pm_notifier() and thus it
+>>> breaks suspend, at least on Exynos4-based boards.
+>>>
+>>> This patch fixes the issue by removing exynos_pm_syscore_ops completely
+>>> and making the code rely only on CPU PM notifier.
+>>>
+>>> Tested on Exynos4210-based Trats board.
+>>>
+>>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+>>> ---
+>>>  arch/arm/mach-exynos/pm.c | 23 ++++-------------------
+>>>  1 file changed, 4 insertions(+), 19 deletions(-)
+>>>
+>>> Changes since v1:
+>>>  - rebased onto Kukjin's fixes branch.
+>>>
+>>> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+>>> index 202ca73..f23cc77 100644
+>>> --- a/arch/arm/mach-exynos/pm.c
+>>> +++ b/arch/arm/mach-exynos/pm.c
+>>> @@ -364,11 +364,6 @@ early_wakeup:
+>>>  	return;
+>>>  }
+>>>  
+>>> -static struct syscore_ops exynos_pm_syscore_ops = {
+>>> -	.suspend	= exynos_pm_suspend,
+>>> -	.resume		= exynos_pm_resume,
+>>> -};
+>>> -
+>>>  /*
+>>>   * Suspend Ops
+>>>   */
+>>> @@ -438,22 +433,13 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
+>>>  
+>>>  	switch (cmd) {
+>>>  	case CPU_PM_ENTER:
+>>> -		if (cpu == 0) {
+>>> -			exynos_pm_central_suspend();
+>>> -			if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+>>> -				exynos_cpu_save_register();
+>>> -		}
+>>> +		if (cpu == 0)
+>>> +			exynos_pm_suspend();
+>>>  		break;
+>>>  
+>>>  	case CPU_PM_EXIT:
+>>> -		if (cpu == 0) {
+>>> -			if (read_cpuid_part_number() ==
+>>> -					ARM_CPU_PART_CORTEX_A9) {
+>>> -				scu_enable(S5P_VA_SCU);
+>>> -				exynos_cpu_restore_register();
+>>> -			}
+>>> -			exynos_pm_central_resume();
+>>> -		}
+>>> +		if (cpu == 0)
+>>> +			exynos_pm_resume();
+>>>  		break;
+>>>  	}
+>>>  
+>>> @@ -478,6 +464,5 @@ void __init exynos_pm_init(void)
+>>>  	tmp |= ((0xFF << 8) | (0x1F << 1));
+>>>  	__raw_writel(tmp, S5P_WAKEUP_MASK);
+>>>  
+>>> -	register_syscore_ops(&exynos_pm_syscore_ops);
+>>>  	suspend_set_ops(&exynos_suspend_ops);
+>>>  }
+>>>
 >>
->> changes since v4:
->>         - Adressed comments from Tomasz figa and rebased on Pankaj Dubey's v5 PMU patchset
->>
->> changes since v3:
->> Addressed the following comments from Pankaj Dubey, Bartlomiej Zolnierkiewicz,
->> Tomasz Figa and Alim Akhtar:
->>         - Moved EXYNOS5420_USE_STANDBY_WFI_ALL define to regs-pmu.h.
->>         - Merged exynos5420_set_core_flag function into powerdown_conf.
->>         - Removed XXTI_DURATION3 register setting.
->>         - Updated the commit message and ordered the clock registers in clock
->>           patch.
->>         - Removed the code for SYS_DISP1_BLK_CFG handling.
->>         - Modified SoC checks to A9 specific checks in PM code.
->>         - Updated some comments in the code and added macros for register offsets.
->>         - Fixed code which was changing pad retention code for older SoCs.
->>
->> changes since v2:
->>         - Addressed comments from Tomasz figa
->>         - rebased on Pankaj's V3 patchset https://lkml.org/lkml/2014/5/2/612
->>         - dropped patch "ARM: dts: Add node for GPIO keys on SMDK5420",
->>           will be sent separately.
->>
->> changes since v1:
->>         - Addressed comments from Tomasz figa.
->>         - restructured/consolidated as per Tomasz figa's PM consolidations for exynos
->>
->> Tested on Kukjin Kim's tree, for-next branch +
->>         1] http://www.spinics.net/lists/linux-samsung-soc/msg33750.html
->>         2] http://www.spinics.net/lists/linux-samsung-soc/msg32923.html
->>         3] https://www.mail-archive.com/linux-mmc@vger.kernel.org/msg26210.html (for eMMC S2R fail issue)
->>
->> on Exynos5420 based chromebook (peach-pit board) and Exynos5250 based chromebook (snow board).
->>
->> PS : Not tested on exynos4 based boards.
->>
->> Tested-by for exynos4 would be appreciated.
->>
->> Below procedures were followed to test S2R:
->> Procedure A:
->>         1. make multi_v7_defconfig
->>         2  enable MCPM for 5420
->>         3. enable S3C RTC
->>         4. pass "no_console_suspend" in bootargs
->>         5. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
->> Procedure B:
->>         1. make exynos_defconfig
->>         2  enable MCPM for 5420
->>         3  enable CONFIG_PL330_DMA
->>         4. enable CONFIG_PM_RUNTIME
->>         5. pass "no_console_suspend" in bootargs
->>         6. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
->
-> Could test with the given description on Exynos5420 based Peach PIT.
-> S2R on Exynos5250 based Snow works fine too.
->
-> With http://www.spinics.net/lists/linux-samsung-soc/msg33999.html
-> S2R on Exynos5800 based Peach PI works fine.
->
-> Tested-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->
+>> Please consider this patch for next fixes pull request. Without it
+>> suspend/resume is broken for Exynos4 and probably other SoCs. This patch
+>> just restores the sequence from before the patch moving things to PM
+>> notifier, so I don't think it should need any special treatment.
+> 
+> Your patch fixes the regression and is a step in the good direction but it
+> seems that it needs a bit more work:
+> 
+> Your patch adds to cpuidle AFTR code path restoring of exynos_core_save and
+> exynos5_sys_save registers without saving them first (restoring is done
+> through exynos_pm_resume() which is used by both suspend and cpuidle while
+> saving is done through exynos_pm_prepare() which is used only by suspend). 
 
-Thank you Naveen for testing.
+That's right, unfortunately. Interestingly enough AFTR worked fine on
+Exynos4210 with this patch, but still this needs to be fixed.
 
-Anybody has comments for this series?
+Now, in fact, I recall that Chander had some objections to this patch as
+well and we decided that he will send another patch to replace mine [1],
+but I haven't heard from him since that.
 
+Chander, do you have any progress with this? Keep in mind that we need
+this as an rc fix and we already have rc5, so not much time left. If you
+don't have time to work on this I can take care of this, proceeding as
+we discussed in [1].
 
->>
->> Abhilash Kesavan (2):
->>   arm: exynos5: Add PMU support for 5420
->>   arm: exynos5: Add Suspend-to-RAM support for 5420
->>
->> Vikas Sajjan (2):
->>   ARM: EXYNOS: Refactor the code to use DT based lookup
->>   clk: samsung: exynos5420: Setup clocks before system suspend
->>
->>  arch/arm/mach-exynos/pm.c            |  376 ++++++++++++++++++++++++++++++----
->>  arch/arm/mach-exynos/pmu.c           |  288 ++++++++++++++++++++++++++
->>  arch/arm/mach-exynos/regs-pmu.h      |  230 +++++++++++++++++++++
->>  drivers/clk/samsung/clk-exynos5420.c |   29 +++
->>  4 files changed, 880 insertions(+), 43 deletions(-)
->>
->> --
->> 1.7.9.5
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->
-> --
-> Shine bright,
-> (: Nav :)
+[1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/29085/focus=33975
+
+Best regards,
+Tomasz
