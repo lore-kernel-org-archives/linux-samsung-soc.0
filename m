@@ -1,127 +1,43 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Add sound nodes for Odroid-X2/U3 boards
-Date: Wed, 16 Jul 2014 03:18:45 +0900
-Message-ID: <53C57085.4020905@samsung.com>
-References: <1405350752-25795-1-git-send-email-s.nawrocki@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 2/3] spi: s3c64xx: validate s3c64xx_spi_csinfo before
+ using
+Date: Tue, 15 Jul 2014 22:00:30 +0200
+Message-ID: <53C5885E.2020609@collabora.co.uk>
+References: <1405426860-18404-1-git-send-email-ch.naveen@samsung.com> <1405426860-18404-3-git-send-email-ch.naveen@samsung.com> <53C569A8.1000103@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:53445 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932814AbaGOSSu (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:46896 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751752AbaGOUAp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 14:18:50 -0400
-Received: by mail-pa0-f43.google.com with SMTP id lf10so7383698pab.30
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jul 2014 11:18:50 -0700 (PDT)
-In-Reply-To: <1405350752-25795-1-git-send-email-s.nawrocki@samsung.com>
+	Tue, 15 Jul 2014 16:00:45 -0400
+In-Reply-To: <53C569A8.1000103@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>
 
-On 07/15/14 00:12, Sylwester Nawrocki wrote:
-> Add MAX98090 audio codec, I2S interface and the sound complex
-> nodes to enable audio on Odroid-X2/U3 boards.
->
-> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
-> ---
-> This patch depends on the series from Marek [1] adding dt sources
-> for Odroid X2/U3. My testing branch can be pulled from [2].
->
-> [1] http://www.spinics.net/lists/linux-samsung-soc/msg32544.html
-> [2] git://linuxtv.org/snawrocki/samsung.git v3.16-rc5-odroid-sound
->
->   arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   27 +++++++++++++++++++++++
->   arch/arm/boot/dts/exynos4412-odroidu3.dts       |   12 ++++++++++
->   arch/arm/boot/dts/exynos4412-odroidx2.dts       |    9 ++++++++
->   3 files changed, 48 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> index 0bc1a9b..6d6d23c 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> @@ -32,6 +32,21 @@
->   		};
->   	};
->
-> +	i2s0: i2s@03830000 {
-> +		pinctrl-0 =<&i2s0_bus>;
-> +		pinctrl-names = "default";
-> +		status = "okay";
-> +		clocks =<&clock_audss EXYNOS_I2S_BUS>,
-> +			<&clock_audss EXYNOS_DOUT_AUD_BUS>;
-> +		clock-names = "iis", "i2s_opclk0";
-> +	};
-> +
-> +	sound: sound {
-> +		compatible = "samsung,odroidx2-audio";
-> +		samsung,i2s-controller =<&i2s0>;
-> +		samsung,audio-codec =<&max98090>;
-> +	};
-> +
->   	mmc@12550000 {
->   		pinctrl-0 =<&sd4_clk&sd4_cmd&sd4_bus4&sd4_bus8>;
->   		pinctrl-names = "default";
-> @@ -321,6 +336,18 @@
->   		};
->   	};
->
-> +	i2c@13870000 {
-> +		pinctrl-names = "default";
-> +		pinctrl-0 =<&i2c1_bus>;
-> +		status = "okay";
-> +		max98090: max98090@10 {
-> +			compatible = "maxim,max98090";
-> +			reg =<0x10>;
-> +			interrupt-parent =<&gpx0>;
-> +			interrupts =<0 0>;
-> +		};
-> +	};
-> +
->   	exynos-usbphy@125B0000 {
->   		status = "okay";
->   	};
-> diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> index 287aa0d..c8a64be 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> +++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> @@ -47,3 +47,15 @@
->   		status = "okay";
->   	};
->   };
-> +
-> +&sound {
-> +	compatible = "samsung,odroidu3-audio";
-> +	samsung,model = "Odroid-U3";
-> +	samsung,audio-routing =
-> +		"Headphone Jack", "HPL",
-> +		"Headphone Jack", "HPR",
-> +		"Headphone Jack", "MICBIAS",
-> +		"IN1", "Headphone Jack",
-> +		"Speakers", "SPKL",
-> +		"Speakers", "SPKR";
-> +};
-> diff --git a/arch/arm/boot/dts/exynos4412-odroidx2.dts b/arch/arm/boot/dts/exynos4412-odroidx2.dts
-> index e9ae161..96b43f4 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroidx2.dts
-> +++ b/arch/arm/boot/dts/exynos4412-odroidx2.dts
-> @@ -21,3 +21,12 @@
->   		reg =<0x40000000 0x7FF00000>;
->   	};
->   };
-> +
-> +&sound {
-> +	samsung,model = "Odroid-X2";
-> +	samsung,audio-routing =
-> +		"Headphone Jack", "HPL",
-> +		"Headphone Jack", "HPR",
-> +		"IN1", "Mic Jack",
-> +		"Mic Jack", "MICBIAS";
-> +};
-> --
+Hello Naveen,
 
+On 07/15/2014 07:49 PM, Tomasz Figa wrote:
+> 
+> In general, I liked previous version of this series much more, as it was
+> doing what it should as opposed to this one.
+> 
+> Best regards,
+> Tomasz
+> 
 
-Applied, thanks.
+I agree with Tomasz. I think version v6 of your series was (almost) correct
+while this is one is not. You only had to address Mark's concerns about using
+gpio_is_valid(spi->cs_gpio).
 
-- Kukjin
+Also, you need to work out your commit messages since I they are still not
+clearly explaining the motivation for the changes. You are explaining what the
+patches are changing but you have to explain why the changes are needed in the
+first place.
+
+Best regards,
+Javier
