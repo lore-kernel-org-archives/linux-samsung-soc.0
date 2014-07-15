@@ -1,84 +1,126 @@
-From: Catalin Marinas <Catalin.Marinas@arm.com>
-Subject: Re: [PATCH v6 2/7] arm64: Introduce VA_BITS and translation level
- options
-Date: Tue, 15 Jul 2014 22:44:56 +0100
-Message-ID: <95F7642B-124A-4E03-ACDE-5BF9D70E8E15@arm.com>
-References: <000101cf6dc6$3b93d510$b2bb7f30$@samsung.com>
- <CAOZdJXWCu-zHuQoAUdiieqsKqCfG9BsZariFqQP=NCgQP-zpNA@mail.gmail.com>
- <53C43FE3.1050008@amd.com> <20140714224159.GA9829@arm.com>
- <3AF98E68-6818-416A-BC33-57148F1EC246@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: dts: remove display power domain for exynos5420
+Date: Wed, 16 Jul 2014 08:35:50 +0900
+Message-ID: <53C5BAD6.5030603@samsung.com>
+References: <1402313299-18885-1-git-send-email-rahul.sharma@samsung.com>	<CAPdUM4OVjRSqVdQDUJZR7vGm1uUEYr31s-tx7Oxs8tM_xc2v7g@mail.gmail.com>	<53A12EA3.5010007@samsung.com>	<CAPdUM4OK+ATMMRM67dV5JeeTGMu=XA7Gvi7Uif+Hypf3iP+6jg@mail.gmail.com>	<CAPdUM4MToVJC5KRS1DUDmYEdUx2PGBE0G1v7p-SGgqpw7SPOhw@mail.gmail.com>	<53BC0F8F.4010106@samsung.com>	<CAPdUM4NGXDz-bX=qqzC7LXRE5fCapdHGZeUZ29Xov=P7VZykgg@mail.gmail.com> <CAPdUM4P7sijj_-fa_Opuo73ugAW7coUDZ+UnSp_tnjkHacJFVw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <3AF98E68-6818-416A-BC33-57148F1EC246@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jungseok Lee <jungseoklee85@gmail.com>
-Cc: Joel Schopp <joel.schopp@amd.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "steve.capper@linaro.org" <steve.capper@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <Marc.Zyngier@arm.com>, Timur Tabi <timur@codeaurora.org>, "barami97@gmail.com" <barami97@gmail.com>, lkml <linux-kernel@vger.kernel.org>, Christoffer Dall <christoffer.dall@linaro.org>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:56878 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934275AbaGOXf5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Jul 2014 19:35:57 -0400
+In-Reply-To: <CAPdUM4P7sijj_-fa_Opuo73ugAW7coUDZ+UnSp_tnjkHacJFVw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Inki Dae <inki.dae@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 15 Jul 2014, at 15:53, Jungseok Lee <jungseoklee85@gmail.com> wrote:
-> On Jul 15, 2014, at 7:41 AM, Catalin Marinas wrote:
->> On Mon, Jul 14, 2014 at 09:38:59PM +0100, Joel Schopp wrote:
->>> I agree that these patches would be very useful.  I just rebased my fix
->>> for a VTTBR_BADDR_MASK bug on one of these patches that could be pulled
->>> out independently.  See
->>> https://lists.cs.columbia.edu/pipermail/kvmarm/2014-July/010480.html
->>>
->>> The original author Jungseok Lee is no longer available to work on
->>> future versions of these patches.  I was thinking that if they didn't
->>> get picked up as they are that with the original author's blessing I
->>> would pick them up and keep them forward ported/resubmitted.  I have an
->>> SOC to test them on.
+On 07/14/14 18:09, Rahul Sharma wrote:
+> Hi Kukjin,
+>
+Hi Rahul,
+
+> Please consider this patch for your branch. This patch is important
+> for Display for Exynos5 boards.
+>
+OK, I will take this for exynos5420 display for 3.17...BTW I'm not sure 
+this is a regression for 3.16 or not...if so, please let me know.
+
+Thanks,
+Kukjin
+
+> Regards,
+> Rahul Sharma.
+>
+> On 9 July 2014 17:00, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
+>> Hi Tomasz,
 >>
->> The patches are pretty good. I'll give them a try tomorrow and if there
->> isn't something fundamental missing I'll consider taking them for 3.17.
->
-> Hi All,
->
-> If only stage1 side is taken and merged, KVM should be disabled under 4 level
-> lookups with the following configuration adjustment. I've tested it on top of
-> arm64/for-next/core branch and it works fine.
->
-> --- a/arch/arm64/kvm/Kconfig
-> +++ b/arch/arm64/kvm/Kconfig
-> @@ -18,6 +18,7 @@ if VIRTUALIZATION
->
-> config KVM
->        bool "Kernel-based Virtual Machine (KVM) support"
-> +       depends on !ARM64_4_LEVELS
->        select MMU_NOTIFIER
->        select PREEMPT_NOTIFIERS
->        select ANON_INODES
->
-> However, I don't know whether it does make sense or not.
-
-I added some patches on top of your series, I hope to be able to post
-them tomorrow. My interim approach was to disable 4-levels if KVM is
-enabled.
-
-> In other words, stage2 side should be prepared to fully support 4 level lookups.
->
-> In order to cover all combinations of host and guest, VTTBR_X should be determined
-> dynamically as referring to hardware capability. At this point, the patches have
-> been revised many times, but they don't have got ACKs from Christoffer and Marc yet.
->
-> That is why the patches are pending now in the author's point of view.
-
-I have some clean-up for stage 1 on top but nothing major.
-
-Catalin
-
--- IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium.  Thank you.
-
-ARM Limited, Registered office 110 Fulbourn Road, Cambridge CB1 9NJ, Registered in England & Wales, Company No:  2557590
-ARM Holdings plc, Registered office 110 Fulbourn Road, Cambridge CB1 9NJ, Registered in England & Wales, Company No:  2548782
+>> On 8 July 2014 21:04, Tomasz Figa<t.figa@samsung.com>  wrote:
+>>> Hi Rahul,
+>>>
+>>> On 07.07.2014 15:37, Rahul Sharma wrote:
+>>>> Hi Andrej, Inki,
+>>>>
+>>>> On 18 June 2014 12:06, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
+>>>>> Hi Andrej,
+>>>>>
+>>>>> On 18 June 2014 11:46, Andrzej Hajda<a.hajda@samsung.com>  wrote:
+>>>>>> On 06/17/2014 07:49 AM, Rahul Sharma wrote:
+>>>>>>> Hi All,
+>>>>>>>
+>>>>>>> Please review this patch.
+>>>>>>>
+>>>>>>> Regards,
+>>>>>>> Rahul Sharma
+>>>>>>>
+>>>>>>> On 9 June 2014 16:58, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
+>>>>>>>> Display domain is removed due to instability issues. Explaining
+>>>>>>>> the problem below:
+>>>>>>>>
+>>>>>>>> exynos_init_late triggers the pm_genpd_poweroff_unused which
+>>>>>>>> powers off the unused power domains. This call hits before
+>>>>>>>> the trigger to deferred probes.
+>>>>>>>>
+>>>>>>>> DRM DP Panel defers the probe due to supply get failure. By the
+>>>>>>>> time, deferred probe is scheduled again, Display Power Domain is
+>>>>>>>> powered off by pm_genpd_poweroff_unused.
+>>>>>>>>
+>>>>>>>> FIMD and DP drivers are accessing registers during Probe and Bind
+>>>>>>>> callbacks. If display domain is enabled/disabled around register
+>>>>>>>> accesses, display domain gets unstable and we are getting Power
+>>>>>>>> Domain Disable fail notification. Increasing the Timeout also
+>>>>>>>> didn't help.
+>>>>>>
+>>>>>> As I understand the problem is that fimd and dp drivers access hw
+>>>>>> registers without enabling power domain. So the proper solution is to
+>>>>>> fix these drivers.
+>>>>>
+>>>>> That is also a problem but I fixed those accesses in my local kernel before
+>>>>> hitting this issue. If we do register accesses in FIMD/DP probe/bind we
+>>>>> observes "Prefetch abort" exception. But here the problem is that 'DP
+>>>>> domain disable' starts failing if we enable/disable multiple times.
+>>>>>
+>>>>>>
+>>>>>> Btw. there are already patches removing hw access from probe/bind of
+>>>>>> fimd. I guess removing also hw access from dp probe/bind could be a good
+>>>>>> solution.
+>>>>>
+>>>>> Please let me know the links for posted patches. I will test with those patches.
+>>>>
+>>>> Is there any update on this? Please share the patches which fixes the
+>>>> above issue or avoid the above scenario of multiple PM Domain enable/disable.
+>>>> I will test them for exynos5 based boards. Otherwise we should get this change
+>>>> merged else display will remain broken for exynos5 based boards.
+>>>
+>>> Andrzej is on holidays right now, so he won't be able to reply in this
+>>> thread until he's back. Here are two patches I was able to find on the
+>>> related MLs that might be fixing the cause of your issues:
+>>
+>> Ok. thanks for the update.
+>>
+>> We should test with Ajay's patches which includes DP probe deferring
+>> based on availability of bridge chip. +
+>>
+>> few patches which cleanup register access in FIMD and DP probe/bind
+>> OR
+>> few patches to enable Display power domain and clocks just before the
+>> register access. As done in https://lkml.org/lkml/2014/7/4/188.
+>>
+>> Later solution results into display power domain enable failure in case of DRM
+>> probe defer.
+>>
+>> I am just curious if Andrej has some solution for the first approach which can
+>> be tested for defer probe and S2R scenarios.
+>>
+>> Regards,
+>> Rahul Sharma.
+>>
+>>>
+>>> [PATCH] drm/exynos: remove hardware overlays disable from fimd probe
+>>> (https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31629.html)
+>>>
+>>> [PATCH] drm/exynos: fimd: Keep power enabled during fimd_bind
+>>> (https://lkml.org/lkml/2014/7/4/188)
