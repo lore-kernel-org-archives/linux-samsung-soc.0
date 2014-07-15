@@ -1,59 +1,62 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: Add mask-tpm-reset to the device tree
-Date: Tue, 15 Jul 2014 10:04:00 +0530
-Message-ID: <CAGm_ybhE62Hjn6H5CJTMG92ZtFdx5wugyprjwLdidHoh6f9wBw@mail.gmail.com>
-References: <1405319602-29892-1-git-send-email-vikas.sajjan@samsung.com>
-	<CAD=FV=UQfQpJ3Tp-cBAfPsH9wHXb1yknget6iMQcgOVnH1PwFA@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH V4 00/10] drm: exynos: few patches to enhance bridge chip
+ support
+Date: Tue, 15 Jul 2014 14:37:21 +0900
+Message-ID: <53C4BE11.1020302@samsung.com>
+References: <1402511228-18945-1-git-send-email-ajaykumar.rs@samsung.com>
+ <53B4E7D6.6000204@suse.de>
+ <CAD=FV=UH=sgZKFxH35qfBb-XJGJ9ctSSdVRhTEkt6zk0f+R4mA@mail.gmail.com>
+ <CAEC9eQO+j8iikztW4Q47xKRM71C6qGaCuBTdSW=odKG0kRsWBg@mail.gmail.com>
+ <CAOesGMgvLr+14tFP3N-kTwH9wJ8+1=OXoiEo9_KFDyOSFpK7nw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:60933 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750756AbaGOEeC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 00:34:02 -0400
-Received: by mail-wg0-f47.google.com with SMTP id b13so2863603wgh.18
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2014 21:34:00 -0700 (PDT)
-In-Reply-To: <CAD=FV=UQfQpJ3Tp-cBAfPsH9wHXb1yknget6iMQcgOVnH1PwFA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAOesGMgvLr+14tFP3N-kTwH9wJ8+1=OXoiEo9_KFDyOSFpK7nw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Doug Anderson <dianders@chromium.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, Andrzej Hajda <a.hajda@samsung.com>, cpgs@samsung.com, Ajay kumar <ajaynumb@gmail.com>, =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNp?= =?UTF-8?B?bg==?= <marcheu@chromium.org>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Thomas P Abraham <thomas.ab@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Doug,
-
-On Mon, Jul 14, 2014 at 10:30 PM, Doug Anderson <dianders@chromium.org> wrote:
-> Vikas,
->
-> On Sun, Jul 13, 2014 at 11:33 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
->> From: Doug Anderson <dianders@chromium.org>
->>
->> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
->> being reset across sleep/wake.  If we don't set it to anything then
->> the TPM will be reset.  U-Boot will detect this as invalid
->> and will reset the system on resume time. This GPIO can always be low
->> and not hurt anything.  It will get pulled back high again during a
->> normal warm reset when it will default back to an input.
->>
->> To properly preserve the TPM state across suspend/resume and to make
->> the chrome U-Boot happy, properly set the GPIO to mask the
->> reset to the TPM.
->>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
->> ---
->> changes since v1:
->>         - removed fixed regulator and used hogs instead.
->>
->>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->
-> This looks reasonable to me except for two things:
->
-> 1. You need to apply this to pit and pi (not just pi)
->
-> 2. The proper sort ordering for elements within a pin control group is
-> by pin number, so this pin should be _after_ gpx0-2, not before.
-
-
-Sure, will repost both pit and pi by reordering the pin as you suggested.
+T24gMjAxNOuFhCAwN+yblCAxNeydvCAwMjoyMiwgT2xvZiBKb2hhbnNzb24gd3JvdGU6Cj4gSW5r
+aSwKPiAKPiBZb3UgaGF2ZSBhY2tzLCBhbmQgeW91IGhhdmUgdGhlIHRlc3RlZC1ieXMgeW91IHJl
+cXVlc3RlZC4gQ2FuIHlvdQo+IHBsZWFzZSBwaWNrIHRoaXMgdXAgcXVpY2tseSBzbyB0aGF0IHdl
+IGNhbiBoYXZlIGdyYXBoaWNzIHdvcmtpbmcgd2l0aAo+IGFuIHVwc3RyZWFtIGtlcm5lbCBvbiBj
+aHJvbWVib29rcz8KPiAKPiBEYXZlLCBpZiBJbmtpIGtlZXBzIGRyYWdnaW5nIGhpcyBmZWV0IGxp
+a2UgdGhpcyBjYW4geW91IHBsZWFzZSBhcHBseQo+IHRoaXMgc2VyaWVzIGRpcmVjdGx5PyBUaGVz
+ZSBkZWxheXMgYXJlIHJpZGljdWxvdXMgYW5kIGl0J3MgaHVydGluZwo+IGZvcndhcmQgcHJvZ3Jl
+c3Mgb24gdGhlIHBsYXRmb3JtIGFzIGEgd2hvbGUuCj4gCgpIaSwKCkkgYW0gbm90IHJlYWxseSBk
+cmFnZ2luZy4gV2UgbmVlZCB0byB3YWl0IGZvciBBQ0tzIG9mIG90aGVyIG1haW50YWluZXJzOgpw
+bGVhc2Uga25vdyB0aGF0IHRoaXMgcGF0Y2ggc2VyaWVzIGluY2x1ZGVzIG5vbi1FeHlub3MgcGFy
+dC4KCkZvciB0aGlzLCBBamF5IHJlcXVlc3RlZCBhbHJlYWR5IGl0IHRvIERhbmllbCwgVGhpZXJy
+eSwgYW5kIFJvYiBhIHdlZWsKYWdvLiBJZiB0aGVyZSBhcmUgbm8gYW55IEFDS3MgZnJvbSB0aGVt
+IHVudGlsIHRoaXMgd2VlaywgSSBwbGFuIHRvIHBpY2sKdGhlbSB1cC4KClNvIHBsZWFzZSB3YWl0
+LgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBUaGFua3MsCj4gCj4gLU9sb2YKPiAKPiAKPiBPbiBU
+dWUsIEp1bCA4LCAyMDE0IGF0IDExOjExIFBNLCBBamF5IGt1bWFyIDxhamF5bnVtYkBnbWFpbC5j
+b20+IHdyb3RlOgo+PiBIaSBEYW5pZWwsIFRoaWVycnkgYW5kIFJvYiwKPj4KPj4gQ3VycmVudGx5
+LCB0aGUgZm9sbG93aW5nIGJvYXJkcyBhcmUgd29ya2luZyBmaW5lIHdpdGggdGhlIGJyaWRnZSBj
+aGlwIHNlcmllczoKPj4gLSBzbm93Cj4+IC0gc3ByaW5nCj4+IC0gcGVhY2hfcGl0Cj4+IC0gcGVh
+Y2hfcGkKPj4gQW5kLCBJIGRpZCBjaGFuZ2UgbXkgb3JpZ2luYWwgcGF0Y2hzZXQgYmFzZWQgb24g
+eW91ciBjb21tZW50cyBoZXJlOgo+PiAoMSkgW1JGQyBWMiAwLzNdIGRybS9icmlkZ2U6IHBhbmVs
+IGFuZCBjaGFpbmluZwo+PiAgICAgICAgIGh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvbGlu
+dXgtc2Ftc3VuZy1zb2MvbXNnMzAxNjAuaHRtbAo+PiAoMikgW1JGQyBWMyAwLzNdIGRybS9icmlk
+Z2U6IHBhbmVsIGFuZCBjaGFpbmluZwo+PiAgICAgICAgIGh0dHA6Ly93d3cuc3Bpbmljcy5uZXQv
+bGlzdHMvbGludXgtc2Ftc3VuZy1zb2MvbXNnMzA1MDcuaHRtbAo+Pgo+PiBJZiB5b3UgdGhpbmsg
+dGhpcyBpcyBub3QgdGhlIHJpZ2h0IHdheSBvZiBkb2luZyBpdCwgcGxlYXNlIGNvbWUgZm9yd2Fy
+ZCB3aXRoCj4+IG1vcmUgc3VnZ2VzdGlvbnMsIG9yIGtpbmRseSBBQ0sgaXQuCj4+IEkgYW0ganVz
+dCB3b25kZXJpbmcgaG93IGxvbmcgY2FuIEkga2VlcCB3YWl0aW5nIGZvciBjb21tZW50cz8KPj4K
+Pj4gUmVnYXJkcywKPj4gQWpheQo+PiAtLQo+PiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlz
+dDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgZGV2aWNldHJlZSIgaW4KPj4gdGhlIGJvZHkg
+b2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4gTW9yZSBtYWpvcmRv
+bW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4g
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
