@@ -1,126 +1,298 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: dts: remove display power domain for exynos5420
-Date: Wed, 16 Jul 2014 08:35:50 +0900
-Message-ID: <53C5BAD6.5030603@samsung.com>
-References: <1402313299-18885-1-git-send-email-rahul.sharma@samsung.com>	<CAPdUM4OVjRSqVdQDUJZR7vGm1uUEYr31s-tx7Oxs8tM_xc2v7g@mail.gmail.com>	<53A12EA3.5010007@samsung.com>	<CAPdUM4OK+ATMMRM67dV5JeeTGMu=XA7Gvi7Uif+Hypf3iP+6jg@mail.gmail.com>	<CAPdUM4MToVJC5KRS1DUDmYEdUx2PGBE0G1v7p-SGgqpw7SPOhw@mail.gmail.com>	<53BC0F8F.4010106@samsung.com>	<CAPdUM4NGXDz-bX=qqzC7LXRE5fCapdHGZeUZ29Xov=P7VZykgg@mail.gmail.com> <CAPdUM4P7sijj_-fa_Opuo73ugAW7coUDZ+UnSp_tnjkHacJFVw@mail.gmail.com>
+Subject: Re: [PATCH 17/19] gpio: samsung: Remove legacy support of S5PV210
+Date: Wed, 16 Jul 2014 08:52:13 +0900
+Message-ID: <53C5BEAD.7080605@samsung.com>
+References: <1404496099-26708-1-git-send-email-t.figa@samsung.com> <1404496099-26708-18-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:56878 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934275AbaGOXf5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 19:35:57 -0400
-In-Reply-To: <CAPdUM4P7sijj_-fa_Opuo73ugAW7coUDZ+UnSp_tnjkHacJFVw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1404496099-26708-18-git-send-email-t.figa@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Inki Dae <inki.dae@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 07/14/14 18:09, Rahul Sharma wrote:
-> Hi Kukjin,
+On 07/05/14 02:48, Tomasz Figa wrote:
+> GPIO support of S5PV210 SoC is now fully handled by pinctrl-samsung
+> driver making the old code in gpio-samsung driver unused. This patch
+> removes it which will also let us remove more code from arch subtree.
 >
-Hi Rahul,
+> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
+> Cc: Linus Walleij<linus.walleij@linaro.org>
 
-> Please consider this patch for your branch. This patch is important
-> for Display for Exynos5 boards.
->
-OK, I will take this for exynos5420 display for 3.17...BTW I'm not sure 
-this is a regression for 3.16 or not...if so, please let me know.
+Hi Linus,
+
+I've applied this in samsung tree for 3.17 if you have any comments, 
+please kindly let me know.
 
 Thanks,
 Kukjin
 
-> Regards,
-> Rahul Sharma.
+> Cc: Alexandre Courbot<gnurou@gmail.com>
+> Cc: linux-gpio@vger.kernel.org
+> ---
+>   drivers/gpio/gpio-samsung.c | 240 --------------------------------------------
+>   1 file changed, 240 deletions(-)
 >
-> On 9 July 2014 17:00, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
->> Hi Tomasz,
->>
->> On 8 July 2014 21:04, Tomasz Figa<t.figa@samsung.com>  wrote:
->>> Hi Rahul,
->>>
->>> On 07.07.2014 15:37, Rahul Sharma wrote:
->>>> Hi Andrej, Inki,
->>>>
->>>> On 18 June 2014 12:06, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
->>>>> Hi Andrej,
->>>>>
->>>>> On 18 June 2014 11:46, Andrzej Hajda<a.hajda@samsung.com>  wrote:
->>>>>> On 06/17/2014 07:49 AM, Rahul Sharma wrote:
->>>>>>> Hi All,
->>>>>>>
->>>>>>> Please review this patch.
->>>>>>>
->>>>>>> Regards,
->>>>>>> Rahul Sharma
->>>>>>>
->>>>>>> On 9 June 2014 16:58, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
->>>>>>>> Display domain is removed due to instability issues. Explaining
->>>>>>>> the problem below:
->>>>>>>>
->>>>>>>> exynos_init_late triggers the pm_genpd_poweroff_unused which
->>>>>>>> powers off the unused power domains. This call hits before
->>>>>>>> the trigger to deferred probes.
->>>>>>>>
->>>>>>>> DRM DP Panel defers the probe due to supply get failure. By the
->>>>>>>> time, deferred probe is scheduled again, Display Power Domain is
->>>>>>>> powered off by pm_genpd_poweroff_unused.
->>>>>>>>
->>>>>>>> FIMD and DP drivers are accessing registers during Probe and Bind
->>>>>>>> callbacks. If display domain is enabled/disabled around register
->>>>>>>> accesses, display domain gets unstable and we are getting Power
->>>>>>>> Domain Disable fail notification. Increasing the Timeout also
->>>>>>>> didn't help.
->>>>>>
->>>>>> As I understand the problem is that fimd and dp drivers access hw
->>>>>> registers without enabling power domain. So the proper solution is to
->>>>>> fix these drivers.
->>>>>
->>>>> That is also a problem but I fixed those accesses in my local kernel before
->>>>> hitting this issue. If we do register accesses in FIMD/DP probe/bind we
->>>>> observes "Prefetch abort" exception. But here the problem is that 'DP
->>>>> domain disable' starts failing if we enable/disable multiple times.
->>>>>
->>>>>>
->>>>>> Btw. there are already patches removing hw access from probe/bind of
->>>>>> fimd. I guess removing also hw access from dp probe/bind could be a good
->>>>>> solution.
->>>>>
->>>>> Please let me know the links for posted patches. I will test with those patches.
->>>>
->>>> Is there any update on this? Please share the patches which fixes the
->>>> above issue or avoid the above scenario of multiple PM Domain enable/disable.
->>>> I will test them for exynos5 based boards. Otherwise we should get this change
->>>> merged else display will remain broken for exynos5 based boards.
->>>
->>> Andrzej is on holidays right now, so he won't be able to reply in this
->>> thread until he's back. Here are two patches I was able to find on the
->>> related MLs that might be fixing the cause of your issues:
->>
->> Ok. thanks for the update.
->>
->> We should test with Ajay's patches which includes DP probe deferring
->> based on availability of bridge chip. +
->>
->> few patches which cleanup register access in FIMD and DP probe/bind
->> OR
->> few patches to enable Display power domain and clocks just before the
->> register access. As done in https://lkml.org/lkml/2014/7/4/188.
->>
->> Later solution results into display power domain enable failure in case of DRM
->> probe defer.
->>
->> I am just curious if Andrej has some solution for the first approach which can
->> be tested for defer probe and S2R scenarios.
->>
->> Regards,
->> Rahul Sharma.
->>
->>>
->>> [PATCH] drm/exynos: remove hardware overlays disable from fimd probe
->>> (https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31629.html)
->>>
->>> [PATCH] drm/exynos: fimd: Keep power enabled during fimd_bind
->>> (https://lkml.org/lkml/2014/7/4/188)
+> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+> index 7d4281e..27298fd 100644
+> --- a/drivers/gpio/gpio-samsung.c
+> +++ b/drivers/gpio/gpio-samsung.c
+> @@ -1169,234 +1169,9 @@ static struct samsung_gpio_chip s3c64xx_gpios_2bit[] = {
+>   #endif
+>   };
+>
+> -/*
+> - * Followings are the gpio banks in S5PV210/S5PC110
+> - *
+> - * The 'config' member when left to NULL, is initialized to the default
+> - * structure samsung_gpio_cfgs[3] in the init function below.
+> - *
+> - * The 'base' member is also initialized in the init function below.
+> - * Note: The initialization of 'base' member of samsung_gpio_chip structure
+> - * uses the above macro and depends on the banks being listed in order here.
+> - */
+> -
+> -static struct samsung_gpio_chip s5pv210_gpios_4bit[] = {
+> -#ifdef CONFIG_CPU_S5PV210
+> -	{
+> -		.chip	= {
+> -			.base	= S5PV210_GPA0(0),
+> -			.ngpio	= S5PV210_GPIO_A0_NR,
+> -			.label	= "GPA0",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPA1(0),
+> -			.ngpio	= S5PV210_GPIO_A1_NR,
+> -			.label	= "GPA1",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPB(0),
+> -			.ngpio	= S5PV210_GPIO_B_NR,
+> -			.label	= "GPB",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPC0(0),
+> -			.ngpio	= S5PV210_GPIO_C0_NR,
+> -			.label	= "GPC0",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPC1(0),
+> -			.ngpio	= S5PV210_GPIO_C1_NR,
+> -			.label	= "GPC1",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPD0(0),
+> -			.ngpio	= S5PV210_GPIO_D0_NR,
+> -			.label	= "GPD0",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPD1(0),
+> -			.ngpio	= S5PV210_GPIO_D1_NR,
+> -			.label	= "GPD1",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPE0(0),
+> -			.ngpio	= S5PV210_GPIO_E0_NR,
+> -			.label	= "GPE0",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPE1(0),
+> -			.ngpio	= S5PV210_GPIO_E1_NR,
+> -			.label	= "GPE1",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPF0(0),
+> -			.ngpio	= S5PV210_GPIO_F0_NR,
+> -			.label	= "GPF0",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPF1(0),
+> -			.ngpio	= S5PV210_GPIO_F1_NR,
+> -			.label	= "GPF1",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPF2(0),
+> -			.ngpio	= S5PV210_GPIO_F2_NR,
+> -			.label	= "GPF2",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPF3(0),
+> -			.ngpio	= S5PV210_GPIO_F3_NR,
+> -			.label	= "GPF3",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPG0(0),
+> -			.ngpio	= S5PV210_GPIO_G0_NR,
+> -			.label	= "GPG0",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPG1(0),
+> -			.ngpio	= S5PV210_GPIO_G1_NR,
+> -			.label	= "GPG1",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPG2(0),
+> -			.ngpio	= S5PV210_GPIO_G2_NR,
+> -			.label	= "GPG2",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPG3(0),
+> -			.ngpio	= S5PV210_GPIO_G3_NR,
+> -			.label	= "GPG3",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPI(0),
+> -			.ngpio	= S5PV210_GPIO_I_NR,
+> -			.label	= "GPI",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPJ0(0),
+> -			.ngpio	= S5PV210_GPIO_J0_NR,
+> -			.label	= "GPJ0",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPJ1(0),
+> -			.ngpio	= S5PV210_GPIO_J1_NR,
+> -			.label	= "GPJ1",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPJ2(0),
+> -			.ngpio	= S5PV210_GPIO_J2_NR,
+> -			.label	= "GPJ2",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPJ3(0),
+> -			.ngpio	= S5PV210_GPIO_J3_NR,
+> -			.label	= "GPJ3",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_GPJ4(0),
+> -			.ngpio	= S5PV210_GPIO_J4_NR,
+> -			.label	= "GPJ4",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_MP01(0),
+> -			.ngpio	= S5PV210_GPIO_MP01_NR,
+> -			.label	= "MP01",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_MP02(0),
+> -			.ngpio	= S5PV210_GPIO_MP02_NR,
+> -			.label	= "MP02",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_MP03(0),
+> -			.ngpio	= S5PV210_GPIO_MP03_NR,
+> -			.label	= "MP03",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_MP04(0),
+> -			.ngpio	= S5PV210_GPIO_MP04_NR,
+> -			.label	= "MP04",
+> -		},
+> -	}, {
+> -		.chip	= {
+> -			.base	= S5PV210_MP05(0),
+> -			.ngpio	= S5PV210_GPIO_MP05_NR,
+> -			.label	= "MP05",
+> -		},
+> -	}, {
+> -		.base	= (S5P_VA_GPIO + 0xC00),
+> -		.irq_base = IRQ_EINT(0),
+> -		.chip	= {
+> -			.base	= S5PV210_GPH0(0),
+> -			.ngpio	= S5PV210_GPIO_H0_NR,
+> -			.label	= "GPH0",
+> -			.to_irq = samsung_gpiolib_to_irq,
+> -		},
+> -	}, {
+> -		.base	= (S5P_VA_GPIO + 0xC20),
+> -		.irq_base = IRQ_EINT(8),
+> -		.chip	= {
+> -			.base	= S5PV210_GPH1(0),
+> -			.ngpio	= S5PV210_GPIO_H1_NR,
+> -			.label	= "GPH1",
+> -			.to_irq = samsung_gpiolib_to_irq,
+> -		},
+> -	}, {
+> -		.base	= (S5P_VA_GPIO + 0xC40),
+> -		.irq_base = IRQ_EINT(16),
+> -		.chip	= {
+> -			.base	= S5PV210_GPH2(0),
+> -			.ngpio	= S5PV210_GPIO_H2_NR,
+> -			.label	= "GPH2",
+> -			.to_irq = samsung_gpiolib_to_irq,
+> -		},
+> -	}, {
+> -		.base	= (S5P_VA_GPIO + 0xC60),
+> -		.irq_base = IRQ_EINT(24),
+> -		.chip	= {
+> -			.base	= S5PV210_GPH3(0),
+> -			.ngpio	= S5PV210_GPIO_H3_NR,
+> -			.label	= "GPH3",
+> -			.to_irq = samsung_gpiolib_to_irq,
+> -		},
+> -	},
+> -#endif
+> -};
+> -
+>   /* TODO: cleanup soc_is_* */
+>   static __init int samsung_gpiolib_init(void)
+>   {
+> -	struct samsung_gpio_chip *chip;
+> -	int i, nr_chips;
+> -	int group = 0;
+> -
+>   	/*
+>   	 * Currently there are two drivers that can provide GPIO support for
+>   	 * Samsung SoCs. For device tree enabled platforms, the new
+> @@ -1420,21 +1195,6 @@ static __init int samsung_gpiolib_init(void)
+>   				S3C64XX_VA_GPIO);
+>   		samsung_gpiolib_add_4bit2_chips(s3c64xx_gpios_4bit2,
+>   				ARRAY_SIZE(s3c64xx_gpios_4bit2));
+> -	} else if (soc_is_s5pv210()) {
+> -		group = 0;
+> -		chip = s5pv210_gpios_4bit;
+> -		nr_chips = ARRAY_SIZE(s5pv210_gpios_4bit);
+> -
+> -		for (i = 0; i<  nr_chips; i++, chip++) {
+> -			if (!chip->config) {
+> -				chip->config =&samsung_gpio_cfgs[3];
+> -				chip->group = group++;
+> -			}
+> -		}
+> -		samsung_gpiolib_add_4bit_chips(s5pv210_gpios_4bit, nr_chips, S5P_VA_GPIO);
+> -#if defined(CONFIG_CPU_S5PV210)&&  defined(CONFIG_S5P_GPIO_INT)
+> -		s5p_register_gpioint_bank(IRQ_GPIOINT, 0, S5P_GPIOINT_GROUP_MAXNR);
+> -#endif
+>   	} else {
+>   		WARN(1, "Unknown SoC in gpio-samsung, no GPIOs added\n");
+>   		return -ENODEV;
