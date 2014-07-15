@@ -1,141 +1,75 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 1/3 v6] spi: s3c64xx: fix broken "cs_gpios" usage in the driver
-Date: Tue, 15 Jul 2014 12:38:58 +0200
-Message-ID: <CABxcv==yuWJYmSiVV=HELMdwi-8aAG-aiT9o12HUBp8uRaBxkQ@mail.gmail.com>
-References: <1405316506-27855-1-git-send-email-ch.naveen@samsung.com>
-	<1405316506-27855-2-git-send-email-ch.naveen@samsung.com>
-	<20140714172524.GH6800@sirena.org.uk>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Update exynos_defconfig
+Date: Tue, 15 Jul 2014 16:17:36 +0530
+Message-ID: <CAFp+6iED1C1_nxgcCz1PwwXSMfgauzhxjobPR58Xig4KAPqHPQ@mail.gmail.com>
+References: <1404901353-14806-1-git-send-email-sachin.kamat@samsung.com>
+	<CAD=FV=XHFY3OtPg6vttpAkX1he0iS6cFLVC6ESauG+1=gredwA@mail.gmail.com>
+	<CAOesGMgyZN8TApVO0Svi65qLBzV6jnzGNg9UP1U+hRw=uXg1Bw@mail.gmail.com>
+	<CAK5sBcEwehAeDqTG=+sRzw57krnQ=8J3wGGcPsuR7r4VZ3tJVw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f180.google.com ([74.125.82.180]:45597 "EHLO
-	mail-we0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758636AbaGOKjA (ORCPT
+Received: from mail-qa0-f45.google.com ([209.85.216.45]:64284 "EHLO
+	mail-qa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758038AbaGOKrh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 06:39:00 -0400
-Received: by mail-we0-f180.google.com with SMTP id k48so4491320wev.25
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jul 2014 03:38:58 -0700 (PDT)
-In-Reply-To: <20140714172524.GH6800@sirena.org.uk>
+	Tue, 15 Jul 2014 06:47:37 -0400
+Received: by mail-qa0-f45.google.com with SMTP id cm18so2881008qab.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jul 2014 03:47:36 -0700 (PDT)
+In-Reply-To: <CAK5sBcEwehAeDqTG=+sRzw57krnQ=8J3wGGcPsuR7r4VZ3tJVw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
+To: Sachin Kamat <spk.linux@gmail.com>
+Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kevin Hilman <khilman@linaro.org>, naveen krishna <ch.naveen@samsung.com>
 
-Hello Mark,
-
-I agree that the commit message could have a better description and I
-understand your concerns. I'm not an SPI expert by any means but I did
-my best to review the patches and provide feedback to Naveen on the
-first iterations of the series.
-
-On Mon, Jul 14, 2014 at 7:25 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Mon, Jul 14, 2014 at 11:11:44AM +0530, Naveen Krishna Chatradhi wrote:
+On Tue, Jul 15, 2014 at 10:01 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
+> On Tue, Jul 15, 2014 at 12:20 AM, Olof Johansson <olof@lixom.net> wrote:
+>> On Mon, Jul 14, 2014 at 9:47 AM, Doug Anderson <dianders@chromium.org> wrote:
+>>> Sachin,
+>>>
+>>> On Wed, Jul 9, 2014 at 3:22 AM, Sachin Kamat <sachin.kamat@samsung.com> wrote:
 >
->> @@ -812,6 +800,10 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
->>               spi->controller_data = cs;
->>       }
+> <snip>
+>
+>> Gave this a go on my board farm as well, it looks better than before
+>> for sure. Boot logs are at:
+>> http://arm-soc.lixom.net/bootlogs/misc/v3.16-rc4-360-g1501776
 >>
->> +     /* For the non-DT platforms derive chip selects from controller data */
->> +     if (!spi->dev.of_node)
->> +             spi->cs_gpio = cs->line;
->> +
->>       if (IS_ERR_OR_NULL(cs)) {
->>               dev_err(&spi->dev, "No CS for SPI(%d)\n", spi->chip_select);
->>               return -ENODEV;
->> @@ -819,17 +811,16 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>> There are still some issues to resolve but this is an improvement so
+>> let's pick it up and fix with new patches on top.
+>
+> Thanks for your review and testing.
+>
 >>
->>       if (!spi_get_ctldata(spi)) {
->>               /* Request gpio only if cs line is asserted by gpio pins */
->> -             if (sdd->cs_gpio) {
->> -                     err = gpio_request_one(cs->line, GPIOF_OUT_INIT_HIGH,
->> -                                     dev_name(&spi->dev));
->> +             if (gpio_is_valid(spi->cs_gpio)) {
+>> Some of the new warnings are:
+>>
+>> [WARN] [    0.785066] usb@12000000 supply vdd33 not found, using dummy regulator
+>> [WARN] [    0.791071] usb@12000000 supply vdd10 not found, using dummy regulator
+>> [WARN] [    0.998658] usb@12400000 supply vdd33 not found, using dummy regulator
+>> [WARN] [    1.004049] usb@12400000 supply vdd10 not found, using dummy regulator
 >
-> As previously mentioned gpio_is_valid() is *not* a direct substitute for
-> checking if the boolean flag cs_gpio has been set since 0 is a valid
-> GPIO on at least some of these platforms and as discussed several times
-> already some of the SoCs require the use of the built in chip select.
+> Vivek had submitted patches for the same [1].
+> Vivek, any updates?
 >
+> [1] https://lkml.org/lkml/2014/6/25/363
 
-Please correct me if I'm wrong but in this case I think that using
-gpio_is_valid(spi->cs_gpio) is the right thing to do. The SPI core
-will set spi->cs_gpio to -ENOENT if a Device Tree didn't use the
-"cs-gpios" property of if the format (explained in
-Documentation/devicetree/bindings/spi/spi-bus.txt) to specify a
-native/built-in line chip select is used:
+Well, these messages are coming out of DWC3, where VDD3.3 and VDD1.0
+regulators are expected.
+These regulator right now are required by smdk5250, and on boards on
+which the USB Vdd regulators are not
+enabled by default. On peach and snow, this will just be a warning and
+we will go ahead with the probe.
 
-cs-gpios = <&gpio1 0 0> <0>
-cs0 : &gpio1 0 0
-cs1 : native
+To add the required dt entry for these regulators is in my TODO list,
+but on snow and peach there's no regression
+due to unavailability of these, since the required regulator supplies
+are enabled by default.
 
-So in that case gpio_is_valid(spi->cs_gpio) will return false which is
-what Naveen wants in his patch.
+[snip]
 
-Now, a problem is that in the non-DT case the patch does not rely on
-the spi->cs_gpio value set by the SPI core but instead overwrites it
-with the value in cs->line. So as you said this would have been an
-issue if legacy non-DT board code used s3c64xx_spi_csinfo .line to
-specify that the built-in chip select should be used instead of a
-GPIO.
 
-But looking at the board files that sets struct spi_board_info
-.controller_data to struct s3c64xx_spi_csinfo I see that the the .line
-field is actually used to specify a GPIO pin and not a chip select.
-
-In fact there is only one user in mainline
-(arch/arm/mach-s3c64xx/mach-crag6410-module.c) that do this:
-
-#define S3C64XX_GPC(_nr)      (S3C64XX_GPIO_C_START + (_nr))
-
-static struct s3c64xx_spi_csinfo wm0010_spi_csinfo = {
-        .line = S3C64XX_GPC(3),
-};
-
-static struct spi_board_info wm1253_devs[] = {
-        [0] = {
-                .modalias       = "wm0010",
-                .max_speed_hz   = 26 * 1000 * 1000,
-                .bus_num        = 0,
-                .chip_select    = 0,
-                .mode           = SPI_MODE_0,
-                .irq            = S3C_EINT(4),
-                .controller_data = &wm0010_spi_csinfo,
-                .platform_data = &wm0010_pdata,
-        },
-};
-
-So, the .line field is used to specify a GPIO, not a chip select. So
-gpio_is_valid() should also be used to check that cs->line is a valid
-GPIO. If board file does not want to use a GPIO and wants to use a
-built-in chip select then it should either not use a struct
-s3c64xx_spi_csinfo at all or set .line to -ENOENT in order to be
-consistent with the SPI core.
-
-Now, looking at this I realize that there is a bug in the spi-s3c64xx
-driver since it does not check if spi->controller_data is NULL in the
-non-DT case which I believe it can be true.
-
-> In general it's quite hard to tie the description in the patch to the
-> code changes, not helped by the decision to do separate refactorings
-> like this conversion to gpio_is_valid() as part of the one patch.  The
-> description of the patch now makes some statements about what the
-> problem that's intended to be fixed is but it still doesn't seem
-> entirely clear that everything has been thought through fully and tied
-> to the code.
->
-
-AFAICT most of the refactoring is actually removing the buggy code
-that was introduced in commit 3146bee ("spi: s3c64xx: Added provision
-for dedicated cs pin"). So maybe Naveen can try doing a new series
-first reverting the offending commit and then on top of that adding
-the support for the generic "cs-gpios" DT property used by the SPI
-core?
-
-As I said before this patch is fixing a bug in the SPI driver, the
-first version of the series was posted on June, 10 so many other
-patches already depend on this fix. So it would be great if we can
-move this forward since this is hurting the platform support as a
-whole.
-
-Thanks a lot and best regards,
-Javier
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
