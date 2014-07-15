@@ -1,65 +1,59 @@
-From: Sachin Kamat <spk.linux@gmail.com>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Update exynos_defconfig
-Date: Tue, 15 Jul 2014 10:01:13 +0530
-Message-ID: <CAK5sBcEwehAeDqTG=+sRzw57krnQ=8J3wGGcPsuR7r4VZ3tJVw@mail.gmail.com>
-References: <1404901353-14806-1-git-send-email-sachin.kamat@samsung.com>
-	<CAD=FV=XHFY3OtPg6vttpAkX1he0iS6cFLVC6ESauG+1=gredwA@mail.gmail.com>
-	<CAOesGMgyZN8TApVO0Svi65qLBzV6jnzGNg9UP1U+hRw=uXg1Bw@mail.gmail.com>
+From: Vikas Sajjan <vikas.sajjan@samsung.com>
+Subject: Re: [PATCH v2] ARM: dts: Add mask-tpm-reset to the device tree
+Date: Tue, 15 Jul 2014 10:04:00 +0530
+Message-ID: <CAGm_ybhE62Hjn6H5CJTMG92ZtFdx5wugyprjwLdidHoh6f9wBw@mail.gmail.com>
+References: <1405319602-29892-1-git-send-email-vikas.sajjan@samsung.com>
+	<CAD=FV=UQfQpJ3Tp-cBAfPsH9wHXb1yknget6iMQcgOVnH1PwFA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f175.google.com ([209.85.217.175]:36911 "EHLO
-	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750729AbaGOEbP (ORCPT
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:60933 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750756AbaGOEeC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 00:31:15 -0400
-Received: by mail-lb0-f175.google.com with SMTP id n15so3549268lbi.34
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2014 21:31:13 -0700 (PDT)
-In-Reply-To: <CAOesGMgyZN8TApVO0Svi65qLBzV6jnzGNg9UP1U+hRw=uXg1Bw@mail.gmail.com>
+	Tue, 15 Jul 2014 00:34:02 -0400
+Received: by mail-wg0-f47.google.com with SMTP id b13so2863603wgh.18
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2014 21:34:00 -0700 (PDT)
+In-Reply-To: <CAD=FV=UQfQpJ3Tp-cBAfPsH9wHXb1yknget6iMQcgOVnH1PwFA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Doug Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kevin Hilman <khilman@linaro.org>, Vivek Gautam <gautam.vivek@samsung.com>, naveen krishna <ch.naveen@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Thomas P Abraham <thomas.ab@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On Tue, Jul 15, 2014 at 12:20 AM, Olof Johansson <olof@lixom.net> wrote:
-> On Mon, Jul 14, 2014 at 9:47 AM, Doug Anderson <dianders@chromium.org> wrote:
->> Sachin,
+Doug,
+
+On Mon, Jul 14, 2014 at 10:30 PM, Doug Anderson <dianders@chromium.org> wrote:
+> Vikas,
+>
+> On Sun, Jul 13, 2014 at 11:33 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+>> From: Doug Anderson <dianders@chromium.org>
 >>
->> On Wed, Jul 9, 2014 at 3:22 AM, Sachin Kamat <sachin.kamat@samsung.com> wrote:
-
-<snip>
-
-> Gave this a go on my board farm as well, it looks better than before
-> for sure. Boot logs are at:
-> http://arm-soc.lixom.net/bootlogs/misc/v3.16-rc4-360-g1501776
+>> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
+>> being reset across sleep/wake.  If we don't set it to anything then
+>> the TPM will be reset.  U-Boot will detect this as invalid
+>> and will reset the system on resume time. This GPIO can always be low
+>> and not hurt anything.  It will get pulled back high again during a
+>> normal warm reset when it will default back to an input.
+>>
+>> To properly preserve the TPM state across suspend/resume and to make
+>> the chrome U-Boot happy, properly set the GPIO to mask the
+>> reset to the TPM.
+>>
+>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+>> ---
+>> changes since v1:
+>>         - removed fixed regulator and used hogs instead.
+>>
+>>  arch/arm/boot/dts/exynos5420-peach-pit.dts |   12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
 >
-> There are still some issues to resolve but this is an improvement so
-> let's pick it up and fix with new patches on top.
-
-Thanks for your review and testing.
-
+> This looks reasonable to me except for two things:
 >
-> Some of the new warnings are:
+> 1. You need to apply this to pit and pi (not just pi)
 >
-> [WARN] [    0.785066] usb@12000000 supply vdd33 not found, using dummy regulator
-> [WARN] [    0.791071] usb@12000000 supply vdd10 not found, using dummy regulator
-> [WARN] [    0.998658] usb@12400000 supply vdd33 not found, using dummy regulator
-> [WARN] [    1.004049] usb@12400000 supply vdd10 not found, using dummy regulator
+> 2. The proper sort ordering for elements within a pin control group is
+> by pin number, so this pin should be _after_ gpx0-2, not before.
 
-Vivek had submitted patches for the same [1].
-Vivek, any updates?
 
-[1] https://lkml.org/lkml/2014/6/25/363
-
-> [WARN] [    1.673277] 10060000.tmu supply vtmu not found, using dummy regulator
-> [WARN] [    1.685873] 10064000.tmu supply vtmu not found, using dummy regulator
-> [WARN] [    1.706262] 10068000.tmu supply vtmu not found, using dummy regulator
-> [WARN] [    1.720076] 1006c000.tmu supply vtmu not found, using dummy regulator
-> [WARN] [    1.733957] 100a0000.tmu supply vtmu not found, using dummy regulator
-
-I think similar patches as with USB are required here.
-Naveen, comments?
-
--- 
-Regards,
-Sachin.
+Sure, will repost both pit and pi by reordering the pin as you suggested.
