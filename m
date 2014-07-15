@@ -1,66 +1,71 @@
-From: Tushar Behera <tushar.b@samsung.com>
-Subject: Re: [PATCH V2 3/3] clk: exynos-audss: Use samsung clock APIs to
- register/unregister clocks
-Date: Tue, 15 Jul 2014 08:32:57 +0530
-Message-ID: <CAC5m3Bwq5cGkN+kk+vWFdj6qjGJUCS3BduwhHMyVAQ6Mdbmh2A@mail.gmail.com>
-References: <1405080036-6651-1-git-send-email-tushar.b@samsung.com>
-	<1405080036-6651-4-git-send-email-tushar.b@samsung.com>
-	<53C3F88A.8080005@samsung.com>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v7 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
+Date: Tue, 15 Jul 2014 09:20:34 +0530
+Message-ID: <CAJuA9ahWbL8v2nS6wuDosn-bi+pga57KUe5wQN14Mot_-RTc6w@mail.gmail.com>
+References: <1405345118-4269-1-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f175.google.com ([209.85.220.175]:34822 "EHLO
-	mail-vc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754007AbaGODC6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 23:02:58 -0400
-In-Reply-To: <53C3F88A.8080005@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1405345118-4269-1-git-send-email-thomas.ab@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: ML Arch-Arm <linux-arm-kernel@lists.infradead.org>, lkml <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>
 
-On Mon, Jul 14, 2014 at 9:04 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> On 11/07/14 14:00, Tushar Behera wrote:
->> @@ -103,17 +140,11 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
->>               return PTR_ERR(reg_base);
->>       }
->>
->> -     clk_table = devm_kzalloc(&pdev->dev,
->> -                             sizeof(struct clk *) * EXYNOS_AUDSS_MAX_CLKS,
->> -                             GFP_KERNEL);
->> -     if (!clk_table)
->> +     ctx = samsung_clk_init(pdev->dev.of_node, reg_base, nr_clks);
->
-> There is an issue here that this registers the clk provider before all
-> its clocks are registered with the clk core. Therefore it introduces
-> a race condition.
->
-> Please have a look at patch [1], you may want to rebase this series
-> onto that patch.
->
+Hi Tomasz,
 
-Thanks for the pointer. I will re-post.
-
->> +     samsung_clk_register_div(ctx, exynos_audss_div_clks,
->> +                             ARRAY_SIZE(exynos_audss_div_clks));
-> [...]
->> +     samsung_clk_register_gate(ctx, exynos_audss_gate_clks,
->> +                             ARRAY_SIZE(exynos_audss_gate_clks));
-> [...]
->> -     ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
->> -                                     &clk_data);
->> -     if (ret) {
->> -             dev_err(&pdev->dev, "failed to add clock provider\n");
->> -             goto unregister;
->> +             samsung_clk_register_gate(ctx, exynos5420_audss_gate_clks,
->> +                                     ARRAY_SIZE(exynos5420_audss_gate_clks));
->>       }
+On Mon, Jul 14, 2014 at 7:08 PM, Thomas Abraham <thomas.ab@samsung.com> wrote:
+> Changes since v6:
+> - Fixes suggested by Amit Daniel <amit.daniel@samsung.com>.
 >
-> [1]
-> https://git.kernel.org/cgit/linux/kernel/git/tfiga/samsung-clk.git/commit/?h=samsung-clk-next&id=d5e136a21b2028fb1f45143ea7112d5869bfc6c7
+> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
+> drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
+> series also enabled cpufreq support for Exynos5420 using arm_big_little cpufreq
+> driver.
+>
+> Thomas Abraham (6):
+>   clk: samsung: add infrastructure to register cpu clocks
+>   clk: samsung: register exynos5420 apll/kpll configuration data
+>   clk: exynos: use cpu-clock provider type to represent arm clock
+>   ARM: dts: Exynos: add cpu nodes, opp and cpu clock configuration data
+>   ARM: Exynos: switch to using generic cpufreq driver for exynos4210/5250
+>   cpufreq: exynos: remove exynos4210/5250 specific cpufreq driver support
+
+In this series, support for Exynos5420 has been included. If there are
+any more changes required, could you please let me know.
+
+Thanks,
+Thomas.
+
+>
+>  arch/arm/boot/dts/exynos4210-origen.dts         |    6 +
+>  arch/arm/boot/dts/exynos4210-trats.dts          |    6 +
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts |    6 +
+>  arch/arm/boot/dts/exynos4210.dtsi               |   27 ++
+>  arch/arm/boot/dts/exynos5250-arndale.dts        |    6 +
+>  arch/arm/boot/dts/exynos5250-cros-common.dtsi   |    6 +
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    6 +
+>  arch/arm/boot/dts/exynos5250.dtsi               |   23 +
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts       |    6 +
+>  arch/arm/boot/dts/exynos5420.dtsi               |   32 ++
+>  arch/arm/mach-exynos/exynos.c                   |   15 +-
+>  drivers/clk/samsung/Makefile                    |    2 +-
+>  drivers/clk/samsung/clk-cpu.c                   |  576 +++++++++++++++++++++++
+>  drivers/clk/samsung/clk-exynos4.c               |   25 +-
+>  drivers/clk/samsung/clk-exynos5250.c            |   16 +-
+>  drivers/clk/samsung/clk-exynos5420.c            |   60 ++-
+>  drivers/clk/samsung/clk.h                       |    5 +
+>  drivers/cpufreq/Kconfig.arm                     |   22 -
+>  drivers/cpufreq/Makefile                        |    2 -
+>  drivers/cpufreq/exynos4210-cpufreq.c            |  184 --------
+>  drivers/cpufreq/exynos5250-cpufreq.c            |  210 ---------
+>  include/dt-bindings/clock/exynos5250.h          |    1 +
+>  include/dt-bindings/clock/exynos5420.h          |    2 +
+>  23 files changed, 802 insertions(+), 442 deletions(-)
+>  create mode 100644 drivers/clk/samsung/clk-cpu.c
+>  delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
 >
 > --
-> Regards,
-> Sylwester
+> 1.7.9.5
+>
