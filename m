@@ -1,44 +1,47 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3 2/2] ARM: dts: Add mask-tpm-reset DT node to the exynos5800-peach-pi
-Date: Tue, 15 Jul 2014 09:19:38 -0700
-Message-ID: <CAD=FV=VtrMTbaaN9MA+8=rM23UY9efktsOHab51H=Nm7JVJz4A@mail.gmail.com>
-References: <1405420294-9323-1-git-send-email-vikas.sajjan@samsung.com>
-	<1405420294-9323-3-git-send-email-vikas.sajjan@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 1/3 v6] spi: s3c64xx: fix broken "cs_gpios" usage in the
+ driver
+Date: Tue, 15 Jul 2014 18:55:51 +0200
+Message-ID: <53C55D17.90109@samsung.com>
+References: <1405316506-27855-1-git-send-email-ch.naveen@samsung.com>
+ <1405316506-27855-2-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f171.google.com ([209.85.220.171]:47896 "EHLO
-	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751279AbaGOQTi (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:64962 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755461AbaGOQ4a (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 12:19:38 -0400
-Received: by mail-vc0-f171.google.com with SMTP id id10so10645125vcb.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jul 2014 09:19:38 -0700 (PDT)
-In-Reply-To: <1405420294-9323-3-git-send-email-vikas.sajjan@samsung.com>
+	Tue, 15 Jul 2014 12:56:30 -0400
+In-reply-to: <1405316506-27855-2-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Olof Johansson <olof@lixom.net>, Thomas P Abraham <thomas.ab@samsung.com>
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org
 
-Vikas,
+Hi Naveen,
 
-On Tue, Jul 15, 2014 at 3:31 AM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
-> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
-> being reset across sleep/wake.  If we don't set it to anything then
-> the TPM will be reset.  U-Boot will detect this as invalid
-> and will reset the system on resume time. This GPIO can always be low
-> and not hurt anything.  It will get pulled back high again during a
-> normal warm reset when it will default back to an input.
->
-> To properly preserve the TPM state across suspend/resume and to make
-> the chrome U-Boot happy, properly set the GPIO to mask the
-> reset to the TPM.
->
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5800-peach-pi.dts |   12 ++++++++++++
->  1 file changed, 12 insertions(+)
+On 14.07.2014 07:41, Naveen Krishna Chatradhi wrote:
+> Since, (3146bee spi: s3c64xx: Added provision for dedicated cs pin)
+> 
+> spi-s3c64xx.c driver expects
+> 1. chip select gpios from "cs-gpio"(singular) under the
+>    "controller-data" node of the client/slave device of the SPI.
 
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+Please work a bit more on readability of your commit messages,
+especially in terms of using correct terminology to avoid unnecessary
+confusion.
 
--Doug
+s/'chip select gpios'/'chip select GPIO pins'/
+s/'"cs-gpio"(singular)'/'"cs-gpio" property'/
+s/'client/slave device of the SPI'/'SPI device'/
+
+More things like this follow in rest of the text below.
+
+Otherwise I believe the code after this patch does the right thing, so:
+
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+
+Best regards,
+Tomasz
