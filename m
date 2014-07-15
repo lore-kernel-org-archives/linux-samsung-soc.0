@@ -1,70 +1,62 @@
-From: Sachin Kamat <spk.linux@gmail.com>
-Subject: Re: [PATCH] ARM: config: update multi_v7_defconfig
-Date: Tue, 15 Jul 2014 22:40:00 +0530
-Message-ID: <CAK5sBcGcnG9FMuJLSkFamcTw3VR1KeLNKRRo7Xhp05s=og-+zg@mail.gmail.com>
-References: <1405411346-12471-1-git-send-email-ch.naveen@samsung.com>
-	<CAD=FV=UFknqF_Mt7ArytFq4KdDsGDa+JR2KZzX9Xn+if-_Vw4g@mail.gmail.com>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH 1/3 v6] spi: s3c64xx: fix broken "cs_gpios" usage in the driver
+Date: Tue, 15 Jul 2014 22:51:02 +0530
+Message-ID: <CAHfPSqA5MMtaY5kb85xmZXkN62a+otgDAM93Gxn9d9fHv39k=g@mail.gmail.com>
+References: <1405316506-27855-1-git-send-email-ch.naveen@samsung.com>
+ <1405316506-27855-2-git-send-email-ch.naveen@samsung.com> <53C55D17.90109@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:44410 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754421AbaGORKC (ORCPT
+Received: from mail-qa0-f52.google.com ([209.85.216.52]:45771 "EHLO
+	mail-qa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932177AbaGORVW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 13:10:02 -0400
-Received: by mail-la0-f52.google.com with SMTP id e16so3002166lan.39
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jul 2014 10:10:00 -0700 (PDT)
-In-Reply-To: <CAD=FV=UFknqF_Mt7ArytFq4KdDsGDa+JR2KZzX9Xn+if-_Vw4g@mail.gmail.com>
+	Tue, 15 Jul 2014 13:21:22 -0400
+In-Reply-To: <53C55D17.90109@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olofj@chromium.org>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, Kukjin Kim <kgene.kim@samsung.com>, cpgs@samsung.com, devicetree@vger.kernel.org
 
-Hi Doug,
+Hello Tomasz,
 
-On Tue, Jul 15, 2014 at 9:29 PM, Doug Anderson <dianders@chromium.org> wrote:
-> Naveen,
+On 15 July 2014 22:25, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Naveen,
 >
-> On Tue, Jul 15, 2014 at 1:02 AM, Naveen Krishna Chatradhi
-> <ch.naveen@samsung.com> wrote:
->> Enabled S3C24XX I2C driver and MAX77686 PMIC MFD and Voltage
->> regulator drivers used on Exynos5250 based Snow board.
+> On 14.07.2014 07:41, Naveen Krishna Chatradhi wrote:
+>> Since, (3146bee spi: s3c64xx: Added provision for dedicated cs pin)
 >>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> ---
->> By enabling the symbols to compile S3C24XX I2C driver, MAX77686 PMIC
->> under MFD and REGULATOR.
->>
->> http://arm-soc.lixom.net/bootlogs/next/next-20140711/snow-multi_v7_defconfig.html
->> The warnings by cpufreq on Snow board are fixed.
->>
->> Booted and verified on  on Exynos5420 based Snow board
->>
->>  arch/arm/configs/multi_v7_defconfig |    3 +++
->>  1 file changed, 3 insertions(+)
+>> spi-s3c64xx.c driver expects
+>> 1. chip select gpios from "cs-gpio"(singular) under the
+>>    "controller-data" node of the client/slave device of the SPI.
 >
-> Is there a reason not to add more of the max77686 configs?
+> Please work a bit more on readability of your commit messages,
+> especially in terms of using correct terminology to avoid unnecessary
+> confusion.
 >
-> +CONFIG_RTC_DRV_MAX77686=y
-> +CONFIG_COMMON_CLK_MAX77686=y
->
-> I also seems like it would be nice to reconcile this with Sacin's
-> latest patch.  For starters I notice that you're missing:
->   CONFIG_EXYNOS5420_MCPM=y
->
-> I'll leave it up to you to look for other things that might be
-> missing.  If some of the things in exynos5_defconfig can't go into the
-> multi-config, please explain.
+> s/'chip select gpios'/'chip select GPIO pins'/
+> s/'"cs-gpio"(singular)'/'"cs-gpio" property'/
+> s/'client/slave device of the SPI'/'SPI device'/
 
-multi_v7_defconfig update patch, inline with exynos_defconfig is already on my
-TODO list. I wanted to send this one along with the next update of
-exynos_defconfig
-(around -rc7) as Olof preferred to have a single patch updating most
-of the available
-things. By then I believe remaining drivers like 5420/5800 regulators,
-display and cpufreq
-drivers would have been merged.
+Sure, I'm working on that.
 
- --
-Regards,
-Sachin.
+>
+> More things like this follow in rest of the text below.
+>
+> Otherwise I believe the code after this patch does the right thing, so:
+>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+
+I've submitted another patch set which does the same functionality
+as this patch set. I believe the new series is more cleaner in terms of
+patch separation and documentation.
+
+Kindly, let me know your comments on that series.
+http://www.spinics.net/lists/arm-kernel/msg347634.html
+
+>
+> Best regards,
+> Tomasz
+-- 
+Thanks & Regards,
+(: Naveen :)
