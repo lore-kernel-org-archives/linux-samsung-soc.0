@@ -1,84 +1,67 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: sdhci_s3c_consider_clock scheduling while atomic - clk_round_rate
-Date: Tue, 15 Jul 2014 15:33:51 +0900
-Message-ID: <53C4CB4F.6070007@samsung.com>
-References: <CAD8Lp45QV4ZcfXA86hoseKfJLLV_BJ-g0UABnOGPkJW1pMXhFw@mail.gmail.com>
- <53A99EB5.6010907@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH] ARM: config: update multi_v7_defconfig
+Date: Tue, 15 Jul 2014 13:32:26 +0530
+Message-ID: <1405411346-12471-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:60657 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757770AbaGOGdy (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:65391 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757363AbaGOIGB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 02:33:54 -0400
-In-reply-to: <53A99EB5.6010907@samsung.com>
+	Tue, 15 Jul 2014 04:06:01 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N8Q003WVUHZD280@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 15 Jul 2014 17:05:59 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Daniel Drake <drake@endlessm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: linux-mmc@vger.kernel.org, ben-linux@fluff.org, Tomasz Figa <tomasz.figa@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Mike Turquette <mturquette@linaro.org>
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: dianders@chromium.org, olofj@chromium.org, cpgs@samsung.com
 
-Hi,
+Enabled S3C24XX I2C driver and MAX77686 PMIC MFD and Voltage
+regulator drivers used on Exynos5250 based Snow board.
 
-It's also related with clock-gating.
-Mainline kernel is using the "clkgate-delay = 0" by default.
-If we use this value, Every request time should be gated/ungated...
-Then it may be faced the race-condition...In my experiment, it occasionally occurred the CRC error or other problem.
-And it's also degraded the performance since add the overhead.
-I'm using "clkgate-delay = 3 ~ 10".
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+---
+By enabling the symbols to compile S3C24XX I2C driver, MAX77686 PMIC
+under MFD and REGULATOR.
 
-Anyway, we need to fix this. I will consider this.
+http://arm-soc.lixom.net/bootlogs/next/next-20140711/snow-multi_v7_defconfig.html
+The warnings by cpufreq on Snow board are fixed.
 
+Booted and verified on  on Exynos5420 based Snow board
 
-Best Regards,
-Jaehoon Chung
+ arch/arm/configs/multi_v7_defconfig |    3 +++
+ 1 file changed, 3 insertions(+)
 
-On 06/25/2014 12:52 AM, Tomasz Figa wrote:
-> Hi Daniel,
-> 
-> [adding Ulf, Chris and Mike to the discussion]
-> 
-> On 24.06.2014 11:48, Daniel Drake wrote:
->> sdhci_s3c_set_clock is called from sdhci_do_set_ios with interrupts
->> disabled, and this calls into sdhci_s3c_consider_clock().
->>
->> The patch "mmc: sdhci-s3c: Cache bus clock rates" addressed some
->> scheduling while atomic in this function, but there are more issues
->> here, seen while testing 3.16-rc2 on exynos4412:
->>
->> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:103
->> in_atomic(): 1, irqs_disabled(): 128, pid: 75, name: mmcqd/0
->> Preemption disabled at:[<  (null)>]   (null)
->>
->> CPU: 0 PID: 75 Comm: mmcqd/0 Not tainted 3.16.0-rc2-00028-ge9fe7eb-dirty #77
->> [<c0016140>] (unwind_backtrace) from [<c0011e14>] (show_stack+0x10/0x14)
->> [<c0011e14>] (show_stack) from [<c05ce8a8>] (dump_stack+0x84/0xc4)
->> [<c05ce8a8>] (dump_stack) from [<c05d2de0>] (mutex_lock+0x1c/0x3c)
->> [<c05d2de0>] (mutex_lock) from [<c046214c>] (clk_prepare_lock+0x6c/0xf4)
->> [<c046214c>] (clk_prepare_lock) from [<c04625ac>] (clk_round_rate+0x10/0x2c)
->> [<c04625ac>] (clk_round_rate) from [<c0447628>] (sdhci_s3c_set_clock+0x4c/0x1e8)
->> [<c0447628>] (sdhci_s3c_set_clock) from [<c0447818>]
->> (sdhci_cmu_set_clock+0x54/0x140)
->> [<c0447818>] (sdhci_cmu_set_clock) from [<c0443a38>]
->> (sdhci_do_set_ios+0x138/0x58c)
->> [<c0443a38>] (sdhci_do_set_ios) from [<c0443864>] (sdhci_set_ios+0x28/0x34)
->>
->> clk_round_rate cannot be called here because it takes a mutex.
->>
->> sdhci_s3c_set_clock() also calls into clk_prepare_enable() which looks
->> like it could trigger this problem too.
-> 
-> Apparently this is related to generic sdhci code calling .set_clock()
-> under spin_lock_irqsave(). For reference, see sdhci_do_set_ios() and
-> sdhci_tasklet_finish().
-> 
-> Chris, Ulf, any suggestions?
-> 
-> Best regards,
-> Tomasz
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 5348364..1aaf91d 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -193,6 +193,7 @@ CONFIG_I2C_CADENCE=y
+ CONFIG_I2C_DESIGNWARE_PLATFORM=y
+ CONFIG_I2C_EXYNOS5=y
+ CONFIG_I2C_MV64XXX=y
++CONFIG_I2C_S3C2410=y
+ CONFIG_I2C_SIRF=y
+ CONFIG_I2C_TEGRA=y
+ CONFIG_SPI=y
+@@ -231,6 +232,7 @@ CONFIG_MFD_AS3722=y
+ CONFIG_MFD_BCM590XX=y
+ CONFIG_MFD_CROS_EC=y
+ CONFIG_MFD_CROS_EC_SPI=y
++CONFIG_MFD_MAX77686=y
+ CONFIG_MFD_MAX8907=y
+ CONFIG_MFD_SEC_CORE=y
+ CONFIG_MFD_PALMAS=y
+@@ -243,6 +245,7 @@ CONFIG_REGULATOR_AS3722=y
+ CONFIG_REGULATOR_BCM590XX=y
+ CONFIG_REGULATOR_GPIO=y
+ CONFIG_REGULATOR_MAX8907=y
++CONFIG_REGULATOR_MAX77686=y
+ CONFIG_REGULATOR_PALMAS=y
+ CONFIG_REGULATOR_S2MPS11=y
+ CONFIG_REGULATOR_S5M8767=y
+-- 
+1.7.9.5
