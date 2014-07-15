@@ -1,145 +1,55 @@
-From: Chander Kashyap <k.chander@samsung.com>
-Subject: Re: [PATCH v2 5/6] ARM: EXYNOS: Fix suspend/resume sequences
-Date: Tue, 15 Jul 2014 23:01:43 +0530
-Message-ID: <CADWw7OgQpJh+5V10QfKQyeUk3kV+AiKJ8yk_+jqW9QywgHAqFA@mail.gmail.com>
-References: <1403618235-19353-1-git-send-email-t.figa@samsung.com>
-	<1403697175-13476-1-git-send-email-t.figa@samsung.com>
-	<53C3A8E8.4090009@gmail.com>
-	<2740751.gTMSlJs48H@amdc1032>
-	<53C51B57.9040404@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v3 1/2] ARM: dts: Add mask-tpm-reset to the device tree
+Date: Wed, 16 Jul 2014 02:35:56 +0900
+Message-ID: <53C5667C.9070207@samsung.com>
+References: <1405420294-9323-1-git-send-email-vikas.sajjan@samsung.com> <1405420294-9323-2-git-send-email-vikas.sajjan@samsung.com> <CAD=FV=XJD=Dt8z5Vmy2wXs4_FWqiW3=AhVw=sSZXFxv31+FHhA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:48113 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932208AbaGORbo (ORCPT
+Received: from mail-pd0-f169.google.com ([209.85.192.169]:39841 "EHLO
+	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932078AbaGORgK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 13:31:44 -0400
-In-Reply-To: <53C51B57.9040404@samsung.com>
+	Tue, 15 Jul 2014 13:36:10 -0400
+Received: by mail-pd0-f169.google.com with SMTP id y10so3090677pdj.14
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jul 2014 10:36:10 -0700 (PDT)
+In-Reply-To: <CAD=FV=XJD=Dt8z5Vmy2wXs4_FWqiW3=AhVw=sSZXFxv31+FHhA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Chander Kashyap <k.chander@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Vikas Sajjan <vikas.sajjan@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Jul 15, 2014 at 5:45 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> On 15.07.2014 13:19, Bartlomiej Zolnierkiewicz wrote:
+On 07/16/14 01:19, Doug Anderson wrote:
+> Vikas,
+>
+> On Tue, Jul 15, 2014 at 3:31 AM, Vikas Sajjan<vikas.sajjan@samsung.com>  wrote:
+>> From: Doug Anderson<dianders@chromium.org>
 >>
->> Hi,
+>> The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
+>> being reset across sleep/wake.  If we don't set it to anything then
+>> the TPM will be reset.  U-Boot will detect this as invalid
+>> and will reset the system on resume time. This GPIO can always be low
+>> and not hurt anything.  It will get pulled back high again during a
+>> normal warm reset when it will default back to an input.
 >>
->> On Monday, July 14, 2014 11:54:48 AM Tomasz Figa wrote:
->>> Hi Kukjin,
->>>
->>> On 25.06.2014 13:52, Tomasz Figa wrote:
->>>> Due to recent consolidation of Exynos suspend and cpuidle code, some
->>>> parts of suspend and resume sequences are executed two times, once from
->>>> exynos_pm_syscore_ops and then from exynos_cpu_pm_notifier() and thus it
->>>> breaks suspend, at least on Exynos4-based boards.
->>>>
->>>> This patch fixes the issue by removing exynos_pm_syscore_ops completely
->>>> and making the code rely only on CPU PM notifier.
->>>>
->>>> Tested on Exynos4210-based Trats board.
->>>>
->>>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
->>>> ---
->>>>  arch/arm/mach-exynos/pm.c | 23 ++++-------------------
->>>>  1 file changed, 4 insertions(+), 19 deletions(-)
->>>>
->>>> Changes since v1:
->>>>  - rebased onto Kukjin's fixes branch.
->>>>
->>>> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
->>>> index 202ca73..f23cc77 100644
->>>> --- a/arch/arm/mach-exynos/pm.c
->>>> +++ b/arch/arm/mach-exynos/pm.c
->>>> @@ -364,11 +364,6 @@ early_wakeup:
->>>>     return;
->>>>  }
->>>>
->>>> -static struct syscore_ops exynos_pm_syscore_ops = {
->>>> -   .suspend        = exynos_pm_suspend,
->>>> -   .resume         = exynos_pm_resume,
->>>> -};
->>>> -
->>>>  /*
->>>>   * Suspend Ops
->>>>   */
->>>> @@ -438,22 +433,13 @@ static int exynos_cpu_pm_notifier(struct notifier_block *self,
->>>>
->>>>     switch (cmd) {
->>>>     case CPU_PM_ENTER:
->>>> -           if (cpu == 0) {
->>>> -                   exynos_pm_central_suspend();
->>>> -                   if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
->>>> -                           exynos_cpu_save_register();
->>>> -           }
->>>> +           if (cpu == 0)
->>>> +                   exynos_pm_suspend();
->>>>             break;
->>>>
->>>>     case CPU_PM_EXIT:
->>>> -           if (cpu == 0) {
->>>> -                   if (read_cpuid_part_number() ==
->>>> -                                   ARM_CPU_PART_CORTEX_A9) {
->>>> -                           scu_enable(S5P_VA_SCU);
->>>> -                           exynos_cpu_restore_register();
->>>> -                   }
->>>> -                   exynos_pm_central_resume();
->>>> -           }
->>>> +           if (cpu == 0)
->>>> +                   exynos_pm_resume();
->>>>             break;
->>>>     }
->>>>
->>>> @@ -478,6 +464,5 @@ void __init exynos_pm_init(void)
->>>>     tmp |= ((0xFF << 8) | (0x1F << 1));
->>>>     __raw_writel(tmp, S5P_WAKEUP_MASK);
->>>>
->>>> -   register_syscore_ops(&exynos_pm_syscore_ops);
->>>>     suspend_set_ops(&exynos_suspend_ops);
->>>>  }
->>>>
->>>
->>> Please consider this patch for next fixes pull request. Without it
->>> suspend/resume is broken for Exynos4 and probably other SoCs. This patch
->>> just restores the sequence from before the patch moving things to PM
->>> notifier, so I don't think it should need any special treatment.
+>> To properly preserve the TPM state across suspend/resume and to make
+>> the chrome U-Boot happy, properly set the GPIO to mask the
+>> reset to the TPM.
 >>
->> Your patch fixes the regression and is a step in the good direction but it
->> seems that it needs a bit more work:
->>
->> Your patch adds to cpuidle AFTR code path restoring of exynos_core_save and
->> exynos5_sys_save registers without saving them first (restoring is done
->> through exynos_pm_resume() which is used by both suspend and cpuidle while
->> saving is done through exynos_pm_prepare() which is used only by suspend).
+>> Signed-off-by: Doug Anderson<dianders@chromium.org>
+>> Signed-off-by: Vikas Sajjan<vikas.sajjan@samsung.com>
+>> ---
+>>   arch/arm/boot/dts/exynos5420-peach-pit.dts |   12 ++++++++++++
+>>   1 file changed, 12 insertions(+)
 >
-> That's right, unfortunately. Interestingly enough AFTR worked fine on
-> Exynos4210 with this patch, but still this needs to be fixed.
+> Looks good to me.  I'll assume Kukjin will add the words
+> "exynos5420-peach-pit" into the patch description when applying.
 >
-> Now, in fact, I recall that Chander had some objections to this patch as
-> well and we decided that he will send another patch to replace mine [1],
-> but I haven't heard from him since that.
+Yes :)
 
-Patch for the same has been already posted.
-Below is the link for the same
-http://www.spinics.net/lists/arm-kernel/msg343402.html
-
-This patch has conflict with Russel's patch, so i will rebase on his
-tree and resend
-
-This patch can be ignored in that case.
-
+> Reviewed-by: Doug Anderson<dianders@chromium.org>
 >
-> Chander, do you have any progress with this? Keep in mind that we need
-> this as an rc fix and we already have rc5, so not much time left. If you
-> don't have time to work on this I can take care of this, proceeding as
-> we discussed in [1].
->
-> [1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/29085/focus=33975
->
-> Best regards,
-> Tomasz
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I've applied this series, thanks.
+
+- Kukjin
