@@ -1,66 +1,57 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/3 v6] spi: s3c64xx: fix broken "cs_gpios" usage in the
- driver
-Date: Tue, 15 Jul 2014 12:00:00 +0100
-Message-ID: <20140715110000.GA17528@sirena.org.uk>
-References: <1405316506-27855-1-git-send-email-ch.naveen@samsung.com>
- <1405316506-27855-2-git-send-email-ch.naveen@samsung.com>
- <20140714172524.GH6800@sirena.org.uk>
- <CAHfPSqAzab931yurSs+3zj=uoFj93FuAdd24AQKm1fZm07Nq8Q@mail.gmail.com>
- <20140714191533.GH6800@sirena.org.uk>
- <CAHfPSqAgCbfL2nkrfSYNJZitT-nGw7+5fpR9FMaabmwVJM6jUQ@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v3 0/4] ARM: EXYNOS: cpuidle: fix AFTR mode on boards with
+ secure firmware enabled
+Date: Tue, 15 Jul 2014 13:00:30 +0200
+Message-ID: <12227526.hKTn2dDzxP@amdc1032>
+References: <1404926274-18411-1-git-send-email-b.zolnierkie@samsung.com>
+ <CAD8Lp46mp-tHcwGpFd0YHRDE4pKWDoPpUvu-Y0QzxSi-jnYtWg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38462 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758656AbaGOLAj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 07:00:39 -0400
-Content-Disposition: inline
-In-Reply-To: <CAHfPSqAgCbfL2nkrfSYNJZitT-nGw7+5fpR9FMaabmwVJM6jUQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAD8Lp46mp-tHcwGpFd0YHRDE4pKWDoPpUvu-Y0QzxSi-jnYtWg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Daniel Drake <drake@endlessm.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, Kukjin Kim <kgene.kim@samsung.com>, cpgs@samsung.com, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
 
+On Monday, July 14, 2014 04:41:25 PM Daniel Drake wrote:
+> Hi Bartlomiej,
 
---yrj/dFKFPuw6o+aM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi,
 
-On Tue, Jul 15, 2014 at 09:33:21AM +0530, Naveen Krishna Ch wrote:
-> On 15 July 2014 00:45, Mark Brown <broonie@kernel.org> wrote:
+> On Wed, Jul 9, 2014 at 6:17 PM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> > This patch series adds support for AFTR idle mode on boards with
+> > secure firmware enabled and allows EXYNOS cpuidle driver usage on
+> > Exynos4x12 SoCs.
+> >
+> > It has been tested on Trats2 board (using Exynos4412 SoC with secure
+> > firmware enabled) on which AFTR mode reduces power consumption by ~12%
+> > when EXYNOS cpuidle driver is enabled (in both cases the default
+> > exynos_defconfig config is used and CPU1-3 are offlined).
+> 
+> Thanks for this, I have tested it on ODROID-U2.
+> 
+> I don't have any equipment to measure the power usage, but after
+> offlining CPUs 1,2,3 via sysfs "online" file, a printk I added
+> confirms that the system is going to enter aftr mode, and system
+> stability seems as good as ever.
 
-> > The problem isn't what you're trying to do, the problem is verifying
-> > that it has been done correctly - making sure that everything has been
-> > accounted for in the change itself.
+Thank you for testing!
 
-> Understand your concern. I will try to get it tested on as many platforms.
+> Is there any automatic way that the cpus should be offlined, or is the
+> intention that it must be done "by hand" like this?
 
-That's useful, but please note that it's mainly a code review thing.
+AFAIK Android kernel disables unused CPUs by itself.  There is also
+ongoing work on Exynos coupled cpuidle driver for upstream kernels
+which will handle offlining of CPUs for AFTR mode transparently to
+the kernel (currently only Exynos4210 SoC is supported by the driver
+posted by Daniel Lezcano, we are working on Exynos3250 SoC support
+and once it is done we might try to also do Exynos4x12 SoCs version).
 
---yrj/dFKFPuw6o+aM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTxQmtAAoJELSic+t+oim9dB0P/jebDkqiuuUfanpDMmS362hr
-+VLGU0tQ0QKE1cCyDJaCPGGdRnEBuWEDWqA0LHc4YNoUJ/6yjhTcLMRdPXabk0DN
-A8FBeICkOIt6vzVzDokblHB80t5a4vCiKSDD6htgOyZ+Ux5bfQut3BoEKUwwWcgq
-6MCPymc98L/C+xb3Dq4pMD4PTwd16DKptRt/x/7FFjVbtMQOdAZ8GeTNu88lSEJ4
-3jE2W12WfLbrLiZoQWYVLBOi/XntTYQI+hQZbjvqxon2Z6C/FA1wLi+p7r3sE9Js
-s7yL8ooKQDGPV6np9TX2hBiJYgi/mXD9f8Ax+L14Ow/mU+MI1HzEVuwiRpdNKdpd
-a0dFpHmE2jPhRrVTfHFwXDf9rV4OrmZlEo1YUrgcb8CTagiSUTJYxDreatI3iTz4
-xHtDvSDABy0pTRirDlR0VVNsGCXDvZwTI8p7MvLhyHK2+4tUl5y6KQurGck9+M5p
-ls4qYccY9r+o3ZLsOamaDbDNNmKjdjykj8e/HUr5mY4avcAS5cx8mgAegdmOKUEN
-7sFWOcDEcJ6FqcKScRLW/uVAiPxOH9Eo7VWSTScer0b6hccG26EoK4trXPTeQ/OT
-9tbtfdSn+3BcDkXRd+N9rSl7FfvsaGMOFqh+CsEBxqvVVMQb7P6RgesFIgV2tgY8
-DhAB9CalbrPHozjS4nzD
-=puuZ
------END PGP SIGNATURE-----
-
---yrj/dFKFPuw6o+aM--
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
