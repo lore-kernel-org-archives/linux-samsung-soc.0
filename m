@@ -1,20 +1,20 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3 1/2] ARM: dts: Add mask-tpm-reset to the device tree
-Date: Tue, 15 Jul 2014 09:19:12 -0700
-Message-ID: <CAD=FV=XJD=Dt8z5Vmy2wXs4_FWqiW3=AhVw=sSZXFxv31+FHhA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] ARM: dts: Add mask-tpm-reset DT node to the exynos5800-peach-pi
+Date: Tue, 15 Jul 2014 09:19:38 -0700
+Message-ID: <CAD=FV=VtrMTbaaN9MA+8=rM23UY9efktsOHab51H=Nm7JVJz4A@mail.gmail.com>
 References: <1405420294-9323-1-git-send-email-vikas.sajjan@samsung.com>
-	<1405420294-9323-2-git-send-email-vikas.sajjan@samsung.com>
+	<1405420294-9323-3-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f171.google.com ([209.85.220.171]:40301 "EHLO
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:47896 "EHLO
 	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751279AbaGOQTN (ORCPT
+	with ESMTP id S1751279AbaGOQTi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 12:19:13 -0400
-Received: by mail-vc0-f171.google.com with SMTP id id10so10710911vcb.16
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jul 2014 09:19:12 -0700 (PDT)
-In-Reply-To: <1405420294-9323-2-git-send-email-vikas.sajjan@samsung.com>
+	Tue, 15 Jul 2014 12:19:38 -0400
+Received: by mail-vc0-f171.google.com with SMTP id id10so10645125vcb.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jul 2014 09:19:38 -0700 (PDT)
+In-Reply-To: <1405420294-9323-3-git-send-email-vikas.sajjan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Vikas Sajjan <vikas.sajjan@samsung.com>
@@ -23,8 +23,6 @@ Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org
 Vikas,
 
 On Tue, Jul 15, 2014 at 3:31 AM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
-> From: Doug Anderson <dianders@chromium.org>
->
 > The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
 > being reset across sleep/wake.  If we don't set it to anything then
 > the TPM will be reset.  U-Boot will detect this as invalid
@@ -36,14 +34,10 @@ On Tue, Jul 15, 2014 at 3:31 AM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
 > the chrome U-Boot happy, properly set the GPIO to mask the
 > reset to the TPM.
 >
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
 > Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos5420-peach-pit.dts |   12 ++++++++++++
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts |   12 ++++++++++++
 >  1 file changed, 12 insertions(+)
-
-Looks good to me.  I'll assume Kukjin will add the words
-"exynos5420-peach-pit" into the patch description when applying.
 
 Reviewed-by: Doug Anderson <dianders@chromium.org>
 
