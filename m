@@ -1,72 +1,141 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: [PATCH v3 2/2] ARM: dts: Add mask-tpm-reset DT node to the
- exynos5800-peach-pi
-Date: Tue, 15 Jul 2014 16:01:34 +0530
-Message-ID: <1405420294-9323-3-git-send-email-vikas.sajjan@samsung.com>
-References: <1405420294-9323-1-git-send-email-vikas.sajjan@samsung.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 1/3 v6] spi: s3c64xx: fix broken "cs_gpios" usage in the driver
+Date: Tue, 15 Jul 2014 12:38:58 +0200
+Message-ID: <CABxcv==yuWJYmSiVV=HELMdwi-8aAG-aiT9o12HUBp8uRaBxkQ@mail.gmail.com>
+References: <1405316506-27855-1-git-send-email-ch.naveen@samsung.com>
+	<1405316506-27855-2-git-send-email-ch.naveen@samsung.com>
+	<20140714172524.GH6800@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:58044 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758727AbaGOKem (ORCPT
+Received: from mail-we0-f180.google.com ([74.125.82.180]:45597 "EHLO
+	mail-we0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758636AbaGOKjA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 06:34:42 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N8R00H7X1DSYD20@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 Jul 2014 19:34:41 +0900 (KST)
-In-reply-to: <1405420294-9323-1-git-send-email-vikas.sajjan@samsung.com>
+	Tue, 15 Jul 2014 06:39:00 -0400
+Received: by mail-we0-f180.google.com with SMTP id k48so4491320wev.25
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jul 2014 03:38:58 -0700 (PDT)
+In-Reply-To: <20140714172524.GH6800@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, linus.walleij@linaro.org, swarren@wwwdotorg.org, olof@lixom.net, thomas.ab@samsung.com, Vikas Sajjan <vikas.sajjan@samsung.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
 
-The mask-tpm-reset GPIO is used by the kernel to prevent the TPM from
-being reset across sleep/wake.  If we don't set it to anything then
-the TPM will be reset.  U-Boot will detect this as invalid
-and will reset the system on resume time. This GPIO can always be low
-and not hurt anything.  It will get pulled back high again during a
-normal warm reset when it will default back to an input.
+Hello Mark,
 
-To properly preserve the TPM state across suspend/resume and to make
-the chrome U-Boot happy, properly set the GPIO to mask the
-reset to the TPM.
+I agree that the commit message could have a better description and I
+understand your concerns. I'm not an SPI expert by any means but I did
+my best to review the patches and provide feedback to Naveen on the
+first iterations of the series.
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
----
- arch/arm/boot/dts/exynos5800-peach-pi.dts |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Mon, Jul 14, 2014 at 7:25 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Mon, Jul 14, 2014 at 11:11:44AM +0530, Naveen Krishna Chatradhi wrote:
+>
+>> @@ -812,6 +800,10 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>>               spi->controller_data = cs;
+>>       }
+>>
+>> +     /* For the non-DT platforms derive chip selects from controller data */
+>> +     if (!spi->dev.of_node)
+>> +             spi->cs_gpio = cs->line;
+>> +
+>>       if (IS_ERR_OR_NULL(cs)) {
+>>               dev_err(&spi->dev, "No CS for SPI(%d)\n", spi->chip_select);
+>>               return -ENODEV;
+>> @@ -819,17 +811,16 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>>
+>>       if (!spi_get_ctldata(spi)) {
+>>               /* Request gpio only if cs line is asserted by gpio pins */
+>> -             if (sdd->cs_gpio) {
+>> -                     err = gpio_request_one(cs->line, GPIOF_OUT_INIT_HIGH,
+>> -                                     dev_name(&spi->dev));
+>> +             if (gpio_is_valid(spi->cs_gpio)) {
+>
+> As previously mentioned gpio_is_valid() is *not* a direct substitute for
+> checking if the boolean flag cs_gpio has been set since 0 is a valid
+> GPIO on at least some of these platforms and as discussed several times
+> already some of the SoCs require the use of the built in chip select.
+>
 
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 28f2a25..0bc97d9 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -209,6 +209,9 @@
- 
- 
- &pinctrl_0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mask_tpm_reset>;
-+
- 	max98091_irq: max98091-irq {
- 		samsung,pins = "gpx0-2";
- 		samsung,pin-function = <0>;
-@@ -216,6 +219,15 @@
- 		samsung,pin-drv = <0>;
- 	};
- 
-+	/* We need GPX0_6 to be low at sleep time; just keep it low always */
-+	mask_tpm_reset: mask-tpm-reset {
-+		samsung,pins = "gpx0-6";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+		samsung,pin-val = <0>;
-+	};
-+
- 	tpm_irq: tpm-irq {
- 		samsung,pins = "gpx1-0";
- 		samsung,pin-function = <0>;
--- 
-1.7.9.5
+Please correct me if I'm wrong but in this case I think that using
+gpio_is_valid(spi->cs_gpio) is the right thing to do. The SPI core
+will set spi->cs_gpio to -ENOENT if a Device Tree didn't use the
+"cs-gpios" property of if the format (explained in
+Documentation/devicetree/bindings/spi/spi-bus.txt) to specify a
+native/built-in line chip select is used:
+
+cs-gpios = <&gpio1 0 0> <0>
+cs0 : &gpio1 0 0
+cs1 : native
+
+So in that case gpio_is_valid(spi->cs_gpio) will return false which is
+what Naveen wants in his patch.
+
+Now, a problem is that in the non-DT case the patch does not rely on
+the spi->cs_gpio value set by the SPI core but instead overwrites it
+with the value in cs->line. So as you said this would have been an
+issue if legacy non-DT board code used s3c64xx_spi_csinfo .line to
+specify that the built-in chip select should be used instead of a
+GPIO.
+
+But looking at the board files that sets struct spi_board_info
+.controller_data to struct s3c64xx_spi_csinfo I see that the the .line
+field is actually used to specify a GPIO pin and not a chip select.
+
+In fact there is only one user in mainline
+(arch/arm/mach-s3c64xx/mach-crag6410-module.c) that do this:
+
+#define S3C64XX_GPC(_nr)      (S3C64XX_GPIO_C_START + (_nr))
+
+static struct s3c64xx_spi_csinfo wm0010_spi_csinfo = {
+        .line = S3C64XX_GPC(3),
+};
+
+static struct spi_board_info wm1253_devs[] = {
+        [0] = {
+                .modalias       = "wm0010",
+                .max_speed_hz   = 26 * 1000 * 1000,
+                .bus_num        = 0,
+                .chip_select    = 0,
+                .mode           = SPI_MODE_0,
+                .irq            = S3C_EINT(4),
+                .controller_data = &wm0010_spi_csinfo,
+                .platform_data = &wm0010_pdata,
+        },
+};
+
+So, the .line field is used to specify a GPIO, not a chip select. So
+gpio_is_valid() should also be used to check that cs->line is a valid
+GPIO. If board file does not want to use a GPIO and wants to use a
+built-in chip select then it should either not use a struct
+s3c64xx_spi_csinfo at all or set .line to -ENOENT in order to be
+consistent with the SPI core.
+
+Now, looking at this I realize that there is a bug in the spi-s3c64xx
+driver since it does not check if spi->controller_data is NULL in the
+non-DT case which I believe it can be true.
+
+> In general it's quite hard to tie the description in the patch to the
+> code changes, not helped by the decision to do separate refactorings
+> like this conversion to gpio_is_valid() as part of the one patch.  The
+> description of the patch now makes some statements about what the
+> problem that's intended to be fixed is but it still doesn't seem
+> entirely clear that everything has been thought through fully and tied
+> to the code.
+>
+
+AFAICT most of the refactoring is actually removing the buggy code
+that was introduced in commit 3146bee ("spi: s3c64xx: Added provision
+for dedicated cs pin"). So maybe Naveen can try doing a new series
+first reverting the offending commit and then on top of that adding
+the support for the generic "cs-gpios" DT property used by the SPI
+core?
+
+As I said before this patch is fixing a bug in the SPI driver, the
+first version of the series was posted on June, 10 so many other
+patches already depend on this fix. So it would be great if we can
+move this forward since this is hurting the platform support as a
+whole.
+
+Thanks a lot and best regards,
+Javier
