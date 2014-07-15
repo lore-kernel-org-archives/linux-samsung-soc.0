@@ -1,14 +1,14 @@
 From: Laura Abbott <lauraa@codeaurora.org>
-Subject: [RESEND][PATCHv2 1/3] of: Split early_init_dt_scan into two parts
-Date: Tue, 15 Jul 2014 10:03:34 -0700
-Message-ID: <1405443816-29917-2-git-send-email-lauraa@codeaurora.org>
+Subject: [RESEND][PATCHv2 3/3] arm: Add devicetree fixup machine function
+Date: Tue, 15 Jul 2014 10:03:36 -0700
+Message-ID: <1405443816-29917-4-git-send-email-lauraa@codeaurora.org>
 References: <1405443816-29917-1-git-send-email-lauraa@codeaurora.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:47901 "EHLO
+Received: from smtp.codeaurora.org ([198.145.11.231]:47920 "EHLO
 	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754434AbaGORDp (ORCPT
+	with ESMTP id S932142AbaGORDq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 13:03:45 -0400
+	Tue, 15 Jul 2014 13:03:46 -0400
 In-Reply-To: <1405443816-29917-1-git-send-email-lauraa@codeaurora.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -16,75 +16,88 @@ To: Tushar Behera <trblinux@gmail.com>, Russell King <linux@arm.linux.org.uk>, K
 Cc: Laura Abbott <lauraa@codeaurora.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, afaerber@suse.de, devicetree@vger.kernel.org
 
 
-Currently, early_init_dt_scan validates the header, sets the
-boot params, and scans for chosen/memory all in one function.
-Split this up into two separate functions (validation/setting
-boot params in one, scanning in another) to allow for
-additional setup between boot params and scanning the memory.
+Commit 1c2f87c22566cd057bc8cde10c37ae9da1a1bb76
+(ARM: 8025/1: Get rid of meminfo) dropped the upper bound on
+the number of memory banks that can be added as there was no
+technical need in the kernel. It turns out though, some bootloaders
+(specifically the arndale-octa exynos boards) may pass invalid memory
+information and rely on the kernel to not parse this data. This is a
+bug in the bootloader but we still need to work around this.
+Work around this by introducing a dt_fixup function. This function
+gets called before the flattened devicetree is scanned for memory
+and the like. In this fixup function for exynos, limit the maximum
+number of memory regions in the devicetree.
 
 Signed-off-by: Laura Abbott <lauraa@codeaurora.org>
 ---
- drivers/of/fdt.c       | 18 +++++++++++++++++-
- include/linux/of_fdt.h |  2 ++
- 2 files changed, 19 insertions(+), 1 deletion(-)
+ arch/arm/include/asm/mach/arch.h |  1 +
+ arch/arm/kernel/devtree.c        |  7 ++++++-
+ arch/arm/mach-exynos/exynos.c    | 10 ++++++++++
+ 3 files changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index c4cddf0..55bfca9 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -922,7 +922,7 @@ int __init __weak early_init_dt_reserve_memory_arch(phys_addr_t base,
- }
+diff --git a/arch/arm/include/asm/mach/arch.h b/arch/arm/include/asm/mach/arch.h
+index 060a75e..0406cb3 100644
+--- a/arch/arm/include/asm/mach/arch.h
++++ b/arch/arm/include/asm/mach/arch.h
+@@ -50,6 +50,7 @@ struct machine_desc {
+ 	struct smp_operations	*smp;		/* SMP operations	*/
+ 	bool			(*smp_init)(void);
+ 	void			(*fixup)(struct tag *, char **);
++	void			(*dt_fixup)(void);
+ 	void			(*init_meminfo)(void);
+ 	void			(*reserve)(void);/* reserve mem blocks	*/
+ 	void			(*map_io)(void);/* IO mapping function	*/
+diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
+index e94a157..893db60 100644
+--- a/arch/arm/kernel/devtree.c
++++ b/arch/arm/kernel/devtree.c
+@@ -212,7 +212,7 @@ const struct machine_desc * __init setup_machine_fdt(unsigned int dt_phys)
+ 	mdesc_best = &__mach_desc_GENERIC_DT;
  #endif
  
--bool __init early_init_dt_scan(void *params)
-+bool __init early_init_dt_verify(void *params)
- {
- 	if (!params)
- 		return false;
-@@ -936,6 +936,12 @@ bool __init early_init_dt_scan(void *params)
- 		return false;
+-	if (!dt_phys || !early_init_dt_scan(phys_to_virt(dt_phys)))
++	if (!dt_phys || !early_init_dt_verify(phys_to_virt(dt_phys)))
+ 		return NULL;
+ 
+ 	mdesc = of_flat_dt_match_machine(mdesc_best, arch_get_next_mach);
+@@ -237,6 +237,11 @@ const struct machine_desc * __init setup_machine_fdt(unsigned int dt_phys)
+ 		dump_machine_table(); /* does not return */
  	}
  
-+	return true;
-+}
++	if (mdesc->dt_fixup)
++		mdesc->dt_fixup();
 +
-+
-+void __init early_init_dt_scan_all(void)
-+{
- 	/* Retrieve various information from the /chosen node */
- 	of_scan_flat_dt(early_init_dt_scan_chosen, boot_command_line);
- 
-@@ -944,7 +950,17 @@ bool __init early_init_dt_scan(void *params)
- 
- 	/* Setup memory, calling early_init_dt_add_memory_arch */
- 	of_scan_flat_dt(early_init_dt_scan_memory, NULL);
-+}
-+
-+bool __init early_init_dt_scan(void *params)
-+{
-+	bool status;
-+
-+	status = early_init_dt_verify(params);
-+	if (!status)
-+		return false;
- 
 +	early_init_dt_scan_all();
- 	return true;
++
+ 	/* Change machine number to match the mdesc we're using */
+ 	__machine_arch_type = mdesc->nr;
+ 
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index f38cf7c..5a7b5c3 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -337,6 +337,15 @@ static void __init exynos_reserve(void)
+ #endif
  }
  
-diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
-index 0511789..d600993 100644
---- a/include/linux/of_fdt.h
-+++ b/include/linux/of_fdt.h
-@@ -73,6 +73,8 @@ extern int early_init_dt_scan_root(unsigned long node, const char *uname,
- 				   int depth, void *data);
- 
- extern bool early_init_dt_scan(void *params);
-+extern bool early_init_dt_verify(void *params);
-+extern void early_init_dt_scan_all(void);
- 
- extern const char *of_flat_dt_get_machine_name(void);
- extern const void *of_flat_dt_match_machine(const void *default_match,
++static void __init exynos_dt_fixup(void)
++{
++	/*
++	 * Some versions of uboot pass garbage entries in the memory node,
++	 * use the old CONFIG_ARM_NR_BANKS
++	 */
++	of_fdt_limit_memory(8);
++}
++
+ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+ 	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
+ 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+@@ -350,4 +359,5 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+ 	.dt_compat	= exynos_dt_compat,
+ 	.restart	= exynos_restart,
+ 	.reserve	= exynos_reserve,
++	.dt_fixup	= exynos_dt_fixup,
+ MACHINE_END
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 hosted by The Linux Foundation
