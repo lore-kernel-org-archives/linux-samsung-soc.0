@@ -1,58 +1,55 @@
-From: Jungseok Lee <jungseoklee85@gmail.com>
-Subject: Re: [PATCH v6 2/7] arm64: Introduce VA_BITS and translation level options
-Date: Tue, 15 Jul 2014 23:53:12 +0900
-Message-ID: <3AF98E68-6818-416A-BC33-57148F1EC246@gmail.com>
-References: <000101cf6dc6$3b93d510$b2bb7f30$@samsung.com> <CAOZdJXWCu-zHuQoAUdiieqsKqCfG9BsZariFqQP=NCgQP-zpNA@mail.gmail.com> <53C43FE3.1050008@amd.com> <20140714224159.GA9829@arm.com>
-Mime-Version: 1.0 (Apple Message framework v1283)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140714224159.GA9829@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Catalin Marinas <Catalin.Marinas@arm.com>
-Cc: Joel Schopp <joel.schopp@amd.com>, Timur Tabi <timur@codeaurora.org>, steve.capper@linaro.org, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <Marc.Zyngier@arm.com>, lkml <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, barami97@gmail.com, kvmarm@lists.cs.columbia.edu, Christoffer Dall <christoffer.dall@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] ARM: config: update multi_v7_defconfig
+Date: Tue, 15 Jul 2014 08:59:45 -0700
+Message-ID: <CAD=FV=UFknqF_Mt7ArytFq4KdDsGDa+JR2KZzX9Xn+if-_Vw4g@mail.gmail.com>
+References: <1405411346-12471-1-git-send-email-ch.naveen@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f179.google.com ([209.85.220.179]:52221 "EHLO
+	mail-vc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753930AbaGOP7q (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Jul 2014 11:59:46 -0400
+Received: by mail-vc0-f179.google.com with SMTP id id10so10566502vcb.38
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jul 2014 08:59:45 -0700 (PDT)
+In-Reply-To: <1405411346-12471-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olofj@chromium.org>, "cpgs ." <cpgs@samsung.com>
 
-On Jul 15, 2014, at 7:41 AM, Catalin Marinas wrote:
-> On Mon, Jul 14, 2014 at 09:38:59PM +0100, Joel Schopp wrote:
->> I agree that these patches would be very useful.  I just rebased my fix
->> for a VTTBR_BADDR_MASK bug on one of these patches that could be pulled
->> out independently.  See
->> https://lists.cs.columbia.edu/pipermail/kvmarm/2014-July/010480.html
->> 
->> The original author Jungseok Lee is no longer available to work on
->> future versions of these patches.  I was thinking that if they didn't
->> get picked up as they are that with the original author's blessing I
->> would pick them up and keep them forward ported/resubmitted.  I have an
->> SOC to test them on.
-> 
-> The patches are pretty good. I'll give them a try tomorrow and if there
-> isn't something fundamental missing I'll consider taking them for 3.17.
+Naveen,
 
-Hi All,
+On Tue, Jul 15, 2014 at 1:02 AM, Naveen Krishna Chatradhi
+<ch.naveen@samsung.com> wrote:
+> Enabled S3C24XX I2C driver and MAX77686 PMIC MFD and Voltage
+> regulator drivers used on Exynos5250 based Snow board.
+>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> ---
+> By enabling the symbols to compile S3C24XX I2C driver, MAX77686 PMIC
+> under MFD and REGULATOR.
+>
+> http://arm-soc.lixom.net/bootlogs/next/next-20140711/snow-multi_v7_defconfig.html
+> The warnings by cpufreq on Snow board are fixed.
+>
+> Booted and verified on  on Exynos5420 based Snow board
+>
+>  arch/arm/configs/multi_v7_defconfig |    3 +++
+>  1 file changed, 3 insertions(+)
 
-If only stage1 side is taken and merged, KVM should be disabled under 4 level
-lookups with the following configuration adjustment. I've tested it on top of
-arm64/for-next/core branch and it works fine.
+Is there a reason not to add more of the max77686 configs?
 
---- a/arch/arm64/kvm/Kconfig
-+++ b/arch/arm64/kvm/Kconfig
-@@ -18,6 +18,7 @@ if VIRTUALIZATION
- 
- config KVM
-        bool "Kernel-based Virtual Machine (KVM) support"
-+       depends on !ARM64_4_LEVELS
-        select MMU_NOTIFIER
-        select PREEMPT_NOTIFIERS
-        select ANON_INODES
++CONFIG_RTC_DRV_MAX77686=y
++CONFIG_COMMON_CLK_MAX77686=y
 
-However, I don't know whether it does make sense or not.
-In other words, stage2 side should be prepared to fully support 4 level lookups.
+I also seems like it would be nice to reconcile this with Sacin's
+latest patch.  For starters I notice that you're missing:
+  CONFIG_EXYNOS5420_MCPM=y
 
-In order to cover all combinations of host and guest, VTTBR_X should be determined
-dynamically as referring to hardware capability. At this point, the patches have
-been revised many times, but they don't have got ACKs from Christoffer and Marc yet.
+I'll leave it up to you to look for other things that might be
+missing.  If some of the things in exynos5_defconfig can't go into the
+multi-config, please explain.
 
-That is why the patches are pending now in the author's point of view.
-
-- Jungseok Lee
+-Doug
