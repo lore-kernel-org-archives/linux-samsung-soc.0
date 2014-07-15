@@ -1,75 +1,66 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Update exynos_defconfig
-Date: Tue, 15 Jul 2014 16:17:36 +0530
-Message-ID: <CAFp+6iED1C1_nxgcCz1PwwXSMfgauzhxjobPR58Xig4KAPqHPQ@mail.gmail.com>
-References: <1404901353-14806-1-git-send-email-sachin.kamat@samsung.com>
-	<CAD=FV=XHFY3OtPg6vttpAkX1he0iS6cFLVC6ESauG+1=gredwA@mail.gmail.com>
-	<CAOesGMgyZN8TApVO0Svi65qLBzV6jnzGNg9UP1U+hRw=uXg1Bw@mail.gmail.com>
-	<CAK5sBcEwehAeDqTG=+sRzw57krnQ=8J3wGGcPsuR7r4VZ3tJVw@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/3 v6] spi: s3c64xx: fix broken "cs_gpios" usage in the
+ driver
+Date: Tue, 15 Jul 2014 12:00:00 +0100
+Message-ID: <20140715110000.GA17528@sirena.org.uk>
+References: <1405316506-27855-1-git-send-email-ch.naveen@samsung.com>
+ <1405316506-27855-2-git-send-email-ch.naveen@samsung.com>
+ <20140714172524.GH6800@sirena.org.uk>
+ <CAHfPSqAzab931yurSs+3zj=uoFj93FuAdd24AQKm1fZm07Nq8Q@mail.gmail.com>
+ <20140714191533.GH6800@sirena.org.uk>
+ <CAHfPSqAgCbfL2nkrfSYNJZitT-nGw7+5fpR9FMaabmwVJM6jUQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f45.google.com ([209.85.216.45]:64284 "EHLO
-	mail-qa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758038AbaGOKrh (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38462 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758656AbaGOLAj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 06:47:37 -0400
-Received: by mail-qa0-f45.google.com with SMTP id cm18so2881008qab.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Jul 2014 03:47:36 -0700 (PDT)
-In-Reply-To: <CAK5sBcEwehAeDqTG=+sRzw57krnQ=8J3wGGcPsuR7r4VZ3tJVw@mail.gmail.com>
+	Tue, 15 Jul 2014 07:00:39 -0400
+Content-Disposition: inline
+In-Reply-To: <CAHfPSqAgCbfL2nkrfSYNJZitT-nGw7+5fpR9FMaabmwVJM6jUQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <spk.linux@gmail.com>
-Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kevin Hilman <khilman@linaro.org>, naveen krishna <ch.naveen@samsung.com>
-
-On Tue, Jul 15, 2014 at 10:01 AM, Sachin Kamat <spk.linux@gmail.com> wrote:
-> On Tue, Jul 15, 2014 at 12:20 AM, Olof Johansson <olof@lixom.net> wrote:
->> On Mon, Jul 14, 2014 at 9:47 AM, Doug Anderson <dianders@chromium.org> wrote:
->>> Sachin,
->>>
->>> On Wed, Jul 9, 2014 at 3:22 AM, Sachin Kamat <sachin.kamat@samsung.com> wrote:
->
-> <snip>
->
->> Gave this a go on my board farm as well, it looks better than before
->> for sure. Boot logs are at:
->> http://arm-soc.lixom.net/bootlogs/misc/v3.16-rc4-360-g1501776
->>
->> There are still some issues to resolve but this is an improvement so
->> let's pick it up and fix with new patches on top.
->
-> Thanks for your review and testing.
->
->>
->> Some of the new warnings are:
->>
->> [WARN] [    0.785066] usb@12000000 supply vdd33 not found, using dummy regulator
->> [WARN] [    0.791071] usb@12000000 supply vdd10 not found, using dummy regulator
->> [WARN] [    0.998658] usb@12400000 supply vdd33 not found, using dummy regulator
->> [WARN] [    1.004049] usb@12400000 supply vdd10 not found, using dummy regulator
->
-> Vivek had submitted patches for the same [1].
-> Vivek, any updates?
->
-> [1] https://lkml.org/lkml/2014/6/25/363
-
-Well, these messages are coming out of DWC3, where VDD3.3 and VDD1.0
-regulators are expected.
-These regulator right now are required by smdk5250, and on boards on
-which the USB Vdd regulators are not
-enabled by default. On peach and snow, this will just be a warning and
-we will go ahead with the probe.
-
-To add the required dt entry for these regulators is in my TODO list,
-but on snow and peach there's no regression
-due to unavailability of these, since the required regulator supplies
-are enabled by default.
-
-[snip]
+To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, Kukjin Kim <kgene.kim@samsung.com>, cpgs@samsung.com, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
 
 
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Jul 15, 2014 at 09:33:21AM +0530, Naveen Krishna Ch wrote:
+> On 15 July 2014 00:45, Mark Brown <broonie@kernel.org> wrote:
+
+> > The problem isn't what you're trying to do, the problem is verifying
+> > that it has been done correctly - making sure that everything has been
+> > accounted for in the change itself.
+
+> Understand your concern. I will try to get it tested on as many platforms.
+
+That's useful, but please note that it's mainly a code review thing.
+
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTxQmtAAoJELSic+t+oim9dB0P/jebDkqiuuUfanpDMmS362hr
++VLGU0tQ0QKE1cCyDJaCPGGdRnEBuWEDWqA0LHc4YNoUJ/6yjhTcLMRdPXabk0DN
+A8FBeICkOIt6vzVzDokblHB80t5a4vCiKSDD6htgOyZ+Ux5bfQut3BoEKUwwWcgq
+6MCPymc98L/C+xb3Dq4pMD4PTwd16DKptRt/x/7FFjVbtMQOdAZ8GeTNu88lSEJ4
+3jE2W12WfLbrLiZoQWYVLBOi/XntTYQI+hQZbjvqxon2Z6C/FA1wLi+p7r3sE9Js
+s7yL8ooKQDGPV6np9TX2hBiJYgi/mXD9f8Ax+L14Ow/mU+MI1HzEVuwiRpdNKdpd
+a0dFpHmE2jPhRrVTfHFwXDf9rV4OrmZlEo1YUrgcb8CTagiSUTJYxDreatI3iTz4
+xHtDvSDABy0pTRirDlR0VVNsGCXDvZwTI8p7MvLhyHK2+4tUl5y6KQurGck9+M5p
+ls4qYccY9r+o3ZLsOamaDbDNNmKjdjykj8e/HUr5mY4avcAS5cx8mgAegdmOKUEN
+7sFWOcDEcJ6FqcKScRLW/uVAiPxOH9Eo7VWSTScer0b6hccG26EoK4trXPTeQ/OT
+9tbtfdSn+3BcDkXRd+N9rSl7FfvsaGMOFqh+CsEBxqvVVMQb7P6RgesFIgV2tgY8
+DhAB9CalbrPHozjS4nzD
+=puuZ
+-----END PGP SIGNATURE-----
+
+--yrj/dFKFPuw6o+aM--
