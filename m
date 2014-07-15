@@ -1,99 +1,142 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Update exynos_defconfig
-Date: Mon, 14 Jul 2014 18:46:07 -0700
-Message-ID: <CAOesGMigojxCjXEEOgf4cwPyhLMSm7mmLHQ5BzhJQcgmzj4B5g@mail.gmail.com>
-References: <1404901353-14806-1-git-send-email-sachin.kamat@samsung.com>
-	<CAD=FV=XHFY3OtPg6vttpAkX1he0iS6cFLVC6ESauG+1=gredwA@mail.gmail.com>
-	<CAOesGMgyZN8TApVO0Svi65qLBzV6jnzGNg9UP1U+hRw=uXg1Bw@mail.gmail.com>
-	<020e01cf9fcc$1c91dda0$55b598e0$@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v5 05/14] drm/exynos: dsi: add pass TE host ops to support
+ LCD I80 interface
+Date: Tue, 15 Jul 2014 11:34:30 +0900
+Message-ID: <53C49336.5050909@samsung.com>
+References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
+ <1404779987-5337-6-git-send-email-yj44.cho@samsung.com>
+ <20140709152207.GA17359@ulmo> <53BDE6FF.1000600@samsung.com>
+ <20140710073826.GB17918@ulmo> <53C3A15F.4020401@samsung.com>
+ <20140714094130.GD9755@ulmo> <53C3B4C8.1070601@samsung.com>
+ <20140714110326.GA31460@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f169.google.com ([209.85.220.169]:49332 "EHLO
-	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753301AbaGOBqI (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:17908 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753670AbaGOCed (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Jul 2014 21:46:08 -0400
-Received: by mail-vc0-f169.google.com with SMTP id hu12so3789891vcb.14
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Jul 2014 18:46:07 -0700 (PDT)
-In-Reply-To: <020e01cf9fcc$1c91dda0$55b598e0$@samsung.com>
+	Mon, 14 Jul 2014 22:34:33 -0400
+In-reply-to: <20140714110326.GA31460@ulmo>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Sachin Kamat <sachin.kamat@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sachin Kamat <spk.linux@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kevin Hilman <khilman@linaro.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: YoungJun Cho <yj44.cho@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com
 
-On Mon, Jul 14, 2014 at 6:28 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Olof Johansson wrote:
+On 2014=EB=85=84 07=EC=9B=94 14=EC=9D=BC 20:03, Thierry Reding wrote:
+> On Mon, Jul 14, 2014 at 07:45:28PM +0900, YoungJun Cho wrote:
+>> On 07/14/2014 06:41 PM, Thierry Reding wrote:
+> [...]
+>>> That said, I've been doing some research and it seems like we have =
+a
+>>> somewhat similar feature on Tegra. What happens there is that there=
+ are
+>>> three GPIO pins that can be repurposed for TE signalling. But as op=
+posed
+>>> to using them as interrupts the display controller can be configure=
+d to
+>>> use them, upon which it will automatically handle the TE signal by
+>>> sending the next frame.
 >>
->> On Mon, Jul 14, 2014 at 9:47 AM, Doug Anderson <dianders@chromium.org> wrote:
->> > Sachin,
->> >
->> > On Wed, Jul 9, 2014 at 3:22 AM, Sachin Kamat <sachin.kamat@samsung.com> wrote:
->> >> Removed outdated configs. Enabled most of the configs used on latest
->> >> Exynos based platforms. This will provide a reference for users trying
->> >> to verify and test various features on Exynos based platforms and also
->> >> help in detecting breakages by widening the build coverage.
->> >>
->> >> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
->> >> ---
->> >>  arch/arm/configs/exynos_defconfig |   56 +++++++++++++++++++++++++++++++------
->> >>  1 file changed, 48 insertions(+), 8 deletions(-)
->> >
->> > How about "CONFIG_CPU_FREQ=y" + related configs?  I'm pretty sure that
->> > CPU_FREQ works on exynos5250-snow and the config didn't hurt last time
->> > I tried on exynos5420/5800.
->> >
->> > Once Javier's changes land we'll need to add max77802 in here, but
->> > it's fine to leave it out until then.
->> >
->> > I'd also wonder about CONFIG_DRM eventually being set for graphics,
->> > but I'll admit to very little knowledge there.  That seems like it
->> > could be in a followup patch.
->> >
->> > I would strongly suggest PREMPT_VOLUNTARY=y for now (again in a
->> > separate patch).  With your config and 'slub_debug=FZPUA' I continue
->> > to get constant errors reported.  These errors are not your fault
->> > (they also show up on tegra boards).  I've already reported this and
->> > it's pretty much gone nowhere.
->> >
->> > Another suggestion is to enable the WiFi that's on ARM Chromebooks:
->> >   CONFIG_MWIFIEX=m
->> >   CONFIG_MWIFIEX_SDIO=m
->> >
->> > ...and that probably means some WiFi configs.  I'm not an expert, but
->> > possibly these.  The first of these appears to be needed to keep shill
->> > (present in the default ChromeOS rootfilesystem) from crashing wildly:
->> >   CONFIG_CFG80211=m
->> >   CONFIG_CFG80211_WEXT=y
->> >   CONFIG_MAC80211=m
->> >
->> >
->> > Possibly you should be enabling the battery eventually since
->> > Chromebooks have these too:
->> >   CONFIG_BATTERY_SBS=m
->> >
->> > You're enabling the adc, but not what's hooked up to it:
->> >   CONFIG_SENSORS_NTC_THERMISTOR=m
->> >
->> > The eMMC that ships on Chromebooks has more than 8 partitions, so you
->> > probably should have this:
->> >   CONFIG_MMC_BLOCK_MINORS=16
->> >
->> > There's a light sensor on most ARM Chromebooks:
->> >   CONFIG_SENSORS_ISL29018=m
->> >
->> >
->> >
->> > All of the above could be in followup patches, so:
->> >
->> > Tested-by: Doug Anderson <dianders@chromium.org>
->> > Reviewed-by: Doug Anderson <dianders@chromium.org>
+>> Could you explain more detail how the Tegra display controller could=
+ be
+>> configured with this GPIO pins?
+>> I have no idea except that the display controller registers this GPI=
+O as an
+>> IRQ.
+>=20
+> On Tegra the display controller has a special register that can be
+> programmed to use one of the three GPIOs as TE signal. Then the displ=
+ay
+> controller can be configured in one-shot (non-continuous) mode, which
+> means that software needs to explicitly set a trigger bit to tell the
+> display controller to send a new frame. If TE signalling is enabled,
+> then the display controller will not immediately send a new frame whe=
+n
+> triggered but wait for signalling of this GPIO.
+>=20
+>>> So we have at least two very different implementations of this on t=
+wo
+>>> different SoCs. Further the specification explicitly recommends usi=
+ng
+>>> the BTA sequence and DSI protocol to wait for TE. So I still think =
+that
+>>> controllers that provide an additional, non-spec compliant method t=
+o
+>>> signal TE should handle it separately rather than within DSI. Other=
+wise
+>>> we essentially need to make the DSI "core" aware of all these quirk=
+s,
+>>> and I'd rather avoid that.
 >>
->> Gave this a go on my board farm as well, it looks better than before
->
-> Sounds good. I will take into fixes for 3.16 and will send out to arm-soc soon.
+>> You mean, the DSI specification guides to use BTA, so it's better to=
+ use
+>> display controller rather than DSIM, right?
+>=20
+> What I'm saying is that there's nothing about a side-band TE wire in =
+the
+> DSI spec. In fact the spec explicitly says that this mechanism of an
+> external TE wire from older protocols (DBI) was replaced by the BTA
+> sequence over the protocol.
+>=20
+> Now, my understanding is that using the BTA sequence over the DSI
+> protocol would introduce some latency and that forces some panel vend=
+ors
+> to still provide a side-band TE wire even in DSI compliant panels. Bu=
+t
+> since this is not part of the specification there is no standard way =
+to
+> do this (as evidenced by Tegra and Exynos). Therefore putting such
+> functionality into the core DSI code is bad.
+>=20
+> But that doesn't mean that you have to put this functionality into th=
+e
+> display controller driver on Exynos. What I'm saying is that it shoul=
+d
+> be handled by the SoC driver rather than the core. Where exactly
+> probably depends on the particular case.
+>=20
+>>>> As Inki commented before, I'll try to use remote-endpoint property=
+ of DSI
+>>>> device node in exynos DSIM driver and call FIMD notifier.
+>>>
+>>> Sounds like it matches what I said above. I'm not a huge fan of
+>>> notifiers, but if it works for you I suppose that's fine. The
+>>> alternative would be to directly call a FIMD function, which is
+>>> somewhat more explicit than a notifier.
+>>
+>> Yes, I also like explicit call, so I want to use dsi_host_ops and ca=
+lls it
+>> in panel. But there is an objection to use dis_host_ops, we think no=
+tifier
+>> in exynos dsim for fimd(display controller).
+>=20
+> There are other ways to explicitly call into the display controller. =
+You
+> could for example get access to the CRTC that DSIM is currently
+> connected to (via exynos_dsi.encoder->crtc) and then cast that to a
+> struct exynos_drm_crtc and call a function to trigger a new frame to =
+be
+> sent (for example exynos_drm_crtc_send_frame()). This assumes that yo=
+u
+> can safely cast struct drm_crtc * to struct exynos_drm_crtc *, but th=
+at
+> shouldn't be a problem.
+>=20
+> With the above, you could make the DSIM handle the TE signal interrup=
+ts
+> and trigger the DC using the new exynos_drm_crtc_send_frame() functio=
+n.
+>=20
 
-3.16 is regressions-only now, so this is 3.17 material now.
+It seems better than the use of notifier. Actually, original patch used
+this way except TE event.
+Mr. Cho, let's use remote-endpoint property and this way instead of
+notifier.
 
+Thanks,
+Inki Dae
 
--Olof
+> Thierry
+>=20
