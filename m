@@ -1,103 +1,94 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 3/3] ARM: DTS: fix the chip select gpios definition in the SPI
- nodes
-Date: Tue, 15 Jul 2014 17:51:00 +0530
-Message-ID: <1405426860-18404-4-git-send-email-ch.naveen@samsung.com>
-References: <1405426860-18404-1-git-send-email-ch.naveen@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/3 v6] spi: s3c64xx: fix broken "cs_gpios" usage in the
+ driver
+Date: Tue, 15 Jul 2014 13:35:57 +0100
+Message-ID: <20140715123557.GB17528@sirena.org.uk>
+References: <1405316506-27855-1-git-send-email-ch.naveen@samsung.com>
+ <1405316506-27855-2-git-send-email-ch.naveen@samsung.com>
+ <20140714172524.GH6800@sirena.org.uk>
+ <CABxcv==yuWJYmSiVV=HELMdwi-8aAG-aiT9o12HUBp8uRaBxkQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="oLBj+sq0vYjzfsbl"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:54446 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759038AbaGOM0U (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38635 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758321AbaGOMgk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 08:26:20 -0400
-In-reply-to: <1405426860-18404-1-git-send-email-ch.naveen@samsung.com>
+	Tue, 15 Jul 2014 08:36:40 -0400
+Content-Disposition: inline
+In-Reply-To: <CABxcv==yuWJYmSiVV=HELMdwi-8aAG-aiT9o12HUBp8uRaBxkQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, spi-devel-general@lists.sourceforge.net, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Naveen Krishna <naveenkrishna.ch@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Jaswinder Singh <jaswinder.singh@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "cpgs ." <cpgs@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>
 
-This patch replaces the "cs-gpio" from "controller-data" node
-as was specified in the old binding and use the standard
-"cs-gpios" property expected by the SPI core as is defined in
-the new binding.
 
-Respective changes are preposed to spi-s3c64xx.c driver.
-@ http://www.spinics.net/lists/linux-samsung-soc/msg32282.html
+--oLBj+sq0vYjzfsbl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Reviewed-by: Doug Anderson <dianders@chromium.org>
-Cc: Tomasz Figa <t.figa@samsung.com>
----
-This change is being reviewed @
+On Tue, Jul 15, 2014 at 12:38:58PM +0200, Javier Martinez Canillas wrote:
+> Hello Mark,
 
-http://www.mail-archive.com/devicetree@vger.kernel.org/msg34498.html
+Don't top post.
 
- arch/arm/boot/dts/exynos4210-smdkv310.dts |    2 +-
- arch/arm/boot/dts/exynos4412-trats2.dts   |    2 +-
- arch/arm/boot/dts/exynos5250-smdk5250.dts |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+> On Mon, Jul 14, 2014 at 7:25 PM, Mark Brown <broonie@kernel.org> wrote:
+> > On Mon, Jul 14, 2014 at 11:11:44AM +0530, Naveen Krishna Chatradhi wrote:
 
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 636d166..676e6e0 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -168,6 +168,7 @@
- 	};
- 
- 	spi_2: spi@13940000 {
-+		cs-gpios = <&gpc1 2 0>;
- 		status = "okay";
- 
- 		w25x80@0 {
-@@ -178,7 +179,6 @@
- 			spi-max-frequency = <1000000>;
- 
- 			controller-data {
--				cs-gpio = <&gpc1 2 0>;
- 				samsung,spi-feedback-delay = <0>;
- 			};
- 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 7787844..11967f4 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -589,6 +589,7 @@
- 	spi_1: spi@13930000 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&spi1_bus>;
-+		cs-gpios = <&gpb 5 0>;
- 		status = "okay";
- 
- 		s5c73m3_spi: s5c73m3 {
-@@ -596,7 +597,6 @@
- 			spi-max-frequency = <50000000>;
- 			reg = <0>;
- 			controller-data {
--				cs-gpio = <&gpb 5 0>;
- 				samsung,spi-feedback-delay = <2>;
- 			};
- 		};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index a794a70..0c6433a 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -316,6 +316,7 @@
- 	};
- 
- 	spi_1: spi@12d30000 {
-+		cs-gpios = <&gpa2 5 0>;
- 		status = "okay";
- 
- 		w25q80bw@0 {
-@@ -326,7 +327,6 @@
- 			spi-max-frequency = <1000000>;
- 
- 			controller-data {
--				cs-gpio = <&gpa2 5 0>;
- 				samsung,spi-feedback-delay = <0>;
- 			};
- 
--- 
-1.7.9.5
+> So, the .line field is used to specify a GPIO, not a chip select. So
+> gpio_is_valid() should also be used to check that cs->line is a valid
+> GPIO. If board file does not want to use a GPIO and wants to use a
+> built-in chip select then it should either not use a struct
+> s3c64xx_spi_csinfo at all or set .line to -ENOENT in order to be
+> consistent with the SPI core.
+
+This sort of "let's make everyone instabuggy" change is not good
+practice, especially when it's mixed in with some other not obviously
+related change, has an unclear benefit and is barely mentioned in the
+commit log - I found this through code review, not through it being a
+clearly intentional and considered part of the change.
+
+> As I said before this patch is fixing a bug in the SPI driver, the
+> first version of the series was posted on June, 10 so many other
+> patches already depend on this fix. So it would be great if we can
+> move this forward since this is hurting the platform support as a
+> whole.
+
+So provide a clear, easy to understand patch series then.  As I've said
+before this series is setting off lots of alarm bells - the large number
+of versions, the difficulty in understanding what it was supposed to do
+both for the overall goal of the series and the individual changes, and
+the fact that several people have found bugs for use cases other than
+your own (all the way up to removing non-DT support) are all saying that
+this is something that needs careful review and also making that review
+difficult.
+
+Code review is an important part of the process, we need people to work
+to make that review easy, address review comments and allow a reasonable
+time for the review to happen (something that's obviously going to be
+quicker with submissions that are easier to review).
+
+--oLBj+sq0vYjzfsbl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTxSAqAAoJELSic+t+oim9jo4P/0IoZoHvgu6y9r8lD2LK/KIX
+QS9HOJidlCM9r7psiKhnMIDVO2voS30Wb/GM7lHtpjir5y5JjAvzvY5fW0mUO6op
+hDdAwJuvb/dlBmVtRRFyESt2xc8dQAoQAGEomVhRWY2HH5qYMNgHXAh+fzEkeIKg
+Iw4x5eUuSIfToKQoZBGLrnVx8OUaNfGtLUdEem5yR4ApgnlBdYcBlLXvoSiB/VHm
+UaPhCRagmhdopK49akONH3b3UjCCy3/L406+yEQL3XMjfYIrRr22Jhsk4owRkNTq
+i0bPvYoyBE30KsKodpzMjG2fGpj79/KRItn9G+1mOIfHv2zEguRo022o/IotKGZd
+S3J80KD4OAwk8LsBYNahHlj9RT2UJ27IWeQ7ovGVFBDHMVZaCCzMqqPP+hKLIl0Y
+bin9alhvpQ7x8TSOtscvhE1SsDL/OTuHtRfMX357nw1T5n2tWVTkZJ31s1js+lBy
+0D4ElMrGVlHyd4x/D4Xl81xyZtCti261cSr3aSUhl5JbERkrp14Iu9lYttBHL+Sr
+BurxmgurcACsNoHxrCfzLPxiutDLNyHdY9JKJz5gLh65gaYyfT36Hd/BA9I+/iyi
+tYxUFdv5K46gimj2plbWxE4NypgZi2xhbZzRFI76+GxQRv2L1Y2o+3ZTRfaeCbTt
+be7eCvGPcQm+UqZan5/H
+=Xxxa
+-----END PGP SIGNATURE-----
+
+--oLBj+sq0vYjzfsbl--
