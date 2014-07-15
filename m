@@ -1,57 +1,131 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 0/3] spi: s3c64xx: fix the driver to use "cs-gpios" property
-Date: Tue, 15 Jul 2014 17:50:57 +0530
-Message-ID: <1405426860-18404-1-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 1/3] spi: s3c64xx: move "cs-gpio" from subnode to SPI DT node
+Date: Tue, 15 Jul 2014 17:50:58 +0530
+Message-ID: <1405426860-18404-2-git-send-email-ch.naveen@samsung.com>
+References: <1405426860-18404-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:21173 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758321AbaGOMYy (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:14910 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758981AbaGOMZV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 08:24:54 -0400
+	Tue, 15 Jul 2014 08:25:21 -0400
+In-reply-to: <1405426860-18404-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, broonie@kernel.org, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>
 
-Current SPI core has generic implementation for configuring
-the Chip select gpios during .setup() & .cleanup(). By modifying
-the spi-s3c64xx.c driver to expect the "cs-gpios" property in SPI
-device node instead of the subnode "controller-data".
+This patch modifies the spi-s3c64xx.c driver to fetch the 
+Chip select or Slave select gpio line property "cs-gpios"
+from SPI node instead of "controller_data" subnode.
 
-This way we can avoid parsing the "cs-gpios" in the driver.
+Rename the property "cs-gpio" to "cs-gpios" in accordance
+with the SPI core. Such that s3c64xx.c can use spi->cs_gpio
+instead of parsing the property in the driver.
 
-This patch set also does the following
-1. Validate the "struct s3c64xx_spi_csinfo *cs" object and the
-   CS gpio for both DT and NON-DT before using them.
-2. Correct the dt-bindings for exynos4210-smdkv310.dts, exynos4412-trats2.dts
-   and exynos5250-smdk5250.dts
-3. Updates the DT bindings.
+Update the dt-bindings ion spi/spi-samsung.txt
 
-Note: 
-This patchset is a rework of the changes under review @
-http://www.mail-archive.com/devicetree@vger.kernel.org/msg34501.html
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Tomasz Figa <t.figa@samsung.com>
+---
+This patch is a rework of the change @
+http://www.mail-archive.com/devicetree@vger.kernel.org/msg34500.html
 
-Tested on Exynos5420 and Exynos5250 based Peach PIT, PI and Snow boards
-respectively using the flashrom utility to access SPI flash.
+I'm not sure if i can carry forward the other Signed-offs and Tested-bys
 
-This patchset is needed by the changes
-http://www.gossamer-threads.com/lists/linux/kernel/1951607
+ .../devicetree/bindings/spi/spi-samsung.txt        |   10 +++++-----
+ drivers/spi/spi-s3c64xx.c                          |   18 ++++++++----------
+ 2 files changed, 13 insertions(+), 15 deletions(-)
 
-Tested-by on boards based on Exynos4, S5P, S3C series SoCs
-would be appreciated.
-
-Naveen Krishna Chatradhi (3):
-  spi: s3c64xx: move property "cs-gpio" from controller_data subnode   
-      to SPI DT node
-  spi: s3c64xx: validate s3c64xx_spi_csinfo before using
-  ARM: DTS: fix the chip select gpios definition in the SPI nodes
-
- .../devicetree/bindings/spi/spi-samsung.txt        |   10 ++++----
- arch/arm/boot/dts/exynos4210-smdkv310.dts          |    2 +-
- arch/arm/boot/dts/exynos4412-trats2.dts            |    2 +-
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |    2 +-
- drivers/spi/spi-s3c64xx.c                          |   27 +++++++-------------
- 5 files changed, 17 insertions(+), 26 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+index 655b665..ff3c4c9 100644
+--- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
++++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+@@ -39,15 +39,15 @@ Optional Board Specific Properties:
+ - num-cs: Specifies the number of chip select lines supported. If
+   not specified, the default number of chip select lines is set to 1.
+ 
++- cs-gpios: A gpio specifier that specifies the gpio line used as
++  the slave select line by the spi controller. The format of the gpio
++  specifier depends on the gpio controller (Also read spi-bus.txt).
++
+ SPI Controller specific data in SPI slave nodes:
+ 
+ - The spi slave nodes should provide the following information which is required
+   by the spi controller.
+ 
+-  - cs-gpio: A gpio specifier that specifies the gpio line used as
+-    the slave select line by the spi controller. The format of the gpio
+-    specifier depends on the gpio controller.
+-
+   - samsung,spi-feedback-delay: The sampling phase shift to be applied on the
+     miso line (to account for any lag in the miso line). The following are the
+     valid values.
+@@ -85,6 +85,7 @@ Example:
+ 		#size-cells = <0>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&spi0_bus>;
++		cs-gpios = <&gpa2 5 1 0 3>;
+ 
+ 		w25q80bw@0 {
+ 			#address-cells = <1>;
+@@ -94,7 +95,6 @@ Example:
+ 			spi-max-frequency = <10000>;
+ 
+ 			controller-data {
+-				cs-gpio = <&gpa2 5 1 0 3>;
+ 				samsung,spi-feedback-delay = <0>;
+ 			};
+ 
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 75a5696..72bfba6 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -764,12 +764,6 @@ static struct s3c64xx_spi_csinfo *s3c64xx_get_slave_ctrldata(
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	data_np = of_get_child_by_name(slave_np, "controller-data");
+-	if (!data_np) {
+-		dev_err(&spi->dev, "child node 'controller-data' not found\n");
+-		return ERR_PTR(-EINVAL);
+-	}
+-
+ 	cs = kzalloc(sizeof(*cs), GFP_KERNEL);
+ 	if (!cs) {
+ 		of_node_put(data_np);
+@@ -777,13 +771,17 @@ static struct s3c64xx_spi_csinfo *s3c64xx_get_slave_ctrldata(
+ 	}
+ 
+ 	/* The CS line is asserted/deasserted by the gpio pin */
+-	if (sdd->cs_gpio)
+-		cs->line = of_get_named_gpio(data_np, "cs-gpio", 0);
++	cs->line = spi->cs_gpio;
+ 
+ 	if (!gpio_is_valid(cs->line)) {
+ 		dev_err(&spi->dev, "chip select gpio is not specified or invalid\n");
+ 		kfree(cs);
+-		of_node_put(data_np);
++		return ERR_PTR(-EINVAL);
++	}
++
++	data_np = of_get_child_by_name(slave_np, "controller-data");
++	if (!data_np) {
++		dev_err(&spi->dev, "child node 'controller-data' not found\n");
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+@@ -1077,7 +1075,7 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	sdd->sfr_start = mem_res->start;
+ 	sdd->cs_gpio = true;
+ 	if (pdev->dev.of_node) {
+-		if (!of_find_property(pdev->dev.of_node, "cs-gpio", NULL))
++		if (!of_find_property(pdev->dev.of_node, "cs-gpios", NULL))
+ 			sdd->cs_gpio = false;
+ 
+ 		ret = of_alias_get_id(pdev->dev.of_node, "spi");
 -- 
 1.7.9.5
