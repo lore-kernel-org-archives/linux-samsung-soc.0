@@ -1,177 +1,189 @@
-From: Chander Kashyap <k.chander@samsung.com>
-Subject: Re: [PATCH 2/2] cpuidle: Exynos: fix cpuidle for all states
-Date: Wed, 16 Jul 2014 09:54:32 +0530
-Message-ID: <CADWw7OiBeUACinoe6B-ZCq1bwFcYM-OeMbq7n8K-sOVbAkG7Aw@mail.gmail.com>
-References: <1404225158-8453-1-git-send-email-k.chander@samsung.com>
-	<1404225158-8453-3-git-send-email-k.chander@samsung.com>
-	<53C567B0.6020009@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v5 05/14] drm/exynos: dsi: add pass TE host ops to
+ support LCD I80 interface
+Date: Wed, 16 Jul 2014 09:54:58 +0200
+Message-ID: <20140716075457.GH7978@ulmo>
+References: <1404779987-5337-6-git-send-email-yj44.cho@samsung.com>
+ <20140709152207.GA17359@ulmo> <53BDE6FF.1000600@samsung.com>
+ <20140710073826.GB17918@ulmo> <53C3A15F.4020401@samsung.com>
+ <20140714094130.GD9755@ulmo> <53C3B4C8.1070601@samsung.com>
+ <20140714110326.GA31460@ulmo> <53C49336.5050909@samsung.com>
+ <53C5E20D.5010704@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <53C567B0.6020009@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Chander Kashyap <k.chander@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="===============1223882680=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <53C5E20D.5010704@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Tomasz,
 
-On Tue, Jul 15, 2014 at 11:11 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Chander,
->
-> Please see my comments inline.
->
-> On 01.07.2014 16:32, Chander Kashyap wrote:
->> Pre/post platform specific cpuidle operations are handled by pm_notifier.
->> But these operations are not same for all cpuidle states. Handle this by
->> moving cpuidle specific code from pm_notifier to cpuidle specific function.
->>
->> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
->> ---
->>  arch/arm/mach-exynos/common.h    |    2 +-
->>  arch/arm/mach-exynos/pm.c        |   45 ++++++++++----------------------------
->>  drivers/cpuidle/cpuidle-exynos.c |    7 ++++--
->>  3 files changed, 17 insertions(+), 37 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
->> index 1ee9176..7769f58 100644
->> --- a/arch/arm/mach-exynos/common.h
->> +++ b/arch/arm/mach-exynos/common.h
->> @@ -166,7 +166,7 @@ extern int  exynos_cpu_power_state(int cpu);
->>  extern void exynos_cluster_power_down(int cluster);
->>  extern void exynos_cluster_power_up(int cluster);
->>  extern int  exynos_cluster_power_state(int cluster);
->> -extern void exynos_enter_aftr(void);
->> +extern void exynos_enter_aftr(int entering_idle);
->>
->>  extern void s5p_init_cpu(void __iomem *cpuid_addr);
->>  extern unsigned int samsung_rev(void);
->> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
->> index a092cc3..328644f 100644
->> --- a/arch/arm/mach-exynos/pm.c
->> +++ b/arch/arm/mach-exynos/pm.c
->> @@ -188,14 +188,6 @@ static void exynos_cpu_set_boot_vector(long flags)
->>       __raw_writel(flags, EXYNOS_BOOT_VECTOR_FLAG);
->>  }
->>
->> -void exynos_enter_aftr(void)
->> -{
->> -     exynos_set_wakeupmask(0x0000ff3e);
->> -     exynos_cpu_set_boot_vector(S5P_CHECK_AFTR);
->> -     /* Set value of power down register for aftr mode */
->> -     exynos_sys_powerdown_conf(SYS_AFTR);
->> -}
->> -
->>  static int exynos_cpu_suspend(unsigned long arg)
->>  {
->>  #ifdef CONFIG_CACHE_L2X0
->> @@ -386,40 +378,25 @@ static const struct platform_suspend_ops exynos_suspend_ops = {
->>       .valid          = suspend_valid_only_mem,
->>  };
->>
->> -static int exynos_cpu_pm_notifier(struct notifier_block *self,
->> -                               unsigned long cmd, void *v)
->> +void exynos_enter_aftr(int entering_idle)
->>  {
->> -     int cpu = smp_processor_id();
->> -
->> -     switch (cmd) {
->> -     case CPU_PM_ENTER:
->> -             if (cpu == 0)
->> -                     exynos_pm_central_suspend();
->> -             break;
->> -
->> -     case CPU_PM_EXIT:
->> -             if (cpu == 0) {
->> -                     if (read_cpuid_part_number() ==
->> -                                     ARM_CPU_PART_CORTEX_A9)
->> -                             scu_enable(S5P_VA_SCU);
->> -                     exynos_pm_central_resume();
->> -             }
->> -             break;
->> +     if (entering_idle) {
->> +             exynos_set_wakeupmask(0x0000ff3e);
->> +             exynos_cpu_set_boot_vector(S5P_CHECK_AFTR);
->> +             /* Set value of power down register for aftr mode */
->> +             exynos_sys_powerdown_conf(SYS_AFTR);
->> +             exynos_pm_central_suspend();
->> +     } else {
->> +             if (scu_a9_has_base())
->> +                     scu_enable(S5P_VA_SCU);
->> +             exynos_pm_central_resume();
->
-> Hmm. This is not very readable. Basically you have two functions that do
-> completely different things packed into one function. I would suggest
-> moving the calls to cpu_pm_enter/exit() and everything in between to
-> this function then you wouldn't need anything like this and the whole
-> low level logic would be in one place.
->
->>       }
->> -
->> -     return NOTIFY_OK;
->>  }
->>
->> -static struct notifier_block exynos_cpu_pm_notifier_block = {
->> -     .notifier_call = exynos_cpu_pm_notifier,
->> -};
->> -
->>  void __init exynos_pm_init(void)
->>  {
->>       u32 tmp;
->>
->> -     cpu_pm_register_notifier(&exynos_cpu_pm_notifier_block);
->> -
->>       /* Platform-specific GIC callback */
->>       gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
->>
->> diff --git a/drivers/cpuidle/cpuidle-exynos.c b/drivers/cpuidle/cpuidle-exynos.c
->> index 7c01512..1196ca7 100644
->> --- a/drivers/cpuidle/cpuidle-exynos.c
->> +++ b/drivers/cpuidle/cpuidle-exynos.c
->> @@ -18,11 +18,10 @@
->>  #include <asm/suspend.h>
->>  #include <asm/cpuidle.h>
->>
->> -static void (*exynos_enter_aftr)(void);
->> +static void (*exynos_enter_aftr)(int);
->>
->>  static int idle_finisher(unsigned long flags)
->>  {
->> -     exynos_enter_aftr();
->>       cpu_do_idle();
->>
->>       return 1;
->> @@ -32,8 +31,12 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
->>                               struct cpuidle_driver *drv,
->>                               int index)
->>  {
->> +     int entering_idle = true;
->>       cpu_pm_enter();
->> +     exynos_enter_aftr(entering_idle);
->>       cpu_suspend(0, idle_finisher);
->> +     entering_idle = false;
->> +     exynos_enter_aftr(entering_idle);
->
-> This doesn't look good. Couldn't you just have called it with constant
-> arguments? E.g.
->
->         exynos_enter_aftr(true);
->         [...]
->         exynos_enter_aftr(false);
->
-> Well, sorry for late comments, I have missed this series, probably
-> because I'm not on Cc list. Anyway, since this patch will need to be
-> respun anyway, maybe it would be better to use the one I just posted
-> today, which IMHO is a bit cleaner.
+--===============1223882680==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8/pVXlBMPtxfSuJG"
+Content-Disposition: inline
 
-I am fine with this. In that case my patches can be ignored. Also take
-the cleanup patch with yours series.
 
->
-> Best regards,
-> Tomasz
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--8/pVXlBMPtxfSuJG
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jul 16, 2014 at 11:23:09AM +0900, YoungJun Cho wrote:
+> Hi Inki,
+>=20
+> On 07/15/2014 11:34 AM, Inki Dae wrote:
+> >On 2014=EB=85=84 07=EC=9B=94 14=EC=9D=BC 20:03, Thierry Reding wrote:
+> >>On Mon, Jul 14, 2014 at 07:45:28PM +0900, YoungJun Cho wrote:
+> >>>On 07/14/2014 06:41 PM, Thierry Reding wrote:
+> >>[...]
+> >>>>That said, I've been doing some research and it seems like we have a
+> >>>>somewhat similar feature on Tegra. What happens there is that there a=
+re
+> >>>>three GPIO pins that can be repurposed for TE signalling. But as oppo=
+sed
+> >>>>to using them as interrupts the display controller can be configured =
+to
+> >>>>use them, upon which it will automatically handle the TE signal by
+> >>>>sending the next frame.
+> >>>
+> >>>Could you explain more detail how the Tegra display controller could be
+> >>>configured with this GPIO pins?
+> >>>I have no idea except that the display controller registers this GPIO =
+as an
+> >>>IRQ.
+> >>
+> >>On Tegra the display controller has a special register that can be
+> >>programmed to use one of the three GPIOs as TE signal. Then the display
+> >>controller can be configured in one-shot (non-continuous) mode, which
+> >>means that software needs to explicitly set a trigger bit to tell the
+> >>display controller to send a new frame. If TE signalling is enabled,
+> >>then the display controller will not immediately send a new frame when
+> >>triggered but wait for signalling of this GPIO.
+> >>
+> >>>>So we have at least two very different implementations of this on two
+> >>>>different SoCs. Further the specification explicitly recommends using
+> >>>>the BTA sequence and DSI protocol to wait for TE. So I still think th=
+at
+> >>>>controllers that provide an additional, non-spec compliant method to
+> >>>>signal TE should handle it separately rather than within DSI. Otherwi=
+se
+> >>>>we essentially need to make the DSI "core" aware of all these quirks,
+> >>>>and I'd rather avoid that.
+> >>>
+> >>>You mean, the DSI specification guides to use BTA, so it's better to u=
+se
+> >>>display controller rather than DSIM, right?
+> >>
+> >>What I'm saying is that there's nothing about a side-band TE wire in the
+> >>DSI spec. In fact the spec explicitly says that this mechanism of an
+> >>external TE wire from older protocols (DBI) was replaced by the BTA
+> >>sequence over the protocol.
+> >>
+> >>Now, my understanding is that using the BTA sequence over the DSI
+> >>protocol would introduce some latency and that forces some panel vendors
+> >>to still provide a side-band TE wire even in DSI compliant panels. But
+> >>since this is not part of the specification there is no standard way to
+> >>do this (as evidenced by Tegra and Exynos). Therefore putting such
+> >>functionality into the core DSI code is bad.
+> >>
+> >>But that doesn't mean that you have to put this functionality into the
+> >>display controller driver on Exynos. What I'm saying is that it should
+> >>be handled by the SoC driver rather than the core. Where exactly
+> >>probably depends on the particular case.
+> >>
+> >>>>>As Inki commented before, I'll try to use remote-endpoint property o=
+f DSI
+> >>>>>device node in exynos DSIM driver and call FIMD notifier.
+> >>>>
+> >>>>Sounds like it matches what I said above. I'm not a huge fan of
+> >>>>notifiers, but if it works for you I suppose that's fine. The
+> >>>>alternative would be to directly call a FIMD function, which is
+> >>>>somewhat more explicit than a notifier.
+> >>>
+> >>>Yes, I also like explicit call, so I want to use dsi_host_ops and call=
+s it
+> >>>in panel. But there is an objection to use dis_host_ops, we think noti=
+fier
+> >>>in exynos dsim for fimd(display controller).
+> >>
+> >>There are other ways to explicitly call into the display controller. You
+> >>could for example get access to the CRTC that DSIM is currently
+> >>connected to (via exynos_dsi.encoder->crtc) and then cast that to a
+> >>struct exynos_drm_crtc and call a function to trigger a new frame to be
+> >>sent (for example exynos_drm_crtc_send_frame()). This assumes that you
+> >>can safely cast struct drm_crtc * to struct exynos_drm_crtc *, but that
+> >>shouldn't be a problem.
+> >>
+> >>With the above, you could make the DSIM handle the TE signal interrupts
+> >>and trigger the DC using the new exynos_drm_crtc_send_frame() function.
+> >>
+> >
+> >It seems better than the use of notifier. Actually, original patch used
+> >this way except TE event.
+> >Mr. Cho, let's use remote-endpoint property and this way instead of
+> >notifier.
+> >
+>=20
+> The struct exynos_dsi has panel_node, which is valid by
+> exynos_dsi_host_attach() is called from panel, we could use it instead of
+> getting new remote-endpoint node.
+>=20
+> So after called exynos_dsi_host_attach(), the dsi driver could know that =
+the
+> panel supports mipi command mode or video mode,
+> and if the panel is for mipi command mode one, dsi driver gets panel te g=
+pio
+> and registers its irq.
+
+Why does the TE GPIO even need to be in the panel's device tree node?
+Wouldn't it make more sense for it to be in the DSIM node? After all
+that's what the GPIO is connected to, right? Well, at least logically
+if not physically.
+
+Thierry
+
+--8/pVXlBMPtxfSuJG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTxi/RAAoJEN0jrNd/PrOhFBwP/0I8+O8e5l6BhhXE1t9+lfdE
+/s/OmPJe+IiAiDafSV98O2AV5pI6f2UcX52hAgPLVU1E6tZ0dYlR6I675ndeCKSv
++7QHp4+AXtz/9sP3iGKsbVdQtS4Ie89eNgQxMGV4vSyhgy+WoAZRBHtej4b/jxXl
+fgp/2LXko6e7Tf6k9+7Eex7p7gXoNfLkbNomyFr7tewaNS0rNlRbWVgDp8MRZWWt
+Ouq48GpUcICxJ+8/KIEvt9dyFAiSGNS7aqMkypsbDdDI174041PIxMls53HNiO/o
+G4U1eacp3/wtldd2B6bGuiy5y0r1UePlHOpCxuy7iEQkDFxMMl6EouBlVYXiraxW
+M5RCrjdMLVVIMf9LgTm/aRVK84edf71p9EQVQLJJuNW/KpeCSyKeuQJVlnMVIWJX
+RLS6WufZRGHrCu97Ee1Yq9/PaqfJorK0nVc2INQHgDs7ylU8uIJH6YZhlR4SXxu7
+diYfvdg1AlNB3ZfoqNhw0aWgDpYA6QdZhogZs6JtY/HWPFqAGQ46xDzj5OIVkjFt
+K9CpGY3Oh3Hi3TVHC7RyHTHytsVyl3heOzdlty+35/sxrdGR1mecLx2j3Off4q6+
+H9dDI4NmByOmxO6MJlrqZaTYx/Vo9CDtT4ARzavZu1aVEtN+2V8ZK27HY1t/dFo2
+cC3IBJBAXraLUXbeIeQ1
+=v39U
+-----END PGP SIGNATURE-----
+
+--8/pVXlBMPtxfSuJG--
+
+--===============1223882680==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1223882680==--
