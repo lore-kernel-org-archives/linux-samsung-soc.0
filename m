@@ -1,116 +1,177 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [PATCH v5 05/14] drm/exynos: dsi: add pass TE host ops to support
- LCD I80 interface
-Date: Wed, 16 Jul 2014 11:23:09 +0900
-Message-ID: <53C5E20D.5010704@samsung.com>
-References: <1404779987-5337-1-git-send-email-yj44.cho@samsung.com>
- <1404779987-5337-6-git-send-email-yj44.cho@samsung.com>
- <20140709152207.GA17359@ulmo> <53BDE6FF.1000600@samsung.com>
- <20140710073826.GB17918@ulmo> <53C3A15F.4020401@samsung.com>
- <20140714094130.GD9755@ulmo> <53C3B4C8.1070601@samsung.com>
- <20140714110326.GA31460@ulmo> <53C49336.5050909@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: Re: [PATCH] ARM: dts: remove display power domain for exynos5420
+Date: Wed, 16 Jul 2014 07:55:29 +0530
+Message-ID: <CAPdUM4N0UyMzvy4vXrVNu0y60=d6J5Zs-hCcD6u1dvCA7Eu-xg@mail.gmail.com>
+References: <1402313299-18885-1-git-send-email-rahul.sharma@samsung.com>
+	<CAPdUM4OVjRSqVdQDUJZR7vGm1uUEYr31s-tx7Oxs8tM_xc2v7g@mail.gmail.com>
+	<53A12EA3.5010007@samsung.com>
+	<CAPdUM4OK+ATMMRM67dV5JeeTGMu=XA7Gvi7Uif+Hypf3iP+6jg@mail.gmail.com>
+	<CAPdUM4MToVJC5KRS1DUDmYEdUx2PGBE0G1v7p-SGgqpw7SPOhw@mail.gmail.com>
+	<53BC0F8F.4010106@samsung.com>
+	<CAPdUM4NGXDz-bX=qqzC7LXRE5fCapdHGZeUZ29Xov=P7VZykgg@mail.gmail.com>
+	<CAPdUM4P7sijj_-fa_Opuo73ugAW7coUDZ+UnSp_tnjkHacJFVw@mail.gmail.com>
+	<53C5BAD6.5030603@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <53C49336.5050909@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f172.google.com ([74.125.82.172]:57224 "EHLO
+	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754748AbaGPCZb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Jul 2014 22:25:31 -0400
+In-Reply-To: <53C5BAD6.5030603@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, sunil joshi <joshi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-SGkgSW5raSwKCk9uIDA3LzE1LzIwMTQgMTE6MzQgQU0sIElua2kgRGFlIHdyb3RlOgo+IE9uIDIw
-MTTrhYQgMDfsm5QgMTTsnbwgMjA6MDMsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+PiBPbiBNb24s
-IEp1bCAxNCwgMjAxNCBhdCAwNzo0NToyOFBNICswOTAwLCBZb3VuZ0p1biBDaG8gd3JvdGU6Cj4+
-PiBPbiAwNy8xNC8yMDE0IDA2OjQxIFBNLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPj4gWy4uLl0K
-Pj4+PiBUaGF0IHNhaWQsIEkndmUgYmVlbiBkb2luZyBzb21lIHJlc2VhcmNoIGFuZCBpdCBzZWVt
-cyBsaWtlIHdlIGhhdmUgYQo+Pj4+IHNvbWV3aGF0IHNpbWlsYXIgZmVhdHVyZSBvbiBUZWdyYS4g
-V2hhdCBoYXBwZW5zIHRoZXJlIGlzIHRoYXQgdGhlcmUgYXJlCj4+Pj4gdGhyZWUgR1BJTyBwaW5z
-IHRoYXQgY2FuIGJlIHJlcHVycG9zZWQgZm9yIFRFIHNpZ25hbGxpbmcuIEJ1dCBhcyBvcHBvc2Vk
-Cj4+Pj4gdG8gdXNpbmcgdGhlbSBhcyBpbnRlcnJ1cHRzIHRoZSBkaXNwbGF5IGNvbnRyb2xsZXIg
-Y2FuIGJlIGNvbmZpZ3VyZWQgdG8KPj4+PiB1c2UgdGhlbSwgdXBvbiB3aGljaCBpdCB3aWxsIGF1
-dG9tYXRpY2FsbHkgaGFuZGxlIHRoZSBURSBzaWduYWwgYnkKPj4+PiBzZW5kaW5nIHRoZSBuZXh0
-IGZyYW1lLgo+Pj4KPj4+IENvdWxkIHlvdSBleHBsYWluIG1vcmUgZGV0YWlsIGhvdyB0aGUgVGVn
-cmEgZGlzcGxheSBjb250cm9sbGVyIGNvdWxkIGJlCj4+PiBjb25maWd1cmVkIHdpdGggdGhpcyBH
-UElPIHBpbnM/Cj4+PiBJIGhhdmUgbm8gaWRlYSBleGNlcHQgdGhhdCB0aGUgZGlzcGxheSBjb250
-cm9sbGVyIHJlZ2lzdGVycyB0aGlzIEdQSU8gYXMgYW4KPj4+IElSUS4KPj4KPj4gT24gVGVncmEg
-dGhlIGRpc3BsYXkgY29udHJvbGxlciBoYXMgYSBzcGVjaWFsIHJlZ2lzdGVyIHRoYXQgY2FuIGJl
-Cj4+IHByb2dyYW1tZWQgdG8gdXNlIG9uZSBvZiB0aGUgdGhyZWUgR1BJT3MgYXMgVEUgc2lnbmFs
-LiBUaGVuIHRoZSBkaXNwbGF5Cj4+IGNvbnRyb2xsZXIgY2FuIGJlIGNvbmZpZ3VyZWQgaW4gb25l
-LXNob3QgKG5vbi1jb250aW51b3VzKSBtb2RlLCB3aGljaAo+PiBtZWFucyB0aGF0IHNvZnR3YXJl
-IG5lZWRzIHRvIGV4cGxpY2l0bHkgc2V0IGEgdHJpZ2dlciBiaXQgdG8gdGVsbCB0aGUKPj4gZGlz
-cGxheSBjb250cm9sbGVyIHRvIHNlbmQgYSBuZXcgZnJhbWUuIElmIFRFIHNpZ25hbGxpbmcgaXMg
-ZW5hYmxlZCwKPj4gdGhlbiB0aGUgZGlzcGxheSBjb250cm9sbGVyIHdpbGwgbm90IGltbWVkaWF0
-ZWx5IHNlbmQgYSBuZXcgZnJhbWUgd2hlbgo+PiB0cmlnZ2VyZWQgYnV0IHdhaXQgZm9yIHNpZ25h
-bGxpbmcgb2YgdGhpcyBHUElPLgo+Pgo+Pj4+IFNvIHdlIGhhdmUgYXQgbGVhc3QgdHdvIHZlcnkg
-ZGlmZmVyZW50IGltcGxlbWVudGF0aW9ucyBvZiB0aGlzIG9uIHR3bwo+Pj4+IGRpZmZlcmVudCBT
-b0NzLiBGdXJ0aGVyIHRoZSBzcGVjaWZpY2F0aW9uIGV4cGxpY2l0bHkgcmVjb21tZW5kcyB1c2lu
-Zwo+Pj4+IHRoZSBCVEEgc2VxdWVuY2UgYW5kIERTSSBwcm90b2NvbCB0byB3YWl0IGZvciBURS4g
-U28gSSBzdGlsbCB0aGluayB0aGF0Cj4+Pj4gY29udHJvbGxlcnMgdGhhdCBwcm92aWRlIGFuIGFk
-ZGl0aW9uYWwsIG5vbi1zcGVjIGNvbXBsaWFudCBtZXRob2QgdG8KPj4+PiBzaWduYWwgVEUgc2hv
-dWxkIGhhbmRsZSBpdCBzZXBhcmF0ZWx5IHJhdGhlciB0aGFuIHdpdGhpbiBEU0kuIE90aGVyd2lz
-ZQo+Pj4+IHdlIGVzc2VudGlhbGx5IG5lZWQgdG8gbWFrZSB0aGUgRFNJICJjb3JlIiBhd2FyZSBv
-ZiBhbGwgdGhlc2UgcXVpcmtzLAo+Pj4+IGFuZCBJJ2QgcmF0aGVyIGF2b2lkIHRoYXQuCj4+Pgo+
-Pj4gWW91IG1lYW4sIHRoZSBEU0kgc3BlY2lmaWNhdGlvbiBndWlkZXMgdG8gdXNlIEJUQSwgc28g
-aXQncyBiZXR0ZXIgdG8gdXNlCj4+PiBkaXNwbGF5IGNvbnRyb2xsZXIgcmF0aGVyIHRoYW4gRFNJ
-TSwgcmlnaHQ/Cj4+Cj4+IFdoYXQgSSdtIHNheWluZyBpcyB0aGF0IHRoZXJlJ3Mgbm90aGluZyBh
-Ym91dCBhIHNpZGUtYmFuZCBURSB3aXJlIGluIHRoZQo+PiBEU0kgc3BlYy4gSW4gZmFjdCB0aGUg
-c3BlYyBleHBsaWNpdGx5IHNheXMgdGhhdCB0aGlzIG1lY2hhbmlzbSBvZiBhbgo+PiBleHRlcm5h
-bCBURSB3aXJlIGZyb20gb2xkZXIgcHJvdG9jb2xzIChEQkkpIHdhcyByZXBsYWNlZCBieSB0aGUg
-QlRBCj4+IHNlcXVlbmNlIG92ZXIgdGhlIHByb3RvY29sLgo+Pgo+PiBOb3csIG15IHVuZGVyc3Rh
-bmRpbmcgaXMgdGhhdCB1c2luZyB0aGUgQlRBIHNlcXVlbmNlIG92ZXIgdGhlIERTSQo+PiBwcm90
-b2NvbCB3b3VsZCBpbnRyb2R1Y2Ugc29tZSBsYXRlbmN5IGFuZCB0aGF0IGZvcmNlcyBzb21lIHBh
-bmVsIHZlbmRvcnMKPj4gdG8gc3RpbGwgcHJvdmlkZSBhIHNpZGUtYmFuZCBURSB3aXJlIGV2ZW4g
-aW4gRFNJIGNvbXBsaWFudCBwYW5lbHMuIEJ1dAo+PiBzaW5jZSB0aGlzIGlzIG5vdCBwYXJ0IG9m
-IHRoZSBzcGVjaWZpY2F0aW9uIHRoZXJlIGlzIG5vIHN0YW5kYXJkIHdheSB0bwo+PiBkbyB0aGlz
-IChhcyBldmlkZW5jZWQgYnkgVGVncmEgYW5kIEV4eW5vcykuIFRoZXJlZm9yZSBwdXR0aW5nIHN1
-Y2gKPj4gZnVuY3Rpb25hbGl0eSBpbnRvIHRoZSBjb3JlIERTSSBjb2RlIGlzIGJhZC4KPj4KPj4g
-QnV0IHRoYXQgZG9lc24ndCBtZWFuIHRoYXQgeW91IGhhdmUgdG8gcHV0IHRoaXMgZnVuY3Rpb25h
-bGl0eSBpbnRvIHRoZQo+PiBkaXNwbGF5IGNvbnRyb2xsZXIgZHJpdmVyIG9uIEV4eW5vcy4gV2hh
-dCBJJ20gc2F5aW5nIGlzIHRoYXQgaXQgc2hvdWxkCj4+IGJlIGhhbmRsZWQgYnkgdGhlIFNvQyBk
-cml2ZXIgcmF0aGVyIHRoYW4gdGhlIGNvcmUuIFdoZXJlIGV4YWN0bHkKPj4gcHJvYmFibHkgZGVw
-ZW5kcyBvbiB0aGUgcGFydGljdWxhciBjYXNlLgo+Pgo+Pj4+PiBBcyBJbmtpIGNvbW1lbnRlZCBi
-ZWZvcmUsIEknbGwgdHJ5IHRvIHVzZSByZW1vdGUtZW5kcG9pbnQgcHJvcGVydHkgb2YgRFNJCj4+
-Pj4+IGRldmljZSBub2RlIGluIGV4eW5vcyBEU0lNIGRyaXZlciBhbmQgY2FsbCBGSU1EIG5vdGlm
-aWVyLgo+Pj4+Cj4+Pj4gU291bmRzIGxpa2UgaXQgbWF0Y2hlcyB3aGF0IEkgc2FpZCBhYm92ZS4g
-SSdtIG5vdCBhIGh1Z2UgZmFuIG9mCj4+Pj4gbm90aWZpZXJzLCBidXQgaWYgaXQgd29ya3MgZm9y
-IHlvdSBJIHN1cHBvc2UgdGhhdCdzIGZpbmUuIFRoZQo+Pj4+IGFsdGVybmF0aXZlIHdvdWxkIGJl
-IHRvIGRpcmVjdGx5IGNhbGwgYSBGSU1EIGZ1bmN0aW9uLCB3aGljaCBpcwo+Pj4+IHNvbWV3aGF0
-IG1vcmUgZXhwbGljaXQgdGhhbiBhIG5vdGlmaWVyLgo+Pj4KPj4+IFllcywgSSBhbHNvIGxpa2Ug
-ZXhwbGljaXQgY2FsbCwgc28gSSB3YW50IHRvIHVzZSBkc2lfaG9zdF9vcHMgYW5kIGNhbGxzIGl0
-Cj4+PiBpbiBwYW5lbC4gQnV0IHRoZXJlIGlzIGFuIG9iamVjdGlvbiB0byB1c2UgZGlzX2hvc3Rf
-b3BzLCB3ZSB0aGluayBub3RpZmllcgo+Pj4gaW4gZXh5bm9zIGRzaW0gZm9yIGZpbWQoZGlzcGxh
-eSBjb250cm9sbGVyKS4KPj4KPj4gVGhlcmUgYXJlIG90aGVyIHdheXMgdG8gZXhwbGljaXRseSBj
-YWxsIGludG8gdGhlIGRpc3BsYXkgY29udHJvbGxlci4gWW91Cj4+IGNvdWxkIGZvciBleGFtcGxl
-IGdldCBhY2Nlc3MgdG8gdGhlIENSVEMgdGhhdCBEU0lNIGlzIGN1cnJlbnRseQo+PiBjb25uZWN0
-ZWQgdG8gKHZpYSBleHlub3NfZHNpLmVuY29kZXItPmNydGMpIGFuZCB0aGVuIGNhc3QgdGhhdCB0
-byBhCj4+IHN0cnVjdCBleHlub3NfZHJtX2NydGMgYW5kIGNhbGwgYSBmdW5jdGlvbiB0byB0cmln
-Z2VyIGEgbmV3IGZyYW1lIHRvIGJlCj4+IHNlbnQgKGZvciBleGFtcGxlIGV4eW5vc19kcm1fY3J0
-Y19zZW5kX2ZyYW1lKCkpLiBUaGlzIGFzc3VtZXMgdGhhdCB5b3UKPj4gY2FuIHNhZmVseSBjYXN0
-IHN0cnVjdCBkcm1fY3J0YyAqIHRvIHN0cnVjdCBleHlub3NfZHJtX2NydGMgKiwgYnV0IHRoYXQK
-Pj4gc2hvdWxkbid0IGJlIGEgcHJvYmxlbS4KPj4KPj4gV2l0aCB0aGUgYWJvdmUsIHlvdSBjb3Vs
-ZCBtYWtlIHRoZSBEU0lNIGhhbmRsZSB0aGUgVEUgc2lnbmFsIGludGVycnVwdHMKPj4gYW5kIHRy
-aWdnZXIgdGhlIERDIHVzaW5nIHRoZSBuZXcgZXh5bm9zX2RybV9jcnRjX3NlbmRfZnJhbWUoKSBm
-dW5jdGlvbi4KPj4KPgo+IEl0IHNlZW1zIGJldHRlciB0aGFuIHRoZSB1c2Ugb2Ygbm90aWZpZXIu
-IEFjdHVhbGx5LCBvcmlnaW5hbCBwYXRjaCB1c2VkCj4gdGhpcyB3YXkgZXhjZXB0IFRFIGV2ZW50
-Lgo+IE1yLiBDaG8sIGxldCdzIHVzZSByZW1vdGUtZW5kcG9pbnQgcHJvcGVydHkgYW5kIHRoaXMg
-d2F5IGluc3RlYWQgb2YKPiBub3RpZmllci4KPgoKVGhlIHN0cnVjdCBleHlub3NfZHNpIGhhcyBw
-YW5lbF9ub2RlLCB3aGljaCBpcyB2YWxpZCBieSAKZXh5bm9zX2RzaV9ob3N0X2F0dGFjaCgpIGlz
-IGNhbGxlZCBmcm9tIHBhbmVsLCB3ZSBjb3VsZCB1c2UgaXQgaW5zdGVhZCAKb2YgZ2V0dGluZyBu
-ZXcgcmVtb3RlLWVuZHBvaW50IG5vZGUuCgpTbyBhZnRlciBjYWxsZWQgZXh5bm9zX2RzaV9ob3N0
-X2F0dGFjaCgpLCB0aGUgZHNpIGRyaXZlciBjb3VsZCBrbm93IHRoYXQgCnRoZSBwYW5lbCBzdXBw
-b3J0cyBtaXBpIGNvbW1hbmQgbW9kZSBvciB2aWRlbyBtb2RlLAphbmQgaWYgdGhlIHBhbmVsIGlz
-IGZvciBtaXBpIGNvbW1hbmQgbW9kZSBvbmUsIGRzaSBkcml2ZXIgZ2V0cyBwYW5lbCB0ZSAKZ3Bp
-byBhbmQgcmVnaXN0ZXJzIGl0cyBpcnEuCgpJJ2xsIHRyeS4KClRoYW5rIHlvdS4KQmVzdCByZWdh
-cmRzIFlKCgo+IFRoYW5rcywKPiBJbmtpIERhZQo+Cj4+IFRoaWVycnkKPj4KPgo+CgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Thanks Kukjin,
+
+This is not a regression but Display domain in exynos5420 was never
+tested well before posting this patch in mainline. This is causing problems
+in drm probe deferring due to late init of bridge chip. Domain fails to disable
+after few enable/disable iterations during boot. Without this patch DP also
+fails to sync with video stream after resume from suspend. This patch is a
+blocker for above 2 use cases.
+
+Regards,
+Rahul Sharma.
+
+On 16 July 2014 05:05, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 07/14/14 18:09, Rahul Sharma wrote:
+>>
+>> Hi Kukjin,
+>>
+> Hi Rahul,
+>
+>
+>> Please consider this patch for your branch. This patch is important
+>> for Display for Exynos5 boards.
+>>
+> OK, I will take this for exynos5420 display for 3.17...BTW I'm not sure this
+> is a regression for 3.16 or not...if so, please let me know.
+>
+> Thanks,
+> Kukjin
+>
+>
+>> Regards,
+>> Rahul Sharma.
+>>
+>> On 9 July 2014 17:00, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
+>>>
+>>> Hi Tomasz,
+>>>
+>>> On 8 July 2014 21:04, Tomasz Figa<t.figa@samsung.com>  wrote:
+>>>>
+>>>> Hi Rahul,
+>>>>
+>>>> On 07.07.2014 15:37, Rahul Sharma wrote:
+>>>>>
+>>>>> Hi Andrej, Inki,
+>>>>>
+>>>>> On 18 June 2014 12:06, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
+>>>>>>
+>>>>>> Hi Andrej,
+>>>>>>
+>>>>>> On 18 June 2014 11:46, Andrzej Hajda<a.hajda@samsung.com>  wrote:
+>>>>>>>
+>>>>>>> On 06/17/2014 07:49 AM, Rahul Sharma wrote:
+>>>>>>>>
+>>>>>>>> Hi All,
+>>>>>>>>
+>>>>>>>> Please review this patch.
+>>>>>>>>
+>>>>>>>> Regards,
+>>>>>>>> Rahul Sharma
+>>>>>>>>
+>>>>>>>> On 9 June 2014 16:58, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
+>>>>>>>>>
+>>>>>>>>> Display domain is removed due to instability issues. Explaining
+>>>>>>>>> the problem below:
+>>>>>>>>>
+>>>>>>>>> exynos_init_late triggers the pm_genpd_poweroff_unused which
+>>>>>>>>> powers off the unused power domains. This call hits before
+>>>>>>>>> the trigger to deferred probes.
+>>>>>>>>>
+>>>>>>>>> DRM DP Panel defers the probe due to supply get failure. By the
+>>>>>>>>> time, deferred probe is scheduled again, Display Power Domain is
+>>>>>>>>> powered off by pm_genpd_poweroff_unused.
+>>>>>>>>>
+>>>>>>>>> FIMD and DP drivers are accessing registers during Probe and Bind
+>>>>>>>>> callbacks. If display domain is enabled/disabled around register
+>>>>>>>>> accesses, display domain gets unstable and we are getting Power
+>>>>>>>>> Domain Disable fail notification. Increasing the Timeout also
+>>>>>>>>> didn't help.
+>>>>>>>
+>>>>>>>
+>>>>>>> As I understand the problem is that fimd and dp drivers access hw
+>>>>>>> registers without enabling power domain. So the proper solution is to
+>>>>>>> fix these drivers.
+>>>>>>
+>>>>>>
+>>>>>> That is also a problem but I fixed those accesses in my local kernel
+>>>>>> before
+>>>>>> hitting this issue. If we do register accesses in FIMD/DP probe/bind
+>>>>>> we
+>>>>>> observes "Prefetch abort" exception. But here the problem is that 'DP
+>>>>>> domain disable' starts failing if we enable/disable multiple times.
+>>>>>>
+>>>>>>>
+>>>>>>> Btw. there are already patches removing hw access from probe/bind of
+>>>>>>> fimd. I guess removing also hw access from dp probe/bind could be a
+>>>>>>> good
+>>>>>>> solution.
+>>>>>>
+>>>>>>
+>>>>>> Please let me know the links for posted patches. I will test with
+>>>>>> those patches.
+>>>>>
+>>>>>
+>>>>> Is there any update on this? Please share the patches which fixes the
+>>>>> above issue or avoid the above scenario of multiple PM Domain
+>>>>> enable/disable.
+>>>>> I will test them for exynos5 based boards. Otherwise we should get this
+>>>>> change
+>>>>> merged else display will remain broken for exynos5 based boards.
+>>>>
+>>>>
+>>>> Andrzej is on holidays right now, so he won't be able to reply in this
+>>>> thread until he's back. Here are two patches I was able to find on the
+>>>> related MLs that might be fixing the cause of your issues:
+>>>
+>>>
+>>> Ok. thanks for the update.
+>>>
+>>> We should test with Ajay's patches which includes DP probe deferring
+>>> based on availability of bridge chip. +
+>>>
+>>> few patches which cleanup register access in FIMD and DP probe/bind
+>>> OR
+>>> few patches to enable Display power domain and clocks just before the
+>>> register access. As done in https://lkml.org/lkml/2014/7/4/188.
+>>>
+>>> Later solution results into display power domain enable failure in case
+>>> of DRM
+>>> probe defer.
+>>>
+>>> I am just curious if Andrej has some solution for the first approach
+>>> which can
+>>> be tested for defer probe and S2R scenarios.
+>>>
+>>> Regards,
+>>> Rahul Sharma.
+>>>
+>>>>
+>>>> [PATCH] drm/exynos: remove hardware overlays disable from fimd probe
+>>>>
+>>>> (https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31629.html)
+>>>>
+>>>> [PATCH] drm/exynos: fimd: Keep power enabled during fimd_bind
+>>>> (https://lkml.org/lkml/2014/7/4/188)
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
