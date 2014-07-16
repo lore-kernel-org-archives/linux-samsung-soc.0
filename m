@@ -1,79 +1,128 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v4 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
-Date: Wed, 16 Jul 2014 13:51:40 +0530
-Message-ID: <1405498900-13473-1-git-send-email-gautam.vivek@samsung.com>
-References: <CAODwPW_h2EBKtA+XwEvjCtS=FrcdHOjybwALGugd-ccQ-_vMWw@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RESEND PATCH v2] ARM: exynos4: hotplug: Fix CPU idle clock down after
+ CPU off
+Date: Wed, 16 Jul 2014 10:23:23 +0200
+Message-ID: <1405499003-9975-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:55456 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752536AbaGPIVx (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50363 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751240AbaGPIXm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jul 2014 04:21:53 -0400
-In-Reply-To: <CAODwPW_h2EBKtA+XwEvjCtS=FrcdHOjybwALGugd-ccQ-_vMWw@mail.gmail.com>
+	Wed, 16 Jul 2014 04:23:42 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, kishon@ti.com, kgene.kim@samsung.com, mathias.nyman@intel.com, jwerner@chromium.org, sergei.shtylyov@cogentembedded.com, heikki.krogerus@linux.intel.com, pratyush.anand@st.com, Vivek Gautam <gautam.vivek@samsung.com>
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-The host controller by itself may sometimes need to handle PHY
-and/or calibrate some of the PHY settings to get full support out
-of the PHY controller. The PHY core provides a calibration
-funtionality now to do so.
-Therefore, facilitate getting the two possible PHYs, viz.
-USB 2.0 type (UTMI+) and USB 3.0 type (PIPE3).
+On Exynos4 USE_DELAYED_RESET_ASSERTION must be set in
+ARM_COREx_OPTION register during CPU power down. This is the proper way
+of powering down CPU on Exynos4.
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Additionally on Exynos4212 without this the CPU clock down feature won't
+work after powering down some CPU and the online CPUs will work at full
+frequency chosen by CPUfreq governor.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
 ---
+Changes since v1:
+1. Use delayed reset assertion on all Exynos4 family and all cores, not
+   only on core 1 of Exynos4212.
+2. Rebase on Tomasz Figa's patch:
+   ARM: EXYNOS: Fix core ID used by platsmp and hotplug code
+   http://www.spinics.net/lists/linux-samsung-soc/msg31604.html
+   Tomasz's patch is currently applied to Kukjin's v3.16-samsung-fixes-4
+---
+ arch/arm/mach-exynos/hotplug.c  | 27 +++++++++++++++++++++++++--
+ arch/arm/mach-exynos/regs-pmu.h |  3 +++
+ 2 files changed, 28 insertions(+), 2 deletions(-)
 
-Changes from v3:
- - Modified error message as per review comments from Julius.
-
- drivers/usb/host/xhci-plat.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 1a0cf9f..b1c0364 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -16,6 +16,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/phy/phy.h>
- #include <linux/slab.h>
- #include <linux/usb/xhci_pdriver.h>
+diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+index 920a4baa53cd..e6340b645f9d 100644
+--- a/arch/arm/mach-exynos/hotplug.c
++++ b/arch/arm/mach-exynos/hotplug.c
+@@ -22,7 +22,7 @@
+ #include "common.h"
+ #include "regs-pmu.h"
  
-@@ -180,6 +181,15 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 			goto put_hcd;
- 	}
+-static inline void cpu_leave_lowpower(void)
++static inline void cpu_leave_lowpower(u32 core_id)
+ {
+ 	unsigned int v;
  
-+	/* Get possile USB 2.0 type PHY (UTMI+) available with xhci */
-+	hcd->gen_phy = devm_phy_get(&pdev->dev, "usb2-phy");
-+	if (IS_ERR(hcd->gen_phy)) {
-+		ret = PTR_ERR(hcd->gen_phy);
-+		if (ret != -ENOSYS && ret != -ENODEV)
-+			dev_warn(&pdev->dev,
-+				 "Error retrieving usb2 phy: %d\n", ret);
-+	}
+@@ -36,6 +36,14 @@ static inline void cpu_leave_lowpower(void)
+ 	  : "=&r" (v)
+ 	  : "Ir" (CR_C), "Ir" (0x40)
+ 	  : "cc");
 +
- 	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (ret)
- 		goto disable_clk;
-@@ -209,6 +219,15 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
- 		xhci->shared_hcd->can_do_streams = 1;
- 
-+	/* Get possile USB 3.0 type PHY (PIPE3) available with xhci */
-+	xhci->shared_hcd->gen_phy = devm_phy_get(&pdev->dev, "usb3-phy");
-+	if (IS_ERR(xhci->shared_hcd->gen_phy)) {
-+		ret = PTR_ERR(xhci->shared_hcd->gen_phy);
-+		if (ret != -ENOSYS && ret != -ENODEV)
-+			dev_warn(&pdev->dev,
-+				 "Error retrieving usb3 phy: %d\n", ret);
-+	}
++	if (soc_is_exynos4()) {
++		unsigned int tmp;
 +
- 	ret = usb_add_hcd(xhci->shared_hcd, irq, IRQF_SHARED);
- 	if (ret)
- 		goto put_usb3_hcd;
++		tmp = __raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
++		tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
++		__raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
++	}
+ }
+ 
+ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+@@ -47,6 +55,19 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+ 
+ 		/* Turn the CPU off on next WFI instruction. */
+ 		exynos_cpu_power_down(core_id);
++		if (soc_is_exynos4()) {
++			unsigned int tmp;
++
++			/*
++			 * Exynos 4 SoCs require setting
++			 * USE_DELAYED_RESET_ASSERTION so the CPU idle
++			 * clock down feature could properly detect
++			 * global idle state when CPUx is off.
++			 */
++			tmp = __raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
++			tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
++			__raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
++		}
+ 
+ 		wfi();
+ 
+@@ -76,6 +97,8 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+ void __ref exynos_cpu_die(unsigned int cpu)
+ {
+ 	int spurious = 0;
++	u32 mpidr = cpu_logical_map(cpu);
++	u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+ 
+ 	v7_exit_coherency_flush(louis);
+ 
+@@ -85,7 +108,7 @@ void __ref exynos_cpu_die(unsigned int cpu)
+ 	 * bring this CPU back into the world of cache
+ 	 * coherency, and then restore interrupts
+ 	 */
+-	cpu_leave_lowpower();
++	cpu_leave_lowpower(core_id);
+ 
+ 	if (spurious)
+ 		pr_warn("CPU%u: %u spurious wakeup calls\n", cpu, spurious);
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index 1d13b08708f0..59bd92112842 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -25,6 +25,7 @@
+ 
+ #define S5P_USE_STANDBY_WFI0			(1 << 16)
+ #define S5P_USE_STANDBY_WFE0			(1 << 24)
++#define S5P_USE_DELAYED_RESET_ASSERTION		BIT(12)
+ 
+ #define EXYNOS_SWRESET				S5P_PMUREG(0x0400)
+ #define EXYNOS5440_SWRESET			S5P_PMUREG(0x00C4)
+@@ -111,6 +112,8 @@
+ 			(EXYNOS_ARM_CORE0_CONFIGURATION + (0x80 * (_nr)))
+ #define EXYNOS_ARM_CORE_STATUS(_nr)		\
+ 			(EXYNOS_ARM_CORE_CONFIGURATION(_nr) + 0x4)
++#define EXYNOS_ARM_CORE_OPTION(_nr)		\
++			(EXYNOS_ARM_CORE_CONFIGURATION(_nr) + 0x8)
+ 
+ #define EXYNOS_ARM_COMMON_CONFIGURATION		S5P_PMUREG(0x2500)
+ #define EXYNOS_COMMON_CONFIGURATION(_nr)	\
 -- 
-1.7.10.4
+1.9.1
