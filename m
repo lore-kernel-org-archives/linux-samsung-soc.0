@@ -1,175 +1,175 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: Re: [PATCH] ARM: dts: remove display power domain for exynos5420
-Date: Wed, 16 Jul 2014 07:55:29 +0530
-Message-ID: <CAPdUM4N0UyMzvy4vXrVNu0y60=d6J5Zs-hCcD6u1dvCA7Eu-xg@mail.gmail.com>
-References: <1402313299-18885-1-git-send-email-rahul.sharma@samsung.com>
-	<CAPdUM4OVjRSqVdQDUJZR7vGm1uUEYr31s-tx7Oxs8tM_xc2v7g@mail.gmail.com>
-	<53A12EA3.5010007@samsung.com>
-	<CAPdUM4OK+ATMMRM67dV5JeeTGMu=XA7Gvi7Uif+Hypf3iP+6jg@mail.gmail.com>
-	<CAPdUM4MToVJC5KRS1DUDmYEdUx2PGBE0G1v7p-SGgqpw7SPOhw@mail.gmail.com>
-	<53BC0F8F.4010106@samsung.com>
-	<CAPdUM4NGXDz-bX=qqzC7LXRE5fCapdHGZeUZ29Xov=P7VZykgg@mail.gmail.com>
-	<CAPdUM4P7sijj_-fa_Opuo73ugAW7coUDZ+UnSp_tnjkHacJFVw@mail.gmail.com>
-	<53C5BAD6.5030603@samsung.com>
+From: Chander Kashyap <k.chander@samsung.com>
+Subject: Re: [PATCH 2/2] cpuidle: Exynos: fix cpuidle for all states
+Date: Wed, 16 Jul 2014 09:54:32 +0530
+Message-ID: <CADWw7OiBeUACinoe6B-ZCq1bwFcYM-OeMbq7n8K-sOVbAkG7Aw@mail.gmail.com>
+References: <1404225158-8453-1-git-send-email-k.chander@samsung.com>
+	<1404225158-8453-3-git-send-email-k.chander@samsung.com>
+	<53C567B0.6020009@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f172.google.com ([74.125.82.172]:57224 "EHLO
-	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754748AbaGPCZb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jul 2014 22:25:31 -0400
-In-Reply-To: <53C5BAD6.5030603@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53C567B0.6020009@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Chander Kashyap <k.chander@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, sunil joshi <joshi@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Thanks Kukjin,
+Hi Tomasz,
 
-This is not a regression but Display domain in exynos5420 was never
-tested well before posting this patch in mainline. This is causing problems
-in drm probe deferring due to late init of bridge chip. Domain fails to disable
-after few enable/disable iterations during boot. Without this patch DP also
-fails to sync with video stream after resume from suspend. This patch is a
-blocker for above 2 use cases.
+On Tue, Jul 15, 2014 at 11:11 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Chander,
+>
+> Please see my comments inline.
+>
+> On 01.07.2014 16:32, Chander Kashyap wrote:
+>> Pre/post platform specific cpuidle operations are handled by pm_notifier.
+>> But these operations are not same for all cpuidle states. Handle this by
+>> moving cpuidle specific code from pm_notifier to cpuidle specific function.
+>>
+>> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/common.h    |    2 +-
+>>  arch/arm/mach-exynos/pm.c        |   45 ++++++++++----------------------------
+>>  drivers/cpuidle/cpuidle-exynos.c |    7 ++++--
+>>  3 files changed, 17 insertions(+), 37 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+>> index 1ee9176..7769f58 100644
+>> --- a/arch/arm/mach-exynos/common.h
+>> +++ b/arch/arm/mach-exynos/common.h
+>> @@ -166,7 +166,7 @@ extern int  exynos_cpu_power_state(int cpu);
+>>  extern void exynos_cluster_power_down(int cluster);
+>>  extern void exynos_cluster_power_up(int cluster);
+>>  extern int  exynos_cluster_power_state(int cluster);
+>> -extern void exynos_enter_aftr(void);
+>> +extern void exynos_enter_aftr(int entering_idle);
+>>
+>>  extern void s5p_init_cpu(void __iomem *cpuid_addr);
+>>  extern unsigned int samsung_rev(void);
+>> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+>> index a092cc3..328644f 100644
+>> --- a/arch/arm/mach-exynos/pm.c
+>> +++ b/arch/arm/mach-exynos/pm.c
+>> @@ -188,14 +188,6 @@ static void exynos_cpu_set_boot_vector(long flags)
+>>       __raw_writel(flags, EXYNOS_BOOT_VECTOR_FLAG);
+>>  }
+>>
+>> -void exynos_enter_aftr(void)
+>> -{
+>> -     exynos_set_wakeupmask(0x0000ff3e);
+>> -     exynos_cpu_set_boot_vector(S5P_CHECK_AFTR);
+>> -     /* Set value of power down register for aftr mode */
+>> -     exynos_sys_powerdown_conf(SYS_AFTR);
+>> -}
+>> -
+>>  static int exynos_cpu_suspend(unsigned long arg)
+>>  {
+>>  #ifdef CONFIG_CACHE_L2X0
+>> @@ -386,40 +378,25 @@ static const struct platform_suspend_ops exynos_suspend_ops = {
+>>       .valid          = suspend_valid_only_mem,
+>>  };
+>>
+>> -static int exynos_cpu_pm_notifier(struct notifier_block *self,
+>> -                               unsigned long cmd, void *v)
+>> +void exynos_enter_aftr(int entering_idle)
+>>  {
+>> -     int cpu = smp_processor_id();
+>> -
+>> -     switch (cmd) {
+>> -     case CPU_PM_ENTER:
+>> -             if (cpu == 0)
+>> -                     exynos_pm_central_suspend();
+>> -             break;
+>> -
+>> -     case CPU_PM_EXIT:
+>> -             if (cpu == 0) {
+>> -                     if (read_cpuid_part_number() ==
+>> -                                     ARM_CPU_PART_CORTEX_A9)
+>> -                             scu_enable(S5P_VA_SCU);
+>> -                     exynos_pm_central_resume();
+>> -             }
+>> -             break;
+>> +     if (entering_idle) {
+>> +             exynos_set_wakeupmask(0x0000ff3e);
+>> +             exynos_cpu_set_boot_vector(S5P_CHECK_AFTR);
+>> +             /* Set value of power down register for aftr mode */
+>> +             exynos_sys_powerdown_conf(SYS_AFTR);
+>> +             exynos_pm_central_suspend();
+>> +     } else {
+>> +             if (scu_a9_has_base())
+>> +                     scu_enable(S5P_VA_SCU);
+>> +             exynos_pm_central_resume();
+>
+> Hmm. This is not very readable. Basically you have two functions that do
+> completely different things packed into one function. I would suggest
+> moving the calls to cpu_pm_enter/exit() and everything in between to
+> this function then you wouldn't need anything like this and the whole
+> low level logic would be in one place.
+>
+>>       }
+>> -
+>> -     return NOTIFY_OK;
+>>  }
+>>
+>> -static struct notifier_block exynos_cpu_pm_notifier_block = {
+>> -     .notifier_call = exynos_cpu_pm_notifier,
+>> -};
+>> -
+>>  void __init exynos_pm_init(void)
+>>  {
+>>       u32 tmp;
+>>
+>> -     cpu_pm_register_notifier(&exynos_cpu_pm_notifier_block);
+>> -
+>>       /* Platform-specific GIC callback */
+>>       gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
+>>
+>> diff --git a/drivers/cpuidle/cpuidle-exynos.c b/drivers/cpuidle/cpuidle-exynos.c
+>> index 7c01512..1196ca7 100644
+>> --- a/drivers/cpuidle/cpuidle-exynos.c
+>> +++ b/drivers/cpuidle/cpuidle-exynos.c
+>> @@ -18,11 +18,10 @@
+>>  #include <asm/suspend.h>
+>>  #include <asm/cpuidle.h>
+>>
+>> -static void (*exynos_enter_aftr)(void);
+>> +static void (*exynos_enter_aftr)(int);
+>>
+>>  static int idle_finisher(unsigned long flags)
+>>  {
+>> -     exynos_enter_aftr();
+>>       cpu_do_idle();
+>>
+>>       return 1;
+>> @@ -32,8 +31,12 @@ static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
+>>                               struct cpuidle_driver *drv,
+>>                               int index)
+>>  {
+>> +     int entering_idle = true;
+>>       cpu_pm_enter();
+>> +     exynos_enter_aftr(entering_idle);
+>>       cpu_suspend(0, idle_finisher);
+>> +     entering_idle = false;
+>> +     exynos_enter_aftr(entering_idle);
+>
+> This doesn't look good. Couldn't you just have called it with constant
+> arguments? E.g.
+>
+>         exynos_enter_aftr(true);
+>         [...]
+>         exynos_enter_aftr(false);
+>
+> Well, sorry for late comments, I have missed this series, probably
+> because I'm not on Cc list. Anyway, since this patch will need to be
+> respun anyway, maybe it would be better to use the one I just posted
+> today, which IMHO is a bit cleaner.
 
-Regards,
-Rahul Sharma.
+I am fine with this. In that case my patches can be ignored. Also take
+the cleanup patch with yours series.
 
-On 16 July 2014 05:05, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> On 07/14/14 18:09, Rahul Sharma wrote:
->>
->> Hi Kukjin,
->>
-> Hi Rahul,
 >
->
->> Please consider this patch for your branch. This patch is important
->> for Display for Exynos5 boards.
->>
-> OK, I will take this for exynos5420 display for 3.17...BTW I'm not sure this
-> is a regression for 3.16 or not...if so, please let me know.
->
-> Thanks,
-> Kukjin
->
->
->> Regards,
->> Rahul Sharma.
->>
->> On 9 July 2014 17:00, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
->>>
->>> Hi Tomasz,
->>>
->>> On 8 July 2014 21:04, Tomasz Figa<t.figa@samsung.com>  wrote:
->>>>
->>>> Hi Rahul,
->>>>
->>>> On 07.07.2014 15:37, Rahul Sharma wrote:
->>>>>
->>>>> Hi Andrej, Inki,
->>>>>
->>>>> On 18 June 2014 12:06, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
->>>>>>
->>>>>> Hi Andrej,
->>>>>>
->>>>>> On 18 June 2014 11:46, Andrzej Hajda<a.hajda@samsung.com>  wrote:
->>>>>>>
->>>>>>> On 06/17/2014 07:49 AM, Rahul Sharma wrote:
->>>>>>>>
->>>>>>>> Hi All,
->>>>>>>>
->>>>>>>> Please review this patch.
->>>>>>>>
->>>>>>>> Regards,
->>>>>>>> Rahul Sharma
->>>>>>>>
->>>>>>>> On 9 June 2014 16:58, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
->>>>>>>>>
->>>>>>>>> Display domain is removed due to instability issues. Explaining
->>>>>>>>> the problem below:
->>>>>>>>>
->>>>>>>>> exynos_init_late triggers the pm_genpd_poweroff_unused which
->>>>>>>>> powers off the unused power domains. This call hits before
->>>>>>>>> the trigger to deferred probes.
->>>>>>>>>
->>>>>>>>> DRM DP Panel defers the probe due to supply get failure. By the
->>>>>>>>> time, deferred probe is scheduled again, Display Power Domain is
->>>>>>>>> powered off by pm_genpd_poweroff_unused.
->>>>>>>>>
->>>>>>>>> FIMD and DP drivers are accessing registers during Probe and Bind
->>>>>>>>> callbacks. If display domain is enabled/disabled around register
->>>>>>>>> accesses, display domain gets unstable and we are getting Power
->>>>>>>>> Domain Disable fail notification. Increasing the Timeout also
->>>>>>>>> didn't help.
->>>>>>>
->>>>>>>
->>>>>>> As I understand the problem is that fimd and dp drivers access hw
->>>>>>> registers without enabling power domain. So the proper solution is to
->>>>>>> fix these drivers.
->>>>>>
->>>>>>
->>>>>> That is also a problem but I fixed those accesses in my local kernel
->>>>>> before
->>>>>> hitting this issue. If we do register accesses in FIMD/DP probe/bind
->>>>>> we
->>>>>> observes "Prefetch abort" exception. But here the problem is that 'DP
->>>>>> domain disable' starts failing if we enable/disable multiple times.
->>>>>>
->>>>>>>
->>>>>>> Btw. there are already patches removing hw access from probe/bind of
->>>>>>> fimd. I guess removing also hw access from dp probe/bind could be a
->>>>>>> good
->>>>>>> solution.
->>>>>>
->>>>>>
->>>>>> Please let me know the links for posted patches. I will test with
->>>>>> those patches.
->>>>>
->>>>>
->>>>> Is there any update on this? Please share the patches which fixes the
->>>>> above issue or avoid the above scenario of multiple PM Domain
->>>>> enable/disable.
->>>>> I will test them for exynos5 based boards. Otherwise we should get this
->>>>> change
->>>>> merged else display will remain broken for exynos5 based boards.
->>>>
->>>>
->>>> Andrzej is on holidays right now, so he won't be able to reply in this
->>>> thread until he's back. Here are two patches I was able to find on the
->>>> related MLs that might be fixing the cause of your issues:
->>>
->>>
->>> Ok. thanks for the update.
->>>
->>> We should test with Ajay's patches which includes DP probe deferring
->>> based on availability of bridge chip. +
->>>
->>> few patches which cleanup register access in FIMD and DP probe/bind
->>> OR
->>> few patches to enable Display power domain and clocks just before the
->>> register access. As done in https://lkml.org/lkml/2014/7/4/188.
->>>
->>> Later solution results into display power domain enable failure in case
->>> of DRM
->>> probe defer.
->>>
->>> I am just curious if Andrej has some solution for the first approach
->>> which can
->>> be tested for defer probe and S2R scenarios.
->>>
->>> Regards,
->>> Rahul Sharma.
->>>
->>>>
->>>> [PATCH] drm/exynos: remove hardware overlays disable from fimd probe
->>>>
->>>> (https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg31629.html)
->>>>
->>>> [PATCH] drm/exynos: fimd: Keep power enabled during fimd_bind
->>>> (https://lkml.org/lkml/2014/7/4/188)
->
+> Best regards,
+> Tomasz
 >
 > _______________________________________________
 > linux-arm-kernel mailing list
