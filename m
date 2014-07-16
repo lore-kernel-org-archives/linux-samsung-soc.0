@@ -1,108 +1,39 @@
-From: Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCHv5 3/5] ARM: dts: socfpga: unuse the slot-node and
- deprecated the supports-highspeed for dw-mmc
-Date: Wed, 16 Jul 2014 16:06:09 -0500
-Message-ID: <1405544769.6107.1.camel@linux-builds1>
-References: <1405050587-5577-1-git-send-email-jh80.chung@samsung.com>
-	 <1405050587-5577-4-git-send-email-jh80.chung@samsung.com>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v2] i2c: s3c2410: resume the I2C controller earlier
+Date: Wed, 16 Jul 2014 15:31:54 -0700
+Message-ID: <CAD=FV=W6OCzXOE9gz9qxGggiVeTHiveg7W-1hnF3_-OKy7RLKQ@mail.gmail.com>
+References: <1403654214-25072-1-git-send-email-dianders@chromium.org>
+	<20140716173528.GF2759@katana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1405050587-5577-4-git-send-email-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140716173528.GF2759@katana>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 2014-07-11 at 12:49 +0900, Jaehoon Chung wrote:
-> dw-mmc controller can support multiple slots.
-> But, there are no use-cases anywhere. So we don't need to support the
-> slot-node for dw-mmc controller.
-> And "supports-highspeed" property in dw-mmc is deprecated.
-> "supports-highspeed" property can be replaced to "cap-sd/mmc-highspeed".
-> 
-> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Reviewed-by: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Acked-by: Seungwon Jeon <tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm/boot/dts/socfpga_arria5.dtsi   |    9 +++------
->  arch/arm/boot/dts/socfpga_cyclone5.dtsi |    9 +++------
->  arch/arm/boot/dts/socfpga_vt.dts        |    9 +++------
->  3 files changed, 9 insertions(+), 18 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/socfpga_arria5.dtsi b/arch/arm/boot/dts/socfpga_arria5.dtsi
-> index 12d1c2c..468fc4c 100644
-> --- a/arch/arm/boot/dts/socfpga_arria5.dtsi
-> +++ b/arch/arm/boot/dts/socfpga_arria5.dtsi
-> @@ -29,13 +29,10 @@
->  
->  		dwmmc0@ff704000 {
->  			num-slots = <1>;
-> -			supports-highspeed;
->  			broken-cd;
-> -
-> -			slot@0 {
-> -				reg = <0>;
-> -				bus-width = <4>;
-> -			};
-> +			bus-width = <4>;
-> +			cap-mmc-highspeed;
-> +			cap-sd-highspeed;
->  		};
->  
->  		sysmgr@ffd08000 {
-> diff --git a/arch/arm/boot/dts/socfpga_cyclone5.dtsi b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-> index bf51182..1ee03c4 100644
-> --- a/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-> +++ b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-> @@ -30,13 +30,10 @@
->  
->  		dwmmc0@ff704000 {
->  			num-slots = <1>;
-> -			supports-highspeed;
->  			broken-cd;
-> -
-> -			slot@0 {
-> -				reg = <0>;
-> -				bus-width = <4>;
-> -			};
-> +			bus-width = <4>;
-> +			cap-mmc-highspeed;
-> +			cap-sd-highspeed;
->  		};
->  
->  		ethernet@ff702000 {
-> diff --git a/arch/arm/boot/dts/socfpga_vt.dts b/arch/arm/boot/dts/socfpga_vt.dts
-> index 09792b4..f9345e0 100644
-> --- a/arch/arm/boot/dts/socfpga_vt.dts
-> +++ b/arch/arm/boot/dts/socfpga_vt.dts
-> @@ -43,13 +43,10 @@
->  
->  		dwmmc0@ff704000 {
->  			num-slots = <1>;
-> -			supports-highspeed;
->  			broken-cd;
-> -
-> -			slot@0 {
-> -				reg = <0>;
-> -				bus-width = <4>;
-> -			};
-> +			bus-width = <4>;
-> +			cap-mmc-highspeed;
-> +			cap-sd-highspeed;
->  		};
->  
->  		ethernet@ff700000 {
+Wolfram,
 
-Acked-by: Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+On Wed, Jul 16, 2014 at 10:35 AM, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org> wrote:
+> On Tue, Jun 24, 2014 at 04:56:54PM -0700, Doug Anderson wrote:
+>> From: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>>
+>> When the wake-up is triggered by the PMIC RTC, the RTC driver is trying
+>> to read the PMIC interrupt status over I2C and fails because the I2C
+>> controller is not resumed yet.
+>> Let's resume the I2C controller earlier in the _noirq phase
+>> (as other hardwares are doing), so we can properly get the wake-up
+>> condition.
+>>
+>> Signed-off-by: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>
+> Applied to for-current (because Tomasz said it fixes issues), thanks! If
+> you think the exynos patch of the same style should also be in current,
+> please let me know...
 
-Thanks,
-Dinh
+Thanks!  I don't think the exynos one needs to go into for-current.
+for-next is enough.  :)
 
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-Doug
