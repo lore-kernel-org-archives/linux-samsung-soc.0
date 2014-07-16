@@ -1,63 +1,97 @@
 From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH v2] i2c: s3c2410: resume the I2C controller earlier
-Date: Wed, 16 Jul 2014 19:35:28 +0200
-Message-ID: <20140716173528.GF2759@katana>
-References: <1403654214-25072-1-git-send-email-dianders@chromium.org>
+Subject: Re: [PATCH 1/1] i2c: Kconfig: Enable HSI2C for Exynos5 platform
+Date: Wed, 16 Jul 2014 19:40:02 +0200
+Message-ID: <20140716174002.GG2759@katana>
+References: <1403690523-1863-1-git-send-email-sachin.kamat@samsung.com>
+ <CAD=FV=WzPxT4okEur8C2G=FZK=zq3EsyCv9aAJwZ1PDkfoOcpA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jkO+KyKz7TfD21mV"
+	protocol="application/pgp-signature"; boundary="jt0yj30bxbg11sci"
 Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1403654214-25072-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <CAD=FV=WzPxT4okEur8C2G=FZK=zq3EsyCv9aAJwZ1PDkfoOcpA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <spk.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---jkO+KyKz7TfD21mV
+--jt0yj30bxbg11sci
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 24, 2014 at 04:56:54PM -0700, Doug Anderson wrote:
-> From: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+On Wed, Jun 25, 2014 at 10:55:31AM -0700, Doug Anderson wrote:
+> Sachin,
 >=20
-> When the wake-up is triggered by the PMIC RTC, the RTC driver is trying
-> to read the PMIC interrupt status over I2C and fails because the I2C
-> controller is not resumed yet.
-> Let's resume the I2C controller earlier in the _noirq phase
-> (as other hardwares are doing), so we can properly get the wake-up
-> condition.
+> On Wed, Jun 25, 2014 at 3:02 AM, Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> =
+wrote:
+> > All Exynos5 platforms have HSI2C controllers and are needed by
+> > various IPs connected to the boards based on these SoCs. Thus
+> > select this by default for Exynos5 platforms.
+> >
+> > Signed-off-by: Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> > ---
+> >  drivers/i2c/busses/Kconfig |    4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> > index 9f7d5859cf65..c7918cffe790 100644
+> > --- a/drivers/i2c/busses/Kconfig
+> > +++ b/drivers/i2c/busses/Kconfig
+> > @@ -465,9 +465,9 @@ config I2C_EG20T
+> >  config I2C_EXYNOS5
+> >         tristate "Exynos5 high-speed I2C driver"
+> >         depends on ARCH_EXYNOS5 && OF
+> > +       default y
+> >         help
+> > -         Say Y here to include support for high-speed I2C controller i=
+n the
+> > -         Exynos5 based Samsung SoCs.
+> > +         High-speed I2C controller on Exynos5 based Samsung SoCs.
+> >
+> >  config I2C_GPIO
+> >         tristate "GPIO-based bitbanging I2C"
+> > --
+> > 1.7.9.5
 >=20
-> Signed-off-by: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> This seems reasonable to me and I will also take the blame for
+> suggesting this.  It's hard to imagine running a real exynos5 system
+> without I2C.  One could argue that on an exynos5250 the high speed I2C
+> controller is not mandatory (since all the ports can be muxed to use
+> the old controller) but on newer exynos5 products you're expected to
+> have the main PMIC on one of the i2c ports.  An exynos system without
+> access to its PMIC will just sorta limp by.
+>=20
+> ...but I've added Arnd to this thread as he expressed some
+> reservations about this type of thing, so we'll see what he says.
 
-Applied to for-current (because Tomasz said it fixes issues), thanks! If
-you think the exynos patch of the same style should also be in current,
-please let me know...
+Ping. Arnd? I have no strong opinion and would take this patch...
 
+>=20
+> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
---jkO+KyKz7TfD21mV
+--jt0yj30bxbg11sci
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJTxrfgAAoJEBQN5MwUoCm2csAP/R2yIXJfGbOybLhBnLZ2ntPT
-BeMeENUOjBXYKYzbDbbHiotkTsOV6d51o5+pJjDynREhxTgwJhSgO03QhReEVdGr
-1Y/PdqNgEYXhcKD5ypaIXL1zLHohMSune9RlIksn5WINRo8kwkHKRx1gYUhsYofl
-YFhmRad/yBsmiTOq9tNN9ML1nGJ6eWLevkGQHy5ZS3NaZiiYGC88fHR743By+vYw
-sGOOX/CHVGe62aNi3UVqqO5IZIQOh2/PHCOMdmrrDtpqSqu4JMTLHRxi/ADj98Bo
-7gdOSsIyKBYsb5vSszWna2/mFaNNMb11FlC40WerPAB5VGeYRq/YIC4QtJTtUJrQ
-43X1v1F4W0UACry6NdAxBGwHtTTFXKRotqTQ6xkHKp0ICfpCf4/nO9NZ7/rYg24W
-I2vjTuLJjZ0sBM/R4bB891KAiEFxVkbk5hwl7I+nN9WSpImwAoBgz+8kLxbR2rpe
-6tKlqXstX2E7yTkeZaYQrkHEXmoU7IsYJxj0XNXwKjIENCQcrQatgwwtdjjwRxrT
-pBgg2D08mO/f+fxH94wbPhlXLvc9PWjcxPkSlmwnV+R2MCrJvWopdOS6+VU231UD
-vlUiJvljbQ0r4bdC64LqvJzLK9y9Y9mSmUe2q8Jnu2r8Ik1o3HnidkrrwCWPjBnq
-ldeEZJHD++3fMgd5LIAL
-=mZ1d
+iQIcBAEBAgAGBQJTxrjyAAoJEBQN5MwUoCm2Uv4QAKS4r9+/GtEo8fqCOErZjukD
+YSmEj/qOOcX4oHLnk63hi8yGTNE2LfW+IdfpwhHUbionjGot6QyDm8MxcflMTvv0
+4c4eygRUPKrVEAWBOs738OJwIuP/4+4EcfYfO+3lMpTpHf2B9UJnOpMijRJiICb+
+afbqlNcxtiF4OKzUJ+RpdjCjmoKkNLp3qqt9QWhNvTuWa4g2Ixfzi2AxKs2j+T3u
+JCasptoTVvN11EhTlxSX4NOdSs3rBt3RouatNiCxv1/Nx5aQ7LO296n8yfuZGvyv
+2GgnR1RewJ7P9HJ1vbuFxTluqfjP6ggJtdixjjDGE09HycHN1ttTJ87ukU+WghkZ
+3d3DtGrr0gtQxZZYkJNSnSub64wPBSqhcCA0qyxs3+BaS2yIP3LclCS0ZU3terW9
+hmWOeKCXsJhTZhWU0NPyHzPeklNhFXxmw8zJs3us5aaoZw/D+Nj8Ta+Pmc5g/WNY
++MywQMb6J1bRaGLWFNhsj00qozNGcx1f6CoDIpEjyPAAM55ktcgxMgGWEQaKT80Z
+XseGgAVMJkuza2Qze1hlu5aQpRDDydusG7co9B6z9LgpDB5A1xmQnbRjC67HQC+c
+dIxkAJp0NwfMEnV29LL1kN8EzJ75LXowTR9PyrJ3m7dA0iCwo1TBEZzrIqblLAYx
+96wg8g/IEJUE/zEPGAJ3
+=JyEI
 -----END PGP SIGNATURE-----
 
---jkO+KyKz7TfD21mV--
+--jt0yj30bxbg11sci--
