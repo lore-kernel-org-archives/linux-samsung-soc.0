@@ -1,84 +1,70 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/3] spi: s3c64xx: move "cs-gpio" from subnode to SPI DT
- node
-Date: Wed, 16 Jul 2014 18:09:05 +0100
-Message-ID: <20140716170905.GT17528@sirena.org.uk>
-References: <1405426860-18404-1-git-send-email-ch.naveen@samsung.com>
- <1405426860-18404-2-git-send-email-ch.naveen@samsung.com>
- <53C56520.8030801@samsung.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH v3] i2c: exynos5: Properly use the "noirq" variants of
+ suspend/resume
+Date: Wed, 16 Jul 2014 19:30:35 +0200
+Message-ID: <20140716173035.GE2759@katana>
+References: <1403714360-7581-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dUqh8vgUBVXHzm9w"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40510 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934006AbaGPRJp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jul 2014 13:09:45 -0400
+	protocol="application/pgp-signature"; boundary="gMR3gsNFwZpnI/Ts"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <53C56520.8030801@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1403714360-7581-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jdelvare-l3A5Bk7waGM@public.gmane.org, sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org, standby24x7-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, naveenkrishna.ch@gmail.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, kgene.kim@samsung.com, cpgs@samsung.com, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>
 
 
---dUqh8vgUBVXHzm9w
+--gMR3gsNFwZpnI/Ts
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 15, 2014 at 07:30:08PM +0200, Tomasz Figa wrote:
-> On 15.07.2014 14:20, Naveen Krishna Chatradhi wrote:
+On Wed, Jun 25, 2014 at 09:39:20AM -0700, Doug Anderson wrote:
+> The original code for the exynos i2c controller registered for the
+> "noirq" variants.  However during review feedback it was moved to
+> SIMPLE_DEV_PM_OPS without anyone noticing that it meant we were no
+> longer actually "noirq" (despite functions named
+> exynos5_i2c_suspend_noirq and exynos5_i2c_resume_noirq).
+>=20
+> i2c controllers that might have wakeup sources on them seem to need to
+> resume at noirq time so that the individual drivers can actually read
+> the i2c bus to handle their wakeup.
+>=20
+> NOTE: I took the original review feedback from Wolfram and added
+> poweroff, thaw, freeze, restore.
+>=20
+> This patch has only been compile-tested since I don't have all the
+> patches needed to make my machine using this i2c driver actually
+> suspend/resume.
+>=20
+> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-> >  	/* The CS line is asserted/deasserted by the gpio pin */
-> > -	if (sdd->cs_gpio)
-> > -		cs->line =3D of_get_named_gpio(data_np, "cs-gpio", 0);
-> > +	cs->line =3D spi->cs_gpio;
-> > =20
-> >  	if (!gpio_is_valid(cs->line)) {
+Applied to for-next, thanks!
 
-> This check is wrong when native chip select is used. However I'm not
-> sure how to distinguish this from a situation when invalid GPIO was
-> specified, because cs->line will be -ENOENT in both cases. Mark, any idea=
-s?
 
-Hrm.  I'd *hope* that of_get_named_gpio() would distinguish between the
-property being there but unparsable and the property being absent.  Does
-it not do this?
-
-> > -		if (!of_find_property(pdev->dev.of_node, "cs-gpio", NULL))
-> > +		if (!of_find_property(pdev->dev.of_node, "cs-gpios", NULL))
-> >  			sdd->cs_gpio =3D false;
-
-> What is this boolean flag used for now? If cs->line now either contains
-> a valid GPIO or a negative error, why gpio_is_valid() couldn't be used
-> on it? I believe it was done correctly in previous version.
-
-We ought to handle the errors differently depending on where they came
-=66rom - an unspecified GPIO means use the physical chip select but a GPIO
-we fail to obtain is an error we should handle.
-
---dUqh8vgUBVXHzm9w
+--gMR3gsNFwZpnI/Ts
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
 
-iQIcBAEBAgAGBQJTxrGuAAoJELSic+t+oim9LwoP/R8wzPlGpAG2STM+UebYlxVk
-nSXWfKaaykxsMY0nZqR7F8AmqBhiC9EX0OGSRWFtcs/xH+AbRhEHsx8VtP8oqQz3
-SjhauMBHQcdNC7sYHD+8gle8gNtqYJ5K52a76dy248AzBs5w9NtHSm/Bf14zb2Td
-stKw9ypAzR7bDBa6S1i72apua7cELovpRkW3vFPv+hs0R0dban/ohg9MDblxMMkw
-yHGS81mRWP/tx6z39/v0JiOaQ2U6o8mJ/bKMalhf0JWderInBU3Ym3bheDY+Fpk0
-V/YEuT++944ztci2N9s3E09CdnlNwEIdH0evT0O6RWh6Yu/7jW53Jm6AdeX2U0lI
-foKQAI+noQVIunOZNDJW9R/MGQycZpfAsLJmDK70WIgdhu6/qKWU0cNaB69AKU58
-pnXcYFBMXVfKCt+Lnmvo59ibRybJFsqps/s0O3Cnq2N7Eb7cOLBU6ULc+DY1TGXz
-QD9rf602rBUI8h9tFFGDtF2vAM5Skkfk2E7uDsfuG9877JWtmOBMxEZ3KPzXIb0Q
-olM+Pi2kQndtDt3/IfnJwEO2uykTH9FQjf5FMlvjOnYYYrMHwJk0RHFmSIYIeZ0q
-O17hoM5FcQiW57zE1eL1ab1czE+icnjMMLmoWfM/Q40k6QjBDvlnH970bCMQPYe4
-o8FtDxzUibIe184OFfXi
-=J8YI
+iQIcBAEBAgAGBQJTxra7AAoJEBQN5MwUoCm25cgP/3M4lXDX304klWnf2sddyq/+
+wVtAHSkdsC2igVORMlOPSJftVdffbiFkbkmwvDChP1nGiYu8p5ukmnKjIDA7JOtH
+XxsPj7XykOkt8K1UhP3Bt95ChPZxqFeM/JvxRy4yTfudr64vg3f8iX0PtsdPsTF5
+vRJXb2R2MzOT5cFPPz4n2ScZqCdZUv5ssHrLZUeYX6m3AS2TYlfi7kOi3ov9ciyC
+3mAbrPNmgB/YL6HPFYPcxqLQMuFjAehguyneuEcrKw9nyDZTkYUkHwDpx9QVgfCn
+tEhYUVGx2PV1NQsou3dmMGTOs0dp3rCTVcH/Yn9lUMB7NDVs8sRyUuhfG+r4yDJU
+DeyxLlyxSW5gzE8nZpr3+SurxyoIPP3w41paF6lx1WiLY4W7hXjRp2laesHdH/PB
+xzaJrlyDtOaCigmnX39wk7JsR/CPwzReZJWiAcVJKGOpexJRURjuGwI9ooRtFdAL
+Y+9ZqmyfcIG+ymFazlyXdYWhvdb5f8Ipj/849MZ2GG8k+b7mwGv/IWqhFVg3BuWw
+evScYWJrO13JlFVpDxvYKBXr88jHlS3AVc6T8kXAJUBh3yPm49rXsijXkyfD0obi
+HO7oUnPc3HD2RclFoOJDN0JNaLhxovtCFhuFhgWjvbAjPpec6B7ArdJ/kNpBI4iQ
+3DNeXMR7HmHEekpnhIj6
+=QDTt
 -----END PGP SIGNATURE-----
 
---dUqh8vgUBVXHzm9w--
+--gMR3gsNFwZpnI/Ts--
