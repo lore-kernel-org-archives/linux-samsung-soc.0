@@ -1,135 +1,108 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 00/16] i2c: drop class based instantiaion for selected
- drivers
-Date: Wed, 16 Jul 2014 19:46:05 +0200
-Message-ID: <20140716174604.GI2759@katana>
-References: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
+From: Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCHv5 3/5] ARM: dts: socfpga: unuse the slot-node and
+ deprecated the supports-highspeed for dw-mmc
+Date: Wed, 16 Jul 2014 16:06:09 -0500
+Message-ID: <1405544769.6107.1.camel@linux-builds1>
+References: <1405050587-5577-1-git-send-email-jh80.chung@samsung.com>
+	 <1405050587-5577-4-git-send-email-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6301060798827206376=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-i2c@vger.kernel.org
-Cc: davinci-linux-open-source@linux.davincidsp.com, linux-samsung-soc@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1405050587-5577-4-git-send-email-jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chris Ball <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Fri, 2014-07-11 at 12:49 +0900, Jaehoon Chung wrote:
+> dw-mmc controller can support multiple slots.
+> But, there are no use-cases anywhere. So we don't need to support the
+> slot-node for dw-mmc controller.
+> And "supports-highspeed" property in dw-mmc is deprecated.
+> "supports-highspeed" property can be replaced to "cap-sd/mmc-highspeed".
+> 
+> Signed-off-by: Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Reviewed-by: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Acked-by: Seungwon Jeon <tgih.jun-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/socfpga_arria5.dtsi   |    9 +++------
+>  arch/arm/boot/dts/socfpga_cyclone5.dtsi |    9 +++------
+>  arch/arm/boot/dts/socfpga_vt.dts        |    9 +++------
+>  3 files changed, 9 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/socfpga_arria5.dtsi b/arch/arm/boot/dts/socfpga_arria5.dtsi
+> index 12d1c2c..468fc4c 100644
+> --- a/arch/arm/boot/dts/socfpga_arria5.dtsi
+> +++ b/arch/arm/boot/dts/socfpga_arria5.dtsi
+> @@ -29,13 +29,10 @@
+>  
+>  		dwmmc0@ff704000 {
+>  			num-slots = <1>;
+> -			supports-highspeed;
+>  			broken-cd;
+> -
+> -			slot@0 {
+> -				reg = <0>;
+> -				bus-width = <4>;
+> -			};
+> +			bus-width = <4>;
+> +			cap-mmc-highspeed;
+> +			cap-sd-highspeed;
+>  		};
+>  
+>  		sysmgr@ffd08000 {
+> diff --git a/arch/arm/boot/dts/socfpga_cyclone5.dtsi b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
+> index bf51182..1ee03c4 100644
+> --- a/arch/arm/boot/dts/socfpga_cyclone5.dtsi
+> +++ b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
+> @@ -30,13 +30,10 @@
+>  
+>  		dwmmc0@ff704000 {
+>  			num-slots = <1>;
+> -			supports-highspeed;
+>  			broken-cd;
+> -
+> -			slot@0 {
+> -				reg = <0>;
+> -				bus-width = <4>;
+> -			};
+> +			bus-width = <4>;
+> +			cap-mmc-highspeed;
+> +			cap-sd-highspeed;
+>  		};
+>  
+>  		ethernet@ff702000 {
+> diff --git a/arch/arm/boot/dts/socfpga_vt.dts b/arch/arm/boot/dts/socfpga_vt.dts
+> index 09792b4..f9345e0 100644
+> --- a/arch/arm/boot/dts/socfpga_vt.dts
+> +++ b/arch/arm/boot/dts/socfpga_vt.dts
+> @@ -43,13 +43,10 @@
+>  
+>  		dwmmc0@ff704000 {
+>  			num-slots = <1>;
+> -			supports-highspeed;
+>  			broken-cd;
+> -
+> -			slot@0 {
+> -				reg = <0>;
+> -				bus-width = <4>;
+> -			};
+> +			bus-width = <4>;
+> +			cap-mmc-highspeed;
+> +			cap-sd-highspeed;
+>  		};
+>  
+>  		ethernet@ff700000 {
 
---===============6301060798827206376==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="QDIl5R72YNOeCxaP"
-Content-Disposition: inline
+Acked-by: Dinh Nguyen <dinguyen-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>
 
-
---QDIl5R72YNOeCxaP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jul 10, 2014 at 01:46:20PM +0200, Wolfram Sang wrote:
-> Some drivers were flagged to remove class based instantiation soon to imp=
-rove
-> boot-up time. Originally, I was planning for a longer deprecation time so=
- users
-> could switch over to some other kind of instantiation. However, the deman=
-d for
-> the speed up is high enough and class based instantiation is used rarely,=
- so
-> the removal takes place now. To make up for the deprecation time, another
-> warning is added to the i2c core pointing out that the behaviour has now
-> changed:
->=20
-> +	/* Warn that the adapter lost class based instantiation */
-> +	if (adapter->class =3D=3D I2C_CLASS_DEPRECATED) {
-> +		dev_dbg(&adapter->dev,
-> +			"This adapter dropped support for I2C classes and "
-> +			"won't auto-detect %s devices anymore. If you need it, check "
-> +			"'Documentation/i2c/instantiating-devices' for alternatives.\n",
-> +			driver->driver.name);
-> +		return 0;
-> +	}
->=20
-> A branch can be found here (with two other cleanups -> driver removals):
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/deprecate=
-_stuff
->=20
-> I hope this meets all the needs. Please comment, ack, test...
->=20
-> Thanks,
->=20
->    Wolfram
->=20
->=20
-> Wolfram Sang (16):
->   i2c: add debug info when class instantiation was dropped
->   i2c: i2c-at91: Drop class based scanning to improve bootup time
->   i2c: i2c-bcm2835: Drop class based scanning to improve bootup time
->   i2c: i2c-bfin-twi: Drop class based scanning to improve bootup time
->   i2c: i2c-davinci: Drop class based scanning to improve bootup time
->   i2c: i2c-designware-platdrv: Drop class based scanning to improve
->     bootup time
->   i2c: i2c-mv64xxx: Drop class based scanning to improve bootup time
->   i2c: i2c-nomadik: Drop class based scanning to improve bootup time
->   i2c: i2c-ocores: Drop class based scanning to improve bootup time
->   i2c: i2c-omap: Drop class based scanning to improve bootup time
->   i2c: i2c-rcar: Drop class based scanning to improve bootup time
->   i2c: i2c-s3c2410: Drop class based scanning to improve bootup time
->   i2c: i2c-sirf: Drop class based scanning to improve bootup time
->   i2c: i2c-stu300: Drop class based scanning to improve bootup time
->   i2c: i2c-tegra: Drop class based scanning to improve bootup time
->   i2c: i2c-xiic: Drop class based scanning to improve bootup time
->=20
->  drivers/i2c/busses/i2c-at91.c               |  2 +-
->  drivers/i2c/busses/i2c-bcm2835.c            |  2 +-
->  drivers/i2c/busses/i2c-bfin-twi.c           |  2 +-
->  drivers/i2c/busses/i2c-davinci.c            |  2 +-
->  drivers/i2c/busses/i2c-designware-platdrv.c |  2 +-
->  drivers/i2c/busses/i2c-mv64xxx.c            |  2 +-
-
-Applied to for-next, thanks!
-
-
---QDIl5R72YNOeCxaP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJTxrpcAAoJEBQN5MwUoCm2WtEP/i6iS+LXxbARgxhigYAWFkUr
-klsJEY41o723X7V6MWVXK5ud2s+1GWY3Z74PTHS8Y2bY79V1mDdq4Sa+FegKM3Q8
-9aOD5VXJBWWyiEufSsqUsJGxxWSz81eLX5n3b4olGWclu8BYKZ73jAt9PNF7SAP4
-G1i8DFZadoBxUbVW/hXk86IULb7Lmq3GOMmNIHJ1PFykI/dq7rogSo5yLccked9r
-Ho3kvEWIHeumRYdDsnlUqUayysl+yTvaJRhuXN+NrfDyH5ZB2/MY/4ZK+poV/cUM
-HrkhvF7Yok4udMtvpcGWaga/GKo5sLZZdz33uZutV09Iek7ce/guPsOuX4/yP+0t
-gjwPpMblPPGhC95aM7rDEELYZ434nszEpHLlE7amPONcCxbjrSYu8Qkg76ZjC/N+
-qaxq0l0QL6292ZBZOa366SxtlY3e8sg/YCJ4SE2Iw2/1aM60W2Gb5M3sqGkzaDZf
-TQTQiKuQbM8OTxiBXT6xKOM5h1n/hX780mJvuCXLdzWC5CbsUob0GHkDOBoDpY9r
-Jf2VXoJ7NYj0bUPEaXOWrn0k+BhBc8rXKaIET6m6Oi3AqhQPFO3OlCamlywOCozi
-90OHHciXrVxLlvWTPbx3H/tM+swlHGlGt+oKvvDxhAUnE/zMnbfM/sDC11+7Vlko
-q8c/leBJlfax/IyaZ3wv
-=2yuG
------END PGP SIGNATURE-----
-
---QDIl5R72YNOeCxaP--
+Thanks,
+Dinh
 
 
---===============6301060798827206376==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============6301060798827206376==--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
