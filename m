@@ -1,87 +1,263 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v3] ARM: exynos4: hotplug: Fix CPU idle clock down after
- CPU off
-Date: Wed, 16 Jul 2014 15:25:50 +0200
-Message-ID: <1405517150.15590.2.camel@AMDC1943>
-References: <1405512467-27269-1-git-send-email-k.kozlowski@samsung.com>
- <53C678B5.7080304@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH 1/3] ARM: EXYNOS: Move code from hotplug.c to platsmp.c
+Date: Wed, 16 Jul 2014 16:20:15 +0200
+Message-ID: <1405520417-15027-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:22518 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:25623 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933174AbaGPNZw (ORCPT
+	with ESMTP id S934275AbaGPOU1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jul 2014 09:25:52 -0400
-In-reply-to: <53C678B5.7080304@samsung.com>
+	Wed, 16 Jul 2014 10:20:27 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On =C5=9Bro, 2014-07-16 at 15:05 +0200, Tomasz Figa wrote:
-> Hi Krzysztof,
->=20
-> On 16.07.2014 14:07, Krzysztof Kozlowski wrote:
->=20
-> [snip]
->=20
-> > +#ifdef CONFIG_SMP
-> > +extern void exynos_clear_delayed_reset_assertion(u32 core_id);
-> > +#endif
->=20
-> Is the ifdef really needed? The only difference it makes if the funct=
-ion
-> is used but not compiled in is that with it the compilation will fail=
-,
-> while without it the kernel won't link.
+Cleanup a little the SMP/hotplug code for Exynos by:
+1. Moving completely all functions from hotplug.c into the platsmp.c;
+2. Deleting the hotplug.c file.
 
-Hmmm... I'll take another approach - just merge hotplug.c into
-platsmp.c.
+After recent cleanups (e.g. 75ad2ab28f0f "ARM: EXYNOS: use
+v7_exit_coherency_flush macro for cache disabling") there was only CPU
+power down related code in hotplug.c file. Keeping this file does not
+give any benefits.
 
->=20
-> > +
-> >  extern void exynos_cpu_resume(void);
-> > =20
-> >  extern struct smp_operations exynos_smp_ops;
->=20
-> [snip]
->=20
-> > +/*
-> > + * Clear the USE_DELAYED_RESET_ASSERTION option, set on Exynos4 So=
-Cs
-> > + * during hot-unplugging CPUx.
-> > + *
-> > + * It won't harm if this is called during first boot of secondary =
-CPU.
-> > + *
-> > + * Exynos4 SoCs require setting USE_DELAYED_RESET_ASSERTION so the=
- CPU idle
-> > + * clock down feature could properly detect global idle state when
-> > + * CPUx is off.
-> > + */
-> > +void exynos_clear_delayed_reset_assertion(u32 core_id)
-> > +{
-> > +	if (soc_is_exynos4()) {
-> > +		unsigned int tmp;
-> > +
-> > +		tmp =3D __raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
-> > +		tmp &=3D ~(S5P_USE_DELAYED_RESET_ASSERTION);
-> > +		__raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
-> > +	}
-> > +}
->=20
-> The idea to make this a helper function is quite nice, but maybe it
-> could be extended into exynos_set_delayed_reset_assertion() and disab=
-le
-> or enable delayed assertion depending on another argument?
+The commit only moves code around with one additional observable change:
+the hotplug.c was compiled with custom CFLAGS (-march=armv7-a). These
+CFLAGS are not necessary any more.
 
-Sure, I'll change it.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/mach-exynos/Makefile  |  3 --
+ arch/arm/mach-exynos/common.h  |  2 -
+ arch/arm/mach-exynos/hotplug.c | 92 ------------------------------------------
+ arch/arm/mach-exynos/platsmp.c | 74 +++++++++++++++++++++++++++++++++
+ 4 files changed, 74 insertions(+), 97 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/hotplug.c
 
-Best regards,
-Krzysztof
-
->=20
-> Best regards,
-> Tomasz
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 788f26d21141..0095de99d703 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -21,9 +21,6 @@ obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
+ 
+ obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
+ 
+-obj-$(CONFIG_HOTPLUG_CPU)	+= hotplug.o
+-CFLAGS_hotplug.o		+= -march=armv7-a
+-
+ plus_sec := $(call as-instr,.arch_extension sec,+sec)
+ AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
+ 
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 1ee91763fa7c..907349d20c25 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -141,8 +141,6 @@ extern void exynos_cpu_resume(void);
+ 
+ extern struct smp_operations exynos_smp_ops;
+ 
+-extern void exynos_cpu_die(unsigned int cpu);
+-
+ /* PMU(Power Management Unit) support */
+ 
+ #define PMU_TABLE_END	NULL
+diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+deleted file mode 100644
+index 920a4baa53cd..000000000000
+--- a/arch/arm/mach-exynos/hotplug.c
++++ /dev/null
+@@ -1,92 +0,0 @@
+-/* linux arch/arm/mach-exynos4/hotplug.c
+- *
+- *  Cloned from linux/arch/arm/mach-realview/hotplug.c
+- *
+- *  Copyright (C) 2002 ARM Ltd.
+- *  All Rights Reserved
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/kernel.h>
+-#include <linux/errno.h>
+-#include <linux/smp.h>
+-#include <linux/io.h>
+-
+-#include <asm/cacheflush.h>
+-#include <asm/cp15.h>
+-#include <asm/smp_plat.h>
+-
+-#include "common.h"
+-#include "regs-pmu.h"
+-
+-static inline void cpu_leave_lowpower(void)
+-{
+-	unsigned int v;
+-
+-	asm volatile(
+-	"mrc	p15, 0, %0, c1, c0, 0\n"
+-	"	orr	%0, %0, %1\n"
+-	"	mcr	p15, 0, %0, c1, c0, 0\n"
+-	"	mrc	p15, 0, %0, c1, c0, 1\n"
+-	"	orr	%0, %0, %2\n"
+-	"	mcr	p15, 0, %0, c1, c0, 1\n"
+-	  : "=&r" (v)
+-	  : "Ir" (CR_C), "Ir" (0x40)
+-	  : "cc");
+-}
+-
+-static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+-{
+-	u32 mpidr = cpu_logical_map(cpu);
+-	u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+-
+-	for (;;) {
+-
+-		/* Turn the CPU off on next WFI instruction. */
+-		exynos_cpu_power_down(core_id);
+-
+-		wfi();
+-
+-		if (pen_release == core_id) {
+-			/*
+-			 * OK, proper wakeup, we're done
+-			 */
+-			break;
+-		}
+-
+-		/*
+-		 * Getting here, means that we have come out of WFI without
+-		 * having been woken up - this shouldn't happen
+-		 *
+-		 * Just note it happening - when we're woken, we can report
+-		 * its occurrence.
+-		 */
+-		(*spurious)++;
+-	}
+-}
+-
+-/*
+- * platform-specific code to shutdown a CPU
+- *
+- * Called with IRQs disabled
+- */
+-void __ref exynos_cpu_die(unsigned int cpu)
+-{
+-	int spurious = 0;
+-
+-	v7_exit_coherency_flush(louis);
+-
+-	platform_do_lowpower(cpu, &spurious);
+-
+-	/*
+-	 * bring this CPU back into the world of cache
+-	 * coherency, and then restore interrupts
+-	 */
+-	cpu_leave_lowpower();
+-
+-	if (spurious)
+-		pr_warn("CPU%u: %u spurious wakeup calls\n", cpu, spurious);
+-}
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 50b9aad5e27b..b0679b6d5161 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -23,6 +23,7 @@
+ #include <linux/of_address.h>
+ 
+ #include <asm/cacheflush.h>
++#include <asm/cp15.h>
+ #include <asm/smp_plat.h>
+ #include <asm/smp_scu.h>
+ #include <asm/firmware.h>
+@@ -32,6 +33,54 @@
+ 
+ extern void exynos4_secondary_startup(void);
+ 
++#ifdef CONFIG_HOTPLUG_CPU
++static inline void cpu_leave_lowpower(void)
++{
++	unsigned int v;
++
++	asm volatile(
++	"mrc	p15, 0, %0, c1, c0, 0\n"
++	"	orr	%0, %0, %1\n"
++	"	mcr	p15, 0, %0, c1, c0, 0\n"
++	"	mrc	p15, 0, %0, c1, c0, 1\n"
++	"	orr	%0, %0, %2\n"
++	"	mcr	p15, 0, %0, c1, c0, 1\n"
++	  : "=&r" (v)
++	  : "Ir" (CR_C), "Ir" (0x40)
++	  : "cc");
++}
++
++static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
++{
++	u32 mpidr = cpu_logical_map(cpu);
++	u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
++
++	for (;;) {
++
++		/* Turn the CPU off on next WFI instruction. */
++		exynos_cpu_power_down(core_id);
++
++		wfi();
++
++		if (pen_release == core_id) {
++			/*
++			 * OK, proper wakeup, we're done
++			 */
++			break;
++		}
++
++		/*
++		 * Getting here, means that we have come out of WFI without
++		 * having been woken up - this shouldn't happen
++		 *
++		 * Just note it happening - when we're woken, we can report
++		 * its occurrence.
++		 */
++		(*spurious)++;
++	}
++}
++#endif /* CONFIG_HOTPLUG_CPU */
++
+ static inline void __iomem *cpu_boot_reg_base(void)
+ {
+ 	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
+@@ -251,6 +300,31 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+ 	}
+ }
+ 
++#ifdef CONFIG_HOTPLUG_CPU
++/*
++ * platform-specific code to shutdown a CPU
++ *
++ * Called with IRQs disabled
++ */
++static void __ref exynos_cpu_die(unsigned int cpu)
++{
++	int spurious = 0;
++
++	v7_exit_coherency_flush(louis);
++
++	platform_do_lowpower(cpu, &spurious);
++
++	/*
++	 * bring this CPU back into the world of cache
++	 * coherency, and then restore interrupts
++	 */
++	cpu_leave_lowpower();
++
++	if (spurious)
++		pr_warn("CPU%u: %u spurious wakeup calls\n", cpu, spurious);
++}
++#endif /* CONFIG_HOTPLUG_CPU */
++
+ struct smp_operations exynos_smp_ops __initdata = {
+ 	.smp_init_cpus		= exynos_smp_init_cpus,
+ 	.smp_prepare_cpus	= exynos_smp_prepare_cpus,
+-- 
+1.9.1
