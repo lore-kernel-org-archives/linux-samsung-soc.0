@@ -1,119 +1,84 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v4 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
-Date: Wed, 16 Jul 2014 09:46:28 -0500
-Message-ID: <20140716144628.GC1365@saruman.home>
-References: <CAODwPW_h2EBKtA+XwEvjCtS=FrcdHOjybwALGugd-ccQ-_vMWw@mail.gmail.com>
- <1405498900-13473-1-git-send-email-gautam.vivek@samsung.com>
-Reply-To: balbi@ti.com
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2289642746942846408=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1405498900-13473-1-git-send-email-gautam.vivek@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: pratyush.anand@st.com, linux-samsung-soc@vger.kernel.org, sergei.shtylyov@cogentembedded.com, mathias.nyman@intel.com, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, kishon@ti.com, kgene.kim@samsung.com, heikki.krogerus@linux.intel.com, jwerner@chromium.org, linux-arm-kernel@lists.infradead.org
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 0/4] spi: s3c64xx: fix DT binding breakage
+Date: Wed, 16 Jul 2014 17:19:06 +0200
+Message-ID: <1405523950-2231-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:47909 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965284AbaGPPT6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Jul 2014 11:19:58 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, devicetree@vger.kernel.org, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
---===============2289642746942846408==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tqI+Z3u+9OQ7kwn0"
-Content-Disposition: inline
+Hello Mark,
 
---tqI+Z3u+9OQ7kwn0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The s3c64xx SPI driver DT binding is currently broken. Commit
+3146bee ("spi: s3c64xx: Added provision for dedicated cs pin")
+added a new "cs-gpio" property and made it a requirement in
+order to make the driver behave in the same way that it used to.
 
-On Wed, Jul 16, 2014 at 01:51:40PM +0530, Vivek Gautam wrote:
-> The host controller by itself may sometimes need to handle PHY
-> and/or calibrate some of the PHY settings to get full support out
-> of the PHY controller. The PHY core provides a calibration
-> funtionality now to do so.
-> Therefore, facilitate getting the two possible PHYs, viz.
-> USB 2.0 type (UTMI+) and USB 3.0 type (PIPE3).
->=20
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> ---
->=20
-> Changes from v3:
->  - Modified error message as per review comments from Julius.
->=20
->  drivers/usb/host/xhci-plat.c |   19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->=20
-> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-> index 1a0cf9f..b1c0364 100644
-> --- a/drivers/usb/host/xhci-plat.c
-> +++ b/drivers/usb/host/xhci-plat.c
-> @@ -16,6 +16,7 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> +#include <linux/phy/phy.h>
->  #include <linux/slab.h>
->  #include <linux/usb/xhci_pdriver.h>
-> =20
-> @@ -180,6 +181,15 @@ static int xhci_plat_probe(struct platform_device *p=
-dev)
->  			goto put_hcd;
->  	}
-> =20
-> +	/* Get possile USB 2.0 type PHY (UTMI+) available with xhci */
-> +	hcd->gen_phy =3D devm_phy_get(&pdev->dev, "usb2-phy");
-> +	if (IS_ERR(hcd->gen_phy)) {
-> +		ret =3D PTR_ERR(hcd->gen_phy);
-> +		if (ret !=3D -ENOSYS && ret !=3D -ENODEV)
-> +			dev_warn(&pdev->dev,
-> +				 "Error retrieving usb2 phy: %d\n", ret);
-> +	}
+The motivation of the offending commit was to allow boards that
+want to use the native chip select (instead of a GPIO) to work
+with the s3c64xx SPI driver. Something that was not possible
+before since the driver made it mandatory to specify a GPIO.
 
-should you treat -EPROBE_DEFER differently here ?
+Unfortunately the commit also changed the driver defaults since
+now besides specifying a GPIO, it makes mandatory to also specify
+that a GPIO is used while the default used to be the opposite.
 
---=20
-balbi
+That mean that old FDT are not working anymore after 3146bee
+so DT backward compatibility was not ensured by that commit.
 
---tqI+Z3u+9OQ7kwn0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+This is a follow-up series from a previous one posted by Naveen
+Krishna [0] which attempts to solve the issue.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+The feedback from Naveen's series was that the patches did not
+provide a clear explanation about the rationale and goal of both
+the series as a whole and the individual changes [1].
 
-iQIcBAEBAgAGBQJTxpBEAAoJEIaOsuA1yqREx1wP/iNhqLpglq0SZRPjO4LozUUv
-+09YZ5L5kjzUacYi9Brqw8nADLB2wmdujfHrF0ezB/VqduFpP/i+XAfhQx2ZkaFR
-Pp9qclEAetygR393laychLfeOS06mMgzUH1/+LOfjNaqLy8Tg1e9bAnaK2ON0lIj
-b3Fh+fbStuNUvTbRR4pTVvhTJnB5Dv7oUHPnRJuMgEE1zJyX47r9HPPDg3jlnExM
-8AB6rwXO8cBwj4ugDk2hm91w/jPL/wydCETvxQNGku5fgKztxF1zsBnvUcWjhpro
-n38nfLYkBXQOCCpPnrjH+yxWCRIHIiy1jZ/EqfwmKlq09JbCPIemHgPOpO9E3fiH
-C8DsL03jNQZZZKbFeGpBeJg3uldlTjO7yInIa7poqfeeH3PKzWtSP2YQz6O9z1nR
-nHlYvVIJTy9ir9edTPfqU2JzPXoMxrofZbyKGyBo4R6yRe80IxvQe7CLtNvGcNno
-OhpwnRLZFeVUtiCBriGFFn6N+jxE4eyttZ/w/0c/dFSY6goJwXaSa+cIld04V7aj
-R2MBQAJdIOQguOj2HHD1D6EXne5gMC0dbcVCzu2AV5tmgWxrLIHaifChwOkCTn6k
-5aqtMqcH2R4WFSjlUV4JPzJZH8UojIkd+nc566XKN6hiT+BzBF+Cerd74JaDi1MZ
-a+70M9jNuM9CtMnWH7X7
-=FRfZ
------END PGP SIGNATURE-----
+So I tried to take Navee's series and rework them to provide
+an easier to understand patch series.
 
---tqI+Z3u+9OQ7kwn0--
+The series is composed of the following patches:
 
+Javier Martinez Canillas (1):
+  Revert "spi: s3c64xx: Added provision for dedicated cs pin"
 
---===============2289642746942846408==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Naveen Krishna Chatradhi (3):
+  spi: s3c64xx: use the generic SPI "cs-gpios" property
+  spi: samsung: Update binding documentation
+  ARM: DTS: fix the chip select gpios definition in the SPI nodes
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+ .../devicetree/bindings/spi/spi-samsung.txt        |  8 ++--
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |  2 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts            |  2 +-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |  2 +-
+ drivers/spi/spi-s3c64xx.c                          | 54 ++++++++++------------
+ 5 files changed, 30 insertions(+), 38 deletions(-)
 
---===============2289642746942846408==--
+Patch 01/04 reverts the offending commit since it not only broke
+the DT binding but also introduced a confusing "cs-gpio" property
+while the driver already used a property with the same name.
+
+Patch 02/04 fixes the DT binding for good by using the SPI core
+"cs-gpios" property to specify the chip select GPIO instead of
+using a custom property only used by this driver. This change
+breaks backward compatibility but this has been broken for more
+than a year and nobody complained so I think it's safe to change
+it again in favor of using standard DT binding properties.
+
+A benefit of Patch 02/04 is that it allows DT and legacy boards
+that need to use the built-in CS instead of a GPIO to work with
+the driver which was the original motivation of the broken commit.
+
+Patch 03/04 updates the driver binding documentation accordingly
+and patch 04/04 updates all the DTS board files in mainline.
+
+Best regards,
+Javier
+
+[0]: http://www.spinics.net/lists/linux-samsung-soc/msg34163.html
+[1]: http://www.spinics.net/lists/linux-samsung-soc/msg34309.html
