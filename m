@@ -1,78 +1,54 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RESEND PATCH v2] ARM: exynos4: hotplug: Fix CPU idle clock down
- after CPU off
-Date: Wed, 16 Jul 2014 13:19:10 +0200
-Message-ID: <1405509550.7368.0.camel@AMDC1943>
-References: <1405499003-9975-1-git-send-email-k.kozlowski@samsung.com>
- <53C65890.8000500@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v2] ARM: EXYNOS: Fix build with PM_SLEEP=n
+Date: Wed, 16 Jul 2014 13:59:32 +0200
+Message-ID: <53C66924.3010303@samsung.com>
+References: <1405323953-25954-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:14996 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757134AbaGPLTT (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:56317 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758523AbaGPMAM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jul 2014 07:19:19 -0400
-In-reply-to: <53C65890.8000500@samsung.com>
+	Wed, 16 Jul 2014 08:00:12 -0400
+In-reply-to: <1405323953-25954-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Olof Johansson <olof@lixom.net>
 
+Hi Krzysztof,
 
+On 14.07.2014 09:45, Krzysztof Kozlowski wrote:
+> Fix building of exynos defconfig with disabled PM_SLEEP:
+> CONFIG_PM_SLEEP=n
+> CONFIG_PM_SLEEP_SMP=n
+> CONFIG_SUSPEND=n
+> by moving functions for power up/down of CPU and cluster to platsmp.c
+> 
+> The build error messages:
+> arch/arm/mach-exynos/built-in.o: In function `exynos_boot_secondary':
+> arch/arm/mach-exynos/platsmp.c:111: undefined reference to `exynos_cpu_power_state'
+> arch/arm/mach-exynos/platsmp.c:112: undefined reference to `exynos_cpu_power_up'
+> arch/arm/mach-exynos/platsmp.c:116: undefined reference to `exynos_cpu_power_state'
+> make: *** [vmlinux] Error 1
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> ---
+> Changes since v1:
+> 1. Use different solution - just move the power up/down functions to a
+>    common place instead of adding stubs in common.h. Suggested by Tomasz
+>    Figa.
+> ---
+>  arch/arm/mach-exynos/platsmp.c | 66 ++++++++++++++++++++++++++++++++++++++++++
+>  arch/arm/mach-exynos/pm.c      | 66 ------------------------------------------
+>  2 files changed, 66 insertions(+), 66 deletions(-)
+> 
 
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-On =C5=9Bro, 2014-07-16 at 12:48 +0200, Tomasz Figa wrote:
-> Hi Krzysztof,
->=20
-> Please see my comment below.
->=20
-> On 16.07.2014 10:23, Krzysztof Kozlowski wrote:
-> > On Exynos4 USE_DELAYED_RESET_ASSERTION must be set in
-> > ARM_COREx_OPTION register during CPU power down. This is the proper=
- way
-> > of powering down CPU on Exynos4.
-> >=20
-> > Additionally on Exynos4212 without this the CPU clock down feature =
-won't
-> > work after powering down some CPU and the online CPUs will work at =
-full
-> > frequency chosen by CPUfreq governor.
-> >=20
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->=20
-> [snip]
->=20
-> > @@ -36,6 +36,14 @@ static inline void cpu_leave_lowpower(void)
-> >  	  : "=3D&r" (v)
-> >  	  : "Ir" (CR_C), "Ir" (0x40)
-> >  	  : "cc");
-> > +
-> > +	if (soc_is_exynos4()) {
-> > +		unsigned int tmp;
-> > +
-> > +		tmp =3D __raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
-> > +		tmp &=3D ~(S5P_USE_DELAYED_RESET_ASSERTION);
-> > +		__raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
-> > +	}
->=20
-> This code is executed only if the CPU doesn't manage to power off bef=
-ore
-> already receiving a wake-up event. Otherwise the context is lost afte=
-r
-> wfi(), as the core power is being cut down.
->=20
-> The normal wake-up path goes through platsmp's exynos_boot_secondary(=
-)
-> and I believe that setting of S5P_USE_DELAYED_RESET_ASSERTION should =
-be
-> taken care there as well.
-
-You're right. Thanks for pointing this, I'll fix it.
-
+--
 Best regards,
-Krzysztof
->=20
-> Best regards,
-> Tomasz
+Tomasz
