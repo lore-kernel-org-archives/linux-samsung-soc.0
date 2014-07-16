@@ -1,233 +1,130 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH 11/19] ARM: S5PV210: Remove support for board files
-Date: Wed, 16 Jul 2014 12:04:32 +0200
-Message-ID: <1405505072.4408.17.camel@x220>
-References: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
-	 <1404496099-26708-12-git-send-email-t.figa@samsung.com>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: Re: [PATCH v5 05/14] drm/exynos: dsi: add pass TE host ops to support
+ LCD I80 interface
+Date: Wed, 16 Jul 2014 19:12:52 +0900
+Message-ID: <53C65024.7080606@samsung.com>
+References: <1404779987-5337-6-git-send-email-yj44.cho@samsung.com>
+ <20140709152207.GA17359@ulmo> <53BDE6FF.1000600@samsung.com>
+ <20140710073826.GB17918@ulmo> <53C3A15F.4020401@samsung.com>
+ <20140714094130.GD9755@ulmo> <53C3B4C8.1070601@samsung.com>
+ <20140714110326.GA31460@ulmo> <53C49336.5050909@samsung.com>
+ <53C5E20D.5010704@samsung.com> <20140716075457.GH7978@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews08.kpnxchange.com ([213.75.39.13]:63272 "EHLO
-	cpsmtpb-ews08.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753171AbaGPKEe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jul 2014 06:04:34 -0400
-In-Reply-To: <1404496099-26708-12-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20140716075457.GH7978@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Tomasz Figa <tomasz.figa@gmail.com>
 
-On Fri, 2014-07-04 at 19:48 +0200, Tomasz Figa wrote:
-> Since all in-tree boards have been moved to device tree, we can now drop
-> legacy code and make mach-s5pv210 DT-only. This patch does it.
-> 
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> ---
-
-This patch showed up in next-20140716 too.
-
->[...]
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-> index ed492cf..d6d0f92 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -19,181 +19,8 @@ config CPU_S5PV210
->  	help
->  	  Enable S5PV210 CPU support
->  
-> -config S5PV210_SETUP_I2C1
-> -	bool
-> -	help
-> -	  Common setup code for i2c bus 1.
-> -
-> -config S5PV210_SETUP_I2C2
-> -	bool
-> -	help
-> -	  Common setup code for i2c bus 2.
-> -
-> -config S5PV210_SETUP_IDE
-> -	bool
-> -	help
-> -	  Common setup code for S5PV210 IDE GPIO configurations
-> -
-> -config S5PV210_SETUP_FB_24BPP
-> -	bool
-> -	help
-> -          Common setup code for S5PV210 with an 24bpp RGB display helper.
-> -
-> -config S5PV210_SETUP_KEYPAD
-> -	bool
-> -	help
-> -	  Common setup code for keypad.
-> -
-> -config S5PV210_SETUP_SDHCI
-> -        bool
-> -        select S5PV210_SETUP_SDHCI_GPIO
-> -        help
-> -          Internal helper functions for S5PV210 based SDHCI systems
-> -
-> -config S5PV210_SETUP_SDHCI_GPIO
-> -	bool
-> -	help
-> -	  Common setup code for SDHCI gpio.
-> -
-> -config S5PV210_SETUP_FIMC
-> -	bool
-> -	help
-> -	  Common setup code for the camera interfaces.
-> -
-> -config S5PV210_SETUP_SPI
-> -	bool
-> -	help
-> -	  Common setup code for SPI GPIO configurations.
-> -
-> -config S5PV210_SETUP_USB_PHY
-> -	bool
-> -	help
-> -	  Common setup code for USB PHY controller
-> -
-> -menu "S5PC110 Machines"
-> -
-> -config MACH_AQUILA
-> -	bool "Aquila"
-> -	select CPU_S5PV210
-> -	select S3C_DEV_FB
-> -	select S3C_DEV_HSMMC
-> -	select S3C_DEV_HSMMC1
-> -	select S3C_DEV_HSMMC2
-> -	select S5PV210_SETUP_FB_24BPP
-> -	select S5PV210_SETUP_SDHCI
-> -	select S5PV210_SETUP_USB_PHY
-> -	select S5P_DEV_FIMC0
-> -	select S5P_DEV_FIMC1
-> -	select S5P_DEV_FIMC2
-> -	select S5P_DEV_ONENAND
-> -	help
-> -	  Machine support for the Samsung Aquila target based on S5PC110 SoC
-> -
-
-This symbol is still referenced in sound/soc/samsung/Kconfig.
-
-> -config MACH_GONI
-> -	bool "GONI"
-> -	select CPU_S5PV210
-> -	select S3C_DEV_FB
-> -	select S3C_DEV_HSMMC
-> -	select S3C_DEV_HSMMC1
-> -	select S3C_DEV_HSMMC2
-> -	select S3C_DEV_I2C1
-> -	select S3C_DEV_I2C2
-> -	select S3C_DEV_USB_HSOTG
-> -	select S5PV210_SETUP_FB_24BPP
-> -	select S5PV210_SETUP_FIMC
-> -	select S5PV210_SETUP_I2C1
-> -	select S5PV210_SETUP_I2C2
-> -	select S5PV210_SETUP_KEYPAD
-> -	select S5PV210_SETUP_SDHCI
-> -	select S5PV210_SETUP_USB_PHY
-> -	select S5P_DEV_FIMC0
-> -	select S5P_DEV_FIMC1
-> -	select S5P_DEV_FIMC2
-> -	select S5P_DEV_MFC
-> -	select S5P_DEV_ONENAND
-> -	select S5P_DEV_TV
-> -	select S5P_GPIO_INT
-> -	select SAMSUNG_DEV_KEYPAD
-> -	help
-> -	  Machine support for Samsung GONI board
-> -	  S5PC110(MCP) is one of package option of S5PV210
-
-Ditto.
-
-> -config MACH_SMDKC110
-> -	bool "SMDKC110"
-> -	select CPU_S5PV210
-> -	select S3C_DEV_I2C1
-> -	select S3C_DEV_I2C2
-> -	select S3C_DEV_RTC
-> -	select S3C_DEV_WDT
-> -	select S5PV210_SETUP_I2C1
-> -	select S5PV210_SETUP_I2C2
-> -	select S5PV210_SETUP_IDE
-> -	select S5P_DEV_FIMC0
-> -	select S5P_DEV_FIMC1
-> -	select S5P_DEV_FIMC2
-> -	select S5P_DEV_MFC
-> -	select SAMSUNG_DEV_IDE
-> -	help
-> -	  Machine support for Samsung SMDKC110
-> -	  S5PC110(MCP) is one of package option of S5PV210
-
-Ditto.
-
-> -endmenu
-> -
->  menu "S5PV210 Machines"
->  
-> -config MACH_SMDKV210
-> -	bool "SMDKV210"
-> -	select CPU_S5PV210
-> -	select S3C_DEV_FB
-> -	select S3C_DEV_HSMMC
-> -	select S3C_DEV_HSMMC1
-> -	select S3C_DEV_HSMMC2
-> -	select S3C_DEV_HSMMC3
-> -	select S3C_DEV_I2C1
-> -	select S3C_DEV_I2C2
-> -	select S3C_DEV_RTC
-> -	select S3C_DEV_USB_HSOTG
-> -	select S3C_DEV_WDT
-> -	select S5PV210_SETUP_FB_24BPP
-> -	select S5PV210_SETUP_I2C1
-> -	select S5PV210_SETUP_I2C2
-> -	select S5PV210_SETUP_IDE
-> -	select S5PV210_SETUP_KEYPAD
-> -	select S5PV210_SETUP_SDHCI
-> -	select S5PV210_SETUP_USB_PHY
-> -	select S5P_DEV_FIMC0
-> -	select S5P_DEV_FIMC1
-> -	select S5P_DEV_FIMC2
-> -	select S5P_DEV_JPEG
-> -	select S5P_DEV_MFC
-> -	select SAMSUNG_DEV_ADC
-> -	select SAMSUNG_DEV_BACKLIGHT
-> -	select SAMSUNG_DEV_IDE
-> -	select SAMSUNG_DEV_KEYPAD
-> -	select SAMSUNG_DEV_PWM
-> -	select SAMSUNG_DEV_TS
-> -	help
-> -	  Machine support for Samsung SMDKV210
-> -
-
-Ditto.
-
-> -config MACH_TORBRECK
-> -	bool "Torbreck"
-> -	select ARCH_SPARSEMEM_ENABLE
-> -	select CPU_S5PV210
-> -	select S3C_DEV_HSMMC
-> -	select S3C_DEV_HSMMC1
-> -	select S3C_DEV_HSMMC2
-> -	select S3C_DEV_HSMMC3
-> -	select S3C_DEV_I2C1
-> -	select S3C_DEV_I2C2
-> -	select S3C_DEV_RTC
-> -	select S3C_DEV_WDT
-> -	select S5PV210_SETUP_I2C1
-> -	select S5PV210_SETUP_I2C2
-> -	select S5PV210_SETUP_SDHCI
-> -	select SAMSUNG_DEV_IDE
-> -	help
-> -	  Machine support for aESOP Torbreck
-> -
->  config MACH_S5PV210_DT
->  	bool "Samsung S5PV210/S5PC110 machine using Device Tree"
->  	select CLKSRC_OF
-
-I assume one or more patches to remove the references to these symbols
-in sound/soc/samsung/Kconfig are pending. Is that correct?
-
-
-Paul Bolle
+SGkgVGhpZXJyeSwKCk9uIDA3LzE2LzIwMTQgMDQ6NTQgUE0sIFRoaWVycnkgUmVkaW5nIHdyb3Rl
+Ogo+IE9uIFdlZCwgSnVsIDE2LCAyMDE0IGF0IDExOjIzOjA5QU0gKzA5MDAsIFlvdW5nSnVuIENo
+byB3cm90ZToKPj4gSGkgSW5raSwKPj4KPj4gT24gMDcvMTUvMjAxNCAxMTozNCBBTSwgSW5raSBE
+YWUgd3JvdGU6Cj4+PiBPbiAyMDE064WEIDA37JuUIDE07J28IDIwOjAzLCBUaGllcnJ5IFJlZGlu
+ZyB3cm90ZToKPj4+PiBPbiBNb24sIEp1bCAxNCwgMjAxNCBhdCAwNzo0NToyOFBNICswOTAwLCBZ
+b3VuZ0p1biBDaG8gd3JvdGU6Cj4+Pj4+IE9uIDA3LzE0LzIwMTQgMDY6NDEgUE0sIFRoaWVycnkg
+UmVkaW5nIHdyb3RlOgo+Pj4+IFsuLi5dCj4+Pj4+PiBUaGF0IHNhaWQsIEkndmUgYmVlbiBkb2lu
+ZyBzb21lIHJlc2VhcmNoIGFuZCBpdCBzZWVtcyBsaWtlIHdlIGhhdmUgYQo+Pj4+Pj4gc29tZXdo
+YXQgc2ltaWxhciBmZWF0dXJlIG9uIFRlZ3JhLiBXaGF0IGhhcHBlbnMgdGhlcmUgaXMgdGhhdCB0
+aGVyZSBhcmUKPj4+Pj4+IHRocmVlIEdQSU8gcGlucyB0aGF0IGNhbiBiZSByZXB1cnBvc2VkIGZv
+ciBURSBzaWduYWxsaW5nLiBCdXQgYXMgb3Bwb3NlZAo+Pj4+Pj4gdG8gdXNpbmcgdGhlbSBhcyBp
+bnRlcnJ1cHRzIHRoZSBkaXNwbGF5IGNvbnRyb2xsZXIgY2FuIGJlIGNvbmZpZ3VyZWQgdG8KPj4+
+Pj4+IHVzZSB0aGVtLCB1cG9uIHdoaWNoIGl0IHdpbGwgYXV0b21hdGljYWxseSBoYW5kbGUgdGhl
+IFRFIHNpZ25hbCBieQo+Pj4+Pj4gc2VuZGluZyB0aGUgbmV4dCBmcmFtZS4KPj4+Pj4KPj4+Pj4g
+Q291bGQgeW91IGV4cGxhaW4gbW9yZSBkZXRhaWwgaG93IHRoZSBUZWdyYSBkaXNwbGF5IGNvbnRy
+b2xsZXIgY291bGQgYmUKPj4+Pj4gY29uZmlndXJlZCB3aXRoIHRoaXMgR1BJTyBwaW5zPwo+Pj4+
+PiBJIGhhdmUgbm8gaWRlYSBleGNlcHQgdGhhdCB0aGUgZGlzcGxheSBjb250cm9sbGVyIHJlZ2lz
+dGVycyB0aGlzIEdQSU8gYXMgYW4KPj4+Pj4gSVJRLgo+Pj4+Cj4+Pj4gT24gVGVncmEgdGhlIGRp
+c3BsYXkgY29udHJvbGxlciBoYXMgYSBzcGVjaWFsIHJlZ2lzdGVyIHRoYXQgY2FuIGJlCj4+Pj4g
+cHJvZ3JhbW1lZCB0byB1c2Ugb25lIG9mIHRoZSB0aHJlZSBHUElPcyBhcyBURSBzaWduYWwuIFRo
+ZW4gdGhlIGRpc3BsYXkKPj4+PiBjb250cm9sbGVyIGNhbiBiZSBjb25maWd1cmVkIGluIG9uZS1z
+aG90IChub24tY29udGludW91cykgbW9kZSwgd2hpY2gKPj4+PiBtZWFucyB0aGF0IHNvZnR3YXJl
+IG5lZWRzIHRvIGV4cGxpY2l0bHkgc2V0IGEgdHJpZ2dlciBiaXQgdG8gdGVsbCB0aGUKPj4+PiBk
+aXNwbGF5IGNvbnRyb2xsZXIgdG8gc2VuZCBhIG5ldyBmcmFtZS4gSWYgVEUgc2lnbmFsbGluZyBp
+cyBlbmFibGVkLAo+Pj4+IHRoZW4gdGhlIGRpc3BsYXkgY29udHJvbGxlciB3aWxsIG5vdCBpbW1l
+ZGlhdGVseSBzZW5kIGEgbmV3IGZyYW1lIHdoZW4KPj4+PiB0cmlnZ2VyZWQgYnV0IHdhaXQgZm9y
+IHNpZ25hbGxpbmcgb2YgdGhpcyBHUElPLgo+Pj4+Cj4+Pj4+PiBTbyB3ZSBoYXZlIGF0IGxlYXN0
+IHR3byB2ZXJ5IGRpZmZlcmVudCBpbXBsZW1lbnRhdGlvbnMgb2YgdGhpcyBvbiB0d28KPj4+Pj4+
+IGRpZmZlcmVudCBTb0NzLiBGdXJ0aGVyIHRoZSBzcGVjaWZpY2F0aW9uIGV4cGxpY2l0bHkgcmVj
+b21tZW5kcyB1c2luZwo+Pj4+Pj4gdGhlIEJUQSBzZXF1ZW5jZSBhbmQgRFNJIHByb3RvY29sIHRv
+IHdhaXQgZm9yIFRFLiBTbyBJIHN0aWxsIHRoaW5rIHRoYXQKPj4+Pj4+IGNvbnRyb2xsZXJzIHRo
+YXQgcHJvdmlkZSBhbiBhZGRpdGlvbmFsLCBub24tc3BlYyBjb21wbGlhbnQgbWV0aG9kIHRvCj4+
+Pj4+PiBzaWduYWwgVEUgc2hvdWxkIGhhbmRsZSBpdCBzZXBhcmF0ZWx5IHJhdGhlciB0aGFuIHdp
+dGhpbiBEU0kuIE90aGVyd2lzZQo+Pj4+Pj4gd2UgZXNzZW50aWFsbHkgbmVlZCB0byBtYWtlIHRo
+ZSBEU0kgImNvcmUiIGF3YXJlIG9mIGFsbCB0aGVzZSBxdWlya3MsCj4+Pj4+PiBhbmQgSSdkIHJh
+dGhlciBhdm9pZCB0aGF0Lgo+Pj4+Pgo+Pj4+PiBZb3UgbWVhbiwgdGhlIERTSSBzcGVjaWZpY2F0
+aW9uIGd1aWRlcyB0byB1c2UgQlRBLCBzbyBpdCdzIGJldHRlciB0byB1c2UKPj4+Pj4gZGlzcGxh
+eSBjb250cm9sbGVyIHJhdGhlciB0aGFuIERTSU0sIHJpZ2h0Pwo+Pj4+Cj4+Pj4gV2hhdCBJJ20g
+c2F5aW5nIGlzIHRoYXQgdGhlcmUncyBub3RoaW5nIGFib3V0IGEgc2lkZS1iYW5kIFRFIHdpcmUg
+aW4gdGhlCj4+Pj4gRFNJIHNwZWMuIEluIGZhY3QgdGhlIHNwZWMgZXhwbGljaXRseSBzYXlzIHRo
+YXQgdGhpcyBtZWNoYW5pc20gb2YgYW4KPj4+PiBleHRlcm5hbCBURSB3aXJlIGZyb20gb2xkZXIg
+cHJvdG9jb2xzIChEQkkpIHdhcyByZXBsYWNlZCBieSB0aGUgQlRBCj4+Pj4gc2VxdWVuY2Ugb3Zl
+ciB0aGUgcHJvdG9jb2wuCj4+Pj4KPj4+PiBOb3csIG15IHVuZGVyc3RhbmRpbmcgaXMgdGhhdCB1
+c2luZyB0aGUgQlRBIHNlcXVlbmNlIG92ZXIgdGhlIERTSQo+Pj4+IHByb3RvY29sIHdvdWxkIGlu
+dHJvZHVjZSBzb21lIGxhdGVuY3kgYW5kIHRoYXQgZm9yY2VzIHNvbWUgcGFuZWwgdmVuZG9ycwo+
+Pj4+IHRvIHN0aWxsIHByb3ZpZGUgYSBzaWRlLWJhbmQgVEUgd2lyZSBldmVuIGluIERTSSBjb21w
+bGlhbnQgcGFuZWxzLiBCdXQKPj4+PiBzaW5jZSB0aGlzIGlzIG5vdCBwYXJ0IG9mIHRoZSBzcGVj
+aWZpY2F0aW9uIHRoZXJlIGlzIG5vIHN0YW5kYXJkIHdheSB0bwo+Pj4+IGRvIHRoaXMgKGFzIGV2
+aWRlbmNlZCBieSBUZWdyYSBhbmQgRXh5bm9zKS4gVGhlcmVmb3JlIHB1dHRpbmcgc3VjaAo+Pj4+
+IGZ1bmN0aW9uYWxpdHkgaW50byB0aGUgY29yZSBEU0kgY29kZSBpcyBiYWQuCj4+Pj4KPj4+PiBC
+dXQgdGhhdCBkb2Vzbid0IG1lYW4gdGhhdCB5b3UgaGF2ZSB0byBwdXQgdGhpcyBmdW5jdGlvbmFs
+aXR5IGludG8gdGhlCj4+Pj4gZGlzcGxheSBjb250cm9sbGVyIGRyaXZlciBvbiBFeHlub3MuIFdo
+YXQgSSdtIHNheWluZyBpcyB0aGF0IGl0IHNob3VsZAo+Pj4+IGJlIGhhbmRsZWQgYnkgdGhlIFNv
+QyBkcml2ZXIgcmF0aGVyIHRoYW4gdGhlIGNvcmUuIFdoZXJlIGV4YWN0bHkKPj4+PiBwcm9iYWJs
+eSBkZXBlbmRzIG9uIHRoZSBwYXJ0aWN1bGFyIGNhc2UuCj4+Pj4KPj4+Pj4+PiBBcyBJbmtpIGNv
+bW1lbnRlZCBiZWZvcmUsIEknbGwgdHJ5IHRvIHVzZSByZW1vdGUtZW5kcG9pbnQgcHJvcGVydHkg
+b2YgRFNJCj4+Pj4+Pj4gZGV2aWNlIG5vZGUgaW4gZXh5bm9zIERTSU0gZHJpdmVyIGFuZCBjYWxs
+IEZJTUQgbm90aWZpZXIuCj4+Pj4+Pgo+Pj4+Pj4gU291bmRzIGxpa2UgaXQgbWF0Y2hlcyB3aGF0
+IEkgc2FpZCBhYm92ZS4gSSdtIG5vdCBhIGh1Z2UgZmFuIG9mCj4+Pj4+PiBub3RpZmllcnMsIGJ1
+dCBpZiBpdCB3b3JrcyBmb3IgeW91IEkgc3VwcG9zZSB0aGF0J3MgZmluZS4gVGhlCj4+Pj4+PiBh
+bHRlcm5hdGl2ZSB3b3VsZCBiZSB0byBkaXJlY3RseSBjYWxsIGEgRklNRCBmdW5jdGlvbiwgd2hp
+Y2ggaXMKPj4+Pj4+IHNvbWV3aGF0IG1vcmUgZXhwbGljaXQgdGhhbiBhIG5vdGlmaWVyLgo+Pj4+
+Pgo+Pj4+PiBZZXMsIEkgYWxzbyBsaWtlIGV4cGxpY2l0IGNhbGwsIHNvIEkgd2FudCB0byB1c2Ug
+ZHNpX2hvc3Rfb3BzIGFuZCBjYWxscyBpdAo+Pj4+PiBpbiBwYW5lbC4gQnV0IHRoZXJlIGlzIGFu
+IG9iamVjdGlvbiB0byB1c2UgZGlzX2hvc3Rfb3BzLCB3ZSB0aGluayBub3RpZmllcgo+Pj4+PiBp
+biBleHlub3MgZHNpbSBmb3IgZmltZChkaXNwbGF5IGNvbnRyb2xsZXIpLgo+Pj4+Cj4+Pj4gVGhl
+cmUgYXJlIG90aGVyIHdheXMgdG8gZXhwbGljaXRseSBjYWxsIGludG8gdGhlIGRpc3BsYXkgY29u
+dHJvbGxlci4gWW91Cj4+Pj4gY291bGQgZm9yIGV4YW1wbGUgZ2V0IGFjY2VzcyB0byB0aGUgQ1JU
+QyB0aGF0IERTSU0gaXMgY3VycmVudGx5Cj4+Pj4gY29ubmVjdGVkIHRvICh2aWEgZXh5bm9zX2Rz
+aS5lbmNvZGVyLT5jcnRjKSBhbmQgdGhlbiBjYXN0IHRoYXQgdG8gYQo+Pj4+IHN0cnVjdCBleHlu
+b3NfZHJtX2NydGMgYW5kIGNhbGwgYSBmdW5jdGlvbiB0byB0cmlnZ2VyIGEgbmV3IGZyYW1lIHRv
+IGJlCj4+Pj4gc2VudCAoZm9yIGV4YW1wbGUgZXh5bm9zX2RybV9jcnRjX3NlbmRfZnJhbWUoKSku
+IFRoaXMgYXNzdW1lcyB0aGF0IHlvdQo+Pj4+IGNhbiBzYWZlbHkgY2FzdCBzdHJ1Y3QgZHJtX2Ny
+dGMgKiB0byBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICosIGJ1dCB0aGF0Cj4+Pj4gc2hvdWxkbid0
+IGJlIGEgcHJvYmxlbS4KPj4+Pgo+Pj4+IFdpdGggdGhlIGFib3ZlLCB5b3UgY291bGQgbWFrZSB0
+aGUgRFNJTSBoYW5kbGUgdGhlIFRFIHNpZ25hbCBpbnRlcnJ1cHRzCj4+Pj4gYW5kIHRyaWdnZXIg
+dGhlIERDIHVzaW5nIHRoZSBuZXcgZXh5bm9zX2RybV9jcnRjX3NlbmRfZnJhbWUoKSBmdW5jdGlv
+bi4KPj4+Pgo+Pj4KPj4+IEl0IHNlZW1zIGJldHRlciB0aGFuIHRoZSB1c2Ugb2Ygbm90aWZpZXIu
+IEFjdHVhbGx5LCBvcmlnaW5hbCBwYXRjaCB1c2VkCj4+PiB0aGlzIHdheSBleGNlcHQgVEUgZXZl
+bnQuCj4+PiBNci4gQ2hvLCBsZXQncyB1c2UgcmVtb3RlLWVuZHBvaW50IHByb3BlcnR5IGFuZCB0
+aGlzIHdheSBpbnN0ZWFkIG9mCj4+PiBub3RpZmllci4KPj4+Cj4+Cj4+IFRoZSBzdHJ1Y3QgZXh5
+bm9zX2RzaSBoYXMgcGFuZWxfbm9kZSwgd2hpY2ggaXMgdmFsaWQgYnkKPj4gZXh5bm9zX2RzaV9o
+b3N0X2F0dGFjaCgpIGlzIGNhbGxlZCBmcm9tIHBhbmVsLCB3ZSBjb3VsZCB1c2UgaXQgaW5zdGVh
+ZCBvZgo+PiBnZXR0aW5nIG5ldyByZW1vdGUtZW5kcG9pbnQgbm9kZS4KPj4KPj4gU28gYWZ0ZXIg
+Y2FsbGVkIGV4eW5vc19kc2lfaG9zdF9hdHRhY2goKSwgdGhlIGRzaSBkcml2ZXIgY291bGQga25v
+dyB0aGF0IHRoZQo+PiBwYW5lbCBzdXBwb3J0cyBtaXBpIGNvbW1hbmQgbW9kZSBvciB2aWRlbyBt
+b2RlLAo+PiBhbmQgaWYgdGhlIHBhbmVsIGlzIGZvciBtaXBpIGNvbW1hbmQgbW9kZSBvbmUsIGRz
+aSBkcml2ZXIgZ2V0cyBwYW5lbCB0ZSBncGlvCj4+IGFuZCByZWdpc3RlcnMgaXRzIGlycS4KPgo+
+IFdoeSBkb2VzIHRoZSBURSBHUElPIGV2ZW4gbmVlZCB0byBiZSBpbiB0aGUgcGFuZWwncyBkZXZp
+Y2UgdHJlZSBub2RlPwo+IFdvdWxkbid0IGl0IG1ha2UgbW9yZSBzZW5zZSBmb3IgaXQgdG8gYmUg
+aW4gdGhlIERTSU0gbm9kZT8gQWZ0ZXIgYWxsCj4gdGhhdCdzIHdoYXQgdGhlIEdQSU8gaXMgY29u
+bmVjdGVkIHRvLCByaWdodD8gV2VsbCwgYXQgbGVhc3QgbG9naWNhbGx5Cj4gaWYgbm90IHBoeXNp
+Y2FsbHkuCj4KCkkgYWxzbyBhZ3JlZSB0aGF0IHRoZSBHUElPIGluIERUIG1lYW5zIHRoZSBjb25u
+ZWN0aW9uIGFmdGVyIGFsbC4KCkJ1dCB0aGUgcGFuZWwgcHJvdmlkZXMgdGhlIFRFIHBpbih0aGlz
+IGlzIG9idmlvdXMpIGFuZCBkZWNpZGVzIHRoZSBEU0lNIAptb2RlKGNvbW1hbmQgb3IgdmlkZW8p
+LgpUaGlzIFRFIHBpbiBpcyB1c2VsZXNzIGluIHZpZGVvIG1vZGUuCgpTbyBJIHRoaW5rIGl0J3Mg
+YmV0dGVyIGZvciBwYW5lbCB0byBkZWNpZGUgYW5kIHByb3ZpZGUgYWxsIHJlbGF0ZWQgdGhpbmdz
+LgoKVGhhbmsgeW91LgpCZXN0IHJlZ2FyZHMgWUoKCj4gVGhpZXJyeQo+CgpfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
