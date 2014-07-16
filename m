@@ -1,128 +1,49 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RESEND PATCH v2] ARM: exynos4: hotplug: Fix CPU idle clock down after
- CPU off
-Date: Wed, 16 Jul 2014 10:23:23 +0200
-Message-ID: <1405499003-9975-1-git-send-email-k.kozlowski@samsung.com>
+From: Daniel Drake <drake@endlessm.com>
+Subject: [PATCH 2/2] ARM: dts: ODROID i2c improvements
+Date: Wed, 16 Jul 2014 09:50:06 +0100
+Message-ID: <1405500606-5752-2-git-send-email-drake@endlessm.com>
+References: <1405500606-5752-1-git-send-email-drake@endlessm.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:50363 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751240AbaGPIXm (ORCPT
+Received: from mail-wg0-f48.google.com ([74.125.82.48]:62756 "EHLO
+	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757881AbaGPIuQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jul 2014 04:23:42 -0400
+	Wed, 16 Jul 2014 04:50:16 -0400
+Received: by mail-wg0-f48.google.com with SMTP id x13so558482wgg.7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 Jul 2014 01:50:15 -0700 (PDT)
+In-Reply-To: <1405500606-5752-1-git-send-email-drake@endlessm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, liquid.acid@gmx.net, m.szyprowski@samsung.com, linux-arm-kernel@lists.infradead.org
 
-On Exynos4 USE_DELAYED_RESET_ASSERTION must be set in
-ARM_COREx_OPTION register during CPU power down. This is the proper way
-of powering down CPU on Exynos4.
+Increase max i2c bus frequency beyond the default for faster
+data transfers. According to the manual, these faster speeds are
+only available when the board is wired up the right way. In this case,
+the vendor kernel has run at this speed for a long time.
 
-Additionally on Exynos4212 without this the CPU clock down feature won't
-work after powering down some CPU and the online CPUs will work at full
-frequency chosen by CPUfreq governor.
+sda-delay is needed for talking to RTC on PMIC, otherwise the i2c
+controller never sees an ACK. Strangely the other PMIC i2c slave (the
+main one) works fine even without this delay. I Chose value 100 to
+match the vendor kernel.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
+Signed-off-by: Daniel Drake <drake@endlessm.com>
 ---
-Changes since v1:
-1. Use delayed reset assertion on all Exynos4 family and all cores, not
-   only on core 1 of Exynos4212.
-2. Rebase on Tomasz Figa's patch:
-   ARM: EXYNOS: Fix core ID used by platsmp and hotplug code
-   http://www.spinics.net/lists/linux-samsung-soc/msg31604.html
-   Tomasz's patch is currently applied to Kukjin's v3.16-samsung-fixes-4
----
- arch/arm/mach-exynos/hotplug.c  | 27 +++++++++++++++++++++++++--
- arch/arm/mach-exynos/regs-pmu.h |  3 +++
- 2 files changed, 28 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
-index 920a4baa53cd..e6340b645f9d 100644
---- a/arch/arm/mach-exynos/hotplug.c
-+++ b/arch/arm/mach-exynos/hotplug.c
-@@ -22,7 +22,7 @@
- #include "common.h"
- #include "regs-pmu.h"
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index cb6f55f..adadaf9 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -134,6 +134,8 @@
+ 	i2c@13860000 {
+ 		pinctrl-0 = <&i2c0_bus>;
+ 		pinctrl-names = "default";
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <400000>;
+ 		status = "okay";
  
--static inline void cpu_leave_lowpower(void)
-+static inline void cpu_leave_lowpower(u32 core_id)
- {
- 	unsigned int v;
- 
-@@ -36,6 +36,14 @@ static inline void cpu_leave_lowpower(void)
- 	  : "=&r" (v)
- 	  : "Ir" (CR_C), "Ir" (0x40)
- 	  : "cc");
-+
-+	if (soc_is_exynos4()) {
-+		unsigned int tmp;
-+
-+		tmp = __raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
-+		tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
-+		__raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
-+	}
- }
- 
- static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
-@@ -47,6 +55,19 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
- 
- 		/* Turn the CPU off on next WFI instruction. */
- 		exynos_cpu_power_down(core_id);
-+		if (soc_is_exynos4()) {
-+			unsigned int tmp;
-+
-+			/*
-+			 * Exynos 4 SoCs require setting
-+			 * USE_DELAYED_RESET_ASSERTION so the CPU idle
-+			 * clock down feature could properly detect
-+			 * global idle state when CPUx is off.
-+			 */
-+			tmp = __raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
-+			tmp |= S5P_USE_DELAYED_RESET_ASSERTION;
-+			__raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
-+		}
- 
- 		wfi();
- 
-@@ -76,6 +97,8 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
- void __ref exynos_cpu_die(unsigned int cpu)
- {
- 	int spurious = 0;
-+	u32 mpidr = cpu_logical_map(cpu);
-+	u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
- 
- 	v7_exit_coherency_flush(louis);
- 
-@@ -85,7 +108,7 @@ void __ref exynos_cpu_die(unsigned int cpu)
- 	 * bring this CPU back into the world of cache
- 	 * coherency, and then restore interrupts
- 	 */
--	cpu_leave_lowpower();
-+	cpu_leave_lowpower(core_id);
- 
- 	if (spurious)
- 		pr_warn("CPU%u: %u spurious wakeup calls\n", cpu, spurious);
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index 1d13b08708f0..59bd92112842 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -25,6 +25,7 @@
- 
- #define S5P_USE_STANDBY_WFI0			(1 << 16)
- #define S5P_USE_STANDBY_WFE0			(1 << 24)
-+#define S5P_USE_DELAYED_RESET_ASSERTION		BIT(12)
- 
- #define EXYNOS_SWRESET				S5P_PMUREG(0x0400)
- #define EXYNOS5440_SWRESET			S5P_PMUREG(0x00C4)
-@@ -111,6 +112,8 @@
- 			(EXYNOS_ARM_CORE0_CONFIGURATION + (0x80 * (_nr)))
- #define EXYNOS_ARM_CORE_STATUS(_nr)		\
- 			(EXYNOS_ARM_CORE_CONFIGURATION(_nr) + 0x4)
-+#define EXYNOS_ARM_CORE_OPTION(_nr)		\
-+			(EXYNOS_ARM_CORE_CONFIGURATION(_nr) + 0x8)
- 
- #define EXYNOS_ARM_COMMON_CONFIGURATION		S5P_PMUREG(0x2500)
- #define EXYNOS_COMMON_CONFIGURATION(_nr)	\
+ 		usb3503: usb3503@08 {
 -- 
 1.9.1
