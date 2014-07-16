@@ -1,80 +1,61 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH 18/19] ARM: SAMSUNG: Remove remaining legacy code
-Date: Wed, 16 Jul 2014 12:24:28 +0200
-Message-ID: <1405506268.4408.28.camel@x220>
-References: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
-	 <1404496099-26708-19-git-send-email-t.figa@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [RESEND PATCH v2] ARM: exynos4: hotplug: Fix CPU idle clock down
+ after CPU off
+Date: Wed, 16 Jul 2014 12:48:48 +0200
+Message-ID: <53C65890.8000500@samsung.com>
+References: <1405499003-9975-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews08.kpnxchange.com ([213.75.39.13]:49668 "EHLO
-	cpsmtpb-ews08.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932680AbaGPKYb (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34650 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751016AbaGPKtg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jul 2014 06:24:31 -0400
-In-Reply-To: <1404496099-26708-19-git-send-email-t.figa@samsung.com>
+	Wed, 16 Jul 2014 06:49:36 -0400
+In-reply-to: <1405499003-9975-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Fri, 2014-07-04 at 19:48 +0200, Tomasz Figa wrote:
-> After refactoring suspend/resume, which was last part with dependencies
-> on legacy code, all Kconfig symbols related to Samsung ATAGS support can
-> be deselected and more unused code removed. This includes most of s5p-*
-> code as well, as s5pv210 was their last user.
+Hi Krzysztof,
+
+Please see my comment below.
+
+On 16.07.2014 10:23, Krzysztof Kozlowski wrote:
+> On Exynos4 USE_DELAYED_RESET_ASSERTION must be set in
+> ARM_COREx_OPTION register during CPU power down. This is the proper way
+> of powering down CPU on Exynos4.
 > 
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> ---
+> Additionally on Exynos4212 without this the CPU clock down feature won't
+> work after powering down some CPU and the online CPUs will work at full
+> frequency chosen by CPUfreq governor.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-And I noticed another issue as this patch showed up in linux-next (this
-should be the last issue for this series).
+[snip]
 
-> [...]
-> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-> index f8185b5..1091b0a 100644
-> --- a/arch/arm/plat-samsung/Kconfig
-> +++ b/arch/arm/plat-samsung/Kconfig
->[...]
-> @@ -64,31 +51,6 @@ config SAMSUNG_ATAGS
->  
->  if SAMSUNG_ATAGS
->  
-> -# options for IRQ support
-> -
-> -config S5P_IRQ
-> -	def_bool ARCH_S5PV210
-> -	help
-> -	  Support common interrupt part for ARCH_S5P SoCs
-> -
-> -config S5P_EXT_INT
-> -	bool
-> -	help
-> -	  Use the external interrupts (other than GPIO interrupts.)
-> -
-> -config S5P_GPIO_INT
-> -	bool
-> -	help
-> -	  Common code for the GPIO interrupts (other than external interrupts.)
-> -
-> -# options for gpio configuration support
-> -
-> -config S5P_GPIO_DRVSTR
-> -	bool
-> -	help
-> -	  Internal configuration to get and set correct GPIO driver strength
-> -	  helper
-> -
+> @@ -36,6 +36,14 @@ static inline void cpu_leave_lowpower(void)
+>  	  : "=&r" (v)
+>  	  : "Ir" (CR_C), "Ir" (0x40)
+>  	  : "cc");
+> +
+> +	if (soc_is_exynos4()) {
+> +		unsigned int tmp;
+> +
+> +		tmp = __raw_readl(EXYNOS_ARM_CORE_OPTION(core_id));
+> +		tmp &= ~(S5P_USE_DELAYED_RESET_ASSERTION);
+> +		__raw_writel(tmp, EXYNOS_ARM_CORE_OPTION(core_id));
+> +	}
 
-This one is used (as a macro) in drivers/gpio/gpio-samsung.c. Is a patch
-that touches that macro queued somewhere?
+This code is executed only if the CPU doesn't manage to power off before
+already receiving a wake-up event. Otherwise the context is lost after
+wfi(), as the core power is being cut down.
 
->  config SAMSUNG_GPIO_EXTRA
->  	int "Number of additional GPIO pins"
->  	default 128 if SAMSUNG_GPIO_EXTRA128
+The normal wake-up path goes through platsmp's exynos_boot_secondary()
+and I believe that setting of S5P_USE_DELAYED_RESET_ASSERTION should be
+taken care there as well.
 
-Thanks,
-
-
-Paul Bolle
+Best regards,
+Tomasz
