@@ -1,18 +1,18 @@
 From: Paul Bolle <pebolle@tiscali.nl>
 Subject: Re: [PATCH 18/19] ARM: SAMSUNG: Remove remaining legacy code
-Date: Wed, 16 Jul 2014 12:15:56 +0200
-Message-ID: <1405505756.4408.24.camel@x220>
+Date: Wed, 16 Jul 2014 12:24:28 +0200
+Message-ID: <1405506268.4408.28.camel@x220>
 References: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
 	 <1404496099-26708-19-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews06.kpnxchange.com ([213.75.39.9]:59243 "EHLO
-	cpsmtpb-ews06.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751016AbaGPKP7 (ORCPT
+Received: from cpsmtpb-ews08.kpnxchange.com ([213.75.39.13]:49668 "EHLO
+	cpsmtpb-ews08.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932680AbaGPKYb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jul 2014 06:15:59 -0400
+	Wed, 16 Jul 2014 06:24:31 -0400
 In-Reply-To: <1404496099-26708-19-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -28,50 +28,53 @@ On Fri, 2014-07-04 at 19:48 +0200, Tomasz Figa wrote:
 > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 > ---
 
-I noticed another thing now this patch showed up in next-20140716.
+And I noticed another issue as this patch showed up in linux-next (this
+should be the last issue for this series).
 
->  [...]
+> [...]
 > diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
 > index f8185b5..1091b0a 100644
 > --- a/arch/arm/plat-samsung/Kconfig
 > +++ b/arch/arm/plat-samsung/Kconfig
-> @@ -6,29 +6,16 @@
+>[...]
+> @@ -64,31 +51,6 @@ config SAMSUNG_ATAGS
 >  
->  config PLAT_SAMSUNG
->  	bool
-> -	depends on PLAT_S3C24XX || ARCH_S3C64XX || PLAT_S5P || ARCH_EXYNOS
-> +	depends on PLAT_S3C24XX || ARCH_S3C64XX || ARCH_EXYNOS || ARCH_S5PV210
->  	default y
->  	select GENERIC_IRQ_CHIP
->  	select NO_IOPORT_MAP
->  	help
->  	  Base platform code for all Samsung SoC based systems
+>  if SAMSUNG_ATAGS
 >  
-> -config PLAT_S5P
-> -	bool
-> -	depends on ARCH_S5PV210
-> -	default y
-> -	select ARCH_REQUIRE_GPIOLIB
-> -	select ARM_VIC
-> -	select NO_IOPORT_MAP
-> -	select PLAT_SAMSUNG
-> -	select S3C_GPIO_TRACK
-> -	select S5P_GPIO_DRVSTR
+> -# options for IRQ support
+> -
+> -config S5P_IRQ
+> -	def_bool ARCH_S5PV210
 > -	help
-> -	  Base platform code for Samsung's S5P series SoC.
+> -	  Support common interrupt part for ARCH_S5P SoCs
+> -
+> -config S5P_EXT_INT
+> -	bool
+> -	help
+> -	  Use the external interrupts (other than GPIO interrupts.)
+> -
+> -config S5P_GPIO_INT
+> -	bool
+> -	help
+> -	  Common code for the GPIO interrupts (other than external interrupts.)
+> -
+> -# options for gpio configuration support
+> -
+> -config S5P_GPIO_DRVSTR
+> -	bool
+> -	help
+> -	  Internal configuration to get and set correct GPIO driver strength
+> -	  helper
 > -
 
-After this patch that symbol is still referenced in:
-drivers/media/platform/Kconfig:159:     depends on VIDEO_DEV && VIDEO_V4L2 && (PLAT_S5P || ARCH_EXYNOS)
-drivers/media/platform/Kconfig:169:     depends on VIDEO_DEV && VIDEO_V4L2 && (PLAT_S5P || ARCH_EXYNOS)
-drivers/media/platform/Kconfig:177:     depends on VIDEO_DEV && VIDEO_V4L2 && (PLAT_S5P || ARCH_EXYNOS)
-drivers/media/platform/exynos4-is/Kconfig:5:    depends on (PLAT_S5P || ARCH_EXYNOS)
-drivers/media/platform/s5p-tv/Kconfig:11:       depends on (PLAT_S5P || ARCH_EXYNOS) && PM_RUNTIME
-drivers/usb/host/Kconfig:223:       depends on PLAT_S5P || ARCH_EXYNOS
-drivers/usb/host/Kconfig:530:   depends on PLAT_S5P || ARCH_EXYNOS
+This one is used (as a macro) in drivers/gpio/gpio-samsung.c. Is a patch
+that touches that macro queued somewhere?
 
-Again, I assume patches to remove these references are pending. But is
-that correct?
+>  config SAMSUNG_GPIO_EXTRA
+>  	int "Number of additional GPIO pins"
+>  	default 128 if SAMSUNG_GPIO_EXTRA128
+
+Thanks,
 
 
 Paul Bolle
