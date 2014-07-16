@@ -1,97 +1,135 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH 1/1] i2c: Kconfig: Enable HSI2C for Exynos5 platform
-Date: Wed, 16 Jul 2014 19:40:02 +0200
-Message-ID: <20140716174002.GG2759@katana>
-References: <1403690523-1863-1-git-send-email-sachin.kamat@samsung.com>
- <CAD=FV=WzPxT4okEur8C2G=FZK=zq3EsyCv9aAJwZ1PDkfoOcpA@mail.gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 00/16] i2c: drop class based instantiaion for selected
+ drivers
+Date: Wed, 16 Jul 2014 19:46:05 +0200
+Message-ID: <20140716174604.GI2759@katana>
+References: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jt0yj30bxbg11sci"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=WzPxT4okEur8C2G=FZK=zq3EsyCv9aAJwZ1PDkfoOcpA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <spk.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============6301060798827206376=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1404992799-3705-1-git-send-email-wsa@the-dreams.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-i2c@vger.kernel.org
+Cc: davinci-linux-open-source@linux.davincidsp.com, linux-samsung-soc@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---jt0yj30bxbg11sci
+--===============6301060798827206376==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="QDIl5R72YNOeCxaP"
+Content-Disposition: inline
+
+
+--QDIl5R72YNOeCxaP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 25, 2014 at 10:55:31AM -0700, Doug Anderson wrote:
-> Sachin,
+On Thu, Jul 10, 2014 at 01:46:20PM +0200, Wolfram Sang wrote:
+> Some drivers were flagged to remove class based instantiation soon to imp=
+rove
+> boot-up time. Originally, I was planning for a longer deprecation time so=
+ users
+> could switch over to some other kind of instantiation. However, the deman=
+d for
+> the speed up is high enough and class based instantiation is used rarely,=
+ so
+> the removal takes place now. To make up for the deprecation time, another
+> warning is added to the i2c core pointing out that the behaviour has now
+> changed:
 >=20
-> On Wed, Jun 25, 2014 at 3:02 AM, Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> =
-wrote:
-> > All Exynos5 platforms have HSI2C controllers and are needed by
-> > various IPs connected to the boards based on these SoCs. Thus
-> > select this by default for Exynos5 platforms.
-> >
-> > Signed-off-by: Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> > ---
-> >  drivers/i2c/busses/Kconfig |    4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> > index 9f7d5859cf65..c7918cffe790 100644
-> > --- a/drivers/i2c/busses/Kconfig
-> > +++ b/drivers/i2c/busses/Kconfig
-> > @@ -465,9 +465,9 @@ config I2C_EG20T
-> >  config I2C_EXYNOS5
-> >         tristate "Exynos5 high-speed I2C driver"
-> >         depends on ARCH_EXYNOS5 && OF
-> > +       default y
-> >         help
-> > -         Say Y here to include support for high-speed I2C controller i=
-n the
-> > -         Exynos5 based Samsung SoCs.
-> > +         High-speed I2C controller on Exynos5 based Samsung SoCs.
-> >
-> >  config I2C_GPIO
-> >         tristate "GPIO-based bitbanging I2C"
-> > --
-> > 1.7.9.5
+> +	/* Warn that the adapter lost class based instantiation */
+> +	if (adapter->class =3D=3D I2C_CLASS_DEPRECATED) {
+> +		dev_dbg(&adapter->dev,
+> +			"This adapter dropped support for I2C classes and "
+> +			"won't auto-detect %s devices anymore. If you need it, check "
+> +			"'Documentation/i2c/instantiating-devices' for alternatives.\n",
+> +			driver->driver.name);
+> +		return 0;
+> +	}
 >=20
-> This seems reasonable to me and I will also take the blame for
-> suggesting this.  It's hard to imagine running a real exynos5 system
-> without I2C.  One could argue that on an exynos5250 the high speed I2C
-> controller is not mandatory (since all the ports can be muxed to use
-> the old controller) but on newer exynos5 products you're expected to
-> have the main PMIC on one of the i2c ports.  An exynos system without
-> access to its PMIC will just sorta limp by.
+> A branch can be found here (with two other cleanups -> driver removals):
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/deprecate=
+_stuff
 >=20
-> ...but I've added Arnd to this thread as he expressed some
-> reservations about this type of thing, so we'll see what he says.
+> I hope this meets all the needs. Please comment, ack, test...
+>=20
+> Thanks,
+>=20
+>    Wolfram
+>=20
+>=20
+> Wolfram Sang (16):
+>   i2c: add debug info when class instantiation was dropped
+>   i2c: i2c-at91: Drop class based scanning to improve bootup time
+>   i2c: i2c-bcm2835: Drop class based scanning to improve bootup time
+>   i2c: i2c-bfin-twi: Drop class based scanning to improve bootup time
+>   i2c: i2c-davinci: Drop class based scanning to improve bootup time
+>   i2c: i2c-designware-platdrv: Drop class based scanning to improve
+>     bootup time
+>   i2c: i2c-mv64xxx: Drop class based scanning to improve bootup time
+>   i2c: i2c-nomadik: Drop class based scanning to improve bootup time
+>   i2c: i2c-ocores: Drop class based scanning to improve bootup time
+>   i2c: i2c-omap: Drop class based scanning to improve bootup time
+>   i2c: i2c-rcar: Drop class based scanning to improve bootup time
+>   i2c: i2c-s3c2410: Drop class based scanning to improve bootup time
+>   i2c: i2c-sirf: Drop class based scanning to improve bootup time
+>   i2c: i2c-stu300: Drop class based scanning to improve bootup time
+>   i2c: i2c-tegra: Drop class based scanning to improve bootup time
+>   i2c: i2c-xiic: Drop class based scanning to improve bootup time
+>=20
+>  drivers/i2c/busses/i2c-at91.c               |  2 +-
+>  drivers/i2c/busses/i2c-bcm2835.c            |  2 +-
+>  drivers/i2c/busses/i2c-bfin-twi.c           |  2 +-
+>  drivers/i2c/busses/i2c-davinci.c            |  2 +-
+>  drivers/i2c/busses/i2c-designware-platdrv.c |  2 +-
+>  drivers/i2c/busses/i2c-mv64xxx.c            |  2 +-
 
-Ping. Arnd? I have no strong opinion and would take this patch...
+Applied to for-next, thanks!
 
->=20
-> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
---jt0yj30bxbg11sci
+--QDIl5R72YNOeCxaP
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJTxrjyAAoJEBQN5MwUoCm2Uv4QAKS4r9+/GtEo8fqCOErZjukD
-YSmEj/qOOcX4oHLnk63hi8yGTNE2LfW+IdfpwhHUbionjGot6QyDm8MxcflMTvv0
-4c4eygRUPKrVEAWBOs738OJwIuP/4+4EcfYfO+3lMpTpHf2B9UJnOpMijRJiICb+
-afbqlNcxtiF4OKzUJ+RpdjCjmoKkNLp3qqt9QWhNvTuWa4g2Ixfzi2AxKs2j+T3u
-JCasptoTVvN11EhTlxSX4NOdSs3rBt3RouatNiCxv1/Nx5aQ7LO296n8yfuZGvyv
-2GgnR1RewJ7P9HJ1vbuFxTluqfjP6ggJtdixjjDGE09HycHN1ttTJ87ukU+WghkZ
-3d3DtGrr0gtQxZZYkJNSnSub64wPBSqhcCA0qyxs3+BaS2yIP3LclCS0ZU3terW9
-hmWOeKCXsJhTZhWU0NPyHzPeklNhFXxmw8zJs3us5aaoZw/D+Nj8Ta+Pmc5g/WNY
-+MywQMb6J1bRaGLWFNhsj00qozNGcx1f6CoDIpEjyPAAM55ktcgxMgGWEQaKT80Z
-XseGgAVMJkuza2Qze1hlu5aQpRDDydusG7co9B6z9LgpDB5A1xmQnbRjC67HQC+c
-dIxkAJp0NwfMEnV29LL1kN8EzJ75LXowTR9PyrJ3m7dA0iCwo1TBEZzrIqblLAYx
-96wg8g/IEJUE/zEPGAJ3
-=JyEI
+iQIcBAEBAgAGBQJTxrpcAAoJEBQN5MwUoCm2WtEP/i6iS+LXxbARgxhigYAWFkUr
+klsJEY41o723X7V6MWVXK5ud2s+1GWY3Z74PTHS8Y2bY79V1mDdq4Sa+FegKM3Q8
+9aOD5VXJBWWyiEufSsqUsJGxxWSz81eLX5n3b4olGWclu8BYKZ73jAt9PNF7SAP4
+G1i8DFZadoBxUbVW/hXk86IULb7Lmq3GOMmNIHJ1PFykI/dq7rogSo5yLccked9r
+Ho3kvEWIHeumRYdDsnlUqUayysl+yTvaJRhuXN+NrfDyH5ZB2/MY/4ZK+poV/cUM
+HrkhvF7Yok4udMtvpcGWaga/GKo5sLZZdz33uZutV09Iek7ce/guPsOuX4/yP+0t
+gjwPpMblPPGhC95aM7rDEELYZ434nszEpHLlE7amPONcCxbjrSYu8Qkg76ZjC/N+
+qaxq0l0QL6292ZBZOa366SxtlY3e8sg/YCJ4SE2Iw2/1aM60W2Gb5M3sqGkzaDZf
+TQTQiKuQbM8OTxiBXT6xKOM5h1n/hX780mJvuCXLdzWC5CbsUob0GHkDOBoDpY9r
+Jf2VXoJ7NYj0bUPEaXOWrn0k+BhBc8rXKaIET6m6Oi3AqhQPFO3OlCamlywOCozi
+90OHHciXrVxLlvWTPbx3H/tM+swlHGlGt+oKvvDxhAUnE/zMnbfM/sDC11+7Vlko
+q8c/leBJlfax/IyaZ3wv
+=2yuG
 -----END PGP SIGNATURE-----
 
---jt0yj30bxbg11sci--
+--QDIl5R72YNOeCxaP--
+
+
+--===============6301060798827206376==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============6301060798827206376==--
