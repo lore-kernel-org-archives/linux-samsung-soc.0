@@ -1,94 +1,205 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v7 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-Date: Thu, 17 Jul 2014 11:28:19 +0530
-Message-ID: <CAJuA9aiVFFZiN7_xBg6iQEX-LJKLMmHKvPhmdmOduouQzBtQJw@mail.gmail.com>
-References: <1405345118-4269-1-git-send-email-thomas.ab@samsung.com>
-	<CAJuA9ahWbL8v2nS6wuDosn-bi+pga57KUe5wQN14Mot_-RTc6w@mail.gmail.com>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: [PATCH v6 05/14] drm/exynos: dsi: add TE interrupt handler to support
+ LCD I80 interface
+Date: Thu, 17 Jul 2014 18:01:20 +0900
+Message-ID: <1405587689-1466-6-git-send-email-yj44.cho@samsung.com>
+References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAJuA9ahWbL8v2nS6wuDosn-bi+pga57KUe5wQN14Mot_-RTc6w@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Mike,
+To support LCD I80 interface, the DSI host should register
+TE interrupt handler from the TE GPIO of attached panel.
+So the panel generates a tearing effect synchronization signal
+then the DSI host calls the CRTC device manager to trigger
+to transfer video image.
 
-On Tue, Jul 15, 2014 at 9:20 AM, Thomas Abraham <ta.omasab@gmail.com> wrote:
-> Hi Tomasz,
->
-> On Mon, Jul 14, 2014 at 7:08 PM, Thomas Abraham <thomas.ab@samsung.com> wrote:
->> Changes since v6:
->> - Fixes suggested by Amit Daniel <amit.daniel@samsung.com>.
->>
->> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
->> drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
->> series also enabled cpufreq support for Exynos5420 using arm_big_little cpufreq
->> driver.
->>
->> Thomas Abraham (6):
->>   clk: samsung: add infrastructure to register cpu clocks
->>   clk: samsung: register exynos5420 apll/kpll configuration data
->>   clk: exynos: use cpu-clock provider type to represent arm clock
->>   ARM: dts: Exynos: add cpu nodes, opp and cpu clock configuration data
->>   ARM: Exynos: switch to using generic cpufreq driver for exynos4210/5250
->>   cpufreq: exynos: remove exynos4210/5250 specific cpufreq driver support
->
-> In this series, support for Exynos5420 has been included. If there are
-> any more changes required, could you please let me know.
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 95 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 93 insertions(+), 2 deletions(-)
 
-This patch series migrates exynos cpufreq support to use generic
-cpufreq drivers. For this, cpu clock blocks are encapsulated into a
-cpu clock type and cpufreq driver operates the cpu clock type.
-
-We had discussed in the [1] about using coordinated clocks. This
-series is not using the concept of coordinated clocks but the code in
-this series can be migrated to use coordinated clocks when it is
-available.
-
-Is it okay to consider this series for v3.17-rc1. I will update this
-code to use coordinated clocks when it is available. This series helps
-with cpufreq support for newer Exynos SoCs such as Exynos5420/3250.
-
-[1] http://www.spinics.net/lists/cpufreq/msg10042.html
-
-Thanks,
-Thomas
-
->
-> Thanks,
-> Thomas.
->
->>
->>  arch/arm/boot/dts/exynos4210-origen.dts         |    6 +
->>  arch/arm/boot/dts/exynos4210-trats.dts          |    6 +
->>  arch/arm/boot/dts/exynos4210-universal_c210.dts |    6 +
->>  arch/arm/boot/dts/exynos4210.dtsi               |   27 ++
->>  arch/arm/boot/dts/exynos5250-arndale.dts        |    6 +
->>  arch/arm/boot/dts/exynos5250-cros-common.dtsi   |    6 +
->>  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    6 +
->>  arch/arm/boot/dts/exynos5250.dtsi               |   23 +
->>  arch/arm/boot/dts/exynos5420-smdk5420.dts       |    6 +
->>  arch/arm/boot/dts/exynos5420.dtsi               |   32 ++
->>  arch/arm/mach-exynos/exynos.c                   |   15 +-
->>  drivers/clk/samsung/Makefile                    |    2 +-
->>  drivers/clk/samsung/clk-cpu.c                   |  576 +++++++++++++++++++++++
->>  drivers/clk/samsung/clk-exynos4.c               |   25 +-
->>  drivers/clk/samsung/clk-exynos5250.c            |   16 +-
->>  drivers/clk/samsung/clk-exynos5420.c            |   60 ++-
->>  drivers/clk/samsung/clk.h                       |    5 +
->>  drivers/cpufreq/Kconfig.arm                     |   22 -
->>  drivers/cpufreq/Makefile                        |    2 -
->>  drivers/cpufreq/exynos4210-cpufreq.c            |  184 --------
->>  drivers/cpufreq/exynos5250-cpufreq.c            |  210 ---------
->>  include/dt-bindings/clock/exynos5250.h          |    1 +
->>  include/dt-bindings/clock/exynos5420.h          |    2 +
->>  23 files changed, 802 insertions(+), 442 deletions(-)
->>  create mode 100644 drivers/clk/samsung/clk-cpu.c
->>  delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
->>  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
->>
->> --
->> 1.7.9.5
->>
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 58bfb2a..4997bfe 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -16,7 +16,9 @@
+ #include <drm/drm_panel.h>
+ 
+ #include <linux/clk.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/irq.h>
++#include <linux/of_gpio.h>
+ #include <linux/phy/phy.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/component.h>
+@@ -24,6 +26,7 @@
+ #include <video/mipi_display.h>
+ #include <video/videomode.h>
+ 
++#include "exynos_drm_crtc.h"
+ #include "exynos_drm_drv.h"
+ 
+ /* returns true iff both arguments logically differs */
+@@ -247,6 +250,7 @@ struct exynos_dsi {
+ 	struct clk *bus_clk;
+ 	struct regulator_bulk_data supplies[2];
+ 	int irq;
++	int te_gpio;
+ 
+ 	u32 pll_clk_rate;
+ 	u32 burst_clk_rate;
+@@ -954,17 +958,89 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
++static irqreturn_t exynos_dsi_te_irq_handler(int irq, void *dev_id)
++{
++	struct exynos_dsi *dsi = (struct exynos_dsi *)dev_id;
++	struct drm_encoder *encoder = dsi->encoder;
++
++	if (dsi->state & DSIM_STATE_ENABLED)
++		exynos_drm_crtc_te_handler(encoder->crtc);
++
++	return IRQ_HANDLED;
++}
++
++static void exynos_dsi_enable_irq(struct exynos_dsi *dsi)
++{
++	enable_irq(dsi->irq);
++
++	if (gpio_is_valid(dsi->te_gpio))
++		enable_irq(gpio_to_irq(dsi->te_gpio));
++}
++
++static void exynos_dsi_disable_irq(struct exynos_dsi *dsi)
++{
++	if (gpio_is_valid(dsi->te_gpio))
++		disable_irq(gpio_to_irq(dsi->te_gpio));
++
++	disable_irq(dsi->irq);
++}
++
+ static int exynos_dsi_init(struct exynos_dsi *dsi)
+ {
+ 	exynos_dsi_enable_clock(dsi);
+ 	exynos_dsi_reset(dsi);
+-	enable_irq(dsi->irq);
++	exynos_dsi_enable_irq(dsi);
+ 	exynos_dsi_wait_for_reset(dsi);
+ 	exynos_dsi_init_link(dsi);
+ 
+ 	return 0;
+ }
+ 
++static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi)
++{
++	int ret;
++
++	dsi->te_gpio = of_get_named_gpio(dsi->panel_node, "te-gpios", 0);
++	if (!gpio_is_valid(dsi->te_gpio)) {
++		dev_err(dsi->dev, "no te-gpios specified\n");
++		ret = dsi->te_gpio;
++		goto out;
++	}
++
++	ret = gpio_request_one(dsi->te_gpio, GPIOF_IN, "te_gpio");
++	if (ret) {
++		dev_err(dsi->dev, "gpio request failed with %d\n", ret);
++		goto out;
++	}
++
++	/*
++	 * This TE GPIO IRQ should not be set to IRQ_NOAUTOEN, because panel
++	 * calls drm_panel_init() first then calls mipi_dsi_attach() in probe().
++	 * It means that te_gpio is invalid when exynos_dsi_enable_irq() is
++	 * called by drm_panel_init() before panel is attached.
++	 */
++	ret = request_threaded_irq(gpio_to_irq(dsi->te_gpio),
++					exynos_dsi_te_irq_handler, NULL,
++					IRQF_TRIGGER_RISING, "TE", dsi);
++	if (ret) {
++		dev_err(dsi->dev, "request interrupt failed with %d\n", ret);
++		gpio_free(dsi->te_gpio);
++		goto out;
++	}
++
++out:
++	return ret;
++}
++
++static void exynos_dsi_unregister_te_irq(struct exynos_dsi *dsi)
++{
++	if (gpio_is_valid(dsi->te_gpio)) {
++		free_irq(gpio_to_irq(dsi->te_gpio), dsi);
++		gpio_free(dsi->te_gpio);
++		dsi->te_gpio = -ENOENT;
++	}
++}
++
+ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+ 				  struct mipi_dsi_device *device)
+ {
+@@ -978,6 +1054,16 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+ 	if (dsi->connector.dev)
+ 		drm_helper_hpd_irq_event(dsi->connector.dev);
+ 
++	/*
++	 * If attached panel device is for command mode one, dsi should
++	 * register TE interrupt handler.
++	 */
++	if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO)) {
++		int ret = exynos_dsi_register_te_irq(dsi);
++		if (ret)
++			return ret;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -986,6 +1072,8 @@ static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
+ {
+ 	struct exynos_dsi *dsi = host_to_dsi(host);
+ 
++	exynos_dsi_unregister_te_irq(dsi);
++
+ 	dsi->panel_node = NULL;
+ 
+ 	if (dsi->connector.dev)
+@@ -1099,7 +1187,7 @@ static void exynos_dsi_poweroff(struct exynos_dsi *dsi)
+ 
+ 		exynos_dsi_disable_clock(dsi);
+ 
+-		disable_irq(dsi->irq);
++		exynos_dsi_disable_irq(dsi);
+ 	}
+ 
+ 	dsi->state &= ~DSIM_STATE_CMD_LPM;
+@@ -1445,6 +1533,9 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 		goto err_del_component;
+ 	}
+ 
++	/* To be checked as invalid one */
++	dsi->te_gpio = -ENOENT;
++
+ 	init_completion(&dsi->completed);
+ 	spin_lock_init(&dsi->transfer_lock);
+ 	INIT_LIST_HEAD(&dsi->transfer_list);
+-- 
+1.9.0
