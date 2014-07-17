@@ -1,60 +1,62 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3] ARM: EXYNOS: Fix suspend/resume sequences
-Date: Thu, 17 Jul 2014 16:42:26 +0200
-Message-ID: <53C7E0D2.1050307@samsung.com>
-References: <53C51B57.9040404@samsung.com>
- <1405434287-22710-1-git-send-email-t.figa@samsung.com>
- <53C53A1A.6060701@samsung.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH v4 0/6] Per-user clock constraints
+Date: Thu, 17 Jul 2014 16:13:13 +0200
+Message-ID: <1405606399-26608-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:60020 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932401AbaGQOnG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jul 2014 10:43:06 -0400
-In-reply-to: <53C53A1A.6060701@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Tony Lindgren <tony@atomide.com>, Tomasz Figa <t.figa@samsung.com>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Thierry Reding <thierry.reding@gmail.com>, Paul Mackerras <paulus@samba.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Walker <dwalker@fifo99.com>, linux-arch@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>, Takashi Iwai <tiwai@suse.de>, Michal Simek <michal.simek@xilinx.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kevin Hilman <khilman@deeprootsystems.com>, linux-arm-kernel@lists.infradead.org, patches@opensource.wolfsonmicro.com, Vire
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Chander Kashyap <k.chander@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 
-Hi Kukjin,
-
-On 15.07.2014 16:26, Tomasz Figa wrote:
-> Forgot to CC Daniel and linux-pm. Sorry for the noise.
-> 
-> On 15.07.2014 16:24, Tomasz Figa wrote:
->> Due to recent consolidation of Exynos suspend and cpuidle code, some
->> parts of suspend and resume sequences are executed two times, once from
->> exynos_pm_syscore_ops and then from exynos_cpu_pm_notifier() and thus it
->> breaks suspend, at least on Exynos4-based boards. In addition, simple
->> core power down from a cpuidle driver could, in case of CPU 0 could
->> result in calling functions that are specific to suspend and deeper idle
->> states.
->>
->> This patch fixes the issue by moving those operations outside the CPU PM
->> notifier into suspend and AFTR code paths. This leads to a bit of code
->> duplication, but allows additional code simplification, so in the end
->> more code is removed than added.
->>
->> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
->> ---
->>  arch/arm/mach-exynos/pm.c        | 164 ++++++++++++++++++---------------------
->>  drivers/cpuidle/cpuidle-exynos.c |  25 +-----
->>  2 files changed, 80 insertions(+), 109 deletions(-)
->>
-
-Please consider this patch for next pull request with rc fixes. It
-replaces following patches posted in this thread:
-
-[PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
-[PATCH v2 5/6] ARM: EXYNOS: Fix suspend/resume sequences
-
-and also similar patch by Chander:
-
-[PATCH 2/2] cpuidle: Exynos: fix cpuidle for all states
-
-Best regards,
-Tomasz
+SGksCgpJJ20gcmV0YWtpbmcgUmFiaW4ncyBwYXRjaGVzIFswXSBmb3Igc3BsaXR0aW5nIHRoZSBj
+bGsgQVBJIGluIHR3bzogb25lIEFQSSBmb3IKY2xrIGNvbnN1bWVycyBhbmQgYW5vdGhlciBmb3Ig
+cHJvdmlkZXJzLiBUaGUgY29uc3VtZXIgQVBJIHVzZXMgYSBjbGsgc3RydWN0dXJlCnRoYXQganVz
+dCBrZWVwcyB0cmFjayBvZiB0aGUgY29uc3VtZXIgYW5kIGhhcyBhIHJlZmVyZW5jZSB0byB0aGUg
+YWN0dWFsCmNsa19jb3JlIHN0cnVjdCwgd2hpY2ggaXMgdXNlZCBpbnRlcm5hbGx5LgoKSSBoYXZl
+IGtlcHQgYSBwYXRjaCBmcm9tIFJhYmluIHRoYXQgYWltcyB0byBhaWQgaW4gZGVidWdnaW5nIG5l
+c3RlZAplbmFibGUvZGlzYWJsZSBjYWxscywgdGhvdWdoIG15IHBlcnNvbmFsIGFpbSBpcyB0byBh
+bGxvdyBtb3JlIHRoYW4gb25lIGNvbnN1bWVyCnRvIGluZmx1ZW5jZSB0aGUgZmluYWwsIGVmZmVj
+dGl2ZSBmcmVxdWVuY3kgcmF0ZS4gRm9yIG5vdyB0aGlzIGlzIGxpbWl0ZWQgdG8Kc2V0dGluZyBm
+bG9vciBhbmQgY2VpbGluZyBjb25zdHJhaW50cywgd2l0aCB0aGUgc2hvcnQtdGVybSBhaW0gb2Yg
+YWxsb3dpbmcKZGV2ZnJlcSBhbmQgdGhlcm1hbCBkcml2ZXJzIHRvIHNldCBmbG9vciBhbmQgY2Vp
+bGluZyBmcmVxdWVuY2llcyBvbiB0aGUgbWVtb3J5CmNsb2NrLCByZXNwZWN0aXZlbHkuCgpGb3Ig
+dGhvc2UgZnVuY3Rpb25zIGluIHRoZSBjb25zdW1lciBjbGsgQVBJIHRoYXQgd2VyZSBjYWxsZWQg
+ZnJvbSBwcm92aWRlcnMsIEkKaGF2ZSBhZGRlZCB2YXJpYW50cyB0byBjbGstcHJvdmlkZXIuaCB0
+aGF0IGFyZSB0aGUgc2FtZSBvbmx5IHRoYXQgYWNjZXB0IGEKY2xrX2NvcmUgaW5zdGVhZC4gVGhl
+c2UgZnVuY3Rpb25zIGFyZSBwcmVmaXhlZCB3aXRoIGNsa19wcm92aWRlcl8uCgpQYXRjaCAxLzYg
+anVzdCBhZGRzIGEgYnVuY2ggb2YgZGVmaW5lcyB3aXRoIHRoZSBnb2FsIG9mIGhhdmluZyBhbGwg
+dGhlIHJlbmFtZXMKaW4gdGhlaXIgb3duIGNvbW1pdCB3aGlsZSBwcmVzZXJ2aW5nIGdpdC1iaXNl
+Y3RhYmlsaXR5LCB3aXRoIHBhdGNoIDMvNgpjb250YWluaW5nIHRoZSByZW5hbWUgaXRzZWxmIGFz
+IGdlbmVyYXRlZCBieSB0aGUgQ29jY2luZWxsZSBzY3JpcHQgaW4gWzFdLgpQYXRjaCAyLzYgaXMg
+bmVlZGVkIGJlY2F1c2Ugc291bmQvc29jL214cy9teHMtc2FpZi5jIGNhbGxzIGJvdGggdGhlIGNv
+bnN1bWVyCmFuZCB0aGUgcHJvdmlkZXIgQVBJLiBUaGUgYWN0dWFsIGltcGxlbWVudGF0aW9uIG9m
+IHRoZSBBUEkgc3BsaXQgY29tZXMgaW4gcGF0Y2gKNC82LiBJIHdpbGwgYmUgaGFwcHkgdG8gb3Jn
+YW5pemUgdGhlIHJlZmFjdG9yaW5nIGRpZmZlcmVudGx5IGlmIGFueWJvZHkgaGFzIGEKYmV0dGVy
+IGlkZWEuCgpQYXRjaCA1LzYgd2FybnMgd2hlbiB0aGVyZSdzIGFuIHVuYmFsYW5jZWQgdXNhZ2Ug
+b2YgdGhlIGVuYWJsZSBhbmQgZGlzYWJsZQpBUElzLCBhbmQgcGF0Y2ggNi82IGFkZHMgdGhlIEFQ
+SSBmb3Igc2V0dGluZyBmbG9vciBhbmQgY2VpbGluZyBmcmVxdWVuY2llcywgcGVyCmNvbnN1bWVy
+LgoKWzBdIGh0dHA6Ly90aHJlYWQuZ21hbmUub3JnL2dtYW5lLmxpbnV4Lmtlcm5lbC8xNDAyMDA2
+ClsxXSBodHRwOi8vY2dpdC5jb2xsYWJvcmEuY29tL2dpdC91c2VyL3RvbWV1L2xpbnV4LmdpdC9j
+b21taXQvP2lkPWRhOWM3ZTM0ZDkKClRoYW5rcywKClRvbWV1CgpUb21ldSBWaXpvc28gKDYpOgog
+IGNsazogQWRkIHRlbXBvcmFyeSBtYXBwaW5nIHRvIHRoZSBleGlzdGluZyBBUEkKICBBU29DOiBt
+eHMtc2FpZjogZml4IG1peGVkIHVzZSBvZiBwdWJsaWMgYW5kIHByb3ZpZGVyIGNsayBBUEkKICBj
+bGs6IE1vdmUgYWxsIGRyaXZlcnMgdG8gdXNlIGludGVybmFsIEFQSQogIGNsazogdXNlIHN0cnVj
+dCBjbGsgb25seSBmb3IgZXh0ZXJuYWwgQVBJCiAgY2xrOiBwZXItdXNlciBjbG9jayBhY2NvdW50
+aW5nIGZvciBkZWJ1ZwogIGNsazogQWRkIGZsb29yIGFuZCBjZWlsaW5nIGNvbnN0cmFpbnRzIHRv
+IGNsb2NrIHJhdGVzCgpbZGV0YWlsZWQgZGlmZnN0YXQgb21pdHRlZCBmb3IgYnJldml0eSBzYWtl
+XQoKIDI0NCBmaWxlcyBjaGFuZ2VkLCAyMzQ1IGluc2VydGlvbnMoKyksIDE4MTIgZGVsZXRpb25z
+KC0pCgotLSAKMS45LjMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCkxpbnV4cHBjLWRldiBtYWlsaW5nIGxpc3QKTGludXhwcGMtZGV2QGxpc3RzLm96bGFi
+cy5vcmcKaHR0cHM6Ly9saXN0cy5vemxhYnMub3JnL2xpc3RpbmZvL2xpbnV4cHBjLWRldg==
