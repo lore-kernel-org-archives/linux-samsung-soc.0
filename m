@@ -1,41 +1,86 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH 1/4] Revert "spi: s3c64xx: Added provision for dedicated
- cs pin"
-Date: Thu, 17 Jul 2014 21:33:35 +0200
-Message-ID: <53C8250F.6070006@collabora.co.uk>
-References: <1405523950-2231-1-git-send-email-javier.martinez@collabora.co.uk> <1405523950-2231-2-git-send-email-javier.martinez@collabora.co.uk> <20140717184656.GB17528@sirena.org.uk>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: [RESEND PATCH v3] charger: tps65090: Allow charger module to be
+ used when no irq
+Date: Thu, 17 Jul 2014 22:43:08 +0200
+Message-ID: <20140717204308.GB13832@earth.universe>
+References: <1403300523-17310-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140717184656.GB17528-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.19.201]:34873 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752227AbaGQUnO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Jul 2014 16:43:14 -0400
+Content-Disposition: inline
+In-Reply-To: <1403300523-17310-1-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, olof@lixom.net, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, broonie@kernel.org, lee.jones@linaro.org, Anton Vorontsov <anton@enomsg.org>, javier.martinez@collabora.co.uk, linux-kernel@vger.kernel.org
 
-Hello Mark,
 
-On 07/17/2014 08:46 PM, Mark Brown wrote:
-> On Wed, Jul 16, 2014 at 05:19:07PM +0200, Javier Martinez Canillas wrote:
->> This reverts commit 3146beec21b64f4551fcf0ac148381d54dc41b1b.
-> 
-> For the benefit of those who haven't memorized the SHA1s of every commit
-> that's "spi: s3c64xx: Added provision for dedicated cs pin" - please
-> include the human readable format whenever you reference a SHA1.
-> 
+--5/uDoXvLw7AC5HRs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok, I'll take into account for the next time.
+Hi,
 
-> I've applied this.
-> 
+On Fri, Jun 20, 2014 at 02:42:03PM -0700, Doug Anderson wrote:
+> On the ARM Chromebook tps65090 has two masters: the AP (the main
+> processor running linux) and the EC (the embedded controller).  The AP
+> is allowed to mess with FETs but the EC is in charge of charge control.
+>=20
+> The tps65090 interupt line is routed to both the AP and the EC, which
+> can cause quite a headache.  Having two people adjusting masks and
+> acking interrupts is a recipe for disaster.
+>=20
+> In the shipping kernel we had a hack to have the AP pay attention to
+> the IRQ but not to ack it.  It also wasn't supposed to configure the
+> IRQ in any way.  That hack allowed us to detect when the device was
+> charging without messing with the EC's state.
+>=20
+> The current tps65090 infrastructure makes the above difficult, and it
+> was a bit of a hack to begin with.  Rather than uglify the driver to
+> support it, just extend the driver's existing notion of "no irq" to
+> the charger.  This makes the charger code poll every 2 seconds for AC
+> detect, which is sufficient.
+>=20
+> For proper functioning, requires (mfd: tps65090: Don't tell child
+> devices we have an IRQ if we don't).  If we don't have that patch
+> we'll simply fail to probe on devices without an interrupt (just like
+> we did before this patch).
 
-Thanks a lot for your help and sorry for all the inconveniences that this series
-caused to you.
+Applied to the dev branch, which I use until I get access to the
+official battery.git:
 
-Best regards,
-Javier
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+https://git.kernel.org/cgit/linux/kernel/git/sre/linux-power-supply.git/com=
+mit/?h=3Ddev&id=3D5a3effdc8877132fd12f97fea0d4756614b911c7
+
+-- Sebastian
+
+--5/uDoXvLw7AC5HRs
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBCgAGBQJTyDVcAAoJENju1/PIO/qaisgP/1+Tej5fVZuEtik1elfp/SxQ
+ytPClBtsaVWdn/TE+/1zOjtn5QLHogKAj3R7+Lq+x2Gj013jyUqf4mhetnm0rMio
+x1NnJicGn+Dy2lw2YIgbcJbkgWXOXvDPwu+tsMr+T3L/8YJBgK99kWaB9hc68Luu
+1TO29Dly5mmmJU2naO0GQEGS6zzLSoULvk2tJJdBQ/p5Omt3u2HFKUm7d1vD3xkE
+/1mld1fM1/7q/ahx0FQ6F3b5KZ+39ymKHziraciGinkO/nv548f6XzbJY3/q2Zze
++xTtW9K/C5nVPRm8Cm5J5sJtkfG8SxksM2179NSKOmpiK6s+ESQVaRFIpwJ066D6
+tX7md+Mz2EnhYXPStlGSmPdzf0Yw8B3eaeE5MqK++Da4akFOFKCyV4YP/Ko/s+iv
+tjfX3B0HOPdRdMsTXDo5GwEDmKCvXIAYy40KUwsDXBWmMPyKn0CUr7LDHmh0vB04
+4QGKmpmSNBCBWpzbYeVmgo1SB16HwGdnJW7ovTul79cnQctngdR80HzaieEo6UZB
+7jm6My2CzIuMD55OAkOvW3Ug9y8yiiqG3ZgneGqC8rCaYPhro225f+cFgYJ2wy7B
++MqaM5KTGKAPQc9cryjiFSsMjINbo+wOTEIy079ySv7kOgmHSFDrxxHnETqyBcA+
+lqGyQB4g18qFrWtKEMHB
+=DAxN
+-----END PGP SIGNATURE-----
+
+--5/uDoXvLw7AC5HRs--
