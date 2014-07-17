@@ -1,15 +1,15 @@
 From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V5 05/12] Documentation: Add DT bindings for panel-lvds
- driver
-Date: Fri, 18 Jul 2014 02:20:39 +0530
-Message-ID: <CAEC9eQNygvwOGvw6QPGp+=7K9=oC9XvcEf9QSv=JBsEHyhM0wA@mail.gmail.com>
+Subject: Re: [PATCH V5 11/12] Documentation: Add DT bindings for ps8622/ps8625
+ bridge driver
+Date: Fri, 18 Jul 2014 02:21:14 +0530
+Message-ID: <CAEC9eQORLcGhA=n_v3+_UAB4d114zsJBXyukfXuhK_VqP0_fMw@mail.gmail.com>
 References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
- <1405629839-12086-6-git-send-email-ajaykumar.rs@samsung.com>
+ <1405629839-12086-12-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1405629839-12086-6-git-send-email-ajaykumar.rs@samsung.com>
+In-Reply-To: <1405629839-12086-12-git-send-email-ajaykumar.rs@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -20,75 +20,49 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@dowhile0.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@dowhile0.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 +devicetree@vger.kernel.org
 
 On Fri, Jul 18, 2014 at 2:13 AM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
-> Add DT binding documentation for panel-lvds driver.
+> From: Vincent Palatin <vpalatin@chromium.org>
 >
+> Add DT binding documentation for ps8622/ps8625 bridge driver.
+>
+> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
 > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 > ---
->  .../devicetree/bindings/panel/panel-lvds.txt       |   50 ++++++++++++++++++++
->  1 file changed, 50 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/panel/panel-lvds.txt
+>  .../devicetree/bindings/drm/bridge/ps8622.txt      |   21 ++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/drm/bridge/ps8622.txt
 >
-> diff --git a/Documentation/devicetree/bindings/panel/panel-lvds.txt b/Documentation/devicetree/bindings/panel/panel-lvds.txt
+> diff --git a/Documentation/devicetree/bindings/drm/bridge/ps8622.txt b/Documentation/devicetree/bindings/drm/bridge/ps8622.txt
 > new file mode 100644
-> index 0000000..fdf91da2
+> index 0000000..1d154ac
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/panel/panel-lvds.txt
-> @@ -0,0 +1,50 @@
-> +panel interface for eDP/lvds panels
+> +++ b/Documentation/devicetree/bindings/drm/bridge/ps8622.txt
+> @@ -0,0 +1,21 @@
+> +ps8622-bridge bindings
 > +
 > +Required properties:
-> +  - compatible: "panel-lvds"
+> +       - compatible: "parade,ps8622" or "parade,ps8625"
+> +       - reg: first i2c address of the bridge
+> +       - sleep-gpios: OF device-tree gpio specification
+> +       - reset-gpios: OF device-tree gpio specification
 > +
 > +Optional properties:
-> +       -lcd-enable-gpios:
-> +               panel LCD poweron GPIO.
-> +                       Indicates which GPIO needs to be powered up as output
-> +                       to powerup/enable the switch to the LCD panel.
-> +       -backlight-enable-gpios:
-> +               panel LED enable GPIO.
-> +                       Indicates which GPIO needs to be powered up as output
-> +                       to enable the backlight.
-> +       -panel-prepare-delay:
-> +               delay value in ms required for panel_prepare process
-> +                       Delay in ms needed for the panel LCD unit to
-> +                       powerup completely.
-> +                       ex: delay needed till eDP panel throws HPD.
-> +                           delay needed so that we cans tart reading edid.
-> +       -panel-enable-delay:
-> +               delay value in ms required for panel_enable process
-> +                       Delay in ms needed for the panel backlight/LED unit
-> +                       to powerup, and delay needed between video_enable and
-> +                       backlight_enable.
-> +       -panel-disable-delay:
-> +               delay value in ms required for panel_disable process
-> +                       Delay in ms needed for the panel backlight/LED unit
-> +                       powerdown, and delay needed between backlight_disable
-> +                       and video_disable.
-> +       -panel-unprepare-delay:
-> +               delay value in ms required for panel_post_disable process
-> +                       Delay in ms needed for the panel LCD unit to
-> +                       to powerdown completely, and the minimum delay needed
-> +                       before powering it on again.
-> +       -panel-width-mm: physical panel width [mm]
-> +       -panel-height-mm: physical panel height [mm]
+> +       - lane-count: number of DP lanes to use
+> +       - use-external-pwm: backlight will be controlled by an external PWM
 > +
 > +Example:
-> +
-> +       panel-lvds {
-> +               compatible = "panel-lvds";
-> +               backlight-enable-gpios = <&gpx3 0 0>;
-> +               panel-prepare-delay = <40>;
-> +               panel-enable-delay = <20>;
-> +               panel-disable-delay = <20>;
-> +               panel-unprepare-delay = <30>;
-> +               panel-width-mm = <256>;
-> +               panel-height-mm = <144>;
+> +       ps8622-bridge@48 {
+> +               compatible = "parade,ps8622";
+> +               reg = <0x48>;
+> +               sleep-gpios = <&gpc3 6 1 0 0>;
+> +               reset-gpios = <&gpc3 1 1 0 0>;
+> +               display-timings = <&lcd_display_timings>;
+> +               lane-count = <1>
 > +       };
 > --
 > 1.7.9.5
