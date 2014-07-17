@@ -1,97 +1,74 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 1/2] ARM: firmware: Introduce suspend and resume operations
-Date: Thu, 17 Jul 2014 17:56:10 +0200
-Message-ID: <1405612571-32598-2-git-send-email-t.figa@samsung.com>
-References: <1405612571-32598-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:63136 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752374AbaGQP45 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jul 2014 11:56:57 -0400
-In-reply-to: <1405612571-32598-1-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: Re: [PATCH] irqchip: gic: Fix core ID calculation when topology is
+ read from DT
+Date: Thu, 17 Jul 2014 17:58:33 +0200
+Message-ID: <53C7F2A9.1080508@samsung.com>
+References: <1405610624-18722-1-git-send-email-t.figa@samsung.com>
+ <20140717153236.GS13108@titan.lakedaemon.net> <53C7EE82.6040803@samsung.com>
+ <20140717155105.GT13108@titan.lakedaemon.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20140717155105.GT13108@titan.lakedaemon.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jason Cooper <jason@lakedaemon.net>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, swarren@nvidia.com, acourbot@nvidia.com, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, drake@endlessm.com, Tomasz Figa <t.figa@samsung.com>
 
-This patch extends the firmware_ops structure with two new callbacks:
-.suspend() and .resume(). The former is intended to ask the firmware to
-save all its volatile state and suspend the system, without returning
-back to the kernel in between. The latter is to be called early by
-very low level platform suspend code after waking up to restore low
-level hardware state, which can't be restored in non-secure mode.
+On 17.07.2014 17:51, Jason Cooper wrote:
+> On Thu, Jul 17, 2014 at 05:40:50PM +0200, Tomasz Figa wrote:
+>> Hi Jason,
+>>
+>> On 17.07.2014 17:32, Jason Cooper wrote:
+>>> On Thu, Jul 17, 2014 at 05:23:44PM +0200, Tomasz Figa wrote:
+>>>> Certain GIC implementation, namely those found on earlier, single
+>>>> cluster, Exynos SoCs, have registers mapped without per-CPU banking,
+>>>> which means that the driver needs to use different offset for each CPU.
+>>>>
+>>>> Currently the driver calculates the offset by multiplying value returned
+>>>> by cpu_logical_map() by CPU offset parsed from DT. This is correct when
+>>>> CPU topology is not specified in DT and aforementioned function returns
+>>>> core ID alone. However when DT contains CPU topology, the function
+>>>> changes to return cluster ID as well, which is non-zero on mentioned
+>>>> SoCs and so breaks the calculation in GIC driver.
+>>>>
+>>>> This patch fixes this by masking out cluster ID in CPU offset
+>>>> calculation so that only core ID is considered. Multi-cluster Exynos
+>>>> SoCs already have banked GIC implementations, so this simple fix should
+>>>> be enough.
+>>>>
+>>>> Reported-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+>>>> Reported-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>>>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+>>>> ---
+>>>>  drivers/irqchip/irq-gic.c | 5 ++++-
+>>>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>>
+>>> iiuc, this was introduced by:
+>>>
+>>>   db0d4db22a78d ARM: gic: allow GIC to support non-banked setups
+>>>
+>>> and so should be for v3.3 and up, correct?
+>>
+>> Could be, although there was and still is no topology data specified in
+>> DT for affected Exynos SoCs. The need for it showed up just recently, so
+>> I'm not sure this is a regression to fix in older kernels.
+> 
+> In my "the kernel and the dtb aren't tied together" quest, these are the
+> kinds of things I like to see fixed in stable kernels.
+> 
+> If a user needs to update a dtb, say to fix a bug, it's reasonable to
+> use the newest one for a given board.  After all, any new nodes won't
+> change anything, since the driver in the kernel won't match the node.
+> 
+> However, in this case, without this fix, a user upgrading to the newest
+> dtb would get a broken system.  So, this fix should be backported to
+> prevent the breakage.  Or, have I missed something in my analysis?
 
-While at it, outdated version of the structure is removed from the
-documentation and replaced with a reference to the header file.
+This is correct when looking only at this issue. However I suspect such
+move would cause a breakage anyway, because DT stuff isn't that stable
+on Exynos side. I don't mind if this patch hits stable, though.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
----
- Documentation/arm/firmware.txt  | 28 +++++-----------------------
- arch/arm/include/asm/firmware.h |  8 ++++++++
- 2 files changed, 13 insertions(+), 23 deletions(-)
-
-diff --git a/Documentation/arm/firmware.txt b/Documentation/arm/firmware.txt
-index c2e468f..da6713a 100644
---- a/Documentation/arm/firmware.txt
-+++ b/Documentation/arm/firmware.txt
-@@ -7,32 +7,14 @@ world, which changes the way some things have to be initialized. This makes
- a need to provide an interface for such platforms to specify available firmware
- operations and call them when needed.
- 
--Firmware operations can be specified using struct firmware_ops
--
--	struct firmware_ops {
--		/*
--		* Enters CPU idle mode
--		*/
--		int (*do_idle)(void);
--		/*
--		* Sets boot address of specified physical CPU
--		*/
--		int (*set_cpu_boot_addr)(int cpu, unsigned long boot_addr);
--		/*
--		* Boots specified physical CPU
--		*/
--		int (*cpu_boot)(int cpu);
--		/*
--		* Initializes L2 cache
--		*/
--		int (*l2x0_init)(void);
--	};
--
--and then registered with register_firmware_ops function
-+Firmware operations can be specified by filling in a struct firmware_ops
-+with appropriate callbacks and then registering it with register_firmware_ops()
-+function.
- 
- 	void register_firmware_ops(const struct firmware_ops *ops)
- 
--the ops pointer must be non-NULL.
-+The ops pointer must be non-NULL. More information about struct firmware_ops
-+and its members can be found in arch/arm/include/asm/firmware.h header.
- 
- There is a default, empty set of operations provided, so there is no need to
- set anything if platform does not require firmware operations.
-diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
-index 2c9f10d..5904f59 100644
---- a/arch/arm/include/asm/firmware.h
-+++ b/arch/arm/include/asm/firmware.h
-@@ -41,6 +41,14 @@ struct firmware_ops {
- 	 * Initializes L2 cache
- 	 */
- 	int (*l2x0_init)(void);
-+	/*
-+	 * Enter system-wide suspend.
-+	 */
-+	int (*suspend)(void);
-+	/*
-+	 * Restore state of privileged hardware after system-wide suspend.
-+	 */
-+	int (*resume)(void);
- };
- 
- /* Global pointer for current firmware_ops structure, can't be NULL. */
--- 
-1.9.3
+Best regards,
+Tomasz
