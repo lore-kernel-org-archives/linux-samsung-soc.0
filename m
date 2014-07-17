@@ -1,8 +1,7 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v6 05/14] drm/exynos: dsi: add TE interrupt handler to support
- LCD I80 interface
-Date: Thu, 17 Jul 2014 18:01:20 +0900
-Message-ID: <1405587689-1466-6-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH v6 09/14] ARM: dts: s6e3fa0: add DT bindings
+Date: Thu, 17 Jul 2014 18:01:24 +0900
+Message-ID: <1405587689-1466-10-git-send-email-yj44.cho@samsung.com>
 References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,184 +21,68 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-To support LCD I80 interface, the DSI host should register
-TE interrupt handler from the TE GPIO of attached panel.
-So the panel generates a tearing effect synchronization signal
-then the DSI host calls the CRTC device manager to trigger
-to transfer video image.
+This patch adds DT bindings for s6e3fa0 panel.
+The bindings describes panel resources and display timings.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 95 ++++++++++++++++++++++++++++++++-
- 1 file changed, 93 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/panel/samsung,s6e3fa0.txt  | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 58bfb2a..4997bfe 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -16,7 +16,9 @@
- #include <drm/drm_panel.h>
- 
- #include <linux/clk.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/irq.h>
-+#include <linux/of_gpio.h>
- #include <linux/phy/phy.h>
- #include <linux/regulator/consumer.h>
- #include <linux/component.h>
-@@ -24,6 +26,7 @@
- #include <video/mipi_display.h>
- #include <video/videomode.h>
- 
-+#include "exynos_drm_crtc.h"
- #include "exynos_drm_drv.h"
- 
- /* returns true iff both arguments logically differs */
-@@ -247,6 +250,7 @@ struct exynos_dsi {
- 	struct clk *bus_clk;
- 	struct regulator_bulk_data supplies[2];
- 	int irq;
-+	int te_gpio;
- 
- 	u32 pll_clk_rate;
- 	u32 burst_clk_rate;
-@@ -954,17 +958,89 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static irqreturn_t exynos_dsi_te_irq_handler(int irq, void *dev_id)
-+{
-+	struct exynos_dsi *dsi = (struct exynos_dsi *)dev_id;
-+	struct drm_encoder *encoder = dsi->encoder;
+diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+new file mode 100644
+index 0000000..2cd32f5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
+@@ -0,0 +1,46 @@
++Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
 +
-+	if (dsi->state & DSIM_STATE_ENABLED)
-+		exynos_drm_crtc_te_handler(encoder->crtc);
++Required properties:
++  - compatible: "samsung,s6e3fa0"
++  - reg: the virtual channel number of a DSI peripheral
++  - vdd3-supply: core voltage supply
++  - vci-supply: voltage supply for analog circuits
++  - reset-gpios: a GPIO spec for the reset pin
++  - det-gpios: a GPIO spec for the OLED detection pin
++  - te-gpios: a GPIO spec for the TE pin
++  - display-timings: timings for the connected panel as described by [1]
 +
-+	return IRQ_HANDLED;
-+}
++Optional properties:
 +
-+static void exynos_dsi_enable_irq(struct exynos_dsi *dsi)
-+{
-+	enable_irq(dsi->irq);
++The device node can contain one 'port' child node with one child 'endpoint'
++node, according to the bindings defined in [2]. This node should describe
++panel's video bus.
 +
-+	if (gpio_is_valid(dsi->te_gpio))
-+		enable_irq(gpio_to_irq(dsi->te_gpio));
-+}
++[1]: Documentation/devicetree/bindings/video/display-timing.txt
++[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
 +
-+static void exynos_dsi_disable_irq(struct exynos_dsi *dsi)
-+{
-+	if (gpio_is_valid(dsi->te_gpio))
-+		disable_irq(gpio_to_irq(dsi->te_gpio));
++Example:
 +
-+	disable_irq(dsi->irq);
-+}
++	panel@0 {
++		compatible = "samsung,s6e3fa0";
++		reg = <0>;
++		vdd3-supply = <&vcclcd_reg>;
++		vci-supply = <&vlcd_reg>;
++		reset-gpios = <&gpy7 4 0>;
++		det-gpios = <&gpg0 6 0>;
++		te-gpios = <&gpd1 7 0>;
 +
- static int exynos_dsi_init(struct exynos_dsi *dsi)
- {
- 	exynos_dsi_enable_clock(dsi);
- 	exynos_dsi_reset(dsi);
--	enable_irq(dsi->irq);
-+	exynos_dsi_enable_irq(dsi);
- 	exynos_dsi_wait_for_reset(dsi);
- 	exynos_dsi_init_link(dsi);
- 
- 	return 0;
- }
- 
-+static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi)
-+{
-+	int ret;
-+
-+	dsi->te_gpio = of_get_named_gpio(dsi->panel_node, "te-gpios", 0);
-+	if (!gpio_is_valid(dsi->te_gpio)) {
-+		dev_err(dsi->dev, "no te-gpios specified\n");
-+		ret = dsi->te_gpio;
-+		goto out;
-+	}
-+
-+	ret = gpio_request_one(dsi->te_gpio, GPIOF_IN, "te_gpio");
-+	if (ret) {
-+		dev_err(dsi->dev, "gpio request failed with %d\n", ret);
-+		goto out;
-+	}
-+
-+	/*
-+	 * This TE GPIO IRQ should not be set to IRQ_NOAUTOEN, because panel
-+	 * calls drm_panel_init() first then calls mipi_dsi_attach() in probe().
-+	 * It means that te_gpio is invalid when exynos_dsi_enable_irq() is
-+	 * called by drm_panel_init() before panel is attached.
-+	 */
-+	ret = request_threaded_irq(gpio_to_irq(dsi->te_gpio),
-+					exynos_dsi_te_irq_handler, NULL,
-+					IRQF_TRIGGER_RISING, "TE", dsi);
-+	if (ret) {
-+		dev_err(dsi->dev, "request interrupt failed with %d\n", ret);
-+		gpio_free(dsi->te_gpio);
-+		goto out;
-+	}
-+
-+out:
-+	return ret;
-+}
-+
-+static void exynos_dsi_unregister_te_irq(struct exynos_dsi *dsi)
-+{
-+	if (gpio_is_valid(dsi->te_gpio)) {
-+		free_irq(gpio_to_irq(dsi->te_gpio), dsi);
-+		gpio_free(dsi->te_gpio);
-+		dsi->te_gpio = -ENOENT;
-+	}
-+}
-+
- static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 				  struct mipi_dsi_device *device)
- {
-@@ -978,6 +1054,16 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 	if (dsi->connector.dev)
- 		drm_helper_hpd_irq_event(dsi->connector.dev);
- 
-+	/*
-+	 * If attached panel device is for command mode one, dsi should
-+	 * register TE interrupt handler.
-+	 */
-+	if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO)) {
-+		int ret = exynos_dsi_register_te_irq(dsi);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -986,6 +1072,8 @@ static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
- {
- 	struct exynos_dsi *dsi = host_to_dsi(host);
- 
-+	exynos_dsi_unregister_te_irq(dsi);
-+
- 	dsi->panel_node = NULL;
- 
- 	if (dsi->connector.dev)
-@@ -1099,7 +1187,7 @@ static void exynos_dsi_poweroff(struct exynos_dsi *dsi)
- 
- 		exynos_dsi_disable_clock(dsi);
- 
--		disable_irq(dsi->irq);
-+		exynos_dsi_disable_irq(dsi);
- 	}
- 
- 	dsi->state &= ~DSIM_STATE_CMD_LPM;
-@@ -1445,6 +1533,9 @@ static int exynos_dsi_probe(struct platform_device *pdev)
- 		goto err_del_component;
- 	}
- 
-+	/* To be checked as invalid one */
-+	dsi->te_gpio = -ENOENT;
-+
- 	init_completion(&dsi->completed);
- 	spin_lock_init(&dsi->transfer_lock);
- 	INIT_LIST_HEAD(&dsi->transfer_list);
++		display-timings {
++			timings0 {
++				clock-frequency = <0>;
++				hactive = <1080>;
++				vactive = <1920>;
++				hfront-porch = <2>;
++				hback-porch = <2>;
++				hsync-len = <1>;
++				vfront-porch = <1>;
++				vback-porch = <4>;
++				vsync-len = <1>;
++			};
++		};
++	};
 -- 
 1.9.0
