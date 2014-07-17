@@ -1,54 +1,67 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH] irqchip: gic: Fix core ID calculation when topology is
- read from DT
-Date: Thu, 17 Jul 2014 11:32:36 -0400
-Message-ID: <20140717153236.GS13108@titan.lakedaemon.net>
-References: <1405610624-18722-1-git-send-email-t.figa@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RESEND PATCH v3] charger: tps65090: Allow charger module to
+ be used when no irq
+Date: Thu, 17 Jul 2014 17:40:09 +0200
+Message-ID: <53C7EE59.1050102@collabora.co.uk>
+References: <1403300523-17310-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:61014 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S933006AbaGQPcu (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:48969 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933145AbaGQPkQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jul 2014 11:32:50 -0400
-Content-Disposition: inline
-In-Reply-To: <1405610624-18722-1-git-send-email-t.figa@samsung.com>
+	Thu, 17 Jul 2014 11:40:16 -0400
+In-Reply-To: <1403300523-17310-1-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Doug Anderson <dianders@chromium.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, Sebastian Reichel <sre@kernel.org>
+Cc: olof@lixom.net, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, broonie@kernel.org, lee.jones@linaro.org, Anton Vorontsov <anton@enomsg.org>, linux-kernel@vger.kernel.org
 
-On Thu, Jul 17, 2014 at 05:23:44PM +0200, Tomasz Figa wrote:
-> Certain GIC implementation, namely those found on earlier, single
-> cluster, Exynos SoCs, have registers mapped without per-CPU banking,
-> which means that the driver needs to use different offset for each CPU.
+Hello Doug,
+
+On 06/20/2014 11:42 PM, Doug Anderson wrote:
+> On the ARM Chromebook tps65090 has two masters: the AP (the main
+> processor running linux) and the EC (the embedded controller).  The AP
+> is allowed to mess with FETs but the EC is in charge of charge control.
 > 
-> Currently the driver calculates the offset by multiplying value returned
-> by cpu_logical_map() by CPU offset parsed from DT. This is correct when
-> CPU topology is not specified in DT and aforementioned function returns
-> core ID alone. However when DT contains CPU topology, the function
-> changes to return cluster ID as well, which is non-zero on mentioned
-> SoCs and so breaks the calculation in GIC driver.
+> The tps65090 interupt line is routed to both the AP and the EC, which
+> can cause quite a headache.  Having two people adjusting masks and
+> acking interrupts is a recipe for disaster.
 > 
-> This patch fixes this by masking out cluster ID in CPU offset
-> calculation so that only core ID is considered. Multi-cluster Exynos
-> SoCs already have banked GIC implementations, so this simple fix should
-> be enough.
+> In the shipping kernel we had a hack to have the AP pay attention to
+> the IRQ but not to ack it.  It also wasn't supposed to configure the
+> IRQ in any way.  That hack allowed us to detect when the device was
+> charging without messing with the EC's state.
 > 
-> Reported-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Reported-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> The current tps65090 infrastructure makes the above difficult, and it
+> was a bit of a hack to begin with.  Rather than uglify the driver to
+> support it, just extend the driver's existing notion of "no irq" to
+> the charger.  This makes the charger code poll every 2 seconds for AC
+> detect, which is sufficient.
+> 
+> For proper functioning, requires (mfd: tps65090: Don't tell child
+> devices we have an IRQ if we don't).  If we don't have that patch
+> we'll simply fail to probe on devices without an interrupt (just like
+> we did before this patch).
+> 
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
 > ---
->  drivers/irqchip/irq-gic.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> Changes in v2:
+> - Split noirq (polling mode) changes into MFD and charger
+> 
+> This patch has been sent up a number of times with no response.  It's
+> needed to make the charger work on exynos5250-snow,
+> exynos5420-peach-pit, and exynos5800-peach-pi.  It was originally part
+> of a series as <https://patchwork.kernel.org/patch/4042751/> and the
+> rest of the series has long since landed.
+> 
 
-iiuc, this was introduced by:
+Looks good to me. Also since this patch makes optional to get an IRQ, the
+following annoying message is not shown anymore:
 
-  db0d4db22a78d ARM: gic: allow GIC to support non-banked setups
+[    2.132944] tps65090-charger tps65090-charger: Unable to get charger irq = -6
 
-and so should be for v3.3 and up, correct?
-
-thx,
-
-Jason.
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
