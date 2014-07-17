@@ -1,68 +1,254 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
-Date: Thu, 17 Jul 2014 17:56:09 +0200
-Message-ID: <1405612571-32598-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:63136 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751975AbaGQP4z (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jul 2014 11:56:55 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 2/2] ARM: EXYNOS: Add support for firmware-assisted
+ suspend/resume
+Date: Thu, 17 Jul 2014 17:56:11 +0200
+Message-ID: <1405612571-32598-3-git-send-email-t.figa@samsung.com>
+References: <1405612571-32598-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1405612571-32598-1-git-send-email-t.figa@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, swarren@nvidia.com, acourbot@nvidia.com, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, drake@endlessm.com, Tomasz Figa <t.figa@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Exynos-based boards running secure firmware the sequence of low level
-operations to enter and leave system-wide sleep mode is different than
-on those without the firmware. Namely:
- - CP15 power control and diagnostic registers cannot be written directly,
- - the way of setting boot address and boot flag is different,
- - different resume handler needs to be used,
- - dedicated SMC call needs to be performed instead of letting the CPU enter
-   WFI.
+On a numer of Exynos-based boards Linux kernel is running in non-secure
+mode under a secure firmware. This means that certain operations need to
+be handled in special way, with firmware assistance. System-wide
+suspend/resume is an example of such operations.
 
-This series introduces .suspend() and .resume() firmware operations to
-perform low level firmware-specific suspend and resume and then leverages
-them to provide suspend-resume path meeting the above requirements.
+This patch adds support for firmware-assisted suspend/resume by
+leveraging recently introduced suspend and resume firmware operations
+and modifying existing suspend/resume paths to account for presence of
+secure firmware.
 
-The series is based on Kgene's for-next branch and tested on:
- - Exynos4412-based Trats2 board running in non-secure mode (under secure
-   firmware) with few board-specific fixes that will be sent separately soon,
- - Exynos4210-based Trats board running in secure mode,
- - Exynos4412-based ODROID-U3 board running in non-secure mode with one minor
-   board-specific fix which will be send shortly.
-
-Depends on:
- - [PATCH v3] ARM: save/restore Cortex-A9 CP15 registers on suspend/resume
-   (http://www.spinics.net/lists/arm-kernel/msg346212.html)
- - [PATCH v3] ARM: EXYNOS: Fix suspend/resume sequences
-   (https://lkml.org/lkml/2014/7/15/319)
- - [PATCH] ARM: make it easier to check the CPU part number correctly
-   (http://thread.gmane.org/gmane.linux.ports.arm.kernel/335126
-    already in linux-next)
-
-Changes since v1:
- - dropped outer_resume() - will be handled in assembly in further patches,
-   as support for L2C in non-secure mode gets added,
- - moved CP15 resume to assembly as it needs to be done before MMU is enabled,
- - surrounded CP15 save with a check for cpuid part, because it is valid only
-   on Cortex A9,
- - rebased on next-20140717 tag of linux-next tree.
-
-Tomasz Figa (2):
-  ARM: firmware: Introduce suspend and resume operations
-  ARM: EXYNOS: Add support for firmware-assisted suspend/resume
-
- Documentation/arm/firmware.txt  | 28 +++++--------------------
- arch/arm/include/asm/firmware.h |  8 ++++++++
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+---
  arch/arm/mach-exynos/Makefile   |  1 +
  arch/arm/mach-exynos/common.h   |  4 ++++
  arch/arm/mach-exynos/firmware.c | 45 +++++++++++++++++++++++++++++++++++++++++
  arch/arm/mach-exynos/pm.c       | 16 ++++++++++-----
  arch/arm/mach-exynos/sleep.S    | 28 +++++++++++++++++++++++++
  arch/arm/mach-exynos/smc.h      |  4 ++++
- 8 files changed, 106 insertions(+), 28 deletions(-)
+ 6 files changed, 93 insertions(+), 5 deletions(-)
 
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 788f26d..e7d1774 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -26,6 +26,7 @@ CFLAGS_hotplug.o		+= -march=armv7-a
+ 
+ plus_sec := $(call as-instr,.arch_extension sec,+sec)
+ AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
++AFLAGS_sleep.o			:=-Wa,-march=armv7-a$(plus_sec)
+ 
+ obj-$(CONFIG_EXYNOS5420_MCPM)	+= mcpm-exynos.o
+ CFLAGS_mcpm-exynos.o		+= -march=armv7-a
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index f8daa9c..a3f3061 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -111,6 +111,9 @@ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
+ #define soc_is_exynos5() (soc_is_exynos5250() || soc_is_exynos5410() || \
+ 			  soc_is_exynos5420() || soc_is_exynos5800())
+ 
++extern u32 cp15_save_diag;
++extern u32 cp15_save_power;
++
+ extern void __iomem *sysram_ns_base_addr;
+ extern void __iomem *sysram_base_addr;
+ extern void __iomem *pmu_base_addr;
+@@ -127,6 +130,7 @@ static inline void exynos_pm_init(void) {}
+ #endif
+ 
+ extern void exynos_cpu_resume(void);
++extern void exynos_cpu_resume_ns(void);
+ 
+ extern struct smp_operations exynos_smp_ops;
+ 
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index e8797bb..f5e626d 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -14,13 +14,20 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ 
++#include <asm/cacheflush.h>
++#include <asm/cputype.h>
+ #include <asm/firmware.h>
++#include <asm/suspend.h>
+ 
+ #include <mach/map.h>
+ 
+ #include "common.h"
+ #include "smc.h"
+ 
++#define EXYNOS_SLEEP_MAGIC	0x00000bad
++#define EXYNOS_BOOT_ADDR	0x8
++#define EXYNOS_BOOT_FLAG	0xc
++
+ static int exynos_do_idle(void)
+ {
+ 	exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
+@@ -69,10 +76,48 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ 	return 0;
+ }
+ 
++static int exynos_cpu_suspend(unsigned long arg)
++{
++	flush_cache_all();
++	outer_flush_all();
++
++	exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
++
++	pr_info("Failed to suspend the system\n");
++	writel(0, sysram_ns_base_addr + EXYNOS_BOOT_FLAG);
++	return 1;
++}
++
++static int exynos_suspend(void)
++{
++	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
++		/* Save Power control and Diagnostic registers */
++		asm ("mrc p15, 0, %0, c15, c0, 0\n"
++			"mrc p15, 0, %1, c15, c0, 1\n"
++			: "=r" (cp15_save_power), "=r" (cp15_save_diag)
++			: : "cc");
++	}
++
++	writel(EXYNOS_SLEEP_MAGIC, sysram_ns_base_addr + EXYNOS_BOOT_FLAG);
++	writel(virt_to_phys(exynos_cpu_resume_ns),
++		sysram_ns_base_addr + EXYNOS_BOOT_ADDR);
++
++	return cpu_suspend(0, exynos_cpu_suspend);
++}
++
++static int exynos_resume(void)
++{
++	writel(0, sysram_ns_base_addr + EXYNOS_BOOT_FLAG);
++
++	return 0;
++}
++
+ static const struct firmware_ops exynos_firmware_ops = {
+ 	.do_idle		= exynos_do_idle,
+ 	.set_cpu_boot_addr	= exynos_set_cpu_boot_addr,
+ 	.cpu_boot		= exynos_cpu_boot,
++	.suspend		= exynos_suspend,
++	.resume			= exynos_resume,
+ };
+ 
+ void __init exynos_firmware_init(void)
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 63a1d6b..681e894 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -23,6 +23,7 @@
+ #include <linux/clk.h>
+ 
+ #include <asm/cacheflush.h>
++#include <asm/firmware.h>
+ #include <asm/hardware/cache-l2x0.h>
+ #include <asm/smp_scu.h>
+ #include <asm/suspend.h>
+@@ -354,12 +355,11 @@ static int exynos_pm_suspend(void)
+ 
+ static void exynos_pm_resume(void)
+ {
++	u32 cpuid = read_cpuid_part();
++
+ 	if (exynos_pm_central_resume())
+ 		goto early_wakeup;
+ 
+-	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
+-		exynos_cpu_restore_register();
+-
+ 	/* For release retention */
+ 
+ 	__raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
+@@ -376,9 +376,13 @@ static void exynos_pm_resume(void)
+ 
+ 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+ 
+-	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
++	if (cpuid == ARM_CPU_PART_CORTEX_A9)
+ 		scu_enable(S5P_VA_SCU);
+ 
++	if (call_firmware_op(resume) == -ENOSYS
++	    && cpuid == ARM_CPU_PART_CORTEX_A9)
++		exynos_cpu_restore_register();
++
+ early_wakeup:
+ 
+ 	/* Clear SLEEP mode set in INFORM1 */
+@@ -419,7 +423,9 @@ static int exynos_suspend_enter(suspend_state_t state)
+ 	flush_cache_all();
+ 	s3c_pm_check_store();
+ 
+-	ret = cpu_suspend(0, exynos_cpu_suspend);
++	ret = call_firmware_op(suspend);
++	if (ret == -ENOSYS)
++		ret = cpu_suspend(0, exynos_cpu_suspend);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/arch/arm/mach-exynos/sleep.S b/arch/arm/mach-exynos/sleep.S
+index 108a45f..e3c3730 100644
+--- a/arch/arm/mach-exynos/sleep.S
++++ b/arch/arm/mach-exynos/sleep.S
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include <linux/linkage.h>
++#include "smc.h"
+ 
+ #define CPU_MASK	0xff0ffff0
+ #define CPU_CORTEX_A9	0x410fc090
+@@ -55,3 +56,30 @@ ENTRY(exynos_cpu_resume)
+ #endif
+ 	b	cpu_resume
+ ENDPROC(exynos_cpu_resume)
++
++	.align
++
++ENTRY(exynos_cpu_resume_ns)
++	mrc	p15, 0, r0, c0, c0, 0
++	ldr	r1, =CPU_MASK
++	and	r0, r0, r1
++	ldr	r1, =CPU_CORTEX_A9
++	cmp	r0, r1
++	bne	skip_cp15
++
++	adr	r0, cp15_save_power
++	ldr	r1, [r0]
++	adr	r0, cp15_save_diag
++	ldr	r2, [r0]
++	mov	r0, #SMC_CMD_C15RESUME
++	dsb
++	smc	#0
++skip_cp15:
++	b	cpu_resume
++ENDPROC(exynos_cpu_resume_ns)
++	.globl cp15_save_diag
++cp15_save_diag:
++	.long	0	@ cp15 diagnostic
++	.globl cp15_save_power
++cp15_save_power:
++	.long	0	@ cp15 power control
+diff --git a/arch/arm/mach-exynos/smc.h b/arch/arm/mach-exynos/smc.h
+index 13a1dc8..f7b82f9 100644
+--- a/arch/arm/mach-exynos/smc.h
++++ b/arch/arm/mach-exynos/smc.h
+@@ -26,6 +26,10 @@
+ #define SMC_CMD_L2X0INVALL	(-24)
+ #define SMC_CMD_L2X0DEBUG	(-25)
+ 
++#ifndef __ASSEMBLY__
++
+ extern void exynos_smc(u32 cmd, u32 arg1, u32 arg2, u32 arg3);
+ 
++#endif /* __ASSEMBLY__ */
++
+ #endif
 -- 
 1.9.3
