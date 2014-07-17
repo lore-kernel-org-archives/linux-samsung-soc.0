@@ -1,138 +1,97 @@
-From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 1/4 v2] iio: exyno-adc: use syscon for PMU register access
-Date: Thu, 17 Jul 2014 16:49:50 +0530
-Message-ID: <1405595993-16661-2-git-send-email-ch.naveen@samsung.com>
-References: <1405595993-16661-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1405595993-16661-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH 0/4] iio: exynos-adc: use syscon instead of ioremap
+Date: Thu, 17 Jul 2014 17:17:18 +0530
+Message-ID: <CAHfPSqDqJuhsMMocpz0jWxJhAuFQDpfssNB3kFN9bMcaPGtH0g@mail.gmail.com>
+References: <1405069589-10388-1-git-send-email-ch.naveen@samsung.com>
+ <53C56F40.1070304@kernel.org> <53C56FB1.2040700@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f173.google.com ([209.85.216.173]:32943 "EHLO
+	mail-qc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754898AbaGQLrj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Jul 2014 07:47:39 -0400
+In-Reply-To: <53C56FB1.2040700@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch updates the IIO based ADC driver to use syscon and regmap
-APIs to access and use PMU registers instead of remapping the PMU
-registers in the driver.
+Hello Jonathan,
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
----
-Changes since v1:
-None
+On 15 July 2014 23:45, Jonathan Cameron <jic23@kernel.org> wrote:
+> On 15/07/14 19:13, Jonathan Cameron wrote:
+>>
+>> On 11/07/14 10:06, Naveen Krishna Chatradhi wrote:
+>>>
+>>> This patch does the following
+>>> 1. Use the syscon and Regmap API instead of ioremappaing the
+>>>     ADC_PHY register from PMU.
+>>> 2. Moves the exynos-adc.txt from bindings/arm/samsung/
+>>>     to bindings/iio/adc/.
+>>> 3. Updates the Documentation in exynos-adc.txt with syscon phandle
+>>>     for the ADC nodes.
+>>> 4. Updates the Dts files for Exynos3250, Exynos4x12, Exynos5250,
+>>>     Exynos5420 with the syscon phandle.
+>>>
+>>> Tested on Exynos5420 based Peach PIT and Exynos5800 based Peach PI
+>>> by verifying sysfs entries provided by HWMON based NTC thermistors.
+>>>
+>>> Tested-By for Exynos3250, Exynos4x12 would be appreciated.
+>>>
+>> This series all looks fine to me.  Took me a minute to work out what the
+>> point
+>> of the syscon change was (perhaps a little description in the cover letter
+>> would have been nice ;)
+>>
+>> Anyhow, with the device tree changes in here we'll have to let it sit for
+>> a while.  I'll also definitely want an ack from
+>> Kukjin Kim <kgene.kim@samsung.com> for the device tree changes.
+>
+> Although I haven't tried it, I'd imagine this might cause a little bit
+> of merging fun with the other exynos series waiting for Kukjin to
+> ack...
 
- drivers/iio/adc/exynos_adc.c |   29 ++++++++++++++++++++---------
- 1 file changed, 20 insertions(+), 9 deletions(-)
+I've tried to rebase on top of Chongwoo's v5 version changes for Exynos5320.
+there is one conflict with Documentation. I've submitted the v2 version.
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index b63e882..60847ef 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -38,6 +38,8 @@
- #include <linux/iio/iio.h>
- #include <linux/iio/machine.h>
- #include <linux/iio/driver.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
- 
- /* EXYNOS4412/5250 ADC_V1 registers definitions */
- #define ADC_V1_CON(x)		((x) + 0x00)
-@@ -79,11 +81,14 @@
- 
- #define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
- 
-+#define EXYNOS_ADCV1_PHY_OFFSET	0x0718
-+#define EXYNOS_ADCV2_PHY_OFFSET	0x0720
-+
- struct exynos_adc {
- 	struct exynos_adc_data	*data;
- 	struct device		*dev;
- 	void __iomem		*regs;
--	void __iomem		*enable_reg;
-+	struct regmap		*pmu_map;
- 	struct clk		*clk;
- 	struct clk		*sclk;
- 	unsigned int		irq;
-@@ -98,6 +103,7 @@ struct exynos_adc {
- struct exynos_adc_data {
- 	int num_channels;
- 	bool needs_sclk;
-+	int phy_offset;
- 
- 	void (*init_hw)(struct exynos_adc *info);
- 	void (*exit_hw)(struct exynos_adc *info);
-@@ -169,7 +175,7 @@ static void exynos_adc_v1_init_hw(struct exynos_adc *info)
- {
- 	u32 con1;
- 
--	writel(1, info->enable_reg);
-+	regmap_write(info->pmu_map, info->data->phy_offset, 1);
- 
- 	/* set default prescaler values and Enable prescaler */
- 	con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
-@@ -183,7 +189,7 @@ static void exynos_adc_v1_exit_hw(struct exynos_adc *info)
- {
- 	u32 con;
- 
--	writel(0, info->enable_reg);
-+	regmap_write(info->pmu_map, info->data->phy_offset, 0);
- 
- 	con = readl(ADC_V1_CON(info->regs));
- 	con |= ADC_V1_CON_STANDBY;
-@@ -208,6 +214,7 @@ static void exynos_adc_v1_start_conv(struct exynos_adc *info,
- 
- static struct exynos_adc_data const exynos_adc_v1_data = {
- 	.num_channels	= MAX_ADC_V1_CHANNELS,
-+	.phy_offset	= EXYNOS_ADCV1_PHY_OFFSET,
- 
- 	.init_hw	= exynos_adc_v1_init_hw,
- 	.exit_hw	= exynos_adc_v1_exit_hw,
-@@ -219,7 +226,7 @@ static void exynos_adc_v2_init_hw(struct exynos_adc *info)
- {
- 	u32 con1, con2;
- 
--	writel(1, info->enable_reg);
-+	regmap_write(info->pmu_map, info->data->phy_offset, 1);
- 
- 	con1 = ADC_V2_CON1_SOFT_RESET;
- 	writel(con1, ADC_V2_CON1(info->regs));
-@@ -236,7 +243,7 @@ static void exynos_adc_v2_exit_hw(struct exynos_adc *info)
- {
- 	u32 con;
- 
--	writel(0, info->enable_reg);
-+	regmap_write(info->pmu_map, info->data->phy_offset, 0);
- 
- 	con = readl(ADC_V2_CON1(info->regs));
- 	con &= ~ADC_CON_EN_START;
-@@ -271,10 +278,12 @@ static void exynos_adc_v2_start_conv(struct exynos_adc *info,
- 
- static struct exynos_adc_data const exynos_adc_v2_data = {
- 	__EXYNOS_ADC_V2_DATA
-+	.phy_offset = EXYNOS_ADCV2_PHY_OFFSET,
- };
- 
- static struct exynos_adc_data const exynos3250_adc_v2_data = {
- 	__EXYNOS_ADC_V2_DATA
-+	.phy_offset = EXYNOS_ADCV1_PHY_OFFSET,
- 	.needs_sclk = true,
- };
- 
-@@ -437,10 +446,12 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 	if (IS_ERR(info->regs))
- 		return PTR_ERR(info->regs);
- 
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	info->enable_reg = devm_ioremap_resource(&pdev->dev, mem);
--	if (IS_ERR(info->enable_reg))
--		return PTR_ERR(info->enable_reg);
-+	info->pmu_map = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
-+					"samsung,syscon-phandle");
-+	if (IS_ERR(info->pmu_map)) {
-+		dev_err(&pdev->dev, "syscon regmap lookup failed.\n");
-+		return PTR_ERR(info->pmu_map);
-+	}
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
+> [PATCHv5 0/4] iio: adc: exynos_adc: Support Exynos3250 ADC and code clean
+>>
+>>
+>> Jonathan
+>>>
+>>> Naveen Krishna Chatradhi (4):
+>>>    iio: exyno-adc: use syscon for PMU register access
+>>>    Documentation: dt-bindings: move exynos-adc.txt to more iio/adc/
+>>>    Documentation: dt-bindings: update exynos-adc.txt with syscon handle
+>>>    ARM: dts: exynos: Add sysreg phandle to ADC node
+>>>
+>>>   .../devicetree/bindings/arm/samsung/exynos-adc.txt |   82
+>>> ------------------
+>>>   .../devicetree/bindings/iio/adc/exynos-adc.txt     |   87
+>>> ++++++++++++++++++++
+>>>   arch/arm/boot/dts/exynos3250.dtsi                  |    3 +-
+>>>   arch/arm/boot/dts/exynos4x12.dtsi                  |    3 +-
+>>>   arch/arm/boot/dts/exynos5250.dtsi                  |    3 +-
+>>>   arch/arm/boot/dts/exynos5420.dtsi                  |    3 +-
+>>>   drivers/iio/adc/exynos_adc.c                       |   29 +++++--
+>>>   7 files changed, 115 insertions(+), 95 deletions(-)
+>>>   delete mode 100644
+>>> Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+>>>   create mode 100644
+>>> Documentation/devicetree/bindings/iio/adc/exynos-adc.txt
+>>>
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+
+
+
 -- 
-1.7.9.5
+Regards,
+(: Naveen :)
