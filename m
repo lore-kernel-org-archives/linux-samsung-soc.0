@@ -1,7 +1,7 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v6 13/14] ARM: dts: exynos5420: add mipi-phy node
-Date: Thu, 17 Jul 2014 18:01:28 +0900
-Message-ID: <1405587689-1466-14-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH v6 14/14] ARM: dts: exynos5420: add dsi node
+Date: Thu, 17 Jul 2014 18:01:29 +0900
+Message-ID: <1405587689-1466-15-git-send-email-yj44.cho@samsung.com>
 References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,27 +21,35 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds mipi-phy node for MIPI DSI device.
+This patch adds common part of dsi node.
 
 Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos5420.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/exynos5420.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index e385322..0b9d15d 100644
+index 0b9d15d..3a7862b 100644
 --- a/arch/arm/boot/dts/exynos5420.dtsi
 +++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -517,6 +517,12 @@
- 		phy-names = "dp";
+@@ -523,6 +523,20 @@
+ 		#phy-cells = <1>;
  	};
  
-+	mipi_phy: video-phy@10040714 {
-+		compatible = "samsung,s5pv210-mipi-video-phy";
-+		reg = <0x10040714 12>;
-+		#phy-cells = <1>;
++	dsi@14500000 {
++		compatible = "samsung,exynos5410-mipi-dsi";
++		reg = <0x14500000 0x10000>;
++		interrupts = <0 82 0>;
++		samsung,power-domain = <&disp_pd>;
++		phys = <&mipi_phy 1>;
++		phy-names = "dsim";
++		clocks = <&clock CLK_DSIM1>, <&clock CLK_SCLK_MIPI1>;
++		clock-names = "bus_clk", "pll_clk";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "disabled";
 +	};
 +
  	fimd: fimd@14400000 {
