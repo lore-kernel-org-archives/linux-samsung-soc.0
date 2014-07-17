@@ -1,53 +1,33 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 1/4 v2] iio: exyno-adc: use syscon for PMU register access
-Date: Thu, 17 Jul 2014 15:56:55 +0200
-Message-ID: <4202302.OdUuvHROuH@amdc1032>
-References: <1405595993-16661-1-git-send-email-ch.naveen@samsung.com>
- <CAK5sBcFR0nwmL97CYxhHHhwHREdNOMYZnc2DF+O=WdQLBHQbLA@mail.gmail.com>
- <CAHfPSqDBfdmt2R4yB1AUG9U8UvsYtmVtL03-OMuozKGXYGdMgw@mail.gmail.com>
+From: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 0/4 v2] hwmon: ntc_thermistor: prepose vendor prefix change
+Date: Thu, 17 Jul 2014 16:05:30 +0200
+Message-ID: <CABxcv=mko=1bQ+VnKhPtRbx6Leop+gRNNkiSO-CbvN=JiyWh2A@mail.gmail.com>
+References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
+	<02b501cf9064$34f16b80$9ed44280$@samsung.com>
+	<53AAD8C8.3080506@roeck-us.net>
+	<CAHfPSqCGf2d6xXDGr974+4ipNsYx3-fOLT+u2OGN=c9FVPEkZg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAHfPSqDBfdmt2R4yB1AUG9U8UvsYtmVtL03-OMuozKGXYGdMgw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Sachin Kamat <spk.linux@gmail.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lars-Peter Clausen <lars@metafoo.de>, cpgs@samsung.com, Grant Grundler <grundler@chromium.org>, jic23@kernel.org
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAHfPSqCGf2d6xXDGr974+4ipNsYx3-fOLT+u2OGN=c9FVPEkZg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, jdelvare-l3A5Bk7waGM@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hello Naveen,
 
-Hi,
+On Thu, Jul 17, 2014 at 6:21 AM, Naveen Krishna Ch
+<naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>
+> Can you pull the 3/4 and 4/4 patches.
+>
 
-On Thursday, July 17, 2014 05:41:16 PM Naveen Krishna Ch wrote:
-> Hello Sachin,
-> 
-> On 17 July 2014 17:24, Sachin Kamat <spk.linux@gmail.com> wrote:
-> > Hi Naveen,
-> >
-> > On Thu, Jul 17, 2014 at 4:49 PM, Naveen Krishna Chatradhi
-> > <ch.naveen@samsung.com> wrote:
-> >> This patch updates the IIO based ADC driver to use syscon and regmap
-> >> APIs to access and use PMU registers instead of remapping the PMU
-> >> registers in the driver.
-> >>
-> >> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> >> To: linux-iio@vger.kernel.org
-> >
-> > With only this patch applied, I believe the ADC functionality would be broken.
-> > Perhaps the DT changes should be merged along with this patch?
-> 
-> Jonathan already mentioned that, he would wait for Ack from Kukjin.
-> With out the dts changes ADC driver will fail to probe but it wont
-> crash the system.
-> git bisect should still work.
-
-Unless someone bisects things related to ADC functionality..
-
-Also patch #1 seems to break device tree ABI (the old dtb will no longer
-work with the new kernel).
+Patch 4/4 depends on the max77802 support series [0] since the ADC
+uses the max77802 ldo9 regulator as its voltage supply. So that patch
+can't be merged before the series land in mainline.
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Javier
+
+[0]: https://lkml.org/lkml/2014/7/14/273
