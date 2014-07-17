@@ -1,97 +1,32 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH 0/4] iio: exynos-adc: use syscon instead of ioremap
-Date: Thu, 17 Jul 2014 17:17:18 +0530
-Message-ID: <CAHfPSqDqJuhsMMocpz0jWxJhAuFQDpfssNB3kFN9bMcaPGtH0g@mail.gmail.com>
-References: <1405069589-10388-1-git-send-email-ch.naveen@samsung.com>
- <53C56F40.1070304@kernel.org> <53C56FB1.2040700@kernel.org>
+From: Sachin Kamat <spk.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/4 v2] iio: exyno-adc: use syscon for PMU register access
+Date: Thu, 17 Jul 2014 17:24:38 +0530
+Message-ID: <CAK5sBcFR0nwmL97CYxhHHhwHREdNOMYZnc2DF+O=WdQLBHQbLA@mail.gmail.com>
+References: <1405595993-16661-1-git-send-email-ch.naveen@samsung.com>
+	<1405595993-16661-2-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f173.google.com ([209.85.216.173]:32943 "EHLO
-	mail-qc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754898AbaGQLrj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jul 2014 07:47:39 -0400
-In-Reply-To: <53C56FB1.2040700@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1405595993-16661-2-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Naveen Krishna <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Hello Jonathan,
+Hi Naveen,
 
-On 15 July 2014 23:45, Jonathan Cameron <jic23@kernel.org> wrote:
-> On 15/07/14 19:13, Jonathan Cameron wrote:
->>
->> On 11/07/14 10:06, Naveen Krishna Chatradhi wrote:
->>>
->>> This patch does the following
->>> 1. Use the syscon and Regmap API instead of ioremappaing the
->>>     ADC_PHY register from PMU.
->>> 2. Moves the exynos-adc.txt from bindings/arm/samsung/
->>>     to bindings/iio/adc/.
->>> 3. Updates the Documentation in exynos-adc.txt with syscon phandle
->>>     for the ADC nodes.
->>> 4. Updates the Dts files for Exynos3250, Exynos4x12, Exynos5250,
->>>     Exynos5420 with the syscon phandle.
->>>
->>> Tested on Exynos5420 based Peach PIT and Exynos5800 based Peach PI
->>> by verifying sysfs entries provided by HWMON based NTC thermistors.
->>>
->>> Tested-By for Exynos3250, Exynos4x12 would be appreciated.
->>>
->> This series all looks fine to me.  Took me a minute to work out what the
->> point
->> of the syscon change was (perhaps a little description in the cover letter
->> would have been nice ;)
->>
->> Anyhow, with the device tree changes in here we'll have to let it sit for
->> a while.  I'll also definitely want an ack from
->> Kukjin Kim <kgene.kim@samsung.com> for the device tree changes.
+On Thu, Jul 17, 2014 at 4:49 PM, Naveen Krishna Chatradhi
+<ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This patch updates the IIO based ADC driver to use syscon and regmap
+> APIs to access and use PMU registers instead of remapping the PMU
+> registers in the driver.
 >
-> Although I haven't tried it, I'd imagine this might cause a little bit
-> of merging fun with the other exynos series waiting for Kukjin to
-> ack...
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-I've tried to rebase on top of Chongwoo's v5 version changes for Exynos5320.
-there is one conflict with Documentation. I've submitted the v2 version.
-
-> [PATCHv5 0/4] iio: adc: exynos_adc: Support Exynos3250 ADC and code clean
->>
->>
->> Jonathan
->>>
->>> Naveen Krishna Chatradhi (4):
->>>    iio: exyno-adc: use syscon for PMU register access
->>>    Documentation: dt-bindings: move exynos-adc.txt to more iio/adc/
->>>    Documentation: dt-bindings: update exynos-adc.txt with syscon handle
->>>    ARM: dts: exynos: Add sysreg phandle to ADC node
->>>
->>>   .../devicetree/bindings/arm/samsung/exynos-adc.txt |   82
->>> ------------------
->>>   .../devicetree/bindings/iio/adc/exynos-adc.txt     |   87
->>> ++++++++++++++++++++
->>>   arch/arm/boot/dts/exynos3250.dtsi                  |    3 +-
->>>   arch/arm/boot/dts/exynos4x12.dtsi                  |    3 +-
->>>   arch/arm/boot/dts/exynos5250.dtsi                  |    3 +-
->>>   arch/arm/boot/dts/exynos5420.dtsi                  |    3 +-
->>>   drivers/iio/adc/exynos_adc.c                       |   29 +++++--
->>>   7 files changed, 115 insertions(+), 95 deletions(-)
->>>   delete mode 100644
->>> Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
->>>   create mode 100644
->>> Documentation/devicetree/bindings/iio/adc/exynos-adc.txt
->>>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
-
-
+With only this patch applied, I believe the ADC functionality would be broken.
+Perhaps the DT changes should be merged along with this patch?
 
 -- 
 Regards,
-(: Naveen :)
+Sachin.
