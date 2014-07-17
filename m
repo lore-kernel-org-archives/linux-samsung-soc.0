@@ -1,77 +1,64 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v4 2/6] ASoC: mxs-saif: fix mixed use of public and
- provider clk API
-Date: Thu, 17 Jul 2014 16:06:57 +0100
-Message-ID: <20140717150657.GY17528@sirena.org.uk>
-References: <1405606399-26608-1-git-send-email-tomeu.vizoso@collabora.com>
- <1405606399-26608-3-git-send-email-tomeu.vizoso@collabora.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4610133115762055383=="
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1405606399-26608-3-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Tony Lindgren <tony@atomide.com>, Tomasz Figa <t.figa@samsung.com>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Thierry Reding <thierry.reding@gmail.com>, Paul Mackerras <paulus@samba.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Walker <dwalker@fifo99.com>, linux-arch@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>, Takashi Iwai <tiwai@suse.de>, Michal Simek <michal.simek@xilinx.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kevin Hilman <khilman@deeprootsystems.com>, linux-arm-kernel@lists.infradead.org, patches@opensource.wolfsonmicro.com, Viresh Kumar <viresh.linux@gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH] irqchip: gic: Fix core ID calculation when topology is read
+ from DT
+Date: Thu, 17 Jul 2014 17:23:44 +0200
+Message-ID: <1405610624-18722-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:54375 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932908AbaGQPYe (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Jul 2014 11:24:34 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Tomasz Figa <t.figa@samsung.com>
 
+Certain GIC implementation, namely those found on earlier, single
+cluster, Exynos SoCs, have registers mapped without per-CPU banking,
+which means that the driver needs to use different offset for each CPU.
 
---===============4610133115762055383==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8c7vHYlrYOebzgj6"
-Content-Disposition: inline
+Currently the driver calculates the offset by multiplying value returned
+by cpu_logical_map() by CPU offset parsed from DT. This is correct when
+CPU topology is not specified in DT and aforementioned function returns
+core ID alone. However when DT contains CPU topology, the function
+changes to return cluster ID as well, which is non-zero on mentioned
+SoCs and so breaks the calculation in GIC driver.
 
+This patch fixes this by masking out cluster ID in CPU offset
+calculation so that only core ID is considered. Multi-cluster Exynos
+SoCs already have banked GIC implementations, so this simple fix should
+be enough.
 
---8c7vHYlrYOebzgj6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reported-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reported-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+---
+ drivers/irqchip/irq-gic.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-On Thu, Jul 17, 2014 at 04:13:15PM +0200, Tomeu Vizoso wrote:
-> In preparation to changing the clk provider API to use struct clk_core instead
-> of struct clk.
-
-Acked-by: Mark Brown <broonie@linaro.org>
-
---8c7vHYlrYOebzgj6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTx+aOAAoJELSic+t+oim9kbYP/1XSKsTieBgyUHwsZVX4t8n8
-RCddHvCUUKM1bGm4/zJcI3EcCy6vjvbt3QkgHSv6JD6ot0jyRo9mzoWEZiUz9lDn
-D8JSITKut5tP1Th1bi+yla0Zm2wf56JModA9CBUT0B/BnOkqxgpTlIua5JmkWV6m
-x+8e98J/rY68uX69MD2RBhCEMfx8UkHlQ3/nWpFUigsHAOogELhIV+ChFSuVq070
-3qbLOzM9Hvbf8clKA0K2c1elyHlG6it+gtSk+6cQs3KH2YU23oi4Yd4b++mGxtsa
-MHVca5khElB8RM06cEsacgpB6QDj5ya17QBnEwZa2Y/FT15mKNCHKCDqWHyh8YEm
-K3phLMwcpdk2hoDeCt2WCSPpCQmRj2xFxG9BG6M6LEM4eHTx1HWb+Hu5uJvi2qQY
-XQi5+3bECfElzmZxgQjfJ867VKHefRiX1nabOE6qdoposm5GoUiga5VpiCYuDc13
-9hsCMpEpSg++Y2G6l7cDlvPDaLnIgGAQ2jLFn/Utfb6BRZtHkQ5zP9jKDecWH7C8
-I7uGjfwnxn7dRlof42mrkPHstNvWGX5hQfhcggQdIeCOiDRfW/Z9u0lZFRTH5h1R
-mKldh7ssgHvYFoMSsBq2tVHZmqAXHHw19OnFQBB2ZPBKJPgsiU1OF1cJQ5i3QJRM
-RF2NVRXsIgDlPYLdPWZE
-=S67s
------END PGP SIGNATURE-----
-
---8c7vHYlrYOebzgj6--
-
---===============4610133115762055383==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXhwcGMt
-ZGV2IG1haWxpbmcgbGlzdApMaW51eHBwYy1kZXZAbGlzdHMub3psYWJzLm9yZwpodHRwczovL2xp
-c3RzLm96bGFicy5vcmcvbGlzdGluZm8vbGludXhwcGMtZGV2
-
---===============4610133115762055383==--
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index ddee133..5c15a09 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -40,6 +40,7 @@
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/irqchip/arm-gic.h>
+ 
++#include <asm/cputype.h>
+ #include <asm/irq.h>
+ #include <asm/exception.h>
+ #include <asm/smp_plat.h>
+@@ -901,7 +902,9 @@ void __init gic_init_bases(unsigned int gic_nr, int irq_start,
+ 		}
+ 
+ 		for_each_possible_cpu(cpu) {
+-			unsigned long offset = percpu_offset * cpu_logical_map(cpu);
++			u32 mpidr = cpu_logical_map(cpu);
++			u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
++			unsigned long offset = percpu_offset * core_id;
+ 			*per_cpu_ptr(gic->dist_base.percpu_base, cpu) = dist_base + offset;
+ 			*per_cpu_ptr(gic->cpu_base.percpu_base, cpu) = cpu_base + offset;
+ 		}
+-- 
+1.9.3
