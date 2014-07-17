@@ -1,33 +1,60 @@
-From: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 0/4 v2] hwmon: ntc_thermistor: prepose vendor prefix change
-Date: Thu, 17 Jul 2014 16:05:30 +0200
-Message-ID: <CABxcv=mko=1bQ+VnKhPtRbx6Leop+gRNNkiSO-CbvN=JiyWh2A@mail.gmail.com>
-References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
-	<02b501cf9064$34f16b80$9ed44280$@samsung.com>
-	<53AAD8C8.3080506@roeck-us.net>
-	<CAHfPSqCGf2d6xXDGr974+4ipNsYx3-fOLT+u2OGN=c9FVPEkZg@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v3] ARM: EXYNOS: Fix suspend/resume sequences
+Date: Thu, 17 Jul 2014 16:42:26 +0200
+Message-ID: <53C7E0D2.1050307@samsung.com>
+References: <53C51B57.9040404@samsung.com>
+ <1405434287-22710-1-git-send-email-t.figa@samsung.com>
+ <53C53A1A.6060701@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAHfPSqCGf2d6xXDGr974+4ipNsYx3-fOLT+u2OGN=c9FVPEkZg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, jdelvare-l3A5Bk7waGM@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:60020 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932401AbaGQOnG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Jul 2014 10:43:06 -0400
+In-reply-to: <53C53A1A.6060701@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Chander Kashyap <k.chander@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 
-Hello Naveen,
+Hi Kukjin,
 
-On Thu, Jul 17, 2014 at 6:21 AM, Naveen Krishna Ch
-<naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
-> Can you pull the 3/4 and 4/4 patches.
->
+On 15.07.2014 16:26, Tomasz Figa wrote:
+> Forgot to CC Daniel and linux-pm. Sorry for the noise.
+> 
+> On 15.07.2014 16:24, Tomasz Figa wrote:
+>> Due to recent consolidation of Exynos suspend and cpuidle code, some
+>> parts of suspend and resume sequences are executed two times, once from
+>> exynos_pm_syscore_ops and then from exynos_cpu_pm_notifier() and thus it
+>> breaks suspend, at least on Exynos4-based boards. In addition, simple
+>> core power down from a cpuidle driver could, in case of CPU 0 could
+>> result in calling functions that are specific to suspend and deeper idle
+>> states.
+>>
+>> This patch fixes the issue by moving those operations outside the CPU PM
+>> notifier into suspend and AFTR code paths. This leads to a bit of code
+>> duplication, but allows additional code simplification, so in the end
+>> more code is removed than added.
+>>
+>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/pm.c        | 164 ++++++++++++++++++---------------------
+>>  drivers/cpuidle/cpuidle-exynos.c |  25 +-----
+>>  2 files changed, 80 insertions(+), 109 deletions(-)
+>>
 
-Patch 4/4 depends on the max77802 support series [0] since the ADC
-uses the max77802 ldo9 regulator as its voltage supply. So that patch
-can't be merged before the series land in mainline.
+Please consider this patch for next pull request with rc fixes. It
+replaces following patches posted in this thread:
+
+[PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
+[PATCH v2 5/6] ARM: EXYNOS: Fix suspend/resume sequences
+
+and also similar patch by Chander:
+
+[PATCH 2/2] cpuidle: Exynos: fix cpuidle for all states
 
 Best regards,
-Javier
-
-[0]: https://lkml.org/lkml/2014/7/14/273
+Tomasz
