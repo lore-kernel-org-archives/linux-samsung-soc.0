@@ -1,13 +1,14 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v3 4/7] ARM: l2c: Add support for overriding prefetch settings
-Date: Thu, 17 Jul 2014 18:38:59 +0200
-Message-ID: <1405615142-21426-5-git-send-email-t.figa@samsung.com>
-References: <1405615142-21426-1-git-send-email-t.figa@samsung.com>
+From: Bastian Hecht <hechtb@gmail.com>
+Subject: Re: [PATCH v3 3/5] i2c: exynos5: Remove suspension check
+Date: Thu, 17 Jul 2014 18:54:10 +0200
+Message-ID: <CABYn4swJfYhTbXA0zYG4Mncm2xSGjL8CQPyeEB_piQWE+wUyTA@mail.gmail.com>
+References: <1405608520-5644-1-git-send-email-hechtb@gmail.com>
+ <1405608520-5644-3-git-send-email-hechtb@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1405615142-21426-1-git-send-email-t.figa@samsung.com>
+In-Reply-To: <1405608520-5644-3-git-send-email-hechtb@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,99 +18,85 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, tony@atomide.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, drake@endlessm.com, loeliger@gmail.com, santosh.shilimkar@ti.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-omap@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-i2c@vger.kernel.org
+Cc: Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Linux-SH <linux-sh@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomoya MORINAGA <tomoya.rohm@gmail.com>, open list <linux-kernel@vger.kernel.org>, Masanari Iida <standby24x7@gmail.com>, Bastian Hecht <hechtb@gmail.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Jean Delvare <jdelvare@suse.de>, Naveen Krishna Ch <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sachin Kamat <sachin.kamat@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Firmware on certain boards (e.g. ODROID-U3) can leave incorrect L2C prefetch
-settings configured in registers leading to crashes if L2C is enabled
-without overriding them. This patch introduces bindings to enable
-prefetch settings to be specified from DT and necessary support in the
-driver.
+2014-07-17 16:48 GMT+02:00 Bastian Hecht <hechtb@gmail.com>:
+> We now take care of suspension in the i2c core code. So we can remove this
+> check here.
+>
+> Signed-off-by: Bastian Hecht <hechtb@gmail.com>
+> ---
+> same as v1
+>
+>  drivers/i2c/busses/i2c-exynos5.c | 20 +-------------------
+>  1 file changed, 1 insertion(+), 19 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+> index 63d2292..a80cf28 100644
+> --- a/drivers/i2c/busses/i2c-exynos5.c
+> +++ b/drivers/i2c/busses/i2c-exynos5.c
+> @@ -145,7 +145,6 @@
+>
+>  struct exynos5_i2c {
+>         struct i2c_adapter      adap;
+> -       unsigned int            suspended:1;
+>
+>         struct i2c_msg          *msg;
+>         struct completion       msg_complete;
+> @@ -610,11 +609,6 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
+>         struct exynos5_i2c *i2c = adap->algo_data;
+>         int i = 0, ret = 0, stop = 0;
+>
+> -       if (i2c->suspended) {
+> -               dev_err(i2c->dev, "HS-I2C is not initialized.\n");
+> -               return -EIO;
+> -       }
+> -
+>         clk_prepare_enable(i2c->clk);
+>
+>         for (i = 0; i < num; i++, msgs++) {
+> @@ -757,16 +751,6 @@ static int exynos5_i2c_remove(struct platform_device *pdev)
+>  }
+>
+>  #ifdef CONFIG_PM_SLEEP
+> -static int exynos5_i2c_suspend_noirq(struct device *dev)
+> -{
+> -       struct platform_device *pdev = to_platform_device(dev);
+> -       struct exynos5_i2c *i2c = platform_get_drvdata(pdev);
+> -
+> -       i2c->suspended = 1;
+> -
+> -       return 0;
+> -}
+> -
+>  static int exynos5_i2c_resume_noirq(struct device *dev)
+>  {
+>         struct platform_device *pdev = to_platform_device(dev);
+> @@ -783,14 +767,12 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
+>
+>         exynos5_i2c_init(i2c);
+>         clk_disable_unprepare(i2c->clk);
+> -       i2c->suspended = 0;
+>
+>         return 0;
+>  }
+>  #endif
+>
+> -static SIMPLE_DEV_PM_OPS(exynos5_i2c_dev_pm_ops, exynos5_i2c_suspend_noirq,
+> -                        exynos5_i2c_resume_noirq);
+> +static SIMPLE_DEV_PM_OPS(exynos5_i2c_dev_pm_ops, exynos5_i2c_resume_noirq);
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- Documentation/devicetree/bindings/arm/l2cc.txt | 10 +++++++
- arch/arm/mm/cache-l2x0.c                       | 39 ++++++++++++++++++++++++++
- 2 files changed, 49 insertions(+)
+This should be
 
-diff --git a/Documentation/devicetree/bindings/arm/l2cc.txt b/Documentation/devicetree/bindings/arm/l2cc.txt
-index af527ee..3443d2d 100644
---- a/Documentation/devicetree/bindings/arm/l2cc.txt
-+++ b/Documentation/devicetree/bindings/arm/l2cc.txt
-@@ -47,6 +47,16 @@ Optional properties:
- - cache-id-part: cache id part number to be used if it is not present
-   on hardware
- - wt-override: If present then L2 is forced to Write through mode
-+- arm,double-linefill : Override double linefill enable setting. Enable if
-+  non-zero, disable if zero.
-+- arm,double-linefill-incr : Override double linefill on INCR read. Enable
-+  if non-zero, disable if zero.
-+- arm,double-linefill-wrap : Override double linefill on WRAP read. Enable
-+  if non-zero, disable if zero.
-+- arm,prefetch-drop : Override prefetch drop enable setting. Enable if non-zero,
-+  disable if zero.
-+- arm,prefetch-offset : Override prefetch offset value. Valid values are
-+  0-7, 15, 23, and 31.
- 
- Example:
- 
-diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
-index 21a625a0..6274803 100644
---- a/arch/arm/mm/cache-l2x0.c
-+++ b/arch/arm/mm/cache-l2x0.c
-@@ -1055,6 +1055,8 @@ static void __init l2c310_of_parse(const struct device_node *np,
- 	u32 data[3] = { 0, 0, 0 };
- 	u32 tag[3] = { 0, 0, 0 };
- 	u32 filter[2] = { 0, 0 };
-+	u32 prefetch;
-+	u32 val;
- 
- 	of_property_read_u32_array(np, "arm,tag-latency", tag, ARRAY_SIZE(tag));
- 	if (tag[0] && tag[1] && tag[2])
-@@ -1079,6 +1081,43 @@ static void __init l2c310_of_parse(const struct device_node *np,
- 		l2x0_saved_regs.filter_start = (filter[0] & ~(SZ_1M - 1))
- 					| L310_ADDR_FILTER_EN;
- 	}
-+
-+	prefetch = l2x0_saved_regs.prefetch_ctrl;
-+
-+	if (!of_property_read_u32(np, "arm,double-linefill", &val)) {
-+		if (val)
-+			prefetch |= L310_PREFETCH_CTRL_DBL_LINEFILL;
-+		else
-+			prefetch &= ~L310_PREFETCH_CTRL_DBL_LINEFILL;
-+	}
-+
-+	if (!of_property_read_u32(np, "arm,double-linefill-incr", &val)) {
-+		if (val)
-+			prefetch |= L310_PREFETCH_CTRL_DBL_LINEFILL_INCR;
-+		else
-+			prefetch &= ~L310_PREFETCH_CTRL_DBL_LINEFILL_INCR;
-+	}
-+
-+	if (!of_property_read_u32(np, "arm,double-linefill-wrap", &val)) {
-+		if (!val)
-+			prefetch |= L310_PREFETCH_CTRL_DBL_LINEFILL_WRAP;
-+		else
-+			prefetch &= ~L310_PREFETCH_CTRL_DBL_LINEFILL_WRAP;
-+	}
-+
-+	if (!of_property_read_u32(np, "arm,prefetch-drop", &val)) {
-+		if (val)
-+			prefetch |= L310_PREFETCH_CTRL_PREFETCH_DROP;
-+		else
-+			prefetch &= ~L310_PREFETCH_CTRL_PREFETCH_DROP;
-+	}
-+
-+	if (!of_property_read_u32(np, "arm,prefetch-offset", &val)) {
-+		prefetch &= ~L310_PREFETCH_CTRL_OFFSET_MASK;
-+		prefetch |= val & L310_PREFETCH_CTRL_OFFSET_MASK;
-+	}
-+
-+	l2x0_saved_regs.prefetch_ctrl = prefetch;
- }
- 
- static const struct l2c_init_data of_l2c310_data __initconst = {
--- 
-1.9.3
++static SIMPLE_DEV_PM_OPS(exynos5_i2c_dev_pm_ops, NULL,
+exynos5_i2c_resume_noirq);
+
+And this is v2, not v3.
+
+>  static struct platform_driver exynos5_i2c_driver = {
+>         .probe          = exynos5_i2c_probe,
+> --
+> 1.9.1
+>
