@@ -1,46 +1,59 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH] ARM: config: update multi_v7_defconfig
-Date: Fri, 18 Jul 2014 00:31:48 +0200
-Message-ID: <CABxcv==+cwoXA=WM3E7Zb62T0Epgqg_oH3UNU0vEe2DDPiCYPA@mail.gmail.com>
-References: <1405411346-12471-1-git-send-email-ch.naveen@samsung.com>
-	<CAD=FV=UFknqF_Mt7ArytFq4KdDsGDa+JR2KZzX9Xn+if-_Vw4g@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH v3] ARM: dts: Add cros_ec to exynos5420-peach-pit and
+ exynos5800-peach-pi
+Date: Fri, 18 Jul 2014 00:42:23 +0200
+Message-ID: <53C8514F.4040606@collabora.co.uk>
+References: <1403627332-4688-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:43902 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753888AbaGQWbt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jul 2014 18:31:49 -0400
-Received: by mail-wi0-f177.google.com with SMTP id ho1so3607190wib.16
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Jul 2014 15:31:48 -0700 (PDT)
-In-Reply-To: <CAD=FV=UFknqF_Mt7ArytFq4KdDsGDa+JR2KZzX9Xn+if-_Vw4g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1403627332-4688-1-git-send-email-dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olofj@chromium.org>, "cpgs ." <cpgs@samsung.com>
 
-Hello,
+Hello Kukjin,
 
-On Tue, Jul 15, 2014 at 5:59 PM, Doug Anderson <dianders@chromium.org> wrote:
->
-> Is there a reason not to add more of the max77686 configs?
->
-> +CONFIG_RTC_DRV_MAX77686=y
-> +CONFIG_COMMON_CLK_MAX77686=y
+On 06/24/2014 06:28 PM, Doug Anderson wrote:
+> This adds cros_ec to exynos5420-peach-pit and exynos5800-peach-pi,
+> including:
+> * The keyboard
+> * The i2c tunnel
+> * The tps65090 under the i2c tunnel
+> * The battery under the i2c tunnel
+> 
+> To add extra motivation, it should be noted that tps65090 is one of
+> the things needed to get display-related FETs turned on for pit and
+> pi.
+> 
+> Note that this relies on a few outstanding changes:
+> * Needs (spi: s3c64xx: fix broken "cs_gpios" usage in the driver) and
+>   (spi: s3c64xx: for DT platofrms always get the chipselect info from
+>   DT node) to work properly and match the documented bindings.  See
+>   <https://patchwork.kernel.org/patch/4346701/> and
+>   <https://patchwork.kernel.org/patch/4346711/>
+> 
+> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Tested-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+> Tested-by: Tushar Behera <tushar.b-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> 
 
-AFAIK for the multi-platform defconfig we should try to build as a
-module as many config options as possible to keep the kernel binary
-size to a minimum.
+Mark Brown as already applied the SPI DT binding fix from Naveen [0] which was
+the dependency for this patch and he said that will try to send the whole series
+to Torvalds before the 3.16-rc cycle ends.
 
-In the case of the MAX77686, the mfd, regulator and clock drivers use
-subsys_initcall() instead of module_init() but I wonder which of these
-really need to be initialized at subsys init call time and which one
-can just be built as a module. The only MAX77686 driver that uses
-module_platform_driver() so it's initialized at device initcall time
-is the rtc-max77686 driver which ironically is the only MAX77686
-driver that doesn't define a MODULE_DEVICE_TABLE() so the module won't
-be autoloaded.
+So I think that it's safe now if you want to pick this patch.
+
+Thanks a lot!
 
 Best regards,
 Javier
+
+[0]:
+https://git.kernel.org/cgit/linux/kernel/git/broonie/spi.git/commit/?h=for-next&id=306972cedfdedc662dd8e32a6397d0e29f2ac90e
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
