@@ -1,53 +1,53 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: EXYNOS: Move code from hotplug.c to platsmp.c
-Date: Thu, 17 Jul 2014 15:15:52 +0200
-Message-ID: <53C7CC88.5040707@samsung.com>
-References: <1405520417-15027-1-git-send-email-k.kozlowski@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/4 v2] iio: exyno-adc: use syscon for PMU register access
+Date: Thu, 17 Jul 2014 15:56:55 +0200
+Message-ID: <4202302.OdUuvHROuH@amdc1032>
+References: <1405595993-16661-1-git-send-email-ch.naveen@samsung.com>
+ <CAK5sBcFR0nwmL97CYxhHHhwHREdNOMYZnc2DF+O=WdQLBHQbLA@mail.gmail.com>
+ <CAHfPSqDBfdmt2R4yB1AUG9U8UvsYtmVtL03-OMuozKGXYGdMgw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:9175 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932322AbaGQNQc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jul 2014 09:16:32 -0400
-In-reply-to: <1405520417-15027-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAHfPSqDBfdmt2R4yB1AUG9U8UvsYtmVtL03-OMuozKGXYGdMgw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Cc: Sachin Kamat <spk.linux@gmail.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lars-Peter Clausen <lars@metafoo.de>, cpgs@samsung.com, Grant Grundler <grundler@chromium.org>, jic23@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Krzysztof,
 
-On 16.07.2014 16:20, Krzysztof Kozlowski wrote:
-> Cleanup a little the SMP/hotplug code for Exynos by:
-> 1. Moving completely all functions from hotplug.c into the platsmp.c;
-> 2. Deleting the hotplug.c file.
+Hi,
+
+On Thursday, July 17, 2014 05:41:16 PM Naveen Krishna Ch wrote:
+> Hello Sachin,
 > 
-> After recent cleanups (e.g. 75ad2ab28f0f "ARM: EXYNOS: use
-> v7_exit_coherency_flush macro for cache disabling") there was only CPU
-> power down related code in hotplug.c file. Keeping this file does not
-> give any benefits.
+> On 17 July 2014 17:24, Sachin Kamat <spk.linux@gmail.com> wrote:
+> > Hi Naveen,
+> >
+> > On Thu, Jul 17, 2014 at 4:49 PM, Naveen Krishna Chatradhi
+> > <ch.naveen@samsung.com> wrote:
+> >> This patch updates the IIO based ADC driver to use syscon and regmap
+> >> APIs to access and use PMU registers instead of remapping the PMU
+> >> registers in the driver.
+> >>
+> >> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> >> To: linux-iio@vger.kernel.org
+> >
+> > With only this patch applied, I believe the ADC functionality would be broken.
+> > Perhaps the DT changes should be merged along with this patch?
 > 
-> The commit only moves code around with one additional observable change:
-> the hotplug.c was compiled with custom CFLAGS (-march=armv7-a). These
-> CFLAGS are not necessary any more.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  arch/arm/mach-exynos/Makefile  |  3 --
->  arch/arm/mach-exynos/common.h  |  2 -
->  arch/arm/mach-exynos/hotplug.c | 92 ------------------------------------------
->  arch/arm/mach-exynos/platsmp.c | 74 +++++++++++++++++++++++++++++++++
->  4 files changed, 74 insertions(+), 97 deletions(-)
->  delete mode 100644 arch/arm/mach-exynos/hotplug.c
-> 
+> Jonathan already mentioned that, he would wait for Ack from Kukjin.
+> With out the dts changes ADC driver will fail to probe but it wont
+> crash the system.
+> git bisect should still work.
 
-For this and remaining patches from this series:
+Unless someone bisects things related to ADC functionality..
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Also patch #1 seems to break device tree ABI (the old dtb will no longer
+work with the new kernel).
 
---
 Best regards,
-Tomasz
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
