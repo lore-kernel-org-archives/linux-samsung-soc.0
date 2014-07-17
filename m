@@ -1,102 +1,60 @@
-From: Bastian Hecht <hechtb@gmail.com>
-Subject: Re: [PATCH v3 3/5] i2c: exynos5: Remove suspension check
-Date: Thu, 17 Jul 2014 18:54:10 +0200
-Message-ID: <CABYn4swJfYhTbXA0zYG4Mncm2xSGjL8CQPyeEB_piQWE+wUyTA@mail.gmail.com>
-References: <1405608520-5644-1-git-send-email-hechtb@gmail.com>
- <1405608520-5644-3-git-send-email-hechtb@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/4] Revert "spi: s3c64xx: Added provision for dedicated
+ cs pin"
+Date: Thu, 17 Jul 2014 19:46:56 +0100
+Message-ID: <20140717184656.GB17528@sirena.org.uk>
+References: <1405523950-2231-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1405523950-2231-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1405608520-5644-3-git-send-email-hechtb@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-i2c@vger.kernel.org
-Cc: Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, Linux-SH <linux-sh@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tomoya MORINAGA <tomoya.rohm@gmail.com>, open list <linux-kernel@vger.kernel.org>, Masanari Iida <standby24x7@gmail.com>, Bastian Hecht <hechtb@gmail.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Jean Delvare <jdelvare@suse.de>, Naveen Krishna Ch <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sachin Kamat <sachin.kamat@linaro.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SuGb6p5JEpzYJdwO"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42342 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751669AbaGQSrW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Jul 2014 14:47:22 -0400
+Content-Disposition: inline
+In-Reply-To: <1405523950-2231-2-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, devicetree@vger.kernel.org, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-2014-07-17 16:48 GMT+02:00 Bastian Hecht <hechtb@gmail.com>:
-> We now take care of suspension in the i2c core code. So we can remove this
-> check here.
->
-> Signed-off-by: Bastian Hecht <hechtb@gmail.com>
-> ---
-> same as v1
->
->  drivers/i2c/busses/i2c-exynos5.c | 20 +-------------------
->  1 file changed, 1 insertion(+), 19 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-> index 63d2292..a80cf28 100644
-> --- a/drivers/i2c/busses/i2c-exynos5.c
-> +++ b/drivers/i2c/busses/i2c-exynos5.c
-> @@ -145,7 +145,6 @@
->
->  struct exynos5_i2c {
->         struct i2c_adapter      adap;
-> -       unsigned int            suspended:1;
->
->         struct i2c_msg          *msg;
->         struct completion       msg_complete;
-> @@ -610,11 +609,6 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
->         struct exynos5_i2c *i2c = adap->algo_data;
->         int i = 0, ret = 0, stop = 0;
->
-> -       if (i2c->suspended) {
-> -               dev_err(i2c->dev, "HS-I2C is not initialized.\n");
-> -               return -EIO;
-> -       }
-> -
->         clk_prepare_enable(i2c->clk);
->
->         for (i = 0; i < num; i++, msgs++) {
-> @@ -757,16 +751,6 @@ static int exynos5_i2c_remove(struct platform_device *pdev)
->  }
->
->  #ifdef CONFIG_PM_SLEEP
-> -static int exynos5_i2c_suspend_noirq(struct device *dev)
-> -{
-> -       struct platform_device *pdev = to_platform_device(dev);
-> -       struct exynos5_i2c *i2c = platform_get_drvdata(pdev);
-> -
-> -       i2c->suspended = 1;
-> -
-> -       return 0;
-> -}
-> -
->  static int exynos5_i2c_resume_noirq(struct device *dev)
->  {
->         struct platform_device *pdev = to_platform_device(dev);
-> @@ -783,14 +767,12 @@ static int exynos5_i2c_resume_noirq(struct device *dev)
->
->         exynos5_i2c_init(i2c);
->         clk_disable_unprepare(i2c->clk);
-> -       i2c->suspended = 0;
->
->         return 0;
->  }
->  #endif
->
-> -static SIMPLE_DEV_PM_OPS(exynos5_i2c_dev_pm_ops, exynos5_i2c_suspend_noirq,
-> -                        exynos5_i2c_resume_noirq);
-> +static SIMPLE_DEV_PM_OPS(exynos5_i2c_dev_pm_ops, exynos5_i2c_resume_noirq);
 
-This should be
+--SuGb6p5JEpzYJdwO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-+static SIMPLE_DEV_PM_OPS(exynos5_i2c_dev_pm_ops, NULL,
-exynos5_i2c_resume_noirq);
+On Wed, Jul 16, 2014 at 05:19:07PM +0200, Javier Martinez Canillas wrote:
+> This reverts commit 3146beec21b64f4551fcf0ac148381d54dc41b1b.
 
-And this is v2, not v3.
+For the benefit of those who haven't memorized the SHA1s of every commit
+that's "spi: s3c64xx: Added provision for dedicated cs pin" - please
+include the human readable format whenever you reference a SHA1.
 
->  static struct platform_driver exynos5_i2c_driver = {
->         .probe          = exynos5_i2c_probe,
-> --
-> 1.9.1
->
+I've applied this.
+
+--SuGb6p5JEpzYJdwO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTyBodAAoJELSic+t+oim9QRIP/AuVtgr3Zc28JmD8GRipCoGG
+WRNS6pELBUaiyIBRbr4Cp65ghHEoLnfXlta1oPiTK9i6PQZ87P/NUCOacqQpn0ss
+VJo27Q3IQ2TqyFvOqFl+jE+3g15WDUhVqoaAAKvGQpnOfe6pByUoqFljdQKZlQzQ
+93CFUIWiZr2Fh8yhdImRPKso9CGt2povajAWW/2qG4/31o4szsla3htSK6I94vf0
+WQ159SlbnHK80jNWn0wBiHM2snKFYkmDZOVqw5s8qacYZBRx4qMhBJci1aJ5zevs
+yqFfZvbsJ/1m+yEIvnmpmBQn6X+kmIqRwT67kC2VpTQ8j9ZLVLCFEwpE7xXm5Vsc
+GeL8nv5bYMhoDg6W3mlaMHlUNpeijGmKQwRWNPFByB1zQwxmhDYhAHI1jZtgMyrM
+FZAO1O565kpxBO/r5v4t/QdgqZI0T3HQqFHT+Ea0epvphfuep2EE409hND7ewtWu
+G7loYUaBC4BKYADFMhlu4zWBpcYdpJXxzWM0Zv+/HIoxmKIeRpKJkMzla7BtwHiT
+shFPD7nJ3fZOkCdkKXQCYE8CaAxKwQKja27lzNL3pQHZef/7Uat3ytQeXIqR7xmq
+2WD2CKgk/l9W5TQ3FZKt5FwX5G409URIEBw+f3N8SuybYIUfAquXAVknqmZq4Txr
+LDn7sgs7ZFFkQ86Ma4bL
+=pjcX
+-----END PGP SIGNATURE-----
+
+--SuGb6p5JEpzYJdwO--
