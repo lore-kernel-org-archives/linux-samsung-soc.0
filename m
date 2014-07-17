@@ -1,60 +1,315 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: Re: [PATCH 0/3] Adds PMU and S2R support for exynos5800
-Date: Thu, 17 Jul 2014 15:47:14 +0545
-Message-ID: <CAGm_ybirYq5iLS-hY8G6W-mMh2pW4ZoieuGn5iBT-X4fbBEboA@mail.gmail.com>
-References: <1404905147-30319-1-git-send-email-vikas.sajjan@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v6 10/14] drm/panel: add S6E3FA0 driver
+Date: Thu, 17 Jul 2014 12:36:46 +0200
+Message-ID: <20140717103645.GD17877@ulmo>
+References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
+ <1405587689-1466-11-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:56413 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755218AbaGQK25 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jul 2014 06:28:57 -0400
-Received: by mail-wi0-f181.google.com with SMTP id bs8so2866203wib.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Jul 2014 03:28:55 -0700 (PDT)
-In-Reply-To: <1404905147-30319-1-git-send-email-vikas.sajjan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0299205572=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1405587689-1466-11-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sajjan.linux@gmail.com, Doug Anderson <dianders@chromium.org>, Vikas Sajjan <vikas.sajjan@samsung.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-
-On Wed, Jul 9, 2014 at 5:10 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
-> Rebased on
-> 1] Kukjin Kim's tree, for-next branch
-> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
-> 2] My 5420 PMU Series :
-> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg33675.html
->
-> Tested on Exynos5800 based chromebook (peach-pi board) with help of
->  1] http://www.spinics.net/lists/linux-samsung-soc/msg33750.html (modified to support 5800)
->  2] http://www.spinics.net/lists/linux-samsung-soc/msg32923.html
->
-> Below are steps followed to test S2R:
->         1. make multi_v7_defconfig
->         2  enable MCPM for 5420
->         3. enable S3C RTC
->         4. pass "no_console_suspend" in bootargs
->         5. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
->
-> Vikas Sajjan (3):
->   arm: dts: Add pmu node for exynos5800 SoC
->   arm: exynos: Add exynos5800-pmu compatible entry
->   arm: exynos: Add PMU and S2R support for exynos5800 SoC
->
->  .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
->  arch/arm/boot/dts/exynos5800.dtsi                  |    4 ++++
->  arch/arm/mach-exynos/exynos.c                      |    1 +
->  arch/arm/mach-exynos/pm.c                          |    3 +++
->  arch/arm/mach-exynos/pmu.c                         |   22 ++++++++++++++++++++
->  arch/arm/mach-exynos/regs-pmu.h                    |    3 ++-
->  6 files changed, 33 insertions(+), 1 deletion(-)
 
 
-any comments on this series..
+--===============0299205572==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xB0nW4MQa6jZONgY"
+Content-Disposition: inline
 
 
->
-> --
-> 1.7.9.5
->
+--xB0nW4MQa6jZONgY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Jul 17, 2014 at 06:01:25PM +0900, YoungJun Cho wrote:
+[...]
+> diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c b/drivers/gpu/drm/panel/panel-s6e3fa0.c
+[...]
+> +/* Manufacturer Command Set */
+> +#define MCS_GLOBAL_PARAMETER	0xb0
+> +#define MCS_AID			0xb2
+> +#define MCS_ELVSSOPT		0xb6
+> +#define MCS_TEMPERATURE_SET	0xb8
+> +#define MCS_PENTILE_CTRL	0xc0
+> +#define MCS_GAMMA_MODE		0xca
+> +#define MCS_VDDM		0xd7
+> +#define MCS_ALS			0xe3
+> +#define MCS_ERR_FG		0xed
+> +#define MCS_KEY_LEV1		0xf0
+> +#define MCS_GAMMA_UPDATE	0xf7
+> +#define MCS_KEY_LEV2		0xfc
+> +#define MCS_RE			0xfe
+> +#define MCS_TOUT2_HSYNC		0xff
+> +
+> +/* Content Adaptive Brightness Control */
+> +#define DCS_WRITE_CABC		0x55
+
+Is this not a manufacturer specific command? I couldn't find it in the
+DSI or DCS specifications, but it sounds like something standard (also
+indicated by the DCS_ prefix). Can you point out the specification for
+this?
+
+> +#define MTP_ID_LEN		3
+> +#define GAMMA_LEVEL_NUM		30
+> +
+> +#define DEFAULT_VDDM_VAL	0x15
+> +
+> +struct s6e3fa0 {
+> +	struct device			*dev;
+> +	struct drm_panel		panel;
+> +
+> +	struct regulator_bulk_data	supplies[2];
+> +	struct gpio_desc		*reset_gpio;
+> +	struct videomode		vm;
+> +
+> +	unsigned int			power_on_delay;
+> +	unsigned int			reset_delay;
+> +	unsigned int			init_delay;
+> +	unsigned int			width_mm;
+> +	unsigned int			height_mm;
+> +
+> +	unsigned char			id;
+> +	unsigned char			vddm;
+> +	unsigned int			brightness;
+> +};
+
+Please don't use this kind of artificial padding. A simple space will
+do.
+
+> +
+> +#define panel_to_s6e3fa0(p) container_of(p, struct s6e3fa0, panel)
+
+Please turn this into a function so we can get proper type checking.
+
+> +
+> +/* VDD Memory Lookup Table contains pairs of {ReadValue, WriteValue} */
+> +static const unsigned char s6e3fa0_vddm_lut[][2] = {
+> +	{0x00, 0x0d}, {0x01, 0x0d}, {0x02, 0x0e}, {0x03, 0x0f}, {0x04, 0x10},
+> +	{0x05, 0x11}, {0x06, 0x12}, {0x07, 0x13}, {0x08, 0x14}, {0x09, 0x15},
+> +	{0x0a, 0x16}, {0x0b, 0x17}, {0x0c, 0x18}, {0x0d, 0x19}, {0x0e, 0x1a},
+> +	{0x0f, 0x1b}, {0x10, 0x1c}, {0x11, 0x1d}, {0x12, 0x1e}, {0x13, 0x1f},
+> +	{0x14, 0x20}, {0x15, 0x21}, {0x16, 0x22}, {0x17, 0x23}, {0x18, 0x24},
+> +	{0x19, 0x25}, {0x1a, 0x26}, {0x1b, 0x27}, {0x1c, 0x28}, {0x1d, 0x29},
+> +	{0x1e, 0x2a}, {0x1f, 0x2b}, {0x20, 0x2c}, {0x21, 0x2d}, {0x22, 0x2e},
+> +	{0x23, 0x2f}, {0x24, 0x30}, {0x25, 0x31}, {0x26, 0x32}, {0x27, 0x33},
+> +	{0x28, 0x34}, {0x29, 0x35}, {0x2a, 0x36}, {0x2b, 0x37}, {0x2c, 0x38},
+> +	{0x2d, 0x39}, {0x2e, 0x3a}, {0x2f, 0x3b}, {0x30, 0x3c}, {0x31, 0x3d},
+> +	{0x32, 0x3e}, {0x33, 0x3f}, {0x34, 0x3f}, {0x35, 0x3f}, {0x36, 0x3f},
+> +	{0x37, 0x3f}, {0x38, 0x3f}, {0x39, 0x3f}, {0x3a, 0x3f}, {0x3b, 0x3f},
+> +	{0x3c, 0x3f}, {0x3d, 0x3f}, {0x3e, 0x3f}, {0x3f, 0x3f}, {0x40, 0x0c},
+> +	{0x41, 0x0b}, {0x42, 0x0a}, {0x43, 0x09}, {0x44, 0x08}, {0x45, 0x07},
+> +	{0x46, 0x06}, {0x47, 0x05}, {0x48, 0x04}, {0x49, 0x03}, {0x4a, 0x02},
+> +	{0x4b, 0x01}, {0x4c, 0x40}, {0x4d, 0x41}, {0x4e, 0x42}, {0x4f, 0x43},
+> +	{0x50, 0x44}, {0x51, 0x45}, {0x52, 0x46}, {0x53, 0x47}, {0x54, 0x48},
+> +	{0x55, 0x49}, {0x56, 0x4a}, {0x57, 0x4b}, {0x58, 0x4c}, {0x59, 0x4d},
+> +	{0x5a, 0x4e}, {0x5b, 0x4f}, {0x5c, 0x50}, {0x5d, 0x51}, {0x5e, 0x52},
+> +	{0x5f, 0x53}, {0x60, 0x54}, {0x61, 0x55}, {0x62, 0x56}, {0x63, 0x57},
+> +	{0x64, 0x58}, {0x65, 0x59}, {0x66, 0x5a}, {0x67, 0x5b}, {0x68, 0x5c},
+> +	{0x69, 0x5d}, {0x6a, 0x5e}, {0x6b, 0x5f}, {0x6c, 0x60}, {0x6d, 0x61},
+> +	{0x6e, 0x62}, {0x6f, 0x63}, {0x70, 0x64}, {0x71, 0x65}, {0x72, 0x66},
+> +	{0x73, 0x67}, {0x74, 0x68}, {0x75, 0x69}, {0x76, 0x6a}, {0x77, 0x6b},
+> +	{0x78, 0x6c}, {0x79, 0x6d}, {0x7a, 0x6e}, {0x7b, 0x6f}, {0x7c, 0x70},
+> +	{0x7d, 0x71}, {0x7e, 0x72}, {0x7f, 0x73},
+> +};
+
+What's this used for?
+
+> +static int s6e3fa0_dcs_read(struct s6e3fa0 *ctx, unsigned char cmd,
+> +							void *data, size_t len)
+> +{
+> +	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+> +
+> +	return mipi_dsi_dcs_read(dsi, dsi->channel, cmd, data, len);
+> +}
+> +
+> +static void s6e3fa0_dcs_write(struct s6e3fa0 *ctx, const void *data, size_t len)
+> +{
+> +	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+> +
+> +	mipi_dsi_dcs_write(dsi, dsi->channel, data, len);
+> +}
+
+Both mipi_dsi_dcs_read() and mipi_dsi_dcs_write() return error codes on
+failure. Why are you silently ignoring them?
+
+> +#define s6e3fa0_dcs_write_seq(ctx, seq...)				\
+> +do {									\
+> +	const unsigned char d[] = { seq };				\
+> +	BUILD_BUG_ON_MSG(ARRAY_SIZE(d) > 64, "too big seq for stack");	\
+> +	s6e3fa0_dcs_write(ctx, d, ARRAY_SIZE(d));			\
+> +} while (0)
+> +
+> +#define s6e3fa0_dcs_write_seq_static(ctx, seq...)			\
+> +do {									\
+> +	static const unsigned char d[] = { seq };			\
+> +	s6e3fa0_dcs_write(ctx, d, ARRAY_SIZE(d));			\
+> +} while (0)
+
+I've had this discussion with Andrzej before and I'm still not convinced
+that this is a useful macro.
+
+At least they should propagate the error code, though.
+
+> +static void s6e3fa0_set_maximum_return_packet_size(struct s6e3fa0 *ctx,
+> +							unsigned int size)
+> +{
+> +	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+> +	const struct mipi_dsi_host_ops *ops = dsi->host->ops;
+> +
+> +	if (ops && ops->transfer) {
+> +		unsigned char buf[] = {size, 0};
+> +		struct mipi_dsi_msg msg = {
+> +			.channel = dsi->channel,
+> +			.type = MIPI_DSI_SET_MAXIMUM_RETURN_PACKET_SIZE,
+> +			.tx_len = sizeof(buf),
+> +			.tx_buf = buf
+> +		};
+> +
+> +		ops->transfer(dsi->host, &msg);
+> +	}
+> +}
+
+The Set Maximum Return Packet Size command is a standard command, so
+please turn that into a generic function exposed by the DSI core.
+
+> +static void s6e3fa0_read_mtp_id(struct s6e3fa0 *ctx)
+> +{
+> +	unsigned char id[MTP_ID_LEN];
+> +	int ret;
+> +
+> +	s6e3fa0_set_maximum_return_packet_size(ctx, MTP_ID_LEN);
+> +	ret = s6e3fa0_dcs_read(ctx, MIPI_DCS_GET_DISPLAY_ID, id, MTP_ID_LEN);
+
+This also looks like a standard DCS command. I can't find it in either
+v1.01 nor v1.02 of the specification, though. Do you know where it's
+specified?
+
+> +static void s6e3fa0_set_te_on(struct s6e3fa0 *ctx)
+> +{
+> +	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_SET_TEAR_ON, 0x00);
+> +}
+
+This is also a standard DCS command.
+
+> +static int s6e3fa0_power_off(struct s6e3fa0 *ctx)
+> +{
+> +	gpiod_set_value(ctx->reset_gpio, 0);
+
+Setting the reset GPIO to 0 for power off? Shouldn't this be 1 and the
+polarity be specified in the GPIO specifier?
+
+> +static void s6e3fa0_set_sequence(struct s6e3fa0 *ctx)
+> +{
+> +	s6e3fa0_apply_level_1_key(ctx);
+> +	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_EXIT_SLEEP_MODE);
+> +	msleep(20);
+> +
+> +	s6e3fa0_read_mtp_id(ctx);
+> +	s6e3fa0_read_vddm(ctx);
+> +
+> +	s6e3fa0_panel_init(ctx);
+> +
+> +	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_ON);
+> +}
+> +
+> +static int s6e3fa0_disable(struct drm_panel *panel)
+> +{
+> +	struct s6e3fa0 *ctx = panel_to_s6e3fa0(panel);
+> +
+> +	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_SET_DISPLAY_OFF);
+> +	msleep(35);
+> +	s6e3fa0_dcs_write_seq_static(ctx, MIPI_DCS_ENTER_SLEEP_MODE);
+> +	msleep(120);
+> +
+> +	return s6e3fa0_power_off(ctx);
+> +}
+
+The SET_DISPLAY_{ON,OFF} and {ENTER,EXIT}_SLEEP_MODE are standard
+commands, too.
+
+> +static int s6e3fa0_probe(struct mipi_dsi_device *dsi)
+> +{
+> +	struct device *dev = &dsi->dev;
+> +	struct s6e3fa0 *ctx;
+> +	struct gpio_desc *det_gpio;
+> +	int ret, te_gpio;
+> +
+> +	ctx = devm_kzalloc(dev, sizeof(struct s6e3fa0), GFP_KERNEL);
+
+sizeof(*ctx)
+
+> +	det_gpio = devm_gpiod_get(dev, "det");
+> +	if (IS_ERR(det_gpio)) {
+> +		dev_err(dev, "failed to get det gpio: %ld\n",
+> +				PTR_ERR(det_gpio));
+> +		return PTR_ERR(det_gpio);
+> +	}
+> +	ret = gpiod_direction_input(det_gpio);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to configure det gpio: %d\n", ret);
+> +		return ret;
+> +	}
+> +	ret = devm_request_irq(dev, gpiod_to_irq(det_gpio),
+> +				s6e3fa0_det_interrupt, IRQF_TRIGGER_FALLING,
+> +				"oled-det", ctx);
+> +	if (ret) {
+> +		dev_err(dev, "failed to request det irq: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	te_gpio = of_get_named_gpio(dev->of_node, "te-gpios", 0);
+
+Why doesn't this use the gpiod_* API like the other GPIOs?
+
+> +static struct of_device_id s6e3fa0_of_match[] = {
+
+Should be static const.
+
+Thierry
+
+--xB0nW4MQa6jZONgY
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTx6c9AAoJEN0jrNd/PrOhcUkP/i3gRqSxC0/kpl6uwbGI4kVs
+vWQnTv925rTlIAIXYWFKZXYHFKPevCSY3mP+cW7lvne+U4uTdTEuMt7fRLl/VODX
+BCw1JvDv0lJA5F6uBcTMOPRgoUgSkc2Z1K2H81aVprH/OJ4IzYc+luvEXiUiKFqg
+PqFhqeNocGmBfFUeyuMJqwddLnsOmRKHdwx/MI1XGwGLsvqJpryPvHC/FeOsMmSK
+YKet6A9xab0hWOH8Mv3+JB93r2X3VSmCVgoDQgMluSSQGq5QZ2502kT1UlULY8NS
+x+dvnRT2CuRxoPiaxEpkeDbVjoAU8q7B/PsCY0UtvfQPkPs0FkUN5wGWGo1gdtuL
+eZv0qiesgKRpz2GEk3xzNvRc/R43uFTfp7EEZsNfBxLX+99LtPflzINbzPGBCi+q
+fycg4QOA5FZSfXlhS1n3NOMFFCLFGs84O3/jGDMBOI825uYRWhxH0MW6TEJaMEYa
+IZJc6R8AktmI9UrF1OO/oAgVsBgxRg57HcKFq4n4YZoMCFp+sUMksA3wE/GhjjfF
+GcOhtwRp3k7U4u5N8aOvYX1irbfhlnJf0nllLGpIZUuhqkSgmWTwd1gsOYU5eXMX
+c4OKfGT3EXuWl7xnDEoBWq6VAEQyEQmEsIdAB0GnV3zltc3ns2gVS16SXxYIwYaM
+5ehWrGFPuvog/LmXHcA/
+=7Z14
+-----END PGP SIGNATURE-----
+
+--xB0nW4MQa6jZONgY--
+
+--===============0299205572==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0299205572==--
