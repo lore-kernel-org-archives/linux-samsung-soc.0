@@ -1,74 +1,113 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] irqchip: gic: Fix core ID calculation when topology is
- read from DT
-Date: Thu, 17 Jul 2014 17:58:33 +0200
-Message-ID: <53C7F2A9.1080508@samsung.com>
-References: <1405610624-18722-1-git-send-email-t.figa@samsung.com>
- <20140717153236.GS13108@titan.lakedaemon.net> <53C7EE82.6040803@samsung.com>
- <20140717155105.GT13108@titan.lakedaemon.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v3 6/7] ARM: EXYNOS: Add support for non-secure L2X0 resume
+Date: Thu, 17 Jul 2014 18:39:01 +0200
+Message-ID: <1405615142-21426-7-git-send-email-t.figa@samsung.com>
+References: <1405615142-21426-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20140717155105.GT13108@titan.lakedaemon.net>
+In-reply-to: <1405615142-21426-1-git-send-email-t.figa@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jason Cooper <jason@lakedaemon.net>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, lauraa@codeaurora.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, santosh.shilimkar@ti.com, tony@atomide.com, drake@endlessm.com, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, loeliger@gmail.com, Tomasz Figa <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 17.07.2014 17:51, Jason Cooper wrote:
-> On Thu, Jul 17, 2014 at 05:40:50PM +0200, Tomasz Figa wrote:
->> Hi Jason,
->>
->> On 17.07.2014 17:32, Jason Cooper wrote:
->>> On Thu, Jul 17, 2014 at 05:23:44PM +0200, Tomasz Figa wrote:
->>>> Certain GIC implementation, namely those found on earlier, single
->>>> cluster, Exynos SoCs, have registers mapped without per-CPU banking,
->>>> which means that the driver needs to use different offset for each CPU.
->>>>
->>>> Currently the driver calculates the offset by multiplying value returned
->>>> by cpu_logical_map() by CPU offset parsed from DT. This is correct when
->>>> CPU topology is not specified in DT and aforementioned function returns
->>>> core ID alone. However when DT contains CPU topology, the function
->>>> changes to return cluster ID as well, which is non-zero on mentioned
->>>> SoCs and so breaks the calculation in GIC driver.
->>>>
->>>> This patch fixes this by masking out cluster ID in CPU offset
->>>> calculation so that only core ID is considered. Multi-cluster Exynos
->>>> SoCs already have banked GIC implementations, so this simple fix should
->>>> be enough.
->>>>
->>>> Reported-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
->>>> Reported-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->>>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
->>>> ---
->>>>  drivers/irqchip/irq-gic.c | 5 ++++-
->>>>  1 file changed, 4 insertions(+), 1 deletion(-)
->>>
->>> iiuc, this was introduced by:
->>>
->>>   db0d4db22a78d ARM: gic: allow GIC to support non-banked setups
->>>
->>> and so should be for v3.3 and up, correct?
->>
->> Could be, although there was and still is no topology data specified in
->> DT for affected Exynos SoCs. The need for it showed up just recently, so
->> I'm not sure this is a regression to fix in older kernels.
-> 
-> In my "the kernel and the dtb aren't tied together" quest, these are the
-> kinds of things I like to see fixed in stable kernels.
-> 
-> If a user needs to update a dtb, say to fix a bug, it's reasonable to
-> use the newest one for a given board.  After all, any new nodes won't
-> change anything, since the driver in the kernel won't match the node.
-> 
-> However, in this case, without this fix, a user upgrading to the newest
-> dtb would get a broken system.  So, this fix should be backported to
-> prevent the breakage.  Or, have I missed something in my analysis?
+On Exynos SoCs it is necessary to resume operation of L2C early in
+assembly code, because otherwise certain systems will crash. This patch
+adds necessary code to non-secure resume handler.
 
-This is correct when looking only at this issue. However I suspect such
-move would cause a breakage anyway, because DT stuff isn't that stable
-on Exynos side. I don't mind if this patch hits stable, though.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+---
+ arch/arm/mach-exynos/common.h   |  1 +
+ arch/arm/mach-exynos/firmware.c |  2 ++
+ arch/arm/mach-exynos/sleep.S    | 41 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 44 insertions(+)
 
-Best regards,
-Tomasz
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index a3f3061..2540827 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -113,6 +113,7 @@ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
+ 
+ extern u32 cp15_save_diag;
+ extern u32 cp15_save_power;
++extern unsigned long l2x0_regs_phys;
+ 
+ extern void __iomem *sysram_ns_base_addr;
+ extern void __iomem *sysram_base_addr;
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 554b350..09131d3 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -103,6 +103,8 @@ static int exynos_suspend(void)
+ 	writel(virt_to_phys(exynos_cpu_resume_ns),
+ 		sysram_ns_base_addr + EXYNOS_BOOT_ADDR);
+ 
++	l2x0_regs_phys = virt_to_phys(&l2x0_saved_regs);
++
+ 	return cpu_suspend(0, exynos_cpu_suspend);
+ }
+ 
+diff --git a/arch/arm/mach-exynos/sleep.S b/arch/arm/mach-exynos/sleep.S
+index e3c3730..b8ce8f0 100644
+--- a/arch/arm/mach-exynos/sleep.S
++++ b/arch/arm/mach-exynos/sleep.S
+@@ -16,6 +16,8 @@
+  */
+ 
+ #include <linux/linkage.h>
++#include <asm/asm-offsets.h>
++#include <asm/hardware/cache-l2x0.h>
+ #include "smc.h"
+ 
+ #define CPU_MASK	0xff0ffff0
+@@ -74,6 +76,40 @@ ENTRY(exynos_cpu_resume_ns)
+ 	mov	r0, #SMC_CMD_C15RESUME
+ 	dsb
+ 	smc	#0
++#ifdef CONFIG_CACHE_L2X0
++	adr	r0, l2x0_regs_phys
++	ldr	r0, [r0]
++	cmp	r0, #0
++	beq	skip_l2x0
++
++	ldr	r1, [r0, #L2X0_R_PHY_BASE]
++	ldr	r2, [r1, #L2X0_CTRL]
++	tst	r2, #0x1
++	bne	skip_l2x0
++
++	ldr	r1, [r0, #L2X0_R_TAG_LATENCY]
++	ldr	r2, [r0, #L2X0_R_DATA_LATENCY]
++	ldr	r3, [r0, #L2X0_R_PREFETCH_CTRL]
++	mov	r0, #SMC_CMD_L2X0SETUP1
++	smc	#0
++
++	/* Reload saved regs pointer because smc corrupts registers. */
++	adr	r0, l2x0_regs_phys
++	ldr	r0, [r0]
++
++	ldr	r1, [r0, #L2X0_R_PWR_CTRL]
++	ldr	r2, [r0, #L2X0_R_AUX_CTRL]
++	mov	r0, #SMC_CMD_L2X0SETUP2
++	smc	#0
++
++	mov	r0, #SMC_CMD_L2X0INVALL
++	smc	#0
++
++	mov	r1, #1
++	mov	r0, #SMC_CMD_L2X0CTRL
++	smc	#0
++skip_l2x0:
++#endif /* CONFIG_CACHE_L2X0 */
+ skip_cp15:
+ 	b	cpu_resume
+ ENDPROC(exynos_cpu_resume_ns)
+@@ -83,3 +119,8 @@ cp15_save_diag:
+ 	.globl cp15_save_power
+ cp15_save_power:
+ 	.long	0	@ cp15 power control
++#ifdef CONFIG_CACHE_L2X0
++	.globl l2x0_regs_phys
++l2x0_regs_phys:
++	.long	0	@ phys address of l2x0 save struct
++#endif /* CONFIG_CACHE_L2X0 */
+-- 
+1.9.3
