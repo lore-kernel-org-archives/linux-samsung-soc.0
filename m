@@ -1,86 +1,106 @@
-From: Sebastian Reichel <sre@kernel.org>
-Subject: Re: [RESEND PATCH v3] charger: tps65090: Allow charger module to be
- used when no irq
-Date: Thu, 17 Jul 2014 22:43:08 +0200
-Message-ID: <20140717204308.GB13832@earth.universe>
-References: <1403300523-17310-1-git-send-email-dianders@chromium.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH V5 00/12] drm/exynos: few patches to enhance bridge chip support
+Date: Fri, 18 Jul 2014 02:13:46 +0530
+Message-ID: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:34873 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752227AbaGQUnO (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:33603 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752010AbaGQUqy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jul 2014 16:43:14 -0400
-Content-Disposition: inline
-In-Reply-To: <1403300523-17310-1-git-send-email-dianders@chromium.org>
+	Thu, 17 Jul 2014 16:46:54 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N8V00FI1J24Q660@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 Jul 2014 05:46:52 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, olof@lixom.net, Sachin Kamat <sachin.kamat@linaro.org>, ajaykumar.rs@samsung.com, linux-samsung-soc@vger.kernel.org, broonie@kernel.org, lee.jones@linaro.org, Anton Vorontsov <anton@enomsg.org>, javier.martinez@collabora.co.uk, linux-kernel@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Cc: inki.dae@samsung.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, thierry.reding@gmail.com, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, javier@dowhile0.org, Ajay Kumar <ajaykumar.rs@samsung.com>
 
+This series is based on exynos-drm-next branch of Inki Dae's tree at:
+git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
 
---5/uDoXvLw7AC5HRs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patchset also consolidates various inputs from the drm community
+regarding the bridge chaining concept:
+(1) [RFC V2 0/3] drm/bridge: panel and chaining
+	http://www.spinics.net/lists/linux-samsung-soc/msg30160.html
+(2) [RFC V3 0/3] drm/bridge: panel and chaining
+	http://www.spinics.net/lists/linux-samsung-soc/msg30507.html
 
-Hi,
+I have tested this after adding few DT changes for exynos5250-snow,
+exynos5420-peach-pit and exynos5800-peach-pi boards.
 
-On Fri, Jun 20, 2014 at 02:42:03PM -0700, Doug Anderson wrote:
-> On the ARM Chromebook tps65090 has two masters: the AP (the main
-> processor running linux) and the EC (the embedded controller).  The AP
-> is allowed to mess with FETs but the EC is in charge of charge control.
->=20
-> The tps65090 interupt line is routed to both the AP and the EC, which
-> can cause quite a headache.  Having two people adjusting masks and
-> acking interrupts is a recipe for disaster.
->=20
-> In the shipping kernel we had a hack to have the AP pay attention to
-> the IRQ but not to ack it.  It also wasn't supposed to configure the
-> IRQ in any way.  That hack allowed us to detect when the device was
-> charging without messing with the EC's state.
->=20
-> The current tps65090 infrastructure makes the above difficult, and it
-> was a bit of a hack to begin with.  Rather than uglify the driver to
-> support it, just extend the driver's existing notion of "no irq" to
-> the charger.  This makes the charger code poll every 2 seconds for AC
-> detect, which is sufficient.
->=20
-> For proper functioning, requires (mfd: tps65090: Don't tell child
-> devices we have an IRQ if we don't).  If we don't have that patch
-> we'll simply fail to probe on devices without an interrupt (just like
-> we did before this patch).
+The V4 series of this particular patchset was also tested by:
+Rahul Sharma <rahul.sharma@samsung.com>
+Javier Martinez Canillas <javier@dowhile0.org>
 
-Applied to the dev branch, which I use until I get access to the
-official battery.git:
+Changes since V2:
+	-- Address comments from Jingoo Han for ps8622 driver
+	-- Address comments from Daniel, Rob and Thierry regarding
+	   bridge chaining
+	-- Address comments from Thierry regarding the names for
+	   new drm_panel functions
 
-https://git.kernel.org/cgit/linux/kernel/git/sre/linux-power-supply.git/com=
-mit/?h=3Ddev&id=3D5a3effdc8877132fd12f97fea0d4756614b911c7
+Changes since V3:
+	-- Remove hotplug based initialization of exynos_dp
+	-- Make exynos_dp work directly with drm_panel, remove
+	   dependency on panel_binder
+	-- Minor cleanups in panel_binder and panel_lvds driver
 
--- Sebastian
+Changes since V4:
+	-- Use gpiod interface for panel-lvds and ps8622 drivers.
+	-- Address comments from Javier.
+	-- Fix compilation issues when PANEL_BINDER is selected as module.
+	-- Split Documentation patches from driver patches.
+	-- Rebase on top of the tree.
 
---5/uDoXvLw7AC5HRs
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Ajay Kumar (9):
+  [RESEND PATCH V5 01/12] drm/exynos: Move DP setup out of hotplug workqueue
+  [RESEND PATCH V5 02/12] drm/panel: add prepare and unprepare routines
+  [RESEND PATCH V5 03/12] drm/exynos: dp: modify driver to support drm_panel
+  [PATCH V5 04/12] drm/panel: Add driver for lvds/edp based panels
+  [PATCH V5 05/12] Documentation: Add DT bindings for panel-lvds driver
+  [RESEND PATCH V5 06/12] drm/bridge: add helper functions to support bridge chain
+  [PATCH V5 07/12] drm/bridge: Add a driver which binds drm_bridge with drm_panel
+  [RESEND PATCH V5 08/12] drm/bridge: ptn3460: Support bridge chaining
+  [RESEND PATCH V5 09/12] drm/exynos: dp: create bridge chain using ptn3460 and panel_binder
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Vincent Palatin (2):
+  [PATCH V5 10/12] Documentation: Add DT bindings for ps8622/ps8625 bridge driver
+  [PATCH V5 11/12] drm/bridge: Add ps8622/ps8625 bridge driver
 
-iQIcBAEBCgAGBQJTyDVcAAoJENju1/PIO/qaisgP/1+Tej5fVZuEtik1elfp/SxQ
-ytPClBtsaVWdn/TE+/1zOjtn5QLHogKAj3R7+Lq+x2Gj013jyUqf4mhetnm0rMio
-x1NnJicGn+Dy2lw2YIgbcJbkgWXOXvDPwu+tsMr+T3L/8YJBgK99kWaB9hc68Luu
-1TO29Dly5mmmJU2naO0GQEGS6zzLSoULvk2tJJdBQ/p5Omt3u2HFKUm7d1vD3xkE
-/1mld1fM1/7q/ahx0FQ6F3b5KZ+39ymKHziraciGinkO/nv548f6XzbJY3/q2Zze
-+xTtW9K/C5nVPRm8Cm5J5sJtkfG8SxksM2179NSKOmpiK6s+ESQVaRFIpwJ066D6
-tX7md+Mz2EnhYXPStlGSmPdzf0Yw8B3eaeE5MqK++Da4akFOFKCyV4YP/Ko/s+iv
-tjfX3B0HOPdRdMsTXDo5GwEDmKCvXIAYy40KUwsDXBWmMPyKn0CUr7LDHmh0vB04
-4QGKmpmSNBCBWpzbYeVmgo1SB16HwGdnJW7ovTul79cnQctngdR80HzaieEo6UZB
-7jm6My2CzIuMD55OAkOvW3Ug9y8yiiqG3ZgneGqC8rCaYPhro225f+cFgYJ2wy7B
-+MqaM5KTGKAPQc9cryjiFSsMjINbo+wOTEIy079ySv7kOgmHSFDrxxHnETqyBcA+
-lqGyQB4g18qFrWtKEMHB
-=DAxN
------END PGP SIGNATURE-----
+Rahul Sharma (1):
+  [RESEND PATCH V5 12/12] drm/exynos: Add ps8622 lvds bridge discovery to DP driver
 
---5/uDoXvLw7AC5HRs--
+ .../devicetree/bindings/drm/bridge/ps8622.txt      |   21 +
+ .../devicetree/bindings/panel/panel-lvds.txt       |   50 ++
+ .../devicetree/bindings/video/exynos_dp.txt        |    2 +
+ drivers/gpu/drm/bridge/Kconfig                     |   15 +
+ drivers/gpu/drm/bridge/Makefile                    |    2 +
+ drivers/gpu/drm/bridge/panel_binder.c              |  193 ++++++++
+ drivers/gpu/drm/bridge/ps8622.c                    |  476 ++++++++++++++++++++
+ drivers/gpu/drm/bridge/ptn3460.c                   |  137 +-----
+ drivers/gpu/drm/exynos/Kconfig                     |    1 +
+ drivers/gpu/drm/exynos/exynos_dp_core.c            |   87 +++-
+ drivers/gpu/drm/exynos/exynos_dp_core.h            |    2 +
+ drivers/gpu/drm/panel/Kconfig                      |   10 +
+ drivers/gpu/drm/panel/Makefile                     |    1 +
+ drivers/gpu/drm/panel/panel-lvds.c                 |  268 +++++++++++
+ include/drm/bridge/panel_binder.h                  |   44 ++
+ include/drm/bridge/ps8622.h                        |   41 ++
+ include/drm/bridge/ptn3460.h                       |   15 +-
+ include/drm/drm_crtc.h                             |   72 +++
+ include/drm/drm_panel.h                            |   18 +
+ 19 files changed, 1316 insertions(+), 139 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/drm/bridge/ps8622.txt
+ create mode 100644 Documentation/devicetree/bindings/panel/panel-lvds.txt
+ create mode 100644 drivers/gpu/drm/bridge/panel_binder.c
+ create mode 100644 drivers/gpu/drm/bridge/ps8622.c
+ create mode 100644 drivers/gpu/drm/panel/panel-lvds.c
+ create mode 100644 include/drm/bridge/panel_binder.h
+ create mode 100644 include/drm/bridge/ps8622.h
+
+-- 
+1.7.9.5
