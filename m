@@ -1,63 +1,40 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 0/4 v2] iio: exynos-adc: use syscon instead of ioremap
-Date: Thu, 17 Jul 2014 16:49:49 +0530
-Message-ID: <1405595993-16661-1-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 2/4 v2] Documentation: dt-bindings: move exynos-adc.txt to more
+ iio/adc/
+Date: Thu, 17 Jul 2014 16:49:51 +0530
+Message-ID: <1405595993-16661-3-git-send-email-ch.naveen@samsung.com>
+References: <1405595993-16661-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:26591 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756881AbaGQLXZ (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:14888 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757042AbaGQLXb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jul 2014 07:23:25 -0400
+	Thu, 17 Jul 2014 07:23:31 -0400
+In-reply-to: <1405595993-16661-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org, jic23@kernel.org
 
-Syscon is a regmap based framework to help various drivers access misc
-bits in registers which does not belong to another module.
-For example, Power Module, SYSREGs.
+The DT bindings in exynos-adc.txt applies to the ADC
+driver (exynos-adc.c) developed based on IIO framework.
 
-With syscon, ADC can use generic regmap API to access
-registers of PMU which are registered into syscon.
- 
-This patch does the following
-1. Use the syscon and Regmap API instead of ioremappaing the
-   ADC_PHY register from PMU.
-2. Moves the exynos-adc.txt from bindings/arm/samsung/
-   to bindings/iio/adc/.
-3. Updates the Documentation in exynos-adc.txt with syscon phandle
-   for the ADC nodes.
-4. Updates the Dts files for Exynos3250, Exynos4x12, Exynos5250,
-   Exynos5420 with the syscon phandle.
+The bindings are more appropriate to be under
+Documentation/devicetree/bindings/iio/adc/
 
-Tested on Exynos5420 based Peach PIT and Exynos5800 based Peach PI
-by verifying sysfs entries provided by HWMON based NTC thermistors.
-
-Tested-By for Exynos3250, Exynos4x12 would be appreciated.
-
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+To: devicetree@vger.kernel.org
+---
 Changes since v1:
-Adding syscon description in commit message
+Use git format-patch -M to reduce the patch size
 
-Rebased on top of v5 version of ADC for exynos3250 from Changwoo.
-iio: adc: exynos_adc: Support Exynos3250 ADC and code clean
-https://lkml.org/lkml/2014/6/27/16
+ .../{arm/samsung => iio/adc}/exynos-adc.txt        |    0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename Documentation/devicetree/bindings/{arm/samsung => iio/adc}/exynos-adc.txt (100%)
 
-Naveen Krishna Chatradhi (4):
-  iio: exyno-adc: use syscon for PMU register access
-  Documentation: dt-bindings: move exynos-adc.txt to more iio/adc/
-  Documentation: dt-bindings: update exynos-adc.txt with syscon handle
-  ARM: dts: exynos: Add sysreg phandle to ADC node
-
- .../devicetree/bindings/arm/samsung/exynos-adc.txt |   82 ------------------
- .../devicetree/bindings/iio/adc/exynos-adc.txt     |   87 ++++++++++++++++++++
- arch/arm/boot/dts/exynos3250.dtsi                  |    3 +-
- arch/arm/boot/dts/exynos4x12.dtsi                  |    3 +-
- arch/arm/boot/dts/exynos5250.dtsi                  |    3 +-
- arch/arm/boot/dts/exynos5420.dtsi                  |    3 +-
- drivers/iio/adc/exynos_adc.c                       |   29 +++++--
- 7 files changed, 115 insertions(+), 95 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
- create mode 100644 Documentation/devicetree/bindings/iio/adc/exynos-adc.txt
-
+diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/iio/adc/exynos-adc.txt
+similarity index 100%
+rename from Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+rename to Documentation/devicetree/bindings/iio/adc/exynos-adc.txt
 -- 
 1.7.9.5
