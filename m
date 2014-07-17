@@ -1,51 +1,94 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/4 v2] hwmon: ntc_thermistor: prepose vendor prefix change
-Date: Thu, 17 Jul 2014 09:51:21 +0530
-Message-ID: <CAHfPSqCGf2d6xXDGr974+4ipNsYx3-fOLT+u2OGN=c9FVPEkZg@mail.gmail.com>
-References: <1403677773-21141-1-git-send-email-ch.naveen@samsung.com>
- <02b501cf9064$34f16b80$9ed44280$@samsung.com> <53AAD8C8.3080506@roeck-us.net>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v7 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
+Date: Thu, 17 Jul 2014 11:28:19 +0530
+Message-ID: <CAJuA9aiVFFZiN7_xBg6iQEX-LJKLMmHKvPhmdmOduouQzBtQJw@mail.gmail.com>
+References: <1405345118-4269-1-git-send-email-thomas.ab@samsung.com>
+	<CAJuA9ahWbL8v2nS6wuDosn-bi+pga57KUe5wQN14Mot_-RTc6w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53AAD8C8.3080506-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jdelvare-l3A5Bk7waGM@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAJuA9ahWbL8v2nS6wuDosn-bi+pga57KUe5wQN14Mot_-RTc6w@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Kukjin,
+Hi Mike,
 
-On 25 June 2014 19:42, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org> wrote:
-> On 06/25/2014 03:57 AM, Kukjin Kim wrote:
->>
->> Naveen Krishna Chatradhi wrote:
->>>
->>>
->> + Jean Delvare, Guenter Roeck
->>
->> I'm adding maintainers for drivers/hwmon/ntc* but I'm not sure.
->>
->> Hi,
->>
->> This series looks good to me. I will take 3/4 and 4/4 for exynos DT
->> changes once
->> hwmon/ntc maintainer pick the others.
->>
+On Tue, Jul 15, 2014 at 9:20 AM, Thomas Abraham <ta.omasab@gmail.com> wrote:
+> Hi Tomasz,
 >
-> I applied both patches. Currently going through my test cycle.
-> I'll send them to Linus Thursday or Friday.
+> On Mon, Jul 14, 2014 at 7:08 PM, Thomas Abraham <thomas.ab@samsung.com> wrote:
+>> Changes since v6:
+>> - Fixes suggested by Amit Daniel <amit.daniel@samsung.com>.
+>>
+>> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
+>> drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
+>> series also enabled cpufreq support for Exynos5420 using arm_big_little cpufreq
+>> driver.
+>>
+>> Thomas Abraham (6):
+>>   clk: samsung: add infrastructure to register cpu clocks
+>>   clk: samsung: register exynos5420 apll/kpll configuration data
+>>   clk: exynos: use cpu-clock provider type to represent arm clock
+>>   ARM: dts: Exynos: add cpu nodes, opp and cpu clock configuration data
+>>   ARM: Exynos: switch to using generic cpufreq driver for exynos4210/5250
+>>   cpufreq: exynos: remove exynos4210/5250 specific cpufreq driver support
+>
+> In this series, support for Exynos5420 has been included. If there are
+> any more changes required, could you please let me know.
 
-I see the 1/4 and 2/4 merged in togreg branch of
-http://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git
+This patch series migrates exynos cpufreq support to use generic
+cpufreq drivers. For this, cpu clock blocks are encapsulated into a
+cpu clock type and cpufreq driver operates the cpu clock type.
 
-Can you pull the 3/4 and 4/4 patches.
+We had discussed in the [1] about using coordinated clocks. This
+series is not using the concept of coordinated clocks but the code in
+this series can be migrated to use coordinated clocks when it is
+available.
+
+Is it okay to consider this series for v3.17-rc1. I will update this
+code to use coordinated clocks when it is available. This series helps
+with cpufreq support for newer Exynos SoCs such as Exynos5420/3250.
+
+[1] http://www.spinics.net/lists/cpufreq/msg10042.html
+
+Thanks,
+Thomas
 
 >
-> Guenter
+> Thanks,
+> Thomas.
 >
-
-
-
--- 
-Regards,
-(: Naveen :)
+>>
+>>  arch/arm/boot/dts/exynos4210-origen.dts         |    6 +
+>>  arch/arm/boot/dts/exynos4210-trats.dts          |    6 +
+>>  arch/arm/boot/dts/exynos4210-universal_c210.dts |    6 +
+>>  arch/arm/boot/dts/exynos4210.dtsi               |   27 ++
+>>  arch/arm/boot/dts/exynos5250-arndale.dts        |    6 +
+>>  arch/arm/boot/dts/exynos5250-cros-common.dtsi   |    6 +
+>>  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    6 +
+>>  arch/arm/boot/dts/exynos5250.dtsi               |   23 +
+>>  arch/arm/boot/dts/exynos5420-smdk5420.dts       |    6 +
+>>  arch/arm/boot/dts/exynos5420.dtsi               |   32 ++
+>>  arch/arm/mach-exynos/exynos.c                   |   15 +-
+>>  drivers/clk/samsung/Makefile                    |    2 +-
+>>  drivers/clk/samsung/clk-cpu.c                   |  576 +++++++++++++++++++++++
+>>  drivers/clk/samsung/clk-exynos4.c               |   25 +-
+>>  drivers/clk/samsung/clk-exynos5250.c            |   16 +-
+>>  drivers/clk/samsung/clk-exynos5420.c            |   60 ++-
+>>  drivers/clk/samsung/clk.h                       |    5 +
+>>  drivers/cpufreq/Kconfig.arm                     |   22 -
+>>  drivers/cpufreq/Makefile                        |    2 -
+>>  drivers/cpufreq/exynos4210-cpufreq.c            |  184 --------
+>>  drivers/cpufreq/exynos5250-cpufreq.c            |  210 ---------
+>>  include/dt-bindings/clock/exynos5250.h          |    1 +
+>>  include/dt-bindings/clock/exynos5420.h          |    2 +
+>>  23 files changed, 802 insertions(+), 442 deletions(-)
+>>  create mode 100644 drivers/clk/samsung/clk-cpu.c
+>>  delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
+>>  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
+>>
+>> --
+>> 1.7.9.5
+>>
