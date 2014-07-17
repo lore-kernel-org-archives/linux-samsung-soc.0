@@ -1,93 +1,63 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v6 09/14] ARM: dts: s6e3fa0: add DT bindings
-Date: Thu, 17 Jul 2014 12:38:45 +0200
-Message-ID: <20140717103844.GE17877@ulmo>
-References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
- <1405587689-1466-10-git-send-email-yj44.cho@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gMR3gsNFwZpnI/Ts"
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH 0/4 v2] iio: exynos-adc: use syscon instead of ioremap
+Date: Thu, 17 Jul 2014 16:49:49 +0530
+Message-ID: <1405595993-16661-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:53320 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756009AbaGQKiy (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:26591 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756881AbaGQLXZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jul 2014 06:38:54 -0400
-Content-Disposition: inline
-In-Reply-To: <1405587689-1466-10-git-send-email-yj44.cho@samsung.com>
+	Thu, 17 Jul 2014 07:23:25 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com
+To: linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org, jic23@kernel.org
 
+Syscon is a regmap based framework to help various drivers access misc
+bits in registers which does not belong to another module.
+For example, Power Module, SYSREGs.
 
---gMR3gsNFwZpnI/Ts
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+With syscon, ADC can use generic regmap API to access
+registers of PMU which are registered into syscon.
+ 
+This patch does the following
+1. Use the syscon and Regmap API instead of ioremappaing the
+   ADC_PHY register from PMU.
+2. Moves the exynos-adc.txt from bindings/arm/samsung/
+   to bindings/iio/adc/.
+3. Updates the Documentation in exynos-adc.txt with syscon phandle
+   for the ADC nodes.
+4. Updates the Dts files for Exynos3250, Exynos4x12, Exynos5250,
+   Exynos5420 with the syscon phandle.
 
-On Thu, Jul 17, 2014 at 06:01:24PM +0900, YoungJun Cho wrote:
-> This patch adds DT bindings for s6e3fa0 panel.
-> The bindings describes panel resources and display timings.
+Tested on Exynos5420 based Peach PIT and Exynos5800 based Peach PI
+by verifying sysfs entries provided by HWMON based NTC thermistors.
 
-The commit message here should preferably say which platform this is
-used on.
+Tested-By for Exynos3250, Exynos4x12 would be appreciated.
 
-> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-> Acked-by: Inki Dae <inki.dae@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  .../devicetree/bindings/panel/samsung,s6e3fa0.txt  | 46 ++++++++++++++++=
-++++++
->  1 file changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/panel/samsung,s6e3f=
-a0.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt =
-b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-> new file mode 100644
-> index 0000000..2cd32f5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/panel/samsung,s6e3fa0.txt
-> @@ -0,0 +1,46 @@
-> +Samsung S6E3FA0 AMOLED LCD 5.7 inch panel
-> +
-> +Required properties:
-> +  - compatible: "samsung,s6e3fa0"
-> +  - reg: the virtual channel number of a DSI peripheral
-> +  - vdd3-supply: core voltage supply
-> +  - vci-supply: voltage supply for analog circuits
-> +  - reset-gpios: a GPIO spec for the reset pin
-> +  - det-gpios: a GPIO spec for the OLED detection pin
-> +  - te-gpios: a GPIO spec for the TE pin
-> +  - display-timings: timings for the connected panel as described by [1]
+Changes since v1:
+Adding syscon description in commit message
 
-display-timings should be optional. The panel driver should provide a
-default mode. And only if you really need to override the default mode
-you should provide the option of getting an alternative set of values
-=66rom DT.
+Rebased on top of v5 version of ADC for exynos3250 from Changwoo.
+iio: adc: exynos_adc: Support Exynos3250 ADC and code clean
+https://lkml.org/lkml/2014/6/27/16
 
-Thierry
+Naveen Krishna Chatradhi (4):
+  iio: exyno-adc: use syscon for PMU register access
+  Documentation: dt-bindings: move exynos-adc.txt to more iio/adc/
+  Documentation: dt-bindings: update exynos-adc.txt with syscon handle
+  ARM: dts: exynos: Add sysreg phandle to ADC node
 
---gMR3gsNFwZpnI/Ts
-Content-Type: application/pgp-signature
+ .../devicetree/bindings/arm/samsung/exynos-adc.txt |   82 ------------------
+ .../devicetree/bindings/iio/adc/exynos-adc.txt     |   87 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi                  |    3 +-
+ arch/arm/boot/dts/exynos4x12.dtsi                  |    3 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  |    3 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  |    3 +-
+ drivers/iio/adc/exynos_adc.c                       |   29 +++++--
+ 7 files changed, 115 insertions(+), 95 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/exynos-adc.txt
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTx6e0AAoJEN0jrNd/PrOh+7YP/A5E1nBJ7DtVFrXymr/TE56R
-vGE8bdMTsPQlVMXzCjR8p7PRsTlIGiORcEuJx4+nG0dpFatEKTAAfwAYoAcK4hOa
-mwHNRINKdHI2lEF9/5dau0XgCIQ0T8vD85muiJXxQKculxOULpt7PChMcusnsoLz
-wxkSzK55TXvzFZ5TD9/Ih94SYfHQqMO9PdFJq/89lC1WRc7iV0yY1aPU837sKic5
-ZTJWhgVp8efNjEuDx7aHMial/AlpbROHVQDVs1XJbId40onM7VSPQ0gbRej9catx
-tg3p7RhTJYjR7V9/pZKrMnCr2HUeHeRumlz8YVc9DSCOCPCY7cf/ThpFUntaUusV
-0l9Uaoyy62e8wjErApc8Cu+FYHJxcRR8t7ja7UXayMvRvKtK14JzrVDsNS/8/XEa
-8ilesbv4n6wb5Fd2+4Lrnb255LFV9u1Go8l9fMhdyV3NCWNlm2S4u4xuTx9VHa90
-W/zMy/Aymc1Or1o2IIjHLEhQBMT+oMIi4T4nmt0tT1xzgnOczMMLIpB/K34qKCxu
-W3I6rIkZJjW50Xoi8OHxp2kpUex5xleNW/yp6NMo2bUoqqkbXd4zf4WLNXouBPne
-Torc4n0gIwOqxRyprENkIGwcRUy9kzMK970ytPXyHQMYKdwjO2xM73DFKuEQchrT
-g7wyllXxaAb6qEOowoU8
-=4Xd0
------END PGP SIGNATURE-----
-
---gMR3gsNFwZpnI/Ts--
+-- 
+1.7.9.5
