@@ -1,41 +1,46 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Update exynos_defconfig
-Date: Thu, 17 Jul 2014 23:30:57 +0200
-Message-ID: <53C84091.5020907@collabora.co.uk>
-References: <1404901353-14806-1-git-send-email-sachin.kamat@samsung.com>	<CAD=FV=XHFY3OtPg6vttpAkX1he0iS6cFLVC6ESauG+1=gredwA@mail.gmail.com>	<CAOesGMgyZN8TApVO0Svi65qLBzV6jnzGNg9UP1U+hRw=uXg1Bw@mail.gmail.com> <CAD=FV=W_XLsyW=k7D4iZn7ogFvf=QqAaZpxL7VyecP3mFv44qA@mail.gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH] ARM: config: update multi_v7_defconfig
+Date: Fri, 18 Jul 2014 00:31:48 +0200
+Message-ID: <CABxcv==+cwoXA=WM3E7Zb62T0Epgqg_oH3UNU0vEe2DDPiCYPA@mail.gmail.com>
+References: <1405411346-12471-1-git-send-email-ch.naveen@samsung.com>
+	<CAD=FV=UFknqF_Mt7ArytFq4KdDsGDa+JR2KZzX9Xn+if-_Vw4g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:49202 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752507AbaGQVbG (ORCPT
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:43902 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753888AbaGQWbt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jul 2014 17:31:06 -0400
-In-Reply-To: <CAD=FV=W_XLsyW=k7D4iZn7ogFvf=QqAaZpxL7VyecP3mFv44qA@mail.gmail.com>
+	Thu, 17 Jul 2014 18:31:49 -0400
+Received: by mail-wi0-f177.google.com with SMTP id ho1so3607190wib.16
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Jul 2014 15:31:48 -0700 (PDT)
+In-Reply-To: <CAD=FV=UFknqF_Mt7ArytFq4KdDsGDa+JR2KZzX9Xn+if-_Vw4g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>
-Cc: Sachin Kamat <sachin.kamat@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <spk.linux@gmail.com>, Kevin Hilman <khilman@linaro.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olofj@chromium.org>, "cpgs ." <cpgs@samsung.com>
 
 Hello,
 
-On 07/14/2014 09:24 PM, Doug Anderson wrote:
-> 
->> [WARN] [    2.296011] tps65090-charger tps65090-charger: Unable to get
->> charger irq = -22
->> [WARN] [    2.313705] tps65090-charger: probe of tps65090-charger
->> failed with error -22
-> 
-> I have resent the patch to fix this 4 times with no avail.  I'm
-> getting a little tired of reposting.  I figure that I'll wait another
-> month and try again--maybe the charger subsystem will be in better
-> hands by then.
+On Tue, Jul 15, 2014 at 5:59 PM, Doug Anderson <dianders@chromium.org> wrote:
+>
+> Is there a reason not to add more of the max77686 configs?
+>
+> +CONFIG_RTC_DRV_MAX77686=y
+> +CONFIG_COMMON_CLK_MAX77686=y
 
-FYI, Sebastian Reichel has applied [0] Doug's patch.
+AFAIK for the multi-platform defconfig we should try to build as a
+module as many config options as possible to keep the kernel binary
+size to a minimum.
+
+In the case of the MAX77686, the mfd, regulator and clock drivers use
+subsys_initcall() instead of module_init() but I wonder which of these
+really need to be initialized at subsys init call time and which one
+can just be built as a module. The only MAX77686 driver that uses
+module_platform_driver() so it's initialized at device initcall time
+is the rtc-max77686 driver which ironically is the only MAX77686
+driver that doesn't define a MODULE_DEVICE_TABLE() so the module won't
+be autoloaded.
 
 Best regards,
 Javier
-
-[0]:
-https://git.kernel.org/cgit/linux/kernel/git/sre/linux-power-supply.git/commit/?h=dev&id=5a3effdc8877132fd12f97fea0d4756614b911c7
