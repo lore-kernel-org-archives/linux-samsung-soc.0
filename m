@@ -1,39 +1,48 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v2] i2c: s3c2410: resume the I2C controller earlier
-Date: Wed, 16 Jul 2014 15:31:54 -0700
-Message-ID: <CAD=FV=W6OCzXOE9gz9qxGggiVeTHiveg7W-1hnF3_-OKy7RLKQ@mail.gmail.com>
-References: <1403654214-25072-1-git-send-email-dianders@chromium.org>
-	<20140716173528.GF2759@katana>
+From: Nick Krause <xerofoify@gmail.com>
+Subject: Re: [PATCH] mach-s3c64xx: Remove all defintions not related to regs-clocks
+Date: Wed, 16 Jul 2014 21:13:19 -0400
+Message-ID: <CAPDOMVgOfaf7qHXGSdwpyT4edo_ZjbbnkP7UYNbzkRzudW_f-A@mail.gmail.com>
+References: <1405361664-5210-1-git-send-email-xerofoify@gmail.com>
+	<36350.1405374230@turing-police.cc.vt.edu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140716173528.GF2759@katana>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f179.google.com ([209.85.220.179]:44836 "EHLO
+	mail-vc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752706AbaGQBNU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Jul 2014 21:13:20 -0400
+In-Reply-To: <36350.1405374230@turing-police.cc.vt.edu>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Valdis.Kletnieks@vt.edu
+Cc: ben-linux <ben-linux@fluff.org>, "kgene.kim" <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Wolfram,
-
-On Wed, Jul 16, 2014 at 10:35 AM, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org> wrote:
-> On Tue, Jun 24, 2014 at 04:56:54PM -0700, Doug Anderson wrote:
->> From: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+On Mon, Jul 14, 2014 at 5:43 PM,  <Valdis.Kletnieks@vt.edu> wrote:
+> On Mon, 14 Jul 2014 14:14:24 -0400, Nicholas Krause said:
+>> This patch addresses the fix me message in this file that states to
+>> remove all definitions not related to reg-clocks in this header
+>> file.
 >>
->> When the wake-up is triggered by the PMIC RTC, the RTC driver is trying
->> to read the PMIC interrupt status over I2C and fails because the I2C
->> controller is not resumed yet.
->> Let's resume the I2C controller earlier in the _noirq phase
->> (as other hardwares are doing), so we can properly get the wake-up
->> condition.
->>
->> Signed-off-by: Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> Signed-off-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> Signed-off-by: Nicholas Krause <xerofoify@gmail.com>
+>> ---
+>>  arch/arm/mach-s3c64xx/include/mach/regs-clock.h | 22 +---------------------
+>>  1 file changed, 1 insertion(+), 21 deletions(-)
 >
-> Applied to for-current (because Tomasz said it fixes issues), thanks! If
-> you think the exynos patch of the same style should also be in current,
-> please let me know...
-
-Thanks!  I don't think the exynos one needs to go into for-current.
-for-next is enough.  :)
-
--Doug
+>> -#endif /* _PLAT_REGS_CLOCK_H */
+>> +/#endif /* _PLAT_REGS_CLOCK_H */
+>
+> You're kidding us, right? Given that this was obviously *not* compile
+> tested at all, why should we believe that in fact all those #defines
+> are in fact no longer used?
+>
+> Hint: There's a very high chance that somebody stuck that FIXME in there rather
+> than just cleaning it up themselves precisely *because* it was still in use in
+> an inconvenient to fix place in the tree..
+>
+I build the arch/arm directory I seem to me hitting a error.
+ arch/arm/xen/enlighten.c:17:29: fatal error: asm/system_misc.h: No
+such file or directory
+ #include <asm/system_misc.h>
+I am also looking into fixing this issue.
+Cheers Nick
