@@ -1,107 +1,138 @@
 From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 3/4 v2] Documentation: dt-bindings: update exynos-adc.txt with
- syscon handle
-Date: Thu, 17 Jul 2014 16:49:52 +0530
-Message-ID: <1405595993-16661-4-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 1/4 v2] iio: exyno-adc: use syscon for PMU register access
+Date: Thu, 17 Jul 2014 16:49:50 +0530
+Message-ID: <1405595993-16661-2-git-send-email-ch.naveen@samsung.com>
 References: <1405595993-16661-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-reply-to: <1405595993-16661-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch updates the DT bindings in exynos-adc.txt with the
-syscon phandle to the ADC nodes.
-
-Also removes the 2nd "reg" property, which used to carry the
-ADC_PHY regiser base from PMU.
+This patch updates the IIO based ADC driver to use syscon and regmap
+APIs to access and use PMU registers instead of remapping the PMU
+registers in the driver.
 
 Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 ---
 Changes since v1:
-rebased on top of Changwoo's v5 ADC patches for exynos3250
+None
 
-iio: adc: exynos_adc: Support Exynos3250 ADC and code clean
-https://lkml.org/lkml/2014/6/27/16
+ drivers/iio/adc/exynos_adc.c |   29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
 
- .../devicetree/bindings/iio/adc/exynos-adc.txt     |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/iio/adc/exynos-adc.txt b/Documentation/devicetree/bindings/iio/adc/exynos-adc.txt
-index 0b0ed85..1634df3 100644
---- a/Documentation/devicetree/bindings/iio/adc/exynos-adc.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/exynos-adc.txt
-@@ -1,10 +1,11 @@
- Samsung Exynos Analog to Digital Converter bindings
+diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+index b63e882..60847ef 100644
+--- a/drivers/iio/adc/exynos_adc.c
++++ b/drivers/iio/adc/exynos_adc.c
+@@ -38,6 +38,8 @@
+ #include <linux/iio/iio.h>
+ #include <linux/iio/machine.h>
+ #include <linux/iio/driver.h>
++#include <linux/mfd/syscon.h>
++#include <linux/regmap.h>
  
- The devicetree bindings are for the new ADC driver written for
--Exynos4 and upward SoCs from Samsung.
-+Exynos4 and Exynos5 series SoCs from Samsung.
-+Now supports Exynos3250 too.
+ /* EXYNOS4412/5250 ADC_V1 registers definitions */
+ #define ADC_V1_CON(x)		((x) + 0x00)
+@@ -79,11 +81,14 @@
  
- New driver handles the following
--1. Supports ADC IF found on EXYNOS4412/EXYNOS5250
-+1. Supports ADC IF found on Exynos3250/EXYNOS4412/EXYNOS5 series
-    and future SoCs from Samsung
- 2. Add ADC driver under iio/adc framework
- 3. Also adds the Documentation for device tree bindings
-@@ -18,7 +19,7 @@ Required properties:
- 				for controllers compatible with ADC of
- 				Exynos3250.
- - reg:			Contains ADC register address range (base address and
--			length) and the address of the phy enable register.
-+			length)
- - interrupts: 		Contains the interrupt information for the timer. The
- 			format is being dependent on which interrupt controller
- 			the Samsung device uses.
-@@ -31,6 +32,8 @@ Required properties:
- 			- "sclk_adc" : ADC special clock (only for Exynos3250
- 				       and compatible ADC block)
- - vdd-supply		VDD input supply.
-+- samsung,syscon-phandle Contains the PMU system controller node
-+			(To access the ADC_PHY register)
+ #define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
  
- Note: child nodes can be added for auto probing from device tree.
++#define EXYNOS_ADCV1_PHY_OFFSET	0x0718
++#define EXYNOS_ADCV2_PHY_OFFSET	0x0720
++
+ struct exynos_adc {
+ 	struct exynos_adc_data	*data;
+ 	struct device		*dev;
+ 	void __iomem		*regs;
+-	void __iomem		*enable_reg;
++	struct regmap		*pmu_map;
+ 	struct clk		*clk;
+ 	struct clk		*sclk;
+ 	unsigned int		irq;
+@@ -98,6 +103,7 @@ struct exynos_adc {
+ struct exynos_adc_data {
+ 	int num_channels;
+ 	bool needs_sclk;
++	int phy_offset;
  
-@@ -38,7 +41,7 @@ Example: adding device info in dtsi file
+ 	void (*init_hw)(struct exynos_adc *info);
+ 	void (*exit_hw)(struct exynos_adc *info);
+@@ -169,7 +175,7 @@ static void exynos_adc_v1_init_hw(struct exynos_adc *info)
+ {
+ 	u32 con1;
  
- adc: adc@12D10000 {
- 	compatible = "samsung,exynos-adc-v1";
--	reg = <0x12D10000 0x100>, <0x10040718 0x4>;
-+	reg = <0x12D10000 0x100>;
- 	interrupts = <0 106 0>;
- 	#io-channel-cells = <1>;
- 	io-channel-ranges;
-@@ -47,13 +50,14 @@ adc: adc@12D10000 {
- 	clock-names = "adc";
+-	writel(1, info->enable_reg);
++	regmap_write(info->pmu_map, info->data->phy_offset, 1);
  
- 	vdd-supply = <&buck5_reg>;
-+	samsung,syscon-phandle = <&pmu_system_controller>;
+ 	/* set default prescaler values and Enable prescaler */
+ 	con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
+@@ -183,7 +189,7 @@ static void exynos_adc_v1_exit_hw(struct exynos_adc *info)
+ {
+ 	u32 con;
+ 
+-	writel(0, info->enable_reg);
++	regmap_write(info->pmu_map, info->data->phy_offset, 0);
+ 
+ 	con = readl(ADC_V1_CON(info->regs));
+ 	con |= ADC_V1_CON_STANDBY;
+@@ -208,6 +214,7 @@ static void exynos_adc_v1_start_conv(struct exynos_adc *info,
+ 
+ static struct exynos_adc_data const exynos_adc_v1_data = {
+ 	.num_channels	= MAX_ADC_V1_CHANNELS,
++	.phy_offset	= EXYNOS_ADCV1_PHY_OFFSET,
+ 
+ 	.init_hw	= exynos_adc_v1_init_hw,
+ 	.exit_hw	= exynos_adc_v1_exit_hw,
+@@ -219,7 +226,7 @@ static void exynos_adc_v2_init_hw(struct exynos_adc *info)
+ {
+ 	u32 con1, con2;
+ 
+-	writel(1, info->enable_reg);
++	regmap_write(info->pmu_map, info->data->phy_offset, 1);
+ 
+ 	con1 = ADC_V2_CON1_SOFT_RESET;
+ 	writel(con1, ADC_V2_CON1(info->regs));
+@@ -236,7 +243,7 @@ static void exynos_adc_v2_exit_hw(struct exynos_adc *info)
+ {
+ 	u32 con;
+ 
+-	writel(0, info->enable_reg);
++	regmap_write(info->pmu_map, info->data->phy_offset, 0);
+ 
+ 	con = readl(ADC_V2_CON1(info->regs));
+ 	con &= ~ADC_CON_EN_START;
+@@ -271,10 +278,12 @@ static void exynos_adc_v2_start_conv(struct exynos_adc *info,
+ 
+ static struct exynos_adc_data const exynos_adc_v2_data = {
+ 	__EXYNOS_ADC_V2_DATA
++	.phy_offset = EXYNOS_ADCV2_PHY_OFFSET,
  };
  
- Example: adding device info in dtsi file for Exynos3250 with additional sclk
- 
- adc: adc@126C0000 {
- 	compatible = "samsung,exynos3250-adc-v2";
--	reg = <0x126C0000 0x100>, <0x10020718 0x4>;
-+	reg = <0x126C0000 0x100>;
- 	interrupts = <0 137 0>;
- 	#io-channel-cells = <1>;
- 	io-channel-ranges;
-@@ -62,6 +66,7 @@ adc: adc@126C0000 {
- 	clock-names = "adc", "sclk_adc";
- 
- 	vdd-supply = <&buck5_reg>;
-+	samsung,syscon-phandle = <&pmu_system_controller>;
+ static struct exynos_adc_data const exynos3250_adc_v2_data = {
+ 	__EXYNOS_ADC_V2_DATA
++	.phy_offset = EXYNOS_ADCV1_PHY_OFFSET,
+ 	.needs_sclk = true,
  };
  
- Example: Adding child nodes in dts file
+@@ -437,10 +446,12 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(info->regs))
+ 		return PTR_ERR(info->regs);
+ 
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	info->enable_reg = devm_ioremap_resource(&pdev->dev, mem);
+-	if (IS_ERR(info->enable_reg))
+-		return PTR_ERR(info->enable_reg);
++	info->pmu_map = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
++					"samsung,syscon-phandle");
++	if (IS_ERR(info->pmu_map)) {
++		dev_err(&pdev->dev, "syscon regmap lookup failed.\n");
++		return PTR_ERR(info->pmu_map);
++	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
 -- 
 1.7.9.5
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
