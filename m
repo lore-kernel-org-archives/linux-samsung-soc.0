@@ -1,91 +1,46 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v7 06/24] mfd: max77686: Make error checking consistent
-Date: Fri, 18 Jul 2014 09:18:36 +0100
-Message-ID: <20140718081836.GP30888@lee--X1>
+Subject: Re: [PATCH v7 04/24] mfd: max77686: Make platform data over-rule DT
+Date: Fri, 18 Jul 2014 09:17:59 +0100
+Message-ID: <20140718081759.GN30888@lee--X1>
 References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
- <1404505467-26526-7-git-send-email-javier.martinez@collabora.co.uk>
+ <1404505467-26526-5-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:55360 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754114AbaGRISn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jul 2014 04:18:43 -0400
-Received: by mail-ie0-f172.google.com with SMTP id lx4so4226004iec.17
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Jul 2014 01:18:43 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1404505467-26526-7-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1404505467-26526-5-git-send-email-javier.martinez@collabora.co.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, devicetree@vger.kernel.org, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@chromium.org>, Tushar Behera <trblinux@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 04 Jul 2014, Javier Martinez Canillas wrote:
-
-> Error checking across the driver is mostly consistent besides
-> a few exceptions, so change these exceptions for consistency.
->=20
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
-=2Euk>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  drivers/mfd/max77686.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-
-Applied now, thanks.
-
-> diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
-> index ada4976..87fe52e 100644
-> --- a/drivers/mfd/max77686.c
-> +++ b/drivers/mfd/max77686.c
-> @@ -134,7 +134,7 @@ static int max77686_i2c_probe(struct i2c_client *=
-i2c,
-> =20
->  	max77686 =3D devm_kzalloc(&i2c->dev,
->  				sizeof(struct max77686_dev), GFP_KERNEL);
-> -	if (max77686 =3D=3D NULL)
-> +	if (!max77686)
->  		return -ENOMEM;
-> =20
->  	i2c_set_clientdata(i2c, max77686);
-> @@ -153,8 +153,8 @@ static int max77686_i2c_probe(struct i2c_client *=
-i2c,
->  		return ret;
->  	}
-> =20
-> -	if (regmap_read(max77686->regmap,
-> -			 MAX77686_REG_DEVICE_ID, &data) < 0) {
-> +	ret =3D regmap_read(max77686->regmap, MAX77686_REG_DEVICE_ID, &data=
-);
-> +	if (ret < 0) {
->  		dev_err(max77686->dev,
->  			"device not found on this channel (this is not an error)\n");
->  		return -ENODEV;
-> @@ -180,7 +180,7 @@ static int max77686_i2c_probe(struct i2c_client *=
-i2c,
->  				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
->  				  IRQF_SHARED, 0, &max77686_irq_chip,
->  				  &max77686->irq_data);
-> -	if (ret !=3D 0) {
-> +	if (ret) {
->  		dev_err(&i2c->dev, "failed to add PMIC irq chip: %d\n", ret);
->  		goto err_unregister_i2c;
->  	}
-> @@ -188,7 +188,7 @@ static int max77686_i2c_probe(struct i2c_client *=
-i2c,
->  				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
->  				  IRQF_SHARED, 0, &max77686_rtc_irq_chip,
->  				  &max77686->rtc_irq_data);
-> -	if (ret !=3D 0) {
-> +	if (ret) {
->  		dev_err(&i2c->dev, "failed to add RTC irq chip: %d\n", ret);
->  		goto err_del_irqc;
->  	}
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+T24gRnJpLCAwNCBKdWwgMjAxNCwgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIHdyb3RlOgoKPiBU
+aGUgZnVuY3Rpb24gbWF4Nzc4MDJfaTJjX3BhcnNlX2R0X3BkYXRhKCkgc2hvdWxkIG9ubHkgYmUg
+Y2FsbGVkCj4gaWYgdGhlcmUgaXNuJ3QgYWxyZWFkeSBwbGF0Zm9ybSBkYXRhIGZvciB0aGUgZGV2
+aWNlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IEphdmllciBNYXJ0aW5leiBDYW5pbGxhcyA8amF2aWVy
+Lm1hcnRpbmV6QGNvbGxhYm9yYS5jby51az4KPiAtLS0KPiAgZHJpdmVycy9tZmQvbWF4Nzc2ODYu
+YyB8IDIgKy0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0p
+CgpBcHBsaWVkIG5vdywgdGhhbmtzLgoKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZmQvbWF4Nzc2
+ODYuYyBiL2RyaXZlcnMvbWZkL21heDc3Njg2LmMKPiBpbmRleCBkMWY5ZDA0Li4xMmQ0YzE3IDEw
+MDY0NAo+IC0tLSBhL2RyaXZlcnMvbWZkL21heDc3Njg2LmMKPiArKysgYi9kcml2ZXJzL21mZC9t
+YXg3NzY4Ni5jCj4gQEAgLTEyNCw3ICsxMjQsNyBAQCBzdGF0aWMgaW50IG1heDc3Njg2X2kyY19w
+cm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqaTJjLAo+ICAJdW5zaWduZWQgaW50IGRhdGE7Cj4gIAlp
+bnQgcmV0ID0gMDsKPiAgCj4gLQlpZiAoSVNfRU5BQkxFRChDT05GSUdfT0YpICYmIGkyYy0+ZGV2
+Lm9mX25vZGUpCj4gKwlpZiAoSVNfRU5BQkxFRChDT05GSUdfT0YpICYmIGkyYy0+ZGV2Lm9mX25v
+ZGUgJiYgIXBkYXRhKQo+ICAJCXBkYXRhID0gbWF4Nzc2ODZfaTJjX3BhcnNlX2R0X3BkYXRhKCZp
+MmMtPmRldik7Cj4gIAo+ICAJaWYgKCFwZGF0YSkgewoKLS0gCkxlZSBKb25lcwpMaW5hcm8gU1RN
+aWNyb2VsZWN0cm9uaWNzIExhbmRpbmcgVGVhbSBMZWFkCkxpbmFyby5vcmcg4pSCIE9wZW4gc291
+cmNlIHNvZnR3YXJlIGZvciBBUk0gU29DcwpGb2xsb3cgTGluYXJvOiBGYWNlYm9vayB8IFR3aXR0
+ZXIgfCBCbG9nCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmlu
+ZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9s
+aW51eC1hcm0ta2VybmVsCg==
