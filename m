@@ -1,7 +1,7 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer support
-Date: Fri, 18 Jul 2014 19:56:03 +0900
-Message-ID: <1405680964-6869-2-git-send-email-inki.dae@samsung.com>
+Subject: [PATCH 2/2] drm/exynos: dsi: add LPM (Low Power Mode) transfer support
+Date: Fri, 18 Jul 2014 19:56:04 +0900
+Message-ID: <1405680964-6869-3-git-send-email-inki.dae@samsung.com>
 References: <1405680964-6869-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,59 +21,62 @@ To: airlied@linux.ie, dri-devel@lists.freedesktop.org
 Cc: a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds below two flags for LPM transfer, and it attaches LPM flags
-to a msg in accordance with master's mode_flags set by LCD Panel driver.
+This patch adds LPM transfer support for video or command data.
 
-MIPI_DSI_MODE_CMD_LPM: low power command transfer
-MIPI_DSI_MODE_VIDEO_LPM: low power video transfer
-
-MIPI DSI spec says,
-     "the host processor controls the desired mode of clock operation.
-      Host protocol and applications control Clock Lane operating mode
-      (High Speed or Low Power mode). System designers are responsible
-      for understanding the clock requirements for peripherals attached
-      to DSI and controlling clock behavior in accordance with those
-      requirements."
-
-Some LCD Panel devices, nt35502a, would need LPM transfer support
-because they should receive some initial commands with LPM by default
-hardware setting.
+With this patch, Exynos MIPI DSI controller can transfer command or
+video data with HS or LP mode in accordance with mode_flags set
+by LCD Panel driver.
 
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/gpu/drm/drm_mipi_dsi.c |    3 +++
- include/drm/drm_mipi_dsi.h     |    4 ++++
- 2 files changed, 7 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c |   22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
-index e633df2..6b2bbda 100644
---- a/drivers/gpu/drm/drm_mipi_dsi.c
-+++ b/drivers/gpu/drm/drm_mipi_dsi.c
-@@ -232,6 +232,9 @@ int mipi_dsi_dcs_write(struct mipi_dsi_device *dsi, unsigned int channel,
- 		break;
- 	}
- 
-+	if (dsi->mode_flags & MIPI_DSI_MODE_CMD_LPM)
-+		msg.flags = MIPI_DSI_MSG_USE_LPM;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 2df3592..b120554 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -426,13 +426,28 @@ static int exynos_dsi_enable_clock(struct exynos_dsi *dsi)
+ 			| DSIM_ESC_PRESCALER(esc_div)
+ 			| DSIM_LANE_ESC_CLK_EN_CLK
+ 			| DSIM_LANE_ESC_CLK_EN_DATA(BIT(dsi->lanes) - 1)
+-			| DSIM_BYTE_CLK_SRC(0)
+-			| DSIM_TX_REQUEST_HSCLK;
++			| DSIM_BYTE_CLK_SRC(0);
 +
- 	return ops->transfer(dsi->host, &msg);
- }
- EXPORT_SYMBOL(mipi_dsi_dcs_write);
-diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-index 944f33f..1c41e49 100644
---- a/include/drm/drm_mipi_dsi.h
-+++ b/include/drm/drm_mipi_dsi.h
-@@ -94,6 +94,10 @@ void mipi_dsi_host_unregister(struct mipi_dsi_host *host);
- #define MIPI_DSI_MODE_VSYNC_FLUSH	BIT(8)
- /* disable EoT packets in HS mode */
- #define MIPI_DSI_MODE_EOT_PACKET	BIT(9)
-+/* command low power mode */
-+#define MIPI_DSI_MODE_CMD_LPM		BIT(10)
-+/* video low power mode */
-+#define MIPI_DSI_MODE_VIDEO_LPM		BIT(11)
++	if (!(dsi->mode_flags & MIPI_DSI_MODE_CMD_LPM))
++		reg |= DSIM_TX_REQUEST_HSCLK;
++
+ 	writel(reg, dsi->reg_base + DSIM_CLKCTRL_REG);
  
- enum mipi_dsi_pixel_format {
- 	MIPI_DSI_FMT_RGB888,
+ 	return 0;
+ }
+ 
++static void exynos_dsi_enable_hs_clock(struct exynos_dsi *dsi,
++					bool enable)
++{
++	u32 reg = readl(dsi->reg_base + DSIM_CLKCTRL_REG);
++
++	reg &= ~DSIM_TX_REQUEST_HSCLK;
++	if (enable)
++		reg |= DSIM_TX_REQUEST_HSCLK;
++
++	writel(reg, dsi->reg_base + DSIM_CLKCTRL_REG);
++}
++
+ static void exynos_dsi_disable_clock(struct exynos_dsi *dsi)
+ {
+ 	u32 reg;
+@@ -575,6 +590,9 @@ static void exynos_dsi_set_display_enable(struct exynos_dsi *dsi, bool enable)
+ {
+ 	u32 reg;
+ 
++	if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_LPM))
++		exynos_dsi_enable_hs_clock(dsi, true);
++
+ 	reg = readl(dsi->reg_base + DSIM_MDRESOL_REG);
+ 	if (enable)
+ 		reg |= DSIM_MAIN_STAND_BY;
 -- 
 1.7.9.5
