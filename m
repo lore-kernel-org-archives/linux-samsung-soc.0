@@ -1,69 +1,70 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv2] ARM: dts: Add I2S dt node for Exynos3250
-Date: Fri, 18 Jul 2014 09:10:11 +0900
-Message-ID: <53C865E3.5030806@samsung.com>
-References: <1404874819-8257-1-git-send-email-cw00.choi@samsung.com>
+Subject: Re: [PATCH v7 0/6] cpufreq: use generic cpufreq drivers for exynos
+ platforms
+Date: Fri, 18 Jul 2014 09:44:35 +0900
+Message-ID: <53C86DF3.1040303@samsung.com>
+References: <1405345118-4269-1-git-send-email-thomas.ab@samsung.com>
+ <CAJuA9ahWbL8v2nS6wuDosn-bi+pga57KUe5wQN14Mot_-RTc6w@mail.gmail.com>
+ <CAJuA9aiVFFZiN7_xBg6iQEX-LJKLMmHKvPhmdmOduouQzBtQJw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:13556 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754053AbaGRAK1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Jul 2014 20:10:27 -0400
-In-reply-to: <1404874819-8257-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <CAJuA9aiVFFZiN7_xBg6iQEX-LJKLMmHKvPhmdmOduouQzBtQJw@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thomas Abraham <ta.omasab@gmail.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux@arm.linux.org.uk, kgene.kim@samsung.com, t.figa@samsung.com, kyungmin.park@samsung.com, ideal.song@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 07/09/2014 12:00 PM, Chanwoo Choi wrote:
-> From: Tomasz Figa <t.figa@samsung.com>
+Hi Thomas,
+
+On 07/17/2014 02:58 PM, Thomas Abraham wrote:
+> Hi Mike,
 > 
-> This patch add I2S (Inter-IC Sound) dt node which supports 1-port stereo
-> (1 channels) IIS-bus for audio interface with DMA-based operation.
+> On Tue, Jul 15, 2014 at 9:20 AM, Thomas Abraham <ta.omasab@gmail.com> wrote:
+>> Hi Tomasz,
+>>
+>> On Mon, Jul 14, 2014 at 7:08 PM, Thomas Abraham <thomas.ab@samsung.com> wrote:
+>>> Changes since v6:
+>>> - Fixes suggested by Amit Daniel <amit.daniel@samsung.com>.
+>>>
+>>> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
+>>> drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
+>>> series also enabled cpufreq support for Exynos5420 using arm_big_little cpufreq
+>>> driver.
+>>>
+>>> Thomas Abraham (6):
+>>>   clk: samsung: add infrastructure to register cpu clocks
+>>>   clk: samsung: register exynos5420 apll/kpll configuration data
+>>>   clk: exynos: use cpu-clock provider type to represent arm clock
+>>>   ARM: dts: Exynos: add cpu nodes, opp and cpu clock configuration data
+>>>   ARM: Exynos: switch to using generic cpufreq driver for exynos4210/5250
+>>>   cpufreq: exynos: remove exynos4210/5250 specific cpufreq driver support
+>>
+>> In this series, support for Exynos5420 has been included. If there are
+>> any more changes required, could you please let me know.
 > 
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Inha Song <ideal.song@samsung.com>
-> Tested-by: Inha Song <ideal.song@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
-> Changes from v1:
-> - Fix wrong name of property (pinctrl-names)
-> - Change phanle name (i2s->i2s2)
+> This patch series migrates exynos cpufreq support to use generic
+> cpufreq drivers. For this, cpu clock blocks are encapsulated into a
+> cpu clock type and cpufreq driver operates the cpu clock type.
 > 
->  arch/arm/boot/dts/exynos3250.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+> We had discussed in the [1] about using coordinated clocks. This
+> series is not using the concept of coordinated clocks but the code in
+> this series can be migrated to use coordinated clocks when it is
+> available.
 > 
-> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> index 3e678fa..77a06df 100644
-> --- a/arch/arm/boot/dts/exynos3250.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> @@ -425,6 +425,19 @@
->  			status = "disabled";
->  		};
->  
-> +		i2s2: i2s@13970000 {
-> +			compatible = "samsung,s3c6410-i2s";
-> +			reg = <0x13970000 0x100>;
-> +			interrupts = <0 126 0>;
-> +			clocks = <&cmu CLK_I2S>, <&cmu CLK_SCLK_I2S>;
-> +			clock-names = "iis", "i2s_opclk0";
-> +			dmas = <&pdma0 14>, <&pdma0 13>;
-> +			dma-names = "tx", "rx";
-> +			pinctrl-0 = <&i2s2_bus>;
-> +			pinctrl-names = "default";
-> +			status = "disabled";
-> +		};
-> +
->  		pwm: pwm@139D0000 {
->  			compatible = "samsung,exynos4210-pwm";
->  			reg = <0x139D0000 0x1000>;
+> Is it okay to consider this series for v3.17-rc1. I will update this
+> code to use coordinated clocks when it is available. This series helps
+> with cpufreq support for newer Exynos SoCs such as Exynos5420/3250.
+> 
+> [1] http://www.spinics.net/lists/cpufreq/msg10042.html
 > 
 
-Ping.
+I tested this patchset with Exynos3250 cpufreq patchset[1] on Exynos3250 SoC.
+ [1] https://lkml.org/lkml/2014/6/18/126
+
+Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 Best Regards,
 Chanwoo Choi
+
