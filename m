@@ -1,38 +1,154 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 4/4] ARM: DTS: fix the chip select gpios definition in
- the SPI nodes
-Date: Sat, 19 Jul 2014 04:16:33 +0900
-Message-ID: <53C97291.3040501@samsung.com>
-References: <1405523950-2231-1-git-send-email-javier.martinez@collabora.co.uk> <1405523950-2231-5-git-send-email-javier.martinez@collabora.co.uk> <20140717184944.GE17528@sirena.org.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 1/2] iio: exynos-adc: add support for s3c64xx adc
+Date: Fri, 18 Jul 2014 21:27:17 +0200
+Message-ID: <5186890.aLtladpMgD@wuerfel>
+References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140717184944.GE17528-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org, ch.naveen@samsung.com, mark.rutland@arm.com, devicetree@vger.kernel.org, kgene.kim@samsung.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, t.figa@samsung.com, rdunlap@infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, heiko.stuebner@bq.com, Ben Dooks <ben-linux@fluff.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/18/14 03:49, Mark Brown wrote:
-> On Wed, Jul 16, 2014 at 05:19:10PM +0200, Javier Martinez Canillas wrote:
->> From: Naveen Krishna Chatradhi<ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>
->> This patch replaces the "cs-gpio" from "controller-data" node
->> as was specified in the old binding and uses the standard
->> "cs-gpios" property expected by the SPI core as is defined now
->> in the spi-s3c64xx driver DT binding.
->
-> I've applied this one too since everything here really ought to go in
-> together and we should probably try to get this into v3.16 - Kukjin,
-> please say if this is an issue and I can revert.
->
-It should be fine to me :)
+The ADC in s3c64xx is almost the same as exynosv1, but
+has a different 'select' method. Adding this here will be
+helpful to move over the existing s3c64xx platform from the
+legacy plat-samsung/adc driver to the new exynos-adc.
 
-Thanks for your asking.
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+[In reply to Exynos3250 ADC support, adding Heiko and Ben]
 
-- Kukjin
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I spent way too much time this week trying to clean up the
+old plat-samsung/adc.c driver as preparation for s3c64xx multiplatform
+support. Eventually I figured out that all that code is much simpler
+done using the new driver. This adds support for s3c64xx in
+samsung-adc.c, similar code changes can be done to support the
+various s3c24xx variants as well.
+
+This first patch should be fairly straightforward but is not tested
+yet. The second patch is more tricky.
+
+Both are based on the exynos3250 patches sent by Chanwoo Choi.
+
+diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+index 26232f98d8c5..f84e9250429b 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+@@ -11,11 +11,21 @@ New driver handles the following
+ 
+ Required properties:
+ - compatible:		Must be "samsung,exynos-adc-v1"
+-				for exynos4412/5250 controllers.
++				for exynos4412/5250 and s5pv210 controllers.
+ 			Must be "samsung,exynos-adc-v2" for
+ 				future controllers.
+ 			Must be "samsung,exynos3250-adc-v2" for
+ 				controllers compatible with ADC of Exynos3250.
++			Must be "samsung,s3c2410-adc" for
++				the ADC in s3c2410 and compatibles
++			Must be "samsung,s3c2416-adc" for
++				the ADC in s3c2416 and compatibles
++			Must be "samsung,s3c2440-adc" for
++				the ADC in s3c2440 and compatibles
++			Must be "samsung,s3c2440-adc" for
++				the ADC in s3c2440 and compatibles
++			Must be "samsung,s3c2443-adc" for
++				the ADC in s3c2443 and compatibles
+ - reg:			Contains ADC register address range (base address and
+ 			length) and the address of the phy enable register.
+ - interrupts: 		Contains the interrupt information for the timer. The
+diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+index b63e88247eb2..5f95638513d2 100644
+--- a/drivers/iio/adc/exynos_adc.c
++++ b/drivers/iio/adc/exynos_adc.c
+@@ -39,12 +39,16 @@
+ #include <linux/iio/machine.h>
+ #include <linux/iio/driver.h>
+ 
+-/* EXYNOS4412/5250 ADC_V1 registers definitions */
++/* S3C/EXYNOS4412/5250 ADC_V1 registers definitions */
+ #define ADC_V1_CON(x)		((x) + 0x00)
++#define ADC_V1_TSC(x)		((x) + 0x04)
+ #define ADC_V1_DLY(x)		((x) + 0x08)
+ #define ADC_V1_DATX(x)		((x) + 0x0C)
++#define ADC_V1_DATY(x)		((x) + 0x10)
++#define ADC_V1_UPDN(x)		((x) + 0x14)
+ #define ADC_V1_INTCLR(x)	((x) + 0x18)
+ #define ADC_V1_MUX(x)		((x) + 0x1c)
++#define ADC_V1_CLRINTPNDNUP(x)	((x) + 0x20)
+ 
+ /* Future ADC_V2 registers definitions */
+ #define ADC_V2_CON1(x)		((x) + 0x00)
+@@ -60,6 +64,30 @@
+ #define ADC_V1_CON_PRSCLV(x)	(((x) & 0xFF) << 6)
+ #define ADC_V1_CON_STANDBY	(1u << 2)
+ 
++#define ADC_S3C2410_CON_SELMUX(x) (((x)&0x7)<<3)
++
++/* ADCTSC Register Bits */
++#define ADC_S3C2443_TSC_UD_SEN		(1<<8)
++#define ADC_S3C2410_TSC_YM_SEN		(1<<7)
++#define ADC_S3C2410_TSC_YP_SEN		(1<<6)
++#define ADC_S3C2410_TSC_XM_SEN		(1<<5)
++#define ADC_S3C2410_TSC_XP_SEN		(1<<4)
++#define ADC_S3C2410_TSC_PULL_UP_DISABLE	(1<<3)
++#define ADC_S3C2410_TSC_AUTO_PST	(1<<2)
++#define ADC_S3C2410_TSC_XY_PST(x)	(((x)&0x3)<<0)
++
++#define ADC_TSC_WAIT4INT (ADC_S3C2410_TSC_YM_SEN | \
++			 ADC_S3C2410_TSC_YP_SEN | \
++			 ADC_S3C2410_TSC_XP_SEN | \
++			 ADC_S3C2410_TSC_XY_PST(3))
++
++#define ADC_TSC_AUTOPST	(ADC_S3C2410_TSC_YM_SEN | \
++			 ADC_S3C2410_TSC_YP_SEN | \
++			 ADC_S3C2410_TSC_XP_SEN | \
++			 ADC_S3C2410_TSC_AUTO_PST | \
++			 ADC_S3C2410_TSC_XY_PST(0))
++
++
+ /* Bit definitions for ADC_V2 */
+ #define ADC_V2_CON1_SOFT_RESET	(1u << 2)
+ 
+@@ -195,6 +223,26 @@ static void exynos_adc_v1_clear_irq(struct exynos_adc *info)
+ 	writel(1, ADC_V1_INTCLR(info->regs));
+ }
+ 
++static void exynos_adc_s3c64xx_start_conv(struct exynos_adc *info,
++				     unsigned long addr)
++{
++	u32 con1;
++
++	con1 = readl(ADC_V1_CON(info->regs));
++	con1 &= ~ADC_S3C2410_CON_SELMUX(7);
++	con1 |= ADC_S3C2410_CON_SELMUX(addr);
++	writel(con1 | ADC_CON_EN_START, ADC_V1_CON(info->regs));
++}
++
++static struct exynos_adc_data const exynos_adc_s3c64xx_data = {
++	.num_channels	= MAX_ADC_V1_CHANNELS,
++
++	.init_hw	= exynos_adc_v1_init_hw,
++	.exit_hw	= exynos_adc_v1_exit_hw,
++	.clear_irq	= exynos_adc_v1_clear_irq,
++	.start_conv	= exynos_adc_s3c64xx_start_conv,
++};
++
+ static void exynos_adc_v1_start_conv(struct exynos_adc *info,
+ 				     unsigned long addr)
+ {
+@@ -280,6 +328,9 @@ static struct exynos_adc_data const exynos3250_adc_v2_data = {
+ 
+ static const struct of_device_id exynos_adc_match[] = {
+ 	{
++		.compatible = "samsung,s3c64100-adc",
++		.data = &exynos_adc_s3c64xx_data,
++	}, {
+ 		.compatible = "samsung,exynos-adc-v1",
+ 		.data = (void *)&exynos_adc_v1_data,
+ 	}, {
+
