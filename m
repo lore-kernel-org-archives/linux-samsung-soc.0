@@ -1,42 +1,52 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCHv6 0/4] iio: adc: exynos_adc: Support Exynos3250 ADC and code clean
-Date: Fri, 18 Jul 2014 11:38:27 +0200
-Message-ID: <59765980.V0Hsx6tyKd@wuerfel>
-References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
+Subject: Re: [PATCHv6 1/4] iio: adc: exynos_adc: Add exynos_adc_data structure to improve readability
+Date: Fri, 18 Jul 2014 11:42:35 +0200
+Message-ID: <6186153.TIYp5NXPIq@wuerfel>
+References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com> <1405663186-26464-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:55253 "EHLO
+Received: from mout.kundenserver.de ([212.227.126.187]:50441 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761066AbaGRJja (ORCPT
+	with ESMTP id S1760775AbaGRJnk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jul 2014 05:39:30 -0400
-In-Reply-To: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
+	Fri, 18 Jul 2014 05:43:40 -0400
+In-Reply-To: <1405663186-26464-2-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org, ch.naveen@samsung.com, mark.rutland@arm.com, devicetree@vger.kernel.org, kgene.kim@samsung.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, t.figa@samsung.com, rdunlap@infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: jic23@kernel.org, ch.naveen@samsung.com, kgene.kim@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, rdunlap@infradead.org, kyungmin.park@samsung.com, t.figa@samsung.com, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 
-On Friday 18 July 2014 14:59:42 Chanwoo Choi wrote:
-> This patchset support Exynos3250 ADC (Analog Digital Converter) because
-> Exynos3250 has additional special clock for ADC IP.
+On Friday 18 July 2014 14:59:43 Chanwoo Choi wrote:
+> This patchset add 'exynos_adc_data' structure which includes some functions
+> to control ADC operation and specific data according to ADC version (v1 or v2).
 > 
 
-by coincidence, I have just looked at the same driver in order to
-add support for s3c24xx and s3c64xx, so we can remove the plat-samsung
-adc framework they still use.  Those changes would naturally conflict
-with yours, but I think it makes sense for your patches to come first.
+This new structure makes a lot of sense for covering the exynos specific
+versions, but it will likely give a little more complexity for the
+older models. We'll have to deal with that later then, no need to
+hold up your patch. Interestingly, the version numbers seem weird. The
+old driver uses
 
-I'll comment a bit more on the individual patches. I didn't have
-interest in them earlier, so I didn't comment so far.
+	{
+                .name           = "s3c24xx-adc",
+                .driver_data    = TYPE_ADCV1,
+        }, {
+                .name           = "s3c2443-adc",
+                .driver_data    = TYPE_ADCV11,
+        }, {
+                .name           = "s3c2416-adc",
+                .driver_data    = TYPE_ADCV12,
+        }, {
+                .name           = "s3c64xx-adc",
+                .driver_data    = TYPE_ADCV2,
+        }, {
+                .name           = "samsung-adc-v3",
+                .driver_data    = TYPE_ADCV3,
+	}
 
-Another aspect that came up is the touchscreen support. Right now,
-there is drivers/input/touchscreen/s3c2410_ts.c which is intimately
-tied to arch/arm/plat-samsung/adc.c. The best way forward (as discussed
-on IRC as few days ago) seems to be to integrate support for that into
-the exynos_adc driver. Can you comment on which parts actually support
-touchscreen? Did touchscreen support get dropped in the exynos hardware,
-or is the driver just missing at the moment?
+Where TYPE_ADCV3 seems to be the same as the new ADC_V1 used in this
+driver. Do you have an explanation for that?
 
 	Arnd
