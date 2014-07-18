@@ -1,78 +1,128 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: Re: [PATCH v2 0/4] Add Exynos4412 based Odroid X2 and U2/U3/U3+ support
-Date: Fri, 18 Jul 2014 07:06:28 +0100
-Message-ID: <CAD8Lp45CDg3tcuqZLqkvaFaFQ-YL8m-Hpnh7p7q3vf6edg2pKg@mail.gmail.com>
-References: <1403702773-9141-1-git-send-email-m.szyprowski@samsung.com>
-	<53B0F6D1.4090006@samsung.com>
-	<CAOesGMirJ0R6NDUY=Yx2Pjaipw32ZGORVqtnrFMPMHpSP8YuBQ@mail.gmail.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V5 05/12] Documentation: Add DT bindings for panel-lvds
+ driver
+Date: Fri, 18 Jul 2014 12:18:05 +0530
+Message-ID: <CAEC9eQMJnae6DaAUd7C5xZkaaaXL+291Qf2pcUd-wrcYXgQx8A@mail.gmail.com>
+References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1405629839-12086-6-git-send-email-ajaykumar.rs@samsung.com>
+ <CAEC9eQNygvwOGvw6QPGp+=7K9=oC9XvcEf9QSv=JBsEHyhM0wA@mail.gmail.com>
+ <20140717224809.GA8875@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f171.google.com ([74.125.82.171]:40149 "EHLO
-	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755283AbaGRGG3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jul 2014 02:06:29 -0400
-Received: by mail-we0-f171.google.com with SMTP id p10so4099345wes.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Jul 2014 23:06:28 -0700 (PDT)
-In-Reply-To: <CAOesGMirJ0R6NDUY=Yx2Pjaipw32ZGORVqtnrFMPMHpSP8YuBQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20140717224809.GA8875@mithrandir>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@dowhile0.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Przemyslaw Marczak <p.marczak@samsung.com>
 
-Hi Olof,
+Hi Thierry,
 
-Thanks for joining the party here :)
+Thanks for your comments.
 
-On Fri, Jul 18, 2014 at 6:56 AM, Olof Johansson <olof@lixom.net> wrote:
-> Anyone got a simple writeup on the steps needed to boot, bl1/2 needed,
-> expected offset into eMMC for where it goes, etc?
-
-https://github.com/hardkernel/u-boot/blob/odroid-v2010.12/sd_fuse/sd_fusing.sh
-is probably the best "writeup" :)
-https://github.com/hardkernel/u-boot/tree/odroid-v2010.12/sd_fuse has
-the blobs needed (they have not changed at all in the U3's history, so
-the ones you have already will work fine).
-
-Samsung guys are also upstreaming support into uboot, including a
-README.odroid in the last commit with this info:
-http://patchwork.ozlabs.org/project/uboot/list/?submitter=23519
-
-> I gave the kernel (next-0717) a go here on my U3, and it boots (as you
-> mention, no USB comes up).
-
-Nice. USB works with the later patches floating around.
-
-> I do see a few KERN_ERR printks though:
+On Fri, Jul 18, 2014 at 4:18 AM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Fri, Jul 18, 2014 at 02:20:39AM +0530, Ajay kumar wrote:
+>> +devicetree@vger.kernel.org
+>>
+>> On Fri, Jul 18, 2014 at 2:13 AM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+>> > Add DT binding documentation for panel-lvds driver.
+>> >
+>> > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>> > ---
+>> >  .../devicetree/bindings/panel/panel-lvds.txt       |   50 ++++++++++++++++++++
+>> >  1 file changed, 50 insertions(+)
+>> >  create mode 100644 Documentation/devicetree/bindings/panel/panel-lvds.txt
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/panel/panel-lvds.txt b/Documentation/devicetree/bindings/panel/panel-lvds.txt
+>> > new file mode 100644
+>> > index 0000000..fdf91da2
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/panel/panel-lvds.txt
+>> > @@ -0,0 +1,50 @@
+>> > +panel interface for eDP/lvds panels
+>> > +
+>> > +Required properties:
+>> > +  - compatible: "panel-lvds"
 >
-> [ERR] [    0.000000] L2C: failed to init: -19
+> I think I've said this before. I oppose the addition of this binding. We
+> need to list a device-specific compatible value here, wildcards like
+> this aren't a good choice. And then if we have that compatible value we
+> can move most of the optional properties below into a driver.
+Yes, "panel-lvds" is a wildcard for all lvds panels.
+And since lvds panels from different vendors have different values
+for power_up_delay, delay from video_to_backlight etc, I thought its
+better to pick them up from device tree.
 
-This one is fixed with the patch series "Enable L2 cache support on
-Exynos4210/4x12 SoCs"
+>> > +Optional properties:
+>
+> If all these properties are optional, then what happens if a device tree
+> node doesn't contain any of them? Doesn't that turn the driver into one
+> big no-op?
+No! We need to provide lcd-supply and backlight-supply.
 
-> [ERR] [    0.001302] missing device node for CPU 0
-> [ERR] [    0.001344] missing device node for CPU 1
-> [ERR] [    0.001366] missing device node for CPU 2
-> [ERR] [    0.001386] missing device node for CPU 3
+>> > +       -lcd-enable-gpios:
+>> > +               panel LCD poweron GPIO.
+>> > +                       Indicates which GPIO needs to be powered up as output
+>> > +                       to powerup/enable the switch to the LCD panel.
+>> > +       -backlight-enable-gpios:
+>> > +               panel LED enable GPIO.
+>> > +                       Indicates which GPIO needs to be powered up as output
+>> > +                       to enable the backlight.
+>
+> I've also said before that this really belongs in a backlight driver.
+> Chances are that you'll want to have a way to set the brightness of the
+> backlight as well, so simply an enable GPIO won't be good enough.
+Ok. I can handle this in backlight driver itself (with some minor glitches).
+But, how do I map bridge functions to panel functions now?
+The bridge supports (pre_enable, enable, disable and post_disable) which I map
+with (prepare, enable, disable and unprepare) of the panel, using a sample layer
+called bridge to panel_binder.
+Moving out the backlight control from panel means I really don't need
+those extra
+panel calls(prepare and unprepare)!
+Then how to distribute 2 panel calls(enable and disable) across 4 bridge calls?
 
-Not sure about these - I still get them with all the patches applied.
+>> > +       -panel-prepare-delay:
+>> > +               delay value in ms required for panel_prepare process
+>> > +                       Delay in ms needed for the panel LCD unit to
+>> > +                       powerup completely.
+>> > +                       ex: delay needed till eDP panel throws HPD.
+>> > +                           delay needed so that we cans tart reading edid.
+>
+> If the panel signals HPD then we don't need this delay at all and we
+> should just wait for HPD instead.
+Not always for HPD, we need to wait for EDID module as well.
 
-> [ERR] [    0.156490] max77686 0-0009: irq is not specified
+>> > +       -panel-enable-delay:
+>> > +               delay value in ms required for panel_enable process
+>> > +                       Delay in ms needed for the panel backlight/LED unit
+>> > +                       to powerup, and delay needed between video_enable and
+>> > +                       backlight_enable.
+>> > +       -panel-disable-delay:
+>> > +               delay value in ms required for panel_disable process
+>> > +                       Delay in ms needed for the panel backlight/LED unit
+>> > +                       powerdown, and delay needed between backlight_disable
+>> > +                       and video_disable.
+>> > +       -panel-unprepare-delay:
+>> > +               delay value in ms required for panel_post_disable process
+>> > +                       Delay in ms needed for the panel LCD unit to
+>> > +                       to powerdown completely, and the minimum delay needed
+>> > +                       before powering it on again.
+>
+> These delays are all panel specific and they don't vary per board, so
+> they shouldn't go into the device tree at all.
+But, fetching them from device tree would allow us to support all lvds
+panels in this single driver.
 
-I submitted a patch for this, "ARM: dts: Enable PMIC interrupts on ODROID"
-
-> [ERR] [    1.339498] /i2c@13860000/usb3503@08: could not get
-> #clock-cells for /system-controller@10020000
-> [ERR] [    1.348050] ERROR: could not get clock
-> /i2c@13860000/usb3503@08:refclk(0)
-
-I think these go away with the USB patches floating around.
-
-> [ERR] [    1.383055] max77686-rtc max77686-rtc: max77686_rtc_init_reg:
-> fail to write controlm reg(-6)
-> [ERR] [    1.391108] max77686-rtc max77686-rtc: Failed to initialize RTC reg:-6
-
-Fixed with "ARM: dts: ODROID i2c improvements"
-
-Daniel
+Thanks and Regards,
+Ajay Kumar
