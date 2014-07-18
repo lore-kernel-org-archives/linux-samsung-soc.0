@@ -1,57 +1,77 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: [PATCH 2/3] Revert "drm/exynos: remove MODULE_DEVICE_TABLE definitions"
-Date: Fri, 18 Jul 2014 22:36:40 +0200
-Message-ID: <1405715801-5325-3-git-send-email-sjoerd.simons@collabora.co.uk>
-References: <1405715801-5325-1-git-send-email-sjoerd.simons@collabora.co.uk>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 13/19] ARM: s5pv210: move debug-macro.S into the common
+ space
+Date: Sat, 19 Jul 2014 01:25:40 +0200
+Message-ID: <53C9ACF4.7050002@gmail.com>
+References: <1404496099-26708-1-git-send-email-t.figa@samsung.com> <1404496099-26708-14-git-send-email-t.figa@samsung.com> <53C5BF24.9030302@samsung.com> <046101cfa090$51757260$f4605720$@samsung.com> <53C5CDCB.2050307@gmail.com> <53C9779E.7060400@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cube.luon.net ([37.72.100.20]:36893 "EHLO cube.luon.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1762254AbaGRUhW (ORCPT
+Received: from mail-we0-f177.google.com ([74.125.82.177]:32841 "EHLO
+	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759750AbaGRX0C (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jul 2014 16:37:22 -0400
-In-Reply-To: <1405715801-5325-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	Fri, 18 Jul 2014 19:26:02 -0400
+In-Reply-To: <53C9779E.7060400@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, =?ISO-8859-1?Q?=27Heiko_St=FCbner=27?= <heiko@sntech.de>, 'Arnd Bergmann' <arnd@arndb.de>, linux-kernel@vger.kernel.org, 'Mark Brown' <broonie@kernel.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 
-This reverts commit d089621896c3530a9bd309f96e9c9124d07f6c3f was
-original to prevent multiple MODULE_DEVICE_TABLE in one module.
-Which, as a side-effect broke autoloading of the module.
+Hi Kukjin,
 
-Since 21bdd17b21b45ea48e06e23918d681afbe0622e9 it is possible to have
-multiple calls to MODULE_DEVICE_TABLE, so the patch can be
-reverted to restore support for autoloading
+On 18.07.2014 21:38, Kukjin Kim wrote:
+> On 07/16/14 09:56, Tomasz Figa wrote:
+>> On 16.07.2014 02:53, Kukjin Kim wrote:
+>>> Kukjin Kim wrote:
+>>>>
+>>>> On 07/05/14 02:48, Tomasz Figa wrote:
+>>>>> Move debug-macro.S from mach/include to include/debug where
+>>>>> all other common debug macros are.
+>>>>>
+>>>>> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
+>>>>> ---
+>>>>>    arch/arm/Kconfig.debug                           | 12 +++++--
+>>>>>    arch/arm/include/debug/s5pv210.S                 | 34
+>>>>> ++++++++++++++++++++
+>>>>>    arch/arm/mach-s5pv210/include/mach/debug-macro.S | 41
+>>>>> ------------------------
+>>>>>    3 files changed, 44 insertions(+), 43 deletions(-)
+>>>>>    create mode 100644 arch/arm/include/debug/s5pv210.S
+>>>>>    delete mode 100644 arch/arm/mach-s5pv210/include/mach/debug-macro.S
+>>>
+>>> [...]
+>>>
+>>>> Tomasz,
+>>>>
+>>>> I couldn't apply this one from this your series because of conflict
+>>>> with
+>>>> others. Can you please respin this one?
+>>>>
+>>> One more note, since I didn't apply this, there is a build breakage for
+>>> s5pv210_defconfig now...
+>>>
+>>> arch/arm/kernel/debug.S:24:33: fatal error: mach/debug-macro.S: No
+>>> such file or directory
+>>> compilation terminated.
+>>> make[2]: *** [arch/arm/kernel/debug.o] Error 1
+>>> make[1]: *** [arch/arm/kernel] Error 2
+>>> make[1]: *** Waiting for unfinished jobs....
+>>
+>> Hmm? Are you sure previous patches applied correctly? I have tested this
+>> series patch by patch on all affected configs and it built fine back
+>> then. Maybe some conflict, I'll see tomorrow.
+>>
+> Tomasz, I've applied this whole series including this again. Can you
+> please check my branch before sending pull-request to arm-soc for 3.17?
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_dp_core.c | 1 +
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 1 +
- 2 files changed, 2 insertions(+)
+Thanks for applying this.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 845d766..31c3de9 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -1376,6 +1376,7 @@ static const struct of_device_id exynos_dp_match[] = {
- 	{ .compatible = "samsung,exynos5-dp" },
- 	{},
- };
-+MODULE_DEVICE_TABLE(of, exynos_dp_match);
- 
- struct platform_driver dp_driver = {
- 	.probe		= exynos_dp_probe,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 2df3592..46b7bf6 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1529,6 +1529,7 @@ static struct of_device_id exynos_dsi_of_match[] = {
- 	{ .compatible = "samsung,exynos4210-mipi-dsi" },
- 	{ }
- };
-+MODULE_DEVICE_TABLE(of, exynos_dsi_of_match);
- 
- struct platform_driver dsi_driver = {
- 	.probe = exynos_dsi_probe,
--- 
-2.0.1
+A quick look through the patches didn't reveal any issues.
+s5pv210_defconfig builds fine too. I don't have any s5pv210-based board
+at home, though, so I can't do anything else than compile testing until
+Tuesday.
+
+Best regards,
+Tomasz
