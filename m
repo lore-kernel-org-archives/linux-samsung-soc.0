@@ -1,77 +1,209 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv6 0/4] iio: adc: exynos_adc: Support Exynos3250 ADC and
- code clean
-Date: Fri, 18 Jul 2014 15:46:51 +0530
-Message-ID: <CAHfPSqAT3EGso2MnFw2qZFpjT5KxHhFZ5Qw165tWEeD0JtdG+A@mail.gmail.com>
-References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
- <59765980.V0Hsx6tyKd@wuerfel> <CAHfPSqBiDZXxSVaK3PHrGhDQxi4TU=szKA06Odm9yeB8a5rDFw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAHfPSqBiDZXxSVaK3PHrGhDQxi4TU=szKA06Odm9yeB8a5rDFw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, My self <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [PATCH] cpufreq: tests: Providing cpufreq regression test
+Date: Fri, 18 Jul 2014 12:23:05 +0200
+Message-ID: <1405678985-21677-1-git-send-email-l.majewski@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Thomas Abraham <ta.omasab@gmail.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello All,
+This commit adds first regression test "cpufreq_freq_test.sh" for the
+cpufreq subsystem.
 
-On 18 July 2014 15:43, Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Hello Arnd,
->
-> On 18 July 2014 15:08, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
->> On Friday 18 July 2014 14:59:42 Chanwoo Choi wrote:
->>> This patchset support Exynos3250 ADC (Analog Digital Converter) because
->>> Exynos3250 has additional special clock for ADC IP.
->>>
->>
->> by coincidence, I have just looked at the same driver in order to
->> add support for s3c24xx and s3c64xx, so we can remove the plat-samsung
->> adc framework they still use.  Those changes would naturally conflict
->> with yours, but I think it makes sense for your patches to come first.
->>
->> I'll comment a bit more on the individual patches. I didn't have
->> interest in them earlier, so I didn't comment so far.
->>
->> Another aspect that came up is the touchscreen support. Right now,
->> there is drivers/input/touchscreen/s3c2410_ts.c which is intimately
->> tied to arch/arm/plat-samsung/adc.c. The best way forward (as discussed
->> on IRC as few days ago) seems to be to integrate support for that into
->> the exynos_adc driver. Can you comment on which parts actually support
->> touchscreen? Did touchscreen support get dropped in the exynos hardware,
->> or is the driver just missing at the moment?
->
-> SoCs from Samsung before Exynos4 had and ADC based Touch screen
-> and the driver under arch/arm/plat-samsung/adc.c and
-> drivers/input/touchscreen/s3c2410_ts.c used to work together.
->
-> Infact, the interrupt routine and priorities in plat-samsung/adc.c
-> driver as written keeping the Touchscreen in mind.
->
-> After Exynos4, ADC IP remained. But, the touch screen was removed in hardware.
+Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+---
+ drivers/cpufreq/tests/README               |  23 +++++
+ drivers/cpufreq/tests/cpufreq_freq_test.sh | 149 +++++++++++++++++++++++++++++
+ 2 files changed, 172 insertions(+)
+ create mode 100644 drivers/cpufreq/tests/README
+ create mode 100755 drivers/cpufreq/tests/cpufreq_freq_test.sh
 
-At least on Exynos4210> i'm not sure about the other Exynos4 series.
-I will try to verify the user manuals.
-
->
-> As per suggestion from Doug Anderson, I've implemented IIO based ADC
-> driver started to support from exynos5250.
->
->>
->>         Arnd
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->
-> --
-> Shine bright,
-> (: Nav :)
-
-
-
+diff --git a/drivers/cpufreq/tests/README b/drivers/cpufreq/tests/README
+new file mode 100644
+index 0000000..66638d2
+--- /dev/null
++++ b/drivers/cpufreq/tests/README
+@@ -0,0 +1,23 @@
++This file contains list of cpufreq's available regression tests with a short
++usage description.
++
++1. cpufreq_freq_test.sh
++
++Description:
++------------
++This test is supposed to test if cpufreq attributes exported by sysfs are
++exposing a correct values.
++
++It can work with or without boost enabled and helps spotting errors related to
++cpufreq and common clock framework.
++
++Used attributes:
++----------------
++- "scaling_available_frequencies"
++- "cpuinfo_cur_freq"
++- "scaling_governor"
++
++Target devices:
++---------------
++
++All devices which exports mentioned above sysfs attributes.
+\ No newline at end of file
+diff --git a/drivers/cpufreq/tests/cpufreq_freq_test.sh b/drivers/cpufreq/tests/cpufreq_freq_test.sh
+new file mode 100755
+index 0000000..53156ca
+--- /dev/null
++++ b/drivers/cpufreq/tests/cpufreq_freq_test.sh
+@@ -0,0 +1,149 @@
++#!/bin/bash
++#
++# This file provides a simple mean to test if all declared freqs at
++# "scaling_available_frequencies" can be set and if "cpuinfo_cur_freq"
++# returns this value.
++#
++# Usage: ./cpufreq_freq_test.sh
++# Requisite: Compile in "performance" governor
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, you can access it online at
++# http://www.gnu.org/licenses/gpl-2.0.html.
++#
++# Copyright (C) Samsung Electronics, 2014
++#
++# Author: Lukasz Majewski <l.majewski@samsung.com>
++
++set +x
++
++COLOUR_RED="\33[31m"
++COLOUR_BLUE="\33[34m"
++COLOUR_GREEN="\33[32m"
++COLOUR_DEFAULT="\33[0m"
++
++T_PATCH=/sys/devices/system/cpu/cpu0/cpufreq
++BOOST_PATCH=/sys/devices/system/cpu/cpufreq
++
++if [ ! -d "$T_PATCH" ]; then
++    printf "   $COLOUR_RED No patch to CPUFREQ $COLOUR_DEFAULT\n"
++    exit 1
++fi
++
++ERRORS=0
++
++OLD_GOV=`cat $T_PATCH/scaling_governor`
++echo "CURRENT GOVERNOR: $OLD_GOV"
++echo "SET GOVERNOR: performance"
++echo "performance" > $T_PATCH/scaling_governor
++
++function test_freqs1 {
++    FREQS=`cat $1`
++    for I in $FREQS; do
++	cpufreq_set_freq $I
++	if [ "$2" ]; then
++	    printf "$COLOUR_BLUE BOOST $COLOUR_DEFAULT" $I
++	fi
++	cpufreq_test_freq $I
++    done
++}
++
++function test_freqs2 {
++    FREQ=`cat $1`
++    FREQS_ARRAY=($FREQ)
++
++    for freq in ${FREQS_ARRAY[@]}
++    do
++	echo "REFERENCE FREQ: $freq"
++	for f in ${FREQS_ARRAY[@]}
++	do
++	    cpufreq_set_freq $freq
++	    echo -n "----> "
++	    cpufreq_set_freq $f
++	    cpufreq_test_freq $f
++	done
++    done
++}
++
++function restore {
++    if [ -f $BOOST_PATCH/boost ]; then
++	cpufreq_boost_state $BOOST_STATE
++    fi
++
++    echo "SET GOVERNOR: $OLD_GOV"
++    echo $OLD_GOV > $T_PATCH/scaling_governor
++}
++
++function die {
++    printf "   $COLOUR_RED FAILED $COLOUR_DEFAULT\n"
++    restore_gov
++    exit 1
++}
++
++function cpufreq_test_freq {
++    gzip < /dev/urandom > /dev/null &
++    pid=$!
++    sleep 0.1
++    CURR_FREQ=`cat $T_PATCH/cpuinfo_cur_freq`
++    if [ $1 -eq $CURR_FREQ ]; then
++	printf "\t$COLOUR_GREEN OK $COLOUR_DEFAULT\n"
++    else
++	printf "$COLOUR_RED CURRENT $CURR_FREQ $COLOUR_DEFAULT\n"
++	ERRORS=`expr $ERRORS + 1`
++	#die
++    fi
++    kill -9 $pid
++    wait $! 2>/dev/null
++}
++
++function cpufreq_set_freq {
++    echo $1 > $T_PATCH/scaling_max_freq || die $?
++    printf "FREQ:$COLOUR_GREEN %s $COLOUR_DEFAULT" $1
++}
++
++function cpufreq_boost_state {
++   echo $1 > $BOOST_PATCH/boost
++}
++
++function cpufreq_boost_status {
++   cat $BOOST_PATCH/boost
++}
++
++if [ -f $BOOST_PATCH/boost ]; then
++    echo "######################################"
++    echo "TEST BOOST OPERATION"
++    echo "######################################"
++
++    BOOST_STATE=$(cpufreq_boost_status)
++    if [ $BOOST_STATE -eq 0 ]; then
++	cpufreq_boost_state 1
++    fi
++    test_freqs1 $T_PATCH/scaling_boost_frequencies 1
++fi
++
++echo "######################################"
++echo "TEST AVAILABLE FREQS"
++echo "######################################"
++test_freqs1 $T_PATCH/scaling_available_frequencies
++
++echo "######################################"
++echo "TEST FREQS SWITCHING"
++echo "######################################"
++test_freqs2 $T_PATCH/scaling_available_frequencies
++
++echo "######################################"
++echo "ERRORS: $ERRORS"
++echo "######################################"
++
++restore
++exit 0
 -- 
-Shine bright,
-(: Nav :)
+2.0.0.rc2
+
