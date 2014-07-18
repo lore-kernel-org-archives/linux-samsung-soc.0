@@ -1,113 +1,42 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 2/2] clk: samsung: exynos3250: Enable ARMCLK down feature
-Date: Fri, 18 Jul 2014 16:36:33 +0200
-Message-ID: <1405694193-29643-2-git-send-email-k.kozlowski@samsung.com>
-References: <1405694193-29643-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:18496 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761773AbaGROgn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jul 2014 10:36:43 -0400
-In-reply-to: <1405694193-29643-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCHv6 2/4] iio: adc: exynos_adc: Control special clock of ADC
+ to support Exynos3250 ADC
+Date: Sat, 19 Jul 2014 00:15:35 +0900
+Message-ID: <CAGTfZH1EHiTpo2Abua=+kDfNoOQx+ydPHU51=+qW8mgCL4Lwvg@mail.gmail.com>
+References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
+	<6485839.CnzmD0SeQj@wuerfel>
+	<53C8F050.6060104@samsung.com>
+	<6917971.QKItNU3coA@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <6917971.QKItNU3coA@wuerfel>
+Sender: linux-doc-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, jic23@kernel.org, naveen krishna <ch.naveen@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, rdunlap@infradead.org, linux-doc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robh+dt@kernel.org>, galak@codeaurora.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Enable ARMCLK down feature on Exynos3250 SoC. The frequency of
-ARMCLK will be reduced upon entering idle mode (WFI or WFE).
+On Fri, Jul 18, 2014 at 8:14 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Friday 18 July 2014 19:00:48 Chanwoo Choi wrote:
+>> On 07/18/2014 06:47 PM, Arnd Bergmann wrote:
+>> >
+>> > Further, why is it called "sclk_adc" rather than just "sclk"?
+>>
+>> The sclk means 'special clock' in Exynos TRM. Exynos SoC has varisou sclk clocks.
+>> 'sclk_adc' is only used for ADC IP.
+>
+> But that sounds like sclk_adc is the name of the global name
+> of the clock signal coming out of the clock controller.
+>
+> I still think it would be best to name it 'sclk' as the input
+> for the adc. It shouldn't rely on a particular name of the
+> clock controller.
 
-The feature behaves like very fast cpufreq ondemand governor.
+I think 'sclk' is too common name. 'sclk' don't include specific device name.
+As I know, usual clock name includes the name of IP or includes the
+specific meaning for each IP.
 
-The patch uses simillar settings as Exynos5250 (clk-exynos5250.c),
-except it disables clock up feature.
+In my opinion, I think sclk_adc is better than 'sclk'.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-
----
-
-Changes since v1:
-1. Add PWR_CTRL registers to the list of saved clk registers on
-   Exynos3250. Suggested by Tomasz Figa.
-2. Disable the clock up feature. (sug. Tomasz Figa)
-3. Use macros for setting clock down ratio. (sug. Tomasz Figa)
----
- drivers/clk/samsung/clk-exynos3250.c | 41 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
-
-diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-index 7a17bd40d1dd..a50dc88f0e8f 100644
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -87,6 +87,22 @@
- #define SRC_CPU			0x14200
- #define DIV_CPU0		0x14500
- #define DIV_CPU1		0x14504
-+#define PWR_CTRL1		0x15020
-+#define PWR_CTRL2		0x15024
-+
-+/* Below definitions are used for PWR_CTRL settings */
-+#define PWR_CTRL1_CORE2_DOWN_RATIO(x)		(((x) & 0x7) << 28)
-+#define PWR_CTRL1_CORE1_DOWN_RATIO(x)		(((x) & 0x7) << 16)
-+#define PWR_CTRL1_DIV2_DOWN_EN			(1 << 9)
-+#define PWR_CTRL1_DIV1_DOWN_EN			(1 << 8)
-+#define PWR_CTRL1_USE_CORE3_WFE			(1 << 7)
-+#define PWR_CTRL1_USE_CORE2_WFE			(1 << 6)
-+#define PWR_CTRL1_USE_CORE1_WFE			(1 << 5)
-+#define PWR_CTRL1_USE_CORE0_WFE			(1 << 4)
-+#define PWR_CTRL1_USE_CORE3_WFI			(1 << 3)
-+#define PWR_CTRL1_USE_CORE2_WFI			(1 << 2)
-+#define PWR_CTRL1_USE_CORE1_WFI			(1 << 1)
-+#define PWR_CTRL1_USE_CORE0_WFI			(1 << 0)
- 
- /* list of PLLs to be registered */
- enum exynos3250_plls {
-@@ -168,6 +184,8 @@ static unsigned long exynos3250_cmu_clk_regs[] __initdata = {
- 	SRC_CPU,
- 	DIV_CPU0,
- 	DIV_CPU1,
-+	PWR_CTRL1,
-+	PWR_CTRL2,
- };
- 
- static int exynos3250_clk_suspend(void)
-@@ -748,6 +766,27 @@ static struct samsung_pll_clock exynos3250_plls[nr_plls] __initdata = {
- 			UPLL_LOCK, UPLL_CON0, NULL),
- };
- 
-+static void __init exynos3_core_down_clock(void)
-+{
-+	unsigned int tmp;
-+
-+	/*
-+	 * Enable arm clock down (in idle) and set arm divider
-+	 * ratios in WFI/WFE state.
-+	 */
-+	tmp = (PWR_CTRL1_CORE2_DOWN_RATIO(7) | PWR_CTRL1_CORE1_DOWN_RATIO(7) |
-+		PWR_CTRL1_DIV2_DOWN_EN | PWR_CTRL1_DIV1_DOWN_EN |
-+		PWR_CTRL1_USE_CORE1_WFE | PWR_CTRL1_USE_CORE0_WFE |
-+		PWR_CTRL1_USE_CORE1_WFI | PWR_CTRL1_USE_CORE0_WFI);
-+	__raw_writel(tmp, reg_base + PWR_CTRL1);
-+
-+	/*
-+	 * Disable the clock up feature on Exynos4x12, in case it was
-+	 * enabled by bootloader.
-+	 */
-+	__raw_writel(0x0, reg_base + PWR_CTRL2);
-+}
-+
- static void __init exynos3250_cmu_init(struct device_node *np)
- {
- 	struct samsung_clk_provider *ctx;
-@@ -775,6 +814,8 @@ static void __init exynos3250_cmu_init(struct device_node *np)
- 	samsung_clk_register_div(ctx, div_clks, ARRAY_SIZE(div_clks));
- 	samsung_clk_register_gate(ctx, gate_clks, ARRAY_SIZE(gate_clks));
- 
-+	exynos3_core_down_clock();
-+
- 	exynos3250_clk_sleep_init();
- }
- CLK_OF_DECLARE(exynos3250_cmu, "samsung,exynos3250-cmu", exynos3250_cmu_init);
--- 
-1.9.1
+Thanks,
+Chanwoo Choi
