@@ -1,144 +1,62 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos4x12: Enable ARMCLK down feature
-Date: Fri, 18 Jul 2014 15:01:18 +0200
-Message-ID: <53C91A9E.7020207@samsung.com>
-References: <1405677186-18678-1-git-send-email-k.kozlowski@samsung.com>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH] irqchip: gic: Fix core ID calculation when topology is
+ read from DT
+Date: Fri, 18 Jul 2014 09:17:04 -0400
+Message-ID: <20140718131704.GG24496@titan.lakedaemon.net>
+References: <1405610624-18722-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:29376 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755155AbaGRNCA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jul 2014 09:02:00 -0400
-In-reply-to: <1405677186-18678-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1405610624-18722-1-git-send-email-t.figa@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Krzysztof,
-
-On 18.07.2014 11:53, Krzysztof Kozlowski wrote:
-> Enable ARMCLK down and up features on Exynos4212 and 4412 SoCs. The
-> frequency of ARMCLK will be reduced upon entering idle mode (WFI or
-> WFE).  Additionally upon exiting from idle mode the divider for ARMCLK
-> will be brought back to 1.
+On Thu, Jul 17, 2014 at 05:23:44PM +0200, Tomasz Figa wrote:
+> Certain GIC implementation, namely those found on earlier, single
+> cluster, Exynos SoCs, have registers mapped without per-CPU banking,
+> which means that the driver needs to use different offset for each CPU.
 > 
-> These are exactly the same settings as for Exynos5250
-> (clk-exynos5250.c), except of Exynos4412 where ARMCLK down is enabled
-> for all 4 cores.
-
-Could you add a sentence or two about the purpose of this change? E.g.
-what it improves, in what conditions, etc.
-
+> Currently the driver calculates the offset by multiplying value returned
+> by cpu_logical_map() by CPU offset parsed from DT. This is correct when
+> CPU topology is not specified in DT and aforementioned function returns
+> core ID alone. However when DT contains CPU topology, the function
+> changes to return cluster ID as well, which is non-zero on mentioned
+> SoCs and so breaks the calculation in GIC driver.
 > 
-> Tested on Trats2 board (Exynos4412) and Samsung Gear 1 (Exynos4212).
+> This patch fixes this by masking out cluster ID in CPU offset
+> calculation so that only core ID is considered. Multi-cluster Exynos
+> SoCs already have banked GIC implementations, so this simple fix should
+> be enough.
 > 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reported-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Reported-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 > ---
->  drivers/clk/samsung/clk-exynos4.c | 53 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 53 insertions(+)
+>  drivers/irqchip/irq-gic.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> index 7f4a473a7ad7..b8ea37b23984 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -114,11 +114,34 @@
->  #define DIV_CPU1		0x14504
->  #define GATE_SCLK_CPU		0x14800
->  #define GATE_IP_CPU		0x14900
-> +#define PWR_CTRL1		0x15020
-> +#define PWR_CTRL2		0x15024
+> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+> index ddee133..5c15a09 100644
+> --- a/drivers/irqchip/irq-gic.c
+> +++ b/drivers/irqchip/irq-gic.c
+> @@ -40,6 +40,7 @@
+>  #include <linux/irqchip/chained_irq.h>
+>  #include <linux/irqchip/arm-gic.h>
 
-I guess these registers should be also added to save/restore list below
-in this driver.
+Applied to irqchip/urgent and Cc'd to stable for v3.3+
 
->  #define E4X12_DIV_ISP0		0x18300
->  #define E4X12_DIV_ISP1		0x18304
->  #define E4X12_GATE_ISP0		0x18800
->  #define E4X12_GATE_ISP1		0x18804
->  
-> +/* Below definitions are used for PWR_CTRL settings */
-> +#define PWR_CTRL1_CORE2_DOWN_RATIO		(7 << 28)
-> +#define PWR_CTRL1_CORE1_DOWN_RATIO		(7 << 16)
+thx,
 
-I think these macros could be defined to take the ratio as its argument,
-e.g.
-
-#define PWR_CTRL1_CORE2_DOWN_RATIO(x)		((x) << 28)
-
-> +#define PWR_CTRL1_DIV2_DOWN_EN			(1 << 9)
-> +#define PWR_CTRL1_DIV1_DOWN_EN			(1 << 8)
-> +#define PWR_CTRL1_USE_CORE3_WFE			(1 << 7)
-> +#define PWR_CTRL1_USE_CORE2_WFE			(1 << 6)
-> +#define PWR_CTRL1_USE_CORE1_WFE			(1 << 5)
-> +#define PWR_CTRL1_USE_CORE0_WFE			(1 << 4)
-> +#define PWR_CTRL1_USE_CORE3_WFI			(1 << 3)
-> +#define PWR_CTRL1_USE_CORE2_WFI			(1 << 2)
-> +#define PWR_CTRL1_USE_CORE1_WFI			(1 << 1)
-> +#define PWR_CTRL1_USE_CORE0_WFI			(1 << 0)
-> +
-> +#define PWR_CTRL2_DIV2_UP_EN			(1 << 25)
-> +#define PWR_CTRL2_DIV1_UP_EN			(1 << 24)
-> +#define PWR_CTRL2_DUR_STANDBY2_VAL		(1 << 16)
-> +#define PWR_CTRL2_DUR_STANDBY1_VAL		(1 << 8)
-
-These two too.
-
-> +#define PWR_CTRL2_CORE2_UP_RATIO		(1 << 4)
-> +#define PWR_CTRL2_CORE1_UP_RATIO		(1 << 0)
-
-These two as well.
-
-> +
->  /* the exynos4 soc type */
->  enum exynos4_soc {
->  	EXYNOS4210,
-> @@ -1164,6 +1187,34 @@ static struct samsung_pll_clock exynos4x12_plls[nr_plls] __initdata = {
->  			VPLL_LOCK, VPLL_CON0, NULL),
->  };
->  
-> +static void __init exynos4_core_down_clock(void)
-> +{
-> +	unsigned int tmp;
-> +
-> +	/*
-> +	 * Enable arm clock down (in idle) and set arm divider
-> +	 * ratios in WFI/WFE state.
-> +	 */
-> +	tmp = (PWR_CTRL1_CORE2_DOWN_RATIO | PWR_CTRL1_CORE1_DOWN_RATIO |
-> +		PWR_CTRL1_DIV2_DOWN_EN | PWR_CTRL1_DIV1_DOWN_EN |
-> +		PWR_CTRL1_USE_CORE1_WFE | PWR_CTRL1_USE_CORE0_WFE |
-> +		PWR_CTRL1_USE_CORE1_WFI | PWR_CTRL1_USE_CORE0_WFI);
-> +	if (of_machine_is_compatible("samsung,exynos4412"))
-
-Maybe you could use num_possible_cpus() here instead?
-
-> +		tmp |= PWR_CTRL1_USE_CORE3_WFE | PWR_CTRL1_USE_CORE2_WFE |
-> +		       PWR_CTRL1_USE_CORE3_WFI | PWR_CTRL1_USE_CORE2_WFI;
-> +	__raw_writel(tmp, reg_base + PWR_CTRL1);
-> +
-> +	/*
-> +	 * Enable arm clock up (on exiting idle). Set arm divider
-> +	 * ratios when not in idle along with the standby duration
-> +	 * ratios.
-> +	 */
-> +	tmp = (PWR_CTRL2_DIV2_UP_EN | PWR_CTRL2_DIV1_UP_EN |
-> +		PWR_CTRL2_DUR_STANDBY2_VAL | PWR_CTRL2_DUR_STANDBY1_VAL |
-> +		PWR_CTRL2_CORE2_UP_RATIO | PWR_CTRL2_CORE1_UP_RATIO);
-> +	__raw_writel(tmp, reg_base + PWR_CTRL2);
-
-Do we need the clock up feature at all? The values you set seem to
-configure both dividers to 2 (resulting in arm_clk = apll / 4) for a
-very short period of time (16 ticks of some, unfortunately unspecified,
-clock) between wake-up and setting the frequency back to normal.
-Moreover, for certain settings (div_core * div_core2 set to > 4 by
-cpufreq) this might cause issues with activating higher frequency than
-current voltage allows.
-
-I believe the same comments apply for patch 2/2 as well.
-
-Best regards,
-Tomasz
+Jason.
