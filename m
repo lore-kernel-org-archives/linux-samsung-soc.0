@@ -1,45 +1,66 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: ASoC: samsung: MACH_SMDKC100
-Date: Sat, 19 Jul 2014 04:03:03 +0900
-Message-ID: <53C96F67.7010108@samsung.com>
-References: <1404288063.12021.13.camel@x220> <1405673749.2155.5.camel@x220>
+Subject: Re: [PATCH v3] ARM: dts: Add cros_ec to exynos5420-peach-pit and
+ exynos5800-peach-pi
+Date: Sat, 19 Jul 2014 04:09:31 +0900
+Message-ID: <53C970EB.9020006@samsung.com>
+References: <1403627332-4688-1-git-send-email-dianders@chromium.org> <53C8514F.4040606@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:39912 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755377AbaGRTDK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jul 2014 15:03:10 -0400
-Received: by mail-pd0-f174.google.com with SMTP id fp1so5465484pdb.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Jul 2014 12:03:10 -0700 (PDT)
-In-Reply-To: <1405673749.2155.5.camel@x220>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53C8514F.4040606@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, khilman@linaro.org, linux@arm.linux.org.uk, pawel.moll@arm.com, swarren@wwwdotorg.org, linux-kernel@vger.kernel.org, sjg@chromium.org, ijc+devicetree@hellion.org.uk, tushar.b@samsung.com, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, ajaynumb@gmail.com, robh+dt@kernel.org, ben-linux@fluff.org, galak@codeaurora.org, olof@lixom.net, ch.naveen@samsung.com, linux-arm-kernel@lists.infradead.org, rahul.sharma@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Jason Cooper <jason@lakedaemon.net>, Ben Dooks <ben-linux@fluff.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
-On 07/18/14 17:55, Paul Bolle wrote:
-> Kukjin,
+On 07/18/14 07:42, Javier Martinez Canillas wrote:
+> Hello Kukjin,
 >
-Hi Paul,
+Hi,
 
-> On Wed, 2014-07-02 at 10:01 +0200, Paul Bolle wrote:
->> Your commit 52ad6582ceb2 ("ARM: S5PC100: no more support S5PC100 SoC"
->> landed in next-20140702. It removed the Kconfig symbol MACH_SMDKC100
->> (and a lot of other stuff).
+> On 06/24/2014 06:28 PM, Doug Anderson wrote:
+>> This adds cros_ec to exynos5420-peach-pit and exynos5800-peach-pi,
+>> including:
+>> * The keyboard
+>> * The i2c tunnel
+>> * The tps65090 under the i2c tunnel
+>> * The battery under the i2c tunnel
 >>
->> Is the trivial patch to also remove the last two references to
->> MACH_SMDKC100 from sound/soc/samsung/Kconfig/ queued somewhere? I don't
->> think it was part of the series that included the above commit.
+>> To add extra motivation, it should be noted that tps65090 is one of
+>> the things needed to get display-related FETs turned on for pit and
+>> pi.
+>>
+>> Note that this relies on a few outstanding changes:
+>> * Needs (spi: s3c64xx: fix broken "cs_gpios" usage in the driver) and
+>>    (spi: s3c64xx: for DT platofrms always get the chipselect info from
+>>    DT node) to work properly and match the documented bindings.  See
+>>    <https://patchwork.kernel.org/patch/4346701/>  and
+>>    <https://patchwork.kernel.org/patch/4346711/>
+>>
+>> Signed-off-by: Doug Anderson<dianders@chromium.org>
+>> Tested-by: Javier Martinez Canillas<javier.martinez@collabora.co.uk>
+>> Tested-by: Tushar Behera<tushar.b@samsung.com>
+>>
 >
-> Have you had time to look at this? Those last two references to
-> MACH_SMDKC100 can still be seen in next-20140718.
+> Mark Brown as already applied the SPI DT binding fix from Naveen [0] which was
+> the dependency for this patch and he said that will try to send the whole series
+> to Torvalds before the 3.16-rc cycle ends.
 >
-Yeah you're right. The MACH_SMDKC100 is no more required...
+Thanks for your gentle reminder ;-)
 
-I submitted its fixup to Mark and I think he will take it for v3.17.
+> So I think that it's safe now if you want to pick this patch.
+>
+Sure, I've applied.
 
-Thanks,
-Kukjin
+> Thanks a lot!
+>
+Many thanks.
+
+- Kukjin
+
+> Best regards,
+> Javier
+>
+> [0]:
+> https://git.kernel.org/cgit/linux/kernel/git/broonie/spi.git/commit/?h=for-next&id=306972cedfdedc662dd8e32a6397d0e29f2ac90e
