@@ -1,68 +1,76 @@
-From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Subject: [PATCH v2 0/4] ARM: dts: exynos: Prepare Spring
-Date: Fri, 18 Jul 2014 19:20:05 +0200
-Message-ID: <1405704009-8430-1-git-send-email-afaerber@suse.de>
+From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Subject: [PATCH v2 2/4] ARM: dts: exynos5250: cypress,cyapa trackpad is Snow only
+Date: Fri, 18 Jul 2014 19:20:07 +0200
+Message-ID: <1405704009-8430-3-git-send-email-afaerber@suse.de>
+References: <1405704009-8430-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephan van Schaik <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:44161 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1030449AbaGRRVk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Jul 2014 13:21:40 -0400
+In-Reply-To: <1405704009-8430-1-git-send-email-afaerber@suse.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, "moderated list:ARM/SAMSUNG ARM
+	A..." <linux-arm-kernel@lists.infradead.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-Hello,
+Move it from exynos5250-cros-common.dtsi to exynos5250-snow.dts.
+Spring does not need it, it uses an Atmel maXTouch instead.
 
-Based on the preinstalled 3.8 based ChromeOS kernel and previous 3.15=20
-based attempts by Stephan and me that broke for 3.16, I've prepared a=20
-device tree for the HP Chromebook 11 aka Google Spring.
+Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+---
+ v2: New (Doug Anderson)
 
-v2 reuses the new cros-ec-keyboard.dtsi and retires exynos5250-cros-com=
-mon.dtsi.
-It drops the timings subnode from dp-controller in expectation of the n=
-ew
-drm eDP bridge framework, which needs it under a different node.
-The built-in MMC is now usable, its node had been inherited as "disable=
-d".
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi |  8 --------
+ arch/arm/boot/dts/exynos5250-snow.dts         | 10 ++++++++++
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
-Not yet enabled are trackpad, Wifi and sound.
-
-Now depends on a Tegra branch (pull pending):
-http://git.kernel.org/cgit/linux/kernel/git/tegra/linux.git/log/?h=3Dfo=
-r-3.17/dt-cros-ec-kbd
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-
-My rebasing branch for testing is here:
-https://github.com/afaerber/linux/commits/spring-next
-
-Regards,
-Andreas
-
-v1 -> v2:
-* Dropped 3 documentation patches from series:
-  2 picked up,
-  https://patchwork.kernel.org/patch/4397271/
-  https://patchwork.kernel.org/patch/4397291/
-  1 already sent separately as v2, pending.
-  https://patchwork.kernel.org/patch/4424881/
-* Minimized and beautified Spring device tree and to some degree Snow a=
-s well.
-  See individual patches.
-
-Andreas F=C3=A4rber (4):
-  ARM: dts: exynos5250: max77686 is Snow only
-  ARM: dts: exynos5250: cypress,cyapa trackpad is Snow only
-  ARM: dts: exynos5250: Fold common ChromeOS parts into Snow
-  ARM: dts: exynos5250: Add Spring device tree
-
- arch/arm/boot/dts/Makefile                    |   1 +
- arch/arm/boot/dts/exynos5250-cros-common.dtsi | 323 -----------------
- arch/arm/boot/dts/exynos5250-snow.dts         | 334 ++++++++++++++++--
- arch/arm/boot/dts/exynos5250-spring.dts       | 485 ++++++++++++++++++=
-++++++++
- 4 files changed, 799 insertions(+), 344 deletions(-)
- delete mode 100644 arch/arm/boot/dts/exynos5250-cros-common.dtsi
- create mode 100644 arch/arm/boot/dts/exynos5250-spring.dts
-
+diff --git a/arch/arm/boot/dts/exynos5250-cros-common.dtsi b/arch/arm/b=
+oot/dts/exynos5250-cros-common.dtsi
+index 61128d1..e603e9c 100644
+--- a/arch/arm/boot/dts/exynos5250-cros-common.dtsi
++++ b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+@@ -39,14 +39,6 @@
+ 		status =3D "okay";
+ 		samsung,i2c-sda-delay =3D <100>;
+ 		samsung,i2c-max-bus-freq =3D <378000>;
+-
+-		trackpad {
+-			reg =3D <0x67>;
+-			compatible =3D "cypress,cyapa";
+-			interrupts =3D <2 0>;
+-			interrupt-parent =3D <&gpx1>;
+-			wakeup-source;
+-		};
+ 	};
+=20
+ 	i2c@12C80000 {
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/=
+exynos5250-snow.dts
+index 0f867a3..f2b8c41 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -490,6 +490,16 @@
+ 	};
+ };
+=20
++&i2c_1 {
++	trackpad {
++		reg =3D <0x67>;
++		compatible =3D "cypress,cyapa";
++		interrupts =3D <2 0>;
++		interrupt-parent =3D <&gpx1>;
++		wakeup-source;
++	};
++};
++
+ &pinctrl_0 {
+ 	max77686_irq: max77686-irq {
+ 		samsung,pins =3D "gpx3-2";
 --=20
 1.9.3
