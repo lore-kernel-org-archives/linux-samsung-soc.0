@@ -1,128 +1,41 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V5 05/12] Documentation: Add DT bindings for panel-lvds
- driver
-Date: Fri, 18 Jul 2014 12:18:05 +0530
-Message-ID: <CAEC9eQMJnae6DaAUd7C5xZkaaaXL+291Qf2pcUd-wrcYXgQx8A@mail.gmail.com>
-References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
- <1405629839-12086-6-git-send-email-ajaykumar.rs@samsung.com>
- <CAEC9eQNygvwOGvw6QPGp+=7K9=oC9XvcEf9QSv=JBsEHyhM0wA@mail.gmail.com>
- <20140717224809.GA8875@mithrandir>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v7 01/24] mfd: max77686: Convert to use regmap_irq
+Date: Fri, 18 Jul 2014 09:17:00 +0100
+Message-ID: <20140718081700.GK30888@lee--X1>
+References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1404505467-26526-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140717224809.GA8875@mithrandir>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@dowhile0.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ig0-f177.google.com ([209.85.213.177]:64616 "EHLO
+	mail-ig0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751084AbaGRIRI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Jul 2014 04:17:08 -0400
+Received: by mail-ig0-f177.google.com with SMTP id hn18so334881igb.16
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Jul 2014 01:17:07 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1404505467-26526-2-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Thierry,
+> By using the generic IRQ support in the Register map API, it
+> is possible to get rid max77686-irq.c and simplify the code.
+>=20
+> Suggested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> Tested-by: Doug Anderson <dianders@chromium.org>
 
-Thanks for your comments.
+Applied now, thanks.
 
-On Fri, Jul 18, 2014 at 4:18 AM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Fri, Jul 18, 2014 at 02:20:39AM +0530, Ajay kumar wrote:
->> +devicetree@vger.kernel.org
->>
->> On Fri, Jul 18, 2014 at 2:13 AM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
->> > Add DT binding documentation for panel-lvds driver.
->> >
->> > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->> > ---
->> >  .../devicetree/bindings/panel/panel-lvds.txt       |   50 ++++++++++++++++++++
->> >  1 file changed, 50 insertions(+)
->> >  create mode 100644 Documentation/devicetree/bindings/panel/panel-lvds.txt
->> >
->> > diff --git a/Documentation/devicetree/bindings/panel/panel-lvds.txt b/Documentation/devicetree/bindings/panel/panel-lvds.txt
->> > new file mode 100644
->> > index 0000000..fdf91da2
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/panel/panel-lvds.txt
->> > @@ -0,0 +1,50 @@
->> > +panel interface for eDP/lvds panels
->> > +
->> > +Required properties:
->> > +  - compatible: "panel-lvds"
->
-> I think I've said this before. I oppose the addition of this binding. We
-> need to list a device-specific compatible value here, wildcards like
-> this aren't a good choice. And then if we have that compatible value we
-> can move most of the optional properties below into a driver.
-Yes, "panel-lvds" is a wildcard for all lvds panels.
-And since lvds panels from different vendors have different values
-for power_up_delay, delay from video_to_backlight etc, I thought its
-better to pick them up from device tree.
-
->> > +Optional properties:
->
-> If all these properties are optional, then what happens if a device tree
-> node doesn't contain any of them? Doesn't that turn the driver into one
-> big no-op?
-No! We need to provide lcd-supply and backlight-supply.
-
->> > +       -lcd-enable-gpios:
->> > +               panel LCD poweron GPIO.
->> > +                       Indicates which GPIO needs to be powered up as output
->> > +                       to powerup/enable the switch to the LCD panel.
->> > +       -backlight-enable-gpios:
->> > +               panel LED enable GPIO.
->> > +                       Indicates which GPIO needs to be powered up as output
->> > +                       to enable the backlight.
->
-> I've also said before that this really belongs in a backlight driver.
-> Chances are that you'll want to have a way to set the brightness of the
-> backlight as well, so simply an enable GPIO won't be good enough.
-Ok. I can handle this in backlight driver itself (with some minor glitches).
-But, how do I map bridge functions to panel functions now?
-The bridge supports (pre_enable, enable, disable and post_disable) which I map
-with (prepare, enable, disable and unprepare) of the panel, using a sample layer
-called bridge to panel_binder.
-Moving out the backlight control from panel means I really don't need
-those extra
-panel calls(prepare and unprepare)!
-Then how to distribute 2 panel calls(enable and disable) across 4 bridge calls?
-
->> > +       -panel-prepare-delay:
->> > +               delay value in ms required for panel_prepare process
->> > +                       Delay in ms needed for the panel LCD unit to
->> > +                       powerup completely.
->> > +                       ex: delay needed till eDP panel throws HPD.
->> > +                           delay needed so that we cans tart reading edid.
->
-> If the panel signals HPD then we don't need this delay at all and we
-> should just wait for HPD instead.
-Not always for HPD, we need to wait for EDID module as well.
-
->> > +       -panel-enable-delay:
->> > +               delay value in ms required for panel_enable process
->> > +                       Delay in ms needed for the panel backlight/LED unit
->> > +                       to powerup, and delay needed between video_enable and
->> > +                       backlight_enable.
->> > +       -panel-disable-delay:
->> > +               delay value in ms required for panel_disable process
->> > +                       Delay in ms needed for the panel backlight/LED unit
->> > +                       powerdown, and delay needed between backlight_disable
->> > +                       and video_disable.
->> > +       -panel-unprepare-delay:
->> > +               delay value in ms required for panel_post_disable process
->> > +                       Delay in ms needed for the panel LCD unit to
->> > +                       to powerdown completely, and the minimum delay needed
->> > +                       before powering it on again.
->
-> These delays are all panel specific and they don't vary per board, so
-> they shouldn't go into the device tree at all.
-But, fetching them from device tree would allow us to support all lvds
-panels in this single driver.
-
-Thanks and Regards,
-Ajay Kumar
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
