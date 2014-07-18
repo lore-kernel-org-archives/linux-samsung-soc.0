@@ -1,77 +1,56 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 13/19] ARM: s5pv210: move debug-macro.S into the common
- space
-Date: Sat, 19 Jul 2014 01:25:40 +0200
-Message-ID: <53C9ACF4.7050002@gmail.com>
-References: <1404496099-26708-1-git-send-email-t.figa@samsung.com> <1404496099-26708-14-git-send-email-t.figa@samsung.com> <53C5BF24.9030302@samsung.com> <046101cfa090$51757260$f4605720$@samsung.com> <53C5CDCB.2050307@gmail.com> <53C9779E.7060400@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung fixes-4 for v3.16
+Date: Sat, 19 Jul 2014 08:34:59 +0900
+Message-ID: <53C9AF23.6030007@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f177.google.com ([74.125.82.177]:32841 "EHLO
-	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759750AbaGRX0C (ORCPT
+Received: from mail-pd0-f169.google.com ([209.85.192.169]:65096 "EHLO
+	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933590AbaGRXfI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jul 2014 19:26:02 -0400
-In-Reply-To: <53C9779E.7060400@samsung.com>
+	Fri, 18 Jul 2014 19:35:08 -0400
+Received: by mail-pd0-f169.google.com with SMTP id y10so5844439pdj.28
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Jul 2014 16:35:08 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, =?ISO-8859-1?Q?=27Heiko_St=FCbner=27?= <heiko@sntech.de>, 'Arnd Bergmann' <arnd@arndb.de>, linux-kernel@vger.kernel.org, 'Mark Brown' <broonie@kernel.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>
+To: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
 
-Hi Kukjin,
+Hi,
 
-On 18.07.2014 21:38, Kukjin Kim wrote:
-> On 07/16/14 09:56, Tomasz Figa wrote:
->> On 16.07.2014 02:53, Kukjin Kim wrote:
->>> Kukjin Kim wrote:
->>>>
->>>> On 07/05/14 02:48, Tomasz Figa wrote:
->>>>> Move debug-macro.S from mach/include to include/debug where
->>>>> all other common debug macros are.
->>>>>
->>>>> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
->>>>> ---
->>>>>    arch/arm/Kconfig.debug                           | 12 +++++--
->>>>>    arch/arm/include/debug/s5pv210.S                 | 34
->>>>> ++++++++++++++++++++
->>>>>    arch/arm/mach-s5pv210/include/mach/debug-macro.S | 41
->>>>> ------------------------
->>>>>    3 files changed, 44 insertions(+), 43 deletions(-)
->>>>>    create mode 100644 arch/arm/include/debug/s5pv210.S
->>>>>    delete mode 100644 arch/arm/mach-s5pv210/include/mach/debug-macro.S
->>>
->>> [...]
->>>
->>>> Tomasz,
->>>>
->>>> I couldn't apply this one from this your series because of conflict
->>>> with
->>>> others. Can you please respin this one?
->>>>
->>> One more note, since I didn't apply this, there is a build breakage for
->>> s5pv210_defconfig now...
->>>
->>> arch/arm/kernel/debug.S:24:33: fatal error: mach/debug-macro.S: No
->>> such file or directory
->>> compilation terminated.
->>> make[2]: *** [arch/arm/kernel/debug.o] Error 1
->>> make[1]: *** [arch/arm/kernel] Error 2
->>> make[1]: *** Waiting for unfinished jobs....
->>
->> Hmm? Are you sure previous patches applied correctly? I have tested this
->> series patch by patch on all affected configs and it built fine back
->> then. Maybe some conflict, I'll see tomorrow.
->>
-> Tomasz, I've applied this whole series including this again. Can you
-> please check my branch before sending pull-request to arm-soc for 3.17?
+This is a regression for v3.16 so please take this in -rc.
 
-Thanks for applying this.
+Thanks,
+Kukjin
 
-A quick look through the patches didn't reveal any issues.
-s5pv210_defconfig builds fine too. I don't have any s5pv210-based board
-at home, though, so I can't do anything else than compile testing until
-Tuesday.
+The following changes since commit 1795cd9b3a91d4b5473c97f491d63892442212ab:
 
-Best regards,
-Tomasz
+   Linux 3.16-rc5 (2014-07-13 14:04:33 -0700)
+
+are available in the git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+tags/samsung-fixes-4
+
+for you to fetch changes up to 4e3a498d6fc438d8c203c51aadc6ca8fb47b0577:
+
+   ARM: EXYNOS: Fix core ID used by platsmp and hotplug code (2014-07-16 
+02:59:18 +0900)
+
+----------------------------------------------------------------
+Samsung fixes-4 for v3.16
+- Fix core ID for platsmp and hotplug
+   This fixes existing calculation of PMU register offsets on
+   exynos SoCs and this also fixes CPU hotplug with more than
+   2 cores, because it removes incorrect condition check in
+   platform_do_lowpower().
+
+----------------------------------------------------------------
+Tomasz Figa (1):
+       ARM: EXYNOS: Fix core ID used by platsmp and hotplug code
+
+  arch/arm/mach-exynos/hotplug.c | 10 ++++++----
+  arch/arm/mach-exynos/platsmp.c | 34 +++++++++++++++++++---------------
+  2 files changed, 25 insertions(+), 19 deletions(-)
