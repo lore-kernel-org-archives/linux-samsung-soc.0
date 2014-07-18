@@ -1,83 +1,91 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v7 03/24] mfd: max77686: Don't define dummy function if
- OF isn't enabled
-Date: Fri, 18 Jul 2014 09:17:42 +0100
-Message-ID: <20140718081742.GM30888@lee--X1>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v7 06/24] mfd: max77686: Make error checking consistent
+Date: Fri, 18 Jul 2014 09:18:36 +0100
+Message-ID: <20140718081836.GP30888@lee--X1>
 References: <1404505467-26526-1-git-send-email-javier.martinez@collabora.co.uk>
- <1404505467-26526-4-git-send-email-javier.martinez@collabora.co.uk>
+ <1404505467-26526-7-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:55360 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754114AbaGRISn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Jul 2014 04:18:43 -0400
+Received: by mail-ie0-f172.google.com with SMTP id lx4so4226004iec.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Jul 2014 01:18:43 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1404505467-26526-4-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tushar Behera <trblinux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andreas Farber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1404505467-26526-7-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
 On Fri, 04 Jul 2014, Javier Martinez Canillas wrote:
 
-> When the CONFIG_OF option was not enabled, a dummy function
-> max77686_i2c_parse_dt_pdata() was defined since this is called
-> unconditionally on probe(). Just always define the real function
-> and conditionally call it if CONFIG_OF is enabled instead.
+> Error checking across the driver is mostly consistent besides
+> a few exceptions, so change these exceptions for consistency.
 >=20
-> Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8rSCDK34cm6iQ@public.gmane.org=
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
 =2Euk>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 > ---
->  drivers/mfd/max77686.c | 10 +---------
->  1 file changed, 1 insertion(+), 9 deletions(-)
+>  drivers/mfd/max77686.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
 Applied now, thanks.
 
 > diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
-> index a38e9ee..d1f9d04 100644
+> index ada4976..87fe52e 100644
 > --- a/drivers/mfd/max77686.c
 > +++ b/drivers/mfd/max77686.c
-> @@ -96,7 +96,6 @@ static const struct regmap_irq_chip max77686_rtc_ir=
-q_chip =3D {
->  	.num_irqs		=3D ARRAY_SIZE(max77686_rtc_irqs),
->  };
-> =20
-> -#ifdef CONFIG_OF
->  static const struct of_device_id max77686_pmic_dt_match[] =3D {
->  	{.compatible =3D "maxim,max77686", .data =3D NULL},
->  	{},
-> @@ -116,13 +115,6 @@ static struct max77686_platform_data *max77686_i=
-2c_parse_dt_pdata(struct device
->  	dev->platform_data =3D pd;
->  	return pd;
->  }
-> -#else
-> -static struct max77686_platform_data *max77686_i2c_parse_dt_pdata(st=
-ruct device
-> -								  *dev)
-> -{
-> -	return 0;
-> -}
-> -#endif
-> =20
->  static int max77686_i2c_probe(struct i2c_client *i2c,
->  			      const struct i2c_device_id *id)
-> @@ -132,7 +124,7 @@ static int max77686_i2c_probe(struct i2c_client *=
+> @@ -134,7 +134,7 @@ static int max77686_i2c_probe(struct i2c_client *=
 i2c,
->  	unsigned int data;
->  	int ret =3D 0;
 > =20
-> -	if (i2c->dev.of_node)
-> +	if (IS_ENABLED(CONFIG_OF) && i2c->dev.of_node)
->  		pdata =3D max77686_i2c_parse_dt_pdata(&i2c->dev);
+>  	max77686 =3D devm_kzalloc(&i2c->dev,
+>  				sizeof(struct max77686_dev), GFP_KERNEL);
+> -	if (max77686 =3D=3D NULL)
+> +	if (!max77686)
+>  		return -ENOMEM;
 > =20
->  	if (!pdata) {
+>  	i2c_set_clientdata(i2c, max77686);
+> @@ -153,8 +153,8 @@ static int max77686_i2c_probe(struct i2c_client *=
+i2c,
+>  		return ret;
+>  	}
+> =20
+> -	if (regmap_read(max77686->regmap,
+> -			 MAX77686_REG_DEVICE_ID, &data) < 0) {
+> +	ret =3D regmap_read(max77686->regmap, MAX77686_REG_DEVICE_ID, &data=
+);
+> +	if (ret < 0) {
+>  		dev_err(max77686->dev,
+>  			"device not found on this channel (this is not an error)\n");
+>  		return -ENODEV;
+> @@ -180,7 +180,7 @@ static int max77686_i2c_probe(struct i2c_client *=
+i2c,
+>  				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
+>  				  IRQF_SHARED, 0, &max77686_irq_chip,
+>  				  &max77686->irq_data);
+> -	if (ret !=3D 0) {
+> +	if (ret) {
+>  		dev_err(&i2c->dev, "failed to add PMIC irq chip: %d\n", ret);
+>  		goto err_unregister_i2c;
+>  	}
+> @@ -188,7 +188,7 @@ static int max77686_i2c_probe(struct i2c_client *=
+i2c,
+>  				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
+>  				  IRQF_SHARED, 0, &max77686_rtc_irq_chip,
+>  				  &max77686->rtc_irq_data);
+> -	if (ret !=3D 0) {
+> +	if (ret) {
+>  		dev_err(&i2c->dev, "failed to add RTC irq chip: %d\n", ret);
+>  		goto err_del_irqc;
+>  	}
 
 --=20
 Lee Jones
 Linaro STMicroelectronics Landing Team Lead
 Linaro.org =E2=94=82 Open source software for ARM SoCs
 =46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
