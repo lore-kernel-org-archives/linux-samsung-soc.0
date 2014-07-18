@@ -1,545 +1,97 @@
-From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [PATCH v2 4/4] ARM: dts: exynos5250: Add Spring device tree
-Date: Fri, 18 Jul 2014 19:20:09 +0200
-Message-ID: <1405704009-8430-5-git-send-email-afaerber@suse.de>
-References: <1405704009-8430-1-git-send-email-afaerber@suse.de>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCHv6 3/4] iio: devicetree: Add DT binding documentation for Exynos3250 ADC
+Date: Fri, 18 Jul 2014 20:48:43 +0200
+Message-ID: <5381273.c6GzlyQ7Ea@wuerfel>
+References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com> <5835825.JtcDoyOP8b@wuerfel> <CAGTfZH3mnPJ72wi7aFYoChe_OeuRVsUVo3KGRRLTV5scwPbO4g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1405704009-8430-1-git-send-email-afaerber@suse.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAGTfZH3mnPJ72wi7aFYoChe_OeuRVsUVo3KGRRLTV5scwPbO4g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, naveen krishna <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, pawel.moll-5wv7dgnIgG8@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adds initial support for the HP Chromebook 11.
+On Saturday 19 July 2014 02:02:09 Chanwoo Choi wrote:
+> On Sat, Jul 19, 2014 at 1:33 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> > On Saturday 19 July 2014 01:23:15 Chanwoo Choi wrote:
+> >> If don't add new compatible including specific exynos version,
+> >> I would add new 'adc-needs-sclk' property with existing 'exynos-adc-v2'
+> >> compatible name.
 
-Cc: Vincent Palatin <vpalatin@chromium.org>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Stephan van Schaik <stephan@synkhronix.com>
-Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
----
- v1 -> v2:
- * Use label-based overriding/extension of nodes. (Doug Anderson)
- * Dropped tps65090 for now, until we know where to place it.
- * Dropped non-Spring nodes from -cros-common.dtsi rather than disablin=
-g them.
- * Enabled a missing MMC node for access to internal storage.
- * Dropped display-timings from dp-controller node. (Ajay Kumar)
+What I actually meant is using compatible="exynos-adc-v2.1" or similar
+rather than "exynos3250-adc". However, as you already explained, the
+version numbers are apparently just made up, so using "exynos3250-adc"
+is actually better here. If a future exynos7890 uses the same clocks
+as exynos3250, it can simply use the same "exynos3250-adc" string here.
 
- arch/arm/boot/dts/Makefile              |   1 +
- arch/arm/boot/dts/exynos5250-spring.dts | 485 ++++++++++++++++++++++++=
-++++++++
- 2 files changed, 486 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos5250-spring.dts
+> >> Dear Naveen, Tomasz,
+> >>
+> >> If existing exynos-adc driver add just one property for 'sclk_adc'
+> >> as following, exynos-adc could not include the exynos version
+> >> in compatible name.
+> >>
+> >> I need your opinion about it.
+> >>
+> >>                 adc: adc@126C0000 {
+> >>                         compatible = "samsung,exynos-adc-v2";
+> >>                         reg = <0x126C0000 0x100>, <0x10020718 0x4>;
+> >>                         interrupts = <0 137 0>;
+> >>                         clock-names = "adc", "sclk_adc";
+> >>                         clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
+> >> +                        adc-needs-sclk;
+> >>                         #io-channel-cells = <1>;
+> >>                         io-channel-ranges;
+> >>                 }
+> >
+> > How about just making it an optional clock? That would be much
+> > easier because then you can simply see if the clock itself is
+> > there and use it, or otherwise ignore it.
+> 
+> The v1 of this patchset[1] got the clock of 'sclk_adc'  but if the dt node
+> of ADC in dtsi file didn't include 'sclk_adc', print just warning message
+> without stopping probe as following:
+> 
+>  [1] https://lkml.org/lkml/2014/4/10/710
+> 
+> +       info->sclk = devm_clk_get(&pdev->dev, "sclk_adc");
+> +       if (IS_ERR(info->sclk)) {
+> +               dev_warn(&pdev->dev, "failed getting sclk clock, err = %ld\n",
+> +                                                       PTR_ERR(info->sclk));
+> +               info->sclk = NULL;
+> +       }
+> 
+> But, Tomasz Figa suggested the method[2] of this patchset(v6).
+>  [2] https://lkml.org/lkml/2014/4/11/189
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 80a781f..dec4c29 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -76,6 +76,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) +=3D exynos4210-origen.dtb =
-\
- 	exynos5250-arndale.dtb \
- 	exynos5250-smdk5250.dtb \
- 	exynos5250-snow.dtb \
-+	exynos5250-spring.dtb \
- 	exynos5260-xyref5260.dtb \
- 	exynos5410-smdk5410.dtb \
- 	exynos5420-arndale-octa.dtb \
-diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dt=
-s/exynos5250-spring.dts
-new file mode 100644
-index 0000000..6695973
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5250-spring.dts
-@@ -0,0 +1,485 @@
-+/*
-+ * Google Spring board device tree source
-+ *
-+ * Copyright (c) 2013 Google, Inc
-+ * Copyright (c) 2014 SUSE LINUX Products GmbH
-+ *
-+ * This program is free software; you can redistribute it and/or modif=
-y
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+/dts-v1/;
-+#include "exynos5250.dtsi"
-+
-+/ {
-+	model =3D "Google Spring";
-+	compatible =3D "google,spring", "samsung,exynos5250", "samsung,exynos=
-5";
-+
-+	memory {
-+		reg =3D <0x40000000 0x80000000>;
-+	};
-+
-+	chosen {
-+	};
-+
-+	usb@12000000 {
-+		status =3D "okay";
-+	};
-+
-+	usb3_vbus_reg: regulator-usb3 {
-+		compatible =3D "regulator-fixed";
-+		regulator-name =3D "P5.0V_USB3CON";
-+		regulator-min-microvolt =3D <5000000>;
-+		regulator-max-microvolt =3D <5000000>;
-+		gpio =3D <&gpe1 0 1>;
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&hsic_reset>;
-+		enable-active-high;
-+	};
-+
-+	usb@12110000 {
-+		samsung,vbus-gpio =3D <&gpx1 1 0>;
-+		status =3D "okay";
-+	};
-+
-+	usb@12120000 {
-+		status =3D "okay";
-+	};
-+
-+	fimd@14400000 {
-+		status =3D "okay";
-+		samsung,invert-vclk;
-+	};
-+
-+	hdmi {
-+		hpd-gpio =3D <&gpx3 7 0>;
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&hdmi_hpd_irq>;
-+		phy =3D <&hdmiphy>;
-+		ddc =3D <&i2c_2>;
-+		hdmi-en-supply =3D <&s5m_ldo8_reg>;
-+		vdd-supply =3D <&s5m_ldo8_reg>;
-+		vdd_osc-supply =3D <&s5m_ldo10_reg>;
-+		vdd_pll-supply =3D <&s5m_ldo8_reg>;
-+	};
-+
-+	dp-controller@145B0000 {
-+		status =3D "okay";
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&dp_hpd>;
-+		samsung,color-space =3D <0>;
-+		samsung,dynamic-range =3D <0>;
-+		samsung,ycbcr-coeff =3D <0>;
-+		samsung,color-depth =3D <1>;
-+		samsung,link-rate =3D <0x0a>;
-+		samsung,lane-count =3D <1>;
-+		samsung,hpd-gpio =3D <&gpc3 0 0>;
-+	};
-+
-+	fixed-rate-clocks {
-+		xxti {
-+			compatible =3D "samsung,clock-xxti";
-+			clock-frequency =3D <24000000>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible =3D "gpio-keys";
-+
-+		power {
-+			label =3D "Power";
-+			gpios =3D <&gpx1 3 1>;
-+			linux,code =3D <116>; /* KEY_POWER */
-+			gpio-key,wakeup;
-+		};
-+	};
-+};
-+
-+&i2c_0 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <378000>;
-+
-+	s5m8767_pmic@66 {
-+		compatible =3D "samsung,s5m8767-pmic";
-+		reg =3D <0x66>;
-+		interrupt-parent =3D <&gpx3>;
-+		interrupts =3D <2 0>;
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&s5m8767_irq &s5m8767_dvs &s5m8767_ds>;
-+		wakeup-source;
-+
-+		s5m8767,pmic-buck-dvs-gpios =3D <&gpd1 0 1>, /* DVS1 */
-+		                              <&gpd1 1 1>, /* DVS2 */
-+		                              <&gpd1 2 1>; /* DVS3 */
-+
-+		s5m8767,pmic-buck-ds-gpios =3D <&gpx2 3 1>, /* SET1 */
-+		                             <&gpx2 4 1>, /* SET2 */
-+		                             <&gpx2 5 1>; /* SET3 */
-+
-+		/*
-+		 * The following arrays of DVS voltages are not used, since we are
-+		 * not using GPIOs to control PMIC bucks, but they must be defined
-+		 * to please the driver.
-+		 */
-+		s5m8767,pmic-buck2-dvs-voltage =3D <1350000>, <1300000>,
-+		                                 <1250000>, <1200000>,
-+		                                 <1150000>, <1100000>,
-+		                                 <1000000>, <950000>;
-+
-+		s5m8767,pmic-buck3-dvs-voltage =3D <1100000>, <1100000>,
-+		                                 <1100000>, <1100000>,
-+		                                 <1000000>, <1000000>,
-+		                                 <1000000>, <1000000>;
-+
-+		s5m8767,pmic-buck4-dvs-voltage =3D <1200000>, <1200000>,
-+		                                 <1200000>, <1200000>,
-+		                                 <1200000>, <1200000>,
-+		                                 <1200000>, <1200000>;
-+
-+		clocks {
-+			compatible =3D "samsung,s5m8767-clk";
-+			#clock-cells =3D <1>;
-+			clock-output-names =3D "en32khz_ap",
-+			                     "en32khz_cp",
-+			                     "en32khz_bt";
-+		};
-+
-+		regulators {
-+			s5m_ldo4_reg: LDO4 {
-+				regulator-name =3D "P1.0V_LDO_OUT4";
-+				regulator-min-microvolt =3D <1000000>;
-+				regulator-max-microvolt =3D <1000000>;
-+				regulator-always-on;
-+				op_mode =3D <0>;
-+			};
-+
-+			s5m_ldo5_reg: LDO5 {
-+				regulator-name =3D "P1.0V_LDO_OUT5";
-+				regulator-min-microvolt =3D <1000000>;
-+				regulator-max-microvolt =3D <1000000>;
-+				regulator-always-on;
-+				op_mode =3D <0>;
-+			};
-+
-+			s5m_ldo6_reg: LDO6 {
-+				regulator-name =3D "vdd_mydp";
-+				regulator-min-microvolt =3D <1000000>;
-+				regulator-max-microvolt =3D <1000000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo7_reg: LDO7 {
-+				regulator-name =3D "P1.1V_LDO_OUT7";
-+				regulator-min-microvolt =3D <1100000>;
-+				regulator-max-microvolt =3D <1100000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo8_reg: LDO8 {
-+				regulator-name =3D "P1.0V_LDO_OUT8";
-+				regulator-min-microvolt =3D <1000000>;
-+				regulator-max-microvolt =3D <1000000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo10_reg: LDO10 {
-+				regulator-name =3D "P1.8V_LDO_OUT10";
-+				regulator-min-microvolt =3D <1800000>;
-+				regulator-max-microvolt =3D <1800000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo11_reg: LDO11 {
-+				regulator-name =3D "P1.8V_LDO_OUT11";
-+				regulator-min-microvolt =3D <1800000>;
-+				regulator-max-microvolt =3D <1800000>;
-+				regulator-always-on;
-+				op_mode =3D <0>;
-+			};
-+
-+			s5m_ldo12_reg: LDO12 {
-+				regulator-name =3D "P3.0V_LDO_OUT12";
-+				regulator-min-microvolt =3D <3000000>;
-+				regulator-max-microvolt =3D <3000000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo13_reg: LDO13 {
-+				regulator-name =3D "P1.8V_LDO_OUT13";
-+				regulator-min-microvolt =3D <1800000>;
-+				regulator-max-microvolt =3D <1800000>;
-+				regulator-always-on;
-+				op_mode =3D <0>;
-+			};
-+
-+			s5m_ldo14_reg: LDO14 {
-+				regulator-name =3D "P1.8V_LDO_OUT14";
-+				regulator-min-microvolt =3D <1800000>;
-+				regulator-max-microvolt =3D <1800000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo15_reg: LDO15 {
-+				regulator-name =3D "P1.0V_LDO_OUT15";
-+				regulator-min-microvolt =3D <1000000>;
-+				regulator-max-microvolt =3D <1000000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo16_reg: LDO16 {
-+				regulator-name =3D "P1.8V_LDO_OUT16";
-+				regulator-min-microvolt =3D <1800000>;
-+				regulator-max-microvolt =3D <1800000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo17_reg: LDO17 {
-+				regulator-name =3D "P2.8V_LDO_OUT17";
-+				regulator-min-microvolt =3D <2800000>;
-+				regulator-max-microvolt =3D <2800000>;
-+				regulator-always-on;
-+				op_mode =3D <0>;
-+			};
-+
-+			s5m_ldo25_reg: LDO25 {
-+				regulator-name =3D "vdd_bridge";
-+				regulator-min-microvolt =3D <1200000>;
-+				regulator-max-microvolt =3D <1200000>;
-+				regulator-always-on;
-+				op_mode =3D <1>;
-+			};
-+
-+			BUCK1 {
-+				regulator-name =3D "vdd_mif";
-+				regulator-min-microvolt =3D <950000>;
-+				regulator-max-microvolt =3D <1300000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			BUCK2 {
-+				regulator-name =3D "vdd_arm";
-+				regulator-min-microvolt =3D <850000>;
-+				regulator-max-microvolt =3D <1350000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			BUCK3 {
-+				regulator-name =3D "vdd_int";
-+				regulator-min-microvolt =3D <900000>;
-+				regulator-max-microvolt =3D <1200000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			BUCK4 {
-+				regulator-name =3D "vdd_g3d";
-+				regulator-min-microvolt =3D <850000>;
-+				regulator-max-microvolt =3D <1300000>;
-+				regulator-boot-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			BUCK5 {
-+				regulator-name =3D "P1.8V_BUCK_OUT5";
-+				regulator-min-microvolt =3D <1800000>;
-+				regulator-max-microvolt =3D <1800000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode =3D <1>;
-+			};
-+
-+			BUCK6 {
-+				regulator-name =3D "P1.2V_BUCK_OUT6";
-+				regulator-min-microvolt =3D <1200000>;
-+				regulator-max-microvolt =3D <1200000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode =3D <0>;
-+			};
-+
-+			BUCK9 {
-+				regulator-name =3D "vdd_ummc";
-+				regulator-min-microvolt =3D <950000>;
-+				regulator-max-microvolt =3D <3000000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode =3D <3>;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c_1 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <378000>;
-+};
-+
-+&i2c_2 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <66000>;
-+
-+	hdmiddc@50 {
-+		compatible =3D "samsung,exynos4210-hdmiddc";
-+		reg =3D <0x50>;
-+	};
-+};
-+
-+&i2c_3 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <66000>;
-+};
-+
-+&i2c_4 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <66000>;
-+
-+	cros_ec: embedded-controller {
-+		compatible =3D "google,cros-ec-i2c";
-+		reg =3D <0x1e>;
-+		interrupts =3D <6 0>;
-+		interrupt-parent =3D <&gpx1>;
-+		wakeup-source;
-+	};
-+};
-+
-+&i2c_5 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <66000>;
-+};
-+
-+&i2c_7 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <66000>;
-+};
-+
-+&i2c_8 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <378000>;
-+
-+	hdmiphy: hdmiphy@38 {
-+		compatible =3D "samsung,exynos4212-hdmiphy";
-+		reg =3D <0x38>;
-+	};
-+};
-+
-+&mmc_0 {
-+	status =3D "okay";
-+	num-slots =3D <1>;
-+	supports-highspeed;
-+	broken-cd;
-+	card-detect-delay =3D <200>;
-+	samsung,dw-mshc-ciu-div =3D <3>;
-+	samsung,dw-mshc-sdr-timing =3D <2 3>;
-+	samsung,dw-mshc-ddr-timing =3D <1 2>;
-+	pinctrl-names =3D "default";
-+	pinctrl-0 =3D <&sd0_clk &sd0_cmd &sd0_cd &sd0_bus4 &sd0_bus8>;
-+
-+	slot@0 {
-+		reg =3D <0>;
-+		bus-width =3D <8>;
-+	};
-+};
-+
-+&mmc_1 {
-+	status =3D "okay";
-+	num-slots =3D <1>;
-+	supports-highspeed;
-+	broken-cd;
-+	card-detect-delay =3D <200>;
-+	samsung,dw-mshc-ciu-div =3D <3>;
-+	samsung,dw-mshc-sdr-timing =3D <2 3>;
-+	samsung,dw-mshc-ddr-timing =3D <1 2>;
-+	pinctrl-names =3D "default";
-+	pinctrl-0 =3D <&sd1_clk &sd1_cmd &sd1_cd &sd1_bus4>;
-+
-+	slot@0 {
-+		reg =3D <0>;
-+		bus-width =3D <4>;
-+	};
-+};
-+
-+&mmc_2 {
-+	/* MMC2 pins are used as GPIO for eDP bridge control. */
-+	status =3D "disabled";
-+};
-+
-+&pinctrl_0 {
-+	/*
-+	 * Disabled pullups since external part has its own pullups and
-+	 * double-pulling gets us out of spec in some cases.
-+	 */
-+	i2c2_bus: i2c2-bus {
-+		samsung,pin-pud =3D <0>;
-+	};
-+
-+	s5m8767_dvs: s5m8767-dvs {
-+		samsung,pins =3D "gpd1-0", "gpd1-1", "gpd1-2";
-+		samsung,pin-function =3D <0>;
-+		samsung,pin-pud =3D <1>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+
-+	s5m8767_ds: s5m8767-ds {
-+		samsung,pins =3D "gpx2-3", "gpx2-4", "gpx2-5";
-+		samsung,pin-function =3D <0>;
-+		samsung,pin-pud =3D <1>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+
-+	s5m8767_irq: s5m8767-irq {
-+		samsung,pins =3D "gpx3-2";
-+		samsung,pin-function =3D <0>;
-+		samsung,pin-pud =3D <0>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+
-+	hdmi_hpd_irq: hdmi-hpd-irq {
-+		samsung,pins =3D "gpx3-7";
-+		samsung,pin-function =3D <0>;
-+		samsung,pin-pud =3D <1>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+};
-+
-+&pinctrl_1 {
-+	hsic_reset: hsic-reset {
-+		samsung,pins =3D "gpe1-0";
-+		samsung,pin-function =3D <1>;
-+		samsung,pin-pud =3D <0>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+};
-+
-+&spi_1 {
-+	status =3D "okay";
-+	samsung,spi-src-clk =3D <0>;
-+	num-cs =3D <1>;
-+};
-+
-+&usbdrd_phy {
-+	vbus-supply =3D <&usb3_vbus_reg>;
-+};
-+
-+#include "cros-ec-keyboard.dtsi"
---=20
-1.9.3
+Yes, your current version is certainly better than this, but another way
+to address Tomasz' comment would be to change the binding to list the "sclk"
+as optional for any device and make the code silently ignore missing sclk
+entries, like:
+
+
+	info->sclk = devm_clk_get(&pdev->dev, "sclk");
+	if (IS_ERR(info->sclk)) {
+		switch (PTR_ERR(info->sclk)) {
+		case -EPROBE_DEFER:
+			/* silently return error so we can retry */
+			return -EPROBE_DEFER:
+		case -ENOENT:
+			/* silently ignore missing optional clk */
+			info->sclk = NULL;
+			break;
+		default:
+			/* any other error: clk is defined by doesn't work  */
+			dev_err(&pdev->dev, "failed getting sclk clock, err = %ld\n",
+				PTR_ERR(info->sclk));
+			return PTR_ERR(info->sclk));
+		}
+	}
+
+One more comment about the name: Both in the code you use "sclk" as the
+name, so presumably that is the actual name of the clk as known to this
+driver, and it makes sense to use clock-names="sclk" as well, if you want
+to have any name.
+
+	Arnd
