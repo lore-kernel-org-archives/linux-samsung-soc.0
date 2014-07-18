@@ -1,255 +1,34 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv6 2/4] iio: adc: exynos_adc: Control special clock of ADC to
- support Exynos3250 ADC
-Date: Fri, 18 Jul 2014 14:59:44 +0900
-Message-ID: <1405663186-26464-3-git-send-email-cw00.choi@samsung.com>
-References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v2 0/4] Add Exynos4412 based Odroid X2 and U2/U3/U3+ support
+Date: Thu, 17 Jul 2014 23:02:49 -0700
+Message-ID: <CAOesGMhjCSononiVtv1rWaP7hAbk=CgtBYx23dFvv6MhXT5-Cg@mail.gmail.com>
+References: <1403702773-9141-1-git-send-email-m.szyprowski@samsung.com>
+	<53B0F6D1.4090006@samsung.com>
+	<CAOesGMirJ0R6NDUY=Yx2Pjaipw32ZGORVqtnrFMPMHpSP8YuBQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: jic23@kernel.org, ch.naveen@samsung.com
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, kgene.kim@samsung.com, Chanwoo Choi <cw00.choi@samsung.com>, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, t.figa@samsung.com, rdunlap@infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f169.google.com ([209.85.220.169]:59723 "EHLO
+	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755019AbaGRGCu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Jul 2014 02:02:50 -0400
+Received: by mail-vc0-f169.google.com with SMTP id hu12so6619149vcb.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Jul 2014 23:02:49 -0700 (PDT)
+In-Reply-To: <CAOesGMirJ0R6NDUY=Yx2Pjaipw32ZGORVqtnrFMPMHpSP8YuBQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Przemyslaw Marczak <p.marczak@samsung.com>
 
-This patch control special clock for ADC in Exynos series's FSYS block.
-If special clock of ADC is registerd on clock list of common clk framework,
-Exynos ADC drvier have to control this clock.
+On Thu, Jul 17, 2014 at 10:56 PM, Olof Johansson <olof@lixom.net> wrote:
 
-Exynos3250/Exynos4/Exynos5 has 'adc' clock as following:
-- 'adc' clock: bus clock for ADC
+> I gave the kernel (next-0717) a go here on my U3, and it boots (as you
+> mention, no USB comes up).
 
-Exynos3250 has additional 'sclk_adc' clock as following:
-- 'sclk_adc' clock: special clock for ADC which provide clock to internal ADC
+Btw, please update multi_v7_defconfig as well (as a separate patch,
+since it needs to be merged directly by us). Right now it doesn't find
+rootfs with that config.
 
-Exynos 4210/4212/4412 and Exynos5250/5420 has not included 'sclk_adc' clock
-in FSYS_BLK. But, Exynos3250 based on Cortex-A7 has only included 'sclk_adc'
-clock in FSYS_BLK.
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
----
- drivers/iio/adc/exynos_adc.c | 112 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 101 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index 00d67fd..b63e882 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -81,9 +81,11 @@
- 
- struct exynos_adc {
- 	struct exynos_adc_data	*data;
-+	struct device		*dev;
- 	void __iomem		*regs;
- 	void __iomem		*enable_reg;
- 	struct clk		*clk;
-+	struct clk		*sclk;
- 	unsigned int		irq;
- 	struct regulator	*vdd;
- 
-@@ -95,6 +97,7 @@ struct exynos_adc {
- 
- struct exynos_adc_data {
- 	int num_channels;
-+	bool needs_sclk;
- 
- 	void (*init_hw)(struct exynos_adc *info);
- 	void (*exit_hw)(struct exynos_adc *info);
-@@ -102,6 +105,66 @@ struct exynos_adc_data {
- 	void (*start_conv)(struct exynos_adc *info, unsigned long addr);
- };
- 
-+static void exynos_adc_unprepare_clk(struct exynos_adc *info)
-+{
-+	if (info->data->needs_sclk)
-+		clk_unprepare(info->sclk);
-+	clk_unprepare(info->clk);
-+}
-+
-+static int exynos_adc_prepare_clk(struct exynos_adc *info)
-+{
-+	int ret;
-+
-+	ret = clk_prepare(info->clk);
-+	if (ret) {
-+		dev_err(info->dev, "failed preparing adc clock: %d\n", ret);
-+		return ret;
-+	}
-+
-+	if (info->data->needs_sclk) {
-+		ret = clk_prepare(info->sclk);
-+		if (ret) {
-+			clk_unprepare(info->clk);
-+			dev_err(info->dev,
-+				"failed preparing sclk_adc clock: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void exynos_adc_disable_clk(struct exynos_adc *info)
-+{
-+	if (info->data->needs_sclk)
-+		clk_disable(info->sclk);
-+	clk_disable(info->clk);
-+}
-+
-+static int exynos_adc_enable_clk(struct exynos_adc *info)
-+{
-+	int ret;
-+
-+	ret = clk_enable(info->clk);
-+	if (ret) {
-+		dev_err(info->dev, "failed enabling adc clock: %d\n", ret);
-+		return ret;
-+	}
-+
-+	if (info->data->needs_sclk) {
-+		ret = clk_enable(info->sclk);
-+		if (ret) {
-+			clk_disable(info->clk);
-+			dev_err(info->dev,
-+				"failed enabling sclk_adc clock: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static void exynos_adc_v1_init_hw(struct exynos_adc *info)
- {
- 	u32 con1;
-@@ -199,13 +262,20 @@ static void exynos_adc_v2_start_conv(struct exynos_adc *info,
- 	writel(con1 | ADC_CON_EN_START, ADC_V2_CON1(info->regs));
- }
- 
-+#define __EXYNOS_ADC_V2_DATA				\
-+	.num_channels	= MAX_ADC_V2_CHANNELS,		\
-+	.init_hw	= exynos_adc_v2_init_hw,	\
-+	.exit_hw	= exynos_adc_v2_exit_hw,	\
-+	.clear_irq	= exynos_adc_v2_clear_irq,	\
-+	.start_conv	= exynos_adc_v2_start_conv,	\
-+
- static struct exynos_adc_data const exynos_adc_v2_data = {
--	.num_channels	= MAX_ADC_V2_CHANNELS,
-+	__EXYNOS_ADC_V2_DATA
-+};
- 
--	.init_hw	= exynos_adc_v2_init_hw,
--	.exit_hw	= exynos_adc_v2_exit_hw,
--	.clear_irq	= exynos_adc_v2_clear_irq,
--	.start_conv	= exynos_adc_v2_start_conv,
-+static struct exynos_adc_data const exynos3250_adc_v2_data = {
-+	__EXYNOS_ADC_V2_DATA
-+	.needs_sclk = true,
- };
- 
- static const struct of_device_id exynos_adc_match[] = {
-@@ -215,6 +285,9 @@ static const struct of_device_id exynos_adc_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos-adc-v2",
- 		.data = (void *)&exynos_adc_v2_data,
-+	}, {
-+		.compatible = "samsung,exynos3250-adc-v2",
-+		.data = (void *)&exynos3250_adc_v2_data,
- 	},
- 	{},
- };
-@@ -376,6 +449,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 	}
- 
- 	info->irq = irq;
-+	info->dev = &pdev->dev;
- 
- 	init_completion(&info->completion);
- 
-@@ -386,6 +460,16 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 		return PTR_ERR(info->clk);
- 	}
- 
-+	if (info->data->needs_sclk) {
-+		info->sclk = devm_clk_get(&pdev->dev, "sclk_adc");
-+		if (IS_ERR(info->sclk)) {
-+			dev_err(&pdev->dev,
-+				"failed getting sclk_adc, err = %ld\n",
-+				PTR_ERR(info->sclk));
-+			return PTR_ERR(info->sclk);
-+		}
-+	}
-+
- 	info->vdd = devm_regulator_get(&pdev->dev, "vdd");
- 	if (IS_ERR(info->vdd)) {
- 		dev_err(&pdev->dev, "failed getting regulator, err = %ld\n",
-@@ -397,10 +481,14 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	ret = clk_prepare_enable(info->clk);
-+	ret = exynos_adc_prepare_clk(info);
- 	if (ret)
- 		goto err_disable_reg;
- 
-+	ret = exynos_adc_enable_clk(info);
-+	if (ret)
-+		goto err_unprepare_clk;
-+
- 	platform_set_drvdata(pdev, indio_dev);
- 
- 	indio_dev->name = dev_name(&pdev->dev);
-@@ -443,7 +531,9 @@ err_irq:
- err_disable_clk:
- 	if (info->data->exit_hw)
- 		info->data->exit_hw(info);
--	clk_disable_unprepare(info->clk);
-+	exynos_adc_disable_clk(info);
-+err_unprepare_clk:
-+	exynos_adc_unprepare_clk(info);
- err_disable_reg:
- 	regulator_disable(info->vdd);
- 	return ret;
-@@ -460,7 +550,8 @@ static int exynos_adc_remove(struct platform_device *pdev)
- 	free_irq(info->irq, info);
- 	if (info->data->exit_hw)
- 		info->data->exit_hw(info);
--	clk_disable_unprepare(info->clk);
-+	exynos_adc_disable_clk(info);
-+	exynos_adc_unprepare_clk(info);
- 	regulator_disable(info->vdd);
- 
- 	return 0;
-@@ -474,8 +565,7 @@ static int exynos_adc_suspend(struct device *dev)
- 
- 	if (info->data->exit_hw)
- 		info->data->exit_hw(info);
--
--	clk_disable_unprepare(info->clk);
-+	exynos_adc_disable_clk(info);
- 	regulator_disable(info->vdd);
- 
- 	return 0;
-@@ -491,7 +581,7 @@ static int exynos_adc_resume(struct device *dev)
- 	if (ret)
- 		return ret;
- 
--	ret = clk_prepare_enable(info->clk);
-+	ret = exynos_adc_enable_clk(info);
- 	if (ret)
- 		return ret;
- 
--- 
-1.8.0
+-Olof
