@@ -1,101 +1,71 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv6 2/4] iio: adc: exynos_adc: Control special clock of ADC
- to support Exynos3250 ADC
-Date: Fri, 18 Jul 2014 19:00:48 +0900
-Message-ID: <53C8F050.6060104@samsung.com>
+From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCHv6 1/4] iio: adc: exynos_adc: Add exynos_adc_data structure
+ to improve readability
+Date: Fri, 18 Jul 2014 15:41:27 +0530
+Message-ID: <CAHfPSqBDOEH5HurG=rECV=d+MM_YjTEpsiwuTgtNgFgCQ0P2bw@mail.gmail.com>
 References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
- <1405663186-26464-3-git-send-email-cw00.choi@samsung.com>
- <6485839.CnzmD0SeQj@wuerfel>
+ <1405663186-26464-2-git-send-email-cw00.choi@samsung.com> <6186153.TIYp5NXPIq@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <6485839.CnzmD0SeQj@wuerfel>
-Sender: linux-doc-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, jic23@kernel.org, ch.naveen@samsung.com, mark.rutland@arm.com, devicetree@vger.kernel.org, kgene.kim@samsung.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, t.figa@samsung.com, rdunlap@infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <6186153.TIYp5NXPIq@wuerfel>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, My self <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Arnd,
+Hello Arnd,
 
-On 07/18/2014 06:47 PM, Arnd Bergmann wrote:
-> On Friday 18 July 2014 14:59:44 Chanwoo Choi wrote:
->> This patch control special clock for ADC in Exynos series's FSYS block.
->> If special clock of ADC is registerd on clock list of common clk framework,
->> Exynos ADC drvier have to control this clock.
+On 18 July 2014 15:12, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> On Friday 18 July 2014 14:59:43 Chanwoo Choi wrote:
+>> This patchset add 'exynos_adc_data' structure which includes some functions
+>> to control ADC operation and specific data according to ADC version (v1 or v2).
 >>
->> Exynos3250/Exynos4/Exynos5 has 'adc' clock as following:
->> - 'adc' clock: bus clock for ADC
->>
->> Exynos3250 has additional 'sclk_adc' clock as following:
->> - 'sclk_adc' clock: special clock for ADC which provide clock to internal ADC
->>
->> Exynos 4210/4212/4412 and Exynos5250/5420 has not included 'sclk_adc' clock
->> in FSYS_BLK. But, Exynos3250 based on Cortex-A7 has only included 'sclk_adc'
->> clock in FSYS_BLK.
-> 
-> Do you know if any of the older ADC blocks have an "sclk" input as well?
+>
+> This new structure makes a lot of sense for covering the exynos specific
+> versions, but it will likely give a little more complexity for the
+> older models. We'll have to deal with that later then, no need to
+> hold up your patch. Interestingly, the version numbers seem weird. The
+> old driver uses
+>
+>         {
+>                 .name           = "s3c24xx-adc",
+>                 .driver_data    = TYPE_ADCV1,
+>         }, {
+>                 .name           = "s3c2443-adc",
+>                 .driver_data    = TYPE_ADCV11,
+>         }, {
+>                 .name           = "s3c2416-adc",
+>                 .driver_data    = TYPE_ADCV12,
+>         }, {
+>                 .name           = "s3c64xx-adc",
+>                 .driver_data    = TYPE_ADCV2,
+>         }, {
+>                 .name           = "samsung-adc-v3",
+>                 .driver_data    = TYPE_ADCV3,
+>         }
+>
+> Where TYPE_ADCV3 seems to be the same as the new ADC_V1 used in this
+> driver. Do you have an explanation for that?
 
-No, I didn't check older ADC blocks. I only checked it on Exynos3250,
-Exynos4210/4212/4412, Exynos5250/5420.
+As per suggestion from Doug Anderson,
+I've implemented IIO based ADC driver to work with Exynos5250.
+keeping the plat-samsung/adc.c unchanged.
 
-> 
-> Further, why is it called "sclk_adc" rather than just "sclk"?
+Assuming Exynos5250 is the one using the driver for the first time.
+i've named it v1 and so on.
 
-The sclk means 'special clock' in Exynos TRM. Exynos SoC has varisou sclk clocks.
-'sclk_adc' is only used for ADC IP.
+Now, This seems to cause a lot of confusion.
 
-> 
->> @@ -199,13 +262,20 @@ static void exynos_adc_v2_start_conv(struct exynos_adc *info,
->>         writel(con1 | ADC_CON_EN_START, ADC_V2_CON1(info->regs));
->>  }
->>  
->> +#define __EXYNOS_ADC_V2_DATA                           \
->> +       .num_channels   = MAX_ADC_V2_CHANNELS,          \
->> +       .init_hw        = exynos_adc_v2_init_hw,        \
->> +       .exit_hw        = exynos_adc_v2_exit_hw,        \
->> +       .clear_irq      = exynos_adc_v2_clear_irq,      \
->> +       .start_conv     = exynos_adc_v2_start_conv,     \
->> +
->>  static struct exynos_adc_data const exynos_adc_v2_data = {
->> -       .num_channels   = MAX_ADC_V2_CHANNELS,
->> +       __EXYNOS_ADC_V2_DATA
->> +};
->>  
->> -       .init_hw        = exynos_adc_v2_init_hw,
->> -       .exit_hw        = exynos_adc_v2_exit_hw,
->> -       .clear_irq      = exynos_adc_v2_clear_irq,
->> -       .start_conv     = exynos_adc_v2_start_conv,
->> +static struct exynos_adc_data const exynos3250_adc_v2_data = {
->> +       __EXYNOS_ADC_V2_DATA
->> +       .needs_sclk = true,
->>  };
-> 
-> I think the macro hurts readability. Please just duplicate the definition
-> here.
-
-OK, I'll fix it.
-
-> 
->>  static const struct of_device_id exynos_adc_match[] = {
->> @@ -215,6 +285,9 @@ static const struct of_device_id exynos_adc_match[] = {
->>         }, {
->>                 .compatible = "samsung,exynos-adc-v2",
->>                 .data = (void *)&exynos_adc_v2_data,
->> +       }, {
->> +               .compatible = "samsung,exynos3250-adc-v2",
->> +               .data = (void *)&exynos3250_adc_v2_data,
->>         },
->>         {},
-> 
-> Remove the '(void *)' cast here and mark the structure as 'const'.
-> We intentionally use a 'const void *' type here to verify that
-> the driver doesn't modify the per-device type data at runtime,
-> which would be bad if you ever have multiple device instances.
-
-OK, I'll remove it.
-
-Thanks,
-Chanwoo Choi
+>
+>         Arnd
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
+
+-- 
+Shine bright,
+(: Nav :)
