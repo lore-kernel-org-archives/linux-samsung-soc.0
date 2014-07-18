@@ -1,72 +1,65 @@
 From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCHv6 2/4] iio: adc: exynos_adc: Control special clock of ADC
- to support Exynos3250 ADC
-Date: Sat, 19 Jul 2014 01:11:53 +0900
-Message-ID: <CAGTfZH3vz9MLN+1fPM22zKE64oMNDgcib3is0nfzZhhLkmdNvw@mail.gmail.com>
+Subject: Re: [PATCHv6 3/4] iio: devicetree: Add DT binding documentation for
+ Exynos3250 ADC
+Date: Sat, 19 Jul 2014 01:23:15 +0900
+Message-ID: <CAGTfZH3cH-QFMbfTWJJfTPTRT-Bij2TW=6CH_Yy-GaZqZvn-Xg@mail.gmail.com>
 References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
-	<6917971.QKItNU3coA@wuerfel>
-	<CAGTfZH1EHiTpo2Abua=+kDfNoOQx+ydPHU51=+qW8mgCL4Lwvg@mail.gmail.com>
-	<32226622.5gSmvBRKvZ@wuerfel>
+	<1405663186-26464-4-git-send-email-cw00.choi@samsung.com>
+	<6104032.PNRl85V92G@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:48382 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965219AbaGRQLz (ORCPT
+Received: from mail-ie0-f177.google.com ([209.85.223.177]:64617 "EHLO
+	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932078AbaGRQXR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jul 2014 12:11:55 -0400
-In-Reply-To: <32226622.5gSmvBRKvZ@wuerfel>
+	Fri, 18 Jul 2014 12:23:17 -0400
+In-Reply-To: <6104032.PNRl85V92G@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, rdunlap@infradead.org, linux-doc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, galak@codeaurora.org, naveen krishna <ch.naveen@samsung.com>, jic23@kernel.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org, naveen krishna <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, pawel.moll@arm.com, Mark Rutland <mark.rutland@arm.com>, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, rdunlap@infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-iio@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org
 
-On Sat, Jul 19, 2014 at 12:23 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Saturday 19 July 2014 00:15:35 Chanwoo Choi wrote:
->> On Fri, Jul 18, 2014 at 8:14 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->> > On Friday 18 July 2014 19:00:48 Chanwoo Choi wrote:
->> >> On 07/18/2014 06:47 PM, Arnd Bergmann wrote:
->> >> >
->> >> > Further, why is it called "sclk_adc" rather than just "sclk"?
->> >>
->> >> The sclk means 'special clock' in Exynos TRM. Exynos SoC has varisou sclk clocks.
->> >> 'sclk_adc' is only used for ADC IP.
->> >
->> > But that sounds like sclk_adc is the name of the global name
->> > of the clock signal coming out of the clock controller.
->> >
->> > I still think it would be best to name it 'sclk' as the input
->> > for the adc. It shouldn't rely on a particular name of the
->> > clock controller.
->>
->> I think 'sclk' is too common name. 'sclk' don't include specific device name.
->> As I know, usual clock name includes the name of IP or includes the
->> specific meaning for each IP.
+On Fri, Jul 18, 2014 at 6:50 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Friday 18 July 2014 14:59:45 Chanwoo Choi wrote:
+>>                         Must be "samsung,exynos-adc-v2" for
+>>                                 future controllers.
 >
-> No, normally it does not include the name of the IP, that's my whole point.
-> Including the name of the IP is completely pointless because that is
-> implied by the fact that it's being used by that particular IP.
+> It would be good to change 'future controllers' to something else now.
+> Presumably that word was used before the actual products were announced,
+> but now they are publically known.
 >
-> Ideally you would find the data sheet for the ADC IP block and figure
-> out what this clock is used for, then find the right name for that.
+>> +                       Must be "samsung,exynos3250-adc-v2" for
+>> +                               controllers compatible with ADC of Exynos3250.
+>
+> Doesn't this version have a specific name as well? The ADC block
+> seems to use version numbers, so better put those in here to avoid
+> confusion when another Exynos7890 comes out that uses the same
+> ADC as exynos3250.
 
-I mentioned the meaning of clocks ('adc', 'sclk_adc') as following in
-patch description.
-But, you think that need the more proper name instead of 'sclk_adc' to mean the
-correct operation of 'sclk_adc'. I'll check once again the meaning of
-'sclk_adc' in data sheet
-and renaming it.
+If don't add new compatible including specific exynos version,
+I would add new 'adc-needs-sclk' property with existing 'exynos-adc-v2'
+compatible name.
 
-  Exynos3250/Exynos4/Exynos5 has 'adc' clock as following:
-  - 'adc' clock: bus clock for ADC
 
-  Exynos3250 has additional 'sclk_adc' clock as following:
-  - 'sclk_adc' clock: special clock for ADC which provide clock to internal ADC
+Dear Naveen, Tomasz,
 
-> In a lot of cases, we are actually better off not naming the clocks
-> at all but simply enumerating them if nobody knows what they are good
-> for. In that case, you would simply have the first clock and the second
-> clock of the ADC part and enable them both.
+If existing exynos-adc driver add just one property for 'sclk_adc'
+as following, exynos-adc could not include the exynos version
+in compatible name.
 
-Thanks for your  review.
+I need your opinion about it.
+
+                adc: adc@126C0000 {
+                        compatible = "samsung,exynos-adc-v2";
+                        reg = <0x126C0000 0x100>, <0x10020718 0x4>;
+                        interrupts = <0 137 0>;
+                        clock-names = "adc", "sclk_adc";
+                        clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
++                        adc-needs-sclk;
+                        #io-channel-cells = <1>;
+                        io-channel-ranges;
+                }
+
+Thanks,
 Chanwoo Choi
