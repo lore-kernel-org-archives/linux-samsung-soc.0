@@ -1,232 +1,144 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH] cpufreq: tests: Providing cpufreq regression test
-Date: Fri, 18 Jul 2014 14:00:51 +0200
-Message-ID: <20140718140051.20054c26@amdc2363>
-References: <1405678985-21677-1-git-send-email-l.majewski@samsung.com>
- <2218713.u72ghDj0Dh@vostro.rjw.lan>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: exynos4x12: Enable ARMCLK down feature
+Date: Fri, 18 Jul 2014 15:01:18 +0200
+Message-ID: <53C91A9E.7020207@samsung.com>
+References: <1405677186-18678-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <2218713.u72ghDj0Dh@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Thomas Abraham <ta.omasab@gmail.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:29376 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755155AbaGRNCA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Jul 2014 09:02:00 -0400
+In-reply-to: <1405677186-18678-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Rafael,
+Hi Krzysztof,
 
-> On Friday, July 18, 2014 12:23:05 PM Lukasz Majewski wrote:
-> > This commit adds first regression test "cpufreq_freq_test.sh" for
-> > the cpufreq subsystem.
+On 18.07.2014 11:53, Krzysztof Kozlowski wrote:
+> Enable ARMCLK down and up features on Exynos4212 and 4412 SoCs. The
+> frequency of ARMCLK will be reduced upon entering idle mode (WFI or
+> WFE).  Additionally upon exiting from idle mode the divider for ARMCLK
+> will be brought back to 1.
 > 
-> Care to add any description of how it is supposed to work and what it
-> is going to test?
+> These are exactly the same settings as for Exynos5250
+> (clk-exynos5250.c), except of Exynos4412 where ARMCLK down is enabled
+> for all 4 cores.
 
-Ok. I will extend the description in the README file.
+Could you add a sentence or two about the purpose of this change? E.g.
+what it improves, in what conditions, etc.
 
 > 
-> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > ---
-> >  drivers/cpufreq/tests/README               |  23 +++++
-> >  drivers/cpufreq/tests/cpufreq_freq_test.sh | 149
-> > +++++++++++++++++++++++++++++ 2 files changed, 172 insertions(+)
-> >  create mode 100644 drivers/cpufreq/tests/README
-> >  create mode 100755 drivers/cpufreq/tests/cpufreq_freq_test.sh
-> > 
-> > diff --git a/drivers/cpufreq/tests/README
-> > b/drivers/cpufreq/tests/README new file mode 100644
-> > index 0000000..66638d2
-> > --- /dev/null
-> > +++ b/drivers/cpufreq/tests/README
-> > @@ -0,0 +1,23 @@
-> > +This file contains list of cpufreq's available regression tests
-> > with a short +usage description.
-> > +
-> > +1. cpufreq_freq_test.sh
-> > +
-> > +Description:
-> > +------------
-> > +This test is supposed to test if cpufreq attributes exported by
-> > sysfs are +exposing a correct values.
-> > +
-> > +It can work with or without boost enabled and helps spotting
-> > errors related to +cpufreq and common clock framework.
-> > +
-> > +Used attributes:
-> > +----------------
-> > +- "scaling_available_frequencies"
-> > +- "cpuinfo_cur_freq"
-> > +- "scaling_governor"
-> > +
-> > +Target devices:
-> > +---------------
-> > +
-> > +All devices which exports mentioned above sysfs attributes.
-> > \ No newline at end of file
-> > diff --git a/drivers/cpufreq/tests/cpufreq_freq_test.sh
-> > b/drivers/cpufreq/tests/cpufreq_freq_test.sh new file mode 100755
-> > index 0000000..53156ca
-> > --- /dev/null
-> > +++ b/drivers/cpufreq/tests/cpufreq_freq_test.sh
-> > @@ -0,0 +1,149 @@
-> > +#!/bin/bash
-> > +#
-> > +# This file provides a simple mean to test if all declared freqs at
-> > +# "scaling_available_frequencies" can be set and if
-> > "cpuinfo_cur_freq" +# returns this value.
-> > +#
-> > +# Usage: ./cpufreq_freq_test.sh
-> > +# Requisite: Compile in "performance" governor
-> > +#
-> > +# This program is free software; you can redistribute it and/or
-> > modify +# it under the terms of the GNU General Public License as
-> > published by +# the Free Software Foundation; either version 2 of
-> > the License, or +# (at your option) any later version.
-> > +#
-> > +# This program is distributed in the hope that it will be useful,
-> > +# but WITHOUT ANY WARRANTY; without even the implied warranty of
-> > +# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> > +# GNU General Public License for more details.
-> > +#
-> > +# You should have received a copy of the GNU General Public License
-> > +# along with this program; if not, you can access it online at
-> > +# http://www.gnu.org/licenses/gpl-2.0.html.
-> > +#
-> > +# Copyright (C) Samsung Electronics, 2014
-> > +#
-> > +# Author: Lukasz Majewski <l.majewski@samsung.com>
-> > +
-> > +set +x
-> > +
-> > +COLOUR_RED="\33[31m"
-> > +COLOUR_BLUE="\33[34m"
-> > +COLOUR_GREEN="\33[32m"
-> > +COLOUR_DEFAULT="\33[0m"
-> > +
-> > +T_PATCH=/sys/devices/system/cpu/cpu0/cpufreq
-> > +BOOST_PATCH=/sys/devices/system/cpu/cpufreq
-> > +
-> > +if [ ! -d "$T_PATCH" ]; then
-> > +    printf "   $COLOUR_RED No patch to CPUFREQ $COLOUR_DEFAULT\n"
-> > +    exit 1
-> > +fi
-> > +
-> > +ERRORS=0
-> > +
-> > +OLD_GOV=`cat $T_PATCH/scaling_governor`
-> > +echo "CURRENT GOVERNOR: $OLD_GOV"
-> > +echo "SET GOVERNOR: performance"
-> > +echo "performance" > $T_PATCH/scaling_governor
-> > +
-> > +function test_freqs1 {
-> > +    FREQS=`cat $1`
-> > +    for I in $FREQS; do
-> > +	cpufreq_set_freq $I
-> > +	if [ "$2" ]; then
-> > +	    printf "$COLOUR_BLUE BOOST $COLOUR_DEFAULT" $I
-> > +	fi
-> > +	cpufreq_test_freq $I
-> > +    done
-> > +}
-> > +
-> > +function test_freqs2 {
-> > +    FREQ=`cat $1`
-> > +    FREQS_ARRAY=($FREQ)
-> > +
-> > +    for freq in ${FREQS_ARRAY[@]}
-> > +    do
-> > +	echo "REFERENCE FREQ: $freq"
-> > +	for f in ${FREQS_ARRAY[@]}
-> > +	do
-> > +	    cpufreq_set_freq $freq
-> > +	    echo -n "----> "
-> > +	    cpufreq_set_freq $f
-> > +	    cpufreq_test_freq $f
-> > +	done
-> > +    done
-> > +}
-> > +
-> > +function restore {
-> > +    if [ -f $BOOST_PATCH/boost ]; then
-> > +	cpufreq_boost_state $BOOST_STATE
-> > +    fi
-> > +
-> > +    echo "SET GOVERNOR: $OLD_GOV"
-> > +    echo $OLD_GOV > $T_PATCH/scaling_governor
-> > +}
-> > +
-> > +function die {
-> > +    printf "   $COLOUR_RED FAILED $COLOUR_DEFAULT\n"
-> > +    restore_gov
-> > +    exit 1
-> > +}
-> > +
-> > +function cpufreq_test_freq {
-> > +    gzip < /dev/urandom > /dev/null &
-> > +    pid=$!
-> > +    sleep 0.1
-> > +    CURR_FREQ=`cat $T_PATCH/cpuinfo_cur_freq`
-> > +    if [ $1 -eq $CURR_FREQ ]; then
-> > +	printf "\t$COLOUR_GREEN OK $COLOUR_DEFAULT\n"
-> > +    else
-> > +	printf "$COLOUR_RED CURRENT $CURR_FREQ $COLOUR_DEFAULT\n"
-> > +	ERRORS=`expr $ERRORS + 1`
-> > +	#die
-> > +    fi
-> > +    kill -9 $pid
-> > +    wait $! 2>/dev/null
-> > +}
-> > +
-> > +function cpufreq_set_freq {
-> > +    echo $1 > $T_PATCH/scaling_max_freq || die $?
-> > +    printf "FREQ:$COLOUR_GREEN %s $COLOUR_DEFAULT" $1
-> > +}
-> > +
-> > +function cpufreq_boost_state {
-> > +   echo $1 > $BOOST_PATCH/boost
-> > +}
-> > +
-> > +function cpufreq_boost_status {
-> > +   cat $BOOST_PATCH/boost
-> > +}
-> > +
-> > +if [ -f $BOOST_PATCH/boost ]; then
-> > +    echo "######################################"
-> > +    echo "TEST BOOST OPERATION"
-> > +    echo "######################################"
-> > +
-> > +    BOOST_STATE=$(cpufreq_boost_status)
-> > +    if [ $BOOST_STATE -eq 0 ]; then
-> > +	cpufreq_boost_state 1
-> > +    fi
-> > +    test_freqs1 $T_PATCH/scaling_boost_frequencies 1
-> > +fi
-> > +
-> > +echo "######################################"
-> > +echo "TEST AVAILABLE FREQS"
-> > +echo "######################################"
-> > +test_freqs1 $T_PATCH/scaling_available_frequencies
-> > +
-> > +echo "######################################"
-> > +echo "TEST FREQS SWITCHING"
-> > +echo "######################################"
-> > +test_freqs2 $T_PATCH/scaling_available_frequencies
-> > +
-> > +echo "######################################"
-> > +echo "ERRORS: $ERRORS"
-> > +echo "######################################"
-> > +
-> > +restore
-> > +exit 0
-> > 
+> Tested on Trats2 board (Exynos4412) and Samsung Gear 1 (Exynos4212).
 > 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos4.c | 53 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index 7f4a473a7ad7..b8ea37b23984 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -114,11 +114,34 @@
+>  #define DIV_CPU1		0x14504
+>  #define GATE_SCLK_CPU		0x14800
+>  #define GATE_IP_CPU		0x14900
+> +#define PWR_CTRL1		0x15020
+> +#define PWR_CTRL2		0x15024
 
+I guess these registers should be also added to save/restore list below
+in this driver.
 
+>  #define E4X12_DIV_ISP0		0x18300
+>  #define E4X12_DIV_ISP1		0x18304
+>  #define E4X12_GATE_ISP0		0x18800
+>  #define E4X12_GATE_ISP1		0x18804
+>  
+> +/* Below definitions are used for PWR_CTRL settings */
+> +#define PWR_CTRL1_CORE2_DOWN_RATIO		(7 << 28)
+> +#define PWR_CTRL1_CORE1_DOWN_RATIO		(7 << 16)
 
--- 
+I think these macros could be defined to take the ratio as its argument,
+e.g.
+
+#define PWR_CTRL1_CORE2_DOWN_RATIO(x)		((x) << 28)
+
+> +#define PWR_CTRL1_DIV2_DOWN_EN			(1 << 9)
+> +#define PWR_CTRL1_DIV1_DOWN_EN			(1 << 8)
+> +#define PWR_CTRL1_USE_CORE3_WFE			(1 << 7)
+> +#define PWR_CTRL1_USE_CORE2_WFE			(1 << 6)
+> +#define PWR_CTRL1_USE_CORE1_WFE			(1 << 5)
+> +#define PWR_CTRL1_USE_CORE0_WFE			(1 << 4)
+> +#define PWR_CTRL1_USE_CORE3_WFI			(1 << 3)
+> +#define PWR_CTRL1_USE_CORE2_WFI			(1 << 2)
+> +#define PWR_CTRL1_USE_CORE1_WFI			(1 << 1)
+> +#define PWR_CTRL1_USE_CORE0_WFI			(1 << 0)
+> +
+> +#define PWR_CTRL2_DIV2_UP_EN			(1 << 25)
+> +#define PWR_CTRL2_DIV1_UP_EN			(1 << 24)
+> +#define PWR_CTRL2_DUR_STANDBY2_VAL		(1 << 16)
+> +#define PWR_CTRL2_DUR_STANDBY1_VAL		(1 << 8)
+
+These two too.
+
+> +#define PWR_CTRL2_CORE2_UP_RATIO		(1 << 4)
+> +#define PWR_CTRL2_CORE1_UP_RATIO		(1 << 0)
+
+These two as well.
+
+> +
+>  /* the exynos4 soc type */
+>  enum exynos4_soc {
+>  	EXYNOS4210,
+> @@ -1164,6 +1187,34 @@ static struct samsung_pll_clock exynos4x12_plls[nr_plls] __initdata = {
+>  			VPLL_LOCK, VPLL_CON0, NULL),
+>  };
+>  
+> +static void __init exynos4_core_down_clock(void)
+> +{
+> +	unsigned int tmp;
+> +
+> +	/*
+> +	 * Enable arm clock down (in idle) and set arm divider
+> +	 * ratios in WFI/WFE state.
+> +	 */
+> +	tmp = (PWR_CTRL1_CORE2_DOWN_RATIO | PWR_CTRL1_CORE1_DOWN_RATIO |
+> +		PWR_CTRL1_DIV2_DOWN_EN | PWR_CTRL1_DIV1_DOWN_EN |
+> +		PWR_CTRL1_USE_CORE1_WFE | PWR_CTRL1_USE_CORE0_WFE |
+> +		PWR_CTRL1_USE_CORE1_WFI | PWR_CTRL1_USE_CORE0_WFI);
+> +	if (of_machine_is_compatible("samsung,exynos4412"))
+
+Maybe you could use num_possible_cpus() here instead?
+
+> +		tmp |= PWR_CTRL1_USE_CORE3_WFE | PWR_CTRL1_USE_CORE2_WFE |
+> +		       PWR_CTRL1_USE_CORE3_WFI | PWR_CTRL1_USE_CORE2_WFI;
+> +	__raw_writel(tmp, reg_base + PWR_CTRL1);
+> +
+> +	/*
+> +	 * Enable arm clock up (on exiting idle). Set arm divider
+> +	 * ratios when not in idle along with the standby duration
+> +	 * ratios.
+> +	 */
+> +	tmp = (PWR_CTRL2_DIV2_UP_EN | PWR_CTRL2_DIV1_UP_EN |
+> +		PWR_CTRL2_DUR_STANDBY2_VAL | PWR_CTRL2_DUR_STANDBY1_VAL |
+> +		PWR_CTRL2_CORE2_UP_RATIO | PWR_CTRL2_CORE1_UP_RATIO);
+> +	__raw_writel(tmp, reg_base + PWR_CTRL2);
+
+Do we need the clock up feature at all? The values you set seem to
+configure both dividers to 2 (resulting in arm_clk = apll / 4) for a
+very short period of time (16 ticks of some, unfortunately unspecified,
+clock) between wake-up and setting the frequency back to normal.
+Moreover, for certain settings (div_core * div_core2 set to > 4 by
+cpufreq) this might cause issues with activating higher frequency than
+current voltage allows.
+
+I believe the same comments apply for patch 2/2 as well.
+
 Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+Tomasz
