@@ -1,36 +1,42 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: ASoC: samsung: MACH_SMDKC100
-Date: Fri, 18 Jul 2014 10:55:49 +0200
-Message-ID: <1405673749.2155.5.camel@x220>
-References: <1404288063.12021.13.camel@x220>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCHv6 0/4] iio: adc: exynos_adc: Support Exynos3250 ADC and code clean
+Date: Fri, 18 Jul 2014 11:38:27 +0200
+Message-ID: <59765980.V0Hsx6tyKd@wuerfel>
+References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews10.kpnxchange.com ([213.75.39.15]:49779 "EHLO
-	cpsmtpb-ews10.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751084AbaGRIzv (ORCPT
+Received: from mout.kundenserver.de ([212.227.17.24]:55253 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761066AbaGRJja (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jul 2014 04:55:51 -0400
-In-Reply-To: <1404288063.12021.13.camel@x220>
+	Fri, 18 Jul 2014 05:39:30 -0400
+In-Reply-To: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Jason Cooper <jason@lakedaemon.net>, Ben Dooks <ben-linux@fluff.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org, ch.naveen@samsung.com, mark.rutland@arm.com, devicetree@vger.kernel.org, kgene.kim@samsung.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, t.figa@samsung.com, rdunlap@infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org
 
-Kukjin,
-
-On Wed, 2014-07-02 at 10:01 +0200, Paul Bolle wrote:
-> Your commit 52ad6582ceb2 ("ARM: S5PC100: no more support S5PC100 SoC"
-> landed in next-20140702. It removed the Kconfig symbol MACH_SMDKC100
-> (and a lot of other stuff).
+On Friday 18 July 2014 14:59:42 Chanwoo Choi wrote:
+> This patchset support Exynos3250 ADC (Analog Digital Converter) because
+> Exynos3250 has additional special clock for ADC IP.
 > 
-> Is the trivial patch to also remove the last two references to
-> MACH_SMDKC100 from sound/soc/samsung/Kconfig/ queued somewhere? I don't
-> think it was part of the series that included the above commit.
 
-Have you had time to look at this? Those last two references to
-MACH_SMDKC100 can still be seen in next-20140718.
+by coincidence, I have just looked at the same driver in order to
+add support for s3c24xx and s3c64xx, so we can remove the plat-samsung
+adc framework they still use.  Those changes would naturally conflict
+with yours, but I think it makes sense for your patches to come first.
 
+I'll comment a bit more on the individual patches. I didn't have
+interest in them earlier, so I didn't comment so far.
 
-Paul Bolle
+Another aspect that came up is the touchscreen support. Right now,
+there is drivers/input/touchscreen/s3c2410_ts.c which is intimately
+tied to arch/arm/plat-samsung/adc.c. The best way forward (as discussed
+on IRC as few days ago) seems to be to integrate support for that into
+the exynos_adc driver. Can you comment on which parts actually support
+touchscreen? Did touchscreen support get dropped in the exynos hardware,
+or is the driver just missing at the moment?
+
+	Arnd
