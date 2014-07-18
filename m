@@ -1,48 +1,72 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCHv6 2/4] iio: adc: exynos_adc: Control special clock of ADC to support Exynos3250 ADC
-Date: Fri, 18 Jul 2014 17:23:30 +0200
-Message-ID: <32226622.5gSmvBRKvZ@wuerfel>
-References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com> <6917971.QKItNU3coA@wuerfel> <CAGTfZH1EHiTpo2Abua=+kDfNoOQx+ydPHU51=+qW8mgCL4Lwvg@mail.gmail.com>
+From: Przemyslaw Marczak <p.marczak@samsung.com>
+Subject: Re: [PATCH v2 0/4] Add Exynos4412 based Odroid X2 and U2/U3/U3+ support
+Date: Fri, 18 Jul 2014 17:40:27 +0200
+Message-ID: <53C93FEB.2030507@samsung.com>
+References: <1403702773-9141-1-git-send-email-m.szyprowski@samsung.com>
+ <53B0F6D1.4090006@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CAGTfZH1EHiTpo2Abua=+kDfNoOQx+ydPHU51=+qW8mgCL4Lwvg@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Chanwoo Choi <cwchoi00@gmail.com>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, rdunlap@infradead.org, linux-doc@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, galak@codeaurora.org, naveen krishna <ch.naveen@samsung.com>, jic23@kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:20838 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965094AbaGRPlD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Jul 2014 11:41:03 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N8W00JG0ZK64370@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 Jul 2014 16:40:54 +0100 (BST)
+In-reply-to: <53B0F6D1.4090006@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Przemyslaw Marczak <p.marczak@samsung.com>, Olof Johansson <olof@lixom.net>
 
-On Saturday 19 July 2014 00:15:35 Chanwoo Choi wrote:
-> On Fri, Jul 18, 2014 at 8:14 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Friday 18 July 2014 19:00:48 Chanwoo Choi wrote:
-> >> On 07/18/2014 06:47 PM, Arnd Bergmann wrote:
-> >> >
-> >> > Further, why is it called "sclk_adc" rather than just "sclk"?
-> >>
-> >> The sclk means 'special clock' in Exynos TRM. Exynos SoC has varisou sclk clocks.
-> >> 'sclk_adc' is only used for ADC IP.
-> >
-> > But that sounds like sclk_adc is the name of the global name
-> > of the clock signal coming out of the clock controller.
-> >
-> > I still think it would be best to name it 'sclk' as the input
-> > for the adc. It shouldn't rely on a particular name of the
-> > clock controller.
-> 
-> I think 'sclk' is too common name. 'sclk' don't include specific device name.
-> As I know, usual clock name includes the name of IP or includes the
-> specific meaning for each IP.
+Hello,
 
-No, normally it does not include the name of the IP, that's my whole point.
-Including the name of the IP is completely pointless because that is
-implied by the fact that it's being used by that particular IP.
+On 06/30/2014 07:34 AM, Marek Szyprowski wrote:
+> Hello,
+>
+> On 2014-06-25 15:26, Marek Szyprowski wrote:
+>> Hello,
+>>
+>> This is the second version of the initial patch series adding support
+>> for Exynos 4412 based Odroid X2 and U2/U3/U3+ boards and improving
+>> support for Odroid X.
+>>
+>> Complete USB support for Odroid U2/U3/U3+ still requires some fixes in
+>> Exynos4 USB2 Phy driver and clock driver for CLKOUT:
+>> http://thread.gmane.org/gmane.linux.kernel/1731843/
+>> http://www.spinics.net/lists/linux-usb/msg109587.html
+>> The above changes however don't affect Odroid DTS files, but without
+>> them, usb3503 hub is not yet functional.
+>>
+>> Support for audio codec will be posted separately by Sylwester Nawrocki
+>> soon. Support for HDMI video output will be also posted separately
+>> together with the required ExynosDRM-HDMI fixes.
+>>
+>> If one is interested in more complete and open-source Odroid board
+>> support, there are also patches for u-boot project:
+>> http://thread.gmane.org/gmane.comp.boot-loaders.u-boot/188295/focus=188610
+>>
+>
+> Just to let everyone knows - updated Odroid patches for uboot has been
+> posted in the following thread:
+> http://www.mail-archive.com/u-boot@lists.denx.de/msg141234.html
+> You can also download them here:
+> http://patchwork.ozlabs.org/project/uboot/list/?submitter=23519
+>
+> Best regards
 
-Ideally you would find the data sheet for the ADC IP block and figure
-out what this clock is used for, then find the right name for that.
-In a lot of cases, we are actually better off not naming the clocks
-at all but simply enumerating them if nobody knows what they are good
-for. In that case, you would simply have the first clock and the second
-clock of the ADC part and enable them both.
+Please follow the link to the new U-boot Odroid U3/X2 patches:
 
-	Arnd
+http://www.mail-archive.com/u-boot@lists.denx.de/msg142507.html
+
+Regards,
+-- 
+Przemyslaw Marczak
+Samsung R&D Institute Poland
+Samsung Electronics
+p.marczak@samsung.com
