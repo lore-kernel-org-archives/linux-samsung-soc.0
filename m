@@ -1,66 +1,68 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCHv6 3/4] iio: devicetree: Add DT binding documentation for
- Exynos3250 ADC
-Date: Sat, 19 Jul 2014 02:02:09 +0900
-Message-ID: <CAGTfZH3mnPJ72wi7aFYoChe_OeuRVsUVo3KGRRLTV5scwPbO4g@mail.gmail.com>
-References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
-	<6104032.PNRl85V92G@wuerfel>
-	<CAGTfZH3cH-QFMbfTWJJfTPTRT-Bij2TW=6CH_Yy-GaZqZvn-Xg@mail.gmail.com>
-	<5835825.JtcDoyOP8b@wuerfel>
+From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Subject: [PATCH v2 0/4] ARM: dts: exynos: Prepare Spring
+Date: Fri, 18 Jul 2014 19:20:05 +0200
+Message-ID: <1405704009-8430-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5835825.JtcDoyOP8b@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org, naveen krishna <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, pawel.moll@arm.com, Mark Rutland <mark.rutland@arm.com>, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, rdunlap@infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-iio@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephan van Schaik <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Jul 19, 2014 at 1:33 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Saturday 19 July 2014 01:23:15 Chanwoo Choi wrote:
->> If don't add new compatible including specific exynos version,
->> I would add new 'adc-needs-sclk' property with existing 'exynos-adc-v2'
->> compatible name.
->>
->>
->> Dear Naveen, Tomasz,
->>
->> If existing exynos-adc driver add just one property for 'sclk_adc'
->> as following, exynos-adc could not include the exynos version
->> in compatible name.
->>
->> I need your opinion about it.
->>
->>                 adc: adc@126C0000 {
->>                         compatible = "samsung,exynos-adc-v2";
->>                         reg = <0x126C0000 0x100>, <0x10020718 0x4>;
->>                         interrupts = <0 137 0>;
->>                         clock-names = "adc", "sclk_adc";
->>                         clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
->> +                        adc-needs-sclk;
->>                         #io-channel-cells = <1>;
->>                         io-channel-ranges;
->>                 }
->
-> How about just making it an optional clock? That would be much
-> easier because then you can simply see if the clock itself is
-> there and use it, or otherwise ignore it.
+Hello,
 
-The v1 of this patchset[1] got the clock of 'sclk_adc'  but if the dt node
-of ADC in dtsi file didn't include 'sclk_adc', print just warning message
-without stopping probe as following:
+Based on the preinstalled 3.8 based ChromeOS kernel and previous 3.15=20
+based attempts by Stephan and me that broke for 3.16, I've prepared a=20
+device tree for the HP Chromebook 11 aka Google Spring.
 
- [1] https://lkml.org/lkml/2014/4/10/710
+v2 reuses the new cros-ec-keyboard.dtsi and retires exynos5250-cros-com=
+mon.dtsi.
+It drops the timings subnode from dp-controller in expectation of the n=
+ew
+drm eDP bridge framework, which needs it under a different node.
+The built-in MMC is now usable, its node had been inherited as "disable=
+d".
 
-+       info->sclk = devm_clk_get(&pdev->dev, "sclk_adc");
-+       if (IS_ERR(info->sclk)) {
-+               dev_warn(&pdev->dev, "failed getting sclk clock, err = %ld\n",
-+                                                       PTR_ERR(info->sclk));
-+               info->sclk = NULL;
-+       }
+Not yet enabled are trackpad, Wifi and sound.
 
-But, Tomasz Figa suggested the method[2] of this patchset(v6).
- [2] https://lkml.org/lkml/2014/4/11/189
+Now depends on a Tegra branch (pull pending):
+http://git.kernel.org/cgit/linux/kernel/git/tegra/linux.git/log/?h=3Dfo=
+r-3.17/dt-cros-ec-kbd
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 
-Thanks,
-Chanwoo Choi
+My rebasing branch for testing is here:
+https://github.com/afaerber/linux/commits/spring-next
+
+Regards,
+Andreas
+
+v1 -> v2:
+* Dropped 3 documentation patches from series:
+  2 picked up,
+  https://patchwork.kernel.org/patch/4397271/
+  https://patchwork.kernel.org/patch/4397291/
+  1 already sent separately as v2, pending.
+  https://patchwork.kernel.org/patch/4424881/
+* Minimized and beautified Spring device tree and to some degree Snow a=
+s well.
+  See individual patches.
+
+Andreas F=C3=A4rber (4):
+  ARM: dts: exynos5250: max77686 is Snow only
+  ARM: dts: exynos5250: cypress,cyapa trackpad is Snow only
+  ARM: dts: exynos5250: Fold common ChromeOS parts into Snow
+  ARM: dts: exynos5250: Add Spring device tree
+
+ arch/arm/boot/dts/Makefile                    |   1 +
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi | 323 -----------------
+ arch/arm/boot/dts/exynos5250-snow.dts         | 334 ++++++++++++++++--
+ arch/arm/boot/dts/exynos5250-spring.dts       | 485 ++++++++++++++++++=
+++++++++
+ 4 files changed, 799 insertions(+), 344 deletions(-)
+ delete mode 100644 arch/arm/boot/dts/exynos5250-cros-common.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5250-spring.dts
+
+--=20
+1.9.3
