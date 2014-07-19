@@ -1,103 +1,573 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 0/7] Exynos4: enable HDMI support for Odroid and UniversalC210
-Date: Sat, 19 Jul 2014 19:40:14 +0900
-Message-ID: <CAAQKjZPzWEkvCejGurkDh78BZTu_ad9saQPkg2cBFFd4=HktVg@mail.gmail.com>
-References: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v7 1/6] clk: samsung: add infrastructure to register cpu
+ clocks
+Date: Sat, 19 Jul 2014 14:55:35 +0200
+Message-ID: <53CA6AC7.9020205@gmail.com>
+References: <1405345118-4269-1-git-send-email-thomas.ab@samsung.com> <1405345118-4269-2-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:58444 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758166AbaGSKkP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 19 Jul 2014 06:40:15 -0400
-Received: by mail-wi0-f169.google.com with SMTP id n3so2189611wiv.4
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Jul 2014 03:40:14 -0700 (PDT)
-In-Reply-To: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1405345118-4269-2-git-send-email-thomas.ab@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Kukjin Kim <kgene.kim@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-2014-07-01 17:10 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
-> Hello,
->
-> This is a long awaited patch series enabling support for HDMI output
-> available on Exynos4412-based Odroid boards (X/X2/U2/U3/U3+) and
-> Exynos4210 Universal C210 board.
->
-> This patch consists of 3 groups of patches, which are aimed to be merged
-> to respective maintainer kernel trees.
->
-> First patch ("clk: exynos4: add support for MOUT_HDMI and MOUT_MIXER
-> clocks") adds missing device tree support for hdmi related clocks. It is
-> prepared for clk kernel tree.
->
-> Next two patches ("drm: exynos: hdmi: make 'hdmi-en' regulator optional
-> and keep it enabled" and "drm: hdmi/mixer: enable exynos 4210 and 4x12
-> soc support") add proper support for Exynos4 SoCs to Exynos DRM drivers.
-> Those patches should go to exynos-drm kernel tree.
 
-Picked them up.
 
-Thanks,
-Inki Dae
+Hi Thomas,
 
->
-> Last patches ("Exynos: add support for 'domain-always-on' property",
-> "ARM: dts: exynos4: add hdmi related nodes", "ARM: dts:
-> exynos4412-odroid: enable hdmi support" and "ARM: dts:
-> exynos4210-universal_c210: enable hdmi support") adds changes to all DTS
-> files and adds 'domain-always-on' property to Exynos power-domain
-> driver. This property is needed to resolve the non-trivial dependences
-> between TV and LCD0 power domains and the power on/off sequence of the
-> TV and mixer modules.
->
-> Patches are prepared on top of v3.16-rc3 with '[PATCH v2 0/4] Add
-> Exynos4412 based Odroid X2 and U2/U3/U3+ support' series and '[PATCH]
-> ARM: dts: exynos4412-odroid: add support for GPIO buttons' patch
-> applied:
-> http://www.spinics.net/lists/linux-samsung-soc/msg33115.html
-> http://www.spinics.net/lists/linux-samsung-soc/msg33497.html
->
-> Kernel tree with all Odroid related patches is available at
-> http://git.linaro.org/git-ro/people/marek.szyprowski/linux-srpol.git
-> on v3.16-odroid branch.
->
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
->
-> Marek Szyprowski (6):
->   clk: exynos4: add support for MOUT_HDMI and MOUT_MIXER clocks
->   drm: exynos: hdmi: make 'hdmi-en' regulator optional and keep it
->     enabled
->   drm: hdmi/mixer: enable exynos 4210 and 4x12 soc support
->   Exynos: add support for 'domain-always-on' property
->   ARM: dts: exynos4: add hdmi related nodes
->   ARM: dts: exynos4412-odroid: enable hdmi support
->
-> Tomasz Stanislawski (1):
->   ARM: dts: exynos4210-universal_c210: enable hdmi support
->
->  .../bindings/arm/exynos/power_domain.txt           |  2 +
->  .../devicetree/bindings/video/exynos_mixer.txt     |  5 +-
->  arch/arm/boot/dts/exynos4.dtsi                     | 37 ++++++++++++
->  arch/arm/boot/dts/exynos4210-universal_c210.dts    | 65 ++++++++++++++++++++++
->  arch/arm/boot/dts/exynos4210.dtsi                  |  5 ++
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi    | 52 +++++++++++++++++
->  arch/arm/boot/dts/exynos4x12.dtsi                  | 10 ++++
->  arch/arm/mach-exynos/pm_domains.c                  |  6 +-
->  drivers/clk/samsung/clk-exynos4.c                  |  4 +-
->  drivers/gpu/drm/exynos/exynos_hdmi.c               | 29 +++++++++-
->  drivers/gpu/drm/exynos/exynos_mixer.c              | 51 ++++++++++++-----
->  include/dt-bindings/clock/exynos4.h                |  2 +
->  12 files changed, 247 insertions(+), 21 deletions(-)
->
-> --
-> 1.9.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please see my comments inline.
+
+On 14.07.2014 15:38, Thomas Abraham wrote:
+
+[snip]
+
+> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+> new file mode 100644
+> index 0000000..0d62968
+> --- /dev/null
+> +++ b/drivers/clk/samsung/clk-cpu.c
+> @@ -0,0 +1,576 @@
+> +/*
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + * Author: Thomas Abraham <thomas.ab@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This file contains the utility functions to register the CPU clocks
+> + * for Samsung platforms.
+
+I'd expect few words here or in separate comment on how the code works,
+i.e. assumptions made, most important procedures, etc. This is a complex
+piece of code for quite complex hardware, so proper documentation is
+essential.
+
+> +*/
+> +
+> +#include <linux/errno.h>
+> +#include "clk.h"
+> +
+> +#define E4210_SRC_CPU		0x0
+> +#define E4210_STAT_CPU		0x200
+> +#define E4210_DIV_CPU0		0x300
+> +#define E4210_DIV_CPU1		0x304
+> +#define E4210_DIV_STAT_CPU0	0x400
+> +#define E4210_DIV_STAT_CPU1	0x404
+> +
+> +#define MAX_DIV			8
+> +#define DIV_MASK		7
+> +#define DIV_MASK_ALL		0xffffffff
+> +#define MUX_MASK		7
+> +
+> +#define E4210_DIV0_RATIO0_MASK	0x7
+> +#define E4210_DIV1_HPM_MASK	((0x7 << 4) | (0x7 << 0))
+
+This mask contains two fields, doesn't it? I'd say it would be better
+for readability if you split it.
+
+> +#define E4210_MUX_HPM_MASK	(1 << 20)
+> +#define E4210_DIV0_ATB_SHIFT	16
+> +#define E4210_DIV0_ATB_MASK	(DIV_MASK << E4210_DIV0_ATB_SHIFT)
+> +
+> +#define E4210_CPU_DIV0(apll, pclk_dbg, atb, periph, corem1, corem0)	\
+> +		(((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |	\
+> +		((periph) << 12) | ((corem1) << 8) | ((corem0) <<  4))
+> +#define E4210_CPU_DIV1(hpm, copy)					\
+> +		(((hpm) << 4) | ((copy) << 0))
+> +
+> +#define E5250_CPU_DIV0(apll, pclk_dbg, atb, periph, acp, cpud)		\
+> +		(((apll << 24) | (pclk_dbg << 20) | (atb << 16) |	\
+> +		 (periph << 12) | (acp << 8) | (cpud << 4)))
+> +#define E5250_CPU_DIV1(hpm, copy)					\
+> +		(((hpm) << 4) | (copy))
+> +
+> +#define E5420_EGL_DIV0(apll, pclk_dbg, atb, cpud)			\
+> +		(((apll << 24) | (pclk_dbg << 20) | (atb << 16) |	\
+> +		 (cpud << 4)))
+> +#define E5420_KFC_DIV(kpll, pclk, aclk)					\
+> +		(((kpll << 24) | (pclk << 20) | (aclk << 4)))
+
+Again, used macro arguments should always be surrounded with parentheses.
+
+> +
+> +enum cpuclk_type {
+> +	EXYNOS4210,
+> +	EXYNOS5250,
+> +	EXYNOS5420,
+> +};
+> +
+> +/**
+> + * struct exynos4210_cpuclk_data: config data to setup cpu clocks.
+
+It seems like this could be used for all Exynos SoCs, so probably should
+be called exynos_cpuclk_data.
+
+> + * @prate: frequency of the primary parent clock (in KHz).
+> + * @div0: value to be programmed in the div_cpu0 register.
+> + * @div1: value to be programmed in the div_cpu1 register.
+> + *
+> + * This structure holds the divider configuration data for dividers in the CPU
+> + * clock domain. The parent frequency at which these divider values are valid is
+> + * specified in @prate. The @prate is the frequency of the primary parent clock.
+> + * For CPU clock domains that do not have a DIV1 register, the @div1 member
+> + * is optional.
+> + */
+> +struct exynos4210_cpuclk_data {
+> +	unsigned long	prate;
+> +	unsigned int	div0;
+> +	unsigned int	div1;
+> +};
+> +
+> +/**
+> + * struct exynos_cpuclk: information about clock supplied to a CPU core.
+> + * @hw:	handle between CCF and CPU clock.
+> + * @alt_parent: alternate parent clock to use when switching the speed
+> + *	of the primary parent clock.
+> + * @ctrl_base:	base address of the clock controller.
+> + * @offset: offset from the ctrl_base address where the CPU clock div/mux
+> + *	registers can be accessed.
+> + * @lock: cpu clock domain register access lock.
+> + * @type: type of the CPU clock.
+> + * @data: optional data which the actual instantiation of this clock
+> + *	can use.
+> + * @clk_nb: clock notifier registered for changes in clock speed of the
+> + *	primary parent clock.
+> + * @pre_rate_cb: callback function to handle PRE_RATE_CHANGE notification
+> + *	of the primary parent clock.
+> + * @post_rate_cb: callback function to handle POST_RATE_CHANGE notification
+> + *	of the primary parent clock.
+> + *
+> + * This structure holds information required for programming the cpu clock for
+> + * various clock speeds.
+
+nit: s/cpu/CPU/
+
+> + */
+> +struct exynos_cpuclk {
+> +	struct clk_hw		hw;
+> +	struct clk		*alt_parent;
+> +	void __iomem		*ctrl_base;
+> +	unsigned long		offset;
+> +	spinlock_t		*lock;
+> +	enum cpuclk_type	type;
+> +	const void		*data;
+
+The code always expects this to be const struct exynos4210_cpuclk_data.
+Why not make this field so?
+
+Also this is not some plain data, but an array of operating points, so
+probably a name like "rates" would be better.
+
+> +	struct notifier_block   clk_nb;
+> +	int			(*pre_rate_cb)(struct clk_notifier_data *,
+> +					struct exynos_cpuclk *,
+> +					void __iomem *base);
+> +	int			(*post_rate_cb)(struct clk_notifier_data *,
+> +					struct exynos_cpuclk *,
+> +					void __iomem *base);
+
+All the Exynos SoCs supported by this patch seem to be using exactly the
+same notifiers. We don't know what changes in further SoCs, so there is
+no guarantee that having these as pointer here will give us any
+benefits. I'd recommend just getting rid of this indirection for now. If
+it turns out to be needed, it will be trivial to add it back.
+
+> +};
+> +
+> +#define to_exynos_cpuclk_hw(hw) container_of(hw, struct exynos_cpuclk, hw)
+> +#define to_exynos_cpuclk_nb(nb) container_of(nb, struct exynos_cpuclk, clk_nb)
+
+Please make these static inlines for type safety.
+
+> +
+> +/**
+> + * struct exynos_cpuclk_soc_data: soc specific data for cpu clocks.
+> + * @ops: clock operations to be used for this clock.
+> + * @offset: optional offset from base of clock controller register base, to
+> + *	be used when accessing clock controller registers related to the
+> + *	CPU clock.
+> + * @data: SoC specific data for cpuclk configuration (optional).
+
+How is this optional? Can this code work without a list of operating points?
+
+> + * @data_size: size of the data contained in @data member.
+
+Both fields could be probably named "rates" and "num_rates", with the
+meaning of the latter changed to mean the number of entries, not size in
+bytes.
+
+> + * @type: type of the CPU clock.
+> + * @pre_rate_cb: callback function to handle PRE_RATE_CHANGE notification
+> + *	of the primary parent clock.
+> + * @post_rate_cb: callback function to handle POST_RATE_CHANGE notification
+> + *	of the primary parent clock.
+> + *
+> + * This structure provides SoC specific data for CPU clocks. Based on
+> + * the compatible value of the clock controller node, the value of the
+> + * fields in this structure can be populated.
+> + */
+> +struct exynos_cpuclk_soc_data {
+> +	const struct clk_ops	*ops;
+> +	unsigned int		offset;
+> +	const void		*data;
+
+Same comments as for the data field above.
+
+> +	const unsigned int	data_size;
+
+If the same struct is always used it would be clearer to
+
+> +	enum cpuclk_type	type;
+> +	int			(*pre_rate_cb)(struct clk_notifier_data *,
+> +					struct exynos_cpuclk *,
+> +					void __iomem *base);
+> +	int			(*post_rate_cb)(struct clk_notifier_data *,
+> +					struct exynos_cpuclk *,
+> +					void __iomem *base);
+
+Same comment as above.
+
+> +};
+
+It looks like instead of duplicating most of the fields of this struct
+in exynos_cpuclk struct the latter could simply have a pointer to an
+instance of the former.
+
+> +
+> +/*
+> + * Helper function to wait until divider(s) have stabilized after the divider
+> + * value has changed.
+> + */
+
+How about a kernel doc like comments for functions as well? (same
+comment for remaining functions)
+
+> +static void wait_until_divider_stable(void __iomem *div_reg, unsigned long mask)
+> +{
+> +	unsigned long timeout = jiffies + msecs_to_jiffies(10);
+> +
+> +	do {
+> +		if (!(readl(div_reg) & mask))
+> +			return;
+> +	} while (time_before(jiffies, timeout));
+> +
+> +	pr_err("%s: timeout in divider stablization\n", __func__);
+> +}
+
+[snip]
+
+> +/* common recalc rate callback useable for all types of CPU clocks */
+> +static unsigned long exynos_cpuclk_recalc_rate(struct clk_hw *hw,
+> +			unsigned long parent_rate)
+> +{
+
+This function is so trivial that it might be reasonable to explain why
+nothing else is needed, e.g.
+
+	/*
+	 * The CPU clock output (armclk) rate is the same as its parent
+	 * rate. Although there exist certain dividers inside the CPU
+	 * clock block that could be used to divide the parent clock,
+	 * the driver does not make use of them currently, except during
+	 * frequency transitions.
+	 */
+
+> +	return parent_rate;
+> +}
+> +
+> +static const struct clk_ops exynos_cpuclk_clk_ops = {
+> +	.recalc_rate = exynos_cpuclk_recalc_rate,
+> +	.round_rate = exynos_cpuclk_round_rate,
+> +};
+> +
+> +/*
+> + * Calculates the divider value to be set for deriving drate from prate.
+> + * Divider value is actual divider value - 1.
+> + */
+> +static unsigned long _calc_div(unsigned long prate, unsigned long drate)
+> +{
+> +	unsigned long div = DIV_ROUND_UP(prate, drate) - 1;
+> +
+> +	WARN_ON(div >= MAX_DIV);
+> +	return div;
+> +}
+
+This function seems to be used just once. Not even saying about its
+strange semantics - the name would suggest a real divider being
+returned, but it's not, it's divider minus one.
+
+So I'd suggest to completely remove this function and simply paste its
+contents instead, since it's only used once.
+
+> +
+
+[snip]
+
+> +/* helper function to register a cpu clock */
+> +static int __init exynos_cpuclk_register(struct samsung_clk_provider *ctx,
+> +		unsigned int lookup_id, const char *name, const char *parent,
+> +		const char *alt_parent, struct device_node *np,
+> +		const struct exynos_cpuclk_soc_data *soc_data)
+> +{
+> +	struct exynos_cpuclk *cpuclk;
+> +	struct clk_init_data init;
+> +	struct clk *clk;
+> +	void *data;
+> +	int ret = 0;
+> +
+> +	cpuclk = kzalloc(sizeof(*cpuclk), GFP_KERNEL);
+> +	if (!cpuclk)
+> +		return -ENOMEM;
+> +
+> +	data = kmalloc(soc_data->data_size, GFP_KERNEL);
+
+You could simply use kmemdup() here to duplicate the source array. Also
+the return value could be already saved in cpuclk->data without the need
+for a local variable.
+
+> +	if (!data) {
+> +		ret = -ENOMEM;
+> +		goto free_cpuclk;
+> +	}
+> +
+> +	init.name = name;
+> +	init.flags = CLK_SET_RATE_PARENT;
+> +	init.parent_names = &parent;
+> +	init.num_parents = 1;
+> +	init.ops = soc_data->ops;
+> +
+> +	cpuclk->hw.init = &init;
+> +	cpuclk->ctrl_base = ctx->reg_base;
+> +	cpuclk->lock = &ctx->lock;
+> +	cpuclk->offset = soc_data->offset;
+> +	cpuclk->type = soc_data->type;
+> +	cpuclk->pre_rate_cb = soc_data->pre_rate_cb;
+> +	cpuclk->post_rate_cb = soc_data->post_rate_cb;
+> +	memcpy(data, soc_data->data, soc_data->data_size);
+> +	cpuclk->data = data;
+> +
+> +	cpuclk->clk_nb.notifier_call = exynos_cpuclk_notifier_cb;
+> +	ret = clk_notifier_register(__clk_lookup(parent), &cpuclk->clk_nb);
+
+It would be a good idea to check if __clk_lookup() succeeded and error
+out otherwise.
+
+> +	if (ret) {
+> +		pr_err("%s: failed to register clock notifier for %s\n",
+> +				__func__, name);
+> +		goto free_cpuclk_data;
+> +	}
+> +
+
+[snip]
+
+> +/*
+> + * Helper function to set the 'safe' dividers for the CPU clock. The parameters
+> + * div and mask contain the divider value and the register bit mask of the
+> + * dividers to be programmed.
+> + */
+> +static void exynos4210_set_safe_div(void __iomem *base, unsigned long div,
+> +					unsigned long mask)
+> +{
+> +	unsigned long div0;
+> +
+> +	div0 = readl(base + E4210_DIV_CPU0);
+> +	div0 = (div0 & ~mask) | div;
+
+There is nothing said in the comment above about the assumption that div
+has bits not indicated by mask cleared, so to be safe it might be a good
+idea to make this
+
+	div0 = (div0 & ~mask) | (div & mask);
+
+instead.
+
+> +	writel(div0, base + E4210_DIV_CPU0);
+> +	wait_until_divider_stable(base + E4210_DIV_STAT_CPU0, mask);
+> +}
+> +
+> +/* handler for pre-rate change notification from parent clock */
+> +static int exynos4210_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+> +			struct exynos_cpuclk *cpuclk, void __iomem *base)
+> +{
+> +	const struct exynos4210_cpuclk_data *cpuclk_data = cpuclk->data;
+> +	unsigned long alt_prate = clk_get_rate(cpuclk->alt_parent);
+> +	unsigned long alt_div = 0, alt_div_mask = DIV_MASK;
+> +	unsigned long div0, div1 = 0, mux_reg;
+> +
+> +	/* find out the divider values to use for clock data */
+> +	while ((cpuclk_data->prate * 1000) != ndata->new_rate) {
+> +		if (cpuclk_data->prate == 0)
+> +			return -EINVAL;
+> +		cpuclk_data++;
+> +	}
+> +
+> +	/* For the selected PLL clock frequency, get the pre-defined divider
+> +	 * values. If the clock for sclk_hpm is not sourced from apll, then
+> +	 * the values for DIV_COPY and DIV_HPM dividers need not be set.
+> +	 */
+> +	div0 = cpuclk_data->div0;
+> +	if (cpuclk->type != EXYNOS5420) {
+
+Rather than checking for Exynos5420 explicitly, it would be better to
+add a boolean "has_mux_hpm" flag to cpuclk.
+
+> +		div1 = cpuclk_data->div1;
+> +		if (readl(base + E4210_SRC_CPU) & E4210_MUX_HPM_MASK) {
+> +			div1 = readl(base + E4210_DIV_CPU1) &
+> +					E4210_DIV1_HPM_MASK;
+> +			div1 |= ((cpuclk_data->div1) & ~E4210_DIV1_HPM_MASK);
+> +		}
+> +	}
+> +
+> +	spin_lock(cpuclk->lock);
+> +
+> +	/*
+> +	 * If the new and old parent clock speed is less than the clock speed
+> +	 * of the alternate parent, then it should be ensured that at no point
+> +	 * the armclk speed is more than the old_prate until the dividers are
+> +	 * set.
+> +	 */
+> +	if (alt_prate > ndata->old_rate) {
+> +		alt_div = _calc_div(alt_prate, ndata->old_rate);
+> +		if (cpuclk->type == EXYNOS4210) {
+
+Again, this could be handled by a boolean "needs_atb_alt_div" flag,
+instead of checking for Exynos4210 explicitly.
+
+> +			/*
+> +			 * In Exynos4210, ATB clock parent is also mout_core. So
+> +			 * ATB clock also needs to be mantained at safe speed.
+> +			 */
+> +			alt_div |= E4210_DIV0_ATB_MASK;
+> +			alt_div_mask |= E4210_DIV0_ATB_MASK;
+> +		}
+> +		exynos4210_set_safe_div(base, alt_div, alt_div_mask);
+> +		div0 |= alt_div;
+> +	}
+> +
+> +	/* select sclk_mpll as the alternate parent */
+> +	mux_reg = readl(base + E4210_SRC_CPU);
+> +	writel(mux_reg | (1 << 16), base + E4210_SRC_CPU);
+> +	wait_until_mux_stable(base + E4210_STAT_CPU, 16, 2);
+> +
+> +	/* alternate parent is active now. set the dividers */
+> +	writel(div0, base + E4210_DIV_CPU0);
+> +	wait_until_divider_stable(base + E4210_DIV_STAT_CPU0, DIV_MASK_ALL);
+> +
+> +	if (cpuclk->type != EXYNOS5420) {
+
+This could be handled by "has_div_cpu1" boolean flag.
+
+> +		writel(div1, base + E4210_DIV_CPU1);
+> +		wait_until_divider_stable(base + E4210_DIV_STAT_CPU1,
+> +				DIV_MASK_ALL);
+> +	}
+> +
+> +	spin_unlock(cpuclk->lock);
+> +	return 0;
+> +}
+> +
+> +/* handler for post-rate change notification from parent clock */
+> +static int exynos4210_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+> +			struct exynos_cpuclk *cpuclk, void __iomem *base)
+> +{
+> +	const struct exynos4210_cpuclk_data *cpuclk_data = cpuclk->data;
+> +	unsigned long div = 0, div_mask = DIV_MASK;
+> +	unsigned long mux_reg;
+> +
+> +	spin_lock(cpuclk->lock);
+> +
+> +	/* select mout_apll as the alternate parent */
+> +	mux_reg = readl(base + E4210_SRC_CPU);
+> +	writel(mux_reg & ~(1 << 16), base + E4210_SRC_CPU);
+> +	wait_until_mux_stable(base + E4210_STAT_CPU, 16, 1);
+> +
+> +	if (cpuclk->type == EXYNOS4210) {
+
+Here the "needs_atb_alt_div" flag could be used again.
+
+> +		/* find out the divider values to use for clock data */
+> +		while ((cpuclk_data->prate * 1000) != ndata->new_rate) {
+> +			if (cpuclk_data->prate == 0)
+> +				return -EINVAL;
+> +			cpuclk_data++;
+> +		}
+> +
+> +		div |= (cpuclk_data->div0 & E4210_DIV0_ATB_MASK);
+> +		div_mask |= E4210_DIV0_ATB_MASK;
+> +	}
+> +
+> +	exynos4210_set_safe_div(base, div, div_mask);
+> +	spin_unlock(cpuclk->lock);
+> +	return 0;
+> +}
+> +
+> +static const struct exynos4210_cpuclk_data e4210_armclk_d[] __initconst = {
+> +	{ 1200000, E4210_CPU_DIV0(7, 1, 4, 3, 7, 3), E4210_CPU_DIV1(0, 5), },
+> +	{ 1000000, E4210_CPU_DIV0(7, 1, 4, 3, 7, 3), E4210_CPU_DIV1(0, 4), },
+> +	{  800000, E4210_CPU_DIV0(7, 1, 3, 3, 7, 3), E4210_CPU_DIV1(0, 3), },
+> +	{  500000, E4210_CPU_DIV0(7, 1, 3, 3, 7, 3), E4210_CPU_DIV1(0, 3), },
+> +	{  400000, E4210_CPU_DIV0(7, 1, 3, 3, 7, 3), E4210_CPU_DIV1(0, 3), },
+> +	{  200000, E4210_CPU_DIV0(0, 1, 1, 1, 3, 1), E4210_CPU_DIV1(0, 3), },
+> +	{  0 },
+> +};
+
+[snip]
+
+> +static const struct exynos_cpuclk_soc_data e4210_clk_soc_data __initconst = {
+> +	.ops = &exynos_cpuclk_clk_ops,
+> +	.offset = 0x14200,
+> +	.data = e4210_armclk_d,
+> +	.data_size = sizeof(e4210_armclk_d),
+> +	.type = EXYNOS4210,
+> +	.pre_rate_cb = exynos4210_cpuclk_pre_rate_change,
+> +	.post_rate_cb = exynos4210_cpuclk_post_rate_change,
+> +};
+
+[snip]
+
+> +/**
+> + * exynos_register_cpu_clock: register cpu clock with ccf.
+> + * @ctx: driver context.
+> + * @cluster_id: cpu cluster number to which this clock is connected.
+> + * @lookup_id: cpuclk clock output id for the clock controller.
+> + * @name: the name of the cpu clock.
+> + * @parent: name of the parent clock for cpuclk.
+> + * @alt_parent: name of the alternate clock parent.
+> + * @np: device tree node pointer of the clock controller.
+> + */
+> +int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+> +		unsigned int cluster_id, unsigned int lookup_id,
+> +		const char *name, const char *parent,
+> +		const char *alt_parent, struct device_node *np)
+> +{
+> +	const struct of_device_id *match;
+> +	const struct exynos_cpuclk_soc_data *data = NULL;
+> +
+> +	if (!np)
+> +		return -EINVAL;
+> +
+> +	match = of_match_node(exynos_cpuclk_ids, np);
+> +	if (!match)
+> +		return -EINVAL;
+> +
+> +	data = match->data;
+> +	data += cluster_id;
+> +	return exynos_cpuclk_register(ctx, lookup_id, name, parent,
+> +			alt_parent, np, data);
+> +}
+
+We now have SoC-specific data hardcoded here, so (as opposed to my
+earlier comments when we did not have such) it's now reasonable to move
+such data to SoC-specific source files and then just call
+exynos_register_cpu_clock() with a pointer to such data. This would also
+eliminate the not so good idea of indexing internal data array with
+cluster_id passed as an argument from external code.
+
+Best regards,
+Tomasz
