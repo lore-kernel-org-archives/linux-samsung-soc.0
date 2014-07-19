@@ -1,138 +1,70 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 5/5] Samsung DT updates for v3.17
-Date: Sat, 19 Jul 2014 09:53:05 +0900
-Message-ID: <53C9C171.4090208@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL] Samsung fixes-4 for v3.16
+Date: Fri, 18 Jul 2014 21:21:22 -0700
+Message-ID: <CAOesGMgX2m4UbO756JbtQLZVJv3SY+dXDE+My-OeY0oCFA-aew@mail.gmail.com>
+References: <53C9AF23.6030007@samsung.com>
+	<CAOesGMgt50Ut8qv+ifDHoSQCBV4NNu-tx6B_t=T7D5SHVx0XMg@mail.gmail.com>
+	<53C9B952.6010000@samsung.com>
+	<53C9BF34.2030903@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:65146 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760311AbaGSAxL (ORCPT
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:63321 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750784AbaGSEVX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jul 2014 20:53:11 -0400
-Received: by mail-pd0-f181.google.com with SMTP id g10so4432610pdj.12
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Jul 2014 17:53:10 -0700 (PDT)
+	Sat, 19 Jul 2014 00:21:23 -0400
+Received: by mail-vc0-f174.google.com with SMTP id la4so8724839vcb.5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Jul 2014 21:21:22 -0700 (PDT)
+In-Reply-To: <53C9BF34.2030903@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
 
-The following changes since commit 7171511eaec5bf23fb06078f59784a3a0626b38f:
+On Fri, Jul 18, 2014 at 5:43 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 07/19/14 09:18, Kukjin Kim wrote:
+>>
+>> On 07/19/14 09:12, Olof Johansson wrote:
+>>>
+>>> On Fri, Jul 18, 2014 at 4:34 PM, Kukjin Kim<kgene.kim@samsung.com> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> This is a regression for v3.16 so please take this in -rc.
+>>>>
+>>>> Thanks,
+>>>> Kukjin
+>>>>
+>>>> The following changes since commit
+>>>> 1795cd9b3a91d4b5473c97f491d63892442212ab:
+>>>>
+>>>> Linux 3.16-rc5 (2014-07-13 14:04:33 -0700)
+>>>>
+>>>> are available in the git repository at:
+>>>>
+>>>> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>>>> tags/samsung-fixes-4
+>>>>
+>>>> for you to fetch changes up to 4e3a498d6fc438d8c203c51aadc6ca8fb47b0577:
+>>>>
+>>>> ARM: EXYNOS: Fix core ID used by platsmp and hotplug code (2014-07-16
+>>>> 02:59:18 +0900)
+>>>
+>>>
+>>> This is based on a newer branch than our current fixes. So I've cherry
+>>> picked the patch instead of merged the branch -- if you have the
+>>> branch in linux-next you should remove it.
+>>>
+>> OK, I will.
+>>
+> BTW, other pm related branches in my tree have dependencies with the change
+> so I just reverted that in my -next.
+>
+> If any problems, please let me know.
 
-   Linux 3.16-rc1 (2014-06-15 17:45:28 -1000)
+Are they part of the branches you sent now? Is that patch a base in
+those branches?
 
-are available in the git repository at:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/samsung-dt
-
-for you to fetch changes up to ccaba4527156da1619a23bafcb944e8e029d0573:
-
-   ARM: dts: Add I2S dt node for exynos3250 (2014-07-19 04:10:44 +0900)
-
-----------------------------------------------------------------
-Samsung DT updates for v3.17
-
-exynos3250: add i2s dt for audio interface
-
-exynos4
-  - cleanup arm-pmu node because of 4 pmu on
-    exynos4412 but 2 pmu on other exynos4 SoCs
-  - add support sub-nodes to exynos usb host for exynos4
-
-exynos4412-odroid-common
-  - fix T-FLASH hotplug detection
-  - disable 'always on' for BUCK8
-  - add support for GPIO based buttons
-  - add MAX98090 audio codec
-
-exynos4412-odroidx2 and exynos4412-odroidu3
-- refactor exynos4412-odroidx and exynos4412-odroid-common
-   for odroid-x2 and u2/u3
-
-exynos4412-odroidx
-  - add support for USB phy, host and device
-  - enable common hardware blocks, secure firmware calls,
-    watchdog, g2d and fimc (mem2mem) multimedia accelerators
-  - add support for USB phy, host and device
-  - correct memory size
-
-exynos5410
-  - fill in CPU clock-frequency property to avoid warning
-
-exynos5420
-  - remove display pd because of instability
-
-exynos5420-peach-pit and exynos5800-peach-pi
-  - sort nodes each other to check its differences easily
-  - enable audio support and add sound-card name property
-  - add mask-tpm-reset node
-  - add cros_ec including keyboard, i2c tunnel and tps65090
-    and battery under the i2c tunnel
-
-----------------------------------------------------------------
-Andreas Faerber (1):
-       ARM: dts: Fill in CPU clock-frequency for exynos5410
-
-Chanho Park (1):
-       ARM: dts: clean up arm-pmu node for exynos4
-
-Doug Anderson (2):
-       ARM: dts: Add mask-tpm-reset node in exynos5420-peach-pit
-       ARM: dts: Add cros_ec to exynos5420-peach-pit and exynos5800-peach-pi
-
-Kamil Debski (2):
-       ARM: dts: add support for USB phy, host and device for 
-exynos4412-odroidx
-       ARM: dts: disable 'always on' for BUCK8 regulator for 
-exynos4412-odroid-common
-
-Marek Szyprowski (6):
-       ARM: dts: add port sub-nodes to exynos usb host modules for exynos4
-       ARM: dts: enable common hardware blocks for exynos4412-odroidx
-       ARM: dts: correct memory size for exynos4412-odroidx
-       ARM: dts: refactor Odroid DTS file and add support for Odroid X2 
-and U2/U3
-       ARM: dts: add support for GPIO buttons for exynos4412-odroid
-       ARM: dts: fix T-FLASH hotplug detection for exynos4412-odroid-common
-
-Rahul Sharma (1):
-       ARM: dts: remove display power domain for exynos5420
-
-Sylwester Nawrocki (1):
-       ARM: dts: Add sound nodes for Odroid-X2/U3 boards
-
-Tomasz Figa (1):
-       ARM: dts: Add I2S dt node for exynos3250
-
-Tushar Behera (3):
-       ARM: dts: Enable audio support for exynos5800-peach-pi
-       ARM: dts: Sort nodes within Peach-pit/Peach-pi dts files
-       ARM: dts: Add sound-card name for Snow/Peach-Pit/Peach-Pi
-
-Vikas Sajjan (1):
-       ARM: dts: Add mask-tpm-reset node in exynos5800-peach-pi
-
-  arch/arm/boot/dts/Makefile                      |   2 +
-  arch/arm/boot/dts/exynos3250.dtsi               |  13 +
-  arch/arm/boot/dts/exynos4.dtsi                  |  30 ++
-  arch/arm/boot/dts/exynos4210.dtsi               |   6 -
-  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 371 
-++++++++++++++++++++++
-  arch/arm/boot/dts/exynos4412-odroidu3.dts       |  61 ++++
-  arch/arm/boot/dts/exynos4412-odroidx.dts        | 279 ++---------------
-  arch/arm/boot/dts/exynos4412-odroidx2.dts       |  32 ++
-  arch/arm/boot/dts/exynos4412.dtsi               |   4 +
-  arch/arm/boot/dts/exynos4x12.dtsi               |   6 -
-  arch/arm/boot/dts/exynos5250-snow.dts           |   1 +
-  arch/arm/boot/dts/exynos5410.dtsi               |   4 +
-  arch/arm/boot/dts/exynos5420-peach-pit.dts      | 392 
-+++++++++++++++++-------
-  arch/arm/boot/dts/exynos5420.dtsi               |   6 -
-  arch/arm/boot/dts/exynos5800-peach-pi.dts       | 374 
-++++++++++++++++------
-  15 files changed, 1106 insertions(+), 475 deletions(-)
-  create mode 100644 arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-  create mode 100644 arch/arm/boot/dts/exynos4412-odroidu3.dts
-  create mode 100644 arch/arm/boot/dts/exynos4412-odroidx2.dts
+-Olof
