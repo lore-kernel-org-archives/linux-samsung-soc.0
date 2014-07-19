@@ -1,51 +1,50 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v7 6/6] cpufreq: exynos: remove exynos4210/5250 specific
- cpufreq driver support
-Date: Sat, 19 Jul 2014 15:29:48 +0200
-Message-ID: <53CA72CC.7010505@gmail.com>
-References: <1405345118-4269-1-git-send-email-thomas.ab@samsung.com> <1405345118-4269-7-git-send-email-thomas.ab@samsung.com>
+From: Tobias Jakobi <liquid.acid@gmx.net>
+Subject: Re: [PATCH v7 0/6] cpufreq: use generic cpufreq drivers for exynos
+ platforms
+Date: Sat, 19 Jul 2014 21:20:27 +0200
+Message-ID: <53CAC4FB.9030703@gmx.net>
+References: <1405345118-4269-1-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:42946 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753892AbaGSNaI (ORCPT
+Received: from mout.gmx.net ([212.227.17.20]:57359 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751363AbaGSTVQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 19 Jul 2014 09:30:08 -0400
-In-Reply-To: <1405345118-4269-7-git-send-email-thomas.ab@samsung.com>
+	Sat, 19 Jul 2014 15:21:16 -0400
+In-Reply-To: <1405345118-4269-1-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.ab@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com
 
-Hi,
+Hello,
 
-On 14.07.2014 15:38, Thomas Abraham wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
-> 
-> Exynos4210 and Exynos5250 based platforms have switched over to use generic
-> cpufreq drivers for cpufreq functionality. So the Exynos specific cpufreq
-> drivers for these platforms can be removed.
-> 
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Reviewed-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> Tested-by: Arjun K.V <arjun.kv@samsung.com>
-> ---
->  drivers/cpufreq/Kconfig.arm          |   22 ----
->  drivers/cpufreq/Makefile             |    2 -
->  drivers/cpufreq/exynos4210-cpufreq.c |  184 -----------------------------
->  drivers/cpufreq/exynos5250-cpufreq.c |  210 ----------------------------------
->  4 files changed, 418 deletions(-)
->  delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
->  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
-> 
+I have a question concerning an older version of this patchset, the one
+which still included exynos4x12 support and where the clocking data was
+provided through DT.
 
-I would hesitate with removing this driver straightaway and replacing it
-with a new one that isn't yet well tested. For at least one release I
-would keep the old code in place with the possibility of switching
-between old and new one in Kconfig.
+I tried to get this working for my ODROID-X2, which does work well,
+including the usage of the boost frequences. Since the X2 has an
+Exynos4412 Prime I added additional clocking data and operating points.
 
-Best regards,
-Tomasz
+clocking data (comes from the vendor kernel):
+<1704000 3 7 0 6 1 2 7 0 7>
+<1600000 3 7 0 6 1 2 6 0 7>
+
+operating points (again from vendor kernel):
+1704000 1375000
+1600000 1350000
+
+Doing this I get correct output from scaling_available_frequencies and
+scaling_boost_frequencies and the driver seems to select these
+frequences. However when reading from cpufreq_cur_freq, which I think
+returns the frequency of the armclk, the maximum freq never exceeds
+1.5GHz. So effectively the additional clocking data and opps are not used.
+
+I wonder this happens? Is there some kind of limit enforced?
+
+
+With best wishes,
+Tobias Jakobi
