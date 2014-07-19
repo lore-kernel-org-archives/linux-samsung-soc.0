@@ -1,81 +1,103 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung fixes-4 for v3.16
-Date: Fri, 18 Jul 2014 22:28:18 -0700
-Message-ID: <CAOesGMjrJ79-9v3OzD=6ADoOqm+mwW_6e8_P6rVQPdB+=-7ndA@mail.gmail.com>
-References: <53C9AF23.6030007@samsung.com>
-	<CAOesGMgt50Ut8qv+ifDHoSQCBV4NNu-tx6B_t=T7D5SHVx0XMg@mail.gmail.com>
-	<53C9B952.6010000@samsung.com>
-	<53C9BF34.2030903@samsung.com>
-	<CAOesGMgX2m4UbO756JbtQLZVJv3SY+dXDE+My-OeY0oCFA-aew@mail.gmail.com>
-	<022101cfa30f$e9fa0fb0$bdee2f10$@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 0/7] Exynos4: enable HDMI support for Odroid and UniversalC210
+Date: Sat, 19 Jul 2014 19:40:14 +0900
+Message-ID: <CAAQKjZPzWEkvCejGurkDh78BZTu_ad9saQPkg2cBFFd4=HktVg@mail.gmail.com>
+References: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f171.google.com ([209.85.220.171]:46881 "EHLO
-	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750835AbaGSF2T (ORCPT
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:58444 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758166AbaGSKkP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 19 Jul 2014 01:28:19 -0400
-Received: by mail-vc0-f171.google.com with SMTP id hq11so7420244vcb.30
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Jul 2014 22:28:19 -0700 (PDT)
-In-Reply-To: <022101cfa30f$e9fa0fb0$bdee2f10$@samsung.com>
+	Sat, 19 Jul 2014 06:40:15 -0400
+Received: by mail-wi0-f169.google.com with SMTP id n3so2189611wiv.4
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Jul 2014 03:40:14 -0700 (PDT)
+In-Reply-To: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Kukjin Kim <kgene.kim@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-On Fri, Jul 18, 2014 at 10:11 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Olof Johansson wrote:
->>
->> On Fri, Jul 18, 2014 at 5:43 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> > On 07/19/14 09:18, Kukjin Kim wrote:
->> >>
->> >> On 07/19/14 09:12, Olof Johansson wrote:
->> >>>
->> >>> On Fri, Jul 18, 2014 at 4:34 PM, Kukjin Kim<kgene.kim@samsung.com> wrote:
->> >>>>
->> >>>> Hi,
->> >>>>
->> >>>> This is a regression for v3.16 so please take this in -rc.
->> >>>>
->> >>>> Thanks,
->> >>>> Kukjin
->> >>>>
->> >>>> The following changes since commit
->> >>>> 1795cd9b3a91d4b5473c97f491d63892442212ab:
->> >>>>
->> >>>> Linux 3.16-rc5 (2014-07-13 14:04:33 -0700)
->> >>>>
->> >>>> are available in the git repository at:
->> >>>>
->> >>>> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->> >>>> tags/samsung-fixes-4
->> >>>>
->> >>>> for you to fetch changes up to 4e3a498d6fc438d8c203c51aadc6ca8fb47b0577:
->> >>>>
->> >>>> ARM: EXYNOS: Fix core ID used by platsmp and hotplug code (2014-07-16
->> >>>> 02:59:18 +0900)
->> >>>
->> >>>
->> >>> This is based on a newer branch than our current fixes. So I've cherry
->> >>> picked the patch instead of merged the branch -- if you have the
->> >>> branch in linux-next you should remove it.
->> >>>
->> >> OK, I will.
->> >>
->> > BTW, other pm related branches in my tree have dependencies with the change
->> > so I just reverted that in my -next.
->> >
->> > If any problems, please let me know.
->>
->> Are they part of the branches you sent now? Is that patch a base in
->> those branches?
->>
-> No, I didn't send out any branch including the fix to arm-soc because I also
-> don't want to make any conflict or inconvenience for you :) Just thought, I
-> need to sort it out once it has been merged into mainline.
+2014-07-01 17:10 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+> Hello,
+>
+> This is a long awaited patch series enabling support for HDMI output
+> available on Exynos4412-based Odroid boards (X/X2/U2/U3/U3+) and
+> Exynos4210 Universal C210 board.
+>
+> This patch consists of 3 groups of patches, which are aimed to be merged
+> to respective maintainer kernel trees.
+>
+> First patch ("clk: exynos4: add support for MOUT_HDMI and MOUT_MIXER
+> clocks") adds missing device tree support for hdmi related clocks. It is
+> prepared for clk kernel tree.
+>
+> Next two patches ("drm: exynos: hdmi: make 'hdmi-en' regulator optional
+> and keep it enabled" and "drm: hdmi/mixer: enable exynos 4210 and 4x12
+> soc support") add proper support for Exynos4 SoCs to Exynos DRM drivers.
+> Those patches should go to exynos-drm kernel tree.
 
-Ok, it should be in for -rc6.
+Picked them up.
 
+Thanks,
+Inki Dae
 
--Olof
+>
+> Last patches ("Exynos: add support for 'domain-always-on' property",
+> "ARM: dts: exynos4: add hdmi related nodes", "ARM: dts:
+> exynos4412-odroid: enable hdmi support" and "ARM: dts:
+> exynos4210-universal_c210: enable hdmi support") adds changes to all DTS
+> files and adds 'domain-always-on' property to Exynos power-domain
+> driver. This property is needed to resolve the non-trivial dependences
+> between TV and LCD0 power domains and the power on/off sequence of the
+> TV and mixer modules.
+>
+> Patches are prepared on top of v3.16-rc3 with '[PATCH v2 0/4] Add
+> Exynos4412 based Odroid X2 and U2/U3/U3+ support' series and '[PATCH]
+> ARM: dts: exynos4412-odroid: add support for GPIO buttons' patch
+> applied:
+> http://www.spinics.net/lists/linux-samsung-soc/msg33115.html
+> http://www.spinics.net/lists/linux-samsung-soc/msg33497.html
+>
+> Kernel tree with all Odroid related patches is available at
+> http://git.linaro.org/git-ro/people/marek.szyprowski/linux-srpol.git
+> on v3.16-odroid branch.
+>
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+>
+> Marek Szyprowski (6):
+>   clk: exynos4: add support for MOUT_HDMI and MOUT_MIXER clocks
+>   drm: exynos: hdmi: make 'hdmi-en' regulator optional and keep it
+>     enabled
+>   drm: hdmi/mixer: enable exynos 4210 and 4x12 soc support
+>   Exynos: add support for 'domain-always-on' property
+>   ARM: dts: exynos4: add hdmi related nodes
+>   ARM: dts: exynos4412-odroid: enable hdmi support
+>
+> Tomasz Stanislawski (1):
+>   ARM: dts: exynos4210-universal_c210: enable hdmi support
+>
+>  .../bindings/arm/exynos/power_domain.txt           |  2 +
+>  .../devicetree/bindings/video/exynos_mixer.txt     |  5 +-
+>  arch/arm/boot/dts/exynos4.dtsi                     | 37 ++++++++++++
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts    | 65 ++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos4210.dtsi                  |  5 ++
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi    | 52 +++++++++++++++++
+>  arch/arm/boot/dts/exynos4x12.dtsi                  | 10 ++++
+>  arch/arm/mach-exynos/pm_domains.c                  |  6 +-
+>  drivers/clk/samsung/clk-exynos4.c                  |  4 +-
+>  drivers/gpu/drm/exynos/exynos_hdmi.c               | 29 +++++++++-
+>  drivers/gpu/drm/exynos/exynos_mixer.c              | 51 ++++++++++++-----
+>  include/dt-bindings/clock/exynos4.h                |  2 +
+>  12 files changed, 247 insertions(+), 21 deletions(-)
+>
+> --
+> 1.9.2
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
