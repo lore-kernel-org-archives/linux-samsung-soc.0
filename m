@@ -1,171 +1,163 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: arm-soc boot: 64 boots: 62 pass, 2 fail (v3.16-rc5-727-gac8047e)
-Date: Sun, 20 Jul 2014 23:35:54 +0200
-Message-ID: <53CC363A.4080907@gmail.com>
-References: <53cb00d6.aa91420a.3437.ffff941f@mx.google.com> <CAOesGMj0ms60-=WAeaNhmX9NURpt+wspzgpTiLk1VE3cHB1BjQ@mail.gmail.com>
+From: Hartmut Knaack <knaack.h-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH 1/2] iio: exynos-adc: add support for s3c64xx adc
+Date: Sun, 20 Jul 2014 23:37:07 +0200
+Message-ID: <53CC3683.9090101@gmx.de>
+References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com> <5186890.aLtladpMgD@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:48695 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751361AbaGTVgP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 20 Jul 2014 17:36:15 -0400
-Received: by mail-wi0-f177.google.com with SMTP id ho1so3131174wib.16
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Jul 2014 14:36:14 -0700 (PDT)
-In-Reply-To: <CAOesGMj0ms60-=WAeaNhmX9NURpt+wspzgpTiLk1VE3cHB1BjQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5186890.aLtladpMgD@wuerfel>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, heiko.stuebner-K3U4GQvHnyU@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Kevin's boot bot <khilman@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>
-Cc: kernel-build-reports@lists.linaro.org, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tarek Dakhran <t.dakhran@samsung.com>
 
-+Cc Tarek
-
-On 20.07.2014 21:50, Olof Johansson wrote:
-> Kukjin,
-> 
-> Looks like the last set of branches from you regressed 5410. Since I
-> don't have that hardware myself I can't bisect down to what patch is
-> causing it.
-> 
-> Can you please try to sort out at your end and send a fixup patch? I
-> think Kevin is out, I haven't seen much from him lately.
-> 
-> 
-> -Olof
-> 
-> On Sat, Jul 19, 2014 at 4:35 PM, Kevin's boot bot <khilman@linaro.org> wrote:
->>
->> Full logs here: http://armcloud.us/kernel-ci/arm-soc/v3.16-rc5-727-gac8047e
->>
->> Tree/Branch: arm-soc
->> Git describe: v3.16-rc5-727-gac8047e
->> Failed boot tests
->> =================
->>          exynos5410-smdk5410:     FAIL:    arm-multi_v7_defconfig
->>                                   http://armcloud.us/kernel-ci/arm-soc/v3.16-rc5-727-gac8047e/arm-multi_v7_defconfig/boot-exynos5410-smdk5410.html
->>          exynos5410-smdk5410:     FAIL:    arm-exynos_defconfig
->>                                   http://armcloud.us/kernel-ci/arm-soc/v3.16-rc5-727-gac8047e/arm-exynos_defconfig/boot-exynos5410-smdk5410.html
->>
->> Full Report
->> ===========
->>
->> arm-davinci_all_defconfig
->> -------------------------
->>              legacy,dm365evm     0 min 18.5 sec:     PASS
->>                    da850-evm     0 min 16.8 sec:     PASS
->>
->> arm-tegra_defconfig
->> -------------------
->>          tegra124-jetson-tk1     0 min 18.6 sec:     PASS
->>               tegra30-beaver     0 min 18.2 sec:     PASS
->>
->> arm-multi_v7_defconfig+CONFIG_ARM_LPAE=y
->> ----------------------------------------
->>          tegra124-jetson-tk1     0 min 18.6 sec:     PASS
->>   armada-xp-openblocks-ax3-4     0 min 24.6 sec:     PASS
->>                   omap5-uevm     2 min  0.6 sec:     PASS  (Warnings: 1)
->>        sun7i-a20-cubieboard2     0 min 13.7 sec:     PASS
->>
->> arm-mvebu_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=y
->> ----------------------------------------------
->>   armada-xp-openblocks-ax3-4     0 min 24.2 sec:     PASS
->>           armada-370-mirabox     0 min 21.1 sec:     PASS
->>
->> arm-omap2plus_defconfig
->> -----------------------
->>                legacy,3730xm     0 min 42.0 sec:     PASS
->>             am335x-boneblack     0 min 23.2 sec:     PASS
->>              omap3-beagle-xm     0 min 51.5 sec:     PASS
->>            legacy,3530beagle     0 min 34.9 sec:     PASS  (Warnings: 1)
->>                  omap4-panda     0 min 51.8 sec:     PASS
->>             omap3-overo-tobi     0 min 23.9 sec:     PASS
->>                  am335x-bone     0 min 24.9 sec:     PASS
->>       omap3-overo-storm-tobi     0 min 26.0 sec:     PASS
->>                   omap5-uevm     0 min 57.6 sec:     PASS  (Warnings: 1)
->>                   omap3-n900     0 min 18.0 sec:     PASS
->>                  legacy,n900     0 min 16.8 sec:     PASS  (Warnings: 1)
->>               omap4-panda-es     0 min 56.6 sec:     PASS  (Warnings: 1)
->>             legacy,3730storm     0 min 20.7 sec:     PASS
->>             legacy,3530overo     0 min 22.5 sec:     PASS  (Warnings: 1)
->>
->> arm-multi_v7_defconfig
->> ----------------------
->>   imx6dl-wandboard,wand-solo     0 min 16.2 sec:     PASS
->>             am335x-boneblack     0 min 22.9 sec:     PASS
->>        sun7i-a20-cubieboard2     0 min 13.8 sec:     PASS
->>         sun4i-a10-cubieboard     0 min 18.2 sec:     PASS
->>          exynos5410-smdk5410     0 min 49.0 sec:     FAIL
->>                  am335x-bone     0 min 24.5 sec:     PASS
->>          tegra124-jetson-tk1     0 min 18.7 sec:     PASS
->>           armada-370-mirabox     0 min 22.4 sec:     PASS
->>                  omap4-panda     0 min 58.5 sec:     PASS
->>              imx6q-wandboard     0 min 15.1 sec:     PASS
->>   imx6dl-wandboard,wand-dual     0 min 15.9 sec:     PASS
->>                 ste-snowball     1 min 33.8 sec:     PASS
->>               tegra30-beaver     0 min 24.3 sec:     PASS
->>                   omap3-n900     0 min 16.5 sec:     PASS
->>     qcom-apq8074-dragonboard     0 min 20.2 sec:     PASS
->>                  bcm28155-ap     0 min 28.4 sec:     PASS
->>             omap3-overo-tobi     0 min 26.0 sec:     PASS
->>       omap3-overo-storm-tobi     0 min 24.5 sec:     PASS
->>              omap3-beagle-xm     0 min 55.9 sec:     PASS
->>      exynos5420-arndale-octa     0 min 34.9 sec:     PASS
->>   armada-xp-openblocks-ax3-4     0 min 25.6 sec:     PASS
->>                   omap5-uevm     2 min  1.2 sec:     PASS  (Warnings: 1)
->>               omap4-panda-es     0 min 53.4 sec:     PASS  (Warnings: 1)
->>           exynos5250-arndale     0 min 37.8 sec:     PASS
->>
->> arm-sunxi_defconfig
->> -------------------
->>        sun7i-a20-cubieboard2     0 min 12.3 sec:     PASS
->>         sun4i-a10-cubieboard     0 min 12.2 sec:     PASS
->>
->> arm-qcom_defconfig
->> ------------------
->>     qcom-apq8074-dragonboard     0 min 18.0 sec:     PASS
->>
->> arm-bcm_defconfig
->> -----------------
->>                  bcm28155-ap     0 min 23.6 sec:     PASS
->>
->> arm-exynos_defconfig
->> --------------------
->>      exynos5420-arndale-octa     0 min 30.8 sec:     PASS
->>           exynos5250-arndale     0 min 31.4 sec:     PASS
->>          exynos5410-smdk5410     0 min 48.2 sec:     FAIL
->>
->> arm-imx_v6_v7_defconfig
->> -----------------------
->>   imx6dl-wandboard,wand-dual     0 min 16.8 sec:     PASS
->>   imx6dl-wandboard,wand-solo     0 min 17.1 sec:     PASS
->>              imx6q-wandboard     0 min 15.4 sec:     PASS
->>
->> arm-u8500_defconfig
->> -------------------
->>                 ste-snowball     0 min 28.1 sec:     PASS
->>
->> arm-multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=y
->> ----------------------------------------------
->>   armada-xp-openblocks-ax3-4     0 min 27.2 sec:     PASS
->>           armada-370-mirabox     0 min 22.9 sec:     PASS
->>
->> arm-mvebu_v7_defconfig
->> ----------------------
->>   armada-xp-openblocks-ax3-4     0 min 23.0 sec:     PASS
->>           armada-370-mirabox     0 min 20.7 sec:     PASS
->>
->> arm-sama5_defconfig
->> -------------------
->>                   sama5d35ek     0 min 16.2 sec:     PASS  (Warnings: 1)
->>
->> _______________________________________________
->> Kernel-build-reports mailing list
->> Kernel-build-reports@lists.linaro.org
->> http://lists.linaro.org/mailman/listinfo/kernel-build-reports
+Arnd Bergmann schrieb:
+> The ADC in s3c64xx is almost the same as exynosv1, but
+> has a different 'select' method. Adding this here will be
+> helpful to move over the existing s3c64xx platform from the
+> legacy plat-samsung/adc driver to the new exynos-adc.
+>
+> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> ---
+There are some style issues, see the comments inline.
+> [In reply to Exynos3250 ADC support, adding Heiko and Ben]
+>
+> I spent way too much time this week trying to clean up the
+> old plat-samsung/adc.c driver as preparation for s3c64xx multiplatform
+> support. Eventually I figured out that all that code is much simpler
+> done using the new driver. This adds support for s3c64xx in
+> samsung-adc.c, similar code changes can be done to support the
+> various s3c24xx variants as well.
+>
+> This first patch should be fairly straightforward but is not tested
+> yet. The second patch is more tricky.
+>
+> Both are based on the exynos3250 patches sent by Chanwoo Choi.
+>
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> index 26232f98d8c5..f84e9250429b 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> @@ -11,11 +11,21 @@ New driver handles the following
+>  
+>  Required properties:
+>  - compatible:		Must be "samsung,exynos-adc-v1"
+> -				for exynos4412/5250 controllers.
+> +				for exynos4412/5250 and s5pv210 controllers.
+>  			Must be "samsung,exynos-adc-v2" for
+>  				future controllers.
+>  			Must be "samsung,exynos3250-adc-v2" for
+>  				controllers compatible with ADC of Exynos3250.
+> +			Must be "samsung,s3c2410-adc" for
+> +				the ADC in s3c2410 and compatibles
+> +			Must be "samsung,s3c2416-adc" for
+> +				the ADC in s3c2416 and compatibles
+> +			Must be "samsung,s3c2440-adc" for
+> +				the ADC in s3c2440 and compatibles
+> +			Must be "samsung,s3c2440-adc" for
+> +				the ADC in s3c2440 and compatibles
+> +			Must be "samsung,s3c2443-adc" for
+> +				the ADC in s3c2443 and compatibles
+>  - reg:			Contains ADC register address range (base address and
+>  			length) and the address of the phy enable register.
+>  - interrupts: 		Contains the interrupt information for the timer. The
+> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+> index b63e88247eb2..5f95638513d2 100644
+> --- a/drivers/iio/adc/exynos_adc.c
+> +++ b/drivers/iio/adc/exynos_adc.c
+> @@ -39,12 +39,16 @@
+>  #include <linux/iio/machine.h>
+>  #include <linux/iio/driver.h>
+>  
+> -/* EXYNOS4412/5250 ADC_V1 registers definitions */
+> +/* S3C/EXYNOS4412/5250 ADC_V1 registers definitions */
+>  #define ADC_V1_CON(x)		((x) + 0x00)
+> +#define ADC_V1_TSC(x)		((x) + 0x04)
+>  #define ADC_V1_DLY(x)		((x) + 0x08)
+>  #define ADC_V1_DATX(x)		((x) + 0x0C)
+> +#define ADC_V1_DATY(x)		((x) + 0x10)
+> +#define ADC_V1_UPDN(x)		((x) + 0x14)
+>  #define ADC_V1_INTCLR(x)	((x) + 0x18)
+>  #define ADC_V1_MUX(x)		((x) + 0x1c)
+> +#define ADC_V1_CLRINTPNDNUP(x)	((x) + 0x20)
+>  
+>  /* Future ADC_V2 registers definitions */
+>  #define ADC_V2_CON1(x)		((x) + 0x00)
+> @@ -60,6 +64,30 @@
+>  #define ADC_V1_CON_PRSCLV(x)	(((x) & 0xFF) << 6)
+>  #define ADC_V1_CON_STANDBY	(1u << 2)
+>  
+Leave a whitespace around operators below.
+> +#define ADC_S3C2410_CON_SELMUX(x) (((x)&0x7)<<3)
+> +
+> +/* ADCTSC Register Bits */
+> +#define ADC_S3C2443_TSC_UD_SEN		(1<<8)
+> +#define ADC_S3C2410_TSC_YM_SEN		(1<<7)
+> +#define ADC_S3C2410_TSC_YP_SEN		(1<<6)
+> +#define ADC_S3C2410_TSC_XM_SEN		(1<<5)
+> +#define ADC_S3C2410_TSC_XP_SEN		(1<<4)
+> +#define ADC_S3C2410_TSC_PULL_UP_DISABLE	(1<<3)
+> +#define ADC_S3C2410_TSC_AUTO_PST	(1<<2)
+> +#define ADC_S3C2410_TSC_XY_PST(x)	(((x)&0x3)<<0)
+> +
+> +#define ADC_TSC_WAIT4INT (ADC_S3C2410_TSC_YM_SEN | \
+> +			 ADC_S3C2410_TSC_YP_SEN | \
+> +			 ADC_S3C2410_TSC_XP_SEN | \
+> +			 ADC_S3C2410_TSC_XY_PST(3))
+> +
+> +#define ADC_TSC_AUTOPST	(ADC_S3C2410_TSC_YM_SEN | \
+> +			 ADC_S3C2410_TSC_YP_SEN | \
+> +			 ADC_S3C2410_TSC_XP_SEN | \
+> +			 ADC_S3C2410_TSC_AUTO_PST | \
+> +			 ADC_S3C2410_TSC_XY_PST(0))
+> +
+> +
+>  /* Bit definitions for ADC_V2 */
+>  #define ADC_V2_CON1_SOFT_RESET	(1u << 2)
+>  
+> @@ -195,6 +223,26 @@ static void exynos_adc_v1_clear_irq(struct exynos_adc *info)
+>  	writel(1, ADC_V1_INTCLR(info->regs));
+>  }
+>  
+> +static void exynos_adc_s3c64xx_start_conv(struct exynos_adc *info,
+> +				     unsigned long addr)
+This indention could be a bit better.
+> +{
+> +	u32 con1;
+> +
+> +	con1 = readl(ADC_V1_CON(info->regs));
+> +	con1 &= ~ADC_S3C2410_CON_SELMUX(7);
+> +	con1 |= ADC_S3C2410_CON_SELMUX(addr);
+> +	writel(con1 | ADC_CON_EN_START, ADC_V1_CON(info->regs));
+> +}
+> +
+> +static struct exynos_adc_data const exynos_adc_s3c64xx_data = {
+> +	.num_channels	= MAX_ADC_V1_CHANNELS,
+> +
+> +	.init_hw	= exynos_adc_v1_init_hw,
+> +	.exit_hw	= exynos_adc_v1_exit_hw,
+> +	.clear_irq	= exynos_adc_v1_clear_irq,
+> +	.start_conv	= exynos_adc_s3c64xx_start_conv,
+> +};
+> +
+>  static void exynos_adc_v1_start_conv(struct exynos_adc *info,
+>  				     unsigned long addr)
+>  {
+> @@ -280,6 +328,9 @@ static struct exynos_adc_data const exynos3250_adc_v2_data = {
+>  
+>  static const struct of_device_id exynos_adc_match[] = {
+>  	{
+> +		.compatible = "samsung,s3c64100-adc",
+> +		.data = &exynos_adc_s3c64xx_data,
+> +	}, {
+>  		.compatible = "samsung,exynos-adc-v1",
+>  		.data = (void *)&exynos_adc_v1_data,
+>  	}, {
+>
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
+> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+>
