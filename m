@@ -1,61 +1,162 @@
-From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/4 v2] iio: exyno-adc: use syscon for PMU register access
-Date: Sun, 20 Jul 2014 14:59:57 +0100
-Message-ID: <53CBCB5D.1050902@kernel.org>
-References: <1405595993-16661-1-git-send-email-ch.naveen@samsung.com> <CAK5sBcFR0nwmL97CYxhHHhwHREdNOMYZnc2DF+O=WdQLBHQbLA@mail.gmail.com> <CAHfPSqDBfdmt2R4yB1AUG9U8UvsYtmVtL03-OMuozKGXYGdMgw@mail.gmail.com> <4202302.OdUuvHROuH@amdc1032>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: arm-soc boot: 64 boots: 62 pass, 2 fail (v3.16-rc5-727-gac8047e)
+Date: Sun, 20 Jul 2014 12:50:40 -0700
+Message-ID: <CAOesGMj0ms60-=WAeaNhmX9NURpt+wspzgpTiLk1VE3cHB1BjQ@mail.gmail.com>
+References: <53cb00d6.aa91420a.3437.ffff941f@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4202302.OdUuvHROuH@amdc1032>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Sachin Kamat <spk.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:49308 "EHLO
+	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753008AbaGTTul (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 20 Jul 2014 15:50:41 -0400
+Received: by mail-vc0-f171.google.com with SMTP id hq11so9258326vcb.30
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Jul 2014 12:50:40 -0700 (PDT)
+In-Reply-To: <53cb00d6.aa91420a.3437.ffff941f@mx.google.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kevin's boot bot <khilman@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>
+Cc: kernel-build-reports@lists.linaro.org, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 17/07/14 14:56, Bartlomiej Zolnierkiewicz wrote:
+Kukjin,
+
+Looks like the last set of branches from you regressed 5410. Since I
+don't have that hardware myself I can't bisect down to what patch is
+causing it.
+
+Can you please try to sort out at your end and send a fixup patch? I
+think Kevin is out, I haven't seen much from him lately.
+
+
+-Olof
+
+On Sat, Jul 19, 2014 at 4:35 PM, Kevin's boot bot <khilman@linaro.org> wrote:
 >
-> Hi,
+> Full logs here: http://armcloud.us/kernel-ci/arm-soc/v3.16-rc5-727-gac8047e
 >
-> On Thursday, July 17, 2014 05:41:16 PM Naveen Krishna Ch wrote:
->> Hello Sachin,
->>
->> On 17 July 2014 17:24, Sachin Kamat <spk.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>> Hi Naveen,
->>>
->>> On Thu, Jul 17, 2014 at 4:49 PM, Naveen Krishna Chatradhi
->>> <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>>> This patch updates the IIO based ADC driver to use syscon and regmap
->>>> APIs to access and use PMU registers instead of remapping the PMU
->>>> registers in the driver.
->>>>
->>>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>> To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>>
->>> With only this patch applied, I believe the ADC functionality would be broken.
->>> Perhaps the DT changes should be merged along with this patch?
->>
->> Jonathan already mentioned that, he would wait for Ack from Kukjin.
->> With out the dts changes ADC driver will fail to probe but it wont
->> crash the system.
->> git bisect should still work.
+> Tree/Branch: arm-soc
+> Git describe: v3.16-rc5-727-gac8047e
+> Failed boot tests
+> =================
+>          exynos5410-smdk5410:     FAIL:    arm-multi_v7_defconfig
+>                                   http://armcloud.us/kernel-ci/arm-soc/v3.16-rc5-727-gac8047e/arm-multi_v7_defconfig/boot-exynos5410-smdk5410.html
+>          exynos5410-smdk5410:     FAIL:    arm-exynos_defconfig
+>                                   http://armcloud.us/kernel-ci/arm-soc/v3.16-rc5-727-gac8047e/arm-exynos_defconfig/boot-exynos5410-smdk5410.html
 >
-> Unless someone bisects things related to ADC functionality..
+> Full Report
+> ===========
 >
-> Also patch #1 seems to break device tree ABI (the old dtb will no longer
-> work with the new kernel).
-A very good point.  How to avoid this breakage?  Supporting the whole
-old mechanism is going to be a little painful but without that phandle
-is there any other way?
+> arm-davinci_all_defconfig
+> -------------------------
+>              legacy,dm365evm     0 min 18.5 sec:     PASS
+>                    da850-evm     0 min 16.8 sec:     PASS
 >
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
+> arm-tegra_defconfig
+> -------------------
+>          tegra124-jetson-tk1     0 min 18.6 sec:     PASS
+>               tegra30-beaver     0 min 18.2 sec:     PASS
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> arm-multi_v7_defconfig+CONFIG_ARM_LPAE=y
+> ----------------------------------------
+>          tegra124-jetson-tk1     0 min 18.6 sec:     PASS
+>   armada-xp-openblocks-ax3-4     0 min 24.6 sec:     PASS
+>                   omap5-uevm     2 min  0.6 sec:     PASS  (Warnings: 1)
+>        sun7i-a20-cubieboard2     0 min 13.7 sec:     PASS
 >
+> arm-mvebu_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=y
+> ----------------------------------------------
+>   armada-xp-openblocks-ax3-4     0 min 24.2 sec:     PASS
+>           armada-370-mirabox     0 min 21.1 sec:     PASS
+>
+> arm-omap2plus_defconfig
+> -----------------------
+>                legacy,3730xm     0 min 42.0 sec:     PASS
+>             am335x-boneblack     0 min 23.2 sec:     PASS
+>              omap3-beagle-xm     0 min 51.5 sec:     PASS
+>            legacy,3530beagle     0 min 34.9 sec:     PASS  (Warnings: 1)
+>                  omap4-panda     0 min 51.8 sec:     PASS
+>             omap3-overo-tobi     0 min 23.9 sec:     PASS
+>                  am335x-bone     0 min 24.9 sec:     PASS
+>       omap3-overo-storm-tobi     0 min 26.0 sec:     PASS
+>                   omap5-uevm     0 min 57.6 sec:     PASS  (Warnings: 1)
+>                   omap3-n900     0 min 18.0 sec:     PASS
+>                  legacy,n900     0 min 16.8 sec:     PASS  (Warnings: 1)
+>               omap4-panda-es     0 min 56.6 sec:     PASS  (Warnings: 1)
+>             legacy,3730storm     0 min 20.7 sec:     PASS
+>             legacy,3530overo     0 min 22.5 sec:     PASS  (Warnings: 1)
+>
+> arm-multi_v7_defconfig
+> ----------------------
+>   imx6dl-wandboard,wand-solo     0 min 16.2 sec:     PASS
+>             am335x-boneblack     0 min 22.9 sec:     PASS
+>        sun7i-a20-cubieboard2     0 min 13.8 sec:     PASS
+>         sun4i-a10-cubieboard     0 min 18.2 sec:     PASS
+>          exynos5410-smdk5410     0 min 49.0 sec:     FAIL
+>                  am335x-bone     0 min 24.5 sec:     PASS
+>          tegra124-jetson-tk1     0 min 18.7 sec:     PASS
+>           armada-370-mirabox     0 min 22.4 sec:     PASS
+>                  omap4-panda     0 min 58.5 sec:     PASS
+>              imx6q-wandboard     0 min 15.1 sec:     PASS
+>   imx6dl-wandboard,wand-dual     0 min 15.9 sec:     PASS
+>                 ste-snowball     1 min 33.8 sec:     PASS
+>               tegra30-beaver     0 min 24.3 sec:     PASS
+>                   omap3-n900     0 min 16.5 sec:     PASS
+>     qcom-apq8074-dragonboard     0 min 20.2 sec:     PASS
+>                  bcm28155-ap     0 min 28.4 sec:     PASS
+>             omap3-overo-tobi     0 min 26.0 sec:     PASS
+>       omap3-overo-storm-tobi     0 min 24.5 sec:     PASS
+>              omap3-beagle-xm     0 min 55.9 sec:     PASS
+>      exynos5420-arndale-octa     0 min 34.9 sec:     PASS
+>   armada-xp-openblocks-ax3-4     0 min 25.6 sec:     PASS
+>                   omap5-uevm     2 min  1.2 sec:     PASS  (Warnings: 1)
+>               omap4-panda-es     0 min 53.4 sec:     PASS  (Warnings: 1)
+>           exynos5250-arndale     0 min 37.8 sec:     PASS
+>
+> arm-sunxi_defconfig
+> -------------------
+>        sun7i-a20-cubieboard2     0 min 12.3 sec:     PASS
+>         sun4i-a10-cubieboard     0 min 12.2 sec:     PASS
+>
+> arm-qcom_defconfig
+> ------------------
+>     qcom-apq8074-dragonboard     0 min 18.0 sec:     PASS
+>
+> arm-bcm_defconfig
+> -----------------
+>                  bcm28155-ap     0 min 23.6 sec:     PASS
+>
+> arm-exynos_defconfig
+> --------------------
+>      exynos5420-arndale-octa     0 min 30.8 sec:     PASS
+>           exynos5250-arndale     0 min 31.4 sec:     PASS
+>          exynos5410-smdk5410     0 min 48.2 sec:     FAIL
+>
+> arm-imx_v6_v7_defconfig
+> -----------------------
+>   imx6dl-wandboard,wand-dual     0 min 16.8 sec:     PASS
+>   imx6dl-wandboard,wand-solo     0 min 17.1 sec:     PASS
+>              imx6q-wandboard     0 min 15.4 sec:     PASS
+>
+> arm-u8500_defconfig
+> -------------------
+>                 ste-snowball     0 min 28.1 sec:     PASS
+>
+> arm-multi_v7_defconfig+CONFIG_CPU_BIG_ENDIAN=y
+> ----------------------------------------------
+>   armada-xp-openblocks-ax3-4     0 min 27.2 sec:     PASS
+>           armada-370-mirabox     0 min 22.9 sec:     PASS
+>
+> arm-mvebu_v7_defconfig
+> ----------------------
+>   armada-xp-openblocks-ax3-4     0 min 23.0 sec:     PASS
+>           armada-370-mirabox     0 min 20.7 sec:     PASS
+>
+> arm-sama5_defconfig
+> -------------------
+>                   sama5d35ek     0 min 16.2 sec:     PASS  (Warnings: 1)
+>
+> _______________________________________________
+> Kernel-build-reports mailing list
+> Kernel-build-reports@lists.linaro.org
+> http://lists.linaro.org/mailman/listinfo/kernel-build-reports
