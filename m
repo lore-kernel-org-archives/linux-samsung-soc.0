@@ -1,72 +1,160 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 00/12] drm/exynos/ipp: image post processing improvements,
- part three
-Date: Mon, 21 Jul 2014 11:23:01 +0200
-Message-ID: <53CCDBF5.9080605@samsung.com>
-References: <1404393037-17299-1-git-send-email-a.hajda@samsung.com>
- <53BD5615.8060900@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v6 10/14] drm/panel: add S6E3FA0 driver
+Date: Mon, 21 Jul 2014 11:35:50 +0200
+Message-ID: <20140721093549.GL8843@ulmo>
+References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
+ <1405587689-1466-11-git-send-email-yj44.cho@samsung.com>
+ <20140717103645.GD17877@ulmo> <53C87D2F.9000906@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:34211 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753031AbaGUJX3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jul 2014 05:23:29 -0400
-In-reply-to: <53BD5615.8060900@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0828350203=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <53C87D2F.9000906@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
 
-Hi Inki,
 
-On 07/09/2014 04:47 PM, Inki Dae wrote:
-> On 2014=EB=85=84 07=EC=9B=94 03=EC=9D=BC 22:10, Andrzej Hajda wrote:
->> This set of independent patches contains various improvement and fix=
-es
->> for exynos_drm ipp framework.
->> The patchset is based on exynos-drm-next branch.
->>
-> Did you test ipp module using libdrm? If so, can you share the app? I
-> would try to test this patch series before merging them. Mainline lib=
-drm
-> has no any ipp interfaces.
+--===============0828350203==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yaPAUYI/0vT2YKpA"
+Content-Disposition: inline
 
-I have used ipptest program developed by you :), with minor changes.
-More advanced tests are on my TODO list, but for this patchset ipptest
-seems to be OK - the patches are mainly cleanup patches.
 
-Regards
-Andrzej
+--yaPAUYI/0vT2YKpA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> Thanks,
-> Inki Dae
->
->> Regards
->> Andrzej
->>
->>
->> Andrzej Hajda (12):
->>   drm/exynos/ipp: remove type casting
->>   drm/exynos/ipp: remove unused field from exynos_drm_ipp_private
->>   drm/exynos/ipp: remove struct exynos_drm_ipp_private
->>   drm/exynos/ipp: correct address type
->>   drm/exynos/ipp: remove temporary variable
->>   drm/exynos/ipp: remove incorrect checks of list_first_entry result
->>   drm/exynos/ipp: simplify memory check function
->>   drm/exynos/ipp: remove useless registration checks
->>   drm/exynos/ipp: simplify ipp_find_obj
->>   drm/exynos/ipp: remove redundant messages
->>   drm/exynos/ipp: simplify ipp_create_id
->>   drm/exynos/ipp: simplify ipp_find_driver
->>
->>  drivers/gpu/drm/exynos/exynos_drm_drv.h |   7 +-
->>  drivers/gpu/drm/exynos/exynos_drm_ipp.c | 259 +++++++++------------=
------------
->>  drivers/gpu/drm/exynos/exynos_drm_ipp.h |   4 +-
->>  3 files changed, 73 insertions(+), 197 deletions(-)
->>
->
+On Fri, Jul 18, 2014 at 10:49:35AM +0900, YoungJun Cho wrote:
+> Hi Thierry,
+>=20
+> Thank you a lot for kind comments.
+>=20
+> On 07/17/2014 07:36 PM, Thierry Reding wrote:
+> > On Thu, Jul 17, 2014 at 06:01:25PM +0900, YoungJun Cho wrote:
+[...]
+> > >diff --git a/drivers/gpu/drm/panel/panel-s6e3fa0.c b/drivers/gpu/drm/p=
+anel/panel-s6e3fa0.c
+[...]
+> > >+static void s6e3fa0_set_maximum_return_packet_size(struct s6e3fa0 *ct=
+x,
+> > >+							unsigned int size)
+> > >+{
+> > >+	struct mipi_dsi_device *dsi =3D to_mipi_dsi_device(ctx->dev);
+> > >+	const struct mipi_dsi_host_ops *ops =3D dsi->host->ops;
+> > >+
+> > >+	if (ops && ops->transfer) {
+> > >+		unsigned char buf[] =3D {size, 0};
+> > >+		struct mipi_dsi_msg msg =3D {
+> > >+			.channel =3D dsi->channel,
+> > >+			.type =3D MIPI_DSI_SET_MAXIMUM_RETURN_PACKET_SIZE,
+> > >+			.tx_len =3D sizeof(buf),
+> > >+			.tx_buf =3D buf
+> > >+		};
+> > >+
+> > >+		ops->transfer(dsi->host, &msg);
+> > >+	}
+> > >+}
+> >
+> > The Set Maximum Return Packet Size command is a standard command, so
+> > please turn that into a generic function exposed by the DSI core.
+> >
+>=20
+> For this and below standard DCS commands, you want to use generic functio=
+ns,
+> but I have no idea for that.
+> Could you explain more detail?
+
+The goal should be to make these standard DCS commands available to all
+DSI peripherals, so the implementation should look something like this:
+
+static int mipi_dsi_set_maximum_return_packet_size(struct mipi_dsi_device *=
+dsi,
+						   u16 size)
+{
+	struct mipi_dsi_msg msg;
+
+	if (!dsi->ops || !dsi->ops->transfer)
+		return -ENOSYS;
+
+	memset(&msg, 0, sizeof(msg));
+	msg.channel =3D dsi->channel;
+	msg.type =3D MIPI_DSI_SET_MAXIMUM_RETURN_PACKET_SIZE;
+	msg.tx_len =3D sizeof(size);
+	msg.tx_buf =3D &size;
+
+	return dsi->ops->transfer(dsi->host, &msg);
+}
+
+The above is somewhat special, since it isn't DCS. For DCS I'd suggest a
+common prefix, like so:
+
+enum mipi_dcs_tear_mode {
+	MIPI_DCS_TEAR_VBLANK,
+	MIPI_DCS_TEAR_BLANK,
+};
+
+static int mipi_dcs_set_tear_on(struct mipi_dsi_device *dsi,
+				enum mipi_dcs_tear_mode mode)
+{
+	u8 data[2] =3D { MIPI_DSI_DCS_SET_TEAR_ON, mode };
+	struct mipi_dsi_msg msg;
+
+	if (!dsi->ops || !dsi->ops->transfer)
+		return -ENOSYS;
+
+	memset(&msg, 0, sizeof(msg));
+	msg.channel =3D dsi->channel;
+	msg.type =3D MIPI_DSI_DCS_SHORT_WRITE_PARAM;
+	msg.tx_len =3D sizeof(data);
+	msg.tx_buf =3D data;
+
+	return dsi->ops->transfer(dsi->host, &msg);
+}
+
+Thierry
+
+--yaPAUYI/0vT2YKpA
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTzN71AAoJEN0jrNd/PrOh60oP/10svYuds9e6P4XPy1uteAPk
+Qp0V8unV2LnenjDwgNgZNQUFtPzTFMcGFUQIUgTt1j3guTUCAaKP56Yc28K2Xlm4
+pzLwKSbC3L2Uv/xfubwnAJuLwopeDv5y0uR50BCp7r/rmMPyv1Pimd7zXDiWZxbP
+aM4VqIKpraB2Ki9nW/SY90snlwAHKjsA1VCFjsfyvbVoBYczhqrqmdoKNMJZXl8+
+aBLphlLoTyVZrhokFODt5DwLf+bZwZ/kpwDbyK96gpV0KBd2dK5w22jlnluDedZS
+8gNixseA4MxLRB50RpqG4y8TEJILQSBEoHvqerPKDFvAOTyB2BXf+CA6xUNsRnBP
+ScRPDn9eJyv6OTxHE6+vSnBdReHaaEqSbvgcvOE63vVPe2o0QBD7dKiRvdIKz40/
++NL4SQpiyAe4W/iPtrKTj/Z3FDvtSVVzuGM1pxp0XpG6QzSWddMfTYjXL9rq/ivn
+uyNxY181zS/4U0/X17XcmE8HkPpUwRvYHCB387UutcHJ56mPWz59aRm5GPTcW2M+
+rgXeG0KacPRlvrfiCQXhs7ttuEy00N2GAJ8UJCpakCKsBYm97m0CfOeV1ZSfMu9S
+hYMAJ6L+SXb3zOHd9bQcJetlJwkKUoAkZikoirzwSzQ3VyOFyHa+H9MpmuQ/BRYt
++6b3vqEUp1SwphDWP5LI
+=UaNY
+-----END PGP SIGNATURE-----
+
+--yaPAUYI/0vT2YKpA--
+
+--===============0828350203==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0828350203==--
