@@ -1,158 +1,228 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH V5 00/12] drm/exynos: few patches to enhance bridge chip
- support
-Date: Mon, 21 Jul 2014 16:51:04 +0900
-Message-ID: <53CCC668.8090602@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V5 05/12] Documentation: Add DT bindings for panel-lvds
+ driver
+Date: Mon, 21 Jul 2014 09:52:11 +0200
+Message-ID: <20140721075210.GC8843@ulmo>
 References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1405629839-12086-6-git-send-email-ajaykumar.rs@samsung.com>
+ <CAEC9eQNygvwOGvw6QPGp+=7K9=oC9XvcEf9QSv=JBsEHyhM0wA@mail.gmail.com>
+ <20140717224809.GA8875@mithrandir>
+ <CAEC9eQMJnae6DaAUd7C5xZkaaaXL+291Qf2pcUd-wrcYXgQx8A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44839 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752025AbaGUHvG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jul 2014 03:51:06 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N9100L38XT4E3D0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 21 Jul 2014 16:51:05 +0900 (KST)
-In-reply-to: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0467325697=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAEC9eQMJnae6DaAUd7C5xZkaaaXL+291Qf2pcUd-wrcYXgQx8A@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@dowhile0.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, robdclark@gmail.com, daniel.vetter@ffwll.ch, thierry.reding@gmail.com, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, javier@dowhile0.org, cpgs@samsung.com
 
-On 2014=EB=85=84 07=EC=9B=94 18=EC=9D=BC 05:43, Ajay Kumar wrote:
-> This series is based on exynos-drm-next branch of Inki Dae's tree at:
-> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
->=20
-> This patchset also consolidates various inputs from the drm community
-> regarding the bridge chaining concept:
-> (1) [RFC V2 0/3] drm/bridge: panel and chaining
-> 	http://www.spinics.net/lists/linux-samsung-soc/msg30160.html
-> (2) [RFC V3 0/3] drm/bridge: panel and chaining
-> 	http://www.spinics.net/lists/linux-samsung-soc/msg30507.html
->=20
-> I have tested this after adding few DT changes for exynos5250-snow,
-> exynos5420-peach-pit and exynos5800-peach-pi boards.
->=20
-> The V4 series of this particular patchset was also tested by:
-> Rahul Sharma <rahul.sharma@samsung.com>
-> Javier Martinez Canillas <javier@dowhile0.org>
->=20
-> Changes since V2:
-> 	-- Address comments from Jingoo Han for ps8622 driver
-> 	-- Address comments from Daniel, Rob and Thierry regarding
-> 	   bridge chaining
-> 	-- Address comments from Thierry regarding the names for
-> 	   new drm_panel functions
->=20
-> Changes since V3:
-> 	-- Remove hotplug based initialization of exynos_dp
-> 	-- Make exynos_dp work directly with drm_panel, remove
-> 	   dependency on panel_binder
-> 	-- Minor cleanups in panel_binder and panel_lvds driver
->=20
-> Changes since V4:
-> 	-- Use gpiod interface for panel-lvds and ps8622 drivers.
-> 	-- Address comments from Javier.
-> 	-- Fix compilation issues when PANEL_BINDER is selected as module.
-> 	-- Split Documentation patches from driver patches.
-> 	-- Rebase on top of the tree.
 
-Hi Ajay,
+--===============0467325697==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9Ek0hoCL9XbhcSqy"
+Content-Disposition: inline
 
-Thanks for your contribution.
 
-I am reviewing your patch series. Sorry for late. Below is my comment.
+--9Ek0hoCL9XbhcSqy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-How about using graph concept to bind eDP, LVDS bridge, and Panel? Your
-patch tries to bind bridge driver using find_bridge function, and this
-function tries to find bridge device node directly using
-of_find_compatible_node() again, which in turn make eDP driver to add
-all codes related to all bridge devices including all relevant bridge
-headers: i.e., if there are five bridge devices then eDP driver should
-try to find all of them. That is really not good.
-
-So my opinion is to define the relationship between eDP, LVDS, and Pane=
-l
-using graph concept: eDP context would have panel and bridge object
-according to graph definition of device tree.
-
-As a result, eDP context has already bridge_chain object for lvds bridg=
-e
-device and panel_binder->bridge object in exynos_drm_attach_lcd_bridge
-function context so it can add bridge_chain object  to
-panel_binder->bridge as is there. I think lvds bridge device drivers
-could follow Linux driver model with this approach.
-
-Rob, it seems to need at least your ACK so that I can merge this patch
-series to exynos-drm-next.
-
-Thanks,
-Inki Dae
-
+On Fri, Jul 18, 2014 at 12:18:05PM +0530, Ajay kumar wrote:
+> Hi Thierry,
 >=20
-> Ajay Kumar (9):
->   [RESEND PATCH V5 01/12] drm/exynos: Move DP setup out of hotplug wo=
-rkqueue
->   [RESEND PATCH V5 02/12] drm/panel: add prepare and unprepare routin=
-es
->   [RESEND PATCH V5 03/12] drm/exynos: dp: modify driver to support dr=
-m_panel
->   [PATCH V5 04/12] drm/panel: Add driver for lvds/edp based panels
->   [PATCH V5 05/12] Documentation: Add DT bindings for panel-lvds driv=
-er
->   [RESEND PATCH V5 06/12] drm/bridge: add helper functions to support=
- bridge chain
->   [PATCH V5 07/12] drm/bridge: Add a driver which binds drm_bridge wi=
-th drm_panel
->   [RESEND PATCH V5 08/12] drm/bridge: ptn3460: Support bridge chainin=
-g
->   [RESEND PATCH V5 09/12] drm/exynos: dp: create bridge chain using p=
-tn3460 and panel_binder
+> Thanks for your comments.
 >=20
-> Vincent Palatin (2):
->   [PATCH V5 10/12] Documentation: Add DT bindings for ps8622/ps8625 b=
-ridge driver
->   [PATCH V5 11/12] drm/bridge: Add ps8622/ps8625 bridge driver
->=20
-> Rahul Sharma (1):
->   [RESEND PATCH V5 12/12] drm/exynos: Add ps8622 lvds bridge discover=
-y to DP driver
->=20
->  .../devicetree/bindings/drm/bridge/ps8622.txt      |   21 +
->  .../devicetree/bindings/panel/panel-lvds.txt       |   50 ++
->  .../devicetree/bindings/video/exynos_dp.txt        |    2 +
->  drivers/gpu/drm/bridge/Kconfig                     |   15 +
->  drivers/gpu/drm/bridge/Makefile                    |    2 +
->  drivers/gpu/drm/bridge/panel_binder.c              |  193 ++++++++
->  drivers/gpu/drm/bridge/ps8622.c                    |  476 ++++++++++=
-++++++++++
->  drivers/gpu/drm/bridge/ptn3460.c                   |  137 +-----
->  drivers/gpu/drm/exynos/Kconfig                     |    1 +
->  drivers/gpu/drm/exynos/exynos_dp_core.c            |   87 +++-
->  drivers/gpu/drm/exynos/exynos_dp_core.h            |    2 +
->  drivers/gpu/drm/panel/Kconfig                      |   10 +
->  drivers/gpu/drm/panel/Makefile                     |    1 +
->  drivers/gpu/drm/panel/panel-lvds.c                 |  268 ++++++++++=
-+
->  include/drm/bridge/panel_binder.h                  |   44 ++
->  include/drm/bridge/ps8622.h                        |   41 ++
->  include/drm/bridge/ptn3460.h                       |   15 +-
->  include/drm/drm_crtc.h                             |   72 +++
->  include/drm/drm_panel.h                            |   18 +
->  19 files changed, 1316 insertions(+), 139 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/drm/bridge/ps86=
-22.txt
->  create mode 100644 Documentation/devicetree/bindings/panel/panel-lvd=
-s.txt
->  create mode 100644 drivers/gpu/drm/bridge/panel_binder.c
->  create mode 100644 drivers/gpu/drm/bridge/ps8622.c
->  create mode 100644 drivers/gpu/drm/panel/panel-lvds.c
->  create mode 100644 include/drm/bridge/panel_binder.h
->  create mode 100644 include/drm/bridge/ps8622.h
->=20
+> On Fri, Jul 18, 2014 at 4:18 AM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > On Fri, Jul 18, 2014 at 02:20:39AM +0530, Ajay kumar wrote:
+> >> +devicetree@vger.kernel.org
+> >>
+> >> On Fri, Jul 18, 2014 at 2:13 AM, Ajay Kumar <ajaykumar.rs@samsung.com>=
+ wrote:
+> >> > Add DT binding documentation for panel-lvds driver.
+> >> >
+> >> > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> >> > ---
+> >> >  .../devicetree/bindings/panel/panel-lvds.txt       |   50 +++++++++=
++++++++++++
+> >> >  1 file changed, 50 insertions(+)
+> >> >  create mode 100644 Documentation/devicetree/bindings/panel/panel-lv=
+ds.txt
+> >> >
+> >> > diff --git a/Documentation/devicetree/bindings/panel/panel-lvds.txt =
+b/Documentation/devicetree/bindings/panel/panel-lvds.txt
+> >> > new file mode 100644
+> >> > index 0000000..fdf91da2
+> >> > --- /dev/null
+> >> > +++ b/Documentation/devicetree/bindings/panel/panel-lvds.txt
+> >> > @@ -0,0 +1,50 @@
+> >> > +panel interface for eDP/lvds panels
+> >> > +
+> >> > +Required properties:
+> >> > +  - compatible: "panel-lvds"
+> >
+> > I think I've said this before. I oppose the addition of this binding. We
+> > need to list a device-specific compatible value here, wildcards like
+> > this aren't a good choice. And then if we have that compatible value we
+> > can move most of the optional properties below into a driver.
+> Yes, "panel-lvds" is a wildcard for all lvds panels.
+> And since lvds panels from different vendors have different values
+> for power_up_delay, delay from video_to_backlight etc, I thought its
+> better to pick them up from device tree.
+
+What I'm saying is that we shouldn't be adding this type of wildcard.
+Instead the compatible property needs to list the specific type of panel
+and since the driver will match on that specific compatible, the values
+for the delays etc. are all implicit and don't have to be listed in
+device tree.
+
+> >> > +Optional properties:
+> >
+> > If all these properties are optional, then what happens if a device tree
+> > node doesn't contain any of them? Doesn't that turn the driver into one
+> > big no-op?
+> No! We need to provide lcd-supply and backlight-supply.
+
+What are those? I don't see them described anywhere.
+
+> >> > +       -lcd-enable-gpios:
+> >> > +               panel LCD poweron GPIO.
+> >> > +                       Indicates which GPIO needs to be powered up =
+as output
+> >> > +                       to powerup/enable the switch to the LCD pane=
+l.
+> >> > +       -backlight-enable-gpios:
+> >> > +               panel LED enable GPIO.
+> >> > +                       Indicates which GPIO needs to be powered up =
+as output
+> >> > +                       to enable the backlight.
+> >
+> > I've also said before that this really belongs in a backlight driver.
+> > Chances are that you'll want to have a way to set the brightness of the
+> > backlight as well, so simply an enable GPIO won't be good enough.
+> Ok. I can handle this in backlight driver itself (with some minor glitche=
+s).
+
+You can make it work without glitches as well and we've discussed this
+before.
+
+> But, how do I map bridge functions to panel functions now?
+> The bridge supports (pre_enable, enable, disable and post_disable) which =
+I map
+> with (prepare, enable, disable and unprepare) of the panel, using a sampl=
+e layer
+> called bridge to panel_binder.
+> Moving out the backlight control from panel means I really don't need
+> those extra
+> panel calls(prepare and unprepare)!
+> Then how to distribute 2 panel calls(enable and disable) across 4 bridge =
+calls?
+
+The .prepare() and .unprepare() functions are useful irrespective of
+backlight control. What you want to separate is powering up the panel
+=66rom enabling the backlight. So .prepare() could be what's doing the
+power up of the panel (and possibly other initialization required to
+make it work) and .enable() could be as simple as turning on the
+backlight.
+
+What I'm saying is rather than use a backlight-enable-gpios property in
+the panel, that property should be part of the backlight device and the
+GPIO can then be toggled by the backlight driver when the backlight is
+enabled.
+
+> >> > +       -panel-prepare-delay:
+> >> > +               delay value in ms required for panel_prepare process
+> >> > +                       Delay in ms needed for the panel LCD unit to
+> >> > +                       powerup completely.
+> >> > +                       ex: delay needed till eDP panel throws HPD.
+> >> > +                           delay needed so that we cans tart readin=
+g edid.
+> >
+> > If the panel signals HPD then we don't need this delay at all and we
+> > should just wait for HPD instead.
+> Not always for HPD, we need to wait for EDID module as well.
+
+I always thought that HPD signalled readiness from the panel to provide
+EDID, too. Are there really panels that need additional delays after HPD
+has been signalled until the EDID can be read? Are there maybe other
+ways to detect that EDID can't be read?
+
+> >> > +       -panel-enable-delay:
+> >> > +               delay value in ms required for panel_enable process
+> >> > +                       Delay in ms needed for the panel backlight/L=
+ED unit
+> >> > +                       to powerup, and delay needed between video_e=
+nable and
+> >> > +                       backlight_enable.
+> >> > +       -panel-disable-delay:
+> >> > +               delay value in ms required for panel_disable process
+> >> > +                       Delay in ms needed for the panel backlight/L=
+ED unit
+> >> > +                       powerdown, and delay needed between backligh=
+t_disable
+> >> > +                       and video_disable.
+> >> > +       -panel-unprepare-delay:
+> >> > +               delay value in ms required for panel_post_disable pr=
+ocess
+> >> > +                       Delay in ms needed for the panel LCD unit to
+> >> > +                       to powerdown completely, and the minimum del=
+ay needed
+> >> > +                       before powering it on again.
+> >
+> > These delays are all panel specific and they don't vary per board, so
+> > they shouldn't go into the device tree at all.
+> But, fetching them from device tree would allow us to support all lvds
+> panels in this single driver.
+
+You can do that even without having this data in device tree. My point
+is that this is redundant information once you know the panel's specific
+compatible value. Therefore there shouldn't be a need to list this in
+device tree again.
+
+Thierry
+
+--9Ek0hoCL9XbhcSqy
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTzMaqAAoJEN0jrNd/PrOh1oAQAL/EeXio+r+zYUqVG7pGgbER
+k5yeIep+RXQMdJsdzPGP91+tddM5tLE7vuBv0KvasUVsPLEQT+8sXgm3+De3FDvn
+Zsq6V50S4QlAGQMNetaJacPU+5zPbLBCAJGb+l4XzNn9oksEPntjzyXlThcqAm9h
+XjVmbCD2LX2Ef3Dyvg7VgWo/0xPV+dIvs1ycyD4cWgS4iS6rgadOuDBj3qie7tx5
+NUZMkPQSeathpNcu/PFobGAd084WqaFm/tHCcBI/xL3wAOXFAR/GDVBMrUiE/Y+U
+d0IRKQAbgXi16Ffzu01Eczh2HErc/XFFtY4GCr5gQdn3hp/eRLZUGpkuVcEs8ZQ4
+jauF8PkBN9dVd0nmEP8A1knLI3/v5QnyMGCkdEaGcQhOPuRlZcf1xWyM/fHlAy/D
+klLXmLzkRRF1zTvMQPxH3tllBeiI0pWMU13H02mDUN7MZbPXBeUtelxaYk2pRIpJ
+62BkduyxUISa5tvTqV94eeGwikZ7vzSdQer7ILaTHYcbCUbZH35NGXP36+X7Gt/w
+c54u53xpu5CxUJmChQa21QWPcPiHt4ScYa6C6SGU3oKR2zU/9JkTFRzCi+uckXD8
+jcaPrNHkL/DLSSev5+4AwpTti2xo0XCoFZnVG3Zlv5DB4jOS98k7/PDM01/UIwBT
+JRjl2HWKt7DirefiIV6s
+=VuJJ
+-----END PGP SIGNATURE-----
+
+--9Ek0hoCL9XbhcSqy--
+
+--===============0467325697==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0467325697==--
