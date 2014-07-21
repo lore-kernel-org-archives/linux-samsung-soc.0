@@ -1,188 +1,227 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: Re: [PATCH 0/3] drm/exynos: Allow module to be autoloaded
-Date: Mon, 21 Jul 2014 08:50:19 +0200
-Message-ID: <1405925419.7527.17.camel@dusk>
-References: <1405715801-5325-1-git-send-email-sjoerd.simons@collabora.co.uk>
-	 <53CC82AC.9060301@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
-	boundary="=-6O02VqC3qfvUc89KmU4r"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:51627 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751017AbaGUGub (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jul 2014 02:50:31 -0400
-In-Reply-To: <53CC82AC.9060301@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [PATCH v2] cpufreq: tests: Providing cpufreq regression test
+Date: Mon, 21 Jul 2014 09:02:34 +0200
+Message-ID: <1405926154-27214-1-git-send-email-l.majewski@samsung.com>
+References: <1405678985-21677-1-git-send-email-l.majewski@samsung.com>
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: <1405678985-21677-1-git-send-email-l.majewski@samsung.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Thomas Abraham <ta.omasab@gmail.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <spk.linux@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
+This commit adds first regression test "cpufreq_freq_test.sh" for the
+cpufreq subsystem.
 
---=-6O02VqC3qfvUc89KmU4r
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
 
-Hey Inki,
+---
+Changes for v2:
+- Replace *_PATCH with *_PATH for variables names
+- Corrected mistakes in the README file
+- Providing detailed explanation of the patch in the README file
+---
+ drivers/cpufreq/tests/README               |  33 +++++++
+ drivers/cpufreq/tests/cpufreq_freq_test.sh | 149 +++++++++++++++++++++++++++++
+ 2 files changed, 182 insertions(+)
+ create mode 100644 drivers/cpufreq/tests/README
+ create mode 100755 drivers/cpufreq/tests/cpufreq_freq_test.sh
 
-On Mon, 2014-07-21 at 12:02 +0900, Inki Dae wrote:
-> On 2014=EB=85=84 07=EC=9B=94 19=EC=9D=BC 05:36, Sjoerd Simons wrote:
-> > The exynos DRM module currently is not automatically loaded when build =
-as a
-> > module. This is due to the simple fact that it doesn't have any
-> > MODULE_DEVICE_TABLE entries whatsoever... Most of these were removed pr=
-eviously
-> > as it wasn't possible at the time to have multiple calls to MODULE_DEVI=
-CE_TABLE
-> > in one module, however commit 21bdd17b21b45ea solved that.
-> >=20
-> > The first two patches revert the previous removals of MODULE_DEVICE_TAB=
-LE
-> > calls, while the last one adds calls for the remaining OF match tables =
-without a
-> > MODULE_DEVICE_TABLE call.
+diff --git a/drivers/cpufreq/tests/README b/drivers/cpufreq/tests/README
+new file mode 100644
+index 0000000..3e9cd80
+--- /dev/null
++++ b/drivers/cpufreq/tests/README
+@@ -0,0 +1,33 @@
++This file contains list of cpufreq's available regression tests with a short
++usage description.
++
++1. cpufreq_freq_test.sh
++
++Description:
++------------
++This script is supposed to test if cpufreq attributes exported by sysfs are
++exposing correct values.
++
++To achieve this goal it saves the current governor and changes it to
++"performance". Afterwards, it reads the "scaling_available_frequencies"
++property. With the list of supported frequencies it is able to enforce each of
++them by writing to "scaling_max_freq" attribute. To make the test more reliable
++a superfluous load with gzip is created to be sure that we are running with
++highest possible frequency. This high load is regulated with the 'sleep'
++duration. After this time the "cpufreq_cur_freq" is read and compared with the
++original value. As the last step the original governor is restored.
++
++This script can work with or without BOOST enabled and helps in spotting errors
++related to cpufreq and common clock framework.
++
++Used attributes:
++----------------
++- "scaling_available_frequencies"
++- "cpuinfo_cur_freq"
++- "scaling_governor"
++- "scaling_max_freq"
++
++Target devices:
++---------------
++
++All devices which exports mentioned above sysfs attributes.
+\ No newline at end of file
+diff --git a/drivers/cpufreq/tests/cpufreq_freq_test.sh b/drivers/cpufreq/tests/cpufreq_freq_test.sh
+new file mode 100755
+index 0000000..c25f05c
+--- /dev/null
++++ b/drivers/cpufreq/tests/cpufreq_freq_test.sh
+@@ -0,0 +1,149 @@
++#!/bin/bash
++#
++# This file provides a simple mean to test if all declared freqs at
++# "scaling_available_frequencies" can be set and if "cpuinfo_cur_freq"
++# returns this value.
++#
++# Usage: ./cpufreq_freq_test.sh
++# Requisite: Compiled in "performance" governor
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, you can access it online at
++# http://www.gnu.org/licenses/gpl-2.0.html.
++#
++# Copyright (C) Samsung Electronics, 2014
++#
++# Author: Lukasz Majewski <l.majewski@samsung.com>
++
++set +x
++
++COLOUR_RED="\33[31m"
++COLOUR_BLUE="\33[34m"
++COLOUR_GREEN="\33[32m"
++COLOUR_DEFAULT="\33[0m"
++
++T_PATH=/sys/devices/system/cpu/cpu0/cpufreq
++BOOST_PATH=/sys/devices/system/cpu/cpufreq
++
++if [ ! -d "$T_PATH" ]; then
++    printf "   $COLOUR_RED No path to CPUFREQ $COLOUR_DEFAULT\n"
++    exit 1
++fi
++
++ERRORS=0
++
++OLD_GOV=`cat $T_PATH/scaling_governor`
++echo "CURRENT GOVERNOR: $OLD_GOV"
++echo "SET GOVERNOR: performance"
++echo "performance" > $T_PATH/scaling_governor
++
++function test_freqs1 {
++    FREQS=`cat $1`
++    for I in $FREQS; do
++	cpufreq_set_freq $I
++	if [ "$2" ]; then
++	    printf "$COLOUR_BLUE BOOST $COLOUR_DEFAULT" $I
++	fi
++	cpufreq_test_freq $I
++    done
++}
++
++function test_freqs2 {
++    FREQ=`cat $1`
++    FREQS_ARRAY=($FREQ)
++
++    for freq in ${FREQS_ARRAY[@]}
++    do
++	echo "REFERENCE FREQ: $freq"
++	for f in ${FREQS_ARRAY[@]}
++	do
++	    cpufreq_set_freq $freq
++	    echo -n "----> "
++	    cpufreq_set_freq $f
++	    cpufreq_test_freq $f
++	done
++    done
++}
++
++function restore {
++    if [ -f $BOOST_PATH/boost ]; then
++	cpufreq_boost_state $BOOST_STATE
++    fi
++
++    echo "SET GOVERNOR: $OLD_GOV"
++    echo $OLD_GOV > $T_PATH/scaling_governor
++}
++
++function die {
++    printf "   $COLOUR_RED FAILED $COLOUR_DEFAULT\n"
++    restore_gov
++    exit 1
++}
++
++function cpufreq_test_freq {
++    gzip < /dev/urandom > /dev/null &
++    pid=$!
++    sleep 0.1
++    CURR_FREQ=`cat $T_PATH/cpuinfo_cur_freq`
++    if [ $1 -eq $CURR_FREQ ]; then
++	printf "\t$COLOUR_GREEN OK $COLOUR_DEFAULT\n"
++    else
++	printf "$COLOUR_RED CURRENT $CURR_FREQ $COLOUR_DEFAULT\n"
++	ERRORS=`expr $ERRORS + 1`
++	#die
++    fi
++    kill -9 $pid
++    wait $! 2>/dev/null
++}
++
++function cpufreq_set_freq {
++    echo $1 > $T_PATH/scaling_max_freq || die $?
++    printf "FREQ:$COLOUR_GREEN %s $COLOUR_DEFAULT" $1
++}
++
++function cpufreq_boost_state {
++   echo $1 > $BOOST_PATH/boost
++}
++
++function cpufreq_boost_status {
++   cat $BOOST_PATH/boost
++}
++
++if [ -f $BOOST_PATH/boost ]; then
++    echo "######################################"
++    echo "TEST BOOST OPERATION"
++    echo "######################################"
++
++    BOOST_STATE=$(cpufreq_boost_status)
++    if [ $BOOST_STATE -eq 0 ]; then
++	cpufreq_boost_state 1
++    fi
++    test_freqs1 $T_PATH/scaling_boost_frequencies 1
++fi
++
++echo "######################################"
++echo "TEST AVAILABLE FREQS"
++echo "######################################"
++test_freqs1 $T_PATH/scaling_available_frequencies
++
++echo "######################################"
++echo "TEST FREQS SWITCHING"
++echo "######################################"
++test_freqs2 $T_PATH/scaling_available_frequencies
++
++echo "######################################"
++echo "ERRORS: $ERRORS"
++echo "######################################"
++
++restore
++exit 0
+-- 
+2.0.0.rc2
 
-> Exynos drm follows single-driver model. So each usb driver of Exynos drm
-> wouldn't need its own MODULE_DEVICE_TABLE.
-
-Strictly speaking you're right, for module autoloading to work the
-module just needs to have one that matches. So in principle all other
-entries are redundant.
-
-However for exynos drm there does not seem to be one main device which
-is guaranteed to always be present which can be used to key the module
-autoloading of. So you still need seperate MODULE_DEVICE_TABLE entries
-for all the various subdrivers to ensure autoloading actually happens,
-especially since the various subdrivers can be seperately enabled
-at build time.=20
-
-The one exception from the above might be the HDMI sub-driver, which is
-always build together with the mixer (And i asume the HDMI hw block
-depends on the mixer block for its input). However it seems more elegant
-and less error-prone to have simply entries for both, rather then
-implicitly replying on the other (sub)driver to trigger module loading.
-Especially given there is essentially no cost in having another module
-alias.
-
---=20
-Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Collabora Ltd.
-
---=-6O02VqC3qfvUc89KmU4r
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIUzDCCBsIw
-ggWqoAMCAQICEAoE3yF0XU0rjOozcgUAUOkwDQYJKoZIhvcNAQEFBQAwZTELMAkGA1UEBhMCVVMx
-FTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEkMCIGA1UE
-AxMbRGlnaUNlcnQgQXNzdXJlZCBJRCBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTIxMTExMDAw
-MDAwMFowYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
-LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6IItmfnKwkKVpYBzQHDSnlZUXKnE0kEGj8kz/E1FkVyB
-n+0snPgWWd+etSQVwpi5tHdJ3InECtqvy15r7a2wcTHrzzpADEZNk+yLejYIA6sMNP4YSYL+x8cx
-SIB8HqIPkg5QycaH6zY/2DDD/6b3+6LNb3Mj/qxWBZDwMiEWicZwiPkFl32jx0PdAug7Pe2xQaPt
-P77blUjE7h6z8rwMK5nQxl0SQoHhg26Ccz8mSxSQrllmCsSNvtLOBq6thG9IhJtPQLnxTPKvmPv2
-zkBdXPao8S+v7Iki8msYZbHBc63X8djPHgp0XEK4aH631XcKJ1Z8D2KkPzIUYJX9BwSiCQIDAQAB
-o4IDbzCCA2swDgYDVR0PAQH/BAQDAgGGMDsGA1UdJQQ0MDIGCCsGAQUFBwMBBggrBgEFBQcDAgYI
-KwYBBQUHAwMGCCsGAQUFBwMEBggrBgEFBQcDCDCCAcYGA1UdIASCAb0wggG5MIIBtQYLYIZIAYb9
-bAEDAAQwggGkMDoGCCsGAQUFBwIBFi5odHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJl
-cG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUHAgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAA
-dABoAGkAcwAgAEMAZQByAHQAaQBmAGkAYwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAg
-AGEAYwBjAGUAcAB0AGEAbgBjAGUAIABvAGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMA
-UAAvAEMAUABTACAAYQBuAGQAIAB0AGgAZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABB
-AGcAcgBlAGUAbQBlAG4AdAAgAHcAaABpAGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkA
-dAB5ACAAYQBuAGQAIABhAHIAZQAgAGkAbgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBp
-AG4AIABiAHkAIAByAGUAZgBlAHIAZQBuAGMAZQAuMA8GA1UdEwEB/wQFMAMBAf8wfQYIKwYBBQUH
-AQEEcTBvMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wRwYIKwYBBQUHMAKG
-O2h0dHA6Ly93d3cuZGlnaWNlcnQuY29tL0NBQ2VydHMvRGlnaUNlcnRBc3N1cmVkSURSb290Q0Eu
-Y3J0MIGBBgNVHR8EejB4MDqgOKA2hjRodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRB
-c3N1cmVkSURSb290Q0EuY3JsMDqgOKA2hjRodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGlnaUNl
-cnRBc3N1cmVkSURSb290Q0EuY3JsMB0GA1UdDgQWBBQVABIrE5iymQftHt+ivlcNK2cCzTAfBgNV
-HSMEGDAWgBRF66Kv9JLLgjEtUYunpyGd823IDzANBgkqhkiG9w0BAQUFAAOCAQEAhGFOQR64dgQq
-tbbvj/JVhbldVv4KmObkvWWKfUAp0/yxXUX9OrgqWzNLJFzNubTkc61hXXatdDOKZtUjr0wfcm5F
-2XVAu6I7z41JL8BBsOIpo1E4Q1CZFKwzBjViiX13qVIH5WwgV7aBum+8s8KU7XYCgNl8zoWoHOzH
-Q0pLsVfPcs7f9SU8yyJP/Z9S0TfLCLs4PuDVPm95Ca1bfDGzdzXD5GP5aAqYB+dGOHeE0j6XvAqg
-qKwlT0RukeHSWq9r7zAcjaNEQrMQiyP61+Y1dDesz+urWB/JiCP/NtQH6jRqR+qdlWyeKU9T7eMr
-lSBOKs+WYHr4LIDwlVLOKZaBYjCCBv8wggXnoAMCAQICEA2fwUKNhvkL8dN88tUFvVwwDQYJKoZI
-hvcNAQEFBQAwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQ
-d3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMB4XDTE0
-MDIxNzAwMDAwMFoXDTE1MDMxMjEyMDAwMFowgaQxCzAJBgNVBAYTAkdCMRcwFQYDVQQIEw5DYW1i
-cmlkZ2VzaGlyZTESMBAGA1UEBxMJQ2FtYnJpZGdlMRYwFAYDVQQKEw1Db2xsYWJvcmEgTHRkMQow
-CAYDVQQLEwExMRYwFAYDVQQDEw1Tam9lcmQgU2ltb25zMSwwKgYJKoZIhvcNAQkBFh1zam9lcmQu
-c2ltb25zQGNvbGxhYm9yYS5jby51azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN4Q
-EHeW1NbogMVZpHedG7o509/L4VBhqQd8j8JViWd+yvLlxOBw/gY+7ioHMatrQY2VvY6QOLle2Xqs
-CDvELcXMxwyFpBC0Ia+CVE+5pF+0IMuVkGIL1T8LHeKZYeRP+uFXtmWzas12hsMILNRmK7Q5PACm
-+v/6HFn111hLKkANBtRHIRiDbFQOiluNeR2bq+ck1y2+X//SGumA1XZFdCB/1VcRJXDdFnYdU3j/
-RkoiGggo3MSq3mJ6yV7sqzk04fTLFvfL0KadCMauputeGBybEiFAt6rCm5TkyUqoDOTU07byOEXO
-M32EGeYeV515RzARTpOSE9sdmRq0jNNAqGsCAwEAAaOCA2wwggNoMB8GA1UdIwQYMBaAFBUAEisT
-mLKZB+0e36K+Vw0rZwLNMB0GA1UdDgQWBBRaTG8RXMDSFO5XcrjqYs/YDlmqSDAoBgNVHREEITAf
-gR1zam9lcmQuc2ltb25zQGNvbGxhYm9yYS5jby51azAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMH0GA1UdHwR2MHQwOKA2oDSGMmh0dHA6Ly9jcmwzLmRpZ2lj
-ZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3JsMDigNqA0hjJodHRwOi8vY3JsNC5kaWdp
-Y2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0xLmNybDCCAcUGA1UdIASCAbwwggG4MIIBtAYK
-YIZIAYb9bAQBAjCCAaQwOgYIKwYBBQUHAgEWLmh0dHA6Ly93d3cuZGlnaWNlcnQuY29tL3NzbC1j
-cHMtcmVwb3NpdG9yeS5odG0wggFkBggrBgEFBQcCAjCCAVYeggFSAEEAbgB5ACAAdQBzAGUAIABv
-AGYAIAB0AGgAaQBzACAAQwBlAHIAdABpAGYAaQBjAGEAdABlACAAYwBvAG4AcwB0AGkAdAB1AHQA
-ZQBzACAAYQBjAGMAZQBwAHQAYQBuAGMAZQAgAG8AZgAgAHQAaABlACAARABpAGcAaQBDAGUAcgB0
-ACAAQwBQAC8AQwBQAFMAIABhAG4AZAAgAHQAaABlACAAUgBlAGwAeQBpAG4AZwAgAFAAYQByAHQA
-eQAgAEEAZwByAGUAZQBtAGUAbgB0ACAAdwBoAGkAYwBoACAAbABpAG0AaQB0ACAAbABpAGEAYgBp
-AGwAaQB0AHkAIABhAG4AZAAgAGEAcgBlACAAaQBuAGMAbwByAHAAbwByAGEAdABlAGQAIABoAGUA
-cgBlAGkAbgAgAGIAeQAgAHIAZQBmAGUAcgBlAG4AYwBlAC4wdwYIKwYBBQUHAQEEazBpMCQGCCsG
-AQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQQYIKwYBBQUHMAKGNWh0dHA6Ly9jYWNl
-cnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3J0MAwGA1UdEwEB/wQCMAAw
-DQYJKoZIhvcNAQEFBQADggEBAAc8CwXSms3RbIx+bhxFsGQoN+RpHtjnPvMPPAobv7rxdhQPPz+N
-6h3hpVzegeW2XhyZVC8MT0U6uWXrk+1uQUAXrJEG+W2X8yTEoHDS/SCF/POOsj/ekaDuNE9JJB/9
-cspoa4W+W8pX1sRurBDFHL0DBudUQ1PgvTSLPOHtfKQpu4gRb2u8KpJermp/IvPLImX9xSCbYKQM
-2L0wbpStFIYdyKCKuXuQxOX3BdBKLCFvcIDE6hjj3UpOlThCbeul2Tz5jARCfRK4OUxnXyb/Tp5j
-tshIAa2ZMGaTH9ApeY7P6C2ONF+Mh5yV/raWXOnJ9dEg6/sXcbdiieqzLKYBIgQwggb/MIIF56AD
-AgECAhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBBQUAMGIxCzAJBgNVBAYTAlVTMRUwEwYD
-VQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xITAfBgNVBAMTGERp
-Z2lDZXJ0IEFzc3VyZWQgSUQgQ0EtMTAeFw0xNDAyMTcwMDAwMDBaFw0xNTAzMTIxMjAwMDBaMIGk
-MQswCQYDVQQGEwJHQjEXMBUGA1UECBMOQ2FtYnJpZGdlc2hpcmUxEjAQBgNVBAcTCUNhbWJyaWRn
-ZTEWMBQGA1UEChMNQ29sbGFib3JhIEx0ZDEKMAgGA1UECxMBMTEWMBQGA1UEAxMNU2pvZXJkIFNp
-bW9uczEsMCoGCSqGSIb3DQEJARYdc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28udWswggEiMA0G
-CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDeEBB3ltTW6IDFWaR3nRu6OdPfy+FQYakHfI/CVYln
-fsry5cTgcP4GPu4qBzGra0GNlb2OkDi5Xtl6rAg7xC3FzMcMhaQQtCGvglRPuaRftCDLlZBiC9U/
-Cx3imWHkT/rhV7Zls2rNdobDCCzUZiu0OTwApvr/+hxZ9ddYSypADQbURyEYg2xUDopbjXkdm6vn
-JNctvl//0hrpgNV2RXQgf9VXESVw3RZ2HVN4/0ZKIhoIKNzEqt5iesle7Ks5NOH0yxb3y9CmnQjG
-rqbrXhgcmxIhQLeqwpuU5MlKqAzk1NO28jhFzjN9hBnmHledeUcwEU6TkhPbHZkatIzTQKhrAgMB
-AAGjggNsMIIDaDAfBgNVHSMEGDAWgBQVABIrE5iymQftHt+ivlcNK2cCzTAdBgNVHQ4EFgQUWkxv
-EVzA0hTuV3K46mLP2A5ZqkgwKAYDVR0RBCEwH4Edc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28u
-dWswDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMEBggrBgEFBQcDAjB9BgNVHR8E
-djB0MDigNqA0hjJodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0x
-LmNybDA4oDagNIYyaHR0cDovL2NybDQuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0QXNzdXJlZElEQ0Et
-MS5jcmwwggHFBgNVHSAEggG8MIIBuDCCAbQGCmCGSAGG/WwEAQIwggGkMDoGCCsGAQUFBwIBFi5o
-dHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJlcG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUH
-AgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAAdABoAGkAcwAgAEMAZQByAHQAaQBmAGkA
-YwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAgAGEAYwBjAGUAcAB0AGEAbgBjAGUAIABv
-AGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMAUAAvAEMAUABTACAAYQBuAGQAIAB0AGgA
-ZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABBAGcAcgBlAGUAbQBlAG4AdAAgAHcAaABp
-AGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkAdAB5ACAAYQBuAGQAIABhAHIAZQAgAGkA
-bgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBpAG4AIABiAHkAIAByAGUAZgBlAHIAZQBu
-AGMAZQAuMHcGCCsGAQUFBwEBBGswaTAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQu
-Y29tMEEGCCsGAQUFBzAChjVodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1
-cmVkSURDQS0xLmNydDAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBBQUAA4IBAQAHPAsF0prN0WyM
-fm4cRbBkKDfkaR7Y5z7zDzwKG7+68XYUDz8/jeod4aVc3oHltl4cmVQvDE9FOrll65PtbkFAF6yR
-Bvltl/MkxKBw0v0ghfzzjrI/3pGg7jRPSSQf/XLKaGuFvlvKV9bEbqwQxRy9AwbnVENT4L00izzh
-7XykKbuIEW9rvCqSXq5qfyLzyyJl/cUgm2CkDNi9MG6UrRSGHcigirl7kMTl9wXQSiwhb3CAxOoY
-491KTpU4Qm3rpdk8+YwEQn0SuDlMZ18m/06eY7bISAGtmTBmkx/QKXmOz+gtjjRfjIeclf62llzp
-yfXRIOv7F3G3YonqsyymASIEMYIDEDCCAwwCAQEwdjBiMQswCQYDVQQGEwJVUzEVMBMGA1UEChMM
-RGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
-dCBBc3N1cmVkIElEIENBLTECEA2fwUKNhvkL8dN88tUFvVwwCQYFKw4DAhoFAKCCAW8wGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTQwNzIxMDY1MDE5WjAjBgkqhkiG
-9w0BCQQxFgQU44J5HjolrXFdbxdSMltnpPtBL4UwgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
-BhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEh
-MB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xAhANn8FCjYb5C/HTfPLVBb1cMIGHBgsq
-hkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcG
-A1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0x
-AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBAEEL+7N5cEsxdCddXDgJ4T3SVdr2
-uguw8yTO20bqLqTUCW0rAPSUnFskkq902DEohK7IXTOwHzsSNDxQvKULVrXTmGXpkVkgUtGtt+j7
-sFHuG20BC7n0UpFe3b0Sebu87VwQHthyI8as9B3W8aqN6T/tnxE670scR55NY9fjuQdMLdW8ua56
-dkOQl97oPBwqKM3rVxsXL1phOzP2ODgLTMf2XAN8b3FzpfIqMGSHVGoI56dZJTzMGSSO3p8agxTE
-/KnPCGLWqbXu32MmzwtA8XWCo6t8/5Lfl7R1z77KVSTuAPXHhqG27wnP4ZSIR/v7wq11rvVfrw7w
-2QugfZUKO2gAAAAAAAA=
-
-
---=-6O02VqC3qfvUc89KmU4r--
