@@ -1,218 +1,188 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [RESEND PATCH] thermal: samsung: Add TMU support for Exynos3250
- SoC
-Date: Mon, 21 Jul 2014 14:04:56 +0800
-Message-ID: <1405922696.2455.1.camel@rzhang1-toshiba>
-References: <1405641605-3370-1-git-send-email-cw00.choi@samsung.com>
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: Re: [PATCH 0/3] drm/exynos: Allow module to be autoloaded
+Date: Mon, 21 Jul 2014 08:50:19 +0200
+Message-ID: <1405925419.7527.17.camel@dusk>
+References: <1405715801-5325-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	 <53CC82AC.9060301@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1405641605-3370-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, Jonghwa Lee <jonghwa3.lee@samsung.com>, kgene.kim@samsung.com, pawel.moll@arm.com, linux-pm@vger.kernel.org, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, amit.daniel@samsung.com, robh+dt@kernel.org, eduardo.valentin@gmail.com, galak@codeaurora.org, ch.naveen@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
+	boundary="=-6O02VqC3qfvUc89KmU4r"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:51627 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751017AbaGUGub (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Jul 2014 02:50:31 -0400
+In-Reply-To: <53CC82AC.9060301@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Fri, 2014-07-18 at 09:00 +0900, Chanwoo Choi wrote:
-> This patch adds the registers, bit fields and compatible strings
-> required to support for the 1 TMU channels on Exynos3250.
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> [Add MUX address setting bits by Jonghwa Lee]
-> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Reviewed-by: Amit Daniel Kachhap<amit.daniel@samsung.com>
 
-Eduardo and Amit,
+--=-6O02VqC3qfvUc89KmU4r
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-do you have any comments on this?
+Hey Inki,
 
-thanks,
-rui
+On Mon, 2014-07-21 at 12:02 +0900, Inki Dae wrote:
+> On 2014=EB=85=84 07=EC=9B=94 19=EC=9D=BC 05:36, Sjoerd Simons wrote:
+> > The exynos DRM module currently is not automatically loaded when build =
+as a
+> > module. This is due to the simple fact that it doesn't have any
+> > MODULE_DEVICE_TABLE entries whatsoever... Most of these were removed pr=
+eviously
+> > as it wasn't possible at the time to have multiple calls to MODULE_DEVI=
+CE_TABLE
+> > in one module, however commit 21bdd17b21b45ea solved that.
+> >=20
+> > The first two patches revert the previous removals of MODULE_DEVICE_TAB=
+LE
+> > calls, while the last one adds calls for the remaining OF match tables =
+without a
+> > MODULE_DEVICE_TABLE call.
 
-> ---
->  .../devicetree/bindings/thermal/exynos-thermal.txt |  1 +
->  drivers/thermal/samsung/exynos_tmu.c               |  7 +-
->  drivers/thermal/samsung/exynos_tmu.h               |  3 +-
->  drivers/thermal/samsung/exynos_tmu_data.c          | 89 ++++++++++++++++++++++
->  drivers/thermal/samsung/exynos_tmu_data.h          |  7 ++
->  5 files changed, 105 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> index c949092..ae738f5 100644
-> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> @@ -3,6 +3,7 @@
->  ** Required properties:
->  
->  - compatible : One of the following:
-> +	       "samsung,exynos3250-tmu"
->  	       "samsung,exynos4412-tmu"
->  	       "samsung,exynos4210-tmu"
->  	       "samsung,exynos5250-tmu"
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index d7ca9f4..a2a08ea 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -505,6 +505,10 @@ static irqreturn_t exynos_tmu_irq(int irq, void *id)
->  
->  static const struct of_device_id exynos_tmu_match[] = {
->  	{
-> +		.compatible = "samsung,exynos3250-tmu",
-> +		.data = (void *)EXYNOS3250_TMU_DRV_DATA,
-> +	},
-> +	{
->  		.compatible = "samsung,exynos4210-tmu",
->  		.data = (void *)EXYNOS4210_TMU_DRV_DATA,
->  	},
-> @@ -677,7 +681,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->  		goto err_clk_sec;
->  	}
->  
-> -	if (pdata->type == SOC_ARCH_EXYNOS4210 ||
-> +	if (pdata->type == SOC_ARCH_EXYNOS3250 ||
-> +	    pdata->type == SOC_ARCH_EXYNOS4210 ||
->  	    pdata->type == SOC_ARCH_EXYNOS4412 ||
->  	    pdata->type == SOC_ARCH_EXYNOS5250 ||
->  	    pdata->type == SOC_ARCH_EXYNOS5260 ||
-> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-> index edd08cf..1b4a644 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.h
-> +++ b/drivers/thermal/samsung/exynos_tmu.h
-> @@ -40,7 +40,8 @@ enum calibration_mode {
->  };
->  
->  enum soc_type {
-> -	SOC_ARCH_EXYNOS4210 = 1,
-> +	SOC_ARCH_EXYNOS3250 = 1,
-> +	SOC_ARCH_EXYNOS4210,
->  	SOC_ARCH_EXYNOS4412,
->  	SOC_ARCH_EXYNOS5250,
->  	SOC_ARCH_EXYNOS5260,
-> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-> index c1d81dc..aa8e0de 100644
-> --- a/drivers/thermal/samsung/exynos_tmu_data.c
-> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
-> @@ -90,6 +90,95 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
->  };
->  #endif
->  
-> +#if defined(CONFIG_SOC_EXYNOS3250)
-> +static const struct exynos_tmu_registers exynos3250_tmu_registers = {
-> +	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
-> +	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
-> +	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
-> +	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
-> +	.test_mux_addr_shift = EXYNOS4412_MUX_ADDR_SHIFT,
-> +	.buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
-> +	.buf_vref_sel_mask = EXYNOS_TMU_REF_VOLTAGE_MASK,
-> +	.therm_trip_mode_shift = EXYNOS_TMU_TRIP_MODE_SHIFT,
-> +	.therm_trip_mode_mask = EXYNOS_TMU_TRIP_MODE_MASK,
-> +	.therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
-> +	.buf_slope_sel_shift = EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
-> +	.buf_slope_sel_mask = EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
-> +	.core_en_shift = EXYNOS_TMU_CORE_EN_SHIFT,
-> +	.tmu_status = EXYNOS_TMU_REG_STATUS,
-> +	.tmu_cur_temp = EXYNOS_TMU_REG_CURRENT_TEMP,
-> +	.threshold_th0 = EXYNOS_THD_TEMP_RISE,
-> +	.threshold_th1 = EXYNOS_THD_TEMP_FALL,
-> +	.tmu_inten = EXYNOS_TMU_REG_INTEN,
-> +	.inten_rise0_shift = EXYNOS_TMU_INTEN_RISE0_SHIFT,
-> +	.inten_rise1_shift = EXYNOS_TMU_INTEN_RISE1_SHIFT,
-> +	.inten_rise2_shift = EXYNOS_TMU_INTEN_RISE2_SHIFT,
-> +	.inten_fall0_shift = EXYNOS_TMU_INTEN_FALL0_SHIFT,
-> +	.tmu_intstat = EXYNOS_TMU_REG_INTSTAT,
-> +	.tmu_intclear = EXYNOS_TMU_REG_INTCLEAR,
-> +	.intclr_fall_shift = EXYNOS_TMU_CLEAR_FALL_INT_SHIFT,
-> +	.intclr_rise_shift = EXYNOS_TMU_RISE_INT_SHIFT,
-> +	.intclr_rise_mask = EXYNOS_TMU_RISE_INT_MASK,
-> +	.intclr_fall_mask = EXYNOS_TMU_FALL_INT_MASK,
-> +	.emul_con = EXYNOS_EMUL_CON,
-> +	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
-> +	.emul_time_shift = EXYNOS_EMUL_TIME_SHIFT,
-> +	.emul_time_mask = EXYNOS_EMUL_TIME_MASK,
-> +};
-> +
-> +#define EXYNOS3250_TMU_DATA \
-> +	.threshold_falling = 10, \
-> +	.trigger_levels[0] = 70, \
-> +	.trigger_levels[1] = 95, \
-> +	.trigger_levels[2] = 110, \
-> +	.trigger_levels[3] = 120, \
-> +	.trigger_enable[0] = true, \
-> +	.trigger_enable[1] = true, \
-> +	.trigger_enable[2] = true, \
-> +	.trigger_enable[3] = false, \
-> +	.trigger_type[0] = THROTTLE_ACTIVE, \
-> +	.trigger_type[1] = THROTTLE_ACTIVE, \
-> +	.trigger_type[2] = SW_TRIP, \
-> +	.trigger_type[3] = HW_TRIP, \
-> +	.max_trigger_level = 4, \
-> +	.gain = 8, \
-> +	.reference_voltage = 16, \
-> +	.noise_cancel_mode = 4, \
-> +	.cal_type = TYPE_TWO_POINT_TRIMMING, \
-> +	.efuse_value = 55, \
-> +	.min_efuse_value = 40, \
-> +	.max_efuse_value = 100, \
-> +	.first_point_trim = 25, \
-> +	.second_point_trim = 85, \
-> +	.default_temp_offset = 50, \
-> +	.freq_tab[0] = { \
-> +		.freq_clip_max = 800 * 1000, \
-> +		.temp_level = 70, \
-> +	}, \
-> +	.freq_tab[1] = { \
-> +		.freq_clip_max = 400 * 1000, \
-> +		.temp_level = 95, \
-> +	}, \
-> +	.freq_tab_count = 2, \
-> +	.registers = &exynos3250_tmu_registers, \
-> +	.features = (TMU_SUPPORT_EMULATION | \
-> +			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
-> +			TMU_SUPPORT_EMUL_TIME)
-> +#endif
-> +
-> +#if defined(CONFIG_SOC_EXYNOS3250)
-> +struct exynos_tmu_init_data const exynos3250_default_tmu_data = {
-> +	.tmu_data = {
-> +		{
-> +			EXYNOS3250_TMU_DATA,
-> +			.type = SOC_ARCH_EXYNOS3250,
-> +			.test_mux = EXYNOS4412_MUX_ADDR_VALUE,
-> +		},
-> +	},
-> +	.tmu_count = 1,
-> +};
-> +#endif
-> +
->  #if defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250)
->  static const struct exynos_tmu_registers exynos4412_tmu_registers = {
->  	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
-> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
-> index d268981..f0979e5 100644
-> --- a/drivers/thermal/samsung/exynos_tmu_data.h
-> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
-> @@ -148,6 +148,13 @@
->  #define EXYNOS5440_TMU_TH_RISE4_SHIFT		24
->  #define EXYNOS5440_EFUSE_SWAP_OFFSET		8
->  
-> +#if defined(CONFIG_SOC_EXYNOS3250)
-> +extern struct exynos_tmu_init_data const exynos3250_default_tmu_data;
-> +#define EXYNOS3250_TMU_DRV_DATA (&exynos3250_default_tmu_data)
-> +#else
-> +#define EXYNOS3250_TMU_DRV_DATA (NULL)
-> +#endif
-> +
->  #if defined(CONFIG_CPU_EXYNOS4210)
->  extern struct exynos_tmu_init_data const exynos4210_default_tmu_data;
->  #define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
+> Exynos drm follows single-driver model. So each usb driver of Exynos drm
+> wouldn't need its own MODULE_DEVICE_TABLE.
+
+Strictly speaking you're right, for module autoloading to work the
+module just needs to have one that matches. So in principle all other
+entries are redundant.
+
+However for exynos drm there does not seem to be one main device which
+is guaranteed to always be present which can be used to key the module
+autoloading of. So you still need seperate MODULE_DEVICE_TABLE entries
+for all the various subdrivers to ensure autoloading actually happens,
+especially since the various subdrivers can be seperately enabled
+at build time.=20
+
+The one exception from the above might be the HDMI sub-driver, which is
+always build together with the mixer (And i asume the HDMI hw block
+depends on the mixer block for its input). However it seems more elegant
+and less error-prone to have simply entries for both, rather then
+implicitly replying on the other (sub)driver to trigger module loading.
+Especially given there is essentially no cost in having another module
+alias.
+
+--=20
+Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Collabora Ltd.
+
+--=-6O02VqC3qfvUc89KmU4r
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIUzDCCBsIw
+ggWqoAMCAQICEAoE3yF0XU0rjOozcgUAUOkwDQYJKoZIhvcNAQEFBQAwZTELMAkGA1UEBhMCVVMx
+FTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEkMCIGA1UE
+AxMbRGlnaUNlcnQgQXNzdXJlZCBJRCBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTIxMTExMDAw
+MDAwMFowYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
+LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6IItmfnKwkKVpYBzQHDSnlZUXKnE0kEGj8kz/E1FkVyB
+n+0snPgWWd+etSQVwpi5tHdJ3InECtqvy15r7a2wcTHrzzpADEZNk+yLejYIA6sMNP4YSYL+x8cx
+SIB8HqIPkg5QycaH6zY/2DDD/6b3+6LNb3Mj/qxWBZDwMiEWicZwiPkFl32jx0PdAug7Pe2xQaPt
+P77blUjE7h6z8rwMK5nQxl0SQoHhg26Ccz8mSxSQrllmCsSNvtLOBq6thG9IhJtPQLnxTPKvmPv2
+zkBdXPao8S+v7Iki8msYZbHBc63X8djPHgp0XEK4aH631XcKJ1Z8D2KkPzIUYJX9BwSiCQIDAQAB
+o4IDbzCCA2swDgYDVR0PAQH/BAQDAgGGMDsGA1UdJQQ0MDIGCCsGAQUFBwMBBggrBgEFBQcDAgYI
+KwYBBQUHAwMGCCsGAQUFBwMEBggrBgEFBQcDCDCCAcYGA1UdIASCAb0wggG5MIIBtQYLYIZIAYb9
+bAEDAAQwggGkMDoGCCsGAQUFBwIBFi5odHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJl
+cG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUHAgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAA
+dABoAGkAcwAgAEMAZQByAHQAaQBmAGkAYwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAg
+AGEAYwBjAGUAcAB0AGEAbgBjAGUAIABvAGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMA
+UAAvAEMAUABTACAAYQBuAGQAIAB0AGgAZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABB
+AGcAcgBlAGUAbQBlAG4AdAAgAHcAaABpAGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkA
+dAB5ACAAYQBuAGQAIABhAHIAZQAgAGkAbgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBp
+AG4AIABiAHkAIAByAGUAZgBlAHIAZQBuAGMAZQAuMA8GA1UdEwEB/wQFMAMBAf8wfQYIKwYBBQUH
+AQEEcTBvMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wRwYIKwYBBQUHMAKG
+O2h0dHA6Ly93d3cuZGlnaWNlcnQuY29tL0NBQ2VydHMvRGlnaUNlcnRBc3N1cmVkSURSb290Q0Eu
+Y3J0MIGBBgNVHR8EejB4MDqgOKA2hjRodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRB
+c3N1cmVkSURSb290Q0EuY3JsMDqgOKA2hjRodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGlnaUNl
+cnRBc3N1cmVkSURSb290Q0EuY3JsMB0GA1UdDgQWBBQVABIrE5iymQftHt+ivlcNK2cCzTAfBgNV
+HSMEGDAWgBRF66Kv9JLLgjEtUYunpyGd823IDzANBgkqhkiG9w0BAQUFAAOCAQEAhGFOQR64dgQq
+tbbvj/JVhbldVv4KmObkvWWKfUAp0/yxXUX9OrgqWzNLJFzNubTkc61hXXatdDOKZtUjr0wfcm5F
+2XVAu6I7z41JL8BBsOIpo1E4Q1CZFKwzBjViiX13qVIH5WwgV7aBum+8s8KU7XYCgNl8zoWoHOzH
+Q0pLsVfPcs7f9SU8yyJP/Z9S0TfLCLs4PuDVPm95Ca1bfDGzdzXD5GP5aAqYB+dGOHeE0j6XvAqg
+qKwlT0RukeHSWq9r7zAcjaNEQrMQiyP61+Y1dDesz+urWB/JiCP/NtQH6jRqR+qdlWyeKU9T7eMr
+lSBOKs+WYHr4LIDwlVLOKZaBYjCCBv8wggXnoAMCAQICEA2fwUKNhvkL8dN88tUFvVwwDQYJKoZI
+hvcNAQEFBQAwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQ
+d3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMB4XDTE0
+MDIxNzAwMDAwMFoXDTE1MDMxMjEyMDAwMFowgaQxCzAJBgNVBAYTAkdCMRcwFQYDVQQIEw5DYW1i
+cmlkZ2VzaGlyZTESMBAGA1UEBxMJQ2FtYnJpZGdlMRYwFAYDVQQKEw1Db2xsYWJvcmEgTHRkMQow
+CAYDVQQLEwExMRYwFAYDVQQDEw1Tam9lcmQgU2ltb25zMSwwKgYJKoZIhvcNAQkBFh1zam9lcmQu
+c2ltb25zQGNvbGxhYm9yYS5jby51azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN4Q
+EHeW1NbogMVZpHedG7o509/L4VBhqQd8j8JViWd+yvLlxOBw/gY+7ioHMatrQY2VvY6QOLle2Xqs
+CDvELcXMxwyFpBC0Ia+CVE+5pF+0IMuVkGIL1T8LHeKZYeRP+uFXtmWzas12hsMILNRmK7Q5PACm
++v/6HFn111hLKkANBtRHIRiDbFQOiluNeR2bq+ck1y2+X//SGumA1XZFdCB/1VcRJXDdFnYdU3j/
+RkoiGggo3MSq3mJ6yV7sqzk04fTLFvfL0KadCMauputeGBybEiFAt6rCm5TkyUqoDOTU07byOEXO
+M32EGeYeV515RzARTpOSE9sdmRq0jNNAqGsCAwEAAaOCA2wwggNoMB8GA1UdIwQYMBaAFBUAEisT
+mLKZB+0e36K+Vw0rZwLNMB0GA1UdDgQWBBRaTG8RXMDSFO5XcrjqYs/YDlmqSDAoBgNVHREEITAf
+gR1zam9lcmQuc2ltb25zQGNvbGxhYm9yYS5jby51azAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMH0GA1UdHwR2MHQwOKA2oDSGMmh0dHA6Ly9jcmwzLmRpZ2lj
+ZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3JsMDigNqA0hjJodHRwOi8vY3JsNC5kaWdp
+Y2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0xLmNybDCCAcUGA1UdIASCAbwwggG4MIIBtAYK
+YIZIAYb9bAQBAjCCAaQwOgYIKwYBBQUHAgEWLmh0dHA6Ly93d3cuZGlnaWNlcnQuY29tL3NzbC1j
+cHMtcmVwb3NpdG9yeS5odG0wggFkBggrBgEFBQcCAjCCAVYeggFSAEEAbgB5ACAAdQBzAGUAIABv
+AGYAIAB0AGgAaQBzACAAQwBlAHIAdABpAGYAaQBjAGEAdABlACAAYwBvAG4AcwB0AGkAdAB1AHQA
+ZQBzACAAYQBjAGMAZQBwAHQAYQBuAGMAZQAgAG8AZgAgAHQAaABlACAARABpAGcAaQBDAGUAcgB0
+ACAAQwBQAC8AQwBQAFMAIABhAG4AZAAgAHQAaABlACAAUgBlAGwAeQBpAG4AZwAgAFAAYQByAHQA
+eQAgAEEAZwByAGUAZQBtAGUAbgB0ACAAdwBoAGkAYwBoACAAbABpAG0AaQB0ACAAbABpAGEAYgBp
+AGwAaQB0AHkAIABhAG4AZAAgAGEAcgBlACAAaQBuAGMAbwByAHAAbwByAGEAdABlAGQAIABoAGUA
+cgBlAGkAbgAgAGIAeQAgAHIAZQBmAGUAcgBlAG4AYwBlAC4wdwYIKwYBBQUHAQEEazBpMCQGCCsG
+AQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQQYIKwYBBQUHMAKGNWh0dHA6Ly9jYWNl
+cnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3J0MAwGA1UdEwEB/wQCMAAw
+DQYJKoZIhvcNAQEFBQADggEBAAc8CwXSms3RbIx+bhxFsGQoN+RpHtjnPvMPPAobv7rxdhQPPz+N
+6h3hpVzegeW2XhyZVC8MT0U6uWXrk+1uQUAXrJEG+W2X8yTEoHDS/SCF/POOsj/ekaDuNE9JJB/9
+cspoa4W+W8pX1sRurBDFHL0DBudUQ1PgvTSLPOHtfKQpu4gRb2u8KpJermp/IvPLImX9xSCbYKQM
+2L0wbpStFIYdyKCKuXuQxOX3BdBKLCFvcIDE6hjj3UpOlThCbeul2Tz5jARCfRK4OUxnXyb/Tp5j
+tshIAa2ZMGaTH9ApeY7P6C2ONF+Mh5yV/raWXOnJ9dEg6/sXcbdiieqzLKYBIgQwggb/MIIF56AD
+AgECAhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBBQUAMGIxCzAJBgNVBAYTAlVTMRUwEwYD
+VQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xITAfBgNVBAMTGERp
+Z2lDZXJ0IEFzc3VyZWQgSUQgQ0EtMTAeFw0xNDAyMTcwMDAwMDBaFw0xNTAzMTIxMjAwMDBaMIGk
+MQswCQYDVQQGEwJHQjEXMBUGA1UECBMOQ2FtYnJpZGdlc2hpcmUxEjAQBgNVBAcTCUNhbWJyaWRn
+ZTEWMBQGA1UEChMNQ29sbGFib3JhIEx0ZDEKMAgGA1UECxMBMTEWMBQGA1UEAxMNU2pvZXJkIFNp
+bW9uczEsMCoGCSqGSIb3DQEJARYdc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28udWswggEiMA0G
+CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDeEBB3ltTW6IDFWaR3nRu6OdPfy+FQYakHfI/CVYln
+fsry5cTgcP4GPu4qBzGra0GNlb2OkDi5Xtl6rAg7xC3FzMcMhaQQtCGvglRPuaRftCDLlZBiC9U/
+Cx3imWHkT/rhV7Zls2rNdobDCCzUZiu0OTwApvr/+hxZ9ddYSypADQbURyEYg2xUDopbjXkdm6vn
+JNctvl//0hrpgNV2RXQgf9VXESVw3RZ2HVN4/0ZKIhoIKNzEqt5iesle7Ks5NOH0yxb3y9CmnQjG
+rqbrXhgcmxIhQLeqwpuU5MlKqAzk1NO28jhFzjN9hBnmHledeUcwEU6TkhPbHZkatIzTQKhrAgMB
+AAGjggNsMIIDaDAfBgNVHSMEGDAWgBQVABIrE5iymQftHt+ivlcNK2cCzTAdBgNVHQ4EFgQUWkxv
+EVzA0hTuV3K46mLP2A5ZqkgwKAYDVR0RBCEwH4Edc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28u
+dWswDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMEBggrBgEFBQcDAjB9BgNVHR8E
+djB0MDigNqA0hjJodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0x
+LmNybDA4oDagNIYyaHR0cDovL2NybDQuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0QXNzdXJlZElEQ0Et
+MS5jcmwwggHFBgNVHSAEggG8MIIBuDCCAbQGCmCGSAGG/WwEAQIwggGkMDoGCCsGAQUFBwIBFi5o
+dHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJlcG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUH
+AgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAAdABoAGkAcwAgAEMAZQByAHQAaQBmAGkA
+YwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAgAGEAYwBjAGUAcAB0AGEAbgBjAGUAIABv
+AGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMAUAAvAEMAUABTACAAYQBuAGQAIAB0AGgA
+ZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABBAGcAcgBlAGUAbQBlAG4AdAAgAHcAaABp
+AGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkAdAB5ACAAYQBuAGQAIABhAHIAZQAgAGkA
+bgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBpAG4AIABiAHkAIAByAGUAZgBlAHIAZQBu
+AGMAZQAuMHcGCCsGAQUFBwEBBGswaTAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQu
+Y29tMEEGCCsGAQUFBzAChjVodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1
+cmVkSURDQS0xLmNydDAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBBQUAA4IBAQAHPAsF0prN0WyM
+fm4cRbBkKDfkaR7Y5z7zDzwKG7+68XYUDz8/jeod4aVc3oHltl4cmVQvDE9FOrll65PtbkFAF6yR
+Bvltl/MkxKBw0v0ghfzzjrI/3pGg7jRPSSQf/XLKaGuFvlvKV9bEbqwQxRy9AwbnVENT4L00izzh
+7XykKbuIEW9rvCqSXq5qfyLzyyJl/cUgm2CkDNi9MG6UrRSGHcigirl7kMTl9wXQSiwhb3CAxOoY
+491KTpU4Qm3rpdk8+YwEQn0SuDlMZ18m/06eY7bISAGtmTBmkx/QKXmOz+gtjjRfjIeclf62llzp
+yfXRIOv7F3G3YonqsyymASIEMYIDEDCCAwwCAQEwdjBiMQswCQYDVQQGEwJVUzEVMBMGA1UEChMM
+RGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
+dCBBc3N1cmVkIElEIENBLTECEA2fwUKNhvkL8dN88tUFvVwwCQYFKw4DAhoFAKCCAW8wGAYJKoZI
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTQwNzIxMDY1MDE5WjAjBgkqhkiG
+9w0BCQQxFgQU44J5HjolrXFdbxdSMltnpPtBL4UwgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
+BhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEh
+MB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xAhANn8FCjYb5C/HTfPLVBb1cMIGHBgsq
+hkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcG
+A1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0x
+AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBAEEL+7N5cEsxdCddXDgJ4T3SVdr2
+uguw8yTO20bqLqTUCW0rAPSUnFskkq902DEohK7IXTOwHzsSNDxQvKULVrXTmGXpkVkgUtGtt+j7
+sFHuG20BC7n0UpFe3b0Sebu87VwQHthyI8as9B3W8aqN6T/tnxE670scR55NY9fjuQdMLdW8ua56
+dkOQl97oPBwqKM3rVxsXL1phOzP2ODgLTMf2XAN8b3FzpfIqMGSHVGoI56dZJTzMGSSO3p8agxTE
+/KnPCGLWqbXu32MmzwtA8XWCo6t8/5Lfl7R1z77KVSTuAPXHhqG27wnP4ZSIR/v7wq11rvVfrw7w
+2QugfZUKO2gAAAAAAAA=
+
+
+--=-6O02VqC3qfvUc89KmU4r--
