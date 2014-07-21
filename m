@@ -1,53 +1,74 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 2/3] ARM: EXYNOS: Enable cpuidle in WFI on all SoCs
-Date: Mon, 21 Jul 2014 10:36:10 +0200
-Message-ID: <1405931771-24100-2-git-send-email-k.kozlowski@samsung.com>
-References: <1405931771-24100-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1405931771-24100-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, Sachin Kamat <sachin.kamat@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [GIT PULL 4/5] Samsung exynos_mct update for v3.17
+Date: Mon, 21 Jul 2014 10:47:39 +0200
+Message-ID: <53CCD3AB.7040205@linaro.org>
+References: <53C9C164.9030404@samsung.com> <20140719220623.GF15676@quad.lixom.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f170.google.com ([74.125.82.170]:41650 "EHLO
+	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753036AbaGUIrl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Jul 2014 04:47:41 -0400
+Received: by mail-we0-f170.google.com with SMTP id w62so7253345wes.29
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jul 2014 01:47:40 -0700 (PDT)
+In-Reply-To: <20140719220623.GF15676@quad.lixom.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, tglx@linutronix.de
 
-Add cpuidle device for each SoC but set AFTR enter function only on
-supported ones (for now these are only Exynos4210 and Exynos5250). For
-other chipsets use only WFI.
+On 07/20/2014 12:06 AM, Olof Johansson wrote:
+> On Sat, Jul 19, 2014 at 09:52:52AM +0900, Kukjin Kim wrote:
+>> Note that this is also based on 3.16-rc5 because of dependency with
+>> previous samsung fixes including exynos_mct already merged in
+>> mainline during -rc.
+>>
+>> The following changes since commit 1795cd9b3a91d4b5473c97f491d638924=
+42212ab:
+>>
+>>    Linux 3.16-rc5 (2014-07-13 14:04:33 -0700)
+>>
+>> are available in the git repository at:
+>>
+>
+>> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.gi=
+t
+>> tags/exynos-mct
+>>
+>> for you to fetch changes up to 1a631118c1d085fe162f3b6d44f710c72206e=
+f2d:
+>>
+>>    clocksource: exynos_mct: Only use 32-bits where possible
+>> (2014-07-19 03:07:52 +0900)
+>>
+>> ----------------------------------------------------------------
+>> exynos_mct update for v3.17
+>> - only use 32-bit access for performance benefits on exynos
+>>    32-bit system and this means ARCH timer should be supported
+>>    on exynos 64-bit system instead of current MCT.
+>> - use readl_relaxed/writel_relaxed to consistently use the
+>>    proper functions in exynos_mct.
+>
+> There's no reason for these to go through arm-soc, is there? They sho=
+uld
+> go through the clocksource tree (Daniel Lezcano / Thomas Gleixner). T=
+hey
+> also lack acks from them if they for some reason need to go through a=
+rm-soc.
 
-This actually does not give any special energy-saving benefits but
-allows to track the idle time of each core.
+Yes, that's right. Furthermore I have been discussing with Doug about=20
+these patches before.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/mach-exynos/exynos.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Kukjin, is there any dependency on these patches ?
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 2a43a1734eca..4109d592f6fc 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -171,14 +171,20 @@ static void exynos_restart(enum reboot_mode mode, const char *cmd)
- 
- static struct platform_device exynos_cpuidle = {
- 	.name              = "exynos_cpuidle",
--	.dev.platform_data = exynos_enter_aftr,
-+	/*
-+	 * Currently AFTR is not implemented for each SoC.
-+	 * Set this to exynos_enter_aftr() only for supported SoCs.
-+	 */
-+	.dev.platform_data = NULL,
- 	.id                = -1,
- };
- 
- void __init exynos_cpuidle_init(void)
- {
- 	if (soc_is_exynos4210() || soc_is_exynos5250())
--		platform_device_register(&exynos_cpuidle);
-+		exynos_cpuidle.dev.platform_data = exynos_enter_aftr;
-+
-+	platform_device_register(&exynos_cpuidle);
- }
- 
- void __init exynos_cpufreq_init(void)
--- 
-1.9.1
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
