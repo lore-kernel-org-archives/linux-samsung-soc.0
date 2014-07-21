@@ -1,147 +1,98 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V5 11/12] Documentation: Add DT bindings for
- ps8622/ps8625 bridge driver
-Date: Mon, 21 Jul 2014 09:06:29 +0200
-Message-ID: <20140721070627.GA8843@ulmo>
+Subject: Re: [RESEND PATCH V5 12/12] drm/exynos: Add ps8622 lvds bridge
+ discovery to DP driver
+Date: Mon, 21 Jul 2014 09:10:29 +0200
+Message-ID: <20140721071028.GB8843@ulmo>
 References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
- <1405629839-12086-12-git-send-email-ajaykumar.rs@samsung.com>
+ <1405629839-12086-13-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0012470332=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1405629839-12086-12-git-send-email-ajaykumar.rs@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, javier@dowhile0.org, prashanth.g@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============0012470332==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+	protocol="application/pgp-signature"; boundary="lEGEL1/lMxI0MVQ2"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:63775 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751187AbaGUHKd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Jul 2014 03:10:33 -0400
+Received: by mail-wi0-f178.google.com with SMTP id hi2so3485052wib.17
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jul 2014 00:10:32 -0700 (PDT)
 Content-Disposition: inline
+In-Reply-To: <1405629839-12086-13-git-send-email-ajaykumar.rs@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, javier@dowhile0.org, Rahul Sharma <rahul.sharma@samsung.com>
 
 
---vkogqOf2sHV7VnPd
+--lEGEL1/lMxI0MVQ2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 18, 2014 at 02:13:57AM +0530, Ajay Kumar wrote:
-> From: Vincent Palatin <vpalatin@chromium.org>
+On Fri, Jul 18, 2014 at 02:13:58AM +0530, Ajay Kumar wrote:
+> From: Rahul Sharma <Rahul.Sharma@samsung.com>
 >=20
-> Add DT binding documentation for ps8622/ps8625 bridge driver.
+> This patch adds ps8622 lvds bridge discovery code to the dp driver.
 >=20
-> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
 > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 > ---
->  .../devicetree/bindings/drm/bridge/ps8622.txt      |   21 ++++++++++++++=
-++++++
-
-This is the wrong directory. Bindings are supposed to be OS agnostic,
-but DRM is (mostly) Linux-specific. video/bridge would be a better
-subdirectory for this. Somebody really ought to be moving out the
-existing bindings in the drm subdirectory to a more proper location.
-
->  1 file changed, 21 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/drm/bridge/ps8622.t=
-xt
+>  drivers/gpu/drm/exynos/exynos_dp_core.c |    5 +++++
+>  1 file changed, 5 insertions(+)
 >=20
-> diff --git a/Documentation/devicetree/bindings/drm/bridge/ps8622.txt b/Do=
-cumentation/devicetree/bindings/drm/bridge/ps8622.txt
-> new file mode 100644
-> index 0000000..1d154ac
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/drm/bridge/ps8622.txt
-> @@ -0,0 +1,21 @@
-> +ps8622-bridge bindings
-> +
-> +Required properties:
-> +	- compatible: "parade,ps8622" or "parade,ps8625"
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/ex=
+ynos/exynos_dp_core.c
+> index 0ca6256..82e2942 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> @@ -31,6 +31,7 @@
+>  #include <drm/drm_panel.h>
+>  #include <drm/bridge/ptn3460.h>
+>  #include <drm/bridge/panel_binder.h>
+> +#include <drm/bridge/ps8622.h>
+> =20
+>  #include "exynos_drm_drv.h"
+>  #include "exynos_dp_core.h"
+> @@ -999,6 +1000,10 @@ static int exynos_drm_attach_lcd_bridge(struct exyn=
+os_dp_device *dp,
+>  	if (find_bridge("nxp,ptn3460", &bridge)) {
+>  		bridge_chain =3D ptn3460_init(dp->drm_dev, encoder, bridge.client,
+>  								bridge.node);
+> +	} else if (find_bridge("parade,ps8622", &bridge) ||
+> +				find_bridge("parade,ps8625", &bridge)) {
+> +		bridge_chain =3D ps8622_init(dp->drm_dev, encoder, bridge.client,
+> +								bridge.node);
+>  	}
 
-Documentation/devicetree/bindings/vendor-prefixes.txt doesn't contain an
-entry for parade yet.
+We really ought to be adding some sort of registry at some point.
+Otherwise every driver that wants to use bridges needs to come up with a
+similar set of helpers to instantiate them.
 
-> +	- reg: first i2c address of the bridge
-> +	- sleep-gpios: OF device-tree gpio specification
-> +	- reset-gpios: OF device-tree gpio specification
-> +
-> +Optional properties:
-> +	- lane-count: number of DP lanes to use
-> +	- use-external-pwm: backlight will be controlled by an external PWM
-
-In case of an external backlight, don't you still need a way to control
-it? Perhaps instead of using this boolean property you should make this
-take a phandle to the real backlight? Like so:
-
-	backlight {
-		compatible =3D "pwm-backlight";
-		...
-	}
-
-	bridge@48 {
-		compatible =3D "parade,ps8622";
-		...
-		backlight =3D <&/backlight>;
-	}
-
-Then you can simply look up the backlight device when that property
-exists and instantiate the built-in backlight otherwise.
-
-> +
-> +Example:
-> +	ps8622-bridge@48 {
-> +		compatible =3D "parade,ps8622";
-> +		reg =3D <0x48>;
-> +		sleep-gpios =3D <&gpc3 6 1 0 0>;
-> +		reset-gpios =3D <&gpc3 1 1 0 0>;
-> +		display-timings =3D <&lcd_display_timings>;
-
-Why is this specifying display-timings? It's not mentioned in the
-binding above and I don't see why the bridge would need to provide
-one since it's really a property of the panel.
+Also you're making this driver depend on (now) two bridges, whereas it
+really shouldn't matter which exact types it supports. Bridges should be
+exposed via a generic interface.
 
 Thierry
 
---vkogqOf2sHV7VnPd
+--lEGEL1/lMxI0MVQ2
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTzLvzAAoJEN0jrNd/PrOhHgMP+wW3gOH7JEXXGhOWBZVJw9Hb
-J/rcYrawGqIkaONc+95kIoZG6N1qVAC/qLXdIsJMLcdsl+VXp5xIx84EFrgrlU+5
-tWmxSthAEDZ69OiP7c4vzC0HAG+soSHvpZC+ekfjw5rt88qlUsNvLjuhHpMX+hSe
-Mm/H6wBUP7RrLA6hzz644uEwnOnYYVudepAhK2cxKTjE+N/dMCcHbQ//P/IUiKRx
-pJ1XsDcnz/s46pKhhEzmufgodr93DxVwLG6/tA7K1v+oHF3b6f9qhGKEOvr+Kyvm
-pLrmZfmnK6alzmDyrGzz/7+wNbRzwelvQ0cfWRQ1TA9BXVrAy8WKCXerLFwb7kC2
-wZ2ZaqOP1XRQA3ADHCLPcPAXCggx6nD470J0deB+X7fTW7NkUWSwUzY8vZ5cnLeE
-l7wRUI6kFOq1CcPxEWNHx0mz5MN178sJfTvSproseOayTdjLcD57VpNkEbJ27GVd
-4I1tVNIMYJio0E0PdFH0W3OD+Y+A6vBlJVVCY9Am1r6Ane6fCs+FGL4rEor3h3is
-8jqDSkzqI6FxNhu6gKqLWOOMXTfdSIN77kF6m6TsiH+jnWHxqIqMNAa8yt4WVOZs
-L8/oVsiyikebHVOzqZJ0ublsunLRItYbnvGESNvEI+Nb5LP9Z1/hJR4dxO6mRkmG
-H5KGoqSmQlvgliiNdinN
-=+0dl
+iQIcBAEBAgAGBQJTzLzkAAoJEN0jrNd/PrOhBWgP+wWNuZ9E/jOX+/DLT69LToZl
+pxbtYXmNHMq6y5IUOi4wviWphud2EApCStobd1XcHOz9v8Cy+paHMP92buo1GDi4
+cArUCB0SgHGx/4ZbLXEgvYfQnsRikoQVdBa1mIIpDOja6nuT1cPILmwBRNyng1rT
+gi7kUDB/+VdKZdLs8i/ApCS7lMGslue9Mcr8opkANc9l68NV7cpJTVcqoe3kSL92
+pvvps7b2fXlQ1P0FY3vWSF9RYU67+kLAQqwYxxZ7IuNS0acrPR9L5nHgcOkzaZgU
+cZMx3gLVB4vH5oGW0kQ+Q5/n31/YsB3ylYseiJt2/lvEqUBzeDGThtIz791TfivT
+jt/6JA0Hwohd6WMkRB43jH3oaRUZtK15qEmYxNwGr/V7CgWxP6HY6yOO+OA0Md9o
++zo9bzKtPZPgdhgbDt6Md6AOxIOZ/cNOQ9sZDH1ND8pojoZsbVQL3qYIBRPtZM+Y
+7Lj1n/CNnP8EWquH19OgI8pobAHMEGvtb67eX2fAuly3dwO+EWr+993PJiRPly3c
+AiPjEqqC3F7rxyZUUlPr/IPCVVCq6WDUeE6gXKOprtF0Y7yn2FIT0pha4/WlNoKw
+I3dYq1xWQCQTCSdg3Wy5D+6aU26yOBnr/grSjjhyFfgLzm9zvFtSgDnhLCQNrSsn
+2zHuokIiLWM7D39wILsz
+=/UpL
 -----END PGP SIGNATURE-----
 
---vkogqOf2sHV7VnPd--
-
---===============0012470332==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0012470332==--
+--lEGEL1/lMxI0MVQ2--
