@@ -1,75 +1,175 @@
 From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [RESEND PATCH V5 12/12] drm/exynos: Add ps8622 lvds bridge
- discovery to DP driver
-Date: Mon, 21 Jul 2014 16:58:25 +0530
-Message-ID: <CAEC9eQPkzrpQn41+zu8mwJUctSd0CF_U4UCdff0F7VYq2oWthw@mail.gmail.com>
+Subject: Re: [PATCH V5 00/12] drm/exynos: few patches to enhance bridge chip support
+Date: Mon, 21 Jul 2014 17:03:22 +0530
+Message-ID: <CAEC9eQNmFYYrcW6xK1a_i4p3fONhjEGCEh+P0s0kurMn_A_zHw@mail.gmail.com>
 References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1405629839-12086-13-git-send-email-ajaykumar.rs@samsung.com>
-	<20140721071028.GB8843@ulmo>
+	<53CCC668.8090602@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f170.google.com ([209.85.220.170]:43387 "EHLO
-	mail-vc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754157AbaGUL20 (ORCPT
+Received: from mail-vc0-f172.google.com ([209.85.220.172]:48319 "EHLO
+	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754157AbaGULdX convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jul 2014 07:28:26 -0400
-Received: by mail-vc0-f170.google.com with SMTP id lf12so11939208vcb.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jul 2014 04:28:25 -0700 (PDT)
-In-Reply-To: <20140721071028.GB8843@ulmo>
+	Mon, 21 Jul 2014 07:33:23 -0400
+Received: by mail-vc0-f172.google.com with SMTP id im17so11929706vcb.17
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jul 2014 04:33:22 -0700 (PDT)
+In-Reply-To: <53CCC668.8090602@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Rahul Sharma <rahul.sharma@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Reding <thierry.reding@gmail.com>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, "cpgs ." <cpgs@samsung.com>
 
-On Mon, Jul 21, 2014 at 12:40 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Fri, Jul 18, 2014 at 02:13:58AM +0530, Ajay Kumar wrote:
->> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+Hi Inki,
+
+On Mon, Jul 21, 2014 at 1:21 PM, Inki Dae <inki.dae@samsung.com> wrote:
+> On 2014=EB=85=84 07=EC=9B=94 18=EC=9D=BC 05:43, Ajay Kumar wrote:
+>> This series is based on exynos-drm-next branch of Inki Dae's tree at=
+:
+>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
 >>
->> This patch adds ps8622 lvds bridge discovery code to the dp driver.
+>> This patchset also consolidates various inputs from the drm communit=
+y
+>> regarding the bridge chaining concept:
+>> (1) [RFC V2 0/3] drm/bridge: panel and chaining
+>>       http://www.spinics.net/lists/linux-samsung-soc/msg30160.html
+>> (2) [RFC V3 0/3] drm/bridge: panel and chaining
+>>       http://www.spinics.net/lists/linux-samsung-soc/msg30507.html
 >>
->> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
->> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_dp_core.c |    5 +++++
->>  1 file changed, 5 insertions(+)
+>> I have tested this after adding few DT changes for exynos5250-snow,
+>> exynos5420-peach-pit and exynos5800-peach-pi boards.
 >>
->> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
->> index 0ca6256..82e2942 100644
->> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
->> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
->> @@ -31,6 +31,7 @@
->>  #include <drm/drm_panel.h>
->>  #include <drm/bridge/ptn3460.h>
->>  #include <drm/bridge/panel_binder.h>
->> +#include <drm/bridge/ps8622.h>
+>> The V4 series of this particular patchset was also tested by:
+>> Rahul Sharma <rahul.sharma@samsung.com>
+>> Javier Martinez Canillas <javier@dowhile0.org>
 >>
->>  #include "exynos_drm_drv.h"
->>  #include "exynos_dp_core.h"
->> @@ -999,6 +1000,10 @@ static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
->>       if (find_bridge("nxp,ptn3460", &bridge)) {
->>               bridge_chain = ptn3460_init(dp->drm_dev, encoder, bridge.client,
->>                                                               bridge.node);
->> +     } else if (find_bridge("parade,ps8622", &bridge) ||
->> +                             find_bridge("parade,ps8625", &bridge)) {
->> +             bridge_chain = ps8622_init(dp->drm_dev, encoder, bridge.client,
->> +                                                             bridge.node);
->>       }
+>> Changes since V2:
+>>       -- Address comments from Jingoo Han for ps8622 driver
+>>       -- Address comments from Daniel, Rob and Thierry regarding
+>>          bridge chaining
+>>       -- Address comments from Thierry regarding the names for
+>>          new drm_panel functions
+>>
+>> Changes since V3:
+>>       -- Remove hotplug based initialization of exynos_dp
+>>       -- Make exynos_dp work directly with drm_panel, remove
+>>          dependency on panel_binder
+>>       -- Minor cleanups in panel_binder and panel_lvds driver
+>>
+>> Changes since V4:
+>>       -- Use gpiod interface for panel-lvds and ps8622 drivers.
+>>       -- Address comments from Javier.
+>>       -- Fix compilation issues when PANEL_BINDER is selected as mod=
+ule.
+>>       -- Split Documentation patches from driver patches.
+>>       -- Rebase on top of the tree.
 >
-> We really ought to be adding some sort of registry at some point.
-> Otherwise every driver that wants to use bridges needs to come up with a
-> similar set of helpers to instantiate them.
+> Hi Ajay,
 >
-> Also you're making this driver depend on (now) two bridges, whereas it
-> really shouldn't matter which exact types it supports. Bridges should be
-> exposed via a generic interface.
+> Thanks for your contribution.
+>
+> I am reviewing your patch series. Sorry for late. Below is my comment=
+=2E
+>
+> How about using graph concept to bind eDP, LVDS bridge, and Panel? Yo=
+ur
+> patch tries to bind bridge driver using find_bridge function, and thi=
+s
+> function tries to find bridge device node directly using
+> of_find_compatible_node() again, which in turn make eDP driver to add
+> all codes related to all bridge devices including all relevant bridge
+> headers: i.e., if there are five bridge devices then eDP driver shoul=
+d
+> try to find all of them. That is really not good.
+I agree.
 
-How about moving out the find_bridge() function into a common header file,
-and also supporting the list of bridge_init declarations in the same file?
-
-We get bridge chip node from phandle, and then pass the same node
-to find_bridge() which searches the list using of_device_is_compatible()
-to call the appropriate bridge_init function?
+> So my opinion is to define the relationship between eDP, LVDS, and Pa=
+nel
+> using graph concept: eDP context would have panel and bridge object
+> according to graph definition of device tree.
+>
+> As a result, eDP context has already bridge_chain object for lvds bri=
+dge
+> device and panel_binder->bridge object in exynos_drm_attach_lcd_bridg=
+e
+> function context so it can add bridge_chain object  to
+> panel_binder->bridge as is there. I think lvds bridge device drivers
+> could follow Linux driver model with this approach.
+Sorry, I didn't quite understand the graph concept. Already Thierry sug=
+gested
+of having a common repository for list of supported bridges. That way, =
+we can
+move out bridge detection stuff from exynos_dp to a common file.
 
 Ajay
+
+> Rob, it seems to need at least your ACK so that I can merge this patc=
+h
+> series to exynos-drm-next.
+>
+> Thanks,
+> Inki Dae
+>
+>>
+>> Ajay Kumar (9):
+>>   [RESEND PATCH V5 01/12] drm/exynos: Move DP setup out of hotplug w=
+orkqueue
+>>   [RESEND PATCH V5 02/12] drm/panel: add prepare and unprepare routi=
+nes
+>>   [RESEND PATCH V5 03/12] drm/exynos: dp: modify driver to support d=
+rm_panel
+>>   [PATCH V5 04/12] drm/panel: Add driver for lvds/edp based panels
+>>   [PATCH V5 05/12] Documentation: Add DT bindings for panel-lvds dri=
+ver
+>>   [RESEND PATCH V5 06/12] drm/bridge: add helper functions to suppor=
+t bridge chain
+>>   [PATCH V5 07/12] drm/bridge: Add a driver which binds drm_bridge w=
+ith drm_panel
+>>   [RESEND PATCH V5 08/12] drm/bridge: ptn3460: Support bridge chaini=
+ng
+>>   [RESEND PATCH V5 09/12] drm/exynos: dp: create bridge chain using =
+ptn3460 and panel_binder
+>>
+>> Vincent Palatin (2):
+>>   [PATCH V5 10/12] Documentation: Add DT bindings for ps8622/ps8625 =
+bridge driver
+>>   [PATCH V5 11/12] drm/bridge: Add ps8622/ps8625 bridge driver
+>>
+>> Rahul Sharma (1):
+>>   [RESEND PATCH V5 12/12] drm/exynos: Add ps8622 lvds bridge discove=
+ry to DP driver
+>>
+>>  .../devicetree/bindings/drm/bridge/ps8622.txt      |   21 +
+>>  .../devicetree/bindings/panel/panel-lvds.txt       |   50 ++
+>>  .../devicetree/bindings/video/exynos_dp.txt        |    2 +
+>>  drivers/gpu/drm/bridge/Kconfig                     |   15 +
+>>  drivers/gpu/drm/bridge/Makefile                    |    2 +
+>>  drivers/gpu/drm/bridge/panel_binder.c              |  193 ++++++++
+>>  drivers/gpu/drm/bridge/ps8622.c                    |  476 +++++++++=
++++++++++++
+>>  drivers/gpu/drm/bridge/ptn3460.c                   |  137 +-----
+>>  drivers/gpu/drm/exynos/Kconfig                     |    1 +
+>>  drivers/gpu/drm/exynos/exynos_dp_core.c            |   87 +++-
+>>  drivers/gpu/drm/exynos/exynos_dp_core.h            |    2 +
+>>  drivers/gpu/drm/panel/Kconfig                      |   10 +
+>>  drivers/gpu/drm/panel/Makefile                     |    1 +
+>>  drivers/gpu/drm/panel/panel-lvds.c                 |  268 +++++++++=
+++
+>>  include/drm/bridge/panel_binder.h                  |   44 ++
+>>  include/drm/bridge/ps8622.h                        |   41 ++
+>>  include/drm/bridge/ptn3460.h                       |   15 +-
+>>  include/drm/drm_crtc.h                             |   72 +++
+>>  include/drm/drm_panel.h                            |   18 +
+>>  19 files changed, 1316 insertions(+), 139 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/drm/bridge/ps8=
+622.txt
+>>  create mode 100644 Documentation/devicetree/bindings/panel/panel-lv=
+ds.txt
+>>  create mode 100644 drivers/gpu/drm/bridge/panel_binder.c
+>>  create mode 100644 drivers/gpu/drm/bridge/ps8622.c
+>>  create mode 100644 drivers/gpu/drm/panel/panel-lvds.c
+>>  create mode 100644 include/drm/bridge/panel_binder.h
+>>  create mode 100644 include/drm/bridge/ps8622.h
+>>
+>
