@@ -1,228 +1,277 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V5 05/12] Documentation: Add DT bindings for panel-lvds
- driver
-Date: Mon, 21 Jul 2014 09:52:11 +0200
-Message-ID: <20140721075210.GC8843@ulmo>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [RESEND PATCH V5 08/12] drm/bridge: ptn3460: Support bridge
+ chaining
+Date: Mon, 21 Jul 2014 16:55:15 +0900
+Message-ID: <53CCC763.30607@samsung.com>
 References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
- <1405629839-12086-6-git-send-email-ajaykumar.rs@samsung.com>
- <CAEC9eQNygvwOGvw6QPGp+=7K9=oC9XvcEf9QSv=JBsEHyhM0wA@mail.gmail.com>
- <20140717224809.GA8875@mithrandir>
- <CAEC9eQMJnae6DaAUd7C5xZkaaaXL+291Qf2pcUd-wrcYXgQx8A@mail.gmail.com>
+ <1405629839-12086-9-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0467325697=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAEC9eQMJnae6DaAUd7C5xZkaaaXL+291Qf2pcUd-wrcYXgQx8A@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@dowhile0.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:11173 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752766AbaGUHzS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Jul 2014 03:55:18 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N9100JIXY04R820@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 21 Jul 2014 16:55:16 +0900 (KST)
+In-reply-to: <1405629839-12086-9-git-send-email-ajaykumar.rs@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, robdclark@gmail.com, daniel.vetter@ffwll.ch, thierry.reding@gmail.com, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, javier@dowhile0.org, cpgs@samsung.com
 
-
---===============0467325697==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="9Ek0hoCL9XbhcSqy"
-Content-Disposition: inline
-
-
---9Ek0hoCL9XbhcSqy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jul 18, 2014 at 12:18:05PM +0530, Ajay kumar wrote:
-> Hi Thierry,
+On 2014=EB=85=84 07=EC=9B=94 18=EC=9D=BC 05:43, Ajay Kumar wrote:
+> Modify the driver to invoke callbacks for the next bridge
+> in the bridge chain.
+> Also, remove the drm_connector implementation from ptn3460,
+> since the same is implemented using panel_binder.
 >=20
-> Thanks for your comments.
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  drivers/gpu/drm/bridge/ptn3460.c        |  137 +++++----------------=
+----------
+>  drivers/gpu/drm/exynos/exynos_dp_core.c |   16 ++--
+>  include/drm/bridge/ptn3460.h            |   15 ++--
+>  3 files changed, 39 insertions(+), 129 deletions(-)
 >=20
-> On Fri, Jul 18, 2014 at 4:18 AM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > On Fri, Jul 18, 2014 at 02:20:39AM +0530, Ajay kumar wrote:
-> >> +devicetree@vger.kernel.org
-> >>
-> >> On Fri, Jul 18, 2014 at 2:13 AM, Ajay Kumar <ajaykumar.rs@samsung.com>=
- wrote:
-> >> > Add DT binding documentation for panel-lvds driver.
-> >> >
-> >> > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> >> > ---
-> >> >  .../devicetree/bindings/panel/panel-lvds.txt       |   50 +++++++++=
-+++++++++++
-> >> >  1 file changed, 50 insertions(+)
-> >> >  create mode 100644 Documentation/devicetree/bindings/panel/panel-lv=
-ds.txt
-> >> >
-> >> > diff --git a/Documentation/devicetree/bindings/panel/panel-lvds.txt =
-b/Documentation/devicetree/bindings/panel/panel-lvds.txt
-> >> > new file mode 100644
-> >> > index 0000000..fdf91da2
-> >> > --- /dev/null
-> >> > +++ b/Documentation/devicetree/bindings/panel/panel-lvds.txt
-> >> > @@ -0,0 +1,50 @@
-> >> > +panel interface for eDP/lvds panels
-> >> > +
-> >> > +Required properties:
-> >> > +  - compatible: "panel-lvds"
-> >
-> > I think I've said this before. I oppose the addition of this binding. We
-> > need to list a device-specific compatible value here, wildcards like
-> > this aren't a good choice. And then if we have that compatible value we
-> > can move most of the optional properties below into a driver.
-> Yes, "panel-lvds" is a wildcard for all lvds panels.
-> And since lvds panels from different vendors have different values
-> for power_up_delay, delay from video_to_backlight etc, I thought its
-> better to pick them up from device tree.
+> diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridg=
+e/ptn3460.c
+> index d466696..5fe16c6 100644
+> --- a/drivers/gpu/drm/bridge/ptn3460.c
+> +++ b/drivers/gpu/drm/bridge/ptn3460.c
+> @@ -34,37 +34,15 @@
+>  #define PTN3460_EDID_SRAM_LOAD_ADDR		0x85
+> =20
+>  struct ptn3460_bridge {
+> -	struct drm_connector connector;
+>  	struct i2c_client *client;
+>  	struct drm_encoder *encoder;
+>  	struct drm_bridge *bridge;
+> -	struct edid *edid;
+>  	int gpio_pd_n;
+>  	int gpio_rst_n;
+>  	u32 edid_emulation;
+>  	bool enabled;
+>  };
+> =20
+> -static int ptn3460_read_bytes(struct ptn3460_bridge *ptn_bridge, cha=
+r addr,
+> -		u8 *buf, int len)
+> -{
+> -	int ret;
+> -
+> -	ret =3D i2c_master_send(ptn_bridge->client, &addr, 1);
+> -	if (ret <=3D 0) {
+> -		DRM_ERROR("Failed to send i2c command, ret=3D%d\n", ret);
+> -		return ret;
+> -	}
+> -
+> -	ret =3D i2c_master_recv(ptn_bridge->client, buf, len);
+> -	if (ret <=3D 0) {
+> -		DRM_ERROR("Failed to recv i2c data, ret=3D%d\n", ret);
+> -		return ret;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static int ptn3460_write_byte(struct ptn3460_bridge *ptn_bridge, cha=
+r addr,
+>  		char val)
+>  {
+> @@ -126,6 +104,8 @@ static void ptn3460_pre_enable(struct drm_bridge =
+*bridge)
+>  		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
+>  	}
+> =20
+> +	drm_next_bridge_pre_enable(bridge);
+> +
+>  	/*
+>  	 * There's a bug in the PTN chip where it falsely asserts hotplug b=
+efore
+>  	 * it is fully functional. We're forced to wait for the maximum sta=
+rt up
+> @@ -142,6 +122,7 @@ static void ptn3460_pre_enable(struct drm_bridge =
+*bridge)
+> =20
+>  static void ptn3460_enable(struct drm_bridge *bridge)
+>  {
+> +	drm_next_bridge_enable(bridge);
+>  }
+> =20
+>  static void ptn3460_disable(struct drm_bridge *bridge)
+> @@ -153,6 +134,8 @@ static void ptn3460_disable(struct drm_bridge *br=
+idge)
+> =20
+>  	ptn_bridge->enabled =3D false;
+> =20
+> +	drm_next_bridge_disable(bridge);
+> +
+>  	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
+>  		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
+> =20
+> @@ -162,6 +145,7 @@ static void ptn3460_disable(struct drm_bridge *br=
+idge)
+> =20
+>  static void ptn3460_post_disable(struct drm_bridge *bridge)
+>  {
+> +	drm_next_bridge_post_disable(bridge);
+>  }
+> =20
+>  void ptn3460_bridge_destroy(struct drm_bridge *bridge)
+> @@ -173,6 +157,9 @@ void ptn3460_bridge_destroy(struct drm_bridge *br=
+idge)
+>  		gpio_free(ptn_bridge->gpio_pd_n);
+>  	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
+>  		gpio_free(ptn_bridge->gpio_rst_n);
+> +
+> +	drm_next_bridge_destroy(bridge);
+> +
+>  	/* Nothing else to free, we've got devm allocated memory */
+>  }
+> =20
+> @@ -184,81 +171,10 @@ struct drm_bridge_funcs ptn3460_bridge_funcs =3D=
+ {
+>  	.destroy =3D ptn3460_bridge_destroy,
+>  };
+> =20
+> -int ptn3460_get_modes(struct drm_connector *connector)
+> -{
+> -	struct ptn3460_bridge *ptn_bridge;
+> -	u8 *edid;
+> -	int ret, num_modes;
+> -	bool power_off;
+> -
+> -	ptn_bridge =3D container_of(connector, struct ptn3460_bridge, conne=
+ctor);
+> -
+> -	if (ptn_bridge->edid)
+> -		return drm_add_edid_modes(connector, ptn_bridge->edid);
+> -
+> -	power_off =3D !ptn_bridge->enabled;
+> -	ptn3460_pre_enable(ptn_bridge->bridge);
+> -
+> -	edid =3D kmalloc(EDID_LENGTH, GFP_KERNEL);
+> -	if (!edid) {
+> -		DRM_ERROR("Failed to allocate edid\n");
+> -		return 0;
+> -	}
+> -
+> -	ret =3D ptn3460_read_bytes(ptn_bridge, PTN3460_EDID_ADDR, edid,
+> -			EDID_LENGTH);
+> -	if (ret) {
+> -		kfree(edid);
+> -		num_modes =3D 0;
+> -		goto out;
+> -	}
+> -
+> -	ptn_bridge->edid =3D (struct edid *)edid;
+> -	drm_mode_connector_update_edid_property(connector, ptn_bridge->edid=
+);
+> -
+> -	num_modes =3D drm_add_edid_modes(connector, ptn_bridge->edid);
+> -
+> -out:
+> -	if (power_off)
+> -		ptn3460_disable(ptn_bridge->bridge);
+> -
+> -	return num_modes;
+> -}
+> -
+> -struct drm_encoder *ptn3460_best_encoder(struct drm_connector *conne=
+ctor)
+> -{
+> -	struct ptn3460_bridge *ptn_bridge;
+> -
+> -	ptn_bridge =3D container_of(connector, struct ptn3460_bridge, conne=
+ctor);
+> -
+> -	return ptn_bridge->encoder;
+> -}
+> -
+> -struct drm_connector_helper_funcs ptn3460_connector_helper_funcs =3D=
+ {
+> -	.get_modes =3D ptn3460_get_modes,
+> -	.best_encoder =3D ptn3460_best_encoder,
+> -};
+> -
+> -enum drm_connector_status ptn3460_detect(struct drm_connector *conne=
+ctor,
+> -		bool force)
+> -{
+> -	return connector_status_connected;
+> -}
+> -
+> -void ptn3460_connector_destroy(struct drm_connector *connector)
+> -{
+> -	drm_connector_cleanup(connector);
+> -}
+> -
+> -struct drm_connector_funcs ptn3460_connector_funcs =3D {
+> -	.dpms =3D drm_helper_connector_dpms,
+> -	.fill_modes =3D drm_helper_probe_single_connector_modes,
+> -	.detect =3D ptn3460_detect,
+> -	.destroy =3D ptn3460_connector_destroy,
+> -};
+> -
+> -int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder=
+,
+> -		struct i2c_client *client, struct device_node *node)
+> +struct drm_bridge *ptn3460_init(struct drm_device *dev,
+> +				struct drm_encoder *encoder,
+> +				struct i2c_client *client,
+> +				struct device_node *node)
+>  {
+>  	int ret;
+>  	struct drm_bridge *bridge;
+> @@ -267,13 +183,13 @@ int ptn3460_init(struct drm_device *dev, struct=
+ drm_encoder *encoder,
+>  	bridge =3D devm_kzalloc(dev->dev, sizeof(*bridge), GFP_KERNEL);
+>  	if (!bridge) {
+>  		DRM_ERROR("Failed to allocate drm bridge\n");
+> -		return -ENOMEM;
+> +		return NULL;
 
-What I'm saying is that we shouldn't be adding this type of wildcard.
-Instead the compatible property needs to list the specific type of panel
-and since the driver will match on that specific compatible, the values
-for the delays etc. are all implicit and don't have to be listed in
-device tree.
+I think you could handle error case correctly. Please return
+ERR_PTR(-ENOMEM) instead of NULL, and below codes also.
 
-> >> > +Optional properties:
-> >
-> > If all these properties are optional, then what happens if a device tree
-> > node doesn't contain any of them? Doesn't that turn the driver into one
-> > big no-op?
-> No! We need to provide lcd-supply and backlight-supply.
+Thanks,
+Inki Dae
 
-What are those? I don't see them described anywhere.
-
-> >> > +       -lcd-enable-gpios:
-> >> > +               panel LCD poweron GPIO.
-> >> > +                       Indicates which GPIO needs to be powered up =
-as output
-> >> > +                       to powerup/enable the switch to the LCD pane=
-l.
-> >> > +       -backlight-enable-gpios:
-> >> > +               panel LED enable GPIO.
-> >> > +                       Indicates which GPIO needs to be powered up =
-as output
-> >> > +                       to enable the backlight.
-> >
-> > I've also said before that this really belongs in a backlight driver.
-> > Chances are that you'll want to have a way to set the brightness of the
-> > backlight as well, so simply an enable GPIO won't be good enough.
-> Ok. I can handle this in backlight driver itself (with some minor glitche=
-s).
-
-You can make it work without glitches as well and we've discussed this
-before.
-
-> But, how do I map bridge functions to panel functions now?
-> The bridge supports (pre_enable, enable, disable and post_disable) which =
-I map
-> with (prepare, enable, disable and unprepare) of the panel, using a sampl=
-e layer
-> called bridge to panel_binder.
-> Moving out the backlight control from panel means I really don't need
-> those extra
-> panel calls(prepare and unprepare)!
-> Then how to distribute 2 panel calls(enable and disable) across 4 bridge =
-calls?
-
-The .prepare() and .unprepare() functions are useful irrespective of
-backlight control. What you want to separate is powering up the panel
-=66rom enabling the backlight. So .prepare() could be what's doing the
-power up of the panel (and possibly other initialization required to
-make it work) and .enable() could be as simple as turning on the
-backlight.
-
-What I'm saying is rather than use a backlight-enable-gpios property in
-the panel, that property should be part of the backlight device and the
-GPIO can then be toggled by the backlight driver when the backlight is
-enabled.
-
-> >> > +       -panel-prepare-delay:
-> >> > +               delay value in ms required for panel_prepare process
-> >> > +                       Delay in ms needed for the panel LCD unit to
-> >> > +                       powerup completely.
-> >> > +                       ex: delay needed till eDP panel throws HPD.
-> >> > +                           delay needed so that we cans tart readin=
-g edid.
-> >
-> > If the panel signals HPD then we don't need this delay at all and we
-> > should just wait for HPD instead.
-> Not always for HPD, we need to wait for EDID module as well.
-
-I always thought that HPD signalled readiness from the panel to provide
-EDID, too. Are there really panels that need additional delays after HPD
-has been signalled until the EDID can be read? Are there maybe other
-ways to detect that EDID can't be read?
-
-> >> > +       -panel-enable-delay:
-> >> > +               delay value in ms required for panel_enable process
-> >> > +                       Delay in ms needed for the panel backlight/L=
-ED unit
-> >> > +                       to powerup, and delay needed between video_e=
-nable and
-> >> > +                       backlight_enable.
-> >> > +       -panel-disable-delay:
-> >> > +               delay value in ms required for panel_disable process
-> >> > +                       Delay in ms needed for the panel backlight/L=
-ED unit
-> >> > +                       powerdown, and delay needed between backligh=
-t_disable
-> >> > +                       and video_disable.
-> >> > +       -panel-unprepare-delay:
-> >> > +               delay value in ms required for panel_post_disable pr=
-ocess
-> >> > +                       Delay in ms needed for the panel LCD unit to
-> >> > +                       to powerdown completely, and the minimum del=
-ay needed
-> >> > +                       before powering it on again.
-> >
-> > These delays are all panel specific and they don't vary per board, so
-> > they shouldn't go into the device tree at all.
-> But, fetching them from device tree would allow us to support all lvds
-> panels in this single driver.
-
-You can do that even without having this data in device tree. My point
-is that this is redundant information once you know the panel's specific
-compatible value. Therefore there shouldn't be a need to list this in
-device tree again.
-
-Thierry
-
---9Ek0hoCL9XbhcSqy
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTzMaqAAoJEN0jrNd/PrOh1oAQAL/EeXio+r+zYUqVG7pGgbER
-k5yeIep+RXQMdJsdzPGP91+tddM5tLE7vuBv0KvasUVsPLEQT+8sXgm3+De3FDvn
-Zsq6V50S4QlAGQMNetaJacPU+5zPbLBCAJGb+l4XzNn9oksEPntjzyXlThcqAm9h
-XjVmbCD2LX2Ef3Dyvg7VgWo/0xPV+dIvs1ycyD4cWgS4iS6rgadOuDBj3qie7tx5
-NUZMkPQSeathpNcu/PFobGAd084WqaFm/tHCcBI/xL3wAOXFAR/GDVBMrUiE/Y+U
-d0IRKQAbgXi16Ffzu01Eczh2HErc/XFFtY4GCr5gQdn3hp/eRLZUGpkuVcEs8ZQ4
-jauF8PkBN9dVd0nmEP8A1knLI3/v5QnyMGCkdEaGcQhOPuRlZcf1xWyM/fHlAy/D
-klLXmLzkRRF1zTvMQPxH3tllBeiI0pWMU13H02mDUN7MZbPXBeUtelxaYk2pRIpJ
-62BkduyxUISa5tvTqV94eeGwikZ7vzSdQer7ILaTHYcbCUbZH35NGXP36+X7Gt/w
-c54u53xpu5CxUJmChQa21QWPcPiHt4ScYa6C6SGU3oKR2zU/9JkTFRzCi+uckXD8
-jcaPrNHkL/DLSSev5+4AwpTti2xo0XCoFZnVG3Zlv5DB4jOS98k7/PDM01/UIwBT
-JRjl2HWKt7DirefiIV6s
-=VuJJ
------END PGP SIGNATURE-----
-
---9Ek0hoCL9XbhcSqy--
-
---===============0467325697==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0467325697==--
+>  	}
+> =20
+>  	ptn_bridge =3D devm_kzalloc(dev->dev, sizeof(*ptn_bridge), GFP_KERN=
+EL);
+>  	if (!ptn_bridge) {
+>  		DRM_ERROR("Failed to allocate ptn bridge\n");
+> -		return -ENOMEM;
+> +		return NULL;
+>  	}
+> =20
+>  	ptn_bridge->client =3D client;
+> @@ -285,7 +201,7 @@ int ptn3460_init(struct drm_device *dev, struct d=
+rm_encoder *encoder,
+>  				GPIOF_OUT_INIT_HIGH, "PTN3460_PD_N");
+>  		if (ret) {
+>  			DRM_ERROR("Request powerdown-gpio failed (%d)\n", ret);
+> -			return ret;
+> +			return NULL;
+>  		}
+>  	}
+> =20
+> @@ -300,7 +216,7 @@ int ptn3460_init(struct drm_device *dev, struct d=
+rm_encoder *encoder,
+>  		if (ret) {
+>  			DRM_ERROR("Request reset-gpio failed (%d)\n", ret);
+>  			gpio_free(ptn_bridge->gpio_pd_n);
+> -			return ret;
+> +			return NULL;
+>  		}
+>  	}
+> =20
