@@ -1,227 +1,147 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH v2] cpufreq: tests: Providing cpufreq regression test
-Date: Mon, 21 Jul 2014 09:02:34 +0200
-Message-ID: <1405926154-27214-1-git-send-email-l.majewski@samsung.com>
-References: <1405678985-21677-1-git-send-email-l.majewski@samsung.com>
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-reply-to: <1405678985-21677-1-git-send-email-l.majewski@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Thomas Abraham <ta.omasab@gmail.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <spk.linux@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V5 11/12] Documentation: Add DT bindings for
+ ps8622/ps8625 bridge driver
+Date: Mon, 21 Jul 2014 09:06:29 +0200
+Message-ID: <20140721070627.GA8843@ulmo>
+References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1405629839-12086-12-git-send-email-ajaykumar.rs@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0012470332=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1405629839-12086-12-git-send-email-ajaykumar.rs@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, javier@dowhile0.org, prashanth.g@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This commit adds first regression test "cpufreq_freq_test.sh" for the
-cpufreq subsystem.
 
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+--===============0012470332==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
+Content-Disposition: inline
 
----
-Changes for v2:
-- Replace *_PATCH with *_PATH for variables names
-- Corrected mistakes in the README file
-- Providing detailed explanation of the patch in the README file
----
- drivers/cpufreq/tests/README               |  33 +++++++
- drivers/cpufreq/tests/cpufreq_freq_test.sh | 149 +++++++++++++++++++++++++++++
- 2 files changed, 182 insertions(+)
- create mode 100644 drivers/cpufreq/tests/README
- create mode 100755 drivers/cpufreq/tests/cpufreq_freq_test.sh
 
-diff --git a/drivers/cpufreq/tests/README b/drivers/cpufreq/tests/README
-new file mode 100644
-index 0000000..3e9cd80
---- /dev/null
-+++ b/drivers/cpufreq/tests/README
-@@ -0,0 +1,33 @@
-+This file contains list of cpufreq's available regression tests with a short
-+usage description.
-+
-+1. cpufreq_freq_test.sh
-+
-+Description:
-+------------
-+This script is supposed to test if cpufreq attributes exported by sysfs are
-+exposing correct values.
-+
-+To achieve this goal it saves the current governor and changes it to
-+"performance". Afterwards, it reads the "scaling_available_frequencies"
-+property. With the list of supported frequencies it is able to enforce each of
-+them by writing to "scaling_max_freq" attribute. To make the test more reliable
-+a superfluous load with gzip is created to be sure that we are running with
-+highest possible frequency. This high load is regulated with the 'sleep'
-+duration. After this time the "cpufreq_cur_freq" is read and compared with the
-+original value. As the last step the original governor is restored.
-+
-+This script can work with or without BOOST enabled and helps in spotting errors
-+related to cpufreq and common clock framework.
-+
-+Used attributes:
-+----------------
-+- "scaling_available_frequencies"
-+- "cpuinfo_cur_freq"
-+- "scaling_governor"
-+- "scaling_max_freq"
-+
-+Target devices:
-+---------------
-+
-+All devices which exports mentioned above sysfs attributes.
-\ No newline at end of file
-diff --git a/drivers/cpufreq/tests/cpufreq_freq_test.sh b/drivers/cpufreq/tests/cpufreq_freq_test.sh
-new file mode 100755
-index 0000000..c25f05c
---- /dev/null
-+++ b/drivers/cpufreq/tests/cpufreq_freq_test.sh
-@@ -0,0 +1,149 @@
-+#!/bin/bash
-+#
-+# This file provides a simple mean to test if all declared freqs at
-+# "scaling_available_frequencies" can be set and if "cpuinfo_cur_freq"
-+# returns this value.
-+#
-+# Usage: ./cpufreq_freq_test.sh
-+# Requisite: Compiled in "performance" governor
-+#
-+# This program is free software; you can redistribute it and/or modify
-+# it under the terms of the GNU General Public License as published by
-+# the Free Software Foundation; either version 2 of the License, or
-+# (at your option) any later version.
-+#
-+# This program is distributed in the hope that it will be useful,
-+# but WITHOUT ANY WARRANTY; without even the implied warranty of
-+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+# GNU General Public License for more details.
-+#
-+# You should have received a copy of the GNU General Public License
-+# along with this program; if not, you can access it online at
-+# http://www.gnu.org/licenses/gpl-2.0.html.
-+#
-+# Copyright (C) Samsung Electronics, 2014
-+#
-+# Author: Lukasz Majewski <l.majewski@samsung.com>
-+
-+set +x
-+
-+COLOUR_RED="\33[31m"
-+COLOUR_BLUE="\33[34m"
-+COLOUR_GREEN="\33[32m"
-+COLOUR_DEFAULT="\33[0m"
-+
-+T_PATH=/sys/devices/system/cpu/cpu0/cpufreq
-+BOOST_PATH=/sys/devices/system/cpu/cpufreq
-+
-+if [ ! -d "$T_PATH" ]; then
-+    printf "   $COLOUR_RED No path to CPUFREQ $COLOUR_DEFAULT\n"
-+    exit 1
-+fi
-+
-+ERRORS=0
-+
-+OLD_GOV=`cat $T_PATH/scaling_governor`
-+echo "CURRENT GOVERNOR: $OLD_GOV"
-+echo "SET GOVERNOR: performance"
-+echo "performance" > $T_PATH/scaling_governor
-+
-+function test_freqs1 {
-+    FREQS=`cat $1`
-+    for I in $FREQS; do
-+	cpufreq_set_freq $I
-+	if [ "$2" ]; then
-+	    printf "$COLOUR_BLUE BOOST $COLOUR_DEFAULT" $I
-+	fi
-+	cpufreq_test_freq $I
-+    done
-+}
-+
-+function test_freqs2 {
-+    FREQ=`cat $1`
-+    FREQS_ARRAY=($FREQ)
-+
-+    for freq in ${FREQS_ARRAY[@]}
-+    do
-+	echo "REFERENCE FREQ: $freq"
-+	for f in ${FREQS_ARRAY[@]}
-+	do
-+	    cpufreq_set_freq $freq
-+	    echo -n "----> "
-+	    cpufreq_set_freq $f
-+	    cpufreq_test_freq $f
-+	done
-+    done
-+}
-+
-+function restore {
-+    if [ -f $BOOST_PATH/boost ]; then
-+	cpufreq_boost_state $BOOST_STATE
-+    fi
-+
-+    echo "SET GOVERNOR: $OLD_GOV"
-+    echo $OLD_GOV > $T_PATH/scaling_governor
-+}
-+
-+function die {
-+    printf "   $COLOUR_RED FAILED $COLOUR_DEFAULT\n"
-+    restore_gov
-+    exit 1
-+}
-+
-+function cpufreq_test_freq {
-+    gzip < /dev/urandom > /dev/null &
-+    pid=$!
-+    sleep 0.1
-+    CURR_FREQ=`cat $T_PATH/cpuinfo_cur_freq`
-+    if [ $1 -eq $CURR_FREQ ]; then
-+	printf "\t$COLOUR_GREEN OK $COLOUR_DEFAULT\n"
-+    else
-+	printf "$COLOUR_RED CURRENT $CURR_FREQ $COLOUR_DEFAULT\n"
-+	ERRORS=`expr $ERRORS + 1`
-+	#die
-+    fi
-+    kill -9 $pid
-+    wait $! 2>/dev/null
-+}
-+
-+function cpufreq_set_freq {
-+    echo $1 > $T_PATH/scaling_max_freq || die $?
-+    printf "FREQ:$COLOUR_GREEN %s $COLOUR_DEFAULT" $1
-+}
-+
-+function cpufreq_boost_state {
-+   echo $1 > $BOOST_PATH/boost
-+}
-+
-+function cpufreq_boost_status {
-+   cat $BOOST_PATH/boost
-+}
-+
-+if [ -f $BOOST_PATH/boost ]; then
-+    echo "######################################"
-+    echo "TEST BOOST OPERATION"
-+    echo "######################################"
-+
-+    BOOST_STATE=$(cpufreq_boost_status)
-+    if [ $BOOST_STATE -eq 0 ]; then
-+	cpufreq_boost_state 1
-+    fi
-+    test_freqs1 $T_PATH/scaling_boost_frequencies 1
-+fi
-+
-+echo "######################################"
-+echo "TEST AVAILABLE FREQS"
-+echo "######################################"
-+test_freqs1 $T_PATH/scaling_available_frequencies
-+
-+echo "######################################"
-+echo "TEST FREQS SWITCHING"
-+echo "######################################"
-+test_freqs2 $T_PATH/scaling_available_frequencies
-+
-+echo "######################################"
-+echo "ERRORS: $ERRORS"
-+echo "######################################"
-+
-+restore
-+exit 0
--- 
-2.0.0.rc2
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Jul 18, 2014 at 02:13:57AM +0530, Ajay Kumar wrote:
+> From: Vincent Palatin <vpalatin@chromium.org>
+>=20
+> Add DT binding documentation for ps8622/ps8625 bridge driver.
+>=20
+> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  .../devicetree/bindings/drm/bridge/ps8622.txt      |   21 ++++++++++++++=
+++++++
+
+This is the wrong directory. Bindings are supposed to be OS agnostic,
+but DRM is (mostly) Linux-specific. video/bridge would be a better
+subdirectory for this. Somebody really ought to be moving out the
+existing bindings in the drm subdirectory to a more proper location.
+
+>  1 file changed, 21 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/drm/bridge/ps8622.t=
+xt
+>=20
+> diff --git a/Documentation/devicetree/bindings/drm/bridge/ps8622.txt b/Do=
+cumentation/devicetree/bindings/drm/bridge/ps8622.txt
+> new file mode 100644
+> index 0000000..1d154ac
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/drm/bridge/ps8622.txt
+> @@ -0,0 +1,21 @@
+> +ps8622-bridge bindings
+> +
+> +Required properties:
+> +	- compatible: "parade,ps8622" or "parade,ps8625"
+
+Documentation/devicetree/bindings/vendor-prefixes.txt doesn't contain an
+entry for parade yet.
+
+> +	- reg: first i2c address of the bridge
+> +	- sleep-gpios: OF device-tree gpio specification
+> +	- reset-gpios: OF device-tree gpio specification
+> +
+> +Optional properties:
+> +	- lane-count: number of DP lanes to use
+> +	- use-external-pwm: backlight will be controlled by an external PWM
+
+In case of an external backlight, don't you still need a way to control
+it? Perhaps instead of using this boolean property you should make this
+take a phandle to the real backlight? Like so:
+
+	backlight {
+		compatible =3D "pwm-backlight";
+		...
+	}
+
+	bridge@48 {
+		compatible =3D "parade,ps8622";
+		...
+		backlight =3D <&/backlight>;
+	}
+
+Then you can simply look up the backlight device when that property
+exists and instantiate the built-in backlight otherwise.
+
+> +
+> +Example:
+> +	ps8622-bridge@48 {
+> +		compatible =3D "parade,ps8622";
+> +		reg =3D <0x48>;
+> +		sleep-gpios =3D <&gpc3 6 1 0 0>;
+> +		reset-gpios =3D <&gpc3 1 1 0 0>;
+> +		display-timings =3D <&lcd_display_timings>;
+
+Why is this specifying display-timings? It's not mentioned in the
+binding above and I don't see why the bridge would need to provide
+one since it's really a property of the panel.
+
+Thierry
+
+--vkogqOf2sHV7VnPd
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTzLvzAAoJEN0jrNd/PrOhHgMP+wW3gOH7JEXXGhOWBZVJw9Hb
+J/rcYrawGqIkaONc+95kIoZG6N1qVAC/qLXdIsJMLcdsl+VXp5xIx84EFrgrlU+5
+tWmxSthAEDZ69OiP7c4vzC0HAG+soSHvpZC+ekfjw5rt88qlUsNvLjuhHpMX+hSe
+Mm/H6wBUP7RrLA6hzz644uEwnOnYYVudepAhK2cxKTjE+N/dMCcHbQ//P/IUiKRx
+pJ1XsDcnz/s46pKhhEzmufgodr93DxVwLG6/tA7K1v+oHF3b6f9qhGKEOvr+Kyvm
+pLrmZfmnK6alzmDyrGzz/7+wNbRzwelvQ0cfWRQ1TA9BXVrAy8WKCXerLFwb7kC2
+wZ2ZaqOP1XRQA3ADHCLPcPAXCggx6nD470J0deB+X7fTW7NkUWSwUzY8vZ5cnLeE
+l7wRUI6kFOq1CcPxEWNHx0mz5MN178sJfTvSproseOayTdjLcD57VpNkEbJ27GVd
+4I1tVNIMYJio0E0PdFH0W3OD+Y+A6vBlJVVCY9Am1r6Ane6fCs+FGL4rEor3h3is
+8jqDSkzqI6FxNhu6gKqLWOOMXTfdSIN77kF6m6TsiH+jnWHxqIqMNAa8yt4WVOZs
+L8/oVsiyikebHVOzqZJ0ublsunLRItYbnvGESNvEI+Nb5LP9Z1/hJR4dxO6mRkmG
+H5KGoqSmQlvgliiNdinN
+=+0dl
+-----END PGP SIGNATURE-----
+
+--vkogqOf2sHV7VnPd--
+
+--===============0012470332==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0012470332==--
