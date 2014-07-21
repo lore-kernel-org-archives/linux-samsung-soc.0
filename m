@@ -1,89 +1,93 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 4/6] ARM: SAMSUNG: Restore Samsung PM Debug functionality
-Date: Mon, 21 Jul 2014 12:30:50 +0200
-Message-ID: <53CCEBDA.1000504@gmail.com>
-References: <1403618235-19353-1-git-send-email-t.figa@samsung.com> <1403618235-19353-5-git-send-email-t.figa@samsung.com> <033901cf9ab3$44c469a0$ce4d3ce0$@samsung.com> <53BBF7FF.6050105@samsung.com> <53C56CBF.1020500@samsung.com> <53C5C065.3010106@gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2] ARM: EXYNOS: Fix build with PM_SLEEP=n
+Date: Mon, 21 Jul 2014 12:38:28 +0200
+Message-ID: <5864544.mJGdtT36g8@amdc1032>
+References: <1405323953-25954-1-git-send-email-k.kozlowski@samsung.com>
+ <53C66924.3010303@samsung.com> <53C978AA.9090603@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:35878 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754392AbaGUKbL (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:32141 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754311AbaGUKi4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jul 2014 06:31:11 -0400
-In-Reply-To: <53C5C065.3010106@gmail.com>
+	Mon, 21 Jul 2014 06:38:56 -0400
+In-reply-to: <53C978AA.9090603@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Olof Johansson <olof@lixom.net>
 
-On 16.07.2014 01:59, Tomasz Figa wrote:
-> On 15.07.2014 20:02, Kukjin Kim wrote:
->> On 07/08/14 22:54, Tomasz Figa wrote:
->>> On 08.07.2014 15:48, Kukjin Kim wrote:
->>>> Tomasz Figa wrote:
->>>>>
->>>>> Due to recently merged patches and previous merge conflicts, the
->>>>> Samsung
->>>>> PM Debug functionality no longer can be enabled. This patch fixes
->>>>> incorrect dependency of SAMSUNG_PM_DEBUG on an integer symbol and adds
->>>>> missing header inclusion.
->>>>>
->>>> Yes, you're right and it should be fixed...but I have comments...
->>>>
->>>>> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
->>>>> ---
->>>>>   arch/arm/plat-samsung/Kconfig    | 8 +++++++-
->>>>>   arch/arm/plat-samsung/pm-debug.c | 1 +
->>>>>   2 files changed, 8 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/arch/arm/plat-samsung/Kconfig
->>>>> b/arch/arm/plat-samsung/Kconfig
->>>>> index 301b892..483c959 100644
->>>>> --- a/arch/arm/plat-samsung/Kconfig
->>>>> +++ b/arch/arm/plat-samsung/Kconfig
->>>>> @@ -412,9 +412,14 @@ config S5P_DEV_MFC
->>>>>
->>>>>   comment "Power management"
->>>>>
->>>>> +config HAVE_SAMSUNG_PM_DEBUG
->>>>> +    bool
->>>>> +    help
->>>>> +      Allow compilation of Samsung PM debugging code.
->>>>> +
->>>>>   config SAMSUNG_PM_DEBUG
->>>>>       bool "S3C2410 PM Suspend debug"
->>>>> -    depends on PM&&  DEBUG_KERNEL&&  DEBUG_S3C_UART
->>>>> +    depends on PM&&  DEBUG_KERNEL&&  HAVE_SAMSUNG_PM_DEBUG
->>>>>       help
->>>>>         Say Y here if you want verbose debugging from the PM Suspend
->>>>> and
->>>>>         Resume code.
->>>>> See<file:Documentation/arm/Samsung-S3C24XX/Suspend.txt>
->>>>> @@ -484,6 +489,7 @@ config S5P_SLEEP
->>>>>
->>>>>   config DEBUG_S3C_UART
->>>>>       depends on PLAT_SAMSUNG
->>>>> +    select HAVE_SAMSUNG_PM_DEBUG
->>>>
->>>> Hmm...
->>>>
->>>> The DEBUG_S3C_UART will be '0' when we select DEBUG_S3C_UART0, then the
->>>> HAVE_SAMSUNG_PM_DEBUG will not be selected so SAMSUNG_PM_DEBUG is
->>>> also...
->>>
->>> Yes, that's right. I posted v2 after a while in another reply to this
->>> thread.
->>>
->> Any updates? Or I missed your updated?
-> 
-> I'm afraid you missed. V2 has been there since a long time posted as a
-> reply to original patch. You can find it here:
-> 
-> https://lkml.org/lkml/2014/6/25/301
 
-Ping.
+Hi,
+
+On Saturday, July 19, 2014 04:42:34 AM Kukjin Kim wrote:
+> On 07/16/14 20:59, Tomasz Figa wrote:
+> > Hi Krzysztof,
+> >
+> > On 14.07.2014 09:45, Krzysztof Kozlowski wrote:
+> >> Fix building of exynos defconfig with disabled PM_SLEEP:
+> >> CONFIG_PM_SLEEP=n
+> >> CONFIG_PM_SLEEP_SMP=n
+> >> CONFIG_SUSPEND=n
+> >> by moving functions for power up/down of CPU and cluster to platsmp.c
+> >>
+> >> The build error messages:
+> >> arch/arm/mach-exynos/built-in.o: In function `exynos_boot_secondary':
+> >> arch/arm/mach-exynos/platsmp.c:111: undefined reference to `exynos_cpu_power_state'
+> >> arch/arm/mach-exynos/platsmp.c:112: undefined reference to `exynos_cpu_power_up'
+> >> arch/arm/mach-exynos/platsmp.c:116: undefined reference to `exynos_cpu_power_state'
+> >> make: *** [vmlinux] Error 1
+> >>
+> >> Signed-off-by: Krzysztof Kozlowski<k.kozlowski@samsung.com>
+> >>
+> >> ---
+> >> Changes since v1:
+> >> 1. Use different solution - just move the power up/down functions to a
+> >>     common place instead of adding stubs in common.h. Suggested by Tomasz
+> >>     Figa.
+> >> ---
+> >>   arch/arm/mach-exynos/platsmp.c | 66 ++++++++++++++++++++++++++++++++++++++++++
+> >>   arch/arm/mach-exynos/pm.c      | 66 ------------------------------------------
+> >>   2 files changed, 66 insertions(+), 66 deletions(-)
+> >>
+> >
+> + Bart,
+> 
+> > Reviewed-by: Tomasz Figa<t.figa@samsung.com>
+> >
+> Applied, thanks.
+> 
+> Bart, I think this is better at this moment to fix the build breakage 
+> with disabling PM...if you have any comments, please let me know.
+
+To fix PM_SLEEP=n build itself (with ARM_EXYNOS_CPUIDLE=n) Krzysztof's
+patch is not enough and patch [1] is also needed (this patch is very
+simple so I think that it is okay for v3.16).
+
+For PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y config more changes are needed
+and they are contained in patch [2] (please note that this patch depends
+on patch [3] from Tomasz Figa which was redone recently into [4] so my
+patch also needs to be refreshed).  However if you think that this would
+result in too much changes for v3.16 kernel we can make ARM_EXYNOS_CPUIDLE
+select (or depend on) PM_SLEEP for now and fix the issue completely later
+in v3.17 kernel.
+
+[1] "[PATCH 1/2] ARM: EXYNOS: Fix build with PM_SLEEP=n part #2"
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34080.html
+
+[2] "[PATCH 2/2] ARM: EXYNOS: Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y"
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34081.html
+
+[3] "[PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies"
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32809.html
+
+[4] "[PATCH v3] ARM: EXYNOS: Fix suspend/resume sequences"
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34150.html
 
 Best regards,
-Tomasz
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
