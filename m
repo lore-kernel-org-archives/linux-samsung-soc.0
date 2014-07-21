@@ -1,71 +1,86 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv7 0/4] iio: adc: exynos_adc: Support Exynos3250 ADC and
- code clean
-Date: Mon, 21 Jul 2014 17:17:44 +0900
-Message-ID: <53CCCCA8.1030509@samsung.com>
-References: <1405909068-22539-1-git-send-email-cw00.choi@samsung.com>
- <14522743.f6oFhEQVv4@wuerfel> <53CCCB20.50802@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RESEND PATCH V5 08/12] drm/bridge: ptn3460: Support bridge
+ chaining
+Date: Mon, 21 Jul 2014 10:22:24 +0200
+Message-ID: <20140721082223.GF8843@ulmo>
+References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1405629839-12086-9-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <53CCCB20.50802@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, jic23@kernel.org, ch.naveen@samsung.com, mark.rutland@arm.com, devicetree@vger.kernel.org, kgene.kim@samsung.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, t.figa@samsung.com, rdunlap@infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org
+Content-Type: multipart/mixed; boundary="===============0585971197=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1405629839-12086-9-git-send-email-ajaykumar.rs@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, javier@dowhile0.org, prashanth.g@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/21/2014 05:11 PM, Chanwoo Choi wrote:
-> On 07/21/2014 04:38 PM, Arnd Bergmann wrote:
->> On Monday 21 July 2014 11:17:44 Chanwoo Choi wrote:
->>>
->>> This patchset support Exynos3250 ADC (Analog Digital Converter) because
->>> Exynos3250 has additional special clock for ADC IP.
->>>
->>> Changes from v6:
->>> - Use "exynos3250-adc" compatible string instead of "exynos3250-adc-v2"
->>> - Use "sclk" clock name instead of "sclk_adc"
->>> - Remove un-necessary macro for exyno-adc-data-v2 structure.
->>> - Remove '(void *)' cast and mark the exynos-adc-data structure as 'const'
->>> - Change the number of ADC channels (Exynos3250 has only two channels for ADC)
->>>
->>
->> Looks good to me. Two small requests:
->>
->> a) if you don't mind, can you add my patch (1/2) to add support for s3c64xx to
->>    your series, adding your Signed-off-by line in addition to mine? I think
->>    that one was noncontroversial, while the second patch (2/2) need some more
->>    work to address the comments and do testing.
-> 
-> OK, I'll add this patch.
-> But, I have a question.
-> 
-> Your patch add following compatible string.
-> "s3c64100-adc" is right?
-> 
->  static const struct of_device_id exynos_adc_match[] = {
->  	{
-> +		.compatible = "samsung,s3c64100-adc",
-> +		.data = &exynos_adc_s3c64xx_data,
-> +	}, {
 
-Additionally,
-Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt has not included
-"samsung,s3c6410-adc" compatible string. Should I add this string in exynos-adc.txt?
+--===============0585971197==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vKFfOv5t3oGVpiF+"
+Content-Disposition: inline
 
-drivers/iio/adc/exynos-adc.c has not includeded following compatible string.
-Should I add this compatible string on exynos-adc.c?
 
-+			Must be "samsung,s3c2410-adc" for
-+				the ADC in s3c2410 and compatibles
-+			Must be "samsung,s3c2416-adc" for
-+				the ADC in s3c2416 and compatibles
-+			Must be "samsung,s3c2440-adc" for
-+				the ADC in s3c2440 and compatibles
-+			Must be "samsung,s3c2440-adc" for
-+				the ADC in s3c2440 and compatibles
-+			Must be "samsung,s3c2443-adc" for
-+				the ADC in s3c2443 and compatibles
+--vKFfOv5t3oGVpiF+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Chanwoo Choi
+On Fri, Jul 18, 2014 at 02:13:54AM +0530, Ajay Kumar wrote:
+[...]
+> Also, remove the drm_connector implementation from ptn3460,
+> since the same is implemented using panel_binder.
+
+I think that's a step backwards. In fact I think the panel-bridge binder
+driver shouldn't be needed at all. At least not for now. We have a very
+limited number of bridge drivers, so it shouldn't hurt at this stage to
+implement the connector instantiation within each driver. Once we have
+more bridge drivers, and therefore a better understanding of what they
+need, we can always add something like the panel-binder (though I think
+it should be library code, similar to the drm_encoder_helper_add() API,
+rather than this kind of self-contained object).
+
+Thierry
+
+--vKFfOv5t3oGVpiF+
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTzM2/AAoJEN0jrNd/PrOhGyYP/RjQCcywTSU+9LgTVYqzSQst
+P2soR4jo+g+sLpncB8HFxb42+RMcjzJaiXnIFCP2u+cC2SIsNNs6NjPK0HXE5B8q
+pViUObuh0Vdvs/sDbNQV0RuEzCnZIt1hDt0E0G3iAbdzQ94aUWgiqkweiIHxY31B
+F7/wqhxc/N5RfcsHVo7Yvoq7l3+tBForV5BgeBjlJc1QrOIanlgg1uGxZUH7mP9e
+OyLltLs8NtRnireLMDVTGM71BrFEtvEgGXxOAfqA3KQAvHYsh1QdgqTqB/VK3gp6
+B57BselXqbeSUWRyh8apx870E13MoXEutsKuxxzfj/gRJRMFV7vkBQGpFCxCx0Bk
+ExWTY9nisLe9RlQXSCulGWon7GRPiM1bbGIvfdCefBo33+0puHWx3JjlW2HOPO9F
+7HQUIiTvo7ARpnrKmAVRXR/QzN1WJSZMR7ULjZGrwS26IJ6SzUUdmf7HCn9/CkL6
+QgNhoHeVfg5woyyiyLq2ZdnAmWhe54ihzhqz7RQXzoEL9ZHyRsza9+FBeLL74nOO
+t1/hhFLIx0VNSAxJR7j9lentEEE/zpMUoqS1oh3CyD/jjBaWpPieChF5tFytZrQ9
+zqmkaQDTVv+zMn+rFgAOaO4sgl1zd13t4mZGjaBM7lHWUOXReoA6vEaVFuYJ84wA
+X3Zg1C3KcYDrbAYFO5mi
+=8OmQ
+-----END PGP SIGNATURE-----
+
+--vKFfOv5t3oGVpiF+--
+
+--===============0585971197==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0585971197==--
