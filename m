@@ -1,26 +1,142 @@
-From: =?euc-kr?B?x9S47cHW?= <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH 1/2] PM / devfreq: Export helper functions for drivers
-Date: Sun, 20 Jul 2014 23:28:17 +0000 (GMT)
-Message-ID: <32148397.172891405898897186.JavaMail.weblogic@epml01>
-Reply-To: myungjoo.ham@samsung.com
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCHv6 3/4] iio: devicetree: Add DT binding documentation for
+ Exynos3250 ADC
+Date: Mon, 21 Jul 2014 10:52:28 +0900
+Message-ID: <53CC725C.9010406@samsung.com>
+References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
+ <5835825.JtcDoyOP8b@wuerfel>
+ <CAGTfZH3mnPJ72wi7aFYoChe_OeuRVsUVo3KGRRLTV5scwPbO4g@mail.gmail.com>
+ <5381273.c6GzlyQ7Ea@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
-Return-path: <linux-pm-owner@vger.kernel.org>
-MIME-version: 1.0
-Sender: linux-pm-owner@vger.kernel.org
-To: Punit Agrawal <punit.agrawal@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: "orjan.eide@arm.com" <orjan.eide@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?euc-kr?Q?=B9=DA=B0=E6=B9=CE?= <kyungmin.park@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <5381273.c6GzlyQ7Ea@wuerfel>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Chanwoo Choi <cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, naveen krishna <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, pawel.moll-5wv7dgnIgG8@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-DQoNClNlbmRlciA6IFB1bml0IEFncmF3YWw8cHVuaXQuYWdyYXdhbEBhcm0uY29tPg0KPiBGcm9t
-OiCoqnJqYW4gRWlkZSANCj4NCj4gVGhlc2UgZnVuY3Rpb25zIGFyZSBpbmRlbmRlZCBmb3IgdXNl
-IGJ5IGRyaXZlcnMgYW5kIHNob3VsZCBiZSBhdmFpbGFibGUNCj4gYWxzbyB3aGVuIHRoZSBkcml2
-ZXIgaXMgYnVpbHQgYXMgYSBtb2R1bGUuDQo+DQo+IENjOiBNeXVuZ0pvbyBIYW0gDQo+IENjOiBL
-eXVuZ21pbiBQYXJrIA0KPiBTaWduZWQtb2ZmLWJ5OiCoqnJqYW4gRWlkZSANCg0KRGVhciBQdW5p
-dCwNCg0KDQpKdXN0IGJlaW5nIGN1cmlvdXMsIGlzIHRoZXJlIGFueSByZWFzb24gbm90IHRvIHVz
-ZSBFWFBPUlRfU1lNQk9MX0dQTCA/DQoNCg0KQ2hlZXJzLA0KTXl1bmdKb28uDQoNCi0tDQpNeXVu
-Z0pvbyBIYW0gKMfUuO3B1iksIFBIRA0KRnJvbnRpZXIgQ1MgTGFiLCBTb2Z0d2FyZSBDZW50ZXIN
-ClNhbXN1bmcgRWxlY3Ryb25pY3MNCkNlbGw6ICs4Mi0xMC02NzE0LTI4NTg=
+On 07/19/2014 03:48 AM, Arnd Bergmann wrote:
+> On Saturday 19 July 2014 02:02:09 Chanwoo Choi wrote:
+>> On Sat, Jul 19, 2014 at 1:33 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+>>> On Saturday 19 July 2014 01:23:15 Chanwoo Choi wrote:
+>>>> If don't add new compatible including specific exynos version,
+>>>> I would add new 'adc-needs-sclk' property with existing 'exynos-adc-v2'
+>>>> compatible name.
+> 
+> What I actually meant is using compatible="exynos-adc-v2.1" or similar
+> rather than "exynos3250-adc". However, as you already explained, the
+> version numbers are apparently just made up, so using "exynos3250-adc"
+> is actually better here. If a future exynos7890 uses the same clocks
+> as exynos3250, it can simply use the same "exynos3250-adc" string here.
+
+OK, I'll use "exynos3250-adc" compatible string instead of "exynos3250-adc-v2".
+
+> 
+>>>> Dear Naveen, Tomasz,
+>>>>
+>>>> If existing exynos-adc driver add just one property for 'sclk_adc'
+>>>> as following, exynos-adc could not include the exynos version
+>>>> in compatible name.
+>>>>
+>>>> I need your opinion about it.
+>>>>
+>>>>                 adc: adc@126C0000 {
+>>>>                         compatible = "samsung,exynos-adc-v2";
+>>>>                         reg = <0x126C0000 0x100>, <0x10020718 0x4>;
+>>>>                         interrupts = <0 137 0>;
+>>>>                         clock-names = "adc", "sclk_adc";
+>>>>                         clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
+>>>> +                        adc-needs-sclk;
+>>>>                         #io-channel-cells = <1>;
+>>>>                         io-channel-ranges;
+>>>>                 }
+>>>
+>>> How about just making it an optional clock? That would be much
+>>> easier because then you can simply see if the clock itself is
+>>> there and use it, or otherwise ignore it.
+>>
+>> The v1 of this patchset[1] got the clock of 'sclk_adc'  but if the dt node
+>> of ADC in dtsi file didn't include 'sclk_adc', print just warning message
+>> without stopping probe as following:
+>>
+>>  [1] https://lkml.org/lkml/2014/4/10/710
+>>
+>> +       info->sclk = devm_clk_get(&pdev->dev, "sclk_adc");
+>> +       if (IS_ERR(info->sclk)) {
+>> +               dev_warn(&pdev->dev, "failed getting sclk clock, err = %ld\n",
+>> +                                                       PTR_ERR(info->sclk));
+>> +               info->sclk = NULL;
+>> +       }
+>>
+>> But, Tomasz Figa suggested the method[2] of this patchset(v6).
+>>  [2] https://lkml.org/lkml/2014/4/11/189
+> 
+> Yes, your current version is certainly better than this, but another way
+> to address Tomasz' comment would be to change the binding to list the "sclk"
+> as optional for any device and make the code silently ignore missing sclk
+> entries, like:
+> 
+> 
+> 	info->sclk = devm_clk_get(&pdev->dev, "sclk");
+> 	if (IS_ERR(info->sclk)) {
+> 		switch (PTR_ERR(info->sclk)) {
+> 		case -EPROBE_DEFER:
+> 			/* silently return error so we can retry */
+> 			return -EPROBE_DEFER:
+> 		case -ENOENT:
+> 			/* silently ignore missing optional clk */
+> 			info->sclk = NULL;
+> 			break;
+> 		default:
+> 			/* any other error: clk is defined by doesn't work  */
+> 			dev_err(&pdev->dev, "failed getting sclk clock, err = %ld\n",
+> 				PTR_ERR(info->sclk));
+> 			return PTR_ERR(info->sclk));
+> 		}
+> 	}
+
+I tested this patch suggested by you.
+But, devm_clk_get returns always '-ENOENT' on follwong two cases:
+
+Case 1.
+ADC dt node in exynos3250.dtsi don't include 'sclk' clock as following:
+
+                adc: adc@126C0000 {
+                        compatible = "samsung,exynos3250-adc";
+                        reg = <0x126C0000 0x100>, <0x10020718 0x4>;
+                        interrupts = <0 137 0>;
+                        clock-names = "adc";
+                        clocks = <&cmu CLK_TSADC>;
+                        #io-channel-cells = <1>;
+                        io-channel-ranges;
+		};
+
+Case 2.
+ADC dt node in exynos3250.dtsi don't include 'sclk' clock
+but, exynos3250 clock controller don't support CLK_SCLK_TSADC clock as following:
+
+                adc: adc@126C0000 {
+                        compatible = "samsung,exynos3250-adc";
+                        reg = <0x126C0000 0x100>, <0x10020718 0x4>;
+                        interrupts = <0 137 0>;
+                        clock-names = "adc", "sclk";
+                        clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
+                        #io-channel-cells = <1>;
+                        io-channel-ranges;
+		};
 
 
+So, I think exynos-adc needs to use 'needs_sclk' field suggested by Tomasz Figa.
+
+> 
+> One more comment about the name: Both in the code you use "sclk" as the
+> name, so presumably that is the actual name of the clk as known to this
+> driver, and it makes sense to use clock-names="sclk" as well, if you want
+> to have any name.
+
+OK, I'll use 'sclk' clock name for special clock of ADC.
+
+Thanks,
+Chanwoo Choi
