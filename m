@@ -1,105 +1,192 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V5 11/12] Documentation: Add DT bindings for ps8622/ps8625
- bridge driver
-Date: Mon, 21 Jul 2014 16:24:52 +0530
-Message-ID: <CAEC9eQPpVykXKo8ZwCvmm_kBT5MgAqdt+6rmCiZjJc81H641mw@mail.gmail.com>
-References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1405629839-12086-12-git-send-email-ajaykumar.rs@samsung.com>
-	<20140721070627.GA8843@ulmo>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] Exynos4: cpuidle: support dual CPUs with AFTR state
+Date: Mon, 21 Jul 2014 13:06:32 +0200
+Message-ID: <53CCF438.8000805@linaro.org>
+References: <1396604925-18383-1-git-send-email-daniel.lezcano@linaro.org> <53886CD5.8010301@gmail.com> <2110279.TVBlLBzQV3@amdc1032> <2337363.gvYnZM7kuD@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f169.google.com ([209.85.220.169]:44207 "EHLO
-	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754350AbaGUKyx (ORCPT
+Received: from mail-we0-f182.google.com ([74.125.82.182]:53951 "EHLO
+	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754350AbaGULGf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jul 2014 06:54:53 -0400
-Received: by mail-vc0-f169.google.com with SMTP id hu12so11955385vcb.28
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jul 2014 03:54:52 -0700 (PDT)
-In-Reply-To: <20140721070627.GA8843@ulmo>
+	Mon, 21 Jul 2014 07:06:35 -0400
+Received: by mail-we0-f182.google.com with SMTP id k48so6171930wev.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jul 2014 04:06:34 -0700 (PDT)
+In-Reply-To: <2337363.gvYnZM7kuD@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Vincent Palatin <vpalatin@chromium.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, ccross@google.com, k.kozlowski@samsung.com
 
-Hi Thierry,
-
-On Mon, Jul 21, 2014 at 12:36 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Fri, Jul 18, 2014 at 02:13:57AM +0530, Ajay Kumar wrote:
->> From: Vincent Palatin <vpalatin@chromium.org>
+On 07/16/2014 07:34 PM, Bartlomiej Zolnierkiewicz wrote:
+>
+> Hi,
+>
+> On Friday, May 30, 2014 03:53:09 PM Bartlomiej Zolnierkiewicz wrote:
 >>
->> Add DT binding documentation for ps8622/ps8625 bridge driver.
+>> Hi,
 >>
->> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
->> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->> ---
->>  .../devicetree/bindings/drm/bridge/ps8622.txt      |   21 ++++++++++++++++++++
->
-> This is the wrong directory. Bindings are supposed to be OS agnostic,
-> but DRM is (mostly) Linux-specific. video/bridge would be a better
-> subdirectory for this. Somebody really ought to be moving out the
-> existing bindings in the drm subdirectory to a more proper location.
-Ok. I will move them out into video/bridge.
-
->>  1 file changed, 21 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/drm/bridge/ps8622.txt
+>> On Friday, May 30, 2014 01:34:45 PM Tomasz Figa wrote:
+>>> Hi Daniel,
+>>>
+>>> On 30.05.2014 11:30, Daniel Lezcano wrote:
+>>>> On 04/24/2014 07:42 PM, Tomasz Figa wrote:
+>>>>> Hi Daniel,
+>>>>>
+>>>>> Please see my comments inline.
+>>>>>
+>>>>> Btw. Please fix your e-mail composer to properly wrap your messag=
+es
+>>>>> around 7xth column, as otherwise they're hard to read.
+>>>>>
+>>>>> On 04.04.2014 11:48, Daniel Lezcano wrote:
+>>>>>> The following driver is for exynos4210. I did not yet finished t=
+he
+>>>>>> other boards, so
+>>>>>> I created a specific driver for 4210 which could be merged later=
+=2E
+>>>>>>
+>>>>>> The driver is based on Colin Cross's driver found at:
+>>>>>>
+>>>>>> https://android.googlesource.com/kernel/exynos/+/e686b1ec67423c4=
+0b4fdf811f9a4dfa3b393a010%5E%5E!/
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> This one was based on a 3.4 kernel and an old API.
+>>>>>>
+>>>>>> It has been refreshed, simplified and based on the recent code c=
+leanup
+>>>>>> I sent
+>>>>>> today.
+>>>>>>
+>>>>>> The AFTR could be entered when all the cpus (except cpu0) are do=
+wn. In
+>>>>>> order to
+>>>>>> reach this situation, the couple idle states are used.
+>>>>>>
+>>>>>> There is a sync barrier at the entry and the exit of the low pow=
+er
+>>>>>> function. So
+>>>>>> all cpus will enter and exit the function at the same time.
+>>>>>>
+>>>>>> At this point, CPU0 knows the other cpu will power down itself. =
+CPU0
+>>>>>> waits for
+>>>>>> the CPU1 to be powered down and then initiate the AFTR power dow=
+n
+>>>>>> sequence.
+>>>>>>
+>>>>>> No interrupts are handled by CPU1, this is why we switch to the =
+timer
+>>>>>> broadcast
+>>>>>> even if the local timer is not impacted by the idle state.
+>>>>>>
+>>>>>> When CPU0 wakes up, it powers up CPU1 and waits for it to boot. =
+Then
+>>>>>> they both
+>>>>>> exit the idle function.
+>>>>>>
+>>>>>> This driver allows the exynos4210 to have the same power consump=
+tion
+>>>>>> at idle
+>>>>>> time than the one when we have to unplug CPU1 in order to let CP=
+U0 to
+>>>>>> reach
+>>>>>> the AFTR state.
+>>>>>>
+>>>>>> This patch is a RFC because, we have to find a way to remove the=
+ macros
+>>>>>> definitions and cpu powerdown function without pulling the arch
+>>>>>> dependent
+>>>>>> headers.
+>>>>>>
+>>>>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>>>>> ---
+>>>>>>    arch/arm/mach-exynos/common.c        |   11 +-
+>>>>>>    drivers/cpuidle/Kconfig.arm          |    8 ++
+>>>>>>    drivers/cpuidle/Makefile             |    1 +
+>>>>>>    drivers/cpuidle/cpuidle-exynos4210.c |  226
+>>>>>> ++++++++++++++++++++++++++++++++++
+>>>>
+>>>> [ ... ]
+>>>>
+>>>>
+>>>>> Otherwise, I quite like the whole idea. I need to play a bit with=
+ CPU
+>>>>> hotplug and PMU to verify that things couldn't really be simplifi=
+ed a
+>>>>> bit, but in general this looks reasonably.
+>>>>
+>>>> Hi Tomasz,
+>>>>
+>>>> did you have time to look at this simplification ?
+>>>
+>>> Unfortunately I got preempted with other things to do and now I'm o=
+n
+>>> vacation. I worked a bit with Bart (added on CC) on this and genera=
+lly
+>>> the conclusion was that all the things are necessary. He was also
+>>> working to extend the driver to support Exynos4x12.
+>>>
+>>> Bart, has anything interesting showed up since we talked about this=
+ last
+>>> time?
 >>
->> diff --git a/Documentation/devicetree/bindings/drm/bridge/ps8622.txt b/Documentation/devicetree/bindings/drm/bridge/ps8622.txt
->> new file mode 100644
->> index 0000000..1d154ac
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/drm/bridge/ps8622.txt
->> @@ -0,0 +1,21 @@
->> +ps8622-bridge bindings
->> +
->> +Required properties:
->> +     - compatible: "parade,ps8622" or "parade,ps8625"
+>> Since we last looked into this I have fixed the "standard" AFTR supp=
+ort
+>> for Exynos3250 and started to work on adding Exynos3250 support to t=
+his
+>> driver (as Exynos3250 support has bigger priority than Exynos4x12 on=
+e).
+>> Unfortunately I also got preempted with other things so it is still
+>> unfinished and doesn't work yet.  Moreover I had no possibility to t=
+est
+>> the new driver on Exynos4210 based Origen yet (I hope to do this nex=
+t
+>> week).
 >
-> Documentation/devicetree/bindings/vendor-prefixes.txt doesn't contain an
-> entry for parade yet.
-I will fix this.
+> I have tested this patch on Origen board (Exynos4210 rev 1.1) and it
+> causes system lockup (it seems that the code gets stuck on waiting fo=
+r
+> CPU1 to wake up).
+>
+> The kernels I have tried:
+> * current -next + this patch + few fixes to bring it up to date
+> * commit cd245f5 + this patch + some fixes
+> * next-20140403 + your Exynos cpuidle patch series + this patch
+>
+> I have also tried with S5P_VA_SYSRAM replaced by S5P_INFORM5 to
+> match Exynos 4210 rev 1.1 but it didn't help.
+>
+> U-Boot version used is:
+> U-Boot 2012.07 (Sep 22 2012 - 05:12:41) for ORIGEN
+>
+> Could you please tell me which hardware/bootloader/kernel exactly
+> have you used to test this patch?
 
->> +     - reg: first i2c address of the bridge
->> +     - sleep-gpios: OF device-tree gpio specification
->> +     - reset-gpios: OF device-tree gpio specification
->> +
->> +Optional properties:
->> +     - lane-count: number of DP lanes to use
->> +     - use-external-pwm: backlight will be controlled by an external PWM
->
-> In case of an external backlight, don't you still need a way to control
-> it? Perhaps instead of using this boolean property you should make this
-> take a phandle to the real backlight? Like so:
->
->         backlight {
->                 compatible = "pwm-backlight";
->                 ...
->         }
->
->         bridge@48 {
->                 compatible = "parade,ps8622";
->                 ...
->                 backlight = <&/backlight>;
->         }
->
-> Then you can simply look up the backlight device when that property
-> exists and instantiate the built-in backlight otherwise.
-Thanks for the pointer, this approach seems perfect!
+When I used it, it was on top of 3.15-rc1:
 
->> +
->> +Example:
->> +     ps8622-bridge@48 {
->> +             compatible = "parade,ps8622";
->> +             reg = <0x48>;
->> +             sleep-gpios = <&gpc3 6 1 0 0>;
->> +             reset-gpios = <&gpc3 1 1 0 0>;
->> +             display-timings = <&lcd_display_timings>;
->
-> Why is this specifying display-timings? It's not mentioned in the
-> binding above and I don't see why the bridge would need to provide
-> one since it's really a property of the panel.
-Ahh. I was trying to copy bindings from previous patchset and I messed it up.
-Will fix it.
+https://git.linaro.org/people/daniel.lezcano/linux.git/shortlog/refs/he=
+ads/cpuidle/samsung-next
 
-Ajay
+The hardware was a exynos-4210 origen board ver A.
+
+> Also could you please port/retest your patch over the current -next?
+
+Will do that in my free time after unstacking my emails after 2 weeks o=
+f=20
+vacations :)
+
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
