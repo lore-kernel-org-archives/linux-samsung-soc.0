@@ -1,192 +1,105 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH] Exynos4: cpuidle: support dual CPUs with AFTR state
-Date: Mon, 21 Jul 2014 13:06:32 +0200
-Message-ID: <53CCF438.8000805@linaro.org>
-References: <1396604925-18383-1-git-send-email-daniel.lezcano@linaro.org> <53886CD5.8010301@gmail.com> <2110279.TVBlLBzQV3@amdc1032> <2337363.gvYnZM7kuD@amdc1032>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2] ARM: EXYNOS: Fix build with PM_SLEEP=n
+Date: Mon, 21 Jul 2014 13:11:14 +0200
+Message-ID: <1539661.ni665pgzAx@amdc1032>
+References: <1405323953-25954-1-git-send-email-k.kozlowski@samsung.com>
+ <53C978AA.9090603@samsung.com> <5864544.mJGdtT36g8@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f182.google.com ([74.125.82.182]:53951 "EHLO
-	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754350AbaGULGf (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:43389 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754932AbaGULLk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jul 2014 07:06:35 -0400
-Received: by mail-we0-f182.google.com with SMTP id k48so6171930wev.13
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jul 2014 04:06:34 -0700 (PDT)
-In-Reply-To: <2337363.gvYnZM7kuD@amdc1032>
+	Mon, 21 Jul 2014 07:11:40 -0400
+In-reply-to: <5864544.mJGdtT36g8@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, ccross@google.com, k.kozlowski@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Olof Johansson <olof@lixom.net>
 
-On 07/16/2014 07:34 PM, Bartlomiej Zolnierkiewicz wrote:
->
+On Monday, July 21, 2014 12:38:28 PM Bartlomiej Zolnierkiewicz wrote:
+> 
 > Hi,
->
-> On Friday, May 30, 2014 03:53:09 PM Bartlomiej Zolnierkiewicz wrote:
->>
->> Hi,
->>
->> On Friday, May 30, 2014 01:34:45 PM Tomasz Figa wrote:
->>> Hi Daniel,
->>>
->>> On 30.05.2014 11:30, Daniel Lezcano wrote:
->>>> On 04/24/2014 07:42 PM, Tomasz Figa wrote:
->>>>> Hi Daniel,
->>>>>
->>>>> Please see my comments inline.
->>>>>
->>>>> Btw. Please fix your e-mail composer to properly wrap your messag=
-es
->>>>> around 7xth column, as otherwise they're hard to read.
->>>>>
->>>>> On 04.04.2014 11:48, Daniel Lezcano wrote:
->>>>>> The following driver is for exynos4210. I did not yet finished t=
-he
->>>>>> other boards, so
->>>>>> I created a specific driver for 4210 which could be merged later=
-=2E
->>>>>>
->>>>>> The driver is based on Colin Cross's driver found at:
->>>>>>
->>>>>> https://android.googlesource.com/kernel/exynos/+/e686b1ec67423c4=
-0b4fdf811f9a4dfa3b393a010%5E%5E!/
->>>>>>
->>>>>>
->>>>>>
->>>>>> This one was based on a 3.4 kernel and an old API.
->>>>>>
->>>>>> It has been refreshed, simplified and based on the recent code c=
-leanup
->>>>>> I sent
->>>>>> today.
->>>>>>
->>>>>> The AFTR could be entered when all the cpus (except cpu0) are do=
-wn. In
->>>>>> order to
->>>>>> reach this situation, the couple idle states are used.
->>>>>>
->>>>>> There is a sync barrier at the entry and the exit of the low pow=
-er
->>>>>> function. So
->>>>>> all cpus will enter and exit the function at the same time.
->>>>>>
->>>>>> At this point, CPU0 knows the other cpu will power down itself. =
-CPU0
->>>>>> waits for
->>>>>> the CPU1 to be powered down and then initiate the AFTR power dow=
-n
->>>>>> sequence.
->>>>>>
->>>>>> No interrupts are handled by CPU1, this is why we switch to the =
-timer
->>>>>> broadcast
->>>>>> even if the local timer is not impacted by the idle state.
->>>>>>
->>>>>> When CPU0 wakes up, it powers up CPU1 and waits for it to boot. =
-Then
->>>>>> they both
->>>>>> exit the idle function.
->>>>>>
->>>>>> This driver allows the exynos4210 to have the same power consump=
-tion
->>>>>> at idle
->>>>>> time than the one when we have to unplug CPU1 in order to let CP=
-U0 to
->>>>>> reach
->>>>>> the AFTR state.
->>>>>>
->>>>>> This patch is a RFC because, we have to find a way to remove the=
- macros
->>>>>> definitions and cpu powerdown function without pulling the arch
->>>>>> dependent
->>>>>> headers.
->>>>>>
->>>>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->>>>>> ---
->>>>>>    arch/arm/mach-exynos/common.c        |   11 +-
->>>>>>    drivers/cpuidle/Kconfig.arm          |    8 ++
->>>>>>    drivers/cpuidle/Makefile             |    1 +
->>>>>>    drivers/cpuidle/cpuidle-exynos4210.c |  226
->>>>>> ++++++++++++++++++++++++++++++++++
->>>>
->>>> [ ... ]
->>>>
->>>>
->>>>> Otherwise, I quite like the whole idea. I need to play a bit with=
- CPU
->>>>> hotplug and PMU to verify that things couldn't really be simplifi=
-ed a
->>>>> bit, but in general this looks reasonably.
->>>>
->>>> Hi Tomasz,
->>>>
->>>> did you have time to look at this simplification ?
->>>
->>> Unfortunately I got preempted with other things to do and now I'm o=
-n
->>> vacation. I worked a bit with Bart (added on CC) on this and genera=
-lly
->>> the conclusion was that all the things are necessary. He was also
->>> working to extend the driver to support Exynos4x12.
->>>
->>> Bart, has anything interesting showed up since we talked about this=
- last
->>> time?
->>
->> Since we last looked into this I have fixed the "standard" AFTR supp=
-ort
->> for Exynos3250 and started to work on adding Exynos3250 support to t=
-his
->> driver (as Exynos3250 support has bigger priority than Exynos4x12 on=
-e).
->> Unfortunately I also got preempted with other things so it is still
->> unfinished and doesn't work yet.  Moreover I had no possibility to t=
-est
->> the new driver on Exynos4210 based Origen yet (I hope to do this nex=
-t
->> week).
->
-> I have tested this patch on Origen board (Exynos4210 rev 1.1) and it
-> causes system lockup (it seems that the code gets stuck on waiting fo=
-r
-> CPU1 to wake up).
->
-> The kernels I have tried:
-> * current -next + this patch + few fixes to bring it up to date
-> * commit cd245f5 + this patch + some fixes
-> * next-20140403 + your Exynos cpuidle patch series + this patch
->
-> I have also tried with S5P_VA_SYSRAM replaced by S5P_INFORM5 to
-> match Exynos 4210 rev 1.1 but it didn't help.
->
-> U-Boot version used is:
-> U-Boot 2012.07 (Sep 22 2012 - 05:12:41) for ORIGEN
->
-> Could you please tell me which hardware/bootloader/kernel exactly
-> have you used to test this patch?
+> 
+> On Saturday, July 19, 2014 04:42:34 AM Kukjin Kim wrote:
+> > On 07/16/14 20:59, Tomasz Figa wrote:
+> > > Hi Krzysztof,
+> > >
+> > > On 14.07.2014 09:45, Krzysztof Kozlowski wrote:
+> > >> Fix building of exynos defconfig with disabled PM_SLEEP:
+> > >> CONFIG_PM_SLEEP=n
+> > >> CONFIG_PM_SLEEP_SMP=n
+> > >> CONFIG_SUSPEND=n
+> > >> by moving functions for power up/down of CPU and cluster to platsmp.c
+> > >>
+> > >> The build error messages:
+> > >> arch/arm/mach-exynos/built-in.o: In function `exynos_boot_secondary':
+> > >> arch/arm/mach-exynos/platsmp.c:111: undefined reference to `exynos_cpu_power_state'
+> > >> arch/arm/mach-exynos/platsmp.c:112: undefined reference to `exynos_cpu_power_up'
+> > >> arch/arm/mach-exynos/platsmp.c:116: undefined reference to `exynos_cpu_power_state'
+> > >> make: *** [vmlinux] Error 1
+> > >>
+> > >> Signed-off-by: Krzysztof Kozlowski<k.kozlowski@samsung.com>
+> > >>
+> > >> ---
+> > >> Changes since v1:
+> > >> 1. Use different solution - just move the power up/down functions to a
+> > >>     common place instead of adding stubs in common.h. Suggested by Tomasz
+> > >>     Figa.
+> > >> ---
+> > >>   arch/arm/mach-exynos/platsmp.c | 66 ++++++++++++++++++++++++++++++++++++++++++
+> > >>   arch/arm/mach-exynos/pm.c      | 66 ------------------------------------------
+> > >>   2 files changed, 66 insertions(+), 66 deletions(-)
+> > >>
+> > >
+> > + Bart,
+> > 
+> > > Reviewed-by: Tomasz Figa<t.figa@samsung.com>
+> > >
+> > Applied, thanks.
+> > 
+> > Bart, I think this is better at this moment to fix the build breakage 
+> > with disabling PM...if you have any comments, please let me know.
+> 
+> To fix PM_SLEEP=n build itself (with ARM_EXYNOS_CPUIDLE=n) Krzysztof's
+> patch is not enough and patch [1] is also needed (this patch is very
+> simple so I think that it is okay for v3.16).
 
-When I used it, it was on top of 3.15-rc1:
+Hmmm, I now see that you've applied Krzysztof's patch for v3.17 not v3.16.
 
-https://git.linaro.org/people/daniel.lezcano/linux.git/shortlog/refs/he=
-ads/cpuidle/samsung-next
+In that case how do you want to deal with PM_SLEEP=n build breakages for
+v3.16 and what do you mean with "fix the build breakage with disabling PM"?
 
-The hardware was a exynos-4210 origen board ver A.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-> Also could you please port/retest your patch over the current -next?
-
-Will do that in my free time after unstacking my emails after 2 weeks o=
-f=20
-vacations :)
-
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> For PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y config more changes are needed
+> and they are contained in patch [2] (please note that this patch depends
+> on patch [3] from Tomasz Figa which was redone recently into [4] so my
+> patch also needs to be refreshed).  However if you think that this would
+> result in too much changes for v3.16 kernel we can make ARM_EXYNOS_CPUIDLE
+> select (or depend on) PM_SLEEP for now and fix the issue completely later
+> in v3.17 kernel.
+> 
+> [1] "[PATCH 1/2] ARM: EXYNOS: Fix build with PM_SLEEP=n part #2"
+> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34080.html
+> 
+> [2] "[PATCH 2/2] ARM: EXYNOS: Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y"
+> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34081.html
+> 
+> [3] "[PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies"
+> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32809.html
+> 
+> [4] "[PATCH v3] ARM: EXYNOS: Fix suspend/resume sequences"
+> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34150.html
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
