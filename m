@@ -1,121 +1,53 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v2] ARM: EXYNOS: Fix build with PM_SLEEP=n
-Date: Mon, 21 Jul 2014 14:55:52 +0200
-Message-ID: <93736288.A8L2I1nMme@amdc1032>
-References: <1405323953-25954-1-git-send-email-k.kozlowski@samsung.com>
- <5864544.mJGdtT36g8@amdc1032> <1539661.ni665pgzAx@amdc1032>
+Subject: Re: [PATCH] ARM: dts: add CPU nodes for Exynos4 SoCs
+Date: Mon, 21 Jul 2014 15:10:54 +0200
+Message-ID: <10657588.befqTi5XsZ@amdc1032>
+References: <1863399.9O2S91ZvEO@amdc1032>
+ <CAD8Lp46eB3cDqD+1YMnWOG-V8CG7fCG1s2KH7znL0OrHSazRcQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:34598 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:35662 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754439AbaGUM4P (ORCPT
+	with ESMTP id S932104AbaGUNLP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jul 2014 08:56:15 -0400
-In-reply-to: <1539661.ni665pgzAx@amdc1032>
+	Mon, 21 Jul 2014 09:11:15 -0400
+In-reply-to: <CAD8Lp46eB3cDqD+1YMnWOG-V8CG7fCG1s2KH7znL0OrHSazRcQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Olof Johansson <olof@lixom.net>
+To: Daniel Drake <drake@endlessm.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Tomasz Figa <t.figa@samsung.com>, thomas.ab@samsung.com
 
-On Monday, July 21, 2014 01:11:14 PM Bartlomiej Zolnierkiewicz wrote:
-> On Monday, July 21, 2014 12:38:28 PM Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > Hi,
-> > 
-> > On Saturday, July 19, 2014 04:42:34 AM Kukjin Kim wrote:
-> > > On 07/16/14 20:59, Tomasz Figa wrote:
-> > > > Hi Krzysztof,
-> > > >
-> > > > On 14.07.2014 09:45, Krzysztof Kozlowski wrote:
-> > > >> Fix building of exynos defconfig with disabled PM_SLEEP:
-> > > >> CONFIG_PM_SLEEP=n
-> > > >> CONFIG_PM_SLEEP_SMP=n
-> > > >> CONFIG_SUSPEND=n
-> > > >> by moving functions for power up/down of CPU and cluster to platsmp.c
-> > > >>
-> > > >> The build error messages:
-> > > >> arch/arm/mach-exynos/built-in.o: In function `exynos_boot_secondary':
-> > > >> arch/arm/mach-exynos/platsmp.c:111: undefined reference to `exynos_cpu_power_state'
-> > > >> arch/arm/mach-exynos/platsmp.c:112: undefined reference to `exynos_cpu_power_up'
-> > > >> arch/arm/mach-exynos/platsmp.c:116: undefined reference to `exynos_cpu_power_state'
-> > > >> make: *** [vmlinux] Error 1
-> > > >>
-> > > >> Signed-off-by: Krzysztof Kozlowski<k.kozlowski@samsung.com>
-> > > >>
-> > > >> ---
-> > > >> Changes since v1:
-> > > >> 1. Use different solution - just move the power up/down functions to a
-> > > >>     common place instead of adding stubs in common.h. Suggested by Tomasz
-> > > >>     Figa.
-> > > >> ---
-> > > >>   arch/arm/mach-exynos/platsmp.c | 66 ++++++++++++++++++++++++++++++++++++++++++
-> > > >>   arch/arm/mach-exynos/pm.c      | 66 ------------------------------------------
-> > > >>   2 files changed, 66 insertions(+), 66 deletions(-)
-> > > >>
-> > > >
-> > > + Bart,
-> > > 
-> > > > Reviewed-by: Tomasz Figa<t.figa@samsung.com>
-> > > >
-> > > Applied, thanks.
-> > > 
-> > > Bart, I think this is better at this moment to fix the build breakage 
-> > > with disabling PM...if you have any comments, please let me know.
-> > 
-> > To fix PM_SLEEP=n build itself (with ARM_EXYNOS_CPUIDLE=n) Krzysztof's
-> > patch is not enough and patch [1] is also needed (this patch is very
-> > simple so I think that it is okay for v3.16).
+
+Hi,
+
+On Monday, July 21, 2014 01:43:53 PM Daniel Drake wrote:
+> On Fri, Jul 18, 2014 at 5:00 PM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> > Recent patch by Tomasz Figa ("irqchip: gic: Fix core ID calculation
+> > when topology is read from DT") fixed GIC driver to filter cluster ID
+> > from values returned by cpu_logical_map() for SoCs having registers
+> > mapped without per-CPU banking making it is possible to add CPU nodes
+> > for Exynos4 SoCs.  In case of Exynos SoCs these CPU nodes are also
+> > required by future changes adding initialization of cpuidle states in
+> > Exynos cpuidle driver through DT.
 > 
-> Hmmm, I now see that you've applied Krzysztof's patch for v3.17 not v3.16.
-> 
-> In that case how do you want to deal with PM_SLEEP=n build breakages for
-> v3.16 and what do you mean with "fix the build breakage with disabling PM"?
+> This conflicts with work in the thread "cpufreq: use generic cpufreq
+> drivers for exynos platforms" which is already in its 7th iteration.
+> Perhaps best to work directly with Thomas to help him finish that series?
 
-Just a bit of explanation:
-
-The PM_SLEEP=n build breakages show up on automated build tests done by
-various people.  Minimal fixes for them (Krzysztof's patch + patch [1] +
-making ARM_EXYNOS_CPUIDLE depend on PM_SLEEP temporally) are really obvious
-and should be pretty safe so it would be great to have them in v3.16.
-
-If that is not possible lets fix the issue completely early in v3.17 cycle.
+Patch "[PATCH v7 4/6] ARM: dts: Exynos: add cpu nodes, opp and cpu clock
+configuration data" from Thomas needs another revision anyway since it lacks
+cluster ID in Exynos4210 CPU node.  It also mixes addition of CPU nodes
+with cpufreq specific changes and IMHO addition of CPU nodes should be in
+separate patch to ease bisection if any later problems turn up.  Therefore
+I think that it would be the best if Thomas would rebase his work on top of
+"irqchip: gic: Fix core ID calculation when topology is read from DT" patch
+and this one.  Thomas, are you okay with this?
 
 Best regards,
 --
 Bartlomiej Zolnierkiewicz
 Samsung R&D Institute Poland
 Samsung Electronics
-
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> > For PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y config more changes are needed
-> > and they are contained in patch [2] (please note that this patch depends
-> > on patch [3] from Tomasz Figa which was redone recently into [4] so my
-> > patch also needs to be refreshed).  However if you think that this would
-> > result in too much changes for v3.16 kernel we can make ARM_EXYNOS_CPUIDLE
-> > select (or depend on) PM_SLEEP for now and fix the issue completely later
-> > in v3.17 kernel.
-> > 
-> > [1] "[PATCH 1/2] ARM: EXYNOS: Fix build with PM_SLEEP=n part #2"
-> > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34080.html
-> > 
-> > [2] "[PATCH 2/2] ARM: EXYNOS: Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y"
-> > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34081.html
-> > 
-> > [3] "[PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies"
-> > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32809.html
-> > 
-> > [4] "[PATCH v3] ARM: EXYNOS: Fix suspend/resume sequences"
-> > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34150.html
-> > 
-> > Best regards,
-> > --
-> > Bartlomiej Zolnierkiewicz
-> > Samsung R&D Institute Poland
-> > Samsung Electronics
