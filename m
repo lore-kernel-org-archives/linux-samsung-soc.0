@@ -1,228 +1,79 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RESEND PATCH V5 12/12] drm/exynos: Add ps8622 lvds bridge
- discovery to DP driver
-Date: Mon, 21 Jul 2014 16:44:28 +0200
-Message-ID: <20140721144427.GA28336@ulmo>
-References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
- <1405629839-12086-13-git-send-email-ajaykumar.rs@samsung.com>
- <20140721071028.GB8843@ulmo>
- <CAEC9eQPkzrpQn41+zu8mwJUctSd0CF_U4UCdff0F7VYq2oWthw@mail.gmail.com>
- <20140721125424.GD15238@ulmo>
- <CAEC9eQODqv=vkWhxnSVC4fFcfn1pHAmXzMZowayBbgKPjdppzw@mail.gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 2/2] iio: exynos-adc: add experimental touchscreen support
+Date: Mon, 21 Jul 2014 07:44:42 -0700
+Message-ID: <20140721144442.GB9112@core.coreip.homeip.net>
+References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
+ <53CBC969.4090704@kernel.org>
+ <20140720202842.GB18347@core.coreip.homeip.net>
+ <5158672.dMAnnUQc7Z@wuerfel>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2027931073=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAEC9eQODqv=vkWhxnSVC4fFcfn1pHAmXzMZowayBbgKPjdppzw@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@dowhile0.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============2027931073==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OgqxwSJOaUobr8KG"
-Content-Disposition: inline
-
-
---OgqxwSJOaUobr8KG
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:64759 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755279AbaGUOoq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Jul 2014 10:44:46 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5158672.dMAnnUQc7Z@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jonathan Cameron <jic23@kernel.org>, linux-arm-kernel@lists.infradead.org, Chanwoo Choi <cw00.choi@samsung.com>, ch.naveen@samsung.com, mark.rutland@arm.com, devicetree@vger.kernel.org, kgene.kim@samsung.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, t.figa@samsung.com, rdunlap@infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, heiko.stuebner@bq.com, Ben Dooks <ben-linux@fluff.org>, linux-input <linux-input@vger.kernel.org>
 
-On Mon, Jul 21, 2014 at 08:06:01PM +0530, Ajay kumar wrote:
-> Hi Thierry,
->=20
-> On Mon, Jul 21, 2014 at 6:24 PM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > On Mon, Jul 21, 2014 at 04:58:25PM +0530, Ajay kumar wrote:
-> >> On Mon, Jul 21, 2014 at 12:40 PM, Thierry Reding
-> >> <thierry.reding@gmail.com> wrote:
-> >> > On Fri, Jul 18, 2014 at 02:13:58AM +0530, Ajay Kumar wrote:
-> >> >> From: Rahul Sharma <Rahul.Sharma@samsung.com>
-> >> >>
-> >> >> This patch adds ps8622 lvds bridge discovery code to the dp driver.
-> >> >>
-> >> >> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
-> >> >> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> >> >> ---
-> >> >>  drivers/gpu/drm/exynos/exynos_dp_core.c |    5 +++++
-> >> >>  1 file changed, 5 insertions(+)
-> >> >>
-> >> >> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/=
-drm/exynos/exynos_dp_core.c
-> >> >> index 0ca6256..82e2942 100644
-> >> >> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-> >> >> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> >> >> @@ -31,6 +31,7 @@
-> >> >>  #include <drm/drm_panel.h>
-> >> >>  #include <drm/bridge/ptn3460.h>
-> >> >>  #include <drm/bridge/panel_binder.h>
-> >> >> +#include <drm/bridge/ps8622.h>
-> >> >>
-> >> >>  #include "exynos_drm_drv.h"
-> >> >>  #include "exynos_dp_core.h"
-> >> >> @@ -999,6 +1000,10 @@ static int exynos_drm_attach_lcd_bridge(struc=
-t exynos_dp_device *dp,
-> >> >>       if (find_bridge("nxp,ptn3460", &bridge)) {
-> >> >>               bridge_chain =3D ptn3460_init(dp->drm_dev, encoder, b=
-ridge.client,
-> >> >>                                                               bridg=
-e.node);
-> >> >> +     } else if (find_bridge("parade,ps8622", &bridge) ||
-> >> >> +                             find_bridge("parade,ps8625", &bridge)=
-) {
-> >> >> +             bridge_chain =3D ps8622_init(dp->drm_dev, encoder, br=
-idge.client,
-> >> >> +                                                             bridg=
-e.node);
-> >> >>       }
-> >> >
-> >> > We really ought to be adding some sort of registry at some point.
-> >> > Otherwise every driver that wants to use bridges needs to come up wi=
-th a
-> >> > similar set of helpers to instantiate them.
-> >> >
-> >> > Also you're making this driver depend on (now) two bridges, whereas =
-it
-> >> > really shouldn't matter which exact types it supports. Bridges shoul=
-d be
-> >> > exposed via a generic interface.
-> >>
-> >> How about moving out the find_bridge() function into a common header f=
-ile,
-> >> and also supporting the list of bridge_init declarations in the same f=
-ile?
-> >>
-> >> We get bridge chip node from phandle, and then pass the same node
-> >> to find_bridge() which searches the list using of_device_is_compatible=
-()
-> >> to call the appropriate bridge_init function?
-> >
-> > That could work, but it's still somewhat unusual and shouldn't be
-> > required. I think we'd be better of with some sort of registry like we
-> > have for panels. That would mean that a driver that wants to use a
-> > bridge would do something like this:
-> >
-> >         struct drm_bridge *bridge;
-> >         struct device_node *np;
-> >
-> >         np =3D of_parse_phandle(dev->of_node, "bridge", 0);
-> >         if (np) {
-> >                 bridge =3D of_drm_find_bridge(np);
-> >                 of_node_put(np);
-> >
-> >                 if (!bridge)
-> >                         return -EPROBE_DEFER;
-> >         }
-> >
-> > An alternative way would be to add a non-OF wrapper around this, like
-> > this for example:
-> Let me try the DT version first :)
->=20
-> >         bridge =3D drm_bridge_get(dev, NULL);
-> >
-> > Which would be conceptually the same as clk_get() or regulator_get() and
-> > could be easily extended to support non-DT setups as well.
-> >
-> > As for bridge drivers I think we may have to rework things a little, so
-> > that a driver can call some sequence like this:
-> >
-> >         struct foo_bridge {
-> >                 struct drm_bridge base;
-> >                 ...
-> >         };
-> >
-> >         static const struct drm_bridge_funcs foo_bridge_funcs =3D {
-> >                 ...
-> >         };
-> >
-> >         static int foo_probe(...)
-> >         {
-> >                 struct foo_bridge *bridge;
-> >                 int err;
-> >
-> >                 bridge =3D devm_kzalloc(dev, sizeof(*bridge), GFP_KERNE=
-L);
-> >                 if (!bridge)
-> >                         return -ENOMEM;
-> >
-> >                 /* setup bridge (return -EPROBE_DEFER if necessary, ...=
-) */
-> >
-> >                 /* register bridge with DRM */
-> >                 drm_bridge_init(&bridge->base);
-> >                 bridge->base.dev =3D dev;
-> >                 bridge->base.funcs =3D &foo_bridge_funcs;
-> >
-> >                 err =3D drm_bridge_add(&bridge->base);
-> >                 if (err < 0)
-> >                         return err;
-> >
-> >                 dev_set_drvdata(dev, bridge);
-> >                 ...
-> >         }
-> >
-> > drm_bridge_add() would add the bridge to a global list of bridge devices
-> > which drm_bridge_get()/of_drm_find_bridge() can use to find the one that
-> > it needs. The above has the big advantage that it'sdev->mode_config.bri=
-dge_list completely
-> > independent of the underlying bus that the bridge is on. It could be I2C
-> > or SPI, platform device or PCI device.
-> >
-> > Thierry
-> Ok. This is all about making the bridge driver confine to the driver mode=
-l.
-> But, I would need a drm_device pointer to register the bridge to DRM core.
-> How do I get it?
+On Mon, Jul 21, 2014 at 12:23:58PM +0200, Arnd Bergmann wrote:
+> On Sunday 20 July 2014 13:28:42 Dmitry Torokhov wrote:
+> > On Sun, Jul 20, 2014 at 02:51:37PM +0100, Jonathan Cameron wrote:
+> > > >>+
+> > > >>+    do {
+> > > >>+        ret =exynos_read_s3c64xx_ts(dev, NULL, &x, &y, IIO_CHAN_INFO_RAW);
+> > > >= exynos
+> > > >>+        if (ret == -ETIMEDOUT)
+> > > >>+            break;
+> > > >>+
+> > > >>+        pressed = x & y & ADC_DATX_PRESSED;
+> > > >>+        if (!pressed)
+> > > >>+            break;
+> > > >>+
+> > > >>+        input_report_abs(info->input, ABS_X, x & ADC_DATX_MASK);
+> > > >>+        input_report_abs(info->input, ABS_Y, y & ADC_DATX_MASK);
+> > > >>+        input_report_key(info->input, BTN_TOUCH, 1);
+> > > >>+        input_sync(info->input);
+> > > >>+
+> > > >>+        msleep(1);
+> > > >>+    } while (1);
+> > 
+> > It would be nice to actually close the device even if someone is
+> > touching screen. Please implement open/close methods and have them set a
+> > flag that you would check here.
+> 
+> Ok. I think it's even better to move the request_irq() into the open function,
+> which will avoid the flag and defer the error handling into the actual opening,
+> as well as syncing the running irq with the close function.
 
-Once you've obtained a reference to the DRM bridge from your driver you
-should carry it around until you've set up the DRM device. Then you can
-hook it up, which possibly requires a new function (since it's what the
-drm_bridge_init() used to do).
+I do not quite like acquiring resources needed in open. I think drivers should
+do all resource acquisition in probe() and leave open()/close() to
+activate/quiesce devices.
 
-Thierry
+> 
+> > > >>+    /* data from s3c2410_ts driver */
+> > > >>+    info->input->name = "S3C24xx TouchScreen";
+> > > >>+    info->input->id.bustype = BUS_HOST;
+> > > >>+    info->input->id.vendor = 0xDEAD;
+> > > >>+    info->input->id.product = 0xBEEF;
+> > 
+> > You do not need to fill these entries with fake data.
+> 
+> Ok, I wondered about this, but didn't want to change too much from
+> the old driver (I changed the version number).
+> 
+> > > >>+    info->input->id.version = 0x0200;
+> 
+> Do I need this?
 
---OgqxwSJOaUobr8KG
-Content-Type: application/pgp-signature
+Not really.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Thanks.
 
-iQIcBAEBAgAGBQJTzSdLAAoJEN0jrNd/PrOhBpkP/A5L6vIod+WyT67vqSac30cr
-DU0J4BlZD3bs0YMC7QkjGx0dOVwwA3bdzSrGpCq8DExOwT/1hIeH5eUx5rYgFotD
-S0JEkMQZsdoScvG/4ZQfYq4tp0RS6fWp7Y1Rf6wjfuzophBkelBTPPZNk69xwZl7
-nTsUR3Yx3UxDnfu5XYPaBCOdDe7AbLldz//8vY50dM3pV90APwIx7tnyFBhlJeJN
-HJGNKUUasuycOeJ2gsRg8ObufVy1GZ8Ja+WkPAyybQvv1ZlZJhVOEALj+kjp7E8K
-rAFoci/TThJFZz91EPe5F/Vrr/ljeajLSCBEDGmH619+bDz+mspET51CG9XoP5+r
-AbMBYomzOOfg68x0SlbsSRjo0E6uZa0RtL3SmN22ODoOIqNblZ52ND6nQu77b/as
-vxGYb9Fhinqlh6jydl2/cIdDFsc9293BcpsT5Tq5s474YKgjJOUQE5ZilIMwooH9
-VcGQO/EM5i0n5YHDalLdWcB43XbGnL+0Is0EIJTdhihb4Yv2EQHBmzOs6mXVodJw
-Glml6Y4qnjcOleYe8hBW1cVQf72w4oeZFDTZONtvz0cJtLusLLjOJEGTXY9hoaCx
-jJvhh8Vi/WuFEawsXlKPOVlZlDuPIYd7PnhReheNKGCrJ4NWWVketj1eTehk0YOk
-Hou5k2A4cmZin0MQ1no3
-=5W44
------END PGP SIGNATURE-----
-
---OgqxwSJOaUobr8KG--
-
---===============2027931073==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============2027931073==--
+-- 
+Dmitry
