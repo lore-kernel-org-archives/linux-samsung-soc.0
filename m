@@ -1,103 +1,84 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH] exynos: boot serial endian fix
-Date: Mon, 21 Jul 2014 17:11:18 +0100
-Message-ID: <1405959078-10603-1-git-send-email-broonie@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48068 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932550AbaGUQLh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jul 2014 12:11:37 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 2/2] iio: exynos-adc: add experimental touchscreen support
+Date: Mon, 21 Jul 2014 09:19:32 -0700
+Message-ID: <20140721161932.GA12180@core.coreip.homeip.net>
+References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com>
+ <5158672.dMAnnUQc7Z@wuerfel>
+ <20140721144442.GB9112@core.coreip.homeip.net>
+ <6569004.FG0IRy8WyL@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <6569004.FG0IRy8WyL@wuerfel>
+Sender: linux-input-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, devicetree@vger.kernel.org, kgene.kim@samsung.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, linux-iio@vger.kernel.org, t.figa@samsung.com, rdunlap@infradead.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, Ben Dooks <ben-linux@fluff.org>, galak@codeaurora.org, ch.naveen@samsung.com, linux-input <linux-input@vger.kernel.org>, heiko.stuebner@bq.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, linux-samsung-soc@vger.kernel.org, Victor Kamensky <victor.kamensky@linaro.org>, Mark Brown <broonie@linaro.org>
 
-From: Victor Kamensky <victor.kamensky@linaro.org>
+On Mon, Jul 21, 2014 at 05:11:27PM +0200, Arnd Bergmann wrote:
+> On Monday 21 July 2014 07:44:42 Dmitry Torokhov wrote:
+> > > > 
+> > > > It would be nice to actually close the device even if someone is
+> > > > touching screen. Please implement open/close methods and have them set a
+> > > > flag that you would check here.
+> > > 
+> > > Ok. I think it's even better to move the request_irq() into the open function,
+> > > which will avoid the flag and defer the error handling into the actual opening,
+> > > as well as syncing the running irq with the close function.
+> > 
+> > I do not quite like acquiring resources needed in open. I think drivers should
+> > do all resource acquisition in probe() and leave open()/close() to
+> > activate/quiesce devices.
+> 
+> Ok, I'll move it back then. I'm not sure what I'm supposed to do
+> in open/close then. Isn't it enough to check info->input->users
+> like this?
+> 
+> static irqreturn_t exynos_ts_isr(int irq, void *dev_id)
+> {
+>         struct exynos_adc *info = dev_id;
+>         struct iio_dev *dev = dev_get_drvdata(info->dev);
+>         u32 x, y;
+>         bool pressed;
+>         int ret;
+> 
+>         while (info->input->users) {
+>                 ret = exynos_read_s3c64xx_ts(dev, &x, &y);
+>                 if (ret == -ETIMEDOUT)
+>                         break;
+> 
+>                 pressed = x & y & ADC_DATX_PRESSED;
+>                 if (!pressed) {
+>                         input_report_key(info->input, BTN_TOUCH, 0);
+>                         input_sync(info->input);
+>                         break;
+>                 }
+> 
+>                 input_report_abs(info->input, ABS_X, x & ADC_DATX_MASK);
+>                 input_report_abs(info->input, ABS_Y, y & ADC_DATY_MASK);
+>                 input_report_key(info->input, BTN_TOUCH, 1);
+>                 input_sync(info->input);
+> 
+>                 msleep(1);
+>         };
+> 
+>         writel(0, ADC_V1_CLRINTPNDNUP(info->regs));
+> 
+>         return IRQ_HANDLED;
+> }
+> 
+> I could do enable_irq()/disable_irq(), but that leaves a small
+> race at startup where we request the irq line and then immediately
+> disable it again.
 
-In order to support booting a big endian kernel the uncompress serial
-line write utils need to use endian neutral functions to read h/w
-register. Fix uart_rd, uart_wr and serial chip fifo related macros to do
-this.
+I think the above (or a separate flag in driver structure) coupled with
+enable/disable IRQ is fine - input core can deal with calls to input_report_*
+on devices that have been properly allocated but have not been registered yet.
 
-Signed-off-by: Victor Kamensky <victor.kamensky@linaro.org>
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
- arch/arm/include/debug/samsung.S | 9 +++++++++
- 1 file changed, 9 insertions(+)
+drivers/input/keyboard/samsung-keypad.c does similar handling.
 
-diff --git a/arch/arm/include/debug/samsung.S b/arch/arm/include/debug/samsung.S
-index 8d8d922e5e44..dc62d4ae04d0 100644
---- a/arch/arm/include/debug/samsung.S
-+++ b/arch/arm/include/debug/samsung.S
-@@ -9,17 +9,20 @@
-  * published by the Free Software Foundation.
- */
- 
-+#include <asm/assembler.h>
- #include <linux/serial_s3c.h>
- 
- /* The S5PV210/S5PC110 implementations are as belows. */
- 
- 	.macro fifo_level_s5pv210 rd, rx
- 		ldr	\rd, [\rx, # S3C2410_UFSTAT]
-+	ARM_BE8(rev	\rd, \rd)
- 		and	\rd, \rd, #S5PV210_UFSTAT_TXMASK
- 	.endm
- 
- 	.macro  fifo_full_s5pv210 rd, rx
- 		ldr	\rd, [\rx, # S3C2410_UFSTAT]
-+	ARM_BE8(rev	\rd, \rd)
- 		tst	\rd, #S5PV210_UFSTAT_TXFULL
- 	.endm
- 
-@@ -28,6 +31,7 @@
- 
- 	.macro fifo_level_s3c2440 rd, rx
- 		ldr	\rd, [\rx, # S3C2410_UFSTAT]
-+	ARM_BE8(rev	\rd, \rd)
- 		and	\rd, \rd, #S3C2440_UFSTAT_TXMASK
- 	.endm
- 
-@@ -37,6 +41,7 @@
- 
- 	.macro  fifo_full_s3c2440 rd, rx
- 		ldr	\rd, [\rx, # S3C2410_UFSTAT]
-+	ARM_BE8(rev	\rd, \rd)
- 		tst	\rd, #S3C2440_UFSTAT_TXFULL
- 	.endm
- 
-@@ -50,6 +55,7 @@
- 
- 	.macro	busyuart, rd, rx
- 		ldr	\rd, [\rx, # S3C2410_UFCON]
-+	ARM_BE8(rev	\rd, \rd)
- 		tst	\rd, #S3C2410_UFCON_FIFOMODE	@ fifo enabled?
- 		beq	1001f				@
- 		@ FIFO enabled...
-@@ -61,6 +67,7 @@
- 1001:
- 		@ busy waiting for non fifo
- 		ldr	\rd, [\rx, # S3C2410_UTRSTAT]
-+	ARM_BE8(rev	\rd, \rd)
- 		tst	\rd, #S3C2410_UTRSTAT_TXFE
- 		beq	1001b
- 
-@@ -69,6 +76,7 @@
- 
- 	.macro	waituart,rd,rx
- 		ldr	\rd, [\rx, # S3C2410_UFCON]
-+	ARM_BE8(rev	\rd, \rd)
- 		tst	\rd, #S3C2410_UFCON_FIFOMODE	@ fifo enabled?
- 		beq	1001f				@
- 		@ FIFO enabled...
-@@ -80,6 +88,7 @@
- 1001:
- 		@ idle waiting for non fifo
- 		ldr	\rd, [\rx, # S3C2410_UTRSTAT]
-+	ARM_BE8(rev	\rd, \rd)
- 		tst	\rd, #S3C2410_UTRSTAT_TXFE
- 		beq	1001b
- 
+Thanks.
+
 -- 
-2.0.1
+Dmitry
