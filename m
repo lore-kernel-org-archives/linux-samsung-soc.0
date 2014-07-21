@@ -1,87 +1,95 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCHv6 3/4] iio: devicetree: Add DT binding documentation for Exynos3250 ADC
-Date: Mon, 21 Jul 2014 10:00:24 +0200
-Message-ID: <7477106.gq1AqisQx4@wuerfel>
-References: <1405663186-26464-1-git-send-email-cw00.choi@samsung.com> <5381273.c6GzlyQ7Ea@wuerfel> <53CC725C.9010406@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RESEND PATCH V5 03/12] drm/exynos: dp: modify driver to support
+ drm_panel
+Date: Mon, 21 Jul 2014 10:02:29 +0200
+Message-ID: <20140721080216.GD8843@ulmo>
+References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1405629839-12086-4-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <53CC725C.9010406@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Chanwoo Choi <cwchoi00@gmail.com>, jic23@kernel.org, naveen krishna <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, pawel.moll@arm.com, Mark Rutland <mark.rutland@arm.com>, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, rdunlap@infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-iio@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, linux-doc@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0799119945=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1405629839-12086-4-git-send-email-ajaykumar.rs@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, javier@dowhile0.org, prashanth.g@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday 21 July 2014 10:52:28 Chanwoo Choi wrote:
-> > Yes, your current version is certainly better than this, but another way
-> > to address Tomasz' comment would be to change the binding to list the "sclk"
-> > as optional for any device and make the code silently ignore missing sclk
-> > entries, like:
-> > 
-> > 
-> >       info->sclk = devm_clk_get(&pdev->dev, "sclk");
-> >       if (IS_ERR(info->sclk)) {
-> >               switch (PTR_ERR(info->sclk)) {
-> >               case -EPROBE_DEFER:
-> >                       /* silently return error so we can retry */
-> >                       return -EPROBE_DEFER:
-> >               case -ENOENT:
-> >                       /* silently ignore missing optional clk */
-> >                       info->sclk = NULL;
-> >                       break;
-> >               default:
-> >                       /* any other error: clk is defined by doesn't work  */
-> >                       dev_err(&pdev->dev, "failed getting sclk clock, err = %ld\n",
-> >                               PTR_ERR(info->sclk));
-> >                       return PTR_ERR(info->sclk));
-> >               }
-> >       }
-> 
-> I tested this patch suggested by you.
-> But, devm_clk_get returns always '-ENOENT' on follwong two cases:
-> 
-> Case 1.
-> ADC dt node in exynos3250.dtsi don't include 'sclk' clock as following:
-> 
->                 adc: adc@126C0000 {
->                         compatible = "samsung,exynos3250-adc";
->                         reg = <0x126C0000 0x100>, <0x10020718 0x4>;
->                         interrupts = <0 137 0>;
->                         clock-names = "adc";
->                         clocks = <&cmu CLK_TSADC>;
->                         #io-channel-cells = <1>;
->                         io-channel-ranges;
->                 };
-> 
-> Case 2.
-> ADC dt node in exynos3250.dtsi don't include 'sclk' clock
-> but, exynos3250 clock controller don't support CLK_SCLK_TSADC clock as following:
-> 
->                 adc: adc@126C0000 {
->                         compatible = "samsung,exynos3250-adc";
->                         reg = <0x126C0000 0x100>, <0x10020718 0x4>;
->                         interrupts = <0 137 0>;
->                         clock-names = "adc", "sclk";
->                         clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
->                         #io-channel-cells = <1>;
->                         io-channel-ranges;
->                 };
 
-But neither of those cases is actually a correct DT representation for
-exynos3250: The first case describes an ADC that doesn't need a second
-clock, so if the hardware actually needs it to function, it is clearly
-unsufficiently described. The second case is even worse because it refers
-to a clock that isn't there. Actually that should probably return a different
-error code, but that's a different matter.
+--===============0799119945==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8nsIa27JVQLqB7/C"
+Content-Disposition: inline
 
-> So, I think exynos-adc needs to use 'needs_sclk' field suggested by Tomasz Figa.
 
-I don't mind you adding a field to the data, especially since you already
-need to have separate structures to encode the different number of channels.
-However, I don't see it as necessary either. What you do here is just
-checking the DT representation for correctness and consistency. It's not
-harmful but we don't normally do that because passing incorrect DT blobs
-can cause an infinite number of other problems that we don't check for.
+--8nsIa27JVQLqB7/C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-	Arnd
+On Fri, Jul 18, 2014 at 02:13:49AM +0530, Ajay Kumar wrote:
+[...]
+> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+[...]
+>  	depends on DRM_EXYNOS_FIMD && ARCH_EXYNOS && (DRM_PTN3460=n || DRM_PTN3460=y || DRM_PTN3460=DRM_EXYNOS)
+
+One of the reasons the current way of implementing bridges is that it
+doesn't scale, as shown by this ridiculous dependency. In patch
+
+	[RESEND PATCH V5 12/12] drm/exynos: Add ps8622 lvds bridge discovery to DP driver
+
+you add support for another type of bridge but it doesn't update this
+dependency. I suspect that in order for this to work properly you'll
+need to extend the dependency like so (rewritten to make it somewhat
+cleaner):
+
+	depends on DRM_EXYNOS_FIMD && ARCH_EXYNOS
+	depends on DRM_PTN3460=n || DRM_PTN3460=y || DRM_PTN3460=DRM_EXYNOS
+	depends on DRM_PS8622=n || DRM_PS8622=y || DRM_PS8622=DRM_EXYNOS
+
+And you'll need one more of these lines for each new bridge chip that
+you want to support.
+
+Thierry
+
+--8nsIa27JVQLqB7/C
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTzMkIAAoJEN0jrNd/PrOhstAP/jBN8i43OMBVFUwLpgB2s4Er
+691ykX5nNTKq0lD6kOkfDvEYLLvvvT6e0LilqVjzawv4eQDzh6RJ0WIVWKIdjNiV
+wW4REnuFdDf7DRTQZ65DK1shfXR7ijRYyhNO4vEPDKTETuCIsin1ZU3pgz+tm1HQ
+K4ixyzv96eLdg6yKIu+Cq/faJtnQ92GIHyPUy5RCrTeqD+3xoeX3an+ElcqOgkZJ
+Q5+53JZmF1RGZikI0rf/E1Dr5JCwzkxW4FXy2ognhI6bJ+kFGJd8rg5xIM7GfoD/
+cXgs8x2yoDWdWP0WQQ8Xq67e5dCJcXp/zXu3XRntQbY2397uKo9Y6Dk2kqYLcFPH
+LUZRlYIC8aG+IHMQeGCLzTTXb+rlBDJ6yVt815L1hVDl+iozBWwI+LjjlYKr43UR
+ROm8lUGHgxagVDWKPmXBHOymk/5MDWYbw354b4gdqQrHPAGTFrqORRZvASGzN3mc
+HwrTePyM8FM4UucZKlVPFT0DwudY+1HrOAMO8NfdVqLoZuFXFf24/+MCQAUXhbJT
+6klJ58vr8XVsRwEZg3W6qNvee5JYK52V3J8Q5AuxoOF7fvRMe0mdhG1d0gXKYizn
+8ClvD8Y55DFcuQljAjEbMXCSsTzO2vYlf7bh6r9hhSLGZpH6LVKbm9gp4y+jO3EH
+zfxf3h+Tx5/bNGzjPzNY
+=fBw5
+-----END PGP SIGNATURE-----
+
+--8nsIa27JVQLqB7/C--
+
+--===============0799119945==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0799119945==--
