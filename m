@@ -1,60 +1,172 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: remove MACH_SMDKC100
-Date: Mon, 21 Jul 2014 13:21:26 +0100
-Message-ID: <20140721122126.GY17528@sirena.org.uk>
-References: <1405710087-24327-1-git-send-email-kgene.kim@samsung.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V5 05/12] Documentation: Add DT bindings for panel-lvds
+ driver
+Date: Mon, 21 Jul 2014 18:00:05 +0530
+Message-ID: <CAEC9eQOfB3Fqe=uVDtWQsR41qXN9vnzGMgAw7wQBLkSUVFq4bg@mail.gmail.com>
+References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1405629839-12086-6-git-send-email-ajaykumar.rs@samsung.com>
+ <CAEC9eQNygvwOGvw6QPGp+=7K9=oC9XvcEf9QSv=JBsEHyhM0wA@mail.gmail.com>
+ <20140717224809.GA8875@mithrandir>
+ <CAEC9eQMJnae6DaAUd7C5xZkaaaXL+291Qf2pcUd-wrcYXgQx8A@mail.gmail.com>
+ <20140721075210.GC8843@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="u+HAydxlPP+oPOdi"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47837 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754216AbaGUMVk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jul 2014 08:21:40 -0400
-Content-Disposition: inline
-In-Reply-To: <1405710087-24327-1-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20140721075210.GC8843@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@dowhile0.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
 
+Hi Thierry,
 
---u+HAydxlPP+oPOdi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Jul 21, 2014 at 1:22 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Fri, Jul 18, 2014 at 12:18:05PM +0530, Ajay kumar wrote:
+>> Hi Thierry,
+>>
+>> Thanks for your comments.
+>>
+>> On Fri, Jul 18, 2014 at 4:18 AM, Thierry Reding
+>> <thierry.reding@gmail.com> wrote:
+>> > On Fri, Jul 18, 2014 at 02:20:39AM +0530, Ajay kumar wrote:
+>> >> +devicetree@vger.kernel.org
+>> >>
+>> >> On Fri, Jul 18, 2014 at 2:13 AM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+>> >> > Add DT binding documentation for panel-lvds driver.
+>> >> >
+>> >> > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>> >> > ---
+>> >> >  .../devicetree/bindings/panel/panel-lvds.txt       |   50 ++++++++++++++++++++
+>> >> >  1 file changed, 50 insertions(+)
+>> >> >  create mode 100644 Documentation/devicetree/bindings/panel/panel-lvds.txt
+>> >> >
+>> >> > diff --git a/Documentation/devicetree/bindings/panel/panel-lvds.txt b/Documentation/devicetree/bindings/panel/panel-lvds.txt
+>> >> > new file mode 100644
+>> >> > index 0000000..fdf91da2
+>> >> > --- /dev/null
+>> >> > +++ b/Documentation/devicetree/bindings/panel/panel-lvds.txt
+>> >> > @@ -0,0 +1,50 @@
+>> >> > +panel interface for eDP/lvds panels
+>> >> > +
+>> >> > +Required properties:
+>> >> > +  - compatible: "panel-lvds"
+>> >
+>> > I think I've said this before. I oppose the addition of this binding. We
+>> > need to list a device-specific compatible value here, wildcards like
+>> > this aren't a good choice. And then if we have that compatible value we
+>> > can move most of the optional properties below into a driver.
+>> Yes, "panel-lvds" is a wildcard for all lvds panels.
+>> And since lvds panels from different vendors have different values
+>> for power_up_delay, delay from video_to_backlight etc, I thought its
+>> better to pick them up from device tree.
+>
+> What I'm saying is that we shouldn't be adding this type of wildcard.
+> Instead the compatible property needs to list the specific type of panel
+> and since the driver will match on that specific compatible, the values
+> for the delays etc. are all implicit and don't have to be listed in
+> device tree.
+>
+>> >> > +Optional properties:
+>> >
+>> > If all these properties are optional, then what happens if a device tree
+>> > node doesn't contain any of them? Doesn't that turn the driver into one
+>> > big no-op?
+>> No! We need to provide lcd-supply and backlight-supply.
+>
+> What are those? I don't see them described anywhere.
+>
+>> >> > +       -lcd-enable-gpios:
+>> >> > +               panel LCD poweron GPIO.
+>> >> > +                       Indicates which GPIO needs to be powered up as output
+>> >> > +                       to powerup/enable the switch to the LCD panel.
+>> >> > +       -backlight-enable-gpios:
+>> >> > +               panel LED enable GPIO.
+>> >> > +                       Indicates which GPIO needs to be powered up as output
+>> >> > +                       to enable the backlight.
+>> >
+>> > I've also said before that this really belongs in a backlight driver.
+>> > Chances are that you'll want to have a way to set the brightness of the
+>> > backlight as well, so simply an enable GPIO won't be good enough.
+>> Ok. I can handle this in backlight driver itself (with some minor glitches).
+>
+> You can make it work without glitches as well and we've discussed this
+> before.
+>
+>> But, how do I map bridge functions to panel functions now?
+>> The bridge supports (pre_enable, enable, disable and post_disable) which I map
+>> with (prepare, enable, disable and unprepare) of the panel, using a sample layer
+>> called bridge to panel_binder.
+>> Moving out the backlight control from panel means I really don't need
+>> those extra
+>> panel calls(prepare and unprepare)!
+>> Then how to distribute 2 panel calls(enable and disable) across 4 bridge calls?
+>
+> The .prepare() and .unprepare() functions are useful irrespective of
+> backlight control. What you want to separate is powering up the panel
+> from enabling the backlight. So .prepare() could be what's doing the
+> power up of the panel (and possibly other initialization required to
+> make it work) and .enable() could be as simple as turning on the
+> backlight.
+>
+> What I'm saying is rather than use a backlight-enable-gpios property in
+> the panel, that property should be part of the backlight device and the
+> GPIO can then be toggled by the backlight driver when the backlight is
+> enabled.
+>
+>> >> > +       -panel-prepare-delay:
+>> >> > +               delay value in ms required for panel_prepare process
+>> >> > +                       Delay in ms needed for the panel LCD unit to
+>> >> > +                       powerup completely.
+>> >> > +                       ex: delay needed till eDP panel throws HPD.
+>> >> > +                           delay needed so that we cans tart reading edid.
+>> >
+>> > If the panel signals HPD then we don't need this delay at all and we
+>> > should just wait for HPD instead.
+>> Not always for HPD, we need to wait for EDID module as well.
+>
+> I always thought that HPD signalled readiness from the panel to provide
+> EDID, too. Are there really panels that need additional delays after HPD
+> has been signalled until the EDID can be read? Are there maybe other
+> ways to detect that EDID can't be read?
+>
+>> >> > +       -panel-enable-delay:
+>> >> > +               delay value in ms required for panel_enable process
+>> >> > +                       Delay in ms needed for the panel backlight/LED unit
+>> >> > +                       to powerup, and delay needed between video_enable and
+>> >> > +                       backlight_enable.
+>> >> > +       -panel-disable-delay:
+>> >> > +               delay value in ms required for panel_disable process
+>> >> > +                       Delay in ms needed for the panel backlight/LED unit
+>> >> > +                       powerdown, and delay needed between backlight_disable
+>> >> > +                       and video_disable.
+>> >> > +       -panel-unprepare-delay:
+>> >> > +               delay value in ms required for panel_post_disable process
+>> >> > +                       Delay in ms needed for the panel LCD unit to
+>> >> > +                       to powerdown completely, and the minimum delay needed
+>> >> > +                       before powering it on again.
+>> >
+>> > These delays are all panel specific and they don't vary per board, so
+>> > they shouldn't go into the device tree at all.
+>> But, fetching them from device tree would allow us to support all lvds
+>> panels in this single driver.
+>
+> You can do that even without having this data in device tree. My point
+> is that this is redundant information once you know the panel's specific
+> compatible value. Therefore there shouldn't be a need to list this in
+> device tree again.
+>
+> Thierry
+I am planning to use panel-simple driver for the lvds panels. Let me test
+using that and if things workout well, then will drop this entire driver.
 
-On Sat, Jul 19, 2014 at 04:01:27AM +0900, Kukjin Kim wrote:
-> This removes MACH_SMDKC100 because of no more support for SMDKC100.
->=20
-> Reported-by: Paul Bolle <pebolle@tiscali.nl>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Mark Brown <broonie@linaro.org>
-
-This doesn't apply against current -next, can you please check what's
-going on there?
-
---u+HAydxlPP+oPOdi
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJTzQXDAAoJELSic+t+oim9E+UP/0bzpX2HSpQrnk1KOElkdE37
-zJw60VruWX1aZV8yC5GBBb9oZILehY8ukXa35pNyI2gXVQxSGzaeByFNf+Y6CxLS
-iEjhZnnxySmHc/OayQ1dwoK/LK/aKo7Idie1h4ARNSpxukEEMEu+HK1fkjTujwOT
-UAc+XcRh9cPfDpGQKPCF66jDcJyeUtmdo3HEXgu0sulLCaTiwPfkDxno7svIrSpu
-up9MDmYufOjrlZ1BRwCudx/ByTRrqFZtT83WpydK6YvAsCwLdQBdG3NIIYYstPvy
-Uf/MB4lFqa6LMvfJPtN6Rv4ajatLCn5vIR24EcpWD34EVeq7isQ11mRaWykAq4DQ
-OC8ir4dCrelXd/OQf/jcEYdqFwqHbJyQ6O8xbl86GvwDC3JKsNxJzzDtcsoEpXib
-f81BC7H3V3D57q2Myua7hyWoRwFnvnPxnEjK70I/Tqhs0bMBaqaXgjYPpoA9oD5t
-Vtyx0XhsEFfRBf7wp48cctmoTbWlkxNTwVgogfW7GDrYQkHIW6TeAtpX5cvXNuva
-rAjDDV/o4AdVTpQ5Mahp/lFBp95qPhUzDWDdPe3lnX81bYCnSWIgcncDKzze7z3G
-GIotJGqW0tc5LD/xQR1dEhvpcdHyW8VcJf2YaYIXBsEgsV7uIxRKjbgYvjve4sam
-mpqI9jp1mq3/uWkELY+h
-=XGr+
------END PGP SIGNATURE-----
-
---u+HAydxlPP+oPOdi--
+Ajay
