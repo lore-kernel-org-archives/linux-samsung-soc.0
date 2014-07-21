@@ -1,172 +1,96 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V5 05/12] Documentation: Add DT bindings for panel-lvds
- driver
-Date: Mon, 21 Jul 2014 18:00:05 +0530
-Message-ID: <CAEC9eQOfB3Fqe=uVDtWQsR41qXN9vnzGMgAw7wQBLkSUVFq4bg@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RESEND PATCH V5 08/12] drm/bridge: ptn3460: Support bridge
+ chaining
+Date: Mon, 21 Jul 2014 14:40:54 +0200
+Message-ID: <20140721124053.GC15238@ulmo>
 References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
- <1405629839-12086-6-git-send-email-ajaykumar.rs@samsung.com>
- <CAEC9eQNygvwOGvw6QPGp+=7K9=oC9XvcEf9QSv=JBsEHyhM0wA@mail.gmail.com>
- <20140717224809.GA8875@mithrandir>
- <CAEC9eQMJnae6DaAUd7C5xZkaaaXL+291Qf2pcUd-wrcYXgQx8A@mail.gmail.com>
- <20140721075210.GC8843@ulmo>
+ <1405629839-12086-9-git-send-email-ajaykumar.rs@samsung.com>
+ <20140721082223.GF8843@ulmo>
+ <CAEC9eQO8yTwYd08_8Cu_o4VSLPZXMrmYPmszap_gcN_bvBVz3A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140721075210.GC8843@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@dowhile0.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="m51xatjYGsM+13rf"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f170.google.com ([74.125.82.170]:34069 "EHLO
+	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754141AbaGUMk6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Jul 2014 08:40:58 -0400
+Received: by mail-we0-f170.google.com with SMTP id w62so7528466wes.15
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jul 2014 05:40:57 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CAEC9eQO8yTwYd08_8Cu_o4VSLPZXMrmYPmszap_gcN_bvBVz3A@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Rob Clark <robdclark@gmail.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
 
-Hi Thierry,
 
-On Mon, Jul 21, 2014 at 1:22 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Fri, Jul 18, 2014 at 12:18:05PM +0530, Ajay kumar wrote:
->> Hi Thierry,
->>
->> Thanks for your comments.
->>
->> On Fri, Jul 18, 2014 at 4:18 AM, Thierry Reding
->> <thierry.reding@gmail.com> wrote:
->> > On Fri, Jul 18, 2014 at 02:20:39AM +0530, Ajay kumar wrote:
->> >> +devicetree@vger.kernel.org
->> >>
->> >> On Fri, Jul 18, 2014 at 2:13 AM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
->> >> > Add DT binding documentation for panel-lvds driver.
->> >> >
->> >> > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->> >> > ---
->> >> >  .../devicetree/bindings/panel/panel-lvds.txt       |   50 ++++++++++++++++++++
->> >> >  1 file changed, 50 insertions(+)
->> >> >  create mode 100644 Documentation/devicetree/bindings/panel/panel-lvds.txt
->> >> >
->> >> > diff --git a/Documentation/devicetree/bindings/panel/panel-lvds.txt b/Documentation/devicetree/bindings/panel/panel-lvds.txt
->> >> > new file mode 100644
->> >> > index 0000000..fdf91da2
->> >> > --- /dev/null
->> >> > +++ b/Documentation/devicetree/bindings/panel/panel-lvds.txt
->> >> > @@ -0,0 +1,50 @@
->> >> > +panel interface for eDP/lvds panels
->> >> > +
->> >> > +Required properties:
->> >> > +  - compatible: "panel-lvds"
->> >
->> > I think I've said this before. I oppose the addition of this binding. We
->> > need to list a device-specific compatible value here, wildcards like
->> > this aren't a good choice. And then if we have that compatible value we
->> > can move most of the optional properties below into a driver.
->> Yes, "panel-lvds" is a wildcard for all lvds panels.
->> And since lvds panels from different vendors have different values
->> for power_up_delay, delay from video_to_backlight etc, I thought its
->> better to pick them up from device tree.
->
-> What I'm saying is that we shouldn't be adding this type of wildcard.
-> Instead the compatible property needs to list the specific type of panel
-> and since the driver will match on that specific compatible, the values
-> for the delays etc. are all implicit and don't have to be listed in
-> device tree.
->
->> >> > +Optional properties:
->> >
->> > If all these properties are optional, then what happens if a device tree
->> > node doesn't contain any of them? Doesn't that turn the driver into one
->> > big no-op?
->> No! We need to provide lcd-supply and backlight-supply.
->
-> What are those? I don't see them described anywhere.
->
->> >> > +       -lcd-enable-gpios:
->> >> > +               panel LCD poweron GPIO.
->> >> > +                       Indicates which GPIO needs to be powered up as output
->> >> > +                       to powerup/enable the switch to the LCD panel.
->> >> > +       -backlight-enable-gpios:
->> >> > +               panel LED enable GPIO.
->> >> > +                       Indicates which GPIO needs to be powered up as output
->> >> > +                       to enable the backlight.
->> >
->> > I've also said before that this really belongs in a backlight driver.
->> > Chances are that you'll want to have a way to set the brightness of the
->> > backlight as well, so simply an enable GPIO won't be good enough.
->> Ok. I can handle this in backlight driver itself (with some minor glitches).
->
-> You can make it work without glitches as well and we've discussed this
-> before.
->
->> But, how do I map bridge functions to panel functions now?
->> The bridge supports (pre_enable, enable, disable and post_disable) which I map
->> with (prepare, enable, disable and unprepare) of the panel, using a sample layer
->> called bridge to panel_binder.
->> Moving out the backlight control from panel means I really don't need
->> those extra
->> panel calls(prepare and unprepare)!
->> Then how to distribute 2 panel calls(enable and disable) across 4 bridge calls?
->
-> The .prepare() and .unprepare() functions are useful irrespective of
-> backlight control. What you want to separate is powering up the panel
-> from enabling the backlight. So .prepare() could be what's doing the
-> power up of the panel (and possibly other initialization required to
-> make it work) and .enable() could be as simple as turning on the
-> backlight.
->
-> What I'm saying is rather than use a backlight-enable-gpios property in
-> the panel, that property should be part of the backlight device and the
-> GPIO can then be toggled by the backlight driver when the backlight is
-> enabled.
->
->> >> > +       -panel-prepare-delay:
->> >> > +               delay value in ms required for panel_prepare process
->> >> > +                       Delay in ms needed for the panel LCD unit to
->> >> > +                       powerup completely.
->> >> > +                       ex: delay needed till eDP panel throws HPD.
->> >> > +                           delay needed so that we cans tart reading edid.
->> >
->> > If the panel signals HPD then we don't need this delay at all and we
->> > should just wait for HPD instead.
->> Not always for HPD, we need to wait for EDID module as well.
->
-> I always thought that HPD signalled readiness from the panel to provide
-> EDID, too. Are there really panels that need additional delays after HPD
-> has been signalled until the EDID can be read? Are there maybe other
-> ways to detect that EDID can't be read?
->
->> >> > +       -panel-enable-delay:
->> >> > +               delay value in ms required for panel_enable process
->> >> > +                       Delay in ms needed for the panel backlight/LED unit
->> >> > +                       to powerup, and delay needed between video_enable and
->> >> > +                       backlight_enable.
->> >> > +       -panel-disable-delay:
->> >> > +               delay value in ms required for panel_disable process
->> >> > +                       Delay in ms needed for the panel backlight/LED unit
->> >> > +                       powerdown, and delay needed between backlight_disable
->> >> > +                       and video_disable.
->> >> > +       -panel-unprepare-delay:
->> >> > +               delay value in ms required for panel_post_disable process
->> >> > +                       Delay in ms needed for the panel LCD unit to
->> >> > +                       to powerdown completely, and the minimum delay needed
->> >> > +                       before powering it on again.
->> >
->> > These delays are all panel specific and they don't vary per board, so
->> > they shouldn't go into the device tree at all.
->> But, fetching them from device tree would allow us to support all lvds
->> panels in this single driver.
->
-> You can do that even without having this data in device tree. My point
-> is that this is redundant information once you know the panel's specific
-> compatible value. Therefore there shouldn't be a need to list this in
-> device tree again.
->
-> Thierry
-I am planning to use panel-simple driver for the lvds panels. Let me test
-using that and if things workout well, then will drop this entire driver.
+--m51xatjYGsM+13rf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ajay
+On Mon, Jul 21, 2014 at 05:28:13PM +0530, Ajay kumar wrote:
+> Hi Thierry,
+>=20
+> On Mon, Jul 21, 2014 at 1:52 PM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > On Fri, Jul 18, 2014 at 02:13:54AM +0530, Ajay Kumar wrote:
+> > [...]
+> >> Also, remove the drm_connector implementation from ptn3460,
+> >> since the same is implemented using panel_binder.
+> >
+> > I think that's a step backwards. In fact I think the panel-bridge binder
+> > driver shouldn't be needed at all. At least not for now. We have a very
+> > limited number of bridge drivers, so it shouldn't hurt at this stage to
+> > implement the connector instantiation within each driver. Once we have
+> > more bridge drivers, and therefore a better understanding of what they
+> > need, we can always add something like the panel-binder (though I think
+> > it should be library code, similar to the drm_encoder_helper_add() API,
+> > rather than this kind of self-contained object).
+> panel_binder was needed to wrap around panel as a bridge, and this was in=
+ turn
+> needed because people wanted to represent a bridge+panel combo as a chain
+> of bridges.
+> So, if we choose to drop panel_binder, we choose to drop the idea of chai=
+ning
+> the bridges, and end up calling drm_panel functions directly from
+> individual bridges.
+> And, the bridge will implement the connector functions as you suggested.
+> I am okay with this, if Daniel/Rob don't have an issue with this.
+
+I think bridge chaining and panel handling are separate issues. That's
+why I think we shouldn't mix them like this. From earlier discussion[0]
+the conclusion was that the final element in the chain should implement
+a connector (with the appropriate type). Often that last element would
+be an encoder (when there are no bridges). Sometimes the last element
+would be a bridge. It's logical for that same element to also implement
+the panel integration since it's closely tied to the connector.
+
+Thierry
+
+[0]: http://lists.freedesktop.org/archives/dri-devel/2014-May/059685.html
+
+--m51xatjYGsM+13rf
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTzQpVAAoJEN0jrNd/PrOhxgIQALoiIkPTs3S+zX2Zp28uclrn
+cCJnsFDHYFC/It07pBBh+4ZPuJqcfpOAjrx0nEuraGXr+uwacTx93JIRXWWHOk6h
+XPn5UOu2hcR5ztWrMoAQcfFWhWZ46XajOhvR1Hfulw6Nq6Eme1Rbx5hMnh03cDiS
+Ufl0o4b9aEuHkbXXvxtIs1gmlAiu51PwlCJfCPWWcv2yvlxhme9Q4MIOTYFTCMIQ
+05Vg17hlGZ5sGBHhwc4mbYtLIe35DxA8K11991AG4f2JaL8yBo9cPHZqfui8B6aj
+MMDeKodPJVXFwtWkLnCqK04TRH8wOpM7uNPOdr2UEbUyFCq5yUjSQ5NC/vIDWqf2
+Qx9YNBV3lmFCNkw7QYHjINyGXWi2foWjiShvLTAgiMLLlVIl5OnACqN31izKeadm
+muNks5grch+Wkft2n9Xh8efRUKGtVCeVfWMPMbT0y9IbQ5rTItpy8s3PLVUx63MB
+qgFd59j98pJGdQv052An7pIUV1IZGZz+8TrkNhHI7Z1uQOZi3tTooWojKkHQd1Ll
+BGtEVMGgSYsXN5w4uncdNJ3lzS57QFcanGTVNMsoCIIGr/veBOwEHt6EhNPjDEUA
+lDkI6i3nywclyERwMsFebu34FoDntw5ehFXVay9jmiqjlkEvdQMEpWJRNpwZtts8
+YpzAjxTq4q9wh5KBFEBZ
+=hmhk
+-----END PGP SIGNATURE-----
+
+--m51xatjYGsM+13rf--
