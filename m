@@ -1,92 +1,53 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [GIT PULL 4/5] Samsung exynos_mct update for v3.17
-Date: Tue, 22 Jul 2014 19:32:16 +0200
-Message-ID: <53CEA020.309@linaro.org>
-References: <53C9C164.9030404@samsung.com> <20140719220623.GF15676@quad.lixom.net> <53CCD3AB.7040205@linaro.org> <01b601cfa59c$12c2c7f0$384857d0$@samsung.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v4 6/6] clk: Add floor and ceiling constraints to clock
+ rates
+Date: Tue, 22 Jul 2014 11:50:59 -0600
+Message-ID: <53CEA483.6090704@wwwdotorg.org>
+References: <1405606399-26608-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1405606399-26608-7-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:46634 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752620AbaGVRcT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Jul 2014 13:32:19 -0400
-Received: by mail-wi0-f169.google.com with SMTP id n3so6299903wiv.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Jul 2014 10:32:18 -0700 (PDT)
-In-Reply-To: <01b601cfa59c$12c2c7f0$384857d0$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <1405606399-26608-7-git-send-email-tomeu.vizoso@collabora.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mike Turquette <mturquette@linaro.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Tony Lindgren <tony@atomide.com>, Tomasz Figa <t.figa@samsung.com>, alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>, Thierry Reding <thierry.reding@gmail.com>, Paul Mackerras <paulus@samba.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Walker <dwalker@fifo99.com>, linux-arch@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, =?ISO-8859-1?Q?Emilio_L=F3pez?= <emilio@elopez.com.ar>, Takashi Iwai <tiwai@suse.de>, Michal Simek <michal.simek@xilinx.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kevin Hilman <khilman@deeprootsystems.com>, linux-arm-kernel@lists.infradead.org, patches@opensource.wolfsonmicro.com, Vire
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>
-Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Doug Anderson' <dianders@chromium.org>, tglx@linutronix.de
 
-On 07/22/2014 12:59 PM, Kukjin Kim wrote:
-> Daniel Lezcano wrote:
->>
->> On 07/20/2014 12:06 AM, Olof Johansson wrote:
->>> On Sat, Jul 19, 2014 at 09:52:52AM +0900, Kukjin Kim wrote:
->>>> Note that this is also based on 3.16-rc5 because of dependency wit=
-h
->>>> previous samsung fixes including exynos_mct already merged in
->>>> mainline during -rc.
->>>>
->>>> The following changes since commit 1795cd9b3a91d4b5473c97f491d6389=
-2442212ab:
->>>>
->>>>     Linux 3.16-rc5 (2014-07-13 14:04:33 -0700)
->>>>
->>>> are available in the git repository at:
->>>>
->>>
->>>> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.=
-git
->>>> tags/exynos-mct
->>>>
->>>> for you to fetch changes up to 1a631118c1d085fe162f3b6d44f710c7220=
-6ef2d:
->>>>
->>>>     clocksource: exynos_mct: Only use 32-bits where possible
->>>> (2014-07-19 03:07:52 +0900)
->>>>
->>>> ----------------------------------------------------------------
->>>> exynos_mct update for v3.17
->>>> - only use 32-bit access for performance benefits on exynos
->>>>     32-bit system and this means ARCH timer should be supported
->>>>     on exynos 64-bit system instead of current MCT.
->>>> - use readl_relaxed/writel_relaxed to consistently use the
->>>>     proper functions in exynos_mct.
->>>
->>> There's no reason for these to go through arm-soc, is there? They s=
-hould
->>> go through the clocksource tree (Daniel Lezcano / Thomas Gleixner).=
- They
->>> also lack acks from them if they for some reason need to go through=
- arm-soc.
->>
-> Olof, you're right. The branch has no dependency with arm-soc so I ag=
-reed.
->
->> Yes, that's right. Furthermore I have been discussing with Doug abou=
-t
->> these patches before.
->>
->> Kukjin, is there any dependency on these patches ?
->>
-> Yeah, Daniel, it should be handled in the clocksource tree so how sho=
-uld I do
-> for it?
-
-I can pull your branch v3.17-next/mct-exynos and you drop the merge fro=
-m=20
-this branch in your master ?
-
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+T24gMDcvMTcvMjAxNCAwODoxMyBBTSwgVG9tZXUgVml6b3NvIHdyb3RlOgo+IEFkZHMgYSB3YXkg
+Zm9yIGNsb2NrIGNvbnN1bWVycyB0byBzZXQgbWF4aW11bSBhbmQgbWluaW11bSByYXRlcy4gVGhp
+cyBjYW4gYmUKPiB1c2VkIGZvciB0aGVybWFsIGRyaXZlcnMgdG8gc2V0IGNlaWxpbmcgcmF0ZXMs
+IG9yIGJ5IG1pc2MuIGRyaXZlcnMgdG8gc2V0Cj4gZmxvb3IgcmF0ZXMgdG8gYXNzdXJlIGEgbWlu
+aW11bSBwZXJmb3JtYW5jZSBsZXZlbC4KCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Nsay5j
+IGIvZHJpdmVycy9jbGsvY2xrLmMKCj4gK3N0cnVjdCByYXRlX2NvbnN0cmFpbnQgewo+ICsJc3Ry
+dWN0IGhsaXN0X25vZGUJbm9kZTsKPiArCWNvbnN0IGNoYXIJCSpkZXZfaWQ7Cj4gKwljb25zdCBj
+aGFyCQkqY29uX2lkOwo+ICsJZW51bSBjb25zdHJhaW50X3R5cGUJdHlwZTsKPiArCXVuc2lnbmVk
+IGxvbmcJCXJhdGU7Cj4gK307CgpJIHdvdWxkIHBlcnNvbmFsbHkgc3RpbGwgcHJlZmVyIGVpdGhl
+cjoKCmEpIFRoZSBzdHJ1Y3QgcmF0ZV9jb25zdHJhaW50cyBiZSBzdG9yZWQgaW4gc3RydWN0IGNs
+ayByYXRoZXIgdGhhbgpzdHJ1Y3QgY2xrX2NvcmUsIHNvIHRoZXkncmUgc3RvcmVkIGluIHRoZSBj
+b250YWluZXIgdGhhdCAic2V0IiB0aGUKY29uc3RyYWludHMuIFRoaXMgd291bGQgbWVhbiBpdGVy
+YXRpbmcgb3ZlciBhIHN0cnVjdCBjbGtfY29yZSdzCmFzc29jaWF0ZWQgc3RydWN0IGNsa3MsIHRo
+ZW4gaXRlcmF0aW5nIG92ZXIgdGhlIHN0cnVjdCByYXRlX2NvbnN0cmFpbnRzCndpdGhpbiBlYWNo
+IHN0cnVjdCBjbGsuCgpvcjoKCmIpIHN0cnVjdCByYXRlX2NvbnN0cmFpbnQgdG8gY29udGFpbiBh
+IHBvaW50ZXIgdG8gdGhlIHN0cnVjdCBjbGsgdGhhdApjcmVhdGVkIHRoZSBjb25zdHJhaW50LCBy
+YXRoZXIgdGhhbiBjb3B5aW5nIHRoZSBkZXZfaWQvY29uX2lkIGZyb20gdGhhdApzdHJ1Y3QgY2xr
+IGludG8gdGhlIHN0cnVjdCByYXRlX2NvbnN0cmFpbnQuCgpXaXRoIGVpdGhlciBvZiB0aG9zZSBj
+aGFuZ2VzLCB0aGUgY29uc3RyYWludHMgYXJlIGRpcmVjdGx5IGFzc29jaWF0ZWQKd2l0aCB0aGUg
+Y2xvY2sgY2xpZW50IG9iamVjdCB0aGF0IGNyZWF0ZWQgdGhlIGNvbnN0cmFpbnQgbXVjaCBiZXR0
+ZXIKdGhhbiByaWdodCBub3csIHdoZXJlIHRoZSBtYXRjaGluZyBpcyBvbmx5IGJlY2F1c2UgdGhl
+IHN0cnVjdCBjbGsgYW5kCnN0cnVjdCByYXRlX2NvbnN0cmFpbnQgImhhcHBlbiB0byIgaGF2ZSB0
+aGUgc2FtZSBkZXZfaWQvY29uX2lkIHZhbHVlcy4KClN0aWxsLCB0aGlzIGlzIGEgcHJldHR5IG1p
+bm9yIGlzc3VlLCBhbmQgb3ZlcmFsbCB0aGlzIHNlcmllcyBsb29rcwpyZWFzb25hYmxlIHRvIG1l
+IGF0IGEgcXVpY2sgbG9vay4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KTGludXhwcGMtZGV2IG1haWxpbmcgbGlzdApMaW51eHBwYy1kZXZAbGlzdHMub3ps
+YWJzLm9yZwpodHRwczovL2xpc3RzLm96bGFicy5vcmcvbGlzdGluZm8vbGludXhwcGMtZGV2
