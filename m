@@ -1,16 +1,20 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v6 10/14] drm/panel: add S6E3FA0 driver
-Date: Tue, 22 Jul 2014 09:49:36 +0200
-Message-ID: <20140722074935.GC18258@ulmo>
-References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
- <1405587689-1466-11-git-send-email-yj44.cho@samsung.com>
- <20140717103645.GD17877@ulmo> <53C87D2F.9000906@samsung.com>
- <53CCD5A8.6090406@samsung.com> <20140721091917.GK8843@ulmo>
- <53CCF70A.5010403@samsung.com> <53CDDD61.6000005@samsung.com>
+Subject: Re: [RESEND PATCH V5 12/12] drm/exynos: Add ps8622 lvds bridge
+ discovery to DP driver
+Date: Tue, 22 Jul 2014 09:51:37 +0200
+Message-ID: <20140722075136.GD18258@ulmo>
+References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1405629839-12086-13-git-send-email-ajaykumar.rs@samsung.com>
+ <20140721071028.GB8843@ulmo>
+ <CAEC9eQPkzrpQn41+zu8mwJUctSd0CF_U4UCdff0F7VYq2oWthw@mail.gmail.com>
+ <20140721125424.GD15238@ulmo>
+ <CAEC9eQODqv=vkWhxnSVC4fFcfn1pHAmXzMZowayBbgKPjdppzw@mail.gmail.com>
+ <20140721144427.GA28336@ulmo>
+ <CAEC9eQOTtFPx-tK8Loo=V1LxSm0i5zwmdCv8khRQr7pYZEiF3A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0130100484=="
+Content-Type: multipart/mixed; boundary="===============0578150846=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <53CDDD61.6000005@samsung.com>
+In-Reply-To: <CAEC9eQOTtFPx-tK8Loo=V1LxSm0i5zwmdCv8khRQr7pYZEiF3A@mail.gmail.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -20,108 +24,231 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, Tomi Valkeinen <tomi.valkeinen@ti.com>, Paul Mundt <paul.mundt@gmail.com>, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com, Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@dowhile0.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---===============0130100484==
+--===============0578150846==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+nBD6E3TurpgldQp"
+	protocol="application/pgp-signature"; boundary="eqp4TxRxnD4KrmFZ"
 Content-Disposition: inline
 
 
---+nBD6E3TurpgldQp
+--eqp4TxRxnD4KrmFZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 22, 2014 at 12:41:21PM +0900, YoungJun Cho wrote:
-> On 07/21/2014 08:18 PM, Andrzej Hajda wrote:
-> >On 07/21/2014 11:19 AM, Thierry Reding wrote:
-> >>On Mon, Jul 21, 2014 at 10:56:08AM +0200, Andrzej Hajda wrote:
-> >>>On 07/18/2014 03:49 AM, YoungJun Cho wrote:
-> >>>>On 07/17/2014 07:36 PM, Thierry Reding wrote:
-> >>>>>On Thu, Jul 17, 2014 at 06:01:25PM +0900, YoungJun Cho wrote:
-[...]
-> >>>>>>+static void s6e3fa0_read_mtp_id(struct s6e3fa0 *ctx)
-> >>>>>>+{
-> >>>>>>+	unsigned char id[MTP_ID_LEN];
-> >>>>>>+	int ret;
-> >>>>>>+
-> >>>>>>+	s6e3fa0_set_maximum_return_packet_size(ctx, MTP_ID_LEN);
-> >>>>>>+	ret =3D s6e3fa0_dcs_read(ctx, MIPI_DCS_GET_DISPLAY_ID, id, MTP_ID=
-_LEN);
-> >>>>>This also looks like a standard DCS command. I can't find it in eith=
-er
-> >>>>>v1.01 nor v1.02 of the specification, though. Do you know where it's
-> >>>>>specified?
-> >>>>>
-> >>>>Yes, I also can't find it in DCS specification and there is no special
-> >>>>description in panel datasheet.
-> >>>>But as it is declared in "include/video/mipi_display.h", so I think it
-> >>>>is a standard one.
-> >>>
-> >>>On page 9 of the "Introduction of MIPI by Renesas" [2] there is info
-> >>>it is a part of "Nokia I/F command list", I guess it is kind of alpha
-> >>>version of MIPI DCS.
-> >>>
-> >>>[2]: http://wenku.baidu.com/view/658fab68af1ffc4ffe47acbe.html
+On Tue, Jul 22, 2014 at 11:35:52AM +0530, Ajay kumar wrote:
+> On Mon, Jul 21, 2014 at 8:14 PM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > On Mon, Jul 21, 2014 at 08:06:01PM +0530, Ajay kumar wrote:
+> >> Hi Thierry,
 > >>
-> >>That link is the only one which contains "Nokia I/F command list" on the
-> >>internet (that is, according to Google). But since this is already part
-> >>of the mipi_display.h header file we may as well use it.
+> >> On Mon, Jul 21, 2014 at 6:24 PM, Thierry Reding
+> >> <thierry.reding@gmail.com> wrote:
+> >> > On Mon, Jul 21, 2014 at 04:58:25PM +0530, Ajay kumar wrote:
+> >> >> On Mon, Jul 21, 2014 at 12:40 PM, Thierry Reding
+> >> >> <thierry.reding@gmail.com> wrote:
+> >> >> > On Fri, Jul 18, 2014 at 02:13:58AM +0530, Ajay Kumar wrote:
+> >> >> >> From: Rahul Sharma <Rahul.Sharma@samsung.com>
+> >> >> >>
+> >> >> >> This patch adds ps8622 lvds bridge discovery code to the dp driv=
+er.
+> >> >> >>
+> >> >> >> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
+> >> >> >> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> >> >> >> ---
+> >> >> >>  drivers/gpu/drm/exynos/exynos_dp_core.c |    5 +++++
+> >> >> >>  1 file changed, 5 insertions(+)
+> >> >> >>
+> >> >> >> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/g=
+pu/drm/exynos/exynos_dp_core.c
+> >> >> >> index 0ca6256..82e2942 100644
+> >> >> >> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> >> >> >> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> >> >> >> @@ -31,6 +31,7 @@
+> >> >> >>  #include <drm/drm_panel.h>
+> >> >> >>  #include <drm/bridge/ptn3460.h>
+> >> >> >>  #include <drm/bridge/panel_binder.h>
+> >> >> >> +#include <drm/bridge/ps8622.h>
+> >> >> >>
+> >> >> >>  #include "exynos_drm_drv.h"
+> >> >> >>  #include "exynos_dp_core.h"
+> >> >> >> @@ -999,6 +1000,10 @@ static int exynos_drm_attach_lcd_bridge(st=
+ruct exynos_dp_device *dp,
+> >> >> >>       if (find_bridge("nxp,ptn3460", &bridge)) {
+> >> >> >>               bridge_chain =3D ptn3460_init(dp->drm_dev, encoder=
+, bridge.client,
+> >> >> >>                                                               br=
+idge.node);
+> >> >> >> +     } else if (find_bridge("parade,ps8622", &bridge) ||
+> >> >> >> +                             find_bridge("parade,ps8625", &brid=
+ge)) {
+> >> >> >> +             bridge_chain =3D ps8622_init(dp->drm_dev, encoder,=
+ bridge.client,
+> >> >> >> +                                                             br=
+idge.node);
+> >> >> >>       }
+> >> >> >
+> >> >> > We really ought to be adding some sort of registry at some point.
+> >> >> > Otherwise every driver that wants to use bridges needs to come up=
+ with a
+> >> >> > similar set of helpers to instantiate them.
+> >> >> >
+> >> >> > Also you're making this driver depend on (now) two bridges, where=
+as it
+> >> >> > really shouldn't matter which exact types it supports. Bridges sh=
+ould be
+> >> >> > exposed via a generic interface.
+> >> >>
+> >> >> How about moving out the find_bridge() function into a common heade=
+r file,
+> >> >> and also supporting the list of bridge_init declarations in the sam=
+e file?
+> >> >>
+> >> >> We get bridge chip node from phandle, and then pass the same node
+> >> >> to find_bridge() which searches the list using of_device_is_compati=
+ble()
+> >> >> to call the appropriate bridge_init function?
+> >> >
+> >> > That could work, but it's still somewhat unusual and shouldn't be
+> >> > required. I think we'd be better of with some sort of registry like =
+we
+> >> > have for panels. That would mean that a driver that wants to use a
+> >> > bridge would do something like this:
+> >> >
+> >> >         struct drm_bridge *bridge;
+> >> >         struct device_node *np;
+> >> >
+> >> >         np =3D of_parse_phandle(dev->of_node, "bridge", 0);
+> >> >         if (np) {
+> >> >                 bridge =3D of_drm_find_bridge(np);
+> >> >                 of_node_put(np);
+> >> >
+> >> >                 if (!bridge)
+> >> >                         return -EPROBE_DEFER;
+> >> >         }
+> >> >
+> >> > An alternative way would be to add a non-OF wrapper around this, like
+> >> > this for example:
+> >> Let me try the DT version first :)
 > >>
-> >>I wonder if perhaps the READ_DDB_START and READ_DDB_CONTINUE commands
-> >>could be used as a replacement for this display ID.
-> >>
+> >> >         bridge =3D drm_bridge_get(dev, NULL);
+> >> >
+> >> > Which would be conceptually the same as clk_get() or regulator_get()=
+ and
+> >> > could be easily extended to support non-DT setups as well.
+> >> >
+> >> > As for bridge drivers I think we may have to rework things a little,=
+ so
+> >> > that a driver can call some sequence like this:
+> >> >
+> >> >         struct foo_bridge {
+> >> >                 struct drm_bridge base;
+> >> >                 ...
+> >> >         };
+> >> >
+> >> >         static const struct drm_bridge_funcs foo_bridge_funcs =3D {
+> >> >                 ...
+> >> >         };
+> >> >
+> >> >         static int foo_probe(...)
+> >> >         {
+> >> >                 struct foo_bridge *bridge;
+> >> >                 int err;
+> >> >
+> >> >                 bridge =3D devm_kzalloc(dev, sizeof(*bridge), GFP_KE=
+RNEL);
+> >> >                 if (!bridge)
+> >> >                         return -ENOMEM;
+> >> >
+> >> >                 /* setup bridge (return -EPROBE_DEFER if necessary, =
+=2E..) */
+> >> >
+> >> >                 /* register bridge with DRM */
+> >> >                 drm_bridge_init(&bridge->base);
+> >> >                 bridge->base.dev =3D dev;
+> >> >                 bridge->base.funcs =3D &foo_bridge_funcs;
+> >> >
+> >> >                 err =3D drm_bridge_add(&bridge->base);
+> >> >                 if (err < 0)
+> >> >                         return err;
+> >> >
+> >> >                 dev_set_drvdata(dev, bridge);
+> >> >                 ...
+> >> >         }
+> >> >
+> >> > drm_bridge_add() would add the bridge to a global list of bridge dev=
+ices
+> >> > which drm_bridge_get()/of_drm_find_bridge() can use to find the one =
+that
+> >> > it needs. The above has the big advantage that it'sdev->mode_config.=
+bridge_list completely
+> >> > independent of the underlying bus that the bridge is on. It could be=
+ I2C
+> >> > or SPI, platform device or PCI device.
+> >> >
+> >> > Thierry
+> >> Ok. This is all about making the bridge driver confine to the driver m=
+odel.
+> >> But, I would need a drm_device pointer to register the bridge to DRM c=
+ore.
+> >> How do I get it?
+> >
+> > Once you've obtained a reference to the DRM bridge from your driver you
+> > should carry it around until you've set up the DRM device. Then you can
+> > hook it up, which possibly requires a new function (since it's what the
+> > drm_bridge_init() used to do).
 >=20
-> There is a simple description for "Read DDB Start(A1H)" like below.
-> - This command returns supplier identification and display module model /
-> revision information.
-> - NOTE: This information is not the same what Read IDs(04H) command is
-> returning.
+> Ok. We can have 2 parts:
 >=20
-> For reference, Read IDs(04H) description is like below.
-> - This read command returns 24-bit display identification information.
-> - The first read byte identifies the OLED module's manufacturer.
-> - The Second read byte is used to track the OLED module/driver version.
-> - The third read byte identifies the OLED module/driver.
+> Non-DRM part:
+> In order to get a reference for drm_bridge in my encoder driver, I
+> should be using
+> of_drm_find_bridge(). In order to do that, I should have already added
+> the bridge
+> into a static list of bridges(using something like drm_bridge_add).
+> Also, bridge_funcs pointer is assigned to the bridge object in the
+> bridge driver itself.
+>=20
+> DRM part:
+> Assuming that the bridge driver probe will take care of calling
+> drm_bridge_add(),
+> I can then call drm_bridge_init from encoder driver, with a drm_bridge po=
+inter
+> and a drm_device pointer, which will actually register the bridge into DR=
+M core.
 
-Okay, that explains things a little better. Can you point me to the
-document that this is from?
-
-But what I was trying to say is that if the Read IDs command isn't an
-official DCS command, maybe it would be a better idea to use the DDB
-instead. I assume that even if it isn't the same information it would
-at least be a superset and therefore a suitable replacement.
+Yes, exactly.
 
 Thierry
 
---+nBD6E3TurpgldQp
+--eqp4TxRxnD4KrmFZ
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJTzhePAAoJEN0jrNd/PrOhsUEQAJdwQx63WI8owaraFNfL5oZI
-f2cleQCk9rF8j0bWhtBtRWhInqK8pLog8dFbcJh9fRcrO79GQhnVfs7BbfdJMeKu
-WUTslblQm5aqWGDJdTVBNcEEggqG8YV5imMHKgpBi29mJ2N4qKEQUQwUSE5tgRpO
-xJ0dKrZr4Jze0dtpkky1DJZ9vHJObzVjMhvzIDzXZQvpSmTZcHgVzi6XcZ29xCtf
-+HzWlkDrQX8VHENFzM13/f3bky4+pNwX+GZI/i6/XW2AKqF6TcpnbYHgGJxDqKAV
-Nb4FiHiEQt0lzLaWwpyBoDpEkaebYqcA9+BVqGEs/DTpj1Z7qW+2Lv4/mVmC8LPJ
-/gmUwoHGDp/MBUk3YOI60obDd4m4gGQwGEBogJsSl7rZqTA243zvSq9JGS7uNdk7
-MszArcanEUqgAUKAvURCVFRxH+q6PmkeIuDGykvyuakQ68V+mMNgvE0nTTrkA16b
-hc4lM1WmIqnR5RYy5EfxtYaYc1VL/JBZad6+TFmfo2jTSUNaQIl5v6NcMLCBqEpo
-1sL2wFDH9EZGYZ590XIuHNz23JXn9DuXWaYpMh3XX785cA/Ohsz8xMtrCUGKt9Ul
-awnVi5uCkqEDqRBcOjYI5Ds3RMAGIS0ef0YYu+p4hadxZufgMzosuNFV/VzI6SW6
-uuAFor9nWyHqUokmADTr
-=ndVx
+iQIcBAEBAgAGBQJTzhgIAAoJEN0jrNd/PrOhipYP/3IBxAqMogmo1QNUEtnyYvHH
+MhOz5/1uKmOpEcTpczuDclb9X+2Ph3UFox16JnLmeYcXS/+PMaE/IYdwmqxmLO0w
+tEOgBR/CkUZY5k6mbrmEgQms1KDfj/zsf5pdLHNT2Mw6Rzs+uwEL+DDOWD82He2t
+axaW/uPv9EWsB8c1glKwOgIKk1yOjm5FIClQ9B2hhV8VunjTZB7g5iam6z/bn6xw
+b4CpJNITIGxq2GUkhZL4NKfH4R6GudVRuaBvQuPRkC43nUC3A94IprGvQrVCPgmI
+Z//UMOsD0Mq4sS1ssHz38uJ2+Sj+d6RoiytP0C+HXsTL09DRQbWDEpf8WMcb5Unf
+i0xI+DFCPmZhlbdD5Gar7tuL6EgPHdWPTYLGn61SNMIfVh+Z9kypVbNCuTIt0C61
+q8rETOEmsyx0IFC4cpWZpZ/OD2by+V89Tx/heX8/1Q8dzG5rybxQl7tPxNtBpcjZ
+earnR1YUkShjJhv4nAZwRj4/DfS7oSKcUEgoVVvw4ueJicjcjqbeQKpfufQhwlET
+ca8+57vFRe8D8q/c7PuxrrBfPI87MB+JOB7AbDYirRUcZQjwMMoaDzd/q2tXajcr
+o1T2OvIJdTZmsXpiNNPldYbwFLo4Rty0bkdRcVdb7ekW337zhSLcXPLC+zCUwndp
+gIiq0rnlQDoAzaPLjVHH
+=gmoe
 -----END PGP SIGNATURE-----
 
---+nBD6E3TurpgldQp--
+--eqp4TxRxnD4KrmFZ--
 
---===============0130100484==
+--===============0578150846==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -132,4 +259,4 @@ dri-devel mailing list
 dri-devel@lists.freedesktop.org
 http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
---===============0130100484==--
+--===============0578150846==--
