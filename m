@@ -1,49 +1,80 @@
-From: Varka Bhadram <varkabhadram-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] iio: exynos-adc: add experimental touchscreen support
-Date: Tue, 22 Jul 2014 19:59:58 +0530
-Message-ID: <53CE7566.8020906@gmail.com>
-References: <5068889.1KfVx3ksNo@wuerfel>
+From: Sean Paul <seanpaul@google.com>
+Subject: Re: [RESEND PATCH V5 01/12] drm/exynos: Move DP setup out of hotplug workqueue
+Date: Tue, 22 Jul 2014 10:59:47 -0400
+Message-ID: <CAOw6vbKeUCoWutYS3ZpFdu6aKXGPyQVvBe_PbGgmTMZHGvjc=w@mail.gmail.com>
+References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com> <1405629839-12086-2-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5068889.1KfVx3ksNo@wuerfel>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-input <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, heiko.stuebner-K3U4GQvHnyU@public.gmane.org, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f181.google.com ([209.85.223.181]:44459 "EHLO
+	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751105AbaGVPAI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Jul 2014 11:00:08 -0400
+Received: by mail-ie0-f181.google.com with SMTP id rp18so7849242iec.26
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Jul 2014 08:00:07 -0700 (PDT)
+In-Reply-To: <1405629839-12086-2-git-send-email-ajaykumar.rs@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Thierry Reding <thierry.reding@gmail.com>, Ajay kumar <ajaynumb@gmail.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, javier@dowhile0.org, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@google.com>
+
+On Thu, Jul 17, 2014 at 4:43 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+> Move the DP training and video enable from the hotplug handler into
+> a seperate function and call the same during dpms ON.
+>
+> With existing code, DP HPD should be generated just few ms before
+> calling enable_irq in dp_poweron.
+>
+> This patch removes that stringent time constraint.
+>
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 
 
-On Tuesday 22 July 2014 06:33 PM, Arnd Bergmann wrote:
+This looks eerily familiar to:
+https://chromium-review.googlesource.com/#/c/65782/
 
-(...)
+In fact, I think it's probably better to do this in commit, rather than poweron.
 
->   
-> +static int exynos_read_s3c64xx_ts(struct iio_dev *indio_dev, int *x, int *y)
+Sean
+
+
+> ---
+>  drivers/gpu/drm/exynos/exynos_dp_core.c |   11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> index 845d766..a94b114 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> @@ -875,10 +875,18 @@ static irqreturn_t exynos_dp_irq_handler(int irq, void *arg)
+>  static void exynos_dp_hotplug(struct work_struct *work)
+>  {
+>         struct exynos_dp_device *dp;
+> -       int ret;
+>
+>         dp = container_of(work, struct exynos_dp_device, hotplug_work);
+>
+> +       if (dp->drm_dev)
+> +               drm_helper_hpd_irq_event(dp->drm_dev);
+> +}
+> +
+> +static void exynos_dp_setup(void *in_ctx)
 > +{
-> +	struct exynos_adc *info = iio_priv(indio_dev);
-> +	unsigned long timeout;
-> +	int ret;
+> +       struct exynos_dp_device *dp = in_ctx;
+> +       int ret;
 > +
-> +	mutex_lock(&indio_dev->mlock);
-> +	info->read_ts = true;
-> +
-> +	reinit_completion(&info->completion);
-> +
-> +	writel(ADC_S3C2410_TSC_PULL_UP_DISABLE | ADC_TSC_AUTOPST,
-> +	       ADC_V1_TSC(info->regs));
-> +
-> +	/* Select the ts channel to be used and Trigger conversion */
-> +	info->data->start_conv(info, ADC_S3C2410_MUX_TS);
-> +
-> +	timeout = wait_for_completion_timeout
-> +			(&info->completion, EXYNOS_ADC_TIMEOUT);
-
-Should be properly aligned:
-
-	wait_for_completion_timeout(&info->completion,
-				    EXYNOS_ADC_TIMEOUT);
-
--- 
-Regards,
-Varka Bhadram
+>         ret = exynos_dp_detect_hpd(dp);
+>         if (ret) {
+>                 /* Cable has been disconnected, we're done */
+> @@ -1059,6 +1067,7 @@ static void exynos_dp_poweron(struct exynos_dp_device *dp)
+>         exynos_dp_phy_init(dp);
+>         exynos_dp_init_dp(dp);
+>         enable_irq(dp->irq);
+> +       exynos_dp_setup(dp);
+>  }
+>
+>  static void exynos_dp_poweroff(struct exynos_dp_device *dp)
+> --
+> 1.7.9.5
+>
