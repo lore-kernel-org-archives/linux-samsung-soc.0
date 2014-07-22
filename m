@@ -1,177 +1,117 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: Re: [PATCH v6 05/14] drm/exynos: dsi: add TE interrupt handler to
- support LCD I80 interface
-Date: Tue, 22 Jul 2014 19:26:13 +0900
-Message-ID: <53CE3C45.9010509@samsung.com>
-References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
- <1405587689-1466-6-git-send-email-yj44.cho@samsung.com>
- <53CD1D1F.1050109@samsung.com> <53CDBCFA.4040403@samsung.com>
- <53CE3907.7050304@samsung.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 2/2] iio: adc: exynos_adc: Add support for S3C24xx ADC
+Date: Tue, 22 Jul 2014 12:44:28 +0200
+Message-ID: <175757227.TPQdXAQiJt@diego>
+References: <1405995074-3271-1-git-send-email-cw00.choi@samsung.com> <1405995074-3271-3-git-send-email-cw00.choi@samsung.com> <5200888.DXoC06U953@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <53CE3907.7050304@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <5200888.DXoC06U953@wuerfel>
+Sender: linux-doc-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org, ch.naveen@samsung.com, kgene.kim@samsung.com, kyungmin.park@samsung.com, t.figa@samsung.com, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgQW5kcnplaiwKCk9uIDA3LzIyLzIwMTQgMDc6MTIgUE0sIEFuZHJ6ZWogSGFqZGEgd3JvdGU6
-Cj4gT24gMDcvMjIvMjAxNCAwMzoyMyBBTSwgSW5raSBEYWUgd3JvdGU6Cj4+IE9uIDIwMTTrhYQg
-MDfsm5QgMjHsnbwgMjM6MDEsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4+PiBPbiAwNy8xNy8yMDE0
-IDExOjAxIEFNLCBZb3VuZ0p1biBDaG8gd3JvdGU6Cj4+Pj4gVG8gc3VwcG9ydCBMQ0QgSTgwIGlu
-dGVyZmFjZSwgdGhlIERTSSBob3N0IHNob3VsZCByZWdpc3Rlcgo+Pj4+IFRFIGludGVycnVwdCBo
-YW5kbGVyIGZyb20gdGhlIFRFIEdQSU8gb2YgYXR0YWNoZWQgcGFuZWwuCj4+Pj4gU28gdGhlIHBh
-bmVsIGdlbmVyYXRlcyBhIHRlYXJpbmcgZWZmZWN0IHN5bmNocm9uaXphdGlvbiBzaWduYWwKPj4+
-PiB0aGVuIHRoZSBEU0kgaG9zdCBjYWxscyB0aGUgQ1JUQyBkZXZpY2UgbWFuYWdlciB0byB0cmln
-Z2VyCj4+Pj4gdG8gdHJhbnNmZXIgdmlkZW8gaW1hZ2UuCj4+Pj4KPj4+IFRoaXMgd2hvbGUgcGF0
-Y2ggc2VlbXMgdG8gYmUgYSBoYWNrLgo+Pj4KPj4+IEkgdGhpbmsgaXQgaXMgbm90IGEgZ29vZCBp
-ZGVhIHRvIHBhcnNlIHByb3BlcnR5IG9mIG9uZSBkZXZpY2UgYnkgYW5vdGhlcgo+Pj4gZGV2aWNl
-J3MgZHJpdmVyLgo+Pj4KPj4+IEVzcGVjaWFsbHkgaGVyZSBURSBHUElPIGJlbG9uZ3MgdG8gdGhl
-IHBhbmVsLiBUaGUgcGFuZWwgZHJpdmVyIHNob3VsZAo+Pj4ga25vdyBob3cgdG8gY29uZmlndXJl
-IGl0IGFuZCBob3cgdG8gdXNlIGl0IG9yIG5vdC4gVGhlIHBhbmVsIGRyaXZlciB3aWxsCj4+PiBn
-ZW5lcmF0ZSBURSBzaWduYWwgYmFzZWQgb24gdGhpcyBHUElPLCBEU0kvQlRBIG1lY2hhbmlzbSBv
-ciBhbnkgb3RoZXIKPj4+IG1lY2hhbmlzbSBwcm92aWRlZCBieSB0aGUgcGFuZWwuCj4+PiBURSBz
-aWduYWwgc2hvdWxkIGJlIGRlbGl2ZXJlZCB0byB0aGUgZGlzcGxheSBjb250cm9sbGVyLiBUaGUg
-b25seSByb2xlCj4+PiBvZiBEU0lNIGhlcmUgaXMgdGhhdCBpdCBpcyBiZXR3ZWVuIHRoZSBwYW5l
-bCBhbmQgdGhlIGRpc3BsYXkgY29udHJvbGxlcgo+Pj4gc28gaXQgc2hvdWxkIGJlIHVzZWQgdG8g
-cm91dGUgdGhpcyBzaWduYWwgdG8gREMuCj4+Pgo+Pj4gQWNjb3JkaW5nIHRvIHNwZWNzIFRFIHNp
-Z25hbCBzaG91bGQvY2FuIGJlIGdlbmVyYXRlZCBieSBEQkkgYW5kIERTSQo+Pj4gY29tbWFuZCBt
-b2RlIHBhbmVscywgc28gaXRzIGhhbmRsaW5nIHNob3VsZCBiZSBtb3JlIGdlbmVyaWMsIG5vdCBF
-eHlub3MKPj4+IHNwZWNpZmljLgo+Pj4KPj4gUmlnaHQuIEhvd2V2ZXIsIGl0IHNlZW1zIHRoYXQg
-dGhlcmUgYXJlIG5vIG11Y2ggdXNlcnMgdXNpbmcgY29tbWFuZCBtb2RlCj4+IHBhbmVsIHNvIHdl
-IHdvdWxkIG5lZWQgbW9yZSB0aW1lcyB0byBkaXNjdXNzIHRoZSBnZW5lcmljIHdheS4gSSB0aGlu
-ayB3ZQo+PiBjYW4gaGF2ZSB0aGlzIGZlYXR1cmUgaW4gc3BlY2lmaWMgdG8gRXh5bm9zIGRybSAt
-IGl0IGRvZXNuJ3QgYWZmZWN0Cj4+IG90aGVyIFNvQyAtLiAgQWN0dWFsbHksIEkga25vdyBPTUFQ
-IHBlb3BsZSBoYW5kbGUgdGhpcyBmZWF0dXJlIGluIGEgd2F5Cj4+IHNwZWNpZmljIHRvIE9NQVAg
-U29DLiBJZiBvdGhlciB1c2VycyBuZWVkIG1vcmUgZ2VuZXJpYyB3YXkgdG8gdGhpcwo+PiBmZWF0
-dXJlIHRoZW4gd2UgY291bGQgaGF2ZSBhIGRpc2N1c3Npb24gYWJvdXQgdGhlIGdlbmVyaWMgd2F5
-IGF0IHRoYXQgdGltZS4KPj4KPj4gVGhhdCBpcyB3aHkgTXIuIENobyBpbXBsZW1lbnRlZCBURSBm
-ZWF0dXJlIGxpa2UgdGhpcy4gRG8geW91IGhhdmUgbW9yZQo+PiBnb29kIGlkZWE/IEkgd2lzaCB0
-aGUgaWRlYSB3b3VsZCBiZSBzcGVjaWZpYyBzbyB0aGF0IE1yLiBDaG8gY2FuCj4+IGltcGxlbWVu
-dCBpdC4KPj4KPj4gUC5zLiBUaGllcnJ5IGFscmVhZHkgb3Bwb3NlZCB0aGUgdXNlIG9mIG1pcGlf
-ZHNpX2hvc3Rfb3BzLCBJIGFncmVlIHdpdGgKPj4gaGltLiBBbmQgYWxzbyBpdCBzZWVtcyBub3Qg
-Z29vZCB0byB1c2UgY3J0YyBhbmQgZW5jb2Rlci9jb25uZWN0b3IKPj4gYmVjYXVzZSB0aGVzZSBm
-cmFtZXdvcmtzIGFyZSBjb21tb24gdG8gYWxsIGFyY2hpdGVjdHVyZSBpbmNsdWRpbmcgeDg2IHNv
-Cj4+IG90aGVyIGFyY2hpdGVjdHVyZXMgd291bGRuJ3QgbmVlZCBURSBmZWF0dXJlLgo+Cj4gVGhl
-IGdvb2QgdGhpbmcgaXMgdGhhdCBEVCBiaW5kaW5ncyBpbiB0aGlzIGNhc2UgYXJlIE9LLCBURSBH
-UElPIGlzIGluCj4gcGFuZWwgbm9kZS4KPiBNYXliZSB3ZSBjYW4gbGVhdmUgaXQgdGhpcyB3YXkg
-Zm9yIG5vdywgYnV0IGF0IGxlYXN0IGxldHMgYWRkIGEgY29tbWVudCB0bwo+IHRoZSBjb2RlIGRl
-c2NyaWJpbmcgdGhhdCBpdCBpcyB0ZW1wb3Jhcnkgc29sdXRpb24gYW5kIHNob3VsZCBiZSBtYWtl
-Cj4gbW9yZSBnZW5lcmljIGluIHRoZSBmdXR1cmUuCj4KCk9rYXksIEknbGwgbGVhdmUgdGhpcyBj
-b21tZW50IGF0IGV4eW5vc19kc2lfaG9zdF9hdHRhY2goKSBiZWZvcmUgY3VycmVudCAKZXh5bm9z
-X2RzaV9yZWdpc3Rlcl90ZV9pcnEoKSByZWxldmFudCBjb21tZW50LgoKVGhhbmsgeW91LgpCZXN0
-IHJlZ2FyZHMgWUoKCj4gUmVnYXJkcwo+IEFuZHJ6ZWoKPj4KPj4gVGhhbmtzLAo+PiBJbmtpIERh
-ZQo+Pgo+Pj4gUmVnYXJkcwo+Pj4gQW5kcnplago+Pj4KPj4+PiBTaWduZWQtb2ZmLWJ5OiBZb3Vu
-Z0p1biBDaG8gPHlqNDQuY2hvQHNhbXN1bmcuY29tPgo+Pj4+IEFja2VkLWJ5OiBJbmtpIERhZSA8
-aW5raS5kYWVAc2Ftc3VuZy5jb20+Cj4+Pj4gQWNrZWQtYnk6IEt5dW5nbWluIFBhcmsgPGt5dW5n
-bWluLnBhcmtAc2Ftc3VuZy5jb20+Cj4+Pj4gLS0tCj4+Pj4gICBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZHNpLmMgfCA5NSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-Ky0KPj4+PiAgIDEgZmlsZSBjaGFuZ2VkLCA5MyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygt
-KQo+Pj4+Cj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+Pj4+IGlu
-ZGV4IDU4YmZiMmEuLjQ5OTdiZmUgMTAwNjQ0Cj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2RzaS5jCj4+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2RzaS5jCj4+Pj4gQEAgLTE2LDcgKzE2LDkgQEAKPj4+PiAgICNpbmNsdWRlIDxk
-cm0vZHJtX3BhbmVsLmg+Cj4+Pj4KPj4+PiAgICNpbmNsdWRlIDxsaW51eC9jbGsuaD4KPj4+PiAr
-I2luY2x1ZGUgPGxpbnV4L2dwaW8vY29uc3VtZXIuaD4KPj4+PiAgICNpbmNsdWRlIDxsaW51eC9p
-cnEuaD4KPj4+PiArI2luY2x1ZGUgPGxpbnV4L29mX2dwaW8uaD4KPj4+PiAgICNpbmNsdWRlIDxs
-aW51eC9waHkvcGh5Lmg+Cj4+Pj4gICAjaW5jbHVkZSA8bGludXgvcmVndWxhdG9yL2NvbnN1bWVy
-Lmg+Cj4+Pj4gICAjaW5jbHVkZSA8bGludXgvY29tcG9uZW50Lmg+Cj4+Pj4gQEAgLTI0LDYgKzI2
-LDcgQEAKPj4+PiAgICNpbmNsdWRlIDx2aWRlby9taXBpX2Rpc3BsYXkuaD4KPj4+PiAgICNpbmNs
-dWRlIDx2aWRlby92aWRlb21vZGUuaD4KPj4+Pgo+Pj4+ICsjaW5jbHVkZSAiZXh5bm9zX2RybV9j
-cnRjLmgiCj4+Pj4gICAjaW5jbHVkZSAiZXh5bm9zX2RybV9kcnYuaCIKPj4+Pgo+Pj4+ICAgLyog
-cmV0dXJucyB0cnVlIGlmZiBib3RoIGFyZ3VtZW50cyBsb2dpY2FsbHkgZGlmZmVycyAqLwo+Pj4+
-IEBAIC0yNDcsNiArMjUwLDcgQEAgc3RydWN0IGV4eW5vc19kc2kgewo+Pj4+ICAgCXN0cnVjdCBj
-bGsgKmJ1c19jbGs7Cj4+Pj4gICAJc3RydWN0IHJlZ3VsYXRvcl9idWxrX2RhdGEgc3VwcGxpZXNb
-Ml07Cj4+Pj4gICAJaW50IGlycTsKPj4+PiArCWludCB0ZV9ncGlvOwo+Pj4+Cj4+Pj4gICAJdTMy
-IHBsbF9jbGtfcmF0ZTsKPj4+PiAgIAl1MzIgYnVyc3RfY2xrX3JhdGU7Cj4+Pj4gQEAgLTk1NCwx
-NyArOTU4LDg5IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCBleHlub3NfZHNpX2lycShpbnQgaXJxLCB2
-b2lkICpkZXZfaWQpCj4+Pj4gICAJcmV0dXJuIElSUV9IQU5ETEVEOwo+Pj4+ICAgfQo+Pj4+Cj4+
-Pj4gK3N0YXRpYyBpcnFyZXR1cm5fdCBleHlub3NfZHNpX3RlX2lycV9oYW5kbGVyKGludCBpcnEs
-IHZvaWQgKmRldl9pZCkKPj4+PiArewo+Pj4+ICsJc3RydWN0IGV4eW5vc19kc2kgKmRzaSA9IChz
-dHJ1Y3QgZXh5bm9zX2RzaSAqKWRldl9pZDsKPj4+PiArCXN0cnVjdCBkcm1fZW5jb2RlciAqZW5j
-b2RlciA9IGRzaS0+ZW5jb2RlcjsKPj4+PiArCj4+Pj4gKwlpZiAoZHNpLT5zdGF0ZSAmIERTSU1f
-U1RBVEVfRU5BQkxFRCkKPj4+PiArCQlleHlub3NfZHJtX2NydGNfdGVfaGFuZGxlcihlbmNvZGVy
-LT5jcnRjKTsKPj4+PiArCj4+Pj4gKwlyZXR1cm4gSVJRX0hBTkRMRUQ7Cj4+Pj4gK30KPj4+PiAr
-Cj4+Pj4gK3N0YXRpYyB2b2lkIGV4eW5vc19kc2lfZW5hYmxlX2lycShzdHJ1Y3QgZXh5bm9zX2Rz
-aSAqZHNpKQo+Pj4+ICt7Cj4+Pj4gKwllbmFibGVfaXJxKGRzaS0+aXJxKTsKPj4+PiArCj4+Pj4g
-KwlpZiAoZ3Bpb19pc192YWxpZChkc2ktPnRlX2dwaW8pKQo+Pj4+ICsJCWVuYWJsZV9pcnEoZ3Bp
-b190b19pcnEoZHNpLT50ZV9ncGlvKSk7Cj4+Pj4gK30KPj4+PiArCj4+Pj4gK3N0YXRpYyB2b2lk
-IGV4eW5vc19kc2lfZGlzYWJsZV9pcnEoc3RydWN0IGV4eW5vc19kc2kgKmRzaSkKPj4+PiArewo+
-Pj4+ICsJaWYgKGdwaW9faXNfdmFsaWQoZHNpLT50ZV9ncGlvKSkKPj4+PiArCQlkaXNhYmxlX2ly
-cShncGlvX3RvX2lycShkc2ktPnRlX2dwaW8pKTsKPj4+PiArCj4+Pj4gKwlkaXNhYmxlX2lycShk
-c2ktPmlycSk7Cj4+Pj4gK30KPj4+PiArCj4+Pj4gICBzdGF0aWMgaW50IGV4eW5vc19kc2lfaW5p
-dChzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpKQo+Pj4+ICAgewo+Pj4+ICAgCWV4eW5vc19kc2lfZW5h
-YmxlX2Nsb2NrKGRzaSk7Cj4+Pj4gICAJZXh5bm9zX2RzaV9yZXNldChkc2kpOwo+Pj4+IC0JZW5h
-YmxlX2lycShkc2ktPmlycSk7Cj4+Pj4gKwlleHlub3NfZHNpX2VuYWJsZV9pcnEoZHNpKTsKPj4+
-PiAgIAlleHlub3NfZHNpX3dhaXRfZm9yX3Jlc2V0KGRzaSk7Cj4+Pj4gICAJZXh5bm9zX2RzaV9p
-bml0X2xpbmsoZHNpKTsKPj4+Pgo+Pj4+ICAgCXJldHVybiAwOwo+Pj4+ICAgfQo+Pj4+Cj4+Pj4g
-K3N0YXRpYyBpbnQgZXh5bm9zX2RzaV9yZWdpc3Rlcl90ZV9pcnEoc3RydWN0IGV4eW5vc19kc2kg
-KmRzaSkKPj4+PiArewo+Pj4+ICsJaW50IHJldDsKPj4+PiArCj4+Pj4gKwlkc2ktPnRlX2dwaW8g
-PSBvZl9nZXRfbmFtZWRfZ3Bpbyhkc2ktPnBhbmVsX25vZGUsICJ0ZS1ncGlvcyIsIDApOwo+Pj4+
-ICsJaWYgKCFncGlvX2lzX3ZhbGlkKGRzaS0+dGVfZ3BpbykpIHsKPj4+PiArCQlkZXZfZXJyKGRz
-aS0+ZGV2LCAibm8gdGUtZ3Bpb3Mgc3BlY2lmaWVkXG4iKTsKPj4+PiArCQlyZXQgPSBkc2ktPnRl
-X2dwaW87Cj4+Pj4gKwkJZ290byBvdXQ7Cj4+Pj4gKwl9Cj4+Pj4gKwo+Pj4+ICsJcmV0ID0gZ3Bp
-b19yZXF1ZXN0X29uZShkc2ktPnRlX2dwaW8sIEdQSU9GX0lOLCAidGVfZ3BpbyIpOwo+Pj4+ICsJ
-aWYgKHJldCkgewo+Pj4+ICsJCWRldl9lcnIoZHNpLT5kZXYsICJncGlvIHJlcXVlc3QgZmFpbGVk
-IHdpdGggJWRcbiIsIHJldCk7Cj4+Pj4gKwkJZ290byBvdXQ7Cj4+Pj4gKwl9Cj4+Pj4gKwo+Pj4+
-ICsJLyoKPj4+PiArCSAqIFRoaXMgVEUgR1BJTyBJUlEgc2hvdWxkIG5vdCBiZSBzZXQgdG8gSVJR
-X05PQVVUT0VOLCBiZWNhdXNlIHBhbmVsCj4+Pj4gKwkgKiBjYWxscyBkcm1fcGFuZWxfaW5pdCgp
-IGZpcnN0IHRoZW4gY2FsbHMgbWlwaV9kc2lfYXR0YWNoKCkgaW4gcHJvYmUoKS4KPj4+PiArCSAq
-IEl0IG1lYW5zIHRoYXQgdGVfZ3BpbyBpcyBpbnZhbGlkIHdoZW4gZXh5bm9zX2RzaV9lbmFibGVf
-aXJxKCkgaXMKPj4+PiArCSAqIGNhbGxlZCBieSBkcm1fcGFuZWxfaW5pdCgpIGJlZm9yZSBwYW5l
-bCBpcyBhdHRhY2hlZC4KPj4+PiArCSAqLwo+Pj4+ICsJcmV0ID0gcmVxdWVzdF90aHJlYWRlZF9p
-cnEoZ3Bpb190b19pcnEoZHNpLT50ZV9ncGlvKSwKPj4+PiArCQkJCQlleHlub3NfZHNpX3RlX2ly
-cV9oYW5kbGVyLCBOVUxMLAo+Pj4+ICsJCQkJCUlSUUZfVFJJR0dFUl9SSVNJTkcsICJURSIsIGRz
-aSk7Cj4+Pj4gKwlpZiAocmV0KSB7Cj4+Pj4gKwkJZGV2X2Vycihkc2ktPmRldiwgInJlcXVlc3Qg
-aW50ZXJydXB0IGZhaWxlZCB3aXRoICVkXG4iLCByZXQpOwo+Pj4+ICsJCWdwaW9fZnJlZShkc2kt
-PnRlX2dwaW8pOwo+Pj4+ICsJCWdvdG8gb3V0Owo+Pj4+ICsJfQo+Pj4+ICsKPj4+PiArb3V0Ogo+
-Pj4+ICsJcmV0dXJuIHJldDsKPj4+PiArfQo+Pj4+ICsKPj4+PiArc3RhdGljIHZvaWQgZXh5bm9z
-X2RzaV91bnJlZ2lzdGVyX3RlX2lycShzdHJ1Y3QgZXh5bm9zX2RzaSAqZHNpKQo+Pj4+ICt7Cj4+
-Pj4gKwlpZiAoZ3Bpb19pc192YWxpZChkc2ktPnRlX2dwaW8pKSB7Cj4+Pj4gKwkJZnJlZV9pcnEo
-Z3Bpb190b19pcnEoZHNpLT50ZV9ncGlvKSwgZHNpKTsKPj4+PiArCQlncGlvX2ZyZWUoZHNpLT50
-ZV9ncGlvKTsKPj4+PiArCQlkc2ktPnRlX2dwaW8gPSAtRU5PRU5UOwo+Pj4+ICsJfQo+Pj4+ICt9
-Cj4+Pj4gKwo+Pj4+ICAgc3RhdGljIGludCBleHlub3NfZHNpX2hvc3RfYXR0YWNoKHN0cnVjdCBt
-aXBpX2RzaV9ob3N0ICpob3N0LAo+Pj4+ICAgCQkJCSAgc3RydWN0IG1pcGlfZHNpX2RldmljZSAq
-ZGV2aWNlKQo+Pj4+ICAgewo+Pj4+IEBAIC05NzgsNiArMTA1NCwxNiBAQCBzdGF0aWMgaW50IGV4
-eW5vc19kc2lfaG9zdF9hdHRhY2goc3RydWN0IG1pcGlfZHNpX2hvc3QgKmhvc3QsCj4+Pj4gICAJ
-aWYgKGRzaS0+Y29ubmVjdG9yLmRldikKPj4+PiAgIAkJZHJtX2hlbHBlcl9ocGRfaXJxX2V2ZW50
-KGRzaS0+Y29ubmVjdG9yLmRldik7Cj4+Pj4KPj4+PiArCS8qCj4+Pj4gKwkgKiBJZiBhdHRhY2hl
-ZCBwYW5lbCBkZXZpY2UgaXMgZm9yIGNvbW1hbmQgbW9kZSBvbmUsIGRzaSBzaG91bGQKPj4+PiAr
-CSAqIHJlZ2lzdGVyIFRFIGludGVycnVwdCBoYW5kbGVyLgo+Pj4+ICsJICovCj4+Pj4gKwlpZiAo
-IShkc2ktPm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX1ZJREVPKSkgewo+Pj4+ICsJCWludCBy
-ZXQgPSBleHlub3NfZHNpX3JlZ2lzdGVyX3RlX2lycShkc2kpOwo+Pj4+ICsJCWlmIChyZXQpCj4+
-Pj4gKwkJCXJldHVybiByZXQ7Cj4+Pj4gKwl9Cj4+Pj4gKwo+Pj4+ICAgCXJldHVybiAwOwo+Pj4+
-ICAgfQo+Pj4+Cj4+Pj4gQEAgLTk4Niw2ICsxMDcyLDggQEAgc3RhdGljIGludCBleHlub3NfZHNp
-X2hvc3RfZGV0YWNoKHN0cnVjdCBtaXBpX2RzaV9ob3N0ICpob3N0LAo+Pj4+ICAgewo+Pj4+ICAg
-CXN0cnVjdCBleHlub3NfZHNpICpkc2kgPSBob3N0X3RvX2RzaShob3N0KTsKPj4+Pgo+Pj4+ICsJ
-ZXh5bm9zX2RzaV91bnJlZ2lzdGVyX3RlX2lycShkc2kpOwo+Pj4+ICsKPj4+PiAgIAlkc2ktPnBh
-bmVsX25vZGUgPSBOVUxMOwo+Pj4+Cj4+Pj4gICAJaWYgKGRzaS0+Y29ubmVjdG9yLmRldikKPj4+
-PiBAQCAtMTA5OSw3ICsxMTg3LDcgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RzaV9wb3dlcm9mZihz
-dHJ1Y3QgZXh5bm9zX2RzaSAqZHNpKQo+Pj4+Cj4+Pj4gICAJCWV4eW5vc19kc2lfZGlzYWJsZV9j
-bG9jayhkc2kpOwo+Pj4+Cj4+Pj4gLQkJZGlzYWJsZV9pcnEoZHNpLT5pcnEpOwo+Pj4+ICsJCWV4
-eW5vc19kc2lfZGlzYWJsZV9pcnEoZHNpKTsKPj4+PiAgIAl9Cj4+Pj4KPj4+PiAgIAlkc2ktPnN0
-YXRlICY9IH5EU0lNX1NUQVRFX0NNRF9MUE07Cj4+Pj4gQEAgLTE0NDUsNiArMTUzMyw5IEBAIHN0
-YXRpYyBpbnQgZXh5bm9zX2RzaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+
-Pj4+ICAgCQlnb3RvIGVycl9kZWxfY29tcG9uZW50Owo+Pj4+ICAgCX0KPj4+Pgo+Pj4+ICsJLyog
-VG8gYmUgY2hlY2tlZCBhcyBpbnZhbGlkIG9uZSAqLwo+Pj4+ICsJZHNpLT50ZV9ncGlvID0gLUVO
-T0VOVDsKPj4+PiArCj4+Pj4gICAJaW5pdF9jb21wbGV0aW9uKCZkc2ktPmNvbXBsZXRlZCk7Cj4+
-Pj4gICAJc3Bpbl9sb2NrX2luaXQoJmRzaS0+dHJhbnNmZXJfbG9jayk7Cj4+Pj4gICAJSU5JVF9M
-SVNUX0hFQUQoJmRzaS0+dHJhbnNmZXJfbGlzdCk7Cj4+Pj4KPj4+IC0tCj4+PiBUbyB1bnN1YnNj
-cmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgZGV2aWNldHJl
-ZSIgaW4KPj4+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwu
-b3JnCj4+PiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21h
-am9yZG9tby1pbmZvLmh0bWwKPj4+Cj4+Cj4KPgoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+Am Dienstag, 22. Juli 2014, 10:39:38 schrieb Arnd Bergmann:
+> On Tuesday 22 July 2014 11:11:14 Chanwoo Choi wrote:
+> > This patch add support for s3c2410/s3c2416/s3c2440/s3c2443 ADC. The
+> > s3c24xx
+> > is alomost same as ADCv1. But, There are a little difference as following:
+> > - ADCMUX register address to select channel
+> > - ADCDAT mask (10bit or 12bit ADC resolution according to SoC version)
+> 
+> Very good, thanks for doing this patch!
+> 
+> (adding Heiko to Cc, he's probably interested in seeing this as well.
+
+indeed. Thanks for implementing this.
+
+While trying to build a test setup for this, I noticed two points:
+
+(1) I'm not sure what the second register (a "phy enable register" according
+to the binding) is supposed to be.
+According to binding and adc code it is mandatory, but I didn't find any
+lone adc register in the s3c2416 manual.
+
+
+(2) You might need something along the lines of:
+
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index 11b048a..088c99a 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -129,7 +129,7 @@ config AT91_ADC
+ 
+ config EXYNOS_ADC
+        tristate "Exynos ADC driver support"
+-       depends on ARCH_EXYNOS || (OF && COMPILE_TEST)
++       depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || (OF && COMPILE_TEST)
+        help
+          Core support for the ADC block found in the Samsung EXYNOS series
+          of SoCs for drivers such as the touchscreen and hwmon to use to share
+
+
+Thanks
+Heiko
+
+> 
+> One comment:
+> > @@ -101,12 +107,14 @@ struct exynos_adc {
+> > 
+> >  	struct completion	completion;
+> >  	
+> >  	u32			value;
+> > 
+> > +	u32			value2;
+> > 
+> >  	unsigned int            version;
+> >  
+> >  };
+> > 
+> > ...
+> > @@ -365,7 +448,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+> > 
+> >  		ret = -ETIMEDOUT;
+> >  	
+> >  	} else {
+> >  	
+> >  		*val = info->value;
+> > 
+> > -		*val2 = 0;
+> > +		*val2 = info->value2;
+> > 
+> >  		ret = IIO_VAL_INT;
+> >  	
+> >  	}
+> > 
+> > @@ -377,9 +460,11 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+> > 
+> >  static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
+> >  {
+> >  
+> >  	struct exynos_adc *info = (struct exynos_adc *)dev_id;
+> > 
+> > +	u32 mask = info->data->mask;
+> > 
+> >  	/* Read value */
+> > 
+> > -	info->value = readl(ADC_V1_DATX(info->regs)) & ADC_DATX_MASK;
+> > +	info->value = readl(ADC_V1_DATX(info->regs)) & mask;
+> > +	info->value2 = readl(ADC_V1_DATY(info->regs)) & mask;
+> > 
+> >  	/* clear irq */
+> >  	if (info->data->clear_irq)
+> 
+> If I understand it right, this would only be necessary if we want
+> to do the touchscreen driver as a separate iio client using the
+> in-kernel interfaces. As Jonathan Cameron commented, we probably
+> don't want to do that though. Even if we do, it should be a separate
+> patch and not mixed in with the s3c24xx support.
+> 
+> Aside from this:
+> 
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> 	Arnd
+
