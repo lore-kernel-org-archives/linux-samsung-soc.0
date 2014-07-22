@@ -1,106 +1,49 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v6 00/14] drm/exynos: support LCD I80 interface display
-Date: Tue, 22 Jul 2014 22:48:00 +0900
-Message-ID: <53CE6B90.2050008@samsung.com>
-References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
+From: Varka Bhadram <varkabhadram-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] iio: exynos-adc: add experimental touchscreen support
+Date: Tue, 22 Jul 2014 19:59:58 +0530
+Message-ID: <53CE7566.8020906@gmail.com>
+References: <5068889.1KfVx3ksNo@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5068889.1KfVx3ksNo@wuerfel>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-input <linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, heiko.stuebner-K3U4GQvHnyU@public.gmane.org, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNOuFhCAwN+yblCAxN+ydvCAxODowMSwgWW91bmdKdW4gQ2hvIHdyb3RlOgo+IEhpLAo+
-IAo+IFRoaXMgc2VyaWVzIGFkZHMgTENEIEk4MCBpbnRlcmZhY2UgZGlzcGxheSBzdXBwb3J0IGZv
-ciBFeHlub3MgRFJNIGRyaXZlci4KPiBUaGUgRklNRChkaXNwbGF5IGNvbnRyb2xsZXIpIHNwZWNp
-ZmljYXRpb24gZGVzY3JpYmVzIGl0IGFzICJMQ0QgSTgwIGludGVyZmFjZSIKPiBhbmQgdGhlIERT
-SSBzcGVjaWZpY2F0aW9uIGRlc2NyaWJlcyBpdCBhcyAiQ29tbWFuZCBtb2RlIGludGVyZmFjZSIu
-Cj4gCj4gVGhpcyBpcyBiYXNlZCBvbiBleHlub3MtZHJtLW5leHQgYnJhbmNoLgo+IAo+IFRoZSBw
-cmV2aW91cyBwYXRjaGVzLAo+IFJGQzogaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9kcmkt
-ZGV2ZWwvbXNnNTg4OTguaHRtbAo+IFYxOiBodHRwOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2Ry
-aS1kZXZlbC9tc2c1OTI5MS5odG1sCj4gVjI6IGh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMv
-ZHJpLWRldmVsL21zZzU5ODY3Lmh0bWwKPiBWMzogaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0
-cy9kcmktZGV2ZWwvbXNnNjA3MDguaHRtbAo+IFY0OiBodHRwOi8vd3d3LnNwaW5pY3MubmV0L2xp
-c3RzL2RyaS1kZXZlbC9tc2c2MDk0My5odG1sCj4gVjU6IGh0dHA6Ly93d3cuc3Bpbmljcy5uZXQv
-bGlzdHMvZHJpLWRldmVsL21zZzYyOTU2Lmh0bWwKPiAKPiBDaGFuZ2Vsb2cgdjI6Cj4gLSBGaXhl
-cyB0eXBvIGFuZCByZW1vdmVzIHVubmVjZXNzYXJ5IGVycm9yIGxvZy4gKGNvbW1lbnRlZCBieSBB
-bmRyemVqIEhhemRhKQo+IC0gQWRkcyBtaXNzZWQgcGVuZGxpZ19mbGlwIGZsYWcgY2xlYXIgcG9p
-bnRzLiAoY29tbWVudGVkIGJ5IERhbmllbCBLdXJ0eikKPiAKPiBDaGFuZ2Vsb2cgdjM6Cj4gLSBS
-ZW1vdmVzIGdlbmVyaWMgY29tbWFuZCBtb2RlIGFuZCBjb21tYW5kIG1vZGUgZGlzcGxheSB0aW1p
-bmcgaW50ZXJmYWNlLgo+IC0gTW92ZXMgSTgwIGludGVyZmFjZSB0aW1pbmdzIGZyb20gcGFuZWwg
-RFQgdG8gdGhlIEZJTUQoZGlzcGxheSBjb250cm9sbGVyKSBEVC4KPiAKPiBDaGFuZ2Vsb2cgdjQ6
-Cj4gLSBSZW1vdmVzIGV4eW5vczUgc3lzcmVnKHN5c2NvbikgRFQgYmluZGluZ3MgYW5kIG5vZGUg
-ZnJvbSBkdHNpIGJlY2F1c2UKPiAgIGl0IHdhcyBhbHJlYWR5IHVwZGF0ZWQgYnkgbGludXgtc2Ft
-c3VuZy1zb2MuIChjb21tZW50ZWQgYnkgVml2ZWsgR2F1dGFtKQo+IAo+IENoYW5nZWxvZyB2NToK
-PiAtIEZpeGVzIEZJTUQgdmlkY29uMCByZWdpc3RlciByZWxldmFudCBjb2RlLgo+IC0gRml4ZXMg
-cGFuZWwgZ2FtbWEgdGFibGUsIGRpc2FibGUgc2VxdWVuY2UuCj4gLSBTbGl0ZWx5IHVwZGF0ZXMg
-Zm9yIGNvZGUgY2xlYW51cC4KPiAKPiBDaGFuZ2Vsb2cgdjY6Cj4gLSBSZW1vdmVzIHBhc3MgVEUg
-aG9zdCBvcHMgaW4gZHNpIGFuZCBleHlub3MgZHNpIHVzZXMgVEUgaXJxIGhhbmRsZXIgaW5zdGVh
-ZCwKPiAgIGFuZCBpdCBpcyByZWxhdGVkIHdpdGggdGhlIFRFIEdQSU8gb2YgcGFuZWwuIChjb21t
-ZW50ZWQgYnkgVGhpZXJyeSBSZWRpbmcpCj4gCj4gUGF0Y2hlcyAxIGFuZCAyIGZpeCB0cml2aWFs
-IGJ1Z3MuCj4gCj4gUGF0Y2hlcyAzLCA0LCA1IGFuZCA2IGltcGxlbWVudCBGSU1EKGRpc3BsYXkg
-Y29udHJvbGxlcikgSTgwIGludGVyZmFjZS4KPiBUaGUgTUlQSSBEU0kgY29tbWFuZCBtb2RlIGJh
-c2VkIHBhbmVsIGdlbmVyYXRlcyBUZWFyaW5nIEVmZmVjdCBzeW5jaHJvbml6YXRpb24KPiBzaWdu
-YWwgYmV0d2VlbiBNQ1UgYW5kIEZCIHRvIGRpc3BsYXkgdmlkZW8gaW1hZ2UsIGFuZCBGSU1EIHNo
-b3VsZCB0cmlnZ2VyIHRvCj4gdHJhbnNmZXIgdmlkZW8gaW1hZ2UgYXQgdGhpcyBzaWduYWwuCj4g
-U28gdGhlIHBhbmVsIGdlbmVyYXRlcyBpdCBhbmQgdGhlIGRzaSBzaG91bGQgcmVjZWl2ZSB0aGUg
-VEUgSVJRIGFuZCBjYWxsIFRFCj4gaGFuZGxlciBjaGFpbnMgdG8gbm90aWZ5IGl0IHRvIHRoZSBG
-SU1ELgo+IAo+IFBhdGNoZXMgNyBhbmQgOCBpbXBsZW1lbnQgdG8gdXNlIEV4eW5vczU0MTAgLyA1
-NDIwIC8gNTQ0MCBTb0MgRFNJIGRyaXZlcgo+IHdoaWNoIGlzIGRpZmZlcmVudCBmcm9tIHByZXZp
-b3VzIEV4eW5vczQgU29DcyBmb3Igc29tZSByZWdpc3RlcnMgY29udHJvbC4KPiAKPiBQYXRjaGVz
-IDkgYW5kIDEwIGludHJvZHVjZSBNSVBJIERTSSBjb21tYW5kIG1vZGUgYmFzZWQgU2Ftc3VuZyBT
-NkUzRkEwIEFNT0xFRAo+IDUuNyIgTENEIGRybSBwYW5lbCBkcml2ZXIuCj4gCj4gVGhlIG9odGVy
-cyBhZGQgRFQgcHJvcGVydHkgbm9kZXMgdG8gc3VwcG9ydCBNSVBJIERTSSBjb21tYW5kIG1vZGUu
-Cj4gCj4gSSB3ZWxjb21lIGFueSBjb21tZW50cy4KPiAKPiBUaGFuayB5b3UuCj4gQmVzdCByZWdh
-cmRzIFlKCj4gCj4gWW91bmdKdW4gQ2hvICgxNCk6Cj4gICBkcm0vZXh5bm9zOiBkc2k6IG1vdmUg
-dGhlIEVvVCBwYWNrZXRzIGNvbmZpZ3VyYXRpb24gcG9pbnQKPiAgIGRybS9leHlub3M6IHVzZSB3
-YWl0X2V2ZW50X3RpbWVvdXQoKSBmb3Igc2FmZXR5IHVzYWdlCj4gICBBUk06IGR0czogc2Ftc3Vu
-Zy1maW1kOiBhZGQgTENEIEk4MCBpbnRlcmZhY2Ugc3BlY2lmaWMgcHJvcGVydGllcwo+ICAgZHJt
-L2V4eW5vczogYWRkIFRFIGhhbmRsZXIgdG8gc3VwcG9ydCBMQ0QgSTgwIGludGVyZmFjZQo+ICAg
-ZHJtL2V4eW5vczogZHNpOiBhZGQgVEUgaW50ZXJydXB0IGhhbmRsZXIgdG8gc3VwcG9ydCBMQ0Qg
-STgwIGludGVyZmFjZQo+ICAgZHJtL2V4eW5vczogZmltZDogc3VwcG9ydCBMQ0QgSTgwIGludGVy
-ZmFjZQo+ICAgQVJNOiBkdHM6IGV4eW5vc19kc2ltOiBhZGQgZXh5bm9zNTQxMCBjb21wYXRpYmxl
-IHRvIERUIGJpbmRpbmdzCj4gICBkcm0vZXh5bm9zOiBkc2k6IGFkZCBkcml2ZXIgZGF0YSB0byBz
-dXBwb3J0IEV4eW5vczU0MTAvNTQyMC81NDQwIFNvQ3MKPiAgIEFSTTogZHRzOiBzNmUzZmEwOiBh
-ZGQgRFQgYmluZGluZ3MKPiAgIGRybS9wYW5lbDogYWRkIFM2RTNGQTAgZHJpdmVyCj4gICBBUk06
-IGR0czogZXh5bm9zNDogYWRkIHN5c3RlbSByZWdpc3RlciBwcm9wZXJ0eQo+ICAgQVJNOiBkdHM6
-IGV4eW5vczU6IGFkZCBzeXN0ZW0gcmVnaXN0ZXIgcHJvcGVydHkKPiAgIEFSTTogZHRzOiBleHlu
-b3M1NDIwOiBhZGQgbWlwaS1waHkgbm9kZQo+ICAgQVJNOiBkdHM6IGV4eW5vczU0MjA6IGFkZCBk
-c2kgbm9kZQoKUGlrZWQgdGhlbSB1cCBleGNlcHQgcGF0Y2ggOSBhbmQgMTAuIFRoZSB0d28gcGF0
-Y2hlcyBhcmUgbmVlZGVkIGZvciBtb3JlCnJldmlldyBhbmQgY29uc2Vuc3VzCgpUaGFua3MsCklu
-a2kgRGFlCgo+IAo+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9wYW5lbC9zYW1zdW5nLHM2ZTNm
-YTAudHh0ICB8ICA0NiArKwo+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9leHlub3Nf
-ZHNpbS50eHQgICAgICB8ICAgNCArLQo+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9z
-YW1zdW5nLWZpbWQudHh0ICAgICB8ICAyOCArKwo+ICBhcmNoL2FybS9ib290L2R0cy9leHlub3M0
-LmR0c2kgICAgICAgICAgICAgICAgICAgICB8ICAgMSArCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4
-eW5vczUuZHRzaSAgICAgICAgICAgICAgICAgICAgIHwgICAxICsKPiAgYXJjaC9hcm0vYm9vdC9k
-dHMvZXh5bm9zNTQyMC5kdHNpICAgICAgICAgICAgICAgICAgfCAgMjAgKwo+ICBkcml2ZXJzL2dw
-dS9kcm0vZXh5bm9zL0tjb25maWcgICAgICAgICAgICAgICAgICAgICB8ICAgMSArCj4gIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgICAgICAgICAgIHwgIDE1ICstCj4g
-IGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmggICAgICAgICAgIHwgICA3
-ICsKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oICAgICAgICAgICAg
-fCAgIDMgKwo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgICAgICAg
-ICAgICB8IDI2NiArKysrKysrKystCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9maW1kLmMgICAgICAgICAgIHwgMjc2ICsrKysrKysrKy0tCj4gIGRyaXZlcnMvZ3B1L2RybS9w
-YW5lbC9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgIHwgICA3ICsKPiAgZHJpdmVycy9ncHUv
-ZHJtL3BhbmVsL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgfCAgIDEgKwo+ICBkcml2ZXJz
-L2dwdS9kcm0vcGFuZWwvcGFuZWwtczZlM2ZhMC5jICAgICAgICAgICAgICB8IDU0MSArKysrKysr
-KysrKysrKysrKysrKysKPiAgaW5jbHVkZS92aWRlby9zYW1zdW5nX2ZpbWQuaCAgICAgICAgICAg
-ICAgICAgICAgICAgfCAgIDMgKy0KPiAgMTYgZmlsZXMgY2hhbmdlZCwgMTE0NiBpbnNlcnRpb25z
-KCspLCA3NCBkZWxldGlvbnMoLSkKPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24v
-ZGV2aWNldHJlZS9iaW5kaW5ncy9wYW5lbC9zYW1zdW5nLHM2ZTNmYTAudHh0Cj4gIGNyZWF0ZSBt
-b2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vcGFuZWwvcGFuZWwtczZlM2ZhMC5jCj4gCgpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
-ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+On Tuesday 22 July 2014 06:33 PM, Arnd Bergmann wrote:
+
+(...)
+
+>   
+> +static int exynos_read_s3c64xx_ts(struct iio_dev *indio_dev, int *x, int *y)
+> +{
+> +	struct exynos_adc *info = iio_priv(indio_dev);
+> +	unsigned long timeout;
+> +	int ret;
+> +
+> +	mutex_lock(&indio_dev->mlock);
+> +	info->read_ts = true;
+> +
+> +	reinit_completion(&info->completion);
+> +
+> +	writel(ADC_S3C2410_TSC_PULL_UP_DISABLE | ADC_TSC_AUTOPST,
+> +	       ADC_V1_TSC(info->regs));
+> +
+> +	/* Select the ts channel to be used and Trigger conversion */
+> +	info->data->start_conv(info, ADC_S3C2410_MUX_TS);
+> +
+> +	timeout = wait_for_completion_timeout
+> +			(&info->completion, EXYNOS_ADC_TIMEOUT);
+
+Should be properly aligned:
+
+	wait_for_completion_timeout(&info->completion,
+				    EXYNOS_ADC_TIMEOUT);
+
+-- 
+Regards,
+Varka Bhadram
