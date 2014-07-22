@@ -1,71 +1,135 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [RESEND PATCH V5 08/12] drm/bridge: ptn3460: Support bridge chaining
-Date: Tue, 22 Jul 2014 11:51:55 +0530
-Message-ID: <CAEC9eQP3U=brHP12ekO-n4GTUnsvQGWWd29HWZJXyxsHtNXDtw@mail.gmail.com>
-References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1405629839-12086-9-git-send-email-ajaykumar.rs@samsung.com>
-	<20140721082223.GF8843@ulmo>
-	<CAEC9eQO8yTwYd08_8Cu_o4VSLPZXMrmYPmszap_gcN_bvBVz3A@mail.gmail.com>
-	<20140721124053.GC15238@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v6 10/14] drm/panel: add S6E3FA0 driver
+Date: Tue, 22 Jul 2014 09:49:36 +0200
+Message-ID: <20140722074935.GC18258@ulmo>
+References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
+ <1405587689-1466-11-git-send-email-yj44.cho@samsung.com>
+ <20140717103645.GD17877@ulmo> <53C87D2F.9000906@samsung.com>
+ <53CCD5A8.6090406@samsung.com> <20140721091917.GK8843@ulmo>
+ <53CCF70A.5010403@samsung.com> <53CDDD61.6000005@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f169.google.com ([209.85.220.169]:63762 "EHLO
-	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751139AbaGVGV4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Jul 2014 02:21:56 -0400
-Received: by mail-vc0-f169.google.com with SMTP id hu12so14116805vcb.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Jul 2014 23:21:55 -0700 (PDT)
-In-Reply-To: <20140721124053.GC15238@ulmo>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0130100484=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <53CDDD61.6000005@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, Tomi Valkeinen <tomi.valkeinen@ti.com>, Paul Mundt <paul.mundt@gmail.com>, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com, Guennadi Liakhovetski <g.liakhovetski@gmx.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Rob Clark <robdclark@gmail.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
 
-On Mon, Jul 21, 2014 at 6:10 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Mon, Jul 21, 2014 at 05:28:13PM +0530, Ajay kumar wrote:
->> Hi Thierry,
->>
->> On Mon, Jul 21, 2014 at 1:52 PM, Thierry Reding
->> <thierry.reding@gmail.com> wrote:
->> > On Fri, Jul 18, 2014 at 02:13:54AM +0530, Ajay Kumar wrote:
->> > [...]
->> >> Also, remove the drm_connector implementation from ptn3460,
->> >> since the same is implemented using panel_binder.
->> >
->> > I think that's a step backwards. In fact I think the panel-bridge binder
->> > driver shouldn't be needed at all. At least not for now. We have a very
->> > limited number of bridge drivers, so it shouldn't hurt at this stage to
->> > implement the connector instantiation within each driver. Once we have
->> > more bridge drivers, and therefore a better understanding of what they
->> > need, we can always add something like the panel-binder (though I think
->> > it should be library code, similar to the drm_encoder_helper_add() API,
->> > rather than this kind of self-contained object).
->> panel_binder was needed to wrap around panel as a bridge, and this was in turn
->> needed because people wanted to represent a bridge+panel combo as a chain
->> of bridges.
->> So, if we choose to drop panel_binder, we choose to drop the idea of chaining
->> the bridges, and end up calling drm_panel functions directly from
->> individual bridges.
->> And, the bridge will implement the connector functions as you suggested.
->> I am okay with this, if Daniel/Rob don't have an issue with this.
->
-> I think bridge chaining and panel handling are separate issues. That's
-> why I think we shouldn't mix them like this. From earlier discussion[0]
-> the conclusion was that the final element in the chain should implement
-> a connector (with the appropriate type). Often that last element would
-> be an encoder (when there are no bridges). Sometimes the last element
-> would be a bridge. It's logical for that same element to also implement
-> the panel integration since it's closely tied to the connector.
->
-> Thierry
->
-> [0]: http://lists.freedesktop.org/archives/dri-devel/2014-May/059685.html
-Going with Thierry's opinion, if the bridge is allowed to do panel integration,
-there is no need for a bridge_chain. I mean a bridge_chain doesn't exist in
-my case at all. I have just one bridge which integrates a panel.
-Is it really necessary to keep next_bridge pointer and other helpers?
 
-Ajay
+--===============0130100484==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+nBD6E3TurpgldQp"
+Content-Disposition: inline
+
+
+--+nBD6E3TurpgldQp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jul 22, 2014 at 12:41:21PM +0900, YoungJun Cho wrote:
+> On 07/21/2014 08:18 PM, Andrzej Hajda wrote:
+> >On 07/21/2014 11:19 AM, Thierry Reding wrote:
+> >>On Mon, Jul 21, 2014 at 10:56:08AM +0200, Andrzej Hajda wrote:
+> >>>On 07/18/2014 03:49 AM, YoungJun Cho wrote:
+> >>>>On 07/17/2014 07:36 PM, Thierry Reding wrote:
+> >>>>>On Thu, Jul 17, 2014 at 06:01:25PM +0900, YoungJun Cho wrote:
+[...]
+> >>>>>>+static void s6e3fa0_read_mtp_id(struct s6e3fa0 *ctx)
+> >>>>>>+{
+> >>>>>>+	unsigned char id[MTP_ID_LEN];
+> >>>>>>+	int ret;
+> >>>>>>+
+> >>>>>>+	s6e3fa0_set_maximum_return_packet_size(ctx, MTP_ID_LEN);
+> >>>>>>+	ret =3D s6e3fa0_dcs_read(ctx, MIPI_DCS_GET_DISPLAY_ID, id, MTP_ID=
+_LEN);
+> >>>>>This also looks like a standard DCS command. I can't find it in eith=
+er
+> >>>>>v1.01 nor v1.02 of the specification, though. Do you know where it's
+> >>>>>specified?
+> >>>>>
+> >>>>Yes, I also can't find it in DCS specification and there is no special
+> >>>>description in panel datasheet.
+> >>>>But as it is declared in "include/video/mipi_display.h", so I think it
+> >>>>is a standard one.
+> >>>
+> >>>On page 9 of the "Introduction of MIPI by Renesas" [2] there is info
+> >>>it is a part of "Nokia I/F command list", I guess it is kind of alpha
+> >>>version of MIPI DCS.
+> >>>
+> >>>[2]: http://wenku.baidu.com/view/658fab68af1ffc4ffe47acbe.html
+> >>
+> >>That link is the only one which contains "Nokia I/F command list" on the
+> >>internet (that is, according to Google). But since this is already part
+> >>of the mipi_display.h header file we may as well use it.
+> >>
+> >>I wonder if perhaps the READ_DDB_START and READ_DDB_CONTINUE commands
+> >>could be used as a replacement for this display ID.
+> >>
+>=20
+> There is a simple description for "Read DDB Start(A1H)" like below.
+> - This command returns supplier identification and display module model /
+> revision information.
+> - NOTE: This information is not the same what Read IDs(04H) command is
+> returning.
+>=20
+> For reference, Read IDs(04H) description is like below.
+> - This read command returns 24-bit display identification information.
+> - The first read byte identifies the OLED module's manufacturer.
+> - The Second read byte is used to track the OLED module/driver version.
+> - The third read byte identifies the OLED module/driver.
+
+Okay, that explains things a little better. Can you point me to the
+document that this is from?
+
+But what I was trying to say is that if the Read IDs command isn't an
+official DCS command, maybe it would be a better idea to use the DDB
+instead. I assume that even if it isn't the same information it would
+at least be a superset and therefore a suitable replacement.
+
+Thierry
+
+--+nBD6E3TurpgldQp
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJTzhePAAoJEN0jrNd/PrOhsUEQAJdwQx63WI8owaraFNfL5oZI
+f2cleQCk9rF8j0bWhtBtRWhInqK8pLog8dFbcJh9fRcrO79GQhnVfs7BbfdJMeKu
+WUTslblQm5aqWGDJdTVBNcEEggqG8YV5imMHKgpBi29mJ2N4qKEQUQwUSE5tgRpO
+xJ0dKrZr4Jze0dtpkky1DJZ9vHJObzVjMhvzIDzXZQvpSmTZcHgVzi6XcZ29xCtf
++HzWlkDrQX8VHENFzM13/f3bky4+pNwX+GZI/i6/XW2AKqF6TcpnbYHgGJxDqKAV
+Nb4FiHiEQt0lzLaWwpyBoDpEkaebYqcA9+BVqGEs/DTpj1Z7qW+2Lv4/mVmC8LPJ
+/gmUwoHGDp/MBUk3YOI60obDd4m4gGQwGEBogJsSl7rZqTA243zvSq9JGS7uNdk7
+MszArcanEUqgAUKAvURCVFRxH+q6PmkeIuDGykvyuakQ68V+mMNgvE0nTTrkA16b
+hc4lM1WmIqnR5RYy5EfxtYaYc1VL/JBZad6+TFmfo2jTSUNaQIl5v6NcMLCBqEpo
+1sL2wFDH9EZGYZ590XIuHNz23JXn9DuXWaYpMh3XX785cA/Ohsz8xMtrCUGKt9Ul
+awnVi5uCkqEDqRBcOjYI5Ds3RMAGIS0ef0YYu+p4hadxZufgMzosuNFV/VzI6SW6
+uuAFor9nWyHqUokmADTr
+=ndVx
+-----END PGP SIGNATURE-----
+
+--+nBD6E3TurpgldQp--
+
+--===============0130100484==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0130100484==--
