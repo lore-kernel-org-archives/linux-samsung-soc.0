@@ -1,184 +1,221 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [RESEND PATCH V5 12/12] drm/exynos: Add ps8622 lvds bridge
- discovery to DP driver
-Date: Tue, 22 Jul 2014 11:35:52 +0530
-Message-ID: <CAEC9eQOTtFPx-tK8Loo=V1LxSm0i5zwmdCv8khRQr7pYZEiF3A@mail.gmail.com>
-References: <1405629839-12086-1-git-send-email-ajaykumar.rs@samsung.com>
- <1405629839-12086-13-git-send-email-ajaykumar.rs@samsung.com>
- <20140721071028.GB8843@ulmo>
- <CAEC9eQPkzrpQn41+zu8mwJUctSd0CF_U4UCdff0F7VYq2oWthw@mail.gmail.com>
- <20140721125424.GD15238@ulmo>
- <CAEC9eQODqv=vkWhxnSVC4fFcfn1pHAmXzMZowayBbgKPjdppzw@mail.gmail.com>
- <20140721144427.GA28336@ulmo>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [RESEND PATCH] thermal: samsung: Add TMU support for Exynos3250 SoC
+Date: Tue, 22 Jul 2014 11:41:56 +0530
+Message-ID: <CADGdYn5Druo7D7QeiiAGHaJxMiyB0uvAiPw+K6aG-xYgNHa8sQ@mail.gmail.com>
+References: <1405641605-3370-1-git-send-email-cw00.choi@samsung.com>
+	<1405922696.2455.1.camel@rzhang1-toshiba>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140721144427.GA28336@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Javier Martinez Canillas <javier@dowhile0.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1405922696.2455.1.camel@rzhang1-toshiba>
+Sender: linux-pm-owner@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Jonghwa Lee <jonghwa3.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, pawel.moll@arm.com, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, eduardo.valentin@gmail.com, Kumar Gala <galak@codeaurora.org>, naveen krishna <ch.naveen@samsung.com>, LAK <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jul 21, 2014 at 8:14 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Mon, Jul 21, 2014 at 08:06:01PM +0530, Ajay kumar wrote:
->> Hi Thierry,
+On Mon, Jul 21, 2014 at 11:34 AM, Zhang Rui <rui.zhang@intel.com> wrote:
+> On Fri, 2014-07-18 at 09:00 +0900, Chanwoo Choi wrote:
+>> This patch adds the registers, bit fields and compatible strings
+>> required to support for the 1 TMU channels on Exynos3250.
 >>
->> On Mon, Jul 21, 2014 at 6:24 PM, Thierry Reding
->> <thierry.reding@gmail.com> wrote:
->> > On Mon, Jul 21, 2014 at 04:58:25PM +0530, Ajay kumar wrote:
->> >> On Mon, Jul 21, 2014 at 12:40 PM, Thierry Reding
->> >> <thierry.reding@gmail.com> wrote:
->> >> > On Fri, Jul 18, 2014 at 02:13:58AM +0530, Ajay Kumar wrote:
->> >> >> From: Rahul Sharma <Rahul.Sharma@samsung.com>
->> >> >>
->> >> >> This patch adds ps8622 lvds bridge discovery code to the dp driver.
->> >> >>
->> >> >> Signed-off-by: Rahul Sharma <Rahul.Sharma@samsung.com>
->> >> >> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->> >> >> ---
->> >> >>  drivers/gpu/drm/exynos/exynos_dp_core.c |    5 +++++
->> >> >>  1 file changed, 5 insertions(+)
->> >> >>
->> >> >> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
->> >> >> index 0ca6256..82e2942 100644
->> >> >> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
->> >> >> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
->> >> >> @@ -31,6 +31,7 @@
->> >> >>  #include <drm/drm_panel.h>
->> >> >>  #include <drm/bridge/ptn3460.h>
->> >> >>  #include <drm/bridge/panel_binder.h>
->> >> >> +#include <drm/bridge/ps8622.h>
->> >> >>
->> >> >>  #include "exynos_drm_drv.h"
->> >> >>  #include "exynos_dp_core.h"
->> >> >> @@ -999,6 +1000,10 @@ static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
->> >> >>       if (find_bridge("nxp,ptn3460", &bridge)) {
->> >> >>               bridge_chain = ptn3460_init(dp->drm_dev, encoder, bridge.client,
->> >> >>                                                               bridge.node);
->> >> >> +     } else if (find_bridge("parade,ps8622", &bridge) ||
->> >> >> +                             find_bridge("parade,ps8625", &bridge)) {
->> >> >> +             bridge_chain = ps8622_init(dp->drm_dev, encoder, bridge.client,
->> >> >> +                                                             bridge.node);
->> >> >>       }
->> >> >
->> >> > We really ought to be adding some sort of registry at some point.
->> >> > Otherwise every driver that wants to use bridges needs to come up with a
->> >> > similar set of helpers to instantiate them.
->> >> >
->> >> > Also you're making this driver depend on (now) two bridges, whereas it
->> >> > really shouldn't matter which exact types it supports. Bridges should be
->> >> > exposed via a generic interface.
->> >>
->> >> How about moving out the find_bridge() function into a common header file,
->> >> and also supporting the list of bridge_init declarations in the same file?
->> >>
->> >> We get bridge chip node from phandle, and then pass the same node
->> >> to find_bridge() which searches the list using of_device_is_compatible()
->> >> to call the appropriate bridge_init function?
->> >
->> > That could work, but it's still somewhat unusual and shouldn't be
->> > required. I think we'd be better of with some sort of registry like we
->> > have for panels. That would mean that a driver that wants to use a
->> > bridge would do something like this:
->> >
->> >         struct drm_bridge *bridge;
->> >         struct device_node *np;
->> >
->> >         np = of_parse_phandle(dev->of_node, "bridge", 0);
->> >         if (np) {
->> >                 bridge = of_drm_find_bridge(np);
->> >                 of_node_put(np);
->> >
->> >                 if (!bridge)
->> >                         return -EPROBE_DEFER;
->> >         }
->> >
->> > An alternative way would be to add a non-OF wrapper around this, like
->> > this for example:
->> Let me try the DT version first :)
->>
->> >         bridge = drm_bridge_get(dev, NULL);
->> >
->> > Which would be conceptually the same as clk_get() or regulator_get() and
->> > could be easily extended to support non-DT setups as well.
->> >
->> > As for bridge drivers I think we may have to rework things a little, so
->> > that a driver can call some sequence like this:
->> >
->> >         struct foo_bridge {
->> >                 struct drm_bridge base;
->> >                 ...
->> >         };
->> >
->> >         static const struct drm_bridge_funcs foo_bridge_funcs = {
->> >                 ...
->> >         };
->> >
->> >         static int foo_probe(...)
->> >         {
->> >                 struct foo_bridge *bridge;
->> >                 int err;
->> >
->> >                 bridge = devm_kzalloc(dev, sizeof(*bridge), GFP_KERNEL);
->> >                 if (!bridge)
->> >                         return -ENOMEM;
->> >
->> >                 /* setup bridge (return -EPROBE_DEFER if necessary, ...) */
->> >
->> >                 /* register bridge with DRM */
->> >                 drm_bridge_init(&bridge->base);
->> >                 bridge->base.dev = dev;
->> >                 bridge->base.funcs = &foo_bridge_funcs;
->> >
->> >                 err = drm_bridge_add(&bridge->base);
->> >                 if (err < 0)
->> >                         return err;
->> >
->> >                 dev_set_drvdata(dev, bridge);
->> >                 ...
->> >         }
->> >
->> > drm_bridge_add() would add the bridge to a global list of bridge devices
->> > which drm_bridge_get()/of_drm_find_bridge() can use to find the one that
->> > it needs. The above has the big advantage that it'sdev->mode_config.bridge_list completely
->> > independent of the underlying bus that the bridge is on. It could be I2C
->> > or SPI, platform device or PCI device.
->> >
->> > Thierry
->> Ok. This is all about making the bridge driver confine to the driver model.
->> But, I would need a drm_device pointer to register the bridge to DRM core.
->> How do I get it?
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> [Add MUX address setting bits by Jonghwa Lee]
+>> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Reviewed-by: Amit Daniel Kachhap<amit.daniel@samsung.com>
 >
-> Once you've obtained a reference to the DRM bridge from your driver you
-> should carry it around until you've set up the DRM device. Then you can
-> hook it up, which possibly requires a new function (since it's what the
-> drm_bridge_init() used to do).
+> Eduardo and Amit,
+>
+> do you have any comments on this?
+The changes looks fine to me. I already reviewed these patches earlier.
 
-Ok. We can have 2 parts:
-
-Non-DRM part:
-In order to get a reference for drm_bridge in my encoder driver, I
-should be using
-of_drm_find_bridge(). In order to do that, I should have already added
-the bridge
-into a static list of bridges(using something like drm_bridge_add).
-Also, bridge_funcs pointer is assigned to the bridge object in the
-bridge driver itself.
-
-DRM part:
-Assuming that the bridge driver probe will take care of calling
-drm_bridge_add(),
-I can then call drm_bridge_init from encoder driver, with a drm_bridge pointer
-and a drm_device pointer, which will actually register the bridge into DRM core.
-
-Ajay
+thanks,
+Amit
+>
+> thanks,
+> rui
+>
+>> ---
+>>  .../devicetree/bindings/thermal/exynos-thermal.txt |  1 +
+>>  drivers/thermal/samsung/exynos_tmu.c               |  7 +-
+>>  drivers/thermal/samsung/exynos_tmu.h               |  3 +-
+>>  drivers/thermal/samsung/exynos_tmu_data.c          | 89 ++++++++++++++++++++++
+>>  drivers/thermal/samsung/exynos_tmu_data.h          |  7 ++
+>>  5 files changed, 105 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>> index c949092..ae738f5 100644
+>> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>> @@ -3,6 +3,7 @@
+>>  ** Required properties:
+>>
+>>  - compatible : One of the following:
+>> +            "samsung,exynos3250-tmu"
+>>              "samsung,exynos4412-tmu"
+>>              "samsung,exynos4210-tmu"
+>>              "samsung,exynos5250-tmu"
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>> index d7ca9f4..a2a08ea 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> @@ -505,6 +505,10 @@ static irqreturn_t exynos_tmu_irq(int irq, void *id)
+>>
+>>  static const struct of_device_id exynos_tmu_match[] = {
+>>       {
+>> +             .compatible = "samsung,exynos3250-tmu",
+>> +             .data = (void *)EXYNOS3250_TMU_DRV_DATA,
+>> +     },
+>> +     {
+>>               .compatible = "samsung,exynos4210-tmu",
+>>               .data = (void *)EXYNOS4210_TMU_DRV_DATA,
+>>       },
+>> @@ -677,7 +681,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>>               goto err_clk_sec;
+>>       }
+>>
+>> -     if (pdata->type == SOC_ARCH_EXYNOS4210 ||
+>> +     if (pdata->type == SOC_ARCH_EXYNOS3250 ||
+>> +         pdata->type == SOC_ARCH_EXYNOS4210 ||
+>>           pdata->type == SOC_ARCH_EXYNOS4412 ||
+>>           pdata->type == SOC_ARCH_EXYNOS5250 ||
+>>           pdata->type == SOC_ARCH_EXYNOS5260 ||
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+>> index edd08cf..1b4a644 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.h
+>> +++ b/drivers/thermal/samsung/exynos_tmu.h
+>> @@ -40,7 +40,8 @@ enum calibration_mode {
+>>  };
+>>
+>>  enum soc_type {
+>> -     SOC_ARCH_EXYNOS4210 = 1,
+>> +     SOC_ARCH_EXYNOS3250 = 1,
+>> +     SOC_ARCH_EXYNOS4210,
+>>       SOC_ARCH_EXYNOS4412,
+>>       SOC_ARCH_EXYNOS5250,
+>>       SOC_ARCH_EXYNOS5260,
+>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+>> index c1d81dc..aa8e0de 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu_data.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+>> @@ -90,6 +90,95 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
+>>  };
+>>  #endif
+>>
+>> +#if defined(CONFIG_SOC_EXYNOS3250)
+>> +static const struct exynos_tmu_registers exynos3250_tmu_registers = {
+>> +     .triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
+>> +     .triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
+>> +     .triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
+>> +     .tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
+>> +     .test_mux_addr_shift = EXYNOS4412_MUX_ADDR_SHIFT,
+>> +     .buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
+>> +     .buf_vref_sel_mask = EXYNOS_TMU_REF_VOLTAGE_MASK,
+>> +     .therm_trip_mode_shift = EXYNOS_TMU_TRIP_MODE_SHIFT,
+>> +     .therm_trip_mode_mask = EXYNOS_TMU_TRIP_MODE_MASK,
+>> +     .therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
+>> +     .buf_slope_sel_shift = EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
+>> +     .buf_slope_sel_mask = EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
+>> +     .core_en_shift = EXYNOS_TMU_CORE_EN_SHIFT,
+>> +     .tmu_status = EXYNOS_TMU_REG_STATUS,
+>> +     .tmu_cur_temp = EXYNOS_TMU_REG_CURRENT_TEMP,
+>> +     .threshold_th0 = EXYNOS_THD_TEMP_RISE,
+>> +     .threshold_th1 = EXYNOS_THD_TEMP_FALL,
+>> +     .tmu_inten = EXYNOS_TMU_REG_INTEN,
+>> +     .inten_rise0_shift = EXYNOS_TMU_INTEN_RISE0_SHIFT,
+>> +     .inten_rise1_shift = EXYNOS_TMU_INTEN_RISE1_SHIFT,
+>> +     .inten_rise2_shift = EXYNOS_TMU_INTEN_RISE2_SHIFT,
+>> +     .inten_fall0_shift = EXYNOS_TMU_INTEN_FALL0_SHIFT,
+>> +     .tmu_intstat = EXYNOS_TMU_REG_INTSTAT,
+>> +     .tmu_intclear = EXYNOS_TMU_REG_INTCLEAR,
+>> +     .intclr_fall_shift = EXYNOS_TMU_CLEAR_FALL_INT_SHIFT,
+>> +     .intclr_rise_shift = EXYNOS_TMU_RISE_INT_SHIFT,
+>> +     .intclr_rise_mask = EXYNOS_TMU_RISE_INT_MASK,
+>> +     .intclr_fall_mask = EXYNOS_TMU_FALL_INT_MASK,
+>> +     .emul_con = EXYNOS_EMUL_CON,
+>> +     .emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
+>> +     .emul_time_shift = EXYNOS_EMUL_TIME_SHIFT,
+>> +     .emul_time_mask = EXYNOS_EMUL_TIME_MASK,
+>> +};
+>> +
+>> +#define EXYNOS3250_TMU_DATA \
+>> +     .threshold_falling = 10, \
+>> +     .trigger_levels[0] = 70, \
+>> +     .trigger_levels[1] = 95, \
+>> +     .trigger_levels[2] = 110, \
+>> +     .trigger_levels[3] = 120, \
+>> +     .trigger_enable[0] = true, \
+>> +     .trigger_enable[1] = true, \
+>> +     .trigger_enable[2] = true, \
+>> +     .trigger_enable[3] = false, \
+>> +     .trigger_type[0] = THROTTLE_ACTIVE, \
+>> +     .trigger_type[1] = THROTTLE_ACTIVE, \
+>> +     .trigger_type[2] = SW_TRIP, \
+>> +     .trigger_type[3] = HW_TRIP, \
+>> +     .max_trigger_level = 4, \
+>> +     .gain = 8, \
+>> +     .reference_voltage = 16, \
+>> +     .noise_cancel_mode = 4, \
+>> +     .cal_type = TYPE_TWO_POINT_TRIMMING, \
+>> +     .efuse_value = 55, \
+>> +     .min_efuse_value = 40, \
+>> +     .max_efuse_value = 100, \
+>> +     .first_point_trim = 25, \
+>> +     .second_point_trim = 85, \
+>> +     .default_temp_offset = 50, \
+>> +     .freq_tab[0] = { \
+>> +             .freq_clip_max = 800 * 1000, \
+>> +             .temp_level = 70, \
+>> +     }, \
+>> +     .freq_tab[1] = { \
+>> +             .freq_clip_max = 400 * 1000, \
+>> +             .temp_level = 95, \
+>> +     }, \
+>> +     .freq_tab_count = 2, \
+>> +     .registers = &exynos3250_tmu_registers, \
+>> +     .features = (TMU_SUPPORT_EMULATION | \
+>> +                     TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
+>> +                     TMU_SUPPORT_EMUL_TIME)
+>> +#endif
+>> +
+>> +#if defined(CONFIG_SOC_EXYNOS3250)
+>> +struct exynos_tmu_init_data const exynos3250_default_tmu_data = {
+>> +     .tmu_data = {
+>> +             {
+>> +                     EXYNOS3250_TMU_DATA,
+>> +                     .type = SOC_ARCH_EXYNOS3250,
+>> +                     .test_mux = EXYNOS4412_MUX_ADDR_VALUE,
+>> +             },
+>> +     },
+>> +     .tmu_count = 1,
+>> +};
+>> +#endif
+>> +
+>>  #if defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250)
+>>  static const struct exynos_tmu_registers exynos4412_tmu_registers = {
+>>       .triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
+>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
+>> index d268981..f0979e5 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu_data.h
+>> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+>> @@ -148,6 +148,13 @@
+>>  #define EXYNOS5440_TMU_TH_RISE4_SHIFT                24
+>>  #define EXYNOS5440_EFUSE_SWAP_OFFSET         8
+>>
+>> +#if defined(CONFIG_SOC_EXYNOS3250)
+>> +extern struct exynos_tmu_init_data const exynos3250_default_tmu_data;
+>> +#define EXYNOS3250_TMU_DRV_DATA (&exynos3250_default_tmu_data)
+>> +#else
+>> +#define EXYNOS3250_TMU_DRV_DATA (NULL)
+>> +#endif
+>> +
+>>  #if defined(CONFIG_CPU_EXYNOS4210)
+>>  extern struct exynos_tmu_init_data const exynos4210_default_tmu_data;
+>>  #define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
+>
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
