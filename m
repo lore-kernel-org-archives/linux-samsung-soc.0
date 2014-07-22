@@ -1,68 +1,45 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
+From: Varka Bhadram <varkabhadram@gmail.com>
 Subject: Re: [PATCH v6 05/14] drm/exynos: dsi: add TE interrupt handler to
  support LCD I80 interface
-Date: Tue, 22 Jul 2014 20:10:18 +0900
-Message-ID: <53CE469A.3090701@samsung.com>
-References: <53CE3C45.9010509@samsung.com>
- <1406026184-29185-1-git-send-email-yj44.cho@samsung.com>
- <53CE43B3.2080203@gmail.com>
+Date: Tue, 22 Jul 2014 16:44:50 +0530
+Message-ID: <53CE47AA.4000200@gmail.com>
+References: <53CE3C45.9010509@samsung.com> <1406026184-29185-1-git-send-email-yj44.cho@samsung.com> <53CE43B3.2080203@gmail.com> <53CE469A.3090701@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <53CE43B3.2080203@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Varka Bhadram <varkabhadram@gmail.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f177.google.com ([209.85.192.177]:55622 "EHLO
+	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754766AbaGVLQL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Jul 2014 07:16:11 -0400
+In-Reply-To: <53CE469A.3090701@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: YoungJun Cho <yj44.cho@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com
 
-Hi Varka,
+On 07/22/2014 04:40 PM, YoungJun Cho wrote:
+> Hi Varka,
+>
+> This irq handler should be registered in attach() and unregistered in 
+> detach().
+>
+> The devm_* APIs are released(freed) in remove(), right?
+>
+> Logically the panel could be attached and detached several times after 
+> dsi is probed and not removed.
+> So I don't use devm_* APIs.
 
-This irq handler should be registered in attach() and unregistered in 
-detach().
+You meant to say that in-case of GPIOs also you are following the same thing ..?
 
-The devm_* APIs are released(freed) in remove(), right?
+Means requesting the GPIOs and Releasing several times ..?
 
-Logically the panel could be attached and detached several times after 
-dsi is probed and not removed.
-So I don't use devm_* APIs.
+>
+>>
+>
 
-Thank you.
-Best regards YJ
 
-On 07/22/2014 07:57 PM, Varka Bhadram wrote:
-> On 07/22/2014 04:19 PM, YoungJun Cho wrote:
->
-> (...)
->
->> +    ret = gpio_request_one(dsi->te_gpio, GPIOF_IN, "te_gpio");
->
-> devm_* APIs..?
->
->> +    if (ret) {
->> +        dev_err(dsi->dev, "gpio request failed with %d\n", ret);
->> +        goto out;
->> +    }
->> +
->> +    /*
->> +     * This TE GPIO IRQ should not be set to IRQ_NOAUTOEN, because panel
->> +     * calls drm_panel_init() first then calls mipi_dsi_attach() in
->> probe().
->> +     * It means that te_gpio is invalid when exynos_dsi_enable_irq() is
->> +     * called by drm_panel_init() before panel is attached.
->> +     */
->> +    ret = request_threaded_irq(gpio_to_irq(dsi->te_gpio),
->> +                    exynos_dsi_te_irq_handler, NULL,
->> +                    IRQF_TRIGGER_RISING, "TE", dsi);
->
-> why don't we use devm_request_threaded_irq()..?
->
->
+-- 
+Regards,
+Varka Bhadram.
