@@ -1,117 +1,210 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 2/2] iio: adc: exynos_adc: Add support for S3C24xx ADC
-Date: Tue, 22 Jul 2014 12:44:28 +0200
-Message-ID: <175757227.TPQdXAQiJt@diego>
-References: <1405995074-3271-1-git-send-email-cw00.choi@samsung.com> <1405995074-3271-3-git-send-email-cw00.choi@samsung.com> <5200888.DXoC06U953@wuerfel>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: [PATCH v6 05/14] drm/exynos: dsi: add TE interrupt handler to support
+ LCD I80 interface
+Date: Tue, 22 Jul 2014 19:49:44 +0900
+Message-ID: <1406026184-29185-1-git-send-email-yj44.cho@samsung.com>
+References: <53CE3C45.9010509@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <5200888.DXoC06U953@wuerfel>
-Sender: linux-doc-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org, ch.naveen@samsung.com, kgene.kim@samsung.com, kyungmin.park@samsung.com, t.figa@samsung.com, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <53CE3C45.9010509@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Am Dienstag, 22. Juli 2014, 10:39:38 schrieb Arnd Bergmann:
-> On Tuesday 22 July 2014 11:11:14 Chanwoo Choi wrote:
-> > This patch add support for s3c2410/s3c2416/s3c2440/s3c2443 ADC. The
-> > s3c24xx
-> > is alomost same as ADCv1. But, There are a little difference as following:
-> > - ADCMUX register address to select channel
-> > - ADCDAT mask (10bit or 12bit ADC resolution according to SoC version)
-> 
-> Very good, thanks for doing this patch!
-> 
-> (adding Heiko to Cc, he's probably interested in seeing this as well.
+This is a temporary solution and should be made by more
+generic way.
 
-indeed. Thanks for implementing this.
+To support LCD I80 interface, the DSI host should register
+TE interrupt handler from the TE GPIO of attached panel.
+So the panel generates a tearing effect synchronization signal
+then the DSI host calls the CRTC device manager to trigger
+to transfer video image.
 
-While trying to build a test setup for this, I noticed two points:
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 97 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 95 insertions(+), 2 deletions(-)
 
-(1) I'm not sure what the second register (a "phy enable register" according
-to the binding) is supposed to be.
-According to binding and adc code it is mandatory, but I didn't find any
-lone adc register in the s3c2416 manual.
-
-
-(2) You might need something along the lines of:
-
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 11b048a..088c99a 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -129,7 +129,7 @@ config AT91_ADC
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 58bfb2a..3adad44 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -16,7 +16,9 @@
+ #include <drm/drm_panel.h>
  
- config EXYNOS_ADC
-        tristate "Exynos ADC driver support"
--       depends on ARCH_EXYNOS || (OF && COMPILE_TEST)
-+       depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || (OF && COMPILE_TEST)
-        help
-          Core support for the ADC block found in the Samsung EXYNOS series
-          of SoCs for drivers such as the touchscreen and hwmon to use to share
-
-
-Thanks
-Heiko
-
-> 
-> One comment:
-> > @@ -101,12 +107,14 @@ struct exynos_adc {
-> > 
-> >  	struct completion	completion;
-> >  	
-> >  	u32			value;
-> > 
-> > +	u32			value2;
-> > 
-> >  	unsigned int            version;
-> >  
-> >  };
-> > 
-> > ...
-> > @@ -365,7 +448,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
-> > 
-> >  		ret = -ETIMEDOUT;
-> >  	
-> >  	} else {
-> >  	
-> >  		*val = info->value;
-> > 
-> > -		*val2 = 0;
-> > +		*val2 = info->value2;
-> > 
-> >  		ret = IIO_VAL_INT;
-> >  	
-> >  	}
-> > 
-> > @@ -377,9 +460,11 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
-> > 
-> >  static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
-> >  {
-> >  
-> >  	struct exynos_adc *info = (struct exynos_adc *)dev_id;
-> > 
-> > +	u32 mask = info->data->mask;
-> > 
-> >  	/* Read value */
-> > 
-> > -	info->value = readl(ADC_V1_DATX(info->regs)) & ADC_DATX_MASK;
-> > +	info->value = readl(ADC_V1_DATX(info->regs)) & mask;
-> > +	info->value2 = readl(ADC_V1_DATY(info->regs)) & mask;
-> > 
-> >  	/* clear irq */
-> >  	if (info->data->clear_irq)
-> 
-> If I understand it right, this would only be necessary if we want
-> to do the touchscreen driver as a separate iio client using the
-> in-kernel interfaces. As Jonathan Cameron commented, we probably
-> don't want to do that though. Even if we do, it should be a separate
-> patch and not mixed in with the s3c24xx support.
-> 
-> Aside from this:
-> 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> 	Arnd
-
+ #include <linux/clk.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/irq.h>
++#include <linux/of_gpio.h>
+ #include <linux/phy/phy.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/component.h>
+@@ -24,6 +26,7 @@
+ #include <video/mipi_display.h>
+ #include <video/videomode.h>
+ 
++#include "exynos_drm_crtc.h"
+ #include "exynos_drm_drv.h"
+ 
+ /* returns true iff both arguments logically differs */
+@@ -247,6 +250,7 @@ struct exynos_dsi {
+ 	struct clk *bus_clk;
+ 	struct regulator_bulk_data supplies[2];
+ 	int irq;
++	int te_gpio;
+ 
+ 	u32 pll_clk_rate;
+ 	u32 burst_clk_rate;
+@@ -954,17 +958,89 @@ static irqreturn_t exynos_dsi_irq(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
++static irqreturn_t exynos_dsi_te_irq_handler(int irq, void *dev_id)
++{
++	struct exynos_dsi *dsi = (struct exynos_dsi *)dev_id;
++	struct drm_encoder *encoder = dsi->encoder;
++
++	if (dsi->state & DSIM_STATE_ENABLED)
++		exynos_drm_crtc_te_handler(encoder->crtc);
++
++	return IRQ_HANDLED;
++}
++
++static void exynos_dsi_enable_irq(struct exynos_dsi *dsi)
++{
++	enable_irq(dsi->irq);
++
++	if (gpio_is_valid(dsi->te_gpio))
++		enable_irq(gpio_to_irq(dsi->te_gpio));
++}
++
++static void exynos_dsi_disable_irq(struct exynos_dsi *dsi)
++{
++	if (gpio_is_valid(dsi->te_gpio))
++		disable_irq(gpio_to_irq(dsi->te_gpio));
++
++	disable_irq(dsi->irq);
++}
++
+ static int exynos_dsi_init(struct exynos_dsi *dsi)
+ {
+ 	exynos_dsi_enable_clock(dsi);
+ 	exynos_dsi_reset(dsi);
+-	enable_irq(dsi->irq);
++	exynos_dsi_enable_irq(dsi);
+ 	exynos_dsi_wait_for_reset(dsi);
+ 	exynos_dsi_init_link(dsi);
+ 
+ 	return 0;
+ }
+ 
++static int exynos_dsi_register_te_irq(struct exynos_dsi *dsi)
++{
++	int ret;
++
++	dsi->te_gpio = of_get_named_gpio(dsi->panel_node, "te-gpios", 0);
++	if (!gpio_is_valid(dsi->te_gpio)) {
++		dev_err(dsi->dev, "no te-gpios specified\n");
++		ret = dsi->te_gpio;
++		goto out;
++	}
++
++	ret = gpio_request_one(dsi->te_gpio, GPIOF_IN, "te_gpio");
++	if (ret) {
++		dev_err(dsi->dev, "gpio request failed with %d\n", ret);
++		goto out;
++	}
++
++	/*
++	 * This TE GPIO IRQ should not be set to IRQ_NOAUTOEN, because panel
++	 * calls drm_panel_init() first then calls mipi_dsi_attach() in probe().
++	 * It means that te_gpio is invalid when exynos_dsi_enable_irq() is
++	 * called by drm_panel_init() before panel is attached.
++	 */
++	ret = request_threaded_irq(gpio_to_irq(dsi->te_gpio),
++					exynos_dsi_te_irq_handler, NULL,
++					IRQF_TRIGGER_RISING, "TE", dsi);
++	if (ret) {
++		dev_err(dsi->dev, "request interrupt failed with %d\n", ret);
++		gpio_free(dsi->te_gpio);
++		goto out;
++	}
++
++out:
++	return ret;
++}
++
++static void exynos_dsi_unregister_te_irq(struct exynos_dsi *dsi)
++{
++	if (gpio_is_valid(dsi->te_gpio)) {
++		free_irq(gpio_to_irq(dsi->te_gpio), dsi);
++		gpio_free(dsi->te_gpio);
++		dsi->te_gpio = -ENOENT;
++	}
++}
++
+ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+ 				  struct mipi_dsi_device *device)
+ {
+@@ -978,6 +1054,18 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+ 	if (dsi->connector.dev)
+ 		drm_helper_hpd_irq_event(dsi->connector.dev);
+ 
++	/*
++	 * This is a temporary solution and should be made by more generic way.
++	 *
++	 * If attached panel device is for command mode one, dsi should register
++	 * TE interrupt handler.
++	 */
++	if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO)) {
++		int ret = exynos_dsi_register_te_irq(dsi);
++		if (ret)
++			return ret;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -986,6 +1074,8 @@ static int exynos_dsi_host_detach(struct mipi_dsi_host *host,
+ {
+ 	struct exynos_dsi *dsi = host_to_dsi(host);
+ 
++	exynos_dsi_unregister_te_irq(dsi);
++
+ 	dsi->panel_node = NULL;
+ 
+ 	if (dsi->connector.dev)
+@@ -1099,7 +1189,7 @@ static void exynos_dsi_poweroff(struct exynos_dsi *dsi)
+ 
+ 		exynos_dsi_disable_clock(dsi);
+ 
+-		disable_irq(dsi->irq);
++		exynos_dsi_disable_irq(dsi);
+ 	}
+ 
+ 	dsi->state &= ~DSIM_STATE_CMD_LPM;
+@@ -1445,6 +1535,9 @@ static int exynos_dsi_probe(struct platform_device *pdev)
+ 		goto err_del_component;
+ 	}
+ 
++	/* To be checked as invalid one */
++	dsi->te_gpio = -ENOENT;
++
+ 	init_completion(&dsi->completed);
+ 	spin_lock_init(&dsi->transfer_lock);
+ 	INIT_LIST_HEAD(&dsi->transfer_list);
+-- 
+1.9.0
