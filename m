@@ -1,50 +1,75 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: Re: [PATCH v6 05/14] drm/exynos: dsi: add TE interrupt handler to
- support LCD I80 interface
-Date: Tue, 22 Jul 2014 16:27:55 +0530
-Message-ID: <53CE43B3.2080203@gmail.com>
-References: <53CE3C45.9010509@samsung.com> <1406026184-29185-1-git-send-email-yj44.cho@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL 4/5] Samsung exynos_mct update for v3.17
+Date: Tue, 22 Jul 2014 19:59:53 +0900
+Message-ID: <01b601cfa59c$12c2c7f0$384857d0$@samsung.com>
+References: <53C9C164.9030404@samsung.com>
+ <20140719220623.GF15676@quad.lixom.net> <53CCD3AB.7040205@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:44241 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753956AbaGVK7T (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:45193 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754853AbaGVK76 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Jul 2014 06:59:19 -0400
-In-Reply-To: <1406026184-29185-1-git-send-email-yj44.cho@samsung.com>
+	Tue, 22 Jul 2014 06:59:58 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N9400CAH17WXQ00@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 22 Jul 2014 19:59:56 +0900 (KST)
+In-reply-to: <53CCD3AB.7040205@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: YoungJun Cho <yj44.cho@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com
+To: 'Daniel Lezcano' <daniel.lezcano@linaro.org>, 'Olof Johansson' <olof@lixom.net>
+Cc: arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Doug Anderson' <dianders@chromium.org>, tglx@linutronix.de
 
-On 07/22/2014 04:19 PM, YoungJun Cho wrote:
+Daniel Lezcano wrote:
+> 
+> On 07/20/2014 12:06 AM, Olof Johansson wrote:
+> > On Sat, Jul 19, 2014 at 09:52:52AM +0900, Kukjin Kim wrote:
+> >> Note that this is also based on 3.16-rc5 because of dependency with
+> >> previous samsung fixes including exynos_mct already merged in
+> >> mainline during -rc.
+> >>
+> >> The following changes since commit 1795cd9b3a91d4b5473c97f491d63892442212ab:
+> >>
+> >>    Linux 3.16-rc5 (2014-07-13 14:04:33 -0700)
+> >>
+> >> are available in the git repository at:
+> >>
+> >
+> >> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> >> tags/exynos-mct
+> >>
+> >> for you to fetch changes up to 1a631118c1d085fe162f3b6d44f710c72206ef2d:
+> >>
+> >>    clocksource: exynos_mct: Only use 32-bits where possible
+> >> (2014-07-19 03:07:52 +0900)
+> >>
+> >> ----------------------------------------------------------------
+> >> exynos_mct update for v3.17
+> >> - only use 32-bit access for performance benefits on exynos
+> >>    32-bit system and this means ARCH timer should be supported
+> >>    on exynos 64-bit system instead of current MCT.
+> >> - use readl_relaxed/writel_relaxed to consistently use the
+> >>    proper functions in exynos_mct.
+> >
+> > There's no reason for these to go through arm-soc, is there? They should
+> > go through the clocksource tree (Daniel Lezcano / Thomas Gleixner). They
+> > also lack acks from them if they for some reason need to go through arm-soc.
+> 
+Olof, you're right. The branch has no dependency with arm-soc so I agreed.
 
-(...)
+> Yes, that's right. Furthermore I have been discussing with Doug about
+> these patches before.
+> 
+> Kukjin, is there any dependency on these patches ?
+> 
+Yeah, Daniel, it should be handled in the clocksource tree so how should I do
+for it?
 
-> +	ret = gpio_request_one(dsi->te_gpio, GPIOF_IN, "te_gpio");
-
-devm_* APIs..?
-
-> +	if (ret) {
-> +		dev_err(dsi->dev, "gpio request failed with %d\n", ret);
-> +		goto out;
-> +	}
-> +
-> +	/*
-> +	 * This TE GPIO IRQ should not be set to IRQ_NOAUTOEN, because panel
-> +	 * calls drm_panel_init() first then calls mipi_dsi_attach() in probe().
-> +	 * It means that te_gpio is invalid when exynos_dsi_enable_irq() is
-> +	 * called by drm_panel_init() before panel is attached.
-> +	 */
-> +	ret = request_threaded_irq(gpio_to_irq(dsi->te_gpio),
-> +					exynos_dsi_te_irq_handler, NULL,
-> +					IRQF_TRIGGER_RISING, "TE", dsi);
-
-why don't we use devm_request_threaded_irq()..?
-
-
--- 
-Regards,
-Varka Bhadram.
+Thanks,
+Kukjin
