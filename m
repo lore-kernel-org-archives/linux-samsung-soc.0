@@ -1,68 +1,91 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v8 00/13] Add Maxim 77802 PMIC support
-Date: Tue, 22 Jul 2014 02:46:20 +0200
-Message-ID: <53CDB45C.10805@collabora.co.uk>
-References: <1405337769-3741-1-git-send-email-javier.martinez@collabora.co.uk> <53CD0B17.5040706@collabora.co.uk> <20140722001053.GO17528@sirena.org.uk>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 00/12] drm/exynos/ipp: image post processing improvements,
+ part three
+Date: Tue, 22 Jul 2014 09:54:53 +0900
+Message-ID: <53CDB65D.4010105@samsung.com>
+References: <1404393037-17299-1-git-send-email-a.hajda@samsung.com>
+ <53BD5615.8060900@samsung.com> <53CCDBF5.9080605@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:52356 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751531AbaGVAq0 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:49910 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751164AbaGVAy4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jul 2014 20:46:26 -0400
-In-Reply-To: <20140722001053.GO17528@sirena.org.uk>
+	Mon, 21 Jul 2014 20:54:56 -0400
+In-reply-to: <53CCDBF5.9080605@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
 
-On 07/22/2014 02:10 AM, Mark Brown wrote:
-> On Mon, Jul 21, 2014 at 02:44:07PM +0200, Javier Martinez Canillas wrote:
->> On 07/14/2014 01:35 PM, Javier Martinez Canillas wrote:
-> 
->> Mark, Mike and Alessandro,
-> 
->> This is a gentle reminder to look at the patches that touches your subsystems
->> and provide acks if possible so Lee can merge the remainder set through the mfd
->> tree.
-> 
-> Please stop nagging, you are chasing after only one week which is
-> excessive for something that isn't an urgent bugfix (especially
-> with a series like this that has had many rapid repins).  Several weeks
-> to a month would be more appropriate, and then resending the patches
-> rather than sending contentless pings is more useful.  Sending mails
-> like this just means that people have more mail to read that isn't your
-> patch, it is more likely to get you negative attention than positive -
-> for example, I will tend to deprioritise things where I'm being chased
-> too urgently as I do not wish to encourage such behaviour by being seen
-> to reward it.
-> 
+On 2014=EB=85=84 07=EC=9B=94 21=EC=9D=BC 18:23, Andrzej Hajda wrote:
+> Hi Inki,
+>=20
+> On 07/09/2014 04:47 PM, Inki Dae wrote:
+>> On 2014=EB=85=84 07=EC=9B=94 03=EC=9D=BC 22:10, Andrzej Hajda wrote:
+>>> This set of independent patches contains various improvement and fi=
+xes
+>>> for exynos_drm ipp framework.
+>>> The patchset is based on exynos-drm-next branch.
+>>>
+>> Did you test ipp module using libdrm? If so, can you share the app? =
+I
+>> would try to test this patch series before merging them. Mainline li=
+bdrm
+>> has no any ipp interfaces.
+>=20
+> I have used ipptest program developed by you :), with minor changes.
+> More advanced tests are on my TODO list, but for this patchset ipptes=
+t
+> seems to be OK - the patches are mainly cleanup patches.
+>=20
 
-I didn't mean to bother you. It's true that it has been only a week since I
-posted v8 of this series but I didn't have feedback for the clock, rtc and
-regulator drivers since v5 which was posted on June, 26 so I thought that a ping
-just to be sure it was not forgotten was not that bad. But sorry I won't do it
-again and will just wait.
 
-About the many re-spins, as most mfd drivers this PMIC support touches different
-subsystems and the series had many patches so each time I had feedback for some
-patches I prepared a new version and reposted the whole series. This doesn't
-mean that all the patches changed from version to version though, some patches
-have not changed for several revisions.
+Did the ipptest work fine? I just tried to build the app so didn't test
+the app. :) Got it, will merge this patch series.
 
-> In general I would recommend taking a step back, slowing down, and if
-> you are not getting a response either thinking of something else to do
-> in parallel or trying to do things that make it easier to accept your
-> change if there are any (sometimes it's just a case of waiting).  Look
-> at how frequently the relevant maintainers tend to respond, at what the
-> previous review comments have been and also consider the possibility
-> that people might take holidays or just be busy.
-> 
+Thanks,
+Inki Dae
 
-Sorry, I didn't mean to imply that you are not busy or might be on holidays. I
-guess I just got anxious due the merge window being close...
-
-Best regards,
-Javier
+> Regards
+> Andrzej
+>=20
+>>
+>> Thanks,
+>> Inki Dae
+>>
+>>> Regards
+>>> Andrzej
+>>>
+>>>
+>>> Andrzej Hajda (12):
+>>>   drm/exynos/ipp: remove type casting
+>>>   drm/exynos/ipp: remove unused field from exynos_drm_ipp_private
+>>>   drm/exynos/ipp: remove struct exynos_drm_ipp_private
+>>>   drm/exynos/ipp: correct address type
+>>>   drm/exynos/ipp: remove temporary variable
+>>>   drm/exynos/ipp: remove incorrect checks of list_first_entry resul=
+t
+>>>   drm/exynos/ipp: simplify memory check function
+>>>   drm/exynos/ipp: remove useless registration checks
+>>>   drm/exynos/ipp: simplify ipp_find_obj
+>>>   drm/exynos/ipp: remove redundant messages
+>>>   drm/exynos/ipp: simplify ipp_create_id
+>>>   drm/exynos/ipp: simplify ipp_find_driver
+>>>
+>>>  drivers/gpu/drm/exynos/exynos_drm_drv.h |   7 +-
+>>>  drivers/gpu/drm/exynos/exynos_drm_ipp.c | 259 +++++++++-----------=
+------------
+>>>  drivers/gpu/drm/exynos/exynos_drm_ipp.h |   4 +-
+>>>  3 files changed, 73 insertions(+), 197 deletions(-)
+>>>
+>>
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
