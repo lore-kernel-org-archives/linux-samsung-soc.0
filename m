@@ -1,46 +1,55 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] Input: s3c2410_ts: Move to
- clk_prepare_enable/clk_disable_unprepare
-Date: Tue, 22 Jul 2014 23:09:14 -0700
-Message-ID: <20140723060913.GD25004@core.coreip.homeip.net>
-References: <1404155377-2862-1-git-send-email-anarsoul@gmail.com>
- <20140709010049.GC14935@core.coreip.homeip.net>
- <2138540.gOK28iFQ6r@vasilykh-desktop-i5>
+From: Daniel Drake <drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH 0/3] Deterministic UART numbering on Samsung SoCs
+Date: Wed, 23 Jul 2014 07:30:33 +0100
+Message-ID: <CAD8Lp47GpiRabx56u5F+qrY=mx_OOj2dOqfQ6_=4TBe=JskDkQ@mail.gmail.com>
+References: <1403781875-5425-1-git-send-email-t.figa@samsung.com>
+	<20140626113939.GP32514@n2100.arm.linux.org.uk>
+	<53AC0BCC.1010608@samsung.com>
+	<CAD8Lp45MvDLsxehayx8uuGt3w3O0vGskiFjb1vdvtOyOv2nG2w@mail.gmail.com>
+	<20140709142333.503a9e39@alan.etchedpixels.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f43.google.com ([209.85.220.43]:39739 "EHLO
-	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751125AbaGWGJR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jul 2014 02:09:17 -0400
-Content-Disposition: inline
-In-Reply-To: <2138540.gOK28iFQ6r@vasilykh-desktop-i5>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140709142333.503a9e39-mUKnrFFms3BCCTY1wZZT65JpZx93mCW/@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: One Thousand Gnomes <gnomes-qBU/x9rampVanCEyBjwyrvXRex20P6io@public.gmane.org>
+Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org
 
-Hi Vasily,
+On Wed, Jul 9, 2014 at 2:23 PM, One Thousand Gnomes
+<gnomes-qBU/x9rampVanCEyBjwyrvXRex20P6io@public.gmane.org> wrote:
+>> I like the sound of going to the standard ttyS notation and only
+>> providing ports for ones that exist, but is this userspace-visible
+>
+> ttyS is 8250 compatible UARTS.
+>
+> If the Samsung is not an 8250 compatible UART then it doesn't belong as
+> ttyS from the kernel perspective.
 
-On Wed, Jul 09, 2014 at 12:13:41PM +0300, Vasily Khoruzhick wrote:
-> On 8 July 2014 18:00:49 Dmitry Torokhov wrote:
-> 
-> Hi Dmitry,
-> 
-> > > 
-> > > -	clk_disable(ts.clock);
-> > > +	clk_disable_unprepare(ts.clock);
-> > 
-> > Do we really need to unprepare on suspend? Why simply disabling is not
-> > enough here?
-> 
-> You're right, disabling should be enough here. I'll resend a patch after 
-> testing on a hardware.
+OK, thanks for pointing that out.
 
-I ended up cutting out suspend/resume parts and applying.
+So we stick with the ttySAC namespace. And by doing that, and sticking
+to the existing and documented behaviour, it seems like we have
+already addressed Russells's concern:
 
-Thanks.
+> The problem you're raising is very much the same problem you have when
+> there are multiple USB serial devices connected to the machine - you
+> just get a bunch of /dev/ttyUSB* devices which are unordered (they can
+> change on each boot, or change order if you disconnect and reconnect
+> them.)
 
--- 
-Dmitry
+In this case, we have a dedicated namespace and the path information
+is already fully encoded in the device name. The order and number of
+ports are fixed, they can't be disconnected and reconnected. There is
+no real risk of an additional serial controller driver coming to play
+in the ttySAC namespace.
+
+So I think Tomasz's approach is good - although I haven't looked at
+the code in detail.
+
+Thanks
+Daniel
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
