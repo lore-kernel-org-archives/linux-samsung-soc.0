@@ -1,55 +1,152 @@
-From: Daniel Drake <drake-6IF/jdPJHihWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH 0/3] Deterministic UART numbering on Samsung SoCs
-Date: Wed, 23 Jul 2014 07:30:33 +0100
-Message-ID: <CAD8Lp47GpiRabx56u5F+qrY=mx_OOj2dOqfQ6_=4TBe=JskDkQ@mail.gmail.com>
-References: <1403781875-5425-1-git-send-email-t.figa@samsung.com>
-	<20140626113939.GP32514@n2100.arm.linux.org.uk>
-	<53AC0BCC.1010608@samsung.com>
-	<CAD8Lp45MvDLsxehayx8uuGt3w3O0vGskiFjb1vdvtOyOv2nG2w@mail.gmail.com>
-	<20140709142333.503a9e39@alan.etchedpixels.co.uk>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v2] cpufreq: tests: Providing cpufreq regression test
+Date: Wed, 23 Jul 2014 09:38:24 +0200
+Message-ID: <20140723093824.5e51918f@amdc2363>
+References: <1405678985-21677-1-git-send-email-l.majewski@samsung.com>
+ <1405926154-27214-1-git-send-email-l.majewski@samsung.com>
+ <CAKohpondk7Cty8MhTcjyzZW8Z0o4AVupYE0rRnG4YJf+SmDyjg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140709142333.503a9e39-mUKnrFFms3BCCTY1wZZT65JpZx93mCW/@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: One Thousand Gnomes <gnomes-qBU/x9rampVanCEyBjwyrvXRex20P6io@public.gmane.org>
-Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-AlSwsSmVLrQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:54704 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753061AbaGWHih (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 23 Jul 2014 03:38:37 -0400
+In-reply-to: <CAKohpondk7Cty8MhTcjyzZW8Z0o4AVupYE0rRnG4YJf+SmDyjg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Thomas Abraham <ta.omasab@gmail.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <spk.linux@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Wed, Jul 9, 2014 at 2:23 PM, One Thousand Gnomes
-<gnomes-qBU/x9rampVanCEyBjwyrvXRex20P6io@public.gmane.org> wrote:
->> I like the sound of going to the standard ttyS notation and only
->> providing ports for ones that exist, but is this userspace-visible
->
-> ttyS is 8250 compatible UARTS.
->
-> If the Samsung is not an 8250 compatible UART then it doesn't belong as
-> ttyS from the kernel perspective.
+Hi Viresh,
 
-OK, thanks for pointing that out.
+> Hi Lukasz,
+> 
+> I haven't replied yet as I wanted to see what the general feed of
+> Rafael is going to be :)
+> 
+> As this is something new and wasn't sure if we really want this..
 
-So we stick with the ttySAC namespace. And by doing that, and sticking
-to the existing and documented behaviour, it seems like we have
-already addressed Russells's concern:
+Do you want to say that we have enough tests and we don't need more ?
 
-> The problem you're raising is very much the same problem you have when
-> there are multiple USB serial devices connected to the machine - you
-> just get a bunch of /dev/ttyUSB* devices which are unordered (they can
-> change on each boot, or change order if you disconnect and reconnect
-> them.)
+I always thought that we shall have as much regression tests as
+possible.
 
-In this case, we have a dedicated namespace and the path information
-is already fully encoded in the device name. The order and number of
-ports are fixed, they can't be disconnected and reconnected. There is
-no real risk of an additional serial controller driver coming to play
-in the ttySAC namespace.
 
-So I think Tomasz's approach is good - although I haven't looked at
-the code in detail.
+> 
+> On 21 July 2014 12:32, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> > This commit adds first regression test "cpufreq_freq_test.sh" for
+> > the cpufreq subsystem.
+> 
+> That's not enough, Tell us why we should continue reading this mail..
 
-Thanks
-Daniel
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hmm... If "regression" and "test" don't catch the attention of a
+diligent maintainer, then I cannot do much more to encourage him to
+read the whole e-mail :-)
+
+I can imagine that maintainers are very busy, therefore I've prepared
+README file with detailed description of the script operation.
+
+> 
+> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> >
+> > ---
+> > Changes for v2:
+> > - Replace *_PATCH with *_PATH for variables names
+> > - Corrected mistakes in the README file
+> > - Providing detailed explanation of the patch in the README file
+> > ---
+> >  drivers/cpufreq/tests/README               |  33 +++++++
+> >  drivers/cpufreq/tests/cpufreq_freq_test.sh | 149
+> > +++++++++++++++++++++++++++++
+> 
+> Probably a better place would be tools/power/cpufreq/
+> 
+> @Rafael?
+
+Rafael, I'm open for suggestions.
+
+> 
+> >  2 files changed, 182 insertions(+)
+> >  create mode 100644 drivers/cpufreq/tests/README
+> >  create mode 100755 drivers/cpufreq/tests/cpufreq_freq_test.sh
+> >
+> > diff --git a/drivers/cpufreq/tests/README
+> > b/drivers/cpufreq/tests/README new file mode 100644
+> > index 0000000..3e9cd80
+> > --- /dev/null
+> > +++ b/drivers/cpufreq/tests/README
+> > @@ -0,0 +1,33 @@
+> > +This file contains list of cpufreq's available regression tests
+> > with a short +usage description.
+> > +
+> > +1. cpufreq_freq_test.sh
+> > +
+> > +Description:
+> > +------------
+> > +This script is supposed to test if cpufreq attributes exported by
+> > sysfs are +exposing correct values.
+> > +
+> > +To achieve this goal it saves the current governor and changes it
+> > to +"performance". Afterwards, it reads the
+> > "scaling_available_frequencies" +property. With the list of
+> > supported frequencies it is able to enforce each of +them by
+> > writing to "scaling_max_freq" attribute. To make the test more
+> > reliable +a superfluous load with gzip is created to be sure that
+> > we are running with +highest possible frequency. This high load is
+> > regulated with the 'sleep' +duration. After this time the
+> > "cpufreq_cur_freq" is read and compared with the +original value.
+> > As the last step the original governor is restored.
+> 
+> I couldn't make out the purpose of this test and why we need it. How
+> do we ensure that "cpufreq attributes exported by sysfs are exposing
+> correct values"?
+
+First of all the cpufreq attributes are part of the subsystem API.
+There are systems which actually depend on them, so we would be better
+off to test if they work as intended.
+
+Secondly, the test takes those values and then with use of other
+attribute enforce the value, which is then read via cat'ing
+cpufreq_cur_freq. If any of the attributes is wrong then we will spot
+the error immediately.
+
+> 
+> And actually what do we mean by this statement even? What kind of
+> errors can be there in exposing these values.
+
+Errors with cpufreq and CCF cooperation - especially when some parts of
+cpufreq code uses direct write to MUX, DIV or PLL SoC registers.
+
+Also, one can check if permutations of changing all available
+frequencies are working properly.
+
+This script allowed me to find at least two bugs at Exynos cpufreq
+subsystem in the past. And those fixes are already applied to mainline.
+
+> 
+> I want to understand the purpose of this script very clearly first
+> and then only will look at the details.
+
+There is a clean shell script code to go through it, the README file
+with detailed description of the script purpose and operation.
+
+What else shall I write?
+
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
