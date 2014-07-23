@@ -1,79 +1,59 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCHv8 0/4] iio: adc: exynos_adc: Support Exynos3250 ADC and
- code clean
-Date: Wed, 23 Jul 2014 10:41:52 +0900
-Message-ID: <53CF12E0.5030903@samsung.com>
-References: <1405994696-3117-1-git-send-email-cw00.choi@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] media: s5p_mfc: remove unnecessary calling to function
+ video_devdata()
+Date: Wed, 23 Jul 2014 11:43:58 +0900
+Message-ID: <53CF216E.9040209@samsung.com>
+References: <1406076572-5719-1-git-send-email-zhaowei.yuan@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1405994696-3117-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:35659 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754771AbaGWCnz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Jul 2014 22:43:55 -0400
+In-reply-to: <1406076572-5719-1-git-send-email-zhaowei.yuan@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Zhaowei Yuan <zhaowei.yuan@samsung.com>, m.chehab@samsung.com
+Cc: linux-media@vger.kernel.org, k.debski@samsung.com, kyungmin.park@samsung.com, jtp.park@samsung.com, linux-samsung-soc@vger.kernel.org
 
-Dear Jonathan,
+Hi Zhaowei,
 
-Could you please pick this patchset for 3.17?
+On 07/23/2014 09:49 AM, Zhaowei Yuan wrote:
+> Since we have get vdev by calling video_devdata() at the beginning of
+> s5p_mfc_open(), we should just use vdev instead of calling video_devdata()
+> again in the following code.
+> 
+> Change-Id: I869051762d33b50a7c0dbc8149b072e70b89c6b9
 
-Best Regards,
-Chanwoo Choi
+Please don't put this in patch when you submit at upstream. Change-Id
+means nothing to us.
 
-On 07/22/2014 11:04 AM, Chanwoo Choi wrote:
-> This patchset support Exynos3250 ADC (Analog Digital Converter) because
-> Exynos3250 has additional special clock for ADC IP.
+> Signed-off-by: Zhaowei Yuan <zhaowei.yuan@samsung.com>
+> ---
+>  drivers/media/platform/s5p-mfc/s5p_mfc.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Changes from v7:
-> - Add acked message by Arnd Bergmann
-> - Use two compatible string for Exynos3250 ADC as following:
->   : compatible = "samsung,exynos3250-adc", "samsung,exynos-adc-v2;
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> index d57b306..d508cbc 100755
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+> @@ -709,7 +709,7 @@ static int s5p_mfc_open(struct file *file)
+>  		ret = -ENOMEM;
+>  		goto err_alloc;
+>  	}
+> -	v4l2_fh_init(&ctx->fh, video_devdata(file));
+> +	v4l2_fh_init(&ctx->fh, vdev);
+>  	file->private_data = &ctx->fh;
+>  	v4l2_fh_add(&ctx->fh);
+>  	ctx->dev = dev;
+> --
+> 1.7.9.5
 > 
-> Changes from v6:
-> - Use "exynos3250-adc" compatible string instead of "exynos3250-adc-v2"
-> - Use "sclk" clock name instead of "sclk_adc"
-> - Remove un-necessary macro for exyno-adc-data-v2 structure.
-> - Remove '(void *)' cast and mark the exynos-adc-data structure as 'const'
-> - Change the number of ADC channels (Exynos3250 has only two channels for ADC)
-> 
-> Changes from v5:
-> - Add acked message by Kukjin Kim
-> - Add reviewed messgae by Tomasz Figa
-> - Fix typo (for for -> for)
-> 
-> Changes from v4:
-> - Use 'exynos_adc_data' structure instead of 'exynos_adc_ops' structure
->   and remove enum variable of ADC version
-> - Fix wrong name of special clock (sclk_tsadc -> sclk_adc)
-> - Add reviewed message by Naveen Krishna Chatradhi
-> - Add functions for ADC clock control
-> 
-> Changes from v3:
-> - Add new 'exynos_adc_ops' structure to improve readability according to
->  Tomasz Figa comment[1]
->  [1] https://lkml.org/lkml/2014/4/16/238
-> - Add new 'exynos3250-adc-v2' compatible string to support Exynos3250 ADC
-> - Fix wrong compaitlbe string of ADC in Exynos3250 dtsi file
-> 
-> Changes from v2:
-> - Check return value of clock function to deal with error exception
-> - Fix minor coding style to improve readability
-> 
-> Changes from v1:
-> - Add new "samsung,exynos-adc-v3" compatible to support Exynos3250 ADC
-> - Add a patch about DT binding documentation
-> 
-> Chanwoo Choi (4):
->   iio: adc: exynos_adc: Add exynos_adc_data structure to improve
->     readability
->   iio: adc: exynos_adc: Control special clock of ADC to support
->     Exynos3250 ADC
->   iio: devicetree: Add DT binding documentation for Exynos3250 ADC
->   ARM: dts: Fix wrong compatible string for Exynos3250 ADC
-> 
->  .../devicetree/bindings/arm/samsung/exynos-adc.txt |  25 +-
->  arch/arm/boot/dts/exynos3250.dtsi                  |   5 +-
->  drivers/iio/adc/exynos_adc.c                       | 335 +++++++++++++++------
->  3 files changed, 275 insertions(+), 90 deletions(-)
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
