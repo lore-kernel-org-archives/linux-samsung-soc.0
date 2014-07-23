@@ -1,103 +1,90 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [GIT PULL 4/5] Samsung exynos_mct update for v3.17
-Date: Wed, 23 Jul 2014 10:03:23 +0200
-Message-ID: <53CF6C4B.8010608@linaro.org>
-References: <53C9C164.9030404@samsung.com> <20140719220623.GF15676@quad.lixom.net> <53CCD3AB.7040205@linaro.org> <01b601cfa59c$12c2c7f0$384857d0$@samsung.com> <53CEA020.309@linaro.org> <53CEF4BC.1050105@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2] cpufreq: tests: Providing cpufreq regression test
+Date: Wed, 23 Jul 2014 14:19:54 +0530
+Message-ID: <CAKohpok++gPcNk9-E4MsFdNBy8qL7oLYvatk1EvcW1OHwroZXQ@mail.gmail.com>
+References: <1405678985-21677-1-git-send-email-l.majewski@samsung.com>
+	<1405926154-27214-1-git-send-email-l.majewski@samsung.com>
+	<CAKohpondk7Cty8MhTcjyzZW8Z0o4AVupYE0rRnG4YJf+SmDyjg@mail.gmail.com>
+	<20140723093824.5e51918f@amdc2363>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:47723 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753919AbaGWID1 (ORCPT
+Received: from mail-oa0-f49.google.com ([209.85.219.49]:33922 "EHLO
+	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756802AbaGWItz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jul 2014 04:03:27 -0400
-Received: by mail-wi0-f181.google.com with SMTP id bs8so1715464wib.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jul 2014 01:03:24 -0700 (PDT)
-In-Reply-To: <53CEF4BC.1050105@samsung.com>
+	Wed, 23 Jul 2014 04:49:55 -0400
+Received: by mail-oa0-f49.google.com with SMTP id eb12so1165298oac.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jul 2014 01:49:54 -0700 (PDT)
+In-Reply-To: <20140723093824.5e51918f@amdc2363>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Doug Anderson' <dianders@chromium.org>, tglx@linutronix.de
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Thomas Abraham <ta.omasab@gmail.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <spk.linux@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 07/23/2014 01:33 AM, Kukjin Kim wrote:
-> On 07/23/14 02:32, Daniel Lezcano wrote:
->> On 07/22/2014 12:59 PM, Kukjin Kim wrote:
->>> Daniel Lezcano wrote:
->>>>
->>>> On 07/20/2014 12:06 AM, Olof Johansson wrote:
->>>>> On Sat, Jul 19, 2014 at 09:52:52AM +0900, Kukjin Kim wrote:
->>>>>> Note that this is also based on 3.16-rc5 because of dependency w=
-ith
->>>>>> previous samsung fixes including exynos_mct already merged in
->>>>>> mainline during -rc.
->>>>>>
->>>>>> The following changes since commit
->>>>>> 1795cd9b3a91d4b5473c97f491d63892442212ab:
->>>>>>
->>>>>> Linux 3.16-rc5 (2014-07-13 14:04:33 -0700)
->>>>>>
->>>>>> are available in the git repository at:
->>>>>>
->>>>>
->>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsun=
-g.git
->>>>>> tags/exynos-mct
->>>>>>
->>>>>> for you to fetch changes up to
->>>>>> 1a631118c1d085fe162f3b6d44f710c72206ef2d:
->>>>>>
->>>>>> clocksource: exynos_mct: Only use 32-bits where possible
->>>>>> (2014-07-19 03:07:52 +0900)
->>>>>>
->>>>>> ----------------------------------------------------------------
->>>>>> exynos_mct update for v3.17
->>>>>> - only use 32-bit access for performance benefits on exynos
->>>>>> 32-bit system and this means ARCH timer should be supported
->>>>>> on exynos 64-bit system instead of current MCT.
->>>>>> - use readl_relaxed/writel_relaxed to consistently use the
->>>>>> proper functions in exynos_mct.
->>>>>
->>>>> There's no reason for these to go through arm-soc, is there? They
->>>>> should
->>>>> go through the clocksource tree (Daniel Lezcano / Thomas Gleixner=
-).
->>>>> They
->>>>> also lack acks from them if they for some reason need to go throu=
-gh
->>>>> arm-soc.
->>>>
->>> Olof, you're right. The branch has no dependency with arm-soc so I
->>> agreed.
->>>
->>>> Yes, that's right. Furthermore I have been discussing with Doug ab=
-out
->>>> these patches before.
->>>>
->>>> Kukjin, is there any dependency on these patches ?
->>>>
->>> Yeah, Daniel, it should be handled in the clocksource tree so how
->>> should I do
->>> for it?
+On 23 July 2014 13:08, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> Do you want to say that we have enough tests and we don't need more ?
+
+No. We don't have any tests at all :)
+
+> I always thought that we shall have as much regression tests as
+> possible.
+
+Yeah, tests are welcomed but the question is where should they get added.
+Don't know if its common to add tests directly to kernel.
+
+And also if the test is really good, not discouraging your work.
+
+>> On 21 July 2014 12:32, Lukasz Majewski <l.majewski@samsung.com> wrote:
+>> > This commit adds first regression test "cpufreq_freq_test.sh" for
+>> > the cpufreq subsystem.
 >>
->> I can pull your branch v3.17-next/mct-exynos and you drop the merge =
-from
->> this branch in your master ?
->>
-> Yes please and I did drop the merge in my -next just now.
+>> That's not enough, Tell us why we should continue reading this mail..
+>
+> Hmm... If "regression" and "test" don't catch the attention of a
+> diligent maintainer, then I cannot do much more to encourage him to
+> read the whole e-mail :-)
 
-Ok, thanks.
+What I meant to say was, your subject and body must be good enough
+to answer most of the things. You don't have to tell much about the
+implementation but other things should be pretty clear from logs.
 
-The patches are applied in my branch for 3.17.
+Your current logs are quite short for something that's not a normal practice.
 
-   -- Daniel
+> I can imagine that maintainers are very busy, therefore I've prepared
+> README file with detailed description of the script operation.
 
+Yeah, a README is welcomed and would be useful for users as well..
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+>> I couldn't make out the purpose of this test and why we need it. How
+>> do we ensure that "cpufreq attributes exported by sysfs are exposing
+>> correct values"?
+>
+> First of all the cpufreq attributes are part of the subsystem API.
+> There are systems which actually depend on them, so we would be better
+> off to test if they work as intended.
+>
+> Secondly, the test takes those values and then with use of other
+> attribute enforce the value, which is then read via cat'ing
+> cpufreq_cur_freq. If any of the attributes is wrong then we will spot
+> the error immediately.
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Shouldn't you use userspace governor then instead of performance?
+And then we don't need the gzip stuff at all. We can just set it to the
+right freq and get current freq to see if it matches?
+
+And now that we are starting to get tests added into the kernel (will still
+wait to see what Rafael has to advice), we better think of the way these
+are going to get added. Probably a single script with parameters like
+what to test?
+
+>> And actually what do we mean by this statement even? What kind of
+>> errors can be there in exposing these values.
+>
+> Errors with cpufreq and CCF cooperation - especially when some parts of
+> cpufreq code uses direct write to MUX, DIV or PLL SoC registers.
+>
+> Also, one can check if permutations of changing all available
+> frequencies are working properly.
+
+Yeah, that would be fine. Probably need to think more about scripts name.
