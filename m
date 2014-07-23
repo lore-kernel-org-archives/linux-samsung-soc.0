@@ -1,65 +1,39 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: exynos: remove unused <mach/memory.h>
-Date: Wed, 23 Jul 2014 08:37:33 +0900
-Message-ID: <53CEF5BD.10307@samsung.com>
-References: <1404295043-6661-1-git-send-email-u.kleine-koenig@pengutronix.de> <20140722075138.GB28538@pengutronix.de> <CAOesGMgA0fc0_8JOOE01y=UKv-eAZuWiAkAKHG5iam0Zkhp9TA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Zhaowei Yuan <zhaowei.yuan@samsung.com>
+Subject: [PATCH] media: s5p_mfc: Check the right pointer after allocation
+Date: Wed, 23 Jul 2014 08:48:45 +0800
+Message-ID: <1406076525-5683-1-git-send-email-zhaowei.yuan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:61564 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753024AbaGVXhk (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:64935 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752910AbaGWAw0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Jul 2014 19:37:40 -0400
-Received: by mail-pd0-f182.google.com with SMTP id fp1so451891pdb.27
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Jul 2014 16:37:39 -0700 (PDT)
-In-Reply-To: <CAOesGMgA0fc0_8JOOE01y=UKv-eAZuWiAkAKHG5iam0Zkhp9TA@mail.gmail.com>
+	Tue, 22 Jul 2014 20:52:26 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, "arm@kernel.org" <arm@kernel.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-media@vger.kernel.org, k.debski@samsung.com, m.chehab@samsung.com, kyungmin.park@samsung.com, jtp.park@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, Zhaowei Yuan <zhaowei.yuan@samsung.com>
 
-On 07/23/14 01:14, Olof Johansson wrote:
-> On Tue, Jul 22, 2014 at 12:51 AM, Uwe Kleine-K=C3=B6nig
-> <u.kleine-koenig@pengutronix.de>  wrote:
->> Hello,
->>
->> who takes care of this series?
->>
->> In fact they are all orthogonal to each other.
->>
->> The first patch
->>
->>          ARM: exynos: remove unused<mach/memory.h>
->>
->> has been reviewed and tested by Tomasz Figa and Sachin Kamat. Can th=
-e
->> Samsung people pick it up? Or armsoc?
->
-> Kukjin should apply this one.
->
-Oh, thanks for gentle reminder and I've applied into 2nd cleanup.
+It should be bank2_virt to be checked after dma allocation
+instead of dev->fw_virt_addr.
 
-Thanks,
-Kukjin
+Change-Id: I03ed5603de3ef1d97bf76d7d42097d9489b6b003
+Signed-off-by: Zhaowei Yuan <zhaowei.yuan@samsung.com>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+index dc1fc94..55ad881 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
+@@ -50,7 +50,7 @@ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev)
+ 		bank2_virt = dma_alloc_coherent(dev->mem_dev_r, 1 << MFC_BASE_ALIGN_ORDER,
+ 					&bank2_dma_addr, GFP_KERNEL);
 
->> Patch 2 (v2!)
->>
->>          ARM: remove remaining definitions of PLAT_PHYS_OFFSET from<=
-mach/memory.h>
->>
->> touches several arch/arm/mach-*/include/mach/memory.h and
->> arch/arm/Kconfig. armsoc? Russell?
->
-> This can go through either, but Russell has already reviewed it once
-> so send it to his patch tracker.
->
->> Patch 3 fixes a warning regarding nommu and touches the Kconfig entr=
-y
->> for Integrator and Renesas (non-multiplatform). armsoc?
->
-> Don't know without seeing the patch. What's the patch subject so I ca=
-n find it?
+-		if (IS_ERR(dev->fw_virt_addr)) {
++		if (IS_ERR(bank2_virt)) {
+ 			mfc_err("Allocating bank2 base failed\n");
+ 			dma_free_coherent(dev->mem_dev_l, dev->fw_size,
+ 				dev->fw_virt_addr, dev->bank1);
+--
+1.7.9.5
