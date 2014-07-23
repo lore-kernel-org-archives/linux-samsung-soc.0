@@ -1,37 +1,74 @@
-From: Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2] cpufreq: tests: Providing cpufreq regression test
-Date: Wed, 23 Jul 2014 17:02:28 +0200
-Message-ID: <20140723150228.GE2856@lunn.ch>
-References: <1405678985-21677-1-git-send-email-l.majewski@samsung.com>
- <1405926154-27214-1-git-send-email-l.majewski@samsung.com>
- <CAKohpondk7Cty8MhTcjyzZW8Z0o4AVupYE0rRnG4YJf+SmDyjg@mail.gmail.com>
- <20140723093824.5e51918f@amdc2363>
- <CAKohpok++gPcNk9-E4MsFdNBy8qL7oLYvatk1EvcW1OHwroZXQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAKohpok++gPcNk9-E4MsFdNBy8qL7oLYvatk1EvcW1OHwroZXQ@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <ta.omasab@gmail.com>, Linux PM list <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@majess.pl>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Sachin Kamat <spk.linux@gmail.com>, Tomasz Figa <t.figa@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH v2: 1/2] drm/exynos: g2d: make ioctls more robust
+Date: Wed, 23 Jul 2014 17:12:05 +0200
+Message-ID: <1406128326-16280-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+References: <1406128326-16280-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:35813 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932509AbaGWPMQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 23 Jul 2014 11:12:16 -0400
+In-Reply-To: <1406128326-16280-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, t.figa@samsung.com, inki.dae@samsung.com, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-On Wed, Jul 23, 2014 at 02:19:54PM +0530, Viresh Kumar wrote:
-> On 23 July 2014 13:08, Lukasz Majewski <l.majewski@samsung.com> wrote:
-> > Do you want to say that we have enough tests and we don't need more ?
-> 
-> No. We don't have any tests at all :)
+Both exynos_g2d_set_cmdlist_ioctl and exynos_g2d_exec_ioctl don't check
+if the G2D was succesfully probe. If that is not the case, then g2d_priv
+is just NULL and extracting 'dev' from it in the next step  is going to
+produce a kernel oops.
 
-Not really true. I've found bugs triggering opps using cpufreq-bench.
-http://marc.info/?l=linux-pm&m=138165517321579&w=2
+Add proper checks and return ENODEV if the G2D is not available.
 
-and i hope you learned from that experience and run this tool when
-making changes to the core.
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-There is an old writeup of cpufreq-bench here:
-https://lwn.net/Articles/339862/
-
-and the code itself is in the mainline tree, tools/power/cpupower/bench
-
-	Andrew
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+index 5fa1bb6..929c6d7 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -1056,7 +1056,7 @@ int exynos_g2d_set_cmdlist_ioctl(struct drm_device *drm_dev, void *data,
+ {
+ 	struct drm_exynos_file_private *file_priv = file->driver_priv;
+ 	struct exynos_drm_g2d_private *g2d_priv = file_priv->g2d_priv;
+-	struct device *dev = g2d_priv->dev;
++	struct device *dev;
+ 	struct g2d_data *g2d;
+ 	struct drm_exynos_g2d_set_cmdlist *req = data;
+ 	struct drm_exynos_g2d_cmd *cmd;
+@@ -1067,6 +1067,10 @@ int exynos_g2d_set_cmdlist_ioctl(struct drm_device *drm_dev, void *data,
+ 	int size;
+ 	int ret;
+ 
++	if (!g2d_priv)
++		return -ENODEV;
++
++	dev = g2d_priv->dev;
+ 	if (!dev)
+ 		return -ENODEV;
+ 
+@@ -1223,13 +1227,17 @@ int exynos_g2d_exec_ioctl(struct drm_device *drm_dev, void *data,
+ {
+ 	struct drm_exynos_file_private *file_priv = file->driver_priv;
+ 	struct exynos_drm_g2d_private *g2d_priv = file_priv->g2d_priv;
+-	struct device *dev = g2d_priv->dev;
++	struct device *dev;
+ 	struct g2d_data *g2d;
+ 	struct drm_exynos_g2d_exec *req = data;
+ 	struct g2d_runqueue_node *runqueue_node;
+ 	struct list_head *run_cmdlist;
+ 	struct list_head *event_list;
+ 
++	if (!g2d_priv)
++		return -ENODEV;
++
++	dev = g2d_priv->dev;
+ 	if (!dev)
+ 		return -ENODEV;
+ 
+-- 
+1.8.5.5
