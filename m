@@ -1,38 +1,40 @@
 From: Zhaowei Yuan <zhaowei.yuan@samsung.com>
-Subject: [PATCH] media: s5p_mfc: Check the right pointer after allocation
-Date: Wed, 23 Jul 2014 12:05:12 +0800
-Message-ID: <1406088312-5205-1-git-send-email-zhaowei.yuan@samsung.com>
+Subject: [PATCH] media: s5p_mfc: remove unnecessary calling to function
+ video_devdata()
+Date: Wed, 23 Jul 2014 12:06:12 +0800
+Message-ID: <1406088372-5240-1-git-send-email-zhaowei.yuan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:41876 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753821AbaGWEIs (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:50798 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754537AbaGWEJn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jul 2014 00:08:48 -0400
+	Wed, 23 Jul 2014 00:09:43 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, k.debski@samsung.com, m.chehab@samsung.com, kyungmin.park@samsung.com, jtp.park@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, Zhaowei Yuan <zhaowei.yuan@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-It should be bank2_virt to be checked after dma allocation
-instead of dev->fw_virt_addr.
+Since we have get vdev by calling video_devdata() at the beginning of
+s5p_mfc_open(), we should just use vdev instead of calling video_devdata()
+again in the following code.
 
 Signed-off-by: Zhaowei Yuan <zhaowei.yuan@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c |    2 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-index dc1fc94..55ad881 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-@@ -50,7 +50,7 @@ int s5p_mfc_alloc_firmware(struct s5p_mfc_dev *dev)
- 		bank2_virt = dma_alloc_coherent(dev->mem_dev_r, 1 << MFC_BASE_ALIGN_ORDER,
- 					&bank2_dma_addr, GFP_KERNEL);
-
--		if (IS_ERR(dev->fw_virt_addr)) {
-+		if (IS_ERR(bank2_virt)) {
- 			mfc_err("Allocating bank2 base failed\n");
- 			dma_free_coherent(dev->mem_dev_l, dev->fw_size,
- 				dev->fw_virt_addr, dev->bank1);
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index d57b306..d508cbc 100755
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -709,7 +709,7 @@ static int s5p_mfc_open(struct file *file)
+ 		ret = -ENOMEM;
+ 		goto err_alloc;
+ 	}
+-	v4l2_fh_init(&ctx->fh, video_devdata(file));
++	v4l2_fh_init(&ctx->fh, vdev);
+ 	file->private_data = &ctx->fh;
+ 	v4l2_fh_add(&ctx->fh);
+ 	ctx->dev = dev;
 --
 1.7.9.5
