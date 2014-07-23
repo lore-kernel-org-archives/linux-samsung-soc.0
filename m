@@ -1,40 +1,81 @@
-From: Zhaowei Yuan <zhaowei.yuan@samsung.com>
-Subject: [PATCH] media: s5p_mfc: remove unnecessary calling to function
- video_devdata()
-Date: Wed, 23 Jul 2014 12:06:12 +0800
-Message-ID: <1406088372-5240-1-git-send-email-zhaowei.yuan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50798 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754537AbaGWEJn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jul 2014 00:09:43 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v2] cpufreq: tests: Providing cpufreq regression test
+Date: Wed, 23 Jul 2014 10:36:15 +0530
+Message-ID: <CAKohpondk7Cty8MhTcjyzZW8Z0o4AVupYE0rRnG4YJf+SmDyjg@mail.gmail.com>
+References: <1405678985-21677-1-git-send-email-l.majewski@samsung.com>
+	<1405926154-27214-1-git-send-email-l.majewski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1405926154-27214-1-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Thomas Abraham <ta.omasab@gmail.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <spk.linux@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, k.debski@samsung.com, m.chehab@samsung.com, kyungmin.park@samsung.com, jtp.park@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org
 
-Since we have get vdev by calling video_devdata() at the beginning of
-s5p_mfc_open(), we should just use vdev instead of calling video_devdata()
-again in the following code.
+Hi Lukasz,
 
-Signed-off-by: Zhaowei Yuan <zhaowei.yuan@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I haven't replied yet as I wanted to see what the general feed of Rafael
+is going to be :)
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index d57b306..d508cbc 100755
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -709,7 +709,7 @@ static int s5p_mfc_open(struct file *file)
- 		ret = -ENOMEM;
- 		goto err_alloc;
- 	}
--	v4l2_fh_init(&ctx->fh, video_devdata(file));
-+	v4l2_fh_init(&ctx->fh, vdev);
- 	file->private_data = &ctx->fh;
- 	v4l2_fh_add(&ctx->fh);
- 	ctx->dev = dev;
---
-1.7.9.5
+As this is something new and wasn't sure if we really want this..
+
+On 21 July 2014 12:32, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> This commit adds first regression test "cpufreq_freq_test.sh" for the
+> cpufreq subsystem.
+
+That's not enough, Tell us why we should continue reading this mail..
+
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+>
+> ---
+> Changes for v2:
+> - Replace *_PATCH with *_PATH for variables names
+> - Corrected mistakes in the README file
+> - Providing detailed explanation of the patch in the README file
+> ---
+>  drivers/cpufreq/tests/README               |  33 +++++++
+>  drivers/cpufreq/tests/cpufreq_freq_test.sh | 149 +++++++++++++++++++++++++++++
+
+Probably a better place would be tools/power/cpufreq/
+
+@Rafael?
+
+>  2 files changed, 182 insertions(+)
+>  create mode 100644 drivers/cpufreq/tests/README
+>  create mode 100755 drivers/cpufreq/tests/cpufreq_freq_test.sh
+>
+> diff --git a/drivers/cpufreq/tests/README b/drivers/cpufreq/tests/README
+> new file mode 100644
+> index 0000000..3e9cd80
+> --- /dev/null
+> +++ b/drivers/cpufreq/tests/README
+> @@ -0,0 +1,33 @@
+> +This file contains list of cpufreq's available regression tests with a short
+> +usage description.
+> +
+> +1. cpufreq_freq_test.sh
+> +
+> +Description:
+> +------------
+> +This script is supposed to test if cpufreq attributes exported by sysfs are
+> +exposing correct values.
+> +
+> +To achieve this goal it saves the current governor and changes it to
+> +"performance". Afterwards, it reads the "scaling_available_frequencies"
+> +property. With the list of supported frequencies it is able to enforce each of
+> +them by writing to "scaling_max_freq" attribute. To make the test more reliable
+> +a superfluous load with gzip is created to be sure that we are running with
+> +highest possible frequency. This high load is regulated with the 'sleep'
+> +duration. After this time the "cpufreq_cur_freq" is read and compared with the
+> +original value. As the last step the original governor is restored.
+
+I couldn't make out the purpose of this test and why we need it. How do
+we ensure that "cpufreq attributes exported by sysfs are exposing
+correct values"?
+
+And actually what do we mean by this statement even? What kind of errors can
+be there in exposing these values.
+
+I want to understand the purpose of this script very clearly first and then only
+will look at the details.
