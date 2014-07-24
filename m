@@ -1,148 +1,56 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: add CPU nodes for Exynos4 SoCs
-Date: Fri, 25 Jul 2014 08:31:06 +0900
-Message-ID: <53D1973A.9060907@samsung.com>
-References: <1444042.RbiCcg7JnP@amdc1032>
+Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable SBS battery support
+Date: Fri, 25 Jul 2014 08:36:19 +0900
+Message-ID: <53D19873.3040806@samsung.com>
+References: <1406227380-3569-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:40261 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934568AbaGXXbM (ORCPT
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:49320 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932131AbaGXXgZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Jul 2014 19:31:12 -0400
-In-Reply-To: <1444042.RbiCcg7JnP@amdc1032>
+	Thu, 24 Jul 2014 19:36:25 -0400
+Received: by mail-pd0-f173.google.com with SMTP id w10so4441613pde.18
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2014 16:36:24 -0700 (PDT)
+In-Reply-To: <1406227380-3569-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Thomas Abraham <ta.omasab@gmail.com>, Tomasz Figa <t.figa@samsung.com>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
-On 07/21/14 22:57, Bartlomiej Zolnierkiewicz wrote:
-> Recent patch by Tomasz Figa ("irqchip: gic: Fix core ID calculation
-> when topology is read from DT") fixed GIC driver to filter cluster ID
-> from values returned by cpu_logical_map() for SoCs having registers
-> mapped without per-CPU banking making it is possible to add CPU nodes
-> for Exynos4 SoCs.  In case of Exynos SoCs these CPU nodes are also
-> required by future changes adding initialization of cpuidle states in
-> Exynos cpuidle driver through DT.
+On 07/25/14 03:43, Javier Martinez Canillas wrote:
+> Many Exynos5 boards (e.g: Snow, Peach Pit and Pi) have
+> a SBS-compliant gas gauge battery. Enable it as module
+> so the needed support is available for these boards.
 >
-> Tested on Origen board (Exynos4210 SoC) and Trats2 (Exynos4412 SoC).
->
-> Signed-off-by: Bartlomiej Zolnierkiewicz<b.zolnierkie@samsung.com>
+> Suggested-by: Doug Anderson<dianders@chromium.org>
+> Signed-off-by: Javier Martinez Canillas<javier.martinez@collabora.co.uk>
 > ---
-> Based on next-20140717 branch of linux-next tree +
-> - [PATCH 2/6] ARM: EXYNOS: Fix core ID used by platsmp and hotplug code
->    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32811.html
-> - [PATCH] irqchip: gic: Fix core ID calculation when topology is read from DT
->    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34277.html
+>   arch/arm/configs/exynos_defconfig | 1 +
+>   1 file changed, 1 insertion(+)
 >
-> v2:
-> - match the unit-address with the reg
->
->   arch/arm/boot/dts/exynos4210.dtsi | 17 +++++++++++++++++
->   arch/arm/boot/dts/exynos4212.dtsi | 17 +++++++++++++++++
->   arch/arm/boot/dts/exynos4412.dtsi | 29 +++++++++++++++++++++++++++++
->   3 files changed, 63 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-> index ee3001f..bc2b444 100644
-> --- a/arch/arm/boot/dts/exynos4210.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> @@ -31,6 +31,23 @@
->   		pinctrl2 =&pinctrl_2;
->   	};
->
-> +	cpus {
-> +		#address-cells =<1>;
-> +		#size-cells =<0>;
-> +
-> +		cpu@900 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a9";
-> +			reg =<0x900>;
-> +		};
-> +
-> +		cpu@901 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a9";
-> +			reg =<0x901>;
-> +		};
-> +	};
-> +
->   	sysram@02020000 {
->   		compatible = "mmio-sram";
->   		reg =<0x02020000 0x20000>;
-> diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-> index 3c00e6e..dd0a43e 100644
-> --- a/arch/arm/boot/dts/exynos4212.dtsi
-> +++ b/arch/arm/boot/dts/exynos4212.dtsi
-> @@ -22,6 +22,23 @@
->   / {
->   	compatible = "samsung,exynos4212", "samsung,exynos4";
->
-> +	cpus {
-> +		#address-cells =<1>;
-> +		#size-cells =<0>;
-> +
-> +		cpu@A00 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a9";
-> +			reg =<0xA00>;
-> +		};
-> +
-> +		cpu@A01 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a9";
-> +			reg =<0xA01>;
-> +		};
-> +	};
-> +
->   	combiner: interrupt-controller@10440000 {
->   		samsung,combiner-nr =<18>;
->   	};
-> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-> index c42a3e1..435a722 100644
-> --- a/arch/arm/boot/dts/exynos4412.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412.dtsi
-> @@ -22,6 +22,35 @@
->   / {
->   	compatible = "samsung,exynos4412", "samsung,exynos4";
->
-> +	cpus {
-> +		#address-cells =<1>;
-> +		#size-cells =<0>;
-> +
-> +		cpu@A00 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a9";
-> +			reg =<0xA00>;
-> +		};
-> +
-> +		cpu@A01 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a9";
-> +			reg =<0xA01>;
-> +		};
-> +
-> +		cpu@A02 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a9";
-> +			reg =<0xA02>;
-> +		};
-> +
-> +		cpu@A03 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a9";
-> +			reg =<0xA03>;
-> +		};
-> +	};
-> +
->   	combiner: interrupt-controller@10440000 {
->   		samsung,combiner-nr =<20>;
->   	};
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index fc7d168..c390bb9 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -77,6 +77,7 @@ CONFIG_SPI_S3C64XX=y
+>   CONFIG_I2C_S3C2410=y
+>   CONFIG_DEBUG_GPIO=y
+>   CONFIG_POWER_SUPPLY=y
+> +CONFIG_BATTERY_SBS=m
+>   CONFIG_CHARGER_TPS65090=y
+>   # CONFIG_HWMON is not set
+>   CONFIG_THERMAL=y
 
-OK, I'm fine on this, will apply.
+Looks good to me.
+
+Olof, since previous exynos_defconfig has been updated in arm-soc and no 
+branch for it in my tree at this time, picking this into arm-soc 
+directly would be better and you may add my ack on this.
+
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
 Thanks,
 Kukjin
