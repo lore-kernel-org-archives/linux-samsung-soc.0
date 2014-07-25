@@ -1,179 +1,34 @@
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Subject: Re: [PATCH 04/10] [media] s5p-mfc: Don't allocate codec buffers on
- STREAMON.
-Date: Fri, 25 Jul 2014 12:03:29 -0400
-Message-ID: <1406304209.2465.5.camel@mpb-nicolas>
-References: <1400502786-4826-1-git-send-email-arun.kk@samsung.com>
-	 <1400502786-4826-5-git-send-email-arun.kk@samsung.com>
-Reply-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v2 3/4] ARM: dts: exynos5250: Fold common ChromeOS parts
+ into Snow
+Date: Fri, 25 Jul 2014 18:35:43 +0200
+Message-ID: <CABxcv=kP2PCcNCtM1WUXx5wGG4m-jdw-P1dw0boaSwdJpoX=jQ@mail.gmail.com>
+References: <1405704009-8430-1-git-send-email-afaerber@suse.de>
+	<1405704009-8430-4-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:56056 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752912AbaGYQDg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jul 2014 12:03:36 -0400
-In-Reply-To: <1400502786-4826-5-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1405704009-8430-4-git-send-email-afaerber@suse.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, "moderated list:ARM/SAMSUNG ARM A..." <linux-arm-kernel@lists.infradead.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, k.debski@samsung.com, posciak@chromium.org, avnd.kiran@samsung.com, arunkk.samsung@gmail.com
 
-Le lundi 19 mai 2014 =C3=A0 18:03 +0530, Arun Kumar K a =C3=A9crit :
-> From: Pawel Osciak <posciak@chromium.org>
->=20
-> Currently, we allocate private codec buffers on STREAMON, which may f=
-ail
-> if we are out of memory. We don't check for failure though, which wil=
-l
-> make us crash with the codec accessing random memory.
->=20
-> We shouldn't be failing STREAMON with out of memory errors though. So=
- move
-> the allocation of private codec buffers to REQBUFS for OUTPUT queue. =
-Also,
-> move MFC instance opening and closing to REQBUFS as well, as it's tie=
-d to
-> allocation and deallocation of private codec buffers.
->=20
-> Signed-off-by: Pawel Osciak <posciak@chromium.org>
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> ---
->  drivers/media/platform/s5p-mfc/s5p_mfc.c      |    8 +++----
->  drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c |    1 +
->  drivers/media/platform/s5p-mfc/s5p_mfc_dec.c  |   30 +++++++++++----=
-----------
->  3 files changed, 18 insertions(+), 21 deletions(-)
->=20
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media=
-/platform/s5p-mfc/s5p_mfc.c
-> index 861087c..70f728f 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> @@ -643,6 +643,7 @@ static irqreturn_t s5p_mfc_irq(int irq, void *pri=
-v)
-> =20
->  	case S5P_MFC_R2H_CMD_CLOSE_INSTANCE_RET:
->  		clear_work_bit(ctx);
-> +		ctx->inst_no =3D MFC_NO_INSTANCE_SET;
->  		ctx->state =3D MFCINST_FREE;
->  		wake_up(&ctx->queue);
->  		goto irq_cleanup_hw;
-> @@ -763,7 +764,7 @@ static int s5p_mfc_open(struct file *file)
->  		goto err_bad_node;
->  	}
->  	ctx->fh.ctrl_handler =3D &ctx->ctrl_handler;
-> -	ctx->inst_no =3D -1;
-> +	ctx->inst_no =3D MFC_NO_INSTANCE_SET;
->  	/* Load firmware if this is the first instance */
->  	if (dev->num_inst =3D=3D 1) {
->  		dev->watchdog_timer.expires =3D jiffies +
-> @@ -873,12 +874,11 @@ static int s5p_mfc_release(struct file *file)
->  	vb2_queue_release(&ctx->vq_dst);
->  	/* Mark context as idle */
->  	clear_work_bit_irqsave(ctx);
-> -	/* If instance was initialised then
-> +	/* If instance was initialised and not yet freed,
->  	 * return instance and free resources */
-> -	if (ctx->inst_no !=3D MFC_NO_INSTANCE_SET) {
-> +	if (ctx->state !=3D MFCINST_FREE && ctx->state !=3D MFCINST_INIT) {
->  		mfc_debug(2, "Has to free instance\n");
->  		s5p_mfc_close_mfc_inst(dev, ctx);
-> -		ctx->inst_no =3D MFC_NO_INSTANCE_SET;
->  	}
->  	/* hardware locking scheme */
->  	if (dev->curr_ctx =3D=3D ctx->num)
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c b/drivers/=
-media/platform/s5p-mfc/s5p_mfc_ctrl.c
-> index 6f6e50a..6c3f8f7 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-> @@ -459,5 +459,6 @@ void s5p_mfc_close_mfc_inst(struct s5p_mfc_dev *d=
-ev, struct s5p_mfc_ctx *ctx)
->  	if (ctx->type =3D=3D MFCINST_DECODER)
->  		s5p_mfc_hw_call(dev->mfc_ops, release_dec_desc_buffer, ctx);
-> =20
-> +	ctx->inst_no =3D MFC_NO_INSTANCE_SET;
->  	ctx->state =3D MFCINST_FREE;
->  }
-> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/m=
-edia/platform/s5p-mfc/s5p_mfc_dec.c
-> index 995cee2..a4e6668 100644
-> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
-> @@ -475,11 +475,11 @@ static int reqbufs_output(struct s5p_mfc_dev *d=
-ev, struct s5p_mfc_ctx *ctx,
->  		ret =3D vb2_reqbufs(&ctx->vq_src, reqbufs);
->  		if (ret)
->  			goto out;
-> +		s5p_mfc_close_mfc_inst(dev, ctx);
+Hello Andreas,
 
-This so far seems to prevent us from probing memory type support. We
-Initially call reqbufs(count =3D 0) for this, but this calls seems to
-triggers a firmware error later if we do so. Any advise ?
-
->  		ctx->src_bufs_cnt =3D 0;
-> +		ctx->output_state =3D QUEUE_FREE;
->  	} else if (ctx->output_state =3D=3D QUEUE_FREE) {
-> -		/* Can only request buffers after the instance
-> -		 * has been opened.
-> -		 */
-> +		/* Can only request buffers when we have a valid format set. */
->  		WARN_ON(ctx->src_bufs_cnt !=3D 0);
->  		if (ctx->state !=3D MFCINST_INIT) {
->  			mfc_err("Reqbufs called in an invalid state\n");
-> @@ -493,6 +493,13 @@ static int reqbufs_output(struct s5p_mfc_dev *de=
-v, struct s5p_mfc_ctx *ctx,
->  		if (ret)
->  			goto out;
-> =20
-> +		ret =3D s5p_mfc_open_mfc_inst(dev, ctx);
-> +		if (ret) {
-> +			reqbufs->count =3D 0;
-> +			vb2_reqbufs(&ctx->vq_src, reqbufs);
-> +			goto out;
-> +		}
+On Fri, Jul 18, 2014 at 7:20 PM, Andreas F=C3=A4rber <afaerber@suse.de>=
+ wrote:
+>
+> +       memory {
+> +               reg =3D <0x40000000 0x80000000>;
+> +       };
 > +
->  		ctx->output_state =3D QUEUE_BUFS_REQUESTED;
->  	} else {
->  		mfc_err("Buffers have already been requested\n");
-> @@ -594,7 +601,7 @@ static int vidioc_querybuf(struct file *file, voi=
-d *priv,
->  		return -EINVAL;
->  	}
->  	mfc_debug(2, "State: %d, buf->type: %d\n", ctx->state, buf->type);
-> -	if (ctx->state =3D=3D MFCINST_INIT &&
-> +	if (ctx->state =3D=3D MFCINST_GOT_INST &&
->  			buf->type =3D=3D V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
->  		ret =3D vb2_querybuf(&ctx->vq_src, buf);
->  	} else if (ctx->state =3D=3D MFCINST_RUNNING &&
-> @@ -670,24 +677,13 @@ static int vidioc_streamon(struct file *file, v=
-oid *priv,
->  			   enum v4l2_buf_type type)
->  {
->  	struct s5p_mfc_ctx *ctx =3D fh_to_ctx(priv);
-> -	struct s5p_mfc_dev *dev =3D ctx->dev;
->  	int ret =3D -EINVAL;
-> =20
->  	mfc_debug_enter();
-> -	if (type =3D=3D V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
-> -		if (ctx->state =3D=3D MFCINST_INIT) {
-> -			ctx->dst_bufs_cnt =3D 0;
-> -			ctx->src_bufs_cnt =3D 0;
-> -			ctx->capture_state =3D QUEUE_FREE;
-> -			ctx->output_state =3D QUEUE_FREE;
-> -			ret =3D s5p_mfc_open_mfc_inst(dev, ctx);
-> -			if (ret)
-> -				return ret;
-> -		}
-> +	if (type =3D=3D V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
->  		ret =3D vb2_streamon(&ctx->vq_src, type);
-> -	} else if (type =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-> +	else if (type =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
->  		ret =3D vb2_streamon(&ctx->vq_dst, type);
-> -	}
->  	mfc_debug_leave();
->  	return ret;
->  }
+> +       chosen {
+> +       };
+> +
+
+Is there a reason for an empty chosen node? Same for the Spring DTS.
+
+Best regards,
+Javier
