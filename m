@@ -1,79 +1,77 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5PV210: move <mach/regs-clock.h> into mach-s5pv210/
-Date: Fri, 25 Jul 2014 13:40:23 +0900
-Message-ID: <1406263223-3646-1-git-send-email-kgene.kim@samsung.com>
+Subject: RE: [PATCH] exynos: Support big endian mode in secondary_startup
+Date: Fri, 25 Jul 2014 13:45:14 +0900
+Message-ID: <073c01cfa7c3$39ec6a10$adc53e30$@samsung.com>
+References: <1405958507-8606-1-git-send-email-broonie@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:19072 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750859AbaGYEjk (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:48827 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750758AbaGYEpR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jul 2014 00:39:40 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Fri, 25 Jul 2014 00:45:17 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N99006VZ3M3U0D0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 25 Jul 2014 13:39:39 +0900 (KST)
+ with ESMTP id <0N9900CM83VFV860@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 25 Jul 2014 13:45:15 +0900 (KST)
+In-reply-to: <1405958507-8606-1-git-send-email-broonie@kernel.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: 'Mark Brown' <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Victor Kamensky' <victor.kamensky@linaro.org>, 'Mark Brown' <broonie@linaro.org>
 
-This moves <mach/regs-clock.h> into mach-s5pv210 so no more
-include/mach/ under mach-s5pv210.
+Mark Brown wrote:
+> 
+> From: Victor Kamensky <victor.kamensky@linaro.org>
+> 
+> Exynos processors generally operate in little endian mode so their
+> bootloader and ROM will almost always operate in little endian mode.
+> This means that if a big endian kernel is run it must switch the CPU
+> into big endian mode after gaining control.
+> 
+> The generic secondary_startup that is called from exynos specific
+> secondary startup code will do the switch, but we need it to do earlier
+> because exynos specific secondary_startup code which runs first also
+> works with data that is big endian when the kernel is compiled for big
+> endian.
+> 
+> [Rewrote commit message. -- broonie]
+> 
+> Signed-off-by: Victor Kamensky <victor.kamensky@linaro.org>
+> Signed-off-by: Mark Brown <broonie@linaro.org>
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/mach-s5pv210/pm.c                            | 3 +--
- arch/arm/mach-s5pv210/{include/mach => }/regs-clock.h | 3 +--
- arch/arm/mach-s5pv210/s5pv210.c                       | 2 +-
- 3 files changed, 3 insertions(+), 5 deletions(-)
- rename arch/arm/mach-s5pv210/{include/mach => }/regs-clock.h (99%)
+Hi Mark,
 
-diff --git a/arch/arm/mach-s5pv210/pm.c b/arch/arm/mach-s5pv210/pm.c
-index 123163d..21b4b13 100644
---- a/arch/arm/mach-s5pv210/pm.c
-+++ b/arch/arm/mach-s5pv210/pm.c
-@@ -24,9 +24,8 @@
- 
- #include <plat/pm-common.h>
- 
--#include <mach/regs-clock.h>
--
- #include "common.h"
-+#include "regs-clock.h"
- 
- static struct sleep_save s5pv210_core_save[] = {
- 	/* Clock ETC */
-diff --git a/arch/arm/mach-s5pv210/include/mach/regs-clock.h b/arch/arm/mach-s5pv210/regs-clock.h
-similarity index 99%
-rename from arch/arm/mach-s5pv210/include/mach/regs-clock.h
-rename to arch/arm/mach-s5pv210/regs-clock.h
-index b14ffcd..4640f0f 100644
---- a/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-+++ b/arch/arm/mach-s5pv210/regs-clock.h
-@@ -1,5 +1,4 @@
--/* linux/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-- *
-+/*
-  * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com/
-  *
-diff --git a/arch/arm/mach-s5pv210/s5pv210.c b/arch/arm/mach-s5pv210/s5pv210.c
-index 53feff3..43eb1ea 100644
---- a/arch/arm/mach-s5pv210/s5pv210.c
-+++ b/arch/arm/mach-s5pv210/s5pv210.c
-@@ -18,9 +18,9 @@
- #include <asm/system_misc.h>
- 
- #include <plat/map-base.h>
--#include <mach/regs-clock.h>
- 
- #include "common.h"
-+#include "regs-clock.h"
- 
- static int __init s5pv210_fdt_map_sys(unsigned long node, const char *uname,
- 					int depth, void *data)
--- 
-2.0.0
+Basically, I have no objection on this, BTW is there any requirement to support
+big endian on exynos stuff? Just wondering...
+
+Thanks,
+Kukjin
+
+> ---
+>  arch/arm/mach-exynos/headsmp.S | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm/mach-exynos/headsmp.S b/arch/arm/mach-exynos/headsmp.S
+> index b54f9701e421..ac8364efb985 100644
+> --- a/arch/arm/mach-exynos/headsmp.S
+> +++ b/arch/arm/mach-exynos/headsmp.S
+> @@ -18,6 +18,11 @@
+>   * ready for them to initialise.
+>   */
+>  ENTRY(exynos4_secondary_startup)
+> +	/*
+> +	 * ROM code operates in little endian mode, when we get control we
+> +	 * need to switch it to big endian mode.
+> +	 */
+> +ARM_BE8(setend	be)
+>  	mrc	p15, 0, r0, c0, c0, 5
+>  	and	r0, r0, #15
+>  	adr	r4, 1f
+> --
+> 2.0.1
