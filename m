@@ -1,868 +1,713 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V6 6/8] drm/bridge: Modify drm_bridge core to support driver
- model
-Date: Sat, 26 Jul 2014 00:52:08 +0530
-Message-ID: <1406316130-4744-7-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [PATCH V6 8/8] drm/bridge: Add i2c based driver for ps8622/ps8625
+ bridge
+Date: Sat, 26 Jul 2014 00:52:10 +0530
+Message-ID: <1406316130-4744-9-git-send-email-ajaykumar.rs@samsung.com>
 References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48602 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:48623 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759679AbaGYTZ2 (ORCPT
+	with ESMTP id S1760748AbaGYTZk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jul 2014 15:25:28 -0400
+	Fri, 25 Jul 2014 15:25:40 -0400
 In-reply-to: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: inki.dae@samsung.com, thierry.reding@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: inki.dae@samsung.com, thierry.reding@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Vincent Palatin <vpalatin@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Sean Paul <seanpaul@chromium.org>, Rahul Sharma <rahul.sharma@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-This patch tries to seperate drm_bridge implementation
-into 2 parts, a drm part and a non_drm part.
+From: Vincent Palatin <vpalatin@chromium.org>
 
-A set of helper functions are defined in this patch to make
-bridge driver probe independent of the drm flow.
+This patch adds drm_bridge driver for parade DisplayPort
+to LVDS bridge chip.
 
-The bridge devices register themselves on a lookup table
-when they get probed by calling "drm_bridge_add_for_lookup".
-
-The parent encoder driver waits till the bridge is available in the
-lookup table(by calling "of_drm_find_bridge") and then continues with
-its initialization.
-
-The encoder driver should call "drm_bridge_attach_encoder" to pass on
-the drm_device and the encoder pointers to the bridge object.
-
-Now that the drm_device pointer is available, the encoder then calls
-"bridge->funcs->post_encoder_init" to allow the bridge to continue
-registering itself with the drm core.
-
-Also, non driver model based ptn3460 driver is removed in this patch.
-
+Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 ---
- .../devicetree/bindings/drm/bridge/ptn3460.txt     |   27 --
- drivers/gpu/drm/Makefile                           |    1 +
- drivers/gpu/drm/bridge/Kconfig                     |   12 +-
- drivers/gpu/drm/bridge/Makefile                    |    2 -
- drivers/gpu/drm/bridge/ptn3460.c                   |  343 --------------------
- drivers/gpu/drm/drm_bridge.c                       |   89 +++++
- drivers/gpu/drm/drm_crtc.c                         |    9 +-
- drivers/gpu/drm/exynos/Kconfig                     |    3 +-
- drivers/gpu/drm/exynos/exynos_dp_core.c            |   57 ++--
- drivers/gpu/drm/exynos/exynos_dp_core.h            |    1 +
- drivers/gpu/drm/msm/hdmi/hdmi_bridge.c             |    3 +-
- include/drm/bridge/ptn3460.h                       |   37 ---
- include/drm/drm_crtc.h                             |   16 +-
- 13 files changed, 147 insertions(+), 453 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/drm/bridge/ptn3460.txt
- delete mode 100644 drivers/gpu/drm/bridge/ptn3460.c
- create mode 100644 drivers/gpu/drm/drm_bridge.c
- delete mode 100644 include/drm/bridge/ptn3460.h
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ .../devicetree/bindings/video/bridge/ps8622.txt    |   19 +
+ drivers/gpu/drm/bridge/Kconfig                     |   10 +
+ drivers/gpu/drm/bridge/Makefile                    |    1 +
+ drivers/gpu/drm/bridge/ps8622.c                    |  602 ++++++++++++++++++++
+ 5 files changed, 633 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/video/bridge/ps8622.txt
+ create mode 100644 drivers/gpu/drm/bridge/ps8622.c
 
-diff --git a/Documentation/devicetree/bindings/drm/bridge/ptn3460.txt b/Documentation/devicetree/bindings/drm/bridge/ptn3460.txt
-deleted file mode 100644
-index 52b93b2..0000000
---- a/Documentation/devicetree/bindings/drm/bridge/ptn3460.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--ptn3460 bridge bindings
--
--Required properties:
--	- compatible: "nxp,ptn3460"
--	- reg: i2c address of the bridge
--	- powerdown-gpio: OF device-tree gpio specification
--	- reset-gpio: OF device-tree gpio specification
--	- edid-emulation: The EDID emulation entry to use
--		+-------+------------+------------------+
--		| Value | Resolution | Description      |
--		|   0   |  1024x768  | NXP Generic      |
--		|   1   |  1920x1080 | NXP Generic      |
--		|   2   |  1920x1080 | NXP Generic      |
--		|   3   |  1600x900  | Samsung LTM200KT |
--		|   4   |  1920x1080 | Samsung LTM230HT |
--		|   5   |  1366x768  | NXP Generic      |
--		|   6   |  1600x900  | ChiMei M215HGE   |
--		+-------+------------+------------------+
--
--Example:
--	lvds-bridge@20 {
--		compatible = "nxp,ptn3460";
--		reg = <0x20>;
--		powerdown-gpio = <&gpy2 5 1 0 0>;
--		reset-gpio = <&gpx1 5 1 0 0>;
--		edid-emulation = <5>;
--	};
-diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-index af9a609..14a8b45 100644
---- a/drivers/gpu/drm/Makefile
-+++ b/drivers/gpu/drm/Makefile
-@@ -20,6 +20,7 @@ drm-$(CONFIG_COMPAT) += drm_ioc32.o
- drm-$(CONFIG_DRM_GEM_CMA_HELPER) += drm_gem_cma_helper.o
- drm-$(CONFIG_PCI) += ati_pcigart.o
- drm-$(CONFIG_DRM_PANEL) += drm_panel.o
-+drm-$(CONFIG_DRM_BRIDGE) += drm_bridge.o
- 
- drm-usb-y   := drm_usb.o
- 
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 46a311e..b4a99cc 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -96,6 +96,7 @@ nxp	NXP Semiconductors
+ onnn	ON Semiconductor Corp.
+ opencores	OpenCores.org
+ panasonic	Panasonic Corporation
++parade	Parade Technologies Inc.
+ phytec	PHYTEC Messtechnik GmbH
+ picochip	Picochip Ltd
+ plathome	Plat'Home Co., Ltd.
+diff --git a/Documentation/devicetree/bindings/video/bridge/ps8622.txt b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
+new file mode 100644
+index 0000000..fdeafb2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
+@@ -0,0 +1,19 @@
++ps8622-bridge bindings
++
++Required properties:
++	- compatible: "parade,ps8622" or "parade,ps8625"
++	- reg: first i2c address of the bridge
++	- sleep-gpios: OF device-tree gpio specification
++	- reset-gpios: OF device-tree gpio specification
++
++Optional properties:
++	- lane-count: number of DP lanes to use
++
++Example:
++	ps8622-bridge@48 {
++		compatible = "parade,ps8622";
++		reg = <0x48>;
++		sleep-gpios = <&gpc3 6 1 0 0>;
++		reset-gpios = <&gpc3 1 1 0 0>;
++		lane-count = <1>
++	};
 diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 884923f..1e2f96c 100644
+index 0b12d16..d73e474 100644
 --- a/drivers/gpu/drm/bridge/Kconfig
 +++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -1,5 +1,9 @@
--config DRM_PTN3460
--	tristate "PTN3460 DP/LVDS bridge"
-+config DRM_BRIDGE
-+	tristate
- 	depends on DRM
--	select DRM_KMS_HELPER
--	---help---
+@@ -16,4 +16,14 @@ config DRM_PTN3460
+ 	help
+ 	  ptn3460 eDP-LVDS bridge chip driver.
+ 
++config DRM_PS8622
++	tristate "Parade eDP/LVDS bridge"
++	depends on DRM && DRM_BRIDGE
++	depends on OF
++	depends on I2C
++	select DRM_PANEL
++	select BACKLIGHT_LCD_SUPPORT
++	select BACKLIGHT_CLASS_DEVICE
 +	help
-+	  Bridge registration and lookup framework.
-+
-+menu "bridge chips"
-+	depends on DRM_BRIDGE
-+endmenu
++	  parade eDP-LVDS bridge chip driver.
+ endmenu
 diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-index b4733e1..be16eca 100644
+index b4733e1..d1b5daa 100644
 --- a/drivers/gpu/drm/bridge/Makefile
 +++ b/drivers/gpu/drm/bridge/Makefile
-@@ -1,3 +1 @@
+@@ -1,3 +1,4 @@
  ccflags-y := -Iinclude/drm
--
--obj-$(CONFIG_DRM_PTN3460) += ptn3460.o
-diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
-deleted file mode 100644
-index d466696..0000000
---- a/drivers/gpu/drm/bridge/ptn3460.c
-+++ /dev/null
-@@ -1,343 +0,0 @@
--/*
-- * NXP PTN3460 DP/LVDS bridge driver
-- *
-- * Copyright (C) 2013 Google, Inc.
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
--
--#include <linux/module.h>
--#include <linux/of.h>
--#include <linux/of_gpio.h>
--#include <linux/i2c.h>
--#include <linux/gpio.h>
--#include <linux/delay.h>
--
--#include "drmP.h"
--#include "drm_edid.h"
--#include "drm_crtc.h"
--#include "drm_crtc_helper.h"
--
--#include "bridge/ptn3460.h"
--
--#define PTN3460_EDID_ADDR			0x0
--#define PTN3460_EDID_EMULATION_ADDR		0x84
--#define PTN3460_EDID_ENABLE_EMULATION		0
--#define PTN3460_EDID_EMULATION_SELECTION	1
--#define PTN3460_EDID_SRAM_LOAD_ADDR		0x85
--
--struct ptn3460_bridge {
--	struct drm_connector connector;
--	struct i2c_client *client;
--	struct drm_encoder *encoder;
--	struct drm_bridge *bridge;
--	struct edid *edid;
--	int gpio_pd_n;
--	int gpio_rst_n;
--	u32 edid_emulation;
--	bool enabled;
--};
--
--static int ptn3460_read_bytes(struct ptn3460_bridge *ptn_bridge, char addr,
--		u8 *buf, int len)
--{
--	int ret;
--
--	ret = i2c_master_send(ptn_bridge->client, &addr, 1);
--	if (ret <= 0) {
--		DRM_ERROR("Failed to send i2c command, ret=%d\n", ret);
--		return ret;
--	}
--
--	ret = i2c_master_recv(ptn_bridge->client, buf, len);
--	if (ret <= 0) {
--		DRM_ERROR("Failed to recv i2c data, ret=%d\n", ret);
--		return ret;
--	}
--
--	return 0;
--}
--
--static int ptn3460_write_byte(struct ptn3460_bridge *ptn_bridge, char addr,
--		char val)
--{
--	int ret;
--	char buf[2];
--
--	buf[0] = addr;
--	buf[1] = val;
--
--	ret = i2c_master_send(ptn_bridge->client, buf, ARRAY_SIZE(buf));
--	if (ret <= 0) {
--		DRM_ERROR("Failed to send i2c command, ret=%d\n", ret);
--		return ret;
--	}
--
--	return 0;
--}
--
--static int ptn3460_select_edid(struct ptn3460_bridge *ptn_bridge)
--{
--	int ret;
--	char val;
--
--	/* Load the selected edid into SRAM (accessed at PTN3460_EDID_ADDR) */
--	ret = ptn3460_write_byte(ptn_bridge, PTN3460_EDID_SRAM_LOAD_ADDR,
--			ptn_bridge->edid_emulation);
--	if (ret) {
--		DRM_ERROR("Failed to transfer edid to sram, ret=%d\n", ret);
--		return ret;
--	}
--
--	/* Enable EDID emulation and select the desired EDID */
--	val = 1 << PTN3460_EDID_ENABLE_EMULATION |
--		ptn_bridge->edid_emulation << PTN3460_EDID_EMULATION_SELECTION;
--
--	ret = ptn3460_write_byte(ptn_bridge, PTN3460_EDID_EMULATION_ADDR, val);
--	if (ret) {
--		DRM_ERROR("Failed to write edid value, ret=%d\n", ret);
--		return ret;
--	}
--
--	return 0;
--}
--
--static void ptn3460_pre_enable(struct drm_bridge *bridge)
--{
--	struct ptn3460_bridge *ptn_bridge = bridge->driver_private;
--	int ret;
--
--	if (ptn_bridge->enabled)
--		return;
--
--	if (gpio_is_valid(ptn_bridge->gpio_pd_n))
--		gpio_set_value(ptn_bridge->gpio_pd_n, 1);
--
--	if (gpio_is_valid(ptn_bridge->gpio_rst_n)) {
--		gpio_set_value(ptn_bridge->gpio_rst_n, 0);
--		udelay(10);
--		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
--	}
--
--	/*
--	 * There's a bug in the PTN chip where it falsely asserts hotplug before
--	 * it is fully functional. We're forced to wait for the maximum start up
--	 * time specified in the chip's datasheet to make sure we're really up.
--	 */
--	msleep(90);
--
--	ret = ptn3460_select_edid(ptn_bridge);
--	if (ret)
--		DRM_ERROR("Select edid failed ret=%d\n", ret);
--
--	ptn_bridge->enabled = true;
--}
--
--static void ptn3460_enable(struct drm_bridge *bridge)
--{
--}
--
--static void ptn3460_disable(struct drm_bridge *bridge)
--{
--	struct ptn3460_bridge *ptn_bridge = bridge->driver_private;
--
--	if (!ptn_bridge->enabled)
--		return;
--
--	ptn_bridge->enabled = false;
--
--	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
--		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
--
--	if (gpio_is_valid(ptn_bridge->gpio_pd_n))
--		gpio_set_value(ptn_bridge->gpio_pd_n, 0);
--}
--
--static void ptn3460_post_disable(struct drm_bridge *bridge)
--{
--}
--
--void ptn3460_bridge_destroy(struct drm_bridge *bridge)
--{
--	struct ptn3460_bridge *ptn_bridge = bridge->driver_private;
--
--	drm_bridge_cleanup(bridge);
--	if (gpio_is_valid(ptn_bridge->gpio_pd_n))
--		gpio_free(ptn_bridge->gpio_pd_n);
--	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
--		gpio_free(ptn_bridge->gpio_rst_n);
--	/* Nothing else to free, we've got devm allocated memory */
--}
--
--struct drm_bridge_funcs ptn3460_bridge_funcs = {
--	.pre_enable = ptn3460_pre_enable,
--	.enable = ptn3460_enable,
--	.disable = ptn3460_disable,
--	.post_disable = ptn3460_post_disable,
--	.destroy = ptn3460_bridge_destroy,
--};
--
--int ptn3460_get_modes(struct drm_connector *connector)
--{
--	struct ptn3460_bridge *ptn_bridge;
--	u8 *edid;
--	int ret, num_modes;
--	bool power_off;
--
--	ptn_bridge = container_of(connector, struct ptn3460_bridge, connector);
--
--	if (ptn_bridge->edid)
--		return drm_add_edid_modes(connector, ptn_bridge->edid);
--
--	power_off = !ptn_bridge->enabled;
--	ptn3460_pre_enable(ptn_bridge->bridge);
--
--	edid = kmalloc(EDID_LENGTH, GFP_KERNEL);
--	if (!edid) {
--		DRM_ERROR("Failed to allocate edid\n");
--		return 0;
--	}
--
--	ret = ptn3460_read_bytes(ptn_bridge, PTN3460_EDID_ADDR, edid,
--			EDID_LENGTH);
--	if (ret) {
--		kfree(edid);
--		num_modes = 0;
--		goto out;
--	}
--
--	ptn_bridge->edid = (struct edid *)edid;
--	drm_mode_connector_update_edid_property(connector, ptn_bridge->edid);
--
--	num_modes = drm_add_edid_modes(connector, ptn_bridge->edid);
--
--out:
--	if (power_off)
--		ptn3460_disable(ptn_bridge->bridge);
--
--	return num_modes;
--}
--
--struct drm_encoder *ptn3460_best_encoder(struct drm_connector *connector)
--{
--	struct ptn3460_bridge *ptn_bridge;
--
--	ptn_bridge = container_of(connector, struct ptn3460_bridge, connector);
--
--	return ptn_bridge->encoder;
--}
--
--struct drm_connector_helper_funcs ptn3460_connector_helper_funcs = {
--	.get_modes = ptn3460_get_modes,
--	.best_encoder = ptn3460_best_encoder,
--};
--
--enum drm_connector_status ptn3460_detect(struct drm_connector *connector,
--		bool force)
--{
--	return connector_status_connected;
--}
--
--void ptn3460_connector_destroy(struct drm_connector *connector)
--{
--	drm_connector_cleanup(connector);
--}
--
--struct drm_connector_funcs ptn3460_connector_funcs = {
--	.dpms = drm_helper_connector_dpms,
--	.fill_modes = drm_helper_probe_single_connector_modes,
--	.detect = ptn3460_detect,
--	.destroy = ptn3460_connector_destroy,
--};
--
--int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
--		struct i2c_client *client, struct device_node *node)
--{
--	int ret;
--	struct drm_bridge *bridge;
--	struct ptn3460_bridge *ptn_bridge;
--
--	bridge = devm_kzalloc(dev->dev, sizeof(*bridge), GFP_KERNEL);
--	if (!bridge) {
--		DRM_ERROR("Failed to allocate drm bridge\n");
--		return -ENOMEM;
--	}
--
--	ptn_bridge = devm_kzalloc(dev->dev, sizeof(*ptn_bridge), GFP_KERNEL);
--	if (!ptn_bridge) {
--		DRM_ERROR("Failed to allocate ptn bridge\n");
--		return -ENOMEM;
--	}
--
--	ptn_bridge->client = client;
--	ptn_bridge->encoder = encoder;
--	ptn_bridge->bridge = bridge;
--	ptn_bridge->gpio_pd_n = of_get_named_gpio(node, "powerdown-gpio", 0);
--	if (gpio_is_valid(ptn_bridge->gpio_pd_n)) {
--		ret = gpio_request_one(ptn_bridge->gpio_pd_n,
--				GPIOF_OUT_INIT_HIGH, "PTN3460_PD_N");
--		if (ret) {
--			DRM_ERROR("Request powerdown-gpio failed (%d)\n", ret);
--			return ret;
--		}
--	}
--
--	ptn_bridge->gpio_rst_n = of_get_named_gpio(node, "reset-gpio", 0);
--	if (gpio_is_valid(ptn_bridge->gpio_rst_n)) {
--		/*
--		 * Request the reset pin low to avoid the bridge being
--		 * initialized prematurely
--		 */
--		ret = gpio_request_one(ptn_bridge->gpio_rst_n,
--				GPIOF_OUT_INIT_LOW, "PTN3460_RST_N");
--		if (ret) {
--			DRM_ERROR("Request reset-gpio failed (%d)\n", ret);
--			gpio_free(ptn_bridge->gpio_pd_n);
--			return ret;
--		}
--	}
--
--	ret = of_property_read_u32(node, "edid-emulation",
--			&ptn_bridge->edid_emulation);
--	if (ret) {
--		DRM_ERROR("Can't read edid emulation value\n");
--		goto err;
--	}
--
--	ret = drm_bridge_init(dev, bridge, &ptn3460_bridge_funcs);
--	if (ret) {
--		DRM_ERROR("Failed to initialize bridge with drm\n");
--		goto err;
--	}
--
--	bridge->driver_private = ptn_bridge;
--	encoder->bridge = bridge;
--
--	ret = drm_connector_init(dev, &ptn_bridge->connector,
--			&ptn3460_connector_funcs, DRM_MODE_CONNECTOR_LVDS);
--	if (ret) {
--		DRM_ERROR("Failed to initialize connector with drm\n");
--		goto err;
--	}
--	drm_connector_helper_add(&ptn_bridge->connector,
--			&ptn3460_connector_helper_funcs);
--	drm_connector_register(&ptn_bridge->connector);
--	drm_mode_connector_attach_encoder(&ptn_bridge->connector, encoder);
--
--	return 0;
--
--err:
--	if (gpio_is_valid(ptn_bridge->gpio_pd_n))
--		gpio_free(ptn_bridge->gpio_pd_n);
--	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
--		gpio_free(ptn_bridge->gpio_rst_n);
--	return ret;
--}
--EXPORT_SYMBOL(ptn3460_init);
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+ 
+ obj-$(CONFIG_DRM_PTN3460) += ptn3460.o
++obj-$(CONFIG_DRM_PS8622) += ps8622.o
+diff --git a/drivers/gpu/drm/bridge/ps8622.c b/drivers/gpu/drm/bridge/ps8622.c
 new file mode 100644
-index 0000000..84645e6
+index 0000000..ec60fcf
 --- /dev/null
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -0,0 +1,89 @@
++++ b/drivers/gpu/drm/bridge/ps8622.c
+@@ -0,0 +1,602 @@
 +/*
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd
++ * Parade PS8622 eDP/LVDS bridge driver
 + *
-+ * Permission is hereby granted, free of charge, to any person obtaining a
-+ * copy of this software and associated documentation files (the "Software"),
-+ * to deal in the Software without restriction, including without limitation
-+ * the rights to use, copy, modify, merge, publish, distribute, sub license,
-+ * and/or sell copies of the Software, and to permit persons to whom the
-+ * Software is furnished to do so, subject to the following conditions:
++ * Copyright (C) 2014 Google, Inc.
 + *
-+ * The above copyright notice and this permission notice (including the
-+ * next paragraph) shall be included in all copies or substantial portions
-+ * of the Software.
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
 + *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL
-+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-+ * DEALINGS IN THE SOFTWARE.
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
 + */
 +
-+#include <linux/err.h>
 +#include <linux/module.h>
++#include <linux/backlight.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/fb.h>
++#include <linux/gpio.h>
++#include <linux/i2c.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/pm.h>
++#include <linux/regulator/consumer.h>
 +
-+#include <drm/drm_crtc.h>
++#include <drm/drm_panel.h>
 +
-+static DEFINE_MUTEX(bridge_lock);
-+static LIST_HEAD(bridge_lookup);
++#include "drmP.h"
++#include "drm_crtc.h"
++#include "drm_crtc_helper.h"
 +
-+int drm_bridge_add_for_lookup(struct drm_bridge *bridge)
-+{
-+	mutex_lock(&bridge_lock);
-+	list_add_tail(&bridge->head, &bridge_lookup);
-+	mutex_unlock(&bridge_lock);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(drm_bridge_add_for_lookup);
-+
-+void drm_bridge_remove_from_lookup(struct drm_bridge *bridge)
-+{
-+	mutex_lock(&bridge_lock);
-+	list_del_init(&bridge->head);
-+	mutex_unlock(&bridge_lock);
-+}
-+EXPORT_SYMBOL(drm_bridge_remove_from_lookup);
-+
-+int drm_bridge_attach_encoder(struct drm_bridge *bridge,
-+				struct drm_encoder *encoder)
-+{
-+	if (!bridge || !encoder)
-+		return -EINVAL;
-+
-+	if (bridge->encoder)
-+		return -EBUSY;
-+
-+	encoder->bridge = bridge;
-+	bridge->encoder = encoder;
-+	bridge->drm_dev = encoder->dev;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(drm_bridge_attach_encoder);
-+
-+#ifdef CONFIG_OF
-+struct drm_bridge *of_drm_find_bridge(struct device_node *np)
-+{
++struct ps8622_bridge {
++	struct drm_connector connector;
++	struct i2c_client *client;
 +	struct drm_bridge *bridge;
++	struct drm_panel *panel;
++	struct regulator *v12;
++	struct backlight_device *bl;
++	struct mutex enable_mutex;
 +
-+	mutex_lock(&bridge_lock);
++	struct gpio_desc *gpio_slp_n;
++	struct gpio_desc *gpio_rst_n;
 +
-+	list_for_each_entry(bridge, &bridge_lookup, head) {
-+		if (bridge->dev->of_node == np) {
-+			mutex_unlock(&bridge_lock);
-+			return bridge;
-+		}
-+	}
++	u8 max_lane_count;
++	u8 lane_count;
 +
-+	mutex_unlock(&bridge_lock);
-+	return NULL;
-+}
-+EXPORT_SYMBOL(of_drm_find_bridge);
++	bool enabled;
++};
++
++struct ps8622_device_data {
++	u8 max_lane_count;
++};
++
++static const struct ps8622_device_data ps8622_data = {
++	.max_lane_count = 1,
++};
++
++static const struct ps8622_device_data ps8625_data = {
++	.max_lane_count = 2,
++};
++
++/* Brightness scale on the Parade chip */
++#define PS8622_MAX_BRIGHTNESS 0xff
++
++/* Timings taken from the version 1.7 datasheet for the PS8622/PS8625 */
++#define PS8622_POWER_RISE_T1_MIN_US 10
++#define PS8622_POWER_RISE_T1_MAX_US 10000
++#define PS8622_RST_HIGH_T2_MIN_US 3000
++#define PS8622_RST_HIGH_T2_MAX_US 30000
++#define PS8622_PWMO_END_T12_MS 200
++#define PS8622_POWER_FALL_T16_MAX_US 10000
++#define PS8622_POWER_OFF_T17_MS 500
++
++#if ((PS8622_RST_HIGH_T2_MIN_US + PS8622_POWER_RISE_T1_MAX_US) > \
++	(PS8622_RST_HIGH_T2_MAX_US + PS8622_POWER_RISE_T1_MIN_US))
++#error "T2.min + T1.max must be less than T2.max + T1.min"
 +#endif
 +
-+MODULE_AUTHOR("Ajay Kumar <ajaykumar.rs@samsung.com>");
-+MODULE_DESCRIPTION("DRM bridge infrastructure");
-+MODULE_LICENSE("GPL and additional rights");
-diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-index 1ccf5cb..436e75d 100644
---- a/drivers/gpu/drm/drm_crtc.c
-+++ b/drivers/gpu/drm/drm_crtc.c
-@@ -993,7 +993,6 @@ EXPORT_SYMBOL(drm_connector_unplug_all);
-  * drm_bridge_init - initialize a drm transcoder/bridge
-  * @dev: drm device
-  * @bridge: transcoder/bridge to set up
-- * @funcs: bridge function table
-  *
-  * Initialises a preallocated bridge. Bridges should be
-  * subclassed as part of driver connector objects.
-@@ -1001,8 +1000,7 @@ EXPORT_SYMBOL(drm_connector_unplug_all);
-  * Returns:
-  * Zero on success, error code on failure.
-  */
--int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
--		const struct drm_bridge_funcs *funcs)
-+int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge)
- {
- 	int ret;
- 
-@@ -1012,8 +1010,7 @@ int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
- 	if (ret)
- 		goto out;
- 
--	bridge->dev = dev;
--	bridge->funcs = funcs;
-+	bridge->drm_dev = dev;
- 
- 	list_add_tail(&bridge->head, &dev->mode_config.bridge_list);
- 	dev->mode_config.num_bridge++;
-@@ -1032,7 +1029,7 @@ EXPORT_SYMBOL(drm_bridge_init);
-  */
- void drm_bridge_cleanup(struct drm_bridge *bridge)
- {
--	struct drm_device *dev = bridge->dev;
-+	struct drm_device *dev = bridge->drm_dev;
- 
- 	drm_modeset_lock_all(dev);
- 	drm_mode_object_put(dev, &bridge->base);
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 7f9f6f9..bdef294 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -51,9 +51,10 @@ config DRM_EXYNOS_DSI
- 
- config DRM_EXYNOS_DP
- 	bool "EXYNOS DRM DP driver support"
--	depends on DRM_EXYNOS_FIMD && ARCH_EXYNOS && (DRM_PTN3460=n || DRM_PTN3460=y || DRM_PTN3460=DRM_EXYNOS)
-+	depends on DRM_EXYNOS_FIMD && ARCH_EXYNOS
- 	default DRM_EXYNOS
- 	select DRM_PANEL
-+	select DRM_BRIDGE
- 	help
- 	  This enables support for DP device.
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 49356cc..055a9e1 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -28,7 +28,6 @@
- #include <drm/drm_crtc.h>
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_panel.h>
--#include <drm/bridge/ptn3460.h>
- 
- #include "exynos_drm_drv.h"
- #include "exynos_dp_core.h"
-@@ -986,33 +985,23 @@ static struct drm_connector_helper_funcs exynos_dp_connector_helper_funcs = {
- 	.best_encoder = exynos_dp_best_encoder,
- };
- 
--static bool find_bridge(const char *compat, struct bridge_init *bridge)
-+static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
-+					struct drm_encoder *encoder)
- {
--	bridge->client = NULL;
--	bridge->node = of_find_compatible_node(NULL, NULL, compat);
--	if (!bridge->node)
--		return false;
--
--	bridge->client = of_find_i2c_device_by_node(bridge->node);
--	if (!bridge->client)
--		return false;
--
--	return true;
--}
--
--/* returns the number of bridges attached */
--static int exynos_drm_attach_lcd_bridge(struct drm_device *dev,
--		struct drm_encoder *encoder)
--{
--	struct bridge_init bridge;
- 	int ret;
- 
--	if (find_bridge("nxp,ptn3460", &bridge)) {
--		ret = ptn3460_init(dev, encoder, bridge.client, bridge.node);
--		if (!ret)
--			return 1;
-+	dp->bridge->connector_polled = DRM_CONNECTOR_POLL_HPD;
-+	ret = drm_bridge_attach_encoder(dp->bridge, encoder);
-+	if (ret) {
-+		DRM_ERROR("Failed to attach bridge to encoder\n");
-+		return ret;
- 	}
--	return 0;
++static int ps8622_set(struct i2c_client *client, u8 page, u8 reg, u8 val)
++{
++	int ret;
++	struct i2c_adapter *adap = client->adapter;
++	struct i2c_msg msg;
++	u8 data[] = {reg, val};
 +
-+	/* Allow the bridge to continue with rest of initialization */
-+	if (dp->bridge->funcs && dp->bridge->funcs->post_encoder_init)
-+		return dp->bridge->funcs->post_encoder_init(dp->bridge);
++	msg.addr = client->addr + page;
++	msg.flags = 0;
++	msg.len = sizeof(data);
++	msg.buf = data;
 +
-+	return -ENODEV;
- }
- 
- static int exynos_dp_create_connector(struct exynos_drm_display *display,
-@@ -1025,9 +1014,11 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
- 	dp->encoder = encoder;
- 
- 	/* Pre-empt DP connector creation if there's a bridge */
--	ret = exynos_drm_attach_lcd_bridge(dp->drm_dev, encoder);
--	if (ret)
--		return 0;
-+	if (dp->bridge) {
-+		ret = exynos_drm_attach_lcd_bridge(dp, encoder);
-+		if (!ret)
-+			return 0;
++	ret = i2c_transfer(adap, &msg, 1);
++	if (ret != 1)
++		pr_warn("PS8622 I2C write (0x%02x,0x%02x,0x%02x) failed: %d\n",
++			client->addr + page, reg, val, ret);
++	return !(ret == 1);
++}
++
++static int ps8622_send_config(struct ps8622_bridge *ps_bridge)
++{
++	struct i2c_client *cl = ps_bridge->client;
++	int err = 0;
++
++	/* wait 20ms after power ON */
++	usleep_range(20000, 30000);
++
++	err |= ps8622_set(cl, 0x02, 0xa1, 0x01); /* HPD low */
++	/* SW setting */
++	err |= ps8622_set(cl, 0x04, 0x14, 0x01); /* [1:0] SW output 1.2V voltage
++						  * is lower to 96% */
++	/* RCO SS setting */
++	err |= ps8622_set(cl, 0x04, 0xe3, 0x20); /* [5:4] = b01 0.5%, b10 1%,
++						  * b11 1.5% */
++	err |= ps8622_set(cl, 0x04, 0xe2, 0x80); /* [7] RCO SS enable */
++	/* RPHY Setting */
++	err |= ps8622_set(cl, 0x04, 0x8a, 0x0c); /* [3:2] CDR tune wait cycle
++						  * before measure for fine tune
++						  * b00: 1us b01: 0.5us b10:2us
++						  * b11: 4us */
++	err |= ps8622_set(cl, 0x04, 0x89, 0x08); /* [3] RFD always on */
++	err |= ps8622_set(cl, 0x04, 0x71, 0x2d); /* CTN lock in/out:
++						  * 20000ppm/80000ppm.
++						  * Lock out 2 times. */
++	/* 2.7G CDR settings */
++	err |= ps8622_set(cl, 0x04, 0x7d, 0x07); /* NOF=40LSB for HBR CDR
++						  * setting */
++	err |= ps8622_set(cl, 0x04, 0x7b, 0x00); /* [1:0] Fmin=+4bands */
++	err |= ps8622_set(cl, 0x04, 0x7a, 0xfd); /* [7:5] DCO_FTRNG=+-40% */
++	/* 1.62G CDR settings */
++	err |= ps8622_set(cl, 0x04, 0xc0, 0x12); /* [5:2]NOF=64LSB [1:0]DCO
++						  * scale is 2/5 */
++	err |= ps8622_set(cl, 0x04, 0xc1, 0x92); /* Gitune=-37% */
++	err |= ps8622_set(cl, 0x04, 0xc2, 0x1c); /* Fbstep=100% */
++	err |= ps8622_set(cl, 0x04, 0x32, 0x80); /* [7] LOS signal disable */
++	/* RPIO Setting */
++	err |= ps8622_set(cl, 0x04, 0x00, 0xb0); /* [7:4] LVDS driver bias
++						  * current : 75% (250mV swing)
++						  * */
++	err |= ps8622_set(cl, 0x04, 0x15, 0x40); /* [7:6] Right-bar GPIO output
++						  * strength is 8mA */
++	/* EQ Training State Machine Setting */
++	err |= ps8622_set(cl, 0x04, 0x54, 0x10); /* RCO calibration start */
++	/* Logic, needs more than 10 I2C command */
++	err |= ps8622_set(cl, 0x01, 0x02, 0x80 | ps_bridge->max_lane_count);
++						 /* [4:0] MAX_LANE_COUNT set to
++						  * max supported lanes */
++	err |= ps8622_set(cl, 0x01, 0x21, 0x80 | ps_bridge->lane_count);
++						 /* [4:0] LANE_COUNT_SET set to
++						  * chosen lane count */
++	err |= ps8622_set(cl, 0x00, 0x52, 0x20);
++	err |= ps8622_set(cl, 0x00, 0xf1, 0x03); /* HPD CP toggle enable */
++	err |= ps8622_set(cl, 0x00, 0x62, 0x41);
++	err |= ps8622_set(cl, 0x00, 0xf6, 0x01); /* Counter number, add 1ms
++						  * counter delay */
++	err |= ps8622_set(cl, 0x00, 0x77, 0x06); /* [6]PWM function control by
++						  * DPCD0040f[7], default is PWM
++						  * block always works. */
++	err |= ps8622_set(cl, 0x00, 0x4c, 0x04); /* 04h Adjust VTotal tolerance
++						  * to fix the 30Hz no display
++						  * issue */
++	err |= ps8622_set(cl, 0x01, 0xc0, 0x00); /* DPCD00400='h00, Parade OUI =
++						  * 'h001cf8 */
++	err |= ps8622_set(cl, 0x01, 0xc1, 0x1c); /* DPCD00401='h1c */
++	err |= ps8622_set(cl, 0x01, 0xc2, 0xf8); /* DPCD00402='hf8 */
++	err |= ps8622_set(cl, 0x01, 0xc3, 0x44); /* DPCD403~408 = ASCII code
++						  * D2SLV5='h4432534c5635 */
++	err |= ps8622_set(cl, 0x01, 0xc4, 0x32); /* DPCD404 */
++	err |= ps8622_set(cl, 0x01, 0xc5, 0x53); /* DPCD405 */
++	err |= ps8622_set(cl, 0x01, 0xc6, 0x4c); /* DPCD406 */
++	err |= ps8622_set(cl, 0x01, 0xc7, 0x56); /* DPCD407 */
++	err |= ps8622_set(cl, 0x01, 0xc8, 0x35); /* DPCD408 */
++	err |= ps8622_set(cl, 0x01, 0xca, 0x01); /* DPCD40A, Initial Code major
++						  * revision '01' */
++	err |= ps8622_set(cl, 0x01, 0xcb, 0x05); /* DPCD40B, Initial Code minor
++						  * revision '05' */
++	if (ps_bridge->bl) {
++		err |= ps8622_set(cl, 0x01, 0xa5, 0xa0);
++						/* DPCD720, internal PWM */
++		err |= ps8622_set(cl, 0x01, 0xa7,
++				ps_bridge->bl->props.brightness);
++						 /* FFh for 100% brightness,
++						  *  0h for 0% brightness */
++	} else {
++		err |= ps8622_set(cl, 0x01, 0xa5, 0x80);
++						/* DPCD720, external PWM */
 +	}
- 
- 	connector->polled = DRM_CONNECTOR_POLL_HPD;
- 
-@@ -1279,7 +1270,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	if (ret)
- 		return ret;
- 
--	if (!dp->panel) {
-+	if (!dp->panel && !dp->bridge) {
- 		ret = exynos_dp_dt_parse_panel(dp);
- 		if (ret)
- 			return ret;
-@@ -1370,7 +1361,7 @@ static const struct component_ops exynos_dp_ops = {
- static int exynos_dp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct device_node *panel_node;
-+	struct device_node *panel_node, *bridge_node;
- 	struct exynos_dp_device *dp;
- 	int ret;
- 
-@@ -1392,6 +1383,14 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 			return -EPROBE_DEFER;
- 	}
- 
-+	bridge_node = of_parse_phandle(dev->of_node, "bridge", 0);
-+	if (bridge_node) {
-+		dp->bridge = of_drm_find_bridge(bridge_node);
-+		of_node_put(bridge_node);
-+		if (!dp->bridge)
++	err |= ps8622_set(cl, 0x01, 0xcc, 0x13); /* Set LVDS output as 6bit-VESA
++						  * mapping, single LVDS channel
++						  * */
++	err |= ps8622_set(cl, 0x02, 0xb1, 0x20); /* Enable SSC set by register
++						  * */
++	err |= ps8622_set(cl, 0x04, 0x10, 0x16); /* Set SSC enabled and +/-1%
++						  * central spreading */
++	/* Logic end */
++	err |= ps8622_set(cl, 0x04, 0x59, 0x60); /* MPU Clock source: LC => RCO
++						  * */
++	err |= ps8622_set(cl, 0x04, 0x54, 0x14); /* LC -> RCO */
++	err |= ps8622_set(cl, 0x02, 0xa1, 0x91); /* HPD high */
++
++	return err ? -EIO : 0;
++}
++
++static int ps8622_backlight_update(struct backlight_device *bl)
++{
++	struct ps8622_bridge *ps_bridge = dev_get_drvdata(&bl->dev);
++	int ret, brightness = bl->props.brightness;
++
++	if (bl->props.power != FB_BLANK_UNBLANK ||
++	    bl->props.state & (BL_CORE_SUSPENDED | BL_CORE_FBBLANK))
++		brightness = 0;
++
++	mutex_lock(&ps_bridge->enable_mutex);
++
++	if (!ps_bridge->enabled) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	ret = ps8622_set(ps_bridge->client, 0x01, 0xa7, brightness);
++
++out:
++	mutex_unlock(&ps_bridge->enable_mutex);
++	return ret;
++}
++
++static int ps8622_backlight_get(struct backlight_device *bl)
++{
++	return bl->props.brightness;
++}
++
++static const struct backlight_ops ps8622_backlight_ops = {
++	.update_status	= ps8622_backlight_update,
++	.get_brightness	= ps8622_backlight_get,
++};
++
++static void ps8622_pre_enable(struct drm_bridge *bridge)
++{
++	struct ps8622_bridge *ps_bridge = bridge->driver_private;
++	int ret;
++
++	mutex_lock(&ps_bridge->enable_mutex);
++	if (ps_bridge->enabled)
++		goto out;
++
++	gpiod_set_value(ps_bridge->gpio_rst_n, 0);
++
++	if (ps_bridge->v12) {
++		ret = regulator_enable(ps_bridge->v12);
++		if (ret)
++			DRM_ERROR("fails to enable ps_bridge->v12");
++	}
++
++	drm_panel_prepare(ps_bridge->panel);
++
++	gpiod_set_value(ps_bridge->gpio_slp_n, 1);
++
++	/*
++	 * T1 is the range of time that it takes for the power to rise after we
++	 * enable the lcd fet. T2 is the range of time in which the data sheet
++	 * specifies we should deassert the reset pin.
++	 *
++	 * If it takes T1.max for the power to rise, we need to wait atleast
++	 * T2.min before deasserting the reset pin. If it takes T1.min for the
++	 * power to rise, we need to wait at most T2.max before deasserting the
++	 * reset pin.
++	 */
++	usleep_range(PS8622_RST_HIGH_T2_MIN_US + PS8622_POWER_RISE_T1_MAX_US,
++		     PS8622_RST_HIGH_T2_MAX_US + PS8622_POWER_RISE_T1_MIN_US);
++
++	gpiod_set_value(ps_bridge->gpio_rst_n, 1);
++
++	ret = ps8622_send_config(ps_bridge);
++	if (ret)
++		DRM_ERROR("Failed to send config to bridge (%d)\n", ret);
++
++	ps_bridge->enabled = true;
++
++out:
++	mutex_unlock(&ps_bridge->enable_mutex);
++}
++
++static void ps8622_enable(struct drm_bridge *bridge)
++{
++	struct ps8622_bridge *ps_bridge = bridge->driver_private;
++
++	mutex_lock(&ps_bridge->enable_mutex);
++	drm_panel_enable(ps_bridge->panel);
++	mutex_unlock(&ps_bridge->enable_mutex);
++}
++
++static void ps8622_disable(struct drm_bridge *bridge)
++{
++	struct ps8622_bridge *ps_bridge = bridge->driver_private;
++
++	mutex_lock(&ps_bridge->enable_mutex);
++
++	if (!ps_bridge->enabled)
++		goto out;
++
++	ps_bridge->enabled = false;
++
++	drm_panel_disable(ps_bridge->panel);
++	msleep(PS8622_PWMO_END_T12_MS);
++
++	/*
++	 * This doesn't matter if the regulators are turned off, but something
++	 * else might keep them on. In that case, we want to assert the slp gpio
++	 * to lower power.
++	 */
++	gpiod_set_value(ps_bridge->gpio_slp_n, 0);
++
++	if (ps_bridge->v12)
++		regulator_disable(ps_bridge->v12);
++
++	/*
++	 * Sleep for at least the amount of time that it takes the power rail to
++	 * fall to prevent asserting the rst gpio from doing anything.
++	 */
++	usleep_range(PS8622_POWER_FALL_T16_MAX_US,
++		     2 * PS8622_POWER_FALL_T16_MAX_US);
++	gpiod_set_value(ps_bridge->gpio_rst_n, 0);
++
++	msleep(PS8622_POWER_OFF_T17_MS);
++
++out:
++	mutex_unlock(&ps_bridge->enable_mutex);
++}
++
++static void ps8622_post_disable(struct drm_bridge *bridge)
++{
++	struct ps8622_bridge *ps_bridge = bridge->driver_private;
++
++	drm_panel_unprepare(ps_bridge->panel);
++}
++
++static void ps8622_destroy(struct drm_bridge *bridge)
++{
++	drm_bridge_cleanup(bridge);
++}
++
++static int ps8622_get_modes(struct drm_connector *connector)
++{
++	struct ps8622_bridge *ps_bridge;
++
++	ps_bridge = container_of(connector, struct ps8622_bridge, connector);
++
++	return drm_panel_get_modes(ps_bridge->panel);
++}
++
++static struct drm_encoder *ps8622_best_encoder(struct drm_connector *connector)
++{
++	struct ps8622_bridge *ps_bridge;
++
++	ps_bridge = container_of(connector, struct ps8622_bridge, connector);
++
++	return ps_bridge->bridge->encoder;
++}
++
++static const struct drm_connector_helper_funcs ps8622_connector_helper_funcs = {
++	.get_modes = ps8622_get_modes,
++	.best_encoder = ps8622_best_encoder,
++};
++
++static enum drm_connector_status ps8622_detect(struct drm_connector *connector,
++		bool force)
++{
++	return connector_status_connected;
++}
++
++static void ps8622_connector_destroy(struct drm_connector *connector)
++{
++	drm_connector_cleanup(connector);
++}
++
++static const struct drm_connector_funcs ps8622_connector_funcs = {
++	.dpms = drm_helper_connector_dpms,
++	.fill_modes = drm_helper_probe_single_connector_modes,
++	.detect = ps8622_detect,
++	.destroy = ps8622_connector_destroy,
++};
++
++int ps8622_post_encoder_init(struct drm_bridge *bridge)
++{
++	struct ps8622_bridge *ps_bridge = bridge->driver_private;
++	int ret;
++
++	/* bridge is attached to encoder.
++	 * safe to remove it from the bridge_lookup table.
++	 */
++	drm_bridge_remove_from_lookup(bridge);
++
++	ret = drm_bridge_init(bridge->drm_dev, bridge);
++	if (ret) {
++		DRM_ERROR("Failed to initialize bridge with drm\n");
++		return ret;
++	}
++
++	/* connector implementation */
++	ps_bridge->connector.polled = bridge->connector_polled;
++
++	ret = drm_connector_init(bridge->drm_dev, &ps_bridge->connector,
++			&ps8622_connector_funcs, DRM_MODE_CONNECTOR_LVDS);
++	if (ret) {
++		DRM_ERROR("Failed to initialize connector with drm\n");
++		return ret;
++	}
++	drm_connector_helper_add(&ps_bridge->connector,
++					&ps8622_connector_helper_funcs);
++	drm_connector_register(&ps_bridge->connector);
++	drm_mode_connector_attach_encoder(&ps_bridge->connector,
++							bridge->encoder);
++
++	if (ps_bridge->panel)
++		drm_panel_attach(ps_bridge->panel, &ps_bridge->connector);
++
++	return ret;
++}
++
++static const struct drm_bridge_funcs ps8622_bridge_funcs = {
++	.post_encoder_init = ps8622_post_encoder_init,
++	.pre_enable = ps8622_pre_enable,
++	.enable = ps8622_enable,
++	.disable = ps8622_disable,
++	.post_disable = ps8622_post_disable,
++	.destroy = ps8622_destroy,
++};
++
++static const struct of_device_id ps8622_devices[] = {
++	{
++		.compatible = "parade,ps8622",
++		.data	= &ps8622_data,
++	}, {
++		.compatible = "parade,ps8625",
++		.data	= &ps8625_data,
++	}, {
++		/* end node */
++	}
++};
++MODULE_DEVICE_TABLE(of, ps8622_devices);
++
++static inline struct ps8622_device_data *get_device_data(struct device *dev)
++{
++	const struct of_device_id *match =
++			of_match_device(ps8622_devices, dev);
++
++	return (struct ps8622_device_data *)match->data;
++}
++
++static int ps8622_probe(struct i2c_client *client,
++					const struct i2c_device_id *id)
++{
++	struct device *dev = &(client->dev);
++	struct device_node *panel_node, *backlight_node;
++	struct drm_bridge *bridge;
++	struct backlight_device *backlight_dev;
++	struct ps8622_bridge *ps_bridge;
++	const struct ps8622_device_data *device_data;
++	int ret;
++
++	bridge = devm_kzalloc(dev, sizeof(*bridge), GFP_KERNEL);
++	if (!bridge) {
++		DRM_ERROR("Failed to allocate drm bridge\n");
++		return -ENOMEM;
++	}
++
++	ps_bridge = devm_kzalloc(dev, sizeof(*ps_bridge), GFP_KERNEL);
++	if (!ps_bridge) {
++		DRM_ERROR("could not allocate ps bridge\n");
++		return -ENOMEM;
++	}
++
++	panel_node = of_parse_phandle(dev->of_node, "panel", 0);
++	if (panel_node) {
++		ps_bridge->panel = of_drm_find_panel(panel_node);
++		of_node_put(panel_node);
++		if (!ps_bridge->panel)
 +			return -EPROBE_DEFER;
 +	}
 +
- 	exynos_dp_display.ctx = dp;
- 
- 	ret = component_add(&pdev->dev, &exynos_dp_ops);
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/exynos/exynos_dp_core.h
-index a1aee69..3b0ba93 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.h
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
-@@ -150,6 +150,7 @@ struct exynos_dp_device {
- 	struct drm_connector	connector;
- 	struct drm_encoder	*encoder;
- 	struct drm_panel	*panel;
-+	struct drm_bridge	*bridge;
- 	struct clk		*clock;
- 	unsigned int		irq;
- 	void __iomem		*reg_base;
-diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-index f6cf745..0309539 100644
---- a/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-+++ b/drivers/gpu/drm/msm/hdmi/hdmi_bridge.c
-@@ -221,8 +221,9 @@ struct drm_bridge *hdmi_bridge_init(struct hdmi *hdmi)
- 	hdmi_bridge->hdmi = hdmi_reference(hdmi);
- 
- 	bridge = &hdmi_bridge->base;
-+	bridge->funcs = &hdmi_bridge_funcs;
- 
--	drm_bridge_init(hdmi->dev, bridge, &hdmi_bridge_funcs);
-+	drm_bridge_init(hdmi->dev, bridge);
- 
- 	return bridge;
- 
-diff --git a/include/drm/bridge/ptn3460.h b/include/drm/bridge/ptn3460.h
-deleted file mode 100644
-index ff62344..0000000
---- a/include/drm/bridge/ptn3460.h
-+++ /dev/null
-@@ -1,37 +0,0 @@
--/*
-- * Copyright (C) 2013 Google, Inc.
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
--
--#ifndef _DRM_BRIDGE_PTN3460_H_
--#define _DRM_BRIDGE_PTN3460_H_
--
--struct drm_device;
--struct drm_encoder;
--struct i2c_client;
--struct device_node;
--
--#if defined(CONFIG_DRM_PTN3460) || defined(CONFIG_DRM_PTN3460_MODULE)
--
--int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
--		struct i2c_client *client, struct device_node *node);
--#else
--
--static inline int ptn3460_init(struct drm_device *dev,
--		struct drm_encoder *encoder, struct i2c_client *client,
--		struct device_node *node)
--{
--	return 0;
--}
--
--#endif
--
--#endif
-diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-index e529b68..e5a41ad 100644
---- a/include/drm/drm_crtc.h
-+++ b/include/drm/drm_crtc.h
-@@ -619,6 +619,7 @@ struct drm_plane {
- 
- /**
-  * drm_bridge_funcs - drm_bridge control functions
-+ * @post_encoder_init: called by the parent encoder
-  * @mode_fixup: Try to fixup (or reject entirely) proposed mode for this bridge
-  * @disable: Called right before encoder prepare, disables the bridge
-  * @post_disable: Called right after encoder prepare, for lockstepped disable
-@@ -628,6 +629,7 @@ struct drm_plane {
-  * @destroy: make object go away
-  */
- struct drm_bridge_funcs {
-+	int (*post_encoder_init)(struct drm_bridge *bridge);
- 	bool (*mode_fixup)(struct drm_bridge *bridge,
- 			   const struct drm_display_mode *mode,
- 			   struct drm_display_mode *adjusted_mode);
-@@ -648,15 +650,19 @@ struct drm_bridge_funcs {
-  * @base: base mode object
-  * @funcs: control functions
-  * @driver_private: pointer to the bridge driver's internal context
-+ * @connector_polled: polled flag needed for registering connector
-  */
- struct drm_bridge {
--	struct drm_device *dev;
-+	struct device *dev;
-+	struct drm_device *drm_dev;
-+	struct drm_encoder *encoder;
- 	struct list_head head;
- 
- 	struct drm_mode_object base;
- 
- 	const struct drm_bridge_funcs *funcs;
- 	void *driver_private;
-+	int connector_polled;
- };
- 
- /**
-@@ -895,8 +901,12 @@ extern void drm_connector_cleanup(struct drm_connector *connector);
- /* helper to unplug all connectors from sysfs for device */
- extern void drm_connector_unplug_all(struct drm_device *dev);
- 
--extern int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
--			   const struct drm_bridge_funcs *funcs);
-+extern int drm_bridge_add_for_lookup(struct drm_bridge *bridge);
-+extern void drm_bridge_remove_from_lookup(struct drm_bridge *bridge);
-+extern struct drm_bridge *of_drm_find_bridge(struct device_node *np);
-+extern int drm_bridge_attach_encoder(struct drm_bridge *bridge,
-+				struct drm_encoder *encoder);
-+extern int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge);
- extern void drm_bridge_cleanup(struct drm_bridge *bridge);
- 
- extern int drm_encoder_init(struct drm_device *dev,
++	backlight_dev = NULL;
++	backlight_node = of_parse_phandle(dev->of_node, "backlight", 0);
++	if (backlight_node) {
++		backlight_dev = of_find_backlight_by_node(backlight_node);
++		of_node_put(backlight_node);
++		if (!backlight_dev)
++			return -EPROBE_DEFER;
++	}
++
++	mutex_init(&ps_bridge->enable_mutex);
++
++	bridge->dev = dev;
++	bridge->driver_private = ps_bridge;
++	bridge->funcs = &ps8622_bridge_funcs;
++
++	ps_bridge->client = client;
++	ps_bridge->bridge = bridge;
++
++	device_data = get_device_data(dev);
++
++	ps_bridge->v12 = devm_regulator_get(&client->dev, "vdd_bridge");
++	if (IS_ERR(ps_bridge->v12)) {
++		DRM_INFO("no 1.2v regulator found for PS8622\n");
++		ps_bridge->v12 = NULL;
++	}
++
++	ps_bridge->gpio_slp_n = devm_gpiod_get(&client->dev, "sleep");
++	if (IS_ERR(ps_bridge->gpio_slp_n)) {
++		ret = PTR_ERR(ps_bridge->gpio_slp_n);
++		DRM_ERROR("cannot get gpio_slp_n %d\n", ret);
++		goto err_client;
++	} else {
++		ret = gpiod_direction_output(ps_bridge->gpio_slp_n, 1);
++		if (ret) {
++			DRM_ERROR("cannot configure gpio_slp_n\n");
++			goto err_client;
++		}
++	}
++
++	ps_bridge->gpio_rst_n = devm_gpiod_get(&client->dev, "reset");
++	if (IS_ERR(ps_bridge->gpio_rst_n)) {
++		ret = PTR_ERR(ps_bridge->gpio_rst_n);
++		DRM_ERROR("cannot get gpio_rst_n %d\n", ret);
++		goto err_client;
++	} else {
++		/*
++		 * Assert the reset pin high to avoid the bridge being
++		 * initialized prematurely
++		 */
++		ret = gpiod_direction_output(ps_bridge->gpio_rst_n, 1);
++		if (ret) {
++			DRM_ERROR("cannot configure gpio_slp_n\n");
++			goto err_client;
++		}
++	}
++
++	ps_bridge->max_lane_count = device_data->max_lane_count;
++
++	if (of_property_read_u8(dev->of_node, "lane-count",
++						&ps_bridge->lane_count))
++		ps_bridge->lane_count = ps_bridge->max_lane_count;
++	else if (ps_bridge->lane_count > ps_bridge->max_lane_count) {
++		DRM_INFO("lane-count property is too high for DP bridge\n");
++		ps_bridge->lane_count = ps_bridge->max_lane_count;
++	}
++
++	if (!backlight_dev) {
++		ps_bridge->bl = backlight_device_register("ps8622-backlight",
++				dev, ps_bridge, &ps8622_backlight_ops,
++				NULL);
++		if (IS_ERR(ps_bridge->bl)) {
++			DRM_ERROR("failed to register backlight\n");
++			ret = PTR_ERR(ps_bridge->bl);
++			ps_bridge->bl = NULL;
++			goto err_client;
++		}
++		ps_bridge->bl->props.max_brightness = PS8622_MAX_BRIGHTNESS;
++		ps_bridge->bl->props.brightness = PS8622_MAX_BRIGHTNESS;
++	}
++
++	i2c_set_clientdata(client, ps_bridge);
++
++	drm_bridge_add_for_lookup(bridge);
++
++	return 0;
++
++err_client:
++	DRM_ERROR("device probe failed : %d\n", ret);
++	return ret;
++}
++
++static int ps8622_remove(struct i2c_client *client)
++{
++	struct ps8622_bridge *ps_bridge = i2c_get_clientdata(client);
++
++	if (ps_bridge->bl)
++		backlight_device_unregister(ps_bridge->bl);
++
++	return 0;
++}
++
++static const struct i2c_device_id ps8622_i2c_table[] = {
++	{"parade", 0},
++	{},
++};
++MODULE_DEVICE_TABLE(i2c, ps8622_i2c_table);
++
++struct i2c_driver ps8622_driver = {
++	.id_table	= ps8622_i2c_table,
++	.probe		= ps8622_probe,
++	.remove		= ps8622_remove,
++	.driver		= {
++		.name	= "parade",
++		.owner	= THIS_MODULE,
++		.of_match_table = of_match_ptr(ps8622_devices),
++	},
++};
++module_i2c_driver(ps8622_driver);
++
++MODULE_AUTHOR("Vincent Palatin <vpalatin@chromium.org>");
++MODULE_DESCRIPTION("Parade ps8622 eDP-LVDS converter driver");
++MODULE_LICENSE("GPL");
 -- 
 1.7.9.5
