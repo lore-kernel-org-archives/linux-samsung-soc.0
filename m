@@ -1,412 +1,291 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v6 2/4] ARM: EXYNOS: Refactor the code to use DT based
- lookup
-Date: Fri, 25 Jul 2014 11:21:11 +0900
-Message-ID: <061a01cfa7af$1a36fb40$4ea4f1c0$@samsung.com>
-References: <1404738090-30522-1-git-send-email-vikas.sajjan@samsung.com>
+Subject: RE: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support for Exynos
+ PMU
+Date: Fri, 25 Jul 2014 13:04:39 +0900
+Message-ID: <067501cfa7bd$8e6cb460$ab461d20$@samsung.com>
+References: <1404878455-31518-1-git-send-email-pankaj.dubey@samsung.com>
+ <1404878455-31518-4-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:20532 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759079AbaGYCVO (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:12085 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750714AbaGYEEl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Jul 2014 22:21:14 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N98002WUX7CA350@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 25 Jul 2014 11:21:12 +0900 (KST)
-In-reply-to: <1404738090-30522-1-git-send-email-vikas.sajjan@samsung.com>
+	Fri, 25 Jul 2014 00:04:41 -0400
+In-reply-to: <1404878455-31518-4-git-send-email-pankaj.dubey@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vikas Sajjan' <vikas.sajjan@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org
+To: 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com
 
-Vikas Sajjan wrote:
+Pankaj Dubey wrote:
 > 
-> Refactoring the pm.c to avoid using "soc_is_exynos" checks,
-> instead use the DT based lookup.
+> This patch modifies Exynos Power Management Unit (PMU) initialization
+> implementation in following way:
 > 
-Yes! please.
-
-Can you please make a separate patch from this series?
-
-And see my small comments inline...
-
-> While at it, consolidate the common code across SoCs
-> and create a static helper functions.
+> - Added platform driver support and probe function where Exynos PMU
+>   driver will register itself as syscon provider with syscon framework.
+> - Added platform struct exynos_pmu_data to hold platform specific data.
+> - For each SoC's PMU support now we can add platform data and statically
+>   bind PMU configuration and SoC specific initialization function.
+> - Separate each SoC's PMU initialization function and make it as part of
+>   platform data.
+> - It also removes uses of soc_is_exynosXYZ().
 > 
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 > ---
->  arch/arm/mach-exynos/pm.c       |  232 +++++++++++++++++++++++++++++++--------
->  arch/arm/mach-exynos/regs-pmu.h |    1 +
->  2 files changed, 189 insertions(+), 44 deletions(-)
+>  arch/arm/mach-exynos/Kconfig |    1 +
+>  arch/arm/mach-exynos/pmu.c   |  185 +++++++++++++++++++++++++++++++++---------
+>  2 files changed, 146 insertions(+), 40 deletions(-)
 > 
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index ba75171..c0dae28 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
-> @@ -38,6 +38,8 @@
->  #include "regs-pmu.h"
->  #include "regs-sys.h"
+Looks good to me, will apply this and 4/4.
+
+Thanks,
+Kukjin
+
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 8f9b66c..a2944ac 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -24,6 +24,7 @@ menuconfig ARCH_EXYNOS
+>  	select PM_GENERIC_DOMAINS if PM_RUNTIME
+>  	select S5P_DEV_MFC
+>  	select SRAM
+> +	select MFD_SYSCON
+>  	help
+>  	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
 > 
-> +#define REG_TABLE_END (-1U)
-> +
->  /**
->   * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
->   * @hwirq: Hardware IRQ signal of the GIC
-> @@ -61,6 +63,19 @@ static struct sleep_save exynos_core_save[] = {
->  	SAVE_ITEM(S5P_SROM_BC3),
->  };
-> 
-> +struct exynos_pm_data {
-> +	const struct exynos_wkup_irq *wkup_irq;
-> +	unsigned int wake_disable_mask;
-> +	unsigned int *release_ret_regs;
-> +
-> +	void (*pm_prepare)(void);
-> +	void (*pm_resume)(void);
-> +	int (*pm_suspend)(void);
-> +	int (*cpu_suspend)(unsigned long);
-> +};
-> +
-> +struct exynos_pm_data *pm_data;
-> +
+> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+> index ff9d23f..5b76728 100644
+> --- a/arch/arm/mach-exynos/pmu.c
+> +++ b/arch/arm/mach-exynos/pmu.c
+> @@ -1,5 +1,5 @@
 >  /*
->   * GIC wake-up support
+> - * Copyright (c) 2011-2012 Samsung Electronics Co., Ltd.
+> + * Copyright (c) 2011-2014 Samsung Electronics Co., Ltd.
+>   *		http://www.samsung.com/
+>   *
+>   * EXYNOS - CPU PMU(Power Management Unit) support
+> @@ -10,12 +10,28 @@
 >   */
-> @@ -89,14 +104,21 @@ static inline u32 pmu_raw_readl(u32 offset)
->  	return __raw_readl(pmu_base_addr + offset);
->  }
 > 
-> +unsigned int exynos_release_ret_regs[] = {
-> +	S5P_PAD_RET_MAUDIO_OPTION,
-> +	S5P_PAD_RET_GPIO_OPTION,
-> +	S5P_PAD_RET_UART_OPTION,
-> +	S5P_PAD_RET_MMCA_OPTION,
-> +	S5P_PAD_RET_MMCB_OPTION,
-> +	S5P_PAD_RET_EBIA_OPTION,
-> +	S5P_PAD_RET_EBIB_OPTION,
-> +	REG_TABLE_END,
+>  #include <linux/io.h>
+> -#include <linux/kernel.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/mfd/syscon.h>
+> 
+>  #include "common.h"
+>  #include "regs-pmu.h"
+> 
+> -static const struct exynos_pmu_conf *exynos_pmu_config;
+> +struct exynos_pmu_data {
+> +	const struct exynos_pmu_conf *pmu_config;
+> +	const struct exynos_pmu_conf *pmu_config_extra;
+> +
+> +	void (*pmu_init)(void);
+> +	void (*powerdown_conf)(enum sys_powerdown);
 > +};
 > +
->  static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
->  {
->  	const struct exynos_wkup_irq *wkup_irq;
-> -
-> -	if (soc_is_exynos5250())
-> -		wkup_irq = exynos5250_wkup_irq;
-> -	else
-> -		wkup_irq = exynos4_wkup_irq;
-> +	wkup_irq = pm_data->wkup_irq;
-
-if (pm_data->wkup_irq) ?
-
-> 
->  	while (wkup_irq->mask) {
->  		if (wkup_irq->hwirq == data->hwirq) {
-> @@ -253,13 +275,13 @@ static void exynos_cpu_restore_register(void)
-> 
->  static int exynos_cpu_suspend(unsigned long arg)
->  {
-> -#ifdef CONFIG_CACHE_L2X0
-> -	outer_flush_all();
-> -#endif
-> -
-> -	if (soc_is_exynos5250())
-> -		flush_cache_all();
-> +	if (pm_data->cpu_suspend)
-> +		return pm_data->cpu_suspend(arg);
-> +	return -1;
-> +}
-> 
-> +static int exynos_cpu_do_idle(void)
-> +{
->  	/* issue the standby signal into the pm unit. */
->  	cpu_do_idle();
-> 
-> @@ -269,32 +291,73 @@ static int exynos_cpu_suspend(unsigned long arg)
-> 
->  static void exynos_pm_prepare(void)
->  {
-> -	unsigned int tmp;
-> +	if (pm_data->pm_prepare)
-> +		pm_data->pm_prepare();
-> +}
+> +struct exynos_pmu_context {
+> +	struct device *dev;
+> +	const struct exynos_pmu_data *pmu_data;
+> +};
 > +
-> +static int exynos4_cpu_suspend(unsigned long arg)
-> +{
-> +#ifdef CONFIG_CACHE_L2X0
-> +	outer_flush_all();
-> +#endif
-> +	return exynos_cpu_do_idle();
-> +}
-> +
-> +static int exynos5250_cpu_suspend(unsigned long arg)
-> +{
-> +#ifdef CONFIG_CACHE_L2X0
-> +	outer_flush_all();
-> +#endif
-> +	flush_cache_all();
-> +	return exynos_cpu_do_idle();
-> +}
+> +static struct exynos_pmu_context *pmu_context;
 > 
-> +static void exynos_pm_set_wakeup_mask(void)
-> +{
->  	/* Set wake-up mask registers */
->  	pmu_raw_writel(exynos_get_eint_wake_mask(), S5P_EINT_WAKEUP_MASK);
->  	pmu_raw_writel(exynos_irqwake_intmask & ~(1 << 31), S5P_WAKEUP_MASK);
-> +}
-> 
-> -	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-> -
-> -	if (soc_is_exynos5250()) {
-> -		s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
-> -		/* Disable USE_RETENTION of JPEG_MEM_OPTION */
-> -		tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
-> -		tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
-> -		pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
-> -	}
-> -
-> +static void exynos_pm_enter_sleep_mode(void)
-> +{
->  	/* Set value of power down register for sleep mode */
-> -
->  	exynos_sys_powerdown_conf(SYS_SLEEP);
->  	pmu_raw_writel(S5P_CHECK_SLEEP, S5P_INFORM1);
-> 
->  	/* ensure at least INFORM0 has the resume address */
-> -
->  	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
->  }
-> 
-> +static void exynos5250_pm_prepare(void)
-> +{
-> +	unsigned int tmp;
-> +
-> +	/* Set wake-up mask registers */
-> +	exynos_pm_set_wakeup_mask();
-> +
-> +	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-> +
-> +	s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
-> +
-> +	/* Disable USE_RETENTION of JPEG_MEM_OPTION */
-> +	tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
-> +	tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
-> +	pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
-> +
-> +	exynos_pm_enter_sleep_mode();
-> +}
-> +
-> +static void exynos4_pm_prepare(void)
-> +{
-> +	/* Set wake-up mask registers */
-> +	exynos_pm_set_wakeup_mask();
-> +
-> +	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-> +
-> +	exynos_pm_enter_sleep_mode();
-> +}
-> +
->  static void exynos_pm_central_suspend(void)
->  {
->  	unsigned long tmp;
-> @@ -307,6 +370,13 @@ static void exynos_pm_central_suspend(void)
-> 
->  static int exynos_pm_suspend(void)
->  {
-> +	if (pm_data->pm_suspend)
-> +		return pm_data->pm_suspend();
-> +	return -1;
-> +}
-> +
-> +static int exynos4_pm_suspend(void)
-> +{
->  	unsigned long tmp;
-> 
->  	exynos_pm_central_suspend();
-> @@ -316,9 +386,20 @@ static int exynos_pm_suspend(void)
->  	tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
->  	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
-> 
-> -	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> -		exynos_cpu_save_register();
-> +	exynos_cpu_save_register();
-> +	return 0;
-> +}
-> +
-> +static int exynos5250_pm_suspend(void)
-> +{
-> +	unsigned long tmp;
-> +
-> +	exynos_pm_central_suspend();
-> +
-> +	/* Setting SEQ_OPTION register */
-> 
-> +	tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
-> +	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
->  	return 0;
->  }
-> 
-> @@ -345,39 +426,57 @@ static int exynos_pm_central_resume(void)
->  	return 0;
->  }
-> 
-> +static void exynos_pm_set_release_retention(void)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; (pm_data->release_ret_regs[i] != REG_TABLE_END); i++)
-> +		pmu_raw_writel(EXYNOS_WAKEUP_FROM_LOWPWR,
-> +				pm_data->release_ret_regs[i]);
-> +}
-> +
->  static void exynos_pm_resume(void)
->  {
-> +	if (pm_data->pm_resume)
-> +		pm_data->pm_resume();
-> +}
-> +
-> +static void exynos4_pm_resume(void)
-> +{
->  	if (exynos_pm_central_resume())
->  		goto early_wakeup;
-> 
-> -	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> -		exynos_cpu_restore_register();
-> +	exynos_cpu_restore_register();
-> 
->  	/* For release retention */
-> -
-> -	pmu_raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
-> -	pmu_raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
-> -	pmu_raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
-> -	pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
-> -	pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
-> -	pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
-> -	pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
-> -
-> -	if (soc_is_exynos5250())
-> -		s3c_pm_do_restore(exynos5_sys_save,
-> -			ARRAY_SIZE(exynos5_sys_save));
-> +	exynos_pm_set_release_retention();
-> 
->  	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-> 
-> -	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> -		scu_enable(S5P_VA_SCU);
-> +	scu_enable(S5P_VA_SCU);
-> 
->  early_wakeup:
-> 
->  	/* Clear SLEEP mode set in INFORM1 */
->  	pmu_raw_writel(0x0, S5P_INFORM1);
-> +}
-> +
-> +static void exynos5250_pm_resume(void)
-> +{
-> +	if (exynos_pm_central_resume())
-> +		goto early_wakeup;
-> 
-> -	return;
-> +	/* For release retention */
-> +	exynos_pm_set_release_retention();
-> +
-> +	s3c_pm_do_restore(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
-> +
-> +	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-> +
-> +early_wakeup:
-> +
-> +	/* Clear SLEEP mode set in INFORM1 */
-> +	pmu_raw_writel(0x0, S5P_INFORM1);
->  }
-> 
->  static struct syscore_ops exynos_pm_syscore_ops = {
-> @@ -480,18 +579,63 @@ static struct notifier_block exynos_cpu_pm_notifier_block = {
->  	.notifier_call = exynos_cpu_pm_notifier,
+>  static const struct exynos_pmu_conf exynos4210_pmu_config[] = {
+>  	/* { .offset = offset, .val = { AFTR, LPA, SLEEP } */
+> @@ -335,7 +351,7 @@ static unsigned int const exynos5_list_diable_wfi_wfe[] = {
+>  	EXYNOS5_ISP_ARM_OPTION,
 >  };
 > 
-> +static struct exynos_pm_data exynos4_pm_data = {
-> +	.wkup_irq	= exynos4_wkup_irq,
-> +	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
-> +	.release_ret_regs = exynos_release_ret_regs,
-> +	.pm_suspend	= exynos4_pm_suspend,
-> +	.pm_resume	= exynos4_pm_resume,
-> +	.pm_prepare	= exynos4_pm_prepare,
-> +	.cpu_suspend	= exynos4_cpu_suspend,
+> -static void exynos5_init_pmu(void)
+> +static void exynos5_powerdown_conf(enum sys_powerdown mode)
+>  {
+>  	unsigned int i;
+>  	unsigned int tmp;
+> @@ -372,51 +388,140 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
+>  {
+>  	unsigned int i;
+> 
+> -	if (soc_is_exynos5250())
+> -		exynos5_init_pmu();
+> +	const struct exynos_pmu_data *pmu_data = pmu_context->pmu_data;
+> 
+> -	for (i = 0; (exynos_pmu_config[i].offset != PMU_TABLE_END) ; i++)
+> -		pmu_raw_writel(exynos_pmu_config[i].val[mode],
+> -				exynos_pmu_config[i].offset);
+> +	if (pmu_data->powerdown_conf)
+> +		pmu_data->powerdown_conf(mode);
+> 
+> -	if (soc_is_exynos4412()) {
+> -		for (i = 0; exynos4412_pmu_config[i].offset != PMU_TABLE_END ; i++)
+> -			pmu_raw_writel(exynos4412_pmu_config[i].val[mode],
+> -					exynos4412_pmu_config[i].offset);
+> +	if (pmu_data->pmu_config) {
+> +		for (i = 0; (pmu_data->pmu_config[i].offset != PMU_TABLE_END) ; i++)
+> +			pmu_raw_writel(pmu_data->pmu_config[i].val[mode],
+> +					pmu_data->pmu_config[i].offset);
+> +	}
+> +
+> +	if (pmu_data->pmu_config_extra) {
+> +		for (i = 0; pmu_data->pmu_config_extra[i].offset != PMU_TABLE_END; i++)
+> +			pmu_raw_writel(pmu_data->pmu_config_extra[i].val[mode],
+> +					pmu_data->pmu_config_extra[i].offset);
+>  	}
+>  }
+> 
+> -static int __init exynos_pmu_init(void)
+> +static void exynos5250_pmu_init(void)
+>  {
+>  	unsigned int value;
+> +	/*
+> +	 * When SYS_WDTRESET is set, watchdog timer reset request
+> +	 * is ignored by power management unit.
+> +	 */
+> +	value = pmu_raw_readl(EXYNOS5_AUTO_WDTRESET_DISABLE);
+> +	value &= ~EXYNOS5_SYS_WDTRESET;
+> +	pmu_raw_writel(value, EXYNOS5_AUTO_WDTRESET_DISABLE);
+> +
+> +	value = pmu_raw_readl(EXYNOS5_MASK_WDTRESET_REQUEST);
+> +	value &= ~EXYNOS5_SYS_WDTRESET;
+> +	pmu_raw_writel(value, EXYNOS5_MASK_WDTRESET_REQUEST);
+> +}
+> +
+> +static const struct exynos_pmu_data exynos4210_pmu_data = {
+> +	.pmu_config	= exynos4210_pmu_config,
 > +};
 > +
-> +static struct exynos_pm_data exynos5250_pm_data = {
-> +	.wkup_irq	= exynos5250_wkup_irq,
-> +	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
-> +	.release_ret_regs = exynos_release_ret_regs,
-> +	.pm_suspend	= exynos5250_pm_suspend,
-> +	.pm_resume	= exynos5250_pm_resume,
-> +	.pm_prepare	= exynos5250_pm_prepare,
-> +	.cpu_suspend	= exynos5250_cpu_suspend,
+> +static const struct exynos_pmu_data exynos4212_pmu_data = {
+> +	.pmu_config	= exynos4x12_pmu_config,
 > +};
 > +
-> +static struct of_device_id exynos_pmu_of_device_ids[] = {
+> +static const struct exynos_pmu_data exynos4412_pmu_data = {
+> +	.pmu_config		= exynos4x12_pmu_config,
+> +	.pmu_config_extra	= exynos4412_pmu_config,
+> +};
+> +
+> +static const struct exynos_pmu_data exynos5250_pmu_data = {
+> +	.pmu_config	= exynos5250_pmu_config,
+> +	.pmu_init	= exynos5250_pmu_init,
+> +	.powerdown_conf	= exynos5_powerdown_conf,
+> +};
+> +
+> +static const struct regmap_config pmu_regmap_config = {
+> +	.reg_bits = 32,
+> +	.val_bits = 32,
+> +	.reg_stride = 4,
+> +};
+> 
+> -	exynos_pmu_config = exynos4210_pmu_config;
+> -
+> -	if (soc_is_exynos4210()) {
+> -		exynos_pmu_config = exynos4210_pmu_config;
+> -		pr_info("EXYNOS4210 PMU Initialize\n");
+> -	} else if (soc_is_exynos4212() || soc_is_exynos4412()) {
+> -		exynos_pmu_config = exynos4x12_pmu_config;
+> -		pr_info("EXYNOS4x12 PMU Initialize\n");
+> -	} else if (soc_is_exynos5250()) {
+> -		/*
+> -		 * When SYS_WDTRESET is set, watchdog timer reset request
+> -		 * is ignored by power management unit.
+> -		 */
+> -		value = pmu_raw_readl(EXYNOS5_AUTO_WDTRESET_DISABLE);
+> -		value &= ~EXYNOS5_SYS_WDTRESET;
+> -		pmu_raw_writel(value, EXYNOS5_AUTO_WDTRESET_DISABLE);
+> -
+> -		value = pmu_raw_readl(EXYNOS5_MASK_WDTRESET_REQUEST);
+> -		value &= ~EXYNOS5_SYS_WDTRESET;
+> -		pmu_raw_writel(value, EXYNOS5_MASK_WDTRESET_REQUEST);
+> -
+> -		exynos_pmu_config = exynos5250_pmu_config;
+> -		pr_info("EXYNOS5250 PMU Initialize\n");
+> -	} else {
+> -		pr_info("EXYNOS: PMU not supported\n");
+> +/*
+> + * PMU platform driver and devicetree bindings.
+> + */
+> +static const struct of_device_id exynos_pmu_of_device_ids[] = {
 > +	{
 > +		.compatible = "samsung,exynos4210-pmu",
-> +		.data = (void *)&exynos4_pm_data,
+> +		.data = &exynos4210_pmu_data,
 > +	}, {
 > +		.compatible = "samsung,exynos4212-pmu",
-> +		.data = (void *)&exynos4_pm_data,
+> +		.data = &exynos4212_pmu_data,
 > +	}, {
 > +		.compatible = "samsung,exynos4412-pmu",
-> +		.data = (void *)&exynos4_pm_data,
+> +		.data = &exynos4412_pmu_data,
 > +	}, {
 > +		.compatible = "samsung,exynos5250-pmu",
-> +		.data = (void *)&exynos5250_pm_data,
+> +		.data = &exynos5250_pmu_data,
 > +	},
 > +	{ /*sentinel*/ },
 > +};
 > +
->  void __init exynos_pm_init(void)
->  {
->  	u32 tmp;
+> +static int exynos_pmu_probe(struct platform_device *pdev)
+> +{
 > +	const struct of_device_id *match;
-> 
->  	cpu_pm_register_notifier(&exynos_cpu_pm_notifier_block);
-> 
-> +	of_find_matching_node_and_match(NULL, exynos_pmu_of_device_ids, &match);
+> +	struct device *dev = &pdev->dev;
+> +	struct regmap *regmap;
+> +	struct resource *res;
 > +
-> +	if (!match)
-> +		panic("Failed to find PMU node\n");
-
-Well, panic() is really required at this point? How about 5260, 5410, 5440 ?
-
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	pmu_base_addr = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(pmu_base_addr))
+> +		return PTR_ERR(pmu_base_addr);
 > +
-> +	pm_data = (struct exynos_pm_data *) match->data;
+> +	pmu_context = devm_kzalloc(&pdev->dev,
+> +			sizeof(struct exynos_pmu_context),
+> +			GFP_KERNEL);
+> +	if (!pmu_context) {
+> +		dev_err(dev, "Cannot allocate memory.\n");
+> +		return -ENOMEM;
+> +	}
+> +	pmu_context->dev = dev;
 > +
->  	/* Platform-specific GIC callback */
->  	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
+> +	regmap = devm_regmap_init_mmio(dev, pmu_base_addr,
+> +					&pmu_regmap_config);
+> +	if (IS_ERR(regmap)) {
+> +		dev_err(dev, "regmap init failed\n");
+> +		return PTR_ERR(regmap);
+>  	}
 > 
->  	/* All wakeup disable */
->  	tmp = pmu_raw_readl(S5P_WAKEUP_MASK);
-> -	tmp |= ((0xFF << 8) | (0x1F << 1));
-> +	tmp |= pm_data->wake_disable_mask;
->  	pmu_raw_writel(tmp, S5P_WAKEUP_MASK);
-> 
->  	register_syscore_ops(&exynos_pm_syscore_ops);
-> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-> index 9b46a52..3a6a559 100644
-> --- a/arch/arm/mach-exynos/regs-pmu.h
-> +++ b/arch/arm/mach-exynos/regs-pmu.h
-> @@ -21,6 +21,7 @@
->  #define S5P_USE_STANDBY_WFI0			(1 << 16)
->  #define S5P_USE_STANDBY_WFE0			(1 << 24)
-> 
-> +#define EXYNOS_WAKEUP_FROM_LOWPWR		(1 << 28)
->  #define EXYNOS_SWRESET				0x0400
->  #define EXYNOS5440_SWRESET			0x00C4
-> 
+> +	devm_syscon_register(dev, regmap);
+> +
+> +	match = of_match_node(exynos_pmu_of_device_ids, pdev->dev.of_node);
+> +
+> +	pmu_context->pmu_data = match->data;
+> +
+> +	if (pmu_context->pmu_data->pmu_init)
+> +		pmu_context->pmu_data->pmu_init();
+> +
+> +	platform_set_drvdata(pdev, pmu_context);
+> +
+> +	dev_dbg(dev, "Exynos PMU Driver probe done\n");
+>  	return 0;
+>  }
+> -arch_initcall(exynos_pmu_init);
+> +
+> +static struct platform_driver exynos_pmu_driver = {
+> +	.driver  = {
+> +		.name   = "exynos-pmu",
+> +		.owner	= THIS_MODULE,
+> +		.of_match_table = exynos_pmu_of_device_ids,
+> +	},
+> +	.probe = exynos_pmu_probe,
+> +};
+> +
+> +static int __init exynos_pmu_init(void)
+> +{
+> +	return platform_driver_register(&exynos_pmu_driver);
+> +
+> +}
+> +postcore_initcall(exynos_pmu_init);
 > --
 > 1.7.9.5
