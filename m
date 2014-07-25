@@ -1,139 +1,83 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer support
-Date: Fri, 25 Jul 2014 16:49:02 +0900
-Message-ID: <53D20BEE.4070502@samsung.com>
+Subject: Re: [PATCH 2/2] drm/exynos: dsi: add LPM (Low Power Mode) transfer
+ support
+Date: Fri, 25 Jul 2014 17:31:11 +0900
+Message-ID: <53D215CF.6080404@samsung.com>
 References: <1405680964-6869-1-git-send-email-inki.dae@samsung.com>
- <1405680964-6869-2-git-send-email-inki.dae@samsung.com>
- <53D0DEA8.1090603@samsung.com>
+ <1405680964-6869-3-git-send-email-inki.dae@samsung.com>
+ <53D0E469.8010308@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:62854 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756912AbaGYHtg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jul 2014 03:49:36 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N9900AEFCDRMY90@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 25 Jul 2014 16:49:04 +0900 (KST)
-In-reply-to: <53D0DEA8.1090603@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <53D0E469.8010308@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Thierry Reding <treding@nvidia.com>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2014=EB=85=84 07=EC=9B=94 24=EC=9D=BC 19:23, Andrzej Hajda wrote:
-> Hi Inki,
->=20
-> +CC: Thierry and Alexandre
->=20
-> On 07/18/2014 12:56 PM, Inki Dae wrote:
->> This patch adds below two flags for LPM transfer, and it attaches LP=
-M flags
->> to a msg in accordance with master's mode_flags set by LCD Panel dri=
-ver.
->>
->> MIPI_DSI_MODE_CMD_LPM: low power command transfer
->> MIPI_DSI_MODE_VIDEO_LPM: low power video transfer
-> What is the difference between these two?
-
-They mean that MIPI DSI controller have to transfer command or video to
-Panel in Low Power Mode according to these flags.
-
-> Why not just MIPI_DSI_MODE_LPM combined optionally with
-> MIPI_DSI_MODE_VIDEO ?
-> Anyway as I understand the only role of this flag is to always trigge=
-r
-> MIPI_DSI_MSG_USE_LPM flag in DSI message. Maybe better is to check bo=
-th
-> flags in DSI host, using some helper function.
-
-No any flag would mean that video and command data have to be
-transferred in HS mode. On the other hands, if there is one of above
-flags, the data would be transferred in Low Power Mode. So I think
-separated flags, MIPI_DSI_MODE_VIDEO/COMMAND and MIPI_DSI_MODE_LPM
-causes unnecessary flag combination.
-
->=20
->>
->> MIPI DSI spec says,
->>      "the host processor controls the desired mode of clock operatio=
-n.
->>       Host protocol and applications control Clock Lane operating mo=
-de
->>       (High Speed or Low Power mode). System designers are responsib=
-le
->>       for understanding the clock requirements for peripherals attac=
-hed
->>       to DSI and controlling clock behavior in accordance with those
->>       requirements."
->>
->> Some LCD Panel devices, nt35502a, would need LPM transfer support
->> because they should receive some initial commands with LPM by defaul=
-t
->> hardware setting.
->=20
-> It would be good to see usage of this flag in the driver. Is it possi=
-ble
-> to post it?
-
-Yes, but that driver is needed for more cleanup works. Anyway I will
-post it in the near future.
->=20
-> I have posted few months ago TC358764 driver[1] which also uses LPM f=
-or
-> initialization, have you look at it.
->=20
-> [1]:
-> http://lists.freedesktop.org/archives/dri-devel/2014-February/053713.=
-html
->=20
-> Regards
-> Andrzej
->=20
->>
->> Signed-off-by: Inki Dae <inki.dae@samsung.com>
->> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>  drivers/gpu/drm/drm_mipi_dsi.c |    3 +++
->>  include/drm/drm_mipi_dsi.h     |    4 ++++
->>  2 files changed, 7 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mi=
-pi_dsi.c
->> index e633df2..6b2bbda 100644
->> --- a/drivers/gpu/drm/drm_mipi_dsi.c
->> +++ b/drivers/gpu/drm/drm_mipi_dsi.c
->> @@ -232,6 +232,9 @@ int mipi_dsi_dcs_write(struct mipi_dsi_device *d=
-si, unsigned int channel,
->>  		break;
->>  	}
->> =20
->> +	if (dsi->mode_flags & MIPI_DSI_MODE_CMD_LPM)
->> +		msg.flags =3D MIPI_DSI_MSG_USE_LPM;
->> +
->>  	return ops->transfer(dsi->host, &msg);
->>  }
->>  EXPORT_SYMBOL(mipi_dsi_dcs_write);
->> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
->> index 944f33f..1c41e49 100644
->> --- a/include/drm/drm_mipi_dsi.h
->> +++ b/include/drm/drm_mipi_dsi.h
->> @@ -94,6 +94,10 @@ void mipi_dsi_host_unregister(struct mipi_dsi_hos=
-t *host);
->>  #define MIPI_DSI_MODE_VSYNC_FLUSH	BIT(8)
->>  /* disable EoT packets in HS mode */
->>  #define MIPI_DSI_MODE_EOT_PACKET	BIT(9)
->> +/* command low power mode */
->> +#define MIPI_DSI_MODE_CMD_LPM		BIT(10)
->> +/* video low power mode */
->> +#define MIPI_DSI_MODE_VIDEO_LPM		BIT(11)
->> =20
->>  enum mipi_dsi_pixel_format {
->>  	MIPI_DSI_FMT_RGB888,
->=20
->=20
+T24gMjAxNOuFhCAwN+yblCAyNOydvCAxOTo0OCwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiArQ0M6
+IFRoaWVycnkgYW5kIEFsZXhhbmRyZQo+IAo+IE9uIDA3LzE4LzIwMTQgMTI6NTYgUE0sIElua2kg
+RGFlIHdyb3RlOgo+PiBUaGlzIHBhdGNoIGFkZHMgTFBNIHRyYW5zZmVyIHN1cHBvcnQgZm9yIHZp
+ZGVvIG9yIGNvbW1hbmQgZGF0YS4KPj4KPj4gV2l0aCB0aGlzIHBhdGNoLCBFeHlub3MgTUlQSSBE
+U0kgY29udHJvbGxlciBjYW4gdHJhbnNmZXIgY29tbWFuZCBvcgo+PiB2aWRlbyBkYXRhIHdpdGgg
+SFMgb3IgTFAgbW9kZSBpbiBhY2NvcmRhbmNlIHdpdGggbW9kZV9mbGFncyBzZXQKPj4gYnkgTENE
+IFBhbmVsIGRyaXZlci4KPj4KPj4gU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNh
+bXN1bmcuY29tPgo+PiBBY2tlZC1ieTogS3l1bmdtaW4gUGFyayA8a3l1bmdtaW4ucGFya0BzYW1z
+dW5nLmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNp
+LmMgfCAgIDIyICsrKysrKysrKysrKysrKysrKysrLS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAyMCBp
+bnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2RzaS5jCj4+IGluZGV4IDJkZjM1OTIuLmIxMjA1NTQgMTAwNjQ0Cj4+IC0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+PiArKysgYi9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPj4gQEAgLTQyNiwxMyArNDI2LDI4IEBA
+IHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9lbmFibGVfY2xvY2soc3RydWN0IGV4eW5vc19kc2kgKmRz
+aSkKPj4gIAkJCXwgRFNJTV9FU0NfUFJFU0NBTEVSKGVzY19kaXYpCj4+ICAJCQl8IERTSU1fTEFO
+RV9FU0NfQ0xLX0VOX0NMSwo+PiAgCQkJfCBEU0lNX0xBTkVfRVNDX0NMS19FTl9EQVRBKEJJVChk
+c2ktPmxhbmVzKSAtIDEpCj4+IC0JCQl8IERTSU1fQllURV9DTEtfU1JDKDApCj4+IC0JCQl8IERT
+SU1fVFhfUkVRVUVTVF9IU0NMSzsKPj4gKwkJCXwgRFNJTV9CWVRFX0NMS19TUkMoMCk7Cj4+ICsK
+Pj4gKwlpZiAoIShkc2ktPm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX0NNRF9MUE0pKQo+PiAr
+CQlyZWcgfD0gRFNJTV9UWF9SRVFVRVNUX0hTQ0xLOwo+PiArCj4gCj4gTWF5YmUgSSBtaXNzZWQg
+c3RoIGJ1dCBpdCBzZWVtcyB0byBtZSBzbGlnaHRseSB1bnJlbGF0ZWQgdG8gTFBNIGZsYWcuCj4g
+QWNjb3JkaW5nIHRvIHNwZWNzIHNvbWUgcGFuZWxzIGNhbiByZXF1aXJlIHRoaXMgY2xvY2sgZXZl
+biBpbiBMUE0gbW9kZS4KPiBJIHdvbmRlciBpZiByZWNlbnRseSBpbnRyb2R1Y2VkICBNSVBJX0RT
+SV9DTE9DS19OT05fQ09OVElOVU9VUyB3b3VsZG4ndAo+IGhhbmRsZSBpdC4KCkl0J3MgZGlmZmVy
+ZW50LiBNSVBJIERTSSBzcGVjIHNheXMsCiJGb3IgY29udGludW91cyBjbG9jayBiZWhhdmlvdXIs
+IHRoZSBDbG9jayBMYW5lIHJlbWFpbnMgaW4gaGlnaC1zcGVlZAptb2RlIGdlbmVyYXRpbmcgYWN0
+aXZlIGNsb2NrIHNpZ25hbHMgYmV0d2VlbiBIUyBkYXRhIHBhY2tldAp0cmFuc21pc3Npb25zLiBG
+b3Igbm9uLWNvbnRpbnVvdXMgY2xvY2sgYmVoYXZpb3VyLCAqdGhlIENsb2NrIExhbmUKZW50ZXJz
+IHRoZSBMUC0xMSBzdGF0ZSBiZXR3ZWVuIEhTIGRhdGEgcGFja2V0IHRyYW5zbWlzc2lvbnMqLiIK
+Cj4gCj4+ICAJd3JpdGVsKHJlZywgZHNpLT5yZWdfYmFzZSArIERTSU1fQ0xLQ1RSTF9SRUcpOwo+
+PiAgCj4+ICAJcmV0dXJuIDA7Cj4+ICB9Cj4+ICAKPj4gK3N0YXRpYyB2b2lkIGV4eW5vc19kc2lf
+ZW5hYmxlX2hzX2Nsb2NrKHN0cnVjdCBleHlub3NfZHNpICpkc2ksCj4+ICsJCQkJCWJvb2wgZW5h
+YmxlKQo+PiArewo+PiArCXUzMiByZWcgPSByZWFkbChkc2ktPnJlZ19iYXNlICsgRFNJTV9DTEtD
+VFJMX1JFRyk7Cj4+ICsKPj4gKwlyZWcgJj0gfkRTSU1fVFhfUkVRVUVTVF9IU0NMSzsKPj4gKwlp
+ZiAoZW5hYmxlKQo+PiArCQlyZWcgfD0gRFNJTV9UWF9SRVFVRVNUX0hTQ0xLOwo+PiArCj4+ICsJ
+d3JpdGVsKHJlZywgZHNpLT5yZWdfYmFzZSArIERTSU1fQ0xLQ1RSTF9SRUcpOwo+PiArfQo+PiAr
+Cj4+ICBzdGF0aWMgdm9pZCBleHlub3NfZHNpX2Rpc2FibGVfY2xvY2soc3RydWN0IGV4eW5vc19k
+c2kgKmRzaSkKPj4gIHsKPj4gIAl1MzIgcmVnOwo+PiBAQCAtNTc1LDYgKzU5MCw5IEBAIHN0YXRp
+YyB2b2lkIGV4eW5vc19kc2lfc2V0X2Rpc3BsYXlfZW5hYmxlKHN0cnVjdCBleHlub3NfZHNpICpk
+c2ksIGJvb2wgZW5hYmxlKQo+PiAgewo+PiAgCXUzMiByZWc7Cj4+ICAKPj4gKwlpZiAoIShkc2kt
+Pm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX1ZJREVPX0xQTSkpCj4+ICsJCWV4eW5vc19kc2lf
+ZW5hYmxlX2hzX2Nsb2NrKGRzaSwgdHJ1ZSk7Cj4+ICsKPiAKPiBJdCBkb2VzIG5vdCBjYXJlIGFi
+b3V0IGVuYWJsZSBhcmd1bWVudCBvZiB0aGUgZnVuY3Rpb24sIEkgZ3Vlc3MgaXQgc2hvdWxkLgo+
+IAoKWWVzLCBpdCdzIGJldHRlciB0byBlbmFibGUgSFMgY2xvY2sgb25seSBpbiBjYXNlIG9mIGVu
+YWJsaW5nLiBTbyB3aWxsCmFkZCBvbmUgbW9yZSBmbGFnIGxpa2UgYmVsb3csCgppZiAoIShkc2kt
+Pm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX1ZJREVPX0xQTSkgJiYgZW5hYmxlKQoKVGhhbmss
+Cklua2kgRGFlCgo+IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4+ICAJcmVnID0gcmVhZGwoZHNpLT5y
+ZWdfYmFzZSArIERTSU1fTURSRVNPTF9SRUcpOwo+PiAgCWlmIChlbmFibGUpCj4+ICAJCXJlZyB8
+PSBEU0lNX01BSU5fU1RBTkRfQlk7Cj4gCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMg
+bGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4g
+dGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3Jl
+IG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZv
+Lmh0bWwKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
