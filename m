@@ -1,56 +1,67 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable SBS battery support
-Date: Fri, 25 Jul 2014 08:36:19 +0900
-Message-ID: <53D19873.3040806@samsung.com>
-References: <1406227380-3569-1-git-send-email-javier.martinez@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:49320 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932131AbaGXXgZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Jul 2014 19:36:25 -0400
-Received: by mail-pd0-f173.google.com with SMTP id w10so4441613pde.18
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jul 2014 16:36:24 -0700 (PDT)
-In-Reply-To: <1406227380-3569-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCHv6 0/5] remove the sub-node and deprecated
+Date: Fri, 25 Jul 2014 10:11:48 +0900
+Message-ID: <1406250713-22604-1-git-send-email-jh80.chung@samsung.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc <linux-mmc@vger.kernel.org>
+Cc: Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, tgih.jun@samsung.com, devicetree@vger.kernel.org, heiko@sntech.de, dinguyen@altera.com, Mark Rutland <mark.rutland@arm.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jaehoon Chung <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
-On 07/25/14 03:43, Javier Martinez Canillas wrote:
-> Many Exynos5 boards (e.g: Snow, Peach Pit and Pi) have
-> a SBS-compliant gas gauge battery. Enable it as module
-> so the needed support is available for these boards.
->
-> Suggested-by: Doug Anderson<dianders@chromium.org>
-> Signed-off-by: Javier Martinez Canillas<javier.martinez@collabora.co.uk>
-> ---
->   arch/arm/configs/exynos_defconfig | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index fc7d168..c390bb9 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -77,6 +77,7 @@ CONFIG_SPI_S3C64XX=y
->   CONFIG_I2C_S3C2410=y
->   CONFIG_DEBUG_GPIO=y
->   CONFIG_POWER_SUPPLY=y
-> +CONFIG_BATTERY_SBS=m
->   CONFIG_CHARGER_TPS65090=y
->   # CONFIG_HWMON is not set
->   CONFIG_THERMAL=y
+Since used the mmc_of_parse(), didn't parse the sub-node.
+So we can remove the sub-node, because almost SoC used the only one card per a host.
+And supports-highspeed can be replaced to "cap-mmc/sd-highspeed" property.
 
-Looks good to me.
+Changelog V6:
+	- Fixed Wrong bit control for host's quirks and rename.
+	- Add "Acked-by" for each SoC maintainers.
+Changelog V5:
+	- Rebased on v3.16-rc4.
+	- Add Acked-by.
+Changelog V4:
+	- Fix the checkpatch error.
+Changelog V3:
+	- Fix the wrong bus-width value.
+	- Use the slot->host->quirks instead of brq->quirks.
+	- Add tested-by and reviewd-by.
+Changelog V2:
+	- Add the "mmc: dw_mmc: replace "disable-wp" from slot's quirks to host's quirk"
 
-Olof, since previous exynos_defconfig has been updated in arm-soc and no 
-branch for it in my tree at this time, picking this into arm-soc 
-directly would be better and you may add my ack on this.
+Jaehoon Chung (5):
+  mmc: dw_mmc: modify the dt-binding for removing slot-node and
+    supports-highspeed
+  ARM: dts: exynos: unuse the slot-node and deprecated the
+    supports-highspeed for dw-mmc
+  ARM: dts: socfpga: unuse the slot-node and deprecated the
+    supports-highspeed for dw-mmc
+  ARM: dts: rockchip: unuse the slot-node and deprecated the
+    supports-highspeed for dw-mmc
+  mmc: dw_mmc: replace "disable-wp" from slot's quirk to host's quirk
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   17 ++++---------
+ .../devicetree/bindings/mmc/k3-dw-mshc.txt         |   12 ++++-----
+ .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |   12 ++++-----
+ arch/arm/boot/dts/exynos4412-odroidx.dts           |    8 ++----
+ arch/arm/boot/dts/exynos4412-origen.dts            |    8 ++----
+ arch/arm/boot/dts/exynos4412-trats2.dts            |    8 ++----
+ arch/arm/boot/dts/exynos5250-arndale.dts           |   18 ++++----------
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi      |   26 ++++++--------------
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   18 ++++----------
+ arch/arm/boot/dts/exynos5250-snow.dts              |    6 ++---
+ arch/arm/boot/dts/exynos5260-xyref5260.dts         |   18 ++++----------
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |   18 ++++----------
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |   16 +++---------
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |   16 +++---------
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   16 +++---------
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |   16 +++---------
+ arch/arm/boot/dts/rk3066a-bqcurie2.dts             |   16 +++---------
+ arch/arm/boot/dts/socfpga_arria5.dtsi              |    9 +++----
+ arch/arm/boot/dts/socfpga_cyclone5.dtsi            |    9 +++----
+ arch/arm/boot/dts/socfpga_vt.dts                   |    9 +++----
+ drivers/mmc/host/dw_mmc.c                          |   12 ++++-----
+ include/linux/mmc/dw_mmc.h                         |    6 ++---
+ 22 files changed, 86 insertions(+), 208 deletions(-)
 
-Thanks,
-Kukjin
+-- 
+1.7.9.5
+
