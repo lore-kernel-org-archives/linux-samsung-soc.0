@@ -1,110 +1,43 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 8/9] s5p-jpeg: add chroma subsampling adjustment for
- Exynos3250
-Date: Fri, 25 Jul 2014 16:20:52 +0200
-Message-ID: <1406298053-30184-9-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v3 9/9] ARM: dts: exynos3250: add JPEG codec device node
+Date: Fri, 25 Jul 2014 16:20:53 +0200
+Message-ID: <1406298053-30184-10-git-send-email-s.nawrocki@samsung.com>
 References: <1406298053-30184-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:61205 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932241AbaGYOVf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jul 2014 10:21:35 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1406298053-30184-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, j.anaszewski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, j.anaszewski@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Take into account limitations specific to the Exynos3250 SoC,
-regarding setting the chroma subsampling control's value.
-
+Cc: Kukjin Kim <kgene.kim@samsung.com>
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/media/platform/s5p-jpeg/jpeg-core.c |   59 +++++++++++++++++----------
- 1 file changed, 38 insertions(+), 21 deletions(-)
+ arch/arm/boot/dts/exynos3250.dtsi |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-index eb13fdf..e66acbc 100644
---- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-+++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-@@ -1603,36 +1603,53 @@ static int s5p_jpeg_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
- 	return 0;
- }
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 3e678fa..46a864d 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -206,6 +206,15 @@
+ 			interrupts = <0 240 0>;
+ 		};
 
--static int s5p_jpeg_try_ctrl(struct v4l2_ctrl *ctrl)
-+static int s5p_jpeg_adjust_subs_ctrl(struct s5p_jpeg_ctx *ctx, int *ctrl_val)
- {
--	struct s5p_jpeg_ctx *ctx = ctrl_to_ctx(ctrl);
--	unsigned long flags;
--	int ret = 0;
--
--	spin_lock_irqsave(&ctx->jpeg->slock, flags);
--
--	if (ctrl->id == V4L2_CID_JPEG_CHROMA_SUBSAMPLING) {
--		if (ctx->jpeg->variant->version == SJPEG_S5P)
--			goto error_free;
-+	switch (ctx->jpeg->variant->version) {
-+	case SJPEG_S5P:
-+		return 0;
-+	case SJPEG_EXYNOS3250:
-+		/*
-+		 * The exynos3250 device can produce JPEG image only
-+		 * of 4:4:4 subsampling when given RGB32 source image.
-+		 */
-+		if (ctx->out_q.fmt->fourcc == V4L2_PIX_FMT_RGB32)
-+			*ctrl_val = 0;
-+		break;
-+	case SJPEG_EXYNOS4:
- 		/*
- 		 * The exynos4x12 device requires input raw image fourcc
- 		 * to be V4L2_PIX_FMT_GREY if gray jpeg format
- 		 * is to be set.
- 		 */
- 		if (ctx->out_q.fmt->fourcc != V4L2_PIX_FMT_GREY &&
--		    ctrl->val == V4L2_JPEG_CHROMA_SUBSAMPLING_GRAY) {
--			ret = -EINVAL;
--			goto error_free;
--		}
--		/*
--		 * The exynos4x12 device requires resulting jpeg subsampling
--		 * not to be lower than the input raw image subsampling.
--		 */
--		if (ctx->out_q.fmt->subsampling > ctrl->val)
--			ctrl->val = ctx->out_q.fmt->subsampling;
-+		    *ctrl_val == V4L2_JPEG_CHROMA_SUBSAMPLING_GRAY)
-+			return -EINVAL;
-+		break;
- 	}
-
--error_free:
-+	/*
-+	 * The exynos4x12 and exynos3250 devices require resulting
-+	 * jpeg subsampling not to be lower than the input raw image
-+	 * subsampling.
-+	 */
-+	if (ctx->out_q.fmt->subsampling > *ctrl_val)
-+		*ctrl_val = ctx->out_q.fmt->subsampling;
++		jpeg-codec@11830000 {
++			compatible = "samsung,exynos3250-jpeg";
++			reg = <0x11830000 0x1000>;
++			interrupts = <0 171 0>;
++			clocks = <&cmu CLK_JPEG>, <&cmu CLK_SCLK_JPEG>;
++			clock-names = "jpeg", "sclk";
++			samsung,power-domain = <&pd_cam>;
++		};
 +
-+	return 0;
-+}
-+
-+static int s5p_jpeg_try_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct s5p_jpeg_ctx *ctx = ctrl_to_ctx(ctrl);
-+	unsigned long flags;
-+	int ret = 0;
-+
-+	spin_lock_irqsave(&ctx->jpeg->slock, flags);
-+
-+	if (ctrl->id == V4L2_CID_JPEG_CHROMA_SUBSAMPLING)
-+		ret = s5p_jpeg_adjust_subs_ctrl(ctx, &ctrl->val);
-+
- 	spin_unlock_irqrestore(&ctx->jpeg->slock, flags);
- 	return ret;
- }
+ 		mshc_0: mshc@12510000 {
+ 			compatible = "samsung,exynos5250-dw-mshc";
+ 			reg = <0x12510000 0x1000>;
 --
 1.7.9.5
