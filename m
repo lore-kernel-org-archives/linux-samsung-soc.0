@@ -1,105 +1,324 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip support
-Date: Sat, 26 Jul 2014 00:52:02 +0530
-Message-ID: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [PATCH V6 2/8] drm/panel: Add support for prepare and unprepare
+ routines
+Date: Sat, 26 Jul 2014 00:52:04 +0530
+Message-ID: <1406316130-4744-3-git-send-email-ajaykumar.rs@samsung.com>
+References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48586 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751336AbaGYTZR (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:44221 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751336AbaGYTZU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jul 2014 15:25:17 -0400
+	Fri, 25 Jul 2014 15:25:20 -0400
+In-reply-to: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Cc: inki.dae@samsung.com, thierry.reding@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-This series is based on exynos-drm-next branch of Inki Dae's tree at:
-git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+Now that we have 2 new callbacks(prepare and unprepare) for drm_panel,
+make changes in all the drm drivers which use the drm_panel framework
+to support the new callbacks.
 
-I have tested this after adding few DT changes for exynos5250-snow,
-exynos5420-peach-pit and exynos5800-peach-pi boards.
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c |    8 +++--
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c |    7 +++++
+ drivers/gpu/drm/panel/panel-ld9040.c    |   18 +++++++++--
+ drivers/gpu/drm/panel/panel-s6e8aa0.c   |   18 +++++++++--
+ drivers/gpu/drm/panel/panel-simple.c    |   51 ++++++++++++++++++++++++-------
+ drivers/gpu/drm/tegra/output.c          |    2 ++
+ 6 files changed, 85 insertions(+), 19 deletions(-)
 
-The V4 series of this particular patchset was also tested by:
-Rahul Sharma <rahul.sharma@samsung.com>
-Javier Martinez Canillas <javier@dowhile0.org>
-
-Changes since V2:
-	-- Address comments from Jingoo Han for ps8622 driver
-	-- Address comments from Daniel, Rob and Thierry regarding
-	   bridge chaining
-	-- Address comments from Thierry regarding the names for
-	   new drm_panel functions
-
-Changes since V3:
-	-- Remove hotplug based initialization of exynos_dp
-	-- Make exynos_dp work directly with drm_panel, remove
-	   dependency on panel_binder
-	-- Minor cleanups in panel_binder and panel_lvds driver
-
-Changes since V4:
-	-- Use gpiod interface for panel-lvds and ps8622 drivers.
-	-- Address comments from Javier.
-	-- Fix compilation issues when PANEL_BINDER is selected as module.
-	-- Split Documentation patches from driver patches.
-	-- Rebase on top of the tree.
-
-Changes since V5:
-	-- Modify bridge drivers to support driver model.
-	-- Drop the concept of bridge chain(sincle there are no 2 real bridges)
-	   Hence drop bridge-panel_binder layer.
-	-- Drop panel-lvds driver and accomodate the required changes in
-	   panel-simple driver.
-	-- Use gpiod interface in ptn3460 driver.
-	-- Address all comments by Thierry Reding for V5 series.
-	-- Address comments from Sean Paul for exynos_dp_commit issue.
-
-Ajay Kumar (6):
-  [PATCH V6 1/8] drm/panel: Add prepare, unprepare and get_modes routines
-  [PATCH V6 2/8] drm/panel: Add support for prepare and unprepare routines
-  [PATCH V6 3/8] drm/panel: simple: Add support for auo_b133htn01 panel
-  [PATCH V6 4/8] drm/exynos: Move DP setup into commit()
-  [PATCH V6 5/8] drm/exynos: dp: Modify driver to support drm_panel
-  [PATCH V6 6/8] drm/bridge: Modify drm_bridge core to support driver model
-
-Sean Paul (1):
-  [PATCH V6 7/8] drm/bridge: Add i2c based driver for ptn3460 bridge
-
-Vincent Palatin (1):
-  [PATCH V6 8/8] drm/bridge: Add i2c based driver for ps8622/ps8625 bridge
-
- .../devicetree/bindings/drm/bridge/ptn3460.txt     |   27 -
- .../devicetree/bindings/panel/auo,b133htn01.txt    |    7 +
- .../devicetree/bindings/vendor-prefixes.txt        |    1 +
- .../devicetree/bindings/video/bridge/ps8622.txt    |   19 +
- .../devicetree/bindings/video/bridge/ptn3460.txt   |   27 +
- drivers/gpu/drm/Makefile                           |    1 +
- drivers/gpu/drm/bridge/Kconfig                     |   32 +-
- drivers/gpu/drm/bridge/Makefile                    |    1 +
- drivers/gpu/drm/bridge/ps8622.c                    |  602 ++++++++++++++++++++
- drivers/gpu/drm/bridge/ptn3460.c                   |  212 ++++---
- drivers/gpu/drm/drm_bridge.c                       |   89 +++
- drivers/gpu/drm/drm_crtc.c                         |    9 +-
- drivers/gpu/drm/exynos/Kconfig                     |    4 +-
- drivers/gpu/drm/exynos/exynos_dp_core.c            |  165 ++++--
- drivers/gpu/drm/exynos/exynos_dp_core.h            |    4 +-
- drivers/gpu/drm/exynos/exynos_drm_dpi.c            |    8 +-
- drivers/gpu/drm/exynos/exynos_drm_dsi.c            |    7 +
- drivers/gpu/drm/msm/hdmi/hdmi_bridge.c             |    3 +-
- drivers/gpu/drm/panel/panel-ld9040.c               |   18 +-
- drivers/gpu/drm/panel/panel-s6e8aa0.c              |   18 +-
- drivers/gpu/drm/panel/panel-simple.c               |   96 +++-
- drivers/gpu/drm/tegra/output.c                     |    2 +
- include/drm/bridge/ptn3460.h                       |   37 --
- include/drm/drm_crtc.h                             |   16 +-
- include/drm/drm_panel.h                            |   26 +
- 25 files changed, 1206 insertions(+), 225 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/drm/bridge/ptn3460.txt
- create mode 100644 Documentation/devicetree/bindings/panel/auo,b133htn01.txt
- create mode 100644 Documentation/devicetree/bindings/video/bridge/ps8622.txt
- create mode 100644 Documentation/devicetree/bindings/video/bridge/ptn3460.txt
- create mode 100644 drivers/gpu/drm/bridge/ps8622.c
- create mode 100644 drivers/gpu/drm/drm_bridge.c
- delete mode 100644 include/drm/bridge/ptn3460.h
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+index 3aa1c7e..fa08f05 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+@@ -125,14 +125,18 @@ static int exynos_dpi_create_connector(struct exynos_drm_display *display,
+ 
+ static void exynos_dpi_poweron(struct exynos_dpi *ctx)
+ {
+-	if (ctx->panel)
++	if (ctx->panel) {
++		drm_panel_prepare(ctx->panel);
+ 		drm_panel_enable(ctx->panel);
++	}
+ }
+ 
+ static void exynos_dpi_poweroff(struct exynos_dpi *ctx)
+ {
+-	if (ctx->panel)
++	if (ctx->panel) {
+ 		drm_panel_disable(ctx->panel);
++		drm_panel_unprepare(ctx->panel);
++	}
+ }
+ 
+ static void exynos_dpi_dpms(struct exynos_drm_display *display, int mode)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 5e78d45..2f58e45 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1333,6 +1333,12 @@ static int exynos_dsi_enable(struct exynos_dsi *dsi)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	ret = drm_panel_prepare(dsi->panel);
++	if (ret < 0) {
++		exynos_dsi_poweroff(dsi);
++		return ret;
++	}
++
+ 	ret = drm_panel_enable(dsi->panel);
+ 	if (ret < 0) {
+ 		exynos_dsi_poweroff(dsi);
+@@ -1354,6 +1360,7 @@ static void exynos_dsi_disable(struct exynos_dsi *dsi)
+ 
+ 	exynos_dsi_set_display_enable(dsi, false);
+ 	drm_panel_disable(dsi->panel);
++	drm_panel_unprepare(dsi->panel);
+ 	exynos_dsi_poweroff(dsi);
+ 
+ 	dsi->state &= ~DSIM_STATE_ENABLED;
+diff --git a/drivers/gpu/drm/panel/panel-ld9040.c b/drivers/gpu/drm/panel/panel-ld9040.c
+index db1601f..046d9fe 100644
+--- a/drivers/gpu/drm/panel/panel-ld9040.c
++++ b/drivers/gpu/drm/panel/panel-ld9040.c
+@@ -214,7 +214,7 @@ static int ld9040_power_off(struct ld9040 *ctx)
+ 	return regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+ }
+ 
+-static int ld9040_disable(struct drm_panel *panel)
++static int ld9040_unprepare(struct drm_panel *panel)
+ {
+ 	struct ld9040 *ctx = panel_to_ld9040(panel);
+ 
+@@ -228,7 +228,12 @@ static int ld9040_disable(struct drm_panel *panel)
+ 	return ld9040_power_off(ctx);
+ }
+ 
+-static int ld9040_enable(struct drm_panel *panel)
++static int ld9040_disable(struct drm_panel *panel)
++{
++	return 0;
++}
++
++static int ld9040_prepare(struct drm_panel *panel)
+ {
+ 	struct ld9040 *ctx = panel_to_ld9040(panel);
+ 	int ret;
+@@ -242,11 +247,16 @@ static int ld9040_enable(struct drm_panel *panel)
+ 	ret = ld9040_clear_error(ctx);
+ 
+ 	if (ret < 0)
+-		ld9040_disable(panel);
++		ld9040_unprepare(panel);
+ 
+ 	return ret;
+ }
+ 
++static int ld9040_enable(struct drm_panel *panel)
++{
++	return 0;
++}
++
+ static int ld9040_get_modes(struct drm_panel *panel)
+ {
+ 	struct drm_connector *connector = panel->connector;
+@@ -272,7 +282,9 @@ static int ld9040_get_modes(struct drm_panel *panel)
+ }
+ 
+ static const struct drm_panel_funcs ld9040_drm_funcs = {
++	.unprepare = ld9040_unprepare,
+ 	.disable = ld9040_disable,
++	.prepare = ld9040_prepare,
+ 	.enable = ld9040_enable,
+ 	.get_modes = ld9040_get_modes,
+ };
+diff --git a/drivers/gpu/drm/panel/panel-s6e8aa0.c b/drivers/gpu/drm/panel/panel-s6e8aa0.c
+index 06e57a2..51c657a 100644
+--- a/drivers/gpu/drm/panel/panel-s6e8aa0.c
++++ b/drivers/gpu/drm/panel/panel-s6e8aa0.c
+@@ -887,7 +887,7 @@ static int s6e8aa0_power_off(struct s6e8aa0 *ctx)
+ 	return regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+ }
+ 
+-static int s6e8aa0_disable(struct drm_panel *panel)
++static int s6e8aa0_unprepare(struct drm_panel *panel)
+ {
+ 	struct s6e8aa0 *ctx = panel_to_s6e8aa0(panel);
+ 
+@@ -900,7 +900,12 @@ static int s6e8aa0_disable(struct drm_panel *panel)
+ 	return s6e8aa0_power_off(ctx);
+ }
+ 
+-static int s6e8aa0_enable(struct drm_panel *panel)
++static int s6e8aa0_disable(struct drm_panel *panel)
++{
++	return 0;
++}
++
++static int s6e8aa0_prepare(struct drm_panel *panel)
+ {
+ 	struct s6e8aa0 *ctx = panel_to_s6e8aa0(panel);
+ 	int ret;
+@@ -913,11 +918,16 @@ static int s6e8aa0_enable(struct drm_panel *panel)
+ 	ret = ctx->error;
+ 
+ 	if (ret < 0)
+-		s6e8aa0_disable(panel);
++		s6e8aa0_unprepare(panel);
+ 
+ 	return ret;
+ }
+ 
++static int s6e8aa0_enable(struct drm_panel *panel)
++{
++	return 0;
++}
++
+ static int s6e8aa0_get_modes(struct drm_panel *panel)
+ {
+ 	struct drm_connector *connector = panel->connector;
+@@ -943,7 +953,9 @@ static int s6e8aa0_get_modes(struct drm_panel *panel)
+ }
+ 
+ static const struct drm_panel_funcs s6e8aa0_drm_funcs = {
++	.unprepare = s6e8aa0_unprepare,
+ 	.disable = s6e8aa0_disable,
++	.prepare = s6e8aa0_prepare,
+ 	.enable = s6e8aa0_enable,
+ 	.get_modes = s6e8aa0_get_modes,
+ };
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index a251361..fb0cfe2 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -45,7 +45,8 @@ struct panel_desc {
+ 
+ struct panel_simple {
+ 	struct drm_panel base;
+-	bool enabled;
++	bool panel_enabled;
++	bool backlight_enabled;
+ 
+ 	const struct panel_desc *desc;
+ 
+@@ -93,11 +94,28 @@ static int panel_simple_get_fixed_modes(struct panel_simple *panel)
+ 	return num;
+ }
+ 
++static int panel_simple_unprepare(struct drm_panel *panel)
++{
++	struct panel_simple *p = to_panel_simple(panel);
++
++	if (!p->panel_enabled)
++		return 0;
++
++	if (p->enable_gpio)
++		gpiod_set_value_cansleep(p->enable_gpio, 0);
++
++	regulator_disable(p->supply);
++
++	p->panel_enabled = false;
++
++	return 0;
++}
++
+ static int panel_simple_disable(struct drm_panel *panel)
+ {
+ 	struct panel_simple *p = to_panel_simple(panel);
+ 
+-	if (!p->enabled)
++	if (!p->backlight_enabled)
+ 		return 0;
+ 
+ 	if (p->backlight) {
+@@ -105,21 +123,17 @@ static int panel_simple_disable(struct drm_panel *panel)
+ 		backlight_update_status(p->backlight);
+ 	}
+ 
+-	if (p->enable_gpio)
+-		gpiod_set_value_cansleep(p->enable_gpio, 0);
+-
+-	regulator_disable(p->supply);
+-	p->enabled = false;
++	p->backlight_enabled = false;
+ 
+ 	return 0;
+ }
+ 
+-static int panel_simple_enable(struct drm_panel *panel)
++static int panel_simple_prepare(struct drm_panel *panel)
+ {
+ 	struct panel_simple *p = to_panel_simple(panel);
+ 	int err;
+ 
+-	if (p->enabled)
++	if (p->panel_enabled)
+ 		return 0;
+ 
+ 	err = regulator_enable(p->supply);
+@@ -131,12 +145,24 @@ static int panel_simple_enable(struct drm_panel *panel)
+ 	if (p->enable_gpio)
+ 		gpiod_set_value_cansleep(p->enable_gpio, 1);
+ 
++	p->panel_enabled = true;
++
++	return 0;
++}
++
++static int panel_simple_enable(struct drm_panel *panel)
++{
++	struct panel_simple *p = to_panel_simple(panel);
++
++	if (p->backlight_enabled)
++		return 0;
++
+ 	if (p->backlight) {
+ 		p->backlight->props.power = FB_BLANK_UNBLANK;
+ 		backlight_update_status(p->backlight);
+ 	}
+ 
+-	p->enabled = true;
++	p->backlight_enabled = true;
+ 
+ 	return 0;
+ }
+@@ -164,6 +190,8 @@ static int panel_simple_get_modes(struct drm_panel *panel)
+ 
+ static const struct drm_panel_funcs panel_simple_funcs = {
+ 	.disable = panel_simple_disable,
++	.unprepare = panel_simple_unprepare,
++	.prepare = panel_simple_prepare,
+ 	.enable = panel_simple_enable,
+ 	.get_modes = panel_simple_get_modes,
+ };
+@@ -178,7 +206,8 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
+ 	if (!panel)
+ 		return -ENOMEM;
+ 
+-	panel->enabled = false;
++	panel->panel_enabled = false;
++	panel->backlight_enabled = false;
+ 	panel->desc = desc;
+ 
+ 	panel->supply = devm_regulator_get(dev, "power");
+diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+index 446837e..b574ee6 100644
+--- a/drivers/gpu/drm/tegra/output.c
++++ b/drivers/gpu/drm/tegra/output.c
+@@ -139,9 +139,11 @@ static void tegra_encoder_dpms(struct drm_encoder *encoder, int mode)
+ 
+ 	if (mode != DRM_MODE_DPMS_ON) {
+ 		drm_panel_disable(panel);
++		drm_panel_unprepare(panel);
+ 		tegra_output_disable(output);
+ 	} else {
+ 		tegra_output_enable(output);
++		drm_panel_prepare(panel);
+ 		drm_panel_enable(panel);
+ 	}
+ }
 -- 
 1.7.9.5
