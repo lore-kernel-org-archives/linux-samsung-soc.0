@@ -1,64 +1,111 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v2 3/4] ARM: dts: exynos5250: Fold common ChromeOS parts
- into Snow
-Date: Fri, 25 Jul 2014 19:02:34 +0200
-Message-ID: <CABxcv=nDsKSdDtVZKpcTP+=3pbeTswJRCUvvXVx98p+1Zzz0Bg@mail.gmail.com>
-References: <1405704009-8430-1-git-send-email-afaerber@suse.de>
-	<1405704009-8430-4-git-send-email-afaerber@suse.de>
-	<CABxcv=kP2PCcNCtM1WUXx5wGG4m-jdw-P1dw0boaSwdJpoX=jQ@mail.gmail.com>
-	<CAD=FV=V-7+Jj7b8-fQL1PiQhNmhiGOPJzitGd__OUQLDteO_8g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH V6 1/8] drm/panel: Add prepare, unprepare and get_modes routines
+Date: Sat, 26 Jul 2014 00:52:03 +0530
+Message-ID: <1406316130-4744-2-git-send-email-ajaykumar.rs@samsung.com>
+References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f179.google.com ([209.85.212.179]:42103 "EHLO
-	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752559AbaGYRCf convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:48586 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753170AbaGYTZT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jul 2014 13:02:35 -0400
-Received: by mail-wi0-f179.google.com with SMTP id f8so1334357wiw.6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Jul 2014 10:02:34 -0700 (PDT)
-In-Reply-To: <CAD=FV=V-7+Jj7b8-fQL1PiQhNmhiGOPJzitGd__OUQLDteO_8g@mail.gmail.com>
+	Fri, 25 Jul 2014 15:25:19 -0400
+In-reply-to: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, "moderated list:ARM/SAMSUNG ARM A..." <linux-arm-kernel@lists.infradead.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: inki.dae@samsung.com, thierry.reding@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Hello Doug,
+Most of the panels need an init sequence as mentioned below:
+	-- poweron LCD unit/LCD_EN
+	-- start video data
+	-- poweron LED unit/BACKLIGHT_EN
+And, a de-init sequence as mentioned below:
+	-- poweroff LED unit/BACKLIGHT_EN
+	-- stop video data
+	-- poweroff LCD unit/LCD_EN
+With existing callbacks for drm panel, we cannot accomodate such panels,
+since only two callbacks, i.e "panel_enable" and panel_disable are supported.
 
-On Fri, Jul 25, 2014 at 6:43 PM, Doug Anderson <dianders@chromium.org> =
-wrote:
-> Javier,
->
-> On Fri, Jul 25, 2014 at 9:35 AM, Javier Martinez Canillas
-> <javier@dowhile0.org> wrote:
->> Hello Andreas,
->>
->> On Fri, Jul 18, 2014 at 7:20 PM, Andreas F=C3=A4rber <afaerber@suse.=
-de> wrote:
->>>
->>> +       memory {
->>> +               reg =3D <0x40000000 0x80000000>;
->>> +       };
->>> +
->>> +       chosen {
->>> +       };
->>> +
->>
->> Is there a reason for an empty chosen node? Same for the Spring DTS.
->
-> I know that the bootloader (U-Boot) fills this in.  I'd have to doubl=
-e
-> check how the bootloader handles the node not being there to begin
-> with.
+This patch adds:
+	-- "prepare" callback which can be called before
+	the actual video data is on, and then call the "enable"
+	callback after the video data is available.
 
-Yes, U-Boot fills this but if the node does not exist in the FDT, it
-creates one. Take a look at fdt_chosen() in common/fdt_support.c [0].
+	-- "unprepare" callback which can be called after
+	the video data is off, and use "disable" callback
+	to do something before switching off the video data.
 
-So I think it's better to just remove it since is empty.
+Now, we can easily map the above scenario as shown below:
+	poweron LCD unit/LCD_EN = "prepare" callback
+	poweron LED unit/BACKLIGHT_EN = "enable" callback
+	poweroff LED unit/BACKLIGHT_EN = "disable" callback
+	poweroff LCD unit/LCD_EN = "unprepare" callback
 
-Best regards,
-Javier
+Also, a helper function for get_modes is added.
 
-[0]: https://chromium.googlesource.com/chromiumos/third_party/u-boot/+/=
-master/common/fdt_support.c#215
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+---
+ include/drm/drm_panel.h |   26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+index c2ab77a..efc63cc 100644
+--- a/include/drm/drm_panel.h
++++ b/include/drm/drm_panel.h
+@@ -31,7 +31,9 @@ struct drm_device;
+ struct drm_panel;
+ 
+ struct drm_panel_funcs {
++	int (*unprepare)(struct drm_panel *panel);
+ 	int (*disable)(struct drm_panel *panel);
++	int (*prepare)(struct drm_panel *panel);
+ 	int (*enable)(struct drm_panel *panel);
+ 	int (*get_modes)(struct drm_panel *panel);
+ };
+@@ -46,6 +48,14 @@ struct drm_panel {
+ 	struct list_head list;
+ };
+ 
++static inline int drm_panel_unprepare(struct drm_panel *panel)
++{
++	if (panel && panel->funcs && panel->funcs->unprepare)
++		return panel->funcs->unprepare(panel);
++
++	return panel ? -ENOSYS : -EINVAL;
++}
++
+ static inline int drm_panel_disable(struct drm_panel *panel)
+ {
+ 	if (panel && panel->funcs && panel->funcs->disable)
+@@ -54,6 +64,14 @@ static inline int drm_panel_disable(struct drm_panel *panel)
+ 	return panel ? -ENOSYS : -EINVAL;
+ }
+ 
++static inline int drm_panel_prepare(struct drm_panel *panel)
++{
++	if (panel && panel->funcs && panel->funcs->prepare)
++		return panel->funcs->prepare(panel);
++
++	return panel ? -ENOSYS : -EINVAL;
++}
++
+ static inline int drm_panel_enable(struct drm_panel *panel)
+ {
+ 	if (panel && panel->funcs && panel->funcs->enable)
+@@ -62,6 +80,14 @@ static inline int drm_panel_enable(struct drm_panel *panel)
+ 	return panel ? -ENOSYS : -EINVAL;
+ }
+ 
++static inline int drm_panel_get_modes(struct drm_panel *panel)
++{
++	if (panel && panel->funcs && panel->funcs->get_modes)
++		return panel->funcs->get_modes(panel);
++
++	return 0;
++}
++
+ void drm_panel_init(struct drm_panel *panel);
+ 
+ int drm_panel_add(struct drm_panel *panel);
+-- 
+1.7.9.5
