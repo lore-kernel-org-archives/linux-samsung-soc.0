@@ -1,402 +1,176 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: [PATCH v2] ARM: EXYNOS: Refactor the pm code to use DT based lookup
-Date: Fri, 25 Jul 2014 17:19:01 +0530
-Message-ID: <1406288941-20792-1-git-send-email-vikas.sajjan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:17565 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751348AbaGYLw3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jul 2014 07:52:29 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N9900CC5NNFW6C0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 25 Jul 2014 20:52:27 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCHv6 1/5] mmc: dw_mmc: modify the dt-binding for removing
+ slot-node and supports-highspeed
+Date: Fri, 25 Jul 2014 14:11:52 +0200
+Message-ID: <53D24988.9010208@suse.de>
+References: <1406250713-22604-1-git-send-email-jh80.chung@samsung.com> <1406250713-22604-2-git-send-email-jh80.chung@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1406250713-22604-2-git-send-email-jh80.chung@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>
+Cc: Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, tgih.jun@samsung.com, devicetree@vger.kernel.org, heiko@sntech.de, dinguyen@altera.com, Mark Rutland <mark.rutland@arm.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, Vikas Sajjan <vikas.sajjan@samsung.com>
 
-Refactoring the pm.c to avoid using "soc_is_exynos" checks,
-instead use the DT based lookup.
+Hi Jaehoon,
 
-While at it, consolidate the common code across SoCs
-and create a static helper functions.
+Am 25.07.2014 03:11, schrieb Jaehoon Chung:
+> Almost Soc is used the slot per a host.
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
----
-changes since v1:
-	- Address Kukjin Kim comments to respin this patch separately from
-		http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/272574.html
-	- removed panic, returned if no PMU node found and added check in exynos_wkup_irq.
+Something's very wrong with this sentence. What are you trying to say?
+Almost all SoCs use one slot only per host controller device?
 
-Rebased on Kukjin Kim's tree, for-next branch 
-	https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
----
- arch/arm/mach-exynos/pm.c       |  234 ++++++++++++++++++++++++++++++++-------
- arch/arm/mach-exynos/regs-pmu.h |    1 +
- 2 files changed, 192 insertions(+), 43 deletions(-)
+> Don't use the slot-node and deprecated the "supports-highsped" proper=
+ty.
 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index c4c6d98..1c875e5 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -36,6 +36,8 @@
- #include "regs-pmu.h"
- #include "regs-sys.h"
- 
-+#define REG_TABLE_END (-1U)
-+
- /**
-  * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
-  * @hwirq: Hardware IRQ signal of the GIC
-@@ -59,6 +61,19 @@ static struct sleep_save exynos_core_save[] = {
- 	SAVE_ITEM(S5P_SROM_BC3),
- };
- 
-+struct exynos_pm_data {
-+	const struct exynos_wkup_irq *wkup_irq;
-+	unsigned int wake_disable_mask;
-+	unsigned int *release_ret_regs;
-+
-+	void (*pm_prepare)(void);
-+	void (*pm_resume)(void);
-+	int (*pm_suspend)(void);
-+	int (*cpu_suspend)(unsigned long);
-+};
-+
-+struct exynos_pm_data *pm_data;
-+
- /*
-  * GIC wake-up support
-  */
-@@ -77,14 +92,24 @@ static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
- 	{ /* sentinel */ },
- };
- 
-+unsigned int exynos_release_ret_regs[] = {
-+	S5P_PAD_RET_MAUDIO_OPTION,
-+	S5P_PAD_RET_GPIO_OPTION,
-+	S5P_PAD_RET_UART_OPTION,
-+	S5P_PAD_RET_MMCA_OPTION,
-+	S5P_PAD_RET_MMCB_OPTION,
-+	S5P_PAD_RET_EBIA_OPTION,
-+	S5P_PAD_RET_EBIB_OPTION,
-+	REG_TABLE_END,
-+};
-+
- static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
- {
- 	const struct exynos_wkup_irq *wkup_irq;
- 
--	if (soc_is_exynos5250())
--		wkup_irq = exynos5250_wkup_irq;
--	else
--		wkup_irq = exynos4_wkup_irq;
-+	if (!pm_data->wkup_irq)
-+		return -ENOENT;
-+	wkup_irq = pm_data->wkup_irq;
- 
- 	while (wkup_irq->mask) {
- 		if (wkup_irq->hwirq == data->hwirq) {
-@@ -241,13 +266,13 @@ static void exynos_cpu_restore_register(void)
- 
- static int exynos_cpu_suspend(unsigned long arg)
- {
--#ifdef CONFIG_CACHE_L2X0
--	outer_flush_all();
--#endif
--
--	if (soc_is_exynos5250())
--		flush_cache_all();
-+	if (pm_data->cpu_suspend)
-+		return pm_data->cpu_suspend(arg);
-+	return -1;
-+}
- 
-+static int exynos_cpu_do_idle(void)
-+{
- 	/* issue the standby signal into the pm unit. */
- 	cpu_do_idle();
- 
-@@ -257,32 +282,73 @@ static int exynos_cpu_suspend(unsigned long arg)
- 
- static void exynos_pm_prepare(void)
- {
--	unsigned int tmp;
-+	if (pm_data->pm_prepare)
-+		pm_data->pm_prepare();
-+}
- 
-+static int exynos4_cpu_suspend(unsigned long arg)
-+{
-+#ifdef CONFIG_CACHE_L2X0
-+	outer_flush_all();
-+#endif
-+	return exynos_cpu_do_idle();
-+}
-+
-+static int exynos5250_cpu_suspend(unsigned long arg)
-+{
-+#ifdef CONFIG_CACHE_L2X0
-+	outer_flush_all();
-+#endif
-+	flush_cache_all();
-+	return exynos_cpu_do_idle();
-+}
-+
-+static void exynos_pm_set_wakeup_mask(void)
-+{
- 	/* Set wake-up mask registers */
- 	pmu_raw_writel(exynos_get_eint_wake_mask(), S5P_EINT_WAKEUP_MASK);
- 	pmu_raw_writel(exynos_irqwake_intmask & ~(1 << 31), S5P_WAKEUP_MASK);
-+}
- 
--	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
--
--	if (soc_is_exynos5250()) {
--		s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
--		/* Disable USE_RETENTION of JPEG_MEM_OPTION */
--		tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
--		tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
--		pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
--	}
--
-+static void exynos_pm_enter_sleep_mode(void)
-+{
- 	/* Set value of power down register for sleep mode */
--
- 	exynos_sys_powerdown_conf(SYS_SLEEP);
- 	pmu_raw_writel(S5P_CHECK_SLEEP, S5P_INFORM1);
- 
- 	/* ensure at least INFORM0 has the resume address */
--
- 	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
- }
- 
-+static void exynos5250_pm_prepare(void)
-+{
-+	unsigned int tmp;
-+
-+	/* Set wake-up mask registers */
-+	exynos_pm_set_wakeup_mask();
-+
-+	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-+
-+	s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
-+
-+	/* Disable USE_RETENTION of JPEG_MEM_OPTION */
-+	tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
-+	tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
-+	pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
-+
-+	exynos_pm_enter_sleep_mode();
-+}
-+
-+static void exynos4_pm_prepare(void)
-+{
-+	/* Set wake-up mask registers */
-+	exynos_pm_set_wakeup_mask();
-+
-+	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-+
-+	exynos_pm_enter_sleep_mode();
-+}
-+
- static void exynos_pm_central_suspend(void)
- {
- 	unsigned long tmp;
-@@ -295,6 +361,13 @@ static void exynos_pm_central_suspend(void)
- 
- static int exynos_pm_suspend(void)
- {
-+	if (pm_data->pm_suspend)
-+		return pm_data->pm_suspend();
-+	return -1;
-+}
-+
-+static int exynos4_pm_suspend(void)
-+{
- 	unsigned long tmp;
- 
- 	exynos_pm_central_suspend();
-@@ -304,9 +377,20 @@ static int exynos_pm_suspend(void)
- 	tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
- 	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
- 
--	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
--		exynos_cpu_save_register();
-+	exynos_cpu_save_register();
-+	return 0;
-+}
-+
-+static int exynos5250_pm_suspend(void)
-+{
-+	unsigned long tmp;
-+
-+	exynos_pm_central_suspend();
-+
-+	/* Setting SEQ_OPTION register */
- 
-+	tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
-+	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
- 	return 0;
- }
- 
-@@ -333,39 +417,57 @@ static int exynos_pm_central_resume(void)
- 	return 0;
- }
- 
-+static void exynos_pm_set_release_retention(void)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; (pm_data->release_ret_regs[i] != REG_TABLE_END); i++)
-+		pmu_raw_writel(EXYNOS_WAKEUP_FROM_LOWPWR,
-+				pm_data->release_ret_regs[i]);
-+}
-+
- static void exynos_pm_resume(void)
- {
-+	if (pm_data->pm_resume)
-+		pm_data->pm_resume();
-+}
-+
-+static void exynos4_pm_resume(void)
-+{
- 	if (exynos_pm_central_resume())
- 		goto early_wakeup;
- 
--	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
--		exynos_cpu_restore_register();
-+	exynos_cpu_restore_register();
- 
- 	/* For release retention */
--
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
--	pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
--
--	if (soc_is_exynos5250())
--		s3c_pm_do_restore(exynos5_sys_save,
--			ARRAY_SIZE(exynos5_sys_save));
-+	exynos_pm_set_release_retention();
- 
- 	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
- 
--	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
--		scu_enable(S5P_VA_SCU);
-+	scu_enable(S5P_VA_SCU);
- 
- early_wakeup:
- 
- 	/* Clear SLEEP mode set in INFORM1 */
- 	pmu_raw_writel(0x0, S5P_INFORM1);
-+}
-+
-+static void exynos5250_pm_resume(void)
-+{
-+	if (exynos_pm_central_resume())
-+		goto early_wakeup;
- 
--	return;
-+	/* For release retention */
-+	exynos_pm_set_release_retention();
-+
-+	s3c_pm_do_restore(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
-+
-+	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-+
-+early_wakeup:
-+
-+	/* Clear SLEEP mode set in INFORM1 */
-+	pmu_raw_writel(0x0, S5P_INFORM1);
- }
- 
- static struct syscore_ops exynos_pm_syscore_ops = {
-@@ -468,18 +570,64 @@ static struct notifier_block exynos_cpu_pm_notifier_block = {
- 	.notifier_call = exynos_cpu_pm_notifier,
- };
- 
-+static struct exynos_pm_data exynos4_pm_data = {
-+	.wkup_irq	= exynos4_wkup_irq,
-+	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
-+	.release_ret_regs = exynos_release_ret_regs,
-+	.pm_suspend	= exynos4_pm_suspend,
-+	.pm_resume	= exynos4_pm_resume,
-+	.pm_prepare	= exynos4_pm_prepare,
-+	.cpu_suspend	= exynos4_cpu_suspend,
-+};
-+
-+static struct exynos_pm_data exynos5250_pm_data = {
-+	.wkup_irq	= exynos5250_wkup_irq,
-+	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
-+	.release_ret_regs = exynos_release_ret_regs,
-+	.pm_suspend	= exynos5250_pm_suspend,
-+	.pm_resume	= exynos5250_pm_resume,
-+	.pm_prepare	= exynos5250_pm_prepare,
-+	.cpu_suspend	= exynos5250_cpu_suspend,
-+};
-+
-+static struct of_device_id exynos_pmu_of_device_ids[] = {
-+	{
-+		.compatible = "samsung,exynos4210-pmu",
-+		.data = (void *)&exynos4_pm_data,
-+	}, {
-+		.compatible = "samsung,exynos4212-pmu",
-+		.data = (void *)&exynos4_pm_data,
-+	}, {
-+		.compatible = "samsung,exynos4412-pmu",
-+		.data = (void *)&exynos4_pm_data,
-+	}, {
-+		.compatible = "samsung,exynos5250-pmu",
-+		.data = (void *)&exynos5250_pm_data,
-+	},
-+	{ /*sentinel*/ },
-+};
-+
- void __init exynos_pm_init(void)
- {
- 	u32 tmp;
-+	const struct of_device_id *match;
- 
- 	cpu_pm_register_notifier(&exynos_cpu_pm_notifier_block);
- 
-+	of_find_matching_node_and_match(NULL, exynos_pmu_of_device_ids, &match);
-+
-+	if (!match) {
-+		pr_err("Failed to find PMU node\n");
-+		return;
-+	}
-+	pm_data = (struct exynos_pm_data *) match->data;
-+
- 	/* Platform-specific GIC callback */
- 	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
- 
- 	/* All wakeup disable */
- 	tmp = pmu_raw_readl(S5P_WAKEUP_MASK);
--	tmp |= ((0xFF << 8) | (0x1F << 1));
-+	tmp |= pm_data->wake_disable_mask;
- 	pmu_raw_writel(tmp, S5P_WAKEUP_MASK);
- 
- 	register_syscore_ops(&exynos_pm_syscore_ops);
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index 96a1569..30c0301 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -21,6 +21,7 @@
- #define S5P_USE_STANDBY_WFI0			(1 << 16)
- #define S5P_USE_STANDBY_WFE0			(1 << 24)
- 
-+#define EXYNOS_WAKEUP_FROM_LOWPWR		(1 << 28)
- #define EXYNOS_SWRESET				0x0400
- #define EXYNOS5440_SWRESET			0x00C4
- 
--- 
-1.7.9.5
+s/deprecated/deprecate/ ?
+s/highsped/highspeed/
+
+> Instead, use the cap-mmc/sd-highspeed.
+>=20
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Reviewed-by: Tushar Behera <trblinux@gmail.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
+> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+> ---
+>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   17 +++++-----=
+-------
+>  .../devicetree/bindings/mmc/k3-dw-mshc.txt         |   12 +++++-----=
+--
+>  .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |   12 +++++-----=
+--
+>  3 files changed, 15 insertions(+), 26 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt=
+ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> index 532b1d4..9308325 100644
+> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> @@ -46,13 +46,14 @@ Required Properties:
+>        - if CIU clock divider value is 0 (that is divide by 1), both =
+tx and rx
+>          phase shift clocks should be 0.
+> =20
+> -Required properties for a slot:
+> +Required properties for a slot (Deprecated - Recommend to use one sl=
+ot per a host):
+
+"per host"
+
+> =20
+>  * gpios: specifies a list of gpios used for command, clock and data =
+bus. The
+>    first gpio is the command line and the second gpio is the clock li=
+ne. The
+>    rest of the gpios (depending on the bus-width property) are the da=
+ta lines in
+>    no particular order. The format of the gpio specifier depends on t=
+he gpio
+>    controller.
+> + (Deprecated - Refer to Documentaion/devicetree/binding/pinctrl/sams=
+ung-pinctrl.txt)
+
+"Documentation/"
+
+Nit: Is the indentation intentional? (parenthesis not aligned with text=
+)
+
+> =20
+>  Example:
+> =20
+> @@ -69,21 +70,13 @@ Example:
+> =20
+>  	dwmmc0@12200000 {
+>  		num-slots =3D <1>;
+> -		supports-highspeed;
+> +		cap-mmc-highspeed;
+> +		cap-sd-highspeed;
+>  		broken-cd;
+>  		fifo-depth =3D <0x80>;
+>  		card-detect-delay =3D <200>;
+>  		samsung,dw-mshc-ciu-div =3D <3>;
+>  		samsung,dw-mshc-sdr-timing =3D <2 3>;
+>  		samsung,dw-mshc-ddr-timing =3D <1 2>;
+> -
+> -		slot@0 {
+> -			reg =3D <0>;
+> -			bus-width =3D <8>;
+> -			gpios =3D <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
+> -				<&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
+> -				<&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>,
+> -				<&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
+> -				<&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>;
+> -		};
+> +		bus-width =3D <8>;
+>  	};
+> diff --git a/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt b/D=
+ocumentation/devicetree/bindings/mmc/k3-dw-mshc.txt
+> index e5bc49f..3b35449 100644
+> --- a/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt
+> @@ -34,13 +34,11 @@ Example:
+>  		num-slots =3D <1>;
+>  		vmmc-supply =3D <&ldo12>;
+>  		fifo-depth =3D <0x100>;
+> -		supports-highspeed;
+>  		pinctrl-names =3D "default";
+>  		pinctrl-0 =3D <&sd_pmx_pins &sd_cfg_func1 &sd_cfg_func2>;
+> -		slot@0 {
+> -			reg =3D <0>;
+> -			bus-width =3D <4>;
+> -			disable-wp;
+> -			cd-gpios =3D <&gpio10 3 0>;
+> -		};
+> +		bus-width =3D <4>;
+> +		disable-wp;
+> +		cd-gpios =3D <&gpio10 3 0>;
+> +		cap-mmc-highspeed;
+> +		cap-sd-highspeed;
+>  	};
+> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.t=
+xt b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+> index 2d4a725..346c609 100644
+> --- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+> @@ -67,7 +67,8 @@ Optional properties:
+>  * card-detect-delay: Delay in milli-seconds before detecting card af=
+ter card
+>    insert event. The default value is 0.
+> =20
+> -* supports-highspeed: Enables support for high speed cards (up to 50=
+MHz)
+> +* supports-highspeed (DEPRECATED): Enables support for high speed ca=
+rds (up to 50MHz)
+> +			   (use "cap-mmc-highspeed" or "cap-sd-highspeed" instead)
+> =20
+>  * broken-cd: as documented in mmc core bindings.
+> =20
+> @@ -98,14 +99,11 @@ board specific portions as listed below.
+>  		clock-frequency =3D <400000000>;
+>  		clock-freq-min-max =3D <400000 200000000>;
+>  		num-slots =3D <1>;
+> -		supports-highspeed;
+>  		broken-cd;
+>  		fifo-depth =3D <0x80>;
+>  		card-detect-delay =3D <200>;
+>  		vmmc-supply =3D <&buck8>;
+> -
+> -		slot@0 {
+> -			reg =3D <0>;
+> -			bus-width =3D <8>;
+> -		};
+> +		bus-width =3D <8>;
+> +		cap-mmc-highspeed;
+> +		cap-sd-highspeed;
+>  	};
+
+Regards,
+Andreas
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
+berg
