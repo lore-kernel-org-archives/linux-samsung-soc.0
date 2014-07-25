@@ -1,83 +1,58 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 2/2] drm/exynos: dsi: add LPM (Low Power Mode) transfer
- support
-Date: Fri, 25 Jul 2014 17:31:11 +0900
-Message-ID: <53D215CF.6080404@samsung.com>
-References: <1405680964-6869-1-git-send-email-inki.dae@samsung.com>
- <1405680964-6869-3-git-send-email-inki.dae@samsung.com>
- <53D0E469.8010308@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] exynos: Support big endian mode in secondary_startup
+Date: Fri, 25 Jul 2014 11:16:43 +0100
+Message-ID: <20140725101643.GN17528@sirena.org.uk>
+References: <1405958507-8606-1-git-send-email-broonie@kernel.org>
+ <073c01cfa7c3$39ec6a10$adc53e30$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <53D0E469.8010308@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Thierry Reding <treding@nvidia.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jOWcLJj2EpBZWei/"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54334 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760034AbaGYKQx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Jul 2014 06:16:53 -0400
+Content-Disposition: inline
+In-Reply-To: <073c01cfa7c3$39ec6a10$adc53e30$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Victor Kamensky' <victor.kamensky@linaro.org>
 
-T24gMjAxNOuFhCAwN+yblCAyNOydvCAxOTo0OCwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiArQ0M6
-IFRoaWVycnkgYW5kIEFsZXhhbmRyZQo+IAo+IE9uIDA3LzE4LzIwMTQgMTI6NTYgUE0sIElua2kg
-RGFlIHdyb3RlOgo+PiBUaGlzIHBhdGNoIGFkZHMgTFBNIHRyYW5zZmVyIHN1cHBvcnQgZm9yIHZp
-ZGVvIG9yIGNvbW1hbmQgZGF0YS4KPj4KPj4gV2l0aCB0aGlzIHBhdGNoLCBFeHlub3MgTUlQSSBE
-U0kgY29udHJvbGxlciBjYW4gdHJhbnNmZXIgY29tbWFuZCBvcgo+PiB2aWRlbyBkYXRhIHdpdGgg
-SFMgb3IgTFAgbW9kZSBpbiBhY2NvcmRhbmNlIHdpdGggbW9kZV9mbGFncyBzZXQKPj4gYnkgTENE
-IFBhbmVsIGRyaXZlci4KPj4KPj4gU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNh
-bXN1bmcuY29tPgo+PiBBY2tlZC1ieTogS3l1bmdtaW4gUGFyayA8a3l1bmdtaW4ucGFya0BzYW1z
-dW5nLmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNp
-LmMgfCAgIDIyICsrKysrKysrKysrKysrKysrKysrLS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAyMCBp
-bnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2RzaS5jCj4+IGluZGV4IDJkZjM1OTIuLmIxMjA1NTQgMTAwNjQ0Cj4+IC0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+PiArKysgYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKPj4gQEAgLTQyNiwxMyArNDI2LDI4IEBA
-IHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9lbmFibGVfY2xvY2soc3RydWN0IGV4eW5vc19kc2kgKmRz
-aSkKPj4gIAkJCXwgRFNJTV9FU0NfUFJFU0NBTEVSKGVzY19kaXYpCj4+ICAJCQl8IERTSU1fTEFO
-RV9FU0NfQ0xLX0VOX0NMSwo+PiAgCQkJfCBEU0lNX0xBTkVfRVNDX0NMS19FTl9EQVRBKEJJVChk
-c2ktPmxhbmVzKSAtIDEpCj4+IC0JCQl8IERTSU1fQllURV9DTEtfU1JDKDApCj4+IC0JCQl8IERT
-SU1fVFhfUkVRVUVTVF9IU0NMSzsKPj4gKwkJCXwgRFNJTV9CWVRFX0NMS19TUkMoMCk7Cj4+ICsK
-Pj4gKwlpZiAoIShkc2ktPm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX0NNRF9MUE0pKQo+PiAr
-CQlyZWcgfD0gRFNJTV9UWF9SRVFVRVNUX0hTQ0xLOwo+PiArCj4gCj4gTWF5YmUgSSBtaXNzZWQg
-c3RoIGJ1dCBpdCBzZWVtcyB0byBtZSBzbGlnaHRseSB1bnJlbGF0ZWQgdG8gTFBNIGZsYWcuCj4g
-QWNjb3JkaW5nIHRvIHNwZWNzIHNvbWUgcGFuZWxzIGNhbiByZXF1aXJlIHRoaXMgY2xvY2sgZXZl
-biBpbiBMUE0gbW9kZS4KPiBJIHdvbmRlciBpZiByZWNlbnRseSBpbnRyb2R1Y2VkICBNSVBJX0RT
-SV9DTE9DS19OT05fQ09OVElOVU9VUyB3b3VsZG4ndAo+IGhhbmRsZSBpdC4KCkl0J3MgZGlmZmVy
-ZW50LiBNSVBJIERTSSBzcGVjIHNheXMsCiJGb3IgY29udGludW91cyBjbG9jayBiZWhhdmlvdXIs
-IHRoZSBDbG9jayBMYW5lIHJlbWFpbnMgaW4gaGlnaC1zcGVlZAptb2RlIGdlbmVyYXRpbmcgYWN0
-aXZlIGNsb2NrIHNpZ25hbHMgYmV0d2VlbiBIUyBkYXRhIHBhY2tldAp0cmFuc21pc3Npb25zLiBG
-b3Igbm9uLWNvbnRpbnVvdXMgY2xvY2sgYmVoYXZpb3VyLCAqdGhlIENsb2NrIExhbmUKZW50ZXJz
-IHRoZSBMUC0xMSBzdGF0ZSBiZXR3ZWVuIEhTIGRhdGEgcGFja2V0IHRyYW5zbWlzc2lvbnMqLiIK
-Cj4gCj4+ICAJd3JpdGVsKHJlZywgZHNpLT5yZWdfYmFzZSArIERTSU1fQ0xLQ1RSTF9SRUcpOwo+
-PiAgCj4+ICAJcmV0dXJuIDA7Cj4+ICB9Cj4+ICAKPj4gK3N0YXRpYyB2b2lkIGV4eW5vc19kc2lf
-ZW5hYmxlX2hzX2Nsb2NrKHN0cnVjdCBleHlub3NfZHNpICpkc2ksCj4+ICsJCQkJCWJvb2wgZW5h
-YmxlKQo+PiArewo+PiArCXUzMiByZWcgPSByZWFkbChkc2ktPnJlZ19iYXNlICsgRFNJTV9DTEtD
-VFJMX1JFRyk7Cj4+ICsKPj4gKwlyZWcgJj0gfkRTSU1fVFhfUkVRVUVTVF9IU0NMSzsKPj4gKwlp
-ZiAoZW5hYmxlKQo+PiArCQlyZWcgfD0gRFNJTV9UWF9SRVFVRVNUX0hTQ0xLOwo+PiArCj4+ICsJ
-d3JpdGVsKHJlZywgZHNpLT5yZWdfYmFzZSArIERTSU1fQ0xLQ1RSTF9SRUcpOwo+PiArfQo+PiAr
-Cj4+ICBzdGF0aWMgdm9pZCBleHlub3NfZHNpX2Rpc2FibGVfY2xvY2soc3RydWN0IGV4eW5vc19k
-c2kgKmRzaSkKPj4gIHsKPj4gIAl1MzIgcmVnOwo+PiBAQCAtNTc1LDYgKzU5MCw5IEBAIHN0YXRp
-YyB2b2lkIGV4eW5vc19kc2lfc2V0X2Rpc3BsYXlfZW5hYmxlKHN0cnVjdCBleHlub3NfZHNpICpk
-c2ksIGJvb2wgZW5hYmxlKQo+PiAgewo+PiAgCXUzMiByZWc7Cj4+ICAKPj4gKwlpZiAoIShkc2kt
-Pm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX1ZJREVPX0xQTSkpCj4+ICsJCWV4eW5vc19kc2lf
-ZW5hYmxlX2hzX2Nsb2NrKGRzaSwgdHJ1ZSk7Cj4+ICsKPiAKPiBJdCBkb2VzIG5vdCBjYXJlIGFi
-b3V0IGVuYWJsZSBhcmd1bWVudCBvZiB0aGUgZnVuY3Rpb24sIEkgZ3Vlc3MgaXQgc2hvdWxkLgo+
-IAoKWWVzLCBpdCdzIGJldHRlciB0byBlbmFibGUgSFMgY2xvY2sgb25seSBpbiBjYXNlIG9mIGVu
-YWJsaW5nLiBTbyB3aWxsCmFkZCBvbmUgbW9yZSBmbGFnIGxpa2UgYmVsb3csCgppZiAoIShkc2kt
-Pm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX1ZJREVPX0xQTSkgJiYgZW5hYmxlKQoKVGhhbmss
-Cklua2kgRGFlCgo+IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4+ICAJcmVnID0gcmVhZGwoZHNpLT5y
-ZWdfYmFzZSArIERTSU1fTURSRVNPTF9SRUcpOwo+PiAgCWlmIChlbmFibGUpCj4+ICAJCXJlZyB8
-PSBEU0lNX01BSU5fU1RBTkRfQlk7Cj4gCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMg
-bGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4g
-dGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3Jl
-IG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZv
-Lmh0bWwKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--jOWcLJj2EpBZWei/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Jul 25, 2014 at 01:45:14PM +0900, Kukjin Kim wrote:
+
+> Basically, I have no objection on this, BTW is there any requirement to support
+> big endian on exynos stuff? Just wondering...
+
+We've been using it for testing within Linaro.  I don't know of any real
+world users.
+
+--jOWcLJj2EpBZWei/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT0i6IAAoJELSic+t+oim9cbIP/jpaNewUE3ySU3reSCBE7OPW
+VhT+2SVglinRLGQ6quEULnaDEzx6V8TAGNWlV+n3ZAw4x8gE+KVgVk2ctumSP2n7
+P8LHI+E61jMIlwAru7pwBF+xjzZsU99LzJ3v0PNxyvqtOh4U98lWNw3ZReU9/KeR
+mryZiOxsefQY3mY2YjnRgmbQCSP/+34UHMRuieYlhg1FGOK/pDvXmAYB9yUoyozz
+ReD+WT0YoWK8+RXgsybv9zBOXf8Cbf5vDrbHIjcPfLssqTQTZyJQi3rNpgW0AVcK
+EZJxv6TpcFTV/HqqXXwOLzclQM+x9855/SAK6+8vVKJxsgxEBa86edPcvlAnb+IM
+xGEAONDSogqxX16IvYk/xJSOU7pZ6aML0yHKY7aOdFbKdtBmtpLbbO14WvLe0Clm
+9H5hAZ6UfZGkSxdNr5UECj0KnDI2XetB7HTT5CoZdnCxAh+9t1KK1g+YB4Cei3Ee
+H9HoHc2LMmOY8ny/i6cDo9H/p8U3/+n1SI5an/zWNjNfSah1RdAh1K3fmNavQghJ
++XFrQvnriK74E+7rAEDs7BPQUzpIdMollgmINBH2n6ScChbQ54bzi5NsdWnSY2y9
+HzDAyjLsoi+IIzw7FCyMCLI9w+zdpjQsoPprb/6z46oDvZY1pURs5QwYM1Rx1V7l
+bndpn1CH7fHXWmvucHFt
+=ybbU
+-----END PGP SIGNATURE-----
+
+--jOWcLJj2EpBZWei/--
