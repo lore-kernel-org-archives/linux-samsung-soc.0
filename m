@@ -1,165 +1,102 @@
 From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v2 1/2] clk: samsung: exynos4: Enable ARMCLK down feature
-Date: Fri, 25 Jul 2014 15:22:13 -0700
-Message-ID: <20140725222213.4791.58949@quantum>
-References: <1405694193-29643-1-git-send-email-k.kozlowski@samsung.com>
- <20140724001853.6419.551@quantum> <1406184144.8807.4.camel@AMDC1943>
- <1406195041.21857.4.camel@AMDC1943>
+Subject: Re: [PATCH v8 00/13] Add Maxim 77802 PMIC support
+Date: Fri, 25 Jul 2014 15:31:40 -0700
+Message-ID: <20140725223140.4791.61816@quantum>
+References: <1405337769-3741-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1406195041.21857.4.camel@AMDC1943>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:56304 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751575AbaGYWbo convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Jul 2014 18:31:44 -0400
+Received: by mail-pa0-f44.google.com with SMTP id eu11so6855073pac.31
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Jul 2014 15:31:44 -0700 (PDT)
+In-Reply-To: <1405337769-3741-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tushar Behera <trblinux@gmail.com>, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-UXVvdGluZyBLcnp5c3p0b2YgS296bG93c2tpICgyMDE0LTA3LTI0IDAyOjQ0OjAxKQo+IE9uIGN6
-dywgMjAxNC0wNy0yNCBhdCAwODo0MiArMDIwMCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
-PiA+IE9uIMWbcm8sIDIwMTQtMDctMjMgYXQgMTc6MTggLTA3MDAsIE1pa2UgVHVycXVldHRlIHdy
-b3RlOgo+ID4gPiBRdW90aW5nIEtyenlzenRvZiBLb3psb3dza2kgKDIwMTQtMDctMTggMDc6MzY6
-MzIpCj4gPiA+ID4gRW5hYmxlIEFSTUNMSyBkb3duIGZlYXR1cmUgb24gYWxsIEV4eW5vczQgU29D
-cy4gVGhlIGZyZXF1ZW5jeSBvZgo+ID4gPiA+IEFSTUNMSyB3aWxsIGJlIHJlZHVjZWQgdXBvbiBl
-bnRlcmluZyBpZGxlIG1vZGUgKFdGSSBvciBXRkUpLgo+ID4gPiA+IAo+ID4gPiA+IFRoZSBmZWF0
-dXJlIGJlaGF2ZXMgbGlrZSB2ZXJ5IGZhc3QgY3B1ZnJlcSBvbmRlbWFuZCBnb3Zlcm5vci4gSW4g
-aWRsZQo+ID4gPiA+IG1vZGUgdGhpcyByZWR1Y2VzIGVuZXJneSBjb25zdW1wdGlvbiBvbiBmdWxs
-IGZyZXF1ZW5jeSBjaG9zZW4gYnkKPiA+ID4gPiBjcHVmcmVxIGdvdmVybm9yIGJ5IGFwcHJveGlt
-YXRlbHk6Cj4gPiA+ID4gIC0gVHJhdHMyOiAgNi41JSAoMTUzIG1BIC0+IDE0MyBtQSkKPiA+ID4g
-PiAgLSBUcmF0czogIDMzLjAlICgxODAgbUEgLT4gMTIwIG1BKQo+ID4gPiA+ICAtIEdlYXIxOiAg
-MjcuMCUgKDE4MCBtQSAtPiAxMzAgbUEpCj4gPiA+IAo+ID4gPiBOaWNlIHBvd2VyIHNhdmluZ3Mh
-IEp1c3QgYSBxdWljayBxdWVzdGlvbiBvbiB0aGlzIGZlYXR1cmU6IHRoZSBjbG9jawo+ID4gPiBm
-cmVxdWVuY3kgaXMgY2hhbmdlZCBpbiBoYXJkd2FyZSBhcyBhIHJlc3VsdCBvZiBXRkkvV0ZFPwo+
-ID4gCj4gPiBZZXMuIFRoaXMgZmVhdHVyZSBtYWtlcyBjaGFuZ2VzIGluIERJVkNPUkUgYW5kIERJ
-VkNPUkUyIGNsb2NrIGRpdmlkZXJzCj4gPiB3aGVuIGdpdmVuIGNvcmUgZW50ZXJzIFdGSS9XRkUu
-Cj4gPiAKPiA+ID4gQW5kIHRoaXMgb25seQo+ID4gPiBoYXBwZW5zIHdoZW4gYWxsIENQVXMgaW4g
-YSBjbHVzdGVyIChlLmcuIGFsbCA0IENQVXMgaW4gRXh5bm9zIDQ0MTIpIGFyZQo+ID4gPiBpbiBX
-RkkvV0ZFIHN0YXRlPwo+ID4gCj4gPiBObywgdGhpcyBpcyBwZXItY29yZS4gSG93ZXZlciBtZWFz
-dXJlZCBlbmVyZ3kgc2F2aW5ncyBhYm92ZSB3ZXJlIGluIGNhc2UKPiA+IHdoZXJlIGFsbCBjb3Jl
-cyBlbnRlcmVkIGlkbGUgKFdGSSkuCj4gCj4gQWFhcmdoLCB0aGF0IGlzIG9idmlvdXNseSBpbmNv
-cnJlY3QsIG15IG1pc3Rha2UuIFlvdSdyZSByaWdodCB0aGF0IHRoaXMKPiBpcyBmb3Igd2hvbGUg
-Y2x1c3RlciBhcyBhbGwgY29yZXMgc2hhcmUgQVJNQ0xLIChhbmQgY2xvY2sgZGl2aWRlcnMpLgo+
-IEhvd2V2ZXIgeW91IGNhbiBlbmFibGUgV0ZJL1dGRSBkZXRlY3Rpb24gcGVyIGNvcmUuIAo+IAo+
-IFRoZSBkYXRhc2hlZXQgZG9lcyBub3QgZGVzY3JpYmUgd2hhdCB3aWxsIGhhcHBlbiBleGFjdGx5
-IHdoZW4geW91IGVuYWJsZQo+IHRoZSBXRkkvV0ZFIGRldGVjdGlvbiBmb3IgY29yZTAgYW5kIGxl
-YXZlIGl0IGRpc2FibGVkIGZvciBvdGhlciBjb3Jlcy4gSQo+IGFzc3VtZSB0aGF0IHVwb24gZW50
-ZXJpbmcgV0ZJIG9uIGNvcmUwIGV2ZXJ5dGhpbmcgd2lsbCBiZSBzbG93ZWQgZG93bgo+IHJlZ2Fy
-ZGxlc3Mgb2YgcGVuZGluZyB3b3JrIG9uIG90aGVyIGNvcmVzIGJ1dCBJIGRpZG4ndCB0ZXN0IGl0
-LgoKT0ssIHRoYXQgaXMgaW50ZXJlc3RpbmcuIFRoZSByZWFzb24gSSB3YXMgYXNraW5nIHdhcyBl
-eGFjdGx5IGZvciB0aGF0CnR5cGUgb2YgY29ybmVyIGNhc2UuIE15IGNvbmNlcm4gd2FzIHRoYXQg
-dGhlIGNsb2NrIHJhdGUgc2hvdWxkIGJlCm1vZGVsZWQgcHJvcGVybHkgaW4gdGhlIGNsb2NrIGZy
-YW1ld29yayBpZiBhbnkgQ1BVcyBhcmUgc3RpbGwgcnVubmluZwp3aGVuIHRoZSBBUk1DTEsgZG93
-biBmZWF0dXJlIGlzIGFjdGl2YXRlZC4gQnV0IGJhc2VkIG9uIHlvdXIgcmVzcG9uc2UgaXQKc291
-bmRzIGxpa2UgdGhhdCBpcyBtb3JlIG9mIGEgYnVnIHRoYW4gYSByZWFsIHBvc3NpYmxlIHVzZSBj
-YXNlLCBzbwpwcm9iYWJseSB3ZSBkb24ndCBoYXZlIHRvIHdvcnJ5IGFib3V0IG1vZGVsaW5nIHRo
-ZSBBUk1DTEsgcmF0ZSB3aGVuIHRoZQpBUk1DTEsgZG93biBmZWF0dXJlIGlzIGFjdGl2YXRlZC4K
-ClJlZ2FyZHMsCk1pa2UKCj4gCj4gQmVzdCByZWdhcmRzLAo+IEtyenlzenRvZgo+IAo+ID4gCj4g
-PiBCZXN0IHJlZ2FyZHMsCj4gPiBLcnp5c3p0b2YKPiA+IAo+ID4gCj4gPiA+IAo+ID4gPiBUaGFu
-a3MsCj4gPiA+IE1pa2UKPiA+ID4gCj4gPiA+ID4gCj4gPiA+ID4gVGhlIHBhdGNoIHVzZXMgc2lt
-aWxsYXIgc2V0dGluZ3MgYXMgRXh5bm9zNTI1MCAoY2xrLWV4eW5vczUyNTAuYyksCj4gPiA+ID4g
-ZXhjZXB0IGl0IGRpc2FibGVzIGNsb2NrIHVwIGZlYXR1cmUgYW5kIG9uIEV4eW5vczQ0MTIgQVJN
-Q0xLIGRvd24gaXMKPiA+ID4gPiBlbmFibGVkIGZvciBhbGwgNCBjb3Jlcy4KPiA+ID4gPiAKPiA+
-ID4gPiBUZXN0ZWQgb24gVHJhdHMgYm9hcmQgKEV4eW5vczQyMTApLCBUcmF0czIgYm9hcmQgKEV4
-eW5vczQ0MTIpIGFuZAo+ID4gPiA+IFNhbXN1bmcgR2VhciAxIChFeHlub3M0MjEyKS4KPiA+ID4g
-PiAKPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3Nr
-aUBzYW1zdW5nLmNvbT4KPiA+ID4gPiAKPiA+ID4gPiAtLS0KPiA+ID4gPiAKPiA+ID4gPiBDaGFu
-Z2VzIHNpbmNlIHYxOgo+ID4gPiA+IDEuIEFkZCBQV1JfQ1RSTCByZWdpc3RlcnMgdG8gdGhlIGxp
-c3Qgb2Ygc2F2ZWQgY2xrIHJlZ2lzdGVycyBvbgo+ID4gPiA+ICAgIEV4eW5vczR4MTIuIFN1Z2dl
-c3RlZCBieSBUb21hc3ogRmlnYS4KPiA+ID4gPiAyLiBEaXNhYmxlIHRoZSBjbG9jayB1cCBmZWF0
-dXJlLiAoc3VnLiBUb21hc3ogRmlnYSkKPiA+ID4gPiAzLiBVc2UgbWFjcm9zIGZvciBzZXR0aW5n
-IGNsb2NrIGRvd24gcmF0aW8uIChzdWcuIFRvbWFzeiBGaWdhKQo+ID4gPiA+IDQuIFVzZSBudW1f
-cG9zc2libGVfY3B1cygpIGZvciBleGNlcHRpb24gb24gRXh5bm9zNHgxMi4gKHN1Zy4gVG9tYXN6
-Cj4gPiA+ID4gICAgRmlnYSkKPiA+ID4gPiA1LiBFbmFibGUgdGhlIGNsb2NrIGRvd24gZmVhdHVy
-ZSBhbHNvIG9uIEV4eW5vczQyMTAgVHJhdHMgYm9hcmQuCj4gPiA+ID4gLS0tCj4gPiA+ID4gIGRy
-aXZlcnMvY2xrL3NhbXN1bmcvY2xrLWV4eW5vczQuYyB8IDQ2ICsrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKwo+ID4gPiA+ICAxIGZpbGUgY2hhbmdlZCwgNDYgaW5zZXJ0aW9u
-cygrKQo+ID4gPiA+IAo+ID4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9zYW1zdW5nL2Ns
-ay1leHlub3M0LmMgYi9kcml2ZXJzL2Nsay9zYW1zdW5nL2Nsay1leHlub3M0LmMKPiA+ID4gPiBp
-bmRleCA3ZjRhNDczYTdhZDcuLjg2Yzc3MDlkYzZkNiAxMDA2NDQKPiA+ID4gPiAtLS0gYS9kcml2
-ZXJzL2Nsay9zYW1zdW5nL2Nsay1leHlub3M0LmMKPiA+ID4gPiArKysgYi9kcml2ZXJzL2Nsay9z
-YW1zdW5nL2Nsay1leHlub3M0LmMKPiA+ID4gPiBAQCAtMTE0LDExICsxMTQsMjcgQEAKPiA+ID4g
-PiAgI2RlZmluZSBESVZfQ1BVMSAgICAgICAgICAgICAgIDB4MTQ1MDQKPiA+ID4gPiAgI2RlZmlu
-ZSBHQVRFX1NDTEtfQ1BVICAgICAgICAgIDB4MTQ4MDAKPiA+ID4gPiAgI2RlZmluZSBHQVRFX0lQ
-X0NQVSAgICAgICAgICAgIDB4MTQ5MDAKPiA+ID4gPiArI2RlZmluZSBQV1JfQ1RSTDEgICAgICAg
-ICAgICAgIDB4MTUwMjAKPiA+ID4gPiArI2RlZmluZSBFNFgxMl9QV1JfQ1RSTDIgICAgICAgICAg
-ICAgICAgMHgxNTAyNAo+ID4gPiA+ICAjZGVmaW5lIEU0WDEyX0RJVl9JU1AwICAgICAgICAgMHgx
-ODMwMAo+ID4gPiA+ICAjZGVmaW5lIEU0WDEyX0RJVl9JU1AxICAgICAgICAgMHgxODMwNAo+ID4g
-PiA+ICAjZGVmaW5lIEU0WDEyX0dBVEVfSVNQMCAgICAgICAgICAgICAgICAweDE4ODAwCj4gPiA+
-ID4gICNkZWZpbmUgRTRYMTJfR0FURV9JU1AxICAgICAgICAgICAgICAgIDB4MTg4MDQKPiA+ID4g
-PiAgCj4gPiA+ID4gKy8qIEJlbG93IGRlZmluaXRpb25zIGFyZSB1c2VkIGZvciBQV1JfQ1RSTCBz
-ZXR0aW5ncyAqLwo+ID4gPiA+ICsjZGVmaW5lIFBXUl9DVFJMMV9DT1JFMl9ET1dOX1JBVElPKHgp
-ICAgICAgICAgICgoKHgpICYgMHg3KSA8PCAyOCkKPiA+ID4gPiArI2RlZmluZSBQV1JfQ1RSTDFf
-Q09SRTFfRE9XTl9SQVRJTyh4KSAgICAgICAgICAoKCh4KSAmIDB4NykgPDwgMTYpCj4gPiA+ID4g
-KyNkZWZpbmUgUFdSX0NUUkwxX0RJVjJfRE9XTl9FTiAgICAgICAgICAgICAgICAgKDEgPDwgOSkK
-PiA+ID4gPiArI2RlZmluZSBQV1JfQ1RSTDFfRElWMV9ET1dOX0VOICAgICAgICAgICAgICAgICAo
-MSA8PCA4KQo+ID4gPiA+ICsjZGVmaW5lIFBXUl9DVFJMMV9VU0VfQ09SRTNfV0ZFICAgICAgICAg
-ICAgICAgICAgICAgICAgKDEgPDwgNykKPiA+ID4gPiArI2RlZmluZSBQV1JfQ1RSTDFfVVNFX0NP
-UkUyX1dGRSAgICAgICAgICAgICAgICAgICAgICAgICgxIDw8IDYpCj4gPiA+ID4gKyNkZWZpbmUg
-UFdSX0NUUkwxX1VTRV9DT1JFMV9XRkUgICAgICAgICAgICAgICAgICAgICAgICAoMSA8PCA1KQo+
-ID4gPiA+ICsjZGVmaW5lIFBXUl9DVFJMMV9VU0VfQ09SRTBfV0ZFICAgICAgICAgICAgICAgICAg
-ICAgICAgKDEgPDwgNCkKPiA+ID4gPiArI2RlZmluZSBQV1JfQ1RSTDFfVVNFX0NPUkUzX1dGSSAg
-ICAgICAgICAgICAgICAgICAgICAgICgxIDw8IDMpCj4gPiA+ID4gKyNkZWZpbmUgUFdSX0NUUkwx
-X1VTRV9DT1JFMl9XRkkgICAgICAgICAgICAgICAgICAgICAgICAoMSA8PCAyKQo+ID4gPiA+ICsj
-ZGVmaW5lIFBXUl9DVFJMMV9VU0VfQ09SRTFfV0ZJICAgICAgICAgICAgICAgICAgICAgICAgKDEg
-PDwgMSkKPiA+ID4gPiArI2RlZmluZSBQV1JfQ1RSTDFfVVNFX0NPUkUwX1dGSSAgICAgICAgICAg
-ICAgICAgICAgICAgICgxIDw8IDApCj4gPiA+ID4gKwo+ID4gPiA+ICAvKiB0aGUgZXh5bm9zNCBz
-b2MgdHlwZSAqLwo+ID4gPiA+ICBlbnVtIGV4eW5vczRfc29jIHsKPiA+ID4gPiAgICAgICAgIEVY
-WU5PUzQyMTAsCj4gPiA+ID4gQEAgLTE1NSw2ICsxNzEsNyBAQCBzdGF0aWMgdW5zaWduZWQgbG9u
-ZyBleHlub3M0MjEwX2Nsa19zYXZlW10gX19pbml0ZGF0YSA9IHsKPiA+ID4gPiAgICAgICAgIEU0
-MjEwX0dBVEVfSVBfTENEMSwKPiA+ID4gPiAgICAgICAgIEU0MjEwX0dBVEVfSVBfUEVSSVIsCj4g
-PiA+ID4gICAgICAgICBFNDIxMF9NUExMX0NPTjAsCj4gPiA+ID4gKyAgICAgICBQV1JfQ1RSTDEs
-Cj4gPiA+ID4gIH07Cj4gPiA+ID4gIAo+ID4gPiA+ICBzdGF0aWMgdW5zaWduZWQgbG9uZyBleHlu
-b3M0eDEyX2Nsa19zYXZlW10gX19pbml0ZGF0YSA9IHsKPiA+ID4gPiBAQCAtMTY0LDYgKzE4MSw4
-IEBAIHN0YXRpYyB1bnNpZ25lZCBsb25nIGV4eW5vczR4MTJfY2xrX3NhdmVbXSBfX2luaXRkYXRh
-ID0gewo+ID4gPiA+ICAgICAgICAgRTRYMTJfRElWX0lTUCwKPiA+ID4gPiAgICAgICAgIEU0WDEy
-X0RJVl9DQU0xLAo+ID4gPiA+ICAgICAgICAgRTRYMTJfTVBMTF9DT04wLAo+ID4gPiA+ICsgICAg
-ICAgUFdSX0NUUkwxLAo+ID4gPiA+ICsgICAgICAgRTRYMTJfUFdSX0NUUkwyLAo+ID4gPiA+ICB9
-Owo+ID4gPiA+ICAKPiA+ID4gPiAgc3RhdGljIHVuc2lnbmVkIGxvbmcgZXh5bm9zNF9jbGtfcGxs
-X3JlZ3NbXSBfX2luaXRkYXRhID0gewo+ID4gPiA+IEBAIC0xMTY0LDYgKzExODMsMzIgQEAgc3Rh
-dGljIHN0cnVjdCBzYW1zdW5nX3BsbF9jbG9jayBleHlub3M0eDEyX3BsbHNbbnJfcGxsc10gX19p
-bml0ZGF0YSA9IHsKPiA+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICBWUExMX0xPQ0ssIFZQ
-TExfQ09OMCwgTlVMTCksCj4gPiA+ID4gIH07Cj4gPiA+ID4gIAo+ID4gPiA+ICtzdGF0aWMgdm9p
-ZCBfX2luaXQgZXh5bm9zNF9jb3JlX2Rvd25fY2xvY2soZW51bSBleHlub3M0X3NvYyBzb2MpCj4g
-PiA+ID4gK3sKPiA+ID4gPiArICAgICAgIHVuc2lnbmVkIGludCB0bXA7Cj4gPiA+ID4gKwo+ID4g
-PiA+ICsgICAgICAgLyoKPiA+ID4gPiArICAgICAgICAqIEVuYWJsZSBhcm0gY2xvY2sgZG93biAo
-aW4gaWRsZSkgYW5kIHNldCBhcm0gZGl2aWRlcgo+ID4gPiA+ICsgICAgICAgICogcmF0aW9zIGlu
-IFdGSS9XRkUgc3RhdGUuCj4gPiA+ID4gKyAgICAgICAgKi8KPiA+ID4gPiArICAgICAgIHRtcCA9
-IChQV1JfQ1RSTDFfQ09SRTJfRE9XTl9SQVRJTyg3KSB8IFBXUl9DVFJMMV9DT1JFMV9ET1dOX1JB
-VElPKDcpIHwKPiA+ID4gPiArICAgICAgICAgICAgICAgUFdSX0NUUkwxX0RJVjJfRE9XTl9FTiB8
-IFBXUl9DVFJMMV9ESVYxX0RPV05fRU4gfAo+ID4gPiA+ICsgICAgICAgICAgICAgICBQV1JfQ1RS
-TDFfVVNFX0NPUkUxX1dGRSB8IFBXUl9DVFJMMV9VU0VfQ09SRTBfV0ZFIHwKPiA+ID4gPiArICAg
-ICAgICAgICAgICAgUFdSX0NUUkwxX1VTRV9DT1JFMV9XRkkgfCBQV1JfQ1RSTDFfVVNFX0NPUkUw
-X1dGSSk7Cj4gPiA+ID4gKyAgICAgICAvKiBPbiBFeHlub3M0NDEyIGVuYWJsZSBpdCBhbHNvIG9u
-IGNvcmUgMiBhbmQgMyAqLwo+ID4gPiA+ICsgICAgICAgaWYgKG51bV9wb3NzaWJsZV9jcHVzKCkg
-PT0gNCkKPiA+ID4gPiArICAgICAgICAgICAgICAgdG1wIHw9IFBXUl9DVFJMMV9VU0VfQ09SRTNf
-V0ZFIHwgUFdSX0NUUkwxX1VTRV9DT1JFMl9XRkUgfAo+ID4gPiA+ICsgICAgICAgICAgICAgICAg
-ICAgICAgUFdSX0NUUkwxX1VTRV9DT1JFM19XRkkgfCBQV1JfQ1RSTDFfVVNFX0NPUkUyX1dGSTsK
-PiA+ID4gPiArICAgICAgIF9fcmF3X3dyaXRlbCh0bXAsIHJlZ19iYXNlICsgUFdSX0NUUkwxKTsK
-PiA+ID4gPiArCj4gPiA+ID4gKyAgICAgICAvKgo+ID4gPiA+ICsgICAgICAgICogRGlzYWJsZSB0
-aGUgY2xvY2sgdXAgZmVhdHVyZSBvbiBFeHlub3M0eDEyLCBpbiBjYXNlIGl0IHdhcwo+ID4gPiA+
-ICsgICAgICAgICogZW5hYmxlZCBieSBib290bG9hZGVyLgo+ID4gPiA+ICsgICAgICAgICovCj4g
-PiA+ID4gKyAgICAgICBpZiAoZXh5bm9zNF9zb2MgPT0gRVhZTk9TNFgxMikKPiA+ID4gPiArICAg
-ICAgICAgICAgICAgX19yYXdfd3JpdGVsKDB4MCwgcmVnX2Jhc2UgKyBFNFgxMl9QV1JfQ1RSTDIp
-Owo+ID4gPiA+ICt9Cj4gPiA+ID4gKwo+ID4gPiA+ICAvKiByZWdpc3RlciBleHlub3M0IGNsb2Nr
-cyAqLwo+ID4gPiA+ICBzdGF0aWMgdm9pZCBfX2luaXQgZXh5bm9zNF9jbGtfaW5pdChzdHJ1Y3Qg
-ZGV2aWNlX25vZGUgKm5wLAo+ID4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIGVudW0gZXh5bm9zNF9zb2Mgc29jKQo+ID4gPiA+IEBAIC0xMjUwLDYgKzEyOTUsNyBAQCBz
-dGF0aWMgdm9pZCBfX2luaXQgZXh5bm9zNF9jbGtfaW5pdChzdHJ1Y3QgZGV2aWNlX25vZGUgKm5w
-LAo+ID4gPiA+ICAgICAgICAgc2Ftc3VuZ19jbGtfcmVnaXN0ZXJfYWxpYXMoY3R4LCBleHlub3M0
-X2FsaWFzZXMsCj4gPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgQVJSQVlfU0laRShleHlu
-b3M0X2FsaWFzZXMpKTsKPiA+ID4gPiAgCj4gPiA+ID4gKyAgICAgICBleHlub3M0X2NvcmVfZG93
-bl9jbG9jayhzb2MpOwo+ID4gPiA+ICAgICAgICAgZXh5bm9zNF9jbGtfc2xlZXBfaW5pdCgpOwo+
-ID4gPiA+ICAKPiA+ID4gPiAgICAgICAgIHByX2luZm8oIiVzIGNsb2Nrczogc2Nsa19hcGxsID0g
-JWxkLCBzY2xrX21wbGwgPSAlbGRcbiIKPiA+ID4gPiAtLSAKPiA+ID4gPiAxLjkuMQo+ID4gPiA+
-IAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGlu
-dXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRl
-YWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgt
-YXJtLWtlcm5lbAo=
+Quoting Javier Martinez Canillas (2014-07-14 04:35:56)
+> This series are based on drivers added by Simon Glass to the Chrome OS
+> kernel and adds support for the Maxim 77802 Power Management IC, their
+> regulators, clocks, RTC and i2c interface.
+> 
+> This is a v8 of the patch-set that addresses issues pointed out in v7.
+> Individual changes are added on each patch but the biggest changes are:
+> 
+> * Patches 1-7 from v7 are not included since those were improvements to
+> the max77686 mfd driver and can be applied independently. Lee Jones said
+> that he is going to pick them from the posted v7 series.
+> 
+> I've created a patchwork bundle with 1-7 from v7 to make it easy to apply:
+> 
+> https://patchwork.kernel.org/bundle/javier/max77686-improvements/
+> 
+> * The Dynamic Voltage Scaling support has been removed since that can be
+> added in a follow up series and shouldn't block the minimum PMIC support.
+> 
+> The patch-set has been tested on both Daisy/Snow (max77686) and Peach
+> Pit (max77802) Chromebooks and it's composed of the following patches:
+> 
+> [PATCH v8 01/13] mfd: max77686: Add Maxim 77802 PMIC support
+> [PATCH v8 02/13] mfd: max77802: Add DT binding documentation
+> [PATCH v8 03/13] regulator: Add driver for Maxim 77802 PMIC regulators
+> [PATCH v8 04/13] clk: max77686: Add DT include for MAX77686 PMIC clock
+> [PATCH v8 05/13] clk: Add generic driver for Maxim PMIC clocks
+> [PATCH v8 06/13] clk: max77686: Convert to the generic max clock driver
+> [PATCH v8 07/13] clk: max77686: Improve Maxim 77686 PMIC clocks binding
+> [PATCH v8 08/13] clk: Add driver for Maxim 77802 PMIC clocks
+> [PATCH v8 09/13] clk: max77802: Add DT binding documentation
+
+For patches 4-9:
+
+Acked-by: Mike Turquette <mturquette@linaro.org>
+
+Regards,
+Mike
+
+> [PATCH v8 10/13] rtc: max77686: Allow the max77686 rtc to wakeup the system
+> [PATCH v8 11/13] rtc: max77686: Remove dead code for SMPL and WTSR
+> [PATCH v8 12/13] rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
+> [PATCH v8 13/13] ARM: dts: Add max77802 to exynos5420-peach-pit and exynos5800-peach-pi
+> 
+> Patch 01/13 extend the max77686 mfd driver to also support the max77802
+> PMIC and patch 02/13 adds the DT binding documentation for this PMIC.
+> 
+> Patch 03/13 adds support for the regulators found in the PMIC.
+> 
+> Patch 04/13 to 07/13 are improvements and refactoring to the max77686 clock
+> driver to avoid code duplication when adding max77802 clocks support in patch
+> 08/13. Patch 09/13 adds the DT binding document for the max77802 clock driver.
+> 
+> Patches 10/13 and 11/13 are improvements to max77686 RTC driver and patch
+> 12/13 adds support for the RTC found in the max77802 PMIC.
+> 
+> Finally patch 13/13 adds the required device node to the Peach Pit and Pi
+> exynos5 based boards.
+> 
+> Since there are cross-subsystems dependencies, I think that the best way to
+> sort this out is if relevant maintainers ack the patches so 01/13 to 012/13
+> can be merged through the mfd tree. The patches and the relevant acks are:
+> 
+> Patch 03/13 (regulator - Mark Brown)
+> Patches 04/13 to 09/13 (clk - Mike Turquette)
+> Patches 10/13 to 12/13 (rtc - Alessandro Zummo)
+> 
+> Patch 13/13 is only a DTS change so it can be picked by Kukjin Kim once the
+> other patches are picked by Lee Jones.
+> 
+> Since we are in 3.16-rc5 already, it would be great if I can get your acks
+> or feedback since I was hoping this series to make it to 3.17. This is due
+> other series that were already posted depend on this one.
+> 
+> Also, the series have been reviewed and tested by Samsung folks and most of
+> the patches already collected Reviewed-by and Tested-by tags.
+> 
+> Thanks a lot and best regards,
+> Javier
+> 
