@@ -1,316 +1,139 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support for Exynos
- PMU
-Date: Fri, 25 Jul 2014 11:02:57 +0530
-Message-ID: <000501cfa7c9$e59f4840$b0ddd8c0$@samsung.com>
-References: <1404878455-31518-1-git-send-email-pankaj.dubey@samsung.com>
- <1404878455-31518-4-git-send-email-pankaj.dubey@samsung.com>
- <067501cfa7bd$8e6cb460$ab461d20$@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer support
+Date: Fri, 25 Jul 2014 16:49:02 +0900
+Message-ID: <53D20BEE.4070502@samsung.com>
+References: <1405680964-6869-1-git-send-email-inki.dae@samsung.com>
+ <1405680964-6869-2-git-send-email-inki.dae@samsung.com>
+ <53D0DEA8.1090603@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:29593 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750869AbaGYFbY (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:62854 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756912AbaGYHtg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jul 2014 01:31:24 -0400
-In-reply-to: <067501cfa7bd$8e6cb460$ab461d20$@samsung.com>
-Content-language: en-us
+	Fri, 25 Jul 2014 03:49:36 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N9900AEFCDRMY90@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 25 Jul 2014 16:49:04 +0900 (KST)
+In-reply-to: <53D0DEA8.1090603@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Thierry Reding <treding@nvidia.com>, Alexandre Courbot <acourbot@nvidia.com>
 
-Hi Kukjin,
+On 2014=EB=85=84 07=EC=9B=94 24=EC=9D=BC 19:23, Andrzej Hajda wrote:
+> Hi Inki,
+>=20
+> +CC: Thierry and Alexandre
+>=20
+> On 07/18/2014 12:56 PM, Inki Dae wrote:
+>> This patch adds below two flags for LPM transfer, and it attaches LP=
+M flags
+>> to a msg in accordance with master's mode_flags set by LCD Panel dri=
+ver.
+>>
+>> MIPI_DSI_MODE_CMD_LPM: low power command transfer
+>> MIPI_DSI_MODE_VIDEO_LPM: low power video transfer
+> What is the difference between these two?
 
-On Friday, July 25, 2014 Kukjin Kim wrote:
-> Subject: RE: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support for
-> Exynos PMU
-> 
-> Pankaj Dubey wrote:
-> >
-> > This patch modifies Exynos Power Management Unit (PMU) initialization
-> > implementation in following way:
-> >
-> > - Added platform driver support and probe function where Exynos PMU
-> >   driver will register itself as syscon provider with syscon framework.
-> > - Added platform struct exynos_pmu_data to hold platform specific data.
-> > - For each SoC's PMU support now we can add platform data and statically
-> >   bind PMU configuration and SoC specific initialization function.
-> > - Separate each SoC's PMU initialization function and make it as part of
-> >   platform data.
-> > - It also removes uses of soc_is_exynosXYZ().
-> >
-> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> > ---
-> >  arch/arm/mach-exynos/Kconfig |    1 +
-> >  arch/arm/mach-exynos/pmu.c   |  185
-> +++++++++++++++++++++++++++++++++---------
-> >  2 files changed, 146 insertions(+), 40 deletions(-)
-> >
-> Looks good to me, will apply this and 4/4.
-> 
+They mean that MIPI DSI controller have to transfer command or video to
+Panel in Low Power Mode according to these flags.
 
-We need to hold these two patches until dependent patch [1] from Tomasz Figa
-gets merged.
+> Why not just MIPI_DSI_MODE_LPM combined optionally with
+> MIPI_DSI_MODE_VIDEO ?
+> Anyway as I understand the only role of this flag is to always trigge=
+r
+> MIPI_DSI_MSG_USE_LPM flag in DSI message. Maybe better is to check bo=
+th
+> flags in DSI host, using some helper function.
 
-[1]: mfd: syscon: Decouple syscon interface from syscon devices
-      https://lkml.org/lkml/2014/6/24/188
+No any flag would mean that video and command data have to be
+transferred in HS mode. On the other hands, if there is one of above
+flags, the data would be transferred in Low Power Mode. So I think
+separated flags, MIPI_DSI_MODE_VIDEO/COMMAND and MIPI_DSI_MODE_LPM
+causes unnecessary flag combination.
 
+>=20
+>>
+>> MIPI DSI spec says,
+>>      "the host processor controls the desired mode of clock operatio=
+n.
+>>       Host protocol and applications control Clock Lane operating mo=
+de
+>>       (High Speed or Low Power mode). System designers are responsib=
+le
+>>       for understanding the clock requirements for peripherals attac=
+hed
+>>       to DSI and controlling clock behavior in accordance with those
+>>       requirements."
+>>
+>> Some LCD Panel devices, nt35502a, would need LPM transfer support
+>> because they should receive some initial commands with LPM by defaul=
+t
+>> hardware setting.
+>=20
+> It would be good to see usage of this flag in the driver. Is it possi=
+ble
+> to post it?
 
-Thanks,
-Pankaj Dubey
-
-> Thanks,
-> Kukjin
-> 
-> > diff --git a/arch/arm/mach-exynos/Kconfig
-> > b/arch/arm/mach-exynos/Kconfig index 8f9b66c..a2944ac 100644
-> > --- a/arch/arm/mach-exynos/Kconfig
-> > +++ b/arch/arm/mach-exynos/Kconfig
-> > @@ -24,6 +24,7 @@ menuconfig ARCH_EXYNOS
-> >  	select PM_GENERIC_DOMAINS if PM_RUNTIME
-> >  	select S5P_DEV_MFC
-> >  	select SRAM
-> > +	select MFD_SYSCON
-> >  	help
-> >  	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
-> >
-> > diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-> > index ff9d23f..5b76728 100644
-> > --- a/arch/arm/mach-exynos/pmu.c
-> > +++ b/arch/arm/mach-exynos/pmu.c
-> > @@ -1,5 +1,5 @@
-> >  /*
-> > - * Copyright (c) 2011-2012 Samsung Electronics Co., Ltd.
-> > + * Copyright (c) 2011-2014 Samsung Electronics Co., Ltd.
-> >   *		http://www.samsung.com/
-> >   *
-> >   * EXYNOS - CPU PMU(Power Management Unit) support @@ -10,12 +10,28
-> > @@
-> >   */
-> >
-> >  #include <linux/io.h>
-> > -#include <linux/kernel.h>
-> > +#include <linux/of.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/mfd/syscon.h>
-> >
-> >  #include "common.h"
-> >  #include "regs-pmu.h"
-> >
-> > -static const struct exynos_pmu_conf *exynos_pmu_config;
-> > +struct exynos_pmu_data {
-> > +	const struct exynos_pmu_conf *pmu_config;
-> > +	const struct exynos_pmu_conf *pmu_config_extra;
-> > +
-> > +	void (*pmu_init)(void);
-> > +	void (*powerdown_conf)(enum sys_powerdown); };
-> > +
-> > +struct exynos_pmu_context {
-> > +	struct device *dev;
-> > +	const struct exynos_pmu_data *pmu_data; };
-> > +
-> > +static struct exynos_pmu_context *pmu_context;
-> >
-> >  static const struct exynos_pmu_conf exynos4210_pmu_config[] = {
-> >  	/* { .offset = offset, .val = { AFTR, LPA, SLEEP } */ @@ -335,7
-> > +351,7 @@ static unsigned int const exynos5_list_diable_wfi_wfe[] = {
-> >  	EXYNOS5_ISP_ARM_OPTION,
-> >  };
-> >
-> > -static void exynos5_init_pmu(void)
-> > +static void exynos5_powerdown_conf(enum sys_powerdown mode)
-> >  {
-> >  	unsigned int i;
-> >  	unsigned int tmp;
-> > @@ -372,51 +388,140 @@ void exynos_sys_powerdown_conf(enum
-> > sys_powerdown mode)  {
-> >  	unsigned int i;
-> >
-> > -	if (soc_is_exynos5250())
-> > -		exynos5_init_pmu();
-> > +	const struct exynos_pmu_data *pmu_data = pmu_context->pmu_data;
-> >
-> > -	for (i = 0; (exynos_pmu_config[i].offset != PMU_TABLE_END) ; i++)
-> > -		pmu_raw_writel(exynos_pmu_config[i].val[mode],
-> > -				exynos_pmu_config[i].offset);
-> > +	if (pmu_data->powerdown_conf)
-> > +		pmu_data->powerdown_conf(mode);
-> >
-> > -	if (soc_is_exynos4412()) {
-> > -		for (i = 0; exynos4412_pmu_config[i].offset != PMU_TABLE_END
-;
-> i++)
-> > -			pmu_raw_writel(exynos4412_pmu_config[i].val[mode],
-> > -					exynos4412_pmu_config[i].offset);
-> > +	if (pmu_data->pmu_config) {
-> > +		for (i = 0; (pmu_data->pmu_config[i].offset !=
-PMU_TABLE_END)
-> ; i++)
-> > +			pmu_raw_writel(pmu_data->pmu_config[i].val[mode],
-> > +					pmu_data->pmu_config[i].offset);
-> > +	}
-> > +
-> > +	if (pmu_data->pmu_config_extra) {
-> > +		for (i = 0; pmu_data->pmu_config_extra[i].offset !=
-> PMU_TABLE_END; i++)
-> > +
-pmu_raw_writel(pmu_data->pmu_config_extra[i].val[mode],
-> > +
-pmu_data->pmu_config_extra[i].offset);
-> >  	}
-> >  }
-> >
-> > -static int __init exynos_pmu_init(void)
-> > +static void exynos5250_pmu_init(void)
-> >  {
-> >  	unsigned int value;
-> > +	/*
-> > +	 * When SYS_WDTRESET is set, watchdog timer reset request
-> > +	 * is ignored by power management unit.
-> > +	 */
-> > +	value = pmu_raw_readl(EXYNOS5_AUTO_WDTRESET_DISABLE);
-> > +	value &= ~EXYNOS5_SYS_WDTRESET;
-> > +	pmu_raw_writel(value, EXYNOS5_AUTO_WDTRESET_DISABLE);
-> > +
-> > +	value = pmu_raw_readl(EXYNOS5_MASK_WDTRESET_REQUEST);
-> > +	value &= ~EXYNOS5_SYS_WDTRESET;
-> > +	pmu_raw_writel(value, EXYNOS5_MASK_WDTRESET_REQUEST); }
-> > +
-> > +static const struct exynos_pmu_data exynos4210_pmu_data = {
-> > +	.pmu_config	= exynos4210_pmu_config,
-> > +};
-> > +
-> > +static const struct exynos_pmu_data exynos4212_pmu_data = {
-> > +	.pmu_config	= exynos4x12_pmu_config,
-> > +};
-> > +
-> > +static const struct exynos_pmu_data exynos4412_pmu_data = {
-> > +	.pmu_config		= exynos4x12_pmu_config,
-> > +	.pmu_config_extra	= exynos4412_pmu_config,
-> > +};
-> > +
-> > +static const struct exynos_pmu_data exynos5250_pmu_data = {
-> > +	.pmu_config	= exynos5250_pmu_config,
-> > +	.pmu_init	= exynos5250_pmu_init,
-> > +	.powerdown_conf	= exynos5_powerdown_conf,
-> > +};
-> > +
-> > +static const struct regmap_config pmu_regmap_config = {
-> > +	.reg_bits = 32,
-> > +	.val_bits = 32,
-> > +	.reg_stride = 4,
-> > +};
-> >
-> > -	exynos_pmu_config = exynos4210_pmu_config;
-> > -
-> > -	if (soc_is_exynos4210()) {
-> > -		exynos_pmu_config = exynos4210_pmu_config;
-> > -		pr_info("EXYNOS4210 PMU Initialize\n");
-> > -	} else if (soc_is_exynos4212() || soc_is_exynos4412()) {
-> > -		exynos_pmu_config = exynos4x12_pmu_config;
-> > -		pr_info("EXYNOS4x12 PMU Initialize\n");
-> > -	} else if (soc_is_exynos5250()) {
-> > -		/*
-> > -		 * When SYS_WDTRESET is set, watchdog timer reset request
-> > -		 * is ignored by power management unit.
-> > -		 */
-> > -		value =
-> pmu_raw_readl(EXYNOS5_AUTO_WDTRESET_DISABLE);
-> > -		value &= ~EXYNOS5_SYS_WDTRESET;
-> > -		pmu_raw_writel(value,
-> EXYNOS5_AUTO_WDTRESET_DISABLE);
-> > -
-> > -		value =
-> pmu_raw_readl(EXYNOS5_MASK_WDTRESET_REQUEST);
-> > -		value &= ~EXYNOS5_SYS_WDTRESET;
-> > -		pmu_raw_writel(value,
-> EXYNOS5_MASK_WDTRESET_REQUEST);
-> > -
-> > -		exynos_pmu_config = exynos5250_pmu_config;
-> > -		pr_info("EXYNOS5250 PMU Initialize\n");
-> > -	} else {
-> > -		pr_info("EXYNOS: PMU not supported\n");
-> > +/*
-> > + * PMU platform driver and devicetree bindings.
-> > + */
-> > +static const struct of_device_id exynos_pmu_of_device_ids[] = {
-> > +	{
-> > +		.compatible = "samsung,exynos4210-pmu",
-> > +		.data = &exynos4210_pmu_data,
-> > +	}, {
-> > +		.compatible = "samsung,exynos4212-pmu",
-> > +		.data = &exynos4212_pmu_data,
-> > +	}, {
-> > +		.compatible = "samsung,exynos4412-pmu",
-> > +		.data = &exynos4412_pmu_data,
-> > +	}, {
-> > +		.compatible = "samsung,exynos5250-pmu",
-> > +		.data = &exynos5250_pmu_data,
-> > +	},
-> > +	{ /*sentinel*/ },
-> > +};
-> > +
-> > +static int exynos_pmu_probe(struct platform_device *pdev) {
-> > +	const struct of_device_id *match;
-> > +	struct device *dev = &pdev->dev;
-> > +	struct regmap *regmap;
-> > +	struct resource *res;
-> > +
-> > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +	pmu_base_addr = devm_ioremap_resource(dev, res);
-> > +	if (IS_ERR(pmu_base_addr))
-> > +		return PTR_ERR(pmu_base_addr);
-> > +
-> > +	pmu_context = devm_kzalloc(&pdev->dev,
-> > +			sizeof(struct exynos_pmu_context),
-> > +			GFP_KERNEL);
-> > +	if (!pmu_context) {
-> > +		dev_err(dev, "Cannot allocate memory.\n");
-> > +		return -ENOMEM;
-> > +	}
-> > +	pmu_context->dev = dev;
-> > +
-> > +	regmap = devm_regmap_init_mmio(dev, pmu_base_addr,
-> > +					&pmu_regmap_config);
-> > +	if (IS_ERR(regmap)) {
-> > +		dev_err(dev, "regmap init failed\n");
-> > +		return PTR_ERR(regmap);
-> >  	}
-> >
-> > +	devm_syscon_register(dev, regmap);
-> > +
-> > +	match = of_match_node(exynos_pmu_of_device_ids, pdev->dev.of_node);
-> > +
-> > +	pmu_context->pmu_data = match->data;
-> > +
-> > +	if (pmu_context->pmu_data->pmu_init)
-> > +		pmu_context->pmu_data->pmu_init();
-> > +
-> > +	platform_set_drvdata(pdev, pmu_context);
-> > +
-> > +	dev_dbg(dev, "Exynos PMU Driver probe done\n");
-> >  	return 0;
-> >  }
-> > -arch_initcall(exynos_pmu_init);
-> > +
-> > +static struct platform_driver exynos_pmu_driver = {
-> > +	.driver  = {
-> > +		.name   = "exynos-pmu",
-> > +		.owner	= THIS_MODULE,
-> > +		.of_match_table = exynos_pmu_of_device_ids,
-> > +	},
-> > +	.probe = exynos_pmu_probe,
-> > +};
-> > +
-> > +static int __init exynos_pmu_init(void) {
-> > +	return platform_driver_register(&exynos_pmu_driver);
-> > +
-> > +}
-> > +postcore_initcall(exynos_pmu_init);
-> > --
-> > 1.7.9.5
+Yes, but that driver is needed for more cleanup works. Anyway I will
+post it in the near future.
+>=20
+> I have posted few months ago TC358764 driver[1] which also uses LPM f=
+or
+> initialization, have you look at it.
+>=20
+> [1]:
+> http://lists.freedesktop.org/archives/dri-devel/2014-February/053713.=
+html
+>=20
+> Regards
+> Andrzej
+>=20
+>>
+>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  drivers/gpu/drm/drm_mipi_dsi.c |    3 +++
+>>  include/drm/drm_mipi_dsi.h     |    4 ++++
+>>  2 files changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mi=
+pi_dsi.c
+>> index e633df2..6b2bbda 100644
+>> --- a/drivers/gpu/drm/drm_mipi_dsi.c
+>> +++ b/drivers/gpu/drm/drm_mipi_dsi.c
+>> @@ -232,6 +232,9 @@ int mipi_dsi_dcs_write(struct mipi_dsi_device *d=
+si, unsigned int channel,
+>>  		break;
+>>  	}
+>> =20
+>> +	if (dsi->mode_flags & MIPI_DSI_MODE_CMD_LPM)
+>> +		msg.flags =3D MIPI_DSI_MSG_USE_LPM;
+>> +
+>>  	return ops->transfer(dsi->host, &msg);
+>>  }
+>>  EXPORT_SYMBOL(mipi_dsi_dcs_write);
+>> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+>> index 944f33f..1c41e49 100644
+>> --- a/include/drm/drm_mipi_dsi.h
+>> +++ b/include/drm/drm_mipi_dsi.h
+>> @@ -94,6 +94,10 @@ void mipi_dsi_host_unregister(struct mipi_dsi_hos=
+t *host);
+>>  #define MIPI_DSI_MODE_VSYNC_FLUSH	BIT(8)
+>>  /* disable EoT packets in HS mode */
+>>  #define MIPI_DSI_MODE_EOT_PACKET	BIT(9)
+>> +/* command low power mode */
+>> +#define MIPI_DSI_MODE_CMD_LPM		BIT(10)
+>> +/* video low power mode */
+>> +#define MIPI_DSI_MODE_VIDEO_LPM		BIT(11)
+>> =20
+>>  enum mipi_dsi_pixel_format {
+>>  	MIPI_DSI_FMT_RGB888,
+>=20
+>=20
