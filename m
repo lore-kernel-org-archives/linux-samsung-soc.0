@@ -1,14 +1,14 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 5/9] s5p-jpeg: fix g_selection op
-Date: Fri, 25 Jul 2014 16:20:49 +0200
-Message-ID: <1406298053-30184-6-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v3 6/9] s5p-jpeg: Assure proper crop rectangle initialization
+Date: Fri, 25 Jul 2014 16:20:50 +0200
+Message-ID: <1406298053-30184-7-git-send-email-s.nawrocki@samsung.com>
 References: <1406298053-30184-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:61848 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:61852 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760460AbaGYOVZ (ORCPT
+	with ESMTP id S1760469AbaGYOV2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jul 2014 10:21:25 -0400
+	Fri, 25 Jul 2014 10:21:28 -0400
 In-reply-to: <1406298053-30184-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -17,48 +17,40 @@ Cc: linux-samsung-soc@vger.kernel.org, j.anaszewski@samsung.com, Sylwester Nawro
 
 From: Jacek Anaszewski <j.anaszewski@samsung.com>
 
-V4L2_SEL_TGT_COMPOSE_DEFAULT switch case should select whole
-available area of the image and V4L2_SEL_TGT_COMPOSE
-should apply user settings.
+Assure proper crop_rect initialization in case
+the user space doesn't call S_SELECTION ioctl.
 
 Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/media/platform/s5p-jpeg/jpeg-core.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/media/platform/s5p-jpeg/jpeg-core.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-index 5ef7f5b..d11357f 100644
+index d11357f..3e3d94d 100644
 --- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
 +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-@@ -1505,21 +1505,23 @@ static int s5p_jpeg_g_selection(struct file *file, void *priv,
- 	case V4L2_SEL_TGT_CROP:
- 	case V4L2_SEL_TGT_CROP_BOUNDS:
- 	case V4L2_SEL_TGT_CROP_DEFAULT:
--	case V4L2_SEL_TGT_COMPOSE:
- 	case V4L2_SEL_TGT_COMPOSE_DEFAULT:
- 		s->r.width = ctx->out_q.w;
- 		s->r.height = ctx->out_q.h;
-+		s->r.left = 0;
-+		s->r.top = 0;
- 		break;
-+	case V4L2_SEL_TGT_COMPOSE:
- 	case V4L2_SEL_TGT_COMPOSE_BOUNDS:
- 	case V4L2_SEL_TGT_COMPOSE_PADDED:
--		s->r.width = ctx->cap_q.w;
--		s->r.height = ctx->cap_q.h;
-+		s->r.width = ctx->crop_rect.width;
-+		s->r.height =  ctx->crop_rect.height;
-+		s->r.left = ctx->crop_rect.left;
-+		s->r.top = ctx->crop_rect.top;
- 		break;
- 	default:
- 		return -EINVAL;
+@@ -1367,6 +1367,21 @@ static int s5p_jpeg_s_fmt(struct s5p_jpeg_ctx *ct, struct v4l2_format *f)
+ 					V4L2_CID_JPEG_CHROMA_SUBSAMPLING);
+ 		if (ctrl_subs)
+ 			v4l2_ctrl_s_ctrl(ctrl_subs, q_data->fmt->subsampling);
++		ct->crop_altered = false;
++	}
++
++	/*
++	 * For decoding init crop_rect with capture buffer dimmensions which
++	 * contain aligned dimensions of the input JPEG image and do it only
++	 * if crop rectangle hasn't been altered by the user space e.g. with
++	 * S_SELECTION ioctl. For encoding assign output buffer dimensions.
++	 */
++	if (!ct->crop_altered &&
++	    ((ct->mode == S5P_JPEG_DECODE && f_type == FMT_TYPE_CAPTURE) ||
++	     (ct->mode == S5P_JPEG_ENCODE && f_type == FMT_TYPE_OUTPUT))) {
++		ct->crop_rect.width = pix->width;
++		ct->crop_rect.height = pix->height;
++	}
  	}
--	s->r.left = 0;
--	s->r.top = 0;
- 	return 0;
- }
 
+ 	return 0;
 --
 1.7.9.5
