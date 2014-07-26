@@ -1,63 +1,50 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 2/2] 2nd Samsung S5PV210 DT support for v3.17
-Date: Sat, 26 Jul 2014 12:08:43 +0200
-Message-ID: <5065930.BoSud11E6H@wuerfel>
-References: <53D196FC.40004@samsung.com>
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [RESEND][PATCHv2 0/3] Fix for buggy u-boot memory banks
+Date: Sat, 26 Jul 2014 21:03:56 +0200
+Message-ID: <53D3FB9C.9080908@suse.de>
+References: <1405443816-29917-1-git-send-email-lauraa@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:55693 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750732AbaGZKJL (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:56857 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753171AbaGZTEA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 26 Jul 2014 06:09:11 -0400
-In-Reply-To: <53D196FC.40004@samsung.com>
+	Sat, 26 Jul 2014 15:04:00 -0400
+In-Reply-To: <1405443816-29917-1-git-send-email-lauraa@codeaurora.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "arm@kernel.org" <arm@kernel.org>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, t.figa@samsung.com
+To: Laura Abbott <lauraa@codeaurora.org>
+Cc: Tushar Behera <trblinux@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robherring2@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, devicetree@vger.kernel.org
 
-On Friday 25 July 2014 08:30:04 Kukjin Kim wrote:
-> 
-> The following changes since commit a7a30232df01db886473324050d79c3122937c78:
-> 
->    Merge branch 'v3.17-next/cleanup-samsung' into v3.17-next/dt-s5pv210 
-> (2014-07-19 04:24:18 +0900)
-> 
-> are available in the git repository at:
-> 
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-> tags/s5pv210-dt
-> 
+Hi Laura,
 
-Pulled both branches into next/soc, thanks!
+Am 15.07.2014 19:03, schrieb Laura Abbott:
+> This is a resend of the series to fix the uboot bug exposed by the re=
+moval
+> of meminfo. I haven't gotten any acks though.
+>=20
+> Please help with review/acks. Grant/Rob, I'd still like this to go th=
+rough
+> the devicetree tree if possible.
 
-Any reason why you based it on top of -rc6? It's only a minor annoyance,
-so I had no reason for not pulling it, but it does make our lives slightly
-easier if we don't have to update the baseline -rc.
+Sorry for the delay in testing.
 
-On a related note, I have two patch sets that I meant to send out earlier.
-One moves mach-s5pv210/* into mach-exynos, the other one enables
-multiplatform support for s3c64xx. The s3c64xx still has some remaining
-issues (debug_ll and adc), so it will have to wait for 3.18 I guess.
+With this v2 applied on top of kgene's for-next branch (plus
+https://patchwork.kernel.org/patch/4297431/ as build fix) I get:
 
-If you like, I can still send you the merge of s5pv210 with exynos
-to take a look.
+[    9.699985] Unhandled fault: asynchronous external abort (0x211) at
+0x00000000
 
-Tomasz: one bug I just found yesterday:
+Same for v1 that had worked okay before, so it's not your series, but i=
+t
+may explain why you haven't heard on v2 from the others yet.
 
-        config DEBUG_S3C_UART0
-                depends on PLAT_SAMSUNG
-                select DEBUG_EXYNOS_UART if ARCH_EXYNOS
-                select DEBUG_S3C24XX_UART if ARCH_S3C24XX
-                select DEBUG_S5PV210_UART if ARCH_S5PV210
+Regards,
+Andreas
 
-This won't work if you try to enable DEBUG_LL for S5PV210
-in a kernel that also includes EXYNOS support. I think it
-would be good to fix this for 3.17 in some way, and in the long
-run merge all the different implementations into debug/samsung.S 
-to avoid this problem altogether.
-
-	Arnd
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
+berg
