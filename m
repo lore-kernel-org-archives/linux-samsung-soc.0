@@ -1,142 +1,81 @@
-From: =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH v7 1/4] ARM: EXYNOS: Add support for mapping PMU base
- address via DT
-Date: Sun, 27 Jul 2014 05:33:19 +0200
-Message-ID: <53D472FF.60009@suse.de>
-References: <1404878455-31518-1-git-send-email-pankaj.dubey@samsung.com> <1404878455-31518-2-git-send-email-pankaj.dubey@samsung.com> <02d701cf9c45$ce481260$6ad83720$@samsung.com>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [RESEND][PATCHv2 0/3] Fix for buggy u-boot memory banks
+Date: Sun, 27 Jul 2014 07:39:48 +0200
+Message-ID: <53D490A4.1060302@suse.de>
+References: <1405443816-29917-1-git-send-email-lauraa@codeaurora.org>	<53D3FB9C.9080908@suse.de> <CAK5sBcFeaHrLLoSYCvrSMBX+eGYWoGPrCH0Uxy3Ao2OAYXoTNA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:33284 "EHLO mx2.suse.de"
+Received: from cantor2.suse.de ([195.135.220.15]:33667 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751681AbaG0DdY (ORCPT
+	id S1750856AbaG0Fjx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 26 Jul 2014 23:33:24 -0400
-In-Reply-To: <02d701cf9c45$ce481260$6ad83720$@samsung.com>
+	Sun, 27 Jul 2014 01:39:53 -0400
+In-Reply-To: <CAK5sBcFeaHrLLoSYCvrSMBX+eGYWoGPrCH0Uxy3Ao2OAYXoTNA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com
+To: Sachin Kamat <spk.linux@gmail.com>, Laura Abbott <lauraa@codeaurora.org>
+Cc: Tushar Behera <trblinux@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robherring2@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Am 10.07.2014 15:49, schrieb Kukjin Kim:
-> Pankaj Dubey wrote:
->>
->> Add support for mapping Samsung Power Management Unit (PMU)
->> base address from device tree.
->>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->> ---
->>  arch/arm/mach-exynos/common.h |    1 +
->>  arch/arm/mach-exynos/exynos.c |   37 ++++++++++++++++++++++++++++++=
-+++++++
->>  2 files changed, 38 insertions(+)
->>
->> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/co=
-mmon.h
->> index 152b464..f8daa9c 100644
->> --- a/arch/arm/mach-exynos/common.h
->> +++ b/arch/arm/mach-exynos/common.h
->> @@ -113,6 +113,7 @@ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EX=
-YNOS5_SOC_MASK)
->>
->>  extern void __iomem *sysram_ns_base_addr;
->>  extern void __iomem *sysram_base_addr;
->> +extern void __iomem *pmu_base_addr;
->>  void exynos_sysram_init(void);
->>
->>  void exynos_firmware_init(void);
->> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/ex=
-ynos.c
->> index 186f35d..173aac8 100644
->> --- a/arch/arm/mach-exynos/exynos.c
->> +++ b/arch/arm/mach-exynos/exynos.c
->> @@ -19,6 +19,7 @@
->>  #include <linux/of_platform.h>
->>  #include <linux/platform_device.h>
->>  #include <linux/pm_domain.h>
->> +#include <linux/irqchip.h>
->>
->>  #include <asm/cacheflush.h>
->>  #include <asm/hardware/cache-l2x0.h>
->> @@ -31,6 +32,8 @@
->>  #include "regs-pmu.h"
->>  #include "regs-sys.h"
->>
->> +void __iomem *pmu_base_addr;
->> +
->>  static struct map_desc exynos4_iodesc[] __initdata =3D {
->>  	{
->>  		.virtual	=3D (unsigned long)S3C_VA_SYS,
->> @@ -253,6 +256,39 @@ static void __init exynos_init_io(void)
->>  	exynos_map_io();
->>  }
->>
->> +static const struct of_device_id exynos_dt_pmu_match[] =3D {
->> +	{ .compatible =3D "samsung,exynos3250-pmu" },
->> +	{ .compatible =3D "samsung,exynos4210-pmu" },
->> +	{ .compatible =3D "samsung,exynos4212-pmu" },
->> +	{ .compatible =3D "samsung,exynos4412-pmu" },
->> +	{ .compatible =3D "samsung,exynos5250-pmu" },
->> +	{ .compatible =3D "samsung,exynos5420-pmu" },
->> +	{ /*sentinel*/ },
->> +};
->> +
->> +static void exynos_map_pmu(void)
->> +{
->> +	struct device_node *np;
->> +
->> +	np =3D of_find_matching_node(NULL, exynos_dt_pmu_match);
->> +	if (np)
->> +		pmu_base_addr =3D of_iomap(np, 0);
->> +
->> +	if (!pmu_base_addr)
->> +		panic("failed to find exynos pmu register\n");
->> +}
->> +
->> +static void __init exynos_init_irq(void)
->> +{
->> +	irqchip_init();
->> +	/*
->> +	 * Since platsmp.c needs pmu base address by the time
->> +	 * DT is not unflatten so we can't use DT APIs before
-
-Either "Since platsmp.c needs ... unflattened, we can't ..."
-or "platsmp.c needs ... unflattened, so we can't ..."
-
->> +	 * init_irq
->> +	 */
->> +	exynos_map_pmu();
->> +}
->> +
->>  static void __init exynos_dt_machine_init(void)
->>  {
->>  	struct device_node *i2c_np;
->> @@ -336,6 +372,7 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Fla=
-ttened Device Tree)")
->>  	.smp		=3D smp_ops(exynos_smp_ops),
->>  	.map_io		=3D exynos_init_io,
->>  	.init_early	=3D exynos_firmware_init,
->> +	.init_irq	=3D exynos_init_irq,
->>  	.init_machine	=3D exynos_dt_machine_init,
->>  	.init_late	=3D exynos_init_late,
->>  	.dt_compat	=3D exynos_dt_compat,
->> --
->> 1.7.9.5
+Am 27.07.2014 06:28, schrieb Sachin Kamat:
 >=20
-> Looks good to me, will apply.
+>=20
+> On Sunday, July 27, 2014, Andreas F=C3=A4rber <afaerber@suse.de
+> <mailto:afaerber@suse.de>> wrote:
+>=20
+>     Hi Laura,
+>=20
+>     Am 15.07.2014 19:03, schrieb Laura Abbott:
+>     > This is a resend of the series to fix the uboot bug exposed by =
+the
+>     removal
+>     > of meminfo. I haven't gotten any acks though.
+>     >
+>     > Please help with review/acks. Grant/Rob, I'd still like this to=
+ go
+>     through
+>     > the devicetree tree if possible.
+>=20
+>     Sorry for the delay in testing.
+>=20
+>     With this v2 applied on top of kgene's for-next branch (plus
+>     https://patchwork.kernel.org/patch/4297431/ as build fix) I get:
+>=20
+>     [    9.699985] Unhandled fault: asynchronous external abort (0x21=
+1) at
+>     0x00000000
+>=20
+>=20
+> If this is on Arndale octa board,
 
-Unfortunately this broke the boot on ODROID-XU: Neither is there a
-exynos_dt_pmu_match[] entry for 5410 nor is such a node defined in
-exynos5410.dtsi. Not having access to a TRM, should 5410 get a node lik=
-e
-5420? Might SoCs beyond 5420 also require changes?
+It is, sorry, that was the board that prompted the series.
 
-Regards,
+> please try disabling MCPM option.
+
+Interestingly without MCPM I then get:
+
+drivers/built-in.o: In function `bl_enter_powerdown':
+/home/andreas/linux/drivers/cpuidle/cpuidle-big_little.c:134: undefined
+reference to `mcpm_cpu_powered_up'
+drivers/built-in.o: In function `bl_powerdown_finisher':
+/home/andreas/linux/drivers/cpuidle/cpuidle-big_little.c:104: undefined
+reference to `mcpm_set_entry_vector'
+/home/andreas/linux/drivers/cpuidle/cpuidle-big_little.c:111: undefined
+reference to `mcpm_cpu_suspend'
+Makefile:885: recipe for target 'vmlinux' failed
+make: *** [vmlinux] Error 1
+
+ARM_BIG_LITTLE_CPUIDLE seems to be lacking a dependency on MCPM.
+
+Together they resolved the issue, thanks!
+
+Tested-by: Andreas F=C3=A4rber <afaerber@suse.de>
+
+Cheers,
 Andreas
 
 --=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
-berg
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
