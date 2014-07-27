@@ -1,48 +1,143 @@
-From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: kgene's for-next branch broken, and boot regressions
-Date: Sun, 27 Jul 2014 14:33:22 +0200
-Message-ID: <53D4F192.5020605@suse.de>
-References: <53D46D2F.3000202@suse.de> <53D494DB.8030600@suse.de>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH v2] mmc: dw_mmc: Make sure we don't get stuck when we get
+ an error
+Date: Sun, 27 Jul 2014 23:15:04 +0900
+Message-ID: <000c01cfa9a5$2979a650$7c6cf2f0$%jun@samsung.com>
+References: <1400623670-2657-1-git-send-email-dianders@chromium.org>
+ <001601cf74d4$3547a410$9fd6ec30$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:36179 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751343AbaG0MdZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 27 Jul 2014 08:33:25 -0400
-In-Reply-To: <53D494DB.8030600@suse.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <001601cf74d4$3547a410$9fd6ec30$%jun@samsung.com>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Seungwon Jeon' <tgih.jun@samsung.com>, 'Doug Anderson' <dianders@chromium.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>
+Cc: 'Chris Ball' <cjb@laptop.org>, 'Sonny Rao' <sonnyrao@chromium.org>, 'Grant Grundler' <grundler@chromium.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'sunil joshi' <joshi@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Yuvaraj Kumar C D' <yuvaraj.cd@gmail.com>, chris@printf.net, ulf.hansson@linaro.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Kevin Hilman <khilman@linaro.org>
 
-Am 27.07.2014 07:57, schrieb Andreas F=E4rber:
-> Am 27.07.2014 05:08, schrieb Andreas F=E4rber:
->> On the ODROID-XU (with local patches based on smdk5410) I get the
->> following with earlyprintk:
->>
-[...]
->> [    0.000000] Kernel panic - not syncing: failed to find exynos pmu
->> register
-[...]
->>
->> Reverting "ARM: EXYNOS: Refactored code for using PMU address via DT=
-"
->> and "ARM: EXYNOS: Add support for mapping PMU base address via DT" f=
-ixed
->> the latter.
->=20
-> Adding a "samsung,exynos5410-pmu" system-controller node like on 5420
-> fixes this as well. Patchset being prepared.
+Hi Chris & Ulf,
 
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34686.=
-html
+I hope you find this patch for next.
 
-Andreas
+Thanks,
+Seungwon Jeon
 
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
-berg
+On Wed, May 21, 2014, Seungwon Jeon wrote:
+> On Wed, May 21, 2014, Doug Anderson wrote:
+> > If we happened to get a data error at just the wrong time the dw_mmc
+> > driver could get into a state where it would never complete its
+> > request.  That would leave the caller just hanging there.
+> >
+> > We fix this two ways and both of the two fixes on their own appear to
+> > fix the problems we've seen:
+> >
+> > 1. Fix a race in the tasklet where the interrupt setting the data
+> >    error happens _just after_ we check for it, then we get a
+> >    EVENT_XFER_COMPLETE.  We fix this by repeating a bit of code.
+> > 2. Fix it so that if we detect that we've got an error in the "data
+> >    busy" state and we're not going to do anything else we end the
+> >    request and unblock anyone waiting.
+> >
+> > Signed-off-by: Doug Anderson <dianders@chromium.org>
+> > Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+> 
+> It will be applied after "mmc: dw_mmc: change to use recommended reset procedure"
+> 
+> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+> 
+> Thanks,
+> Seungwon Jeon
+> 
+> > ---
+> > Changes in v2:
+> > - Removed TODO
+> > - Set cmd to NULL before calling dw_mci_request_end()
+> >
+> >  drivers/mmc/host/dw_mmc.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 46 insertions(+)
+> >
+> > diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> > index cced599..54ec8b0 100644
+> > --- a/drivers/mmc/host/dw_mmc.c
+> > +++ b/drivers/mmc/host/dw_mmc.c
+> > @@ -1318,6 +1318,14 @@ static void dw_mci_tasklet_func(unsigned long priv)
+> >  			/* fall through */
+> >
+> >  		case STATE_SENDING_DATA:
+> > +			/*
+> > +			 * We could get a data error and never a transfer
+> > +			 * complete so we'd better check for it here.
+> > +			 *
+> > +			 * Note that we don't really care if we also got a
+> > +			 * transfer complete; stopping the DMA and sending an
+> > +			 * abort won't hurt.
+> > +			 */
+> >  			if (test_and_clear_bit(EVENT_DATA_ERROR,
+> >  					       &host->pending_events)) {
+> >  				dw_mci_stop_dma(host);
+> > @@ -1331,7 +1339,29 @@ static void dw_mci_tasklet_func(unsigned long priv)
+> >  				break;
+> >
+> >  			set_bit(EVENT_XFER_COMPLETE, &host->completed_events);
+> > +
+> > +			/*
+> > +			 * Handle an EVENT_DATA_ERROR that might have shown up
+> > +			 * before the transfer completed.  This might not have
+> > +			 * been caught by the check above because the interrupt
+> > +			 * could have gone off between the previous check and
+> > +			 * the check for transfer complete.
+> > +			 *
+> > +			 * Technically this ought not be needed assuming we
+> > +			 * get a DATA_COMPLETE eventually (we'll notice the
+> > +			 * error and end the request), but it shouldn't hurt.
+> > +			 *
+> > +			 * This has the advantage of sending the stop command.
+> > +			 */
+> > +			if (test_and_clear_bit(EVENT_DATA_ERROR,
+> > +					       &host->pending_events)) {
+> > +				dw_mci_stop_dma(host);
+> > +				send_stop_abort(host, data);
+> > +				state = STATE_DATA_ERROR;
+> > +				break;
+> > +			}
+> >  			prev_state = state = STATE_DATA_BUSY;
+> > +
+> >  			/* fall through */
+> >
+> >  		case STATE_DATA_BUSY:
+> > @@ -1354,6 +1384,22 @@ static void dw_mci_tasklet_func(unsigned long priv)
+> >  				/* stop command for open-ended transfer*/
+> >  				if (data->stop)
+> >  					send_stop_abort(host, data);
+> > +			} else {
+> > +				/*
+> > +				 * If we don't have a command complete now we'll
+> > +				 * never get one since we just reset everything;
+> > +				 * better end the request.
+> > +				 *
+> > +				 * If we do have a command complete we'll fall
+> > +				 * through to the SENDING_STOP command and
+> > +				 * everything will be peachy keen.
+> > +				 */
+> > +				if (!test_bit(EVENT_CMD_COMPLETE,
+> > +					      &host->pending_events)) {
+> > +					host->cmd = NULL;
+> > +					dw_mci_request_end(host, mrq);
+> > +					goto unlock;
+> > +				}
+> >  			}
+> >
+> >  			/*
+> > --
+> > 1.9.1.423.g4596e3a
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
