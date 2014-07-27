@@ -1,66 +1,118 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip
- support
-Date: Sun, 27 Jul 2014 20:22:19 +0200
-Message-ID: <53D5435B.8030305@suse.de>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Hartmut Knaack <knaack.h@gmx.de>
+Subject: Re: [PATCH 1/2] iio: adc: exynos_adc: add support for s3c64xx adc
+Date: Sun, 27 Jul 2014 20:49:06 +0200
+Message-ID: <53D549A2.1000900@gmx.de>
+References: <1405995074-3271-1-git-send-email-cw00.choi@samsung.com> <1405995074-3271-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:39704 "EHLO mx2.suse.de"
+Received: from mout.gmx.net ([212.227.15.15]:54594 "EHLO mout.gmx.net"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750865AbaG0SWY (ORCPT
+	id S1752517AbaG0St4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 27 Jul 2014 14:22:24 -0400
-In-Reply-To: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
+	Sun, 27 Jul 2014 14:49:56 -0400
+In-Reply-To: <1405995074-3271-2-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: inki.dae@samsung.com, thierry.reding@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com
+To: Chanwoo Choi <cw00.choi@samsung.com>, jic23@kernel.org
+Cc: ch.naveen@samsung.com, arnd@arndb.de, kgene.kim@samsung.com, kyungmin.park@samsung.com, t.figa@samsung.com, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 
-Hi Ajay,
-
-Am 25.07.2014 21:22, schrieb Ajay Kumar:
-> This series is based on exynos-drm-next branch of Inki Dae's tree at:
-> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
->=20
-> I have tested this after adding few DT changes for exynos5250-snow,
-> exynos5420-peach-pit and exynos5800-peach-pi boards.
-
-I'm trying to test this with a modified exynos5250-spring DT based off
-kgene's for-next branch due to DT, and I run into the following:
-
-  CC      drivers/gpu/drm/bridge/ptn3460.o
-drivers/gpu/drm/bridge/ptn3460.c: In function =E2=80=98ptn3460_post_enc=
-oder_init=E2=80=99:
-drivers/gpu/drm/bridge/ptn3460.c:275:2: error: implicit declaration of
-function =E2=80=98drm_connector_register=E2=80=99 [-Werror=3Dimplicit-f=
-unction-declaration]
-  drm_connector_register(&ptn_bridge->connector);
-  ^
-cc1: some warnings being treated as errors
-scripts/Makefile.build:257: recipe for target
-'drivers/gpu/drm/bridge/ptn3460.o' failed
-make[4]: *** [drivers/gpu/drm/bridge/ptn3460.o] Error 1
-scripts/Makefile.build:404: recipe for target 'drivers/gpu/drm/bridge'
-failed
-make[3]: *** [drivers/gpu/drm/bridge] Error 2
-make[3]: *** Warte auf noch nicht beendete Prozesse...
-scripts/Makefile.build:404: recipe for target 'drivers/gpu/drm' failed
-make[2]: *** [drivers/gpu/drm] Error 2
-scripts/Makefile.build:404: recipe for target 'drivers/gpu' failed
-make[1]: *** [drivers/gpu] Error 2
-Makefile:899: recipe for target 'drivers' failed
-make: *** [drivers] Error 2
-
-Any hint which prerequisite I'm missing? Didn't spot it in Inki's tree,
-and it must be new since v4.
-
-Thanks,
-Andreas
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+Chanwoo Choi schrieb:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The ADC in s3c64xx is almost the same as exynosv1, but
+> has a different 'select' method. Adding this here will be
+> helpful to move over the existing s3c64xx platform from the
+> legacy plat-samsung/adc driver to the new exynos-adc.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  .../devicetree/bindings/arm/samsung/exynos-adc.txt |  2 ++
+>  drivers/iio/adc/exynos_adc.c                       | 32 +++++++++++++++++++++-
+>  2 files changed, 33 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> index 6d34891..b6e3989 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> @@ -16,6 +16,8 @@ Required properties:
+>  				future controllers.
+>  			Must be "samsung,exynos3250-adc" for
+>  				controllers compatible with ADC of Exynos3250.
+> +			Must be "samsung,s3c6410-adc" for
+> +				the ADC in s3c6410 and compatibles
+>  - reg:			Contains ADC register address range (base address and
+>  			length) and the address of the phy enable register.
+>  - interrupts: 		Contains the interrupt information for the timer. The
+> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+> index 87e0895..05bdd2f12 100644
+> --- a/drivers/iio/adc/exynos_adc.c
+> +++ b/drivers/iio/adc/exynos_adc.c
+> @@ -40,12 +40,16 @@
+>  #include <linux/iio/machine.h>
+>  #include <linux/iio/driver.h>
+>  
+> -/* EXYNOS4412/5250 ADC_V1 registers definitions */
+> +/* S3C/EXYNOS4412/5250 ADC_V1 registers definitions */
+>  #define ADC_V1_CON(x)		((x) + 0x00)
+> +#define ADC_V1_TSC(x)		((x) + 0x04)
+>  #define ADC_V1_DLY(x)		((x) + 0x08)
+>  #define ADC_V1_DATX(x)		((x) + 0x0C)
+> +#define ADC_V1_DATY(x)		((x) + 0x10)
+> +#define ADC_V1_UPDN(x)		((x) + 0x14)
+>  #define ADC_V1_INTCLR(x)	((x) + 0x18)
+>  #define ADC_V1_MUX(x)		((x) + 0x1c)
+> +#define ADC_V1_CLRINTPNDNUP(x)	((x) + 0x20)
+>  
+>  /* Future ADC_V2 registers definitions */
+>  #define ADC_V2_CON1(x)		((x) + 0x00)
+> @@ -61,6 +65,9 @@
+>  #define ADC_V1_CON_PRSCLV(x)	(((x) & 0xFF) << 6)
+>  #define ADC_V1_CON_STANDBY	(1u << 2)
+>  
+> +/* Bit definitions for S3C2410 ADC */
+> +#define ADC_S3C2410_CON_SELMUX(x) (((x) & 7) <<3)
+There is a whitespace missing.
+> +
+>  /* Bit definitions for ADC_V2 */
+>  #define ADC_V2_CON1_SOFT_RESET	(1u << 2)
+>  
+> @@ -217,6 +224,26 @@ static const struct exynos_adc_data const exynos_adc_v1_data = {
+>  	.start_conv	= exynos_adc_v1_start_conv,
+>  };
+>  
+> +static void exynos_adc_s3c64xx_start_conv(struct exynos_adc *info,
+> +					  unsigned long addr)
+> +{
+> +	u32 con1;
+> +
+> +	con1 = readl(ADC_V1_CON(info->regs));
+> +	con1 &= ~ADC_S3C2410_CON_SELMUX(7);
+> +	con1 |= ADC_S3C2410_CON_SELMUX(addr);
+> +	writel(con1 | ADC_CON_EN_START, ADC_V1_CON(info->regs));
+> +}
+> +
+> +static struct exynos_adc_data const exynos_adc_s3c64xx_data = {
+> +	.num_channels	= MAX_ADC_V1_CHANNELS,
+> +
+> +	.init_hw	= exynos_adc_v1_init_hw,
+> +	.exit_hw	= exynos_adc_v1_exit_hw,
+> +	.clear_irq	= exynos_adc_v1_clear_irq,
+> +	.start_conv	= exynos_adc_s3c64xx_start_conv,
+> +};
+> +
+>  static void exynos_adc_v2_init_hw(struct exynos_adc *info)
+>  {
+>  	u32 con1, con2;
+> @@ -285,6 +312,9 @@ static const struct exynos_adc_data const exynos3250_adc_data = {
+>  
+>  static const struct of_device_id exynos_adc_match[] = {
+>  	{
+> +		.compatible = "samsung,s3c6410-adc",
+> +		.data = &exynos_adc_s3c64xx_data,
+> +	}, {
+>  		.compatible = "samsung,exynos-adc-v1",
+>  		.data = &exynos_adc_v1_data,
+>  	}, {
