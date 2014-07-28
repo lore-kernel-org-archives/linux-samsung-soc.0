@@ -1,91 +1,49 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH v2 0/9] thermal: exynos: various cleanups
-Date: Mon, 28 Jul 2014 20:30:53 +0530
-Message-ID: <CADGdYn6EN-evo2KCjFfQ2h8gLoop=xTJZO3fnNxBxM9067tjxg@mail.gmail.com>
-References: <1403026045-16024-1-git-send-email-b.zolnierkie@samsung.com>
-	<20140728143759.GA17837@developer>
+From: Sachin Kamat <spk.linux@gmail.com>
+Subject: Re: [RESEND][PATCH 1/2] ARM: DTS: Add PMU DT node for exynos5260 SoC
+Date: Mon, 28 Jul 2014 20:56:31 +0530
+Message-ID: <CAK5sBcHdsDF60JTv7ugC4m=A-5Lmr2rDwizhkCLEyYGRio-2-Q@mail.gmail.com>
+References: <1406551080-14821-1-git-send-email-vikas.sajjan@samsung.com>
+	<1406551080-14821-2-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20140728143759.GA17837@developer>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f175.google.com ([209.85.217.175]:38776 "EHLO
+	mail-lb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751946AbaG1P0d (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Jul 2014 11:26:33 -0400
+Received: by mail-lb0-f175.google.com with SMTP id 10so5836315lbg.20
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Jul 2014 08:26:32 -0700 (PDT)
+In-Reply-To: <1406551080-14821-2-git-send-email-vikas.sajjan@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, sajjan.linux@gmail.com, Doug Anderson <dianders@chromium.org>
 
-Hi Eduardo,
+Hi Vikas,
 
-Please reject this entire series as this is not re-based recently.
-Actually two point trimming which this series seeks to remove is used
-by exynos3250 and is in Rui's tree
-(https://git.kernel.org/cgit/linux/kernel/git/rzhang/linux.git/commit/?h=next&id=1fe56dc16a3dab400206443f70ae158c8f595c42).
-
-Thanks,
-Amit D
-
-
-On Mon, Jul 28, 2014 at 8:07 PM, Eduardo Valentin <edubezval@gmail.com> wrote:
-> On Tue, Jun 17, 2014 at 07:27:16PM +0200, Bartlomiej Zolnierkiewicz wrote:
->> Hi,
->>
->> This patch series contains various cleanups for EXYNOS thermal
->> driver.  Overall it decreases driver's LOC by 12%.  It is based
->> on next-20140617 kernel.  It should not cause any functionality
->> changes.
->>
->> Changes since v1:
->> - synced patches against next-20140617
->> - merged patch "thermal: exynos: remove unused defines" into
->>   "thermal: exynos: remove unused struct exynos_tmu_registers
->>   entries" one (per request from Eduardo)
->> - improved patch descriptions for patches #1-5
->> - fixed documentation for pdata->gain and pdata->reference_voltage
->> - added Reviewed-by from Amit to patches #6, #7 and #10
->> - added missing Acked-by from Kyungmin Park
+On Mon, Jul 28, 2014 at 6:07 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+> Adds PMU DT node for exynos5260 SoC.
 >
-> Pulled the series.
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> ---
+>  .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
+>  arch/arm/boot/dts/exynos5260.dtsi                  |    5 +++++
+>  2 files changed, 6 insertions(+)
 >
-> Thanks.
->
->>
->> Best regards,
->> --
->> Bartlomiej Zolnierkiewicz
->> Samsung R&D Institute Poland
->> Samsung Electronics
->>
->>
->> Bartlomiej Zolnierkiewicz (9):
->>   thermal: exynos: remove unused struct exynos_tmu_registers entries
->>   thermal: exynos: remove dead code for HW_MODE calibration
->>   thermal: exynos: remove dead code for TYPE_TWO_POINT_TRIMMING
->>     calibration
->>   thermal: exynos: remove redundant pdata checks from
->>     exynos_tmu_initialize()
->>   thermal: exynos: remove redundant threshold_code checks from
->>     exynos_tmu_initialize()
->>   thermal: exynos: simplify temp_to_code() and code_to_temp()
->>   thermal: exynos: cache non_hw_trigger_levels in pdata
->>   thermal: exynos: remove redundant pdata checks from
->>     exynos_tmu_control()
->>   thermal: exynos: remove identical values from exynos*_tmu_registers
->>     structures
->>
->>  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
->>  drivers/thermal/samsung/exynos_tmu.c            | 181 ++++--------------------
->>  drivers/thermal/samsung/exynos_tmu.h            |  90 +-----------
->>  drivers/thermal/samsung/exynos_tmu_data.c       |  64 +--------
->>  drivers/thermal/samsung/exynos_tmu_data.h       |  33 +----
->>  5 files changed, 41 insertions(+), 328 deletions(-)
->>
->> --
->> 1.8.2.3
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> index 2a4ab04..c038628 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> @@ -8,6 +8,7 @@ Properties:
+>                    - "samsung,exynos4412-pmu" - for Exynos4412 SoC,
+>                    - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
+>                    - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
+> +                  - "samsung,exynos5260-pmu" - for Exynos5260 SoC.
+
+nit: This line should come after 5250 entry to preserve the order.
+
+Otherwise, looks good.
+-- 
+Regards,
+Sachin.
