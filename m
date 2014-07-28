@@ -1,57 +1,91 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: kgene's for-next branch broken, and boot regressions
-Date: Sun, 27 Jul 2014 20:44:39 -0700
-Message-ID: <CAOesGMibn1VpDKGSTQXNcDrn7QswW+Zwm5nHRFYreYmPpSAtCg@mail.gmail.com>
-References: <53D46D2F.3000202@suse.de>
-	<009b01cfa9fb$157617a0$406246e0$@samsung.com>
-	<CAD=FV=Vw-cPW2B1RZHjMbO9SqmQ-=AVv_XqV-NEmNMPagWv93g@mail.gmail.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: RE: [PATCH RFC] mfd: syscon: Decouple syscon interface from syscon
+ devices
+Date: Mon, 28 Jul 2014 09:45:01 +0530
+Message-ID: <002701cfaa1a$82b42770$881c7650$@samsung.com>
+References: <53A05E2D.6020702@samsung.com> <5027740.B7iVUcUX2T@wuerfel>
+ <53A0B27E.5010708@gmail.com> <5537724.LlmJ2hxcKn@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f182.google.com ([209.85.220.182]:42815 "EHLO
-	mail-vc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750825AbaG1Dok (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:33699 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750708AbaG1ENt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 27 Jul 2014 23:44:40 -0400
-Received: by mail-vc0-f182.google.com with SMTP id hy4so10657751vcb.27
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Jul 2014 20:44:39 -0700 (PDT)
-In-Reply-To: <CAD=FV=Vw-cPW2B1RZHjMbO9SqmQ-=AVv_XqV-NEmNMPagWv93g@mail.gmail.com>
+	Mon, 28 Jul 2014 00:13:49 -0400
+In-reply-to: <5537724.LlmJ2hxcKn@wuerfel>
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Tomasz Figa' <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, mark.brown@linaro.org, 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Samuel Ortiz' <sameo@linux.intel.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, 'Lee Jones' <lee.jones@linaro.org>
 
-On Sun, Jul 27, 2014 at 8:30 PM, Doug Anderson <dianders@chromium.org> wrote:
-> Kukjin,
->
-> On Sun, Jul 27, 2014 at 5:30 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> Oops, I always use my script to check kernel build like follow...
->>
->> $ mt
->> building exynos_defconfig done
->> building s3c2410_defconfig done
->> building s3c6400_defconfig done
->> building s5pv210_defconfig done
->>
->> but seems it couldn't detect the breakage from dtb :(
->
-> Could you add a "make dtbs" in there?
->
-> Is there any chance you could get a boot farm on this, or somehow try
-> to piggyback on Olof's or Kevin's boot farms (assuming they are
-> willing to build/boot your branch on relevant hardware)?
+Hi Arnd,
 
-I boot -next on the farm, and it had found the 5410 issues, which I
-forwarded on to some of the relevant parties (but maybe not all). I
-don't have any 5410 hardware so I couldn't bisect the problem and
-narrow it down to a single patch. Hardware currently in there is 4412
-(ODROID-U3), 5250 (Arndale and Snow), 5420 and 5800 (Pit/Pi). I have a
-6410-based board that I have not yet hooked up.
+On Wednesday, June 18, 2014 Arnd wrote:
+> To: Tomasz Figa
+> Cc: linux-arm-kernel@lists.infradead.org; mark.brown@linaro.org; Tomasz
+Figa;
+> linux-samsung-soc@vger.kernel.org; Kukjin Kim; Russell King - ARM Linux;
+Samuel
+> Ortiz; Pankaj Dubey; linux-kernel@vger.kernel.org; joshi@samsung.com;
+> vikas.sajjan@samsung.com; chow.kim@samsung.com; Lee Jones
+> Subject: Re: [PATCH RFC] mfd: syscon: Decouple syscon interface from
+syscon
+> devices
+> 
+> On Tuesday 17 June 2014 23:26:22 Tomasz Figa wrote:
+> > On 17.06.2014 17:42, Arnd Bergmann wrote:
+> > > This seems like a reasonable way of solving the problem, but I think
+> > > there is an even better one that we have about in the past: if we
+> > > promote syscon from a platform driver into a a drivers/base/ helper
+> > > that is independent of the platform device matching, we can use call
+> > > syscon_regmap_lookup_* for any device node, whether it's already
+> > > bound to a driver or not, which do what you need. It would also make
+> > > it easier to call the syscon code before the platform_device
+> > > infrastructure gets initialized, which is something a number of
+> > > people have asked for, e.g. for using regmap to do SMP bringup or
+> > > for clock registration.
+> >
+> > Basically, unless I'm missing your point, this is what my patch does,
+> > except that I don't move it to drivers/base/ and the registration
+> > function I added require a pointer to struct device. Indeed,
+> > decoupling it further from the driver model, by adding
+> > of_syscon_register() should be useful for early users.
+> 
+> I believe the part you are missing is that with the approach I suggested,
+there would
+> be no registration function at all. You can easily do the lookup from the
+client drivers
+> using the DT data structures, with no need for the device at all. 
 
-I also boot arm-soc's for-next branch, so as soon as we merge
-something in I'll notice breakage, if it's somehow masked by other
-parts of linux-next (i.e. dependent but not described driver changes,
-etc).
+Will you please elaborate more on this? 
 
+The only exception
+> today is the clps711x platform using syscon_regmap_lookup_by_pdevname(),
+but
+> that should be solved in 3.17 when clps711x becomes DT-only.
+> 
 
--Olof
+Does it mean that this may become a blocking issue for this patch to go
+before 3.17?
+If yes, isn't it will be good to accept this patch as it is if it's not
+causing issue or breaking
+anything with existing users of syscon. At least for our use of converting
+Exynos PMU and
+PM related consolidation this change is working fine and we have verified
+it.
+
+> > Should I move this to drivers/base/, even though from current location
+> > it can be used outside the platform driver anyway?
+> 
+> Thinking about it some more, drivers/of might be better than drivers/base.
+> It depends a bit where we are heading with this, in particular if we
+expect to see non-
+> DT users in the future.
+> 
+> 	Arnd
+
+Thanks,
+Pankaj Dubey
