@@ -1,87 +1,194 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH v2 2/2] drm/exynos: dsi: add LPM (Low Power Mode) transfer
- support
-Date: Mon, 28 Jul 2014 11:00:57 +0900
-Message-ID: <1406512857-7213-3-git-send-email-inki.dae@samsung.com>
-References: <1406512857-7213-1-git-send-email-inki.dae@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCHv6 1/5] mmc: dw_mmc: modify the dt-binding for removing
+ slot-node and supports-highspeed
+Date: Mon, 28 Jul 2014 11:11:17 +0900
+Message-ID: <53D5B145.6020807@samsung.com>
+References: <1406250713-22604-1-git-send-email-jh80.chung@samsung.com>
+ <1406250713-22604-2-git-send-email-jh80.chung@samsung.com>
+ <53D24988.9010208@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1406512857-7213-1-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: a.hajda@samsung.com, treding@nvidia.com, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:24002 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750795AbaG1CL2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 27 Jul 2014 22:11:28 -0400
+In-reply-to: <53D24988.9010208@suse.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>, Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>
+Cc: Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, tgih.jun@samsung.com, devicetree@vger.kernel.org, heiko@sntech.de, dinguyen@altera.com, Mark Rutland <mark.rutland@arm.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This patch adds LPM transfer support for video or command data.
+Hi, Andreas,
 
-With this patch, Exynos MIPI DSI controller can transfer command or
-video data with HS or LP mode in accordance with mode_flags set
-by LCD Panel driver.
+On 07/25/2014 09:11 PM, Andreas F=E4rber wrote:
+> Hi Jaehoon,
+>=20
+> Am 25.07.2014 03:11, schrieb Jaehoon Chung:
+>> Almost Soc is used the slot per a host.
+>=20
+> Something's very wrong with this sentence. What are you trying to say=
+?
+> Almost all SoCs use one slot only per host controller device?
 
-Changelog v2: Enable High Speed clock only in case of stand by request.
+If you are confusion for this sentence, sorry.
+It means that we recommend only one slot per host controller.
+Some controller can be supported the multiple slot per a host controlle=
+r.
+But i didn't find anywhere it used the multiple slot per a host control=
+ler.
 
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+
+Best Regards,
+Jaehoon Chung
+>=20
+>> Don't use the slot-node and deprecated the "supports-highsped" prope=
+rty.
+>=20
+> s/deprecated/deprecate/ ?
+> s/highsped/highspeed/
+>=20
+>> Instead, use the cap-mmc/sd-highspeed.
+>>
+>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>> Reviewed-by: Tushar Behera <trblinux@gmail.com>
+>> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>> Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
+>> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+>> ---
+>>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   17 +++++----=
+--------
+>>  .../devicetree/bindings/mmc/k3-dw-mshc.txt         |   12 +++++----=
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c |   22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 5e78d45..1bed105 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -493,8 +493,11 @@ static int exynos_dsi_enable_clock(struct exynos_dsi *dsi)
- 			| DSIM_ESC_PRESCALER(esc_div)
- 			| DSIM_LANE_ESC_CLK_EN_CLK
- 			| DSIM_LANE_ESC_CLK_EN_DATA(BIT(dsi->lanes) - 1)
--			| DSIM_BYTE_CLK_SRC(0)
--			| DSIM_TX_REQUEST_HSCLK;
-+			| DSIM_BYTE_CLK_SRC(0);
-+
-+	if (!(dsi->mode_flags & MIPI_DSI_MODE_CMD_LPM))
-+		reg |= DSIM_TX_REQUEST_HSCLK;
-+
- 	writel(reg, dsi->reg_base + DSIM_CLKCTRL_REG);
- 
- 	return 0;
-@@ -553,6 +556,18 @@ static void exynos_dsi_set_phy_ctrl(struct exynos_dsi *dsi)
- 	writel(reg, dsi->reg_base + DSIM_PHYTIMING2_REG);
- }
- 
-+static void exynos_dsi_enable_hs_clock(struct exynos_dsi *dsi,
-+					bool enable)
-+{
-+	u32 reg = readl(dsi->reg_base + DSIM_CLKCTRL_REG);
-+
-+	reg &= ~DSIM_TX_REQUEST_HSCLK;
-+	if (enable)
-+		reg |= DSIM_TX_REQUEST_HSCLK;
-+
-+	writel(reg, dsi->reg_base + DSIM_CLKCTRL_REG);
-+}
-+
- static void exynos_dsi_disable_clock(struct exynos_dsi *dsi)
- {
- 	u32 reg;
-@@ -705,6 +720,9 @@ static void exynos_dsi_set_display_enable(struct exynos_dsi *dsi, bool enable)
- {
- 	u32 reg;
- 
-+	if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_LPM) && enable)
-+		exynos_dsi_enable_hs_clock(dsi, true);
-+
- 	reg = readl(dsi->reg_base + DSIM_MDRESOL_REG);
- 	if (enable)
- 		reg |= DSIM_MAIN_STAND_BY;
--- 
-1.7.9.5
+>>  .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |   12 +++++----=
+---
+>>  3 files changed, 15 insertions(+), 26 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.tx=
+t b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> index 532b1d4..9308325 100644
+>> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> @@ -46,13 +46,14 @@ Required Properties:
+>>        - if CIU clock divider value is 0 (that is divide by 1), both=
+ tx and rx
+>>          phase shift clocks should be 0.
+>> =20
+>> -Required properties for a slot:
+>> +Required properties for a slot (Deprecated - Recommend to use one s=
+lot per a host):
+>=20
+> "per host"
+>=20
+>> =20
+>>  * gpios: specifies a list of gpios used for command, clock and data=
+ bus. The
+>>    first gpio is the command line and the second gpio is the clock l=
+ine. The
+>>    rest of the gpios (depending on the bus-width property) are the d=
+ata lines in
+>>    no particular order. The format of the gpio specifier depends on =
+the gpio
+>>    controller.
+>> + (Deprecated - Refer to Documentaion/devicetree/binding/pinctrl/sam=
+sung-pinctrl.txt)
+>=20
+> "Documentation/"
+>=20
+> Nit: Is the indentation intentional? (parenthesis not aligned with te=
+xt)
+>=20
+>> =20
+>>  Example:
+>> =20
+>> @@ -69,21 +70,13 @@ Example:
+>> =20
+>>  	dwmmc0@12200000 {
+>>  		num-slots =3D <1>;
+>> -		supports-highspeed;
+>> +		cap-mmc-highspeed;
+>> +		cap-sd-highspeed;
+>>  		broken-cd;
+>>  		fifo-depth =3D <0x80>;
+>>  		card-detect-delay =3D <200>;
+>>  		samsung,dw-mshc-ciu-div =3D <3>;
+>>  		samsung,dw-mshc-sdr-timing =3D <2 3>;
+>>  		samsung,dw-mshc-ddr-timing =3D <1 2>;
+>> -
+>> -		slot@0 {
+>> -			reg =3D <0>;
+>> -			bus-width =3D <8>;
+>> -			gpios =3D <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
+>> -				<&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
+>> -				<&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>,
+>> -				<&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
+>> -				<&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>;
+>> -		};
+>> +		bus-width =3D <8>;
+>>  	};
+>> diff --git a/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt b/=
+Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt
+>> index e5bc49f..3b35449 100644
+>> --- a/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt
+>> +++ b/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt
+>> @@ -34,13 +34,11 @@ Example:
+>>  		num-slots =3D <1>;
+>>  		vmmc-supply =3D <&ldo12>;
+>>  		fifo-depth =3D <0x100>;
+>> -		supports-highspeed;
+>>  		pinctrl-names =3D "default";
+>>  		pinctrl-0 =3D <&sd_pmx_pins &sd_cfg_func1 &sd_cfg_func2>;
+>> -		slot@0 {
+>> -			reg =3D <0>;
+>> -			bus-width =3D <4>;
+>> -			disable-wp;
+>> -			cd-gpios =3D <&gpio10 3 0>;
+>> -		};
+>> +		bus-width =3D <4>;
+>> +		disable-wp;
+>> +		cd-gpios =3D <&gpio10 3 0>;
+>> +		cap-mmc-highspeed;
+>> +		cap-sd-highspeed;
+>>  	};
+>> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.=
+txt b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+>> index 2d4a725..346c609 100644
+>> --- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+>> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
+>> @@ -67,7 +67,8 @@ Optional properties:
+>>  * card-detect-delay: Delay in milli-seconds before detecting card a=
+fter card
+>>    insert event. The default value is 0.
+>> =20
+>> -* supports-highspeed: Enables support for high speed cards (up to 5=
+0MHz)
+>> +* supports-highspeed (DEPRECATED): Enables support for high speed c=
+ards (up to 50MHz)
+>> +			   (use "cap-mmc-highspeed" or "cap-sd-highspeed" instead)
+>> =20
+>>  * broken-cd: as documented in mmc core bindings.
+>> =20
+>> @@ -98,14 +99,11 @@ board specific portions as listed below.
+>>  		clock-frequency =3D <400000000>;
+>>  		clock-freq-min-max =3D <400000 200000000>;
+>>  		num-slots =3D <1>;
+>> -		supports-highspeed;
+>>  		broken-cd;
+>>  		fifo-depth =3D <0x80>;
+>>  		card-detect-delay =3D <200>;
+>>  		vmmc-supply =3D <&buck8>;
+>> -
+>> -		slot@0 {
+>> -			reg =3D <0>;
+>> -			bus-width =3D <8>;
+>> -		};
+>> +		bus-width =3D <8>;
+>> +		cap-mmc-highspeed;
+>> +		cap-sd-highspeed;
+>>  	};
+>=20
+> Regards,
+> Andreas
+>=20
