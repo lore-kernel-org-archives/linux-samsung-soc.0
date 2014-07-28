@@ -1,61 +1,39 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: [RESEND][PATCH 1/2] ARM: DTS: Add PMU DT node for exynos5260 SoC
-Date: Mon, 28 Jul 2014 18:07:59 +0530
-Message-ID: <1406551080-14821-2-git-send-email-vikas.sajjan@samsung.com>
-References: <1406551080-14821-1-git-send-email-vikas.sajjan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:38470 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751674AbaG1MmZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jul 2014 08:42:25 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N9F004I79XQTIA0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 28 Jul 2014 21:41:50 +0900 (KST)
-In-reply-to: <1406551080-14821-1-git-send-email-vikas.sajjan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv2 0/3] iio: adc: exynos_adc: Add support for s3c64xx/s3c24xx ADC
+Date: Mon, 28 Jul 2014 21:43:59 +0900
+Message-ID: <1406551442-15186-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: jic23@kernel.org
+Cc: ch.naveen@samsung.com, arnd@arndb.de, kgene.kim@samsung.com, kyungmin.park@samsung.com, heiko@sntech.de, knaack.h@gmx.de, t.figa@samsung.com, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, Vikas Sajjan <vikas.sajjan@samsung.com>
 
-Adds PMU DT node for exynos5260 SoC.
+This patch add support for s3c64xx/s3c24xx ADC. s3c64xx/s3c24xx is alomost same
+as ADCv1. But, s3c64xx/s3c24xx has a little difference from ADCv1 as following:
+- ADCMUX register address to select channel
+- ADCDAT mask (10bit or 12bit ADC resolution according to SoC version)
+- s3c24xx/s3c64xx has not included ADC_PHY enable register
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
----
- .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
- arch/arm/boot/dts/exynos5260.dtsi                  |    5 +++++
- 2 files changed, 6 insertions(+)
+Changes from v1:
+- Fix minor coding style.
+- Remove the sentence which reading DATY register.
+- Add ARCH_S3C24XX / ARCH_S3C64XX dependency for EXYNOS_ADC to Kconfig.
+- Remove the function pointer of 'clear_irq' for s3c24xx becase s3c24xx
+  has not included ADC_V1_INTCLR register.
+- Remove un-necessary white-space in dt-binding documentation
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-index 2a4ab04..c038628 100644
---- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-@@ -8,6 +8,7 @@ Properties:
- 		   - "samsung,exynos4412-pmu" - for Exynos4412 SoC,
- 		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
- 		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
-+		   - "samsung,exynos5260-pmu" - for Exynos5260 SoC.
- 		second value must be always "syscon".
- 
-  - reg : offset and length of the register set.
-diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
-index 5398a60..4f2fabe 100644
---- a/arch/arm/boot/dts/exynos5260.dtsi
-+++ b/arch/arm/boot/dts/exynos5260.dtsi
-@@ -227,6 +227,11 @@
- 			interrupts = <0 243 0>;
- 		};
- 
-+		pmu_system_controller: system-controller@10D50000 {
-+			compatible = "samsung,exynos5260-pmu", "syscon";
-+			reg = <0x10D50000 0x10000>;
-+		};
-+
- 		uart0: serial@12C00000 {
- 			compatible = "samsung,exynos4210-uart";
- 			reg = <0x12C00000 0x100>;
+Arnd Bergmann (1):
+  iio: adc: exynos_adc: add support for s3c64xx adc
+
+Chanwoo Choi (2):
+  iio: adc: exynos_adc: Add support for s3c24xx ADC
+  dt-bindings: samsung: exynos_adc: Remove un-necessary white-sapce
+
+ .../devicetree/bindings/arm/samsung/exynos-adc.txt |  20 ++-
+ drivers/iio/adc/Kconfig                            |   2 +-
+ drivers/iio/adc/exynos_adc.c                       | 137 +++++++++++++++++++--
+ 3 files changed, 144 insertions(+), 15 deletions(-)
+
 -- 
-1.7.9.5
+1.8.0
+
