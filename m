@@ -1,84 +1,63 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip support
-Date: Mon, 28 Jul 2014 11:43:01 +0530
-Message-ID: <CAEC9eQPW-Z4craCC15M7oTp8eSD09AGxdTFEWaAWqn3Up4eJUg@mail.gmail.com>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
-	<53D5435B.8030305@suse.de>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 1/3] regulator: s2mpxxx: Move regulator min/step
+ voltages in common place
+Date: Mon, 28 Jul 2014 07:57:44 +0100
+Message-ID: <20140728065744.GD5273@lee--X1>
+References: <1405422173-15050-1-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f176.google.com ([209.85.220.176]:57089 "EHLO
-	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751134AbaG1GNC convert rfc822-to-8bit (ORCPT
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:36281 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750914AbaG1G5u (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jul 2014 02:13:02 -0400
-In-Reply-To: <53D5435B.8030305@suse.de>
+	Mon, 28 Jul 2014 02:57:50 -0400
+Received: by mail-ie0-f172.google.com with SMTP id lx4so6225949iec.31
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Jul 2014 23:57:49 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1405422173-15050-1-git-send-email-amit.daniel@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, inki.dae@samsung.com, thierry.reding@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-Hi Andreas,
+On Tue, 15 Jul 2014, Amit Daniel Kachhap wrote:
 
-On 7/27/14, Andreas F=C3=A4rber <afaerber@suse.de> wrote:
-> Hi Ajay,
->
-> Am 25.07.2014 21:22, schrieb Ajay Kumar:
->> This series is based on exynos-drm-next branch of Inki Dae's tree at=
-:
->> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
->>
->> I have tested this after adding few DT changes for exynos5250-snow,
->> exynos5420-peach-pit and exynos5800-peach-pi boards.
->
-> I'm trying to test this with a modified exynos5250-spring DT based of=
-f
-> kgene's for-next branch due to DT, and I run into the following:
->
->   CC      drivers/gpu/drm/bridge/ptn3460.o
-> drivers/gpu/drm/bridge/ptn3460.c: In function =E2=80=98ptn3460_post_e=
-ncoder_init=E2=80=99:
-> drivers/gpu/drm/bridge/ptn3460.c:275:2: error: implicit declaration o=
-f
-> function =E2=80=98drm_connector_register=E2=80=99 [-Werror=3Dimplicit=
--function-declaration]
->   drm_connector_register(&ptn_bridge->connector);
->   ^
-Hope this might help:
-http://www.spinics.net/lists/dri-devel/msg60578.html
+> This is a cleanup patch and moves min/step voltages in a common samsu=
+ng
+> header file so that they can be used by other s2mpxxx PMIC drivers. O=
+nly
+> few required macros are added currently and others can be added if ne=
+eded.
+>=20
+> Cc: Sangbeom Kim <sbkim73@samsung.com>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Samuel Ortiz <sameo@linux.intel.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> ---
+> Changes since v1:
+> * Added Cc to maintainers.
+> * Added Krzysztof reviewed-by.
+>=20
+>  drivers/regulator/s2mpa01.c         | 32 ++++++++++++------------
+>  drivers/regulator/s2mps11.c         | 50 ++++++++++++++++++---------=
+----------
+>  include/linux/mfd/samsung/core.h    | 21 ++++++++++++++++
+>  include/linux/mfd/samsung/s2mpa01.h | 12 ---------
+>  include/linux/mfd/samsung/s2mps11.h |  9 -------
+>  include/linux/mfd/samsung/s2mps14.h | 10 --------
+>  6 files changed, 62 insertions(+), 72 deletions(-)
 
-Switch back to drm_sysfs_connector_add if your kernel doesn't have this=
- patch.
+=46or the MFD changes:
 
-Ajay
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-> cc1: some warnings being treated as errors
-> scripts/Makefile.build:257: recipe for target
-> 'drivers/gpu/drm/bridge/ptn3460.o' failed
-> make[4]: *** [drivers/gpu/drm/bridge/ptn3460.o] Error 1
-> scripts/Makefile.build:404: recipe for target 'drivers/gpu/drm/bridge=
-'
-> failed
-> make[3]: *** [drivers/gpu/drm/bridge] Error 2
-> make[3]: *** Warte auf noch nicht beendete Prozesse...
-> scripts/Makefile.build:404: recipe for target 'drivers/gpu/drm' faile=
-d
-> make[2]: *** [drivers/gpu/drm] Error 2
-> scripts/Makefile.build:404: recipe for target 'drivers/gpu' failed
-> make[1]: *** [drivers/gpu] Error 2
-> Makefile:899: recipe for target 'drivers' failed
-> make: *** [drivers] Error 2
->
-> Any hint which prerequisite I'm missing? Didn't spot it in Inki's tre=
-e,
-> and it must be new since v4.
->
-> Thanks,
-> Andreas
->
-> --
-> SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-> GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=
-=C3=BCrnberg
->
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
