@@ -1,63 +1,85 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 1/3] regulator: s2mpxxx: Move regulator min/step
- voltages in common place
-Date: Mon, 28 Jul 2014 07:57:44 +0100
-Message-ID: <20140728065744.GD5273@lee--X1>
-References: <1405422173-15050-1-git-send-email-amit.daniel@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v3 0/4] ARM: EXYNOS: cpuidle: fix AFTR mode on boards
+ with secure firmware enabled
+Date: Mon, 28 Jul 2014 09:43:02 +0200
+Message-ID: <53D5FF06.6080904@linaro.org>
+References: <1404926274-18411-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:36281 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750914AbaG1G5u (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jul 2014 02:57:50 -0400
-Received: by mail-ie0-f172.google.com with SMTP id lx4so6225949iec.31
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Jul 2014 23:57:49 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1405422173-15050-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1404926274-18411-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-On Tue, 15 Jul 2014, Amit Daniel Kachhap wrote:
+On 07/09/2014 07:17 PM, Bartlomiej Zolnierkiewicz wrote:
+> Hi,
+>
+> This patch series adds support for AFTR idle mode on boards with
+> secure firmware enabled and allows EXYNOS cpuidle driver usage on
+> Exynos4x12 SoCs.
+>
+> It has been tested on Trats2 board (using Exynos4412 SoC with secure
+> firmware enabled) on which AFTR mode reduces power consumption by ~12=
+%
+> when EXYNOS cpuidle driver is enabled (in both cases the default
+> exynos_defconfig config is used and CPU1-3 are offlined).
 
-> This is a cleanup patch and moves min/step voltages in a common samsu=
-ng
-> header file so that they can be used by other s2mpxxx PMIC drivers. O=
-nly
-> few required macros are added currently and others can be added if ne=
-eded.
->=20
-> Cc: Sangbeom Kim <sbkim73@samsung.com>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Samuel Ortiz <sameo@linux.intel.com>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
-> Changes since v1:
-> * Added Cc to maintainers.
-> * Added Krzysztof reviewed-by.
->=20
->  drivers/regulator/s2mpa01.c         | 32 ++++++++++++------------
->  drivers/regulator/s2mps11.c         | 50 ++++++++++++++++++---------=
+
+Hi Bartlomiej,
+
+what is the status of this patchset ? Is it supposed to land for 3.17 ?
+
+Thanks
+
+   -- Daniel
+
+> v3:
+> - rebased on top of next-20140708 +
+>    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg3=
+2809.html
+>    (with rejects fixed)
+>    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg3=
+2808.html
+>    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg3=
+2991.html
+>    (with rejects fixed in patch #2)
+> - addressed review comments from Tomasz Figa and Daniel Lezcano
+>
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>
+>
+> Bartlomiej Zolnierkiewicz (4):
+>    ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static inl=
+ines
+>    ARM: EXYNOS: add AFTR mode support to firmware do_idle method
+>    ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode cod=
+e
+>    ARM: EXYNOS: cpuidle: allow driver usage on Exynos4x12 SoCs
+>
+>   arch/arm/include/asm/firmware.h  |  2 +-
+>   arch/arm/mach-exynos/common.h    |  7 ++++++-
+>   arch/arm/mach-exynos/exynos.c    |  3 ++-
+>   arch/arm/mach-exynos/firmware.c  | 36 ++++++++++++++++++++++++++---=
+-------
+>   arch/arm/mach-exynos/pm.c        | 39 +++++++++++++++++++++++++++++=
 ----------
->  include/linux/mfd/samsung/core.h    | 21 ++++++++++++++++
->  include/linux/mfd/samsung/s2mpa01.h | 12 ---------
->  include/linux/mfd/samsung/s2mps11.h |  9 -------
->  include/linux/mfd/samsung/s2mps14.h | 10 --------
->  6 files changed, 62 insertions(+), 72 deletions(-)
+>   drivers/cpuidle/cpuidle-exynos.c |  6 +++---
+>   6 files changed, 67 insertions(+), 26 deletions(-)
+>
 
-=46or the MFD changes:
-
-Acked-by: Lee Jones <lee.jones@linaro.org>
 
 --=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
