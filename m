@@ -1,89 +1,61 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 2/2] iio: adc: exynos_adc: Add support for S3C24xx ADC
-Date: Mon, 28 Jul 2014 21:08:28 +0900
-Message-ID: <53D63D3C.7000401@samsung.com>
-References: <1405995074-3271-1-git-send-email-cw00.choi@samsung.com>
- <1405995074-3271-3-git-send-email-cw00.choi@samsung.com>
- <5200888.DXoC06U953@wuerfel> <175757227.TPQdXAQiJt@diego>
+From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Subject: [RFC 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
+Date: Mon, 28 Jul 2014 14:18:07 +0200
+Message-ID: <1406549892-5558-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <175757227.TPQdXAQiJt@diego>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, jic23@kernel.org, ch.naveen@samsung.com, kgene.kim@samsung.com, kyungmin.park@samsung.com, t.figa@samsung.com, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:51150 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751598AbaG1MSU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Jul 2014 08:18:20 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, Hakjoo Kim <ruppi.kim@hardkernel.com>
+Cc: Tarek Dakhran <t.dakhran@samsung.com>, Kevin Hilman <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 
-On 07/22/2014 07:44 PM, Heiko St=FCbner wrote:
-> Am Dienstag, 22. Juli 2014, 10:39:38 schrieb Arnd Bergmann:
->> On Tuesday 22 July 2014 11:11:14 Chanwoo Choi wrote:
->>> This patch add support for s3c2410/s3c2416/s3c2440/s3c2443 ADC. The
->>> s3c24xx
->>> is alomost same as ADCv1. But, There are a little difference as fol=
-lowing:
->>> - ADCMUX register address to select channel
->>> - ADCDAT mask (10bit or 12bit ADC resolution according to SoC versi=
-on)
->>
->> Very good, thanks for doing this patch!
->>
->> (adding Heiko to Cc, he's probably interested in seeing this as well=
-=2E
->=20
-> indeed. Thanks for implementing this.
->=20
-> While trying to build a test setup for this, I noticed two points:
->=20
-> (1) I'm not sure what the second register (a "phy enable register" ac=
-cording
-> to the binding) is supposed to be.
-> According to binding and adc code it is mandatory, but I didn't find =
-any
-> lone adc register in the s3c2416 manual.
+Hello,
 
-You're right. I don't find ADC_PHY_CONTROL register on s3c2410 datashee=
-t.
-So, if 'needs_adc_phy' field is true, exynos-adc would only get 'phy en=
-able register'
-from dt node.
+This series adds a dedicated ODROID-XU device tree and enhances it with=
+=20
+LED configuration, to match the downstream 3.14 based behavior.
 
--       mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 1);
--       info->enable_reg =3D devm_ioremap_resource(&pdev->dev, mem);
--       if (IS_ERR(info->enable_reg))
--               return PTR_ERR(info->enable_reg);
-+
-+       if (info->data->needs_adc_phy) {
-+               mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+               info->enable_reg =3D devm_ioremap_resource(&pdev->dev, =
-mem);
-+               if (IS_ERR(info->enable_reg))
-+                       return PTR_ERR(info->enable_reg);
-+       }
+It had turned out less trivial than I initially thought as the whole=20
+pinctrl stuff is still missing. I thus cherry-pick two downstream commi=
+ts.
 
+Hakjoo, can you please reply with a Signed-off-by to your patches
+so that we can get them into upstream? Thanks in advance!
 
->=20
->=20
-> (2) You might need something along the lines of:
->=20
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 11b048a..088c99a 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -129,7 +129,7 @@ config AT91_ADC
-> =20
->  config EXYNOS_ADC
->         tristate "Exynos ADC driver support"
-> -       depends on ARCH_EXYNOS || (OF && COMPILE_TEST)
-> +       depends on ARCH_EXYNOS || ARCH_S3C24XX || ARCH_S3C64XX || (OF=
- && COMPILE_TEST)
->         help
->           Core support for the ADC block found in the Samsung EXYNOS =
-series
->           of SoCs for drivers such as the touchscreen and hwmon to us=
-e to share
+Regards,
+Andreas
 
-OK, I'll modify it as your comment.
+Cc: Hakjoo Kim <ruppi.kim@hardkernel.com>
 
-Best Regards,
-Chanwoo Choi
+Andreas F=C3=A4rber (3):
+  ARM: dts: exynos5410: Clean up SMDK5410 indentation
+  ARM: dts: exynos5410: Prepare ODROID-XU device tree
+  ARM: dts: exynos5410: Add ODROID-XU LEDs
+
+Hakjoo Kim (2):
+  pinctrl: exynos: add exynos5410 SoC specific data
+  ARM: dts: add pinctrl support to Exynos5410
+
+ .../bindings/pinctrl/samsung-pinctrl.txt           |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/exynos5410-odroidxu.dts          | 111 ++++++
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi          | 408 +++++++++++++=
+++++++++
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |   6 +-
+ arch/arm/boot/dts/exynos5410.dtsi                  |  32 ++
+ drivers/pinctrl/pinctrl-exynos.c                   | 126 +++++++
+ drivers/pinctrl/pinctrl-samsung.c                  |   2 +
+ drivers/pinctrl/pinctrl-samsung.h                  |   1 +
+ 9 files changed, 685 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
+ create mode 100644 arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+
+--=20
+1.9.3
