@@ -1,35 +1,61 @@
 From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: [PATCH 0/2] Add support to get PMU node via DT for exynos5260
-Date: Mon, 28 Jul 2014 17:45:24 +0530
-Message-ID: <1406549726-10452-1-git-send-email-vikas.sajjan@samsung.com>
+Subject: [PATCH 1/2] ARM: EXYNOS: Add PMU DT node for exynos5260 SoC
+Date: Mon, 28 Jul 2014 17:45:25 +0530
+Message-ID: <1406549726-10452-2-git-send-email-vikas.sajjan@samsung.com>
+References: <1406549726-10452-1-git-send-email-vikas.sajjan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:19734 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:19750 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752684AbaG1MSp (ORCPT
+	with ESMTP id S1752684AbaG1MSy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jul 2014 08:18:45 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
+	Mon, 28 Jul 2014 08:18:54 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
  by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N9F00BYB8V7WD90@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 28 Jul 2014 21:18:43 +0900 (KST)
+ with ESMTP id <0N9F00CFY8VHEL90@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 28 Jul 2014 21:18:53 +0900 (KST)
+In-reply-to: <1406549726-10452-1-git-send-email-vikas.sajjan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, Vikas Sajjan <vikas.sajjan@samsung.com>
 
-rebased on kgene tree for-next branch
-https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+Addd PMU DT node for exynos5260 SoC.
 
-Vikas Sajjan (2):
-  ARM: EXYNOS: Add PMU DT node for exynos5260 SoC
-  ARM: EXYNOS: Add exynos5260 PMU compatible string to DT match table
-
+Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+---
  .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
  arch/arm/boot/dts/exynos5260.dtsi                  |    5 +++++
- arch/arm/mach-exynos/exynos.c                      |    1 +
- 3 files changed, 7 insertions(+)
+ 2 files changed, 6 insertions(+)
 
+diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+index 2a4ab04..c038628 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+@@ -8,6 +8,7 @@ Properties:
+ 		   - "samsung,exynos4412-pmu" - for Exynos4412 SoC,
+ 		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
+ 		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
++		   - "samsung,exynos5260-pmu" - for Exynos5260 SoC.
+ 		second value must be always "syscon".
+ 
+  - reg : offset and length of the register set.
+diff --git a/arch/arm/boot/dts/exynos5260.dtsi b/arch/arm/boot/dts/exynos5260.dtsi
+index 5398a60..4f2fabe 100644
+--- a/arch/arm/boot/dts/exynos5260.dtsi
++++ b/arch/arm/boot/dts/exynos5260.dtsi
+@@ -227,6 +227,11 @@
+ 			interrupts = <0 243 0>;
+ 		};
+ 
++		pmu_system_controller: system-controller@10D50000 {
++			compatible = "samsung,exynos5260-pmu", "syscon";
++			reg = <0x10D50000 0x10000>;
++		};
++
+ 		uart0: serial@12C00000 {
+ 			compatible = "samsung,exynos4210-uart";
+ 			reg = <0x12C00000 0x100>;
 -- 
 1.7.9.5
