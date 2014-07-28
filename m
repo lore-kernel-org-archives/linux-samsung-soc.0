@@ -1,40 +1,64 @@
-From: Laura Abbott <lauraa@codeaurora.org>
-Subject: Re: [RESEND][PATCHv2 0/3] Fix for buggy u-boot memory banks
-Date: Mon, 28 Jul 2014 11:56:42 -0700
-Message-ID: <53D69CEA.3060206@codeaurora.org>
-References: <1405443816-29917-1-git-send-email-lauraa@codeaurora.org> <CAL_JsqJv2_UHxHGFF=nFKQRiEwfFtH_7PhMPS=W=APyzc-yiTQ@mail.gmail.com>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [RESEND][PATCH 1/2] ARM: DTS: Add PMU DT node for exynos5260
+ SoC
+Date: Mon, 28 Jul 2014 22:29:33 +0200
+Message-ID: <53D6B2AD.7070404@suse.de>
+References: <1406551080-14821-1-git-send-email-vikas.sajjan@samsung.com>	<1406551080-14821-2-git-send-email-vikas.sajjan@samsung.com> <CAK5sBcHdsDF60JTv7ugC4m=A-5Lmr2rDwizhkCLEyYGRio-2-Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:47909 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750960AbaG1S4o (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:60103 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751162AbaG1U3l (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jul 2014 14:56:44 -0400
-In-Reply-To: <CAL_JsqJv2_UHxHGFF=nFKQRiEwfFtH_7PhMPS=W=APyzc-yiTQ@mail.gmail.com>
+	Mon, 28 Jul 2014 16:29:41 -0400
+In-Reply-To: <CAK5sBcHdsDF60JTv7ugC4m=A-5Lmr2rDwizhkCLEyYGRio-2-Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Tushar Behera <trblinux@gmail.com>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@linaro.org>, Grant Likely <grant.likely@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Sachin Kamat <spk.linux@gmail.com>, Vikas Sajjan <vikas.sajjan@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, sajjan.linux@gmail.com, Doug Anderson <dianders@chromium.org>
 
-On 7/26/2014 2:20 PM, Rob Herring wrote:
-> On Tue, Jul 15, 2014 at 12:03 PM, Laura Abbott <lauraa@codeaurora.org> wrote:
->> Hi,
+Hi Vikas and Sachin,
+
+Am 28.07.2014 17:26, schrieb Sachin Kamat:
+> On Mon, Jul 28, 2014 at 6:07 PM, Vikas Sajjan <vikas.sajjan@samsung.c=
+om> wrote:
+>> Adds PMU DT node for exynos5260 SoC.
 >>
->> This is a resend of the series to fix the uboot bug exposed by the removal
->> of meminfo. I haven't gotten any acks though.
-> 
-> Is the bug with ATAGs that get converted to DT in the decompressor or
-> u-boot puts the wrong info in DT directly?
-> 
+>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+>> ---
+>>  .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
+>>  arch/arm/boot/dts/exynos5260.dtsi                  |    5 +++++
+>>  2 files changed, 6 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b=
+/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>> index 2a4ab04..c038628 100644
+>> --- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>> @@ -8,6 +8,7 @@ Properties:
+>>                    - "samsung,exynos4412-pmu" - for Exynos4412 SoC,
+>>                    - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
+>>                    - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
+>> +                  - "samsung,exynos5260-pmu" - for Exynos5260 SoC.
+>=20
+> nit: This line should come after 5250 entry to preserve the order.
+>=20
+> Otherwise, looks good.
 
-I believe it's u-boot putting the wrong info in DT directly. See
-http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/266782.html
+Earlier today, Kukjin indicated he would apply my corresponding 5410
+series [*], but he hasn't pushed yet. It adds a 5410 entry before 5420,
+which will conflict with adding 5260 in the same place.
 
-Thanks,
-Laura
+Regards,
+Andreas
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+[*]
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34686.=
+html
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
