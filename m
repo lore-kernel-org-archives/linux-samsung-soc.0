@@ -1,90 +1,147 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH 0/3] drm/exynos: Allow module to be autoloaded
-Date: Tue, 29 Jul 2014 13:59:51 +0200
-Message-ID: <53D78CB7.6010806@suse.de>
-References: <1405715801-5325-1-git-send-email-sjoerd.simons@collabora.co.uk>	 <53CC82AC.9060301@samsung.com> <1405925419.7527.17.camel@dusk>	 <1406536246.15871.6.camel@dusk> <53D65B5D.1060505@samsung.com>	 <1406558722.29009.11.camel@dusk> <53D7335F.9020802@samsung.com> <1406621118.17890.11.camel@dusk>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v8 3/6] ARM: dts: Exynos: add CPU OPP and regulator supply property
+Date: Tue, 29 Jul 2014 17:30:20 +0530
+Message-ID: <CAJuA9ahAmPytu0Oncnj7Ytm+UFCfiekdFnsHu1N6js=NNsypJQ@mail.gmail.com>
+References: <1406611711-25112-1-git-send-email-thomas.ab@samsung.com>
+	<1406611711-25112-4-git-send-email-thomas.ab@samsung.com>
+	<53D77817.7030605@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:43094 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753240AbaG2L7y (ORCPT
+Received: from mail-lb0-f182.google.com ([209.85.217.182]:60011 "EHLO
+	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751296AbaG2MAW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 07:59:54 -0400
-In-Reply-To: <1406621118.17890.11.camel@dusk>
+	Tue, 29 Jul 2014 08:00:22 -0400
+In-Reply-To: <53D77817.7030605@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Sachin Kamat <sachin.kamat@linaro.org>
 
-Am 29.07.2014 10:05, schrieb Sjoerd Simons:
-> On Tue, 2014-07-29 at 14:38 +0900, Inki Dae wrote:
->> On 2014=EB=85=84 07=EC=9B=94 28=EC=9D=BC 23:45, Sjoerd Simons wrote:
->>> On Mon, 2014-07-28 at 23:17 +0900, Inki Dae wrote:
->>>> On 2014=EB=85=84 07=EC=9B=94 28=EC=9D=BC 17:30, Sjoerd Simons wrot=
-e:
->>>> I don't see why Exynos drm driver should be auto-loaded module. I =
-think
->>>> all devices covered by Exynos drm framework are not hot-plugged. M=
-aybe
->>>> there is my missing point. So can you explain why Exynos drm drive=
-r
->>>> should be auto-loaded module?
->>>
->>> The background for this is that I'm building a distribution-style
->>> multiplatform kernel, that is to say a kernel which can boot on a b=
-ig
->>> set of different ARM boards. As such, the intention is to keep the =
-core
->>> zImage as small as possible and essentially build things as far as
->>> possible as loadable modules. So in a sense, all of the hardware is
->>> "hotplugged", depending on which board the kernel is actually boote=
-d on!
->>>
->>> For that use-case, exynosdrm needs to be able to build as a module
->>> (which it already can!) and it needs the required meta-data for
->>> userspace to know when it should be loaded. The latter is what my p=
-atch
->>> adds.=20
+Hi Tomasz,
+
+On Tue, Jul 29, 2014 at 4:01 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Thomas,
+>
+> Other than the same question about 400 MHz OPP for Exynos4210, I have
+> also few more inline.
+>
+> On 29.07.2014 07:28, Thomas Abraham wrote:
+>> For Exynos 4210/5250/5420 based platforms, add CPU operating points and CPU
+>> regulator supply properties for migrating from Exynos specific cpufreq driver
+>> to using generic cpufreq drivers.
 >>
->> It seems that you want that module data of sub drivers are added by
->> depmod to /lib/modules/KERNEL_VERSION/modules.xxxmap because some
->> hot-plug system should use modules.xxxmap file to find the proper dr=
-iver
->> to load.
->=20
-> Yes. I would like the module to export its module alias information f=
-or
-> the subdrivers such that depmod can add it to its databases and the
-> normal module autoloading mechanisms work as intended. Note that in m=
-y
-> case, "some hot-plug" system is really just udev, not something
-> special..
+>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos4210-origen.dts         |    6 ++++
+>>  arch/arm/boot/dts/exynos4210-trats.dts          |    6 ++++
+>>  arch/arm/boot/dts/exynos4210-universal_c210.dts |    6 ++++
+>>  arch/arm/boot/dts/exynos4210.dtsi               |   12 +++++++
+>>  arch/arm/boot/dts/exynos5250-arndale.dts        |    6 ++++
+>>  arch/arm/boot/dts/exynos5250-cros-common.dtsi   |    6 ++++
+>>  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    6 ++++
+>>  arch/arm/boot/dts/exynos5250.dtsi               |   23 ++++++++++++++
+>>  arch/arm/boot/dts/exynos5420-smdk5420.dts       |    6 ++++
+>
+> There are more Exynos5420-based boards supported in mainline. If you do
+> not have necessary data and/or hardware to fully enable the new driver
+> on them, you should add responsible people on Cc list, so at least they
+> know they have one more item on their TODO list. Added them for you.
 
-+1 here.
+Thanks!. Will do that next time.
 
-While I haven't tested this on my Exynos devices yet since I'm still
-working on -next kernels there, here's an example of such a 3.16 config=
-:
+>
+>>  arch/arm/boot/dts/exynos5420.dtsi               |   38 +++++++++++++++++++++++
+>>  10 files changed, 115 insertions(+)
+>
+> [snip]
+>
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+>> index 492e1ef..876247a 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -63,6 +63,29 @@
+>>                       compatible = "arm,cortex-a15";
+>>                       reg = <0>;
+>>                       clock-frequency = <1700000000>;
+>> +
+>> +                     clocks = <&clock CLK_ARM_CLK>;
+>> +                     clock-names = "cpu";
+>> +                     clock-latency = <200000>;
+>
+> Where does this latency value comes from? How did you calculate it?
+>
+> For example, on Exynos4210, for all operating points added by your
+> patches, the highest PLL locking latency will be 60uS, because the
+> highest PDIV value would be 6 and PLL lock time is PDIV*240 ticks of 24
+> MHz reference clock.
 
-http://kernel.opensuse.org/cgit/kernel-source/tree/config/armv7hl/defau=
-lt
+Since the CPU clock is a composite clock with dividers and muxes, the
+latency includes the settling time for these clock blocks as well. I
+have not made any measurements of the clock transition latency.
 
-Of the platforms enabled, all drivers are configured as modules where
-possible, to keep kernel size small, and dracut (or kiwi) is used to
-generate an initrd that makes available the modules.
+>
+>> +
+>> +                     operating-points = <
+>> +                             1700000 1300000
+>> +                             1600000 1250000
+>
+> [snip]
+>
+>> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> index 6052aa9..084e587 100644
+>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> @@ -24,6 +24,12 @@
+>>               bootargs = "console=ttySAC2,115200 init=/linuxrc";
+>>       };
+>>
+>> +     cpus {
+>
+> Is there no regulator for cpu0?
 
-So it would certainly be good to have the DRM auto-load somehow, withou=
-t
-the user having to manually touch config files. In particular when I
-think of the Chromebooks, where Wifi needs configuration on first boot
-and no serial console is accessible.
+This was a mistake. I did not intend to add regulator for cpu4 as well
+but somehow I missed it. I will remove it in the next version.
 
-Regards,
-Andreas
+>
+>> +             cpu@4 {
+>> +                     cpu0-supply = <&buck6_reg>;
+>> +             };
+>> +     };
+>> +
+>>       fixed-rate-clocks {
+>>               oscclk {
+>>                       compatible = "samsung,exynos5420-oscclk";
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index cb2b70e..1116d55 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>
+> [snip]
+>
+>>
+>>               cpu1: cpu@1 {
+>> @@ -69,6 +87,7 @@
+>>                       reg = <0x1>;
+>>                       clock-frequency = <1800000000>;
+>>                       cci-control-port = <&cci_control1>;
+>> +                     clock-latency = <200000>;
+>
+> Do you need to specify this property for every CPU or rather just for
+> those which have operating points specified?
 
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+The big.little cpufreq driver expects each CPU to have the clock
+latency specified.
+
+Thanks,
+Thomas.
+
+>
+> Best regards,
+> Tomasz
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
