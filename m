@@ -1,106 +1,60 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v7 5/6] ARM: Exynos: switch to using generic cpufreq
- driver for exynos4210/5250/5420
-Date: Tue, 29 Jul 2014 11:07:44 +0530
-Message-ID: <CAJuA9ai=Dw0QN+KR7XQAP93R3+78ndzYNpJKwtAn-Nr6dffTXg@mail.gmail.com>
-References: <1405345118-4269-1-git-send-email-thomas.ab@samsung.com>
-	<1405345118-4269-6-git-send-email-thomas.ab@samsung.com>
-	<53CA7247.1080009@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 0/3] drm/exynos: Allow module to be autoloaded
+Date: Tue, 29 Jul 2014 14:38:39 +0900
+Message-ID: <53D7335F.9020802@samsung.com>
+References: <1405715801-5325-1-git-send-email-sjoerd.simons@collabora.co.uk>
+ <53CC82AC.9060301@samsung.com> <1405925419.7527.17.camel@dusk>
+ <1406536246.15871.6.camel@dusk> <53D65B5D.1060505@samsung.com>
+ <1406558722.29009.11.camel@dusk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f170.google.com ([209.85.217.170]:37365 "EHLO
-	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750931AbaG2Fhq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 01:37:46 -0400
-In-Reply-To: <53CA7247.1080009@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1406558722.29009.11.camel@dusk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Sat, Jul 19, 2014 at 6:57 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On 14.07.2014 15:38, Thomas Abraham wrote:
->> From: Thomas Abraham <thomas.ab@samsung.com>
->>
->> Remove the platform device instantiation for exynos cpufreq driver and add the
->> platform device for generic cpufreq drivers.
->>
->> Cc: Kukjin Kim <kgene.kim@samsung.com>
->> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->> Reviewed-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->> Tested-by: Arjun K.V <arjun.kv@samsung.com>
->> ---
->>  arch/arm/mach-exynos/exynos.c |   15 ++++++++++++++-
->>  1 file changed, 14 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
->> index 2a43a17..5028b35 100644
->> --- a/arch/arm/mach-exynos/exynos.c
->> +++ b/arch/arm/mach-exynos/exynos.c
->> @@ -183,7 +183,20 @@ void __init exynos_cpuidle_init(void)
->>
->>  void __init exynos_cpufreq_init(void)
->>  {
->> -     platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
->> +     char *dev_name;
->> +
->> +     if (of_machine_is_compatible("samsung,exynos5440"))
->> +             return;
->
-> The original code registers the device unconditionally. Why Exynos5440
-> is excluded now?
->
->> +     if (of_machine_is_compatible("samsung,exynos5420"))
->> +             dev_name = "arm-bL-cpufreq-dt";
->> +     else
->> +             if (of_machine_is_compatible("samsung,exynos4412") ||
->> +                     of_machine_is_compatible("samsung,exynos4212"))
->> +                     dev_name = "exynos-cpufreq";
->> +             else
->> +                     dev_name = "cpufreq-cpu0";
->> +
->> +     platform_device_register_simple(dev_name, -1, NULL, 0);
->>  }
->
-> How about rewriting this to:
->
-> static const struct of_device_id exynos_cpufreq_matches[] = {
->         { .compatible = "samsung,exynos5420",
->                         .data = "arm-bL-cpufreq-dt" },
->         { .compatible = "samsung,exynos5250",
->                         .data = "cpufreq-cpu0" },
->         { .compatible = "samsung,exynos4210",
->                         .data = "cpufreq-cpu0" },
->         { /* sentinel */ }
-> };
->
-> void __init exynos_cpufreq_init(void)
-> {
->         struct device_node *root = of_find_node_by_path("/");
->         const struct of_device_id *match;
->
->         match = of_match_node(exynos_cpufreq_matches, root);
->         if (!match) {
->                 platform_device_register_simple("exynos-cpufreq", -1,
->                                                 NULL, 0);
->                 return;
->         }
->
->         platform_device_register_simple(match->data, -1, NULL, 0);
-> }
->
-> This way it is much more readable and original behavior is preserved for
-> any SoCs not supported by new drivers.
-
-Thanks for the suggestion Tomasz.
-
->
-> Best regards,
-> Tomasz
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gMjAxNOuFhCAwN+yblCAyOOydvCAyMzo0NSwgU2pvZXJkIFNpbW9ucyB3cm90ZToKPiBIZXkg
+SW5raSwKPiAKPiBPbiBNb24sIDIwMTQtMDctMjggYXQgMjM6MTcgKzA5MDAsIElua2kgRGFlIHdy
+b3RlOgo+PiBPbiAyMDE064WEIDA37JuUIDI47J28IDE3OjMwLCBTam9lcmQgU2ltb25zIHdyb3Rl
+Ogo+PiBTb3JyeSBmb3IgbGF0ZSwKPj4KPj4gSSBkb24ndCBzZWUgd2h5IEV4eW5vcyBkcm0gZHJp
+dmVyIHNob3VsZCBiZSBhdXRvLWxvYWRlZCBtb2R1bGUuIEkgdGhpbmsKPj4gYWxsIGRldmljZXMg
+Y292ZXJlZCBieSBFeHlub3MgZHJtIGZyYW1ld29yayBhcmUgbm90IGhvdC1wbHVnZ2VkLiBNYXli
+ZQo+PiB0aGVyZSBpcyBteSBtaXNzaW5nIHBvaW50LiBTbyBjYW4geW91IGV4cGxhaW4gd2h5IEV4
+eW5vcyBkcm0gZHJpdmVyCj4+IHNob3VsZCBiZSBhdXRvLWxvYWRlZCBtb2R1bGU/Cj4gCj4gVGhl
+IGJhY2tncm91bmQgZm9yIHRoaXMgaXMgdGhhdCBJJ20gYnVpbGRpbmcgYSBkaXN0cmlidXRpb24t
+c3R5bGUKPiBtdWx0aXBsYXRmb3JtIGtlcm5lbCwgdGhhdCBpcyB0byBzYXkgYSBrZXJuZWwgd2hp
+Y2ggY2FuIGJvb3Qgb24gYSBiaWcKPiBzZXQgb2YgZGlmZmVyZW50IEFSTSBib2FyZHMuIEFzIHN1
+Y2gsIHRoZSBpbnRlbnRpb24gaXMgdG8ga2VlcCB0aGUgY29yZQo+IHpJbWFnZSBhcyBzbWFsbCBh
+cyBwb3NzaWJsZSBhbmQgZXNzZW50aWFsbHkgYnVpbGQgdGhpbmdzIGFzIGZhciBhcwo+IHBvc3Np
+YmxlIGFzIGxvYWRhYmxlIG1vZHVsZXMuIFNvIGluIGEgc2Vuc2UsIGFsbCBvZiB0aGUgaGFyZHdh
+cmUgaXMKPiAiaG90cGx1Z2dlZCIsIGRlcGVuZGluZyBvbiB3aGljaCBib2FyZCB0aGUga2VybmVs
+IGlzIGFjdHVhbGx5IGJvb3RlZCBvbiEKPiAKPiBGb3IgdGhhdCB1c2UtY2FzZSwgZXh5bm9zZHJt
+IG5lZWRzIHRvIGJlIGFibGUgdG8gYnVpbGQgYXMgYSBtb2R1bGUKPiAod2hpY2ggaXQgYWxyZWFk
+eSBjYW4hKSBhbmQgaXQgbmVlZHMgdGhlIHJlcXVpcmVkIG1ldGEtZGF0YSBmb3IKPiB1c2Vyc3Bh
+Y2UgdG8ga25vdyB3aGVuIGl0IHNob3VsZCBiZSBsb2FkZWQuIFRoZSBsYXR0ZXIgaXMgd2hhdCBt
+eSBwYXRjaAo+IGFkZHMuIAo+IAoKSXQgc2VlbXMgdGhhdCB5b3Ugd2FudCB0aGF0IG1vZHVsZSBk
+YXRhIG9mIHN1YiBkcml2ZXJzIGFyZSBhZGRlZCBieQpkZXBtb2QgdG8gL2xpYi9tb2R1bGVzL0tF
+Uk5FTF9WRVJTSU9OL21vZHVsZXMueHh4bWFwIGJlY2F1c2Ugc29tZQpob3QtcGx1ZyBzeXN0ZW0g
+c2hvdWxkIHVzZSBtb2R1bGVzLnh4eG1hcCBmaWxlIHRvIGZpbmQgdGhlIHByb3BlciBkcml2ZXIK
+dG8gbG9hZC4KCk9rLCB0aGVuIGRvZXMgZXh5bm9zIGRybSBkcml2ZXIgaXMgbG9hZGVkIHdlbGwg
+d2l0aCB5b3VyIHBhdGNoZXM/IE15CmNvbmNlcm4gaXMgdGhhdCBkZXZpY2VfaWQgb2YgZXh5bm9z
+IGRybSBjb3JlIGRyaXZlciAsIGV4eW5vc19kcm1fZHJ2LmMsCndvdWxkbid0IGJlIGV4cG9ydGVk
+IHRvIHVzZXJzcGFjZSwgd2hpY2ggbWVhbnMgdGhhdCBleHlub3MgZHJtIHN1YnN5c3RlbQphcmVu
+J3QgYm91bmQgYnkgY29tcG9uZW50IGZyYW1ld29yayBiZWNhdXNlIG1vc3Qgc3ViIGRyaXZlcnMg
+ZXhjZXB0IHZpZGkKYXJlIGJvdW5kIGJ5IGNvbXBvbmVudCBpbnRlcmZhY2VzIG9mIGV4eW5vcyBk
+cm0gY29yZTogZXh5bm9zIGRybSBkcnYgaXMKbm90IGRldmljZSB0cmVlIGJhc2UgZHJpdmVyLgoK
+VGhhbmtzLApJbmtpIERhZQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo=
