@@ -1,68 +1,57 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC 3/5] regulator: core: Only apply constraints if available
- on list voltage
-Date: Tue, 29 Jul 2014 18:18:57 +0100
-Message-ID: <20140729171857.GV17528@sirena.org.uk>
+Subject: Re: [RFC 5/5] ARM: dts: Improve Peach Pit and Pi power scheme model
+Date: Tue, 29 Jul 2014 18:20:05 +0100
+Message-ID: <20140729172005.GW17528@sirena.org.uk>
 References: <1406651339-28901-1-git-send-email-javier.martinez@collabora.co.uk>
- <1406651339-28901-4-git-send-email-javier.martinez@collabora.co.uk>
+ <1406651339-28901-6-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="R0sYUISimcquDWTD"
+	protocol="application/pgp-signature"; boundary="iV2d/vj8ESJZTLS0"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1406651339-28901-4-git-send-email-javier.martinez@collabora.co.uk>
+In-Reply-To: <1406651339-28901-6-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---R0sYUISimcquDWTD
+--iV2d/vj8ESJZTLS0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 29, 2014 at 06:28:57PM +0200, Javier Martinez Canillas wrote:
-> If a selector can't be used on a platform due to voltage constraints,
-> regulator_list_voltage() returns 0. Doing this unconditionally made
-> sense since constraints were set in machine_constraints_voltage() at
-> regulator registration time.
->=20
-> But for load switches that don't define a voltage output, the parent
-> supply voltage is used so the constraints should only be applied if
-> they were defined for the child regulators.
+On Tue, Jul 29, 2014 at 06:28:59PM +0200, Javier Martinez Canillas wrote:
+> The DeviceTree files for the Peach Pit and Pi machines have
+> a simplistic model of the connections between the different
+> regulators since not all the tps65090 regulators get their
+> input supply voltage from the VDC. DCDC1-3, LD0-1 and fet7
+> parent supply is indded VDC but the fet1-6 get their input
+> supply from the DCDC1 and DCDC2 output voltage rails.
 
-No, think about what you're doing here and why we're filtering out
-unsettable voltages - this causes problems for consumers on regulators
-that don't have any ability to vary voltages since they will now be able
-to list voltages that they can't select. =20
+Acked-by: Mark Brown <broonie@linaro.org>
 
-I would also expect any regulator where the supplied devices are able to
-vary the voltage to explicitly provide a constraint even if the
-implementation is done in a parent regulator.  There may be constraints
-on the child supply which aren't directly present on the parent supply
-and can be ignored if the child supply is turned off.
+This *should* be independent of the rest of this series.
 
---R0sYUISimcquDWTD
+--iV2d/vj8ESJZTLS0
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT19d+AAoJELSic+t+oim992wP/iLrqpiwTyw4N9z1hAe8Oi6F
-bSV6hdU0SVlfOp2Fwge5oLNu8PVhrxpV3t/O607GeAwVBCnmW1cFS6c02gccuKpf
-4GGxaiBqe6Juw/KH4j26dgrEKFJwvpoEKkgGMBcw++bE7xEsvwpMMEDgEndFjpge
-WFe7Dw28SH4pcLbZd7/3o1k1zR2Fn6K2JevSMiPb3ukpiqwmt9MwySbuUsoVzz+U
-xqtARXnLN/U+XE8VX1R+jCYf0QqaAh/1u5Vzt2b6RKNsX/tuame+2wiPTZROj2oc
-U1csVFPHuztI+bi/FSVRiqEVav0TMekdqSzVjvX0T1Rg81qK9OPsOO2vD0aQC0NK
-bj3pFT0zb2Yu/hb6iQ9VKXs11yel1RmQRKPJ5nwp95b6zbDdvm1UKgbSJH2b2k05
-CZJBJSOiph016g1jdpfiNYfWQ0DxKLi9ph70+Cs6RcIw5jioVulhf2ZAKmzYbUJD
-aDlATxwn3L2jgL3jySGwxLmPjAlmtuXJxwStgfSOzSauscGA23r607ZNcpOD5X9+
-QEqmXH5PGwFd21h6sJ0DxTANTTBT1aQMikqxgiocYnafk9DuGPnEX6zKn9pdzWMJ
-XPeOh6AYsPYckbs0yIOfs8TKpZA67JVBsxWAzalCArtwraEy/NnCKc+pHy/1wUQm
-HpnYpfeS5Q6+d6Mi8gRF
-=uy9r
+iQIcBAEBAgAGBQJT19fCAAoJELSic+t+oim9GJUP/2pHMO6SaojAsT12eeQ/Ox+8
+w0cxU1Vv6y+bJbsivw7rZ8LBUWWS16kltny2Dp7qRtENnRP67+ws5/q75wr+i7B+
+SkoVR9vpCFupRt9/1ddvUPUG6BD6k96YxvHMlPnUi+JjpEWzGaXjR2hJjNEad8hT
+m99QCw72prWA+csr1y8dnWjE4CqxELGXjoeoB7sIRyAAC1DY8s0x28DFyLmulQUt
+cjppWNiIu5r1+2cBbOeS+/rYyYP/ZLZ7efzUg+qoOHqU7ToNt46ByZi8YAv2XwsJ
+fp2HfRauGQjsQjsujB54GzMlMDK1oXl62ugZTw0Ia5yhBc8X4v6BmM5b3M+oE/PM
+Nc/L1fZBpCQXwYsPYZdrUizdS1TVbeDXdTo4sjByluvybEEoAOQjROqCdwQkfRtX
+PrVq8BCd3ZUvO6HfRvxgocrbCF3oFDqR8fhCkCKwiUIgXS4/UrMgkef1SflPzMDy
+poglt9mWKHFfehWF037HpRT7wSU1HqxoEA4Hh2yKx9qOf8rcCoPLzxSVPrcw2VKT
+noainkzL7zNF518uj8O1tq21twDiCczMi5aVjp2XkkNGozaxoIRBovyMRxBe1bml
+WG/b38W2lhTSvz5UKEXYxhMV7YHBrrMISOVKoMwHoqYps6ntKTdWEtYihFE/7yYO
+Q90vYzBL9TL/sju+cntj
+=RgOI
 -----END PGP SIGNATURE-----
 
---R0sYUISimcquDWTD--
+--iV2d/vj8ESJZTLS0--
