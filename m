@@ -1,56 +1,61 @@
-From: Doug Anderson <dianders@google.com>
-Subject: Re: [PATCHv7 5/5] mmc: dw_mmc: replace "disable-wp" from slot's quirk
- to host's quirk
-Date: Tue, 29 Jul 2014 11:01:19 -0700
-Message-ID: <CAD=FV=VnP7q0UE0uP_8Hzbhtu6qJqz2kUR9E_sfk4wHbBH_7cg@mail.gmail.com>
-References: <1406514579-3769-1-git-send-email-jh80.chung@samsung.com>
-	<1406514579-3769-6-git-send-email-jh80.chung@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC 2/5] regulator: core: Allow to get voltage count and list
+ from parent
+Date: Tue, 29 Jul 2014 19:25:24 +0100
+Message-ID: <20140729182524.GZ17528@sirena.org.uk>
+References: <1406651339-28901-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1406651339-28901-3-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="LC1YWv9qPTwZNmWR"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f173.google.com ([209.85.220.173]:53592 "EHLO
-	mail-vc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750708AbaG2SBU (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33348 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751212AbaG2SZk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 14:01:20 -0400
-Received: by mail-vc0-f173.google.com with SMTP id hy10so32952vcb.32
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jul 2014 11:01:20 -0700 (PDT)
-In-Reply-To: <1406514579-3769-6-git-send-email-jh80.chung@samsung.com>
+	Tue, 29 Jul 2014 14:25:40 -0400
+Content-Disposition: inline
+In-Reply-To: <1406651339-28901-3-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Dinh Nguyen <dinguyen@altera.com>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Jaehoon,
 
-On Sun, Jul 27, 2014 at 7:29 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> Replaced the "disable-wp" into host's quirks.
-> (Because the slot-node is removed at dt-file.)
->
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
-> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
-> ---
->  drivers/mmc/host/dw_mmc.c  |   12 +++++-------
->  include/linux/mmc/dw_mmc.h |    6 ++----
->  2 files changed, 7 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 1ac227c..4a4f66f 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -997,7 +997,7 @@ static int dw_mci_get_ro(struct mmc_host *mmc)
->         int gpio_ro = mmc_gpio_get_ro(mmc);
->
->         /* Use platform get_ro function, else try on board write protect */
-> -       if (slot->quirks & DW_MCI_SLOT_QUIRK_NO_WRITE_PROTECT)
-> +       if (slot->host->quirks & DW_MCI_QUIRK_NO_WRITE_PROTECT)
+--LC1YWv9qPTwZNmWR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It doesn't seem like it would be hard to include support for the old
-binding (and just print a warning).  Then this could land ahead of the
-device tree changes.
+On Tue, Jul 29, 2014 at 06:28:56PM +0200, Javier Martinez Canillas wrote:
+> Load switches are modeled as regulators but they just provide
+> the voltage of their parent input supply. So, the drivers for
+> these switches usually neither provide a .list_voltage handler
+> not set a .n_voltages count. But there is code in the kernel
+> that assumes that all regulators should be able to provide this
+> information (e.g: cpufreq and mmc subsystems).
 
-Generally I think we're supposed to keep support for old device trees
-if possible (except in extreme cases).
+Applied, thanks.
 
--Doug
+--LC1YWv9qPTwZNmWR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT1+cRAAoJELSic+t+oim9y9gP/28pPZSR5MGdyetLh/Smvhd9
+fkWoPkM++JG1NS3IPseKIT3E9hFLeaM4H+EsOpnjMWfTYieA7Axedd/gHFnn04jn
++XZAtqVr3UI1iOpJ8n8UO90fedmTDquyo4lG64xCMqbDw0W5+EFJLFGti5Ix2fRd
+qBavBcSYDBjjjaP8TQ4JCmyfMrvSOy+bCzPUSBwKiV6CAtqDXZ+GQCm0DMn3BDLd
+chzEXQwqtPv5CElZk8XypbytbMrMbEXIRXXWngEoiOvgHInaWKqTqRq+umwB0bQ0
+GGxJA57/ZD1y+zBzFZK8gMf3xIXz8/HEGOcWlBysVg4mF1ZNN2Fz8yWvl13L0I4J
+06MIYJq4NUN1SGZKtk0cYcsCWFrigZTy6/7kI+dtTwVrhoZWiTBF8JqsKJ5w82ja
+mV1b+jA/clfH1BygV0NrOzD5e+KGwvce2FIKw6llRZpxPwN4s8AhO3WqTwhB7dDh
+71g+wEQwQNqoLa70Y/9cS4F4cqV3sCU1YO/SPrvImC8Z74j/Xv3pq6qEe+TJ1hu+
+R5lNYJzNRTdnvsgC/P10498vmRmmcG2elBdkg+5j/OCQqpstrGn+Bij1wGx3kLV7
+NzaR3IoQmvv23sqUF4Lz8y/xL19mO370xrtRoFu5tKlToSlHPCk/spayycct/h6j
+bqKfo/z2bHF+omq1/dNu
+=ilPJ
+-----END PGP SIGNATURE-----
+
+--LC1YWv9qPTwZNmWR--
