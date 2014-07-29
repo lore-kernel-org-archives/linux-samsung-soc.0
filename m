@@ -1,58 +1,56 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC 4/5] regulator: tps65090: Set voltage for fixed regulators
-Date: Tue, 29 Jul 2014 18:36:31 +0100
-Message-ID: <20140729173631.GX17528@sirena.org.uk>
-References: <1406651339-28901-1-git-send-email-javier.martinez@collabora.co.uk>
- <1406651339-28901-5-git-send-email-javier.martinez@collabora.co.uk>
+From: Doug Anderson <dianders@google.com>
+Subject: Re: [PATCHv7 5/5] mmc: dw_mmc: replace "disable-wp" from slot's quirk
+ to host's quirk
+Date: Tue, 29 Jul 2014 11:01:19 -0700
+Message-ID: <CAD=FV=VnP7q0UE0uP_8Hzbhtu6qJqz2kUR9E_sfk4wHbBH_7cg@mail.gmail.com>
+References: <1406514579-3769-1-git-send-email-jh80.chung@samsung.com>
+	<1406514579-3769-6-git-send-email-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="zlZIUqJgAFTDhHLL"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33266 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750929AbaG2RhH (ORCPT
+Received: from mail-vc0-f173.google.com ([209.85.220.173]:53592 "EHLO
+	mail-vc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750708AbaG2SBU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 13:37:07 -0400
-Content-Disposition: inline
-In-Reply-To: <1406651339-28901-5-git-send-email-javier.martinez@collabora.co.uk>
+	Tue, 29 Jul 2014 14:01:20 -0400
+Received: by mail-vc0-f173.google.com with SMTP id hy10so32952vcb.32
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jul 2014 11:01:20 -0700 (PDT)
+In-Reply-To: <1406514579-3769-6-git-send-email-jh80.chung@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Dinh Nguyen <dinguyen@altera.com>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
 
+Jaehoon,
 
---zlZIUqJgAFTDhHLL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Sun, Jul 27, 2014 at 7:29 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Replaced the "disable-wp" into host's quirks.
+> (Because the slot-node is removed at dt-file.)
+>
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
+> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+> ---
+>  drivers/mmc/host/dw_mmc.c  |   12 +++++-------
+>  include/linux/mmc/dw_mmc.h |    6 ++----
+>  2 files changed, 7 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 1ac227c..4a4f66f 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -997,7 +997,7 @@ static int dw_mci_get_ro(struct mmc_host *mmc)
+>         int gpio_ro = mmc_gpio_get_ro(mmc);
+>
+>         /* Use platform get_ro function, else try on board write protect */
+> -       if (slot->quirks & DW_MCI_SLOT_QUIRK_NO_WRITE_PROTECT)
+> +       if (slot->host->quirks & DW_MCI_QUIRK_NO_WRITE_PROTECT)
 
-On Tue, Jul 29, 2014 at 06:28:58PM +0200, Javier Martinez Canillas wrote:
+It doesn't seem like it would be hard to include support for the old
+binding (and just print a warning).  Then this could land ahead of the
+device tree changes.
 
-> +#define tps65090_REG_VAR(_id, _sname, en_reg, _en_bits, _ops) \
-> +	tps65090_REG_DESC(_id, _sname, en_reg, _en_bits, 0, 0, _ops)
+Generally I think we're supposed to keep support for old device trees
+if possible (except in extreme cases).
 
-I'd expect this to describe a variable regulator when in fact it
-seems it describes a switch with no regulation.  Better name please.
-
---zlZIUqJgAFTDhHLL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT19ucAAoJELSic+t+oim9efkP/jLMypjv2sfrlLFaC59Lb2HI
-99kLoGVpaNqLYEhy2tQ1yGZ3eDVTXXJncprxKjAe1orQ9k1sRC/mztV/fJCWoYsa
-fLfrUTJh+4YAxaFSXS5xE3CQwXvkcWHyR2ZViVyDZvJdmNHg1y7lQfhW/RlHWPmq
-XUqWg66OkFz2u5y8Bymfo5DD3+5uWenT7gW/hGWohdsXWargj7FC3j60f0hutYJx
-AycWkTQt1Dr61op5RWHxI7IZC5CLMvnW+cvzGvvN8biAcsTtry58BOdwFNuutZQj
-mxwD4h40uaIwWZBEwKKSR4Cs+k0cOrKrYbiKg5uJXIYKrE6ySs8TfLuA1nVeOFfF
-RTUv1bmZp1oY4CaKhWMB9rjcAF3gt8jcfq+tfq44OrtMAn23OSfvwuRy/suyetQh
-m3SZNgp0naMBMItvRiVJG4oDWoCWZ+3SsmL817GVg+CJ5Maw7FZvgvp+uj+0YZNc
-nQuf7fmglr9uk0xEYYFYPLM4Zt9KlZZxrQtS6bg++8WaUyPSenZzPQzUhUTB2Hbw
-hb38W3xz/Yf3RPLIFErEHD6ASufKv/pgbn17KeqJ4uIHTMQIYs3Pc7dvdxDmYh8p
-tKNNBsmQV6NYidUeEo7DiqBw+3RfarD+n22jG/2tdd0vVRmDVWEH0NkM7sC7A177
-RmiS4xnPHdlg1OBalAR5
-=9qdY
------END PGP SIGNATURE-----
-
---zlZIUqJgAFTDhHLL--
+-Doug
