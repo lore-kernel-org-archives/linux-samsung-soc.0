@@ -1,36 +1,51 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 0/3] ARM: dts: Add TMU dt node and missing data for Exynos3250
-Date: Wed, 30 Jul 2014 08:02:27 +0900
-Message-ID: <53D82803.9060804@samsung.com>
-References: <1406600232-31033-1-git-send-email-cw00.choi@samsung.com>
+Subject: Re: [PATCH v2 2/4] ARM: dts: exynos5250: cypress,cyapa trackpad is
+ Snow only
+Date: Wed, 30 Jul 2014 08:06:40 +0900
+Message-ID: <53D82900.1050409@samsung.com>
+References: <1405704009-8430-1-git-send-email-afaerber@suse.de>	<1405704009-8430-3-git-send-email-afaerber@suse.de> <CAD=FV=VAWG=H9=mwKZfip9zvAROU3aVXihnaBUBr0GNSzDoWFw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:41186 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754123AbaG2XCe (ORCPT
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:46349 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753131AbaG2XGr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 19:02:34 -0400
-In-Reply-To: <1406600232-31033-1-git-send-email-cw00.choi@samsung.com>
+	Tue, 29 Jul 2014 19:06:47 -0400
+In-Reply-To: <CAD=FV=VAWG=H9=mwKZfip9zvAROU3aVXihnaBUBr0GNSzDoWFw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: kgene.kim@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-doc@vger.kernel.org, t.figa@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, "moderated list:ARM/SAMSUNG ARM A..." <linux-arm-kernel@lists.infradead.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-On 07/29/14 11:17, Chanwoo Choi wrote:
-> This patchset add TMU (Thermal Management Unit) dt node and missing pinctrl
-> property of uart0/1. Also, this patchset remove duplcate 'interrupt-parent'
-> property for code clean.
+On 07/30/14 01:16, Doug Anderson wrote:
+> Andreas,
 >
-> Chanwoo Choi (3):
->    ARM: dts: Add TMU dt node to monitor the temperature for Exynos3250
->    ARM: dts: Remove duplicate 'interrput-parent' property for Exynos3250
->    ARM: dts: Add missing pinctrl for uart0/1 for Exynos3250
+> On Fri, Jul 18, 2014 at 10:20 AM, Andreas F=C3=A4rber<afaerber@suse.d=
+e>  wrote:
+>> Move it from exynos5250-cros-common.dtsi to exynos5250-snow.dts.
+>> Spring does not need it, it uses an Atmel maXTouch instead.
+>>
+>> Signed-off-by: Andreas F=C3=A4rber<afaerber@suse.de>
+>> ---
+>>   v2: New (Doug Anderson)
+>>
+>>   arch/arm/boot/dts/exynos5250-cros-common.dtsi |  8 --------
+>>   arch/arm/boot/dts/exynos5250-snow.dts         | 10 ++++++++++
+>>   2 files changed, 10 insertions(+), 8 deletions(-)
 >
->   arch/arm/boot/dts/exynos3250.dtsi | 15 +++++++++++++--
->   1 file changed, 13 insertions(+), 2 deletions(-)
+> Reviewed-by: Doug Anderson<dianders@chromium.org>
 >
-Applied this whole series, thanks.
+> Kukjin could apply this now if he wanted to avoid future conflicts.
 
-- Kukjin
+OK, I read your comments on another this series and I've applied 1/4 an=
+d=20
+2/4 as per your suggestion with your reviewed by tag ;)
+
+And I think, Andreas is going to re-spin remains for exynos5250-spring=20
+based on updated my -next?
+
+Thanks,
+Kukjin
