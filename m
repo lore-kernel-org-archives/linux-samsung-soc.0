@@ -1,118 +1,76 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v2 0/9] thermal: exynos: various cleanups
-Date: Tue, 29 Jul 2014 08:58:48 -0400
-Message-ID: <20140729125848.GA18746@developer>
-References: <1403026045-16024-1-git-send-email-b.zolnierkie@samsung.com>
- <20140728143759.GA17837@developer>
- <CADGdYn6EN-evo2KCjFfQ2h8gLoop=xTJZO3fnNxBxM9067tjxg@mail.gmail.com>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [PATCH v2 3/4] ARM: dts: exynos5250: Fold common ChromeOS parts
+ into Snow
+Date: Tue, 29 Jul 2014 15:00:03 +0200
+Message-ID: <53D79AD3.8020700@suse.de>
+References: <1405704009-8430-1-git-send-email-afaerber@suse.de>	<1405704009-8430-4-git-send-email-afaerber@suse.de>	<CABxcv=kP2PCcNCtM1WUXx5wGG4m-jdw-P1dw0boaSwdJpoX=jQ@mail.gmail.com>	<CAD=FV=V-7+Jj7b8-fQL1PiQhNmhiGOPJzitGd__OUQLDteO_8g@mail.gmail.com> <CABxcv=nDsKSdDtVZKpcTP+=3pbeTswJRCUvvXVx98p+1Zzz0Bg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f176.google.com ([209.85.220.176]:36912 "EHLO
-	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750907AbaG2M7D (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 08:59:03 -0400
-Content-Disposition: inline
-In-Reply-To: <CADGdYn6EN-evo2KCjFfQ2h8gLoop=xTJZO3fnNxBxM9067tjxg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CABxcv=nDsKSdDtVZKpcTP+=3pbeTswJRCUvvXVx98p+1Zzz0Bg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>, Doug Anderson <dianders@chromium.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, "moderated list:ARM/SAMSUNG ARM A..." <linux-arm-kernel@lists.infradead.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: amit daniel kachhap <amit.daniel@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Jul 28, 2014 at 08:30:53PM +0530, amit daniel kachhap wrote:
-> Hi Eduardo,
+Hi Javier and Doug,
 
-Hello Amit,
+Am 25.07.2014 19:02, schrieb Javier Martinez Canillas:
+> On Fri, Jul 25, 2014 at 6:43 PM, Doug Anderson <dianders@chromium.org=
+> wrote:
+>> On Fri, Jul 25, 2014 at 9:35 AM, Javier Martinez Canillas
+>> <javier@dowhile0.org> wrote:
+>>> Hello Andreas,
+>>>
+>>> On Fri, Jul 18, 2014 at 7:20 PM, Andreas F=C3=A4rber <afaerber@suse=
+=2Ede> wrote:
+>>>>
+>>>> +       memory {
+>>>> +               reg =3D <0x40000000 0x80000000>;
+>>>> +       };
+>>>> +
+>>>> +       chosen {
+>>>> +       };
+>>>> +
+>>>
+>>> Is there a reason for an empty chosen node? Same for the Spring DTS=
+=2E
+>>
+>> I know that the bootloader (U-Boot) fills this in.  I'd have to doub=
+le
+>> check how the bootloader handles the node not being there to begin
+>> with.
+>=20
+> Yes, U-Boot fills this but if the node does not exist in the FDT, it
+> creates one. Take a look at fdt_chosen() in common/fdt_support.c [0].
+>=20
+> So I think it's better to just remove it since is empty.
 
-> 
-> Please reject this entire series as this is not re-based recently.
-> Actually two point trimming which this series seeks to remove is used
-> by exynos3250 and is in Rui's tree
-> (https://git.kernel.org/cgit/linux/kernel/git/rzhang/linux.git/commit/?h=next&id=1fe56dc16a3dab400206443f70ae158c8f595c42).
-> 
+Hm, in different context it was stated that device trees shouldn't rely
+on bootloader behavior (for a /memory node on Zynq we ended up
+specifying the size cell with the real value despite U-Boot overriding
+it to a lesser value).
 
-Yeah, that was my original concern when I first looked this series.
-However, as I saw a couple of your acks I thought you would be in sync
-with Bartlomiej. 
+Can we instead settle on filling this node with defaults? :)
+bootargs =3D "console=3Dtty1"; would be my choice for Spring. Would tha=
+t be
+applicable for Snow as well?
+Not sure how to specify that via linux,stdout-path property.
 
-I agree with Bartlomiej that we need to keep the kernel code in very
-good shape, but if we are removing features for the sake of reducing
-LOCs and we end up dropping support to known chips, I definitely won't
-agree. 
+I believe this would be a follow-up patch either way.
 
-Can you guys please reach a common agreement on these cleanups?
+Since there's at least two series out there trying to fiddle with
+-cros-common.dtsi, including one that drops the slot sub-node of the MM=
+C
+and one that adds CPU power supply, it would be nice if we can get the
+-cros-common parts sorted out and applied. Can you ack/review 1-2?
+Should I squash them in a v3?
 
-Bartlomiej, best thing to do is to sync your work on top of Rui's tree.
+Thanks,
+Andreas
 
-For now I am dropping this series from my -next branch. :-(
-
-> Thanks,
-> Amit D
-> 
-> 
-> On Mon, Jul 28, 2014 at 8:07 PM, Eduardo Valentin <edubezval@gmail.com> wrote:
-> > On Tue, Jun 17, 2014 at 07:27:16PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> >> Hi,
-> >>
-> >> This patch series contains various cleanups for EXYNOS thermal
-> >> driver.  Overall it decreases driver's LOC by 12%.  It is based
-> >> on next-20140617 kernel.  It should not cause any functionality
-> >> changes.
-> >>
-> >> Changes since v1:
-> >> - synced patches against next-20140617
-> >> - merged patch "thermal: exynos: remove unused defines" into
-> >>   "thermal: exynos: remove unused struct exynos_tmu_registers
-> >>   entries" one (per request from Eduardo)
-> >> - improved patch descriptions for patches #1-5
-> >> - fixed documentation for pdata->gain and pdata->reference_voltage
-> >> - added Reviewed-by from Amit to patches #6, #7 and #10
-> >> - added missing Acked-by from Kyungmin Park
-> >
-> > Pulled the series.
-> >
-> > Thanks.
-> >
-> >>
-> >> Best regards,
-> >> --
-> >> Bartlomiej Zolnierkiewicz
-> >> Samsung R&D Institute Poland
-> >> Samsung Electronics
-> >>
-> >>
-> >> Bartlomiej Zolnierkiewicz (9):
-> >>   thermal: exynos: remove unused struct exynos_tmu_registers entries
-> >>   thermal: exynos: remove dead code for HW_MODE calibration
-> >>   thermal: exynos: remove dead code for TYPE_TWO_POINT_TRIMMING
-> >>     calibration
-> >>   thermal: exynos: remove redundant pdata checks from
-> >>     exynos_tmu_initialize()
-> >>   thermal: exynos: remove redundant threshold_code checks from
-> >>     exynos_tmu_initialize()
-> >>   thermal: exynos: simplify temp_to_code() and code_to_temp()
-> >>   thermal: exynos: cache non_hw_trigger_levels in pdata
-> >>   thermal: exynos: remove redundant pdata checks from
-> >>     exynos_tmu_control()
-> >>   thermal: exynos: remove identical values from exynos*_tmu_registers
-> >>     structures
-> >>
-> >>  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
-> >>  drivers/thermal/samsung/exynos_tmu.c            | 181 ++++--------------------
-> >>  drivers/thermal/samsung/exynos_tmu.h            |  90 +-----------
-> >>  drivers/thermal/samsung/exynos_tmu_data.c       |  64 +--------
-> >>  drivers/thermal/samsung/exynos_tmu_data.h       |  33 +----
-> >>  5 files changed, 41 insertions(+), 328 deletions(-)
-> >>
-> >> --
-> >> 1.8.2.3
-> >>
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> >> the body of a message to majordomo@vger.kernel.org
-> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
