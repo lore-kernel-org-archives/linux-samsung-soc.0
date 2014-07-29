@@ -1,60 +1,155 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v8 2/6] clk: samsung: add cpu clock configuration data
- and instantiate cpu clock
-Date: Tue, 29 Jul 2014 12:13:46 +0200
-Message-ID: <53D773DA.6050003@gmail.com>
-References: <1406611711-25112-1-git-send-email-thomas.ab@samsung.com> <1406611711-25112-3-git-send-email-thomas.ab@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v2 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer
+ support
+Date: Tue, 29 Jul 2014 12:23:11 +0200
+Message-ID: <53D7760F.3060200@samsung.com>
+References: <1406512857-7213-1-git-send-email-inki.dae@samsung.com>
+ <1406512857-7213-2-git-send-email-inki.dae@samsung.com>
+ <53D675D6.2000309@samsung.com> <53D6F189.3060004@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1406611711-25112-3-git-send-email-thomas.ab@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:63641 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752892AbaG2KXQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Jul 2014 06:23:16 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N9G004QIY68WV00@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 29 Jul 2014 11:22:56 +0100 (BST)
+In-reply-to: <53D6F189.3060004@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: YoungJun Cho <yj44.cho@samsung.com>, Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, treding@nvidia.com
 
-Hi Thomas,
+On 07/29/2014 02:57 AM, YoungJun Cho wrote:
+> Hi Andrzej,
+>
+> On 07/29/2014 01:09 AM, Andrzej Hajda wrote:
+>> On 07/28/2014 04:00 AM, Inki Dae wrote:
+>>> This patch adds below two flags for LPM transfer, and it attaches LPM flags
+>>> to a msg in accordance with master's mode_flags set by LCD Panel driver.
+>>>
+>>> MIPI_DSI_MODE_CMD_LPM
+>>> - If this flag is set by Panel driver, MIPI-DSI controller will tranfer
+>>> command data to Panel device in Low Power Mode.
+>> What do you mean by command data? It could be:
+>> - all transfer in command mode of operations,
+>> - transfer initialized by the driver by writing to DSIM registers.
+> The 2nd one.
+>
+>>> MIPI_DSI_MODE_VIDEO_LPM
+>>> - If this flag is set by Panel driver, MIPI-DSI controller will tranfer
+>>> image data to Panel device in Low Power Mode.
+>> What is the meaning of this flag in case of command mode of operation?
+> I'm also not sure that there is a case to transfer image data in Low 
+> Power Mode, but this flag is not related with 'command mode' only.
+> Inki may consider generic condition.
+>
+>> Maybe it would be better to create flags based on source of data/FIFOs:
+>> - commands send by SFR registers,
+>> - commands generated from data sent from Display Controller.
+>>
+>>
+>>> And above two flags can be combined together to transfer command and video
+>>> data to Panel device.
+>>>
+>>> MIPI DSI spec says,
+>>>       "the host processor controls the desired mode of clock operation.
+>>>        Host protocol and applications control Clock Lane operating mode
+>>>        (High Speed or Low Power mode). System designers are responsible
+>>>        for understanding the clock requirements for peripherals attached
+>>>        to DSI and controlling clock behavior in accordance with those
+>>>        requirements."
+>>>
+>>> Some LCD Panel devices, nt35502a, would need LPM transfer support
+>>> because they should receive some initial commands with LPM by default
+>>> hardware setting.
+>>
+>> Is this requirement for initial commands, or for all commands.
+>> Btw what is the mode of operation of nt35502a? What flags do you need
+>> for it?
+>>
+> The nt35502a panel is video(RGB) mode panel and it requires low power 
+> mode for initial commands, which means to initialize nt35502a panel, the 
+> initial commands are transferred by LP mode(Not HS mode).
+> And after initialization, its other features like gamma control or etc 
+> could be controlled in HS mode.
 
-Just few minor comments for things I probably missed before.
+It sounds similar to my tc358764 bridge driver [1]. The difference is that
+it uses only MIPI_DSI_GENERIC_LONG_(WRITE|READ) in LPM.
 
-On 29.07.2014 07:28, Thomas Abraham wrote:
+As I understand nt35502a requires also different driving of
+TxRequestHSClk signal
+and this seems to me unrelated to LPM. As LPM is not related at all with
+HS clock, AFAIK.
 
-[snip]
+Regards
+Andrzej
 
-> @@ -1356,6 +1357,16 @@ static struct samsung_pll_clock exynos4x12_plls[nr_plls] __initdata = {
->  			VPLL_LOCK, VPLL_CON0, NULL),
->  };
->  
-> +static const struct exynos_cpuclk_cfg_data e4210_armclk_d[] __initconst = {
-> +	{ 1200000, E4210_CPU_DIV0(7, 1, 4, 3, 7, 3), E4210_CPU_DIV1(0, 5), },
-> +	{ 1000000, E4210_CPU_DIV0(7, 1, 4, 3, 7, 3), E4210_CPU_DIV1(0, 4), },
-> +	{  800000, E4210_CPU_DIV0(7, 1, 3, 3, 7, 3), E4210_CPU_DIV1(0, 3), },
-> +	{  500000, E4210_CPU_DIV0(7, 1, 3, 3, 7, 3), E4210_CPU_DIV1(0, 3), },
-> +	{  400000, E4210_CPU_DIV0(7, 1, 3, 3, 7, 3), E4210_CPU_DIV1(0, 3), },
+[1]: http://permalink.gmane.org/gmane.linux.drivers.devicetree/61559
 
-I have noticed that the old driver does not have this operating point.
-While it is probably OK to add this one and even few more for all
-possible APLL settings, I am interested in how you obtained the values
-for DIV0 and DIV1 registers for this configuration.
 
-> +	{  200000, E4210_CPU_DIV0(0, 1, 1, 1, 3, 1), E4210_CPU_DIV1(0, 3), },
-> +	{  0 },
-> +};
-
-[snip]
-
-> diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
-> index 4273891..855d809 100644
-> --- a/include/dt-bindings/clock/exynos5250.h
-> +++ b/include/dt-bindings/clock/exynos5250.h
-> @@ -21,6 +21,7 @@
->  #define CLK_FOUT_CPLL		6
->  #define CLK_FOUT_EPLL		7
->  #define CLK_FOUT_VPLL		8
-> +#define CLK_ARM_CLK		12
-
-Why 12 not 9?
-
-Best regards,
-Tomasz
+>
+> Thank you.
+> Best regards YJ
+>
+>>
+>>> Changelog v2: just add more descriptions.
+>>>
+>>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> ---
+>>>   drivers/gpu/drm/drm_mipi_dsi.c |    3 +++
+>>>   include/drm/drm_mipi_dsi.h     |    4 ++++
+>>>   2 files changed, 7 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+>>> index e633df2..6b2bbda 100644
+>>> --- a/drivers/gpu/drm/drm_mipi_dsi.c
+>>> +++ b/drivers/gpu/drm/drm_mipi_dsi.c
+>>> @@ -232,6 +232,9 @@ int mipi_dsi_dcs_write(struct mipi_dsi_device *dsi, unsigned int channel,
+>>>   		break;
+>>>   	}
+>>>
+>>> +	if (dsi->mode_flags & MIPI_DSI_MODE_CMD_LPM)
+>>> +		msg.flags = MIPI_DSI_MSG_USE_LPM;
+>>> +
+>>>   	return ops->transfer(dsi->host, &msg);
+>>>   }
+>> Shouldn't this be also the same for dcs read?
+>>
+>> Anyway I think check in the DSIM should be used instead, as panel driver
+>> can issue other dsi transfers without MIPI_DSI_MSG_USE_LPM flag set.
+>>
+>> Regards
+>> Andrzej
+>>
+>>
+>>>   EXPORT_SYMBOL(mipi_dsi_dcs_write);
+>>> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+>>> index 944f33f..1c41e49 100644
+>>> --- a/include/drm/drm_mipi_dsi.h
+>>> +++ b/include/drm/drm_mipi_dsi.h
+>>> @@ -94,6 +94,10 @@ void mipi_dsi_host_unregister(struct mipi_dsi_host *host);
+>>>   #define MIPI_DSI_MODE_VSYNC_FLUSH	BIT(8)
+>>>   /* disable EoT packets in HS mode */
+>>>   #define MIPI_DSI_MODE_EOT_PACKET	BIT(9)
+>>> +/* command low power mode */
+>>> +#define MIPI_DSI_MODE_CMD_LPM		BIT(10)
+>>> +/* video low power mode */
+>>> +#define MIPI_DSI_MODE_VIDEO_LPM		BIT(11)
+>>>
+>>>   enum mipi_dsi_pixel_format {
+>>>   	MIPI_DSI_FMT_RGB888,
+>>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>
+>
