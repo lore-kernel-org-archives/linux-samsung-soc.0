@@ -1,125 +1,135 @@
-From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH V6 8/8] drm/bridge: Add i2c based driver for ps8622/ps8625
- bridge
-Date: Tue, 29 Jul 2014 13:29:58 +0200
-Message-ID: <53D785B6.9060806@suse.de>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com> <1406316130-4744-9-git-send-email-ajaykumar.rs@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip
+ support
+Date: Tue, 29 Jul 2014 13:36:46 +0200
+Message-ID: <20140729113645.GB21732@ulmo.nvidia.com>
+References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
+ <53D5435B.8030305@suse.de>
+ <CAEC9eQPW-Z4craCC15M7oTp8eSD09AGxdTFEWaAWqn3Up4eJUg@mail.gmail.com>
+ <53D783CC.2080108@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="St7VIuEGZ6dlpu13"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:42572 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753296AbaG2LaC (ORCPT
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:64011 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753148AbaG2Lgy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 07:30:02 -0400
-In-Reply-To: <1406316130-4744-9-git-send-email-ajaykumar.rs@samsung.com>
+	Tue, 29 Jul 2014 07:36:54 -0400
+Content-Disposition: inline
+In-Reply-To: <53D783CC.2080108@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: inki.dae@samsung.com, thierry.reding@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Vincent Palatin <vpalatin@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Sean Paul <seanpaul@chromium.org>, Rahul Sharma <rahul.sharma@samsung.com>
+To: Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>
+Cc: Ajay kumar <ajaynumb@gmail.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, inki.dae@samsung.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Am 25.07.2014 21:22, schrieb Ajay Kumar:
-> From: Vincent Palatin <vpalatin@chromium.org>
+
+--St7VIuEGZ6dlpu13
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jul 29, 2014 at 01:21:48PM +0200, Andreas F=C3=A4rber wrote:
+> Hi Ajay,
 >=20
-> This patch adds drm_bridge driver for parade DisplayPort
-> to LVDS bridge chip.
+> Am 28.07.2014 08:13, schrieb Ajay kumar:
+> > On 7/27/14, Andreas F=C3=A4rber <afaerber@suse.de> wrote:
+> >> Am 25.07.2014 21:22, schrieb Ajay Kumar:
+> >>> This series is based on exynos-drm-next branch of Inki Dae's tree at:
+> >>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+> >>>
+> >>> I have tested this after adding few DT changes for exynos5250-snow,
+> >>> exynos5420-peach-pit and exynos5800-peach-pi boards.
+> >>
+> >> I'm trying to test this with a modified exynos5250-spring DT based off
+> >> kgene's for-next branch due to DT, and I run into the following:
+> >>
+> >>   CC      drivers/gpu/drm/bridge/ptn3460.o
+> >> drivers/gpu/drm/bridge/ptn3460.c: In function =E2=80=98ptn3460_post_en=
+coder_init=E2=80=99:
+> >> drivers/gpu/drm/bridge/ptn3460.c:275:2: error: implicit declaration of
+> >> function =E2=80=98drm_connector_register=E2=80=99 [-Werror=3Dimplicit-=
+function-declaration]
+> >>   drm_connector_register(&ptn_bridge->connector);
+> >>   ^
+> > Hope this might help:
+> > http://www.spinics.net/lists/dri-devel/msg60578.html
 >=20
-> Signed-off-by: Vincent Palatin <vpalatin@chromium.org>
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> That fixed my build, thanks.
+>=20
+> Unfortunately the most I got on Spring with attached DT was a blank
+> screen with a white horizontal line in the middle.
+>=20
+> Do I need to specify a specific panel model for Spring?
+>=20
+> For testing I re-applied your iommu patches (which btw fail now for 5420
+> due to disp_pd) but didn't know what to do about your panel-lvds
+> regulator patch now that it's gone.
+>=20
+> If I don't apply this series, then commenting out the dp-controller node
+> gets me a working display with simplefb as before.
+>=20
+> Regards,
+> Andreas
+>=20
+> --=20
+> SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+> GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
+
+> From 9172a26a8f0d0f0d170bd27e1c150ad204d8086a Mon Sep 17 00:00:00 2001
+> From: =3D?UTF-8?q?Andreas=3D20F=3DC3=3DA4rber?=3D <afaerber@suse.de>
+> Date: Sun, 27 Jul 2014 21:58:06 +0200
+> Subject: [PATCH] ARM: dts: exynos5250: Add eDP/LVDS bridge to Spring
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=3DUTF-8
+> Content-Transfer-Encoding: 8bit
+>=20
 > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> [AF: Redone for v6]
+> Signed-off-by: Andreas F??rber <afaerber@suse.de>
 > ---
->  .../devicetree/bindings/vendor-prefixes.txt        |    1 +
->  .../devicetree/bindings/video/bridge/ps8622.txt    |   19 +
->  drivers/gpu/drm/bridge/Kconfig                     |   10 +
->  drivers/gpu/drm/bridge/Makefile                    |    1 +
->  drivers/gpu/drm/bridge/ps8622.c                    |  602 ++++++++++=
-++++++++++
->  5 files changed, 633 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/video/bridge/ps=
-8622.txt
->  create mode 100644 drivers/gpu/drm/bridge/ps8622.c
+>  arch/arm/boot/dts/exynos5250-spring.dts | 32 +++++++++++++++++++++++++++=
+++++-
+>  1 file changed, 31 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/=
-Documentation/devicetree/bindings/vendor-prefixes.txt
-> index 46a311e..b4a99cc 100644
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> @@ -96,6 +96,7 @@ nxp	NXP Semiconductors
->  onnn	ON Semiconductor Corp.
->  opencores	OpenCores.org
->  panasonic	Panasonic Corporation
-> +parade	Parade Technologies Inc.
->  phytec	PHYTEC Messtechnik GmbH
->  picochip	Picochip Ltd
->  plathome	Plat'Home Co., Ltd.
-> diff --git a/Documentation/devicetree/bindings/video/bridge/ps8622.tx=
-t b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
-> new file mode 100644
-> index 0000000..fdeafb2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
-> @@ -0,0 +1,19 @@
-> +ps8622-bridge bindings
-> +
-> +Required properties:
-> +	- compatible: "parade,ps8622" or "parade,ps8625"
-> +	- reg: first i2c address of the bridge
-> +	- sleep-gpios: OF device-tree gpio specification
-> +	- reset-gpios: OF device-tree gpio specification
-> +
-> +Optional properties:
-> +	- lane-count: number of DP lanes to use
-> +
-> +Example:
-> +	ps8622-bridge@48 {
-
-Nit: Shouldn't this be lvds-bridge like in 7/8 or something else not
-derived from the specific model? Applies to the DT series as well.
-
-> +		compatible =3D "parade,ps8622";
-> +		reg =3D <0x48>;
-> +		sleep-gpios =3D <&gpc3 6 1 0 0>;
-> +		reset-gpios =3D <&gpc3 1 1 0 0>;
-> +		lane-count =3D <1>
+> diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/=
+exynos5250-spring.dts
+> index 687dfab86bc8..517b1ff2bfdf 100644
+> --- a/arch/arm/boot/dts/exynos5250-spring.dts
+> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
+> @@ -64,10 +64,14 @@
+>  		vdd_pll-supply =3D <&s5m_ldo8_reg>;
+>  	};
+> =20
+> +	panel: panel {
+> +		compatible =3D "simple-panel";
 > +	};
-[...]
-> diff --git a/drivers/gpu/drm/bridge/ps8622.c b/drivers/gpu/drm/bridge=
-/ps8622.c
-> new file mode 100644
-> index 0000000..ec60fcf
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/ps8622.c
-> @@ -0,0 +1,602 @@
-> +/*
-> + * Parade PS8622 eDP/LVDS bridge driver
-> + *
-> + * Copyright (C) 2014 Google, Inc.
-> + *
-> + * This software is licensed under the terms of the GNU General Publ=
-ic
-> + * License version 2, as published by the Free Software Foundation, =
-and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-[...]
-> +MODULE_AUTHOR("Vincent Palatin <vpalatin@chromium.org>");
-> +MODULE_DESCRIPTION("Parade ps8622 eDP-LVDS converter driver");
-> +MODULE_LICENSE("GPL");
 
-"GPL v2"?
+You can't do this. "simple-panel" isn't a valid panel model. It should
+probably be removed from the platform_of_match table in the driver.
 
-Regards,
-Andreas
+Thierry
 
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
-berg
+--St7VIuEGZ6dlpu13
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT14dNAAoJEN0jrNd/PrOhepoP/02Wtsv/fDLO0k5lj+qdN7sd
+ECvLGkZ+6pqhH+5lH9efnDwpcxPZ4JY9HOK0LSY3eIgCBeFcbrN9tos889API9lx
+eSS2yQIcCDeJunLg/JQhco6/vKK+rFyYP5lXE5UEnZWtBu5WRSGCp60eEYhxRnxG
+DCtDQPwPwtFrYFCd1w8vIOJdmfHFoeyfVV0CvciQ+oekiOYb/9y8obSBb2UhqX4R
+K+lnlOxk5JC1NF8jBo6xH0JpIE8GWuYa9FazelS4GgfDsFJvBpmdcGPEGvgIk6N4
+wdK8O6IQFIBFcpoBNRRU85OpkQRQ2All0nNhALT+TtQlnMJMyw9fpbYXawvvzfZF
+hrnVTawfDGNpdvb1uEl4qWP4f811zP3ulDVs7t8tolWd/qfTIJsGsYnR0w+4KtX/
+IlbdDhTn4pmmEdZDEU5IWZ9bZMELta0rU9enusNBS2xe6llmiQCptGC50W21oqq4
+KGbINHcx9CJUYu7DVM67T2VMj+2CZAQSpHCH1HARol3sCJ1qRtt698QQQCZtYYLw
+0QKZpKK6eGtmECn/hDUZ3u2jkySjAlYmVYqMqCuVZUyLd+vWNKgMQeA0OcLktYmg
+NuV/Bt2fc3XgKX+6bXprXFIKLzaDyiern72sjv3KftineiJGSYIK/m2YeHWfJ3qk
+1aCkZPxjM0nclF22NyV5
+=GgRv
+-----END PGP SIGNATURE-----
+
+--St7VIuEGZ6dlpu13--
