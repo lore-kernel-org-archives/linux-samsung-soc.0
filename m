@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [RFC 5/5] ARM: dts: Improve Peach Pit and Pi power scheme model
-Date: Tue, 29 Jul 2014 18:28:59 +0200
-Message-ID: <1406651339-28901-6-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [RFC 3/5] regulator: core: Only apply constraints if available on list voltage
+Date: Tue, 29 Jul 2014 18:28:57 +0200
+Message-ID: <1406651339-28901-4-git-send-email-javier.martinez@collabora.co.uk>
 References: <1406651339-28901-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1406651339-28901-1-git-send-email-javier.martinez@collabora.co.uk>
@@ -10,68 +10,37 @@ To: Mark Brown <broonie@kernel.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The DeviceTree files for the Peach Pit and Pi machines have
-a simplistic model of the connections between the different
-regulators since not all the tps65090 regulators get their
-input supply voltage from the VDC. DCDC1-3, LD0-1 and fet7
-parent supply is indded VDC but the fet1-6 get their input
-supply from the DCDC1 and DCDC2 output voltage rails.
+If a selector can't be used on a platform due to voltage constraints,
+regulator_list_voltage() returns 0. Doing this unconditionally made
+sense since constraints were set in machine_constraints_voltage() at
+regulator registration time.
 
-This information has to be present in the DTS since fets
-are switches that don't provide an output voltage so when
-this is needed, the parent input supply voltage is queried.
+But for load switches that don't define a voltage output, the parent
+supply voltage is used so the constraints should only be applied if
+they were defined for the child regulators.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 12 ++++++------
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 12 ++++++------
- 2 files changed, 12 insertions(+), 12 deletions(-)
+ drivers/regulator/core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 7656a42..acc2936 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -367,12 +367,12 @@
- 				vsys2-supply = <&vbat>;
- 				vsys3-supply = <&vbat>;
- 				infet1-supply = <&vbat>;
--				infet2-supply = <&vbat>;
--				infet3-supply = <&vbat>;
--				infet4-supply = <&vbat>;
--				infet5-supply = <&vbat>;
--				infet6-supply = <&vbat>;
--				infet7-supply = <&vbat>;
-+				infet2-supply = <&tps65090_dcdc1>;
-+				infet3-supply = <&tps65090_dcdc2>;
-+				infet4-supply = <&tps65090_dcdc2>;
-+				infet5-supply = <&tps65090_dcdc2>;
-+				infet6-supply = <&tps65090_dcdc2>;
-+				infet7-supply = <&tps65090_dcdc1>;
- 				vsys-l1-supply = <&vbat>;
- 				vsys-l2-supply = <&vbat>;
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index a3c3785..7472535 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -2228,9 +2228,11 @@ int regulator_list_voltage(struct regulator *regulator, unsigned selector)
+ 	}
  
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 5f3e54f..6b83b98 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -365,12 +365,12 @@
- 				vsys2-supply = <&vbat>;
- 				vsys3-supply = <&vbat>;
- 				infet1-supply = <&vbat>;
--				infet2-supply = <&vbat>;
--				infet3-supply = <&vbat>;
--				infet4-supply = <&vbat>;
--				infet5-supply = <&vbat>;
--				infet6-supply = <&vbat>;
--				infet7-supply = <&vbat>;
-+				infet2-supply = <&tps65090_dcdc1>;
-+				infet3-supply = <&tps65090_dcdc2>;
-+				infet4-supply = <&tps65090_dcdc2>;
-+				infet5-supply = <&tps65090_dcdc2>;
-+				infet6-supply = <&tps65090_dcdc2>;
-+				infet7-supply = <&tps65090_dcdc1>;
- 				vsys-l1-supply = <&vbat>;
- 				vsys-l2-supply = <&vbat>;
+ 	if (ret > 0) {
+-		if (ret < rdev->constraints->min_uV)
++		if (rdev->constraints->min_uV &&
++		    ret < rdev->constraints->min_uV)
+ 			ret = 0;
+-		else if (ret > rdev->constraints->max_uV)
++		else if (rdev->constraints->max_uV &&
++			 ret > rdev->constraints->max_uV)
+ 			ret = 0;
+ 	}
  
 -- 
 2.0.0.rc2
