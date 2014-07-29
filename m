@@ -1,233 +1,155 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [RESEND PATCH] thermal: samsung: Add TMU support for Exynos3250
- SoC
-Date: Tue, 29 Jul 2014 09:39:31 -0400
-Message-ID: <20140729133931.GC3336@developer>
-References: <1405641605-3370-1-git-send-email-cw00.choi@samsung.com>
- <1405922696.2455.1.camel@rzhang1-toshiba>
- <CADGdYn5Druo7D7QeiiAGHaJxMiyB0uvAiPw+K6aG-xYgNHa8sQ@mail.gmail.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH 0/3] drm/exynos: Allow module to be autoloaded
+Date: Tue, 29 Jul 2014 14:43:51 +0100
+Message-ID: <CAPj87rPcXYDAnAWmuzwuuT0t_FoTptU0Bh7Z9dn4NcKqC-6jLg@mail.gmail.com>
+References: <1405715801-5325-1-git-send-email-sjoerd.simons@collabora.co.uk>
+ <53CC82AC.9060301@samsung.com> <1405925419.7527.17.camel@dusk>
+ <1406536246.15871.6.camel@dusk> <53D65B5D.1060505@samsung.com>
+ <1406558722.29009.11.camel@dusk> <53D7335F.9020802@samsung.com>
+ <1406621118.17890.11.camel@dusk> <53D78CB7.6010806@suse.de>
+ <53D793BF.8070603@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CADGdYn5Druo7D7QeiiAGHaJxMiyB0uvAiPw+K6aG-xYgNHa8sQ@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: amit daniel kachhap <amit.daniel@samsung.com>, b.zolnierkie@samsung.com
-Cc: Zhang Rui <rui.zhang@intel.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Jonghwa Lee <jonghwa3.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, pawel.moll@arm.com, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, eduardo.valentin@gmail.com, Kumar Gala <galak@codeaurora.org>, naveen krishna <ch.naveen@samsung.com>, LAK <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/mixed; boundary="===============1715545385=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <53D793BF.8070603@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jul 22, 2014 at 11:41:56AM +0530, amit daniel kachhap wrote:
-> On Mon, Jul 21, 2014 at 11:34 AM, Zhang Rui <rui.zhang@intel.com> wrote:
-> > On Fri, 2014-07-18 at 09:00 +0900, Chanwoo Choi wrote:
-> >> This patch adds the registers, bit fields and compatible strings
-> >> required to support for the 1 TMU channels on Exynos3250.
-> >>
-> >> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> >> [Add MUX address setting bits by Jonghwa Lee]
-> >> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-> >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >> Reviewed-by: Amit Daniel Kachhap<amit.daniel@samsung.com>
-> >
-> > Eduardo and Amit,
-> >
-> > do you have any comments on this?
-> The changes looks fine to me. I already reviewed these patches earlier.
+--===============1715545385==
+Content-Type: multipart/alternative; boundary=089e010d8628e1cd1404ff553a00
 
+--089e010d8628e1cd1404ff553a00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Bartlomiej, can you please rebase your work on top of this one?
+Hi Inki,
 
-> 
-> thanks,
-> Amit
+On 29 July 2014 13:29, Inki Dae <inki.dae@samsung.com> wrote:
+
+> On 2014=EB=85=84 07=EC=9B=94 29=EC=9D=BC 20:59, Andreas F=C3=A4rber wrote=
+:
+> > Am 29.07.2014 10:05, schrieb Sjoerd Simons:
+> >> Yes. I would like the module to export its module alias information fo=
+r
+> >> the subdrivers such that depmod can add it to its databases and the
+> >> normal module autoloading mechanisms work as intended. Note that in my
+> >> case, "some hot-plug" system is really just udev, not something
+> >> special..
 > >
-> > thanks,
-> > rui
+> > +1 here.
 > >
-> >> ---
-> >>  .../devicetree/bindings/thermal/exynos-thermal.txt |  1 +
-> >>  drivers/thermal/samsung/exynos_tmu.c               |  7 +-
-> >>  drivers/thermal/samsung/exynos_tmu.h               |  3 +-
-> >>  drivers/thermal/samsung/exynos_tmu_data.c          | 89 ++++++++++++++++++++++
-> >>  drivers/thermal/samsung/exynos_tmu_data.h          |  7 ++
-> >>  5 files changed, 105 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> >> index c949092..ae738f5 100644
-> >> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> >> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> >> @@ -3,6 +3,7 @@
-> >>  ** Required properties:
-> >>
-> >>  - compatible : One of the following:
-> >> +            "samsung,exynos3250-tmu"
-> >>              "samsung,exynos4412-tmu"
-> >>              "samsung,exynos4210-tmu"
-> >>              "samsung,exynos5250-tmu"
-> >> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> >> index d7ca9f4..a2a08ea 100644
-> >> --- a/drivers/thermal/samsung/exynos_tmu.c
-> >> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> >> @@ -505,6 +505,10 @@ static irqreturn_t exynos_tmu_irq(int irq, void *id)
-> >>
-> >>  static const struct of_device_id exynos_tmu_match[] = {
-> >>       {
-> >> +             .compatible = "samsung,exynos3250-tmu",
-> >> +             .data = (void *)EXYNOS3250_TMU_DRV_DATA,
-> >> +     },
-> >> +     {
-> >>               .compatible = "samsung,exynos4210-tmu",
-> >>               .data = (void *)EXYNOS4210_TMU_DRV_DATA,
-> >>       },
-> >> @@ -677,7 +681,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
-> >>               goto err_clk_sec;
-> >>       }
-> >>
-> >> -     if (pdata->type == SOC_ARCH_EXYNOS4210 ||
-> >> +     if (pdata->type == SOC_ARCH_EXYNOS3250 ||
-> >> +         pdata->type == SOC_ARCH_EXYNOS4210 ||
-> >>           pdata->type == SOC_ARCH_EXYNOS4412 ||
-> >>           pdata->type == SOC_ARCH_EXYNOS5250 ||
-> >>           pdata->type == SOC_ARCH_EXYNOS5260 ||
-> >> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-> >> index edd08cf..1b4a644 100644
-> >> --- a/drivers/thermal/samsung/exynos_tmu.h
-> >> +++ b/drivers/thermal/samsung/exynos_tmu.h
-> >> @@ -40,7 +40,8 @@ enum calibration_mode {
-> >>  };
-> >>
-> >>  enum soc_type {
-> >> -     SOC_ARCH_EXYNOS4210 = 1,
-> >> +     SOC_ARCH_EXYNOS3250 = 1,
-> >> +     SOC_ARCH_EXYNOS4210,
-> >>       SOC_ARCH_EXYNOS4412,
-> >>       SOC_ARCH_EXYNOS5250,
-> >>       SOC_ARCH_EXYNOS5260,
-> >> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-> >> index c1d81dc..aa8e0de 100644
-> >> --- a/drivers/thermal/samsung/exynos_tmu_data.c
-> >> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
-> >> @@ -90,6 +90,95 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
-> >>  };
-> >>  #endif
-> >>
-> >> +#if defined(CONFIG_SOC_EXYNOS3250)
-> >> +static const struct exynos_tmu_registers exynos3250_tmu_registers = {
-> >> +     .triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
-> >> +     .triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
-> >> +     .triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
-> >> +     .tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
-> >> +     .test_mux_addr_shift = EXYNOS4412_MUX_ADDR_SHIFT,
-> >> +     .buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
-> >> +     .buf_vref_sel_mask = EXYNOS_TMU_REF_VOLTAGE_MASK,
-> >> +     .therm_trip_mode_shift = EXYNOS_TMU_TRIP_MODE_SHIFT,
-> >> +     .therm_trip_mode_mask = EXYNOS_TMU_TRIP_MODE_MASK,
-> >> +     .therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
-> >> +     .buf_slope_sel_shift = EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
-> >> +     .buf_slope_sel_mask = EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
-> >> +     .core_en_shift = EXYNOS_TMU_CORE_EN_SHIFT,
-> >> +     .tmu_status = EXYNOS_TMU_REG_STATUS,
-> >> +     .tmu_cur_temp = EXYNOS_TMU_REG_CURRENT_TEMP,
-> >> +     .threshold_th0 = EXYNOS_THD_TEMP_RISE,
-> >> +     .threshold_th1 = EXYNOS_THD_TEMP_FALL,
-> >> +     .tmu_inten = EXYNOS_TMU_REG_INTEN,
-> >> +     .inten_rise0_shift = EXYNOS_TMU_INTEN_RISE0_SHIFT,
-> >> +     .inten_rise1_shift = EXYNOS_TMU_INTEN_RISE1_SHIFT,
-> >> +     .inten_rise2_shift = EXYNOS_TMU_INTEN_RISE2_SHIFT,
-> >> +     .inten_fall0_shift = EXYNOS_TMU_INTEN_FALL0_SHIFT,
-> >> +     .tmu_intstat = EXYNOS_TMU_REG_INTSTAT,
-> >> +     .tmu_intclear = EXYNOS_TMU_REG_INTCLEAR,
-> >> +     .intclr_fall_shift = EXYNOS_TMU_CLEAR_FALL_INT_SHIFT,
-> >> +     .intclr_rise_shift = EXYNOS_TMU_RISE_INT_SHIFT,
-> >> +     .intclr_rise_mask = EXYNOS_TMU_RISE_INT_MASK,
-> >> +     .intclr_fall_mask = EXYNOS_TMU_FALL_INT_MASK,
-> >> +     .emul_con = EXYNOS_EMUL_CON,
-> >> +     .emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
-> >> +     .emul_time_shift = EXYNOS_EMUL_TIME_SHIFT,
-> >> +     .emul_time_mask = EXYNOS_EMUL_TIME_MASK,
-> >> +};
-> >> +
-> >> +#define EXYNOS3250_TMU_DATA \
-> >> +     .threshold_falling = 10, \
-> >> +     .trigger_levels[0] = 70, \
-> >> +     .trigger_levels[1] = 95, \
-> >> +     .trigger_levels[2] = 110, \
-> >> +     .trigger_levels[3] = 120, \
-> >> +     .trigger_enable[0] = true, \
-> >> +     .trigger_enable[1] = true, \
-> >> +     .trigger_enable[2] = true, \
-> >> +     .trigger_enable[3] = false, \
-> >> +     .trigger_type[0] = THROTTLE_ACTIVE, \
-> >> +     .trigger_type[1] = THROTTLE_ACTIVE, \
-> >> +     .trigger_type[2] = SW_TRIP, \
-> >> +     .trigger_type[3] = HW_TRIP, \
-> >> +     .max_trigger_level = 4, \
-> >> +     .gain = 8, \
-> >> +     .reference_voltage = 16, \
-> >> +     .noise_cancel_mode = 4, \
-> >> +     .cal_type = TYPE_TWO_POINT_TRIMMING, \
-> >> +     .efuse_value = 55, \
-> >> +     .min_efuse_value = 40, \
-> >> +     .max_efuse_value = 100, \
-> >> +     .first_point_trim = 25, \
-> >> +     .second_point_trim = 85, \
-> >> +     .default_temp_offset = 50, \
-> >> +     .freq_tab[0] = { \
-> >> +             .freq_clip_max = 800 * 1000, \
-> >> +             .temp_level = 70, \
-> >> +     }, \
-> >> +     .freq_tab[1] = { \
-> >> +             .freq_clip_max = 400 * 1000, \
-> >> +             .temp_level = 95, \
-> >> +     }, \
-> >> +     .freq_tab_count = 2, \
-> >> +     .registers = &exynos3250_tmu_registers, \
-> >> +     .features = (TMU_SUPPORT_EMULATION | \
-> >> +                     TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
-> >> +                     TMU_SUPPORT_EMUL_TIME)
-> >> +#endif
-> >> +
-> >> +#if defined(CONFIG_SOC_EXYNOS3250)
-> >> +struct exynos_tmu_init_data const exynos3250_default_tmu_data = {
-> >> +     .tmu_data = {
-> >> +             {
-> >> +                     EXYNOS3250_TMU_DATA,
-> >> +                     .type = SOC_ARCH_EXYNOS3250,
-> >> +                     .test_mux = EXYNOS4412_MUX_ADDR_VALUE,
-> >> +             },
-> >> +     },
-> >> +     .tmu_count = 1,
-> >> +};
-> >> +#endif
-> >> +
-> >>  #if defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250)
-> >>  static const struct exynos_tmu_registers exynos4412_tmu_registers = {
-> >>       .triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
-> >> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
-> >> index d268981..f0979e5 100644
-> >> --- a/drivers/thermal/samsung/exynos_tmu_data.h
-> >> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
-> >> @@ -148,6 +148,13 @@
-> >>  #define EXYNOS5440_TMU_TH_RISE4_SHIFT                24
-> >>  #define EXYNOS5440_EFUSE_SWAP_OFFSET         8
-> >>
-> >> +#if defined(CONFIG_SOC_EXYNOS3250)
-> >> +extern struct exynos_tmu_init_data const exynos3250_default_tmu_data;
-> >> +#define EXYNOS3250_TMU_DRV_DATA (&exynos3250_default_tmu_data)
-> >> +#else
-> >> +#define EXYNOS3250_TMU_DRV_DATA (NULL)
-> >> +#endif
-> >> +
-> >>  #if defined(CONFIG_CPU_EXYNOS4210)
-> >>  extern struct exynos_tmu_init_data const exynos4210_default_tmu_data;
-> >>  #define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
+> > While I haven't tested this on my Exynos devices yet since I'm still
+> > working on -next kernels there, here's an example of such a 3.16 config=
+:
 > >
 > >
+> http://kernel.opensuse.org/cgit/kernel-source/tree/config/armv7hl/default
 > >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > Of the platforms enabled, all drivers are configured as modules where
+> > possible, to keep kernel size small, and dracut (or kiwi) is used to
+> > generate an initrd that makes available the modules.
+> >
+> > So it would certainly be good to have the DRM auto-load somehow, withou=
+t
+> > the user having to manually touch config files. In particular when I
+> > think of the Chromebooks, where Wifi needs configuration on first boot
+> > and no serial console is accessible.
+>
+> Got it. will merge them. However, I'm not sure that Exynos drm should
+> have hot-plug feature such as PCI base devices: all devices covered by
+> Exynos drm framework cannot attached and detached to and from machine.
+>
+
+Thanks for merging these. Just wanted to reiterate that it is not about
+hotplug at all: it is about delayed/conditional loading. There is no
+expectation that these will be used in a hotplug manner, it is just about
+being able to load them in the initrd without having to have explicit cases
+for every single driver and device in userspace (which would make it much
+harder to change the driver later).
+
+Cheers,
+Daniel
+
+--089e010d8628e1cd1404ff553a00
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Inki,<div class=3D"gmail_extra"><br><div class=3D"gmail=
+_quote">On 29 July 2014 13:29, Inki Dae <span dir=3D"ltr">&lt;<a href=3D"ma=
+ilto:inki.dae@samsung.com" target=3D"_blank">inki.dae@samsung.com</a>&gt;</=
+span> wrote:<br>
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex">On 2014=EB=85=84 07=EC=9B=94 29=EC=9D=BC 20:=
+59, Andreas F=C3=A4rber wrote:<br>
+&gt; Am 29.07.2014 10:05, schrieb Sjoerd Simons:<br>
+<div class=3D"">&gt;&gt; Yes. I would like the module to export its module =
+alias information for<br></div>
+&gt;&gt; the subdrivers such that depmod can add it to its databases and th=
+e<br>
+&gt;&gt; normal module autoloading mechanisms work as intended. Note that i=
+n my<br>
+&gt;&gt; case, &quot;some hot-plug&quot; system is really just udev, not so=
+mething<br>
+&gt;&gt; special..<br>
+&gt;<br>
+&gt; +1 here.<br>
+&gt;<br>
+&gt; While I haven&#39;t tested this on my Exynos devices yet since I&#39;m=
+ still<br>
+&gt; working on -next kernels there, here&#39;s an example of such a 3.16 c=
+onfig:<br>
+&gt;<br>
+&gt; <a href=3D"http://kernel.opensuse.org/cgit/kernel-source/tree/config/a=
+rmv7hl/default" target=3D"_blank">http://kernel.opensuse.org/cgit/kernel-so=
+urce/tree/config/armv7hl/default</a><br>
+&gt;<br>
+&gt; Of the platforms enabled, all drivers are configured as modules where<=
+br>
+&gt; possible, to keep kernel size small, and dracut (or kiwi) is used to<b=
+r>
+&gt; generate an initrd that makes available the modules.<br>
+&gt;<br>
+&gt; So it would certainly be good to have the DRM auto-load somehow, witho=
+ut<br>
+&gt; the user having to manually touch config files. In particular when I<b=
+r>
+&gt; think of the Chromebooks, where Wifi needs configuration on first boot=
+<br>
+&gt; and no serial console is accessible.<br>
+<br>
+Got it. will merge them. However, I&#39;m not sure that Exynos drm should<b=
+r>
+have hot-plug feature such as PCI base devices: all devices covered by<br>
+Exynos drm framework cannot attached and detached to and from machine.<br><=
+/blockquote><div><br></div><div>Thanks for merging these. Just wanted to re=
+iterate that it is not about hotplug at all: it is about delayed/conditiona=
+l loading. There is no expectation that these will be used in a hotplug man=
+ner, it is just about being able to load them in the initrd without having =
+to have explicit cases for every single driver and device in userspace (whi=
+ch would make it much harder to change the driver later).</div>
+<div><br></div><div>Cheers,</div><div>Daniel=C2=A0</div></div></div></div>
+
+--089e010d8628e1cd1404ff553a00--
+
+--===============1715545385==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1715545385==--
