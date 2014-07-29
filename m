@@ -1,60 +1,118 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH 0/7] Second batch of cleanups for cros_ec
-Date: Tue, 29 Jul 2014 14:58:11 +0200
-Message-ID: <53D79A63.4010500@collabora.co.uk>
-References: <1406549967-21291-1-git-send-email-javier.martinez@collabora.co.uk> <53D79328.8060609@suse.de>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v2 0/9] thermal: exynos: various cleanups
+Date: Tue, 29 Jul 2014 08:58:48 -0400
+Message-ID: <20140729125848.GA18746@developer>
+References: <1403026045-16024-1-git-send-email-b.zolnierkie@samsung.com>
+ <20140728143759.GA17837@developer>
+ <CADGdYn6EN-evo2KCjFfQ2h8gLoop=xTJZO3fnNxBxM9067tjxg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53D79328.8060609-l3A5Bk7waGM@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f176.google.com ([209.85.220.176]:36912 "EHLO
+	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750907AbaG2M7D (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Jul 2014 08:59:03 -0400
+Content-Disposition: inline
+In-Reply-To: <CADGdYn6EN-evo2KCjFfQ2h8gLoop=xTJZO3fnNxBxM9067tjxg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: amit daniel kachhap <amit.daniel@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Andreas,
+On Mon, Jul 28, 2014 at 08:30:53PM +0530, amit daniel kachhap wrote:
+> Hi Eduardo,
 
-On 07/29/2014 02:27 PM, Andreas F=E4rber wrote:
-> Hi Javier,
->=20
-> Am 28.07.2014 14:19, schrieb Javier Martinez Canillas:
->> The patches in this series are authored by different people
->> (all on cc) and consist of the following:
->>=20
->> Andrew Bresticker (3):
->>   mfd: cros_ec: stop calling ->cmd_xfer() directly
->>   mfd: cros_ec: move locking into cros_ec_cmd_xfer
->>   mfd: cros_ec: wait for completion of commands that return IN_PROGR=
-ESS
->>=20
->> Derek Basehore (1):
->>   i2c: i2c-cros-ec-tunnel: Set retries to 3
->>=20
->> Doug Anderson (1):
->>   mfd: cros_ec: Delay for 50ms when we see EC_CMD_REBOOT_EC
->>=20
->> Todd Broch (2):
->>   mfd: cros_ec: Instantiate sub-devices from device tree
->>   Input: cros_ec_keyb: Optimize ghosting algorithm.
->=20
-> When you submit other people's patches, I believe you still need to s=
-ign
-> them off as submitter. In particular when you rebased them.
->=20
+Hello Amit,
 
-You are right. I thought that given that I only rebased the patches and=
- removed
-changes for files that are not yet in mainline I shouldn't add my s-o-b=
-=2E
+> 
+> Please reject this entire series as this is not re-based recently.
+> Actually two point trimming which this series seeks to remove is used
+> by exynos3250 and is in Rui's tree
+> (https://git.kernel.org/cgit/linux/kernel/git/rzhang/linux.git/commit/?h=next&id=1fe56dc16a3dab400206443f70ae158c8f595c42).
+> 
 
-But looking at the Developer's Certificate of Origin 1.1 rule (b) it se=
-ems that
-I should had added my s-o-b as well.
+Yeah, that was my original concern when I first looked this series.
+However, as I saw a couple of your acks I thought you would be in sync
+with Bartlomiej. 
 
-> Regards,
-> Andreas
->=20
+I agree with Bartlomiej that we need to keep the kernel code in very
+good shape, but if we are removing features for the sake of reducing
+LOCs and we end up dropping support to known chips, I definitely won't
+agree. 
 
-Thanks a lot and best regards,
-Javier
+Can you guys please reach a common agreement on these cleanups?
+
+Bartlomiej, best thing to do is to sync your work on top of Rui's tree.
+
+For now I am dropping this series from my -next branch. :-(
+
+> Thanks,
+> Amit D
+> 
+> 
+> On Mon, Jul 28, 2014 at 8:07 PM, Eduardo Valentin <edubezval@gmail.com> wrote:
+> > On Tue, Jun 17, 2014 at 07:27:16PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> >> Hi,
+> >>
+> >> This patch series contains various cleanups for EXYNOS thermal
+> >> driver.  Overall it decreases driver's LOC by 12%.  It is based
+> >> on next-20140617 kernel.  It should not cause any functionality
+> >> changes.
+> >>
+> >> Changes since v1:
+> >> - synced patches against next-20140617
+> >> - merged patch "thermal: exynos: remove unused defines" into
+> >>   "thermal: exynos: remove unused struct exynos_tmu_registers
+> >>   entries" one (per request from Eduardo)
+> >> - improved patch descriptions for patches #1-5
+> >> - fixed documentation for pdata->gain and pdata->reference_voltage
+> >> - added Reviewed-by from Amit to patches #6, #7 and #10
+> >> - added missing Acked-by from Kyungmin Park
+> >
+> > Pulled the series.
+> >
+> > Thanks.
+> >
+> >>
+> >> Best regards,
+> >> --
+> >> Bartlomiej Zolnierkiewicz
+> >> Samsung R&D Institute Poland
+> >> Samsung Electronics
+> >>
+> >>
+> >> Bartlomiej Zolnierkiewicz (9):
+> >>   thermal: exynos: remove unused struct exynos_tmu_registers entries
+> >>   thermal: exynos: remove dead code for HW_MODE calibration
+> >>   thermal: exynos: remove dead code for TYPE_TWO_POINT_TRIMMING
+> >>     calibration
+> >>   thermal: exynos: remove redundant pdata checks from
+> >>     exynos_tmu_initialize()
+> >>   thermal: exynos: remove redundant threshold_code checks from
+> >>     exynos_tmu_initialize()
+> >>   thermal: exynos: simplify temp_to_code() and code_to_temp()
+> >>   thermal: exynos: cache non_hw_trigger_levels in pdata
+> >>   thermal: exynos: remove redundant pdata checks from
+> >>     exynos_tmu_control()
+> >>   thermal: exynos: remove identical values from exynos*_tmu_registers
+> >>     structures
+> >>
+> >>  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
+> >>  drivers/thermal/samsung/exynos_tmu.c            | 181 ++++--------------------
+> >>  drivers/thermal/samsung/exynos_tmu.h            |  90 +-----------
+> >>  drivers/thermal/samsung/exynos_tmu_data.c       |  64 +--------
+> >>  drivers/thermal/samsung/exynos_tmu_data.h       |  33 +----
+> >>  5 files changed, 41 insertions(+), 328 deletions(-)
+> >>
+> >> --
+> >> 1.8.2.3
+> >>
+> >> --
+> >> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> >> the body of a message to majordomo@vger.kernel.org
+> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
