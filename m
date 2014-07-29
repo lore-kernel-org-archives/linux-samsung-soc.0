@@ -1,153 +1,203 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH 1/3] clk: exynos-audss: Keep the parent of mout_audss always
- enabled
-Date: Mon, 28 Jul 2014 23:58:44 -0700
-Message-ID: <20140729065844.4906.7964@quantum>
-References: <1402464739-19044-1-git-send-email-tushar.b@samsung.com>
- <1402464739-19044-2-git-send-email-tushar.b@samsung.com>
- <20140611165027.6562.64928@quantum>
- <CAC5m3BwR9WhiiDqUw1A6FjmzAnQ02xCBxOeAaY2nt3CRqTz+oQ@mail.gmail.com>
- <20140612210920.6562.96815@quantum> <53BF81CE.60507@gmail.com>
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: Re: [PATCH 0/3] drm/exynos: Allow module to be autoloaded
+Date: Tue, 29 Jul 2014 10:05:18 +0200
+Message-ID: <1406621118.17890.11.camel@dusk>
+References: <1405715801-5325-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	 <53CC82AC.9060301@samsung.com> <1405925419.7527.17.camel@dusk>
+	 <1406536246.15871.6.camel@dusk> <53D65B5D.1060505@samsung.com>
+	 <1406558722.29009.11.camel@dusk> <53D7335F.9020802@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
+	boundary="=-zQvl29ntDiUm9ZQWejmB"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:65456 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752722AbaG2G6s convert rfc822-to-8bit (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:58140 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752644AbaG2IFX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 02:58:48 -0400
-Received: by mail-pd0-f182.google.com with SMTP id fp1so11239870pdb.13
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Jul 2014 23:58:48 -0700 (PDT)
-In-Reply-To: <53BF81CE.60507@gmail.com>
+	Tue, 29 Jul 2014 04:05:23 -0400
+In-Reply-To: <53D7335F.9020802@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <trblinux@gmail.com>, Tushar Behera <tushar.b@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, ML Devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Tomasz Figa <t.figa@samsung.com>, lkml <linux-kernel@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Doug Anderson <dianders@google.com>, Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, ML Arch-Arm <linux-arm-kernel@lists.infradead.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Quoting Tushar Behera (2014-07-10 23:18:54)
-> On 06/13/2014 02:39 AM, Mike Turquette wrote:
-> > Quoting Tushar Behera (2014-06-12 00:29:23)
-> >> On Wed, Jun 11, 2014 at 10:20 PM, Mike Turquette <mturquette@linaro.org> wrote:
-> >>> Quoting Tushar Behera (2014-06-10 22:32:17)
-> >>>> When the output clock of AUDSS mux is disabled, we are getting kernel
-> >>>> oops while doing a clk_get() on other clocks provided by AUDSS. Though
-> >>>> user manual doesn't specify this dependency, we came across this issue
-> >>>> while disabling the parent of AUDSS mux clocks.
-> >>>
-> >>> Hi Tushar,
-> >>>
-> >>> Can you help me understand better what the actual problem is? What is
-> >>> the root cause of the kernel oops?
+
+--=-zQvl29ntDiUm9ZQWejmB
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, 2014-07-29 at 14:38 +0900, Inki Dae wrote:
+> On 2014=EB=85=84 07=EC=9B=94 28=EC=9D=BC 23:45, Sjoerd Simons wrote:
+> > Hey Inki,
+> >=20
+> > On Mon, 2014-07-28 at 23:17 +0900, Inki Dae wrote:
+> >> On 2014=EB=85=84 07=EC=9B=94 28=EC=9D=BC 17:30, Sjoerd Simons wrote:
+> >> Sorry for late,
 > >>
-> >> Currently AUDSS mux has two parents, XXTI crystal and MAU_EPLL clock.
-> >> As per observation, when the output of AUDSS mux is gated, we are not
-> >> able to do any operation on the clocks provided by MAU block (mostly
-> >> the clocks used by ADMA and audio blocks).
-> > 
-> > I tried to get a datasheet for Exynos 54xx but could not find it. I even
-> > looked at the public 5250 data sheet, but it is completely missing
-> > Chapter 34, "Audio Subsystem", which apparently contains Figure 34-3,
-> > "Clock names and clock tree diagram of MAUDIO_BLK".
-> > 
-> > So without any clue about your hardware (not for lack of trying) I would
-> > guess that somewhere in the parent hierarchy you have an interface clock
-> > which must be enabled in order for you to touch the registers pertaining
-> > to the downstream audio clocks.
-> > 
-> 
-> Yes, right. As per observation, we need to keep the output of AUDSS mux
-> enabled to access the registers present in MAU block.
-> 
-> > The right way to handle this requires two steps:
-> > 
-> > 1) model your interface clock in the Linux clock framework if you
-> > haven't already (I assume it is a gate clock, or the child of a gate
-> > clock)
-> > 
-> 
-> The interface clock is already part of the clock framework.
+> >> I don't see why Exynos drm driver should be auto-loaded module. I thin=
+k
+> >> all devices covered by Exynos drm framework are not hot-plugged. Maybe
+> >> there is my missing point. So can you explain why Exynos drm driver
+> >> should be auto-loaded module?
+> >=20
+> > The background for this is that I'm building a distribution-style
+> > multiplatform kernel, that is to say a kernel which can boot on a big
+> > set of different ARM boards. As such, the intention is to keep the core
+> > zImage as small as possible and essentially build things as far as
+> > possible as loadable modules. So in a sense, all of the hardware is
+> > "hotplugged", depending on which board the kernel is actually booted on=
+!
+> >=20
+> > For that use-case, exynosdrm needs to be able to build as a module
+> > (which it already can!) and it needs the required meta-data for
+> > userspace to know when it should be loaded. The latter is what my patch
+> > adds.=20
+>=20
+> It seems that you want that module data of sub drivers are added by
+> depmod to /lib/modules/KERNEL_VERSION/modules.xxxmap because some
+> hot-plug system should use modules.xxxmap file to find the proper driver
+> to load.
 
-Great!
+Yes. I would like the module to export its module alias information for
+the subdrivers such that depmod can add it to its databases and the
+normal module autoloading mechanisms work as intended. Note that in my
+case, "some hot-plug" system is really just udev, not something
+special..
 
-> 
-> > 2) the clk_ops callbacks for the affected audio clocks should wrap their
-> > operations (i.e. critical secion) with a clk_enable/clk_disable pair,
-> > where the clock being enables/disable is the interface clock mentioned
-> > above in #1
-> > 
-> > The CCF is reentrant, so you can do this by simply using the top-level
-> > clk.h API from within your clk_ops callbacks.
-> > 
-> 
-> Right now, the clocks are registered with clk_register_mux,
-> clk_register_div and clk_register_gate calls which in turn set
-> appropriate clk_ops callbacks. If I need to wrap the register access
-> during these clk_ops callbacks with clk_enable/clk_disable of interface
-> lock, I would have to reimplement the clk_ops callbacks in
-> clk-exynos-audss driver.
-> 
-> Is that the approach that you are suggesting?
 
-Is there another way? This is one of the reasons why I don't like the
-basic clock types being subclassed by clock drivers. It's a brittle
-design that tends to fall over as soon as the basic clock types don't do
-what you need. And don't even get me started on how ugly clk-composite.c
-is! ;-)
+> Ok, then does exynos drm driver is loaded well with your patches?=20
 
-One hack you can do is to subclass the clk_ops for each of the basic
-clock types you use and add .prepare and .unprepare callbacks to them
-which enable/disable the interface clock. Some examples of this are
-merged and it may be what your clock driver does already. However this
-may not be very optimal if your consumer driver simply calls
-clk_prepare_enable at probe-time and never turns the interface clock off
-again...
+It is indeed.
 
-> 
-> > I might be totally wrong about the cause of the hang, but that's my best
-> > guess based on everyone's bug reports.
-> > 
-> 
-> There are 5 gate clocks within MAU block. While disabling the unused
-> clocks, if CLK_MAU_EPLL is disabled first, then we are getting this
-> system hang.
+> My concern is that device_id of exynos drm core driver ,
+> exynos_drm_drv.c, wouldn't be exported to userspace, which means that
+> exynos drm subsystem aren't bound by component framework because most
+> sub drivers except vidi are bound by component interfaces of exynos drm
+> core: exynos drm drv is not device tree base driver.
 
-Right. Then your accesses to the clock control register need to be
-protected by a clk_enable/clk_disable critical section.
+This patchset doesn't change how that works. Really all it does is to
+tell userspace which devices exynosdrm supports. From the kernel side of
+things, there is no difference between the module being loaded based on
+that information vs. it being loaded by hand.
 
-Regards,
-Mike
+--=20
+Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Collabora Ltd.
 
-> 
-> 
-> > Regards,
-> > Mike
-> > 
-> >>
-> >>>
-> >>> You mention calling clk_get on child clocks of the AUDSS mux fails, but
-> >>> I cannot imagine why. How can the enable/disable state of a clock affect
-> >>> the ability to clk_get other clocks?
-> >>>
-> >>
-> >> I might have a little vogue while updating the commit message
-> >> (mentioning about clk_get which surely is only a s/w operation), but
-> >> there is definitely some issue with handling those clocks under given
-> >> scenario.
-> >>
-> >> I am on leave till end of this week, so I will update you more with
-> >> the logs on Monday.
-> >>
-> >> Thanks,
-> >> --
-> >> Tushar
-> > 
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> > 
-> 
-> 
-> -- 
-> Tushar Behera
+--=-zQvl29ntDiUm9ZQWejmB
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIUzDCCBsIw
+ggWqoAMCAQICEAoE3yF0XU0rjOozcgUAUOkwDQYJKoZIhvcNAQEFBQAwZTELMAkGA1UEBhMCVVMx
+FTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEkMCIGA1UE
+AxMbRGlnaUNlcnQgQXNzdXJlZCBJRCBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTIxMTExMDAw
+MDAwMFowYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
+LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6IItmfnKwkKVpYBzQHDSnlZUXKnE0kEGj8kz/E1FkVyB
+n+0snPgWWd+etSQVwpi5tHdJ3InECtqvy15r7a2wcTHrzzpADEZNk+yLejYIA6sMNP4YSYL+x8cx
+SIB8HqIPkg5QycaH6zY/2DDD/6b3+6LNb3Mj/qxWBZDwMiEWicZwiPkFl32jx0PdAug7Pe2xQaPt
+P77blUjE7h6z8rwMK5nQxl0SQoHhg26Ccz8mSxSQrllmCsSNvtLOBq6thG9IhJtPQLnxTPKvmPv2
+zkBdXPao8S+v7Iki8msYZbHBc63X8djPHgp0XEK4aH631XcKJ1Z8D2KkPzIUYJX9BwSiCQIDAQAB
+o4IDbzCCA2swDgYDVR0PAQH/BAQDAgGGMDsGA1UdJQQ0MDIGCCsGAQUFBwMBBggrBgEFBQcDAgYI
+KwYBBQUHAwMGCCsGAQUFBwMEBggrBgEFBQcDCDCCAcYGA1UdIASCAb0wggG5MIIBtQYLYIZIAYb9
+bAEDAAQwggGkMDoGCCsGAQUFBwIBFi5odHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJl
+cG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUHAgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAA
+dABoAGkAcwAgAEMAZQByAHQAaQBmAGkAYwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAg
+AGEAYwBjAGUAcAB0AGEAbgBjAGUAIABvAGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMA
+UAAvAEMAUABTACAAYQBuAGQAIAB0AGgAZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABB
+AGcAcgBlAGUAbQBlAG4AdAAgAHcAaABpAGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkA
+dAB5ACAAYQBuAGQAIABhAHIAZQAgAGkAbgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBp
+AG4AIABiAHkAIAByAGUAZgBlAHIAZQBuAGMAZQAuMA8GA1UdEwEB/wQFMAMBAf8wfQYIKwYBBQUH
+AQEEcTBvMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wRwYIKwYBBQUHMAKG
+O2h0dHA6Ly93d3cuZGlnaWNlcnQuY29tL0NBQ2VydHMvRGlnaUNlcnRBc3N1cmVkSURSb290Q0Eu
+Y3J0MIGBBgNVHR8EejB4MDqgOKA2hjRodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRB
+c3N1cmVkSURSb290Q0EuY3JsMDqgOKA2hjRodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGlnaUNl
+cnRBc3N1cmVkSURSb290Q0EuY3JsMB0GA1UdDgQWBBQVABIrE5iymQftHt+ivlcNK2cCzTAfBgNV
+HSMEGDAWgBRF66Kv9JLLgjEtUYunpyGd823IDzANBgkqhkiG9w0BAQUFAAOCAQEAhGFOQR64dgQq
+tbbvj/JVhbldVv4KmObkvWWKfUAp0/yxXUX9OrgqWzNLJFzNubTkc61hXXatdDOKZtUjr0wfcm5F
+2XVAu6I7z41JL8BBsOIpo1E4Q1CZFKwzBjViiX13qVIH5WwgV7aBum+8s8KU7XYCgNl8zoWoHOzH
+Q0pLsVfPcs7f9SU8yyJP/Z9S0TfLCLs4PuDVPm95Ca1bfDGzdzXD5GP5aAqYB+dGOHeE0j6XvAqg
+qKwlT0RukeHSWq9r7zAcjaNEQrMQiyP61+Y1dDesz+urWB/JiCP/NtQH6jRqR+qdlWyeKU9T7eMr
+lSBOKs+WYHr4LIDwlVLOKZaBYjCCBv8wggXnoAMCAQICEA2fwUKNhvkL8dN88tUFvVwwDQYJKoZI
+hvcNAQEFBQAwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQ
+d3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMB4XDTE0
+MDIxNzAwMDAwMFoXDTE1MDMxMjEyMDAwMFowgaQxCzAJBgNVBAYTAkdCMRcwFQYDVQQIEw5DYW1i
+cmlkZ2VzaGlyZTESMBAGA1UEBxMJQ2FtYnJpZGdlMRYwFAYDVQQKEw1Db2xsYWJvcmEgTHRkMQow
+CAYDVQQLEwExMRYwFAYDVQQDEw1Tam9lcmQgU2ltb25zMSwwKgYJKoZIhvcNAQkBFh1zam9lcmQu
+c2ltb25zQGNvbGxhYm9yYS5jby51azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN4Q
+EHeW1NbogMVZpHedG7o509/L4VBhqQd8j8JViWd+yvLlxOBw/gY+7ioHMatrQY2VvY6QOLle2Xqs
+CDvELcXMxwyFpBC0Ia+CVE+5pF+0IMuVkGIL1T8LHeKZYeRP+uFXtmWzas12hsMILNRmK7Q5PACm
++v/6HFn111hLKkANBtRHIRiDbFQOiluNeR2bq+ck1y2+X//SGumA1XZFdCB/1VcRJXDdFnYdU3j/
+RkoiGggo3MSq3mJ6yV7sqzk04fTLFvfL0KadCMauputeGBybEiFAt6rCm5TkyUqoDOTU07byOEXO
+M32EGeYeV515RzARTpOSE9sdmRq0jNNAqGsCAwEAAaOCA2wwggNoMB8GA1UdIwQYMBaAFBUAEisT
+mLKZB+0e36K+Vw0rZwLNMB0GA1UdDgQWBBRaTG8RXMDSFO5XcrjqYs/YDlmqSDAoBgNVHREEITAf
+gR1zam9lcmQuc2ltb25zQGNvbGxhYm9yYS5jby51azAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMH0GA1UdHwR2MHQwOKA2oDSGMmh0dHA6Ly9jcmwzLmRpZ2lj
+ZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3JsMDigNqA0hjJodHRwOi8vY3JsNC5kaWdp
+Y2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0xLmNybDCCAcUGA1UdIASCAbwwggG4MIIBtAYK
+YIZIAYb9bAQBAjCCAaQwOgYIKwYBBQUHAgEWLmh0dHA6Ly93d3cuZGlnaWNlcnQuY29tL3NzbC1j
+cHMtcmVwb3NpdG9yeS5odG0wggFkBggrBgEFBQcCAjCCAVYeggFSAEEAbgB5ACAAdQBzAGUAIABv
+AGYAIAB0AGgAaQBzACAAQwBlAHIAdABpAGYAaQBjAGEAdABlACAAYwBvAG4AcwB0AGkAdAB1AHQA
+ZQBzACAAYQBjAGMAZQBwAHQAYQBuAGMAZQAgAG8AZgAgAHQAaABlACAARABpAGcAaQBDAGUAcgB0
+ACAAQwBQAC8AQwBQAFMAIABhAG4AZAAgAHQAaABlACAAUgBlAGwAeQBpAG4AZwAgAFAAYQByAHQA
+eQAgAEEAZwByAGUAZQBtAGUAbgB0ACAAdwBoAGkAYwBoACAAbABpAG0AaQB0ACAAbABpAGEAYgBp
+AGwAaQB0AHkAIABhAG4AZAAgAGEAcgBlACAAaQBuAGMAbwByAHAAbwByAGEAdABlAGQAIABoAGUA
+cgBlAGkAbgAgAGIAeQAgAHIAZQBmAGUAcgBlAG4AYwBlAC4wdwYIKwYBBQUHAQEEazBpMCQGCCsG
+AQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQQYIKwYBBQUHMAKGNWh0dHA6Ly9jYWNl
+cnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3J0MAwGA1UdEwEB/wQCMAAw
+DQYJKoZIhvcNAQEFBQADggEBAAc8CwXSms3RbIx+bhxFsGQoN+RpHtjnPvMPPAobv7rxdhQPPz+N
+6h3hpVzegeW2XhyZVC8MT0U6uWXrk+1uQUAXrJEG+W2X8yTEoHDS/SCF/POOsj/ekaDuNE9JJB/9
+cspoa4W+W8pX1sRurBDFHL0DBudUQ1PgvTSLPOHtfKQpu4gRb2u8KpJermp/IvPLImX9xSCbYKQM
+2L0wbpStFIYdyKCKuXuQxOX3BdBKLCFvcIDE6hjj3UpOlThCbeul2Tz5jARCfRK4OUxnXyb/Tp5j
+tshIAa2ZMGaTH9ApeY7P6C2ONF+Mh5yV/raWXOnJ9dEg6/sXcbdiieqzLKYBIgQwggb/MIIF56AD
+AgECAhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBBQUAMGIxCzAJBgNVBAYTAlVTMRUwEwYD
+VQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xITAfBgNVBAMTGERp
+Z2lDZXJ0IEFzc3VyZWQgSUQgQ0EtMTAeFw0xNDAyMTcwMDAwMDBaFw0xNTAzMTIxMjAwMDBaMIGk
+MQswCQYDVQQGEwJHQjEXMBUGA1UECBMOQ2FtYnJpZGdlc2hpcmUxEjAQBgNVBAcTCUNhbWJyaWRn
+ZTEWMBQGA1UEChMNQ29sbGFib3JhIEx0ZDEKMAgGA1UECxMBMTEWMBQGA1UEAxMNU2pvZXJkIFNp
+bW9uczEsMCoGCSqGSIb3DQEJARYdc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28udWswggEiMA0G
+CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDeEBB3ltTW6IDFWaR3nRu6OdPfy+FQYakHfI/CVYln
+fsry5cTgcP4GPu4qBzGra0GNlb2OkDi5Xtl6rAg7xC3FzMcMhaQQtCGvglRPuaRftCDLlZBiC9U/
+Cx3imWHkT/rhV7Zls2rNdobDCCzUZiu0OTwApvr/+hxZ9ddYSypADQbURyEYg2xUDopbjXkdm6vn
+JNctvl//0hrpgNV2RXQgf9VXESVw3RZ2HVN4/0ZKIhoIKNzEqt5iesle7Ks5NOH0yxb3y9CmnQjG
+rqbrXhgcmxIhQLeqwpuU5MlKqAzk1NO28jhFzjN9hBnmHledeUcwEU6TkhPbHZkatIzTQKhrAgMB
+AAGjggNsMIIDaDAfBgNVHSMEGDAWgBQVABIrE5iymQftHt+ivlcNK2cCzTAdBgNVHQ4EFgQUWkxv
+EVzA0hTuV3K46mLP2A5ZqkgwKAYDVR0RBCEwH4Edc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28u
+dWswDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMEBggrBgEFBQcDAjB9BgNVHR8E
+djB0MDigNqA0hjJodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0x
+LmNybDA4oDagNIYyaHR0cDovL2NybDQuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0QXNzdXJlZElEQ0Et
+MS5jcmwwggHFBgNVHSAEggG8MIIBuDCCAbQGCmCGSAGG/WwEAQIwggGkMDoGCCsGAQUFBwIBFi5o
+dHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJlcG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUH
+AgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAAdABoAGkAcwAgAEMAZQByAHQAaQBmAGkA
+YwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAgAGEAYwBjAGUAcAB0AGEAbgBjAGUAIABv
+AGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMAUAAvAEMAUABTACAAYQBuAGQAIAB0AGgA
+ZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABBAGcAcgBlAGUAbQBlAG4AdAAgAHcAaABp
+AGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkAdAB5ACAAYQBuAGQAIABhAHIAZQAgAGkA
+bgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBpAG4AIABiAHkAIAByAGUAZgBlAHIAZQBu
+AGMAZQAuMHcGCCsGAQUFBwEBBGswaTAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQu
+Y29tMEEGCCsGAQUFBzAChjVodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1
+cmVkSURDQS0xLmNydDAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBBQUAA4IBAQAHPAsF0prN0WyM
+fm4cRbBkKDfkaR7Y5z7zDzwKG7+68XYUDz8/jeod4aVc3oHltl4cmVQvDE9FOrll65PtbkFAF6yR
+Bvltl/MkxKBw0v0ghfzzjrI/3pGg7jRPSSQf/XLKaGuFvlvKV9bEbqwQxRy9AwbnVENT4L00izzh
+7XykKbuIEW9rvCqSXq5qfyLzyyJl/cUgm2CkDNi9MG6UrRSGHcigirl7kMTl9wXQSiwhb3CAxOoY
+491KTpU4Qm3rpdk8+YwEQn0SuDlMZ18m/06eY7bISAGtmTBmkx/QKXmOz+gtjjRfjIeclf62llzp
+yfXRIOv7F3G3YonqsyymASIEMYIDEDCCAwwCAQEwdjBiMQswCQYDVQQGEwJVUzEVMBMGA1UEChMM
+RGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
+dCBBc3N1cmVkIElEIENBLTECEA2fwUKNhvkL8dN88tUFvVwwCQYFKw4DAhoFAKCCAW8wGAYJKoZI
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTQwNzI5MDgwNTE4WjAjBgkqhkiG
+9w0BCQQxFgQUgzSa+mbna9NhzFFXrenA4wJMutQwgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
+BhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEh
+MB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xAhANn8FCjYb5C/HTfPLVBb1cMIGHBgsq
+hkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcG
+A1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0x
+AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBAGdzi9Ow1RDdQH4CU7CGcKMr8p/b
+nLkw4II0BrFdqdgf4jQSZZYXOTElZcToHYN7sF53IDefCwTgs86YgGd/uyBiW7+7c7iznYwzeaWU
+6WOcN/d1h8vt71zUOiT/6Qn/4lku1/Hglb/9QYuBjBP3eBY1jQGlTixBzOLd/MnNWbJnaJEjPRmt
+JLhjwJdbHCiyJQLFcAORMHuBIwXujqIqSwdTsYPoU8XvTEgYHSwg15flNhR9qp4B1RNN+FrwfpFZ
+Euo4SV0BuvG7vA1KkLQ1QfPB0VuGYO/8EAT9PO7NvzVwfE8g/lMdam5H5UavqoKr+29wmdgSiF/F
+uyvOpDsNkIsAAAAAAAA=
+
+
+--=-zQvl29ntDiUm9ZQWejmB--
