@@ -1,60 +1,68 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 0/3] drm/exynos: Allow module to be autoloaded
-Date: Tue, 29 Jul 2014 14:38:39 +0900
-Message-ID: <53D7335F.9020802@samsung.com>
-References: <1405715801-5325-1-git-send-email-sjoerd.simons@collabora.co.uk>
- <53CC82AC.9060301@samsung.com> <1405925419.7527.17.camel@dusk>
- <1406536246.15871.6.camel@dusk> <53D65B5D.1060505@samsung.com>
- <1406558722.29009.11.camel@dusk>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v7 6/6] cpufreq: exynos: remove exynos4210/5250 specific
+ cpufreq driver support
+Date: Tue, 29 Jul 2014 11:23:20 +0530
+Message-ID: <CAJuA9agfpQ7oyfZ99qSDj7EbsFk6dMnxxu5=P=vJYzTpAAUEuQ@mail.gmail.com>
+References: <1405345118-4269-1-git-send-email-thomas.ab@samsung.com>
+	<1405345118-4269-7-git-send-email-thomas.ab@samsung.com>
+	<53CA72CC.7010505@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1406558722.29009.11.camel@dusk>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f44.google.com ([209.85.215.44]:54913 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751042AbaG2FxV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Jul 2014 01:53:21 -0400
+In-Reply-To: <53CA72CC.7010505@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>
 
-T24gMjAxNOuFhCAwN+yblCAyOOydvCAyMzo0NSwgU2pvZXJkIFNpbW9ucyB3cm90ZToKPiBIZXkg
-SW5raSwKPiAKPiBPbiBNb24sIDIwMTQtMDctMjggYXQgMjM6MTcgKzA5MDAsIElua2kgRGFlIHdy
-b3RlOgo+PiBPbiAyMDE064WEIDA37JuUIDI47J28IDE3OjMwLCBTam9lcmQgU2ltb25zIHdyb3Rl
-Ogo+PiBTb3JyeSBmb3IgbGF0ZSwKPj4KPj4gSSBkb24ndCBzZWUgd2h5IEV4eW5vcyBkcm0gZHJp
-dmVyIHNob3VsZCBiZSBhdXRvLWxvYWRlZCBtb2R1bGUuIEkgdGhpbmsKPj4gYWxsIGRldmljZXMg
-Y292ZXJlZCBieSBFeHlub3MgZHJtIGZyYW1ld29yayBhcmUgbm90IGhvdC1wbHVnZ2VkLiBNYXli
-ZQo+PiB0aGVyZSBpcyBteSBtaXNzaW5nIHBvaW50LiBTbyBjYW4geW91IGV4cGxhaW4gd2h5IEV4
-eW5vcyBkcm0gZHJpdmVyCj4+IHNob3VsZCBiZSBhdXRvLWxvYWRlZCBtb2R1bGU/Cj4gCj4gVGhl
-IGJhY2tncm91bmQgZm9yIHRoaXMgaXMgdGhhdCBJJ20gYnVpbGRpbmcgYSBkaXN0cmlidXRpb24t
-c3R5bGUKPiBtdWx0aXBsYXRmb3JtIGtlcm5lbCwgdGhhdCBpcyB0byBzYXkgYSBrZXJuZWwgd2hp
-Y2ggY2FuIGJvb3Qgb24gYSBiaWcKPiBzZXQgb2YgZGlmZmVyZW50IEFSTSBib2FyZHMuIEFzIHN1
-Y2gsIHRoZSBpbnRlbnRpb24gaXMgdG8ga2VlcCB0aGUgY29yZQo+IHpJbWFnZSBhcyBzbWFsbCBh
-cyBwb3NzaWJsZSBhbmQgZXNzZW50aWFsbHkgYnVpbGQgdGhpbmdzIGFzIGZhciBhcwo+IHBvc3Np
-YmxlIGFzIGxvYWRhYmxlIG1vZHVsZXMuIFNvIGluIGEgc2Vuc2UsIGFsbCBvZiB0aGUgaGFyZHdh
-cmUgaXMKPiAiaG90cGx1Z2dlZCIsIGRlcGVuZGluZyBvbiB3aGljaCBib2FyZCB0aGUga2VybmVs
-IGlzIGFjdHVhbGx5IGJvb3RlZCBvbiEKPiAKPiBGb3IgdGhhdCB1c2UtY2FzZSwgZXh5bm9zZHJt
-IG5lZWRzIHRvIGJlIGFibGUgdG8gYnVpbGQgYXMgYSBtb2R1bGUKPiAod2hpY2ggaXQgYWxyZWFk
-eSBjYW4hKSBhbmQgaXQgbmVlZHMgdGhlIHJlcXVpcmVkIG1ldGEtZGF0YSBmb3IKPiB1c2Vyc3Bh
-Y2UgdG8ga25vdyB3aGVuIGl0IHNob3VsZCBiZSBsb2FkZWQuIFRoZSBsYXR0ZXIgaXMgd2hhdCBt
-eSBwYXRjaAo+IGFkZHMuIAo+IAoKSXQgc2VlbXMgdGhhdCB5b3Ugd2FudCB0aGF0IG1vZHVsZSBk
-YXRhIG9mIHN1YiBkcml2ZXJzIGFyZSBhZGRlZCBieQpkZXBtb2QgdG8gL2xpYi9tb2R1bGVzL0tF
-Uk5FTF9WRVJTSU9OL21vZHVsZXMueHh4bWFwIGJlY2F1c2Ugc29tZQpob3QtcGx1ZyBzeXN0ZW0g
-c2hvdWxkIHVzZSBtb2R1bGVzLnh4eG1hcCBmaWxlIHRvIGZpbmQgdGhlIHByb3BlciBkcml2ZXIK
-dG8gbG9hZC4KCk9rLCB0aGVuIGRvZXMgZXh5bm9zIGRybSBkcml2ZXIgaXMgbG9hZGVkIHdlbGwg
-d2l0aCB5b3VyIHBhdGNoZXM/IE15CmNvbmNlcm4gaXMgdGhhdCBkZXZpY2VfaWQgb2YgZXh5bm9z
-IGRybSBjb3JlIGRyaXZlciAsIGV4eW5vc19kcm1fZHJ2LmMsCndvdWxkbid0IGJlIGV4cG9ydGVk
-IHRvIHVzZXJzcGFjZSwgd2hpY2ggbWVhbnMgdGhhdCBleHlub3MgZHJtIHN1YnN5c3RlbQphcmVu
-J3QgYm91bmQgYnkgY29tcG9uZW50IGZyYW1ld29yayBiZWNhdXNlIG1vc3Qgc3ViIGRyaXZlcnMg
-ZXhjZXB0IHZpZGkKYXJlIGJvdW5kIGJ5IGNvbXBvbmVudCBpbnRlcmZhY2VzIG9mIGV4eW5vcyBk
-cm0gY29yZTogZXh5bm9zIGRybSBkcnYgaXMKbm90IGRldmljZSB0cmVlIGJhc2UgZHJpdmVyLgoK
-VGhhbmtzLApJbmtpIERhZQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+Hi Tomasz,
+
+On Sat, Jul 19, 2014 at 6:59 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi,
+>
+> On 14.07.2014 15:38, Thomas Abraham wrote:
+>> From: Thomas Abraham <thomas.ab@samsung.com>
+>>
+>> Exynos4210 and Exynos5250 based platforms have switched over to use generic
+>> cpufreq drivers for cpufreq functionality. So the Exynos specific cpufreq
+>> drivers for these platforms can be removed.
+>>
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>> Reviewed-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> Tested-by: Arjun K.V <arjun.kv@samsung.com>
+>> ---
+>>  drivers/cpufreq/Kconfig.arm          |   22 ----
+>>  drivers/cpufreq/Makefile             |    2 -
+>>  drivers/cpufreq/exynos4210-cpufreq.c |  184 -----------------------------
+>>  drivers/cpufreq/exynos5250-cpufreq.c |  210 ----------------------------------
+>>  4 files changed, 418 deletions(-)
+>>  delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
+>>  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
+>>
+>
+> I would hesitate with removing this driver straightaway and replacing it
+> with a new one that isn't yet well tested. For at least one release I
+> would keep the old code in place with the possibility of switching
+> between old and new one in Kconfig.
+
+The new drivers have been tested for three days on
+Exynos4210/5250/5420 based boards. So I am fairly confident that there
+will be no issues in switching to the generic drivers and the old
+drivers have not been retained in the next version.
+
+Thanks,
+Thomas.
+
+>
+> Best regards,
+> Tomasz
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
