@@ -1,135 +1,186 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v2 2/2] drm/exynos: dsi: add LPM (Low Power Mode) transfer
  support
-Date: Tue, 29 Jul 2014 13:36:46 +0200
-Message-ID: <20140729113645.GB21732@ulmo.nvidia.com>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <53D5435B.8030305@suse.de>
- <CAEC9eQPW-Z4craCC15M7oTp8eSD09AGxdTFEWaAWqn3Up4eJUg@mail.gmail.com>
- <53D783CC.2080108@suse.de>
+Date: Tue, 29 Jul 2014 13:39:47 +0200
+Message-ID: <53D78803.2020002@samsung.com>
+References: <1406512857-7213-1-git-send-email-inki.dae@samsung.com>
+ <1406512857-7213-3-git-send-email-inki.dae@samsung.com>
+ <53D6715A.5040604@samsung.com> <53D7182E.6040308@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="St7VIuEGZ6dlpu13"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:64011 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753148AbaG2Lgy (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47709 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753087AbaG2Ljw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 07:36:54 -0400
-Content-Disposition: inline
-In-Reply-To: <53D783CC.2080108@suse.de>
+	Tue, 29 Jul 2014 07:39:52 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0N9H00MRS1Q8HM50@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 29 Jul 2014 12:39:44 +0100 (BST)
+In-reply-to: <53D7182E.6040308@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>
-Cc: Ajay kumar <ajaynumb@gmail.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, inki.dae@samsung.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, airlied@linux.ie, linux-samsung-soc@vger.kernel.org, treding@nvidia.com
+
+On 07/29/2014 05:42 AM, Inki Dae wrote:
+> On 2014=EB=85=84 07=EC=9B=94 29=EC=9D=BC 00:50, Andrzej Hajda wrote:
+>> On 07/28/2014 04:00 AM, Inki Dae wrote:
+>>> This patch adds LPM transfer support for video or command data.
+>>>
+>>> With this patch, Exynos MIPI DSI controller can transfer command or
+>>> video data with HS or LP mode in accordance with mode_flags set
+>>> by LCD Panel driver.
+>>>
+>>> Changelog v2: Enable High Speed clock only in case of stand by requ=
+est.
+>>>
+>>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> ---
+>>>  drivers/gpu/drm/exynos/exynos_drm_dsi.c |   22 +++++++++++++++++++=
++--
+>>>  1 file changed, 20 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/=
+drm/exynos/exynos_drm_dsi.c
+>>> index 5e78d45..1bed105 100644
+>>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>>> @@ -493,8 +493,11 @@ static int exynos_dsi_enable_clock(struct exyn=
+os_dsi *dsi)
+>>>  			| DSIM_ESC_PRESCALER(esc_div)
+>>>  			| DSIM_LANE_ESC_CLK_EN_CLK
+>>>  			| DSIM_LANE_ESC_CLK_EN_DATA(BIT(dsi->lanes) - 1)
+>>> -			| DSIM_BYTE_CLK_SRC(0)
+>>> -			| DSIM_TX_REQUEST_HSCLK;
+>>> +			| DSIM_BYTE_CLK_SRC(0);
+>>> +
+>>> +	if (!(dsi->mode_flags & MIPI_DSI_MODE_CMD_LPM))
+>>> +		reg |=3D DSIM_TX_REQUEST_HSCLK;
+>>> +
+>>>  	writel(reg, dsi->reg_base + DSIM_CLKCTRL_REG);
+>>> =20
+>>>  	return 0;
+>>> @@ -553,6 +556,18 @@ static void exynos_dsi_set_phy_ctrl(struct exy=
+nos_dsi *dsi)
+>>>  	writel(reg, dsi->reg_base + DSIM_PHYTIMING2_REG);
+>>>  }
+>>> =20
+>>> +static void exynos_dsi_enable_hs_clock(struct exynos_dsi *dsi,
+>>> +					bool enable)
+>>> +{
+>>> +	u32 reg =3D readl(dsi->reg_base + DSIM_CLKCTRL_REG);
+>>> +
+>>> +	reg &=3D ~DSIM_TX_REQUEST_HSCLK;
+>>> +	if (enable)
+>>> +		reg |=3D DSIM_TX_REQUEST_HSCLK;
+>>> +
+>>> +	writel(reg, dsi->reg_base + DSIM_CLKCTRL_REG);
+>>> +}
+>>> +
+>> I have tested DSIM_TX_REQUEST_HSCLK bit on trats device(video mode H=
+S) -
+>> it works with and without the bit set.
+> If you can test thmorstat board, you will face with that its panel is
+> not worked.
+
+So it means this panel requires proper driving of this bit, but it does
+not prove it is
+LPM related.
+
+>> So I start to suspect this bit is not just for simply enable/disable=
+ HS
+>> clock as function name suggests, do you know what is its
+>> exact meaning? The specs are quite succinct on it.
+> HSCLK only has meaning when it is used with CmdLpdt and TxLpdt bits.
+
+This sounds very strange. DSI specs and D-PHY specs says clearly
+that LPM transmissions are unrelated to HS clock [1][2]. Even timing
+diagrams
+in Exynos specs shows no dependency of LPM transmissions on HS clock.
+And the
+description of TxRequestHsClk bit says "HS clock request for HS transfe=
+r
+at clock lane (Turn
+on HS clock)".
+
+Maybe different flag should be used to describe your panel requirements
+regarding this bit.
+
+It would be good to see the real initialization sequence in form of
+pseudo-code or better in the driver.
 
 
---St7VIuEGZ6dlpu13
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[1]: MIPI DSI: "Note that in Low Power signaling mode, LP clock is
+functionally embedded in the data signals. When LP
+data transmission ends, the clock effectively stops and subsequent LP
+clocks are not available to the
+peripheral. The peripheral shall not require additional bits, bytes, or
+packets from the host processor in
+order to complete processing or pipeline movement of received data in L=
+P
+mode transmissions. There are a
+variety of ways to meet this requirement. For example, the peripheral
+may generate its own clock or it may
+require the host processor to keep the HS serial clock running."
 
-On Tue, Jul 29, 2014 at 01:21:48PM +0200, Andreas F=C3=A4rber wrote:
-> Hi Ajay,
->=20
-> Am 28.07.2014 08:13, schrieb Ajay kumar:
-> > On 7/27/14, Andreas F=C3=A4rber <afaerber@suse.de> wrote:
-> >> Am 25.07.2014 21:22, schrieb Ajay Kumar:
-> >>> This series is based on exynos-drm-next branch of Inki Dae's tree at:
-> >>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
-> >>>
-> >>> I have tested this after adding few DT changes for exynos5250-snow,
-> >>> exynos5420-peach-pit and exynos5800-peach-pi boards.
-> >>
-> >> I'm trying to test this with a modified exynos5250-spring DT based off
-> >> kgene's for-next branch due to DT, and I run into the following:
-> >>
-> >>   CC      drivers/gpu/drm/bridge/ptn3460.o
-> >> drivers/gpu/drm/bridge/ptn3460.c: In function =E2=80=98ptn3460_post_en=
-coder_init=E2=80=99:
-> >> drivers/gpu/drm/bridge/ptn3460.c:275:2: error: implicit declaration of
-> >> function =E2=80=98drm_connector_register=E2=80=99 [-Werror=3Dimplicit-=
-function-declaration]
-> >>   drm_connector_register(&ptn_bridge->connector);
-> >>   ^
-> > Hope this might help:
-> > http://www.spinics.net/lists/dri-devel/msg60578.html
->=20
-> That fixed my build, thanks.
->=20
-> Unfortunately the most I got on Spring with attached DT was a blank
-> screen with a white horizontal line in the middle.
->=20
-> Do I need to specify a specific panel model for Spring?
->=20
-> For testing I re-applied your iommu patches (which btw fail now for 5420
-> due to disp_pd) but didn't know what to do about your panel-lvds
-> regulator patch now that it's gone.
->=20
-> If I don't apply this series, then commenting out the dp-controller node
-> gets me a working display with simplefb as before.
->=20
-> Regards,
-> Andreas
->=20
-> --=20
-> SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-> GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+[2]: MIPI D-PHY: "The data is self-clocked by the applied bit encoding
+and does not rely on the Clock Lane".
 
-> From 9172a26a8f0d0f0d170bd27e1c150ad204d8086a Mon Sep 17 00:00:00 2001
-> From: =3D?UTF-8?q?Andreas=3D20F=3DC3=3DA4rber?=3D <afaerber@suse.de>
-> Date: Sun, 27 Jul 2014 21:58:06 +0200
-> Subject: [PATCH] ARM: dts: exynos5250: Add eDP/LVDS bridge to Spring
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=3DUTF-8
-> Content-Transfer-Encoding: 8bit
->=20
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> [AF: Redone for v6]
-> Signed-off-by: Andreas F??rber <afaerber@suse.de>
-> ---
->  arch/arm/boot/dts/exynos5250-spring.dts | 32 +++++++++++++++++++++++++++=
-++++-
->  1 file changed, 31 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dts/=
-exynos5250-spring.dts
-> index 687dfab86bc8..517b1ff2bfdf 100644
-> --- a/arch/arm/boot/dts/exynos5250-spring.dts
-> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
-> @@ -64,10 +64,14 @@
->  		vdd_pll-supply =3D <&s5m_ldo8_reg>;
->  	};
-> =20
-> +	panel: panel {
-> +		compatible =3D "simple-panel";
-> +	};
+Regards
+Andrzej
 
-You can't do this. "simple-panel" isn't a valid panel model. It should
-probably be removed from the platform_of_match table in the driver.
-
-Thierry
-
---St7VIuEGZ6dlpu13
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT14dNAAoJEN0jrNd/PrOhepoP/02Wtsv/fDLO0k5lj+qdN7sd
-ECvLGkZ+6pqhH+5lH9efnDwpcxPZ4JY9HOK0LSY3eIgCBeFcbrN9tos889API9lx
-eSS2yQIcCDeJunLg/JQhco6/vKK+rFyYP5lXE5UEnZWtBu5WRSGCp60eEYhxRnxG
-DCtDQPwPwtFrYFCd1w8vIOJdmfHFoeyfVV0CvciQ+oekiOYb/9y8obSBb2UhqX4R
-K+lnlOxk5JC1NF8jBo6xH0JpIE8GWuYa9FazelS4GgfDsFJvBpmdcGPEGvgIk6N4
-wdK8O6IQFIBFcpoBNRRU85OpkQRQ2All0nNhALT+TtQlnMJMyw9fpbYXawvvzfZF
-hrnVTawfDGNpdvb1uEl4qWP4f811zP3ulDVs7t8tolWd/qfTIJsGsYnR0w+4KtX/
-IlbdDhTn4pmmEdZDEU5IWZ9bZMELta0rU9enusNBS2xe6llmiQCptGC50W21oqq4
-KGbINHcx9CJUYu7DVM67T2VMj+2CZAQSpHCH1HARol3sCJ1qRtt698QQQCZtYYLw
-0QKZpKK6eGtmECn/hDUZ3u2jkySjAlYmVYqMqCuVZUyLd+vWNKgMQeA0OcLktYmg
-NuV/Bt2fc3XgKX+6bXprXFIKLzaDyiern72sjv3KftineiJGSYIK/m2YeHWfJ3qk
-1aCkZPxjM0nclF22NyV5
-=GgRv
------END PGP SIGNATURE-----
-
---St7VIuEGZ6dlpu13--
+>
+>> On the other side I have found DSIM_TX_LPDT_LP and DSIM_CMD_LPDT_LP =
+bits
+>> in DSIM_ESCMODE register
+>> which seems to be related to flags you have introduced:
+>> - DSIM_CMD_LPDT_LP - transmit commands in LP mode,
+>> - DSIM_TX_LPDT_LP - transmit data in LP mode.
+> As I mentioned already at other email thread, DSIM_TX_LPDT_LP specifi=
+es
+> that host can transmit command and also image data to Panel in Low Po=
+wer
+> Mode. So these flags are specific to MIPI-DSI controller of Exynos.
+>
+>> The former is already triggered by MIPI_DSI_MSG_USE_LPM flag. Why do=
+ not
+> This flag is set only when command msg transmission is requested by
+> Panel driver. So we would need separated flags, MIPI_DSI_MODE_CMD_LPM
+> and MIPI_DSI_MODE_VIDEO_LPM, to notify how host controller should
+> transmit command and also image.
+>
+> Thanks,
+> Inki Dae
+>
+>> you use the latter?
+>>
+>> Regards
+>> Andrzej
+>>
+>>>  static void exynos_dsi_disable_clock(struct exynos_dsi *dsi)
+>>>  {
+>>>  	u32 reg;
+>>> @@ -705,6 +720,9 @@ static void exynos_dsi_set_display_enable(struc=
+t exynos_dsi *dsi, bool enable)
+>>>  {
+>>>  	u32 reg;
+>>> =20
+>>> +	if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_LPM) && enable)
+>>> +		exynos_dsi_enable_hs_clock(dsi, true);
+>>> +
+>>>  	reg =3D readl(dsi->reg_base + DSIM_MDRESOL_REG);
+>>>  	if (enable)
+>>>  		reg |=3D DSIM_MAIN_STAND_BY;
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-sams=
+ung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>
