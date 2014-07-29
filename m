@@ -1,71 +1,68 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [RFC 2/5] regulator: core: Allow to get voltage count and list from parent
-Date: Tue, 29 Jul 2014 18:28:56 +0200
-Message-ID: <1406651339-28901-3-git-send-email-javier.martinez@collabora.co.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC 3/5] regulator: core: Only apply constraints if available
+ on list voltage
+Date: Tue, 29 Jul 2014 18:18:57 +0100
+Message-ID: <20140729171857.GV17528@sirena.org.uk>
 References: <1406651339-28901-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1406651339-28901-4-git-send-email-javier.martinez@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="R0sYUISimcquDWTD"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1406651339-28901-1-git-send-email-javier.martinez@collabora.co.uk>
+Content-Disposition: inline
+In-Reply-To: <1406651339-28901-4-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Load switches are modeled as regulators but they just provide
-the voltage of their parent input supply. So, the drivers for
-these switches usually neither provide a .list_voltage handler
-not set a .n_voltages count. But there is code in the kernel
-that assumes that all regulators should be able to provide this
-information (e.g: cpufreq and mmc subsystems).
 
-If the voltage count and list are not available for a regulator
-and it has a parent input supply, then use the parent values.
+--R0sYUISimcquDWTD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- drivers/regulator/core.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+On Tue, Jul 29, 2014 at 06:28:57PM +0200, Javier Martinez Canillas wrote:
+> If a selector can't be used on a platform due to voltage constraints,
+> regulator_list_voltage() returns 0. Doing this unconditionally made
+> sense since constraints were set in machine_constraints_voltage() at
+> regulator registration time.
+>=20
+> But for load switches that don't define a voltage output, the parent
+> supply voltage is used so the constraints should only be applied if
+> they were defined for the child regulators.
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 089cea8..a3c3785 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -2186,7 +2186,13 @@ int regulator_count_voltages(struct regulator *regulator)
- {
- 	struct regulator_dev	*rdev = regulator->rdev;
- 
--	return rdev->desc->n_voltages ? : -EINVAL;
-+	if (rdev->desc->n_voltages)
-+		return rdev->desc->n_voltages;
-+
-+	if (!rdev->supply)
-+		return -EINVAL;
-+
-+	return regulator_count_voltages(rdev->supply);
- }
- EXPORT_SYMBOL_GPL(regulator_count_voltages);
- 
-@@ -2209,12 +2215,17 @@ int regulator_list_voltage(struct regulator *regulator, unsigned selector)
- 	if (rdev->desc->fixed_uV && rdev->desc->n_voltages == 1 && !selector)
- 		return rdev->desc->fixed_uV;
- 
--	if (!ops->list_voltage || selector >= rdev->desc->n_voltages)
-+	if (ops->list_voltage) {
-+		if (selector >= rdev->desc->n_voltages)
-+			return -EINVAL;
-+		mutex_lock(&rdev->mutex);
-+		ret = ops->list_voltage(rdev, selector);
-+		mutex_unlock(&rdev->mutex);
-+	} else if (rdev->supply) {
-+		ret = regulator_list_voltage(rdev->supply, selector);
-+	} else {
- 		return -EINVAL;
--
--	mutex_lock(&rdev->mutex);
--	ret = ops->list_voltage(rdev, selector);
--	mutex_unlock(&rdev->mutex);
-+	}
- 
- 	if (ret > 0) {
- 		if (ret < rdev->constraints->min_uV)
--- 
-2.0.0.rc2
+No, think about what you're doing here and why we're filtering out
+unsettable voltages - this causes problems for consumers on regulators
+that don't have any ability to vary voltages since they will now be able
+to list voltages that they can't select. =20
+
+I would also expect any regulator where the supplied devices are able to
+vary the voltage to explicitly provide a constraint even if the
+implementation is done in a parent regulator.  There may be constraints
+on the child supply which aren't directly present on the parent supply
+and can be ignored if the child supply is turned off.
+
+--R0sYUISimcquDWTD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT19d+AAoJELSic+t+oim992wP/iLrqpiwTyw4N9z1hAe8Oi6F
+bSV6hdU0SVlfOp2Fwge5oLNu8PVhrxpV3t/O607GeAwVBCnmW1cFS6c02gccuKpf
+4GGxaiBqe6Juw/KH4j26dgrEKFJwvpoEKkgGMBcw++bE7xEsvwpMMEDgEndFjpge
+WFe7Dw28SH4pcLbZd7/3o1k1zR2Fn6K2JevSMiPb3ukpiqwmt9MwySbuUsoVzz+U
+xqtARXnLN/U+XE8VX1R+jCYf0QqaAh/1u5Vzt2b6RKNsX/tuame+2wiPTZROj2oc
+U1csVFPHuztI+bi/FSVRiqEVav0TMekdqSzVjvX0T1Rg81qK9OPsOO2vD0aQC0NK
+bj3pFT0zb2Yu/hb6iQ9VKXs11yel1RmQRKPJ5nwp95b6zbDdvm1UKgbSJH2b2k05
+CZJBJSOiph016g1jdpfiNYfWQ0DxKLi9ph70+Cs6RcIw5jioVulhf2ZAKmzYbUJD
+aDlATxwn3L2jgL3jySGwxLmPjAlmtuXJxwStgfSOzSauscGA23r607ZNcpOD5X9+
+QEqmXH5PGwFd21h6sJ0DxTANTTBT1aQMikqxgiocYnafk9DuGPnEX6zKn9pdzWMJ
+XPeOh6AYsPYckbs0yIOfs8TKpZA67JVBsxWAzalCArtwraEy/NnCKc+pHy/1wUQm
+HpnYpfeS5Q6+d6Mi8gRF
+=uy9r
+-----END PGP SIGNATURE-----
+
+--R0sYUISimcquDWTD--
