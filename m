@@ -1,48 +1,79 @@
-From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [PATCH 0/7] Second batch of cleanups for cros_ec
-Date: Tue, 29 Jul 2014 14:27:20 +0200
-Message-ID: <53D79328.8060609@suse.de>
-References: <1406549967-21291-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 0/3] drm/exynos: Allow module to be autoloaded
+Date: Tue, 29 Jul 2014 21:29:51 +0900
+Message-ID: <53D793BF.8070603@samsung.com>
+References: <1405715801-5325-1-git-send-email-sjoerd.simons@collabora.co.uk>
+ <53CC82AC.9060301@samsung.com> <1405925419.7527.17.camel@dusk>
+ <1406536246.15871.6.camel@dusk> <53D65B5D.1060505@samsung.com>
+ <1406558722.29009.11.camel@dusk> <53D7335F.9020802@samsung.com>
+ <1406621118.17890.11.camel@dusk> <53D78CB7.6010806@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1406549967-21291-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <53D78CB7.6010806@suse.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Javier,
-
-Am 28.07.2014 14:19, schrieb Javier Martinez Canillas:
-> The patches in this series are authored by different people
-> (all on cc) and consist of the following:
->=20
-> Andrew Bresticker (3):
->   mfd: cros_ec: stop calling ->cmd_xfer() directly
->   mfd: cros_ec: move locking into cros_ec_cmd_xfer
->   mfd: cros_ec: wait for completion of commands that return IN_PROGRE=
-SS
->=20
-> Derek Basehore (1):
->   i2c: i2c-cros-ec-tunnel: Set retries to 3
->=20
-> Doug Anderson (1):
->   mfd: cros_ec: Delay for 50ms when we see EC_CMD_REBOOT_EC
->=20
-> Todd Broch (2):
->   mfd: cros_ec: Instantiate sub-devices from device tree
->   Input: cros_ec_keyb: Optimize ghosting algorithm.
-
-When you submit other people's patches, I believe you still need to sig=
-n
-them off as submitter. In particular when you rebased them.
-
-Regards,
-Andreas
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
-berg
+T24gMjAxNOuFhCAwN+yblCAyOeydvCAyMDo1OSwgQW5kcmVhcyBGw6RyYmVyIHdyb3RlOgo+IEFt
+IDI5LjA3LjIwMTQgMTA6MDUsIHNjaHJpZWIgU2pvZXJkIFNpbW9uczoKPj4gT24gVHVlLCAyMDE0
+LTA3LTI5IGF0IDE0OjM4ICswOTAwLCBJbmtpIERhZSB3cm90ZToKPj4+IE9uIDIwMTTrhYQgMDfs
+m5QgMjjsnbwgMjM6NDUsIFNqb2VyZCBTaW1vbnMgd3JvdGU6Cj4+Pj4gT24gTW9uLCAyMDE0LTA3
+LTI4IGF0IDIzOjE3ICswOTAwLCBJbmtpIERhZSB3cm90ZToKPj4+Pj4gT24gMjAxNOuFhCAwN+yb
+lCAyOOydvCAxNzozMCwgU2pvZXJkIFNpbW9ucyB3cm90ZToKPj4+Pj4gSSBkb24ndCBzZWUgd2h5
+IEV4eW5vcyBkcm0gZHJpdmVyIHNob3VsZCBiZSBhdXRvLWxvYWRlZCBtb2R1bGUuIEkgdGhpbmsK
+Pj4+Pj4gYWxsIGRldmljZXMgY292ZXJlZCBieSBFeHlub3MgZHJtIGZyYW1ld29yayBhcmUgbm90
+IGhvdC1wbHVnZ2VkLiBNYXliZQo+Pj4+PiB0aGVyZSBpcyBteSBtaXNzaW5nIHBvaW50LiBTbyBj
+YW4geW91IGV4cGxhaW4gd2h5IEV4eW5vcyBkcm0gZHJpdmVyCj4+Pj4+IHNob3VsZCBiZSBhdXRv
+LWxvYWRlZCBtb2R1bGU/Cj4+Pj4KPj4+PiBUaGUgYmFja2dyb3VuZCBmb3IgdGhpcyBpcyB0aGF0
+IEknbSBidWlsZGluZyBhIGRpc3RyaWJ1dGlvbi1zdHlsZQo+Pj4+IG11bHRpcGxhdGZvcm0ga2Vy
+bmVsLCB0aGF0IGlzIHRvIHNheSBhIGtlcm5lbCB3aGljaCBjYW4gYm9vdCBvbiBhIGJpZwo+Pj4+
+IHNldCBvZiBkaWZmZXJlbnQgQVJNIGJvYXJkcy4gQXMgc3VjaCwgdGhlIGludGVudGlvbiBpcyB0
+byBrZWVwIHRoZSBjb3JlCj4+Pj4gekltYWdlIGFzIHNtYWxsIGFzIHBvc3NpYmxlIGFuZCBlc3Nl
+bnRpYWxseSBidWlsZCB0aGluZ3MgYXMgZmFyIGFzCj4+Pj4gcG9zc2libGUgYXMgbG9hZGFibGUg
+bW9kdWxlcy4gU28gaW4gYSBzZW5zZSwgYWxsIG9mIHRoZSBoYXJkd2FyZSBpcwo+Pj4+ICJob3Rw
+bHVnZ2VkIiwgZGVwZW5kaW5nIG9uIHdoaWNoIGJvYXJkIHRoZSBrZXJuZWwgaXMgYWN0dWFsbHkg
+Ym9vdGVkIG9uIQo+Pj4+Cj4+Pj4gRm9yIHRoYXQgdXNlLWNhc2UsIGV4eW5vc2RybSBuZWVkcyB0
+byBiZSBhYmxlIHRvIGJ1aWxkIGFzIGEgbW9kdWxlCj4+Pj4gKHdoaWNoIGl0IGFscmVhZHkgY2Fu
+ISkgYW5kIGl0IG5lZWRzIHRoZSByZXF1aXJlZCBtZXRhLWRhdGEgZm9yCj4+Pj4gdXNlcnNwYWNl
+IHRvIGtub3cgd2hlbiBpdCBzaG91bGQgYmUgbG9hZGVkLiBUaGUgbGF0dGVyIGlzIHdoYXQgbXkg
+cGF0Y2gKPj4+PiBhZGRzLiAKPj4+Cj4+PiBJdCBzZWVtcyB0aGF0IHlvdSB3YW50IHRoYXQgbW9k
+dWxlIGRhdGEgb2Ygc3ViIGRyaXZlcnMgYXJlIGFkZGVkIGJ5Cj4+PiBkZXBtb2QgdG8gL2xpYi9t
+b2R1bGVzL0tFUk5FTF9WRVJTSU9OL21vZHVsZXMueHh4bWFwIGJlY2F1c2Ugc29tZQo+Pj4gaG90
+LXBsdWcgc3lzdGVtIHNob3VsZCB1c2UgbW9kdWxlcy54eHhtYXAgZmlsZSB0byBmaW5kIHRoZSBw
+cm9wZXIgZHJpdmVyCj4+PiB0byBsb2FkLgo+Pgo+PiBZZXMuIEkgd291bGQgbGlrZSB0aGUgbW9k
+dWxlIHRvIGV4cG9ydCBpdHMgbW9kdWxlIGFsaWFzIGluZm9ybWF0aW9uIGZvcgo+PiB0aGUgc3Vi
+ZHJpdmVycyBzdWNoIHRoYXQgZGVwbW9kIGNhbiBhZGQgaXQgdG8gaXRzIGRhdGFiYXNlcyBhbmQg
+dGhlCj4+IG5vcm1hbCBtb2R1bGUgYXV0b2xvYWRpbmcgbWVjaGFuaXNtcyB3b3JrIGFzIGludGVu
+ZGVkLiBOb3RlIHRoYXQgaW4gbXkKPj4gY2FzZSwgInNvbWUgaG90LXBsdWciIHN5c3RlbSBpcyBy
+ZWFsbHkganVzdCB1ZGV2LCBub3Qgc29tZXRoaW5nCj4+IHNwZWNpYWwuLgo+IAo+ICsxIGhlcmUu
+Cj4gCj4gV2hpbGUgSSBoYXZlbid0IHRlc3RlZCB0aGlzIG9uIG15IEV4eW5vcyBkZXZpY2VzIHll
+dCBzaW5jZSBJJ20gc3RpbGwKPiB3b3JraW5nIG9uIC1uZXh0IGtlcm5lbHMgdGhlcmUsIGhlcmUn
+cyBhbiBleGFtcGxlIG9mIHN1Y2ggYSAzLjE2IGNvbmZpZzoKPiAKPiBodHRwOi8va2VybmVsLm9w
+ZW5zdXNlLm9yZy9jZ2l0L2tlcm5lbC1zb3VyY2UvdHJlZS9jb25maWcvYXJtdjdobC9kZWZhdWx0
+Cj4gCj4gT2YgdGhlIHBsYXRmb3JtcyBlbmFibGVkLCBhbGwgZHJpdmVycyBhcmUgY29uZmlndXJl
+ZCBhcyBtb2R1bGVzIHdoZXJlCj4gcG9zc2libGUsIHRvIGtlZXAga2VybmVsIHNpemUgc21hbGws
+IGFuZCBkcmFjdXQgKG9yIGtpd2kpIGlzIHVzZWQgdG8KPiBnZW5lcmF0ZSBhbiBpbml0cmQgdGhh
+dCBtYWtlcyBhdmFpbGFibGUgdGhlIG1vZHVsZXMuCj4gCj4gU28gaXQgd291bGQgY2VydGFpbmx5
+IGJlIGdvb2QgdG8gaGF2ZSB0aGUgRFJNIGF1dG8tbG9hZCBzb21laG93LCB3aXRob3V0Cj4gdGhl
+IHVzZXIgaGF2aW5nIHRvIG1hbnVhbGx5IHRvdWNoIGNvbmZpZyBmaWxlcy4gSW4gcGFydGljdWxh
+ciB3aGVuIEkKPiB0aGluayBvZiB0aGUgQ2hyb21lYm9va3MsIHdoZXJlIFdpZmkgbmVlZHMgY29u
+ZmlndXJhdGlvbiBvbiBmaXJzdCBib290Cj4gYW5kIG5vIHNlcmlhbCBjb25zb2xlIGlzIGFjY2Vz
+c2libGUuCgpHb3QgaXQuIHdpbGwgbWVyZ2UgdGhlbS4gSG93ZXZlciwgSSdtIG5vdCBzdXJlIHRo
+YXQgRXh5bm9zIGRybSBzaG91bGQKaGF2ZSBob3QtcGx1ZyBmZWF0dXJlIHN1Y2ggYXMgUENJIGJh
+c2UgZGV2aWNlczogYWxsIGRldmljZXMgY292ZXJlZCBieQpFeHlub3MgZHJtIGZyYW1ld29yayBj
+YW5ub3QgYXR0YWNoZWQgYW5kIGRldGFjaGVkIHRvIGFuZCBmcm9tIG1hY2hpbmUuCgpUaGFua3Ms
+Cklua2kgRGFlCgoKCj4gCj4gUmVnYXJkcywKPiBBbmRyZWFzCj4gCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
