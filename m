@@ -1,74 +1,65 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 6/7] mfd: cros_ec: Instantiate sub-devices from device
- tree
-Date: Tue, 29 Jul 2014 15:28:00 +0200
-Message-ID: <53D7A160.7010801@collabora.co.uk>
-References: <1406549967-21291-1-git-send-email-javier.martinez@collabora.co.uk> <1406549967-21291-7-git-send-email-javier.martinez@collabora.co.uk> <53D794E1.1090003@suse.de>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH 1/3] ARM: dts: Add TMU dt node to monitor the temperature
+ for Exynos3250
+Date: Tue, 29 Jul 2014 09:37:16 -0400
+Message-ID: <20140729133716.GB3336@developer>
+References: <1406600232-31033-1-git-send-email-cw00.choi@samsung.com>
+ <1406600232-31033-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:58306 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753531AbaG2N2H (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 09:28:07 -0400
-In-Reply-To: <53D794E1.1090003@suse.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1406600232-31033-2-git-send-email-cw00.choi@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, ben-linux@fluff.org, linux@arm.linux.org.uk, kyungmin.park@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>, Lee Jones <lee.jones@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hello Andreas,
+On Tue, Jul 29, 2014 at 11:17:10AM +0900, Chanwoo Choi wrote:
+> This patch add TMU (Thermal Management Unit) dt node to monitor the high
+> temperature for Exynos3250.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-On 07/29/2014 02:34 PM, Andreas F=E4rber wrote:
-> Hi Javier,
->=20
-> Am 28.07.2014 14:19, schrieb Javier Martinez Canillas:
->> From: Todd Broch <tbroch@chromium.org>
->>=20
->> If the EC device tree node has sub-nodes, try to instantiate them as
->> MFD sub-devices.  We can configure the EC features provided by the b=
-oard.
->>=20
->> Signed-off-by: Todd Broch <tbroch@chromium.org>
->=20
-> This is provoking the blunt question: What sub-devices is it good for=
-?
-> I.e., do you have a matching DT patchset that adds such devices?
->=20
+Acked-by: Eduardo Valentin <edubezval@gmail.com>
 
-=46or Peach Pit and Pi, the matching DTS changes is [0]. But answering =
-your
-question it is to instantiate the subdevices that can be child nodes of=
- either
-cros-ec-spi or cros-ec-i2c. So for the devices that are directly connec=
-ted to
-the EC Cortex-M through i2c.
-
-> In particular I'm wondering whether that would help with the tps65090=
- on
-> Spring? It's a "power-regulator" sub-node of cros-ec in 3.8.
->=20
-
-Spring is a little more complicated since the EC in Spring don't have t=
-he full
-EC_CMD_I2C_PASSTHRU. So the downstream Chrome OS 3.8 kernel has a forke=
-d
-tps65090 driver (drivers/regulator/cros_ec-tps65090.c) that talks direc=
-tly with
-the cros_ec MFD driver, you can get more info from [1] in the "About Sp=
-ring"
-section.
-
-> Thanks,
-> Andreas
->=20
-
-Best regards,
-Javier
-
-[0]:
-https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/co=
-mmit/?h=3Dfor-next&id=3D8060098bbb564d27a287057a93d4fe3bfd266290
-[1]: http://code.google.com/p/chromium/issues/detail?id=3D391797
+> ---
+> This patch has a dependency on following patch [1] which supporting the TMU
+> of Exynos3250:
+>  [1] https://git.kernel.org/cgit/linux/kernel/git/rzhang/linux.git/commit/?h=next&id=1fe56dc16a3dab400206443f70ae158c8f595c42
+> 
+> Changes from v1:
+> - Remove duplicate 'interrupt-parent' property.
+> 
+>  arch/arm/boot/dts/exynos3250.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+> index 77a06df..41a260a 100644
+> --- a/arch/arm/boot/dts/exynos3250.dtsi
+> +++ b/arch/arm/boot/dts/exynos3250.dtsi
+> @@ -168,6 +168,15 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		tmu: tmu@100C0000 {
+> +			compatible = "samsung,exynos3250-tmu";
+> +			reg = <0x100C0000 0x100>;
+> +			interrupts = <0 216 0>;
+> +			clocks = <&cmu CLK_TMU_APBIF>;
+> +			clock-names = "tmu_apbif";
+> +			status = "disabled";
+> +		};
+> +
+>  		gic: interrupt-controller@10481000 {
+>  			compatible = "arm,cortex-a15-gic";
+>  			#interrupt-cells = <3>;
+> -- 
+> 1.8.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
