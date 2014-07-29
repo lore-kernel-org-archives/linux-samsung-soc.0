@@ -1,106 +1,52 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [RFC 4/5] regulator: tps65090: Set voltage for fixed regulators
-Date: Tue, 29 Jul 2014 18:28:58 +0200
-Message-ID: <1406651339-28901-5-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [RFC 1/5] regulator: core: Get voltage from parent if not available
+Date: Tue, 29 Jul 2014 18:28:55 +0200
+Message-ID: <1406651339-28901-2-git-send-email-javier.martinez@collabora.co.uk>
 References: <1406651339-28901-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1406651339-28901-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-According to the tps65090 data manual [0], the DCDC1 and DCDC2
-step-down converters and the LDO's have a fixed output voltage.
+Load switches are modeled as regulators but they just provide
+the voltage of their parent input supply. So the drivers for
+these switches usually don't provide a .get_voltage function
+handler but there is code in the kernel that assumes that all
+regulators should be able to provide its current voltage rail.
 
-Add this information to the driver since these fixed regulators
-be used as input supply for load switches which don't provide
-an output voltage and their parent supply voltage is used.
-
-[0]: http://www.ti.com/lit/gpn/tps65090
+So, if the output voltage for a regulator is not available and
+it has a parent supply, then pass the voltage of its parent.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- drivers/regulator/tps65090-regulator.c | 34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+ drivers/regulator/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
-index 2064b3f..919f5ce 100644
---- a/drivers/regulator/tps65090-regulator.c
-+++ b/drivers/regulator/tps65090-regulator.c
-@@ -192,12 +192,14 @@ static struct regulator_ops tps65090_fet_control_ops = {
- static struct regulator_ops tps65090_ldo_ops = {
- };
- 
--#define tps65090_REG_DESC(_id, _sname, _en_reg, _en_bits, _ops)	\
-+#define tps65090_REG_DESC(_id, _sname, _en_reg, _en_bits, _nvolt, _volt, _ops) \
- {							\
- 	.name = "TPS65090_RAILS"#_id,			\
- 	.supply_name = _sname,				\
- 	.id = TPS65090_REGULATOR_##_id,			\
-+	.n_voltages = _nvolt,				\
- 	.ops = &_ops,					\
-+	.fixed_uV = _volt,				\
- 	.enable_reg = _en_reg,				\
- 	.enable_val = _en_bits,				\
- 	.enable_mask = _en_bits,			\
-@@ -205,39 +207,45 @@ static struct regulator_ops tps65090_ldo_ops = {
- 	.owner = THIS_MODULE,				\
- }
- 
-+#define tps65090_REG_FIX(_id, _sname, en_reg, _en_bits, _volt, _ops) \
-+	tps65090_REG_DESC(_id, _sname, en_reg, _en_bits, 1, _volt, _ops)
-+
-+#define tps65090_REG_VAR(_id, _sname, en_reg, _en_bits, _ops) \
-+	tps65090_REG_DESC(_id, _sname, en_reg, _en_bits, 0, 0, _ops)
-+
- static struct regulator_desc tps65090_regulator_desc[] = {
--	tps65090_REG_DESC(DCDC1, "vsys1",   0x0C, BIT(CTRL_EN_BIT),
-+	tps65090_REG_FIX(DCDC1, "vsys1",   0x0C, BIT(CTRL_EN_BIT), 5000000,
- 			  tps65090_reg_control_ops),
--	tps65090_REG_DESC(DCDC2, "vsys2",   0x0D, BIT(CTRL_EN_BIT),
-+	tps65090_REG_FIX(DCDC2, "vsys2",   0x0D, BIT(CTRL_EN_BIT), 3300000,
- 			  tps65090_reg_control_ops),
--	tps65090_REG_DESC(DCDC3, "vsys3",   0x0E, BIT(CTRL_EN_BIT),
-+	tps65090_REG_VAR(DCDC3, "vsys3",   0x0E, BIT(CTRL_EN_BIT),
- 			  tps65090_reg_control_ops),
- 
--	tps65090_REG_DESC(FET1,  "infet1",  0x0F,
-+	tps65090_REG_VAR(FET1,  "infet1",  0x0F,
- 			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
- 			  tps65090_fet_control_ops),
--	tps65090_REG_DESC(FET2,  "infet2",  0x10,
-+	tps65090_REG_VAR(FET2,  "infet2",  0x10,
- 			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
- 			  tps65090_fet_control_ops),
--	tps65090_REG_DESC(FET3,  "infet3",  0x11,
-+	tps65090_REG_VAR(FET3,  "infet3",  0x11,
- 			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
- 			  tps65090_fet_control_ops),
--	tps65090_REG_DESC(FET4,  "infet4",  0x12,
-+	tps65090_REG_VAR(FET4,  "infet4",  0x12,
- 			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
- 			  tps65090_fet_control_ops),
--	tps65090_REG_DESC(FET5,  "infet5",  0x13,
-+	tps65090_REG_VAR(FET5,  "infet5",  0x13,
- 			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
- 			  tps65090_fet_control_ops),
--	tps65090_REG_DESC(FET6,  "infet6",  0x14,
-+	tps65090_REG_VAR(FET6,  "infet6",  0x14,
- 			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
- 			  tps65090_fet_control_ops),
--	tps65090_REG_DESC(FET7,  "infet7",  0x15,
-+	tps65090_REG_VAR(FET7,  "infet7",  0x15,
- 			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
- 			  tps65090_fet_control_ops),
- 
--	tps65090_REG_DESC(LDO1,  "vsys-l1", 0, 0,
-+	tps65090_REG_FIX(LDO1,  "vsys-l1", 0, 0, 5000000,
- 			  tps65090_ldo_ops),
--	tps65090_REG_DESC(LDO2,  "vsys-l2", 0, 0,
-+	tps65090_REG_FIX(LDO2,  "vsys-l2", 0, 0, 3300000,
- 			  tps65090_ldo_ops),
- };
- 
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 69c9c08..089cea8 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -2695,6 +2695,8 @@ static int _regulator_get_voltage(struct regulator_dev *rdev)
+ 		ret = rdev->desc->ops->list_voltage(rdev, 0);
+ 	} else if (rdev->desc->fixed_uV && (rdev->desc->n_voltages == 1)) {
+ 		ret = rdev->desc->fixed_uV;
++	} else if (rdev->supply) {
++		ret = regulator_get_voltage(rdev->supply);
+ 	} else {
+ 		return -EINVAL;
+ 	}
 -- 
 2.0.0.rc2
