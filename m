@@ -1,107 +1,60 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v8 3/6] ARM: dts: Exynos: add CPU OPP and regulator supply property
-Date: Tue, 29 Jul 2014 18:21:42 +0530
-Message-ID: <CAJuA9aiwWm-egBdiHhNVtkgC9k_J4qL6fumuFuNvkePVmHY-hw@mail.gmail.com>
-References: <1406611711-25112-1-git-send-email-thomas.ab@samsung.com>
-	<1406611711-25112-4-git-send-email-thomas.ab@samsung.com>
-	<53D78ED3.9090703@suse.de>
-	<CAJuA9ag1xHm=vaXxXzj7ykKxYHxBndDsOTwN0vRdXvhb_DtQ2g@mail.gmail.com>
-	<53D796CB.5020805@suse.de>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH 0/7] Second batch of cleanups for cros_ec
+Date: Tue, 29 Jul 2014 14:58:11 +0200
+Message-ID: <53D79A63.4010500@collabora.co.uk>
+References: <1406549967-21291-1-git-send-email-javier.martinez@collabora.co.uk> <53D79328.8060609@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <53D796CB.5020805@suse.de>
-Sender: linux-pm-owner@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53D79328.8060609-l3A5Bk7waGM@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Andreas,
 
-On Tue, Jul 29, 2014 at 6:12 PM, Andreas F=C3=A4rber <afaerber@suse.de>=
- wrote:
-> Hi Thomas,
->
-> Am 29.07.2014 14:35, schrieb Thomas Abraham:
->> On Tue, Jul 29, 2014 at 5:38 PM, Andreas F=C3=A4rber <afaerber@suse.=
-de> wrote:
->>> Am 29.07.2014 07:28, schrieb Thomas Abraham:
->>>> diff --git a/arch/arm/boot/dts/exynos5250-cros-common.dtsi b/arch/=
-arm/boot/dts/exynos5250-cros-common.dtsi
->>>> index 89ac90f..34bb31c 100644
->>>> --- a/arch/arm/boot/dts/exynos5250-cros-common.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
->>>> @@ -19,6 +19,12 @@
->>>>       chosen {
->>>>       };
->>>>
->>>> +     cpus {
->>>> +             cpu@0 {
->>>> +                     cpu0-supply =3D <&buck2_reg>;
->>>> +             };
->>>> +     };
->>>> +
->>>>       pinctrl@11400000 {
->>>>               /*
->>>>                * Disabled pullups since external part has its own =
-pullups and
->>>
->>> I've been instructed to dismantle this .dtsi file, so please place =
-this
->>> into exynos5250-snow.dts. It's probably wrong here anyway, since Sp=
-ring
->>> doesn't use the max77686 but an s5m6787 PMIC.
->>
->> Ok, I will move this to exynos5250-snow.dts.
->>
->>>
->>> How do I find out which -supply to specify here for Spring?
->>
->> This information can be found in the Spring board schematic.
->
-> Are those available publicly somewhere? I guess not...
+On 07/29/2014 02:27 PM, Andreas F=E4rber wrote:
+> Hi Javier,
+>=20
+> Am 28.07.2014 14:19, schrieb Javier Martinez Canillas:
+>> The patches in this series are authored by different people
+>> (all on cc) and consist of the following:
+>>=20
+>> Andrew Bresticker (3):
+>>   mfd: cros_ec: stop calling ->cmd_xfer() directly
+>>   mfd: cros_ec: move locking into cros_ec_cmd_xfer
+>>   mfd: cros_ec: wait for completion of commands that return IN_PROGR=
+ESS
+>>=20
+>> Derek Basehore (1):
+>>   i2c: i2c-cros-ec-tunnel: Set retries to 3
+>>=20
+>> Doug Anderson (1):
+>>   mfd: cros_ec: Delay for 50ms when we see EC_CMD_REBOOT_EC
+>>=20
+>> Todd Broch (2):
+>>   mfd: cros_ec: Instantiate sub-devices from device tree
+>>   Input: cros_ec_keyb: Optimize ghosting algorithm.
+>=20
+> When you submit other people's patches, I believe you still need to s=
+ign
+> them off as submitter. In particular when you rebased them.
+>=20
 
-I am not sure if it is available publicly. Doug (Cc'ed on this email)
-might have it.
+You are right. I thought that given that I only rebased the patches and=
+ removed
+changes for files that are not yet in mainline I shouldn't add my s-o-b=
+=2E
 
->
->>> Also, wouldn't it make sense to assign a cpu0 label in exynos????.d=
-tsi
->>> to override it via &cpu0 { ... };?
->>
->> Sorry, I did not understand the question.
->
-> Instead of adding
->
-> cpus { cpu@0 { ... }; };
->
-> to the board's / node, I am suggesting you do in the SoC's .dtsi:
->
-> - cpu@0 {
-> + cpu0: cpu@0 {
->
-> and then in the board's file after / { ... }; add the following:
->
-> &cpu0 {
->         cpu0-supply =3D <&buck2_reg>;
-> };
->
-> This is the new preferred way to override or extend inherited nodes, =
-I
-> am told. (&cpu0 should be inserted in alphabetical order then.)
+But looking at the Developer's Certificate of Origin 1.1 rule (b) it se=
+ems that
+I should had added my s-o-b as well.
 
-Okay, thanks for the clarification. I will update as per the preferred =
-way.
-
-Thanks,
-Thomas.
-
->
-> Cheers,
+> Regards,
 > Andreas
->
-> --
-> SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-> GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=
-=C3=BCrnberg
+>=20
+
+Thanks a lot and best regards,
+Javier
