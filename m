@@ -1,146 +1,90 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip
- support
-Date: Tue, 29 Jul 2014 13:47:39 +0200
-Message-ID: <20140729114736.GB26346@ulmo.nvidia.com>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <53D5435B.8030305@suse.de>
- <CAEC9eQPW-Z4craCC15M7oTp8eSD09AGxdTFEWaAWqn3Up4eJUg@mail.gmail.com>
- <53D783CC.2080108@suse.de> <20140729113645.GB21732@ulmo.nvidia.com>
- <53D78891.4080703@suse.de>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [PATCH 0/3] drm/exynos: Allow module to be autoloaded
+Date: Tue, 29 Jul 2014 13:59:51 +0200
+Message-ID: <53D78CB7.6010806@suse.de>
+References: <1405715801-5325-1-git-send-email-sjoerd.simons@collabora.co.uk>	 <53CC82AC.9060301@samsung.com> <1405925419.7527.17.camel@dusk>	 <1406536246.15871.6.camel@dusk> <53D65B5D.1060505@samsung.com>	 <1406558722.29009.11.camel@dusk> <53D7335F.9020802@samsung.com> <1406621118.17890.11.camel@dusk>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1385137477=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <53D78891.4080703@suse.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Ajay kumar <ajaynumb@gmail.com>, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:43094 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753240AbaG2L7y (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Jul 2014 07:59:54 -0400
+In-Reply-To: <1406621118.17890.11.camel@dusk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-
---===============1385137477==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1UWUbFP1cBYEclgG"
-Content-Disposition: inline
-
-
---1UWUbFP1cBYEclgG
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jul 29, 2014 at 01:42:09PM +0200, Andreas F=C3=A4rber wrote:
-> Am 29.07.2014 13:36, schrieb Thierry Reding:
-> > On Tue, Jul 29, 2014 at 01:21:48PM +0200, Andreas F=C3=A4rber wrote:
-> >> Hi Ajay,
-> >>
-> >> Am 28.07.2014 08:13, schrieb Ajay kumar:
-> >>> On 7/27/14, Andreas F=C3=A4rber <afaerber@suse.de> wrote:
-> >>>> Am 25.07.2014 21:22, schrieb Ajay Kumar:
-> >>>>> This series is based on exynos-drm-next branch of Inki Dae's tree a=
-t:
-> >>>>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
-> >>>>>
-> >>>>> I have tested this after adding few DT changes for exynos5250-snow,
-> >>>>> exynos5420-peach-pit and exynos5800-peach-pi boards.
-> >>>>
-> >>>> I'm trying to test this with a modified exynos5250-spring DT
-> [...]
-> >> Unfortunately the most I got on Spring with attached DT was a blank
-> >> screen with a white horizontal line in the middle.
-> >>
-> >> Do I need to specify a specific panel model for Spring?
-> [...]
-> >> From 9172a26a8f0d0f0d170bd27e1c150ad204d8086a Mon Sep 17 00:00:00 2001
-> >> From: =3D?UTF-8?q?Andreas=3D20F=3DC3=3DA4rber?=3D <afaerber@suse.de>
-> >> Date: Sun, 27 Jul 2014 21:58:06 +0200
-> >> Subject: [PATCH] ARM: dts: exynos5250: Add eDP/LVDS bridge to Spring
-> >> MIME-Version: 1.0
-> >> Content-Type: text/plain; charset=3DUTF-8
-> >> Content-Transfer-Encoding: 8bit
-> >>
-> >> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> >> [AF: Redone for v6]
-> >> Signed-off-by: Andreas F??rber <afaerber@suse.de>
-> >> ---
-> >>  arch/arm/boot/dts/exynos5250-spring.dts | 32 ++++++++++++++++++++++++=
-+++++++-
-> >>  1 file changed, 31 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/d=
-ts/exynos5250-spring.dts
-> >> index 687dfab86bc8..517b1ff2bfdf 100644
-> >> --- a/arch/arm/boot/dts/exynos5250-spring.dts
-> >> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
-> >> @@ -64,10 +64,14 @@
-> >>  		vdd_pll-supply =3D <&s5m_ldo8_reg>;
-> >>  	};
-> >> =20
-> >> +	panel: panel {
-> >> +		compatible =3D "simple-panel";
-> >> +	};
-> >=20
-> > You can't do this. "simple-panel" isn't a valid panel model. It should
-> > probably be removed from the platform_of_match table in the driver.
+Am 29.07.2014 10:05, schrieb Sjoerd Simons:
+> On Tue, 2014-07-29 at 14:38 +0900, Inki Dae wrote:
+>> On 2014=EB=85=84 07=EC=9B=94 28=EC=9D=BC 23:45, Sjoerd Simons wrote:
+>>> On Mon, 2014-07-28 at 23:17 +0900, Inki Dae wrote:
+>>>> On 2014=EB=85=84 07=EC=9B=94 28=EC=9D=BC 17:30, Sjoerd Simons wrot=
+e:
+>>>> I don't see why Exynos drm driver should be auto-loaded module. I =
+think
+>>>> all devices covered by Exynos drm framework are not hot-plugged. M=
+aybe
+>>>> there is my missing point. So can you explain why Exynos drm drive=
+r
+>>>> should be auto-loaded module?
+>>>
+>>> The background for this is that I'm building a distribution-style
+>>> multiplatform kernel, that is to say a kernel which can boot on a b=
+ig
+>>> set of different ARM boards. As such, the intention is to keep the =
+core
+>>> zImage as small as possible and essentially build things as far as
+>>> possible as loadable modules. So in a sense, all of the hardware is
+>>> "hotplugged", depending on which board the kernel is actually boote=
+d on!
+>>>
+>>> For that use-case, exynosdrm needs to be able to build as a module
+>>> (which it already can!) and it needs the required meta-data for
+>>> userspace to know when it should be loaded. The latter is what my p=
+atch
+>>> adds.=20
+>>
+>> It seems that you want that module data of sub drivers are added by
+>> depmod to /lib/modules/KERNEL_VERSION/modules.xxxmap because some
+>> hot-plug system should use modules.xxxmap file to find the proper dr=
+iver
+>> to load.
 >=20
-> Okay, that means the Snow DT is wrong, too:
-> https://patchwork.kernel.org/patch/4625441/
->=20
-> And the others specify it as fallback:
-> https://patchwork.kernel.org/patch/4625461/
-> https://patchwork.kernel.org/patch/4625451/
+> Yes. I would like the module to export its module alias information f=
+or
+> the subdrivers such that depmod can add it to its databases and the
+> normal module autoloading mechanisms work as intended. Note that in m=
+y
+> case, "some hot-plug" system is really just udev, not something
+> special..
 
-A quick grep shows that many (all?) devices that use DRM panels provide
-simple-panel as fallback. That's probably fine as long as they also do
-provide the specific model. But given that simple-panel does not have a
-mode or physical size, I don't think even that makes sense.
++1 here.
 
-Any of the DTS files in the tree I have that list simple-panel as a
-fallback are Tegra, so I'll go write a patch that removes the fallback.
-I can't think of a reason why it would ever be needed or meaningful.
+While I haven't tested this on my Exynos devices yet since I'm still
+working on -next kernels there, here's an example of such a 3.16 config=
+:
 
-Thierry
+http://kernel.opensuse.org/cgit/kernel-source/tree/config/armv7hl/defau=
+lt
 
---1UWUbFP1cBYEclgG
-Content-Type: application/pgp-signature
+Of the platforms enabled, all drivers are configured as modules where
+possible, to keep kernel size small, and dracut (or kiwi) is used to
+generate an initrd that makes available the modules.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+So it would certainly be good to have the DRM auto-load somehow, withou=
+t
+the user having to manually touch config files. In particular when I
+think of the Chromebooks, where Wifi needs configuration on first boot
+and no serial console is accessible.
 
-iQIcBAEBAgAGBQJT14nYAAoJEN0jrNd/PrOhPusP/0MxFlMKt2iR9V7Tf5N6KaHT
-pZFg8SfiYutBu3sBiJvzyOydccHJ1KCtuDvJ1UoTxpx0BWNi/y9i3ks6Pb/s8tXe
-rYedxwEd7TAlFrjMtnohRKGNoutNF6ucn7bqwPVcLMuwDbTWRf1qNY0NYWxdxoES
-4pFqohrGYskLT2pxn1Kc8N1jGbz/qNWgwZUrjlxVhcj5XSGp5OUf7RNh7FQZ5j8O
-AAxxpcHZR1Y+8+7Tlh7Wt08Ub/ZXciRqNFcpQ2sz36prvKGumQKMjDr287SyVK7O
-Fw6rpPoxOUFFLKGyPIRZbmwg5XPA1JBS5UMpHDPEn0sToS8Vd10q7ayBuuyKgQH0
-4A+aT0vCKyJoBumbfhJQAlZjitOl1sxXQ+17i7xz95IwoOYEc/HCa0+lP5TH7UVJ
-Jhup5dBqxAft4bFrXOlCMD3l+UHe6zd0F59615q+gV8d+n5vYP8fUSJ8Ft6GGn9t
-si3QF8r4jL2iRvkVVEBakaA5gXK9KQc45zFNk7i2Dgy3DgNyxWSuuLmkfdRHkIBH
-zEc1inbSs91AoHv3nHNe0NK1cBTN8/D16uEnceAwLXneTYbT6aNe7bNyItBTgY7E
-xB4cCVimB4148+ERrFVYvPx+AJw8Q4D+CpdHUyrTRuhS+VdbU88eVIkxy6jDsNy+
-4MpHgN/WTTsJP5gfW4E6
-=OguT
------END PGP SIGNATURE-----
+Regards,
+Andreas
 
---1UWUbFP1cBYEclgG--
-
---===============1385137477==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1385137477==--
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
