@@ -1,61 +1,49 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH -next] ASoC: samsung: Fix return value check in
- s3c2412_iis_dev_probe()
-Date: Tue, 29 Jul 2014 19:56:09 +0100
-Message-ID: <20140729185609.GH17528@sirena.org.uk>
-References: <1405827787-26055-1-git-send-email-weiyj_lk@163.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: dts: smdk5250: Specify MAX77686 pmic interrupt
+Date: Wed, 30 Jul 2014 08:01:24 +0900
+Message-ID: <53D827C4.1000708@samsung.com>
+References: <1406608029-8538-1-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lAQf9ELXiMBEg3QV"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33416 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753184AbaG2S4b (ORCPT
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:51751 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754258AbaG2XBo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 14:56:31 -0400
-Content-Disposition: inline
-In-Reply-To: <1405827787-26055-1-git-send-email-weiyj_lk@163.com>
+	Tue, 29 Jul 2014 19:01:44 -0400
+Received: by mail-pa0-f48.google.com with SMTP id et14so388100pad.35
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jul 2014 16:01:43 -0700 (PDT)
+In-Reply-To: <1406608029-8538-1-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: weiyj_lk@163.com
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+To: Thomas Abraham <thomas.ab@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-
---lAQf9ELXiMBEg3QV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Jul 20, 2014 at 11:43:07AM +0800, weiyj_lk@163.com wrote:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
->=20
-> In case of error, the function devm_ioremap_resource() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check should be
-> replaced with IS_ERR(). Also remove redundant return value check of
-> platform_get_resource().
+On 07/29/14 13:27, Thomas Abraham wrote:
+> The IRQB interrupt pin of MAX77686 PMIC is connected to GPX3[2] pin of
+> Exynos5250 on the Exynos5250 SMDK board. Specify this connection using
+> interrupts property for the max77686 pmic node.
+>
+> Signed-off-by: Thomas Abraham<thomas.ab@samsung.com>
+> ---
+>   arch/arm/boot/dts/exynos5250-smdk5250.dts |    2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index 695f5ad..cf38808 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -50,6 +50,8 @@
+>   		max77686@09 {
+>   			compatible = "maxim,max77686";
+>   			reg =<0x09>;
+> +			interrupt-parent =<&gpx3>;
+> +			interrupts =<2 0>;
+>
+>   			voltage-regulators {
+>   				ldo1_reg: LDO1 {
 
 Applied, thanks.
 
---lAQf9ELXiMBEg3QV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT1+5GAAoJELSic+t+oim90NwQAIwabohwhJ3kXXnMlvMNj/at
-T5x6oYclecVnLev+xxbhwyFWwOe5I+btQ2cksZaODLAp1Ula8XdOngSOusH9uvoS
-qBnrcIJi47+nb7g422QOki1AADMeADwa62iqqqeUfQPBRAk69sycOTRpm9cVHLdF
-wA2XMUKKfoAIpOLyYo3YWvhhpWFNU31UM+ngBh2Clt3y4Fm/ik34vLyrWcfYnnLr
-IYOKcuG0ZDyzgjTWo5kh3ZcCyx4nrVhVfIJEHKQhxv+ehToCG6A74oJCvEmbI5ef
-2iJ4thuvhq+CloLOe9xjhypLkDtnqO0SLsPApVx7hUhDQbEBUAdH/oLnn1p424vO
-4mXP4dVF2iwcZga3mC8uiBt9N3cdkmYph/XQYM90aSn8ZJZll+i52uGbTU+Lr4Rc
-SPxkJRbxMk4wntjnOMnCpcQgpB3GOFu9o/26NCIuM2EyjaDuHr1vKgNsQ8pjv/SF
-Io8/2o/hsSI7E4hrL/1/Ec35MuPmqClItqFXH3SlSBH9N9LDQL+2ZZs/GI7Ouc84
-huFECiM1+CBnyrlkX0ajYD/FRchs8nb/z8C8pMrMCRmjZJ/wA8b0UqhwTGcp7mvW
-mzoQi6gz9n+TN9CuJ4zfnB0YcGkswwLD0w6fqtLH2RJmL1XeEfRNJC/21vx0aWdI
-65j9OWXIHXgBDxvyb2Y0
-=IfyT
------END PGP SIGNATURE-----
-
---lAQf9ELXiMBEg3QV--
+- Kukjin
