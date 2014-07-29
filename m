@@ -1,203 +1,272 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: Re: [PATCH 0/3] drm/exynos: Allow module to be autoloaded
-Date: Tue, 29 Jul 2014 10:05:18 +0200
-Message-ID: <1406621118.17890.11.camel@dusk>
-References: <1405715801-5325-1-git-send-email-sjoerd.simons@collabora.co.uk>
-	 <53CC82AC.9060301@samsung.com> <1405925419.7527.17.camel@dusk>
-	 <1406536246.15871.6.camel@dusk> <53D65B5D.1060505@samsung.com>
-	 <1406558722.29009.11.camel@dusk> <53D7335F.9020802@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v7 1/6] clk: samsung: add infrastructure to register cpu
+ clocks
+Date: Tue, 29 Jul 2014 11:57:24 +0200
+Message-ID: <53D77004.9010701@gmail.com>
+References: <1405345118-4269-1-git-send-email-thomas.ab@samsung.com>	<1405345118-4269-2-git-send-email-thomas.ab@samsung.com>	<53CA6AC7.9020205@gmail.com> <CAJuA9ahMTE0K2E0jr1R4pv121VZv7Bkhxf8_ke4PcAUY5QiHuQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
-	boundary="=-zQvl29ntDiUm9ZQWejmB"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:58140 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752644AbaG2IFX (ORCPT
+Received: from mail-we0-f169.google.com ([74.125.82.169]:54353 "EHLO
+	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752168AbaG2J5a (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 04:05:23 -0400
-In-Reply-To: <53D7335F.9020802@samsung.com>
+	Tue, 29 Jul 2014 05:57:30 -0400
+In-Reply-To: <CAJuA9ahMTE0K2E0jr1R4pv121VZv7Bkhxf8_ke4PcAUY5QiHuQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Thomas Abraham <ta.omasab@gmail.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>
 
+On 29.07.2014 07:35, Thomas Abraham wrote:
+> Hi Tomasz,
+> 
+> Thanks for your review comments. I have made most of the changes you
+> have suggested. The suggested modifications which I did not include is
+> marked below.
+> 
+> On Sat, Jul 19, 2014 at 6:25 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>>
+>>
+>> Hi Thomas,
+>>
+>> Please see my comments inline.
+>>
+>> On 14.07.2014 15:38, Thomas Abraham wrote:
+>>
+>> [snip]
+>>
+>>> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+>>> new file mode 100644
+>>> index 0000000..0d62968
+>>> --- /dev/null
+>>> +++ b/drivers/clk/samsung/clk-cpu.c
+>>> @@ -0,0 +1,576 @@
+>>> +/*
+>>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>>> + * Author: Thomas Abraham <thomas.ab@samsung.com>
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify
+>>> + * it under the terms of the GNU General Public License version 2 as
+>>> + * published by the Free Software Foundation.
+>>> + *
+>>> + * This file contains the utility functions to register the CPU clocks
+>>> + * for Samsung platforms.
+>>
+>> I'd expect few words here or in separate comment on how the code works,
+>> i.e. assumptions made, most important procedures, etc. This is a complex
+>> piece of code for quite complex hardware, so proper documentation is
+>> essential.
+>>
+>>> +*/
+>>> +
+>>> +#include <linux/errno.h>
+>>> +#include "clk.h"
+>>> +
+>>> +#define E4210_SRC_CPU                0x0
+>>> +#define E4210_STAT_CPU               0x200
+>>> +#define E4210_DIV_CPU0               0x300
+>>> +#define E4210_DIV_CPU1               0x304
+>>> +#define E4210_DIV_STAT_CPU0  0x400
+>>> +#define E4210_DIV_STAT_CPU1  0x404
+>>> +
+>>> +#define MAX_DIV                      8
+>>> +#define DIV_MASK             7
+>>> +#define DIV_MASK_ALL         0xffffffff
+>>> +#define MUX_MASK             7
+>>> +
+>>> +#define E4210_DIV0_RATIO0_MASK       0x7
+>>> +#define E4210_DIV1_HPM_MASK  ((0x7 << 4) | (0x7 << 0))
+>>
+>> This mask contains two fields, doesn't it? I'd say it would be better
+>> for readability if you split it.
+>>
+>>> +#define E4210_MUX_HPM_MASK   (1 << 20)
+>>> +#define E4210_DIV0_ATB_SHIFT 16
+>>> +#define E4210_DIV0_ATB_MASK  (DIV_MASK << E4210_DIV0_ATB_SHIFT)
+>>> +
+>>> +#define E4210_CPU_DIV0(apll, pclk_dbg, atb, periph, corem1, corem0)  \
+>>> +             (((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |  \
+>>> +             ((periph) << 12) | ((corem1) << 8) | ((corem0) <<  4))
+>>> +#define E4210_CPU_DIV1(hpm, copy)                                    \
+>>> +             (((hpm) << 4) | ((copy) << 0))
+>>> +
+>>> +#define E5250_CPU_DIV0(apll, pclk_dbg, atb, periph, acp, cpud)               \
+>>> +             (((apll << 24) | (pclk_dbg << 20) | (atb << 16) |       \
+>>> +              (periph << 12) | (acp << 8) | (cpud << 4)))
+>>> +#define E5250_CPU_DIV1(hpm, copy)                                    \
+>>> +             (((hpm) << 4) | (copy))
+>>> +
+>>> +#define E5420_EGL_DIV0(apll, pclk_dbg, atb, cpud)                    \
+>>> +             (((apll << 24) | (pclk_dbg << 20) | (atb << 16) |       \
+>>> +              (cpud << 4)))
+>>> +#define E5420_KFC_DIV(kpll, pclk, aclk)                                      \
+>>> +             (((kpll << 24) | (pclk << 20) | (aclk << 4)))
+>>
+>> Again, used macro arguments should always be surrounded with parentheses.
+>>
+>>> +
+>>> +enum cpuclk_type {
+>>> +     EXYNOS4210,
+>>> +     EXYNOS5250,
+>>> +     EXYNOS5420,
+>>> +};
+>>> +
+>>> +/**
+>>> + * struct exynos4210_cpuclk_data: config data to setup cpu clocks.
+>>
+>> It seems like this could be used for all Exynos SoCs, so probably should
+>> be called exynos_cpuclk_data.
+>>
+>>> + * @prate: frequency of the primary parent clock (in KHz).
+>>> + * @div0: value to be programmed in the div_cpu0 register.
+>>> + * @div1: value to be programmed in the div_cpu1 register.
+>>> + *
+>>> + * This structure holds the divider configuration data for dividers in the CPU
+>>> + * clock domain. The parent frequency at which these divider values are valid is
+>>> + * specified in @prate. The @prate is the frequency of the primary parent clock.
+>>> + * For CPU clock domains that do not have a DIV1 register, the @div1 member
+>>> + * is optional.
+>>> + */
+>>> +struct exynos4210_cpuclk_data {
+>>> +     unsigned long   prate;
+>>> +     unsigned int    div0;
+>>> +     unsigned int    div1;
+>>> +};
+>>> +
+>>> +/**
+>>> + * struct exynos_cpuclk: information about clock supplied to a CPU core.
+>>> + * @hw:      handle between CCF and CPU clock.
+>>> + * @alt_parent: alternate parent clock to use when switching the speed
+>>> + *   of the primary parent clock.
+>>> + * @ctrl_base:       base address of the clock controller.
+>>> + * @offset: offset from the ctrl_base address where the CPU clock div/mux
+>>> + *   registers can be accessed.
+>>> + * @lock: cpu clock domain register access lock.
+>>> + * @type: type of the CPU clock.
+>>> + * @data: optional data which the actual instantiation of this clock
+>>> + *   can use.
+>>> + * @clk_nb: clock notifier registered for changes in clock speed of the
+>>> + *   primary parent clock.
+>>> + * @pre_rate_cb: callback function to handle PRE_RATE_CHANGE notification
+>>> + *   of the primary parent clock.
+>>> + * @post_rate_cb: callback function to handle POST_RATE_CHANGE notification
+>>> + *   of the primary parent clock.
+>>> + *
+>>> + * This structure holds information required for programming the cpu clock for
+>>> + * various clock speeds.
+>>
+>> nit: s/cpu/CPU/
+>>
+>>> + */
+>>> +struct exynos_cpuclk {
+>>> +     struct clk_hw           hw;
+>>> +     struct clk              *alt_parent;
+>>> +     void __iomem            *ctrl_base;
+>>> +     unsigned long           offset;
+>>> +     spinlock_t              *lock;
+>>> +     enum cpuclk_type        type;
+>>> +     const void              *data;
+>>
+>> The code always expects this to be const struct exynos4210_cpuclk_data.
+>> Why not make this field so?
+>>
+>> Also this is not some plain data, but an array of operating points, so
+>> probably a name like "rates" would be better.
+>>
+>>> +     struct notifier_block   clk_nb;
+>>> +     int                     (*pre_rate_cb)(struct clk_notifier_data *,
+>>> +                                     struct exynos_cpuclk *,
+>>> +                                     void __iomem *base);
+>>> +     int                     (*post_rate_cb)(struct clk_notifier_data *,
+>>> +                                     struct exynos_cpuclk *,
+>>> +                                     void __iomem *base);
+>>
+>> All the Exynos SoCs supported by this patch seem to be using exactly the
+>> same notifiers. We don't know what changes in further SoCs, so there is
+>> no guarantee that having these as pointer here will give us any
+>> benefits. I'd recommend just getting rid of this indirection for now. If
+>> it turns out to be needed, it will be trivial to add it back.
+>>
+>>> +};
+>>> +
+>>> +#define to_exynos_cpuclk_hw(hw) container_of(hw, struct exynos_cpuclk, hw)
+>>> +#define to_exynos_cpuclk_nb(nb) container_of(nb, struct exynos_cpuclk, clk_nb)
+>>
+>> Please make these static inlines for type safety.
+>>
+>>> +
+>>> +/**
+>>> + * struct exynos_cpuclk_soc_data: soc specific data for cpu clocks.
+>>> + * @ops: clock operations to be used for this clock.
+>>> + * @offset: optional offset from base of clock controller register base, to
+>>> + *   be used when accessing clock controller registers related to the
+>>> + *   CPU clock.
+>>> + * @data: SoC specific data for cpuclk configuration (optional).
+>>
+>> How is this optional? Can this code work without a list of operating points?
+>>
+>>> + * @data_size: size of the data contained in @data member.
+>>
+>> Both fields could be probably named "rates" and "num_rates", with the
+>> meaning of the latter changed to mean the number of entries, not size in
+>> bytes.
+>>
+>>> + * @type: type of the CPU clock.
+>>> + * @pre_rate_cb: callback function to handle PRE_RATE_CHANGE notification
+>>> + *   of the primary parent clock.
+>>> + * @post_rate_cb: callback function to handle POST_RATE_CHANGE notification
+>>> + *   of the primary parent clock.
+>>> + *
+>>> + * This structure provides SoC specific data for CPU clocks. Based on
+>>> + * the compatible value of the clock controller node, the value of the
+>>> + * fields in this structure can be populated.
+>>> + */
+>>> +struct exynos_cpuclk_soc_data {
+>>> +     const struct clk_ops    *ops;
+>>> +     unsigned int            offset;
+>>> +     const void              *data;
+>>
+>> Same comments as for the data field above.
+>>
+>>> +     const unsigned int      data_size;
+>>
+>> If the same struct is always used it would be clearer to
+>>
+>>> +     enum cpuclk_type        type;
+>>> +     int                     (*pre_rate_cb)(struct clk_notifier_data *,
+>>> +                                     struct exynos_cpuclk *,
+>>> +                                     void __iomem *base);
+>>> +     int                     (*post_rate_cb)(struct clk_notifier_data *,
+>>> +                                     struct exynos_cpuclk *,
+>>> +                                     void __iomem *base);
+>>
+>> Same comment as above.
+>>
+>>> +};
+>>
+>> It looks like instead of duplicating most of the fields of this struct
+>> in exynos_cpuclk struct the latter could simply have a pointer to an
+>> instance of the former.
+>>
+>>> +
+>>> +/*
+>>> + * Helper function to wait until divider(s) have stabilized after the divider
+>>> + * value has changed.
+>>> + */
+>>
+>> How about a kernel doc like comments for functions as well? (same
+>> comment for remaining functions)
+> 
+> Since most of these functions are static and very simple, I have not
+> added kernel-doc like comments.
 
---=-zQvl29ntDiUm9ZQWejmB
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+What I mean is that you already added comments for those functions, so
+why they couldn't be in kerneldoc format as in other drivers?
 
-On Tue, 2014-07-29 at 14:38 +0900, Inki Dae wrote:
-> On 2014=EB=85=84 07=EC=9B=94 28=EC=9D=BC 23:45, Sjoerd Simons wrote:
-> > Hey Inki,
-> >=20
-> > On Mon, 2014-07-28 at 23:17 +0900, Inki Dae wrote:
-> >> On 2014=EB=85=84 07=EC=9B=94 28=EC=9D=BC 17:30, Sjoerd Simons wrote:
-> >> Sorry for late,
-> >>
-> >> I don't see why Exynos drm driver should be auto-loaded module. I thin=
-k
-> >> all devices covered by Exynos drm framework are not hot-plugged. Maybe
-> >> there is my missing point. So can you explain why Exynos drm driver
-> >> should be auto-loaded module?
-> >=20
-> > The background for this is that I'm building a distribution-style
-> > multiplatform kernel, that is to say a kernel which can boot on a big
-> > set of different ARM boards. As such, the intention is to keep the core
-> > zImage as small as possible and essentially build things as far as
-> > possible as loadable modules. So in a sense, all of the hardware is
-> > "hotplugged", depending on which board the kernel is actually booted on=
-!
-> >=20
-> > For that use-case, exynosdrm needs to be able to build as a module
-> > (which it already can!) and it needs the required meta-data for
-> > userspace to know when it should be loaded. The latter is what my patch
-> > adds.=20
->=20
-> It seems that you want that module data of sub drivers are added by
-> depmod to /lib/modules/KERNEL_VERSION/modules.xxxmap because some
-> hot-plug system should use modules.xxxmap file to find the proper driver
-> to load.
+Anyway, this doesn't have any functional meaning, so it might be changed
+in further patch, since you already posted next version.
 
-Yes. I would like the module to export its module alias information for
-the subdrivers such that depmod can add it to its databases and the
-normal module autoloading mechanisms work as intended. Note that in my
-case, "some hot-plug" system is really just udev, not something
-special..
-
-
-> Ok, then does exynos drm driver is loaded well with your patches?=20
-
-It is indeed.
-
-> My concern is that device_id of exynos drm core driver ,
-> exynos_drm_drv.c, wouldn't be exported to userspace, which means that
-> exynos drm subsystem aren't bound by component framework because most
-> sub drivers except vidi are bound by component interfaces of exynos drm
-> core: exynos drm drv is not device tree base driver.
-
-This patchset doesn't change how that works. Really all it does is to
-tell userspace which devices exynosdrm supports. From the kernel side of
-things, there is no difference between the module being loaded based on
-that information vs. it being loaded by hand.
-
---=20
-Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Collabora Ltd.
-
---=-zQvl29ntDiUm9ZQWejmB
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIUzDCCBsIw
-ggWqoAMCAQICEAoE3yF0XU0rjOozcgUAUOkwDQYJKoZIhvcNAQEFBQAwZTELMAkGA1UEBhMCVVMx
-FTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEkMCIGA1UE
-AxMbRGlnaUNlcnQgQXNzdXJlZCBJRCBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTIxMTExMDAw
-MDAwMFowYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
-LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6IItmfnKwkKVpYBzQHDSnlZUXKnE0kEGj8kz/E1FkVyB
-n+0snPgWWd+etSQVwpi5tHdJ3InECtqvy15r7a2wcTHrzzpADEZNk+yLejYIA6sMNP4YSYL+x8cx
-SIB8HqIPkg5QycaH6zY/2DDD/6b3+6LNb3Mj/qxWBZDwMiEWicZwiPkFl32jx0PdAug7Pe2xQaPt
-P77blUjE7h6z8rwMK5nQxl0SQoHhg26Ccz8mSxSQrllmCsSNvtLOBq6thG9IhJtPQLnxTPKvmPv2
-zkBdXPao8S+v7Iki8msYZbHBc63X8djPHgp0XEK4aH631XcKJ1Z8D2KkPzIUYJX9BwSiCQIDAQAB
-o4IDbzCCA2swDgYDVR0PAQH/BAQDAgGGMDsGA1UdJQQ0MDIGCCsGAQUFBwMBBggrBgEFBQcDAgYI
-KwYBBQUHAwMGCCsGAQUFBwMEBggrBgEFBQcDCDCCAcYGA1UdIASCAb0wggG5MIIBtQYLYIZIAYb9
-bAEDAAQwggGkMDoGCCsGAQUFBwIBFi5odHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJl
-cG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUHAgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAA
-dABoAGkAcwAgAEMAZQByAHQAaQBmAGkAYwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAg
-AGEAYwBjAGUAcAB0AGEAbgBjAGUAIABvAGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMA
-UAAvAEMAUABTACAAYQBuAGQAIAB0AGgAZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABB
-AGcAcgBlAGUAbQBlAG4AdAAgAHcAaABpAGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkA
-dAB5ACAAYQBuAGQAIABhAHIAZQAgAGkAbgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBp
-AG4AIABiAHkAIAByAGUAZgBlAHIAZQBuAGMAZQAuMA8GA1UdEwEB/wQFMAMBAf8wfQYIKwYBBQUH
-AQEEcTBvMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wRwYIKwYBBQUHMAKG
-O2h0dHA6Ly93d3cuZGlnaWNlcnQuY29tL0NBQ2VydHMvRGlnaUNlcnRBc3N1cmVkSURSb290Q0Eu
-Y3J0MIGBBgNVHR8EejB4MDqgOKA2hjRodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRB
-c3N1cmVkSURSb290Q0EuY3JsMDqgOKA2hjRodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGlnaUNl
-cnRBc3N1cmVkSURSb290Q0EuY3JsMB0GA1UdDgQWBBQVABIrE5iymQftHt+ivlcNK2cCzTAfBgNV
-HSMEGDAWgBRF66Kv9JLLgjEtUYunpyGd823IDzANBgkqhkiG9w0BAQUFAAOCAQEAhGFOQR64dgQq
-tbbvj/JVhbldVv4KmObkvWWKfUAp0/yxXUX9OrgqWzNLJFzNubTkc61hXXatdDOKZtUjr0wfcm5F
-2XVAu6I7z41JL8BBsOIpo1E4Q1CZFKwzBjViiX13qVIH5WwgV7aBum+8s8KU7XYCgNl8zoWoHOzH
-Q0pLsVfPcs7f9SU8yyJP/Z9S0TfLCLs4PuDVPm95Ca1bfDGzdzXD5GP5aAqYB+dGOHeE0j6XvAqg
-qKwlT0RukeHSWq9r7zAcjaNEQrMQiyP61+Y1dDesz+urWB/JiCP/NtQH6jRqR+qdlWyeKU9T7eMr
-lSBOKs+WYHr4LIDwlVLOKZaBYjCCBv8wggXnoAMCAQICEA2fwUKNhvkL8dN88tUFvVwwDQYJKoZI
-hvcNAQEFBQAwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQ
-d3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMB4XDTE0
-MDIxNzAwMDAwMFoXDTE1MDMxMjEyMDAwMFowgaQxCzAJBgNVBAYTAkdCMRcwFQYDVQQIEw5DYW1i
-cmlkZ2VzaGlyZTESMBAGA1UEBxMJQ2FtYnJpZGdlMRYwFAYDVQQKEw1Db2xsYWJvcmEgTHRkMQow
-CAYDVQQLEwExMRYwFAYDVQQDEw1Tam9lcmQgU2ltb25zMSwwKgYJKoZIhvcNAQkBFh1zam9lcmQu
-c2ltb25zQGNvbGxhYm9yYS5jby51azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN4Q
-EHeW1NbogMVZpHedG7o509/L4VBhqQd8j8JViWd+yvLlxOBw/gY+7ioHMatrQY2VvY6QOLle2Xqs
-CDvELcXMxwyFpBC0Ia+CVE+5pF+0IMuVkGIL1T8LHeKZYeRP+uFXtmWzas12hsMILNRmK7Q5PACm
-+v/6HFn111hLKkANBtRHIRiDbFQOiluNeR2bq+ck1y2+X//SGumA1XZFdCB/1VcRJXDdFnYdU3j/
-RkoiGggo3MSq3mJ6yV7sqzk04fTLFvfL0KadCMauputeGBybEiFAt6rCm5TkyUqoDOTU07byOEXO
-M32EGeYeV515RzARTpOSE9sdmRq0jNNAqGsCAwEAAaOCA2wwggNoMB8GA1UdIwQYMBaAFBUAEisT
-mLKZB+0e36K+Vw0rZwLNMB0GA1UdDgQWBBRaTG8RXMDSFO5XcrjqYs/YDlmqSDAoBgNVHREEITAf
-gR1zam9lcmQuc2ltb25zQGNvbGxhYm9yYS5jby51azAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMH0GA1UdHwR2MHQwOKA2oDSGMmh0dHA6Ly9jcmwzLmRpZ2lj
-ZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3JsMDigNqA0hjJodHRwOi8vY3JsNC5kaWdp
-Y2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0xLmNybDCCAcUGA1UdIASCAbwwggG4MIIBtAYK
-YIZIAYb9bAQBAjCCAaQwOgYIKwYBBQUHAgEWLmh0dHA6Ly93d3cuZGlnaWNlcnQuY29tL3NzbC1j
-cHMtcmVwb3NpdG9yeS5odG0wggFkBggrBgEFBQcCAjCCAVYeggFSAEEAbgB5ACAAdQBzAGUAIABv
-AGYAIAB0AGgAaQBzACAAQwBlAHIAdABpAGYAaQBjAGEAdABlACAAYwBvAG4AcwB0AGkAdAB1AHQA
-ZQBzACAAYQBjAGMAZQBwAHQAYQBuAGMAZQAgAG8AZgAgAHQAaABlACAARABpAGcAaQBDAGUAcgB0
-ACAAQwBQAC8AQwBQAFMAIABhAG4AZAAgAHQAaABlACAAUgBlAGwAeQBpAG4AZwAgAFAAYQByAHQA
-eQAgAEEAZwByAGUAZQBtAGUAbgB0ACAAdwBoAGkAYwBoACAAbABpAG0AaQB0ACAAbABpAGEAYgBp
-AGwAaQB0AHkAIABhAG4AZAAgAGEAcgBlACAAaQBuAGMAbwByAHAAbwByAGEAdABlAGQAIABoAGUA
-cgBlAGkAbgAgAGIAeQAgAHIAZQBmAGUAcgBlAG4AYwBlAC4wdwYIKwYBBQUHAQEEazBpMCQGCCsG
-AQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQQYIKwYBBQUHMAKGNWh0dHA6Ly9jYWNl
-cnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3J0MAwGA1UdEwEB/wQCMAAw
-DQYJKoZIhvcNAQEFBQADggEBAAc8CwXSms3RbIx+bhxFsGQoN+RpHtjnPvMPPAobv7rxdhQPPz+N
-6h3hpVzegeW2XhyZVC8MT0U6uWXrk+1uQUAXrJEG+W2X8yTEoHDS/SCF/POOsj/ekaDuNE9JJB/9
-cspoa4W+W8pX1sRurBDFHL0DBudUQ1PgvTSLPOHtfKQpu4gRb2u8KpJermp/IvPLImX9xSCbYKQM
-2L0wbpStFIYdyKCKuXuQxOX3BdBKLCFvcIDE6hjj3UpOlThCbeul2Tz5jARCfRK4OUxnXyb/Tp5j
-tshIAa2ZMGaTH9ApeY7P6C2ONF+Mh5yV/raWXOnJ9dEg6/sXcbdiieqzLKYBIgQwggb/MIIF56AD
-AgECAhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBBQUAMGIxCzAJBgNVBAYTAlVTMRUwEwYD
-VQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xITAfBgNVBAMTGERp
-Z2lDZXJ0IEFzc3VyZWQgSUQgQ0EtMTAeFw0xNDAyMTcwMDAwMDBaFw0xNTAzMTIxMjAwMDBaMIGk
-MQswCQYDVQQGEwJHQjEXMBUGA1UECBMOQ2FtYnJpZGdlc2hpcmUxEjAQBgNVBAcTCUNhbWJyaWRn
-ZTEWMBQGA1UEChMNQ29sbGFib3JhIEx0ZDEKMAgGA1UECxMBMTEWMBQGA1UEAxMNU2pvZXJkIFNp
-bW9uczEsMCoGCSqGSIb3DQEJARYdc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28udWswggEiMA0G
-CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDeEBB3ltTW6IDFWaR3nRu6OdPfy+FQYakHfI/CVYln
-fsry5cTgcP4GPu4qBzGra0GNlb2OkDi5Xtl6rAg7xC3FzMcMhaQQtCGvglRPuaRftCDLlZBiC9U/
-Cx3imWHkT/rhV7Zls2rNdobDCCzUZiu0OTwApvr/+hxZ9ddYSypADQbURyEYg2xUDopbjXkdm6vn
-JNctvl//0hrpgNV2RXQgf9VXESVw3RZ2HVN4/0ZKIhoIKNzEqt5iesle7Ks5NOH0yxb3y9CmnQjG
-rqbrXhgcmxIhQLeqwpuU5MlKqAzk1NO28jhFzjN9hBnmHledeUcwEU6TkhPbHZkatIzTQKhrAgMB
-AAGjggNsMIIDaDAfBgNVHSMEGDAWgBQVABIrE5iymQftHt+ivlcNK2cCzTAdBgNVHQ4EFgQUWkxv
-EVzA0hTuV3K46mLP2A5ZqkgwKAYDVR0RBCEwH4Edc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28u
-dWswDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMEBggrBgEFBQcDAjB9BgNVHR8E
-djB0MDigNqA0hjJodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0x
-LmNybDA4oDagNIYyaHR0cDovL2NybDQuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0QXNzdXJlZElEQ0Et
-MS5jcmwwggHFBgNVHSAEggG8MIIBuDCCAbQGCmCGSAGG/WwEAQIwggGkMDoGCCsGAQUFBwIBFi5o
-dHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJlcG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUH
-AgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAAdABoAGkAcwAgAEMAZQByAHQAaQBmAGkA
-YwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAgAGEAYwBjAGUAcAB0AGEAbgBjAGUAIABv
-AGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMAUAAvAEMAUABTACAAYQBuAGQAIAB0AGgA
-ZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABBAGcAcgBlAGUAbQBlAG4AdAAgAHcAaABp
-AGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkAdAB5ACAAYQBuAGQAIABhAHIAZQAgAGkA
-bgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBpAG4AIABiAHkAIAByAGUAZgBlAHIAZQBu
-AGMAZQAuMHcGCCsGAQUFBwEBBGswaTAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQu
-Y29tMEEGCCsGAQUFBzAChjVodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1
-cmVkSURDQS0xLmNydDAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBBQUAA4IBAQAHPAsF0prN0WyM
-fm4cRbBkKDfkaR7Y5z7zDzwKG7+68XYUDz8/jeod4aVc3oHltl4cmVQvDE9FOrll65PtbkFAF6yR
-Bvltl/MkxKBw0v0ghfzzjrI/3pGg7jRPSSQf/XLKaGuFvlvKV9bEbqwQxRy9AwbnVENT4L00izzh
-7XykKbuIEW9rvCqSXq5qfyLzyyJl/cUgm2CkDNi9MG6UrRSGHcigirl7kMTl9wXQSiwhb3CAxOoY
-491KTpU4Qm3rpdk8+YwEQn0SuDlMZ18m/06eY7bISAGtmTBmkx/QKXmOz+gtjjRfjIeclf62llzp
-yfXRIOv7F3G3YonqsyymASIEMYIDEDCCAwwCAQEwdjBiMQswCQYDVQQGEwJVUzEVMBMGA1UEChMM
-RGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
-dCBBc3N1cmVkIElEIENBLTECEA2fwUKNhvkL8dN88tUFvVwwCQYFKw4DAhoFAKCCAW8wGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTQwNzI5MDgwNTE4WjAjBgkqhkiG
-9w0BCQQxFgQUgzSa+mbna9NhzFFXrenA4wJMutQwgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
-BhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEh
-MB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xAhANn8FCjYb5C/HTfPLVBb1cMIGHBgsq
-hkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcG
-A1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0x
-AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBAGdzi9Ow1RDdQH4CU7CGcKMr8p/b
-nLkw4II0BrFdqdgf4jQSZZYXOTElZcToHYN7sF53IDefCwTgs86YgGd/uyBiW7+7c7iznYwzeaWU
-6WOcN/d1h8vt71zUOiT/6Qn/4lku1/Hglb/9QYuBjBP3eBY1jQGlTixBzOLd/MnNWbJnaJEjPRmt
-JLhjwJdbHCiyJQLFcAORMHuBIwXujqIqSwdTsYPoU8XvTEgYHSwg15flNhR9qp4B1RNN+FrwfpFZ
-Euo4SV0BuvG7vA1KkLQ1QfPB0VuGYO/8EAT9PO7NvzVwfE8g/lMdam5H5UavqoKr+29wmdgSiF/F
-uyvOpDsNkIsAAAAAAAA=
-
-
---=-zQvl29ntDiUm9ZQWejmB--
+Best regards,
+Tomasz
