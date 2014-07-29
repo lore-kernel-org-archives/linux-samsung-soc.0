@@ -1,155 +1,121 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer
- support
-Date: Tue, 29 Jul 2014 12:23:11 +0200
-Message-ID: <53D7760F.3060200@samsung.com>
-References: <1406512857-7213-1-git-send-email-inki.dae@samsung.com>
- <1406512857-7213-2-git-send-email-inki.dae@samsung.com>
- <53D675D6.2000309@samsung.com> <53D6F189.3060004@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v8 3/6] ARM: dts: Exynos: add CPU OPP and regulator supply
+ property
+Date: Tue, 29 Jul 2014 12:31:51 +0200
+Message-ID: <53D77817.7030605@gmail.com>
+References: <1406611711-25112-1-git-send-email-thomas.ab@samsung.com> <1406611711-25112-4-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:63641 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752892AbaG2KXQ (ORCPT
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:54815 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753145AbaG2Kb5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 06:23:16 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N9G004QIY68WV00@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 29 Jul 2014 11:22:56 +0100 (BST)
-In-reply-to: <53D6F189.3060004@samsung.com>
+	Tue, 29 Jul 2014 06:31:57 -0400
+In-Reply-To: <1406611711-25112-4-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: YoungJun Cho <yj44.cho@samsung.com>, Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, treding@nvidia.com
+To: Thomas Abraham <thomas.ab@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, =?windows-1252?Q?Andreas_F=E4rber?= <afaerber@suse.de>, Sachin Kamat <sachin.kamat@linaro.org>
 
-On 07/29/2014 02:57 AM, YoungJun Cho wrote:
-> Hi Andrzej,
->
-> On 07/29/2014 01:09 AM, Andrzej Hajda wrote:
->> On 07/28/2014 04:00 AM, Inki Dae wrote:
->>> This patch adds below two flags for LPM transfer, and it attaches LPM flags
->>> to a msg in accordance with master's mode_flags set by LCD Panel driver.
->>>
->>> MIPI_DSI_MODE_CMD_LPM
->>> - If this flag is set by Panel driver, MIPI-DSI controller will tranfer
->>> command data to Panel device in Low Power Mode.
->> What do you mean by command data? It could be:
->> - all transfer in command mode of operations,
->> - transfer initialized by the driver by writing to DSIM registers.
-> The 2nd one.
->
->>> MIPI_DSI_MODE_VIDEO_LPM
->>> - If this flag is set by Panel driver, MIPI-DSI controller will tranfer
->>> image data to Panel device in Low Power Mode.
->> What is the meaning of this flag in case of command mode of operation?
-> I'm also not sure that there is a case to transfer image data in Low 
-> Power Mode, but this flag is not related with 'command mode' only.
-> Inki may consider generic condition.
->
->> Maybe it would be better to create flags based on source of data/FIFOs:
->> - commands send by SFR registers,
->> - commands generated from data sent from Display Controller.
->>
->>
->>> And above two flags can be combined together to transfer command and video
->>> data to Panel device.
->>>
->>> MIPI DSI spec says,
->>>       "the host processor controls the desired mode of clock operation.
->>>        Host protocol and applications control Clock Lane operating mode
->>>        (High Speed or Low Power mode). System designers are responsible
->>>        for understanding the clock requirements for peripherals attached
->>>        to DSI and controlling clock behavior in accordance with those
->>>        requirements."
->>>
->>> Some LCD Panel devices, nt35502a, would need LPM transfer support
->>> because they should receive some initial commands with LPM by default
->>> hardware setting.
->>
->> Is this requirement for initial commands, or for all commands.
->> Btw what is the mode of operation of nt35502a? What flags do you need
->> for it?
->>
-> The nt35502a panel is video(RGB) mode panel and it requires low power 
-> mode for initial commands, which means to initialize nt35502a panel, the 
-> initial commands are transferred by LP mode(Not HS mode).
-> And after initialization, its other features like gamma control or etc 
-> could be controlled in HS mode.
+Hi Thomas,
 
-It sounds similar to my tc358764 bridge driver [1]. The difference is that
-it uses only MIPI_DSI_GENERIC_LONG_(WRITE|READ) in LPM.
+Other than the same question about 400 MHz OPP for Exynos4210, I have
+also few more inline.
 
-As I understand nt35502a requires also different driving of
-TxRequestHSClk signal
-and this seems to me unrelated to LPM. As LPM is not related at all with
-HS clock, AFAIK.
+On 29.07.2014 07:28, Thomas Abraham wrote:
+> For Exynos 4210/5250/5420 based platforms, add CPU operating points and CPU
+> regulator supply properties for migrating from Exynos specific cpufreq driver
+> to using generic cpufreq drivers.
+> 
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4210-origen.dts         |    6 ++++
+>  arch/arm/boot/dts/exynos4210-trats.dts          |    6 ++++
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts |    6 ++++
+>  arch/arm/boot/dts/exynos4210.dtsi               |   12 +++++++
+>  arch/arm/boot/dts/exynos5250-arndale.dts        |    6 ++++
+>  arch/arm/boot/dts/exynos5250-cros-common.dtsi   |    6 ++++
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    6 ++++
+>  arch/arm/boot/dts/exynos5250.dtsi               |   23 ++++++++++++++
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts       |    6 ++++
 
-Regards
-Andrzej
+There are more Exynos5420-based boards supported in mainline. If you do
+not have necessary data and/or hardware to fully enable the new driver
+on them, you should add responsible people on Cc list, so at least they
+know they have one more item on their TODO list. Added them for you.
 
-[1]: http://permalink.gmane.org/gmane.linux.drivers.devicetree/61559
+>  arch/arm/boot/dts/exynos5420.dtsi               |   38 +++++++++++++++++++++++
+>  10 files changed, 115 insertions(+)
 
+[snip]
 
->
-> Thank you.
-> Best regards YJ
->
->>
->>> Changelog v2: just add more descriptions.
->>>
->>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
->>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>> ---
->>>   drivers/gpu/drm/drm_mipi_dsi.c |    3 +++
->>>   include/drm/drm_mipi_dsi.h     |    4 ++++
->>>   2 files changed, 7 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
->>> index e633df2..6b2bbda 100644
->>> --- a/drivers/gpu/drm/drm_mipi_dsi.c
->>> +++ b/drivers/gpu/drm/drm_mipi_dsi.c
->>> @@ -232,6 +232,9 @@ int mipi_dsi_dcs_write(struct mipi_dsi_device *dsi, unsigned int channel,
->>>   		break;
->>>   	}
->>>
->>> +	if (dsi->mode_flags & MIPI_DSI_MODE_CMD_LPM)
->>> +		msg.flags = MIPI_DSI_MSG_USE_LPM;
->>> +
->>>   	return ops->transfer(dsi->host, &msg);
->>>   }
->> Shouldn't this be also the same for dcs read?
->>
->> Anyway I think check in the DSIM should be used instead, as panel driver
->> can issue other dsi transfers without MIPI_DSI_MSG_USE_LPM flag set.
->>
->> Regards
->> Andrzej
->>
->>
->>>   EXPORT_SYMBOL(mipi_dsi_dcs_write);
->>> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
->>> index 944f33f..1c41e49 100644
->>> --- a/include/drm/drm_mipi_dsi.h
->>> +++ b/include/drm/drm_mipi_dsi.h
->>> @@ -94,6 +94,10 @@ void mipi_dsi_host_unregister(struct mipi_dsi_host *host);
->>>   #define MIPI_DSI_MODE_VSYNC_FLUSH	BIT(8)
->>>   /* disable EoT packets in HS mode */
->>>   #define MIPI_DSI_MODE_EOT_PACKET	BIT(9)
->>> +/* command low power mode */
->>> +#define MIPI_DSI_MODE_CMD_LPM		BIT(10)
->>> +/* video low power mode */
->>> +#define MIPI_DSI_MODE_VIDEO_LPM		BIT(11)
->>>
->>>   enum mipi_dsi_pixel_format {
->>>   	MIPI_DSI_FMT_RGB888,
->>>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->>
->
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 492e1ef..876247a 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -63,6 +63,29 @@
+>  			compatible = "arm,cortex-a15";
+>  			reg = <0>;
+>  			clock-frequency = <1700000000>;
+> +
+> +			clocks = <&clock CLK_ARM_CLK>;
+> +			clock-names = "cpu";
+> +			clock-latency = <200000>;
+
+Where does this latency value comes from? How did you calculate it?
+
+For example, on Exynos4210, for all operating points added by your
+patches, the highest PLL locking latency will be 60uS, because the
+highest PDIV value would be 6 and PLL lock time is PDIV*240 ticks of 24
+MHz reference clock.
+
+> +
+> +			operating-points = <
+> +				1700000 1300000
+> +				1600000 1250000
+
+[snip]
+
+> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> index 6052aa9..084e587 100644
+> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> @@ -24,6 +24,12 @@
+>  		bootargs = "console=ttySAC2,115200 init=/linuxrc";
+>  	};
+>  
+> +	cpus {
+
+Is there no regulator for cpu0?
+
+> +		cpu@4 {
+> +			cpu0-supply = <&buck6_reg>;
+> +		};
+> +	};
+> +
+>  	fixed-rate-clocks {
+>  		oscclk {
+>  			compatible = "samsung,exynos5420-oscclk";
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index cb2b70e..1116d55 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+
+[snip]
+
+>  
+>  		cpu1: cpu@1 {
+> @@ -69,6 +87,7 @@
+>  			reg = <0x1>;
+>  			clock-frequency = <1800000000>;
+>  			cci-control-port = <&cci_control1>;
+> +			clock-latency = <200000>;
+
+Do you need to specify this property for every CPU or rather just for
+those which have operating points specified?
+
+Best regards,
+Tomasz
