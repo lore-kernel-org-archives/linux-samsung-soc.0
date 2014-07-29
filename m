@@ -1,152 +1,149 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer
+Subject: Re: [PATCH v2 2/2] drm/exynos: dsi: add LPM (Low Power Mode) transfer
  support
-Date: Tue, 29 Jul 2014 12:30:15 +0900
-Message-ID: <53D71547.5040006@samsung.com>
+Date: Tue, 29 Jul 2014 12:42:38 +0900
+Message-ID: <53D7182E.6040308@samsung.com>
 References: <1406512857-7213-1-git-send-email-inki.dae@samsung.com>
- <1406512857-7213-2-git-send-email-inki.dae@samsung.com>
- <53D675D6.2000309@samsung.com>
+ <1406512857-7213-3-git-send-email-inki.dae@samsung.com>
+ <53D6715A.5040604@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <53D675D6.2000309@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:55258 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751968AbaG2Dml (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Jul 2014 23:42:41 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N9G00EBTFN3XKA0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 29 Jul 2014 12:42:39 +0900 (KST)
+In-reply-to: <53D6715A.5040604@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, airlied@linux.ie, linux-samsung-soc@vger.kernel.org, treding@nvidia.com
 
-T24gMjAxNOuFhCAwN+yblCAyOeydvCAwMTowOSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBPbiAw
-Ny8yOC8yMDE0IDA0OjAwIEFNLCBJbmtpIERhZSB3cm90ZToKPj4gVGhpcyBwYXRjaCBhZGRzIGJl
-bG93IHR3byBmbGFncyBmb3IgTFBNIHRyYW5zZmVyLCBhbmQgaXQgYXR0YWNoZXMgTFBNIGZsYWdz
-Cj4+IHRvIGEgbXNnIGluIGFjY29yZGFuY2Ugd2l0aCBtYXN0ZXIncyBtb2RlX2ZsYWdzIHNldCBi
-eSBMQ0QgUGFuZWwgZHJpdmVyLgo+Pgo+PiBNSVBJX0RTSV9NT0RFX0NNRF9MUE0KPj4gLSBJZiB0
-aGlzIGZsYWcgaXMgc2V0IGJ5IFBhbmVsIGRyaXZlciwgTUlQSS1EU0kgY29udHJvbGxlciB3aWxs
-IHRyYW5mZXIKPj4gY29tbWFuZCBkYXRhIHRvIFBhbmVsIGRldmljZSBpbiBMb3cgUG93ZXIgTW9k
-ZS4KPiAKPiBXaGF0IGRvIHlvdSBtZWFuIGJ5IGNvbW1hbmQgZGF0YT8gSXQgY291bGQgYmU6Cj4g
-LSBhbGwgdHJhbnNmZXIgaW4gY29tbWFuZCBtb2RlIG9mIG9wZXJhdGlvbnMsCj4gLSB0cmFuc2Zl
-ciBpbml0aWFsaXplZCBieSB0aGUgZHJpdmVyIGJ5IHdyaXRpbmcgdG8gRFNJTSByZWdpc3RlcnMu
-Cj4gCj4+Cj4+IE1JUElfRFNJX01PREVfVklERU9fTFBNCj4+IC0gSWYgdGhpcyBmbGFnIGlzIHNl
-dCBieSBQYW5lbCBkcml2ZXIsIE1JUEktRFNJIGNvbnRyb2xsZXIgd2lsbCB0cmFuZmVyCj4+IGlt
-YWdlIGRhdGEgdG8gUGFuZWwgZGV2aWNlIGluIExvdyBQb3dlciBNb2RlLgo+IAo+IFdoYXQgaXMg
-dGhlIG1lYW5pbmcgb2YgdGhpcyBmbGFnIGluIGNhc2Ugb2YgY29tbWFuZCBtb2RlIG9mIG9wZXJh
-dGlvbj8KPiAKPiBNYXliZSBpdCB3b3VsZCBiZSBiZXR0ZXIgdG8gY3JlYXRlIGZsYWdzIGJhc2Vk
-IG9uIHNvdXJjZSBvZiBkYXRhL0ZJRk9zOgo+IC0gY29tbWFuZHMgc2VuZCBieSBTRlIgcmVnaXN0
-ZXJzLAo+IC0gY29tbWFuZHMgZ2VuZXJhdGVkIGZyb20gZGF0YSBzZW50IGZyb20gRGlzcGxheSBD
-b250cm9sbGVyLgo+IAoKSSB3cm90ZSB0aGUgZGVzY3JpcHRpb25zIGluIGhvc3QgY29udHJvbGxl
-ciBwb2ludCBvZiB2aWV3OiB3aXRoCk1JUElfRFNJX01PREVfQ01EX0xQTSwgaG9zdCBjb250cm9s
-bGVyIHdpbGwgc2V0IHRoZSBvcGVyYXRpb24gbW9kZSB0bwpjb21tYW5kIG1vZGUgb3BlcmF0aW9u
-IGFuZCB0cmFuc2ZlciBjb21tYW5kIGRhdGEgdG8gUGFuZWwgKE1JUEkgRFNJCmNsaWVudCksIGFu
-ZCB3aXRoIE1JUElfRFNJX01PREVfVklERU9fTFBNLCBob3N0IGNvbnRyb2xsZXIgd2lsbCBzZXQg
-dGhlCm9wZXJhdGlvbiBtb2RlIHRvIHZpZGVvIG1vZGUgYW5kIHRyYW5zZmVyIHZpZGVvIGRhdGEg
-KHBpeGVsIHN0cmVhbSkgdG8KUGFuZWwuCgpIb3dldmVyLCBpdCBzZWVtcyB0aGF0IHRoZXNlIGRl
-c2NyaXB0aW9ucyBhcmVuJ3QgZW5vdWdoLiBTbyBtYWtlIHN1cmUKdGhlIG1lYW5pbmdzLgoKTUlQ
-SS1EU0kgaGFzIHR3byBvcGVyYXRpb24gbW9kZXMsIENvbW1hbmQgYW5kIFZpZGVvIG1vZGUuIEFu
-ZCBNSVBJLURTSQpzcGVjIHNheXMsICJDb21tYW5kIE1vZGUgcmVmZXJzIHRvIG9wZXJhdGlvbiBp
-biB3aGljaCB0cmFuc2FjdGlvbnMKcHJpbWFyaWx5IHRha2UgdGhlIGZvcm0gb2Ygc2VuZGluZyBj
-b21tYW5kcyBhbmQgZGF0YSB0byBhIHBlcmlwaGVyYWwsCnN1Y2ggYXMgYSBkaXNwbGF5IG1vZHVs
-ZSwgdGhhdCBpbmNvcnBvcmF0ZXMgYSBkaXNwbGF5IGNvbnRyb2xsZXIuIFRoZQpkaXNwbGF5IGNv
-bnRyb2xsZXIgbWF5IGluY2x1ZGUgbG9jYWwgcmVnaXN0ZXJzIGFuZCBhIGZyYW1lIGJ1ZmZlci4K
-U3lzdGVtcyB1c2luZyBDb21tYW5kIE1vZGUgd3JpdGUgdG8sIGFuZCByZWFkIGZyb20sIHRoZSBy
-ZWdpc3RlcnMgYW5kCmZyYW1lIGJ1ZmZlciBtZW1vcnkuIFRoZSBob3N0IHByb2Nlc3NvciBpbmRp
-cmVjdGx5IGNvbnRyb2xzIGFjdGl2aXR5IGF0CnRoZSBwZXJpcGhlcmFsIGJ5IHNlbmRpbmcgY29t
-bWFuZHMsIHBhcmFtZXRlcnMgYW5kIGRhdGEgdG8gdGhlIGRpc3BsYXkKY29udHJvbGxlci4gVGhl
-IGhvc3QgcHJvY2Vzc29yIGNhbiBhbHNvIHJlYWQgZGlzcGxheSBtb2R1bGUgc3RhdHVzCmluZm9y
-bWF0aW9uIG9yIHRoZSBjb250ZW50cyBvZiB0aGUgZnJhbWUgbWVtb3J5LiBDb21tYW5kIE1vZGUg
-b3BlcmF0aW9uCnJlcXVpcmVzIGEgYmlkaXJlY3Rpb25hbCBpbnRlcmZhY2UuIi4KCkFuZCBhbHNv
-IHRoZSBzcGVjIHNheXMgZm9yIFZpZGVvIG1vZGUsICJWaWRlbyBtb2RlIE1vZGUgcmVmZXJzIHRv
-Cm9wZXJhdGlvbiBpbiB3aGljaCB0cmFuc2ZlcnMgZnJvbSB0aGUgaG9zdCBwcm9jZXNzb3IgdG8g
-dGhlIHBlcmlwaGVyYWwKdGFrZSB0aGUgZm9ybSBvZiBhIHJlYWwtdGltZSBwaXhlbCBzdHJlYW0u
-IEluIG5vcm1hbCBvcGVyYXRpb24sIHRoZQpkaXNwbGF5IG1vZHVsZSByZWxpZXMgb24gdGhlIGhv
-c3QgcHJvY2Vzc29yIHRvIHByb3ZpZGUgaW1hZ2UgZGF0YSBhdApzdWZmaWNpZW50IGJhbmR3aWR0
-aCB0byBhdm9pZCBmbGlja2VyIG9yIG90aGVyIHZpc2libGUgYXJ0aWZhY3RzIGluIHRoZQpkaXNw
-bGF5ZWQgaW1hZ2UuIFZpZGVvIGluZm9ybWF0aW9uIHNob3VsZCBvbmx5IGJlIHRyYW5zbWl0dGVk
-IHVzaW5nIEhpZ2gKU3BlZWQgTW9kZS4gU29tZSBWaWRlbyBNb2RlIGFyY2hpdGVjdHVyZXMgbWF5
-IGluY2x1ZGUgYSBzaW1wbGUgdGltaW5nCmNvbnRyb2xsZXIgYW5kIHBhcnRpYWwgZnJhbWUgYnVm
-ZmVyLCB1c2VkIHRvCm1haW50YWluIGEgcGFydGlhbC1zY3JlZW4gb3IgbG93ZXItcmVzb2x1dGlv
-biBpbWFnZSBpbiBzdGFuZGJ5IG9yCmxvdy1wb3dlciBtb2RlLiBUaGlzIHBlcm1pdHMgdGhlIGlu
-dGVyZmFjZSB0byBiZSBzaHV0IGRvd24gdG8gcmVkdWNlCnBvd2VyIGNvbnN1bXB0aW9uLiBUbyBy
-ZWR1Y2UgY29tcGxleGl0eSBhbmQgY29zdCwgc3lzdGVtcyB0aGF0IG9ubHkKb3BlcmF0ZSBpbiBW
-aWRlbyBNb2RlIG1heSB1c2UgYSB1bmlkaXJlY3Rpb25hbCBkYXRhIHBhdGguIgoKVGh1cywgd2l0
-aCBDb21tYW5kIG1vZGUsIGhvc3QgY2FuIHNlbmQgY29tbWFuZCBhbmQgaW1hZ2UgZGF0YSB0byBQ
-YW5lbApkZXZpY2UsIGFuZCB3aXRoIFZpZGVvIG1vZGUsIGhvc3QgY2FuIHNlbmQgaW1hZ2UgZGF0
-YSB0byBQYW5lbCBkZXZpY2UgaW4KSGlnaCBTcGVlZCBNb2RlIChIUyBjbG9jayBlbmFibGVkKQoK
-VGhlcmVmb3JlLCBJIHRoaW5rIE1JUElfRFNJX01PREVfQ01EX0xQTSBhbmQgTUlQSV9EU0lfTU9E
-RV9WSURFT19MUE0KZmxhZ3MgaGF2ZSBnZW5lcmljIG1lYW5pbmcsCkluIGRlZmF1bHQsIGhvc3Qg
-dHJhbnNtaXRzIENvbW1hbmQgYW5kIGltYWdlIGRhdGEgdG8gUGFuZWwgaW4gSGlnaCBTcGVlZApN
-b2RlLgoKTUlQX0RTSV9NT0RFX0NNRF9MUE06IEhvc3QgdHJhbnNtaXRzIGNvbW1hbmQgYW5kIGlt
-YWdlIGRhdGEgdG8gUGFuZWwgaW4KTG93IFBvd2VyIG1vZGUsIGFuZCBhbHNvIHRoZSBob3N0IGNh
-biByZWFkIGRhdGEgZnJvbSBTUkYgYW5kIGludGVybmFsCmZyYW1lIGJ1ZmZlciBvZiBQYW5lbCBk
-ZXZpY2UuIFdpdGggdGhpcyBmbGFnLCBob3N0IG5lZWRzIHRvIHNldAp0cmFuc21pc3Npb24gbW9k
-ZSB0byBMb3cgUG93ZXIgTW9kZSAoYW5kIEhTIGNsb2NrIGRpc2FibGVkKQoKTUlQSV9EU0lfTU9E
-RV9WSURFT19MUE06IEhvc3QgdHJhbnNtaXRzIGltYWdlIGRhdGEgdG8gUGFuZWwgaW4gTG93IFBv
-d2VyCm1vZGUuIFdpdGggdGhpcyBmbGFncywgaG9zdCBuZWVkcyB0byBzZXQgdHJhbnNtaXNzaW9u
-IG1vZGUgdG8gTG93IFBvd2VyCk1vZGUuCgpJIHRoaW5rIGFib3ZlIHR3byBmbGFncyBhcmUgY29t
-bW9uIHRvIGFsbCBTb0MuCgpJbiBjYXNlIG9mIEV4eW5vcyBNSVBJLURTSSwgJ0NtZExwZHQgYml0
-ID0gMScgc3BlY2lmaWVzIHRoYXQgaG9zdAp0cmFuc21pdHMgY29tbWFuZHMgdG8gUGFuZWwgaW4g
-TG93IFBvd2VyIE1vZGUgc28gdGhpcyB3b3VsZCBiZQpjb3JyZXNwb25kZWQgdG8gTUlQSV9EU0lf
-TU9ERV9DTURfTFBNLiBIb3dldmVyLCAnVHhMcGR0ID0gMScgc3BlY2lmaWVzCnRoYXQgaG9zdCB0
-cmFuc21pdHMgYWxsIGRhdGEgdGhhdCBpbmNsdWRlIGNvbW1hbmRzIGFuZCBpbWFnZXRvIFBhbmVs
-IGluCkxvdyBQb3dlciBNb2RlIChhbmQgSFMgY2xvY2sgZGlzYWJsZWQpLiBTbyB0aGlzIGJpdCB3
-b3VsZCBiZQpjb3JyZXNwb25kZWQgdG8gTUlQSV9EU0lfTU9ERV9WSURFT19MUE0uCgpGZWVsIGZy
-ZWUgdG8gZ2l2ZSBtZSB5b3VyIG9waW5pb25zIGlmIHlvdSBoYXZlIG90aGVyIG9waW5pb25zIG9y
-IHRoZXJlCmlzIG15IG1pc3NpbmcgcG9pbnQuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+Pgo+PiBB
-bmQgYWJvdmUgdHdvIGZsYWdzIGNhbiBiZSBjb21iaW5lZCB0b2dldGhlciB0byB0cmFuc2ZlciBj
-b21tYW5kIGFuZCB2aWRlbwo+PiBkYXRhIHRvIFBhbmVsIGRldmljZS4KPj4KPj4gTUlQSSBEU0kg
-c3BlYyBzYXlzLAo+PiAgICAgICJ0aGUgaG9zdCBwcm9jZXNzb3IgY29udHJvbHMgdGhlIGRlc2ly
-ZWQgbW9kZSBvZiBjbG9jayBvcGVyYXRpb24uCj4+ICAgICAgIEhvc3QgcHJvdG9jb2wgYW5kIGFw
-cGxpY2F0aW9ucyBjb250cm9sIENsb2NrIExhbmUgb3BlcmF0aW5nIG1vZGUKPj4gICAgICAgKEhp
-Z2ggU3BlZWQgb3IgTG93IFBvd2VyIG1vZGUpLiBTeXN0ZW0gZGVzaWduZXJzIGFyZSByZXNwb25z
-aWJsZQo+PiAgICAgICBmb3IgdW5kZXJzdGFuZGluZyB0aGUgY2xvY2sgcmVxdWlyZW1lbnRzIGZv
-ciBwZXJpcGhlcmFscyBhdHRhY2hlZAo+PiAgICAgICB0byBEU0kgYW5kIGNvbnRyb2xsaW5nIGNs
-b2NrIGJlaGF2aW9yIGluIGFjY29yZGFuY2Ugd2l0aCB0aG9zZQo+PiAgICAgICByZXF1aXJlbWVu
-dHMuIgo+Pgo+PiBTb21lIExDRCBQYW5lbCBkZXZpY2VzLCBudDM1NTAyYSwgd291bGQgbmVlZCBM
-UE0gdHJhbnNmZXIgc3VwcG9ydAo+PiBiZWNhdXNlIHRoZXkgc2hvdWxkIHJlY2VpdmUgc29tZSBp
-bml0aWFsIGNvbW1hbmRzIHdpdGggTFBNIGJ5IGRlZmF1bHQKPj4gaGFyZHdhcmUgc2V0dGluZy4K
-PiAKPiAKPiBJcyB0aGlzIHJlcXVpcmVtZW50IGZvciBpbml0aWFsIGNvbW1hbmRzLCBvciBmb3Ig
-YWxsIGNvbW1hbmRzLgo+IEJ0dyB3aGF0IGlzIHRoZSBtb2RlIG9mIG9wZXJhdGlvbiBvZiBudDM1
-NTAyYT8gV2hhdCBmbGFncyBkbyB5b3UgbmVlZAo+IGZvciBpdD8KPiAKPiAKPiAKPj4KPj4gQ2hh
-bmdlbG9nIHYyOiBqdXN0IGFkZCBtb3JlIGRlc2NyaXB0aW9ucy4KPj4KPj4gU2lnbmVkLW9mZi1i
-eTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgo+PiBBY2tlZC1ieTogS3l1bmdtaW4g
-UGFyayA8a3l1bmdtaW4ucGFya0BzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9k
-cm0vZHJtX21pcGlfZHNpLmMgfCAgICAzICsrKwo+PiAgaW5jbHVkZS9kcm0vZHJtX21pcGlfZHNp
-LmggICAgIHwgICAgNCArKysrCj4+ICAyIGZpbGVzIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKQo+
-Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9taXBpX2RzaS5jIGIvZHJpdmVy
-cy9ncHUvZHJtL2RybV9taXBpX2RzaS5jCj4+IGluZGV4IGU2MzNkZjIuLjZiMmJiZGEgMTAwNjQ0
-Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fbWlwaV9kc2kuYwo+PiArKysgYi9kcml2ZXJz
-L2dwdS9kcm0vZHJtX21pcGlfZHNpLmMKPj4gQEAgLTIzMiw2ICsyMzIsOSBAQCBpbnQgbWlwaV9k
-c2lfZGNzX3dyaXRlKHN0cnVjdCBtaXBpX2RzaV9kZXZpY2UgKmRzaSwgdW5zaWduZWQgaW50IGNo
-YW5uZWwsCj4+ICAJCWJyZWFrOwo+PiAgCX0KPj4gIAo+PiArCWlmIChkc2ktPm1vZGVfZmxhZ3Mg
-JiBNSVBJX0RTSV9NT0RFX0NNRF9MUE0pCj4+ICsJCW1zZy5mbGFncyA9IE1JUElfRFNJX01TR19V
-U0VfTFBNOwo+PiArCj4+ICAJcmV0dXJuIG9wcy0+dHJhbnNmZXIoZHNpLT5ob3N0LCAmbXNnKTsK
-Pj4gIH0KPiAKPiBTaG91bGRuJ3QgdGhpcyBiZSBhbHNvIHRoZSBzYW1lIGZvciBkY3MgcmVhZD8K
-PiAKPiBBbnl3YXkgSSB0aGluayBjaGVjayBpbiB0aGUgRFNJTSBzaG91bGQgYmUgdXNlZCBpbnN0
-ZWFkLCBhcyBwYW5lbCBkcml2ZXIKPiBjYW4gaXNzdWUgb3RoZXIgZHNpIHRyYW5zZmVycyB3aXRo
-b3V0IE1JUElfRFNJX01TR19VU0VfTFBNIGZsYWcgc2V0Lgo+IAo+IFJlZ2FyZHMKPiBBbmRyemVq
-Cj4gCj4gCj4+ICBFWFBPUlRfU1lNQk9MKG1pcGlfZHNpX2Rjc193cml0ZSk7Cj4+IGRpZmYgLS1n
-aXQgYS9pbmNsdWRlL2RybS9kcm1fbWlwaV9kc2kuaCBiL2luY2x1ZGUvZHJtL2RybV9taXBpX2Rz
-aS5oCj4+IGluZGV4IDk0NGYzM2YuLjFjNDFlNDkgMTAwNjQ0Cj4+IC0tLSBhL2luY2x1ZGUvZHJt
-L2RybV9taXBpX2RzaS5oCj4+ICsrKyBiL2luY2x1ZGUvZHJtL2RybV9taXBpX2RzaS5oCj4+IEBA
-IC05NCw2ICs5NCwxMCBAQCB2b2lkIG1pcGlfZHNpX2hvc3RfdW5yZWdpc3RlcihzdHJ1Y3QgbWlw
-aV9kc2lfaG9zdCAqaG9zdCk7Cj4+ICAjZGVmaW5lIE1JUElfRFNJX01PREVfVlNZTkNfRkxVU0gJ
-QklUKDgpCj4+ICAvKiBkaXNhYmxlIEVvVCBwYWNrZXRzIGluIEhTIG1vZGUgKi8KPj4gICNkZWZp
-bmUgTUlQSV9EU0lfTU9ERV9FT1RfUEFDS0VUCUJJVCg5KQo+PiArLyogY29tbWFuZCBsb3cgcG93
-ZXIgbW9kZSAqLwo+PiArI2RlZmluZSBNSVBJX0RTSV9NT0RFX0NNRF9MUE0JCUJJVCgxMCkKPj4g
-Ky8qIHZpZGVvIGxvdyBwb3dlciBtb2RlICovCj4+ICsjZGVmaW5lIE1JUElfRFNJX01PREVfVklE
-RU9fTFBNCQlCSVQoMTEpCj4+ICAKPj4gIGVudW0gbWlwaV9kc2lfcGl4ZWxfZm9ybWF0IHsKPj4g
-IAlNSVBJX0RTSV9GTVRfUkdCODg4LAo+Pgo+IAo+IAo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJv
-bSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29j
-IiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3Jn
-Cj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRv
-bW8taW5mby5odG1sCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
-ZXZlbAo=
+On 2014=EB=85=84 07=EC=9B=94 29=EC=9D=BC 00:50, Andrzej Hajda wrote:
+> On 07/28/2014 04:00 AM, Inki Dae wrote:
+>> This patch adds LPM transfer support for video or command data.
+>>
+>> With this patch, Exynos MIPI DSI controller can transfer command or
+>> video data with HS or LP mode in accordance with mode_flags set
+>> by LCD Panel driver.
+>>
+>> Changelog v2: Enable High Speed clock only in case of stand by reque=
+st.
+>>
+>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_dsi.c |   22 ++++++++++++++++++++=
+--
+>>  1 file changed, 20 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/d=
+rm/exynos/exynos_drm_dsi.c
+>> index 5e78d45..1bed105 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> @@ -493,8 +493,11 @@ static int exynos_dsi_enable_clock(struct exyno=
+s_dsi *dsi)
+>>  			| DSIM_ESC_PRESCALER(esc_div)
+>>  			| DSIM_LANE_ESC_CLK_EN_CLK
+>>  			| DSIM_LANE_ESC_CLK_EN_DATA(BIT(dsi->lanes) - 1)
+>> -			| DSIM_BYTE_CLK_SRC(0)
+>> -			| DSIM_TX_REQUEST_HSCLK;
+>> +			| DSIM_BYTE_CLK_SRC(0);
+>> +
+>> +	if (!(dsi->mode_flags & MIPI_DSI_MODE_CMD_LPM))
+>> +		reg |=3D DSIM_TX_REQUEST_HSCLK;
+>> +
+>>  	writel(reg, dsi->reg_base + DSIM_CLKCTRL_REG);
+>> =20
+>>  	return 0;
+>> @@ -553,6 +556,18 @@ static void exynos_dsi_set_phy_ctrl(struct exyn=
+os_dsi *dsi)
+>>  	writel(reg, dsi->reg_base + DSIM_PHYTIMING2_REG);
+>>  }
+>> =20
+>> +static void exynos_dsi_enable_hs_clock(struct exynos_dsi *dsi,
+>> +					bool enable)
+>> +{
+>> +	u32 reg =3D readl(dsi->reg_base + DSIM_CLKCTRL_REG);
+>> +
+>> +	reg &=3D ~DSIM_TX_REQUEST_HSCLK;
+>> +	if (enable)
+>> +		reg |=3D DSIM_TX_REQUEST_HSCLK;
+>> +
+>> +	writel(reg, dsi->reg_base + DSIM_CLKCTRL_REG);
+>> +}
+>> +
+>=20
+> I have tested DSIM_TX_REQUEST_HSCLK bit on trats device(video mode HS=
+) -
+> it works with and without the bit set.
+
+If you can test thmorstat board, you will face with that its panel is
+not worked.
+
+> So I start to suspect this bit is not just for simply enable/disable =
+HS
+> clock as function name suggests, do you know what is its
+> exact meaning? The specs are quite succinct on it.
+
+HSCLK only has meaning when it is used with CmdLpdt and TxLpdt bits.
+
+> On the other side I have found DSIM_TX_LPDT_LP and DSIM_CMD_LPDT_LP b=
+its
+> in DSIM_ESCMODE register
+> which seems to be related to flags you have introduced:
+> - DSIM_CMD_LPDT_LP - transmit commands in LP mode,
+> - DSIM_TX_LPDT_LP - transmit data in LP mode.
+
+As I mentioned already at other email thread, DSIM_TX_LPDT_LP specifies
+that host can transmit command and also image data to Panel in Low Powe=
+r
+Mode. So these flags are specific to MIPI-DSI controller of Exynos.
+
+> The former is already triggered by MIPI_DSI_MSG_USE_LPM flag. Why do =
+not
+
+This flag is set only when command msg transmission is requested by
+Panel driver. So we would need separated flags, MIPI_DSI_MODE_CMD_LPM
+and MIPI_DSI_MODE_VIDEO_LPM, to notify how host controller should
+transmit command and also image.
+
+Thanks,
+Inki Dae
+
+> you use the latter?
+>=20
+> Regards
+> Andrzej
+>=20
+>>  static void exynos_dsi_disable_clock(struct exynos_dsi *dsi)
+>>  {
+>>  	u32 reg;
+>> @@ -705,6 +720,9 @@ static void exynos_dsi_set_display_enable(struct=
+ exynos_dsi *dsi, bool enable)
+>>  {
+>>  	u32 reg;
+>> =20
+>> +	if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO_LPM) && enable)
+>> +		exynos_dsi_enable_hs_clock(dsi, true);
+>> +
+>>  	reg =3D readl(dsi->reg_base + DSIM_MDRESOL_REG);
+>>  	if (enable)
+>>  		reg |=3D DSIM_MAIN_STAND_BY;
+>=20
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
