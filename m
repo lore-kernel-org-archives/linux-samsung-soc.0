@@ -1,39 +1,51 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V6 4/8] drm/exynos: Move DP setup into commit()
-Date: Wed, 30 Jul 2014 17:35:32 +0530
-Message-ID: <CAEC9eQP+wRr0dqQ5kiiAsujY0e1qRa4EfnaqC-nVpufX66uKUA@mail.gmail.com>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <1406316130-4744-5-git-send-email-ajaykumar.rs@samsung.com>
- <20140730105245.GG29590@ulmo>
+From: Sachin Kamat <spk.linux@gmail.com>
+Subject: Re: [PATCH] media: v4l2: make allocation algorithm more robust and flexible
+Date: Wed, 30 Jul 2014 17:37:20 +0530
+Message-ID: <CAK5sBcHRRwEjCAcB789EoQGpAGmyqb57sVFzd2RVY2SNb1FwxQ@mail.gmail.com>
+References: <1406693390-31849-1-git-send-email-zhaowei.yuan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140730105245.GG29590@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f44.google.com ([209.85.215.44]:63765 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751345AbaG3MHW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Jul 2014 08:07:22 -0400
+In-Reply-To: <1406693390-31849-1-git-send-email-zhaowei.yuan@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Zhaowei Yuan <zhaowei.yuan@samsung.com>
+Cc: linux-media@vger.kernel.org, k.debski@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, jtp.park@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, m.chehab@samsung.com
 
-On Wed, Jul 30, 2014 at 4:22 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Sat, Jul 26, 2014 at 12:52:06AM +0530, Ajay Kumar wrote:
->> This patch moves the DP training and video enable from the hotplug
->> handler into commit().
+Hi Zhaowei,
+
+On Wed, Jul 30, 2014 at 9:39 AM, Zhaowei Yuan <zhaowei.yuan@samsung.com> wrote:
+> Current algorithm relies on the fact that caller will align the
+> size to PAGE_SIZE, otherwise order will be decreased to negative
+> when remain size is less than PAGE_SIZE, it makes the function
+> hard to be migrated.
+> This patch sloves the hidden problem.
 >
-> I don't think I can comment on this one, but perhaps the commit message
-> should describe why it's doing this rather than just parroting what the
-> code does.
+> Signed-off-by: Zhaowei Yuan <zhaowei.yuan@samsung.com>
+> ---
+>  drivers/media/v4l2-core/videobuf2-dma-sg.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/v4l2-core/videobuf2-dma-sg.c b/drivers/media/v4l2-core/videobuf2-dma-sg.c
+> index adefc31..40d18aa 100644
+> --- a/drivers/media/v4l2-core/videobuf2-dma-sg.c
+> +++ b/drivers/media/v4l2-core/videobuf2-dma-sg.c
+> @@ -58,7 +58,7 @@ static int vb2_dma_sg_alloc_compacted(struct vb2_dma_sg_buf *buf,
+>
+>                 order = get_order(size);
+>                 /* Dont over allocate*/
+> -               if ((PAGE_SIZE << order) > size)
+> +               if (order > 0 && (PAGE_SIZE << order) > size)
+>                         order--;
 
-Actually, this patch adds the missing commit callback for dp encoder.
-I will add proper commit message.
+If size is not page aligned, then wouldn't decrementing the order
+under-allocate the memory?
 
-Ajay
+-- 
+Regards,
+Sachin.
