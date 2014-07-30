@@ -1,218 +1,326 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V6 6/8] drm/bridge: Modify drm_bridge core to support
- driver model
-Date: Wed, 30 Jul 2014 13:19:32 +0200
-Message-ID: <20140730111931.GI29590@ulmo>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <1406316130-4744-7-git-send-email-ajaykumar.rs@samsung.com>
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH v9 3/6] ARM: dts: Exynos: add CPU OPP and regulator supply
+ property
+Date: Wed, 30 Jul 2014 13:28:47 +0200
+Message-ID: <53D8D6EF.8010503@suse.de>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com> <1406707663-16656-4-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0726594590=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1406316130-4744-7-git-send-email-ajaykumar.rs@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:35877 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752403AbaG3L2w (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Jul 2014 07:28:52 -0400
+In-Reply-To: <1406707663-16656-4-git-send-email-thomas.ab@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sachin Kamat <sachin.kamat@linaro.org>
 
-
---===============0726594590==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kH8JNVvasRCCW1Oz"
-Content-Disposition: inline
-
-
---kH8JNVvasRCCW1Oz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Jul 26, 2014 at 12:52:08AM +0530, Ajay Kumar wrote:
-> This patch tries to seperate drm_bridge implementation
-> into 2 parts, a drm part and a non_drm part.
+Am 30.07.2014 10:07, schrieb Thomas Abraham:
+> For Exynos 4210/5250/5420 based platforms, add CPU operating points a=
+nd CPU
+> regulator supply properties for migrating from Exynos specific cpufre=
+q driver
+> to using generic cpufreq drivers.
 >=20
-> A set of helper functions are defined in this patch to make
-> bridge driver probe independent of the drm flow.
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Cc: Andreas Faerber <afaerber@suse.de>
+> Cc: Sachin Kamat <sachin.kamat@linaro.org>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4210-origen.dts         |    4 +++
+>  arch/arm/boot/dts/exynos4210-trats.dts          |    4 +++
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 +++
+>  arch/arm/boot/dts/exynos4210.dtsi               |   14 ++++++++-
+>  arch/arm/boot/dts/exynos5250-arndale.dts        |    4 +++
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    4 +++
+>  arch/arm/boot/dts/exynos5250-snow.dts           |    4 +++
+>  arch/arm/boot/dts/exynos5250.dtsi               |   25 +++++++++++++=
++-
+>  arch/arm/boot/dts/exynos5420.dtsi               |   38 +++++++++++++=
+++++++++++
+>  9 files changed, 99 insertions(+), 2 deletions(-)
 >=20
-> The bridge devices register themselves on a lookup table
-> when they get probed by calling "drm_bridge_add_for_lookup".
->=20
-> The parent encoder driver waits till the bridge is available in the
-> lookup table(by calling "of_drm_find_bridge") and then continues with
-> its initialization.
->=20
-> The encoder driver should call "drm_bridge_attach_encoder" to pass on
-> the drm_device and the encoder pointers to the bridge object.
->=20
-> Now that the drm_device pointer is available, the encoder then calls
-> "bridge->funcs->post_encoder_init" to allow the bridge to continue
-> registering itself with the drm core.
->=20
-> Also, non driver model based ptn3460 driver is removed in this patch.
-
-Why is it removed in this patch? Can't you do this incrementally rather
-than remove the driver in this patch and add it again later? If you do
-it this way then we'll always have this one commit where devices that
-have a ptn3460 don't work, so it becomes impossible to bisect across
-this commit.
-
-> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-[...]
-> +int drm_bridge_add_for_lookup(struct drm_bridge *bridge)
-> +{
-> +	mutex_lock(&bridge_lock);
-> +	list_add_tail(&bridge->head, &bridge_lookup);
-> +	mutex_unlock(&bridge_lock);
+> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/=
+dts/exynos4210-origen.dts
+> index f767c42..887dded 100644
+> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+> @@ -334,3 +334,7 @@
+>  		};
+>  	};
+>  };
 > +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(drm_bridge_add_for_lookup);
+> +&cpu0 {
+> +	cpu0-supply =3D <&buck1_reg>;
+> +};
+> diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/d=
+ts/exynos4210-trats.dts
+> index f516da9..66119dd 100644
+> --- a/arch/arm/boot/dts/exynos4210-trats.dts
+> +++ b/arch/arm/boot/dts/exynos4210-trats.dts
+> @@ -446,3 +446,7 @@
+>  		};
+>  	};
+>  };
 > +
-> +void drm_bridge_remove_from_lookup(struct drm_bridge *bridge)
-> +{
-> +	mutex_lock(&bridge_lock);
-> +	list_del_init(&bridge->head);
-> +	mutex_unlock(&bridge_lock);
-> +}
-> +EXPORT_SYMBOL(drm_bridge_remove_from_lookup);
-
-The "_for_lookup" and "_from_lookup" suffixes aren't useful in my
-opinion.
-
-> +int drm_bridge_attach_encoder(struct drm_bridge *bridge,
-> +				struct drm_encoder *encoder)
-
-And this could simply be "drm_bridge_attach()" since we'll only ever
-want to attach it to encoders.
-
-> +{
-> +	if (!bridge || !encoder)
-> +		return -EINVAL;
+> +&cpu0 {
+> +	cpu0-supply =3D <&varm_breg>;
+> +};
+> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/a=
+rm/boot/dts/exynos4210-universal_c210.dts
+> index d50eb3a..bf0a39c 100644
+> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> @@ -492,3 +492,7 @@
+>  &mdma1 {
+>  	reg =3D <0x12840000 0x1000>;
+>  };
 > +
-> +	if (bridge->encoder)
-> +		return -EBUSY;
-> +
-> +	encoder->bridge =3D bridge;
-> +	bridge->encoder =3D encoder;
-> +	bridge->drm_dev =3D encoder->dev;
-
-Should this function perhaps call the bridge's ->post_encoder_init()?
-And it should probably call drm_bridge_init() too, since the DRM device
-is now available.
-
-> diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-[...]
-
-Maybe since you're introducing a new drm_bridge.c file above already it
-would make sense to move out existing drm_bridge related code in a
-preparatory patch?
-
-Maybe Sean or Rob can comment on whether there was a specific reason to
-include it in drm_crtc.c in the first place.
-
-> @@ -1012,8 +1010,7 @@ int drm_bridge_init(struct drm_device *dev, struct =
-drm_bridge *bridge,
->  	if (ret)
->  		goto out;
+> +&cpu0 {
+> +	cpu0-supply =3D <&vdd_arm_reg>;
+> +};
+> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/ex=
+ynos4210.dtsi
+> index bcc9e63..69bac07 100644
+> --- a/arch/arm/boot/dts/exynos4210.dtsi
+> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+> @@ -35,10 +35,22 @@
+>  		#address-cells =3D <1>;
+>  		#size-cells =3D <0>;
 > =20
-> -	bridge->dev =3D dev;
-> -	bridge->funcs =3D funcs;
-> +	bridge->drm_dev =3D dev;
+> -		cpu@900 {
+> +		cpu0: cpu@900 {
+>  			device_type =3D "cpu";
+>  			compatible =3D "arm,cortex-a9";
+>  			reg =3D <0x900>;
+> +			clocks =3D <&clock CLK_ARM_CLK>;
+> +			clock-names =3D "cpu";
+> +			clock-latency =3D <160000>;
+> +
+> +			operating-points =3D <
+> +				1200000 1250000
+> +				1000000 1150000
+> +				800000	1075000
+> +				500000	975000
+> +				400000	975000
+> +				200000	950000
 
-This sets ->drm_dev, but it was already set in drm_bridge_attach(), so I
-think that's one more argument to call this function when attaching.
+Nit: Here you left-align the columns ...
 
-> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/ex=
-ynos/exynos_dp_core.c
-[...]
-> @@ -1370,7 +1361,7 @@ static const struct component_ops exynos_dp_ops =3D=
- {
->  static int exynos_dp_probe(struct platform_device *pdev)
->  {
->  	struct device *dev =3D &pdev->dev;
-> -	struct device_node *panel_node;
-> +	struct device_node *panel_node, *bridge_node;
-
-Nit: I don't think you'll need two variables here, since once you've
-obtained the real panel or bridge objects you no longer need the OF
-nodes.
-
-> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-> index e529b68..e5a41ad 100644
-> --- a/include/drm/drm_crtc.h
-> +++ b/include/drm/drm_crtc.h
-> @@ -619,6 +619,7 @@ struct drm_plane {
+> +			>;
+>  		};
 > =20
->  /**
->   * drm_bridge_funcs - drm_bridge control functions
-> + * @post_encoder_init: called by the parent encoder
+>  		cpu@901 {
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot=
+/dts/exynos5250-arndale.dts
+> index d0de1f5..3b12a97 100644
+> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -575,3 +575,7 @@
+>  		usb-phy =3D <&usb2_phy>;
+>  	};
+>  };
+> +
+> +&cpu0 {
+> +	cpu0-supply =3D <&buck2_reg>;
+> +};
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boo=
+t/dts/exynos5250-smdk5250.dts
+> index b4b35ad..f07e834 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -414,3 +414,7 @@
+>  		};
+>  	};
+>  };
+> +
+> +&cpu0 {
+> +	cpu0-supply =3D <&buck2_reg>;
+> +};
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dt=
+s/exynos5250-snow.dts
+> index f2b8c41..91acca7 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -509,4 +509,8 @@
+>  	};
+>  };
+> =20
+> +&cpu0 {
+> +	cpu0-supply =3D <&buck2_reg>;
+> +};
+> +
+>  #include "cros-ec-keyboard.dtsi"
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/ex=
+ynos5250.dtsi
+> index 492e1ef..97b282c 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -58,11 +58,34 @@
+>  		#address-cells =3D <1>;
+>  		#size-cells =3D <0>;
+> =20
+> -		cpu@0 {
+> +		cpu0: cpu@0 {
+>  			device_type =3D "cpu";
+>  			compatible =3D "arm,cortex-a15";
+>  			reg =3D <0>;
+>  			clock-frequency =3D <1700000000>;
+> +
+> +			clocks =3D <&clock CLK_ARM_CLK>;
+> +			clock-names =3D "cpu";
+> +			clock-latency =3D <140000>;
+> +
+> +			operating-points =3D <
+> +				1700000 1300000
+> +				1600000 1250000
+> +				1500000 1225000
+> +				1400000 1200000
+> +				1300000 1150000
+> +				1200000 1125000
+> +				1100000 1100000
+> +				1000000 1075000
+> +				 900000 1050000
+> +				 800000 1025000
+> +				 700000 1012500
+> +				 600000 1000000
+> +				 500000  975000
+> +				 400000  950000
+> +				 300000  937500
+> +				 200000  925000
 
-Maybe rename this to "attach" to make it more obvious when exactly it's
-called?
+=2E.. here you right-align both ...
 
->   * @mode_fixup: Try to fixup (or reject entirely) proposed mode for this=
- bridge
->   * @disable: Called right before encoder prepare, disables the bridge
->   * @post_disable: Called right after encoder prepare, for lockstepped di=
-sable
-> @@ -628,6 +629,7 @@ struct drm_plane {
->   * @destroy: make object go away
->   */
->  struct drm_bridge_funcs {
-> +	int (*post_encoder_init)(struct drm_bridge *bridge);
->  	bool (*mode_fixup)(struct drm_bridge *bridge,
->  			   const struct drm_display_mode *mode,
->  			   struct drm_display_mode *adjusted_mode);
-> @@ -648,15 +650,19 @@ struct drm_bridge_funcs {
->   * @base: base mode object
->   * @funcs: control functions
->   * @driver_private: pointer to the bridge driver's internal context
-> + * @connector_polled: polled flag needed for registering connector
+> +			>;
+>  		};
+>  		cpu@1 {
+>  			device_type =3D "cpu";
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/ex=
+ynos5420.dtsi
+> index cb2b70e..3154b4c 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -59,8 +59,26 @@
+>  			device_type =3D "cpu";
+>  			compatible =3D "arm,cortex-a15";
+>  			reg =3D <0x0>;
+> +			clocks =3D <&clock CLK_ARM_CLK>;
+> +			clock-names =3D "cpu-cluster.0";
+>  			clock-frequency =3D <1800000000>;
+>  			cci-control-port =3D <&cci_control1>;
+> +			clock-latency =3D <140000>;
+> +
+> +			operating-points =3D <
+> +				1800000 1250000
+> +				1700000 1212500
+> +				1600000 1175000
+> +				1500000 1137500
+> +				1400000 1112500
+> +				1300000 1062500
+> +				1200000 1037500
+> +				1100000 1012500
+> +				1000000 987500
+> +				 900000 962500
+> +				 800000 937500
+> +				 700000 912500
 
-Can you explain why this new field is needed? It seems like a completely
-unrelated change.
+=2E.. but here only the left column.
 
-Thierry
+> +			>;
+>  		};
+> =20
+>  		cpu1: cpu@1 {
+> @@ -69,6 +87,7 @@
+>  			reg =3D <0x1>;
+>  			clock-frequency =3D <1800000000>;
+>  			cci-control-port =3D <&cci_control1>;
+> +			clock-latency =3D <140000>;
+>  		};
+> =20
+>  		cpu2: cpu@2 {
+> @@ -77,6 +96,7 @@
+>  			reg =3D <0x2>;
+>  			clock-frequency =3D <1800000000>;
+>  			cci-control-port =3D <&cci_control1>;
+> +			clock-latency =3D <140000>;
+>  		};
+> =20
+>  		cpu3: cpu@3 {
+> @@ -85,14 +105,29 @@
+>  			reg =3D <0x3>;
+>  			clock-frequency =3D <1800000000>;
+>  			cci-control-port =3D <&cci_control1>;
+> +			clock-latency =3D <140000>;
+>  		};
+> =20
+>  		cpu4: cpu@100 {
+>  			device_type =3D "cpu";
+>  			compatible =3D "arm,cortex-a7";
+>  			reg =3D <0x100>;
+> +			clocks =3D <&clock CLK_KFC_CLK>;
+> +			clock-names =3D "cpu-cluster.1";
+>  			clock-frequency =3D <1000000000>;
+>  			cci-control-port =3D <&cci_control0>;
+> +			clock-latency =3D <140000>;
+> +
+> +			operating-points =3D <
+> +				1300000 1275000
+> +				1200000 1212500
+> +				1100000 1162500
+> +				1000000 1112500
+> +				 900000 1062500
+> +				 800000 1025000
+> +				 700000 975000
+> +				 600000 937500
 
---kH8JNVvasRCCW1Oz
-Content-Type: application/pgp-signature
+Dito.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+> +			>;
+>  		};
+> =20
+>  		cpu5: cpu@101 {
+> @@ -101,6 +136,7 @@
+>  			reg =3D <0x101>;
+>  			clock-frequency =3D <1000000000>;
+>  			cci-control-port =3D <&cci_control0>;
+> +			clock-latency =3D <140000>;
+>  		};
+> =20
+>  		cpu6: cpu@102 {
+> @@ -109,6 +145,7 @@
+>  			reg =3D <0x102>;
+>  			clock-frequency =3D <1000000000>;
+>  			cci-control-port =3D <&cci_control0>;
+> +			clock-latency =3D <140000>;
+>  		};
+> =20
+>  		cpu7: cpu@103 {
+> @@ -117,6 +154,7 @@
+>  			reg =3D <0x103>;
+>  			clock-frequency =3D <1000000000>;
+>  			cci-control-port =3D <&cci_control0>;
+> +			clock-latency =3D <140000>;
+>  		};
+>  	};
+> =20
 
-iQIcBAEBAgAGBQJT2NTDAAoJEN0jrNd/PrOhc3YP/i1Ws6dBuIiY0S/CPl16RV87
-OnyaNTWfHv7rYyKSlF+BtJrAgkyZmIO3h1OLaBaRfAw6IncKHZwJX53lDJ5fMUab
-e0NFp9kbWFRzvWnwmUz4ccSazRUKrw1RQZvN5zGGD2RshnIzfolgPlK9MkNL43CA
-pVv77lvBcheDBiBXvy2cTNmOpsEdNPXQbuGKCRe1SfqWu9LlLQ9zUPPDu7U33ela
-HafSWjtdk39cKvTbFsxNQzRdHqbBYICTrtEemuZr48RIktUfQYa8osUn4EqMp4AP
-Ok/FVKLaIJPv5L+QjKs68JCQcIL0W3w/DZK+pmjO101TBJQtJ3AAjddVo6grHGcQ
-3t9JTd5WP66fVp80Ic7AoI0VsgiQluS42LDXi9/SjOqgED0FJeYnjzYN0siVF8mJ
-zwqKrDbImt/PY3d38mW2+d7BbTgDGdTlV8MWBqKSjSHE7J+kAle5AQ5OoQv5fBlt
-WZjfE/n4NFo37AWUtakM80Lfb2dZNYiN2RgfXe8TBAfR/9rn5Fg6IuWVQ4QTWm38
-yYgMQR4ADjE+8qB9FdwDBEHQmNhTPARdCCkoZE9u9ov6Saz/iTloUiDrrGV6d+oP
-RIkhAHvCryo6RLMnr4mr28yFSlAOmLT61vIzwBo/rNuMCdCYZPXrzHGTGXzKcBcR
-cwVWZG9Bu4WXhacxlrvM
-=ytUV
------END PGP SIGNATURE-----
+Since I don't really care which template you choose and can't judge mos=
+t
+numbers, FWIW
 
---kH8JNVvasRCCW1Oz--
+Reviewed-by: Andreas F=E4rber <afaerber@suse.de>
 
---===============0726594590==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Thanks for resolving the conflict,
 
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Andreas
 
---===============0726594590==--
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
+berg
