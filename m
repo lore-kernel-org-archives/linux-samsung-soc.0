@@ -1,60 +1,66 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH v2 2/4] ARM: dts: exynos5250: cypress,cyapa trackpad is
- Snow only
-Date: Wed, 30 Jul 2014 02:21:53 +0200
-Message-ID: <53D83AA1.7080607@suse.de>
-References: <1405704009-8430-1-git-send-email-afaerber@suse.de>	<1405704009-8430-3-git-send-email-afaerber@suse.de> <CAD=FV=VAWG=H9=mwKZfip9zvAROU3aVXihnaBUBr0GNSzDoWFw@mail.gmail.com> <53D82900.1050409@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCHv7 5/5] mmc: dw_mmc: replace "disable-wp" from slot's quirk
+ to host's quirk
+Date: Wed, 30 Jul 2014 11:47:26 +0900
+Message-ID: <53D85CBE.8090104@samsung.com>
+References: <1406514579-3769-1-git-send-email-jh80.chung@samsung.com>
+ <1406514579-3769-6-git-send-email-jh80.chung@samsung.com>
+ <CAD=FV=VnP7q0UE0uP_8Hzbhtu6qJqz2kUR9E_sfk4wHbBH_7cg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:55238 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753397AbaG3AWA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 20:22:00 -0400
-In-Reply-To: <53D82900.1050409@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <CAD=FV=VnP7q0UE0uP_8Hzbhtu6qJqz2kUR9E_sfk4wHbBH_7cg@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Doug Anderson <dianders@google.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, Dinh Nguyen <dinguyen@altera.com>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, CPGS <cpgs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Ben Dooks <ben-linux@fluff.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, "ARM/SAMSUNG ARM A..." <linux-arm-kernel@lists.infradead.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-Am 30.07.2014 01:06, schrieb Kukjin Kim:
-> On 07/30/14 01:16, Doug Anderson wrote:
->> On Fri, Jul 18, 2014 at 10:20 AM, Andreas F=C3=A4rber<afaerber@suse.=
-de>=20
->> wrote:
->>> Move it from exynos5250-cros-common.dtsi to exynos5250-snow.dts.
->>> Spring does not need it, it uses an Atmel maXTouch instead.
->>>
->>> Signed-off-by: Andreas F=C3=A4rber<afaerber@suse.de>
->>> ---
->>>   v2: New (Doug Anderson)
->>>
->>>   arch/arm/boot/dts/exynos5250-cros-common.dtsi |  8 --------
->>>   arch/arm/boot/dts/exynos5250-snow.dts         | 10 ++++++++++
->>>   2 files changed, 10 insertions(+), 8 deletions(-)
+Hi, Doug.
+
+Thanks for review.
+
+On 07/30/2014 03:01 AM, Doug Anderson wrote:
+> Jaehoon,
+> 
+> On Sun, Jul 27, 2014 at 7:29 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>> Replaced the "disable-wp" into host's quirks.
+>> (Because the slot-node is removed at dt-file.)
 >>
->> Reviewed-by: Doug Anderson<dianders@chromium.org>
+>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>> Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
+>> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+>> ---
+>>  drivers/mmc/host/dw_mmc.c  |   12 +++++-------
+>>  include/linux/mmc/dw_mmc.h |    6 ++----
+>>  2 files changed, 7 insertions(+), 11 deletions(-)
 >>
->> Kukjin could apply this now if he wanted to avoid future conflicts.
->=20
-> OK, I read your comments on another this series and I've applied 1/4 =
-and
-> 2/4 as per your suggestion with your reviewed by tag ;)
+>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>> index 1ac227c..4a4f66f 100644
+>> --- a/drivers/mmc/host/dw_mmc.c
+>> +++ b/drivers/mmc/host/dw_mmc.c
+>> @@ -997,7 +997,7 @@ static int dw_mci_get_ro(struct mmc_host *mmc)
+>>         int gpio_ro = mmc_gpio_get_ro(mmc);
+>>
+>>         /* Use platform get_ro function, else try on board write protect */
+>> -       if (slot->quirks & DW_MCI_SLOT_QUIRK_NO_WRITE_PROTECT)
+>> +       if (slot->host->quirks & DW_MCI_QUIRK_NO_WRITE_PROTECT)
+> 
+> It doesn't seem like it would be hard to include support for the old
+> binding (and just print a warning).  Then this could land ahead of the
+> device tree changes.
+> 
+> Generally I think we're supposed to keep support for old device trees
+> if possible (except in extreme cases).
+Ok, I see. I will add the Warning message like this. ("Recommend not to use the slot-node...")
+Then Developers can change the device-tree, right.
 
-Thanks.
+Today, i will send the patch. If you have any other comment, let me know, plz.
+I want to merge this patch-set into 3.16.
 
-> And I think, Andreas is going to re-spin remains for exynos5250-sprin=
-g
-> based on updated my -next?
+Best Regards,
+Jaehoon Chung
+> 
+> -Doug
+> 
 
-Yes. Please don't apply 3/4, I'm fixing a duplicate hdmi node.
-
-Regards,
-Andreas
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
