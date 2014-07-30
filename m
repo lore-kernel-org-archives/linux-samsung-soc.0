@@ -1,16 +1,14 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V6 2/8] drm/panel: Add support for prepare and unprepare
- routines
-Date: Wed, 30 Jul 2014 16:39:44 +0530
-Message-ID: <CAEC9eQPB7ttebwmnPKtj=ER3Tg9TNd6oFPXKqX9CDoLJ5zy_NA@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V6 6/8] drm/bridge: Modify drm_bridge core to support
+ driver model
+Date: Wed, 30 Jul 2014 13:19:32 +0200
+Message-ID: <20140730111931.GI29590@ulmo>
 References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <1406316130-4744-3-git-send-email-ajaykumar.rs@samsung.com>
- <20140730103239.GE29590@ulmo>
+ <1406316130-4744-7-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============0726594590=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140730103239.GE29590@ulmo>
+In-Reply-To: <1406316130-4744-7-git-send-email-ajaykumar.rs@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -20,234 +18,201 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, InKi Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 30, 2014 at 4:02 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Sat, Jul 26, 2014 at 12:52:04AM +0530, Ajay Kumar wrote:
->> Now that we have 2 new callbacks(prepare and unprepare) for drm_panel,
->> make changes in all the drm drivers which use the drm_panel framework
->> to support the new callbacks.
->>
->> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_dpi.c |    8 +++--
->>  drivers/gpu/drm/exynos/exynos_drm_dsi.c |    7 +++++
->>  drivers/gpu/drm/panel/panel-ld9040.c    |   18 +++++++++--
->>  drivers/gpu/drm/panel/panel-s6e8aa0.c   |   18 +++++++++--
->>  drivers/gpu/drm/panel/panel-simple.c    |   51 ++++++++++++++++++++++++-------
->>  drivers/gpu/drm/tegra/output.c          |    2 ++
->>  6 files changed, 85 insertions(+), 19 deletions(-)
->
-> I'd prefer for this to be split up into patches per panel and per
-> display driver. The reason is that if this patch is merged as-is, then
-> if it's ever determined to cause a regression it'll be difficult to find
-> out which change exactly caused this.
->
-> But to not break bisectability you'll need to be careful in how you
-> break up the patches. I think the following should work:
->
->         - for each panel driver, implement dummy .prepare() and
->           .unprepare() that return 0
->         - for each display driver, make use of drm_panel_prepare() and
->           drm_panel_unprepare()
->         - for each panel driver, properly implement .prepare() and
->           .unprepare() (presumably by moving code out of .enable() and
->           .disable(), respectively)
->
-I will try this. With this approach, compilation should not fail.
 
-> I have a couple more comments below about the ordering of the .prepare()
-> vs. .enable() and .disable() vs. .unprepare() calls.
->
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> index 5e78d45..2f58e45 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
->> @@ -1333,6 +1333,12 @@ static int exynos_dsi_enable(struct exynos_dsi *dsi)
->>       if (ret < 0)
->>               return ret;
->>
->> +     ret = drm_panel_prepare(dsi->panel);
->> +     if (ret < 0) {
->> +             exynos_dsi_poweroff(dsi);
->> +             return ret;
->> +     }
->> +
->>       ret = drm_panel_enable(dsi->panel);
->>       if (ret < 0) {
->>               exynos_dsi_poweroff(dsi);
->> @@ -1354,6 +1360,7 @@ static void exynos_dsi_disable(struct exynos_dsi *dsi)
->>
->>       exynos_dsi_set_display_enable(dsi, false);
->>       drm_panel_disable(dsi->panel);
->> +     drm_panel_unprepare(dsi->panel);
->>       exynos_dsi_poweroff(dsi);
->
-> I don't know Exynos very well, so this may be completely wrong, but
-> should disable_panel_prepare() be called much earlier than
-> drm_panel_enable() and drm_panel_unprepare() much later than
-> drm_panel_disable()? With the above the result is still the same, so
-> you'll get the same glitches as without their separation.
-Actually, I have not worked on DSI panels.
-And till now, these DSI panels have been working with just the
-enable/disable callback. So, I thought it might not really cause a
-glitch/garbage on the screen.
-I just placed the new panel calls so that basic working will not be broken.
-It would be great if someone can test this on exynos boards with DSI panels :(
-Inki/Andrej?
+--===============0726594590==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kH8JNVvasRCCW1Oz"
+Content-Disposition: inline
 
-Anyways, now there is a kerneldoc which explains all these calls,
-I will rearrange the panel calls.
 
-> Without knowing exactly what Exynos does in the above, I'd expect the
-> correct sequence to be something like this:
->
->         ret = exynos_dsi_power_on(dsi);
->         if (ret < 0)
->                 return ret;
->
->         ret = drm_panel_prepare(dsi->panel);
->         if (ret < 0) {
->                 exynos_dsi_poweroff(dsi);
->                 return ret;
->         }
->
->         exynos_dsi_set_display_mode(dsi);
->         exynos_dsi_set_display_enable(dsi, true);
->
->         ret = drm_panel_enable(dsi->panel);
->         if (ret < 0) {
->                 /* perhaps undo exynos_dsi_set_display_enable() here? */
->                 exynos_dsi_poweroff(dsi);
->                 return ret;
->         }
->
-> And for disable:
->
->         drm_panel_disable(dsi->panel);
->         exynos_dsi_set_display_enable(dsi, false);
->         drm_panel_unprepare(dsi->panel);
->         exynos_dsi_poweroff(dsi);
->
-> Perhaps I should quote the kerneldoc that I added for drm_panel_funcs to
-> underline why I think this is important:
->
-> /**
->  * struct drm_panel_funcs - perform operations on a given panel
->  * @disable: disable panel (turn off back light, etc.)
->  * @unprepare: turn off panel
->  * @prepare: turn on panel and perform set up
->  * @enable: enable panel (turn on back light, etc.)
->  * @get_modes: add modes to the connector that the panel is attached to and
->  * return the number of modes added
->  *
->  * The .prepare() function is typically called before the display controller
->  * starts to transmit video data. Panel drivers can use this to turn the panel
->  * on and wait for it to become ready. If additional configuration is required
->  * (via a control bus such as I2C, SPI or DSI for example) this is a good time
->  * to do that.
->  *
->  * After the display controller has started transmitting video data, it's safe
->  * to call the .enable() function. This will typically enable the backlight to
->  * make the image on screen visible. Some panels require a certain amount of
->  * time or frames before the image is displayed. This function is responsible
->  * for taking this into account before enabling the backlight to avoid visual
->  * glitches.
->  *
->  * Before stopping video transmission from the display controller it can be
->  * necessary to turn off the panel to avoid visual glitches. This is done in
->  * the .disable() function. Analogously to .enable() this typically involves
->  * turning off the backlight and waiting for some time to make sure no image
->  * is visible on the panel. It is then safe for the display controller to
->  * cease transmission of video data.
->  *
->  * To save power when no video data is transmitted, a driver can power down
->  * the panel. This is the job of the .unprepare() function.
->  */
->
-> As you see, .prepare() should do whatever is necessary to make the panel
-> accept a stream of video data, then the display driver can start sending
-> video data and call .enable() to make the transmitted data visible.
->
-> Analogously .disable() should turn off the display, so that the user can
-> no longer see what's going on, then the display controller can cease
-> transmission of video data (and since the panel is disabled this should
-> no longer cause visual glitches) and then call .unprepare() to turn the
-> panel off.
->
-> I know that this isn't immediately relevant just yet because currently
-> the backlight will already turn on by default, but like we discussed
-> earlier I have ideas on how to properly fix it. As a matter of fact I'll
-> go and send out another mail about that when I'm through this series.
->
->>  static const struct drm_panel_funcs ld9040_drm_funcs = {
->> +     .unprepare = ld9040_unprepare,
->>       .disable = ld9040_disable,
->> +     .prepare = ld9040_prepare,
->>       .enable = ld9040_enable,
->>       .get_modes = ld9040_get_modes,
->>  };
->
-> The patch I applied for .prepare() and .unprepare() I've reordered the
-> functions slightly to give a more natural sequence. .disable() is now
-> first, while .unprepare() is next, since that's the sequence that they
-> should be called in.
->
-> Patches for the panel drivers should follow this same ordering.
-Ok. I will follow the same order for all panel drivers.
+--kH8JNVvasRCCW1Oz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
->> index a251361..fb0cfe2 100644
->> --- a/drivers/gpu/drm/panel/panel-simple.c
->> +++ b/drivers/gpu/drm/panel/panel-simple.c
->> @@ -45,7 +45,8 @@ struct panel_desc {
->>
->>  struct panel_simple {
->>       struct drm_panel base;
->> -     bool enabled;
->> +     bool panel_enabled;
->> +     bool backlight_enabled;
->
-> Perhaps this should rather be:
->
->         bool prepared;
->         bool enabled;
->
-More generic. Will change it!
+On Sat, Jul 26, 2014 at 12:52:08AM +0530, Ajay Kumar wrote:
+> This patch tries to seperate drm_bridge implementation
+> into 2 parts, a drm part and a non_drm part.
+>=20
+> A set of helper functions are defined in this patch to make
+> bridge driver probe independent of the drm flow.
+>=20
+> The bridge devices register themselves on a lookup table
+> when they get probed by calling "drm_bridge_add_for_lookup".
+>=20
+> The parent encoder driver waits till the bridge is available in the
+> lookup table(by calling "of_drm_find_bridge") and then continues with
+> its initialization.
+>=20
+> The encoder driver should call "drm_bridge_attach_encoder" to pass on
+> the drm_device and the encoder pointers to the bridge object.
+>=20
+> Now that the drm_device pointer is available, the encoder then calls
+> "bridge->funcs->post_encoder_init" to allow the bridge to continue
+> registering itself with the drm core.
+>=20
+> Also, non driver model based ptn3460 driver is removed in this patch.
 
-Ajay
+Why is it removed in this patch? Can't you do this incrementally rather
+than remove the driver in this patch and add it again later? If you do
+it this way then we'll always have this one commit where devices that
+have a ptn3460 don't work, so it becomes impossible to bisect across
+this commit.
 
->
->> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
->> index 446837e..b574ee6 100644
->> --- a/drivers/gpu/drm/tegra/output.c
->> +++ b/drivers/gpu/drm/tegra/output.c
->> @@ -139,9 +139,11 @@ static void tegra_encoder_dpms(struct drm_encoder *encoder, int mode)
->>
->>       if (mode != DRM_MODE_DPMS_ON) {
->>               drm_panel_disable(panel);
->> +             drm_panel_unprepare(panel);
->>               tegra_output_disable(output);
->
-> Similarly to my comments for the Exynos drivers, this should be:
->
->                 drm_panel_disable(panel);
->                 tegra_output_disable(output);
->                 drm_panel_unprepare(panel);
->
->>       } else {
->>               tegra_output_enable(output);
->> +             drm_panel_prepare(panel);
->>               drm_panel_enable(panel);
->>       }
->
-> and
->
->                 drm_panel_prepare(panel);
->                 tegra_output_enable(output);
->                 drm_panel_enable(panel);
->
-> Thierry
+> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+[...]
+> +int drm_bridge_add_for_lookup(struct drm_bridge *bridge)
+> +{
+> +	mutex_lock(&bridge_lock);
+> +	list_add_tail(&bridge->head, &bridge_lookup);
+> +	mutex_unlock(&bridge_lock);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(drm_bridge_add_for_lookup);
+> +
+> +void drm_bridge_remove_from_lookup(struct drm_bridge *bridge)
+> +{
+> +	mutex_lock(&bridge_lock);
+> +	list_del_init(&bridge->head);
+> +	mutex_unlock(&bridge_lock);
+> +}
+> +EXPORT_SYMBOL(drm_bridge_remove_from_lookup);
+
+The "_for_lookup" and "_from_lookup" suffixes aren't useful in my
+opinion.
+
+> +int drm_bridge_attach_encoder(struct drm_bridge *bridge,
+> +				struct drm_encoder *encoder)
+
+And this could simply be "drm_bridge_attach()" since we'll only ever
+want to attach it to encoders.
+
+> +{
+> +	if (!bridge || !encoder)
+> +		return -EINVAL;
+> +
+> +	if (bridge->encoder)
+> +		return -EBUSY;
+> +
+> +	encoder->bridge =3D bridge;
+> +	bridge->encoder =3D encoder;
+> +	bridge->drm_dev =3D encoder->dev;
+
+Should this function perhaps call the bridge's ->post_encoder_init()?
+And it should probably call drm_bridge_init() too, since the DRM device
+is now available.
+
+> diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+[...]
+
+Maybe since you're introducing a new drm_bridge.c file above already it
+would make sense to move out existing drm_bridge related code in a
+preparatory patch?
+
+Maybe Sean or Rob can comment on whether there was a specific reason to
+include it in drm_crtc.c in the first place.
+
+> @@ -1012,8 +1010,7 @@ int drm_bridge_init(struct drm_device *dev, struct =
+drm_bridge *bridge,
+>  	if (ret)
+>  		goto out;
+> =20
+> -	bridge->dev =3D dev;
+> -	bridge->funcs =3D funcs;
+> +	bridge->drm_dev =3D dev;
+
+This sets ->drm_dev, but it was already set in drm_bridge_attach(), so I
+think that's one more argument to call this function when attaching.
+
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/ex=
+ynos/exynos_dp_core.c
+[...]
+> @@ -1370,7 +1361,7 @@ static const struct component_ops exynos_dp_ops =3D=
+ {
+>  static int exynos_dp_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev =3D &pdev->dev;
+> -	struct device_node *panel_node;
+> +	struct device_node *panel_node, *bridge_node;
+
+Nit: I don't think you'll need two variables here, since once you've
+obtained the real panel or bridge objects you no longer need the OF
+nodes.
+
+> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+> index e529b68..e5a41ad 100644
+> --- a/include/drm/drm_crtc.h
+> +++ b/include/drm/drm_crtc.h
+> @@ -619,6 +619,7 @@ struct drm_plane {
+> =20
+>  /**
+>   * drm_bridge_funcs - drm_bridge control functions
+> + * @post_encoder_init: called by the parent encoder
+
+Maybe rename this to "attach" to make it more obvious when exactly it's
+called?
+
+>   * @mode_fixup: Try to fixup (or reject entirely) proposed mode for this=
+ bridge
+>   * @disable: Called right before encoder prepare, disables the bridge
+>   * @post_disable: Called right after encoder prepare, for lockstepped di=
+sable
+> @@ -628,6 +629,7 @@ struct drm_plane {
+>   * @destroy: make object go away
+>   */
+>  struct drm_bridge_funcs {
+> +	int (*post_encoder_init)(struct drm_bridge *bridge);
+>  	bool (*mode_fixup)(struct drm_bridge *bridge,
+>  			   const struct drm_display_mode *mode,
+>  			   struct drm_display_mode *adjusted_mode);
+> @@ -648,15 +650,19 @@ struct drm_bridge_funcs {
+>   * @base: base mode object
+>   * @funcs: control functions
+>   * @driver_private: pointer to the bridge driver's internal context
+> + * @connector_polled: polled flag needed for registering connector
+
+Can you explain why this new field is needed? It seems like a completely
+unrelated change.
+
+Thierry
+
+--kH8JNVvasRCCW1Oz
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT2NTDAAoJEN0jrNd/PrOhc3YP/i1Ws6dBuIiY0S/CPl16RV87
+OnyaNTWfHv7rYyKSlF+BtJrAgkyZmIO3h1OLaBaRfAw6IncKHZwJX53lDJ5fMUab
+e0NFp9kbWFRzvWnwmUz4ccSazRUKrw1RQZvN5zGGD2RshnIzfolgPlK9MkNL43CA
+pVv77lvBcheDBiBXvy2cTNmOpsEdNPXQbuGKCRe1SfqWu9LlLQ9zUPPDu7U33ela
+HafSWjtdk39cKvTbFsxNQzRdHqbBYICTrtEemuZr48RIktUfQYa8osUn4EqMp4AP
+Ok/FVKLaIJPv5L+QjKs68JCQcIL0W3w/DZK+pmjO101TBJQtJ3AAjddVo6grHGcQ
+3t9JTd5WP66fVp80Ic7AoI0VsgiQluS42LDXi9/SjOqgED0FJeYnjzYN0siVF8mJ
+zwqKrDbImt/PY3d38mW2+d7BbTgDGdTlV8MWBqKSjSHE7J+kAle5AQ5OoQv5fBlt
+WZjfE/n4NFo37AWUtakM80Lfb2dZNYiN2RgfXe8TBAfR/9rn5Fg6IuWVQ4QTWm38
+yYgMQR4ADjE+8qB9FdwDBEHQmNhTPARdCCkoZE9u9ov6Saz/iTloUiDrrGV6d+oP
+RIkhAHvCryo6RLMnr4mr28yFSlAOmLT61vIzwBo/rNuMCdCYZPXrzHGTGXzKcBcR
+cwVWZG9Bu4WXhacxlrvM
+=ytUV
+-----END PGP SIGNATURE-----
+
+--kH8JNVvasRCCW1Oz--
+
+--===============0726594590==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0726594590==--
