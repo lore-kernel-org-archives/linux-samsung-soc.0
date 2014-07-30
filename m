@@ -1,83 +1,566 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V6 5/8] drm/exynos: dp: Modify driver to support drm_panel
-Date: Wed, 30 Jul 2014 12:58:58 +0200
-Message-ID: <20140730105857.GH29590@ulmo>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <1406316130-4744-6-git-send-email-ajaykumar.rs@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5vjQsMS/9MbKYGLq"
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCHv8 2/5] ARM: dts: exynos: unuse the slot-node and deprecated the
+ supports-highspeed for dw-mmc
+Date: Wed, 30 Jul 2014 20:05:07 +0900
+Message-ID: <1406718310-32078-3-git-send-email-jh80.chung@samsung.com>
+References: <1406718310-32078-1-git-send-email-jh80.chung@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f48.google.com ([74.125.82.48]:46382 "EHLO
-	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751934AbaG3K7D (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:16217 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752607AbaG3LFN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jul 2014 06:59:03 -0400
-Content-Disposition: inline
-In-Reply-To: <1406316130-4744-6-git-send-email-ajaykumar.rs@samsung.com>
+	Wed, 30 Jul 2014 07:05:13 -0400
+In-reply-to: <1406718310-32078-1-git-send-email-jh80.chung@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, inki.dae@samsung.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com
+To: linux-mmc <linux-mmc@vger.kernel.org>
+Cc: Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, tgih.jun@samsung.com, devicetree@vger.kernel.org, heiko@sntech.de, dinguyen@altera.com, Mark Rutland <mark.rutland@arm.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Doug Anderson <dianders@google.com>, cpgs@samsung.com, Jaehoon Chung <jh80.chung@samsung.com>
 
+dw-mmc controller can support multiple slots.
+But, there are no use-cases anywhere. So we don't need to support the
+slot-node for dw-mmc controller.
+And "supports-highspeed" property in dw-mmc is deprecated.
+"supports-highspeed" property can be replaced to "cap-sd/mmc-highspeed".
 
---5vjQsMS/9MbKYGLq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Reviewed-by: Tushar Behera <trblinux@gmail.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
+Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412-odroidx.dts      |    8 ++------
+ arch/arm/boot/dts/exynos4412-origen.dts       |    8 ++------
+ arch/arm/boot/dts/exynos4412-trats2.dts       |    8 ++------
+ arch/arm/boot/dts/exynos5250-arndale.dts      |   18 +++++------------
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi |   26 +++++++------------------
+ arch/arm/boot/dts/exynos5250-smdk5250.dts     |   18 +++++------------
+ arch/arm/boot/dts/exynos5250-snow.dts         |    6 ++----
+ arch/arm/boot/dts/exynos5260-xyref5260.dts    |   18 +++++------------
+ arch/arm/boot/dts/exynos5410-smdk5410.dts     |   18 +++++------------
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |   16 ++++-----------
+ arch/arm/boot/dts/exynos5420-peach-pit.dts    |   16 ++++-----------
+ arch/arm/boot/dts/exynos5420-smdk5420.dts     |   16 ++++-----------
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     |   16 ++++-----------
+ 13 files changed, 51 insertions(+), 141 deletions(-)
 
-On Sat, Jul 26, 2014 at 12:52:07AM +0530, Ajay Kumar wrote:
-[...]
-> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/ex=
-ynos/exynos_dp_core.c
-[...]
-> @@ -887,6 +885,12 @@ static void exynos_dp_commit(struct exynos_drm_displ=
-ay *display)
->  	struct exynos_dp_device *dp =3D display->ctx;
->  	int ret;
-> =20
-> +	/* Keep backlight disabled while we configure video */
-> +	if (dp->panel) {
-> +		if (drm_panel_disable(dp->panel))
-> +			DRM_ERROR("failed to disable panel backlight\n");
-> +	}
-
-drm_panel_disable() already gracefully handles the dp->panel =3D=3D NULL
-case, so no need to check for it explicitly. But perhaps you do that
-only because panel support is optional and you want to avoid the
-error message if it isn't set up. In that case it's probably fine to
-leave this as-is.
-
-But you should change the comment and error message, since you don't
-know what exactly drm_panel_disable() does.
-
-And it might be useful to print the error code while at it, it might
-help save some debugging time in the future.
-
-The same comments apply to most of the remainder of the file, but it
-looks good to me otherwise.
-
-Thierry
-
---5vjQsMS/9MbKYGLq
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT2M/xAAoJEN0jrNd/PrOh11wP/3lu/aFS5bWkrzvzEYIfurbh
-GZM0vMdII8koRgd/POwwvL9+Av3GQv4xWIq+VhTUzDkgp2DCRNxUGoITvrdYLqbt
-Y0He2VrK5HNUC8eZIlZQSTQMAFLTWnpLGuVwFzM7a5IsVrlXKMhAj18rX6zhOznj
-eSEwuG4ibaI2O/oyn0VUBEAGCW083axsc0Q3bpbdd0RmZMjvMNiTjbI0dRTcRU39
-lc7KnUmQoI8zWnlwYgVsZWKdFbVQ50AVTcjLLaz25DvmIxTJzuBq6+mhzk8k+4TC
-yUHpQ6QQ6zpDevBhNwXGDzYzLdwepUS11mnZklYHnQALdobxZ5cAxv8Q8l1nBA5Q
-kmibcGG0DrOOYETcGQT9rqr2sroSO86INqtrwYQ5+Olo6lvMpgP1RdfStfobOIkR
-CNCMbNHhTbax5iI33ygYhh6Tz6uZvZM5qkIYTCZKyFB3lAHj5kSSnfuke6tQs3nE
-3BEDySUqjv8QwX1D10HHPMzgXrYw2Vx3FqFUkGKpVZWDNGYSXxnuXdN2kYpoYKc6
-XayDA9xGEvbY2aTH/cf0FIpR6Qv1kkEwswMTFPSRJluLO9s4/U24QU6KdJBbNLaS
-EQnsup0cNt7a2fUXyUxbAibPPPRAxh7KdRhzZ6GDCweHM2KKtsTSo6Y+z5NIp1f/
-FkrgVPmmuzFwTJZOotZb
-=/Yv5
------END PGP SIGNATURE-----
-
---5vjQsMS/9MbKYGLq--
+diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
+index 31db28a..778aec6 100644
+--- a/arch/arm/boot/dts/exynos4412-odroidx.dts
++++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
+@@ -45,17 +45,13 @@
+ 		status = "okay";
+ 
+ 		num-slots = <1>;
+-		supports-highspeed;
+ 		broken-cd;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+ 		samsung,dw-mshc-sdr-timing = <2 3>;
+ 		samsung,dw-mshc-ddr-timing = <1 2>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <8>;
+-		};
++		bus-width = <8>;
++		cap-mmc-highspeed;
+ 	};
+ 
+ 	regulator_p3v3 {
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index e925c9f..de15114 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -137,17 +137,13 @@
+ 		status = "okay";
+ 
+ 		num-slots = <1>;
+-		supports-highspeed;
+ 		broken-cd;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+ 		samsung,dw-mshc-sdr-timing = <2 3>;
+ 		samsung,dw-mshc-ddr-timing = <1 2>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <8>;
+-		};
++		bus-width = <8>;
++		cap-mmc-highspeed;
+ 	};
+ 
+ 	codec@13400000 {
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 7787844..65ab885 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -520,7 +520,6 @@
+ 
+ 	mmc@12550000 {
+ 		num-slots = <1>;
+-		supports-highspeed;
+ 		broken-cd;
+ 		non-removable;
+ 		card-detect-delay = <200>;
+@@ -532,11 +531,8 @@
+ 		pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
+ 		pinctrl-names = "default";
+ 		status = "okay";
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <8>;
+-		};
++		bus-width = <8>;
++		cap-mmc-highspeed;
+ 	};
+ 
+ 	serial@13800000 {
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index d0de1f5..42a3590 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -401,7 +401,6 @@
+ 	mmc_0: mmc@12200000 {
+ 		status = "okay";
+ 		num-slots = <1>;
+-		supports-highspeed;
+ 		broken-cd;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+@@ -410,17 +409,13 @@
+ 		vmmc-supply = <&mmc_reg>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <8>;
+-		};
++		bus-width = <8>;
++		cap-mmc-highspeed;
+ 	};
+ 
+ 	mmc_2: mmc@12220000 {
+ 		status = "okay";
+ 		num-slots = <1>;
+-		supports-highspeed;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+ 		samsung,dw-mshc-sdr-timing = <2 3>;
+@@ -428,12 +423,9 @@
+ 		vmmc-supply = <&mmc_reg>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <4>;
+-			disable-wp;
+-		};
++		bus-width = <4>;
++		disable-wp;
++		cap-sd-highspeed;
+ 	};
+ 
+ 	i2s0: i2s@03830000 {
+diff --git a/arch/arm/boot/dts/exynos5250-cros-common.dtsi b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+index 89ac90f..af51361 100644
+--- a/arch/arm/boot/dts/exynos5250-cros-common.dtsi
++++ b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+@@ -248,7 +248,6 @@
+ 
+ 	mmc@12200000 {
+ 		num-slots = <1>;
+-		supports-highspeed;
+ 		broken-cd;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+@@ -256,44 +255,33 @@
+ 		samsung,dw-mshc-ddr-timing = <1 2>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_cd &sd0_bus4 &sd0_bus8>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <8>;
+-		};
++		bus-width = <8>;
++		cap-mmc-highspeed;
+ 	};
+ 
+ 	mmc@12220000 {
+ 		num-slots = <1>;
+-		supports-highspeed;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+ 		samsung,dw-mshc-sdr-timing = <2 3>;
+ 		samsung,dw-mshc-ddr-timing = <1 2>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <4>;
+-			wp-gpios = <&gpc2 1 0>;
+-		};
++		bus-width = <4>;
++		wp-gpios = <&gpc2 1 0>;
++		cap-sd-highspeed;
+ 	};
+ 
+ 	mmc@12230000 {
+ 		num-slots = <1>;
+-		supports-highspeed;
+ 		broken-cd;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+ 		samsung,dw-mshc-sdr-timing = <2 3>;
+ 		samsung,dw-mshc-ddr-timing = <1 2>;
+ 		/* See board-specific dts files for pin setup */
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <4>;
+-		};
++		bus-width = <4>;
++		cap-sd-highspeed;
+ 	};
+ 
+ 	spi_1: spi@12d30000 {
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index a794a70..e00ffc6 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -282,7 +282,6 @@
+ 	mmc@12200000 {
+ 		status = "okay";
+ 		num-slots = <1>;
+-		supports-highspeed;
+ 		broken-cd;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+@@ -290,29 +289,22 @@
+ 		samsung,dw-mshc-ddr-timing = <1 2>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <8>;
+-		};
++		bus-width = <8>;
++		cap-mmc-highspeed;
+ 	};
+ 
+ 	mmc@12220000 {
+ 		status = "okay";
+ 		num-slots = <1>;
+-		supports-highspeed;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+ 		samsung,dw-mshc-sdr-timing = <2 3>;
+ 		samsung,dw-mshc-ddr-timing = <1 2>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <4>;
+-			disable-wp;
+-		};
++		bus-width = <4>;
++		disable-wp;
++		cap-sd-highspeed;
+ 	};
+ 
+ 	spi_1: spi@12d30000 {
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index 079fdf9..17d8f53 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -329,10 +329,8 @@
+ 	 */
+ 	mmc@12230000 {
+ 		status = "okay";
+-		slot@0 {
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&sd3_clk &sd3_cmd &sd3_bus4>;
+-		};
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd3_clk &sd3_cmd &sd3_bus4>;
+ 	};
+ 
+ 	i2c@12CD0000 {
+diff --git a/arch/arm/boot/dts/exynos5260-xyref5260.dts b/arch/arm/boot/dts/exynos5260-xyref5260.dts
+index 8c84ab2..a803b60 100644
+--- a/arch/arm/boot/dts/exynos5260-xyref5260.dts
++++ b/arch/arm/boot/dts/exynos5260-xyref5260.dts
+@@ -69,7 +69,7 @@
+ 	num-slots = <1>;
+ 	broken-cd;
+ 	bypass-smu;
+-	supports-highspeed;
++	cap-mmc-highspeed;
+ 	supports-hs200-mode; /* 200 Mhz */
+ 	card-detect-delay = <200>;
+ 	samsung,dw-mshc-ciu-div = <3>;
+@@ -77,27 +77,19 @@
+ 	samsung,dw-mshc-ddr-timing = <0 2>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_rdqs &sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
+-
+-	slot@0 {
+-		reg = <0>;
+-		bus-width = <8>;
+-	};
++	bus-width = <8>;
+ };
+ 
+ &mmc_2 {
+ 	status = "okay";
+ 	num-slots = <1>;
+-	supports-highspeed;
++	cap-sd-highspeed;
+ 	card-detect-delay = <200>;
+ 	samsung,dw-mshc-ciu-div = <3>;
+ 	samsung,dw-mshc-sdr-timing = <2 3>;
+ 	samsung,dw-mshc-ddr-timing = <1 2>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
+-
+-	slot@0 {
+-		reg = <0>;
+-		bus-width = <4>;
+-		disable-wp;
+-	};
++	bus-width = <4>;
++	disable-wp;
+ };
+diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+index 7275bbd..be3e025 100644
+--- a/arch/arm/boot/dts/exynos5410-smdk5410.dts
++++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+@@ -40,33 +40,25 @@
+ &mmc_0 {
+ 	status = "okay";
+ 	num-slots = <1>;
+-	supports-highspeed;
++	cap-mmc-highspeed;
+ 	broken-cd;
+ 	card-detect-delay = <200>;
+ 	samsung,dw-mshc-ciu-div = <3>;
+ 	samsung,dw-mshc-sdr-timing = <2 3>;
+ 	samsung,dw-mshc-ddr-timing = <1 2>;
+-
+-	slot@0 {
+-		reg = <0>;
+-		bus-width = <8>;
+-	};
++	bus-width = <8>;
+ };
+ 
+ &mmc_2 {
+ 	status = "okay";
+ 	num-slots = <1>;
+-	supports-highspeed;
++	cap-sd-highspeed;
+ 	card-detect-delay = <200>;
+ 	samsung,dw-mshc-ciu-div = <3>;
+ 	samsung,dw-mshc-sdr-timing = <2 3>;
+ 	samsung,dw-mshc-ddr-timing = <1 2>;
+-
+-	slot@0 {
+-		reg = <0>;
+-		bus-width = <4>;
+-		disable-wp;
+-	};
++	bus-width = <4>;
++	disable-wp;
+ };
+ 
+ &uart0 {
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index 434fd9d..29dd71b 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -50,7 +50,6 @@
+ 	mmc@12200000 {
+ 		status = "okay";
+ 		broken-cd;
+-		supports-highspeed;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+ 		samsung,dw-mshc-sdr-timing = <0 4>;
+@@ -58,16 +57,12 @@
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+ 		vmmc-supply = <&ldo10_reg>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <8>;
+-		};
++		bus-width = <8>;
++		cap-mmc-highspeed;
+ 	};
+ 
+ 	mmc@12220000 {
+ 		status = "okay";
+-		supports-highspeed;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+ 		samsung,dw-mshc-sdr-timing = <2 3>;
+@@ -75,11 +70,8 @@
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+ 		vmmc-supply = <&ldo10_reg>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <4>;
+-		};
++		bus-width = <4>;
++		cap-mmc-highspeed;
+ 	};
+ 
+ 	hsi2c_4: i2c@12CA0000 {
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 1c5b8f9..ca305d0 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -155,7 +155,7 @@
+ 	num-slots = <1>;
+ 	broken-cd;
+ 	caps2-mmc-hs200-1_8v;
+-	supports-highspeed;
++	cap-mmc-highspeed;
+ 	non-removable;
+ 	card-detect-delay = <200>;
+ 	clock-frequency = <400000000>;
+@@ -164,17 +164,13 @@
+ 	samsung,dw-mshc-ddr-timing = <0 2>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+-
+-	slot@0 {
+-		reg = <0>;
+-		bus-width = <8>;
+-	};
++	bus-width = <8>;
+ };
+ 
+ &mmc_2 {
+ 	status = "okay";
+ 	num-slots = <1>;
+-	supports-highspeed;
++	cap-sd-highspeed;
+ 	card-detect-delay = <200>;
+ 	clock-frequency = <400000000>;
+ 	samsung,dw-mshc-ciu-div = <3>;
+@@ -182,11 +178,7 @@
+ 	samsung,dw-mshc-ddr-timing = <1 2>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+-
+-	slot@0 {
+-		reg = <0>;
+-		bus-width = <4>;
+-	};
++	bus-width = <4>;
+ };
+ 
+ &hsi2c_7 {
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index 6052aa9..8be3d7b 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -76,34 +76,26 @@
+ 	mmc@12200000 {
+ 		status = "okay";
+ 		broken-cd;
+-		supports-highspeed;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+ 		samsung,dw-mshc-sdr-timing = <0 4>;
+ 		samsung,dw-mshc-ddr-timing = <0 2>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <8>;
+-		};
++		bus-width = <8>;
++		cap-mmc-highspeed;
+ 	};
+ 
+ 	mmc@12220000 {
+ 		status = "okay";
+-		supports-highspeed;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+ 		samsung,dw-mshc-sdr-timing = <2 3>;
+ 		samsung,dw-mshc-ddr-timing = <1 2>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <4>;
+-		};
++		bus-width = <4>;
++		cap-sd-highspeed;
+ 	};
+ 
+ 	dp-controller@145B0000 {
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index f3af207..d78ec38 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -139,7 +139,7 @@
+ 	num-slots = <1>;
+ 	broken-cd;
+ 	caps2-mmc-hs200-1_8v;
+-	supports-highspeed;
++	cap-mmc-highspeed;
+ 	non-removable;
+ 	card-detect-delay = <200>;
+ 	clock-frequency = <400000000>;
+@@ -148,17 +148,13 @@
+ 	samsung,dw-mshc-ddr-timing = <0 2>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+-
+-	slot@0 {
+-		reg = <0>;
+-		bus-width = <8>;
+-	};
++	bus-width = <8>;
+ };
+ 
+ &mmc_2 {
+ 	status = "okay";
+ 	num-slots = <1>;
+-	supports-highspeed;
++	cap-sd-highspeed;
+ 	card-detect-delay = <200>;
+ 	clock-frequency = <400000000>;
+ 	samsung,dw-mshc-ciu-div = <3>;
+@@ -166,11 +162,7 @@
+ 	samsung,dw-mshc-ddr-timing = <1 2>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+-
+-	slot@0 {
+-		reg = <0>;
+-		bus-width = <4>;
+-	};
++	bus-width = <4>;
+ };
+ 
+ &dp {
+-- 
+1.7.9.5
