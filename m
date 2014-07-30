@@ -1,79 +1,83 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V6 4/8] drm/exynos: Move DP setup into commit()
-Date: Wed, 30 Jul 2014 12:52:47 +0200
-Message-ID: <20140730105245.GG29590@ulmo>
+Subject: Re: [PATCH V6 5/8] drm/exynos: dp: Modify driver to support drm_panel
+Date: Wed, 30 Jul 2014 12:58:58 +0200
+Message-ID: <20140730105857.GH29590@ulmo>
 References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <1406316130-4744-5-git-send-email-ajaykumar.rs@samsung.com>
+ <1406316130-4744-6-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0861367642=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1406316130-4744-5-git-send-email-ajaykumar.rs@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============0861367642==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3xoW37o/FfUZJwQG"
+	protocol="application/pgp-signature"; boundary="5vjQsMS/9MbKYGLq"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f48.google.com ([74.125.82.48]:46382 "EHLO
+	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751934AbaG3K7D (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Jul 2014 06:59:03 -0400
 Content-Disposition: inline
+In-Reply-To: <1406316130-4744-6-git-send-email-ajaykumar.rs@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, inki.dae@samsung.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com
 
 
---3xoW37o/FfUZJwQG
+--5vjQsMS/9MbKYGLq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 26, 2014 at 12:52:06AM +0530, Ajay Kumar wrote:
-> This patch moves the DP training and video enable from the hotplug
-> handler into commit().
+On Sat, Jul 26, 2014 at 12:52:07AM +0530, Ajay Kumar wrote:
+[...]
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/ex=
+ynos/exynos_dp_core.c
+[...]
+> @@ -887,6 +885,12 @@ static void exynos_dp_commit(struct exynos_drm_displ=
+ay *display)
+>  	struct exynos_dp_device *dp =3D display->ctx;
+>  	int ret;
+> =20
+> +	/* Keep backlight disabled while we configure video */
+> +	if (dp->panel) {
+> +		if (drm_panel_disable(dp->panel))
+> +			DRM_ERROR("failed to disable panel backlight\n");
+> +	}
 
-I don't think I can comment on this one, but perhaps the commit message
-should describe why it's doing this rather than just parroting what the
-code does.
+drm_panel_disable() already gracefully handles the dp->panel =3D=3D NULL
+case, so no need to check for it explicitly. But perhaps you do that
+only because panel support is optional and you want to avoid the
+error message if it isn't set up. In that case it's probably fine to
+leave this as-is.
+
+But you should change the comment and error message, since you don't
+know what exactly drm_panel_disable() does.
+
+And it might be useful to print the error code while at it, it might
+help save some debugging time in the future.
+
+The same comments apply to most of the remainder of the file, but it
+looks good to me otherwise.
 
 Thierry
 
---3xoW37o/FfUZJwQG
+--5vjQsMS/9MbKYGLq
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT2M59AAoJEN0jrNd/PrOhb/UP/AymB1xBfF2sIA+hl/ottKHy
-1cqguF2cqnK1DTrG2I13vE+ovNXC8GVmuQdGa+EEJ4xdsP++OG4gqDsdPm3Ty1VD
-aii/Xuj5Cf8/7XLdy0yUsxA0v07nROXCeqEJaTW4/PtNUnmCsIBYWCZJsaO00y3Z
-sPjmOhKTfFvyrxTcLGGAVvGk5Gg/iLUgFMFjVsmJaIpL4EvmAzTXu5E5U0ZaULC2
-20bUm/0v61aafBhQ6Zd+0Jh0flx0T9XaZL7bFGU6cRM/Kynizw9FzvEzfnWsFlI8
-YpJ2KDqEcYaxtLgrDr3f3xO9jHlK9+FBtlXtjr0YNENZRLFqsFpoVFXlzE2lf4ZU
-jnkuYiFfuR7aAGXH/9JVbUj4CpKr/IFrtOCBPJeJHGQ9TpeQbuUaEZ83IMVn9hEb
-ttQ7iIPui/lsSWyzmDTReNz+0dQRpaxVPiqQtV56OS3g7Cka1lc08IOMCvGsxzS5
-7HOx6TFyaIHoMC4a2374jwGRnMD69NQJFukIGIaztJ4PyL5go1e7Bx3iUPAuVn4W
-onBcq7Az4l0yTjZwWhQjUDfimQ0ZZtQIuj1/IVEs4NGUYdi7hYjNZmKmMEc2I0Yg
-8SI3ym1IBF960324YAFdkw0ugd1jCk5ZHLkpxud4Pg7qjUI9qvHaxj+BNcrpSRMy
-m8QyqM9Ug1PRI2diuR5M
-=p3e8
+iQIcBAEBAgAGBQJT2M/xAAoJEN0jrNd/PrOh11wP/3lu/aFS5bWkrzvzEYIfurbh
+GZM0vMdII8koRgd/POwwvL9+Av3GQv4xWIq+VhTUzDkgp2DCRNxUGoITvrdYLqbt
+Y0He2VrK5HNUC8eZIlZQSTQMAFLTWnpLGuVwFzM7a5IsVrlXKMhAj18rX6zhOznj
+eSEwuG4ibaI2O/oyn0VUBEAGCW083axsc0Q3bpbdd0RmZMjvMNiTjbI0dRTcRU39
+lc7KnUmQoI8zWnlwYgVsZWKdFbVQ50AVTcjLLaz25DvmIxTJzuBq6+mhzk8k+4TC
+yUHpQ6QQ6zpDevBhNwXGDzYzLdwepUS11mnZklYHnQALdobxZ5cAxv8Q8l1nBA5Q
+kmibcGG0DrOOYETcGQT9rqr2sroSO86INqtrwYQ5+Olo6lvMpgP1RdfStfobOIkR
+CNCMbNHhTbax5iI33ygYhh6Tz6uZvZM5qkIYTCZKyFB3lAHj5kSSnfuke6tQs3nE
+3BEDySUqjv8QwX1D10HHPMzgXrYw2Vx3FqFUkGKpVZWDNGYSXxnuXdN2kYpoYKc6
+XayDA9xGEvbY2aTH/cf0FIpR6Qv1kkEwswMTFPSRJluLO9s4/U24QU6KdJBbNLaS
+EQnsup0cNt7a2fUXyUxbAibPPPRAxh7KdRhzZ6GDCweHM2KKtsTSo6Y+z5NIp1f/
+FkrgVPmmuzFwTJZOotZb
+=/Yv5
 -----END PGP SIGNATURE-----
 
---3xoW37o/FfUZJwQG--
-
---===============0861367642==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0861367642==--
+--5vjQsMS/9MbKYGLq--
