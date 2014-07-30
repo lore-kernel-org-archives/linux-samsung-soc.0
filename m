@@ -1,209 +1,91 @@
-From: Humberto Silva Naves <hsnaves@gmail.com>
-Subject: [PATCH 3/3] clk: exynos5410: Added clocks BPLL, DPLL, EPLL, IPLL, MPLL, and VPLL
-Date: Wed, 30 Jul 2014 16:36:03 +0200
-Message-ID: <1406730963-30658-3-git-send-email-hsnaves@gmail.com>
-References: <1406730963-30658-1-git-send-email-hsnaves@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v6 10/14] drm/panel: add S6E3FA0 driver
+Date: Wed, 30 Jul 2014 16:36:20 +0200
+Message-ID: <20140730143619.GA1345@ulmo>
+References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
+ <1405587689-1466-11-git-send-email-yj44.cho@samsung.com>
+ <20140717103645.GD17877@ulmo>
+ <53C87D2F.9000906@samsung.com>
+ <53CCD5A8.6090406@samsung.com>
+ <20140721091917.GK8843@ulmo>
+ <53CCF70A.5010403@samsung.com>
+ <53CDDD61.6000005@samsung.com>
+ <20140722074935.GC18258@ulmo>
+ <53D8F6B5.4090903@ti.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="OgqxwSJOaUobr8KG"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:63509 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752834AbaG3OgV (ORCPT
+Received: from mail-we0-f182.google.com ([74.125.82.182]:56737 "EHLO
+	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752834AbaG3Og0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jul 2014 10:36:21 -0400
-Received: by mail-wi0-f180.google.com with SMTP id n3so2449465wiv.7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2014 07:36:20 -0700 (PDT)
-In-Reply-To: <1406730963-30658-1-git-send-email-hsnaves@gmail.com>
+	Wed, 30 Jul 2014 10:36:26 -0400
+Content-Disposition: inline
+In-Reply-To: <53D8F6B5.4090903@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Tomasz Figa <t.figa@samsung.com>, Humberto Silva Naves <hsnaves@gmail.com>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: YoungJun Cho <yj44.cho@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Paul Mundt <paul.mundt@gmail.com>, Imre Deak <imre.deak@intel.com>
 
-Added the remaining PLL clocks, and also registered the configuration
-tables with the PLL coefficients for the supported frequencies.
-These frequency tables are valid when a 24MHz clock is supplied as the
-input clock source (which I believe is always the case). Furthermore,
-the corresponding constants for these PLL clocks were addded to the
-dt-bindings header file. While at it, the constant definitions were
-reordered alphabetically.
 
-Signed-off-by: Humberto Silva Naves <hsnaves@gmail.com>
----
- drivers/clk/samsung/clk-exynos5410.c   |  128 +++++++++++++++++++++++++++++---
- include/dt-bindings/clock/exynos5410.h |   12 ++-
- 2 files changed, 127 insertions(+), 13 deletions(-)
+--OgqxwSJOaUobr8KG
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index aaca65d..7f4b3ea 100644
---- a/drivers/clk/samsung/clk-exynos5410.c
-+++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -156,9 +156,10 @@
- 
- /* list of PLLs */
- enum exynos5410_plls {
--	apll, cpll, mpll,
--	bpll, kpll,
--	nr_plls                 /* number of PLLs */
-+	apll, bpll, cpll,
-+	dpll, epll, ipll,
-+	kpll, mpll, vpll,
-+	nr_plls			/* number of PLLs */
- };
- 
- static void __iomem *reg_base;
-@@ -398,17 +399,126 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
- 			SRC_MASK_PERIC0, 8, CLK_SET_RATE_PARENT, 0),
- };
- 
-+static struct samsung_pll_rate_table apll_24mhz_tbl[] __initdata = {
-+	/* sorted in descending order */
-+	/* PLL_35XX_RATE(rate, m, p, s) */
-+	PLL_35XX_RATE(2100000000, 175, 2, 0),
-+	PLL_35XX_RATE(2000000000, 250, 3, 0),
-+	PLL_35XX_RATE(1900000000, 475, 6, 0),
-+	PLL_35XX_RATE(1800000000, 225, 3, 0),
-+	PLL_35XX_RATE(1700000000, 425, 6, 0),
-+	PLL_35XX_RATE(1600000000, 200, 3, 0),
-+	PLL_35XX_RATE(1500000000, 250, 4, 0),
-+	PLL_35XX_RATE(1400000000, 175, 3, 0),
-+	PLL_35XX_RATE(1300000000, 325, 6, 0),
-+	PLL_35XX_RATE(1200000000, 100, 2, 0),
-+	PLL_35XX_RATE(1100000000, 275, 3, 1),
-+	PLL_35XX_RATE(1000000000, 250, 3, 1),
-+	PLL_35XX_RATE(900000000, 150, 2, 1),
-+	PLL_35XX_RATE(800000000, 200, 3, 1),
-+	PLL_35XX_RATE(700000000, 175, 3, 1),
-+	PLL_35XX_RATE(600000000, 100, 2, 1),
-+	PLL_35XX_RATE(500000000, 250, 3, 2),
-+	PLL_35XX_RATE(400000000, 200, 3, 2),
-+	PLL_35XX_RATE(300000000, 100, 2, 2),
-+	PLL_35XX_RATE(200000000, 200, 3, 3),
-+	{ },
-+};
-+
-+static struct samsung_pll_rate_table cpll_24mhz_tbl[] __initdata = {
-+	/* sorted in descending order */
-+	/* PLL_35XX_RATE(rate, m, p, s) */
-+	PLL_35XX_RATE(666000000, 222, 4, 1),
-+	PLL_35XX_RATE(640000000, 160, 3, 1),
-+	PLL_35XX_RATE(320000000, 160, 3, 2),
-+	{ },
-+};
-+
-+static struct samsung_pll_rate_table dpll_24mhz_tbl[] __initdata = {
-+	/* sorted in descending order */
-+	/* PLL_35XX_RATE(rate, m, p, s) */
-+	PLL_35XX_RATE(600000000, 200, 4, 1),
-+	{ },
-+};
-+
-+static struct samsung_pll_rate_table epll_24mhz_tbl[] __initdata = {
-+	/* sorted in descending order */
-+	/* PLL_36XX_RATE(rate, m, p, s, k) */
-+	PLL_36XX_RATE(600000000, 100, 2, 1,      0),
-+	PLL_36XX_RATE(400000000, 200, 3, 2,      0),
-+	PLL_36XX_RATE(200000000, 200, 3, 3,      0),
-+	PLL_36XX_RATE(180633600, 301, 5, 3,  -3670),
-+	PLL_36XX_RATE( 67737600, 452, 5, 5, -27263),
-+	PLL_36XX_RATE( 49152000, 197, 3, 5, -25690),
-+	PLL_36XX_RATE( 45158401, 181, 3, 5, -24012),
-+	{ },
-+};
-+
-+static struct samsung_pll_rate_table ipll_24mhz_tbl[] __initdata = {
-+	/* sorted in descending order */
-+	/* PLL_35XX_RATE(rate, m, p, s, k) */
-+	PLL_35XX_RATE(864000000, 288, 4, 1),
-+	PLL_35XX_RATE(666000000, 222, 4, 1),
-+	PLL_35XX_RATE(432000000, 288, 4, 2),
-+	{ },
-+};
-+
-+static struct samsung_pll_rate_table kpll_24mhz_tbl[] __initdata = {
-+	/* sorted in descending order */
-+	/* PLL_35XX_RATE(rate, m, p, s) */
-+	PLL_35XX_RATE(1500000000, 250, 4, 0),
-+	PLL_35XX_RATE(1400000000, 175, 3, 0),
-+	PLL_35XX_RATE(1300000000, 325, 6, 0),
-+	PLL_35XX_RATE(1200000000, 100, 2, 0),
-+	PLL_35XX_RATE(1100000000, 275, 3, 1),
-+	PLL_35XX_RATE(1000000000, 250, 3, 1),
-+	PLL_35XX_RATE(900000000, 150, 2, 1),
-+	PLL_35XX_RATE(800000000, 200, 3, 1),
-+	PLL_35XX_RATE(700000000, 175, 3, 1),
-+	PLL_35XX_RATE(600000000, 100, 2, 1),
-+	PLL_35XX_RATE(500000000, 250, 3, 2),
-+	PLL_35XX_RATE(400000000, 200, 3, 2),
-+	PLL_35XX_RATE(300000000, 100, 2, 2),
-+	PLL_35XX_RATE(200000000, 200, 3, 3),
-+	{ },
-+};
-+
-+static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
-+	/* sorted in descending order */
-+	/* PLL_36XX_RATE(rate, m, p, s, k) */
-+	PLL_36XX_RATE(880000000, 220, 3, 1, 0),
-+	PLL_36XX_RATE(640000000, 160, 3, 1, 0),
-+	PLL_36XX_RATE(532000000, 133, 3, 1, 0),
-+	PLL_36XX_RATE(480000000, 240, 3, 2, 0),
-+	PLL_36XX_RATE(440000000, 220, 3, 2, 0),
-+	PLL_36XX_RATE(350000000, 175, 3, 2, 0),
-+	PLL_36XX_RATE(333000000, 111, 2, 2, 0),
-+	PLL_36XX_RATE(266000000, 133, 3, 2, 0),
-+	PLL_36XX_RATE(177000000, 118, 2, 3, 0),
-+	PLL_36XX_RATE(123500000, 330, 4, 4, 0),
-+	PLL_36XX_RATE( 89000000, 178, 3, 4, 0),
-+	{ },
-+};
-+
- static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
- 	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
--		APLL_CON0, NULL),
--	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
--		CPLL_CON0, NULL),
--	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
--		MPLL_CON0, NULL),
-+		APLL_CON0, apll_24mhz_tbl),
- 	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
- 		BPLL_CON0, NULL),
-+	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
-+		CPLL_CON0, cpll_24mhz_tbl),
-+	[dpll] = PLL(pll_35xx, CLK_FOUT_DPLL, "fout_dpll", "fin_pll", DPLL_LOCK,
-+		DPLL_CON0, dpll_24mhz_tbl),
-+	[epll] = PLL(pll_36xx, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
-+		EPLL_CON0, epll_24mhz_tbl),
-+	[ipll] = PLL(pll_35xx, CLK_FOUT_IPLL, "fout_ipll", "fin_pll", IPLL_LOCK,
-+		IPLL_CON0, ipll_24mhz_tbl),
- 	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll", KPLL_LOCK,
--		KPLL_CON0, NULL),
-+		KPLL_CON0, kpll_24mhz_tbl),
-+	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
-+		MPLL_CON0, NULL),
-+	[vpll] = PLL(pll_36xx, CLK_FOUT_VPLL, "fout_vpll", "mout_vpllsrc",
-+		VPLL_LOCK, VPLL_CON0, vpll_24mhz_tbl),
- };
- 
- /* register exynos5410 clocks */
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 9b180f0..46e85dc 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -4,10 +4,14 @@
- /* core clocks */
- #define CLK_FIN_PLL 1
- #define CLK_FOUT_APLL 2
--#define CLK_FOUT_CPLL 3
--#define CLK_FOUT_MPLL 4
--#define CLK_FOUT_BPLL 5
--#define CLK_FOUT_KPLL 6
-+#define CLK_FOUT_BPLL 3
-+#define CLK_FOUT_CPLL 4
-+#define CLK_FOUT_DPLL 5
-+#define CLK_FOUT_EPLL 6
-+#define CLK_FOUT_IPLL 7
-+#define CLK_FOUT_KPLL 8
-+#define CLK_FOUT_MPLL 9
-+#define CLK_FOUT_VPLL 10
- 
- /* gate for special clocks (sclk) */
- #define CLK_SCLK_UART0 128
--- 
-1.7.10.4
+On Wed, Jul 30, 2014 at 04:44:21PM +0300, Tomi Valkeinen wrote:
+> On 22/07/14 10:49, Thierry Reding wrote:
+>=20
+> > But what I was trying to say is that if the Read IDs command isn't an
+> > official DCS command, maybe it would be a better idea to use the DDB
+> > instead. I assume that even if it isn't the same information it would
+> > at least be a superset and therefore a suitable replacement.
+>=20
+> Only if DDB commands work on that panel =3D). Even if a panel supports
+> DCS, it doesn't mean it supports all the commands.
+
+Indeed. I was perhaps a little na=C3=AFve and assumed this was such a great
+standard command that every panel simply had to support it. But so far
+I haven't yet come across a single panel that does...
+
+> Also, does it really matter which one to use inside a panel driver? I
+> don't really see any pros nor cons with either option. Except, of
+> course, if using one of those makes the driver's code simpler.
+
+Yeah, at this point I don't see why the read IDs command shouldn't be
+used. It's somewhat unfortunate that it isn't mentioned in the DCS
+specification at all, but specifications are only as useful to the
+degree that they get implemented...
+
+My hope had been that we would be able to automatically probe for panels
+using the DDB, but it seems like that's not a practicable idea given the
+almost non-existent support for it.
+
+So as long as we can standardize on common APIs rather than per-driver
+implementations, I'm good.
+
+Thierry
+
+--OgqxwSJOaUobr8KG
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT2QLjAAoJEN0jrNd/PrOhGQEQAI4XFatbODIwvTeSGtgFoUqM
+OZZmxyva4Wk+A6iRdCUDFiMBB3vqLbWSmNdAjwixYod3qn+KwTsqlnqPLTZLTBKS
+O4+GBbpTl0aKOG2oZv4+99SsH/shBy7UDbgjpC1SVGkZDOh+LZC1v4+C8ZLIZbZh
+xjmKoKMxGTxWd5veXbI1YYyE8XNZv6fN6wXIsh82FEU5vSPk5OMpoYACqDywOurJ
+bmnLpim6GWbU1g8pyxoeNvPJs8jwkdyBJFvCcbo5F8Ow46cAVh5FlRiE/6TUm9g/
+tHUUgh6QJiLxq8iFlFM8/DvEWue8UJsNjZcnrtvm47uTL5a4oPUJgwtfjCOyBK0g
+18olXm9z9RDDGrGEFXaHmlzA9BpK2hSwQvEau4AZP5R4B9qQfgGqjPcBAhm4TNIM
+q9S9rqvL2ALLSPsdvx5T+jP4iQLqDVr9Pv2eLkiWRC4K8B+5jnsUzoaC/WBQ7TV2
+tPQ7jW79g78xren2lz6wn/MhvX9cVrcU0CGxPDzwzuCwu2mJFNVgvSa9MeH4iQTX
+C7m8MpirZNIKsDSOfLcGszuVKaUSAWf5HB4jzZbNCnnS2KD7QePdk+Nt6D6RzEQL
+G03vMyus/4DGC9jn0j5uSC6tUDRvgU30kFnKBLU8R7FRAOcBLDzRtTNXww+7uFGz
+zHomiB5svCtqBN8d8D7K
+=LdrU
+-----END PGP SIGNATURE-----
+
+--OgqxwSJOaUobr8KG--
