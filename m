@@ -1,196 +1,209 @@
 From: Humberto Silva Naves <hsnaves@gmail.com>
-Subject: [PATCH 2/3] clk: exynos5410: Add suspend/resume handling
-Date: Wed, 30 Jul 2014 16:36:02 +0200
-Message-ID: <1406730963-30658-2-git-send-email-hsnaves@gmail.com>
+Subject: [PATCH 3/3] clk: exynos5410: Added clocks BPLL, DPLL, EPLL, IPLL, MPLL, and VPLL
+Date: Wed, 30 Jul 2014 16:36:03 +0200
+Message-ID: <1406730963-30658-3-git-send-email-hsnaves@gmail.com>
 References: <1406730963-30658-1-git-send-email-hsnaves@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:62596 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752834AbaG3OgT (ORCPT
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:63509 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752834AbaG3OgV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jul 2014 10:36:19 -0400
-Received: by mail-wi0-f174.google.com with SMTP id d1so7698055wiv.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2014 07:36:16 -0700 (PDT)
+	Wed, 30 Jul 2014 10:36:21 -0400
+Received: by mail-wi0-f180.google.com with SMTP id n3so2449465wiv.7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2014 07:36:20 -0700 (PDT)
 In-Reply-To: <1406730963-30658-1-git-send-email-hsnaves@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: Tomasz Figa <t.figa@samsung.com>, Humberto Silva Naves <hsnaves@gmail.com>
 
-This patch implements all the necessary code that handles register
-saving and restoring during a suspend/resume cycle.
-
-To make this possible, the local variable reg_base from the function
-exynos5410_clk_init was changed to global.
+Added the remaining PLL clocks, and also registered the configuration
+tables with the PLL coefficients for the supported frequencies.
+These frequency tables are valid when a 24MHz clock is supplied as the
+input clock source (which I believe is always the case). Furthermore,
+the corresponding constants for these PLL clocks were addded to the
+dt-bindings header file. While at it, the constant definitions were
+reordered alphabetically.
 
 Signed-off-by: Humberto Silva Naves <hsnaves@gmail.com>
 ---
- drivers/clk/samsung/clk-exynos5410.c |  132 +++++++++++++++++++++++++++++++++-
- 1 file changed, 131 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos5410.c   |  128 +++++++++++++++++++++++++++++---
+ include/dt-bindings/clock/exynos5410.h |   12 ++-
+ 2 files changed, 127 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index 72a533e..aaca65d 100644
+index aaca65d..7f4b3ea 100644
 --- a/drivers/clk/samsung/clk-exynos5410.c
 +++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -16,6 +16,7 @@
- #include <linux/clk-provider.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/syscore_ops.h>
+@@ -156,9 +156,10 @@
  
- #include "clk.h"
- 
-@@ -160,6 +161,134 @@ enum exynos5410_plls {
- 	nr_plls                 /* number of PLLs */
+ /* list of PLLs */
+ enum exynos5410_plls {
+-	apll, cpll, mpll,
+-	bpll, kpll,
+-	nr_plls                 /* number of PLLs */
++	apll, bpll, cpll,
++	dpll, epll, ipll,
++	kpll, mpll, vpll,
++	nr_plls			/* number of PLLs */
  };
  
-+static void __iomem *reg_base;
-+
-+#ifdef CONFIG_PM_SLEEP
-+static struct samsung_clk_reg_dump *exynos5410_save;
-+
-+/*
-+ * list of controller registers to be saved and restored during a
-+ * suspend/resume cycle.
-+ */
-+static unsigned long exynos5410_clk_regs[] __initdata = {
-+	SRC_CDREX,
-+	SRC_CPERI0,
-+	SRC_CPERI1,
-+	SRC_CPU,
-+	SRC_DISP0_0,
-+	SRC_DISP0_1,
-+	SRC_DISP1_0,
-+	SRC_DISP1_1,
-+	SRC_FSYS,
-+	SRC_GSCL,
-+	SRC_KFC,
-+	SRC_MAU,
-+	SRC_PERIC0,
-+	SRC_PERIC1,
-+	SRC_TOP0,
-+	SRC_TOP1,
-+	SRC_TOP2,
-+	SRC_TOP3,
-+
-+	DIV_CDREX,
-+	DIV_CDREX2,
-+	DIV_CPU0,
-+	DIV_CPERI1,
-+	DIV_DISP0_0,
-+	DIV_DISP0_1,
-+	DIV_DISP1_0,
-+	DIV_DISP1_1,
-+	DIV_FSYS0,
-+	DIV_FSYS1,
-+	DIV_FSYS2,
-+	DIV_GEN,
-+	DIV_GSCL,
-+	DIV_G2D,
-+	DIV_KFC0,
-+	DIV_MAU,
-+	DIV_PERIC0,
-+	DIV_PERIC1,
-+	DIV_PERIC2,
-+	DIV_PERIC3,
-+	DIV_PERIC4,
-+	DIV_PERIC5,
-+	DIV_TOP0,
-+	DIV_TOP1,
-+	DIV_TOP2,
-+	DIV_TOP3,
-+
-+	GATE_BUS_DISP1,
-+	GATE_BUS_FSYS0,
-+
-+	GATE_IP_CDREX,
-+	GATE_IP_CORE,
-+	GATE_IP_DISP0,
-+	GATE_IP_DISP1,
-+	GATE_IP_FSYS,
-+	GATE_IP_GEN,
-+	GATE_IP_GSCL0,
-+	GATE_IP_GSCL1,
-+	GATE_IP_G2D,
-+	GATE_IP_G3D,
-+	GATE_IP_MFC,
-+	GATE_IP_PERIC,
-+	GATE_IP_PERIS,
-+
-+	GATE_TOP_SCLK_DISP1,
-+	GATE_TOP_SCLK_FSYS,
-+	GATE_TOP_SCLK_GSCL,
-+	GATE_TOP_SCLK_MAU,
-+	GATE_TOP_SCLK_PERIC,
-+
-+	GATE_BUS_DISP1,
-+	GATE_BUS_FSYS0,
-+
-+	GATE_SCLK_CPU,
-+
-+	SRC_MASK_DISP0_0,
-+	SRC_MASK_DISP1_0,
-+	SRC_MASK_FSYS,
-+	SRC_MASK_MAU,
-+	SRC_MASK_PERIC0,
-+	SRC_MASK_PERIC1,
+ static void __iomem *reg_base;
+@@ -398,17 +399,126 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ 			SRC_MASK_PERIC0, 8, CLK_SET_RATE_PARENT, 0),
+ };
+ 
++static struct samsung_pll_rate_table apll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_35XX_RATE(rate, m, p, s) */
++	PLL_35XX_RATE(2100000000, 175, 2, 0),
++	PLL_35XX_RATE(2000000000, 250, 3, 0),
++	PLL_35XX_RATE(1900000000, 475, 6, 0),
++	PLL_35XX_RATE(1800000000, 225, 3, 0),
++	PLL_35XX_RATE(1700000000, 425, 6, 0),
++	PLL_35XX_RATE(1600000000, 200, 3, 0),
++	PLL_35XX_RATE(1500000000, 250, 4, 0),
++	PLL_35XX_RATE(1400000000, 175, 3, 0),
++	PLL_35XX_RATE(1300000000, 325, 6, 0),
++	PLL_35XX_RATE(1200000000, 100, 2, 0),
++	PLL_35XX_RATE(1100000000, 275, 3, 1),
++	PLL_35XX_RATE(1000000000, 250, 3, 1),
++	PLL_35XX_RATE(900000000, 150, 2, 1),
++	PLL_35XX_RATE(800000000, 200, 3, 1),
++	PLL_35XX_RATE(700000000, 175, 3, 1),
++	PLL_35XX_RATE(600000000, 100, 2, 1),
++	PLL_35XX_RATE(500000000, 250, 3, 2),
++	PLL_35XX_RATE(400000000, 200, 3, 2),
++	PLL_35XX_RATE(300000000, 100, 2, 2),
++	PLL_35XX_RATE(200000000, 200, 3, 3),
++	{ },
 +};
 +
-+static int exynos5410_clk_suspend(void)
-+{
-+	samsung_clk_save(reg_base, exynos5410_save,
-+				ARRAY_SIZE(exynos5410_clk_regs));
-+
-+	return 0;
-+}
-+
-+static void exynos5410_clk_resume(void)
-+{
-+	samsung_clk_restore(reg_base, exynos5410_save,
-+				ARRAY_SIZE(exynos5410_clk_regs));
-+}
-+
-+static struct syscore_ops exynos5410_clk_syscore_ops = {
-+	.suspend = exynos5410_clk_suspend,
-+	.resume = exynos5410_clk_resume,
++static struct samsung_pll_rate_table cpll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_35XX_RATE(rate, m, p, s) */
++	PLL_35XX_RATE(666000000, 222, 4, 1),
++	PLL_35XX_RATE(640000000, 160, 3, 1),
++	PLL_35XX_RATE(320000000, 160, 3, 2),
++	{ },
 +};
 +
-+static void exynos5410_clk_sleep_init(void)
-+{
-+	exynos5410_save = samsung_clk_alloc_reg_dump(exynos5410_clk_regs,
-+					ARRAY_SIZE(exynos5410_clk_regs));
-+	if (!exynos5410_save) {
-+		pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
-+			__func__);
-+		return;
-+	}
++static struct samsung_pll_rate_table dpll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_35XX_RATE(rate, m, p, s) */
++	PLL_35XX_RATE(600000000, 200, 4, 1),
++	{ },
++};
 +
-+	register_syscore_ops(&exynos5410_clk_syscore_ops);
-+}
-+#else
-+static void exynos5410_clk_sleep_init(void) {}
-+#endif
++static struct samsung_pll_rate_table epll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_36XX_RATE(rate, m, p, s, k) */
++	PLL_36XX_RATE(600000000, 100, 2, 1,      0),
++	PLL_36XX_RATE(400000000, 200, 3, 2,      0),
++	PLL_36XX_RATE(200000000, 200, 3, 3,      0),
++	PLL_36XX_RATE(180633600, 301, 5, 3,  -3670),
++	PLL_36XX_RATE( 67737600, 452, 5, 5, -27263),
++	PLL_36XX_RATE( 49152000, 197, 3, 5, -25690),
++	PLL_36XX_RATE( 45158401, 181, 3, 5, -24012),
++	{ },
++};
 +
++static struct samsung_pll_rate_table ipll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_35XX_RATE(rate, m, p, s, k) */
++	PLL_35XX_RATE(864000000, 288, 4, 1),
++	PLL_35XX_RATE(666000000, 222, 4, 1),
++	PLL_35XX_RATE(432000000, 288, 4, 2),
++	{ },
++};
 +
- /* list of all parent clocks */
- PNAME(apll_p)		= { "fin_pll", "fout_apll", };
- PNAME(bpll_p)		= { "fin_pll", "fout_bpll", };
-@@ -286,7 +415,6 @@ static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
- static void __init exynos5410_clk_init(struct device_node *np)
- {
- 	struct samsung_clk_provider *ctx;
--	void __iomem *reg_base;
++static struct samsung_pll_rate_table kpll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_35XX_RATE(rate, m, p, s) */
++	PLL_35XX_RATE(1500000000, 250, 4, 0),
++	PLL_35XX_RATE(1400000000, 175, 3, 0),
++	PLL_35XX_RATE(1300000000, 325, 6, 0),
++	PLL_35XX_RATE(1200000000, 100, 2, 0),
++	PLL_35XX_RATE(1100000000, 275, 3, 1),
++	PLL_35XX_RATE(1000000000, 250, 3, 1),
++	PLL_35XX_RATE(900000000, 150, 2, 1),
++	PLL_35XX_RATE(800000000, 200, 3, 1),
++	PLL_35XX_RATE(700000000, 175, 3, 1),
++	PLL_35XX_RATE(600000000, 100, 2, 1),
++	PLL_35XX_RATE(500000000, 250, 3, 2),
++	PLL_35XX_RATE(400000000, 200, 3, 2),
++	PLL_35XX_RATE(300000000, 100, 2, 2),
++	PLL_35XX_RATE(200000000, 200, 3, 3),
++	{ },
++};
++
++static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_36XX_RATE(rate, m, p, s, k) */
++	PLL_36XX_RATE(880000000, 220, 3, 1, 0),
++	PLL_36XX_RATE(640000000, 160, 3, 1, 0),
++	PLL_36XX_RATE(532000000, 133, 3, 1, 0),
++	PLL_36XX_RATE(480000000, 240, 3, 2, 0),
++	PLL_36XX_RATE(440000000, 220, 3, 2, 0),
++	PLL_36XX_RATE(350000000, 175, 3, 2, 0),
++	PLL_36XX_RATE(333000000, 111, 2, 2, 0),
++	PLL_36XX_RATE(266000000, 133, 3, 2, 0),
++	PLL_36XX_RATE(177000000, 118, 2, 3, 0),
++	PLL_36XX_RATE(123500000, 330, 4, 4, 0),
++	PLL_36XX_RATE( 89000000, 178, 3, 4, 0),
++	{ },
++};
++
+ static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
+ 	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
+-		APLL_CON0, NULL),
+-	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
+-		CPLL_CON0, NULL),
+-	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
+-		MPLL_CON0, NULL),
++		APLL_CON0, apll_24mhz_tbl),
+ 	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll", BPLL_LOCK,
+ 		BPLL_CON0, NULL),
++	[cpll] = PLL(pll_35xx, CLK_FOUT_CPLL, "fout_cpll", "fin_pll", CPLL_LOCK,
++		CPLL_CON0, cpll_24mhz_tbl),
++	[dpll] = PLL(pll_35xx, CLK_FOUT_DPLL, "fout_dpll", "fin_pll", DPLL_LOCK,
++		DPLL_CON0, dpll_24mhz_tbl),
++	[epll] = PLL(pll_36xx, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
++		EPLL_CON0, epll_24mhz_tbl),
++	[ipll] = PLL(pll_35xx, CLK_FOUT_IPLL, "fout_ipll", "fin_pll", IPLL_LOCK,
++		IPLL_CON0, ipll_24mhz_tbl),
+ 	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll", KPLL_LOCK,
+-		KPLL_CON0, NULL),
++		KPLL_CON0, kpll_24mhz_tbl),
++	[mpll] = PLL(pll_35xx, CLK_FOUT_MPLL, "fout_mpll", "fin_pll", MPLL_LOCK,
++		MPLL_CON0, NULL),
++	[vpll] = PLL(pll_36xx, CLK_FOUT_VPLL, "fout_vpll", "mout_vpllsrc",
++		VPLL_LOCK, VPLL_CON0, vpll_24mhz_tbl),
+ };
  
- 	reg_base = of_iomap(np, 0);
- 	if (!reg_base)
-@@ -304,6 +432,8 @@ static void __init exynos5410_clk_init(struct device_node *np)
- 	samsung_clk_register_gate(ctx, exynos5410_gate_clks,
- 			ARRAY_SIZE(exynos5410_gate_clks));
+ /* register exynos5410 clocks */
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 9b180f0..46e85dc 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -4,10 +4,14 @@
+ /* core clocks */
+ #define CLK_FIN_PLL 1
+ #define CLK_FOUT_APLL 2
+-#define CLK_FOUT_CPLL 3
+-#define CLK_FOUT_MPLL 4
+-#define CLK_FOUT_BPLL 5
+-#define CLK_FOUT_KPLL 6
++#define CLK_FOUT_BPLL 3
++#define CLK_FOUT_CPLL 4
++#define CLK_FOUT_DPLL 5
++#define CLK_FOUT_EPLL 6
++#define CLK_FOUT_IPLL 7
++#define CLK_FOUT_KPLL 8
++#define CLK_FOUT_MPLL 9
++#define CLK_FOUT_VPLL 10
  
-+	exynos5410_clk_sleep_init();
-+
- 	samsung_clk_of_add_provider(np, ctx);
- 
- 	pr_debug("Exynos5410: clock setup completed.\n");
+ /* gate for special clocks (sclk) */
+ #define CLK_SCLK_UART0 128
 -- 
 1.7.10.4
