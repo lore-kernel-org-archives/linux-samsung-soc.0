@@ -1,16 +1,15 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V6 6/8] drm/bridge: Modify drm_bridge core to support
- driver model
-Date: Wed, 30 Jul 2014 17:08:47 +0200
-Message-ID: <20140730150846.GB1345@ulmo>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V2 7/8] drm/bridge: Add i2c based driver for ptn3460 bridge
+Date: Wed, 30 Jul 2014 20:46:44 +0530
+Message-ID: <CAEC9eQPERoZjPV5=P_Re_Bs7gT7Q5Q_Z6sJViuxoG8oo9O3=-w@mail.gmail.com>
 References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <1406316130-4744-7-git-send-email-ajaykumar.rs@samsung.com>
- <20140730111931.GI29590@ulmo>
- <CAEC9eQPv-D2ThnHR=FZiXJJisMf9NRqS-TJQKdZRjV45Y0Mjsw@mail.gmail.com>
+ <1406316130-4744-8-git-send-email-ajaykumar.rs@samsung.com>
+ <20140730120504.GJ29590@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1630905823=="
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAEC9eQPv-D2ThnHR=FZiXJJisMf9NRqS-TJQKdZRjV45Y0Mjsw@mail.gmail.com>
+In-Reply-To: <20140730120504.GJ29590@ulmo>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -20,210 +19,400 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay kumar <ajaynumb@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
 Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Wed, Jul 30, 2014 at 5:35 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Sat, Jul 26, 2014 at 12:52:09AM +0530, Ajay Kumar wrote:
+> [...]
+>> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+>> index 1e2f96c..0b12d16 100644
+>> --- a/drivers/gpu/drm/bridge/Kconfig
+>> +++ b/drivers/gpu/drm/bridge/Kconfig
+>> @@ -6,4 +6,14 @@ config DRM_BRIDGE
+>>
+>>  menu "bridge chips"
+>>       depends on DRM_BRIDGE
+>> +
+>> +config DRM_PTN3460
+>> +     tristate "NXP ptn3460 eDP/LVDS bridge"
+>> +     depends on DRM && DRM_BRIDGE
+>
+> I don't think you need these two dependencies any longer since they are
+> implicit in the "bridge chips" menu.
+Ok.
 
---===============1630905823==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jho1yZJdad60DJr+"
-Content-Disposition: inline
+>> diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
+> [...]
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_gpio.h>
+>> +#include <linux/i2c.h>
+>> +#include <linux/gpio.h>
+>> +#include <linux/delay.h>
+>> +#include <drm/drm_panel.h>
+>
+> These should be ordered alphabetically, but they are already this way in
+> the original driver, so the reordering can be a separate patch.
+This can be done later.
 
+>> +struct ptn3460_bridge {
+>> +     struct drm_connector connector;
+>> +     struct i2c_client *client;
+>> +     struct drm_bridge *bridge;
+>
+> I think it would be much more natural for ptn3460_bridge to embed struct
+> drm_bridge rather than store a pointer to it.
+Right. As you said, we can eliminate driver_private and use container_of.
 
---jho1yZJdad60DJr+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> +     struct drm_panel *panel;
+>> +     struct edid *edid;
+>> +     struct gpio_desc *gpio_pd_n;
+>> +     struct gpio_desc *gpio_rst_n;
+>> +     u32 edid_emulation;
+>> +     bool enabled;
+>> +};
+>> +
+>> +static int ptn3460_read_bytes(struct ptn3460_bridge *ptn_bridge, char addr,
+>> +             u8 *buf, int len)
+>> +{
+>> +     int ret;
+>> +
+>> +     ret = i2c_master_send(ptn_bridge->client, &addr, 1);
+>> +     if (ret <= 0) {
+>> +             DRM_ERROR("Failed to send i2c command, ret=%d\n", ret);
+>> +             return ret;
+>> +     }
+>> +
+>> +     ret = i2c_master_recv(ptn_bridge->client, buf, len);
+>> +     if (ret <= 0) {
+>> +             DRM_ERROR("Failed to recv i2c data, ret=%d\n", ret);
+>> +             return ret;
+>> +     }
+>
+> This isn't introduced by this patch, but doesn't this require locking so
+> that this is an atomic transaction?
+>
+> Perhaps it could be rewritten using i2c_smbus_read_block_data()?
+Well, I am not quite aware of i2c functions. I will have a look into it though.
 
-On Wed, Jul 30, 2014 at 08:01:44PM +0530, Ajay kumar wrote:
-> On Wed, Jul 30, 2014 at 4:49 PM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > On Sat, Jul 26, 2014 at 12:52:08AM +0530, Ajay Kumar wrote:
-> >> This patch tries to seperate drm_bridge implementation
-> >> into 2 parts, a drm part and a non_drm part.
-> >>
-> >> A set of helper functions are defined in this patch to make
-> >> bridge driver probe independent of the drm flow.
-> >>
-> >> The bridge devices register themselves on a lookup table
-> >> when they get probed by calling "drm_bridge_add_for_lookup".
-> >>
-> >> The parent encoder driver waits till the bridge is available in the
-> >> lookup table(by calling "of_drm_find_bridge") and then continues with
-> >> its initialization.
-> >>
-> >> The encoder driver should call "drm_bridge_attach_encoder" to pass on
-> >> the drm_device and the encoder pointers to the bridge object.
-> >>
-> >> Now that the drm_device pointer is available, the encoder then calls
-> >> "bridge->funcs->post_encoder_init" to allow the bridge to continue
-> >> registering itself with the drm core.
-> >>
-> >> Also, non driver model based ptn3460 driver is removed in this patch.
-> >
-> > Why is it removed in this patch? Can't you do this incrementally rather
-> > than remove the driver in this patch and add it again later? If you do
-> > it this way then we'll always have this one commit where devices that
-> > have a ptn3460 don't work, so it becomes impossible to bisect across
-> > this commit.
-> Ok. I will try to modify ptn3460 to support driver model in this patch it=
-self.
-> And then, adding panel support, converting it to gpiod interface and other
-> cleanups should follow.
+>> +static int ptn3460_write_byte(struct ptn3460_bridge *ptn_bridge, char addr,
+>> +             char val)
+>> +{
+>> +     int ret;
+>> +     char buf[2];
+>> +
+>> +     buf[0] = addr;
+>> +     buf[1] = val;
+>> +
+>> +     ret = i2c_master_send(ptn_bridge->client, buf, ARRAY_SIZE(buf));
+>> +     if (ret <= 0) {
+>> +             DRM_ERROR("Failed to send i2c command, ret=%d\n", ret);
+>> +             return ret;
+>> +     }
+>> +
+>> +     return 0;
+>> +}
+>
+> Same here, this looks like it could be i2c_smbus_write_byte_data().
+>
+>> +static int ptn3460_select_edid(struct ptn3460_bridge *ptn_bridge)
+>> +{
+>> +     int ret;
+>> +     char val;
+>> +
+>> +     /* Load the selected edid into SRAM (accessed at PTN3460_EDID_ADDR) */
+>> +     ret = ptn3460_write_byte(ptn_bridge, PTN3460_EDID_SRAM_LOAD_ADDR,
+>> +                     ptn_bridge->edid_emulation);
+>> +     if (ret) {
+>> +             DRM_ERROR("Failed to transfer edid to sram, ret=%d\n", ret);
+>> +             return ret;
+>> +     }
+>> +
+>> +     /* Enable EDID emulation and select the desired EDID */
+>> +     val = 1 << PTN3460_EDID_ENABLE_EMULATION |
+>> +             ptn_bridge->edid_emulation << PTN3460_EDID_EMULATION_SELECTION;
+>> +
+>> +     ret = ptn3460_write_byte(ptn_bridge, PTN3460_EDID_EMULATION_ADDR, val);
+>> +     if (ret) {
+>> +             DRM_ERROR("Failed to write edid value, ret=%d\n", ret);
+>> +             return ret;
+>> +     }
+>> +
+>> +     return 0;
+>> +}
+>
+> s/edid/EDID/ in the above (and below, too), but again the original
+> driver had this, so it can be a separate patch.
+This can be done later.
 
-I think it should even be possible to do this in more separate steps.
-For example you could add the new bridge infrastructure without touching
-any of the existing drivers (so that they are completely unaffected by
-the changes) and then start converting one by one.
+>> +static void ptn3460_pre_enable(struct drm_bridge *bridge)
+>> +{
+>> +     struct ptn3460_bridge *ptn_bridge = bridge->driver_private;
+>
+> If you embed drm_bridge within ptn3460_bridge then you can use the much
+> more canonical container_of() macro (or rather a driver-specific inline
+> function that wraps it) and no longer need the drm_bridge.driver_private
+> field.
+Agreed.
 
-For some of the changes this may be difficult (such as the dev ->
-drm_dev rename to make room for the new struct device *dev). But that
-could for example be done in a preparatory patch that first renames the
-field, so that the "infrastructure" patch can add the new field without
-renaming any fields and therefore needing changes to drivers directly.
+>> +     int ret;
+>> +
+>> +     if (ptn_bridge->enabled)
+>> +             return;
+>> +
+>> +     gpiod_set_value(ptn_bridge->gpio_pd_n, 1);
+>> +
+>> +     gpiod_set_value(ptn_bridge->gpio_rst_n, 0);
+>> +     udelay(10);
+>
+> This shouldn't be using udelay(), usleep_range(10, 20) (or similar)
+> would be better. Again, can be a separate patch.
+>
+>> +     gpiod_set_value(ptn_bridge->gpio_rst_n, 1);
+>
+> It also seems like you've converted to using the gpiod_*() API, but the
+> driver previously used gpio_is_valid() to check that both PD and RST
+> pins had valid GPIOs associated with them. The device tree binding said
+> that they are required, though.
+>
+> So this patch actually does the right thing by making them non-optional
+> but it also changes behaviour from the original. Like I said earlier, I
+> would very much prefer that this conversion be split into separate
+> patches rather than one patch that removes the old driver and a second
+> patch that adds a new one. It makes it really difficult to tell what's
+> really changing, breaks bisectability and generally makes our lives
+> miserable.
+Ok. I will add these as incremental changes.
 
-The goal of that whole exercise is to allow display drivers to keep
-working with the existing API (ptn3460_init()) while we convert the
-bridge drivers to register with the new framework. Then we can more
-safely convert each display driver individually to make use of the new
-framework and once all drivers have been converted the old API can
-simply be removed.
+>> +
+>> +     drm_panel_prepare(ptn_bridge->panel);
+>
+> This should check for errors.
+Ok.
 
-That way there should be no impact on existing functionality at any
-point.
+>> +static void ptn3460_enable(struct drm_bridge *bridge)
+>> +{
+>> +     struct ptn3460_bridge *ptn_bridge = bridge->driver_private;
+>> +
+>> +     drm_panel_enable(ptn_bridge->panel);
+>
+> Should check for errors as well.
+Ok.
 
-> >> diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
-> > [...]
-> >
-> > Maybe since you're introducing a new drm_bridge.c file above already it
-> > would make sense to move out existing drm_bridge related code in a
-> > preparatory patch?
-> >
-> > Maybe Sean or Rob can comment on whether there was a specific reason to
-> > include it in drm_crtc.c in the first place.
-> >
-> >> @@ -1012,8 +1010,7 @@ int drm_bridge_init(struct drm_device *dev, stru=
-ct drm_bridge *bridge,
-> >>       if (ret)
-> >>               goto out;
-> >>
-> >> -     bridge->dev =3D dev;
-> >> -     bridge->funcs =3D funcs;
-> >> +     bridge->drm_dev =3D dev;
-> >
-> > This sets ->drm_dev, but it was already set in drm_bridge_attach(), so I
-> > think that's one more argument to call this function when attaching.
-> Point accepted.
+>> +int ptn3460_get_modes(struct drm_connector *connector)
+>
+> static? There seem to be quite a few functions that can be locally
+> scoped. Again, this seems to be the case in the original driver as
+> but it should definitely be fixed at some point.
+Ok.
 
-I forgot to mention earlier. drm_dev seems redundant to me. I'd go with
-just "drm".
+>> +{
+>> +     struct ptn3460_bridge *ptn_bridge;
+>> +     u8 *edid;
+>> +     int ret, num_modes;
+>> +     bool power_off;
+>> +
+>> +     ptn_bridge = container_of(connector, struct ptn3460_bridge, connector);
+>> +
+>> +     if (ptn_bridge->edid)
+>> +             return drm_add_edid_modes(connector, ptn_bridge->edid);
+>> +
+>> +     power_off = !ptn_bridge->enabled;
+>> +     ptn3460_pre_enable(ptn_bridge->bridge);
+>> +
+>> +     edid = kmalloc(EDID_LENGTH, GFP_KERNEL);
+>> +     if (!edid) {
+>> +             DRM_ERROR("Failed to allocate edid\n");
+>> +             return 0;
+>> +     }
+>> +
+>> +     ret = ptn3460_read_bytes(ptn_bridge, PTN3460_EDID_ADDR, edid,
+>> +                     EDID_LENGTH);
+>> +     if (ret) {
+>> +             kfree(edid);
+>> +             num_modes = 0;
+>
+> Maybe instead of doing this here you can initialize the variable when
+> you declare it? It's always been that way, so can be a separate patch,
+> too.
+Ok.
 
-> >> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-> >> index e529b68..e5a41ad 100644
-> >> --- a/include/drm/drm_crtc.h
-> >> +++ b/include/drm/drm_crtc.h
-> >> @@ -619,6 +619,7 @@ struct drm_plane {
-> >>
-> >>  /**
-> >>   * drm_bridge_funcs - drm_bridge control functions
-> >> + * @post_encoder_init: called by the parent encoder
-> >
-> > Maybe rename this to "attach" to make it more obvious when exactly it's
-> > called?
-> "post_encoder_attach"?
+>> +struct drm_encoder *ptn3460_best_encoder(struct drm_connector *connector)
+>> +{
+>> +     struct ptn3460_bridge *ptn_bridge;
+>> +
+>> +     ptn_bridge = container_of(connector, struct ptn3460_bridge, connector);
+>
+> You use this long construct a couple of times, so it's useful to
+> introduce a helper, such as this:
+>
+>         static inline struct ptn3460_bridge *
+>         connector_to_ptn3460(struct drm_connector *connector)
+>         {
+>                 return container_of(connector, struct ptn3460_bridge, connector);
+>         }
+Ok, will use this.
 
-"post_encoder_" doesn't contain much information, or even ambiguous
-information. What does "post" "encoder" mean? A bridge is always
-attached to an encoder, so "encoder" can be dropped. Now "post" has
-implications as to the time when it is called, but does it mean after
-the encoder has been initialized, or after the encoder has been removed?
-Simply "attach" means it's called by the parent encoder to initialize
-the bridge once it's been attached to an encoder. So obviously it's
-after the encoder has been initialized. "attach" has all he information
-required. Any prefix is redundant in my opinion and removing prefixes
-gives shorter names and reduces the number of keypresses.
+>> +int ptn3460_post_encoder_init(struct drm_bridge *bridge)
+>> +{
+>> +     struct ptn3460_bridge *ptn_bridge = bridge->driver_private;
+>> +     int ret;
+>> +
+>> +     /* bridge is attached to encoder.
+>> +      * safe to remove it from the bridge_lookup table.
+>> +      */
+>> +     drm_bridge_remove_from_lookup(bridge);
+>
+> No, you should never do this. First, you're not adding it back to the
+> registry when the bridge is detached, so unloading and reloading the
+> display driver will fail. Second there should never be a need to remove
+> it from the registry as long as the driver itself is loaded. If you're
+> concerned about a single bridge being used multiple times, there's
+> already code to handle that in your previous patch:
+>
+>         int drm_bridge_attach_encoder(...)
+>         {
+>                 ...
+>
+>                 if (bridge->encoder)
+>                         return -EBUSY;
+>
+>                 ...
+>         }
+>
+> Generally the registry should contain a list of bridges that have been
+> registered, whether they're used or not is irrelevant.
+I was just wondering if it is ok to have a node in two independent lists?
+bridge_lookup_table and the other mode_config.bridge_list?
 
-> >>   * @mode_fixup: Try to fixup (or reject entirely) proposed mode for t=
-his bridge
-> >>   * @disable: Called right before encoder prepare, disables the bridge
-> >>   * @post_disable: Called right after encoder prepare, for lockstepped=
- disable
-> >> @@ -628,6 +629,7 @@ struct drm_plane {
-> >>   * @destroy: make object go away
-> >>   */
-> >>  struct drm_bridge_funcs {
-> >> +     int (*post_encoder_init)(struct drm_bridge *bridge);
-> >>       bool (*mode_fixup)(struct drm_bridge *bridge,
-> >>                          const struct drm_display_mode *mode,
-> >>                          struct drm_display_mode *adjusted_mode);
-> >> @@ -648,15 +650,19 @@ struct drm_bridge_funcs {
-> >>   * @base: base mode object
-> >>   * @funcs: control functions
-> >>   * @driver_private: pointer to the bridge driver's internal context
-> >> + * @connector_polled: polled flag needed for registering connector
-> >
-> > Can you explain why this new field is needed? It seems like a completely
-> > unrelated change.
-> How do I select this flag for the bridge chip?
-> Assume if I did select DRM_CONNECTOR_POLL_HPD, where to call
-> drm_helper_hpd_irq_event in the driver? Is post_encoder_init a right plac=
-e?
->=20
-> Without the polled flag, I get display very late.
-> Please throw some light on this!
+>> +     ret = drm_bridge_init(bridge->drm_dev, bridge);
+>> +     if (ret) {
+>> +             DRM_ERROR("Failed to initialize bridge with drm\n");
+>> +             return ret;
+>> +     }
+>> +
+>> +     /* connector implementation */
+>> +     ptn_bridge->connector.polled = bridge->connector_polled;
+>
+> Why does this need to be handed from bridge to connector? You implement
+> both the connector and the bridge in this driver, so can't you directly
+> set ptn_bridge->connector.polled as appropriate?
+As explained for the previous patch, how to choose the polled flag?
 
-I just don't understand why it's necessary to implement this field in
-the drm_bridge. Every bridge driver will already implement a connector,
-in which case it can simply set the connector's .polled field, can't it?
+>> +     ret = drm_connector_init(bridge->drm_dev, &ptn_bridge->connector,
+>> +                     &ptn3460_connector_funcs, DRM_MODE_CONNECTOR_LVDS);
+>> +     if (ret) {
+>> +             DRM_ERROR("Failed to initialize connector with drm\n");
+>> +             return ret;
+>> +     }
+>> +     drm_connector_helper_add(&ptn_bridge->connector,
+>> +                                     &ptn3460_connector_helper_funcs);
+>> +     drm_connector_register(&ptn_bridge->connector);
+>> +     drm_mode_connector_attach_encoder(&ptn_bridge->connector,
+>> +                                                     bridge->encoder);
+>> +
+>> +     if (ptn_bridge->panel)
+>> +             drm_panel_attach(ptn_bridge->panel, &ptn_bridge->connector);
+>> +
+>> +     return ret;
+>> +}
+>
+> I'm thinking that eventually we'll want to register the connector only
+> when a panel is attached to the bridge. This will only become important
+> when we implement bridge chaining because if you instantiate a connector
+> for each bridge then you'll get a list of connectors for the DRM device
+> representing the output of each bridge rather than just the final one
+> that goes to the display.
+So, do not initialize connector if there is no panel? and, get_modes
+via panel instead of doing it by edid-emulation?
 
-It seems like the only reason you have it in drm_bridge is so that the
-encoder driver can set it. But I don't see why it should be doing that.
-The polled state is a property of the connector, and the encoder driver
-doesn't know anything about it. So if the bridge has a way to detect HPD
-then it should be setting up the connector to properly report it. For
-example if the bridge has an input pin to detect it, then it could use a
-GPIO to receive interrupts and call drm_helper_hpd_irq_event() in the
-interrupt handler.
+>> +static int ptn3460_probe(struct i2c_client *client,
+>> +                             const struct i2c_device_id *id)
+>> +{
+>> +     struct device *dev = &(client->dev);
+>
+> No need for the parentheses here.
+Ok.
 
-Perhaps you can explain the exact setup where you need this (or point me
-at the code since I can't seem to find the relevant location) so that I
-can gain a better understanding.
+>> +     struct device_node *panel_node;
+>> +     struct drm_bridge *bridge;
+>> +     struct ptn3460_bridge *ptn_bridge;
+>> +     int ret;
+>> +
+>> +     bridge = devm_kzalloc(dev, sizeof(*bridge), GFP_KERNEL);
+>> +     if (!bridge) {
+>> +             DRM_ERROR("Failed to allocate drm bridge\n");
+>> +             return -ENOMEM;
+>> +     }
+>> +
+>> +     ptn_bridge = devm_kzalloc(dev, sizeof(*ptn_bridge), GFP_KERNEL);
+>> +     if (!ptn_bridge) {
+>> +             DRM_ERROR("Failed to allocate ptn bridge\n");
+>> +             return -ENOMEM;
+>> +     }
+>
+> No need for error messages on allocation failures. The allocator will
+> already complain itself.
+>
+> Also I think it's usually better to use the dev_*() functions to print
+> messages, especially given that at this stage we're not even hooked up
+> to DRM in the first place.
+>
+> So in general I try to use DRM_*() functions only from DRM-specific
+> callbacks (or functions called from them) and dev_*() otherwise.
+Ok, will fix them.
 
-Thierry
+>> +static int ptn3460_remove(struct i2c_client *client)
+>> +{
+>> +     return 0;
+>> +}
+>
+> This function should remove the bridge from the lookup table by calling
+> drm_bridge_remove().
+Just one doubt, already asked above.
 
---jho1yZJdad60DJr+
-Content-Type: application/pgp-signature
+>> +
+>> +static const struct i2c_device_id ptn3460_i2c_table[] = {
+>> +     {"nxp,ptn3460", 0},
+>> +     {},
+>> +};
+>> +MODULE_DEVICE_TABLE(i2c, ptn3460_i2c_table);
+>> +
+>> +static const struct of_device_id ptn3460_match[] = {
+>> +     { .compatible = "nxp,ptn3460" },
+>> +     {},
+>> +};
+>> +MODULE_DEVICE_TABLE(of, ptn3460_match);
+>> +
+>> +struct i2c_driver ptn3460_driver = {
+>
+> Is there a reason why this can't be static?
+Will make it static.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+>> +     .id_table       = ptn3460_i2c_table,
+>> +     .probe          = ptn3460_probe,
+>> +     .remove         = ptn3460_remove,
+>> +     .driver         = {
+>> +             .name   = "nxp,ptn3460",
+>> +             .owner  = THIS_MODULE,
+>> +             .of_match_table = of_match_ptr(ptn3460_match),
+>
+> You don't need of_match_ptr() here since you already depend on OF in
+> Kconfig, therefore of_match_ptr(x) will always evaluate to x.
+Ok, will fix it.
 
-iQIcBAEBAgAGBQJT2Qp+AAoJEN0jrNd/PrOhyZsQAJzme5R0v2H4PzeAenjBMrfq
-gL6oQhINTywZDoLI9dOxiHkjxoWT5HZUDUWCoqQyeCkqLv6QY3/LsN2JCj/QJewh
-ihMcMkKuU5qDp2Iu11foV8g63AdUOvpKrGlkk2w1mTitOZS/N/v9v3Tc3qgVL/ON
-2diLbWVf4oSQFz3eB7X3r60OX1RsNeQuAMPm9+cfhuLILzzVLI2A0ZdtRixL9VM7
-pQLPuDLEbP9HnkZBFJEm2KPjPcuc/tmspFXAlrg/ivMhMVDcKKcp7NxkZNCRPGAV
-LXv1h1HMyJ4HpPTLhCMsyPk/ZWFqGoITOcHiWl7cAxiLobEhxgYQFHl4PxTp5LRy
-uA8PV5xF4ZgREIWYbBpQE2YXEksObzcFZbtdE4y2Qn8xhUGBv7lVkRoDmsnAjB9F
-tMksoG3kBNFzgkU3qoz86QDOttftWq/WxhbbgBF4m2LuJiXXb4LK5T6sIXZQA4+L
-9crbkBlW8MsRG+jF1FGk4lFZ3cB1ckf94i5FfjPPv2R0alEaZtJ22LliwjZc6icD
-zfbozz1lx3ShOMWPWk+OIinabGfA3CHDv2aL1fZz4/oeH8XcodkF1mvH/nB1KWlS
-MUx5TUB/t+/oVuF7iqY+w/1nkk/hrbX36j3E9TUjgbrC6nQdPiqg0xGKavEAIOr0
-Tyrf7MUSQYXIPnG3zbAE
-=KXHE
------END PGP SIGNATURE-----
+>> +     },
+>> +};
+>> +module_i2c_driver(ptn3460_driver);
+>> +
+>> +MODULE_AUTHOR("Sean Paul <seanpaul@chromium.org>");
+>> +MODULE_DESCRIPTION("NXP ptn3460 eDP-LVDS converter driver");
+>> +MODULE_LICENSE("GPL");
+>
+> This should be "GPL v2".
+Ok. Will fix it.
 
---jho1yZJdad60DJr+--
-
---===============1630905823==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1630905823==--
+Ajay
