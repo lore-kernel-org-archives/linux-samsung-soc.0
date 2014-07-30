@@ -1,137 +1,69 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V6 3/8] drm/panel: simple: Add support for auo_b133htn01
- panel
-Date: Wed, 30 Jul 2014 15:30:17 +0200
-Message-ID: <20140730133015.GN29590@ulmo>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <1406316130-4744-4-git-send-email-ajaykumar.rs@samsung.com>
- <20140730105132.GF29590@ulmo>
- <CAEC9eQN0mqhiEzn5mkVKu+cAqVkdQ90F73q9cNf76gMAZZ-LRg@mail.gmail.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH v6 10/14] drm/panel: add S6E3FA0 driver
+Date: Wed, 30 Jul 2014 16:40:52 +0300
+Message-ID: <53D8F5E4.1080301@ti.com>
+References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com> <1405587689-1466-11-git-send-email-yj44.cho@samsung.com> <20140717103645.GD17877@ulmo> <53C87D2F.9000906@samsung.com> <53CCD5A8.6090406@samsung.com> <20140721091917.GK8843@ulmo> <53CCF70A.5010403@samsung.com> <53CDDD61.6000005@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0660148508=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAEC9eQN0mqhiEzn5mkVKu+cAqVkdQ90F73q9cNf76gMAZZ-LRg@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============0660148508==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hD6P3ib1XCFtz2ni"
-Content-Disposition: inline
+	protocol="application/pgp-signature";
+	boundary="3JkDLsmuvKtmI7OhigoniVDGQKLHnk8Gn"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:55627 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751472AbaG3NlS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Jul 2014 09:41:18 -0400
+In-Reply-To: <53CDDD61.6000005@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: YoungJun Cho <yj44.cho@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Paul Mundt <paul.mundt@gmail.com>, Imre Deak <imre.deak@intel.com>
+
+--3JkDLsmuvKtmI7OhigoniVDGQKLHnk8Gn
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
+
+On 22/07/14 06:41, YoungJun Cho wrote:
+
+> Yes, this command is related with Nokia.
+>=20
+> Last Friday, I met panel vendor guy for some issues.
+> At the break time, I asked him for about this Read IDs(04H), why it is
+> not included in DCS specification.
+> He said that this command was originated by Nokia.
+> In feature phone times, most of panel vendors wanted their panels to be=
+
+> used by Nokia and Nokia wanted this command, so most of panel vendors
+> still provide this command traditionally.
+
+This is my understanding also. I think the whole MIPI DCS spec
+originated from Nokia's command set.
+
+ Tomi
 
 
---hD6P3ib1XCFtz2ni
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, Jul 30, 2014 at 05:02:11PM +0530, Ajay kumar wrote:
-> On Wed, Jul 30, 2014 at 4:21 PM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > On Sat, Jul 26, 2014 at 12:52:05AM +0530, Ajay Kumar wrote:
-> >> Add panel_desc structure for auo_b133htn01 eDP panel.
-> >>
-> >> Also, modify the panel_simple routines to support timing_parameter
-> >> delays if mentioned in the panel_desc structure.
-> >>
-> >> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> >> ---
-> >>  .../devicetree/bindings/panel/auo,b133htn01.txt    |    7 +++
-> >>  drivers/gpu/drm/panel/panel-simple.c               |   47 ++++++++++++++++++++
-> >>  2 files changed, 54 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/panel/auo,b133htn01.txt
-> >
-> > I think this should be two patches, one which adds the delay parameters
-> > and another which adds support for the new panel.
-> Ok. Will split it.
-
-I was going to propose that I split this up myself so you no longer have
-to worry about it. I can easily apply the changes we discussed. But if
-you prefer to keep it in one series that works for me too.
-
-> > In general I think it would be good to have a description of these in
-> > the struct panel_desc structure, something like this perhaps:
-> >
-> >         /**
-> >          * @prepare: the time (in milliseconds) that it takes for the panel
-> >          *           to become ready and start receiving video data
-> >          * @enable: the time (in milliseconds) that it takes for the panel
-> >          *          to display the first valid frame after starting to
-> >          *          receive video data
-> >          * @disable: the time (in milliseconds) that it takes for the panel
-> >          *           to turn the display off (no content is visible)
-> >          * @unprepare: the time (in milliseconds) that it takes for the panel
->                         to power down itself completely.
-> >          */
-> >         struct {
-> >                 unsigned int prepare;
-> >                 unsigned int enable;
-> >                 unsigned int disable;
-> >                 unsigned int unprepare;
-> >         } delay;
-> >
-> > For prepare and enable delays this would mean that they should take
-> > effect at the very end of the .prepare() and .enable() functions,
-> > respectively. For disable in means that it should be at the end (for
-> > example to take into account the time it takes for backlight to
-> > completely turn off). For unprepare I have no idea what we would need it
-> > for. And the new panel that you're adding in this patch doesn't use it
-> > either, so perhaps it can just be left out (for now)?
-> Actually, there was a typo.
-> That should have been .unprepare_stage_delay = 50.
-> This is needed because panels need some delay before powering
-> them on again.
-> As in, assume you are doing a test to turn on/off display continuously,
-> Then, the delay between
-> (N - 1)th cycle poweroff to Nth cycle poweron should be at least 500ms.
-> That's what the datasheet says! And, somehow 50ms works fine for me.
-
-Okay, that makes sense then.
-
-Thierry
-
---hD6P3ib1XCFtz2ni
-Content-Type: application/pgp-signature
+--3JkDLsmuvKtmI7OhigoniVDGQKLHnk8Gn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG v1
 
-iQIcBAEBAgAGBQJT2PNnAAoJEN0jrNd/PrOhZ+YP/3jT10M5/2gcLFu+e/NrZPvY
-zcAGAD3YSjJIqDMWr6rZS9joJ2U7s30sr2AUHhIhtS/xY1dYvOcRvqTe/yRvuEf/
-3Kq6Z6QC+zXtz/Oab0DQFaxr6tmp6qRLZR4jeL0Akk8pj3HCxKlwOpwsYL6O6Jkk
-vcowHWNqQ13q5kXKh/xMpsQ6xft4n9VGpqp9+HmbbNrjfLPjowXwa27EZchE047U
-9LMthtl18jksDJI+qVmD5fYc4ahSeXly3llprxcgXuXlvp+HrT5/NLG85o6X2ppi
-fvgy3krzFpPF+VlLWuxtArMUFWCQ4rCs7EjNcU5g0ZWaiaOi5i17nsOKnykuSjL1
-qkIJHI3GI4GzunBMFwDoI8Wt7csH5TMq6hsNaDw2si07TkCb6IE8p3gxNCbJ3Gw/
-mRJ3ylhfiYxggPqMAbZZrZSbFlxP4X8EeSYxcNiX812kVomr8haVmTEVz1hVqlIT
-miIwzTVYvM8PXYpyGu7MtX71v85ZOLsIaGFUZqGeuheDsAtBpGH3eunkoYom/biL
-Cd1PpVo74Oy0ZYUjZ6VBJmrQLeQ2bBAyQwW6f6qAOovjPXN1xgxF6z/T7ENb+xP4
-TQ9PozpI0V9BQBfwBi+vlCdeIeUR8x2GichGE9IJiFhImA4V+GlPLqKULM0u3fpb
-5b+hwRdz+tIRsYjNOhaC
-=k5q0
+iQIcBAEBAgAGBQJT2PXkAAoJEPo9qoy8lh71aRAP/3IXsIcwxDnruqY2FEgooDFS
+nvzwBm/V4J0v4BG1/HdWBlRvWgaE4mPSRiTFbLJKQ5Ya+DBLwTZ4JwbYoCV9Y8UC
+S0DVS/C6quonQrUBPqoN0k+lgS0NGpkQKNGvrEeJPu2kIXcqHyaawROYoYTyJEH4
+Oe06HPNq2D67LbRvEG4z28kn9HLXV8y2jyacVHkVgFDxYjLsHWUSFvULagCl7FJM
+r0eEz7t2gjtt3ZFJtup8GM9DZjJkO1K8vrfPb5xJoE9bs3I0SBzI123R1NBI1PGC
+j1CveZcDZ2ZKVtD9Ew70/Px1cmA1osvYC6VH39rcyVyaVL/Q31Mm8nQ9qEEsE30t
+Ijw0WnZI9Bj7pJoRguZKDxHspXyjUKc16tq0XS/mwILu77YsWi5/YVdzWg4khXG/
+NbwAjz/loyw/yAdaCE9uYhdu04V9kNrJDkckaoGJn1776jwQV+9tRtkP6OUnRDw5
+J8FHv9+/yzat5GesJX1jZZjsfY1xa2EgwI4Zd3I0eSwAWlsqzYk2y9WY6xx525/1
+9fZn9gOWOSGoOoGToF2y67G74IgeCnQ7gFn2GQUH1RuTvKXDjyAE3DLUT5EQA+A9
+DQuwWqEe5tP0PJRmYiHGGZ36JmJDmgScdk8G5jfV9kojwoVD4i9Qe+z/3DJGQ8vB
+k5QtizgvvuCPeOFeGrWQ
+=BKr1
 -----END PGP SIGNATURE-----
 
---hD6P3ib1XCFtz2ni--
-
---===============0660148508==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0660148508==--
+--3JkDLsmuvKtmI7OhigoniVDGQKLHnk8Gn--
