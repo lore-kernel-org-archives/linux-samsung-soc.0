@@ -1,91 +1,67 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V6 3/8] drm/panel: simple: Add support for auo_b133htn01 panel
-Date: Wed, 30 Jul 2014 19:12:37 +0530
-Message-ID: <CAEC9eQMzgpEzZsP7F7hGF16do+=Et7UpJDm3+EqiYmzdtqpbOQ@mail.gmail.com>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1406316130-4744-4-git-send-email-ajaykumar.rs@samsung.com>
-	<20140730105132.GF29590@ulmo>
-	<CAEC9eQN0mqhiEzn5mkVKu+cAqVkdQ90F73q9cNf76gMAZZ-LRg@mail.gmail.com>
-	<20140730133015.GN29590@ulmo>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH v6 10/14] drm/panel: add S6E3FA0 driver
+Date: Wed, 30 Jul 2014 16:44:21 +0300
+Message-ID: <53D8F6B5.4090903@ti.com>
+References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com> <1405587689-1466-11-git-send-email-yj44.cho@samsung.com> <20140717103645.GD17877@ulmo> <53C87D2F.9000906@samsung.com> <53CCD5A8.6090406@samsung.com> <20140721091917.GK8843@ulmo> <53CCF70A.5010403@samsung.com> <53CDDD61.6000005@samsung.com> <20140722074935.GC18258@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="B0EEds8a3xERofK0fIM8t0rQtppQBeHVn"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f169.google.com ([209.85.220.169]:43816 "EHLO
-	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751472AbaG3Nmi (ORCPT
+Received: from bear.ext.ti.com ([192.94.94.41]:37420 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751292AbaG3Nos (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jul 2014 09:42:38 -0400
-In-Reply-To: <20140730133015.GN29590@ulmo>
+	Wed, 30 Jul 2014 09:44:48 -0400
+In-Reply-To: <20140722074935.GC18258@ulmo>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
+To: Thierry Reding <thierry.reding@gmail.com>, YoungJun Cho <yj44.cho@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Paul Mundt <paul.mundt@gmail.com>, Imre Deak <imre.deak@intel.com>
 
-On Wed, Jul 30, 2014 at 7:00 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Wed, Jul 30, 2014 at 05:02:11PM +0530, Ajay kumar wrote:
->> On Wed, Jul 30, 2014 at 4:21 PM, Thierry Reding
->> <thierry.reding@gmail.com> wrote:
->> > On Sat, Jul 26, 2014 at 12:52:05AM +0530, Ajay Kumar wrote:
->> >> Add panel_desc structure for auo_b133htn01 eDP panel.
->> >>
->> >> Also, modify the panel_simple routines to support timing_parameter
->> >> delays if mentioned in the panel_desc structure.
->> >>
->> >> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->> >> ---
->> >>  .../devicetree/bindings/panel/auo,b133htn01.txt    |    7 +++
->> >>  drivers/gpu/drm/panel/panel-simple.c               |   47 ++++++++++++++++++++
->> >>  2 files changed, 54 insertions(+)
->> >>  create mode 100644 Documentation/devicetree/bindings/panel/auo,b133htn01.txt
->> >
->> > I think this should be two patches, one which adds the delay parameters
->> > and another which adds support for the new panel.
->> Ok. Will split it.
->
-> I was going to propose that I split this up myself so you no longer have
-> to worry about it. I can easily apply the changes we discussed. But if
-> you prefer to keep it in one series that works for me too.
-Well, you can only take in the "delay" structure as of now.
+--B0EEds8a3xERofK0fIM8t0rQtppQBeHVn
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-Ajay
->> > In general I think it would be good to have a description of these in
->> > the struct panel_desc structure, something like this perhaps:
->> >
->> >         /**
->> >          * @prepare: the time (in milliseconds) that it takes for the panel
->> >          *           to become ready and start receiving video data
->> >          * @enable: the time (in milliseconds) that it takes for the panel
->> >          *          to display the first valid frame after starting to
->> >          *          receive video data
->> >          * @disable: the time (in milliseconds) that it takes for the panel
->> >          *           to turn the display off (no content is visible)
->> >          * @unprepare: the time (in milliseconds) that it takes for the panel
->>                         to power down itself completely.
->> >          */
->> >         struct {
->> >                 unsigned int prepare;
->> >                 unsigned int enable;
->> >                 unsigned int disable;
->> >                 unsigned int unprepare;
->> >         } delay;
->> >
->> > For prepare and enable delays this would mean that they should take
->> > effect at the very end of the .prepare() and .enable() functions,
->> > respectively. For disable in means that it should be at the end (for
->> > example to take into account the time it takes for backlight to
->> > completely turn off). For unprepare I have no idea what we would need it
->> > for. And the new panel that you're adding in this patch doesn't use it
->> > either, so perhaps it can just be left out (for now)?
->> Actually, there was a typo.
->> That should have been .unprepare_stage_delay = 50.
->> This is needed because panels need some delay before powering
->> them on again.
->> As in, assume you are doing a test to turn on/off display continuously,
->> Then, the delay between
->> (N - 1)th cycle poweroff to Nth cycle poweron should be at least 500ms.
->> That's what the datasheet says! And, somehow 50ms works fine for me.
->
-> Okay, that makes sense then.
->
-> Thierry
+On 22/07/14 10:49, Thierry Reding wrote:
+
+> But what I was trying to say is that if the Read IDs command isn't an
+> official DCS command, maybe it would be a better idea to use the DDB
+> instead. I assume that even if it isn't the same information it would
+> at least be a superset and therefore a suitable replacement.
+
+Only if DDB commands work on that panel =3D). Even if a panel supports
+DCS, it doesn't mean it supports all the commands.
+
+Also, does it really matter which one to use inside a panel driver? I
+don't really see any pros nor cons with either option. Except, of
+course, if using one of those makes the driver's code simpler.
+
+ Tomi
+
+
+
+--B0EEds8a3xERofK0fIM8t0rQtppQBeHVn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJT2Pa1AAoJEPo9qoy8lh71Ei0P/0u7TZ5DRKYTKy3VFSA2/DSY
+SiR7StXFy+qmQVYqxYvTz5uruQmoF5YLDMZZP9gm9zy5BC/cf5ASeK79XCpFU3BA
+Xn8YN0zJmvpLesu5AWf2+7yxB+9Fhhtlp/o2WmfatT9eQ+k+w8GCq0a7AXHDrz1f
+wKXCfTMticjlam2eCRUMSQhcf1ejt0r9rV996gQU9tQoJL2cKi9ELwixZdo1OfK/
+5oAZl2tNVtanDetunCWGWZcRv2nC1K6710ja+qJWxLKbfqe7WktR9AbUmhN96P63
+Mkd0UX6RqFBUZOtAyUxLzgRVhqN/XxIu3+je8xMcwf4046oYbL8bWNC300a6WDom
+gRQp94C8lYZFzxt4AmLFyw1p/t5Cwkjb9w7Ukg9gHb5RaDNsmcJng0WgfmVc/gcz
+jM1Xl7micbwJsywLVjJUwXcD4wOZD8AM0TtuSebFUplreV2BZM2YF62FXNK3neYI
+t1J+yUTrsI97PNW8bRHoPrIoGnz8H28f3Q3BRJi/UMgcnIrKF0Zwc5c+RZ/C+Cr1
+ZE7oJHcufRgddYjsE46wsOHTZf5Q7dtH8rDFNo1LkT4OYpeWx/DVPUdEJBaSewlr
+ihcCZ8EW86BzwvmAiX1qmpGmwfw58mbE8On7GCUpjKKMGcLw/yosanvJKGRI35bU
+bGcAUSNVqaH0+r5Pp52L
+=48Yo
+-----END PGP SIGNATURE-----
+
+--B0EEds8a3xERofK0fIM8t0rQtppQBeHVn--
