@@ -1,123 +1,72 @@
 From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip
- support
-Date: Wed, 30 Jul 2014 15:54:13 +0530
-Message-ID: <CAEC9eQM6DkhP_k77uo6_GNgQMNWr_TVPC6ePUBgyzOr=V1A78Q@mail.gmail.com>
+Subject: Re: [PATCH V6 1/8] drm/panel: Add prepare, unprepare and get_modes routines
+Date: Wed, 30 Jul 2014 15:59:20 +0530
+Message-ID: <CAEC9eQPa3xGb4Z=gRqaN8SUyJsjyyBHb8ubk0=ZtW4EwPWNpCg@mail.gmail.com>
 References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <53D5435B.8030305@suse.de>
- <CAEC9eQPW-Z4craCC15M7oTp8eSD09AGxdTFEWaAWqn3Up4eJUg@mail.gmail.com>
- <53D783CC.2080108@suse.de> <20140729113645.GB21732@ulmo.nvidia.com>
- <53D78891.4080703@suse.de> <20140729114736.GB26346@ulmo.nvidia.com>
- <CAEC9eQOpmUsZKEJ_uK7Y73kn9Q5Rk8=n3jV9orBYwn2R4M0efA@mail.gmail.com>
- <20140730094053.GB29590@ulmo>
+	<1406316130-4744-2-git-send-email-ajaykumar.rs@samsung.com>
+	<20140730100028.GD29590@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140730094053.GB29590@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Doug Anderson <dianders@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ajay Kumar <ajaykumar.rs@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Prashanth G <prashanth.g@samsung.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f169.google.com ([209.85.220.169]:36099 "EHLO
+	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751138AbaG3K3V (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Jul 2014 06:29:21 -0400
+In-Reply-To: <20140730100028.GD29590@ulmo>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-T24gV2VkLCBKdWwgMzAsIDIwMTQgYXQgMzoxMCBQTSwgVGhpZXJyeSBSZWRpbmcKPHRoaWVycnku
-cmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4gT24gV2VkLCBKdWwgMzAsIDIwMTQgYXQgMTE6NTQ6
-MDBBTSArMDUzMCwgQWpheSBrdW1hciB3cm90ZToKPj4gSGkgVGhpZXJyeSwKPj4KPj4gT24gVHVl
-LCBKdWwgMjksIDIwMTQgYXQgNToxNyBQTSwgVGhpZXJyeSBSZWRpbmcKPj4gPHRoaWVycnkucmVk
-aW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4+ID4gT24gVHVlLCBKdWwgMjksIDIwMTQgYXQgMDE6NDI6
-MDlQTSArMDIwMCwgQW5kcmVhcyBGw6RyYmVyIHdyb3RlOgo+PiA+PiBBbSAyOS4wNy4yMDE0IDEz
-OjM2LCBzY2hyaWViIFRoaWVycnkgUmVkaW5nOgo+PiA+PiA+IE9uIFR1ZSwgSnVsIDI5LCAyMDE0
-IGF0IDAxOjIxOjQ4UE0gKzAyMDAsIEFuZHJlYXMgRsOkcmJlciB3cm90ZToKPj4gPj4gPj4gSGkg
-QWpheSwKPj4gPj4gPj4KPj4gPj4gPj4gQW0gMjguMDcuMjAxNCAwODoxMywgc2NocmllYiBBamF5
-IGt1bWFyOgo+PiA+PiA+Pj4gT24gNy8yNy8xNCwgQW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJlckBz
-dXNlLmRlPiB3cm90ZToKPj4gPj4gPj4+PiBBbSAyNS4wNy4yMDE0IDIxOjIyLCBzY2hyaWViIEFq
-YXkgS3VtYXI6Cj4+ID4+ID4+Pj4+IFRoaXMgc2VyaWVzIGlzIGJhc2VkIG9uIGV4eW5vcy1kcm0t
-bmV4dCBicmFuY2ggb2YgSW5raSBEYWUncyB0cmVlIGF0Ogo+PiA+PiA+Pj4+PiBnaXQ6Ly9naXQu
-a2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvZGFlaW5raS9kcm0tZXh5bm9zLmdp
-dAo+PiA+PiA+Pj4+Pgo+PiA+PiA+Pj4+PiBJIGhhdmUgdGVzdGVkIHRoaXMgYWZ0ZXIgYWRkaW5n
-IGZldyBEVCBjaGFuZ2VzIGZvciBleHlub3M1MjUwLXNub3csCj4+ID4+ID4+Pj4+IGV4eW5vczU0
-MjAtcGVhY2gtcGl0IGFuZCBleHlub3M1ODAwLXBlYWNoLXBpIGJvYXJkcy4KPj4gPj4gPj4+Pgo+
-PiA+PiA+Pj4+IEknbSB0cnlpbmcgdG8gdGVzdCB0aGlzIHdpdGggYSBtb2RpZmllZCBleHlub3M1
-MjUwLXNwcmluZyBEVAo+PiA+PiBbLi4uXQo+PiA+PiA+PiBVbmZvcnR1bmF0ZWx5IHRoZSBtb3N0
-IEkgZ290IG9uIFNwcmluZyB3aXRoIGF0dGFjaGVkIERUIHdhcyBhIGJsYW5rCj4+ID4+ID4+IHNj
-cmVlbiB3aXRoIGEgd2hpdGUgaG9yaXpvbnRhbCBsaW5lIGluIHRoZSBtaWRkbGUuCj4+ID4+ID4+
-Cj4+ID4+ID4+IERvIEkgbmVlZCB0byBzcGVjaWZ5IGEgc3BlY2lmaWMgcGFuZWwgbW9kZWwgZm9y
-IFNwcmluZz8KPj4gPj4gWy4uLl0KPj4gPj4gPj4gRnJvbSA5MTcyYTI2YThmMGQwZjBkMTcwYmQy
-N2UxYzE1MGFkMjA0ZDgwODZhIE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQo+PiA+PiA+PiBGcm9t
-OiA9P1VURi04P3E/QW5kcmVhcz0yMEY9QzM9QTRyYmVyPz0gPGFmYWVyYmVyQHN1c2UuZGU+Cj4+
-ID4+ID4+IERhdGU6IFN1biwgMjcgSnVsIDIwMTQgMjE6NTg6MDYgKzAyMDAKPj4gPj4gPj4gU3Vi
-amVjdDogW1BBVENIXSBBUk06IGR0czogZXh5bm9zNTI1MDogQWRkIGVEUC9MVkRTIGJyaWRnZSB0
-byBTcHJpbmcKPj4gPj4gPj4gTUlNRS1WZXJzaW9uOiAxLjAKPj4gPj4gPj4gQ29udGVudC1UeXBl
-OiB0ZXh0L3BsYWluOyBjaGFyc2V0PVVURi04Cj4+ID4+ID4+IENvbnRlbnQtVHJhbnNmZXItRW5j
-b2Rpbmc6IDhiaXQKPj4gPj4gPj4KPj4gPj4gPj4gU2lnbmVkLW9mZi1ieTogQWpheSBLdW1hciA8
-YWpheWt1bWFyLnJzQHNhbXN1bmcuY29tPgo+PiA+PiA+PiBbQUY6IFJlZG9uZSBmb3IgdjZdCj4+
-ID4+ID4+IFNpZ25lZC1vZmYtYnk6IEFuZHJlYXMgRj8/cmJlciA8YWZhZXJiZXJAc3VzZS5kZT4K
-Pj4gPj4gPj4gLS0tCj4+ID4+ID4+ICBhcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNwcmlu
-Zy5kdHMgfCAzMiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLQo+PiA+PiA+PiAgMSBm
-aWxlIGNoYW5nZWQsIDMxIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPj4gPj4gPj4KPj4g
-Pj4gPj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc3ByaW5nLmR0
-cyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc3ByaW5nLmR0cwo+PiA+PiA+PiBpbmRl
-eCA2ODdkZmFiODZiYzguLjUxN2IxZmYyYmZkZiAxMDA2NDQKPj4gPj4gPj4gLS0tIGEvYXJjaC9h
-cm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zcHJpbmcuZHRzCj4+ID4+ID4+ICsrKyBiL2FyY2gvYXJt
-L2Jvb3QvZHRzL2V4eW5vczUyNTAtc3ByaW5nLmR0cwo+PiA+PiA+PiBAQCAtNjQsMTAgKzY0LDE0
-IEBACj4+ID4+ID4+ICAgICAgICAgICAgdmRkX3BsbC1zdXBwbHkgPSA8JnM1bV9sZG84X3JlZz47
-Cj4+ID4+ID4+ICAgIH07Cj4+ID4+ID4+Cj4+ID4+ID4+ICsgIHBhbmVsOiBwYW5lbCB7Cj4+ID4+
-ID4+ICsgICAgICAgICAgY29tcGF0aWJsZSA9ICJzaW1wbGUtcGFuZWwiOwo+PiA+PiA+PiArICB9
-Owo+PiA+PiA+Cj4+ID4+ID4gWW91IGNhbid0IGRvIHRoaXMuICJzaW1wbGUtcGFuZWwiIGlzbid0
-IGEgdmFsaWQgcGFuZWwgbW9kZWwuIEl0IHNob3VsZAo+PiA+PiA+IHByb2JhYmx5IGJlIHJlbW92
-ZWQgZnJvbSB0aGUgcGxhdGZvcm1fb2ZfbWF0Y2ggdGFibGUgaW4gdGhlIGRyaXZlci4KPj4gPj4K
-Pj4gPj4gT2theSwgdGhhdCBtZWFucyB0aGUgU25vdyBEVCBpcyB3cm9uZywgdG9vOgo+PiA+PiBo
-dHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzQ2MjU0NDEvCj4+ID4+Cj4+ID4+IEFu
-ZCB0aGUgb3RoZXJzIHNwZWNpZnkgaXQgYXMgZmFsbGJhY2s6Cj4+ID4+IGh0dHBzOi8vcGF0Y2h3
-b3JrLmtlcm5lbC5vcmcvcGF0Y2gvNDYyNTQ2MS8KPj4gPj4gaHR0cHM6Ly9wYXRjaHdvcmsua2Vy
-bmVsLm9yZy9wYXRjaC80NjI1NDUxLwo+PiA+Cj4+ID4gQSBxdWljayBncmVwIHNob3dzIHRoYXQg
-bWFueSAoYWxsPykgZGV2aWNlcyB0aGF0IHVzZSBEUk0gcGFuZWxzIHByb3ZpZGUKPj4gPiBzaW1w
-bGUtcGFuZWwgYXMgZmFsbGJhY2suIFRoYXQncyBwcm9iYWJseSBmaW5lIGFzIGxvbmcgYXMgdGhl
-eSBhbHNvIGRvCj4+ID4gcHJvdmlkZSB0aGUgc3BlY2lmaWMgbW9kZWwuIEJ1dCBnaXZlbiB0aGF0
-IHNpbXBsZS1wYW5lbCBkb2VzIG5vdCBoYXZlIGEKPj4gPiBtb2RlIG9yIHBoeXNpY2FsIHNpemUs
-IEkgZG9uJ3QgdGhpbmsgZXZlbiB0aGF0IG1ha2VzIHNlbnNlLgo+PiBPbiBzbm93LCB0aGUgYnJp
-ZGdlIGNoaXAgcHJvdmlkZXMgdGhlIGRpc3BsYXkgbW9kZSBpbnN0ZWFkIG9mIHRoZSBwYW5lbC4K
-Pj4gVGhhdCBpcyB3aHkgZGlzcGxheSB3YXMgd29ya2luZyBmb3IgbWUuCj4KPiBPa2F5LCBJIHN1
-cHBvc2UgdW5kZXIgc29tZSBjaXJjdW1zdGFuY2VzIHRoYXQgbWlnaHQgbWFrZSBzZW5zZS4gQWx0
-aG91Z2gKPiBpdCdzIHN0aWxsIGFsd2F5cyB0aGUgcGFuZWwgdGhhdCBkaWN0YXRlcyB0aGUgZGlz
-cGxheSB0aW1pbmdzLCBzbyB0aGUKPiBwYW5lbCBub2RlIG5lZWRzIHRvIGhhdmUgYSBwYW5lbCBt
-b2RlbCBzcGVjaWZpYyBjb21wYXRpYmxlIHZhbHVlIHdpdGggYQo+IG1hdGNoaW5nIGVudHJ5IGlu
-IHRoZSBwYW5lbC1zaW1wbGUgZHJpdmVyIHNvIHRoYXQgaXQgY2FuIGV2ZW4gYmUgdXNlZCBpbgo+
-IHNldHVwcyB3aXRob3V0IGEgYnJpZGdlLgpXZWxsLCBJIGFtIG9rYXkgd2l0aCBhZGRpbmcgdGhl
-IGNvbXBhdGlibGUgdmFsdWUgZm9yIHNwZWNpZmljIHBhbmVsIG1vZGVsCmJlY2F1c2UgInNpbXBs
-ZS1wYW5lbCIgYWxvbmUgY2Fubm90IHByb3ZpZGUgd2lkdGgvaGVpZ2h0IG9mIHRoZSBwYW5lbC4K
-Cj4gT25lIG90aGVyIHRoaW5nOiBob3cgZG9lcyB0aGUgYnJpZGdlIGtub3cgd2hpY2ggbW9kZSB0
-byBkcml2ZT8gSSBzdXNwZWN0Cj4gdGhhdCBpdCBjYW4gZHJpdmUgbW9yZSB0aGFuIG9uZSBtb2Rl
-PyBDYW4gaXQgZnJlZWx5IGJlIGNvbmZpZ3VyZWQgb3IKPiBkb2VzIGl0IGhhdmUgYSBwcmVkZWZp
-bmVkIHNldCBvZiBtb2Rlcz8gSWYgdGhlIGxhdHRlciwgdGhlbiBhY2NvcmRpbmcgdG8KPiB3aGF0
-IHlvdSBzYWlkIGFib3ZlIHRoZXJlIG5lZWRzIHRvIGJlIGEgd2F5IHRvIGNvbmZpZ3VyZSB0aGUg
-YnJpZGdlICh2aWEKPiBEVD8pIHNvIHRoYXQgaXQgcmVwb3J0cyB0aGUgbW9kZSBtYXRjaGluZyB0
-aGUgcGFuZWwuIEkgd29uZGVyIGlmIHRoYXQKPiBzaG91bGQgYmUgaGFuZGxlZCBjb21wbGV0ZWx5
-IGluIGNvZGUsIHNvIHRoYXQgZm9yIGV4YW1wbGUgYSBicmlkZ2UgaGFzIGEKPiBwYW5lbCBhdHRh
-Y2hlZCBpdCBjYW4gdXNlIHRoZSBwYW5lbCdzIC5nZXRfbW9kZXMoKSBhbmQgc2VsZWN0IGEgbWF0
-Y2hpbmcKPiBtb2RlIGFtb25nIHRoZSBzZXQgdGhhdCBpdCBzdXBwb3J0cy4KcHRuMzQ2MCBzdXBw
-b3J0cyBhIHN0YW5kYXJkIGxpc3Qgb2YgImVkaWQtZW11bGF0aW9uIiBpZHMuCkFzIG9mIG5vdywg
-d2UgcmVjZWl2ZSB0aGF0IGFzIGEgRFQgZW50cnkuCkFuZCwgdGhlc2UgYXJlIHRoZSBsaXN0IG9m
-IGVtdWxhdGlvbiBpZHMgc3VwcG9ydGVkOgoKICAgICAgICAgICAgICAgIHwgVmFsdWUgfCBSZXNv
-bHV0aW9uIHwgRGVzY3JpcHRpb24KICAgICAgICAgICAgICAgIHwgICAwICAgfCAgMTAyNHg3Njgg
-IHwgTlhQIEdlbmVyaWMKICAgICAgICAgICAgICAgIHwgICAxICAgfCAgMTkyMHgxMDgwIHwgTlhQ
-IEdlbmVyaWMKICAgICAgICAgICAgICAgIHwgICAyICAgfCAgMTkyMHgxMDgwIHwgTlhQIEdlbmVy
-aWMKICAgICAgICAgICAgICAgIHwgICAzICAgfCAgMTYwMHg5MDAgIHwgU2Ftc3VuZyBMVE0yMDBL
-VAogICAgICAgICAgICAgICAgfCAgIDQgICB8ICAxOTIweDEwODAgfCBTYW1zdW5nIExUTTIzMEhU
-CiAgICAgICAgICAgICAgICB8ICAgNSAgIHwgIDEzNjZ4NzY4ICB8IE5YUCBHZW5lcmljCiAgICAg
-ICAgICAgICAgICB8ICAgNiAgIHwgIDE2MDB4OTAwICB8IENoaU1laSBNMjE1SEdFCgpBcyB5b3Ug
-Y2FuIHNlZSwgdGhlIHNhbWUgcmVzb2x1dGlvbnMgaGF2ZSBkaWZmZXJlbnQgZW11bGF0b3IgaWRz
-LgpNYXkgYmUsIGl0IGRlcGVuZHMgb24gcGFuZWwgdmVuZG9yIGFsc28uIEkgYW0gcmVhbGx5IG5v
-dCBzdXJlIGlmIHdlIGNhbiBkbyB0aGlzLgpGb3Igc25vdyh3aGljaCBoYXMgMTM2Nng3NjggcGFu
-ZWwpLCB3ZSBzZXQgZWRpZC1lbXVsYXRpb24gYXMgNS4KCgpBamF5Cl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Wed, Jul 30, 2014 at 3:30 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Sat, Jul 26, 2014 at 12:52:03AM +0530, Ajay Kumar wrote:
+>> Most of the panels need an init sequence as mentioned below:
+>>       -- poweron LCD unit/LCD_EN
+>>       -- start video data
+>>       -- poweron LED unit/BACKLIGHT_EN
+>> And, a de-init sequence as mentioned below:
+>>       -- poweroff LED unit/BACKLIGHT_EN
+>>       -- stop video data
+>>       -- poweroff LCD unit/LCD_EN
+>> With existing callbacks for drm panel, we cannot accomodate such panels,
+>> since only two callbacks, i.e "panel_enable" and panel_disable are supported.
+>>
+>> This patch adds:
+>>       -- "prepare" callback which can be called before
+>>       the actual video data is on, and then call the "enable"
+>>       callback after the video data is available.
+>>
+>>       -- "unprepare" callback which can be called after
+>>       the video data is off, and use "disable" callback
+>>       to do something before switching off the video data.
+>>
+>> Now, we can easily map the above scenario as shown below:
+>>       poweron LCD unit/LCD_EN = "prepare" callback
+>>       poweron LED unit/BACKLIGHT_EN = "enable" callback
+>>       poweroff LED unit/BACKLIGHT_EN = "disable" callback
+>>       poweroff LCD unit/LCD_EN = "unprepare" callback
+>>
+>> Also, a helper function for get_modes is added.
+>>
+>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>> ---
+>>  include/drm/drm_panel.h |   26 ++++++++++++++++++++++++++
+>>  1 file changed, 26 insertions(+)
+>
+> I had already decided to apply an earlier version that you posted (I
+> think the only difference was that it didn't have the inline
+> implementation for drm_panel_get_modes() yet), reworded the commit
+> message a little (to be less specific about LED, LCD and backlight
+> units) and added some kerneldoc for struct drm_panel_funcs.
+>
+> What I propose is to merge that patch (I'll hopefully push it today so
+> that it shows up in tomorrow's linux-next) and then apply a separate
+> patch to add drm_panel_get_modes().
+>
+> Do you have any objections to that?
+I am okay with that. drm_panel_get_modes() will come as a separate patch.
+
+
+Ajay
