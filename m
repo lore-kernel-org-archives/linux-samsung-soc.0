@@ -1,91 +1,229 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v6 10/14] drm/panel: add S6E3FA0 driver
-Date: Wed, 30 Jul 2014 16:36:20 +0200
-Message-ID: <20140730143619.GA1345@ulmo>
-References: <1405587689-1466-1-git-send-email-yj44.cho@samsung.com>
- <1405587689-1466-11-git-send-email-yj44.cho@samsung.com>
- <20140717103645.GD17877@ulmo>
- <53C87D2F.9000906@samsung.com>
- <53CCD5A8.6090406@samsung.com>
- <20140721091917.GK8843@ulmo>
- <53CCF70A.5010403@samsung.com>
- <53CDDD61.6000005@samsung.com>
- <20140722074935.GC18258@ulmo>
- <53D8F6B5.4090903@ti.com>
+Subject: Re: [PATCH V6 6/8] drm/bridge: Modify drm_bridge core to support
+ driver model
+Date: Wed, 30 Jul 2014 17:08:47 +0200
+Message-ID: <20140730150846.GB1345@ulmo>
+References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1406316130-4744-7-git-send-email-ajaykumar.rs@samsung.com>
+ <20140730111931.GI29590@ulmo>
+ <CAEC9eQPv-D2ThnHR=FZiXJJisMf9NRqS-TJQKdZRjV45Y0Mjsw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OgqxwSJOaUobr8KG"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f182.google.com ([74.125.82.182]:56737 "EHLO
-	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752834AbaG3Og0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jul 2014 10:36:26 -0400
-Content-Disposition: inline
-In-Reply-To: <53D8F6B5.4090903@ti.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1630905823=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAEC9eQPv-D2ThnHR=FZiXJJisMf9NRqS-TJQKdZRjV45Y0Mjsw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: YoungJun Cho <yj44.cho@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, inki.dae@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Paul Mundt <paul.mundt@gmail.com>, Imre Deak <imre.deak@intel.com>
 
 
---OgqxwSJOaUobr8KG
-Content-Type: text/plain; charset=utf-8
+--===============1630905823==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jho1yZJdad60DJr+"
+Content-Disposition: inline
+
+
+--jho1yZJdad60DJr+
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 30, 2014 at 04:44:21PM +0300, Tomi Valkeinen wrote:
-> On 22/07/14 10:49, Thierry Reding wrote:
+On Wed, Jul 30, 2014 at 08:01:44PM +0530, Ajay kumar wrote:
+> On Wed, Jul 30, 2014 at 4:49 PM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > On Sat, Jul 26, 2014 at 12:52:08AM +0530, Ajay Kumar wrote:
+> >> This patch tries to seperate drm_bridge implementation
+> >> into 2 parts, a drm part and a non_drm part.
+> >>
+> >> A set of helper functions are defined in this patch to make
+> >> bridge driver probe independent of the drm flow.
+> >>
+> >> The bridge devices register themselves on a lookup table
+> >> when they get probed by calling "drm_bridge_add_for_lookup".
+> >>
+> >> The parent encoder driver waits till the bridge is available in the
+> >> lookup table(by calling "of_drm_find_bridge") and then continues with
+> >> its initialization.
+> >>
+> >> The encoder driver should call "drm_bridge_attach_encoder" to pass on
+> >> the drm_device and the encoder pointers to the bridge object.
+> >>
+> >> Now that the drm_device pointer is available, the encoder then calls
+> >> "bridge->funcs->post_encoder_init" to allow the bridge to continue
+> >> registering itself with the drm core.
+> >>
+> >> Also, non driver model based ptn3460 driver is removed in this patch.
+> >
+> > Why is it removed in this patch? Can't you do this incrementally rather
+> > than remove the driver in this patch and add it again later? If you do
+> > it this way then we'll always have this one commit where devices that
+> > have a ptn3460 don't work, so it becomes impossible to bisect across
+> > this commit.
+> Ok. I will try to modify ptn3460 to support driver model in this patch it=
+self.
+> And then, adding panel support, converting it to gpiod interface and other
+> cleanups should follow.
+
+I think it should even be possible to do this in more separate steps.
+For example you could add the new bridge infrastructure without touching
+any of the existing drivers (so that they are completely unaffected by
+the changes) and then start converting one by one.
+
+For some of the changes this may be difficult (such as the dev ->
+drm_dev rename to make room for the new struct device *dev). But that
+could for example be done in a preparatory patch that first renames the
+field, so that the "infrastructure" patch can add the new field without
+renaming any fields and therefore needing changes to drivers directly.
+
+The goal of that whole exercise is to allow display drivers to keep
+working with the existing API (ptn3460_init()) while we convert the
+bridge drivers to register with the new framework. Then we can more
+safely convert each display driver individually to make use of the new
+framework and once all drivers have been converted the old API can
+simply be removed.
+
+That way there should be no impact on existing functionality at any
+point.
+
+> >> diff --git a/drivers/gpu/drm/drm_crtc.c b/drivers/gpu/drm/drm_crtc.c
+> > [...]
+> >
+> > Maybe since you're introducing a new drm_bridge.c file above already it
+> > would make sense to move out existing drm_bridge related code in a
+> > preparatory patch?
+> >
+> > Maybe Sean or Rob can comment on whether there was a specific reason to
+> > include it in drm_crtc.c in the first place.
+> >
+> >> @@ -1012,8 +1010,7 @@ int drm_bridge_init(struct drm_device *dev, stru=
+ct drm_bridge *bridge,
+> >>       if (ret)
+> >>               goto out;
+> >>
+> >> -     bridge->dev =3D dev;
+> >> -     bridge->funcs =3D funcs;
+> >> +     bridge->drm_dev =3D dev;
+> >
+> > This sets ->drm_dev, but it was already set in drm_bridge_attach(), so I
+> > think that's one more argument to call this function when attaching.
+> Point accepted.
+
+I forgot to mention earlier. drm_dev seems redundant to me. I'd go with
+just "drm".
+
+> >> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+> >> index e529b68..e5a41ad 100644
+> >> --- a/include/drm/drm_crtc.h
+> >> +++ b/include/drm/drm_crtc.h
+> >> @@ -619,6 +619,7 @@ struct drm_plane {
+> >>
+> >>  /**
+> >>   * drm_bridge_funcs - drm_bridge control functions
+> >> + * @post_encoder_init: called by the parent encoder
+> >
+> > Maybe rename this to "attach" to make it more obvious when exactly it's
+> > called?
+> "post_encoder_attach"?
+
+"post_encoder_" doesn't contain much information, or even ambiguous
+information. What does "post" "encoder" mean? A bridge is always
+attached to an encoder, so "encoder" can be dropped. Now "post" has
+implications as to the time when it is called, but does it mean after
+the encoder has been initialized, or after the encoder has been removed?
+Simply "attach" means it's called by the parent encoder to initialize
+the bridge once it's been attached to an encoder. So obviously it's
+after the encoder has been initialized. "attach" has all he information
+required. Any prefix is redundant in my opinion and removing prefixes
+gives shorter names and reduces the number of keypresses.
+
+> >>   * @mode_fixup: Try to fixup (or reject entirely) proposed mode for t=
+his bridge
+> >>   * @disable: Called right before encoder prepare, disables the bridge
+> >>   * @post_disable: Called right after encoder prepare, for lockstepped=
+ disable
+> >> @@ -628,6 +629,7 @@ struct drm_plane {
+> >>   * @destroy: make object go away
+> >>   */
+> >>  struct drm_bridge_funcs {
+> >> +     int (*post_encoder_init)(struct drm_bridge *bridge);
+> >>       bool (*mode_fixup)(struct drm_bridge *bridge,
+> >>                          const struct drm_display_mode *mode,
+> >>                          struct drm_display_mode *adjusted_mode);
+> >> @@ -648,15 +650,19 @@ struct drm_bridge_funcs {
+> >>   * @base: base mode object
+> >>   * @funcs: control functions
+> >>   * @driver_private: pointer to the bridge driver's internal context
+> >> + * @connector_polled: polled flag needed for registering connector
+> >
+> > Can you explain why this new field is needed? It seems like a completely
+> > unrelated change.
+> How do I select this flag for the bridge chip?
+> Assume if I did select DRM_CONNECTOR_POLL_HPD, where to call
+> drm_helper_hpd_irq_event in the driver? Is post_encoder_init a right plac=
+e?
 >=20
-> > But what I was trying to say is that if the Read IDs command isn't an
-> > official DCS command, maybe it would be a better idea to use the DDB
-> > instead. I assume that even if it isn't the same information it would
-> > at least be a superset and therefore a suitable replacement.
->=20
-> Only if DDB commands work on that panel =3D). Even if a panel supports
-> DCS, it doesn't mean it supports all the commands.
+> Without the polled flag, I get display very late.
+> Please throw some light on this!
 
-Indeed. I was perhaps a little na=C3=AFve and assumed this was such a great
-standard command that every panel simply had to support it. But so far
-I haven't yet come across a single panel that does...
+I just don't understand why it's necessary to implement this field in
+the drm_bridge. Every bridge driver will already implement a connector,
+in which case it can simply set the connector's .polled field, can't it?
 
-> Also, does it really matter which one to use inside a panel driver? I
-> don't really see any pros nor cons with either option. Except, of
-> course, if using one of those makes the driver's code simpler.
+It seems like the only reason you have it in drm_bridge is so that the
+encoder driver can set it. But I don't see why it should be doing that.
+The polled state is a property of the connector, and the encoder driver
+doesn't know anything about it. So if the bridge has a way to detect HPD
+then it should be setting up the connector to properly report it. For
+example if the bridge has an input pin to detect it, then it could use a
+GPIO to receive interrupts and call drm_helper_hpd_irq_event() in the
+interrupt handler.
 
-Yeah, at this point I don't see why the read IDs command shouldn't be
-used. It's somewhat unfortunate that it isn't mentioned in the DCS
-specification at all, but specifications are only as useful to the
-degree that they get implemented...
-
-My hope had been that we would be able to automatically probe for panels
-using the DDB, but it seems like that's not a practicable idea given the
-almost non-existent support for it.
-
-So as long as we can standardize on common APIs rather than per-driver
-implementations, I'm good.
+Perhaps you can explain the exact setup where you need this (or point me
+at the code since I can't seem to find the relevant location) so that I
+can gain a better understanding.
 
 Thierry
 
---OgqxwSJOaUobr8KG
+--jho1yZJdad60DJr+
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT2QLjAAoJEN0jrNd/PrOhGQEQAI4XFatbODIwvTeSGtgFoUqM
-OZZmxyva4Wk+A6iRdCUDFiMBB3vqLbWSmNdAjwixYod3qn+KwTsqlnqPLTZLTBKS
-O4+GBbpTl0aKOG2oZv4+99SsH/shBy7UDbgjpC1SVGkZDOh+LZC1v4+C8ZLIZbZh
-xjmKoKMxGTxWd5veXbI1YYyE8XNZv6fN6wXIsh82FEU5vSPk5OMpoYACqDywOurJ
-bmnLpim6GWbU1g8pyxoeNvPJs8jwkdyBJFvCcbo5F8Ow46cAVh5FlRiE/6TUm9g/
-tHUUgh6QJiLxq8iFlFM8/DvEWue8UJsNjZcnrtvm47uTL5a4oPUJgwtfjCOyBK0g
-18olXm9z9RDDGrGEFXaHmlzA9BpK2hSwQvEau4AZP5R4B9qQfgGqjPcBAhm4TNIM
-q9S9rqvL2ALLSPsdvx5T+jP4iQLqDVr9Pv2eLkiWRC4K8B+5jnsUzoaC/WBQ7TV2
-tPQ7jW79g78xren2lz6wn/MhvX9cVrcU0CGxPDzwzuCwu2mJFNVgvSa9MeH4iQTX
-C7m8MpirZNIKsDSOfLcGszuVKaUSAWf5HB4jzZbNCnnS2KD7QePdk+Nt6D6RzEQL
-G03vMyus/4DGC9jn0j5uSC6tUDRvgU30kFnKBLU8R7FRAOcBLDzRtTNXww+7uFGz
-zHomiB5svCtqBN8d8D7K
-=LdrU
+iQIcBAEBAgAGBQJT2Qp+AAoJEN0jrNd/PrOhyZsQAJzme5R0v2H4PzeAenjBMrfq
+gL6oQhINTywZDoLI9dOxiHkjxoWT5HZUDUWCoqQyeCkqLv6QY3/LsN2JCj/QJewh
+ihMcMkKuU5qDp2Iu11foV8g63AdUOvpKrGlkk2w1mTitOZS/N/v9v3Tc3qgVL/ON
+2diLbWVf4oSQFz3eB7X3r60OX1RsNeQuAMPm9+cfhuLILzzVLI2A0ZdtRixL9VM7
+pQLPuDLEbP9HnkZBFJEm2KPjPcuc/tmspFXAlrg/ivMhMVDcKKcp7NxkZNCRPGAV
+LXv1h1HMyJ4HpPTLhCMsyPk/ZWFqGoITOcHiWl7cAxiLobEhxgYQFHl4PxTp5LRy
+uA8PV5xF4ZgREIWYbBpQE2YXEksObzcFZbtdE4y2Qn8xhUGBv7lVkRoDmsnAjB9F
+tMksoG3kBNFzgkU3qoz86QDOttftWq/WxhbbgBF4m2LuJiXXb4LK5T6sIXZQA4+L
+9crbkBlW8MsRG+jF1FGk4lFZ3cB1ckf94i5FfjPPv2R0alEaZtJ22LliwjZc6icD
+zfbozz1lx3ShOMWPWk+OIinabGfA3CHDv2aL1fZz4/oeH8XcodkF1mvH/nB1KWlS
+MUx5TUB/t+/oVuF7iqY+w/1nkk/hrbX36j3E9TUjgbrC6nQdPiqg0xGKavEAIOr0
+Tyrf7MUSQYXIPnG3zbAE
+=KXHE
 -----END PGP SIGNATURE-----
 
---OgqxwSJOaUobr8KG--
+--jho1yZJdad60DJr+--
+
+--===============1630905823==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1630905823==--
