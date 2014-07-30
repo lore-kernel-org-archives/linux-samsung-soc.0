@@ -1,19 +1,14 @@
 From: Zhaowei Yuan <zhaowei.yuan@samsung.com>
-Subject: [PATCH] media: v4l2: make alloction alogthim more robust and flexible
-Date: Wed, 30 Jul 2014 11:55:32 +0800
-Message-ID: <1406692532-31800-1-git-send-email-zhaowei.yuan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:38838 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754966AbaG3D7I (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Jul 2014 23:59:08 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] media: v4l2: make allocation algorithm more robust and flexible
+Date: Wed, 30 Jul 2014 12:09:50 +0800
+Message-ID: <1406693390-31849-1-git-send-email-zhaowei.yuan@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, k.debski@samsung.com, kyungmin.park@samsung.com, jtp.park@samsung.com
 Cc: linux-samsung-soc@vger.kernel.org, m.chehab@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Current algothim relies on the fact that caller will align the
+Current algorithm relies on the fact that caller will align the
 size to PAGE_SIZE, otherwise order will be decreased to negative
 when remain size is less than PAGE_SIZE, it makes the function
 hard to be migrated.
