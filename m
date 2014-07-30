@@ -1,36 +1,84 @@
-From: Zhaowei Yuan <zhaowei.yuan@samsung.com>
-Subject: [PATCH] media: v4l2: make allocation algorithm more robust and flexible
-Date: Wed, 30 Jul 2014 12:09:50 +0800
-Message-ID: <1406693390-31849-1-git-send-email-zhaowei.yuan@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, k.debski@samsung.com, kyungmin.park@samsung.com, jtp.park@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, m.chehab@samsung.com
+From: Doug Anderson <dianders@google.com>
+Subject: Re: [PATCHv7 5/5] mmc: dw_mmc: replace "disable-wp" from slot's quirk
+ to host's quirk
+Date: Tue, 29 Jul 2014 21:30:58 -0700
+Message-ID: <CAD=FV=V9h5Zfhhgkg8TwAvFzsnwY0PBQnDBHdkiWSYA1LN+o-A@mail.gmail.com>
+References: <1406514579-3769-1-git-send-email-jh80.chung@samsung.com>
+	<1406514579-3769-6-git-send-email-jh80.chung@samsung.com>
+	<CAD=FV=VnP7q0UE0uP_8Hzbhtu6qJqz2kUR9E_sfk4wHbBH_7cg@mail.gmail.com>
+	<53D85CBE.8090104@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f173.google.com ([209.85.220.173]:62959 "EHLO
+	mail-vc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750845AbaG3Ea6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Jul 2014 00:30:58 -0400
+Received: by mail-vc0-f173.google.com with SMTP id hy10so995535vcb.18
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Jul 2014 21:30:58 -0700 (PDT)
+In-Reply-To: <53D85CBE.8090104@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Dinh Nguyen <dinguyen@altera.com>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, CPGS <cpgs@samsung.com>
 
-Current algorithm relies on the fact that caller will align the
-size to PAGE_SIZE, otherwise order will be decreased to negative
-when remain size is less than PAGE_SIZE, it makes the function
-hard to be migrated.
-This patch sloves the hidden problem.
+Jaehoon,
 
-Signed-off-by: Zhaowei Yuan <zhaowei.yuan@samsung.com>
----
- drivers/media/v4l2-core/videobuf2-dma-sg.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Jul 29, 2014 at 7:47 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Hi, Doug.
+>
+> Thanks for review.
+>
+> On 07/30/2014 03:01 AM, Doug Anderson wrote:
+>> Jaehoon,
+>>
+>> On Sun, Jul 27, 2014 at 7:29 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>> Replaced the "disable-wp" into host's quirks.
+>>> (Because the slot-node is removed at dt-file.)
+>>>
+>>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>>> Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
+>>> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+>>> ---
+>>>  drivers/mmc/host/dw_mmc.c  |   12 +++++-------
+>>>  include/linux/mmc/dw_mmc.h |    6 ++----
+>>>  2 files changed, 7 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>>> index 1ac227c..4a4f66f 100644
+>>> --- a/drivers/mmc/host/dw_mmc.c
+>>> +++ b/drivers/mmc/host/dw_mmc.c
+>>> @@ -997,7 +997,7 @@ static int dw_mci_get_ro(struct mmc_host *mmc)
+>>>         int gpio_ro = mmc_gpio_get_ro(mmc);
+>>>
+>>>         /* Use platform get_ro function, else try on board write protect */
+>>> -       if (slot->quirks & DW_MCI_SLOT_QUIRK_NO_WRITE_PROTECT)
+>>> +       if (slot->host->quirks & DW_MCI_QUIRK_NO_WRITE_PROTECT)
+>>
+>> It doesn't seem like it would be hard to include support for the old
+>> binding (and just print a warning).  Then this could land ahead of the
+>> device tree changes.
+>>
+>> Generally I think we're supposed to keep support for old device trees
+>> if possible (except in extreme cases).
+> Ok, I see. I will add the Warning message like this. ("Recommend not to use the slot-node...")
 
-diff --git a/drivers/media/v4l2-core/videobuf2-dma-sg.c b/drivers/media/v4l2-core/videobuf2-dma-sg.c
-index adefc31..40d18aa 100644
---- a/drivers/media/v4l2-core/videobuf2-dma-sg.c
-+++ b/drivers/media/v4l2-core/videobuf2-dma-sg.c
-@@ -58,7 +58,7 @@ static int vb2_dma_sg_alloc_compacted(struct vb2_dma_sg_buf *buf,
+That seems reasonable.
 
- 		order = get_order(size);
- 		/* Dont over allocate*/
--		if ((PAGE_SIZE << order) > size)
-+		if (order > 0 && (PAGE_SIZE << order) > size)
- 			order--;
 
- 		pages = NULL;
---
-1.7.9.5
+> Then Developers can change the device-tree, right.
+
+Right.  Then this can land even ahead of the dts changes and you could
+change them one at a time (if you wanted) once you have the proper
+acks.
+
+
+> Today, i will send the patch. If you have any other comment, let me know, plz.
+> I want to merge this patch-set into 3.16.
+
+I haven't done a full review, but generally this looked pretty sane to
+me.  It seems like it might be too late for 3.16 but I'm no expert on
+the subject.
+
+-Doug
