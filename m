@@ -1,122 +1,95 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V2 7/8] drm/bridge: Add i2c based driver for ptn3460 bridge
-Date: Wed, 30 Jul 2014 21:44:32 +0530
-Message-ID: <CAEC9eQOnTEsCD1fKw_Ac0mDt=hJBU5MzHOSfSRmpM0MY2pMRjQ@mail.gmail.com>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1406316130-4744-8-git-send-email-ajaykumar.rs@samsung.com>
-	<20140730120504.GJ29590@ulmo>
-	<CAEC9eQPERoZjPV5=P_Re_Bs7gT7Q5Q_Z6sJViuxoG8oo9O3=-w@mail.gmail.com>
-	<20140730154054.GE1345@ulmo>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v3 0/4] ARM: EXYNOS: cpuidle: fix AFTR mode on boards
+ with secure firmware enabled
+Date: Wed, 30 Jul 2014 18:30:47 +0200
+Message-ID: <53D91DB7.8050806@linaro.org>
+References: <1404926274-18411-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f181.google.com ([209.85.220.181]:50318 "EHLO
-	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755207AbaG3QOe (ORCPT
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:51747 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753921AbaG3Qat (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jul 2014 12:14:34 -0400
-In-Reply-To: <20140730154054.GE1345@ulmo>
+	Wed, 30 Jul 2014 12:30:49 -0400
+Received: by mail-wi0-f174.google.com with SMTP id d1so7869479wiv.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2014 09:30:48 -0700 (PDT)
+In-Reply-To: <1404926274-18411-1-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Sean Paul <seanpaul@chromium.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
 
-On Wed, Jul 30, 2014 at 9:10 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Wed, Jul 30, 2014 at 08:46:44PM +0530, Ajay kumar wrote:
->> On Wed, Jul 30, 2014 at 5:35 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
->> > On Sat, Jul 26, 2014 at 12:52:09AM +0530, Ajay Kumar wrote:
-> [...]
->> >> +int ptn3460_post_encoder_init(struct drm_bridge *bridge)
->> >> +{
->> >> +     struct ptn3460_bridge *ptn_bridge = bridge->driver_private;
->> >> +     int ret;
->> >> +
->> >> +     /* bridge is attached to encoder.
->> >> +      * safe to remove it from the bridge_lookup table.
->> >> +      */
->> >> +     drm_bridge_remove_from_lookup(bridge);
->> >
->> > No, you should never do this. First, you're not adding it back to the
->> > registry when the bridge is detached, so unloading and reloading the
->> > display driver will fail. Second there should never be a need to remove
->> > it from the registry as long as the driver itself is loaded. If you're
->> > concerned about a single bridge being used multiple times, there's
->> > already code to handle that in your previous patch:
->> >
->> >         int drm_bridge_attach_encoder(...)
->> >         {
->> >                 ...
->> >
->> >                 if (bridge->encoder)
->> >                         return -EBUSY;
->> >
->> >                 ...
->> >         }
->> >
->> > Generally the registry should contain a list of bridges that have been
->> > registered, whether they're used or not is irrelevant.
->> I was just wondering if it is ok to have a node in two independent lists?
->> bridge_lookup_table and the other mode_config.bridge_list?
->
-> Oh, it reuses the head field for the registry. I hadn't noticed before.
-> No, you certainly can't have the same node in two lists. Honestly I
-> don't quite understand why there was a need to expose drm_bridge as a
-> drm_mode_object in the first place since it's never exported to
-> userspace.
->
-> So I think that perhaps we could simply get rid of the base field and
-> not tie in drm_bridge objects with the DRM object as we currently do.
-> But until Sean or Rob comment on this it might be better to simply add
-> another struct list_head field for the registry. That way both can
-> coexist and we can independently still decide to remove the base and
-> head fields if they're no longer needed.
-Ok. What shall I name the new list_head?
 
->> >> +     ret = drm_connector_init(bridge->drm_dev, &ptn_bridge->connector,
->> >> +                     &ptn3460_connector_funcs, DRM_MODE_CONNECTOR_LVDS);
->> >> +     if (ret) {
->> >> +             DRM_ERROR("Failed to initialize connector with drm\n");
->> >> +             return ret;
->> >> +     }
->> >> +     drm_connector_helper_add(&ptn_bridge->connector,
->> >> +                                     &ptn3460_connector_helper_funcs);
->> >> +     drm_connector_register(&ptn_bridge->connector);
->> >> +     drm_mode_connector_attach_encoder(&ptn_bridge->connector,
->> >> +                                                     bridge->encoder);
->> >> +
->> >> +     if (ptn_bridge->panel)
->> >> +             drm_panel_attach(ptn_bridge->panel, &ptn_bridge->connector);
->> >> +
->> >> +     return ret;
->> >> +}
->> >
->> > I'm thinking that eventually we'll want to register the connector only
->> > when a panel is attached to the bridge. This will only become important
->> > when we implement bridge chaining because if you instantiate a connector
->> > for each bridge then you'll get a list of connectors for the DRM device
->> > representing the output of each bridge rather than just the final one
->> > that goes to the display.
->> So, do not initialize connector if there is no panel? and, get_modes
->> via panel instead of doing it by edid-emulation?
->
-> If there's no panel, then there's nothing to connect the connector to,
-> so it's unneeded. Also if you have chained bridges, then each bridge
-> would expose a connector and it would become impossible to choose the
-> correct one. So only the final bridge in the chain should instantiate
-> the connector.
-Since there is only a single bridge when it comes to ptn3460/ps8622, lets
-not talk about chaining of bridges now.
-And, I agree that if there is no panel, then no need to register connector.
+Hi Bartlomiej,
 
-> .get_modes() still needs to be done from the bridge because that is the
-> most closely connected to the display controller and therefore dictates
-> the timing that the display controller needs to generate.
->
-> Querying the panel's .get_modes() might be useful to figure out which
-> emulation mode to use in the bridge.
-But, get_modes from panel returns me only the no_of_modes but
-not the actual mode structure. How do I compare the list of supported
-emulation modes?
+I tried to apply this patchset on top of next-20140708 but it does not=20
+apply.
 
-Ajay
+Do you have a more recent version ?
+
+Thanks in advance
+
+   -- Daniel
+
+On 07/09/2014 07:17 PM, Bartlomiej Zolnierkiewicz wrote:
+> Hi,
+>
+> This patch series adds support for AFTR idle mode on boards with
+> secure firmware enabled and allows EXYNOS cpuidle driver usage on
+> Exynos4x12 SoCs.
+>
+> It has been tested on Trats2 board (using Exynos4412 SoC with secure
+> firmware enabled) on which AFTR mode reduces power consumption by ~12=
+%
+> when EXYNOS cpuidle driver is enabled (in both cases the default
+> exynos_defconfig config is used and CPU1-3 are offlined).
+>
+> v3:
+> - rebased on top of next-20140708 +
+>    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg3=
+2809.html
+>    (with rejects fixed)
+>    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg3=
+2808.html
+>    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg3=
+2991.html
+>    (with rejects fixed in patch #2)
+> - addressed review comments from Tomasz Figa and Daniel Lezcano
+>
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>
+>
+> Bartlomiej Zolnierkiewicz (4):
+>    ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static inl=
+ines
+>    ARM: EXYNOS: add AFTR mode support to firmware do_idle method
+>    ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode cod=
+e
+>    ARM: EXYNOS: cpuidle: allow driver usage on Exynos4x12 SoCs
+>
+>   arch/arm/include/asm/firmware.h  |  2 +-
+>   arch/arm/mach-exynos/common.h    |  7 ++++++-
+>   arch/arm/mach-exynos/exynos.c    |  3 ++-
+>   arch/arm/mach-exynos/firmware.c  | 36 ++++++++++++++++++++++++++---=
+-------
+>   arch/arm/mach-exynos/pm.c        | 39 +++++++++++++++++++++++++++++=
+----------
+>   drivers/cpuidle/cpuidle-exynos.c |  6 +++---
+>   6 files changed, 67 insertions(+), 26 deletions(-)
+>
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
