@@ -1,96 +1,64 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V6 8/8] drm/bridge: Add i2c based driver for ps8622/ps8625
- bridge
-Date: Wed, 30 Jul 2014 11:57:20 +0530
-Message-ID: <CAEC9eQOvnoZ=RoVi5kxjU_yS96U+RaLdVn1+xqc35oCy3pVW5w@mail.gmail.com>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <1406316130-4744-9-git-send-email-ajaykumar.rs@samsung.com>
- <53D785B6.9060806@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <53D785B6.9060806@suse.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Sean Paul <seanpaul@google.com>, Andrew Bresticker <abrestic@chromium.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
+From: Thomas Abraham <thomas.ab@samsung.com>
+Subject: [PATCH] clk: exynos4: remove duplicate div_core2 divider clock
+ instantiation
+Date: Wed, 30 Jul 2014 13:25:32 +0530
+Message-ID: <1406706932-10527-1-git-send-email-thomas.ab@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:61964 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750949AbaG3H6q (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Jul 2014 03:58:46 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0N9I007AZM5WCO40@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 30 Jul 2014 16:58:44 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: t.figa@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-SGkgQW5kcmVhcywKCk9uIFR1ZSwgSnVsIDI5LCAyMDE0IGF0IDQ6NTkgUE0sIEFuZHJlYXMgRsOk
-cmJlciA8YWZhZXJiZXJAc3VzZS5kZT4gd3JvdGU6Cj4gQW0gMjUuMDcuMjAxNCAyMToyMiwgc2No
-cmllYiBBamF5IEt1bWFyOgo+PiBGcm9tOiBWaW5jZW50IFBhbGF0aW4gPHZwYWxhdGluQGNocm9t
-aXVtLm9yZz4KPj4KPj4gVGhpcyBwYXRjaCBhZGRzIGRybV9icmlkZ2UgZHJpdmVyIGZvciBwYXJh
-ZGUgRGlzcGxheVBvcnQKPj4gdG8gTFZEUyBicmlkZ2UgY2hpcC4KPj4KPj4gU2lnbmVkLW9mZi1i
-eTogVmluY2VudCBQYWxhdGluIDx2cGFsYXRpbkBjaHJvbWl1bS5vcmc+Cj4+IFNpZ25lZC1vZmYt
-Ynk6IEFuZHJldyBCcmVzdGlja2VyIDxhYnJlc3RpY0BjaHJvbWl1bS5vcmc+Cj4+IFNpZ25lZC1v
-ZmYtYnk6IFNlYW4gUGF1bCA8c2VhbnBhdWxAY2hyb21pdW0ub3JnPgo+PiBTaWduZWQtb2ZmLWJ5
-OiBSYWh1bCBTaGFybWEgPHJhaHVsLnNoYXJtYUBzYW1zdW5nLmNvbT4KPj4gU2lnbmVkLW9mZi1i
-eTogQWpheSBLdW1hciA8YWpheWt1bWFyLnJzQHNhbXN1bmcuY29tPgo+PiAtLS0KPj4gIC4uLi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL3ZlbmRvci1wcmVmaXhlcy50eHQgICAgICAgIHwgICAgMSArCj4+
-ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy92aWRlby9icmlkZ2UvcHM4NjIyLnR4dCAgICB8ICAg
-MTkgKwo+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9LY29uZmlnICAgICAgICAgICAgICAgICAg
-ICAgfCAgIDEwICsKPj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvTWFrZWZpbGUgICAgICAgICAg
-ICAgICAgICAgIHwgICAgMSArCj4+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BzODYyMi5jICAg
-ICAgICAgICAgICAgICAgICB8ICA2MDIgKysrKysrKysrKysrKysrKysrKysKPj4gIDUgZmlsZXMg
-Y2hhbmdlZCwgNjMzIGluc2VydGlvbnMoKykKPj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdmlkZW8vYnJpZGdlL3BzODYyMi50eHQKPj4gIGNy
-ZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BzODYyMi5jCj4+Cj4+IGRp
-ZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdmVuZG9yLXByZWZp
-eGVzLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92ZW5kb3ItcHJlZml4
-ZXMudHh0Cj4+IGluZGV4IDQ2YTMxMWUuLmI0YTk5Y2MgMTAwNjQ0Cj4+IC0tLSBhL0RvY3VtZW50
-YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92ZW5kb3ItcHJlZml4ZXMudHh0Cj4+ICsrKyBiL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92ZW5kb3ItcHJlZml4ZXMudHh0Cj4+IEBA
-IC05Niw2ICs5Niw3IEBAIG54cCBOWFAgU2VtaWNvbmR1Y3RvcnMKPj4gIG9ubm4gT04gU2VtaWNv
-bmR1Y3RvciBDb3JwLgo+PiAgb3BlbmNvcmVzICAgIE9wZW5Db3Jlcy5vcmcKPj4gIHBhbmFzb25p
-YyAgICBQYW5hc29uaWMgQ29ycG9yYXRpb24KPj4gK3BhcmFkZSAgICAgICBQYXJhZGUgVGVjaG5v
-bG9naWVzIEluYy4KPj4gIHBoeXRlYyAgICAgICBQSFlURUMgTWVzc3RlY2huaWsgR21iSAo+PiAg
-cGljb2NoaXAgICAgIFBpY29jaGlwIEx0ZAo+PiAgcGxhdGhvbWUgICAgIFBsYXQnSG9tZSBDby4s
-IEx0ZC4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy92
-aWRlby9icmlkZ2UvcHM4NjIyLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
-cy92aWRlby9icmlkZ2UvcHM4NjIyLnR4dAo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+PiBpbmRl
-eCAwMDAwMDAwLi5mZGVhZmIyCj4+IC0tLSAvZGV2L251bGwKPj4gKysrIGIvRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVvL2JyaWRnZS9wczg2MjIudHh0Cj4+IEBAIC0wLDAg
-KzEsMTkgQEAKPj4gK3BzODYyMi1icmlkZ2UgYmluZGluZ3MKPj4gKwo+PiArUmVxdWlyZWQgcHJv
-cGVydGllczoKPj4gKyAgICAgLSBjb21wYXRpYmxlOiAicGFyYWRlLHBzODYyMiIgb3IgInBhcmFk
-ZSxwczg2MjUiCj4+ICsgICAgIC0gcmVnOiBmaXJzdCBpMmMgYWRkcmVzcyBvZiB0aGUgYnJpZGdl
-Cj4+ICsgICAgIC0gc2xlZXAtZ3Bpb3M6IE9GIGRldmljZS10cmVlIGdwaW8gc3BlY2lmaWNhdGlv
-bgo+PiArICAgICAtIHJlc2V0LWdwaW9zOiBPRiBkZXZpY2UtdHJlZSBncGlvIHNwZWNpZmljYXRp
-b24KPj4gKwo+PiArT3B0aW9uYWwgcHJvcGVydGllczoKPj4gKyAgICAgLSBsYW5lLWNvdW50OiBu
-dW1iZXIgb2YgRFAgbGFuZXMgdG8gdXNlCj4+ICsKPj4gK0V4YW1wbGU6Cj4+ICsgICAgIHBzODYy
-Mi1icmlkZ2VANDggewo+Cj4gTml0OiBTaG91bGRuJ3QgdGhpcyBiZSBsdmRzLWJyaWRnZSBsaWtl
-IGluIDcvOCBvciBzb21ldGhpbmcgZWxzZSBub3QKPiBkZXJpdmVkIGZyb20gdGhlIHNwZWNpZmlj
-IG1vZGVsPyBBcHBsaWVzIHRvIHRoZSBEVCBzZXJpZXMgYXMgd2VsbC4KUmlnaHQuIEkgd2lsbCBm
-aXggdGhpcyB3aGlsZSBzZW5kaW5nIHRoZSBuZXh0IHNlcmllcy4KCj4+ICsgICAgICAgICAgICAg
-Y29tcGF0aWJsZSA9ICJwYXJhZGUscHM4NjIyIjsKPj4gKyAgICAgICAgICAgICByZWcgPSA8MHg0
-OD47Cj4+ICsgICAgICAgICAgICAgc2xlZXAtZ3Bpb3MgPSA8JmdwYzMgNiAxIDAgMD47Cj4+ICsg
-ICAgICAgICAgICAgcmVzZXQtZ3Bpb3MgPSA8JmdwYzMgMSAxIDAgMD47Cj4+ICsgICAgICAgICAg
-ICAgbGFuZS1jb3VudCA9IDwxPgo+PiArICAgICB9Owo+IFsuLi5dCj4+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BzODYyMi5jIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9w
-czg2MjIuYwo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NAo+PiBpbmRleCAwMDAwMDAwLi5lYzYwZmNm
-Cj4+IC0tLSAvZGV2L251bGwKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wczg2MjIu
-Ywo+PiBAQCAtMCwwICsxLDYwMiBAQAo+PiArLyoKPj4gKyAqIFBhcmFkZSBQUzg2MjIgZURQL0xW
-RFMgYnJpZGdlIGRyaXZlcgo+PiArICoKPj4gKyAqIENvcHlyaWdodCAoQykgMjAxNCBHb29nbGUs
-IEluYy4KPj4gKyAqCj4+ICsgKiBUaGlzIHNvZnR3YXJlIGlzIGxpY2Vuc2VkIHVuZGVyIHRoZSB0
-ZXJtcyBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljCj4+ICsgKiBMaWNlbnNlIHZlcnNpb24gMiwg
-YXMgcHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJlIEZvdW5kYXRpb24sIGFuZAo+PiArICog
-bWF5IGJlIGNvcGllZCwgZGlzdHJpYnV0ZWQsIGFuZCBtb2RpZmllZCB1bmRlciB0aG9zZSB0ZXJt
-cy4KPj4gKyAqCj4+ICsgKiBUaGlzIHByb2dyYW0gaXMgZGlzdHJpYnV0ZWQgaW4gdGhlIGhvcGUg
-dGhhdCBpdCB3aWxsIGJlIHVzZWZ1bCwKPj4gKyAqIGJ1dCBXSVRIT1VUIEFOWSBXQVJSQU5UWTsg
-d2l0aG91dCBldmVuIHRoZSBpbXBsaWVkIHdhcnJhbnR5IG9mCj4+ICsgKiBNRVJDSEFOVEFCSUxJ
-VFkgb3IgRklUTkVTUyBGT1IgQSBQQVJUSUNVTEFSIFBVUlBPU0UuICBTZWUgdGhlCj4+ICsgKiBH
-TlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSBmb3IgbW9yZSBkZXRhaWxzLgo+PiArICovCj4gWy4u
-Ll0KPj4gK01PRFVMRV9BVVRIT1IoIlZpbmNlbnQgUGFsYXRpbiA8dnBhbGF0aW5AY2hyb21pdW0u
-b3JnPiIpOwo+PiArTU9EVUxFX0RFU0NSSVBUSU9OKCJQYXJhZGUgcHM4NjIyIGVEUC1MVkRTIGNv
-bnZlcnRlciBkcml2ZXIiKTsKPj4gK01PRFVMRV9MSUNFTlNFKCJHUEwiKTsKPgo+ICJHUEwgdjIi
-PwpPay4gV2lsbCBjaGFuZ2UgaXQuCgpSZWdhcmRzLApBamF5Cl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+The 'div_core2' clock and the 'arm_clk' divider clocks are instances of
+the same divider clock. So remove the 'arm_clk' clock instance.
+
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+---
+This patch is based on for-next branch of Samsung clock tree.
+
+ drivers/clk/samsung/clk-exynos4.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index ac163d7..8617f49 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -719,7 +719,7 @@ static struct samsung_div_clock exynos4_div_clks[] __initdata = {
+ 	DIV(0, "div_periph", "div_core2", DIV_CPU0, 12, 3),
+ 	DIV(0, "div_atb", "mout_core", DIV_CPU0, 16, 3),
+ 	DIV(0, "div_pclk_dbg", "div_atb", DIV_CPU0, 20, 3),
+-	DIV(0, "div_core2", "div_core", DIV_CPU0, 28, 3),
++	DIV(CLK_ARM_CLK, "div_core2", "div_core", DIV_CPU0, 28, 3),
+ 	DIV(0, "div_copy", "mout_hpm", DIV_CPU1, 0, 3),
+ 	DIV(0, "div_hpm", "div_copy", DIV_CPU1, 4, 3),
+ 	DIV(0, "div_clkout_cpu", "mout_clkout_cpu", CLKOUT_CMU_CPU, 8, 6),
+@@ -769,7 +769,6 @@ static struct samsung_div_clock exynos4_div_clks[] __initdata = {
+ 	DIV(0, "div_spi_pre2", "div_spi2", DIV_PERIL2, 8, 8),
+ 	DIV(0, "div_audio1", "mout_audio1", DIV_PERIL4, 0, 4),
+ 	DIV(0, "div_audio2", "mout_audio2", DIV_PERIL4, 16, 4),
+-	DIV(CLK_ARM_CLK, "arm_clk", "div_core2", DIV_CPU0, 28, 3),
+ 	DIV(CLK_SCLK_APLL, "sclk_apll", "mout_apll", DIV_CPU0, 24, 3),
+ 	DIV_F(0, "div_mipi_pre0", "div_mipi0", DIV_LCD0, 20, 4,
+ 			CLK_SET_RATE_PARENT, 0),
+@@ -1486,7 +1485,7 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 		exynos4_soc == EXYNOS4210 ? "Exynos4210" : "Exynos4x12",
+ 		_get_rate("sclk_apll"),	_get_rate("sclk_mpll"),
+ 		_get_rate("sclk_epll"), _get_rate("sclk_vpll"),
+-		_get_rate("arm_clk"));
++		_get_rate("div_core2"));
+ }
+ 
+ 
+-- 
+1.7.9.5
