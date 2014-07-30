@@ -1,69 +1,120 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip
- support
-Date: Wed, 30 Jul 2014 11:56:10 +0200
-Message-ID: <20140730095609.GC29590@ulmo>
+Subject: Re: [PATCH V6 1/8] drm/panel: Add prepare, unprepare and get_modes
+ routines
+Date: Wed, 30 Jul 2014 12:00:30 +0200
+Message-ID: <20140730100028.GD29590@ulmo>
 References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1406316130-4744-2-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lCAWRPmW1mITcIfM"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f171.google.com ([74.125.82.171]:59576 "EHLO
-	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751683AbaG3J4P (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jul 2014 05:56:15 -0400
-Content-Disposition: inline
-In-Reply-To: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0642522397=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1406316130-4744-2-git-send-email-ajaykumar.rs@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, inki.dae@samsung.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
 
---lCAWRPmW1mITcIfM
+--===============0642522397==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FFoLq8A0u+X9iRU8"
+Content-Disposition: inline
+
+
+--FFoLq8A0u+X9iRU8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 26, 2014 at 12:52:02AM +0530, Ajay Kumar wrote:
-> This series is based on exynos-drm-next branch of Inki Dae's tree at:
-> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+On Sat, Jul 26, 2014 at 12:52:03AM +0530, Ajay Kumar wrote:
+> Most of the panels need an init sequence as mentioned below:
+> 	-- poweron LCD unit/LCD_EN
+> 	-- start video data
+> 	-- poweron LED unit/BACKLIGHT_EN
+> And, a de-init sequence as mentioned below:
+> 	-- poweroff LED unit/BACKLIGHT_EN
+> 	-- stop video data
+> 	-- poweroff LCD unit/LCD_EN
+> With existing callbacks for drm panel, we cannot accomodate such panels,
+> since only two callbacks, i.e "panel_enable" and panel_disable are suppor=
+ted.
 >=20
-> I have tested this after adding few DT changes for exynos5250-snow,
-> exynos5420-peach-pit and exynos5800-peach-pi boards.
+> This patch adds:
+> 	-- "prepare" callback which can be called before
+> 	the actual video data is on, and then call the "enable"
+> 	callback after the video data is available.
+>=20
+> 	-- "unprepare" callback which can be called after
+> 	the video data is off, and use "disable" callback
+> 	to do something before switching off the video data.
+>=20
+> Now, we can easily map the above scenario as shown below:
+> 	poweron LCD unit/LCD_EN =3D "prepare" callback
+> 	poweron LED unit/BACKLIGHT_EN =3D "enable" callback
+> 	poweroff LED unit/BACKLIGHT_EN =3D "disable" callback
+> 	poweroff LCD unit/LCD_EN =3D "unprepare" callback
+>=20
+> Also, a helper function for get_modes is added.
+>=20
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  include/drm/drm_panel.h |   26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 
-Hi Ajay,
+I had already decided to apply an earlier version that you posted (I
+think the only difference was that it didn't have the inline
+implementation for drm_panel_get_modes() yet), reworded the commit
+message a little (to be less specific about LED, LCD and backlight
+units) and added some kerneldoc for struct drm_panel_funcs.
 
-I very much like where this is going. There are a few rough edges still,
-but generally this is pretty much what I had imagined. Thanks for
-bearing with me.
+What I propose is to merge that patch (I'll hopefully push it today so
+that it shows up in tomorrow's linux-next) and then apply a separate
+patch to add drm_panel_get_modes().
 
-Generally I think it would be safer to restructure some of the patches a
-little so that they can be more easily applied and keep bisectability.
-I'll go into more detail in the individual patches.
+Do you have any objections to that?
 
 Thierry
 
---lCAWRPmW1mITcIfM
+--FFoLq8A0u+X9iRU8
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT2ME5AAoJEN0jrNd/PrOhyiMP+waptJeYSL7hyxaNznh3ELmw
-mA3W7JpfVXbJuEQbnlJsjy2MMqcMRX96wMm7gZe9BoEUUuuqVA2UUE9U4tm23whS
-/0A5AN9W6hyR/OU2O+OyxAEXrbNaGo6c7p7qstdAyQgKlf4r02qzyVjOobDh1ym/
-LzwteZNF1gqqWNgXTa//hnAmVC+z1S3tRnk6KbSqkXH14js1obk6a7eS6D04s3fv
-Yi5kIVlBb4EJ//JfpQcDQnYGt+JwNCb7SRFLbzt6hj8Vj8t1VfmyjE4YwXbmpsyc
-xZC9np/DX8Heog/LoWU6EbXXAZ9EUKe2wgta+YndH7/0re4WmQzpb/Jj6osWp4No
-XvJ7MrHzAVVoKYukYeaZfnOin7Csz+j1hHP8wCMmpjmhcloNX+eZJ+VGX+xvJh8H
-Va5/1kAtlcRgUhkYWuyV2Wfy1kEAN9a61orI6V2eT8GamNcJOCHrEPLg2s/qDl8O
-+F+jL1p38P/2X9fhdG0Efm23+PpMOdntWydL0cQTBsRdCNubd7zvmenzd6nDIYEC
-WZZ7BVfpNKjaVm4I3DYo9qpFOBXp4SDPFPm8uMTEA8CS0vF62GURNvF4qCvXAGMJ
-QkcmqU4VR4voa5oW95+Z67dycBk+KYvbUPa1JsMSaTqNz+PZowUxYjggWHTzYPoy
-Mtg53VsgxOxvLGmIdoni
-=6qfQ
+iQIcBAEBAgAGBQJT2MI8AAoJEN0jrNd/PrOhIDsQALvokMrAC16rn7gvGk7374K3
+QZBXiBv7x8hdsjWnBTn81OCEaNBZt2wNh7vIuQiGghT/sztwK8xhzQifQFVhEHyt
+40RVdQ6NmS4VOcVfzzSZPbYoEMCUpO1vM5bWnD8LZgIC47906MfskeMW+USBwK7f
+Bmy+TdLMh0A+6V4wGw0CIuXytyIRsLnn7guJcuq1hzeYm+zsjVSj/lePSRf/wggZ
+iYDvjkbcNSfTn2zDxVOjUOOnWqoQs/u6j9KWKkLDeDDaIbR3fCV9mlWal3mpGI52
+5XB3SMhqsmqGOfpbmPqQaF4LAb1ISDjhQp+oYRV3dmB/xBtXW8oZaVkwZR4ec8cB
+3acp36Q5Jl3DGFgP5SpJhpa+mtX5F1LgGYKfx1jdcxkCeKFNIrlwYE4E6ql2MCX+
+XJAoPahuBpA/LkccJUkoSTmlfstQ53Xh6ZURlUdJVEJEb3Ou4mb2A+i6IEqjaXIe
+4ddtJ4YLCjJszQ/djjQGcgpCm8QrVcj3Lo62D0/ZzQ8uGS1Wap0+Qf/i1WK6scWu
+dAN/kBUc3e5IiSGJRr9/8AA0O2j54vyrS67u6TCn21qd4WvFqZE4iAGzOvyEZYby
+ycij84hMJ7g/7mWg6xBCGIrE2rfdJq8Ky9QFSqd4qeDiS5Dtd3hd9fXG/PsgGgsO
+DOtwVvyQO7wGP1VkpbKB
+=thTb
 -----END PGP SIGNATURE-----
 
---lCAWRPmW1mITcIfM--
+--FFoLq8A0u+X9iRU8--
+
+--===============0642522397==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0642522397==--
