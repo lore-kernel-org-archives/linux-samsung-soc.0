@@ -1,618 +1,130 @@
 From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [PATCH v3 4/4] ARM: dts: Add exynos5250-spring device tree
-Date: Wed, 30 Jul 2014 15:50:44 +0200
-Message-ID: <1406728244-5105-5-git-send-email-afaerber@suse.de>
+Subject: [PATCH v3 3/4] ARM: dts: Clean up exynos5250-snow
+Date: Wed, 30 Jul 2014 15:50:43 +0200
+Message-ID: <1406728244-5105-4-git-send-email-afaerber@suse.de>
 References: <1406728244-5105-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1406728244-5105-1-git-send-email-afaerber@suse.de>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Vincent Palatin <vpalatin@chromium.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, open list <linux-kernel@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>, Stephan van Schaik <stephan@synkhronix.com>, Doug Anderson <dianders@chromium.org>, Rob Herring <robh+dt@kernel.org>, Ben Dooks <ben-linux@fluff.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Russell King <linux@arm.linux.org.uk>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adds initial support for the HP Chromebook 11.
-
-Cc: Vincent Palatin <vpalatin@chromium.org>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Stephan van Schaik <stephan@synkhronix.com>
-Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
----
- v2 -> v3:
- * Use GPIO_ACTIVE_{LOW,HIGH} (Doug Anderson)
- * Use symbolic KEY_POWER instead of comment
- * Moved hsic_reset to new USB3503 node's reset-gpios (Vincent Palatin)
- * Use dp_hpd_gpio for dp-controller (Doug Anderson, Ajay Kumar)
- * Override sd1_{clk,cmd,cd,bus4} pinctrl similar to Snow (Doug Anderso=
-n)
- * Added ec_irq pinctrl for cros_ec (Doug Anderson)
- * Reordered nodes to minimize diff against Snow (Doug Anderson)
- * Dropped obsolete mmc_2 override (Doug Anderson)
- * Added lid-switch node (Doug Anderson)
- * Added gpio-keys pinctrl (Doug Anderson)
- * Added bootargs to avoid empty /chosen node and to document console s=
-etting
- * Renamed s5m8767_pmic node to avoid underscore
- * Use new style for overriding inherited pinctrl nodes, too
- * Enable i2s0 node
-=20
- v1 -> v2:
- * Use label-based overriding/extension of nodes. (Doug Anderson)
- * Dropped tps65090 for now, until we know where to place it.
- * Dropped non-Spring nodes from -cros-common.dtsi rather than disablin=
-g them.
- * Enabled a missing MMC node for access to internal storage.
- * Dropped display-timings from dp-controller node. (Ajay Kumar)
-
- arch/arm/boot/dts/Makefile              |   1 +
- arch/arm/boot/dts/exynos5250-spring.dts | 539 ++++++++++++++++++++++++=
-++++++++
- 2 files changed, 540 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos5250-spring.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 80a781f76e88..dec4c292f63d 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -76,6 +76,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) +=3D exynos4210-origen.dtb =
-\
- 	exynos5250-arndale.dtb \
- 	exynos5250-smdk5250.dtb \
- 	exynos5250-snow.dtb \
-+	exynos5250-spring.dtb \
- 	exynos5260-xyref5260.dtb \
- 	exynos5410-smdk5410.dtb \
- 	exynos5420-arndale-octa.dtb \
-diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot/dt=
-s/exynos5250-spring.dts
-new file mode 100644
-index 000000000000..bcca892bf2ff
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5250-spring.dts
-@@ -0,0 +1,539 @@
-+/*
-+ * Google Spring board device tree source
-+ *
-+ * Copyright (c) 2013 Google, Inc
-+ * Copyright (c) 2014 SUSE LINUX Products GmbH
-+ *
-+ * This program is free software; you can redistribute it and/or modif=
-y
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+/dts-v1/;
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include "exynos5250.dtsi"
-+
-+/ {
-+	model =3D "Google Spring";
-+	compatible =3D "google,spring", "samsung,exynos5250", "samsung,exynos=
-5";
-+
-+	memory {
-+		reg =3D <0x40000000 0x80000000>;
-+	};
-+
-+	chosen {
-+		bootargs =3D "console=3Dtty1";
-+	};
-+
-+	gpio-keys {
-+		compatible =3D "gpio-keys";
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&power_key_irq>, <&lid_irq>;
-+
-+		power {
-+			label =3D "Power";
-+			gpios =3D <&gpx1 3 GPIO_ACTIVE_LOW>;
-+			linux,code =3D <KEY_POWER>;
-+			gpio-key,wakeup;
-+		};
-+
-+		lid-switch {
-+			label =3D "Lid";
-+			gpios =3D <&gpx3 5 GPIO_ACTIVE_LOW>;
-+			linux,input-type =3D <5>; /* EV_SW */
-+			linux,code =3D <0>; /* SW_LID */
-+			debounce-interval =3D <1>;
-+			gpio-key,wakeup;
-+		};
-+	};
-+
-+	usb3_vbus_reg: regulator-usb3 {
-+		compatible =3D "regulator-fixed";
-+		regulator-name =3D "P5.0V_USB3CON";
-+		regulator-min-microvolt =3D <5000000>;
-+		regulator-max-microvolt =3D <5000000>;
-+		gpio =3D <&gpe1 0 GPIO_ACTIVE_LOW>;
-+		enable-active-high;
-+	};
-+
-+	usb@12110000 {
-+		samsung,vbus-gpio =3D <&gpx1 1 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	usb-hub {
-+		compatible =3D "smsc,usb3503a";
-+		reset-gpios =3D <&hsic_reset>;
-+	};
-+
-+	fixed-rate-clocks {
-+		xxti {
-+			compatible =3D "samsung,clock-xxti";
-+			clock-frequency =3D <24000000>;
-+		};
-+	};
-+
-+	hdmi {
-+		hpd-gpio =3D <&gpx3 7 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&hdmi_hpd_irq>;
-+		phy =3D <&hdmiphy>;
-+		ddc =3D <&i2c_2>;
-+		hdmi-en-supply =3D <&s5m_ldo8_reg>;
-+		vdd-supply =3D <&s5m_ldo8_reg>;
-+		vdd_osc-supply =3D <&s5m_ldo10_reg>;
-+		vdd_pll-supply =3D <&s5m_ldo8_reg>;
-+	};
-+
-+	fimd@14400000 {
-+		status =3D "okay";
-+		samsung,invert-vclk;
-+	};
-+
-+	dp-controller@145B0000 {
-+		status =3D "okay";
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&dp_hpd_gpio>;
-+		samsung,color-space =3D <0>;
-+		samsung,dynamic-range =3D <0>;
-+		samsung,ycbcr-coeff =3D <0>;
-+		samsung,color-depth =3D <1>;
-+		samsung,link-rate =3D <0x0a>;
-+		samsung,lane-count =3D <1>;
-+		samsung,hpd-gpio =3D <&gpc3 0 GPIO_ACTIVE_HIGH>;
-+	};
-+};
-+
-+&i2c_0 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <378000>;
-+
-+	s5m8767-pmic@66 {
-+		compatible =3D "samsung,s5m8767-pmic";
-+		reg =3D <0x66>;
-+		interrupt-parent =3D <&gpx3>;
-+		interrupts =3D <2 0>;
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&s5m8767_irq &s5m8767_dvs &s5m8767_ds>;
-+		wakeup-source;
-+
-+		s5m8767,pmic-buck-dvs-gpios =3D <&gpd1 0 GPIO_ACTIVE_LOW>, /* DVS1 *=
-/
-+		                              <&gpd1 1 GPIO_ACTIVE_LOW>, /* DVS2 */
-+		                              <&gpd1 2 GPIO_ACTIVE_LOW>; /* DVS3 */
-+
-+		s5m8767,pmic-buck-ds-gpios =3D <&gpx2 3 GPIO_ACTIVE_LOW>, /* SET1 */
-+		                             <&gpx2 4 GPIO_ACTIVE_LOW>, /* SET2 */
-+		                             <&gpx2 5 GPIO_ACTIVE_LOW>; /* SET3 */
-+
-+		/*
-+		 * The following arrays of DVS voltages are not used, since we are
-+		 * not using GPIOs to control PMIC bucks, but they must be defined
-+		 * to please the driver.
-+		 */
-+		s5m8767,pmic-buck2-dvs-voltage =3D <1350000>, <1300000>,
-+		                                 <1250000>, <1200000>,
-+		                                 <1150000>, <1100000>,
-+		                                 <1000000>, <950000>;
-+
-+		s5m8767,pmic-buck3-dvs-voltage =3D <1100000>, <1100000>,
-+		                                 <1100000>, <1100000>,
-+		                                 <1000000>, <1000000>,
-+		                                 <1000000>, <1000000>;
-+
-+		s5m8767,pmic-buck4-dvs-voltage =3D <1200000>, <1200000>,
-+		                                 <1200000>, <1200000>,
-+		                                 <1200000>, <1200000>,
-+		                                 <1200000>, <1200000>;
-+
-+		clocks {
-+			compatible =3D "samsung,s5m8767-clk";
-+			#clock-cells =3D <1>;
-+			clock-output-names =3D "en32khz_ap",
-+			                     "en32khz_cp",
-+			                     "en32khz_bt";
-+		};
-+
-+		regulators {
-+			s5m_ldo4_reg: LDO4 {
-+				regulator-name =3D "P1.0V_LDO_OUT4";
-+				regulator-min-microvolt =3D <1000000>;
-+				regulator-max-microvolt =3D <1000000>;
-+				regulator-always-on;
-+				op_mode =3D <0>;
-+			};
-+
-+			s5m_ldo5_reg: LDO5 {
-+				regulator-name =3D "P1.0V_LDO_OUT5";
-+				regulator-min-microvolt =3D <1000000>;
-+				regulator-max-microvolt =3D <1000000>;
-+				regulator-always-on;
-+				op_mode =3D <0>;
-+			};
-+
-+			s5m_ldo6_reg: LDO6 {
-+				regulator-name =3D "vdd_mydp";
-+				regulator-min-microvolt =3D <1000000>;
-+				regulator-max-microvolt =3D <1000000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo7_reg: LDO7 {
-+				regulator-name =3D "P1.1V_LDO_OUT7";
-+				regulator-min-microvolt =3D <1100000>;
-+				regulator-max-microvolt =3D <1100000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo8_reg: LDO8 {
-+				regulator-name =3D "P1.0V_LDO_OUT8";
-+				regulator-min-microvolt =3D <1000000>;
-+				regulator-max-microvolt =3D <1000000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo10_reg: LDO10 {
-+				regulator-name =3D "P1.8V_LDO_OUT10";
-+				regulator-min-microvolt =3D <1800000>;
-+				regulator-max-microvolt =3D <1800000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo11_reg: LDO11 {
-+				regulator-name =3D "P1.8V_LDO_OUT11";
-+				regulator-min-microvolt =3D <1800000>;
-+				regulator-max-microvolt =3D <1800000>;
-+				regulator-always-on;
-+				op_mode =3D <0>;
-+			};
-+
-+			s5m_ldo12_reg: LDO12 {
-+				regulator-name =3D "P3.0V_LDO_OUT12";
-+				regulator-min-microvolt =3D <3000000>;
-+				regulator-max-microvolt =3D <3000000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo13_reg: LDO13 {
-+				regulator-name =3D "P1.8V_LDO_OUT13";
-+				regulator-min-microvolt =3D <1800000>;
-+				regulator-max-microvolt =3D <1800000>;
-+				regulator-always-on;
-+				op_mode =3D <0>;
-+			};
-+
-+			s5m_ldo14_reg: LDO14 {
-+				regulator-name =3D "P1.8V_LDO_OUT14";
-+				regulator-min-microvolt =3D <1800000>;
-+				regulator-max-microvolt =3D <1800000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo15_reg: LDO15 {
-+				regulator-name =3D "P1.0V_LDO_OUT15";
-+				regulator-min-microvolt =3D <1000000>;
-+				regulator-max-microvolt =3D <1000000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo16_reg: LDO16 {
-+				regulator-name =3D "P1.8V_LDO_OUT16";
-+				regulator-min-microvolt =3D <1800000>;
-+				regulator-max-microvolt =3D <1800000>;
-+				regulator-always-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			s5m_ldo17_reg: LDO17 {
-+				regulator-name =3D "P2.8V_LDO_OUT17";
-+				regulator-min-microvolt =3D <2800000>;
-+				regulator-max-microvolt =3D <2800000>;
-+				regulator-always-on;
-+				op_mode =3D <0>;
-+			};
-+
-+			s5m_ldo25_reg: LDO25 {
-+				regulator-name =3D "vdd_bridge";
-+				regulator-min-microvolt =3D <1200000>;
-+				regulator-max-microvolt =3D <1200000>;
-+				regulator-always-on;
-+				op_mode =3D <1>;
-+			};
-+
-+			BUCK1 {
-+				regulator-name =3D "vdd_mif";
-+				regulator-min-microvolt =3D <950000>;
-+				regulator-max-microvolt =3D <1300000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			BUCK2 {
-+				regulator-name =3D "vdd_arm";
-+				regulator-min-microvolt =3D <850000>;
-+				regulator-max-microvolt =3D <1350000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			BUCK3 {
-+				regulator-name =3D "vdd_int";
-+				regulator-min-microvolt =3D <900000>;
-+				regulator-max-microvolt =3D <1200000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			BUCK4 {
-+				regulator-name =3D "vdd_g3d";
-+				regulator-min-microvolt =3D <850000>;
-+				regulator-max-microvolt =3D <1300000>;
-+				regulator-boot-on;
-+				op_mode =3D <3>;
-+			};
-+
-+			BUCK5 {
-+				regulator-name =3D "P1.8V_BUCK_OUT5";
-+				regulator-min-microvolt =3D <1800000>;
-+				regulator-max-microvolt =3D <1800000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode =3D <1>;
-+			};
-+
-+			BUCK6 {
-+				regulator-name =3D "P1.2V_BUCK_OUT6";
-+				regulator-min-microvolt =3D <1200000>;
-+				regulator-max-microvolt =3D <1200000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode =3D <0>;
-+			};
-+
-+			BUCK9 {
-+				regulator-name =3D "vdd_ummc";
-+				regulator-min-microvolt =3D <950000>;
-+				regulator-max-microvolt =3D <3000000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+				op_mode =3D <3>;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c_1 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <378000>;
-+};
-+
-+/*
-+ * Disabled pullups since external part has its own pullups and
-+ * double-pulling gets us out of spec in some cases.
-+ */
-+&i2c2_bus {
-+	samsung,pin-pud =3D <0>;
-+};
-+
-+&i2c_2 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <66000>;
-+
-+	hdmiddc@50 {
-+		compatible =3D "samsung,exynos4210-hdmiddc";
-+		reg =3D <0x50>;
-+	};
-+};
-+
-+&i2c_3 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <66000>;
-+};
-+
-+&i2c_4 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <66000>;
-+
-+	cros_ec: embedded-controller {
-+		compatible =3D "google,cros-ec-i2c";
-+		reg =3D <0x1e>;
-+		interrupts =3D <6 0>;
-+		interrupt-parent =3D <&gpx1>;
-+		wakeup-source;
-+		pinctrl-names =3D "default";
-+		pinctrl-0 =3D <&ec_irq>;
-+	};
-+};
-+
-+&i2c_5 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <66000>;
-+};
-+
-+&i2c_7 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <66000>;
-+};
-+
-+&i2c_8 {
-+	status =3D "okay";
-+	samsung,i2c-sda-delay =3D <100>;
-+	samsung,i2c-max-bus-freq =3D <378000>;
-+
-+	hdmiphy: hdmiphy@38 {
-+		compatible =3D "samsung,exynos4212-hdmiphy";
-+		reg =3D <0x38>;
-+	};
-+};
-+
-+&i2s0 {
-+	status =3D "okay";
-+};
-+
-+&mmc_0 {
-+	status =3D "okay";
-+	num-slots =3D <1>;
-+	supports-highspeed;
-+	broken-cd;
-+	card-detect-delay =3D <200>;
-+	samsung,dw-mshc-ciu-div =3D <3>;
-+	samsung,dw-mshc-sdr-timing =3D <2 3>;
-+	samsung,dw-mshc-ddr-timing =3D <1 2>;
-+	pinctrl-names =3D "default";
-+	pinctrl-0 =3D <&sd0_clk &sd0_cmd &sd0_cd &sd0_bus4 &sd0_bus8>;
-+
-+	slot@0 {
-+		reg =3D <0>;
-+		bus-width =3D <8>;
-+	};
-+};
-+
-+&mmc_1 {
-+	status =3D "okay";
-+	num-slots =3D <1>;
-+	supports-highspeed;
-+	broken-cd;
-+	card-detect-delay =3D <200>;
-+	samsung,dw-mshc-ciu-div =3D <3>;
-+	samsung,dw-mshc-sdr-timing =3D <2 3>;
-+	samsung,dw-mshc-ddr-timing =3D <1 2>;
-+	pinctrl-names =3D "default";
-+	pinctrl-0 =3D <&sd1_clk &sd1_cmd &sd1_cd &sd1_bus4>;
-+
-+	slot@0 {
-+		reg =3D <0>;
-+		bus-width =3D <4>;
-+	};
-+};
-+
-+&pinctrl_0 {
-+	dp_hpd_gpio: dp-hpd-gpio {
-+		samsung,pins =3D "gpc3-0";
-+		samsung,pin-function =3D <1>;
-+		samsung,pin-pud =3D <3>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+
-+	s5m8767_dvs: s5m8767-dvs {
-+		samsung,pins =3D "gpd1-0", "gpd1-1", "gpd1-2";
-+		samsung,pin-function =3D <0>;
-+		samsung,pin-pud =3D <1>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+
-+	power_key_irq: power-key-irq {
-+		samsung,pins =3D "gpx1-3";
-+		samsung,pin-function =3D <0>;
-+		samsung,pin-pud =3D <0>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+
-+	ec_irq: ec-irq {
-+		samsung,pins =3D "gpx1-6";
-+		samsung,pin-function =3D <0>;
-+		samsung,pin-pud =3D <0>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+
-+	s5m8767_ds: s5m8767-ds {
-+		samsung,pins =3D "gpx2-3", "gpx2-4", "gpx2-5";
-+		samsung,pin-function =3D <0>;
-+		samsung,pin-pud =3D <1>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+
-+	s5m8767_irq: s5m8767-irq {
-+		samsung,pins =3D "gpx3-2";
-+		samsung,pin-function =3D <0>;
-+		samsung,pin-pud =3D <0>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+
-+	lid_irq: lid-irq {
-+		samsung,pins =3D "gpx3-5";
-+		samsung,pin-function =3D <0>;
-+		samsung,pin-pud =3D <0>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+
-+	hdmi_hpd_irq: hdmi-hpd-irq {
-+		samsung,pins =3D "gpx3-7";
-+		samsung,pin-function =3D <0>;
-+		samsung,pin-pud =3D <1>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+};
-+
-+&pinctrl_1 {
-+	hsic_reset: hsic-reset {
-+		samsung,pins =3D "gpe1-0";
-+		samsung,pin-function =3D <1>;
-+		samsung,pin-pud =3D <0>;
-+		samsung,pin-drv =3D <0>;
-+	};
-+};
-+
-+&sd1_clk {
-+	samsung,pin-drv =3D <0>;
-+};
-+
-+&sd1_cmd {
-+	samsung,pin-pud =3D <3>;
-+	samsung,pin-drv =3D <0>;
-+};
-+
-+&sd1_cd {
-+	samsung,pin-drv =3D <0>;
-+};
-+
-+&sd1_bus4 {
-+	samsung,pin-drv =3D <0>;
-+};
-+
-+&spi_1 {
-+	status =3D "okay";
-+	samsung,spi-src-clk =3D <0>;
-+	num-cs =3D <1>;
-+};
-+
-+&usbdrd_phy {
-+	vbus-supply =3D <&usb3_vbus_reg>;
-+};
-+
-+#include "cros-ec-keyboard.dtsi"
---=20
-1.9.3
+VXNlIHRoZSBuZXcgc3R5bGUgb2YgcmVmZXJlbmNpbmcgaW5oZXJpdGVkIG5vZGVzIGFuZCB1c2Ug
+c3ltYm9saWMgbmFtZXMuCgpTdWdnZXN0ZWQtYnk6IERvdWcgQW5kZXJzb24gPGRpYW5kZXJzQGNo
+cm9taXVtLm9yZz4KU2lnbmVkLW9mZi1ieTogQW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJlckBzdXNl
+LmRlPgotLS0KIHYzOiBOZXcgKERvdWcgQW5kZXJzb24pCgogYXJjaC9hcm0vYm9vdC9kdHMvZXh5
+bm9zNTI1MC1zbm93LmR0cyB8IDE4MiArKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0t
+CiAxIGZpbGUgY2hhbmdlZCwgOTAgaW5zZXJ0aW9ucygrKSwgOTIgZGVsZXRpb25zKC0pCgpkaWZm
+IC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zbm93LmR0cyBiL2FyY2gvYXJt
+L2Jvb3QvZHRzL2V4eW5vczUyNTAtc25vdy5kdHMKaW5kZXggMWMzNmNkNzI5MDVmLi4yZWQ2Y2Iw
+NGEyZGIgMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc25vdy5kdHMK
+KysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zbm93LmR0cwpAQCAtOSw2ICs5LDgg
+QEAKICovCiAKIC9kdHMtdjEvOworI2luY2x1ZGUgPGR0LWJpbmRpbmdzL2dwaW8vZ3Bpby5oPgor
+I2luY2x1ZGUgPGR0LWJpbmRpbmdzL2lucHV0L2lucHV0Lmg+CiAjaW5jbHVkZSAiZXh5bm9zNTI1
+MC5kdHNpIgogCiAvIHsKQEAgLTMwLDg1ICszMiwxOSBAQAogCQlzdGF0dXMgPSAib2theSI7CiAJ
+fTsKIAotCXBpbmN0cmxAMTE0MDAwMDAgewotCQllY19pcnE6IGVjLWlycSB7Ci0JCQlzYW1zdW5n
+LHBpbnMgPSAiZ3B4MS02IjsKLQkJCXNhbXN1bmcscGluLWZ1bmN0aW9uID0gPDA+OwotCQkJc2Ft
+c3VuZyxwaW4tcHVkID0gPDA+OwotCQkJc2Ftc3VuZyxwaW4tZHJ2ID0gPDA+OwotCQl9OwotCi0J
+CXNkM19jbGs6IHNkMy1jbGsgewotCQkJc2Ftc3VuZyxwaW4tZHJ2ID0gPDA+OwotCQl9OwotCi0J
+CXNkM19jbWQ6IHNkMy1jbWQgewotCQkJc2Ftc3VuZyxwaW4tcHVkID0gPDM+OwotCQkJc2Ftc3Vu
+ZyxwaW4tZHJ2ID0gPDA+OwotCQl9OwotCi0JCXNkM19idXM0OiBzZDMtYnVzLXdpZHRoNCB7Ci0J
+CQlzYW1zdW5nLHBpbi1kcnYgPSA8MD47Ci0JCX07Ci0KLQkJbWF4OTgwOTVfZW46IG1heDk4MDk1
+LWVuIHsKLQkJCXNhbXN1bmcscGlucyA9ICJncHgxLTciOwotCQkJc2Ftc3VuZyxwaW4tZnVuY3Rp
+b24gPSA8MD47Ci0JCQlzYW1zdW5nLHBpbi1wdWQgPSA8Mz47Ci0JCQlzYW1zdW5nLHBpbi1kcnYg
+PSA8MD47Ci0JCX07Ci0KLQkJdHBzNjUwOTBfaXJxOiB0cHM2NTA5MC1pcnEgewotCQkJc2Ftc3Vu
+ZyxwaW5zID0gImdweDItNiI7Ci0JCQlzYW1zdW5nLHBpbi1mdW5jdGlvbiA9IDwwPjsKLQkJCXNh
+bXN1bmcscGluLXB1ZCA9IDwwPjsKLQkJCXNhbXN1bmcscGluLWRydiA9IDwwPjsKLQkJfTsKLQot
+CQl1c2IzX3ZidXNfZW46IHVzYjMtdmJ1cy1lbiB7Ci0JCQlzYW1zdW5nLHBpbnMgPSAiZ3B4Mi03
+IjsKLQkJCXNhbXN1bmcscGluLWZ1bmN0aW9uID0gPDE+OwotCQkJc2Ftc3VuZyxwaW4tcHVkID0g
+PDA+OwotCQkJc2Ftc3VuZyxwaW4tZHJ2ID0gPDA+OwotCQl9OwotCi0JCWhkbWlfaHBkX2lycTog
+aGRtaS1ocGQtaXJxIHsKLQkJCXNhbXN1bmcscGlucyA9ICJncHgzLTciOwotCQkJc2Ftc3VuZyxw
+aW4tZnVuY3Rpb24gPSA8MD47Ci0JCQlzYW1zdW5nLHBpbi1wdWQgPSA8MT47Ci0JCQlzYW1zdW5n
+LHBpbi1kcnYgPSA8MD47Ci0JCX07Ci0JfTsKLQotCXBpbmN0cmxAMTM0MDAwMDAgewotCQlhcmJf
+dGhlaXJfY2xhaW06IGFyYi10aGVpci1jbGFpbSB7Ci0JCQlzYW1zdW5nLHBpbnMgPSAiZ3BlMC00
+IjsKLQkJCXNhbXN1bmcscGluLWZ1bmN0aW9uID0gPDA+OwotCQkJc2Ftc3VuZyxwaW4tcHVkID0g
+PDM+OwotCQkJc2Ftc3VuZyxwaW4tZHJ2ID0gPDA+OwotCQl9OwotCi0JCWFyYl9vdXJfY2xhaW06
+IGFyYi1vdXItY2xhaW0gewotCQkJc2Ftc3VuZyxwaW5zID0gImdwZjAtMyI7Ci0JCQlzYW1zdW5n
+LHBpbi1mdW5jdGlvbiA9IDwxPjsKLQkJCXNhbXN1bmcscGluLXB1ZCA9IDwwPjsKLQkJCXNhbXN1
+bmcscGluLWRydiA9IDwwPjsKLQkJfTsKLQl9OwotCiAJZ3Bpby1rZXlzIHsKIAkJY29tcGF0aWJs
+ZSA9ICJncGlvLWtleXMiOwogCiAJCXBvd2VyIHsKIAkJCWxhYmVsID0gIlBvd2VyIjsKLQkJCWdw
+aW9zID0gPCZncHgxIDMgMT47Ci0JCQlsaW51eCxjb2RlID0gPDExNj47IC8qIEtFWV9QT1dFUiAq
+LworCQkJZ3Bpb3MgPSA8JmdweDEgMyBHUElPX0FDVElWRV9MT1c+OworCQkJbGludXgsY29kZSA9
+IDxLRVlfUE9XRVI+OwogCQkJZ3Bpby1rZXksd2FrZXVwOwogCQl9OwogCiAJCWxpZC1zd2l0Y2gg
+ewogCQkJbGFiZWwgPSAiTGlkIjsKLQkJCWdwaW9zID0gPCZncHgzIDUgMT47CisJCQlncGlvcyA9
+IDwmZ3B4MyA1IEdQSU9fQUNUSVZFX0xPVz47CiAJCQlsaW51eCxpbnB1dC10eXBlID0gPDU+OyAv
+KiBFVl9TVyAqLwogCQkJbGludXgsY29kZSA9IDwwPjsgLyogU1dfTElEICovCiAJCQlkZWJvdW5j
+ZS1pbnRlcnZhbCA9IDwxPjsKQEAgLTEyOSw4ICs2NSw4IEBACiAKIAkJaTJjLXBhcmVudCA9IDwm
+ey9pMmNAMTJDQTAwMDB9PjsKIAotCQlvdXItY2xhaW0tZ3BpbyA9IDwmZ3BmMCAzIDE+OwotCQl0
+aGVpci1jbGFpbS1ncGlvcyA9IDwmZ3BlMCA0IDE+OworCQlvdXItY2xhaW0tZ3BpbyA9IDwmZ3Bm
+MCAzIEdQSU9fQUNUSVZFX0xPVz47CisJCXRoZWlyLWNsYWltLWdwaW9zID0gPCZncGUwIDQgR1BJ
+T19BQ1RJVkVfTE9XPjsKIAkJc2xldy1kZWxheS11cyA9IDwxMD47CiAJCXdhaXQtcmV0cnktdXMg
+PSA8MzAwMD47CiAJCXdhaXQtZnJlZS11cyA9IDw1MDAwMD47CkBAIC0yMzksMTkgKzE3NSw2IEBA
+CiAJCX07CiAJfTsKIAotCWkyY0AxMkNEMDAwMCB7Ci0JCW1heDk4MDk1OiBjb2RlY0AxMSB7Ci0J
+CQljb21wYXRpYmxlID0gIm1heGltLG1heDk4MDk1IjsKLQkJCXJlZyA9IDwweDExPjsKLQkJCXBp
+bmN0cmwtMCA9IDwmbWF4OTgwOTVfZW4+OwotCQkJcGluY3RybC1uYW1lcyA9ICJkZWZhdWx0IjsK
+LQkJfTsKLQl9OwotCi0JaTJzMDogaTJzQDAzODMwMDAwIHsKLQkJc3RhdHVzID0gIm9rYXkiOwot
+CX07Ci0KIAlzb3VuZCB7CiAJCWNvbXBhdGlibGUgPSAiZ29vZ2xlLHNub3ctYXVkaW8tbWF4OTgw
+OTUiOwogCkBAIC0yNjUsMTggKzE4OCwxNCBAQAogCQlyZWd1bGF0b3ItbmFtZSA9ICJQNS4wVl9V
+U0IzQ09OIjsKIAkJcmVndWxhdG9yLW1pbi1taWNyb3ZvbHQgPSA8NTAwMDAwMD47CiAJCXJlZ3Vs
+YXRvci1tYXgtbWljcm92b2x0ID0gPDUwMDAwMDA+OwotCQlncGlvID0gPCZncHgyIDcgMD47CisJ
+CWdwaW8gPSA8JmdweDIgNyBHUElPX0FDVElWRV9ISUdIPjsKIAkJcGluY3RybC1uYW1lcyA9ICJk
+ZWZhdWx0IjsKIAkJcGluY3RybC0wID0gPCZ1c2IzX3ZidXNfZW4+OwogCQllbmFibGUtYWN0aXZl
+LWhpZ2g7CiAJfTsKIAotCXBoeUAxMjEwMDAwMCB7Ci0JCXZidXMtc3VwcGx5ID0gPCZ1c2IzX3Zi
+dXNfcmVnPjsKLQl9OwotCiAJdXNiQDEyMTEwMDAwIHsKLQkJc2Ftc3VuZyx2YnVzLWdwaW8gPSA8
+JmdweDEgMSAwPjsKKwkJc2Ftc3VuZyx2YnVzLWdwaW8gPSA8JmdweDEgMSBHUElPX0FDVElWRV9I
+SUdIPjsKIAl9OwogCiAJZml4ZWQtcmF0ZS1jbG9ja3MgewpAQCAtMjg3LDcgKzIwNiw3IEBACiAJ
+fTsKIAogCWhkbWkgewotCQlocGQtZ3BpbyA9IDwmZ3B4MyA3IDA+OworCQlocGQtZ3BpbyA9IDwm
+Z3B4MyA3IEdQSU9fQUNUSVZFX0hJR0g+OwogCQlwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOwog
+CQlwaW5jdHJsLTAgPSA8JmhkbWlfaHBkX2lycT47CiAJCXBoeSA9IDwmaGRtaXBoeT47CkBAIC0z
+MjIsNyArMjQxLDcgQEAKIAkJc2Ftc3VuZyxjb2xvci1kZXB0aCA9IDwxPjsKIAkJc2Ftc3VuZyxs
+aW5rLXJhdGUgPSA8MHgwYT47CiAJCXNhbXN1bmcsbGFuZS1jb3VudCA9IDwyPjsKLQkJc2Ftc3Vu
+ZyxocGQtZ3BpbyA9IDwmZ3B4MCA3IDA+OworCQlzYW1zdW5nLGhwZC1ncGlvID0gPCZncHgwIDcg
+R1BJT19BQ1RJVkVfSElHSD47CiAKIAkJZGlzcGxheS10aW1pbmdzIHsKIAkJCW5hdGl2ZS1tb2Rl
+ID0gPCZ0aW1pbmcxPjsKQEAgLTU0Nyw2ICs0NjYsMTMgQEAKIAlzdGF0dXMgPSAib2theSI7CiAJ
+c2Ftc3VuZyxpMmMtc2RhLWRlbGF5ID0gPDEwMD47CiAJc2Ftc3VuZyxpMmMtbWF4LWJ1cy1mcmVx
+ID0gPDY2MDAwPjsKKworCW1heDk4MDk1OiBjb2RlY0AxMSB7CisJCWNvbXBhdGlibGUgPSAibWF4
+aW0sbWF4OTgwOTUiOworCQlyZWcgPSA8MHgxMT47CisJCXBpbmN0cmwtMCA9IDwmbWF4OTgwOTVf
+ZW4+OworCQlwaW5jdHJsLW5hbWVzID0gImRlZmF1bHQiOworCX07CiB9OwogCiAmaTJjXzggewpA
+QCAtNTYwLDYgKzQ4NiwxMCBAQAogCX07CiB9OwogCismaTJzMCB7CisJc3RhdHVzID0gIm9rYXki
+OworfTsKKwogJm1tY18wIHsKIAlzdGF0dXMgPSAib2theSI7CiAJbnVtLXNsb3RzID0gPDE+OwpA
+QCAtNjI1LDYgKzU1NSw3MCBAQAogCQlzYW1zdW5nLHBpbi1wdWQgPSA8MD47CiAJCXNhbXN1bmcs
+cGluLWRydiA9IDwwPjsKIAl9OworCisJZWNfaXJxOiBlYy1pcnEgeworCQlzYW1zdW5nLHBpbnMg
+PSAiZ3B4MS02IjsKKwkJc2Ftc3VuZyxwaW4tZnVuY3Rpb24gPSA8MD47CisJCXNhbXN1bmcscGlu
+LXB1ZCA9IDwwPjsKKwkJc2Ftc3VuZyxwaW4tZHJ2ID0gPDA+OworCX07CisKKwltYXg5ODA5NV9l
+bjogbWF4OTgwOTUtZW4geworCQlzYW1zdW5nLHBpbnMgPSAiZ3B4MS03IjsKKwkJc2Ftc3VuZyxw
+aW4tZnVuY3Rpb24gPSA8MD47CisJCXNhbXN1bmcscGluLXB1ZCA9IDwzPjsKKwkJc2Ftc3VuZyxw
+aW4tZHJ2ID0gPDA+OworCX07CisKKwl0cHM2NTA5MF9pcnE6IHRwczY1MDkwLWlycSB7CisJCXNh
+bXN1bmcscGlucyA9ICJncHgyLTYiOworCQlzYW1zdW5nLHBpbi1mdW5jdGlvbiA9IDwwPjsKKwkJ
+c2Ftc3VuZyxwaW4tcHVkID0gPDA+OworCQlzYW1zdW5nLHBpbi1kcnYgPSA8MD47CisJfTsKKwor
+CXVzYjNfdmJ1c19lbjogdXNiMy12YnVzLWVuIHsKKwkJc2Ftc3VuZyxwaW5zID0gImdweDItNyI7
+CisJCXNhbXN1bmcscGluLWZ1bmN0aW9uID0gPDE+OworCQlzYW1zdW5nLHBpbi1wdWQgPSA8MD47
+CisJCXNhbXN1bmcscGluLWRydiA9IDwwPjsKKwl9OworCisJaGRtaV9ocGRfaXJxOiBoZG1pLWhw
+ZC1pcnEgeworCQlzYW1zdW5nLHBpbnMgPSAiZ3B4My03IjsKKwkJc2Ftc3VuZyxwaW4tZnVuY3Rp
+b24gPSA8MD47CisJCXNhbXN1bmcscGluLXB1ZCA9IDwxPjsKKwkJc2Ftc3VuZyxwaW4tZHJ2ID0g
+PDA+OworCX07Cit9OworCismcGluY3RybF8xIHsKKwlhcmJfdGhlaXJfY2xhaW06IGFyYi10aGVp
+ci1jbGFpbSB7CisJCXNhbXN1bmcscGlucyA9ICJncGUwLTQiOworCQlzYW1zdW5nLHBpbi1mdW5j
+dGlvbiA9IDwwPjsKKwkJc2Ftc3VuZyxwaW4tcHVkID0gPDM+OworCQlzYW1zdW5nLHBpbi1kcnYg
+PSA8MD47CisJfTsKKworCWFyYl9vdXJfY2xhaW06IGFyYi1vdXItY2xhaW0geworCQlzYW1zdW5n
+LHBpbnMgPSAiZ3BmMC0zIjsKKwkJc2Ftc3VuZyxwaW4tZnVuY3Rpb24gPSA8MT47CisJCXNhbXN1
+bmcscGluLXB1ZCA9IDwwPjsKKwkJc2Ftc3VuZyxwaW4tZHJ2ID0gPDA+OworCX07Cit9OworCism
+c2QzX2NsayB7CisJc2Ftc3VuZyxwaW4tZHJ2ID0gPDA+OworfTsKKworJnNkM19jbWQgeworCXNh
+bXN1bmcscGluLXB1ZCA9IDwzPjsKKwlzYW1zdW5nLHBpbi1kcnYgPSA8MD47Cit9OworCismc2Qz
+X2J1czQgeworCXNhbXN1bmcscGluLWRydiA9IDwwPjsKIH07CiAKICZzcGlfMSB7CkBAIC02MzMs
+NCArNjI3LDggQEAKIAludW0tY3MgPSA8MT47CiB9OwogCismdXNiZHJkX3BoeSB7CisJdmJ1cy1z
+dXBwbHkgPSA8JnVzYjNfdmJ1c19yZWc+OworfTsKKwogI2luY2x1ZGUgImNyb3MtZWMta2V5Ym9h
+cmQuZHRzaSIKLS0gCjEuOS4zCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5l
+bEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4v
+bGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
