@@ -1,51 +1,101 @@
-From: Sachin Kamat <spk.linux@gmail.com>
-Subject: Re: [PATCH] media: v4l2: make allocation algorithm more robust and flexible
-Date: Wed, 30 Jul 2014 17:37:20 +0530
-Message-ID: <CAK5sBcHRRwEjCAcB789EoQGpAGmyqb57sVFzd2RVY2SNb1FwxQ@mail.gmail.com>
-References: <1406693390-31849-1-git-send-email-zhaowei.yuan@samsung.com>
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCHv7 0/5] ARM: remove the sub-node and deprecate supports-highspeed
+ property for dwmmc.
+Date: Wed, 30 Jul 2014 14:08:14 +0200
+Message-ID: <53D8E02E.2070007@suse.de>
+References: <1406514579-3769-1-git-send-email-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f44.google.com ([209.85.215.44]:63765 "EHLO
-	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751345AbaG3MHW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jul 2014 08:07:22 -0400
-In-Reply-To: <1406693390-31849-1-git-send-email-zhaowei.yuan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1406514579-3769-1-git-send-email-jh80.chung@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>
+Cc: Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, tgih.jun@samsung.com, devicetree@vger.kernel.org, heiko@sntech.de, dinguyen@altera.com, Mark Rutland <mark.rutland@arm.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Zhaowei Yuan <zhaowei.yuan@samsung.com>
-Cc: linux-media@vger.kernel.org, k.debski@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, jtp.park@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, m.chehab@samsung.com
 
-Hi Zhaowei,
+Am 28.07.2014 04:29, schrieb Jaehoon Chung:
+> Since used the mmc_of_parse(), didn't parse the sub-node.
+> So we can remove the sub-node, because almost SoC used the only one c=
+ard per a host.
+> And supports-highspeed can be replaced to "cap-mmc/sd-highspeed" prop=
+erty.
+>=20
+> Chnagelog V7:
+> 	- Fixed typo and modified the commit message.
+> Changelog V6:
+> 	- Fixed Wrong bit control for host's quirks and rename.
+> 	- Add "Acked-by" for each SoC maintainers.
+> Changelog V5:
+> 	- Rebased on v3.16-rc4.
+> 	- Add Acked-by.
+> Changelog V4:
+> 	- Fix the checkpatch error.
+> Changelog V3:
+> 	- Fix the wrong bus-width value.
+> 	- Use the slot->host->quirks instead of brq->quirks.
+> 	- Add tested-by and reviewd-by.
+> Changelog V2:
+> 	- Add the "mmc: dw_mmc: replace "disable-wp" from slot's quirks to h=
+ost's quirk"
+>=20
+>=20
+> Jaehoon Chung (5):
+>   mmc: dw_mmc: modify the dt-binding for removing slot-node and
+>     supports-highspeed
+>   ARM: dts: exynos: unuse the slot-node and deprecated the
+>     supports-highspeed for dw-mmc
+>   ARM: dts: socfpga: unuse the slot-node and deprecated the
+>     supports-highspeed for dw-mmc
+>   ARM: dts: rockchip: unuse the slot-node and deprecated the
+>     supports-highspeed for dw-mmc
 
-On Wed, Jul 30, 2014 at 9:39 AM, Zhaowei Yuan <zhaowei.yuan@samsung.com> wrote:
-> Current algorithm relies on the fact that caller will align the
-> size to PAGE_SIZE, otherwise order will be decreased to negative
-> when remain size is less than PAGE_SIZE, it makes the function
-> hard to be migrated.
-> This patch sloves the hidden problem.
->
-> Signed-off-by: Zhaowei Yuan <zhaowei.yuan@samsung.com>
-> ---
->  drivers/media/v4l2-core/videobuf2-dma-sg.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/v4l2-core/videobuf2-dma-sg.c b/drivers/media/v4l2-core/videobuf2-dma-sg.c
-> index adefc31..40d18aa 100644
-> --- a/drivers/media/v4l2-core/videobuf2-dma-sg.c
-> +++ b/drivers/media/v4l2-core/videobuf2-dma-sg.c
-> @@ -58,7 +58,7 @@ static int vb2_dma_sg_alloc_compacted(struct vb2_dma_sg_buf *buf,
->
->                 order = get_order(size);
->                 /* Dont over allocate*/
-> -               if ((PAGE_SIZE << order) > size)
-> +               if (order > 0 && (PAGE_SIZE << order) > size)
->                         order--;
+Nit: 3x s/deprecated/deprecate/g to align tenses? (Sorry, I got
+interrupted during previous review pass.)
 
-If size is not page aligned, then wouldn't decrementing the order
-under-allocate the memory?
-
--- 
 Regards,
-Sachin.
+Andreas
+
+>   mmc: dw_mmc: replace "disable-wp" from slot's quirk to host's quirk
+>=20
+>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   17 ++++------=
+---
+>  .../devicetree/bindings/mmc/k3-dw-mshc.txt         |   12 ++++-----
+>  .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |   12 ++++-----
+>  arch/arm/boot/dts/exynos4412-odroidx.dts           |    8 ++----
+>  arch/arm/boot/dts/exynos4412-origen.dts            |    8 ++----
+>  arch/arm/boot/dts/exynos4412-trats2.dts            |    8 ++----
+>  arch/arm/boot/dts/exynos5250-arndale.dts           |   18 ++++------=
+----
+>  arch/arm/boot/dts/exynos5250-cros-common.dtsi      |   26 ++++++----=
+----------
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts          |   18 ++++------=
+----
+>  arch/arm/boot/dts/exynos5250-snow.dts              |    6 ++---
+>  arch/arm/boot/dts/exynos5260-xyref5260.dts         |   18 ++++------=
+----
+>  arch/arm/boot/dts/exynos5410-smdk5410.dts          |   18 ++++------=
+----
+>  arch/arm/boot/dts/exynos5420-arndale-octa.dts      |   16 +++-------=
+--
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts         |   16 +++-------=
+--
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   16 +++-------=
+--
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts          |   16 +++-------=
+--
+>  arch/arm/boot/dts/rk3066a-bqcurie2.dts             |   16 +++-------=
+--
+>  arch/arm/boot/dts/socfpga_arria5.dtsi              |    9 +++----
+>  arch/arm/boot/dts/socfpga_cyclone5.dtsi            |    9 +++----
+>  arch/arm/boot/dts/socfpga_vt.dts                   |    9 +++----
+>  drivers/mmc/host/dw_mmc.c                          |   12 ++++-----
+>  include/linux/mmc/dw_mmc.h                         |    6 ++---
+>  22 files changed, 86 insertions(+), 208 deletions(-)
+>=20
+
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
+berg
