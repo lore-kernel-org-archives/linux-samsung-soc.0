@@ -1,89 +1,81 @@
-From: "Chander M. Kashyap" <chander.kashyap@gmail.com>
-Subject: Re: [PATCH v9 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-Date: Thu, 31 Jul 2014 11:50:45 +0530
-Message-ID: <CADWw7OiwXNrbFyiVhpcJyBnAdsGsXcAMgMUOmY=JxHM7+7Z0eA@mail.gmail.com>
-References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip
+ support
+Date: Thu, 31 Jul 2014 14:08:05 +0530
+Message-ID: <CAEC9eQOFWQ8t1zzOVrHm2=aS4+N94EW6LSjBUG2fH51aFs0GLQ@mail.gmail.com>
+References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
+ <53D5435B.8030305@suse.de>
+ <CAEC9eQPW-Z4craCC15M7oTp8eSD09AGxdTFEWaAWqn3Up4eJUg@mail.gmail.com>
+ <53D783CC.2080108@suse.de>
+ <CAEC9eQOpS90U9kWmY8YdcAtdxQYKoM9ikoWpkwMs6T2udLeZHA@mail.gmail.com>
+ <53D9484A.1070905@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, l.majewski@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, heiko@sntech.de, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, cw00.choi@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <53D9484A.1070905@suse.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 30, 2014 at 1:37 PM, Thomas Abraham <thomas.ab@samsung.com> wrote:
-> Changes since v8:
-> - Fixes suggested by Tomasz Figa.
->
-> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
-> drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
-> series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
-> driver.
->
-> This patch series is dependent on two other patches
-> 1. ARM: dts: add CPU nodes for Exynos4 SoCs
->    - https://lkml.org/lkml/2014/7/21/315
-> 2. ARM: dts: smdk5250: Specify MAX77686 pmic interrupt
->    - http://www.spinics.net/lists/arm-kernel/msg351134.html
-> 3. clk: exynos4: remove duplicate div_core2 divider clock instantiation
->    - http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34859.html
->
-> Thomas Abraham (6):
->   clk: samsung: add infrastructure to register cpu clocks
->   clk: samsung: add cpu clock configuration data and instantiate cpu clock
->   ARM: dts: Exynos: add CPU OPP and regulator supply property
->   ARM: Exynos: switch to using generic cpufreq driver for Exynos4210/5250/5420
->   cpufreq: exynos: remove exynos4210/5250 specific cpufreq driver support
->   clk: samsung: remove unused clock aliases and update clock flags
->
->  arch/arm/boot/dts/exynos4210-origen.dts         |    4 +
->  arch/arm/boot/dts/exynos4210-trats.dts          |    4 +
->  arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 +
->  arch/arm/boot/dts/exynos4210.dtsi               |   14 +-
->  arch/arm/boot/dts/exynos5250-arndale.dts        |    4 +
->  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    4 +
->  arch/arm/boot/dts/exynos5250-snow.dts           |    4 +
->  arch/arm/boot/dts/exynos5250.dtsi               |   25 +-
->  arch/arm/boot/dts/exynos5420.dtsi               |   38 +++
->  arch/arm/mach-exynos/exynos.c                   |   24 +-
->  drivers/clk/samsung/Makefile                    |    2 +-
->  drivers/clk/samsung/clk-cpu.c                   |  335 +++++++++++++++++++++++
->  drivers/clk/samsung/clk-cpu.h                   |   91 ++++++
->  drivers/clk/samsung/clk-exynos4.c               |   63 +++--
->  drivers/clk/samsung/clk-exynos5250.c            |   44 ++-
->  drivers/clk/samsung/clk-exynos5420.c            |   72 ++++-
->  drivers/cpufreq/Kconfig.arm                     |   22 --
->  drivers/cpufreq/Makefile                        |    2 -
->  drivers/cpufreq/exynos4210-cpufreq.c            |  184 -------------
->  drivers/cpufreq/exynos5250-cpufreq.c            |  210 --------------
->  include/dt-bindings/clock/exynos5250.h          |    1 +
->  include/dt-bindings/clock/exynos5420.h          |    2 +
->  22 files changed, 690 insertions(+), 463 deletions(-)
->  create mode 100644 drivers/clk/samsung/clk-cpu.c
->  create mode 100644 drivers/clk/samsung/clk-cpu.h
->  delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
->  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
->
-> --
-> 1.7.9.5
-
-Working great.
-tested on smdk5420, and arndale-5250
-
->
->
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-
-
--- 
-thanks and regards,
-Chander M. Kashyap
-Contact Number: +918123738320
-------- TENSION LENE KA NAHI, DENE KE-----
+QW5kcmVhcywKCk9uIFRodSwgSnVsIDMxLCAyMDE0IGF0IDE6MDIgQU0sIEFuZHJlYXMgRsOkcmJl
+ciA8YWZhZXJiZXJAc3VzZS5kZT4gd3JvdGU6Cj4gSGkgQWpheSwKPgo+IEFtIDMwLjA3LjIwMTQg
+MDg6MjEsIHNjaHJpZWIgQWpheSBrdW1hcjoKPj4gT24gVHVlLCBKdWwgMjksIDIwMTQgYXQgNDo1
+MSBQTSwgQW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJlckBzdXNlLmRlPiB3cm90ZToKPj4+IEFtIDI4
+LjA3LjIwMTQgMDg6MTMsIHNjaHJpZWIgQWpheSBrdW1hcjoKPj4+PiBPbiA3LzI3LzE0LCBBbmRy
+ZWFzIEbDpHJiZXIgPGFmYWVyYmVyQHN1c2UuZGU+IHdyb3RlOgo+Pj4+PiBBbSAyNS4wNy4yMDE0
+IDIxOjIyLCBzY2hyaWViIEFqYXkgS3VtYXI6Cj4+Pj4+PiBUaGlzIHNlcmllcyBpcyBiYXNlZCBv
+biBleHlub3MtZHJtLW5leHQgYnJhbmNoIG9mIElua2kgRGFlJ3MgdHJlZSBhdDoKPj4+Pj4+IGdp
+dDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1l
+eHlub3MuZ2l0Cj4+Pj4+Pgo+Pj4+Pj4gSSBoYXZlIHRlc3RlZCB0aGlzIGFmdGVyIGFkZGluZyBm
+ZXcgRFQgY2hhbmdlcyBmb3IgZXh5bm9zNTI1MC1zbm93LAo+Pj4+Pj4gZXh5bm9zNTQyMC1wZWFj
+aC1waXQgYW5kIGV4eW5vczU4MDAtcGVhY2gtcGkgYm9hcmRzLgo+Pj4+Pgo+Pj4+PiBJJ20gdHJ5
+aW5nIHRvIHRlc3QgdGhpcyB3aXRoIGEgbW9kaWZpZWQgZXh5bm9zNTI1MC1zcHJpbmcgRFQgYmFz
+ZWQgb2ZmCj4+Pj4+IGtnZW5lJ3MgZm9yLW5leHQgYnJhbmNoIGR1ZSB0byBEVCwgYW5kIEkgcnVu
+IGludG8gdGhlIGZvbGxvd2luZzoKPj4+Cj4+PiBVbmZvcnR1bmF0ZWx5IHRoZSBtb3N0IEkgZ290
+IG9uIFNwcmluZyB3aXRoIGF0dGFjaGVkIERUIHdhcyBhIGJsYW5rCj4+PiBzY3JlZW4gd2l0aCBh
+IHdoaXRlIGhvcml6b250YWwgbGluZSBpbiB0aGUgbWlkZGxlLgo+PiBUaGVuLCBJIHRoaW5rIGJy
+aWRnZSBjaGlwIGlzIHdvcmtpbmcgZmluZS4KPj4gWW91IGp1c3QgbmVlZCB0byBjb25maWd1cmUg
+dGhlIHByb3BlciBtb2RlIGZvciBGSU1ELgo+PiBZb3UgY2FuIHNlZSBiYWNrbGlnaHQgYWxzbywg
+cmlnaHQ/Cj4+Cj4+PiBEbyBJIG5lZWQgdG8gc3BlY2lmeSBhIHNwZWNpZmljIHBhbmVsIG1vZGVs
+IGZvciBTcHJpbmc/Cj4+IFllcyEgVHJ5IHVzaW5nICJjaHVuZ2h3YSxjbGFhMTAxd2IwMSIgYXMg
+Y29tcGF0aWJsZSBzdHJpbmcgZm9yCj4+IHBhbmVsIG5vZGUuCj4KPiBXaXRoIGp1c3QgeW91ciB2
+NiBhcHBsaWVkIHBsdXMgdXBkYXRlZCBEVCBwYXRjaCAoYXR0YWNoZWQpIFsxXSwgSSBzZWUKPiBi
+YWNrbGlnaHQgYW5kIGEgYmxhY2sgc2NyZWVuIChubyB3aGl0ZSBsaW5lIGFueSBtb3JlKS4gZG1l
+c2cgYXR0YWNoZWQuCkkgY2FuIHNlZSBwZW5ndWluJ3MgYWxzbyEKCj4+PiBGb3IgdGVzdGluZyBJ
+IHJlLWFwcGxpZWQgeW91ciBpb21tdSBwYXRjaGVzICh3aGljaCBidHcgZmFpbCBub3cgZm9yIDU0
+MjAKPj4+IGR1ZSB0byBkaXNwX3BkKSBidXQgZGlkbid0IGtub3cgd2hhdCB0byBkbyBhYm91dCB5
+b3VyIHBhbmVsLWx2ZHMKPj4+IHJlZ3VsYXRvciBwYXRjaCBub3cgdGhhdCBpdCdzIGdvbmUuCj4+
+IElnbm9yZSB0aGF0IHJlZ3VsYXRvciBwYXRjaC4KPj4KPj4gQWxzbywgcGxlYXNlIGF0dGFjaCB0
+aGUgYm9vdGxvZyBpZiBwb3NzaWJsZSBhZnRlciB0cnlpbmcgdGhpcy4KPgo+IElmIEkgZnVydGhl
+ciBhcHBseSB0aGUgSU9NTVUgcGF0Y2hlcyBbMl0sIEkgZ2V0IG5vIGJhY2tsaWdodCBub3IgVVNC
+IGFuZAo+IHRodXMgY2FuJ3Qgb2J0YWluIGEgYm9vdCBsb2cuCj4KPiBSZWdhcmRzLAo+IEFuZHJl
+YXMKPgo+IFsxXSBodHRwczovL2dpdGh1Yi5jb20vYWZhZXJiZXIvbGludXgvY29tbWl0cy9zcHJp
+bmctbmV4dAo+IFsyXSBodHRwczovL2dpdGh1Yi5jb20vYWZhZXJiZXIvbGludXgvY29tbWl0cy9z
+cHJpbmctYnJpZGdlLnY2CldpdGgganVzdCB0aGUgc3ByaW5nLWJyaWRnZS52NiBicmFuY2ggb2Yg
+eW91ciBvd24gdHJlZSwgSSBhbSBhYmxlIHRvIHNlZQpib290dXAgbG9nbyBvbiBTa2F0ZShhIHZh
+cmlhbnQgb2Ygc3ByaW5nIHdoaWNoIGFsc28gY29udGFpbnMgcHM4NjIyKS4KSSBoYXZlIHRyaWVk
+IGJvdGggZXh5bm9zX2RlZmNvbmZpZyBhbmQgbXVsdGlfdjdfZGVmY29uZmlnLgpJIGVuYWJsZSBE
+Uk0sIEVYWU5PUyBEUk0sIEJSSURHRSBDSElQUywgSU9NTVUsIEVYWU5PUyBJT01NVQppbiBjb25m
+aWdzLgoKRXZlbiBpbiB5b3VyIGJvb3Rsb2dzLCBJIGNhbiBzZWUgRFAgZ2V0dGluZyBwcm9iZWQu
+CkFuZCwgeW91IHNheSBiYWNrbGlnaHQgaXMgYWxzbyB2aXNpYmxlLiBUaGF0IG1lYW5zIGVudGly
+ZSBkaXNwbGF5CnBhdGggc2hvdWxkIGJlIGZpbmUuIEl0cyBqdXN0IHRoYXQgeW91IHNob3VsZCBz
+dGFydCB3cml0aW5nIHRvIHRoZSBidWZmZXIuCkhhdmUgeW91IGVuYWJsZWQgYm9vdCBsb2dvcz8K
+CkFqYXkKPiBQLlMuIE5vdGUgdGhhdCB5b3VyIFNub3cgRFQgcGF0Y2ggd2lsbCBjb25mbGljdCB3
+aXRoIG15IFNub3cgY2xlYW51cHMsCj4gc2h1ZmZsaW5nIHNvbWUgbm9kZXMgYXJvdW5kOiBodHRw
+czovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzQ2NDk0NzEvCj4KPiAtLQo+IFNVU0UgTElO
+VVggUHJvZHVjdHMgR21iSCwgTWF4ZmVsZHN0ci4gNSwgOTA0MDkgTsO8cm5iZXJnLCBHZXJtYW55
+Cj4gR0Y6IEplZmYgSGF3biwgSmVubmlmZXIgR3VpbGQsIEZlbGl4IEltZW5kw7ZyZmZlcjsgSFJC
+IDE2NzQ2IEFHIE7DvHJuYmVyZwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
