@@ -1,59 +1,104 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCHv2 5/5] clk: samsung: exynos5410: Added clocks DPLL, EPLL,
- IPLL, and VPLL
-Date: Thu, 31 Jul 2014 17:19:26 +0200
-Message-ID: <53DA5E7E.9010607@gmail.com>
-References: <1406805732-17372-1-git-send-email-hsnaves@gmail.com> <1406805732-17372-6-git-send-email-hsnaves@gmail.com> <53DA3F86.3020506@gmail.com> <CAEe5pB9Rj9rdzk-fjyNcdWyhQCfLtwxt+nAZdb4xuKDO9OpzUA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CAEe5pB9Rj9rdzk-fjyNcdWyhQCfLtwxt+nAZdb4xuKDO9OpzUA@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Humberto Naves <hsnaves@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, Andreas Farber <afaerber@suse.de>, Randy Dunlap <rdunlap@infradead.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>
+Subject: [GIT PULL] Samsung clock changes for v3.17
+Date: Thu, 31 Jul 2014 17:37:35 +0200
+Message-ID: <1406821055-7290-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 31.07.2014 15:37, Humberto Naves wrote:
-> Hi Tomasz,
-> 
-> I remember checking these rates on my calculator. You might notice the
-> odd frequency of 45158401Hz (no pun intended) in the EPLL clock. This
-> particular clock frequency was giving me a big headache in a previous
-> project, since it was wrongly listed as 45158400. At first it seems
-> innocuous, but whenever I would ask for one of the child clocks to
-> change the rate, the driver would miscalculate the correct frequencies
-> and errors would propagate up and down the clock tree.
-> 
-> Anyway, I would double check these tables. And if you want, I can
-> write a separate patch for the rate table validation. I presume that
-> you would like to add a new field, such as default_base_freq, to the
-> structure samsung_pll_clock, and if that field is non-zero, you
-> perform the validation of the table in _samsung_clk_register_pll?
+From: Tomasz Figa <tomasz.figa@gmail.com>
 
-I'm not sure I get the idea of the field you're suggesting. If I
-understand correctly, your intention would be to provide a default
-frequency if there is no table provided. I don't think there is a need
-for it, because current code can read back current settings from
-registers and calculate current rate.
+Hi Mike,
 
-As for the validation itself, one more thing that needs to be considered
-is that the rate table must be sorted.
+The following changes since commit bdfcdf18c380a3c376b42709a89eb2cc52e95ae0:
 
-We once decided to rely on the fact that tables in SoC drivers have
-rates explicitly specified and are correctly sorted, but now I'm
-inclined to reconsider this, based on the fact that those rates often
-are already incorrectly calculated in vendor code or even datasheets,
-which are main information sources for patch authors.
+  Merge branch 'v3.16-samsung-clk-fixes-1' into samsung-clk-next (2014-06-30 15:06:43 +0200)
 
-Before mainlining PLL drivers (which was quite some time ago), we had a
-bit different implementation in our internal tree, which did not use
-explicitly specified rates at all (they could have been considered just
-comments to improve table readability) and the _register_pll() function
-simply calculated rates for all entries creating new table for internal
-use of the PLL driver that was in addition explicitly sorted to make
-sure that the order is correct. This kind of implementation is what I
-would lean toward today.
+are available in the git repository at:
 
-Best regards,
-Tomasz
+  git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/for_3.17/samsung-clk
+
+for you to fetch changes up to f65d518942325d4bfa74b5c9d42ea5a89e4f6943:
+
+  clk: samsung: trivial: Correct typo in author's name (2014-07-26 02:57:20 +0200)
+
+----------------------------------------------------------------
+Samsung clock patches for 3.17
+
+1) non-critical fixes (without need to push to stable):
+
+d5e136a clk: samsung: Register clk provider only after registering its all clocks
+305cfab clk: samsung: Make of_device_id array const
+e9d5295 clk: samsung: exynos5420: Setup clocks before system suspend
+f65d518 clk: samsung: trivial: Correct typo in author's name
+
+2) Exynos CLKOUT driver:
+
+800c979 clk: samsung: exynos4: Add missing CPU/DMC clock hierarchy
+01f7ec2 clk: samsung: exynos4: Add CLKOUT clock hierarchy
+1e832e5 clk: samsung: Add driver to control CLKOUT line on Exynos SoCs
+d19bb39 ARM: dts: exynos: Update PMU node with CLKOUT related data
+
+3) Clock hierarchy extensions:
+
+17d3f1d clk: exynos4: Add PPMU IP block source clocks.
+ca5b402 clk: samsung: register exynos5420 apll/kpll configuration data
+
+4) ARM CLKDOWN functionality enablement for Exynos4 and 3250:
+
+42773b2 clk: samsung: exynos4: Enable ARMCLK down feature
+45c5b0a clk: samsung: exynos3250: Enable ARMCLK down feature
+
+----------------------------------------------------------------
+Jonghwa Lee (1):
+      clk: exynos4: Add PPMU IP block source clocks.
+
+Krzysztof Kozlowski (3):
+      clk: samsung: exynos4: Enable ARMCLK down feature
+      clk: samsung: exynos3250: Enable ARMCLK down feature
+      clk: samsung: Make of_device_id array const
+
+Sylwester Nawrocki (1):
+      clk: samsung: Register clk provider only after registering its all clocks
+
+Thomas Abraham (1):
+      clk: samsung: register exynos5420 apll/kpll configuration data
+
+Tomasz Figa (5):
+      clk: samsung: exynos4: Add missing CPU/DMC clock hierarchy
+      clk: samsung: exynos4: Add CLKOUT clock hierarchy
+      clk: samsung: Add driver to control CLKOUT line on Exynos SoCs
+      ARM: dts: exynos: Update PMU node with CLKOUT related data
+      clk: samsung: trivial: Correct typo in author's name
+
+Vikas Sajjan (1):
+      clk: samsung: exynos5420: Setup clocks before system suspend
+
+ .../devicetree/bindings/arm/samsung/pmu.txt        |  30 +++
+ arch/arm/boot/dts/exynos4210.dtsi                  |  10 +
+ arch/arm/boot/dts/exynos4x12.dtsi                  |   7 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |   3 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |   3 +
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-exynos-clkout.c            | 153 ++++++++++++++
+ drivers/clk/samsung/clk-exynos3250.c               |  43 ++++
+ drivers/clk/samsung/clk-exynos4.c                  | 231 ++++++++++++++++++++-
+ drivers/clk/samsung/clk-exynos5250.c               |   4 +-
+ drivers/clk/samsung/clk-exynos5260.c               |   2 +
+ drivers/clk/samsung/clk-exynos5410.c               |   2 +
+ drivers/clk/samsung/clk-exynos5420.c               |  61 +++++-
+ drivers/clk/samsung/clk-exynos5440.c               |   4 +-
+ drivers/clk/samsung/clk-s3c2410.c                  |   2 +
+ drivers/clk/samsung/clk-s3c2412.c                  |   2 +
+ drivers/clk/samsung/clk-s3c2443.c                  |   2 +
+ drivers/clk/samsung/clk-s3c64xx.c                  |   2 +
+ drivers/clk/samsung/clk.c                          |  21 +-
+ drivers/clk/samsung/clk.h                          |   4 +-
+ include/dt-bindings/clock/exynos4.h                |  25 ++-
+ include/dt-bindings/clock/exynos5250.h             |   2 +-
+ include/dt-bindings/clock/exynos5420.h             |   2 +-
+ include/dt-bindings/clock/exynos5440.h             |   2 +-
+ 24 files changed, 599 insertions(+), 19 deletions(-)
+ create mode 100644 drivers/clk/samsung/clk-exynos-clkout.c
