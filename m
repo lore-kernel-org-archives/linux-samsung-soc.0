@@ -1,45 +1,58 @@
-From: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 02/15] drm/panel: Add get_modes helper
-Date: Thu, 31 Jul 2014 23:12:01 +0530
-Message-ID: <1406828534-10072-3-git-send-email-ajaykumar.rs@samsung.com>
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH 04/15] drm/panel: s6e8aa0: Add dummy prepare and unprepare
+ routines
+Date: Thu, 31 Jul 2014 23:12:03 +0530
+Message-ID: <1406828534-10072-5-git-send-email-ajaykumar.rs@samsung.com>
 References: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1406828534-10072-1-git-send-email-ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:9238 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751805AbaGaRpi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 31 Jul 2014 13:45:38 -0400
+In-reply-to: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, thierry.reding@gmail.com
+Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Add a helper function drm_panel_get_modes to get modes from the panel.
+This patch adds dummy definition for prepare and unprepare
+routines to s6e8aa0 panel driver.
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 ---
- include/drm/drm_panel.h |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/gpu/drm/panel/panel-s6e8aa0.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-index 9addc69..efc63cc 100644
---- a/include/drm/drm_panel.h
-+++ b/include/drm/drm_panel.h
-@@ -80,6 +80,14 @@ static inline int drm_panel_enable(struct drm_panel *panel)
- 	return panel ? -ENOSYS : -EINVAL;
+diff --git a/drivers/gpu/drm/panel/panel-s6e8aa0.c b/drivers/gpu/drm/panel/panel-s6e8aa0.c
+index 06e57a2..60694dd 100644
+--- a/drivers/gpu/drm/panel/panel-s6e8aa0.c
++++ b/drivers/gpu/drm/panel/panel-s6e8aa0.c
+@@ -900,6 +900,16 @@ static int s6e8aa0_disable(struct drm_panel *panel)
+ 	return s6e8aa0_power_off(ctx);
  }
  
-+static inline int drm_panel_get_modes(struct drm_panel *panel)
++static int s6e8aa0_unprepare(struct drm_panel *panel)
 +{
-+	if (panel && panel->funcs && panel->funcs->get_modes)
-+		return panel->funcs->get_modes(panel);
-+
 +	return 0;
 +}
 +
- void drm_panel_init(struct drm_panel *panel);
++static int s6e8aa0_prepare(struct drm_panel *panel)
++{
++	return 0;
++}
++
+ static int s6e8aa0_enable(struct drm_panel *panel)
+ {
+ 	struct s6e8aa0 *ctx = panel_to_s6e8aa0(panel);
+@@ -944,6 +954,8 @@ static int s6e8aa0_get_modes(struct drm_panel *panel)
  
- int drm_panel_add(struct drm_panel *panel);
+ static const struct drm_panel_funcs s6e8aa0_drm_funcs = {
+ 	.disable = s6e8aa0_disable,
++	.unprepare = s6e8aa0_unprepare,
++	.prepare = s6e8aa0_prepare,
+ 	.enable = s6e8aa0_enable,
+ 	.get_modes = s6e8aa0_get_modes,
+ };
 -- 
 1.7.9.5
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
