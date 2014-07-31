@@ -1,123 +1,137 @@
-From: "Chander M. Kashyap" <chander.kashyap@gmail.com>
-Subject: Re: [PATCH v9 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-Date: Thu, 31 Jul 2014 17:54:50 +0530
-Message-ID: <CADWw7OhqAZ+zbZ=Q8SLMYL2rMxj3ajn+Y2OUtkZTCESzsjKYUQ@mail.gmail.com>
-References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
-	<CADWw7OiwXNrbFyiVhpcJyBnAdsGsXcAMgMUOmY=JxHM7+7Z0eA@mail.gmail.com>
-	<CAJuA9aiwHUm1NrfLBR8pEzgTjpDd7xY9Lzpi3WmK0VeOgMGGFA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH] regulator: tps65090: Set voltage for fixed regulators
+Date: Thu, 31 Jul 2014 14:31:05 +0200
+Message-ID: <1406809865-13115-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:59290 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750702AbaGaMYv (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:59631 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751013AbaGaMbS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jul 2014 08:24:51 -0400
-In-Reply-To: <CAJuA9aiwHUm1NrfLBR8pEzgTjpDd7xY9Lzpi3WmK0VeOgMGGFA@mail.gmail.com>
+	Thu, 31 Jul 2014 08:31:18 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On Thu, Jul 31, 2014 at 4:29 PM, Thomas Abraham <ta.omasab@gmail.com> wrote:
-> On Thu, Jul 31, 2014 at 11:50 AM, Chander M. Kashyap
-> <chander.kashyap@gmail.com> wrote:
->> On Wed, Jul 30, 2014 at 1:37 PM, Thomas Abraham <thomas.ab@samsung.com> wrote:
->>> Changes since v8:
->>> - Fixes suggested by Tomasz Figa.
->>>
->>> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
->>> drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
->>> series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
->>> driver.
->>>
->>> This patch series is dependent on two other patches
->>> 1. ARM: dts: add CPU nodes for Exynos4 SoCs
->>>    - https://lkml.org/lkml/2014/7/21/315
->>> 2. ARM: dts: smdk5250: Specify MAX77686 pmic interrupt
->>>    - http://www.spinics.net/lists/arm-kernel/msg351134.html
->>> 3. clk: exynos4: remove duplicate div_core2 divider clock instantiation
->>>    - http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34859.html
->>>
->>> Thomas Abraham (6):
->>>   clk: samsung: add infrastructure to register cpu clocks
->>>   clk: samsung: add cpu clock configuration data and instantiate cpu clock
->>>   ARM: dts: Exynos: add CPU OPP and regulator supply property
->>>   ARM: Exynos: switch to using generic cpufreq driver for Exynos4210/5250/5420
->>>   cpufreq: exynos: remove exynos4210/5250 specific cpufreq driver support
->>>   clk: samsung: remove unused clock aliases and update clock flags
->>>
->>>  arch/arm/boot/dts/exynos4210-origen.dts         |    4 +
->>>  arch/arm/boot/dts/exynos4210-trats.dts          |    4 +
->>>  arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 +
->>>  arch/arm/boot/dts/exynos4210.dtsi               |   14 +-
->>>  arch/arm/boot/dts/exynos5250-arndale.dts        |    4 +
->>>  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    4 +
->>>  arch/arm/boot/dts/exynos5250-snow.dts           |    4 +
->>>  arch/arm/boot/dts/exynos5250.dtsi               |   25 +-
->>>  arch/arm/boot/dts/exynos5420.dtsi               |   38 +++
->>>  arch/arm/mach-exynos/exynos.c                   |   24 +-
->>>  drivers/clk/samsung/Makefile                    |    2 +-
->>>  drivers/clk/samsung/clk-cpu.c                   |  335 +++++++++++++++++++++++
->>>  drivers/clk/samsung/clk-cpu.h                   |   91 ++++++
->>>  drivers/clk/samsung/clk-exynos4.c               |   63 +++--
->>>  drivers/clk/samsung/clk-exynos5250.c            |   44 ++-
->>>  drivers/clk/samsung/clk-exynos5420.c            |   72 ++++-
->>>  drivers/cpufreq/Kconfig.arm                     |   22 --
->>>  drivers/cpufreq/Makefile                        |    2 -
->>>  drivers/cpufreq/exynos4210-cpufreq.c            |  184 -------------
->>>  drivers/cpufreq/exynos5250-cpufreq.c            |  210 --------------
->>>  include/dt-bindings/clock/exynos5250.h          |    1 +
->>>  include/dt-bindings/clock/exynos5420.h          |    2 +
->>>  22 files changed, 690 insertions(+), 463 deletions(-)
->>>  create mode 100644 drivers/clk/samsung/clk-cpu.c
->>>  create mode 100644 drivers/clk/samsung/clk-cpu.h
->>>  delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
->>>  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
->>>
->>> --
->>> 1.7.9.5
->>
->> Working great.
->> tested on smdk5420, and arndale-5250
->
-> Hi Chander,
->
-> Thanks for testing this series. Can I add a "Tested-by" tag for this series?
+According to the tps65090 data manual [0], the DCDC1 and DCDC2
+step-down converters and the LDO's have a fixed output voltage.
 
-sure you can.
+Add this information to the driver since these fixed regulators
+can be used as parent input supply for switches that don't have
+an output voltage defined. So the regulator core needs to fetch
+the FET parent output voltage if the child voltage is queried.
 
->
-> Thanks,
-> Thomas.
->
->>
->>>
->>>
->>>
->>>
->>> _______________________________________________
->>> linux-arm-kernel mailing list
->>> linux-arm-kernel@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
->>
->>
->> --
->> thanks and regards,
->> Chander M. Kashyap
->> Contact Number: +918123738320
->> ------- TENSION LENE KA NAHI, DENE KE-----
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+[0]: http://www.ti.com/lit/gpn/tps65090
 
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
 
+Changes since RFC:
+ - Use better names to describe the macro used to create the regulator desc.
+   Suggested by Mark Brown.
 
+ drivers/regulator/tps65090-regulator.c | 76 +++++++++++++++++++---------------
+ 1 file changed, 42 insertions(+), 34 deletions(-)
+
+diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
+index 2064b3f..d5df1e9 100644
+--- a/drivers/regulator/tps65090-regulator.c
++++ b/drivers/regulator/tps65090-regulator.c
+@@ -192,12 +192,14 @@ static struct regulator_ops tps65090_fet_control_ops = {
+ static struct regulator_ops tps65090_ldo_ops = {
+ };
+ 
+-#define tps65090_REG_DESC(_id, _sname, _en_reg, _en_bits, _ops)	\
++#define tps65090_REG_DESC(_id, _sname, _en_reg, _en_bits, _nvolt, _volt, _ops) \
+ {							\
+ 	.name = "TPS65090_RAILS"#_id,			\
+ 	.supply_name = _sname,				\
+ 	.id = TPS65090_REGULATOR_##_id,			\
++	.n_voltages = _nvolt,				\
+ 	.ops = &_ops,					\
++	.fixed_uV = _volt,				\
+ 	.enable_reg = _en_reg,				\
+ 	.enable_val = _en_bits,				\
+ 	.enable_mask = _en_bits,			\
+@@ -205,40 +207,46 @@ static struct regulator_ops tps65090_ldo_ops = {
+ 	.owner = THIS_MODULE,				\
+ }
+ 
++#define tps65090_REG_FIXEDV(_id, _sname, en_reg, _en_bits, _volt, _ops) \
++	tps65090_REG_DESC(_id, _sname, en_reg, _en_bits, 1, _volt, _ops)
++
++#define tps65090_REG_SWITCH(_id, _sname, en_reg, _en_bits, _ops) \
++	tps65090_REG_DESC(_id, _sname, en_reg, _en_bits, 0, 0, _ops)
++
+ static struct regulator_desc tps65090_regulator_desc[] = {
+-	tps65090_REG_DESC(DCDC1, "vsys1",   0x0C, BIT(CTRL_EN_BIT),
+-			  tps65090_reg_control_ops),
+-	tps65090_REG_DESC(DCDC2, "vsys2",   0x0D, BIT(CTRL_EN_BIT),
+-			  tps65090_reg_control_ops),
+-	tps65090_REG_DESC(DCDC3, "vsys3",   0x0E, BIT(CTRL_EN_BIT),
+-			  tps65090_reg_control_ops),
+-
+-	tps65090_REG_DESC(FET1,  "infet1",  0x0F,
+-			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
+-			  tps65090_fet_control_ops),
+-	tps65090_REG_DESC(FET2,  "infet2",  0x10,
+-			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
+-			  tps65090_fet_control_ops),
+-	tps65090_REG_DESC(FET3,  "infet3",  0x11,
+-			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
+-			  tps65090_fet_control_ops),
+-	tps65090_REG_DESC(FET4,  "infet4",  0x12,
+-			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
+-			  tps65090_fet_control_ops),
+-	tps65090_REG_DESC(FET5,  "infet5",  0x13,
+-			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
+-			  tps65090_fet_control_ops),
+-	tps65090_REG_DESC(FET6,  "infet6",  0x14,
+-			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
+-			  tps65090_fet_control_ops),
+-	tps65090_REG_DESC(FET7,  "infet7",  0x15,
+-			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
+-			  tps65090_fet_control_ops),
+-
+-	tps65090_REG_DESC(LDO1,  "vsys-l1", 0, 0,
+-			  tps65090_ldo_ops),
+-	tps65090_REG_DESC(LDO2,  "vsys-l2", 0, 0,
+-			  tps65090_ldo_ops),
++	tps65090_REG_FIXEDV(DCDC1, "vsys1",   0x0C, BIT(CTRL_EN_BIT), 5000000,
++			    tps65090_reg_control_ops),
++	tps65090_REG_FIXEDV(DCDC2, "vsys2",   0x0D, BIT(CTRL_EN_BIT), 3300000,
++			    tps65090_reg_control_ops),
++	tps65090_REG_SWITCH(DCDC3, "vsys3",   0x0E, BIT(CTRL_EN_BIT),
++			    tps65090_reg_control_ops),
++
++	tps65090_REG_SWITCH(FET1,  "infet1",  0x0F,
++			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			    tps65090_fet_control_ops),
++	tps65090_REG_SWITCH(FET2,  "infet2",  0x10,
++			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			    tps65090_fet_control_ops),
++	tps65090_REG_SWITCH(FET3,  "infet3",  0x11,
++			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			    tps65090_fet_control_ops),
++	tps65090_REG_SWITCH(FET4,  "infet4",  0x12,
++			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			    tps65090_fet_control_ops),
++	tps65090_REG_SWITCH(FET5,  "infet5",  0x13,
++			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			    tps65090_fet_control_ops),
++	tps65090_REG_SWITCH(FET6,  "infet6",  0x14,
++			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			    tps65090_fet_control_ops),
++	tps65090_REG_SWITCH(FET7,  "infet7",  0x15,
++			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
++			    tps65090_fet_control_ops),
++
++	tps65090_REG_FIXEDV(LDO1,  "vsys-l1", 0, 0, 5000000,
++			    tps65090_ldo_ops),
++	tps65090_REG_FIXEDV(LDO2,  "vsys-l2", 0, 0, 3300000,
++			    tps65090_ldo_ops),
+ };
+ 
+ static inline bool is_dcdc(int id)
 -- 
-thanks and regards,
-Chander M. Kashyap
-Contact Number: +918123738320
-------- TENSION LENE KA NAHI, DENE KE-----
+2.0.0.rc2
