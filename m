@@ -1,123 +1,74 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [GIT PULL] Samsung clock changes for v3.17
-Date: Thu, 31 Jul 2014 11:33:06 -0700
-Message-ID: <20140731183306.4463.28400@quantum>
-References: <1406821055-7290-1-git-send-email-t.figa@samsung.com>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v9 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
+Date: Fri, 1 Aug 2014 00:04:10 +0530
+Message-ID: <CAJuA9ajCP85aWL8ke_2sZ0bNXYxPHOLDHMfTVG1F7Z1aMCAyNA@mail.gmail.com>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
+	<53DA4F73.5040400@gmail.com>
+	<CAJuA9ahoke1b+=TgJQ0tfb4dKh4QmT7w1PoLkB0pZueWr0Awkw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1406821055-7290-1-git-send-email-t.figa@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAJuA9ahoke1b+=TgJQ0tfb4dKh4QmT7w1PoLkB0pZueWr0Awkw@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Tomasz Figa (2014-07-31 08:37:35)
-> From: Tomasz Figa <tomasz.figa@gmail.com>
-> 
-> Hi Mike,
-> 
-> The following changes since commit bdfcdf18c380a3c376b42709a89eb2cc52e95ae0:
-> 
->   Merge branch 'v3.16-samsung-clk-fixes-1' into samsung-clk-next (2014-06-30 15:06:43 +0200)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/for_3.17/samsung-clk
-> 
-> for you to fetch changes up to f65d518942325d4bfa74b5c9d42ea5a89e4f6943:
-> 
->   clk: samsung: trivial: Correct typo in author's name (2014-07-26 02:57:20 +0200)
+Hi Viresh,
 
-Pulled.
+On Thu, Jul 31, 2014 at 11:55 PM, Thomas Abraham <ta.omasab@gmail.com> wrote:
+> On Thu, Jul 31, 2014 at 7:45 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> Hi Thomas,
+>>
+>> On 30.07.2014 10:07, Thomas Abraham wrote:
+>>> Changes since v8:
+>>> - Fixes suggested by Tomasz Figa.
+>>>
+>>> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
+>>> drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
+>>> series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
+>>> driver.
+>>>
+>>> This patch series is dependent on two other patches
+>>> 1. ARM: dts: add CPU nodes for Exynos4 SoCs
+>>>    - https://lkml.org/lkml/2014/7/21/315
+>>> 2. ARM: dts: smdk5250: Specify MAX77686 pmic interrupt
+>>>    - http://www.spinics.net/lists/arm-kernel/msg351134.html
+>>> 3. clk: exynos4: remove duplicate div_core2 divider clock instantiation
+>>>    - http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34859.html
+>>
+>> I think we are at final stage of works on this series. Thanks for your
+>> cooperation.
+>>
+>> After addressing remaining minor comments from this thread, feel free to
+>> add:
+>>
+>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-Regards,
-Mike
+You had acked the cpufreq related changes in  v7 of this series. But
+there were some changes in v8 and so I have not included your Ack for
+v8 and v9. Could you please have one more look at the patches 4/6 [1]
+and 5/6 [2] of this v9 series and let me know if it looks okay.
 
-> 
-> ----------------------------------------------------------------
-> Samsung clock patches for 3.17
-> 
-> 1) non-critical fixes (without need to push to stable):
-> 
-> d5e136a clk: samsung: Register clk provider only after registering its all clocks
-> 305cfab clk: samsung: Make of_device_id array const
-> e9d5295 clk: samsung: exynos5420: Setup clocks before system suspend
-> f65d518 clk: samsung: trivial: Correct typo in author's name
-> 
-> 2) Exynos CLKOUT driver:
-> 
-> 800c979 clk: samsung: exynos4: Add missing CPU/DMC clock hierarchy
-> 01f7ec2 clk: samsung: exynos4: Add CLKOUT clock hierarchy
-> 1e832e5 clk: samsung: Add driver to control CLKOUT line on Exynos SoCs
-> d19bb39 ARM: dts: exynos: Update PMU node with CLKOUT related data
-> 
-> 3) Clock hierarchy extensions:
-> 
-> 17d3f1d clk: exynos4: Add PPMU IP block source clocks.
-> ca5b402 clk: samsung: register exynos5420 apll/kpll configuration data
-> 
-> 4) ARM CLKDOWN functionality enablement for Exynos4 and 3250:
-> 
-> 42773b2 clk: samsung: exynos4: Enable ARMCLK down feature
-> 45c5b0a clk: samsung: exynos3250: Enable ARMCLK down feature
-> 
-> ----------------------------------------------------------------
-> Jonghwa Lee (1):
->       clk: exynos4: Add PPMU IP block source clocks.
-> 
-> Krzysztof Kozlowski (3):
->       clk: samsung: exynos4: Enable ARMCLK down feature
->       clk: samsung: exynos3250: Enable ARMCLK down feature
->       clk: samsung: Make of_device_id array const
-> 
-> Sylwester Nawrocki (1):
->       clk: samsung: Register clk provider only after registering its all clocks
-> 
-> Thomas Abraham (1):
->       clk: samsung: register exynos5420 apll/kpll configuration data
-> 
-> Tomasz Figa (5):
->       clk: samsung: exynos4: Add missing CPU/DMC clock hierarchy
->       clk: samsung: exynos4: Add CLKOUT clock hierarchy
->       clk: samsung: Add driver to control CLKOUT line on Exynos SoCs
->       ARM: dts: exynos: Update PMU node with CLKOUT related data
->       clk: samsung: trivial: Correct typo in author's name
-> 
-> Vikas Sajjan (1):
->       clk: samsung: exynos5420: Setup clocks before system suspend
-> 
->  .../devicetree/bindings/arm/samsung/pmu.txt        |  30 +++
->  arch/arm/boot/dts/exynos4210.dtsi                  |  10 +
->  arch/arm/boot/dts/exynos4x12.dtsi                  |   7 +
->  arch/arm/boot/dts/exynos5250.dtsi                  |   3 +
->  arch/arm/boot/dts/exynos5420.dtsi                  |   3 +
->  drivers/clk/samsung/Makefile                       |   1 +
->  drivers/clk/samsung/clk-exynos-clkout.c            | 153 ++++++++++++++
->  drivers/clk/samsung/clk-exynos3250.c               |  43 ++++
->  drivers/clk/samsung/clk-exynos4.c                  | 231 ++++++++++++++++++++-
->  drivers/clk/samsung/clk-exynos5250.c               |   4 +-
->  drivers/clk/samsung/clk-exynos5260.c               |   2 +
->  drivers/clk/samsung/clk-exynos5410.c               |   2 +
->  drivers/clk/samsung/clk-exynos5420.c               |  61 +++++-
->  drivers/clk/samsung/clk-exynos5440.c               |   4 +-
->  drivers/clk/samsung/clk-s3c2410.c                  |   2 +
->  drivers/clk/samsung/clk-s3c2412.c                  |   2 +
->  drivers/clk/samsung/clk-s3c2443.c                  |   2 +
->  drivers/clk/samsung/clk-s3c64xx.c                  |   2 +
->  drivers/clk/samsung/clk.c                          |  21 +-
->  drivers/clk/samsung/clk.h                          |   4 +-
->  include/dt-bindings/clock/exynos4.h                |  25 ++-
->  include/dt-bindings/clock/exynos5250.h             |   2 +-
->  include/dt-bindings/clock/exynos5420.h             |   2 +-
->  include/dt-bindings/clock/exynos5440.h             |   2 +-
->  24 files changed, 599 insertions(+), 19 deletions(-)
->  create mode 100644 drivers/clk/samsung/clk-exynos-clkout.c
+[1] http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34865.html
+[2] http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34864.html
+
+Thanks,
+Thomas.
+
+>
+> Hi Tomasz,
+>
+> Thanks for your review of this series. Your review comments has helped
+> to make this series better.
+>
+> Regards,
+> Thomas.
+>
+>>
+>> Best regards,
+>> Tomasz
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
