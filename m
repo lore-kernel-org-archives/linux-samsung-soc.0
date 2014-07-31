@@ -1,7 +1,8 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3 6/8] thermal: exynos: cache non_hw_trigger_levels in pdata
-Date: Thu, 31 Jul 2014 19:11:04 +0200
-Message-ID: <1406826667-2289-7-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH v3 2/8] thermal: exynos: remove dead code for HW_MODE
+ calibration
+Date: Thu, 31 Jul 2014 19:11:00 +0200
+Message-ID: <1406826667-2289-3-git-send-email-b.zolnierkie@samsung.com>
 References: <1406826667-2289-1-git-send-email-b.zolnierkie@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1406826667-2289-1-git-send-email-b.zolnierkie@samsung.com>
@@ -10,139 +11,198 @@ To: Eduardo Valentin <eduardo.valentin@ti.com>
 Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Cache number of non-hardware trigger levels in a new pdata field
-(non_hw_trigger_levels) and convert code in exynos_tmu_initialize()
-accordingly.
+The commit 1928457 ("thermal: exynos: Add hardware mode thermal
+calibration support") has added HW_MODE feature but it has never
+been enabled.  As such it has been a dead code for over a year
+now and should be removed from the kernel.
+
+We don't keep the unused/untested features in the kernel just
+in case that some future hardware might need it.  Such code has
+a real maintainance cost (all other code changes have to take
+the dead code into account) and usually makes future changes
+more difficult, not easier (i.e. recent additions of Exynos5420
+SoC and Exynos5260 SoC thermal support has not made use of any
+of the driver's currently unused/untested features, moreover
+the recently added code is more complex than needed because of
+the existing dead code).  Also all removed dead code is still
+accessible in the kernel git repository and can be easily
+brought back if/when needed.
 
 There should be no functional changes caused by this patch.
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Reviewed-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 ---
- drivers/thermal/samsung/exynos_tmu.c      | 16 +++-------------
- drivers/thermal/samsung/exynos_tmu.h      |  2 ++
- drivers/thermal/samsung/exynos_tmu_data.c |  6 ++++++
- 3 files changed, 11 insertions(+), 13 deletions(-)
+ drivers/thermal/samsung/exynos_tmu.c      | 33 +------------------------------
+ drivers/thermal/samsung/exynos_tmu.h      | 13 ------------
+ drivers/thermal/samsung/exynos_tmu_data.c |  3 ---
+ drivers/thermal/samsung/exynos_tmu_data.h |  2 --
+ 4 files changed, 1 insertion(+), 50 deletions(-)
 
 diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index aa4d4fd..6bc8a20 100644
+index acbff14..4a55f11 100644
 --- a/drivers/thermal/samsung/exynos_tmu.c
 +++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -129,7 +129,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 	const struct exynos_tmu_registers *reg = pdata->registers;
- 	unsigned int status, trim_info = 0, con;
- 	unsigned int rising_threshold = 0, falling_threshold = 0;
--	int ret = 0, threshold_code, i, trigger_levs = 0;
-+	int ret = 0, threshold_code, i;
+@@ -77,9 +77,6 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
+ 	struct exynos_tmu_platform_data *pdata = data->pdata;
+ 	int temp_code;
  
- 	mutex_lock(&data->lock);
- 	clk_enable(data->clk);
-@@ -187,15 +187,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+-	if (pdata->cal_mode == HW_MODE)
+-		return temp;
+-
+ 	if (data->soc == SOC_ARCH_EXYNOS4210)
+ 		/* temp should range between 25 and 125 */
+ 		if (temp < 25 || temp > 125) {
+@@ -114,9 +111,6 @@ static int code_to_temp(struct exynos_tmu_data *data, u8 temp_code)
+ 	struct exynos_tmu_platform_data *pdata = data->pdata;
+ 	int temp;
+ 
+-	if (pdata->cal_mode == HW_MODE)
+-		return temp_code;
+-
+ 	if (data->soc == SOC_ARCH_EXYNOS4210)
+ 		/* temp_code should range between 75 and 175 */
+ 		if (temp_code < 75 || temp_code > 175) {
+@@ -167,9 +161,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+ 	if (TMU_SUPPORTS(pdata, TRIM_RELOAD))
+ 		__raw_writel(1, data->base + reg->triminfo_ctrl);
+ 
+-	if (pdata->cal_mode == HW_MODE)
+-		goto skip_calib_data;
+-
+ 	/* Save trimming info in order to perform calibration */
+ 	if (data->soc == SOC_ARCH_EXYNOS5440) {
+ 		/*
+@@ -210,7 +201,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
  			(pdata->efuse_value >> reg->triminfo_85_shift) &
  			EXYNOS_TMU_TEMP_MASK;
  
--	for (i = 0; i < pdata->max_trigger_level; i++) {
--		if (!pdata->trigger_levels[i])
--			continue;
--
--		/* Count trigger levels except the HW trip*/
--		if (!(pdata->trigger_type[i] == HW_TRIP))
--			trigger_levs++;
+-skip_calib_data:
+ 	if (pdata->max_trigger_level > MAX_THRESHOLD_LEVS) {
+ 		dev_err(&pdev->dev, "Invalid max trigger level\n");
+ 		ret = -EINVAL;
+@@ -325,7 +315,7 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+ 	struct exynos_tmu_platform_data *pdata = data->pdata;
+ 	const struct exynos_tmu_registers *reg = pdata->registers;
+-	unsigned int con, interrupt_en, cal_val;
++	unsigned int con, interrupt_en;
+ 
+ 	mutex_lock(&data->lock);
+ 	clk_enable(data->clk);
+@@ -351,27 +341,6 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
+ 		con |= (pdata->noise_cancel_mode << reg->therm_trip_mode_shift);
+ 	}
+ 
+-	if (pdata->cal_mode == HW_MODE) {
+-		con &= ~(reg->calib_mode_mask << reg->calib_mode_shift);
+-		cal_val = 0;
+-		switch (pdata->cal_type) {
+-		case TYPE_TWO_POINT_TRIMMING:
+-			cal_val = 3;
+-			break;
+-		case TYPE_ONE_POINT_TRIMMING_85:
+-			cal_val = 2;
+-			break;
+-		case TYPE_ONE_POINT_TRIMMING_25:
+-			cal_val = 1;
+-			break;
+-		case TYPE_NONE:
+-			break;
+-		default:
+-			dev_err(&pdev->dev, "Invalid calibration type, using none\n");
+-		}
+-		con |= cal_val << reg->calib_mode_shift;
 -	}
 -
- 	rising_threshold = readl(data->base + reg->threshold_th0);
- 
- 	if (data->soc == SOC_ARCH_EXYNOS4210) {
-@@ -203,15 +194,14 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 		threshold_code = temp_to_code(data, pdata->threshold);
- 		writeb(threshold_code,
- 			data->base + reg->threshold_temp);
--		for (i = 0; i < trigger_levs; i++)
-+		for (i = 0; i < pdata->non_hw_trigger_levels; i++)
- 			writeb(pdata->trigger_levels[i], data->base +
- 			reg->threshold_th0 + i * sizeof(reg->threshold_th0));
- 
- 		writel(reg->intclr_rise_mask, data->base + reg->tmu_intclear);
- 	} else {
- 		/* Write temperature code for rising and falling threshold */
--		for (i = 0;
--		i < trigger_levs && i < EXYNOS_MAX_TRIGGER_PER_REG; i++) {
-+		for (i = 0; i < pdata->non_hw_trigger_levels; i++) {
- 			threshold_code = temp_to_code(data,
- 						pdata->trigger_levels[i]);
- 			rising_threshold &= ~(0xff << 8 * i);
+ 	if (on) {
+ 		con |= (1 << reg->core_en_shift);
+ 		interrupt_en =
 diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-index 789a8f7..5514d68 100644
+index 44ca633..789a8f7 100644
 --- a/drivers/thermal/samsung/exynos_tmu.h
 +++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -199,6 +199,7 @@ struct exynos_tmu_registers {
-  *	1 = enable trigger_level[] interrupt,
-  *	0 = disable trigger_level[] interrupt
-  * @max_trigger_level: max trigger level supported by the TMU
-+ * @non_hw_trigger_levels: number of defined non-hardware trigger levels
-  * @gain: gain of amplifier in the positive-TC generator block
-  *	0 <= gain <= 15
-  * @reference_voltage: reference voltage of amplifier
-@@ -232,6 +233,7 @@ struct exynos_tmu_platform_data {
- 	enum trigger_type trigger_type[MAX_TRIP_COUNT];
- 	bool trigger_enable[MAX_TRIP_COUNT];
- 	u8 max_trigger_level;
-+	u8 non_hw_trigger_levels;
- 	u8 gain;
- 	u8 reference_voltage;
- 	u8 noise_cancel_mode;
+@@ -34,11 +34,6 @@ enum calibration_type {
+ 	TYPE_NONE,
+ };
+ 
+-enum calibration_mode {
+-	SW_MODE,
+-	HW_MODE,
+-};
+-
+ enum soc_type {
+ 	SOC_ARCH_EXYNOS3250 = 1,
+ 	SOC_ARCH_EXYNOS4210,
+@@ -95,10 +90,6 @@ enum soc_type {
+  * @buf_slope_sel_shift: shift bits of amplifier gain value in tmu_ctrl
+ 	register.
+  * @buf_slope_sel_mask: mask bits of amplifier gain value in tmu_ctrl register.
+- * @calib_mode_shift: shift bits of calibration mode value in tmu_ctrl
+-	register.
+- * @calib_mode_mask: mask bits of calibration mode value in tmu_ctrl
+-	register.
+  * @core_en_shift: shift bits of TMU core enable bit in tmu_ctrl register.
+  * @tmu_status: register drescribing the TMU status.
+  * @tmu_cur_temp: register containing the current temperature of the TMU.
+@@ -143,8 +134,6 @@ struct exynos_tmu_registers {
+ 	u32	therm_trip_en_shift;
+ 	u32	buf_slope_sel_shift;
+ 	u32	buf_slope_sel_mask;
+-	u32	calib_mode_shift;
+-	u32	calib_mode_mask;
+ 	u32	core_en_shift;
+ 
+ 	u32	tmu_status;
+@@ -226,7 +215,6 @@ struct exynos_tmu_registers {
+  * @default_temp_offset: default temperature offset in case of no trimming
+  * @test_mux; information if SoC supports test MUX
+  * @cal_type: calibration type for temperature
+- * @cal_mode: calibration mode for temperature
+  * @freq_clip_table: Table representing frequency reduction percentage.
+  * @freq_tab_count: Count of the above table as frequency reduction may
+  *	applicable to only some of the trigger levels.
+@@ -257,7 +245,6 @@ struct exynos_tmu_platform_data {
+ 	u8 test_mux;
+ 
+ 	enum calibration_type cal_type;
+-	enum calibration_mode cal_mode;
+ 	enum soc_type type;
+ 	struct freq_clip_table freq_tab[4];
+ 	unsigned int freq_tab_count;
 diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-index 1d05bf8..9c81515 100644
+index d5cdfe5..1d05bf8 100644
 --- a/drivers/thermal/samsung/exynos_tmu_data.c
 +++ b/drivers/thermal/samsung/exynos_tmu_data.c
-@@ -64,6 +64,7 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
- 		.trigger_type[1] = THROTTLE_ACTIVE,
- 		.trigger_type[2] = SW_TRIP,
- 		.max_trigger_level = 4,
-+		.non_hw_trigger_levels = 3,
- 		.gain = 15,
- 		.reference_voltage = 7,
- 		.cal_type = TYPE_ONE_POINT_TRIMMING,
-@@ -140,6 +141,7 @@ static const struct exynos_tmu_registers exynos3250_tmu_registers = {
- 	.trigger_type[2] = SW_TRIP, \
- 	.trigger_type[3] = HW_TRIP, \
- 	.max_trigger_level = 4, \
-+	.non_hw_trigger_levels = 3, \
- 	.gain = 8, \
+@@ -482,8 +482,6 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
+ 	.therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
+ 	.buf_slope_sel_shift = EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
+ 	.buf_slope_sel_mask = EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
+-	.calib_mode_shift = EXYNOS_TMU_CALIB_MODE_SHIFT,
+-	.calib_mode_mask = EXYNOS_TMU_CALIB_MODE_MASK,
+ 	.core_en_shift = EXYNOS_TMU_CORE_EN_SHIFT,
+ 	.tmu_status = EXYNOS5440_TMU_S0_7_STATUS,
+ 	.tmu_cur_temp = EXYNOS5440_TMU_S0_7_TEMP,
+@@ -520,7 +518,6 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
  	.reference_voltage = 16, \
  	.noise_cancel_mode = 4, \
-@@ -230,6 +232,7 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
- 	.trigger_type[2] = SW_TRIP, \
- 	.trigger_type[3] = HW_TRIP, \
- 	.max_trigger_level = 4, \
-+	.non_hw_trigger_levels = 3, \
- 	.gain = 8, \
- 	.reference_voltage = 16, \
- 	.noise_cancel_mode = 4, \
-@@ -331,6 +334,7 @@ static const struct exynos_tmu_registers exynos5260_tmu_registers = {
- 	.trigger_type[2] = SW_TRIP, \
- 	.trigger_type[3] = HW_TRIP, \
- 	.max_trigger_level = 4, \
-+	.non_hw_trigger_levels = 3, \
- 	.gain = 8, \
- 	.reference_voltage = 16, \
- 	.noise_cancel_mode = 4, \
-@@ -422,6 +426,7 @@ static const struct exynos_tmu_registers exynos5420_tmu_registers = {
- 	.trigger_type[2] = SW_TRIP, \
- 	.trigger_type[3] = HW_TRIP, \
- 	.max_trigger_level = 4, \
-+	.non_hw_trigger_levels = 3, \
- 	.gain = 8, \
- 	.reference_voltage = 16, \
- 	.noise_cancel_mode = 4, \
-@@ -514,6 +519,7 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
- 	.trigger_type[0] = SW_TRIP, \
- 	.trigger_type[4] = HW_TRIP, \
- 	.max_trigger_level = 5, \
-+	.non_hw_trigger_levels = 1, \
- 	.gain = 5, \
- 	.reference_voltage = 16, \
- 	.noise_cancel_mode = 4, \
+ 	.cal_type = TYPE_ONE_POINT_TRIMMING, \
+-	.cal_mode = 0, \
+ 	.efuse_value = 0x5b2d, \
+ 	.min_efuse_value = 16, \
+ 	.max_efuse_value = 76, \
+diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
+index 9337c5a..ac03b76 100644
+--- a/drivers/thermal/samsung/exynos_tmu_data.h
++++ b/drivers/thermal/samsung/exynos_tmu_data.h
+@@ -62,8 +62,6 @@
+ #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
+ #define EXYNOS_TMU_TRIP_MODE_MASK	0x7
+ #define EXYNOS_TMU_THERM_TRIP_EN_SHIFT	12
+-#define EXYNOS_TMU_CALIB_MODE_SHIFT	4
+-#define EXYNOS_TMU_CALIB_MODE_MASK	0x3
+ 
+ #define EXYNOS_TMU_INTEN_RISE0_SHIFT	0
+ #define EXYNOS_TMU_INTEN_RISE1_SHIFT	4
 -- 
 1.8.2.3
