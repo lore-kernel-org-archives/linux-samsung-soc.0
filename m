@@ -1,137 +1,88 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH] regulator: tps65090: Set voltage for fixed regulators
-Date: Thu, 31 Jul 2014 14:31:05 +0200
-Message-ID: <1406809865-13115-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCHv2 1/5] clk: samsung: exynos5410: Add NULL pointer checks
+ in clock init
+Date: Thu, 31 Jul 2014 14:34:50 +0200
+Message-ID: <53DA37EA.7010306@gmail.com>
+References: <1406805732-17372-1-git-send-email-hsnaves@gmail.com> <1406805732-17372-2-git-send-email-hsnaves@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:59631 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751013AbaGaMbS (ORCPT
+Received: from mail-we0-f181.google.com ([74.125.82.181]:56123 "EHLO
+	mail-we0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751008AbaGaMe4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jul 2014 08:31:18 -0400
+	Thu, 31 Jul 2014 08:34:56 -0400
+In-Reply-To: <1406805732-17372-2-git-send-email-hsnaves@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Humberto Silva Naves <hsnaves@gmail.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, Andreas Farber <afaerber@suse.de>, Randy Dunlap <rdunlap@infradead.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>
 
-According to the tps65090 data manual [0], the DCDC1 and DCDC2
-step-down converters and the LDO's have a fixed output voltage.
+Hi Humberto,
 
-Add this information to the driver since these fixed regulators
-can be used as parent input supply for switches that don't have
-an output voltage defined. So the regulator core needs to fetch
-the FET parent output voltage if the child voltage is queried.
+Please see my comments inline.
 
-[0]: http://www.ti.com/lit/gpn/tps65090
+On 31.07.2014 13:22, Humberto Silva Naves wrote:
+> Added NULL pointer checks for device_node input parameter and
+> for the samsung_clk_provider context returned by samsung_clk_init.
+> Even though the *current* samsung_clk_init function never returns
+> a NULL pointer, it is good to keep this check in place to avoid
+> possible problems in the future due to changes in implementation.
+> That way, we also improve the consistency of the code that performs
+> clock initialization across the different SoCs.
+> 
+> Signed-off-by: Humberto Silva Naves <hsnaves@gmail.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5410.c |   12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+> index 231475b..bf57c80 100644
+> --- a/drivers/clk/samsung/clk-exynos5410.c
+> +++ b/drivers/clk/samsung/clk-exynos5410.c
+> @@ -188,11 +188,17 @@ static void __init exynos5410_clk_init(struct device_node *np)
+>  	struct samsung_clk_provider *ctx;
+>  	void __iomem *reg_base;
+>  
+> -	reg_base = of_iomap(np, 0);
+> -	if (!reg_base)
+> -		panic("%s: failed to map registers\n", __func__);
+> +	if (np) {
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
+Since all Exynos-based boards are always booted using DT, this function
+will never be called if there is no node for the clock controller and so
+there is no way this pointer can end up being NULL. I don't see a point
+in complicating this code with useless checks.
 
-Changes since RFC:
- - Use better names to describe the macro used to create the regulator desc.
-   Suggested by Mark Brown.
+> +		reg_base = of_iomap(np, 0);
+> +		if (!reg_base)
+> +			panic("%s: failed to map registers\n", __func__);
+> +	} else {
+> +		panic("%s: unable to determine soc\n", __func__);
+> +	}
 
- drivers/regulator/tps65090-regulator.c | 76 +++++++++++++++++++---------------
- 1 file changed, 42 insertions(+), 34 deletions(-)
+As a side note, since panic() does not return, the code above could be
+changed to follow rest of checks in this function:
 
-diff --git a/drivers/regulator/tps65090-regulator.c b/drivers/regulator/tps65090-regulator.c
-index 2064b3f..d5df1e9 100644
---- a/drivers/regulator/tps65090-regulator.c
-+++ b/drivers/regulator/tps65090-regulator.c
-@@ -192,12 +192,14 @@ static struct regulator_ops tps65090_fet_control_ops = {
- static struct regulator_ops tps65090_ldo_ops = {
- };
- 
--#define tps65090_REG_DESC(_id, _sname, _en_reg, _en_bits, _ops)	\
-+#define tps65090_REG_DESC(_id, _sname, _en_reg, _en_bits, _nvolt, _volt, _ops) \
- {							\
- 	.name = "TPS65090_RAILS"#_id,			\
- 	.supply_name = _sname,				\
- 	.id = TPS65090_REGULATOR_##_id,			\
-+	.n_voltages = _nvolt,				\
- 	.ops = &_ops,					\
-+	.fixed_uV = _volt,				\
- 	.enable_reg = _en_reg,				\
- 	.enable_val = _en_bits,				\
- 	.enable_mask = _en_bits,			\
-@@ -205,40 +207,46 @@ static struct regulator_ops tps65090_ldo_ops = {
- 	.owner = THIS_MODULE,				\
- }
- 
-+#define tps65090_REG_FIXEDV(_id, _sname, en_reg, _en_bits, _volt, _ops) \
-+	tps65090_REG_DESC(_id, _sname, en_reg, _en_bits, 1, _volt, _ops)
-+
-+#define tps65090_REG_SWITCH(_id, _sname, en_reg, _en_bits, _ops) \
-+	tps65090_REG_DESC(_id, _sname, en_reg, _en_bits, 0, 0, _ops)
-+
- static struct regulator_desc tps65090_regulator_desc[] = {
--	tps65090_REG_DESC(DCDC1, "vsys1",   0x0C, BIT(CTRL_EN_BIT),
--			  tps65090_reg_control_ops),
--	tps65090_REG_DESC(DCDC2, "vsys2",   0x0D, BIT(CTRL_EN_BIT),
--			  tps65090_reg_control_ops),
--	tps65090_REG_DESC(DCDC3, "vsys3",   0x0E, BIT(CTRL_EN_BIT),
--			  tps65090_reg_control_ops),
--
--	tps65090_REG_DESC(FET1,  "infet1",  0x0F,
--			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
--			  tps65090_fet_control_ops),
--	tps65090_REG_DESC(FET2,  "infet2",  0x10,
--			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
--			  tps65090_fet_control_ops),
--	tps65090_REG_DESC(FET3,  "infet3",  0x11,
--			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
--			  tps65090_fet_control_ops),
--	tps65090_REG_DESC(FET4,  "infet4",  0x12,
--			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
--			  tps65090_fet_control_ops),
--	tps65090_REG_DESC(FET5,  "infet5",  0x13,
--			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
--			  tps65090_fet_control_ops),
--	tps65090_REG_DESC(FET6,  "infet6",  0x14,
--			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
--			  tps65090_fet_control_ops),
--	tps65090_REG_DESC(FET7,  "infet7",  0x15,
--			  BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
--			  tps65090_fet_control_ops),
--
--	tps65090_REG_DESC(LDO1,  "vsys-l1", 0, 0,
--			  tps65090_ldo_ops),
--	tps65090_REG_DESC(LDO2,  "vsys-l2", 0, 0,
--			  tps65090_ldo_ops),
-+	tps65090_REG_FIXEDV(DCDC1, "vsys1",   0x0C, BIT(CTRL_EN_BIT), 5000000,
-+			    tps65090_reg_control_ops),
-+	tps65090_REG_FIXEDV(DCDC2, "vsys2",   0x0D, BIT(CTRL_EN_BIT), 3300000,
-+			    tps65090_reg_control_ops),
-+	tps65090_REG_SWITCH(DCDC3, "vsys3",   0x0E, BIT(CTRL_EN_BIT),
-+			    tps65090_reg_control_ops),
-+
-+	tps65090_REG_SWITCH(FET1,  "infet1",  0x0F,
-+			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-+			    tps65090_fet_control_ops),
-+	tps65090_REG_SWITCH(FET2,  "infet2",  0x10,
-+			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-+			    tps65090_fet_control_ops),
-+	tps65090_REG_SWITCH(FET3,  "infet3",  0x11,
-+			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-+			    tps65090_fet_control_ops),
-+	tps65090_REG_SWITCH(FET4,  "infet4",  0x12,
-+			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-+			    tps65090_fet_control_ops),
-+	tps65090_REG_SWITCH(FET5,  "infet5",  0x13,
-+			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-+			    tps65090_fet_control_ops),
-+	tps65090_REG_SWITCH(FET6,  "infet6",  0x14,
-+			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-+			    tps65090_fet_control_ops),
-+	tps65090_REG_SWITCH(FET7,  "infet7",  0x15,
-+			    BIT(CTRL_EN_BIT) | BIT(CTRL_PG_BIT),
-+			    tps65090_fet_control_ops),
-+
-+	tps65090_REG_FIXEDV(LDO1,  "vsys-l1", 0, 0, 5000000,
-+			    tps65090_ldo_ops),
-+	tps65090_REG_FIXEDV(LDO2,  "vsys-l2", 0, 0, 3300000,
-+			    tps65090_ldo_ops),
- };
- 
- static inline bool is_dcdc(int id)
--- 
-2.0.0.rc2
+	if (!np)
+		panic("%s: unable to determine soc\n", __func__);
+
+	reg_base = of_iomap(np, 0);
+	...
+
+leading to more readable code with less indentation and less changes to
+existing code.
+
+>  
+>  	ctx = samsung_clk_init(np, reg_base, CLK_NR_CLKS);
+> +	if (!ctx)
+> +		panic("%s: unable to allocate context.\n", __func__);
+
+samsung_clk_init() already panics on any error, although now as I think
+of it, it probably should be changed with a patch to just error out and
+let the caller handle the error. However callers don't need to be
+changed before this is done.
+
+Best regards,
+Tomasz
