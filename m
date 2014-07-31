@@ -1,81 +1,124 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [RFC 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
-Date: Thu, 31 Jul 2014 06:46:45 +0200
-Message-ID: <53D9CA35.1030800@suse.de>
-References: <1406549892-5558-1-git-send-email-afaerber@suse.de>
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: Role of PLL_ENABLE_BIT
+Date: Thu, 31 Jul 2014 10:36:57 +0545
+Message-ID: <CAKew6eUinuZ0gNu5EzH7+N2VQiXD6ujZ9FY9rwY-cqa=WkxZjA@mail.gmail.com>
+References: <2111968107.110151406781109677.JavaMail.weblogic@epmlwas02a>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:49352 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751555AbaGaEqt (ORCPT
+Received: from mail-ie0-f177.google.com ([209.85.223.177]:42381 "EHLO
+	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750975AbaGaEv6 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jul 2014 00:46:49 -0400
-In-Reply-To: <1406549892-5558-1-git-send-email-afaerber@suse.de>
+	Thu, 31 Jul 2014 00:51:58 -0400
+Received: by mail-ie0-f177.google.com with SMTP id at20so2948815iec.36
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2014 21:51:58 -0700 (PDT)
+In-Reply-To: <2111968107.110151406781109677.JavaMail.weblogic@epmlwas02a>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Hakjoo Kim <ruppi.kim@hardkernel.com>, Tarek Dakhran <t.dakhran@samsung.com>, Kevin Hilman <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Humberto Naves <hsnaves@gmail.com>
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, hsnaves@gmail.com
+Cc: Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Yadwinder Singh <yadi.brar@samsung.com>
 
-Kukjin,
+Hi Humberto,
 
-Am 28.07.2014 14:18, schrieb Andreas F=C3=A4rber:
-> Hello,
->=20
-> This series adds a dedicated ODROID-XU device tree and enhances it wi=
-th=20
-> LED configuration, to match the downstream 3.14 based behavior.
->=20
-> It had turned out less trivial than I initially thought as the whole=20
-> pinctrl stuff is still missing. I thus cherry-pick two downstream com=
-mits.
->=20
-> Hakjoo, can you please reply with a Signed-off-by to your patches
-> so that we can get them into upstream? Thanks in advance!
 
-=46TR, Hakjoo Kim did reply with signed off patches (thanks again!) and
-updated their branch accordingly:
+> ------- Original Message -------
+> Sender : Humberto Naves<hsnaves@gmail.com>
+> Date : Jul 31, 2014 00:16 (GMT+09:00)
+> Title : Role of PLL_ENABLE_BIT
+>
+> Hi,
+>
+>
+> I am using an ODROID-XU board, and I was trying to change the rates of some PLL clocks for a while, but I could not. After a while, I realized that the cpu was trapped in an infinite loop waiting for the PLL35XX_LOCK_STAT bit to be set. Furthermore, I discovered that the reason was that the the PLL35XX_ENABLE_BIT was not set.
+>
+>
+> I wonder if this is really a driver problem, since in the set_rate functions, the ENABLE_BIT is not set. Can someone confirm if this is indeed the expected behavior of the driver?
+>
 
-https://github.com/hardkernel/linux/commits/odroid-3.14.y-linaro
-https://github.com/hardkernel/linux/commit/53edc3da0d1da287517681b47daf=
-36679637b6ba
-https://github.com/hardkernel/linux/commit/afdc310e47e4d1799719566bfb5a=
-47c55141a7cb
+hmm .. actually it doesn't clear also ENABLE_BIT, I wonder how its getting clear
+in your case since we don't have enable/disable() implemented yet.
 
-> Andreas F=C3=A4rber (3):
->   ARM: dts: exynos5410: Clean up SMDK5410 indentation
->   ARM: dts: exynos5410: Prepare ODROID-XU device tree
+>
+>
+> By the way, In order to solve this issue, I changed the files according to the following diff
+>
+>
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> index b07fad2..9300274 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -131,14 +131,15 @@ static const struct clk_ops samsung_pll3000_clk_ops = {
+>  /* Maximum lock time can be 270 * PDIV cycles */
+>  #define PLL35XX_LOCK_FACTOR (270)
+>
+> -#define PLL35XX_MDIV_MASK       (0x3FF)
+> -#define PLL35XX_PDIV_MASK       (0x3F)
+> -#define PLL35XX_SDIV_MASK       (0x7)
+> +#define PLL35XX_MDIV_MASK (0x3FF)
+> +#define PLL35XX_PDIV_MASK (0x3F)
+> +#define PLL35XX_SDIV_MASK (0x7)
+>  #define PLL35XX_LOCK_STAT_MASK (0x1)
+> -#define PLL35XX_MDIV_SHIFT      (16)
+> -#define PLL35XX_PDIV_SHIFT      (8)
+> -#define PLL35XX_SDIV_SHIFT      (0)
+> +#define PLL35XX_MDIV_SHIFT (16)
+> +#define PLL35XX_PDIV_SHIFT (8)
+> +#define PLL35XX_SDIV_SHIFT (0)
+>  #define PLL35XX_LOCK_STAT_SHIFT (29)
+> +#define PLL35XX_ENABLE_SHIFT (31)
+>
+>  static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
+>   unsigned long parent_rate)
+> @@ -190,6 +191,7 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+>   /* If only s change, change just s value only*/
+>   tmp &= ~(PLL35XX_SDIV_MASK << PLL35XX_SDIV_SHIFT);
+>   tmp |= rate->sdiv << PLL35XX_SDIV_SHIFT;
+> + tmp |= (1 << PLL35XX_ENABLE_SHIFT);
+>   __raw_writel(tmp, pll->con_reg);
+>
+>   return 0;
+> @@ -206,6 +208,7 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+>   tmp |= (rate->mdiv << PLL35XX_MDIV_SHIFT) |
+>   (rate->pdiv << PLL35XX_PDIV_SHIFT) |
+>   (rate->sdiv << PLL35XX_SDIV_SHIFT);
+> + tmp |= (1 << PLL35XX_ENABLE_SHIFT);
 
-The functional changes below haven't been reviewed yet, but could you
-consider applying trivial patches 1-2?
+Ideally tmp should already have this bit set since we are not clearing it
+after doing tmp = __raw_readl(tmp);
+
+Can you please check value of tmp here ? and Is there anything else in
+your kernel clearing this bit ?
+
 
 Regards,
-Andreas
+Yadwinder
 
->   ARM: dts: exynos5410: Add ODROID-XU LEDs
->=20
-> Hakjoo Kim (2):
->   pinctrl: exynos: add exynos5410 SoC specific data
->   ARM: dts: add pinctrl support to Exynos5410
->=20
->  .../bindings/pinctrl/samsung-pinctrl.txt           |   1 +
->  arch/arm/boot/dts/Makefile                         |   1 +
->  arch/arm/boot/dts/exynos5410-odroidxu.dts          | 111 ++++++
->  arch/arm/boot/dts/exynos5410-pinctrl.dtsi          | 408 +++++++++++=
-++++++++++
->  arch/arm/boot/dts/exynos5410-smdk5410.dts          |   6 +-
->  arch/arm/boot/dts/exynos5410.dtsi                  |  32 ++
->  drivers/pinctrl/pinctrl-exynos.c                   | 126 +++++++
->  drivers/pinctrl/pinctrl-samsung.c                  |   2 +
->  drivers/pinctrl/pinctrl-samsung.h                  |   1 +
->  9 files changed, 685 insertions(+), 3 deletions(-)
->  create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
->  create mode 100644 arch/arm/boot/dts/exynos5410-pinctrl.dtsi
->=20
-
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+>   __raw_writel(tmp, pll->con_reg);
+>
+>   /* wait_lock_time */
+> @@ -242,6 +245,7 @@ static const struct clk_ops samsung_pll35xx_clk_min_ops = {
+>  #define PLL36XX_SDIV_SHIFT (0)
+>  #define PLL36XX_KDIV_SHIFT (0)
+>  #define PLL36XX_LOCK_STAT_SHIFT (29)
+> +#define PLL36XX_ENABLE_SHIFT (31)
+>
+>  static unsigned long samsung_pll36xx_recalc_rate(struct clk_hw *hw,
+>   unsigned long parent_rate)
+> @@ -299,6 +303,7 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
+>   /* If only s change, change just s value only*/
+>   pll_con0 &= ~(PLL36XX_SDIV_MASK << PLL36XX_SDIV_SHIFT);
+>   pll_con0 |= (rate->sdiv << PLL36XX_SDIV_SHIFT);
+> + pll_con0 |= (1 << PLL36XX_ENABLE_SHIFT);
+>   __raw_writel(pll_con0, pll->con_reg);
+>
+>   return 0;
+> @@ -314,6 +319,7 @@ static int samsung_pll36xx_set_rate(struct clk_hw *hw, unsigned long drate,
+>   pll_con0 |= (rate->mdiv << PLL36XX_MDIV_SHIFT) |
+>   (rate->pdiv << PLL36XX_PDIV_SHIFT) |
+>   (rate->sdiv << PLL36XX_SDIV_SHIFT);
+> + pll_con0 |= (1 << PLL36XX_ENABLE_SHIFT);
+>   __raw_writel(pll_con0, pll->con_reg);
+>
+>   pll_con1 &= ~(PLL36XX_KDIV_MASK << PLL36XX_KDIV_SHIFT);
