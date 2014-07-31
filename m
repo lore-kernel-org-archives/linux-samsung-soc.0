@@ -1,113 +1,102 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH 11/15] drm/panel: simple: Add proper definition for prepare and
- unprepare
-Date: Thu, 31 Jul 2014 23:12:10 +0530
-Message-ID: <1406828534-10072-12-git-send-email-ajaykumar.rs@samsung.com>
+From: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 14/15] drm/exynos: Move DP setup into commit()
+Date: Thu, 31 Jul 2014 23:12:13 +0530
+Message-ID: <1406828534-10072-15-git-send-email-ajaykumar.rs@samsung.com>
 References: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:42262 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753432AbaGaRpy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jul 2014 13:45:54 -0400
-In-reply-to: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1406828534-10072-1-git-send-email-ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, thierry.reding@gmail.com
-Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Move out code from enable and disable routines to prepare
-and unprepare routines, so that functionality is properly
-distributed across all the panel functions.
+Add commit callback for exynos_dp, and move the DP link training,
+video configuration code from the hotplug handler into commit().
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+Signed-off-by: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Signed-off-by: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/gpu/drm/panel/panel-simple.c |   37 +++++++++++++++++++++++++---------
- 1 file changed, 27 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/exynos/exynos_dp_core.c |   24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 2e51c34..9801728 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -45,6 +45,7 @@ struct panel_desc {
- 
- struct panel_simple {
- 	struct drm_panel base;
-+	bool prepared;
- 	bool enabled;
- 
- 	const struct panel_desc *desc;
-@@ -105,10 +106,6 @@ static int panel_simple_disable(struct drm_panel *panel)
- 		backlight_update_status(p->backlight);
- 	}
- 
--	if (p->enable_gpio)
--		gpiod_set_value_cansleep(p->enable_gpio, 0);
--
--	regulator_disable(p->supply);
- 	p->enabled = false;
- 
- 	return 0;
-@@ -116,20 +113,27 @@ static int panel_simple_disable(struct drm_panel *panel)
- 
- static int panel_simple_unprepare(struct drm_panel *panel)
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+index 31c3de9..347dec9 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.c
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+@@ -875,10 +875,18 @@ static irqreturn_t exynos_dp_irq_handler(int irq, void *arg)
+ static void exynos_dp_hotplug(struct work_struct *work)
  {
--	return 0;
--}
-+	struct panel_simple *p = to_panel_simple(panel);
-+
-+	if (!p->prepared)
-+		return 0;
-+
-+	if (p->enable_gpio)
-+		gpiod_set_value_cansleep(p->enable_gpio, 0);
-+
-+	regulator_disable(p->supply);
-+
-+	p->prepared = false;
+ 	struct exynos_dp_device *dp;
+-	int ret;
  
--static int panel_simple_prepare(struct drm_panel *panel)
--{
- 	return 0;
- }
+ 	dp = container_of(work, struct exynos_dp_device, hotplug_work);
  
--static int panel_simple_enable(struct drm_panel *panel)
-+static int panel_simple_prepare(struct drm_panel *panel)
- {
- 	struct panel_simple *p = to_panel_simple(panel);
- 	int err;
- 
--	if (p->enabled)
-+	if (p->prepared)
- 		return 0;
- 
- 	err = regulator_enable(p->supply);
-@@ -141,6 +145,18 @@ static int panel_simple_enable(struct drm_panel *panel)
- 	if (p->enable_gpio)
- 		gpiod_set_value_cansleep(p->enable_gpio, 1);
- 
-+	p->prepared = true;
-+
-+	return 0;
++	if (dp->drm_dev)
++		drm_helper_hpd_irq_event(dp->drm_dev);
 +}
 +
-+static int panel_simple_enable(struct drm_panel *panel)
++static void exynos_dp_commit(struct exynos_drm_display *display)
 +{
-+	struct panel_simple *p = to_panel_simple(panel);
++	struct exynos_dp_device *dp = display->ctx;
++	int ret;
 +
-+	if (p->enabled)
-+		return 0;
+ 	ret = exynos_dp_detect_hpd(dp);
+ 	if (ret) {
+ 		/* Cable has been disconnected, we're done */
+@@ -1050,8 +1058,10 @@ static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
+ 	}
+ }
+ 
+-static void exynos_dp_poweron(struct exynos_dp_device *dp)
++static void exynos_dp_poweron(struct exynos_drm_display *display)
+ {
++	struct exynos_dp_device *dp = display->ctx;
 +
- 	if (p->backlight) {
- 		p->backlight->props.power = FB_BLANK_UNBLANK;
- 		backlight_update_status(p->backlight);
-@@ -191,6 +207,7 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
- 		return -ENOMEM;
+ 	if (dp->dpms_mode == DRM_MODE_DPMS_ON)
+ 		return;
  
- 	panel->enabled = false;
-+	panel->prepared = false;
- 	panel->desc = desc;
+@@ -1059,10 +1069,13 @@ static void exynos_dp_poweron(struct exynos_dp_device *dp)
+ 	exynos_dp_phy_init(dp);
+ 	exynos_dp_init_dp(dp);
+ 	enable_irq(dp->irq);
++	exynos_dp_commit(display);
+ }
  
- 	panel->supply = devm_regulator_get(dev, "power");
+-static void exynos_dp_poweroff(struct exynos_dp_device *dp)
++static void exynos_dp_poweroff(struct exynos_drm_display *display)
+ {
++	struct exynos_dp_device *dp = display->ctx;
++
+ 	if (dp->dpms_mode != DRM_MODE_DPMS_ON)
+ 		return;
+ 
+@@ -1078,12 +1091,12 @@ static void exynos_dp_dpms(struct exynos_drm_display *display, int mode)
+ 
+ 	switch (mode) {
+ 	case DRM_MODE_DPMS_ON:
+-		exynos_dp_poweron(dp);
++		exynos_dp_poweron(display);
+ 		break;
+ 	case DRM_MODE_DPMS_STANDBY:
+ 	case DRM_MODE_DPMS_SUSPEND:
+ 	case DRM_MODE_DPMS_OFF:
+-		exynos_dp_poweroff(dp);
++		exynos_dp_poweroff(display);
+ 		break;
+ 	default:
+ 		break;
+@@ -1094,6 +1107,7 @@ static void exynos_dp_dpms(struct exynos_drm_display *display, int mode)
+ static struct exynos_drm_display_ops exynos_dp_display_ops = {
+ 	.create_connector = exynos_dp_create_connector,
+ 	.dpms = exynos_dp_dpms,
++	.commit = exynos_dp_commit,
+ };
+ 
+ static struct exynos_drm_display exynos_dp_display = {
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
