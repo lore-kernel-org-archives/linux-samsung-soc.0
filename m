@@ -1,220 +1,80 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 4/4] ARM: dts: Add exynos5250-spring device tree
-Date: Thu, 31 Jul 2014 21:05:18 +0200
-Message-ID: <53DA936E.9060004@gmail.com>
-References: <1406822910-6255-1-git-send-email-afaerber@suse.de> <1406822910-6255-5-git-send-email-afaerber@suse.de>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+Date: Thu, 31 Jul 2014 21:08:10 +0200
+Message-ID: <53DA941A.4070801@gmail.com>
+References: <1405612571-32598-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1406822910-6255-5-git-send-email-afaerber-l3A5Bk7waGM@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephan van Schaik <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:34950 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751350AbaGaTIP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 31 Jul 2014 15:08:15 -0400
+In-Reply-To: <1405612571-32598-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, swarren@nvidia.com, acourbot@nvidia.com, Marek Szyprowski <m.szyprowski@samsung.com>, Olof Johansson <olof@lixom.net>, drake@endlessm.com
 
-Hi Andreas,
+Hi Kukjin,
 
-Sorry for joining the party a bit late, but there were patches with les=
-s
-people involved so I preferred to review them first.
+On 17.07.2014 17:56, Tomasz Figa wrote:
+> On Exynos-based boards running secure firmware the sequence of low level
+> operations to enter and leave system-wide sleep mode is different than
+> on those without the firmware. Namely:
+>  - CP15 power control and diagnostic registers cannot be written directly,
+>  - the way of setting boot address and boot flag is different,
+>  - different resume handler needs to be used,
+>  - dedicated SMC call needs to be performed instead of letting the CPU enter
+>    WFI.
+> 
+> This series introduces .suspend() and .resume() firmware operations to
+> perform low level firmware-specific suspend and resume and then leverages
+> them to provide suspend-resume path meeting the above requirements.
+> 
+> The series is based on Kgene's for-next branch and tested on:
+>  - Exynos4412-based Trats2 board running in non-secure mode (under secure
+>    firmware) with few board-specific fixes that will be sent separately soon,
+>  - Exynos4210-based Trats board running in secure mode,
+>  - Exynos4412-based ODROID-U3 board running in non-secure mode with one minor
+>    board-specific fix which will be send shortly.
+> 
+> Depends on:
+>  - [PATCH v3] ARM: save/restore Cortex-A9 CP15 registers on suspend/resume
+>    (http://www.spinics.net/lists/arm-kernel/msg346212.html)
+>  - [PATCH v3] ARM: EXYNOS: Fix suspend/resume sequences
+>    (https://lkml.org/lkml/2014/7/15/319)
+>  - [PATCH] ARM: make it easier to check the CPU part number correctly
+>    (http://thread.gmane.org/gmane.linux.ports.arm.kernel/335126
+>     already in linux-next)
+> 
+> Changes since v1:
+>  - dropped outer_resume() - will be handled in assembly in further patches,
+>    as support for L2C in non-secure mode gets added,
+>  - moved CP15 resume to assembly as it needs to be done before MMU is enabled,
+>  - surrounded CP15 save with a check for cpuid part, because it is valid only
+>    on Cortex A9,
+>  - rebased on next-20140717 tag of linux-next tree.
+> 
+> Tomasz Figa (2):
+>   ARM: firmware: Introduce suspend and resume operations
+>   ARM: EXYNOS: Add support for firmware-assisted suspend/resume
+> 
+>  Documentation/arm/firmware.txt  | 28 +++++--------------------
+>  arch/arm/include/asm/firmware.h |  8 ++++++++
+>  arch/arm/mach-exynos/Makefile   |  1 +
+>  arch/arm/mach-exynos/common.h   |  4 ++++
+>  arch/arm/mach-exynos/firmware.c | 45 +++++++++++++++++++++++++++++++++++++++++
+>  arch/arm/mach-exynos/pm.c       | 16 ++++++++++-----
+>  arch/arm/mach-exynos/sleep.S    | 28 +++++++++++++++++++++++++
+>  arch/arm/mach-exynos/smc.h      |  4 ++++
+>  8 files changed, 106 insertions(+), 28 deletions(-)
+> 
 
-You can find my comments inline.
-
-On 31.07.2014 18:08, Andreas F=C3=A4rber wrote:
-> Adds initial support for the HP Chromebook 11.
-
-[snip]
-
-> +	gpio-keys {
-> +		compatible =3D "gpio-keys";
-> +		pinctrl-names =3D "default";
-> +		pinctrl-0 =3D <&power_key_irq>, <&lid_irq>;
-> +
-> +		power {
-> +			label =3D "Power";
-> +			gpios =3D <&gpx1 3 GPIO_ACTIVE_LOW>;
-> +			linux,code =3D <KEY_POWER>;
-
-I assume the key is debounced in hardware, so there is no need for
-debounce-interval here. Is this correct?
-
-> +			gpio-key,wakeup;
-> +		};
-> +
-> +		lid-switch {
-> +			label =3D "Lid";
-> +			gpios =3D <&gpx3 5 GPIO_ACTIVE_LOW>;
-> +			linux,input-type =3D <5>; /* EV_SW */
-> +			linux,code =3D <0>; /* SW_LID */
-> +			debounce-interval =3D <1>;
-> +			gpio-key,wakeup;
-> +		};
-> +	};
-> +
-> +	usb3_vbus_reg: regulator-usb3 {
-> +		compatible =3D "regulator-fixed";
-> +		regulator-name =3D "P5.0V_USB3CON";
-> +		regulator-min-microvolt =3D <5000000>;
-> +		regulator-max-microvolt =3D <5000000>;
-> +		gpio =3D <&gpe1 0 GPIO_ACTIVE_LOW>;
-> +		enable-active-high;
-> +	};
-> +
-> +	usb@12110000 {
-
-Since this is a brand new dts file, it should use the reference based
-syntax, which would be something like
-
-&usbhost {
-	...
-};
-
-below the / { ... }; block.
-
-> +		samsung,vbus-gpio =3D <&gpx1 1 GPIO_ACTIVE_HIGH>;
-> +	};
-> +
-> +	usb-hub {
-> +		compatible =3D "smsc,usb3503a";
-> +		reset-gpios =3D <&hsic_reset>;
-
-Hmm, why a -gpios property points to a pinctrl node? Shouldn't there be
-a phandle to GPIO bank + GPIO specifier instead?
-
-> +	};
-> +
-> +	fixed-rate-clocks {
-> +		xxti {
-> +			compatible =3D "samsung,clock-xxti";
-> +			clock-frequency =3D <24000000>;
-> +		};
-> +	};
-
-This is also referencing a node from higher level, so it should be done
-using a reference.
-
-> +
-> +	hdmi {
-> +		hpd-gpio =3D <&gpx3 7 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names =3D "default";
-> +		pinctrl-0 =3D <&hdmi_hpd_irq>;
-> +		phy =3D <&hdmiphy>;
-> +		ddc =3D <&i2c_2>;
-> +		hdmi-en-supply =3D <&s5m_ldo8_reg>;
-> +		vdd-supply =3D <&s5m_ldo8_reg>;
-> +		vdd_osc-supply =3D <&s5m_ldo10_reg>;
-> +		vdd_pll-supply =3D <&s5m_ldo8_reg>;
-> +	};
-
-Ditto.
-
-> +
-> +	fimd@14400000 {
-> +		status =3D "okay";
-> +		samsung,invert-vclk;
-> +	};
-
-Ditto.
-
-> +
-> +	dp-controller@145B0000 {
-> +		status =3D "okay";
-> +		pinctrl-names =3D "default";
-> +		pinctrl-0 =3D <&dp_hpd>;
-> +		samsung,color-space =3D <0>;
-> +		samsung,dynamic-range =3D <0>;
-> +		samsung,ycbcr-coeff =3D <0>;
-> +		samsung,color-depth =3D <1>;
-> +		samsung,link-rate =3D <0x0a>;
-> +		samsung,lane-count =3D <1>;
-> +		samsung,hpd-gpio =3D <&gpc3 0 GPIO_ACTIVE_HIGH>;
-> +	};
-
-Ditto.
-
-> +};
-> +
-> +&dp_hpd {
-> +	samsung,pins =3D "gpc3-0";
-> +	samsung,pin-function =3D <0>;
-> +	samsung,pin-pud =3D <3>;
-> +	samsung,pin-drv =3D <0>;
-> +};
-
-Hmm, what node is this referencing? I believe this should rather
-reference the pin controller and add a new board-specific pinconf/pinmu=
-x
-group instead....
-
-> +
-> +&i2c_0 {
-> +	status =3D "okay";
-> +	samsung,i2c-sda-delay =3D <100>;
-> +	samsung,i2c-max-bus-freq =3D <378000>;
-
-[snip]
-
-> +/*
-> + * Disabled pullups since external part has its own pullups and
-> + * double-pulling gets us out of spec in some cases.
-> + */
-> +&i2c2_bus {
-> +	samsung,pin-pud =3D <0>;
-> +};
-
-OK, here overriding a generic pinconf group is justified and nicely
-explained by a comment.
-
-> +
-> +&i2c_2 {
-> +	status =3D "okay";
-> +	samsung,i2c-sda-delay =3D <100>;
-> +	samsung,i2c-max-bus-freq =3D <66000>;
-> +
-> +	hdmiddc@50 {
-> +		compatible =3D "samsung,exynos4210-hdmiddc";
-> +		reg =3D <0x50>;
-> +	};
-
-I don't think this matches current Exynos HDMI bindings, which I believ=
-e
-have been changed to just take a phandle to i2c bus instead.
-
-> +};
-> +
-> +&i2c_3 {
-> +	status =3D "okay";
-> +	samsung,i2c-sda-delay =3D <100>;
-> +	samsung,i2c-max-bus-freq =3D <66000>;
-> +};
-
-[snip]
-
-> +&sd1_clk {
-> +	samsung,pin-drv =3D <0>;
-> +};
-> +
-> +&sd1_cmd {
-> +	samsung,pin-pud =3D <3>;
-> +	samsung,pin-drv =3D <0>;
-> +};
-> +
-> +&sd1_cd {
-> +	samsung,pin-drv =3D <0>;
-> +};
-> +
-> +&sd1_bus4 {
-> +	samsung,pin-drv =3D <0>;
-> +};
-
-Here generic settings are being overridden, so it might be a good idea
-to explain why, like with i2c pull-up above.
+I wonder if it is already too late to take this rather useful series for
+3.17 as well...
 
 Best regards,
 Tomasz
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
