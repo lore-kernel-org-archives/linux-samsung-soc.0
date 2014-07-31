@@ -1,66 +1,95 @@
 From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH v3 4/4] ARM: dts: Add exynos5250-spring device tree
-Date: Thu, 31 Jul 2014 15:31:04 +0530
-Message-ID: <CAEC9eQOfeW==+YhWbYT5zbCYtQ+poe5=NL2bcuL4GOjPrpQ5hg@mail.gmail.com>
-References: <1406728244-5105-1-git-send-email-afaerber@suse.de>
-	<1406728244-5105-5-git-send-email-afaerber@suse.de>
-	<53DA0BAA.8090000@suse.de>
-	<CAEC9eQNuPN+WiKGOtCosCwcR48MNawQL7dU4S8=dbA4eFXB_-w@mail.gmail.com>
-	<53DA1231.70309@suse.de>
+Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip
+ support
+Date: Thu, 31 Jul 2014 15:37:25 +0530
+Message-ID: <CAEC9eQMNYFRJquLdixWkbo-ehXTPAVRh0hGTCeUpRxqV0Vjr0g@mail.gmail.com>
+References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
+ <53D5435B.8030305@suse.de>
+ <CAEC9eQPW-Z4craCC15M7oTp8eSD09AGxdTFEWaAWqn3Up4eJUg@mail.gmail.com>
+ <53D783CC.2080108@suse.de>
+ <CAEC9eQOpS90U9kWmY8YdcAtdxQYKoM9ikoWpkwMs6T2udLeZHA@mail.gmail.com>
+ <53D9484A.1070905@suse.de>
+ <CAEC9eQOFWQ8t1zzOVrHm2=aS4+N94EW6LSjBUG2fH51aFs0GLQ@mail.gmail.com>
+ <53DA0513.3080602@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53DA1231.70309@suse.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <53DA0513.3080602@suse.de>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jul 31, 2014 at 3:23 PM, Andreas F=C3=A4rber <afaerber@suse.de>=
- wrote:
-> Hi,
->
-> Am 31.07.2014 11:49, schrieb Ajay kumar:
->> On Thu, Jul 31, 2014 at 2:56 PM, Andreas F=C3=A4rber <afaerber@suse.=
-de> wrote:
->>> Am 30.07.2014 15:50, schrieb Andreas F=C3=A4rber:
->>>> diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/bo=
-ot/dts/exynos5250-spring.dts
->>>> new file mode 100644
->>>> index 000000000000..bcca892bf2ff
->>>> --- /dev/null
->>>> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
->>> [...]
->>>> +&pinctrl_0 {
->>>> +     dp_hpd_gpio: dp-hpd-gpio {
->>>> +             samsung,pins =3D "gpc3-0";
->>>> +             samsung,pin-function =3D <1>;
->>>
->>> Not sure where this 1 came from... Both Ajay and my 3.8 DT have 0.
->> Right, this should be 0.
->>
->>>> +             samsung,pin-pud =3D <3>;
->>>> +             samsung,pin-drv =3D <0>;
->>>> +     };
->>>
->>> Seeing that Ajay called this node dp-hdp, it should probably be an =
-override?
->> dp_hpd should be enough. I will keep the same name for peach boards.
->> dp_hpd: dp-hpd {
->> .
->> .
->> .
->> };
->
-> Apart from my own set of typos, I see that you proposed dp-hpd wherea=
-s
-> -pinctrl.dtsi has dp_hpd (dash vs. underscore). My question is, can w=
-e
-> override the pinctrl one instead of adding a new one, or do they need=
- to
-> coexist?
-The one in exynos5250-pinctrl.dtsi will be used only for smdk5250/snow.
-=46or spring, you can override the same.
-
-Ajay
+T24gVGh1LCBKdWwgMzEsIDIwMTQgYXQgMjoyNyBQTSwgQW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJl
+ckBzdXNlLmRlPiB3cm90ZToKPiBBamF5LAo+Cj4gQW0gMzEuMDcuMjAxNCAxMDozOCwgc2Nocmll
+YiBBamF5IGt1bWFyOgo+PiBPbiBUaHUsIEp1bCAzMSwgMjAxNCBhdCAxOjAyIEFNLCBBbmRyZWFz
+IEbDpHJiZXIgPGFmYWVyYmVyQHN1c2UuZGU+IHdyb3RlOgo+Pj4gQW0gMzAuMDcuMjAxNCAwODoy
+MSwgc2NocmllYiBBamF5IGt1bWFyOgo+Pj4+IE9uIFR1ZSwgSnVsIDI5LCAyMDE0IGF0IDQ6NTEg
+UE0sIEFuZHJlYXMgRsOkcmJlciA8YWZhZXJiZXJAc3VzZS5kZT4gd3JvdGU6Cj4+Pj4+IEFtIDI4
+LjA3LjIwMTQgMDg6MTMsIHNjaHJpZWIgQWpheSBrdW1hcjoKPj4+Pj4+IE9uIDcvMjcvMTQsIEFu
+ZHJlYXMgRsOkcmJlciA8YWZhZXJiZXJAc3VzZS5kZT4gd3JvdGU6Cj4+Pj4+Pj4gQW0gMjUuMDcu
+MjAxNCAyMToyMiwgc2NocmllYiBBamF5IEt1bWFyOgo+Pj4+Pj4+PiBUaGlzIHNlcmllcyBpcyBi
+YXNlZCBvbiBleHlub3MtZHJtLW5leHQgYnJhbmNoIG9mIElua2kgRGFlJ3MgdHJlZSBhdDoKPj4+
+Pj4+Pj4gZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2RhZWlu
+a2kvZHJtLWV4eW5vcy5naXQKPj4+Pj4+Pj4KPj4+Pj4+Pj4gSSBoYXZlIHRlc3RlZCB0aGlzIGFm
+dGVyIGFkZGluZyBmZXcgRFQgY2hhbmdlcyBmb3IgZXh5bm9zNTI1MC1zbm93LAo+Pj4+Pj4+PiBl
+eHlub3M1NDIwLXBlYWNoLXBpdCBhbmQgZXh5bm9zNTgwMC1wZWFjaC1waSBib2FyZHMuCj4+Pj4+
+Pj4KPj4+Pj4+PiBJJ20gdHJ5aW5nIHRvIHRlc3QgdGhpcyB3aXRoIGEgbW9kaWZpZWQgZXh5bm9z
+NTI1MC1zcHJpbmcgRFQgYmFzZWQgb2ZmCj4+Pj4+Pj4ga2dlbmUncyBmb3ItbmV4dCBicmFuY2gg
+ZHVlIHRvIERULCBhbmQgSSBydW4gaW50byB0aGUgZm9sbG93aW5nOgo+Pj4+Pgo+Pj4+PiBVbmZv
+cnR1bmF0ZWx5IHRoZSBtb3N0IEkgZ290IG9uIFNwcmluZyB3aXRoIGF0dGFjaGVkIERUIHdhcyBh
+IGJsYW5rCj4+Pj4+IHNjcmVlbiB3aXRoIGEgd2hpdGUgaG9yaXpvbnRhbCBsaW5lIGluIHRoZSBt
+aWRkbGUuCj4+Pj4gVGhlbiwgSSB0aGluayBicmlkZ2UgY2hpcCBpcyB3b3JraW5nIGZpbmUuCj4+
+Pj4gWW91IGp1c3QgbmVlZCB0byBjb25maWd1cmUgdGhlIHByb3BlciBtb2RlIGZvciBGSU1ELgo+
+Pj4+IFlvdSBjYW4gc2VlIGJhY2tsaWdodCBhbHNvLCByaWdodD8KPj4+Pgo+Pj4+PiBEbyBJIG5l
+ZWQgdG8gc3BlY2lmeSBhIHNwZWNpZmljIHBhbmVsIG1vZGVsIGZvciBTcHJpbmc/Cj4+Pj4gWWVz
+ISBUcnkgdXNpbmcgImNodW5naHdhLGNsYWExMDF3YjAxIiBhcyBjb21wYXRpYmxlIHN0cmluZyBm
+b3IKPj4+PiBwYW5lbCBub2RlLgo+Pj4KPj4+IFdpdGgganVzdCB5b3VyIHY2IGFwcGxpZWQgcGx1
+cyB1cGRhdGVkIERUIHBhdGNoIChhdHRhY2hlZCkgWzFdLCBJIHNlZQo+Pj4gYmFja2xpZ2h0IGFu
+ZCBhIGJsYWNrIHNjcmVlbiAobm8gd2hpdGUgbGluZSBhbnkgbW9yZSkuIGRtZXNnIGF0dGFjaGVk
+Lgo+PiBJIGNhbiBzZWUgcGVuZ3VpbidzIGFsc28hCj4KPiBTZWUgYmVsb3cuLi4KPgo+Pj4+PiBG
+b3IgdGVzdGluZyBJIHJlLWFwcGxpZWQgeW91ciBpb21tdSBwYXRjaGVzICh3aGljaCBidHcgZmFp
+bCBub3cgZm9yIDU0MjAKPj4+Pj4gZHVlIHRvIGRpc3BfcGQpIGJ1dCBkaWRuJ3Qga25vdyB3aGF0
+IHRvIGRvIGFib3V0IHlvdXIgcGFuZWwtbHZkcwo+Pj4+PiByZWd1bGF0b3IgcGF0Y2ggbm93IHRo
+YXQgaXQncyBnb25lLgo+Pj4+IElnbm9yZSB0aGF0IHJlZ3VsYXRvciBwYXRjaC4KPj4+Pgo+Pj4+
+IEFsc28sIHBsZWFzZSBhdHRhY2ggdGhlIGJvb3Rsb2cgaWYgcG9zc2libGUgYWZ0ZXIgdHJ5aW5n
+IHRoaXMuCj4+Pgo+Pj4gSWYgSSBmdXJ0aGVyIGFwcGx5IHRoZSBJT01NVSBwYXRjaGVzIFsyXSwg
+SSBnZXQgbm8gYmFja2xpZ2h0IG5vciBVU0IgYW5kCj4+PiB0aHVzIGNhbid0IG9idGFpbiBhIGJv
+b3QgbG9nLgo+Pj4KPj4+IFJlZ2FyZHMsCj4+PiBBbmRyZWFzCj4+Pgo+Pj4gWzFdIGh0dHBzOi8v
+Z2l0aHViLmNvbS9hZmFlcmJlci9saW51eC9jb21taXRzL3NwcmluZy1uZXh0Cj4KPiAoSSB1cGRh
+dGVkIHRoZSBicmFuY2ggbWVhbnRpbWUsIHNvIHdoYXQgSSBtZWFudCB3YXMgc3ByaW5nLWJyaWRn
+ZS52Nn4yKQo+Cj4+PiBbMl0gaHR0cHM6Ly9naXRodWIuY29tL2FmYWVyYmVyL2xpbnV4L2NvbW1p
+dHMvc3ByaW5nLWJyaWRnZS52Ngo+PiBXaXRoIGp1c3QgdGhlIHNwcmluZy1icmlkZ2UudjYgYnJh
+bmNoIG9mIHlvdXIgb3duIHRyZWUsIEkgYW0gYWJsZSB0byBzZWUKPj4gYm9vdHVwIGxvZ28gb24g
+U2thdGUoYSB2YXJpYW50IG9mIHNwcmluZyB3aGljaCBhbHNvIGNvbnRhaW5zIHBzODYyMikuCj4+
+IEkgaGF2ZSB0cmllZCBib3RoIGV4eW5vc19kZWZjb25maWcgYW5kIG11bHRpX3Y3X2RlZmNvbmZp
+Zy4KPj4gSSBlbmFibGUgRFJNLCBFWFlOT1MgRFJNLCBCUklER0UgQ0hJUFMsIElPTU1VLCBFWFlO
+T1MgSU9NTVUKPj4gaW4gY29uZmlncy4KPj4KPj4gRXZlbiBpbiB5b3VyIGJvb3Rsb2dzLCBJIGNh
+biBzZWUgRFAgZ2V0dGluZyBwcm9iZWQuCj4+IEFuZCwgeW91IHNheSBiYWNrbGlnaHQgaXMgYWxz
+byB2aXNpYmxlLiBUaGF0IG1lYW5zIGVudGlyZSBkaXNwbGF5Cj4+IHBhdGggc2hvdWxkIGJlIGZp
+bmUuIEl0cyBqdXN0IHRoYXQgeW91IHNob3VsZCBzdGFydCB3cml0aW5nIHRvIHRoZSBidWZmZXIu
+Cj4+IEhhdmUgeW91IGVuYWJsZWQgYm9vdCBsb2dvcz8KPgo+IExldCBtZSBjbGFyaWZ5OiBVLUJv
+b3QgdXNlcyB0aGUgZGlzcGxheSBbKl0sIHNvIGl0IGlzIHBvd2VyZWQgYW5kIEkgc2VlCj4gcGVu
+Z3VpbnMgaW5pdGlhbGx5LiBUaGVuLCB3aGVuIGRybSBnZXRzIGluaXRpYWxpemVkLCB0aGUgc2Ny
+ZWVuIGdvZXMKPiBibGFjayBhbmQgbm8gbG9uZ2VyIHByaW50cyBrZXJuZWwgbWVzc2FnZXMgb3Ig
+c3lzdGVtZCBvdXRwdXQgb3IgWDExIGdkbQo+IGxvZ2luIHNjcmVlbi4KPgo+IFNpbmNlIGRybSBz
+dHVmZiBpcyB0aGUgb25seSB2YXJpYW5jZSBoZXJlIGFuZCBpdCB3b3JrcyB3aXRoIHNpbXBsZWZi
+LAo+IHN1cmVseSBzb21ldGhpbmcgcHJpbnRzIHRvIHNvbWUgYnVmZmVyIQpXZWxsLCBJIGNhbm5v
+dCByZWFsbHkgaGVscCB5b3Ugd2l0aCB0aGlzLgpJIHRoaW5rIHRoZSB1aSBwcm9jZXNzL1ggc2Vy
+dmVyIGlzIGdldHRpbmcgdGVybWluYXRlZCBmb3Igc29tZSByZWFzb24uClRoYXQgbWlnaHQgYmUg
+c29tZSBpc3N1ZSBpbmR1Y2VkIGJ5IHRoZSBwbGF0Zm9ybS9kcm0gbGliLgpUaGlzIGNhbm5vdCBi
+ZSBhbiBpc3N1ZSBpbmR1Y2VkIGJ5IHRoZSBicmlkZ2UgY2hpcCBzZXJpZXMsIGRlZmluaXRlbHkg
+bm90IQpJIGFtIGFibGUgdG8gcnVuIG1vZGV0ZXN0LCBhbmQgYWxzbyBhYmxlIHRvIHNlZSByYW5k
+b20gZGF0YSBvbiBkaXNwbGF5CmJ5IGRvaW5nICJjYXQgL2Rldi91cmFuZG9tID4gL2Rldi9mYjAi
+CgpBamF5Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
