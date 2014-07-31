@@ -1,101 +1,54 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCHv2 4/5] clk: samsung: exynos5410: Add fixed rate clocks
-Date: Thu, 31 Jul 2014 15:37:39 +0200
-Message-ID: <53DA46A3.9080808@gmail.com>
-References: <1406805732-17372-1-git-send-email-hsnaves@gmail.com> <1406805732-17372-5-git-send-email-hsnaves@gmail.com> <53DA3C36.1040206@gmail.com> <CAEe5pB_7e_5YkpcuRvsaUg6vKfdu6C+XhwRYyY1uUGptxM5zkg@mail.gmail.com>
+Subject: Re: [PATCH v9 6/6] clk: samsung: remove unused clock aliases and
+ update clock flags
+Date: Thu, 31 Jul 2014 16:13:46 +0200
+Message-ID: <53DA4F1A.5040604@gmail.com>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com> <1406707663-16656-7-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CAEe5pB_7e_5YkpcuRvsaUg6vKfdu6C+XhwRYyY1uUGptxM5zkg@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Humberto Naves <hsnaves@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, Andreas Farber <afaerber@suse.de>, Randy Dunlap <rdunlap@infradead.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1406707663-16656-7-git-send-email-thomas.ab@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 31.07.2014 15:23, Humberto Naves wrote:
-> Hi Tomasz,
-> 
-> I perfectly see your point.
-> However my question was why you did you decide to postpone
-> Sylwester's? Was there any specific reason?
-> I suppose it would break all the dtb compatibility, but besides that,
-> was there any other reason?
+On 30.07.2014 10:07, Thomas Abraham wrote:
+> With some of the Exynos SoCs switched over to use the generic CPUfreq drivers,
+> the unused clock aliases can be removed. In addition to this, the individual
+> clock blocks which are now encapsulated with the consolidate CPU clock type
+> can now be marked with read-only flags.
 
-We discussed this in private (we work in the same office) and I pointed
-out certain issues with Sylwester's proposed implementation and we
-agreed that one more revision of the patch is needed, but as it happens,
-higher priority tasks showed up and this one got lost in action.
+[snip]
 
-The first version of the patch [1] changed the original behavior
-breaking DT ABI compatibility and relied on improper assumption that
-those clocks are always in "fixed-rate-clocks" node. The thing is that
-no code should rely on DT node naming.
+> @@ -1500,6 +1499,7 @@ static void __init exynos4_clk_init(struct device_node *np,
+>  		exynos4_soc == EXYNOS4210 ? "Exynos4210" : "Exynos4x12",
+>  		_get_rate("sclk_apll"),	_get_rate("sclk_mpll"),
+>  		_get_rate("sclk_epll"), _get_rate("sclk_vpll"),
+> +		exynos4_soc == EXYNOS4210 ? _get_rate("armclk") :
+>  		_get_rate("div_core2"));
 
-Second version [2] was much better in this aspect, but it had some minor
-implementation issues - custom clk_ops used instead of generic mux clock
-and chipid block being constantly mapped and unmapped in every call to
-__fin_pll_mux_get_parent().
+I believe "div_core2" should work fine here for all SoCs without the
+need for this if.
 
-I should have reviewed them both on the mailing lists, but at that time
-there was no major activity related to Exynos4 outside of our office, so
-it was more convenient to just talk together directly.
+>  }
+>  
+> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+> index e19e365..1d958f1 100644
+> --- a/drivers/clk/samsung/clk-exynos5250.c
+> +++ b/drivers/clk/samsung/clk-exynos5250.c
 
-[1] http://www.spinics.net/lists/arm-kernel/msg333211.html
-[2]
-http://lists.infradead.org/pipermail/linux-arm-kernel/2014-May/258490.html
+[snip]
 
-Anyway, I don't think this is all relevant to Exynos5410, which just
-uses the generic fixed rate binding and has the thing done right from
-the start.
+> @@ -848,6 +851,6 @@ static void __init exynos5250_clk_init(struct device_node *np)
+>  	samsung_clk_of_add_provider(np, ctx);
+>  
+>  	pr_info("Exynos5250: clock setup completed, armclk=%ld\n",
+> -			_get_rate("div_arm2"));
+> +			_get_rate("armclk"));
+
+Similarly here, no need for this change.
 
 Best regards,
 Tomasz
-
-> 
-> Best,
-> Humberto
-> 
-> On Thu, Jul 31, 2014 at 2:53 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> Hi Humberto,
->>
->> You can find my comments inline.
->>
->> On 31.07.2014 13:22, Humberto Silva Naves wrote:
->>> This implements the fixed rate clocks generated either inside or
->>> outside the SoC. It also adds a dt-binding constant for the
->>> sclk_hdmiphy clock, which shall be later used by other drivers,
->>> such as the DRM.
->>>
->>> Since the external fixed rate clock fin_pll is now registered by
->>> the clk-exynos5410 file, the bindings with the device tree file have
->>> changed. It is no longer needed to define fin_pll as a fixed clock,
->>> such as in:
->>>
->>>       fin_pll: xxti {
->>>               compatible = "fixed-clock";
->>>               clock-frequency = <24000000>;
->>>               clock-output-names = "fin_pll";
->>>               #clock-cells = <0>;
->>>       };
->>>
->>> The above lines should be replaced by the following lines:
->>>
->>>       fixed-rate-clocks {
->>>               oscclk {
->>>                       compatible = "samsung,exynos5410-oscclk";
->>>                       clock-frequency = <24000000>;
->>>               };
->>>       };
->>>
->>> This new form of binding was properly documented in the relevant
->>> documentation file.
->>
->> In general this is backwards. This Exynos-specific clock binding was
->> invented before generic fixed rate clock binding showed up and so few
->> drivers still use it to maintain DT ABI compatibility. However new
->> drivers are required to use the new generic binding and so does the one
->> for Exynos5410.
->>
->> Best regards,
->> Tomasz
