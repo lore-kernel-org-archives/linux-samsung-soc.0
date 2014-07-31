@@ -1,35 +1,50 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 2/4] ARM: dts: Fold exynos5250-cros-common into exynos5250-snow
-Date: Thu, 31 Jul 2014 21:22:11 +0200
-Message-ID: <53DA9763.2070709@gmail.com>
-References: <1406822910-6255-1-git-send-email-afaerber@suse.de> <1406822910-6255-3-git-send-email-afaerber@suse.de>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] regulator: tps65090: Set voltage for fixed regulators
+Date: Thu, 31 Jul 2014 20:24:42 +0100
+Message-ID: <20140731192442.GM17528@sirena.org.uk>
+References: <1406809865-13115-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:50890 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752646AbaGaTWS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jul 2014 15:22:18 -0400
-In-Reply-To: <1406822910-6255-3-git-send-email-afaerber@suse.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lpp9n2aosfmoKORi"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1406809865-13115-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Vincent Palatin <vpalatin@chromium.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, open list <linux-kernel@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>, Stephan van Schaik <stephan@synkhronix.com>, Doug Anderson <dianders@chromium.org>, Rob Herring <robh+dt@kernel.org>, Ben Dooks <ben-linux@fluff.org>, Russell King <linux@arm.linux.org.uk>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 
-Please see my comments inline.
 
-On 31.07.2014 18:08, Andreas F=C3=A4rber wrote:
-> The remaining common ChromeOS pieces are fairly minor.
->=20
+--lpp9n2aosfmoKORi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-=46or people that might stumble upon this patch in future, it would be
-nice to specify the reason for this change.
+On Thu, Jul 31, 2014 at 02:31:05PM +0200, Javier Martinez Canillas wrote:
+> According to the tps65090 data manual [0], the DCDC1 and DCDC2
+> step-down converters and the LDO's have a fixed output voltage.
 
-Otherwise feel free to add:
+Applied, thanks.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+--lpp9n2aosfmoKORi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Best regards,
-Tomasz
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT2pf3AAoJELSic+t+oim9SDQP/3hv44TmN/t+A/W7UocQRu4u
+Pv1qtjZtfKWgAC1mgzrmXUqol16ENgJzEWBgFNru0duvhTQNrWrNcS6GxUagQPCq
+oKRTvkM7Xe5dQueHytu6O/YesxoD6nJJZ+Rf6BTfa2iFKoC0G4A/Agyn00SorwJW
+lNHFhBUnhVgMpkcEngKNagSFyL2Vnx/1FgnztKpq37uyU+0+Lx+MsXHOPOwRtVTw
+l4qXePZHZ/tDpI2X7qH33LAYsLD3/2N8zbZYxgzkLUQDQOIoLn2l5BvtPFCelIDv
+0rTowyRE8VZL+uFClu3iIGINih5RmCzTqj3Wb3EGRrIVGOgELFy4vyWTzvA1FAyl
+1m3FFreAKb9hfSY8bBdOsPC4uiThqYMJdoDG/fr7rdDoUHH/RpDHQW6D2rUoLTUn
+ipGB7FGQQIBdfEUX/zHaDk/Y1j4iqRykyyN91C/BeWBeWVSuzlguB2esg2LIUSmb
+lS7fpGJ3PtOL2E8ZmN+yo/Hroa+ASoOxPO5yQYEqtfIwgIFxTn4bmGsX+QZ9jXHL
+CvDbfdunlZ+sgSDt7QACtLBPvS5v0jKUF3cWm3asK0IMd3sSirdKgAgasNzIAJDK
+dmLw1JMTXLTDdjGhWoGguPqFqFow1mbrj6PTlZaE3nq4H8kfdCDGZf/JAmmko4RK
+2xv4jGXIAxr/T2wbweyt
+=nS6c
+-----END PGP SIGNATURE-----
+
+--lpp9n2aosfmoKORi--
