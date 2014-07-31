@@ -1,69 +1,37 @@
-From: Humberto Naves <hsnaves@gmail.com>
-Subject: Re: [PATCHv2 4/5] clk: samsung: exynos5410: Add fixed rate clocks
-Date: Thu, 31 Jul 2014 15:23:03 +0200
-Message-ID: <CAEe5pB_7e_5YkpcuRvsaUg6vKfdu6C+XhwRYyY1uUGptxM5zkg@mail.gmail.com>
-References: <1406805732-17372-1-git-send-email-hsnaves@gmail.com>
- <1406805732-17372-5-git-send-email-hsnaves@gmail.com> <53DA3C36.1040206@gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: Role of PLL_ENABLE_BIT
+Date: Thu, 31 Jul 2014 15:25:56 +0200
+Message-ID: <53DA43E4.1000007@gmail.com>
+References: <2111968107.110151406781109677.JavaMail.weblogic@epmlwas02a> <CAKew6eUinuZ0gNu5EzH7+N2VQiXD6ujZ9FY9rwY-cqa=WkxZjA@mail.gmail.com> <53DA1576.6020504@suse.de> <CAEe5pB9QzqfNFGMSKNxc7ncGDp-sCUMdm7--uY6aT9YWjHZ5Aw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <53DA3C36.1040206@gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, Andreas Farber <afaerber@suse.de>, Randy Dunlap <rdunlap@infradead.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:65104 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750831AbaGaN0E (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 31 Jul 2014 09:26:04 -0400
+Received: by mail-wg0-f49.google.com with SMTP id k14so2735482wgh.20
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Jul 2014 06:26:00 -0700 (PDT)
+In-Reply-To: <CAEe5pB9QzqfNFGMSKNxc7ncGDp-sCUMdm7--uY6aT9YWjHZ5Aw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Humberto Naves <hsnaves@gmail.com>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Yadwinder Singh <yadi.brar@samsung.com>
 
-Hi Tomasz,
+On 31.07.2014 12:46, Humberto Naves wrote:
+> Hi Andreas,
+> 
+> I guess the original message was not plain text, and majordomo refused
+> to deliver it :-(
+> The signedness is not an issue, if I just use what I sent in the
+> patch, the set_rate function works like a charm. But otherwise, the
+> whole system freezes and I have to reboot the machine.
 
-I perfectly see your point.
-However my question was why you did you decide to postpone
-Sylwester's? Was there any specific reason?
-I suppose it would break all the dtb compatibility, but besides that,
-was there any other reason?
+It's possible that the bootloader simply doesn't enable the PLL. I had a
+patch somewhere which added enable/disable control for the PLL, which
+required a bit more work. It might be a good idea to revisit it then.
 
-Best,
-Humberto
-
-On Thu, Jul 31, 2014 at 2:53 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Humberto,
->
-> You can find my comments inline.
->
-> On 31.07.2014 13:22, Humberto Silva Naves wrote:
->> This implements the fixed rate clocks generated either inside or
->> outside the SoC. It also adds a dt-binding constant for the
->> sclk_hdmiphy clock, which shall be later used by other drivers,
->> such as the DRM.
->>
->> Since the external fixed rate clock fin_pll is now registered by
->> the clk-exynos5410 file, the bindings with the device tree file have
->> changed. It is no longer needed to define fin_pll as a fixed clock,
->> such as in:
->>
->>       fin_pll: xxti {
->>               compatible = "fixed-clock";
->>               clock-frequency = <24000000>;
->>               clock-output-names = "fin_pll";
->>               #clock-cells = <0>;
->>       };
->>
->> The above lines should be replaced by the following lines:
->>
->>       fixed-rate-clocks {
->>               oscclk {
->>                       compatible = "samsung,exynos5410-oscclk";
->>                       clock-frequency = <24000000>;
->>               };
->>       };
->>
->> This new form of binding was properly documented in the relevant
->> documentation file.
->
-> In general this is backwards. This Exynos-specific clock binding was
-> invented before generic fixed rate clock binding showed up and so few
-> drivers still use it to maintain DT ABI compatibility. However new
-> drivers are required to use the new generic binding and so does the one
-> for Exynos5410.
->
-> Best regards,
-> Tomasz
+Best regards,
+Tomasz
