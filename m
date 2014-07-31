@@ -1,105 +1,65 @@
-From: Humberto Silva Naves <hsnaves@gmail.com>
-Subject: [PATCHv2 2/5] clk: samsung: exynos5410: Organize register offset
- constants
-Date: Thu, 31 Jul 2014 13:22:09 +0200
-Message-ID: <1406805732-17372-3-git-send-email-hsnaves@gmail.com>
+From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCHv2 4/5] clk: samsung: exynos5410: Add fixed rate clocks
+Date: Thu, 31 Jul 2014 13:45:56 +0200
+Message-ID: <53DA2C74.3010101@samsung.com>
 References: <1406805732-17372-1-git-send-email-hsnaves@gmail.com>
+ <1406805732-17372-5-git-send-email-hsnaves@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1406805732-17372-1-git-send-email-hsnaves@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Humberto Silva Naves <hsnaves@gmail.com>, devicetree@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, linux-doc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Andreas Farber <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1406805732-17372-5-git-send-email-hsnaves-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Humberto Silva Naves <hsnaves-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thomas Abraham <ta.omasab-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andreas Farber <afaerber-l3A5Bk7waGM@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The different register groups (SRC, DIV, PLL, GATE, etc) are
-now separated by a blank line, and within the same group, the
-definitions are ordered by address. This is done to reduce the
-chances of potential conflicts when adding new entries, and
-to improve the readability of code. While at it, replaced some
-spaces with tabs to keep consistency.
+(dropping linux-doc ML and Randy from Cc)
 
-Signed-off-by: Humberto Silva Naves <hsnaves@gmail.com>
----
- drivers/clk/samsung/clk-exynos5410.c |   42 +++++++++++++++++++---------------
- 1 file changed, 23 insertions(+), 19 deletions(-)
+On 31/07/14 13:22, Humberto Silva Naves wrote:
+> This implements the fixed rate clocks generated either inside or
+> outside the SoC. It also adds a dt-binding constant for the
+> sclk_hdmiphy clock, which shall be later used by other drivers,
+> such as the DRM.
+> 
+> Since the external fixed rate clock fin_pll is now registered by
+> the clk-exynos5410 file, the bindings with the device tree file have
+> changed. It is no longer needed to define fin_pll as a fixed clock,
+> such as in:
+> 
+> 	fin_pll: xxti {
+>   		compatible = "fixed-clock";
+> 	  	clock-frequency = <24000000>;
+> 	  	clock-output-names = "fin_pll";
+> 	  	#clock-cells = <0>;
+> 	};
+> 
+> The above lines should be replaced by the following lines:
+> 
+> 	fixed-rate-clocks {
+> 		oscclk {
+> 			compatible = "samsung,exynos5410-oscclk";
+> 			clock-frequency = <24000000>;
+> 		};
+> 	};
+> 
+> This new form of binding was properly documented in the relevant
+> documentation file.
 
-diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index bf57c80..92c56b7 100644
---- a/drivers/clk/samsung/clk-exynos5410.c
-+++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -19,39 +19,43 @@
- 
- #include "clk.h"
- 
--#define APLL_LOCK               0x0
--#define APLL_CON0               0x100
--#define CPLL_LOCK               0x10020
--#define CPLL_CON0               0x10120
--#define MPLL_LOCK               0x4000
--#define MPLL_CON0               0x4100
--#define BPLL_LOCK               0x20010
--#define BPLL_CON0               0x20110
--#define KPLL_LOCK               0x28000
--#define KPLL_CON0               0x28100
-+#define APLL_LOCK		0x0
-+#define APLL_CON0		0x100
-+#define MPLL_LOCK		0x4000
-+#define MPLL_CON0		0x4100
-+#define CPLL_LOCK		0x10020
-+#define CPLL_CON0		0x10120
-+#define BPLL_LOCK		0x20010
-+#define BPLL_CON0		0x20110
-+#define KPLL_LOCK		0x28000
-+#define KPLL_CON0		0x28100
- 
- #define SRC_CPU			0x200
--#define DIV_CPU0		0x500
- #define SRC_CPERI1		0x4204
--#define DIV_TOP0		0x10510
--#define DIV_TOP1		0x10514
--#define DIV_FSYS1		0x1054c
--#define DIV_FSYS2		0x10550
--#define DIV_PERIC0		0x10558
- #define SRC_TOP0		0x10210
- #define SRC_TOP1		0x10214
- #define SRC_TOP2		0x10218
- #define SRC_FSYS		0x10244
- #define SRC_PERIC0		0x10250
-+#define SRC_CDREX		0x20200
-+#define SRC_KFC			0x28200
-+
- #define SRC_MASK_FSYS		0x10340
- #define SRC_MASK_PERIC0		0x10350
-+
-+#define DIV_CPU0		0x500
-+#define DIV_TOP0		0x10510
-+#define DIV_TOP1		0x10514
-+#define DIV_FSYS1		0x1054c
-+#define DIV_FSYS2		0x10550
-+#define DIV_PERIC0		0x10558
-+#define DIV_KFC0		0x28500
-+
- #define GATE_BUS_FSYS0		0x10740
-+
- #define GATE_IP_FSYS		0x10944
- #define GATE_IP_PERIC		0x10950
- #define GATE_IP_PERIS		0x10960
--#define SRC_CDREX		0x20200
--#define SRC_KFC			0x28200
--#define DIV_KFC0		0x28500
- 
- /* list of PLLs */
- enum exynos5410_plls {
--- 
-1.7.10.4
+Can you explain what is rationale behind this change ? Is it related to
+suspend/resume ordering ?
+Obviously it breaks the kernel/dtb compatibility. We should be moving
+in opposite direction, i.e. completely remove the custom samsung fixed
+rate clocks. I've tried to address this with patches [1], [2] but Tomasz
+wasn't happy with them IIRC and I postponed work on that.
+
+[1] http://www.spinics.net/lists/arm-kernel/msg333211.html
+[2] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-May/258490.html
+
+--
+Regards,
+Sylwester
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
