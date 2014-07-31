@@ -1,81 +1,113 @@
-From: Ajay kumar <ajaynumb@gmail.com>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
 Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip
  support
-Date: Thu, 31 Jul 2014 14:08:05 +0530
-Message-ID: <CAEC9eQOFWQ8t1zzOVrHm2=aS4+N94EW6LSjBUG2fH51aFs0GLQ@mail.gmail.com>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <53D5435B.8030305@suse.de>
- <CAEC9eQPW-Z4craCC15M7oTp8eSD09AGxdTFEWaAWqn3Up4eJUg@mail.gmail.com>
- <53D783CC.2080108@suse.de>
- <CAEC9eQOpS90U9kWmY8YdcAtdxQYKoM9ikoWpkwMs6T2udLeZHA@mail.gmail.com>
- <53D9484A.1070905@suse.de>
+Date: Thu, 31 Jul 2014 10:57:55 +0200
+Message-ID: <53DA0513.3080602@suse.de>
+References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>	<53D5435B.8030305@suse.de>	<CAEC9eQPW-Z4craCC15M7oTp8eSD09AGxdTFEWaAWqn3Up4eJUg@mail.gmail.com>	<53D783CC.2080108@suse.de>	<CAEC9eQOpS90U9kWmY8YdcAtdxQYKoM9ikoWpkwMs6T2udLeZHA@mail.gmail.com>	<53D9484A.1070905@suse.de> <CAEC9eQOFWQ8t1zzOVrHm2=aS4+N94EW6LSjBUG2fH51aFs0GLQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <53D9484A.1070905@suse.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:54554 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932250AbaGaI6A (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 31 Jul 2014 04:58:00 -0400
+In-Reply-To: <CAEC9eQOFWQ8t1zzOVrHm2=aS4+N94EW6LSjBUG2fH51aFs0GLQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-QW5kcmVhcywKCk9uIFRodSwgSnVsIDMxLCAyMDE0IGF0IDE6MDIgQU0sIEFuZHJlYXMgRsOkcmJl
-ciA8YWZhZXJiZXJAc3VzZS5kZT4gd3JvdGU6Cj4gSGkgQWpheSwKPgo+IEFtIDMwLjA3LjIwMTQg
-MDg6MjEsIHNjaHJpZWIgQWpheSBrdW1hcjoKPj4gT24gVHVlLCBKdWwgMjksIDIwMTQgYXQgNDo1
-MSBQTSwgQW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJlckBzdXNlLmRlPiB3cm90ZToKPj4+IEFtIDI4
-LjA3LjIwMTQgMDg6MTMsIHNjaHJpZWIgQWpheSBrdW1hcjoKPj4+PiBPbiA3LzI3LzE0LCBBbmRy
-ZWFzIEbDpHJiZXIgPGFmYWVyYmVyQHN1c2UuZGU+IHdyb3RlOgo+Pj4+PiBBbSAyNS4wNy4yMDE0
-IDIxOjIyLCBzY2hyaWViIEFqYXkgS3VtYXI6Cj4+Pj4+PiBUaGlzIHNlcmllcyBpcyBiYXNlZCBv
-biBleHlub3MtZHJtLW5leHQgYnJhbmNoIG9mIElua2kgRGFlJ3MgdHJlZSBhdDoKPj4+Pj4+IGdp
-dDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9kYWVpbmtpL2RybS1l
-eHlub3MuZ2l0Cj4+Pj4+Pgo+Pj4+Pj4gSSBoYXZlIHRlc3RlZCB0aGlzIGFmdGVyIGFkZGluZyBm
-ZXcgRFQgY2hhbmdlcyBmb3IgZXh5bm9zNTI1MC1zbm93LAo+Pj4+Pj4gZXh5bm9zNTQyMC1wZWFj
-aC1waXQgYW5kIGV4eW5vczU4MDAtcGVhY2gtcGkgYm9hcmRzLgo+Pj4+Pgo+Pj4+PiBJJ20gdHJ5
-aW5nIHRvIHRlc3QgdGhpcyB3aXRoIGEgbW9kaWZpZWQgZXh5bm9zNTI1MC1zcHJpbmcgRFQgYmFz
-ZWQgb2ZmCj4+Pj4+IGtnZW5lJ3MgZm9yLW5leHQgYnJhbmNoIGR1ZSB0byBEVCwgYW5kIEkgcnVu
-IGludG8gdGhlIGZvbGxvd2luZzoKPj4+Cj4+PiBVbmZvcnR1bmF0ZWx5IHRoZSBtb3N0IEkgZ290
-IG9uIFNwcmluZyB3aXRoIGF0dGFjaGVkIERUIHdhcyBhIGJsYW5rCj4+PiBzY3JlZW4gd2l0aCBh
-IHdoaXRlIGhvcml6b250YWwgbGluZSBpbiB0aGUgbWlkZGxlLgo+PiBUaGVuLCBJIHRoaW5rIGJy
-aWRnZSBjaGlwIGlzIHdvcmtpbmcgZmluZS4KPj4gWW91IGp1c3QgbmVlZCB0byBjb25maWd1cmUg
-dGhlIHByb3BlciBtb2RlIGZvciBGSU1ELgo+PiBZb3UgY2FuIHNlZSBiYWNrbGlnaHQgYWxzbywg
-cmlnaHQ/Cj4+Cj4+PiBEbyBJIG5lZWQgdG8gc3BlY2lmeSBhIHNwZWNpZmljIHBhbmVsIG1vZGVs
-IGZvciBTcHJpbmc/Cj4+IFllcyEgVHJ5IHVzaW5nICJjaHVuZ2h3YSxjbGFhMTAxd2IwMSIgYXMg
-Y29tcGF0aWJsZSBzdHJpbmcgZm9yCj4+IHBhbmVsIG5vZGUuCj4KPiBXaXRoIGp1c3QgeW91ciB2
-NiBhcHBsaWVkIHBsdXMgdXBkYXRlZCBEVCBwYXRjaCAoYXR0YWNoZWQpIFsxXSwgSSBzZWUKPiBi
-YWNrbGlnaHQgYW5kIGEgYmxhY2sgc2NyZWVuIChubyB3aGl0ZSBsaW5lIGFueSBtb3JlKS4gZG1l
-c2cgYXR0YWNoZWQuCkkgY2FuIHNlZSBwZW5ndWluJ3MgYWxzbyEKCj4+PiBGb3IgdGVzdGluZyBJ
-IHJlLWFwcGxpZWQgeW91ciBpb21tdSBwYXRjaGVzICh3aGljaCBidHcgZmFpbCBub3cgZm9yIDU0
-MjAKPj4+IGR1ZSB0byBkaXNwX3BkKSBidXQgZGlkbid0IGtub3cgd2hhdCB0byBkbyBhYm91dCB5
-b3VyIHBhbmVsLWx2ZHMKPj4+IHJlZ3VsYXRvciBwYXRjaCBub3cgdGhhdCBpdCdzIGdvbmUuCj4+
-IElnbm9yZSB0aGF0IHJlZ3VsYXRvciBwYXRjaC4KPj4KPj4gQWxzbywgcGxlYXNlIGF0dGFjaCB0
-aGUgYm9vdGxvZyBpZiBwb3NzaWJsZSBhZnRlciB0cnlpbmcgdGhpcy4KPgo+IElmIEkgZnVydGhl
-ciBhcHBseSB0aGUgSU9NTVUgcGF0Y2hlcyBbMl0sIEkgZ2V0IG5vIGJhY2tsaWdodCBub3IgVVNC
-IGFuZAo+IHRodXMgY2FuJ3Qgb2J0YWluIGEgYm9vdCBsb2cuCj4KPiBSZWdhcmRzLAo+IEFuZHJl
-YXMKPgo+IFsxXSBodHRwczovL2dpdGh1Yi5jb20vYWZhZXJiZXIvbGludXgvY29tbWl0cy9zcHJp
-bmctbmV4dAo+IFsyXSBodHRwczovL2dpdGh1Yi5jb20vYWZhZXJiZXIvbGludXgvY29tbWl0cy9z
-cHJpbmctYnJpZGdlLnY2CldpdGgganVzdCB0aGUgc3ByaW5nLWJyaWRnZS52NiBicmFuY2ggb2Yg
-eW91ciBvd24gdHJlZSwgSSBhbSBhYmxlIHRvIHNlZQpib290dXAgbG9nbyBvbiBTa2F0ZShhIHZh
-cmlhbnQgb2Ygc3ByaW5nIHdoaWNoIGFsc28gY29udGFpbnMgcHM4NjIyKS4KSSBoYXZlIHRyaWVk
-IGJvdGggZXh5bm9zX2RlZmNvbmZpZyBhbmQgbXVsdGlfdjdfZGVmY29uZmlnLgpJIGVuYWJsZSBE
-Uk0sIEVYWU5PUyBEUk0sIEJSSURHRSBDSElQUywgSU9NTVUsIEVYWU5PUyBJT01NVQppbiBjb25m
-aWdzLgoKRXZlbiBpbiB5b3VyIGJvb3Rsb2dzLCBJIGNhbiBzZWUgRFAgZ2V0dGluZyBwcm9iZWQu
-CkFuZCwgeW91IHNheSBiYWNrbGlnaHQgaXMgYWxzbyB2aXNpYmxlLiBUaGF0IG1lYW5zIGVudGly
-ZSBkaXNwbGF5CnBhdGggc2hvdWxkIGJlIGZpbmUuIEl0cyBqdXN0IHRoYXQgeW91IHNob3VsZCBz
-dGFydCB3cml0aW5nIHRvIHRoZSBidWZmZXIuCkhhdmUgeW91IGVuYWJsZWQgYm9vdCBsb2dvcz8K
-CkFqYXkKPiBQLlMuIE5vdGUgdGhhdCB5b3VyIFNub3cgRFQgcGF0Y2ggd2lsbCBjb25mbGljdCB3
-aXRoIG15IFNub3cgY2xlYW51cHMsCj4gc2h1ZmZsaW5nIHNvbWUgbm9kZXMgYXJvdW5kOiBodHRw
-czovL3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzQ2NDk0NzEvCj4KPiAtLQo+IFNVU0UgTElO
-VVggUHJvZHVjdHMgR21iSCwgTWF4ZmVsZHN0ci4gNSwgOTA0MDkgTsO8cm5iZXJnLCBHZXJtYW55
-Cj4gR0Y6IEplZmYgSGF3biwgSmVubmlmZXIgR3VpbGQsIEZlbGl4IEltZW5kw7ZyZmZlcjsgSFJC
-IDE2NzQ2IEFHIE7DvHJuYmVyZwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
-aS1kZXZlbAo=
+Ajay,
+
+Am 31.07.2014 10:38, schrieb Ajay kumar:
+> On Thu, Jul 31, 2014 at 1:02 AM, Andreas F=C3=A4rber <afaerber@suse.d=
+e> wrote:
+>> Am 30.07.2014 08:21, schrieb Ajay kumar:
+>>> On Tue, Jul 29, 2014 at 4:51 PM, Andreas F=C3=A4rber <afaerber@suse=
+=2Ede> wrote:
+>>>> Am 28.07.2014 08:13, schrieb Ajay kumar:
+>>>>> On 7/27/14, Andreas F=C3=A4rber <afaerber@suse.de> wrote:
+>>>>>> Am 25.07.2014 21:22, schrieb Ajay Kumar:
+>>>>>>> This series is based on exynos-drm-next branch of Inki Dae's tr=
+ee at:
+>>>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exyno=
+s.git
+>>>>>>>
+>>>>>>> I have tested this after adding few DT changes for exynos5250-s=
+now,
+>>>>>>> exynos5420-peach-pit and exynos5800-peach-pi boards.
+>>>>>>
+>>>>>> I'm trying to test this with a modified exynos5250-spring DT bas=
+ed off
+>>>>>> kgene's for-next branch due to DT, and I run into the following:
+>>>>
+>>>> Unfortunately the most I got on Spring with attached DT was a blan=
+k
+>>>> screen with a white horizontal line in the middle.
+>>> Then, I think bridge chip is working fine.
+>>> You just need to configure the proper mode for FIMD.
+>>> You can see backlight also, right?
+>>>
+>>>> Do I need to specify a specific panel model for Spring?
+>>> Yes! Try using "chunghwa,claa101wb01" as compatible string for
+>>> panel node.
+>>
+>> With just your v6 applied plus updated DT patch (attached) [1], I se=
+e
+>> backlight and a black screen (no white line any more). dmesg attache=
+d.
+> I can see penguin's also!
+
+See below...
+
+>>>> For testing I re-applied your iommu patches (which btw fail now fo=
+r 5420
+>>>> due to disp_pd) but didn't know what to do about your panel-lvds
+>>>> regulator patch now that it's gone.
+>>> Ignore that regulator patch.
+>>>
+>>> Also, please attach the bootlog if possible after trying this.
+>>
+>> If I further apply the IOMMU patches [2], I get no backlight nor USB=
+ and
+>> thus can't obtain a boot log.
+>>
+>> Regards,
+>> Andreas
+>>
+>> [1] https://github.com/afaerber/linux/commits/spring-next
+
+(I updated the branch meantime, so what I meant was spring-bridge.v6~2)
+
+>> [2] https://github.com/afaerber/linux/commits/spring-bridge.v6
+> With just the spring-bridge.v6 branch of your own tree, I am able to =
+see
+> bootup logo on Skate(a variant of spring which also contains ps8622).
+> I have tried both exynos_defconfig and multi_v7_defconfig.
+> I enable DRM, EXYNOS DRM, BRIDGE CHIPS, IOMMU, EXYNOS IOMMU
+> in configs.
+>=20
+> Even in your bootlogs, I can see DP getting probed.
+> And, you say backlight is also visible. That means entire display
+> path should be fine. Its just that you should start writing to the bu=
+ffer.
+> Have you enabled boot logos?
+
+Let me clarify: U-Boot uses the display [*], so it is powered and I see
+penguins initially. Then, when drm gets initialized, the screen goes
+black and no longer prints kernel messages or systemd output or X11 gdm
+login screen.
+
+Since drm stuff is the only variance here and it works with simplefb,
+surely something prints to some buffer!
+
+Andreas
+
+[*] https://github.com/afaerber/u-boot/commits/spring
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
