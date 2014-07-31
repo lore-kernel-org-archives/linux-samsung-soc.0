@@ -1,104 +1,45 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [GIT PULL] Samsung clock changes for v3.17
-Date: Thu, 31 Jul 2014 17:37:35 +0200
-Message-ID: <1406821055-7290-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+From: Doug Anderson <dianders@google.com>
+Subject: Re: [PATCHv9 1/5] mmc: dw_mmc: Slot quirk "disable-wp" is deprecated.
+Date: Thu, 31 Jul 2014 09:02:45 -0700
+Message-ID: <CAD=FV=VfXOqt1A=8-1kq5nhnMrk7PbpCWj-A-UWQN12_U8sW4g@mail.gmail.com>
+References: <1406784907-26349-1-git-send-email-jh80.chung@samsung.com>
+	<1406784907-26349-2-git-send-email-jh80.chung@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:63167 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750774AbaGaQCq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 31 Jul 2014 12:02:46 -0400
+Received: by mail-oa0-f48.google.com with SMTP id m1so2158205oag.7
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Jul 2014 09:02:45 -0700 (PDT)
+In-Reply-To: <1406784907-26349-2-git-send-email-jh80.chung@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Dinh Nguyen <dinguyen@altera.com>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, cpgs <cpgs@samsung.com>
 
-From: Tomasz Figa <tomasz.figa@gmail.com>
+Jaehoon
 
-Hi Mike,
+On Wed, Jul 30, 2014 at 10:35 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Slot quirks "disable-wp" is deprecated.
+> Instead, use the host quirk "disable-wp".
+> (Because the slot-node is removed in dt-file.)
+>
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
+> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+> ---
+>  drivers/mmc/host/dw_mmc.c  |   11 +++++++++--
+>  include/linux/mmc/dw_mmc.h |    2 ++
+>  2 files changed, 11 insertions(+), 2 deletions(-)
 
-The following changes since commit bdfcdf18c380a3c376b42709a89eb2cc52e95ae0:
+Thanks for taking my suggestion and making it backward compatible.
+This looks great to me.  It tested this in both the backward
+compatible way (with the warning) and the non-backward compatible way.
+I think we should land and patch #2 ASAP and then we can land the rest
+of the series as SoC maintainers see fit.
 
-  Merge branch 'v3.16-samsung-clk-fixes-1' into samsung-clk-next (2014-06-30 15:06:43 +0200)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/for_3.17/samsung-clk
-
-for you to fetch changes up to f65d518942325d4bfa74b5c9d42ea5a89e4f6943:
-
-  clk: samsung: trivial: Correct typo in author's name (2014-07-26 02:57:20 +0200)
-
-----------------------------------------------------------------
-Samsung clock patches for 3.17
-
-1) non-critical fixes (without need to push to stable):
-
-d5e136a clk: samsung: Register clk provider only after registering its all clocks
-305cfab clk: samsung: Make of_device_id array const
-e9d5295 clk: samsung: exynos5420: Setup clocks before system suspend
-f65d518 clk: samsung: trivial: Correct typo in author's name
-
-2) Exynos CLKOUT driver:
-
-800c979 clk: samsung: exynos4: Add missing CPU/DMC clock hierarchy
-01f7ec2 clk: samsung: exynos4: Add CLKOUT clock hierarchy
-1e832e5 clk: samsung: Add driver to control CLKOUT line on Exynos SoCs
-d19bb39 ARM: dts: exynos: Update PMU node with CLKOUT related data
-
-3) Clock hierarchy extensions:
-
-17d3f1d clk: exynos4: Add PPMU IP block source clocks.
-ca5b402 clk: samsung: register exynos5420 apll/kpll configuration data
-
-4) ARM CLKDOWN functionality enablement for Exynos4 and 3250:
-
-42773b2 clk: samsung: exynos4: Enable ARMCLK down feature
-45c5b0a clk: samsung: exynos3250: Enable ARMCLK down feature
-
-----------------------------------------------------------------
-Jonghwa Lee (1):
-      clk: exynos4: Add PPMU IP block source clocks.
-
-Krzysztof Kozlowski (3):
-      clk: samsung: exynos4: Enable ARMCLK down feature
-      clk: samsung: exynos3250: Enable ARMCLK down feature
-      clk: samsung: Make of_device_id array const
-
-Sylwester Nawrocki (1):
-      clk: samsung: Register clk provider only after registering its all clocks
-
-Thomas Abraham (1):
-      clk: samsung: register exynos5420 apll/kpll configuration data
-
-Tomasz Figa (5):
-      clk: samsung: exynos4: Add missing CPU/DMC clock hierarchy
-      clk: samsung: exynos4: Add CLKOUT clock hierarchy
-      clk: samsung: Add driver to control CLKOUT line on Exynos SoCs
-      ARM: dts: exynos: Update PMU node with CLKOUT related data
-      clk: samsung: trivial: Correct typo in author's name
-
-Vikas Sajjan (1):
-      clk: samsung: exynos5420: Setup clocks before system suspend
-
- .../devicetree/bindings/arm/samsung/pmu.txt        |  30 +++
- arch/arm/boot/dts/exynos4210.dtsi                  |  10 +
- arch/arm/boot/dts/exynos4x12.dtsi                  |   7 +
- arch/arm/boot/dts/exynos5250.dtsi                  |   3 +
- arch/arm/boot/dts/exynos5420.dtsi                  |   3 +
- drivers/clk/samsung/Makefile                       |   1 +
- drivers/clk/samsung/clk-exynos-clkout.c            | 153 ++++++++++++++
- drivers/clk/samsung/clk-exynos3250.c               |  43 ++++
- drivers/clk/samsung/clk-exynos4.c                  | 231 ++++++++++++++++++++-
- drivers/clk/samsung/clk-exynos5250.c               |   4 +-
- drivers/clk/samsung/clk-exynos5260.c               |   2 +
- drivers/clk/samsung/clk-exynos5410.c               |   2 +
- drivers/clk/samsung/clk-exynos5420.c               |  61 +++++-
- drivers/clk/samsung/clk-exynos5440.c               |   4 +-
- drivers/clk/samsung/clk-s3c2410.c                  |   2 +
- drivers/clk/samsung/clk-s3c2412.c                  |   2 +
- drivers/clk/samsung/clk-s3c2443.c                  |   2 +
- drivers/clk/samsung/clk-s3c64xx.c                  |   2 +
- drivers/clk/samsung/clk.c                          |  21 +-
- drivers/clk/samsung/clk.h                          |   4 +-
- include/dt-bindings/clock/exynos4.h                |  25 ++-
- include/dt-bindings/clock/exynos5250.h             |   2 +-
- include/dt-bindings/clock/exynos5420.h             |   2 +-
- include/dt-bindings/clock/exynos5440.h             |   2 +-
- 24 files changed, 599 insertions(+), 19 deletions(-)
- create mode 100644 drivers/clk/samsung/clk-exynos-clkout.c
+Reviewed-by: Doug Anderson <dianders@chromium.org>
+Tested-by: Doug Anderson <dianders@chromium.org>
