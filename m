@@ -1,95 +1,110 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip
- support
-Date: Thu, 31 Jul 2014 15:37:25 +0530
-Message-ID: <CAEC9eQMNYFRJquLdixWkbo-ehXTPAVRh0hGTCeUpRxqV0Vjr0g@mail.gmail.com>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <53D5435B.8030305@suse.de>
- <CAEC9eQPW-Z4craCC15M7oTp8eSD09AGxdTFEWaAWqn3Up4eJUg@mail.gmail.com>
- <53D783CC.2080108@suse.de>
- <CAEC9eQOpS90U9kWmY8YdcAtdxQYKoM9ikoWpkwMs6T2udLeZHA@mail.gmail.com>
- <53D9484A.1070905@suse.de>
- <CAEC9eQOFWQ8t1zzOVrHm2=aS4+N94EW6LSjBUG2fH51aFs0GLQ@mail.gmail.com>
- <53DA0513.3080602@suse.de>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: Role of PLL_ENABLE_BIT
+Date: Thu, 31 Jul 2014 12:07:50 +0200
+Message-ID: <53DA1576.6020504@suse.de>
+References: <2111968107.110151406781109677.JavaMail.weblogic@epmlwas02a> <CAKew6eUinuZ0gNu5EzH7+N2VQiXD6ujZ9FY9rwY-cqa=WkxZjA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <53DA0513.3080602@suse.de>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:56155 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755880AbaGaKHy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 31 Jul 2014 06:07:54 -0400
+In-Reply-To: <CAKew6eUinuZ0gNu5EzH7+N2VQiXD6ujZ9FY9rwY-cqa=WkxZjA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, hsnaves@gmail.com
+Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Yadwinder Singh <yadi.brar@samsung.com>
 
-T24gVGh1LCBKdWwgMzEsIDIwMTQgYXQgMjoyNyBQTSwgQW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJl
-ckBzdXNlLmRlPiB3cm90ZToKPiBBamF5LAo+Cj4gQW0gMzEuMDcuMjAxNCAxMDozOCwgc2Nocmll
-YiBBamF5IGt1bWFyOgo+PiBPbiBUaHUsIEp1bCAzMSwgMjAxNCBhdCAxOjAyIEFNLCBBbmRyZWFz
-IEbDpHJiZXIgPGFmYWVyYmVyQHN1c2UuZGU+IHdyb3RlOgo+Pj4gQW0gMzAuMDcuMjAxNCAwODoy
-MSwgc2NocmllYiBBamF5IGt1bWFyOgo+Pj4+IE9uIFR1ZSwgSnVsIDI5LCAyMDE0IGF0IDQ6NTEg
-UE0sIEFuZHJlYXMgRsOkcmJlciA8YWZhZXJiZXJAc3VzZS5kZT4gd3JvdGU6Cj4+Pj4+IEFtIDI4
-LjA3LjIwMTQgMDg6MTMsIHNjaHJpZWIgQWpheSBrdW1hcjoKPj4+Pj4+IE9uIDcvMjcvMTQsIEFu
-ZHJlYXMgRsOkcmJlciA8YWZhZXJiZXJAc3VzZS5kZT4gd3JvdGU6Cj4+Pj4+Pj4gQW0gMjUuMDcu
-MjAxNCAyMToyMiwgc2NocmllYiBBamF5IEt1bWFyOgo+Pj4+Pj4+PiBUaGlzIHNlcmllcyBpcyBi
-YXNlZCBvbiBleHlub3MtZHJtLW5leHQgYnJhbmNoIG9mIElua2kgRGFlJ3MgdHJlZSBhdDoKPj4+
-Pj4+Pj4gZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2RhZWlu
-a2kvZHJtLWV4eW5vcy5naXQKPj4+Pj4+Pj4KPj4+Pj4+Pj4gSSBoYXZlIHRlc3RlZCB0aGlzIGFm
-dGVyIGFkZGluZyBmZXcgRFQgY2hhbmdlcyBmb3IgZXh5bm9zNTI1MC1zbm93LAo+Pj4+Pj4+PiBl
-eHlub3M1NDIwLXBlYWNoLXBpdCBhbmQgZXh5bm9zNTgwMC1wZWFjaC1waSBib2FyZHMuCj4+Pj4+
-Pj4KPj4+Pj4+PiBJJ20gdHJ5aW5nIHRvIHRlc3QgdGhpcyB3aXRoIGEgbW9kaWZpZWQgZXh5bm9z
-NTI1MC1zcHJpbmcgRFQgYmFzZWQgb2ZmCj4+Pj4+Pj4ga2dlbmUncyBmb3ItbmV4dCBicmFuY2gg
-ZHVlIHRvIERULCBhbmQgSSBydW4gaW50byB0aGUgZm9sbG93aW5nOgo+Pj4+Pgo+Pj4+PiBVbmZv
-cnR1bmF0ZWx5IHRoZSBtb3N0IEkgZ290IG9uIFNwcmluZyB3aXRoIGF0dGFjaGVkIERUIHdhcyBh
-IGJsYW5rCj4+Pj4+IHNjcmVlbiB3aXRoIGEgd2hpdGUgaG9yaXpvbnRhbCBsaW5lIGluIHRoZSBt
-aWRkbGUuCj4+Pj4gVGhlbiwgSSB0aGluayBicmlkZ2UgY2hpcCBpcyB3b3JraW5nIGZpbmUuCj4+
-Pj4gWW91IGp1c3QgbmVlZCB0byBjb25maWd1cmUgdGhlIHByb3BlciBtb2RlIGZvciBGSU1ELgo+
-Pj4+IFlvdSBjYW4gc2VlIGJhY2tsaWdodCBhbHNvLCByaWdodD8KPj4+Pgo+Pj4+PiBEbyBJIG5l
-ZWQgdG8gc3BlY2lmeSBhIHNwZWNpZmljIHBhbmVsIG1vZGVsIGZvciBTcHJpbmc/Cj4+Pj4gWWVz
-ISBUcnkgdXNpbmcgImNodW5naHdhLGNsYWExMDF3YjAxIiBhcyBjb21wYXRpYmxlIHN0cmluZyBm
-b3IKPj4+PiBwYW5lbCBub2RlLgo+Pj4KPj4+IFdpdGgganVzdCB5b3VyIHY2IGFwcGxpZWQgcGx1
-cyB1cGRhdGVkIERUIHBhdGNoIChhdHRhY2hlZCkgWzFdLCBJIHNlZQo+Pj4gYmFja2xpZ2h0IGFu
-ZCBhIGJsYWNrIHNjcmVlbiAobm8gd2hpdGUgbGluZSBhbnkgbW9yZSkuIGRtZXNnIGF0dGFjaGVk
-Lgo+PiBJIGNhbiBzZWUgcGVuZ3VpbidzIGFsc28hCj4KPiBTZWUgYmVsb3cuLi4KPgo+Pj4+PiBG
-b3IgdGVzdGluZyBJIHJlLWFwcGxpZWQgeW91ciBpb21tdSBwYXRjaGVzICh3aGljaCBidHcgZmFp
-bCBub3cgZm9yIDU0MjAKPj4+Pj4gZHVlIHRvIGRpc3BfcGQpIGJ1dCBkaWRuJ3Qga25vdyB3aGF0
-IHRvIGRvIGFib3V0IHlvdXIgcGFuZWwtbHZkcwo+Pj4+PiByZWd1bGF0b3IgcGF0Y2ggbm93IHRo
-YXQgaXQncyBnb25lLgo+Pj4+IElnbm9yZSB0aGF0IHJlZ3VsYXRvciBwYXRjaC4KPj4+Pgo+Pj4+
-IEFsc28sIHBsZWFzZSBhdHRhY2ggdGhlIGJvb3Rsb2cgaWYgcG9zc2libGUgYWZ0ZXIgdHJ5aW5n
-IHRoaXMuCj4+Pgo+Pj4gSWYgSSBmdXJ0aGVyIGFwcGx5IHRoZSBJT01NVSBwYXRjaGVzIFsyXSwg
-SSBnZXQgbm8gYmFja2xpZ2h0IG5vciBVU0IgYW5kCj4+PiB0aHVzIGNhbid0IG9idGFpbiBhIGJv
-b3QgbG9nLgo+Pj4KPj4+IFJlZ2FyZHMsCj4+PiBBbmRyZWFzCj4+Pgo+Pj4gWzFdIGh0dHBzOi8v
-Z2l0aHViLmNvbS9hZmFlcmJlci9saW51eC9jb21taXRzL3NwcmluZy1uZXh0Cj4KPiAoSSB1cGRh
-dGVkIHRoZSBicmFuY2ggbWVhbnRpbWUsIHNvIHdoYXQgSSBtZWFudCB3YXMgc3ByaW5nLWJyaWRn
-ZS52Nn4yKQo+Cj4+PiBbMl0gaHR0cHM6Ly9naXRodWIuY29tL2FmYWVyYmVyL2xpbnV4L2NvbW1p
-dHMvc3ByaW5nLWJyaWRnZS52Ngo+PiBXaXRoIGp1c3QgdGhlIHNwcmluZy1icmlkZ2UudjYgYnJh
-bmNoIG9mIHlvdXIgb3duIHRyZWUsIEkgYW0gYWJsZSB0byBzZWUKPj4gYm9vdHVwIGxvZ28gb24g
-U2thdGUoYSB2YXJpYW50IG9mIHNwcmluZyB3aGljaCBhbHNvIGNvbnRhaW5zIHBzODYyMikuCj4+
-IEkgaGF2ZSB0cmllZCBib3RoIGV4eW5vc19kZWZjb25maWcgYW5kIG11bHRpX3Y3X2RlZmNvbmZp
-Zy4KPj4gSSBlbmFibGUgRFJNLCBFWFlOT1MgRFJNLCBCUklER0UgQ0hJUFMsIElPTU1VLCBFWFlO
-T1MgSU9NTVUKPj4gaW4gY29uZmlncy4KPj4KPj4gRXZlbiBpbiB5b3VyIGJvb3Rsb2dzLCBJIGNh
-biBzZWUgRFAgZ2V0dGluZyBwcm9iZWQuCj4+IEFuZCwgeW91IHNheSBiYWNrbGlnaHQgaXMgYWxz
-byB2aXNpYmxlLiBUaGF0IG1lYW5zIGVudGlyZSBkaXNwbGF5Cj4+IHBhdGggc2hvdWxkIGJlIGZp
-bmUuIEl0cyBqdXN0IHRoYXQgeW91IHNob3VsZCBzdGFydCB3cml0aW5nIHRvIHRoZSBidWZmZXIu
-Cj4+IEhhdmUgeW91IGVuYWJsZWQgYm9vdCBsb2dvcz8KPgo+IExldCBtZSBjbGFyaWZ5OiBVLUJv
-b3QgdXNlcyB0aGUgZGlzcGxheSBbKl0sIHNvIGl0IGlzIHBvd2VyZWQgYW5kIEkgc2VlCj4gcGVu
-Z3VpbnMgaW5pdGlhbGx5LiBUaGVuLCB3aGVuIGRybSBnZXRzIGluaXRpYWxpemVkLCB0aGUgc2Ny
-ZWVuIGdvZXMKPiBibGFjayBhbmQgbm8gbG9uZ2VyIHByaW50cyBrZXJuZWwgbWVzc2FnZXMgb3Ig
-c3lzdGVtZCBvdXRwdXQgb3IgWDExIGdkbQo+IGxvZ2luIHNjcmVlbi4KPgo+IFNpbmNlIGRybSBz
-dHVmZiBpcyB0aGUgb25seSB2YXJpYW5jZSBoZXJlIGFuZCBpdCB3b3JrcyB3aXRoIHNpbXBsZWZi
-LAo+IHN1cmVseSBzb21ldGhpbmcgcHJpbnRzIHRvIHNvbWUgYnVmZmVyIQpXZWxsLCBJIGNhbm5v
-dCByZWFsbHkgaGVscCB5b3Ugd2l0aCB0aGlzLgpJIHRoaW5rIHRoZSB1aSBwcm9jZXNzL1ggc2Vy
-dmVyIGlzIGdldHRpbmcgdGVybWluYXRlZCBmb3Igc29tZSByZWFzb24uClRoYXQgbWlnaHQgYmUg
-c29tZSBpc3N1ZSBpbmR1Y2VkIGJ5IHRoZSBwbGF0Zm9ybS9kcm0gbGliLgpUaGlzIGNhbm5vdCBi
-ZSBhbiBpc3N1ZSBpbmR1Y2VkIGJ5IHRoZSBicmlkZ2UgY2hpcCBzZXJpZXMsIGRlZmluaXRlbHkg
-bm90IQpJIGFtIGFibGUgdG8gcnVuIG1vZGV0ZXN0LCBhbmQgYWxzbyBhYmxlIHRvIHNlZSByYW5k
-b20gZGF0YSBvbiBkaXNwbGF5CmJ5IGRvaW5nICJjYXQgL2Rldi91cmFuZG9tID4gL2Rldi9mYjAi
-CgpBamF5Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
-aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Humberto,
+
+Somehow the original message didn't arrive on linux-samsung-soc...
+
+Am 31.07.2014 06:51, schrieb Yadwinder Singh Brar:
+>> ------- Original Message -------
+>> Sender : Humberto Naves<hsnaves@gmail.com>
+>> Date : Jul 31, 2014 00:16 (GMT+09:00)
+>> Title : Role of PLL_ENABLE_BIT
+>>
+>> Hi,
+>>
+>>
+>> I am using an ODROID-XU board, and I was trying to change the rates =
+of some PLL clocks for a while, but I could not. After a while, I reali=
+zed that the cpu was trapped in an infinite loop waiting for the PLL35X=
+X_LOCK_STAT bit to be set. Furthermore, I discovered that the reason wa=
+s that the the PLL35XX_ENABLE_BIT was not set.
+>>
+>>
+>> I wonder if this is really a driver problem, since in the set_rate f=
+unctions, the ENABLE_BIT is not set. Can someone confirm if this is ind=
+eed the expected behavior of the driver?
+>>
+>=20
+> hmm .. actually it doesn't clear also ENABLE_BIT, I wonder how its ge=
+tting clear
+> in your case since we don't have enable/disable() implemented yet.
+>=20
+>>
+>>
+>> By the way, In order to solve this issue, I changed the files accord=
+ing to the following diff
+>>
+>>
+>> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk=
+-pll.c
+>> index b07fad2..9300274 100644
+>> --- a/drivers/clk/samsung/clk-pll.c
+>> +++ b/drivers/clk/samsung/clk-pll.c
+>> @@ -131,14 +131,15 @@ static const struct clk_ops samsung_pll3000_cl=
+k_ops =3D {
+>>  /* Maximum lock time can be 270 * PDIV cycles */
+>>  #define PLL35XX_LOCK_FACTOR (270)
+>>
+>> -#define PLL35XX_MDIV_MASK       (0x3FF)
+>> -#define PLL35XX_PDIV_MASK       (0x3F)
+>> -#define PLL35XX_SDIV_MASK       (0x7)
+>> +#define PLL35XX_MDIV_MASK (0x3FF)
+>> +#define PLL35XX_PDIV_MASK (0x3F)
+>> +#define PLL35XX_SDIV_MASK (0x7)
+>>  #define PLL35XX_LOCK_STAT_MASK (0x1)
+>> -#define PLL35XX_MDIV_SHIFT      (16)
+>> -#define PLL35XX_PDIV_SHIFT      (8)
+>> -#define PLL35XX_SDIV_SHIFT      (0)
+>> +#define PLL35XX_MDIV_SHIFT (16)
+>> +#define PLL35XX_PDIV_SHIFT (8)
+>> +#define PLL35XX_SDIV_SHIFT (0)
+>>  #define PLL35XX_LOCK_STAT_SHIFT (29)
+>> +#define PLL35XX_ENABLE_SHIFT (31)
+>>
+>>  static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
+>>   unsigned long parent_rate)
+>> @@ -190,6 +191,7 @@ static int samsung_pll35xx_set_rate(struct clk_h=
+w *hw, unsigned long drate,
+>>   /* If only s change, change just s value only*/
+>>   tmp &=3D ~(PLL35XX_SDIV_MASK << PLL35XX_SDIV_SHIFT);
+>>   tmp |=3D rate->sdiv << PLL35XX_SDIV_SHIFT;
+>> + tmp |=3D (1 << PLL35XX_ENABLE_SHIFT);
+>>   __raw_writel(tmp, pll->con_reg);
+>>
+>>   return 0;
+>> @@ -206,6 +208,7 @@ static int samsung_pll35xx_set_rate(struct clk_h=
+w *hw, unsigned long drate,
+>>   tmp |=3D (rate->mdiv << PLL35XX_MDIV_SHIFT) |
+>>   (rate->pdiv << PLL35XX_PDIV_SHIFT) |
+>>   (rate->sdiv << PLL35XX_SDIV_SHIFT);
+>> + tmp |=3D (1 << PLL35XX_ENABLE_SHIFT);
+
+It appears tmp is a u32. Does that make 1 << 31 a safe expression wrt
+signedness, or does it need to be 1u << PLL35XX_ENABLE_SHIFT?
+Did you verify the result?
+
+Regards,
+Andreas
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
