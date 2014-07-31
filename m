@@ -1,188 +1,109 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCHv2 5/5] clk: samsung: exynos5410: Added clocks DPLL, EPLL, IPLL,
- and VPLL
-Date: Thu, 31 Jul 2014 15:51:22 -0700
-Message-ID: <20140731225122.4463.77416@quantum>
-References: <1406805732-17372-1-git-send-email-hsnaves@gmail.com>
- <1406805732-17372-6-git-send-email-hsnaves@gmail.com>
- <53DA3F86.3020506@gmail.com>
- <CAEe5pB9Rj9rdzk-fjyNcdWyhQCfLtwxt+nAZdb4xuKDO9OpzUA@mail.gmail.com>
- <53DA5E7E.9010607@gmail.com>
- <CAEe5pB9=0VWd+d2KAcHD=YZSqFQo_3hRfV9M2mzvq2mziZXMUg@mail.gmail.com>
- <53DAC079.5040709@gmail.com>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [PATCH v4 4/4] ARM: dts: Add exynos5250-spring device tree
+Date: Fri, 01 Aug 2014 01:17:07 +0200
+Message-ID: <53DACE73.8080009@suse.de>
+References: <1406822910-6255-1-git-send-email-afaerber@suse.de> <1406822910-6255-5-git-send-email-afaerber@suse.de> <53DA936E.9060004@gmail.com> <53DA9709.10602@suse.de> <53DA9BA9.60808@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:64532 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750945AbaGaWv0 convert rfc822-to-8bit (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:43449 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750978AbaGaXRU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jul 2014 18:51:26 -0400
-Received: by mail-pd0-f174.google.com with SMTP id fp1so4309987pdb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Jul 2014 15:51:25 -0700 (PDT)
-In-Reply-To: <53DAC079.5040709@gmail.com>
+	Thu, 31 Jul 2014 19:17:20 -0400
+In-Reply-To: <53DA9BA9.60808@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Humberto Naves <hsnaves@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, Andreas Farber <afaerber@suse.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org
+Cc: Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Stephan van Schaik <stephan@synkhronix.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>
 
-Quoting Tomasz Figa (2014-07-31 15:17:29)
-> Humberto,
-> 
-> [dropping few addresses from Cc as this topic is rather irrelevant for
-> them and adding Mike and Sylwester]
-> 
-> On 31.07.2014 23:19, Humberto Naves wrote:
-> > Hi,
-> > 
-> > On Thu, Jul 31, 2014 at 5:19 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> >>
-> >> I'm not sure I get the idea of the field you're suggesting. If I
-> >> understand correctly, your intention would be to provide a default
-> >> frequency if there is no table provided. I don't think there is a need
-> >> for it, because current code can read back current settings from
-> >> registers and calculate current rate.
-> >>
-> > I think I was not clear enough. I am not trying to provide a default
-> > frequency for the clock, but I do want to specify the base frequency
-> > on which the rate table was based upon. Let me give you an example
-> > that will hopefully clarify the matter. Suppose I want to register my
-> > PLL, such as in the 5410. The *current* solution would be like this:
-> > 
-> > static struct samsung_pll_rate_table ipll_24mhz_tbl[] __initdata = {
-> >        /* PLL_35XX_RATE(rate, m, p, s, k) */
-> >        PLL_35XX_RATE(864000000, 288, 4, 1),
-> >        { },
-> > };
-> > static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
-> >        [ipll] = PLL(pll_35xx, CLK_FOUT_IPLL, "fout_ipll", "fin_pll", IPLL_LOCK,
-> >                IPLL_CON0, NULL),
-> > };
-> > 
-> > And in the driver initialization function, I would add the rate table
-> > if the input clock source matches what I expected, in this case 24Mhz:
-> > 
-> > if (_get_rate("fin_pll") == 24 * MHZ) {
-> >          exynos5410_plls[ipll].rate_table = ipll_24mhz_tbl;
-> > }
-> > 
-> > An alternative approach would be as follows, we add a new field (say
-> > "base_rate") to the structure samsung_pll_clock, and to the macro PLL,
-> > and describe the pll table in a simpler way, such as follows:
-> > 
-> > static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
-> >        [ipll] = PLL(pll_35xx, CLK_FOUT_IPLL, "fout_ipll", "fin_pll", IPLL_LOCK,
-> >                IPLL_CON0, &ipll_24mhz_tbl, 24 * MHZ),
-> > };
-> > 
-> > and in the _samsung_clk_register_pll function, all the validation
-> > would be performed. Here I am talking about checking if the parent
-> > rate is what is specified on the samsung_pll_clock structure, and if
-> > so, to check if the rates on the rate table actually match what the
-> > coefficients are telling.
-> 
-> What if there are multiple sets of tables for different "base rates"?
-> Certain PLLs can run with several reference clock frequencies, e.g. VPLL
-> rates are often specified for 24 MHz and 27 MHz, depending on setting of
-> mout_vpllsrc.
-> 
-> > 
-> >> As for the validation itself, one more thing that needs to be considered
-> >> is that the rate table must be sorted.
-> > 
-> > The _samsung_clk_register_pll could do that in theory.
-> > 
-> >>
-> >> We once decided to rely on the fact that tables in SoC drivers have
-> >> rates explicitly specified and are correctly sorted, but now I'm
-> >> inclined to reconsider this, based on the fact that those rates often
-> >> are already incorrectly calculated in vendor code or even datasheets,
-> >> which are main information sources for patch authors.
-> >>
-> >> Before mainlining PLL drivers (which was quite some time ago), we had a
-> >> bit different implementation in our internal tree, which did not use
-> >> explicitly specified rates at all (they could have been considered just
-> >> comments to improve table readability) and the _register_pll() function
-> >> simply calculated rates for all entries creating new table for internal
-> >> use of the PLL driver that was in addition explicitly sorted to make
-> >> sure that the order is correct. This kind of implementation is what I
-> >> would lean toward today.
-> > 
-> > I would strongly object to such as solution. I think that in the
-> > table, the frequency *must* be specified. As you said previously, the
-> > coefficients should be carefully chosen. We cannot know for sure that
-> > the same coefficients that work for a base frequency of 24 Mhz will
-> > also work for a different base frequency. So the driver cannot simply
-> > compute the frequency from the coefficients, and it must also check
-> > that the input rate is correct. This is another reason why I want to
-> > add the base_frequency field to that structure.
-> 
-> Sorry, I don't understand your concern. Currently it's SoC driver's duty
-> to check which rate table to use depending on input clock rate. If input
-> rate matches any table the driver has, it assigns the table pointer.
-> Otherwise no table is used and the PLL is working in read-only mode.
-> 
-> If we leave this as is, then PLL driver will have enough information to
-> calculate PLL rate, because it can retrieve input clock rate by calling
-> clk_get_rate() on its parent clock. No need to specify output_rate in
-> rate table, as it is redundant. However...
-> 
-> > 
-> > I believe that the the _samsung_clk_register_pll must double-check if
-> > the frequencies match what the formula tells, and must drop the
-> > entries (or the whole frequency table) that are faulty. And then
-> > finally, it should sort the entries in descending order.
-> 
-> Based on your proposal, another idea came to my mind.
-> 
-> We can add input_rate to rate table instead, so that each entry will
-> have its own input rate specified. Then register_pll() would do following:
->  - validate all the entries by checking if entry.rate ==
-> calc_rate(entry.fin, entry.p, entry.m, ...),
->  - discard invalid entries and print a warning,
->  - sort the table.
+Am 31.07.2014 21:40, schrieb Tomasz Figa:
+> On 31.07.2014 21:20, Andreas F=C3=A4rber wrote:
+>> Am 31.07.2014 21:05, schrieb Tomasz Figa:
+>>> On 31.07.2014 18:08, Andreas F=C3=A4rber wrote:
+>>>> +	usb-hub {
+>>>> +		compatible =3D "smsc,usb3503a";
+>>>> +		reset-gpios =3D <&hsic_reset>;
+>>>
+>>> Hmm, why a -gpios property points to a pinctrl node? Shouldn't ther=
+e be
+>>> a phandle to GPIO bank + GPIO specifier instead?
+>>
+>> Dunno, can change it. Can I just copy the gpio property from the
+>> regulator above?
+>=20
+> Reading what Vincent posted earlier I would consider this as the righ=
+t
+> thing to do and it might even let you remove the fake regulator node.
 
-This is how my "coordinated clock rates" approach works. A given
-coordinated rate table must specify the parent(s) and input rate(s). An
-assignee at Linaro was working on this but then got shuffled out so
-unfortunately the work is stalled.
+Indeed it does, thanks for spotting this!
 
-My secret plan is to replace the "cpu clocks" type stuff I've seen on
-the list recently with an approach that is baked into the clock
-framework core and is re-usable for everybody.
+[...]
+>>>> +&dp_hpd {
+>>>> +	samsung,pins =3D "gpc3-0";
+>>>> +	samsung,pin-function =3D <0>;
+>>>> +	samsung,pin-pud =3D <3>;
+>>>> +	samsung,pin-drv =3D <0>;
+>>>> +};
+>>>
+>>> Hmm, what node is this referencing? I believe this should rather
+>>> reference the pin controller and add a new board-specific pinconf/p=
+inmux
+>>> group instead....
+>>
+>> It's a -pinctrl node. See v3->v4 change log and discussion on v3.
+>>
+>=20
+> Well, this is clearly a board specific node anyway, because it does n=
+ot
+> refer to a special function, but simply an input/interrupt GPIO. If i=
+t
+> somehow has landed in generic pinctrl dtsi then it should be removed
+> from there and this patch should simply introduce its own instance of
+> dp_hpd node, so you did the right thing in v3.
 
-Back on topic, the approach of specifying input rate for these patches
-is sane and helps a lot to sanity check.
+Well, my point was that the 3.8 tree contains only one dp-hpd node, not
+two as we would get by adding a new node here.
 
-Regards,
-Mike
+Apart from Spring, it's used in Snow and SMDK5250, so moving it there
+seems feasible and the cleanest solution to me.
 
-> 
-> Resulting table would have entries for various input clock rates mixed
-> together, but all sorted according to output rate.
-> 
-> Then set_rate() when going through rate table would not only check the
-> output_rate, but also whether input_rate matches and skip entries
-> unsuitable for current setup.
-> 
-> This would have the advantage of being able to work with input_rate
-> which can dynamically change, e.g. when mout_vpllsrc setting changes,
-> while no check for input_rate would have to be done in SoC driver at all.
-> 
-> However I'm still not sure whether specifying output_rate in rate table
-> has really any benefits. It's something that can be calculated precisely
-> by the driver, so it introduces redundancy and unnecessarily increases
-> error possibility, because you need to precisely calculate those rates
-> yourself according to equation from the datasheet or reverse engineered
-> from the code, because you often get incorrectly rounded values from the
-> vendor. Not even saying that it makes it harder to add more frequencies
-> to the table.
-> 
-> I'd like to collect more opinions on this though and so altered Cc list
-> as mentioned at the top.
-> 
-> Mike, Sylwester, what do you think?
-> 
-> Best regards,
-> Tomasz
+>>> [snip]
+>>>
+>>>> +/*
+>>>> + * Disabled pullups since external part has its own pullups and
+>>>> + * double-pulling gets us out of spec in some cases.
+>>>> + */
+>>>> +&i2c2_bus {
+>>>> +	samsung,pin-pud =3D <0>;
+>>>> +};
+>>>
+>>> OK, here overriding a generic pinconf group is justified and nicely
+>>> explained by a comment.
+>>
+>> You seem to assume that I actually understand these things. ;)
+>> Just copied from -cros-common/-snow.
+>>
+>=20
+> It is good if those things are being done with some level of
+> understanding. The DT mechanics are quite well documented in
+> Documentation/devicetree/bindings, while for HW-specific bits I belie=
+ve
+> Chromium guys could give you a hand.
+
+I did read and even fix documentation for those bindings that I added
+myself in Spring, just not for those that were already in common code,
+like this one here.
+
+A tps65090 patch has been ignored since being asked to extend the commi=
+t
+message, v3 was recently sent. Help getting that in appreciated.
+
+Cheers,
+Andreas
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
