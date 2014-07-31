@@ -1,65 +1,42 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCHv2 4/5] clk: samsung: exynos5410: Add fixed rate clocks
-Date: Thu, 31 Jul 2014 13:45:56 +0200
-Message-ID: <53DA2C74.3010101@samsung.com>
-References: <1406805732-17372-1-git-send-email-hsnaves@gmail.com>
- <1406805732-17372-5-git-send-email-hsnaves@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1406805732-17372-5-git-send-email-hsnaves-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Humberto Silva Naves <hsnaves-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thomas Abraham <ta.omasab-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andreas Farber <afaerber-l3A5Bk7waGM@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 0/2] Better model Peach Pit and PI power scheme
+Date: Thu, 31 Jul 2014 13:55:09 +0200
+Message-ID: <1406807711-19955-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:59601 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750836AbaGaLz4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 31 Jul 2014 07:55:56 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-(dropping linux-doc ML and Randy from Cc)
+Hello,
 
-On 31/07/14 13:22, Humberto Silva Naves wrote:
-> This implements the fixed rate clocks generated either inside or
-> outside the SoC. It also adds a dt-binding constant for the
-> sclk_hdmiphy clock, which shall be later used by other drivers,
-> such as the DRM.
-> 
-> Since the external fixed rate clock fin_pll is now registered by
-> the clk-exynos5410 file, the bindings with the device tree file have
-> changed. It is no longer needed to define fin_pll as a fixed clock,
-> such as in:
-> 
-> 	fin_pll: xxti {
->   		compatible = "fixed-clock";
-> 	  	clock-frequency = <24000000>;
-> 	  	clock-output-names = "fin_pll";
-> 	  	#clock-cells = <0>;
-> 	};
-> 
-> The above lines should be replaced by the following lines:
-> 
-> 	fixed-rate-clocks {
-> 		oscclk {
-> 			compatible = "samsung,exynos5410-oscclk";
-> 			clock-frequency = <24000000>;
-> 		};
-> 	};
-> 
-> This new form of binding was properly documented in the relevant
-> documentation file.
+This is a small series that improve the modeling of the power
+scheme on the Peach Pit and Pi boards. Besides making the DTS
+to better describe the hardware these changes allows the core
+regulator to know what's the real supply for a child to fetch
+the parent output voltage if the child voltage is requested,
+now that the regulator core allows to do that [0,1].
 
-Can you explain what is rationale behind this change ? Is it related to
-suspend/resume ordering ?
-Obviously it breaks the kernel/dtb compatibility. We should be moving
-in opposite direction, i.e. completely remove the custom samsung fixed
-rate clocks. I've tried to address this with patches [1], [2] but Tomasz
-wasn't happy with them IIRC and I postponed work on that.
+Patch 1 modifies the regulators input supply to use the real
+parents instead of using a simplistic model and assume that
+VDC is supplying power to all regulators and patch 2 defines
+the maximum and minimum voltage constraints for the switches.
 
-[1] http://www.spinics.net/lists/arm-kernel/msg333211.html
-[2] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-May/258490.html
+Javier Martinez Canillas (2):
+  ARM: dts: Improve Peach Pit and Pi power scheme model
+  ARM: dts: Add tps65090 FET constraints on Peach Pit and Pi
 
---
-Regards,
-Sylwester
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 26 ++++++++++++++++++++------
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 26 ++++++++++++++++++++------
+ 2 files changed, 40 insertions(+), 12 deletions(-)
+
+Best regards,
+Javier
+
+[0]: https://patchwork.kernel.org/patch/4641331/
+[1]: https://patchwork.kernel.org/patch/4641311/
