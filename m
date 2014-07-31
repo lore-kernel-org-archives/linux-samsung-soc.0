@@ -1,208 +1,80 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3 2/8] thermal: exynos: remove dead code for HW_MODE
- calibration
-Date: Thu, 31 Jul 2014 19:11:00 +0200
-Message-ID: <1406826667-2289-3-git-send-email-b.zolnierkie@samsung.com>
-References: <1406826667-2289-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1406826667-2289-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [PATCH v4 4/4] ARM: dts: Add exynos5250-spring device tree
+Date: Thu, 31 Jul 2014 19:14:59 +0200
+Message-ID: <53DA7993.1000800@suse.de>
+References: <1406822910-6255-1-git-send-email-afaerber@suse.de> <1406822910-6255-5-git-send-email-afaerber@suse.de> <CAP_ceTz+KRJzF9XV=_aLE+6sV6d5GqCtQ_daKtpFJfCZQ1erpA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:37493 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752496AbaGaRPG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 31 Jul 2014 13:15:06 -0400
+In-Reply-To: <CAP_ceTz+KRJzF9XV=_aLE+6sV6d5GqCtQ_daKtpFJfCZQ1erpA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vincent Palatin <vpalatin@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, ARM PORT <linux-arm-kernel@lists.infradead.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>
 
-The commit 1928457 ("thermal: exynos: Add hardware mode thermal
-calibration support") has added HW_MODE feature but it has never
-been enabled.  As such it has been a dead code for over a year
-now and should be removed from the kernel.
+Hi,
 
-We don't keep the unused/untested features in the kernel just
-in case that some future hardware might need it.  Such code has
-a real maintainance cost (all other code changes have to take
-the dead code into account) and usually makes future changes
-more difficult, not easier (i.e. recent additions of Exynos5420
-SoC and Exynos5260 SoC thermal support has not made use of any
-of the driver's currently unused/untested features, moreover
-the recently added code is more complex than needed because of
-the existing dead code).  Also all removed dead code is still
-accessible in the kernel git repository and can be easily
-brought back if/when needed.
+Am 31.07.2014 19:00, schrieb Vincent Palatin:
+> Always a bit late to the game.
+> One small comment inline.
+>=20
+> Reviewed-by: Vincent Palatin <vpalatin@chromium.org>
 
-There should be no functional changes caused by this patch.
+Thanks,
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/thermal/samsung/exynos_tmu.c      | 33 +------------------------------
- drivers/thermal/samsung/exynos_tmu.h      | 13 ------------
- drivers/thermal/samsung/exynos_tmu_data.c |  3 ---
- drivers/thermal/samsung/exynos_tmu_data.h |  2 --
- 4 files changed, 1 insertion(+), 50 deletions(-)
+>=20
+> On Thu, Jul 31, 2014 at 9:08 AM, Andreas F=C3=A4rber <afaerber@suse.d=
+e> wrote:
+>> +       usb3_vbus_reg: regulator-usb3 {
+>> +               compatible =3D "regulator-fixed";
+>> +               regulator-name =3D "P5.0V_USB3CON";
+>> +               regulator-min-microvolt =3D <5000000>;
+>> +               regulator-max-microvolt =3D <5000000>;
+>> +               gpio =3D <&gpe1 0 GPIO_ACTIVE_LOW>;
+>> +               enable-active-high;
+>> +       };
+>=20
+> GPE1_0 GPIO is the HSIC hub (SMSC 3503) reset# line (already defined
+> below afaik).
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index acbff14..4a55f11 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -77,9 +77,6 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
- 	struct exynos_tmu_platform_data *pdata = data->pdata;
- 	int temp_code;
- 
--	if (pdata->cal_mode == HW_MODE)
--		return temp;
--
- 	if (data->soc == SOC_ARCH_EXYNOS4210)
- 		/* temp should range between 25 and 125 */
- 		if (temp < 25 || temp > 125) {
-@@ -114,9 +111,6 @@ static int code_to_temp(struct exynos_tmu_data *data, u8 temp_code)
- 	struct exynos_tmu_platform_data *pdata = data->pdata;
- 	int temp;
- 
--	if (pdata->cal_mode == HW_MODE)
--		return temp_code;
--
- 	if (data->soc == SOC_ARCH_EXYNOS4210)
- 		/* temp_code should range between 75 and 175 */
- 		if (temp_code < 75 || temp_code > 175) {
-@@ -167,9 +161,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 	if (TMU_SUPPORTS(pdata, TRIM_RELOAD))
- 		__raw_writel(1, data->base + reg->triminfo_ctrl);
- 
--	if (pdata->cal_mode == HW_MODE)
--		goto skip_calib_data;
--
- 	/* Save trimming info in order to perform calibration */
- 	if (data->soc == SOC_ARCH_EXYNOS5440) {
- 		/*
-@@ -210,7 +201,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 			(pdata->efuse_value >> reg->triminfo_85_shift) &
- 			EXYNOS_TMU_TEMP_MASK;
- 
--skip_calib_data:
- 	if (pdata->max_trigger_level > MAX_THRESHOLD_LEVS) {
- 		dev_err(&pdev->dev, "Invalid max trigger level\n");
- 		ret = -EINVAL;
-@@ -325,7 +315,7 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
- 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
- 	struct exynos_tmu_platform_data *pdata = data->pdata;
- 	const struct exynos_tmu_registers *reg = pdata->registers;
--	unsigned int con, interrupt_en, cal_val;
-+	unsigned int con, interrupt_en;
- 
- 	mutex_lock(&data->lock);
- 	clk_enable(data->clk);
-@@ -351,27 +341,6 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
- 		con |= (pdata->noise_cancel_mode << reg->therm_trip_mode_shift);
- 	}
- 
--	if (pdata->cal_mode == HW_MODE) {
--		con &= ~(reg->calib_mode_mask << reg->calib_mode_shift);
--		cal_val = 0;
--		switch (pdata->cal_type) {
--		case TYPE_TWO_POINT_TRIMMING:
--			cal_val = 3;
--			break;
--		case TYPE_ONE_POINT_TRIMMING_85:
--			cal_val = 2;
--			break;
--		case TYPE_ONE_POINT_TRIMMING_25:
--			cal_val = 1;
--			break;
--		case TYPE_NONE:
--			break;
--		default:
--			dev_err(&pdev->dev, "Invalid calibration type, using none\n");
--		}
--		con |= cal_val << reg->calib_mode_shift;
--	}
--
- 	if (on) {
- 		con |= (1 << reg->core_en_shift);
- 		interrupt_en =
-diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-index 44ca633..789a8f7 100644
---- a/drivers/thermal/samsung/exynos_tmu.h
-+++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -34,11 +34,6 @@ enum calibration_type {
- 	TYPE_NONE,
- };
- 
--enum calibration_mode {
--	SW_MODE,
--	HW_MODE,
--};
--
- enum soc_type {
- 	SOC_ARCH_EXYNOS3250 = 1,
- 	SOC_ARCH_EXYNOS4210,
-@@ -95,10 +90,6 @@ enum soc_type {
-  * @buf_slope_sel_shift: shift bits of amplifier gain value in tmu_ctrl
- 	register.
-  * @buf_slope_sel_mask: mask bits of amplifier gain value in tmu_ctrl register.
-- * @calib_mode_shift: shift bits of calibration mode value in tmu_ctrl
--	register.
-- * @calib_mode_mask: mask bits of calibration mode value in tmu_ctrl
--	register.
-  * @core_en_shift: shift bits of TMU core enable bit in tmu_ctrl register.
-  * @tmu_status: register drescribing the TMU status.
-  * @tmu_cur_temp: register containing the current temperature of the TMU.
-@@ -143,8 +134,6 @@ struct exynos_tmu_registers {
- 	u32	therm_trip_en_shift;
- 	u32	buf_slope_sel_shift;
- 	u32	buf_slope_sel_mask;
--	u32	calib_mode_shift;
--	u32	calib_mode_mask;
- 	u32	core_en_shift;
- 
- 	u32	tmu_status;
-@@ -226,7 +215,6 @@ struct exynos_tmu_registers {
-  * @default_temp_offset: default temperature offset in case of no trimming
-  * @test_mux; information if SoC supports test MUX
-  * @cal_type: calibration type for temperature
-- * @cal_mode: calibration mode for temperature
-  * @freq_clip_table: Table representing frequency reduction percentage.
-  * @freq_tab_count: Count of the above table as frequency reduction may
-  *	applicable to only some of the trigger levels.
-@@ -257,7 +245,6 @@ struct exynos_tmu_platform_data {
- 	u8 test_mux;
- 
- 	enum calibration_type cal_type;
--	enum calibration_mode cal_mode;
- 	enum soc_type type;
- 	struct freq_clip_table freq_tab[4];
- 	unsigned int freq_tab_count;
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-index d5cdfe5..1d05bf8 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.c
-+++ b/drivers/thermal/samsung/exynos_tmu_data.c
-@@ -482,8 +482,6 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
- 	.therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
- 	.buf_slope_sel_shift = EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
- 	.buf_slope_sel_mask = EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
--	.calib_mode_shift = EXYNOS_TMU_CALIB_MODE_SHIFT,
--	.calib_mode_mask = EXYNOS_TMU_CALIB_MODE_MASK,
- 	.core_en_shift = EXYNOS_TMU_CORE_EN_SHIFT,
- 	.tmu_status = EXYNOS5440_TMU_S0_7_STATUS,
- 	.tmu_cur_temp = EXYNOS5440_TMU_S0_7_TEMP,
-@@ -520,7 +518,6 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
- 	.reference_voltage = 16, \
- 	.noise_cancel_mode = 4, \
- 	.cal_type = TYPE_ONE_POINT_TRIMMING, \
--	.cal_mode = 0, \
- 	.efuse_value = 0x5b2d, \
- 	.min_efuse_value = 16, \
- 	.max_efuse_value = 76, \
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
-index 9337c5a..ac03b76 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.h
-+++ b/drivers/thermal/samsung/exynos_tmu_data.h
-@@ -62,8 +62,6 @@
- #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
- #define EXYNOS_TMU_TRIP_MODE_MASK	0x7
- #define EXYNOS_TMU_THERM_TRIP_EN_SHIFT	12
--#define EXYNOS_TMU_CALIB_MODE_SHIFT	4
--#define EXYNOS_TMU_CALIB_MODE_MASK	0x3
- 
- #define EXYNOS_TMU_INTEN_RISE0_SHIFT	0
- #define EXYNOS_TMU_INTEN_RISE1_SHIFT	4
--- 
-1.8.2.3
+Yes, that was a suggestion you made on v1.
+
+> On this design there is no external USB3 port, so no VBUS reg/load
+> switch for USB3.
+
+Could you be a little clearer? Are you suggesting to drop the gpio
+property? I just re-tested that without the regulator node plus the
+vbus-supply below I don't get any USB2 (so maybe rename the regulator?)=
+=2E
+
+Regards,
+Andreas
+
+>> +
+>> +       usb@12110000 {
+>> +               samsung,vbus-gpio =3D <&gpx1 1 GPIO_ACTIVE_HIGH>;
+>> +       };
+>> +
+>> +       usb-hub {
+>> +               compatible =3D "smsc,usb3503a";
+>> +               reset-gpios =3D <&hsic_reset>;
+>> +       };
+[...]
+>> +&usbdrd_phy {
+>> +       vbus-supply =3D <&usb3_vbus_reg>;
+>> +};
+>> +
+>> +#include "cros-ec-keyboard.dtsi"
+>> --
+>> 1.9.3
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
