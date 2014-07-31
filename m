@@ -1,125 +1,221 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2 7/8] drm/bridge: Add i2c based driver for ptn3460
- bridge
-Date: Thu, 31 Jul 2014 13:21:53 +0200
-Message-ID: <20140731112152.GB11955@ulmo>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <1406316130-4744-8-git-send-email-ajaykumar.rs@samsung.com>
- <20140730120504.GJ29590@ulmo>
- <CAEC9eQPERoZjPV5=P_Re_Bs7gT7Q5Q_Z6sJViuxoG8oo9O3=-w@mail.gmail.com>
- <20140730154054.GE1345@ulmo>
- <CAEC9eQOnTEsCD1fKw_Ac0mDt=hJBU5MzHOSfSRmpM0MY2pMRjQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="1LKvkjL3sHcu1TtY"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f49.google.com ([74.125.82.49]:52429 "EHLO
-	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750859AbaGaLV6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jul 2014 07:21:58 -0400
-Content-Disposition: inline
-In-Reply-To: <CAEC9eQOnTEsCD1fKw_Ac0mDt=hJBU5MzHOSfSRmpM0MY2pMRjQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Humberto Silva Naves <hsnaves@gmail.com>
+Subject: [PATCHv2 5/5] clk: samsung: exynos5410: Added clocks DPLL, EPLL, IPLL, and VPLL
+Date: Thu, 31 Jul 2014 13:22:12 +0200
+Message-ID: <1406805732-17372-6-git-send-email-hsnaves@gmail.com>
+References: <1406805732-17372-1-git-send-email-hsnaves@gmail.com>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1406805732-17372-1-git-send-email-hsnaves@gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, Andreas Farber <afaerber@suse.de>, Randy Dunlap <rdunlap@infradead.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Humberto Silva Naves <hsnaves@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Sean Paul <seanpaul@chromium.org>
 
+Added the remaining PLL clocks, and also added the configuration
+tables with the PLL coefficients for the supported frequencies.
+These frequency tables are only installed when a 24MHz clock is
+supplied as the input clock source. To reflect these changes, new
+constants were added to the dt-bindings file.
 
---1LKvkjL3sHcu1TtY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Furthermore, the definition of the clock "mout_vpllsrc" was added,
+as it is required for the VPLL.
 
-On Wed, Jul 30, 2014 at 09:44:32PM +0530, Ajay kumar wrote:
-> On Wed, Jul 30, 2014 at 9:10 PM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > On Wed, Jul 30, 2014 at 08:46:44PM +0530, Ajay kumar wrote:
-> >> On Wed, Jul 30, 2014 at 5:35 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
-> >> > On Sat, Jul 26, 2014 at 12:52:09AM +0530, Ajay Kumar wrote:
-> > [...]
-> >> >> +int ptn3460_post_encoder_init(struct drm_bridge *bridge)
-> >> >> +{
-> >> >> +     struct ptn3460_bridge *ptn_bridge = bridge->driver_private;
-> >> >> +     int ret;
-> >> >> +
-> >> >> +     /* bridge is attached to encoder.
-> >> >> +      * safe to remove it from the bridge_lookup table.
-> >> >> +      */
-> >> >> +     drm_bridge_remove_from_lookup(bridge);
-> >> >
-> >> > No, you should never do this. First, you're not adding it back to the
-> >> > registry when the bridge is detached, so unloading and reloading the
-> >> > display driver will fail. Second there should never be a need to remove
-> >> > it from the registry as long as the driver itself is loaded. If you're
-> >> > concerned about a single bridge being used multiple times, there's
-> >> > already code to handle that in your previous patch:
-> >> >
-> >> >         int drm_bridge_attach_encoder(...)
-> >> >         {
-> >> >                 ...
-> >> >
-> >> >                 if (bridge->encoder)
-> >> >                         return -EBUSY;
-> >> >
-> >> >                 ...
-> >> >         }
-> >> >
-> >> > Generally the registry should contain a list of bridges that have been
-> >> > registered, whether they're used or not is irrelevant.
-> >> I was just wondering if it is ok to have a node in two independent lists?
-> >> bridge_lookup_table and the other mode_config.bridge_list?
-> >
-> > Oh, it reuses the head field for the registry. I hadn't noticed before.
-> > No, you certainly can't have the same node in two lists. Honestly I
-> > don't quite understand why there was a need to expose drm_bridge as a
-> > drm_mode_object in the first place since it's never exported to
-> > userspace.
-> >
-> > So I think that perhaps we could simply get rid of the base field and
-> > not tie in drm_bridge objects with the DRM object as we currently do.
-> > But until Sean or Rob comment on this it might be better to simply add
-> > another struct list_head field for the registry. That way both can
-> > coexist and we can independently still decide to remove the base and
-> > head fields if they're no longer needed.
-> Ok. What shall I name the new list_head?
+Signed-off-by: Humberto Silva Naves <hsnaves@gmail.com>
+---
+ drivers/clk/samsung/clk-exynos5410.c   |  130 +++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/exynos5410.h |    4 +
+ 2 files changed, 133 insertions(+), 1 deletion(-)
 
-"list" would be a good choice in my opinion.
+diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
+index efbe734..9a6a371 100644
+--- a/drivers/clk/samsung/clk-exynos5410.c
++++ b/drivers/clk/samsung/clk-exynos5410.c
+@@ -157,7 +157,8 @@
+ /* list of PLLs */
+ enum exynos5410_plls {
+ 	apll, cpll, mpll,
+-	bpll, kpll,
++	bpll, kpll, dpll,
++	epll, ipll, vpll,
+ 	nr_plls                 /* number of PLLs */
+ };
+ 
+@@ -302,6 +303,7 @@ PNAME(mout_kfc_p)	= { "mout_kpll", "sclk_mpll", };
+ PNAME(mpll_user_p)	= { "fin_pll", "sclk_mpll", };
+ PNAME(bpll_user_p)	= { "fin_pll", "sclk_bpll", };
+ PNAME(mpll_bpll_p)	= { "sclk_mpll_muxed", "sclk_bpll_muxed", };
++PNAME(mout_vpllsrc_p)	= { "fin_pll", "sclk_hdmi27m" };
+ 
+ PNAME(group2_p)		= { "fin_pll", "fin_pll", "none", "none",
+ 			"none", "none", "sclk_mpll_bpll",
+@@ -321,6 +323,10 @@ static struct samsung_fixed_rate_clock exynos5410_fixed_rate_clks[] __initdata =
+ 	FRATE(0, "sclk_uhostphy", NULL, CLK_IS_ROOT, 48000000),
+ };
+ 
++static struct samsung_mux_clock exynos5410_pll_pmux_clks[] __initdata = {
++	MUX(0, "mout_vpllsrc", mout_vpllsrc_p, SRC_TOP2, 0, 1),
++};
++
+ static struct samsung_mux_clock exynos5410_mux_clks[] __initdata = {
+ 	MUX(0, "mout_apll", apll_p, SRC_CPU, 0, 1),
+ 	MUX(0, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1),
+@@ -412,6 +418,107 @@ static struct samsung_gate_clock exynos5410_gate_clks[] __initdata = {
+ 			SRC_MASK_PERIC0, 8, CLK_SET_RATE_PARENT, 0),
+ };
+ 
++static struct samsung_pll_rate_table apll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_35XX_RATE(rate, m, p, s) */
++	PLL_35XX_RATE(2100000000, 175, 2, 0),
++	PLL_35XX_RATE(2000000000, 250, 3, 0),
++	PLL_35XX_RATE(1900000000, 475, 6, 0),
++	PLL_35XX_RATE(1800000000, 225, 3, 0),
++	PLL_35XX_RATE(1700000000, 425, 6, 0),
++	PLL_35XX_RATE(1600000000, 200, 3, 0),
++	PLL_35XX_RATE(1500000000, 250, 4, 0),
++	PLL_35XX_RATE(1400000000, 175, 3, 0),
++	PLL_35XX_RATE(1300000000, 325, 6, 0),
++	PLL_35XX_RATE(1200000000, 100, 2, 0),
++	PLL_35XX_RATE(1100000000, 275, 3, 1),
++	PLL_35XX_RATE(1000000000, 250, 3, 1),
++	PLL_35XX_RATE(900000000, 150, 2, 1),
++	PLL_35XX_RATE(800000000, 200, 3, 1),
++	PLL_35XX_RATE(700000000, 175, 3, 1),
++	PLL_35XX_RATE(600000000, 100, 2, 1),
++	PLL_35XX_RATE(500000000, 250, 3, 2),
++	PLL_35XX_RATE(400000000, 200, 3, 2),
++	PLL_35XX_RATE(300000000, 100, 2, 2),
++	PLL_35XX_RATE(200000000, 200, 3, 3),
++	{ },
++};
++
++static struct samsung_pll_rate_table cpll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_35XX_RATE(rate, m, p, s) */
++	PLL_35XX_RATE(666000000, 222, 4, 1),
++	PLL_35XX_RATE(640000000, 160, 3, 1),
++	PLL_35XX_RATE(320000000, 160, 3, 2),
++	{ },
++};
++
++static struct samsung_pll_rate_table dpll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_35XX_RATE(rate, m, p, s) */
++	PLL_35XX_RATE(600000000, 200, 4, 1),
++	{ },
++};
++
++static struct samsung_pll_rate_table epll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_36XX_RATE(rate, m, p, s, k) */
++	PLL_36XX_RATE(600000000, 100, 2, 1,      0),
++	PLL_36XX_RATE(400000000, 200, 3, 2,      0),
++	PLL_36XX_RATE(200000000, 200, 3, 3,      0),
++	PLL_36XX_RATE(180633600, 301, 5, 3,  -3670),
++	PLL_36XX_RATE( 67737600, 452, 5, 5, -27263),
++	PLL_36XX_RATE( 49152000, 197, 3, 5, -25690),
++	PLL_36XX_RATE( 45158401, 181, 3, 5, -24012),
++	{ },
++};
++
++static struct samsung_pll_rate_table ipll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_35XX_RATE(rate, m, p, s, k) */
++	PLL_35XX_RATE(864000000, 288, 4, 1),
++	PLL_35XX_RATE(666000000, 222, 4, 1),
++	PLL_35XX_RATE(432000000, 288, 4, 2),
++	{ },
++};
++
++static struct samsung_pll_rate_table kpll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_35XX_RATE(rate, m, p, s) */
++	PLL_35XX_RATE(1500000000, 250, 4, 0),
++	PLL_35XX_RATE(1400000000, 175, 3, 0),
++	PLL_35XX_RATE(1300000000, 325, 6, 0),
++	PLL_35XX_RATE(1200000000, 100, 2, 0),
++	PLL_35XX_RATE(1100000000, 275, 3, 1),
++	PLL_35XX_RATE(1000000000, 250, 3, 1),
++	PLL_35XX_RATE(900000000, 150, 2, 1),
++	PLL_35XX_RATE(800000000, 200, 3, 1),
++	PLL_35XX_RATE(700000000, 175, 3, 1),
++	PLL_35XX_RATE(600000000, 100, 2, 1),
++	PLL_35XX_RATE(500000000, 250, 3, 2),
++	PLL_35XX_RATE(400000000, 200, 3, 2),
++	PLL_35XX_RATE(300000000, 100, 2, 2),
++	PLL_35XX_RATE(200000000, 200, 3, 3),
++	{ },
++};
++
++static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_36XX_RATE(rate, m, p, s, k) */
++	PLL_36XX_RATE(880000000, 220, 3, 1, 0),
++	PLL_36XX_RATE(640000000, 160, 3, 1, 0),
++	PLL_36XX_RATE(532000000, 133, 3, 1, 0),
++	PLL_36XX_RATE(480000000, 240, 3, 2, 0),
++	PLL_36XX_RATE(440000000, 220, 3, 2, 0),
++	PLL_36XX_RATE(350000000, 175, 3, 2, 0),
++	PLL_36XX_RATE(333000000, 111, 2, 2, 0),
++	PLL_36XX_RATE(266000000, 133, 3, 2, 0),
++	PLL_36XX_RATE(177000000, 118, 2, 3, 0),
++	PLL_36XX_RATE(123500000, 330, 4, 4, 0),
++	PLL_36XX_RATE( 89000000, 178, 3, 4, 0),
++	{ },
++};
++
+ static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
+ 	[apll] = PLL(pll_35xx, CLK_FOUT_APLL, "fout_apll", "fin_pll", APLL_LOCK,
+ 		APLL_CON0, NULL),
+@@ -423,6 +530,14 @@ static struct samsung_pll_clock exynos5410_plls[nr_plls] __initdata = {
+ 		BPLL_CON0, NULL),
+ 	[kpll] = PLL(pll_35xx, CLK_FOUT_KPLL, "fout_kpll", "fin_pll", KPLL_LOCK,
+ 		KPLL_CON0, NULL),
++	[dpll] = PLL(pll_35xx, CLK_FOUT_DPLL, "fout_dpll", "fin_pll", DPLL_LOCK,
++		DPLL_CON0, NULL),
++	[epll] = PLL(pll_36xx, CLK_FOUT_EPLL, "fout_epll", "fin_pll", EPLL_LOCK,
++		EPLL_CON0, NULL),
++	[ipll] = PLL(pll_35xx, CLK_FOUT_IPLL, "fout_ipll", "fin_pll", IPLL_LOCK,
++		IPLL_CON0, NULL),
++	[vpll] = PLL(pll_36xx, CLK_FOUT_VPLL, "fout_vpll", "mout_vpllsrc",
++		VPLL_LOCK, VPLL_CON0, NULL),
+ };
+ 
+ static const struct of_device_id ext_clk_match[] __initconst = {
+@@ -450,6 +565,19 @@ static void __init exynos5410_clk_init(struct device_node *np)
+ 	samsung_clk_of_register_fixed_ext(ctx, exynos5410_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5410_fixed_rate_ext_clks),
+ 			ext_clk_match);
++	samsung_clk_register_mux(ctx, exynos5410_pll_pmux_clks,
++				ARRAY_SIZE(exynos5410_pll_pmux_clks));
++
++	if (_get_rate("fin_pll") == 24 * MHZ) {
++		exynos5410_plls[apll].rate_table = apll_24mhz_tbl;
++		exynos5410_plls[cpll].rate_table = cpll_24mhz_tbl;
++		exynos5410_plls[kpll].rate_table = kpll_24mhz_tbl;
++		exynos5410_plls[dpll].rate_table = dpll_24mhz_tbl;
++		exynos5410_plls[epll].rate_table = epll_24mhz_tbl;
++		exynos5410_plls[ipll].rate_table = ipll_24mhz_tbl;
++	}
++	if (_get_rate("mout_vpllsrc") == 24 * MHZ)
++		exynos5410_plls[vpll].rate_table = vpll_24mhz_tbl;
+ 
+ 	samsung_clk_register_pll(ctx, exynos5410_plls,
+ 			ARRAY_SIZE(exynos5410_plls), reg_base);
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 3a8da3c..7da296c 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -8,6 +8,10 @@
+ #define CLK_FOUT_MPLL 4
+ #define CLK_FOUT_BPLL 5
+ #define CLK_FOUT_KPLL 6
++#define CLK_FOUT_DPLL 7
++#define CLK_FOUT_EPLL 8
++#define CLK_FOUT_IPLL 9
++#define CLK_FOUT_VPLL 10
+ 
+ /* gate for special clocks (sclk) */
+ #define CLK_SCLK_UART0 128
+-- 
+1.7.10.4
 
-> > .get_modes() still needs to be done from the bridge because that is the
-> > most closely connected to the display controller and therefore dictates
-> > the timing that the display controller needs to generate.
-> >
-> > Querying the panel's .get_modes() might be useful to figure out which
-> > emulation mode to use in the bridge.
-> But, get_modes from panel returns me only the no_of_modes but
-> not the actual mode structure. How do I compare the list of supported
-> emulation modes?
-
-You could iterate over the connector's probed_modes list which should
-contain all the modes that the panel reported (after .get_modes() was
-called).
-
-Thierry
-
---1LKvkjL3sHcu1TtY
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT2ibQAAoJEN0jrNd/PrOh/QAP/RDohUOgMW6lFMD9XotzTzZJ
-4l5bQnCniHfEg7gueyajA4A+pkMGIWqU38jX9nO5kPuuWRBFmgZqgnATFjDYC8Yr
-OFX20KDe0QIxqXmUKCQ9cirI0oQeVD0ixlXV/JxUusND8rwErGEFo7g2AZNaLVWD
-hkDS12MjFhvEYjxCXg4Cfvj1IHScgGFWcg1j+QpK7qD5Z7ZFvoD2f506eZjARAWF
-EYVRrQX0FwGGiUAZzXJQiCkSLa6SZwJjU5d5B1rIPSvByYAkr8N03dudibgopQq9
-zVmDacyWyRAWfQH8r5xaxD22IBQ0KG6+rx2THPYL4at6vKEoD6FBRYrk59rfNyyb
-iOs2/ZfMTLaAjU5VoUiUiVGOU9Lod+5COp7F9gbG+Mw9jneewg36zijRBnvJZjzp
-N5J9PRK5vb4VeWOg1U40JSe2lWkh6JFSVy5iQLk5kuIhJItOu1nL77M15p6Xiqu7
-JiHhqc65qR6hU6xeyyMiUQqLFN+2euq28WIsyaPCOkL8duy4dXRTkL2oQKUvLvn+
-mbmxnO/9qOTagpb3HXyraM3XbSPFmXfrS9JYRLHF02PvRC9oy49ri72PnNVjcK//
-NbxhWgfwySFaja0xOAWUKzzKunyJgmGoup+r1XVikS9Vpwg16W5MLWqZvVa80H9J
-52B14To66ATF3RJkX0aD
-=2fZk
------END PGP SIGNATURE-----
-
---1LKvkjL3sHcu1TtY--
