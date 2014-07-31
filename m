@@ -1,84 +1,58 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH v4 4/4] ARM: dts: Add exynos5250-spring device tree
-Date: Thu, 31 Jul 2014 19:38:54 +0200
-Message-ID: <53DA7F2E.2030109@suse.de>
-References: <1406822910-6255-1-git-send-email-afaerber@suse.de> <1406822910-6255-5-git-send-email-afaerber@suse.de> <CAP_ceTz+KRJzF9XV=_aLE+6sV6d5GqCtQ_daKtpFJfCZQ1erpA@mail.gmail.com> <53DA7993.1000800@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53DA7993.1000800@suse.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vincent Palatin <vpalatin@chromium.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, ARM PORT <linux-arm-kernel@lists.infradead.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH 03/15] drm/panel: ld9040: Add dummy prepare and unprepare
+ routines
+Date: Thu, 31 Jul 2014 23:12:02 +0530
+Message-ID: <1406828534-10072-4-git-send-email-ajaykumar.rs@samsung.com>
+References: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:42253 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751805AbaGaRpe (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 31 Jul 2014 13:45:34 -0400
+In-reply-to: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, thierry.reding@gmail.com
+Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Am 31.07.2014 19:14, schrieb Andreas F=C3=A4rber:
-> Hi,
->=20
-> Am 31.07.2014 19:00, schrieb Vincent Palatin:
->> Always a bit late to the game.
->> One small comment inline.
->>
->> Reviewed-by: Vincent Palatin <vpalatin@chromium.org>
->=20
-> Thanks,
->=20
->>
->> On Thu, Jul 31, 2014 at 9:08 AM, Andreas F=C3=A4rber <afaerber@suse.=
-de> wrote:
->>> +       usb3_vbus_reg: regulator-usb3 {
->>> +               compatible =3D "regulator-fixed";
->>> +               regulator-name =3D "P5.0V_USB3CON";
->>> +               regulator-min-microvolt =3D <5000000>;
->>> +               regulator-max-microvolt =3D <5000000>;
->>> +               gpio =3D <&gpe1 0 GPIO_ACTIVE_LOW>;
->>> +               enable-active-high;
->>> +       };
->>
->> GPE1_0 GPIO is the HSIC hub (SMSC 3503) reset# line (already defined
->> below afaik).
->=20
-> Yes, that was a suggestion you made on v1.
->=20
->> On this design there is no external USB3 port, so no VBUS reg/load
->> switch for USB3.
->=20
-> Could you be a little clearer? Are you suggesting to drop the gpio
-> property?
+This patch adds dummy definition for prepare and unprepare
+routines to ld9040 panel driver.
 
-Nah, doesn't work. Do we need a pinctrl on the usb-hub instead?
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+---
+ drivers/gpu/drm/panel/panel-ld9040.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Andreas
-
-> I just re-tested that without the regulator node plus the
-> vbus-supply below I don't get any USB2 (so maybe rename the regulator=
-?).
->=20
-> Regards,
-> Andreas
->=20
->>> +
->>> +       usb@12110000 {
->>> +               samsung,vbus-gpio =3D <&gpx1 1 GPIO_ACTIVE_HIGH>;
->>> +       };
->>> +
->>> +       usb-hub {
->>> +               compatible =3D "smsc,usb3503a";
->>> +               reset-gpios =3D <&hsic_reset>;
->>> +       };
-> [...]
->>> +&usbdrd_phy {
->>> +       vbus-supply =3D <&usb3_vbus_reg>;
->>> +};
->>> +
->>> +#include "cros-ec-keyboard.dtsi"
->>> --
->>> 1.9.3
->=20
-
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+diff --git a/drivers/gpu/drm/panel/panel-ld9040.c b/drivers/gpu/drm/panel/panel-ld9040.c
+index db1601f..9b40bd05 100644
+--- a/drivers/gpu/drm/panel/panel-ld9040.c
++++ b/drivers/gpu/drm/panel/panel-ld9040.c
+@@ -228,6 +228,16 @@ static int ld9040_disable(struct drm_panel *panel)
+ 	return ld9040_power_off(ctx);
+ }
+ 
++static int ld9040_unprepare(struct drm_panel *panel)
++{
++	return 0;
++}
++
++static int ld9040_prepare(struct drm_panel *panel)
++{
++	return 0;
++}
++
+ static int ld9040_enable(struct drm_panel *panel)
+ {
+ 	struct ld9040 *ctx = panel_to_ld9040(panel);
+@@ -273,6 +283,8 @@ static int ld9040_get_modes(struct drm_panel *panel)
+ 
+ static const struct drm_panel_funcs ld9040_drm_funcs = {
+ 	.disable = ld9040_disable,
++	.unprepare = ld9040_unprepare,
++	.prepare = ld9040_prepare,
+ 	.enable = ld9040_enable,
+ 	.get_modes = ld9040_get_modes,
+ };
+-- 
+1.7.9.5
