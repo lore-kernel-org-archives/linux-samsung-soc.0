@@ -1,61 +1,221 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 0/3] ARM: EXYNOS: Fix Exynos5410 boot
-Date: Wed, 30 Jul 2014 17:33:59 -0700
-Message-ID: <CAOesGMjh=xMZ3vB45ofh=CLjTFDMQxSxus5q_P67XQSbwg6-+A@mail.gmail.com>
-References: <1406463725-4208-1-git-send-email-afaerber@suse.de>
-	<53D4EFBB.6000404@suse.de>
-	<00c901cfa9fc$727b4e10$5771ea30$@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v9 3/6] ARM: dts: Exynos: add CPU OPP and regulator supply property
+Date: Wed, 30 Jul 2014 17:37:43 -0700
+Message-ID: <CAD=FV=WNmREbRLmsusbJ6KKykVzwdBqOUfYkWWOhbc=HmxyTdA@mail.gmail.com>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
+	<1406707663-16656-4-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <00c901cfa9fc$727b4e10$5771ea30$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tarek Dakhran <t.dakhran@samsung.com>, Kevin Hilman <khilman@linaro.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f172.google.com ([209.85.220.172]:39256 "EHLO
+	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752883AbaGaAho (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Jul 2014 20:37:44 -0400
+Received: by mail-vc0-f172.google.com with SMTP id im17so3164474vcb.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jul 2014 17:37:43 -0700 (PDT)
+In-Reply-To: <1406707663-16656-4-git-send-email-thomas.ab@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, l.majewski@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, cw00.choi@samsung.com, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@linaro.org>
 
-Hi,
+Thomas,
 
-On Sun, Jul 27, 2014 at 5:39 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> Andreas F=C3=A4rber wrote:
->>
->> Am 27.07.2014 14:22, schrieb Andreas F=C3=A4rber:
->> > Hello,
->> >
->> > This mini-series unbreaks booting on 5410 based ODROID-XU.
->> >
->> > Since I do not have access to a TRM, the address is a guess based =
-on
->> > 5250 and 5410. Such a node was not present in the 3.14 downstream =
-tree.
->>
->> s/5410/5420/
->>
-> OK.
+On Wed, Jul 30, 2014 at 1:07 AM, Thomas Abraham <thomas.ab@samsung.com> wrote:
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+> index d0de1f5..3b12a97 100644
+> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -575,3 +575,7 @@
+>                 usb-phy = <&usb2_phy>;
+>         };
+>  };
+> +
+> +&cpu0 {
+> +       cpu0-supply = <&buck2_reg>;
+> +};
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index b4b35ad..f07e834 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -414,3 +414,7 @@
+>                 };
+>         };
+>  };
+> +
+> +&cpu0 {
+> +       cpu0-supply = <&buck2_reg>;
+> +};
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+> index f2b8c41..91acca7 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -509,4 +509,8 @@
+>         };
+>  };
 >
->> >
->> > Regards,
->> > Andreas
->> >
->> > Andreas F=C3=A4rber (3):
->> >   Documentation: devicetree: Document exynos5410 PMU
->> >   ARM: dts: exynos: Add PMU to Exynos5410
->> >   ARM: EXYNOS: Add support for Exynos5410 PMU
->> >
->> >  Documentation/devicetree/bindings/arm/samsung/pmu.txt | 1 +
->> >  arch/arm/boot/dts/exynos5410.dtsi                     | 5 +++++
->> >  arch/arm/mach-exynos/exynos.c                         | 1 +
->> >  3 files changed, 7 insertions(+)
->>
-> Andreas, thanks.
+> +&cpu0 {
+> +       cpu0-supply = <&buck2_reg>;
+> +};
+> +
+>  #include "cros-ec-keyboard.dtsi"
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 492e1ef..97b282c 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -58,11 +58,34 @@
+>                 #address-cells = <1>;
+>                 #size-cells = <0>;
 >
-> I'll apply this whole series.
+> -               cpu@0 {
+> +               cpu0: cpu@0 {
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a15";
+>                         reg = <0>;
+>                         clock-frequency = <1700000000>;
+> +
+> +                       clocks = <&clock CLK_ARM_CLK>;
+> +                       clock-names = "cpu";
+> +                       clock-latency = <140000>;
 
-We're getting close to the merge window. I'd prefer not to have to
-start reverting samsung code to recover from these regressions, so
-please send this up very soon.
+Where did the 140000 number come from?  My old calculations show that
+with lock time of 270 ad P up to 6 we were at 67.5us lock time.
 
 
--Olof
+> +                       operating-points = <
+> +                               1700000 1300000
+> +                               1600000 1250000
+> +                               1500000 1225000
+> +                               1400000 1200000
+> +                               1300000 1150000
+> +                               1200000 1125000
+> +                               1100000 1100000
+> +                               1000000 1075000
+> +                                900000 1050000
+> +                                800000 1025000
+> +                                700000 1012500
+> +                                600000 1000000
+> +                                500000  975000
+> +                                400000  950000
+> +                                300000  937500
+> +                                200000  925000
+> +                       >;
+>                 };
+>                 cpu@1 {
+>                         device_type = "cpu";
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index cb2b70e..3154b4c 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -59,8 +59,26 @@
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a15";
+>                         reg = <0x0>;
+> +                       clocks = <&clock CLK_ARM_CLK>;
+> +                       clock-names = "cpu-cluster.0";
+>                         clock-frequency = <1800000000>;
+>                         cci-control-port = <&cci_control1>;
+> +                       clock-latency = <140000>;
+> +
+> +                       operating-points = <
+> +                               1800000 1250000
+> +                               1700000 1212500
+> +                               1600000 1175000
+> +                               1500000 1137500
+> +                               1400000 1112500
+> +                               1300000 1062500
+> +                               1200000 1037500
+> +                               1100000 1012500
+> +                               1000000 987500
+> +                                900000 962500
+> +                                800000 937500
+> +                                700000 912500
+> +                       >;
+>                 };
+>
+>                 cpu1: cpu@1 {
+> @@ -69,6 +87,7 @@
+>                         reg = <0x1>;
+>                         clock-frequency = <1800000000>;
+>                         cci-control-port = <&cci_control1>;
+> +                       clock-latency = <140000>;
+>                 };
+>
+>                 cpu2: cpu@2 {
+> @@ -77,6 +96,7 @@
+>                         reg = <0x2>;
+>                         clock-frequency = <1800000000>;
+>                         cci-control-port = <&cci_control1>;
+> +                       clock-latency = <140000>;
+>                 };
+>
+>                 cpu3: cpu@3 {
+> @@ -85,14 +105,29 @@
+>                         reg = <0x3>;
+>                         clock-frequency = <1800000000>;
+>                         cci-control-port = <&cci_control1>;
+> +                       clock-latency = <140000>;
+>                 };
+>
+>                 cpu4: cpu@100 {
+>                         device_type = "cpu";
+>                         compatible = "arm,cortex-a7";
+>                         reg = <0x100>;
+> +                       clocks = <&clock CLK_KFC_CLK>;
+> +                       clock-names = "cpu-cluster.1";
+>                         clock-frequency = <1000000000>;
+
+It does't start out at its maximum?
+
+
+>                         cci-control-port = <&cci_control0>;
+> +                       clock-latency = <140000>;
+> +
+> +                       operating-points = <
+> +                               1300000 1275000
+> +                               1200000 1212500
+> +                               1100000 1162500
+> +                               1000000 1112500
+> +                                900000 1062500
+> +                                800000 1025000
+> +                                700000 975000
+> +                                600000 937500
+> +                       >;
+>                 };
+>
+>                 cpu5: cpu@101 {
+> @@ -101,6 +136,7 @@
+>                         reg = <0x101>;
+>                         clock-frequency = <1000000000>;
+>                         cci-control-port = <&cci_control0>;
+> +                       clock-latency = <140000>;
+>                 };
+>
+>                 cpu6: cpu@102 {
+> @@ -109,6 +145,7 @@
+>                         reg = <0x102>;
+>                         clock-frequency = <1000000000>;
+>                         cci-control-port = <&cci_control0>;
+> +                       clock-latency = <140000>;
+>                 };
+>
+>                 cpu7: cpu@103 {
+> @@ -117,6 +154,7 @@
+>                         reg = <0x103>;
+>                         clock-frequency = <1000000000>;
+>                         cci-control-port = <&cci_control0>;
+> +                       clock-latency = <140000>;
+>                 };
+>         };
+
+Don't you need to put a reference to the supply in the 5420 board
+files?  ...or is that not possible yet since the max77802 hasn't
+landed yet?
+
+If that's not possible, is there any reason to post the 5420.dtsi
+patch now?  Also: what about 5800?  It's so similar to 5420 that it
+seems a shame not to do them at the same time.
+
+
+-Doug
