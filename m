@@ -1,106 +1,59 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig: Enable PL330 DMA
-Date: Thu, 31 Jul 2014 16:29:13 +0200
-Message-ID: <11826036.v8B4Gvn5AK@amdc1032>
-References: <1406785359-21669-1-git-send-email-tushar.b@samsung.com>
- <53D9DDAD.7040602@suse.de>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCHv2 5/5] clk: samsung: exynos5410: Added clocks DPLL, EPLL,
+ IPLL, and VPLL
+Date: Thu, 31 Jul 2014 17:19:26 +0200
+Message-ID: <53DA5E7E.9010607@gmail.com>
+References: <1406805732-17372-1-git-send-email-hsnaves@gmail.com> <1406805732-17372-6-git-send-email-hsnaves@gmail.com> <53DA3F86.3020506@gmail.com> <CAEe5pB9Rj9rdzk-fjyNcdWyhQCfLtwxt+nAZdb4xuKDO9OpzUA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:20692 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751008AbaGaO3S convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jul 2014 10:29:18 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0N9K00JIHYWSHP50@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 31 Jul 2014 23:29:16 +0900 (KST)
-In-reply-to: <53D9DDAD.7040602@suse.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CAEe5pB9Rj9rdzk-fjyNcdWyhQCfLtwxt+nAZdb4xuKDO9OpzUA@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Humberto Naves <hsnaves@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <ta.omasab@gmail.com>, Andreas Farber <afaerber@suse.de>, Randy Dunlap <rdunlap@infradead.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: Tushar Behera <tushar.b@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, olof@lixom.net, khilman@linaro.org, trblinux@gmail.com
 
+On 31.07.2014 15:37, Humberto Naves wrote:
+> Hi Tomasz,
+> 
+> I remember checking these rates on my calculator. You might notice the
+> odd frequency of 45158401Hz (no pun intended) in the EPLL clock. This
+> particular clock frequency was giving me a big headache in a previous
+> project, since it was wrongly listed as 45158400. At first it seems
+> innocuous, but whenever I would ask for one of the child clocks to
+> change the rate, the driver would miscalculate the correct frequencies
+> and errors would propagate up and down the clock tree.
+> 
+> Anyway, I would double check these tables. And if you want, I can
+> write a separate patch for the rate table validation. I presume that
+> you would like to add a new field, such as default_base_freq, to the
+> structure samsung_pll_clock, and if that field is non-zero, you
+> perform the validation of the table in _samsung_clk_register_pll?
 
-Hi,
+I'm not sure I get the idea of the field you're suggesting. If I
+understand correctly, your intention would be to provide a default
+frequency if there is no table provided. I don't think there is a need
+for it, because current code can read back current settings from
+registers and calculate current rate.
 
-On Thursday, July 31, 2014 08:09:49 AM Andreas F=E4rber wrote:
-> Hi Tushar,
->=20
-> Am 31.07.2014 07:42, schrieb Tushar Behera:
-> > We are getting a system hang on Arndale-Octa board if PL330_DMA is =
-not
-> > enabled. The issue is related to [1].
-> >=20
-> > AUDSS block provides the clock for audio DMA controller. Any operat=
-ion
-> > on this clock requires that the clock to AUDSS block be enabled. In
-> > current configuration, the clock is gated during late boot process =
-when
-> > all unused clocks are disabled.
-> >=20
-> > When PL330_DMA is enabled, the 'apb_pclk' is enabled/disabled durin=
-g
-> > amba_probe(). Otherwise, this clock is also disabled during late bo=
-ot.
-> > If the AUDSS block clock is disabled by then, we get a system hang.
+As for the validation itself, one more thing that needs to be considered
+is that the rate table must be sorted.
 
-Could you please explain this more?
+We once decided to rely on the fact that tables in SoC drivers have
+rates explicitly specified and are correctly sorted, but now I'm
+inclined to reconsider this, based on the fact that those rates often
+are already incorrectly calculated in vendor code or even datasheets,
+which are main information sources for patch authors.
 
-I don't get it how apb_pclk is related to AUDSS block clock and why
-enabling PL330_DMA fixes the issue (I suspect that enabling PL330_DMA
-enables PL330 DMA AMBA device so the amba_probe() keeps apb_pclk clock
-enabled but what is its relation to AUDSS block clock?).
-
-> > [1] https://lkml.org/lkml/2014/6/11/32
-> >=20
-> > Signed-off-by: Tushar Behera <tushar.b@samsung.com>
-> > ---
-> >  arch/arm/configs/exynos_defconfig |    2 ++
-> >  1 file changed, 2 insertions(+)
-> >=20
-> > diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/e=
-xynos_defconfig
-> > index e07a227..c5888e8 100644
-> > --- a/arch/arm/configs/exynos_defconfig
-> > +++ b/arch/arm/configs/exynos_defconfig
-> > @@ -109,6 +109,8 @@ CONFIG_MMC_DW_IDMAC=3Dy
-> >  CONFIG_MMC_DW_EXYNOS=3Dy
-> >  CONFIG_RTC_CLASS=3Dy
-> >  CONFIG_RTC_DRV_S3C=3Dy
-> > +CONFIG_DMADEVICES=3Dy
-> > +CONFIG_PL330_DMA=3Dy
-> >  CONFIG_COMMON_CLK_MAX77686=3Dy
-> >  CONFIG_EXT2_FS=3Dy
-> >  CONFIG_EXT3_FS=3Dy
->=20
-> Reviewed-by: Andreas F=E4rber <afaerber@suse.de>
->=20
-> Turns out I had those enabled in my local config when testing the mem=
-ory
-> patches on Arndale Octa.
->=20
-> multi_v7_defconfig has them already.
-
-I observe more and more discrepancies between exynos_defconfig and
-multi_v7_defconfig when it comes to Exynos specific options.  I wanted
-to avoid this by proposing exynos_defconfig removal when multiplatform
-support was added to Exynos.  Unfortunately there was no agreement on
-this at that time.  It would really be great if all Exynos users run on
-a common configuration so the testing is done more efficiently.
-
-> However, shouldn't Kconfig grow a dependency to enable those options
-> automatically for whatever driver or SoC needs them?
-
-Yes, moreover it is not clear yet that enabling PL330 DMA to resolve
-the hang issue is the right approach (to be honest it looks like
-a workaround for the lack of proper clock dependencies in a code).
+Before mainlining PLL drivers (which was quite some time ago), we had a
+bit different implementation in our internal tree, which did not use
+explicitly specified rates at all (they could have been considered just
+comments to improve table readability) and the _register_pll() function
+simply calculated rates for all entries creating new table for internal
+use of the PLL driver that was in addition explicitly sorted to make
+sure that the order is correct. This kind of implementation is what I
+would lean toward today.
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Tomasz
