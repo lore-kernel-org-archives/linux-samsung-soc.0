@@ -1,52 +1,48 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCHv9 1/5] mmc: dw_mmc: Slot quirk "disable-wp" is deprecated.
-Date: Fri, 01 Aug 2014 03:36:59 +0900
-Message-ID: <53DA8CCB.3080900@samsung.com>
-References: <1406784907-26349-1-git-send-email-jh80.chung@samsung.com>	<1406784907-26349-2-git-send-email-jh80.chung@samsung.com> <CAD=FV=VfXOqt1A=8-1kq5nhnMrk7PbpCWj-A-UWQN12_U8sW4g@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq driver
+ for Exynos4210/5250/5420
+Date: Thu, 31 Jul 2014 20:40:05 +0200
+Message-ID: <53DA8D85.3050106@gmail.com>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com> <1406707663-16656-5-git-send-email-thomas.ab@samsung.com> <53DA8BB9.6020702@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:46788 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750859AbaGaShH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jul 2014 14:37:07 -0400
-In-Reply-To: <CAD=FV=VfXOqt1A=8-1kq5nhnMrk7PbpCWj-A-UWQN12_U8sW4g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53DA8BB9.6020702@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, l.majewski@samsung.com, mturquette@linaro.org, heiko@sntech.de, viresh.kumar@linaro.org, t.figa@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@google.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, Dinh Nguyen <dinguyen@altera.com>, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, cpgs <cpgs@samsung.com>
 
-On 08/01/14 01:02, Doug Anderson wrote:
-> Jaehoon
->
-> On Wed, Jul 30, 2014 at 10:35 PM, Jaehoon Chung<jh80.chung@samsung.com>  wrote:
->> Slot quirks "disable-wp" is deprecated.
->> Instead, use the host quirk "disable-wp".
->> (Because the slot-node is removed in dt-file.)
+Kukjin,
+
+On 31.07.2014 20:32, Kukjin Kim wrote:
+> On 07/30/14 17:07, Thomas Abraham wrote:
+>> The new CPU clock type allows the use of generic CPUfreq drivers. So for
+>> Exynos4210/5250, switch to using generic cpufreq driver. For Exynos5420,
+>> which did not have CPUfreq driver support, enable the use of generic
+>> CPUfreq driver.
 >>
->> Signed-off-by: Jaehoon Chung<jh80.chung@samsung.com>
->> Tested-by: Sachin Kamat<sachin.kamat@samsung.com>
->> Acked-by: Seungwon Jeon<tgih.jun@samsung.com>
->> ---
->>   drivers/mmc/host/dw_mmc.c  |   11 +++++++++--
->>   include/linux/mmc/dw_mmc.h |    2 ++
->>   2 files changed, 11 insertions(+), 2 deletions(-)
->
-> Thanks for taking my suggestion and making it backward compatible.
-> This looks great to me.  It tested this in both the backward
-> compatible way (with the warning) and the non-backward compatible way.
-> I think we should land and patch #2 ASAP and then we can land the rest
-> of the series as SoC maintainers see fit.
->
-Yes, right if we don't want to see useless merge conflicts...
+>> Suggested-by: Tomasz Figa<t.figa@samsung.com>
+>> Cc: Kukjin Kim<kgene.kim@samsung.com>
+> 
+> Looks good to me,
+> 
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> 
+> BTW, who will handle this series? I hope see this series in 3.17.
 
-When I sent ack on exynos stuff, there was no conflict with my tree but 
-happens it now.
+This series consists mostly of clock changes and it likely depends on
+patches already in my for-next, so I would be inclined toward taking it
+through samsung-clk tree. However, for this I would need Acks for patch
+5/6 from Viresh and for patches [1] and [2] (which are dependencies of
+this series) from you. I also need to make sure that the two mentioned
+patches don't have any dependencies already in your tree.
 
-- Kukjin
+[1] ARM: dts: add CPU nodes for Exynos4 SoCs
+   - https://lkml.org/lkml/2014/7/21/315
+[2] ARM: dts: smdk5250: Specify MAX77686 pmic interrupt
+   - http://www.spinics.net/lists/arm-kernel/msg351134.html
 
-
-> Reviewed-by: Doug Anderson<dianders@chromium.org>
-> Tested-by: Doug Anderson<dianders@chromium.org>
+Best regards,
+Tomasz
