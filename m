@@ -1,42 +1,66 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH 08/15] drm/tegra: Add support for panel prepare and unprepare
- routines
-Date: Thu, 31 Jul 2014 23:12:07 +0530
-Message-ID: <1406828534-10072-9-git-send-email-ajaykumar.rs@samsung.com>
+From: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 07/15] drm/exynos: dsi: Add support for panel prepare and
+ unprepare routines
+Date: Thu, 31 Jul 2014 23:12:06 +0530
+Message-ID: <1406828534-10072-8-git-send-email-ajaykumar.rs@samsung.com>
 References: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:9252 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753102AbaGaRpr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jul 2014 13:45:47 -0400
-In-reply-to: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1406828534-10072-1-git-send-email-ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, thierry.reding@gmail.com
-Cc: inki.dae@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Modify tegra output driver to support the new panel calls:
+Modify exynos_dsi driver to support the new panel calls:
 prepare and unprepare.
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+Signed-off-by: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/output.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index 446837e..0c67d7e 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -140,7 +140,9 @@ static void tegra_encoder_dpms(struct drm_encoder *encoder, int mode)
- 	if (mode != DRM_MODE_DPMS_ON) {
- 		drm_panel_disable(panel);
- 		tegra_output_disable(output);
-+		drm_panel_unprepare(panel);
- 	} else {
-+		drm_panel_prepare(panel);
- 		tegra_output_enable(output);
- 		drm_panel_enable(panel);
- 	}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index dc7c80b..4834932 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1351,7 +1351,7 @@ static int exynos_dsi_enable(struct exynos_dsi *dsi)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = drm_panel_enable(dsi->panel);
++	ret = drm_panel_prepare(dsi->panel);
+ 	if (ret < 0) {
+ 		exynos_dsi_poweroff(dsi);
+ 		return ret;
+@@ -1360,6 +1360,13 @@ static int exynos_dsi_enable(struct exynos_dsi *dsi)
+ 	exynos_dsi_set_display_mode(dsi);
+ 	exynos_dsi_set_display_enable(dsi, true);
+ 
++	ret = drm_panel_enable(dsi->panel);
++	if (ret < 0) {
++		exynos_dsi_set_display_enable(dsi, false);
++		exynos_dsi_poweroff(dsi);
++		return ret;
++	}
++
+ 	dsi->state |= DSIM_STATE_ENABLED;
+ 
+ 	return 0;
+@@ -1370,8 +1377,9 @@ static void exynos_dsi_disable(struct exynos_dsi *dsi)
+ 	if (!(dsi->state & DSIM_STATE_ENABLED))
+ 		return;
+ 
+-	exynos_dsi_set_display_enable(dsi, false);
+ 	drm_panel_disable(dsi->panel);
++	exynos_dsi_set_display_enable(dsi, false);
++	drm_panel_unprepare(dsi->panel);
+ 	exynos_dsi_poweroff(dsi);
+ 
+ 	dsi->state &= ~DSIM_STATE_ENABLED;
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
