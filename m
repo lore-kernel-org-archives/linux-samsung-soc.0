@@ -1,41 +1,74 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 2/7] i2c: i2c-cros-ec-tunnel: Set retries to 3
-Date: Fri, 01 Aug 2014 20:05:57 +0200
-Message-ID: <53DBD705.2060706@collabora.co.uk>
-References: <1406549967-21291-1-git-send-email-javier.martinez@collabora.co.uk> <1406549967-21291-3-git-send-email-javier.martinez@collabora.co.uk> <20140801175912.GF3277@katana>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v5 03/10] ARM: dts: Clean up exynos5250-snow
+Date: Fri, 1 Aug 2014 13:24:12 -0700
+Message-ID: <CAD=FV=W2XJzv4NpB=27AFjX94VkH8dYXxAPBL58ntXL2WvRCoQ@mail.gmail.com>
+References: <1406868897-26874-1-git-send-email-afaerber@suse.de>
+	<1406868897-26874-4-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:60391 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751460AbaHASGG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Aug 2014 14:06:06 -0400
-In-Reply-To: <20140801175912.GF3277@katana>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1406868897-26874-4-git-send-email-afaerber@suse.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Lee Jones <lee.jones@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hello Wolfram,
+Andreas,
 
-On 08/01/2014 07:59 PM, Wolfram Sang wrote:
->>  
->> +#define I2C_MAX_RETRIES 3
-> 
-> I think a define for this is overkill, yet I don't really mind.
+On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber <afaerber@suse.de>=
+ wrote:
+> Use the new style of referencing inherited nodes and use symbolic nam=
+es.
+> Reorder one pinctrl node in GPIO order.
 >
-> Acked-by: Wolfram Sang <wsa@the-dreams.de>
+> Goal is the alignment of all exynos5250 based device trees for compar=
+ison.
 >
+> Suggested-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+> ---
+>  v4 -> v5:
+>  * Introduced labels to consistently use new referencing style (Tomas=
+z)
+>  * Use IRQ_TYPE_* constants
+>  * Use some more GPIO_ACTIVE_*
+>
+>  v3 -> v4: Unchanged
+>
+>  v3: New (Doug Anderson)
+>
+>  arch/arm/boot/dts/exynos5250-snow.dts | 291 +++++++++++++++++-------=
+----------
+>  arch/arm/boot/dts/exynos5250.dtsi     |  20 +--
 
-Thanks a lot.
+As much as possible it's nice to touch the main exynos dtsi file and
+specific board files in different patches.  Among other things it
+makes backporting the patch and resolving merge conflicts easier (if
+someone doesn't care about snow they could just pick up the main dtsi,
+for instance).
 
-> I assume this goes via MFD, let me know if I should take it.
-> 
+I'm not a total stickler and I'd love to see this land quickly to
+avoid conflicts, though...
 
-Yes, if possible I prefer if all the series are picked by Lee Jones to avoid any
-dependencies.
 
-Best regards,
-Javier
+> +&sd3_clk {
+> +       samsung,pin-drv =3D <0>;
+> +};
+> +
+> +&sd3_cmd {
+> +       samsung,pin-pud =3D <3>;
+> +       samsung,pin-drv =3D <0>;
+> +};
+> +
+> +&sd3_bus4 {
+
+Itty bitty bitty nit that "bus" sorts alphabetically above "clk".  ;)
+Maybe Kukjin would be willing to sort these when he applies?
+
+
+Thank you for all your hard work on this one.  Things look MUCH MUCH
+nicer!  I did a pretty thorough review of your changes and it all
+looks good.
+
+Reviewed-by: Doug Anderson <dianders@chromium.org>
