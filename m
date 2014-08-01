@@ -1,104 +1,77 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v5 00/10] ARM: dts: exynos: Prepare Spring
-Date: Fri, 01 Aug 2014 23:07:07 +0200
-Message-ID: <53DC017B.9000902@gmail.com>
-References: <1406868897-26874-1-git-send-email-afaerber@suse.de>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [PATCH v5 04/10] ARM: dts: Fill in bootargs for exynos5250-snow
+Date: Fri, 01 Aug 2014 23:10:34 +0200
+Message-ID: <53DC024A.3020106@suse.de>
+References: <1406868897-26874-1-git-send-email-afaerber@suse.de>	<1406868897-26874-5-git-send-email-afaerber@suse.de> <CAD=FV=V4hQeGvE9+O2EY8KGvDj3SJKfOZGes4gKpHfg=xz1h4A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f176.google.com ([74.125.82.176]:55357 "EHLO
-	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751460AbaHAVHM (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:60505 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751460AbaHAVKk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Aug 2014 17:07:12 -0400
-In-Reply-To: <1406868897-26874-1-git-send-email-afaerber@suse.de>
+	Fri, 1 Aug 2014 17:10:40 -0400
+In-Reply-To: <CAD=FV=V4hQeGvE9+O2EY8KGvDj3SJKfOZGes4gKpHfg=xz1h4A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
 
-Hi Andreas,
+Hi Doug,
 
-On 01.08.2014 06:54, Andreas F=C3=A4rber wrote:
-> Hello,
+Am 01.08.2014 22:28, schrieb Doug Anderson:
+> On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber <afaerber@suse.d=
+e> wrote:
+>> exynos5250-cros-common.dtsi had an empty /chosen node.
+>> Fill in exemplary boot arguments.
+>>
+>> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+>> ---
+>>  v5: New
+>>  Cleanup for /chosen node moved into -snow.dts.
+>>
+>>  arch/arm/boot/dts/exynos5250-snow.dts | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/d=
+ts/exynos5250-snow.dts
+>> index 7680d5e03fb3..c4b0c73c736d 100644
+>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+>> @@ -27,6 +27,7 @@
+>>         };
+>>
+>>         chosen {
+>> +               bootargs =3D "console=3Dtty1";
 >=20
-> Based on the preinstalled 3.8 based ChromeOS kernel and previous 3.15=
-=20
-> based attempts by Stephan and me that broke for 3.16, I've prepared a=
-=20
-> device tree for the HP Chromebook 11 aka Google Spring.
+> As mentioned earlier, I don't think this is a particularly useful
+> change.  Just this boot argument is not enough to boot with anyway, s=
+o
+> listing it doesn't really help anyone.  In theory you could make some
+> assertion about what the "most popular" boot device and filesystem is=
+,
+> but it seems unlikely to cover the majority of the cases.
 >=20
-> v5 cleans up a regulator and the USB3503 hub and touches more=20
-> exynos5250 files.
->=20
-> Not yet enabled are trackpad, Wifi and sound.
->=20
-> My rebasing branch for testing is here:
-> https://github.com/afaerber/linux/commits/spring-next
->=20
-> Regards,
-> Andreas
->=20
-> v1 -> v2:
-> * Dropped 3 documentation patches from series:
->   2 picked up,
->   https://patchwork.kernel.org/patch/4397271/
->   https://patchwork.kernel.org/patch/4397291/
->   1 already sent separately as v2, pending.
->   https://patchwork.kernel.org/patch/4424881/
-> * Minimized and beautified Spring device tree and to some degree Snow=
- as well.
->   See individual patches.
->=20
-> v2 -> v3:
-> * Rebased: Two -cros-common cleanup patches were already applied
-> * Lots of small cleanups for both Snow and Spring
-> * Enabled I2S in Spring for symmetry
-> * Added lid-switch and gpio-keys pinctrls to Spring
->=20
-> v3 -> v4:
-> * Fixed pin-function 1 -> 0 for dp-hpd pinctrl, style cleanup
->=20
-> v4 -> v5:
-> * Dropped regulator and fixed USB3503 for Spring
-> * More cleanups, including SMDK5250 and Arndale
->=20
->=20
-> Andreas F=C3=A4rber (10):
->   ARM: dts: Fix MMC pinctrl for exynos5250-snow
->   ARM: dts: Fold exynos5250-cros-common into exynos5250-snow
->   ARM: dts: Clean up exynos5250-snow
->   ARM: dts: Fill in bootargs for exynos5250-snow
->   ARM: dts: Move dp_hpd from exynos5250 into smdk5250 and snow
->   ARM: dts: Clean up exynos5250-smdk5250
->   ARM: dts: Clean up exynos5250-arndale
->   ARM: dts: Fix apparent GPIO typo in exynos5250-arndale
->   ARM: dts: Simplify USB3503 on exynos5250-arndale
->   ARM: dts: Add exynos5250-spring device tree
->=20
->  arch/arm/boot/dts/Makefile                    |   1 +
->  arch/arm/boot/dts/exynos5250-arndale.dts      | 927 +++++++++++++---=
-----------
->  arch/arm/boot/dts/exynos5250-cros-common.dtsi | 164 -----
->  arch/arm/boot/dts/exynos5250-pinctrl.dtsi     |   7 -
->  arch/arm/boot/dts/exynos5250-smdk5250.dts     | 641 +++++++++-------=
---
->  arch/arm/boot/dts/exynos5250-snow.dts         | 441 +++++++-----
->  arch/arm/boot/dts/exynos5250-spring.dts       | 536 +++++++++++++++
->  arch/arm/boot/dts/exynos5250.dtsi             |  24 +-
->  8 files changed, 1624 insertions(+), 1117 deletions(-)
->  delete mode 100644 arch/arm/boot/dts/exynos5250-cros-common.dtsi
->  create mode 100644 arch/arm/boot/dts/exynos5250-spring.dts
->=20
+> I won't NAK this change myself, but I certainly won't push for it.
 
-I have looked through all the patches and they look good to me, so, for
-the whole series:
+This patch should be entirely optional.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+I believe you said it wasn't necessary because the bootloader supplies
+it. My point is that someone needs to know what to put into the bootarg=
+s
+(setenv / boot.scr / uEnv.txt) - knowing whether it's ttySAC3 vs.
+ttySAC2 vs. ttyS0 etc. has been pretty handy for me. In this case, Snow
+and Spring use an identical console, so not sure if it might be tty2 or
+something elsewhere?
 
-There is one unrelated issue I reported in my reply to patch 7/10, but
-it is more of a bug report, not a comment to your patch.
+My question of what to use for linux,stdout-path (which was elsewhere
+mentioned as successor to bootargs in that regard) remained unanswered.
+Should it point to the dp-controller node or what?
 
-Best regards,
-Tomasz
+Andreas
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
