@@ -1,35 +1,51 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung 2nd cleanup for v3.17
-Date: Thu, 31 Jul 2014 20:12:14 -0700
-Message-ID: <CAOesGMizb9-mn7M1r2mLfKUjYVcV0TR_2+Z+1+wsc0n2Tb8xCg@mail.gmail.com>
-References: <53DA924F.40201@samsung.com>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [PATCH v4 4/4] ARM: dts: Add exynos5250-spring device tree
+Date: Fri, 01 Aug 2014 05:17:42 +0200
+Message-ID: <53DB06D6.9060604@suse.de>
+References: <1406822910-6255-1-git-send-email-afaerber@suse.de> <1406822910-6255-5-git-send-email-afaerber@suse.de> <53DA936E.9060004@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f176.google.com ([209.85.220.176]:50602 "EHLO
-	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750978AbaHADMP (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:44884 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751663AbaHADRt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jul 2014 23:12:15 -0400
-Received: by mail-vc0-f176.google.com with SMTP id id10so5717340vcb.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Jul 2014 20:12:14 -0700 (PDT)
-In-Reply-To: <53DA924F.40201@samsung.com>
+	Thu, 31 Jul 2014 23:17:49 -0400
+In-Reply-To: <53DA936E.9060004@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>
 
-On Thu, Jul 31, 2014 at 12:00 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Hi Arnd, Olof
->
-> One more pull-request. Sorry.
+Am 31.07.2014 21:05, schrieb Tomasz Figa:
+>> +
+>> +&i2c_2 {
+>> +	status =3D "okay";
+>> +	samsung,i2c-sda-delay =3D <100>;
+>> +	samsung,i2c-max-bus-freq =3D <66000>;
+>> +
+>> +	hdmiddc@50 {
+>> +		compatible =3D "samsung,exynos4210-hdmiddc";
+>> +		reg =3D <0x50>;
+>> +	};
+>=20
+> I don't think this matches current Exynos HDMI bindings, which I beli=
+eve
+> have been changed to just take a phandle to i2c bus instead.
 
-Hi Kukjin,
+Looks correct to me:
 
-We're close enough to the merge window that this should be targeted to
-3.18 instead.
+http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/tre=
+e/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt?h=3Dfor-ne=
+xt
 
-Please send it as a cleanup once the merge window is over and we'll queue it up.
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/D=
+ocumentation/devicetree/bindings/video/exynos_hdmiddc.txt
 
+Andreas
 
--Olof
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
