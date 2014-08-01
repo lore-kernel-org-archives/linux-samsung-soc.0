@@ -1,98 +1,44 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v5 05/10] ARM: dts: Move dp_hpd from exynos5250 into
- smdk5250 and snow
-Date: Fri, 1 Aug 2014 13:33:23 -0700
-Message-ID: <CAD=FV=WhocoyQ=rU7dU1EPM-PAQq06gg9HhamSOm+BgMDeM8NA@mail.gmail.com>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v5 06/10] ARM: dts: Clean up exynos5250-smdk5250
+Date: Fri, 1 Aug 2014 13:37:13 -0700
+Message-ID: <CAD=FV=Vra6p3bUeHGz6hTXjM1QMCZ-Ph++oqMWFAj1Uqmdg1rw@mail.gmail.com>
 References: <1406868897-26874-1-git-send-email-afaerber@suse.de>
-	<1406868897-26874-6-git-send-email-afaerber@suse.de>
+	<1406868897-26874-7-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1406868897-26874-6-git-send-email-afaerber@suse.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1406868897-26874-7-git-send-email-afaerber-l3A5Bk7waGM@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephan van Schaik <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Andreas,
 
-On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber <afaerber@suse.de>=
+On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>=
  wrote:
-> Spring uses a different GPIO, so this is not a generic SoC piece.
+> Use the new style for referencing inherited nodes and use symbolic na=
+mes.
 >
-> Suggested-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+> Goal is the alignment of all exynos5250 based device trees for compar=
+ison.
+>
+> Signed-off-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
 > ---
->  v5: New (Tomasz Figa)
->  Frees dp_hpd for Spring.
->
->  arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 7 -------
->  arch/arm/boot/dts/exynos5250-smdk5250.dts | 9 +++++++++
->  arch/arm/boot/dts/exynos5250-snow.dts     | 7 +++++++
->  3 files changed, 16 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boo=
-t/dts/exynos5250-pinctrl.dtsi
-> index 886cfca044ac..ed0e5230514b 100644
-> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> @@ -581,13 +581,6 @@
->                         samsung,pin-pud =3D <0>;
->                         samsung,pin-drv =3D <0>;
->                 };
-> -
-> -               dp_hpd: dp_hpd {
-> -                       samsung,pins =3D "gpx0-7";
-> -                       samsung,pin-function =3D <3>;
-> -                       samsung,pin-pud =3D <0>;
-> -                       samsung,pin-drv =3D <0>;
-> -               };
->         };
->
->         pinctrl@13400000 {
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boo=
-t/dts/exynos5250-smdk5250.dts
-> index aaa055ac0fe3..5d30fe1dcda4 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -414,3 +414,12 @@
->                 };
->         };
->  };
-> +
-> +&pinctrl_0 {
-> +       dp_hpd: dp_hpd {
-> +               samsung,pins =3D "gpx0-7";
-> +               samsung,pin-function =3D <3>;
-> +               samsung,pin-pud =3D <0>;
-> +               samsung,pin-drv =3D <0>;
-> +       };
-> +};
-> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dt=
-s/exynos5250-snow.dts
-> index c4b0c73c736d..a9a2f2743794 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -547,6 +547,13 @@
->  };
->
->  &pinctrl_0 {
-> +       dp_hpd: dp_hpd {
-> +               samsung,pins =3D "gpx0-7";
-> +               samsung,pin-function =3D <3>;
-> +               samsung,pin-pud =3D <0>;
-> +               samsung,pin-drv =3D <0>;
-> +       };
-> +
+>  v5: New
+>  Follow-up after adding dp_hpd pinctrl node new-style.
 
-NAK.  dp_hpd is a generic SoC piece.  Pin function 0 and 1 are GPIOs.
-Pin function 3 is special function.  This pin _is_ the hot plug detect
-pin for display port.  When it's set as special function 3 it goes
-straight into the hot plug logic of the display port controller.
+Since I NAKed that one, are you going to drop this patch?  It's
+probably still a useful thing to do.
 
-Spring may have had its reasons to detect hot plug events on a GPIO
-instead of using this pin, but that doesn't make this pin any less the
-"hot plug pin".
+It sounds like you might be spinning?  ...if so I'll review it in the
+next cycle...  Note: same feedback as before about splitting changes
+to exynos5250.dtsi and actual board files...
 
 -Doug
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
