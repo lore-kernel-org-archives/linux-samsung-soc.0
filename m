@@ -1,87 +1,52 @@
 From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [PATCH v5 00/10] ARM: dts: exynos: Prepare Spring
-Date: Fri,  1 Aug 2014 06:54:47 +0200
-Message-ID: <1406868897-26874-1-git-send-email-afaerber@suse.de>
+Subject: [PATCH v5 01/10] ARM: dts: Fix MMC pinctrl for exynos5250-snow
+Date: Fri,  1 Aug 2014 06:54:48 +0200
+Message-ID: <1406868897-26874-2-git-send-email-afaerber@suse.de>
+References: <1406868897-26874-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:45319 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752964AbaHAE4q (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Aug 2014 00:56:46 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1406868897-26874-1-git-send-email-afaerber@suse.de>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Jaehoon Chung <jh80.chung@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+The pinctrl properties should be on the device directly and not on the
+slot sub-node.
 
-Based on the preinstalled 3.8 based ChromeOS kernel and previous 3.15=20
-based attempts by Stephan and me that broke for 3.16, I've prepared a=20
-device tree for the HP Chromebook 11 aka Google Spring.
+Reported-by: Doug Anderson <dianders@chromium.org>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+---
+ v3 -> v4 -> v5: Unchanged
+=20
+ v3: New (Doug Anderson)
+ Redundant with Jaehoon Chung's general slot@0 deprecation,
+ in case that hits the tree earlier.
 
-v5 cleans up a regulator and the USB3503 hub and touches more=20
-exynos5250 files.
+ arch/arm/boot/dts/exynos5250-snow.dts | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Not yet enabled are trackpad, Wifi and sound.
-
-My rebasing branch for testing is here:
-https://github.com/afaerber/linux/commits/spring-next
-
-Regards,
-Andreas
-
-v1 -> v2:
-* Dropped 3 documentation patches from series:
-  2 picked up,
-  https://patchwork.kernel.org/patch/4397271/
-  https://patchwork.kernel.org/patch/4397291/
-  1 already sent separately as v2, pending.
-  https://patchwork.kernel.org/patch/4424881/
-* Minimized and beautified Spring device tree and to some degree Snow a=
-s well.
-  See individual patches.
-
-v2 -> v3:
-* Rebased: Two -cros-common cleanup patches were already applied
-* Lots of small cleanups for both Snow and Spring
-* Enabled I2S in Spring for symmetry
-* Added lid-switch and gpio-keys pinctrls to Spring
-
-v3 -> v4:
-* Fixed pin-function 1 -> 0 for dp-hpd pinctrl, style cleanup
-
-v4 -> v5:
-* Dropped regulator and fixed USB3503 for Spring
-* More cleanups, including SMDK5250 and Arndale
-
-
-Andreas F=C3=A4rber (10):
-  ARM: dts: Fix MMC pinctrl for exynos5250-snow
-  ARM: dts: Fold exynos5250-cros-common into exynos5250-snow
-  ARM: dts: Clean up exynos5250-snow
-  ARM: dts: Fill in bootargs for exynos5250-snow
-  ARM: dts: Move dp_hpd from exynos5250 into smdk5250 and snow
-  ARM: dts: Clean up exynos5250-smdk5250
-  ARM: dts: Clean up exynos5250-arndale
-  ARM: dts: Fix apparent GPIO typo in exynos5250-arndale
-  ARM: dts: Simplify USB3503 on exynos5250-arndale
-  ARM: dts: Add exynos5250-spring device tree
-
- arch/arm/boot/dts/Makefile                    |   1 +
- arch/arm/boot/dts/exynos5250-arndale.dts      | 927 +++++++++++++-----=
---------
- arch/arm/boot/dts/exynos5250-cros-common.dtsi | 164 -----
- arch/arm/boot/dts/exynos5250-pinctrl.dtsi     |   7 -
- arch/arm/boot/dts/exynos5250-smdk5250.dts     | 641 +++++++++---------
- arch/arm/boot/dts/exynos5250-snow.dts         | 441 +++++++-----
- arch/arm/boot/dts/exynos5250-spring.dts       | 536 +++++++++++++++
- arch/arm/boot/dts/exynos5250.dtsi             |  24 +-
- 8 files changed, 1624 insertions(+), 1117 deletions(-)
- delete mode 100644 arch/arm/boot/dts/exynos5250-cros-common.dtsi
- create mode 100644 arch/arm/boot/dts/exynos5250-spring.dts
-
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/=
+exynos5250-snow.dts
+index f2b8c4116541..eb437f6afec1 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -240,10 +240,8 @@
+ 	 */
+ 	mmc@12230000 {
+ 		status =3D "okay";
+-		slot@0 {
+-			pinctrl-names =3D "default";
+-			pinctrl-0 =3D <&sd3_clk &sd3_cmd &sd3_bus4>;
+-		};
++		pinctrl-names =3D "default";
++		pinctrl-0 =3D <&sd3_clk &sd3_cmd &sd3_bus4>;
+ 	};
+=20
+ 	i2c@12CD0000 {
 --=20
 1.9.3
