@@ -1,103 +1,110 @@
-From: =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip
- support
-Date: Fri, 01 Aug 2014 16:57:59 +0200
-Message-ID: <53DBAAF7.3040207@suse.de>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>	<53D5435B.8030305@suse.de>	<CAEC9eQPW-Z4craCC15M7oTp8eSD09AGxdTFEWaAWqn3Up4eJUg@mail.gmail.com>	<53D783CC.2080108@suse.de>	<CAEC9eQOpS90U9kWmY8YdcAtdxQYKoM9ikoWpkwMs6T2udLeZHA@mail.gmail.com>	<53D9484A.1070905@suse.de>	<CAEC9eQOFWQ8t1zzOVrHm2=aS4+N94EW6LSjBUG2fH51aFs0GLQ@mail.gmail.com>	<53DA0513.3080602@suse.de>	<20140731102348.GC7458@ulmo>	<53DA5120.7080709@suse.de> <CAEC9eQMoMC9Py+nvUANw_yHQX84tmpNCzEAQfFAhaN2GkeDwHw@mail.gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 1/1] i2c: Kconfig: Enable HSI2C for Exynos5 platform
+Date: Fri, 1 Aug 2014 18:17:36 +0200
+Message-ID: <20140801161735.GB3277@katana>
+References: <1403690523-1863-1-git-send-email-sachin.kamat@samsung.com>
+ <CAD=FV=WzPxT4okEur8C2G=FZK=zq3EsyCv9aAJwZ1PDkfoOcpA@mail.gmail.com>
+ <20140716174002.GG2759@katana>
+ <CAK5sBcGoYC5qpwy1C95Nx5+ni6bEqCTFShYoVEAdxQVeekZhtQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pvezYHf7grwyp3Bc"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:56571 "EHLO mx2.suse.de"
+Received: from sauhun.de ([89.238.76.85]:37764 "EHLO pokefinder.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753111AbaHAO6F (ORCPT
+	id S1750886AbaHAQSE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Aug 2014 10:58:05 -0400
-In-Reply-To: <CAEC9eQMoMC9Py+nvUANw_yHQX84tmpNCzEAQfFAhaN2GkeDwHw@mail.gmail.com>
+	Fri, 1 Aug 2014 12:18:04 -0400
+Content-Disposition: inline
+In-Reply-To: <CAK5sBcGoYC5qpwy1C95Nx5+ni6bEqCTFShYoVEAdxQVeekZhtQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Sachin Kamat <spk.linux@gmail.com>
+Cc: Doug Anderson <dianders@chromium.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>
 
-Ajay,
 
-Am 01.08.2014 09:02, schrieb Ajay kumar:
-> On Thu, Jul 31, 2014 at 7:52 PM, Andreas F=E4rber <afaerber@suse.de> =
-wrote:
->> Am 31.07.2014 12:23, schrieb Thierry Reding:
->>> On Thu, Jul 31, 2014 at 10:57:55AM +0200, Andreas F=E4rber wrote:
->>>> Am 31.07.2014 10:38, schrieb Ajay kumar:
->>>>> With just the spring-bridge.v6 branch of your own tree, I am able=
- to see
->>>>> bootup logo on Skate(a variant of spring which also contains ps86=
-22).
->>>>> I have tried both exynos_defconfig and multi_v7_defconfig.
->>>>> I enable DRM, EXYNOS DRM, BRIDGE CHIPS, IOMMU, EXYNOS IOMMU
->>>>> in configs.
->> [...]
->>> If you have something like simplefb enabled in addition to a DRM dr=
-iver,
->>> then perhaps the DRM driver isn't properly taking over the framebuf=
-fer
->>> console.
->>
->> So, with simplefb reverted in U-Boot and ...
->>
->> * with just the v6 applied (...~2), I get only a black screen from
->> Linux, no penguins, but the backlight seems on. System comes up okay=
-,
->> ssh available, and nothing stands out in dmesg.
->>
->> * with the two iommu patches on top, something breaks badly, no
->> backlight, no USB/network, system inaccessible.
->> I.e. U-Boot had no noticeable impact on these symptoms.
->>
->> * with the iommu patches, but dp-controller, ps8622, panel commented
->> out, I do get backlight but USB/network not working, system inaccess=
-ible.
->>
->> With simplefb support in U-Boot and with just v6 applied, but
->> dp-controller, ps8622, panel commented out, things work as well as
->> before, i.e. this series has no bad side effects. Note that I never
->> claimed Ajay's series were broken, just reported that things regress=
-ed
->> for me from v4, which may well be DT-related.
->>
->> The iommu patches interfere with my USB somehow (none or not all dev=
-ices
->> powered; with v4, plugging my wifi dongle led to oops but ethernet
->> dongle worked, so not entirely new symptom), which is bad since my
->> rootfs is on USB. The internal SDIO-connected Wifi is not enabled ye=
-t,
->> so USB based network is my only alternative to a working display onc=
-e we
->> reach userspace.
-> Well, there are 2 variants here:
-> 1) Bootloader
-> 2) config
+--pvezYHf7grwyp3Bc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Unfortunately your config doesn't work for me either, on my latest
-spring-bridge.v6 branch.
+On Fri, Jul 25, 2014 at 05:06:32PM +0530, Sachin Kamat wrote:
+> On Wed, Jul 16, 2014 at 11:10 PM, Wolfram Sang <wsa@the-dreams.de> wrote:
+> > On Wed, Jun 25, 2014 at 10:55:31AM -0700, Doug Anderson wrote:
+> >> Sachin,
+> >>
+> >> On Wed, Jun 25, 2014 at 3:02 AM, Sachin Kamat <sachin.kamat@samsung.co=
+m> wrote:
+> >> > All Exynos5 platforms have HSI2C controllers and are needed by
+> >> > various IPs connected to the boards based on these SoCs. Thus
+> >> > select this by default for Exynos5 platforms.
+> >> >
+> >> > Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
+> >> > Cc: Doug Anderson <dianders@chromium.org>
+> >> > ---
+> >> >  drivers/i2c/busses/Kconfig |    4 ++--
+> >> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >> >
+> >> > diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> >> > index 9f7d5859cf65..c7918cffe790 100644
+> >> > --- a/drivers/i2c/busses/Kconfig
+> >> > +++ b/drivers/i2c/busses/Kconfig
+> >> > @@ -465,9 +465,9 @@ config I2C_EG20T
+> >> >  config I2C_EXYNOS5
+> >> >         tristate "Exynos5 high-speed I2C driver"
+> >> >         depends on ARCH_EXYNOS5 && OF
+> >> > +       default y
+> >> >         help
+> >> > -         Say Y here to include support for high-speed I2C controlle=
+r in the
+> >> > -         Exynos5 based Samsung SoCs.
+> >> > +         High-speed I2C controller on Exynos5 based Samsung SoCs.
+> >> >
+> >> >  config I2C_GPIO
+> >> >         tristate "GPIO-based bitbanging I2C"
+> >> > --
+> >> > 1.7.9.5
+> >>
+> >> This seems reasonable to me and I will also take the blame for
+> >> suggesting this.  It's hard to imagine running a real exynos5 system
+> >> without I2C.  One could argue that on an exynos5250 the high speed I2C
+> >> controller is not mandatory (since all the ports can be muxed to use
+> >> the old controller) but on newer exynos5 products you're expected to
+> >> have the main PMIC on one of the i2c ports.  An exynos system without
+> >> access to its PMIC will just sorta limp by.
+> >>
+> >> ...but I've added Arnd to this thread as he expressed some
+> >> reservations about this type of thing, so we'll see what he says.
+> >
+> > Ping. Arnd? I have no strong opinion and would take this patch...
+>=20
+> Wolfram,
+>=20
+> How do you want to proceed with this?
 
-> Type of the bootloader should not matter unless its switching on
-> FET1 and FET6 of tps65090 for you.
+Giving Arnd a last chance to speak, otherwise I'll take it.
 
-It does switch them on, if I'm reading correctly:
 
-https://github.com/afaerber/u-boot/blob/spring/board/samsung/smdk5250/s=
-mdk5250.c#L599
+--pvezYHf7grwyp3Bc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-https://github.com/afaerber/u-boot/blob/spring/board/samsung/smdk5250/s=
-mdk5250.c#L907
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Another observation I made is that sometimes in my testing (didn't spot
-a pattern yet) after reboot or power-off/power-on the initial white
-screen with the warning did not come up (no backlight), but Ctrl+U
-worked fine and chain-loaded nv u-boot came up on screen okay.
+iQIcBAEBAgAGBQJT272fAAoJEBQN5MwUoCm2bSMQAJ1U8Tv5EDDb0vBbv+idcKT/
+3gGaYzUcFJzCZ88axjKYK0vXv7NSWhtWGPvDWOCdkewAmGC9gd01NbgoPZk6H/6Z
+fMupxMlZOl7AU9vODXN096PSHpGGcc/ctxDlQoOXmR0KhE+RQ9iyR7VNBecfJKo9
+SfmY9MLw2hPtelTBen75roDUlyFM/uI7vpOyWZ48V2NZBbX5XdYccnS5PJJj86tK
+ovn/qm5dgJ6RpUR/J9vZIPtEtSV5kE29dPk/QT+I5e0sJMSl7NA4wcCLi2xOzncH
+WCL1BPMyGyatgqikRSN86a54HmO1P8E7QUOGpC4gcnA9xEm4ylIeYYFq8f9otXz+
+RT5/+RrTFnkYHwLKqBGYnb1e3k4mEL3tWW8+82iAOzK/NLR49g7NwCsABU5hl1De
+H0EXha/Ypd1J5bchaiVr/34qk5sTBPMdfKo0/Xgw3ed5hM/xGZ8jmt61ONCqGnfP
+O672uSyDgOeluTqBLKMjdJ4bxbXYL9D8V/HZPncm+rjHQdMAjTOGPIgDIBIRnfLq
+rfLDXqU11RQt1eNqy8dqOL4k3syw+xAsCmqfysK/LcQuExW9RYDgcK/DpQsrTXcD
+WXqRO5fv8diSH/+bfoIRM9uZB1Z6nqUx1DmU5hdL/pXP32s99UdllbyEtOotuUGJ
+IvR8BmC8+TThqVgAgiBk
+=3s/E
+-----END PGP SIGNATURE-----
 
-Andreas
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
-berg
+--pvezYHf7grwyp3Bc--
