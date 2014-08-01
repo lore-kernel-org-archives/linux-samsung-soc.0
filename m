@@ -1,58 +1,37 @@
 From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [PATCH v5 09/10] ARM: dts: Simplify USB3503 on exynos5250-arndale
-Date: Fri,  1 Aug 2014 06:54:56 +0200
-Message-ID: <1406868897-26874-10-git-send-email-afaerber@suse.de>
+Subject: [PATCH v5 04/10] ARM: dts: Fill in bootargs for exynos5250-snow
+Date: Fri,  1 Aug 2014 06:54:51 +0200
+Message-ID: <1406868897-26874-5-git-send-email-afaerber@suse.de>
 References: <1406868897-26874-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1406868897-26874-1-git-send-email-afaerber@suse.de>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Vincent Palatin <vpalatin@chromium.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, open list <linux-kernel@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kumar Gala <galak@codeaurora.org>, Stephan van Schaik <stephan@synkhronix.com>, Doug Anderson <dianders@chromium.org>, Rob Herring <robh+dt@kernel.org>, Ben Dooks <ben-linux@fluff.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Russell King <linux@arm.linux.org.uk>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-There's no need for a simple-bus, place the smsc,usb3503a directly into
-the root node. That's what we're going to do on exynos5250-spring.
-
-Reported-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
----
- v5: New
- Aligns with Spring's new USB3503 node.
-
- arch/arm/boot/dts/exynos5250-arndale.dts | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/d=
-ts/exynos5250-arndale.dts
-index a04a875346aa..9912d27492db 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -108,18 +108,12 @@
- 		};
- 	};
-=20
--	usb_hub_bus {
--		compatible =3D "simple-bus";
--		#address-cells =3D <1>;
--		#size-cells =3D <0>;
-+	// SMSC USB3503 connected in hardware only mode as a PHY
-+	usb_hub: usb-hub {
-+		compatible =3D "smsc,usb3503a";
-=20
--		// SMSC USB3503 connected in hardware only mode as a PHY
--		usb_hub: usb_hub {
--			compatible =3D "smsc,usb3503a";
--
--			reset-gpios =3D <&gpx3 5 GPIO_ACTIVE_LOW>;
--			connect-gpios =3D <&gpd1 7 GPIO_ACTIVE_LOW>;
--		};
-+		reset-gpios =3D <&gpx3 5 GPIO_ACTIVE_LOW>;
-+		connect-gpios =3D <&gpd1 7 GPIO_ACTIVE_LOW>;
- 	};
- };
-=20
---=20
-1.9.3
+ZXh5bm9zNTI1MC1jcm9zLWNvbW1vbi5kdHNpIGhhZCBhbiBlbXB0eSAvY2hvc2VuIG5vZGUuCkZp
+bGwgaW4gZXhlbXBsYXJ5IGJvb3QgYXJndW1lbnRzLgoKU2lnbmVkLW9mZi1ieTogQW5kcmVhcyBG
+w6RyYmVyIDxhZmFlcmJlckBzdXNlLmRlPgotLS0KIHY1OiBOZXcKIENsZWFudXAgZm9yIC9jaG9z
+ZW4gbm9kZSBtb3ZlZCBpbnRvIC1zbm93LmR0cy4KCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1
+MjUwLXNub3cuZHRzIHwgMSArCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKCmRpZmYg
+LS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNub3cuZHRzIGIvYXJjaC9hcm0v
+Ym9vdC9kdHMvZXh5bm9zNTI1MC1zbm93LmR0cwppbmRleCA3NjgwZDVlMDNmYjMuLmM0YjBjNzNj
+NzM2ZCAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zbm93LmR0cwor
+KysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNub3cuZHRzCkBAIC0yNyw2ICsyNyw3
+IEBACiAJfTsKIAogCWNob3NlbiB7CisJCWJvb3RhcmdzID0gImNvbnNvbGU9dHR5MSI7CiAJfTsK
+IAogCWdwaW8ta2V5cyB7Ci0tIAoxLjkuMwoKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFy
+bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
