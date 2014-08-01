@@ -1,44 +1,96 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v5 06/10] ARM: dts: Clean up exynos5250-smdk5250
-Date: Fri, 1 Aug 2014 13:37:13 -0700
-Message-ID: <CAD=FV=Vra6p3bUeHGz6hTXjM1QMCZ-Ph++oqMWFAj1Uqmdg1rw@mail.gmail.com>
-References: <1406868897-26874-1-git-send-email-afaerber@suse.de>
-	<1406868897-26874-7-git-send-email-afaerber@suse.de>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [PATCH v5 03/10] ARM: dts: Clean up exynos5250-snow
+Date: Fri, 01 Aug 2014 22:44:50 +0200
+Message-ID: <53DBFC42.6030205@suse.de>
+References: <1406868897-26874-1-git-send-email-afaerber@suse.de>	<1406868897-26874-4-git-send-email-afaerber@suse.de> <CAD=FV=W2XJzv4NpB=27AFjX94VkH8dYXxAPBL58ntXL2WvRCoQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1406868897-26874-7-git-send-email-afaerber-l3A5Bk7waGM@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephan van Schaik <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:60273 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754697AbaHAUo4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 1 Aug 2014 16:44:56 -0400
+In-Reply-To: <CAD=FV=W2XJzv4NpB=27AFjX94VkH8dYXxAPBL58ntXL2WvRCoQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
 
-Andreas,
-
-On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>=
- wrote:
-> Use the new style for referencing inherited nodes and use symbolic na=
+Am 01.08.2014 22:24, schrieb Doug Anderson:
+> Andreas,
+>=20
+> On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber <afaerber@suse.d=
+e> wrote:
+>> Use the new style of referencing inherited nodes and use symbolic na=
 mes.
+>> Reorder one pinctrl node in GPIO order.
+>>
+>> Goal is the alignment of all exynos5250 based device trees for compa=
+rison.
+>>
+>> Suggested-by: Doug Anderson <dianders@chromium.org>
+>> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+>> ---
+>>  v4 -> v5:
+>>  * Introduced labels to consistently use new referencing style (Toma=
+sz)
+>>  * Use IRQ_TYPE_* constants
+>>  * Use some more GPIO_ACTIVE_*
+>>
+>>  v3 -> v4: Unchanged
+>>
+>>  v3: New (Doug Anderson)
+>>
+>>  arch/arm/boot/dts/exynos5250-snow.dts | 291 +++++++++++++++++------=
+-----------
+>>  arch/arm/boot/dts/exynos5250.dtsi     |  20 +--
+>=20
+> As much as possible it's nice to touch the main exynos dtsi file and
+> specific board files in different patches.  Among other things it
+> makes backporting the patch and resolving merge conflicts easier (if
+> someone doesn't care about snow they could just pick up the main dtsi=
+,
+> for instance).
+>=20
+> I'm not a total stickler and I'd love to see this land quickly to
+> avoid conflicts, though...
+>=20
+>=20
+>> +&sd3_clk {
+>> +       samsung,pin-drv =3D <0>;
+>> +};
+>> +
+>> +&sd3_cmd {
+>> +       samsung,pin-pud =3D <3>;
+>> +       samsung,pin-drv =3D <0>;
+>> +};
+>> +
+>> +&sd3_bus4 {
+>=20
+> Itty bitty bitty nit that "bus" sorts alphabetically above "clk".  ;)
+
+True. I guess I just reused the original order from within pinctrl.
+
+> Maybe Kukjin would be willing to sort these when he applies?
 >
-> Goal is the alignment of all exynos5250 based device trees for compar=
-ison.
 >
-> Signed-off-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
-> ---
->  v5: New
->  Follow-up after adding dp_hpd pinctrl node new-style.
+> Thank you for all your hard work on this one.  Things look MUCH MUCH
+> nicer!  I did a pretty thorough review of your changes and it all
+> looks good.
+>=20
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
 
-Since I NAKed that one, are you going to drop this patch?  It's
-probably still a useful thing to do.
+I need to respin anyway for a .dtsi label, so I can factor this out
+while at it.
 
-It sounds like you might be spinning?  ...if so I'll review it in the
-next cycle...  Note: same feedback as before about splitting changes
-to exynos5250.dtsi and actual board files...
+Patches 1-2 could meanwhile already be applied by Kukjin.
 
--Doug
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Andreas
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
