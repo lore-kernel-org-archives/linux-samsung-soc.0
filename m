@@ -1,151 +1,91 @@
-From: "edubezval@gmail.com" <edubezval@gmail.com>
-Subject: Re: [PATCH v2 0/9] thermal: exynos: various cleanups
-Date: Fri, 1 Aug 2014 09:18:30 -0400
-Message-ID: <CAC-25o9xxKtsphuY51Fhv3CBFKxMoJ1SGMJypLkt9fvHnTsQxA@mail.gmail.com>
-References: <1403026045-16024-1-git-send-email-b.zolnierkie@samsung.com>
-	<CADGdYn6EN-evo2KCjFfQ2h8gLoop=xTJZO3fnNxBxM9067tjxg@mail.gmail.com>
-	<20140729125848.GA18746@developer>
-	<5064578.QsHz5kKYq8@amdc1032>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [FIX][RESEND PATCH v3] ARM: EXYNOS: Fix suspend/resume sequences
+Date: Fri, 01 Aug 2014 23:18:53 +0900
+Message-ID: <081101cfad93$8615d810$92418830$@samsung.com>
+References: <1406883097-14157-1-git-send-email-tomasz.figa@gmail.com>
+ <1910401.THJm9YLBl0@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:64024 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754881AbaHANSd (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:12345 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750738AbaHAOS5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Aug 2014 09:18:33 -0400
-In-Reply-To: <5064578.QsHz5kKYq8@amdc1032>
+	Fri, 1 Aug 2014 10:18:57 -0400
+In-reply-to: <1910401.THJm9YLBl0@amdc1032>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: amit daniel kachhap <amit.daniel@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, arm@kernel.org
 
-Bartlomiej,
-
-On Thu, Jul 31, 2014 at 1:37 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
->
+Bartlomiej Zolnierkiewicz wrote:
+> 
 > Hi,
->
-> On Tuesday, July 29, 2014 08:58:48 AM Eduardo Valentin wrote:
->> On Mon, Jul 28, 2014 at 08:30:53PM +0530, amit daniel kachhap wrote:
->> > Hi Eduardo,
->>
->> Hello Amit,
->>
->> >
->> > Please reject this entire series as this is not re-based recently.
->> > Actually two point trimming which this series seeks to remove is used
->> > by exynos3250 and is in Rui's tree
->> > (https://git.kernel.org/cgit/linux/kernel/git/rzhang/linux.git/commit/?h=next&id=1fe56dc16a3dab400206443f70ae158c8f595c42).
->> >
->>
->> Yeah, that was my original concern when I first looked this series.
->> However, as I saw a couple of your acks I thought you would be in sync
->> with Bartlomiej.
->>
->> I agree with Bartlomiej that we need to keep the kernel code in very
->> good shape, but if we are removing features for the sake of reducing
->> LOCs and we end up dropping support to known chips, I definitely won't
->> agree.
->
-> There is no intention to drop support for known chips.  Two months after
-> initial posting of my patchset support for the new Exynos3250 SoC was
-> posted and it happens to use the two point trimming calibration code (that
-> was introduced back in September 2011 but never used previously).  If we
-> had removed it earlier it would have to be readded partially but we are
-> talking about less than 100 lines of rather straightforward code (also
-> the calibration code in question is not perfect anyway and would profit
-> from some cleaning but I left it as it is for now).
->
->> Can you guys please reach a common agreement on these cleanups?
->>
->> Bartlomiej, best thing to do is to sync your work on top of Rui's tree.
->
-> Done, I posted v3 of patchset today:
->
->   http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35013.html
->
-> I hope that it is acceptable for Amit now (Amit, please take a look at
-> patches when you find some time, thanks!).
->
+> 
+Hi,
 
-Thanks for updating the series.
+> On Friday, August 01, 2014 10:51:37 AM Tomasz Figa wrote:
+> > From: Tomasz Figa <t.figa@samsung.com>
+> >
+> > Due to recent consolidation of Exynos suspend and cpuidle code, some
+> > parts of suspend and resume sequences are executed two times, once from
+> > exynos_pm_syscore_ops and then from exynos_cpu_pm_notifier() and thus it
+> > breaks suspend, at least on Exynos4-based boards. In addition, simple
+> > core power down from a cpuidle driver could, in case of CPU 0 could
+> > result in calling functions that are specific to suspend and deeper idle
+> > states.
+> >
+> > This patch fixes the issue by moving those operations outside the CPU PM
+> > notifier into suspend and AFTR code paths. This leads to a bit of code
+> > duplication, but allows additional code simplification, so in the end
+> > more code is removed than added.
+> >
+> > Fixes: 85f9f90808b4 ("ARM: EXYNOS: Use the cpu_pm notifier for pm")
+> > Cc: Kukjin Kim <kgene.kim@samsung.com>
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Olof Johansson <olof@lixom.net>
+> > Cc: arm@kernel.org
+> > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/pm.c        | 164 ++++++++++++++++++---------------------
+> >  drivers/cpuidle/cpuidle-exynos.c |  25 +-----
+> >  2 files changed, 80 insertions(+), 109 deletions(-)
+> >
+> > This is resend of a regression fix sent more than two weeks ago (July, 15;
+> > [1]), without any response from respective maintainers. It fixes
+> > a significant regression breaking suspend/resume on Exynos4-based systems.
+> >
+> > I know we already have -rc7, but this patch in its first iteration was
+> > sent more than a month ago (June, 24; [2]) and it changed only for
+> > convenience of authors of further patches, to either avoid conflicts ([3])
+> > or reduce the need of changes to support more functionality later (as
+> > discussed in [4]). However it should have had priority over clean-up or
+> > functional patches, which was apparently not the case.
+> 
+> This is not quite right, your initial version needed to be changed also
+> because of potential problems (https://lkml.org/lkml/2014/7/15/206).
+> 
+Yeah...hmm...maybe it should be updated in 3.17...
 
-Amit, can you please test the series on socs you have available? I
-would prefer to merge this one now if we have a proper tested-by.
+> However the current version (from two weeks ago) is fine and IMO still
+> should be merged as a _regression_ fix for v3.16 (despite not being
+> a tiny patch).
+> 
+Agreed. OK.
 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
->> For now I am dropping this series from my -next branch. :-(
->>
->> > Thanks,
->> > Amit D
->> >
->> >
->> > On Mon, Jul 28, 2014 at 8:07 PM, Eduardo Valentin <edubezval@gmail.com> wrote:
->> > > On Tue, Jun 17, 2014 at 07:27:16PM +0200, Bartlomiej Zolnierkiewicz wrote:
->> > >> Hi,
->> > >>
->> > >> This patch series contains various cleanups for EXYNOS thermal
->> > >> driver.  Overall it decreases driver's LOC by 12%.  It is based
->> > >> on next-20140617 kernel.  It should not cause any functionality
->> > >> changes.
->> > >>
->> > >> Changes since v1:
->> > >> - synced patches against next-20140617
->> > >> - merged patch "thermal: exynos: remove unused defines" into
->> > >>   "thermal: exynos: remove unused struct exynos_tmu_registers
->> > >>   entries" one (per request from Eduardo)
->> > >> - improved patch descriptions for patches #1-5
->> > >> - fixed documentation for pdata->gain and pdata->reference_voltage
->> > >> - added Reviewed-by from Amit to patches #6, #7 and #10
->> > >> - added missing Acked-by from Kyungmin Park
->> > >
->> > > Pulled the series.
->> > >
->> > > Thanks.
->> > >
->> > >>
->> > >> Best regards,
->> > >> --
->> > >> Bartlomiej Zolnierkiewicz
->> > >> Samsung R&D Institute Poland
->> > >> Samsung Electronics
->> > >>
->> > >>
->> > >> Bartlomiej Zolnierkiewicz (9):
->> > >>   thermal: exynos: remove unused struct exynos_tmu_registers entries
->> > >>   thermal: exynos: remove dead code for HW_MODE calibration
->> > >>   thermal: exynos: remove dead code for TYPE_TWO_POINT_TRIMMING
->> > >>     calibration
->> > >>   thermal: exynos: remove redundant pdata checks from
->> > >>     exynos_tmu_initialize()
->> > >>   thermal: exynos: remove redundant threshold_code checks from
->> > >>     exynos_tmu_initialize()
->> > >>   thermal: exynos: simplify temp_to_code() and code_to_temp()
->> > >>   thermal: exynos: cache non_hw_trigger_levels in pdata
->> > >>   thermal: exynos: remove redundant pdata checks from
->> > >>     exynos_tmu_control()
->> > >>   thermal: exynos: remove identical values from exynos*_tmu_registers
->> > >>     structures
->> > >>
->> > >>  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
->> > >>  drivers/thermal/samsung/exynos_tmu.c            | 181 ++++--------------------
->> > >>  drivers/thermal/samsung/exynos_tmu.h            |  90 +-----------
->> > >>  drivers/thermal/samsung/exynos_tmu_data.c       |  64 +--------
->> > >>  drivers/thermal/samsung/exynos_tmu_data.h       |  33 +----
->> > >>  5 files changed, 41 insertions(+), 328 deletions(-)
->> > >>
->> > >> --
->> > >> 1.8.2.3
->
+> Also FWIW:
+> 
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> 
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
+@Olof,
 
+It's true this is a regression for v3.16 and I couldn't take this before
+because of some dependencies...so I'd like to ask you to take for v3.16 even
+though it's late and big...
 
--- 
-Eduardo Bezerra Valentin
+Thanks,
+Kukjin
