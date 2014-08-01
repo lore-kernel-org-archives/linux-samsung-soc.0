@@ -1,97 +1,75 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 14/15] drm/exynos: Move DP setup into commit()
-Date: Fri, 1 Aug 2014 12:21:23 +0200
-Message-ID: <20140801102122.GG21724@ulmo>
+Subject: Re: [PATCH 06/15] drm/exynos: dpi: Add support for panel prepare and
+ unprepare routines
+Date: Fri, 1 Aug 2014 12:22:02 +0200
+Message-ID: <20140801102200.GH21724@ulmo>
 References: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com>
- <1406828534-10072-15-git-send-email-ajaykumar.rs@samsung.com>
- <20140801091834.GE21724@ulmo>
- <CAEC9eQPARFrDP8k31v_P=ve5DK9Kx9Ao6ZBRuDt2bVS3eegiQQ@mail.gmail.com>
+ <1406828534-10072-7-git-send-email-ajaykumar.rs@samsung.com>
+ <20140801090444.GB21724@ulmo>
+ <53DB5CDA.3010901@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1450540871=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAEC9eQPARFrDP8k31v_P=ve5DK9Kx9Ao6ZBRuDt2bVS3eegiQQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============1450540871==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PyMzGVE0NRonI6bs"
+	protocol="application/pgp-signature"; boundary="xQmOcGOVkeO43v2v"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f172.google.com ([74.125.82.172]:39767 "EHLO
+	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752174AbaHAKWG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 1 Aug 2014 06:22:06 -0400
 Content-Disposition: inline
+In-Reply-To: <53DB5CDA.3010901@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, cpgs@samsung.com
 
 
---PyMzGVE0NRonI6bs
-Content-Type: text/plain; charset=us-ascii
+--xQmOcGOVkeO43v2v
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 01, 2014 at 03:11:37PM +0530, Ajay kumar wrote:
-> On Fri, Aug 1, 2014 at 2:48 PM, Thierry Reding <thierry.reding@gmail.com>=
- wrote:
-> > On Thu, Jul 31, 2014 at 11:12:13PM +0530, Ajay Kumar wrote:
-> >> Add commit callback for exynos_dp, and move the DP link training,
-> >> video configuration code from the hotplug handler into commit().
+On Fri, Aug 01, 2014 at 06:24:42PM +0900, Inki Dae wrote:
+> On 2014=EB=85=84 08=EC=9B=94 01=EC=9D=BC 18:04, Thierry Reding wrote:
+> > On Thu, Jul 31, 2014 at 11:12:05PM +0530, Ajay Kumar wrote:
+> >> Modify exynos_dpi driver to support the new panel calls:
+> >> prepare and unprepare.
 > >>
-> >> Signed-off-by: Sean Paul <seanpaul@chromium.org>
 > >> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 > >> ---
-> >>  drivers/gpu/drm/exynos/exynos_dp_core.c |   24 +++++++++++++++++++---=
---
-> >>  1 file changed, 19 insertions(+), 5 deletions(-)
-> >
-> > This is not related to the other patches in the series, so it can be
-> > applied independently.
-> This patch should go in this series only.
-> [PATCH 15/15] has dependency on this because it modifies exynos_dp_commit=
-().
+> >>  drivers/gpu/drm/exynos/exynos_drm_dpi.c |    8 ++++++--
+> >>  1 file changed, 6 insertions(+), 2 deletions(-)
+> >=20
+> > Looks good to me. Inki, can I have your Acked-by to take this through
+> > the panel tree?
+>=20
+> Of course.
+>=20
+> Acked-by: Inki Dae <inki.dae@samsung.com>
 
-Okay, I'll apply it to the panel tree. Inki, can I assume your Acked-by
-=66rom patch 06/15 applies to this one as well?
+I'll take it that this Acked-by applies also to patch 07/15?
 
 Thierry
 
---PyMzGVE0NRonI6bs
+--xQmOcGOVkeO43v2v
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT22oiAAoJEN0jrNd/PrOhd9MQAIGxjFif3RED4hD+ikOmIz7G
-AXl5OAFKKi6Qqzzo3s1D8kSL4T6NvLskhMhkPDYIfXuSxse02MvfH5JFfKZiWnDe
-zRI043XVrpbEsBXwlWVUSL6PaO2w+uyO7mY1XBy57qB6NMK7kVYnKtC15q6KBb+k
-EPiUv2P6vBKcEiOnbG5wjtNpkVxipSppHZOhQI0/oGVWgSiDTkIpxwzAt6lr9w4f
-eK07dOZ0jbTpCVPPK+gjPHlEbCQ1wkRn0rdQ7+K/lNoWu/XW2xNz+xUtNGwQ+smW
-Tn1s2Sbg4uDIjAYv1Ov33lSFq3wf8Of64RQhRRdp6dC8kAxDysvwhvAr2eYUPYZp
-If3P6nhoqxtupxJjk/KXLxpJWXxWh+eEZCKHGWfodEEfHZTyyLJYqlYWOV9f3LWc
-TQ/VO+EWSHe0C2iDdNJ417fKVADf4vcMqzgDToLH7hoDvHmrmiHq28ervZyv9EWa
-vAwlQvsrY9YA1kDOhu0cYiBJqJnypFmAmAIuP9smxIsyN3QhZOVRK7BoxCAxHpRo
-pVnCPZ35UcqR6uBAMEr/v6+ZeXsFrwBR+PiMrts4yQ8JHlge/oCI1E4fddelqIiT
-C+mM+EBm9AW2fPaN7d0PGgdvnusy4jpJ0b0/+/SF4B/Wv4VANm2eBbHQ514JdNWP
-9kmKWYfV9tcBS/MloKlv
-=BprP
+iQIcBAEBAgAGBQJT22pIAAoJEN0jrNd/PrOhV1AP/i0cljheT+tEWXY9Et6bO+c2
+9I40W3a2VNwSxGlolhNurU0Jfj75zEAb/tO+1IUfg8ClOQd5HoJHiqS/a6RC0VRR
+5oc1V84PkK75wHmrUbmds3dabPxzYIQkTbG5j2yUvLdAZINig05npzi81Jc9tzhv
+HAGZVlhuFKH9nGqUYcoTz+NFwQ4j2ndZg2QgPG+JMJsPaOVEIEk7glQ63nYaKeQn
+rZTz92nkWoEfrrNH4kBY3wg3IRalCbbtrFgwnr1T3WUnDjvgT5Z41iNJYURr25Zy
+wZf6JFZceykS11srAU4fUN9hmB1Qcq0W8PMENnQSPjXZIJIxiO6TxPMceBKlnE1s
+EzBz30B92tdWTSqkWUm/PlX+hdNMQlcyMF43EI/QzEW0zbhAg6mJd+D71D4H7qQH
+AeogIgDbBLP/HNbEQrCzXXmQRdV3peOO7fFG4Q+xr/YdwjA5Xx81chdse6Lmo7tE
+SY9jg8cPnOkGEnKpKdixalr5FNuTu8Vw7cjCA0g2E3i3KxlI92cea5KbtU5xQyt8
+oLqtxdQRdnJZWXGilS6ZbMjVTpu2Q7Cz0hDn1u+BlNlGBRMb6Tv4LFBRtvZTVdFe
+u98qwcNp7mXinn67dDHSib0d7FrRmbbnjKpaVYHMILjzSSdSu1v+KLV0P9AMxbcg
+eAq2XURGC1v0H+UcO+Mg
+=HDMR
 -----END PGP SIGNATURE-----
 
---PyMzGVE0NRonI6bs--
-
---===============1450540871==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============1450540871==--
+--xQmOcGOVkeO43v2v--
