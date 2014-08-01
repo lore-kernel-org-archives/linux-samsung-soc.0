@@ -1,46 +1,43 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 06/15] drm/exynos: dpi: Add support for panel prepare and
- unprepare routines
-Date: Fri, 01 Aug 2014 18:24:42 +0900
-Message-ID: <53DB5CDA.3010901@samsung.com>
+Subject: Re: [PATCH 15/15] drm/exynos: dp: Modify driver to support drm_panel
+Date: Fri, 01 Aug 2014 18:26:00 +0900
+Message-ID: <53DB5D28.4020500@samsung.com>
 References: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com>
- <1406828534-10072-7-git-send-email-ajaykumar.rs@samsung.com>
- <20140801090444.GB21724@ulmo>
+ <1406828534-10072-16-git-send-email-ajaykumar.rs@samsung.com>
+ <20140801090952.GD21724@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:19799 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750708AbaHAJYo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Aug 2014 05:24:44 -0400
-In-reply-to: <20140801090444.GB21724@ulmo>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20140801090952.GD21724@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, cpgs@samsung.com
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, joshi@samsung.com, dri-devel@lists.freedesktop.org, cpgs@samsung.com, ajaynumb@gmail.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2014=EB=85=84 08=EC=9B=94 01=EC=9D=BC 18:04, Thierry Reding wrote:
-> On Thu, Jul 31, 2014 at 11:12:05PM +0530, Ajay Kumar wrote:
->> Modify exynos_dpi driver to support the new panel calls:
->> prepare and unprepare.
->>
->> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_dpi.c |    8 ++++++--
->>  1 file changed, 6 insertions(+), 2 deletions(-)
->=20
-> Looks good to me. Inki, can I have your Acked-by to take this through
-> the panel tree?
-
-Of course.
-
-Acked-by: Inki Dae <inki.dae@samsung.com>
-
-Thanks,
-Inki Dae
-
->=20
-> Thierry
->=20
+T24gMjAxNOuFhCAwOOyblCAwMeydvCAxODowOSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24g
+VGh1LCBKdWwgMzEsIDIwMTQgYXQgMTE6MTI6MTRQTSArMDUzMCwgQWpheSBLdW1hciB3cm90ZToK
+Pj4gQWRkIGRybV9wYW5lbCBjb250cm9scyB0byBzdXBwb3J0IHBvd2VydXAvZG93biBvZiB0aGUK
+Pj4gZURQIHBhbmVsLCBpZiBvbmUgaXMgcHJlc2VudCBhdCB0aGUgc2luayBzaWRlLgo+Pgo+PiBT
+aWduZWQtb2ZmLWJ5OiBBamF5IEt1bWFyIDxhamF5a3VtYXIucnNAc2Ftc3VuZy5jb20+Cj4+IC0t
+LQo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnICAgICAgICAgIHwgICAgMSArCj4+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMgfCAgIDg4ICsrKysrKysr
+KysrKysrKysrKysrKysrKy0tLS0tLS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RwX2NvcmUuaCB8ICAgIDMgKy0KPj4gIDMgZmlsZXMgY2hhbmdlZCwgNzEgaW5zZXJ0aW9ucygr
+KSwgMjEgZGVsZXRpb25zKC0pCj4gCj4gSW5raSwgSSdsbCBuZWVkIGFuIEFja2VkLWJ5IGZyb20g
+eW91IG9uIHRoaXMgb25lIGFzIHdlbGwuIEl0IGhhcyBhIGJ1aWxkCj4gdGltZSBkZXBlbmRlbmN5
+IG9uIGVhcmxpZXIgcGF0Y2hlcyBpbiB0aGlzIHNlcmllcywgc28gdGFraW5nIGl0IHRocm91Z2gK
+PiB0aGUgcGFuZWwgdHJlZSBhbG9uZyB3aXRoIHRoZSByZXN0IGlzIHByb2JhYmx5IGVhc2llc3Qu
+CgpBY2tlZC1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgoKVGhhbmtzLApJbmtp
+IERhZQoKPiAKPiBUaGllcnJ5Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
