@@ -1,42 +1,68 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung 2nd DT updates for v3.17
-Date: Thu, 31 Jul 2014 20:19:13 -0700
-Message-ID: <CAOesGMj_ni9ciuN2=RFEKZPB-h2UypC2xNJkweNGBU9Wy+=RSA@mail.gmail.com>
-References: <53DA88D6.9010700@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCHv9 1/5] mmc: dw_mmc: Slot quirk "disable-wp" is deprecated.
+Date: Fri, 01 Aug 2014 13:26:43 +0900
+Message-ID: <53DB1703.4090002@samsung.com>
+References: <1406784907-26349-1-git-send-email-jh80.chung@samsung.com>
+ <1406784907-26349-2-git-send-email-jh80.chung@samsung.com>
+ <CAD=FV=VfXOqt1A=8-1kq5nhnMrk7PbpCWj-A-UWQN12_U8sW4g@mail.gmail.com>
+ <53DA8CCB.3080900@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f171.google.com ([209.85.220.171]:58686 "EHLO
-	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751879AbaHADTO (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:17919 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750770AbaHAE0r (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Jul 2014 23:19:14 -0400
-Received: by mail-vc0-f171.google.com with SMTP id hq11so5748879vcb.16
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Jul 2014 20:19:13 -0700 (PDT)
-In-Reply-To: <53DA88D6.9010700@samsung.com>
+	Fri, 1 Aug 2014 00:26:47 -0400
+In-reply-to: <53DA8CCB.3080900@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@google.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, Dinh Nguyen <dinguyen@altera.com>, Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, cpgs <cpgs@samsung.com>
 
-On Thu, Jul 31, 2014 at 11:20 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> The following changes since commit 6da287ad0266cca1fa8f88fb8b1c466e8164671f:
->
->   Merge branch 'v3.17-next/power-exynos' into v3.17-next/dt-samsung-2
-> (2014-07-29 06:09:42 +0900)
->
-> are available in the git repository at:
->
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/samsung-dt-2
->
-> for you to fetch changes up to a9408a6bba0de106d702fe5fa36fdc545116e9ab:
->
->   ARM: dts: Add missing pinctrl for uart0/1 for exynos3250 (2014-07-30
-> 07:57:32 +0900)
+Hi, All.
 
-These are mostly fixes and not new stuff, so I have merged them into
-next/dt now.
+It seems too late that this patch-set is merged into linux-3.16.
+Also there are some conflicts in device-tree. (I will remove the conflicts)
+So if everybody is ok, I will rebase on linux-next after released linux-3.16.
+At that time, i will send this patch-set to stable kernel, too.
+how about?
+And I want to know who can apply this patch-set(#3~#5).
 
--Olof
+Best Regards,
+Jaehoon Chung
+
+On 08/01/2014 03:36 AM, Kukjin Kim wrote:
+> On 08/01/14 01:02, Doug Anderson wrote:
+>> Jaehoon
+>>
+>> On Wed, Jul 30, 2014 at 10:35 PM, Jaehoon Chung<jh80.chung@samsung.com>  wrote:
+>>> Slot quirks "disable-wp" is deprecated.
+>>> Instead, use the host quirk "disable-wp".
+>>> (Because the slot-node is removed in dt-file.)
+>>>
+>>> Signed-off-by: Jaehoon Chung<jh80.chung@samsung.com>
+>>> Tested-by: Sachin Kamat<sachin.kamat@samsung.com>
+>>> Acked-by: Seungwon Jeon<tgih.jun@samsung.com>
+>>> ---
+>>>   drivers/mmc/host/dw_mmc.c  |   11 +++++++++--
+>>>   include/linux/mmc/dw_mmc.h |    2 ++
+>>>   2 files changed, 11 insertions(+), 2 deletions(-)
+>>
+>> Thanks for taking my suggestion and making it backward compatible.
+>> This looks great to me.  It tested this in both the backward
+>> compatible way (with the warning) and the non-backward compatible way.
+>> I think we should land and patch #2 ASAP and then we can land the rest
+>> of the series as SoC maintainers see fit.
+>>
+> Yes, right if we don't want to see useless merge conflicts...
+> 
+> When I sent ack on exynos stuff, there was no conflict with my tree but happens it now.
+> 
+> - Kukjin
+> 
+> 
+>> Reviewed-by: Doug Anderson<dianders@chromium.org>
+>> Tested-by: Doug Anderson<dianders@chromium.org>
+> 
