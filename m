@@ -1,72 +1,85 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCHv9 1/5] mmc: dw_mmc: Slot quirk "disable-wp" is deprecated.
-Date: Fri, 01 Aug 2014 10:58:50 +0200
-Message-ID: <1765329.zdt1X395r3@diego>
-References: <1406784907-26349-1-git-send-email-jh80.chung@samsung.com> <53DA8CCB.3080900@samsung.com> <53DB1703.4090002@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 06/15] drm/exynos: dpi: Add support for panel prepare and
+ unprepare routines
+Date: Fri, 1 Aug 2014 11:04:45 +0200
+Message-ID: <20140801090444.GB21724@ulmo>
+References: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1406828534-10072-7-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <53DB1703.4090002@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@google.com>, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Seungwon Jeon <tgih.jun@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Dinh Nguyen <dinguyen@altera.com>, Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>, cpgs <cpgs@samsung.com>
+Content-Type: multipart/mixed; boundary="===============0924024442=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1406828534-10072-7-git-send-email-ajaykumar.rs@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Am Freitag, 1. August 2014, 13:26:43 schrieb Jaehoon Chung:
-> Hi, All.
-> 
-> It seems too late that this patch-set is merged into linux-3.16.
-> Also there are some conflicts in device-tree. (I will remove the conflicts)
-> So if everybody is ok, I will rebase on linux-next after released
-> linux-3.16. At that time, i will send this patch-set to stable kernel, too.
-> how about?
 
-> And I want to know who can apply this patch-set(#3~#5).
-
-I guess each SoC maintainer could take the changes to their work-area, once 
-the core changes have landed in the mmc tree. So I would take the Rockchip 
-patch, Kukjin the Exynos one and Dinh the socfpga patch.
+--===============0924024442==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lEGEL1/lMxI0MVQ2"
+Content-Disposition: inline
 
 
-Heiko
+--lEGEL1/lMxI0MVQ2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Best Regards,
-> Jaehoon Chung
-> 
-> On 08/01/2014 03:36 AM, Kukjin Kim wrote:
-> > On 08/01/14 01:02, Doug Anderson wrote:
-> >> Jaehoon
-> >> 
-> >> On Wed, Jul 30, 2014 at 10:35 PM, Jaehoon Chung<jh80.chung@samsung.com>  
-wrote:
-> >>> Slot quirks "disable-wp" is deprecated.
-> >>> Instead, use the host quirk "disable-wp".
-> >>> (Because the slot-node is removed in dt-file.)
-> >>> 
-> >>> Signed-off-by: Jaehoon Chung<jh80.chung@samsung.com>
-> >>> Tested-by: Sachin Kamat<sachin.kamat@samsung.com>
-> >>> Acked-by: Seungwon Jeon<tgih.jun@samsung.com>
-> >>> ---
-> >>> 
-> >>>   drivers/mmc/host/dw_mmc.c  |   11 +++++++++--
-> >>>   include/linux/mmc/dw_mmc.h |    2 ++
-> >>>   2 files changed, 11 insertions(+), 2 deletions(-)
-> >> 
-> >> Thanks for taking my suggestion and making it backward compatible.
-> >> This looks great to me.  It tested this in both the backward
-> >> compatible way (with the warning) and the non-backward compatible way.
-> >> I think we should land and patch #2 ASAP and then we can land the rest
-> >> of the series as SoC maintainers see fit.
-> > 
-> > Yes, right if we don't want to see useless merge conflicts...
-> > 
-> > When I sent ack on exynos stuff, there was no conflict with my tree but
-> > happens it now.
-> > 
-> > - Kukjin
-> > 
-> >> Reviewed-by: Doug Anderson<dianders@chromium.org>
-> >> Tested-by: Doug Anderson<dianders@chromium.org>
+On Thu, Jul 31, 2014 at 11:12:05PM +0530, Ajay Kumar wrote:
+> Modify exynos_dpi driver to support the new panel calls:
+> prepare and unprepare.
+>=20
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_dpi.c |    8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 
+Looks good to me. Inki, can I have your Acked-by to take this through
+the panel tree?
+
+Thierry
+
+--lEGEL1/lMxI0MVQ2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT21gsAAoJEN0jrNd/PrOh5QcP/3ZzaWIeR351uRlq1RHhyCgi
+JacEzXTY8fIBWHxbZnvb4V5RYFWgWi4UG9scDmlHDPlSqEF4UkEDFpl4CCTPpghp
+nJ4qdxprapZKGVolwOFEMvsoBaiLk1UaMVugpMbYERSUdDh1wQDfn9kw2my6gWf3
+fA+qRFBM/W/d0J2UeBE48XaPZoMZMKS17ImBeBif4qoeOc5yA5EsH5MwH9Gkxrje
+qWwm/HPww24t1ndPlQhLuYCIoW87cnohyq/c65OMxcctnpLRgdRHcd5DhXwoDgZN
+RdXFUb+pZJIdcP8lkPujqI1tSD6dCtf6ur2RuA5ucxD2DdoWurDHWNkytpVtr5Mu
+7BNnnhEIcl0bKc8JMnBrXFAyL5nRT8BNT5rpSdE+7lwK7jmbTIsRzGR/v7Xvcclm
+bEMEFPoi6k0y91ZJ/8fwjhK+2LpmxVVR+f665/KTkU1t7DbfCFBIX0wIKx3dnzmK
+XYTIgo1gZYZ8HstXsiV/yaJmVGILmRGDIE890iqlLxx6U3aw7BRgITIz/hU5sADA
+M40GLnIq38E4dcXsHlBEyNq/4Wi5Bv4fHUr+cSPVrBMtfkhNp2I/sT9Feb+XkG30
+r5YD7yXdTYELEyJV3hYkmtFYD4ghaNK3Yj/AwuV4ZOVQe9W4kjgVbpBblRQl9yoM
+gPF4kSDD55TDMNn0W68c
+=9mFZ
+-----END PGP SIGNATURE-----
+
+--lEGEL1/lMxI0MVQ2--
+
+--===============0924024442==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0924024442==--
