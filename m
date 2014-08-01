@@ -1,74 +1,58 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v5 03/10] ARM: dts: Clean up exynos5250-snow
-Date: Fri, 1 Aug 2014 13:24:12 -0700
-Message-ID: <CAD=FV=W2XJzv4NpB=27AFjX94VkH8dYXxAPBL58ntXL2WvRCoQ@mail.gmail.com>
+Subject: Re: [PATCH v5 04/10] ARM: dts: Fill in bootargs for exynos5250-snow
+Date: Fri, 1 Aug 2014 13:28:17 -0700
+Message-ID: <CAD=FV=V4hQeGvE9+O2EY8KGvDj3SJKfOZGes4gKpHfg=xz1h4A@mail.gmail.com>
 References: <1406868897-26874-1-git-send-email-afaerber@suse.de>
-	<1406868897-26874-4-git-send-email-afaerber@suse.de>
+	<1406868897-26874-5-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1406868897-26874-4-git-send-email-afaerber@suse.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:56249 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754822AbaHAU2S convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 1 Aug 2014 16:28:18 -0400
+Received: by mail-vc0-f174.google.com with SMTP id la4so7632954vcb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Aug 2014 13:28:18 -0700 (PDT)
+In-Reply-To: <1406868897-26874-5-git-send-email-afaerber@suse.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
 Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Andreas,
+Hi,
 
 On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber <afaerber@suse.de>=
  wrote:
-> Use the new style of referencing inherited nodes and use symbolic nam=
-es.
-> Reorder one pinctrl node in GPIO order.
+> exynos5250-cros-common.dtsi had an empty /chosen node.
+> Fill in exemplary boot arguments.
 >
-> Goal is the alignment of all exynos5250 based device trees for compar=
-ison.
->
-> Suggested-by: Doug Anderson <dianders@chromium.org>
 > Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
 > ---
->  v4 -> v5:
->  * Introduced labels to consistently use new referencing style (Tomas=
-z)
->  * Use IRQ_TYPE_* constants
->  * Use some more GPIO_ACTIVE_*
+>  v5: New
+>  Cleanup for /chosen node moved into -snow.dts.
 >
->  v3 -> v4: Unchanged
+>  arch/arm/boot/dts/exynos5250-snow.dts | 1 +
+>  1 file changed, 1 insertion(+)
 >
->  v3: New (Doug Anderson)
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dt=
+s/exynos5250-snow.dts
+> index 7680d5e03fb3..c4b0c73c736d 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -27,6 +27,7 @@
+>         };
 >
->  arch/arm/boot/dts/exynos5250-snow.dts | 291 +++++++++++++++++-------=
-----------
->  arch/arm/boot/dts/exynos5250.dtsi     |  20 +--
+>         chosen {
+> +               bootargs =3D "console=3Dtty1";
 
-As much as possible it's nice to touch the main exynos dtsi file and
-specific board files in different patches.  Among other things it
-makes backporting the patch and resolving merge conflicts easier (if
-someone doesn't care about snow they could just pick up the main dtsi,
-for instance).
+As mentioned earlier, I don't think this is a particularly useful
+change.  Just this boot argument is not enough to boot with anyway, so
+listing it doesn't really help anyone.  In theory you could make some
+assertion about what the "most popular" boot device and filesystem is,
+but it seems unlikely to cover the majority of the cases.
 
-I'm not a total stickler and I'd love to see this land quickly to
-avoid conflicts, though...
+I won't NAK this change myself, but I certainly won't push for it.
 
-
-> +&sd3_clk {
-> +       samsung,pin-drv =3D <0>;
-> +};
-> +
-> +&sd3_cmd {
-> +       samsung,pin-pud =3D <3>;
-> +       samsung,pin-drv =3D <0>;
-> +};
-> +
-> +&sd3_bus4 {
-
-Itty bitty bitty nit that "bus" sorts alphabetically above "clk".  ;)
-Maybe Kukjin would be willing to sort these when he applies?
-
-
-Thank you for all your hard work on this one.  Things look MUCH MUCH
-nicer!  I did a pretty thorough review of your changes and it all
-looks good.
-
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+-Doug
