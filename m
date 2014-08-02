@@ -1,50 +1,71 @@
 From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [PATCH v6 08/10] ARM: dts: Fix apparent GPIO typo in exynos5250-arndale
-Date: Sat,  2 Aug 2014 02:52:28 +0200
-Message-ID: <1406940750-15880-9-git-send-email-afaerber@suse.de>
+Subject: [PATCH v6 03/10] ARM: dts: Prepare node labels for exynos5250
+Date: Sat,  2 Aug 2014 02:52:23 +0200
+Message-ID: <1406940750-15880-4-git-send-email-afaerber@suse.de>
 References: <1406940750-15880-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:33663 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754487AbaHBAxU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Aug 2014 20:53:20 -0400
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1406940750-15880-1-git-send-email-afaerber@suse.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Vincent Palatin <vpalatin@chromium.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, open list <linux-kernel@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kumar Gala <galak@codeaurora.org>, Stephan van Schaik <stephan@synkhronix.com>, Doug Anderson <dianders@chromium.org>, Rob Herring <robh+dt@kernel.org>, Ben Dooks <ben-linux@fluff.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Russell King <linux@arm.linux.org.uk>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The GPIO flag 2 has no constant assigned, so this was probably active-l=
-ow.
-
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
----
- v5 -> v6: Unchanged
-=20
- v5: New
- Spotted during cleanup.
-
- arch/arm/boot/dts/exynos5250-arndale.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/d=
-ts/exynos5250-arndale.dts
-index aac41c394d43..cc8b9ffeecc1 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -159,7 +159,7 @@
- };
-=20
- &hdmi {
--	hpd-gpio =3D <&gpx3 7 2>;
-+	hpd-gpio =3D <&gpx3 7 GPIO_ACTIVE_LOW>;
- 	vdd_osc-supply =3D <&ldo10_reg>;
- 	vdd_pll-supply =3D <&ldo8_reg>;
- 	vdd-supply =3D <&ldo8_reg>;
---=20
-1.9.3
+QWxsb3dzIHRoZW0gdG8gYmUgZXh0ZW5kZWQgYnkgcmVmZXJlbmNlLgoKU2lnbmVkLW9mZi1ieTog
+QW5kcmVhcyBGw6RyYmVyIDxhZmFlcmJlckBzdXNlLmRlPgotLS0KIHY2OiBTcGxpdCBvZmYgZnJv
+bSBTbm93L1NNREsgY2xlYW51cHMgKERvdWcgQW5kZXJzb24pCgogYXJjaC9hcm0vYm9vdC9kdHMv
+ZXh5bm9zNTI1MC5kdHNpIHwgMjQgKysrKysrKysrKysrLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hh
+bmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvYXJj
+aC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9z
+NTI1MC5kdHNpCmluZGV4IDgzNGZiNWE1MzA2Zi4uY2Y5NGFlYWVhYTg0IDEwMDY0NAotLS0gYS9h
+cmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kKKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMv
+ZXh5bm9zNTI1MC5kdHNpCkBAIC0yMTUsNyArMjE1LDcgQEAKIAkJY2xvY2stbmFtZXMgPSAiZmlt
+ZzJkIjsKIAl9OwogCi0JY29kZWNAMTEwMDAwMDAgeworCW1mYzogY29kZWNAMTEwMDAwMDAgewog
+CQljb21wYXRpYmxlID0gInNhbXN1bmcsbWZjLXY2IjsKIAkJcmVnID0gPDB4MTEwMDAwMDAgMHgx
+MDAwMD47CiAJCWludGVycnVwdHMgPSA8MCA5NiAwPjsKQEAgLTIyNCw3ICsyMjQsNyBAQAogCQlj
+bG9jay1uYW1lcyA9ICJtZmMiOwogCX07CiAKLQlydGNAMTAxRTAwMDAgeworCXJ0YzogcnRjQDEw
+MUUwMDAwIHsKIAkJY2xvY2tzID0gPCZjbG9jayBDTEtfUlRDPjsKIAkJY2xvY2stbmFtZXMgPSAi
+cnRjIjsKIAkJc3RhdHVzID0gImRpc2FibGVkIjsKQEAgLTIzOCwyNyArMjM4LDI3IEBACiAJCWNs
+b2NrLW5hbWVzID0gInRtdV9hcGJpZiI7CiAJfTsKIAotCXNlcmlhbEAxMkMwMDAwMCB7CisJdWFy
+dDA6IHNlcmlhbEAxMkMwMDAwMCB7CiAJCWNsb2NrcyA9IDwmY2xvY2sgQ0xLX1VBUlQwPiwgPCZj
+bG9jayBDTEtfU0NMS19VQVJUMD47CiAJCWNsb2NrLW5hbWVzID0gInVhcnQiLCAiY2xrX3VhcnRf
+YmF1ZDAiOwogCX07CiAKLQlzZXJpYWxAMTJDMTAwMDAgeworCXVhcnQxOiBzZXJpYWxAMTJDMTAw
+MDAgewogCQljbG9ja3MgPSA8JmNsb2NrIENMS19VQVJUMT4sIDwmY2xvY2sgQ0xLX1NDTEtfVUFS
+VDE+OwogCQljbG9jay1uYW1lcyA9ICJ1YXJ0IiwgImNsa191YXJ0X2JhdWQwIjsKIAl9OwogCi0J
+c2VyaWFsQDEyQzIwMDAwIHsKKwl1YXJ0Mjogc2VyaWFsQDEyQzIwMDAwIHsKIAkJY2xvY2tzID0g
+PCZjbG9jayBDTEtfVUFSVDI+LCA8JmNsb2NrIENMS19TQ0xLX1VBUlQyPjsKIAkJY2xvY2stbmFt
+ZXMgPSAidWFydCIsICJjbGtfdWFydF9iYXVkMCI7CiAJfTsKIAotCXNlcmlhbEAxMkMzMDAwMCB7
+CisJdWFydDM6IHNlcmlhbEAxMkMzMDAwMCB7CiAJCWNsb2NrcyA9IDwmY2xvY2sgQ0xLX1VBUlQz
+PiwgPCZjbG9jayBDTEtfU0NMS19VQVJUMz47CiAJCWNsb2NrLW5hbWVzID0gInVhcnQiLCAiY2xr
+X3VhcnRfYmF1ZDAiOwogCX07CiAKLQlzYXRhQDEyMkYwMDAwIHsKKwlzYXRhOiBzYXRhQDEyMkYw
+MDAwIHsKIAkJY29tcGF0aWJsZSA9ICJzbnBzLGR3Yy1haGNpIjsKIAkJc2Ftc3VuZyxzYXRhLWZy
+ZXEgPSA8NjY+OwogCQlyZWcgPSA8MHgxMjJGMDAwMCAweDFmZj47CkBAIC01NzAsNyArNTcwLDcg
+QEAKIAkJI3BoeS1jZWxscyA9IDwxPjsKIAl9OwogCi0JdXNiQDEyMTEwMDAwIHsKKwllaGNpOiB1
+c2JAMTIxMTAwMDAgewogCQljb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNDIxMC1laGNpIjsK
+IAkJcmVnID0gPDB4MTIxMTAwMDAgMHgxMDA+OwogCQlpbnRlcnJ1cHRzID0gPDAgNzEgMD47CkBA
+IC01ODUsNyArNTg1LDcgQEAKIAkJfTsKIAl9OwogCi0JdXNiQDEyMTIwMDAwIHsKKwlvaGNpOiB1
+c2JAMTIxMjAwMDAgewogCQljb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNDIxMC1vaGNpIjsK
+IAkJcmVnID0gPDB4MTIxMjAwMDAgMHgxMDA+OwogCQlpbnRlcnJ1cHRzID0gPDAgNzEgMD47CkBA
+IC03MjIsNyArNzIyLDcgQEAKIAkJY2xvY2stbmFtZXMgPSAiZ3NjbCI7CiAJfTsKIAotCWhkbWkg
+eworCWhkbWk6IGhkbWkgewogCQljb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNDIxMi1oZG1p
+IjsKIAkJcmVnID0gPDB4MTQ1MzAwMDAgMHg3MDAwMD47CiAJCWludGVycnVwdHMgPSA8MCA5NSAw
+PjsKQEAgLTc0OCwxNCArNzQ4LDE0IEBACiAJCSNwaHktY2VsbHMgPSA8MD47CiAJfTsKIAotCWRw
+LWNvbnRyb2xsZXJAMTQ1QjAwMDAgeworCWRwOiBkcC1jb250cm9sbGVyQDE0NUIwMDAwIHsKIAkJ
+Y2xvY2tzID0gPCZjbG9jayBDTEtfRFA+OwogCQljbG9jay1uYW1lcyA9ICJkcCI7CiAJCXBoeXMg
+PSA8JmRwX3BoeT47CiAJCXBoeS1uYW1lcyA9ICJkcCI7CiAJfTsKIAotCWZpbWRAMTQ0MDAwMDAg
+eworCWZpbWQ6IGZpbWRAMTQ0MDAwMDAgewogCQljbG9ja3MgPSA8JmNsb2NrIENMS19TQ0xLX0ZJ
+TUQxPiwgPCZjbG9jayBDTEtfRklNRDE+OwogCQljbG9jay1uYW1lcyA9ICJzY2xrX2ZpbWQiLCAi
+ZmltZCI7CiAJfTsKLS0gCjEuOS4zCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtl
+cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxt
+YW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
