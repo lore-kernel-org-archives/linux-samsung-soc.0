@@ -1,53 +1,68 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v6 00/10] ARM: dts: exynos: Prepare Spring
-Date: Sat, 02 Aug 2014 04:34:41 +0200
-Message-ID: <53DC4E41.4050200@collabora.co.uk>
-References: <1406940750-15880-1-git-send-email-afaerber@suse.de>
+Subject: Re: [PATCH v9 3/6] ARM: dts: Exynos: add CPU OPP and regulator supply
+ property
+Date: Sat, 02 Aug 2014 05:49:21 +0200
+Message-ID: <53DC5FC1.7060700@collabora.co.uk>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com> <1406707663-16656-4-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:60581 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:60613 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751723AbaHBCer (ORCPT
+	with ESMTP id S1753139AbaHBDt2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Aug 2014 22:34:47 -0400
-In-Reply-To: <1406940750-15880-1-git-send-email-afaerber@suse.de>
+	Fri, 1 Aug 2014 23:49:28 -0400
+In-Reply-To: <1406707663-16656-4-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com, Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@linaro.org>
 
-Hello Andreas
+Hello Thomas,
 
-On 08/02/2014 02:52 AM, Andreas F=C3=A4rber wrote:
->=20
-> Based on the preinstalled 3.8 based ChromeOS kernel and previous 3.15=
-=20
-> based attempts by Stephan and me that broke for 3.16, I've prepared a=
-=20
-> device tree for the HP Chromebook 11 aka Google Spring.
->=20
-> v6 renames a node and reverts dp_hpd.
->=20
-> Not yet enabled are trackpad, Wifi and sound.
->=20
-> My rebasing branch for testing is here:
-> https://github.com/afaerber/linux/commits/spring-next
->=20
-> Regards,
-> Andreas
->=20
+On 07/30/2014 10:07 AM, Thomas Abraham wrote:
+> For Exynos 4210/5250/5420 based platforms, add CPU operating points and CPU
+> regulator supply properties for migrating from Exynos specific cpufreq driver
+> to using generic cpufreq drivers.
+> 
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Cc: Andreas Faerber <afaerber@suse.de>
+> Cc: Sachin Kamat <sachin.kamat@linaro.org>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4210-origen.dts         |    4 +++
+>  arch/arm/boot/dts/exynos4210-trats.dts          |    4 +++
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 +++
+>  arch/arm/boot/dts/exynos4210.dtsi               |   14 ++++++++-
+>  arch/arm/boot/dts/exynos5250-arndale.dts        |    4 +++
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    4 +++
+>  arch/arm/boot/dts/exynos5250-snow.dts           |    4 +++
+>  arch/arm/boot/dts/exynos5250.dtsi               |   25 ++++++++++++++-
+>  arch/arm/boot/dts/exynos5420.dtsi               |   38 +++++++++++++++++++++++
+>  9 files changed, 99 insertions(+), 2 deletions(-)
+> 
 
-I made a comment on patch 05/10 but the rest of the series looks good t=
-o me. So
-for the remaining patches:
+Tested the series on a Exynos5420 based Peach Pit Chromebook by doing the
+following for CPU0-3:
 
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+1) Verified that the big.LITTLE CPUFreq (arm-big-little) driver was reported as
+used in /sys/devices/system/cpu/cpu*/cpufreq/scaling_driver.
 
-NOTE: I thought that Tomasz Figa gave you his Reviewed-by on v5 for the=
- whole
-series as well but I didn't see his tag on the v6 patches.
+2) Set all available governors (conservative, ondemand, userspace, powersave and
+performance).
+
+3) Confirmed that cpuinfo_cur_freq and scaling_cur_freq values were fixed or
+changing according to the selected governor policy.
+
+4) Verified that the statistics in /sys/devices/system/cpu/cpu*/cpufreq/stats/*
+were filled.
+
+Everything is working correctly so please feel free to add for the whole series:
+
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
 Best regards,
 Javier
