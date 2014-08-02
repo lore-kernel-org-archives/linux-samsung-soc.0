@@ -1,93 +1,99 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v5 04/10] ARM: dts: Fill in bootargs for exynos5250-snow
-Date: Fri, 1 Aug 2014 22:01:44 -0700
-Message-ID: <CAD=FV=XyvVNJ8vLYUE+Tx8dYUzqLH_sXXYcA_ZEFDfH_Un2u4g@mail.gmail.com>
-References: <1406868897-26874-1-git-send-email-afaerber@suse.de>
-	<1406868897-26874-5-git-send-email-afaerber@suse.de>
-	<CAD=FV=V4hQeGvE9+O2EY8KGvDj3SJKfOZGes4gKpHfg=xz1h4A@mail.gmail.com>
-	<53DC024A.3020106@suse.de>
+Subject: Re: [PATCH v4 4/4] ARM: dts: Add exynos5250-spring device tree
+Date: Fri, 1 Aug 2014 22:15:45 -0700
+Message-ID: <CAD=FV=XVM4FUMxjindZGXku5DZ1MkTWq=Smmt_Fs7=_i4MBFKw@mail.gmail.com>
+References: <1406822910-6255-1-git-send-email-afaerber@suse.de>
+	<1406822910-6255-5-git-send-email-afaerber@suse.de>
+	<53DA936E.9060004@gmail.com>
+	<53DA9709.10602@suse.de>
+	<53DA9BA9.60808@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f169.google.com ([209.85.220.169]:64271 "EHLO
-	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751421AbaHBFBp convert rfc822-to-8bit (ORCPT
+Received: from mail-vc0-f172.google.com ([209.85.220.172]:36512 "EHLO
+	mail-vc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750819AbaHBFPq convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 2 Aug 2014 01:01:45 -0400
-Received: by mail-vc0-f169.google.com with SMTP id le20so8090980vcb.28
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Aug 2014 22:01:45 -0700 (PDT)
-In-Reply-To: <53DC024A.3020106@suse.de>
+	Sat, 2 Aug 2014 01:15:46 -0400
+Received: by mail-vc0-f172.google.com with SMTP id im17so8084358vcb.31
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Aug 2014 22:15:45 -0700 (PDT)
+In-Reply-To: <53DA9BA9.60808@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>
 
-Andreas,
+Tomasz,
 
-On Fri, Aug 1, 2014 at 2:10 PM, Andreas F=C3=A4rber <afaerber@suse.de> =
-wrote:
-> Hi Doug,
+On Thu, Jul 31, 2014 at 12:40 PM, Tomasz Figa <tomasz.figa@gmail.com> w=
+rote:
+> Andreas,
 >
-> Am 01.08.2014 22:28, schrieb Doug Anderson:
->> On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber <afaerber@suse.=
-de> wrote:
->>> exynos5250-cros-common.dtsi had an empty /chosen node.
->>> Fill in exemplary boot arguments.
+> On 31.07.2014 21:20, Andreas F=C3=A4rber wrote:
+>> Am 31.07.2014 21:05, schrieb Tomasz Figa:
+>>> On 31.07.2014 18:08, Andreas F=C3=A4rber wrote:
+>>>> Adds initial support for the HP Chromebook 11.
 >>>
->>> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
->>> ---
->>>  v5: New
->>>  Cleanup for /chosen node moved into -snow.dts.
+>>> [snip]
 >>>
->>>  arch/arm/boot/dts/exynos5250-snow.dts | 1 +
->>>  1 file changed, 1 insertion(+)
+>>>> +   gpio-keys {
+>>>> +           compatible =3D "gpio-keys";
+>>>> +           pinctrl-names =3D "default";
+>>>> +           pinctrl-0 =3D <&power_key_irq>, <&lid_irq>;
+>>>> +
+>>>> +           power {
+>>>> +                   label =3D "Power";
+>>>> +                   gpios =3D <&gpx1 3 GPIO_ACTIVE_LOW>;
+>>>> +                   linux,code =3D <KEY_POWER>;
 >>>
->>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/=
-dts/exynos5250-snow.dts
->>> index 7680d5e03fb3..c4b0c73c736d 100644
->>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
->>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
->>> @@ -27,6 +27,7 @@
->>>         };
->>>
->>>         chosen {
->>> +               bootargs =3D "console=3Dtty1";
+>>> I assume the key is debounced in hardware, so there is no need for
+>>> debounce-interval here. Is this correct?
 >>
->> As mentioned earlier, I don't think this is a particularly useful
->> change.  Just this boot argument is not enough to boot with anyway, =
-so
->> listing it doesn't really help anyone.  In theory you could make som=
-e
->> assertion about what the "most popular" boot device and filesystem i=
-s,
->> but it seems unlikely to cover the majority of the cases.
+>> You're asking the wrong person... This is copied from
+>> -cros-common/-snow. Downstream 3.8 does not have a debounce-interval
+>> property.
+>
+> Doug, Vincent?
+
+Not something I've looked at, but it's never been a problem...
+
+
+>>>> +&sd1_clk {
+>>>> +   samsung,pin-drv =3D <0>;
+>>>> +};
+>>>> +
+>>>> +&sd1_cmd {
+>>>> +   samsung,pin-pud =3D <3>;
+>>>> +   samsung,pin-drv =3D <0>;
+>>>> +};
+>>>> +
+>>>> +&sd1_cd {
+>>>> +   samsung,pin-drv =3D <0>;
+>>>> +};
+>>>> +
+>>>> +&sd1_bus4 {
+>>>> +   samsung,pin-drv =3D <0>;
+>>>> +};
+>>>
+>>> Here generic settings are being overridden, so it might be a good i=
+dea
+>>> to explain why, like with i2c pull-up above.
 >>
->> I won't NAK this change myself, but I certainly won't push for it.
+>> Snow does not have an explanation either, so please suggest what com=
+ment
+>> you'd like to see. Consider me just a user with no specs. :)
 >
-> This patch should be entirely optional.
->
-> I believe you said it wasn't necessary because the bootloader supplie=
-s
-> it. My point is that someone needs to know what to put into the boota=
-rgs
-> (setenv / boot.scr / uEnv.txt) - knowing whether it's ttySAC3 vs.
-> ttySAC2 vs. ttyS0 etc. has been pretty handy for me. In this case, Sn=
-ow
-> and Spring use an identical console, so not sure if it might be tty2 =
-or
-> something elsewhere?
+> Doug, Vincent, someone else?
 
-=2E..but in your case you're not including any of that info.  tty1 is a
-LCD console, isn't it?
+The comment is just in a different place--it's in the dw_mmc node.
+Probably belongs here, though:
 
+                /*
+                 * Wifi is a SiP, so can keep drive strengths low
+                 * to reduce EMI.
+                 */
 
-> My question of what to use for linux,stdout-path (which was elsewhere
-> mentioned as successor to bootargs in that regard) remained unanswere=
-d.
-> Should it point to the dp-controller node or what?
-
-No idea since I've never heard of linux,stdout-path other than your
-emails.  Maybe someone else can chime in and I'll learn something.  ;)
-
--Doug
+I guess the cmd line isn't documented.  There is no external pull on
+the command line and on most boards there is one.  Our hardware guys
+thought we didn't need it and apparently we don't...
