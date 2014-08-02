@@ -1,65 +1,54 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v6 03/10] ARM: dts: Prepare node labels for exynos5250
-Date: Sat, 02 Aug 2014 14:19:23 +0200
-Message-ID: <53DCD74B.8090400@gmail.com>
-References: <1406940750-15880-1-git-send-email-afaerber@suse.de> <1406940750-15880-4-git-send-email-afaerber@suse.de>
+Subject: Re: [PATCH v6 04/10] ARM: dts: Clean up exynos5250-snow
+Date: Sat, 02 Aug 2014 14:21:43 +0200
+Message-ID: <53DCD7D7.2070208@gmail.com>
+References: <1406940750-15880-1-git-send-email-afaerber@suse.de> <1406940750-15880-5-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1406940750-15880-4-git-send-email-afaerber@suse.de>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f175.google.com ([74.125.82.175]:59918 "EHLO
+	mail-we0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750971AbaHBMVt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 2 Aug 2014 08:21:49 -0400
+In-Reply-To: <1406940750-15880-5-git-send-email-afaerber@suse.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org
 Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Vincent Palatin <vpalatin@chromium.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, open list <linux-kernel@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kumar Gala <galak@codeaurora.org>, Stephan van Schaik <stephan@synkhronix.com>, Doug Anderson <dianders@chromium.org>, Rob Herring <robh+dt@kernel.org>, Ben Dooks <ben-linux@fluff.org>, Russell King <linux@arm.linux.org.uk>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
-Andreas,
-
-Ehh, one more thing. It looks like my memory is playing tricks on me.
-Please see inline.
 
 On 02.08.2014 02:52, Andreas F=C3=A4rber wrote:
-> Allows them to be extended by reference.
+> Use the new style of referencing inherited nodes and use symbolic nam=
+es.
+> Reorder one pinctrl node in GPIO order.
 >=20
+> Goal is the alignment of all exynos5250 based device trees for compar=
+ison.
+>=20
+> Suggested-by: Doug Anderson <dianders@chromium.org>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
 > Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
 > ---
->  v6: Split off from Snow/SMDK cleanups (Doug Anderson)
-
-[snip]
-
-> -	serial@12C00000 {
-> +	uart0: serial@12C00000 {
->  		clocks =3D <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
->  		clock-names =3D "uart", "clk_uart_baud0";
->  	};
+>  v5 -> v6:
+>  * Split off label additions (Doug Anderson)
+>  * Fixed alphabetical order of sd3_* nodes (Doug Anderson)
 > =20
-> -	serial@12C10000 {
-> +	uart1: serial@12C10000 {
->  		clocks =3D <&clock CLK_UART1>, <&clock CLK_SCLK_UART1>;
->  		clock-names =3D "uart", "clk_uart_baud0";
->  	};
+>  v4 -> v5:
+>  * Introduced labels to consistently use new referencing style (Tomas=
+z Figa)
+>  * Use IRQ_TYPE_* constants
+>  * Use some more GPIO_ACTIVE_*
+>=20
+>  v3 -> v4: Unchanged
 > =20
-> -	serial@12C20000 {
-> +	uart2: serial@12C20000 {
->  		clocks =3D <&clock CLK_UART2>, <&clock CLK_SCLK_UART2>;
->  		clock-names =3D "uart", "clk_uart_baud0";
->  	};
-> =20
-> -	serial@12C30000 {
-> +	uart3: serial@12C30000 {
->  		clocks =3D <&clock CLK_UART3>, <&clock CLK_SCLK_UART3>;
->  		clock-names =3D "uart", "clk_uart_baud0";
->  	};
+>  v3: New (Doug Anderson)
+>=20
+>  arch/arm/boot/dts/exynos5250-snow.dts | 291 +++++++++++++++++-------=
+----------
+>  1 file changed, 145 insertions(+), 146 deletions(-)
 
-I forgot about a series [1] that went through tty tree, which is going
-to conflict with this patch. It already adds labels to uart nodes in
-serial_X format. I don't really remember why I went with this format fo=
-r
-Exynos SoCs and with uartX for older ones...
-
-[1]
-https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit=
-/arch/arm/boot/dts?id=3D1e64f48ea7c59fb94acd7551dd9fa68b8a752efc
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
 Tomasz
