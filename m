@@ -1,89 +1,458 @@
 From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [PATCH v6 00/10] ARM: dts: exynos: Prepare Spring
-Date: Sat,  2 Aug 2014 02:52:20 +0200
-Message-ID: <1406940750-15880-1-git-send-email-afaerber@suse.de>
+Subject: [PATCH v6 02/10] ARM: dts: Fold exynos5250-cros-common into exynos5250-snow
+Date: Sat,  2 Aug 2014 02:52:22 +0200
+Message-ID: <1406940750-15880-3-git-send-email-afaerber@suse.de>
+References: <1406940750-15880-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:33564 "EHLO mx2.suse.de"
+Received: from cantor2.suse.de ([195.135.220.15]:33588 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753571AbaHBAxF (ORCPT
+	id S1753921AbaHBAxL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Aug 2014 20:53:05 -0400
+	Fri, 1 Aug 2014 20:53:11 -0400
+In-Reply-To: <1406940750-15880-1-git-send-email-afaerber@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
 
-Hello,
+exynos5250-cros-common.dtsi was meant for sharing common pieces across
+ChromeOS devices. This turned out premature, as several devices ended u=
+p
+in the common file that are not common after all. Since the remaining
+common ChromeOS pieces are fairly minor,  exynos5250-cros-common.dtsi
+was requested to be merged into the Snow device tree, sharing only the
+keyboard controller for now. This may be re-evaluated as both mature.
 
-Based on the preinstalled 3.8 based ChromeOS kernel and previous 3.15=20
-based attempts by Stephan and me that broke for 3.16, I've prepared a=20
-device tree for the HP Chromebook 11 aka Google Spring.
+Suggested-by: Doug Anderson <dianders@chromium.org>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Reviewed-by: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+---
+ v5 -> v6: Unchanged
 
-v6 renames a node and reverts dp_hpd.
+ v4 -> v5:
+ * Extended commit message (Tomasz Figa)
 
-Not yet enabled are trackpad, Wifi and sound.
+ v3 -> v4: Unchanged
+=20
+ v2 -> v3:
+ * Renamed subject to match Kukjin's style
+ * Rebased onto MMC pinctrl bug fix (Doug Anderson)
+=20
+ v2: New (Doug Anderson)
 
-My rebasing branch for testing is here:
-https://github.com/afaerber/linux/commits/spring-next
-
-Regards,
-Andreas
-
-v1 -> v2:
-* Dropped 3 documentation patches from series:
-  2 picked up,
-  https://patchwork.kernel.org/patch/4397271/
-  https://patchwork.kernel.org/patch/4397291/
-  1 already sent separately as v2, pending.
-  https://patchwork.kernel.org/patch/4424881/
-* Minimized and beautified Spring device tree and to some degree Snow a=
-s well.
-  See individual patches.
-
-v2 -> v3:
-* Rebased: Two -cros-common cleanup patches were already applied
-* Lots of small cleanups for both Snow and Spring
-* Enabled I2S in Spring for symmetry
-* Added lid-switch and gpio-keys pinctrls to Spring
-
-v3 -> v4:
-* Fixed pin-function 1 -> 0 for dp-hpd pinctrl, style cleanup
-
-v4 -> v5:
-* Dropped regulator and fixed USB3503 for Spring
-* More cleanups, including SMDK5250 and Arndale
-
-v5 -> v6:
-* Renamed mfc node label for alignment with iommu patches around
-* Reverted dp-hpd to v4
-
-
-Andreas F=C3=A4rber (10):
-  ARM: dts: Fix MMC pinctrl for exynos5250-snow
-  ARM: dts: Fold exynos5250-cros-common into exynos5250-snow
-  ARM: dts: Prepare node labels for exynos5250
-  ARM: dts: Clean up exynos5250-snow
-  ARM: dts: Fill in bootargs for exynos5250-snow
-  ARM: dts: Clean up exynos5250-smdk5250
-  ARM: dts: Clean up exynos5250-arndale
-  ARM: dts: Fix apparent GPIO typo in exynos5250-arndale
-  ARM: dts: Simplify USB3503 on exynos5250-arndale
-  ARM: dts: Add exynos5250-spring device tree
-
- arch/arm/boot/dts/Makefile                    |   1 +
- arch/arm/boot/dts/exynos5250-arndale.dts      | 927 +++++++++++++-----=
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi | 164 ------------------=
 --------
- arch/arm/boot/dts/exynos5250-cros-common.dtsi | 164 -----
- arch/arm/boot/dts/exynos5250-smdk5250.dts     | 632 +++++++++---------
- arch/arm/boot/dts/exynos5250-snow.dts         | 434 +++++++-----
- arch/arm/boot/dts/exynos5250-spring.dts       | 536 +++++++++++++++
- arch/arm/boot/dts/exynos5250.dtsi             |  24 +-
- 7 files changed, 1608 insertions(+), 1110 deletions(-)
+ arch/arm/boot/dts/exynos5250-snow.dts         | 164 ++++++++++++++++++=
++++++---
+ 2 files changed, 145 insertions(+), 183 deletions(-)
  delete mode 100644 arch/arm/boot/dts/exynos5250-cros-common.dtsi
- create mode 100644 arch/arm/boot/dts/exynos5250-spring.dts
 
+diff --git a/arch/arm/boot/dts/exynos5250-cros-common.dtsi b/arch/arm/b=
+oot/dts/exynos5250-cros-common.dtsi
+deleted file mode 100644
+index e603e9c70142..000000000000
+--- a/arch/arm/boot/dts/exynos5250-cros-common.dtsi
++++ /dev/null
+@@ -1,164 +0,0 @@
+-/*
+- * Common device tree include for all Exynos 5250 boards based off of =
+Daisy.
+- *
+- * Copyright (c) 2012 Google, Inc
+- *
+- * This program is free software; you can redistribute it and/or modif=
+y
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-/ {
+-	aliases {
+-	};
+-
+-	memory {
+-		reg =3D <0x40000000 0x80000000>;
+-	};
+-
+-	chosen {
+-	};
+-
+-	pinctrl@11400000 {
+-		/*
+-		 * Disabled pullups since external part has its own pullups and
+-		 * double-pulling gets us out of spec in some cases.
+-		 */
+-		i2c2_bus: i2c2-bus {
+-			samsung,pin-pud =3D <0>;
+-		};
+-	};
+-
+-	i2c@12C60000 {
+-		status =3D "okay";
+-		samsung,i2c-sda-delay =3D <100>;
+-		samsung,i2c-max-bus-freq =3D <378000>;
+-	};
+-
+-	i2c@12C70000 {
+-		status =3D "okay";
+-		samsung,i2c-sda-delay =3D <100>;
+-		samsung,i2c-max-bus-freq =3D <378000>;
+-	};
+-
+-	i2c@12C80000 {
+-		status =3D "okay";
+-		samsung,i2c-sda-delay =3D <100>;
+-		samsung,i2c-max-bus-freq =3D <66000>;
+-
+-		hdmiddc@50 {
+-			compatible =3D "samsung,exynos4210-hdmiddc";
+-			reg =3D <0x50>;
+-		};
+-	};
+-
+-	i2c@12C90000 {
+-		status =3D "okay";
+-		samsung,i2c-sda-delay =3D <100>;
+-		samsung,i2c-max-bus-freq =3D <66000>;
+-	};
+-
+-	i2c@12CA0000 {
+-		status =3D "okay";
+-		samsung,i2c-sda-delay =3D <100>;
+-		samsung,i2c-max-bus-freq =3D <66000>;
+-	};
+-
+-	i2c@12CB0000 {
+-		status =3D "okay";
+-		samsung,i2c-sda-delay =3D <100>;
+-		samsung,i2c-max-bus-freq =3D <66000>;
+-	};
+-
+-	i2c@12CD0000 {
+-		status =3D "okay";
+-		samsung,i2c-sda-delay =3D <100>;
+-		samsung,i2c-max-bus-freq =3D <66000>;
+-	};
+-
+-	i2c@12CE0000 {
+-		status =3D "okay";
+-		samsung,i2c-sda-delay =3D <100>;
+-		samsung,i2c-max-bus-freq =3D <378000>;
+-
+-		hdmiphy: hdmiphy@38 {
+-			compatible =3D "samsung,exynos4212-hdmiphy";
+-			reg =3D <0x38>;
+-		};
+-	};
+-
+-	mmc@12200000 {
+-		num-slots =3D <1>;
+-		supports-highspeed;
+-		broken-cd;
+-		card-detect-delay =3D <200>;
+-		samsung,dw-mshc-ciu-div =3D <3>;
+-		samsung,dw-mshc-sdr-timing =3D <2 3>;
+-		samsung,dw-mshc-ddr-timing =3D <1 2>;
+-		pinctrl-names =3D "default";
+-		pinctrl-0 =3D <&sd0_clk &sd0_cmd &sd0_cd &sd0_bus4 &sd0_bus8>;
+-
+-		slot@0 {
+-			reg =3D <0>;
+-			bus-width =3D <8>;
+-		};
+-	};
+-
+-	mmc@12220000 {
+-		num-slots =3D <1>;
+-		supports-highspeed;
+-		card-detect-delay =3D <200>;
+-		samsung,dw-mshc-ciu-div =3D <3>;
+-		samsung,dw-mshc-sdr-timing =3D <2 3>;
+-		samsung,dw-mshc-ddr-timing =3D <1 2>;
+-		pinctrl-names =3D "default";
+-		pinctrl-0 =3D <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+-
+-		slot@0 {
+-			reg =3D <0>;
+-			bus-width =3D <4>;
+-			wp-gpios =3D <&gpc2 1 0>;
+-		};
+-	};
+-
+-	mmc@12230000 {
+-		num-slots =3D <1>;
+-		supports-highspeed;
+-		broken-cd;
+-		card-detect-delay =3D <200>;
+-		samsung,dw-mshc-ciu-div =3D <3>;
+-		samsung,dw-mshc-sdr-timing =3D <2 3>;
+-		samsung,dw-mshc-ddr-timing =3D <1 2>;
+-		/* See board-specific dts files for pin setup */
+-
+-		slot@0 {
+-			reg =3D <0>;
+-			bus-width =3D <4>;
+-		};
+-	};
+-
+-	spi_1: spi@12d30000 {
+-		status =3D "okay";
+-		samsung,spi-src-clk =3D <0>;
+-		num-cs =3D <1>;
+-	};
+-
+-	hdmi {
+-		hpd-gpio =3D <&gpx3 7 0>;
+-		pinctrl-names =3D "default";
+-		pinctrl-0 =3D <&hdmi_hpd_irq>;
+-		phy =3D <&hdmiphy>;
+-		ddc =3D <&i2c_2>;
+-	};
+-
+-	gpio-keys {
+-		compatible =3D "gpio-keys";
+-
+-		power {
+-			label =3D "Power";
+-			gpios =3D <&gpx1 3 1>;
+-			linux,code =3D <116>; /* KEY_POWER */
+-			gpio-key,wakeup;
+-		};
+-	};
+-};
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/=
+exynos5250-snow.dts
+index eb437f6afec1..1c36cd72905f 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -10,7 +10,6 @@
+=20
+ /dts-v1/;
+ #include "exynos5250.dtsi"
+-#include "exynos5250-cros-common.dtsi"
+=20
+ / {
+ 	model =3D "Google Snow";
+@@ -20,6 +19,13 @@
+ 		i2c104 =3D &i2c_104;
+ 	};
+=20
++	memory {
++		reg =3D <0x40000000 0x80000000>;
++	};
++
++	chosen {
++	};
++
+ 	rtc@101E0000 {
+ 		status =3D "okay";
+ 	};
+@@ -93,6 +99,13 @@
+ 	gpio-keys {
+ 		compatible =3D "gpio-keys";
+=20
++		power {
++			label =3D "Power";
++			gpios =3D <&gpx1 3 1>;
++			linux,code =3D <116>; /* KEY_POWER */
++			gpio-key,wakeup;
++		};
++
+ 		lid-switch {
+ 			label =3D "Lid";
+ 			gpios =3D <&gpx3 5 1>;
+@@ -226,24 +239,6 @@
+ 		};
+ 	};
+=20
+-	mmc@12200000 {
+-		status =3D "okay";
+-	};
+-
+-	mmc@12220000 {
+-		status =3D "okay";
+-	};
+-
+-	/*
+-	 * On Snow we've got SIP WiFi and so can keep drive strengths low to
+-	 * reduce EMI.
+-	 */
+-	mmc@12230000 {
+-		status =3D "okay";
+-		pinctrl-names =3D "default";
+-		pinctrl-0 =3D <&sd3_clk &sd3_cmd &sd3_bus4>;
+-	};
+-
+ 	i2c@12CD0000 {
+ 		max98095: codec@11 {
+ 			compatible =3D "maxim,max98095";
+@@ -292,6 +287,11 @@
+ 	};
+=20
+ 	hdmi {
++		hpd-gpio =3D <&gpx3 7 0>;
++		pinctrl-names =3D "default";
++		pinctrl-0 =3D <&hdmi_hpd_irq>;
++		phy =3D <&hdmiphy>;
++		ddc =3D <&i2c_2>;
+ 		hdmi-en-supply =3D <&tps65090_fet7>;
+ 		vdd-supply =3D <&ldo8_reg>;
+ 		vdd_osc-supply =3D <&ldo10_reg>;
+@@ -343,6 +343,10 @@
+ };
+=20
+ &i2c_0 {
++	status =3D "okay";
++	samsung,i2c-sda-delay =3D <100>;
++	samsung,i2c-max-bus-freq =3D <378000>;
++
+ 	max77686@09 {
+ 		compatible =3D "maxim,max77686";
+ 		interrupt-parent =3D <&gpx3>;
+@@ -489,6 +493,10 @@
+ };
+=20
+ &i2c_1 {
++	status =3D "okay";
++	samsung,i2c-sda-delay =3D <100>;
++	samsung,i2c-max-bus-freq =3D <378000>;
++
+ 	trackpad {
+ 		reg =3D <0x67>;
+ 		compatible =3D "cypress,cyapa";
+@@ -498,6 +506,118 @@
+ 	};
+ };
+=20
++/*
++ * Disabled pullups since external part has its own pullups and
++ * double-pulling gets us out of spec in some cases.
++ */
++&i2c2_bus {
++	samsung,pin-pud =3D <0>;
++};
++
++&i2c_2 {
++	status =3D "okay";
++	samsung,i2c-sda-delay =3D <100>;
++	samsung,i2c-max-bus-freq =3D <66000>;
++
++	hdmiddc@50 {
++		compatible =3D "samsung,exynos4210-hdmiddc";
++		reg =3D <0x50>;
++	};
++};
++
++&i2c_3 {
++	status =3D "okay";
++	samsung,i2c-sda-delay =3D <100>;
++	samsung,i2c-max-bus-freq =3D <66000>;
++};
++
++&i2c_4 {
++	status =3D "okay";
++	samsung,i2c-sda-delay =3D <100>;
++	samsung,i2c-max-bus-freq =3D <66000>;
++};
++
++&i2c_5 {
++	status =3D "okay";
++	samsung,i2c-sda-delay =3D <100>;
++	samsung,i2c-max-bus-freq =3D <66000>;
++};
++
++&i2c_7 {
++	status =3D "okay";
++	samsung,i2c-sda-delay =3D <100>;
++	samsung,i2c-max-bus-freq =3D <66000>;
++};
++
++&i2c_8 {
++	status =3D "okay";
++	samsung,i2c-sda-delay =3D <100>;
++	samsung,i2c-max-bus-freq =3D <378000>;
++
++	hdmiphy: hdmiphy@38 {
++		compatible =3D "samsung,exynos4212-hdmiphy";
++		reg =3D <0x38>;
++	};
++};
++
++&mmc_0 {
++	status =3D "okay";
++	num-slots =3D <1>;
++	supports-highspeed;
++	broken-cd;
++	card-detect-delay =3D <200>;
++	samsung,dw-mshc-ciu-div =3D <3>;
++	samsung,dw-mshc-sdr-timing =3D <2 3>;
++	samsung,dw-mshc-ddr-timing =3D <1 2>;
++	pinctrl-names =3D "default";
++	pinctrl-0 =3D <&sd0_clk &sd0_cmd &sd0_cd &sd0_bus4 &sd0_bus8>;
++
++	slot@0 {
++		reg =3D <0>;
++		bus-width =3D <8>;
++	};
++};
++
++&mmc_2 {
++	status =3D "okay";
++	num-slots =3D <1>;
++	supports-highspeed;
++	card-detect-delay =3D <200>;
++	samsung,dw-mshc-ciu-div =3D <3>;
++	samsung,dw-mshc-sdr-timing =3D <2 3>;
++	samsung,dw-mshc-ddr-timing =3D <1 2>;
++	pinctrl-names =3D "default";
++	pinctrl-0 =3D <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++
++	slot@0 {
++		reg =3D <0>;
++		bus-width =3D <4>;
++		wp-gpios =3D <&gpc2 1 0>;
++	};
++};
++
++/*
++ * On Snow we've got SIP WiFi and so can keep drive strengths low to
++ * reduce EMI.
++ */
++&mmc_3 {
++	status =3D "okay";
++	num-slots =3D <1>;
++	supports-highspeed;
++	broken-cd;
++	card-detect-delay =3D <200>;
++	samsung,dw-mshc-ciu-div =3D <3>;
++	samsung,dw-mshc-sdr-timing =3D <2 3>;
++	samsung,dw-mshc-ddr-timing =3D <1 2>;
++	pinctrl-names =3D "default";
++	pinctrl-0 =3D <&sd3_clk &sd3_cmd &sd3_bus4>;
++
++	slot@0 {
++		reg =3D <0>;
++		bus-width =3D <4>;
++	};
++};
++
+ &pinctrl_0 {
+ 	max77686_irq: max77686-irq {
+ 		samsung,pins =3D "gpx3-2";
+@@ -507,4 +627,10 @@
+ 	};
+ };
+=20
++&spi_1 {
++	status =3D "okay";
++	samsung,spi-src-clk =3D <0>;
++	num-cs =3D <1>;
++};
++
+ #include "cros-ec-keyboard.dtsi"
 --=20
 1.9.3
