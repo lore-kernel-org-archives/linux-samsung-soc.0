@@ -1,68 +1,93 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v6 00/10] ARM: dts: exynos: Prepare Spring
-Date: Fri, 1 Aug 2014 21:57:42 -0700
-Message-ID: <CAD=FV=V_vXZLMaTMFdgr62=zRXucZA6D3PvS0Mb40he0ShHTfA@mail.gmail.com>
-References: <1406940750-15880-1-git-send-email-afaerber@suse.de>
-	<53DC4E41.4050200@collabora.co.uk>
+Subject: Re: [PATCH v5 04/10] ARM: dts: Fill in bootargs for exynos5250-snow
+Date: Fri, 1 Aug 2014 22:01:44 -0700
+Message-ID: <CAD=FV=XyvVNJ8vLYUE+Tx8dYUzqLH_sXXYcA_ZEFDfH_Un2u4g@mail.gmail.com>
+References: <1406868897-26874-1-git-send-email-afaerber@suse.de>
+	<1406868897-26874-5-git-send-email-afaerber@suse.de>
+	<CAD=FV=V4hQeGvE9+O2EY8KGvDj3SJKfOZGes4gKpHfg=xz1h4A@mail.gmail.com>
+	<53DC024A.3020106@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f173.google.com ([209.85.220.173]:62293 "EHLO
-	mail-vc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750734AbaHBE5n convert rfc822-to-8bit (ORCPT
+Received: from mail-vc0-f169.google.com ([209.85.220.169]:64271 "EHLO
+	mail-vc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751421AbaHBFBp convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 2 Aug 2014 00:57:43 -0400
-Received: by mail-vc0-f173.google.com with SMTP id hy10so8119876vcb.18
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Aug 2014 21:57:42 -0700 (PDT)
-In-Reply-To: <53DC4E41.4050200@collabora.co.uk>
+	Sat, 2 Aug 2014 01:01:45 -0400
+Received: by mail-vc0-f169.google.com with SMTP id le20so8090980vcb.28
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Aug 2014 22:01:45 -0700 (PDT)
+In-Reply-To: <53DC024A.3020106@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Tomasz Figa <t.figa@samsung.com>
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
 
-Hi,
+Andreas,
 
-On Fri, Aug 1, 2014 at 7:34 PM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> Hello Andreas
+On Fri, Aug 1, 2014 at 2:10 PM, Andreas F=C3=A4rber <afaerber@suse.de> =
+wrote:
+> Hi Doug,
 >
-> On 08/02/2014 02:52 AM, Andreas F=C3=A4rber wrote:
+> Am 01.08.2014 22:28, schrieb Doug Anderson:
+>> On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber <afaerber@suse.=
+de> wrote:
+>>> exynos5250-cros-common.dtsi had an empty /chosen node.
+>>> Fill in exemplary boot arguments.
+>>>
+>>> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+>>> ---
+>>>  v5: New
+>>>  Cleanup for /chosen node moved into -snow.dts.
+>>>
+>>>  arch/arm/boot/dts/exynos5250-snow.dts | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/=
+dts/exynos5250-snow.dts
+>>> index 7680d5e03fb3..c4b0c73c736d 100644
+>>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+>>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+>>> @@ -27,6 +27,7 @@
+>>>         };
+>>>
+>>>         chosen {
+>>> +               bootargs =3D "console=3Dtty1";
 >>
->> Based on the preinstalled 3.8 based ChromeOS kernel and previous 3.1=
-5
->> based attempts by Stephan and me that broke for 3.16, I've prepared =
-a
->> device tree for the HP Chromebook 11 aka Google Spring.
+>> As mentioned earlier, I don't think this is a particularly useful
+>> change.  Just this boot argument is not enough to boot with anyway, =
+so
+>> listing it doesn't really help anyone.  In theory you could make som=
+e
+>> assertion about what the "most popular" boot device and filesystem i=
+s,
+>> but it seems unlikely to cover the majority of the cases.
 >>
->> v6 renames a node and reverts dp_hpd.
->>
->> Not yet enabled are trackpad, Wifi and sound.
->>
->> My rebasing branch for testing is here:
->> https://github.com/afaerber/linux/commits/spring-next
->>
->> Regards,
->> Andreas
->>
+>> I won't NAK this change myself, but I certainly won't push for it.
 >
-> I made a comment on patch 05/10 but the rest of the series looks good=
- to me. So
-> for the remaining patches:
+> This patch should be entirely optional.
 >
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.u=
-k>
->
-> NOTE: I thought that Tomasz Figa gave you his Reviewed-by on v5 for t=
-he whole
-> series as well but I didn't see his tag on the v6 patches.
+> I believe you said it wasn't necessary because the bootloader supplie=
+s
+> it. My point is that someone needs to know what to put into the boota=
+rgs
+> (setenv / boot.scr / uEnv.txt) - knowing whether it's ttySAC3 vs.
+> ttySAC2 vs. ttyS0 etc. has been pretty handy for me. In this case, Sn=
+ow
+> and Spring use an identical console, so not sure if it might be tty2 =
+or
+> something elsewhere?
 
-Yes, I thought that too.  I assume he's OK with the small changes you
-made between v5 and v6.  In the very least his Reviewed-by could be
-present on the patches that didn't change between the last two revs.
+=2E..but in your case you're not including any of that info.  tty1 is a
+LCD console, isn't it?
 
-Given Javier's review and Tomasz's review and Vincent's comments, I'll
-probably skip all the work of reviewing the rest of the series unless
-someone really wants me to.  ;)
+
+> My question of what to use for linux,stdout-path (which was elsewhere
+> mentioned as successor to bootargs in that regard) remained unanswere=
+d.
+> Should it point to the dp-controller node or what?
+
+No idea since I've never heard of linux,stdout-path other than your
+emails.  Maybe someone else can chime in and I'll learn something.  ;)
 
 -Doug
