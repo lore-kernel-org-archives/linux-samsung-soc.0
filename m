@@ -1,59 +1,68 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v6 04/10] ARM: dts: Clean up exynos5250-snow
-Date: Fri, 1 Aug 2014 21:54:46 -0700
-Message-ID: <CAD=FV=WB_JP_jAp5bC-cBtJs8U0AmrxPGj_J2d6uJkn=LEjEPA@mail.gmail.com>
+Subject: Re: [PATCH v6 00/10] ARM: dts: exynos: Prepare Spring
+Date: Fri, 1 Aug 2014 21:57:42 -0700
+Message-ID: <CAD=FV=V_vXZLMaTMFdgr62=zRXucZA6D3PvS0Mb40he0ShHTfA@mail.gmail.com>
 References: <1406940750-15880-1-git-send-email-afaerber@suse.de>
-	<1406940750-15880-5-git-send-email-afaerber@suse.de>
+	<53DC4E41.4050200@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f179.google.com ([209.85.220.179]:45774 "EHLO
-	mail-vc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750850AbaHBEyr convert rfc822-to-8bit (ORCPT
+Received: from mail-vc0-f173.google.com ([209.85.220.173]:62293 "EHLO
+	mail-vc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750734AbaHBE5n convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 2 Aug 2014 00:54:47 -0400
-Received: by mail-vc0-f179.google.com with SMTP id hq11so8003837vcb.24
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Aug 2014 21:54:46 -0700 (PDT)
-In-Reply-To: <1406940750-15880-5-git-send-email-afaerber@suse.de>
+	Sat, 2 Aug 2014 00:57:43 -0400
+Received: by mail-vc0-f173.google.com with SMTP id hy10so8119876vcb.18
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Aug 2014 21:57:42 -0700 (PDT)
+In-Reply-To: <53DC4E41.4050200@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Tomasz Figa <t.figa@samsung.com>
 
-Andreas,
+Hi,
 
-On Fri, Aug 1, 2014 at 5:52 PM, Andreas F=C3=A4rber <afaerber@suse.de> =
-wrote:
-> Use the new style of referencing inherited nodes and use symbolic nam=
-es.
-> Reorder one pinctrl node in GPIO order.
+On Fri, Aug 1, 2014 at 7:34 PM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> Hello Andreas
 >
-> Goal is the alignment of all exynos5250 based device trees for compar=
-ison.
+> On 08/02/2014 02:52 AM, Andreas F=C3=A4rber wrote:
+>>
+>> Based on the preinstalled 3.8 based ChromeOS kernel and previous 3.1=
+5
+>> based attempts by Stephan and me that broke for 3.16, I've prepared =
+a
+>> device tree for the HP Chromebook 11 aka Google Spring.
+>>
+>> v6 renames a node and reverts dp_hpd.
+>>
+>> Not yet enabled are trackpad, Wifi and sound.
+>>
+>> My rebasing branch for testing is here:
+>> https://github.com/afaerber/linux/commits/spring-next
+>>
+>> Regards,
+>> Andreas
+>>
 >
-> Suggested-by: Doug Anderson <dianders@chromium.org>
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> ---
->  v5 -> v6:
->  * Split off label additions (Doug Anderson)
->  * Fixed alphabetical order of sd3_* nodes (Doug Anderson)
+> I made a comment on patch 05/10 but the rest of the series looks good=
+ to me. So
+> for the remaining patches:
 >
->  v4 -> v5:
->  * Introduced labels to consistently use new referencing style (Tomas=
-z Figa)
->  * Use IRQ_TYPE_* constants
->  * Use some more GPIO_ACTIVE_*
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.u=
+k>
 >
->  v3 -> v4: Unchanged
->
->  v3: New (Doug Anderson)
->
->  arch/arm/boot/dts/exynos5250-snow.dts | 291 +++++++++++++++++-------=
-----------
->  1 file changed, 145 insertions(+), 146 deletions(-)
+> NOTE: I thought that Tomasz Figa gave you his Reviewed-by on v5 for t=
+he whole
+> series as well but I didn't see his tag on the v6 patches.
 
-I'm happy now.  :)  Thank you for putting up with me...
+Yes, I thought that too.  I assume he's OK with the small changes you
+made between v5 and v6.  In the very least his Reviewed-by could be
+present on the patches that didn't change between the last two revs.
 
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+Given Javier's review and Tomasz's review and Vincent's comments, I'll
+probably skip all the work of reviewing the rest of the series unless
+someone really wants me to.  ;)
+
+-Doug
