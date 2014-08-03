@@ -1,111 +1,196 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [FIX][RESEND PATCH v3] ARM: EXYNOS: Fix suspend/resume sequences
-Date: Sat, 2 Aug 2014 20:31:48 -0700
-Message-ID: <20140803033148.GA18838@quad.lixom.net>
-References: <1406883097-14157-1-git-send-email-tomasz.figa@gmail.com>
- <1910401.THJm9YLBl0@amdc1032>
- <081101cfad93$8615d810$92418830$@samsung.com>
- <20140803032718.GB16641@quad.lixom.net>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer
+ support
+Date: Sun, 3 Aug 2014 16:03:53 +0900
+Message-ID: <CAAQKjZMaOsiThMgu+b_u7WCN+aakq7nAfomFVwQSvNrmWOgKjQ@mail.gmail.com>
+References: <1406512857-7213-1-git-send-email-inki.dae@samsung.com>
+ <1406512857-7213-2-git-send-email-inki.dae@samsung.com>
+ <53D675D6.2000309@samsung.com> <53D6F189.3060004@samsung.com>
+ <53D7760F.3060200@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f180.google.com ([209.85.192.180]:62861 "EHLO
-	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752706AbaHCDbV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 2 Aug 2014 23:31:21 -0400
-Received: by mail-pd0-f180.google.com with SMTP id y13so7623137pdi.39
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 02 Aug 2014 20:31:20 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20140803032718.GB16641@quad.lixom.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <53D7760F.3060200@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-samsung-soc@vger.kernel.org, treding@nvidia.com, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, arm@kernel.org
 
-On Sat, Aug 02, 2014 at 08:27:18PM -0700, Olof Johansson wrote:
-> On Fri, Aug 01, 2014 at 11:18:53PM +0900, Kukjin Kim wrote:
-> > Bartlomiej Zolnierkiewicz wrote:
-> > > 
-> > > Hi,
-> > > 
-> > Hi,
-> > 
-> > > On Friday, August 01, 2014 10:51:37 AM Tomasz Figa wrote:
-> > > > From: Tomasz Figa <t.figa@samsung.com>
-> > > >
-> > > > Due to recent consolidation of Exynos suspend and cpuidle code, some
-> > > > parts of suspend and resume sequences are executed two times, once from
-> > > > exynos_pm_syscore_ops and then from exynos_cpu_pm_notifier() and thus it
-> > > > breaks suspend, at least on Exynos4-based boards. In addition, simple
-> > > > core power down from a cpuidle driver could, in case of CPU 0 could
-> > > > result in calling functions that are specific to suspend and deeper idle
-> > > > states.
-> > > >
-> > > > This patch fixes the issue by moving those operations outside the CPU PM
-> > > > notifier into suspend and AFTR code paths. This leads to a bit of code
-> > > > duplication, but allows additional code simplification, so in the end
-> > > > more code is removed than added.
-> > > >
-> > > > Fixes: 85f9f90808b4 ("ARM: EXYNOS: Use the cpu_pm notifier for pm")
-> > > > Cc: Kukjin Kim <kgene.kim@samsung.com>
-> > > > Cc: Arnd Bergmann <arnd@arndb.de>
-> > > > Cc: Olof Johansson <olof@lixom.net>
-> > > > Cc: arm@kernel.org
-> > > > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > > > ---
-> > > >  arch/arm/mach-exynos/pm.c        | 164 ++++++++++++++++++---------------------
-> > > >  drivers/cpuidle/cpuidle-exynos.c |  25 +-----
-> > > >  2 files changed, 80 insertions(+), 109 deletions(-)
-> > > >
-> > > > This is resend of a regression fix sent more than two weeks ago (July, 15;
-> > > > [1]), without any response from respective maintainers. It fixes
-> > > > a significant regression breaking suspend/resume on Exynos4-based systems.
-> > > >
-> > > > I know we already have -rc7, but this patch in its first iteration was
-> > > > sent more than a month ago (June, 24; [2]) and it changed only for
-> > > > convenience of authors of further patches, to either avoid conflicts ([3])
-> > > > or reduce the need of changes to support more functionality later (as
-> > > > discussed in [4]). However it should have had priority over clean-up or
-> > > > functional patches, which was apparently not the case.
-> > > 
-> > > This is not quite right, your initial version needed to be changed also
-> > > because of potential problems (https://lkml.org/lkml/2014/7/15/206).
-> > > 
-> > Yeah...hmm...maybe it should be updated in 3.17...
-> > 
-> > > However the current version (from two weeks ago) is fine and IMO still
-> > > should be merged as a _regression_ fix for v3.16 (despite not being
-> > > a tiny patch).
-> > > 
-> > Agreed. OK.
-> > 
-> > > Also FWIW:
-> > > 
-> > > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > > 
-> > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> > 
-> > @Olof,
-> > 
-> > It's true this is a regression for v3.16 and I couldn't take this before
-> > because of some dependencies...so I'd like to ask you to take for v3.16 even
-> > though it's late and big...
-> 
-> It's really, really late in the release cycle to pick this up now. I'm also
-> travelling right now and have limited email access to handle fall-out. :(
-> 
-> I'll apply this to the fixes branch for 3.17 and mark it for stable instead.
-> 
-> Kukjin, seems like you're not testing suspend/resume yourself, since you
-> haven't known about the regression and the fix. Can you please make sure that
-> you have appropriate test coverage? Thanks!
+2014-07-29 19:23 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
+> On 07/29/2014 02:57 AM, YoungJun Cho wrote:
+>> Hi Andrzej,
+>>
+>> On 07/29/2014 01:09 AM, Andrzej Hajda wrote:
+>>> On 07/28/2014 04:00 AM, Inki Dae wrote:
+>>>> This patch adds below two flags for LPM transfer, and it attaches LPM flags
+>>>> to a msg in accordance with master's mode_flags set by LCD Panel driver.
+>>>>
+>>>> MIPI_DSI_MODE_CMD_LPM
+>>>> - If this flag is set by Panel driver, MIPI-DSI controller will tranfer
+>>>> command data to Panel device in Low Power Mode.
+>>> What do you mean by command data? It could be:
+>>> - all transfer in command mode of operations,
+>>> - transfer initialized by the driver by writing to DSIM registers.
+>> The 2nd one.
+>>
+>>>> MIPI_DSI_MODE_VIDEO_LPM
+>>>> - If this flag is set by Panel driver, MIPI-DSI controller will tranfer
+>>>> image data to Panel device in Low Power Mode.
+>>> What is the meaning of this flag in case of command mode of operation?
+>> I'm also not sure that there is a case to transfer image data in Low
+>> Power Mode, but this flag is not related with 'command mode' only.
+>> Inki may consider generic condition.
+>>
+>>> Maybe it would be better to create flags based on source of data/FIFOs:
+>>> - commands send by SFR registers,
+>>> - commands generated from data sent from Display Controller.
+>>>
+>>>
+>>>> And above two flags can be combined together to transfer command and video
+>>>> data to Panel device.
+>>>>
+>>>> MIPI DSI spec says,
+>>>>       "the host processor controls the desired mode of clock operation.
+>>>>        Host protocol and applications control Clock Lane operating mode
+>>>>        (High Speed or Low Power mode). System designers are responsible
+>>>>        for understanding the clock requirements for peripherals attached
+>>>>        to DSI and controlling clock behavior in accordance with those
+>>>>        requirements."
+>>>>
+>>>> Some LCD Panel devices, nt35502a, would need LPM transfer support
+>>>> because they should receive some initial commands with LPM by default
+>>>> hardware setting.
+>>>
+>>> Is this requirement for initial commands, or for all commands.
+>>> Btw what is the mode of operation of nt35502a? What flags do you need
+>>> for it?
+>>>
+>> The nt35502a panel is video(RGB) mode panel and it requires low power
+>> mode for initial commands, which means to initialize nt35502a panel, the
+>> initial commands are transferred by LP mode(Not HS mode).
+>> And after initialization, its other features like gamma control or etc
+>> could be controlled in HS mode.
+>
+> It sounds similar to my tc358764 bridge driver [1]. The difference is that
+> it uses only MIPI_DSI_GENERIC_LONG_(WRITE|READ) in LPM.
+>
+> As I understand nt35502a requires also different driving of
+> TxRequestHSClk signal
+> and this seems to me unrelated to LPM. As LPM is not related at all with
+> HS clock, AFAIK.
+>
 
-Actually, this has a bunch of merge conflicts with the 3.17 material that's
-queued up. ;(
++ Tomi Valkeinen
 
-Please send a tested patch that applies on top of the 3.17 branches
-without a lot of conflicts.
+At private talks before, I think we reached the following consensus,
 
+1. D-PHY could disable HS clock of MIPI-DSI controller in case that
+D-PHY detectsTransition to Stop state (LP=11) and TxRequestHSClk bit
+of MIPI-DSI controller is set, which means that Panel driver set
+MIPI_DSI_CLOCK_NON_CONTINUOUS flag.
 
--Olof
+2. Lower Power Mode means that the state of HS clock is low, Positive
+and Negative lane are all low,  LP-11 state.
+
+However, it seems some misunderstanding each other.
+
+I guess that non-contiguous clock mode - TxRequestHSCllk bit is set or
+maybe unset - would mean that HS clock is high while MIPI-DSI
+controller transmits data to Panel  until D-PHY detects LP-11 state.
+Therefore, I think LPM is different from non-contiguous clock mode,
+and I think with LPM flag, host driver - for MIPI-DSI device - should
+disable HS clock to transmit data to Panel. So I think HS clock is
+related to LPM.
+
+Anyway, we all are not sure how D-PHY handles HS clock of MIPI-DSI
+controller. So we would need more comments from HW guy or
+specitialists of MIPI-DSI to make sure. I think Tomi Valkeinen would
+be one of the specitialists.
+
+Hi Tomi,
+Could you give us some comments about this? Is HS clock unrelated to
+Low Power Mode at all? And do you know D-PHY handle HS clock of
+MIPI-DSI controller with non-contigous clock mode?
+
+Thanks,
+Inki Dae
+
+> Regards
+> Andrzej
+>
+> [1]: http://permalink.gmane.org/gmane.linux.drivers.devicetree/61559
+>
+>
+>>
+>> Thank you.
+>> Best regards YJ
+>>
+>>>
+>>>> Changelog v2: just add more descriptions.
+>>>>
+>>>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>> ---
+>>>>   drivers/gpu/drm/drm_mipi_dsi.c |    3 +++
+>>>>   include/drm/drm_mipi_dsi.h     |    4 ++++
+>>>>   2 files changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+>>>> index e633df2..6b2bbda 100644
+>>>> --- a/drivers/gpu/drm/drm_mipi_dsi.c
+>>>> +++ b/drivers/gpu/drm/drm_mipi_dsi.c
+>>>> @@ -232,6 +232,9 @@ int mipi_dsi_dcs_write(struct mipi_dsi_device *dsi, unsigned int channel,
+>>>>             break;
+>>>>     }
+>>>>
+>>>> +   if (dsi->mode_flags & MIPI_DSI_MODE_CMD_LPM)
+>>>> +           msg.flags = MIPI_DSI_MSG_USE_LPM;
+>>>> +
+>>>>     return ops->transfer(dsi->host, &msg);
+>>>>   }
+>>> Shouldn't this be also the same for dcs read?
+>>>
+>>> Anyway I think check in the DSIM should be used instead, as panel driver
+>>> can issue other dsi transfers without MIPI_DSI_MSG_USE_LPM flag set.
+>>>
+>>> Regards
+>>> Andrzej
+>>>
+>>>
+>>>>   EXPORT_SYMBOL(mipi_dsi_dcs_write);
+>>>> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+>>>> index 944f33f..1c41e49 100644
+>>>> --- a/include/drm/drm_mipi_dsi.h
+>>>> +++ b/include/drm/drm_mipi_dsi.h
+>>>> @@ -94,6 +94,10 @@ void mipi_dsi_host_unregister(struct mipi_dsi_host *host);
+>>>>   #define MIPI_DSI_MODE_VSYNC_FLUSH BIT(8)
+>>>>   /* disable EoT packets in HS mode */
+>>>>   #define MIPI_DSI_MODE_EOT_PACKET  BIT(9)
+>>>> +/* command low power mode */
+>>>> +#define MIPI_DSI_MODE_CMD_LPM              BIT(10)
+>>>> +/* video low power mode */
+>>>> +#define MIPI_DSI_MODE_VIDEO_LPM            BIT(11)
+>>>>
+>>>>   enum mipi_dsi_pixel_format {
+>>>>     MIPI_DSI_FMT_RGB888,
+>>>>
+>>> _______________________________________________
+>>> dri-devel mailing list
+>>> dri-devel@lists.freedesktop.org
+>>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>>
+>>
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
