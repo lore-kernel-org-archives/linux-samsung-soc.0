@@ -1,209 +1,92 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer
- support
-Date: Sun, 3 Aug 2014 16:16:35 +0900
-Message-ID: <CAAQKjZM=WR_R=4uiEOUKOXovcXg8wutFceXKvk=zbLUF-QcO3A@mail.gmail.com>
-References: <1406512857-7213-1-git-send-email-inki.dae@samsung.com>
- <1406512857-7213-2-git-send-email-inki.dae@samsung.com>
- <53D675D6.2000309@samsung.com> <53D6F189.3060004@samsung.com>
- <53D7760F.3060200@samsung.com>
- <CAAQKjZMaOsiThMgu+b_u7WCN+aakq7nAfomFVwQSvNrmWOgKjQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/exynos: g2d: make ioctls more robust
+Date: Sun, 3 Aug 2014 16:54:46 +0900
+Message-ID: <CAAQKjZOC34azEuBzwdAXtWhWjqnVY40PMUmWN3PA6NKMf1T-uQ@mail.gmail.com>
+References: <1406127433-3914-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	<1406127433-3914-2-git-send-email-tjakobi@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAAQKjZMaOsiThMgu+b_u7WCN+aakq7nAfomFVwQSvNrmWOgKjQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-samsung-soc@vger.kernel.org, treding@nvidia.com, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f177.google.com ([74.125.82.177]:38560 "EHLO
+	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751107AbaHCHys (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 3 Aug 2014 03:54:48 -0400
+Received: by mail-we0-f177.google.com with SMTP id w62so6173538wes.8
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Aug 2014 00:54:46 -0700 (PDT)
+In-Reply-To: <1406127433-3914-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, t.figa@samsung.com
 
-2014-08-03 16:03 GMT+09:00 Inki Dae <inki.dae@samsung.com>:
-> 2014-07-29 19:23 GMT+09:00 Andrzej Hajda <a.hajda@samsung.com>:
->> On 07/29/2014 02:57 AM, YoungJun Cho wrote:
->>> Hi Andrzej,
->>>
->>> On 07/29/2014 01:09 AM, Andrzej Hajda wrote:
->>>> On 07/28/2014 04:00 AM, Inki Dae wrote:
->>>>> This patch adds below two flags for LPM transfer, and it attaches LPM flags
->>>>> to a msg in accordance with master's mode_flags set by LCD Panel driver.
->>>>>
->>>>> MIPI_DSI_MODE_CMD_LPM
->>>>> - If this flag is set by Panel driver, MIPI-DSI controller will tranfer
->>>>> command data to Panel device in Low Power Mode.
->>>> What do you mean by command data? It could be:
->>>> - all transfer in command mode of operations,
->>>> - transfer initialized by the driver by writing to DSIM registers.
->>> The 2nd one.
->>>
->>>>> MIPI_DSI_MODE_VIDEO_LPM
->>>>> - If this flag is set by Panel driver, MIPI-DSI controller will tranfer
->>>>> image data to Panel device in Low Power Mode.
->>>> What is the meaning of this flag in case of command mode of operation?
->>> I'm also not sure that there is a case to transfer image data in Low
->>> Power Mode, but this flag is not related with 'command mode' only.
->>> Inki may consider generic condition.
->>>
->>>> Maybe it would be better to create flags based on source of data/FIFOs:
->>>> - commands send by SFR registers,
->>>> - commands generated from data sent from Display Controller.
->>>>
->>>>
->>>>> And above two flags can be combined together to transfer command and video
->>>>> data to Panel device.
->>>>>
->>>>> MIPI DSI spec says,
->>>>>       "the host processor controls the desired mode of clock operation.
->>>>>        Host protocol and applications control Clock Lane operating mode
->>>>>        (High Speed or Low Power mode). System designers are responsible
->>>>>        for understanding the clock requirements for peripherals attached
->>>>>        to DSI and controlling clock behavior in accordance with those
->>>>>        requirements."
->>>>>
->>>>> Some LCD Panel devices, nt35502a, would need LPM transfer support
->>>>> because they should receive some initial commands with LPM by default
->>>>> hardware setting.
->>>>
->>>> Is this requirement for initial commands, or for all commands.
->>>> Btw what is the mode of operation of nt35502a? What flags do you need
->>>> for it?
->>>>
->>> The nt35502a panel is video(RGB) mode panel and it requires low power
->>> mode for initial commands, which means to initialize nt35502a panel, the
->>> initial commands are transferred by LP mode(Not HS mode).
->>> And after initialization, its other features like gamma control or etc
->>> could be controlled in HS mode.
->>
->> It sounds similar to my tc358764 bridge driver [1]. The difference is that
->> it uses only MIPI_DSI_GENERIC_LONG_(WRITE|READ) in LPM.
->>
->> As I understand nt35502a requires also different driving of
->> TxRequestHSClk signal
->> and this seems to me unrelated to LPM. As LPM is not related at all with
->> HS clock, AFAIK.
->>
+2014-07-23 23:57 GMT+09:00 Tobias Jakobi <tjakobi@math.uni-bielefeld.de>:
+> Both exynos_g2d_set_cmdlist_ioctl and exynos_g2d_exec_ioctl don't check
+> if the G2D was succesfully probe. If that is not the case, then g2d_priv
+> is just NULL and extracting 'dev' from it in the next step  is going to
+> produce a kernel oops.
 >
-> + Tomi Valkeinen
+> Add proper checks and return ENODEV if the G2D is not available.
 >
-> At private talks before, I think we reached the following consensus,
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_g2d.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
 >
-> 1. D-PHY could disable HS clock of MIPI-DSI controller in case that
-> D-PHY detectsTransition to Stop state (LP=11) and TxRequestHSClk bit
-> of MIPI-DSI controller is set, which means that Panel driver set
-> MIPI_DSI_CLOCK_NON_CONTINUOUS flag.
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> index 5fa1bb6..8c62423 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> @@ -1056,7 +1056,7 @@ int exynos_g2d_set_cmdlist_ioctl(struct drm_device *drm_dev, void *data,
+>  {
+>         struct drm_exynos_file_private *file_priv = file->driver_priv;
+>         struct exynos_drm_g2d_private *g2d_priv = file_priv->g2d_priv;
+> -       struct device *dev = g2d_priv->dev;
+> +       struct device *dev;
+>         struct g2d_data *g2d;
+>         struct drm_exynos_g2d_set_cmdlist *req = data;
+>         struct drm_exynos_g2d_cmd *cmd;
+> @@ -1067,6 +1067,10 @@ int exynos_g2d_set_cmdlist_ioctl(struct drm_device *drm_dev, void *data,
+>         int size;
+>         int ret;
 >
-> 2. Lower Power Mode means that the state of HS clock is low, Positive
-> and Negative lane are all low,  LP-11 state.
+> +       if (!g2d_priv)
+> +               return -ENODEV;
+> +
+> +       dev = g2d_priv->dev;
+>         if (!dev)
+>                 return -ENODEV;
 >
-> However, it seems some misunderstanding each other.
+> @@ -1223,13 +1227,17 @@ int exynos_g2d_exec_ioctl(struct drm_device *drm_dev, void *data,
+>  {
+>         struct drm_exynos_file_private *file_priv = file->driver_priv;
+>         struct exynos_drm_g2d_private *g2d_priv = file_priv->g2d_priv;
+> -       struct device *dev = g2d_priv->dev;
+> +       struct device *dev;
+>         struct g2d_data *g2d;
+>         struct drm_exynos_g2d_exec *req = data;
+>         struct g2d_runqueue_node *runqueue_node;
+>         struct list_head *run_cmdlist;
+>         struct list_head *event_list;
 >
-> I guess that non-contiguous clock mode - TxRequestHSCllk bit is set or
-> maybe unset - would mean that HS clock is high while MIPI-DSI
-> controller transmits data to Panel  until D-PHY detects LP-11 state.
+> +       if (!g2d_priv)
+> +               return -ENODEV;
+> +
+> +       dev = g2d_priv->dev
 
-Or with non-contiguous clock mode, data may be transmistted to Panel
-in LPM (HS clock is low and LP-11) after D-PHY detects LP-11 state. To
-make sure this, I will try to test that Panel - requiring LPM transfer
-for initial commands as default hw setting - works well with
-non-contiguous clock mode. In this cae, it seems that we need to
-consider HW that supports non-continuous clock mode.
+It seems that you have no build test because above line incurs build
+error. Anyway I fixed it up.
 
 Thanks,
 Inki Dae
 
-> Therefore, I think LPM is different from non-contiguous clock mode,
-> and I think with LPM flag, host driver - for MIPI-DSI device - should
-> disable HS clock to transmit data to Panel. So I think HS clock is
-> related to LPM.
+>         if (!dev)
+>                 return -ENODEV;
 >
-> Anyway, we all are not sure how D-PHY handles HS clock of MIPI-DSI
-> controller. So we would need more comments from HW guy or
-> specitialists of MIPI-DSI to make sure. I think Tomi Valkeinen would
-> be one of the specitialists.
+> --
+> 1.8.5.5
 >
-> Hi Tomi,
-> Could you give us some comments about this? Is HS clock unrelated to
-> Low Power Mode at all? And do you know D-PHY handle HS clock of
-> MIPI-DSI controller with non-contigous clock mode?
->
-> Thanks,
-> Inki Dae
->
->> Regards
->> Andrzej
->>
->> [1]: http://permalink.gmane.org/gmane.linux.drivers.devicetree/61559
->>
->>
->>>
->>> Thank you.
->>> Best regards YJ
->>>
->>>>
->>>>> Changelog v2: just add more descriptions.
->>>>>
->>>>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
->>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>>> ---
->>>>>   drivers/gpu/drm/drm_mipi_dsi.c |    3 +++
->>>>>   include/drm/drm_mipi_dsi.h     |    4 ++++
->>>>>   2 files changed, 7 insertions(+)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
->>>>> index e633df2..6b2bbda 100644
->>>>> --- a/drivers/gpu/drm/drm_mipi_dsi.c
->>>>> +++ b/drivers/gpu/drm/drm_mipi_dsi.c
->>>>> @@ -232,6 +232,9 @@ int mipi_dsi_dcs_write(struct mipi_dsi_device *dsi, unsigned int channel,
->>>>>             break;
->>>>>     }
->>>>>
->>>>> +   if (dsi->mode_flags & MIPI_DSI_MODE_CMD_LPM)
->>>>> +           msg.flags = MIPI_DSI_MSG_USE_LPM;
->>>>> +
->>>>>     return ops->transfer(dsi->host, &msg);
->>>>>   }
->>>> Shouldn't this be also the same for dcs read?
->>>>
->>>> Anyway I think check in the DSIM should be used instead, as panel driver
->>>> can issue other dsi transfers without MIPI_DSI_MSG_USE_LPM flag set.
->>>>
->>>> Regards
->>>> Andrzej
->>>>
->>>>
->>>>>   EXPORT_SYMBOL(mipi_dsi_dcs_write);
->>>>> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
->>>>> index 944f33f..1c41e49 100644
->>>>> --- a/include/drm/drm_mipi_dsi.h
->>>>> +++ b/include/drm/drm_mipi_dsi.h
->>>>> @@ -94,6 +94,10 @@ void mipi_dsi_host_unregister(struct mipi_dsi_host *host);
->>>>>   #define MIPI_DSI_MODE_VSYNC_FLUSH BIT(8)
->>>>>   /* disable EoT packets in HS mode */
->>>>>   #define MIPI_DSI_MODE_EOT_PACKET  BIT(9)
->>>>> +/* command low power mode */
->>>>> +#define MIPI_DSI_MODE_CMD_LPM              BIT(10)
->>>>> +/* video low power mode */
->>>>> +#define MIPI_DSI_MODE_VIDEO_LPM            BIT(11)
->>>>>
->>>>>   enum mipi_dsi_pixel_format {
->>>>>     MIPI_DSI_FMT_RGB888,
->>>>>
->>>> _______________________________________________
->>>> dri-devel mailing list
->>>> dri-devel@lists.freedesktop.org
->>>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->>>>
->>>
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
