@@ -1,67 +1,61 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v4 4/5] ARM: EXYNOS: PM: fix register setup for AFTR mode code
-Date: Mon, 04 Aug 2014 19:45:44 +0200
-Message-ID: <1407174345-31213-5-git-send-email-b.zolnierkie@samsung.com>
-References: <1407174345-31213-1-git-send-email-b.zolnierkie@samsung.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 1/1] i2c: Kconfig: Enable HSI2C for Exynos5 platform
+Date: Mon, 4 Aug 2014 23:21:13 +0200
+Message-ID: <20140804212113.GA2730@katana>
+References: <1403690523-1863-1-git-send-email-sachin.kamat@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:36698 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751498AbaHDRqR (ORCPT
+Received: from sauhun.de ([89.238.76.85]:38940 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752497AbaHDVVS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Aug 2014 13:46:17 -0400
-In-reply-to: <1407174345-31213-1-git-send-email-b.zolnierkie@samsung.com>
+	Mon, 4 Aug 2014 17:21:18 -0400
+Content-Disposition: inline
+In-Reply-To: <1403690523-1863-1-git-send-email-sachin.kamat@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
+To: Sachin Kamat <sachin.kamat@samsung.com>
+Cc: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, spk.linux@gmail.com, kgene.kim@samsung.com, Doug Anderson <dianders@chromium.org>
 
-Add S5P_CENTRAL_SEQ_OPTION register setup to cpuidle AFTR mode code
-by moving the relevant code from exynos_pm_suspend() (used only by
-suspend) to exynos_pm_central_suspend() (used by both suspend and
-AFTR).  Without this setup AFTR mode doesn't show any benefit over
-WFI one (at least on Exynos4412 SoC).  When this setup is applied
-AFTR mode reduces power consumption by ~12% (as measured on Trats2
-board).
 
-This change is a preparation for adding secure firmware support to
-EXYNOS cpuidle driver.
+--J/dobhs11T7y2rNN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/pm.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+On Wed, Jun 25, 2014 at 03:32:03PM +0530, Sachin Kamat wrote:
+> All Exynos5 platforms have HSI2C controllers and are needed by
+> various IPs connected to the boards based on these SoCs. Thus
+> select this by default for Exynos5 platforms.
+>=20
+> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
+> Cc: Doug Anderson <dianders@chromium.org>
 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index a61b85c..4e32cc6 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -169,6 +169,10 @@ static void exynos_pm_central_suspend(void)
- 	tmp = pmu_raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
- 	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
- 	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
-+
-+	/* Setting SEQ_OPTION register */
-+	pmu_raw_writel(S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0,
-+		       S5P_CENTRAL_SEQ_OPTION);
- }
- 
- static int exynos_pm_central_resume(void)
-@@ -291,15 +295,8 @@ static void exynos_pm_prepare(void)
- 
- static int exynos_pm_suspend(void)
- {
--	unsigned long tmp;
--
- 	exynos_pm_central_suspend();
- 
--	/* Setting SEQ_OPTION register */
--
--	tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
--	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
--
- 	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
- 		exynos_cpu_save_register();
- 
--- 
-1.8.2.3
+Applied to for-next, thanks!
+
+
+--J/dobhs11T7y2rNN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJT3/lJAAoJEBQN5MwUoCm2unoP/3BVg+T0z6QzLLeeOY1PzZ0a
+InCpJafFb8pdVfFc+Aq6M2wrez4rt2hKeqaX13TsHxvG9iNnY2vB1CtNd19MhSa9
+0Djcp6zOhYn7aOot0Ps4Ql1TnDqH9VhUv8ysTAedqcZPeb/5gc/g8l5CgHSeFYTb
+R8ObQVbpTAJecUQpc5+YCFSaJk1WYXW/QKFd0MCX8RSoIclJne93mPLULCsUeRPQ
+6qhSYuVvUsS9GHhzh4q4iOLTCK8nemZkElSW8Bm7CD3syWwLyxS5h8J7mreXOZ5o
+hwbtGmkvFp73XzKfBop9ac9BQom1vjjY64IaqL/HF9/2zPL40vuLsF50v0CxrSVO
+V3r7MyKtfj2CJApy02YuQGKgoDQM6TcGnZ2ZUSYK5kz9kL0mOv0D6cXwD8/CGxGs
+81kwF+gTXivpkyRbL80UoZ5rY3pdoxiOQz6NEwUuMuREKKFsyCMQ4BHcuLIDufJX
+jcCevqYA/ivwqQOADfHjf0NxNLIRA7kTy7Nj2l0Aekp1LD/2pniBGzVy/H1fTDqk
+sgmEK/J9Pad0Pct5KHt82hiHc/YGAMxFkmJL+iLwR3cW2jmf+tmBBK6SRMziDOfn
+6Zn+TLf8IuCT+1dWDEz9IvGTmQD+AqzpdlJxPh1zddck6NTPSTUlKQ1eDlpZryqy
+GGOWNKb2hUtmm3LNYTxj
+=ObFw
+-----END PGP SIGNATURE-----
+
+--J/dobhs11T7y2rNN--
