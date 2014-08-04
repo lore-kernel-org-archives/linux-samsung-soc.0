@@ -1,81 +1,33 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 2/2] sbs-battery: add min design voltage to sbs-battery
-Date: Mon,  4 Aug 2014 13:47:46 +0200
-Message-ID: <1407152866-31790-3-git-send-email-javier.martinez@collabora.co.uk>
-References: <1407152866-31790-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1407152866-31790-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-pm-owner@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Simon Que <sque@chromium.org>, cychiang <cychiang@chromium.org>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: [PATCH 1/2] drm/exynos: g2d: make ioctls more robust
+Date: Mon, 04 Aug 2014 14:02:30 +0200
+Message-ID: <5b6c5af6cf1270e3f0575a61744626a1@math.uni-bielefeld.de>
+References: <1406127433-3914-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1406127433-3914-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <CAAQKjZOC34azEuBzwdAXtWhWjqnVY40PMUmWN3PA6NKMf1T-uQ@mail.gmail.com>
+ <53DE0675.7060605@gmx.net> <53DED390.8000100@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:51212 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751373AbaHDMCg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 4 Aug 2014 08:02:36 -0400
+In-Reply-To: <53DED390.8000100@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Tobias Jakobi <liquid.acid@gmx.net>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, t.figa@samsung.com
 
-From: Simon Que <sque@chromium.org>
+On 2014-08-04 02:28, Inki Dae wrote:
+> Oops, sorry. I didn't check v2.
+No problem :)
 
-sbs-battery has a max design voltage but not a min design voltage field.
-The SBS spec only has one design voltage:
-http://www.sbs-forum.org/specs/sbdat110.pdf
+It would be good if you could also check the libdrm patches that I've 
+resent some while ago.
 
-Currently this is being used for max design voltage.  This patch uses it
-for min design voltage as well.
-
-Signed-off-by: Simon Que <sque@chromium.org>
-Reviewed-by: Simon Glass <sjg@chromium.org>
-Reviewed-by: Todd Broch <tbroch@chromium.org>
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- drivers/power/sbs-battery.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/power/sbs-battery.c b/drivers/power/sbs-battery.c
-index 08feb38..c7b7b40 100644
---- a/drivers/power/sbs-battery.c
-+++ b/drivers/power/sbs-battery.c
-@@ -48,7 +48,8 @@ enum {
- 	REG_FULL_CHARGE_CAPACITY_CHARGE,
- 	REG_DESIGN_CAPACITY,
- 	REG_DESIGN_CAPACITY_CHARGE,
--	REG_DESIGN_VOLTAGE,
-+	REG_DESIGN_VOLTAGE_MIN,
-+	REG_DESIGN_VOLTAGE_MAX,
- 	REG_MANUFACTURER,
- 	REG_MODEL_NAME,
- };
-@@ -114,7 +115,9 @@ static const struct chip_data {
- 		SBS_DATA(POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN, 0x18, 0, 65535),
- 	[REG_DESIGN_CAPACITY_CHARGE] =
- 		SBS_DATA(POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN, 0x18, 0, 65535),
--	[REG_DESIGN_VOLTAGE] =
-+	[REG_DESIGN_VOLTAGE_MIN] =
-+		SBS_DATA(POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN, 0x19, 0, 65535),
-+	[REG_DESIGN_VOLTAGE_MAX] =
- 		SBS_DATA(POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN, 0x19, 0, 65535),
- 	[REG_SERIAL_NUMBER] =
- 		SBS_DATA(POWER_SUPPLY_PROP_SERIAL_NUMBER, 0x1C, 0, 65535),
-@@ -138,6 +141,7 @@ static enum power_supply_property sbs_properties[] = {
- 	POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
- 	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
- 	POWER_SUPPLY_PROP_SERIAL_NUMBER,
-+	POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN,
- 	POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN,
- 	POWER_SUPPLY_PROP_ENERGY_NOW,
- 	POWER_SUPPLY_PROP_ENERGY_FULL,
-@@ -431,6 +435,7 @@ static void  sbs_unit_adjustment(struct i2c_client *client,
- 		break;
- 
- 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-+	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
- 	case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
- 	case POWER_SUPPLY_PROP_CURRENT_NOW:
- 	case POWER_SUPPLY_PROP_CHARGE_NOW:
-@@ -592,6 +597,7 @@ static int sbs_get_property(struct power_supply *psy,
- 	case POWER_SUPPLY_PROP_TEMP:
- 	case POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG:
- 	case POWER_SUPPLY_PROP_TIME_TO_FULL_AVG:
-+	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
- 	case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
- 		ret = sbs_get_property_index(client, psp);
- 		if (ret < 0)
--- 
-2.0.0.rc2
-
+With best wishes,
+Tobias
