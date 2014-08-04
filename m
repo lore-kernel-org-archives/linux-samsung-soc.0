@@ -1,103 +1,411 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq
- driver for Exynos4210/5250/5420
-Date: Mon, 4 Aug 2014 08:54:26 +0530
-Message-ID: <CAJuA9agA+-tV1hjnsYaJSYs4YVLdiD-7oZ+wPprw8XBwdvLtmQ@mail.gmail.com>
-References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
-	<1406707663-16656-5-git-send-email-thomas.ab@samsung.com>
-	<53DA8BB9.6020702@samsung.com>
-	<53DA8D85.3050106@gmail.com>
-	<53DA90DD.6090704@gmail.com>
-	<CAJuA9ahz_aybnFER+0JNizAto1pJNoTunPVTgF4tZCMLqHtm-g@mail.gmail.com>
-	<53DA9970.5010202@gmail.com>
+From: Vikas Sajjan <vikas.sajjan@samsung.com>
+Subject: Re: [PATCH v2] ARM: EXYNOS: Refactor the pm code to use DT based lookup
+Date: Mon, 4 Aug 2014 10:39:10 +0545
+Message-ID: <CAGm_ybj3jqSDLmL1a08cvd8gbuv+mhRE3Ve6=PxiyuStHNqavQ@mail.gmail.com>
+References: <1406288941-20792-1-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:36556 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750929AbaHDDY2 (ORCPT
+Received: from mail-wg0-f51.google.com ([74.125.82.51]:62014 "EHLO
+	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751132AbaHDEyL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Aug 2014 23:24:28 -0400
-In-Reply-To: <53DA9970.5010202@gmail.com>
+	Mon, 4 Aug 2014 00:54:11 -0400
+Received: by mail-wg0-f51.google.com with SMTP id b13so7005218wgh.34
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Aug 2014 21:54:10 -0700 (PDT)
+In-Reply-To: <1406288941-20792-1-git-send-email-vikas.sajjan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Doug Anderson <dianders@chromium.org>, Vikas Sajjan <vikas.sajjan@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>
 
-Hi Tomasz,
+Hi Kukjin,
 
-On Fri, Aug 1, 2014 at 1:00 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On 31.07.2014 21:25, Thomas Abraham wrote:
->> On Fri, Aug 1, 2014 at 12:24 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>>
->>>
->>> On 31.07.2014 20:40, Tomasz Figa wrote:
->>>> Kukjin,
->>>>
->>>> On 31.07.2014 20:32, Kukjin Kim wrote:
->>>>> On 07/30/14 17:07, Thomas Abraham wrote:
->>>>>> The new CPU clock type allows the use of generic CPUfreq drivers. So for
->>>>>> Exynos4210/5250, switch to using generic cpufreq driver. For Exynos5420,
->>>>>> which did not have CPUfreq driver support, enable the use of generic
->>>>>> CPUfreq driver.
->>>>>>
->>>>>> Suggested-by: Tomasz Figa<t.figa@samsung.com>
->>>>>> Cc: Kukjin Kim<kgene.kim@samsung.com>
->>>>>
->>>>> Looks good to me,
->>>>>
->>>>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->>>>>
->>>>> BTW, who will handle this series? I hope see this series in 3.17.
->>>>
->>>> This series consists mostly of clock changes and it likely depends on
->>>> patches already in my for-next, so I would be inclined toward taking it
->>>> through samsung-clk tree. However, for this I would need Acks for patch
->>>> 5/6 from Viresh and for patches [1] and [2] (which are dependencies of
->>>> this series) from you. I also need to make sure that the two mentioned
->>>> patches don't have any dependencies already in your tree.
->>>>
->>>> [1] ARM: dts: add CPU nodes for Exynos4 SoCs
->>>>    - https://lkml.org/lkml/2014/7/21/315
->>>> [2] ARM: dts: smdk5250: Specify MAX77686 pmic interrupt
->>>>    - http://www.spinics.net/lists/arm-kernel/msg351134.html
->>>
->>> Aha, I'm not quite sure we really want to hurry with this series for
->>> 3.17. I'd prefer it to be picked up early after 3.17-rc1 shows up to sit
->>> in linux-next for a while an be thoroughly tested on a number of boards.
->>
->> The v9 revision of this series has completed about 2 days of testing
->> now on 4210/5250/5420 boards. I will let it run for few more days. For
->> v8 and previous versions, the tests had completed 3 or more days. So I
->> really don't think there is anything fundamentally wrong with this
->> series. It would be nice to have this series merged and we start
->> migrating other Exynos based boards to use generic cpufreq drivers.
+
+On Fri, Jul 25, 2014 at 5:34 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+> Refactoring the pm.c to avoid using "soc_is_exynos" checks,
+> instead use the DT based lookup.
 >
-> We have 22 Exynos-based boards currently supported in mainline. Is the
-> testing running on all of them? This is the purpose of linux-next and
-
-This series replaces existing cpufreq driver for Exynos4210 and
-Exynos5250 which impact 7 Exynos boards - Exynos4210 (smdk, origen,
-trats, universal), Exynos5250 (smdk, arndale, snow). Out of these, it
-is trats and universal that have not been tested. Which other 15
-Exynos boards did you feel this series needs to be tested on? Sanity
-testing for Exynos4x12 cpufreq support was done on Exynos4412 Origen
-board.
-
-> for series that completely replace one driver with another I'd consider
-> this as the only reasonable choice, if not keeping the old driver for a
-> release.
+> While at it, consolidate the common code across SoCs
+> and create a static helper functions.
 >
-> Of course we have never good testing traditions on Samsung SoC (see
-> OMAP and Tegra baseline tests), but does it mean that we shouldn't start
-> doing the right thing?
-
-Aren't Tegra/OMAP baseline tests for upstream kernel versions only,
-not for linux-next?
-
-Thanks,
-Thomas.
-
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> ---
+> changes since v1:
+>         - Address Kukjin Kim comments to respin this patch separately from
+>                 http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/272574.html
+>         - removed panic, returned if no PMU node found and added check in exynos_wkup_irq.
 >
-> Best regards,
-> Tomasz
+
+Do you have any more comments.
+
+
+> Rebased on Kukjin Kim's tree, for-next branch
+>         https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+> ---
+>  arch/arm/mach-exynos/pm.c       |  234 ++++++++++++++++++++++++++++++++-------
+>  arch/arm/mach-exynos/regs-pmu.h |    1 +
+>  2 files changed, 192 insertions(+), 43 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index c4c6d98..1c875e5 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -36,6 +36,8 @@
+>  #include "regs-pmu.h"
+>  #include "regs-sys.h"
+>
+> +#define REG_TABLE_END (-1U)
+> +
+>  /**
+>   * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
+>   * @hwirq: Hardware IRQ signal of the GIC
+> @@ -59,6 +61,19 @@ static struct sleep_save exynos_core_save[] = {
+>         SAVE_ITEM(S5P_SROM_BC3),
+>  };
+>
+> +struct exynos_pm_data {
+> +       const struct exynos_wkup_irq *wkup_irq;
+> +       unsigned int wake_disable_mask;
+> +       unsigned int *release_ret_regs;
+> +
+> +       void (*pm_prepare)(void);
+> +       void (*pm_resume)(void);
+> +       int (*pm_suspend)(void);
+> +       int (*cpu_suspend)(unsigned long);
+> +};
+> +
+> +struct exynos_pm_data *pm_data;
+> +
+>  /*
+>   * GIC wake-up support
+>   */
+> @@ -77,14 +92,24 @@ static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
+>         { /* sentinel */ },
+>  };
+>
+> +unsigned int exynos_release_ret_regs[] = {
+> +       S5P_PAD_RET_MAUDIO_OPTION,
+> +       S5P_PAD_RET_GPIO_OPTION,
+> +       S5P_PAD_RET_UART_OPTION,
+> +       S5P_PAD_RET_MMCA_OPTION,
+> +       S5P_PAD_RET_MMCB_OPTION,
+> +       S5P_PAD_RET_EBIA_OPTION,
+> +       S5P_PAD_RET_EBIB_OPTION,
+> +       REG_TABLE_END,
+> +};
+> +
+>  static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
+>  {
+>         const struct exynos_wkup_irq *wkup_irq;
+>
+> -       if (soc_is_exynos5250())
+> -               wkup_irq = exynos5250_wkup_irq;
+> -       else
+> -               wkup_irq = exynos4_wkup_irq;
+> +       if (!pm_data->wkup_irq)
+> +               return -ENOENT;
+> +       wkup_irq = pm_data->wkup_irq;
+>
+>         while (wkup_irq->mask) {
+>                 if (wkup_irq->hwirq == data->hwirq) {
+> @@ -241,13 +266,13 @@ static void exynos_cpu_restore_register(void)
+>
+>  static int exynos_cpu_suspend(unsigned long arg)
+>  {
+> -#ifdef CONFIG_CACHE_L2X0
+> -       outer_flush_all();
+> -#endif
+> -
+> -       if (soc_is_exynos5250())
+> -               flush_cache_all();
+> +       if (pm_data->cpu_suspend)
+> +               return pm_data->cpu_suspend(arg);
+> +       return -1;
+> +}
+>
+> +static int exynos_cpu_do_idle(void)
+> +{
+>         /* issue the standby signal into the pm unit. */
+>         cpu_do_idle();
+>
+> @@ -257,32 +282,73 @@ static int exynos_cpu_suspend(unsigned long arg)
+>
+>  static void exynos_pm_prepare(void)
+>  {
+> -       unsigned int tmp;
+> +       if (pm_data->pm_prepare)
+> +               pm_data->pm_prepare();
+> +}
+>
+> +static int exynos4_cpu_suspend(unsigned long arg)
+> +{
+> +#ifdef CONFIG_CACHE_L2X0
+> +       outer_flush_all();
+> +#endif
+> +       return exynos_cpu_do_idle();
+> +}
+> +
+> +static int exynos5250_cpu_suspend(unsigned long arg)
+> +{
+> +#ifdef CONFIG_CACHE_L2X0
+> +       outer_flush_all();
+> +#endif
+> +       flush_cache_all();
+> +       return exynos_cpu_do_idle();
+> +}
+> +
+> +static void exynos_pm_set_wakeup_mask(void)
+> +{
+>         /* Set wake-up mask registers */
+>         pmu_raw_writel(exynos_get_eint_wake_mask(), S5P_EINT_WAKEUP_MASK);
+>         pmu_raw_writel(exynos_irqwake_intmask & ~(1 << 31), S5P_WAKEUP_MASK);
+> +}
+>
+> -       s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+> -
+> -       if (soc_is_exynos5250()) {
+> -               s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
+> -               /* Disable USE_RETENTION of JPEG_MEM_OPTION */
+> -               tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
+> -               tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
+> -               pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
+> -       }
+> -
+> +static void exynos_pm_enter_sleep_mode(void)
+> +{
+>         /* Set value of power down register for sleep mode */
+> -
+>         exynos_sys_powerdown_conf(SYS_SLEEP);
+>         pmu_raw_writel(S5P_CHECK_SLEEP, S5P_INFORM1);
+>
+>         /* ensure at least INFORM0 has the resume address */
+> -
+>         pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
+>  }
+>
+> +static void exynos5250_pm_prepare(void)
+> +{
+> +       unsigned int tmp;
+> +
+> +       /* Set wake-up mask registers */
+> +       exynos_pm_set_wakeup_mask();
+> +
+> +       s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+> +
+> +       s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
+> +
+> +       /* Disable USE_RETENTION of JPEG_MEM_OPTION */
+> +       tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
+> +       tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
+> +       pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
+> +
+> +       exynos_pm_enter_sleep_mode();
+> +}
+> +
+> +static void exynos4_pm_prepare(void)
+> +{
+> +       /* Set wake-up mask registers */
+> +       exynos_pm_set_wakeup_mask();
+> +
+> +       s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+> +
+> +       exynos_pm_enter_sleep_mode();
+> +}
+> +
+>  static void exynos_pm_central_suspend(void)
+>  {
+>         unsigned long tmp;
+> @@ -295,6 +361,13 @@ static void exynos_pm_central_suspend(void)
+>
+>  static int exynos_pm_suspend(void)
+>  {
+> +       if (pm_data->pm_suspend)
+> +               return pm_data->pm_suspend();
+> +       return -1;
+> +}
+> +
+> +static int exynos4_pm_suspend(void)
+> +{
+>         unsigned long tmp;
+>
+>         exynos_pm_central_suspend();
+> @@ -304,9 +377,20 @@ static int exynos_pm_suspend(void)
+>         tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
+>         pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
+>
+> -       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+> -               exynos_cpu_save_register();
+> +       exynos_cpu_save_register();
+> +       return 0;
+> +}
+> +
+> +static int exynos5250_pm_suspend(void)
+> +{
+> +       unsigned long tmp;
+> +
+> +       exynos_pm_central_suspend();
+> +
+> +       /* Setting SEQ_OPTION register */
+>
+> +       tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
+> +       pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
+>         return 0;
+>  }
+>
+> @@ -333,39 +417,57 @@ static int exynos_pm_central_resume(void)
+>         return 0;
+>  }
+>
+> +static void exynos_pm_set_release_retention(void)
+> +{
+> +       unsigned int i;
+> +
+> +       for (i = 0; (pm_data->release_ret_regs[i] != REG_TABLE_END); i++)
+> +               pmu_raw_writel(EXYNOS_WAKEUP_FROM_LOWPWR,
+> +                               pm_data->release_ret_regs[i]);
+> +}
+> +
+>  static void exynos_pm_resume(void)
+>  {
+> +       if (pm_data->pm_resume)
+> +               pm_data->pm_resume();
+> +}
+> +
+> +static void exynos4_pm_resume(void)
+> +{
+>         if (exynos_pm_central_resume())
+>                 goto early_wakeup;
+>
+> -       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+> -               exynos_cpu_restore_register();
+> +       exynos_cpu_restore_register();
+>
+>         /* For release retention */
+> -
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
+> -
+> -       if (soc_is_exynos5250())
+> -               s3c_pm_do_restore(exynos5_sys_save,
+> -                       ARRAY_SIZE(exynos5_sys_save));
+> +       exynos_pm_set_release_retention();
+>
+>         s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+>
+> -       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+> -               scu_enable(S5P_VA_SCU);
+> +       scu_enable(S5P_VA_SCU);
+>
+>  early_wakeup:
+>
+>         /* Clear SLEEP mode set in INFORM1 */
+>         pmu_raw_writel(0x0, S5P_INFORM1);
+> +}
+> +
+> +static void exynos5250_pm_resume(void)
+> +{
+> +       if (exynos_pm_central_resume())
+> +               goto early_wakeup;
+>
+> -       return;
+> +       /* For release retention */
+> +       exynos_pm_set_release_retention();
+> +
+> +       s3c_pm_do_restore(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
+> +
+> +       s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+> +
+> +early_wakeup:
+> +
+> +       /* Clear SLEEP mode set in INFORM1 */
+> +       pmu_raw_writel(0x0, S5P_INFORM1);
+>  }
+>
+>  static struct syscore_ops exynos_pm_syscore_ops = {
+> @@ -468,18 +570,64 @@ static struct notifier_block exynos_cpu_pm_notifier_block = {
+>         .notifier_call = exynos_cpu_pm_notifier,
+>  };
+>
+> +static struct exynos_pm_data exynos4_pm_data = {
+> +       .wkup_irq       = exynos4_wkup_irq,
+> +       .wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
+> +       .release_ret_regs = exynos_release_ret_regs,
+> +       .pm_suspend     = exynos4_pm_suspend,
+> +       .pm_resume      = exynos4_pm_resume,
+> +       .pm_prepare     = exynos4_pm_prepare,
+> +       .cpu_suspend    = exynos4_cpu_suspend,
+> +};
+> +
+> +static struct exynos_pm_data exynos5250_pm_data = {
+> +       .wkup_irq       = exynos5250_wkup_irq,
+> +       .wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
+> +       .release_ret_regs = exynos_release_ret_regs,
+> +       .pm_suspend     = exynos5250_pm_suspend,
+> +       .pm_resume      = exynos5250_pm_resume,
+> +       .pm_prepare     = exynos5250_pm_prepare,
+> +       .cpu_suspend    = exynos5250_cpu_suspend,
+> +};
+> +
+> +static struct of_device_id exynos_pmu_of_device_ids[] = {
+> +       {
+> +               .compatible = "samsung,exynos4210-pmu",
+> +               .data = (void *)&exynos4_pm_data,
+> +       }, {
+> +               .compatible = "samsung,exynos4212-pmu",
+> +               .data = (void *)&exynos4_pm_data,
+> +       }, {
+> +               .compatible = "samsung,exynos4412-pmu",
+> +               .data = (void *)&exynos4_pm_data,
+> +       }, {
+> +               .compatible = "samsung,exynos5250-pmu",
+> +               .data = (void *)&exynos5250_pm_data,
+> +       },
+> +       { /*sentinel*/ },
+> +};
+> +
+>  void __init exynos_pm_init(void)
+>  {
+>         u32 tmp;
+> +       const struct of_device_id *match;
+>
+>         cpu_pm_register_notifier(&exynos_cpu_pm_notifier_block);
+>
+> +       of_find_matching_node_and_match(NULL, exynos_pmu_of_device_ids, &match);
+> +
+> +       if (!match) {
+> +               pr_err("Failed to find PMU node\n");
+> +               return;
+> +       }
+> +       pm_data = (struct exynos_pm_data *) match->data;
+> +
+>         /* Platform-specific GIC callback */
+>         gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
+>
+>         /* All wakeup disable */
+>         tmp = pmu_raw_readl(S5P_WAKEUP_MASK);
+> -       tmp |= ((0xFF << 8) | (0x1F << 1));
+> +       tmp |= pm_data->wake_disable_mask;
+>         pmu_raw_writel(tmp, S5P_WAKEUP_MASK);
+>
+>         register_syscore_ops(&exynos_pm_syscore_ops);
+> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+> index 96a1569..30c0301 100644
+> --- a/arch/arm/mach-exynos/regs-pmu.h
+> +++ b/arch/arm/mach-exynos/regs-pmu.h
+> @@ -21,6 +21,7 @@
+>  #define S5P_USE_STANDBY_WFI0                   (1 << 16)
+>  #define S5P_USE_STANDBY_WFE0                   (1 << 24)
+>
+> +#define EXYNOS_WAKEUP_FROM_LOWPWR              (1 << 28)
+>  #define EXYNOS_SWRESET                         0x0400
+>  #define EXYNOS5440_SWRESET                     0x00C4
+>
+> --
+> 1.7.9.5
+>
