@@ -1,154 +1,62 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v6 00/10] ARM: dts: exynos: Prepare Spring
-Date: Mon, 4 Aug 2014 08:42:51 -0700
-Message-ID: <CAD=FV=WFNW_5KZvLMk0kK1JQsdWLeo2kCjpQsFuxKNSnOKzfgw@mail.gmail.com>
-References: <1406940750-15880-1-git-send-email-afaerber@suse.de>
-	<53DC4E41.4050200@collabora.co.uk>
-	<CAD=FV=V_vXZLMaTMFdgr62=zRXucZA6D3PvS0Mb40he0ShHTfA@mail.gmail.com>
-	<53DCBC84.8080600@suse.de>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v6 10/10] ARM: dts: Add exynos5250-spring device tree
+Date: Mon, 04 Aug 2014 19:31:12 +0200
+Message-ID: <53DFC360.9080304@collabora.co.uk>
+References: <1406940750-15880-1-git-send-email-afaerber@suse.de>	<1406940750-15880-11-git-send-email-afaerber@suse.de> <CAD=FV=WFP53bZAks7t9xybUxpna89Nz=KG+PQwAcxFEH0D+3mw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f170.google.com ([209.85.220.170]:49615 "EHLO
-	mail-vc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751093AbaHDPmz convert rfc822-to-8bit (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:33736 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750892AbaHDRbU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Aug 2014 11:42:55 -0400
-Received: by mail-vc0-f170.google.com with SMTP id lf12so11298940vcb.15
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Aug 2014 08:42:51 -0700 (PDT)
-In-Reply-To: <53DCBC84.8080600@suse.de>
+	Mon, 4 Aug 2014 13:31:20 -0400
+In-Reply-To: <CAD=FV=WFP53bZAks7t9xybUxpna89Nz=KG+PQwAcxFEH0D+3mw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Doug Anderson <dianders@chromium.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, Julius Werner <jwerner@google.com>
 
-Andreas,
+Hello Doug,
 
-On Sat, Aug 2, 2014 at 3:25 AM, Andreas F=C3=A4rber <afaerber@suse.de> =
-wrote:
-> Hi,
->
-> Am 02.08.2014 06:57, schrieb Doug Anderson:
->> On Fri, Aug 1, 2014 at 7:34 PM, Javier Martinez Canillas
->> <javier.martinez@collabora.co.uk> wrote:
->>> On 08/02/2014 02:52 AM, Andreas F=C3=A4rber wrote:
->>>>
->>>> Based on the preinstalled 3.8 based ChromeOS kernel and previous 3=
-=2E15
->>>> based attempts by Stephan and me that broke for 3.16, I've prepare=
-d a
->>>> device tree for the HP Chromebook 11 aka Google Spring.
->>>>
->>>> v6 renames a node and reverts dp_hpd.
->>>>
->>>> Not yet enabled are trackpad, Wifi and sound.
->>>
->>> I made a comment on patch 05/10 but the rest of the series looks go=
-od to me. So
->>> for the remaining patches:
->>>
->>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co=
-=2Euk>
->>>
->>> NOTE: I thought that Tomasz Figa gave you his Reviewed-by on v5 for=
- the whole
->>> series as well but I didn't see his tag on the v6 patches.
->>
->> Yes, I thought that too.  I assume he's OK with the small changes yo=
-u
->> made between v5 and v6.  In the very least his Reviewed-by could be
->> present on the patches that didn't change between the last two revs.
->
-> I did add it to the bootargs, GPIO, USB3503 patches. All other patche=
-s
-> were either split off or slightly changed due to dp_hpd[_gpio], so I
-> didn't carry it over.
->
->> Given Javier's review and Tomasz's review and Vincent's comments, I'=
-ll
->> probably skip all the work of reviewing the rest of the series unles=
-s
->> someone really wants me to.  ;)
->
-> Could you maybe give an Rb or Ab for the actual Spring patch to have =
-the
-> Cc: updated? :)
+On 08/04/2014 05:22 PM, Doug Anderson wrote:
+>> +
+>> +&pinctrl_0 {
+>> +       s5m8767_dvs: s5m8767-dvs {
+>> +               samsung,pins = "gpd1-0", "gpd1-1", "gpd1-2";
+>> +               samsung,pin-function = <0>;
+>> +               samsung,pin-pud = <1>;
+>> +               samsung,pin-drv = <0>;
+>> +       };
+>> +
+>> +       dp_hpd_gpio: dp-hpd-gpio {
+>> +               samsung,pins = "gpc3-0";
+>> +               samsung,pin-function = <0>;
+>> +               samsung,pin-pud = <3>;
+>> +               samsung,pin-drv = <0>;
+>> +       };
+>> +
+>> +       power_key_irq: power-key-irq {
+>> +               samsung,pins = "gpx1-3";
+>> +               samsung,pin-function = <0>;
+>> +               samsung,pin-pud = <0>;
+>> +               samsung,pin-drv = <0>;
+>> +       };
+> 
+> The fact that snow is missing the pinctrl lines for power and lid is a
+> bug on snow.  Perhaps Javier would be interested in submitting a patch
+> to fix that?
+> 
+> 
 
-Done.
+Sure, added on my TODO list to not only add these missing pin control lines for
+lid and power and reference them on gpio-keys but also to double check if there
+is anything else missing in the mainline Snow DTS that is on the downstream
+Chrome OS one.
 
+I'll wait for Andreas series to be picked by Kukjin before submit a patch though
+to avoid any unnecessary churn.
 
-> Note that if there's some problem that can't be resolved by selective=
-ly
-> dropping patches, I won't be available next week, so you'll either ha=
-ve
-> to provide fixups for Kukjin to squash or wait till I've returned.
->
-> One thing I've wondered is whether we should put status =3D "disabled=
-" on
-> the dp node with some comment, since it's known not to work as is (bu=
-t
-> better having the data here than leaving it out, I believe).
-
-Don't know about this one.
-
-
-> Of course if either of you has input on the discussions on the drm
-> bridge/panel series V6 [1] for how to enable non-simplefb display and
-> iommus, that would be valuable.
-
-I've been letting the graphics folks and Samsung hash out the graphics
-patches, so I don't think I'll be much help here.
-
-
-> [1] http://www.spinics.net/lists/linux-samsung-soc/msg35274.html
->
->
-> And when one thing is accomplished, I am always quick to look forward=
-:
->
-> I've taken a quick look at sound nodes: According to 3.8 DT, Spring u=
-ses
-> max98089 whereas Snow has 98091, so different codec driver and still
-> lacking DT binding support. I might look into trivially enabling
-> sound/soc/codecs/max98089.c through a "maxim,max98089" OF match table
-> once this series lands in linux-next. As for the driver, can we reuse
-> http://git.kernel.org/cgit/linux/kernel/git/broonie/sound.git/tree/so=
-und/soc/samsung/snow.c?h=3Dfor-next
-> with a "google,spring-audio-max98089", or are code changes needed?
-
-I don't know this offhand.
-
-
-> Both of you mentioned limitations of cros_ec i2c passthrough leading =
-to
-> a forked tps65090 driver downstream - I don't think I can be of help
-> there, as I guess simply copying a driver will not be an option. ;)
-> https://code.google.com/p/chromium/issues/detail?id=3D391797
-
-Yup, I think this will be real work for someone.  I made a quick
-attempt and failed at it and I haven't had time to work on it since
-(and don't necessarily expect to have time in the near future)...  I
-think it is possible for anyone versed in i2c to figure this out based
-on what I already posted and what's in our local tree...
-
-
-> For the touchpad it seems DT support has landed in the input tree as
-> "atmel,maxtouch". Backporting just that patch does not make it work
-> though. (Tried the rejected pinctrl approach to be on the safe side.)
-> https://code.google.com/p/chromium/issues/detail?id=3D371114
-> https://patchwork.kernel.org/patch/3976801/
-
-This is the same work as needed for pit and pi, I believe.  Perhaps
-Javier or Dmitry has this on their todo list?
-
-
-> I thought the internal xhci would have the webcam on it, but I don't =
-see
-> it in lsusb. Does that need some pinctrl or tps65090 regulator? Once
-> appearing on a bus, which driver config option will it need?
-
-Perhaps tps65090 FET5?  That looks like what the device tree says in
-our local tree.
-
--Doug
+Best regards,
+Javier
