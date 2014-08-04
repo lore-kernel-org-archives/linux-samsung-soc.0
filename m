@@ -1,62 +1,77 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v6 00/10] ARM: dts: exynos: Prepare Spring
-Date: Mon, 04 Aug 2014 19:43:22 +0200
-Message-ID: <53DFC63A.7010709@collabora.co.uk>
-References: <1406940750-15880-1-git-send-email-afaerber@suse.de>	<53DC4E41.4050200@collabora.co.uk>	<CAD=FV=V_vXZLMaTMFdgr62=zRXucZA6D3PvS0Mb40he0ShHTfA@mail.gmail.com>	<53DCBC84.8080600@suse.de> <CAD=FV=WFNW_5KZvLMk0kK1JQsdWLeo2kCjpQsFuxKNSnOKzfgw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:33761 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750831AbaHDRn2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Aug 2014 13:43:28 -0400
-In-Reply-To: <CAD=FV=WFNW_5KZvLMk0kK1JQsdWLeo2kCjpQsFuxKNSnOKzfgw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v4 0/5] ARM: EXYNOS: cpuidle: fix AFTR mode on boards with
+ secure firmware enabled
+Date: Mon, 04 Aug 2014 19:45:40 +0200
+Message-ID: <1407174345-31213-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Hello Doug,
+Hi,
 
-On 08/04/2014 05:42 PM, Doug Anderson wrote:
-> 
-> 
->> Both of you mentioned limitations of cros_ec i2c passthrough leading to
->> a forked tps65090 driver downstream - I don't think I can be of help
->> there, as I guess simply copying a driver will not be an option. ;)
->> https://code.google.com/p/chromium/issues/detail?id=391797
-> 
-> Yup, I think this will be real work for someone.  I made a quick
-> attempt and failed at it and I haven't had time to work on it since
-> (and don't necessarily expect to have time in the near future)...  I
-> think it is possible for anyone versed in i2c to figure this out based
-> on what I already posted and what's in our local tree...
-> 
+This patch series adds support for AFTR idle mode on boards with
+secure firmware enabled and allows EXYNOS cpuidle driver usage on
+Exynos4x12 SoCs.
 
-I posted a series [0] with the remaining cleanups/fixes for cros_ec that are on
-the downstream Chrome OS 3.8 kernel. Once these lands it will be easier to add
-the missing cros_ec functionality on top. I've these on my TODO list but I was
-going to give priority to the cros_ec user-space interface, LPC bus support and
-vboot context over the tps65090 Spring support since I don't have access to a
-Spring machine to test.
+It has been tested on Trats2 board (using Exynos4412 SoC with secure
+firmware enabled) on which AFTR mode reduces power consumption by ~12%
+when EXYNOS cpuidle driver is enabled (in both cases the default
+exynos_defconfig config is used and CPU1-3 are offlined).
 
-> 
->> For the touchpad it seems DT support has landed in the input tree as
->> "atmel,maxtouch". Backporting just that patch does not make it work
->> though. (Tried the rejected pinctrl approach to be on the safe side.)
->> https://code.google.com/p/chromium/issues/detail?id=371114
->> https://patchwork.kernel.org/patch/3976801/
-> 
-> This is the same work as needed for pit and pi, I believe.  Perhaps
-> Javier or Dmitry has this on their todo list?
-> 
-> 
+Depends on:
+- next-20140804 branch of linux-next kernel tree
+- [PATCH v4][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
+  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35192.html)
+- [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34282.html)
 
-Yes, I've this on my TODO list as well.
+Changes since v3:
+- rebased on top of next-20140804 +
+  [PATCH v4][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
+  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35192.html)
+  [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34282.html)
+- (re-)added patch fixing S5P_CENTRAL_SEQ_OPTION register setup
+
+Changes since v2:
+- rebased on top of next-20140708 +
+  [PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
+  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32809.html)
+  [with rejects fixed]
+  [PATCH 6/6] ARM: EXYNOS: Register cpuidle device only on Exynos4210 and 5250
+  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32808.html)
+  [PATCH 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32991.html)
+  [with rejects fixed in patch #2]
+- addressed review comments from Tomasz Figa and Daniel Lezcano
+
+Changes since v1:
+- synced against next-20140602
+- added missing Acked-by-s
 
 Best regards,
-Javier
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-[0]: http://www.spinics.net/lists/linux-samsung-soc/msg34897.html
+
+Bartlomiej Zolnierkiewicz (5):
+  ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static inlines
+  ARM: EXYNOS: add AFTR mode support to firmware do_idle method
+  ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode code
+  ARM: EXYNOS: PM: fix register setup for AFTR mode code
+  ARM: EXYNOS: cpuidle: allow driver usage on Exynos4x12 SoCs
+
+ arch/arm/include/asm/firmware.h |  2 +-
+ arch/arm/mach-exynos/common.h   |  5 ++++
+ arch/arm/mach-exynos/exynos.c   |  4 ++-
+ arch/arm/mach-exynos/firmware.c | 33 ++++++++++++++++-------
+ arch/arm/mach-exynos/pm.c       | 60 ++++++++++++++++++++++++-----------------
+ 5 files changed, 69 insertions(+), 35 deletions(-)
+
+-- 
+1.8.2.3
+
