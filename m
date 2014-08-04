@@ -1,46 +1,84 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 1/2] drm/exynos: g2d: make ioctls more robust
-Date: Mon, 04 Aug 2014 09:28:00 +0900
-Message-ID: <53DED390.8000100@samsung.com>
-References: <1406127433-3914-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1406127433-3914-2-git-send-email-tjakobi@math.uni-bielefeld.de>
- <CAAQKjZOC34azEuBzwdAXtWhWjqnVY40PMUmWN3PA6NKMf1T-uQ@mail.gmail.com>
- <53DE0675.7060605@gmx.net>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v9 3/6] ARM: dts: Exynos: add CPU OPP and regulator supply property
+Date: Mon, 4 Aug 2014 08:30:00 +0530
+Message-ID: <CAJuA9ajwHbEGBxTBGgqJrFZMPS30UacTBEn0Bth23rKk-wXPzg@mail.gmail.com>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
+	<1406707663-16656-4-git-send-email-thomas.ab@samsung.com>
+	<53DC5FC1.7060700@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:20613 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751622AbaHDA2E (ORCPT
+Received: from mail-la0-f45.google.com ([209.85.215.45]:35189 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750900AbaHDDAC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Aug 2014 20:28:04 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0N9R005XTAMPBZ00@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Aug 2014 09:28:01 +0900 (KST)
-In-reply-to: <53DE0675.7060605@gmx.net>
+	Sun, 3 Aug 2014 23:00:02 -0400
+In-Reply-To: <53DC5FC1.7060700@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tobias Jakobi <liquid.acid@gmx.net>
-Cc: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, t.figa@samsung.com
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@linaro.org>
 
-On 2014=EB=85=84 08=EC=9B=94 03=EC=9D=BC 18:52, Tobias Jakobi wrote:
-> Inki Dae wrote:
->> It seems that you have no build test because above line incurs build
->> error. Anyway I fixed it up.
-> That's why I have sent v2 of the patch.
->=20
+Hi Javier,
 
-Oops, sorry. I didn't check v2.
+On Sat, Aug 2, 2014 at 9:19 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> Hello Thomas,
+>
+> On 07/30/2014 10:07 AM, Thomas Abraham wrote:
+>> For Exynos 4210/5250/5420 based platforms, add CPU operating points and CPU
+>> regulator supply properties for migrating from Exynos specific cpufreq driver
+>> to using generic cpufreq drivers.
+>>
+>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+>> Cc: Doug Anderson <dianders@chromium.org>
+>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> Cc: Andreas Faerber <afaerber@suse.de>
+>> Cc: Sachin Kamat <sachin.kamat@linaro.org>
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos4210-origen.dts         |    4 +++
+>>  arch/arm/boot/dts/exynos4210-trats.dts          |    4 +++
+>>  arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 +++
+>>  arch/arm/boot/dts/exynos4210.dtsi               |   14 ++++++++-
+>>  arch/arm/boot/dts/exynos5250-arndale.dts        |    4 +++
+>>  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    4 +++
+>>  arch/arm/boot/dts/exynos5250-snow.dts           |    4 +++
+>>  arch/arm/boot/dts/exynos5250.dtsi               |   25 ++++++++++++++-
+>>  arch/arm/boot/dts/exynos5420.dtsi               |   38 +++++++++++++++++++++++
+>>  9 files changed, 99 insertions(+), 2 deletions(-)
+>>
+>
+> Tested the series on a Exynos5420 based Peach Pit Chromebook by doing the
+> following for CPU0-3:
+>
+> 1) Verified that the big.LITTLE CPUFreq (arm-big-little) driver was reported as
+> used in /sys/devices/system/cpu/cpu*/cpufreq/scaling_driver.
+>
+> 2) Set all available governors (conservative, ondemand, userspace, powersave and
+> performance).
+>
+> 3) Confirmed that cpuinfo_cur_freq and scaling_cur_freq values were fixed or
+> changing according to the selected governor policy.
+>
+> 4) Verified that the statistics in /sys/devices/system/cpu/cpu*/cpufreq/stats/*
+> were filled.
+>
+> Everything is working correctly so please feel free to add for the whole series:
+>
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Thanks,
-Inki Dae
+Thank you for using this series and the details of what has worked.
+This is very helpful.
 
+Regards,
+Thomas.
 
-> With best wishes,
-> Tobias
->=20
->=20
+>
+> Best regards,
+> Javier
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
