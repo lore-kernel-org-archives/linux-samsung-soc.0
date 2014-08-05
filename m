@@ -1,109 +1,150 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v3 0/4] ARM: EXYNOS: cpuidle: fix AFTR mode on boards
- with secure firmware enabled
-Date: Tue, 05 Aug 2014 14:06:38 +0200
-Message-ID: <53E0C8CE.6050203@linaro.org>
-References: <1404926274-18411-1-git-send-email-b.zolnierkie@samsung.com> <53D5FF06.6080904@linaro.org> <1616004.BFfRa8qesz@amdc1032>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH v5 05/10] ARM: dts: Move dp_hpd from exynos5250 into
+ smdk5250 and snow
+Date: Tue, 05 Aug 2014 21:16:55 +0900
+Message-ID: <000e01cfb0a7$25d0ed70$7172c850$%han@samsung.com>
+References: <1406868897-26874-1-git-send-email-afaerber@suse.de>
+ <1406868897-26874-6-git-send-email-afaerber@suse.de>
+ <CAD=FV=WhocoyQ=rU7dU1EPM-PAQq06gg9HhamSOm+BgMDeM8NA@mail.gmail.com>
+ <53DBFE8A.7020505@suse.de> <53DBFF22.3010905@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1616004.BFfRa8qesz@amdc1032>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <53DBFF22.3010905@gmail.com>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, =?UTF-8?Q?'Andreas_F=C3=A4rber'?= <afaerber@suse.de>, 'Doug Anderson' <dianders@chromium.org>
+Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 'Stephan van Schaik' <stephan@synkhronix.com>, 'Vincent Palatin' <vpalatin@chromium.org>, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Tomasz Figa' <t.figa@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Russell King' <linux@arm.linux.org.uk>, 'open list' <linux-kernel@vger.kernel.org>, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08/05/2014 02:04 PM, Bartlomiej Zolnierkiewicz wrote:
->
-> Hi Daniel,
->
-> On Monday, July 28, 2014 09:43:02 AM Daniel Lezcano wrote:
->> On 07/09/2014 07:17 PM, Bartlomiej Zolnierkiewicz wrote:
->>> Hi,
->>>
->>> This patch series adds support for AFTR idle mode on boards with
->>> secure firmware enabled and allows EXYNOS cpuidle driver usage on
->>> Exynos4x12 SoCs.
->>>
->>> It has been tested on Trats2 board (using Exynos4412 SoC with secur=
-e
->>> firmware enabled) on which AFTR mode reduces power consumption by ~=
-12%
->>> when EXYNOS cpuidle driver is enabled (in both cases the default
->>> exynos_defconfig config is used and CPU1-3 are offlined).
->>
->>
->> Hi Bartlomiej,
->>
->> what is the status of this patchset ? Is it supposed to land for 3.1=
-7 ?
->
-> I posted v4 yesterday:
-> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg3519=
-7.html
->
-> When it comes to merging the patchset for 3.17 it is up to Kukjin.
+On Saturday, August 02, 2014 5:57 AM, Tomasz Figa wrote:
+> On 01.08.2014 22:54, Andreas F=C3=A4rber wrote:
+> > Am 01.08.2014 22:33, schrieb Doug Anderson:
+> >> On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber <afaerber@sus=
+e.de> wrote:
+> >>> Spring uses a different GPIO, so this is not a generic SoC piece.
+> >>>
+> >>> Suggested-by: Tomasz Figa <t.figa@samsung.com>
+> >>> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+> >>> ---
+> >>>  v5: New (Tomasz Figa)
+> >>>  Frees dp_hpd for Spring.
+> >>>
+> >>>  arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 7 -------
+> >>>  arch/arm/boot/dts/exynos5250-smdk5250.dts | 9 +++++++++
+> >>>  arch/arm/boot/dts/exynos5250-snow.dts     | 7 +++++++
+> >>>  3 files changed, 16 insertions(+), 7 deletions(-)
+> >>>
+> >>> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm=
+/boot/dts/exynos5250-pinctrl.dtsi
+> >>> index 886cfca044ac..ed0e5230514b 100644
+> >>> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> >>> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> >>> @@ -581,13 +581,6 @@
+> >>>                         samsung,pin-pud =3D <0>;
+> >>>                         samsung,pin-drv =3D <0>;
+> >>>                 };
+> >>> -
+> >>> -               dp_hpd: dp_hpd {
+> >>> -                       samsung,pins =3D "gpx0-7";
+> >>> -                       samsung,pin-function =3D <3>;
+> >>> -                       samsung,pin-pud =3D <0>;
+> >>> -                       samsung,pin-drv =3D <0>;
+> >>> -               };
+> >>>         };
+> >>>
+> >>>         pinctrl@13400000 {
+> >>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm=
+/boot/dts/exynos5250-smdk5250.dts
+> >>> index aaa055ac0fe3..5d30fe1dcda4 100644
+> >>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> >>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> >>> @@ -414,3 +414,12 @@
+> >>>                 };
+> >>>         };
+> >>>  };
+> >>> +
+> >>> +&pinctrl_0 {
+> >>> +       dp_hpd: dp_hpd {
+> >>> +               samsung,pins =3D "gpx0-7";
+> >>> +               samsung,pin-function =3D <3>;
+> >>> +               samsung,pin-pud =3D <0>;
+> >>> +               samsung,pin-drv =3D <0>;
+> >>> +       };
+> >>> +};
+> >>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boo=
+t/dts/exynos5250-snow.dts
+> >>> index c4b0c73c736d..a9a2f2743794 100644
+> >>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> >>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> >>> @@ -547,6 +547,13 @@
+> >>>  };
+> >>>
+> >>>  &pinctrl_0 {
+> >>> +       dp_hpd: dp_hpd {
+> >>> +               samsung,pins =3D "gpx0-7";
+> >>> +               samsung,pin-function =3D <3>;
+> >>> +               samsung,pin-pud =3D <0>;
+> >>> +               samsung,pin-drv =3D <0>;
+> >>> +       };
+> >>> +
+> >>
+> >> NAK.  dp_hpd is a generic SoC piece.  Pin function 0 and 1 are GPI=
+Os.
+> >> Pin function 3 is special function.  This pin _is_ the hot plug de=
+tect
+> >> pin for display port.  When it's set as special function 3 it goes
+> >> straight into the hot plug logic of the display port controller.
+> >>
+> >> Spring may have had its reasons to detect hot plug events on a GPI=
+O
+> >> instead of using this pin, but that doesn't make this pin any less=
+ the
+> >> "hot plug pin".
+> >
+> > Please advise how to handle it then: Should there be two different
+> > pinctrl entries (if so, how should it be named?),
+>=20
+> IMHO this is the right way. Just name the GPIO variant dp_hpd_gpio.
 
-Ok, thanks for the sync up.
+Hi Andreas F=C3=A4rber,
 
-   -- Daniel
+I agree with Tomasz Figa and Doug Anderson.
+Please refer to the following.
 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
->> Thanks
->>
->>     -- Daniel
->>
->>> v3:
->>> - rebased on top of next-20140708 +
->>>     http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/m=
-sg32809.html
->>>     (with rejects fixed)
->>>     http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/m=
-sg32808.html
->>>     http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/m=
-sg32991.html
->>>     (with rejects fixed in patch #2)
->>> - addressed review comments from Tomasz Figa and Daniel Lezcano
->>>
->>> Best regards,
->>> --
->>> Bartlomiej Zolnierkiewicz
->>> Samsung R&D Institute Poland
->>> Samsung Electronics
->>>
->>>
->>> Bartlomiej Zolnierkiewicz (4):
->>>     ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static =
-inlines
->>>     ARM: EXYNOS: add AFTR mode support to firmware do_idle method
->>>     ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode =
-code
->>>     ARM: EXYNOS: cpuidle: allow driver usage on Exynos4x12 SoCs
->>>
->>>    arch/arm/include/asm/firmware.h  |  2 +-
->>>    arch/arm/mach-exynos/common.h    |  7 ++++++-
->>>    arch/arm/mach-exynos/exynos.c    |  3 ++-
->>>    arch/arm/mach-exynos/firmware.c  | 36 ++++++++++++++++++++++++++=
-----------
->>>    arch/arm/mach-exynos/pm.c        | 39 ++++++++++++++++++++++++++=
-+++----------
->>>    drivers/cpuidle/cpuidle-exynos.c |  6 +++---
->>>    6 files changed, 67 insertions(+), 26 deletions(-)
->
+1. case: Standard HPD pin is used. (smdk5420)
+arch/arm/boot/dts/exynos5420-pinctrl.dts
+	pinctrl@13400000 {
+		dp_hpd: dp_hpd {
+			samsung,pins =3D "gpx0-7";
+			samsung,pin-function =3D <3>;
+			samsung,pin-pud =3D <0>;
+			samsung,pin-drv =3D <0>;
+		};
+arch/arm/boot/dts/exynos5420-smdk5420.dts
+	dp-controller@145B0000 {
+		pinctrl-names =3D "default";
+		pinctrl-0 =3D <&dp_hpd>;
+		...
 
+2. case: non-standard HPD pin such as GPIO is used. (peach pit)
+arch/arm/boot/dts/exynos5420-peach-pit.dts
+	pinctrl@13400000 {
+		dp_hpd_gpio: dp_hpd_gpio {
+			samsung,pins =3D "gpx2-6";
+			samsung,pin-function =3D <0>;
+			samsung,pin-pud =3D <3>;
+			samsung,pin-drv =3D <0>;
+		};
+	dp-controller@145B0000 {
+		pinctrl-names =3D "default";
+		pinctrl-0 =3D <&dp_hpd_gpio>;
+		...
+		samsung,hpd-gpio =3D <&gpx2 6 0>;
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+So, you need to follow the second case.
+"dp_hpd_gpio" can be used for Spring board.
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Best regards,
+Jingoo Han
