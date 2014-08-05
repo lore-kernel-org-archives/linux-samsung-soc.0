@@ -1,150 +1,419 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH v5 05/10] ARM: dts: Move dp_hpd from exynos5250 into
- smdk5250 and snow
-Date: Tue, 05 Aug 2014 21:16:55 +0900
-Message-ID: <000e01cfb0a7$25d0ed70$7172c850$%han@samsung.com>
-References: <1406868897-26874-1-git-send-email-afaerber@suse.de>
- <1406868897-26874-6-git-send-email-afaerber@suse.de>
- <CAD=FV=WhocoyQ=rU7dU1EPM-PAQq06gg9HhamSOm+BgMDeM8NA@mail.gmail.com>
- <53DBFE8A.7020505@suse.de> <53DBFF22.3010905@gmail.com>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v2] ARM: EXYNOS: Refactor the pm code to use DT based lookup
+Date: Tue, 5 Aug 2014 17:54:56 +0530
+Message-ID: <CAJuA9ahu2DBvK3tOvWSL=+8Tnm3G06d4kEd5Y0ruruMe5ku7sg@mail.gmail.com>
+References: <1406288941-20792-1-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <53DBFF22.3010905@gmail.com>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, =?UTF-8?Q?'Andreas_F=C3=A4rber'?= <afaerber@suse.de>, 'Doug Anderson' <dianders@chromium.org>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 'Stephan van Schaik' <stephan@synkhronix.com>, 'Vincent Palatin' <vpalatin@chromium.org>, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Tomasz Figa' <t.figa@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Russell King' <linux@arm.linux.org.uk>, 'open list' <linux-kernel@vger.kernel.org>, 'Jingoo Han' <jg1.han@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f178.google.com ([209.85.217.178]:42506 "EHLO
+	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752773AbaHEMY6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Aug 2014 08:24:58 -0400
+Received: by mail-lb0-f178.google.com with SMTP id c11so665665lbj.9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Aug 2014 05:24:56 -0700 (PDT)
+In-Reply-To: <1406288941-20792-1-git-send-email-vikas.sajjan@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, joshi@samsung.com, sajjan.linux@gmail.com, Doug Anderson <dianders@chromium.org>
 
-On Saturday, August 02, 2014 5:57 AM, Tomasz Figa wrote:
-> On 01.08.2014 22:54, Andreas F=C3=A4rber wrote:
-> > Am 01.08.2014 22:33, schrieb Doug Anderson:
-> >> On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber <afaerber@sus=
-e.de> wrote:
-> >>> Spring uses a different GPIO, so this is not a generic SoC piece.
-> >>>
-> >>> Suggested-by: Tomasz Figa <t.figa@samsung.com>
-> >>> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> >>> ---
-> >>>  v5: New (Tomasz Figa)
-> >>>  Frees dp_hpd for Spring.
-> >>>
-> >>>  arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 7 -------
-> >>>  arch/arm/boot/dts/exynos5250-smdk5250.dts | 9 +++++++++
-> >>>  arch/arm/boot/dts/exynos5250-snow.dts     | 7 +++++++
-> >>>  3 files changed, 16 insertions(+), 7 deletions(-)
-> >>>
-> >>> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm=
-/boot/dts/exynos5250-pinctrl.dtsi
-> >>> index 886cfca044ac..ed0e5230514b 100644
-> >>> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> >>> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> >>> @@ -581,13 +581,6 @@
-> >>>                         samsung,pin-pud =3D <0>;
-> >>>                         samsung,pin-drv =3D <0>;
-> >>>                 };
-> >>> -
-> >>> -               dp_hpd: dp_hpd {
-> >>> -                       samsung,pins =3D "gpx0-7";
-> >>> -                       samsung,pin-function =3D <3>;
-> >>> -                       samsung,pin-pud =3D <0>;
-> >>> -                       samsung,pin-drv =3D <0>;
-> >>> -               };
-> >>>         };
-> >>>
-> >>>         pinctrl@13400000 {
-> >>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm=
-/boot/dts/exynos5250-smdk5250.dts
-> >>> index aaa055ac0fe3..5d30fe1dcda4 100644
-> >>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> >>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> >>> @@ -414,3 +414,12 @@
-> >>>                 };
-> >>>         };
-> >>>  };
-> >>> +
-> >>> +&pinctrl_0 {
-> >>> +       dp_hpd: dp_hpd {
-> >>> +               samsung,pins =3D "gpx0-7";
-> >>> +               samsung,pin-function =3D <3>;
-> >>> +               samsung,pin-pud =3D <0>;
-> >>> +               samsung,pin-drv =3D <0>;
-> >>> +       };
-> >>> +};
-> >>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boo=
-t/dts/exynos5250-snow.dts
-> >>> index c4b0c73c736d..a9a2f2743794 100644
-> >>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> >>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> >>> @@ -547,6 +547,13 @@
-> >>>  };
-> >>>
-> >>>  &pinctrl_0 {
-> >>> +       dp_hpd: dp_hpd {
-> >>> +               samsung,pins =3D "gpx0-7";
-> >>> +               samsung,pin-function =3D <3>;
-> >>> +               samsung,pin-pud =3D <0>;
-> >>> +               samsung,pin-drv =3D <0>;
-> >>> +       };
-> >>> +
-> >>
-> >> NAK.  dp_hpd is a generic SoC piece.  Pin function 0 and 1 are GPI=
-Os.
-> >> Pin function 3 is special function.  This pin _is_ the hot plug de=
-tect
-> >> pin for display port.  When it's set as special function 3 it goes
-> >> straight into the hot plug logic of the display port controller.
-> >>
-> >> Spring may have had its reasons to detect hot plug events on a GPI=
-O
-> >> instead of using this pin, but that doesn't make this pin any less=
- the
-> >> "hot plug pin".
-> >
-> > Please advise how to handle it then: Should there be two different
-> > pinctrl entries (if so, how should it be named?),
->=20
-> IMHO this is the right way. Just name the GPIO variant dp_hpd_gpio.
+Hi Vikas,
 
-Hi Andreas F=C3=A4rber,
+On Fri, Jul 25, 2014 at 5:19 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+> Refactoring the pm.c to avoid using "soc_is_exynos" checks,
+> instead use the DT based lookup.
+>
+> While at it, consolidate the common code across SoCs
+> and create a static helper functions.
+>
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> ---
+> changes since v1:
+>         - Address Kukjin Kim comments to respin this patch separately from
+>                 http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/272574.html
+>         - removed panic, returned if no PMU node found and added check in exynos_wkup_irq.
+>
+> Rebased on Kukjin Kim's tree, for-next branch
+>         https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+> ---
+>  arch/arm/mach-exynos/pm.c       |  234 ++++++++++++++++++++++++++++++++-------
+>  arch/arm/mach-exynos/regs-pmu.h |    1 +
+>  2 files changed, 192 insertions(+), 43 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index c4c6d98..1c875e5 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -36,6 +36,8 @@
+>  #include "regs-pmu.h"
+>  #include "regs-sys.h"
+>
+> +#define REG_TABLE_END (-1U)
+> +
+>  /**
+>   * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
+>   * @hwirq: Hardware IRQ signal of the GIC
+> @@ -59,6 +61,19 @@ static struct sleep_save exynos_core_save[] = {
+>         SAVE_ITEM(S5P_SROM_BC3),
+>  };
+>
+> +struct exynos_pm_data {
+> +       const struct exynos_wkup_irq *wkup_irq;
+> +       unsigned int wake_disable_mask;
+> +       unsigned int *release_ret_regs;
+> +
+> +       void (*pm_prepare)(void);
+> +       void (*pm_resume)(void);
+> +       int (*pm_suspend)(void);
+> +       int (*cpu_suspend)(unsigned long);
+> +};
+> +
+> +struct exynos_pm_data *pm_data;
+> +
+>  /*
+>   * GIC wake-up support
+>   */
+> @@ -77,14 +92,24 @@ static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
+>         { /* sentinel */ },
+>  };
+>
+> +unsigned int exynos_release_ret_regs[] = {
+> +       S5P_PAD_RET_MAUDIO_OPTION,
+> +       S5P_PAD_RET_GPIO_OPTION,
+> +       S5P_PAD_RET_UART_OPTION,
+> +       S5P_PAD_RET_MMCA_OPTION,
+> +       S5P_PAD_RET_MMCB_OPTION,
+> +       S5P_PAD_RET_EBIA_OPTION,
+> +       S5P_PAD_RET_EBIB_OPTION,
+> +       REG_TABLE_END,
+> +};
+> +
+>  static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
+>  {
+>         const struct exynos_wkup_irq *wkup_irq;
+>
+> -       if (soc_is_exynos5250())
+> -               wkup_irq = exynos5250_wkup_irq;
+> -       else
+> -               wkup_irq = exynos4_wkup_irq;
+> +       if (!pm_data->wkup_irq)
+> +               return -ENOENT;
+> +       wkup_irq = pm_data->wkup_irq;
+>
+>         while (wkup_irq->mask) {
+>                 if (wkup_irq->hwirq == data->hwirq) {
+> @@ -241,13 +266,13 @@ static void exynos_cpu_restore_register(void)
+>
+>  static int exynos_cpu_suspend(unsigned long arg)
+>  {
+> -#ifdef CONFIG_CACHE_L2X0
+> -       outer_flush_all();
+> -#endif
+> -
+> -       if (soc_is_exynos5250())
+> -               flush_cache_all();
+> +       if (pm_data->cpu_suspend)
+> +               return pm_data->cpu_suspend(arg);
+> +       return -1;
+> +}
+>
+> +static int exynos_cpu_do_idle(void)
+> +{
+>         /* issue the standby signal into the pm unit. */
+>         cpu_do_idle();
+>
+> @@ -257,32 +282,73 @@ static int exynos_cpu_suspend(unsigned long arg)
+>
+>  static void exynos_pm_prepare(void)
+>  {
+> -       unsigned int tmp;
+> +       if (pm_data->pm_prepare)
+> +               pm_data->pm_prepare();
+> +}
+>
+> +static int exynos4_cpu_suspend(unsigned long arg)
+> +{
+> +#ifdef CONFIG_CACHE_L2X0
+> +       outer_flush_all();
+> +#endif
+> +       return exynos_cpu_do_idle();
+> +}
+> +
+> +static int exynos5250_cpu_suspend(unsigned long arg)
+> +{
+> +#ifdef CONFIG_CACHE_L2X0
+> +       outer_flush_all();
+> +#endif
 
-I agree with Tomasz Figa and Doug Anderson.
-Please refer to the following.
+Exynos5 SoCs do not use an additional outer cache controller. So the
+above #ifdef block can be dropped.
 
-1. case: Standard HPD pin is used. (smdk5420)
-arch/arm/boot/dts/exynos5420-pinctrl.dts
-	pinctrl@13400000 {
-		dp_hpd: dp_hpd {
-			samsung,pins =3D "gpx0-7";
-			samsung,pin-function =3D <3>;
-			samsung,pin-pud =3D <0>;
-			samsung,pin-drv =3D <0>;
-		};
-arch/arm/boot/dts/exynos5420-smdk5420.dts
-	dp-controller@145B0000 {
-		pinctrl-names =3D "default";
-		pinctrl-0 =3D <&dp_hpd>;
-		...
+> +       flush_cache_all();
+> +       return exynos_cpu_do_idle();
+> +}
+> +
+> +static void exynos_pm_set_wakeup_mask(void)
+> +{
+>         /* Set wake-up mask registers */
+>         pmu_raw_writel(exynos_get_eint_wake_mask(), S5P_EINT_WAKEUP_MASK);
+>         pmu_raw_writel(exynos_irqwake_intmask & ~(1 << 31), S5P_WAKEUP_MASK);
+> +}
+>
+> -       s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+> -
+> -       if (soc_is_exynos5250()) {
+> -               s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
+> -               /* Disable USE_RETENTION of JPEG_MEM_OPTION */
+> -               tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
+> -               tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
+> -               pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
+> -       }
+> -
+> +static void exynos_pm_enter_sleep_mode(void)
+> +{
+>         /* Set value of power down register for sleep mode */
+> -
+>         exynos_sys_powerdown_conf(SYS_SLEEP);
+>         pmu_raw_writel(S5P_CHECK_SLEEP, S5P_INFORM1);
+>
+>         /* ensure at least INFORM0 has the resume address */
+> -
+>         pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
+>  }
+>
+> +static void exynos5250_pm_prepare(void)
+> +{
+> +       unsigned int tmp;
+> +
+> +       /* Set wake-up mask registers */
+> +       exynos_pm_set_wakeup_mask();
+> +
+> +       s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+> +
+> +       s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
+> +
+> +       /* Disable USE_RETENTION of JPEG_MEM_OPTION */
+> +       tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
+> +       tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
+> +       pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
+> +
+> +       exynos_pm_enter_sleep_mode();
+> +}
+> +
+> +static void exynos4_pm_prepare(void)
+> +{
+> +       /* Set wake-up mask registers */
+> +       exynos_pm_set_wakeup_mask();
+> +
+> +       s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+> +
+> +       exynos_pm_enter_sleep_mode();
+> +}
+> +
+>  static void exynos_pm_central_suspend(void)
+>  {
+>         unsigned long tmp;
+> @@ -295,6 +361,13 @@ static void exynos_pm_central_suspend(void)
+>
+>  static int exynos_pm_suspend(void)
+>  {
+> +       if (pm_data->pm_suspend)
+> +               return pm_data->pm_suspend();
+> +       return -1;
+> +}
+> +
+> +static int exynos4_pm_suspend(void)
+> +{
+>         unsigned long tmp;
+>
+>         exynos_pm_central_suspend();
+> @@ -304,9 +377,20 @@ static int exynos_pm_suspend(void)
+>         tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
+>         pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
+>
+> -       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+> -               exynos_cpu_save_register();
+> +       exynos_cpu_save_register();
+> +       return 0;
+> +}
+> +
+> +static int exynos5250_pm_suspend(void)
+> +{
+> +       unsigned long tmp;
+> +
+> +       exynos_pm_central_suspend();
+> +
+> +       /* Setting SEQ_OPTION register */
+>
+> +       tmp = (S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0);
+> +       pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
+>         return 0;
+>  }
+>
+> @@ -333,39 +417,57 @@ static int exynos_pm_central_resume(void)
+>         return 0;
+>  }
+>
+> +static void exynos_pm_set_release_retention(void)
+> +{
+> +       unsigned int i;
+> +
+> +       for (i = 0; (pm_data->release_ret_regs[i] != REG_TABLE_END); i++)
+> +               pmu_raw_writel(EXYNOS_WAKEUP_FROM_LOWPWR,
+> +                               pm_data->release_ret_regs[i]);
+> +}
+> +
+>  static void exynos_pm_resume(void)
+>  {
+> +       if (pm_data->pm_resume)
+> +               pm_data->pm_resume();
+> +}
+> +
+> +static void exynos4_pm_resume(void)
+> +{
+>         if (exynos_pm_central_resume())
+>                 goto early_wakeup;
+>
+> -       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+> -               exynos_cpu_restore_register();
+> +       exynos_cpu_restore_register();
+>
+>         /* For release retention */
+> -
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
+> -       pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
+> -
+> -       if (soc_is_exynos5250())
+> -               s3c_pm_do_restore(exynos5_sys_save,
+> -                       ARRAY_SIZE(exynos5_sys_save));
+> +       exynos_pm_set_release_retention();
+>
+>         s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+>
+> -       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+> -               scu_enable(S5P_VA_SCU);
+> +       scu_enable(S5P_VA_SCU);
+>
+>  early_wakeup:
+>
+>         /* Clear SLEEP mode set in INFORM1 */
+>         pmu_raw_writel(0x0, S5P_INFORM1);
+> +}
+> +
+> +static void exynos5250_pm_resume(void)
+> +{
+> +       if (exynos_pm_central_resume())
+> +               goto early_wakeup;
+>
+> -       return;
+> +       /* For release retention */
+> +       exynos_pm_set_release_retention();
+> +
+> +       s3c_pm_do_restore(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
+> +
+> +       s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+> +
+> +early_wakeup:
+> +
+> +       /* Clear SLEEP mode set in INFORM1 */
+> +       pmu_raw_writel(0x0, S5P_INFORM1);
+>  }
+>
+>  static struct syscore_ops exynos_pm_syscore_ops = {
+> @@ -468,18 +570,64 @@ static struct notifier_block exynos_cpu_pm_notifier_block = {
+>         .notifier_call = exynos_cpu_pm_notifier,
+>  };
+>
+> +static struct exynos_pm_data exynos4_pm_data = {
+> +       .wkup_irq       = exynos4_wkup_irq,
+> +       .wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
+> +       .release_ret_regs = exynos_release_ret_regs,
+> +       .pm_suspend     = exynos4_pm_suspend,
+> +       .pm_resume      = exynos4_pm_resume,
+> +       .pm_prepare     = exynos4_pm_prepare,
+> +       .cpu_suspend    = exynos4_cpu_suspend,
+> +};
+> +
+> +static struct exynos_pm_data exynos5250_pm_data = {
+> +       .wkup_irq       = exynos5250_wkup_irq,
+> +       .wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
+> +       .release_ret_regs = exynos_release_ret_regs,
+> +       .pm_suspend     = exynos5250_pm_suspend,
+> +       .pm_resume      = exynos5250_pm_resume,
+> +       .pm_prepare     = exynos5250_pm_prepare,
+> +       .cpu_suspend    = exynos5250_cpu_suspend,
+> +};
+> +
+> +static struct of_device_id exynos_pmu_of_device_ids[] = {
+> +       {
+> +               .compatible = "samsung,exynos4210-pmu",
+> +               .data = (void *)&exynos4_pm_data,
+> +       }, {
+> +               .compatible = "samsung,exynos4212-pmu",
+> +               .data = (void *)&exynos4_pm_data,
+> +       }, {
+> +               .compatible = "samsung,exynos4412-pmu",
+> +               .data = (void *)&exynos4_pm_data,
+> +       }, {
+> +               .compatible = "samsung,exynos5250-pmu",
+> +               .data = (void *)&exynos5250_pm_data,
+> +       },
+> +       { /*sentinel*/ },
+> +};
+> +
+>  void __init exynos_pm_init(void)
+>  {
+>         u32 tmp;
+> +       const struct of_device_id *match;
+>
+>         cpu_pm_register_notifier(&exynos_cpu_pm_notifier_block);
+>
+> +       of_find_matching_node_and_match(NULL, exynos_pmu_of_device_ids, &match);
+> +
+> +       if (!match) {
+> +               pr_err("Failed to find PMU node\n");
+> +               return;
+> +       }
+> +       pm_data = (struct exynos_pm_data *) match->data;
+> +
+>         /* Platform-specific GIC callback */
+>         gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
+>
+>         /* All wakeup disable */
+>         tmp = pmu_raw_readl(S5P_WAKEUP_MASK);
+> -       tmp |= ((0xFF << 8) | (0x1F << 1));
+> +       tmp |= pm_data->wake_disable_mask;
+>         pmu_raw_writel(tmp, S5P_WAKEUP_MASK);
+>
+>         register_syscore_ops(&exynos_pm_syscore_ops);
+> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+> index 96a1569..30c0301 100644
+> --- a/arch/arm/mach-exynos/regs-pmu.h
+> +++ b/arch/arm/mach-exynos/regs-pmu.h
+> @@ -21,6 +21,7 @@
+>  #define S5P_USE_STANDBY_WFI0                   (1 << 16)
+>  #define S5P_USE_STANDBY_WFE0                   (1 << 24)
+>
+> +#define EXYNOS_WAKEUP_FROM_LOWPWR              (1 << 28)
+>  #define EXYNOS_SWRESET                         0x0400
+>  #define EXYNOS5440_SWRESET                     0x00C4
+>
 
-2. case: non-standard HPD pin such as GPIO is used. (peach pit)
-arch/arm/boot/dts/exynos5420-peach-pit.dts
-	pinctrl@13400000 {
-		dp_hpd_gpio: dp_hpd_gpio {
-			samsung,pins =3D "gpx2-6";
-			samsung,pin-function =3D <0>;
-			samsung,pin-pud =3D <3>;
-			samsung,pin-drv =3D <0>;
-		};
-	dp-controller@145B0000 {
-		pinctrl-names =3D "default";
-		pinctrl-0 =3D <&dp_hpd_gpio>;
-		...
-		samsung,hpd-gpio =3D <&gpx2 6 0>;
+Rest of the patch looks fine. With the fix for comment above,
 
-So, you need to follow the second case.
-"dp_hpd_gpio" can be used for Spring board.
+Reviewed-by: Thomas Abraham <thomas.ab@samsung.com>
 
-Best regards,
-Jingoo Han
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
