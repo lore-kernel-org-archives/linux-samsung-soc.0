@@ -1,122 +1,66 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 01/15] drm/panel: add prepare and unprepare routines
-Date: Tue, 05 Aug 2014 11:00:06 +0200
-Message-ID: <53E09D16.9090701@samsung.com>
-References: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com> <1406828534-10072-2-git-send-email-ajaykumar.rs@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: [PATCH] media: s5p_mfc: Release ctx->ctx if failed to allocate
+ ctx->shm
+Date: Tue, 05 Aug 2014 11:11:28 +0200
+Message-ID: <0bd801cfb08d$3e5cf330$bb16d990$%debski@samsung.com>
+References: <1407222797-14350-1-git-send-email-zhaowei.yuan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:57820 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755609AbaHEJAe (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:60574 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932795AbaHEJL2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Aug 2014 05:00:34 -0400
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
-	id 1XEabd-0002w8-LV
-	for linux-samsung-soc@vger.kernel.org; Tue, 05 Aug 2014 11:00:29 +0200
-Received: from 217-67-201-162.itsa.net.pl ([217.67.201.162])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Aug 2014 11:00:29 +0200
-Received: from a.hajda by 217-67-201-162.itsa.net.pl with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Aug 2014 11:00:29 +0200
-In-Reply-To: <1406828534-10072-2-git-send-email-ajaykumar.rs@samsung.com>
+	Tue, 5 Aug 2014 05:11:28 -0400
+In-reply-to: <1407222797-14350-1-git-send-email-zhaowei.yuan@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.orgdri-devel@lists.freedesktop.org
+To: 'Zhaowei Yuan' <zhaowei.yuan@samsung.com>, linux-media@vger.kernel.org, m.chehab@samsung.com, kyungmin.park@samsung.com, jtp.park@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org
 
-Hi Ajay,
+Hi Zhaowei,
 
-I am glad we have finally more fine-grained callbacks.
-Just few nitpicks.
+Please provide a short and informative commit description.
 
-On 07/31/2014 07:42 PM, Ajay Kumar wrote:
-> Most of the panels need an init sequence as mentioned below:
-> 	-- poweron LCD unit/LCD_EN
-> 	-- start video data
-> 	-- poweron LED unit/BACKLIGHT_EN
-> And, a de-init sequence as mentioned below:
-> 	-- poweroff LED unit/BACKLIGHT_EN
-> 	-- stop video data
-> 	-- poweroff LCD unit/LCD_EN
-> With existing callbacks for drm panel, we cannot accomodate such panels,
-> since only two callbacks, i.e "panel_enable" and panel_disable are supported.
+Best wishes,
+-- 
+Kamil Debski
+Samsung R&D Institute Poland
+
+
+> -----Original Message-----
+> From: Zhaowei Yuan [mailto:zhaowei.yuan@samsung.com]
+> Sent: Tuesday, August 05, 2014 9:13 AM
+> To: linux-media@vger.kernel.org; k.debski@samsung.com;
+> m.chehab@samsung.com; kyungmin.park@samsung.com; jtp.park@samsung.com
+> Cc: linux-samsung-soc@vger.kernel.org
+> Subject: [PATCH] media: s5p_mfc: Release ctx->ctx if failed to allocate
+> ctx->shm
 > 
-> This patch adds:
-> 	-- "prepare" callback which can be called before
-> 	the actual video data is on, and then call the "enable"
-> 	callback after the video data is available.
-> 
-> 	-- "unprepare" callback which can be called after
-> 	the video data is off, and use "disable" callback
-> 	to do something before switching off the video data.
-> 
-> Now, we can easily map the above scenario as shown below:
-> 	poweron LCD unit/LCD_EN = "prepare" callback
-> 	poweron LED unit/BACKLIGHT_EN = "enable" callback
-> 	poweroff LED unit/BACKLIGHT_EN = "disable" callback
-> 	poweroff LCD unit/LCD_EN = "unprepare" callback
-> 
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> Signed-off-by: Zhaowei Yuan <zhaowei.yuan@samsung.com>
 > ---
->  include/drm/drm_panel.h |   18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+>  drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c |    1 +
+>  1 file changed, 1 insertion(+)
+>  mode change 100644 => 100755 drivers/media/platform/s5p-
+> mfc/s5p_mfc_opr_v5.c
 > 
-> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-> index c2ab77a..9addc69 100644
-> --- a/include/drm/drm_panel.h
-> +++ b/include/drm/drm_panel.h
-> @@ -31,7 +31,9 @@ struct drm_device;
->  struct drm_panel;
->  
->  struct drm_panel_funcs {
-> +	int (*unprepare)(struct drm_panel *panel);
->  	int (*disable)(struct drm_panel *panel);
-> +	int (*prepare)(struct drm_panel *panel);
->  	int (*enable)(struct drm_panel *panel);
->  	int (*get_modes)(struct drm_panel *panel);
->  };
-> @@ -46,6 +48,14 @@ struct drm_panel {
->  	struct list_head list;
->  };
->  
-> +static inline int drm_panel_unprepare(struct drm_panel *panel)
-> +{
-> +	if (panel && panel->funcs && panel->funcs->unprepare)
-> +		return panel->funcs->unprepare(panel);
-> +
-> +	return panel ? -ENOSYS : -EINVAL;
-> +}
-
-Wouldn't be better to return 0 in case there is no callback.
-In such case we could avoid implementing ugly dummy callbacks in
-each panel driver. This is true for all
-prepare/unprepare/enable/disable callbacks.
-
-Regards
-Andrzej
-
-> +
->  static inline int drm_panel_disable(struct drm_panel *panel)
->  {
->  	if (panel && panel->funcs && panel->funcs->disable)
-> @@ -54,6 +64,14 @@ static inline int drm_panel_disable(struct drm_panel *panel)
->  	return panel ? -ENOSYS : -EINVAL;
->  }
->  
-> +static inline int drm_panel_prepare(struct drm_panel *panel)
-> +{
-> +	if (panel && panel->funcs && panel->funcs->prepare)
-> +		return panel->funcs->prepare(panel);
-> +
-> +	return panel ? -ENOSYS : -EINVAL;
-> +}
-> +
->  static inline int drm_panel_enable(struct drm_panel *panel)
->  {
->  	if (panel && panel->funcs && panel->funcs->enable)
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c
+> b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c
+> old mode 100644
+> new mode 100755
+> index 58ec7bb..dc00aea
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v5.c
+> @@ -228,6 +228,7 @@ static int s5p_mfc_alloc_instance_buffer_v5(struct
+> s5p_mfc_ctx *ctx)
+>  	ret = s5p_mfc_alloc_priv_buf(dev->mem_dev_l, &ctx->shm);
+>  	if (ret) {
+>  		mfc_err("Failed to allocate shared memory buffer\n");
+> +		s5p_mfc_release_priv_buf(dev->mem_dev_l, &ctx->ctx);
+>  		return ret;
+>  	}
 > 
+> --
+> 1.7.9.5
