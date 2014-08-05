@@ -1,689 +1,315 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 3/5] rtc: s3c: Add s3c_rtc_data structure to use variant data
- instead of s3c_cpu_type
-Date: Tue, 05 Aug 2014 21:27:44 +0900
-Message-ID: <1407241666-17835-4-git-send-email-cw00.choi@samsung.com>
-References: <1407241666-17835-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1407241666-17835-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: a.zummo@towertech.it
-Cc: kgene.kim@samsung.com, kyungmin.park@samsung.com, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v4][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
+Date: Tue, 05 Aug 2014 14:41:46 +0200
+Message-ID: <5916828.8hQVGW3cAr@amdc1032>
+References: <1634593.NW3m9xbfbC@amdc1032>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:58922 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753048AbaHEMlv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Aug 2014 08:41:51 -0400
+In-reply-to: <1634593.NW3m9xbfbC@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, arm@kernel.org
 
-This patch add s3c_rtc_data structure to variant data according to SoC type.
-The s3c_rtc_data structure includes some functions to control RTC operation
-and specific data dependent on SoC type.
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/rtc/rtc-s3c.c | 464 +++++++++++++++++++++++++++++++-------------------
- 1 file changed, 289 insertions(+), 175 deletions(-)
+Hi,
 
-diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-index 814ee74..43070f5 100644
---- a/drivers/rtc/rtc-s3c.c
-+++ b/drivers/rtc/rtc-s3c.c
-@@ -32,17 +32,6 @@
- #include <asm/irq.h>
- #include "rtc-s3c.h"
- 
--enum s3c_cpu_type {
--	TYPE_S3C2410,
--	TYPE_S3C2416,
--	TYPE_S3C2443,
--	TYPE_S3C64XX,
--};
--
--struct s3c_rtc_drv_data {
--	int cpu_type;
--};
--
- struct s3c_rtc {
- 	struct device *dev;
- 	struct rtc_device *rtc;
-@@ -51,7 +40,7 @@ struct s3c_rtc {
- 	struct clk *rtc_clk;
- 	bool enabled;
- 
--	enum s3c_cpu_type cpu_type;
-+	struct s3c_rtc_data *data;
- 
- 	int irq_alarm;
- 	int irq_tick;
-@@ -63,6 +52,19 @@ struct s3c_rtc {
- 	bool wake_en;
- };
- 
-+struct s3c_rtc_data {
-+	int max_user_freq;
-+
-+	void (*irq_handler) (struct s3c_rtc *info, int mask);
-+	void (*set_freq) (struct s3c_rtc *info, int freq);
-+	void (*enable_tick) (struct s3c_rtc *info, struct seq_file *seq);
-+	void (*select_tick_clk) (struct s3c_rtc *info);
-+	void (*save_tick_cnt) (struct s3c_rtc *info);
-+	void (*restore_tick_cnt) (struct s3c_rtc *info);
-+	void (*enable) (struct s3c_rtc *info);
-+	void (*disable) (struct s3c_rtc *info);
-+};
-+
- static void s3c_rtc_alarm_clk_enable(struct s3c_rtc *info, bool enable)
- {
- 	unsigned long irq_flags;
-@@ -83,34 +85,22 @@ static void s3c_rtc_alarm_clk_enable(struct s3c_rtc *info, bool enable)
- }
- 
- /* IRQ Handlers */
--static irqreturn_t s3c_rtc_alarmirq(int irq, void *id)
-+static irqreturn_t s3c_rtc_tickirq(int irq, void *id)
- {
- 	struct s3c_rtc *info = (struct s3c_rtc *)id;
- 
--	clk_enable(info->rtc_clk);
--	rtc_update_irq(info->rtc, 1, RTC_AF | RTC_IRQF);
--
--	if (info->cpu_type == TYPE_S3C64XX)
--		writeb(S3C2410_INTP_ALM, info->base + S3C2410_INTP);
--
--	clk_disable(info->rtc_clk);
--
--	s3c_rtc_alarm_clk_enable(info, false);
-+	if (info->data->irq_handler)
-+		info->data->irq_handler(info, S3C2410_INTP_TIC);
- 
- 	return IRQ_HANDLED;
- }
- 
--static irqreturn_t s3c_rtc_tickirq(int irq, void *id)
-+static irqreturn_t s3c_rtc_alarmirq(int irq, void *id)
- {
- 	struct s3c_rtc *info = (struct s3c_rtc *)id;
- 
--	clk_enable(info->rtc_clk);
--	rtc_update_irq(info->rtc, 1, RTC_PF | RTC_IRQF);
--
--	if (info->cpu_type == TYPE_S3C64XX)
--		writeb(S3C2410_INTP_TIC, info->base + S3C2410_INTP);
--
--	clk_disable(info->rtc_clk);
-+	if (info->data->irq_handler)
-+		info->data->irq_handler(info, S3C2410_INTP_ALM);
- 
- 	return IRQ_HANDLED;
- }
-@@ -137,36 +127,18 @@ static int s3c_rtc_setaie(struct device *dev, unsigned int enabled)
- 	return 0;
- }
- 
-+/* Set RTC frequency */
- static int s3c_rtc_setfreq(struct s3c_rtc *info, int freq)
- {
--	unsigned int tmp = 0;
--	int val;
--
- 	if (!is_power_of_2(freq))
- 		return -EINVAL;
- 
- 	clk_enable(info->rtc_clk);
- 	spin_lock_irq(&info->pie_lock);
- 
--	if (info->cpu_type != TYPE_S3C64XX) {
--		tmp = readb(info->base + S3C2410_TICNT);
--		tmp &= S3C2410_TICNT_ENABLE;
--	}
--
--	val = (info->rtc->max_user_freq / freq) - 1;
--
--	if (info->cpu_type == TYPE_S3C2416 || info->cpu_type == TYPE_S3C2443) {
--		tmp |= S3C2443_TICNT_PART(val);
--		writel(S3C2443_TICNT1_PART(val), info->base + S3C2443_TICNT1);
-+	if (info->data->set_freq)
-+		info->data->set_freq(info, freq);
- 
--		if (info->cpu_type == TYPE_S3C2416)
--			writel(S3C2416_TICNT2_PART(val),
--				info->base + S3C2416_TICNT2);
--	} else {
--		tmp |= val;
--	}
--
--	writel(tmp, info->base + S3C2410_TICNT);
- 	spin_unlock_irq(&info->pie_lock);
- 	clk_disable(info->rtc_clk);
- 
-@@ -174,7 +146,6 @@ static int s3c_rtc_setfreq(struct s3c_rtc *info, int freq)
- }
- 
- /* Time read/write */
--
- static int s3c_rtc_gettime(struct device *dev, struct rtc_time *rtc_tm)
- {
- 	struct s3c_rtc *info = dev_get_drvdata(dev);
-@@ -355,19 +326,14 @@ static int s3c_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
- static int s3c_rtc_proc(struct device *dev, struct seq_file *seq)
- {
- 	struct s3c_rtc *info = dev_get_drvdata(dev);
--	unsigned int ticnt;
- 
- 	clk_enable(info->rtc_clk);
--	if (info->cpu_type == TYPE_S3C64XX) {
--		ticnt = readw(info->base + S3C2410_RTCCON);
--		ticnt &= S3C64XX_RTCCON_TICEN;
--	} else {
--		ticnt = readb(info->base + S3C2410_TICNT);
--		ticnt &= S3C2410_TICNT_ENABLE;
--	}
- 
--	seq_printf(seq, "periodic_IRQ\t: %s\n", ticnt  ? "yes" : "no");
-+	if (info->data->enable_tick)
-+		info->data->enable_tick(info, seq);
-+
- 	clk_disable(info->rtc_clk);
-+
- 	return 0;
- }
- 
-@@ -380,53 +346,69 @@ static const struct rtc_class_ops s3c_rtcops = {
- 	.alarm_irq_enable = s3c_rtc_setaie,
- };
- 
--static void s3c_rtc_enable(struct s3c_rtc *info, int en)
-+static void s3c24xx_rtc_enable(struct s3c_rtc *info)
- {
- 	unsigned int con, tmp;
- 
--	if (!info->base)
--		return;
--
- 	clk_enable(info->rtc_clk);
- 
- 	con = readw(info->base + S3C2410_RTCCON);
--	if (!en) {
--		if (info->cpu_type == TYPE_S3C64XX)
--			con &= ~S3C64XX_RTCCON_TICEN;
--		con &= ~S3C2410_RTCCON_RTCEN;
--		writew(con, info->base + S3C2410_RTCCON);
--
--		if (info->cpu_type != TYPE_S3C64XX) {
--			con = readb(info->base + S3C2410_TICNT);
--			con &= ~S3C2410_TICNT_ENABLE;
--			writeb(con, info->base + S3C2410_TICNT);
--		}
--	} else {
--		/* re-enable the device, and check it is ok */
--		if ((con & S3C2410_RTCCON_RTCEN) == 0) {
--			dev_info(info->dev, "rtc disabled, re-enabling\n");
-+	/* re-enable the device, and check it is ok */
-+	if ((con & S3C2410_RTCCON_RTCEN) == 0) {
-+		dev_info(info->dev, "rtc disabled, re-enabling\n");
- 
--			tmp = readw(info->base + S3C2410_RTCCON);
--			writew(tmp | S3C2410_RTCCON_RTCEN,
--				info->base + S3C2410_RTCCON);
--		}
-+		tmp = readw(info->base + S3C2410_RTCCON);
-+		writew(tmp | S3C2410_RTCCON_RTCEN,
-+			info->base + S3C2410_RTCCON);
-+	}
- 
--		if (con & S3C2410_RTCCON_CNTSEL) {
--			dev_info(info->dev, "removing RTCCON_CNTSEL\n");
-+	if (con & S3C2410_RTCCON_CNTSEL) {
-+		dev_info(info->dev, "removing RTCCON_CNTSEL\n");
- 
--			tmp = readw(info->base + S3C2410_RTCCON);
--			writew(tmp & ~S3C2410_RTCCON_CNTSEL,
--				info->base + S3C2410_RTCCON);
--		}
-+		tmp = readw(info->base + S3C2410_RTCCON);
-+		writew(tmp & ~S3C2410_RTCCON_CNTSEL,
-+			info->base + S3C2410_RTCCON);
-+	}
- 
--		if (con & S3C2410_RTCCON_CLKRST) {
--			dev_info(info->dev, "removing RTCCON_CLKRST\n");
-+	if (con & S3C2410_RTCCON_CLKRST) {
-+		dev_info(info->dev, "removing RTCCON_CLKRST\n");
- 
--			tmp = readw(info->base + S3C2410_RTCCON);
--			writew(tmp & ~S3C2410_RTCCON_CLKRST,
--				info->base + S3C2410_RTCCON);
--		}
-+		tmp = readw(info->base + S3C2410_RTCCON);
-+		writew(tmp & ~S3C2410_RTCCON_CLKRST,
-+			info->base + S3C2410_RTCCON);
- 	}
-+
-+	clk_disable(info->rtc_clk);
-+}
-+
-+static void s3c24xx_rtc_disable(struct s3c_rtc *info)
-+{
-+	unsigned int con;
-+
-+	clk_enable(info->rtc_clk);
-+
-+	con = readw(info->base + S3C2410_RTCCON);
-+	con &= ~S3C2410_RTCCON_RTCEN;
-+	writew(con, info->base + S3C2410_RTCCON);
-+
-+	con = readb(info->base + S3C2410_TICNT);
-+	con &= ~S3C2410_TICNT_ENABLE;
-+	writeb(con, info->base + S3C2410_TICNT);
-+
-+	clk_disable(info->rtc_clk);
-+}
-+
-+static void s3c6410_rtc_disable(struct s3c_rtc *info)
-+{
-+	unsigned int con;
-+
-+	clk_enable(info->rtc_clk);
-+
-+	con = readw(info->base + S3C2410_RTCCON);
-+	con &= ~S3C64XX_RTCCON_TICEN;
-+	con &= ~S3C2410_RTCCON_RTCEN;
-+	writew(con, info->base + S3C2410_RTCCON);
-+
- 	clk_disable(info->rtc_clk);
- }
- 
-@@ -444,20 +426,12 @@ static int s3c_rtc_remove(struct platform_device *pdev)
- 
- static const struct of_device_id s3c_rtc_dt_match[];
- 
--static inline int s3c_rtc_get_driver_data(struct platform_device *pdev)
-+static struct s3c_rtc_data *s3c_rtc_get_data(struct platform_device *pdev)
- {
--#ifdef CONFIG_OF
--	struct s3c_rtc_drv_data *data;
--
--	if (pdev->dev.of_node) {
--		const struct of_device_id *match;
-+	const struct of_device_id *match;
- 
--		match = of_match_node(s3c_rtc_dt_match, pdev->dev.of_node);
--		data = (struct s3c_rtc_drv_data *) match->data;
--		return data->cpu_type;
--	}
--#endif
--	return platform_get_device_id(pdev)->driver_data;
-+	match = of_match_node(s3c_rtc_dt_match, pdev->dev.of_node);
-+	return (struct s3c_rtc_data *)match->data;
- }
- 
- static int s3c_rtc_probe(struct platform_device *pdev)
-@@ -466,7 +440,6 @@ static int s3c_rtc_probe(struct platform_device *pdev)
- 	struct rtc_time rtc_tm;
- 	struct resource *res;
- 	int ret;
--	int tmp;
- 
- 	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
- 	if (!info)
-@@ -480,7 +453,11 @@ static int s3c_rtc_probe(struct platform_device *pdev)
- 	}
- 
- 	info->dev = &pdev->dev;
--	info->cpu_type = s3c_rtc_get_driver_data(pdev);
-+	info->data = s3c_rtc_get_data(pdev);
-+	if (!info->data) {
-+		dev_err(&pdev->dev, "failed getting s3c_rtc_data\n");
-+		return -EINVAL;
-+	}
- 	spin_lock_init(&info->pie_lock);
- 	spin_lock_init(&info->alarm_clk_lock);
- 
-@@ -509,7 +486,8 @@ static int s3c_rtc_probe(struct platform_device *pdev)
- 	clk_prepare_enable(info->rtc_clk);
- 
- 	/* check to see if everything is setup correctly */
--	s3c_rtc_enable(info, 1);
-+	if (info->data->enable)
-+		info->data->enable(info);
- 
- 	dev_dbg(&pdev->dev, "s3c2410_rtc: RTCCON=%02x\n",
- 		 readw(info->base + S3C2410_RTCCON));
-@@ -555,16 +533,8 @@ static int s3c_rtc_probe(struct platform_device *pdev)
- 		dev_warn(&pdev->dev, "warning: invalid RTC value so initializing it\n");
- 	}
- 
--	if (info->cpu_type != TYPE_S3C2410)
--		info->rtc->max_user_freq = 32768;
--	else
--		info->rtc->max_user_freq = 128;
--
--	if (info->cpu_type == TYPE_S3C2416 || info->cpu_type == TYPE_S3C2443) {
--		tmp = readw(info->base + S3C2410_RTCCON);
--		tmp |= S3C2443_RTCCON_TICSEL;
--		writew(tmp, info->base + S3C2410_RTCCON);
--	}
-+	if (info->data->select_tick_clk)
-+		info->data->select_tick_clk(info);
- 
- 	s3c_rtc_setfreq(info, 1);
- 
-@@ -573,7 +543,8 @@ static int s3c_rtc_probe(struct platform_device *pdev)
- 	return 0;
- 
-  err_nortc:
--	s3c_rtc_enable(info, 0);
-+	if (info->data->disable)
-+		info->data->disable(info);
- 	clk_disable_unprepare(info->rtc_clk);
- 
- 	return ret;
-@@ -586,15 +557,13 @@ static int s3c_rtc_suspend(struct device *dev)
- 	struct s3c_rtc *info = dev_get_drvdata(dev);
- 
- 	clk_enable(info->rtc_clk);
-+
- 	/* save TICNT for anyone using periodic interrupts */
--	if (info->cpu_type == TYPE_S3C64XX) {
--		info->ticnt_en_save = readw(info->base + S3C2410_RTCCON);
--		info->ticnt_en_save &= S3C64XX_RTCCON_TICEN;
--		info->ticnt_save = readl(info->base + S3C2410_TICNT);
--	} else {
--		info->ticnt_save = readb(info->base + S3C2410_TICNT);
--	}
--	s3c_rtc_enable(info, 0);
-+	if (info->data->save_tick_cnt)
-+		info->data->save_tick_cnt(info);
-+
-+	if (info->data->disable)
-+		info->data->disable(info);
- 
- 	if (device_may_wakeup(dev) && !info->wake_en) {
- 		if (enable_irq_wake(info->irq_alarm) == 0)
-@@ -602,6 +571,7 @@ static int s3c_rtc_suspend(struct device *dev)
- 		else
- 			dev_err(dev, "enable_irq_wake failed\n");
- 	}
-+
- 	clk_disable(info->rtc_clk);
- 
- 	return 0;
-@@ -610,25 +580,20 @@ static int s3c_rtc_suspend(struct device *dev)
- static int s3c_rtc_resume(struct device *dev)
- {
- 	struct s3c_rtc *info = dev_get_drvdata(dev);
--	unsigned int tmp;
- 
- 	clk_enable(info->rtc_clk);
--	s3c_rtc_enable(info, 1);
--	if (info->cpu_type == TYPE_S3C64XX) {
--		writel(info->ticnt_save, info->base + S3C2410_TICNT);
--		if (info->ticnt_en_save) {
--			tmp = readw(info->base + S3C2410_RTCCON);
--			writew(tmp | info->ticnt_en_save,
--					info->base + S3C2410_RTCCON);
--		}
--	} else {
--		writeb(info->ticnt_save, info->base + S3C2410_TICNT);
--	}
-+
-+	if (info->data->enable)
-+		info->data->enable(info);
-+
-+	if (info->data->restore_tick_cnt)
-+		info->data->restore_tick_cnt(info);
- 
- 	if (device_may_wakeup(dev) && info->wake_en) {
- 		disable_irq_wake(info->irq_alarm);
- 		info->wake_en = false;
- 	}
-+
- 	clk_disable(info->rtc_clk);
- 
- 	return 0;
-@@ -636,56 +601,206 @@ static int s3c_rtc_resume(struct device *dev)
- #endif
- static SIMPLE_DEV_PM_OPS(s3c_rtc_pm_ops, s3c_rtc_suspend, s3c_rtc_resume);
- 
--#ifdef CONFIG_OF
--static struct s3c_rtc_drv_data s3c_rtc_drv_data_array[] = {
--	[TYPE_S3C2410] = { TYPE_S3C2410 },
--	[TYPE_S3C2416] = { TYPE_S3C2416 },
--	[TYPE_S3C2443] = { TYPE_S3C2443 },
--	[TYPE_S3C64XX] = { TYPE_S3C64XX },
-+static void s3c24xx_rtc_irq(struct s3c_rtc *info, int mask)
-+{
-+	clk_enable(info->rtc_clk);
-+	rtc_update_irq(info->rtc, 1, RTC_AF | RTC_IRQF);
-+	clk_disable(info->rtc_clk);
-+
-+	s3c_rtc_alarm_clk_enable(info, false);
-+}
-+
-+static void s3c6410_rtc_irq(struct s3c_rtc *info, int mask)
-+{
-+	clk_enable(info->rtc_clk);
-+	rtc_update_irq(info->rtc, 1, RTC_AF | RTC_IRQF);
-+	writeb(mask, info->base + S3C2410_INTP);
-+	clk_disable(info->rtc_clk);
-+
-+	s3c_rtc_alarm_clk_enable(info, false);
-+}
-+
-+static void s3c2410_rtc_setfreq(struct s3c_rtc *info, int freq)
-+{
-+	unsigned int tmp = 0;
-+	int val;
-+
-+	tmp = readb(info->base + S3C2410_TICNT);
-+	tmp &= S3C2410_TICNT_ENABLE;
-+
-+	val = (info->rtc->max_user_freq / freq) - 1;
-+	tmp |= val;
-+
-+	writel(tmp, info->base + S3C2410_TICNT);
-+}
-+
-+static void s3c2416_rtc_setfreq(struct s3c_rtc *info, int freq)
-+{
-+	unsigned int tmp = 0;
-+	int val;
-+
-+	tmp = readb(info->base + S3C2410_TICNT);
-+	tmp &= S3C2410_TICNT_ENABLE;
-+
-+	val = (info->rtc->max_user_freq / freq) - 1;
-+
-+	tmp |= S3C2443_TICNT_PART(val);
-+	writel(S3C2443_TICNT1_PART(val), info->base + S3C2443_TICNT1);
-+
-+	writel(S3C2416_TICNT2_PART(val), info->base + S3C2416_TICNT2);
-+
-+	writel(tmp, info->base + S3C2410_TICNT);
-+}
-+
-+static void s3c2443_rtc_setfreq(struct s3c_rtc *info, int freq)
-+{
-+	unsigned int tmp = 0;
-+	int val;
-+
-+	tmp = readb(info->base + S3C2410_TICNT);
-+	tmp &= S3C2410_TICNT_ENABLE;
-+
-+	val = (info->rtc->max_user_freq / freq) - 1;
-+
-+	tmp |= S3C2443_TICNT_PART(val);
-+	writel(S3C2443_TICNT1_PART(val), info->base + S3C2443_TICNT1);
-+
-+	writel(tmp, info->base + S3C2410_TICNT);
-+}
-+
-+static void s3c6410_rtc_setfreq(struct s3c_rtc *info, int freq)
-+{
-+	int val;
-+
-+	val = (info->rtc->max_user_freq / freq) - 1;
-+	writel(val, info->base + S3C2410_TICNT);
-+}
-+
-+static void s3c24xx_rtc_enable_tick(struct s3c_rtc *info, struct seq_file *seq)
-+{
-+	unsigned int ticnt;
-+
-+	ticnt = readb(info->base + S3C2410_TICNT);
-+	ticnt &= S3C2410_TICNT_ENABLE;
-+
-+	seq_printf(seq, "periodic_IRQ\t: %s\n", ticnt  ? "yes" : "no");
-+}
-+
-+static void s3c2416_rtc_select_tick_clk(struct s3c_rtc *info)
-+{
-+	unsigned int con;
-+
-+	con = readw(info->base + S3C2410_RTCCON);
-+	con |= S3C2443_RTCCON_TICSEL;
-+	writew(con, info->base + S3C2410_RTCCON);
-+}
-+
-+static void s3c6410_rtc_enable_tick(struct s3c_rtc *info, struct seq_file *seq)
-+{
-+	unsigned int ticnt;
-+
-+	ticnt = readw(info->base + S3C2410_RTCCON);
-+	ticnt &= S3C64XX_RTCCON_TICEN;
-+
-+	seq_printf(seq, "periodic_IRQ\t: %s\n", ticnt  ? "yes" : "no");
-+}
-+
-+static void s3c24xx_rtc_save_tick_cnt(struct s3c_rtc *info)
-+{
-+	info->ticnt_save = readb(info->base + S3C2410_TICNT);
-+}
-+
-+static void s3c24xx_rtc_restore_tick_cnt(struct s3c_rtc *info)
-+{
-+	writeb(info->ticnt_save, info->base + S3C2410_TICNT);
-+}
-+
-+static void s3c6410_rtc_save_tick_cnt(struct s3c_rtc *info)
-+{
-+	info->ticnt_en_save = readw(info->base + S3C2410_RTCCON);
-+	info->ticnt_en_save &= S3C64XX_RTCCON_TICEN;
-+	info->ticnt_save = readl(info->base + S3C2410_TICNT);
-+}
-+
-+static void s3c6410_rtc_restore_tick_cnt(struct s3c_rtc *info)
-+{
-+	unsigned int con;
-+
-+	writel(info->ticnt_save, info->base + S3C2410_TICNT);
-+	if (info->ticnt_en_save) {
-+		con = readw(info->base + S3C2410_RTCCON);
-+		writew(con | info->ticnt_en_save,
-+				info->base + S3C2410_RTCCON);
-+	}
-+}
-+
-+static struct s3c_rtc_data const s3c2410_rtc_data = {
-+	.max_user_freq		= 128,
-+	.irq_handler		= s3c24xx_rtc_irq,
-+	.set_freq		= s3c2410_rtc_setfreq,
-+	.enable_tick		= s3c24xx_rtc_enable_tick,
-+	.save_tick_cnt		= s3c24xx_rtc_save_tick_cnt,
-+	.restore_tick_cnt	= s3c24xx_rtc_restore_tick_cnt,
-+	.enable			= s3c24xx_rtc_enable,
-+	.disable		= s3c24xx_rtc_disable,
-+};
-+
-+static struct s3c_rtc_data const s3c2416_rtc_data = {
-+	.max_user_freq		= 32768,
-+	.irq_handler		= s3c24xx_rtc_irq,
-+	.set_freq		= s3c2416_rtc_setfreq,
-+	.enable_tick		= s3c24xx_rtc_enable_tick,
-+	.select_tick_clk	= s3c2416_rtc_select_tick_clk,
-+	.save_tick_cnt		= s3c24xx_rtc_save_tick_cnt,
-+	.restore_tick_cnt	= s3c24xx_rtc_restore_tick_cnt,
-+	.enable			= s3c24xx_rtc_enable,
-+	.disable		= s3c24xx_rtc_disable,
-+};
-+
-+static struct s3c_rtc_data const s3c2443_rtc_data = {
-+	.max_user_freq		= 32768,
-+	.irq_handler		= s3c24xx_rtc_irq,
-+	.set_freq		= s3c2443_rtc_setfreq,
-+	.enable_tick		= s3c24xx_rtc_enable_tick,
-+	.select_tick_clk	= s3c2416_rtc_select_tick_clk,
-+	.save_tick_cnt		= s3c24xx_rtc_save_tick_cnt,
-+	.restore_tick_cnt	= s3c24xx_rtc_restore_tick_cnt,
-+	.enable			= s3c24xx_rtc_enable,
-+	.disable		= s3c24xx_rtc_disable,
-+};
-+
-+static struct s3c_rtc_data const s3c6410_rtc_data = {
-+	.max_user_freq		= 32768,
-+	.irq_handler		= s3c6410_rtc_irq,
-+	.set_freq		= s3c6410_rtc_setfreq,
-+	.enable_tick		= s3c6410_rtc_enable_tick,
-+	.save_tick_cnt		= s3c6410_rtc_save_tick_cnt,
-+	.restore_tick_cnt	= s3c6410_rtc_restore_tick_cnt,
-+	.enable			= s3c24xx_rtc_enable,
-+	.disable		= s3c6410_rtc_disable,
- };
- 
- static const struct of_device_id s3c_rtc_dt_match[] = {
- 	{
- 		.compatible = "samsung,s3c2410-rtc",
--		.data = &s3c_rtc_drv_data_array[TYPE_S3C2410],
-+		.data = (void *)&s3c2410_rtc_data,
- 	}, {
- 		.compatible = "samsung,s3c2416-rtc",
--		.data = &s3c_rtc_drv_data_array[TYPE_S3C2416],
-+		.data = (void *)&s3c2416_rtc_data,
- 	}, {
- 		.compatible = "samsung,s3c2443-rtc",
--		.data = &s3c_rtc_drv_data_array[TYPE_S3C2443],
-+		.data = (void *)&s3c2443_rtc_data,
- 	}, {
- 		.compatible = "samsung,s3c6410-rtc",
--		.data = &s3c_rtc_drv_data_array[TYPE_S3C64XX],
-+		.data = (void *)&s3c6410_rtc_data,
- 	},
--	{},
-+	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, s3c_rtc_dt_match);
--#endif
--
--static struct platform_device_id s3c_rtc_driver_ids[] = {
--	{
--		.name		= "s3c2410-rtc",
--		.driver_data	= TYPE_S3C2410,
--	}, {
--		.name		= "s3c2416-rtc",
--		.driver_data	= TYPE_S3C2416,
--	}, {
--		.name		= "s3c2443-rtc",
--		.driver_data	= TYPE_S3C2443,
--	}, {
--		.name		= "s3c64xx-rtc",
--		.driver_data	= TYPE_S3C64XX,
--	},
--	{ }
--};
--
--MODULE_DEVICE_TABLE(platform, s3c_rtc_driver_ids);
- 
- static struct platform_driver s3c_rtc_driver = {
- 	.probe		= s3c_rtc_probe,
- 	.remove		= s3c_rtc_remove,
--	.id_table	= s3c_rtc_driver_ids,
- 	.driver		= {
- 		.name	= "s3c-rtc",
- 		.owner	= THIS_MODULE,
-@@ -693,7 +808,6 @@ static struct platform_driver s3c_rtc_driver = {
- 		.of_match_table	= of_match_ptr(s3c_rtc_dt_match),
- 	},
- };
--
- module_platform_driver(s3c_rtc_driver);
- 
- MODULE_DESCRIPTION("Samsung S3C RTC Driver");
--- 
-1.8.0
+I'm very sorry but this version also has a problem as it still uses
+read_cpuid_part_number() instead of read_cpuid_part().  v5 (which really
+should be the final one) to be posted in a minute.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+On Monday, August 04, 2014 04:40:20 PM Bartlomiej Zolnierkiewicz wrote:
+> From: Tomasz Figa <t.figa@samsung.com>
+> 
+> Due to recent consolidation of Exynos suspend and cpuidle code, some
+> parts of suspend and resume sequences are executed two times, once from
+> exynos_pm_syscore_ops and then from exynos_cpu_pm_notifier() and thus it
+> breaks suspend, at least on Exynos4-based boards. In addition, simple
+> core power down from a cpuidle driver could, in case of CPU 0 could
+> result in calling functions that are specific to suspend and deeper idle
+> states.
+> 
+> This patch fixes the issue by moving those operations outside the CPU PM
+> notifier into suspend and AFTR code paths. This leads to a bit of code
+> duplication, but allows additional code simplification, so in the end
+> more code is removed than added.
+> 
+> Fixes: 85f9f90808b4 ("ARM: EXYNOS: Use the cpu_pm notifier for pm")
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Olof Johansson <olof@lixom.net>
+> Cc: arm@kernel.org
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> [b.zolnierkie: ported patch over current changes]
+> [b.zolnierkie: fixed exynos_aftr_finisher() return value]
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  arch/arm/mach-exynos/pm.c        |  163 ++++++++++++++++++---------------------
+>  drivers/cpuidle/cpuidle-exynos.c |   25 -----
+>  2 files changed, 80 insertions(+), 108 deletions(-)
+> 
+> v4:
+> - fixed exynos_aftr_finisher() return value
+> 
+> Index: b/arch/arm/mach-exynos/pm.c
+> ===================================================================
+> --- a/arch/arm/mach-exynos/pm.c	2014-08-04 16:36:18.927125851 +0200
+> +++ b/arch/arm/mach-exynos/pm.c	2014-08-04 16:36:38.559126369 +0200
+> @@ -114,26 +114,6 @@ static int exynos_irq_set_wake(struct ir
+>  #define S5P_CHECK_AFTR  0xFCBA0D10
+>  #define S5P_CHECK_SLEEP 0x00000BAD
+>  
+> -/* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
+> -static void exynos_set_wakeupmask(long mask)
+> -{
+> -	pmu_raw_writel(mask, S5P_WAKEUP_MASK);
+> -}
+> -
+> -static void exynos_cpu_set_boot_vector(long flags)
+> -{
+> -	__raw_writel(virt_to_phys(exynos_cpu_resume), EXYNOS_BOOT_VECTOR_ADDR);
+> -	__raw_writel(flags, EXYNOS_BOOT_VECTOR_FLAG);
+> -}
+> -
+> -void exynos_enter_aftr(void)
+> -{
+> -	exynos_set_wakeupmask(0x0000ff3e);
+> -	exynos_cpu_set_boot_vector(S5P_CHECK_AFTR);
+> -	/* Set value of power down register for aftr mode */
+> -	exynos_sys_powerdown_conf(SYS_AFTR);
+> -}
+> -
+>  /* For Cortex-A9 Diagnostic and Power control register */
+>  static unsigned int save_arm_register[2];
+>  
+> @@ -173,6 +153,82 @@ static void exynos_cpu_restore_register(
+>  		      : "cc");
+>  }
+>  
+> +static void exynos_pm_central_suspend(void)
+> +{
+> +	unsigned long tmp;
+> +
+> +	/* Setting Central Sequence Register for power down mode */
+> +	tmp = pmu_raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
+> +	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
+> +	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
+> +}
+> +
+> +static int exynos_pm_central_resume(void)
+> +{
+> +	unsigned long tmp;
+> +
+> +	/*
+> +	 * If PMU failed while entering sleep mode, WFI will be
+> +	 * ignored by PMU and then exiting cpu_do_idle().
+> +	 * S5P_CENTRAL_LOWPWR_CFG bit will not be set automatically
+> +	 * in this situation.
+> +	 */
+> +	tmp = pmu_raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
+> +	if (!(tmp & S5P_CENTRAL_LOWPWR_CFG)) {
+> +		tmp |= S5P_CENTRAL_LOWPWR_CFG;
+> +		pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
+> +		/* clear the wakeup state register */
+> +		pmu_raw_writel(0x0, S5P_WAKEUP_STAT);
+> +		/* No need to perform below restore code */
+> +		return -1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
+> +static void exynos_set_wakeupmask(long mask)
+> +{
+> +	pmu_raw_writel(mask, S5P_WAKEUP_MASK);
+> +}
+> +
+> +static void exynos_cpu_set_boot_vector(long flags)
+> +{
+> +	__raw_writel(virt_to_phys(exynos_cpu_resume), EXYNOS_BOOT_VECTOR_ADDR);
+> +	__raw_writel(flags, EXYNOS_BOOT_VECTOR_FLAG);
+> +}
+> +
+> +static int exynos_aftr_finisher(unsigned long flags)
+> +{
+> +	exynos_set_wakeupmask(0x0000ff3e);
+> +	exynos_cpu_set_boot_vector(S5P_CHECK_AFTR);
+> +	/* Set value of power down register for aftr mode */
+> +	exynos_sys_powerdown_conf(SYS_AFTR);
+> +	cpu_do_idle();
+> +
+> +	return 1;
+> +}
+> +
+> +void exynos_enter_aftr(void)
+> +{
+> +	cpu_pm_enter();
+> +
+> +	exynos_pm_central_suspend();
+> +	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+> +		exynos_cpu_save_register();
+> +
+> +	cpu_suspend(0, exynos_aftr_finisher);
+> +
+> +	if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9) {
+> +		scu_enable(S5P_VA_SCU);
+> +		exynos_cpu_restore_register();
+> +	}
+> +
+> +	exynos_pm_central_resume();
+> +
+> +	cpu_pm_exit();
+> +}
+> +
+>  static int exynos_cpu_suspend(unsigned long arg)
+>  {
+>  #ifdef CONFIG_CACHE_L2X0
+> @@ -217,16 +273,6 @@ static void exynos_pm_prepare(void)
+>  	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
+>  }
+>  
+> -static void exynos_pm_central_suspend(void)
+> -{
+> -	unsigned long tmp;
+> -
+> -	/* Setting Central Sequence Register for power down mode */
+> -	tmp = pmu_raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
+> -	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
+> -	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
+> -}
+> -
+>  static int exynos_pm_suspend(void)
+>  {
+>  	unsigned long tmp;
+> @@ -244,29 +290,6 @@ static int exynos_pm_suspend(void)
+>  	return 0;
+>  }
+>  
+> -static int exynos_pm_central_resume(void)
+> -{
+> -	unsigned long tmp;
+> -
+> -	/*
+> -	 * If PMU failed while entering sleep mode, WFI will be
+> -	 * ignored by PMU and then exiting cpu_do_idle().
+> -	 * S5P_CENTRAL_LOWPWR_CFG bit will not be set automatically
+> -	 * in this situation.
+> -	 */
+> -	tmp = pmu_raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
+> -	if (!(tmp & S5P_CENTRAL_LOWPWR_CFG)) {
+> -		tmp |= S5P_CENTRAL_LOWPWR_CFG;
+> -		pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
+> -		/* clear the wakeup state register */
+> -		pmu_raw_writel(0x0, S5P_WAKEUP_STAT);
+> -		/* No need to perform below restore code */
+> -		return -1;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static void exynos_pm_resume(void)
+>  {
+>  	if (exynos_pm_central_resume())
+> @@ -369,44 +392,10 @@ static const struct platform_suspend_ops
+>  	.valid		= suspend_valid_only_mem,
+>  };
+>  
+> -static int exynos_cpu_pm_notifier(struct notifier_block *self,
+> -				  unsigned long cmd, void *v)
+> -{
+> -	int cpu = smp_processor_id();
+> -
+> -	switch (cmd) {
+> -	case CPU_PM_ENTER:
+> -		if (cpu == 0) {
+> -			exynos_pm_central_suspend();
+> -			if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
+> -				exynos_cpu_save_register();
+> -		}
+> -		break;
+> -
+> -	case CPU_PM_EXIT:
+> -		if (cpu == 0) {
+> -			if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
+> -				scu_enable(S5P_VA_SCU);
+> -				exynos_cpu_restore_register();
+> -			}
+> -			exynos_pm_central_resume();
+> -		}
+> -		break;
+> -	}
+> -
+> -	return NOTIFY_OK;
+> -}
+> -
+> -static struct notifier_block exynos_cpu_pm_notifier_block = {
+> -	.notifier_call = exynos_cpu_pm_notifier,
+> -};
+> -
+>  void __init exynos_pm_init(void)
+>  {
+>  	u32 tmp;
+>  
+> -	cpu_pm_register_notifier(&exynos_cpu_pm_notifier_block);
+> -
+>  	/* Platform-specific GIC callback */
+>  	gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
+>  
+> Index: b/drivers/cpuidle/cpuidle-exynos.c
+> ===================================================================
+> --- a/drivers/cpuidle/cpuidle-exynos.c	2014-08-04 16:36:18.911125850 +0200
+> +++ b/drivers/cpuidle/cpuidle-exynos.c	2014-08-04 16:36:22.783125951 +0200
+> @@ -20,25 +20,6 @@
+>  
+>  static void (*exynos_enter_aftr)(void);
+>  
+> -static int idle_finisher(unsigned long flags)
+> -{
+> -	exynos_enter_aftr();
+> -	cpu_do_idle();
+> -
+> -	return 1;
+> -}
+> -
+> -static int exynos_enter_core0_aftr(struct cpuidle_device *dev,
+> -				struct cpuidle_driver *drv,
+> -				int index)
+> -{
+> -	cpu_pm_enter();
+> -	cpu_suspend(0, idle_finisher);
+> -	cpu_pm_exit();
+> -
+> -	return index;
+> -}
+> -
+>  static int exynos_enter_lowpower(struct cpuidle_device *dev,
+>  				struct cpuidle_driver *drv,
+>  				int index)
+> @@ -51,8 +32,10 @@ static int exynos_enter_lowpower(struct
+>  
+>  	if (new_index == 0)
+>  		return arm_cpuidle_simple_enter(dev, drv, new_index);
+> -	else
+> -		return exynos_enter_core0_aftr(dev, drv, new_index);
+> +
+> +	exynos_enter_aftr();
+> +
+> +	return new_index;
+>  }
+>  
+>  static struct cpuidle_driver exynos_idle_driver = {
