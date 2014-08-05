@@ -1,26 +1,19 @@
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
 Subject: Re: [PATCH v5 0/5] ARM: EXYNOS: cpuidle: fix AFTR mode on boards
  with secure firmware enabled
-Date: Tue, 05 Aug 2014 15:50:54 +0200
-Message-ID: <53E0E13E.3@linaro.org>
+Date: Tue, 05 Aug 2014 16:03:12 +0200
+Message-ID: <53E0E420.8060207@linaro.org>
 References: <1407245666-20016-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8;
 	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f178.google.com ([74.125.82.178]:49840 "EHLO
-	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751643AbaHENu7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Aug 2014 09:50:59 -0400
-Received: by mail-we0-f178.google.com with SMTP id w61so1069899wes.37
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Aug 2014 06:50:58 -0700 (PDT)
+Return-path: <linux-pm-owner@vger.kernel.org>
 In-Reply-To: <1407245666-20016-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-pm-owner@vger.kernel.org
 To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 Cc: Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On 08/05/2014 03:34 PM, Bartlomiej Zolnierkiewicz wrote:
 > Hi,
@@ -35,15 +28,19 @@ On 08/05/2014 03:34 PM, Bartlomiej Zolnierkiewicz wrote:
 > when EXYNOS cpuidle driver is enabled (in both cases the default
 > exynos_defconfig config is used and CPU1-3 are offlined).
 
-Hi Bartlomiej,
+As a sidenote:
 
-I tested your patchset on an odroid-u2. When the cpuidle driver is=20
-enabled and the cpu1-3 are offlined, the kernel hangs.
+On my odroid-U2:
+  * 4 cpus online -> 130 mA
+  * 3 cpus online -> 164 mA
+  * 2 cpus online -> 160 mA
+  * 1 cpu online  -> 157 mA
 
-If I disable the AFTR state on cpuidle, and offline the 1-3, it works a=
-s=20
-expected. So there is something wrong with the AFTR on the odroid board=
-=2E
+So were are consuming more when there are unplugged cpu ... any ideas ?
+
+Thanks !
+
+   -- Daniel
 
 > Depends on:
 > - next-20140804 branch of linux-next kernel tree
@@ -131,3 +128,4 @@ r ARM SoCs
 =46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
 <http://twitter.com/#!/linaroorg> Twitter |
 <http://www.linaro.org/linaro-blog/> Blog
+
