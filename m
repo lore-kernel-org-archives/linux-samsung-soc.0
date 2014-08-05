@@ -1,167 +1,268 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH RESEND] usb: ehci/ohci-exynos: Fix PHY getting sequence
-Date: Tue,  5 Aug 2014 16:09:08 +0530
-Message-ID: <1407235148-31790-1-git-send-email-gautam.vivek@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v5 1/3] ARM: EXYNOS: Move code from hotplug.c to platsmp.c
+Date: Tue, 05 Aug 2014 12:43:43 +0200
+Message-ID: <1407235425-13937-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:49889 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753212AbaHEKjQ (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44257 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752983AbaHEKnw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Aug 2014 06:39:16 -0400
+	Tue, 5 Aug 2014 06:43:52 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Jingoo Han <jg1.han@samsung.com>
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Since we want to keep support for both older usb-phys as well as the
-newer generic phys, lets first get the generic PHYs and fallback to
-older USB-PHYs only when we fail to get the former.
-This should fix the issue with ehci-exynos and ohci-exynos, wherein
-in the absence of SAMSUNG_USB2PHY config symbol, we end up getting
-the NOP_USB_XCEIV phy when the same is enabled. And thus the PHYs
-are not configured properly.
+Cleanup a little the SMP/hotplug code for Exynos by:
+1. Moving completely all functions from hotplug.c into the platsmp.c;
+2. Deleting the hotplug.c file.
 
-Reported-by: Sachin Kamat <sachin.kamat@samsung.com>
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Jingoo Han <jg1.han@samsung.com>
+After recent cleanups (e.g. 75ad2ab28f0f "ARM: EXYNOS: use
+v7_exit_coherency_flush macro for cache disabling") there was only CPU
+power down related code in hotplug.c file. Keeping this file does not
+give any benefits.
+
+The commit only moves code around with one additional observable change:
+the hotplug.c was compiled with custom CFLAGS (-march=armv7-a). These
+CFLAGS are not necessary any more.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+
 ---
+Changes since v4:
+1. Rebase on linux-next-20140804.
+2. Add Reviewed-by Tomasz Figa.
+---
+ arch/arm/mach-exynos/Makefile  |  3 --
+ arch/arm/mach-exynos/common.h  |  2 -
+ arch/arm/mach-exynos/hotplug.c | 91 ------------------------------------------
+ arch/arm/mach-exynos/platsmp.c | 74 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 74 insertions(+), 96 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/hotplug.c
 
-Based on 'usb-next' branch.
-Resending it after adding 'Reported-by' tag.
-
- drivers/usb/host/ehci-exynos.c |   40 +++++++++++++++++-----------------
- drivers/usb/host/ohci-exynos.c |   47 +++++++++++++++++++---------------------
- 2 files changed, 42 insertions(+), 45 deletions(-)
-
-diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-index cda0a2f..2eed9a4 100644
---- a/drivers/usb/host/ehci-exynos.c
-+++ b/drivers/usb/host/ehci-exynos.c
-@@ -62,18 +62,6 @@ static int exynos_ehci_get_phy(struct device *dev,
- 	int phy_number;
- 	int ret = 0;
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 788f26d21141..0095de99d703 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -21,9 +21,6 @@ obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
  
--	exynos_ehci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
--	if (IS_ERR(exynos_ehci->phy)) {
--		ret = PTR_ERR(exynos_ehci->phy);
--		if (ret != -ENXIO && ret != -ENODEV) {
--			dev_err(dev, "no usb2 phy configured\n");
--			return ret;
--		}
--		dev_dbg(dev, "Failed to get usb2 phy\n");
--	} else {
--		exynos_ehci->otg = exynos_ehci->phy->otg;
--	}
+ obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
+ 
+-obj-$(CONFIG_HOTPLUG_CPU)	+= hotplug.o
+-CFLAGS_hotplug.o		+= -march=armv7-a
 -
- 	for_each_available_child_of_node(dev->of_node, child) {
- 		ret = of_property_read_u32(child, "reg", &phy_number);
- 		if (ret) {
-@@ -90,15 +78,27 @@ static int exynos_ehci_get_phy(struct device *dev,
+ plus_sec := $(call as-instr,.arch_extension sec,+sec)
+ AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
  
- 		phy = devm_of_phy_get(dev, child, NULL);
- 		of_node_put(child);
--		if (IS_ERR(phy)) {
--			ret = PTR_ERR(phy);
--			if (ret != -ENOSYS && ret != -ENODEV) {
--				dev_err(dev, "no usb2 phy configured\n");
--				return ret;
--			}
--			dev_dbg(dev, "Failed to get usb2 phy\n");
--		}
-+		if (IS_ERR(phy))
-+			/* Lets fallback to older USB-PHYs */
-+			goto usb_phy_old;
- 		exynos_ehci->phy_g[phy_number] = phy;
-+		/* Make the older PHYs unavailable */
-+		exynos_ehci->phy = ERR_PTR(-ENXIO);
-+	}
-+
-+	return 0;
-+
-+usb_phy_old:
-+	exynos_ehci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
-+	if (IS_ERR(exynos_ehci->phy)) {
-+		ret = PTR_ERR(exynos_ehci->phy);
-+		if (ret != -ENXIO && ret != -ENODEV) {
-+			dev_err(dev, "no usb2 phy configured\n");
-+			return ret;
-+		}
-+		dev_dbg(dev, "Failed to get usb2 phy\n");
-+	} else {
-+		exynos_ehci->otg = exynos_ehci->phy->otg;
- 	}
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 47b904b3b973..3d3e6af9d015 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -130,8 +130,6 @@ extern void exynos_cpu_resume(void);
  
- 	return ret;
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index a72ab8f..7c48e3f 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -51,27 +51,12 @@ static int exynos_ohci_get_phy(struct device *dev,
- 	int phy_number;
- 	int ret = 0;
+ extern struct smp_operations exynos_smp_ops;
  
--	exynos_ohci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
--	if (IS_ERR(exynos_ohci->phy)) {
--		ret = PTR_ERR(exynos_ohci->phy);
--		if (ret != -ENXIO && ret != -ENODEV) {
--			dev_err(dev, "no usb2 phy configured\n");
--			return ret;
--		}
--		dev_dbg(dev, "Failed to get usb2 phy\n");
--	} else {
--		exynos_ohci->otg = exynos_ohci->phy->otg;
--	}
+-extern void exynos_cpu_die(unsigned int cpu);
 -
- 	/*
- 	 * Getting generic phy:
- 	 * We are keeping both types of phys as a part of transiting OHCI
- 	 * to generic phy framework, so as to maintain backward compatibilty
--	 * with old DTB.
--	 * If there are existing devices using DTB files built from them,
--	 * to remove the support for old bindings in this driver,
--	 * we need to make sure that such devices have their DTBs
--	 * updated to ones built from new DTS.
-+	 * with old DTB too.
-+	 * We fallback to older USB-PHYs when we fail to get generic PHYs.
- 	 */
- 	for_each_available_child_of_node(dev->of_node, child) {
- 		ret = of_property_read_u32(child, "reg", &phy_number);
-@@ -89,15 +74,27 @@ static int exynos_ohci_get_phy(struct device *dev,
+ /* PMU(Power Management Unit) support */
  
- 		phy = devm_of_phy_get(dev, child, NULL);
- 		of_node_put(child);
--		if (IS_ERR(phy)) {
--			ret = PTR_ERR(phy);
--			if (ret != -ENOSYS && ret != -ENODEV) {
--				dev_err(dev, "no usb2 phy configured\n");
--				return ret;
--			}
--			dev_dbg(dev, "Failed to get usb2 phy\n");
+ #define PMU_TABLE_END	(-1U)
+diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
+deleted file mode 100644
+index 4d86961a7957..000000000000
+--- a/arch/arm/mach-exynos/hotplug.c
++++ /dev/null
+@@ -1,91 +0,0 @@
+-/*
+- *  Cloned from linux/arch/arm/mach-realview/hotplug.c
+- *
+- *  Copyright (C) 2002 ARM Ltd.
+- *  All Rights Reserved
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/kernel.h>
+-#include <linux/errno.h>
+-#include <linux/smp.h>
+-#include <linux/io.h>
+-
+-#include <asm/cacheflush.h>
+-#include <asm/cp15.h>
+-#include <asm/smp_plat.h>
+-
+-#include "common.h"
+-#include "regs-pmu.h"
+-
+-static inline void cpu_leave_lowpower(void)
+-{
+-	unsigned int v;
+-
+-	asm volatile(
+-	"mrc	p15, 0, %0, c1, c0, 0\n"
+-	"	orr	%0, %0, %1\n"
+-	"	mcr	p15, 0, %0, c1, c0, 0\n"
+-	"	mrc	p15, 0, %0, c1, c0, 1\n"
+-	"	orr	%0, %0, %2\n"
+-	"	mcr	p15, 0, %0, c1, c0, 1\n"
+-	  : "=&r" (v)
+-	  : "Ir" (CR_C), "Ir" (0x40)
+-	  : "cc");
+-}
+-
+-static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+-{
+-	u32 mpidr = cpu_logical_map(cpu);
+-	u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+-
+-	for (;;) {
+-
+-		/* Turn the CPU off on next WFI instruction. */
+-		exynos_cpu_power_down(core_id);
+-
+-		wfi();
+-
+-		if (pen_release == core_id) {
+-			/*
+-			 * OK, proper wakeup, we're done
+-			 */
+-			break;
 -		}
-+		if (IS_ERR(phy))
-+			/* Lets fallback to older USB-PHYs */
-+			goto usb_phy_old;
- 		exynos_ohci->phy_g[phy_number] = phy;
-+		/* Make the older PHYs unavailable */
-+		exynos_ohci->phy = ERR_PTR(-ENXIO);
-+	}
-+
-+	return 0;
-+
-+usb_phy_old:
-+	exynos_ohci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
-+	if (IS_ERR(exynos_ohci->phy)) {
-+		ret = PTR_ERR(exynos_ohci->phy);
-+		if (ret != -ENXIO && ret != -ENODEV) {
-+			dev_err(dev, "no usb2 phy configured\n");
-+			return ret;
-+		}
-+		dev_dbg(dev, "Failed to get usb2 phy\n");
-+	} else {
-+		exynos_ohci->otg = exynos_ohci->phy->otg;
- 	}
+-
+-		/*
+-		 * Getting here, means that we have come out of WFI without
+-		 * having been woken up - this shouldn't happen
+-		 *
+-		 * Just note it happening - when we're woken, we can report
+-		 * its occurrence.
+-		 */
+-		(*spurious)++;
+-	}
+-}
+-
+-/*
+- * platform-specific code to shutdown a CPU
+- *
+- * Called with IRQs disabled
+- */
+-void __ref exynos_cpu_die(unsigned int cpu)
+-{
+-	int spurious = 0;
+-
+-	v7_exit_coherency_flush(louis);
+-
+-	platform_do_lowpower(cpu, &spurious);
+-
+-	/*
+-	 * bring this CPU back into the world of cache
+-	 * coherency, and then restore interrupts
+-	 */
+-	cpu_leave_lowpower();
+-
+-	if (spurious)
+-		pr_warn("CPU%u: %u spurious wakeup calls\n", cpu, spurious);
+-}
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index a9f1cf759949..a809f76c8160 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -22,6 +22,7 @@
+ #include <linux/of_address.h>
  
- 	return ret;
+ #include <asm/cacheflush.h>
++#include <asm/cp15.h>
+ #include <asm/smp_plat.h>
+ #include <asm/smp_scu.h>
+ #include <asm/firmware.h>
+@@ -33,6 +34,54 @@
+ 
+ extern void exynos4_secondary_startup(void);
+ 
++#ifdef CONFIG_HOTPLUG_CPU
++static inline void cpu_leave_lowpower(void)
++{
++	unsigned int v;
++
++	asm volatile(
++	"mrc	p15, 0, %0, c1, c0, 0\n"
++	"	orr	%0, %0, %1\n"
++	"	mcr	p15, 0, %0, c1, c0, 0\n"
++	"	mrc	p15, 0, %0, c1, c0, 1\n"
++	"	orr	%0, %0, %2\n"
++	"	mcr	p15, 0, %0, c1, c0, 1\n"
++	  : "=&r" (v)
++	  : "Ir" (CR_C), "Ir" (0x40)
++	  : "cc");
++}
++
++static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
++{
++	u32 mpidr = cpu_logical_map(cpu);
++	u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
++
++	for (;;) {
++
++		/* Turn the CPU off on next WFI instruction. */
++		exynos_cpu_power_down(core_id);
++
++		wfi();
++
++		if (pen_release == core_id) {
++			/*
++			 * OK, proper wakeup, we're done
++			 */
++			break;
++		}
++
++		/*
++		 * Getting here, means that we have come out of WFI without
++		 * having been woken up - this shouldn't happen
++		 *
++		 * Just note it happening - when we're woken, we can report
++		 * its occurrence.
++		 */
++		(*spurious)++;
++	}
++}
++#endif /* CONFIG_HOTPLUG_CPU */
++
+ /**
+  * exynos_core_power_down : power down the specified cpu
+  * @cpu : the cpu to power down
+@@ -318,6 +367,31 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+ 	}
+ }
+ 
++#ifdef CONFIG_HOTPLUG_CPU
++/*
++ * platform-specific code to shutdown a CPU
++ *
++ * Called with IRQs disabled
++ */
++static void __ref exynos_cpu_die(unsigned int cpu)
++{
++	int spurious = 0;
++
++	v7_exit_coherency_flush(louis);
++
++	platform_do_lowpower(cpu, &spurious);
++
++	/*
++	 * bring this CPU back into the world of cache
++	 * coherency, and then restore interrupts
++	 */
++	cpu_leave_lowpower();
++
++	if (spurious)
++		pr_warn("CPU%u: %u spurious wakeup calls\n", cpu, spurious);
++}
++#endif /* CONFIG_HOTPLUG_CPU */
++
+ struct smp_operations exynos_smp_ops __initdata = {
+ 	.smp_init_cpus		= exynos_smp_init_cpus,
+ 	.smp_prepare_cpus	= exynos_smp_prepare_cpus,
 -- 
-1.7.10.4
+1.9.1
