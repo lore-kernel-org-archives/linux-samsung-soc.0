@@ -1,60 +1,56 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v5 1/3] ARM: EXYNOS: Move code from hotplug.c to platsmp.c
-Date: Tue, 05 Aug 2014 21:53:00 +0200
-Message-ID: <53E1361C.2070905@gmail.com>
-References: <1407235425-13937-1-git-send-email-k.kozlowski@samsung.com> <53E0EE32.7060500@linaro.org> <1407251006.9849.8.camel@AMDC1943>
+Subject: Re: PWM on Hardkernel ODROID-XU board
+Date: Tue, 05 Aug 2014 22:58:56 +0200
+Message-ID: <53E14590.5090704@gmail.com>
+References: <D0070FDB.10331%daniel.gachet@hefr.ch>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1407251006.9849.8.camel@AMDC1943>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:34464 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753603AbaHEU7B (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Aug 2014 16:59:01 -0400
+Received: by mail-wg0-f42.google.com with SMTP id l18so1605182wgh.25
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Aug 2014 13:59:00 -0700 (PDT)
+In-Reply-To: <D0070FDB.10331%daniel.gachet@hefr.ch>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gachet Daniel <Daniel.Gachet@hefr.ch>
+Cc: Tomasz Figa <t.figa@samsung.com>, Tarek Dakhran <t.dakhran@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Humberto Silva Naves <hsnaves@gmail.com>, Mauro Ribeiro <mdrjr0@gmail.com>
 
-On 05.08.2014 17:03, Krzysztof Kozlowski wrote:
-> On wto, 2014-08-05 at 16:46 +0200, Daniel Lezcano wrote:
->> On 08/05/2014 12:43 PM, Krzysztof Kozlowski wrote:
->>> Cleanup a little the SMP/hotplug code for Exynos by:
->>> 1. Moving completely all functions from hotplug.c into the platsmp.c;
->>> 2. Deleting the hotplug.c file.
->>>
->>> After recent cleanups (e.g. 75ad2ab28f0f "ARM: EXYNOS: use
->>> v7_exit_coherency_flush macro for cache disabling") there was only CPU
->>> power down related code in hotplug.c file. Keeping this file does not
->>> give any benefits.
->>>
->>> The commit only moves code around with one additional observable change:
->>> the hotplug.c was compiled with custom CFLAGS (-march=armv7-a). These
->>> CFLAGS are not necessary any more.
->>
->> What is the benefit of moving this code around ?
->>
->> Usually the cpu hotplug code is located in hotplug.c for most of the 
->> platforms, so why moving pm code inside platsmp ?
-> 
-> The benefits are:
-> 
-> 1. Less dependencies, cleaner code because platsmp.c is the only user of
-> code located in hotplug.c. So the exynos_cpu_die() had to be declared in
-> common.h.
-> 
-> 2. Less dependencies between modules after adding patch 3/3 [1] which
-> introduces exynos_set_delayed_reset_assertion() function. The
-> exynos_set_delayed_reset_assertion() is called by:
->  - cpu_leave_power (hotplug.c)
->  - platform_do_lowpower (hotplug.c)
->  - exynos_boot_secondary (platsmp.c)
-> 
-> so merging everything into one file seemed simpler and cleaner.
+Hi Daniel,
 
-mach-exynos/hotplug.c does not have too much code right now and as
-Krzysztof noticed the only user of functions from it is platsmp.c
-anyway. We don't need to follow other machs in something that makes no
-sense, so
+On 05.08.2014 22:48, Gachet Daniel wrote:
+> Hi Thomasz,
+>=20
+> I=E2=80=99m currently trying to use the Hardkernel ODROID-XU board un=
+der Linux version 3.14 (hard kernel sources =E2=80=9Codroid-3.14.y-lina=
+ro=E2=80=9D.
+> I=E2=80=99m almost happy with that version, but I still have a proble=
+m by migrating the =E2=80=9Codroidxu_fan.c=E2=80=9D module from the 3.4=
+ version.
+> I can register to the samsung pwm module (pam_request).
+>=20
+> Could you tell me what are the right entry for the flattened device t=
+ree for this board ?
 
-Acked-by: Tomasz Figa <t.figa@samsung.com>
+Unfortunately I don't know too much about this board or hardkernel
+sources. I mostly work with mainline kernel.
+
+In general, you probably need a node for the PWM block of the SoC and a
+node for the PWM fan, but I don't have any details for you at the momen=
+t.
+
+I'd say you should have posted this to linux-samsung-soc mailing list
+for bigger chance of getting more information. For your convenience, I'=
+m
+adding them and several people that might be able to give some input on
+this.
+
+By the way, you might be interested in pwm-fan driver recently merged
+for Linux 3.17: https://lkml.org/lkml/2014/7/16/426 .
 
 Best regards,
 Tomasz
