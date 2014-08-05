@@ -1,89 +1,133 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v5 1/5] ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by
- static inlines
-Date: Tue, 05 Aug 2014 15:34:22 +0200
-Message-ID: <1407245666-20016-2-git-send-email-b.zolnierkie@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v5 0/5] ARM: EXYNOS: cpuidle: fix AFTR mode on boards
+ with secure firmware enabled
+Date: Tue, 05 Aug 2014 15:50:54 +0200
+Message-ID: <53E0E13E.3@linaro.org>
 References: <1407245666-20016-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1407245666-20016-1-git-send-email-b.zolnierkie@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f178.google.com ([74.125.82.178]:49840 "EHLO
+	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751643AbaHENu7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Aug 2014 09:50:59 -0400
+Received: by mail-we0-f178.google.com with SMTP id w61so1069899wes.37
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Aug 2014 06:50:58 -0700 (PDT)
+In-Reply-To: <1407245666-20016-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
 
-Replace EXYNOS_BOOT_VECTOR_ADDR and EXYNOS_BOOT_VECTOR_FLAG macros
-by exynos_boot_vector_addr() and exynos_boot_vector_flag() static
-inlines.
+On 08/05/2014 03:34 PM, Bartlomiej Zolnierkiewicz wrote:
+> Hi,
+>
+> This patch series adds support for AFTR idle mode on boards with
+> secure firmware enabled and allows EXYNOS cpuidle driver usage on
+> Exynos4x12 SoCs.
+>
+> It has been tested on Trats2 board (using Exynos4412 SoC with secure
+> firmware enabled) on which AFTR mode reduces power consumption by ~12=
+%
+> when EXYNOS cpuidle driver is enabled (in both cases the default
+> exynos_defconfig config is used and CPU1-3 are offlined).
 
-This patch shouldn't cause any functionality changes.
+Hi Bartlomiej,
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- arch/arm/mach-exynos/pm.c | 32 ++++++++++++++++++++------------
- 1 file changed, 20 insertions(+), 12 deletions(-)
+I tested your patchset on an odroid-u2. When the cpuidle driver is=20
+enabled and the cpu1-3 are offlined, the kernel hangs.
 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 454c1cc..78e50ed 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -101,16 +101,23 @@ static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
- 	return -ENOENT;
- }
- 
--#define EXYNOS_BOOT_VECTOR_ADDR	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
--			pmu_base_addr + S5P_INFORM7 : \
--			(samsung_rev() == EXYNOS4210_REV_1_0 ? \
--			(sysram_base_addr + 0x24) : \
--			pmu_base_addr + S5P_INFORM0))
--#define EXYNOS_BOOT_VECTOR_FLAG	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
--			pmu_base_addr + S5P_INFORM6 : \
--			(samsung_rev() == EXYNOS4210_REV_1_0 ? \
--			(sysram_base_addr + 0x20) : \
--			pmu_base_addr + S5P_INFORM1))
-+static inline void __iomem *exynos_boot_vector_addr(void)
-+{
-+	if (samsung_rev() == EXYNOS4210_REV_1_1)
-+		return pmu_base_addr + S5P_INFORM7;
-+	else if (samsung_rev() == EXYNOS4210_REV_1_0)
-+		return sysram_base_addr + 0x24;
-+	return pmu_base_addr + S5P_INFORM0;
-+}
-+
-+static inline void __iomem *exynos_boot_vector_flag(void)
-+{
-+	if (samsung_rev() == EXYNOS4210_REV_1_1)
-+		return pmu_base_addr + S5P_INFORM6;
-+	else if (samsung_rev() == EXYNOS4210_REV_1_0)
-+		return sysram_base_addr + 0x20;
-+	return pmu_base_addr + S5P_INFORM1;
-+}
- 
- #define S5P_CHECK_AFTR  0xFCBA0D10
- #define S5P_CHECK_SLEEP 0x00000BAD
-@@ -195,8 +202,9 @@ static void exynos_set_wakeupmask(long mask)
- 
- static void exynos_cpu_set_boot_vector(long flags)
- {
--	__raw_writel(virt_to_phys(exynos_cpu_resume), EXYNOS_BOOT_VECTOR_ADDR);
--	__raw_writel(flags, EXYNOS_BOOT_VECTOR_FLAG);
-+	__raw_writel(virt_to_phys(exynos_cpu_resume),
-+		     exynos_boot_vector_addr());
-+	__raw_writel(flags, exynos_boot_vector_flag());
- }
- 
- static int exynos_aftr_finisher(unsigned long flags)
--- 
-1.8.2.3
+If I disable the AFTR state on cpuidle, and offline the 1-3, it works a=
+s=20
+expected. So there is something wrong with the AFTR on the odroid board=
+=2E
+
+> Depends on:
+> - next-20140804 branch of linux-next kernel tree
+> - [PATCH v5][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
+>    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
+35262.html)
+> - [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+>    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
+34282.html)
+>
+> Changes since v4:
+> - rebased on top of next-20140804 +
+>    [PATCH v5][next-20140804] ARM: EXYNOS: Fix suspend/resume sequence=
+s
+>    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
+35262.html)
+>    [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+>    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
+34282.html)
+> - call exynos_save_cp15() only on A9 type core (this is needed for th=
+e future
+>    Exynos3250 SoC support)
+>
+> Changes since v3:
+> - rebased on top of next-20140804 +
+>    [PATCH v4][next-20140804] ARM: EXYNOS: Fix suspend/resume sequence=
+s
+>    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
+35192.html)
+>    [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+>    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
+34282.html)
+> - (re-)added patch fixing S5P_CENTRAL_SEQ_OPTION register setup
+>
+> Changes since v2:
+> - rebased on top of next-20140708 +
+>    [PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
+>    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
+32809.html)
+>    [with rejects fixed]
+>    [PATCH 6/6] ARM: EXYNOS: Register cpuidle device only on Exynos421=
+0 and 5250
+>    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
+32808.html)
+>    [PATCH 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+>    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
+32991.html)
+>    [with rejects fixed in patch #2]
+> - addressed review comments from Tomasz Figa and Daniel Lezcano
+>
+> Changes since v1:
+> - synced against next-20140602
+> - added missing Acked-by-s
+>
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>
+>
+> Bartlomiej Zolnierkiewicz (5):
+>    ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static inl=
+ines
+>    ARM: EXYNOS: add AFTR mode support to firmware do_idle method
+>    ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode cod=
+e
+>    ARM: EXYNOS: PM: fix register setup for AFTR mode code
+>    ARM: EXYNOS: cpuidle: allow driver usage on Exynos4x12 SoCs
+>
+>   arch/arm/include/asm/firmware.h |  2 +-
+>   arch/arm/mach-exynos/common.h   |  5 ++++
+>   arch/arm/mach-exynos/exynos.c   |  4 ++-
+>   arch/arm/mach-exynos/firmware.c | 34 ++++++++++++++++-------
+>   arch/arm/mach-exynos/pm.c       | 60 ++++++++++++++++++++++++------=
+-----------
+>   5 files changed, 70 insertions(+), 35 deletions(-)
+>
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
