@@ -1,89 +1,167 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 07/15] drm/exynos: dsi: Add support for panel prepare
- and unprepare routines
-Date: Tue, 05 Aug 2014 12:03:56 +0200
-Message-ID: <53E0AC0C.9030309@samsung.com>
-References: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com> <1406828534-10072-8-git-send-email-ajaykumar.rs@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH RESEND] usb: ehci/ohci-exynos: Fix PHY getting sequence
+Date: Tue,  5 Aug 2014 16:09:08 +0530
+Message-ID: <1407235148-31790-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:38054 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933078AbaHEKET (ORCPT
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:49889 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753212AbaHEKjQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Aug 2014 06:04:19 -0400
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
-	id 1XEbbN-0003bf-Lt
-	for linux-samsung-soc@vger.kernel.org; Tue, 05 Aug 2014 12:04:17 +0200
-Received: from 217-67-201-162.itsa.net.pl ([217.67.201.162])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Aug 2014 12:04:17 +0200
-Received: from a.hajda by 217-67-201-162.itsa.net.pl with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Aug 2014 12:04:17 +0200
-In-Reply-To: <1406828534-10072-8-git-send-email-ajaykumar.rs@samsung.com>
+	Tue, 5 Aug 2014 06:39:16 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.orgdri-devel@lists.freedesktop.org
+To: linux-usb@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Jingoo Han <jg1.han@samsung.com>
 
-Hi Ajay,
+Since we want to keep support for both older usb-phys as well as the
+newer generic phys, lets first get the generic PHYs and fallback to
+older USB-PHYs only when we fail to get the former.
+This should fix the issue with ehci-exynos and ohci-exynos, wherein
+in the absence of SAMSUNG_USB2PHY config symbol, we end up getting
+the NOP_USB_XCEIV phy when the same is enabled. And thus the PHYs
+are not configured properly.
 
+Reported-by: Sachin Kamat <sachin.kamat@samsung.com>
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Jingoo Han <jg1.han@samsung.com>
+---
 
-On 07/31/2014 07:42 PM, Ajay Kumar wrote:
-> Modify exynos_dsi driver to support the new panel calls:
-> prepare and unprepare.
-> 
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c |   12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> index dc7c80b..4834932 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -1351,7 +1351,7 @@ static int exynos_dsi_enable(struct exynos_dsi *dsi)
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = drm_panel_enable(dsi->panel);
-> +	ret = drm_panel_prepare(dsi->panel);
->  	if (ret < 0) {
->  		exynos_dsi_poweroff(dsi);
->  		return ret;
-> @@ -1360,6 +1360,13 @@ static int exynos_dsi_enable(struct exynos_dsi *dsi)
->  	exynos_dsi_set_display_mode(dsi);
->  	exynos_dsi_set_display_enable(dsi, true);
->  
-> +	ret = drm_panel_enable(dsi->panel);
-> +	if (ret < 0) {
-> +		exynos_dsi_set_display_enable(dsi, false);
+Based on 'usb-next' branch.
+Resending it after adding 'Reported-by' tag.
 
-I guess drm_panel_unprepare(dsi->panel) should be here.
+ drivers/usb/host/ehci-exynos.c |   40 +++++++++++++++++-----------------
+ drivers/usb/host/ohci-exynos.c |   47 +++++++++++++++++++---------------------
+ 2 files changed, 42 insertions(+), 45 deletions(-)
 
-Regards
-Andrzej
-
-> +		exynos_dsi_poweroff(dsi);
-> +		return ret;
-> +	}
-> +
->  	dsi->state |= DSIM_STATE_ENABLED;
->  
->  	return 0;
-> @@ -1370,8 +1377,9 @@ static void exynos_dsi_disable(struct exynos_dsi *dsi)
->  	if (!(dsi->state & DSIM_STATE_ENABLED))
->  		return;
->  
-> -	exynos_dsi_set_display_enable(dsi, false);
->  	drm_panel_disable(dsi->panel);
-> +	exynos_dsi_set_display_enable(dsi, false);
-> +	drm_panel_unprepare(dsi->panel);
->  	exynos_dsi_poweroff(dsi);
->  
->  	dsi->state &= ~DSIM_STATE_ENABLED;
-> 
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+index cda0a2f..2eed9a4 100644
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -62,18 +62,6 @@ static int exynos_ehci_get_phy(struct device *dev,
+ 	int phy_number;
+ 	int ret = 0;
+ 
+-	exynos_ehci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+-	if (IS_ERR(exynos_ehci->phy)) {
+-		ret = PTR_ERR(exynos_ehci->phy);
+-		if (ret != -ENXIO && ret != -ENODEV) {
+-			dev_err(dev, "no usb2 phy configured\n");
+-			return ret;
+-		}
+-		dev_dbg(dev, "Failed to get usb2 phy\n");
+-	} else {
+-		exynos_ehci->otg = exynos_ehci->phy->otg;
+-	}
+-
+ 	for_each_available_child_of_node(dev->of_node, child) {
+ 		ret = of_property_read_u32(child, "reg", &phy_number);
+ 		if (ret) {
+@@ -90,15 +78,27 @@ static int exynos_ehci_get_phy(struct device *dev,
+ 
+ 		phy = devm_of_phy_get(dev, child, NULL);
+ 		of_node_put(child);
+-		if (IS_ERR(phy)) {
+-			ret = PTR_ERR(phy);
+-			if (ret != -ENOSYS && ret != -ENODEV) {
+-				dev_err(dev, "no usb2 phy configured\n");
+-				return ret;
+-			}
+-			dev_dbg(dev, "Failed to get usb2 phy\n");
+-		}
++		if (IS_ERR(phy))
++			/* Lets fallback to older USB-PHYs */
++			goto usb_phy_old;
+ 		exynos_ehci->phy_g[phy_number] = phy;
++		/* Make the older PHYs unavailable */
++		exynos_ehci->phy = ERR_PTR(-ENXIO);
++	}
++
++	return 0;
++
++usb_phy_old:
++	exynos_ehci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
++	if (IS_ERR(exynos_ehci->phy)) {
++		ret = PTR_ERR(exynos_ehci->phy);
++		if (ret != -ENXIO && ret != -ENODEV) {
++			dev_err(dev, "no usb2 phy configured\n");
++			return ret;
++		}
++		dev_dbg(dev, "Failed to get usb2 phy\n");
++	} else {
++		exynos_ehci->otg = exynos_ehci->phy->otg;
+ 	}
+ 
+ 	return ret;
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index a72ab8f..7c48e3f 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -51,27 +51,12 @@ static int exynos_ohci_get_phy(struct device *dev,
+ 	int phy_number;
+ 	int ret = 0;
+ 
+-	exynos_ohci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+-	if (IS_ERR(exynos_ohci->phy)) {
+-		ret = PTR_ERR(exynos_ohci->phy);
+-		if (ret != -ENXIO && ret != -ENODEV) {
+-			dev_err(dev, "no usb2 phy configured\n");
+-			return ret;
+-		}
+-		dev_dbg(dev, "Failed to get usb2 phy\n");
+-	} else {
+-		exynos_ohci->otg = exynos_ohci->phy->otg;
+-	}
+-
+ 	/*
+ 	 * Getting generic phy:
+ 	 * We are keeping both types of phys as a part of transiting OHCI
+ 	 * to generic phy framework, so as to maintain backward compatibilty
+-	 * with old DTB.
+-	 * If there are existing devices using DTB files built from them,
+-	 * to remove the support for old bindings in this driver,
+-	 * we need to make sure that such devices have their DTBs
+-	 * updated to ones built from new DTS.
++	 * with old DTB too.
++	 * We fallback to older USB-PHYs when we fail to get generic PHYs.
+ 	 */
+ 	for_each_available_child_of_node(dev->of_node, child) {
+ 		ret = of_property_read_u32(child, "reg", &phy_number);
+@@ -89,15 +74,27 @@ static int exynos_ohci_get_phy(struct device *dev,
+ 
+ 		phy = devm_of_phy_get(dev, child, NULL);
+ 		of_node_put(child);
+-		if (IS_ERR(phy)) {
+-			ret = PTR_ERR(phy);
+-			if (ret != -ENOSYS && ret != -ENODEV) {
+-				dev_err(dev, "no usb2 phy configured\n");
+-				return ret;
+-			}
+-			dev_dbg(dev, "Failed to get usb2 phy\n");
+-		}
++		if (IS_ERR(phy))
++			/* Lets fallback to older USB-PHYs */
++			goto usb_phy_old;
+ 		exynos_ohci->phy_g[phy_number] = phy;
++		/* Make the older PHYs unavailable */
++		exynos_ohci->phy = ERR_PTR(-ENXIO);
++	}
++
++	return 0;
++
++usb_phy_old:
++	exynos_ohci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
++	if (IS_ERR(exynos_ohci->phy)) {
++		ret = PTR_ERR(exynos_ohci->phy);
++		if (ret != -ENXIO && ret != -ENODEV) {
++			dev_err(dev, "no usb2 phy configured\n");
++			return ret;
++		}
++		dev_dbg(dev, "Failed to get usb2 phy\n");
++	} else {
++		exynos_ohci->otg = exynos_ohci->phy->otg;
+ 	}
+ 
+ 	return ret;
+-- 
+1.7.10.4
