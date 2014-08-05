@@ -1,301 +1,96 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v5 1/3] ARM: EXYNOS: Move code from hotplug.c to platsmp.c
-Date: Tue, 05 Aug 2014 17:03:26 +0200
-Message-ID: <1407251006.9849.8.camel@AMDC1943>
-References: <1407235425-13937-1-git-send-email-k.kozlowski@samsung.com>
- <53E0EE32.7060500@linaro.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v5 0/5] ARM: EXYNOS: cpuidle: fix AFTR mode on boards
+ with secure firmware enabled
+Date: Tue, 05 Aug 2014 17:07:36 +0200
+Message-ID: <53E0F338.8080006@linaro.org>
+References: <1407245666-20016-1-git-send-email-b.zolnierkie@samsung.com> <53E0E420.8060207@linaro.org> <53E0E98F.5020706@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <53E0EE32.7060500@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53E0E98F.5020706@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On wto, 2014-08-05 at 16:46 +0200, Daniel Lezcano wrote:
-> On 08/05/2014 12:43 PM, Krzysztof Kozlowski wrote:
-> > Cleanup a little the SMP/hotplug code for Exynos by:
-> > 1. Moving completely all functions from hotplug.c into the platsmp.c;
-> > 2. Deleting the hotplug.c file.
-> >
-> > After recent cleanups (e.g. 75ad2ab28f0f "ARM: EXYNOS: use
-> > v7_exit_coherency_flush macro for cache disabling") there was only CPU
-> > power down related code in hotplug.c file. Keeping this file does not
-> > give any benefits.
-> >
-> > The commit only moves code around with one additional observable change:
-> > the hotplug.c was compiled with custom CFLAGS (-march=armv7-a). These
-> > CFLAGS are not necessary any more.
-> 
-> What is the benefit of moving this code around ?
-> 
-> Usually the cpu hotplug code is located in hotplug.c for most of the 
-> platforms, so why moving pm code inside platsmp ?
+On 08/05/2014 04:26 PM, Krzysztof Kozlowski wrote:
+> On 05.08.2014 16:03, Daniel Lezcano wrote:
+>> On 08/05/2014 03:34 PM, Bartlomiej Zolnierkiewicz wrote:
+>>> Hi,
+>>>
+>>> This patch series adds support for AFTR idle mode on boards with
+>>> secure firmware enabled and allows EXYNOS cpuidle driver usage on
+>>> Exynos4x12 SoCs.
+>>>
+>>> It has been tested on Trats2 board (using Exynos4412 SoC with secur=
+e
+>>> firmware enabled) on which AFTR mode reduces power consumption by ~=
+12%
+>>> when EXYNOS cpuidle driver is enabled (in both cases the default
+>>> exynos_defconfig config is used and CPU1-3 are offlined).
+>>
+>> As a sidenote:
+>>
+>> On my odroid-U2:
+>>   * 4 cpus online -> 130 mA
+>>   * 3 cpus online -> 164 mA
+>>   * 2 cpus online -> 160 mA
+>>   * 1 cpu online  -> 157 mA
+>>
+>> So were are consuming more when there are unplugged cpu ... any idea=
+s ?
+>
+> On which tree are you testing? Current next has ARMCLK down feature
+> enabled. ARMCLK down may stop working after hotunplugging CPU:
+> http://www.spinics.net/lists/arm-kernel/msg352890.html
+>
+> That was observed especially on Exynos4212 where ARMCLK down stops
+> working permanently. On Trats2 (Exynos4412) the clock down stopped on=
+ly
+> a for short period after disabling CPU.
 
-The benefits are:
+Hi Krzysztof,
 
-1. Less dependencies, cleaner code because platsmp.c is the only user of
-code located in hotplug.c. So the exynos_cpu_die() had to be declared in
-common.h.
+I tested the patches you mentioned above on top of this patchset.
 
-2. Less dependencies between modules after adding patch 3/3 [1] which
-introduces exynos_set_delayed_reset_assertion() function. The
-exynos_set_delayed_reset_assertion() is called by:
- - cpu_leave_power (hotplug.c)
- - platform_do_lowpower (hotplug.c)
- - exynos_boot_secondary (platsmp.c)
+You are right this is directly related to the ARMCLK but the behavior=20
+may be not as you expect I think.
 
-so merging everything into one file seemed simpler and cleaner.
+When I boot:
 
-However I do not insist on such solution. I'm merely interested in
-getting the third patch into the kernel :) .
+4 cpus online =3D> 131 mA
 
-[1] http://www.spinics.net/lists/arm-kernel/msg352890.html
+Then I unplug one by one the cpus:
 
-Best regards,
-Krzysztof
+3 cpus online =3D> 127 mA
+2 cpus online =3D> 123 mA
+1 cpu online  =3D> 120 mA
 
-> 
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> >
-> > ---
-> > Changes since v4:
-> > 1. Rebase on linux-next-20140804.
-> > 2. Add Reviewed-by Tomasz Figa.
-> > ---
-> >   arch/arm/mach-exynos/Makefile  |  3 --
-> >   arch/arm/mach-exynos/common.h  |  2 -
-> >   arch/arm/mach-exynos/hotplug.c | 91 ------------------------------------------
-> >   arch/arm/mach-exynos/platsmp.c | 74 ++++++++++++++++++++++++++++++++++
-> >   4 files changed, 74 insertions(+), 96 deletions(-)
-> >   delete mode 100644 arch/arm/mach-exynos/hotplug.c
-> >
-> > diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-> > index 788f26d21141..0095de99d703 100644
-> > --- a/arch/arm/mach-exynos/Makefile
-> > +++ b/arch/arm/mach-exynos/Makefile
-> > @@ -21,9 +21,6 @@ obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
-> >
-> >   obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
-> >
-> > -obj-$(CONFIG_HOTPLUG_CPU)	+= hotplug.o
-> > -CFLAGS_hotplug.o		+= -march=armv7-a
-> > -
-> >   plus_sec := $(call as-instr,.arch_extension sec,+sec)
-> >   AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
-> >
-> > diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> > index 47b904b3b973..3d3e6af9d015 100644
-> > --- a/arch/arm/mach-exynos/common.h
-> > +++ b/arch/arm/mach-exynos/common.h
-> > @@ -130,8 +130,6 @@ extern void exynos_cpu_resume(void);
-> >
-> >   extern struct smp_operations exynos_smp_ops;
-> >
-> > -extern void exynos_cpu_die(unsigned int cpu);
-> > -
-> >   /* PMU(Power Management Unit) support */
-> >
-> >   #define PMU_TABLE_END	(-1U)
-> > diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
-> > deleted file mode 100644
-> > index 4d86961a7957..000000000000
-> > --- a/arch/arm/mach-exynos/hotplug.c
-> > +++ /dev/null
-> > @@ -1,91 +0,0 @@
-> > -/*
-> > - *  Cloned from linux/arch/arm/mach-realview/hotplug.c
-> > - *
-> > - *  Copyright (C) 2002 ARM Ltd.
-> > - *  All Rights Reserved
-> > - *
-> > - * This program is free software; you can redistribute it and/or modify
-> > - * it under the terms of the GNU General Public License version 2 as
-> > - * published by the Free Software Foundation.
-> > -*/
-> > -
-> > -#include <linux/kernel.h>
-> > -#include <linux/errno.h>
-> > -#include <linux/smp.h>
-> > -#include <linux/io.h>
-> > -
-> > -#include <asm/cacheflush.h>
-> > -#include <asm/cp15.h>
-> > -#include <asm/smp_plat.h>
-> > -
-> > -#include "common.h"
-> > -#include "regs-pmu.h"
-> > -
-> > -static inline void cpu_leave_lowpower(void)
-> > -{
-> > -	unsigned int v;
-> > -
-> > -	asm volatile(
-> > -	"mrc	p15, 0, %0, c1, c0, 0\n"
-> > -	"	orr	%0, %0, %1\n"
-> > -	"	mcr	p15, 0, %0, c1, c0, 0\n"
-> > -	"	mrc	p15, 0, %0, c1, c0, 1\n"
-> > -	"	orr	%0, %0, %2\n"
-> > -	"	mcr	p15, 0, %0, c1, c0, 1\n"
-> > -	  : "=&r" (v)
-> > -	  : "Ir" (CR_C), "Ir" (0x40)
-> > -	  : "cc");
-> > -}
-> > -
-> > -static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
-> > -{
-> > -	u32 mpidr = cpu_logical_map(cpu);
-> > -	u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
-> > -
-> > -	for (;;) {
-> > -
-> > -		/* Turn the CPU off on next WFI instruction. */
-> > -		exynos_cpu_power_down(core_id);
-> > -
-> > -		wfi();
-> > -
-> > -		if (pen_release == core_id) {
-> > -			/*
-> > -			 * OK, proper wakeup, we're done
-> > -			 */
-> > -			break;
-> > -		}
-> > -
-> > -		/*
-> > -		 * Getting here, means that we have come out of WFI without
-> > -		 * having been woken up - this shouldn't happen
-> > -		 *
-> > -		 * Just note it happening - when we're woken, we can report
-> > -		 * its occurrence.
-> > -		 */
-> > -		(*spurious)++;
-> > -	}
-> > -}
-> > -
-> > -/*
-> > - * platform-specific code to shutdown a CPU
-> > - *
-> > - * Called with IRQs disabled
-> > - */
-> > -void __ref exynos_cpu_die(unsigned int cpu)
-> > -{
-> > -	int spurious = 0;
-> > -
-> > -	v7_exit_coherency_flush(louis);
-> > -
-> > -	platform_do_lowpower(cpu, &spurious);
-> > -
-> > -	/*
-> > -	 * bring this CPU back into the world of cache
-> > -	 * coherency, and then restore interrupts
-> > -	 */
-> > -	cpu_leave_lowpower();
-> > -
-> > -	if (spurious)
-> > -		pr_warn("CPU%u: %u spurious wakeup calls\n", cpu, spurious);
-> > -}
-> > diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-> > index a9f1cf759949..a809f76c8160 100644
-> > --- a/arch/arm/mach-exynos/platsmp.c
-> > +++ b/arch/arm/mach-exynos/platsmp.c
-> > @@ -22,6 +22,7 @@
-> >   #include <linux/of_address.h>
-> >
-> >   #include <asm/cacheflush.h>
-> > +#include <asm/cp15.h>
-> >   #include <asm/smp_plat.h>
-> >   #include <asm/smp_scu.h>
-> >   #include <asm/firmware.h>
-> > @@ -33,6 +34,54 @@
-> >
-> >   extern void exynos4_secondary_startup(void);
-> >
-> > +#ifdef CONFIG_HOTPLUG_CPU
-> > +static inline void cpu_leave_lowpower(void)
-> > +{
-> > +	unsigned int v;
-> > +
-> > +	asm volatile(
-> > +	"mrc	p15, 0, %0, c1, c0, 0\n"
-> > +	"	orr	%0, %0, %1\n"
-> > +	"	mcr	p15, 0, %0, c1, c0, 0\n"
-> > +	"	mrc	p15, 0, %0, c1, c0, 1\n"
-> > +	"	orr	%0, %0, %2\n"
-> > +	"	mcr	p15, 0, %0, c1, c0, 1\n"
-> > +	  : "=&r" (v)
-> > +	  : "Ir" (CR_C), "Ir" (0x40)
-> > +	  : "cc");
-> > +}
-> > +
-> > +static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
-> > +{
-> > +	u32 mpidr = cpu_logical_map(cpu);
-> > +	u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
-> > +
-> > +	for (;;) {
-> > +
-> > +		/* Turn the CPU off on next WFI instruction. */
-> > +		exynos_cpu_power_down(core_id);
-> > +
-> > +		wfi();
-> > +
-> > +		if (pen_release == core_id) {
-> > +			/*
-> > +			 * OK, proper wakeup, we're done
-> > +			 */
-> > +			break;
-> > +		}
-> > +
-> > +		/*
-> > +		 * Getting here, means that we have come out of WFI without
-> > +		 * having been woken up - this shouldn't happen
-> > +		 *
-> > +		 * Just note it happening - when we're woken, we can report
-> > +		 * its occurrence.
-> > +		 */
-> > +		(*spurious)++;
-> > +	}
-> > +}
-> > +#endif /* CONFIG_HOTPLUG_CPU */
-> > +
-> >   /**
-> >    * exynos_core_power_down : power down the specified cpu
-> >    * @cpu : the cpu to power down
-> > @@ -318,6 +367,31 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
-> >   	}
-> >   }
-> >
-> > +#ifdef CONFIG_HOTPLUG_CPU
-> > +/*
-> > + * platform-specific code to shutdown a CPU
-> > + *
-> > + * Called with IRQs disabled
-> > + */
-> > +static void __ref exynos_cpu_die(unsigned int cpu)
-> > +{
-> > +	int spurious = 0;
-> > +
-> > +	v7_exit_coherency_flush(louis);
-> > +
-> > +	platform_do_lowpower(cpu, &spurious);
-> > +
-> > +	/*
-> > +	 * bring this CPU back into the world of cache
-> > +	 * coherency, and then restore interrupts
-> > +	 */
-> > +	cpu_leave_lowpower();
-> > +
-> > +	if (spurious)
-> > +		pr_warn("CPU%u: %u spurious wakeup calls\n", cpu, spurious);
-> > +}
-> > +#endif /* CONFIG_HOTPLUG_CPU */
-> > +
-> >   struct smp_operations exynos_smp_ops __initdata = {
-> >   	.smp_init_cpus		= exynos_smp_init_cpus,
-> >   	.smp_prepare_cpus	= exynos_smp_prepare_cpus,
-> >
-> 
-> 
+This is consistent.
+
+But now, I online the cpus:
+
+2 cpus online =3D> 162 mA
+3 cpus online =3D> 165 mA
+4 cpus online =3D> 131 mA
+
+
+-- side note --
+
+Please note, I did not disable the cpuidle neither the AFTR state and=20
+the kernel did not hang but I don't see the noticeable power saving we=20
+should be observing when there is one cpu remaining entering the AFTR=20
+state (cpuidle stats show we enter AFTR). So there is definitively=20
+something wrong with this state.
+
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
