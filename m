@@ -1,96 +1,94 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v5 0/5] ARM: EXYNOS: cpuidle: fix AFTR mode on boards
- with secure firmware enabled
-Date: Tue, 05 Aug 2014 17:07:36 +0200
-Message-ID: <53E0F338.8080006@linaro.org>
-References: <1407245666-20016-1-git-send-email-b.zolnierkie@samsung.com> <53E0E420.8060207@linaro.org> <53E0E98F.5020706@samsung.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH 07/15] drm/exynos: dsi: Add support for panel prepare and
+ unprepare routines
+Date: Tue, 5 Aug 2014 21:41:09 +0530
+Message-ID: <CAEC9eQPFnMEptzYiox2-6Z37iOCKgMyqjfYWo6RfRbEFtXW9jg@mail.gmail.com>
+References: <1406828534-10072-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1406828534-10072-8-git-send-email-ajaykumar.rs@samsung.com>
+ <53E0AC0C.9030309@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <53E0E98F.5020706@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <53E0AC0C.9030309@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08/05/2014 04:26 PM, Krzysztof Kozlowski wrote:
-> On 05.08.2014 16:03, Daniel Lezcano wrote:
->> On 08/05/2014 03:34 PM, Bartlomiej Zolnierkiewicz wrote:
->>> Hi,
->>>
->>> This patch series adds support for AFTR idle mode on boards with
->>> secure firmware enabled and allows EXYNOS cpuidle driver usage on
->>> Exynos4x12 SoCs.
->>>
->>> It has been tested on Trats2 board (using Exynos4412 SoC with secur=
-e
->>> firmware enabled) on which AFTR mode reduces power consumption by ~=
-12%
->>> when EXYNOS cpuidle driver is enabled (in both cases the default
->>> exynos_defconfig config is used and CPU1-3 are offlined).
->>
->> As a sidenote:
->>
->> On my odroid-U2:
->>   * 4 cpus online -> 130 mA
->>   * 3 cpus online -> 164 mA
->>   * 2 cpus online -> 160 mA
->>   * 1 cpu online  -> 157 mA
->>
->> So were are consuming more when there are unplugged cpu ... any idea=
-s ?
+Hi Andreas,
+
+
+On Tue, Aug 5, 2014 at 3:33 PM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+> Hi Ajay,
 >
-> On which tree are you testing? Current next has ARMCLK down feature
-> enabled. ARMCLK down may stop working after hotunplugging CPU:
-> http://www.spinics.net/lists/arm-kernel/msg352890.html
 >
-> That was observed especially on Exynos4212 where ARMCLK down stops
-> working permanently. On Trats2 (Exynos4412) the clock down stopped on=
-ly
-> a for short period after disabling CPU.
+> On 07/31/2014 07:42 PM, Ajay Kumar wrote:
+>> Modify exynos_dsi driver to support the new panel calls:
+>> prepare and unprepare.
+>>
+>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_dsi.c |   12 ++++++++++--
+>>  1 file changed, 10 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> index dc7c80b..4834932 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+>> @@ -1351,7 +1351,7 @@ static int exynos_dsi_enable(struct exynos_dsi *dsi)
+>>       if (ret < 0)
+>>               return ret;
+>>
+>> -     ret = drm_panel_enable(dsi->panel);
+>> +     ret = drm_panel_prepare(dsi->panel);
+>>       if (ret < 0) {
+>>               exynos_dsi_poweroff(dsi);
+>>               return ret;
+>> @@ -1360,6 +1360,13 @@ static int exynos_dsi_enable(struct exynos_dsi *dsi)
+>>       exynos_dsi_set_display_mode(dsi);
+>>       exynos_dsi_set_display_enable(dsi, true);
+>>
+>> +     ret = drm_panel_enable(dsi->panel);
+>> +     if (ret < 0) {
+>> +             exynos_dsi_set_display_enable(dsi, false);
+>
+> I guess drm_panel_unprepare(dsi->panel) should be here.
+Thanks for pointing it out. I am not sure if Thierry has already
+picked this up since Inki has given Acked by.
+In that case, you can send it as a fix separately :)
 
-Hi Krzysztof,
-
-I tested the patches you mentioned above on top of this patchset.
-
-You are right this is directly related to the ARMCLK but the behavior=20
-may be not as you expect I think.
-
-When I boot:
-
-4 cpus online =3D> 131 mA
-
-Then I unplug one by one the cpus:
-
-3 cpus online =3D> 127 mA
-2 cpus online =3D> 123 mA
-1 cpu online  =3D> 120 mA
-
-This is consistent.
-
-But now, I online the cpus:
-
-2 cpus online =3D> 162 mA
-3 cpus online =3D> 165 mA
-4 cpus online =3D> 131 mA
-
-
--- side note --
-
-Please note, I did not disable the cpuidle neither the AFTR state and=20
-the kernel did not hang but I don't see the noticeable power saving we=20
-should be observing when there is one cpu remaining entering the AFTR=20
-state (cpuidle stats show we enter AFTR). So there is definitively=20
-something wrong with this state.
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Ajay
+>> +             exynos_dsi_poweroff(dsi);
+>> +             return ret;
+>> +     }
+>> +
+>>       dsi->state |= DSIM_STATE_ENABLED;
+>>
+>>       return 0;
+>> @@ -1370,8 +1377,9 @@ static void exynos_dsi_disable(struct exynos_dsi *dsi)
+>>       if (!(dsi->state & DSIM_STATE_ENABLED))
+>>               return;
+>>
+>> -     exynos_dsi_set_display_enable(dsi, false);
+>>       drm_panel_disable(dsi->panel);
+>> +     exynos_dsi_set_display_enable(dsi, false);
+>> +     drm_panel_unprepare(dsi->panel);
+>>       exynos_dsi_poweroff(dsi);
+>>
+>>       dsi->state &= ~DSIM_STATE_ENABLED;
+>>
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
