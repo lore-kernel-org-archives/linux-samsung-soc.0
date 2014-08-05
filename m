@@ -1,53 +1,83 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH RESEND] usb: ehci/ohci-exynos: Fix PHY getting sequence
-Date: Tue, 05 Aug 2014 17:14:26 +0530
-Message-ID: <4F887641414547418FB42327CF5E09DF@sisodomain.com>
-References: <1407235148-31790-1-git-send-email-gautam.vivek@samsung.com>
- <000d01cfb09c$239a8670$6acf9350$%han@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v3 0/4] ARM: EXYNOS: cpuidle: fix AFTR mode on boards with
+ secure firmware enabled
+Date: Tue, 05 Aug 2014 14:04:44 +0200
+Message-ID: <1616004.BFfRa8qesz@amdc1032>
+References: <1404926274-18411-1-git-send-email-b.zolnierkie@samsung.com>
+ <53D5FF06.6080904@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=iso-8859-1; reply-type=original
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <000d01cfb09c$239a8670$6acf9350$%han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, 'Alan Stern' <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <53D5FF06.6080904@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Jingoo,
 
+Hi Daniel,
 
-On Tuesday, August 05, 2014 4:28 PM, Jingoo Han wrote:
-> On Tuesday, August 05, 2014 7:39 PM, Vivek Gautam wrote:
->>
->> Since we want to keep support for both older usb-phys as well as the
->> newer generic phys, lets first get the generic PHYs and fallback to
->> older USB-PHYs only when we fail to get the former.
->> This should fix the issue with ehci-exynos and ohci-exynos, wherein
->> in the absence of SAMSUNG_USB2PHY config symbol, we end up getting
->> the NOP_USB_XCEIV phy when the same is enabled. And thus the PHYs
->> are not configured properly.
->>
->> Reported-by: Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
->> Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->
-> Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->
-> Right, we would get the generic PHYs first, then get the older
-> usb-phys. Then, the older one will be removed from the kernel.
+On Monday, July 28, 2014 09:43:02 AM Daniel Lezcano wrote:
+> On 07/09/2014 07:17 PM, Bartlomiej Zolnierkiewicz wrote:
+> > Hi,
+> >
+> > This patch series adds support for AFTR idle mode on boards with
+> > secure firmware enabled and allows EXYNOS cpuidle driver usage on
+> > Exynos4x12 SoCs.
+> >
+> > It has been tested on Trats2 board (using Exynos4412 SoC with secure
+> > firmware enabled) on which AFTR mode reduces power consumption by ~12%
+> > when EXYNOS cpuidle driver is enabled (in both cases the default
+> > exynos_defconfig config is used and CPU1-3 are offlined).
+> 
+> 
+> Hi Bartlomiej,
+> 
+> what is the status of this patchset ? Is it supposed to land for 3.17 ?
 
-Right, I have a set of patches to remove the older phy support for Exynos 
-SoC series,
-keeping the support for S3C64XX, which I shall send soon.
+I posted v4 yesterday:
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35197.html
 
-[snip]
+When it comes to merging the patchset for 3.17 it is up to Kukjin.
 
-Thanks
-Vivek Gautam 
-
+Best regards,
 --
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> Thanks
+> 
+>    -- Daniel
+> 
+> > v3:
+> > - rebased on top of next-20140708 +
+> >    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32809.html
+> >    (with rejects fixed)
+> >    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32808.html
+> >    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32991.html
+> >    (with rejects fixed in patch #2)
+> > - addressed review comments from Tomasz Figa and Daniel Lezcano
+> >
+> > Best regards,
+> > --
+> > Bartlomiej Zolnierkiewicz
+> > Samsung R&D Institute Poland
+> > Samsung Electronics
+> >
+> >
+> > Bartlomiej Zolnierkiewicz (4):
+> >    ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static inlines
+> >    ARM: EXYNOS: add AFTR mode support to firmware do_idle method
+> >    ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode code
+> >    ARM: EXYNOS: cpuidle: allow driver usage on Exynos4x12 SoCs
+> >
+> >   arch/arm/include/asm/firmware.h  |  2 +-
+> >   arch/arm/mach-exynos/common.h    |  7 ++++++-
+> >   arch/arm/mach-exynos/exynos.c    |  3 ++-
+> >   arch/arm/mach-exynos/firmware.c  | 36 ++++++++++++++++++++++++++----------
+> >   arch/arm/mach-exynos/pm.c        | 39 +++++++++++++++++++++++++++++----------
+> >   drivers/cpuidle/cpuidle-exynos.c |  6 +++---
+> >   6 files changed, 67 insertions(+), 26 deletions(-)
+
