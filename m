@@ -1,131 +1,72 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v5 0/5] ARM: EXYNOS: cpuidle: fix AFTR mode on boards
- with secure firmware enabled
-Date: Tue, 05 Aug 2014 16:03:12 +0200
-Message-ID: <53E0E420.8060207@linaro.org>
-References: <1407245666-20016-1-git-send-email-b.zolnierkie@samsung.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH RESEND] usb: ehci/ohci-exynos: Fix PHY getting sequence
+Date: Tue, 5 Aug 2014 10:11:48 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1408051006570.1227-100000@iolanthe.rowland.org>
+References: <1407235148-31790-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1407245666-20016-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from iolanthe.rowland.org ([192.131.102.54]:51507 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754040AbaHEOLt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Aug 2014 10:11:49 -0400
+In-Reply-To: <1407235148-31790-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-usb@vger.kernel.org, gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@samsung.com, Jingoo Han <jg1.han@samsung.com>
 
-On 08/05/2014 03:34 PM, Bartlomiej Zolnierkiewicz wrote:
-> Hi,
->
-> This patch series adds support for AFTR idle mode on boards with
-> secure firmware enabled and allows EXYNOS cpuidle driver usage on
-> Exynos4x12 SoCs.
->
-> It has been tested on Trats2 board (using Exynos4412 SoC with secure
-> firmware enabled) on which AFTR mode reduces power consumption by ~12=
-%
-> when EXYNOS cpuidle driver is enabled (in both cases the default
-> exynos_defconfig config is used and CPU1-3 are offlined).
+On Tue, 5 Aug 2014, Vivek Gautam wrote:
 
-As a sidenote:
+> Since we want to keep support for both older usb-phys as well as the
+> newer generic phys, lets first get the generic PHYs and fallback to
+> older USB-PHYs only when we fail to get the former.
+> This should fix the issue with ehci-exynos and ohci-exynos, wherein
+> in the absence of SAMSUNG_USB2PHY config symbol, we end up getting
+> the NOP_USB_XCEIV phy when the same is enabled. And thus the PHYs
+> are not configured properly.
+> 
+> Reported-by: Sachin Kamat <sachin.kamat@samsung.com>
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: Jingoo Han <jg1.han@samsung.com>
+> ---
+> 
+> Based on 'usb-next' branch.
+> Resending it after adding 'Reported-by' tag.
+> 
+>  drivers/usb/host/ehci-exynos.c |   40 +++++++++++++++++-----------------
+>  drivers/usb/host/ohci-exynos.c |   47 +++++++++++++++++++---------------------
+>  2 files changed, 42 insertions(+), 45 deletions(-)
+> 
+> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> index cda0a2f..2eed9a4 100644
+> --- a/drivers/usb/host/ehci-exynos.c
+> +++ b/drivers/usb/host/ehci-exynos.c
+> @@ -62,18 +62,6 @@ static int exynos_ehci_get_phy(struct device *dev,
+>  	int phy_number;
+>  	int ret = 0;
+>  
+> -	exynos_ehci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+> -	if (IS_ERR(exynos_ehci->phy)) {
+> -		ret = PTR_ERR(exynos_ehci->phy);
+> -		if (ret != -ENXIO && ret != -ENODEV) {
+> -			dev_err(dev, "no usb2 phy configured\n");
+> -			return ret;
+> -		}
+> -		dev_dbg(dev, "Failed to get usb2 phy\n");
+> -	} else {
+> -		exynos_ehci->otg = exynos_ehci->phy->otg;
+> -	}
+> -
+>  	for_each_available_child_of_node(dev->of_node, child) {
+>  		ret = of_property_read_u32(child, "reg", &phy_number);
+>  		if (ret) {
+> @@ -90,15 +78,27 @@ static int exynos_ehci_get_phy(struct device *dev,
 
-On my odroid-U2:
-  * 4 cpus online -> 130 mA
-  * 3 cpus online -> 164 mA
-  * 2 cpus online -> 160 mA
-  * 1 cpu online  -> 157 mA
+What about the code that you skipped here?  Suppose the 
+of_property_read_32() call returns an error.  Do you then want to abort 
+the whole thing, or should you go on to try the old usb_phy?
 
-So were are consuming more when there are unplugged cpu ... any ideas ?
-
-Thanks !
-
-   -- Daniel
-
-> Depends on:
-> - next-20140804 branch of linux-next kernel tree
-> - [PATCH v5][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
->    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
-35262.html)
-> - [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
->    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
-34282.html)
->
-> Changes since v4:
-> - rebased on top of next-20140804 +
->    [PATCH v5][next-20140804] ARM: EXYNOS: Fix suspend/resume sequence=
-s
->    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
-35262.html)
->    [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
->    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
-34282.html)
-> - call exynos_save_cp15() only on A9 type core (this is needed for th=
-e future
->    Exynos3250 SoC support)
->
-> Changes since v3:
-> - rebased on top of next-20140804 +
->    [PATCH v4][next-20140804] ARM: EXYNOS: Fix suspend/resume sequence=
-s
->    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
-35192.html)
->    [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
->    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
-34282.html)
-> - (re-)added patch fixing S5P_CENTRAL_SEQ_OPTION register setup
->
-> Changes since v2:
-> - rebased on top of next-20140708 +
->    [PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
->    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
-32809.html)
->    [with rejects fixed]
->    [PATCH 6/6] ARM: EXYNOS: Register cpuidle device only on Exynos421=
-0 and 5250
->    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
-32808.html)
->    [PATCH 0/2] Firmware-assisted suspend/resume of Exynos SoCs
->    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg=
-32991.html)
->    [with rejects fixed in patch #2]
-> - addressed review comments from Tomasz Figa and Daniel Lezcano
->
-> Changes since v1:
-> - synced against next-20140602
-> - added missing Acked-by-s
->
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
->
-> Bartlomiej Zolnierkiewicz (5):
->    ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static inl=
-ines
->    ARM: EXYNOS: add AFTR mode support to firmware do_idle method
->    ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode cod=
-e
->    ARM: EXYNOS: PM: fix register setup for AFTR mode code
->    ARM: EXYNOS: cpuidle: allow driver usage on Exynos4x12 SoCs
->
->   arch/arm/include/asm/firmware.h |  2 +-
->   arch/arm/mach-exynos/common.h   |  5 ++++
->   arch/arm/mach-exynos/exynos.c   |  4 ++-
->   arch/arm/mach-exynos/firmware.c | 34 ++++++++++++++++-------
->   arch/arm/mach-exynos/pm.c       | 60 ++++++++++++++++++++++++------=
------------
->   5 files changed, 70 insertions(+), 35 deletions(-)
->
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Alan Stern
