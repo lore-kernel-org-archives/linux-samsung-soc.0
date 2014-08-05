@@ -1,43 +1,53 @@
-From: Sachin Kamat <spk.linux@gmail.com>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Subject: Re: [PATCH RESEND] usb: ehci/ohci-exynos: Fix PHY getting sequence
-Date: Tue, 5 Aug 2014 17:05:19 +0530
-Message-ID: <CAK5sBcGq1XzCkLz_f5q+5ik9shQSJ=pqzQkrtXbKzJFYfOUnPw@mail.gmail.com>
+Date: Tue, 05 Aug 2014 17:14:26 +0530
+Message-ID: <4F887641414547418FB42327CF5E09DF@sisodomain.com>
 References: <1407235148-31790-1-git-send-email-gautam.vivek@samsung.com>
+ <000d01cfb09c$239a8670$6acf9350$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f169.google.com ([209.85.217.169]:45915 "EHLO
-	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751743AbaHELfW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Aug 2014 07:35:22 -0400
-In-Reply-To: <1407235148-31790-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; format=flowed; charset=iso-8859-1; reply-type=original
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <000d01cfb09c$239a8670$6acf9350$%han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, 'Alan Stern' <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Jingoo Han <jg1.han@samsung.com>
 
-Hi Vivek,
+Hi Jingoo,
 
-On Tue, Aug 5, 2014 at 4:09 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> Since we want to keep support for both older usb-phys as well as the
-> newer generic phys, lets first get the generic PHYs and fallback to
-> older USB-PHYs only when we fail to get the former.
-> This should fix the issue with ehci-exynos and ohci-exynos, wherein
-> in the absence of SAMSUNG_USB2PHY config symbol, we end up getting
-> the NOP_USB_XCEIV phy when the same is enabled. And thus the PHYs
-> are not configured properly.
+
+On Tuesday, August 05, 2014 4:28 PM, Jingoo Han wrote:
+> On Tuesday, August 05, 2014 7:39 PM, Vivek Gautam wrote:
+>>
+>> Since we want to keep support for both older usb-phys as well as the
+>> newer generic phys, lets first get the generic PHYs and fallback to
+>> older USB-PHYs only when we fail to get the former.
+>> This should fix the issue with ehci-exynos and ohci-exynos, wherein
+>> in the absence of SAMSUNG_USB2PHY config symbol, we end up getting
+>> the NOP_USB_XCEIV phy when the same is enabled. And thus the PHYs
+>> are not configured properly.
+>>
+>> Reported-by: Sachin Kamat <sachin.kamat-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+>> Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 >
-> Reported-by: Sachin Kamat <sachin.kamat@samsung.com>
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Jingoo Han <jg1.han@samsung.com>
+> Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>
+> Right, we would get the generic PHYs first, then get the older
+> usb-phys. Then, the older one will be removed from the kernel.
 
-Tested this patch on Exynos5250 based Arndale and Snow boards.
-Fixes the said issue. Thanks.
+Right, I have a set of patches to remove the older phy support for Exynos 
+SoC series,
+keeping the support for S3C64XX, which I shall send soon.
 
-Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
+[snip]
 
--- 
-Regards,
-Sachin.
+Thanks
+Vivek Gautam 
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
