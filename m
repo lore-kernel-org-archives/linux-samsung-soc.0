@@ -1,225 +1,59 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer support
-Date: Thu, 7 Aug 2014 02:09:19 +0900
-Message-ID: <CAAQKjZNei31upmmHB_HaVQo8=mRpiBKa4-gri8ftpuWDbS2eew@mail.gmail.com>
-References: <1406512857-7213-1-git-send-email-inki.dae@samsung.com>
-	<1406512857-7213-2-git-send-email-inki.dae@samsung.com>
-	<53D675D6.2000309@samsung.com>
-	<20140805111223.GA27340@ulmo>
-	<53E1D53A.9050703@samsung.com>
-	<20140806074357.GA13788@ulmo>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3] Documentation: devicetree: Fix tps65090 typos in
+ example
+Date: Wed, 6 Aug 2014 22:10:51 +0100
+Message-ID: <20140806211051.GA17528@sirena.org.uk>
+References: <1406755767-5910-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="w3kmj6YJmRtqQaLC"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:63571 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753191AbaHFRJV convert rfc822-to-8bit (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50390 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753508AbaHFVLf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Aug 2014 13:09:21 -0400
-Received: by mail-wi0-f180.google.com with SMTP id n3so3590686wiv.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Aug 2014 10:09:19 -0700 (PDT)
-In-Reply-To: <20140806074357.GA13788@ulmo>
+	Wed, 6 Aug 2014 17:11:35 -0400
+Content-Disposition: inline
+In-Reply-To: <1406755767-5910-1-git-send-email-afaerber@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: treding@nvidia.com, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, open list <linux-kernel@vger.kernel.org>
 
-2014-08-06 16:43 GMT+09:00 Thierry Reding <thierry.reding@gmail.com>:
-> On Wed, Aug 06, 2014 at 04:11:54PM +0900, Inki Dae wrote:
->> On 2014=B3=E2 08=BF=F9 05=C0=CF 20:12, Thierry Reding wrote:
-> [...]
->> > I think that low power mode is more often used for command transmi=
-ssion
->> > (in host-driven mode). I'm not sure how much sense it really makes=
- to
->> > transmit video data in low power mode. It also seems like low powe=
-r mode
->> > is what all peripherals need to support (if they can do command mo=
-de).
->> > Hence I'd like to propose the attached patch that makes all comman=
-d
->> > messages use low power mode.
->>
->> To use low power mode, I think SoC drivers should add more codes:
->> checking xxx_MSG_LPM, and maybe disabling HS clock. My patch does
->> exactly that,
->> http://www.spinics.net/lists/linux-samsung-soc/msg34866.html
->
-> I agree in general that DSI host drivers need to check the flags to m=
-ake
-> a decision about which mode to enable. But your patch also introduces
-> additional flags that I don't think are necessary (at least for any o=
-f
-> the use-cases discussed so far).
->
-> As I understand it the MIPI_DSI_MODE_CMD_LPM and MIPI_DSI_MODE_VIDEO_=
-LPM
-> flags that you introduce would advertise that the device only support=
-s
-> low power mode for command or video modes respectively. However, I do=
-ubt
 
-Not so. My intention is to add LPM support for video and command data
-transfers because mipi-dsi framework enforces implicitly using HS mode
-for
-by default.
+--w3kmj6YJmRtqQaLC
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> that there really are devices that only support low power video mode.=
- It
-> wouldn't make much sense because you'd get a maximum of 10 MHz for th=
-e
-> clock, which is about 1.6 frames per second at 1920x1080 resolution (=
-not
-> counting blanking). And even with lower resolutions such as 1024x768 =
-it
-> would be somewhere around 4 frames per second. And I think it's
-> reasonable to assume that we'll see that kind of resolution become ve=
-ry
-> rare in the future.
->
-> So my point is that devices which support video mode will always supp=
-ort
-> high speed mode for video transmission too. Similarly, if a device
-> supports command mode, then it will likely support it in low-power mo=
-de,
-> and optionally in high speed mode too.
->
->> And what I and Andrzej don't make sure is non-continuous clock mode.=
- Do
->> you know how non-continuous clock mode is related to HS clock?
->
-> As far as I can tell non-continuous mode simply means that the host c=
-an
-> turn off the HS clock after a high-speed transmission. I think Andrze=
-j
-> mentioned this already in another subthread, but this is an optional
-> mode that peripherals can support if they have extra circuitry that
-> provides an internal clock. Peripherals that don't have such circuitr=
-y
-> may rely on the HS clock to perform in between transmissions and
-> therefore require the HS clock to be always on (continuous mode). Tha=
-t's
-> what the MIPI_DSI_CLOCK_NON_CONTINUOUS flag is: it advertises that th=
-e
-> peripheral supports non-continuous mode and therefore the host can tu=
-rn
-> the HS clock off after high-speed transmissions.
+On Wed, Jul 30, 2014 at 11:29:27PM +0200, Andreas F=E4rber wrote:
+> Specification and existing device trees use vsys-l{1,2}-supply,
+> not vsys_l{1,2}-supply. Fix the example to match the specification.
 
-What I don't make sure is this sentence. With
-MIPI_DSI_CLOCK_NON_CONTIUOUS flag, I guess two possible operations.
-One is,
-1. host controller will generates signals if a bit of a register
-related to non-contiguous clock mode is set or unset.
-2. And then video data is transmitted to panel in HS mode.
-3. And then D-PHY detects LP-11 signal (positive and negative lane all
-are high).
-4. And then D-PHY disables HS clock of host controller.
-5. At this time, operation mode of host controller becomes LPM.
+Applied.  I've previously reminded you to use subject lines appropraite
+for the subsystem, please do so - this is important for telling people
+what the patch is for.
 
-Other is,
-1. host controller will generates signals if a bit of a register
-related to non-contiguous clock mode is set or unset.
-2. And then D-PHY detects LP-11 signal (positive and negative lane all
-are high).
-3. And then video data is transmitted to panel in LPM.
-4. At this time, operation mode of host controller becomes LPM.
+--w3kmj6YJmRtqQaLC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-It seems that you says latter case.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-I really know that with non-contiguous clock mode, HS clock of host
-controller can be disabled. My question is who controls HS clock in
-this case. D-PHY or host controller?
-In other words, with LPM and MIPI_DSI_CLOCK_NON_CONTIUOUS flags,
-should the host driver check these two flags to disable HS clock? or
-In this case, does the D-PHY disable HS clock regardless of host
-driver?
+iQIcBAEBAgAGBQJT4pnXAAoJELSic+t+oim9Y6EP/0DwyVyQ/+UFFITQo7zScDpp
+hm9gZqRUOyJwNJC/fP47L464R3l4CrSS3bYfOLFzUe4jcVbAjZVTzguSAaN6f59Q
+4znQM8h60K2+vhUWKSxCinz+gvzTchV17d7R4PWN/wPypWg3xjA3jI1TnHca1d59
+EN+pYG++04VtV9Z2vj94kJDQRgyOyIz6W9QesyTX6aJuGN+WhvZ/qKLQ8aOifRdF
+FDQr4QSiY8tpvrDO8/g831NFT/RyBgCJGDyodlooHZ3Q3Vnx7TXOY24QpFnc/KQ9
+yt7KFgKjKfDl4Grgwx37HO5RLeYX2PeMMp0uPZuhSn/HAR9VCk9mXN00BPK7hv1H
+lI7M0OydX1crYOout2tTAyxf2pcX5HsRLMMHABCNb8+rzpbpNxrz/tr+VQRzUlfW
+IdRxzmlKAziLCg1tuTUbwNwP239nIhaK30FH2kyfJPsxIKEwjJHpF/zbbAZK8yqm
+hnDUeB+foWf5xncYeyLJFyG2n76QL9aS3fegQffXXXmrlGtii5OXpS5L2ZGBLcmh
+8cPFgVaiHNpyCLEH5Je9HCWdBg4DNwv84Yxrag+IJOTUdh6eJhs6cqWPUm1pn+bu
+gYWxhX+4tH76gO0Y6wGoAlG2tn6YUv6diyTPdiOcyi8EYWZWZ2S20JUlLKlR+Iup
+WmLYXxzxOZ9trZuNtQX+
+=Rlq4
+-----END PGP SIGNATURE-----
 
-I think we should make sure that to handle LP and HS modes correctly.
-
->
-> If a device doesn't specify that flag then the host needs to keep the=
- HS
-> clock running all the time.
->
->> > The .transfer() function was really designed with initialization
->> > commands in mind, so it doesn't deal with mixing video data and co=
-mmands
->> > anyway and for initialization low-power mode should be fast enough=
-=2E The
->> > downside is that it may not be optimal for some peripherals, but i=
-t
->> > gives us a good solution for the general case since it should supp=
-ort
->> > all devices.
->> >
->> > If we absolutely must have faster initialization, or if we come ac=
-ross a
->> > device that can only initialize in high speed mode, then I think w=
-e
->> > should introduce a new flag to allow DSI host controllers to optim=
-ize in
->> > those cases.
->>
->> Originally, mipi-dsi framework enforces implicitly using HS mode for
->> video and command data as default so I added LPM relevant flags - fo=
-r
->> video and also command data
->
-> Yes, it transmits in HS mode by default. Quite frankly, I'm not sure =
-if
-> that's really the right default. Given that .transfer() is meant for
-> sending synchronous commands, low-power mode would probably be a bett=
-er
-> default.
->
->> - for host driver can consider Low Power Mode. However, your patch m=
-akes
->> it use Low Power Mode for command data as default.
->
-> Not as default. It just means that all messages that are sent using t=
-he
-> standard functions use low-power mode. Drivers could still override t=
-he
-> default by constructing the messages themselves.
->
->> So your patch would mean that default transfer mode for command data=
- is
->> Low Power Mode, but HS mode for video data.
->
-> Exactly. For the reasons specified above, I'd expect peripherals to
-> always support command transmissions in low-power mode, whereas I'd
-> equally expect them to support video transmission in high-speed mode.
->
-> Therefore I think the default should be to send commands in low-power
-> mode and video data in high speed mode (by default), because those ar=
-e
-> the normal cases. If we ever encounter a device that requires somethi=
-ng
-> different we can always introduce an additional flag/quirk at that
-> point.
->
->> Do you intend to control transfer mode - HS or LPM - only for comman=
-d
->> data? If so, we would need only one flag, i.e., MIPI_DSI_MODE_HS.
->
-> We already have that flag, it's called MIPI_DSI_MSG_USE_LPM. Given th=
-e
-> above discussion I think it may still be worthwhile to invert the
-> meaning of the flag and rename it MIPI_DSI_MSG_USE_HS, so that all
-> messages are indeed sent in low power mode by default.
-
-Yes, it may be reasonable. But I'm not sure that there is no any issue
-in case of transmitting always video data in HS mode.
-
-Thanks,
-Inki Dae
-
->
-> Thierry
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
->
+--w3kmj6YJmRtqQaLC--
