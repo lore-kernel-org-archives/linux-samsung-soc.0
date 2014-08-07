@@ -1,101 +1,72 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] mmc: sdhci-s3c: fix runtime PM handling on sdhci_add_host()
- failure
-Date: Thu, 07 Aug 2014 18:07:07 +0200
-Message-ID: <5567000.WJnOP5ckul@amdc1032>
+Subject: [PATCH] mfd: max77686: fix support for devices without irq specified
+Date: Thu, 07 Aug 2014 18:09:04 +0200
+Message-ID: <1457999.lNPdqEWCCR@amdc1032>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:43977 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757488AbaHGQHP (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:39000 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932082AbaHGQJL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Aug 2014 12:07:15 -0400
+	Thu, 7 Aug 2014 12:09:11 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chris Ball <chris@printf.net>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Runtime Power Management handling for the sdhci_add_host() failure
-case in sdhci_s3c_probe() should match the code in sdhci_s3c_remove()
-(which uses pm_runtime_disable() call which matches the earlier
-pm_runtime_enable() one).  Fix it.
+Before commit 6f1c1e71d933 ("mfd: max77686: Convert to use regmap_irq")
+max77686_irq_init() return value was never checked so devices without
+irq specified (like Hardkernel's Exynos4412 based ODROID-U3 board)
+worked fine even though -ENODEV was returned by the function.  Add
+handling for no irq specified case in max77686_i2c_probe() restoring
+the previous driver's behavior.
 
-This patch fixes "BUG: spinlock bad magic on CPU#0, swapper/0/1" and
-"Unbalanced pm_runtime_enable!" warnings.
+The patch fixes boot for Hardkernel's Exynos4412 based ODROID-U3 board.
 
->From the kernel log:
+Error messages before the patch:
 ...
-[    1.659631] s3c-sdhci 12530000.sdhci: sdhci_add_host() failed
-[    1.665096] BUG: spinlock bad magic on CPU#0, swapper/0/1
-[    1.670433]  lock: 0xea01e484, .magic: 00000000, .owner: <none>/-1, .owner_cpu: 0
-[    1.677895] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.16.0-next-20140804-00008-ga59480f-dirty #707
-[    1.687037] [<c0013ae4>] (unwind_backtrace) from [<c0010d70>] (show_stack+0x10/0x14)
-[    1.694740] [<c0010d70>] (show_stack) from [<c04050c8>] (dump_stack+0x68/0xb8)
-[    1.701948] [<c04050c8>] (dump_stack) from [<c0052558>] (do_raw_spin_lock+0x15c/0x1a4)
-[    1.709848] [<c0052558>] (do_raw_spin_lock) from [<c040a630>] (_raw_spin_lock_irqsave+0x20/0x28)
-[    1.718619] [<c040a630>] (_raw_spin_lock_irqsave) from [<c030d7d0>] (sdhci_do_set_ios+0x1c/0x5cc)
-[    1.727464] [<c030d7d0>] (sdhci_do_set_ios) from [<c030ddfc>] (sdhci_runtime_resume_host+0x50/0x104)
-[    1.736574] [<c030ddfc>] (sdhci_runtime_resume_host) from [<c02462dc>] (pm_generic_runtime_resume+0x2c/0x40)
-[    1.746383] [<c02462dc>] (pm_generic_runtime_resume) from [<c0247898>] (__rpm_callback+0x34/0x70)
-[    1.755233] [<c0247898>] (__rpm_callback) from [<c02478fc>] (rpm_callback+0x28/0x88)
-[    1.762958] [<c02478fc>] (rpm_callback) from [<c02486f0>] (rpm_resume+0x384/0x4ec)
-[    1.770511] [<c02486f0>] (rpm_resume) from [<c02488b0>] (pm_runtime_forbid+0x58/0x64)
-[    1.778325] [<c02488b0>] (pm_runtime_forbid) from [<c030ea70>] (sdhci_s3c_probe+0x4a4/0x540)
-[    1.786749] [<c030ea70>] (sdhci_s3c_probe) from [<c02429cc>] (platform_drv_probe+0x2c/0x5c)
-[    1.795076] [<c02429cc>] (platform_drv_probe) from [<c02415f0>] (driver_probe_device+0x114/0x234)
-[    1.803929] [<c02415f0>] (driver_probe_device) from [<c024179c>] (__driver_attach+0x8c/0x90)
-[    1.812347] [<c024179c>] (__driver_attach) from [<c023ffb4>] (bus_for_each_dev+0x54/0x88)
-[    1.820506] [<c023ffb4>] (bus_for_each_dev) from [<c0240df8>] (bus_add_driver+0xd8/0x1cc)
-[    1.828665] [<c0240df8>] (bus_add_driver) from [<c0241db8>] (driver_register+0x78/0xf4)
-[    1.836652] [<c0241db8>] (driver_register) from [<c00088a4>] (do_one_initcall+0x80/0x1d0)
-[    1.844816] [<c00088a4>] (do_one_initcall) from [<c059ac94>] (kernel_init_freeable+0x108/0x1d4)
-[    1.853503] [<c059ac94>] (kernel_init_freeable) from [<c0401300>] (kernel_init+0x8/0xe4)
-[    1.861568] [<c0401300>] (kernel_init) from [<c000e538>] (ret_from_fork+0x14/0x3c)
-[    1.869582] platform 12530000.sdhci: Driver s3c-sdhci requests probe deferral
-...
-[    1.997047] s3c-sdhci 12530000.sdhci: Unbalanced pm_runtime_enable!
-...
-[    2.027235] s3c-sdhci 12530000.sdhci: sdhci_add_host() failed
-[    2.032884] platform 12530000.sdhci: Driver s3c-sdhci requests probe deferral
+[    0.163995] max77686 0-0009: Failed to request IRQ 0 for max77686-pmic: -22
+[    0.164020] max77686 0-0009: failed to add PMIC irq chip: -22
+[    0.164478] max77686: probe of 0-0009 failed with error -22
 ...
 
-Tested on Hardkernel's Exynos4412 based ODROID-U3 board.
-
-Fixes: 9f4e8151dbbc ("mmc: sdhci-s3c: Enable runtime power management")
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>
+Fixes: 6f1c1e71d933 ("mfd: max77686: Convert to use regmap_irq")
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Doug Anderson <dianders@chromium.org>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
 patch is against next-20140804 branch of linux-next kernel
 
- drivers/mmc/host/sdhci-s3c.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mfd/max77686.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index fa5954a..1e47903 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -606,8 +606,6 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
- 	ret = sdhci_add_host(host);
- 	if (ret) {
- 		dev_err(dev, "sdhci_add_host() failed\n");
--		pm_runtime_forbid(&pdev->dev);
--		pm_runtime_get_noresume(&pdev->dev);
- 		goto err_req_regs;
+diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
+index 86e5523..5fe024c 100644
+--- a/drivers/mfd/max77686.c
++++ b/drivers/mfd/max77686.c
+@@ -314,6 +314,11 @@ static int max77686_i2c_probe(struct i2c_client *i2c,
+ 		}
  	}
  
-@@ -618,6 +616,8 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
- 	return 0;
- 
-  err_req_regs:
-+	pm_runtime_disable(&pdev->dev);
++	if (!max77686->irq) {
++		dev_info(max77686->dev, "irq is not specified\n");
++		goto skip_irq_setup;
++	}
 +
-  err_no_busclks:
- 	clk_disable_unprepare(sc->clk_io);
+ 	ret = regmap_add_irq_chip(max77686->regmap, max77686->irq,
+ 				  IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
+ 				  IRQF_SHARED, 0, irq_chip,
+@@ -332,6 +337,7 @@ static int max77686_i2c_probe(struct i2c_client *i2c,
+ 		goto err_del_irqc;
+ 	}
  
++skip_irq_setup:
+ 	ret = mfd_add_devices(max77686->dev, -1, cells, n_devs, NULL, 0, NULL);
+ 	if (ret < 0) {
+ 		dev_err(&i2c->dev, "failed to add MFD devices: %d\n", ret);
 -- 
 1.8.2.3
