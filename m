@@ -1,69 +1,89 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH] mfd: max77686: fix support for devices without irq specified
-Date: Fri, 08 Aug 2014 14:38:13 +0200
-Message-ID: <53E4C4B5.2000202@collabora.co.uk>
-References: <1457999.lNPdqEWCCR@amdc1032> <1407495251.28710.2.camel@AMDC1943> <53E4AD6A.4000705@collabora.co.uk> <6204488.MKXsGQj0V8@amdc1032>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] mfd: sec-irq: fix support for devices without irq specified
+Date: Fri, 08 Aug 2014 14:44:20 +0200
+Message-ID: <2973458.9hVm8HXmvI@amdc1032>
+References: <22704524.WE4thfvSda@amdc1032> <1407483274.21474.1.camel@AMDC1943>
+ <1407484136.21474.8.camel@AMDC1943>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:36040 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753593AbaHHMiV (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:62095 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755485AbaHHMo2 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Aug 2014 08:38:21 -0400
-In-Reply-To: <6204488.MKXsGQj0V8@amdc1032>
+	Fri, 8 Aug 2014 08:44:28 -0400
+In-reply-to: <1407484136.21474.8.camel@AMDC1943>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On 08/08/2014 02:24 PM, Bartlomiej Zolnierkiewicz wrote:
-> 
-> It seems that Daniel Drake has already fixed ODROID dtsi with:
-> 
->   [PATCH 1/2] ARM: dts: Enable PMIC interrupts on ODROID
->   http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34191.html
-> 
-> and
-> 
->   [PATCH 2/2] ARM: dts: ODROID i2c improvements
->   http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34190.html
-> 
-> Both patches are needed to fix boot on ODROID.  They also fix RTC driver
-> registration:
-> 
-> MFD driver error message with only patch #1 applied:
-> [    0.164488] max77686 0-0009: failed to add RTC irq chip: -6
-> 
-> RTC driver messages with both patches #1 and #2 applied:
-> [    1.731461] max77686-rtc max77686-rtc: max77686_rtc_probe
-> [    1.833303] max77686-rtc max77686-rtc: rtc core: registered max77686-rtc as rtc0
->
+On Friday, August 08, 2014 09:48:56 AM Krzysztof Kozlowski wrote:
+> On pi=C4=85, 2014-08-08 at 09:34 +0200, Krzysztof Kozlowski wrote:
+> > On czw, 2014-08-07 at 18:48 +0200, Bartlomiej Zolnierkiewicz wrote:
+> > > [ added missing linux-samsung-soc ML, sorry for the noise ]
+> > >=20
+> > > On Thursday, August 07, 2014 06:42:28 PM Bartlomiej Zolnierkiewic=
+z wrote:
+> > > > Add missing check for the case of device without irq specified
+> > > > in sec_irq_exit() (please note that sec_irq_init() already
+> > > > correctly handles such devices).
+> > > >=20
+> > > > This is needed for Insignal's Exynos4412 based Origen board.
+> > > >=20
+> > > > Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > > > Cc: Sangbeom Kim <sbkim73@samsung.com>
+> > > > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.=
+com>
+> > > > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > > > ---
+> > > > patch is against next-20140804 branch of linux-next kernel
+> > > >=20
+> > > >  drivers/mfd/sec-irq.c | 3 ++-
+> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > Looks and works good (tested on board with S2MPS14).
+> >=20
+> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> >=20
+> > Best regards,
+> > Krzysztof
+> >=20
+> > > >=20
+> > > > diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
+> > > > index f9a5786..b65a7f0 100644
+> > > > --- a/drivers/mfd/sec-irq.c
+> > > > +++ b/drivers/mfd/sec-irq.c
+> > > > @@ -478,5 +478,6 @@ int sec_irq_init(struct sec_pmic_dev *sec_p=
+mic)
+> > > > =20
+> > > >  void sec_irq_exit(struct sec_pmic_dev *sec_pmic)
+> > > >  {
+> > > > -	regmap_del_irq_chip(sec_pmic->irq, sec_pmic->irq_data);
+> > > > +	if (sec_pmic->irq)
+> > > > +		regmap_del_irq_chip(sec_pmic->irq, sec_pmic->irq_data);
+> > > >  }
+>=20
+> Seems I jumped too far with this one. Patch looks OK and works fine b=
+ut
+> is it really needed? If (!sec_pmic->irq) then sec_pmic->irq_data will=
+ be
+> NULL and regmap_del_irq_chip() will handle it correctly.
+>=20
+> Your change adds some sense of precautions (the sec_pmic->irq_data ma=
+y
+> be set by some other module by mistake) but still it does not look li=
+ke
+> "needed" for Origen.
 
-Great!
-
-> Kukjin, could you please apply Daniel's fixes?  They are critical for ODROID
-> boards.
-> 
-> Javier, I think that it still would be useful to apply my patch for max77686
-> as it makes new kernels work with older dtbs and leaves the possibility to
-> use PMIC on boards without IRQ connected.  If you agree I will post v2 of
-> the patch (with suspend/resume handlers fixed and bindings documentation
-> updated).
-> 
-
-Well it really depends on whether it is possible or not to have a design where a
-IRQ line is not connected to the PMIC. If such a design makes sense then your
-patch should be applied since the driver should not fail to probe in that case.
-
-But then the DT binding doc should be changed and the "interrupt" property moved
-from required to optional in order to reflect that it's not a requirement.
-
-If the motivation is just to support old DTB then I tend to disagree since those
-DTBs were not following the documented binding. Drivers should be robust enough
-to not crash of course but if a required property is not defined in a DTB but
-failing to probe is the right thing to do IMHO.
+Indeed, I somehow assumed that regmap_del_irq_chip() doesn't check for
+NULL 'struct regmap_irq_chip_data *d' argument.  Since such check is
+actually present in regmap_del_irq_chip() the patch is not needed and
+can be dropped.  Thanks for noticing this.
 
 Best regards,
-Javier
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
