@@ -1,44 +1,34 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] mfd: sec-irq: fix support for devices without irq specified
-Date: Fri, 08 Aug 2014 09:34:34 +0200
-Message-ID: <1407483274.21474.1.camel@AMDC1943>
-References: <22704524.WE4thfvSda@amdc1032> <1471646.xbSCysvkpT@amdc1032>
+Subject: Re: [PATCH] rtc: s5m: re-add support for devices without irq specified
+Date: Fri, 08 Aug 2014 09:34:57 +0200
+Message-ID: <1407483297.21474.2.camel@AMDC1943>
+References: <2220469.b1qFJrigEi@amdc1032> <3505114.LnLWmLa1kW@amdc1032>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:11278 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752948AbaHHHec (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:41285 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752948AbaHHHe4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Aug 2014 03:34:32 -0400
-In-reply-to: <1471646.xbSCysvkpT@amdc1032>
+	Fri, 8 Aug 2014 03:34:56 -0400
+In-reply-to: <3505114.LnLWmLa1kW@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Kyungmin Park <kyungmin.park@samsung.com>, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
 On czw, 2014-08-07 at 18:48 +0200, Bartlomiej Zolnierkiewicz wrote:
 > [ added missing linux-samsung-soc ML, sorry for the noise ]
 > 
-> On Thursday, August 07, 2014 06:42:28 PM Bartlomiej Zolnierkiewicz wrote:
-> > Add missing check for the case of device without irq specified
-> > in sec_irq_exit() (please note that sec_irq_init() already
-> > correctly handles such devices).
+> On Thursday, August 07, 2014 06:41:02 PM Bartlomiej Zolnierkiewicz wrote:
+> > The rtc-s5m driver used to support devices without irq specified
+> > in the past.  Re-add this support.
 > > 
-> > This is needed for Insignal's Exynos4412 based Origen board.
-> > 
-> > Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Cc: Sangbeom Kim <sbkim73@samsung.com>
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> > patch is against next-20140804 branch of linux-next kernel
-> > 
-> >  drivers/mfd/sec-irq.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > The patch fixes boot for Insignal's Exynos4412 based Origen board.
 
-Looks and works good (tested on board with S2MPS14).
+Looks and works good (tested on board with S2MPS14 with and without
+interrupt).
 
 Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
@@ -46,16 +36,118 @@ Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Best regards,
 Krzysztof
 
+
 > > 
-> > diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
-> > index f9a5786..b65a7f0 100644
-> > --- a/drivers/mfd/sec-irq.c
-> > +++ b/drivers/mfd/sec-irq.c
-> > @@ -478,5 +478,6 @@ int sec_irq_init(struct sec_pmic_dev *sec_pmic)
+> > Error messages before the patch:
+> > ...
+> > [    2.095991] Unable to handle kernel NULL pointer dereference at virtual address 00000094
+> > [    2.103299] pgd = c0004000
+> > [    2.105944] [00000094] *pgd=00000000
+> > [    2.109510] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+> > [    2.114796] Modules linked in:
+> > [    2.117840] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 3.16.0-next-20140804-00008-ga59480f-dirty #701
+> > [    2.126950] task: ea80f000 ti: ea882000 task.ti: ea882000
+> > [    2.132348] PC is at regmap_irq_get_virq+0x0/0x28
+> > [    2.137033] LR is at s5m_rtc_probe+0xdc/0x310
+> > [    2.141360] pc : [<c02574fc>]    lr : [<c02de75c>]    psr: 80000153
+> > [    2.141360] sp : ea883e48  ip : 00000000  fp : 00000000
+> > [    2.152815] r10: 0000000c  r9 : c05de7ac  r8 : eaabc600
+> > [    2.158024] r7 : eaa6b4d0  r6 : c0439e8c  r5 : eaabc610  r4 : eab30e50
+> > [    2.164533] r3 : 00000000  r2 : 00000000  r1 : 0000000c  r0 : 00000000
+> > [    2.171045] Flags: Nzcv  IRQs on  FIQs off  Mode SVC_32  ISA ARM  Segment kernel
+> > [    2.178423] Control: 10c5387d  Table: 4000404a  DAC: 00000015
+> > [    2.184150] Process swapper/0 (pid: 1, stack limit = 0xea882240)
+> > [    2.190139] Stack: (0xea883e48 to 0xea884000)
+> > [    2.194483] 3e40:                   eab32910 00000001 c05de7ac eab329b0 00000000 eaabc610
+> > [    2.202642] 3e60: c0618c68 eaabc610 c0618c68 00000000 00000000 c0618c68 0000008f c02429cc
+> > [    2.210801] 3e80: c02429a0 eaabc610 c06628a8 c02415f0 eaabc610 c0618c68 eaabc644 00000000
+> > [    2.218960] 3ea0: eab30d00 c024179c c0618c68 00000000 c0241710 c023ffb4 ea805478 eaadefc0
+> > [    2.227119] 3ec0: c0618c68 ea115e80 c0610b10 c0240df8 c0518984 c0618c68 00000000 c0618c68
+> > [    2.235278] 3ee0: 00000000 c05ecc18 c05ecc18 c0241db8 c02426a0 c05b480c 00000000 c00088a4
+> > [    2.243437] 3f00: 0000009f c040f134 ea92a300 c0649fe0 ea80f000 60000153 c05efe54 00000000
+> > [    2.251596] 3f20: 00000000 c05efe54 60000153 00000000 eb7ff916 eb7ff908 c0573048 c00376dc
+> > [    2.259756] 3f40: c05288f0 c0572758 00000006 00000006 c05efdf4 c05c2da4 00000006 c05c2d84
+> > [    2.267914] 3f60: c0626900 c059a508 c05de7ac 0000008f 00000000 c059ac94 00000006 00000006
+> > [    2.276074] 3f80: c059a508 c003c3fc 00000000 c0401330 00000000 00000000 00000000 00000000
+> > [    2.284233] 3fa0: 00000000 c0401338 00000000 c000e538 00000000 00000000 00000000 00000000
+> > [    2.292392] 3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> > [    2.300551] 3fe0: 00000000 00000000 00000000 00000000 00000013 00000000 c0c0c0c0 c0c0c0c0
+> > [    2.308729] [<c02574fc>] (regmap_irq_get_virq) from [<c02de75c>] (s5m_rtc_probe+0xdc/0x310)
+> > [    2.317057] [<c02de75c>] (s5m_rtc_probe) from [<c02429cc>] (platform_drv_probe+0x2c/0x5c)
+> > [    2.325209] [<c02429cc>] (platform_drv_probe) from [<c02415f0>] (driver_probe_device+0x114/0x234)
+> > [    2.334060] [<c02415f0>] (driver_probe_device) from [<c024179c>] (__driver_attach+0x8c/0x90)
+> > [    2.342479] [<c024179c>] (__driver_attach) from [<c023ffb4>] (bus_for_each_dev+0x54/0x88)
+> > [    2.350637] [<c023ffb4>] (bus_for_each_dev) from [<c0240df8>] (bus_add_driver+0xd8/0x1cc)
+> > [    2.358796] [<c0240df8>] (bus_add_driver) from [<c0241db8>] (driver_register+0x78/0xf4)
+> > [    2.366785] [<c0241db8>] (driver_register) from [<c00088a4>] (do_one_initcall+0x80/0x1d0)
+> > [    2.374947] [<c00088a4>] (do_one_initcall) from [<c059ac94>] (kernel_init_freeable+0x108/0x1d4)
+> > [    2.383634] [<c059ac94>] (kernel_init_freeable) from [<c0401338>] (kernel_init+0x8/0xe4)
+> > [    2.391704] [<c0401338>] (kernel_init) from [<c000e538>] (ret_from_fork+0x14/0x3c)
+> > [    2.399246] Code: e8bd8070 e3500000 1590009c e12fff1e (e5903094)
+> > [    2.405391] ---[ end trace a954d7f019122700 ]---
+> > [    2.409987] Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+> > ...
+> > 
+> > Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> > patch is against next-20140804 branch of linux-next kernel
+> > 
+> >  drivers/rtc/rtc-s5m.c | 21 ++++++++++++++-------
+> >  1 file changed, 14 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
+> > index 8f06250a..8754c33 100644
+> > --- a/drivers/rtc/rtc-s5m.c
+> > +++ b/drivers/rtc/rtc-s5m.c
+> > @@ -717,12 +717,14 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+> >  	info->device_type = s5m87xx->device_type;
+> >  	info->wtsr_smpl = s5m87xx->wtsr_smpl;
 > >  
-> >  void sec_irq_exit(struct sec_pmic_dev *sec_pmic)
-> >  {
-> > -	regmap_del_irq_chip(sec_pmic->irq, sec_pmic->irq_data);
-> > +	if (sec_pmic->irq)
-> > +		regmap_del_irq_chip(sec_pmic->irq, sec_pmic->irq_data);
-> >  }
+> > -	info->irq = regmap_irq_get_virq(s5m87xx->irq_data, alarm_irq);
+> > -	if (info->irq <= 0) {
+> > -		ret = -EINVAL;
+> > -		dev_err(&pdev->dev, "Failed to get virtual IRQ %d\n",
+> > +	if (s5m87xx->irq_data) {
+> > +		info->irq = regmap_irq_get_virq(s5m87xx->irq_data, alarm_irq);
+> > +		if (info->irq <= 0) {
+> > +			ret = -EINVAL;
+> > +			dev_err(&pdev->dev, "Failed to get virtual IRQ %d\n",
+> >  				alarm_irq);
+> > -		goto err;
+> > +			goto err;
+> > +		}
+> >  	}
+> >  
+> >  	platform_set_drvdata(pdev, info);
+> > @@ -744,6 +746,11 @@ static int s5m_rtc_probe(struct platform_device *pdev)
+> >  		goto err;
+> >  	}
+> >  
+> > +	if (!info->irq) {
+> > +		dev_info(&pdev->dev, "Alarm IRQ not available\n");
+> > +		return 0;
+> > +	}
+> > +
+> >  	ret = devm_request_threaded_irq(&pdev->dev, info->irq, NULL,
+> >  					s5m_rtc_alarm_irq, 0, "rtc-alarm0",
+> >  					info);
+> > @@ -802,7 +809,7 @@ static int s5m_rtc_resume(struct device *dev)
+> >  	struct s5m_rtc_info *info = dev_get_drvdata(dev);
+> >  	int ret = 0;
+> >  
+> > -	if (device_may_wakeup(dev))
+> > +	if (info->irq && device_may_wakeup(dev))
+> >  		ret = disable_irq_wake(info->irq);
+> >  
+> >  	return ret;
+> > @@ -813,7 +820,7 @@ static int s5m_rtc_suspend(struct device *dev)
+> >  	struct s5m_rtc_info *info = dev_get_drvdata(dev);
+> >  	int ret = 0;
+> >  
+> > -	if (device_may_wakeup(dev))
+> > +	if (info->irq && device_may_wakeup(dev))
+> >  		ret = enable_irq_wake(info->irq);
+> >  
+> >  	return ret;
