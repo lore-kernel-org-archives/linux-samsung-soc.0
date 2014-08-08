@@ -1,20 +1,21 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH v2 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer
  support
-Date: Fri, 08 Aug 2014 10:45:47 +0900
-Message-ID: <53E42BCB.5090608@samsung.com>
-References: <20140806074357.GA13788@ulmo>
- <CAAQKjZNei31upmmHB_HaVQo8=mRpiBKa4-gri8ftpuWDbS2eew@mail.gmail.com>
- <20140807065801.GD17340@ulmo> <53E32FF6.6050402@samsung.com>
- <20140807090859.GD13315@ulmo.nvidia.com> <53E3599F.3020301@samsung.com>
- <20140807110925.GA31594@ulmo.nvidia.com> <53E379A8.1020506@samsung.com>
- <20140807131713.GB1540@ulmo.nvidia.com> <53E38191.1050308@samsung.com>
+Date: Fri, 8 Aug 2014 09:03:12 +0200
+Message-ID: <20140808070311.GA5387@ulmo>
+References: <20140807065801.GD17340@ulmo> <53E32FF6.6050402@samsung.com>
+ <20140807090859.GD13315@ulmo.nvidia.com>
+ <53E3599F.3020301@samsung.com>
+ <20140807110925.GA31594@ulmo.nvidia.com>
+ <53E379A8.1020506@samsung.com>
+ <20140807131713.GB1540@ulmo.nvidia.com>
+ <53E38191.1050308@samsung.com>
  <20140807135500.GA27417@ulmo.nvidia.com>
+ <53E42BCB.5090608@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============1468216242=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20140807135500.GA27417@ulmo.nvidia.com>
+In-Reply-To: <53E42BCB.5090608@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -24,146 +25,259 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
+To: Inki Dae <inki.dae@samsung.com>
 Cc: Andrzej Hajda <a.hajda@samsung.com>, treding@nvidia.com, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNOuFhCAwOOyblCAwN+ydvCAyMjo1NSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24g
-VGh1LCBBdWcgMDcsIDIwMTQgYXQgMTA6Mzk6MjlQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6Cj4+
-IE9uIDIwMTTrhYQgMDjsm5QgMDfsnbwgMjI6MTcsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+Pj4g
-T24gVGh1LCBBdWcgMDcsIDIwMTQgYXQgMTA6MDU6NDRQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6
-Cj4+Pj4gT24gMjAxNOuFhCAwOOyblCAwN+ydvCAyMDowOSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6
-Cj4+Pj4+IE9uIFRodSwgQXVnIDA3LCAyMDE0IGF0IDA3OjQ5OjAzUE0gKzA5MDAsIElua2kgRGFl
-IHdyb3RlOgo+Pj4+Pj4gT24gMjAxNOuFhCAwOOyblCAwN+ydvCAxODowOSwgVGhpZXJyeSBSZWRp
-bmcgd3JvdGU6Cj4+Pj4+Pj4gT24gVGh1LCBBdWcgMDcsIDIwMTQgYXQgMDQ6NTE6MThQTSArMDkw
-MCwgSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4+IE9uIDIwMTTrhYQgMDjsm5QgMDfsnbwgMTU6NTgs
-IFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+Pj4+Pj4+Pj4gT24gVGh1LCBBdWcgMDcsIDIwMTQgYXQg
-MDI6MDk6MTlBTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4+Pj4gMjAxNC0wOC0wNiAx
-Njo0MyBHTVQrMDk6MDAgVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT46
-Cj4+Pj4+Pj4gWy4uLl0KPj4+Pj4+Pj4+Pj4gQXMgZmFyIGFzIEkgY2FuIHRlbGwgbm9uLWNvbnRp
-bnVvdXMgbW9kZSBzaW1wbHkgbWVhbnMgdGhhdCB0aGUgaG9zdCBjYW4KPj4+Pj4+Pj4+Pj4gdHVy
-biBvZmYgdGhlIEhTIGNsb2NrIGFmdGVyIGEgaGlnaC1zcGVlZCB0cmFuc21pc3Npb24uIEkgdGhp
-bmsgQW5kcnplago+Pj4+Pj4+Pj4+PiBtZW50aW9uZWQgdGhpcyBhbHJlYWR5IGluIGFub3RoZXIg
-c3VidGhyZWFkLCBidXQgdGhpcyBpcyBhbiBvcHRpb25hbAo+Pj4+Pj4+Pj4+PiBtb2RlIHRoYXQg
-cGVyaXBoZXJhbHMgY2FuIHN1cHBvcnQgaWYgdGhleSBoYXZlIGV4dHJhIGNpcmN1aXRyeSB0aGF0
-Cj4+Pj4+Pj4+Pj4+IHByb3ZpZGVzIGFuIGludGVybmFsIGNsb2NrLiBQZXJpcGhlcmFscyB0aGF0
-IGRvbid0IGhhdmUgc3VjaCBjaXJjdWl0cnkKPj4+Pj4+Pj4+Pj4gbWF5IHJlbHkgb24gdGhlIEhT
-IGNsb2NrIHRvIHBlcmZvcm0gaW4gYmV0d2VlbiB0cmFuc21pc3Npb25zIGFuZAo+Pj4+Pj4+Pj4+
-PiB0aGVyZWZvcmUgcmVxdWlyZSB0aGUgSFMgY2xvY2sgdG8gYmUgYWx3YXlzIG9uIChjb250aW51
-b3VzIG1vZGUpLiBUaGF0J3MKPj4+Pj4+Pj4+Pj4gd2hhdCB0aGUgTUlQSV9EU0lfQ0xPQ0tfTk9O
-X0NPTlRJTlVPVVMgZmxhZyBpczogaXQgYWR2ZXJ0aXNlcyB0aGF0IHRoZQo+Pj4+Pj4+Pj4+PiBw
-ZXJpcGhlcmFsIHN1cHBvcnRzIG5vbi1jb250aW51b3VzIG1vZGUgYW5kIHRoZXJlZm9yZSB0aGUg
-aG9zdCBjYW4gdHVybgo+Pj4+Pj4+Pj4+PiB0aGUgSFMgY2xvY2sgb2ZmIGFmdGVyIGhpZ2gtc3Bl
-ZWQgdHJhbnNtaXNzaW9ucy4KPj4+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4+IFdoYXQgSSBkb24ndCBtYWtl
-IHN1cmUgaXMgdGhpcyBzZW50ZW5jZS4gV2l0aAo+Pj4+Pj4+Pj4+IE1JUElfRFNJX0NMT0NLX05P
-Tl9DT05USVVPVVMgZmxhZywgSSBndWVzcyB0d28gcG9zc2libGUgb3BlcmF0aW9ucy4KPj4+Pj4+
-Pj4+PiBPbmUgaXMsCj4+Pj4+Pj4+Pj4gMS4gaG9zdCBjb250cm9sbGVyIHdpbGwgZ2VuZXJhdGVz
-IHNpZ25hbHMgaWYgYSBiaXQgb2YgYSByZWdpc3Rlcgo+Pj4+Pj4+Pj4+IHJlbGF0ZWQgdG8gbm9u
-LWNvbnRpZ3VvdXMgY2xvY2sgbW9kZSBpcyBzZXQgb3IgdW5zZXQuCj4+Pj4+Pj4+Pj4gMi4gQW5k
-IHRoZW4gdmlkZW8gZGF0YSBpcyB0cmFuc21pdHRlZCB0byBwYW5lbCBpbiBIUyBtb2RlLgo+Pj4+
-Pj4+Pj4+IDMuIEFuZCB0aGVuIEQtUEhZIGRldGVjdHMgTFAtMTEgc2lnbmFsIChwb3NpdGl2ZSBh
-bmQgbmVnYXRpdmUgbGFuZSBhbGwKPj4+Pj4+Pj4+PiBhcmUgaGlnaCkuCj4+Pj4+Pj4+Pj4gNC4g
-QW5kIHRoZW4gRC1QSFkgZGlzYWJsZXMgSFMgY2xvY2sgb2YgaG9zdCBjb250cm9sbGVyLgo+Pj4+
-Pj4+Pj4+IDUuIEF0IHRoaXMgdGltZSwgb3BlcmF0aW9uIG1vZGUgb2YgaG9zdCBjb250cm9sbGVy
-IGJlY29tZXMgTFBNLgo+Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+Pj4gT3RoZXIgaXMsCj4+Pj4+Pj4+Pj4g
-MS4gaG9zdCBjb250cm9sbGVyIHdpbGwgZ2VuZXJhdGVzIHNpZ25hbHMgaWYgYSBiaXQgb2YgYSBy
-ZWdpc3Rlcgo+Pj4+Pj4+Pj4+IHJlbGF0ZWQgdG8gbm9uLWNvbnRpZ3VvdXMgY2xvY2sgbW9kZSBp
-cyBzZXQgb3IgdW5zZXQuCj4+Pj4+Pj4+Pj4gMi4gQW5kIHRoZW4gRC1QSFkgZGV0ZWN0cyBMUC0x
-MSBzaWduYWwgKHBvc2l0aXZlIGFuZCBuZWdhdGl2ZSBsYW5lIGFsbAo+Pj4+Pj4+Pj4+IGFyZSBo
-aWdoKS4KPj4+Pj4+Pj4+PiAzLiBBbmQgdGhlbiB2aWRlbyBkYXRhIGlzIHRyYW5zbWl0dGVkIHRv
-IHBhbmVsIGluIExQTS4KPj4+Pj4+Pj4+PiA0LiBBdCB0aGlzIHRpbWUsIG9wZXJhdGlvbiBtb2Rl
-IG9mIGhvc3QgY29udHJvbGxlciBiZWNvbWVzIExQTS4KPj4+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4+IEl0
-IHNlZW1zIHRoYXQgeW91IHNheXMgbGF0dGVyIGNhc2UuCj4+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4gTm8u
-IEhpZ2ggc3BlZWQgY2xvY2sgYW5kIGxvdyBwb3dlciBtb2RlIGFyZSBvcnRob2dvbmFsLiBOb24t
-Y29udGludW91cwo+Pj4+Pj4+Pj4gbW9kZSBzaW1wbHkgbWVhbnMgdGhhdCB0aGUgY2xvY2sgbGFu
-ZSBlbnRlcnMgTFAtMTEgYmV0d2VlbiBIUwo+Pj4+Pj4+Pj4gdHJhbnNtaXNzaW9ucyAoc2VlIDUu
-NiAiQ2xvY2sgTWFuYWdlbWVudCIgb2YgdGhlIERTSSBzcGVjaWZpY2F0aW9uKS4KPj4+Pj4+Pj4+
-Cj4+Pj4+Pj4+Cj4+Pj4+Pj4+IEl0IHNlZW1zIHRoYXQgY2xvY2sgbGFuZSBlbnRlcnMgTFAtMTEg
-cmVnYXJkbGVzcyBvZiBIUyBjbG9jayBlbmFibGVkIGlmCj4+Pj4+Pj4+IG5vbi1jb250aW5vdXMg
-bW9kZSBpcyB1c2VkLiBSaWdodD8KPj4+Pj4+Pgo+Pj4+Pj4+IE5vLCBJIHRoaW5rIGFzIGxvbmcg
-YXMgSFMgY2xvY2sgaXMgZW5hYmxlZCB0aGUgY2xvY2sgbGFuZSB3b24ndCBlbnRlcgo+Pj4+Pj4+
-IExQLTExLiBOb24tY29udGludW91cyBtb2RlIG1lYW5zIHRoYXQgdGhlIGNvbnRyb2xsZXIgY2Fu
-IGRpc2FibGUgdGhlIEhTCj4+Pj4+Pj4gY2xvY2sgYmV0d2VlbiBIUyB0cmFuc21pc3Npb25zLiBT
-byBpbiBub24tY29udGludW91cyBtb2RlIHRoZSBjbG9jayBsYW5lCj4+Pj4+Pj4gY2FuIGVudGVy
-IExQLTExIGJlY2F1c2UgdGhlIGNvbnRyb2xsZXIgZGlzYWJsZXMgdGhlIEhTIGNsb2NrLgo+Pj4+
-Pj4KPj4+Pj4+IEl0IG1ha2VzIG1lIGEgbGl0dGxlIGJpdCBjb25mdXNpbmcuIFlvdSBzYWlkICJp
-ZiBIUyBjbG9jayBpcyBlbmFibGVkLAo+Pj4+Pj4gdGhlIHRoZSBjbG9jayBsYW5lIHdvbid0IGVu
-dGVyIExQLTExIiBCdXQgeW91IHNhaWQgYWdhaW4gInRoZSBjbG9jayBsYW5lCj4+Pj4+PiBjYW4g
-ZW50ZXIgTFAtMTEgYmVjYXVzZSB0aGUgY29udHJvbGxlciBkaXNhYmxlcyB0aGUgSFMgY2xvY2si
-IFdoYXQgaXMKPj4+Pj4+IHRoZSBtZWFuaW5nPwo+Pj4+Pgo+Pj4+PiBJdCBtZWFucyB0aGF0IGlm
-IHRoZSBIUyBjbG9jayBpcyBlbmFibGVkLCB0aGVuIHRoZSBjbG9jayBsYW5lIGlzIG5vdCBpbgo+
-Pj4+PiBMUC0xMS4gV2hlbiB0aGUgSFMgY2xvY2sgc3RvcHMsIHRoZW4gdGhlIGNsb2NrIGxhbmUg
-ZW50ZXJzIExQLTExLgo+Pj4+Pgo+Pj4+Pj4+IEluIGNvbnRpbnVvdXMgbW9kZSwgdGhlbiB0aGUg
-Y2xvY2sgd2lsbCBuZXZlciBiZSBkaXNhYmxlZCwgaGVuY2UgdGhlCj4+Pj4+Pj4gY2xvY2sgbGFu
-ZSB3aWxsIG5ldmVyIGVudGVyIExQLTExLgo+Pj4+Pj4+Cj4+Pj4+Pj4+IEFuZCBhbHNvIGl0IHNl
-ZW1zIHRoYXQgbm9uLWNvbnRpbm91cyBtb2RlIGlzIGRpZmZlcmVudCBmcm9tIExQTSBhdCBhbGwK
-Pj4+Pj4+Pj4gYmVjYXVzZSB3aXRoIG5vbi1jb250aW51b3VzIG1vZGUsIGNvbW1hbmQgZGF0YSBp
-cyB0cmFuc21pdHRlZCB0byBwYW5lbAo+Pj4+Pj4+PiBpbiBIUyBtb2RlLCBidXQgd2l0aCBMUE0s
-IGNvbW1hbmQgZGF0YSBpcyB0cmFuc21pdHRlZCB0byBwYW5lbCBpbiBMUAo+Pj4+Pj4+PiBtb2Rl
-LiBBbHNvIHJpZ2h0Pwo+Pj4+Pj4+Cj4+Pj4+Pj4gTm8uIEkgdGhpbmsgeW91IGNhbiBzZW5kIGNv
-bW1hbmQgZGF0YSB0byB0aGUgcGVyaXBoZXJhbCBpbiBsb3cgcG93ZXIKPj4+Pj4+PiBtb2RlIGlu
-IGJvdGggY29udGludW91cyBhbmQgbm9uLWNvbnRpbnVvdXMgY2xvY2sgbW9kZXMuCj4+Pj4+Pj4K
-Pj4+Pj4+Pj4gSWYgc28sIHNob3VsZG4ndCB0aGUgaG9zdCBkcml2ZXIgZGlzYWJsZSBIUyBjbG9j
-aywgaW4gY2FzZSBvZiBMUCBtb2RlLAo+Pj4+Pj4+PiBiZWZvcmUgdGhlIGhvc3QgZHJpdmVyIHRy
-YW5zbWl0cyBjb21tYW5kIGRhdGE/Cj4+Pj4+Pj4KPj4+Pj4+PiBOby4gSWYgdGhlIHBlcmlwaGVy
-YWwgZG9lc24ndCBzdXBwb3J0IG5vbi1jb250aW51b3VzIG1vZGUsIHRoZW4gdGhlIEhTCj4+Pj4+
-Pj4gY2xvY2sgbXVzdCBuZXZlciBiZSB0dXJuZWQgb2ZmLiBPbiB0aGUgb3RoZXIgaGFuZCwgaWYg
-dGhlIHBlcmlwaGVyYWwKPj4+Pj4+PiBzdXBwb3J0cyBub24tY29udGludW91cyBtb2RlLCB0aGVu
-IHRoZSBEU0kgaG9zdCBzaG91bGQgYXV0b21hdGljYWxseQo+Pj4+Pj4+IGRpc2FibGUgdGhlIEhT
-IGNsb2NrIGJldHdlZW4gaGlnaC1zcGVlZCB0cmFuc21pc3Npb25zLiBUaGF0IG1lYW5zIGlmIGEK
-Pj4+Pj4+PiBwYWNrZXQgaXMgdHJhbnNtaXR0ZWQgaW4gbG93IHBvd2VyIG1vZGUgdGhlIERTSSBo
-b3N0IHdpbGwgbm90IGJlCj4+Pj4+Pj4gdHJhbnNtaXR0aW5nIGluIGhpZ2gtc3BlZWQgbW9kZSBh
-bmQgdGhlcmVmb3JlIGRpc2FibGUgdGhlIEhTIGNsb2NrLgo+Pj4+Pj4KPj4+Pj4+IFdoYXQgaXMg
-TFBNIHlvdSB0aGluaz8gSSB0aG91Z2h0IExQTSBpcyBMUC0xMSBhbmQgSFMgY2xvY2sgZGlzYWJs
-ZWQuIFNvCj4+Pj4+PiBmb3IgTFBNIHRyYW5zZmVyLCBsYW5lcyBzaG91bGQgYmUgTFAtMTEgc3Rh
-dGUgYW5kIGFsc28gSFMgY2xvY2sgb2YgdGhlCj4+Pj4+PiBob3N0IGNvbnRyb2xsZXIgc2hvdWxk
-IGJlIGRpc2FibGVkLgo+Pj4+Pgo+Pj4+PiBOby4gSSBkb24ndCB0aGluayBhbnkgdHJhbnNtaXNz
-aW9ucyBjYW4gaGFwcGVuIHdoZW4gYWxsIGxhbmVzIGFyZSBpbgo+Pj4+PiBMUC0xMSBzdGF0ZS4g
-VGhlIE1JUElfRFNJX01TR19VU0VfTFBNIGlzIHVzZWQgdG8gc3BlY2lmeSB0aGF0IGEgcGFja2V0
-Cj4+Pj4+IHNob3VsZCBiZSB0cmFuc21pdHRlZCBpbiBsb3cgcG93ZXIgbW9kZSAoc2VlIExQIFRy
-YW5zbWlzc2lvbiBpbiAyLjEKPj4+Pj4gIkRlZmluaXRpb25zIiBvZiB0aGUgTUlQSSBEU0kgc3Bl
-Y2lmaWNhdGlvbikuCj4+Pj4+Cj4+Pj4KPj4+PiBIbS4uIEkgc2VlLiBJIG1lYW50LAo+Pj4+Cj4+
-Pj4gaWYgKGZsYWdzICYgTUlQSV9EU0lfTVNHX1VTRV9MUE0pCj4+Pj4gICAgICAgIGRpc2FibGUg
-SFMgY2xvY2sgPC0gcmVxdWlyZWQuCj4+Pj4KPj4+PiB0cmFuc21pdCBjb21tYW5kIGRhdGEgPC0g
-aW4gTFBNLgo+Pj4KPj4+IE5vLiBEaXNhYmxpbmcgdGhlIEhTIGNsb2NrIGlzIG5vdCByZXF1aXJl
-ZCBmb3IgTFBNIG1vZGUuIEluIGZhY3QgaWYgdGhlCj4+PiBwZXJpcGhlcmFsIHNwZWNpZmllcyB0
-aGF0IGl0IGRvZXNuJ3Qgc3VwcG9ydCBub24tY29udGludW91cyBtb2RlIHRoZW4KPj4+IHRoZSBI
-UyBjbG9jayBtdXN0ICpuZXZlciogYmUgZGlzYWJsZWQgYXMgbG9uZyBhcyB0aGUgcGVyaXBoZXJh
-bCBpcyBpbgo+Pj4gdXNlLgo+Pj4KPj4+IE1JUElfRFNJX01TR19VU0VfTFBNIGFuZCBNSVBJX0RT
-SV9DTE9DS19OT05fQ09OVElOVU9VUyBhcmUgdW5yZWxhdGVkIGFuZAo+Pj4gbmVlZCB0byBiZSBj
-b25zaWRlcmVkIHNlcGFyYXRlbHkuCj4+Cj4+IEkgbWVudGlvbmVkIGFscmVhZHkgTFBNIGFuZCBO
-T05fQ09OVElOVU9VUyBhcmUgdW5yZWxhdGVkLgo+Pgo+PiBJdCBzZWVtcyB0aGF0IHlvdSBzYXkg
-dGhlIG9ubHkgd2F5IHRvIHRyYW5zZmVyIGNvbW1hbmQgZGF0YSBpbiBMUE0gaXMKPj4gbm9uLWNv
-bnRpbnVvdXMgY2xvY2sgbW9kZS4KPiAKPiBObywgdGhhdCdzIG5vdCB3aGF0IEknbSBzYXlpbmcu
-Cj4gCj4+IEhvd2V2ZXIsIHlvdSBzYWlkIGFuZCBhbHNvIHRoZSBzcGVjIHNheXMsICJOb24tY29u
-dGludW91cyBtb2RlIHNpbXBseQo+PiBtZWFucyB0aGF0IHRoZSBjbG9jayBsYW5lIGVudGVycyBM
-UC0xMSBiZXR3ZWVuIEhTIHRyYW5zbWlzc2lvbnMiLgo+PiBEb2Vzbid0ICpiZXR3ZWVuIEhTIHRy
-YW5zbWlzc2lvbnMiIG1lYW4gdGhlIGNvbW1hbmQgZGF0YSBpcyB0cmFuc21pdHRlZAo+PiBpbiBI
-UywgKm5vdCBpbiBMUE0qLCBhbmQgY2xvY2sgbGFuZSBlbnRlcnMgTFAtMTEgYmV0d2VlbiB0aGVt
-Pwo+IAo+IE5vdCBuZWNlc3NhcmlseS4gWW91IGNhbiB0cmFuc21pdCBjb21tYW5kIHBhY2tldHMg
-aW4gaGlnaC1zcGVlZCBtb2RlLAo+IGJ1dCB5b3UgZG9uJ3QgaGF2ZSB0by4gSWYgeW91IHRyYW5z
-bWl0IHBhY2tldHMgaW4gbG93IHBvd2VyIG1vZGUsIHRoZW4KClRoYXQgd291bGQgbWF5IHdoeSB3
-ZSBhcmUgbWVudGlvbmluZyBzYW1lIGNvbW1lbnRzIHJlcGVhdGVkbHkuCgpJbiBteSBjYXNlLCBo
-b3N0IGRyaXZlciB3YWl0cyBmb3IgdGhlIGxhbmUgc3RvcCBzdGF0ZSAoTFAtMTEpLCBhbmQgdGhl
-bgpkaXNhYmxlcyBIUyBjbG9jayB0byB0cmFuc21pdCBjb21tYW5kIGRhdGEgaW4gTFBNLiBPZiBj
-b3Vyc2UsIEknbSBub3QKc3VyZSB0aGF0IHlldCBpdCdzIGNvcnJlY3Qgd2F5LgoKSW4gVGVncmEs
-IFdoYXQgdG8gZG8gZm9yIGl0PwoKVGhhbmtzLApJbmtpIERhZQoKPiB0aGUgSFMgY2xvY2sgaXNu
-J3QgaW52b2x2ZWQgaW4gdGhlIHRyYW5zbWlzc2lvbiBhbmQgdGhlIGNsb2NrIGxhbmUgbWF5Cj4g
-ZW50ZXIgTFAtMTEgZHVyaW5nIHRoZSB3aG9sZSB0cmFuc21pc3Npb24gKGlmIG5vbi1jb250aW51
-b3VzIG1vZGUgaXMKPiBlbmFibGVkKS4KPiAKPj4gV2UgaGF2ZSBvbmUgbGNkIHBhbmVsLCBudDM1
-NTAyYSwgd2hpY2ggbmVlZHMgTFBNIHRyYW5zZmVyIHN1cHBvcnQKPj4gYmVjYXVzZSBpdCBzaG91
-bGQgcmVjZWl2ZSBzb21lIGluaXRpYWwgY29tbWFuZHMgd2l0aCBMUE0gYnkgZGVmYXVsdAo+PiBo
-YXJkd2FyZSBzZXR0aW5nLCBhbmQgd2UgZmFjZWQgd2l0aCB0aGF0IHRoZSBwYW5lbCBkaWRuJ3Qg
-d29yayB3aXRob3V0Cj4+IGRpc2FibGluZyBIUyBjbG9jayBiZWZvcmUgdHJhbnNtaXR0aW5nIGNv
-bW1hbmQgZGF0YS4gSG93IGNhbiB5b3UgZXhwbGFpbgo+PiB0aGF0Pwo+IAo+IFRoZSBzcGVjaWZp
-Y2F0aW9uIGNsZWFybHkgc2F5cyB0aGF0ICg1LjYuMSAiQ2xvY2sgUmVxdWlyZW1lbnRzIik6Cj4g
-Cj4gCUFsbCBEU0kgdHJhbnNtaXR0ZXJzIGFuZCByZWNlaXZlcnMgc2hhbGwgc3VwcG9ydCBjb250
-aW51b3VzCj4gCWNsb2NrIGJlaGF2aW9yIG9uIHRoZSBDbG9jayBMYW5lLCBhbmQgb3B0aW9uYWxs
-eSBtYXkgc3VwcG9ydAo+IAlub24tY29udGludW91cyBjbG9jayBiZWhhdmlvci4KPiAKPiBTbyBp
-ZiB5b3UgbmVlZCB0byAiZGlzYWJsZSBIUyBjbG9jayIgZm9yIGNvbW1hbmQgZGF0YSB0byBiZSBz
-dWNjZXNzZnVsbHkKPiB0cmFuc21pdHRlZCwgZWl0aGVyIHRoZSBwYW5lbCBkb2Vzbid0IGNvbXBs
-eSB0byB0aGUgc3BlY2lmaWNhdGlvbiwgb3IKPiB3aGF0ZXZlciB5b3UgZG8gdG8gImRpc2FibGUg
-SFMgY2xvY2siIGRvZXNuJ3QgZG8gd2hhdCB5b3UgdGhpbmsgaXQgZG9lcy4KPiAKPiBUaGllcnJ5
-Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
-ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
-L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+--===============1468216242==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
+Content-Disposition: inline
+
+
+--VS++wcV0S1rZb1Fb
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Aug 08, 2014 at 10:45:47AM +0900, Inki Dae wrote:
+> On 2014=EB=85=84 08=EC=9B=94 07=EC=9D=BC 22:55, Thierry Reding wrote:
+> > On Thu, Aug 07, 2014 at 10:39:29PM +0900, Inki Dae wrote:
+> >> On 2014=EB=85=84 08=EC=9B=94 07=EC=9D=BC 22:17, Thierry Reding wrote:
+> >>> On Thu, Aug 07, 2014 at 10:05:44PM +0900, Inki Dae wrote:
+> >>>> On 2014=EB=85=84 08=EC=9B=94 07=EC=9D=BC 20:09, Thierry Reding wrote:
+> >>>>> On Thu, Aug 07, 2014 at 07:49:03PM +0900, Inki Dae wrote:
+> >>>>>> On 2014=EB=85=84 08=EC=9B=94 07=EC=9D=BC 18:09, Thierry Reding wro=
+te:
+> >>>>>>> On Thu, Aug 07, 2014 at 04:51:18PM +0900, Inki Dae wrote:
+> >>>>>>>> On 2014=EB=85=84 08=EC=9B=94 07=EC=9D=BC 15:58, Thierry Reding w=
+rote:
+> >>>>>>>>> On Thu, Aug 07, 2014 at 02:09:19AM +0900, Inki Dae wrote:
+> >>>>>>>>>> 2014-08-06 16:43 GMT+09:00 Thierry Reding <thierry.reding@gmai=
+l.com>:
+> >>>>>>> [...]
+> >>>>>>>>>>> As far as I can tell non-continuous mode simply means that th=
+e host can
+> >>>>>>>>>>> turn off the HS clock after a high-speed transmission. I thin=
+k Andrzej
+> >>>>>>>>>>> mentioned this already in another subthread, but this is an o=
+ptional
+> >>>>>>>>>>> mode that peripherals can support if they have extra circuitr=
+y that
+> >>>>>>>>>>> provides an internal clock. Peripherals that don't have such =
+circuitry
+> >>>>>>>>>>> may rely on the HS clock to perform in between transmissions =
+and
+> >>>>>>>>>>> therefore require the HS clock to be always on (continuous mo=
+de). That's
+> >>>>>>>>>>> what the MIPI_DSI_CLOCK_NON_CONTINUOUS flag is: it advertises=
+ that the
+> >>>>>>>>>>> peripheral supports non-continuous mode and therefore the hos=
+t can turn
+> >>>>>>>>>>> the HS clock off after high-speed transmissions.
+> >>>>>>>>>>
+> >>>>>>>>>> What I don't make sure is this sentence. With
+> >>>>>>>>>> MIPI_DSI_CLOCK_NON_CONTIUOUS flag, I guess two possible operat=
+ions.
+> >>>>>>>>>> One is,
+> >>>>>>>>>> 1. host controller will generates signals if a bit of a regist=
+er
+> >>>>>>>>>> related to non-contiguous clock mode is set or unset.
+> >>>>>>>>>> 2. And then video data is transmitted to panel in HS mode.
+> >>>>>>>>>> 3. And then D-PHY detects LP-11 signal (positive and negative =
+lane all
+> >>>>>>>>>> are high).
+> >>>>>>>>>> 4. And then D-PHY disables HS clock of host controller.
+> >>>>>>>>>> 5. At this time, operation mode of host controller becomes LPM.
+> >>>>>>>>>>
+> >>>>>>>>>> Other is,
+> >>>>>>>>>> 1. host controller will generates signals if a bit of a regist=
+er
+> >>>>>>>>>> related to non-contiguous clock mode is set or unset.
+> >>>>>>>>>> 2. And then D-PHY detects LP-11 signal (positive and negative =
+lane all
+> >>>>>>>>>> are high).
+> >>>>>>>>>> 3. And then video data is transmitted to panel in LPM.
+> >>>>>>>>>> 4. At this time, operation mode of host controller becomes LPM.
+> >>>>>>>>>>
+> >>>>>>>>>> It seems that you says latter case.
+> >>>>>>>>>
+> >>>>>>>>> No. High speed clock and low power mode are orthogonal. Non-con=
+tinuous
+> >>>>>>>>> mode simply means that the clock lane enters LP-11 between HS
+> >>>>>>>>> transmissions (see 5.6 "Clock Management" of the DSI specificat=
+ion).
+> >>>>>>>>>
+> >>>>>>>>
+> >>>>>>>> It seems that clock lane enters LP-11 regardless of HS clock ena=
+bled if
+> >>>>>>>> non-continous mode is used. Right?
+> >>>>>>>
+> >>>>>>> No, I think as long as HS clock is enabled the clock lane won't e=
+nter
+> >>>>>>> LP-11. Non-continuous mode means that the controller can disable =
+the HS
+> >>>>>>> clock between HS transmissions. So in non-continuous mode the clo=
+ck lane
+> >>>>>>> can enter LP-11 because the controller disables the HS clock.
+> >>>>>>
+> >>>>>> It makes me a little bit confusing. You said "if HS clock is enabl=
+ed,
+> >>>>>> the the clock lane won't enter LP-11" But you said again "the cloc=
+k lane
+> >>>>>> can enter LP-11 because the controller disables the HS clock" What=
+ is
+> >>>>>> the meaning?
+> >>>>>
+> >>>>> It means that if the HS clock is enabled, then the clock lane is no=
+t in
+> >>>>> LP-11. When the HS clock stops, then the clock lane enters LP-11.
+> >>>>>
+> >>>>>>> In continuous mode, then the clock will never be disabled, hence =
+the
+> >>>>>>> clock lane will never enter LP-11.
+> >>>>>>>
+> >>>>>>>> And also it seems that non-continous mode is different from LPM =
+at all
+> >>>>>>>> because with non-continuous mode, command data is transmitted to=
+ panel
+> >>>>>>>> in HS mode, but with LPM, command data is transmitted to panel i=
+n LP
+> >>>>>>>> mode. Also right?
+> >>>>>>>
+> >>>>>>> No. I think you can send command data to the peripheral in low po=
+wer
+> >>>>>>> mode in both continuous and non-continuous clock modes.
+> >>>>>>>
+> >>>>>>>> If so, shouldn't the host driver disable HS clock, in case of LP=
+ mode,
+> >>>>>>>> before the host driver transmits command data?
+> >>>>>>>
+> >>>>>>> No. If the peripheral doesn't support non-continuous mode, then t=
+he HS
+> >>>>>>> clock must never be turned off. On the other hand, if the periphe=
+ral
+> >>>>>>> supports non-continuous mode, then the DSI host should automatica=
+lly
+> >>>>>>> disable the HS clock between high-speed transmissions. That means=
+ if a
+> >>>>>>> packet is transmitted in low power mode the DSI host will not be
+> >>>>>>> transmitting in high-speed mode and therefore disable the HS cloc=
+k.
+> >>>>>>
+> >>>>>> What is LPM you think? I thought LPM is LP-11 and HS clock disable=
+d. So
+> >>>>>> for LPM transfer, lanes should be LP-11 state and also HS clock of=
+ the
+> >>>>>> host controller should be disabled.
+> >>>>>
+> >>>>> No. I don't think any transmissions can happen when all lanes are in
+> >>>>> LP-11 state. The MIPI_DSI_MSG_USE_LPM is used to specify that a pac=
+ket
+> >>>>> should be transmitted in low power mode (see LP Transmission in 2.1
+> >>>>> "Definitions" of the MIPI DSI specification).
+> >>>>>
+> >>>>
+> >>>> Hm.. I see. I meant,
+> >>>>
+> >>>> if (flags & MIPI_DSI_MSG_USE_LPM)
+> >>>>        disable HS clock <- required.
+> >>>>
+> >>>> transmit command data <- in LPM.
+> >>>
+> >>> No. Disabling the HS clock is not required for LPM mode. In fact if t=
+he
+> >>> peripheral specifies that it doesn't support non-continuous mode then
+> >>> the HS clock must *never* be disabled as long as the peripheral is in
+> >>> use.
+> >>>
+> >>> MIPI_DSI_MSG_USE_LPM and MIPI_DSI_CLOCK_NON_CONTINUOUS are unrelated =
+and
+> >>> need to be considered separately.
+> >>
+> >> I mentioned already LPM and NON_CONTINUOUS are unrelated.
+> >>
+> >> It seems that you say the only way to transfer command data in LPM is
+> >> non-continuous clock mode.
+> >
+> > No, that's not what I'm saying.
+> >
+> >> However, you said and also the spec says, "Non-continuous mode simply
+> >> means that the clock lane enters LP-11 between HS transmissions".
+> >> Doesn't *between HS transmissions" mean the command data is transmitted
+> >> in HS, *not in LPM*, and clock lane enters LP-11 between them?
+> >
+> > Not necessarily. You can transmit command packets in high-speed mode,
+> > but you don't have to. If you transmit packets in low power mode, then
+>=20
+> That would may why we are mentioning same comments repeatedly.
+>=20
+> In my case, host driver waits for the lane stop state (LP-11), and then
+> disables HS clock to transmit command data in LPM. Of course, I'm not
+> sure that yet it's correct way.
+
+That's confusing. How can the lane go to LP-11 when the clock is still
+running?
+
+> In Tegra, What to do for it?
+
+There are two bits in two separate registers for this:
+
+	DSI_HOST_CONTROL:
+	  bit 5: DSI_HIGH_SPEED_TRANS: DSI high speed transmission of
+	                               packets
+	    - 0 =3D LOW: low speed
+	    - 1 =3D HIGH: high speed
+
+	DSI_CONTROL:
+	  bit 20: DSI_HS_CLK_CTRL: Control for the HS clock lane
+	    - 0 =3D CONTINUOUS: HS clock is on all the time
+	    - 1 =3D TX_ONLY: HS clock is only active during HS
+	                   transmissions
+
+So if the peripheral supports non-continuous mode of operation we set
+the DSI_HS_CLK_CTRL bit, otherwise we clear it to make sure the clock
+remains on all the time.
+
+When a packet is to be transmitted in high speed mode, we set the
+DSI_HIGH_SPEED_TRANS bit. For low power mode transmissions that bit is
+cleared.
+
+Thierry
+
+--VS++wcV0S1rZb1Fb
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT5HYvAAoJEN0jrNd/PrOh4zoQAJTnjOBWPaiVR2ddHRgZk38F
+BBeux2RnJzSDQi2+YWyqKM6TeV7Hbx0tk+Swf6YepvIKqjO/kqWFOaqQTveuTViD
+6wMUh/nm+ZnZgwd8975XJADIY0uTOHXRskurrYJLqaS6B2cyRzPKaIMh6OmirVjt
+lyEso1bBc5WaIePm7k6+iDJFYgBzD9W9rH4KVLj+2cn9ROFtTrhU/p0gHeTjZZEI
+FMQYM4M7TT8wa1d5YnKoySBwrrzpQb2VISWLER2uwMvzWZ5KlmY3IouWYSKwcfTk
+UOo03tN56McYYCTC1byz6M4hxfxqvjzhzqtNZRnU27FjGi66xCPxocMTI8ydRXd9
+Sdh1c8F6S4cignv8RGmJpIE/wTF8liol01gcyPltOAFyLoYUzWtCsQxYC7odmYKC
+UDZQzS2Eaevs/CM6etxwKL3tc+PUxw0EZlhCaOmCyUtvnlSUvZUs6Vgy2DTuzeDc
+++GeoIAFT07ut4Y1BAZfcwSNP7SGQSDrJGxwBQ3Z9Fie41XOEtD9Wf7C+Flo7+Hr
+l3xp85QDrJGZMhWCb11tKEu7oLfyYGj2MMIfGdmmDKxNyac46xwT/P57JuWGw8CC
+UzsR9kbEwWWW0ppdRawifylHSp7C7pAmvEvXWs1r0H3RSZW6UZ1JNWWbaLzQwQyp
+SksFpTs8aJWd6wityng1
+=U5Bt
+-----END PGP SIGNATURE-----
+
+--VS++wcV0S1rZb1Fb--
+
+--===============1468216242==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1468216242==--
