@@ -1,135 +1,169 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v5 0/5] ARM: EXYNOS: cpuidle: fix AFTR mode on boards with
- secure firmware enabled
-Date: Thu, 07 Aug 2014 19:18:43 +0200
-Message-ID: <25593716.2VrAenu32Y@amdc1032>
-References: <1407245666-20016-1-git-send-email-b.zolnierkie@samsung.com>
- <53E0E13E.3@linaro.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer
+ support
+Date: Fri, 08 Aug 2014 10:45:47 +0900
+Message-ID: <53E42BCB.5090608@samsung.com>
+References: <20140806074357.GA13788@ulmo>
+ <CAAQKjZNei31upmmHB_HaVQo8=mRpiBKa4-gri8ftpuWDbS2eew@mail.gmail.com>
+ <20140807065801.GD17340@ulmo> <53E32FF6.6050402@samsung.com>
+ <20140807090859.GD13315@ulmo.nvidia.com> <53E3599F.3020301@samsung.com>
+ <20140807110925.GA31594@ulmo.nvidia.com> <53E379A8.1020506@samsung.com>
+ <20140807131713.GB1540@ulmo.nvidia.com> <53E38191.1050308@samsung.com>
+ <20140807135500.GA27417@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47496 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757264AbaHGRSs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Aug 2014 13:18:48 -0400
-In-reply-to: <53E0E13E.3@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20140807135500.GA27417@ulmo.nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, treding@nvidia.com, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
 
-
-On Tuesday, August 05, 2014 03:50:54 PM Daniel Lezcano wrote:
-> On 08/05/2014 03:34 PM, Bartlomiej Zolnierkiewicz wrote:
-> > Hi,
-> >
-> > This patch series adds support for AFTR idle mode on boards with
-> > secure firmware enabled and allows EXYNOS cpuidle driver usage on
-> > Exynos4x12 SoCs.
-> >
-> > It has been tested on Trats2 board (using Exynos4412 SoC with secure
-> > firmware enabled) on which AFTR mode reduces power consumption by ~12%
-> > when EXYNOS cpuidle driver is enabled (in both cases the default
-> > exynos_defconfig config is used and CPU1-3 are offlined).
-> 
-> Hi Bartlomiej,
-
-Hi Daniel,
-
-> I tested your patchset on an odroid-u2. When the cpuidle driver is 
-> enabled and the cpu1-3 are offlined, the kernel hangs.
-> 
-> If I disable the AFTR state on cpuidle, and offline the 1-3, it works as 
-> expected. So there is something wrong with the AFTR on the odroid board.
-
-Thanks for testing.  I reproduced the problem on ODROID-U3 board.  I also
-tested Exynos4412 based Origen board and it also has problem with AFTR mode.
-We did some debugging but nothing specific has came up yet (we suspect that
-the issue may be caused by incompatibilities of bootloader firmware of
-ODROID-U2/U3 and Origen4412 boards).  We will keep investigating this but
-in the meantime I would like to have this patchset acked/merged if possible
-(with Exynos4412 support limited to Trats2 target currently [*]) as:
-
-- it contains mostly fundamental changes for all secure firmware enabled
-  boards (which would be needed also on ODROID/Origen4412 boards if we get
-  AFTR mode working on them)
-
-- it adds working AFTR mode support for Exynos4412 Trats2 target
-
-- it prepares support for Exynos4212 and Exynos3250 targets which are
-  working fine with AFTR mode in our internal kernels and which are not
-  yet upstreamed
-
-[*] In the future it should be possible to enable AFTR mode support per
-    board using DT (basing on patches from Lorenzo), for now it should be
-    fine to check for Trats2 target directly while registering cpuidle
-    platform device.  I will post v6 soon.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-> > Depends on:
-> > - next-20140804 branch of linux-next kernel tree
-> > - [PATCH v5][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
-> >    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35262.html)
-> > - [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
-> >    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34282.html)
-> >
-> > Changes since v4:
-> > - rebased on top of next-20140804 +
-> >    [PATCH v5][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
-> >    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35262.html)
-> >    [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
-> >    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34282.html)
-> > - call exynos_save_cp15() only on A9 type core (this is needed for the future
-> >    Exynos3250 SoC support)
-> >
-> > Changes since v3:
-> > - rebased on top of next-20140804 +
-> >    [PATCH v4][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
-> >    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35192.html)
-> >    [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
-> >    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34282.html)
-> > - (re-)added patch fixing S5P_CENTRAL_SEQ_OPTION register setup
-> >
-> > Changes since v2:
-> > - rebased on top of next-20140708 +
-> >    [PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
-> >    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32809.html)
-> >    [with rejects fixed]
-> >    [PATCH 6/6] ARM: EXYNOS: Register cpuidle device only on Exynos4210 and 5250
-> >    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32808.html)
-> >    [PATCH 0/2] Firmware-assisted suspend/resume of Exynos SoCs
-> >    (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32991.html)
-> >    [with rejects fixed in patch #2]
-> > - addressed review comments from Tomasz Figa and Daniel Lezcano
-> >
-> > Changes since v1:
-> > - synced against next-20140602
-> > - added missing Acked-by-s
-> >
-> > Best regards,
-> > --
-> > Bartlomiej Zolnierkiewicz
-> > Samsung R&D Institute Poland
-> > Samsung Electronics
-> >
-> >
-> > Bartlomiej Zolnierkiewicz (5):
-> >    ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static inlines
-> >    ARM: EXYNOS: add AFTR mode support to firmware do_idle method
-> >    ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode code
-> >    ARM: EXYNOS: PM: fix register setup for AFTR mode code
-> >    ARM: EXYNOS: cpuidle: allow driver usage on Exynos4x12 SoCs
-> >
-> >   arch/arm/include/asm/firmware.h |  2 +-
-> >   arch/arm/mach-exynos/common.h   |  5 ++++
-> >   arch/arm/mach-exynos/exynos.c   |  4 ++-
-> >   arch/arm/mach-exynos/firmware.c | 34 ++++++++++++++++-------
-> >   arch/arm/mach-exynos/pm.c       | 60 ++++++++++++++++++++++++-----------------
-> >   5 files changed, 70 insertions(+), 35 deletions(-)
+T24gMjAxNOuFhCAwOOyblCAwN+ydvCAyMjo1NSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24g
+VGh1LCBBdWcgMDcsIDIwMTQgYXQgMTA6Mzk6MjlQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6Cj4+
+IE9uIDIwMTTrhYQgMDjsm5QgMDfsnbwgMjI6MTcsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+Pj4g
+T24gVGh1LCBBdWcgMDcsIDIwMTQgYXQgMTA6MDU6NDRQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6
+Cj4+Pj4gT24gMjAxNOuFhCAwOOyblCAwN+ydvCAyMDowOSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6
+Cj4+Pj4+IE9uIFRodSwgQXVnIDA3LCAyMDE0IGF0IDA3OjQ5OjAzUE0gKzA5MDAsIElua2kgRGFl
+IHdyb3RlOgo+Pj4+Pj4gT24gMjAxNOuFhCAwOOyblCAwN+ydvCAxODowOSwgVGhpZXJyeSBSZWRp
+bmcgd3JvdGU6Cj4+Pj4+Pj4gT24gVGh1LCBBdWcgMDcsIDIwMTQgYXQgMDQ6NTE6MThQTSArMDkw
+MCwgSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4+IE9uIDIwMTTrhYQgMDjsm5QgMDfsnbwgMTU6NTgs
+IFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+Pj4+Pj4+Pj4gT24gVGh1LCBBdWcgMDcsIDIwMTQgYXQg
+MDI6MDk6MTlBTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4+Pj4gMjAxNC0wOC0wNiAx
+Njo0MyBHTVQrMDk6MDAgVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT46
+Cj4+Pj4+Pj4gWy4uLl0KPj4+Pj4+Pj4+Pj4gQXMgZmFyIGFzIEkgY2FuIHRlbGwgbm9uLWNvbnRp
+bnVvdXMgbW9kZSBzaW1wbHkgbWVhbnMgdGhhdCB0aGUgaG9zdCBjYW4KPj4+Pj4+Pj4+Pj4gdHVy
+biBvZmYgdGhlIEhTIGNsb2NrIGFmdGVyIGEgaGlnaC1zcGVlZCB0cmFuc21pc3Npb24uIEkgdGhp
+bmsgQW5kcnplago+Pj4+Pj4+Pj4+PiBtZW50aW9uZWQgdGhpcyBhbHJlYWR5IGluIGFub3RoZXIg
+c3VidGhyZWFkLCBidXQgdGhpcyBpcyBhbiBvcHRpb25hbAo+Pj4+Pj4+Pj4+PiBtb2RlIHRoYXQg
+cGVyaXBoZXJhbHMgY2FuIHN1cHBvcnQgaWYgdGhleSBoYXZlIGV4dHJhIGNpcmN1aXRyeSB0aGF0
+Cj4+Pj4+Pj4+Pj4+IHByb3ZpZGVzIGFuIGludGVybmFsIGNsb2NrLiBQZXJpcGhlcmFscyB0aGF0
+IGRvbid0IGhhdmUgc3VjaCBjaXJjdWl0cnkKPj4+Pj4+Pj4+Pj4gbWF5IHJlbHkgb24gdGhlIEhT
+IGNsb2NrIHRvIHBlcmZvcm0gaW4gYmV0d2VlbiB0cmFuc21pc3Npb25zIGFuZAo+Pj4+Pj4+Pj4+
+PiB0aGVyZWZvcmUgcmVxdWlyZSB0aGUgSFMgY2xvY2sgdG8gYmUgYWx3YXlzIG9uIChjb250aW51
+b3VzIG1vZGUpLiBUaGF0J3MKPj4+Pj4+Pj4+Pj4gd2hhdCB0aGUgTUlQSV9EU0lfQ0xPQ0tfTk9O
+X0NPTlRJTlVPVVMgZmxhZyBpczogaXQgYWR2ZXJ0aXNlcyB0aGF0IHRoZQo+Pj4+Pj4+Pj4+PiBw
+ZXJpcGhlcmFsIHN1cHBvcnRzIG5vbi1jb250aW51b3VzIG1vZGUgYW5kIHRoZXJlZm9yZSB0aGUg
+aG9zdCBjYW4gdHVybgo+Pj4+Pj4+Pj4+PiB0aGUgSFMgY2xvY2sgb2ZmIGFmdGVyIGhpZ2gtc3Bl
+ZWQgdHJhbnNtaXNzaW9ucy4KPj4+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4+IFdoYXQgSSBkb24ndCBtYWtl
+IHN1cmUgaXMgdGhpcyBzZW50ZW5jZS4gV2l0aAo+Pj4+Pj4+Pj4+IE1JUElfRFNJX0NMT0NLX05P
+Tl9DT05USVVPVVMgZmxhZywgSSBndWVzcyB0d28gcG9zc2libGUgb3BlcmF0aW9ucy4KPj4+Pj4+
+Pj4+PiBPbmUgaXMsCj4+Pj4+Pj4+Pj4gMS4gaG9zdCBjb250cm9sbGVyIHdpbGwgZ2VuZXJhdGVz
+IHNpZ25hbHMgaWYgYSBiaXQgb2YgYSByZWdpc3Rlcgo+Pj4+Pj4+Pj4+IHJlbGF0ZWQgdG8gbm9u
+LWNvbnRpZ3VvdXMgY2xvY2sgbW9kZSBpcyBzZXQgb3IgdW5zZXQuCj4+Pj4+Pj4+Pj4gMi4gQW5k
+IHRoZW4gdmlkZW8gZGF0YSBpcyB0cmFuc21pdHRlZCB0byBwYW5lbCBpbiBIUyBtb2RlLgo+Pj4+
+Pj4+Pj4+IDMuIEFuZCB0aGVuIEQtUEhZIGRldGVjdHMgTFAtMTEgc2lnbmFsIChwb3NpdGl2ZSBh
+bmQgbmVnYXRpdmUgbGFuZSBhbGwKPj4+Pj4+Pj4+PiBhcmUgaGlnaCkuCj4+Pj4+Pj4+Pj4gNC4g
+QW5kIHRoZW4gRC1QSFkgZGlzYWJsZXMgSFMgY2xvY2sgb2YgaG9zdCBjb250cm9sbGVyLgo+Pj4+
+Pj4+Pj4+IDUuIEF0IHRoaXMgdGltZSwgb3BlcmF0aW9uIG1vZGUgb2YgaG9zdCBjb250cm9sbGVy
+IGJlY29tZXMgTFBNLgo+Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+Pj4gT3RoZXIgaXMsCj4+Pj4+Pj4+Pj4g
+MS4gaG9zdCBjb250cm9sbGVyIHdpbGwgZ2VuZXJhdGVzIHNpZ25hbHMgaWYgYSBiaXQgb2YgYSBy
+ZWdpc3Rlcgo+Pj4+Pj4+Pj4+IHJlbGF0ZWQgdG8gbm9uLWNvbnRpZ3VvdXMgY2xvY2sgbW9kZSBp
+cyBzZXQgb3IgdW5zZXQuCj4+Pj4+Pj4+Pj4gMi4gQW5kIHRoZW4gRC1QSFkgZGV0ZWN0cyBMUC0x
+MSBzaWduYWwgKHBvc2l0aXZlIGFuZCBuZWdhdGl2ZSBsYW5lIGFsbAo+Pj4+Pj4+Pj4+IGFyZSBo
+aWdoKS4KPj4+Pj4+Pj4+PiAzLiBBbmQgdGhlbiB2aWRlbyBkYXRhIGlzIHRyYW5zbWl0dGVkIHRv
+IHBhbmVsIGluIExQTS4KPj4+Pj4+Pj4+PiA0LiBBdCB0aGlzIHRpbWUsIG9wZXJhdGlvbiBtb2Rl
+IG9mIGhvc3QgY29udHJvbGxlciBiZWNvbWVzIExQTS4KPj4+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4+IEl0
+IHNlZW1zIHRoYXQgeW91IHNheXMgbGF0dGVyIGNhc2UuCj4+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4gTm8u
+IEhpZ2ggc3BlZWQgY2xvY2sgYW5kIGxvdyBwb3dlciBtb2RlIGFyZSBvcnRob2dvbmFsLiBOb24t
+Y29udGludW91cwo+Pj4+Pj4+Pj4gbW9kZSBzaW1wbHkgbWVhbnMgdGhhdCB0aGUgY2xvY2sgbGFu
+ZSBlbnRlcnMgTFAtMTEgYmV0d2VlbiBIUwo+Pj4+Pj4+Pj4gdHJhbnNtaXNzaW9ucyAoc2VlIDUu
+NiAiQ2xvY2sgTWFuYWdlbWVudCIgb2YgdGhlIERTSSBzcGVjaWZpY2F0aW9uKS4KPj4+Pj4+Pj4+
+Cj4+Pj4+Pj4+Cj4+Pj4+Pj4+IEl0IHNlZW1zIHRoYXQgY2xvY2sgbGFuZSBlbnRlcnMgTFAtMTEg
+cmVnYXJkbGVzcyBvZiBIUyBjbG9jayBlbmFibGVkIGlmCj4+Pj4+Pj4+IG5vbi1jb250aW5vdXMg
+bW9kZSBpcyB1c2VkLiBSaWdodD8KPj4+Pj4+Pgo+Pj4+Pj4+IE5vLCBJIHRoaW5rIGFzIGxvbmcg
+YXMgSFMgY2xvY2sgaXMgZW5hYmxlZCB0aGUgY2xvY2sgbGFuZSB3b24ndCBlbnRlcgo+Pj4+Pj4+
+IExQLTExLiBOb24tY29udGludW91cyBtb2RlIG1lYW5zIHRoYXQgdGhlIGNvbnRyb2xsZXIgY2Fu
+IGRpc2FibGUgdGhlIEhTCj4+Pj4+Pj4gY2xvY2sgYmV0d2VlbiBIUyB0cmFuc21pc3Npb25zLiBT
+byBpbiBub24tY29udGludW91cyBtb2RlIHRoZSBjbG9jayBsYW5lCj4+Pj4+Pj4gY2FuIGVudGVy
+IExQLTExIGJlY2F1c2UgdGhlIGNvbnRyb2xsZXIgZGlzYWJsZXMgdGhlIEhTIGNsb2NrLgo+Pj4+
+Pj4KPj4+Pj4+IEl0IG1ha2VzIG1lIGEgbGl0dGxlIGJpdCBjb25mdXNpbmcuIFlvdSBzYWlkICJp
+ZiBIUyBjbG9jayBpcyBlbmFibGVkLAo+Pj4+Pj4gdGhlIHRoZSBjbG9jayBsYW5lIHdvbid0IGVu
+dGVyIExQLTExIiBCdXQgeW91IHNhaWQgYWdhaW4gInRoZSBjbG9jayBsYW5lCj4+Pj4+PiBjYW4g
+ZW50ZXIgTFAtMTEgYmVjYXVzZSB0aGUgY29udHJvbGxlciBkaXNhYmxlcyB0aGUgSFMgY2xvY2si
+IFdoYXQgaXMKPj4+Pj4+IHRoZSBtZWFuaW5nPwo+Pj4+Pgo+Pj4+PiBJdCBtZWFucyB0aGF0IGlm
+IHRoZSBIUyBjbG9jayBpcyBlbmFibGVkLCB0aGVuIHRoZSBjbG9jayBsYW5lIGlzIG5vdCBpbgo+
+Pj4+PiBMUC0xMS4gV2hlbiB0aGUgSFMgY2xvY2sgc3RvcHMsIHRoZW4gdGhlIGNsb2NrIGxhbmUg
+ZW50ZXJzIExQLTExLgo+Pj4+Pgo+Pj4+Pj4+IEluIGNvbnRpbnVvdXMgbW9kZSwgdGhlbiB0aGUg
+Y2xvY2sgd2lsbCBuZXZlciBiZSBkaXNhYmxlZCwgaGVuY2UgdGhlCj4+Pj4+Pj4gY2xvY2sgbGFu
+ZSB3aWxsIG5ldmVyIGVudGVyIExQLTExLgo+Pj4+Pj4+Cj4+Pj4+Pj4+IEFuZCBhbHNvIGl0IHNl
+ZW1zIHRoYXQgbm9uLWNvbnRpbm91cyBtb2RlIGlzIGRpZmZlcmVudCBmcm9tIExQTSBhdCBhbGwK
+Pj4+Pj4+Pj4gYmVjYXVzZSB3aXRoIG5vbi1jb250aW51b3VzIG1vZGUsIGNvbW1hbmQgZGF0YSBp
+cyB0cmFuc21pdHRlZCB0byBwYW5lbAo+Pj4+Pj4+PiBpbiBIUyBtb2RlLCBidXQgd2l0aCBMUE0s
+IGNvbW1hbmQgZGF0YSBpcyB0cmFuc21pdHRlZCB0byBwYW5lbCBpbiBMUAo+Pj4+Pj4+PiBtb2Rl
+LiBBbHNvIHJpZ2h0Pwo+Pj4+Pj4+Cj4+Pj4+Pj4gTm8uIEkgdGhpbmsgeW91IGNhbiBzZW5kIGNv
+bW1hbmQgZGF0YSB0byB0aGUgcGVyaXBoZXJhbCBpbiBsb3cgcG93ZXIKPj4+Pj4+PiBtb2RlIGlu
+IGJvdGggY29udGludW91cyBhbmQgbm9uLWNvbnRpbnVvdXMgY2xvY2sgbW9kZXMuCj4+Pj4+Pj4K
+Pj4+Pj4+Pj4gSWYgc28sIHNob3VsZG4ndCB0aGUgaG9zdCBkcml2ZXIgZGlzYWJsZSBIUyBjbG9j
+aywgaW4gY2FzZSBvZiBMUCBtb2RlLAo+Pj4+Pj4+PiBiZWZvcmUgdGhlIGhvc3QgZHJpdmVyIHRy
+YW5zbWl0cyBjb21tYW5kIGRhdGE/Cj4+Pj4+Pj4KPj4+Pj4+PiBOby4gSWYgdGhlIHBlcmlwaGVy
+YWwgZG9lc24ndCBzdXBwb3J0IG5vbi1jb250aW51b3VzIG1vZGUsIHRoZW4gdGhlIEhTCj4+Pj4+
+Pj4gY2xvY2sgbXVzdCBuZXZlciBiZSB0dXJuZWQgb2ZmLiBPbiB0aGUgb3RoZXIgaGFuZCwgaWYg
+dGhlIHBlcmlwaGVyYWwKPj4+Pj4+PiBzdXBwb3J0cyBub24tY29udGludW91cyBtb2RlLCB0aGVu
+IHRoZSBEU0kgaG9zdCBzaG91bGQgYXV0b21hdGljYWxseQo+Pj4+Pj4+IGRpc2FibGUgdGhlIEhT
+IGNsb2NrIGJldHdlZW4gaGlnaC1zcGVlZCB0cmFuc21pc3Npb25zLiBUaGF0IG1lYW5zIGlmIGEK
+Pj4+Pj4+PiBwYWNrZXQgaXMgdHJhbnNtaXR0ZWQgaW4gbG93IHBvd2VyIG1vZGUgdGhlIERTSSBo
+b3N0IHdpbGwgbm90IGJlCj4+Pj4+Pj4gdHJhbnNtaXR0aW5nIGluIGhpZ2gtc3BlZWQgbW9kZSBh
+bmQgdGhlcmVmb3JlIGRpc2FibGUgdGhlIEhTIGNsb2NrLgo+Pj4+Pj4KPj4+Pj4+IFdoYXQgaXMg
+TFBNIHlvdSB0aGluaz8gSSB0aG91Z2h0IExQTSBpcyBMUC0xMSBhbmQgSFMgY2xvY2sgZGlzYWJs
+ZWQuIFNvCj4+Pj4+PiBmb3IgTFBNIHRyYW5zZmVyLCBsYW5lcyBzaG91bGQgYmUgTFAtMTEgc3Rh
+dGUgYW5kIGFsc28gSFMgY2xvY2sgb2YgdGhlCj4+Pj4+PiBob3N0IGNvbnRyb2xsZXIgc2hvdWxk
+IGJlIGRpc2FibGVkLgo+Pj4+Pgo+Pj4+PiBOby4gSSBkb24ndCB0aGluayBhbnkgdHJhbnNtaXNz
+aW9ucyBjYW4gaGFwcGVuIHdoZW4gYWxsIGxhbmVzIGFyZSBpbgo+Pj4+PiBMUC0xMSBzdGF0ZS4g
+VGhlIE1JUElfRFNJX01TR19VU0VfTFBNIGlzIHVzZWQgdG8gc3BlY2lmeSB0aGF0IGEgcGFja2V0
+Cj4+Pj4+IHNob3VsZCBiZSB0cmFuc21pdHRlZCBpbiBsb3cgcG93ZXIgbW9kZSAoc2VlIExQIFRy
+YW5zbWlzc2lvbiBpbiAyLjEKPj4+Pj4gIkRlZmluaXRpb25zIiBvZiB0aGUgTUlQSSBEU0kgc3Bl
+Y2lmaWNhdGlvbikuCj4+Pj4+Cj4+Pj4KPj4+PiBIbS4uIEkgc2VlLiBJIG1lYW50LAo+Pj4+Cj4+
+Pj4gaWYgKGZsYWdzICYgTUlQSV9EU0lfTVNHX1VTRV9MUE0pCj4+Pj4gICAgICAgIGRpc2FibGUg
+SFMgY2xvY2sgPC0gcmVxdWlyZWQuCj4+Pj4KPj4+PiB0cmFuc21pdCBjb21tYW5kIGRhdGEgPC0g
+aW4gTFBNLgo+Pj4KPj4+IE5vLiBEaXNhYmxpbmcgdGhlIEhTIGNsb2NrIGlzIG5vdCByZXF1aXJl
+ZCBmb3IgTFBNIG1vZGUuIEluIGZhY3QgaWYgdGhlCj4+PiBwZXJpcGhlcmFsIHNwZWNpZmllcyB0
+aGF0IGl0IGRvZXNuJ3Qgc3VwcG9ydCBub24tY29udGludW91cyBtb2RlIHRoZW4KPj4+IHRoZSBI
+UyBjbG9jayBtdXN0ICpuZXZlciogYmUgZGlzYWJsZWQgYXMgbG9uZyBhcyB0aGUgcGVyaXBoZXJh
+bCBpcyBpbgo+Pj4gdXNlLgo+Pj4KPj4+IE1JUElfRFNJX01TR19VU0VfTFBNIGFuZCBNSVBJX0RT
+SV9DTE9DS19OT05fQ09OVElOVU9VUyBhcmUgdW5yZWxhdGVkIGFuZAo+Pj4gbmVlZCB0byBiZSBj
+b25zaWRlcmVkIHNlcGFyYXRlbHkuCj4+Cj4+IEkgbWVudGlvbmVkIGFscmVhZHkgTFBNIGFuZCBO
+T05fQ09OVElOVU9VUyBhcmUgdW5yZWxhdGVkLgo+Pgo+PiBJdCBzZWVtcyB0aGF0IHlvdSBzYXkg
+dGhlIG9ubHkgd2F5IHRvIHRyYW5zZmVyIGNvbW1hbmQgZGF0YSBpbiBMUE0gaXMKPj4gbm9uLWNv
+bnRpbnVvdXMgY2xvY2sgbW9kZS4KPiAKPiBObywgdGhhdCdzIG5vdCB3aGF0IEknbSBzYXlpbmcu
+Cj4gCj4+IEhvd2V2ZXIsIHlvdSBzYWlkIGFuZCBhbHNvIHRoZSBzcGVjIHNheXMsICJOb24tY29u
+dGludW91cyBtb2RlIHNpbXBseQo+PiBtZWFucyB0aGF0IHRoZSBjbG9jayBsYW5lIGVudGVycyBM
+UC0xMSBiZXR3ZWVuIEhTIHRyYW5zbWlzc2lvbnMiLgo+PiBEb2Vzbid0ICpiZXR3ZWVuIEhTIHRy
+YW5zbWlzc2lvbnMiIG1lYW4gdGhlIGNvbW1hbmQgZGF0YSBpcyB0cmFuc21pdHRlZAo+PiBpbiBI
+UywgKm5vdCBpbiBMUE0qLCBhbmQgY2xvY2sgbGFuZSBlbnRlcnMgTFAtMTEgYmV0d2VlbiB0aGVt
+Pwo+IAo+IE5vdCBuZWNlc3NhcmlseS4gWW91IGNhbiB0cmFuc21pdCBjb21tYW5kIHBhY2tldHMg
+aW4gaGlnaC1zcGVlZCBtb2RlLAo+IGJ1dCB5b3UgZG9uJ3QgaGF2ZSB0by4gSWYgeW91IHRyYW5z
+bWl0IHBhY2tldHMgaW4gbG93IHBvd2VyIG1vZGUsIHRoZW4KClRoYXQgd291bGQgbWF5IHdoeSB3
+ZSBhcmUgbWVudGlvbmluZyBzYW1lIGNvbW1lbnRzIHJlcGVhdGVkbHkuCgpJbiBteSBjYXNlLCBo
+b3N0IGRyaXZlciB3YWl0cyBmb3IgdGhlIGxhbmUgc3RvcCBzdGF0ZSAoTFAtMTEpLCBhbmQgdGhl
+bgpkaXNhYmxlcyBIUyBjbG9jayB0byB0cmFuc21pdCBjb21tYW5kIGRhdGEgaW4gTFBNLiBPZiBj
+b3Vyc2UsIEknbSBub3QKc3VyZSB0aGF0IHlldCBpdCdzIGNvcnJlY3Qgd2F5LgoKSW4gVGVncmEs
+IFdoYXQgdG8gZG8gZm9yIGl0PwoKVGhhbmtzLApJbmtpIERhZQoKPiB0aGUgSFMgY2xvY2sgaXNu
+J3QgaW52b2x2ZWQgaW4gdGhlIHRyYW5zbWlzc2lvbiBhbmQgdGhlIGNsb2NrIGxhbmUgbWF5Cj4g
+ZW50ZXIgTFAtMTEgZHVyaW5nIHRoZSB3aG9sZSB0cmFuc21pc3Npb24gKGlmIG5vbi1jb250aW51
+b3VzIG1vZGUgaXMKPiBlbmFibGVkKS4KPiAKPj4gV2UgaGF2ZSBvbmUgbGNkIHBhbmVsLCBudDM1
+NTAyYSwgd2hpY2ggbmVlZHMgTFBNIHRyYW5zZmVyIHN1cHBvcnQKPj4gYmVjYXVzZSBpdCBzaG91
+bGQgcmVjZWl2ZSBzb21lIGluaXRpYWwgY29tbWFuZHMgd2l0aCBMUE0gYnkgZGVmYXVsdAo+PiBo
+YXJkd2FyZSBzZXR0aW5nLCBhbmQgd2UgZmFjZWQgd2l0aCB0aGF0IHRoZSBwYW5lbCBkaWRuJ3Qg
+d29yayB3aXRob3V0Cj4+IGRpc2FibGluZyBIUyBjbG9jayBiZWZvcmUgdHJhbnNtaXR0aW5nIGNv
+bW1hbmQgZGF0YS4gSG93IGNhbiB5b3UgZXhwbGFpbgo+PiB0aGF0Pwo+IAo+IFRoZSBzcGVjaWZp
+Y2F0aW9uIGNsZWFybHkgc2F5cyB0aGF0ICg1LjYuMSAiQ2xvY2sgUmVxdWlyZW1lbnRzIik6Cj4g
+Cj4gCUFsbCBEU0kgdHJhbnNtaXR0ZXJzIGFuZCByZWNlaXZlcnMgc2hhbGwgc3VwcG9ydCBjb250
+aW51b3VzCj4gCWNsb2NrIGJlaGF2aW9yIG9uIHRoZSBDbG9jayBMYW5lLCBhbmQgb3B0aW9uYWxs
+eSBtYXkgc3VwcG9ydAo+IAlub24tY29udGludW91cyBjbG9jayBiZWhhdmlvci4KPiAKPiBTbyBp
+ZiB5b3UgbmVlZCB0byAiZGlzYWJsZSBIUyBjbG9jayIgZm9yIGNvbW1hbmQgZGF0YSB0byBiZSBz
+dWNjZXNzZnVsbHkKPiB0cmFuc21pdHRlZCwgZWl0aGVyIHRoZSBwYW5lbCBkb2Vzbid0IGNvbXBs
+eSB0byB0aGUgc3BlY2lmaWNhdGlvbiwgb3IKPiB3aGF0ZXZlciB5b3UgZG8gdG8gImRpc2FibGUg
+SFMgY2xvY2siIGRvZXNuJ3QgZG8gd2hhdCB5b3UgdGhpbmsgaXQgZG9lcy4KPiAKPiBUaGllcnJ5
+Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
