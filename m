@@ -1,89 +1,36 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] mfd: sec-irq: fix support for devices without irq specified
-Date: Fri, 08 Aug 2014 14:44:20 +0200
-Message-ID: <2973458.9hVm8HXmvI@amdc1032>
-References: <22704524.WE4thfvSda@amdc1032> <1407483274.21474.1.camel@AMDC1943>
- <1407484136.21474.8.camel@AMDC1943>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC 3/5] pinctrl: exynos: add exynos5410 SoC specific data
+Date: Fri, 8 Aug 2014 14:55:39 +0200
+Message-ID: <CACRpkdazZTUS50_mrXd+sNVAdf2m7meT1_LX5r6BKg3U-tC3Kw@mail.gmail.com>
+References: <1406549892-5558-1-git-send-email-afaerber@suse.de>
+	<1406549892-5558-4-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:62095 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755485AbaHHMo2 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Aug 2014 08:44:28 -0400
-In-reply-to: <1407484136.21474.8.camel@AMDC1943>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1406549892-5558-4-git-send-email-afaerber-l3A5Bk7waGM@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hakjoo Kim <ruppi.kim-vC+yAUbXFBlQ0OI7PeSoCw@public.gmane.org>, Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "open list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Friday, August 08, 2014 09:48:56 AM Krzysztof Kozlowski wrote:
-> On pi=C4=85, 2014-08-08 at 09:34 +0200, Krzysztof Kozlowski wrote:
-> > On czw, 2014-08-07 at 18:48 +0200, Bartlomiej Zolnierkiewicz wrote:
-> > > [ added missing linux-samsung-soc ML, sorry for the noise ]
-> > >=20
-> > > On Thursday, August 07, 2014 06:42:28 PM Bartlomiej Zolnierkiewic=
-z wrote:
-> > > > Add missing check for the case of device without irq specified
-> > > > in sec_irq_exit() (please note that sec_irq_init() already
-> > > > correctly handles such devices).
-> > > >=20
-> > > > This is needed for Insignal's Exynos4412 based Origen board.
-> > > >=20
-> > > > Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > > > Cc: Sangbeom Kim <sbkim73@samsung.com>
-> > > > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.=
-com>
-> > > > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > > > ---
-> > > > patch is against next-20140804 branch of linux-next kernel
-> > > >=20
-> > > >  drivers/mfd/sec-irq.c | 3 ++-
-> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > Looks and works good (tested on board with S2MPS14).
-> >=20
-> > Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> >=20
-> > Best regards,
-> > Krzysztof
-> >=20
-> > > >=20
-> > > > diff --git a/drivers/mfd/sec-irq.c b/drivers/mfd/sec-irq.c
-> > > > index f9a5786..b65a7f0 100644
-> > > > --- a/drivers/mfd/sec-irq.c
-> > > > +++ b/drivers/mfd/sec-irq.c
-> > > > @@ -478,5 +478,6 @@ int sec_irq_init(struct sec_pmic_dev *sec_p=
-mic)
-> > > > =20
-> > > >  void sec_irq_exit(struct sec_pmic_dev *sec_pmic)
-> > > >  {
-> > > > -	regmap_del_irq_chip(sec_pmic->irq, sec_pmic->irq_data);
-> > > > +	if (sec_pmic->irq)
-> > > > +		regmap_del_irq_chip(sec_pmic->irq, sec_pmic->irq_data);
-> > > >  }
->=20
-> Seems I jumped too far with this one. Patch looks OK and works fine b=
-ut
-> is it really needed? If (!sec_pmic->irq) then sec_pmic->irq_data will=
- be
-> NULL and regmap_del_irq_chip() will handle it correctly.
->=20
-> Your change adds some sense of precautions (the sec_pmic->irq_data ma=
-y
-> be set by some other module by mistake) but still it does not look li=
-ke
-> "needed" for Origen.
+On Mon, Jul 28, 2014 at 2:18 PM, Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>=
+ wrote:
 
-Indeed, I somehow assumed that regmap_del_irq_chip() doesn't check for
-NULL 'struct regmap_irq_chip_data *d' argument.  Since such check is
-actually present in regmap_del_irq_chip() the patch is not needed and
-can be dropped.  Thanks for noticing this.
+> From: Hakjoo Kim <ruppi.kim-vC+yAUbXFBlQ0OI7PeSoCw@public.gmane.org>
+>
+> Add Samsung EXYNOS5410 SoC specific data to enable pinctrl
+> support for all platforms based on EXYNOS5410.
+>
+> Cc: Hakjoo Kim <ruppi.kim-vC+yAUbXFBlQ0OI7PeSoCw@public.gmane.org>
+> [AF: Rebased onto Exynos5260]
 
-Best regards,
+I'm waiting for Tomasz to review this before applying.
+
+Yours,
+Linus Walleij
 --
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
