@@ -1,61 +1,94 @@
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [RFC PATCH v3] reset: Add a defer reset object to send board
- specific reset
-Date: Fri, 08 Aug 2014 16:23:09 +0200
-Message-ID: <1407507789.3354.20.camel@paszta.hi.pengutronix.de>
-References: <1403098673-3058-1-git-send-email-houcheng@gmail.com>
-	 <CACRpkdYfu8HmVCkn9JFh+YP5OPdr8o9nTfoCnkJ7SSpGoenQUg@mail.gmail.com>
-	 <20140708080535.GJ13423@lukather>
-	 <CACRpkdbFPAsu1gE-AVyD=-RxyE7mUJPSbFga7HLh0mxjE-mQuQ@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 2/2] Input: atmel_mxt_ts - Add keycodes array example
+Date: Fri, 08 Aug 2014 16:52:13 +0200
+Message-ID: <53E4E41D.4070703@collabora.co.uk>
+References: <1407372486-25881-1-git-send-email-javier.martinez@collabora.co.uk> <1407372486-25881-2-git-send-email-javier.martinez@collabora.co.uk> <53E37329.4020002@itdev.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdbFPAsu1gE-AVyD=-RxyE7mUJPSbFga7HLh0mxjE-mQuQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Houcheng Lin <houcheng@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Stephen Gallimore <stephen.gallimore@st.com>, Srinivas KANDAGATLA <srinivas.kandagatla@st.com>, Ulf Hansson <ulf.hansson@linaro.org>, sre@kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Vikas Sajjan <vikas.sajjan@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <53E37329.4020002@itdev.co.uk>
+Sender: linux-input-owner@vger.kernel.org
+To: Nick Dyer <nick.dyer@itdev.co.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Stephen Warren <swarren@nvidia.com>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Am Dienstag, den 08.07.2014, 11:38 +0200 schrieb Linus Walleij:
-> On Tue, Jul 8, 2014 at 10:05 AM, Maxime Ripard
-> <maxime.ripard@free-electrons.com> wrote:
-> > On Tue, Jul 08, 2014 at 09:52:03AM +0200, Linus Walleij wrote:
-> >> On Wed, Jun 18, 2014 at 3:37 PM, Houcheng Lin <houcheng@gmail.com> wrote:
-> >>
-> >> > The Problem
-> >> > -----------
-> >> > The reset signal on a hardware board is send either:
-> >> >     - during machine initialization
-> >> >     - during bus master's initialization
-> >>
-> >> I just thought about this a bit, since there isn't already a generic GPIO
-> >> reset driver, just call this drivers/reset/reset-gpio.c and make the
-> >> ability to deferral just a configuration detail of the GPIO reset driver.
-> >
-> > Philipp has been working on one for quite some time. See
-> > http://www.spinics.net/lists/arm-kernel/msg321927.html
-> >
-> > However, it seems to progress slowly, and we don't seem to be able to
-> > reach a consensus here.
+Hello Nick,
 
-Mostly because Maxime and I seem to have a completely different opinion
-and nobody else argued one way or the other.
-
-> > If you ask me, having to set a few extra properties like this just
-> > advocates for a regular reset driver and DT node for the reset GPIO,
-> > but I'm pretty sure Philipp will feel otherwise :)
+On 08/07/2014 02:38 PM, Nick Dyer wrote:
+>> 
+>> Also, the current documentation says that the array limit
+>> is four entries but the driver dynamically allocates the
+>> keymap array and does not limit the array size.
 > 
-> Hm haha yeah let's fight it out :-)
+> There is a physical limit to the number of GPIOs on the device. The number
+> 4 is wrong, the protocol does allow for up to 8 GPIOs. But it is a hard limit.
+>
+
+Thanks a lot for the explanation, then I guess s/4/8 is enough.
+
+>> 
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> ---
+>>  Documentation/devicetree/bindings/input/atmel,maxtouch.txt | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
+>> index baef432..be50476 100644
+>> --- a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
+>> +++ b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
+>> @@ -11,7 +11,7 @@ Required properties:
+>>  
+>>  Optional properties for main touchpad device:
+>>  
+>> -- linux,gpio-keymap: An array of up to 4 entries indicating the Linux
+>> +- linux,gpio-keymap: An array of entries indicating the Linux
+>>      keycode generated by each GPIO. Linux keycodes are defined in
+>>      <dt-bindings/input/input.h>.
+>>  
+>> @@ -22,4 +22,10 @@ Example:
+>>  		reg = <0x4b>;
+>>  		interrupt-parent = <&gpio>;
+>>  		interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_LEVEL_LOW>;
+>> +		linux,gpio-keymap = < BTN_LEFT
+>> +				      BTN_TOOL_FINGER
+>> +				      BTN_TOOL_DOUBLETAP
+>> +				      BTN_TOOL_TRIPLETAP
+>> +				      BTN_TOOL_QUADTAP
+>> +				      BTN_TOOL_QUINTTAP >;
 > 
-> This is not my subsystem so I'm getting some popcorn.
+> I'm afraid you have misunderstood the impact of this change to the way that
+> the GPIOs coming in to the touch controller are mapped to key codes. Look
 
-Sorry about missing this earlier, I hope the popcorn is not stale.
+Unfortunately there are no boards in mainline using this "linux,gpio-keymap"
+property so I tried to figure out what the expected values were by reading the
+driver. So is more than possible that I got them wrong.
 
-I think a reset that needs to be released before a fixed device appears
-on the bus, should be handled by the bus driver. The reset framework
-could be made to help with that, but I don't think a separate entity
-that scans the whole device tree itself is the right solution.
+By passing all these keycodes the touchpad worked as expected for me and the
+driver did the same than the Chrome OS driver that has these keycodes hardcoded
+when is_tp is true.
 
-regards
-Philipp
+> at the protocol guide for T19.
+> 
+
+I don't have access to proper documentation and I wouldn't expect people to have
+access to non-public docs in order to use a Device Tree binding.
+
+That's why I wanted to document an example, so using this property could be
+easier for others and they shouldn't have to look at the driver in order to
+figure it out (and getting it wrong as you said :) )
+
+So it would be great if you could provide an example on how this is supposed to
+be used.
+
+> The DOUBLE/TRIPLE/QUAD/QUINTTAP stuff is filled in for us by the input core
+> when we use INPUT_MT_POINTER, anyway.
+> 
+
+Thanks for the hint, I didn't know that this was the case but I just looked at
+input_mt_init_slots() [0] and indeed those are not needed.
+
+Best regards,
+Javier
+
+[0]: http://lxr.free-electrons.com/source/drivers/input/input-mt.c#L69
