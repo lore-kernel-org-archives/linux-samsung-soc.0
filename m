@@ -1,99 +1,59 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Subject: Re: [PATCH v2 1/1] Input: atmel_mxt_ts - Get IRQ edge/level flags
  on DT booting
-Date: Fri, 08 Aug 2014 18:38:51 +0200
-Message-ID: <53E4FD1B.6060600@collabora.co.uk>
-References: <1407397492-17475-1-git-send-email-javier.martinez@collabora.co.uk> <53E4D9A5.908@itdev.co.uk> <20140808162146.GC26820@core.coreip.homeip.net>
+Date: Fri, 08 Aug 2014 20:29:32 +0200
+Message-ID: <53E5170C.10302@collabora.co.uk>
+References: <1407397492-17475-1-git-send-email-javier.martinez@collabora.co.uk> <53E4D9A5.908@itdev.co.uk> <20140808162146.GC26820@core.coreip.homeip.net> <53E4FD1B.6060600@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20140808162146.GC26820@core.coreip.homeip.net>
+In-Reply-To: <53E4FD1B.6060600@collabora.co.uk>
 Sender: linux-input-owner@vger.kernel.org
 To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick.dyer@itdev.co.uk>
 Cc: Stephen Warren <swarren@nvidia.com>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Abraham <thomas.ab@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-+Thomas Gleixner, Jason Cooper, Benjamin Herrenschmidt and Thomas Abraham
+Hello,
 
-Hello Dmitry,
-
-On 08/08/2014 06:21 PM, Dmitry Torokhov wrote:
-> On Fri, Aug 08, 2014 at 03:07:33PM +0100, Nick Dyer wrote:
->> On 07/08/14 08:44, Javier Martinez Canillas wrote:
->> > The Atmel maXTouch driver assumed that the IRQ type flags will
->> > always be passed using platform data but this is not true when
->> > booting using Device Trees. In these setups the interrupt type
->> > was ignored by the driver when requesting an IRQ.
->> > 
->> > This means that it will fail if a machine specified other type
->> > than IRQ_TYPE_NONE. The right approach is to get the IRQ flags
->> > that was parsed by OF from the "interrupt" Device Tree propery.
->> > 
->> > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> 
->> I'm happy for this to go in if Dmitry will accept it. It does seem to be a
->> quirk of some platforms that it is necessary, but it's only one line.
+On 08/08/2014 06:38 PM, Javier Martinez Canillas wrote:
 > 
-> I'd rather not as it masks the deeper platform issue. There might be
-> other drovers also expecting platform/OF code set up interrupt triggers
-> and working/not working by chance.
+> 
+> It seems as if the first call to exynos_irq_set_type() that is made by OF is a
+> no-op while the second call is the one that actually setups the hw correctly.
+> Does this make any sense? Maybe is related to the pin not being muxed in the
+> correct function when the "interrupts" property is parsed by OF?
 > 
 
-I totally agree. When posted the patch I thought that it was the right fix but
-after your explanation and studying the IRQ core I see that as you said this i
-just hiding a more fundamental issue. We should fix the root cause instead of
-adding a workaround for every driver.
+So after a conversation with Tomasz Figa over IRC the problem was after all that
+the pin was reconfigured. The IRQ trigger type resulted to be just a red herring
+and not a direct cause.
 
-> Can we figure out why the platform in question needs this change?
-> 
+The pinctrl-eyxnos driver does the IRQ pinmux setup in the .irq_set_type
+function handler. So what happened was that OF parsed the "interrupts" property
+and called exynos_irq_set_type() which did the pinmux setup.
 
-I dig further on this. First I wanted to see if the problem was on IRQ core or
-in the irqchip driver so I tried calling the chip's .irq_set_type function
-handler directly using the flags set by __irq_set_trigger() the first time that
-it's called from OF when the "interrupts" property is parsed.
+But after that, due a DTS pinctrl configuration the pin function was changed as
+a GPIO input and that happened before the atmel driver was probed. So when the
+driver called request_threaded_irq(), the correct flags were used but the pin
+was not configured as an IRQ anymore so IRQ were not fired.
 
-Doing that makes the device to trigger interrupts so the problem seems to be
-related to the pinctrl-exynos driver and is not in the IRQ core.
+Setting a trigger type just had the side effect of calling exynos_irq_set_type()
+which again setup the pin as an IRQ.
 
-So, this is the change I did just for testing purposes to make it work again:
+To fix the issue a variation of patch [0] will be posted that moves the IRQ
+pinmux setup from .irq_set_type to the .irq_request_resources function handler.
+That way the pin will be setup as IRQ regardless of the the trigger type [1]
+when someone calls request_[threaded]_irq().
 
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 3dc6a61..ed76b25 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1176,6 +1176,10 @@ __setup_irq(unsigned int irq, struct irq_desc *desc,
-struct irqaction *new)
-
- 			if (ret)
- 				goto out_mask;
-+		} else if (irq == 283 /* mapped IRQ number for touchpad */) {
-+			struct irq_chip *chip = desc->irq_data.chip;
-+			chip->irq_set_type(&desc->irq_data,
-+					   irq_get_trigger_type(irq));
- 		}
-
- 		desc->istate &= ~(IRQS_AUTODETECT | IRQS_SPURIOUS_DISABLED | \
-
-
-It seems as if the first call to exynos_irq_set_type() that is made by OF is a
-no-op while the second call is the one that actually setups the hw correctly.
-Does this make any sense? Maybe is related to the pin not being muxed in the
-correct function when the "interrupts" property is parsed by OF?
-
-Now I added some debug logs to see what could be different but all the variables
-have the same values in both cases:
-
-When called happens due irq_parse_and_map():
-
-irq 283 type 2 pin 1 shift 4 base 4026679296 reg_con 3588 con 32 flags 0 mask 0
-
-When called happens due request_threaded_irq():
-
-irq 283 type 2 pin 1 shift 4 base 4026679296 reg_con 3588 con 32 flags 0 mask 0
-
-I would really appreciate if someone that is more familiar with the driver or
-this chip can provide some hints.
+Only the mentioned patch fixes the issue but Tomasz said that even a call to
+gpio_direction_{input,output} can change the pin configuration so he will post
+another patch that will add a bit mask to samsung_pin_bank to prevent any pinmux
+reconfiguration.
 
 Thanks a lot and best regards,
 Javier
+
+[0]: http://thread.gmane.org/gmane.linux.kernel.samsung-soc/34259/focus=34261
+[1]: http://lxr.free-electrons.com/source/kernel/irq/manage.c#L1162
+
