@@ -1,64 +1,63 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [GIT PULL 3/5] Samsung exynos cpuidle update for v3.17
-Date: Fri, 8 Aug 2014 15:19:12 -0700
-Message-ID: <CAGa+x86XpkxEhe2D9NfFvWhTre-mAPkcsyzObb8q=Xa=Yd2Xdw@mail.gmail.com>
-References: <53C9C159.4070305@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2 1/1] Input: atmel_mxt_ts - Get IRQ edge/level flags
+ on DT booting
+Date: Sat, 09 Aug 2014 00:26:25 +0200
+Message-ID: <53E54E91.9060905@collabora.co.uk>
+References: <1407397492-17475-1-git-send-email-javier.martinez@collabora.co.uk>	<53E4D9A5.908@itdev.co.uk>	<20140808162146.GC26820@core.coreip.homeip.net>	<53E4FD1B.6060600@collabora.co.uk>	<53E5170C.10302@collabora.co.uk> <CAD=FV=WSNqjHLLbTh1LBF3RFrCnWnj498hivivcmx1SbuYp=Hw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f52.google.com ([209.85.192.52]:43713 "EHLO
-	mail-qg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757575AbaHHWTN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Aug 2014 18:19:13 -0400
-Received: by mail-qg0-f52.google.com with SMTP id f51so6815176qge.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Aug 2014 15:19:13 -0700 (PDT)
-In-Reply-To: <53C9C159.4070305@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=WSNqjHLLbTh1LBF3RFrCnWnj498hivivcmx1SbuYp=Hw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick.dyer@itdev.co.uk>, Stephen Warren <swarren@nvidia.com>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Abraham <thomas.ab@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "arm@kernel.org" <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Chander Kashyap <chander.kashyap@linaro.org>, Doug Anderson <dianders@google.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
 
-Hello,
+Hello Doug,
 
-On Fri, Jul 18, 2014 at 5:52 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> The following changes since commit 1795cd9b3a91d4b5473c97f491d63892442212ab:
->
->   Linux 3.16-rc5 (2014-07-13 14:04:33 -0700)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/exynos-cpuidle
->
-> for you to fetch changes up to fc2cac41ebbfb16da8b036cba6ec6714ab780a6d:
->
->   ARM: EXYNOS: populate suspend and powered_up callbacks for mcpm
-> (2014-07-19 03:36:00 +0900)
->
-> ----------------------------------------------------------------
-> exynos cpuidle update for v3.17
->
-> - add callbacks exynos_suspend() and exynos_powered_up()
->   for support cpuidle through mcpm
-> - skip exynos_cpuidle for exynos5420 because is uses
->   cpuidle-big-liggle generic cpuidle driver
-> - add generic functions to calculate cpu number is used
->   for pmu and this is required for exynos5420 multi-cluster
-> - add of_device_id structure for big.LITTLE cpuidle and
->   add "samsung,exynos5420" compatible string for exynos5420
+On 08/08/2014 10:54 PM, Doug Anderson wrote:
+> Hi,
+>>
+>> To fix the issue a variation of patch [0] will be posted that moves the IRQ
+>> pinmux setup from .irq_set_type to the .irq_request_resources function handler.
+>> That way the pin will be setup as IRQ regardless of the the trigger type [1]
+>> when someone calls request_[threaded]_irq().
+>>
+>> Only the mentioned patch fixes the issue but Tomasz said that even a call to
+>> gpio_direction_{input,output} can change the pin configuration so he will post
+>> another patch that will add a bit mask to samsung_pin_bank to prevent any pinmux
+>> reconfiguration.
+> 
+> Would just making a device tree change fix this?  AKA for the pin, do:
+> 
+>   samsung,pin-function = <0xf>;
+> 
 
-I'm curious what platforms this is expected to work on, and where it's
-been tested.
+Yes, when configuring the pin as 0xf (GPIO interrupt) instead of 0x0 (GPIO
+input) the issue is not present indeed. So after Nick answer my question about
+what I got wrong with the "linux,gpio-keymap" property, I will change the pin
+function when re-posing the DTS changes for the atmel touchpad.
 
-I tried it on exynos5800-peach-pi (chromebook2) and it hangs up (no
-kernel messages) shortly after the driver loads, and never finishes to
-boot.
+> I have some vague recollection that I set interrupts to pin-function
+> "0" by default for some reason (assuming they would go to 0xf when
+> interrupts were enabled).  ...but I can't for the life of me remember
+> if it was a good reason or just seemed like the right thing to do.
+> 
 
-I needed an extra compatible entry for the 5800 in the driver for the
-driver to load, which suggests it hasn't been tested on 5800, but at
-least in theory, this should be compatible with the 542x, right?
+It would be great to know if there is a good reason. I see indeed that all
+pinctrl setup in the Peach Pit/Pi and Snow DTS that involves interrupts are
+using 0x0 as the pin function. Since as Tomasz explained Samsung SoC makes a
+difference between GPIO-IRQ and GPIO input I guess that it's better to change
+those to 0xf instead. What do you think?
 
-For testing, I tried today's linux-next and arm-soc/for-next.
+Regardless of this though I think that both the patch to move the IRQ
+pinmux setup from .irq_set_type to the .irq_request_resources and the patch to
+to prevent any pinmux reconfiguration are good improvements to avoid future
+issues like the one we found here.
 
-Kevin
+> -Doug
+> 
+
+Best regards,
+Javier
