@@ -1,76 +1,61 @@
-From: Nick Dyer <nick.dyer-8YpZQSjhsQH10XsdtD+oqA@public.gmane.org>
-Subject: Re: [PATCH v2 1/1] Input: atmel_mxt_ts - Get IRQ edge/level flags
- on DT booting
-Date: Fri, 08 Aug 2014 15:07:33 +0100
-Message-ID: <53E4D9A5.908@itdev.co.uk>
-References: <1407397492-17475-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [RFC PATCH v3] reset: Add a defer reset object to send board
+ specific reset
+Date: Fri, 08 Aug 2014 16:23:09 +0200
+Message-ID: <1407507789.3354.20.camel@paszta.hi.pengutronix.de>
+References: <1403098673-3058-1-git-send-email-houcheng@gmail.com>
+	 <CACRpkdYfu8HmVCkn9JFh+YP5OPdr8o9nTfoCnkJ7SSpGoenQUg@mail.gmail.com>
+	 <20140708080535.GJ13423@lukather>
+	 <CACRpkdbFPAsu1gE-AVyD=-RxyE7mUJPSbFga7HLh0mxjE-mQuQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1407397492-17475-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Yufeng Shen <miletus-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdbFPAsu1gE-AVyD=-RxyE7mUJPSbFga7HLh0mxjE-mQuQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Houcheng Lin <houcheng@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Stephen Gallimore <stephen.gallimore@st.com>, Srinivas KANDAGATLA <srinivas.kandagatla@st.com>, Ulf Hansson <ulf.hansson@linaro.org>, sre@kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Vikas Sajjan <vikas.sajjan@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/08/14 08:44, Javier Martinez Canillas wrote:
-> The Atmel maXTouch driver assumed that the IRQ type flags will
-> always be passed using platform data but this is not true when
-> booting using Device Trees. In these setups the interrupt type
-> was ignored by the driver when requesting an IRQ.
-> 
-> This means that it will fail if a machine specified other type
-> than IRQ_TYPE_NONE. The right approach is to get the IRQ flags
-> that was parsed by OF from the "interrupt" Device Tree propery.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Am Dienstag, den 08.07.2014, 11:38 +0200 schrieb Linus Walleij:
+> On Tue, Jul 8, 2014 at 10:05 AM, Maxime Ripard
+> <maxime.ripard@free-electrons.com> wrote:
+> > On Tue, Jul 08, 2014 at 09:52:03AM +0200, Linus Walleij wrote:
+> >> On Wed, Jun 18, 2014 at 3:37 PM, Houcheng Lin <houcheng@gmail.com> wrote:
+> >>
+> >> > The Problem
+> >> > -----------
+> >> > The reset signal on a hardware board is send either:
+> >> >     - during machine initialization
+> >> >     - during bus master's initialization
+> >>
+> >> I just thought about this a bit, since there isn't already a generic GPIO
+> >> reset driver, just call this drivers/reset/reset-gpio.c and make the
+> >> ability to deferral just a configuration detail of the GPIO reset driver.
+> >
+> > Philipp has been working on one for quite some time. See
+> > http://www.spinics.net/lists/arm-kernel/msg321927.html
+> >
+> > However, it seems to progress slowly, and we don't seem to be able to
+> > reach a consensus here.
 
-I'm happy for this to go in if Dmitry will accept it. It does seem to be a
-quirk of some platforms that it is necessary, but it's only one line.
+Mostly because Maxime and I seem to have a completely different opinion
+and nobody else argued one way or the other.
 
-Thanks for spending so much time debugging this.
+> > If you ask me, having to set a few extra properties like this just
+> > advocates for a regular reset driver and DT node for the reset GPIO,
+> > but I'm pretty sure Philipp will feel otherwise :)
+> 
+> Hm haha yeah let's fight it out :-)
+> 
+> This is not my subsystem so I'm getting some popcorn.
 
-Signed-off-by: Nick Dyer <nick.dyer-8YpZQSjhsQH10XsdtD+oqA@public.gmane.org>
+Sorry about missing this earlier, I hope the popcorn is not stale.
 
-> ---
-> 
-> This patch was first sent as a part of a two part series along
-> with [PATCH 2/2] Input: atmel_mxt_ts - Add keycodes array example.
-> 
-> But there are no dependencies between these two patches so there
-> is no need to resend that one with no changes for v2.
-> 
-> Changes since v1:
->  - Assign flags to pdata->irqflags in mxt_parse_dt() instead of probe().
->    Suggested by Tomasz Figa.
-> 
->  drivers/input/touchscreen/atmel_mxt_ts.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index 03b8571..5c8cbd3 100644
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -22,6 +22,7 @@
->  #include <linux/i2c.h>
->  #include <linux/i2c/atmel_mxt_ts.h>
->  #include <linux/input/mt.h>
-> +#include <linux/irq.h>
->  #include <linux/interrupt.h>
->  #include <linux/of.h>
->  #include <linux/slab.h>
-> @@ -2093,6 +2094,8 @@ static struct mxt_platform_data *mxt_parse_dt(struct i2c_client *client)
->  	if (!pdata)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	pdata->irqflags = irq_get_trigger_type(client->irq);
-> +
->  	if (of_find_property(client->dev.of_node, "linux,gpio-keymap",
->  			     &proplen)) {
->  		pdata->t19_num_keys = proplen / sizeof(u32);
-> 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I think a reset that needs to be released before a fixed device appears
+on the bus, should be handled by the bus driver. The reset framework
+could be made to help with that, but I don't think a separate entity
+that scans the whole device tree itself is the right solution.
+
+regards
+Philipp
