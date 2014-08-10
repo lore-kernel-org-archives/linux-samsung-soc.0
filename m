@@ -1,53 +1,160 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v5][next-20140804] ARM: EXYNOS: Fix suspend/resume
- sequences
-Date: Sat, 9 Aug 2014 08:24:52 -0700
-Message-ID: <20140809152452.GC5053@quad.lixom.net>
-References: <6342975.PHG2cX2jjn@amdc1032>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [PATCH v5 05/10] ARM: dts: Move dp_hpd from exynos5250 into smdk5250
+ and snow
+Date: Sun, 10 Aug 2014 10:15:19 +0100
+Message-ID: <53E73827.7000703@suse.de>
+References: <1406868897-26874-1-git-send-email-afaerber@suse.de> <1406868897-26874-6-git-send-email-afaerber@suse.de> <CAD=FV=WhocoyQ=rU7dU1EPM-PAQq06gg9HhamSOm+BgMDeM8NA@mail.gmail.com> <53DBFE8A.7020505@suse.de> <53DBFF22.3010905@gmail.com> <000e01cfb0a7$25d0ed70$7172c850$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:44542 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751700AbaHIPYW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 9 Aug 2014 11:24:22 -0400
-Received: by mail-pd0-f169.google.com with SMTP id y10so8532651pdj.28
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 09 Aug 2014 08:24:22 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <6342975.PHG2cX2jjn@amdc1032>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <000e01cfb0a7$25d0ed70$7172c850$%han@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Doug Anderson' <dianders@chromium.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 'Stephan van Schaik' <stephan@synkhronix.com>, 'Vincent Palatin' <vpalatin@chromium.org>, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Tomasz Figa' <t.figa@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Russell King' <linux@arm.linux.org.uk>, 'open list' <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org
 
-On Tue, Aug 05, 2014 at 02:43:10PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> From: Tomasz Figa <t.figa@samsung.com>
-> 
-> Due to recent consolidation of Exynos suspend and cpuidle code, some
-> parts of suspend and resume sequences are executed two times, once from
-> exynos_pm_syscore_ops and then from exynos_cpu_pm_notifier() and thus it
-> breaks suspend, at least on Exynos4-based boards. In addition, simple
-> core power down from a cpuidle driver could, in case of CPU 0 could
-> result in calling functions that are specific to suspend and deeper idle
-> states.
-> 
-> This patch fixes the issue by moving those operations outside the CPU PM
-> notifier into suspend and AFTR code paths. This leads to a bit of code
-> duplication, but allows additional code simplification, so in the end
-> more code is removed than added.
-> 
-> Fixes: 85f9f90808b4 ("ARM: EXYNOS: Use the cpu_pm notifier for pm")
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Olof Johansson <olof@lixom.net>
-> Cc: arm@kernel.org
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> [b.zolnierkie: ported patch over current changes]
-> [b.zolnierkie: fixed exynos_aftr_finisher() return value]
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Hi Jingoo,
 
-Applied to fixes.
+Am 05.08.2014 13:16, schrieb Jingoo Han:
+> On Saturday, August 02, 2014 5:57 AM, Tomasz Figa wrote:
+>> On 01.08.2014 22:54, Andreas F=C3=A4rber wrote:
+>>> Am 01.08.2014 22:33, schrieb Doug Anderson:
+>>>> On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber <afaerber@sus=
+e.de> wrote:
+>>>>> Spring uses a different GPIO, so this is not a generic SoC piece.
+>>>>>
+>>>>> Suggested-by: Tomasz Figa <t.figa@samsung.com>
+>>>>> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+>>>>> ---
+>>>>>  v5: New (Tomasz Figa)
+>>>>>  Frees dp_hpd for Spring.
+>>>>>
+>>>>>  arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 7 -------
+>>>>>  arch/arm/boot/dts/exynos5250-smdk5250.dts | 9 +++++++++
+>>>>>  arch/arm/boot/dts/exynos5250-snow.dts     | 7 +++++++
+>>>>>  3 files changed, 16 insertions(+), 7 deletions(-)
+>>>>>
+>>>>> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm=
+/boot/dts/exynos5250-pinctrl.dtsi
+>>>>> index 886cfca044ac..ed0e5230514b 100644
+>>>>> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>>> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+>>>>> @@ -581,13 +581,6 @@
+>>>>>                         samsung,pin-pud =3D <0>;
+>>>>>                         samsung,pin-drv =3D <0>;
+>>>>>                 };
+>>>>> -
+>>>>> -               dp_hpd: dp_hpd {
+>>>>> -                       samsung,pins =3D "gpx0-7";
+>>>>> -                       samsung,pin-function =3D <3>;
+>>>>> -                       samsung,pin-pud =3D <0>;
+>>>>> -                       samsung,pin-drv =3D <0>;
+>>>>> -               };
+>>>>>         };
+>>>>>
+>>>>>         pinctrl@13400000 {
+>>>>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm=
+/boot/dts/exynos5250-smdk5250.dts
+>>>>> index aaa055ac0fe3..5d30fe1dcda4 100644
+>>>>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>>>>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>>>>> @@ -414,3 +414,12 @@
+>>>>>                 };
+>>>>>         };
+>>>>>  };
+>>>>> +
+>>>>> +&pinctrl_0 {
+>>>>> +       dp_hpd: dp_hpd {
+>>>>> +               samsung,pins =3D "gpx0-7";
+>>>>> +               samsung,pin-function =3D <3>;
+>>>>> +               samsung,pin-pud =3D <0>;
+>>>>> +               samsung,pin-drv =3D <0>;
+>>>>> +       };
+>>>>> +};
+>>>>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boo=
+t/dts/exynos5250-snow.dts
+>>>>> index c4b0c73c736d..a9a2f2743794 100644
+>>>>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+>>>>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+>>>>> @@ -547,6 +547,13 @@
+>>>>>  };
+>>>>>
+>>>>>  &pinctrl_0 {
+>>>>> +       dp_hpd: dp_hpd {
+>>>>> +               samsung,pins =3D "gpx0-7";
+>>>>> +               samsung,pin-function =3D <3>;
+>>>>> +               samsung,pin-pud =3D <0>;
+>>>>> +               samsung,pin-drv =3D <0>;
+>>>>> +       };
+>>>>> +
+>>>>
+>>>> NAK.  dp_hpd is a generic SoC piece.  Pin function 0 and 1 are GPI=
+Os.
+>>>> Pin function 3 is special function.  This pin _is_ the hot plug de=
+tect
+>>>> pin for display port.  When it's set as special function 3 it goes
+>>>> straight into the hot plug logic of the display port controller.
+>>>>
+>>>> Spring may have had its reasons to detect hot plug events on a GPI=
+O
+>>>> instead of using this pin, but that doesn't make this pin any less=
+ the
+>>>> "hot plug pin".
+>>>
+>>> Please advise how to handle it then: Should there be two different
+>>> pinctrl entries (if so, how should it be named?),
+>>
+>> IMHO this is the right way. Just name the GPIO variant dp_hpd_gpio.
+>=20
+> Hi Andreas F=C3=A4rber,
+>=20
+> I agree with Tomasz Figa and Doug Anderson.
+> Please refer to the following.
+>=20
+> 1. case: Standard HPD pin is used. (smdk5420)
+> arch/arm/boot/dts/exynos5420-pinctrl.dts
+> 	pinctrl@13400000 {
+> 		dp_hpd: dp_hpd {
+> 			samsung,pins =3D "gpx0-7";
+> 			samsung,pin-function =3D <3>;
+> 			samsung,pin-pud =3D <0>;
+> 			samsung,pin-drv =3D <0>;
+> 		};
+> arch/arm/boot/dts/exynos5420-smdk5420.dts
+> 	dp-controller@145B0000 {
+> 		pinctrl-names =3D "default";
+> 		pinctrl-0 =3D <&dp_hpd>;
+> 		...
+>=20
+> 2. case: non-standard HPD pin such as GPIO is used. (peach pit)
+> arch/arm/boot/dts/exynos5420-peach-pit.dts
+> 	pinctrl@13400000 {
+> 		dp_hpd_gpio: dp_hpd_gpio {
+> 			samsung,pins =3D "gpx2-6";
+> 			samsung,pin-function =3D <0>;
+> 			samsung,pin-pud =3D <3>;
+> 			samsung,pin-drv =3D <0>;
+> 		};
+> 	dp-controller@145B0000 {
+> 		pinctrl-names =3D "default";
+> 		pinctrl-0 =3D <&dp_hpd_gpio>;
+> 		...
+> 		samsung,hpd-gpio =3D <&gpx2 6 0>;
+>=20
+> So, you need to follow the second case.
+> "dp_hpd_gpio" can be used for Spring board.
 
+I believe I already did so in v6 [0]? Please take a look there and let
+me know if you still need anything changed. The label name seems
+identical, whereas for the node name I adopted the dashes convention.
 
--Olof
+Thanks,
+Andreas
+
+[0] https://patchwork.kernel.org/patch/4664691/
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
