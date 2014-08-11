@@ -1,145 +1,189 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCHv10 2/5] mmc: dw_mmc: modify the dt-binding for removing
- slot-node and supports-highspeed
-Date: Mon, 11 Aug 2014 11:46:02 +0200
-Message-ID: <CAPDyKFqnJhai_ibZqmWd_1e6fEdJ0T3TKg9jeFrbE6nhPSDjSQ@mail.gmail.com>
-References: <1407397082-32495-1-git-send-email-jh80.chung@samsung.com>
-	<1407397082-32495-3-git-send-email-jh80.chung@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH v5 05/10] ARM: dts: Move dp_hpd from exynos5250 into
+ smdk5250 and snow
+Date: Mon, 11 Aug 2014 19:24:12 +0900
+Message-ID: <003601cfb54e$655130d0$2ff39270$%han@samsung.com>
+References: <1406868897-26874-1-git-send-email-afaerber@suse.de>
+ <1406868897-26874-6-git-send-email-afaerber@suse.de>
+ <CAD=FV=WhocoyQ=rU7dU1EPM-PAQq06gg9HhamSOm+BgMDeM8NA@mail.gmail.com>
+ <53DBFE8A.7020505@suse.de> <53DBFF22.3010905@gmail.com>
+ <000e01cfb0a7$25d0ed70$7172c850$%han@samsung.com> <53E73827.7000703@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1407397082-32495-3-git-send-email-jh80.chung@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, dinguyen@altera.com, Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:23636 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752040AbaHKKYP convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Aug 2014 06:24:15 -0400
+In-reply-to: <53E73827.7000703@suse.de>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?Q?'Andreas_F=C3=A4rber'?= <afaerber@suse.de>
+Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Doug Anderson' <dianders@chromium.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 'Stephan van Schaik' <stephan@synkhronix.com>, 'Vincent Palatin' <vpalatin@chromium.org>, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Tomasz Figa' <t.figa@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Russell King' <linux@arm.linux.org.uk>, 'open list' <linux-kernel@vger.kernel.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On 7 August 2014 09:37, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> Almost all SoCs use one slot per host controller.
-> (Even if controller can support the multiple slot, Recommend to use one slot per host controller.)
-> Don't use the slot-node and deprecate the "supports-highspeed" property.
-> Instead, use the cap-mmc/sd-highspeed.
->
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> Reviewed-by: Tushar Behera <trblinux@gmail.com>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Tested-by: Sachin Kamat <sachin.kamat@samsung.com>
-> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
+On Sunday, August 10, 2014 6:15 PM, Andreas Farber wrote:
+> Am 05.08.2014 13:16, schrieb Jingoo Han:
+> > On Saturday, August 02, 2014 5:57 AM, Tomasz Figa wrote:
+> >> On 01.08.2014 22:54, Andreas F=C3=A4rber wrote:
+> >>> Am 01.08.2014 22:33, schrieb Doug Anderson:
+> >>>> On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber <afaerber@s=
+use.de> wrote:
+> >>>>> Spring uses a different GPIO, so this is not a generic SoC piec=
+e.
+> >>>>>
+> >>>>> Suggested-by: Tomasz Figa <t.figa@samsung.com>
+> >>>>> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+> >>>>> ---
+> >>>>>  v5: New (Tomasz Figa)
+> >>>>>  Frees dp_hpd for Spring.
+> >>>>>
+> >>>>>  arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 7 -------
+> >>>>>  arch/arm/boot/dts/exynos5250-smdk5250.dts | 9 +++++++++
+> >>>>>  arch/arm/boot/dts/exynos5250-snow.dts     | 7 +++++++
+> >>>>>  3 files changed, 16 insertions(+), 7 deletions(-)
+> >>>>>
+> >>>>> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/a=
+rm/boot/dts/exynos5250-
+> pinctrl.dtsi
+> >>>>> index 886cfca044ac..ed0e5230514b 100644
+> >>>>> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> >>>>> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> >>>>> @@ -581,13 +581,6 @@
+> >>>>>                         samsung,pin-pud =3D <0>;
+> >>>>>                         samsung,pin-drv =3D <0>;
+> >>>>>                 };
+> >>>>> -
+> >>>>> -               dp_hpd: dp_hpd {
+> >>>>> -                       samsung,pins =3D "gpx0-7";
+> >>>>> -                       samsung,pin-function =3D <3>;
+> >>>>> -                       samsung,pin-pud =3D <0>;
+> >>>>> -                       samsung,pin-drv =3D <0>;
+> >>>>> -               };
+> >>>>>         };
+> >>>>>
+> >>>>>         pinctrl@13400000 {
+> >>>>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/a=
+rm/boot/dts/exynos5250-
+> smdk5250.dts
+> >>>>> index aaa055ac0fe3..5d30fe1dcda4 100644
+> >>>>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> >>>>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> >>>>> @@ -414,3 +414,12 @@
+> >>>>>                 };
+> >>>>>         };
+> >>>>>  };
+> >>>>> +
+> >>>>> +&pinctrl_0 {
+> >>>>> +       dp_hpd: dp_hpd {
+> >>>>> +               samsung,pins =3D "gpx0-7";
+> >>>>> +               samsung,pin-function =3D <3>;
+> >>>>> +               samsung,pin-pud =3D <0>;
+> >>>>> +               samsung,pin-drv =3D <0>;
+> >>>>> +       };
+> >>>>> +};
+> >>>>> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/b=
+oot/dts/exynos5250-snow.dts
+> >>>>> index c4b0c73c736d..a9a2f2743794 100644
+> >>>>> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> >>>>> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> >>>>> @@ -547,6 +547,13 @@
+> >>>>>  };
+> >>>>>
+> >>>>>  &pinctrl_0 {
+> >>>>> +       dp_hpd: dp_hpd {
+> >>>>> +               samsung,pins =3D "gpx0-7";
+> >>>>> +               samsung,pin-function =3D <3>;
+> >>>>> +               samsung,pin-pud =3D <0>;
+> >>>>> +               samsung,pin-drv =3D <0>;
+> >>>>> +       };
+> >>>>> +
+> >>>>
+> >>>> NAK.  dp_hpd is a generic SoC piece.  Pin function 0 and 1 are G=
+PIOs.
+> >>>> Pin function 3 is special function.  This pin _is_ the hot plug =
+detect
+> >>>> pin for display port.  When it's set as special function 3 it go=
+es
+> >>>> straight into the hot plug logic of the display port controller.
+> >>>>
+> >>>> Spring may have had its reasons to detect hot plug events on a G=
+PIO
+> >>>> instead of using this pin, but that doesn't make this pin any le=
+ss the
+> >>>> "hot plug pin".
+> >>>
+> >>> Please advise how to handle it then: Should there be two differen=
+t
+> >>> pinctrl entries (if so, how should it be named?),
+> >>
+> >> IMHO this is the right way. Just name the GPIO variant dp_hpd_gpio=
+=2E
+> >
+> > Hi Andreas F=C3=A4rber,
+> >
+> > I agree with Tomasz Figa and Doug Anderson.
+> > Please refer to the following.
+> >
+> > 1. case: Standard HPD pin is used. (smdk5420)
+> > arch/arm/boot/dts/exynos5420-pinctrl.dts
+> > 	pinctrl@13400000 {
+> > 		dp_hpd: dp_hpd {
+> > 			samsung,pins =3D "gpx0-7";
+> > 			samsung,pin-function =3D <3>;
+> > 			samsung,pin-pud =3D <0>;
+> > 			samsung,pin-drv =3D <0>;
+> > 		};
+> > arch/arm/boot/dts/exynos5420-smdk5420.dts
+> > 	dp-controller@145B0000 {
+> > 		pinctrl-names =3D "default";
+> > 		pinctrl-0 =3D <&dp_hpd>;
+> > 		...
+> >
+> > 2. case: non-standard HPD pin such as GPIO is used. (peach pit)
+> > arch/arm/boot/dts/exynos5420-peach-pit.dts
+> > 	pinctrl@13400000 {
+> > 		dp_hpd_gpio: dp_hpd_gpio {
+> > 			samsung,pins =3D "gpx2-6";
+> > 			samsung,pin-function =3D <0>;
+> > 			samsung,pin-pud =3D <3>;
+> > 			samsung,pin-drv =3D <0>;
+> > 		};
+> > 	dp-controller@145B0000 {
+> > 		pinctrl-names =3D "default";
+> > 		pinctrl-0 =3D <&dp_hpd_gpio>;
+> > 		...
+> > 		samsung,hpd-gpio =3D <&gpx2 6 0>;
+> >
+> > So, you need to follow the second case.
+> > "dp_hpd_gpio" can be used for Spring board.
+>=20
+> I believe I already did so in v6 [0]? Please take a look there and le=
+t
+> me know if you still need anything changed. The label name seems
+> identical, whereas for the node name I adopted the dashes convention.
 
-Thanks! Applied for next!
+OK, I checked v6 patches.
+I have no objection. It looks good.
+Thank you.
 
-Kind regards
-Uffe
+Best regards,
+Jingoo Han
 
-
-
-> ---
->  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   17 +++++------------
->  .../devicetree/bindings/mmc/k3-dw-mshc.txt         |   12 +++++-------
->  .../devicetree/bindings/mmc/synopsys-dw-mshc.txt   |   12 +++++-------
->  3 files changed, 15 insertions(+), 26 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> index 532b1d4..6cd3525 100644
-> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> @@ -46,13 +46,14 @@ Required Properties:
->        - if CIU clock divider value is 0 (that is divide by 1), both tx and rx
->          phase shift clocks should be 0.
->
-> -Required properties for a slot:
-> +Required properties for a slot (Deprecated - Recommend to use one slot per host):
->
->  * gpios: specifies a list of gpios used for command, clock and data bus. The
->    first gpio is the command line and the second gpio is the clock line. The
->    rest of the gpios (depending on the bus-width property) are the data lines in
->    no particular order. The format of the gpio specifier depends on the gpio
->    controller.
-> +(Deprecated - Refer to Documentation/devicetree/binding/pinctrl/samsung-pinctrl.txt)
->
->  Example:
->
-> @@ -69,21 +70,13 @@ Example:
->
->         dwmmc0@12200000 {
->                 num-slots = <1>;
-> -               supports-highspeed;
-> +               cap-mmc-highspeed;
-> +               cap-sd-highspeed;
->                 broken-cd;
->                 fifo-depth = <0x80>;
->                 card-detect-delay = <200>;
->                 samsung,dw-mshc-ciu-div = <3>;
->                 samsung,dw-mshc-sdr-timing = <2 3>;
->                 samsung,dw-mshc-ddr-timing = <1 2>;
-> -
-> -               slot@0 {
-> -                       reg = <0>;
-> -                       bus-width = <8>;
-> -                       gpios = <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
-> -                               <&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
-> -                               <&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>,
-> -                               <&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
-> -                               <&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>;
-> -               };
-> +               bus-width = <8>;
->         };
-> diff --git a/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt
-> index e5bc49f..3b35449 100644
-> --- a/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/k3-dw-mshc.txt
-> @@ -34,13 +34,11 @@ Example:
->                 num-slots = <1>;
->                 vmmc-supply = <&ldo12>;
->                 fifo-depth = <0x100>;
-> -               supports-highspeed;
->                 pinctrl-names = "default";
->                 pinctrl-0 = <&sd_pmx_pins &sd_cfg_func1 &sd_cfg_func2>;
-> -               slot@0 {
-> -                       reg = <0>;
-> -                       bus-width = <4>;
-> -                       disable-wp;
-> -                       cd-gpios = <&gpio10 3 0>;
-> -               };
-> +               bus-width = <4>;
-> +               disable-wp;
-> +               cd-gpios = <&gpio10 3 0>;
-> +               cap-mmc-highspeed;
-> +               cap-sd-highspeed;
->         };
-> diff --git a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-> index 2d4a725..346c609 100644
-> --- a/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/synopsys-dw-mshc.txt
-> @@ -67,7 +67,8 @@ Optional properties:
->  * card-detect-delay: Delay in milli-seconds before detecting card after card
->    insert event. The default value is 0.
->
-> -* supports-highspeed: Enables support for high speed cards (up to 50MHz)
-> +* supports-highspeed (DEPRECATED): Enables support for high speed cards (up to 50MHz)
-> +                          (use "cap-mmc-highspeed" or "cap-sd-highspeed" instead)
->
->  * broken-cd: as documented in mmc core bindings.
->
-> @@ -98,14 +99,11 @@ board specific portions as listed below.
->                 clock-frequency = <400000000>;
->                 clock-freq-min-max = <400000 200000000>;
->                 num-slots = <1>;
-> -               supports-highspeed;
->                 broken-cd;
->                 fifo-depth = <0x80>;
->                 card-detect-delay = <200>;
->                 vmmc-supply = <&buck8>;
-> -
-> -               slot@0 {
-> -                       reg = <0>;
-> -                       bus-width = <8>;
-> -               };
-> +               bus-width = <8>;
-> +               cap-mmc-highspeed;
-> +               cap-sd-highspeed;
->         };
+>=20
+> Thanks,
+> Andreas
+>=20
+> [0] https://patchwork.kernel.org/patch/4664691/
+>=20
 > --
-> 1.7.9.5
->
+> SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+> GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=
+=C3=BCrnberg
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
