@@ -1,354 +1,244 @@
-From: Thierry Reding <thierry.reding@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH v2 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer
  support
-Date: Mon, 11 Aug 2014 09:24:17 +0200
-Message-ID: <20140811072414.GA30762@ulmo>
+Date: Mon, 11 Aug 2014 16:35:46 +0900
+Message-ID: <53E87252.60700@samsung.com>
 References: <20140807110925.GA31594@ulmo.nvidia.com>
- <53E379A8.1020506@samsung.com>
- <20140807131713.GB1540@ulmo.nvidia.com>
- <53E38191.1050308@samsung.com>
- <20140807135500.GA27417@ulmo.nvidia.com>
- <53E42BCB.5090608@samsung.com>
- <20140808070311.GA5387@ulmo>
- <53E47E23.1050302@samsung.com>
- <20140808095507.GE15852@ulmo>
- <53E85259.2000204@samsung.com>
+ <53E379A8.1020506@samsung.com> <20140807131713.GB1540@ulmo.nvidia.com>
+ <53E38191.1050308@samsung.com> <20140807135500.GA27417@ulmo.nvidia.com>
+ <53E42BCB.5090608@samsung.com> <20140808070311.GA5387@ulmo>
+ <53E47E23.1050302@samsung.com> <20140808095507.GE15852@ulmo>
+ <53E85259.2000204@samsung.com> <20140811072414.GA30762@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f173.google.com ([74.125.82.173]:37617 "EHLO
-	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752030AbaHKHYW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Aug 2014 03:24:22 -0400
-Received: by mail-we0-f173.google.com with SMTP id q58so8219586wes.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Aug 2014 00:24:20 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <53E85259.2000204@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20140811072414.GA30762@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, treding@nvidia.com, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: treding@nvidia.com, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-
---HcAYCG3uE/tztfnV
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Aug 11, 2014 at 02:19:21PM +0900, Inki Dae wrote:
-> On 2014=EB=85=84 08=EC=9B=94 08=EC=9D=BC 18:55, Thierry Reding wrote:
-> > On Fri, Aug 08, 2014 at 04:37:07PM +0900, Inki Dae wrote:
-> >> On 2014=EB=85=84 08=EC=9B=94 08=EC=9D=BC 16:03, Thierry Reding wrote:
-> >>> On Fri, Aug 08, 2014 at 10:45:47AM +0900, Inki Dae wrote:
-> >>>> On 2014=EB=85=84 08=EC=9B=94 07=EC=9D=BC 22:55, Thierry Reding wrote:
-> >>>>> On Thu, Aug 07, 2014 at 10:39:29PM +0900, Inki Dae wrote:
-> >>>>>> On 2014=EB=85=84 08=EC=9B=94 07=EC=9D=BC 22:17, Thierry Reding wro=
-te:
-> >>>>>>> On Thu, Aug 07, 2014 at 10:05:44PM +0900, Inki Dae wrote:
-> >>>>>>>> On 2014=EB=85=84 08=EC=9B=94 07=EC=9D=BC 20:09, Thierry Reding w=
-rote:
-> >>>>>>>>> On Thu, Aug 07, 2014 at 07:49:03PM +0900, Inki Dae wrote:
-> >>>>>>>>>> On 2014=EB=85=84 08=EC=9B=94 07=EC=9D=BC 18:09, Thierry Reding=
- wrote:
-> >>>>>>>>>>> On Thu, Aug 07, 2014 at 04:51:18PM +0900, Inki Dae wrote:
-> >>>>>>>>>>>> On 2014=EB=85=84 08=EC=9B=94 07=EC=9D=BC 15:58, Thierry Redi=
-ng wrote:
-> >>>>>>>>>>>>> On Thu, Aug 07, 2014 at 02:09:19AM +0900, Inki Dae wrote:
-> >>>>>>>>>>>>>> 2014-08-06 16:43 GMT+09:00 Thierry Reding <thierry.reding@=
-gmail.com>:
-> >>>>>>>>>>> [...]
-> >>>>>>>>>>>>>>> As far as I can tell non-continuous mode simply means tha=
-t the host can
-> >>>>>>>>>>>>>>> turn off the HS clock after a high-speed transmission. I =
-think Andrzej
-> >>>>>>>>>>>>>>> mentioned this already in another subthread, but this is =
-an optional
-> >>>>>>>>>>>>>>> mode that peripherals can support if they have extra circ=
-uitry that
-> >>>>>>>>>>>>>>> provides an internal clock. Peripherals that don't have s=
-uch circuitry
-> >>>>>>>>>>>>>>> may rely on the HS clock to perform in between transmissi=
-ons and
-> >>>>>>>>>>>>>>> therefore require the HS clock to be always on (continuou=
-s mode). That's
-> >>>>>>>>>>>>>>> what the MIPI_DSI_CLOCK_NON_CONTINUOUS flag is: it advert=
-ises that the
-> >>>>>>>>>>>>>>> peripheral supports non-continuous mode and therefore the=
- host can turn
-> >>>>>>>>>>>>>>> the HS clock off after high-speed transmissions.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> What I don't make sure is this sentence. With
-> >>>>>>>>>>>>>> MIPI_DSI_CLOCK_NON_CONTIUOUS flag, I guess two possible op=
-erations.
-> >>>>>>>>>>>>>> One is,
-> >>>>>>>>>>>>>> 1. host controller will generates signals if a bit of a re=
-gister
-> >>>>>>>>>>>>>> related to non-contiguous clock mode is set or unset.
-> >>>>>>>>>>>>>> 2. And then video data is transmitted to panel in HS mode.
-> >>>>>>>>>>>>>> 3. And then D-PHY detects LP-11 signal (positive and negat=
-ive lane all
-> >>>>>>>>>>>>>> are high).
-> >>>>>>>>>>>>>> 4. And then D-PHY disables HS clock of host controller.
-> >>>>>>>>>>>>>> 5. At this time, operation mode of host controller becomes=
- LPM.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> Other is,
-> >>>>>>>>>>>>>> 1. host controller will generates signals if a bit of a re=
-gister
-> >>>>>>>>>>>>>> related to non-contiguous clock mode is set or unset.
-> >>>>>>>>>>>>>> 2. And then D-PHY detects LP-11 signal (positive and negat=
-ive lane all
-> >>>>>>>>>>>>>> are high).
-> >>>>>>>>>>>>>> 3. And then video data is transmitted to panel in LPM.
-> >>>>>>>>>>>>>> 4. At this time, operation mode of host controller becomes=
- LPM.
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> It seems that you says latter case.
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> No. High speed clock and low power mode are orthogonal. Non=
--continuous
-> >>>>>>>>>>>>> mode simply means that the clock lane enters LP-11 between =
-HS
-> >>>>>>>>>>>>> transmissions (see 5.6 "Clock Management" of the DSI specif=
-ication).
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> It seems that clock lane enters LP-11 regardless of HS clock=
- enabled if
-> >>>>>>>>>>>> non-continous mode is used. Right?
-> >>>>>>>>>>>
-> >>>>>>>>>>> No, I think as long as HS clock is enabled the clock lane won=
-'t enter
-> >>>>>>>>>>> LP-11. Non-continuous mode means that the controller can disa=
-ble the HS
-> >>>>>>>>>>> clock between HS transmissions. So in non-continuous mode the=
- clock lane
-> >>>>>>>>>>> can enter LP-11 because the controller disables the HS clock.
-> >>>>>>>>>>
-> >>>>>>>>>> It makes me a little bit confusing. You said "if HS clock is e=
-nabled,
-> >>>>>>>>>> the the clock lane won't enter LP-11" But you said again "the =
-clock lane
-> >>>>>>>>>> can enter LP-11 because the controller disables the HS clock" =
-What is
-> >>>>>>>>>> the meaning?
-> >>>>>>>>>
-> >>>>>>>>> It means that if the HS clock is enabled, then the clock lane i=
-s not in
-> >>>>>>>>> LP-11. When the HS clock stops, then the clock lane enters LP-1=
-1.
-> >>>>>>>>>
-> >>>>>>>>>>> In continuous mode, then the clock will never be disabled, he=
-nce the
-> >>>>>>>>>>> clock lane will never enter LP-11.
-> >>>>>>>>>>>
-> >>>>>>>>>>>> And also it seems that non-continous mode is different from =
-LPM at all
-> >>>>>>>>>>>> because with non-continuous mode, command data is transmitte=
-d to panel
-> >>>>>>>>>>>> in HS mode, but with LPM, command data is transmitted to pan=
-el in LP
-> >>>>>>>>>>>> mode. Also right?
-> >>>>>>>>>>>
-> >>>>>>>>>>> No. I think you can send command data to the peripheral in lo=
-w power
-> >>>>>>>>>>> mode in both continuous and non-continuous clock modes.
-> >>>>>>>>>>>
-> >>>>>>>>>>>> If so, shouldn't the host driver disable HS clock, in case o=
-f LP mode,
-> >>>>>>>>>>>> before the host driver transmits command data?
-> >>>>>>>>>>>
-> >>>>>>>>>>> No. If the peripheral doesn't support non-continuous mode, th=
-en the HS
-> >>>>>>>>>>> clock must never be turned off. On the other hand, if the per=
-ipheral
-> >>>>>>>>>>> supports non-continuous mode, then the DSI host should automa=
-tically
-> >>>>>>>>>>> disable the HS clock between high-speed transmissions. That m=
-eans if a
-> >>>>>>>>>>> packet is transmitted in low power mode the DSI host will not=
- be
-> >>>>>>>>>>> transmitting in high-speed mode and therefore disable the HS =
-clock.
-> >>>>>>>>>>
-> >>>>>>>>>> What is LPM you think? I thought LPM is LP-11 and HS clock dis=
-abled. So
-> >>>>>>>>>> for LPM transfer, lanes should be LP-11 state and also HS cloc=
-k of the
-> >>>>>>>>>> host controller should be disabled.
-> >>>>>>>>>
-> >>>>>>>>> No. I don't think any transmissions can happen when all lanes a=
-re in
-> >>>>>>>>> LP-11 state. The MIPI_DSI_MSG_USE_LPM is used to specify that a=
- packet
-> >>>>>>>>> should be transmitted in low power mode (see LP Transmission in=
- 2.1
-> >>>>>>>>> "Definitions" of the MIPI DSI specification).
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> Hm.. I see. I meant,
-> >>>>>>>>
-> >>>>>>>> if (flags & MIPI_DSI_MSG_USE_LPM)
-> >>>>>>>>        disable HS clock <- required.
-> >>>>>>>>
-> >>>>>>>> transmit command data <- in LPM.
-> >>>>>>>
-> >>>>>>> No. Disabling the HS clock is not required for LPM mode. In fact =
-if the
-> >>>>>>> peripheral specifies that it doesn't support non-continuous mode =
-then
-> >>>>>>> the HS clock must *never* be disabled as long as the peripheral i=
-s in
-> >>>>>>> use.
-> >>>>>>>
-> >>>>>>> MIPI_DSI_MSG_USE_LPM and MIPI_DSI_CLOCK_NON_CONTINUOUS are unrela=
-ted and
-> >>>>>>> need to be considered separately.
-> >>>>>>
-> >>>>>> I mentioned already LPM and NON_CONTINUOUS are unrelated.
-> >>>>>>
-> >>>>>> It seems that you say the only way to transfer command data in LPM=
- is
-> >>>>>> non-continuous clock mode.
-> >>>>>
-> >>>>> No, that's not what I'm saying.
-> >>>>>
-> >>>>>> However, you said and also the spec says, "Non-continuous mode sim=
-ply
-> >>>>>> means that the clock lane enters LP-11 between HS transmissions".
-> >>>>>> Doesn't *between HS transmissions" mean the command data is transm=
-itted
-> >>>>>> in HS, *not in LPM*, and clock lane enters LP-11 between them?
-> >>>>>
-> >>>>> Not necessarily. You can transmit command packets in high-speed mod=
-e,
-> >>>>> but you don't have to. If you transmit packets in low power mode, t=
-hen
-> >>>>
-> >>>> That would may why we are mentioning same comments repeatedly.
-> >>>>
-> >>>> In my case, host driver waits for the lane stop state (LP-11), and t=
-hen
-> >>>> disables HS clock to transmit command data in LPM. Of course, I'm not
-> >>>> sure that yet it's correct way.
-> >>>
-> >>> That's confusing. How can the lane go to LP-11 when the clock is still
-> >>> running?
-> >>
-> >> Actually, we are doing so. If the clock is still running then dsi driv=
-er
-> >> will wait for stop state of the clock and data lanes. Know that this is
-> >> valid only when initial time - just one time since power up.
-> >>
-> >> 	/* Check clock and data lane state are stop state */
-> >> 	timeout =3D 100;
-> >> 	do {
-> >> 		if (timeout-- =3D=3D 0) {
-> >> 			dev_err(dsi->dev, "waiting for bus lanes timed out\n");
-> >> 			return -EFAULT;
-> >> 		}
-> >>
-> >> 		reg =3D readl(dsi->reg_base + DSIM_STATUS_REG);
-> >> 		if ((reg & DSIM_STOP_STATE_DAT(lanes_mask))
-> >> 		    !=3D DSIM_STOP_STATE_DAT(lanes_mask))
-> >> 			continue;
-> >> 	} while (!(reg & (DSIM_STOP_STATE_CLK | DSIM_TX_READY_HS_CLK)));
-> >>
-> >>>
-> >>>> In Tegra, What to do for it?
-> >>>
-> >>> There are two bits in two separate registers for this:
-> >>>
-> >>> 	DSI_HOST_CONTROL:
-> >>> 	  bit 5: DSI_HIGH_SPEED_TRANS: DSI high speed transmission of
-> >>> 	                               packets
-> >>> 	    - 0 =3D LOW: low speed
-> >>> 	    - 1 =3D HIGH: high speed
-> >>>
-> >>> 	DSI_CONTROL:
-> >>> 	  bit 20: DSI_HS_CLK_CTRL: Control for the HS clock lane
-> >>> 	    - 0 =3D CONTINUOUS: HS clock is on all the time
-> >>> 	    - 1 =3D TX_ONLY: HS clock is only active during HS
-> >>> 	                   transmissions
-> >>>
-> >>> So if the peripheral supports non-continuous mode of operation we set
-> >>> the DSI_HS_CLK_CTRL bit, otherwise we clear it to make sure the clock
-> >>> remains on all the time.
-> >>>
-> >>> When a packet is to be transmitted in high speed mode, we set the
-> >>> DSI_HIGH_SPEED_TRANS bit. For low power mode transmissions that bit is
-> >>> cleared.
-> >>
-> >> That is exactly what I want. In your case, if you want to transmit
-> >> command data in Low Power Mode in case of supporting non-continuous
-> >> clock mode, then you would set DSI_HS_CLK_CTRL (TX_ONLY), and also you
-> >> would clear DSI_HIGH_SPEED_TRANS (LOW).
-> >>
-> >> So I guess,
-> >>
-> >> if (flags & MIPI_DSI_MODE_NON_CONTINUOUS) {
-> >>         disable DSI_HIGH_SPEED_TRANS;   <- LOW
-> >>         enable DSI_HS_CLK_CTRL; <- TX_ONLY
-> >> }
-> >>
-> >> transmit command data <- in LPM.
-> >>
-> >> However, what if the peripheral doesn't support non-continuous but want
-> >> to transmit command data in LPM? Is that  impossible?
-> >=20
-> > The above is actually more like this:
-> >=20
-> > 	if ((flags & MIPI_DSI_MODE_NON_CONTINUOUS) =3D=3D 0)
-> > 		clear DSI_HS_CLK_CTRL;
-> > 	else
-> > 		set DSI_HS_CLK_CTRL;
-> >=20
-> > 	if (msg->flags & MIPI_DSI_MSG_USE_LPM)
-> > 		clear DSI_HIGH_SPEED_TRANS;
-> > 	else
-> > 		set DSI_HIGH_SPEED_TRANS;
-> >=20
-> > So for peripherals that don't support non-continuous clock mode, this
-> > will result in the following for low-power transmissions:
-> >=20
-> > 	clear DSI_HS_CLK_CTRL; /* HS clock always on */
-> > 	clear DSI_HIGH_SPEED_TRANS;
->=20
-> Right, then how host driver should check it if peripheral doesn't
-> support non-continuous clock mode? Or how the peripheral should notify
-> it to host driver? It would need a new flag instead of
-> MIPI_DSI_MODE_NON_CONTINUOUS.
-
-MIPI_DSI_MODE_NON_CONTINUOUS is exactly the flag that devices need to
-set to signal that they support non-continuous mode. If devices don't
-have that set, then the controller should always provide the HS clock.
-
-So, if MIPI_DSI_MODE_NON_CONTINUOUS is *not* set, then the peripheral
-does *not* support non-continuous mode.
-
-Thierry
-
---HcAYCG3uE/tztfnV
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT6G+eAAoJEN0jrNd/PrOhXwYP/0WmcJE9nYeJuBXQRpldxJIG
-28TjyXC7RdP6pAd1hkcg5T2fnf3b0YbxOpsdNmzSuzJyK96FKMKnac766j2WKlDx
-wXMh1C5qka86aOiLVOVpnHh4tvYjaOoGDV8eAzmTjbtwtClsIW6UhVuKtShlbLwG
-5+tUn1zsq0RpoYzPo6yOGmXxjQr8yo254/GxbIKuNL0YD3p6JQ6SJ92ZJxCXWraR
-U+Pj7IEQWqKhD6BVtwzKOEIZKK6pZuSQP9zPmtyuE9P2Zr4cI3v5dnRURgvYeYc5
-T0V03ACCS9lDUItvwU/F2w5i0oWmywNipnKdrcDGM6N3juJERdV0S8wJGzNwXb9q
-cFRwtezjkiBDCZyU30MeQytn6v85jmAkY9YwNh2hJDd6b+wQEM5RpMLntEUh8kmf
-WSkGl1Nz0rmSMfPK/HACf+V/xA//bxdmu+asxRFCmaHHhTDBBUrfyNidkFmPjM/f
-u2QdfFyJ+gQUJ41p5CApmQupPMAeKNwbvmn8ZhNCAV2k4dWXh0iX5UfMZsjSqduA
-CyUuCwp+2qey4lbpnIFGHp7MdzxgB2nL8HxbbnZ6eO+ywldgcuSKG9lZn1KT+Qbt
-2Xjd3Dmu2rZc7U365yD30Dgibrz8ZG5Do+qIYmeDoymvI4WtFLtx4UWyALgqrof1
-4bH01qNftEzANEsCaTnq
-=rwoL
------END PGP SIGNATURE-----
-
---HcAYCG3uE/tztfnV--
+T24gMjAxNOuFhCAwOOyblCAxMeydvCAxNjoyNCwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24g
+TW9uLCBBdWcgMTEsIDIwMTQgYXQgMDI6MTk6MjFQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6Cj4+
+IE9uIDIwMTTrhYQgMDjsm5QgMDjsnbwgMTg6NTUsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+Pj4g
+T24gRnJpLCBBdWcgMDgsIDIwMTQgYXQgMDQ6Mzc6MDdQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6
+Cj4+Pj4gT24gMjAxNOuFhCAwOOyblCAwOOydvCAxNjowMywgVGhpZXJyeSBSZWRpbmcgd3JvdGU6
+Cj4+Pj4+IE9uIEZyaSwgQXVnIDA4LCAyMDE0IGF0IDEwOjQ1OjQ3QU0gKzA5MDAsIElua2kgRGFl
+IHdyb3RlOgo+Pj4+Pj4gT24gMjAxNOuFhCAwOOyblCAwN+ydvCAyMjo1NSwgVGhpZXJyeSBSZWRp
+bmcgd3JvdGU6Cj4+Pj4+Pj4gT24gVGh1LCBBdWcgMDcsIDIwMTQgYXQgMTA6Mzk6MjlQTSArMDkw
+MCwgSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4+IE9uIDIwMTTrhYQgMDjsm5QgMDfsnbwgMjI6MTcs
+IFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+Pj4+Pj4+Pj4gT24gVGh1LCBBdWcgMDcsIDIwMTQgYXQg
+MTA6MDU6NDRQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4+Pj4gT24gMjAxNOuFhCAw
+OOyblCAwN+ydvCAyMDowOSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4+Pj4+Pj4+Pj4+IE9uIFRo
+dSwgQXVnIDA3LCAyMDE0IGF0IDA3OjQ5OjAzUE0gKzA5MDAsIElua2kgRGFlIHdyb3RlOgo+Pj4+
+Pj4+Pj4+Pj4gT24gMjAxNOuFhCAwOOyblCAwN+ydvCAxODowOSwgVGhpZXJyeSBSZWRpbmcgd3Jv
+dGU6Cj4+Pj4+Pj4+Pj4+Pj4gT24gVGh1LCBBdWcgMDcsIDIwMTQgYXQgMDQ6NTE6MThQTSArMDkw
+MCwgSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4+Pj4+Pj4+IE9uIDIwMTTrhYQgMDjsm5QgMDfsnbwg
+MTU6NTgsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+Pj4+Pj4+Pj4+Pj4+Pj4gT24gVGh1LCBBdWcg
+MDcsIDIwMTQgYXQgMDI6MDk6MTlBTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6Cj4+Pj4+Pj4+Pj4+
+Pj4+Pj4gMjAxNC0wOC0wNiAxNjo0MyBHTVQrMDk6MDAgVGhpZXJyeSBSZWRpbmcgPHRoaWVycnku
+cmVkaW5nQGdtYWlsLmNvbT46Cj4+Pj4+Pj4+Pj4+Pj4gWy4uLl0KPj4+Pj4+Pj4+Pj4+Pj4+Pj4g
+QXMgZmFyIGFzIEkgY2FuIHRlbGwgbm9uLWNvbnRpbnVvdXMgbW9kZSBzaW1wbHkgbWVhbnMgdGhh
+dCB0aGUgaG9zdCBjYW4KPj4+Pj4+Pj4+Pj4+Pj4+Pj4gdHVybiBvZmYgdGhlIEhTIGNsb2NrIGFm
+dGVyIGEgaGlnaC1zcGVlZCB0cmFuc21pc3Npb24uIEkgdGhpbmsgQW5kcnplago+Pj4+Pj4+Pj4+
+Pj4+Pj4+PiBtZW50aW9uZWQgdGhpcyBhbHJlYWR5IGluIGFub3RoZXIgc3VidGhyZWFkLCBidXQg
+dGhpcyBpcyBhbiBvcHRpb25hbAo+Pj4+Pj4+Pj4+Pj4+Pj4+PiBtb2RlIHRoYXQgcGVyaXBoZXJh
+bHMgY2FuIHN1cHBvcnQgaWYgdGhleSBoYXZlIGV4dHJhIGNpcmN1aXRyeSB0aGF0Cj4+Pj4+Pj4+
+Pj4+Pj4+Pj4+IHByb3ZpZGVzIGFuIGludGVybmFsIGNsb2NrLiBQZXJpcGhlcmFscyB0aGF0IGRv
+bid0IGhhdmUgc3VjaCBjaXJjdWl0cnkKPj4+Pj4+Pj4+Pj4+Pj4+Pj4gbWF5IHJlbHkgb24gdGhl
+IEhTIGNsb2NrIHRvIHBlcmZvcm0gaW4gYmV0d2VlbiB0cmFuc21pc3Npb25zIGFuZAo+Pj4+Pj4+
+Pj4+Pj4+Pj4+PiB0aGVyZWZvcmUgcmVxdWlyZSB0aGUgSFMgY2xvY2sgdG8gYmUgYWx3YXlzIG9u
+IChjb250aW51b3VzIG1vZGUpLiBUaGF0J3MKPj4+Pj4+Pj4+Pj4+Pj4+Pj4gd2hhdCB0aGUgTUlQ
+SV9EU0lfQ0xPQ0tfTk9OX0NPTlRJTlVPVVMgZmxhZyBpczogaXQgYWR2ZXJ0aXNlcyB0aGF0IHRo
+ZQo+Pj4+Pj4+Pj4+Pj4+Pj4+PiBwZXJpcGhlcmFsIHN1cHBvcnRzIG5vbi1jb250aW51b3VzIG1v
+ZGUgYW5kIHRoZXJlZm9yZSB0aGUgaG9zdCBjYW4gdHVybgo+Pj4+Pj4+Pj4+Pj4+Pj4+PiB0aGUg
+SFMgY2xvY2sgb2ZmIGFmdGVyIGhpZ2gtc3BlZWQgdHJhbnNtaXNzaW9ucy4KPj4+Pj4+Pj4+Pj4+
+Pj4+Pgo+Pj4+Pj4+Pj4+Pj4+Pj4+IFdoYXQgSSBkb24ndCBtYWtlIHN1cmUgaXMgdGhpcyBzZW50
+ZW5jZS4gV2l0aAo+Pj4+Pj4+Pj4+Pj4+Pj4+IE1JUElfRFNJX0NMT0NLX05PTl9DT05USVVPVVMg
+ZmxhZywgSSBndWVzcyB0d28gcG9zc2libGUgb3BlcmF0aW9ucy4KPj4+Pj4+Pj4+Pj4+Pj4+PiBP
+bmUgaXMsCj4+Pj4+Pj4+Pj4+Pj4+Pj4gMS4gaG9zdCBjb250cm9sbGVyIHdpbGwgZ2VuZXJhdGVz
+IHNpZ25hbHMgaWYgYSBiaXQgb2YgYSByZWdpc3Rlcgo+Pj4+Pj4+Pj4+Pj4+Pj4+IHJlbGF0ZWQg
+dG8gbm9uLWNvbnRpZ3VvdXMgY2xvY2sgbW9kZSBpcyBzZXQgb3IgdW5zZXQuCj4+Pj4+Pj4+Pj4+
+Pj4+Pj4gMi4gQW5kIHRoZW4gdmlkZW8gZGF0YSBpcyB0cmFuc21pdHRlZCB0byBwYW5lbCBpbiBI
+UyBtb2RlLgo+Pj4+Pj4+Pj4+Pj4+Pj4+IDMuIEFuZCB0aGVuIEQtUEhZIGRldGVjdHMgTFAtMTEg
+c2lnbmFsIChwb3NpdGl2ZSBhbmQgbmVnYXRpdmUgbGFuZSBhbGwKPj4+Pj4+Pj4+Pj4+Pj4+PiBh
+cmUgaGlnaCkuCj4+Pj4+Pj4+Pj4+Pj4+Pj4gNC4gQW5kIHRoZW4gRC1QSFkgZGlzYWJsZXMgSFMg
+Y2xvY2sgb2YgaG9zdCBjb250cm9sbGVyLgo+Pj4+Pj4+Pj4+Pj4+Pj4+IDUuIEF0IHRoaXMgdGlt
+ZSwgb3BlcmF0aW9uIG1vZGUgb2YgaG9zdCBjb250cm9sbGVyIGJlY29tZXMgTFBNLgo+Pj4+Pj4+
+Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+Pj4+Pj4+Pj4gT3RoZXIgaXMsCj4+Pj4+Pj4+Pj4+Pj4+Pj4gMS4g
+aG9zdCBjb250cm9sbGVyIHdpbGwgZ2VuZXJhdGVzIHNpZ25hbHMgaWYgYSBiaXQgb2YgYSByZWdp
+c3Rlcgo+Pj4+Pj4+Pj4+Pj4+Pj4+IHJlbGF0ZWQgdG8gbm9uLWNvbnRpZ3VvdXMgY2xvY2sgbW9k
+ZSBpcyBzZXQgb3IgdW5zZXQuCj4+Pj4+Pj4+Pj4+Pj4+Pj4gMi4gQW5kIHRoZW4gRC1QSFkgZGV0
+ZWN0cyBMUC0xMSBzaWduYWwgKHBvc2l0aXZlIGFuZCBuZWdhdGl2ZSBsYW5lIGFsbAo+Pj4+Pj4+
+Pj4+Pj4+Pj4+IGFyZSBoaWdoKS4KPj4+Pj4+Pj4+Pj4+Pj4+PiAzLiBBbmQgdGhlbiB2aWRlbyBk
+YXRhIGlzIHRyYW5zbWl0dGVkIHRvIHBhbmVsIGluIExQTS4KPj4+Pj4+Pj4+Pj4+Pj4+PiA0LiBB
+dCB0aGlzIHRpbWUsIG9wZXJhdGlvbiBtb2RlIG9mIGhvc3QgY29udHJvbGxlciBiZWNvbWVzIExQ
+TS4KPj4+Pj4+Pj4+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4+Pj4+Pj4+IEl0IHNlZW1zIHRoYXQgeW91IHNh
+eXMgbGF0dGVyIGNhc2UuCj4+Pj4+Pj4+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4+Pj4+Pj4gTm8uIEhpZ2gg
+c3BlZWQgY2xvY2sgYW5kIGxvdyBwb3dlciBtb2RlIGFyZSBvcnRob2dvbmFsLiBOb24tY29udGlu
+dW91cwo+Pj4+Pj4+Pj4+Pj4+Pj4gbW9kZSBzaW1wbHkgbWVhbnMgdGhhdCB0aGUgY2xvY2sgbGFu
+ZSBlbnRlcnMgTFAtMTEgYmV0d2VlbiBIUwo+Pj4+Pj4+Pj4+Pj4+Pj4gdHJhbnNtaXNzaW9ucyAo
+c2VlIDUuNiAiQ2xvY2sgTWFuYWdlbWVudCIgb2YgdGhlIERTSSBzcGVjaWZpY2F0aW9uKS4KPj4+
+Pj4+Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+Pj4+Pj4+IEl0IHNlZW1zIHRoYXQg
+Y2xvY2sgbGFuZSBlbnRlcnMgTFAtMTEgcmVnYXJkbGVzcyBvZiBIUyBjbG9jayBlbmFibGVkIGlm
+Cj4+Pj4+Pj4+Pj4+Pj4+IG5vbi1jb250aW5vdXMgbW9kZSBpcyB1c2VkLiBSaWdodD8KPj4+Pj4+
+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4+Pj4+IE5vLCBJIHRoaW5rIGFzIGxvbmcgYXMgSFMgY2xvY2sgaXMg
+ZW5hYmxlZCB0aGUgY2xvY2sgbGFuZSB3b24ndCBlbnRlcgo+Pj4+Pj4+Pj4+Pj4+IExQLTExLiBO
+b24tY29udGludW91cyBtb2RlIG1lYW5zIHRoYXQgdGhlIGNvbnRyb2xsZXIgY2FuIGRpc2FibGUg
+dGhlIEhTCj4+Pj4+Pj4+Pj4+Pj4gY2xvY2sgYmV0d2VlbiBIUyB0cmFuc21pc3Npb25zLiBTbyBp
+biBub24tY29udGludW91cyBtb2RlIHRoZSBjbG9jayBsYW5lCj4+Pj4+Pj4+Pj4+Pj4gY2FuIGVu
+dGVyIExQLTExIGJlY2F1c2UgdGhlIGNvbnRyb2xsZXIgZGlzYWJsZXMgdGhlIEhTIGNsb2NrLgo+
+Pj4+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+Pj4+IEl0IG1ha2VzIG1lIGEgbGl0dGxlIGJpdCBjb25mdXNp
+bmcuIFlvdSBzYWlkICJpZiBIUyBjbG9jayBpcyBlbmFibGVkLAo+Pj4+Pj4+Pj4+Pj4gdGhlIHRo
+ZSBjbG9jayBsYW5lIHdvbid0IGVudGVyIExQLTExIiBCdXQgeW91IHNhaWQgYWdhaW4gInRoZSBj
+bG9jayBsYW5lCj4+Pj4+Pj4+Pj4+PiBjYW4gZW50ZXIgTFAtMTEgYmVjYXVzZSB0aGUgY29udHJv
+bGxlciBkaXNhYmxlcyB0aGUgSFMgY2xvY2siIFdoYXQgaXMKPj4+Pj4+Pj4+Pj4+IHRoZSBtZWFu
+aW5nPwo+Pj4+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4+PiBJdCBtZWFucyB0aGF0IGlmIHRoZSBIUyBjbG9j
+ayBpcyBlbmFibGVkLCB0aGVuIHRoZSBjbG9jayBsYW5lIGlzIG5vdCBpbgo+Pj4+Pj4+Pj4+PiBM
+UC0xMS4gV2hlbiB0aGUgSFMgY2xvY2sgc3RvcHMsIHRoZW4gdGhlIGNsb2NrIGxhbmUgZW50ZXJz
+IExQLTExLgo+Pj4+Pj4+Pj4+Pgo+Pj4+Pj4+Pj4+Pj4+IEluIGNvbnRpbnVvdXMgbW9kZSwgdGhl
+biB0aGUgY2xvY2sgd2lsbCBuZXZlciBiZSBkaXNhYmxlZCwgaGVuY2UgdGhlCj4+Pj4+Pj4+Pj4+
+Pj4gY2xvY2sgbGFuZSB3aWxsIG5ldmVyIGVudGVyIExQLTExLgo+Pj4+Pj4+Pj4+Pj4+Cj4+Pj4+
+Pj4+Pj4+Pj4+IEFuZCBhbHNvIGl0IHNlZW1zIHRoYXQgbm9uLWNvbnRpbm91cyBtb2RlIGlzIGRp
+ZmZlcmVudCBmcm9tIExQTSBhdCBhbGwKPj4+Pj4+Pj4+Pj4+Pj4gYmVjYXVzZSB3aXRoIG5vbi1j
+b250aW51b3VzIG1vZGUsIGNvbW1hbmQgZGF0YSBpcyB0cmFuc21pdHRlZCB0byBwYW5lbAo+Pj4+
+Pj4+Pj4+Pj4+PiBpbiBIUyBtb2RlLCBidXQgd2l0aCBMUE0sIGNvbW1hbmQgZGF0YSBpcyB0cmFu
+c21pdHRlZCB0byBwYW5lbCBpbiBMUAo+Pj4+Pj4+Pj4+Pj4+PiBtb2RlLiBBbHNvIHJpZ2h0Pwo+
+Pj4+Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+Pj4+Pj4gTm8uIEkgdGhpbmsgeW91IGNhbiBzZW5kIGNvbW1h
+bmQgZGF0YSB0byB0aGUgcGVyaXBoZXJhbCBpbiBsb3cgcG93ZXIKPj4+Pj4+Pj4+Pj4+PiBtb2Rl
+IGluIGJvdGggY29udGludW91cyBhbmQgbm9uLWNvbnRpbnVvdXMgY2xvY2sgbW9kZXMuCj4+Pj4+
+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+Pj4+Pj4gSWYgc28sIHNob3VsZG4ndCB0aGUgaG9zdCBkcml2ZXIg
+ZGlzYWJsZSBIUyBjbG9jaywgaW4gY2FzZSBvZiBMUCBtb2RlLAo+Pj4+Pj4+Pj4+Pj4+PiBiZWZv
+cmUgdGhlIGhvc3QgZHJpdmVyIHRyYW5zbWl0cyBjb21tYW5kIGRhdGE/Cj4+Pj4+Pj4+Pj4+Pj4K
+Pj4+Pj4+Pj4+Pj4+PiBOby4gSWYgdGhlIHBlcmlwaGVyYWwgZG9lc24ndCBzdXBwb3J0IG5vbi1j
+b250aW51b3VzIG1vZGUsIHRoZW4gdGhlIEhTCj4+Pj4+Pj4+Pj4+Pj4gY2xvY2sgbXVzdCBuZXZl
+ciBiZSB0dXJuZWQgb2ZmLiBPbiB0aGUgb3RoZXIgaGFuZCwgaWYgdGhlIHBlcmlwaGVyYWwKPj4+
+Pj4+Pj4+Pj4+PiBzdXBwb3J0cyBub24tY29udGludW91cyBtb2RlLCB0aGVuIHRoZSBEU0kgaG9z
+dCBzaG91bGQgYXV0b21hdGljYWxseQo+Pj4+Pj4+Pj4+Pj4+IGRpc2FibGUgdGhlIEhTIGNsb2Nr
+IGJldHdlZW4gaGlnaC1zcGVlZCB0cmFuc21pc3Npb25zLiBUaGF0IG1lYW5zIGlmIGEKPj4+Pj4+
+Pj4+Pj4+PiBwYWNrZXQgaXMgdHJhbnNtaXR0ZWQgaW4gbG93IHBvd2VyIG1vZGUgdGhlIERTSSBo
+b3N0IHdpbGwgbm90IGJlCj4+Pj4+Pj4+Pj4+Pj4gdHJhbnNtaXR0aW5nIGluIGhpZ2gtc3BlZWQg
+bW9kZSBhbmQgdGhlcmVmb3JlIGRpc2FibGUgdGhlIEhTIGNsb2NrLgo+Pj4+Pj4+Pj4+Pj4KPj4+
+Pj4+Pj4+Pj4+IFdoYXQgaXMgTFBNIHlvdSB0aGluaz8gSSB0aG91Z2h0IExQTSBpcyBMUC0xMSBh
+bmQgSFMgY2xvY2sgZGlzYWJsZWQuIFNvCj4+Pj4+Pj4+Pj4+PiBmb3IgTFBNIHRyYW5zZmVyLCBs
+YW5lcyBzaG91bGQgYmUgTFAtMTEgc3RhdGUgYW5kIGFsc28gSFMgY2xvY2sgb2YgdGhlCj4+Pj4+
+Pj4+Pj4+PiBob3N0IGNvbnRyb2xsZXIgc2hvdWxkIGJlIGRpc2FibGVkLgo+Pj4+Pj4+Pj4+Pgo+
+Pj4+Pj4+Pj4+PiBOby4gSSBkb24ndCB0aGluayBhbnkgdHJhbnNtaXNzaW9ucyBjYW4gaGFwcGVu
+IHdoZW4gYWxsIGxhbmVzIGFyZSBpbgo+Pj4+Pj4+Pj4+PiBMUC0xMSBzdGF0ZS4gVGhlIE1JUElf
+RFNJX01TR19VU0VfTFBNIGlzIHVzZWQgdG8gc3BlY2lmeSB0aGF0IGEgcGFja2V0Cj4+Pj4+Pj4+
+Pj4+IHNob3VsZCBiZSB0cmFuc21pdHRlZCBpbiBsb3cgcG93ZXIgbW9kZSAoc2VlIExQIFRyYW5z
+bWlzc2lvbiBpbiAyLjEKPj4+Pj4+Pj4+Pj4gIkRlZmluaXRpb25zIiBvZiB0aGUgTUlQSSBEU0kg
+c3BlY2lmaWNhdGlvbikuCj4+Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+PiBIbS4uIEkg
+c2VlLiBJIG1lYW50LAo+Pj4+Pj4+Pj4+Cj4+Pj4+Pj4+Pj4gaWYgKGZsYWdzICYgTUlQSV9EU0lf
+TVNHX1VTRV9MUE0pCj4+Pj4+Pj4+Pj4gICAgICAgIGRpc2FibGUgSFMgY2xvY2sgPC0gcmVxdWly
+ZWQuCj4+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+PiB0cmFuc21pdCBjb21tYW5kIGRhdGEgPC0gaW4gTFBN
+Lgo+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+IE5vLiBEaXNhYmxpbmcgdGhlIEhTIGNsb2NrIGlzIG5vdCBy
+ZXF1aXJlZCBmb3IgTFBNIG1vZGUuIEluIGZhY3QgaWYgdGhlCj4+Pj4+Pj4+PiBwZXJpcGhlcmFs
+IHNwZWNpZmllcyB0aGF0IGl0IGRvZXNuJ3Qgc3VwcG9ydCBub24tY29udGludW91cyBtb2RlIHRo
+ZW4KPj4+Pj4+Pj4+IHRoZSBIUyBjbG9jayBtdXN0ICpuZXZlciogYmUgZGlzYWJsZWQgYXMgbG9u
+ZyBhcyB0aGUgcGVyaXBoZXJhbCBpcyBpbgo+Pj4+Pj4+Pj4gdXNlLgo+Pj4+Pj4+Pj4KPj4+Pj4+
+Pj4+IE1JUElfRFNJX01TR19VU0VfTFBNIGFuZCBNSVBJX0RTSV9DTE9DS19OT05fQ09OVElOVU9V
+UyBhcmUgdW5yZWxhdGVkIGFuZAo+Pj4+Pj4+Pj4gbmVlZCB0byBiZSBjb25zaWRlcmVkIHNlcGFy
+YXRlbHkuCj4+Pj4+Pj4+Cj4+Pj4+Pj4+IEkgbWVudGlvbmVkIGFscmVhZHkgTFBNIGFuZCBOT05f
+Q09OVElOVU9VUyBhcmUgdW5yZWxhdGVkLgo+Pj4+Pj4+Pgo+Pj4+Pj4+PiBJdCBzZWVtcyB0aGF0
+IHlvdSBzYXkgdGhlIG9ubHkgd2F5IHRvIHRyYW5zZmVyIGNvbW1hbmQgZGF0YSBpbiBMUE0gaXMK
+Pj4+Pj4+Pj4gbm9uLWNvbnRpbnVvdXMgY2xvY2sgbW9kZS4KPj4+Pj4+Pgo+Pj4+Pj4+IE5vLCB0
+aGF0J3Mgbm90IHdoYXQgSSdtIHNheWluZy4KPj4+Pj4+Pgo+Pj4+Pj4+PiBIb3dldmVyLCB5b3Ug
+c2FpZCBhbmQgYWxzbyB0aGUgc3BlYyBzYXlzLCAiTm9uLWNvbnRpbnVvdXMgbW9kZSBzaW1wbHkK
+Pj4+Pj4+Pj4gbWVhbnMgdGhhdCB0aGUgY2xvY2sgbGFuZSBlbnRlcnMgTFAtMTEgYmV0d2VlbiBI
+UyB0cmFuc21pc3Npb25zIi4KPj4+Pj4+Pj4gRG9lc24ndCAqYmV0d2VlbiBIUyB0cmFuc21pc3Np
+b25zIiBtZWFuIHRoZSBjb21tYW5kIGRhdGEgaXMgdHJhbnNtaXR0ZWQKPj4+Pj4+Pj4gaW4gSFMs
+ICpub3QgaW4gTFBNKiwgYW5kIGNsb2NrIGxhbmUgZW50ZXJzIExQLTExIGJldHdlZW4gdGhlbT8K
+Pj4+Pj4+Pgo+Pj4+Pj4+IE5vdCBuZWNlc3NhcmlseS4gWW91IGNhbiB0cmFuc21pdCBjb21tYW5k
+IHBhY2tldHMgaW4gaGlnaC1zcGVlZCBtb2RlLAo+Pj4+Pj4+IGJ1dCB5b3UgZG9uJ3QgaGF2ZSB0
+by4gSWYgeW91IHRyYW5zbWl0IHBhY2tldHMgaW4gbG93IHBvd2VyIG1vZGUsIHRoZW4KPj4+Pj4+
+Cj4+Pj4+PiBUaGF0IHdvdWxkIG1heSB3aHkgd2UgYXJlIG1lbnRpb25pbmcgc2FtZSBjb21tZW50
+cyByZXBlYXRlZGx5Lgo+Pj4+Pj4KPj4+Pj4+IEluIG15IGNhc2UsIGhvc3QgZHJpdmVyIHdhaXRz
+IGZvciB0aGUgbGFuZSBzdG9wIHN0YXRlIChMUC0xMSksIGFuZCB0aGVuCj4+Pj4+PiBkaXNhYmxl
+cyBIUyBjbG9jayB0byB0cmFuc21pdCBjb21tYW5kIGRhdGEgaW4gTFBNLiBPZiBjb3Vyc2UsIEkn
+bSBub3QKPj4+Pj4+IHN1cmUgdGhhdCB5ZXQgaXQncyBjb3JyZWN0IHdheS4KPj4+Pj4KPj4+Pj4g
+VGhhdCdzIGNvbmZ1c2luZy4gSG93IGNhbiB0aGUgbGFuZSBnbyB0byBMUC0xMSB3aGVuIHRoZSBj
+bG9jayBpcyBzdGlsbAo+Pj4+PiBydW5uaW5nPwo+Pj4+Cj4+Pj4gQWN0dWFsbHksIHdlIGFyZSBk
+b2luZyBzby4gSWYgdGhlIGNsb2NrIGlzIHN0aWxsIHJ1bm5pbmcgdGhlbiBkc2kgZHJpdmVyCj4+
+Pj4gd2lsbCB3YWl0IGZvciBzdG9wIHN0YXRlIG9mIHRoZSBjbG9jayBhbmQgZGF0YSBsYW5lcy4g
+S25vdyB0aGF0IHRoaXMgaXMKPj4+PiB2YWxpZCBvbmx5IHdoZW4gaW5pdGlhbCB0aW1lIC0ganVz
+dCBvbmUgdGltZSBzaW5jZSBwb3dlciB1cC4KPj4+Pgo+Pj4+IAkvKiBDaGVjayBjbG9jayBhbmQg
+ZGF0YSBsYW5lIHN0YXRlIGFyZSBzdG9wIHN0YXRlICovCj4+Pj4gCXRpbWVvdXQgPSAxMDA7Cj4+
+Pj4gCWRvIHsKPj4+PiAJCWlmICh0aW1lb3V0LS0gPT0gMCkgewo+Pj4+IAkJCWRldl9lcnIoZHNp
+LT5kZXYsICJ3YWl0aW5nIGZvciBidXMgbGFuZXMgdGltZWQgb3V0XG4iKTsKPj4+PiAJCQlyZXR1
+cm4gLUVGQVVMVDsKPj4+PiAJCX0KPj4+Pgo+Pj4+IAkJcmVnID0gcmVhZGwoZHNpLT5yZWdfYmFz
+ZSArIERTSU1fU1RBVFVTX1JFRyk7Cj4+Pj4gCQlpZiAoKHJlZyAmIERTSU1fU1RPUF9TVEFURV9E
+QVQobGFuZXNfbWFzaykpCj4+Pj4gCQkgICAgIT0gRFNJTV9TVE9QX1NUQVRFX0RBVChsYW5lc19t
+YXNrKSkKPj4+PiAJCQljb250aW51ZTsKPj4+PiAJfSB3aGlsZSAoIShyZWcgJiAoRFNJTV9TVE9Q
+X1NUQVRFX0NMSyB8IERTSU1fVFhfUkVBRFlfSFNfQ0xLKSkpOwo+Pj4+Cj4+Pj4+Cj4+Pj4+PiBJ
+biBUZWdyYSwgV2hhdCB0byBkbyBmb3IgaXQ/Cj4+Pj4+Cj4+Pj4+IFRoZXJlIGFyZSB0d28gYml0
+cyBpbiB0d28gc2VwYXJhdGUgcmVnaXN0ZXJzIGZvciB0aGlzOgo+Pj4+Pgo+Pj4+PiAJRFNJX0hP
+U1RfQ09OVFJPTDoKPj4+Pj4gCSAgYml0IDU6IERTSV9ISUdIX1NQRUVEX1RSQU5TOiBEU0kgaGln
+aCBzcGVlZCB0cmFuc21pc3Npb24gb2YKPj4+Pj4gCSAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBwYWNrZXRzCj4+Pj4+IAkgICAgLSAwID0gTE9XOiBsb3cgc3BlZWQKPj4+Pj4gCSAgICAt
+IDEgPSBISUdIOiBoaWdoIHNwZWVkCj4+Pj4+Cj4+Pj4+IAlEU0lfQ09OVFJPTDoKPj4+Pj4gCSAg
+Yml0IDIwOiBEU0lfSFNfQ0xLX0NUUkw6IENvbnRyb2wgZm9yIHRoZSBIUyBjbG9jayBsYW5lCj4+
+Pj4+IAkgICAgLSAwID0gQ09OVElOVU9VUzogSFMgY2xvY2sgaXMgb24gYWxsIHRoZSB0aW1lCj4+
+Pj4+IAkgICAgLSAxID0gVFhfT05MWTogSFMgY2xvY2sgaXMgb25seSBhY3RpdmUgZHVyaW5nIEhT
+Cj4+Pj4+IAkgICAgICAgICAgICAgICAgICAgdHJhbnNtaXNzaW9ucwo+Pj4+Pgo+Pj4+PiBTbyBp
+ZiB0aGUgcGVyaXBoZXJhbCBzdXBwb3J0cyBub24tY29udGludW91cyBtb2RlIG9mIG9wZXJhdGlv
+biB3ZSBzZXQKPj4+Pj4gdGhlIERTSV9IU19DTEtfQ1RSTCBiaXQsIG90aGVyd2lzZSB3ZSBjbGVh
+ciBpdCB0byBtYWtlIHN1cmUgdGhlIGNsb2NrCj4+Pj4+IHJlbWFpbnMgb24gYWxsIHRoZSB0aW1l
+Lgo+Pj4+Pgo+Pj4+PiBXaGVuIGEgcGFja2V0IGlzIHRvIGJlIHRyYW5zbWl0dGVkIGluIGhpZ2gg
+c3BlZWQgbW9kZSwgd2Ugc2V0IHRoZQo+Pj4+PiBEU0lfSElHSF9TUEVFRF9UUkFOUyBiaXQuIEZv
+ciBsb3cgcG93ZXIgbW9kZSB0cmFuc21pc3Npb25zIHRoYXQgYml0IGlzCj4+Pj4+IGNsZWFyZWQu
+Cj4+Pj4KPj4+PiBUaGF0IGlzIGV4YWN0bHkgd2hhdCBJIHdhbnQuIEluIHlvdXIgY2FzZSwgaWYg
+eW91IHdhbnQgdG8gdHJhbnNtaXQKPj4+PiBjb21tYW5kIGRhdGEgaW4gTG93IFBvd2VyIE1vZGUg
+aW4gY2FzZSBvZiBzdXBwb3J0aW5nIG5vbi1jb250aW51b3VzCj4+Pj4gY2xvY2sgbW9kZSwgdGhl
+biB5b3Ugd291bGQgc2V0IERTSV9IU19DTEtfQ1RSTCAoVFhfT05MWSksIGFuZCBhbHNvIHlvdQo+
+Pj4+IHdvdWxkIGNsZWFyIERTSV9ISUdIX1NQRUVEX1RSQU5TIChMT1cpLgo+Pj4+Cj4+Pj4gU28g
+SSBndWVzcywKPj4+Pgo+Pj4+IGlmIChmbGFncyAmIE1JUElfRFNJX01PREVfTk9OX0NPTlRJTlVP
+VVMpIHsKPj4+PiAgICAgICAgIGRpc2FibGUgRFNJX0hJR0hfU1BFRURfVFJBTlM7ICAgPC0gTE9X
+Cj4+Pj4gICAgICAgICBlbmFibGUgRFNJX0hTX0NMS19DVFJMOyA8LSBUWF9PTkxZCj4+Pj4gfQo+
+Pj4+Cj4+Pj4gdHJhbnNtaXQgY29tbWFuZCBkYXRhIDwtIGluIExQTS4KPj4+Pgo+Pj4+IEhvd2V2
+ZXIsIHdoYXQgaWYgdGhlIHBlcmlwaGVyYWwgZG9lc24ndCBzdXBwb3J0IG5vbi1jb250aW51b3Vz
+IGJ1dCB3YW50Cj4+Pj4gdG8gdHJhbnNtaXQgY29tbWFuZCBkYXRhIGluIExQTT8gSXMgdGhhdCAg
+aW1wb3NzaWJsZT8KPj4+Cj4+PiBUaGUgYWJvdmUgaXMgYWN0dWFsbHkgbW9yZSBsaWtlIHRoaXM6
+Cj4+Pgo+Pj4gCWlmICgoZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX05PTl9DT05USU5VT1VTKSA9PSAw
+KQo+Pj4gCQljbGVhciBEU0lfSFNfQ0xLX0NUUkw7Cj4+PiAJZWxzZQo+Pj4gCQlzZXQgRFNJX0hT
+X0NMS19DVFJMOwo+Pj4KPj4+IAlpZiAobXNnLT5mbGFncyAmIE1JUElfRFNJX01TR19VU0VfTFBN
+KQo+Pj4gCQljbGVhciBEU0lfSElHSF9TUEVFRF9UUkFOUzsKPj4+IAllbHNlCj4+PiAJCXNldCBE
+U0lfSElHSF9TUEVFRF9UUkFOUzsKPj4+Cj4+PiBTbyBmb3IgcGVyaXBoZXJhbHMgdGhhdCBkb24n
+dCBzdXBwb3J0IG5vbi1jb250aW51b3VzIGNsb2NrIG1vZGUsIHRoaXMKPj4+IHdpbGwgcmVzdWx0
+IGluIHRoZSBmb2xsb3dpbmcgZm9yIGxvdy1wb3dlciB0cmFuc21pc3Npb25zOgo+Pj4KPj4+IAlj
+bGVhciBEU0lfSFNfQ0xLX0NUUkw7IC8qIEhTIGNsb2NrIGFsd2F5cyBvbiAqLwo+Pj4gCWNsZWFy
+IERTSV9ISUdIX1NQRUVEX1RSQU5TOwo+Pgo+PiBSaWdodCwgdGhlbiBob3cgaG9zdCBkcml2ZXIg
+c2hvdWxkIGNoZWNrIGl0IGlmIHBlcmlwaGVyYWwgZG9lc24ndAo+PiBzdXBwb3J0IG5vbi1jb250
+aW51b3VzIGNsb2NrIG1vZGU/IE9yIGhvdyB0aGUgcGVyaXBoZXJhbCBzaG91bGQgbm90aWZ5Cj4+
+IGl0IHRvIGhvc3QgZHJpdmVyPyBJdCB3b3VsZCBuZWVkIGEgbmV3IGZsYWcgaW5zdGVhZCBvZgo+
+PiBNSVBJX0RTSV9NT0RFX05PTl9DT05USU5VT1VTLgo+IAo+IE1JUElfRFNJX01PREVfTk9OX0NP
+TlRJTlVPVVMgaXMgZXhhY3RseSB0aGUgZmxhZyB0aGF0IGRldmljZXMgbmVlZCB0bwo+IHNldCB0
+byBzaWduYWwgdGhhdCB0aGV5IHN1cHBvcnQgbm9uLWNvbnRpbnVvdXMgbW9kZS4gSWYgZGV2aWNl
+cyBkb24ndAo+IGhhdmUgdGhhdCBzZXQsIHRoZW4gdGhlIGNvbnRyb2xsZXIgc2hvdWxkIGFsd2F5
+cyBwcm92aWRlIHRoZSBIUyBjbG9jay4KPiAKPiBTbywgaWYgTUlQSV9EU0lfTU9ERV9OT05fQ09O
+VElOVU9VUyBpcyAqbm90KiBzZXQsIHRoZW4gdGhlIHBlcmlwaGVyYWwKPiBkb2VzICpub3QqIHN1
+cHBvcnQgbm9uLWNvbnRpbnVvdXMgbW9kZS4KPiAKCkFnYWluLCBhc3N1bWUgdGhhdCB0aGVyZSBp
+cyBhIHBlcmlwaGVyYWwgdGhhdCBkb2Vzbid0IHN1cHBvcnQKbm9uLWNvbnRpbnVvdXMgY2xvY2sg
+bW9kZSBidXQgaG9zdCBkcml2ZXIgd2FudCB0byB0cmFuc21pdCBkYXRhIGluIGxvdwpwb3dlci4g
+Rm9yIHRoaXMsIHlvdSBhbHJlYWR5IG1lbnRpb25lZCBsaWtlIGJlbG93LAoKIlNvIGZvciBwZXJp
+cGhlcmFscyB0aGF0IGRvbid0IHN1cHBvcnQgbm9uLWNvbnRpbnVvdXMgY2xvY2sgbW9kZSwgdGhp
+cwp3aWxsIHJlc3VsdCBpbiB0aGUgZm9sbG93aW5nIGZvciBsb3ctcG93ZXIgdHJhbnNtaXNzaW9u
+czoKCiAJY2xlYXIgRFNJX0hTX0NMS19DVFJMOyAvKiBIUyBjbG9jayBhbHdheXMgb24gKi8KIAlj
+bGVhciBEU0lfSElHSF9TUEVFRF9UUkFOUzsKIgoKSW4gdGhpcyBjYXNlLCBob3cgc2hvdWxkIGhv
+c3QgZHJpdmVyIGNoZWNrIGl0IHRvIGNsZWFyIGFib3ZlIHR3byBmbGFncz8KQXMgeW91IGtub3cs
+IHRoaXMgaXMgcmVxdWlyZWQgdG8gY2xlYXIgdHdvIGZsYWdzIHNhbWUgYXMgbm9uLWNvbnRpbnVv
+dXMKY2xvY2sgbW9kZS4gRG9uJ3QgeW91IHRoaW5rIHRoYXQgd2UgbmVlZCBhIG5ldyBmbGFnIHRv
+IGlkZW50aWZ5IHRoZW0gLQpub24tY29udGludW91cyBjbG9jayBtb2RlIG9yIGp1c3QgZm9yIGxv
+dy1wb3dlciB0cmFuc21pc3Npb24/CgpUaGFua3MsCklua2kgRGFlCgo+IFRoaWVycnkKPiAKCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
