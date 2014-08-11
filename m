@@ -1,67 +1,115 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RESEND PATCH 2/2] ARM: dts: Add tps65090 FET constraints on
- Peach Pit and Pi
-Date: Mon, 11 Aug 2014 19:31:16 +0200
-Message-ID: <53E8FDE4.40005@collabora.co.uk>
-References: <1407757091-18730-1-git-send-email-javier.martinez@collabora.co.uk> <1407757091-18730-2-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=XRmNkxXoxWaEfxFADrTgBrOPVX746woxiZoKck1ajwgA@mail.gmail.com> <20140811160222.GF17528@sirena.org.uk>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: [RFC PATCH v3] reset: Add a defer reset object to send board
+ specific reset
+Date: Mon, 11 Aug 2014 19:33:56 +0200
+Message-ID: <20140811173356.GN15297@lukather>
+References: <1403098673-3058-1-git-send-email-houcheng@gmail.com>
+ <CACRpkdYfu8HmVCkn9JFh+YP5OPdr8o9nTfoCnkJ7SSpGoenQUg@mail.gmail.com>
+ <20140708080535.GJ13423@lukather>
+ <CACRpkdbFPAsu1gE-AVyD=-RxyE7mUJPSbFga7HLh0mxjE-mQuQ@mail.gmail.com>
+ <1407507789.3354.20.camel@paszta.hi.pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jdM5ZcN/ZcXXVwZs"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:37687 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751101AbaHKRbH (ORCPT
+Received: from top.free-electrons.com ([176.31.233.9]:49354 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752694AbaHKRfF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Aug 2014 13:31:07 -0400
-In-Reply-To: <20140811160222.GF17528@sirena.org.uk>
+	Mon, 11 Aug 2014 13:35:05 -0400
+Content-Disposition: inline
+In-Reply-To: <1407507789.3354.20.camel@paszta.hi.pengutronix.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Houcheng Lin <houcheng@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Stephen Gallimore <stephen.gallimore@st.com>, Srinivas KANDAGATLA <srinivas.kandagatla@st.com>, Ulf Hansson <ulf.hansson@linaro.org>, sre@kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Vikas Sajjan <vikas.sajjan@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hello Mark,
 
-On 08/11/2014 06:02 PM, Mark Brown wrote:
-> On Mon, Aug 11, 2014 at 08:57:24AM -0700, Doug Anderson wrote:
->> On Mon, Aug 11, 2014 at 4:38 AM, Javier Martinez Canillas
-> 
->> > After the switch is turned on, a safety timer is started
->> > and before this timer times out the output voltage must
->> > have reached the input voltage. Otherwise the switch is
->> > turned off expecting an overload condition.
-> 
->> > So using the maximum output voltage slew rate and the timer
->> > minimum and maximum timeouts, a voltage constraints can be
->> > expressed as bounded limits for the timeout. That is what
->> > is used in the board schematics and should be in the DT too.
-> 
->> I don't understand this, but if you and Mark are happy with it...
-> 
-> I have not looked at this change to my knowledge.
-> 
+--jdM5ZcN/ZcXXVwZs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No worries, I have to re-spin anyways to fix the 17v typo that Doug pointed out.
-But basically is related to our previous discussion in patch:
+On Fri, Aug 08, 2014 at 04:23:09PM +0200, Philipp Zabel wrote:
+> Am Dienstag, den 08.07.2014, 11:38 +0200 schrieb Linus Walleij:
+> > On Tue, Jul 8, 2014 at 10:05 AM, Maxime Ripard
+> > <maxime.ripard@free-electrons.com> wrote:
+> > > On Tue, Jul 08, 2014 at 09:52:03AM +0200, Linus Walleij wrote:
+> > >> On Wed, Jun 18, 2014 at 3:37 PM, Houcheng Lin <houcheng@gmail.com> w=
+rote:
+> > >>
+> > >> > The Problem
+> > >> > -----------
+> > >> > The reset signal on a hardware board is send either:
+> > >> >     - during machine initialization
+> > >> >     - during bus master's initialization
+> > >>
+> > >> I just thought about this a bit, since there isn't already a generic=
+ GPIO
+> > >> reset driver, just call this drivers/reset/reset-gpio.c and make the
+> > >> ability to deferral just a configuration detail of the GPIO reset dr=
+iver.
+> > >
+> > > Philipp has been working on one for quite some time. See
+> > > http://www.spinics.net/lists/arm-kernel/msg321927.html
+> > >
+> > > However, it seems to progress slowly, and we don't seem to be able to
+> > > reach a consensus here.
+>=20
+> Mostly because Maxime and I seem to have a completely different opinion
+> and nobody else argued one way or the other.
 
-"[RFC 3/5] regulator: core: Only apply constraints if available on list voltage"
+Yep, mostly because I don't see how a generic approach can work.
 
-where you explained [0] to me that child regulators should explicit set their
-constraints instead of getting from its parent supply. So this patch adds the
-needed constraints for the children FETs even when their output voltage depend
-on its parent supply.
+The existing reset-gpios property only provide the gpio to use, but
+some informations are encoded in the driver, such as the reset
+duration, or a reset sequence if any.
 
->> ...I'm also not 100% certain what the above description has to do with
->> this change, but I'll admit to having only skimmed some of the earlier
->> conversations.
-> 
-> It's not at all clear to me either looking at the quoted section.
-> 
+How do you plan on giving that information to your generic driver?
 
-Yes, the commit message is not great to say the least. Also I didn't have the
-last version of the documentation so I misunderstood from where the constraints
-mentioned in the schematics came from. Will fix the commit message when posting v2.
+The only solution I can think of would be to add an extra property
+that your code would parse. But then, you break the existing DT
+bindings.
 
-Thanks a lot and best regards,
-Javier
+And if we're going to break those bindings, at least do it in a way
+consistent with reset bindings.
 
-[0]: https://lkml.org/lkml/2014/7/30/99
+Plus, your approach doesn't cover the weird corner cases such as:
+  - reset-gpio
+  - wlf,reset-gpios
+  - phy-reset-gpios
+  - snps,reset-gpio
+  - the drivers that need several gpio and expect the reset one as a
+    positional argument.
+  - etc.
+
+Maxime
+
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+
+--jdM5ZcN/ZcXXVwZs
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJT6P6EAAoJEBx+YmzsjxAgeykP/2GNQxfk2wdXbNum225uiKFe
+qIkEVovztjBUQUyLePq4dltRSGqm3dXKNDVymcvCsv5RaNqgQAxXuDr/ElhGnOHr
+KyCMZjYpDh6ta7LdJmH5vkr3UBhmCdtpKM9j3W5j5yjc6YqaykzNCwOAxrMenDsY
+VG0FpmRe4XsGBUCi/au8cfNMdGGNeyF3jidPZrz8LKz1KsWqtIv4+gnwZzkxWYjW
+NioFXRjPl8BA+nLdKUCRib/gcK1Ok6TKI4+ehPw13sF8sSbfVgSAbSuH6SXa/89I
+rePDvKYOStnBcwANqMZa3MGPqb3/KER+5krTPKr1UduQn+OQ23UlhjIVMpkpqIiq
+bXIbUNmjBCAqTpLN4E8LrNmmjRFeDNfdLUjwG/RalFfpciq4JoEaohgRQ0F2Eppk
+1kC8pZWE8B+0iBe7CE29Wj5fK6IqKwldncBZMy7315H1AqrTbtkXXt8VZGmjebZH
+BfvS5bsVkKXL5Bqe83m5CcfYCFBsVwAkLcAirWxDPiqZzoM0eDDSkLKVXq/x2eCb
+kWe4VDrW1FPWYUXhjGhzYLWdYvq06hpP4w2ScJo4ii4O9vvPS8fWdhOxhAu56JoU
+/5OQRc32DQlq0o/TxjGDAmIJFQheuYWncstSvTgcgKxYkn9pgjGMrq8G9AGzZrlZ
+PC59BjM75QyuZs4K5Irk
+=Cba6
+-----END PGP SIGNATURE-----
+
+--jdM5ZcN/ZcXXVwZs--
