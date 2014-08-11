@@ -1,40 +1,36 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [RESEND PATCH 1/1] ARM: exynos_defconfig: Enable SBS battery support
-Date: Mon, 11 Aug 2014 10:36:50 -0700
-Message-ID: <CAD=FV=WB9SVMf2r1zE9JjLW0yLt=jPXkW_OyvNzhtjoiUzB5Lg@mail.gmail.com>
-References: <1407755198-17568-1-git-send-email-javier.martinez@collabora.co.uk>
-	<CAD=FV=XfvzKJO-enwH95hi_mGT6AhXq-R9WHjvhRrDdNtdmazA@mail.gmail.com>
-	<53E8EDE5.4000807@collabora.co.uk>
-	<87990175.pWuoYNXuLf@amdc1032>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RESEND PATCH 1/1] ARM: exynos_defconfig: Enable SBS battery
+ support
+Date: Mon, 11 Aug 2014 19:38:03 +0200
+Message-ID: <53E8FF7B.8020301@collabora.co.uk>
+References: <1407755198-17568-1-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=XfvzKJO-enwH95hi_mGT6AhXq-R9WHjvhRrDdNtdmazA@mail.gmail.com> <53E8EDE5.4000807@collabora.co.uk> <87990175.pWuoYNXuLf@amdc1032>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f181.google.com ([209.85.220.181]:53536 "EHLO
-	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754290AbaHKRgv (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:37695 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752150AbaHKRhw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Aug 2014 13:36:51 -0400
-Received: by mail-vc0-f181.google.com with SMTP id lf12so11762983vcb.40
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Aug 2014 10:36:50 -0700 (PDT)
+	Mon, 11 Aug 2014 13:37:52 -0400
 In-Reply-To: <87990175.pWuoYNXuLf@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi,
+Hello Bartlomiej,
 
-On Mon, Aug 11, 2014 at 10:28 AM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
->
+On 08/11/2014 07:28 PM, Bartlomiej Zolnierkiewicz wrote:
+> 
 > Hi,
->
+> 
 > On Monday, August 11, 2014 06:23:01 PM Javier Martinez Canillas wrote:
 >> Hello,
->>
+>> 
 >> On 08/11/2014 05:59 PM, Doug Anderson wrote:
 >> > Bartlomiej,
->> >
+>> > 
 >> > On Mon, Aug 11, 2014 at 8:42 AM, Bartlomiej Zolnierkiewicz
 >> > <b.zolnierkie@samsung.com> wrote:
 >> >>
@@ -100,20 +96,20 @@ On Mon, Aug 11, 2014 at 10:28 AM, Bartlomiej Zolnierkiewicz
 >> >> will therefore miss SBS battery support altogether (which is only 3.6
 >> >> kB of code more in the kernel image so there is no much gain in making
 >> >> it modular currently).
->> >
+>> > 
 >> > I'm not against making it =y for exynos_defconfig.  I do pretty
 >> > strongly agree that the multi_v7 version should be =m eventually,
 >> > though.  We'd need to do everything we can to make that kernel
 >> > smaller.
 >> >
->>
+>> 
 >> Same for me. I don't have such a strong opinion about this so if you think that
 >> I should re-spin to change to =m, I will.
->>
+>> 
 >> I do think that we should try to keep the delta between exynos_defconfig and
 >> multi_v7_defconfig as small as possible and eventually even get rid of
 >> exynos_defconfig. Since building everything as built-in and having a config
->
+> 
 > I completely agree.  I proposed exynos_defconfig removal as soon as
 > Exynos gained multiplatform support (and before exynos_defconfig
 > started getting out-of-sync with multi_v7_defconfig).  There were
@@ -121,25 +117,50 @@ On Mon, Aug 11, 2014 at 10:28 AM, Bartlomiej Zolnierkiewicz
 > it would be possible to go from a modular multi_v7_defconfig to
 > a modular/built-in single platform config (using a script?) all
 > such use cases will be covered.
+> 
+>> targeted to a single platform is not aligned with the effort to have support for
+>> multi platforms kernels.
+> 
+> Currently even for multi_v7_defconfig "=m" seems to be an exception
+> from the general rule:
+> 
+> $ grep "=m" arch/arm/configs/multi_v7_defconfig 
+> CONFIG_INET6_AH=m
+> CONFIG_INET6_ESP=m
+> CONFIG_INET6_IPCOMP=m
+> CONFIG_IPV6_MIP6=m
+> CONFIG_IPV6_TUNNEL=m
+> CONFIG_CFG80211=m
+> CONFIG_MAC80211=m
+> CONFIG_BRCMFMAC=m
+> CONFIG_RT2X00=m
+> CONFIG_RT2800USB=m
+> 
+> $ wc -l arch/arm/configs/multi_v7_defconfig 
+> 405 arch/arm/configs/multi_v7_defconfig
+> 
 
-There's one really nice thing about having an "exynos_defconfig".  It
-makes it a little easier to tease apart what's actually needed if you
-just want to build a product kernel that support exynos.
-
-Most product kernels shipping in embedded devices only support one or
-maybe a small number of SoCs.  If you need to try to figure out what
-parts of the "multi_v7" config is relevant then it's very hard.
-
-It's also nice to help measure multiplatform code bloat.  You can keep
-measuring the output kernel size of the exynos kernel to see how much
-bloat all of the mutliplatform stuff has added.
-
+Again, I think this is more of a consequence of people adding the config they
+use (which as you said in most cases is just built everything in the kernel to
+avoid copying modules) than something that was made on purpose.
 
 > so I would vote for CONFIG_BATTERY_SBS=y for both configs.  Especially
 > since it results in only 3.6 kB bigger kernel image (0.05% kernel size
 > increase for kernel image built with exynos_defconfig, probably a lot
 > less for multi_v7_defconfig one).
+> 
 
-Death by 1000 cuts is a very painful death indeed, even if each cut is small.
+I'll repost with =y for exynos_defconfig but I really think that for
+multi_v7_defconfig we should have everything as a module if possible. It's just
+3.6 kB but if every single platform do the same the kernel will be quite bloated
+for little gain.
 
--Doug
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+
+Best regards,
+Javier
