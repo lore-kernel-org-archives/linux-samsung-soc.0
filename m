@@ -1,40 +1,78 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [RESEND PATCH 1/1] ARM: exynos_defconfig: Enable SBS battery support
-Date: Mon, 11 Aug 2014 13:06:38 +0200
-Message-ID: <1407755198-17568-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:37489 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750800AbaHKLG7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Aug 2014 07:06:59 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [RESEND PATCH 1/2] ARM: dts: Improve Peach Pit and Pi power scheme
+Date: Mon, 11 Aug 2014 13:38:10 +0200
+Message-ID: <1407757091-18730-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Sachin Kamat <sachin.kamat@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Many Exynos5 boards (e.g: Snow, Peach Pit and Pi) have
-a SBS-compliant gas gauge battery. Enable it as module
-so the needed support is available for these boards.
+The DeviceTree files for the Peach Pit and Pi machines have
+a simplistic model of the connections between the different
+regulators since not all the tps65090 regulators get their
+input supply voltage from the VDC. DCDC1-3, LD0-1 and fet7
+parent supply is indded VDC but the fet1-6 get their input
+supply from the DCDC1 and DCDC2 output voltage rails.
 
-Suggested-by: Doug Anderson <dianders@chromium.org>
+Update the DeviceTree to better reflect the real connections
+between tps65090 regulators. Having this information in the
+DTS is useful since FETs are switches that don't provide an
+output voltage so the regulator core needs to fetch the FET
+parent output voltage if the child voltage is queried.
+
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+Acked-by: Mark Brown <broonie@linaro.org>
 ---
- arch/arm/configs/exynos_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 12 ++++++------
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 12 ++++++------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index fc7d168..c390bb9 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -77,6 +77,7 @@ CONFIG_SPI_S3C64XX=y
- CONFIG_I2C_S3C2410=y
- CONFIG_DEBUG_GPIO=y
- CONFIG_POWER_SUPPLY=y
-+CONFIG_BATTERY_SBS=m
- CONFIG_CHARGER_TPS65090=y
- # CONFIG_HWMON is not set
- CONFIG_THERMAL=y
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 228a6b1..d8710c1 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -365,12 +365,12 @@
+ 				vsys2-supply = <&vbat>;
+ 				vsys3-supply = <&vbat>;
+ 				infet1-supply = <&vbat>;
+-				infet2-supply = <&vbat>;
+-				infet3-supply = <&vbat>;
+-				infet4-supply = <&vbat>;
+-				infet5-supply = <&vbat>;
+-				infet6-supply = <&vbat>;
+-				infet7-supply = <&vbat>;
++				infet2-supply = <&tps65090_dcdc1>;
++				infet3-supply = <&tps65090_dcdc2>;
++				infet4-supply = <&tps65090_dcdc2>;
++				infet5-supply = <&tps65090_dcdc2>;
++				infet6-supply = <&tps65090_dcdc2>;
++				infet7-supply = <&tps65090_dcdc1>;
+ 				vsys-l1-supply = <&vbat>;
+ 				vsys-l2-supply = <&vbat>;
+ 
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index f3ee48b..07b29b7 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -363,12 +363,12 @@
+ 				vsys2-supply = <&vbat>;
+ 				vsys3-supply = <&vbat>;
+ 				infet1-supply = <&vbat>;
+-				infet2-supply = <&vbat>;
+-				infet3-supply = <&vbat>;
+-				infet4-supply = <&vbat>;
+-				infet5-supply = <&vbat>;
+-				infet6-supply = <&vbat>;
+-				infet7-supply = <&vbat>;
++				infet2-supply = <&tps65090_dcdc1>;
++				infet3-supply = <&tps65090_dcdc2>;
++				infet4-supply = <&tps65090_dcdc2>;
++				infet5-supply = <&tps65090_dcdc2>;
++				infet6-supply = <&tps65090_dcdc2>;
++				infet7-supply = <&tps65090_dcdc1>;
+ 				vsys-l1-supply = <&vbat>;
+ 				vsys-l2-supply = <&vbat>;
+ 
 -- 
 2.0.0.rc2
