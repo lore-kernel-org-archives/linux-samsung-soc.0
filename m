@@ -1,128 +1,87 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [RESEND PATCH 2/2] ARM: dts: Add tps65090 FET constraints on Peach Pit and Pi
-Date: Mon, 11 Aug 2014 13:38:11 +0200
-Message-ID: <1407757091-18730-2-git-send-email-javier.martinez@collabora.co.uk>
-References: <1407757091-18730-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1407757091-18730-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Subject: Re: [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+Date: Mon, 11 Aug 2014 14:07:30 +0200
+Message-ID: <CAAObsKB3vO1KtgSvDY-+1WA4qDFVS_A6cXZM=vr9U1gVM=v=5g@mail.gmail.com>
+References: <1405612571-32598-1-git-send-email-t.figa@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f181.google.com ([209.85.212.181]:56573 "EHLO
+	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752629AbaHKMHv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Aug 2014 08:07:51 -0400
+In-Reply-To: <1405612571-32598-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, swarren@nvidia.com, acourbot@nvidia.com, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, Daniel Drake <drake@endlessm.com>
 
-Both Exynos5420 Peach Pit and Exynos5800 Peach Pi boards
-have a tps65090 PMU that has a number of switches (FETs)
-that are just on/off devices but they do have a current
-limit and the output voltage of the switch is ramped up
-within a controlled slope.
+For both patches, on the Odroid U2:
 
-After the switch is turned on, a safety timer is started
-and before this timer times out the output voltage must
-have reached the input voltage. Otherwise the switch is
-turned off expecting an overload condition.
+Tested-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 
-So using the maximum output voltage slew rate and the timer
-minimum and maximum timeouts, a voltage constraints can be
-expressed as bounded limits for the timeout. That is what
-is used in the board schematics and should be in the DT too.
+Thanks,
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 14 ++++++++++++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 14 ++++++++++++++
- 2 files changed, 28 insertions(+)
+Tomeu
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index d8710c1..eefafe6 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -386,27 +386,41 @@
- 					};
- 					tps65090_fet1: fet1 {
- 						regulator-name = "vcd_led";
-+						regulator-min-microvolt = <5000000>;
-+						regulator-max-microvolt = <1700000>;
- 					};
- 					tps65090_fet2: fet2 {
- 						regulator-name = "video_mid";
-+						regulator-min-microvolt = <4500000>;
-+						regulator-max-microvolt = <5500000>;
- 						regulator-always-on;
- 					};
- 					tps65090_fet3: fet3 {
- 						regulator-name = "wwan_r";
-+						regulator-min-microvolt = <3000000>;
-+						regulator-max-microvolt = <5500000>;
- 						regulator-always-on;
- 					};
- 					tps65090_fet4: fet4 {
- 						regulator-name = "sdcard";
-+						regulator-min-microvolt = <3000000>;
-+						regulator-max-microvolt = <5500000>;
- 						regulator-always-on;
- 					};
- 					tps65090_fet5: fet5 {
- 						regulator-name = "camout";
-+						regulator-min-microvolt = <3000000>;
-+						regulator-max-microvolt = <5500000>;
- 					};
- 					tps65090_fet6: fet6 {
- 						regulator-name = "lcd_vdd";
-+						regulator-min-microvolt = <3000000>;
-+						regulator-max-microvolt = <5500000>;
- 					};
- 					tps65090_fet7: fet7 {
- 						regulator-name = "video_mid_1a";
-+						regulator-min-microvolt = <3000000>;
-+						regulator-max-microvolt = <5500000>;
- 						regulator-always-on;
- 					};
- 					tps65090_ldo1: ldo1 {
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 07b29b7..5c38bc0 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -384,27 +384,41 @@
- 					};
- 					tps65090_fet1: fet1 {
- 						regulator-name = "vcd_led";
-+						regulator-min-microvolt = <5000000>;
-+						regulator-max-microvolt = <1700000>;
- 					};
- 					tps65090_fet2: fet2 {
- 						regulator-name = "video_mid";
-+						regulator-min-microvolt = <4500000>;
-+						regulator-max-microvolt = <5500000>;
- 						regulator-always-on;
- 					};
- 					tps65090_fet3: fet3 {
- 						regulator-name = "wwan_r";
-+						regulator-min-microvolt = <3000000>;
-+						regulator-max-microvolt = <5500000>;
- 						regulator-always-on;
- 					};
- 					tps65090_fet4: fet4 {
- 						regulator-name = "sdcard";
-+						regulator-min-microvolt = <3000000>;
-+						regulator-max-microvolt = <5500000>;
- 						regulator-always-on;
- 					};
- 					tps65090_fet5: fet5 {
- 						regulator-name = "camout";
-+						regulator-min-microvolt = <3000000>;
-+						regulator-max-microvolt = <5500000>;
- 					};
- 					tps65090_fet6: fet6 {
- 						regulator-name = "lcd_vdd";
-+						regulator-min-microvolt = <3000000>;
-+						regulator-max-microvolt = <5500000>;
- 					};
- 					tps65090_fet7: fet7 {
- 						regulator-name = "video_mid_1a";
-+						regulator-min-microvolt = <3000000>;
-+						regulator-max-microvolt = <5500000>;
- 						regulator-always-on;
- 					};
- 					tps65090_ldo1: ldo1 {
--- 
-2.0.0.rc2
+On 17 July 2014 17:56, Tomasz Figa <t.figa@samsung.com> wrote:
+> On Exynos-based boards running secure firmware the sequence of low level
+> operations to enter and leave system-wide sleep mode is different than
+> on those without the firmware. Namely:
+>  - CP15 power control and diagnostic registers cannot be written directly,
+>  - the way of setting boot address and boot flag is different,
+>  - different resume handler needs to be used,
+>  - dedicated SMC call needs to be performed instead of letting the CPU enter
+>    WFI.
+>
+> This series introduces .suspend() and .resume() firmware operations to
+> perform low level firmware-specific suspend and resume and then leverages
+> them to provide suspend-resume path meeting the above requirements.
+>
+> The series is based on Kgene's for-next branch and tested on:
+>  - Exynos4412-based Trats2 board running in non-secure mode (under secure
+>    firmware) with few board-specific fixes that will be sent separately soon,
+>  - Exynos4210-based Trats board running in secure mode,
+>  - Exynos4412-based ODROID-U3 board running in non-secure mode with one minor
+>    board-specific fix which will be send shortly.
+>
+> Depends on:
+>  - [PATCH v3] ARM: save/restore Cortex-A9 CP15 registers on suspend/resume
+>    (http://www.spinics.net/lists/arm-kernel/msg346212.html)
+>  - [PATCH v3] ARM: EXYNOS: Fix suspend/resume sequences
+>    (https://lkml.org/lkml/2014/7/15/319)
+>  - [PATCH] ARM: make it easier to check the CPU part number correctly
+>    (http://thread.gmane.org/gmane.linux.ports.arm.kernel/335126
+>     already in linux-next)
+>
+> Changes since v1:
+>  - dropped outer_resume() - will be handled in assembly in further patches,
+>    as support for L2C in non-secure mode gets added,
+>  - moved CP15 resume to assembly as it needs to be done before MMU is enabled,
+>  - surrounded CP15 save with a check for cpuid part, because it is valid only
+>    on Cortex A9,
+>  - rebased on next-20140717 tag of linux-next tree.
+>
+> Tomasz Figa (2):
+>   ARM: firmware: Introduce suspend and resume operations
+>   ARM: EXYNOS: Add support for firmware-assisted suspend/resume
+>
+>  Documentation/arm/firmware.txt  | 28 +++++--------------------
+>  arch/arm/include/asm/firmware.h |  8 ++++++++
+>  arch/arm/mach-exynos/Makefile   |  1 +
+>  arch/arm/mach-exynos/common.h   |  4 ++++
+>  arch/arm/mach-exynos/firmware.c | 45 +++++++++++++++++++++++++++++++++++++++++
+>  arch/arm/mach-exynos/pm.c       | 16 ++++++++++-----
+>  arch/arm/mach-exynos/sleep.S    | 28 +++++++++++++++++++++++++
+>  arch/arm/mach-exynos/smc.h      |  4 ++++
+>  8 files changed, 106 insertions(+), 28 deletions(-)
+>
+> --
+> 1.9.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
