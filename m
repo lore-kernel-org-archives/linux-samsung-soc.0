@@ -1,94 +1,47 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer
- support
-Date: Mon, 11 Aug 2014 17:15:35 +0900
-Message-ID: <53E87BA7.2040208@samsung.com>
-References: <20140807131713.GB1540@ulmo.nvidia.com>
- <53E38191.1050308@samsung.com> <20140807135500.GA27417@ulmo.nvidia.com>
- <53E42BCB.5090608@samsung.com> <20140808070311.GA5387@ulmo>
- <53E47E23.1050302@samsung.com> <20140808095507.GE15852@ulmo>
- <53E85259.2000204@samsung.com> <20140811072414.GA30762@ulmo>
- <53E87252.60700@samsung.com> <20140811075043.GA31127@ulmo>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/1] Input: atmel_mxt_ts - Get IRQ edge/level flags on
+ DT booting
+Date: Mon, 11 Aug 2014 10:32:19 +0200
+Message-ID: <CACRpkdZ9-5Pw-SHFNuGtvxDDHrA13ShSSFN9uZRBLTfpe=m5ug@mail.gmail.com>
+References: <1407397492-17475-1-git-send-email-javier.martinez@collabora.co.uk>
+	<53E4D9A5.908@itdev.co.uk>
+	<20140808162146.GC26820@core.coreip.homeip.net>
+	<53E4FD1B.6060600@collabora.co.uk>
+	<53E5170C.10302@collabora.co.uk>
+	<CAD=FV=WSNqjHLLbTh1LBF3RFrCnWnj498hivivcmx1SbuYp=Hw@mail.gmail.com>
+	<53E54E91.9060905@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20140811075043.GA31127@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, treding@nvidia.com, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <53E54E91.9060905@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Doug Anderson <dianders@chromium.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick.dyer@itdev.co.uk>, Stephen Warren <swarren@nvidia.com>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Abraham <thomas.ab@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNOuFhCAwOOyblCAxMeydvCAxNjo1MCwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24g
-TW9uLCBBdWcgMTEsIDIwMTQgYXQgMDQ6MzU6NDZQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6Cj4+
-IE9uIDIwMTTrhYQgMDjsm5QgMTHsnbwgMTY6MjQsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+Pj4g
-T24gTW9uLCBBdWcgMTEsIDIwMTQgYXQgMDI6MTk6MjFQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6
-Cj4+Pj4gT24gMjAxNOuFhCAwOOyblCAwOOydvCAxODo1NSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6
-Cj4gWy4uLl0KPj4+Pj4gVGhlIGFib3ZlIGlzIGFjdHVhbGx5IG1vcmUgbGlrZSB0aGlzOgo+Pj4+
-Pgo+Pj4+PiAJaWYgKChmbGFncyAmIE1JUElfRFNJX01PREVfTk9OX0NPTlRJTlVPVVMpID09IDAp
-Cj4+Pj4+IAkJY2xlYXIgRFNJX0hTX0NMS19DVFJMOwo+Pj4+PiAJZWxzZQo+Pj4+PiAJCXNldCBE
-U0lfSFNfQ0xLX0NUUkw7Cj4+Pj4+Cj4+Pj4+IAlpZiAobXNnLT5mbGFncyAmIE1JUElfRFNJX01T
-R19VU0VfTFBNKQo+Pj4+PiAJCWNsZWFyIERTSV9ISUdIX1NQRUVEX1RSQU5TOwo+Pj4+PiAJZWxz
-ZQo+Pj4+PiAJCXNldCBEU0lfSElHSF9TUEVFRF9UUkFOUzsKPj4+Pj4KPj4+Pj4gU28gZm9yIHBl
-cmlwaGVyYWxzIHRoYXQgZG9uJ3Qgc3VwcG9ydCBub24tY29udGludW91cyBjbG9jayBtb2RlLCB0
-aGlzCj4+Pj4+IHdpbGwgcmVzdWx0IGluIHRoZSBmb2xsb3dpbmcgZm9yIGxvdy1wb3dlciB0cmFu
-c21pc3Npb25zOgo+Pj4+Pgo+Pj4+PiAJY2xlYXIgRFNJX0hTX0NMS19DVFJMOyAvKiBIUyBjbG9j
-ayBhbHdheXMgb24gKi8KPj4+Pj4gCWNsZWFyIERTSV9ISUdIX1NQRUVEX1RSQU5TOwo+Pj4+Cj4+
-Pj4gUmlnaHQsIHRoZW4gaG93IGhvc3QgZHJpdmVyIHNob3VsZCBjaGVjayBpdCBpZiBwZXJpcGhl
-cmFsIGRvZXNuJ3QKPj4+PiBzdXBwb3J0IG5vbi1jb250aW51b3VzIGNsb2NrIG1vZGU/IE9yIGhv
-dyB0aGUgcGVyaXBoZXJhbCBzaG91bGQgbm90aWZ5Cj4+Pj4gaXQgdG8gaG9zdCBkcml2ZXI/IEl0
-IHdvdWxkIG5lZWQgYSBuZXcgZmxhZyBpbnN0ZWFkIG9mCj4+Pj4gTUlQSV9EU0lfTU9ERV9OT05f
-Q09OVElOVU9VUy4KPj4+Cj4+PiBNSVBJX0RTSV9NT0RFX05PTl9DT05USU5VT1VTIGlzIGV4YWN0
-bHkgdGhlIGZsYWcgdGhhdCBkZXZpY2VzIG5lZWQgdG8KPj4+IHNldCB0byBzaWduYWwgdGhhdCB0
-aGV5IHN1cHBvcnQgbm9uLWNvbnRpbnVvdXMgbW9kZS4gSWYgZGV2aWNlcyBkb24ndAo+Pj4gaGF2
-ZSB0aGF0IHNldCwgdGhlbiB0aGUgY29udHJvbGxlciBzaG91bGQgYWx3YXlzIHByb3ZpZGUgdGhl
-IEhTIGNsb2NrLgo+Pj4KPj4+IFNvLCBpZiBNSVBJX0RTSV9NT0RFX05PTl9DT05USU5VT1VTIGlz
-ICpub3QqIHNldCwgdGhlbiB0aGUgcGVyaXBoZXJhbAo+Pj4gZG9lcyAqbm90KiBzdXBwb3J0IG5v
-bi1jb250aW51b3VzIG1vZGUuCj4+Pgo+Pgo+PiBBZ2FpbiwgYXNzdW1lIHRoYXQgdGhlcmUgaXMg
-YSBwZXJpcGhlcmFsIHRoYXQgZG9lc24ndCBzdXBwb3J0Cj4+IG5vbi1jb250aW51b3VzIGNsb2Nr
-IG1vZGUgYnV0IGhvc3QgZHJpdmVyIHdhbnQgdG8gdHJhbnNtaXQgZGF0YSBpbiBsb3cKPj4gcG93
-ZXIuIEZvciB0aGlzLCB5b3UgYWxyZWFkeSBtZW50aW9uZWQgbGlrZSBiZWxvdywKPj4KPj4gIlNv
-IGZvciBwZXJpcGhlcmFscyB0aGF0IGRvbid0IHN1cHBvcnQgbm9uLWNvbnRpbnVvdXMgY2xvY2sg
-bW9kZSwgdGhpcwo+PiB3aWxsIHJlc3VsdCBpbiB0aGUgZm9sbG93aW5nIGZvciBsb3ctcG93ZXIg
-dHJhbnNtaXNzaW9uczoKPj4KPj4gIAljbGVhciBEU0lfSFNfQ0xLX0NUUkw7IC8qIEhTIGNsb2Nr
-IGFsd2F5cyBvbiAqLwo+PiAgCWNsZWFyIERTSV9ISUdIX1NQRUVEX1RSQU5TOwo+PiAiCj4+Cj4+
-IEluIHRoaXMgY2FzZSwgaG93IHNob3VsZCBob3N0IGRyaXZlciBjaGVjayBpdCB0byBjbGVhciBh
-Ym92ZSB0d28gZmxhZ3M/Cj4+IEFzIHlvdSBrbm93LCB0aGlzIGlzIHJlcXVpcmVkIHRvIGNsZWFy
-IHR3byBmbGFncyBzYW1lIGFzIG5vbi1jb250aW51b3VzCj4+IGNsb2NrIG1vZGUuIERvbid0IHlv
-dSB0aGluayB0aGF0IHdlIG5lZWQgYSBuZXcgZmxhZyB0byBpZGVudGlmeSB0aGVtIC0KPj4gbm9u
-LWNvbnRpbnVvdXMgY2xvY2sgbW9kZSBvciBqdXN0IGZvciBsb3ctcG93ZXIgdHJhbnNtaXNzaW9u
-Pwo+IAo+IFNlZSB3aGF0IEkgd3JvdGUgYSBsaXR0bGUgZnVydGhlciB1cDoKPiAKPj4+Pj4gCWlm
-ICgoZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX05PTl9DT05USU5VT1VTKSA9PSAwKQo+Pj4+PiAJCWNs
-ZWFyIERTSV9IU19DTEtfQ1RSTDsKPj4+Pj4gCWVsc2UKPj4+Pj4gCQlzZXQgRFNJX0hTX0NMS19D
-VFJMOwo+Pj4+Pgo+Pj4+PiAJaWYgKG1zZy0+ZmxhZ3MgJiBNSVBJX0RTSV9NU0dfVVNFX0xQTSkK
-Pj4+Pj4gCQljbGVhciBEU0lfSElHSF9TUEVFRF9UUkFOUzsKPj4+Pj4gCWVsc2UKPj4+Pj4gCQlz
-ZXQgRFNJX0hJR0hfU1BFRURfVFJBTlM7Cj4+Pj4+Cj4gCj4gTUlQSV9EU0lfTU9ERV9OT05fQ09O
-VElOVU9VUyBzcGVjaWZpZXMgdGhhdCBhIHBlcmlwaGVyYWwgc3VwcG9ydHMgbm9uLQo+IGNvbnRp
-bnVvdXMgbW9kZS4gV2hlbiBzZXQsIHdlIGNsZWFyIERTSV9IU19DTEtfQ1RSTCBvbiBUZWdyYSBi
-ZWNhdXNlCj4gdGhhdCB0ZWxscyB0aGUgY29udHJvbGxlciB0byB0dXJuIG9mZiB0aGUgSFMgY2xv
-Y2sgYmV0d2VlbiBoaWdoLXNwZWVkCj4gdHJhbnNtaXNzaW9ucy4KPiAKPiBNSVBJX0RTSV9NU0df
-VVNFX0xQTSBzcGVjaWZpZXMgdGhhdCBhIG1lc3NhZ2UgaXMgdG8gYmUgc2VudCBpbiBsb3ctcG93
-ZXIKPiBtb2RlLgo+IAo+IFdpdGggdGhlIGFib3ZlIHR3byBmbGFncyB3ZSBjYW4gY292ZXIgZm91
-ciBjYXNlczoKPiAKPiAgIDEpIG5vbi1jb250aW51b3VzIG1vZGUgd2l0aCBtZXNzYWdlcyB0cmFu
-c21pdHRlZCBpbiBsb3ctcG93ZXIgbW9kZQo+ICAgMikgbm9uLWNvbnRpbnVvdXMgbW9kZSB3aXRo
-IG1lc3NhZ2VzIHRyYW5zbWl0dGVkIGluIGhpZ2gtc3BlZWQgbW9kZQo+ICAgMykgY29udGludW91
-cyBtb2RlIHdpdGggbWVzc2FnZXMgdHJhbnNtaXR0ZWQgaW4gbG93LXBvd2VyIG1vZGUKCkluIGNh
-c2Ugb2YgMyksIGl0IHdvdWxkIG1lYW4gInNldCBEU0lfSFNfQ0xLX0NUUkwiIGFuZCAiY2xlYXIK
-RFNJX0hJR0hfU1BFRURfVFJBTlMiLiBIb3dldmVyLCBtc2ctPmZsYWdzIGhhcyBNSVBJX0RTSV9N
-U0dfVVNFX0xQTSBidXQKZHNpLT5tb2RlX2ZsYWdzIGhhcyBubyBNSVBJX0RTSV9NT0RFX05PTl9D
-T05USU5PVVMgZmxhZy4uLi4uIEFoLCByaWdodC4KWW91IG1lYW4gdGhhdCBjb250aW51b3VzIG1v
-ZGUgaXMgc2V0IGJ5IGRlZmF1bHQgaW1wbGljaXRseT8KClRoYW5rcywKSW5raSBEYWUKCj4gICA0
-KSBjb250aW51b3VzIG1vZGUgd2l0aCBtZXNzYWdlcyB0cmFuc21pdHRlZCBpbiBoaWdoLXNwZWVk
-IG1vZGUKPiAKPiBXaGF0IG90aGVyIGNhc2VzIGRvIHlvdSB0aGluayB3ZSBuZWVkIHRvIHN1cHBv
-cnQ/Cj4gCj4gVGhpZXJyeQo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwK
+I guess this discussion is about drivers/pinctrl/samsung/pinctrl-exynos.c?
+
+Or else I'm not really following this... $SUBJECT is a bit confusing.
+
+On Sat, Aug 9, 2014 at 12:26 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+
+> Regardless of this though I think that both the patch to move the IRQ
+> pinmux setup from .irq_set_type to the .irq_request_resources and the patch to
+> to prevent any pinmux reconfiguration are good improvements to avoid future
+> issues like the one we found here.
+
+I think someone should look into switching the Samsung/Exynos pinctrl
+driver to the gpiolib irqchip helpers, I looked at it but was scared by
+the special wkup chip and stuff I can't test.
+
+The irqchip helpers will atleast help out in flagging GPIO lines as
+used for IRQs so the core can keep track of stuff and show that
+properly in debugfs.
+
+The orthogonality compliance between GPIO and irqchip must
+however be solved in the driver itself, the core only helps out
+in blocking some abuse of the API.
+
+Yours,
+Linus Walleij
