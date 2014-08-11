@@ -1,65 +1,99 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RESEND PATCH 1/1] ARM: exynos_defconfig: Enable SBS battery
- support
-Date: Mon, 11 Aug 2014 14:52:27 +0200
-Message-ID: <53E8BC8B.70709@collabora.co.uk>
-References: <1407755198-17568-1-git-send-email-javier.martinez@collabora.co.uk> <1761549.yKSqfXafKr@amdc1032>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCHv10 5/5] ARM: dts: rockchip: unuse the slot-node and
+ deprecate the supports-highspeed for dw-mmc
+Date: Mon, 11 Aug 2014 16:38:31 +0200
+Message-ID: <2216569.yZfKCR5Kzu@diego>
+References: <1407397082-32495-1-git-send-email-jh80.chung@samsung.com>
+ <1407397082-32495-6-git-send-email-jh80.chung@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:37550 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751485AbaHKMwZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Aug 2014 08:52:25 -0400
-In-Reply-To: <1761549.yKSqfXafKr@amdc1032>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1407397082-32495-6-git-send-email-jh80.chung@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, kgene.kim@samsung.com, tgih.jun@samsung.com, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dinguyen@altera.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hello Bartlomiej,
-
-On 08/11/2014 02:40 PM, Bartlomiej Zolnierkiewicz wrote:
->> index fc7d168..c390bb9 100644
->> --- a/arch/arm/configs/exynos_defconfig
->> +++ b/arch/arm/configs/exynos_defconfig
->> @@ -77,6 +77,7 @@ CONFIG_SPI_S3C64XX=y
->>  CONFIG_I2C_S3C2410=y
->>  CONFIG_DEBUG_GPIO=y
->>  CONFIG_POWER_SUPPLY=y
->> +CONFIG_BATTERY_SBS=m
+Am Donnerstag, 7. August 2014, 16:38:02 schrieb Jaehoon Chung:
+> dw-mmc controller can support multiple slots.
+> But, there are no use-cases anywhere. So we don't need to support the
+> slot-node for dw-mmc controller.
+> And "supports-highspeed" property in dw-mmc is deprecated.
+> "supports-highspeed" property can be replaced with "cap-sd/mmc-highspeed".
 > 
-> Why not make it "=y"?
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Reviewed-by: Tushar Behera <trblinux@gmail.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+
+I've added this one to my queue for 3.18
+
+
+Heiko
+
+> ---
+>  arch/arm/boot/dts/rk3066a-bqcurie2.dts |   15 ++++-----------
+>  arch/arm/boot/dts/rk3188-radxarock.dts |    7 ++-----
+>  2 files changed, 6 insertions(+), 16 deletions(-)
 > 
-> Rationale:
-> - currently no hardware related option uses "=m" in exynos_defconfig
-> - it would match the SBS option usage in multi_v7_defconfig
->
->>  CONFIG_CHARGER_TPS65090=y
->>  # CONFIG_HWMON is not set
->>  CONFIG_THERMAL=y
+> diff --git a/arch/arm/boot/dts/rk3066a-bqcurie2.dts
+> b/arch/arm/boot/dts/rk3066a-bqcurie2.dts index 042f821d..665dd56 100644
+> --- a/arch/arm/boot/dts/rk3066a-bqcurie2.dts
+> +++ b/arch/arm/boot/dts/rk3066a-bqcurie2.dts
+> @@ -150,12 +150,8 @@
+>  	num-slots = <1>;
+>  	status = "okay";
+>  	vmmc-supply = <&vcc_sd0>;
+> -
+> -	slot@0 {
+> -		reg = <0>;
+> -		bus-width = <4>;
+> -		disable-wp;
+> -	};
+> +	bus-width = <4>;
+> +	disable-wp;
+>  };
 > 
-
-I know but personally I think this should be changed. The idea of having a multi
-platform kernel is to build a single kernel image that can be used to boot
-different platforms. Not all platforms have a SBS-compliant battery so this
-support shouldn't be built in the kernel image IMHO.
-
-This also matches to what real users will do since distributions most likely
-will have a minimal kernel and every possible hardware support will be enabled
-as a loadable kernel module. This is what distros do for other platforms too.
-
-If someone has a different use case and wants a kernel image that is optimized
-for a particular platform then she has to create its own defconfig anyways.
-
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
+>  &mmc1 { /* wifi */
+> @@ -166,11 +162,8 @@
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&sd1_clk &sd1_cmd &sd1_bus4>;
 > 
-
-Best regards,
-Javier
+> -	slot@0 {
+> -		reg = <0>;
+> -		bus-width = <4>;
+> -		disable-wp;
+> -	};
+> +	bus-width = <4>;
+> +	disable-wp;
+>  };
+> 
+>  &uart0 {
+> diff --git a/arch/arm/boot/dts/rk3188-radxarock.dts
+> b/arch/arm/boot/dts/rk3188-radxarock.dts index 171b610..ef72faf 100644
+> --- a/arch/arm/boot/dts/rk3188-radxarock.dts
+> +++ b/arch/arm/boot/dts/rk3188-radxarock.dts
+> @@ -181,11 +181,8 @@
+>  	status = "okay";
+>  	vmmc-supply = <&vcc_sd0>;
+> 
+> -	slot@0 {
+> -		reg = <0>;
+> -		bus-width = <4>;
+> -		disable-wp;
+> -	};
+> +	bus-width = <4>;
+> +	disable-wp;
+>  };
+> 
+>  &pinctrl {
