@@ -1,155 +1,67 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [RESEND PATCH 1/1] ARM: exynos_defconfig: Enable SBS battery
- support
-Date: Mon, 11 Aug 2014 19:28:09 +0200
-Message-ID: <87990175.pWuoYNXuLf@amdc1032>
-References: <1407755198-17568-1-git-send-email-javier.martinez@collabora.co.uk>
- <CAD=FV=XfvzKJO-enwH95hi_mGT6AhXq-R9WHjvhRrDdNtdmazA@mail.gmail.com>
- <53E8EDE5.4000807@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RESEND PATCH 2/2] ARM: dts: Add tps65090 FET constraints on
+ Peach Pit and Pi
+Date: Mon, 11 Aug 2014 19:31:16 +0200
+Message-ID: <53E8FDE4.40005@collabora.co.uk>
+References: <1407757091-18730-1-git-send-email-javier.martinez@collabora.co.uk> <1407757091-18730-2-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=XRmNkxXoxWaEfxFADrTgBrOPVX746woxiZoKck1ajwgA@mail.gmail.com> <20140811160222.GF17528@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:14234 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751438AbaHKR2V (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:37687 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751101AbaHKRbH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Aug 2014 13:28:21 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NA5000XSKJ725C0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 12 Aug 2014 02:28:19 +0900 (KST)
-In-reply-to: <53E8EDE5.4000807@collabora.co.uk>
+	Mon, 11 Aug 2014 13:31:07 -0400
+In-Reply-To: <20140811160222.GF17528@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Mark Brown <broonie@kernel.org>, Doug Anderson <dianders@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
+Hello Mark,
 
-Hi,
-
-On Monday, August 11, 2014 06:23:01 PM Javier Martinez Canillas wrote:
-> Hello,
+On 08/11/2014 06:02 PM, Mark Brown wrote:
+> On Mon, Aug 11, 2014 at 08:57:24AM -0700, Doug Anderson wrote:
+>> On Mon, Aug 11, 2014 at 4:38 AM, Javier Martinez Canillas
 > 
-> On 08/11/2014 05:59 PM, Doug Anderson wrote:
-> > Bartlomiej,
-> > 
-> > On Mon, Aug 11, 2014 at 8:42 AM, Bartlomiej Zolnierkiewicz
-> > <b.zolnierkie@samsung.com> wrote:
-> >>
-> >> Hi,
-> >>
-> >> On Monday, August 11, 2014 02:52:27 PM Javier Martinez Canillas wrote:
-> >>> Hello Bartlomiej,
-> >>>
-> >>> On 08/11/2014 02:40 PM, Bartlomiej Zolnierkiewicz wrote:
-> >>> >> index fc7d168..c390bb9 100644
-> >>> >> --- a/arch/arm/configs/exynos_defconfig
-> >>> >> +++ b/arch/arm/configs/exynos_defconfig
-> >>> >> @@ -77,6 +77,7 @@ CONFIG_SPI_S3C64XX=y
-> >>> >>  CONFIG_I2C_S3C2410=y
-> >>> >>  CONFIG_DEBUG_GPIO=y
-> >>> >>  CONFIG_POWER_SUPPLY=y
-> >>> >> +CONFIG_BATTERY_SBS=m
-> >>> >
-> >>> > Why not make it "=y"?
-> >>> >
-> >>> > Rationale:
-> >>> > - currently no hardware related option uses "=m" in exynos_defconfig
-> >>> > - it would match the SBS option usage in multi_v7_defconfig
-> >>> >
-> >>> >>  CONFIG_CHARGER_TPS65090=y
-> >>> >>  # CONFIG_HWMON is not set
-> >>> >>  CONFIG_THERMAL=y
-> >>> >
-> >>>
-> >>> I know but personally I think this should be changed. The idea of having a multi
-> >>> platform kernel is to build a single kernel image that can be used to boot
-> >>> different platforms. Not all platforms have a SBS-compliant battery so this
-> >>> support shouldn't be built in the kernel image IMHO.
-> >>>
-> >>> This also matches to what real users will do since distributions most likely
-> >>> will have a minimal kernel and every possible hardware support will be enabled
-> >>> as a loadable kernel module. This is what distros do for other platforms too.
-> >>>
-> >>> If someone has a different use case and wants a kernel image that is optimized
-> >>> for a particular platform then she has to create its own defconfig anyways.
-> >>
-> >> Distributions usually use their own configs anyway and the current most
-> >> popular use case for exynos_defconfig (not multi_v7_defconfig) seems to
-> >> be to build kernel image alone and use it without any modules:
-> >>
-> >> $ grep "=m" arch/arm/configs/exynos_defconfig
-> >> CONFIG_DM_CRYPT=m
-> >>
-> >> $ grep "=m" .config
-> >> CONFIG_NET_IP_TUNNEL=m
-> >> CONFIG_INET_TUNNEL=m
-> >> CONFIG_IPV6=m
-> >> CONFIG_INET6_XFRM_MODE_TRANSPORT=m
-> >> CONFIG_INET6_XFRM_MODE_TUNNEL=m
-> >> CONFIG_INET6_XFRM_MODE_BEET=m
-> >> CONFIG_IPV6_SIT=m
-> >> CONFIG_DM_CRYPT=m
-> >> CONFIG_CRYPTO_RNG=m
-> >> CONFIG_CRYPTO_ANSI_CPRNG=m
-> >>
-> >> What I'm trying to say is that there is a high probability that people
-> >> will continue to use just the kernel image for exynos_defconfig and
-> >> will therefore miss SBS battery support altogether (which is only 3.6
-> >> kB of code more in the kernel image so there is no much gain in making
-> >> it modular currently).
-> > 
-> > I'm not against making it =y for exynos_defconfig.  I do pretty
-> > strongly agree that the multi_v7 version should be =m eventually,
-> > though.  We'd need to do everything we can to make that kernel
-> > smaller.
-> >
+>> > After the switch is turned on, a safety timer is started
+>> > and before this timer times out the output voltage must
+>> > have reached the input voltage. Otherwise the switch is
+>> > turned off expecting an overload condition.
 > 
-> Same for me. I don't have such a strong opinion about this so if you think that
-> I should re-spin to change to =m, I will.
+>> > So using the maximum output voltage slew rate and the timer
+>> > minimum and maximum timeouts, a voltage constraints can be
+>> > expressed as bounded limits for the timeout. That is what
+>> > is used in the board schematics and should be in the DT too.
 > 
-> I do think that we should try to keep the delta between exynos_defconfig and
-> multi_v7_defconfig as small as possible and eventually even get rid of
-> exynos_defconfig. Since building everything as built-in and having a config
+>> I don't understand this, but if you and Mark are happy with it...
+> 
+> I have not looked at this change to my knowledge.
+> 
 
-I completely agree.  I proposed exynos_defconfig removal as soon as
-Exynos gained multiplatform support (and before exynos_defconfig
-started getting out-of-sync with multi_v7_defconfig).  There were
-arguments that it is still useful in some cases.  I think that if
-it would be possible to go from a modular multi_v7_defconfig to
-a modular/built-in single platform config (using a script?) all
-such use cases will be covered.
+No worries, I have to re-spin anyways to fix the 17v typo that Doug pointed out.
+But basically is related to our previous discussion in patch:
 
-> targeted to a single platform is not aligned with the effort to have support for
-> multi platforms kernels.
+"[RFC 3/5] regulator: core: Only apply constraints if available on list voltage"
 
-Currently even for multi_v7_defconfig "=m" seems to be an exception
-from the general rule:
+where you explained [0] to me that child regulators should explicit set their
+constraints instead of getting from its parent supply. So this patch adds the
+needed constraints for the children FETs even when their output voltage depend
+on its parent supply.
 
-$ grep "=m" arch/arm/configs/multi_v7_defconfig 
-CONFIG_INET6_AH=m
-CONFIG_INET6_ESP=m
-CONFIG_INET6_IPCOMP=m
-CONFIG_IPV6_MIP6=m
-CONFIG_IPV6_TUNNEL=m
-CONFIG_CFG80211=m
-CONFIG_MAC80211=m
-CONFIG_BRCMFMAC=m
-CONFIG_RT2X00=m
-CONFIG_RT2800USB=m
+>> ...I'm also not 100% certain what the above description has to do with
+>> this change, but I'll admit to having only skimmed some of the earlier
+>> conversations.
+> 
+> It's not at all clear to me either looking at the quoted section.
+> 
 
-$ wc -l arch/arm/configs/multi_v7_defconfig 
-405 arch/arm/configs/multi_v7_defconfig
+Yes, the commit message is not great to say the least. Also I didn't have the
+last version of the documentation so I misunderstood from where the constraints
+mentioned in the schematics came from. Will fix the commit message when posting v2.
 
-so I would vote for CONFIG_BATTERY_SBS=y for both configs.  Especially
-since it results in only 3.6 kB bigger kernel image (0.05% kernel size
-increase for kernel image built with exynos_defconfig, probably a lot
-less for multi_v7_defconfig one).
+Thanks a lot and best regards,
+Javier
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+[0]: https://lkml.org/lkml/2014/7/30/99
