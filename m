@@ -1,66 +1,50 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/1] pinctrl: exynos: Lock GPIOs as interrupts when used
- as EINTs
-Date: Mon, 11 Aug 2014 10:35:57 +0200
-Message-ID: <CACRpkdZLCzNbpmWFAT=OD5zqyq-7cuLXcUo3FvnH-pkf3zrYBA@mail.gmail.com>
-References: <1407541685-20021-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2 1/1] Input: atmel_mxt_ts - Get IRQ edge/level flags
+ on DT booting
+Date: Mon, 11 Aug 2014 11:09:37 +0200
+Message-ID: <53E88851.6000705@collabora.co.uk>
+References: <1407397492-17475-1-git-send-email-javier.martinez@collabora.co.uk>	<53E4D9A5.908@itdev.co.uk>	<20140808162146.GC26820@core.coreip.homeip.net>	<53E4FD1B.6060600@collabora.co.uk>	<53E5170C.10302@collabora.co.uk>	<CAD=FV=WSNqjHLLbTh1LBF3RFrCnWnj498hivivcmx1SbuYp=Hw@mail.gmail.com>	<53E54E91.9060905@collabora.co.uk> <CACRpkdZ9-5Pw-SHFNuGtvxDDHrA13ShSSFN9uZRBLTfpe=m5ug@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f43.google.com ([209.85.219.43]:49563 "EHLO
-	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751584AbaHKIf5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Aug 2014 04:35:57 -0400
-Received: by mail-oa0-f43.google.com with SMTP id i7so5888700oag.30
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Aug 2014 01:35:57 -0700 (PDT)
-In-Reply-To: <1407541685-20021-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZ9-5Pw-SHFNuGtvxDDHrA13ShSSFN9uZRBLTfpe=m5ug@mail.gmail.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Doug Anderson <dianders@chromium.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick.dyer@itdev.co.uk>, Stephen Warren <swarren@nvidia.com>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Thomas Abraham <thomas.ab@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Tomasz Figa <t.figa@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick.dyer@itdev.co.uk>, Stephen Warren <swarren@nvidia.com>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Sat, Aug 9, 2014 at 1:48 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
+Hello Linus,
 
-> From: Tomasz Figa <t.figa@samsung.com>
->
-> Currently after configuring a GPIO pin as an interrupt related pinmux
-> registers are changed, but there is no protection from calling
-> gpio_direction_*() in a badly written driver, which would cause the same
-> pinmux register to be reconfigured for regular input/output and this
-> disabling interrupt capability of the pin.
->
-> This patch addresses this issue by moving pinmux reconfiguration to
-> .irq_{request,release}_resources() callback of irq_chip and calling
-> gpio_lock_as_irq() helper to prevent reconfiguration of pin direction.
->
-> Setting up a GPIO interrupt on Samsung SoCs is a two-step operation -
-> in addition to trigger configuration in a dedicated register, the pinmux
-> must be also reconfigured to GPIO interrupt, which is a different function
-> than normal GPIO input, although I/O-wise they both behave in the same way
-> and gpio_get_value() can be used on a pin configured as IRQ as well.
->
-> Such design implies subtleties such as gpio_direction_input() not having
-> to fail if a pin is already configured as an interrupt nor change the
-> configuration to normal input. But the FLAG_USED_AS_IRQ set in gpiolib by
-> gpio_lock_as_irq() is only used to check that gpio_direction_output() is
-> not called, it's not used to prevent gpio_direction_input() to be called.
-> So this is not a complete solution for Samsung SoCs but it's definitely a
-> move in the right direction.
->
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> [javier: use request resources instead of startup and expand commit message]
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> ---
->
-> This patch solves the issue explained in https://lkml.org/lkml/2014/8/8/461
+On 08/11/2014 10:32 AM, Linus Walleij wrote:
+> I guess this discussion is about drivers/pinctrl/samsung/pinctrl-exynos.c?
+> 
+> Or else I'm not really following this... $SUBJECT is a bit confusing.
+> 
 
-Hm, this looks much better atleast, it is not possible to use the
-irqchip helpers from gpiolib then, because that grabs the request/release
-resource callbacks.
+Yes, the thing is that at the beginning I (wrongly) thought that the IRQ trigger
+type flags defined in the DTS were discarded if someone called
+request_threaded_irq() with a flags != 0. And since the atmel touchpad driver
+was pass pdata->irqflags | IRQF_ONESHOT I posted this patch to get the trigger
+type parsed from DT and pass it to request_threaded_irq().
 
-If I get some ACKs on this we can go for this solution.
+But after digging further I found that the issue was in the pinctrl-exynos
+driver and Tomasz explained to me that the real cause was that the pin was being
+configured from GPIO IRQ to GPIO input (which on other platforms is just the
+same mode but on Exynos are two different modes).
 
-Yours,
-Linus Walleij
+At the end passing the trigger type to request_threaded_irq() just had the side
+effect to call the exynos .irq_set_type function handler that reconfigured the
+pin as GPIO-IRQ and that is why it made it to work. So I posted a patch from
+Tomasz that fixes the real cause [0].
+
+I'm so sorry for the confusion.
+
+> Yours,
+> Linus Walleij
+> 
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/8/8/962
