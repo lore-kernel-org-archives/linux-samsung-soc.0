@@ -1,46 +1,116 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 1/1] ARM: exynos_defconfig: Enable SBS battery support
-Date: Mon, 11 Aug 2014 19:57:17 +0200
-Message-ID: <1407779837-10981-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Dinh Nguyen <dinh.linux@gmail.com>
+Subject: Re: [PATCHv10 4/5] ARM: dts: socfpga: unuse the slot-node and
+ deprecate the supports-highspeed for dw-mmc
+Date: Mon, 11 Aug 2014 16:03:52 -0500
+Message-ID: <CADhT+wcKrL8f-OyLnKKzsBgyU3PSYFLfsZgvCcdAgVV5BAT76Q@mail.gmail.com>
+References: <1407397082-32495-1-git-send-email-jh80.chung@samsung.com>
+	<1407397082-32495-5-git-send-email-jh80.chung@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:37723 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753439AbaHKR5V (ORCPT
+Received: from mail-lb0-f176.google.com ([209.85.217.176]:61050 "EHLO
+	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754692AbaHKVD6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Aug 2014 13:57:21 -0400
+	Mon, 11 Aug 2014 17:03:58 -0400
+In-Reply-To: <1407397082-32495-5-git-send-email-jh80.chung@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Seungwon Jeon <tgih.jun@samsung.com>, Chris Ball <chris@printf.net>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dinh Nguyen <dinguyen@altera.com>
 
-Many Exynos5 boards (e.g: Snow, Peach Pit and Pi) have
-a SBS-compliant gas gauge battery. Enable to built it
-so the needed support is available for these boards.
+On Thu, Aug 7, 2014 at 2:38 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> dw-mmc controller can support multiple slots.
+> But, there are no use-cases anywhere. So we don't need to support the
+> slot-node for dw-mmc controller.
+> And "supports-highspeed" property in dw-mmc is deprecated.
+> "supports-highspeed" property can be replaced with "cap-sd/mmc-highspeed".
+>
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Reviewed-by: Tushar Behera <trblinux@gmail.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
+> Acked-by: Dinh Nguyen <dinguyen@altera.com>
+> ---
 
-Suggested-by: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-Reviewed-by: Doug Anderson <dianders@chromium.org>
----
+I've queued this patch in my tree for v3.18.
 
-Changes since v1:
- - Don't build it as a module since is the exception in exynos_defconfig.
-   Suggested by Bartlomiej Zolnierkiewicz.
+Thanks,
+Dinh
 
- arch/arm/configs/exynos_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index fc7d168..c390bb9 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -77,6 +77,7 @@ CONFIG_SPI_S3C64XX=y
- CONFIG_I2C_S3C2410=y
- CONFIG_DEBUG_GPIO=y
- CONFIG_POWER_SUPPLY=y
-+CONFIG_BATTERY_SBS=y
- CONFIG_CHARGER_TPS65090=y
- # CONFIG_HWMON is not set
- CONFIG_THERMAL=y
--- 
-2.0.0.rc2
+>  arch/arm/boot/dts/socfpga_arria5.dtsi   |    9 +++------
+>  arch/arm/boot/dts/socfpga_cyclone5.dtsi |    9 +++------
+>  arch/arm/boot/dts/socfpga_vt.dts        |    9 +++------
+>  3 files changed, 9 insertions(+), 18 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/socfpga_arria5.dtsi b/arch/arm/boot/dts/socfpga_arria5.dtsi
+> index 12d1c2c..468fc4c 100644
+> --- a/arch/arm/boot/dts/socfpga_arria5.dtsi
+> +++ b/arch/arm/boot/dts/socfpga_arria5.dtsi
+> @@ -29,13 +29,10 @@
+>
+>                 dwmmc0@ff704000 {
+>                         num-slots = <1>;
+> -                       supports-highspeed;
+>                         broken-cd;
+> -
+> -                       slot@0 {
+> -                               reg = <0>;
+> -                               bus-width = <4>;
+> -                       };
+> +                       bus-width = <4>;
+> +                       cap-mmc-highspeed;
+> +                       cap-sd-highspeed;
+>                 };
+>
+>                 sysmgr@ffd08000 {
+> diff --git a/arch/arm/boot/dts/socfpga_cyclone5.dtsi b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
+> index bf51182..1ee03c4 100644
+> --- a/arch/arm/boot/dts/socfpga_cyclone5.dtsi
+> +++ b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
+> @@ -30,13 +30,10 @@
+>
+>                 dwmmc0@ff704000 {
+>                         num-slots = <1>;
+> -                       supports-highspeed;
+>                         broken-cd;
+> -
+> -                       slot@0 {
+> -                               reg = <0>;
+> -                               bus-width = <4>;
+> -                       };
+> +                       bus-width = <4>;
+> +                       cap-mmc-highspeed;
+> +                       cap-sd-highspeed;
+>                 };
+>
+>                 ethernet@ff702000 {
+> diff --git a/arch/arm/boot/dts/socfpga_vt.dts b/arch/arm/boot/dts/socfpga_vt.dts
+> index 09792b4..f9345e0 100644
+> --- a/arch/arm/boot/dts/socfpga_vt.dts
+> +++ b/arch/arm/boot/dts/socfpga_vt.dts
+> @@ -43,13 +43,10 @@
+>
+>                 dwmmc0@ff704000 {
+>                         num-slots = <1>;
+> -                       supports-highspeed;
+>                         broken-cd;
+> -
+> -                       slot@0 {
+> -                               reg = <0>;
+> -                               bus-width = <4>;
+> -                       };
+> +                       bus-width = <4>;
+> +                       cap-mmc-highspeed;
+> +                       cap-sd-highspeed;
+>                 };
+>
+>                 ethernet@ff700000 {
+> --
+> 1.7.9.5
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
