@@ -1,57 +1,77 @@
 From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Subject: Re: [PATCH 0/7] Exynos4: enable HDMI support for Odroid and
- UniversalC210
-Date: Tue, 12 Aug 2014 15:00:44 +0200
-Message-ID: <CAAObsKC96xCOU8-hoecDn0PAZM5Z-T6Y3pb885csQm4_AakuyA@mail.gmail.com>
-References: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com>
+Subject: Re: [PATCH 1/2] ARM: dts: Enable PMIC interrupts on ODROID
+Date: Tue, 12 Aug 2014 15:06:20 +0200
+Message-ID: <CAAObsKAokjDmpVy5cm_iFD52bCq+3jYeGDWzACsmh-JKktyjDw@mail.gmail.com>
+References: <1405500606-5752-1-git-send-email-drake@endlessm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f179.google.com ([74.125.82.179]:51107 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751810AbaHLNGl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 12 Aug 2014 09:06:41 -0400
+Received: by mail-we0-f179.google.com with SMTP id u57so9972210wes.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Aug 2014 06:06:40 -0700 (PDT)
+In-Reply-To: <1405500606-5752-1-git-send-email-drake@endlessm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Drake <drake@endlessm.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, liquid.acid@gmx.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 1 July 2014 10:10, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> This is a long awaited patch series enabling support for HDMI output
-> available on Exynos4412-based Odroid boards (X/X2/U2/U3/U3+) and
-> Exynos4210 Universal C210 board.
-
-Hello,
-
-have tested a few of these patches on an Odroid-U2 on top of
-linux/master (c8d6637):
-
-1a8edf8 clk: exynos4: add support for MOUT_HDMI and MOUT_MIXER clocks
-bb2561d drm: exynos: hdmi: make 'hdmi-en' regulator optional and keep it enabled
-afe0bff Exynos: add support for 'domain-always-on' property
-be421b7 ARM: dts: exynos4: add hdmi related nodes
-1206d41 ARM: dts: exynos4412-odroid: enable hdmi support
+Tested on an Odroid-U2:
 
 Tested-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-
-I also needed these two patches from Daniel Drake:
-
-64489ec ARM: dts: Enable PMIC interrupts on ODROID
-ef009d7 ARM: dts: ODROID i2c improvements
-
-HDMI worked just fine in the testing I did, I have pushed a branch here:
-
-http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=odroid-hdmi
-
-Marek, Daniel: would you like me to send a series with all the needed
-patches together?
 
 Thanks,
 
 Tomeu
+
+
+On 16 July 2014 10:50, Daniel Drake <drake@endlessm.com> wrote:
+> The ODROID kernel shows that the PMIC interrupt line is hooked up
+> to pin GPX3-2.
+>
+> This is needed for the max77686-irq driver to create the PMIC IRQ
+> domain, which is needed by max77686-rtc.
+>
+> Signed-off-by: Daniel Drake <drake@endlessm.com>
+> ---
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> index 6d6d23c..cb6f55f 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> @@ -148,6 +148,10 @@
+>
+>                 max77686: pmic@09 {
+>                         compatible = "maxim,max77686";
+> +                       interrupt-parent = <&gpx3>;
+> +                       interrupts = <2 0>;
+> +                       pinctrl-names = "default";
+> +                       pinctrl-0 = <&max77686_irq>;
+>                         reg = <0x09>;
+>                         #clock-cells = <1>;
+>
+> @@ -368,4 +372,11 @@
+>                 samsung,pins = "gpx1-3";
+>                 samsung,pin-pud = <0>;
+>         };
+> +
+> +       max77686_irq: max77686-irq {
+> +               samsung,pins = "gpx3-2";
+> +               samsung,pin-function = <0>;
+> +               samsung,pin-pud = <0>;
+> +               samsung,pin-drv = <0>;
+> +       };
+>  };
+> --
+> 1.9.1
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
