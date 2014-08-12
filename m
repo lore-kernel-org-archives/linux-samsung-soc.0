@@ -1,63 +1,83 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 0/6] tps65090 DTS refactoring and improvements
-Date: Tue, 12 Aug 2014 18:44:22 +0200
-Message-ID: <1407861868-20097-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 6/6] ARM: dts: Add tps65090 FETs constraints
+Date: Tue, 12 Aug 2014 18:44:28 +0200
+Message-ID: <1407861868-20097-7-git-send-email-javier.martinez@collabora.co.uk>
+References: <1407861868-20097-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:38300 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754121AbaHLQpT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 12 Aug 2014 12:45:19 -0400
+In-Reply-To: <1407861868-20097-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-This series does a refactoring by creating dtsi files for the
-tps65090 PMU that can be included by DT board files that have
-this component. This not only allow to remove duplicated code
-but also makes it easier to maintain the tps65090 information.
+The tps65090 PMU data manual [0] has a table that list the
+"Recommended operating conditions" for each regulator. Add
+the information about the FET constraints to its dtsi file.
 
-So the series also improve the tps65090 description by adding
-regulator constraints information and also the power scheme
-for some boards that are using a simplistic model for the
-connection between the regulators in the tps65090.
+[0]: http://www.ti.com/lit/ds/symlink/tps65090.pdf
 
-The refactoring was made after Doug Anderson suggestion on a
-previous patch that just attempted to add the constraints to
-the Peach machines DTS [0].
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+ arch/arm/boot/dts/tps65090.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Patch 01/06 creates a .dtsi fragment for the tps65090 and patch
-02/06 removes the duplicated definitions from the Exynos Snow
-board. Patch 03/06 creates a fragment that is more specific for
-the tps65090 usage in Chrome OS machines and patch 04/06 uses it
-for Peach boards. Patch 05/06 model the real regulators relation
-instead of the simplistic model that was used before and finally
-patch 06/06 adds the tps65090 regulators constraints according to
-the data manual.
-
-NOTES: The NVIDIA Tegra114 Dalmore evaluation board also uses this
-PMU and can be converted to use the .dtsi but I didn't include in
-this series to avoid unnecessary cross subsystem churn. Once this
-is included I can post as a follow-up patch.
-
-Maybe the Snow can also use the cros-tps65090.dtsi instead of just
-the tps65090.dtsi but someone with the schematics for this board
-has to double check and can be done in a follow-up patch as well.
-
-Javier Martinez Canillas (6):
-  ARM: dts: Create fragment for tps65090 PMU
-  ARM: dts: Use tps65090 fragment in exynos5250-snow
-  ARM: dts: Create cros-tps65090 fragment
-  ARM: dts: Use cros-tps65090 fragment in Peach boards
-  ARM: dts: Improve cros-tps65090 power scheme
-  ARM: dts: Add tps65090 FETs constraints
-
- arch/arm/boot/dts/cros-tps65090.dtsi       |  81 ++++++++++++++++++++++
- arch/arm/boot/dts/exynos5250-snow.dts      | 108 ++++++++++++++---------------
- arch/arm/boot/dts/exynos5420-peach-pit.dts |  95 ++++++-------------------
- arch/arm/boot/dts/exynos5800-peach-pi.dts  |  94 ++++++-------------------
- arch/arm/boot/dts/tps65090.dtsi            |  75 ++++++++++++++++++++
- 5 files changed, 251 insertions(+), 202 deletions(-)
- create mode 100644 arch/arm/boot/dts/cros-tps65090.dtsi
- create mode 100644 arch/arm/boot/dts/tps65090.dtsi
-
-Best regards,
-Javier
-
-[0]: https://lkml.org/lkml/2014/8/11/202
+diff --git a/arch/arm/boot/dts/tps65090.dtsi b/arch/arm/boot/dts/tps65090.dtsi
+index a2ff534..60c56da 100644
+--- a/arch/arm/boot/dts/tps65090.dtsi
++++ b/arch/arm/boot/dts/tps65090.dtsi
+@@ -24,30 +24,48 @@
+ 		};
+ 
+ 		tps65090_fet1: fet1 {
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <17000000>;
+ 		};
+ 
+ 		tps65090_fet2: fet2 {
++			regulator-min-microvolt = <4500000>;
++			regulator-max-microvolt = <5500000>;
+ 		};
+ 
+ 		tps65090_fet3: fet3 {
++			regulator-min-microvolt = <3000000>;
++			regulator-max-microvolt = <5500000>;
+ 		};
+ 
+ 		tps65090_fet4: fet4 {
++			regulator-min-microvolt = <3000000>;
++			regulator-max-microvolt = <5500000>;
+ 		};
+ 
+ 		tps65090_fet5: fet5 {
++			regulator-min-microvolt = <3000000>;
++			regulator-max-microvolt = <5500000>;
+ 		};
+ 
+ 		tps65090_fet6: fet6 {
++			regulator-min-microvolt = <3000000>;
++			regulator-max-microvolt = <5500000>;
+ 		};
+ 
+ 		tps65090_fet7: fet7 {
++			regulator-min-microvolt = <3000000>;
++			regulator-max-microvolt = <5500000>;
+ 		};
+ 
+ 		tps65090_ldo1: ldo1 {
++			regulator-min-microvolt = <6000000>;
++			regulator-max-microvolt = <17000000>;
+ 		};
+ 
+ 		tps65090_ldo2: ldo2 {
++			regulator-min-microvolt = <6000000>;
++			regulator-max-microvolt = <17000000>;
+ 		};
+ 	};
+ 
+-- 
+2.0.0.rc2
