@@ -1,65 +1,66 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/6] ARM: dts: Create fragment for tps65090 PMU
-Date: Tue, 12 Aug 2014 17:58:52 +0100
-Message-ID: <20140812165852.GT17528@sirena.org.uk>
-References: <1407861868-20097-1-git-send-email-javier.martinez@collabora.co.uk>
- <1407861868-20097-2-git-send-email-javier.martinez@collabora.co.uk>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v2 1/1] ARM: exynos_defconfig: Enable SBS battery support
+Date: Tue, 12 Aug 2014 19:05:09 +0200
+Message-ID: <5085566.VKH3IuqYyi@amdc1032>
+References: <1407779837-10981-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="opPAX5Xc6j4THLmW"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60169 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753126AbaHLQ7Z (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:28903 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753241AbaHLRFO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Aug 2014 12:59:25 -0400
-Content-Disposition: inline
-In-Reply-To: <1407861868-20097-2-git-send-email-javier.martinez@collabora.co.uk>
+	Tue, 12 Aug 2014 13:05:14 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NA7006ASE4OI800@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Aug 2014 02:05:12 +0900 (KST)
+In-reply-to: <1407779837-10981-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
+On Monday, August 11, 2014 07:57:17 PM Javier Martinez Canillas wrote:
+> Many Exynos5 boards (e.g: Snow, Peach Pit and Pi) have
+> a SBS-compliant gas gauge battery. Enable to built it
+> so the needed support is available for these boards.
+> 
+> Suggested-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
 
---opPAX5Xc6j4THLmW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for updating the patch.
 
-On Tue, Aug 12, 2014 at 06:44:23PM +0200, Javier Martinez Canillas wrote:
-> The tps65090 is a Power Management Unit (PMU) used in several
-> boards so the same information is described on different DTS.
-> It is better to create a .dtsi fragment that can be included.
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Why is it better to do this?
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-> +	regulators {
-> +		tps65090_dcdc1: dcdc1 {
-> +		};
-> +
-
-It appears to be largely content free, exactly the same effect should be
-achieved by removing the entire regulators node.
-
---opPAX5Xc6j4THLmW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT6kfJAAoJELSic+t+oim9VVYP/iUUHeUs610ceooZPqBP1L+s
-f96QsZpIikhxYXW42eYY3IHxW2E82yF86quid6Gq+c9bdWQEWxuH1rS10BzYrBZX
-Lvbk0fma844K8MNb06/gsfLTrr4eSK0/zZTeUWMNgPFSaSY/+9wN7cCKu8S9ilv4
-43Ylehc2rvTBFYvQetf/Vdsth8gjthTmDhYrLCUpUiYifuaRth5PQnSR64Nhvl8z
-bKoEwMKCFjOHMxrIVSn7xVVpeUv4+3GG2Ed+Sy//ZuRgBrNRT2npI1MHW+pRLq+j
-MliFKetEwnKYSZ8mRDuN6acC2/QyIr/QatGZQx8HhO6DSGolhDQaMSv3qeIDitWl
-yuNq52WHK+IgtpkjXRBvjkRrHYnIfOA/kVtcS+LM283Bq0uZaAc/vbXx0zPdYxve
-Mr1e1wQx/7aaBFoURR7x55S4V1U6jFCwE3LmuJLBy+RvxPAhG8KVAeCUOhv4FMj5
-nD0DZZImBXFdTz2hbXh2UD06lfhJ715eVILuuBKorMeFiqWjtcLwnUA+nZ0kU6pF
-cogck/gGjlJqG5RfHIcLXasHkYJcWmuJVH+XdQnul3sQwyMGjF4BNGqmU6E1FjjG
-S18vfl4/7uFryUZing9hiiraBd3f4oUDwzl6J2kzd6IR7uHw+W6wh4W4MsL6A/IK
-Uijx9WTj3lEnRcQ2G9VX
-=D5qG
------END PGP SIGNATURE-----
-
---opPAX5Xc6j4THLmW--
+> ---
+> 
+> Changes since v1:
+>  - Don't build it as a module since is the exception in exynos_defconfig.
+>    Suggested by Bartlomiej Zolnierkiewicz.
+> 
+>  arch/arm/configs/exynos_defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index fc7d168..c390bb9 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -77,6 +77,7 @@ CONFIG_SPI_S3C64XX=y
+>  CONFIG_I2C_S3C2410=y
+>  CONFIG_DEBUG_GPIO=y
+>  CONFIG_POWER_SUPPLY=y
+> +CONFIG_BATTERY_SBS=y
+>  CONFIG_CHARGER_TPS65090=y
+>  # CONFIG_HWMON is not set
+>  CONFIG_THERMAL=y
