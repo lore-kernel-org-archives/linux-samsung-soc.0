@@ -1,58 +1,66 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/6] ARM: dts: Create fragment for tps65090 PMU
-Date: Tue, 12 Aug 2014 19:21:35 +0200
-Message-ID: <53EA4D1F.2030406@collabora.co.uk>
-References: <1407861868-20097-1-git-send-email-javier.martinez@collabora.co.uk> <1407861868-20097-2-git-send-email-javier.martinez@collabora.co.uk> <20140812165852.GT17528@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 6/6] ARM: dts: Add tps65090 FETs constraints
+Date: Tue, 12 Aug 2014 18:25:52 +0100
+Message-ID: <20140812172552.GU17528@sirena.org.uk>
+References: <1407861868-20097-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1407861868-20097-7-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="GB3+cIDl1yUQNmKJ"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:38322 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753426AbaHLRVl (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60205 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751318AbaHLR0N (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Aug 2014 13:21:41 -0400
-In-Reply-To: <20140812165852.GT17528@sirena.org.uk>
+	Tue, 12 Aug 2014 13:26:13 -0400
+Content-Disposition: inline
+In-Reply-To: <1407861868-20097-7-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Mark,
 
-On 08/12/2014 06:58 PM, Mark Brown wrote:
-> On Tue, Aug 12, 2014 at 06:44:23PM +0200, Javier Martinez Canillas wrote:
->> The tps65090 is a Power Management Unit (PMU) used in several
->> boards so the same information is described on different DTS.
->> It is better to create a .dtsi fragment that can be included.
-> 
-> Why is it better to do this?
->
+--GB3+cIDl1yUQNmKJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Is better IMHO because we have a single place where the tps65090 information can
-be updated instead of duplicating the same definition on each DTS.
+On Tue, Aug 12, 2014 at 06:44:28PM +0200, Javier Martinez Canillas wrote:
+> The tps65090 PMU data manual [0] has a table that list the
+> "Recommended operating conditions" for each regulator. Add
+> the information about the FET constraints to its dtsi file.
 
-This appears to be the current trend to better manage shared DTS snippet across
-different boards. Others examples are arch/arm/boot/dts/omap-gpmc-smsc911x.dtsi
-and arch/arm/boot/dts/twl6030.dtsi.
+>  		tps65090_fet1: fet1 {
+> +			regulator-min-microvolt = <5000000>;
+> +			regulator-max-microvolt = <17000000>;
+>  		};
 
->> +	regulators {
->> +		tps65090_dcdc1: dcdc1 {
->> +		};
->> +
-> 
-> It appears to be largely content free, exactly the same effect should be
-> achieved by removing the entire regulators node.
-> 
+No, this is completely broken and exactly the sort of thing that makes
+doing generic device .dtsi a bad idea.  We have absolutely no idea if
+these voltage ranges are suitable for use on a given board using the
+device, these are the design limits for the device but tell us nothing
+about the system they are deployed in.
 
-Yes it's content free but later "[PATCH 6/6] ARM: dts: Add tps65090 FETs
-constraints" [0] fills the FETs constraints [0]. This is a preparatory patch.
+--GB3+cIDl1yUQNmKJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Also, having all the regulators allows DTS files to reference the node by the
-label if they want to add other properties. I can squash this patch and 06/06 if
-you think that is better but I thought that the split makes it easier to review.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Best regards,
-Javier
+iQIcBAEBAgAGBQJT6k4dAAoJELSic+t+oim9xlMP/RtGcuTvhAnZd+zi6I2ujlF0
+ENDNM0PDisCkN+3+FPmznmtl3X0LqW/fieCPfns0CXN4uM/QFSubvlb/lqG4AGqB
+UtDOenReZhytGDdytpPsUoV9xnGwFh2zxUh1Gi8JrrDLZAY74PnqQ/2ysdlmVm67
+F8SylkoFGFHGpPyKGx4dbJLSTl+Jx4km6WFGKOgv2+ZhJw7CnkH6CIjfXDrO+O3S
+P+bsWZpsxKdTGxnX4JgZFMk09JOZkidYIWYXO9amoXe+J73PFKwPdSqDBGzl7o0s
+zmDXZmmJ+gCYcOezo/JyYPhVW2wfuyLq2BEdoY+XtbAcd1jUfjnCbRuWqQQEwwq5
+J5d4yJA8I08TgFuEURdihya4VU0M+eNOhHtlkhfxBWMLiQmHdhLzMaxzBmQy8Tgf
+oVVhHllYCojiygTurTiN9wgw9KRhLZYJzxmZ/QoyMBYqHPlMDhkSvRSA28S1VNzb
+dy0Tc4br5rJY6FozYGVMYwBZqNTb+oCQVnuYKob9SF6O/GQKEk9vwR5cUp4kFdX8
+YL/zcjkxB0L/SrsMqyvWo5JEBX3PrmHl0bN9/S7IDvs40UQwcwP6SpoCVuYfNqY9
+VYAAIgArusTKjAVlBtUCeLhFy4l5kqljCVuE7mlfhe+Y7U96TgXeUMv66CPQTg1e
+0XNu7l1Ga5qFNRMcdzjn
+=cHH6
+-----END PGP SIGNATURE-----
 
-[0]: https://lkml.org/lkml/2014/8/12/377
+--GB3+cIDl1yUQNmKJ--
