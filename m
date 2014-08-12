@@ -1,66 +1,53 @@
-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Subject: Re: [PATCH 2/2] ARM: dts: ODROID i2c improvements
-Date: Tue, 12 Aug 2014 15:11:19 +0200
-Message-ID: <CAAObsKBQz=K2ssjCP6tBCkZ4m+XnvX8ZZAszrxE0CAxU=1ZHjw@mail.gmail.com>
-References: <1405500606-5752-1-git-send-email-drake@endlessm.com> <1405500606-5752-2-git-send-email-drake@endlessm.com>
+From: "Hernandez, Carlos" <ceh@ti.com>
+Subject: RE: [PATCH 1/2] PM / devfreq: Export helper functions for drivers
+Date: Tue, 12 Aug 2014 13:49:16 +0000
+Message-ID: <32B5D12402BE454796026F6AC58AA86E32F2EFD6@DLEE08.ent.ti.com>
+References: <1405692594-19352-1-git-send-email-punit.agrawal@arm.com>
+ <1405692594-19352-2-git-send-email-punit.agrawal@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:54940 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752291AbaHLNLk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Aug 2014 09:11:40 -0400
-Received: by mail-wg0-f44.google.com with SMTP id m15so9828632wgh.27
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Aug 2014 06:11:39 -0700 (PDT)
-In-Reply-To: <1405500606-5752-2-git-send-email-drake@endlessm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1405692594-19352-2-git-send-email-punit.agrawal@arm.com>
+Content-Language: en-US
+Sender: linux-pm-owner@vger.kernel.org
+To: Punit Agrawal <punit.agrawal@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: "orjan.eide@arm.com" <orjan.eide@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tobias Jakobi <liquid.acid@gmx.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Tested on an Odroid-U2:
-
-Tested-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-
-Thanks,
-
-Tomeu
-
-On 16 July 2014 10:50, Daniel Drake <drake@endlessm.com> wrote:
-> Increase max i2c bus frequency beyond the default for faster
-> data transfers. According to the manual, these faster speeds are
-> only available when the board is wired up the right way. In this case,
-> the vendor kernel has run at this speed for a long time.
->
-> sda-delay is needed for talking to RTC on PMIC, otherwise the i2c
-> controller never sees an ACK. Strangely the other PMIC i2c slave (the
-> main one) works fine even without this delay. I Chose value 100 to
-> match the vendor kernel.
->
-> Signed-off-by: Daniel Drake <drake@endlessm.com>
-> ---
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> index cb6f55f..adadaf9 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> @@ -134,6 +134,8 @@
->         i2c@13860000 {
->                 pinctrl-0 = <&i2c0_bus>;
->                 pinctrl-names = "default";
-> +               samsung,i2c-sda-delay = <100>;
-> +               samsung,i2c-max-bus-freq = <400000>;
->                 status = "okay";
->
->                 usb3503: usb3503@08 {
-> --
-> 1.9.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+QWNrZWQtQnk6IENhcmxvcyBIZXJuYW5kZXogPGNlaEB0aS5jb20+DQoNCi0tLS0tT3JpZ2luYWwg
+TWVzc2FnZS0tLS0tDQpGcm9tOiBsaW51eC1rZXJuZWwtb3duZXJAdmdlci5rZXJuZWwub3JnIFtt
+YWlsdG86bGludXgta2VybmVsLW93bmVyQHZnZXIua2VybmVsLm9yZ10gT24gQmVoYWxmIE9mIFB1
+bml0IEFncmF3YWwNClNlbnQ6IEZyaWRheSwgSnVseSAxOCwgMjAxNCAxMDoxMCBBTQ0KVG86IGxp
+bnV4LXBtQHZnZXIua2VybmVsLm9yZzsgbGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3Jn
+DQpDYzogb3JqYW4uZWlkZUBhcm0uY29tOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBs
+aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IE15dW5nSm9vIEhhbTsgS3l1bmdt
+aW4gUGFyaw0KU3ViamVjdDogW1BBVENIIDEvMl0gUE0gLyBkZXZmcmVxOiBFeHBvcnQgaGVscGVy
+IGZ1bmN0aW9ucyBmb3IgZHJpdmVycw0KDQpGcm9tOiDDmHJqYW4gRWlkZSA8b3JqYW4uZWlkZUBh
+cm0uY29tPg0KDQpUaGVzZSBmdW5jdGlvbnMgYXJlIGluZGVuZGVkIGZvciB1c2UgYnkgZHJpdmVy
+cyBhbmQgc2hvdWxkIGJlIGF2YWlsYWJsZSBhbHNvIHdoZW4gdGhlIGRyaXZlciBpcyBidWlsdCBh
+cyBhIG1vZHVsZS4NCg0KQ2M6IE15dW5nSm9vIEhhbSA8bXl1bmdqb28uaGFtQHNhbXN1bmcuY29t
+Pg0KQ2M6IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+DQpTaWduZWQt
+b2ZmLWJ5OiDDmHJqYW4gRWlkZSA8b3JqYW4uZWlkZUBhcm0uY29tPg0KLS0tDQogZHJpdmVycy9k
+ZXZmcmVxL2RldmZyZXEuYyB8ICAgIDMgKysrDQogMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9u
+cygrKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVxL2RldmZyZXEuYyBiL2RyaXZlcnMv
+ZGV2ZnJlcS9kZXZmcmVxLmMgaW5kZXggOWY5MDM2OS4uMzBiNTM4ZDggMTAwNjQ0DQotLS0gYS9k
+cml2ZXJzL2RldmZyZXEvZGV2ZnJlcS5jDQorKysgYi9kcml2ZXJzL2RldmZyZXEvZGV2ZnJlcS5j
+DQpAQCAtMTExOSw2ICsxMTE5LDcgQEAgc3RydWN0IGRldl9wbV9vcHAgKmRldmZyZXFfcmVjb21t
+ZW5kZWRfb3BwKHN0cnVjdCBkZXZpY2UgKmRldiwNCiANCiAJcmV0dXJuIG9wcDsNCiB9DQorRVhQ
+T1JUX1NZTUJPTChkZXZmcmVxX3JlY29tbWVuZGVkX29wcCk7DQogDQogLyoqDQogICogZGV2ZnJl
+cV9yZWdpc3Rlcl9vcHBfbm90aWZpZXIoKSAtIEhlbHBlciBmdW5jdGlvbiB0byBnZXQgZGV2ZnJl
+cSBub3RpZmllZCBAQCAtMTE0Miw2ICsxMTQzLDcgQEAgaW50IGRldmZyZXFfcmVnaXN0ZXJfb3Bw
+X25vdGlmaWVyKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmZyZXEgKmRldmZyZXEpDQog
+DQogCXJldHVybiByZXQ7DQogfQ0KK0VYUE9SVF9TWU1CT0woZGV2ZnJlcV9yZWdpc3Rlcl9vcHBf
+bm90aWZpZXIpOw0KIA0KIC8qKg0KICAqIGRldmZyZXFfdW5yZWdpc3Rlcl9vcHBfbm90aWZpZXIo
+KSAtIEhlbHBlciBmdW5jdGlvbiB0byBzdG9wIGdldHRpbmcgZGV2ZnJlcSBAQCAtMTE2OCw2ICsx
+MTcwLDcgQEAgaW50IGRldmZyZXFfdW5yZWdpc3Rlcl9vcHBfbm90aWZpZXIoc3RydWN0IGRldmlj
+ZSAqZGV2LCBzdHJ1Y3QgZGV2ZnJlcSAqZGV2ZnJlcSkNCiANCiAJcmV0dXJuIHJldDsNCiB9DQor
+RVhQT1JUX1NZTUJPTChkZXZmcmVxX3VucmVnaXN0ZXJfb3BwX25vdGlmaWVyKTsNCiANCiBzdGF0
+aWMgdm9pZCBkZXZtX2RldmZyZXFfb3BwX3JlbGVhc2Uoc3RydWN0IGRldmljZSAqZGV2LCB2b2lk
+ICpyZXMpICB7DQotLQ0KMS43LjEwLjQNCg0KLS0NClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBs
+aXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1rZXJuZWwiIGluIHRoZSBib2R5
+IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnIE1vcmUgbWFqb3Jkb21v
+IGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA0KUGxl
+YXNlIHJlYWQgdGhlIEZBUSBhdCAgaHR0cDovL3d3dy50dXgub3JnL2xrbWwvDQoNCg0K
