@@ -1,142 +1,181 @@
-From: y@samsung.com
-Subject: [PATCHv2 2/5] rtc: s3c: Remove warning message when checking coding
- style with checkpatch script
-Date: Tue, 12 Aug 2014 11:01:08 +0900
-Message-ID: <1407808871-6046-3-git-send-email-y@samsung.com>
-References: <y@samsung.com> <1407808871-6046-1-git-send-email-y@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1407808871-6046-1-git-send-email-y@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: a.zummo@towertech.it
-Cc: kgene.kim@samsung.com, kyungmin.park@samsung.com, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 1/2] drm/mipi-dsi: add (LPM) Low Power Mode transfer
+ support
+Date: Tue, 12 Aug 2014 11:51:02 +0900
+Message-ID: <53E98116.3000704@samsung.com>
+References: <20140807135500.GA27417@ulmo.nvidia.com>
+ <53E42BCB.5090608@samsung.com> <20140808070311.GA5387@ulmo>
+ <53E47E23.1050302@samsung.com> <20140808095507.GE15852@ulmo>
+ <53E85259.2000204@samsung.com> <20140811072414.GA30762@ulmo>
+ <53E87252.60700@samsung.com> <20140811075043.GA31127@ulmo>
+ <53E87BA7.2040208@samsung.com> <20140811091151.GA25512@ulmo.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:31460 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754266AbaHLCvE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Aug 2014 22:51:04 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NA600KQCAL3ESB0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 12 Aug 2014 11:51:03 +0900 (KST)
+In-reply-to: <20140811091151.GA25512@ulmo.nvidia.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: treding@nvidia.com, Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-From: Chanwoo Choi <cw00.choi@samsung.com>
+On 2014=EB=85=84 08=EC=9B=94 11=EC=9D=BC 18:11, Thierry Reding wrote:
+> On Mon, Aug 11, 2014 at 05:15:35PM +0900, Inki Dae wrote:
+>> On 2014=EB=85=84 08=EC=9B=94 11=EC=9D=BC 16:50, Thierry Reding wrote=
+:
+>>> On Mon, Aug 11, 2014 at 04:35:46PM +0900, Inki Dae wrote:
+>>>> On 2014=EB=85=84 08=EC=9B=94 11=EC=9D=BC 16:24, Thierry Reding wro=
+te:
+>>>>> On Mon, Aug 11, 2014 at 02:19:21PM +0900, Inki Dae wrote:
+>>>>>> On 2014=EB=85=84 08=EC=9B=94 08=EC=9D=BC 18:55, Thierry Reding w=
+rote:
+>>> [...]
+>>>>>>> The above is actually more like this:
+>>>>>>>
+>>>>>>> 	if ((flags & MIPI_DSI_MODE_NON_CONTINUOUS) =3D=3D 0)
+>>>>>>> 		clear DSI_HS_CLK_CTRL;
+>>>>>>> 	else
+>>>>>>> 		set DSI_HS_CLK_CTRL;
+>>>>>>>
+>>>>>>> 	if (msg->flags & MIPI_DSI_MSG_USE_LPM)
+>>>>>>> 		clear DSI_HIGH_SPEED_TRANS;
+>>>>>>> 	else
+>>>>>>> 		set DSI_HIGH_SPEED_TRANS;
+>>>>>>>
+>>>>>>> So for peripherals that don't support non-continuous clock mode=
+, this
+>>>>>>> will result in the following for low-power transmissions:
+>>>>>>>
+>>>>>>> 	clear DSI_HS_CLK_CTRL; /* HS clock always on */
+>>>>>>> 	clear DSI_HIGH_SPEED_TRANS;
+>>>>>>
+>>>>>> Right, then how host driver should check it if peripheral doesn'=
+t
+>>>>>> support non-continuous clock mode? Or how the peripheral should =
+notify
+>>>>>> it to host driver? It would need a new flag instead of
+>>>>>> MIPI_DSI_MODE_NON_CONTINUOUS.
+>>>>>
+>>>>> MIPI_DSI_MODE_NON_CONTINUOUS is exactly the flag that devices nee=
+d to
+>>>>> set to signal that they support non-continuous mode. If devices d=
+on't
+>>>>> have that set, then the controller should always provide the HS c=
+lock.
+>>>>>
+>>>>> So, if MIPI_DSI_MODE_NON_CONTINUOUS is *not* set, then the periph=
+eral
+>>>>> does *not* support non-continuous mode.
+>>>>>
+>>>>
+>>>> Again, assume that there is a peripheral that doesn't support
+>>>> non-continuous clock mode but host driver want to transmit data in=
+ low
+>>>> power. For this, you already mentioned like below,
+>>>>
+>>>> "So for peripherals that don't support non-continuous clock mode, =
+this
+>>>> will result in the following for low-power transmissions:
+>>>>
+>>>>  	clear DSI_HS_CLK_CTRL; /* HS clock always on */
+>>>>  	clear DSI_HIGH_SPEED_TRANS;
+>>>> "
+>>>>
+>>>> In this case, how should host driver check it to clear above two f=
+lags?
+>>>> As you know, this is required to clear two flags same as non-conti=
+nuous
+>>>> clock mode. Don't you think that we need a new flag to identify th=
+em -
+>>>> non-continuous clock mode or just for low-power transmission?
+>>>
+>>> See what I wrote a little further up:
+>>>
+>>>>>>> 	if ((flags & MIPI_DSI_MODE_NON_CONTINUOUS) =3D=3D 0)
+>>>>>>> 		clear DSI_HS_CLK_CTRL;
+>>>>>>> 	else
+>>>>>>> 		set DSI_HS_CLK_CTRL;
+>>>>>>>
+>>>>>>> 	if (msg->flags & MIPI_DSI_MSG_USE_LPM)
+>>>>>>> 		clear DSI_HIGH_SPEED_TRANS;
+>>>>>>> 	else
+>>>>>>> 		set DSI_HIGH_SPEED_TRANS;
+>>>>>>>
+>>>
+>>> MIPI_DSI_MODE_NON_CONTINUOUS specifies that a peripheral supports n=
+on-
+>>> continuous mode. When set, we clear DSI_HS_CLK_CTRL on Tegra becaus=
+e
+>>> that tells the controller to turn off the HS clock between high-spe=
+ed
+>>> transmissions.
+>>>
+>>> MIPI_DSI_MSG_USE_LPM specifies that a message is to be sent in low-=
+power
+>>> mode.
+>>>
+>>> With the above two flags we can cover four cases:
+>>>
+>>>   1) non-continuous mode with messages transmitted in low-power mod=
+e
+>>>   2) non-continuous mode with messages transmitted in high-speed mo=
+de
+>>>   3) continuous mode with messages transmitted in low-power mode
+>>
+>> In case of 3), it would mean "set DSI_HS_CLK_CTRL" and "clear
+>> DSI_HIGH_SPEED_TRANS". However, msg->flags has MIPI_DSI_MSG_USE_LPM =
+but
+>> dsi->mode_flags has no MIPI_DSI_MODE_NON_CONTINOUS flag..... Ah, rig=
+ht.
+>> You mean that continuous mode is set by default implicitly?
+>=20
+> Yes, if the MIPI_DSI_MODE_NON_CONTINUOUS flag is not specified, then =
+it
+> means the peripheral supports only continuous mode.
+>=20
 
-This patch remove warning message when checking codeing style with checkpatch
-script and reduce un-necessary i2c read operation on s3c_rtc_enable.
+On more thing, in case of non-continuous clock mode, host controller ca=
+n
+transmit data in low power or high speed.  With
+MIPI_DSI_MODE_NON_CONTINUOUS flag, host controller can clear
+DSI_HS_CLK_CTRL or set it by default. However, we have no any flag to
+select low power or high speed transmission.
 
-	WARNING: line over 80 characters
-	#406: FILE: drivers/rtc/rtc-s3c.c:406:
-	+		if ((readw(info->base + S3C2410_RTCCON) & S3C2410_RTCCON_RTCEN) == 0) {
+Of course, as your patch of other thread, we can set
+MIPI_DSI_MSG_USE_LPM by default but I'm not sure that the change incurs
+what problem to all other panel devices. So I think it's better to add =
+a
+new flag which decides host controller should transmit data in high
+speed or low power. i.e., MIPI_DSI_MODE_LPM
 
-	WARNING: line over 80 characters
-	#414: FILE: drivers/rtc/rtc-s3c.c:414:
-	+		if ((readw(info->base + S3C2410_RTCCON) & S3C2410_RTCCON_CNTSEL)) {
+at mipi dsi framework,
+         if ((flags & MIPI_DSI_MODE_LPM) =3D=3D 0)
+                msg->flags |=3D MIPI_DSI_MSG_USE_LPM;
 
-	WARNING: line over 80 characters
-	#422: FILE: drivers/rtc/rtc-s3c.c:422:
-	+		if ((readw(info->base + S3C2410_RTCCON) & S3C2410_RTCCON_CLKRST)) {
+at each host driver,
+        if ((flags & MIPI_DSI_MODE_NON_CONTINUOUS) =3D=3D 0)
+               clear high speed clock of each SoC
+       else
+              set high speed clock of each SoC <- by default
 
-	WARNING: Missing a blank line after declarations
-	#451: FILE: drivers/rtc/rtc-s3c.c:451:
-	+	struct s3c_rtc_drv_data *data;
-	+	if (pdev->dev.of_node) {
+       if ((msg->flags =3D MIPI_DSI_MSG_USE_LPM) =3D=3D 0)
+               clear high speed transmission of each SoC
+      else
+               set high speed transmission of each SoC <- by default
 
-	WARNING: Missing a blank line after declarations
-	#453: FILE: drivers/rtc/rtc-s3c.c:453:
-	+		const struct of_device_id *match;
-	+		match = of_match_node(s3c_rtc_dt_match, pdev->dev.of_node);
+Thanks,
+Inki Dae
 
-	WARNING: DT compatible string "samsung,s3c2416-rtc" appears un-documented -- check ./Documentation/devicetree/bindings/
-	#650: FILE: drivers/rtc/rtc-s3c.c:650:
-	+		.compatible = "samsung,s3c2416-rtc",
-
-	WARNING: DT compatible string "samsung,s3c2443-rtc" appears un-documented -- check ./Documentation/devicetree/bindings/
-	#653: FILE: drivers/rtc/rtc-s3c.c:653:
-	+		.compatible = "samsung,s3c2443-rtc",
-
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- Documentation/devicetree/bindings/rtc/s3c-rtc.txt |  2 ++
- drivers/rtc/rtc-s3c.c                             | 26 ++++++++++++-----------
- 2 files changed, 16 insertions(+), 12 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-index 7ac7259..06db446 100644
---- a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-+++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-@@ -3,6 +3,8 @@
- Required properties:
- - compatible: should be one of the following.
-     * "samsung,s3c2410-rtc" - for controllers compatible with s3c2410 rtc.
-+    * "samsung,s3c2416-rtc" - for controllers compatible with s3c2416 rtc.
-+    * "samsung,s3c2443-rtc" - for controllers compatible with s3c2443 rtc.
-     * "samsung,s3c6410-rtc" - for controllers compatible with s3c6410 rtc.
- - reg: physical base address of the controller and length of memory mapped
-   region.
-diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-index 1d9e158..d8f25bd 100644
---- a/drivers/rtc/rtc-s3c.c
-+++ b/drivers/rtc/rtc-s3c.c
-@@ -400,28 +400,28 @@ static const struct rtc_class_ops s3c_rtcops = {
- 
- static void s3c_rtc_enable(struct s3c_rtc *info, int en)
- {
--	unsigned int tmp;
-+	unsigned int con, tmp;
- 
- 	if (!info->base)
- 		return;
- 
- 	clk_enable(info->rtc_clk);
-+
-+	con = readw(info->base + S3C2410_RTCCON);
- 	if (!en) {
--		tmp = readw(info->base + S3C2410_RTCCON);
- 		if (info->cpu_type == TYPE_S3C64XX)
--			tmp &= ~S3C64XX_RTCCON_TICEN;
--		tmp &= ~S3C2410_RTCCON_RTCEN;
--		writew(tmp, info->base + S3C2410_RTCCON);
-+			con &= ~S3C64XX_RTCCON_TICEN;
-+		con &= ~S3C2410_RTCCON_RTCEN;
-+		writew(con, info->base + S3C2410_RTCCON);
- 
- 		if (info->cpu_type != TYPE_S3C64XX) {
--			tmp = readb(info->base + S3C2410_TICNT);
--			tmp &= ~S3C2410_TICNT_ENABLE;
--			writeb(tmp, info->base + S3C2410_TICNT);
-+			con = readb(info->base + S3C2410_TICNT);
-+			con &= ~S3C2410_TICNT_ENABLE;
-+			writeb(con, info->base + S3C2410_TICNT);
- 		}
- 	} else {
- 		/* re-enable the device, and check it is ok */
--
--		if ((readw(info->base + S3C2410_RTCCON) & S3C2410_RTCCON_RTCEN) == 0) {
-+		if ((con & S3C2410_RTCCON_RTCEN) == 0) {
- 			dev_info(info->dev, "rtc disabled, re-enabling\n");
- 
- 			tmp = readw(info->base + S3C2410_RTCCON);
-@@ -429,7 +429,7 @@ static void s3c_rtc_enable(struct s3c_rtc *info, int en)
- 				info->base + S3C2410_RTCCON);
- 		}
- 
--		if ((readw(info->base + S3C2410_RTCCON) & S3C2410_RTCCON_CNTSEL)) {
-+		if (con & S3C2410_RTCCON_CNTSEL) {
- 			dev_info(info->dev, "removing RTCCON_CNTSEL\n");
- 
- 			tmp = readw(info->base + S3C2410_RTCCON);
-@@ -437,7 +437,7 @@ static void s3c_rtc_enable(struct s3c_rtc *info, int en)
- 				info->base + S3C2410_RTCCON);
- 		}
- 
--		if ((readw(info->base + S3C2410_RTCCON) & S3C2410_RTCCON_CLKRST)) {
-+		if (con & S3C2410_RTCCON_CLKRST) {
- 			dev_info(info->dev, "removing RTCCON_CLKRST\n");
- 
- 			tmp = readw(info->base + S3C2410_RTCCON);
-@@ -466,8 +466,10 @@ static inline int s3c_rtc_get_driver_data(struct platform_device *pdev)
- {
- #ifdef CONFIG_OF
- 	struct s3c_rtc_drv_data *data;
-+
- 	if (pdev->dev.of_node) {
- 		const struct of_device_id *match;
-+
- 		match = of_match_node(s3c_rtc_dt_match, pdev->dev.of_node);
- 		data = (struct s3c_rtc_drv_data *) match->data;
- 		return data->cpu_type;
--- 
-1.8.0
+> Thierry
+>=20
