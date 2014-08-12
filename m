@@ -1,102 +1,114 @@
-From: Matt Flax <flatmax@flatmax.org>
-Subject: alsa exynos i2s driver
-Date: Tue, 12 Aug 2014 18:16:16 +1000
-Message-ID: <53E9CD50.6020203@flatmax.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] mmc: sdhci-s3c: fix runtime PM handling on
+ sdhci_add_host() failure
+Date: Tue, 12 Aug 2014 13:46:53 +0200
+Message-ID: <CAPDyKFoZ=z560H2hydWdP22RwzXUWdLzxJF+pzOXjxx8FGc3pQ@mail.gmail.com>
+References: <5567000.WJnOP5ckul@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:2810 "EHLO
-	ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754010AbaHLIQO (ORCPT
+Received: from mail-qg0-f52.google.com ([209.85.192.52]:34475 "EHLO
+	mail-qg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752272AbaHLLqy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Aug 2014 04:16:14 -0400
+	Tue, 12 Aug 2014 07:46:54 -0400
+Received: by mail-qg0-f52.google.com with SMTP id f51so9576817qge.11
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Aug 2014 04:46:53 -0700 (PDT)
+In-Reply-To: <5567000.WJnOP5ckul@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Chris Ball <chris@printf.net>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaehoon Chung <jh80.chung@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-hi there,
+On 7 August 2014 18:07, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+> Runtime Power Management handling for the sdhci_add_host() failure
+> case in sdhci_s3c_probe() should match the code in sdhci_s3c_remove()
+> (which uses pm_runtime_disable() call which matches the earlier
+> pm_runtime_enable() one).  Fix it.
+>
+> This patch fixes "BUG: spinlock bad magic on CPU#0, swapper/0/1" and
+> "Unbalanced pm_runtime_enable!" warnings.
+>
+> From the kernel log:
+> ...
+> [    1.659631] s3c-sdhci 12530000.sdhci: sdhci_add_host() failed
+> [    1.665096] BUG: spinlock bad magic on CPU#0, swapper/0/1
+> [    1.670433]  lock: 0xea01e484, .magic: 00000000, .owner: <none>/-1, .owner_cpu: 0
+> [    1.677895] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.16.0-next-20140804-00008-ga59480f-dirty #707
+> [    1.687037] [<c0013ae4>] (unwind_backtrace) from [<c0010d70>] (show_stack+0x10/0x14)
+> [    1.694740] [<c0010d70>] (show_stack) from [<c04050c8>] (dump_stack+0x68/0xb8)
+> [    1.701948] [<c04050c8>] (dump_stack) from [<c0052558>] (do_raw_spin_lock+0x15c/0x1a4)
+> [    1.709848] [<c0052558>] (do_raw_spin_lock) from [<c040a630>] (_raw_spin_lock_irqsave+0x20/0x28)
+> [    1.718619] [<c040a630>] (_raw_spin_lock_irqsave) from [<c030d7d0>] (sdhci_do_set_ios+0x1c/0x5cc)
+> [    1.727464] [<c030d7d0>] (sdhci_do_set_ios) from [<c030ddfc>] (sdhci_runtime_resume_host+0x50/0x104)
+> [    1.736574] [<c030ddfc>] (sdhci_runtime_resume_host) from [<c02462dc>] (pm_generic_runtime_resume+0x2c/0x40)
+> [    1.746383] [<c02462dc>] (pm_generic_runtime_resume) from [<c0247898>] (__rpm_callback+0x34/0x70)
+> [    1.755233] [<c0247898>] (__rpm_callback) from [<c02478fc>] (rpm_callback+0x28/0x88)
+> [    1.762958] [<c02478fc>] (rpm_callback) from [<c02486f0>] (rpm_resume+0x384/0x4ec)
+> [    1.770511] [<c02486f0>] (rpm_resume) from [<c02488b0>] (pm_runtime_forbid+0x58/0x64)
+> [    1.778325] [<c02488b0>] (pm_runtime_forbid) from [<c030ea70>] (sdhci_s3c_probe+0x4a4/0x540)
+> [    1.786749] [<c030ea70>] (sdhci_s3c_probe) from [<c02429cc>] (platform_drv_probe+0x2c/0x5c)
+> [    1.795076] [<c02429cc>] (platform_drv_probe) from [<c02415f0>] (driver_probe_device+0x114/0x234)
+> [    1.803929] [<c02415f0>] (driver_probe_device) from [<c024179c>] (__driver_attach+0x8c/0x90)
+> [    1.812347] [<c024179c>] (__driver_attach) from [<c023ffb4>] (bus_for_each_dev+0x54/0x88)
+> [    1.820506] [<c023ffb4>] (bus_for_each_dev) from [<c0240df8>] (bus_add_driver+0xd8/0x1cc)
+> [    1.828665] [<c0240df8>] (bus_add_driver) from [<c0241db8>] (driver_register+0x78/0xf4)
+> [    1.836652] [<c0241db8>] (driver_register) from [<c00088a4>] (do_one_initcall+0x80/0x1d0)
+> [    1.844816] [<c00088a4>] (do_one_initcall) from [<c059ac94>] (kernel_init_freeable+0x108/0x1d4)
+> [    1.853503] [<c059ac94>] (kernel_init_freeable) from [<c0401300>] (kernel_init+0x8/0xe4)
+> [    1.861568] [<c0401300>] (kernel_init) from [<c000e538>] (ret_from_fork+0x14/0x3c)
+> [    1.869582] platform 12530000.sdhci: Driver s3c-sdhci requests probe deferral
+> ...
+> [    1.997047] s3c-sdhci 12530000.sdhci: Unbalanced pm_runtime_enable!
+> ...
+> [    2.027235] s3c-sdhci 12530000.sdhci: sdhci_add_host() failed
+> [    2.032884] platform 12530000.sdhci: Driver s3c-sdhci requests probe deferral
+> ...
+>
+> Tested on Hardkernel's Exynos4412 based ODROID-U3 board.
+>
+> Fixes: 9f4e8151dbbc ("mmc: sdhci-s3c: Enable runtime power management")
+> Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> Cc: Jaehoon Chung <jh80.chung@samsung.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-I am writing a very generic alsa soc i2s driver for a very generic i2s 
-device.
-The platform is an Exynos 5250 SoC board.
+Thanks! Applied for fixes.
 
-Having trouble was looking for some help ...
+Kind regards
+Uffe
 
-I have tried to start this driver in two ways. 1] Using the 
-module_init/module_exit method and 2] Using the module_platform_driver 
-approach.
-
-I have implemented the following :
-soc/codecs/implant.c
-soc/samsung/implant.c
-
-In both cases I have :
-static struct snd_soc_ops implant_ops = {
-     .hw_params = implant_hw_params,
-};
-
-static struct snd_soc_dai_link implant_dai = {
-     .name        = "implant",
-     .stream_name    = "IMPLANT",
-     .cpu_dai_name = "samsung-i2s.0",
-     .codec_dai_name = "implant-pcm",
-     .platform_name = "samsung-i2s.0",
-     .codec_name    = "implant.0-001a",
-     .ignore_suspend = 1,
-     .ops = &implant_ops,
-};
-
-I have setup the device tree as expected for sound@3830000
-     sound@3830000 {
-         samsung,codec-type = "implant";
-     };
-
-1]    Approach using module_init/module_exit
-static struct snd_soc_card snd_soc_machine_implant = {
-     .name        = "Implant",
-     .owner        = THIS_MODULE,
-     .dai_link    = &implant_dai,
-     .num_links    = 1,
-
-     .dapm_widgets    = widgets,
-     .num_dapm_widgets = ARRAY_SIZE(widgets),
-     .dapm_routes    = audio_paths,
-     .num_dapm_routes = ARRAY_SIZE(audio_paths),
-};
-
-Here is the output of the kernel :
-
-[    1.802645] soc-audio soc-audio: ASoC: machine Implant should use 
-snd_soc_register_card()
-[    1.802656] soc-audio soc-audio: ASoC: CPU DAI samsung-i2s.0 not 
-registered
-[    1.802679] platform soc-audio: Driver soc-audio requests probe deferral
-[    2.271140] soc-audio: probe of soc-audio failed with error -22
-
-Not sure why it fails.
-
-The only thing I know is that my driver exits the init function 
-returning 0 (module_init(implant_init)).
-This appears to be correct.
-
-2]     Approach using module_platform_driver
-When I switch to using snd_soc_register_card with :
-module_platform_driver(implant_driver);
-
-static struct platform_driver implant_driver = {
-     .driver = {
-         .name = "implant",
-         .owner = THIS_MODULE,
-     },
-     .probe = implant_probe,
-     .remove = implant_remove,
-};
-
-I get the following from dmesg :
-[    1.802430] Error: Driver 'implant' is already registered, aborting...
-
-However I don't see any of my printk statements from dmesg ...
-
-
-Matt
+> ---
+> patch is against next-20140804 branch of linux-next kernel
+>
+>  drivers/mmc/host/sdhci-s3c.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index fa5954a..1e47903 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -606,8 +606,6 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
+>         ret = sdhci_add_host(host);
+>         if (ret) {
+>                 dev_err(dev, "sdhci_add_host() failed\n");
+> -               pm_runtime_forbid(&pdev->dev);
+> -               pm_runtime_get_noresume(&pdev->dev);
+>                 goto err_req_regs;
+>         }
+>
+> @@ -618,6 +616,8 @@ static int sdhci_s3c_probe(struct platform_device *pdev)
+>         return 0;
+>
+>   err_req_regs:
+> +       pm_runtime_disable(&pdev->dev);
+> +
+>   err_no_busclks:
+>         clk_disable_unprepare(sc->clk_io);
+>
+> --
+> 1.8.2.3
+>
+>
