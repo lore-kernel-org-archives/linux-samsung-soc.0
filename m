@@ -1,116 +1,44 @@
-From: Dinh Nguyen <dinh.linux@gmail.com>
-Subject: Re: [PATCHv10 4/5] ARM: dts: socfpga: unuse the slot-node and
- deprecate the supports-highspeed for dw-mmc
-Date: Mon, 11 Aug 2014 16:03:52 -0500
-Message-ID: <CADhT+wcKrL8f-OyLnKKzsBgyU3PSYFLfsZgvCcdAgVV5BAT76Q@mail.gmail.com>
-References: <1407397082-32495-1-git-send-email-jh80.chung@samsung.com>
-	<1407397082-32495-5-git-send-email-jh80.chung@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: y@samsung.com
+Subject: [PATCHv2 0/5] rtc: s3c: Refactoring s3c-rtc driver and support
+ Exynos3250 RTC
+Date: Tue, 12 Aug 2014 11:01:06 +0900
+Message-ID: <1407808871-6046-1-git-send-email-y@samsung.com>
+References: <y@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f176.google.com ([209.85.217.176]:61050 "EHLO
-	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754692AbaHKVD6 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:28970 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752051AbaHLCBU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Aug 2014 17:03:58 -0400
-In-Reply-To: <1407397082-32495-5-git-send-email-jh80.chung@samsung.com>
+	Mon, 11 Aug 2014 22:01:20 -0400
+In-reply-to: <y@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Seungwon Jeon <tgih.jun@samsung.com>, Chris Ball <chris@printf.net>, linux-samsung-soc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dinh Nguyen <dinguyen@altera.com>
+To: a.zummo@towertech.it
+Cc: kgene.kim@samsung.com, kyungmin.park@samsung.com, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Thu, Aug 7, 2014 at 2:38 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> dw-mmc controller can support multiple slots.
-> But, there are no use-cases anywhere. So we don't need to support the
-> slot-node for dw-mmc controller.
-> And "supports-highspeed" property in dw-mmc is deprecated.
-> "supports-highspeed" property can be replaced with "cap-sd/mmc-highspeed".
->
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> Reviewed-by: Tushar Behera <trblinux@gmail.com>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
-> Acked-by: Dinh Nguyen <dinguyen@altera.com>
-> ---
+From: Chanwoo Choi <cw00.choi@samsung.com>
 
-I've queued this patch in my tree for v3.18.
+This patchset clean up codes to improve readability as following and support
+the RTC of Exynos3250 SoC.
+- Remove global variables and then use new s3c_rtc structure
+- Remove warn message with checking checkpatch script
+- Use variant structure according to SoC type instead of legacy enum variable(s3c_cpu_type)
 
-Thanks,
-Dinh
+Changes from v1:
+- Fix NULL pointer panic of s3c_rtc_settime()
+- Check info->base value to protect NULL pointer panic
 
->  arch/arm/boot/dts/socfpga_arria5.dtsi   |    9 +++------
->  arch/arm/boot/dts/socfpga_cyclone5.dtsi |    9 +++------
->  arch/arm/boot/dts/socfpga_vt.dts        |    9 +++------
->  3 files changed, 9 insertions(+), 18 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/socfpga_arria5.dtsi b/arch/arm/boot/dts/socfpga_arria5.dtsi
-> index 12d1c2c..468fc4c 100644
-> --- a/arch/arm/boot/dts/socfpga_arria5.dtsi
-> +++ b/arch/arm/boot/dts/socfpga_arria5.dtsi
-> @@ -29,13 +29,10 @@
->
->                 dwmmc0@ff704000 {
->                         num-slots = <1>;
-> -                       supports-highspeed;
->                         broken-cd;
-> -
-> -                       slot@0 {
-> -                               reg = <0>;
-> -                               bus-width = <4>;
-> -                       };
-> +                       bus-width = <4>;
-> +                       cap-mmc-highspeed;
-> +                       cap-sd-highspeed;
->                 };
->
->                 sysmgr@ffd08000 {
-> diff --git a/arch/arm/boot/dts/socfpga_cyclone5.dtsi b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-> index bf51182..1ee03c4 100644
-> --- a/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-> +++ b/arch/arm/boot/dts/socfpga_cyclone5.dtsi
-> @@ -30,13 +30,10 @@
->
->                 dwmmc0@ff704000 {
->                         num-slots = <1>;
-> -                       supports-highspeed;
->                         broken-cd;
-> -
-> -                       slot@0 {
-> -                               reg = <0>;
-> -                               bus-width = <4>;
-> -                       };
-> +                       bus-width = <4>;
-> +                       cap-mmc-highspeed;
-> +                       cap-sd-highspeed;
->                 };
->
->                 ethernet@ff702000 {
-> diff --git a/arch/arm/boot/dts/socfpga_vt.dts b/arch/arm/boot/dts/socfpga_vt.dts
-> index 09792b4..f9345e0 100644
-> --- a/arch/arm/boot/dts/socfpga_vt.dts
-> +++ b/arch/arm/boot/dts/socfpga_vt.dts
-> @@ -43,13 +43,10 @@
->
->                 dwmmc0@ff704000 {
->                         num-slots = <1>;
-> -                       supports-highspeed;
->                         broken-cd;
-> -
-> -                       slot@0 {
-> -                               reg = <0>;
-> -                               bus-width = <4>;
-> -                       };
-> +                       bus-width = <4>;
-> +                       cap-mmc-highspeed;
-> +                       cap-sd-highspeed;
->                 };
->
->                 ethernet@ff700000 {
-> --
-> 1.7.9.5
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Chanwoo Choi (5):
+  rtc: s3c: Define s3c_rtc structure to remove global variables.
+  rtc: s3c: Remove warning message when checking coding style with checkpatch script
+  rtc: s3c: Add s3c_rtc_data structure to use variant data instead of s3c_cpu_type
+  rtc: s3c: Add support for RTC of Exynos3250 SoC
+  ARM: dts: Fix wrong compatible string of Exynos3250 RTC dt node
+
+ Documentation/devicetree/bindings/rtc/s3c-rtc.txt |   3 +
+ arch/arm/boot/dts/exynos3250.dtsi                 |   2 +-
+ drivers/rtc/rtc-s3c.c                             | 869 ++++++++++++++--------
+ 3 files changed, 553 insertions(+), 321 deletions(-)
+
+-- 
+1.8.0
