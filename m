@@ -1,78 +1,41 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 6/6] ARM: dts: Add tps65090 FETs constraints
-Date: Tue, 12 Aug 2014 22:27:57 +0100
-Message-ID: <20140812212757.GY17528@sirena.org.uk>
-References: <1407861868-20097-1-git-send-email-javier.martinez@collabora.co.uk>
- <1407861868-20097-7-git-send-email-javier.martinez@collabora.co.uk>
- <20140812172552.GU17528@sirena.org.uk>
- <53EA61B9.2070805@collabora.co.uk>
+From: =?euc-kr?B?x9S47cHW?= <myungjoo.ham@samsung.com>
+Subject: Re: RE: [PATCH 1/2] PM / devfreq: Export helper functions for drivers
+Date: Tue, 12 Aug 2014 23:37:25 +0000 (GMT)
+Message-ID: <2126088679.390471407886644188.JavaMail.weblogic@epmlwas02a>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UU1ixziQytOgr6B7"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60454 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751368AbaHLV2Q (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Aug 2014 17:28:16 -0400
-Content-Disposition: inline
-In-Reply-To: <53EA61B9.2070805@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
+Return-path: <linux-pm-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-pm-owner@vger.kernel.org
+To: "Hernandez, Carlos" <ceh@ti.com>, Punit Agrawal <punit.agrawal@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: "orjan.eide@arm.com" <orjan.eide@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?euc-kr?Q?=B9=DA=B0=E6=B9=CE?= <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+
+DQoNCj4gLS0tLS0tLSBPcmlnaW5hbCBNZXNzYWdlIC0tLS0tLS0NCj4gU2VuZGVyIDogSGVybmFu
+ZGV6LCBDYXJsb3M8Y2VoQHRpLmNvbT4NCj4gRGF0ZSA6IDIwMTQtMDgtMTIgMjI6NDkgKEdNVCsw
+OTowMCkNCj4gVGl0bGUgOiBSRTogW1BBVENIIDEvMl0gUE0gLyBkZXZmcmVxOiBFeHBvcnQgaGVs
+cGVyIGZ1bmN0aW9ucyBmb3IgZHJpdmVycw0KPiANCj4gQWNrZWQtQnk6IENhcmxvcyBIZXJuYW5k
+ZXogDQo+IA0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1rZXJu
+ZWwtb3duZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bGludXgta2VybmVsLW93bmVyQHZnZXIu
+a2VybmVsLm9yZ10gT24gQmVoYWxmIE9mIFB1bml0IEFncmF3YWwNCj4gU2VudDogRnJpZGF5LCBK
+dWx5IDE4LCAyMDE0IDEwOjEwIEFNDQo+IFRvOiBsaW51eC1wbUB2Z2VyLmtlcm5lbC5vcmc7IGxp
+bnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZw0KPiBDYzogb3JqYW4uZWlkZUBhcm0uY29t
+OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmlu
+ZnJhZGVhZC5vcmc7IE15dW5nSm9vIEhhbTsgS3l1bmdtaW4gUGFyaw0KPiBTdWJqZWN0OiBbUEFU
+Q0ggMS8yXSBQTSAvIGRldmZyZXE6IEV4cG9ydCBoZWxwZXIgZnVuY3Rpb25zIGZvciBkcml2ZXJz
+DQo+IA0KPiBGcm9tOiCoqnJqYW4gRWlkZSANCj4gDQo+IFRoZXNlIGZ1bmN0aW9ucyBhcmUgaW5k
+ZW5kZWQgZm9yIHVzZSBieSBkcml2ZXJzIGFuZCBzaG91bGQgYmUgYXZhaWxhYmxlIGFsc28gd2hl
+biB0aGUgZHJpdmVyIGlzIGJ1aWx0IGFzIGEgbW9kdWxlLj4gDQo+IA0KPiBDYzogTXl1bmdKb28g
+SGFtIA0KPiBDYzogS3l1bmdtaW4gUGFyayANCj4gU2lnbmVkLW9mZi1ieTogqKpyamFuIEVpZGUg
+DQoNCkFja2VkLWJ5OiBNeXVuZ0pvbyBIYW0gPG15dW5nam9vLmhhbUBzYW1zdW5nLmNvbT4NCg0K
+VGhlcmUgd2lsbCBiZSBzb21lIG1vZGlmaWNhdGlvbnMgdG8gdGhpcyBwYXRjaCBmb3IgY29uc2lz
+dGVuY3kgd2l0aCBvdGhlciBwZW5kaW5nIHBhdGNoZXMsIGJ1dCBwbGVhc2UgZG9uJ3Qgd29ycnkg
+YWJvdXQgdGhlbS4gSSdsbCBoYW5kbGUgdGhlbSB3aGlsZSBtZXJnaW5nIHRoaXMuDQoNCg0KQ2hl
+ZXJzLA0KTXl1bmdKb28uDQoNCj4gLS0tDQo+IGRyaXZlcnMvZGV2ZnJlcS9kZXZmcmVxLmMgfCAg
+ICAzICsrKw0KPiAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspDQoNCg0KDQotLQ0KTXl1
+bmdKb28gSGFtICjH1LjtwdYpLCBQSEQNCkZyb250aWVyIENTIExhYiwgU29mdHdhcmUgQ2VudGVy
+DQpTYW1zdW5nIEVsZWN0cm9uaWNzDQpDZWxsOiArODItMTAtNjcxNC0yODU4
 
 
---UU1ixziQytOgr6B7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Aug 12, 2014 at 08:49:29PM +0200, Javier Martinez Canillas wrote:
-
-> So, is adding these voltages ranges (the design limits) in the Peach Pit =
-DTS
-> file directly an acceptable solution? Basically what my previous patch [0=
-] did.
-
-> That matches what is in the board schematic so I assume that it's safe to=
- use
-> these voltage ranges for that machine. If so I'll drop this series and re=
-post
-> that patch fixing the typo error and commit message pointed by Doug that =
-were
-> already addressed in $subject.
-
-Well, I think the question is if you understand where those numbers come
-=66rom and if they make sense.  I've not seen the schematic for the board
-so I can't comment but it is quite unusual to see ranges listed for so
-many supplies, for things like SD it's obviously normal but things like
-video_mid are a bit more surprising.  Does anything actually vary those
-voltages?
-
-The change where you fix up the supply mappings still makes sense of
-course.
-
---UU1ixziQytOgr6B7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT6obaAAoJELSic+t+oim909kP/1okMQECkjemzwIec4io27fl
-qYZJEBgB9Jsm6J1k2iko77mU6fkQVoLJPbXKXhY1n7TecUbb7uPIcoYfAeVSTdKR
-AI0jwaOZTyWbPf87/UIiW6WUIgzRmp5Ckit6FsQFm0bQkfIRJgF6NCYsx8KAOEEX
-w90F0tncP0DkS6Z3lYaXwp9WL5G7STWJRopHjhYxTSXOeD/Uhu41PsIJ/aDHlnMi
-2JiyoBzVX3fGRxfa6uLAxPNUBXTVGtQUreet+HcQRZmnXRkXTgb0wluQ3o6gG0qj
-bh5JipFtjQ0v/d6ivPqaS9UraEF+Po8qW37Lswpv102xwmEViQpQIPqCcRRl1x6i
-0EDJdXczVBKH6YJWHuoswPuMrLIJ1I0OqPWaIQTVfx1v9DXgTpHBZYyzPLGf9KRs
-fmq6S1mNgYHnhMlapp2VbSWsH9PHlVKPbVrcSmVWQx67QaFg1C23z50lTUh82zxK
-nPM5ET3fYkxs0RbYbrNw5eAKO6SdYswBggD9ciMDL1pyo12+qEoNX3/SFzPlSnjz
-ppO82J4GImONl3FuuiXw9GY0I9IGjGcIeL7bUZ9JQNno+wyG29lpuii4xLft3yMD
-i63dM6Q76/VR3JYDotQabSaj4U/U4s2Y+8OJjLjvRIc0jAQE7jA4E7ef3tfgGWp6
-gtaPrvtN6bi4xxWUvq6j
-=XQWs
------END PGP SIGNATURE-----
-
---UU1ixziQytOgr6B7--
