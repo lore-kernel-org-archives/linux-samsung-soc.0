@@ -1,53 +1,55 @@
-From: "Hernandez, Carlos" <ceh@ti.com>
-Subject: RE: [PATCH 1/2] PM / devfreq: Export helper functions for drivers
-Date: Tue, 12 Aug 2014 13:49:16 +0000
-Message-ID: <32B5D12402BE454796026F6AC58AA86E32F2EFD6@DLEE08.ent.ti.com>
-References: <1405692594-19352-1-git-send-email-punit.agrawal@arm.com>
- <1405692594-19352-2-git-send-email-punit.agrawal@arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1405692594-19352-2-git-send-email-punit.agrawal@arm.com>
-Content-Language: en-US
-Sender: linux-pm-owner@vger.kernel.org
-To: Punit Agrawal <punit.agrawal@arm.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: "orjan.eide@arm.com" <orjan.eide@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 0/3] ARM: EXYNOS: Fix builds with PM_SLEEP=n
+Date: Tue, 12 Aug 2014 17:11:54 +0200
+Message-ID: <1407856317-2457-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:35894 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752134AbaHLPMY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 12 Aug 2014 11:12:24 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Olof Johansson <olof@lixom.net>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 
-QWNrZWQtQnk6IENhcmxvcyBIZXJuYW5kZXogPGNlaEB0aS5jb20+DQoNCi0tLS0tT3JpZ2luYWwg
-TWVzc2FnZS0tLS0tDQpGcm9tOiBsaW51eC1rZXJuZWwtb3duZXJAdmdlci5rZXJuZWwub3JnIFtt
-YWlsdG86bGludXgta2VybmVsLW93bmVyQHZnZXIua2VybmVsLm9yZ10gT24gQmVoYWxmIE9mIFB1
-bml0IEFncmF3YWwNClNlbnQ6IEZyaWRheSwgSnVseSAxOCwgMjAxNCAxMDoxMCBBTQ0KVG86IGxp
-bnV4LXBtQHZnZXIua2VybmVsLm9yZzsgbGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3Jn
-DQpDYzogb3JqYW4uZWlkZUBhcm0uY29tOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBs
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IE15dW5nSm9vIEhhbTsgS3l1bmdt
-aW4gUGFyaw0KU3ViamVjdDogW1BBVENIIDEvMl0gUE0gLyBkZXZmcmVxOiBFeHBvcnQgaGVscGVy
-IGZ1bmN0aW9ucyBmb3IgZHJpdmVycw0KDQpGcm9tOiDDmHJqYW4gRWlkZSA8b3JqYW4uZWlkZUBh
-cm0uY29tPg0KDQpUaGVzZSBmdW5jdGlvbnMgYXJlIGluZGVuZGVkIGZvciB1c2UgYnkgZHJpdmVy
-cyBhbmQgc2hvdWxkIGJlIGF2YWlsYWJsZSBhbHNvIHdoZW4gdGhlIGRyaXZlciBpcyBidWlsdCBh
-cyBhIG1vZHVsZS4NCg0KQ2M6IE15dW5nSm9vIEhhbSA8bXl1bmdqb28uaGFtQHNhbXN1bmcuY29t
-Pg0KQ2M6IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+DQpTaWduZWQt
-b2ZmLWJ5OiDDmHJqYW4gRWlkZSA8b3JqYW4uZWlkZUBhcm0uY29tPg0KLS0tDQogZHJpdmVycy9k
-ZXZmcmVxL2RldmZyZXEuYyB8ICAgIDMgKysrDQogMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9u
-cygrKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVxL2RldmZyZXEuYyBiL2RyaXZlcnMv
-ZGV2ZnJlcS9kZXZmcmVxLmMgaW5kZXggOWY5MDM2OS4uMzBiNTM4ZDggMTAwNjQ0DQotLS0gYS9k
-cml2ZXJzL2RldmZyZXEvZGV2ZnJlcS5jDQorKysgYi9kcml2ZXJzL2RldmZyZXEvZGV2ZnJlcS5j
-DQpAQCAtMTExOSw2ICsxMTE5LDcgQEAgc3RydWN0IGRldl9wbV9vcHAgKmRldmZyZXFfcmVjb21t
-ZW5kZWRfb3BwKHN0cnVjdCBkZXZpY2UgKmRldiwNCiANCiAJcmV0dXJuIG9wcDsNCiB9DQorRVhQ
-T1JUX1NZTUJPTChkZXZmcmVxX3JlY29tbWVuZGVkX29wcCk7DQogDQogLyoqDQogICogZGV2ZnJl
-cV9yZWdpc3Rlcl9vcHBfbm90aWZpZXIoKSAtIEhlbHBlciBmdW5jdGlvbiB0byBnZXQgZGV2ZnJl
-cSBub3RpZmllZCBAQCAtMTE0Miw2ICsxMTQzLDcgQEAgaW50IGRldmZyZXFfcmVnaXN0ZXJfb3Bw
-X25vdGlmaWVyKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmZyZXEgKmRldmZyZXEpDQog
-DQogCXJldHVybiByZXQ7DQogfQ0KK0VYUE9SVF9TWU1CT0woZGV2ZnJlcV9yZWdpc3Rlcl9vcHBf
-bm90aWZpZXIpOw0KIA0KIC8qKg0KICAqIGRldmZyZXFfdW5yZWdpc3Rlcl9vcHBfbm90aWZpZXIo
-KSAtIEhlbHBlciBmdW5jdGlvbiB0byBzdG9wIGdldHRpbmcgZGV2ZnJlcSBAQCAtMTE2OCw2ICsx
-MTcwLDcgQEAgaW50IGRldmZyZXFfdW5yZWdpc3Rlcl9vcHBfbm90aWZpZXIoc3RydWN0IGRldmlj
-ZSAqZGV2LCBzdHJ1Y3QgZGV2ZnJlcSAqZGV2ZnJlcSkNCiANCiAJcmV0dXJuIHJldDsNCiB9DQor
-RVhQT1JUX1NZTUJPTChkZXZmcmVxX3VucmVnaXN0ZXJfb3BwX25vdGlmaWVyKTsNCiANCiBzdGF0
-aWMgdm9pZCBkZXZtX2RldmZyZXFfb3BwX3JlbGVhc2Uoc3RydWN0IGRldmljZSAqZGV2LCB2b2lk
-ICpyZXMpICB7DQotLQ0KMS43LjEwLjQNCg0KLS0NClRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBs
-aXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1rZXJuZWwiIGluIHRoZSBib2R5
-IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnIE1vcmUgbWFqb3Jkb21v
-IGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA0KUGxl
-YXNlIHJlYWQgdGhlIEZBUSBhdCAgaHR0cDovL3d3dy50dXgub3JnL2xrbWwvDQoNCg0K
+Hi,
+
+This patch series fixes builds with CONFIG_PM_SLEEP config option
+disabled.  It has been runtime tested on Exynos4210 based Origen
+board.
+
+Depends on:
+- next-20140811 branch of linux-next kernel
+
+Changes since v1:
+(http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34079.html)
+- rebased on top of next-20140811
+- fixed OOPS on the first try to enter cpuidle AFTR mode
+  (config with CONFIG_PM_SLEEP=n and CONFIG_ARM_EXYNOS_CPUIDLE=y)
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (3):
+  ARM: EXYNOS: Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=n
+  ARM: mm: Fix ifdef around cpu_*_do_[suspend,resume] ops
+  ARM: EXYNOS: Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
+
+ arch/arm/mach-exynos/Kconfig   |   5 +
+ arch/arm/mach-exynos/Makefile  |   3 +-
+ arch/arm/mach-exynos/common.h  |   4 +
+ arch/arm/mach-exynos/exynos.c  |   2 +
+ arch/arm/mach-exynos/pm.c      | 262 +-------------------------------------
+ arch/arm/mach-exynos/suspend.c | 279 +++++++++++++++++++++++++++++++++++++++++
+ arch/arm/mm/proc-macros.S      |   2 +-
+ arch/arm/plat-samsung/Makefile |   1 +
+ 8 files changed, 299 insertions(+), 259 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/suspend.c
+
+-- 
+1.8.2.3
