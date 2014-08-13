@@ -1,29 +1,23 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 Subject: Re: [PATCH v2] mmc: dw_mmc: Make sure we don't get stuck when we get
  an error
-Date: Wed, 13 Aug 2014 22:52:58 +0900
-Message-ID: <53EB6DBA.1080801@samsung.com>
+Date: Wed, 13 Aug 2014 17:04:28 +0200
+Message-ID: <CAPDyKFpEEevF8z+RRqftUVXa6VGdbAiL82wam2AmuoRBBvAxnA@mail.gmail.com>
 References: <1400623670-2657-1-git-send-email-dianders@chromium.org>
- <001601cf74d4$3547a410$9fd6ec30$%jun@samsung.com>
- <CAD=FV=XCSTzX04M1TDCf9p4QqZrNsStTKG5s7uYbJNaAKmtkuw@mail.gmail.com>
+	<001601cf74d4$3547a410$9fd6ec30$%jun@samsung.com>
+	<CAD=FV=XCSTzX04M1TDCf9p4QqZrNsStTKG5s7uYbJNaAKmtkuw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:56305 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750751AbaHMNxA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Aug 2014 09:53:00 -0400
-In-reply-to: <CAD=FV=XCSTzX04M1TDCf9p4QqZrNsStTKG5s7uYbJNaAKmtkuw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=XCSTzX04M1TDCf9p4QqZrNsStTKG5s7uYbJNaAKmtkuw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Sonny Rao <sonnyrao@chromium.org>, Grant Grundler <grundler@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Chris Ball <chris@printf.net>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Seungwon Jeon <tgih.jun@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Sonny Rao <sonnyrao@chromium.org>, Grant Grundler <grundler@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Chris Ball <chris@printf.net>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 08/13/2014 10:38 PM, Doug Anderson wrote:
+On 13 August 2014 15:38, Doug Anderson <dianders@chromium.org> wrote:
 > Hi,
-> 
+>
 > On Wed, May 21, 2014 at 2:08 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
 >> On Wed, May 21, 2014, Doug Anderson wrote:
 >>> If we happened to get a data error at just the wrong time the dw_mmc
@@ -49,19 +43,14 @@ On 08/13/2014 10:38 PM, Doug Anderson wrote:
 >>
 >> Thanks,
 >> Seungwon Jeon
-> 
+>
 > I saw that Ulf applied "mmc: dw_mmc: change to use recommended reset
 > procedure".  Could we apply this one now, too?  Do you want me to
 > repost?
-It's good that it will be merged with it.
 
-Best Regards,
-Jaehoon Chung
+Please repost and rebase if needed.
 
-> 
+Kind regards
+Uffe
+>
 > -Doug
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
