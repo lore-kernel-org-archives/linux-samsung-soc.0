@@ -1,42 +1,70 @@
-From: Boris BREZILLON <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v5 3/6] clk: Move all drivers to use internal API
-Date: Wed, 13 Aug 2014 11:50:56 +0200
-Message-ID: <20140813115056.0bd5ead7@bbrezillon>
-References: <1407333468-32180-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 6/6] ARM: dts: Add tps65090 FETs constraints
+Date: Wed, 13 Aug 2014 13:31:44 +0200
+Message-ID: <53EB4CA0.3010006@collabora.co.uk>
+References: <1407861868-20097-1-git-send-email-javier.martinez@collabora.co.uk> <1407861868-20097-7-git-send-email-javier.martinez@collabora.co.uk> <20140812172552.GU17528@sirena.org.uk> <53EA61B9.2070805@collabora.co.uk> <20140812212757.GY17528@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1407333468-32180-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Ulf Hansson <ulf.hansson@linaro.org>, Prashant Gaikwad <pgaikwad@nvidia.com>, Tony Lindgren <tony@atomide.com>, Tomasz Figa <t.figa@samsung.com>, alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Paul Mackerras <paulus@samba.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Walker <dwalker@fifo99.com>, linux-arch@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Takashi Iwai <tiwai@suse.de>, Michal Simek <michal.simek@xilinx.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kevin Hilman <khilman@deeprootsystems.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, patches@opensource.wolfsonmicro.com, Viresh Kumar <viresh.linux@gmai>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140812212757.GY17528@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgVG9tZXUsCgpPbiBXZWQsICA2IEF1ZyAyMDE0IDE1OjU3OjQ4ICswMjAwClRvbWV1IFZpem9z
-byA8dG9tZXUudml6b3NvQGNvbGxhYm9yYS5jb20+IHdyb3RlOgoKPiBJbiBwcmVwYXJhdGlvbiB0
-byBjaGFuZ2UgdGhlIHB1YmxpYyBBUEkgdG8gcmV0dXJuIGEgcGVyLXVzZXIgY2xrIHN0cnVjdHVy
-ZSwKPiByZW1vdmUgYW55IHVzYWdlIG9mIHRoaXMgcHVibGljIEFQSSBmcm9tIHRoZSBjbG9jayBp
-bXBsZW1lbnRhdGlvbnMuCj4gCj4gVGhlIHJlYXNvbiBmb3IgaGF2aW5nIHRoaXMgaW4gYSBzZXBh
-cmF0ZSBjb21taXQgZnJvbSB0aGUgb25lIHRoYXQgaW50cm9kdWNlcwo+IHRoZSBpbXBsZW1lbnRh
-dGlvbiBvZiB0aGUgbmV3IGZ1bmN0aW9ucyBpcyB0byBzZXBhcmF0ZSB0aGUgY2hhbmdlcyBnZW5l
-cmF0ZWQKPiB3aXRoIENvY2NpbmVsbGUgZnJvbSB0aGUgcmVzdCwgYW5kIGtlZXAgdGhlIHBhdGNo
-ZXMnIHNpemUgcmVhc29uYWJsZS4KPiAKCllvdSBjYW4gYWRkIG15OgoKVGVzdGVkLWJ5OiBCb3Jp
-cyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0cm9ucy5jb20+CgphbmQKCkFj
-a2VkLWJ5OiBCb3JpcyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0cm9ucy5j
-b20+Cgpmb3IgdGhlIGF0OTEgcGFydC4KCj4gU2lnbmVkLW9mZi1ieTogVG9tZXUgVml6b3NvIDx0
-b21ldS52aXpvc29AY29sbGFib3JhLmNvbT4KCkJlc3QgUmVnYXJkcywKCkJvcmlzCgotLSAKQm9y
-aXMgQnJlemlsbG9uLCBGcmVlIEVsZWN0cm9ucwpFbWJlZGRlZCBMaW51eCBhbmQgS2VybmVsIGVu
-Z2luZWVyaW5nCmh0dHA6Ly9mcmVlLWVsZWN0cm9ucy5jb20KX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXhwcGMtZGV2IG1haWxpbmcgbGlzdApMaW51
-eHBwYy1kZXZAbGlzdHMub3psYWJzLm9yZwpodHRwczovL2xpc3RzLm96bGFicy5vcmcvbGlzdGlu
-Zm8vbGludXhwcGMtZGV2
+Hello Mark,
+
+On 08/12/2014 11:27 PM, Mark Brown wrote:
+> On Tue, Aug 12, 2014 at 08:49:29PM +0200, Javier Martinez Canillas wrote:
+> 
+>> So, is adding these voltages ranges (the design limits) in the Peach Pit DTS
+>> file directly an acceptable solution? Basically what my previous patch [0] did.
+> 
+>> That matches what is in the board schematic so I assume that it's safe to use
+>> these voltage ranges for that machine. If so I'll drop this series and repost
+>> that patch fixing the typo error and commit message pointed by Doug that were
+>> already addressed in $subject.
+> 
+> Well, I think the question is if you understand where those numbers come
+> from and if they make sense.  I've not seen the schematic for the board
+> so I can't comment but it is quite unusual to see ranges listed for so
+> many supplies, for things like SD it's obviously normal but things like
+> video_mid are a bit more surprising.  Does anything actually vary those
+> voltages?
+> 
+
+You are right, in fact even the voltage for the SD supply (tps65090 fet4) does
+not change but still their constraints have to be defined, since it is used as a
+vmmc-supply and the series "Adding UHS support for dw_mmc driver" [0] calls
+mmc_regulator_get_ocrmask()/mmc_regulator_set_ocr() for mmc->supply.vmmc.
+
+For fixed regulators (like fet4), mmc_regulator_set_ocr() just skips varying the
+regulator voltage but still expects to be able to obtain its voltage.
+
+Since the FET is just a switch and doesn't have an output voltage, the regulator
+core gets its parent supply voltage but regulator_list_voltge() [1] checks that
+the obtained parent voltage is between the child regulator constraints.
+
+So in this particular case it makes sense to compare that the parent voltage is
+between the (design limits) voltage ranges for the FET but I agree that it may
+not make sense on other boards.
+
+Since I needed to add the ranges for fet4 I (wrongly) thought that it would make
+sense to add the ranges for all the other FETs in case other boards had a
+similar need. But now I understand your concerns about this series so I'll drop
+it and just post a patch that adds to the Peach Pit and Pi DTS, the constraints
+for the fet4 used as vmmc-supply instead of pretending that it's a common setup.
+
+> The change where you fix up the supply mappings still makes sense of
+> course.
+>
+
+Good to know, again thanks a lot for your feedback and explanations.
+
+Best regards,
+Javier
+
+[0]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/265657.html
+[1]:
+https://git.kernel.org/cgit/linux/kernel/git/broonie/regulator.git/tree/drivers/regulator/core.c?h=for-next#n2209
