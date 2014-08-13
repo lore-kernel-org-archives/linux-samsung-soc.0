@@ -1,70 +1,73 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v2 1/3] ARM: EXYNOS: Fix build with PM_SLEEP=n and
- ARM_EXYNOS_CPUIDLE=n
-Date: Wed, 13 Aug 2014 08:40:47 +0200
-Message-ID: <2126575.mQYDXuNU1Q@amdc1032>
-References: <1407856317-2457-1-git-send-email-b.zolnierkie@samsung.com>
- <1407856317-2457-2-git-send-email-b.zolnierkie@samsung.com>
- <53EA7DC8.6040801@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: sdhci_s3c_consider_clock scheduling while atomic - clk_round_rate
+Date: Wed, 13 Aug 2014 11:10:36 +0200
+Message-ID: <CAPDyKFpn5RZY6NqOKB1QwKkFZmQDt0D8aqsA_=PBX6FwJygYEg@mail.gmail.com>
+References: <CAD8Lp45QV4ZcfXA86hoseKfJLLV_BJ-g0UABnOGPkJW1pMXhFw@mail.gmail.com>
+	<53A99EB5.6010907@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50220 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750705AbaHMGkx (ORCPT
+Received: from mail-qg0-f42.google.com ([209.85.192.42]:40413 "EHLO
+	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750751AbaHMJKg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Aug 2014 02:40:53 -0400
-In-reply-to: <53EA7DC8.6040801@linaro.org>
+	Wed, 13 Aug 2014 05:10:36 -0400
+Received: by mail-qg0-f42.google.com with SMTP id j5so10775883qga.29
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Aug 2014 02:10:36 -0700 (PDT)
+In-Reply-To: <53A99EB5.6010907@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Olof Johansson <olof@lixom.net>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, Daniel Drake <drake@endlessm.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chris Ball <chris@printf.net>, Mike Turquette <mturquette@linaro.org>
 
+On 24 June 2014 17:52, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Daniel,
+>
+> [adding Ulf, Chris and Mike to the discussion]
+>
+> On 24.06.2014 11:48, Daniel Drake wrote:
+>> sdhci_s3c_set_clock is called from sdhci_do_set_ios with interrupts
+>> disabled, and this calls into sdhci_s3c_consider_clock().
+>>
+>> The patch "mmc: sdhci-s3c: Cache bus clock rates" addressed some
+>> scheduling while atomic in this function, but there are more issues
+>> here, seen while testing 3.16-rc2 on exynos4412:
+>>
+>> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:103
+>> in_atomic(): 1, irqs_disabled(): 128, pid: 75, name: mmcqd/0
+>> Preemption disabled at:[<  (null)>]   (null)
+>>
+>> CPU: 0 PID: 75 Comm: mmcqd/0 Not tainted 3.16.0-rc2-00028-ge9fe7eb-dirty #77
+>> [<c0016140>] (unwind_backtrace) from [<c0011e14>] (show_stack+0x10/0x14)
+>> [<c0011e14>] (show_stack) from [<c05ce8a8>] (dump_stack+0x84/0xc4)
+>> [<c05ce8a8>] (dump_stack) from [<c05d2de0>] (mutex_lock+0x1c/0x3c)
+>> [<c05d2de0>] (mutex_lock) from [<c046214c>] (clk_prepare_lock+0x6c/0xf4)
+>> [<c046214c>] (clk_prepare_lock) from [<c04625ac>] (clk_round_rate+0x10/0x2c)
+>> [<c04625ac>] (clk_round_rate) from [<c0447628>] (sdhci_s3c_set_clock+0x4c/0x1e8)
+>> [<c0447628>] (sdhci_s3c_set_clock) from [<c0447818>]
+>> (sdhci_cmu_set_clock+0x54/0x140)
+>> [<c0447818>] (sdhci_cmu_set_clock) from [<c0443a38>]
+>> (sdhci_do_set_ios+0x138/0x58c)
+>> [<c0443a38>] (sdhci_do_set_ios) from [<c0443864>] (sdhci_set_ios+0x28/0x34)
+>>
+>> clk_round_rate cannot be called here because it takes a mutex.
+>>
+>> sdhci_s3c_set_clock() also calls into clk_prepare_enable() which looks
+>> like it could trigger this problem too.
+>
+> Apparently this is related to generic sdhci code calling .set_clock()
+> under spin_lock_irqsave(). For reference, see sdhci_do_set_ios() and
+> sdhci_tasklet_finish().
+>
+> Chris, Ulf, any suggestions?
 
-Hi,
+Well, the approach I think of is simply to invoke
+spin_unlock_irqrestore() prior the ->set_clock callbacks are invoked.
 
-On Tuesday, August 12, 2014 10:49:12 PM Daniel Lezcano wrote:
-> On 08/12/2014 05:11 PM, Bartlomiej Zolnierkiewicz wrote:
-> > Fix building of exynos_defconfig with disabled CONFIG_PM_SLEEP by
-> > adding checking whether Exynos cpuidle support is enabled before
-> > accessing exynos_enter_aftr.
-> >
-> > The build error message:
-> > arch/arm/mach-exynos/built-in.o:(.data+0x74): undefined reference to `exynos_enter_aftr'
-> > make: *** [vmlinux] Error 1
->  >
-> > This patch has been tested on Exynos4210 based Origen board.
-> >
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >   arch/arm/mach-exynos/exynos.c | 2 ++
-> >   1 file changed, 2 insertions(+)
-> >
-> > diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> > index 6a24e11..d57f136 100644
-> > --- a/arch/arm/mach-exynos/exynos.c
-> > +++ b/arch/arm/mach-exynos/exynos.c
-> > @@ -161,7 +161,9 @@ static void exynos_restart(enum reboot_mode mode, const char *cmd)
-> >
-> >   static struct platform_device exynos_cpuidle = {
-> >   	.name              = "exynos_cpuidle",
-> > +#ifdef CONFIG_ARM_EXYNOS_CPUIDLE
-> >   	.dev.platform_data = exynos_enter_aftr,
-> > +#endif
-> >   	.id                = -1,
-> >   };
-> 
-> This patch does not address the real issue of the compilation error. The 
-> cpuidle driver needs the exynos_enter_aftr function in order to work 
-> correctly. Hence the Makefile should be fixed in order to compile pm.o 
-> if cpuidle or pm_sleep are set.
+The spinlock then needs to be handled by each ->set_clock callback for
+each driver. To simplify for ->set_clock callbacks, we might also want
+to add spinlock handling to the exported library function,
+sdhci_set_clock().
 
-Please take a look at patch #3.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Kind regards
+Uffe
