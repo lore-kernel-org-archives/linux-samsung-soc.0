@@ -1,40 +1,56 @@
-From: Zhaowei Yuan <zhaowei.yuan@samsung.com>
-Subject: [PATCH] media: s5p-mfc: correct improper logs
-Date: Thu, 14 Aug 2014 10:11:47 +0800
-Message-ID: <1407982307-3132-1-git-send-email-zhaowei.yuan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:22606 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752527AbaHNCPc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Aug 2014 22:15:32 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: [PATCH] drm/exynos: dsi: fix exynos_dsi_set_pll() wrong return value
+Date: Thu, 14 Aug 2014 11:22:36 +0900
+Message-ID: <1407982956-18923-1-git-send-email-yj44.cho@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, k.debski@samsung.com, m.chehab@samsung.com, kyungmin.park@samsung.com, jtp.park@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org
 
-This patch corrects improper logs within the code initializing hardware.
+The type of this function is unsigned long, and it is expected
+to return proper fout value or zero if something is wrong.
+So this patch fixes wrong return value for error cases.
 
-Signed-off-by: Zhaowei Yuan <zhaowei.yuan@samsung.com>
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c |    4 ++--
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-index 6c3f8f7..4976292 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_ctrl.c
-@@ -282,9 +282,9 @@ int s5p_mfc_init_hw(struct s5p_mfc_dev *dev)
- 		s5p_mfc_clock_off();
- 		return ret;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 86aebd8..061017b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -421,7 +421,7 @@ static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
+ 	if (!fout) {
+ 		dev_err(dsi->dev,
+ 			"failed to find PLL PMS for requested frequency\n");
+-		return -EFAULT;
++		return 0;
  	}
--	mfc_debug(2, "Ok, now will write a command to init the system\n");
-+	mfc_debug(2, "Ok, now will wait for completion of hardware init\n");
- 	if (s5p_mfc_wait_for_done_dev(dev, S5P_MFC_R2H_CMD_SYS_INIT_RET)) {
--		mfc_err("Failed to load firmware\n");
-+		mfc_err("Failed to init hardware\n");
- 		s5p_mfc_reset(dev);
- 		s5p_mfc_clock_off();
- 		return -EIO;
---
-1.7.9.5
+ 	dev_dbg(dsi->dev, "PLL freq %lu, (p %d, m %d, s %d)\n", fout, p, m, s);
+ 
+@@ -453,7 +453,7 @@ static unsigned long exynos_dsi_set_pll(struct exynos_dsi *dsi,
+ 	do {
+ 		if (timeout-- == 0) {
+ 			dev_err(dsi->dev, "PLL failed to stabilize\n");
+-			return -EFAULT;
++			return 0;
+ 		}
+ 		reg = readl(dsi->reg_base + DSIM_STATUS_REG);
+ 	} while ((reg & DSIM_PLL_STABLE) == 0);
+-- 
+1.9.0
