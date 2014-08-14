@@ -1,7 +1,7 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 1/5] ARM: dts: remove old USB2 PHY node hook for Arndale
-Date: Thu, 14 Aug 2014 16:25:23 +0200
-Message-ID: <1408026327-31437-2-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 2/5] ARM: dts: remove old USB2 PHY node for Exynos5250
+Date: Thu, 14 Aug 2014 16:25:24 +0200
+Message-ID: <1408026327-31437-3-git-send-email-b.zolnierkie@samsung.com>
 References: <1408026327-31437-1-git-send-email-b.zolnierkie@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1408026327-31437-1-git-send-email-b.zolnierkie@samsung.com>
@@ -11,8 +11,9 @@ Cc: Felipe Balbi <balbi@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kamil D
 List-Id: linux-samsung-soc@vger.kernel.org
 
 drivers/usb/phy/phy-samsung-usb2 driver got replaced by
-drivers/phy/phy-samsung-usb2 one.  Remove the leftover hook
-from Arndale dts file.
+drivers/phy/phy-samsung-usb2 one.  Remove the leftover
+USB2 PHY node (EHCI/OHCI USB nodes are using the new one
+already) from Exynos5250 dtsi file.
 
 Cc: Mark Brown <broonie@linaro.org>
 Cc: Kamil Debski <k.debski@samsung.com>
@@ -20,21 +21,34 @@ Cc: Vivek Gautam <gautam.vivek@samsung.com>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos5250-arndale.dts | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/arm/boot/dts/exynos5250.dtsi | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index d0de1f5..dad8f9b 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -570,8 +570,4 @@
- 			connect-gpios = <&gpd1 7 1>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 492e1ef..f21b9aa 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -603,21 +603,6 @@
  		};
  	};
+ 
+-	usb2_phy: usbphy@12130000 {
+-		compatible = "samsung,exynos5250-usb2phy";
+-		reg = <0x12130000 0x100>;
+-		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_USB2>;
+-		clock-names = "ext_xtal", "usbhost";
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		ranges;
 -
--	usb@12110000 {
--		usb-phy = <&usb2_phy>;
+-		usbphy-sys {
+-			reg = <0x10040704 0x8>,
+-			      <0x10050230 0x4>;
+-		};
 -	};
- };
+-
+ 	usb2_phy_gen: phy@12130000 {
+ 		compatible = "samsung,exynos5250-usb2-phy";
+ 		reg = <0x12130000 0x100>;
 -- 
 1.8.2.3
