@@ -1,73 +1,43 @@
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 0/9] phy: various misc cleanups to phy drivers
-Date: Fri, 15 Aug 2014 13:40:07 +0100
-Message-ID: <1408106416-19044-1-git-send-email-peter.griffin@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:35000 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750795AbaHOMkW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Aug 2014 08:40:22 -0400
-Received: by mail-wi0-f181.google.com with SMTP id bs8so760969wib.14
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Aug 2014 05:40:20 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/9] phy: phy-omap-control: Remove unncessary site specific OOM messages
+Date: Fri, 15 Aug 2014 13:40:08 +0100
+Message-ID: <1408106416-19044-2-git-send-email-peter.griffin@linaro.org>
+References: <1408106416-19044-1-git-send-email-peter.griffin@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1408106416-19044-1-git-send-email-peter.griffin@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kishon@ti.com, kgene.kim@samsung.com, maxime.ripard@free-electrons.com, linux-samsung-soc@vger.kernel.org
 Cc: peter.griffin@linaro.org, patches@linaro.org, lee.jones@linaro.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+The site specific OOM messages are unncessary, because they duplicate
+messages from the memory subsystem which include dump_stack().
 
-This series some a few misc cleanups to the PHY drivers: -
+Removing these superflous messages makes the kernel smaller. A discussion
+here http://patchwork.ozlabs.org/patch/324158/ found that all error paths
+from kzalloc will print a error message, and that any error path which maybe
+found which doesn't would be considered a bug in kzalloc.
 
-1) Use module_platform_driver to register spear PHY drivers. This gets rid
-of a lof of boiler plate code.
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+ drivers/phy/phy-omap-control.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-2) Remove .owner field from drivers using module_platform_driver, as this gets
-overridden anyway in __platform_driver_register.
-
-3) Remove OOM site specific failure messages. These are unecessary and make
-the kernel bigger.
-
-4) Add missing kzalloc error check, which could avoid NULL ptr dereference.
-
-regards,
-
-Peter.
-
-Peter Griffin (9):
-  phy: phy-omap-control: Remove unncessary site specific OOM messages
-  phy: phy-mvebu-sata: Add missing error check for devm_kzalloc
-  phy: phy-omap-usb2: Remove unncessary site specific OOM messages
-  phy: phy-ti-pipe3: Remove unncessary site specific OOM messages
-  phy: phy-spear1310-miphy: Remove unncessary site specific OOM messages
-  phy: phy-spear1340-miphy: Remove unncessary site specific OOM messages
-  phy: remove .owner field for drivers using module_platform_driver
-  phy: phy-spear1310-miphy: Use module_platform_driver to register
-    driver.
-  phy: phy-spear1340-miphy: Use module_platform_driver to register
-    driver.
-
- drivers/phy/phy-bcm-kona-usb2.c     |  1 -
- drivers/phy/phy-berlin-sata.c       |  1 -
- drivers/phy/phy-exynos-dp-video.c   |  1 -
- drivers/phy/phy-exynos-mipi-video.c |  1 -
- drivers/phy/phy-exynos5-usbdrd.c    |  1 -
- drivers/phy/phy-exynos5250-sata.c   |  1 -
- drivers/phy/phy-hix5hd2-sata.c      |  1 -
- drivers/phy/phy-miphy365x.c         |  1 -
- drivers/phy/phy-mvebu-sata.c        |  3 ++-
- drivers/phy/phy-omap-control.c      |  5 +----
- drivers/phy/phy-omap-usb2.c         |  9 ++-------
- drivers/phy/phy-qcom-apq8064-sata.c |  1 -
- drivers/phy/phy-qcom-ipq806x-sata.c |  1 -
- drivers/phy/phy-samsung-usb2.c      |  1 -
- drivers/phy/phy-spear1310-miphy.c   | 17 ++---------------
- drivers/phy/phy-spear1340-miphy.c   | 17 ++---------------
- drivers/phy/phy-sun4i-usb.c         |  1 -
- drivers/phy/phy-ti-pipe3.c          |  6 ++----
- drivers/phy/phy-twl4030-usb.c       |  1 -
- drivers/phy/phy-xgene.c             |  1 -
- 20 files changed, 11 insertions(+), 60 deletions(-)
-
+diff --git a/drivers/phy/phy-omap-control.c b/drivers/phy/phy-omap-control.c
+index 9487bf1..cb2f4d1 100644
+--- a/drivers/phy/phy-omap-control.c
++++ b/drivers/phy/phy-omap-control.c
+@@ -295,10 +295,8 @@ static int omap_control_phy_probe(struct platform_device *pdev)
+ 
+ 	control_phy = devm_kzalloc(&pdev->dev, sizeof(*control_phy),
+ 		GFP_KERNEL);
+-	if (!control_phy) {
+-		dev_err(&pdev->dev, "unable to alloc memory for control phy\n");
++	if (!control_phy)
+ 		return -ENOMEM;
+-	}
+ 
+ 	control_phy->dev = &pdev->dev;
+ 	control_phy->type = *(enum omap_control_phy_type *)of_id->data;
 -- 
 1.9.1
