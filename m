@@ -1,72 +1,75 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: Re: [PATCH 1/1] mmc: core: Use regulator_get_voltage() if OCR mask
  is empty.
-Date: Fri, 15 Aug 2014 09:59:19 +0100
-Message-ID: <20140815085919.GG17528@sirena.org.uk>
+Date: Fri, 15 Aug 2014 10:55:28 +0100
+Message-ID: <20140815095528.GH17528@sirena.org.uk>
 References: <1408019940-11153-1-git-send-email-javier.martinez@collabora.co.uk>
  <CAD7vxxKvzxvmzgx=S5ZZn54ts99ca2TqBYFvY1SXZQZDkhjq3w@mail.gmail.com>
  <20140814151958.GY17528@sirena.org.uk>
  <CAD7vxxLHtk2ywHGoBtDp6x3-5BtDdaFnCdc_pfgMwq63Cg8Qow@mail.gmail.com>
+ <53EDBB5B.4000209@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Qvf+BwRAf9ngBazt"
-Return-path: <linux-mmc-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="Q4thQ4L2MN5Si/2d"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36515 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752575AbaHOJ4Q (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 15 Aug 2014 05:56:16 -0400
 Content-Disposition: inline
-In-Reply-To: <CAD7vxxLHtk2ywHGoBtDp6x3-5BtDdaFnCdc_pfgMwq63Cg8Qow@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Tim Kryger <tim.kryger@gmail.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Seungwon Jeon <tgih.jun@samsung.com>, Haijun Zhang <Haijun.Zhang@freescale.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <53EDBB5B.4000209@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Tim Kryger <tim.kryger@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Seungwon Jeon <tgih.jun@samsung.com>, Haijun Zhang <Haijun.Zhang@freescale.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 
---Qvf+BwRAf9ngBazt
+--Q4thQ4L2MN5Si/2d
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2014 at 10:36:18PM -0700, Tim Kryger wrote:
-> On Thu, Aug 14, 2014 at 8:19 AM, Mark Brown <broonie@kernel.org> wrote:
->=20
-> > Right, there's two things going on here.  One is that as you describe we
-> > shouldn't be putting constraints in .dtsi files if we don't know they're
-> > OK for a given board.  The other thing is that on this particular board
-> > it turns out that there's no support for varying the voltages at all so
-> > it doesn't make sense to have to specify a range, there's only one value
-> > anyway so the software really should be able to figure out that fixed
-> > value all by itself.
+On Fri, Aug 15, 2014 at 09:48:43AM +0200, Javier Martinez Canillas wrote:
 
-> If constraints are truly irrelevant when the voltage supplied to
-> consumers is fixed, why doesn't regulator_list_voltage honor this
-> exemption and skip the voltage filtering that uses (potentially
-> unspecified) constraints when output is entirely determined by a
-> parent (or grandparent) supply that can't change its voltage?
+> But now I wonder why regulator_list_voltage() even list the voltage for
+> fixed regulators (desc->fixed_uV) since they don't have the ability to
+> vary voltage. The regulator_list_voltage() documentation says:
 
-> It seems odd to make callers be the ones to handle this subtlety.
+That's because it's very cheap to do and there is a comprehensible thing
+we can return - if we have to read the voltage that means potentially
+asking the hardware in an I2C transaction which is not cheap.
 
-regulator_list_voltage() tells the consumer what voltages could be set,
-regulator_get_voltage() tells the consumer what the voltage currently
-is.  These aren't quite the same thing.
+> > It seems odd to make callers be the ones to handle this subtlety.
 
---Qvf+BwRAf9ngBazt
+> If regulator_list_voltage() didn't list the voltage for fixed regulators,
+> then this subtlety should had been handled by callers before but they
+> didn't because they rely on regulator_list_voltage() to always return a
+> voltage even for fixed regulators.
+
+There's plenty of potentially variable regulators used in these
+situations, I expect it's more likely that people were just ignoring the
+warning since it has no practical effect.
+
+--Q4thQ4L2MN5Si/2d
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT7cvkAAoJELSic+t+oim9n58P/j7dIEFD0zbLZjzRPAeWZWwt
-POlcwTziEARpsbTPQKDyEXqOBFLQ2R8JGTmXTyesHPkDkllkP+OCB+bYIq7FiNVP
-WBIxXNaEy1md172yoBriD1wcAy8lp/2Qv/I9l4YUr6Zdn5mfoC6TRWFCoTv8fZpp
-xlggbtJFWQyfeZuEp/Oq2QyCkZdGl9MwIDBc2MlAYng2VWStrdPB5iuX4akBgmSE
-TQS6GmFg1aKaxecgdOgpY8wHBfCbfa8aT99gEhtdUB6cSJHJTGjxkjvUw7L8+ifW
-aY1EqTrVE73K52DYrrRsPU6d8/mwaIPhOkRDBJ1FGMMNxinbxmm2TDz0Lz5IL2S/
-bCAROoOBJAFQ7vKNoc5RAEe+37fbEI9B591gPKkOpJMVUJhkh2w70G++h2eaCo5y
-eir2l2vZBpwnxgcNPCgvR1X08n1CdwPzl5pxqPoxzs3XLrEz6FGKULzhgCASa7BL
-VMEoteXds8f+xG5i2WIHbuTgNfxarAvaVQ326TrVxv46NpO3ddJWESG7rZQai7v6
-/A+xIlGuw/NX/6uqgDnaLFZuZT6X1uH7GRD9/O2HEbPZVM+KxpGA12TWG9oo6NSG
-8OLWX3R+7yqnBh9qT8fpA1Ar8hWEW++gqY0fLQ2d/9vENAWlNHVu4UyU5GwwTikg
-E3uZGT0wt5ARkxgS6549
-=HxP4
+iQIcBAEBAgAGBQJT7dkNAAoJELSic+t+oim9+HAP/1M2/DpYFr89DkGoXpLukKh6
+HhfpOuQypBMLQ77KOKe8KKZuMFHM13pO4DmsMQk5dl0NnxRYUFjxGsONk9o2KtUo
+yvETMeZHgXMGmNPt10JBOmHuvtD63qdRdYu4gzVge21Xj5yl1DjoGGh8afSfspRD
+ZPN8a/yYS9Iu22UzV2tjjocW5At1NZhsB/KkvWoYAP1L5dGRSS97RgOJE8AKGAdl
+fympmzFn43NKXDK63Ui9pc58guBmNv9I2MHI2LgSg0nkmDO28NJvAHC+m3MmEeD5
+K1pEcgWXktlifEu6a2OtSMcPGyA0olge0lTkhpb6iOOPqtgKYB8GBjfigRPNfSbk
+sTcfae50foPGXoI10PYDAbVI9lEpgmik0FM9xvdfZBbgZoFNCyJMFuiufABqtKic
+cSTLS8mwU9YFRENAuPTib8vEfVHvmjC42Eueb2v1/uRrSv91RqlGzmfjo1kFCzzr
+VvtQqrnwWBu7W7UhoUeQ6v/inMtvPVGBYWlKzxlQaBU5bJKH6BBte/JPiZH/1FYb
+7EwQjAu5lyZTUK2bnjDiCDGBmZliuTkhS6r/Ixabhzjb5Yo8jcXF4EChWJZRpFRJ
+gZbUwJ7HXIEKx459/IdUAdhaVM5RV9nx63CZbdwrMs6ZZrE5tgSGJ8ZY9Vo0kjhR
+L7E2p7n1whKZMq3WstSA
+=1Rvw
 -----END PGP SIGNATURE-----
 
---Qvf+BwRAf9ngBazt--
+--Q4thQ4L2MN5Si/2d--
