@@ -1,8 +1,8 @@
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 2/9] phy: phy-mvebu-sata: Add missing error check for
- devm_kzalloc
-Date: Fri, 15 Aug 2014 13:40:09 +0100
-Message-ID: <1408106416-19044-3-git-send-email-peter.griffin@linaro.org>
+Subject: [PATCH 6/9] phy: phy-spear1340-miphy: Remove unncessary site specific
+ OOM messages
+Date: Fri, 15 Aug 2014 13:40:13 +0100
+Message-ID: <1408106416-19044-7-git-send-email-peter.griffin@linaro.org>
 References: <1408106416-19044-1-git-send-email-peter.griffin@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,28 +22,34 @@ To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kishon@t
 Cc: peter.griffin@linaro.org, lee.jones@linaro.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Currently this driver is missing a check on the return value of devm_kzalloc,
-which would cause a NULL pointer dereference in a OOM situation.
+The site specific OOM messages are unncessary, because they duplicate
+messages from the memory subsystem which include dump_stack().
 
-This patch adds the aformentioned missing check.
+Removing these superflous messages makes the kernel smaller. A discussion
+here http://patchwork.ozlabs.org/patch/324158/ found that all error paths
+from kzalloc will print a error message, and that any error path which maybe
+found which doesn't would be considered a bug in kzalloc.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/phy/phy-mvebu-sata.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/phy/phy-spear1340-miphy.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/phy/phy-mvebu-sata.c b/drivers/phy/phy-mvebu-sata.c
-index cc3c0e1..10bb8e5 100644
---- a/drivers/phy/phy-mvebu-sata.c
-+++ b/drivers/phy/phy-mvebu-sata.c
-@@ -89,6 +89,8 @@ static int phy_mvebu_sata_probe(struct platform_device *pdev)
- 	struct phy *phy;
+diff --git a/drivers/phy/phy-spear1340-miphy.c b/drivers/phy/phy-spear1340-miphy.c
+index 7135ba2..ee4d66f 100644
+--- a/drivers/phy/phy-spear1340-miphy.c
++++ b/drivers/phy/phy-spear1340-miphy.c
+@@ -249,10 +249,8 @@ static int spear1340_miphy_probe(struct platform_device *pdev)
+ 	struct phy_provider *phy_provider;
  
- 	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		dev_err(dev, "can't alloc spear1340_miphy private date memory\n");
 +	if (!priv)
-+		return -ENOMEM;
+ 		return -ENOMEM;
+-	}
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	priv->base = devm_ioremap_resource(&pdev->dev, res);
+ 	priv->misc =
+ 		syscon_regmap_lookup_by_phandle(dev->of_node, "misc");
 -- 
 1.9.1
