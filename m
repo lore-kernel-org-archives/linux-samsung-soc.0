@@ -1,13 +1,25 @@
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 4/9] phy: phy-ti-pipe3: Remove unncessary site specific OOM messages
-Date: Fri, 15 Aug 2014 13:40:11 +0100
-Message-ID: <1408106416-19044-5-git-send-email-peter.griffin@linaro.org>
+Subject: [PATCH 5/9] phy: phy-spear1310-miphy: Remove unncessary site specific
+ OOM messages
+Date: Fri, 15 Aug 2014 13:40:12 +0100
+Message-ID: <1408106416-19044-6-git-send-email-peter.griffin@linaro.org>
 References: <1408106416-19044-1-git-send-email-peter.griffin@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1408106416-19044-1-git-send-email-peter.griffin@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kishon@ti.com, kgene.kim@samsung.com, maxime.ripard@free-electrons.com, linux-samsung-soc@vger.kernel.org
-Cc: peter.griffin@linaro.org, patches@linaro.org, lee.jones@linaro.org
+Cc: peter.griffin@linaro.org, lee.jones@linaro.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 The site specific OOM messages are unncessary, because they duplicate
@@ -20,25 +32,24 @@ found which doesn't would be considered a bug in kzalloc.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
- drivers/phy/phy-ti-pipe3.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/phy/phy-spear1310-miphy.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/phy/phy-ti-pipe3.c b/drivers/phy/phy-ti-pipe3.c
-index b964aa9..9280ef8 100644
---- a/drivers/phy/phy-ti-pipe3.c
-+++ b/drivers/phy/phy-ti-pipe3.c
-@@ -299,10 +299,9 @@ static int ti_pipe3_probe(struct platform_device *pdev)
- 	struct clk *clk;
+diff --git a/drivers/phy/phy-spear1310-miphy.c b/drivers/phy/phy-spear1310-miphy.c
+index 6dcbfcd..911d25b 100644
+--- a/drivers/phy/phy-spear1310-miphy.c
++++ b/drivers/phy/phy-spear1310-miphy.c
+@@ -212,10 +212,8 @@ static int spear1310_miphy_probe(struct platform_device *pdev)
+ 	struct phy_provider *phy_provider;
  
- 	phy = devm_kzalloc(&pdev->dev, sizeof(*phy), GFP_KERNEL);
--	if (!phy) {
--		dev_err(&pdev->dev, "unable to alloc mem for TI PIPE3 PHY\n");
-+	if (!phy)
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		dev_err(dev, "can't alloc spear1310_miphy private date memory\n");
++	if (!priv)
  		return -ENOMEM;
 -	}
-+
- 	phy->dev		= &pdev->dev;
  
- 	if (!of_device_is_compatible(node, "ti,phy-pipe3-pcie")) {
+ 	priv->misc =
+ 		syscon_regmap_lookup_by_phandle(dev->of_node, "misc");
 -- 
 1.9.1
