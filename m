@@ -1,61 +1,57 @@
-From: Tim Kryger <tim.kryger@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 Subject: Re: [PATCH 1/1] mmc: core: Use regulator_get_voltage() if OCR mask is empty.
-Date: Fri, 15 Aug 2014 07:19:41 -0700
-Message-ID: <CAD7vxxKvZCxnDpPn3X1Uch_6m7Hfj_vApNfxUS2Wex9BjjBUdg@mail.gmail.com>
+Date: Fri, 15 Aug 2014 16:51:38 +0200
+Message-ID: <CAPDyKFpm5nzXp5p0qxDof2NcOML911eYkjPNMsn9a2ttdnW7gQ@mail.gmail.com>
 References: <1408019940-11153-1-git-send-email-javier.martinez@collabora.co.uk>
 	<CAD7vxxKvzxvmzgx=S5ZZn54ts99ca2TqBYFvY1SXZQZDkhjq3w@mail.gmail.com>
 	<20140814151958.GY17528@sirena.org.uk>
 	<CAD7vxxLHtk2ywHGoBtDp6x3-5BtDdaFnCdc_pfgMwq63Cg8Qow@mail.gmail.com>
 	<53EDBB5B.4000209@collabora.co.uk>
+	<20140815095528.GH17528@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f178.google.com ([209.85.214.178]:40440 "EHLO
-	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751408AbaHOOTm (ORCPT
+Received: from mail-qc0-f182.google.com ([209.85.216.182]:62112 "EHLO
+	mail-qc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751199AbaHOOvi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Aug 2014 10:19:42 -0400
-In-Reply-To: <53EDBB5B.4000209@collabora.co.uk>
+	Fri, 15 Aug 2014 10:51:38 -0400
+Received: by mail-qc0-f182.google.com with SMTP id i8so2460868qcq.27
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Aug 2014 07:51:38 -0700 (PDT)
+In-Reply-To: <20140815095528.GH17528@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Mark Brown <broonie@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Seungwon Jeon <tgih.jun@samsung.com>, Haijun Zhang <Haijun.Zhang@freescale.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tim Kryger <tim.kryger@gmail.com>
+Cc: Chris Ball <chris@printf.net>, Seungwon Jeon <tgih.jun@samsung.com>, Haijun Zhang <Haijun.Zhang@freescale.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Fri, Aug 15, 2014 at 12:48 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> Hello Tim,
+On 15 August 2014 11:55, Mark Brown <broonie@kernel.org> wrote:
+> On Fri, Aug 15, 2014 at 09:48:43AM +0200, Javier Martinez Canillas wrote:
 >
-> On 08/15/2014 07:36 AM, Tim Kryger wrote:
->> On Thu, Aug 14, 2014 at 8:19 AM, Mark Brown <broonie@kernel.org> wrote:
->>
->>> Right, there's two things going on here.  One is that as you describe we
->>> shouldn't be putting constraints in .dtsi files if we don't know they're
->>> OK for a given board.  The other thing is that on this particular board
->>> it turns out that there's no support for varying the voltages at all so
->>> it doesn't make sense to have to specify a range, there's only one value
->>> anyway so the software really should be able to figure out that fixed
->>> value all by itself.
->>
->> If constraints are truly irrelevant when the voltage supplied to
->> consumers is fixed, why doesn't regulator_list_voltage honor this
->> exemption and skip the voltage filtering that uses (potentially
->> unspecified) constraints when output is entirely determined by a
->> parent (or grandparent) supply that can't change its voltage?
->>
+>> But now I wonder why regulator_list_voltage() even list the voltage for
+>> fixed regulators (desc->fixed_uV) since they don't have the ability to
+>> vary voltage. The regulator_list_voltage() documentation says:
 >
-> I had a similar thought before and proposed the patch:
+> That's because it's very cheap to do and there is a comprehensible thing
+> we can return - if we have to read the voltage that means potentially
+> asking the hardware in an I2C transaction which is not cheap.
 >
-> "[RFC 3/5] regulator: core: Only apply constraints if available on list
-> voltage" [0].
+>> > It seems odd to make callers be the ones to handle this subtlety.
+>
+>> If regulator_list_voltage() didn't list the voltage for fixed regulators,
+>> then this subtlety should had been handled by callers before but they
+>> didn't because they rely on regulator_list_voltage() to always return a
+>> voltage even for fixed regulators.
+>
+> There's plenty of potentially variable regulators used in these
+> situations, I expect it's more likely that people were just ignoring the
+> warning since it has no practical effect.
 
-> [0]: https://lkml.org/lkml/2014/7/29/418
+Just wanted to add some input regarding the errors in the mmc case.
+These are of high importance. In principle if you get, "Failed getting
+OCR mask: -22", likely you will be using a wrong OCR mask while
+negotiating the voltage level with the card.
 
-You proposed constraints only be applied when they are defined.
+So, somehow we need to address this issue.
 
-That is a little different from my suggestion where the constraints
-check is skipped when the regulator output is fixed.  It effectively
-does this now when the regulator itself provides the fixed voltage.
-However, the checks aren't skipped when that fixed voltage is coming
-from an ancestor.  Why the difference?
-
--Tim
+Kind regards
+Uffe
