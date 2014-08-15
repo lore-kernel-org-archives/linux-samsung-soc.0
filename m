@@ -1,41 +1,57 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/1] mmc: core: Use regulator_get_voltage() if OCR mask
- is empty.
-Date: Fri, 15 Aug 2014 13:13:42 +0200
-Message-ID: <53EDEB66.1040304@collabora.co.uk>
-References: <1408019940-11153-1-git-send-email-javier.martinez@collabora.co.uk> <CAD7vxxKvzxvmzgx=S5ZZn54ts99ca2TqBYFvY1SXZQZDkhjq3w@mail.gmail.com> <20140814151958.GY17528@sirena.org.uk> <CAD7vxxLHtk2ywHGoBtDp6x3-5BtDdaFnCdc_pfgMwq63Cg8Qow@mail.gmail.com> <53EDBB5B.4000209@collabora.co.uk> <20140815095528.GH17528@sirena.org.uk>
+Subject: Re: [PATCH 2/2] Input: atmel_mxt_ts - Add keycodes array example
+Date: Fri, 15 Aug 2014 14:01:56 +0200
+Message-ID: <53EDF6B4.7080804@collabora.co.uk>
+References: <1407372486-25881-1-git-send-email-javier.martinez@collabora.co.uk> <1407372486-25881-2-git-send-email-javier.martinez@collabora.co.uk> <53E37329.4020002@itdev.co.uk> <53E4E41D.4070703@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140815095528.GH17528@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Tim Kryger <tim.kryger@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Seungwon Jeon <tgih.jun@samsung.com>, Haijun Zhang <Haijun.Zhang@freescale.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:40117 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750765AbaHOMCC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 15 Aug 2014 08:02:02 -0400
+In-Reply-To: <53E4E41D.4070703@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Nick Dyer <nick.dyer@itdev.co.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Stephen Warren <swarren@nvidia.com>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Mark,
+Hello Nick,
 
-On 08/15/2014 11:55 AM, Mark Brown wrote:
-> On Fri, Aug 15, 2014 at 09:48:43AM +0200, Javier Martinez Canillas wrote:
+On 08/08/2014 04:52 PM, Javier Martinez Canillas wrote:
+On 08/07/2014 02:38 PM, Nick Dyer wrote:
+>> >>
+>> 
+>> I'm afraid you have misunderstood the impact of this change to the way that
+>> the GPIOs coming in to the touch controller are mapped to key codes. Look
 > 
->> But now I wonder why regulator_list_voltage() even list the voltage for
->> fixed regulators (desc->fixed_uV) since they don't have the ability to
+> Unfortunately there are no boards in mainline using this "linux,gpio-keymap"
+> property so I tried to figure out what the expected values were by reading the
+> driver. So is more than possible that I got them wrong.
 > 
-> That's because it's very cheap to do and there is a comprehensible thing
-> we can return - if we have to read the voltage that means potentially
-> asking the hardware in an I2C transaction which is not cheap.
+> By passing all these keycodes the touchpad worked as expected for me and the
+> driver did the same than the Chrome OS driver that has these keycodes hardcoded
+> when is_tp is true.
+> 
+>> at the protocol guide for T19.
+>> 
+> 
+> I don't have access to proper documentation and I wouldn't expect people to have
+> access to non-public docs in order to use a Device Tree binding.
+> 
+> That's why I wanted to document an example, so using this property could be
+> easier for others and they shouldn't have to look at the driver in order to
+> figure it out (and getting it wrong as you said :) )
+> 
+> So it would be great if you could provide an example on how this is supposed to
+> be used.
 > 
 
-Thanks a lot for the explanation, that does make a lot of sense.
+Any comments on this? I would really appreciate if you can expand on how
+this DT property is supposed to be used so I can re-spin the atmel support
+patch for Peach boards.
 
-> 
-> There's plenty of potentially variable regulators used in these
-> situations, I expect it's more likely that people were just ignoring the
-> warning since it has no practical effect.
-> 
-
-Indeed.
-
-Best regards,
+Thanks a lot and best regards,
 Javier
