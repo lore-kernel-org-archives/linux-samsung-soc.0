@@ -1,67 +1,52 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/1] mmc: core: Use regulator_get_voltage() if OCR mask
- is empty.
-Date: Fri, 15 Aug 2014 23:29:14 +0100
-Message-ID: <20140815222914.GM17528@sirena.org.uk>
-References: <1408019940-11153-1-git-send-email-javier.martinez@collabora.co.uk>
- <CAD7vxxKvzxvmzgx=S5ZZn54ts99ca2TqBYFvY1SXZQZDkhjq3w@mail.gmail.com>
- <20140814151958.GY17528@sirena.org.uk>
- <CAD7vxxLHtk2ywHGoBtDp6x3-5BtDdaFnCdc_pfgMwq63Cg8Qow@mail.gmail.com>
- <53EDBB5B.4000209@collabora.co.uk>
- <CAD7vxxKvZCxnDpPn3X1Uch_6m7Hfj_vApNfxUS2Wex9BjjBUdg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] regulator: s2mpxxx: Move regulator min/step
+ voltages in common place
+Date: Sat, 16 Aug 2014 14:08:24 +0100
+Message-ID: <20140816130824.GE28623@sirena.org.uk>
+References: <1405422173-15050-1-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="l0GZ4SE/qP5NVpaF"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37389 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751109AbaHOW3l (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Aug 2014 18:29:41 -0400
+	protocol="application/pgp-signature"; boundary="xA/XKXTdy9G3iaIz"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAD7vxxKvZCxnDpPn3X1Uch_6m7Hfj_vApNfxUS2Wex9BjjBUdg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1405422173-15050-1-git-send-email-amit.daniel@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tim Kryger <tim.kryger@gmail.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Seungwon Jeon <tgih.jun@samsung.com>, Haijun Zhang <Haijun.Zhang@freescale.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 
---l0GZ4SE/qP5NVpaF
+--xA/XKXTdy9G3iaIz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Aug 15, 2014 at 07:19:41AM -0700, Tim Kryger wrote:
+On Tue, Jul 15, 2014 at 04:32:51PM +0530, Amit Daniel Kachhap wrote:
+> This is a cleanup patch and moves min/step voltages in a common samsung
+> header file so that they can be used by other s2mpxxx PMIC drivers. Only
+> few required macros are added currently and others can be added if needed.
 
-> That is a little different from my suggestion where the constraints
-> check is skipped when the regulator output is fixed.  It effectively
-> does this now when the regulator itself provides the fixed voltage.
-> However, the checks aren't skipped when that fixed voltage is coming
-> from an ancestor.  Why the difference?
+Applied all, thanks.
 
-Nobody has written suitable code, and please bear in mind that even if
-the code is written there will probably be cases where it's too
-expensive for whatever reason so Javier's change is going to be needed.
-
---l0GZ4SE/qP5NVpaF
+--xA/XKXTdy9G3iaIz
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT7om3AAoJELSic+t+oim9h3IP/R1CiGNSrZBydfF6pdNiMt5B
-Z8vjp/9GOdQkZqKc/xgXZc6Gki8n0g6k6VpC+/EPljalIvmIwS3b/Ln94Eu9PhcT
-0kp0WU+zVYkCZ+jX0caIt/O0OIC0yWAsf0VK/OMpcFXQbQYfZRQgeeItYQ/lC8eJ
-nJ18yHXD5eu7dw2CXJtt9jGDkOktC67knVtZHC50gYrEgtMoGG/lxHq0muGvByHT
-InKV339duP9hiNehPotRnuQ50ZM7u4RdWuRlGGOt33s2q7vk876I51cxrjJS0X6v
-zA//XD5QgdjyNhbIe1Q4N04mv+Un240EpqOYl0QdR6FuC/Wg7N/h0j4FSgdLIRCc
-IGKeLE+qRg/j28MQdjxX7dwRJqIv1LWd4WpHFkionkPJoLBcDA/U1N4/EJAxgh6M
-JmSn/g3GVIEEYc4EhVzESctPReGgAmntRBiHDHsW8Dwx2zRN/9jaCwi9vYuIDMke
-4ktZJFHLpmfTeJ6iPt3v4NGRxxglDAGNFrra/keiRwZcpLCoSugERaQkpOmcAyt3
-BrzrgslYLAQS+ubzp/Em5DqwD9Ygz0YdsRhSWCG6jR2JoKMKxJzOy3SFf4qyc1bv
-h05oU6pySwgp5qG8ZOv7SR7d6e8ZxHhr0WvDT4ovPy3ssMMN1S2Kyjn2RPGNWC8S
-n7xCUoG0TJNRH5FIyW1E
-=C0ZE
+iQIcBAEBAgAGBQJT71fEAAoJELSic+t+oim9fsMP/13Rf4Xeskh010CqMQoQVCnN
+ZXYGjJkBjDs2wJ2pmLZn419tgVdkFKrPD2E14qSJ5crZ+QOomKyjTETWUG9e43Fc
+xlrBX20e7OBAxesrjil34A9VboJtHjSKcu4seGLGfNKgP2tPeGDq4Y9L53dKRX5J
+2nn3eBKYSrS2qKLENmVh8hmliwrxBC5qIKMxmMd7xXf1BnRRrxH8X+/4hdsB2ske
+RDJ2z8XpwPoDm0dXtrLui5oylkJRmlajl9CAfEk/dav4TNN/AEzQ3qROyy12WNAX
+JDBw2kKUGRnzPscLLJMMJCyge+lox2XKli7836Je0FdJcFeb5fdH2bWvyb68u1lJ
+llWJE7+oD+FCCRKU00qWvU4WG/yuTn4oHXnniMYOcPXu0SBpNKOU5vMfZ7bE0Svr
+LwApnxRNFLWsSfSz27uZDtmBAK4wetN61dEGD7SRbqKzpK9Y9yqJXvqXoUSFttWu
+o8sPEAxpfQI3cYMo953bpLJKiQSSWU9VIwzAAbrBcqYmJ2N7hvaYD8n0C8FVa7XF
+c3oD/qtJj08ZwN/DUF3zHQteYzb9/tNzWibTHxU1zkO/qespgqL11d0ZB1OsuU9U
+WrP7hhT9saUjvwEY3UmU0QbTxKZV7bJJnqQ871K55l6gsDLFU+PgbCeIzI1hHkNY
+vH+5VdZJ7MZg+fuPhjV9
+=kuKi
 -----END PGP SIGNATURE-----
 
---l0GZ4SE/qP5NVpaF--
+--xA/XKXTdy9G3iaIz--
