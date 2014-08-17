@@ -1,68 +1,29 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/1] mmc: core: Use regulator_get_voltage() if OCR mask
- is empty.
-Date: Sat, 16 Aug 2014 13:59:03 +0100
-Message-ID: <20140816125903.GC28623@sirena.org.uk>
-References: <1408019940-11153-1-git-send-email-javier.martinez@collabora.co.uk>
- <CAD7vxxKvzxvmzgx=S5ZZn54ts99ca2TqBYFvY1SXZQZDkhjq3w@mail.gmail.com>
- <20140814151958.GY17528@sirena.org.uk>
- <CAD7vxxLHtk2ywHGoBtDp6x3-5BtDdaFnCdc_pfgMwq63Cg8Qow@mail.gmail.com>
- <53EDBB5B.4000209@collabora.co.uk>
- <20140815095528.GH17528@sirena.org.uk>
- <CAPDyKFpm5nzXp5p0qxDof2NcOML911eYkjPNMsn9a2ttdnW7gQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jy6Sn24JjFx/iggw"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38890 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751958AbaHPVeT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 16 Aug 2014 17:34:19 -0400
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFpm5nzXp5p0qxDof2NcOML911eYkjPNMsn9a2ttdnW7gQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arjun Sreedharan <arjun024@gmail.com>
+Subject: [PATCH] cpufreq: exynos: free memory immediately on unknown SoC
+Date: Sun, 17 Aug 2014 09:36:14 +0530
+Message-ID: <1408248374-1638-1-git-send-email-arjun024@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: viresh.kumar@linaro.org
+Cc: rjw@rjwysocki.net, kgene.kim@samsung.com, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tim Kryger <tim.kryger@gmail.com>, Chris Ball <chris@printf.net>, Seungwon Jeon <tgih.jun@samsung.com>, Haijun Zhang <Haijun.Zhang@freescale.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
+Signed-off-by: Arjun Sreedharan <arjun024@gmail.com>
+---
+ drivers/cpufreq/exynos-cpufreq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---jy6Sn24JjFx/iggw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Aug 15, 2014 at 04:51:38PM +0200, Ulf Hansson wrote:
-
-> Just wanted to add some input regarding the errors in the mmc case.
-> These are of high importance. In principle if you get, "Failed getting
-> OCR mask: -22", likely you will be using a wrong OCR mask while
-> negotiating the voltage level with the card.
-
-> So, somehow we need to address this issue.
-
-Perhaps a WARN_ON() would help here - I'd not blame users for just
-ignoring the current warning?
-
---jy6Sn24JjFx/iggw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT71WUAAoJELSic+t+oim96VgP/2jbHcBpAmIOtWRxUYHsiKUk
-QAbWtkW+xpUnG9+BGfnGTUKvY9EMl/rIVjyetsxWl85u3l5MxP89XQas59/ftRw5
-DVk/aJEqSP8e5KkPTl9S726ZRjAVAlGzqCFM4EtQfv5ySQH0UYVXsftKSlCkNmFV
-lYfPkEjdT7UuuZ6L2QcitkRTtzpn08rPTx7+e0JCdnO2/mNgu7Kr6z/H45cpuBvW
-UD55rxupcFf+MNQWosj3IscQH2QhT4GQzHcezHRAkoCLHi5BYGauNbjRchvrpFvL
-f0GSyjOSqe3LChIXvXeVL9/2ddypQz84neuC7WkqLkA3GT27t6Fy9Khi8I9f+a2K
-d6eHnaGxQ8HOf++CCF3hu21Vs6sOhSowR0NUJVK/YwtRkpdz4lTJq+MgIa5zv/3I
-Tnme1lvh88yUDWMQrwgq1Y7T97wC+/WKw/vcNKftVh83gnUSHcynB4fHx5qarik6
-x4GYsv8v0DV0XheexiafWZvsKqVxgcLIhlzIpWZSLB096ixCLOFU81LBLTEhCMaV
-p+VBebdR8PbGTs9IUsvvNY8ugaO0qfq7NZAD+ZaQ+aBMLiGL7NZgwmy9nZZHHrlC
-GaVxFULaHO8dhn2KJyMliGW7ZCOfiyFVRmDoFiNCwfz9pxqYxJFLu+YlYwwlluZv
-lAEmAzabsaYjYFsKokea
-=ebub
------END PGP SIGNATURE-----
-
---jy6Sn24JjFx/iggw--
+diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+index 1e0ec57..e47d165 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -178,6 +178,7 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
+ 		ret = exynos5250_cpufreq_init(exynos_info);
+ 	} else {
+ 		pr_err("%s: Unknown SoC type\n", __func__);
++		kfree(exynos_info);
+ 		return -ENODEV;
+ 	}
+ 
+-- 
+1.7.11.7
