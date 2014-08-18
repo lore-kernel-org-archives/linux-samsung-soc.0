@@ -1,52 +1,48 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: dsi: fix exynos_dsi_set_pll() wrong return
- value
-Date: Mon, 18 Aug 2014 17:32:36 +0900
-Message-ID: <53F1BA24.6000102@samsung.com>
-References: <1407982956-18923-1-git-send-email-yj44.cho@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1407982956-18923-1-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v9 0/2] Add Maxim 77802 regulator support
+Date: Mon, 18 Aug 2014 10:32:40 +0200
+Message-ID: <1408350762-15520-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:41448 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751525AbaHRIcz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 18 Aug 2014 04:32:55 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-T24gMjAxNOuFhCAwOOyblCAxNOydvCAxMToyMiwgWW91bmdKdW4gQ2hvIHdyb3RlOgo+IFRoZSB0
-eXBlIG9mIHRoaXMgZnVuY3Rpb24gaXMgdW5zaWduZWQgbG9uZywgYW5kIGl0IGlzIGV4cGVjdGVk
-Cj4gdG8gcmV0dXJuIHByb3BlciBmb3V0IHZhbHVlIG9yIHplcm8gaWYgc29tZXRoaW5nIGlzIHdy
-b25nLgo+IFNvIHRoaXMgcGF0Y2ggZml4ZXMgd3JvbmcgcmV0dXJuIHZhbHVlIGZvciBlcnJvciBj
-YXNlcy4KCkFwcGxpZWQuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IFNpZ25lZC1vZmYtYnk6IFlv
-dW5nSnVuIENobyA8eWo0NC5jaG9Ac2Ftc3VuZy5jb20+Cj4gQWNrZWQtYnk6IElua2kgRGFlIDxp
-bmtpLmRhZUBzYW1zdW5nLmNvbT4KPiBBY2tlZC1ieTogS3l1bmdtaW4gUGFyayA8a3l1bmdtaW4u
-cGFya0BzYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2RzaS5jIHwgNCArKy0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIg
-ZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+
-IGluZGV4IDg2YWViZDguLjA2MTAxN2IgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2RzaS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHJtX2RzaS5jCj4gQEAgLTQyMSw3ICs0MjEsNyBAQCBzdGF0aWMgdW5zaWduZWQgbG9uZyBl
-eHlub3NfZHNpX3NldF9wbGwoc3RydWN0IGV4eW5vc19kc2kgKmRzaSwKPiAgCWlmICghZm91dCkg
-ewo+ICAJCWRldl9lcnIoZHNpLT5kZXYsCj4gIAkJCSJmYWlsZWQgdG8gZmluZCBQTEwgUE1TIGZv
-ciByZXF1ZXN0ZWQgZnJlcXVlbmN5XG4iKTsKPiAtCQlyZXR1cm4gLUVGQVVMVDsKPiArCQlyZXR1
-cm4gMDsKPiAgCX0KPiAgCWRldl9kYmcoZHNpLT5kZXYsICJQTEwgZnJlcSAlbHUsIChwICVkLCBt
-ICVkLCBzICVkKVxuIiwgZm91dCwgcCwgbSwgcyk7Cj4gIAo+IEBAIC00NTMsNyArNDUzLDcgQEAg
-c3RhdGljIHVuc2lnbmVkIGxvbmcgZXh5bm9zX2RzaV9zZXRfcGxsKHN0cnVjdCBleHlub3NfZHNp
-ICpkc2ksCj4gIAlkbyB7Cj4gIAkJaWYgKHRpbWVvdXQtLSA9PSAwKSB7Cj4gIAkJCWRldl9lcnIo
-ZHNpLT5kZXYsICJQTEwgZmFpbGVkIHRvIHN0YWJpbGl6ZVxuIik7Cj4gLQkJCXJldHVybiAtRUZB
-VUxUOwo+ICsJCQlyZXR1cm4gMDsKPiAgCQl9Cj4gIAkJcmVnID0gcmVhZGwoZHNpLT5yZWdfYmFz
-ZSArIERTSU1fU1RBVFVTX1JFRyk7Cj4gIAl9IHdoaWxlICgocmVnICYgRFNJTV9QTExfU1RBQkxF
-KSA9PSAwKTsKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-Cg==
+Hello Mark,
+
+This series add support for the regulators present in the
+Maxim 77802 Power Managment IC. Previously, the series was
+part of a bigger one [0] that aimed to add support for all
+the devices in the max77802 PMIC. But now the Maxim 77802
+PMIC dependencies were already merged for 3.17 so the series
+can be split and each driver can go through the relevant tree.
+
+Patch 01/02 adds the driver for the regulators in the Maxim
+77802 PMIC and patch 02/02 adds the related DT bindings doc.
+
+I kept the version numbering from the old series so this is
+version 9 although there were no changes on the max77802 driver
+since v7 of the old series.
+
+The series were tested on an Exynos5420 based Peach Pit board
+and applies cleanly to both 3.17-rc1 and today's next-20140818.
+
+Javier Martinez Canillas (2):
+  regulator: Add driver for max77802 PMIC PMIC regulators
+  regulator: Add DT bindings for max77802 PMIC regulators
+
+ .../devicetree/bindings/regulator/max77802.txt     |  53 ++
+ drivers/regulator/Kconfig                          |   9 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/max77802.c                       | 578 +++++++++++++++++++++
+ 4 files changed, 641 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/max77802.txt
+ create mode 100644 drivers/regulator/max77802.c
+
+Best regards,
+Javier
