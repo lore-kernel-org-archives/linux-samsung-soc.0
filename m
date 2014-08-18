@@ -1,13 +1,14 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 4/5] ARM: dts: add mipi_phy device node to exynos3250.dtsi
-Date: Mon, 18 Aug 2014 17:21:32 +0900
-Message-ID: <1408350093-26220-5-git-send-email-inki.dae@samsung.com>
-References: <1408350093-26220-1-git-send-email-inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: dsi: fix exynos_dsi_set_pll() wrong return
+ value
+Date: Mon, 18 Aug 2014 17:32:36 +0900
+Message-ID: <53F1BA24.6000102@samsung.com>
+References: <1407982956-18923-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1408350093-26220-1-git-send-email-inki.dae@samsung.com>
+In-reply-to: <1407982956-18923-1-git-send-email-yj44.cho@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -17,34 +18,35 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, a.hajda@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds mipi_phy device node to reset, disable and enable
-DSIM and CSIS PHY.
-
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
----
- arch/arm/boot/dts/exynos3250.dtsi |    6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 0ec2584..2bab12f 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -132,6 +132,12 @@
- 			reg = <0x10020000 0x4000>;
- 		};
- 
-+		mipi_phy: video-phy@10020710 {
-+			compatible = "samsung,s5pv210-mipi-video-phy";
-+			reg = <0x10020710 8>;
-+			#phy-cells = <1>;
-+		};
-+
- 		pd_cam: cam-power-domain@10023C00 {
- 			compatible = "samsung,exynos4210-pd";
- 			reg = <0x10023C00 0x20>;
--- 
-1.7.9.5
+T24gMjAxNOuFhCAwOOyblCAxNOydvCAxMToyMiwgWW91bmdKdW4gQ2hvIHdyb3RlOgo+IFRoZSB0
+eXBlIG9mIHRoaXMgZnVuY3Rpb24gaXMgdW5zaWduZWQgbG9uZywgYW5kIGl0IGlzIGV4cGVjdGVk
+Cj4gdG8gcmV0dXJuIHByb3BlciBmb3V0IHZhbHVlIG9yIHplcm8gaWYgc29tZXRoaW5nIGlzIHdy
+b25nLgo+IFNvIHRoaXMgcGF0Y2ggZml4ZXMgd3JvbmcgcmV0dXJuIHZhbHVlIGZvciBlcnJvciBj
+YXNlcy4KCkFwcGxpZWQuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IFNpZ25lZC1vZmYtYnk6IFlv
+dW5nSnVuIENobyA8eWo0NC5jaG9Ac2Ftc3VuZy5jb20+Cj4gQWNrZWQtYnk6IElua2kgRGFlIDxp
+bmtpLmRhZUBzYW1zdW5nLmNvbT4KPiBBY2tlZC1ieTogS3l1bmdtaW4gUGFyayA8a3l1bmdtaW4u
+cGFya0BzYW1zdW5nLmNvbT4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2RzaS5jIHwgNCArKy0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIg
+ZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9kc2kuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+
+IGluZGV4IDg2YWViZDguLjA2MTAxN2IgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2RzaS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2RzaS5jCj4gQEAgLTQyMSw3ICs0MjEsNyBAQCBzdGF0aWMgdW5zaWduZWQgbG9uZyBl
+eHlub3NfZHNpX3NldF9wbGwoc3RydWN0IGV4eW5vc19kc2kgKmRzaSwKPiAgCWlmICghZm91dCkg
+ewo+ICAJCWRldl9lcnIoZHNpLT5kZXYsCj4gIAkJCSJmYWlsZWQgdG8gZmluZCBQTEwgUE1TIGZv
+ciByZXF1ZXN0ZWQgZnJlcXVlbmN5XG4iKTsKPiAtCQlyZXR1cm4gLUVGQVVMVDsKPiArCQlyZXR1
+cm4gMDsKPiAgCX0KPiAgCWRldl9kYmcoZHNpLT5kZXYsICJQTEwgZnJlcSAlbHUsIChwICVkLCBt
+ICVkLCBzICVkKVxuIiwgZm91dCwgcCwgbSwgcyk7Cj4gIAo+IEBAIC00NTMsNyArNDUzLDcgQEAg
+c3RhdGljIHVuc2lnbmVkIGxvbmcgZXh5bm9zX2RzaV9zZXRfcGxsKHN0cnVjdCBleHlub3NfZHNp
+ICpkc2ksCj4gIAlkbyB7Cj4gIAkJaWYgKHRpbWVvdXQtLSA9PSAwKSB7Cj4gIAkJCWRldl9lcnIo
+ZHNpLT5kZXYsICJQTEwgZmFpbGVkIHRvIHN0YWJpbGl6ZVxuIik7Cj4gLQkJCXJldHVybiAtRUZB
+VUxUOwo+ICsJCQlyZXR1cm4gMDsKPiAgCQl9Cj4gIAkJcmVnID0gcmVhZGwoZHNpLT5yZWdfYmFz
+ZSArIERTSU1fU1RBVFVTX1JFRyk7Cj4gIAl9IHdoaWxlICgocmVnICYgRFNJTV9QTExfU1RBQkxF
+KSA9PSAwKTsKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cg==
