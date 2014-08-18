@@ -1,7 +1,7 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 3/5] ARM: dts: add fimd device node to exynos3250.dsti
-Date: Mon, 18 Aug 2014 17:21:31 +0900
-Message-ID: <1408350093-26220-4-git-send-email-inki.dae@samsung.com>
+Subject: [PATCH 1/5] drm/exynos: mipi-dsi: add Exynos3 SoC support
+Date: Mon, 18 Aug 2014 17:21:29 +0900
+Message-ID: <1408350093-26220-2-git-send-email-inki.dae@samsung.com>
 References: <1408350093-26220-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,33 +21,51 @@ To: dri-devel@lists.freedesktop.org
 Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, a.hajda@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+This patch adds Exynos3250/3472 SoCs support.
+
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250.dtsi |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .../devicetree/bindings/video/exynos_dsim.txt      |    1 +
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |    8 ++++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 1d52de6..0ec2584 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -216,6 +216,18 @@
- 			interrupts = <0 240 0>;
- 		};
+diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt b/Documentation/devicetree/bindings/video/exynos_dsim.txt
+index 31036c6..e74243b 100644
+--- a/Documentation/devicetree/bindings/video/exynos_dsim.txt
++++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
+@@ -2,6 +2,7 @@ Exynos MIPI DSI Master
  
-+		fimd: fimd@11c00000 {
-+			compatible = "samsung,exynos3250-fimd";
-+			reg = <0x11c00000 0x30000>;
-+			interrupt-names = "fifo", "vsync", "lcd_sys";
-+			interrupts = <0 84 0>, <0 85 0>, <0 86 0>;
-+			clocks = <&cmu CLK_SCLK_FIMD0>, <&cmu CLK_FIMD0>;
-+			clock-names = "sclk_fimd", "fimd";
-+			samsung,power-domain = <&pd_lcd0>;
-+			samsung,sysreg = <&sys_reg>;
-+			status = "disabled";
-+		};
+ Required properties:
+   - compatible: value should be one of the following
++		"samsung,exynos3250-mipi-dsi" /* for Exynos3250/3472 SoCs */
+ 		"samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
+ 		"samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
+   - reg: physical base address and length of the registers set for the device
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 9a186c0..a8c0c4f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -304,6 +304,12 @@ struct exynos_dsi {
+ #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
+ #define connector_to_dsi(c) container_of(c, struct exynos_dsi, connector)
+ 
++static struct exynos_dsi_driver_data exynos3_dsi_driver_data = {
++	.plltmr_reg = 0x50,
++	.has_freqband = 1,
++	.has_clklane_stop = 1,
++};
 +
- 		mshc_0: mshc@12510000 {
- 			compatible = "samsung,exynos5250-dw-mshc";
- 			reg = <0x12510000 0x1000>;
+ static struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
+ 	.plltmr_reg = 0x50,
+ 	.has_freqband = 1,
+@@ -315,6 +321,8 @@ static struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
+ };
+ 
+ static struct of_device_id exynos_dsi_of_match[] = {
++	{ .compatible = "samsung,exynos3250-mipi-dsi",
++	  .data = &exynos3_dsi_driver_data },
+ 	{ .compatible = "samsung,exynos4210-mipi-dsi",
+ 	  .data = &exynos4_dsi_driver_data },
+ 	{ .compatible = "samsung,exynos5410-mipi-dsi",
 -- 
 1.7.9.5
